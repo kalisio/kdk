@@ -1,6 +1,6 @@
 # Kaelia
 
-Kaelia Tech Open Source contributions documentation 
+Kaelia application framework documentation
 
 ## Component Diagram
 
