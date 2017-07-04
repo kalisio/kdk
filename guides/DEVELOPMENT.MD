@@ -144,17 +144,17 @@ npm run release:type
 
 Because Kaelia web app are also released as Docker images you can build it like this:
 ```bash
-docker build -t kaeliatech/kApp .
+docker build -t kaeliatech/kapp .
 ```
 Then release it as latest version:
 ```bash
 docker login
-docker push kaeliatech/kApp
+docker push kaeliatech/kapp
 ```
 And tag it (`version_tag` being the current version number like `1.1.2`)
 ```bash
-docker tag kaeliatech/kApp kaeliatech/kApp:version_tag
-docker push kaeliatech/kApp:version_tag
+docker tag kaeliatech/kapp kaeliatech/kapp:version_tag
+docker push kaeliatech/kapp:version_tag
 ```
 
 > This requires you to have a DockerHub account and be a team member of the Kaelia organization, if you'd like to become a maintainer please tell us
