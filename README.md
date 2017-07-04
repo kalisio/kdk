@@ -4,6 +4,8 @@
 
 > Kaelia application framework documentation
 
+The Kaelia framework is highly inspired by our experience in developing [Weacast](https://weacast.gitbooks.io/weacast-docs/), refering to it might also help.
+
 [**Guide**](./guides/README.MD)<br/>
 Get familiar with Kaelia by building your first Kaelia app server.
 
