@@ -1,0 +1,33 @@
+# Data model-oriented view of the architecture
+
+> According to the [Feathers philosophy](https://docs.feathersjs.com/guides/about/philosophy.html) each data model is manipulated using a [service interface](https://docs.feathersjs.com/api/services.html) to perform [CRUD operations](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) of the [persistence layer](https://docs.feathersjs.com/api/databases/common.html). So this data model-oriented view is a service-oriented view in the same manner.
+
+Because data models internally rely on [JSON](http://www.json.org/) they are by nature hierarchical. In the following diagrams each nested JSON object is represented as a smaller *bubble* in a bigger *bubble* (the nesting/parent object), the data model instance being the root JSON object or the *biggest* bubble. The name of the bubble is the name of the nesting object property owing the nested object.
+
+## User data model
+
+The common properties of a user are described by the following data model:
+
+![User data model](https://cdn.rawgit.com/kaelia-tech/kDocs/61f0fdd282249196857204d68ba44ada046bd7bf/images/User%20Data%20Model%20Diagram.svg)
+
+The details of each property are the following:
+* **email** : user e-mail used as an internal unique ID
+
+## Organization data model
+
+The common properties of an organization are described by the following data model:
+
+![Organization data model](https://cdn.rawgit.com/kaelia-tech/kDocs/61f0fdd282249196857204d68ba44ada046bd7bf/images/Organization%20Data%20Model%20Diagram.svg)
+
+This data model is manipulated through the [Organization API](https://kaelia-tech.gitbooks.io/kDocs/api/ORGANIZATION.html).
+
+The details of each property are the following:
+* **name**: the name of the organization used as an internal unique ID
+
+## Group data model
+
+The properties of a group object are described by the following data model:
+
+![Group data model](https://cdn.rawgit.com/kaelia-tech/kDocsocs/2724c914bb95d9167dd460b800ff1186dd3b31cb/images/Group%20Data%20Model%20Diagram.svg)
+
+This data model is manipulated through the [Organization API](https://kaelia-tech.gitbooks.io/kDocs/api/ORGANIZATION.html#group-api).

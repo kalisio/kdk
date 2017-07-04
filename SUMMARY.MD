@@ -1,0 +1,26 @@
+# Summary
+
+* [Introduction](README.MD)
+* [Guides](guides/README.MD)
+  * [About Kaelia](guides/ABOUT.MD)
+  * [The Basics](guides/BASICS.MD)
+  * [Development](guides/DEVELOPMENT.MD)
+* [Architecture](architecture/README.MD)
+  * [Main concepts](architecture/DOMAINMODEL.MD)
+    * [User model](architecture/DOMAINMODEL.MD#user-model)
+    * [Organization model](architecture/DOMAINMODEL.MD#organization-model)
+    * [Group model](architecture/DOMAINMODEL.MD#group-model)
+    * [Domain model](architecture/DOMAINMODEL.MD#domain-model)
+  * [Global architecture](architecture/GLOBAL.MD)
+  * [Component view](architecture/COMPONENTS.MD)
+  * [Data model view](architecture/DATAMODEL.MD)
+    * [User data model](architecture/DATAMODEL.MD#user-data-model)
+    * [Organization data model](architecture/DATAMODEL.MD#organization-data-model)
+    * [Group data model](architecture/DATAMODEL.MD#group-data-model)
+* [API](api/README.MD)
+  * kCore
+    * [Hooks](api/HOOKS.MD)
+    * [Application](api/APPLICATION.MD)
+  * Client-specific
+    * [Mixins](api/MIXINS.MD)
+* [License](LICENSE.MD)
