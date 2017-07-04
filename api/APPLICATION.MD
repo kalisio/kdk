@@ -49,4 +49,4 @@ This assumes you have created a *models* and *services* directories containing t
 ## Application Hooks
 
 The following [hooks](./HOOKS.MD) are globally executed on the application:
-![Application hooks](https://cdn.rawgit.com/kaelia-tech/kDocs/9d7ac840bd860ce612ffe098f1b8c1027de8d914/images/Application%20Hooks%20Diagram.svg)
+![Application hooks](https://cdn.rawgit.com/kaelia-tech/kDocs/c70b836e2a7c92c98afd73eac9d2010f897b68b7/images/Application%20Hooks%20Diagram.svg)

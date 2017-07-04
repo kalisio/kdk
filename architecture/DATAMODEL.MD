@@ -28,6 +28,6 @@ The details of each property are the following:
 
 The properties of a group object are described by the following data model:
 
-![Group data model](https://cdn.rawgit.com/kaelia-tech/kDocsocs/b1b2d612dcea10ef9f9efcd445dc3f73def21b52/images/Group%20Data%20Model%20Diagram.svg)
+![Group data model](https://cdn.rawgit.com/kaelia-tech/kDocs/b1b2d612dcea10ef9f9efcd445dc3f73def21b52/images/Group%20Data%20Model%20Diagram.svg)
 
 This data model is manipulated through the [Organization API](https://kaelia-tech.gitbooks.io/kDocs/api/ORGANIZATION.html#group-api).
