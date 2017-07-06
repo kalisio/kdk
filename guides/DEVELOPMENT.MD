@@ -17,6 +17,8 @@ It has the largest ecosystem of open source libraries in the world.
 - [Default install.](https://nodejs.org/en/)
 - [Specific versions.](https://nodejs.org/en/download/)
 
+**In order to be able to switch easily between different versions of Node.js we recommand to use a version manager like [n](https://github.com/tj/n)/[nvm](https://github.com/creationix/nvm) under Linux/Mac or [nvm](https://github.com/coreybutler/nvm-windows) under Windows.**
+
 #### Install Git
 
 [git](https://git-scm.com/) is the version control system most frequently used in open source.
