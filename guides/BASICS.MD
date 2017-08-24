@@ -1,20 +1,20 @@
 ## Deploying
 
-A Kaelia application includes the front-end side client as well as back-end services/API gateway.
+A Kalisio application includes the front-end side client as well as back-end services/API gateway.
 
 ### The easy way : using Docker
 
 > This requires you to [install Docker](https://docs.docker.com/engine/installation/), the world’s leading software container platform.
 
-Kaelia provides Docker images on the [Docker Hub](https://hub.docker.com/r/kaeliatech/) to ease deploying your own server. To run correctly it has to be linked with a standard [MongoDB container](https://hub.docker.com/_/mongo/) for the database. 
+Kalisio provides Docker images on the [Docker Hub](https://hub.docker.com/r/kaeliatech/) to ease deploying your own server. To run correctly it has to be linked with a standard [MongoDB container](https://hub.docker.com/_/mongo/) for the database. 
 
 The following commands should do the job (assuming `kApp`is the name of the app):
 ```bash
 // Run the MongoDB container
 docker run --name mongodb-kapp -v mongodb_kapp:/data/db -d mongo
 
-// Run the Kaelia app container
-docker run --name kapp -d -p 8081:8081 --link mongodb-kapp:mongodb kaeliatech/kapp
+// Run the Kalisio app container
+docker run --name kapp -d -p 8081:8081 --link mongodb-kapp:mongodb kalisio/kapp
 ```
 
 Then point your browser to [localhost:8081](http://localhost:8081).
@@ -25,35 +25,35 @@ You can also use [docker-compose](https://docs.docker.com/compose/) and the [doc
 The following commands should do the job:
 ```bash
 docker pull kaeliatech/kapp
-// Run the MongoDB and Kaelia app containers
+// Run the MongoDB and Kalisio app containers
 docker-compose up -d
 
-// Stop the MongoDB and Kaelia app containers
+// Stop the MongoDB and Kalisio app containers
 docker-compose down
-// Stop the MongoDB and Kaelia app containers erasing DB data
+// Stop the MongoDB and Kalisio app containers erasing DB data
 docker-compose down -v
 ```
 
 ### The hard way : from source code
 
-First you have to ensure the same [prerequisites](./DEVELOPMENT.MD#prerequisites) as for developing to build Kaelia app from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance of the Kaelia app:
+First you have to ensure the same [prerequisites](./DEVELOPMENT.MD#prerequisites) as for developing to build Kalisio app from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance of the Kalisio app:
 
 ```bash
-// Clone Kaelia app
-git clone https://github.com/kaeliatech/kApp.git
+// Clone Kalisio app
+git clone https://github.com/kalisio/kApp.git
 cd kApp
 
 // Client build (or using yarn)
-npm install
+yarn/npm install
 quasar build
 
 // Server build (or using yarn)
 cd api
-npm install
-npm run build
+yarn/npm install
+yarn/npm run build
 
 // Running the server
-npm run prod
+yarn/npm run prod
 ```
 
 Then point your browser to [localhost:8081](http://localhost:8080).
@@ -62,22 +62,23 @@ Then point your browser to [localhost:8081](http://localhost:8080).
 
 ### Backend side
 
-Kaelia app backend configuration is based on [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `api/config` folder. The main properties are the following:
+Kalisio app backend configuration is based on [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `api/config` folder. The main properties are the following:
 * **apiPath** : the API path prefix
-* **authentication** : object configuring [Feathers authentication](https://github.com/feathersjs/feathers-authentication#default-options) plus custom Kaelia options
+* **authentication** : object configuring [Feathers authentication](https://github.com/feathersjs/feathers-authentication#default-options) plus custom Kalisio options
   * **defaultUsers** : the array of default users to be created on launch (format `{ email, password }`)
 * **logs** : object configuring the [winston](https://github.com/winstonjs/winston) loggers to be used - each key is a [transport name](https://github.com/winstonjs/winston/blob/master/docs/transports.md) which value is associated configuration options
 * **db**
-  * **adapter** : the database adapter, default and recommanded is [`mongodb`](https://github.com/feathersjs/feathers-mongodb)
+  * **adapter** : the database adapter, for now the only supported one is [`mongodb`](https://github.com/feathersjs/feathers-mongodb)
   * **url** : database URL to access the app database used by drivers such as [mongodb](https://github.com/mongodb/node-mongodb-native)
 * **proxyTable**: a set of proxy rules typically used for [scaling](./architecture/GLOBAL.MD#architecture-at-scale)
 
 ### Frontend side
 
-Kaelia app frontend configuration is based on the same underlying [tool](https://github.com/lorenwest/node-config) that powers [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `config` folder. The main properties are the following:
+Kalisio app frontend configuration is based on the same underlying [tool](https://github.com/lorenwest/node-config) that powers [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `config` folder. The main properties are the following:
 * **apiPath** : the API path prefix
-* **transport** : the transport to be used between frontend and backend, could be `http` for standard REST or `web-socket` for WebSockets
-* **appName** : the name of the Kaelia app
+* **transport** : the transport to be used between frontend and backend, could be `http` for standard REST or `websocket` for WebSockets
+* **appName** : the name of the Kalisio app
+* **appLogo** : the image to be used as logo for the Kalisio app
 * **logs**
   * **level** : [log level](https://github.com/pimterry/loglevel#documentation) to be used 
   
