@@ -42,7 +42,7 @@ There are many resources available for installing it.
 
 #### Install Yarn
 
-Due to some changes in the way `npm` manages linked module we prefer to use [Yarn](https://yarnpkg.com) as a package manager.
+Due to some [changes](http://codetunnel.io/npm-5-changes-to-npm-link/) in the way `npm` manages linked modules we prefer to use [Yarn](https://yarnpkg.com) as a package manager.
 
 [Install Yarn](https://yarnpkg.com/en/docs/install) on your platform.
 
