@@ -1,8 +1,8 @@
-Kaelia is powered by the following stack:
+Kalisio is powered by the following stack:
 * [Feathers](https://feathersjs.com/) on the backend side
 * [Quasar](http://quasar-framework.org/) on the frontend side
 
-If you are not familiar with those technologies and want to develop for Kaelia, in addition to read the dedicated documentation, we recommand reading https://github.com/claustres/quasar-feathers-tutorial. Indeed, Kaelia template application is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api), while Kaelia plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html). 
+If you are not familiar with those technologies and want to develop for Kalisio, in addition to read the dedicated documentation, we recommand reading https://github.com/claustres/quasar-feathers-tutorial. Indeed, Kalisio template application is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api), while Kalisio plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html). 
 
 ## Setup your environment
 
@@ -16,6 +16,8 @@ It has the largest ecosystem of open source libraries in the world.
 
 - [Default install.](https://nodejs.org/en/)
 - [Specific versions.](https://nodejs.org/en/download/)
+
+> **Kalisio modules are expected to work with Node.js >= 8**
 
 **In order to be able to switch easily between different versions of Node.js we recommand to use a version manager like [n](https://github.com/tj/n)/[nvm](https://github.com/creationix/nvm) under Linux/Mac or [nvm](https://github.com/coreybutler/nvm-windows) under Windows.**
 
@@ -36,6 +38,16 @@ There are many resources available for installing it.
 - [macOS.](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
 - [Windows.](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
 
+> **Kalisio modules are expected to work with MongoDB >= 3**
+
+#### Install Yarn
+
+Due to some changes in the way `npm` manages linked module we prefer to use [Yarn](https://yarnpkg.com) as a package manager.
+
+[Install Yarn](https://yarnpkg.com/en/docs/install) on your platform.
+
+https://yarnpkg.com
+
 #### Install Quasar CLI
 
 Install the Quasar CLI : `$ npm install -g quasar-cli`
@@ -44,36 +56,37 @@ Install the Quasar CLI : `$ npm install -g quasar-cli`
 
 While it is a WIP and not yet pushed to NPM, or when developing, please use the following process.
 
-First clone all the plugins you need and use [npm link](https://docs.npmjs.com/cli/link) to make them globally available to your Node.js installation:
+First clone all the modules/plugins you need and use [yarn/npm link](https://docs.npmjs.com/cli/link) to make them globally available to your Node.js installation:
 
 ```bash
 // Clone and link the plugins
-git clone https://github.com/kaelia-tech/kCore.git
+git clone https://github.com/kalisio/kCore.git
 cd kCore
-npm link
+yarn link
 
-git clone https://github.com/kaelia-tech/kTeam.git
+git clone https://github.com/kalisio/kTeam.git
 cd kTeam
-npm link
+yarn link
 
-git clone https://github.com/kaelia-tech/kClient.git
+git clone https://github.com/kalisio/kClient.git
 cd kClient
-npm link
+yarn link
 
 ...
 ```
 
-Then clone the main Weacast repository and use [npm link](https://docs.npmjs.com/cli/link) to make Node.js pointing to the previously cloned modules instead of those installed by npm, e.g. :
+Then clone the main app repository and link to modules/plugins to make Node.js pointing to the previously cloned modules instead of those installed by yarn/npm, e.g. :
 ```bash
-// Clone and link plugins to Kaelia app
-git clone https://github.com/kaelia-tech/kApp.git
+// Clone and link plugins to Kalisio app
+git clone https://github.com/kalisio/kApp.git
 cd kApp
 // Client side
-npm link kClient
+yarn link kCore
+yarn link kTeam
 // API side
 cd api
-npm link kCore
-npm link kTeam
+yarn link kCore
+yarn link kTeam
 ...
 ```
 
@@ -83,44 +96,44 @@ npm link kTeam
 
 ### Web app
 
-The default Kaelia web application template is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api).
+The default Kalisio web application template is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api).
 
 #### Running for development
 Run the frontend Quasar app (from root project folder): `$ quasar dev`
 
-Then from the backend `api` folder run the server-side Feathers app: `$ npm run dev`
+Then from the backend `api` folder run the server-side Feathers app: `$ yarn/npm run dev`
 
 Then point your browser to [localhost:8080](http://localhost:8080).
 
 #### Building for production
 Build the frontend Quasar app (from root project folder): `$ quasar build`.
 
-Then from the backend `api` folder build the server-side Feathers app: `$ npm run build`
+Then from the backend `api` folder build the server-side Feathers app: `$ yarn/npm run build`
 
 #### Running in production
 **Make sure you built your app first**
 
-From the backend `api` folder run the server-side Feathers app, this will also serve the frontend Quasar app : `$ npm run prod`
+From the backend `api` folder run the server-side Feathers app, this will also serve the frontend Quasar app : `$ yarn/npm run prod`
 
 Then point your browser to [localhost:8081](http://localhost:8081).
 
 #### Running test
 
-From the backend `api` folder run the server-side tests : `$ npm run test`
+From the backend `api` folder run the server-side tests : `$ yarn/npm run test`
 This will lint and fix issues in the code according to [JS standard](https://github.com/feross/standard), then execute tests using [Mocha](https://mochajs.org/) and compute code coverage using [Istanbul](https://istanbul.js.org/).
 
 > **We are looking for integrating frontend and end-to-end tests, please contribute !**
 
-### Plugins
+### Modules/Plugins
 
-Kaelia plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins
+Kalisio modules/plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins
 ```bash
 cd kTeam
-npm install
-npm run watch
+yarn/npm install
+yarn/npm run watch
 ```
 
-To run the module tests (same as above) : `$ npm run test`
+To run the module tests (same as above) : `$ yarn/npm run test`
 
 ## Publish
 
@@ -141,31 +154,31 @@ The same process applies when releasing a patch, minor or major version, i.e. th
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
-npm run release:type
+yarn/npm run release:type
 ```
 
-Because Kaelia web app are also released as Docker images you can build it like this:
+Because Kalisio web app are also released as Docker images you can build it like this:
 ```bash
-docker build -t kaeliatech/kapp .
+docker build -t kalisio/kapp .
 ```
 Then release it as latest version:
 ```bash
 docker login
-docker push kaeliatech/kapp
+docker push kalisio/kapp
 ```
 And tag it (`version_tag` being the current version number like `1.1.2`)
 ```bash
-docker tag kaeliatech/kapp kaeliatech/kapp:version_tag
-docker push kaeliatech/kapp:version_tag
+docker tag kalisio/kapp kalisio/kapp:version_tag
+docker push kalisio/kapp:version_tag
 ```
 
-> This requires you to have a DockerHub account and be a team member of the Kaelia organization, if you'd like to become a maintainer please tell us
+> This requires you to have a DockerHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
 
 ### Plugins
 
 The same process applies as for the web app but in addition the module is published on the NPM registry.
 
-> This requires you to have a NPM and GitHub account and be a team member of the Kaelia organization, if you'd like to become a maintainer please tell us
+> This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
 
 > **Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
 
