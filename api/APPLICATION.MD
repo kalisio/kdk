@@ -1,23 +1,23 @@
 ## Backend setup
 
-Kaelia [core module](https://github.com/kaelia-tech/kCore) provides a helper to quickly initialize what is required for your [server application](https://docs.feathersjs.com/api/application.html). The core module provides the ability to initialize a new Weacast application instance, attach it to the configured database and setup authentication:
+Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [server application](https://docs.feathersjs.com/api/application.html). The core module provides the ability to initialize a new Kalisio application instance, attach it to the configured database and setup authentication:
 ```javascript
-import { kaelia } from 'kCore'
+import { kalisio } from 'kCore'
 
 // Initialize app
-let app = kaelia()
+let app = kalisio()
 // Connect to DB
 await app.db.connect()
 ```
 
 ## Client setup
 
-Weacast [client module](https://github.com/kaelia-tech/kClient) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
+Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
 ```javascript
-import { kaelia } from 'kClient'
+import { kalisio } from 'kCore/client'
 
 // Initialize API wrapper
-let api = kaelia()
+let api = kalisio()
 // Retrieve a given service
 let users = api.getService('users')
 ```
@@ -30,12 +30,18 @@ Retrieve the given service by name, should replace [Feathers service method](htt
 
 > On the client side this is also used to instanciate the service on first call.
 
-### .createService(name, app, modelsPath, servicesPath) - backend only
+### .createService(name, app, options) - backend only
 
-Create a new service attached to the application by name and given a set of directories where to find model/service
+Create a new service attached to the application by name and given a set of options:
+* **modelsPath**: directory where to find model declaration (optional), if provided will initiate a DB service based on the model
+* **servicesPath**: directory where to find service declaration (optional), if provided for a non-DB service will initiate a service based on the returned object or constructor function from the service module, for a DB service it will apply the provided mixin object coming from the service module
+* **proxy**: options for a service to be proxied by the created service
+  * **service**: the name of the proxied service
+  * **params**: the parameters to be used when calling the proxied service, either an object or a function returning the object
+* **perspectives**: the *perspectives* of the model that will not be retrieved by default except if [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) is used
 
-This assumes you have created a *models* and *services* directories containing the required files to declare your service, e.g. your folder/file hierarchy should look like this:
-* *index.js*
+Depending on the options you have to create a *models* and *services* directories containing the required files to declare your services, e.g. your folder/file hierarchy should look like this:
+* *index.js*: contains adefault function instantiating all the services
 * *models* : constains one file per database adapter you'd like to support
   * *serviceName.model.mongodb.js* : exporting the data model managed by your service in [MongoDB](https://docs.feathersjs.com/api/databases/mongodb.html), 
   * *serviceName.model.levelup.js* : exporting the data model managed by your service in [LevelUP](https://github.com/feathersjs/feathers-levelup), 
