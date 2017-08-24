@@ -2,7 +2,7 @@
 
 * [Introduction](README.MD)
 * [Guides](guides/README.MD)
-  * [About Kaelia](guides/ABOUT.MD)
+  * [About Kalisio](guides/ABOUT.MD)
   * [The Basics](guides/BASICS.MD)
   * [Development](guides/DEVELOPMENT.MD)
 * [Architecture](architecture/README.MD)
@@ -19,8 +19,16 @@
     * [Group data model](architecture/DATAMODEL.MD#group-data-model)
 * [API](api/README.MD)
   * kCore
-    * [Hooks](api/HOOKS.MD)
-    * [Application](api/APPLICATION.MD)
-  * Client-specific
-    * [Mixins](api/MIXINS.MD)
+    * [Services](api/kCore/SERVICES.MD)
+    * [Hooks](api/kCore/HOOKS.MD)
+    * [Application](api/kCore/APPLICATION.MD)
+    * Client
+      * [Components](api/kCore/COMPONENTS.MD)
+      * [Mixins](api/kCore/MIXINS.MD)
+  * kTeam
+    * [Services](api/kTeam/SERVICES.MD)
+    * [Hooks](api/kTeam/HOOKS.MD)
+    * Client
+      * [Components](api/kTeam/COMPONENTS.MD)
+      * [Mixins](api/kTeam/MIXINS.MD)
 * [License](LICENSE.MD)
