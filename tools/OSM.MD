@@ -6,13 +6,15 @@ To generate OSM data we start from a fresh Scaleway server with a Docker image, 
 
 > Git clone using HTTPS instead of git protocol on Scaleway.
 
-Because you will need a lot of storage here is how to add a volume:
+Because you will need a lot of storage here is [how to add a volume](https://www.scaleway.com/docs/attach-and-detach-a-volume-to-an-existing-server/):
 ``` bash
 mkfs -t ext4 /dev/nbd1
 mkdir -p /mnt/data
 mount /dev/nbd1 /mnt/data
 ```
 To automount it: https://community.online.net/t/automatic-mounting-of-additional-volumes-using-systemd-on-ubuntu/3102
+
+Because some data (eg PG data) are generated in docker volumes it is necessary to [change the default docker location to your volumes](https://forums.docker.com/t/how-do-i-change-the-docker-image-installation-directory/1169).
 
 Rendering the whole planet is a [tricky thing](https://github.com/openmaptiles/openmaptiles/issues/242), so for now we prefer to:
 * contribute with a Pull Request to the community maintained open-source official vector tile schema so that the changes will be part of the future public OpenMapTiles releases and maintained
