@@ -23,6 +23,6 @@ Rendering the whole planet is a [tricky thing](https://github.com/openmaptiles/o
   * [T-Rex](https://github.com/t-rex-tileserver/t-rex) directly as MVT
 
 Here is a list of interesting documentation:
-* [kloklantech thesis](./Updatable%20Vector%20Tiles%20from%20OpenStreetMap.pdf)
-* http://fuzzytolerance.info/blog/2017/04/25/Generating-your-own-OpenMapTiles/
-* https://www.youtube.com/watch?v=D7mmXonFIqA&feature=youtu.be
+* [kloklantech thesis](./Updatable%20Vector%20Tiles%20from%20OpenStreetMap.pdf) detailing the whole toolchain
+* [tutorial video](http://fuzzytolerance.info/blog/2017/04/25/Generating-your-own-OpenMapTiles/)
+* [mapbox presentation](https://www.youtube.com/watch?v=D7mmXonFIqA&feature=youtu.be)
