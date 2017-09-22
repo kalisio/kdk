@@ -14,14 +14,6 @@ mount /dev/nbd1 /mnt/data
 ```
 To automount it: https://community.online.net/t/automatic-mounting-of-additional-volumes-using-systemd-on-ubuntu/3102
 
-We use the [quickstart script](https://github.com/openmaptiles/openmaptiles/blob/master/QUICKSTART.md) to generate data (the link contains useful information about required architecture/sizing):
-```
-git clone https://github.com/openmaptiles/openmaptiles
-cd openmaptiles
-make
-./quickstart.sh france // could be country, region, etc. but not planet
-```
-
 Rendering the whole planet is a [tricky thing](https://github.com/openmaptiles/openmaptiles/issues/242), so for now we prefer to:
 * contribute with a Pull Request to the community maintained open-source official vector tile schema so that the changes will be part of the future public OpenMapTiles releases and maintained
 * render only the features needed into a separate MBTiles files with new layers - and combine the standard planet with the extra layers - this is doable easily with JSON GL style and software stack powered by mapnik or tippecanoe.
@@ -50,7 +42,15 @@ out body;
 out skel qt;
 ```
 
-Otherwise download the [whole planet](https://planet.openstreetmap.org/pbf/) in the *data* directory and launch the process:
+We also use the [quickstart script](https://github.com/openmaptiles/openmaptiles/blob/master/QUICKSTART.md) to generate data (the link contains useful information about required architecture/sizing):
+```
+git clone https://github.com/openmaptiles/openmaptiles
+cd openmaptiles
+make
+./quickstart.sh france // could be country, region, etc. but not planet
+```
+
+For a layer covering the planet first download the [whole planet](https://planet.openstreetmap.org/pbf/) in the *data* directory and launch the process:
 ```
 cd data
 wget https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf
