@@ -22,6 +22,26 @@ Rendering the whole planet is a [tricky thing](https://github.com/openmaptiles/o
   * [Tegola](https://github.com/terranodo/tegola) directly as MVT
   * [T-Rex](https://github.com/t-rex-tileserver/t-rex) directly as MVT
 
+Pour de petites extractions possible d'utiliser l'[OverPass API](http://overpass-turbo.eu/), eg extraire les taxiways/runways:
+```
+[out:json][timeout:25];
+// gather results
+(
+  // query part for: “aeroway=runway”
+  node["aeroway"="runway"]({{bbox}});
+  way["aeroway"="runway"]({{bbox}});
+  relation["aeroway"="runway"]({{bbox}});
+  // query part for: “aeroway=taxiway”
+  node["aeroway"="taxiway"]({{bbox}});
+  way["aeroway"="taxiway"]({{bbox}});
+  relation["aeroway"="taxiway"]({{bbox}});
+);
+// print results
+out body;
+>;
+out skel qt;
+```
+
 Here is a list of interesting documentation:
 * [kloklantech thesis](./Updatable%20Vector%20Tiles%20from%20OpenStreetMap.pdf) detailing the whole toolchain
 * [tutorial video](http://fuzzytolerance.info/blog/2017/04/25/Generating-your-own-OpenMapTiles/)
