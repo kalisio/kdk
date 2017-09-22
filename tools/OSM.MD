@@ -19,7 +19,7 @@ We use the [quickstart script](https://github.com/openmaptiles/openmaptiles/blob
 git clone https://github.com/openmaptiles/openmaptiles
 cd openmaptiles
 make
-./quickstart.sh france // could be planet, etc.
+./quickstart.sh france // could be country, region, etc. but not planet
 ```
 
 Rendering the whole planet is a [tricky thing](https://github.com/openmaptiles/openmaptiles/issues/242), so for now we prefer to:
@@ -48,6 +48,14 @@ For small extractions it's possible to use the [OverPass API](http://overpass-tu
 out body;
 >;
 out skel qt;
+```
+
+Otherwise download the [whole planet](https://planet.openstreetmap.org/pbf/) in the *data* directory and launch the process:
+```
+cd data
+wget https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf
+cd ..
+./quickstart.sh planet
 ```
 
 Here is a list of interesting documentation:
