@@ -30,7 +30,7 @@ Rendering the whole planet is a [tricky thing](https://github.com/openmaptiles/o
   * [Tegola](https://github.com/terranodo/tegola) directly as MVT
   * [T-Rex](https://github.com/t-rex-tileserver/t-rex) directly as MVT
 
-Pour de petites extractions possible d'utiliser l'[OverPass API](http://overpass-turbo.eu/), eg extraire les taxiways/runways:
+For small extractions it's possible to use the [OverPass API](http://overpass-turbo.eu/), eg to extract taxiways/runways in a zone:
 ```
 [out:json][timeout:25];
 // gather results
