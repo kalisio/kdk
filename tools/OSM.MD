@@ -6,6 +6,14 @@ To generate OSM data we start from a fresh Scaleway server with a Docker image, 
 
 > Git clone using HTTPS instead of git protocol on Scaleway.
 
+Because you will need a lot of storage here is how to add a volume:
+``` bash
+mkfs -t ext4 /dev/nbd1
+mkdir -p /mnt/data
+mount /dev/nbd1 /mnt/data
+```
+To automount it: https://community.online.net/t/automatic-mounting-of-additional-volumes-using-systemd-on-ubuntu/3102
+
 We use the [quickstart script](https://github.com/openmaptiles/openmaptiles/blob/master/QUICKSTART.md) to generate data (the link contains useful information about required architecture/sizing):
 ```
 git clone https://github.com/openmaptiles/openmaptiles
