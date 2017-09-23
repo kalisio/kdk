@@ -49,7 +49,7 @@ We also use the [quickstart script](https://github.com/openmaptiles/openmaptiles
 git clone https://github.com/openmaptiles/openmaptiles
 cd openmaptiles
 make
-./quickstart.sh france // could be country, region, etc. but not planet
+./quickstart.sh france > logs 2>&1 & // could be country, region, etc. but not planet
 ```
 
 For a layer covering the planet first download the [whole planet](https://planet.openstreetmap.org/pbf/) in the *data* directory and launch the process:
@@ -58,7 +58,9 @@ cd data
 wget https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf
 mv planet-latest.osm.pbf planet.osm.pbf
 cd ..
-./quickstart.sh planet
+./quickstart.sh planet > logs 2>&1 &
+// To see result
+docker run -it --rm -v /mnt/data/openmaptiles/data:/data -p 80:80 klokantech/tileserver-gl
 ```
 
 Here is a list of interesting documentation:
