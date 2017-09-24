@@ -63,6 +63,8 @@ cd ..
 docker run -it --rm -v /mnt/data/openmaptiles/data:/data -p 80:80 klokantech/tileserver-gl
 ```
 
+Using a Scaleway C2L configuration (€23.99/mo, €0.048/hour, 8 Dedicated X86 64bit Cores, 32GB memory, 250GB Direct SSD, 800Mbit/s Unmetered) processing the `aeroway` layer on the planet takes ~ 16 000 s and 120 GB.
+
 Here is a list of interesting documentation:
 * [kloklantech thesis](./Updatable%20Vector%20Tiles%20from%20OpenStreetMap.pdf) detailing the whole toolchain
 * [tutorial video](http://fuzzytolerance.info/blog/2017/04/25/Generating-your-own-OpenMapTiles/)
