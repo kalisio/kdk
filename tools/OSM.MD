@@ -56,7 +56,7 @@ For a layer covering the planet first download the [whole planet](https://planet
 ```
 cd data
 wget https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf
-mv planet-latest.osm.pbf planet.osm.pbf
+mv planet-latest.osm.pbf planet.pbf
 cd ..
 ./quickstart.sh planet > logs 2>&1 &
 // To see result
@@ -64,6 +64,14 @@ docker run -it --rm -v /mnt/data/openmaptiles/data:/data -p 80:80 klokantech/til
 ```
 
 Using a Scaleway C2L configuration (€23.99/mo, €0.048/hour, 8 Dedicated X86 64bit Cores, 32GB memory, 250GB Direct SSD, 800Mbit/s Unmetered) processing the `aeroway` layer on the planet takes ~ 16 000 s and 120 GB.
+
+> Launching the script against the same data set again does not seem to correctly update the generation configuration. You should clean everything before relaunching:
+```
+make clean-docker
+make forced-clean-sql
+rm -fr data build
+make
+```
 
 Here is a list of interesting documentation:
 * [kloklantech thesis](./Updatable%20Vector%20Tiles%20from%20OpenStreetMap.pdf) detailing the whole toolchain
