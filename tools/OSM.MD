@@ -56,7 +56,7 @@ For a layer covering the planet first download the [whole planet](https://planet
 ```
 cd data
 wget https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf
-mv planet-latest.osm.pbf planet.pbf
+mv planet-latest.osm.pbf planet.osm.pbf
 cd ..
 ./quickstart.sh planet > logs 2>&1 &
 // To see result
