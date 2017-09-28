@@ -136,7 +136,17 @@ This will lint and fix issues in the code according to [JS standard](https://git
 
 ### Cordova wrapper
 
-Follow [Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html).
+[Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html) might help.
+
+#### Building the app
+Build the app (from *cordova* project folder): `$ cordova build android`
+
+#### Running the app
+Run the app (from *cordova* project folder): `$ cordova run android`
+
+If no device is connected this should launch the emulator, otherwise this should use your device.
+
+> Check that the `adb` daemon is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
 
 #### Icons & Splashscreens
 
