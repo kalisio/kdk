@@ -92,6 +92,16 @@ yarn link kTeam
 
 > **Take care that a top-level plugin might depend on another plugin so you will have to link them together, for instance the kTeam plugin depends on the kCore plugin.**
 
+### Cordova wrapper
+
+Follow [Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html).
+
+Under Windows you might have somme issue creating a symbolic link. First you need to have administrator privileges in your shell. Then  the easy way is to use the [PowerShell Community Extensions](http://pscx.codeplex.com/) and the `New-SymLink dir link_target` command. The environment variable `PSModulePath` needs to be updated to add the path to the extension (eg `C:\Program Files (x86)\PowerShell Community Extensions\Pscx3\Pscx`) and the command should be run as administrator or your user should have [appropriate rights](http://superuser.com/questions/104845/permission-to-make-symbolic-links-in-windows-7).
+
+If you have some issue about *You have not accepted the license agreements of the following SDK components...* you need to update first your installed SDKs through *Android Studio > Configure > SDK Manager > Install*. You might need to do it multiple times since the last version of a SDK only appear for download when previous version dependencies are installed.
+
+To have a viable emulator install [HAXM](https://software.intel.com/en-us/articles/intel-hardware-accelerated-execution-manager-intel-haxm).
+
 ## Develop
 
 ### Web app
@@ -124,15 +134,19 @@ This will lint and fix issues in the code according to [JS standard](https://git
 
 > **We are looking for integrating frontend and end-to-end tests, please contribute !**
 
-#### Cordova wrapper
+### Cordova wrapper
 
 Follow [Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html).
 
-Under Windows you might have somme issue creating a symbolic link. First you need to have administrator privileges in your shell. Then  the easy way is to use the [PowerShell Community Extensions](http://pscx.codeplex.com/) and the `New-SymLink dir link_target` command. The environment variable `PSModulePath` needs to be updated to add the path to the extension (eg `C:\Program Files (x86)\PowerShell Community Extensions\Pscx3\Pscx`) and the command should be run as administrator or your user should have [appropriate rights](http://superuser.com/questions/104845/permission-to-make-symbolic-links-in-windows-7).
+#### Icons & Splashscreens
 
-If you have some issue about *You have not accepted the license agreements of the following SDK components...* you need to update first your installed SDKs through *Android Studio > Configure > SDK Manager > Install*. You might need to do it multiple times since the last version of a SDK only appear for download when previous version dependencies are installed.
+It does exist a couple of solutions to generate it for your app:
+* https://github.com/eberlitz/splashicon-generator
+* https://www.npmjs.com/package/cordova-gen-icon
+* https://www.javascripttuts.com/how-to-automatically-generate-icons-and-splash-screens-with-the-ionic-cli/
+* https://github.com/AlexDisler/cordova-icon
 
-To have a viable emulator install [HAXM](https://software.intel.com/en-us/articles/intel-hardware-accelerated-execution-manager-intel-haxm).
+You will find the example model icon/splash in *cordova/model* so that running https://github.com/eberlitz/splashicon-generator in the *cordova* directory should work. **Under windows** take care to [this issue](https://github.com/eberlitz/splashicon-generator/issues/23).
 
 ### Modules/Plugins
 
