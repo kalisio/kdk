@@ -138,6 +138,14 @@ This will lint and fix issues in the code according to [JS standard](https://git
 
 [Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html) might help.
 
+#### Configuring the app
+
+Information about the [Android Emulator Networking](https://developer.android.com/studio/run/emulator-networking.html) might be usefull.
+
+When running the app through cordova the `domain` entry of the client-side config file is used to know how to contact the remote API service:
+* use http://10.0.2.2:8081 in the emulator which is an alias to host loopback interface
+* use eg http://192.168.1.16:8081 in your device which is the IP affected by your router to your localhost (use `ipconfig /all` under Windows or `ifconfig` under Linux to get it)
+
 #### Building the app
 Build the app (from *cordova* project folder): `$ cordova build android`
 
@@ -157,6 +165,13 @@ It does exist a couple of solutions to generate it for your app:
 * https://github.com/AlexDisler/cordova-icon
 
 You will find the example model icon/splash in *cordova/model* so that running https://github.com/eberlitz/splashicon-generator in the *cordova* directory should work. **Under windows** take care to [this issue](https://github.com/eberlitz/splashicon-generator/issues/23).
+
+#### Plugins
+
+We rely on a bunch of cordova plugins so it might be usefull to refer to their specific issues:
+* https://github.com/phonegap/phonegap-plugin-push
+* https://github.com/apache/cordova-plugin-geolocation
+* https://github.com/crosswalk-project/cordova-plugin-crosswalk-webview
 
 ### Modules/Plugins
 
