@@ -146,7 +146,7 @@ Run the app (from *cordova* project folder): `$ cordova run android`
 
 If no device is connected this should launch the emulator, otherwise this should use your device.
 
-> Check that the `adb` daemon is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
+> Check that the [`adb` daemon](https://developer.android.com/studio/command-line/adb.html) is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
 
 #### Icons & Splashscreens
 
