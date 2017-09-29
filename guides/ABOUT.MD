@@ -9,7 +9,7 @@ Our approach is to propose a Microservice based platform. Thus each of these bui
 
 ## What is inside ?
 
-Kaelia is possible and mainly powered by the following stack:
+Kalisio is possible and mainly powered by the following stack:
 * [Feathers](https://feathersjs.com/) on the backend side
 * [Quasar](http://quasar-framework.org/) on the frontend side
 * [Leaflet](http://leafletjs.com/) and [plugins](http://leafletjs.com/plugins.html) for mapping
