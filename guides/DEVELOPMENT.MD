@@ -132,7 +132,9 @@ Then point your browser to [localhost:8081](http://localhost:8081).
 From the backend `api` folder run the server-side tests : `$ yarn/npm run test`
 This will lint and fix issues in the code according to [JS standard](https://github.com/feross/standard), then execute tests using [Mocha](https://mochajs.org/) and compute code coverage using [Istanbul](https://istanbul.js.org/).
 
-> **We are looking for integrating frontend and end-to-end tests, please contribute !**
+#### Debug
+
+Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27).
 
 ### Cordova wrapper
 
@@ -156,6 +158,10 @@ Run the app (from *cordova* project folder): `$ cordova run android`
 If no device is connected this should launch the emulator, otherwise this should use your device.
 
 > Check that the [`adb` daemon](https://developer.android.com/studio/command-line/adb.html) is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
+
+#### Debug
+
+Use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/).
 
 #### Icons & Splashscreens
 
