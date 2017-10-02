@@ -161,7 +161,7 @@ If no device is connected this should launch the emulator, otherwise this should
 
 #### Debug
 
-Use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/).
+Use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/) for the WebView. If you want to also get native errors without running Android Studio use [logcat](https://ourcodeworld.com/articles/read/295/how-to-debug-java-code-in-a-cordova-android-application-from-your-device-using-adb-in-windows).
 
 #### Icons & Splashscreens
 
