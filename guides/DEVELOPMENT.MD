@@ -52,6 +52,10 @@ https://yarnpkg.com
 
 Install the Quasar CLI : `$ npm install -g quasar-cli`
 
+#### Install Cordova ecosystem
+
+Follow this [tutorial](https://evothings.com/doc/build/cordova-install-windows.html).
+
 ### Web app
 
 While it is a WIP and not yet pushed to NPM, or when developing, please use the following process.
