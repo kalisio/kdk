@@ -187,14 +187,20 @@ We rely on a bunch of cordova plugins so it might be usefull to refer to their s
 
 ### Modules/Plugins
 
-Kalisio modules/plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins
+Kalisio modules/plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins so that the module is re-compiled on each file change:
 ```bash
 cd kTeam
 yarn/npm install
 yarn/npm run watch
 ```
 
-To run the module tests (same as above) : `$ yarn/npm run test`
+#### Running test
+
+To run the module tests including linting and coverage : `$ npm run test`
+
+To speed-up things simply run the tests with: `$ npm run mocha`
+
+To speed-up things even more run a single test suite with: `$ npm run mocha -- --grep "test suite name"`
 
 ## Publish
 
