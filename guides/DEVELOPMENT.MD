@@ -249,4 +249,24 @@ The same process applies as for the web app but in addition the module is publis
 
 > **Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
 
+## Security
 
+As an application often relies on third-party services its configuration must include secrets like API keys, passwords, etc. In this section we detail how we manage it in a secure way.
+
+**The most important point is you should never store passwords or other sensitive data in source code, and you shouldn't use production secrets in development and test mode.**
+
+### Using environment variables
+
+Environment variables might be used to store secrets then retrieved in config files like this:
+```
+github: {
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET
+}
+```
+
+In your local development environment you should use a script to setup all the required secrets. This script should be safe-guarded in a non-public environment.
+
+When using Travis CI you can use [encrypted variables](https://docs.travis-ci.com/user/environment-variables/) set either in build file or repository settings.
+
+**If you'd like to set a value holding multilines or special characters take care to surround it with `"` so that it will be properly escaped.**
