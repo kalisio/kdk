@@ -12,6 +12,9 @@ Get familiar with Kalisio by building your first Kaelia app server.
 [**API**](./api/README.MD)<br/>
 Learn more about Kalisio architecture, API and plugins.
 
+[**Tools**](./tools/README.MD)<br/>
+Learn more about tools used at Kalisio.
+
 [**License**](./LICENSE.MD)
 
 If you are looking for different formats we have the latest version of this doc available in:
