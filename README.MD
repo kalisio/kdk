@@ -1,8 +1,8 @@
-# Kalisio
+# Kalisio Development Kit (KDK)
 
 ![Kalisio logo](./images/kalisio-logo-256.png)
 
-> Kalisio application framework documentation
+> Kalisio application development framework documentation
 
 The Kalisio framework is highly inspired by our experience in developing [Weacast](https://weacast.gitbooks.io/weacast-docs/), refering to it might also help.
 
