@@ -138,7 +138,7 @@ This will lint and fix issues in the code according to [JS standard](https://git
 
 #### Debug
 
-Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27).
+Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8).
 
 ### Cordova wrapper
 
