@@ -18,3 +18,5 @@ To add new tasks *right click on settings > Startup/Tasks*, and add commands lik
 If you'd like the PowerShell to execute a script at launch time (e.g. to setup your environment variables): `powershell.exe -noexit path-to-script new_console:t:"TaskName":d:D:\path-to-directory`
 
 To make a command executed by default *right click on settings > Startup > Select it as named task*.
+
+> It might be required to modify the [execution policy](https://technet.microsoft.com/fr-FR/library/hh847748.aspx), e.g. `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned`.
