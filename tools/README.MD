@@ -6,7 +6,7 @@ At Kalisio we are using a large number of different tools to support application
 
 Usefull command line tools.
 
-## [Browser extensions](EXTENSIONS.MD)
+## [Browsers](BROWSERS.MD)
 
 Usefull browser-based tools.
 
