@@ -6,7 +6,12 @@ At Kalisio we are using a large number of different tools to support application
 
 Usefull command line tools.
 
+## [Browser extensions](EXTENSIONS.MD)
+
+Usefull browser-based tools.
+
 ## [OpenStreetMap](./OSM.MD)
 
 Learn how we generate OpenStreetMap data.
+
 
