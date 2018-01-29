@@ -185,6 +185,8 @@ We rely on a bunch of cordova plugins so it might be usefull to refer to their s
 * https://github.com/apache/cordova-plugin-geolocation
 * https://github.com/crosswalk-project/cordova-plugin-crosswalk-webview
 
+**The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/blog/crosswalk-final-release.html), as a consequence there are some issues with recent Cordova versions like [this](https://github.com/apache/cordova-android/pull/417). We will probably drop it soon.**
+
 ### Modules/Plugins
 
 Kalisio modules/plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins so that the module is re-compiled on each file change:
