@@ -154,10 +154,26 @@ When running the app through cordova the `domain` entry of the client-side confi
 * use [port forwarding](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/local-server)
 
 #### Building the app
-Build the app (from *cordova* project folder): `$ cordova build android`
+Build the app (from project folder): 
+```
+// Debug mode
+$ yarn/npm run cordova:build:debug
+// Release mode
+$ yarn/npm run cordova:build:release
+// All
+$ yarn/npm run cordova:build
+```
 
 #### Running the app
-Run the app (from *cordova* project folder): `$ cordova run android`
+Run the app (from project folder):
+```
+// Debug mode
+$ yarn/npm run cordova:dev
+// Release mode
+$ yarn/npm run cordova:prod
+// Shortcut to dev mode
+$ yarn/npm run cordova
+```
 
 If no device is connected this should launch the emulator, otherwise this should use your device.
 
