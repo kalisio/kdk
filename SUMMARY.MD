@@ -31,4 +31,5 @@
     * Client
       * [Components](api/kTeam/COMPONENTS.MD)
       * [Mixins](api/kTeam/MIXINS.MD)
+* [Tools](tools/README.MD)
 * [License](LICENSE.MD)
