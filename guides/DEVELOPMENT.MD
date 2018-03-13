@@ -131,10 +131,12 @@ From the backend `api` folder run the server-side Feathers app, this will also s
 
 Then point your browser to [localhost:8081](http://localhost:8081).
 
-#### Running test
+#### Running tests
 
-From the backend `api` folder run the server-side tests : `$ yarn/npm run test`
+From the root or backend `api` folder run the server-side tests : `$ yarn/npm run test:server` or `$ yarn/npm run test`
 This will lint and fix issues in the code according to [JS standard](https://github.com/feross/standard), then execute tests using [Mocha](https://mochajs.org/) and compute code coverage using [Istanbul](https://istanbul.js.org/).
+
+From the root folder run the client-side tests : `yarn/npm run test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). If you already have a built app and a running server you could simply do this to launch TestCafé only: `$ yarn/npm run cafe`
 
 #### Debug
 
@@ -212,7 +214,7 @@ yarn/npm install
 yarn/npm run watch
 ```
 
-#### Running test
+#### Running tests
 
 To run the module tests including linting and coverage : `$ npm run test`
 
