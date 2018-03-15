@@ -14,4 +14,6 @@ Usefull browser-based tools.
 
 Learn how we generate OpenStreetMap data.
 
+## [Infrastructure](INFRASTRUCTURE.MD)
 
+Usefull infrastructure tips.
