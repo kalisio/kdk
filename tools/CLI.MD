@@ -20,3 +20,22 @@ If you'd like the PowerShell to execute a script at launch time (e.g. to setup y
 To make a command executed by default *right click on settings > Startup > Select it as named task*.
 
 > It might be required to modify the [execution policy](https://technet.microsoft.com/fr-FR/library/hh847748.aspx), e.g. `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned`.
+
+## [Travis CLI](https://github.com/travis-ci/travis.rb#installation)
+
+To encrypt a file in reliable manner use a Linux VM or container because this does not work under Windows. For example with https://hub.docker.com/r/caktux/travis-cli/:
+```
+docker pull caktux/travis-cli
+// Mount your project as volume
+// Override the default entry point which automatically launch the travis CLI with provided arguments
+// otherwise you cannot do multiple commands
+docker run -it --name travis -v d:/Development/kalisio/kaabah:/project --entrypoint="" --rm caktux/travis-cli sh
+$ travis login
+$ travis encrypt-file ssh.pem
+```
+
+Add the output to your build script:
+```
+before_install:
+  - openssl aes-256-cbc -K $encrypted_12c8071d2874_key -iv $encrypted_12c8071d2874_iv -in ssh.pem.enc -out ssh.pem -d
+```
