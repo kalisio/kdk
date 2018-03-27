@@ -138,6 +138,15 @@ This will lint and fix issues in the code according to [JS standard](https://git
 
 From the root folder run the client-side tests : `yarn/npm run test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). If you already have a built app and a running server you could simply do this to launch TestCafé only: `$ yarn/npm run cafe`
 
+In development mode, you can tell TestCafé to run a given fixture or a given test:
+```
+# Running a given fixture
+npm run cafe -- -f "my fxture"
+
+# Running a given test
+npm run cafe -- -t "my test"
+```
+
 #### Debug
 
 Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8).
