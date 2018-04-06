@@ -25,3 +25,9 @@ If you are not familiar with those technologies and want to develop for Kalisio,
 #### [Develop your app](./DEVELOP.MD)
 
 #### [Publish your app](./PUBLISH.MD)
+
+## Kalisio infrastructure
+
+The setup of our infrastructure is powered by our [kaabah](https://github.com/kalisio/kaabah) project.
+
+**TODO diagram**
