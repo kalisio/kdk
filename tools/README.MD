@@ -16,4 +16,4 @@ Learn how we generate OpenStreetMap data.
 
 ## [Infrastructure](INFRASTRUCTURE.MD)
 
-Usefull infrastructure tips.
+Usefull infrastructure tips and tools.
