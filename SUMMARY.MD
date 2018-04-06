@@ -4,7 +4,7 @@
 * [Guides](guides/README.MD)
   * [About Kalisio](guides/ABOUT.MD)
   * [The Basics](guides/BASICS.MD)
-  * [Development](guides/DEVELOPMENT.MD)
+  * [Development](guides/README.MD#kalisio-development)
 * [Architecture](architecture/README.MD)
   * [Main concepts](architecture/DOMAINMODEL.MD)
     * [User model](architecture/DOMAINMODEL.MD#user-model)
