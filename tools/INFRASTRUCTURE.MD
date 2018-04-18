@@ -18,6 +18,18 @@ Find the location of a named volume of a container:
 ```
 docker volume inspect volume_name
 ```
+Quick container fix:
+```
+// Perform configuration changes inside the container then exit
+docker exec -it container_name bash
+// Or copy configuration files to host then back to container
+docker cp container_name:/conf/config_file .
+// Edit config file
+docker cp config_file container_name:/conf
+docker commit container_name repository:tag
+docker-compose down ...
+docker-compose up ...
+```
 
 ## Scaleway
 
