@@ -24,7 +24,7 @@ To get a deeper overview of some of the internals we recommand you to read our t
 The Kalisio framework is also inspired by our experience in developing [Weacast](https://weacast.gitbooks.io/weacast-docs/), refering to it as a more simple project might help.
 
 [**Guide**](./guides/README.MD)<br/>
-Get familiar with Kalisio by building your first Kaelia app server.
+Get familiar with Kalisio by building your first Kalisio app server.
 
 [**API**](./api/README.MD)<br/>
 Learn more about Kalisio architecture, API and plugins.
