@@ -6,6 +6,8 @@
 
 **Introduction**
 
+The Kalisio Development Kit (KDK) aims to simplify the development of web applications running on desktop or mobile devices. It is a strongly opiniated stack to build geospatial applications provided as SaaS solutions.
+
 KDK is mainly powered by the following stack:
 * [Feathers](https://feathersjs.com/) on the backend side
 * [Quasar](http://quasar-framework.org/) on the frontend side
