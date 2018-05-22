@@ -4,7 +4,15 @@
 
 > Kalisio application development framework documentation
 
-We recommand you to read our technical articles on [Medium](https://medium.com/@luc.claustres) as a source of inspiration:
+**Introduction**
+
+KDK is mainly powered by the following stack:
+* [Feathers](https://feathersjs.com/) on the backend side
+* [Quasar](http://quasar-framework.org/) on the frontend side
+
+If you are not familiar with those technologies and want to develop for Kalisio, in addition to read the dedicated documentation, we recommand reading https://github.com/claustres/quasar-feathers-tutorial. Indeed, Kalisio template application is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api), while Kalisio plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html). 
+
+To get a deeper overview of some of the internals we recommand you to read our technical articles on [Medium](https://medium.com/@luc.claustres) as a source of inspiration:
 * [FeathersJS in production: configuration, API prefixing, logging and error catching](https://blog.feathersjs.com/feathersjs-in-production-configuration-api-prefixing-logging-and-error-catching-2a80e044e233)
 * [How to setup OAuth flow with FeathersJS](https://blog.feathersjs.com/how-to-setup-oauth-flow-with-featherjs-522bdecb10a8)
 * [Access control strategies with FeathersJS](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)
