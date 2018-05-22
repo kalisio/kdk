@@ -23,5 +23,3 @@ You'll also learn how to create, develop and publish your own app and plugins.
 ## Kalisio infrastructure
 
 The setup of our infrastructure is powered by our [kaabah](https://github.com/kalisio/kaabah) project.
-
-**TODO diagram**
