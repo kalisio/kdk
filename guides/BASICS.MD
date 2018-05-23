@@ -6,7 +6,7 @@ A Kalisio application includes the front-end side client as well as back-end ser
 
 > This requires you to [install Docker](https://docs.docker.com/engine/installation/), the world’s leading software container platform.
 
-Kalisio provides Docker images on the [Docker Hub](https://hub.docker.com/r/kaeliatech/) to ease deploying your own server. To run correctly it has to be linked with a standard [MongoDB container](https://hub.docker.com/_/mongo/) for the database. 
+Kalisio provides Docker images on the [Docker Hub](https://hub.docker.com/u/kalisio/) to ease deploying your own server. To run correctly it has to be linked with a standard [MongoDB container](https://hub.docker.com/_/mongo/) for the database. 
 
 The following commands should do the job (assuming `kApp`is the name of the app):
 ```bash
@@ -21,10 +21,10 @@ Then point your browser to [localhost:8081](http://localhost:8081).
 
 > If running Docker under Windows in a virtual machine first redirect the port 8081 of your virtual machine to your host
 
-You can also use [docker-compose](https://docs.docker.com/compose/) and the [docker compose file](https://github.com/kaelia-tech/kApp/blob/master/docker-compose.yml).
+You can also use [docker-compose](https://docs.docker.com/compose/) and the [docker compose file](https://github.com/kalisio/kApp/blob/master/docker-compose.yml).
 The following commands should do the job:
 ```bash
-docker pull kaeliatech/kapp
+docker pull kalisio/kapp
 // Run the MongoDB and Kalisio app containers
 docker-compose up -d
 
@@ -33,6 +33,8 @@ docker-compose down
 // Stop the MongoDB and Kalisio app containers erasing DB data
 docker-compose down -v
 ```
+
+> Some secrets (like your AWS S3 access key) need to be set in your environment to make it work
 
 ### The hard way : from source code
 
@@ -63,13 +65,45 @@ Then point your browser to [localhost:8081](http://localhost:8080).
 ### Backend side
 
 Kalisio app backend configuration is based on [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `api/config` folder. The main properties are the following:
-* **apiPath** : the API path prefix
+* **apiPath**: the API path prefix
+* **port**: the server port
+* **domain**: the web application domain name (eg https://app.kalisio.xyz)
+* **apiLimiter**: the API rate limiting configuration
+  * **http**: for HTTP REST clients, compliant with [express-rate-limit](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fnfriedly%2Fexpress-rate-limit) options
+  * **websocket**: for Websocket clients, compliant with [node-rate-limiter](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fjhurliman%2Fnode-rate-limiter) options
 * **authentication** : object configuring [Feathers authentication](https://github.com/feathersjs/feathers-authentication#default-options) plus custom Kalisio options
-  * **defaultUsers** : the array of default users to be created on launch (format `{ email, password }`)
-* **logs** : object configuring the [winston](https://github.com/winstonjs/winston) loggers to be used - each key is a [transport name](https://github.com/winstonjs/winston/blob/master/docs/transports.md) which value is associated configuration options
-* **db**
-  * **adapter** : the database adapter, for now the only supported one is [`mongodb`](https://github.com/feathersjs/feathers-mongodb)
-  * **url** : database URL to access the app database used by drivers such as [mongodb](https://github.com/mongodb/node-mongodb-native)
+  * **passwordPolicy**: password policy configuration
+    * **minLength**: minimum length
+    * **maxLength**: maximum length
+    * **uppercase**: boolean indicating if the password requires at least an uppercase letter
+    * **lowercase**: boolean indicating if the password requires at least an uppercase letter
+    * **digits**: boolean indicating if the password requires at least a digit
+    * **symbols**: boolean indicating if the password requires at least a symbol
+    * **prohibited**: array of prohibited common passwords
+    * **history**: number of passwords to look for in history to avoid keeping a similar one when changing
+  * **defaultUsers**: the array of default users to be created on launch (format `{ email, password }`)
+    * note: will not be exposed on staging/production environments for security concerns
+  * **limiter**: the authentication API rate limiting configuration
+    * **http**: for HTTP REST clients, compliant with [express-rate-limit](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fnfriedly%2Fexpress-rate-limit) options
+    * **websocket**: for Websocket clients, compliant with [node-rate-limiter](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fjhurliman%2Fnode-rate-limiter) options
+* **logs**: object configuring the [winston](https://github.com/winstonjs/winston) loggers to be used - each key is a [transport name](https://github.com/winstonjs/winston/blob/master/docs/transports.md) which value is associated configuration options
+* **db**: database configuration
+  * **adapter**: the database adapter, for now the only supported one is [`mongodb`](https://github.com/feathersjs/feathers-mongodb)
+  * **url**: database URL to access the app database used by drivers such as [mongodb](https://github.com/mongodb/node-mongodb-native)
+* **mailer**: e-mail service configuration, compliant with [nodemailer](https://github.com/nodemailer/nodemailer-smtp-transport) options plus custom Kalisio options, e.g.
+  * **service**: e-mail service to be used (like `gmail`)
+  * **auth**: user login and password
+  * **templateDir**: directory containing the e-mails templates to be used
+* **storage**: storage service configuration
+  * **accessKeyId**: AWS SNS access key
+  * **secretAccessKey**: AWS SNS secret access key
+  * **region**: AWS region to be used (like `eu-west-1`)
+  * **apiVersion**: AWS API version to be used (like `2010-03-31`)
+  * **platforms**: object containing as keys platforms names in uppercase (like `ANDROID`) and corresponding AWS SNS ARN as values
+* **pusher**: push notification service configuration
+  * **accessKeyId**: AWS S3 access key
+  * **secretAccessKey**: AWS S3 secret access key
+  * **bucket**: AWS S3 bucket to be used
 * **proxyTable**: a set of proxy rules typically used for [scaling](./architecture/GLOBAL.MD#architecture-at-scale)
 
 ### Frontend side
