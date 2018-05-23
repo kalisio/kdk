@@ -10,6 +10,8 @@ KDK implements an extreme solution to segregate data at the source: using differ
 
 > Under the hood the [feathers-mongodb-management](https://github.com/feathersjs-ecosystem/feathers-mongodb-management) module is used to dynamically create/remove a database per organisation whenever required
 
+Using the KDK you can dynamically declare services to access organisation assets stored in this segregated DB.
+
 ### Permissions
 
 Organisation owners can manage member access to an organisation with a pre-defined set of permissions based on [Attribute Based Access Control](https://en.wikipedia.org/wiki/Attribute-based_access_control) (ABAC), which allows to enforce authorization decisions based on any attribute accessible to the application and not just the user's role. Similarly, resource owners can manage member access to a given resource (e.g. a **group**).
