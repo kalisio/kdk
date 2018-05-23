@@ -6,7 +6,7 @@ You might prefer to have a:
 * [component-oriented view](./COMPONENTS.MD) of the architecture
 * [data model-oriented view](./DATAMODEL.MD) of the architecture
 
-![Global architecture](https://cdn.rawgit.com/kalisio/kdk/f399062d4f9471d2d97479d730aad444711a2100#diff-238e25adfbbd3132551d6f6eca8a6a0c/images/Global%20Architecture%20Diagram.svg)
+![Global architecture](https://rawgit.com/kalisio/kdk/master/images/Global%20Architecture%20Diagram.svg)
 
 ## Architecture at scale
 
