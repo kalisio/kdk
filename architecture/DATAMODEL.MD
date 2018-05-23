@@ -4,6 +4,8 @@
 
 Because data models internally rely on [JSON](http://www.json.org/) they are by nature hierarchical. In the following diagrams each nested JSON object is represented as a smaller *bubble* in a bigger *bubble* (the nesting/parent object), the data model instance being the root JSON object or the *biggest* bubble. The name of the bubble is the name of the nesting object property owing the nested object.
 
+Data models are dynamic by nature, allowing any plugin to add custom fields whenever required. Each data model includes an implicit [ObjectID](https://mongodb.github.io/node-mongodb-native/api-bson-generated/objectid.html) `_id` field
+
 ## User data model
 
 The common properties of a user are described by the following data model:
@@ -13,6 +15,7 @@ The common properties of a user are described by the following data model:
 The details of each property are the following:
 * **email** : user e-mail used as an internal unique ID
 * **password** : hashed user password
+* **previousPasswords** : hashed user password history if [password policy has been enabled](../guides/BASICS.MD#configuring)
 * **profile** : user profile information including name
 * **provider** : user profile information for associated provider, e.g. `google`
 * **scope** : user permissions for associated scope, e.g. `groups`
@@ -27,9 +30,9 @@ This data model is manipulated through the [Organization API](../api/kTeam/SERVI
 
 The details of each property are the following:
 * **name**: the name of the organisation
-* **topics**: the ARN of associated SNS topics for each platform used to publih messages to organisation' members
+* **topics**: the ARN of associated SNS topics for each platform used to publish messages to organisation' members
 
-> the organization ID is used as the internal DB name
+> the organization ObjectID is used as the internal DB name
 
 ## Group data model
 
@@ -41,5 +44,19 @@ This data model is manipulated through the [Group API](../api/kTeam/SERVICES.MD)
 
 The details of each property are the following:
 * **name**: the name of the group
-* **description**: thedescriptionname of the organisation
-* **topics**: the ARN of associated SNS topics for each platform used to publih messages to group' members
+* **description**: the description of the group
+* **topics**: the ARN of associated SNS topics for each platform used to publish messages to group' members
+
+## Tag data model
+
+The properties of a tag object are described by the following data model:
+
+![Tag data model](https://rawgit.com/kalisio/kdk/master/images/Tag%20Data%20Model%20Diagram.svg)
+
+This data model is manipulated through the [Tag API](../api/kCore/SERVICES.MD).
+
+The details of each property are the following:
+* **name**: the name of the tag, e.g. `skill`
+* **value**: the value of the tag, e.g. `developer`
+* **context**: the ID of the associated context object if any (e.g. the organisation)
+* **topics**: the ARN of associated SNS topics for each platform used to publish messages to tagged objects
