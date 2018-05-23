@@ -5,18 +5,30 @@ These sections detail the external (i.e. REST/Websocket) as well as the internal
 > **All dates/times in Kalisio are managed as [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).**
 
 * kCore
-  * [Services](/api/kCore/SERVICES.MD)
-  * [Application](/api/kCore/APPLICATION.MD)
-  * [Hooks](/api/kCore/HOOKS.MD)
+  * [Services](./kCore/SERVICES.MD)
+  * [Application](./kCore/APPLICATION.MD)
+  * [Hooks](./kCore/HOOKS.MD)
   * Client
-    * [Components](/api/kCore/COMPONENTS.MD)
-    * [Mixins](/api/kCore/MIXINS.MD)
+    * [Components](./kCore/COMPONENTS.MD)
+    * [Mixins](./kCore/MIXINS.MD)
 * kTeam
-  * [Services](/api/kTeam/SERVICES.MD)
-  * [Hooks](/api/kTeam/HOOKS.MD)
+  * [Services](./kTeam/SERVICES.MD)
+  * [Hooks](./kTeam/HOOKS.MD)
   * Client
-    * [Components](/api/kTeam/COMPONENTS.MD)
-    * [Mixins](/api/kTeam/MIXINS.MD)
+    * [Components](./kTeam/COMPONENTS.MD)
+    * [Mixins](./kTeam/MIXINS.MD)
+* kNotify
+  * [Services](./kNotify/SERVICES.MD)
+  * [Hooks](./kNotify/HOOKS.MD)
+  * Client
+    * [Components](./kNotify/COMPONENTS.MD)
+    * [Mixins](./kNotify/MIXINS.MD)
+* kMap
+  * [Services](./kMap/SERVICES.MD)
+  * [Hooks](./kMap/HOOKS.MD)
+  * Client
+    * [Components](./kMap/COMPONENTS.MD)
+    * [Mixins](./kMap/MIXINS.MD)
   
 ## Testing
 
