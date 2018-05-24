@@ -1,7 +1,5 @@
 # Services
 
-> On the client/server side the service API is exposed using the [Feathers isomorphic API](https://docs.feathersjs.com/api/client.html#universal-isomorphic-api) and the [Feathers common database query API](https://docs.feathersjs.com/api/databases/querying.html)
-
 ## User service
 
 > Available as a global service
