@@ -21,6 +21,7 @@
     * [Group data model](architecture/DATAMODEL.MD#group-data-model)
 * [API](api/README.MD)
   * kCore
+    * [Application](api/kCore/APPLICATION.MD)
     * [Services](api/kCore/SERVICES.MD)
       * [Users](api/kCore/SERVICES.MD#users-service)
       * [Tags](api/kCore/SERVICES.MD#tags-service)
@@ -33,7 +34,6 @@
       * [Users](api/kCore/SERVICES.MD#users-source)
       * [Logs](api/kCore/SERVICES.MD#logs-server-source-client-source)
       * [Events](api/kCore/SERVICES.MD#events-source)
-    * [Application](api/kCore/APPLICATION.MD)
     * Client
       * [Components](api/kCore/COMPONENTS.MD)
       * [Mixins](api/kCore/MIXINS.MD)
