@@ -30,6 +30,7 @@
     * [Hooks](api/kCore/HOOKS.MD)
       * [Query](api/kCore/SERVICES.MD#query-source)
       * [Data model](api/kCore/SERVICES.MD#data-model-source)
+      * [Service](api/kCore/SERVICES.MD#service-source)
       * [Authorisations](api/kCore/SERVICES.MD#authorisations-source)
       * [Users](api/kCore/SERVICES.MD#users-source)
       * [Logs](api/kCore/SERVICES.MD#logs-server-source-client-source)
