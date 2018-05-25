@@ -19,7 +19,7 @@ To get a deeper overview of some of the internals we recommand you to read our t
 * [How to setup OAuth flow with FeathersJS](https://blog.feathersjs.com/how-to-setup-oauth-flow-with-featherjs-522bdecb10a8)
 * [Access control strategies with FeathersJS](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)
 * [Stress testing your FeathersJS application like in production](https://blog.feathersjs.com/stress-testing-your-feathersjs-application-like-in-production-4b8611ee8d9e)
-* [FeathersJS in production: password policy and rate limiting](https://medium.com/@luc.claustres/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
+* [FeathersJS in production: password policy and rate limiting](https://blog.feathersjs.com/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
 
 The Kalisio framework is also inspired by our experience in developing [Weacast](https://weacast.gitbooks.io/weacast-docs/), refering to it as a more simple project might help.
 
@@ -40,3 +40,4 @@ If you are looking for different formats we have the latest version of this doc 
 * [ePub](https://www.gitbook.com/download/epub/book/kalisio/kalisio)
 * [Mobi](https://www.gitbook.com/download/mobi/book/kalisio/kalisio)
 
+> Most diagrams are built using [draw.io](http://draw.io) and [mermaid](https://github.com/knsv/mermaid)
