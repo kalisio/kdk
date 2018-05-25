@@ -124,6 +124,21 @@ Set the MongoDB [TTL](https://docs.mongodb.com/manual/tutorial/expire-data/) on 
 
 > TTL is stored in the `expireAt` field
 
+## Service [source](https://github.com/kalisio/kCore/blob/master/src/hooks/service.js)
+
+### .rateLimit(options)
+
+> To be used a a before hook
+> Return a hook function according to provided options
+
+Rate limit the call of a target service (and possibly operation) according to the following options:
+* **tokensPerInterval**: the number of allowed tokens in the given delay (1 service call = 1 token)
+* **interval**: the delay to fill the bucket with the given number of tokens in
+* **operation**: will only apply to this operation when given
+* **service**: will only apply to this service when given (usefull when used as a app-level hook)
+
+> Rely on the [token bucket algorithm](https://en.wikipedia.org/wiki/Token_bucket)
+
 ## Authorisations [source](https://github.com/kalisio/kCore/blob/master/src/hooks/authorisations.js)
 
 ### .populateSubjects(hook)
