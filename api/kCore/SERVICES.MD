@@ -6,7 +6,7 @@
 
 ### Data model
 
-The data model of a user as used by the API is [detailed here](../../../architecture/DATAMODEL.MD#user-data-model).
+The data model of a user as used by the API is [detailed here](../../architecture/DATAMODEL.MD#user-data-model).
 
 ### Hooks
 
@@ -41,7 +41,7 @@ The following [hooks](./HOOKS.MD) are executed on the `authorisations` service:
 
 ### Data model
 
-The data model of a user as used by the API is [detailed here](../../../architecture/DATAMODEL.MD#tag-data-model).
+The data model of a user as used by the API is [detailed here](../../architecture/DATAMODEL.MD#tag-data-model).
 
 ### Hooks
 
