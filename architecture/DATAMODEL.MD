@@ -8,7 +8,7 @@ Data models are dynamic by nature, allowing any plugin to add custom fields when
 
 ## User data model
 
-The common properties of a user are described by the following data model:
+The most common properties of a user are described by the following data model:
 
 ![User data model](https://rawgit.com/kalisio/kdk/master/images/User%20Data%20Model%20Diagram.svg)
 
@@ -18,41 +18,14 @@ The details of each property are the following:
 * **locale** : user locale when registering
 * **previousPasswords** : hashed user password history if [password policy has been enabled](../guides/BASICS.MD#configuring)
 * **profile** : user profile information including name
-* **provider** : user profile information for associated provider, e.g. `google`
-* **scope** : user permissions for associated scope, e.g. `groups`
+* **[provider]** : user profile information for associated OAuth provider, e.g. `google`
+* **[scope]** : user permissions for associated scope, e.g. `groups`
 * **tags** : user affected tags if any
-* **devices** : user mobile devices if any, each time the user uses a new device it is registered
-
-## Organization data model
-
-The common properties of an organization are described by the following data model:
-
-![Organization data model](https://rawgit.com/kalisio/kdk/master/images/Organization%20Data%20Model%20Diagram.svg)
-
-This data model is manipulated through the [Organization API](../api/kTeam/SERVICES.MD).
-
-The details of each property are the following:
-* **name**: the name of the organisation
-* **topics**: the ARN of associated SNS topics for each platform used to publish messages to organisation' members
-
-> the organization ObjectID is used as the internal DB name
-
-## Group data model
-
-The properties of a group object are described by the following data model:
-
-![Group data model](https://rawgit.com/kalisio/kdk/master/images/Group%20Data%20Model%20Diagram.svg)
-
-This data model is manipulated through the [Group API](../api/kTeam/SERVICES.MD).
-
-The details of each property are the following:
-* **name**: the name of the group
-* **description**: the description of the group
-* **topics**: the ARN of associated SNS topics for each platform used to publish messages to group' members
+* **devices** : user mobile devices if any, each time the user uses a new device it is registered, provided by [kNotify plugin](../api/README.MD)
 
 ## Tag data model
 
-The properties of a tag object are described by the following data model:
+The most common properties of a tag object are described by the following data model:
 
 ![Tag data model](https://rawgit.com/kalisio/kdk/master/images/Tag%20Data%20Model%20Diagram.svg)
 
@@ -63,4 +36,32 @@ The details of each property are the following:
 * **value**: the value of the tag, e.g. `developer`
 * **count**: the number of tagged objects
 * **context**: the ID of the associated context object providing this tag if any (e.g. the organisation)
-* **topics**: the ARN of associated SNS topics for each platform used to publish messages to tagged objects
+* **topics**: the ARN of associated SNS topics for each platform used to publish messages to tagged objects, provided by [kNotify plugin](../api/README.MD)
+
+
+## Organization data model
+
+The most common properties of an organization are described by the following data model, provided by [kTeam plugin](../api/README.MD):
+
+![Organization data model](https://rawgit.com/kalisio/kdk/master/images/Organization%20Data%20Model%20Diagram.svg)
+
+This data model is manipulated through the [Organization API](../api/kTeam/SERVICES.MD).
+
+The details of each property are the following:
+* **name**: the name of the organisation
+* **topics**: the ARN of associated SNS topics for each platform used to publish messages to organisation' members, provided by [kNotify plugin](../api/README.MD)
+
+> the organization ObjectID is used as the internal DB name
+
+## Group data model
+
+The most common properties of a group object are described by the following data model, provided by [kTeam plugin](../api/README.MD):
+
+![Group data model](https://rawgit.com/kalisio/kdk/master/images/Group%20Data%20Model%20Diagram.svg)
+
+This data model is manipulated through the [Group API](../api/kTeam/SERVICES.MD).
+
+The details of each property are the following:
+* **name**: the name of the group
+* **description**: the description of the group
+* **topics**: the ARN of associated SNS topics for each platform used to publish messages to group' members, provided by [kNotify plugin](../api/README.MD)
