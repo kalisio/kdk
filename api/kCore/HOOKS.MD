@@ -31,13 +31,110 @@ Retrieve the target object(s) required by a subsequent operation from its servic
 
 > If when applied existing object(s) and/or service are found in `hook.params` they are reused as is (i.e. not updated)
 
+### .populateObjects(options)
+
+Similar to [populateObject](./HOOKS.MD#populateobjectshook) except that if no object ID is found it will retrieve all objects from the target servic using `service.find({ query: {} })`.
+
+## Data model management [source](https://github.com/kalisio/kCore/blob/master/src/hooks/model.js)
+
+### .processPerspectives(hook)
+
+> Usually used as a app-level hook
+
+Discard all perspectives declared on the model by default. Will for any to be included when using [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select).
+
+> Take care of a subset of perspective fields like when using `$select: ['perspective.fieldName']`
+
+### .preventUpdatePerspectives(hook)
+
+> Usually used as a app-level hook
+
+When a perspectives is present in your data model you must disallow update it in order to avoid erasing it. Indeed, when requesting an object e.g. for edition they are not retrieved by default, su sending it back for update will erase the missing perspective fields.
+
+### .serialize(rules, options)
+
+> Return a hook function according to provided options
+
+The **rules** argument contains the list of transformations to be applied, it is an array of objects like the following:
+  * **source**: the path of the source property to read value from
+  * **target**: the path of the target property where to write value to
+  * **delete**: boolean indicating if the source property should be deleted after transformation
+
+Modify the data structure of operation item (i.e. data/result in before/after hook) according to the following options:
+* **throwOnNotFound**: boolean indicating if an error should be raised when either the target service or object is not found
+
+```js
+import { hooks } from 'kCore'
+// Will transform hook data from { name: 'toto' } to { profile: { name: 'toto' } }
+service.hooks({ before: { create: [ hooks.serialize([{ source: 'name', target: 'profile.name', delete: true }], { throwOnNotFound: true }) ] } })
+```
+      
+### .processObjectIDs(hook)
+
+> Usually used as a app-level hook
+
+Transform any value bound to an `_id` like key from a string into a [Mongo ObjectID](https://mongodb.github.io/node-mongodb-native/api-bson-generated/objectid.html) on client queries.
+
+> Take care of `$in`, `$nin` and `$or` operators recursively, as well as nested fields query like `field._id`
+
+### .convertObjectIDs(properties)
+
+> Return a hook function according to provided property list
+
+Transform a known set of properties from strings into a [Mongo ObjectIDs](https://mongodb.github.io/node-mongodb-native/api-bson-generated/objectid.html) on client queries.
+
+> Fields are searched on `hook.data` or `hook.params.query`
+
+```js
+import { hooks } from 'kCore'
+// Will convert data.participant and data.event to ObjectIDs
+service.hooks({ before: { all: [ hooks.convertObjectIDs(['participant', 'event']) ] } })
+```
+
+### .convertDates(properties, asMoment)
+
+> Return a hook function according to provided property list and Date/moment object flag
+
+Transform a known set of properties from strings into a Data or [moment](https://momentjs.com/) object on client queries.
+
+> Fields are searched on `hook.data` or `hook.params.query`
+
+```js
+import { hooks } from 'kCore'
+// Will convert data.expireAt to Date
+service.hooks({ before: { create: [ hooks.convertDates(['expireAt']) ] } })
+```
+
+### .setAsDeleted(hook)
+
+Flag the item as deleted when required by subsequent operations.
+
+> Delete flag is stored in the `deleted` field
+
+### .populatePreviousObject(hook)
+
+> To be used a a before hook 
+
+Retrieve the target object before an update or a patch operation.
+
+> Previous object is stored in `hook.params.previousItem`
+
+### .setExpireAfter(delayInSeconds)
+
+> To be used a a before hook 
+> Return a hook function according to provided delay
+
+Set the MongoDB [TTL](https://docs.mongodb.com/manual/tutorial/expire-data/) on the target object.
+
+> TTL is stored in the `expireAt` field
+
 ## Authorisations management [source](https://github.com/kalisio/kCore/blob/master/src/hooks/authorisations.js)
 
 ### .populateSubjects(hook)
 
 Retrieve the target subject object(s) for an authorisation operation.
 
-Specialises the [populateObjects](./HOOKS.MD#populateobjectshook) with the following options:
+Specialises [populateObjects](./HOOKS.MD#populateobjectshook) with the following options:
 * **serviceField**: `'subjectsService'`
 * **idField**: `'subjects'`
 * **throwOnNotFound**: `true`
@@ -46,12 +143,14 @@ Specialises the [populateObjects](./HOOKS.MD#populateobjectshook) with the follo
 
 Retrieve the target resource object for an authorisation operation.
 
-Specialises the [populateObjects](./HOOKS.MD#populateobjectshook) with the following options:
+Specialises the [populateObject](./HOOKS.MD#populateobjecthook) with the following options:
 * **serviceField**: `'resourcesService'`
 * **idField**: `'resource'`
 * **throwOnNotFound**: `true`
 
 ### .authorise(hook)
+
+> Usually used as a app-level hook
 
 Check permissions to access target resource object(s) for current user on the performed operation.
 
@@ -66,11 +165,14 @@ If you'd like to force/unforce authorisation check use the `hook.params.checkAut
 > Return a hook function according to provided options
 
 Update cached subject abilities when permissions have changed according to the following options:
-* **TODO**
+* **subjectAsItem**: boolean indicating if the subject is the item of the current operation (e.g. when applied on the users service) or provided by `hook.params.user`
+* **fetchSubject**: boolean indicating if the subject object has to be entirely fetched from the underlying service (usefull when the item does not include permissions)
 
-## Logging [core source](https://github.com/kalisio/kCore/blob/master/src/hooks/logger.js), [client source](https://github.com/kalisio/kCore/blob/master/src/client/hooks/logger.js)
+## Logging [server source](https://github.com/kalisio/kCore/blob/master/src/hooks/logger.js), [client source](https://github.com/kalisio/kCore/blob/master/src/client/hooks/logger.js)
 
 ### .log(hook)
+
+> Usually used as a app-level hook
 
 * Log error for each hook in error with error log level.
 * Log information for each hook ran with verbose (respectively debug for client) log level.
@@ -79,5 +181,7 @@ Update cached subject abilities when permissions have changed according to the f
 ## Events [source](https://github.com/kalisio/kCore/blob/master/src/hooks/events.js)
 
 ### .emit(hook)
+
+> Usually used as a app-level hook
 
 Emit an event named `{hook_type}Hook` (e.g. `beforeHook` or `afterHook`) for each hook ran, the payload of the event being the hook object.
