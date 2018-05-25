@@ -1,0 +1,33 @@
+graph LR
+	hook1(hook1) --> before{before all}
+    before --> hook3(hook3)
+    before --> hook4(hook4)
+    before --> hook5(hook5)
+    before --> hook6(hook6)
+    before --> hook7(hook7)
+    before --> hook8(hook8)
+    hook3 -->|before| FIND[FIND]
+    hook4 -->|before| GET[GET]
+    hook5 -->|before| CREATE[CREATE]
+    hook6 -->|before| UPDATE[UPDATE]
+    hook7 -->|before| PATCH[PATCH]
+    hook8 -->|before| REMOVE[REMOVE]
+    FIND -->|after| hook9(hook9)
+    GET -->|after| hook10(hook10)
+    CREATE -->|after| hook11(hook11)
+    UPDATE -->|after| hook12(hook12)
+    PATCH -->|after| hook13(hook13)
+    REMOVE -->|after| hook14(hook14)
+    hook9 --> after{after all}
+    hook10 --> after
+    hook11 --> after
+    hook12 --> after
+    hook13 --> after
+    hook14 --> after
+    after --> hook15(hook15)
+
+    linkStyle default stroke-width:2px,fill:none,stroke:black
+    classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+    class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13,hook14,hook15 hookClass
+    classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+    class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
