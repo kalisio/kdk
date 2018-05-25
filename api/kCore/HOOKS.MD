@@ -1,9 +1,5 @@
 # Hooks
 
-Kalisio [core module](https://github.com/kalisio/kCore) aprovides a collection of common [hooks](https://docs.feathersjs.com/api/hooks.html) to be used by plugins or [client applications](https://docs.feathersjs.com/api/client.html). They also rely on [Feathers common hooks](https://docs.feathersjs.com/api/hooks-common.html).
-
-> [Hooks](https://docs.feathersjs.com/api/hooks.html) are the main way to introduce business logic into applications and plugins so we recommand to understand them well first before reading this.
-
 ## Query [source](https://github.com/kalisio/kCore/blob/master/src/hooks/query.js)
 
 ### .marshallComparisonQuery(hook)
