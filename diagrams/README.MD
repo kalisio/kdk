@@ -14,4 +14,4 @@ To generate them:
 4. reference it in the documentation using a link like this `![My legend](https://raw.githubusercontent.com/kalisio/kdk/master/images/my-diagram.svg)`
 
 The template looks like this:
-![Hooks Diagram Template](https://raw.githubusercontent.com/kalisio/kdk/master/images/hooks-diagram-template.svg)
+![Hooks Diagram Template](https://raw.githubusercontent.com/kalisio/kdk/master/images/hooks-diagram-template.png)
