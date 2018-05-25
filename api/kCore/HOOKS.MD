@@ -168,6 +168,40 @@ Update cached subject abilities when permissions have changed according to the f
 * **subjectAsItem**: boolean indicating if the subject is the item of the current operation (e.g. when applied on the users service) or provided by `hook.params.user`
 * **fetchSubject**: boolean indicating if the subject object has to be entirely fetched from the underlying service (usefull when the item does not include permissions)
 
+## Users management [source](https://github.com/kalisio/kCore/blob/master/src/hooks/users.js)
+
+### .enforcePasswordPolicy(options)
+
+> To be used a a before hook
+> Return a hook function according to provided options
+
+Check password policy when creating/updating the user's password according to the following options:
+* **userAsItem**: boolean indicating if the user is the item of the current operation (e.g. when applied on the users service) or provided by `hook.params.user`
+* **passwordField**: the name of the field containing the clear password on the item (defaults to `clearPassword`)
+* **previousPasswordsField**: the name of the field containing the hashed password history on the item (defaults to `previousPasswords`)
+
+> For more information read about [password policy configuration](https://github.com/kalisio/kdk/blob/master/guides/BASICS.MD#configuring).
+
+### .storePreviousPassword(options)
+
+> To be used a a before hook
+> Return a hook function according to provided options
+
+Update the password history when updating the user's password according to the following options:
+* **userAsItem**: boolean indicating if the user is the item of the current operation (e.g. when applied on the users service) or provided by `hook.params.user`
+* **passwordField**: the name of the field containing the current hashed password on the item (defaults to `password`)
+* **previousPasswordsField**: the name of the field containing the hashed password history on the item (defaults to `previousPasswords`)
+
+> For more information read about [password policy configuration](https://github.com/kalisio/kdk/blob/master/guides/BASICS.MD#configuring).
+
+### .generatePassword(hook)
+
+> To be used a a before hook
+
+Generate a random password according to password policy (if any) and store it in the **password** item field.
+
+> For more information read about [password policy configuration](https://github.com/kalisio/kdk/blob/master/guides/BASICS.MD#configuring).
+
 ## Logging [server source](https://github.com/kalisio/kCore/blob/master/src/hooks/logger.js), [client source](https://github.com/kalisio/kCore/blob/master/src/client/hooks/logger.js)
 
 ### .log(hook)
