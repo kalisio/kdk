@@ -24,7 +24,7 @@ Each module then exposes a set of *external* [hooks](https://docs.feathersjs.com
 
 ## Data model
 
-Each service can declare a set of *perspectives*, which are not retrieved by default when querying the object(s), you will need to use [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) to do so. A perspective is simply a field of the data model containing a are nested object like **profile** containing the user's profile information on the user data model.
+Each service can declare a set of *perspectives*, which are not retrieved by default when querying the object(s), you will need to use [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) to do so. A perspective is simply a field of the data model containing a nested object, like the **profile** field containing the user's profile information on the user data model.
 
 > All dates/times in KDK are managed as date or [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 
