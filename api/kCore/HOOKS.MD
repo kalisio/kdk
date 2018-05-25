@@ -4,7 +4,7 @@ Kalisio [core module](https://github.com/kalisio/kCore) aprovides a collection o
 
 > [Hooks](https://docs.feathersjs.com/api/hooks.html) are the main way to introduce business logic into applications and plugins so we recommand to understand them well first before reading this.
 
-## Query management [source](https://github.com/kalisio/kCore/blob/master/src/hooks/query.js)
+## Query [source](https://github.com/kalisio/kCore/blob/master/src/hooks/query.js)
 
 ### .marshallComparisonQuery(hook)
 
@@ -35,7 +35,7 @@ Retrieve the target object(s) required by a subsequent operation from its servic
 
 Similar to [populateObject](./HOOKS.MD#populateobjectshook) except that if no object ID is found it will retrieve all objects from the target servic using `service.find({ query: {} })`.
 
-## Data model management [source](https://github.com/kalisio/kCore/blob/master/src/hooks/model.js)
+## Data model [source](https://github.com/kalisio/kCore/blob/master/src/hooks/model.js)
 
 ### .processPerspectives(hook)
 
@@ -128,7 +128,7 @@ Set the MongoDB [TTL](https://docs.mongodb.com/manual/tutorial/expire-data/) on 
 
 > TTL is stored in the `expireAt` field
 
-## Authorisations management [source](https://github.com/kalisio/kCore/blob/master/src/hooks/authorisations.js)
+## Authorisations [source](https://github.com/kalisio/kCore/blob/master/src/hooks/authorisations.js)
 
 ### .populateSubjects(hook)
 
@@ -168,7 +168,7 @@ Update cached subject abilities when permissions have changed according to the f
 * **subjectAsItem**: boolean indicating if the subject is the item of the current operation (e.g. when applied on the users service) or provided by `hook.params.user`
 * **fetchSubject**: boolean indicating if the subject object has to be entirely fetched from the underlying service (usefull when the item does not include permissions)
 
-## Users management [source](https://github.com/kalisio/kCore/blob/master/src/hooks/users.js)
+## Users [source](https://github.com/kalisio/kCore/blob/master/src/hooks/users.js)
 
 ### .enforcePasswordPolicy(options)
 
@@ -202,7 +202,7 @@ Generate a random password according to password policy (if any) and store it in
 
 > For more information read about [password policy configuration](https://github.com/kalisio/kdk/blob/master/guides/BASICS.MD#configuring).
 
-## Logging [server source](https://github.com/kalisio/kCore/blob/master/src/hooks/logger.js), [client source](https://github.com/kalisio/kCore/blob/master/src/client/hooks/logger.js)
+## Logs [server source](https://github.com/kalisio/kCore/blob/master/src/hooks/logger.js), [client source](https://github.com/kalisio/kCore/blob/master/src/client/hooks/logger.js)
 
 ### .log(hook)
 
