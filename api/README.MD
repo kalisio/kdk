@@ -18,6 +18,10 @@ response.data.forEach(user => {
 
 ## Hooks
 
+KDK modules provide a collection of [hooks](https://docs.feathersjs.com/api/hooks.html) to be used by plugins or [client applications](https://docs.feathersjs.com/api/client.html). They often rely on [Feathers common hooks](https://docs.feathersjs.com/api/hooks-common.html).
+
+> [Hooks](https://docs.feathersjs.com/api/hooks.html) are the main way to introduce business logic into applications and plugins so we recommand to understand them well first before reading this.
+
 Each service can include a set of *internal* [hooks](https://docs.feathersjs.com/api/hooks.html), i.e. hooks required to make the service work. They are built-in with the service and cannot usually be removed.
 
 Each module then exposes a set of *external* [hooks](https://docs.feathersjs.com/api/hooks.html) you can use to extend the capabilites of your application. They are not built-in with the services and are usually added or removed on-demand by your application. The main reason is that you must have control over the order of execution when mixing different hooks to best fit your application logic and avoid any side effect.
@@ -27,6 +31,14 @@ Each module then exposes a set of *external* [hooks](https://docs.feathersjs.com
 Each service can declare a set of *perspectives*, which are not retrieved by default when querying the object(s), you will need to use [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) to do so. A perspective is simply a field of the data model containing a nested object, like the **profile** field containing the user's profile information on the user data model.
 
 > All dates/times in KDK are managed as date or [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+## Client
+
+KDK modules provide a collection of reusable *mixins* and *components* to be used by plugins or applications.
+
+[Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be “mixed” into the component’s own options.
+
+> Although `.vue` components are stored at the module level to ensure right configuration management with backend code they are not "processed" within. Instead, the application process them directly using [WebPack dynamic imports](https://medium.com/front-end-hacking/webpack-and-dynamic-imports-doing-it-right-72549ff49234).
 
 ## Plugins/Modules
 
