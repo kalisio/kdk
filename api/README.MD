@@ -2,6 +2,8 @@
 
 These sections detail the external (i.e. REST/Websocket) as well as the internal (ie Classes/Functions) [API](https://en.wikipedia.org/wiki/Application_programming_interface) for each module of KDK.
 
+## Services
+
 On the client/server side each service API is exposed using the [Feathers isomorphic API](https://docs.feathersjs.com/api/client.html#universal-isomorphic-api) and the [Feathers common database query API](https://docs.feathersjs.com/api/databases/querying.html). Although only web sockets are usually used on the client side, both the [REST](https://docs.feathersjs.com/api/rest.html) and the [Socket](https://docs.feathersjs.com/api/socketio.html) interfaces are configured.
 
 KDK usually exposes the available items of a service (e.g. users) through the `items` (e.g. `users`) service. For exemple you can request the available users like this on the client side:
@@ -11,13 +13,22 @@ response.data.forEach(user => {
   // Do something with the current user
 })
 ```
-Depending on the permissions set on the user by the application he might not have access to all items of the service.
+
+> Depending on the permissions set on the user by the application he might not have access to all items of the service.
+
+## Hooks
 
 Each service can include a set of *internal* [hooks](https://docs.feathersjs.com/api/hooks.html), i.e. hooks required to make the service work. They are built-in with the service and cannot usually be removed.
 
 Each module then exposes a set of *external* [hooks](https://docs.feathersjs.com/api/hooks.html) you can use to extend the capabilites of your application. They are not built-in with the services and are usually added or removed on-demand by your application. The main reason is that you must have control over the order of execution when mixing different hooks to best fit your application logic and avoid any side effect.
 
+## Data model
+
+Each service can declare a set of *perspectives*, which are not retrieved by default when querying the object(s), you will need to use [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) to do so. A perspective is simply a field of the data model containing a are nested object like **profile** containing the user's profile information on the user data model.
+
 > All dates/times in KDK are managed as date or [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
+## Plugins/Modules
 
 * kCore
   * [Application](./kCore/APPLICATION.MD)
