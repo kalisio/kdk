@@ -11,7 +11,7 @@ The data model of a user as used by the API is [detailed here](../architecture/D
 ### Hooks
 
 The following [hooks](./HOOKS.MD) are executed on the `users` service:
-![User hooks](https://rawgit.com/kalisio/kdk/master/images/User%20Hooks%20Diagram.svg)
+![Users hooks](https://rawgit.com/kalisio/kdk/master/images/Users%20Hooks%20Diagram.svg)
 
 ## Authorisations service
 
@@ -26,7 +26,7 @@ No data model, authorisations are directly stored on target subject(s).
 ### Hooks
 
 The following [hooks](./HOOKS.MD) are executed on the `authorisations` service:
-![Authorisation hooks](https://rawgit.com/kalisio/kdk/master/images/User%20Hooks%20Diagram.svg)
+![Authorisations hooks](https://rawgit.com/kalisio/kdk/master/images/Authorisations%20Hooks%20Diagram.svg)
 
 ## Tags service
 
@@ -45,13 +45,15 @@ The data model of a user as used by the API is [detailed here](../architecture/D
 ### Hooks
 
 The following [hooks](./HOOKS.MD) are executed on the `tags` service:
-![Tag hooks](https://rawgit.com/kalisio/kdk/master/images/Tag%20Hooks%20Diagram.svg)
+![Tags hooks](https://rawgit.com/kalisio/kdk/master/images/Tags%20Hooks%20Diagram.svg)
 
 ## Storage service
 
 > Available as a global and a contextual service
 
-> `create` and `remove` methods are the only one allowed from the client/server side
+> `get`, `create` and `remove` methods are the only one allowed from the client/server side
+
+This service heavily relies on [feathers-blob](https://github.com/feathersjs-ecosystem/feathers-blob) and [multer](https://github.com/expressjs/multer) for handling [multipart/form-data](https://docs.feathersjs.com/guides/advanced/file-uploading.html#feathers-blob-with-multipart-support).
 
 ### Data model
 
