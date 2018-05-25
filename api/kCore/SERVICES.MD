@@ -26,6 +26,7 @@ No data model, authorisations are directly stored on target subject(s).
 ### Hooks
 
 The following [hooks](./HOOKS.MD) are executed on the `authorisations` service:
+
 ![Authorisations hooks](https://raw.githubusercontent.com/kalisio/kdk/master/images/Authorisations%20Hooks%20Diagram.png)
 
 ## Tags service
@@ -45,6 +46,7 @@ The data model of a user as used by the API is [detailed here](../architecture/D
 ### Hooks
 
 The following [hooks](./HOOKS.MD) are executed on the `tags` service:
+
 ![Tags hooks](https://raw.githubusercontent.com/kalisio/kdk/master/images/Tags%20Hooks%20Diagram.png)
 
 ## Storage service
@@ -62,5 +64,6 @@ No data model, data are directly stored on target storage backend (i.e. AWS S3).
 ### Hooks
 
 The following [hooks](./HOOKS.MD) are executed on the `storage` service:
+
 ![Storage hooks](https://raw.githubusercontent.com/kalisio/kdk/master/images/Storage%20Hooks%20Diagram.png)
 
