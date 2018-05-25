@@ -4,26 +4,26 @@ graph TB
     after{none after all}
 
     before --> hook1(disallow)
-    hook1 -->|before| FIND[FIND]
-    FIND -->|after| after
+    hook1 --> FIND[FIND]
+    FIND --> after
 
     before --> hook2(populateAttachmentResource)
-    hook2 -->|before| CREATE[CREATE]
-    CREATE -->|after| hook3(attachToResource)
+    hook2 --> CREATE[CREATE]
+    CREATE --> hook3(attachToResource)
     hook3 --> hook4("discard('uri')")
     hook4 --> after
     
     before --> hook5(disallow)
-    hook5 -->|before| UPDATE[UPDATE]
-    UPDATE -->|after| after
+    hook5 --> UPDATE[UPDATE]
+    UPDATE --> after
     
     before --> hook6(disallow)
-    hook6 -->|before| PATCH[PATCH]
-    PATCH -->|after| after
+    hook6 --> PATCH[PATCH]
+    PATCH --> after
 
     before --> hook7(populateAttachmentResource)
-    hook7 -->|before| REMOVE[REMOVE]
-    REMOVE -->|after| hook8(detachFromResource)
+    hook7 --> REMOVE[REMOVE]
+    REMOVE --> hook8(detachFromResource)
     hook8 --> hook9("discard('uri')")
     hook9 --> after
 
