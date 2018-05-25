@@ -20,8 +20,8 @@ Each module then exposes a set of *external* [hooks](https://docs.feathersjs.com
 > **All dates/times in KDK are managed as date or [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).**
 
 * kCore
-  * [Services](./kCore/SERVICES.MD)
   * [Application](./kCore/APPLICATION.MD)
+  * [Services](./kCore/SERVICES.MD)
   * [Hooks](./kCore/HOOKS.MD)
   * Client
     * [Components](./kCore/COMPONENTS.MD)
