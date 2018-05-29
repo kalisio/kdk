@@ -1,6 +1,8 @@
 # Application
 
-KDK offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services.
+KDK offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application, mainly on the frontend side.
+
+**TODO**: Activity, Context
 
 ## Backend setup
 
