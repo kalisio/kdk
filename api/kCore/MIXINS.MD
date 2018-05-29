@@ -2,13 +2,15 @@
 
 ## Authentication [source](https://github.com/kalisio/kCore/blob/master/src/client/mixins/mixin.authentication.js)
 
-Provide basic methods to **register()**, **login()**, **logout()**, and **restoreSession()**.
+Provide basic methods to **register(user)**, **login(email, password)**, **logout()**, and **restoreSession()**.
+
+> Will make the currently authenticated user available in the `user` property of the [global store](./APPLICATION.MD#store).
 
 ## Authorisation [source](https://github.com/kalisio/kCore/blob/master/src/client/mixins/mixin.authorisation.js)
 
 Compute user' abilities and keeps it up-to-date on user' permissions changes.
 
-> Abilities are stored in the `user.abilities` property of the store.
+> Abilities are stored in the `user.abilities` property of the [global store](./APPLICATION.MD#store).
 
 ## Activity [source](https://github.com/kalisio/kCore/blob/master/src/client/mixins/mixin.base-activity.js)
 
@@ -17,7 +19,7 @@ Make it easier to update the application layout when the user changes his curren
 * **clearActions()/registerAction(type, action)** (un)registers actions to be used by the activity
   * **registerFabAction()** registers actions to be used in action button, `type = 'fab'`
   * **registerTabAction()** registers actions to be used in navigation bar, `type = 'tabBar'`
-* **clearActivity()** resrt actions/title used by the activity
+* **clearActivity()** resets actions/title used by the activity
 * **refreshActivity()** should be overriden in concrete activities to implement action registration and title setup
 
 > Causes the activity to be automatically refreshed on user' permissions changes or route change.
@@ -32,6 +34,17 @@ Used to retrieve items from a specific service and keep track of real-time updat
 > To be used with the [service mixin](./MIXINS.MD#service).
 
 ## Context [source](https://github.com/kalisio/kCore/blob/master/src/client/mixins/mixin.base-context.js)
+
+Retrieve the current context of the application from the **contextId** props, usually set on the target route:
+* **clearContext()** clears actions set by the context and context in store
+* **refreshContext()** clears the current context if **contextId** is not set or retrieve it if different from current one
+* **getActionsForContext()** can be overriden in concrete context-aware component to provide any custom actions required by the context, default behaviour is to get the action list from the configuration `context.actions` property and set it in [application bar](./COMPONENTS.MD#k-app-bar).
+
+The context service to be used is the one set in the `context.service` property of the [configuration](./APPLICATION.MD#configuration-1).
+
+> Causes the context to be automatically refreshed on route change.
+
+> Will make the context available in the `context` property of the [global store](./APPLICATION.MD#store).
 
 ## Editor [source](https://github.com/kalisio/kCore/blob/master/src/client/mixins/mixin.base-editor.js)
 
