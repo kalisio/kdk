@@ -31,6 +31,7 @@ let users = api.getService('users')
 We use the [global event bus](https://alligator.io/vuejs/global-event-bus/) provided by Quasar to exchange events between independent components in the app:
 ```javascript
 import { Events } from 'quasar'
+
 // Register callback on event
 const myCallback = (object) => { ... }
 Events.$on('myEvent', myCallback)
