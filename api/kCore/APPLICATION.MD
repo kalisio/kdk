@@ -1,32 +1,34 @@
 # Application
 
-KDK offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application, mainly on the frontend side.
+KDK offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application right.
 
-**TODO**: Activity, Context
+## Backend ecosystem
 
-## Backend setup
+### Configuration
 
-Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [server application](https://docs.feathersjs.com/api/application.html). The core module provides the ability to initialize a new Kalisio application instance, attach it to the configured database and setup authentication:
+Any value from the [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved on the application object like this:
 ```javascript
-import { kalisio } from 'kCore'
-
-// Initialize app
-let app = kalisio()
-// Connect to DB
-await app.db.connect()
+const value = app.get('property')
 ```
 
-## Client setup
+> Under the hood [FeathersJS configuration module](https://github.com/feathersjs/configuration) and [node-config](https://github.com/lorenwest/node-config) are used to manage configuration so that any related concept to organise your configuration according to deployment options can be used.
 
-Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
+### Permissions
+
+**TODO**
+
+## Client ecosystem
+
+### Configuration
+
+Any value from the [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved by importing it like this:
 ```javascript
-import { kalisio } from 'kCore/client'
+import config from 'config'
 
-// Initialize API wrapper
-let api = kalisio()
-// Retrieve a given service
-let users = api.getService('users')
+const value = config.property
 ```
+
+> Under the hood [FeathersJS configuration module](https://github.com/feathersjs/configuration) and [node-config](https://github.com/lorenwest/node-config) are used to manage configuration so that any related concept to organise your configuration according to deployment options can be used.
 
 ### Events
 
@@ -59,7 +61,43 @@ Events.$on('myGlobal-changed', myCallback) // When updating a root object
 Events.$on('myGlobal-property-changed', myCallback) // When patching on a specific property path
 ```
 
+### Permissions
+
+**TODO**
+
+### Context
+
+**TODO**
+
+### Activity
+
+**TODO**
+
 ## Application API
+
+### Backend setup
+
+Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [server application](https://docs.feathersjs.com/api/application.html). The core module provides the ability to initialize a new Kalisio application instance, attach it to the configured database and setup authentication:
+```javascript
+import { kalisio } from 'kCore'
+
+// Initialize app
+let app = kalisio()
+// Connect to DB
+await app.db.connect()
+```
+
+### Client setup
+
+Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
+```javascript
+import { kalisio } from 'kCore/client'
+
+// Initialize API wrapper
+let api = kalisio()
+// Retrieve a given service
+let users = api.getService('users')
+```
 
 ### .getService(name) - backend/client
 
