@@ -38,7 +38,7 @@ Used to retrieve items from a specific service and keep track of real-time updat
 Retrieve the current context of the application from the **contextId** props, usually set on the target route:
 * **clearContext()** clears actions set by the context and context in store
 * **refreshContext()** clears the current context if **contextId** is not set or retrieve it if different from current one
-* **getActionsForContext()** can be overriden in concrete context-aware component to provide any custom actions required by the context, default behaviour is to get the action list from the configuration `context.actions` property and set it in [application bar](./COMPONENTS.MD#k-app-bar).
+* **getActionsForContext()** can be overriden in concrete context-aware components to provide actions required by the context to be set it in the [application bar](./COMPONENTS.MD#k-app-bar), default behaviour is to get the action list from the configuration `context.actions` property.
 
 The context service to be used is the one set in the `context.service` property of the [configuration](./APPLICATION.MD#configuration-1).
 
