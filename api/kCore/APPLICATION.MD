@@ -26,6 +26,36 @@ let api = kalisio()
 let users = api.getService('users')
 ```
 
+### Events
+
+We use the [global event bus](https://alligator.io/vuejs/global-event-bus/) provided by Quasar to exchange events between independent components in the app:
+```javascript
+import { Events } from 'quasar'
+// Register callback on event
+const myCallback = (object) => { ... }
+Events.$on('myEvent', myCallback)
+// Unregister it
+Events.$off('myEvent', myCallback)
+```
+
+> The event bus is notably used to be aware of state changes in the global store (see hereafter)
+
+### Store
+
+A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton:
+
+```javascript
+import { Store } from 'kCore/client'
+import { Events } from 'quasar'
+
+Store.set('myGlobal', { ... }) // Set a root object
+Store.patch('myGlobal', { property: value }) // Set a specific property path
+Store.set('myGlobal.property', value)
+Store.get('myGlobal.property', defaultValue) // defaultValue is returned if path is not found
+Events.$on('myGlobal-changed', myCallback) // When updating a root object
+Events.$on('myGlobal-property-changed', myCallback) // When patching on a specific property path
+```
+
 ## Application API
 
 ### .getService(name) - backend/client
