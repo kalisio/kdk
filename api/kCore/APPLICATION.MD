@@ -2,77 +2,6 @@
 
 KDK offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application right.
 
-## Backend ecosystem
-
-### Configuration
-
-Any value from the [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved on the application object like this:
-```javascript
-const value = app.get('property')
-```
-
-> Under the hood [FeathersJS configuration module](https://github.com/feathersjs/configuration) and [node-config](https://github.com/lorenwest/node-config) are used to manage configuration so that any related concept to organise your configuration according to deployment options can be used.
-
-### Permissions
-
-**TODO**
-
-## Client ecosystem
-
-### Configuration
-
-Any value from the [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved by importing it like this:
-```javascript
-import config from 'config'
-
-const value = config.property
-```
-
-> Under the hood [FeathersJS configuration module](https://github.com/feathersjs/configuration) and [node-config](https://github.com/lorenwest/node-config) are used to manage configuration so that any related concept to organise your configuration according to deployment options can be used.
-
-### Events
-
-We use the [global event bus](https://alligator.io/vuejs/global-event-bus/) provided by Quasar to exchange events between independent components in the app:
-```javascript
-import { Events } from 'quasar'
-
-// Register callback on event
-const myCallback = (object) => { ... }
-Events.$on('myEvent', myCallback)
-// Unregister it
-Events.$off('myEvent', myCallback)
-```
-
-> The event bus is notably used to be aware of state changes in the global store (see hereafter)
-
-### Store
-
-A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton:
-
-```javascript
-import { Store } from 'kCore/client'
-import { Events } from 'quasar'
-
-Store.set('myGlobal', { ... }) // Set a root object
-Store.patch('myGlobal', { property: value }) // Set a specific property path
-Store.set('myGlobal.property', value)
-Store.get('myGlobal.property', defaultValue) // defaultValue is returned if path is not found
-Events.$on('myGlobal-changed', myCallback) // When updating a root object
-Events.$on('myGlobal-property-changed', myCallback) // When patching on a specific property path
-```
-
-### Permissions
-
-**TODO**
-
-### Context
-
-**TODO**
-
-### Activity
-
-**TODO**
-
 ## Application API
 
 ### Backend setup
@@ -98,6 +27,22 @@ let api = kalisio()
 // Retrieve a given service
 let users = api.getService('users')
 ```
+
+### Configuration
+
+Any value from the backend [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved on the application object like this:
+```javascript
+const value = app.get('property')
+```
+
+Any value from the frontend [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved by importing it like this:
+```javascript
+import config from 'config'
+
+const value = config.property
+```
+
+> Under the hood [FeathersJS configuration module](https://github.com/feathersjs/configuration) and [node-config](https://github.com/lorenwest/node-config) are used to manage configuration so that any related concept to organise your configuration according to deployment options can be used.
 
 ### .getService(name) - backend/client
 
@@ -134,3 +79,50 @@ Depending on the options you have to create a *models* and *services* directorie
 
 The following [hooks](./HOOKS.MD) are usually globally executed on the application:
 ![Application hooks](https://rawgit.com/kalisio/kdk/master/images/Application%20Hooks%20Diagram.svg)
+
+## Permissions
+
+Isomorphic permissions management system.
+
+**TODO**
+
+## Client ecosystem
+
+### Events
+
+We use the [global event bus](https://alligator.io/vuejs/global-event-bus/) provided by Quasar to exchange events between independent components in the app:
+```javascript
+import { Events } from 'quasar'
+
+// Register callback on event
+const myCallback = (object) => { ... }
+Events.$on('myEvent', myCallback)
+// Unregister it
+Events.$off('myEvent', myCallback)
+```
+
+> The event bus is notably used to be aware of state changes in the global store (see hereafter)
+
+### Store
+
+A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton:
+
+```javascript
+import { Store } from 'kCore/client'
+import { Events } from 'quasar'
+
+Store.set('myGlobal', { ... }) // Set a root object
+Store.patch('myGlobal', { property: value }) // Set a specific property path
+Store.set('myGlobal.property', value)
+Store.get('myGlobal.property', defaultValue) // defaultValue is returned if path is not found
+Events.$on('myGlobal-changed', myCallback) // When updating a root object
+Events.$on('myGlobal-property-changed', myCallback) // When patching on a specific property path
+```
+
+### Context
+
+**TODO**
+
+### Activity
+
+**TODO**
