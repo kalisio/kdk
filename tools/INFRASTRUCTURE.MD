@@ -18,6 +18,10 @@ Find the location of a named volume of a container:
 ```
 docker volume inspect volume_name
 ```
+Export the logs with errors in a file:
+```
+docker logs aktnmap > aktnmap.log 2>&1
+```
 Quick container fix:
 ```
 // Perform configuration changes inside the container then exit
