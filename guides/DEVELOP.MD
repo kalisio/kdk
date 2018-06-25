@@ -43,6 +43,8 @@ npm run cafe -- -t "my test"
 
 Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8). Usually you simply have to open `chrome://inspect` in the Chrome URL.
 
+If you want to pause the debugger when running the tests this should do it: `npm run mocha -- --inspect-brk`
+
 ### Cordova wrapper
 
 [Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html) might help.
