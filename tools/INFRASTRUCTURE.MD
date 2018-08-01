@@ -34,6 +34,10 @@ docker commit container_name repository:tag
 docker-compose down ...
 docker-compose up ...
 ```
+Check why a swarm service did not start (empty logs, no replica):
+```
+docker service ps --no-trunc {serviceName}
+```
 
 ## Scaleway
 
