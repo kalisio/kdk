@@ -17,7 +17,8 @@ Build the frontend Quasar app (from root project folder): `$ quasar build`.
 Then from the backend `api` folder build the server-side Feathers app: `$ yarn/npm run build`
 
 #### Running in production
-**Make sure you built your app first**
+
+> Make sure you built your app first
 
 From the backend `api` folder run the server-side Feathers app, this will also serve the frontend Quasar app : `$ yarn/npm run prod`
 
@@ -43,7 +44,13 @@ npm run cafe -- -t "my test"
 
 Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8). Usually you simply have to open `chrome://inspect` in the Chrome URL.
 
-If you want to pause the debugger when running the tests this should do it: `npm run mocha -- --inspect-brk`
+If you want to pause the debugger when running the tests this should do it: `npm run mocha -- --inspect-brk`.
+
+If you want to debug replicas you can use the following environment variables to launch two instances of your apps:
+* **PORT / HTTPS_PORT**: API server port for HTTP and HTTPS modes
+* **CLIENT_PORT / HTTPS_CLIENT_PORT**: frontend server port for HTTP and HTTPS modes
+
+For the backend run one instance with `$ yarn/npm run dev` and the other one with `$ yarn/npm run dev:replica` (this will use another port for the Node.js debugger on the second instance and avoid conflict).
 
 ### Cordova wrapper
 
