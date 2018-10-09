@@ -49,7 +49,7 @@ Most information here should be [secured](./PUBLISH.MD#security) and **should no
 
 #### Configure continuous integration and delivery
 
-We heavily rely on [Travis CI](https://travis-ci.org) for continuous integration and delivery, as such the best is to create a *secrets.tar* containing all secured files and encode it to *secrets.tar.enc* a using [Travis CLI](https://github.com/kalisio/kdk/blob/master/tools/CLI.MD#travis-cli). This file will be decrypted before the build or whenever you need something inside.
+We heavily rely on [Travis CI](https://travis-ci.org) for continuous integration and delivery, as such the best is to create encrypted environment variables or a *secrets.tar* containing all secured files and encode it to *secrets.tar.enc* a using [Travis CLI](https://github.com/kalisio/kdk/blob/master/tools/CLI.MD#travis-cli). This file will be decrypted before the build or whenever you need something inside.
 
 #### Install Change log generator
 
