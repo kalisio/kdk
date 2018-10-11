@@ -64,6 +64,8 @@ The same process applies when releasing a patch, minor or major version, i.e. th
 
 > **Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam kClient`**
 
+> **If you have a lot of issues/PRs to be integrated in change log please [generate a GitHub token](https://github.com/github-changelog-generator/github-changelog-generator#github-token) to avoid rate-limiting on their API and set the `CHANGELOG_GITHUB_TOKEN` environment variable to your token before publishing**
+
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
 yarn/npm run release:type
