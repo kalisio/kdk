@@ -55,21 +55,37 @@ We heavily rely on [Travis CI](https://travis-ci.org) for continuous integration
 
 This [gem](https://github.com/skywinder/github-changelog-generator) generates a change log file based on **tags**, **issues** and merged **pull requests** (and splits them into separate lists according to labels) from :octocat: GitHub Issue Tracker. This requires you to install (e.g. for Windows) [Ruby](http://rubyinstaller.org/downloads/) and its [DevKit](https://github.com/oneclick/rubyinstaller/wiki/Development-Kit).
 
-### Web app
+### Plugins/Modules
 
 The same process applies when releasing a patch, minor or major version, i.e. the following tasks are done:
 * increase the package version number in the **package.json** file (frontend and backend API)
+* publish the module on the NPM registry
 * create a tag accordingly in the git repository and push it
 * generates the changelog in the git repository and push it
 
-> **Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam kClient`**
-
-> **If you have a lot of issues/PRs to be integrated in change log please [generate a GitHub token](https://github.com/github-changelog-generator/github-changelog-generator#github-token) to avoid rate-limiting on their API and set the `CHANGELOG_GITHUB_TOKEN` environment variable to your token before publishing**
+> This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
 yarn/npm run release:type
 ```
+
+> **If you have a lot of issues/PRs to be integrated in change log please [generate a GitHub token](https://github.com/github-changelog-generator/github-changelog-generator#github-token) to avoid rate-limiting on their API and set the `CHANGELOG_GITHUB_TOKEN` environment variable to your token before publishing**
+
+> **The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches**
+
+> **Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
+
+### Web app
+
+The same process applies as for the plugin except the app is not published on the NPM registry, i.e. the following tasks are done:
+* increase the package version number in the **package.json** files (frontend and backend API) and cordova **config.xml** file
+* create a tag accordingly in the git repository and push it
+* generates the changelog in the git repository and push it
+
+> **Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam kClient`**
+
+> Depending on the app the push of tags or changlog is more or less automated in order to have more control
 
 Because Kalisio web app are also released as Docker images you can build it like this:
 ```bash
@@ -87,14 +103,6 @@ docker push kalisio/kapp:version_tag
 ```
 
 > This requires you to have a DockerHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
-
-### Plugins
-
-The same process applies as for the web app but in addition the module is published on the NPM registry.
-
-> This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
-
-> **Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
 
 ## Security
 
