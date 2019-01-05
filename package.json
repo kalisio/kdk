@@ -28,7 +28,7 @@
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
     "build": "gitbook build",
     "build:diffs": "./examples/make-diffs.sh && npm run build",
     "postinstall": "npm run build",
