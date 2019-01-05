@@ -44,6 +44,8 @@
     "gitbook-plugin-include-codeblock": "2.2.0"
   },
   "devDependencies": {
-    "gitbook-cli": "^2.3.0"
+    "gitbook-cli": "^2.3.0",
+    "vuepress": "^0.14.8",
+    "vuepress-theme-kalisio": "https://github.com/kalisio/vuepress-theme-kalisio"
   }
 }
