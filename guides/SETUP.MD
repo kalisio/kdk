@@ -54,6 +54,8 @@ Follow this [tutorial](https://evothings.com/doc/build/cordova-install-windows.h
 
 While it is a WIP and not yet pushed to NPM, or when developing, please use the following process.
 
+> Since 07/2018 we recommand using our [CLI](https://github.com/kalisio/cli) but you can still proceed manually as explained below.
+
 First clone all the modules/plugins you need and use [yarn/npm link](https://docs.npmjs.com/cli/link) to make them globally available to your Node.js installation:
 
 ```bash
@@ -79,12 +81,12 @@ Then clone the main app repository and link to modules/plugins to make Node.js p
 git clone https://github.com/kalisio/kApp.git
 cd kApp
 // Client side
-yarn link kCore
-yarn link kTeam
+yarn link @kalisio/kdk-core
+yarn link @kalisio/kdk-team
 // API side
 cd api
-yarn link kCore
-yarn link kTeam
+yarn link @kalisio/kdk-core
+yarn link @kalisio/kdk-team
 ...
 ```
 
