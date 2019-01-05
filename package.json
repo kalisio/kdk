@@ -1,12 +1,14 @@
 {
-  "name": "kDocs",
-  "description": "Kaelia documentation",
+  "name": "KDK",
+  "description": "Kalisio Development Kit",
   "version": "0.1.0",
-  "homepage": "https://github.com/kaelia-tech/kDocs",
+  "homepage": "https://github.com/kalisio/kdk",
   "main": "",
   "keywords": [
-    "kaelia",
-    "docs"
+    "Kalisio",
+	"KDK",
+    "docs",
+	"cli"
   ],
   "license": "MIT",
   "repository": {
@@ -25,6 +27,8 @@
     "node": ">= 0.12.0"
   },
   "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
     "build": "gitbook build",
     "build:diffs": "./examples/make-diffs.sh && npm run build",
     "postinstall": "npm run build",
