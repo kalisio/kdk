@@ -75,7 +75,7 @@ KDK modules provide a collection of reusable *mixins* and *components* to be use
   
 ## Testing
 
-You will find [here](./kApp.postman_collection.json) a collection of ready-to-go REST requests to test the API with the great [POSTMAN](https://www.getpostman.com/) tool. Simply download it and import it in your POSTMAN installation.
+You will find [here](~kApp.postman_collection.json) a collection of ready-to-go REST requests to test the API with the great [POSTMAN](https://www.getpostman.com/) tool. Simply download it and import it in your POSTMAN installation.
 
 You should do the following:
 1. make your Kalisio installation run (the collection is configured for default dev port `8080` but you can easily switch to `8081` for production mode for instance or any other)

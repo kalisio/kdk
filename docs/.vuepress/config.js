@@ -10,6 +10,7 @@ module.exports = {
   theme: 'kalisio',
   themeConfig: {
     docsDir: 'docs',
+    sidebar: 'auto',
     plugins: {
       '@vuepress/pwa': {
         serviceWorker: true,
@@ -40,57 +41,51 @@ module.exports = {
           { text: 'Overview', link: '/modules/overview.md' },
           { text: 'kCore', 
             items: [
-              { text: 'Application', link: '/modules/kcore/application.md'},
-              { text: 'Services', link: '/modules/kcore/services.md'},
-              { text: 'Hooks', link: '/modules/kcore/hooks.md'},
-              { text: 'Components', link: '/modules/kcore/components.md'},
-              { text: 'Mixins', link: '/modules/kcore/mixins.md'},
-              
+              { text: 'Application', link: '/modules/kcore/application.md' },
+              { text: 'Services', link: '/modules/kcore/services.md' },
+              { text: 'Hooks', link: '/modules/kcore/hooks.md' },
+              { text: 'Components', link: '/modules/kcore/components.md' },
+              { text: 'Mixins', link: '/modules/kcore/mixins.md' }
             ]
           },
           { text: 'kTeam', 
             items: [
-              { text: 'Application', link: '/modules/kteam/application.md'},
-              { text: 'Services', link: '/modules/kteam/services.md'},
-              { text: 'Hooks', link: '/modules/kteam/hooks.md'},
-              { text: 'Components', link: '/modules/kteam/components.md'},
-              { text: 'Mixins', link: '/modules/kteam/mixins.md'},
+              { text: 'Services', link: '/modules/kteam/services.md' },
+              { text: 'Hooks', link: '/modules/kteam/hooks.md' },
+              { text: 'Components', link: '/modules/kteam/components.md' },
+              { text: 'Mixins', link: '/modules/kteam/mixins.md' }
             ]
           },
           { text: 'kNotify', 
             items: [
-              { text: 'Application', link: '/modules/knotify/application.md'},
-              { text: 'Services', link: '/modules/knotify/services.md'},
-              { text: 'Hooks', link: '/modules/knotify/hooks.md'},
-              { text: 'Components', link: '/modules/knotify/components.md'},
-              { text: 'Mixins', link: '/modules/knotify/mixins.md'},
+              { text: 'Services', link: '/modules/knotify/services.md' },
+              { text: 'Hooks', link: '/modules/knotify/hooks.md' },
+              { text: 'Components', link: '/modules/knotify/components.md' },
+              { text: 'Mixins', link: '/modules/knotify/mixins.md' }
             ]
           },
           { text: 'kMap', 
             items: [
-              { text: 'Application', link: '/modules/kmap/application.md'},
-              { text: 'Services', link: '/modules/kmap/services.md'},
-              { text: 'Hooks', link: '/modules/kmap/hooks.md'},
-              { text: 'Components', link: '/modules/kmap/components.md'},
-              { text: 'Mixins', link: '/modules/kmap/mixins.md'},
+              { text: 'Services', link: '/modules/kmap/services.md' },
+              { text: 'Hooks', link: '/modules/kmap/hooks.md' },
+              { text: 'Components', link: '/modules/kmap/components.md' },
+              { text: 'Mixins', link: '/modules/kmap/mixins.md' }
             ]
           },
           { text: 'kBilling', 
             items: [
-              { text: 'Application', link: '/modules/kbilling/application.md'},
-              { text: 'Services', link: '/modules/kbilling/services.md'},
-              { text: 'Hooks', link: '/modules/kbilling/hooks.md'},
-              { text: 'Components', link: '/modules/kbilling/components.md'},
-              { text: 'Mixins', link: '/modules/kbilling/mixins.md'},
+              { text: 'Services', link: '/modules/kbilling/services.md' },
+              { text: 'Hooks', link: '/modules/kbilling/hooks.md' },
+              { text: 'Components', link: '/modules/kbilling/components.md' },
+              { text: 'Mixins', link: '/modules/kbilling/mixins.md' }
             ]
           },
           { text: 'kEvent', 
             items: [
-              { text: 'Application', link: '/modules/kevent/application.md'},
-              { text: 'Services', link: '/modules/kevent/services.md'},
-              { text: 'Hooks', link: '/modules/kevent/hooks.md'},
-              { text: 'Components', link: '/modules/kevent/components.md'},
-              { text: 'Mixins', link: '/modules/kevent/mixins.md'},
+              { text: 'Services', link: '/modules/kevent/services.md' },
+              { text: 'Hooks', link: '/modules/kevent/hooks.md' },
+              { text: 'Components', link: '/modules/kevent/components.md' },
+              { text: 'Mixins', link: '/modules/kevent/mixins.md' }
             ]
           }
         ]
