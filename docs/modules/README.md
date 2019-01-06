@@ -1,7 +1,7 @@
 
 # Modules
 
-These sections detail the external (i.e. REST/Websocket) as well as the internal (ie Classes/Functions) [API](https://en.wikipedia.org/wiki/Application_programming_interface) for each module of KDK.
+These sections detail the external (i.e. REST/Websocket) as well as the internal (i.e. Classes/Functions) [API](https://en.wikipedia.org/wiki/Application_programming_interface) for each module of KDK.
 
 ## Services
 
@@ -40,34 +40,6 @@ KDK modules provide a collection of reusable *mixins* and *components* to be use
 [Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be “mixed” into the component’s own options.
 
 > Although `.vue` components are stored at the module level to ensure right configuration management with backend code they are not "processed" within. Instead, the application process them directly using [WebPack dynamic imports](https://medium.com/front-end-hacking/webpack-and-dynamic-imports-doing-it-right-72549ff49234).
-
-## Plugins/Modules
-
-* kCore
-  * [Application](./kCore/APPLICATION.MD)
-  * [Services](./kCore/SERVICES.MD)
-  * [Hooks](./kCore/HOOKS.MD)
-  * Client
-    * [Components](./kCore/COMPONENTS.MD)
-    * [Mixins](./kCore/MIXINS.MD)
-* kTeam
-  * [Services](./kTeam/SERVICES.MD)
-  * [Hooks](./kTeam/HOOKS.MD)
-  * Client
-    * [Components](./kTeam/COMPONENTS.MD)
-    * [Mixins](./kTeam/MIXINS.MD)
-* kNotify
-  * [Services](./kNotify/SERVICES.MD)
-  * [Hooks](./kNotify/HOOKS.MD)
-  * Client
-    * [Components](./kNotify/COMPONENTS.MD)
-    * [Mixins](./kNotify/MIXINS.MD)
-* kMap
-  * [Services](./kMap/SERVICES.MD)
-  * [Hooks](./kMap/HOOKS.MD)
-  * Client
-    * [Components](./kMap/COMPONENTS.MD)
-    * [Mixins](./kMap/MIXINS.MD)
   
 ## Testing
 
