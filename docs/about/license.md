@@ -4,4 +4,4 @@ sidebar: auto
 
 # License
 
-<<< @/../LICENSE.md
+<<< @/LICENSE.md
