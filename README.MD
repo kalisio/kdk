@@ -1,44 +1,23 @@
-# Kalisio Development Kit (KDK)
+# [KDK](https://kalisio.github.io/kdk/)
 
-![Kalisio logo](./images/kalisio-logo-256.png)
+_The Kalisio Development Kit_
 
-> Kalisio application development framework documentation
+## Documentation
 
-**Introduction**
+The full documentation is available [here](https://kalisio.github.io/kdk/)
 
-The Kalisio Development Kit (KDK) aims to simplify the development of web applications running on desktop or mobile devices. It is a strongly opiniated stack to build geospatial applications provided as SaaS solutions.
+> The documentation website is generated using [VuePress](https://vuepress.vuejs.org/)
 
-KDK is mainly powered by the following stack:
-* [Feathers](https://feathersjs.com/) on the backend side
-* [Quasar](http://quasar-framework.org/) on the frontend side
+## Contributing
 
-If you are not familiar with those technologies and want to develop for Kalisio, in addition to read the dedicated documentation, we recommand reading https://github.com/claustres/quasar-feathers-tutorial. Indeed, Kalisio template application is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api), while Kalisio plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html). 
+Want to contribute ? check out our [contribution guidelines](https://kalisio.github.io/kdk/about/contributing.html) for details
 
-To get a deeper overview of some of the internals we recommand you to read our technical articles on [Medium](https://medium.com/@luc.claustres) as a source of inspiration:
-* [FeathersJS in production: configuration, API prefixing, logging and error catching](https://blog.feathersjs.com/feathersjs-in-production-configuration-api-prefixing-logging-and-error-catching-2a80e044e233)
-* [How to setup OAuth flow with FeathersJS](https://blog.feathersjs.com/how-to-setup-oauth-flow-with-featherjs-522bdecb10a8)
-* [Enterprise-grade authentication using AWS Cognito and OneLogin with FeathersJS](https://blog.feathersjs.com/enterprise-grade-authentication-using-aws-cognito-and-onelogin-with-feathersjs-d4c6f46ab123)
-* [Access control strategies with FeathersJS](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)
-* [Stress testing your FeathersJS application like in production](https://blog.feathersjs.com/stress-testing-your-feathersjs-application-like-in-production-4b8611ee8d9e)
-* [FeathersJS in production: password policy and rate limiting](https://blog.feathersjs.com/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
+## Authors
 
-The Kalisio framework is also inspired by our experience in developing [Weacast](https://weacast.gitbooks.io/weacast-docs/), refering to it as a more simple project might help.
+This project is sponsored by 
 
-[**Guide**](./guides/README.MD)<br/>
-Get familiar with Kalisio by building your first Kalisio app server.
+[![Kalisio](https://s3.eu-central-1.amazonaws.com/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
 
-[**API**](./api/README.MD)<br/>
-Learn more about Kalisio architecture, API and plugins.
+## License
 
-[**Tools**](./tools/README.MD)<br/>
-Learn more about tools used at Kalisio.
-
-[**License**](./LICENSE.MD)
-
-If you are looking for different formats we have the latest version of this doc available in:
-
-* [PDF](https://www.gitbook.com/download/pdf/book/kalisio/kalisio)
-* [ePub](https://www.gitbook.com/download/epub/book/kalisio/kalisio)
-* [Mobi](https://www.gitbook.com/download/mobi/book/kalisio/kalisio)
-
-> Most diagrams are built using [draw.io](http://draw.io) and [mermaid](https://github.com/knsv/mermaid)
+This project is licensed under the MIT License - see the [license file](./docs/LICENSE.md) for details
