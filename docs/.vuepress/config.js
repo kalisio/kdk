@@ -15,11 +15,17 @@ module.exports = {
     },
     nav: [
       {
-        text: 'What is it ?',
-        link: '/what-is-it/',
+        text: 'About',
+        items: [
+          { text: 'Introduction', link: '/about/intoduction.md' },
+          { text: 'Realease Notes', link: '/about/release-notes.md' },
+          { text: 'Roadmap', link: '/about/roadmap.md' },
+          { text: 'Contributing', link: '/about/contributing.md' },
+          { text: 'Licence', link: '/about/licence.md' }
+        ]
       },
       {
-        text: 'How doest it work ?',
+        text: 'Development',
         items: [
           { text: 'Architecture', link: '/how-to-use-it/architecture' }
         ]
