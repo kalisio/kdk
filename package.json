@@ -6,9 +6,9 @@
   "main": "",
   "keywords": [
     "Kalisio",
-	"KDK",
+    "KDK",
     "docs",
-	"cli"
+    "cli"
   ],
   "license": "MIT",
   "repository": {
@@ -29,26 +29,23 @@
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "build": "gitbook build",
-    "build:diffs": "./examples/make-diffs.sh && npm run build",
-    "postinstall": "npm run build",
     "publish": "git push origin && git push origin --tags",
     "release:patch": "npm version patch && npm run publish",
     "release:minor": "npm version minor && npm run publish",
     "release:major": "npm version major && npm run publish",
-    "test": "echo \"Error: no test specified.\""
+    "lint": "standard src/**/*.js test/**/*.js --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "directories": {},
   "dependencies": {
-    "gitbook-plugin-edit-link": "^2.0.2",
-    "gitbook-plugin-feathers-collapsible-menu": "^2.0.0",
-    "gitbook-plugin-feathers-versions": "^0.1.0",
-    "gitbook-plugin-ga": "^1.0.1",
-    "gitbook-plugin-heading-anchors": "^1.0.3",
-    "gitbook-plugin-include-codeblock": "2.2.0"
+    "commander": "^2.19.0",
+    "debug": "^4.1.1",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "gitbook-cli": "^2.3.0",
+    "shelljs": "^0.8.3",
+    "shx": "^0.3.2",
+    "standard": "^12.0.1",
     "vuepress": "^0.14.8",
     "vuepress-theme-kalisio": "https://github.com/kalisio/vuepress-theme-kalisio"
   }
