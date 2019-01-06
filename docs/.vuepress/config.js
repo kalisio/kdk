@@ -22,7 +22,6 @@ module.exports = {
         text: 'How doest it work ?',
         items: [
           { text: 'Architecture', link: '/how-to-use-it/architecture' }
-		  { text: 'API', link: '/how-to-use
         ]
       },
       {
