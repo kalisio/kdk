@@ -21,19 +21,19 @@ importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox
 self.__precacheManifest = [
   {
     "url": "404.html",
-    "revision": "c3c8c2927ccee4dc2d681dd444db519a"
+    "revision": "b664ae92cb59ee8dd4563ad624064a7f"
   },
   {
     "url": "about/introduction.html",
-    "revision": "6501eb01aca8dbacd861644dc61f0e79"
+    "revision": "1fcd793ab84002df4a29ecddf9ed04cc"
   },
   {
     "url": "about/license.html",
-    "revision": "33a326e5e7982bc86a1e3f80156d9108"
+    "revision": "d1663676cb53ed91ee1f53a349a00752"
   },
   {
     "url": "about/roadmap.html",
-    "revision": "25cb2fe5b1513e03263b745caa20329c"
+    "revision": "ae81b0edc9dcf37ff1edbe5f5641112b"
   },
   {
     "url": "assets/css/0.styles.c934418d.css",
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "revision": "cffd33b180983cf77d424259cfaa814a"
   },
   {
-    "url": "assets/js/7.0dd64a80.js",
-    "revision": "509084343994463925b9038a5ee1f654"
+    "url": "assets/js/7.c26dd8cf.js",
+    "revision": "2d429e84ceb09518c669b24e40b4e3ff"
   },
   {
     "url": "assets/js/8.f18f60dd.js",
@@ -104,48 +104,48 @@ self.__precacheManifest = [
     "revision": "156c7d7f947166fa501550327f1cfef2"
   },
   {
-    "url": "assets/js/app.9364c7bf.js",
-    "revision": "55f85872c395bd9870da86dfaaaee08d"
+    "url": "assets/js/app.63bc01fe.js",
+    "revision": "d643b84a6ab7f768df5702d247c20c3d"
   },
   {
     "url": "CONTRIBUTING.html",
-    "revision": "1aebe5836abf4a8f3bebff215071b5af"
+    "revision": "c6f06fb7d3cb8cbed01a679b314be9b0"
   },
   {
     "url": "development/architecture.html",
-    "revision": "93ab5a8b816f4fd799185b06e12a3613"
+    "revision": "b54774cbc72a3b42e7c8c4c3ed1dade4"
   },
   {
     "url": "index.html",
-    "revision": "081bf98022ae5052a769f724810f1ce3"
+    "revision": "f99a76b1bd13c85f026d731bf76fdd37"
   },
   {
     "url": "LICENSE.html",
-    "revision": "2e8b2e1554b50585c764e41157dc8448"
+    "revision": "81d27bad8e97950cd83ceb48bf371c09"
   },
   {
     "url": "modules/kbilling.html",
-    "revision": "5882a14db2069dabe5fa032a1baf8b25"
+    "revision": "569e8a0aaa27ab85e06c5616d15c033d"
   },
   {
     "url": "modules/kcore.html",
-    "revision": "2c84a0fb9ca8341fc1c6690bf7b24af3"
+    "revision": "6d53b4241480fff8ed2074992e9b6b47"
   },
   {
     "url": "modules/kevent.html",
-    "revision": "97df02714ddd7bb6c6bd5f767911939e"
+    "revision": "bb3f07e3517ba3af99f3609ed2a6fbf0"
   },
   {
     "url": "modules/kmap.html",
-    "revision": "a270018f1b0921c249b31756d5dfef26"
+    "revision": "c36aa26ceee85ef1c392cdba32aeb1c7"
   },
   {
     "url": "modules/knotify.html",
-    "revision": "c0820dcd836e6a18f458c967bb1cd222"
+    "revision": "49932642867eff2e55259ae1f940d400"
   },
   {
     "url": "modules/kteam.html",
-    "revision": "d84f706d6ec5b3f55e3d190b66caa8d9"
+    "revision": "4a72fe661ce9aeddd78043c311c850a5"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
