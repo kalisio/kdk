@@ -29,19 +29,14 @@ module.exports = {
         ]
       },
       {
-        text: 'How to use it ?',
+        text: 'Modules',
         items: [
-          { text: 'The Bascis', link: '/how-to-use-it/the-basics.md' },
-          { text: 'Development', link: '/how-to-use-it/development.md' },
-		  { text: 'Tools', link: '/how-to-use-it/tools.md' }
-        ]
-      },
-      {
-        text: '   ?',
-        items: [
-          { text: 'GitHub', link: 'https://github.com/kalisio/kdk' },
-          { text: 'Contributing', link: '/CONTRIBUTING.md' },
-          { text: 'License', link: '/LICENSE.md' }
+          { text: 'kCore', link: '/modules/kcore.md' },
+          { text: 'kTeam', link: '/modules/kteam.md' },
+          { text: 'kNotify', link: '/modules/knotify.md' },
+          { text: 'kMap', link: '/modules/kmap.md' },
+          { text: 'kEvent', link: '/modules/kevent.md' },
+          { text: 'kBilling', link: '/modules/kbilling.md' }
         ]
       }
     ]
