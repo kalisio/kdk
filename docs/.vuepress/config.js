@@ -25,7 +25,7 @@ module.exports = {
       {
         text: 'Development',
         items: [
-          { text: 'Architecture', link: '/how-to-use-it/architecture' }
+          { text: 'Architecture', link: '/development/architecture.md' }
         ]
       },
       {
