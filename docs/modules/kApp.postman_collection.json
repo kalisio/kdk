@@ -1,0 +1,180 @@
+{
+	"info": {
+		"name": "kApp",
+		"_postman_id": "52c3f553-f154-2548-38cf-a896713987d2",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authenticate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"strategy\": \"local\",\n  \"email\": \"kalisio@kalisio.xyz\",\n  \"password\": \"kalisio\"\n}"
+				},
+				"url": "http://localhost:8081/api/authentication",
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get me",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOiI1YTRmYjg3NGRjZDRlZDQ0YTQ5NDM5MzYiLCJpYXQiOjE1MTUxNzQ0ODIsImV4cCI6MTUxNTI2MDg4MiwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImlzcyI6ImZlYXRoZXJzIiwic3ViIjoiYW5vbnltb3VzIn0.9h6jHMiVtN2IRH3O5GwKnbPJOwXZEnDRv8S4sziAmUc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"strategy\": \"local\",\n  \"email\": \"kalisio@kalisio.xyz\",\n  \"password\": \"kalisio\"\n}"
+				},
+				"url": "http://localhost:8081/api/users/5a4ba962d22add5848ed8adb",
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get org",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOiI1YTRmYjg3NGRjZDRlZDQ0YTQ5NDM5MzYiLCJpYXQiOjE1MTUxNzQ0ODIsImV4cCI6MTUxNTI2MDg4MiwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImlzcyI6ImZlYXRoZXJzIiwic3ViIjoiYW5vbnltb3VzIn0.9h6jHMiVtN2IRH3O5GwKnbPJOwXZEnDRv8S4sziAmUc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"strategy\": \"local\",\n  \"email\": \"kalisio@kalisio.xyz\",\n  \"password\": \"kalisio\"\n}"
+				},
+				"url": "http://localhost:8081/api/organisations",
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get org groups",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOiI1YTRmYjg3NGRjZDRlZDQ0YTQ5NDM5MzYiLCJpYXQiOjE1MTUxNzQ0ODIsImV4cCI6MTUxNTI2MDg4MiwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImlzcyI6ImZlYXRoZXJzIiwic3ViIjoiYW5vbnltb3VzIn0.9h6jHMiVtN2IRH3O5GwKnbPJOwXZEnDRv8S4sziAmUc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"strategy\": \"local\",\n  \"email\": \"kalisio@kalisio.xyz\",\n  \"password\": \"kalisio\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/5a4fb874dcd4ed44a4943936/groups?_id[$nin][]=5a4fb895dcd4ed44a4943937",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"5a4fb874dcd4ed44a4943936",
+						"groups"
+					],
+					"query": [
+						{
+							"key": "_id[$nin][]",
+							"value": "5a4fb895dcd4ed44a4943937",
+							"equals": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get org members",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOiI1YTRmYjg3NGRjZDRlZDQ0YTQ5NDM5MzYiLCJpYXQiOjE1MTUxNzQ0ODIsImV4cCI6MTUxNTI2MDg4MiwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImlzcyI6ImZlYXRoZXJzIiwic3ViIjoiYW5vbnltb3VzIn0.9h6jHMiVtN2IRH3O5GwKnbPJOwXZEnDRv8S4sziAmUc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"strategy\": \"local\",\n  \"email\": \"kalisio@kalisio.xyz\",\n  \"password\": \"kalisio\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/5a4fb874dcd4ed44a4943936/members?profile.name=Kalisio",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"5a4fb874dcd4ed44a4943936",
+						"members"
+					],
+					"query": [
+						{
+							"key": "profile.name",
+							"value": "Kalisio",
+							"equals": true
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get users of org",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOiI1YTRmYjg3NGRjZDRlZDQ0YTQ5NDM5MzYiLCJpYXQiOjE1MTUxNzQ0ODIsImV4cCI6MTUxNTI2MDg4MiwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImlzcyI6ImZlYXRoZXJzIiwic3ViIjoiYW5vbnltb3VzIn0.9h6jHMiVtN2IRH3O5GwKnbPJOwXZEnDRv8S4sziAmUc"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"strategy\": \"local\",\n  \"email\": \"kalisio@kalisio.xyz\",\n  \"password\": \"kalisio\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/users?organisations._id=5a4fb874dcd4ed44a4943936",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "organisations._id",
+							"value": "5a4fb874dcd4ed44a4943936",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
