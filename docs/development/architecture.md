@@ -8,13 +8,13 @@ sidebar: auto
 
 The typical global architecture and the underlying technologies of **KDK** are summarized in the following diagram.
 
-[Global architecture](../global-architecture.svg)
+![Global architecture](./../global-architecture.svg)
 
 ## Components and dependencies
 
 The typical components and the underlying dependencies of **KDK** are summarized in the following diagram.
 
-[Component view](../component-view.png)
+![Component view](./../component-view.png)
 
 ## Architecture at scale
 
@@ -41,4 +41,6 @@ module.exports = {
 
 The above example will proxy the request `/api/service/1` to `http://my.service.com/api/1`.
 
+::: tip Note
 Our [feathers-distributed](https://github.com/kalisio/feathers-distributed) module aims at making distribution more transparent.
+:::
