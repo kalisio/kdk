@@ -21,19 +21,19 @@ importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox
 self.__precacheManifest = [
   {
     "url": "404.html",
-    "revision": "17155d2c4d63b2efc724a89c2949f4af"
+    "revision": "23ed4edfd8fadaa448bab3951c62e350"
   },
   {
     "url": "about/introduction.html",
-    "revision": "ed9004d67b9239c772b9d08baeb1a0ec"
+    "revision": "14018099c91226687a2a77ad9501f6c7"
   },
   {
     "url": "about/license.html",
-    "revision": "a30138c9f8f5291e6c8c4ae4e349f978"
+    "revision": "93251ac01589885f9f2f4d88fbb117af"
   },
   {
     "url": "about/roadmap.html",
-    "revision": "a538f4a2d87ff94cff9ea00a440a8489"
+    "revision": "5a920c4cd0e03af69203d8797bb9c0a3"
   },
   {
     "url": "assets/css/0.styles.c934418d.css",
@@ -104,48 +104,48 @@ self.__precacheManifest = [
     "revision": "156c7d7f947166fa501550327f1cfef2"
   },
   {
-    "url": "assets/js/app.59efa0af.js",
-    "revision": "b31ca592240d33fc1cfda4974d63acd2"
+    "url": "assets/js/app.53e7d609.js",
+    "revision": "4428337c22f86d2774809d00a85d1a42"
   },
   {
     "url": "CONTRIBUTING.html",
-    "revision": "1f30359693ac0c6211c654b58815ea43"
+    "revision": "6920015f7d46ddb84dcf45abf901f4c7"
   },
   {
     "url": "development/architecture.html",
-    "revision": "061a83104a1c69891fa1612fc00f3091"
+    "revision": "4016a902989587c3bb313ae7ca777460"
   },
   {
     "url": "index.html",
-    "revision": "f1dc766d56da5d0904ea59659ac674ff"
+    "revision": "db5765eeba541fcc3f4228cc652cc162"
   },
   {
     "url": "LICENSE.html",
-    "revision": "bb7123079dda34183b75ba9e548cf81e"
+    "revision": "4cc7a717704a2fdcc25b0004e1b2d567"
   },
   {
     "url": "modules/kbilling.html",
-    "revision": "c856058ad0859875e943f21fe0e5356c"
+    "revision": "4e1630ab489df43eebbbf6a8f869f192"
   },
   {
     "url": "modules/kcore.html",
-    "revision": "1cac6f7002c9f5ca429abcb474233520"
+    "revision": "0370e5c177e0dbee9cb26950a7074c87"
   },
   {
     "url": "modules/kevent.html",
-    "revision": "31fb3858ebbef7627b55087693aabebb"
+    "revision": "250fb80362fb08f0c32b701c1e16c025"
   },
   {
     "url": "modules/kmap.html",
-    "revision": "2d0c1ff20f38226571cc6807fa6ce73a"
+    "revision": "fe0b0001d88687db03df1f89042f27e0"
   },
   {
     "url": "modules/knotify.html",
-    "revision": "a1aafa81c2664db88617a4e9b36d0a8b"
+    "revision": "26ade7bbb52f7fc865401a2686d062b2"
   },
   {
     "url": "modules/kteam.html",
-    "revision": "fca62794af28f4e28d1c21895364e7f8"
+    "revision": "0a875655ffebe1ee82fc50733803c58d"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
