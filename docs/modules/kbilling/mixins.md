@@ -1,5 +1,1 @@
----
-sidebar: auto
----
-
 # Mixins
