@@ -17,9 +17,9 @@ module.exports = {
       {
         text: 'About',
         items: [
-          { text: 'Introduction', link: '/about/intoduction.md' },
+          { text: 'Introduction', link: '/about/introduction.md' },
           { text: 'Roadmap', link: '/about/roadmap.md' },
-          { text: 'Licence', link: '/about/licence.md' }
+          { text: 'License', link: '/about/license.md' }
         ]
       },
       {
