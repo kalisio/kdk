@@ -108,7 +108,7 @@ program
 
 let workspace = program.args[0]
 // When relative path is given assume it relative to working dir
-if (!path.isAbsolute(workspace)) workspace = path.join(process.cwd(), workspace)
+if (!path.isAbsolute(workspace)) workspace = path.join(process.cwd(), "workspaces", workspace)
 // Read workspace file
 workspace = require(workspace)
 run(workspace, program.branch || 'master')
