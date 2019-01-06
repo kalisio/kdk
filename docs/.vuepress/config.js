@@ -6,12 +6,18 @@ module.exports = {
     ['link', { rel: 'icon', href: `https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-64x64.png` }],
     ['link', { rel: 'manifest', href: '/manifest.json' }]
   ],
-  serviceWorker: true,
+  plugins: ['@vuepress/pwa'],
   theme: 'kalisio',
   themeConfig: {
     docsDir: 'docs',
-    serviceWorker: {
-      updatePopup: true
+    plugins: {
+      '@vuepress/pwa': {
+        serviceWorker: true,
+        updatePopup: {
+          message: "New content is available.",
+          buttonText: "Refresh"
+        }
+      }
     },
     nav: [
       {
