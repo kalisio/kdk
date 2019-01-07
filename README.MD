@@ -1,8 +1,8 @@
 # [KDK](https://kalisio.github.io/kdk/)
 
-_The Kalisio Development Kit_
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+_The Kalisio Development Kit_
 
 ## Documentation
 
@@ -12,14 +12,14 @@ The full documentation is available [here](https://kalisio.github.io/kdk/)
 
 ## Contributing
 
-Want to contribute ? check out our [contribution guidelines](https://kalisio.github.io/kdk/about/contributing.html) for details
+Want to contribute ? check out our [contribution guidelines](https://kalisio.github.io/kdk/about/roadmap.html#contributing) for details
+
+## License
+
+This project is licensed under the MIT License - see the [license file](./LICENSE.md) for details
 
 ## Authors
 
 This project is sponsored by 
 
 [![Kalisio](https://s3.eu-central-1.amazonaws.com/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
-
-## License
-
-This project is licensed under the MIT License - see the [license file](./docs/LICENSE.md) for details
