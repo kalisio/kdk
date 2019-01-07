@@ -41,7 +41,9 @@ function getAboutSidebar () {
 function getGuidesSidebar () {
   return [
     '',
-    'the-basics',
+    { title: 'The Basics',
+      children: [ 'the-basics' ]
+  },
     {
       title: 'Development',
       children: ['setup', 'develop', 'publish', 'deploy' ] 
