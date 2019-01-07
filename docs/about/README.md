@@ -8,7 +8,7 @@ Our approach is to propose a Microservice based platform. Thus each of these bui
 * [Feathers](https://feathersjs.com/) on the backend side
 * [Quasar](https://quasar-framework.org/) on the frontend side
 
-If you are not familiar with those technologies and want to develop for Kalisio, in addition to read the dedicated documentation, we recommend reading [https://github.com/claustres/quasar-feathers-tutorial](https://github.com/claustres/quasar-feathers-tutorial). Indeed, Kalisio template application is based on the Quasar wrapper for Feathers, while Kalisio plugins are Feathers plugins.
+If you are not familiar with those technologies and want to develop with the **KDK**, in addition to read the dedicated documentation, we recommend reading [https://github.com/claustres/quasar-feathers-tutorial](https://github.com/claustres/quasar-feathers-tutorial). Indeed, Kalisio template application is based on the Quasar wrapper for Feathers, while Kalisio plugins are Feathers plugins.
 
 To get a deeper overview of some of the internals we recommend you to read our technical articles on Medium as a source of inspiration:
 * [FeathersJS in production: configuration, API prefixing, logging and error catching](https://blog.feathersjs.com/feathersjs-in-production-configuration-api-prefixing-logging-and-error-catching-2a80e044e233)

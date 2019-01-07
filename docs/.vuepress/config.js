@@ -20,13 +20,15 @@ module.exports = {
       { text: 'About', link: '/about/' },
       { text: 'Guides', link: '/guides/' },
       { text: 'Architecture', link: '/architecture/' },
-      { text: 'API', link: '/api/' }
+      { text: 'API', link: '/api/' },
+      { text: 'Tools', link: '/tools/' }
     ],
     sidebar: {
       '/about/': getAboutSidebar(),
       '/guides/': getGuidesSidebar(),
       '/architecture/': getArchitectureSidebar(),
-      '/api/': getAPISidebar()
+      '/api/': getAPISidebar(),
+      '/tools/': getToolsSidebar()
     }
   }
 }
@@ -91,5 +93,15 @@ function getAPISidebar () {
       title: 'kEvent',
       children: [ 'kevent/', 'kevent/services', 'kevent/hooks', 'kevent/components', 'kevent/mixins' ]
     }
+  ]
+}
+
+function getToolsSidebar () {
+  return [
+    '',
+    'cli', 
+    'browsers', 
+    'infrastructure',
+    'osm'
   ]
 }

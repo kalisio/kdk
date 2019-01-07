@@ -1,4 +1,4 @@
-# A Step-by-Step Intro to KDK
+# A Step-by-Step introduction to KDK
 
 A Kalisio application includes the front-end side client as well as back-end services/API gateway.
 
