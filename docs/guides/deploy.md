@@ -1,14 +1,14 @@
-## DEPLOY
+# Deploy
 
-### Global pipeline
+## Global pipeline
 
 The global deployment pipeline is illustrated in the following schema:
 
 ![Deployment pipeline](./../figures/Deploy Pipeline Diagram.svg)
 
-### Prerequisites
+## Prerequisites
 
-#### Configure third-party services
+### Configure third-party services
 
 Depending on the services you need you will have to do the following:
 * Create a Firebase app in the [Firebase Console](https://console.firebase.google.com)
@@ -51,17 +51,17 @@ export GOOGLE_CLIENT_SECRET=xxx
 
 Most information here should be [secured](./PUBLISH.MD#security) and **should not be pushed under source control unless you use private repositories (and even in this case it is best to secure it)**.
 
-#### Configure continuous integration and delivery
+### Configure continuous integration and delivery
 
 We heavily rely on [Travis CI](https://travis-ci.org) for continuous integration and delivery, as such the best is to create a *secrets.tar* containing all secured files and encode it to *secrets.tar.enc* a using [Travis CLI](https://github.com/kalisio/kdk/blob/master/tools/CLI.MD#travis-cli). This file will be decrypted before the build or whenever you need something inside.
 
 
 
-#### Install Change log generator
+### Install Change log generator
 
 This [gem](https://github.com/skywinder/github-changelog-generator) generates a change log file based on **tags**, **issues** and merged **pull requests** (and splits them into separate lists according to labels) from :octocat: GitHub Issue Tracker. This requires you to install (e.g. for Windows) [Ruby](http://rubyinstaller.org/downloads/) and its [DevKit](https://github.com/oneclick/rubyinstaller/wiki/Development-Kit).
 
-### Web app
+## Web app
 
 The same process applies when releasing a patch, minor or major version, i.e. the following tasks are done:
 * increase the package version number in the **package.json** file (frontend and backend API)
@@ -92,7 +92,7 @@ docker push kalisio/kapp:version_tag
 
 > This requires you to have a DockerHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
 
-### Plugins
+## Plugins
 
 The same process applies as for the web app but in addition the module is published on the NPM registry.
 

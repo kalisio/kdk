@@ -42,11 +42,11 @@ function getGuidesSidebar () {
   return [
     '',
     'the-basics',
-    'setup',
-    'develop',
-    'publish',
-    'deploy'
-  ] 
+    {
+      title: 'Development',
+      children: ['setup', 'develop', 'publish', 'deploy' ] 
+    }
+  ]
 }
 
 function getModuleSidebar () {
