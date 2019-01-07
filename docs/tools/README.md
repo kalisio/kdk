@@ -10,10 +10,11 @@ Useful command line tools.
 
 Useful browser-based tools.
 
+## [Infrastructure](./infrastructure.md)
+
+Useful infrastructure tips and tools.
+
 ## [OpenStreetMap](./osm.md)
 
 Learn how we generate OpenStreetMap data.
 
-## [Infrastructure](./infrastructure.md)
-
-Useful infrastructure tips and tools.

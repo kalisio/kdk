@@ -18,6 +18,8 @@ To get a deeper overview of some of the internals we recommend you to read our t
 * [Stress testing your FeathersJS application like in production](https://blog.feathersjs.com/stress-testing-your-feathersjs-application-like-in-production-4b8611ee8d9e)
 * [FeathersJS in production: password policy and rate limiting](https://blog.feathersjs.com/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
 
+::: tip Note
 The Kalisio framework is also inspired by our experience in developing [Weacast](https://weacast.gitbooks.io/weacast-docs/), referring to it as a more simple project might help.
+:::
 
 
