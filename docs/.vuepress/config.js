@@ -41,12 +41,17 @@ function getAboutSidebar () {
 function getGuidesSidebar () {
   return [
     '',
-    { title: 'The Basics',
-      children: [ 'the-basics' ]
-  },
+    { 
+      title: 'The Basics',
+      children: [ 'basics/step-by-step' ]
+    },
+    { 
+      title: 'Architecture',
+      childrend: ['architecture/overview' ]
+    },
     {
       title: 'Development',
-      children: ['setup', 'develop', 'publish', 'deploy' ] 
+      children: ['development/setup', 'development/develop', 'development/publish', 'development/deploy' ] 
     }
   ]
 }

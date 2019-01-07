@@ -1,8 +1,8 @@
-# The Basics - A Step-by-Step Intro to KDK
-
-## Deploying
+# A Step-by-Step Intro to KDK
 
 A Kalisio application includes the front-end side client as well as back-end services/API gateway.
+
+## Running the app
 
 ### The easy way : using Docker
 
@@ -40,7 +40,7 @@ docker-compose down -v
 
 ### The hard way : from source code
 
-First you have to ensure the same [prerequisites](./DEVELOPMENT.MD#prerequisites) as for developing to build Kalisio app from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance of the Kalisio app:
+First you have to ensure the same [prerequisites](./develop.md#prerequisites) as for developing to build Kalisio app from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance of the Kalisio app:
 
 ```bash
 // Clone Kalisio app
@@ -62,7 +62,7 @@ yarn/npm run prod
 
 Then point your browser to [localhost:8081](http://localhost:8080).
 
-## Configuring
+## Configuring the app
 
 ### Backend side
 

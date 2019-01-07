@@ -1,16 +1,16 @@
-# Architecture overview
+# Overview
 
 ## Global architecture
 
 The typical global architecture and the underlying technologies of **KDK** are summarized in the following diagram.
 
-![Global architecture](./../assets/global-architecture.svg)
+![Global architecture](./../../assets/global-architecture.svg)
 
 ## Components and dependencies
 
 The typical components and the underlying dependencies of **KDK** are summarized in the following diagram.
 
-![Component view](./../assets/component-view.png)
+![Component view](./../../assets/component-view.png)
 
 ## Architecture at scale
 
