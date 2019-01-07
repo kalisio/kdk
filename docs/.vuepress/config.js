@@ -39,7 +39,12 @@ function getAboutSidebar () {
 
 function getGuidesSidebar () {
   return [
-    ''
+    '',
+    'the-basics',
+    'setup',
+    'develop',
+    'publish',
+    'deploy'
   ] 
 }
 
