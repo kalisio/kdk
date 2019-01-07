@@ -54,13 +54,13 @@ For the backend run one instance with `$ yarn/npm run dev` and the other one wit
 
 ## Cordova wrapper
 
-[Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html) might help.
+[Quasar guide](http://quasar-framework.org/guide/Cordova-wrapper.html) might help.
 
 ### Configuring the app
 
-Information about the [Android Emulator Networking](https://developer.android.com/studio/run/emulator-networking.html) might be usefull.
+Information about the [Android Emulator Networking](https://developer.android.com/studio/run/emulator-networking.html) might be useful.
 
-When running the app through cordova the `domain` entry of the client-side config file is used to know how to contact the remote API service:
+When running the app through Cordova the `domain` entry of the client-side config file is used to know how to contact the remote API service:
 * use http://10.0.2.2:8081 in the emulator which is an alias to host loopback interface
 * use eg http://192.168.1.16:8081 in your device which is the IP affected by your router to your localhost (use `ipconfig /all` under Windows or `ifconfig` under Linux to get it)
 * use [port forwarding](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/local-server)
@@ -69,22 +69,22 @@ When running the app through cordova the `domain` entry of the client-side confi
 Build the app (from project folder): 
 ```
 // Debug mode
-$ yarn/npm run cordova:build:debug
+$ yarn/npm run Cordova:build:debug
 // Release mode
-$ yarn/npm run cordova:build:release
+$ yarn/npm run Cordova:build:release
 // All
-$ yarn/npm run cordova:build
+$ yarn/npm run Cordova:build
 ```
 
 ### Running the app
 Run the app (from project folder):
 ```
 // Debug mode
-$ yarn/npm run cordova:dev
+$ yarn/npm run Cordova:dev
 // Release mode
-$ yarn/npm run cordova:prod
+$ yarn/npm run Cordova:prod
 // Shortcut to dev mode
-$ yarn/npm run cordova
+$ yarn/npm run Cordova
 ```
 
 If no device is connected this should launch the emulator, otherwise this should use your device.
@@ -93,27 +93,27 @@ If no device is connected this should launch the emulator, otherwise this should
 
 ### Debug
 
-Use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/) for the WebView. If you want to also get native errors without running Android Studio use [logcat](https://ourcodeworld.com/articles/read/295/how-to-debug-java-code-in-a-cordova-android-application-from-your-device-using-adb-in-windows).
+Use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/) for the WebView. If you want to also get native errors without running Android Studio use [logcat](https://ourcodeworld.com/articles/read/295/how-to-debug-java-code-in-a-Cordova-android-application-from-your-device-using-adb-in-windows).
 
 ### Icons & Splashscreens
 
 It does exist a couple of solutions to generate it for your app:
 * https://github.com/eberlitz/splashicon-generator
-* https://www.npmjs.com/package/cordova-gen-icon
+* https://www.npmjs.com/package/Cordova-gen-icon
 * https://www.javascripttuts.com/how-to-automatically-generate-icons-and-splash-screens-with-the-ionic-cli/
-* https://github.com/AlexDisler/cordova-icon
+* https://github.com/AlexDisler/Cordova-icon
 
-You will find the example model icon/splash in *cordova/model* so that running https://github.com/eberlitz/splashicon-generator in the *cordova* directory should work. **Under windows** take care to [this issue](https://github.com/eberlitz/splashicon-generator/issues/23).
+You will find the example model icon/splash in *Cordova/model* so that running https://github.com/eberlitz/splashicon-generator in the *Cordova* directory should work. **Under windows** take care to [this issue](https://github.com/eberlitz/splashicon-generator/issues/23).
 
 ### Plugins
 
-We rely on a bunch of cordova plugins so it might be usefull to refer to their specific issues:
-* https://github.com/apache/cordova-plugin-device
+We rely on a bunch of Cordova plugins so it might be useful to refer to their specific issues:
+* https://github.com/apache/Cordova-plugin-device
 * https://github.com/phonegap/phonegap-plugin-push
-* https://github.com/apache/cordova-plugin-geolocation
-* https://github.com/crosswalk-project/cordova-plugin-crosswalk-webview
+* https://github.com/apache/Cordova-plugin-geolocation
+* https://github.com/crosswalk-project/Cordova-plugin-crosswalk-webview
 
-**The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/blog/crosswalk-final-release.html), as a consequence there are some issues with recent Cordova versions like [this](https://github.com/apache/cordova-android/pull/417). We will probably drop it soon.**
+**The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/blog/crosswalk-final-release.html), as a consequence there are some issues with recent Cordova versions like [this](https://github.com/apache/Cordova-android/pull/417). We will probably drop it soon.**
 
 ## Modules/Plugins
 

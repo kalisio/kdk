@@ -33,7 +33,8 @@ function getAboutSidebar () {
   return [
     '',
     'roadmap',
-    'license'
+    'license',
+    'contact'
   ] 
 }
 
