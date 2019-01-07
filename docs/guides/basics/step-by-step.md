@@ -40,7 +40,7 @@ docker-compose down -v
 
 ### The hard way : from source code
 
-First you have to ensure the same [prerequisites](./develop.md#prerequisites) as for developing to build Kalisio app from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance of the Kalisio app:
+First you have to ensure the same [prerequisites](./../development/develop.md#prerequisites) as for developing to build Kalisio app from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance of the Kalisio app:
 
 ```bash
 // Clone Kalisio app

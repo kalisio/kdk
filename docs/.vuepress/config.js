@@ -19,12 +19,14 @@ module.exports = {
     nav: [
       { text: 'About', link: '/about/' },
       { text: 'Guides', link: '/guides/' },
-      { text: 'Modules', link: '/modules/' }
+      { text: 'Architecture', link: '/architecture/' },
+      { text: 'API', link: '/api/' }
     ],
     sidebar: {
       '/about/': getAboutSidebar(),
       '/guides/': getGuidesSidebar(),
-      '/modules/': getModuleSidebar()
+      '/architecture/': getArchitectureSidebar(),
+      '/api/': getAPISidebar()
     }
   }
 }
@@ -45,10 +47,6 @@ function getGuidesSidebar () {
       title: 'The Basics',
       children: [ 'basics/step-by-step' ]
     },
-    { 
-      title: 'Architecture',
-      childrend: ['architecture/overview' ]
-    },
     {
       title: 'Development',
       children: ['development/setup', 'development/develop', 'development/publish', 'development/deploy' ] 
@@ -56,7 +54,17 @@ function getGuidesSidebar () {
   ]
 }
 
-function getModuleSidebar () {
+function getArchitectureSidebar () {
+  return [
+    '',
+    'main-concepts', 
+    'global-architecture', 
+    'component-view',
+    'data-model-view'
+  ]
+}
+
+function getAPISidebar () {
   return [
     '',
     {

@@ -1,4 +1,4 @@
-Before jumping to the [global architecture view](./GLOBAL.MD) we recommand to read about the [main concepts](./DOMAINMODEL.MD) of KDK. 
+Before jumping to the [global architecture view](./global.md) we recommend to read about the [main concepts](./main-concepts.md) of **KDK**. 
 
-You can then have a look to the [component-oriented view](./COMPONENTS.MD) and the [data model-oriented view](./DATAMODEL.MD) of the architecture.
+You can then have a look to the [component-oriented view](./components-view.md) and the [data model-oriented view](./data-model.md) of the architecture.
 

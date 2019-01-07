@@ -23,11 +23,11 @@ All permissions are stored along with the user so that they are always available
 
 > Under the hood the [CASL](https://stalniy.github.io/casl/) module is used to manage the permissions
 
-# Domain model
+## Domain model
 
 The **domain model** is a set of high-level abstractions that describes selected aspects of a sphere of activity, it is a representation of meaningful real-world concepts pertinent to the domain that are modeled in the software. The concepts include the data involved in the business and rules the business uses in relation to that data.
 
-The class diagram used to represent the domain model in the [Unified Modeling Language](https://en.wikipedia.org/wiki/Unified_Modeling_Language) (UML) is presented afterwards. The Kaelia domain model is implemented as a hybridation between [objects](https://en.wikipedia.org/wiki/Object-oriented_programming) and [cross-cutting concerns](https://en.wikipedia.org/wiki/Aspect-oriented_software_development) within a layer that uses a lower-level layer for [persistence](./DATAMODEL.MD) and *publishes* an [API](../api/README.MD) to a higher-level layer to gain access to the data and behavior of the model. 
+The class diagram used to represent the domain model in the [Unified Modeling Language](https://en.wikipedia.org/wiki/Unified_Modeling_Language) (UML) is presented afterwards. The Kalisio domain model is implemented as a hybridation between [objects](https://en.wikipedia.org/wiki/Object-oriented_programming) and [cross-cutting concerns](https://en.wikipedia.org/wiki/Aspect-oriented_software_development) within a layer that uses a lower-level layer for [persistence](./DATAMODEL.MD) and *publishes* an [API](../api/README.MD) to a higher-level layer to gain access to the data and behavior of the model. 
 
 ![Domain model](https://rawgit.com/kalisio/kdk/master/images/Domain%20Model%20Diagram.svg)
 

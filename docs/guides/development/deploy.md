@@ -1,6 +1,6 @@
-# Deploy
+# Deploy your app
 
-## Global pipeline
+## Deployment pipeline
 
 The global deployment pipeline is illustrated in the following schema:
 
