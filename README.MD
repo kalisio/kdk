@@ -2,6 +2,8 @@
 
 _The Kalisio Development Kit_
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Documentation
 
 The full documentation is available [here](https://kalisio.github.io/kdk/)
