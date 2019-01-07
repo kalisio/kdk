@@ -1,4 +1,4 @@
-# [KDK](https://kalisio.github.io/kdk/)
+[![KDK](https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-logo-black-512x168.png)](https://kalisio.github.io/kdk/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
