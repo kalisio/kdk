@@ -4,7 +4,7 @@
 
 The global deployment pipeline is illustrated in the following schema:
 
-![Deployment pipeline](./../figures/Deploy Pipeline Diagram.svg)
+![Deployment pipeline](./../assets/cd-pipeline.svg)
 
 ## Prerequisites
 
