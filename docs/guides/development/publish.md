@@ -43,7 +43,9 @@ export GOOGLE_CLIENT_ID=xxx
 export GOOGLE_CLIENT_SECRET=xxx
 ```
 
-> Note: some of the previous accounts/IDs are not app specific and can be share accross multiple apps, e.g. S3, SNS, etc.
+::: tip
+Note: some of the previous accounts/IDs are not app specific and can be share accross multiple apps, e.g. S3, SNS, etc.
+:::
 
 Most information here should be [secured](./PUBLISH.MD#security) and **should not be pushed under source control unless you use private repositories (and even in this case it is best to secure it)**.
 
@@ -63,18 +65,26 @@ The same process applies when releasing a patch, minor or major version, i.e. th
 * create a tag accordingly in the git repository and push it
 * generates the changelog in the git repository and push it
 
-> This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+::: warning
+This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+:::
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
 yarn/npm run release:type
 ```
 
-> **If you have a lot of issues/PRs to be integrated in change log please [generate a GitHub token](https://github.com/github-changelog-generator/github-changelog-generator#github-token) to avoid rate-limiting on their API and set the `CHANGELOG_GITHUB_TOKEN` environment variable to your token before publishing**
+::: warning
+If you have a lot of issues/PRs to be integrated in change log please [generate a GitHub token](https://github.com/github-changelog-generator/github-changelog-generator#github-token) to avoid rate-limiting on their API and set the `CHANGELOG_GITHUB_TOKEN` environment variable to your token before publishing**
+:::
 
-> **The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches**
+::: danger
+The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches**
+:::
 
-> **Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
+::: warning
+Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
+:::
 
 ## Web app
 
@@ -83,9 +93,13 @@ The same process applies as for the plugin except the app is not published on th
 * create a tag accordingly in the git repository and push it
 * generates the changelog in the git repository and push it
 
-> **Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam kClient`**
+::: warning
+Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam kClient`**
+:::
 
-> Depending on the app the push of tags or changlog is more or less automated in order to have more control
+::: tip
+Depending on the app the push of tags or changlog is more or less automated in order to have more control
+:::
 
 Because Kalisio web app are also released as Docker images you can build it like this:
 ```bash
@@ -102,13 +116,17 @@ docker tag kalisio/kapp kalisio/kapp:version_tag
 docker push kalisio/kapp:version_tag
 ```
 
-> This requires you to have a DockerHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+::: warning
+This requires you to have a DockerHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+:::
 
 ### Security
 
 As an application often relies on third-party services its configuration must include secrets like API keys, passwords, etc. In this section we detail how we manage it in a secure way.
 
-**The most important point is you should never store passwords or other sensitive data in source code, and you shouldn't use production secrets in development and test mode.**
+::: danger
+The most important point is you should never store passwords or other sensitive data in source code, and you shouldn't use production secrets in development and test mode.**
+:::
 
 ### Using environment variables
 
@@ -124,4 +142,6 @@ In your local development environment you should use a script to setup all the r
 
 When using Travis CI you can use [encrypted variables](https://docs.travis-ci.com/user/environment-variables/) set either in build file or repository settings.
 
-**If you'd like to set a value holding multilines or special characters take care to surround it with `"` so that it will be properly escaped.**
+::: warning
+If you'd like to set a value holding multilines or special characters take care to surround it with `"` so that it will be properly escaped.
+:::

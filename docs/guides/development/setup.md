@@ -11,9 +11,13 @@ It has the largest ecosystem of open source libraries in the world.
 - [Default install.](https://nodejs.org/en/)
 - [Specific versions.](https://nodejs.org/en/download/)
 
-> **Kalisio modules are expected to work with Node.js >= 8**
+::: warning
+Kalisio modules are expected to work with Node.js 8.x
+:::
 
-**In order to be able to switch easily between different versions of Node.js we recommand to use a version manager like [n](https://github.com/tj/n)/[nvm](https://github.com/creationix/nvm) under Linux/Mac or [nvm](https://github.com/coreybutler/nvm-windows) under Windows.**
+::: tip
+In order to be able to switch easily between different versions of Node.js we recommand to use a version manager like [n](https://github.com/tj/n)/[nvm](https://github.com/creationix/nvm) under Linux/Mac or [nvm](https://github.com/coreybutler/nvm-windows) under Windows.
+:::
 
 #### Install Git
 
@@ -32,7 +36,9 @@ There are many resources available for installing it.
 - [macOS.](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
 - [Windows.](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
 
-> **Kalisio modules are expected to work with MongoDB >= 3**
+::: warning
+Kalisio modules are expected to work with MongoDB 3.x
+:::
 
 #### Install Yarn
 
@@ -54,7 +60,9 @@ Follow this [tutorial](https://evothings.com/doc/build/cordova-install-windows.h
 
 While it is a WIP and not yet pushed to NPM, or when developing, please use the following process.
 
-> Since 07/2018 we recommand using our [CLI](https://github.com/kalisio/cli) but you can still proceed manually as explained below.
+::: tip
+Since 07/2018 we recommand using our [CLI](https://github.com/kalisio/cli) but you can still proceed manually as explained below.
+:::
 
 First clone all the modules/plugins you need and use [yarn/npm link](https://docs.npmjs.com/cli/link) to make them globally available to your Node.js installation:
 
@@ -90,7 +98,9 @@ yarn link @kalisio/kdk-team
 ...
 ```
 
-> **Take care that a top-level plugin might depend on another plugin so you will have to link them together, for instance the kTeam plugin depends on the kCore plugin.**
+::: warning
+Take care that a top-level plugin might depend on another plugin so you will have to link them together, for instance the kTeam plugin depends on the kCore plugin.
+:::
 
 ### Cordova wrapper
 

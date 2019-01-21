@@ -89,7 +89,9 @@ $ yarn/npm run Cordova
 
 If no device is connected this should launch the emulator, otherwise this should use your device.
 
-> Check that the [`adb` daemon](https://developer.android.com/studio/command-line/adb.html) is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
+::: tip
+Check that the [`adb` daemon](https://developer.android.com/studio/command-line/adb.html) is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
+:::
 
 ### Debug
 
@@ -113,7 +115,9 @@ We rely on a bunch of Cordova plugins so it might be useful to refer to their sp
 * https://github.com/apache/Cordova-plugin-geolocation
 * https://github.com/crosswalk-project/Cordova-plugin-crosswalk-webview
 
-**The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/blog/crosswalk-final-release.html), as a consequence there are some issues with recent Cordova versions like [this](https://github.com/apache/Cordova-android/pull/417). We will probably drop it soon.**
+::: danger
+The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/blog/crosswalk-final-release.html), as a consequence there are some issues with recent Cordova versions like [this](https://github.com/apache/Cordova-android/pull/417). We will probably drop it soon.
+:::
 
 ## Modules/Plugins
 

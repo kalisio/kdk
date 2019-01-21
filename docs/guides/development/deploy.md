@@ -47,15 +47,15 @@ export GOOGLE_CLIENT_ID=xxx
 export GOOGLE_CLIENT_SECRET=xxx
 ```
 
-> Note: some of the previous accounts/IDs are not app specific and can be share accross multiple apps, e.g. S3, SNS, etc.
+::: tip
+Note: some of the previous accounts/IDs are not app specific and can be share accross multiple apps, e.g. S3, SNS, etc.
+:::
 
 Most information here should be [secured](./PUBLISH.MD#security) and **should not be pushed under source control unless you use private repositories (and even in this case it is best to secure it)**.
 
 ### Configure continuous integration and delivery
 
 We heavily rely on [Travis CI](https://travis-ci.org) for continuous integration and delivery, as such the best is to create a *secrets.tar* containing all secured files and encode it to *secrets.tar.enc* a using [Travis CLI](https://github.com/kalisio/kdk/blob/master/tools/CLI.MD#travis-cli). This file will be decrypted before the build or whenever you need something inside.
-
-
 
 ### Install Change log generator
 
@@ -68,7 +68,9 @@ The same process applies when releasing a patch, minor or major version, i.e. th
 * create a tag accordingly in the git repository and push it
 * generates the changelog in the git repository and push it
 
-> **Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam kClient`**
+::: tip
+Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam kClient`
+:::
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
@@ -90,21 +92,29 @@ docker tag kalisio/kapp kalisio/kapp:version_tag
 docker push kalisio/kapp:version_tag
 ```
 
-> This requires you to have a DockerHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+::: tip
+This requires you to have a DockerHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+:::
 
 ## Plugins
 
 The same process applies as for the web app but in addition the module is published on the NPM registry.
 
-> This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+::: warning
+This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+:::
 
-> **Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
+::: tip
+Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it
+:::
 
 ## Security
 
 As an application often relies on third-party services its configuration must include secrets like API keys, passwords, etc. In this section we detail how we manage it in a secure way.
 
-**The most important point is you should never store passwords or other sensitive data in source code, and you shouldn't use production secrets in development and test mode.**
+::: warning
+The most important point is you should never store passwords or other sensitive data in source code, and you shouldn't use production secrets in development and test mode.
+:::
 
 ### Using environment variables
 
@@ -120,11 +130,9 @@ In your local development environment you should use a script to setup all the r
 
 When using Travis CI you can use [encrypted variables](https://docs.travis-ci.com/user/environment-variables/) set either in build file or repository settings.
 
-**If you'd like to set a value holding multilines or special characters take care to surround it with `"` so that it will be properly escaped.**
-
-
-
-
+::: warning
+If you'd like to set a value holding multilines or special characters take care to surround it with `"` so that it will be properly escaped.**
+:::
 
 ## Configuration
 
@@ -132,10 +140,7 @@ When using Travis CI you can use [encrypted variables](https://docs.travis-ci.co
 
 ### Sensitive data
 
-To set up the CI/CD pipeline, sensitive data are needed to access the different services and api. If some of these data can be stored using environment variables, others are stored through files and need to be pushed within the respoitory. For this purpose Travis CI offer a way to store these files within a unique encrypted archive.
-
-See https://docs.travis-ci.com/user/encryption-keys/
-
+To set up the CI/CD pipeline, sensitive data are needed to access the different services and api. If some of these data can be stored using environment variables, others are stored through files and need to be pushed within the respoitory. For this purpose Travis CI offer a way to store these files within a [unique encrypted archive](https://docs.travis-ci.com/user/encryption-keys/).
 
 ## Secret archive
 
@@ -152,16 +157,15 @@ The table below lists all the required files:
 
 ### Creating the archive
 
-As mentioned in the documentation (https://docs.travis-ci.com/user/encrypting-files/#Encrypting-multiple-files), is it not possible to encrypt multiple files. It is then required to create a `tar` file containing the different secret files and then to encrypt the archive.
+As mentioned in the [documentation](https://docs.travis-ci.com/user/encrypting-files/#Encrypting-multiple-files), is it not possible to encrypt multiple files. It is then required to create a `tar` file containing the different secret files and then to encrypt the archive. 
 
-You need to be logged in to Travis CI
+::: tip
+You need to be logged in to Travis CI.
+:::
 
 ```
 tar cvf secrets.tar your_keystore.keystore build.json google-play.json google-services.json
 travis encrypt-file secrets.tar
 ```
-
-
-
 
 Do not push the secret files on your repository but keep them in a secure place !
