@@ -1,6 +1,6 @@
 [![KDK](https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-logo-black-512x168.png)](https://kalisio.github.io/kdk/)
-[![Build Status](https://travis-ci.org/kalisio/kdk.png?branch=master)](https://travis-ci.org/kalisio/kdk)
 
+[![Build Status](https://travis-ci.org/kalisio/kdk.png?branch=master)](https://travis-ci.org/kalisio/kdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 _The Kalisio Development Kit_
