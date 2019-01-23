@@ -27,6 +27,8 @@ The details of each property are the following:
 
 The most common properties of a tag object are described by the following data model:
 
+**TODO**
+
 This data model is manipulated through the [Tag API](./../api/kCore/services.md).
 
 The details of each property are the following:

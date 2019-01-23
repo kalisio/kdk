@@ -125,4 +125,4 @@ Events.$on('myGlobal-property-changed', myCallback) // When patching on a specif
 
 ### Activity
 
-**TODO**
+Except for the basic application layout components 

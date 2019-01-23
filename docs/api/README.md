@@ -1,7 +1,22 @@
-
 # API
 
-These sections detail the external (i.e. REST/Websocket) as well as the internal (i.e. Classes/Functions) [API](https://en.wikipedia.org/wiki/Application_programming_interface) for each module of KDK.
+These sections details the available external (i.e. REST/Websocket) as well as the internal (i.e. Classes/Functions) [API](https://en.wikipedia.org/wiki/Application_programming_interface) within each module of the KDK. If you'd like to check the detailed API of a given module please select it in the menu.
+
+> Modules are published under the `@kalisio` namespace with a `kdk` prefix in NPM, e.g. `kCore` NPM package is named `@kalisio/kdk-core`
+
+Each module is internally broken into 3 different parts.
+
+* client API (`client` folder in module `src` folder) to be used within the browser and imported like this:
+
+`import { xxx } from '@kalisio/kdk-core/client'`
+
+* common API (`common` folder in module `src` folder)  to be used within the browser or NodeJS and imported like this:
+
+`import { xxx } from '@kalisio/kdk-core/common'`
+
+* backend API (all other files in module `src` folder) to be used within NodeJS and imported like this:
+
+`import { xxx } from '@kalisio/kdk-core'`
 
 ## Services
 
@@ -39,14 +54,18 @@ KDK modules provide a collection of reusable *mixins* and *components* to be use
 
 [Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be “mixed” into the component’s own options.
 
-> Although `.vue` components are stored at the module level to ensure right configuration management with backend code they are not "processed" within. Instead, the application process them directly using [WebPack dynamic imports](https://medium.com/front-end-hacking/webpack-and-dynamic-imports-doing-it-right-72549ff49234).
+Although `.vue` [single file components](https://vuejs.org/v2/guide/single-file-components.html) are stored at the module level to ensure synchronized configuration management with backend code they are not "processed" within. Instead, the application processes them directly using [WebPack dynamic imports](https://medium.com/front-end-hacking/webpack-and-dynamic-imports-doing-it-right-72549ff49234).
+
+::: warning
+Single component files are temporarily copied into the application folder during the build process, in development mode they are directly imported from (linked) modules using hot reload.
+:::
   
 ## Testing
 
-You will find [here](~kApp.postman_collection.json) a collection of ready-to-go REST requests to test the API with the great [POSTMAN](https://www.getpostman.com/) tool. Simply download it and import it in your POSTMAN installation.
+You will find [here](https://documenter.getpostman.com/view/3473756/RztfxCRc) a collection of ready-to-go REST requests to test the API with the great [POSTMAN](https://www.getpostman.com/) tool. Simply download it and import it in your POSTMAN installation.
 
 You should do the following:
-1. make your Kalisio installation run (the collection is configured for default dev port `8080` but you can easily switch to `8081` for production mode for instance or any other)
+1. make your application run (the collection is configured for default dev port `8080` but you can easily switch to `8081` for production mode for instance or any other)
 2. use the authenticate request with a registered user e-mail/password to retrieve an authorization token
 3. set this token in the header of other requests in order to be authorized to perform the request
 4. renew your token when expired (step 2)

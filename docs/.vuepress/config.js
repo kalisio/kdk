@@ -1,5 +1,6 @@
 module.exports = {
   base: '/kdk/',
+  port: 8888,
   title: 'KDK',
   description: 'The Kalisio Development Kit',
   head: [
@@ -51,7 +52,7 @@ function getGuidesSidebar () {
     },
     {
       title: 'Development',
-      children: ['development/setup', 'development/develop', 'development/publish', 'development/deploy' ] 
+      children: ['development/setup', 'development/develop', 'development/deploy' ] 
     }
   ]
 }
