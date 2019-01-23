@@ -191,7 +191,7 @@ Check password policy when creating/updating the user's password according to th
 * **passwordField**: the name of the field containing the clear password on the item (defaults to `clearPassword`)
 * **previousPasswordsField**: the name of the field containing the hashed password history on the item (defaults to `previousPasswords`)
 
-> For more information read about [password policy configuration](https://github.com/kalisio/kdk/blob/master/guides/BASICS.MD#configuring).
+> For more information read about [password policy configuration](../../guides/basics/step-by-step.md#configuring-the-app).
 
 ### .storePreviousPassword(options)
 
@@ -203,7 +203,7 @@ Update the password history when updating the user's password according to the f
 * **passwordField**: the name of the field containing the current hashed password on the item (defaults to `password`)
 * **previousPasswordsField**: the name of the field containing the hashed password history on the item (defaults to `previousPasswords`)
 
-> For more information read about [password policy configuration](https://github.com/kalisio/kdk/blob/master/guides/BASICS.MD#configuring).
+> For more information read about [password policy configuration](../../guides/basics/step-by-step.md#configuring-the-app).
 
 ### .generatePassword(hook)
 
@@ -211,7 +211,7 @@ Update the password history when updating the user's password according to the f
 
 Generate a random password according to password policy (if any) and store it in the **password** item field.
 
-> For more information read about [password policy configuration](https://github.com/kalisio/kdk/blob/master/guides/BASICS.MD#configuring).
+> For more information read about [password policy configuration](../../guides/basics/step-by-step.md#configuring-the-app).
 
 ## Logs [server source](https://github.com/kalisio/kCore/blob/master/src/hooks/logger.js), [client source](https://github.com/kalisio/kCore/blob/master/src/client/hooks/logger.js)
 

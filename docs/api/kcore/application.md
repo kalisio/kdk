@@ -1,6 +1,6 @@
 # Application
 
-KDK offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application right.
+Kalisio [core module](https://github.com/kalisio/kCore) offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application right.
 
 ## Application API
 
@@ -30,12 +30,12 @@ let users = api.getService('users')
 
 ### Configuration
 
-Any value from the backend [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved on the application object like this:
+Any value from the backend [configuration](../../guides/basics/step-by-step.md#configuring-the-app) can be directly retrieved on the application object like this:
 ```javascript
 const value = app.get('property')
 ```
 
-Any value from the frontend [configuration](../../guides/BASICS.MD#configuring) can be directly retrieved by importing it like this:
+Any value from the frontend [configuration](../../guides/basics/step-by-step.md#configuring-the-app) can be directly retrieved by importing it like this:
 ```javascript
 import config from 'config'
 
@@ -78,7 +78,8 @@ Depending on the options you have to create a *models* and *services* directorie
 ## Application Hooks
 
 The following [hooks](./HOOKS.MD) are usually globally executed on the application:
-![Application hooks](https://rawgit.com/kalisio/kdk/master/images/Application%20Hooks%20Diagram.svg)
+
+![Application hooks](../../assets/application-hooks.svg)
 
 ## Permissions
 
@@ -123,6 +124,3 @@ Events.$on('myGlobal-property-changed', myCallback) // When patching on a specif
 
 **TODO**
 
-### Activity
-
-Except for the basic application layout components 

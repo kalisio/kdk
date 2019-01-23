@@ -16,7 +16,7 @@ The details of each property are the following:
 * **email** : user e-mail used as an internal unique ID
 * **password** : hashed user password
 * **locale** : user locale when registering
-* **previousPasswords** : hashed user password history if [password policy has been enabled](./../guides/basics/step-by-step.md#configuring)
+* **previousPasswords** : hashed user password history if [password policy has been enabled](./../guides/basics/step-by-step.md#configuring-the-app)
 * **profile** : user profile information including name
 * **[provider]** : user profile information for associated OAuth provider, e.g. `google`
 * **[scope]** : user permissions for associated scope, e.g. `groups`
