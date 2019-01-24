@@ -33,6 +33,10 @@ Some layout components are fixed for the entire application lifecycle, as such t
 
 Some components are more dynamic and support to be updated depending on the current activity of the user: application bar, tab bar search bar, right panel, FAB. In this case the configuration is read from the [global store](./application.md#store) and any change watched to keep the components in sync.
 
+::: tip
+The best thing to do to learn how to configure your application is to have a look to the config files of our production applications like [Akt'n'Map](https://github.com/kalisio/aktnmap/blob/master/config/default.js) and [Kano](https://github.com/kalisio/kano/blob/master/config/default.js)
+:::
+
 ## Collections
 
 Most activities are used to list, search, edit (i.e. update) and remove data model items. To avoid a lot of boilerplate code the KDK provides you with built-in components to manage item collections either as list or grid as shown below:
@@ -41,8 +45,57 @@ Most activities are used to list, search, edit (i.e. update) and remove data mod
 
 ### List
 
+The **k-list** component is powered by [Quasar lists](https://quasar-framework.org/components/lists-and-list-items.html) and [Quasar pagination](https://quasar-framework.org/components/pagination.html). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
+
+The following properties can be used to customize it:
+* **renderer**:
+  * **component**: the component to be used to render items (defaults to `collection/KItem`)
+  * **options**: options of the rendrer,
+  * **props**: properties to be bound to the item components
+* **baseQuery**: the base query to be used when retrieving items from the target service
+* **filterQuery**: the additional query parameters to be used to filter items according to current search criteria
+* **listStrategy**: the update strategy used under the hood by [feathers-reactive](https://github.com/feathersjs-ecosystem/feathers-reactive)
+
+The default **k-item** component is powered by the [base item mixin](./mixins.md#base-item) and provides you with the following properties:
+* **item**: the object to be displayed
+* **itemActions**: the list of actions available on the object, each action been described as
+  * **label**: action label in the action menu
+  * **route**: route to be pushed when action is triggerred
+  * **handler**: function to be called when action is triggerred
+* **options**: 
+  * **icon**: icon to be used
+  * **color**: icon color to be used
+  * **avatar**: avatar image to be used
+  * **nameField**: the name or path of the property used to retrieve the displayed name on the object, defaults to `name`
+  * **descriptionField**: the name or path of the property used to retrieve the displayed description on the object, defaults to `description`
+  
+The default **k-item** component also provides you with the following slots will you need more customisation:
+* `item-icon` or `item-avatar` to override icon or avatar section
+* `item-content` to override content section
+* `item-label` and `item-sublabel` to override labels section
+* `item-actions` to override actions section
+
 ### Grid
 
+The **k-grid** component is powered by [Flex](https://quasar-framework.org/components/flex-css.html), [Quasar cards](https://quasar-framework.org/components/card.html) and [Quasar pagination](https://quasar-framework.org/components/pagination.html). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
+
+The same properties as with the **k-list** component can be used to customize it, the component to be used to render items defaults to `collection/KCard`.
+
+The default **k-card** component is powered by the [base item mixin](./mixins.md#base-item) and provides you with the same properties as the **k-item** component but available slots are the following:
+* `card-title` to override title section
+* `card-icon` to override icon section
+* `card-tags` to override tags section
+* `card-content` to override content section
+* `card-actions` to override actions section
+
+However options of the **itemActions** are more complex:
+* **pane**: the list of actions displayed in the pane, each action been described as
+  * **name**: unique action name/ID
+  * **icon**: action icon
+  * **label**: action label in the action menu
+  * **route**: route to be pushed when action is triggerred
+  * **handler**: function to be called when action is triggerred
+* **menu**: the list of actions displayed in the menu, each action been described as above
 
 ## Forms and editors
 
