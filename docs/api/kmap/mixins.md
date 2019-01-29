@@ -2,9 +2,9 @@
 
 [Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be “mixed” into the component’s own options.
 
-## Map mixins
+## 2D Map
 
-A map is based on a [Leaflet](http://leafletjs.com/) map object.
+The underlying map object is based on [Leaflet](http://leafletjs.com/) and some mixins also rely on [Leaflet plugins](https://leafletjs.com/plugins.html).
 
 This set of mixins is to be used to construct a new Weacast Map component and underlying Leaflet objects:
 * **Mandatory** [Base](https://github.com/kaelia-tech/kClient/blob/master/src/mixins/map/mixin.base.js) mixin simply initialize the underlying Leaflet map object and registered controls by other mixins
@@ -78,3 +78,7 @@ map: {
   }
 ...
 ```
+
+## 3D Globe
+
+The underlying globe object is based on [Cesium](https://cesium.com/).

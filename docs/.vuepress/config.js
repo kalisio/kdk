@@ -75,16 +75,16 @@ function getAPISidebar () {
       children: [ 'kcore/', 'kcore/application', 'kcore/services', 'kcore/hooks', 'kcore/components', 'kcore/mixins' ]
     },
     {
+      title: 'kMap',
+      children: [ 'kmap/', 'kmap/services', 'kmap/hooks', 'kmap/components', 'kmap/mixins' ]
+    },
+    {
       title: 'kTeam',
       children: [ 'kteam/', 'kteam/services', 'kteam/hooks', 'kteam/components', 'kteam/mixins' ]
     },
     {
       title: 'kNotify',
       children: [ 'knotify/', 'knotify/services', 'knotify/hooks', 'knotify/components', 'knotify/mixins' ]
-    },
-    {
-      title: 'kMap',
-      children: [ 'kmap/', 'kmap/services', 'kmap/hooks', 'kmap/components', 'kmap/mixins' ]
     },
     {
       title: 'kBilling',
