@@ -1,5 +1,7 @@
 # Roadmap
 
+The roadmap is available on [Github](https://github.com/orgs/kalisio/projects/1).
+
 ## Release Notes
 
 Release Notes for each modules are available on Github:
@@ -17,7 +19,7 @@ Release Notes for each modules are available on Github:
 
 Before creating an issue please make sure you have checked out the docs, you might want to also try searching Github. It's pretty likely someone has already asked a similar question.
 
-Issues can be reported in the [issue tracker](https://github.com/kalisio/kdk/issues).
+Issues can be reported in the main [issue tracker](https://github.com/kalisio/kdk/issues). Ideally you should open issues in the tracker of the source module/application when possible.
 
 ### Pull Requests
 
