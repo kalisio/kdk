@@ -12,7 +12,7 @@ The data model of a user as used by the API is [detailed here](../../architectur
 
 ### Hooks
 
-The following [hooks](./HOOKS.MD) are executed on the `users` service:
+The following [hooks](./hooks.md) are executed on the `users` service:
 ![Users hooks](../../assets/users-hooks.png)
 
 ## Authorisations service
@@ -31,7 +31,7 @@ No data model, authorisations are directly stored on target subject(s).
 
 ### Hooks
 
-The following [hooks](./HOOKS.MD) are executed on the `authorisations` service:
+The following [hooks](./hooks.md) are executed on the `authorisations` service:
 
 ![Authorisations hooks](../../assets/authorisations-hooks.png)
 
@@ -53,7 +53,7 @@ The data model of a user as used by the API is [detailed here](../../architectur
 
 ### Hooks
 
-The following [hooks](./HOOKS.MD) are executed on the `tags` service:
+The following [hooks](./hooks.md) are executed on the `tags` service:
 
 ![Tags hooks](../../assets/tags-hooks.png)
 
@@ -75,7 +75,7 @@ No data model, data are directly stored on target storage backend (i.e. AWS S3).
 
 ### Hooks
 
-The following [hooks](./HOOKS.MD) are executed on the `storage` service:
+The following [hooks](./hooks.md) are executed on the `storage` service:
 
 ![Storage hooks](../../assets/storage-hooks.png)
 
