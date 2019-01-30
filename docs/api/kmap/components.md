@@ -1,6 +1,6 @@
 # Components
 
-## Catalog layers
+## Layers panel
 
 The **k-layers-panel** is used to list all available layers in [catalog](./services.md#catalog-service) and organize them by category.
 

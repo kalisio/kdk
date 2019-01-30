@@ -4,6 +4,10 @@
 Although this page details the main data model used for SaaS applications the organisation part is optional and you can build legacy applications just by using services.
 :::
 
+## Services
+
+According to the [Feathers philosophy](https://docs.feathersjs.com/guides/about/philosophy.html) each business operation should be performed through a [service interface](https://docs.feathersjs.com/api/services.html). As a consequence, these are are the building blocks at the heart of each KDK application.
+
 ## Organisation model
 
 Organisations are the basic elements that permit to create and configure teams (i.e. **groups** of users) and invite others to join and share content. Organisations are shared workspaces where users can collaborate using a set of services only available **within the context** of the organisation.
