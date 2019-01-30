@@ -1,8 +1,10 @@
 # About
 
-The **Kalisio Development Kit** (**KDK**) aims to simplify the development of web applications running on desktop or mobile devices. It is a strongly opiniated stack to build geospatial applications provided as SaaS solutions.
+The **Kalisio Development Kit** (**KDK**) aims to simplify the development of web applications running on desktop or mobile devices. It is a strongly opiniated stack to build geospatial applications provided as SaaS solutions like [Akt'n'Map](https://aktnmap.com).
 
-Our approach is to propose a Microservice based platform. Thus each of these building blocks will have the responsibility to deliver specific and limited functionalities. Such an architectural approach plays a key role in helping us face the challenges of maintaining several mature products that need scalability within multiple contexts and include scalability in processing, storage, delivery of product features.
+![Kano application built with the KDK](../assets/kano-weather.png)
+
+Our approach is to propose a microservice based platform. Each building block has the responsibility to deliver specific and limited functionalities. Such an architectural approach plays a key role in helping us face the challenge of maintaining several mature products that need scalability within multiple contexts in terms of processing, storage, and features delivery.
 
 **KDK** is mainly powered by the following stack:
 * [Feathers](https://feathersjs.com/) on the backend side
@@ -21,5 +23,7 @@ To get a deeper overview of some of the internals we recommend you to read our t
 ::: tip Note
 The Kalisio framework is also inspired by our experience in developing [Weacast](https://weacast.gitbooks.io/weacast-docs/), referring to it as a more simple project might help.
 :::
+
+If you'd like more information on how this documentation is built please refer to our [tools section](../tools/documentation.md#documentation).
 
 

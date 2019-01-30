@@ -46,9 +46,11 @@ Available as a global and a contextual service
 
 ### Data model
 
-The data model of a feature as used by the API is detailed below, first the raw model when no aggregation is performed, second when some elements of the feature are aggregated over time.
+The raw data model of a feature (ie when no aggregation is performed) as used by the API is detailed below.
 
 ![Feature data model](../../assets/feature-data-model.png)
+
+The data model of a feature as used by the API when some elements of the feature are aggregated over time is detailed below.
 
 ![Aggregated feature data model](../../assets/aggregated-feature-data-model.png)
 
