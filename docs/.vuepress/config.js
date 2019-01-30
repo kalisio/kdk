@@ -100,9 +100,9 @@ function getAPISidebar () {
 function getToolsSidebar () {
   return [
     '',
-    'cli', 
-    'browsers', 
-    'infrastructure',
-    'osm'
+    'cli',
+    'browsers',
+    'documentation',
+    'infrastructure'
   ]
 }
