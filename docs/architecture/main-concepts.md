@@ -1,12 +1,16 @@
 # Main concepts
 
+::: warning
+Although this page details the main data model used for SaaS applications the organisation part is optional and you can build legacy applications just by using services.
+:::
+
 ## Organisation model
 
 Organisations are the basic elements that permit to create and configure teams (i.e. **groups** of users) and invite others to join and share content. Organisations are shared workspaces where users can collaborate using a set of services only available **within the context** of the organisation.
 
 ### Data segregation
 
-KDK implements an extreme solution to segregate data at the source: using different databases. This means that dedicated databases   (respectively services) are created to hold (respectively to manage) the contextual assets when organisations are made available, and simply destroyed when they are not anymore.
+KDK implements an extreme solution to segregate data at the source: using different databases. This means that dedicated databases (respectively services) are created to hold (respectively to manage) the contextual assets when organisations are made available, and simply destroyed when they are not anymore.
 
 ::: tip
 Under the hood the [feathers-mongodb-management](https://github.com/feathersjs-ecosystem/feathers-mongodb-management) module is used to dynamically create/remove a database per organisation whenever required
