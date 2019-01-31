@@ -52,7 +52,7 @@ Each service can declare a set of *perspectives*, which are not retrieved by def
 
 KDK modules provide a collection of reusable *mixins* and *components* to be used by plugins or applications.
 
-[Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be “mixed” into the component’s own options.
+[Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be "mixed" into the component's own options.
 
 Although `.vue` [single file components](https://vuejs.org/v2/guide/single-file-components.html) are stored at the module level to ensure synchronized configuration management with backend code they are not "processed" within. Instead, the application processes them directly using [WebPack dynamic imports](https://medium.com/front-end-hacking/webpack-and-dynamic-imports-doing-it-right-72549ff49234).
 

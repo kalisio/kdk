@@ -106,21 +106,88 @@ Events.$off('myEvent', myCallback)
 
 ### Store
 
-A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton:
+A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton object: allow to get or update the global state and make any interested component aware of it in real-time through events. The available API is illustrated by this code sample:
 
 ```javascript
 import { Store } from 'kCore/client'
 import { Events } from 'quasar'
 
+const myCallback = (value, previousValue) => { ... }
+
 Store.set('myGlobal', { ... }) // Set a root object
-Store.patch('myGlobal', { property: value }) // Set a specific property path
-Store.set('myGlobal.property', value)
+Store.patch('myGlobal', { property: value }) // Set a specific group of properties
+Store.set('myGlobal.property', value) // Set a specific property path
 Store.get('myGlobal.property', defaultValue) // defaultValue is returned if path is not found
 Events.$on('myGlobal-changed', myCallback) // When updating a root object
-Events.$on('myGlobal-property-changed', myCallback) // When patching on a specific property path
+Events.$on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
 
 ### Context
 
 **TODO**
 
+### i18n
+
+## Client-side internationalization
+
+Internationalization relies on [i18next](https://github.com/i18next/i18next) and its [Vue plugin](https://github.com/panter/vue-i18next). We don't use [component based localization](https://panter.github.io/vue-i18next/guide/component.html) and prefer to use [component interpolation](https://panter.github.io/vue-i18next/guide/component-interpolation.html). Each module/application has its own set of translation files stored in the *client/i18n* folder. To avoid conflicts the convention we use is the following:
+* a translation used in mulitple components has no prefix
+* a translation used in a single component is prefixed by the source component name
+* some prefixs are reserved
+  * `errors` for error messages
+  * `schemas` for labels in JSON schemas
+
+```json
+{
+  "CANCEL": "Cancel",
+  "errors": {
+    "400": "Operation cannot be performed: bad parameters",
+    ...
+  },
+  "schemas": {
+    "AVATAR_FIELD_HELPER": "Select an avatar",
+    ...
+  },
+  "KScreen": {
+    "CLIENT_VERSION": "Client version",
+    ...
+  }
+  ...
+}
+```
+
+The setup of your application simply consists in providing to the i18n system the resolvers to load all the required translation files, please refer to our [application template](https://github.com/kalisio/kApp/blob/master/src/i18n/index.js).
+
+## Server-side internationalization
+
+Usually translations are only meant to be used at the client level, server errors are converted to client-side translation based on error codes. However, sometimes you need to raise more specific and meaningful error messages from the server, in this case the raised error should contain translation key(s) and context instead of raw message(s), e.g.:
+
+```js
+import { BadRequest } from '@feathersjs/errors'
+
+  // Somewhere in a hook or service
+  throw new BadRequest('The provided password does not comply to the password policy', {
+    translation: {
+      key: 'WEAK_PASSWORD',
+      params: { failedRules: ... }
+    }
+  })
+```
+
+That way you can generate client-side translation with a generic error handler like in our [application template](https://github.com/kalisio/kApp/blob/master/src/App.vue):
+
+```js
+Events.$on('error', error => {
+  // Translate the message if a translation key exists
+  const translation = _.get(error, 'data.translation')
+  if (translation) {
+    error.message = this.$t('errors.' + translation.key, translation.params)
+  } else {
+    // Overwrite the message using error code
+    if (error.code) {
+      error.message = this.$t('errors.' + error.code)
+    }
+  }
+  this.showError(error.message)
+})
+```
