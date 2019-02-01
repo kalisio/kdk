@@ -33,8 +33,25 @@ No [hooks](./hooks.md) are executed on the `geocoder` service for now.
 ## Catalog service
 
 ::: tip
-Available as a global service
+Available as a global and a contextual service
 :::
+
+The service can be created using the global **createCatalogService(context, db)** function, if no arguments provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../kcore/application.md#createservice-name-options).
+
+Here is a sample code to retrieve all data layer descriptors available in the catalog:
+```javascript
+const catalogService = app.getService('catalog')
+let response = await catalogService.find()
+_.forEach(response.data, (layer) => {
+	if (layer[engine]) {
+	  // Process i18n if you'd like to
+	  if (this.$t(layer.name)) layer.name = this.$t(layer.name)
+	  if (this.$t(layer.description)) layer.description = this.$t(layer.description)
+	  // Create the underlying layer object in the map/globe
+	  this.addLayer(layer)
+	}
+})
+```
 
 ### Data model
 
@@ -44,7 +61,34 @@ The data model of a layer descriptor as used by the API is detailed below.
 
 The catalog is typically populated at application startup with a default set of layers, as a consequence the best is to have a look at some of our application configuration files like the one of [Kano](https://github.com/kalisio/kano/blob/master/api/config/layers.js).
 
+The details of each property are the following:
+* **name** : the layer name, typically used in the [layers panel](./components.md#layers-panel)
+* **description** : the layer short description, typically used in the [layers panel](./components.md#layers-panel)
+* **type** : usually `BaseLayer` for map backgrounds, `TerrainLayer` for 3D terrain, `OverlayLayer` for additionnal data layers
+* **tags** : list of tags to classify the layer
+* **icon** : a [Quasar icon](https://quasar-framework.org/components/icons.html) for the layer, typically used in the [layers panel](./components.md#layers-panel)
+* **iconUrl** : a link to an image to be used as icon for the layer, typically used in the [layers panel](./components.md#layers-panel)
+* **attribution** : data attribution informaiton to be displayed along with the layer
+* **leaflet** : options to be passed to the underlying Leaflet layer constructor
+  * **type**: the type of Leaflet layer to be constructed (i.e. class/constructor function name), e.g. `tileLayer` or `geoJson`
+  * **source**: if provided this property is reserved for the first argument to be passed to the underlying Leaflet layer constructor, typically the URL or the GeoJson data, in this case the options will be passed as the second argument
+* **cesium**: options to be passed to the underlying Cesium layer constructor
+  * **type**: the type of Cesium layer to be constructed (i.e. class/constructor function name), e.g. `EllipsoidTerrainProvider` or `BingImageryProvider`
+
+::: tip
 The `type` and `tags` attributes are typically used by the [layers panel](./components.md#layers-panel) to organize the layer selection in a meaningful way.
+:::
+
+If the layer is a feature layer based on a [feature service](./services.md#feature-service) the additional properties are the following:
+* **service**: the name of the underlying feature service,
+* **probeService**: the name of the underlying feature service containing probe locations,
+* **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object),
+* **history**: the expiration period for stored feature
+* **variables**: array of available properties in feature to be [aggregated over time](./services.md#time-based-feature-aggregation), for each entry the following options are available:
+  * **name**: property name in feature (relative to the nested `properties` object),
+  * **label**: property label to use in UI,
+  * **units**: array of target units to be available in the legend, the first unit is the one used to store the data, others will be converted from using [math.js](http://mathjs.org/docs/datatypes/units.html)
+  * **chartjs**: options to be passed to [chart.js](https://www.chartjs.org/docs/latest/charts/line.html#dataset-properties) when drawing timeseries
 
 ### Hooks
 
@@ -55,6 +99,8 @@ The sole [hook](./hooks.md) executed on the `catalog` service is one that sets t
 ::: tip
 Available as a global and a contextual service
 :::
+
+The service can be created using the global **createCatalogService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../kcore/application.md#createservice-name-options).
 
 ### Data model
 
@@ -69,8 +115,6 @@ The raw data model of a feature (ie when no aggregation is performed) as used by
 
 Sometimes it is useful to retrieve a single result aggregating all the times for a given feature instead of multiple single results (i.e. one per time). You can perform such an aggregation based on [MongoDB capabilities](https://docs.mongodb.com/manual/core/aggregation-pipeline/) like this:
 
-**TBC**
-
 ```javascript
 let result = await app.getService('features').find({
   query: {
@@ -79,7 +123,7 @@ let result = await app.getService('features').find({
       $lte: '2017-05-25T12:00:00.000Z'
     },
     $groupBy: 'properties.iata_code', // Will perform aggregation based on this unique feature identifier
-    'properties.iata_code': 'LFBO', // The target feature to aggregate, if omit all will be or you can provide a list with $in
+    'properties.iata_code': 'LFBO', // The target feature to aggregate, if omitted all will be or you can provide a list with $in
     $aggregate: ['geometry', 'speed'] // List of properties to aggregate over time
   }
 })
@@ -136,5 +180,4 @@ const collection = await api.getService('features').find({
 ### Hooks
 
 The following [hooks](./hooks.md) are executed on the `feature` service:
-
-**TODO**
+![Features hooks](../../assets/feature-hooks.png)

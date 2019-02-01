@@ -44,24 +44,35 @@ const value = config.property
 
 > Under the hood [FeathersJS configuration module](https://github.com/feathersjs/configuration) and [node-config](https://github.com/lorenwest/node-config) are used to manage configuration so that any related concept to organise your configuration according to deployment options can be used.
 
-### .getService(name) - backend/client
+### .getService(name, context)
 
-Retrieve the given service by name, should replace [Feathers service method](https://docs.feathersjs.com/api/application.html#servicepath) so that you are abstracted away from service path (i.e. API prefix) and only refer to it by internal name.
+::: tip
+backend/client
+:::
+
+Retrieve the given service by name, should replace [Feathers service method](https://docs.feathersjs.com/api/application.html#servicepath) so that you are abstracted away from the internal service path (i.e. API prefix and context ID) and only refer to it by its "usual" name.
 
 > On the client side this is also used to instanciate the service on first call.
 
-### .createService(name, options) - backend only
+### .createService(name, options)
+
+::: tip
+backend only
+:::
 
 Create a new service attached to the application by name and given a set of options:
-* **modelsPath**: directory where to find model declaration (optional), if provided will initiate a DB service based on the model
+* **context**: the context object the service will be contextual to, if given the internal service path will be `contextId/serviceName`
+* **modelsPath**: directory where to find model declaration (optional), if provided will initiate a DB service based on the model file
 * **servicesPath**: directory where to find service declaration (optional), if provided for a non-DB service will initiate a service based on the returned object or constructor function from the service module, for a DB service it will apply the provided mixin object coming from the service module
+* **fileName**: by default the function will look to a model/service file named after the service name, this option allows to override it
+* **events**: [service events](https://docs.feathersjs.com/api/events.html#service-events) to be used by the service
+* **perspectives**: the *perspectives* of the model that will not be retrieved by default except if [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) is used
 * **proxy**: options for a service to be proxied by the created service
   * **service**: the name of the proxied service
   * **params**: the parameters to be used when calling the proxied service, either an object or a function returning the object and applied on the input parameters
   * **id**: the id map function to be used when calling the proxied service, will be applied on the input id
   * **data**: the data map function to be used when calling the proxied service, will be applied on the input the object
   * **result**: the result map to be used when calling the proxied service, will be applied on the returning the object(s)
-* **perspectives**: the *perspectives* of the model that will not be retrieved by default except if [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) is used
 
 Depending on the options you have to create a *models* and *services* directories containing the required files to declare your services, e.g. your folder/file hierarchy should look like this:
 * *index.js*: contains adefault function instantiating all the services

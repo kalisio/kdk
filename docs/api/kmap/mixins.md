@@ -72,6 +72,31 @@ Make it possible to manage and style raw or time-based GeoJson map layers ([Leaf
   * `tooltip` => **f(feature, layer, options)** returns a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip)
   * `popup` => **f(feature, layer, options)** returns a [Leaflet popup](https://leafletjs.com/reference.html#popup)
 
+The mixin automatically registers defaults styling:
+  * `markerStyle` => will create a marker based on the following options merged with the following order of precedence
+    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
+    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on layer descriptor
+    * [Leaflet style options](https://leafletjs.com/reference.html#path-option) set on the **pointStyle** property in the component
+  * `featureStyle` => will create a style based on the following options merged with the following order of precedence
+    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
+    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on layer descriptor
+    * [Leaflet style options](https://leafletjs.com/reference.html#path-option) set on the **featureStyle** property in the component
+  * `tooltip` => will create a tooltip based on the following options with the following order of precedence
+    * **tooltip**: set on layer descriptor or in the component
+      * **property**: property name to appear in the tooltip
+      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
+  * `popup` => will create a popup displaying a property name/value table based on the following options with the following order of precedence
+    * **popup**: set on layer descriptor or in the component
+      * **pick**: array of property names to appear in the popup
+      * **omit**: array of property names not to appear in the popup
+      * **options**: Leaflet [popup options](https://leafletjs.com/reference.html#popup-option)
+
+If your component has a **onLeafletFeature(feature, layer, options)** method it will be called each time a new GeoJson feature is created.
+
+::: tip
+Marker cluster options are to be provided in the **cluster** property of the Leaflet layer options
+:::
+
 ### File Layer
 
 Make it possible to drag'n'drop GeoJson or KML file on the map ([Leaflet.FileLayer plugin](https://github.com/makinacorpus/Leaflet.FileLayer) is used under-the-hood). It will automatically create a new [GeoJson layer](./mixins.md#geojson-layer) named after the filename on drop. As a consequence it has to be used with the GeoJson layer mixin and will use the configured styling.
@@ -130,6 +155,10 @@ Make it possible to manage globe layers and extend supported layer types:
 Make it possible to manage and style raw or time-based GeoJson map layers:
 * **createCesiumGeoJsonLayer(options)** automatically registered GeoJson Cesium layer constructor
 * **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Cesium style options](https://cesiumjs.org/Cesium/Build/Documentation/GeoJsonDataSource.html#.load)
+
+::: tip
+Marker cluster options are to be provided in the **cluster** property of the Cesium layer options
+:::
 
 ### File Layer
 

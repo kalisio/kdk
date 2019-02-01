@@ -1,20 +1,14 @@
 # Hooks
 
-## Query [source](https://github.com/kalisio/kCore/blob/master/src/hooks/query.js)
+## Query
 
-### .marshallComparisonQuery(hook)
+### marshallComparisonQuery(hook)
 
 Converts from client/server side comparison types (e.g. numbers) to basic JS types, which is usually required when querying the database. Applies to `$lt`, `$lte`, `$gt` and `$gte` operators.
 
 > Reads the query object to process from `hook.params.query`
 
-### .marshallGeometryQuery(hook)
-
-Converts from client/server side spatial types (e.g. coordinates or numbers) to basic JS types, which is usually required when querying the database. Applies to [MongoDB geospatial operators](https://docs.mongodb.com/manual/reference/operator/query-geospatial/).
-
-> Reads the query object to process from `hook.params.query`
-
-### .populateObject(options)
+### populateObject(options)
 
 > Return a hook function according to provided options
 
@@ -27,13 +21,13 @@ Retrieve the target object(s) required by a subsequent operation from its servic
 
 > If when applied existing object(s) and/or service are found in `hook.params` they are reused as is (i.e. not updated)
 
-### .populateObjects(options)
+### populateObjects(options)
 
 Similar to [populateObject](./HOOKS.MD#populateobjectshook) except that if no object ID is found it will retrieve all objects from the target servic using `service.find({ query: {} })`.
 
-## Data model [source](https://github.com/kalisio/kCore/blob/master/src/hooks/model.js)
+## Data model
 
-### .processPerspectives(hook)
+### processPerspectives(hook)
 
 > Usually used as a app-level hook
 
@@ -41,13 +35,13 @@ Discard all perspectives declared on the model by default. Will for any to be in
 
 > Take care of a subset of perspective fields like when using `$select: ['perspective.fieldName']`
 
-### .preventUpdatePerspectives(hook)
+### preventUpdatePerspectives(hook)
 
 > Usually used as a app-level hook
 
 When a perspectives is present in your data model you must disallow update it in order to avoid erasing it. Indeed, when requesting an object e.g. for edition they are not retrieved by default, su sending it back for update will erase the missing perspective fields.
 
-### .serialize(rules, options)
+### serialize(rules, options)
 
 > Return a hook function according to provided options
 
@@ -65,7 +59,7 @@ import { hooks } from 'kCore'
 service.hooks({ before: { create: [ hooks.serialize([{ source: 'name', target: 'profile.name', delete: true }], { throwOnNotFound: true }) ] } })
 ```
       
-### .processObjectIDs(hook)
+### processObjectIDs(hook)
 
 > Usually used as a app-level hook
 
@@ -73,7 +67,7 @@ Transform any value bound to an `_id` like key from a string into a [Mongo Objec
 
 > Take care of `$in`, `$nin` and `$or` operators recursively, as well as nested fields query like `field._id`
 
-### .convertObjectIDs(properties)
+### convertObjectIDs(properties)
 
 > Return a hook function according to provided property list
 
@@ -87,7 +81,7 @@ import { hooks } from 'kCore'
 service.hooks({ before: { all: [ hooks.convertObjectIDs(['participant', 'event']) ] } })
 ```
 
-### .convertDates(properties, asMoment)
+### convertDates(properties, asMoment)
 
 > Return a hook function according to provided property list and Date/moment object flag
 
@@ -101,13 +95,13 @@ import { hooks } from 'kCore'
 service.hooks({ before: { create: [ hooks.convertDates(['expireAt']) ] } })
 ```
 
-### .setAsDeleted(hook)
+### setAsDeleted(hook)
 
 Flag the item as deleted when required by subsequent operations.
 
 > Delete flag is stored in the `deleted` field
 
-### .populatePreviousObject(hook)
+### populatePreviousObject(hook)
 
 > To be used a a before hook 
 
@@ -115,7 +109,7 @@ Retrieve the target object before an update or a patch operation.
 
 > Previous object is stored in `hook.params.previousItem`
 
-### .setExpireAfter(delayInSeconds)
+### setExpireAfter(delayInSeconds)
 
 > To be used a a before hook 
 > Return a hook function according to provided delay
@@ -124,9 +118,9 @@ Set the MongoDB [TTL](https://docs.mongodb.com/manual/tutorial/expire-data/) on 
 
 > TTL is stored in the `expireAt` field
 
-## Service [source](https://github.com/kalisio/kCore/blob/master/src/hooks/service.js)
+## Service
 
-### .rateLimit(options)
+### rateLimit(options)
 
 > To be used a a before hook
 > Return a hook function according to provided options
@@ -139,9 +133,9 @@ Rate limit the call of a target service (and possibly operation) according to th
 
 > Rely on the [token bucket algorithm](https://en.wikipedia.org/wiki/Token_bucket)
 
-## Authorisations [source](https://github.com/kalisio/kCore/blob/master/src/hooks/authorisations.js)
+## Authorisations
 
-### .populateSubjects(hook)
+### populateSubjects(hook)
 
 Retrieve the target subject object(s) for an authorisation operation.
 
@@ -150,7 +144,7 @@ Specialises [populateObjects](./HOOKS.MD#populateobjectshook) with the following
 * **idField**: `'subjects'`
 * **throwOnNotFound**: `true`
 
-### .populateResource(hook)
+### populateResource(hook)
 
 Retrieve the target resource object for an authorisation operation.
 
@@ -159,7 +153,7 @@ Specialises the [populateObject](./HOOKS.MD#populateobjecthook) with the followi
 * **idField**: `'resource'`
 * **throwOnNotFound**: `true`
 
-### .authorise(hook)
+### authorise(hook)
 
 > Usually used as a app-level hook
 
@@ -171,7 +165,7 @@ If you'd like to force/unforce authorisation check use the `hook.params.checkAut
 
 > By default check will only be performed when called from a client not from the server itself.
 
-### .updateAbilities(options)
+### updateAbilities(options)
 
 > Return a hook function according to provided options
 
@@ -179,9 +173,9 @@ Update cached subject abilities when permissions have changed according to the f
 * **subjectAsItem**: boolean indicating if the subject is the item of the current operation (e.g. when applied on the users service) or provided by `hook.params.user`
 * **fetchSubject**: boolean indicating if the subject object has to be entirely fetched from the underlying service (usefull when the item does not include permissions)
 
-## Users [source](https://github.com/kalisio/kCore/blob/master/src/hooks/users.js)
+## Users
 
-### .enforcePasswordPolicy(options)
+### enforcePasswordPolicy(options)
 
 > To be used a a before hook
 > Return a hook function according to provided options
@@ -193,7 +187,7 @@ Check password policy when creating/updating the user's password according to th
 
 > For more information read about [password policy configuration](../../guides/basics/step-by-step.md#configuring-the-app).
 
-### .storePreviousPassword(options)
+### storePreviousPassword(options)
 
 > To be used a a before hook
 > Return a hook function according to provided options
@@ -205,7 +199,7 @@ Update the password history when updating the user's password according to the f
 
 > For more information read about [password policy configuration](../../guides/basics/step-by-step.md#configuring-the-app).
 
-### .generatePassword(hook)
+### generatePassword(hook)
 
 > To be used a a before hook
 
@@ -213,9 +207,9 @@ Generate a random password according to password policy (if any) and store it in
 
 > For more information read about [password policy configuration](../../guides/basics/step-by-step.md#configuring-the-app).
 
-## Logs [server source](https://github.com/kalisio/kCore/blob/master/src/hooks/logger.js), [client source](https://github.com/kalisio/kCore/blob/master/src/client/hooks/logger.js)
+## Logs
 
-### .log(hook)
+### log(hook)
 
 > Usually used as a app-level hook
 
@@ -223,9 +217,9 @@ Generate a random password according to password policy (if any) and store it in
 * Log information for each hook ran with verbose (respectively debug for client) log level.
 * Log detailed information for each hook ran with debug (respectively trace for client) log level.
 
-## Events [source](https://github.com/kalisio/kCore/blob/master/src/hooks/events.js)
+## Events
 
-### .emit(hook)
+### emit(hook)
 
 > Usually used as a app-level hook
 
