@@ -44,7 +44,7 @@ const value = config.property
 
 > Under the hood [FeathersJS configuration module](https://github.com/feathersjs/configuration) and [node-config](https://github.com/lorenwest/node-config) are used to manage configuration so that any related concept to organise your configuration according to deployment options can be used.
 
-### .getService(name, context)
+### getService(name, context)
 
 ::: tip
 backend/client
@@ -54,7 +54,7 @@ Retrieve the given service by name, should replace [Feathers service method](htt
 
 > On the client side this is also used to instanciate the service on first call.
 
-### .createService(name, options)
+### createService(name, options)
 
 ::: tip
 backend only
