@@ -97,6 +97,34 @@ If your component has a **onLeafletFeature(feature, layer, options)** method it 
 Marker cluster options are to be provided in the **cluster** property of the Leaflet layer options
 :::
 
+The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
+```js
+{
+  name: 'Layer',
+  description: 'My sites',
+  tags: [ 'business' ],
+  icon: 'star',
+  attribution: '(c) My company',
+  type: 'OverlayLayer',
+  leaflet: {
+    type: 'geoJson',
+    source: 'https://s3.eu-central-1.amazonaws.com/kargo/nuclear-sites.json',
+    cluster: {},
+    'marker-color': 'orange',
+    'icon-color': 'white',
+    'icon-classes': 'fa fa-star',
+    popup: {
+      pick: [ 'NAME' ]
+    },
+    tooltip: {
+      property: 'LABEL'
+    }
+  }
+}
+```
+
+![2D marker cluster](../../assets/marker-cluster-2D.png)
+
 ### File Layer
 
 Make it possible to drag'n'drop GeoJson or KML file on the map ([Leaflet.FileLayer plugin](https://github.com/makinacorpus/Leaflet.FileLayer) is used under-the-hood). It will automatically create a new [GeoJson layer](./mixins.md#geojson-layer) named after the filename on drop. As a consequence it has to be used with the GeoJson layer mixin and will use the configured styling.
@@ -159,6 +187,29 @@ Make it possible to manage and style raw or time-based GeoJson map layers:
 ::: tip
 Marker cluster options are to be provided in the **cluster** property of the Cesium layer options
 :::
+
+The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
+```js
+{
+  name: 'Layer',
+  description: 'My sites',
+  tags: [ 'business' ],
+  icon: 'star',
+  attribution: '(c) My company',
+  type: 'OverlayLayer',
+  cesium: {
+    type: 'geoJson',
+    source: 'https://s3.eu-central-1.amazonaws.com/kargo/nuclear-sites.json',
+    cluster: {
+      pixelRange: 50
+    },
+    'marker-symbol': 'star',
+    'marker-color': '#FFA500'
+  }
+}
+```
+
+![3D marker cluster](../../assets/marker-cluster-3D.png)
 
 ### File Layer
 
