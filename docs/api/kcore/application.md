@@ -126,9 +126,9 @@ Events.$on('myGlobal-property-changed', myCallback) // When updating a specific 
 
 **TODO**
 
-### i18n
+## i18n
 
-## Client-side internationalization
+### Client-side internationalization
 
 Internationalization relies on [i18next](https://github.com/i18next/i18next) and its [Vue plugin](https://github.com/panter/vue-i18next). We don't use [component based localization](https://panter.github.io/vue-i18next/guide/component.html) and prefer to use [component interpolation](https://panter.github.io/vue-i18next/guide/component-interpolation.html). Each module/application has its own set of translation files stored in the *client/i18n* folder. To avoid conflicts the convention we use is the following:
 * a translation used in mulitple components has no prefix
@@ -158,7 +158,7 @@ Internationalization relies on [i18next](https://github.com/i18next/i18next) and
 
 The setup of your application simply consists in providing to the i18n system the resolvers to load all the required translation files, please refer to our [application template](https://github.com/kalisio/kApp/blob/master/src/i18n/index.js).
 
-## Server-side internationalization
+### Server-side internationalization
 
 Usually translations are only meant to be used at the client level, server errors are converted to client-side translation based on error codes. However, sometimes you need to raise more specific and meaningful error messages from the server, in this case the raised error should contain translation key(s) and context instead of raw message(s), e.g.:
 

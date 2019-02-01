@@ -100,20 +100,20 @@ Use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/re
 ### Icons & Splashscreens
 
 It does exist a couple of solutions to generate it for your app:
-* https://github.com/eberlitz/splashicon-generator
-* https://www.npmjs.com/package/Cordova-gen-icon
-* https://www.javascripttuts.com/how-to-automatically-generate-icons-and-splash-screens-with-the-ionic-cli/
-* https://github.com/AlexDisler/Cordova-icon
+* [splashicon-generator](https://github.com/eberlitz/splashicon-generator)
+* [Cordova-gen-icon](https://www.npmjs.com/package/Cordova-gen-icon)
+* [Ionic CLI](https://www.javascripttuts.com/how-to-automatically-generate-icons-and-splash-screens-with-the-ionic-cli/)
+* [Cordova-icon](https://github.com/AlexDisler/Cordova-icon)
 
-You will find the example model icon/splash in *Cordova/model* so that running https://github.com/eberlitz/splashicon-generator in the *Cordova* directory should work. **Under windows** take care to [this issue](https://github.com/eberlitz/splashicon-generator/issues/23).
+You will find the example model icon/splash in *Cordova/model* so that running [splashicon-generator](https://github.com/eberlitz/splashicon-generator) in the *Cordova* directory should work. **Under windows** take care to [this issue](https://github.com/eberlitz/splashicon-generator/issues/23).
 
 ### Plugins
 
 We rely on a bunch of Cordova plugins so it might be useful to refer to their specific issues:
-* https://github.com/apache/Cordova-plugin-device
-* https://github.com/phonegap/phonegap-plugin-push
-* https://github.com/apache/Cordova-plugin-geolocation
-* https://github.com/crosswalk-project/Cordova-plugin-crosswalk-webview
+* [Cordova-plugin-device](https://github.com/apache/Cordova-plugin-device)
+* [phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push)
+* [Cordova-plugin-geolocation](https://github.com/apache/Cordova-plugin-geolocation)
+* [Cordova-plugin-crosswalk-webview](https://github.com/crosswalk-project/Cordova-plugin-crosswalk-webview)
 
 ::: danger
 The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/blog/crosswalk-final-release.html), as a consequence there are some issues with recent Cordova versions like [this](https://github.com/apache/Cordova-android/pull/417). We will probably drop it soon.
