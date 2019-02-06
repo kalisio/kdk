@@ -1,16 +1,31 @@
 # A Step-by-Step introduction to KDK
 
-A Kalisio application includes the front-end side client as well as back-end services/API gateway.
+**KDK** is mainly powered by the following stack:
+* [Feathers](https://feathersjs.com/) on the backend side
+* [Quasar](https://quasar-framework.org/) on the frontend side
 
-## Running the app
+If you are not familiar with those technologies and want to develop with the **KDK**, in addition to read this documentation, we recommend reading [https://github.com/claustres/quasar-feathers-tutorial](https://github.com/claustres/quasar-feathers-tutorial). Indeed, KDK template application is based on the Quasar wrapper for Feathers, while KDK modules are Feathers plugins.
 
-### The easy way : using Docker
+A KDK-based application usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [kApp](https://github.com/kalisio/kApp) as a starting point. In this guide we will use the template as a reference but most commands will be valid for any KDK-based application.
 
-> This requires you to [install Docker](https://docs.docker.com/engine/installation/), the world’s leading software container platform.
+The kApp includes all the necessary boilerplate that you will need to get started building your application:
+* [client-side boilerplate](https://v0-14.quasar-framework.org/guide/app-boilerplate.html) in the *root* folder
+* [server-side boilerplate](https://docs.feathersjs.com/guides/basics/generator.html) in the *api* folder
+* [continuous integration/deployment boilerplate](../development/deploy.md) in the *root* and *deploy* folders
 
-Kalisio provides Docker images on the [Docker Hub](https://hub.docker.com/u/kalisio/) to ease deploying your own server. To run correctly it has to be linked with a standard [MongoDB container](https://hub.docker.com/_/mongo/) for the database. 
+It also includes the minimum viable set of features to start:
+* a [basic application layout](../../api/kcore/components.md#layout)
+* ready-to-go [user authentication services](../../api/kcore/services.md#users) and [screens](../../api/kcore/components.md#authentication)
 
-The following commands should do the job (assuming `kApp` is the name of the app):
+## Running a kApp
+
+::: warning
+This requires you to [install Docker](https://docs.docker.com/engine/installation/), the world’s leading software container platform.
+:::
+
+Kalisio provides Docker images for the template on the [Docker Hub](https://hub.docker.com/u/kalisio/) to ease testing it. To run correctly it has to be linked with a standard [MongoDB container](https://hub.docker.com/_/mongo/) for the database. 
+
+The following commands should do the job:
 ```bash
 // Run the MongoDB container
 docker run --name mongodb-kapp -v mongodb_kapp:/data/db -d mongo
@@ -25,7 +40,7 @@ Then point your browser to [localhost:8081](http://localhost:8081).
 If running Docker under Windows in a virtual machine first redirect the port 8081 of your virtual machine to your host
 ::: 
 
-You can also use [docker-compose](https://docs.docker.com/compose/) and the [docker compose file](https://github.com/kalisio/kApp/blob/master/docker-compose.yml).
+You can also use [docker-compose](https://docs.docker.com/compose/) and the [docker compose files](https://github.com/kalisio/kApp/tree/master/deploy).
 The following commands should do the job:
 ```bash
 docker pull kalisio/kapp
@@ -42,35 +57,35 @@ docker-compose down -v
 Some secrets (like your AWS S3 access key) need to be set in your environment to make it work, see [deployment prerequisites](./../development/deploy.md#prerequisites)
 ::: 
 
-### The hard way : from source code
+## Coding in a kApp
 
-First you have to ensure the same [prerequisites](./../development/develop.md#prerequisites) as for developing to build Kalisio app from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance of the Kalisio app:
+First you have to ensure you fulfilled the [prerequisites](./../development/develop.md#prerequisites) to build and run kApp from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance:
 
 ```bash
-// Clone Kalisio app
+// Clone kApp
 git clone https://github.com/kalisio/kApp.git
 cd kApp
 
 // Client build (or using yarn)
-yarn/npm install
-quasar build
+yarn install
+yarn/npm run build
 
 // Server build (or using yarn)
 cd api
-yarn/npm install
+yarn install
 yarn/npm run build
 
 // Running the server
 yarn/npm run prod
 ```
 
-Then point your browser to [localhost:8081](http://localhost:8080).
+Then point your browser to [localhost:8081](http://localhost:8081).
 
-## Configuring the app
+## Configuring a kApp
 
 ### Backend side
 
-Kalisio app backend configuration is based on [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `api/config` folder. The main properties are the following:
+kApp backend configuration is based on [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `api/config` folder. The main properties are the following:
 * **apiPath**: the API path prefix
 * **port**: the server port
 * **domain**: the web application domain name (eg https://app.kalisio.xyz)
@@ -119,11 +134,11 @@ Environment variables (will override defaults in config file):
 
 ### Frontend side
 
-Kalisio app frontend configuration is based on the same underlying [tool](https://github.com/lorenwest/node-config) that powers [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `config` folder. The main properties are the following:
+kApp frontend configuration is based on the same underlying [tool](https://github.com/lorenwest/node-config) that powers [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `config` folder. The main properties are the following:
 * **apiPath**: the API path prefix
 * **apiTimeout**: the API timeout
 * **version**: the web application version number
-* **domain**: the web application domain name (eg https://app.kalisio.xyz)
+* **domain**: the web application domain name (eg https://kapp.dev.kalisio.xyz)
 * **transport** : the transport to be used between frontend and backend, could be `http` for standard REST or `websocket` for WebSockets
 * **appName**: the name of the Kalisio app
 * **appLogo**: the image to be used as logo for the Kalisio app
@@ -147,4 +162,17 @@ Environment variables for the frontend development server (will override default
 * **PORT / HTTPS_PORT**: backend port for HTTP and HTTPS modes (used to configure proxy)
 * **CLIENT_PORT / HTTPS_CLIENT_PORT**: frontend port for HTTP and HTTPS modes
 
+## To go further
+
+To get a deeper overview of some of the internals we recommend you to read our technical articles on Medium as a source of inspiration:
+* [FeathersJS in production: configuration, API prefixing, logging and error catching](https://blog.feathersjs.com/feathersjs-in-production-configuration-api-prefixing-logging-and-error-catching-2a80e044e233)
+* [How to setup OAuth flow with FeathersJS](https://blog.feathersjs.com/how-to-setup-oauth-flow-with-featherjs-522bdecb10a8)
+* [Enterprise-grade authentication using AWS Cognito and OneLogin with FeathersJS](https://blog.feathersjs.com/enterprise-grade-authentication-using-aws-cognito-and-onelogin-with-feathersjs-d4c6f46ab123)
+* [Access control strategies with FeathersJS](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)
+* [Stress testing your FeathersJS application like in production](https://blog.feathersjs.com/stress-testing-your-feathersjs-application-like-in-production-4b8611ee8d9e)
+* [FeathersJS in production: password policy and rate limiting](https://blog.feathersjs.com/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
+
+::: tip Note
+The Kalisio framework is also inspired by our experience in developing [Weacast](https://weacast.github.io/weacast-docs/), referring to it as a more simple project might help.
+:::
 

@@ -102,3 +102,8 @@ However options of the **itemActions** are more complex:
 The **k-editor** (and its modal counterpart **k-modal-editor**) is a built-in editor, relying on different [mixins](./mixins.md) according to the following lifecycle:
 
 ![Editor lifecycle](../../assets/editor-lifecycle.png)
+
+## Authentication
+
+
+

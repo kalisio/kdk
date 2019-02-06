@@ -10,7 +10,7 @@ You will learn how to deploy your own KDK app.
 ## Development
 
 In these guides you will learn step-by-step how the setup your development environment.
-You'll also learn how to create, develop and publish your own app and plugins.
+You'll also learn how to create, develop and publish your own app and plugins, which is also how we develop the KDK.
 
 * [Setup your environment](./development/setup.md)
 * [Develop your app](./development/develop.md)
