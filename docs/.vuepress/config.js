@@ -52,7 +52,7 @@ function getGuidesSidebar () {
     },
     {
       title: 'Development',
-      children: ['development/setup', 'development/develop', 'development/deploy' ] 
+      children: ['development/setup', 'development/develop', 'development/deploy', 'development/publish' ] 
     }
   ]
 }
