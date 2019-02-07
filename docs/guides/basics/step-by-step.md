@@ -14,10 +14,11 @@ The kApp includes all the necessary boilerplate that you will need to get starte
 * [continuous integration/deployment boilerplate](../development/deploy.md) in the *root* and *deploy* folders
 
 It also includes the minimum viable set of features to start:
-* a [basic application layout](../../api/kcore/components.md#layout)
+* a [basic application layout](../../api/kcore/components.md#layout) including side navigation, application bar and a right panel
 * ready-to-go [user authentication services](../../api/kcore/services.md#users) and [screens](../../api/kcore/components.md#authentication)
+* a [basic activity](../../api/kcore/mixins.md#base-activity) listing registered users using a [k-list](../../api/kcore/components.md#collections)
 
-## Running a kApp
+## Running a kApp from a Docker image
 
 ::: warning
 This requires you to [install Docker](https://docs.docker.com/engine/installation/), the world’s leading software container platform.
@@ -27,6 +28,8 @@ Kalisio provides Docker images for the template on the [Docker Hub](https://hub.
 
 The following commands should do the job:
 ```bash
+// Retrieve the latest available dev tag
+docker pull kalisio/kapp:0.3.0-dev
 // Run the MongoDB container
 docker run --name mongodb-kapp -v mongodb_kapp:/data/db -d mongo
 
@@ -57,7 +60,7 @@ docker-compose down -v
 Some secrets (like your AWS S3 access key) need to be set in your environment to make it work, see [deployment prerequisites](./../development/deploy.md#prerequisites)
 ::: 
 
-## Coding in a kApp
+## Running a kApp from source code
 
 First you have to ensure you fulfilled the [prerequisites](./../development/develop.md#prerequisites) to build and run kApp from source code. Then the following commands, assuming you have a MongoDB instance running on local host and default port (27017), should launch your local instance:
 
@@ -66,20 +69,22 @@ First you have to ensure you fulfilled the [prerequisites](./../development/deve
 git clone https://github.com/kalisio/kApp.git
 cd kApp
 
-// Client build (or using yarn)
+// Client build
 yarn install
 yarn/npm run build
 
-// Server build (or using yarn)
+// Server build
 cd api
 yarn install
 yarn/npm run build
 
-// Running the server
+// Running the server in production will also serve the client
 yarn/npm run prod
 ```
 
 Then point your browser to [localhost:8081](http://localhost:8081).
+
+To start coding into your application please refer to our [development guide](../development/develop.md).
 
 ## Configuring a kApp
 
