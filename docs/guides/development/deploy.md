@@ -2,9 +2,16 @@
 
 ## Deployment pipeline
 
-The global continuous integration and deployment (CI/CD) pipeline is illustrated in the following schema:
+The main purpose of the continuous integration and deployment (CI/CD) pipeline is to create/build applications artifacts (Docker images for the web application and associated mobile application bundles) and deploy them in production-like environments in order to test it. The global CI/CD pipeline is illustrated in the following schema:
 
 ![Deployment pipeline](./../../assets/cd-pipeline.svg)
+
+It comes in three different flavors, as defined by the value of the `NODE_APP_INSTANCE` environment variable:
+* **dev**: in order to deploy current development/alpha version, linked to the `master` branch
+* **test**: in order to deploy current staging/beta version, linked to the `test` branch
+* **prod**: in order to deploy current production version, linked to `tags` on the `test` branch
+
+**TODO**
 
 ## Prerequisites
 
