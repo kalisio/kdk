@@ -34,7 +34,7 @@ docker pull kalisio/kapp:0.3.0-dev
 docker run --name mongodb-kapp -v mongodb_kapp:/data/db -d mongo
 
 // Run the Kalisio app container
-docker run --name kapp -d -p 8081:8081 --link mongodb-kapp:mongodb kalisio/kapp
+docker run --name kapp -d -p 8081:8081 --link mongodb-kapp:mongodb -e "NODE_APP_INSTANCE=" kalisio/kapp:0.3.0-dev
 ```
 
 Then point your browser to [localhost:8081](http://localhost:8081).
