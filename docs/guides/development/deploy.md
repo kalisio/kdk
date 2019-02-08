@@ -23,7 +23,7 @@ CI/CD comes al well in three different flavors, as defined by the value of the `
 * **prod**: in order to deploy current production version, linked to `tags` on the `test` branch of your code
 
 ::: tip
-In the CI/CD process the `FLAVOR`/`NODE_APP_INSTANCE` environment variable is automatically set based on the branch/tag you are pushing
+In the CI/CD process the `FLAVOR`/`NODE_APP_INSTANCE` environment variable is automatically set based on the branch/tag you are pushing. During local development these variables are usually not defined.
 :::
 
 Starting from the following base application setup:

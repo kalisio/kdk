@@ -22,6 +22,7 @@ module.exports = {
       { text: 'Guides', link: '/guides/' },
       { text: 'Architecture', link: '/architecture/' },
       { text: 'API', link: '/api/' },
+      { text: 'Tips', link: '/tips.md' },
       { text: 'Tools', link: '/tools/' }
     ],
     sidebar: {
