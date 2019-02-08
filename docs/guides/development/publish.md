@@ -32,7 +32,7 @@ If you have a lot of issues/PRs to be integrated in change log please [generate 
 :::
 
 ::: danger
-The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches**
+The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches
 :::
 
 ::: warning

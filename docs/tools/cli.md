@@ -1,5 +1,59 @@
 # Command-line tools
 
+## KDK CLI
+
+### Installation
+
+Production version (**not yet pushed**):
+```bash
+npm install -g @kalisio/cli
+```
+
+Or to use the master branch:
+```bash
+git clone https://github.com/kalisio/kdk.git
+cd kdk
+npm install
+npm link
+```
+
+### Usage
+
+Allow to easily clone, install, link, switch branch on all modules required for a KDK-based application using a workspace file like this:
+```
+module.exports = {
+  // Each key is the name of a module
+  kCore: {
+    dependencies: [] // List of dependent kalisio modules
+  },
+  kApp: {
+    application: true, // Indicates if this is the main application module
+    dependencies: ['kCore']
+  }
+}
+
+```
+All operations will take effect in the current directory so that subdirectories named according to modules will be created.
+
+```
+// Will clone all repositories
+kalisio workspace.js --clone
+// Will install dependencies in all modules
+kalisio workspace.js --install
+// Will perform link between required modules
+kalisio workspace.js --link
+// Will perform unlink between required modules
+kalisio workspace.js --unlink
+// Will perform branch switching on all modules
+kalisio workspace.js --branch test
+```
+
+::: tip
+This CLI assumes git and yarn are already globally installed on your system.
+:::
+
+Sample [workspaces](https://github.com/kalisio/kdk/tree/master/workspaces) for our [application template](https://github.com/kalisio/kApp), [Kano](https://github.com/kalisio/kano) and [Akt'n'Map](https://github.com/kalisio/aktnmap) are provided.
+
 ## [Screen](https://doc.ubuntu-fr.org/screen)
 
 We use it to launch processes in the background on servers, which won't be killed when closing the ssh session.

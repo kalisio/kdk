@@ -46,8 +46,6 @@ Due to some [changes](http://codetunnel.io/npm-5-changes-to-npm-link/) in the wa
 
 [Install Yarn](https://yarnpkg.com/en/docs/install) on your platform.
 
-https://yarnpkg.com
-
 #### Install Quasar CLI
 
 Install the Quasar CLI : `$ npm install -g quasar-cli`
@@ -61,7 +59,7 @@ Follow this [tutorial](https://evothings.com/doc/build/cordova-install-windows.h
 While it is a WIP and not yet pushed to NPM, or when developing, please use the following process.
 
 ::: tip
-Since 07/2018 we recommand using our [CLI](https://github.com/kalisio/cli) but you can still proceed manually as explained below.
+We recommand using our [CLI](../../tools/cli.md#kdk-cli) but you can still proceed manually as explained below.
 :::
 
 First clone all the modules/plugins you need and use [yarn/npm link](https://docs.npmjs.com/cli/link) to make them globally available to your Node.js installation:
