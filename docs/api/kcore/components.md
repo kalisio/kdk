@@ -97,13 +97,182 @@ However options of the **itemActions** are more complex:
   * **handler**: function to be called when action is triggerred
 * **menu**: the list of actions displayed in the menu, each action been described as above
 
-## Forms and editors
+## Forms 
 
-The **k-editor** (and its modal counterpart **k-modal-editor**) is a built-in editor, relying on different [mixins](./mixins.md) according to the following lifecycle:
+The **k-form** is a generic form component capable of building HTML forms from of a [JSON schema](https://json-schema.org/). Moreover **k-form** validates that the data is conformed to the schema using [AJV validator](https://github.com/epoberezkin/ajv). 
+
+A schema must have the following convention:
+* a `$schema` property specifying the version of the schema
+* a `$id` property specifying the id of the schema. It is mainly used by **AJV** to cache the schema.
+* a `title` property specifying the title of the form. It is used by the **Editors**.
+* a `description` property providing a brief description of the usage of the schema
+* a `type` which must be `object`
+* a `properties` property which define the list of the fields of the form. To each object is assigned a field. The name of the field is the name of the object and the properties are used to provide the characteristics of the field. A `field` sub-object provides the UI characteristic to assign to the field: the component to be used for the rendering as well as the properties to apply to this component.
+* `required` property to define the required fields. You must specify the name of the fields.
+
+As an example, here is a schema defining a basic form asking for an `email` and a `password`:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "A unique identifier",
+  "title": "The title of the schema", 
+  "description": "A description of the schema", 
+  "type": "object",
+  "properties": {
+     "email": {
+      "type": "string",
+      "format": "email",
+      "field": {
+        "component": "form/KTextEmail",
+        "helper": "schemas.EMAIL_FIELD_HELPER"
+      }
+    }
+    "password": {
+      "type": "string", 
+      "field": {
+        "component": "form/KTextPassword",
+        "helper": "schemas.PASSWORD_FIELD_HELPER"
+      }
+    }
+  },
+  "required": ["name", "password"]
+}
+```
+
+The **KDK** comes with a set of built-in fields:
+* **k-attachment-field**: an input used to upload a document
+* **k-chips-field**: a basic chips input based on Quasar [Chips input](https://v0-14.quasar-framework.org/components/chips-input.html)
+* **k-chips-with-icon-field**: extends the previous chips input in 
+* **k-datetime-field**: a Quasar [Datetime input](https://v0-14.quasar-framework.org/components/datetime.html)
+* **k-email-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `email`
+* **k-icon-field**: an input that allows you to select an icon and to assign it a color among. The list of icons is provided by [FontAwesome](https://fontawesome.com/icons?d=gallery
+* **k-item-field**: an input that allows you to select one or multiple items from one service or many services.
+* **k-number-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `number`
+* **k-options-field**: a Quasar [Options group input](https://v0-14.quasar-framework.org/components/option-group.html)
+* **k-phone-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `phone`
+* **k-select-field**:  a Quasar [Select input](https://v0-14.quasar-framework.org/components/select.html)
+* **k-tag-field**: an input that allows you to define a set of tags
+* **k-textarea-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `textarea`
+* **k-text-field**: a Quasar [text input](https://v0-14.quasar-framework.org/components/input.html) of type of `email`
+* **k-toggle-field**: a Quasar [Toggle input](https://v0-14.quasar-framework.org/components/toggle.html)
+* **k-url-field**: a Quasar [text input](https://v0-14.quasar-framework.org/components/input.html) of type of `url`
+
+It also has modules that propose additional. For instance, the **kMap** module provides the [**k-location-field**](../kmap/components.md#location). In addition one can add his own field. When implementing a field, you must rely on the [base field mixin](./mixins.md#base-field). 
+
+The properties to declare  a **k-form** are the following:
+* **schema**: the schema object to be used to build the form
+* **clearOnCreate**: ??? _FIXME_
+* **display**: the options to be used when displaying the fields. You can specify:
+  * **icon**: a boolean value to tell whether an icon has to be displayed or not in front of each field
+  * **label**: a boolean value to tell whether the field label have to be displayed or not in front of each field
+  * **labelWidth**: the width used to display the label. Out of 12 grid points, how much should the label take? Default is 5. Minimum is 1 and maximum is 11
+
+::: tip
+Because, the **k-form** loads dynamically the required components to build the form, it is mandatory to use use a reference to the form using the keyword `ref` and to the [**refs resolver mixin**](../mixins.md#refs-resolver) to wait for the components to be loaded before applying any methods.
+:::
+
+## Editors
+
+The **Editors** are built-in editors that allow you to create/edit an object/perspective using a **k-form**. Thus we distinguish the following modes:
+* the `create` mode allows you to create a new object
+* the `update` mode allows you to edit an existing object or a perspective. In that case you must provide to the **editor** the **object id** of the object to edit and the **perspective name** if wanted.
+
+The **KDK** comes with 2 types of editor:
+* the **k-editor** which is rendered within the parent container
+* the **k-modal-editor** which is rendered within a modal widget
+
+Both components depend on different [mixins](./mixins.md) according to the following lifecycle:
 
 ![Editor lifecycle](../../assets/editor-lifecycle.png)
 
+### k-editor
+
+The following example shows how to edit the **profile** perspective of a user (service **users**):
+
+```html
+<k-editor service="users" :objectId="objectId" perspective="profile"/>
+```
+
+where **k-editor** has been declared with the following code:
+
+```js
+this.$options.components['k-editor'] = this.$load('editor/KEditor')
+```
+
+The properties to declare a **k-editor** are the following:
+* **objectId**: the Id of the object to edit. If not defined, the editor is in the `create` mode
+* **perspective**: the perspective of the object to edit
+* **schemaName**: the name of the schema to be used to build the corresponding **k-form**. If you do not provide any name, the **editors** will search for a schema with the name:
+  * in `create` mode: `<service>-create.json`
+  * in `update` mode: `<service>-update.json`
+* **baseObject**: an default object to be used to keep track of existing additional properties to the ones edited through the form 
+* **baseQuery**: a query to be executed to customize the access to the service
+* **clearButton**: the label of the clear button. When clearing the editor, all the fields are emptied. By default the property is empty and the button is not rendered.
+* **resetButton**: the label of the reset button. When resetting the editor, the form is filled with the default object. By default the property is empty and the button is not rendered.
+
+::: warning
+Schemas are usually stored in a specific folder and you must have tell **Webpack** to look in this folder when searching for a schema.
+::: 
+
+### k-modal-editor
+
+There are 2 ways to use the **k-modal-editor**:
+* by declaring the **k-modal-editor** directly in the parent component. Check out the code example [here](https://github.com/kalisio/kTeam/blob/master/src/client/components/KOrganisationsPanel.vue#L26)
+* by declaring a route using the the **KModalEditor**. In this case you must:
+  * in the template section, define a `router-view` with the following properties:
+    *  the targeted `service`
+    *  the `router` function to be triggered when the editor is closed. The function should define the navigation routes when the user cancel or apply the changes in the editor
+  
+```html
+<div>
+  ....
+  <router-view service="groups" :router="router()"></router-view>
+</div>
+```
+  
+```js
+  router () {
+    return {
+      onApply: { name: 'groups-activity', params: { contextId: this.contextId } },
+      onDismiss: { name: 'groups-activity', params: { contextId: this.contextId } }
+    }
+  }
+```
+
+  *  define a function that trigger the navigation to the editor route, usually an action within an activity:
+
+```js
+ this.registerFabAction({
+    name: 'create-group',
+    label: this.$t('KGroupsActivity.CREATE_GROUP_LABEL'),
+    icon: 'add',
+    route: { name: 'create-group', params: { contextId: this.contextId } }
+  })
+```
+
+  *  define the corresponding route with:
+     * the `name` of the route
+     * the `component` property set to **editor/KModalEditor** 
+     * the `props` property set to to `true`
+
+```js
+'groups': {
+  name: 'groups-activity',
+  component: 'KGroupsActivity',
+  props: true,
+  children: {
+  'create': { name: 'create-group', component: 'editor/KModalEditor', props: true },
+  'edit/:objectId': { name: 'edit-group', component: 'editor/KModalEditor', props: true }
+}
+```
+
+The properties to declare a **k-modal-editor** are identical to those of the **k-modal-editor** plus: 
+ * **router**: the router function to be triggered when the editor is getting closed. 
+
+
 ## Authentication
+
 
 
 

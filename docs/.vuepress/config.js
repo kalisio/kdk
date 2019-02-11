@@ -39,6 +39,7 @@ function getAboutSidebar () {
   return [
     '',
     'roadmap',
+    'contributing',
     'license',
     'contact'
   ] 

@@ -14,7 +14,7 @@ Although some dedicated components do exist, you usually rely on provided [mixin
 
 The **k-location-map** allows to display a location on a map using a marker.
 
-The **k-location-field** provides you with an autocomplete address search input powered by the [geocoder service](./services.md#geocoder-service) to be embedded in a [**k-form**](../kcore/components.md#forms-and-editors).
+The **k-location-field** provides you with an autocomplete address search input powered by the [geocoder service](./services.md#geocoder-service) to be embedded in a [**k-form**](../kcore/components.md#forms).
 
 ## Globe
 
