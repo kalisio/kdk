@@ -19,7 +19,7 @@
     "url": "git://github.com/kalisio/kdk.git"
   },
   "author": {
-    "name": "Kaelia contributors",
+    "name": "Kalisio contributors",
     "url": "https://github.com/kalisio/kdk"
   },
   "contributors": [],
@@ -33,9 +33,9 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "publish": "git push origin && git push origin --tags",
-    "release:patch": "npm version patch && npm run publish",
-    "release:minor": "npm version minor && npm run publish",
-    "release:major": "npm version major && npm run publish",
+    "release:patch": "npm version patch && npm run publish --access=public",
+    "release:minor": "npm version minor && npm run publish --access=public",
+    "release:major": "npm version major && npm run publish --access=public",
     "lint": "standard src/**/*.js test/**/*.js --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
