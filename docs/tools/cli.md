@@ -2,11 +2,13 @@
 
 ## KDK CLI
 
+The KDK CLI is a multiplexer for usual git/npm/yarn commands used when developing KDK-based applications. It allows to easily clone, install, link, unlink, switch branch on all modules and application using a single command.
+
 ### Installation
 
-Production version (**not yet pushed**):
+Production version:
 ```bash
-npm install -g @kalisio/cli
+npm install -g @kalisio/kdk
 ```
 
 Or to use the master branch:
@@ -19,32 +21,32 @@ npm link
 
 ### Usage
 
-Allow to easily clone, install, link, switch branch on all modules required for a KDK-based application using a workspace file like this:
+The CLI relies on a workspace file defining the dependency tree between your KDK-based application and modules like this:
 ```
 module.exports = {
-  // Each key is the name of a module
+  // Each key is the repo name of a module or application
   kCore: {
-    dependencies: [] // List of dependent kalisio modules
+    dependencies: [] // List of dependent kalisio modules if any
   },
   kApp: {
     application: true, // Indicates if this is the main application module
-    dependencies: ['kCore']
+    dependencies: ['@kalisio/kdk-core']
   }
 }
 
 ```
-All operations will take effect in the current directory so that subdirectories named according to modules will be created.
+All operations will take effect in the current working directory so that subdirectories named according to modules will be created or expected to already exist.
 
 ```
 // Will clone all repositories
 kalisio workspace.js --clone
-// Will install dependencies in all modules
+// Will install dependencies in all modules and application
 kalisio workspace.js --install
-// Will perform link between required modules
+// Will perform link between required modules and application
 kalisio workspace.js --link
-// Will perform unlink between required modules
+// Will perform unlink between required modules and application
 kalisio workspace.js --unlink
-// Will perform branch switching on all modules
+// Will perform branch switching on all modules and application
 kalisio workspace.js --branch test
 ```
 

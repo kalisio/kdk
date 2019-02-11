@@ -3,10 +3,10 @@ module.exports = {
     dependencies: []
   },
   kMap: {
-    dependencies: ['kCore']
+    dependencies: ['@kalisio/kdk-core']
   },
   kano: {
     application: true,
-    dependencies: ['kCore', 'kMap']
+    dependencies: ['@kalisio/kdk-core', '@kalisio/kdk-map']
   }
 }

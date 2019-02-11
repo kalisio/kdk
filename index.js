@@ -7,15 +7,17 @@ const makeDebug = require('debug')
 const shell = require('shelljs')
 const util = require('util')
 
-const debug = makeDebug('kala')
+const debug = makeDebug('kdk')
 
 const exec = util.promisify(require('child_process').exec)
+const wait = util.promisify(setTimeout)
 
 async function runCommand (command) {
   if (program.debug) debug('Running command', command)
   const { stdout, stderr } = await exec(command)
   console.log(stdout)
   console.error(stderr)
+  await wait(2000) // Wait a couple of seconds to ensure files are closed
 }
 
 async function run (workspace, branch) {
@@ -32,7 +34,8 @@ async function run (workspace, branch) {
     if (program.clone) {
       await runCommand(`git clone https://github.com/kalisio/${module}.git`)
     }
-    shell.cd(`./${module}`)
+    const cwd = process.cwd()
+    shell.cd(path.join(cwd, `${module}`))
     try {
       if (program.branch) {
         await runCommand(`git fetch origin ${branch}:${branch}`)
@@ -58,7 +61,7 @@ async function run (workspace, branch) {
     } catch (error) {
       console.log(error)
     }
-    shell.cd('..')
+    shell.cd(cwd)
   }
   // Now everything is installed process with links
   if (program.link || program.unlink) {
@@ -69,7 +72,8 @@ async function run (workspace, branch) {
       }
       console.log(`Linking module ${module}`)
       options = workspace[module]
-      shell.cd(`./${module}`)
+      const cwd = process.cwd()
+      shell.cd(path.join(cwd, `${module}`))
       try {
         for (let i = 0; i < options.dependencies.length; i++) {
           const dependency = options.dependencies[i]
@@ -87,7 +91,7 @@ async function run (workspace, branch) {
           }
           shell.cd('..')
         }
-        shell.cd('..')
+        shell.cd(cwd)
       } catch (error) {
         console.log(error)
       }
@@ -96,19 +100,19 @@ async function run (workspace, branch) {
 }
 
 program
-	.version(require('./package.json').version)
-	.usage('<workspacefile> [options]')
-	.option('-d, --debug', 'Verbose output for debugging')
+  .version(require('./package.json').version)
+  .usage('<workspacefile> [options]')
+  .option('-d, --debug', 'Verbose output for debugging')
   .option('-c, --clone', 'Clone git repositories')
-	.option('-i, --install', 'Perform yarn install')
-	.option('-l, --link', 'Perform yarn link')
-	.option('-ul, --unlink', 'Perform yarn unlink')
-  .option('-b, --branch [branch]', 'Sw<itch git branch')
-	.parse(process.argv)
+  .option('-i, --install', 'Perform yarn install')
+  .option('-l, --link', 'Perform yarn link')
+  .option('-ul, --unlink', 'Perform yarn unlink')
+  .option('-b, --branch [branch]', 'Switch git branch')
+  .parse(process.argv)
 
 let workspace = program.args[0]
 // When relative path is given assume it relative to working dir
-if (!path.isAbsolute(workspace)) workspace = path.join(process.cwd(), "workspaces", workspace)
+if (!path.isAbsolute(workspace)) workspace = path.join(process.cwd(), workspace)
 // Read workspace file
 workspace = require(workspace)
 run(workspace, program.branch || 'master')

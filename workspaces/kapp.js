@@ -4,6 +4,6 @@ module.exports = {
   },
   kApp: {
     application: true,
-    dependencies: ['kCore']
+    dependencies: ['@kalisio/kdk-core']
   }
 }
