@@ -183,6 +183,46 @@ Make it possible to manage globe layers and extend supported layer types:
 Make it possible to manage and style raw or time-based GeoJson map layers:
 * **createCesiumGeoJsonLayer(options)** automatically registered GeoJson Cesium layer constructor
 * **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Cesium style options](https://cesiumjs.org/Cesium/Build/Documentation/GeoJsonDataSource.html#.load)
+* **convertToCesiumObjects(style)** helper function to convert from JSON description to Cesium objects
+* **register/unregisterCesiumStyle(type, generator)** (un)registers a function generating a Cesium object depending on the given type:
+  * `entityStyle` => **f(entity, options)** returns a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
+  * `clusterStyle` => **f(entities, cluster, options)** returns a [Cesium cluster style object](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback)
+
+The mixin automatically registers defaults styling:
+  * `entityStyle` => will create a style based on the following options merged with the following order of precedence
+    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
+    * [Cesium entity style options](https://cesium.com/docs/tutorials/creating-entities/) set on layer descriptor
+    * [Cesium entity style options](https://cesium.com/docs/tutorials/creating-entities/) set on the **entityStyle** property in the component
+  * `clusterStyle` => will create a style based on the following options merged with the following order of precedence
+    * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on layer descriptor
+    * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on the **clusterStyle** property in the component
+
+Cesium styles often rely on dynamically created objects while the input styling configuration is a static JSON. As a consequence the following rules are used to convert from JSON to Cesium objects:
+* constants are expressed as strings starting with `'Cesium.'`
+* object instances are expressed as a `{ type, options }` object where type is a string starting with `'Cesium.'` followed by the class name like `'Cesium.CheckerboardMaterialProperty'`, options are constructor options for the object instance
+The following Cesium code:
+```
+ellipse.material = new Cesium.CheckerboardMaterialProperty({
+  evenColor : Cesium.Color.WHITE,
+  oddColor : Cesium.Color.BLACK,
+  repeat : new Cesium.Cartesian2(4, 4)
+})
+```
+will result in the following layer configuration:
+```
+ellipse: {
+  material: {
+    type: 'Cesium.CheckerboardMaterialProperty',
+    options: {
+      evenColor: 'Cesium.Color.WHITE',
+      oddColor: 'Cesium.Color.BLACK',
+      repeat: {
+        type: 'Cesium.Cartesian2',
+        options: [4, 4]
+    }
+  }
+}
+```
 
 ::: tip
 Marker cluster options are to be provided in the **cluster** property of the Cesium layer options
