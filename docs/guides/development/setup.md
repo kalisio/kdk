@@ -16,7 +16,7 @@ Kalisio modules are expected to work with Node.js 8.x
 :::
 
 ::: tip
-In order to be able to switch easily between different versions of Node.js we recommand to use a version manager like [n](https://github.com/tj/n)/[nvm](https://github.com/creationix/nvm) under Linux/Mac or [nvm](https://github.com/coreybutler/nvm-windows) under Windows.
+Under Windows we recommand using [Tortoise Git](https://tortoisegit.org/) and to set the [`autocrlf` flag](https://tortoisegit.org/docs/tortoisegit/tgit-dug-settings.html#tgit-dug-settings-git) in settings.
 :::
 
 #### Install Git
@@ -27,6 +27,10 @@ There are many resources available for installing it.
 - [Linux.](https://www.atlassian.com/git/tutorials/install-git#linux)
 - [macOS.](https://www.atlassian.com/git/tutorials/install-git#mac-os-x)
 - [Windows.](https://www.atlassian.com/git/tutorials/install-git#windows)
+
+::: tip
+In order to be able to switch easily between different versions of Node.js we recommand to use a version manager like [n](https://github.com/tj/n)/[nvm](https://github.com/creationix/nvm) under Linux/Mac or [nvm](https://github.com/coreybutler/nvm-windows) under Windows.
+:::
 
 #### Install MongoDB
 
