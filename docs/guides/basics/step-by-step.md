@@ -16,7 +16,9 @@ The kApp includes all the necessary boilerplate that you will need to get starte
 It also includes the minimum viable set of features to start:
 * a [basic application layout](../../api/kcore/components.md#layout) including side navigation, application bar and a right panel
 * ready-to-go [user authentication services](../../api/kcore/services.md#users) and [screens](../../api/kcore/components.md#authentication)
-* a [basic activity](../../api/kcore/mixins.md#base-activity) listing registered users using a [k-list](../../api/kcore/components.md#collections)
+* a [basic service](../../api/kcore/application.md) to create/remove documents in database
+* a [basic activity](../../api/kcore/mixins.md#base-activity) listing documents using a [k-list](../../api/kcore/components.md#collections)
+* a [basic editor](../../api/kcore/components.md#editors) to fill document properties when creating a new document
 
 ## Running a kApp from a Docker image
 
