@@ -41,8 +41,8 @@ This mixin is a mandatory one to build a map activity
 
 Make it possible to manage map layers and extend supported layer types:
 * **setupMap(domElement, options)** creates the underlying Leaflet map object with given options
-* **add(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog)
-* **show/hideLayer(name)** (un)hides the given layer in map, on first show the layer will be lazily created
+* **addLayer(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog)
+* **showLayer/hideLayer(name)** (un)hides the given layer in map, on first show the layer will be lazily created
 * **hasLayer(name)** check if a given layer is already registered
 * **isLayerVisible(name)** check if a given layer is visible and underlying Leaflet object created
 * **zoomToLayer(name)** fits the map view to visualize a given layer
@@ -167,8 +167,8 @@ This mixin is a mandatory one to build a globe activity
 
 Make it possible to manage globe layers and extend supported layer types:
 * **setupGlobe(domElement, token)** creates the underlying Cesium globe object with given Cesium Ion token
-* **add(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog)
-* **show/hideLayer(name)** (un)hides the given layer in globe, on first show the layer will be lazily created
+* **addLayer(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog)
+* **showLayer/hideLayer(name)** (un)hides the given layer in globe, on first show the layer will be lazily created
 * **hasLayer(name)** check if a given layer is already registered
 * **isLayerVisible(name)** check if a given layer is visible and underlying Cesium object created
 * **zoomToLayer(name)** fits the globe view to visualize a given layer
