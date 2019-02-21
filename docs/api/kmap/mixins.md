@@ -28,19 +28,39 @@ Ease management of time-based component:
 * **setTimeFormat(format)** change the formats used to display date/time, each format is based on [moment](https://momentjs.com/docs/#/displaying/format/) display options and the object is structured like this
   * **time**
     * **short**: display format for time in "short" form
-    * **long**: display format for time in "short" form
+    * **long**: display format for time in "long" form
   * **date**
     * **short**: display format for date in "short" form
-    * **long**: display format for date in "short" form
+    * **long**: display format for date in "long" form
   * **year**
     * **short**: display format for year in "short" form
-    * **long**: display format for year in "short" form
+    * **long**: display format for year in "long" form
   * **utc**: boolean indicating if date/time should be displayed in UTC or according to user's locale
   * **locale**: the user's locale to be used when not displaying date/time in UTC
 * **formatTime(format, datetime)**: get the formatted date/time for display according to current format settings, if no date/time given the current one set in component will be used. The format is the path to the actual format in the format object, e.g. `formatTime('time.short')` to get a formatted time in short form. The `iso` path is reserved for [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) display.
 
+Here is an example of a format object:
+```js
+{
+  time: {
+    short: 'H[h]',
+    long: 'HH:mm'
+  },
+  date: {
+    short: 'DD/MM',
+    long: 'dddd D'
+  },
+  year: {
+    short: 'YY',
+    long: 'YYYY'
+  },
+  utc: true,
+  locale: 'en'
+}
+```
+
 ::: tip
-By default the mixin is in sync with the `timeFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared data/time display format accross all time-based components with a dedicated UI to change settings.
+By default the mixin is in sync with the `timeFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared data/time display format accross all time-based components with a dedicated UI to change settings using e.g. `store.patch('timeFormat', { locale, utc })`.
 :::
 
 This mixin also adds the following internal data properties:
