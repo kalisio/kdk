@@ -21,6 +21,33 @@ Allow to launch native route navigation apps to go to a given location (the [lau
 * **canNavigate()** check if navigation is possible (mobile device and navigation app installed)
 * **navigate(longitude, latitude)** launches native route navigation app for the given location
 
+## Time
+
+Ease management of time-based component:
+* **setCurrentTime(datetime)** change the current time to the given one and ensure it is internally stored as a UTC [moment](https://momentjs.com/) object to avoid any confusion
+* **setTimeFormat(format)** change the formats used to display date/time, each format is based on [moment](https://momentjs.com/docs/#/displaying/format/) display options and the object is structured like this
+  * **time**
+    * **short**: display format for time in "short" form
+    * **long**: display format for time in "short" form
+  * **date**
+    * **short**: display format for date in "short" form
+    * **long**: display format for date in "short" form
+  * **year**
+    * **short**: display format for year in "short" form
+    * **long**: display format for year in "short" form
+  * **utc**: boolean indicating if date/time should be displayed in UTC or according to user's locale
+  * **locale**: the user's locale to be used when not displaying date/time in UTC
+* **formatTime(format, datetime)**: get the formatted date/time for display according to current format settings, if no date/time given the current one set in component will be used. The format is the path to the actual format in the format object, e.g. `formatTime('time.short')` to get a formatted time in short form. The `iso` path is reserved for [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) display.
+
+::: tip
+By default the mixin is in sync with the `timeFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared data/time display format accross all time-based components with a dedicated UI to change settings.
+:::
+
+This mixin also adds the following internal data properties:
+* **currentTime**: current time as UTC [moment](https://momentjs.com/) object
+* **currentTimeFormat**: current format object to be used for display
+* **currentFormattedTime**: same structure as the format object but contains ready-to-display values of the current time, e.g. `currentFormattedTime.time.short` will give you the formatted time string in short form according to current format settings.
+
 ## Feature Service
 
 Ease requests to a [feature service](./services.md#feature-service) in order to get real-time updates:
