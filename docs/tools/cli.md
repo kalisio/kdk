@@ -39,15 +39,15 @@ All operations will take effect in the current working directory so that subdire
 
 ```
 // Will clone all repositories
-kalisio workspace.js --clone
+kdk workspace.js --clone
 // Will install dependencies in all modules and application
-kalisio workspace.js --install
+kdk workspace.js --install
 // Will perform link between required modules and application
-kalisio workspace.js --link
+kdk workspace.js --link
 // Will perform unlink between required modules and application
-kalisio workspace.js --unlink
+kdk workspace.js --unlink
 // Will perform branch switching on all modules and application
-kalisio workspace.js --branch test
+kdk workspace.js --branch test
 ```
 
 ::: tip
