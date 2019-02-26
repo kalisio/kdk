@@ -2,16 +2,16 @@
 
 ## Deployment pipeline
 
-The main purpose of the continuous integration and deployment (CI/CD) pipeline is to create/build application artifacts (Docker images for the web application + mobile application bundles) and deploy it in production-like environments in order to test it. The global CI/CD pipeline is illustrated in the following schema:
+The main purpose of the continuous integration and deployment (CI/CD) pipeline is to create/build application artifacts (Docker images for the web application and mobile application bundles) and deploy it in production-like environments in order to test it. The global CI/CD pipeline is illustrated in the following schema:
 
 ![Deployment pipeline](./../../assets/cd-pipeline.svg)
 
 The different operations performed by each stages are the following:
 * **BUILD**: executes the *travis.build.sh* script to create the Docker images
 * **TEST**: executes the *travis.test.sh* script to run backend and frontend tests
-* **DEPLOY**: executes the *travis.deploy.sh* script to deploy the web application on the target infrastruture
-* **ANDROID**: executes the *travis.android.sh* script to build the Android APK
-* **IOS**: executes the *travis.ios.sh* script to build the iOS IPA
+* **DEPLOY**: executes the *travis.deploy.sh* script to deploy the web application on the target infrastructure
+* **ANDROID**: executes the *travis.android.sh* script to build the Android APK and deploy it to Google Play
+* **IOS**: executes the *travis.ios.sh* script to build the iOS IPA and deploy it to App Store Connect
 
 ::: tip
 You can skip any of this stage by adding `[skip stage]` to your commit message, e.g. `[skip android]` to skip the Android build

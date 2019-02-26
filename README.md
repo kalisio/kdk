@@ -13,7 +13,7 @@ The full documentation is available [here](https://kalisio.github.io/kdk/)
 
 ## Contributing
 
-Want to contribute ? check out our [contribution guidelines](https://kalisio.github.io/kdk/about/roadmap.html#contributing) for details
+Found a bug ? Missing a Feature ? Want to contribute ? check out our [contribution guidelines](https://kalisio.github.io/kdk/about/roadmap.html#contributing) for details
 
 ## License
 
