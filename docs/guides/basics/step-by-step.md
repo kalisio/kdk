@@ -99,7 +99,7 @@ kApp backend configuration is based on [Feathers](https://docs.feathersjs.com/gu
 * **apiLimiter**: the API rate limiting configuration
   * **http**: for HTTP REST clients, compliant with [express-rate-limit](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fnfriedly%2Fexpress-rate-limit) options
   * **websocket**: for Websocket clients, compliant with [node-rate-limiter](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fjhurliman%2Fnode-rate-limiter) options
-* **authentication** : object configuring [Feathers authentication](https://github.com/feathersjs/feathers-authentication#default-options) plus custom Kalisio options
+* **authentication** : object configuring [Feathers authentication](https://github.com/feathersjs/feathers-authentication#default-options) plus custom options
   * **passwordPolicy**: password policy configuration
     * **minLength**: minimum length
     * **maxLength**: maximum length
@@ -118,20 +118,20 @@ kApp backend configuration is based on [Feathers](https://docs.feathersjs.com/gu
 * **db**: database configuration
   * **adapter**: the database adapter, for now the only supported one is [`mongodb`](https://github.com/feathersjs/feathers-mongodb)
   * **url**: database URL to access the app database used by drivers such as [mongodb](https://github.com/mongodb/node-mongodb-native)
-* **mailer**: e-mail service configuration, compliant with [nodemailer](https://github.com/nodemailer/nodemailer-smtp-transport) options plus custom Kalisio options, e.g.
+* **storage**: storage service configuration used by [kCore](../../api/kcore/services.md#storage-service)
+  * **accessKeyId**: AWS S3 access key
+  * **secretAccessKey**: AWS S3 secret access key
+  * **bucket**: AWS S3 bucket to be used
+* **mailer**: e-mail service configuration used by [kNotify](../../api/knotify/services.md#mailer-service), compliant with [nodemailer](https://github.com/nodemailer/nodemailer-smtp-transport) options plus custom Kalisio options, e.g.
   * **service**: e-mail service to be used (like `gmail`)
   * **auth**: user login and password
   * **templateDir**: directory containing the e-mails templates to be used
-* **storage**: storage service configuration
+* **pusher**: push notification service configuration used by [kNotify](../../api/knotify/services.md#pusher-service)
   * **accessKeyId**: AWS SNS access key
   * **secretAccessKey**: AWS SNS secret access key
   * **region**: AWS region to be used (like `eu-west-1`)
   * **apiVersion**: AWS API version to be used (like `2010-03-31`)
   * **platforms**: object containing as keys platforms names in uppercase (like `ANDROID`) and corresponding AWS SNS ARN as values
-* **pusher**: push notification service configuration
-  * **accessKeyId**: AWS S3 access key
-  * **secretAccessKey**: AWS S3 secret access key
-  * **bucket**: AWS S3 bucket to be used
 * **proxyTable**: a set of proxy rules typically used for [scaling](./architecture/GLOBAL.MD#architecture-at-scale)
 
 Environment variables (will override defaults in config file):
@@ -158,7 +158,7 @@ kApp frontend configuration is based on the same underlying [tool](https://githu
   * **sideNav**: component to be used for the side bar, e.g. `'layout/KSideNav'`
 * **sideNav**:
   * **banner**: image to be used as banner
-  * **components**: object containing as keys configuration key names (like `ANDROID`) and corresponding component to be used as values
+  * **components**: object containing as keys configuration key names (like `XXX`) and corresponding component to be used as values
 * **XXX**: configuration object for component YYY
 
 ::: tip 

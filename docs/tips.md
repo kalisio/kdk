@@ -22,3 +22,7 @@ As a workaround you will either need to:
 ::: tip
 You might also clean all dependencies frist using [`rimraf node_modules`](http://www.nikola-breznjak.com/blog/javascript/nodejs/how-to-delete-node_modules-folder-on-windows-machine/) 
 :::
+
+## Running Kano and Weacast side-by-side in development mode
+
+By default all our apps uses the `8081` port for server and `8080` port for client in development mode. As Kano depends for some features on a running Weacast API you will need to run both on your local environment. To avoid any conflict you should run Weacast server (you don't need the client application only the API) by defining first `PORT=8082` as environment variable and then execute `npm run dev:replica` (this will use a different port for the Node.js debugger). You can launch Kano as usual in a second step.
