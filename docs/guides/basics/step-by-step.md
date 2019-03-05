@@ -59,7 +59,7 @@ docker-compose down -v
 ```
 
 ::: tip
-Some secrets (like your AWS S3 access key) need to be set in your environment to make it work, see [deployment prerequisites](./../development/deploy.md#prerequisites)
+For most applications some secrets (like your AWS S3 access key) need also to be set in your environment to make it work, see [deployment prerequisites](./../development/deploy.md#prerequisites)
 ::: 
 
 ## Running a kApp from source code

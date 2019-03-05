@@ -79,3 +79,57 @@ The following [hooks](./hooks.md) are executed on the `storage` service:
 
 ![Storage hooks](../../assets/storage-hooks.png)
 
+## Local settings service
+
+This **client-side** service allows to restore/save persistent settings to/from the [global store](./application.md#store) from/to [local storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
+
+::: warning
+`get` and `patch` methods are the only one allowed, `id` parameter is ignored and methods will always target the whole settings object
+:::
+
+::: warning
+This service has to be instanciated at application level, none provided by default
+:::
+
+To create your own service use the following code:
+```js
+import { Store, LocalSettingsService } from '@kalisio/kdk-core/client'
+
+// Setup defaults in global store
+Store.set('app-settings', { x: y, ... })
+// Create a service targeting only settings in store
+const settingsService = api.createService('settings', {
+  service: LocalSettingsService,
+  propertyMapping: {
+    x: 'app-settings.x',
+    ...
+  }
+})
+// Restore previous settings from local storage if any
+settingsService.restoreSettings()
+```
+
+::: tip
+Because settings are available through a service interface you can edit it using the [editor system](./components.md#editors). The `propertyMapping` will be used to match form field names and corresponding global store properties.
+:::
+
+For instance the following schema can be used to edit the previous sample:
+```json
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "http://www.kalisio.xyz/schemas/settings.update.json#",
+  "title": "schemas.UPDATE_SETTINGS_TITLE",
+  "type": "object",
+  "properties": {
+    "x": {
+      "type": "string", 
+      "field": {
+        "component": "form/KTextField",
+        "helper": "schemas.X_FIELD_HELPER"
+      }
+    }
+  },
+  "required": ["x"]
+}
+
+```
