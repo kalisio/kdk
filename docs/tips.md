@@ -1,5 +1,19 @@
 # Tips
 
+## Generating service account tokens
+
+If you'd like a third-party application to rely on the API of your application without authenticating using a user/password you can generate an access token with a fixed expiration date to be used as an API key.
+
+If your API needs a user ID to work as expected first register a user as usual. Then, using your application secret and a [JWT library](https://jwt.io/), issue a JWT with a payload matching the configuration options of your application regarding audience (i.e. domain), issuer and the user ID if any, e.g.:
+```json
+{
+  "aud": "https://kano.kargo.kalisio.xyz",
+  "iss": "kalisio",
+  "exp": 1552402010,
+  "userId": "5bc5b166beb4648d3cd79327"
+}
+```
+
 ## Linking errors
 
 Due to the modular approach of the KDK we need to [link](https://medium.com/@alexishevia/the-magic-behind-npm-link-d94dcb3a81af) the modules and the applications according to the dependency tree when developing.
@@ -23,6 +37,12 @@ As a workaround you will either need to:
 You might also clean all dependencies frist using [`rimraf node_modules`](http://www.nikola-breznjak.com/blog/javascript/nodejs/how-to-delete-node_modules-folder-on-windows-machine/) 
 :::
 
-## Running Kano and Weacast side-by-side in development mode
+## Running multiple applications side-by-side in development mode
 
-By default all our apps uses the `8081` port for server and `8080` port for client in development mode. As Kano depends for some features on a running Weacast API you will need to run both on your local environment. You should run Weacast server (you don't need the client application only the API) by defining first `PORT=8082` (to avoid port conflict) and `APP_SECRET=same value as in Kano configuration` (for single-sign-on to work) as environment variables and then execute `npm run dev:replica` (to avoid port conflict for the Node.js debugger). You can launch Kano as usual in a second step.
+For instance, as Kano depends for some features on a running Weacast API you will need to run both on your local environment. If your application also uses replication you will need to launch two instances in parallel. The problem is that by default all our apps uses the `8081` port for server and `8080` port for client in development mode, generating a port conflict.
+
+You should run the first server by defining `PORT=8082` (to avoid port conflict). If single-sign-on is expected to work, define also `APP_SECRET=same value as in second application configuration` as environment variables. Then execute the `npm run dev:replica` command (to avoid port conflict for the Node.js debugger). Last, you can launch the second server/client as usual.
+
+::: tip
+You usually don't need the client application but only the API on the replica but if required you can launch another client similarly using `CLIENT_PORT=8083`
+:::
