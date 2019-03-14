@@ -73,8 +73,20 @@ This mixin also adds the following internal data properties:
 Ease requests to a [feature service](./services.md#feature-service) in order to get real-time updates:
 * **getProbeFeatures(options)** retrieve the probe locations (if any) for a given [catalog layer descriptor](./services.md#catalog) to initialize the feature layer
 * **getFeatures(options, queryInterval)** get the latest available features for a given [catalog layer descriptor](./services.md#catalog) at current time or in a given elapsed time range if a query interval in milliseconds is given
+* **getMeasureForFeature(options, feature, startTime, endTime)** get the available probe measures for a given [catalog layer descriptor](./services.md#catalog) in the given time range, will store result in `probedLocation` attribute
+* **getProbedLocationMeasureAtCurrentTime()** computes measure values at current time (see [time mixin](./mixins.md#time)) once a location has been probed
 
 Please refer to [feature service API](./services.md#time-based-feature-aggregation) for more details.
+
+## Weacast
+
+Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-docs/):
+* **setupWeacast(config)** initializes a [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property
+* **setupForecastModels()** retrieve available [forecast models](https://github.com/mapbox/simplestyle-spec) from [Weacast API](https://weacast.github.io/weacast-docs/api/forecast.html)
+* **getForecastForLocation(long, lat, startTime, endTime)** helper function to dynamically probe weather elements at a given location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probes-api)
+* **getForecastForFeature(featureId, startTime, endTime)** helper function to get weather element at static probe location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probe-results-api)
+* **getProbedLocationForecastAtCurrentTime()** computes element values at current time (see [time mixin](./mixins.md#time)) once a location has been probed (dynamically or statically)
+* **getProbedLocationForecastMarker(feature, latlng)** generates a marker using a [wind barb](http://weather.rap.ucar.edu/info/about_windbarb.html) according to element values in feature
 
 ## Map
 
@@ -181,14 +193,9 @@ Make it possible to drag'n'drop GeoJson or KML file on the map ([Leaflet.FileLay
 
 Make it possible to manage [Weacast map layers](https://weacast.github.io/weacast-docs/api/layers.html#forecast-data-layers):
 * **createLeafletForecastLayer(options)** automatically registered Weacast Leaflet layer constructor
-* **setupForecastModels()** retrieve available [forecast models](https://github.com/mapbox/simplestyle-spec) from [Weacast API](https://weacast.github.io/weacast-docs/api/forecast.html)
-* **getForecastForLocation(long, lat, startTime, endTime)** helper function to dynamically probe weather elements at a given location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probes-api)
-* **getForecastForFeature(featureId, startTime, endTime)** helper function to get weather element at static probe location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probe-results-api)
-* **getProbedLocationForecastAtCurrentTime()** computes element values at current time once a location has been probed (dynamically or statically)
-* **getProbedLocationForecastMarker(feature, latlng)** generates a marker using a [wind barb](http://weather.rap.ucar.edu/info/about_windbarb.html) according to element values in feature
 
 ::: warning
-This mixin assumes that your component has initialized its [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property
+This mixin assumes that your component has initialized its [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property by using e.g. the [Weacast mixin](./mixins.md#weacast)
 :::
 
 ### Service Layer
