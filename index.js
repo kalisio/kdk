@@ -32,7 +32,12 @@ async function run (workspace, branch) {
     }
     console.log(`Preparing module ${module}`)
     if (program.clone) {
-      await runCommand(`git clone https://github.com/kalisio/${module}.git`)
+      const organization = program.organization
+      try {
+        await runCommand(`git clone https://github.com/${organization}/${module}.git`)
+      } catch (error) {
+        console.log(error)
+      }
     }
     const cwd = process.cwd()
     shell.cd(path.join(cwd, `${module}`))
@@ -102,6 +107,7 @@ async function run (workspace, branch) {
 program
   .version(require('./package.json').version)
   .usage('<workspacefile> [options]')
+  .option('-o, --organization [organization]', 'GitHub organization owing the project', 'kalisio')
   .option('-d, --debug', 'Verbose output for debugging')
   .option('-c, --clone', 'Clone git repositories')
   .option('-i, --install', 'Perform yarn install')
