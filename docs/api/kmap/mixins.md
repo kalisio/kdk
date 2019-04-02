@@ -72,7 +72,9 @@ This mixin also adds the following internal data properties:
 
 Ease requests to a [feature service](./services.md#feature-service) in order to get real-time updates:
 * **getProbeFeatures(options)** retrieve the probe locations (if any) for a given [catalog layer descriptor](./services.md#catalog) to initialize the feature layer
+* **getProbeFeaturesFromLayer(name)** same as above but using the layer name
 * **getFeatures(options, queryInterval)** get the latest available features for a given [catalog layer descriptor](./services.md#catalog) at current time or in a given elapsed time range if a query interval in milliseconds is given
+* **getFeaturesFromLayer(name, queryInterval)** same as above but using the layer name
 * **getMeasureForFeature(options, feature, startTime, endTime)** get the available probe measures for a given [catalog layer descriptor](./services.md#catalog) in the given time range, will store result in `probedLocation` attribute
 * **getProbedLocationMeasureAtCurrentTime()** computes measure values at current time (see [time mixin](./mixins.md#time)) once a location has been probed
 

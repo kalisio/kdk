@@ -22,7 +22,7 @@ Due to the modular approach of the KDK we need to [link](https://medium.com/@ale
 Due to some [changes](http://codetunnel.io/npm-5-changes-to-npm-link/) in the way `npm` manages linked modules we prefer to use [Yarn](https://yarnpkg.com) as a package manager.
 :::
 
-It appeared that when performing a new install, adding a new dependency, or launching two installs concurrently, some of these links often break raising different errors, probably due to the fact incompatible versions of the same library (e.g. Feathers) are installed:
+It appeared that when performing a new install, adding a new dependency, or launching two installs concurrently, some of these links often break raising different errors:
 * `TypeError: processNextTick is not a function`
 * `TypeError: Cannot read property 'eventMappings' of undefined`
 * `An unexpected error occurred: "ENOENT: no such file or directory, scandir 'xxx'`
@@ -35,6 +35,10 @@ As a workaround you will either need to:
 
 ::: tip
 You might also clean all dependencies frist using [`rimraf node_modules`](http://www.nikola-breznjak.com/blog/javascript/nodejs/how-to-delete-node_modules-folder-on-windows-machine/) 
+:::
+
+::: tip
+Errors are often visible when launching the app server but might come from an underlying module. For instance the `TypeError: Cannot read property 'eventMappings' of undefined` error often appears in kCore, probably due to the fact incompatible versions of the same library (e.g. Feathers) are installed. So try first to reinstall and relink the modules before your app, and if you'd like to see if a module is fine running its tests is usually a good indcator: `npm run mocha`.
 :::
 
 ## Running multiple applications side-by-side in development mode
