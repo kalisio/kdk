@@ -23,8 +23,9 @@ Due to some [changes](http://codetunnel.io/npm-5-changes-to-npm-link/) in the wa
 :::
 
 It appeared that when performing a new install, adding a new dependency, or launching two installs concurrently, some of these links often break raising different errors:
-* `TypeError: processNextTick is not a function`
 * `TypeError: Cannot read property 'eventMappings' of undefined`
+* `TypeError: processNextTick is not a function`
+* `Error: Cannot find module 'safer-buffer'`
 * `An unexpected error occurred: "ENOENT: no such file or directory, scandir 'xxx'`
 * ...
 
