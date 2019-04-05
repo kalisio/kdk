@@ -200,18 +200,6 @@ Make it possible to manage [Weacast map layers](https://weacast.github.io/weacas
 This mixin assumes that your component has initialized its [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property by using e.g. the [Weacast mixin](./mixins.md#weacast)
 :::
 
-### Service Layer
-
-**TODO**
-
-### Collection Layer
-
-**TODO**
-
-### Geotiff Layer
-
-**TODO**
-
 ## Globe
 
 The underlying globe object is based on [Cesium](https://cesium.com/).
