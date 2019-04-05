@@ -90,6 +90,22 @@ Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-doc
 * **getProbedLocationForecastAtCurrentTime()** computes element values at current time (see [time mixin](./mixins.md#time)) once a location has been probed (dynamically or statically)
 * **getProbedLocationForecastMarker(feature, latlng)** generates a marker using a [wind barb](http://weather.rap.ucar.edu/info/about_windbarb.html) according to element values in feature
 
+## Activity
+
+Make it easier to create 2D/3D mapping activities:
+* **registerActivityActions()** register default activity actions (fullscreen mode, geolocation, geocoding, probing, etc.)
+* **refreshLayers()** retrieve available [catalog layer descriptors](./services.md#catalog) and setup accordingly
+* **isLayerStorable/Removable/Editable(layer)** helper function to get the state of a given layer descriptor
+* **onLayerAdded(layer)** add layer action handler that will setup available action on layer
+* **onTriggerLayer(layer)** trigger layer action handler that will hide/show a given layer
+* **onZoomToLayer(layer)** zoom layer action handler that will zoom to a given layer
+* **onSaveLayer(layer)** save layer action handler that will persist a given in-memory layer to persistent storage provided by a [feature service](./services.md#feature-service)
+* **onEditLayer(layer)** edit layer action handler that will open an [editor](../kcore/components.md#editors) to change layer properties
+* **onRemoveLayer(layer)** remove layer action handler that will ask for confirmation before removing a persisted layer
+* **onRemoveLayer(layer)** remove layer action handler that will ask for confirmation before removing a persisted layer
+* **onGeocoding()** geocoding action handler that will open a dialog to search for a location to go to
+* **onGeolocate()** geolocation action handler that will launch a user's position lookup and go to found user's location
+
 ## Map
 
 The underlying map object is based on [Leaflet](http://leafletjs.com/) and some mixins also rely on [Leaflet plugins](https://leafletjs.com/plugins.html). The following set of mixins is to be used to construct a new map activity and underlying Leaflet objects.
@@ -134,6 +150,10 @@ Make it possible to manage and style raw or time-based GeoJson map layers ([Leaf
   * `tooltip` => **f(feature, layer, options)** returns a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip)
   * `popup` => **f(feature, layer, options)** returns a [Leaflet popup](https://leafletjs.com/reference.html#popup)
 
+::: tip
+The [simple style spec options](https://github.com/mapbox/simplestyle-spec) does not cover all [Leaflet style options](https://leafletjs.com/reference.html#path-option). However you can use it simply by converting option names from camel case to kebab case.
+:::
+
 The mixin automatically registers defaults styling:
   * `markerStyle` => will create a marker based on the following options merged with the following order of precedence
     * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
@@ -147,10 +167,12 @@ The mixin automatically registers defaults styling:
     * **tooltip**: set on layer descriptor or in the component
       * **property**: property name to appear in the tooltip
       * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
+      * **options**: Leaflet [tooltip options](https://leafletjs.com/reference.html#tooltip-option)
   * `popup` => will create a popup displaying a property name/value table based on the following options with the following order of precedence
     * **popup**: set on layer descriptor or in the component
       * **pick**: array of property names to appear in the popup
       * **omit**: array of property names not to appear in the popup
+      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
       * **options**: Leaflet [popup options](https://leafletjs.com/reference.html#popup-option)
 
 If your component has a **onLeafletFeature(feature, layer, options)** method it will be called each time a new GeoJson feature is created.
@@ -186,6 +208,17 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 ```
 
 ![2D marker cluster](../../assets/marker-cluster-2D.png)
+
+#### Dynamic styling
+
+**TODO: feature style or templating**
+
+### Edit Layer
+
+Make it possible to edit features of a [GeoJson layer](./mixins.md#geojson-layer) (geometry and properties):
+* **editLayer(name)** start/stop layer edition on a given layer
+
+As a consequence it has to be used with the GeoJson layer mixin and will use the configured styling.
 
 ### File Layer
 
@@ -241,6 +274,17 @@ The mixin automatically registers defaults styling:
   * `clusterStyle` => will create a style based on the following options merged with the following order of precedence
     * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on layer descriptor
     * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on the **clusterStyle** property in the component
+  * `tooltip` => will create a tooltip based on the following options with the following order of precedence
+    * **tooltip**: set on layer descriptor or in the component
+      * **property**: property name to appear in the tooltip
+      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
+      * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html?classFilter=label)
+  * `popup` => will create a popup displaying a property name/value table based on the following options with the following order of precedence
+    * **popup**: set on layer descriptor or in the component
+      * **pick**: array of property names to appear in the popup
+      * **omit**: array of property names not to appear in the popup
+      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
+      * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html?classFilter=label)
 
 Cesium styles often rely on dynamically created objects while the input styling configuration is a static JSON. As a consequence the following rules are used to convert from JSON to Cesium objects:
 * constants are expressed as strings starting with `'Cesium.'`
