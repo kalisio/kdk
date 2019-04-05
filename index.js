@@ -32,7 +32,7 @@ async function run (workspace, branch) {
     }
     console.log(`Preparing module ${module}`)
     if (program.clone) {
-      const organization = program.organization
+      const organization = options.organization || program.organization
       try {
         await runCommand(`git clone https://github.com/${organization}/${module}.git`)
       } catch (error) {
@@ -40,7 +40,7 @@ async function run (workspace, branch) {
       }
     }
     const cwd = process.cwd()
-    shell.cd(path.join(cwd, `${module}`))
+    shell.cd(options.path ? path.join(cwd, options.path, `${module}`) : path.join(cwd, `${module}`))
     try {
       if (program.branch) {
         await runCommand(`git fetch origin ${branch}:${branch}`)
@@ -78,7 +78,7 @@ async function run (workspace, branch) {
       console.log(`Linking module ${module}`)
       options = workspace[module]
       const cwd = process.cwd()
-      shell.cd(path.join(cwd, `${module}`))
+      shell.cd(options.path ? path.join(cwd, options.path, `${module}`) : path.join(cwd, `${module}`))
       try {
         for (let i = 0; i < options.dependencies.length; i++) {
           const dependency = options.dependencies[i]
