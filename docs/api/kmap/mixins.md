@@ -60,7 +60,7 @@ Here is an example of a format object:
 ```
 
 ::: tip
-By default the mixin is in sync with the `timeFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared data/time display format accross all time-based components with a dedicated UI to change settings using e.g. `store.patch('timeFormat', { locale, utc })`.
+The mixin is in sync with the `timeFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared data/time display format accross all time-based components with a dedicated UI to change settings using e.g. `store.patch('timeFormat', { locale, utc })`.
 :::
 
 This mixin also adds the following internal data properties:
@@ -93,18 +93,33 @@ Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-doc
 ## Activity
 
 Make it easier to create 2D/3D mapping activities:
-* **registerActivityActions()** register default activity actions (fullscreen mode, geolocation, geocoding, probing, etc.)
+* **registerActivityActions()** register default activity actions (fullscreen mode, geolocation, geocoding, tracking, probing, etc.)
 * **refreshLayers()** retrieve available [catalog layer descriptors](./services.md#catalog) and setup accordingly
 * **isLayerStorable/Removable/Editable(layer)** helper function to get the state of a given layer descriptor
 * **onLayerAdded(layer)** add layer action handler that will setup available action on layer
 * **onTriggerLayer(layer)** trigger layer action handler that will hide/show a given layer
 * **onZoomToLayer(layer)** zoom layer action handler that will zoom to a given layer
+* **onCreateLayer()** create layer action handler that will open an [editor](../kcore/components.md#editors) to define layer properties
 * **onSaveLayer(layer)** save layer action handler that will persist a given in-memory layer to persistent storage provided by a [feature service](./services.md#feature-service)
 * **onEditLayer(layer)** edit layer action handler that will open an [editor](../kcore/components.md#editors) to change layer properties
 * **onRemoveLayer(layer)** remove layer action handler that will ask for confirmation before removing a persisted layer
 * **onRemoveLayer(layer)** remove layer action handler that will ask for confirmation before removing a persisted layer
 * **onGeocoding()** geocoding action handler that will open a dialog to search for a location to go to
 * **onGeolocate()** geolocation action handler that will launch a user's position lookup and go to found user's location
+
+## Location indicator
+
+Allow to display an indicator on top of the map indicating the current mouse location:
+* **createLocationIndicator()** installs the indicator
+* **removeLocationIndicator()** removes the indicator
+
+::: tip
+The mixin is in sync with the `locationFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared location display format accross all mapping components with a dedicated UI to change settings using e.g. `store.patch('locationFormat', 'FFf')`.
+:::
+
+This mixin also adds the following internal data properties:
+* **currentLocation**: current location as [latitude, longitude]
+* **currentLocationFormat**: current location format object to be used for display as supported by [formatcoords](https://github.com/nerik/formatcoords)
 
 ## Map
 
@@ -123,6 +138,7 @@ Make it possible to manage map layers and extend supported layer types:
 * **hasLayer(name)** check if a given layer is already registered
 * **isLayerVisible(name)** check if a given layer is visible and underlying Leaflet object created
 * **zoomToLayer(name)** fits the map view to visualize a given layer
+* **zoomToBounds(bounds)** fits the map view to visualize a given extent as bounds [ [south, west], [north, east] ]
 * **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog) for a given layer
 * **getLeafletLayerByName(name)** retrieve the underlying Leaflet object for a given layer
 * **createLeafletLayer(options)** creates the underlying Leaflet object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
@@ -211,7 +227,44 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 
 #### Dynamic styling
 
-**TODO: feature style or templating**
+Usually the same style is used for all features of a GeoJson layer, you might however require a more dynamic style base on each feature properties. To handle this use case you can either:
+* provide styling options for each feature in their `properties` or `style` field
+* use [Lodash templating](https://lodash.com/docs/#template) on layer styling options with feature and its properties as context
+
+::: warning
+Templating can only be efficient if compilers are created upfront, as a consequence you need to declare the list of templated options in your layer styling using the `template` property.
+:::
+
+For instance you can change the marker color or image based on a given features's property like this:
+```js
+'marker-color': `<% if (properties.visibility < 75) { %>#000000<% }
+                  else if (properties.visibility < 300) { %>#d20200<% }
+                  else if (properties.visibility < 1500) { %>#f9b40f<% }
+                  else if (properties.visibility < 3000) { %>#eef52f<% }
+                  else { %>#33c137<% } %>`,
+'marker-symbol': `<% if (properties.visibility < 75) { %>/statics/windyblack.png<% }
+                    else if (properties.visibility < 300) { %>/statics/windyred.png<% }
+                    else if (properties.visibility < 1500) { %>/statics/windyorange.png<% }
+                    else if (properties.visibility < 3000) { %>/statics/windyyellow.png<% }
+                    else { %>/statics/windygreen.png<% } %>`,
+template: ['marker-color', 'marker-symbol']
+```
+
+You can also draw a path with a different styling on each part like this:
+```json
+{
+  type: 'FeatureCollection',
+  features: [{
+    type: 'Feature',
+    properties: { stroke: '#000000', weight: 1 },
+    geometry: { type: 'LineString', coordinates: [...] }
+  }, {
+    type: 'Feature',
+    properties: { stroke: '#FF00FF', weight: 3 },
+    geometry: { type: 'LineString', coordinates: [...] }
+  }]
+}
+```
 
 ### Edit Layer
 
@@ -250,6 +303,7 @@ Make it possible to manage globe layers and extend supported layer types:
 * **hasLayer(name)** check if a given layer is already registered
 * **isLayerVisible(name)** check if a given layer is visible and underlying Cesium object created
 * **zoomToLayer(name)** fits the globe view to visualize a given layer
+* **zoomToBounds(bounds)** fits the globe view to visualize a given extent as bounds [ [south, west], [north, east] ]
 * **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog) for a given layer
 * **getCesiumLayerByName(name)** retrieve the underlying Cesium object for a given layer
 * **createCesiumLayer(options)** creates the underlying Cesium object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
@@ -339,6 +393,12 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 ```
 
 ![3D marker cluster](../../assets/marker-cluster-3D.png)
+
+#### Dynamic styling
+
+::: warning
+The same than for [dynamic map style](./mixins.md#dynamic-styling) applies for globe except that it does not yet support templating.
+:::
 
 ### File Layer
 
