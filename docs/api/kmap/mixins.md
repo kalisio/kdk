@@ -144,6 +144,7 @@ Make it possible to manage map layers and extend supported layer types:
 * **createLeafletLayer(options)** creates the underlying Leaflet object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
 * **registerLeafletConstructor(constructor)** registers a Leaflet constructor function for a given type of layer
 * **center(longitude, latitude, zoomLevel)** centers the map view to visualize a given point at a given zoom level
+* **getCenter()** get the current map view center as longitude, latitude and zoom level
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
 
 This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec). 
@@ -309,6 +310,7 @@ Make it possible to manage globe layers and extend supported layer types:
 * **createCesiumLayer(options)** creates the underlying Cesium object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
 * **registerCesiumConstructor(constructor)** registers a Cesium constructor function for a given type of layer
 * **center(longitude, latitude, altitude, heading, pitch, roll)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90])
+* **getCenter()** get the current globe view center as longitude, latitude and altitude
 
 ### GeoJson Layer
 
