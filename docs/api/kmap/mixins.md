@@ -147,7 +147,13 @@ Make it possible to manage map layers and extend supported layer types:
 * **getCenter()** get the current map view center as longitude, latitude and zoom level
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
 
-This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec). 
+This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
+
+:::tip Managing layers render order
+Although DOM-based layers like [Markers](https://leafletjs.com/reference.html#marker) could make use of a `z-index` to possibly manage render order between them, SVG or canvas-based layers used to manage [GeoJson](https://leafletjs.com/reference.html#geojson) like [Polylines](https://leafletjs.com/reference.html#polyline) provided no mean to do so. This is the reason why Leaflet 1.0 introduced the concept of [panes](https://leafletjs.com/reference.html#map-pane).
+
+If you add a `zIndex` option to your layer descriptor we will create a dedicated pane for you under-the-hood so that the layer will be rendered at its right rank. Check the `z-index` value of [the default panes](https://leafletjs.com/reference.html#map-pane) to select the appropriate one.
+:::
 
 ### GeoJson Layer
 
@@ -398,9 +404,26 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 
 #### Dynamic styling
 
-::: warning
-The same than for [dynamic map style](./mixins.md#dynamic-styling) applies for globe except that it does not yet support templating.
-:::
+The same than for [dynamic map style](./mixins.md#dynamic-styling) applies for globe. Note however that templating will be applied once the 3D entities have been created, which means that you cannot use templating on [simple style spec options](https://github.com/mapbox/simplestyle-spec) but rather on Cesium object options set on the `entityStyle` layer option.
+
+For instance you can change the marker color or image based on a given features's property like this:
+```js
+entityStyle: {
+  billboard: {
+    image: `<% if (properties.visibility < 75) { %>/statics/windyblack.png<% }
+              else if (properties.visibility < 300) { %>/statics/windyred.png<% }
+              else if (properties.visibility < 1500) { %>/statics/windyorange.png<% }
+              else if (properties.visibility < 3000) { %>/statics/windyyellow.png<% }
+              else { %>/statics/windygreen.png<% } %>`,
+    color: `Cesium.Color.<% if (properties.visibility < 75) { %>BLACK<% }
+              else if (properties.visibility < 300) { %>ORANGERED<% }
+              else if (properties.visibility < 1500) { %>GOLD<% }
+              else if (properties.visibility < 3000) { %>YELLOW<% }
+              else { %>LIMEGREEN<% } %>"/>`
+  },
+  template: ['billboard.image', 'billboard.color']
+}
+```
 
 ### File Layer
 
