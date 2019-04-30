@@ -56,6 +56,12 @@ This CLI assumes git and yarn are already globally installed on your system.
 
 Sample [workspaces](https://github.com/kalisio/kdk/tree/master/workspaces) for our [application template](https://github.com/kalisio/kApp), [Kano](https://github.com/kalisio/kano) and [Akt'n'Map](https://github.com/kalisio/aktnmap) are provided.
 
+## [Gitrob](https://github.com/michenriksen/gitrob)
+
+Gitrob is a tool to help find potentially sensitive files pushed to public repositories on Github. Simply run it using a GitHub token and a target user or organisation: `gitrob -github-access-token XXX kalisio`.
+
+Then you can open the WebUI at [http://localhost:9393](http://localhost:9393) and see what's going on.
+
 ## [Screen](https://doc.ubuntu-fr.org/screen)
 
 We use it to launch processes in the background on servers, which won't be killed when closing the ssh session.
