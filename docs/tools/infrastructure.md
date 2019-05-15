@@ -38,6 +38,7 @@ Check why a swarm service did not start (empty logs, no replica):
 ```
 docker service ps --no-trunc {serviceName}
 ```
+To access host in Docker Desktop Edition on [Windows](https://docs.docker.com/docker-for-windows/networking/) or [Mac](https://docs.docker.com/docker-for-mac/networking/) use the special DNS name `host.docker.internal`.
 
 ## Scaleway
 
