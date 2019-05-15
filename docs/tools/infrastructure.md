@@ -10,6 +10,10 @@ Follow-up logs while running a container:
 ```
 docker logs container_name -f --tail 100
 ```
+Get detailed healthcheck status for a running container:
+```
+docker inspect -f '{{json .State.Health.Status}}' container_name
+```
 Find the location of the log file of a container:
 ```
 docker inspect --format='{{.LogPath}}' container_name
