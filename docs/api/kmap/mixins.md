@@ -93,8 +93,10 @@ Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-doc
 ## Activity
 
 Make it easier to create 2D/3D mapping activities:
+* **setMappingEngine(engine)** setup the mapping engine to be used by activity (either `leaflet` for 2D mapping or `cesium` for 3D mapping), **should be called first before any other method**
 * **registerActivityActions()** register default activity actions (fullscreen mode, geolocation, geocoding, tracking, probing, etc.)
-* **refreshLayers()** retrieve available [catalog layer descriptors](./services.md#catalog) and setup accordingly
+* **getCatalogLayers()** retrieve available [catalog layer descriptors](./services.md#catalog)
+* **refreshLayers()** setup available layers based on [catalog layer descriptors](./services.md#catalog)
 * **isLayerStorable/Removable/Editable(layer)** helper function to get the state of a given layer descriptor
 * **onLayerAdded(layer)** add layer action handler that will setup available action on layer
 * **onTriggerLayer(layer)** trigger layer action handler that will hide/show a given layer
@@ -103,9 +105,12 @@ Make it easier to create 2D/3D mapping activities:
 * **onSaveLayer(layer)** save layer action handler that will persist a given in-memory layer to persistent storage provided by a [feature service](./services.md#feature-service)
 * **onEditLayer(layer)** edit layer action handler that will open an [editor](../kcore/components.md#editors) to change layer properties
 * **onRemoveLayer(layer)** remove layer action handler that will ask for confirmation before removing a persisted layer
-* **onRemoveLayer(layer)** remove layer action handler that will ask for confirmation before removing a persisted layer
 * **onGeocoding()** geocoding action handler that will open a dialog to search for a location to go to
 * **onGeolocate()** geolocation action handler that will launch a user's position lookup and go to found user's location
+* **onTrackLocation()** location tracking action handler that will enable/disable a location indicator to display location values
+* **storeView()** store current view bounds as query parameters and persists as well in local storage 
+* **restoreView()** restore previously stored view bounds from local storage or query parameters
+* **clearStoredView()** clears the stored view bounds so that it will not be restored anymore
 
 ## Location indicator
 
