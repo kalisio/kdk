@@ -155,11 +155,9 @@ Although DOM-based layers like [Markers](https://leafletjs.com/reference.html#ma
 If you add a `zIndex` option to your layer descriptor we will create a dedicated pane for you under-the-hood so that the layer will be rendered at its right rank. Check the `z-index` value of [the default panes](https://leafletjs.com/reference.html#map-pane) to select the appropriate one.
 :::
 
-### GeoJson Layer
+### Map Style
 
-Make it possible to manage and style raw or time-based GeoJson map layers ([Leaflet.Realtime plugin](https://github.com/perliedman/leaflet-realtime) is used under-the-hood):
-* **updateLayer(name, geoJson, remove)** update underlying GeoJson data of a given layer, if `remove` is `true` it will remove given features from the layer, otherwise it will add new ones found and update matching ones based on the `featureId` option
-* **createLeafletGeoJsonLayer(options)** automatically registered GeoJson Leaflet layer constructor
+Make it possible to generate Leaflet map objects with style based on (Geo)Json (feature) properties:
 * **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Leaflet style options](https://leafletjs.com/reference.html#path-option)
 * **createMarkerFromStyle(latlng, style)** helper function create a [Leaflet marker](https://leafletjs.com/reference.html#marker) from marker style options:
   * **icon** icon style options 
@@ -170,8 +168,8 @@ Make it possible to manage and style raw or time-based GeoJson map layers ([Leaf
 * **register/unregisterLeafletStyle(type, generator)** (un)registers a function generating a Leaflet object depending on the given type:
   * `markerStyle` => **f(feature, latlng, options)** returns a [Leaflet marker](https://leafletjs.com/reference.html#marker)
   * `featureStyle` => **f(feature, options)** returns a [Leaflet style object](https://leafletjs.com/reference.html#path-option)
-  * `tooltip` => **f(feature, layer, options)** returns a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip)
-  * `popup` => **f(feature, layer, options)** returns a [Leaflet popup](https://leafletjs.com/reference.html#popup)
+  * `tooltip` => **f(feature, layer, options)** returns a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip), see [tooltip mixin](./mixins.md#map-tooltip)
+  * `popup` => **f(feature, layer, options)** returns a [Leaflet popup](https://leafletjs.com/reference.html#popup), see [popup mixin](./mixins.md#map-popup)
 
 ::: tip
 The [simple style spec options](https://github.com/mapbox/simplestyle-spec) does not cover all [Leaflet style options](https://leafletjs.com/reference.html#path-option). However you can use it simply by converting option names from camel case to kebab case.
@@ -186,17 +184,41 @@ The mixin automatically registers defaults styling:
     * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
     * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on layer descriptor
     * [Leaflet style options](https://leafletjs.com/reference.html#path-option) set on the **featureStyle** property in the component
-  * `tooltip` => will create a tooltip based on the following options with the following order of precedence
-    * **tooltip**: set on layer descriptor or in the component
-      * **property**: property name to appear in the tooltip
-      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
-      * **options**: Leaflet [tooltip options](https://leafletjs.com/reference.html#tooltip-option)
-  * `popup` => will create a popup displaying a property name/value table based on the following options with the following order of precedence
-    * **popup**: set on layer descriptor or in the component
-      * **pick**: array of property names to appear in the popup
-      * **omit**: array of property names not to appear in the popup
-      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
-      * **options**: Leaflet [popup options](https://leafletjs.com/reference.html#popup-option)
+
+### Map Popup
+
+Make it possible to generate [Leaflet popups](https://leafletjs.com/reference.html#popup) based on GeoJson feature properties:
+* use **register/unregisterLeafletStyle(`popup`, generator)** to (un)register a function **f(feature, layer, options)** returning a [Leaflet popup](https://leafletjs.com/reference.html#popup)
+
+The mixin automatically registers a default generator that will create a popup displaying a property name/value table based on the following options with the following order of precedence
+  * **popup**: set on **feature.properties** or layer descriptor or in the **popup** property of component options
+    * **pick**: array of property names to appear in the popup
+    * **omit**: array of property names not to appear in the popup
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
+    * **text**: text content of the popup, if provided will override default display
+    * **options**: Leaflet [popup options](https://leafletjs.com/reference.html#popup-option)
+
+### Map Tooltip
+
+Make it possible to generate [Leaflet tooltips](https://leafletjs.com/reference.html#tooltip) based on GeoJson feature properties:
+* use **register/unregisterLeafletStyle(`tooltip`, generator)** to (un)register a function **f(feature, layer, options)** returning a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip)
+
+The mixin automatically registers a default generator that will create a tooltip based on the following options with the following order of precedence
+  * **tooltip**: set on **feature.properties** or layer descriptor or in the **tooltip** property of component options
+    * **property**: property name to appear in the tooltip
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
+    * **text**: text content of the tooltip, if provided will override default display
+    * **options**: Leaflet [tooltip options](https://leafletjs.com/reference.html#tooltip-option)
+
+### GeoJson Layer
+
+Make it possible to manage and style raw or time-based GeoJson map layers ([Leaflet.Realtime plugin](https://github.com/perliedman/leaflet-realtime) is used under-the-hood):
+* **createLeafletGeoJsonLayer(options)** automatically registered GeoJson Leaflet layer constructor
+* **updateLayer(name, geoJson, remove)** update underlying GeoJson data of a given layer, if `remove` is `true` it will remove given features from the layer, otherwise it will add new ones found and update matching ones based on the `featureId` option
+
+::: danger
+This [style mixin](./mixins.md#map-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#map-tooltip) and/or [tooltip mixin](./mixins.md#map-tooltip).
+:::
 
 If your component has a **onLeafletFeature(feature, layer, options)** method it will be called each time a new GeoJson feature is created.
 
@@ -318,10 +340,9 @@ Make it possible to manage globe layers and extend supported layer types:
 * **center(longitude, latitude, altitude, heading, pitch, roll)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90])
 * **getCenter()** get the current globe view center as longitude, latitude and altitude
 
-### GeoJson Layer
+### Globe Style
 
-Make it possible to manage and style raw or time-based GeoJson map layers:
-* **createCesiumGeoJsonLayer(options)** automatically registered GeoJson Cesium layer constructor
+Make it possible to setup Cesium entities objects with style based on (Geo)Json (feature) properties stored in entities:
 * **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Cesium style options](https://cesiumjs.org/Cesium/Build/Documentation/GeoJsonDataSource.html#.load)
 * **convertToCesiumObjects(style)** helper function to convert from JSON description to Cesium objects
 * **register/unregisterCesiumStyle(type, generator)** (un)registers a function generating a Cesium object depending on the given type:
@@ -332,21 +353,10 @@ The mixin automatically registers defaults styling:
   * `entityStyle` => will create a style based on the following options merged with the following order of precedence
     * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
     * [Cesium entity style options](https://cesium.com/docs/tutorials/creating-entities/) set on layer descriptor
-    * [Cesium entity style options](https://cesium.com/docs/tutorials/creating-entities/) set on the **entityStyle** property in the component
+    * [Cesium entity style options](https://cesium.com/docs/tutorials/creating-entities/) set on the **entityStyle** property in the component options
   * `clusterStyle` => will create a style based on the following options merged with the following order of precedence
     * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on layer descriptor
-    * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on the **clusterStyle** property in the component
-  * `tooltip` => will create a tooltip based on the following options with the following order of precedence
-    * **tooltip**: set on layer descriptor or in the component
-      * **property**: property name to appear in the tooltip
-      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
-      * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html?classFilter=label)
-  * `popup` => will create a popup displaying a property name/value table based on the following options with the following order of precedence
-    * **popup**: set on layer descriptor or in the component
-      * **pick**: array of property names to appear in the popup
-      * **omit**: array of property names not to appear in the popup
-      * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
-      * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html?classFilter=label)
+    * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on the **clusterStyle** property in the component options
 
 Cesium styles often rely on dynamically created objects while the input styling configuration is a static JSON. As a consequence the following rules are used to convert from JSON to Cesium objects:
 * constants are expressed as strings starting with `'Cesium.'`
@@ -359,7 +369,7 @@ ellipse.material = new Cesium.CheckerboardMaterialProperty({
   repeat : new Cesium.Cartesian2(4, 4)
 })
 ```
-will result in the following layer configuration:
+will result in the following Json configuration:
 ```
 ellipse: {
   material: {
@@ -374,6 +384,41 @@ ellipse: {
   }
 }
 ```
+
+### Globe Popup
+
+Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as popups based on GeoJson feature properties stored in entities:
+* use **register/unregisterCesiumStyle(`popup`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
+
+The mixin automatically registers a default generator that will create a popup displaying a property name/value table based on the following options with the following order of precedence
+  * **popup**: set on **entity.properties** or layer descriptor or in the **popup** property of component options
+    * **pick**: array of property names to appear in the popup
+    * **omit**: array of property names not to appear in the popup
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
+    * **html**: HTML content of the popup, if provided will override default display
+    * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
+
+### Globe Tooltip
+
+Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as tooltips based on GeoJson feature properties stored in entities:
+* use **register/unregisterCesiumStyle(`tooltip`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
+
+The mixin automatically registers a default generator that will create a tooltip based on the following options with the following order of precedence
+  * **tooltip**: set on **entity.properties** or layer descriptor or in the **tooltip** property of component options
+    * **property**: property name to appear in the tooltip
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
+    * **html**: HTML content of the tooltip, if provided will override default display
+    * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
+
+### GeoJson Layer
+
+Make it possible to manage and style raw or time-based GeoJson map layers:
+* **createCesiumGeoJsonLayer(options)** automatically registered GeoJson Cesium layer constructor
+* **updateLayer(name, geoJson)** update underlying GeoJson data of a given layer
+
+::: danger
+This [style mixin](./mixins.md#globe-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#globe-tooltip) and/or [tooltip mixin](./mixins.md#globe-tooltip).
+:::
 
 ::: tip
 Marker cluster options are to be provided in the **cluster** property of the Cesium layer options
@@ -422,6 +467,22 @@ entityStyle: {
               else { %>LIMEGREEN<% } %>"/>`
   },
   template: ['billboard.image', 'billboard.color']
+}
+```
+
+You can also draw a path with a different styling on each part like this:
+```json
+{
+  type: 'FeatureCollection',
+  features: [{
+    type: 'Feature',
+    properties: { stroke: '#000000', weight: 1 },
+    geometry: { type: 'LineString', coordinates: [...] }
+  }, {
+    type: 'Feature',
+    properties: { stroke: '#FF00FF', weight: 3 },
+    geometry: { type: 'LineString', coordinates: [...] }
+  }]
 }
 ```
 
