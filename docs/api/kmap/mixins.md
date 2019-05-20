@@ -154,11 +154,24 @@ Make it possible to manage map layers and extend supported layer types:
 
 This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
 
-:::tip Managing layers render order
-Although DOM-based layers like [Markers](https://leafletjs.com/reference.html#marker) could make use of a `z-index` to possibly manage render order between them, SVG or canvas-based layers used to manage [GeoJson](https://leafletjs.com/reference.html#geojson) like [Polylines](https://leafletjs.com/reference.html#polyline) provided no mean to do so. This is the reason why Leaflet 1.0 introduced the concept of [panes](https://leafletjs.com/reference.html#map-pane).
+#### Managing panes
+
+Although DOM-based layers like [Markers](https://leafletjs.com/reference.html#marker) could make use of a `z-index` to possibly manage render order between them, SVG or canvas-based layers used to manage [GeoJson features](https://leafletjs.com/reference.html#geojson) like [Polylines](https://leafletjs.com/reference.html#polyline) provided no mean to do so. Similarly, there was no simple way to render some layers only at some specific zoom levels. This is the reason why Leaflet 1.0 introduced the concept of [panes](https://leafletjs.com/reference.html#map-pane).
 
 If you add a `zIndex` option to your layer descriptor we will create a dedicated pane for you under-the-hood so that the layer will be rendered at its right rank. Check the `z-index` value of [the default panes](https://leafletjs.com/reference.html#map-pane) to select the appropriate one.
-:::
+
+If you add a `panes` option to your layer descriptor we will create the dedicated panes for you under-the-hood so that you can then set in the `pane` option of any sublayer the pane it will belong to. Each pane must have a unique name and can be visible at specific zoom levels:
+```json
+{
+  name: 'Layer',
+  ...
+  panes: [{
+    name: 'waypoints',
+    minZoom: 7,
+    maxZoom: 14
+  }]
+}
+```
 
 ### Map Style
 
@@ -232,7 +245,7 @@ Marker cluster options are to be provided in the **cluster** property of the Lea
 :::
 
 The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
-```js
+```json
 {
   name: 'Layer',
   description: 'My sites',
@@ -367,7 +380,7 @@ Cesium styles often rely on dynamically created objects while the input styling 
 * constants are expressed as strings starting with `'Cesium.'`
 * object instances are expressed as a `{ type, options }` object where type is a string starting with `'Cesium.'` followed by the class name like `'Cesium.CheckerboardMaterialProperty'`, options are constructor options for the object instance
 The following Cesium code:
-```
+```js
 ellipse.material = new Cesium.CheckerboardMaterialProperty({
   evenColor : Cesium.Color.WHITE,
   oddColor : Cesium.Color.BLACK,
@@ -375,7 +388,7 @@ ellipse.material = new Cesium.CheckerboardMaterialProperty({
 })
 ```
 will result in the following Json configuration:
-```
+```json
 ellipse: {
   material: {
     type: 'Cesium.CheckerboardMaterialProperty',
@@ -430,7 +443,7 @@ Marker cluster options are to be provided in the **cluster** property of the Ces
 :::
 
 The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
-```js
+```json
 {
   name: 'Layer',
   description: 'My sites',
@@ -457,7 +470,7 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 The same than for [dynamic map style](./mixins.md#dynamic-styling) applies for globe. Note however that templating will be applied once the 3D entities have been created, which means that you cannot use templating on [simple style spec options](https://github.com/mapbox/simplestyle-spec) but rather on Cesium object options set on the `entityStyle` layer option.
 
 For instance you can change the marker color or image based on a given features's property like this:
-```js
+```json
 entityStyle: {
   billboard: {
     image: `<% if (properties.visibility < 75) { %>/statics/windyblack.png<% }
