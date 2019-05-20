@@ -25,6 +25,13 @@ Event messaging using post-robot is always async because it relies on the [postM
 In-memory data exchange is Json and more specifically GeoJson for map features. Do not try to inject functions or "complex" objects (e.g. class instances) in event payloads.
 :::
 
+In addition to the events used to access mixin methods there are a couple of dedicated events:
+* `kano-ready`: to be listened by integrating application to know when the Kano application has been initialized in the iframe so that you can safely use the API
+* `setLocalStorage`: listened by Kano to set key/value pairs (provided as event data payload) in its local storage, typically useful to inject access tokens
+* `setConfiguration`: listened by Kano to override key/value pairs (provided as event data payload) in its default configuration, typically useful to setup UI according to your application needs, see the [detailed configuration page](./configuration.md)
+* `map-ready`: to be listened by integrating application to know when the 2D map component has been initialized in the Kano application so that you can safely use the underlying API
+* `globe-ready`: to be listened by integrating application to know when the 3D globe component has been initialized in the Kano application so that you can safely use the underlying API
+
 Here is a simple code sample:
 ```html
   <script src="./post-robot.min.js"></script>
@@ -50,5 +57,5 @@ Here is a simple code sample:
 	</script>
 ```
 
-A full sample exploring the different ways to interact with the API is provided [here](https://github.com/kalisio/kano/blob/master/src/statics/iframe.html). You can dynamically call API methods when toggling the different buttons on the left.
+A full sample exploring the different ways to interact with the API is provided [here](https://github.com/kalisio/kano/blob/master/src/statics/iframe.html). When running the demo you can dynamically call API methods when toggling the different buttons on the left.
 

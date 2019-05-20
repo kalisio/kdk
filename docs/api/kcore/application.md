@@ -30,12 +30,12 @@ let users = api.getService('users')
 
 ### Configuration
 
-Any value from the backend [configuration](../../guides/basics/step-by-step.md#configuring-the-app) can be directly retrieved on the application object like this:
+Any value from the backend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) can be directly retrieved on the application object like this:
 ```javascript
 const value = app.get('property')
 ```
 
-Any value from the frontend [configuration](../../guides/basics/step-by-step.md#configuring-the-app) can be directly retrieved by importing it like this:
+Any value from the frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) can be directly retrieved by importing it like this:
 ```javascript
 import config from 'config'
 
