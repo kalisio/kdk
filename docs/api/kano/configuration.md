@@ -26,7 +26,7 @@ Most options come from the "standard" frontend [configuration](../../guides/basi
 * **mapActivity**: 2D map activity configuration
   * **buttons**: active UI buttons among `['side-nav', 'panel']`,
   * **actions**: active UI action in FAB among `['fullscreen', 'geolocate', 'geocode', 'track-location', 'probe-location', 'create-layer']`,
-* **globeActivity: 3D globe activity configuration
+* **globeActivity**: 3D globe activity configuration
   * **buttons**: active UI buttons among `['side-nav', 'panel']`,
   * **actions**: active UI action in FAB among `['fullscreen', 'geolocate', 'geocode', 'track-location', 'vr']`
 * **map**: 2D map view configuration
@@ -46,4 +46,3 @@ Most options come from the "standard" frontend [configuration](../../guides/basi
 	* **popup**: default GeoJSON [popup style](../kmap/mixins.md#globe-popup),
 	* **clusterStyle**: default GeoJSON [clustering style](../kmap/mixins.md#globe-style),
 	* **cluster**: default GeoJSON [cluster options](../kmap/mixins.md#globe-style)
-	
