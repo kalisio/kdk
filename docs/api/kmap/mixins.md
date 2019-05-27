@@ -235,7 +235,7 @@ Make it possible to manage and style raw or time-based GeoJson map layers ([Leaf
 * **updateLayer(name, geoJson, remove)** update underlying GeoJson data of a given layer, if `remove` is `true` it will remove given features from the layer, otherwise it will add new ones found and update matching ones based on the `featureId` option
 
 ::: danger
-This [style mixin](./mixins.md#map-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#map-tooltip) and/or [tooltip mixin](./mixins.md#map-tooltip).
+The [style mixin](./mixins.md#map-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#map-tooltip) and/or [tooltip mixin](./mixins.md#map-tooltip).
 :::
 
 If your component has a **onLeafletFeature(feature, layer, options)** method it will be called each time a new GeoJson feature is created.
@@ -435,7 +435,7 @@ Make it possible to manage and style raw or time-based GeoJson map layers:
 * **updateLayer(name, geoJson)** update underlying GeoJson data of a given layer
 
 ::: danger
-This [style mixin](./mixins.md#globe-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#globe-tooltip) and/or [tooltip mixin](./mixins.md#globe-tooltip).
+The [style mixin](./mixins.md#globe-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#globe-tooltip) and/or [tooltip mixin](./mixins.md#globe-tooltip).
 :::
 
 ::: tip
