@@ -158,18 +158,31 @@ The **KDK** comes with a set of built-in fields:
 * **k-toggle-field**: a Quasar [Toggle input](https://v0-14.quasar-framework.org/components/toggle.html)
 * **k-url-field**: a Quasar [text input](https://v0-14.quasar-framework.org/components/input.html) of type of `url`
 
-It also has modules that propose additional. For instance, the **kMap** module provides the [**k-location-field**](../kmap/components.md#location). In addition one can add his own field. When implementing a field, you must rely on the [base field mixin](./mixins.md#base-field). 
+It also has modules that propose additional ones. For instance, the **kMap** module provides the [**k-location-field**](../kmap/components.md#location). You can also add your own field, when implementing it you must rely on the [base field mixin](./mixins.md#base-field). 
 
 The properties to declare  a **k-form** are the following:
 * **schema**: the schema object to be used to build the form
-* **clearOnCreate**: ??? _FIXME_
+* **clearOnCreate**: boolean indicating if the form should be cleared on creation
 * **display**: the options to be used when displaying the fields. You can specify:
   * **icon**: a boolean value to tell whether an icon has to be displayed or not in front of each field
   * **label**: a boolean value to tell whether the field label have to be displayed or not in front of each field
   * **labelWidth**: the width used to display the label. Out of 12 grid points, how much should the label take? Default is 5. Minimum is 1 and maximum is 11
 
 ::: tip
-Because, the **k-form** loads dynamically the required components to build the form, it is mandatory to use use a reference to the form using the keyword `ref` and to the [**refs resolver mixin**](../mixins.md#refs-resolver) to wait for the components to be loaded before applying any methods.
+Because, the **k-form** loads dynamically the required components to build the form, it is mandatory to use use a reference to the form using the keyword `ref` and the [**refs resolver mixin**](../mixins.md#refs-resolver) to wait for the components to be loaded before applying any methods.
+:::
+
+The **k-form** components exhibits the following methods:
+* **getField(name)** get a field component by its name
+* **build()** dynamically build the required field components and internal validator
+* **fill(values)** fill the form with given object values
+* **clear()** clear the form back to default values
+* **validate()** validate the form
+* **apply(object)** call **apply()** on all field components
+* **submitted(object)** call **submitted()** on all field components
+
+::: tip
+If the **schema** props is defined on creation the form will automatically build itself and emit the `form-ready` event.
 :::
 
 ## Editors
@@ -270,9 +283,14 @@ There are 2 ways to use the **k-modal-editor**:
 The properties to declare a **k-modal-editor** are identical to those of the **k-modal-editor** plus: 
  * **router**: the router function to be triggered when the editor is getting closed. 
 
-
 ## Authentication
 
+The KDK provides you with some default forms to manage [login](https://github.com/kalisio/kCore/blob/master/src/client/components/KLogin.vue), [logout](https://github.com/kalisio/kCore/blob/master/src/client/components/KLogout.vue), [registration](https://github.com/kalisio/kCore/blob/master/src/client/components/KRegister.vue) and [server endpoint configuration for mobile apps](https://github.com/kalisio/kCore/blob/master/src/client/components/KChangeEndpoint.vue).
 
+## User Account
 
+The KDK provides you with a default [activity](./components.md#activity) to manage [user accounts](KAccountActivity) containing:
+* an "identity panel" to [edit profile informaiton](https://github.com/kalisio/kCore/blob/master/src/client/components/KIdentityPanel.vue)
+* a "danger zone" for [account removal](https://github.com/kalisio/kCore/blob/master/src/client/components/KAccountDZ.vue)
+* a "security zone" for [password and email change](https://github.com/kalisio/kCore/blob/master/src/client/components/KAccountSecurity.vue)
 

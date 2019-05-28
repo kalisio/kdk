@@ -138,7 +138,17 @@ For instance, if you set props like this `<my-editor service="users"/>` on your 
 
 ## Base Editor
 
-Make it easier to build [editors](./components.md#editors) from props defined on associated mixins:
+Make it easier to build [editors](./components.md#editors) from **baseObject** and **baseQuery** props, as well as props defined on associated mixins:
+* **getMode()** returns `updated` or `create` depending if the **objectId** props is defined or not
+* **setFormDisabled(name, disabled)** used to disable/enable a given form by its refs name
+* **fillEditor()** fill all forms with current object values
+* **clear()** clear all forms back to default values
+* **validateForms()** validate all forms
+* **applyForms()** call **apply()** on all forms
+* **submittedForms()** call **submitted()** on all forms
+* **getBaseObject()** return retrieved object from service or input base object as defined in **baseObject** props, if a perspective is defined through the **perspective** props only that perspective is returned.
+* **getBaseQuery()** return input base query as defined in **baseQuery** props, will automatically add object ID and perspective to query if any defined
+* **async apply(event, done)** setups all the underlying objects to make it ready for edition
 * **refresh()** setups all the underlying objects to make it ready for edition
   1. [load service](./mixins.md#service-proxy) from the **contextId** and **service** props
   2. [load schema](./mixins.md#schema-proxy) from the **schema-name**, **service** or **schema-json** props
@@ -151,15 +161,36 @@ Make it easier to build [editors](./components.md#editors) from props defined on
 This mixin has been designed to be used with the [service mixin](./mixins.md#service-proxy), the [schema mixin](./mixins.md#schema-proxy), the [object mixin](./mixins.md#object-proxy) and the [refs resolver mixin](./mixins.md#refs-resolver).
 :::
 
+::: tip
+The **baseObject** props is usually used to keep track of existing or additional "hidden" or "internal" properties in addition to the ones edited throught the form.
+:::
+
+Check out a code example [here](https://github.com/kalisio/kCore/blob/master/src/client/components/editor) to see how to create your own editors.
+
 ## Base Field
 
 Make it easier to build [form fields](./components.md#editors) from the **properties** and **display** props:
 * **emptyModel()** get the default "empty" value of the field, returns an empty string by default
-* **clear()** set the current value of the field to "empty"
+* **clear()** set the current value of the field to be the default one if provided through `properties.field.default`, use "empty" model value otherwise
 * **value()** get the current value of the field, simply gets the value from model by default
 * **fill(value)** set the current value of the field, simply copies the value as model by default
 * **apply (object, field)** applies the current field value on the given target object, simply copies the value in the object by default, to be overloaded if you need to perform specific operations before the form has been submitted
 * **submitted (object, field)** does nothing by default, to be overloaded if you need to perform specific operations after the form has been submitted
+* **onChanged()** emits the `field-changed` event whenever the field value has changed, consequently the form will validate or invalidate the field, should be binded in template to events like [`blur`](https://v0-14.quasar-framework.org/components/input.html#Vue-Events).
+
+[Quasar field components](https://v0-14.quasar-framework.org/components/field.html) are usually used to implement form fields, the given set of computed properties are available to be bound:
+* **icon** alias for `properties.field.icon` if `display.icon` is `true`, empty by default
+* **label** alias for `properties.field.label` if `display.label` is `true`, empty by default
+* **helper** alias for `properties.field.helper`
+* **disabled** alias for `properties.field.disabled`, `false` by default
+* **hasError** boolean indicating if a validation error has occured
+* **errorLabel** alias for `properties.field.errorLabel`, empty by default
+
+::: tip
+**label**, **helper** and **errorLabel** properties will be automatically internationalized if corresponding values are valid translation keys.
+:::
+
+Check out a code example [here](https://github.com/kalisio/kCore/blob/master/src/client/components/form) to see how to create your own fields.
 
 ## Version
 
