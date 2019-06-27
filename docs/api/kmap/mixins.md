@@ -21,10 +21,47 @@ Allow to launch native route navigation apps to go to a given location (the [lau
 * **canNavigate()** check if navigation is possible (mobile device and navigation app installed)
 * **navigate(longitude, latitude)** launches native route navigation app for the given location
 
+## Feature Service
+
+Ease requests to a [feature service](./services.md#feature-service) in order to get real-time updates and edit features:
+* **getProbeFeatures(options)** retrieve the probe locations (if any) for a given [catalog layer descriptor](./services.md#catalog) to initialize the feature layer
+* **getProbeFeaturesFromLayer(name)** same as above but using the layer name
+* **getFeatures(options, queryInterval)** get the latest available features for a given [catalog layer descriptor](./services.md#catalog) at current time or in a given elapsed time range if a query interval in milliseconds is given
+* **getFeaturesFromLayer(name, queryInterval)** same as above but using the layer name
+* **getMeasureForFeature(options, feature, startTime, endTime)** get the available probe measures for a given [catalog layer descriptor](./services.md#catalog) in the given time range, will store result in `probedLocation` attribute and emits the `probed-location-changed` event
+* **getProbedLocationMeasureAtCurrentTime()** computes measure values at current time (see [time mixin](./mixins.md#time)) once a location has been probed
+* **createFeatures(geoJson, layerId)** creates a new set of features in feature service associated to the target layer based on input GeoJson
+* **editFeaturesGeometry(geoJson)** edits the geometry of a set of features in feature service based on input GeoJson
+* **editFeaturesProperties(geoJson)** edits the properties of a set of features in feature service based on input GeoJson
+* **removeFeatures(geoJsonOrLayerId)** removes a set of features in feature service based on input GeoJson or all features associated to the target layer if any
+
+::: tip
+Please refer to [feature service API](./services.md#time-based-feature-aggregation) for more details on measure aggregation.
+:::
+
+## Weacast
+
+Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-docs/):
+* **setupWeacast(config)** initializes a [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property
+* **setupForecastModels()** retrieve available [forecast models](https://weacast.github.io/weacast-docs/architecture/main-concepts.html#forecast-model) from [Weacast API](https://weacast.github.io/weacast-docs/api/forecast.html)
+* **setForecastModel(model)** updates the current [forecast model](https://weacast.github.io/weacast-docs/architecture/main-concepts.html#forecast-model) and emits the `forecast-model-changed` event
+* **getForecastForLocation(long, lat, startTime, endTime)** helper function to dynamically probe weather elements at a given location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probes-api)
+* **getForecastForFeature(featureId, startTime, endTime)** helper function to get weather element at static probe location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probe-results-api)
+* **getProbedLocationForecastAtCurrentTime()** computes element values at current time (see [time mixin](./mixins.md#time)) once a location has been probed (dynamically or statically)
+* **getProbedLocationForecastMarker(feature, latlng)** generates a marker using a [wind barb](http://weather.rap.ucar.edu/info/about_windbarb.html) according to element values in feature
+
+::: tip
+Will automatically update forecast time whenever the current time is changed in the activity
+:::
+
+::: warning
+If no config options are provided when initializing Weacast it is assumed that it runs as a backend service acccessible through [feathers-distributed](https://github.com/kalisio/feathers-distributed)
+:::
+
 ## Time
 
 Ease management of time-based component:
-* **setCurrentTime(datetime)** change the current time to the given one and ensure it is internally stored as a UTC [moment](https://momentjs.com/) object to avoid any confusion
+* **setCurrentTime(datetime)** change the current time to the given one and ensure it is internally stored as a UTC [moment](https://momentjs.com/) object to avoid any confusion, emits the `current-time-changed` event
 * **setTimeFormat(format)** change the formats used to display date/time, each format is based on [moment](https://momentjs.com/docs/#/displaying/format/) display options and the object is structured like this
   * **time**
     * **short**: display format for time in "short" form
@@ -68,49 +105,64 @@ This mixin also adds the following internal data properties:
 * **currentTimeFormat**: current format object to be used for display
 * **currentFormattedTime**: same structure as the format object but contains ready-to-display values of the current time, e.g. `currentFormattedTime.time.short` will give you the formatted time string in short form according to current format settings.
 
-## Feature Service
+## Timeline
 
-Ease requests to a [feature service](./services.md#feature-service) in order to get real-time updates:
-* **getProbeFeatures(options)** retrieve the probe locations (if any) for a given [catalog layer descriptor](./services.md#catalog) to initialize the feature layer
-* **getProbeFeaturesFromLayer(name)** same as above but using the layer name
-* **getFeatures(options, queryInterval)** get the latest available features for a given [catalog layer descriptor](./services.md#catalog) at current time or in a given elapsed time range if a query interval in milliseconds is given
-* **getFeaturesFromLayer(name, queryInterval)** same as above but using the layer name
-* **getMeasureForFeature(options, feature, startTime, endTime)** get the available probe measures for a given [catalog layer descriptor](./services.md#catalog) in the given time range, will store result in `probedLocation` attribute
-* **getProbedLocationMeasureAtCurrentTime()** computes measure values at current time (see [time mixin](./mixins.md#time)) once a location has been probed
+Ease integration of a timeline component in mapping activities:
+* **setupTimeline()** setups the timeline according to currently selected forecast model time range if any (see [Weacast mixin](./mixins.md#weacast)) or based on the following global frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) properties:
+ * **start**: offset in seconds from now the timeline should begin
+ * **end**: offset in seconds from now the timeline should end
+* **getTimelineInterval()** default timeline interval function
+* **getTimelineFormatter()** default timeline formatting function
 
-Please refer to [feature service API](./services.md#time-based-feature-aggregation) for more details.
+## Timeseries
 
-## Weacast
+Ease integration of a graph component displaying weather or measurements as timeseries in mapping activities:
+* **createProbedLocationLayer()** updates the marker layer used to locate the probe measurements come from
+* **updateProbedLocationForecast()** updates the probe prediction values whenever the current forecast model has changed (see [Weacast mixin](./mixins.md#weacast))
+* **isTimeseriesOpen()** check if the timeseries widget is currently visible
+* **openTimeseries()** opens the timeseries widget to make it currently visible
+* **closeTimeseries()** closes the timeseries widget to make it currently hidden
+* **toggleTimeseries()** changes the visibility state of the timeseries widget
 
-Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-docs/):
-* **setupWeacast(config)** initializes a [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property
-* **setupForecastModels()** retrieve available [forecast models](https://github.com/mapbox/simplestyle-spec) from [Weacast API](https://weacast.github.io/weacast-docs/api/forecast.html)
-* **getForecastForLocation(long, lat, startTime, endTime)** helper function to dynamically probe weather elements at a given location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probes-api)
-* **getForecastForFeature(featureId, startTime, endTime)** helper function to get weather element at static probe location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probe-results-api)
-* **getProbedLocationForecastAtCurrentTime()** computes element values at current time (see [time mixin](./mixins.md#time)) once a location has been probed (dynamically or statically)
-* **getProbedLocationForecastMarker(feature, latlng)** generates a marker using a [wind barb](http://weather.rap.ucar.edu/info/about_windbarb.html) according to element values in feature
+::: tip
+The mixin keeps in sync the timeseries widget visibility state and the associated probe marker layer.
+:::
+
+::: danger
+It assumes that the DOM element used to display the graph is a [KWidget](../kcore/components.md#kwidget) including a [KLocationTimeSeries](./components.md#klocationtimeseries) with a ref named `timeseriesWidget`.
+:::
 
 ## Activity
 
-Make it easier to create 2D/3D mapping activities:
-* **setMappingEngine(engine)** setup the mapping engine to be used by activity (either `leaflet` for 2D mapping or `cesium` for 3D mapping), **should be called first before any other method**
+Make it easier to create 2D/3D mapping activities by providing methods available in both cases:
+* **initialize()** setup view, Weacast, layers and timeline, **should be called first before any other method**
 * **registerActivityActions()** register default activity actions (fullscreen mode, geolocation, geocoding, tracking, probing, etc.)
 * **getCatalogLayers()** retrieve available [catalog layer descriptors](./services.md#catalog)
 * **refreshLayers()** setup available layers based on [catalog layer descriptors](./services.md#catalog)
+* **registerLayerActions(layer)** register default layer actions (zoom, save, edit, edit data, remove, etc.)
 * **isLayerStorable/Removable/Editable(layer)** helper function to get the state of a given layer descriptor
-* **onLayerAdded(layer)** add layer action handler that will setup available action on layer
-* **onTriggerLayer(layer)** trigger layer action handler that will hide/show a given layer
-* **onZoomToLayer(layer)** zoom layer action handler that will zoom to a given layer
+* **onLayerAdded(layer)** layer action handler that will setup available action on layer
+* **onTriggerLayer(layer)** trigger action handler that will hide/show a given layer
+* **onZoomToLayer(layer)** zoom action handler that will zoom to a given layer
 * **onCreateLayer()** create layer action handler that will open an [editor](../kcore/components.md#editors) to define layer properties
-* **onSaveLayer(layer)** save layer action handler that will persist a given in-memory layer to persistent storage provided by a [feature service](./services.md#feature-service)
-* **onEditLayer(layer)** edit layer action handler that will open an [editor](../kcore/components.md#editors) to change layer properties
-* **onRemoveLayer(layer)** remove layer action handler that will ask for confirmation before removing a persisted layer
+* **onSaveLayer(layer)** save action handler that will persist a given in-memory layer to persistent storage provided by a [feature service](./services.md#feature-service)
+* **onEditLayer(layer)** edit action handler that will open an [editor](../kcore/components.md#editors) to change layer properties
+* **onEditLayerData(layer)** edit data action handler that will (de)activate [feature edition mode](https://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html) to update layer features geometry and properties
+* **onRemoveLayer(layer)** remove action handler that will ask for confirmation before removing a persisted layer
 * **onGeocoding()** geocoding action handler that will open a dialog to search for a location to go to
 * **onGeolocate()** geolocation action handler that will launch a user's position lookup and go to found user's location
 * **onTrackLocation()** location tracking action handler that will enable/disable a location indicator to display location values
-* **storeView()** store current view bounds as query parameters and persists as well in local storage 
-* **restoreView()** restore previously stored view bounds from local storage or query parameters
+* **storeView()** stores current view bounds as query parameters and persists as well in local storage 
+* **restoreView()** restores previously stored view bounds from local storage or query parameters
 * **clearStoredView()** clears the stored view bounds so that it will not be restored anymore
+
+::: tip
+This mixin has to be initialized by providing a unique component/activity name like `mixins.activity('map')`. Indeed, the name is then used to retrieve the configuration associated with the activity from the global frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) according to the following properties:
+* **{name}**: 2D/3D view configuration
+* **[name}Panel**: 2D/3D layers panel configuration
+* **[name}Activity**: 2D/3D activity configuration
+See [Kano configuration options](../kano/configuration.md) for more details.
+:::
 
 ## Location indicator
 
@@ -125,6 +177,16 @@ The mixin is in sync with the `locationFormat` property of the [global store](..
 This mixin also adds the following internal data properties:
 * **currentLocation**: current location as [latitude, longitude]
 * **currentLocationFormat**: current location format object to be used for display as supported by [formatcoords](https://github.com/nerik/formatcoords)
+
+## Legend
+
+Allow to display a legend on top of the map according to currently active layer variables:
+* **createLocationIndicator()** installs the indicator
+* **removeLocationIndicator()** removes the indicator
+
+::: tip
+Will automatically hide/show the legend whenever a layer is.
+:::
 
 ## Map
 
@@ -145,11 +207,17 @@ Make it possible to manage map layers and extend supported layer types:
 * **zoomToLayer(name)** fits the map view to visualize a given layer
 * **zoomToBounds(bounds)** fits the map view to visualize a given extent as bounds [ [south, west], [north, east] ]
 * **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog) for a given layer
+* **renameLayer(previousName, newName)** rename a given layer
+* **removeLayer(name)** destroys a given layer
 * **getLeafletLayerByName(name)** retrieve the underlying Leaflet object for a given layer
 * **createLeafletLayer(options)** creates the underlying Leaflet object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
+* **getLeafletPaneByName(name)** retrieve the underlying Leaflet object for a given pane
+* **createLeafletPane(name)** creates the underlying Leaflet object for a pane
+* **removeLeafletPane(name)** destroys the underlying Leaflet object for a given pane
 * **registerLeafletConstructor(constructor)** registers a Leaflet constructor function for a given type of layer
 * **center(longitude, latitude, zoomLevel)** centers the map view to visualize a given point at a given zoom level
 * **getCenter()** get the current map view center as longitude, latitude and zoom level
+* **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
 
 This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
@@ -317,8 +385,11 @@ You can also draw a path with a different styling on each part like this:
 
 Make it possible to edit features of a [GeoJson layer](./mixins.md#geojson-layer) (geometry and properties):
 * **editLayer(name)** start/stop layer edition on a given layer
+* **updateFeatureProperties(feature, layer, leafletLayer)** update feature properties action handler that will open an [editor](../kcore/components.md#editors) to define feature properties
 
-As a consequence it has to be used with the GeoJson layer mixin and will use the configured styling.
+::: warning
+It has to be used with the GeoJson layer mixin and will use the configured styling.
+:::
 
 ### File Layer
 
@@ -331,6 +402,16 @@ Make it possible to manage [Weacast map layers](https://weacast.github.io/weacas
 
 ::: warning
 This mixin assumes that your component has initialized its [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property by using e.g. the [Weacast mixin](./mixins.md#weacast)
+:::
+
+#### Map Activity
+
+Make it easier to create 2D mapping activities:
+* **initializeMap()** setup the mapping engine, **should be called first before any other method**
+* **finalizeMap()** destroy the mapping engine
+
+::: danger
+It assumes that the DOM element used by the render engine has a ref named `map`
 :::
 
 ## Globe
@@ -352,11 +433,14 @@ Make it possible to manage globe layers and extend supported layer types:
 * **zoomToLayer(name)** fits the globe view to visualize a given layer
 * **zoomToBounds(bounds)** fits the globe view to visualize a given extent as bounds [ [south, west], [north, east] ]
 * **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog) for a given layer
+* **renameLayer(previousName, newName)** rename a given layer
+* **removeLayer(name)** destroys a given layer
 * **getCesiumLayerByName(name)** retrieve the underlying Cesium object for a given layer
 * **createCesiumLayer(options)** creates the underlying Cesium object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
 * **registerCesiumConstructor(constructor)** registers a Cesium constructor function for a given type of layer
 * **center(longitude, latitude, altitude, heading, pitch, roll)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90])
 * **getCenter()** get the current globe view center as longitude, latitude and altitude
+* **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
 
 ### Globe Style
 
@@ -507,3 +591,13 @@ You can also draw a path with a different styling on each part like this:
 ### File Layer
 
 Make it possible to drag'n'drop GeoJson or KML file on the globe. It will automatically create a new [GeoJson layer](./mixins.md#geojson-layer) named after the filename on drop. As a consequence it has to be used with the GeoJson layer mixin and will use the configured styling.
+
+#### Globe Activity
+
+Make it easier to create 3D mapping activities:
+* **initializeGlobe(token)** setup the render engine with given Cesium ion access token, **should be called first before any other method**
+* **finalizeGlobe()** destroy the render engine
+
+::: danger
+It assumes that the DOM element used by the render engine has a ref named `globe`
+:::

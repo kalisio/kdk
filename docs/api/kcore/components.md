@@ -169,7 +169,7 @@ The properties to declare  a **k-form** are the following:
   * **labelWidth**: the width used to display the label. Out of 12 grid points, how much should the label take? Default is 5. Minimum is 1 and maximum is 11
 
 ::: tip
-Because, the **k-form** loads dynamically the required components to build the form, it is mandatory to use use a reference to the form using the keyword `ref` and the [**refs resolver mixin**](../mixins.md#refs-resolver) to wait for the components to be loaded before applying any methods.
+Because, the **k-form** loads dynamically the required components to build the form, it is mandatory to use use a reference to the form using the keyword `ref` and the [**refs resolver mixin**](./mixins.md#refs-resolver) to wait for the components to be loaded before applying any methods.
 :::
 
 The **k-form** components exhibits the following methods:

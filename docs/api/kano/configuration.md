@@ -26,9 +26,11 @@ Most options come from the "standard" frontend [configuration](../../guides/basi
 * **mapActivity**: 2D map activity configuration
   * **buttons**: active UI buttons among `['side-nav', 'panel']`,
   * **actions**: active UI action in FAB among `['fullscreen', 'geolocate', 'geocode', 'track-location', 'probe-location', 'create-layer']`,
+  * **layerActions**: active UI action in layer menu among `['zoom-to', 'save', 'edit', 'edit-data', 'remove']`
 * **globeActivity**: 3D globe activity configuration
   * **buttons**: active UI buttons among `['side-nav', 'panel']`,
-  * **actions**: active UI action in FAB among `['fullscreen', 'geolocate', 'geocode', 'track-location', 'vr']`
+  * **actions**: active UI action in FAB among `['fullscreen', 'geolocate', 'geocode', 'track-location', 'probe-location', 'vr']`,
+  * **layerActions**: active UI action in layer menu among `['zoom-to', 'save', 'edit', 'remove']`
 * **map**: 2D map view configuration
 	* **viewer**: 2D map initialization [options](https://leafletjs.com/reference.html#map-option),
 	* **featureStyle**: default GeoJSON [layer style](../kmap/mixins.md#map-style) for polygons/lines,
