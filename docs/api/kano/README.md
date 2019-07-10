@@ -31,6 +31,10 @@ In addition to the events used to access mixin methods there are a couple of ded
 * `setConfiguration`: listened by Kano to override key/value pairs (provided as event data payload) in its default configuration, typically useful to setup UI according to your application needs, see the [detailed configuration page](./configuration.md)
 * `map-ready`: to be listened by integrating application to know when the 2D map component has been initialized in the Kano application so that you can safely use the underlying API
 * `globe-ready`: to be listened by integrating application to know when the 3D globe component has been initialized in the Kano application so that you can safely use the underlying API
+* `layer-added`: to be listened by integrating application to know whenever a new layer has been added to the 2D/3D map (from the internal catalog or externally)
+* `layer-removed`: to be listened by integrating application to know whenever a layer has been removed from the 2D/3D map
+* `layer-shown`: to be listened by integrating application to know whenever a layer has been shown in the 2D/3D map
+* `layer-hidden`: to be listened by integrating application to know whenever a new layer has been hidden in the 2D/3D map
 
 Here is a simple code sample:
 ```html
