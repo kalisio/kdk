@@ -10,6 +10,10 @@ Follow-up logs while running a container:
 ```
 docker logs container_name -f --tail 100
 ```
+Get detailed healthcheck status for a running container:
+```
+docker inspect -f '{{json .State.Health.Status}}' container_name
+```
 Find the location of the log file of a container:
 ```
 docker inspect --format='{{.LogPath}}' container_name
@@ -38,13 +42,67 @@ Check why a swarm service did not start (empty logs, no replica):
 ```
 docker service ps --no-trunc {serviceName}
 ```
+To access host in Docker Desktop Edition on [Windows](https://docs.docker.com/docker-for-windows/networking/) or [Mac](https://docs.docker.com/docker-for-mac/networking/) use the special DNS name `host.docker.internal`.
 
 ## Scaleway
 
 A [step-by-step configuration](https://gist.github.com/cnouguier/a1ecc88f67819a610ae8e4d221789a8c) of a new server with Docker and a single logical volume.
 
-# Networking
+## Networking
 
 List all running ssh sessions: `netstat -tnpa | grep 'ESTABLISHED.*sshd'`
 
 List all ssh session attempts: `cat /var/log/auth.log`
+
+### Development domains
+
+Some development tasks like OAuth2 authentication have strict security concerns so that you cannot use `localhost`, non-standard ports or need to enforce HTTPS in all URLs. Here is how to setup a "fake" domain on your host.
+
+Let's say we have our app running on `localhost:8080` in HTTP or `localhost:8083` in HTTPS. First, edit the `hosts` file (*/etc/hosts* under Linux or *C:\Windows\System32\drivers\etc\hosts* under Windows) and add this line to redirect the domain to local host:
+```
+127.0.0.1 test.airbusoidc.com
+```
+
+Then, since the `hosts` file does not allow to manage port redirections we need to do so using the operating system network tools.
+
+#### Windows
+
+To see what is currently running:
+```
+netstat -a -n -p TCP | grep "LISTENING"
+```
+
+To add port redirection for HTTP:
+```
+netsh interface portproxy add v4tov4 listenport=80 listenaddress=127.0.0.1 connectport=8080 connectaddress=127.0.0.1
+```
+
+To add port redirection for HTTPS:
+```
+netsh interface portproxy add v4tov4 listenport=443 listenaddress=127.0.0.1 connectport=8083 connectaddress=127.0.0.1
+```
+
+To see running proxied port:
+```
+netsh interface portproxy show v4tov4
+```
+
+To see remove proxied port:
+```
+netsh interface portproxy delete v4tov4 listenport=80 listenaddress=127.0.0.1
+```
+
+#### Linux
+
+First enable port redirection:
+```
+echo "1" > /proc/sys/net/ipv4/ip_forward
+```
+
+Then add port redirect:
+```
+iptables -t nat -A PREROUTING -s 127.0.0.1 -p tcp --dport 80 -j REDIRECT --to 8080`
+iptables -t nat -A OUTPUT -s 127.0.0.1 -p tcp --dport 80 -j REDIRECT --to 8080`
+```
+
+To remove simply replace in the previous command the `-D` switch instead of the `-A` switch.

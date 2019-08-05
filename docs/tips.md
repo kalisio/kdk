@@ -44,10 +44,15 @@ Errors are often visible when launching the app server but might come from an un
 
 ## Running multiple applications side-by-side in development mode
 
-For instance, as Kano depends for some features on a running Weacast API you will need to run both on your local environment. If your application also uses replication you will need to launch two instances in parallel. The problem is that by default all our apps uses the `8081` port for server and `8080` port for client in development mode, generating a port conflict.
+For instance, as Kano depends for some features on a running Weacast API you will need to run both on your local environment. If your application also uses replication you will need to launch two instances in parallel. The problem is that by default all our apps uses the `8081` port for server and `8080` port for client in development mode, generating a port conflict. Similarly the Node.js debugger uses by default the `9229` port.
 
-You should run the first server by defining `PORT=8082` (to avoid port conflict). If single-sign-on is expected to work, define also `APP_SECRET=same value as in second application configuration` as environment variables. Then execute the `npm run dev:replica` command (to avoid port conflict for the Node.js debugger). Last, you can launch the second server/client as usual.
+You should run the first server by defining eg. `PORT=8082` (to avoid port conflict). If single-sign-on is expected to work, define also `APP_SECRET=same value as in second application configuration` as environment variables. Then execute the `npm run dev:replica` command (will setup the Node.js debugger to use the `9229` port to avoid port conflict). Last, you can launch the second server/client as usual.
 
 ::: tip
-You usually don't need the client application but only the API on the replica but if required you can launch another client similarly using `CLIENT_PORT=8083`
+You usually don't need the client application but only the API on the replica but if required you can launch another client similarly e.g. by setting `CLIENT_PORT=8083`.
 :::
+
+::: tip
+If you need more than two side-by-side applications then use set [NODE_OPTIONS](https://nodejs.org/api/cli.html#cli_node_options_options) environment variable before launching each one, e.g. `NODE_OPTIONS='--inspect-port=9230'`.
+:::
+

@@ -27,19 +27,29 @@ async function run (workspace, branch) {
   for (let i = 0; i < modules.length; i++) {
     const module = modules[i]
     options = workspace[module]
+    if (program.modules && !program.modules.includes(module)) {
+      continue
+    }
     if (options.branches && !options.branches.includes(branch)) {
       continue
     }
     console.log(`Preparing module ${module}`)
     if (program.clone) {
+      const cwd = process.cwd()
+      // Clone path can be relative to CWD when managing code for different organizations (eg kalisio/weacast)
+      // CWD is the root path for the "main" organization usually owing the project
+      if (options.path) shell.cd(path.join(cwd, options.path))
       const organization = options.organization || program.organization
       try {
         await runCommand(`git clone https://github.com/${organization}/${module}.git`)
       } catch (error) {
         console.log(error)
       }
+      shell.cd(cwd)
     }
     const cwd = process.cwd()
+    // Working path for module can be relative to CWD when managing code for different organizations (eg kalisio/weacast)
+    // CWD is the root path for the "main" organization usually owing the project
     shell.cd(options.path ? path.join(cwd, options.path, `${module}`) : path.join(cwd, `${module}`))
     try {
       if (program.branch) {
@@ -75,7 +85,7 @@ async function run (workspace, branch) {
       if (options.branches && !options.branches.includes(branch)) {
         continue
       }
-      console.log(`Linking module ${module}`)
+      console.log(program.link ? `Linking module ${module}` : `Unlinking module ${module}`)
       options = workspace[module]
       const cwd = process.cwd()
       shell.cd(options.path ? path.join(cwd, options.path, `${module}`) : path.join(cwd, `${module}`))
@@ -104,6 +114,10 @@ async function run (workspace, branch) {
   }
 }
 
+function commaSeparatedList(values) {
+  return values.split(',')
+}
+
 program
   .version(require('./package.json').version)
   .usage('<workspacefile> [options]')
@@ -114,6 +128,7 @@ program
   .option('-l, --link', 'Perform yarn link')
   .option('-ul, --unlink', 'Perform yarn unlink')
   .option('-b, --branch [branch]', 'Switch git branch')
+  .option('-m, --modules [modules]', 'Comma separated list of modules from the workspace to apply command on', commaSeparatedList)
   .parse(process.argv)
 
 let workspace = program.args[0]

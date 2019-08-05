@@ -95,6 +95,10 @@ function getAPISidebar () {
     {
       title: 'kEvent',
       children: [ 'kevent/', 'kevent/services', 'kevent/hooks', 'kevent/components', 'kevent/mixins' ]
+    },
+    {
+      title: 'kano',
+      children: [ 'kano/', 'kano/configuration' ]
     }
   ]
 }

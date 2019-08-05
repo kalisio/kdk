@@ -54,7 +54,38 @@ kdk workspace.js --branch test
 This CLI assumes git and yarn are already globally installed on your system.
 :::
 
+::: warning
+By default all Git operations target the `kalisio` organization, you can change this for the whole workspace using the `organization` CLI option or on specific modules only using the `organization` option in the workspace file. Like this you include modules coming from a separate organization but used as dependencies of the project owned by the main organization of the project.
+:::
+
+::: warning
+All operations are performed relative to the CWD by default, you can change this for specific modules only using the `path` option in the workspace file providing a module path relative to the CWD. Like this you can for instance have modules coming from a separate organization isolated into their own directory.
+:::
+
 Sample [workspaces](https://github.com/kalisio/kdk/tree/master/workspaces) for our [application template](https://github.com/kalisio/kApp), [Kano](https://github.com/kalisio/kano) and [Akt'n'Map](https://github.com/kalisio/aktnmap) are provided.
+
+Full CLI usage is the following:
+```
+Usage: index <workspacefile> [options]
+
+Options:
+  -V, --version                      output the version number
+  -o, --organization [organization]  GitHub organization owing the project (default: "kalisio")
+  -d, --debug                        Verbose output for debugging
+  -c, --clone                        Clone git repositories
+  -i, --install                      Perform yarn install
+  -l, --link                         Perform yarn link
+  -ul, --unlink                      Perform yarn unlink
+  -b, --branch [branch]              Switch git branch
+  -m, --modules [modules]            Comma separated list of modules from the workspace to apply command on
+  -h, --help                         output usage information
+```
+
+## [Gitrob](https://github.com/michenriksen/gitrob)
+
+Gitrob is a tool to help find potentially sensitive files pushed to public repositories on Github. Simply run it using a GitHub token and a target user or organisation: `gitrob -github-access-token XXX kalisio`.
+
+Then you can open the WebUI at [http://localhost:9393](http://localhost:9393) and see what's going on.
 
 ## [Screen](https://doc.ubuntu-fr.org/screen)
 
