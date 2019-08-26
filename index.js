@@ -34,14 +34,18 @@ async function run (workspace, branch) {
       continue
     }
     console.log(`Preparing module ${module}`)
-    if (program.clone) {
+    if (program.clone || program.pull) {
       const cwd = process.cwd()
       // Clone path can be relative to CWD when managing code for different organizations (eg kalisio/weacast)
       // CWD is the root path for the "main" organization usually owing the project
       if (options.path) shell.cd(path.join(cwd, options.path))
       const organization = options.organization || program.organization
       try {
-        await runCommand(`git clone https://github.com/${organization}/${module}.git`)
+        if (program.clone) await runCommand(`git clone https://github.com/${organization}/${module}.git`)
+        else {
+          shell.cd(`${module}`)
+          await runCommand(`git pull`)
+        }
       } catch (error) {
         console.log(error)
       }
@@ -124,6 +128,7 @@ program
   .option('-o, --organization [organization]', 'GitHub organization owing the project', 'kalisio')
   .option('-d, --debug', 'Verbose output for debugging')
   .option('-c, --clone', 'Clone git repositories')
+  .option('-p, --pull', 'Pull git repositories')
   .option('-i, --install', 'Perform yarn install')
   .option('-l, --link', 'Perform yarn link')
   .option('-ul, --unlink', 'Perform yarn unlink')
