@@ -54,7 +54,7 @@ For the backend run one instance with `$ yarn/npm run dev` and the other one wit
 
 ## Cordova wrapper
 
-[Quasar guide](http://quasar-framework.org/guide/Cordova-wrapper.html) might help.
+[Quasar guide](https://v0-14.quasar-framework.org/guide/cordova-wrapper.html) might help.
 
 ### Configuring the app
 
