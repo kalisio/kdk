@@ -63,8 +63,10 @@ async function run (workspace, branch) {
       if (program.install) {
         await runCommand('yarn install')
       }
-      if (!options.application && program.link) {
-        await runCommand('yarn link')
+      if (!options.application && (program.link || program.unlink)) {
+        console.log(program.link ? `Linking global module ${module}` : `Unlinking global module ${module}`)
+        if (program.link) await runCommand('yarn link')
+        else await runCommand('yarn unlink')
       }
       if (options.application) {
         shell.cd('api')
@@ -93,27 +95,27 @@ async function run (workspace, branch) {
       options = workspace[module]
       const cwd = process.cwd()
       shell.cd(options.path ? path.join(cwd, options.path, `${module}`) : path.join(cwd, `${module}`))
-      try {
+      for (let i = 0; i < options.dependencies.length; i++) {
+        const dependency = options.dependencies[i]
+        try {
+          await runCommand(program.link ? `yarn link ${dependency}` : `yarn unlink ${dependency}`)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      if (options.application) {
+        shell.cd('api')
         for (let i = 0; i < options.dependencies.length; i++) {
           const dependency = options.dependencies[i]
-          await runCommand(program.link ? `yarn link ${dependency}` : `yarn unlink ${dependency}`)
-        }
-        if (options.application) {
-          shell.cd('api')
           try {
-            for (let i = 0; i < options.dependencies.length; i++) {
-              const dependency = options.dependencies[i]
-              await runCommand(program.link ? `yarn link ${dependency}` : `yarn unlink ${dependency}`)
-            }
+            await runCommand(program.link ? `yarn link ${dependency}` : `yarn unlink ${dependency}`)
           } catch (error) {
             console.log(error)
           }
-          shell.cd('..')
         }
-        shell.cd(cwd)
-      } catch (error) {
-        console.log(error)
+        shell.cd('..')
       }
+      shell.cd(cwd)
     }
   }
 }
