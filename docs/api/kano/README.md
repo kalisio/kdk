@@ -16,6 +16,8 @@ It uses [post-robot](https://github.com/krakenjs/post-robot) to
     * the `args` property is the expected method arguments
 3. retrieve internal method call result externally
     * event response data is the method result object
+4. retrieve internal property externally
+    * event response data is the property value
 
 ::: tip
 Event messaging using post-robot is always async because it relies on the [postMessage API](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) under-the-hood.
@@ -47,16 +49,22 @@ Here is a simple code sample:
 	  	// Optionnaly overrides default setup of Kano
 	  	postRobot.send(kano, 'setConfiguration', { 'appName': 'xxx' })
 	  	.then(function() {
-		  	// Optionnaly set a valid token to avoid authentication
-		  	postRobot.send(kano, 'setLocalStorage', { 'kano-jwt': 'xxx' })
-		  	.then(function() {
-				  // Show and zoom to a layer
-			    postRobot.send(kano, 'map', { command: 'showLayer', args: 'Layer name' })
-			    .then(function() {
-			      postRobot.send(kano, 'map', { command: 'zoomToLayer', args: 'Layer name' })
-			    })
-			  })
-			})
+		  // Optionnaly set a valid token to avoid authentication
+		  return postRobot.send(kano, 'setLocalStorage', { 'kano-jwt': 'xxx' })
+		})
+	  	.then(function() {
+		  // Show and zoom to a layer
+		  return postRobot.send(kano, 'map', { command: 'showLayer', args: 'Layer name' })
+		})
+		.then(function() {
+	      return postRobot.send(kano, 'map', { command: 'zoomToLayer', args: 'Layer name' })
+	    })
+		.then(function() {
+	      return postRobot.send(kano, 'map', { property: 'layers' })
+	    })
+		.then(function(result) {
+	      console.log('Layer list', result.data)
+	    })
 	  })
 	</script>
 ```

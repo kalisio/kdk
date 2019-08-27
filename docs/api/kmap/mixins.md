@@ -45,13 +45,34 @@ Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-doc
 * **setupWeacast(config)** initializes a [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property
 * **setupForecastModels()** retrieve available [forecast models](https://weacast.github.io/weacast-docs/architecture/main-concepts.html#forecast-model) from [Weacast API](https://weacast.github.io/weacast-docs/api/forecast.html)
 * **setForecastModel(model)** updates the current [forecast model](https://weacast.github.io/weacast-docs/architecture/main-concepts.html#forecast-model) and emits the `forecast-model-changed` event
+* **setForecastLevel(level)** updates the current forecast level and emits the `forecast-level-changed` event
 * **getForecastForLocation(long, lat, startTime, endTime)** helper function to dynamically probe weather elements at a given location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probes-api)
 * **getForecastForFeature(featureId, startTime, endTime)** helper function to get weather element at static probe location in a given time range using the [Weacast API](https://weacast.github.io/weacast-docs/api/probe.html#probe-results-api)
 * **getProbedLocationForecastAtCurrentTime()** computes element values at current time (see [time mixin](./mixins.md#time)) once a location has been probed (dynamically or statically)
 * **getProbedLocationForecastMarker(feature, latlng)** generates a marker using a [wind barb](http://weather.rap.ucar.edu/info/about_windbarb.html) according to element values in feature
 
+This mixin also adds the following internal data properties:
+* **forecastModel** currently selected forecast model
+* **forecastModels** list of available forecast models
+* **forecastLevel** currently selected forecast level
+* **forecastLevels** list of available forecast levels
+
+Here is an example of a forecast levels description object:
+```js
+{
+  name: 'pressure',
+  label: 'Pression',
+  units: [
+    'mb'
+  ],
+  values: [ 1000, 700, 450, 300, 200 ]
+}
+```
+
+Note that in Weacast all meteorological elements are assumed to be atomic, i.e. each element is a 2D longitude/latitude grid of scalar values, there is no forecast level. As a consequence each forecast level will be associated to a different element in the Weacast configuration. This means that the forecast level is a pure construction of the KDK based on the following convention: if a forecast layer descriptor for an element named `gust` contains a list of forecast levels like `[ 1000, 700, 450, 300, 200 ]` then it is assumed that Weacast will provide the atomic elements named `gust-1000`, `gust-700`, `gust-450`, `gust-300`, `gust-200`. The right one will be retrieved according to currently selected forecast level using the pattern `element_name-forecast_level`.
+
 ::: tip
-Will automatically update forecast time whenever the current time is changed in the activity
+The mixin will automatically update forecast time whenever the current time is changed in the activity
 :::
 
 ::: warning
@@ -123,6 +144,9 @@ Ease integration of a graph component displaying weather or measurements as time
 * **openTimeseries()** opens the timeseries widget to make it currently visible
 * **closeTimeseries()** closes the timeseries widget to make it currently hidden
 * **toggleTimeseries()** changes the visibility state of the timeseries widget
+
+This mixin also adds the following internal data properties:
+* **probedLocation** currently probed location feature
 
 ::: tip
 The mixin keeps in sync the timeseries widget visibility state and the associated probe marker layer.
@@ -219,6 +243,9 @@ Make it possible to manage map layers and extend supported layer types:
 * **getCenter()** get the current map view center as longitude, latitude and zoom level
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
+
+This mixin also adds the following internal data properties:
+* **layers** available layers as [catalog layer descriptors](./services.md#catalog)
 
 This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
 
@@ -447,6 +474,9 @@ Make it possible to manage globe layers and extend supported layer types:
 * **center(longitude, latitude, altitude, heading, pitch, roll)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90])
 * **getCenter()** get the current globe view center as longitude, latitude and altitude
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
+
+This mixin also adds the following internal data properties:
+* **layers** available layers as [catalog layer descriptors](./services.md#catalog)
 
 ### Globe Style
 
