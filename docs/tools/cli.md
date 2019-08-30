@@ -73,6 +73,7 @@ Options:
   -o, --organization [organization]  GitHub organization owing the project (default: "kalisio")
   -d, --debug                        Verbose output for debugging
   -c, --clone                        Clone git repositories
+  -p, --pull                         Pull git repositories
   -i, --install                      Perform yarn install
   -l, --link                         Perform yarn link
   -ul, --unlink                      Perform yarn unlink
