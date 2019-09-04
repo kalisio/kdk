@@ -88,7 +88,7 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
 
 Then you can open the WebUI at [http://localhost:9393](http://localhost:9393) and see what's going on.
 
-## [Screen](https://doc.ubuntu-fr.org/screen)
+## [Nohup](https://en.wikipedia.org/wiki/Nohup), [Screen](https://doc.ubuntu-fr.org/screen)
 
 We use it to launch processes in the background on servers, which won't be killed when closing the ssh session.
 
