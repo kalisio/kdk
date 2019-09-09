@@ -19,17 +19,17 @@ Most options come from the "standard" frontend [configuration](../../guides/basi
   * **banner**: displayed application banner,
   * **components**: key/value pairs of components displayed in side navigation (an entry looks like `user_actions: 'layout/KLinksPanel'`),
 * **XXX**: configuration object for component YYY of e.g. side navigation
-* **mapPanel**: 2D map layers panel configuration
-    * **categories**: list of categories to be displayed in 2D map layers panel,
-  * **globePanel**: 2D globe layers panel configuration
-    * **categories**: list of categories to be displayed in 3D globe layers panel,
+* **mapCatalog**: 2D map layers panel configuration
+  * **categories**: list of categories to be displayed in 2D map layers panel,
+* **globeCatalog**: 2D globe layers panel configuration
+  * **categories**: list of categories to be displayed in 3D globe layers panel,
 * **mapActivity**: 2D map activity configuration
-  * **buttons**: active UI buttons among `['side-nav', 'panel']`,
-  * **actions**: active UI action in FAB among `['fullscreen', 'geolocate', 'geocode', 'track-location', 'probe-location', 'create-layer']`,
+  * **tools**: active UI tools in the navigation bar among `['side-nav', 'zoom', 'track-location', 'location-bar', 'fullscreen', 'catalog']`,
+  * **actions**: active UI action in the FAB among `['probe-location']`,
   * **layerActions**: active UI action in layer menu among `['zoom-to', 'save', 'edit', 'edit-data', 'remove']`
 * **globeActivity**: 3D globe activity configuration
-  * **buttons**: active UI buttons among `['side-nav', 'panel']`,
-  * **actions**: active UI action in FAB among `['fullscreen', 'geolocate', 'geocode', 'track-location', 'probe-location', 'vr']`,
+  * **tools**: active UI tools in the navigation bar among `['side-nav', 'zoom', 'track-location', 'location-bar', 'fullscreen', 'catalog', 'vr']`,
+  * **actions**: active UI action in the FAB among `['probe-location', 'create-layer']`,
   * **layerActions**: active UI action in layer menu among `['zoom-to', 'save', 'edit', 'remove']`
 * **map**: 2D map view configuration
 	* **viewer**: 2D map initialization [options](https://leafletjs.com/reference.html#map-option),
