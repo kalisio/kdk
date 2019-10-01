@@ -94,9 +94,94 @@ The following [hooks](./HOOKS.MD) are usually globally executed on the applicati
 
 ## Permissions
 
-Isomorphic permissions management system.
+We provide an isomorphic permissions management system so that user access can be checked:
+* at backend level, typically when accessing the API
+* at frontend level, typically before constructing the UI
 
-**TODO**
+The primary level of a permissions management system is a [Role Based Access Control](https://en.wikipedia.org/wiki/Role-based_access_control) (RBAC), which relies on the grouping of users into various roles which are then assigned rights.
+A right is typically made up of an action and a resource type, e.g. role manager can create (action) documents (resource type).
+The KDK provide the following default roles, ordered by privilege level:
+* `Roles.member`, usually a "standard" user
+* `Roles.manager`, usually a "privileged" user
+* `Roles.owner`, usually a "superuser" or "administrator"
+
+The secondary level of a permissions management system is an [Attribute Based Access Control](https://en.wikipedia.org/wiki/Attribute-based_access_control) (ABAC), which allows to enforce authorization decisions based on any attribute accessible to your application and not just the user's role. Let's say we'd like to give a specific user access to a specific resource and this resource is created/removed dynamically at run time by your app. RBAC is a legacy access control that usually fails in this kind of dynamic environments. ABAC is more flexible and powerful to support these use cases, and technically ABAC is also capable of enforcing RBAC. This is the reason why the KDK implements this type of access control.
+
+The `create`, respectively `remove`, operation on the `authorisations` service will:
+1. add, respectively remove, a privilege or permission level (e.g. `owner` or `manager`)
+2. for a subject (i.e. a user in most case but it could be generalized)
+3. on a resource (e.g. an organisation).
+
+The permission will be stored directly on the subject (i.e. user) object so that they are already available once authenticated.
+They will be organised by resource types (what is called a *scope*) so that a user being the owner of the *feathers* organisation
+will be structured like this (*organisations* is an *authorization scope* on the user object):
+```javascript
+{
+  email: 'xxx',
+  name: 'xxx',
+  organisations: [{
+    name: 'feathers',
+    _id: ID,
+    permissions: 'owner'
+  }]
+}
+```
+
+A hook system allows to register the different rules that should be enforced, [CASL](https://stalniy.github.io/casl/) is used under-the-hood:
+```javascript
+import { permissions } from '@kalisio/kdk-core'
+
+permissions.defineAbilities.registerHook((subject, can, cannot) => {
+  if (subject && subject._id) { // Subject can be null on anonymous access
+    // Anyone can create new organisations
+    can('service', 'organisations')
+    can('create', 'organisations')
+    if (subject.organisations) { // Check for authorisation scope
+      subject.organisations.forEach(organisation => {
+        if (organisation._id) {
+          // Get user privilege level for this organisation
+          const role = permissions.Roles[organisation.permissions]
+          if (role >= Roles.member) { // Members have read-only access to organisation
+            can('read', 'organisations', { _id: organisation._id })
+          }
+          if (role >= Roles.manager) { // Manager have read-write access to organisation
+            can('update', 'organisations', { _id: organisation._id })
+          }
+          if (role >= Roles.owner) { // Owners have full access to organisation
+            can('remove', 'organisations', { _id: organisation._id })
+          }
+        }
+      })
+    }
+  }
+})
+```
+The `can/cannot` method requires three arguments to define permissions:
+* the first one is the action or the set of actions you're setting the permission for
+  * `service` can be used to completely block access to a given service, otherwise specify either
+  `get`, `find`, `create`, `update`, `patch`, or `remove` service-level operation
+  * `read` is an alias for `get` + `find`
+  * `all` is an alias for `read` + `create` + `update` + `remove`
+  * `update` is an alias for `patch` as objects are usually only patched due to [perspectives](../README.md#data-model)
+* the second one is the name of the resource type (i.e. usually the service) you're setting it on,
+* the third one is the conditions to further restrict which resources the permission applies to.
+
+::: warning
+It is important to only use database fields for the conditions so it can be used for fetching records.
+:::
+
+Once registered, rules can be enforced at API level using the `authorise` application-level hook:
+```javascript
+import { hooks } from '@kalisio/kdk-core'
+
+app.hooks({
+  before: {
+    all: [hooks.authorise]
+  }
+})
+```
+
+You will find implementation details [in this article](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d).
 
 ## Client ecosystem
 
