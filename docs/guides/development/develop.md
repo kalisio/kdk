@@ -44,6 +44,8 @@ npm run cafe -- -t "my test"
 
 Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8). Usually you simply have to open `chrome://inspect` in the Chrome URL.
 
+If you want to launch a specific test use: `npm run mocha -- --grep "My test"`.
+
 If you want to pause the debugger when running the tests this should do it: `npm run mocha -- --inspect-brk`.
 
 If you want to debug replicas you can use the following environment variables to launch two instances of your apps:
