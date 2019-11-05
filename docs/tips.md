@@ -7,7 +7,7 @@ If you'd like a third-party application to rely on the API of your application w
 If your API needs a user ID to work as expected first register a user as usual. Then, using your application secret and a [JWT library](https://jwt.io/), issue a JWT with a payload matching the configuration options of your application regarding audience (i.e. domain), issuer and the user ID if any, e.g.:
 ```json
 {
-  "aud": "https://kano.kargo.kalisio.xyz",
+  "aud": "kano.kargo.kalisio.xyz",
   "iss": "kalisio",
   "exp": 1552402010,
   "userId": "5bc5b166beb4648d3cd79327"
