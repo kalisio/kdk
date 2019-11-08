@@ -20,8 +20,10 @@ Most options come from the "standard" frontend [configuration](../../guides/basi
   * **components**: key/value pairs of components displayed in side navigation (an entry looks like `user_actions: 'layout/KLinksPanel'`),
 * **XXX**: configuration object for component YYY of e.g. side navigation
 * **mapCatalog**: 2D map layers panel configuration
+  * **filter**: global layer filter,
   * **categories**: list of categories to be displayed in 2D map layers panel,
 * **globeCatalog**: 2D globe layers panel configuration
+  * **filter**: global layer filter,
   * **categories**: list of categories to be displayed in 3D globe layers panel,
 * **mapActivity**: 2D map activity configuration
   * **tools**: active UI tools in the navigation bar among `['side-nav', 'zoom', 'track-location', 'location-bar', 'fullscreen', 'catalog']`,
