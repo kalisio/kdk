@@ -134,8 +134,10 @@ In your local development environment you should use the script to setup all the
 You should never store production passwords or other sensitive production data in a clear form in source code or config files.
 :::
 
-During the CI/CD process the script *travis.env.sh* automatically generates a temporary environment file, based on the secret environment variables defined in your Travis repository settings, to be sourced at the different stages.
+During the CI/CD process the script *travis.env.sh* automatically generates a temporary environment file, based on the secret environment variables defined in your Travis repository settings or coming from a dedicated private repository (in this case only the access token of this repository needs to be in your Travis settings), to be sourced at the different stages.
 
 ::: warning
 You shouldn't use production secrets in development and test mode.
 :::
+
+To avoid publishing by error production secrets we recommand generating an access key/token for each flavor *AND* third-party service required by your app using the following naming convention for these tokens: **flavor-service**. For instance you would have a **dev-s3**, **test-s3** and **prod-s3** keys to use the AWS S3 service respectively in your dev, test and production version of your app.
