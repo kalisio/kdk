@@ -177,9 +177,9 @@ Make it easier to build [form fields](./components.md#editors) from the **proper
 * **fill(value)** set the current value of the field, simply copies the value as model by default
 * **apply (object, field)** applies the current field value on the given target object, simply copies the value in the object by default, to be overloaded if you need to perform specific operations before the form has been submitted
 * **submitted (object, field)** does nothing by default, to be overloaded if you need to perform specific operations after the form has been submitted
-* **onChanged()** emits the `field-changed` event whenever the field value has changed, consequently the form will validate or invalidate the field, should be binded in template to events like [`blur`](https://v0-14.quasar-framework.org/components/input.html#Vue-Events).
+* **onChanged()** emits the `field-changed` event whenever the field value has changed, consequently the form will validate or invalidate the field, should be binded in template to events like [`blur`](https://quasar.dev/vue-components/input#QInput-API).
 
-[Quasar field components](https://v0-14.quasar-framework.org/components/field.html) are usually used to implement form fields, the given set of computed properties are available to be bound:
+[Quasar field components](https://quasar.dev/vue-components/field) are usually used to implement form fields, the given set of computed properties are available to be bound:
 * **icon** alias for `properties.field.icon` if `display.icon` is `true`, empty by default
 * **label** alias for `properties.field.label` if `display.label` is `true`, empty by default
 * **helper** alias for `properties.field.helper`

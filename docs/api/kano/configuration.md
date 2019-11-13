@@ -14,7 +14,7 @@ Most options come from the "standard" frontend [configuration](../../guides/basi
     * **links**: links displayed at the bottom of the screen,
   * **changeEndpoint**: change endpoint screen configuration (only useful for mobile apps)
     * **links**: links displayed at the bottom of the screen,
-* **layout**: layout configuration, see [Quasar docs](https://v0-14.quasar-framework.org/components/layout.html#Vue-Properties) for details,
+* **layout**: layout configuration, see [Quasar docs](https://quasar.dev/layout/layout) for details,
 * **sideNav**: side navigation component configuration
   * **banner**: displayed application banner,
   * **components**: key/value pairs of components displayed in side navigation (an entry looks like `user_actions: 'layout/KLinksPanel'`),

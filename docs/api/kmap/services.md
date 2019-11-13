@@ -66,7 +66,7 @@ The details of each property are the following:
 * **description** : the layer short description, typically used in the [layers panel](./components.md#layers-panel)
 * **type** : usually `BaseLayer` for map backgrounds, `TerrainLayer` for 3D terrain, `OverlayLayer` for additionnal data layers
 * **tags** : list of tags to classify the layer
-* **icon** : a [Quasar icon](https://quasar-framework.org/components/icons.html) for the layer, typically used in the [layers panel](./components.md#layers-panel)
+* **icon** : a [Quasar icon](https://quasar.dev/options/app-icons) for the layer, typically used in the [layers panel](./components.md#layers-panel)
 * **iconUrl** : a link to an image to be used as icon for the layer, typically used in the [layers panel](./components.md#layers-panel)
 * **attribution** : data attribution informaiton to be displayed along with the layer
 * **leaflet** : options to be passed to the underlying Leaflet layer constructor

@@ -16,12 +16,12 @@ The layout is flexible enough to only use part of it like e.g. the [Kano](https:
 
 ![Kano layout](../../assets/kano-layout.png)
 
-The **k-layout** component based on [QLayout](https://quasar-framework.org/components/layout.html) contains the elements that wrap application's content:
+The **k-layout** component based on [QLayout](https://quasar.dev/layout/layout) contains the elements that wrap application's content:
 * **k-app-bar**: application bar shown on top of the page - can be overriden using the *header* slot
 * **k-side-nav** : a left side navigation panel (which is shown alongside page content on wide screens) - can be overriden using the *left* slot
 * **k-right-panel** : a right side panel (which can be shown alongside page content on wide screens) - can be overriden using the *right* slot
-* **k-tab-bar**: a navigation with [QTabs](https://quasar-framework.org/components/tabs.html) - can be overriden using the *navigation* slot
-* **k-fab**: an action button based on a [Quasar Floating Action Button](https://v0-14.quasar-framework.org/components/floating-action-button.html) at the bottom right corner of the page
+* **k-tab-bar**: a navigation with [QTabs](https://quasar.dev/vue-components/tabs) - can be overriden using the *navigation* slot
+* **k-fab**: an action button based on a [Quasar Floating Action Button](https://quasar.dev/layout/floating-action-button) at the bottom right corner of the page
 * **k-search-bar**: a global search bar
 * the embedded content of the page (i.e. the **Activity**) as a [router-view](https://router.vuejs.org/api/#router-view)
 
@@ -45,7 +45,7 @@ Most activities are used to list, search, edit (i.e. update) and remove data mod
 
 ### List
 
-The **k-list** component is powered by [Quasar lists](https://quasar-framework.org/components/lists-and-list-items.html) and [Quasar pagination](https://quasar-framework.org/components/pagination.html). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
+The **k-list** component is powered by [Quasar lists](https://quasar.dev/vue-components/list-and-list-items) and [Quasar pagination](https://quasar.dev/vue-components/pagination). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
 
 The following properties can be used to customize it:
 * **renderer**:
@@ -77,7 +77,7 @@ The default **k-item** component also provides you with the following slots will
 
 ### Grid
 
-The **k-grid** component is powered by [Flex](https://quasar-framework.org/components/flex-css.html), [Quasar cards](https://quasar-framework.org/components/card.html) and [Quasar pagination](https://quasar-framework.org/components/pagination.html). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
+The **k-grid** component is powered by [Flex](https://quasar.dev/layout/grid/introduction-to-flexbox), [Quasar cards](https://quasar.dev/vue-components/card) and [Quasar pagination](https://quasar.dev/vue-components/pagination). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
 
 The same properties as with the **k-list** component can be used to customize it, the component to be used to render items defaults to `collection/KCard`.
 
@@ -142,21 +142,21 @@ As an example, here is a schema defining a basic form asking for an `email` and 
 
 The **KDK** comes with a set of built-in fields:
 * **k-attachment-field**: an input used to upload a document
-* **k-chips-field**: a basic chips input based on Quasar [Chips input](https://v0-14.quasar-framework.org/components/chips-input.html)
+* **k-chips-field**: a basic chips input based on Quasar [Select input](https://quasar.dev/vue-components/select)
 * **k-chips-with-icon-field**: extends the previous chips input in 
-* **k-datetime-field**: a Quasar [Datetime input](https://v0-14.quasar-framework.org/components/datetime.html)
-* **k-email-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `email`
+* **k-datetime-field**: a Quasar [Date input](https://quasar.dev/vue-components/date) and [Time input](https://quasar.dev/vue-components/time)
+* **k-email-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `email`
 * **k-icon-field**: an input that allows you to select an icon and to assign it a color among. The list of icons is provided by [FontAwesome](https://fontawesome.com/icons?d=gallery
 * **k-item-field**: an input that allows you to select one or multiple items from one service or many services.
-* **k-number-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `number`
-* **k-options-field**: a Quasar [Options group input](https://v0-14.quasar-framework.org/components/option-group.html)
-* **k-phone-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `phone`
-* **k-select-field**:  a Quasar [Select input](https://v0-14.quasar-framework.org/components/select.html)
+* **k-number-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `number`
+* **k-options-field**: a Quasar [Options group input](https://quasar.dev/vue-components/option-group)
+* **k-phone-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `phone`
+* **k-select-field**:  a Quasar [Select input](https://quasar.dev/vue-components/select)
 * **k-tag-field**: an input that allows you to define a set of tags
-* **k-textarea-field**: a Quasar [Text input](https://v0-14.quasar-framework.org/components/input.html) of type of `textarea`
-* **k-text-field**: a Quasar [text input](https://v0-14.quasar-framework.org/components/input.html) of type of `email`
-* **k-toggle-field**: a Quasar [Toggle input](https://v0-14.quasar-framework.org/components/toggle.html)
-* **k-url-field**: a Quasar [text input](https://v0-14.quasar-framework.org/components/input.html) of type of `url`
+* **k-textarea-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `textarea`
+* **k-text-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `text`
+* **k-toggle-field**: a Quasar [Toggle input](https://quasar.dev/vue-components/toggle)
+* **k-url-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `url`
 
 It also has modules that propose additional ones. For instance, the **kMap** module provides the [**k-location-field**](../kmap/components.md#location). You can also add your own field, when implementing it you must rely on the [base field mixin](./mixins.md#base-field). 
 

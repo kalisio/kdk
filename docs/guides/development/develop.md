@@ -5,14 +5,14 @@
 The default Kalisio web application template is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api).
 
 ### Running for development
-Run the frontend Quasar app (from root project folder): `$ quasar dev`
+Run the frontend Quasar app (from root project folder): `$ yarn/npm dev`
 
 Then from the backend `api` folder run the server-side Feathers app: `$ yarn/npm run dev`
 
 Then point your browser to [localhost:8080](http://localhost:8080).
 
 ### Building for production
-Build the frontend Quasar app (from root project folder): `$ quasar build`.
+Build the frontend Quasar app (from root project folder): `$ yarn/npm build`.
 
 Then from the backend `api` folder build the server-side Feathers app: `$ yarn/npm run build`
 
@@ -56,9 +56,22 @@ For the backend run one instance with `$ yarn/npm run dev` and the other one wit
 
 ## Cordova wrapper
 
-[Quasar guide](https://v0-14.quasar-framework.org/guide/cordova-wrapper.html) might help.
+[Quasar guide](https://quasar.dev/quasar-cli/developing-cordova-apps/introduction) might help.
 
-### Configuring the app
+### Running for development
+Run your web app as usual first, then build and run the mobile app in debug mode (from project folder):
+```
+// Android
+$ yarn/npm run cordova:dev:android
+// iOS
+$ yarn/npm run cordova:dev:ios
+```
+
+If no device is connected this should launch the emulator, otherwise this should use your device.
+
+::: tip
+Check that the [`adb` daemon](https://developer.android.com/studio/command-line/adb.html) is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
+:::
 
 Information about the [Android Emulator Networking](https://developer.android.com/studio/run/emulator-networking.html) might be useful.
 
@@ -67,33 +80,14 @@ When running the app through Cordova the `domain` entry of the client-side confi
 * use eg http://192.168.1.16:8081 in your device which is the IP affected by your router to your localhost (use `ipconfig /all` under Windows or `ifconfig` under Linux to get it)
 * use [port forwarding](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/local-server)
 
-### Building the app
-Build the app (from project folder): 
+### Building for production
+Build the app in release mode (from project folder): 
 ```
-// Debug mode
-$ yarn/npm run Cordova:build:debug
-// Release mode
-$ yarn/npm run Cordova:build:release
-// All
-$ yarn/npm run Cordova:build
+// Android
+$ yarn/npm run cordova:build:android
+// iOS
+$ yarn/npm run cordova:build:ios
 ```
-
-### Running the app
-Run the app (from project folder):
-```
-// Debug mode
-$ yarn/npm run Cordova:dev
-// Release mode
-$ yarn/npm run Cordova:prod
-// Shortcut to dev mode
-$ yarn/npm run Cordova
-```
-
-If no device is connected this should launch the emulator, otherwise this should use your device.
-
-::: tip
-Check that the [`adb` daemon](https://developer.android.com/studio/command-line/adb.html) is running and that you authorized USB debug on your device. Use `adb devices` to check if your device is here, if you see it in `unauthorised` state uncheck/check again the USB debug option on your device.
-:::
 
 ### Debug
 

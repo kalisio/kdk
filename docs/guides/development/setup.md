@@ -106,7 +106,7 @@ Take care that a top-level plugin might depend on another plugin so you will hav
 
 ### Cordova wrapper
 
-Follow [Quasar guide](http://quasar-framework.org/guide/cordova-wrapper.html).
+Follow [Quasar guide](https://quasar.dev/quasar-cli/developing-cordova-apps/introduction).
 
 Under Windows you might have somme issue creating a symbolic link. First you need to have administrator privileges in your shell. Then  the easy way is to use the [PowerShell Community Extensions](http://pscx.codeplex.com/) and the `New-SymLink dir link_target` command. The environment variable `PSModulePath` needs to be updated to add the path to the extension (eg `C:\Program Files (x86)\PowerShell Community Extensions\Pscx3\Pscx`) and the command should be run as administrator or your user should have [appropriate rights](http://superuser.com/questions/104845/permission-to-make-symbolic-links-in-windows-7).
 

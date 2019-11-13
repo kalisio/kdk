@@ -2,14 +2,14 @@
 
 **KDK** is mainly powered by the following stack:
 * [Feathers](https://feathersjs.com/) on the backend side
-* [Quasar](https://quasar-framework.org/) on the frontend side
+* [Quasar](https://quasar.dev/) on the frontend side
 
 If you are not familiar with those technologies and want to develop with the **KDK**, in addition to read this documentation, we recommend reading [https://github.com/claustres/quasar-feathers-tutorial](https://github.com/claustres/quasar-feathers-tutorial). Indeed, KDK template application is based on the Quasar wrapper for Feathers, while KDK modules are Feathers plugins.
 
 A KDK-based application usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [kApp](https://github.com/kalisio/kApp) as a starting point. In this guide we will use the template as a reference but most commands will be valid for any KDK-based application.
 
 The kApp includes all the necessary boilerplate that you will need to get started building your application:
-* [client-side boilerplate](https://v0-14.quasar-framework.org/guide/app-boilerplate.html) in the *root* folder
+* [client-side boilerplate](https://quasar.dev/quasar-cli/developing-spa/introduction) in the *root* folder
 * [server-side boilerplate](https://docs.feathersjs.com/guides/basics/generator.html) in the *api* folder
 * [continuous integration/deployment boilerplate](../development/deploy.md) in the *root* and *deploy* folders
 
@@ -161,7 +161,7 @@ kApp frontend configuration is based on the same underlying [tool](https://githu
     * **links**: links displayed at the bottom of the screen,
   * **changeEndpoint**: change endpoint screen configuration (only useful for mobile apps)
     * **links**: links displayed at the bottom of the screen,
-* **layout**: layout configuration, see [Quasar docs](https://v0-14.quasar-framework.org/components/layout.html#Vue-Properties) for details
+* **layout**: layout configuration, see [Quasar docs](https://quasar.dev/layout/layout) for details
   * **appBar**: component to be used for the app bar, e.g. `'layout/KAppBar'`
   * **sideNav**: component to be used for the side bar, e.g. `'layout/KSideNav'`
 * **sideNav**:
