@@ -24,11 +24,11 @@ Allow to launch native route navigation apps to go to a given location (the [lau
 ## Feature Service
 
 Ease requests to a [feature service](./services.md#feature-service) in order to get real-time updates and edit features:
-* **getProbeFeatures(options)** retrieve the probe locations (if any) for a given [catalog layer descriptor](./services.md#catalog) to initialize the feature layer
+* **getProbeFeatures(options)** retrieve the probe locations (if any) for a given [catalog layer descriptor](./services.md#catalog-service) to initialize the feature layer
 * **getProbeFeaturesFromLayer(name)** same as above but using the layer name
-* **getFeatures(options, queryInterval)** get the latest available features for a given [catalog layer descriptor](./services.md#catalog) at current time or in a given elapsed time range if a query interval in milliseconds is given
+* **getFeatures(options, queryInterval)** get the latest available features for a given [catalog layer descriptor](./services.md#catalog-service) at current time or in a given elapsed time range if a query interval in milliseconds is given
 * **getFeaturesFromLayer(name, queryInterval)** same as above but using the layer name
-* **getMeasureForFeature(options, feature, startTime, endTime)** get the available probe measures for a given [catalog layer descriptor](./services.md#catalog) in the given time range, will store result in `probedLocation` attribute and emits the `probed-location-changed` event
+* **getMeasureForFeature(options, feature, startTime, endTime)** get the available probe measures for a given [catalog layer descriptor](./services.md#catalog-service) in the given time range, will store result in `probedLocation` attribute and emits the `probed-location-changed` event
 * **getProbedLocationMeasureAtCurrentTime()** computes measure values at current time (see [time mixin](./mixins.md#time)) once a location has been probed
 * **createFeatures(geoJson, layerId)** creates a new set of features in feature service associated to the target layer based on input GeoJson
 * **editFeaturesGeometry(geoJson)** edits the geometry of a set of features in feature service based on input GeoJson
@@ -161,8 +161,8 @@ It assumes that the DOM element used to display the graph is a [KWidget](../kcor
 Make it easier to create 2D/3D mapping activities by providing methods available in both cases:
 * **initialize()** setup view, Weacast, layers and timeline, **should be called first before any other method**
 * **registerActivityActions()** register default activity actions (fullscreen mode, geolocation, geocoding, tracking, probing, etc.)
-* **getCatalogLayers()** retrieve available [catalog layer descriptors](./services.md#catalog)
-* **refreshLayers()** setup available layers based on [catalog layer descriptors](./services.md#catalog)
+* **getCatalogLayers()** retrieve available [catalog layer descriptors](./services.md#catalog-service)
+* **refreshLayers()** setup available layers based on [catalog layer descriptors](./services.md#catalog-service)
 * **registerLayerActions(layer)** register default layer actions (zoom, save, edit, edit data, remove, etc.)
 * **isLayerStorable/Removable/Editable(layer)** helper function to get the state of a given layer descriptor
 * **onLayerAdded(layer)** layer action handler that will setup available action on layer
@@ -224,17 +224,17 @@ This mixin is a mandatory one to build a map activity
 
 Make it possible to manage map layers and extend supported layer types:
 * **setupMap(domElement, options)** creates the underlying Leaflet map object with given options
-* **addLayer(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog)
+* **addLayer(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog-service)
 * **showLayer/hideLayer(name)** (un)hides the given layer in map, on first show the layer will be lazily created
 * **hasLayer(name)** check if a given layer is already registered
 * **isLayerVisible(name)** check if a given layer is visible and underlying Leaflet object created
 * **zoomToLayer(name)** fits the map view to visualize a given layer
 * **zoomToBounds(bounds)** fits the map view to visualize a given extent as bounds [ [south, west], [north, east] ]
-* **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog) for a given layer
+* **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog-service) for a given layer
 * **renameLayer(previousName, newName)** rename a given layer
 * **removeLayer(name)** destroys a given layer
 * **getLeafletLayerByName(name)** retrieve the underlying Leaflet object for a given layer
-* **createLeafletLayer(options)** creates the underlying Leaflet object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
+* **createLeafletLayer(options)** creates the underlying Leaflet object based on a [catalog layer descriptor](./services.md#catalog-service), will check all registered constructor for any one matching
 * **getLeafletPaneByName(name)** retrieve the underlying Leaflet object for a given pane
 * **createLeafletPane(name)** creates the underlying Leaflet object for a pane
 * **removeLeafletPane(name)** destroys the underlying Leaflet object for a given pane
@@ -245,7 +245,7 @@ Make it possible to manage map layers and extend supported layer types:
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
 
 This mixin also adds the following internal data properties:
-* **layers** available layers as [catalog layer descriptors](./services.md#catalog)
+* **layers** available layers as [catalog layer descriptors](./services.md#catalog-service)
 
 This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
 
@@ -459,24 +459,24 @@ This mixin is a mandatory one to build a globe activity
 
 Make it possible to manage globe layers and extend supported layer types:
 * **setupGlobe(domElement, token)** creates the underlying Cesium globe object with given Cesium Ion token
-* **addLayer(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog)
+* **addLayer(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog-service)
 * **showLayer/hideLayer(name)** (un)hides the given layer in globe, on first show the layer will be lazily created
 * **hasLayer(name)** check if a given layer is already registered
 * **isLayerVisible(name)** check if a given layer is visible and underlying Cesium object created
 * **zoomToLayer(name)** fits the globe view to visualize a given layer
 * **zoomToBounds(bounds)** fits the globe view to visualize a given extent as bounds [ [south, west], [north, east] ]
-* **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog) for a given layer
+* **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog-service) for a given layer
 * **renameLayer(previousName, newName)** rename a given layer
 * **removeLayer(name)** destroys a given layer
 * **getCesiumLayerByName(name)** retrieve the underlying Cesium object for a given layer
-* **createCesiumLayer(options)** creates the underlying Cesium object based on a [catalog layer descriptor](./services.md#catalog), will check all registered constructor for any one matching
+* **createCesiumLayer(options)** creates the underlying Cesium object based on a [catalog layer descriptor](./services.md#catalog-service), will check all registered constructor for any one matching
 * **registerCesiumConstructor(constructor)** registers a Cesium constructor function for a given type of layer
 * **center(longitude, latitude, altitude, heading, pitch, roll)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90])
 * **getCenter()** get the current globe view center as longitude, latitude and altitude
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
 
 This mixin also adds the following internal data properties:
-* **layers** available layers as [catalog layer descriptors](./services.md#catalog)
+* **layers** available layers as [catalog layer descriptors](./services.md#catalog-service)
 
 ### Globe Style
 
