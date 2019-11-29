@@ -67,8 +67,8 @@ The **k-timeline** is used to display the time range of the weather prediction m
 
 The main methods are the following:
 * **setupTimeline()** setups the timeline according to currently selected forecast model time range if any (see [Weacast mixin](./mixins.md#weacast)) or based on the following global frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) properties:
- * **start**: offset in seconds from now the timeline should begin
- * **end**: offset in seconds from now the timeline should end
+  * **start**: offset in seconds from now the timeline should begin
+  * **end**: offset in seconds from now the timeline should end
 * **getTimelineInterval()** default timeline interval function
 * **getTimelineFormatter()** default timeline formatting function
 
