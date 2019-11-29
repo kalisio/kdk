@@ -212,6 +212,63 @@ Allow to display a legend on top of the map according to currently active layer 
 Will automatically hide/show the legend whenever a layer is.
 :::
 
+## Level
+
+Allow to configure the [**k-level-slider**
+component](./components.md#level-slider). The slider is associated with a
+layer and is only shown when properly configured. When the selected value
+changes, the `selected-level-changed` event is broadcasted.
+
+::: warning
+The level slider is global, meaning that there's only one instance of the
+slider, and it is shared by every layer.
+:::
+
+To configure the slider, we use an object with the following properties:
+* **label**: defines the slider label which will be displayed by the
+  k-level-slider component.
+* **units**: an array defining the unit of the value we're manipulating.
+  Currently we only care about `units[0]`.
+* **values**: an array defining the discrete values the level can take.
+* **range**: an object defining a continuous range of values:
+  * **min**: the minimum value
+  * **max**: the maximum value
+  * **interval**: the interval to use between `min` and `max`, 1 by default if not
+   specified
+* **lazy**: a boolean indicating if `setSelectedLevel` is called as the slider
+  moves (when `false`) or if it is only called when the slider is released (when
+  `true`).
+
+Here is an example of a configuration object:
+```js
+{
+  label: 'Temperature',
+  units: ['degC'],
+  lazy: false,
+  range: {
+    min: -10,
+    max: 10,
+    interval: 2
+  }
+  /* or only some specific values
+  values: [ -10, -8, 0, 4, 9 ]
+  */
+}
+```
+The mixin adds the following functions:
+* **setSelectableLevels(layer, levels, initialLevel)** : defines the layer the
+  slider is currently associated to, configures the selectable levels and sets the initial level.
+* **clearSelectableLevels(layer)** : clears the slider definition associated
+  with the layer. This function will only clear the slider configuration if the
+  current layer associated with the slider is the same as the `layer` argument.
+* **setSelectedLevel(level)** : selects a level value and broadcasts the
+  `selected-level-changed` event. This is the function that is called when the
+  slider moves.
+
+This mixin also adds the following internal data properties:
+* **selectedLevel**: the currently selected level value.
+* **selectableLevels**: the current slider configuration object.
+
 ## Map
 
 The underlying map object is based on [Leaflet](http://leafletjs.com/) and some mixins also rely on [Leaflet plugins](https://leafletjs.com/plugins.html). The following set of mixins is to be used to construct a new map activity and underlying Leaflet objects.

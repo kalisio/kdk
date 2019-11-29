@@ -18,6 +18,11 @@ The **k-location-map** allows to display a location on a map using a marker.
 
 The **k-location-field** provides you with an autocomplete address search input powered by the [geocoder service](./services.md#geocoder-service) to be embedded in a [**k-form**](../kcore/components.md#forms).
 
+### Level slider
+
+The **k-level-slider** allows to display a slider to select among a range of
+value. It is meant to be used in conjunction with the [level mixin](./mixins.md#level).
+
 ## Globe
 
 No dedicated component exist at the moment, you usually rely on provided [mixins](./mixins.md#globe) to build your own globe.
