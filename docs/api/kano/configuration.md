@@ -26,11 +26,11 @@ Most options come from the "standard" frontend [configuration](../../guides/basi
   * **filter**: global layer filter,
   * **categories**: list of categories to be displayed in 3D globe layers panel,
 * **mapActivity**: 2D map activity configuration
-  * **tools**: active UI tools in the navigation bar among `['side-nav', 'zoom', 'track-location', 'location-bar', 'fullscreen', 'catalog']`,
+  * **tools**: active UI tools in the navigation bar among `['side-nav', 'zoom', 'track-location', 'location-bar', 'globe', 'fullscreen', 'catalog']`,
   * **actions**: active UI action in the FAB among `['probe-location']`,
   * **layerActions**: active UI action in layer menu among `['zoom-to', 'save', 'edit', 'edit-data', 'remove']`
 * **globeActivity**: 3D globe activity configuration
-  * **tools**: active UI tools in the navigation bar among `['side-nav', 'zoom', 'track-location', 'location-bar', 'fullscreen', 'catalog', 'vr']`,
+  * **tools**: active UI tools in the navigation bar among `['side-nav', 'zoom', 'track-location', 'location-bar', 'map', 'fullscreen', 'catalog', 'vr']`,
   * **actions**: active UI action in the FAB among `['probe-location', 'create-layer']`,
   * **layerActions**: active UI action in layer menu among `['zoom-to', 'save', 'edit', 'remove']`
 * **map**: 2D map view configuration

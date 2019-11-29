@@ -52,10 +52,11 @@ Make it easier to integrate with [Weacast](https://weacast.github.io/weacast-doc
 * **getProbedLocationForecastMarker(feature, latlng)** generates a marker using a [wind barb](http://weather.rap.ucar.edu/info/about_windbarb.html) according to element values in feature
 
 This mixin also adds the following internal data properties:
-* **forecastModel** currently selected forecast model
-* **forecastModels** list of available forecast models
-* **forecastLevel** currently selected forecast level
-* **forecastLevels** list of available forecast levels
+* **forecastModel**: currently selected forecast model
+* **forecastModels**: list of available forecast models
+* **forecastLevel**: currently selected forecast level
+
+The currently selected forecast level or the list of available forecast levels is managed through the [levels mixin](./mixins.md#levels).
 
 Here is an example of a forecast levels description object:
 ```js
@@ -126,36 +127,6 @@ This mixin also adds the following internal data properties:
 * **currentTimeFormat**: current format object to be used for display
 * **currentFormattedTime**: same structure as the format object but contains ready-to-display values of the current time, e.g. `currentFormattedTime.time.short` will give you the formatted time string in short form according to current format settings.
 
-## Timeline
-
-Ease integration of a timeline component in mapping activities:
-* **setupTimeline()** setups the timeline according to currently selected forecast model time range if any (see [Weacast mixin](./mixins.md#weacast)) or based on the following global frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) properties:
- * **start**: offset in seconds from now the timeline should begin
- * **end**: offset in seconds from now the timeline should end
-* **getTimelineInterval()** default timeline interval function
-* **getTimelineFormatter()** default timeline formatting function
-
-## Timeseries
-
-Ease integration of a graph component displaying weather or measurements as timeseries in mapping activities:
-* **createProbedLocationLayer()** updates the marker layer used to locate the probe measurements come from
-* **updateProbedLocationForecast()** updates the probe prediction values whenever the current forecast model has changed (see [Weacast mixin](./mixins.md#weacast))
-* **isTimeseriesOpen()** check if the timeseries widget is currently visible
-* **openTimeseries()** opens the timeseries widget to make it currently visible
-* **closeTimeseries()** closes the timeseries widget to make it currently hidden
-* **toggleTimeseries()** changes the visibility state of the timeseries widget
-
-This mixin also adds the following internal data properties:
-* **probedLocation** currently probed location feature
-
-::: tip
-The mixin keeps in sync the timeseries widget visibility state and the associated probe marker layer.
-:::
-
-::: danger
-It assumes that the DOM element used to display the graph is a [KWidget](../kcore/components.md#kwidget) including a [KLocationTimeSeries](./components.md#klocationtimeseries) with a ref named `timeseriesWidget`.
-:::
-
 ## Activity
 
 Make it easier to create 2D/3D mapping activities by providing methods available in both cases:
@@ -188,6 +159,11 @@ This mixin has to be initialized by providing a unique component/activity name l
 See [Kano configuration options](../kano/configuration.md) for more details.
 :::
 
+This mixin also adds the following internal data properties:
+variables
+* **variables** the set of available variables in catalog layers
+* **probedLocation** the currently probed location feature (weather or measurement)
+
 ## Location indicator
 
 Allow to display an indicator on top of the map indicating the current mouse location:
@@ -202,17 +178,7 @@ This mixin also adds the following internal data properties:
 * **currentLocation**: current location as [latitude, longitude]
 * **currentLocationFormat**: current location format object to be used for display as supported by [formatcoords](https://github.com/nerik/formatcoords)
 
-## Legend
-
-Allow to display a legend on top of the map according to currently active layer variables:
-* **createLocationIndicator()** installs the indicator
-* **removeLocationIndicator()** removes the indicator
-
-::: tip
-Will automatically hide/show the legend whenever a layer is.
-:::
-
-## Level
+## Levels
 
 Allow to configure the [**k-level-slider**
 component](./components.md#level-slider). The slider is associated with a
