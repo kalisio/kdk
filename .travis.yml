@@ -20,7 +20,7 @@ jobs:
     node_js:
     - '8'  
     script: 
-    - docker build -f tools/testcafe/Dockerfile -t kalisio/testcafe:1.3.3 .
+    - cd tools/testcafe && docker build -t kalisio/testcafe:1.3.3 .
     before_deploy:
     - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
     deploy:
