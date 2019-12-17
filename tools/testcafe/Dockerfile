@@ -3,18 +3,6 @@ FROM alpine:edge
 ARG TESTCAFE_VERSION=1.3.3
 ARG TESTCAFE_VUE_SELECTORS_VERSION=3.1.0
 
-RUN apk --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ add \
-    nodejs \
-    nodejs-npm \
-    chromium \
-    firefox \
-    xwininfo \
-    xvfb \
-    dbus \
-    eudev \
-    ttf-freefont \
-    fluxbox
-
 RUN \
   apk --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --repository http://dl-cdn.alpinelinux.org/alpine/v3.10/main/ upgrade && \
   apk --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --repository http://dl-cdn.alpinelinux.org/alpine/v3.10/main/ add \
