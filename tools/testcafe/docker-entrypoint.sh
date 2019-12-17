@@ -7,4 +7,4 @@ Xvfb :1 -screen 0 "${XVFB_SCREEN_WIDTH}x${XVFB_SCREEN_HEIGHT}x24" >/dev/null 2>&
 export DISPLAY=:1.0
 fluxbox >/dev/null 2>&1 &
 
-exec testface --ports 1337,1338 "$@"
+exec testcafe --ports 1337,1338 "$@"
