@@ -1,7 +1,8 @@
 FROM alpine:edge
 
-ARG TESTCAFE_VERSION=1.3.3
+ARG TESTCAFE_VERSION=1.7.1
 ARG TESTCAFE_VUE_SELECTORS_VERSION=3.1.0
+ARG MONGODB_DRIVER_VERSION=3.1.4
 
 RUN \
   apk --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --repository http://dl-cdn.alpinelinux.org/alpine/v3.10/main/ upgrade && \
@@ -15,6 +16,7 @@ USER user
 RUN npm install \
     testcafe@${TESTCAFE_VERSION} \
     testcafe-vue-selectors@${TESTCAFE_VUE_SELECTORS_VERSION} \
+    mongodb@{MONGODB_DRIVER_VERSION} \
     && npm cache clean --force \
     && rm -rf /tmp/*
 
