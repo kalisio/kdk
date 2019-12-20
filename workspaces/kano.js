@@ -1,15 +1,21 @@
 var path = require('path')
 
 module.exports = {
+  'feathers-distributed': {
+    dependencies: [],
+    branch: 'master'
+  },
   'weacast-core': {
     organization: 'weacast',
     path: path.join('..', 'weacast'),
-    dependencies: []
+    dependencies: [],
+    branch: 'master'
   },
   'weacast-leaflet': {
     organization: 'weacast',
     path: path.join('..', 'weacast'),
-    dependencies: ['weacast-core']
+    dependencies: ['weacast-core'],
+    branch: 'master'
   },
   kCore: {
     dependencies: []

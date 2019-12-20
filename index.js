@@ -41,7 +41,11 @@ async function run (workspace, branch) {
       if (options.path) shell.cd(path.join(cwd, options.path))
       const organization = options.organization || program.organization
       try {
-        if (program.clone) await runCommand(`git clone https://github.com/${organization}/${module}.git`)
+        if (program.clone) {
+          // Check if branch is forced on module, otherwise use CLI/default one
+          const branch = options.branch || (typeof program.clone === 'string' ? program.clone : 'master')
+          await runCommand(`git clone -b ${branch} https://github.com/${organization}/${module}.git`)
+        }
         else {
           shell.cd(`${module}`)
           await runCommand(`git pull`)
@@ -57,6 +61,8 @@ async function run (workspace, branch) {
     shell.cd(options.path ? path.join(cwd, options.path, `${module}`) : path.join(cwd, `${module}`))
     try {
       if (program.branch) {
+        // Check if branch is forced on module, otherwise use CLI one
+        const branch = options.branch || program.branch
         await runCommand(`git fetch origin ${branch}:${branch}`)
         await runCommand(`git checkout ${branch}`)
       }
@@ -129,13 +135,13 @@ program
   .usage('<workspacefile> [options]')
   .option('-o, --organization [organization]', 'GitHub organization owing the project', 'kalisio')
   .option('-d, --debug', 'Verbose output for debugging')
-  .option('-c, --clone', 'Clone git repositories')
+  .option('-c, --clone [branch]', 'Clone git repositories')
   .option('-p, --pull', 'Pull git repositories')
   .option('-i, --install', 'Perform yarn install')
   .option('-l, --link', 'Perform yarn link')
   .option('-ul, --unlink', 'Perform yarn unlink')
-  .option('-b, --branch [branch]', 'Switch git branch')
-  .option('-m, --modules [modules]', 'Comma separated list of modules from the workspace to apply command on', commaSeparatedList)
+  .option('-b, --branch <branch>', 'Switch git branch')
+  .option('-m, --modules <modules>', 'Comma separated list of modules from the workspace to apply command on', commaSeparatedList)
   .parse(process.argv)
 
 let workspace = program.args[0]

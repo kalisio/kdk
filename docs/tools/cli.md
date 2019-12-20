@@ -26,11 +26,14 @@ The CLI relies on a workspace file defining the dependency tree between your KDK
 module.exports = {
   // Each key is the repo name of a module or application
   kCore: {
-    dependencies: [] // List of dependent kalisio modules if any
+    dependencies: [], // List of dependent KDK modules if any
+    branches: ['master', 'test'] // List of branches the module is available on
+    // If the current target branch of the CLI is not included it will be skipped
   },
   kApp: {
     application: true, // Indicates if this is the main application module
-    dependencies: ['@kalisio/kdk-core']
+    dependencies: ['@kalisio/kdk-core'],
+    branch: 'master' // Branch the module should be forced on whatever the current target branch of the CLI
   }
 }
 
@@ -72,13 +75,13 @@ Options:
   -V, --version                      output the version number
   -o, --organization [organization]  GitHub organization owing the project (default: "kalisio")
   -d, --debug                        Verbose output for debugging
-  -c, --clone                        Clone git repositories
+  -c, --clone <branch>               Clone git repositories (default: "master")
   -p, --pull                         Pull git repositories
   -i, --install                      Perform yarn install
   -l, --link                         Perform yarn link
   -ul, --unlink                      Perform yarn unlink
-  -b, --branch [branch]              Switch git branch
-  -m, --modules [modules]            Comma separated list of modules from the workspace to apply command on
+  -b, --branch <branch>              Switch git branch
+  -m, --modules <modules>            Comma separated list of modules from the workspace to apply command on
   -h, --help                         output usage information
 ```
 
@@ -88,7 +91,7 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
 
 Then you can open the WebUI at [http://localhost:9393](http://localhost:9393) and see what's going on.
 
-## [Nohup](https://en.wikipedia.org/wiki/Nohup), [Screen](https://doc.ubuntu-fr.org/screen)
+## [Nohup](https://en.wikipedia.org/wiki/Nohup) or [Screen](https://doc.ubuntu-fr.org/screen)
 
 We use it to launch processes in the background on servers, which won't be killed when closing the ssh session.
 
