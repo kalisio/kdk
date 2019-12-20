@@ -6,6 +6,12 @@ notifications:
     on_success: always
     on_failure: always
 
+env:
+  global:
+  - TESTCAFE_VERSION=1.7.1
+  - TESTCAFE_VUE_SELECTORS_VERSION=3.1.0
+  - TESTCAFE_MONGODB_DRIVER_VERSION=3.1.4
+
 stages:
 - name: TESTCAFE
   if: commit_message !~ /(skip[ _-]testcafe)/  
@@ -20,12 +26,12 @@ jobs:
     node_js:
     - '8'  
     script: 
-    - cd tools/testcafe && docker build -t kalisio/testcafe:1.7.1 .
+    - cd tools/testcafe && docker build --build-arg TESTCAFE_VERSION=$TESTCAFE_VERSION --build-arg TESTCAFE_VUE_SELECTORS_VERSION=$TESTCAFE_VUE_SELECTORS_VERSION --build-arg MONGDODB_DRIVER_VERSION=$TESTCAFE_MONGODB_DRIVER_VERSION -t kalisio/testcafe:$TESTCAFE_VERSION .
     before_deploy:
     - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
     deploy:
       provider: script
-      script: docker push kalisio/testcafe:1.7.1
+      script: docker push kalisio/testcafe:$TESTCAFE_VERSION
       on:
         branch: master   
 

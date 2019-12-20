@@ -16,7 +16,7 @@ USER user
 RUN npm install \
     testcafe@${TESTCAFE_VERSION} \
     testcafe-vue-selectors@${TESTCAFE_VUE_SELECTORS_VERSION} \
-    mongodb@{MONGODB_DRIVER_VERSION} \
+    mongodb@${MONGODB_DRIVER_VERSION} \
     && npm cache clean --force \
     && rm -rf /tmp/*
 
