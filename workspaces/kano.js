@@ -7,13 +7,13 @@ module.exports = {
   },
   'weacast-core': {
     organization: 'weacast',
-    path: path.join('..', 'weacast'),
+    //path: path.join('..', 'weacast'),
     dependencies: [],
     branch: 'master'
   },
   'weacast-leaflet': {
     organization: 'weacast',
-    path: path.join('..', 'weacast'),
+    //path: path.join('..', 'weacast'),
     dependencies: ['weacast-core'],
     branch: 'master'
   },
@@ -25,6 +25,10 @@ module.exports = {
   },
   kano: {
     application: true,
-    dependencies: ['@kalisio/kdk-core', '@kalisio/kdk-map', 'weacast-core', 'weacast-leaflet']
+    dependencies: [
+      '@kalisio/kdk-core', 
+      '@kalisio/kdk-map', 
+      'weacast-core', 
+      'weacast-leaflet']
   }
 }
