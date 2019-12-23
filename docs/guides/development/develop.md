@@ -26,21 +26,48 @@ Then point your browser to [localhost:8081](http://localhost:8081).
 
 ### Running tests
 
-From the root or backend `api` folder run the server-side tests : `$ yarn/npm run test:server` or `$ yarn/npm run test`
+#### API 
+
+From the root or backend `api` folder run the server-side tests: 
+
+```bash
+$yarn test:server`
+```
+
 This will lint and fix issues in the code according to [JS standard](https://github.com/feross/standard), then execute tests using [Mocha](https://mochajs.org/) and compute code coverage using [Istanbul](https://istanbul.js.org/).
+
+You can also run the linter or the tests independently:
+
+```bash
+$yarn lint
+$yarn mocha
+```
+
+### Client 
 
 From the root folder run the client-side tests : `yarn/npm run test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). If you already have a built app and a running server you could simply do this to launch TestCafé only: `$ yarn/npm run cafe`
 
-In development mode, you can tell TestCafé to run a given fixture or a given test:
-```
-# Running a given fixture
-npm run cafe -- -f "my fxture"
+In development mode, you can tell TestCafé to run a specific fixture:
 
-# Running a given test
-npm run cafe -- -t "my test"
+```bash
+$yarn cafe:firefox -f "a-fxture"
 ```
 
-### Debug
+Or a specific test:
+
+```bash
+$yarn cafe:firefox -t "a-test"
+```
+
+::: tip
+Because the UI components are rendered asynchronously, it is often convenient to reduce the overall test execution speed to ensure the components are visible:
+
+```bash
+$yarn cafe:firefox -f "a-fixture" --speed 0.8
+```
+:::
+
+### Debugging
 
 Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8). Usually you simply have to open `chrome://inspect` in the Chrome URL.
 
