@@ -7,13 +7,13 @@ module.exports = {
   },
   'weacast-core': {
     organization: 'weacast',
-    //path: path.join('..', 'weacast'),
+    path: path.join('..', 'weacast'),
     dependencies: [],
     branch: 'master'
   },
   'weacast-leaflet': {
     organization: 'weacast',
-    //path: path.join('..', 'weacast'),
+    path: path.join('..', 'weacast'),
     dependencies: ['weacast-core'],
     branch: 'master'
   },
