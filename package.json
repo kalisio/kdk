@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/kdk",
   "description": "Kalisio Development Kit - Command-Line Interface",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "homepage": "https://github.com/kalisio/kdk",
   "main": "index.js",
   "bin": {
