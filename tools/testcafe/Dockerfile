@@ -27,13 +27,13 @@ USER root
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
-ENV SCREEN_WIDTH=1024
-ENV SCREEN_HEIGHT=720
-ENV BROWSER=firefox
-ENV SPEED=0.75
+ENV SCREEN_WIDTH=${TESTCAFE_SCREEN_WIDTH:-1024}
+ENV SCREEN_HEIGHT=${TESTCAFE_SCREEN_WIDTH:-720}
+ENV BROWSER=${TESTCAFE_BROWSER:-1024}
+ENV SPEED=${TESTCAFE_SPEED:-0.75}
 
 VOLUME [ "/screenshots" ]
 EXPOSE 1337 1338
 USER user
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD ["$BROWSER:headless", "/tests/*.test.js", "-S", "-s", "/screenshots", "--speed", "$SPEED"]
+
