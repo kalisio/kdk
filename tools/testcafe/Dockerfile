@@ -25,7 +25,6 @@ ENV NODE_PATH=/opt/testcafe/node_modules
 ENV PATH=${PATH}:/opt/testcafe/node_modules/.bin
 
 USER root
-COPY .testcaferc.json /
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
