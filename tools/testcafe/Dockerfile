@@ -16,6 +16,7 @@ USER user
 RUN npm install \
     testcafe@${TESTCAFE_VERSION} \
     testcafe-vue-selectors@${TESTCAFE_VUE_SELECTORS_VERSION} \
+    testcafe-reporter-slack \
     mongodb@${MONGODB_DRIVER_VERSION} \
     && npm cache clean --force \
     && rm -rf /tmp/*
@@ -24,12 +25,13 @@ ENV NODE_PATH=/opt/testcafe/node_modules
 ENV PATH=${PATH}:/opt/testcafe/node_modules/.bin
 
 USER root
+COPY .testcaferc.json /
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
 ENV SCREEN_WIDTH=${TESTCAFE_SCREEN_WIDTH:-1024}
 ENV SCREEN_HEIGHT=${TESTCAFE_SCREEN_WIDTH:-720}
-ENV BROWSER=${TESTCAFE_BROWSER:-1024}
+ENV BROWSER=${TESTCAFE_BROWSER:-firefox}
 ENV SPEED=${TESTCAFE_SPEED:-0.75}
 
 VOLUME [ "/screenshots" ]

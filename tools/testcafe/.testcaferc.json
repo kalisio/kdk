@@ -1,0 +1,13 @@
+{
+  "browsers": [ "firefox:headless", "chromium:headless" ],
+  "src": "/tests/*.test.js",
+  "screenshots": {
+    "path": "/screenshots/",
+    "takeOnFails": true
+  },
+  "reporter": [
+    {
+      "name": "slack"
+    }
+  ]
+}
