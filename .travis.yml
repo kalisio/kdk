@@ -11,6 +11,7 @@ env:
   - TESTCAFE_VERSION=1.7.1
   - TESTCAFE_VUE_SELECTORS_VERSION=3.1.0
   - TESTCAFE_MONGODB_DRIVER_VERSION=3.1.4
+  - TEST_REPORTER_VERSION=0.7.0
 
 stages:
 - name: TESTCAFE
@@ -32,6 +33,20 @@ jobs:
     deploy:
       provider: script
       script: docker push kalisio/testcafe:$TESTCAFE_VERSION
+      on:
+        branch: master   
+
+  - stage: TEST-REPORTER
+    language: node_js
+    node_js:
+    - '8'  
+    script: 
+    - cd tools/test-reporter && docker build -t kalisio/test-reporter:$TEST_REPORTER_VERSION .
+    before_deploy:
+    - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+    deploy:
+      provider: script
+      script: docker push kalisio/test-reporter:$TEST_REPORTER_VERSION
       on:
         branch: master   
 
