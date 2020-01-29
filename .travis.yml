@@ -14,7 +14,7 @@ env:
 
 stages:
 - name: TESTCAFE
-  if: commit_message !~ /(skip[ _-]testcafe)/    
+  if: commit_message !~ /(skip[ _-]testcafe)/  
 - name: DOC
   if: commit_message !~ /(skip[ _-]doc)/
 
