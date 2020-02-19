@@ -13,8 +13,7 @@ You first need to add the dependencies in the project:
 
 ```bash
 $yarn add -D vuepress
-$yarn add -D @vuepress/plugin-pwa
-$yarn add -D http://github.com/kalisio/vuepress-theme-kalisio 
+$yarn add -D http://github.com/kalisio/vuepress-theme-kalisio#1.3.0
 ```
 
 And then add the documentation generation scripts to the `package.json` file:
@@ -34,7 +33,6 @@ docs/
 |    |_ public/
 |    |    |_ manifest.json
 |    |_ config.js
-|    |_ override.styl
 |_ assets/
 |_ package.json
 |_ README.md
@@ -44,7 +42,9 @@ docs/
 * `.vuepress` stores the **VuePress** configuration.
 * `assets` stores the resources (images, diagrams...) you want to use in your documentation. 
 * `README.md` is the entry point of your documentation. 
-* `package.json` is the Node.js entry point to build the documentation.
+* `package.json` is the Node.js entry point to build the documentation. The file must have the following content:
+
+<<< @/package.json
 
 ::: tip
 The structure follows the **VuePress** directory structure and more information can be found [here](https://vuepress.vuejs.org/guide/directory-structure.html)
@@ -55,12 +55,6 @@ The structure follows the **VuePress** directory structure and more information 
 Edit the `config.js` to configure **VuePress**. We usually have this kind of configuration:
 
 <<< @/.vuepress/config.js
-
-If needed, override the theme main color by editing the `override.styl` file:
-
-```css
-$accentColor = #bb2158
-```
 
 ### Write the documentation
 
