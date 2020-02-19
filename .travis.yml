@@ -39,9 +39,8 @@ jobs:
     language: node_js
     node_js:
     - '8'
-    script:
-    - yarn install
-    - yarn docs:build
+    install: true
+    script: cd docs && yarn install && yarn docs:build
     deploy:
       provider: pages
       local-dir: docs/.vuepress/dist
