@@ -36,6 +36,7 @@ docs/
 |    |_ config.js
 |    |_ override.styl
 |_ assets/
+|_ package.json
 |_ README.md
 |....
 ```
@@ -43,6 +44,7 @@ docs/
 * `.vuepress` stores the **VuePress** configuration.
 * `assets` stores the resources (images, diagrams...) you want to use in your documentation. 
 * `README.md` is the entry point of your documentation. 
+* `package.json` is the Node.js entry point to build the documentation.
 
 ::: tip
 The structure follows the **VuePress** directory structure and more information can be found [here](https://vuepress.vuejs.org/guide/directory-structure.html)
@@ -52,7 +54,7 @@ The structure follows the **VuePress** directory structure and more information 
 
 Edit the `config.js` to configure **VuePress**. We usually have this kind of configuration:
 
-<<< @/docs/.vuepress/config.js
+<<< @/.vuepress/config.js
 
 If needed, override the theme main color by editing the `override.styl` file:
 
@@ -78,8 +80,7 @@ Add the following lines to your `.travis.yml` file:
     - '8'
     install: true
     script:
-    - yarn install
-    - npm run docs:build
+    - cd docs && yarn install && yarn build
     deploy:
       provider: pages
       local-dir: docs/.vuepress/dist

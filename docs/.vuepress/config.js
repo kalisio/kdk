@@ -9,7 +9,6 @@ module.exports = {
   ],
   theme: 'kalisio',
   themeConfig: {
-    docsDir: 'docs',
     nav: [
       { text: 'About', link: '/about/' },
       { text: 'Guides', link: '/guides/' },
