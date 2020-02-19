@@ -7,13 +7,6 @@ module.exports = {
     ['link', { rel: 'icon', href: `https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-64x64.png` }],
     ['link', { rel: 'manifest', href: '/manifest.json' }]
   ],
-  plugins: [
-    ['@vuepress/back-to-top', true],
-    ['@vuepress/pwa', {
-      serviceWorker: true,
-      updatePopup: true
-    }]
-  ],
   theme: 'kalisio',
   themeConfig: {
     docsDir: 'docs',
