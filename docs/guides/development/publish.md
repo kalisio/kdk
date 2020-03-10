@@ -15,7 +15,7 @@ The same process applies when releasing a patch, minor or major version, i.e. th
 * generates the changelog in the git repository and push it
 
 ::: tip
-Modules are published under the `@kalisio` namespace with a `kdk` prefix in NPM, e.g. `kCore` NPM package is named `@kalisio/kdk-core`
+Modules are published under the `@kalisio` namespace with a `kdk` prefix in NPM, e.g. `kCore` NPM package is named `@kalisio/kdk/core`
 :::
 
 ::: warning

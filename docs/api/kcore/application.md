@@ -130,7 +130,7 @@ will be structured like this (*organisations* is an *authorization scope* on the
 
 A hook system allows to register the different rules that should be enforced, [CASL](https://stalniy.github.io/casl/) is used under-the-hood:
 ```javascript
-import { permissions } from '@kalisio/kdk-core'
+import { permissions } from '@kalisio/kdk/core'
 
 permissions.defineAbilities.registerHook((subject, can, cannot) => {
   if (subject && subject._id) { // Subject can be null on anonymous access
@@ -173,7 +173,7 @@ It is important to only use database fields for the conditions so it can be used
 
 Once registered, rules can be enforced at API level using the `authorise` application-level hook:
 ```javascript
-import { hooks } from '@kalisio/kdk-core'
+import { hooks } from '@kalisio/kdk/core'
 
 app.hooks({
   before: {

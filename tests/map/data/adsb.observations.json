@@ -1,0 +1,132 @@
+[
+  {
+    "type" : "Feature",
+    "properties" : {
+        "latitude" : 43.1396484375,
+        "longitude" : 24.601965615916,
+        "altitude" : 10668,
+        "callsign" : "THA945",
+        "icao" : "885102",
+        "speed" : 518,
+        "vSpeed" : null,
+        "onGround" : false,
+        "registration" : "HS-THB",
+        "squawk" : "1260",
+        "track" : 93,
+        "source" : "adsb-network"
+    },
+    "geometry" : {
+        "type" : "Point",
+        "coordinates" : [ 
+            24.601965615916, 
+            43.1396484375, 
+            10668
+        ]
+    },
+    "time" : "2019-01-04T14:00:01.660Z"
+  },
+  {
+    "type" : "Feature",
+    "properties" : {
+        "latitude" : 43.147933959961,
+        "longitude" : 24.391500783521,
+        "altitude" : 10668,
+        "callsign" : "THA945",
+        "icao" : "885102",
+        "speed" : 518,
+        "vSpeed" : null,
+        "onGround" : false,
+        "registration" : "HS-THB",
+        "squawk" : "1260",
+        "track" : 92,
+        "source" : "adsb-network"
+    },
+    "geometry" : {
+        "type" : "Point",
+        "coordinates" : [ 
+            24.391500783521, 
+            43.147933959961, 
+            10668
+        ]
+    },
+    "time" : "2019-01-04T13:58:54.767Z"
+  },
+  {
+    "type" : "Feature",
+    "properties" : {
+        "latitude" : 43.154110666049,
+        "longitude" : 24.226946149554,
+        "altitude" : 10668,
+        "callsign" : "THA945",
+        "icao" : "885102",
+        "speed" : 519,
+        "vSpeed" : null,
+        "onGround" : false,
+        "registration" : "HS-THB",
+        "squawk" : "1260",
+        "track" : 92,
+        "source" : "adsb-network"
+    },
+    "geometry" : {
+        "type" : "Point",
+        "coordinates" : [ 
+            24.226946149554, 
+            43.154110666049, 
+            10668
+        ]
+    },
+    "time" : "2019-01-04T13:58:10.862Z"
+  },
+  {
+    "type" : "Feature",
+    "properties" : {
+        "latitude" : 43.161698680813,
+        "longitude" : 24.017813546317,
+        "altitude" : 10668,
+        "callsign" : "THA945",
+        "icao" : "885102",
+        "speed" : 516,
+        "vSpeed" : null,
+        "onGround" : false,
+        "registration" : "HS-THB",
+        "squawk" : null,
+        "track" : 92,
+        "source" : "adsb-network"
+    },
+    "geometry" : {
+        "type" : "Point",
+        "coordinates" : [ 
+            24.017813546317, 
+            43.161698680813, 
+            10668
+        ]
+    },
+    "time" : "2019-01-04T13:57:02.150Z"
+  },
+  {
+    "type" : "Feature",
+    "properties" : {
+        "latitude" : 43.168350219727,
+        "longitude" : 23.823916413063,
+        "altitude" : 10668,
+        "callsign" : "THA945",
+        "icao" : "885102",
+        "speed" : 512,
+        "vSpeed" : null,
+        "onGround" : false,
+        "registration" : "HS-THB",
+        "squawk" : "1260",
+        "track" : 92,
+        "source" : "adsb-network"
+    },
+    "geometry" : {
+        "type" : "Point",
+        "coordinates" : [ 
+            23.823916413063, 
+            43.168350219727, 
+            10668
+        ]
+    },
+    "time" : "2019-01-04T13:55:54.773Z"
+  }
+]

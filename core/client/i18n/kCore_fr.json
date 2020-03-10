@@ -1,0 +1,272 @@
+{
+  "OK": "Ok",
+  "CANCEL": "Annuler",
+  "UPDATE": "Mettre à jour",
+  "CREATE": "Créer",
+  "CLOSE": "Fermer",
+  "SEARCH": "Rechercher",
+  "DONE": "Ok",
+  "APPLY": "Appliquer",
+  "RETRY": "Réessayer",
+  "EMPTY": "Aucun élément",
+  "ANONYMOUS": "Anonyme",
+  "errors": {
+    "400": "Cette opération ne peut être réalisée: paramètres incorrects",
+    "401": "Cette opération ne peut être réalisée: vous devez être authentifié",
+    "402": "Cette opération ne peut être réalisée: erreur de paiement",
+    "403": "Cette opération ne peut être réalisée: non autorisée",
+    "404": "Cette opération ne peut être réalisée: introuvable",
+    "405": "Cette opération ne peut être réalisée: non autorisée",
+    "406": "Cette opération ne peut être réalisée: non autorisée",
+    "408": "Cette opération ne peut être réalisée: temps alloué écoulé",
+    "409": "Cette opération ne peut être réalisée: conflit",
+    "411": "Cette opération ne peut être réalisée: taille requise",
+    "422": "Cette opération ne peut être réalisée: impossible à traiter",
+    "429": "Cette opération ne peut être réalisée: trop de requêtes",
+    "500": "Cette opération ne peut être réalisée: une erreur a été rencontrée",
+    "501": "Cette opération ne peut être réalisée: non gérée",
+    "502": "Cette opération ne peut être réalisée: service introuvable",
+    "503": "Cette opération ne peut être réalisée: service indisponible",
+    "RETRY": "Veuillez réessayer plus tard ou modifier votre paramétrage",
+    "RATE_LIMITING": "Trop de requête vers l'API en un laps de temps donné (limitation de débit)",
+    "RATE_LIMITING_AUTHENTICATION": "Trop de requête d'authentification en un laps de temps donné (limitation de débit)",
+    "RATE_LIMITING_CONCURRENCY": "Trop de connexions simultanées (limitation de débit)",
+    "COUNT_LIMITING": "Trop de ressources utilisées (quota dépassé)",
+    "WEAK_PASSWORD": "Le mot de passe ne respecte pas nos règles de sécurité",
+    "WEAK_PASSWORD_MIN": "Taille minimale de {{minLength}} caractères",
+    "WEAK_PASSWORD_MAX": "Taille maximale de {{maxLength}} caractères",
+    "WEAK_PASSWORD_LOWERCASE": "Au moins une lettre minuscule",
+    "WEAK_PASSWORD_UPPERCASE": "Au moins une lettre majuscule",
+    "WEAK_PASSWORD_DIGITS": "Au moins un nombre",
+    "WEAK_PASSWORD_SYMBOLS": "Au moins un caractère spécial comme :;?!+-.,^@",
+    "WEAK_PASSWORD_ONEOF": "Non reconnu comme l'un des mots de passe les plus courants",
+    "WEAK_PASSWORD_PREVIOUS": "Différents de vos {{history}} derniers mots de passe",
+    "CANNOT_PROCESS_DOWNLOAD_DATA": "Fichier invalide ou incomplet"
+  },
+  "schemas": {
+    "OBJECT_NAME": "{{ object.name }}",
+    "AVATAR_FIELD_HELPER": "Choisissez un avatar",
+    "NAME_FIELD_HELPER": "Saisissez votre nom"
+  },
+  "KScreen": {
+    "CLIENT_VERSION": "Client v",
+    "API_VERSION": "API v",
+    "EMAIL_FIELD_HELPER": "Saisissez votre adresse mail",
+    "CHANGE_ENDPOINT_LINK": "Modifier l'adresse du serveur",
+    "DEVELOPMENT_VERSION": "VERSION DE DEVELOPPEMENT",
+    "TEST_VERSION": "VERSION DE TEST",
+    "KDK_POWERED": "Réalisé avec KDK (Kalisio's Development Kit)"
+  },
+  "KLogin": {
+    "TITLE": "Connectez vous avec",
+    "OR_LABEL": "Ou",
+    "EMAIL_FIELD_HELPER": "$t(KScreen.EMAIL_FIELD_HELPER)",
+    "PASSWORD_FIELD_HELPER": "Saisissez votre mot de passe",
+    "APPLY_BUTTON": "Se connecter",
+    "FORGOT_YOUR_PASSWORD_LINK": "Mot de passe oublié ?",
+    "DONT_HAVE_AN_ACCOUNT_LINK": "Vous n'avez pas de compte ?",
+    "LOGIN_ERROR": "Mauvais identifiants ou service indisponible, veuillez réessayer"
+  },
+  "KRegister": {
+    "TITLE": "Enregistrez vous",
+    "NAME_FIELD_HELPER": "$t(schemas.NAME_FIELD_HELPER)",
+    "EMAIL_FIELD_HELPER": "$t(KScreen.EMAIL_FIELD_HELPER)",
+    "PASSWORD_FIELD_HELPER": "Saisissez un mot de passe",
+    "CONFIRM_PASSWORD_FIELD_HELPER": "Confirmez votre mot de passe",
+    "ACCEPT_TERMS_HELPER": "J'accepte les <a href='{{domain}}/#/terms' target='_blank'>conditions générales</a>",
+    "ACCEPT_TERMS_ERROR_LABEL": "Vous devez accepter nos conditions générales pour vous enregistrer",
+    "APPLY_BUTTON": "S'enregistrer",
+    "ALREADY_HAVE_AN_ACCOUNT_LINK": "Déjà un compte ?",
+    "EMAIL_ALREADY_TAKEN": "Mail déjà pris !"
+  },
+  "KChangeEndpoint": {
+    "TITLE": "Changer l'adresse du serveur ?",
+    "BASE_URL_FIELD_HELPER": "Saisissez l'adresse du serveur à utiliser",
+    "APPLY_BUTTON": "Appliquer",
+    "RESET_BUTTON": "Réinitialiser",
+    "LOGIN_LINK": "Se connecter ?",
+    "DONT_HAVE_AN_ACCOUNT_LINK": "Vous n'avez pas de compte ?"
+  },
+  "KLogout": {
+    "TITLE": "Vous avez été déconnecté",
+    "SIGN_OFF_LABEL": "Merci d'utiliser",
+    "LOG_IN_AGAIN_LINK": "Se reconnecter ?"
+  },
+  "KAccountActivity": {
+    "PROFILE": "Profil",
+    "SECURITY": "Securité",
+    "DANGER_ZONE": "Zone de danger"
+  },
+  "KAccountDZ": {
+    "BLOCK_TITLE": "Supprimer votre compte ?",
+    "BLOCK_TEXT": "Veuillez prendre en compte que la suppression de votre compte entrainera la suppression de toutes les données qui y sont attachées.<br>La suppression ne peut pas être annulée et vous serez déconnecté de l'application.",
+    "BLOCK_ACTION": "Supprimer",
+    "DIALOG_TITLE": "Etes vous sûr de vouloir supprimer votre compte ?",
+    "DIALOG_HELPER": "Saisissez le nom de votre compte pour confirmer la suprression"
+  },
+  "KAccountSecurity": {
+    "PASSWORD_BLOCK_TITLE": "Changer votre mot de passe ?",
+    "PASSWORD_BLOCK_TEXT": "Votre mot de passe protège votre compte.<br>Changez le avec précaution.",
+    "PASSWORD_BLOCK_ACTION": "Changer",
+    "EMAIL_BLOCK_TITLE": "Changez votre adresse mail ?",
+    "EMAIL_BLOCK_TEXT": "Changer votre adresse mail sécurise les accès à votre compte, changez la avec précaution.<br>Adresse actuelle: <b>{{email}}</b>",
+    "EMAIL_BLOCK_ACTION": "Changer"
+  },
+  "KGrid": {
+    "EMPTY_GRID": "$t(EMPTY)"
+  },
+  "KList": {
+    "EMPTY_LIST": "$t(EMPTY)"
+  },
+  "KUploader": {
+    "dropZone": {
+      "dictDefaultMessage": "Glissez-déposez vos fichiers ou cliquez ici",
+      "dictFallbackMessage": "Votre navigateur ne supporte pas le glisser-déposer.",
+      "dictFallbackText": "Utilisez le formulaire ci-dessous pour télécharger vos fichiers.",
+      "dictFileTooBig": "Votre fichier ({{filesize}}MO) excède la taille maximale autorisée ({{maxFilesize}}MO).",
+      "dictInvalidFileType": "Vous ne pouvez ajouter des fichiers de ce type.",
+      "dictResponseError": "Une erreur est survenue lors du téléchargement (code {{statusCode}}), veuillez réessayer.",
+      "dictCancelUpload": "Annuler",
+      "dictUploadCanceled": "Téléchargement annulé.",
+      "dictCancelUploadConfirmation": "Etes-vous sûr de vouloir annuler le téléchargement ?",
+      "dictRemoveFile": "Effacer",
+      "dictRemoveFileConfirmation": "Etes-vous sûr de vouloir effacer ce fichier ?",
+      "dictMaxFilesExceeded": "Vous ne pouvez plus ajouter de fichiers.",
+      "dictFileSizeUnits": {
+        "tb": "TO",
+        "gb": "GO",
+        "mb": "MO",
+        "kb": "KO",
+        "b": "o"
+      }
+    }
+  },
+  "KAutocomplete": {
+    "PLACEHOLDER": "$t(SEARCH)",
+    "NO_RESULTS": "$t(EMPTY)"
+  },
+  "KColorChooser": {
+    "CLOSE_ACTION": "$t(CANCEL)",
+    "DONE_BUTTON": "$t(DONE)"
+  },
+  "KIconChooser": {
+    "CLOSE_ACTION": "$t(CANCEL)",
+    "DONE_BUTTON": "$t(DONE)",
+    "SEARCH_FIELD_LABEL": "Tapez ici pour rechercher",
+    "SEARCH_CATEGORY_LABEL": "Toutes les catégories",
+    "categories": {
+      "accessibility"          : "accessibility",
+      "alert"                  : "alert",
+      "animals"                : "animals",
+      "arrows"                 : "arrows",
+      "audio-video"            : "audio-video",
+      "automotive"             : "automotive",
+      "autumn"                 : "autumn",
+      "beverage"               : "beverage",
+      "buildings"              : "buildings",
+      "business"               : "business",
+      "camping"                : "camping",
+      "charity"                : "charity",
+      "chat"                   : "chat",
+      "chess"                  : "chess",
+      "childhood"              : "childhood",
+      "clothing"               : "clothing",
+      "code"                   : "code",
+      "communication"          : "communication",
+      "computers"              : "computers",
+      "construction"           : "construction",
+      "currency"               : "currency",
+      "date-time"              : "date-time",
+      "design"                 : "design",
+      "editors"                : "editors",
+      "education"              : "education",
+      "emoji"                  : "emoji",
+      "energy"                 : "energy",
+      "files"                  : "files",
+      "finance"                : "finance",
+      "fitness"                : "fitness",
+      "food"                   : "food",
+      "fruit-vegetable"        : "fruit-vegetable",
+      "games"                  : "games",
+      "gaming-tabletop"        : "gaming-tabletop",
+      "gender"                 : "gender",
+      "halloween"              : "halloween",
+      "hands"                  : "hands",
+      "health"                 : "health",
+      "holiday"                : "holiday",
+      "hotel"                  : "hotel",
+      "household"              : "household",
+      "images"                 : "images",
+      "interfaces"             : "interfaces",
+      "logistics"              : "logistics",
+      "maps"                   : "maps",
+      "maritime"               : "maritime",
+      "marketing"              : "marketing",
+      "mathematics"            : "mathematics",
+      "medical"                : "medical",
+      "moving"                 : "moving",
+      "music"                  : "music",
+      "objects"                : "objects",
+      "payments-shopping"      : "payments-shopping",
+      "pharmacy"               : "pharmacy",
+      "political"              : "political",
+      "religion"               : "religion",
+      "science"                : "science",
+      "science-fiction"        : "science-fiction",
+      "security"               : "security",
+      "shapes"                 : "shapes",
+      "shopping"               : "shopping",
+      "social"                 : "social",
+      "spinners"               : "spinners",
+      "sports"                 : "sports",
+      "spring"                 : "spring",
+      "status"                 : "status",
+      "summer"                 : "summer",
+      "toggle"                 : "toggle",
+      "travel"                 : "travel",
+      "users-people"           : "users-people",
+      "vehicles"               : "vehicles",
+      "weather"                : "weather",
+      "winter"                 : "winter",
+      "writing"                : "writing"
+    }
+  },
+  "KTagField": {
+    "CREATE_TAG": "Créer <b>{{tag}}</b>"
+  },
+  "KFileField": {
+    "ERROR_WHILE_LOADING_THE_FILE": "Erreur durant la lecture du fichier, avez-vous sélectionné un fichier valide ?",
+    "INVALID_FILE_TYPE": "Type de fichier invalide, veuillez sélectionner un fichier du bon type."
+  },
+  "KMediaBrowser": {
+    "LOADING": "Chargement... ",
+    "NO_MEDIA": "Il n'y a rien à voir, ajoutez des médias!"
+  },
+  "KFab": {
+    "CLOSE_ACTION": "$t(CLOSE)"
+  },
+  "KWidget": {
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "MINIMIZE_ACTION": "Aggrandir",
+    "MAXIMIZE_ACTION": "Réduire"
+  },
+  "KAbout": {
+    "SIDENAV": "A propos",
+    "TITLE": "A propos",
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "CLIENT_VERSION": "$t(KScreen.CLIENT_VERSION)",
+    "API_VERSION": "$t(KScreen.API_VERSION)",
+    "DOMAIN": "Hébergé sur",
+    "FLAVOR": "Saveur",
+    "MORE": "En savoir plus sur",
+    "MORE_PUBLISHER": "En savoir plus sur",
+    "KDK_POWERED": "$t(KScreen.KDK_POWERED)",
+    "BUG_REPORT": "Nous signaler un bug",
+    "BUG_REPORT_SUBJECT": "[{{appName}}] Rapport de bug - Client v{{clientVersionName}} - API v{{apiVersionName}}",
+    "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
+    "SYSTEM_DETAILS": "Informations système"
+  },
+  "KTable": {
+    "TABLE_COLUMNS": "Propriétés"
+  }
+}

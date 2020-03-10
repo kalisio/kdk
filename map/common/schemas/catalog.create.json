@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "http://www.kalisio.xyz/schemas/catalog.create.json#",
+  "title": "schemas.CATALOG_CREATE_TITLE",
+  "description": "Catalog creation schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string", 
+      "maxLength": 128,
+      "minLength": 3,
+      "field": {
+        "component": "form/KTextField",
+        "helper": "schemas.CATALOG_NAME_FIELD_HELPER"
+      }
+    },
+    "description": {
+      "type": "string", 
+      "maxLength": 256,
+      "field": {
+        "component": "form/KTextField",
+        "helper": "schemas.CATALOG_DESCRIPTION_FIELD_HELPER"
+      }
+    },
+    "featureId": {
+      "type": "string", 
+      "maxLength": 256,
+      "minLength": 1,
+      "default": "_id",
+      "field": {
+        "component": "form/KTextField",
+        "helper": "schemas.CATALOG_FEATURE_ID_FIELD_HELPER"
+      }
+    },
+    "schema": { 
+      "type": "object",
+      "field": {
+        "component": "form/KFileField",
+        "helper": "schemas.CATALOG_SCHEMA_FIELD_HELPER",
+        "mime-types": ["application/json"]
+      }
+    }
+  },
+  "required": ["name", "featureId"]
+}
+

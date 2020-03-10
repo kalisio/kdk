@@ -32,7 +32,7 @@ module.exports = {
   },
   kApp: {
     application: true, // Indicates if this is the main application module
-    dependencies: ['@kalisio/kdk-core'],
+    dependencies: ['@kalisio/kdk/core'],
     branch: 'master' // Branch the module should be forced on whatever the current target branch of the CLI
   }
 }

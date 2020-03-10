@@ -1,0 +1,230 @@
+[ 
+  {
+    "name": "Sentinel 2",
+    "description": "Cloudless",
+    "iconUrl": "https://mapproxy.kargo.kalisio.xyz/wmts/s2/GLOBAL_WEBMERCATOR/0/0/0.jpeg",
+    "icon": "satellite",
+    "attribution": "Sentinel-2 cloudless <a href=\"https://s2maps.eu\">by EOX IT Services GmbH </a>",
+    "type": "BaseLayer",
+    "leaflet": {
+      "type": "tileLayer",
+      "arguments": [
+        "https://mapproxy.kargo.kalisio.xyz/wmts/s2/GLOBAL_WEBMERCATOR/{z}/{x}/{y}.jpeg",
+        {
+          "maxZoom": 18
+        }
+      ]
+    },
+    "cesium": {
+      "type": "OpenStreetMap",
+      "isVisible": true,
+      "fileExtension": "jpeg",
+      "url": "https://mapproxy.kargo.kalisio.xyz/wmts/s2/GLOBAL_WEBMERCATOR"
+    }
+  },
+  {
+    "name": "OSM Bright",
+    "description": "OpenStreetMap",
+    "iconUrl": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-bright/GLOBAL_WEBMERCATOR/0/0/0.png",
+    "icon": "streetview",
+    "attribution": "OpenMapTiles © <a href=\"https://openmaptiles.com\">OpenMapTiles</a> & OpenStreetMap © <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors",
+    "type": "BaseLayer",
+    "leaflet": {
+      "type": "tileLayer",
+      "isVisible": true,
+      "arguments": [
+        "https://mapproxy.kargo.kalisio.xyz/wmts/osm-bright/GLOBAL_WEBMERCATOR/{z}/{x}/{y}.png",
+        {
+          "maxZoom": 18
+        }
+      ]
+    },
+    "cesium": {
+      "type": "OpenStreetMap",
+      "url": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-bright/GLOBAL_WEBMERCATOR"
+    }
+  },
+  {
+    "name": "OSM Dark",
+    "description": "OpenStreetMap",
+    "iconUrl": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-dark/GLOBAL_WEBMERCATOR/0/0/0.png",
+    "icon": "streetview",
+    "attribution": "OpenMapTiles © <a href=\"https://openmaptiles.com\">OpenMapTiles</a> & OpenStreetMap © <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors",
+    "type": "BaseLayer",
+    "leaflet": {
+      "type": "tileLayer",
+      "arguments": [
+        "https://mapproxy.kargo.kalisio.xyz/wmts/osm-dark/GLOBAL_WEBMERCATOR/{z}/{x}/{y}.png",
+        {
+          "maxZoom": 18
+        }
+      ]
+    },
+    "cesium": {
+      "type": "OpenStreetMap",
+      "url": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-dark/GLOBAL_WEBMERCATOR"
+    }
+  },
+  {
+    "name": "OSMT bright",
+    "description": "OpenStreetMap & Terrain",
+    "iconUrl": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-terrain-bright/GLOBAL_WEBMERCATOR/0/0/0.png",
+    "icon": "terrain",
+    "attribution": "OpenMapTiles © <a href=\"https://openmaptiles.com\">OpenMapTiles</a> & OpenStreetMap © <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors",
+    "type": "BaseLayer",
+    "leaflet": {
+      "type": "tileLayer",
+      "arguments": [
+        "https://mapproxy.kargo.kalisio.xyz/wmts/osm-terrain-bright/GLOBAL_WEBMERCATOR/{z}/{x}/{y}.png",
+        {
+          "maxZoom": 18
+        }
+      ]
+    },
+    "cesium": {
+      "type": "OpenStreetMap",
+      "url": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-terrain-bright/GLOBAL_WEBMERCATOR"
+    }
+  },
+  {
+    "name": "OSMT dark",
+    "description": "OpenStreetMap & Terrain",
+    "iconUrl": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-terrain-dark/GLOBAL_WEBMERCATOR/0/0/0.png",
+    "icon": "terrain",
+    "attribution": "OpenMapTiles © <a href=\"https://openmaptiles.com\">OpenMapTiles</a> & OpenStreetMap © <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors",
+    "type": "BaseLayer",
+    "leaflet": {
+      "type": "tileLayer",
+      "arguments": [
+        "https://mapproxy.kargo.kalisio.xyz/wmts/osm-terrain-dark/GLOBAL_WEBMERCATOR/{z}/{x}/{y}.png",
+        {
+          "maxZoom": 18
+        }
+      ]
+    },
+    "cesium": {
+      "type": "OpenStreetMap",
+      "url": "https://mapproxy.kargo.kalisio.xyz/wmts/osm-terrain-dark/GLOBAL_WEBMERCATOR"
+    }
+  },
+  {
+    "name": "WGS84",
+    "description": "Standard Ellipsoid",
+    "iconUrl": "statics/Cesium/Widgets/Images/TerrainProviders/Ellipsoid.png",
+    "icon": "fiber_manual_record",
+    "attribution": "",
+    "default": true,
+    "type": "TerrainLayer",
+    "cesium": {
+      "type": "Ellipsoid",
+      "isVisible": true
+    }
+  }, 
+  {
+    "name": "Cesium Terrain",
+    "description": "World-wide 30m",
+    "iconUrl" : "statics/Cesium/Widgets/Images/TerrainProviders/CesiumWorldTerrain.png",
+    "icon": "terrain",
+    "attribution": "High-resolution, mesh-based terrain for the entire globe.\nBy https://cesiumjs.org",
+    "type": "TerrainLayer",
+    "cesium": {
+      "type": "Cesium",
+      "requestWaterMask" : "true",
+      "requestVertexNormals" : "true"
+    }
+  }, 
+  {
+    "name": "Kalisio Terrain",
+    "description": "World-wide 30m",
+    "iconUrl" : "statics/Cesium/Widgets/Images/TerrainProviders/CesiumWorldTerrain.png",
+    "icon": "terrain",
+    "attribution": "High-resolution, mesh-based terrain for the entire globe.\nBy http://www.kalisio.com",
+    "type": "TerrainLayer",
+    "cesium": {
+      "type": "Cesium",
+      "url": "http://cesiumterrainserver.kalisio.xyz/tilesets/md15-tiles",
+      "requestWaterMask" : "true",
+      "requestVertexNormals" : "true"
+    }
+  },
+  {
+    "name": "Wind",
+    "description": "Speed and direction",
+    "iconUrl" : "https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/wind.jpg",
+    "attribution": "Forecast data from <a href=\"http://www.meteofrance.com\">Météo-France</a>",
+    "type" : "OverlayLayer",
+    "leaflet": {
+      "type": "weacast.flowLayer",
+      "arguments": [{
+        "elements": ["u-wind", "v-wind"],
+        "lineWidth": 4,
+        "frameRate": 20,
+        "particleMultiplier": 0.001,
+        "displayOptions": {
+          "velocityType": "Wind",
+          "position": "bottomright",
+          "emptyString": "No wind data",
+          "angleConvention": "meteoCW",
+          "speedUnit": "m/s"
+        }
+      }]
+    }
+  },
+  {
+    "name": "Gust",
+    "description": "Max wind speed",
+    "iconUrl" : "https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/gust.jpg",
+    "attribution": "Forecast data from <a href=\"http://www.meteofrance.com\">Météo-France</a>",
+    "type" : "OverlayLayer",
+    "leaflet": {
+      "type": "weacast.scalarLayer",
+      "arguments": [{
+        "elements": ["gust"],
+        "mesh": true
+      }]
+    }
+  },
+  {
+    "name": "Precipitations",
+    "description": "3h accumulation",
+    "iconUrl" : "https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/precipitations.png",
+    "attribution": "Forecast data from <a href=\"http://www.meteofrance.com\">Météo-France</a>",
+    "type" : "OverlayLayer",
+    "leaflet": {
+      "type": "weacast.scalarLayer",
+      "arguments": [{
+        "elements": ["precipitations"],
+        "mesh": true,
+        "colorMap": "BuPu",
+        "colorClasses": [0, 1, 2, 4, 10, 25, 50, 100, 300]
+      }]
+    }
+  },
+  {
+    "name": "vigicrues-stations",
+    "iconUrl" : "https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/vigicrues-icon.png",
+    "attribution" : "",
+    "type" : "OverlayLayer",
+    "service": "vigicrues-stations",
+    "featureId": "CdStationH"
+  },
+  {
+    "name": "vigicrues-observations",
+    "iconUrl" : "https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/vigicrues-icon.png",
+    "attribution" : "",
+    "type" : "OverlayLayer",
+    "service": "vigicrues-observations",
+    "featureId": "CdStationH",
+    "history": 604800
+  },
+  {
+    "name": "adsb-observations",
+    "iconUrl" : "https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/adsb-icon.png",
+    "attribution" : "",
+    "type" : "OverlayLayer",
+    "service": "adsb-observations",
+    "featureId": "icao",
+    "history": 604800
+  }
+]
+

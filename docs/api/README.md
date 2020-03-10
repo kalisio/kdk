@@ -2,21 +2,21 @@
 
 These sections details the available external (i.e. REST/Websocket) as well as the internal (i.e. Classes/Functions) [API](https://en.wikipedia.org/wiki/Application_programming_interface) within each module of the KDK. If you'd like to check the detailed API of a given module please select it in the menu.
 
-> Modules are published under the `@kalisio` namespace with a `kdk` prefix in NPM, e.g. `kCore` NPM package is named `@kalisio/kdk-core`
+> Modules are published under the `@kalisio` namespace with a `kdk` prefix in NPM, e.g. `kCore` NPM package is named `@kalisio/kdk/core`
 
 Each module is internally broken into 3 different parts.
 
 * client API (`client` folder in module `src` folder) to be used within the browser and imported like this:
 
-`import { xxx } from '@kalisio/kdk-core/client'`
+`import { xxx } from '@kalisio/kdk/core.client'`
 
 * common API (`common` folder in module `src` folder)  to be used within the browser or NodeJS and imported like this:
 
-`import { xxx } from '@kalisio/kdk-core/common'`
+`import { xxx } from '@kalisio/kdk/core.common'`
 
 * backend API (all other files in module `src` folder) to be used within NodeJS and imported like this:
 
-`import { xxx } from '@kalisio/kdk-core'`
+`import { xxx } from '@kalisio/kdk/core.api'`
 
 ## Services
 

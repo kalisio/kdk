@@ -1,0 +1,272 @@
+{
+  "OK": "Ok",
+  "CANCEL": "Cancel",
+  "UPDATE": "Update",
+  "CREATE": "Create",
+  "CLOSE": "Close",
+  "SEARCH": "Search",
+  "DONE": "Done",
+  "APPLY": "Apply",
+  "RETRY": "Retry",
+  "EMPTY": "No elements found",
+  "ANONYMOUS": "Anonymous",
+  "errors": {
+    "400": "Operation cannot be performed: bad parameters",
+    "401": "Operation cannot be performed: authentication required",
+    "402": "Operation cannot be performed: payment error",
+    "403": "Operation cannot be performed: not allowed",
+    "404": "Operation cannot be performed: not found",
+    "405": "Operation cannot be performed: not allowed",
+    "406": "Operation cannot be performed: not acceptable",
+    "408": "Operation cannot be performed: timeout",
+    "409": "Operation cannot be performed: conflict",
+    "411": "Operation cannot be performed: length required",
+    "422": "Operation cannot be performed: unprocessable",
+    "429": "Operation cannot be performed: too many requests",
+    "500": "Operation cannot be performed: an error occured",
+    "501": "Operation cannot be performed: not implemented",
+    "502": "Operation cannot be performed: service unavailable",
+    "503": "Operation cannot be performed: service unavailable",
+    "RETRY": "Please try again later or modify your parameters",
+    "RATE_LIMITING": "Too many API requests in a given amount of time (rate limiting)",
+    "RATE_LIMITING_AUTHENTICATION": "Too many authentication requests in a given amount of time (rate limiting)",
+    "RATE_LIMITING_CONCURRENCY": "Too many concurrent connections (rate limiting)",
+    "COUNT_LIMITING": "Too many resources used (count limiting)",
+    "WEAK_PASSWORD": "The provided password does not comply our password policy",
+    "WEAK_PASSWORD_MIN": "Minimum length of {{minLength}} characters",
+    "WEAK_PASSWORD_MAX": "Maximum length of {{maxLength}} characters",
+    "WEAK_PASSWORD_LOWERCASE": "A least one lower case letter",
+    "WEAK_PASSWORD_UPPERCASE": "A least one upper case letter",
+    "WEAK_PASSWORD_DIGITS": "A least one digit",
+    "WEAK_PASSWORD_SYMBOLS": "A least one special symbol like :;?!+-.,^@",
+    "WEAK_PASSWORD_ONEOF": "Not known as one of the most common passwords",
+    "WEAK_PASSWORD_PREVIOUS": "Not one of your {{history}} last passwords",
+    "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file"
+  },
+  "schemas": {
+    "OBJECT_NAME": "{{ object.name }}",
+    "AVATAR_FIELD_HELPER": "Select an avatar",
+    "NAME_FIELD_HELPER": "Enter your name"
+  },
+  "KScreen": {
+    "CLIENT_VERSION": "Client v",
+    "API_VERSION": "API v",
+    "EMAIL_FIELD_HELPER": "Enter your email address",
+    "CHANGE_ENDPOINT_LINK": "Change endpoint" ,
+    "DEVELOPMENT_VERSION": "DEVELOPMENT VERSION",
+    "TEST_VERSION": "TEST VERSION",
+    "KDK_POWERED": "Powered by KDK (Kalisio's Development Kit)"
+  },
+  "KLogin": {
+    "TITLE": "Log in with",
+    "OR_LABEL": "Or",
+    "EMAIL_FIELD_HELPER": "$t(KScreen.EMAIL_FIELD_HELPER)",
+    "PASSWORD_FIELD_HELPER": "Enter your password",
+    "APPLY_BUTTON": "Log in",
+    "FORGOT_YOUR_PASSWORD_LINK": "Forgot your password ?",
+    "DONT_HAVE_AN_ACCOUNT_LINK": "Don't have an account ?",
+    "LOGIN_ERROR": "Wrong credentials or service unavailable, please try again"
+  },
+  "KRegister": {
+    "TITLE": "Register",
+    "NAME_FIELD_HELPER": "$t(schemas.NAME_FIELD_HELPER)",
+    "EMAIL_FIELD_HELPER": "$t(KScreen.EMAIL_FIELD_HELPER)",
+    "PASSWORD_FIELD_HELPER": "Enter a password",
+    "CONFIRM_PASSWORD_FIELD_HELPER": "Confirm your password",
+    "ACCEPT_TERMS_HELPER": "I accept the <a href='{{domain}}/#/terms' target='_blank'>terms and policies</a>",
+    "ACCEPT_TERMS_ERROR_LABEL": "You must accept our terms and policies to register",
+    "APPLY_BUTTON": "Register",
+    "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?",
+    "EMAIL_ALREADY_TAKEN": "Email already taken !"
+  },
+  "KChangeEndpoint": {
+    "TITLE": "Change endpoint",
+    "BASE_URL_FIELD_HELPER": "Enter the address of the server to be used",
+    "APPLY_BUTTON": "Apply",
+    "RESET_BUTTON": "Reset",
+    "LOGIN_LINK": "Log in ?",
+    "DONT_HAVE_AN_ACCOUNT_LINK": "Don't have an account ?"
+  },
+  "KLogout": {
+    "TITLE": "You are now logged out",
+    "SIGN_OFF_LABEL": "Thank you for using",
+    "LOG_IN_AGAIN_LINK": "Log in again ?"
+  },
+  "KAccountActivity": {
+    "PROFILE": "Profile",
+    "SECURITY": "Security",
+    "DANGER_ZONE": "Danger zone"
+  },
+  "KAccountDZ": {
+    "BLOCK_TITLE": "Delete your account ?",
+    "BLOCK_TEXT": "Please note that deleting your account will delete any data attached to this account.<br><br>The deletion cannot be undone and you will be logged out of the application.",
+    "BLOCK_ACTION": "Delete account",
+    "DIALOG_TITLE": "Are you sure you want to delete your account ?",
+    "DIALOG_HELPER": "Enter your account name to confirm the deletion"
+  },
+  "KAccountSecurity": {
+    "PASSWORD_BLOCK_TITLE": "Change your password ?",
+    "PASSWORD_BLOCK_TEXT": "Your password protect your account.<br>Change it carefully.",
+    "PASSWORD_BLOCK_ACTION": "Change",
+    "EMAIL_BLOCK_TITLE": "Change your email ?",
+    "EMAIL_BLOCK_TEXT": "Your email secures changes to your account credentials, change it carefully.<br>Current email address: <b>{{email}}</b>",
+    "EMAIL_BLOCK_ACTION": "Change"
+  },
+  "KGrid": {
+    "EMPTY_GRID": "$t(EMPTY)"
+  },
+  "KList": {
+    "EMPTY_LIST": "$t(EMPTY)"
+  },
+  "KUploader": {
+    "dropZone": {
+      "dictDefaultMessage": "Drop files or click here",
+      "dictFallbackMessage": "Your browser does not support drag'n'drop file uploads.",
+      "dictFallbackText": "Please use the fallback form below to upload your files.",
+      "dictFileTooBig": "Your file ({{filesize}}MiB) exceeds the maximum allowed size ({{maxFilesize}}MiB).",
+      "dictInvalidFileType": "You can't upload files of this type.",
+      "dictResponseError": "An error occured while uploading (code {{statusCode}}), please try again.",
+      "dictCancelUpload": "Cancel",
+      "dictUploadCanceled": "Upload canceled.",
+      "dictCancelUploadConfirmation": "Are you sure you want to cancel this upload?",
+      "dictRemoveFile": "Remove",
+      "dictRemoveFileConfirmation": "Are you sure you want to remove this file?",
+      "dictMaxFilesExceeded": "You can not upload any more files.",
+      "dictFileSizeUnits": {
+        "tb": "TB",
+        "gb": "GB",
+        "mb": "MB",
+        "kb": "KB",
+        "b": "b"
+      }
+    }
+  },
+  "KAutocomplete": {
+    "PLACEHOLDER": "$t(SEARCH)",
+    "NO_RESULTS": "$t(EMPTY)"
+  },
+  "KColorChooser": {
+    "CLOSE_ACTION": "$t(CANCEL)",
+    "DONE_BUTTON": "$t(DONE)"
+  },
+  "KIconChooser": {
+    "CLOSE_ACTION": "$t(CANCEL)",
+    "DONE_BUTTON": "$t(DONE)",
+    "SEARCH_FIELD_LABEL": "Type to search",
+    "SEARCH_CATEGORY_LABEL": "All categories",
+    "categories": {
+      "accessibility"          : "accessibility",
+      "alert"                  : "alert",
+      "animals"                : "animals",
+      "arrows"                 : "arrows",
+      "audio-video"            : "audio-video",
+      "automotive"             : "automotive",
+      "autumn"                 : "autumn",
+      "beverage"               : "beverage",
+      "buildings"              : "buildings",
+      "business"               : "business",
+      "camping"                : "camping",
+      "charity"                : "charity",
+      "chat"                   : "chat",
+      "chess"                  : "chess",
+      "childhood"              : "childhood",
+      "clothing"               : "clothing",
+      "code"                   : "code",
+      "communication"          : "communication",
+      "computers"              : "computers",
+      "construction"           : "construction",
+      "currency"               : "currency",
+      "date-time"              : "date-time",
+      "design"                 : "design",
+      "editors"                : "editors",
+      "education"              : "education",
+      "emoji"                  : "emoji",
+      "energy"                 : "energy",
+      "files"                  : "files",
+      "finance"                : "finance",
+      "fitness"                : "fitness",
+      "food"                   : "food",
+      "fruit-vegetable"        : "fruit-vegetable",
+      "games"                  : "games",
+      "gaming-tabletop"        : "gaming-tabletop",
+      "gender"                 : "gender",
+      "halloween"              : "halloween",
+      "hands"                  : "hands",
+      "health"                 : "health",
+      "holiday"                : "holiday",
+      "hotel"                  : "hotel",
+      "household"              : "household",
+      "images"                 : "images",
+      "interfaces"             : "interfaces",
+      "logistics"              : "logistics",
+      "maps"                   : "maps",
+      "maritime"               : "maritime",
+      "marketing"              : "marketing",
+      "mathematics"            : "mathematics",
+      "medical"                : "medical",
+      "moving"                 : "moving",
+      "music"                  : "music",
+      "objects"                : "objects",
+      "payments-shopping"      : "payments-shopping",
+      "pharmacy"               : "pharmacy",
+      "political"              : "political",
+      "religion"               : "religion",
+      "science"                : "science",
+      "science-fiction"        : "science-fiction",
+      "security"               : "security",
+      "shapes"                 : "shapes",
+      "shopping"               : "shopping",
+      "social"                 : "social",
+      "spinners"               : "spinners",
+      "sports"                 : "sports",
+      "spring"                 : "spring",
+      "status"                 : "status",
+      "summer"                 : "summer",
+      "toggle"                 : "toggle",
+      "travel"                 : "travel",
+      "users-people"           : "users-people",
+      "vehicles"               : "vehicles",
+      "weather"                : "weather",
+      "winter"                 : "winter",
+      "writing"                : "writing"
+    }
+  },
+  "KTagField": {
+    "CREATE_TAG": "Create <b>{{tag}}</b>"
+  },
+  "KFileField": {
+    "ERROR_WHILE_LOADING_THE_FILE": "Error while loading the file, did you select a valid file ?",
+    "INVALID_FILE_TYPE": "Invalid file type, please select the right file type."
+  },
+  "KMediaBrowser": {
+    "LOADING": "Loading... ",
+    "NO_MEDIA": "There is nothing to show, please add medias first!"
+  },
+  "KFab": {
+    "CLOSE_ACTION": "$t(CLOSE)"
+  },
+  "KWidget": {
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "MINIMIZE_ACTION": "Minimize",
+    "MAXIMIZE_ACTION": "Maximize"
+  },
+  "KAbout": {
+    "SIDENAV": "About",
+    "TITLE": "About",
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "CLIENT_VERSION": "$t(KScreen.CLIENT_VERSION)",
+    "API_VERSION": "$t(KScreen.API_VERSION)",
+    "DOMAIN": "Hosted on",
+    "FLAVOR": "Flavor",
+    "MORE": "More about",
+    "MORE_PUBLISHER": "More about",
+    "KDK_POWERED": "$t(KScreen.KDK_POWERED)",
+    "BUG_REPORT": "Report us a bug",
+    "BUG_REPORT_SUBJECT": "[{{appName}}] Bug report - Client v{{clientVersionName}} - API v{{apiVersionName}}",
+    "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
+    "SYSTEM_DETAILS": "Platform information"
+  },
+  "KTable": {
+    "TABLE_COLUMNS": "Properties"
+  }
+}

@@ -1,0 +1,17 @@
+Dataset {
+    Int32 LatLon_Projection;
+    Float32 lat[lat = 361];
+    Float32 lon[lon = 721];
+    Float64 reftime;
+    Float64 time[time = 25];
+    Float32 height_above_ground[height_above_ground = 10];
+    Grid {
+     ARRAY:
+        Float32 Temperature_height_above_ground[time = 25][height_above_ground = 10][lat = 361][lon = 721];
+     MAPS:
+        Float64 time[time = 25];
+        Float32 height_above_ground[height_above_ground = 10];
+        Float32 lat[lat = 361];
+        Float32 lon[lon = 721];
+    } Temperature_height_above_ground;
+} mf-arpege-05/2019/11/26/06/T6086_G_T_Hau_20191126060000.grb;

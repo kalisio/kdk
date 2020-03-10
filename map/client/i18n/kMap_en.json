@@ -1,0 +1,222 @@
+{
+  "CLOSE": "Close",
+  "SEARCH": "Search",
+  "errors": {
+    "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
+    "GEOLOCATION_ERROR": "We are not able to locate your position, this might affect some features of the application.",
+    "GEOLOCATION_PERMISSION_DENIED": "$t(errors.GEOLOCATION_ERROR)</br>It seems you did not give permission to locate you.",
+    "GEOLOCATION_POSITION_UNAVAILABLE": "$t(errors.GEOLOCATION_ERROR)</br>It seems the internal source of position returned an internal error.",
+    "GEOLOCATION_POSITION_TIMEOUT": "$t(errors.GEOLOCATION_ERROR)</br>It seems the time allowed to acquire it was reached before the information was obtained.",
+    "CANNOT_PROCESS_SCHEMA_DATA": "Invalid or incomplete data scheme",
+    "ALERTS_LIMIT": "Too much alerts to display all of them",
+    "FILE_IMPORT_ERROR": "L'import du fichier a échoué"
+  },
+  "mixins": {
+    "geolocation": {
+      "TITLE": "My position",
+      "METERS": "meters",
+      "FEET": "feet",
+      "POPUP": "You are within {distance} {unit} from this point",
+      "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
+    },
+    "navigator": {
+      "ACTION_SHEET_TITLE": "Select an application"
+    },
+    "fileLayers": {
+      "IMPORTED_DATA_NAME": "My data"
+    },
+    "legend": {
+      "CONVERT_UNITS": "{{layer}}: convert to {{unit}}"
+    },
+    "activity": {
+      "CREATE_LAYER": "Create a new layer",
+      "SAVE_LABEL": "Save layer",
+      "EDIT_LABEL": "Edit layer",
+      "VIEW_DATA_LABEL": "View data",
+      "CHART_DATA_LABEL": "Chart data",
+      "START_EDIT_DATA_LABEL": "Start data edit",
+      "STOP_EDIT_DATA_LABEL": "Stop data edit",
+      "REMOVE_LABEL": "Remove",
+      "REMOVE_DIALOG_TITLE": "Remove {{layer}} ?",
+      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{layer}}</b> from your workspace ?",
+      "ZOOM_TO_LABEL": "Zoom to",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+      "TOGGLE_SIDENAV": "Menu",
+      "TOGGLE_FULLSCREEN": "Fullscreen",
+      "TOGGLE_CATALOG": "Catalog",
+      "TOGGLE_MAP": "2D",
+      "TOGGLE_GLOBE": "3D",
+      "TOGGLE_VR": "VR",
+      "TRACK_LOCATION": "Track location",
+      "PROBE": "Probe"
+    },
+    "timeseries": {
+      "PROBE": "Probe",
+      "PROBED_LOCATION": "Probe"
+    },
+    "editLayers": {
+      "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",
+      "REMOVE_FEATURE_DIALOG_MESSAGE": "Are you sure you want to remove this feature from your workspace ?",
+      "draw": {
+        "toolbar": {
+          "actions": {
+            "title": "Cancel drawing",
+            "text": "Cancel"
+          },
+          "finish": {
+            "title": "Finish drawing",
+            "text": "Finish"
+          },
+          "undo": {
+            "title": "Delete last point drawn",
+            "text": "Delete last point"
+          },
+          "buttons": {
+            "polyline": "Draw a polyline",
+            "polygon": "Draw a polygon",
+            "rectangle": "Draw a rectangle",
+            "circle": "Draw a circle",
+            "marker": "Draw a marker",
+            "circlemarker": "Draw a circlemarker"
+          }
+        },
+        "handlers": {
+          "circle": {
+            "tooltip": {
+              "start": "Click and drag to draw circle."
+            },
+            "radius": "Radius"
+          },
+          "circlemarker": {
+            "tooltip": {
+              "start": "Click map to place circle marker."
+            }
+          },
+          "marker": {
+            "tooltip": {
+              "start": "Click map to place marker."
+            }
+          },
+          "polygon": {
+            "tooltip": {
+              "start": "Click to start drawing shape.",
+              "cont": "Click to continue drawing shape.",
+              "end": "Click first point to close this shape."
+            }
+          },
+          "polyline": {
+            "error": "<strong>Error:</strong> shape edges cannot cross!",
+            "tooltip": {
+              "start": "Click to start drawing line.",
+              "cont": "Click to continue drawing line.",
+              "end": "Click last point to finish line."
+            }
+          },
+          "rectangle": {
+            "tooltip": {
+              "start": "Click and drag to draw rectangle."
+            }
+          },
+          "simpleshape": {
+            "tooltip": {
+              "end": "Release mouse to finish drawing."
+            }
+          }
+        }
+      },
+      "edit": {
+        "toolbar": {
+          "actions": {
+            "save": {
+              "title": "Save changes",
+              "text": "Save"
+            },
+            "cancel": {
+              "title": "Cancel editing, discards all changes",
+              "text": "Cancel"
+            },
+            "clearAll": {
+              "title": "Clear all layers",
+              "text": "Clear All"
+            }
+          },
+          "buttons": {
+            "edit": "Edit layers",
+            "editDisabled": "No layers to edit",
+            "remove": "Delete layers",
+            "removeDisabled": "No layers to delete"
+          }
+        },
+        "handlers": {
+          "edit": {
+            "tooltip": {
+              "text": "Drag handles or markers to edit features.",
+              "subtext": "Click cancel to undo changes."
+            }
+          },
+          "remove": {
+            "tooltip": {
+              "text": "Click on a feature to remove."
+            }
+          }
+        }
+      }
+    }
+  },
+  "schemas": {
+    "OBJECT_NAME": "{{ object.name }}",
+    "CATALOG_CREATE_TITLE": "Create a new data layer",
+    "CATALOG_NAME_FIELD_HELPER": "Enter a name",
+    "CATALOG_DESCRIPTION_FIELD_HELPER": "Enter a description",
+    "CATALOG_FEATURE_ID_FIELD_HELPER": "Select a unique ID",
+    "CATALOG_SCHEMA_FIELD_HELPER": "Select a data scheme"
+  },
+  "KLocationField": {
+    "SEARCH": "$t(SEARCH)",
+    "NO_RESULTS": "$t(EMPTY)"
+  },
+  "KLocationMap": {
+    "RESTORE_BUTTON": "Restore position",
+    "RECENTER_BUTTON": "Recenter map"
+  },
+  "KLocationInput": {
+    "GEOLOCATE": "My position",
+    "LOCATION_MAP": "Location map"
+  },
+  "KNavigationBar": {
+    "SEARCH": "Search",
+    "BACK": "Back"
+  },
+  "KTimeSeries": {
+    "NO_DATA_AVAILABLE": "No Data Available"
+  },
+  "KCatalogPanel": {
+    "BASE_LAYERS": "Base Layers",
+    "TERRAIN_LAYERS": "Terrain layers",
+    "OVERLAY_LAYERS": "My layers",
+    "MEASURE_LAYERS": "Measure layers",
+    "METEO_LAYERS": "Meteo forecasts",
+    "BUSINESS_LAYERS": "Business layers",
+    "FORECASTS_LABEL": "Forecast models"
+  },
+  "KFeaturesTable": {
+    "TITLE": "Data for layer {{layer}}"
+  },
+  "KFeaturesChart": {
+    "SELECT_PROPERTY_LABEL": "Select a target property to start",
+    "TITLE": "Graph for layer {{layer}}",
+    "PROPERTY_LABEL": "Target property",
+    "CHART_LABEL": "Chart type",
+    "PAGINATION_LABEL": "Number of values",
+    "CHART_LABEL_PIE": "Pie",
+    "CHART_LABEL_POLARAREA": "Polar",
+    "CHART_LABEL_RADAR": "Radar",
+    "CHART_LABEL_BAR": "Bar",
+    "NULL_VALUE_LABEL": "None",
+    "ALL_VALUES": "All",
+    "RENDER_LABEL": "Display type",
+    "VALUE_LABEL": "Count",
+    "PERCENTAGE_LABEL": "Percentage"
+  }
+}

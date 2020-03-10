@@ -31,7 +31,7 @@ It appeared that when performing a new install, adding a new dependency, or laun
 
 As a workaround you will either need to:
 * clear the yarn cache `yarn cache clean` (or `yarn cache clean module` to be more specific)
-* restore the broken links using commands like e.g. `yarn link @kalisio/kdk-core` in the broken modules/applications
+* restore the broken links using commands like e.g. `yarn link @kalisio/kdk` in the broken modules/applications
 * reinstall all dependencies using `yarn install` in broken modules/applications, and then restore the links as above
 
 ::: tip
