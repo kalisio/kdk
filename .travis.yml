@@ -24,7 +24,8 @@ jobs:
   - stage: TESTCAFE
     language: node_js
     node_js:
-    - '8'  
+    - '12'  
+    install: true
     script: 
     - cd tools/testcafe && docker build --build-arg TESTCAFE_VERSION=$TESTCAFE_VERSION --build-arg TESTCAFE_VUE_SELECTORS_VERSION=$TESTCAFE_VUE_SELECTORS_VERSION --build-arg MONGDODB_DRIVER_VERSION=$TESTCAFE_MONGODB_DRIVER_VERSION -t kalisio/testcafe:$TESTCAFE_VERSION .
     before_deploy:
@@ -38,7 +39,7 @@ jobs:
   - stage: DOC
     language: node_js
     node_js:
-    - '8'
+    - '12'
     install: true
     script: cd docs && yarn install && yarn build
     deploy:
