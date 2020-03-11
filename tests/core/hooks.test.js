@@ -7,7 +7,7 @@ import chailint from 'chai-lint'
 import { hooks } from '../../core/api'
 import { ObjectID } from 'mongodb'
 
-describe('kCore:hooks', () => {
+describe('hooks', () => {
   before(() => {
     chailint(chai, util)
   })

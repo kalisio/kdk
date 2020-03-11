@@ -1,3 +1,4 @@
+import account from './mixin.account'
 import authentication from './mixin.authentication'
 import authorisation from './mixin.authorisation'
 import version from './mixin.version'
@@ -15,6 +16,7 @@ import refsResolver from './mixin.refs-resolver'
 import rangeCompute from './mixin.range-compute'
 
 export default {
+  account,
   authentication,
   authorisation,
   version,

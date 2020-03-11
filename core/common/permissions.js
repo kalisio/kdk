@@ -62,6 +62,12 @@ export function defineUserAbilities (subject, can, cannot) {
     can('create', 'storage', { id: 'avatars/' + subject._id.toString() + '.thumbnail' })
     can(['read', 'remove'], 'storage', { _id: 'avatars/' + subject._id.toString() })
     can(['read', 'remove'], 'storage', { _id: 'avatars/' + subject._id.toString() + '.thumbnail' })
+    // Verification email, reset password, etc.
+    can('service', 'account')
+    can('create', 'account')
+    can('service', 'devices')
+    can('update', 'devices')
+    can('remove', 'devices')
   }
 }
 

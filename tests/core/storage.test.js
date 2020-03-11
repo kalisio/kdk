@@ -6,7 +6,7 @@ import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
 import core, { kalisio, hooks } from '../../core/api'
 
-describe('kCore:storage', () => {
+describe('storage', () => {
   let app, server, port, baseUrl, userService, userObject, storageService, storageObject
   const content = Buffer.from('some buffered data')
   const contentType = 'text/plain'

@@ -7,7 +7,7 @@ import chailint from 'chai-lint'
 import core, { kalisio, hooks, permissions, createTagService } from '../../core/api'
 const { hashPassword } = require('@feathersjs/authentication-local').hooks
 
-describe('kCore', () => {
+describe('core', () => {
   let app, server, port, baseUrl, accessToken,
     userService, userObject, authorisationService, tagService, tagObject
 

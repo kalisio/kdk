@@ -132,4 +132,16 @@ export default async function () {
   if (orgConfig) {
     createOrganisationService.call(app)
   }
+
+  const mailerConfig = app.get('mailer')
+  if (mailerConfig) {
+    app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events  
+    app.createService('account', { servicesPath })
+  }
+
+  const pusherConfig = app.get('pusher') 
+  if (pusherConfig) {
+    app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    app.createService('devices', { servicesPath })
+  }
 }

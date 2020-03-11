@@ -39,6 +39,43 @@ module.exports = {
       maxUsers: 1000
     }
   },
+  storage: {
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    bucket: process.env.S3_BUCKET
+  },
+  organisations: {
+    // nothing for now
+  },
+  mailer: {
+    service: 'gmail',
+    auth: {
+      user: process.env.GOOGLE_MAIL_USER,
+      pass: process.env.GOOGLE_MAIL_PASSWORD
+    },
+    templateDir: path.join(__dirname, 'email-templates')
+  },
+  pusher: {
+    accessKeyId: process.env.SNS_ACCESS_KEY,
+    secretAccessKey: process.env.SNS_SECRET_ACCESS_KEY,
+    region: 'eu-west-1',
+    apiVersion: '2010-03-31',
+    platforms: {
+      ANDROID: process.env.SNS_ANDROID_ARN
+    },
+    topicName: (object) => object._id.toString()
+  },
+  gmailApi: {
+    user: process.env.GMAIL_API_USER,
+    clientEmail: process.env.GMAIL_API_CLIENT_EMAIL,
+    // The private key file is set as an environment variable containing \n
+    // So we need to parse it such as if it came from a JSON file
+    privateKey: JSON.parse('{ "key": "' + process.env.GMAIL_API_PRIVATE_KEY + '" }').key
+  },
+  db: {
+    adapter: 'mongodb',
+    url: (containerized ? 'mongodb://mongodb:27017/kdk-test' : 'mongodb://127.0.0.1:27017/kdk-test')
+  },
   logs: {
     Console: {
       format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
@@ -49,17 +86,5 @@ module.exports = {
       filename: path.join(__dirname, '..', 'test-log-%DATE%.log'),
       datePattern: 'YYYY-MM-DD'
     }
-  },
-  db: {
-    adapter: 'mongodb',
-    url: (containerized ? 'mongodb://mongodb:27017/kdk-test' : 'mongodb://127.0.0.1:27017/kdk-test')
-  },
-  storage: {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-    bucket: process.env.S3_BUCKET
-  },
-  organisations: {
-    
   }
 }

@@ -1,0 +1,7 @@
+<h1><%= email.subject %></h1>
+
+<p>Hi <%= user.name %>, your account was just signed in from a new <%= device.platform %> device. You're getting this email to make sure it was you.</p>
+
+<p>Follow <a href='<%= email.link %>'>this link</a> to check the activity.</p>
+
+<p>If you do not recognize this activity please let us know by following <a href='mailto:<%= email.from %>?subject=I do not recognize this activity&body=Someone unauthorized signed into my account from an unknown device.'>this link</a>.</p>

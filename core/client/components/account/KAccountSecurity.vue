@@ -32,8 +32,6 @@
 </template>
 
 <script>
-import { KBlock } from '../frame'
-
 export default {
   name: 'k-account-security',
   components: {
@@ -59,6 +57,7 @@ export default {
     }
   },
   created () {
+    this.$options.components['k-block'] = this.$load('frame/KBlock')
     this.$options.components['k-account-devices'] = this.$load('account/KAccountDevices')
   }
 }
