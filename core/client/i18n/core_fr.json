@@ -284,7 +284,7 @@
   },
   "KTable": {
     "TABLE_COLUMNS": "Propriétés"
-  }
+  },
   "KOrganisationPanel": {
     "NEW_ORGANISATION": "Nouvelle organisation",
     "ORGANISATION_REMOVED_WARNING": "L'organisation <b>{{organisation}}</b> a été supprimée"
