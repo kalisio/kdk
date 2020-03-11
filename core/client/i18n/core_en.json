@@ -10,6 +10,12 @@
   "RETRY": "Retry",
   "EMPTY": "No elements found",
   "ANONYMOUS": "Anonymous",
+  "MEMBERS": "Members",
+  "GROUPS": "Groups",
+  "REMOVE": "Remove",
+  "OWNER": "Owner",
+  "MANAGER": "Manager",
+  "MEMBER": "Member",
   "errors": {
     "400": "Operation cannot be performed: bad parameters",
     "401": "Operation cannot be performed: authentication required",
@@ -41,12 +47,22 @@
     "WEAK_PASSWORD_SYMBOLS": "A least one special symbol like :;?!+-.,^@",
     "WEAK_PASSWORD_ONEOF": "Not known as one of the most common passwords",
     "WEAK_PASSWORD_PREVIOUS": "Not one of your {{history}} last passwords",
-    "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file"
+    "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file",
+    "CANNOT_REMOVE_USER": "Your are not allowed to remove this accound.<br>Please remove the organisations owned by <b>{{user}}</b> first.",
+    "CANNOT_REMOVE_ORGANISATION": "You are not allowed to remove this organisation.<br>Please remove all the groups first.",
+    "CANNOT_REMOVE_LAST_OWNER": "You are not allowed to remove the last owner of <b>{{resource}}</b>"
   },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
     "AVATAR_FIELD_HELPER": "Select an avatar",
-    "NAME_FIELD_HELPER": "Enter your name"
+    "NAME_FIELD_HELPER": "Enter your name",
+    "ORGANISATIONS_CREATE_TITLE": "Create a new organisation ?",
+    "ORGANISATIONS_NAME_FIELD_HELPER": "Enter the name of this organisation",
+    "ORGANISATIONS_DESCRIPTION_FIELD_HELPER": "Enter a description name of this organisation",
+    "MEMBERS_TAGS_FIELD_HELPER": "Add somes tags to qualify this member",
+    "GROUPS_CREATE_TITLE": "Create a new group ?",
+    "GROUPS_NAME_FIELD_HELPER": "Enter the name of this group",
+    "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description name of this group"
   },
   "KScreen": {
     "CLIENT_VERSION": "Client v",
@@ -268,5 +284,92 @@
   },
   "KTable": {
     "TABLE_COLUMNS": "Properties"
+  },
+  "KOrganisationPanel": {
+    "NEW_ORGANISATION": "New organisation",
+    "ORGANISATION_REMOVED_WARNING": "The organisation <b>{{organisation}}</b> has been removed"
+  },
+  "KMembersActivity": {
+    "MEMBERS_LABEL": "$t(MEMBERS)",
+    "GROUPS_LABEL": "$t(GROUPS)",
+    "ADD_USER_LABEL": "Add a user",
+    "INVITE_GUEST_LABEL": "Invite guests"
+  },
+  "KAddMember": {
+    "TITLE": "Add a member ?",
+    "USER_FIELD_HELPER": "Select the user to add",
+    "ROLE_FIELD_HELPER": "Select the role granted to the user",
+    "OWNER_LABEL": "$t(OWNER)",
+    "MANAGER_LABEL": "$t(MANAGER)",
+    "MEMBER_LABEL": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "ADD_BUTTON": "Add"
+  },
+  "KInviteMember": {
+    "TITLE": "Invite guests ?",
+    "NAME_FIELD_HELPER": "Enter your guest's name",
+    "EMAIL_FIELD_HELPER": "Enter your guest's email address",
+    "ROLE_FIELD_HELPER": "Select the role granted to your guest",
+    "OWNER_LABEL": "$t(OWNER)",
+    "MANAGER_LABEL": "$t(MANAGER)",
+    "MEMBER_LABEL": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "ERROR_WHILE_LOADING_THE_FILE": "Error while loading the file. Did you select a valid CSV file ?",
+    "INVALID_FILE_TYPE": "Invalid file type. Please select a CSV file",
+    "FILE_FIELD_HELPER": "Select the CSV file you want to import",
+    "ALERT_FILE_IMPORT_DIALOG": "Are you sure your file is correclty formatted ?",
+    "ALERT_FILE_IMPORT_MESSAGE": "We were not able to detect any valid record. Please ensure your file is correctly formatted",
+    "CONFIRM_FILE_IMPORT_DIALOG": "Are you sure you want to proceed ?",
+    "CONFIRM_FILE_IMPORT_MESSAGE": "We have detected {{errors}} error(s) among {{records}] record(s)",
+    "CANCEL_BUTTON": "Cancel",
+    "INVITE_BUTTON": "Invite"
+  },
+  "KJoinGroup": {
+    "TITLE": "Add {{member}} to an existing group ?",
+    "GROUP_FIELD_HELPER": "Enter the name of the group",
+    "ROLE_FIELD_HELPER": "Select the role granted to the user",
+    "OWNER_LABEL": "$t(OWNER)",
+    "MANAGER_LABEL": "$t(MANAGER)",
+    "MEMBER_LABEL": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "ADD_BUTTON": "Add"
+  },
+  "KChangeRole": {
+    "TITLE": "Change role ?",
+    "ROLE_FIELD_HELPER": "Select the role granted to the user",
+    "OWNER_LABEL": "$t(OWNER)",
+    "MANAGER_LABEL": "$t(MANAGER)",
+    "MEMBER_LABEL": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "UPDATE_BUTTON": "Update"
+  },
+  "KMemberCard": {
+    "JOIN_GROUP_LABEL": "Join a group",
+    "TAG_LABEL": "Tag",
+    "EXPIRE_AT_LABEL": "Invitation expire at",
+    "CHANGE_ROLE_LABEL": "Change role",
+    "REMOVE_LABEL": "$t(REMOVE)",
+    "REMOVE_DIALOG_TITLE": "Remove {{member}} ?",
+    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{member}}</b> from your organisation ?",
+    "LEAVE_GROUP_DIALOG_TITLE": "Leave the group {{group}} '?",
+    "LEAVE_GROUP_DIALOG_MESSAGE": "Are you sure you want <b>{{member}}</b> to leave the group <b>{{group}}</b> ?"
+  },
+  "KGroupsActivity": {
+    "MEMBERS_LABEL": "$t(MEMBERS)",
+    "GROUPS_LABEL": "$t(GROUPS)",
+    "CREATE_GROUP_LABEL": "Create a group"
+  },
+  "KGroupCard": {
+    "EDIT_LABEL": "Edit",    
+    "REMOVE_LABEL": "$t(REMOVE)",
+    "REMOVE_DIALOG_TITLE": "Remove {{group}} ?",
+    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{group}}</b> from your organisation ?"
+  },
+  "KOrganisationDZ": {
+    "BLOCK_TITLE": "Delete this organisation ?",
+    "BLOCK_TEXT": "Please note that deleting {{organiation}} will delete any data attached to this organisation.<br>The deletion cannot be undone.",
+    "BLOCK_ACTION": "Delete",
+    "DIALOG_TITLE": "Are you sure you want to delete {{organisation}} ?",
+    "DIALOG_HELPER": "Enter the organisation name to confirm the deletion" 
   }
 }

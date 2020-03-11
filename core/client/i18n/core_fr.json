@@ -10,6 +10,12 @@
   "RETRY": "Réessayer",
   "EMPTY": "Aucun élément",
   "ANONYMOUS": "Anonyme",
+  "MEMBERS": "Membres",
+  "GROUPS": "Groupes",
+  "REMOVE": "Supprimer",
+  "OWNER": "Propriétaire",  
+  "MANAGER": "Gestionnaire",
+  "MEMBER": "Membre",
   "errors": {
     "400": "Cette opération ne peut être réalisée: paramètres incorrects",
     "401": "Cette opération ne peut être réalisée: vous devez être authentifié",
@@ -41,12 +47,22 @@
     "WEAK_PASSWORD_SYMBOLS": "Au moins un caractère spécial comme :;?!+-.,^@",
     "WEAK_PASSWORD_ONEOF": "Non reconnu comme l'un des mots de passe les plus courants",
     "WEAK_PASSWORD_PREVIOUS": "Différents de vos {{history}} derniers mots de passe",
-    "CANNOT_PROCESS_DOWNLOAD_DATA": "Fichier invalide ou incomplet"
+    "CANNOT_PROCESS_DOWNLOAD_DATA": "Fichier invalide ou incomplet",
+    "CANNOT_REMOVE_USER": "Vous n'êtes pas autorisé à supprimer ce compte.<br>Merci de supprimer les organisations appartenant à <b>{{user}}</b> préalablement.",
+    "CANNOT_REMOVE_ORGANISATION": "Vous n'êtes pas autorisé à supprimer cette organisation.<br>Merci de supprimer tous les groupes préalablement.",
+    "CANNOT_REMOVE_LAST_OWNER": "Vous n'êtes pas autorisé à supprimer le dernier propriétaire de <b>{{resource}}</b>"
   },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
     "AVATAR_FIELD_HELPER": "Choisissez un avatar",
-    "NAME_FIELD_HELPER": "Saisissez votre nom"
+    "NAME_FIELD_HELPER": "Saisissez votre nom",
+    "ORGANISATIONS_CREATE_TITLE": "Créer une nouvelle organisation ?",
+    "ORGANISATIONS_NAME_FIELD_HELPER": "Saisissez le nom de l'organisation",
+    "ORGANISATIONS_DESCRIPTION_FIELD_HELPER": "Saisissez une description de l'organisation",
+    "MEMBERS_TAGS_FIELD_HELPER": "Ajouter des étiquettes pour qualifier le membre",
+    "GROUPS_CREATE_TITLE": "Créer un nouveau groupe ?",
+    "GROUPS_NAME_FIELD_HELPER": "Saisissez le nom du groupe",
+    "GROUPS_DESCRIPTION_FIELD_HELPER": "Saisissez une description du groupe"
   },
   "KScreen": {
     "CLIENT_VERSION": "Client v",
@@ -269,4 +285,92 @@
   "KTable": {
     "TABLE_COLUMNS": "Propriétés"
   }
+  "KOrganisationPanel": {
+    "NEW_ORGANISATION": "Nouvelle organisation",
+    "ORGANISATION_REMOVED_WARNING": "L'organisation <b>{{organisation}}</b> a été supprimée"
+  },
+  "KMembersActivity": {
+    "MEMBERS": "$t(MEMBERS)",
+    "GROUPS": "$t(GROUPS)",
+    "ADD_USER_LABEL": "Ajouter un utilisateur",
+    "INVITE_GUEST_LABEL": "Inviter des personnes"
+  },
+  "KAddMember": {
+    "TITLE": "Ajouter un membre ?",
+    "USER_FIELD_HELPER": "Sélectionnez l'utilisateur à ajouter",
+    "ROLE_FIELD_HELPER": "Sélectionnez le rôle à attribuer",
+    "OWNER": "$t(OWNER)",
+    "MANAGER": "$t(MANAGER)",
+    "MEMBER": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
+    "ADD_BUTTON": "Ajouter"    
+  },
+  "KInviteMember": {
+    "TITLE": "Inviter des personnes ?",
+    "NAME_FIELD_HELPER": "Saisissez le nom de votre invité",
+    "EMAIL_FIELD_HELPER": "Saisissez l'adresse mail de votre invité",
+    "ROLE_FIELD_HELPER": "Sélectionnez le rôle à attribuer à votre invité",
+    "OWNER": "$t(OWNER)",
+    "MANAGER": "$t(MANAGER)",
+    "MEMBER": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
+    "ERROR_WHILE_LOADING_THE_FILE": "Erreur durant la lecture du fichier. Avez vous sélectionné un fichier CSV ?",
+    "INVALID_FILE_TYPE": "Type de fichier invalide. Veuillez sélectionner un fichier CSV",
+    "FILE_FIELD_HELPER": "Sélectionnez le fichier CSV que vous désirez importer",
+    "ALERT_FILE_IMPORT_DIALOG": "Êtes vous sur que votre fichier est correctement formaté ?",
+    "ALERT_FILE_IMPORT_MESSAGE": "Nous n'avons pas pu détecter un enregistrement valide. Merci de Vérifier le format de votre fichier",
+    "CONFIRM_FILE_IMPORT_DIALOG": "Êtes vous sur de vouloir continuer ?",
+    "CONFIRM_FILE_IMPORT_MESSAGE": "Nous avons détecté {{errors}} erreur(s) sur {{records}} enregistrement(s)",
+    "CANCEL_BUTTON": "Annuler",
+    "INVITE_BUTTON": "Inviter"
+  },
+  "KJoinGroup": {
+    "TITLE": "Ajouter {{member}} à un groupe existant ?",
+    "GROUP_FIELD_HELPER": "Saisissez le nom du groupe",
+    "ROLE_FIELD_HELPER": "Sélectionnez le rôle à attribuer",
+    "OWNER": "$t(OWNER)",
+    "MANAGER": "$t(MANAGER)",
+    "MEMBER": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
+    "ADD_BUTTON": "Ajouter"
+  },
+  "KChangeRole": {
+    "TITLE": "Changer le rôle ?",
+    "ROLE_FIELD_HELPER": "Sélectionnez le rôle à attribuer",
+    "OWNER": "$t(OWNER)",
+    "MANAGER": "$t(MANAGER)",
+    "MEMBER": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
+    "UPDATE_BUTTON": "Mettre à jour"
+  },
+  "KMemberCard": {
+    "JOIN_GROUP_LABEL": "Rejoindre un groupe",
+    "TAG_LABEL": "Etiqueter",    
+    "EXPIRE_AT_LABEL": "L'invitation expire au",
+    "CHANGE_ROLE_LABEL": "Changer de rôle",
+    "REMOVE": "$t(REMOVE)",
+    "REMOVE_DIALOG_TITLE": "Supprimer {{member}} ?",
+    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer <b>{{member}}</b> de votre organisation ?",
+    "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {{group}} '?",
+    "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{{member}}</b> du groupe <b>{{group}}</b> ?"
+  },
+  "KGroupsActivity": {
+    "MEMBERS": "$t(MEMBERS)",
+    "GROUPS": "$t(GROUPS)",
+    "CREATE_GROUP_LABEL": "Créer un groupe"
+  },
+  "KGroupCard": {
+    "REMOVE": "$t(REMOVE)",
+    "EDIT_LABEL": "Editer",
+    "REMOVE_DIALOG_TITLE": "Supprimer {{group}} ?",
+    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloier supprimer {{group}} de votre organisation ?"
+  },
+  "KOrganisationDZ": {
+    "BLOCK_TITLE": "Supprimer cette organisation ?",
+    "BLOCK_TEXT": "Notez que la suppresion de <b>{{organisation}}</b> entrainera la suppression de toutes les données qui lui sont attachées.<br>La suppression ne peut pas être annulée.",
+    "BLOCK_ACTION": "Supprimer",
+    "DIALOG_TITLE": "Etes vous sûr de vouloir supprimer {{organisation}} ?",
+    "DIALOG_HELPER": "Saisissez le nom de l'organisation pour confirmer sa suppression" 
+  }
 }
+

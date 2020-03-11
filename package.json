@@ -101,6 +101,7 @@
     "feathers-hooks-common": "^3.0.0",
     "feathers-memory": "^3.0.0",
     "feathers-mongodb": "^2.8.0",
+    "feathers-mongodb-management": "^0.1.0",
     "geotiff": "^1.0.0-beta.6",
     "helmet": "^3.5.0",
     "jsdap": "^8.1.0",

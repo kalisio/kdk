@@ -67,11 +67,55 @@ export function removeStorageService (options) {
   // TODO
 }
 
+export function createOrganisationService (options = {}) {
+  const app = this
+
+  // Create services to manage MongoDB databases, organisations, etc.
+  app.createService('databases', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+  const orgsService = app.createService('organisations', { modelsPath, servicesPath, perspectives: ['billing'] })
+
+  // Replication management
+  const usersService = app.getService('users')
+  const authorisationsService = app.getService('authorisations')
+  // Ensure permissions are correctly distributed when replicated
+  usersService.on('patched', user => {
+    // Patching profile should not trigger abilities update since
+    // it is a perspective and permissions are not available in this case
+    if (user.organisations || user.groups) authorisationsService.updateAbilities(user)
+  })
+  // Ensure org services are correctly distributed when replicated
+  orgsService.on('created', organisation => {
+    // Check if already done (initiator)
+    const orgMembersService = app.getService('members', organisation)
+    if (!orgMembersService) {
+      // Jump from infos/stats to real DB object
+      const db = app.db.instance.db(organisation._id.toString())
+      orgsService.createOrganisationServices(organisation, db)
+    }
+  })
+  orgsService.on('removed', organisation => {
+    // Check if already done (initiator)
+    const orgMembersService = app.getService('members', organisation)
+    if (orgMembersService) return
+    orgsService.removeOrganisationServices(organisation)
+  })
+}
+
 export default async function () {
   const app = this
-  const storeConfig = app.get('storage')
-  const authConfig = app.get('authentication')
 
+  const authConfig = app.get('authentication')
+  if (authConfig) {
+    app.createService('users', {
+      modelsPath,
+      servicesPath,
+      // Add required OAuth2 provider perspectives
+      perspectives: ['profile'].concat(app.authenticationProviders)
+    })
+    app.createService('authorisations', { servicesPath })
+  }
+  
+  const storeConfig = app.get('storage')
   if (storeConfig) {
     const client = new aws.S3({
       accessKeyId: storeConfig.accessKeyId,
@@ -84,13 +128,8 @@ export default async function () {
     createStorageService.call(app, blobService)
   }
 
-  if (authConfig) {
-    app.createService('users', {
-      modelsPath,
-      servicesPath,
-      // Add required OAuth2 provider perspectives
-      perspectives: ['profile'].concat(app.authenticationProviders)
-    })
-    app.createService('authorisations', { servicesPath })
+  const orgConfig = app.get('organisations') 
+  if (orgConfig) {
+    createOrganisationService.call(app)
   }
 }

@@ -34,6 +34,11 @@ module.exports = {
       history: 5
     }
   },
+  authorisation: {
+    cache: {
+      maxUsers: 1000
+    }
+  },
   logs: {
     Console: {
       format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
@@ -53,5 +58,8 @@ module.exports = {
     accessKeyId: process.env.S3_ACCESS_KEY,
     secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
     bucket: process.env.S3_BUCKET
+  },
+  organisations: {
+    
   }
 }

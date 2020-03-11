@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "http://www.kalisio.xyz/schemas/organisations.create.json#",
+  "title": "schemas.ORGANISATIONS_CREATE_TITLE",
+  "description": "Organisation creation schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string", 
+      "maxLength": 128,
+      "minLength": 3,
+      "field": {
+        "component": "form/KTextField",
+        "helper": "schemas.ORGANISATIONS_NAME_FIELD_HELPER"
+      }
+    },
+    "description": {
+      "type": "string", 
+      "maxLength": 256,
+      "field": {
+        "component": "form/KTextField",
+        "helper": "schemas.ORGANISATIONS_DESCRIPTION_FIELD_HELPER"
+      }
+    }
+  },
+  "required": ["name"]
+}
+
