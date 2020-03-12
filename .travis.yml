@@ -11,8 +11,8 @@ stages:
   if: commit_message !~ /(skip[ _-]test)/    
 - name: DOC
   if: commit_message !~ /(skip[ _-]doc)/
-- name: EXTRA
-  if: commit_message !~ /(skip[ _-]extra)/  
+- name: EXTRAS
+  if: commit_message ~ /(extras)/  
 
 jobs:
   include:
@@ -41,11 +41,11 @@ jobs:
       on:
         branch: master
 
-  - stage: EXTRA
+  - stage: EXTRAS
     language: node_js
     node_js:
     - '12'  
     services:
     - docker    
     install: true
-    script: bash .travis.extra.sh testcafe        
+    script: bash .travis.extras.sh testcafe        
