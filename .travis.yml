@@ -22,7 +22,8 @@ jobs:
     node_js:
     - '12'  
     services:
-    - docker    
+    - docker
+    - mongodb    
     script: bash .travis.test.sh
 
   - stage: DOC
