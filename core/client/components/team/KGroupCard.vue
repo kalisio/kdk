@@ -26,18 +26,11 @@
 import _ from 'lodash'
 import { utils } from '../../utils'
 import { mixins } from '../../mixins'
-import { findMembersOfGroup, getRoleForGroup, Roles, RoleNames } from '../../common/permissions'
-import { QChip, QBtn, QIcon, QTooltip, Dialog } from 'quasar'
+import { findMembersOfGroup, getRoleForGroup, Roles, RoleNames } from '../../../common/permissions'
 
 export default {
   name: 'k-group-card',
   mixins: [mixins.baseItem],
-  components: {
-    QChip,
-    QBtn,
-    QIcon,
-    QTooltip
-  },
   computed: {
     memberRoleIcon () {
       const user = this.$store.get('user')

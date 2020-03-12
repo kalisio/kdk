@@ -48,8 +48,7 @@ import _ from 'lodash'
 import { Dialog } from 'quasar'
 import { mixins } from '../../mixins'
 import { utils } from '../../utils'
-import { Roles } from '../../../common/permissions'
-import { getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../common/permissions'
+import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 
 export default {
   name: 'k-member-card',

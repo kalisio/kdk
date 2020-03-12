@@ -16,7 +16,9 @@ import { mixins } from '../../mixins'
 
 export default {
   name: 'k-groups-activity',
-  mixins: [mixins.baseActivity],
+  mixins: [
+    mixins.baseActivity
+  ],
   props: {
     contextId: {
       type: String,
