@@ -1,8 +1,8 @@
 <template>
   <div class="row justify-between">
     <div class="row q-gutter-sm">
-      <q-btn round icon='fas fa-step-backward' color="secondary" @click="onClickBackward"/>
-      <q-btn round icon='fas fa-step-forward' color="secondary" @click="onClickForward"/>
+      <q-btn size="sm" round icon='fas fa-step-backward' color="secondary" @click="onClickBackward"/>
+      <q-btn size="sm" round icon='fas fa-step-forward' color="secondary" @click="onClickForward"/>
     </div>
     <!--
     <q-fab icon='keyboard_arrow_left' direction='left' color="secondary">
@@ -12,8 +12,8 @@
     </q-fab>
     -->
     <div class="row q-gutter-sm">
-      <q-btn round icon='fas fa-sync' color="secondary" @click="onClickReset"/>
-      <q-btn round icon='fas fa-calendar' color="secondary">
+      <q-btn size="sm" round icon='fas fa-sync' color="secondary" @click="onClickReset"/>
+      <q-btn size="sm" round icon='fas fa-calendar' color="secondary">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-input filled v-model="controlDateTime">
             <template v-slot:prepend>

@@ -77,7 +77,7 @@ export default {
       this.loader.on('data:error', event => {
         logger.error(event.error)
         this.$events.$emit('error', {
-          message: this.$t('errors.FILE_IMPORT_ERROR') + ' : ' + event.error.message
+          message: this.$t('errors.FILE_IMPORT_ERROR')
         })
       })
     })
