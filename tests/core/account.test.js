@@ -172,7 +172,7 @@ describe('account', () => {
       action: 'resetPwdLong',
       value: {
         token,
-        password: 'reset-password'
+        password: 'pass;word1'
       }
     })
       .then(user => {
@@ -200,7 +200,7 @@ describe('account', () => {
   it('authenticates a user with reset password', () => {
     return request
       .post(`${baseUrl}/authentication`)
-      .send({ email: userObject.email, password: 'reset-password', strategy: 'local' })
+      .send({ email: userObject.email, password: 'pass;word2', strategy: 'local' })
       .then(response => {
         expect(response.body.accessToken).toExist()
       })
@@ -211,8 +211,8 @@ describe('account', () => {
       action: 'passwordChange',
       value: {
         user: { email: userObject.email },
-        oldPassword: 'reset-password',
-        password: '1234'
+        oldPassword: 'pass;word2',
+        password: 'pass;word1'
       }
     })
       .catch(error => {
@@ -228,8 +228,8 @@ describe('account', () => {
       action: 'passwordChange',
       value: {
         user: { email: userObject.email },
-        oldPassword: 'reset-password',
-        password: 'changed-password'
+        oldPassword: 'pass;word1',
+        password: 'pass;word3'
       }
     })
       .then(user => {
@@ -257,7 +257,7 @@ describe('account', () => {
   it('authenticates a user with changed password', () => {
     return request
       .post(`${baseUrl}/authentication`)
-      .send({ email: userObject.email, password: 'changed-password', strategy: 'local' })
+      .send({ email: userObject.email, password: 'pass;word3', strategy: 'local' })
       .then(response => {
         expect(response.body.accessToken).toExist()
       })
@@ -268,7 +268,7 @@ describe('account', () => {
       action: 'identityChange',
       value: {
         user: { email: userObject.email },
-        password: 'changed-password',
+        password: 'pass;word3',
         changes: { email: gmailUser.replace('com', 'xyz') }
       }
     })
@@ -317,7 +317,7 @@ describe('account', () => {
   it('authenticates a user with changed identity', () => {
     return request
       .post(`${baseUrl}/authentication`)
-      .send({ email: userObject.email, password: 'changed-password', strategy: 'local' })
+      .send({ email: userObject.email, password: 'pass;word3', strategy: 'local' })
       .then(response => {
         expect(response.body.accessToken).toExist()
       })
