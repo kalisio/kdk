@@ -3,6 +3,7 @@ import moment from 'moment'
 import { getNearestRunTime, getNearestForecastTime } from 'weacast-core/common'
 import { makeGridSource, extractGridSourceConfig } from './grid'
 import { DynamicGridSource } from './dynamic-grid-source'
+import { readAsTimeOrDuration, makeTime } from './moment-utils'
 
 export class MeteoModelGridSource extends DynamicGridSource {
   static getKey () {
@@ -21,7 +22,7 @@ export class MeteoModelGridSource extends DynamicGridSource {
   }
 
   setTime (time) {
-    this.queuedCtx.time = time
+    this.queuedCtx.time = time.clone()
     this.queueUpdate()
   }
 
@@ -34,8 +35,8 @@ export class MeteoModelGridSource extends DynamicGridSource {
         key: key,
         staticProps: conf,
         dynamicProps: {},
-        from: this.readAsTimeOrDuration(item.from),
-        to: this.readAsTimeOrDuration(item.to),
+        from: readAsTimeOrDuration(item.from),
+        to: readAsTimeOrDuration(item.to),
         model: item.model
       }
 
@@ -57,13 +58,18 @@ export class MeteoModelGridSource extends DynamicGridSource {
     ctx.runTime = getNearestRunTime(ctx.time, ctx.model.runInterval)
     ctx.forecastTime = getNearestForecastTime(ctx.time, ctx.model.interval)
 
+    // switch to utc mode, all display methods will display in UTC
+    ctx.time.utc()
+    ctx.runTime.utc()
+    ctx.forecastTime.utc()
+
     let candidate = null
     // select a source for the requested time
     for (const source of this.sources) {
       if (source.model !== ctx.model.name) continue
 
-      const from = source.from ? this.makeTime(source.from, now) : null
-      const to = source.to ? this.makeTime(source.to, now) : null
+      const from = source.from ? makeTime(source.from, now) : null
+      const to = source.to ? makeTime(source.to, now) : null
       if (from && to) {
         candidate = ctx.time.isBetween(from, to) ? source : null
       } else if (from) {

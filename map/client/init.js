@@ -38,6 +38,17 @@ export default function init () {
     view: true,
     layers: false
   })
+  // Default timeline parameters
+  Store.set('timeline', {
+    span: 15, // days
+    offset: 7, // days
+    step: 60, // minutes
+    reference: null // now
+  })
+  // Default timeseries parameters
+  Store.set('timeseries', {
+    span: 1 // days
+  })
 
   if (!Platform.is.cordova) return
   window.navigationApps = []

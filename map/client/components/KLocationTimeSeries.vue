@@ -404,7 +404,7 @@ export default {
                               (options.name === this.$t('mixins.timeseries.PROBED_LOCATION')))
       let hasTimeseries = true
       // Update timeseries data if required
-      const { start, end } = this.kActivity.getTimeRange()
+      const { start, end } = this.kActivity.getProbeTimeRange()
       if (options.probe) { // Static weacast probe
         const probe = await this.kActivity.getForecastProbe(options.probe)
         if (probe) {
@@ -424,7 +424,7 @@ export default {
     async updateProbedLocationForecast (model) {
       // Update probed location if any
       if (this.kActivity.probedLocation && this.isTimeseriesOpen()) {
-        const { start, end } = this.kActivity.getTimeRange()
+        const { start, end } = this.kActivity.getProbeTimeRange()
         // Feature mode
         if (this.kActivity.probe && this.kActivity.probedLocation.probeId) {
           const probe = await this.kActivity.getForecastProbe(this.kActivity.probe.name)

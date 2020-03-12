@@ -31,7 +31,7 @@ export class WeacastGridSource extends GridSource {
     if (!model) return
 
     this.converter = unitConverters[config.converter]
-    this.time = moment(config.forecastTime).format()
+    this.time = moment(config.forecastTime).utc().format()
     this.service = config.model + '/' + config.element
 
     this.minMaxLat = [model.bounds[1], model.bounds[3]]

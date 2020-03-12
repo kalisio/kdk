@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import moment from 'moment'
 import { GridSource } from './grid'
 
 export class DynamicGridSource extends GridSource {
@@ -52,27 +51,6 @@ export class DynamicGridSource extends GridSource {
 
   selectSourceAndDeriveConfig (ctx) {
     throw new Error('Not implemented')
-  }
-
-  readAsTimeOrDuration (conf) {
-    let ret = null
-    if (typeof conf === 'string') {
-      if (conf.charAt(0) === 'P') {
-        // treat as a duration
-        ret = moment.duration(conf)
-      } else {
-        // treat as time
-        ret = moment(conf)
-      }
-
-      ret = ret.isValid() ? ret : null
-    }
-
-    return ret
-  }
-
-  makeTime (timeOrDuration, referenceTime) {
-    return moment.isDuration(timeOrDuration) ? referenceTime.clone().add(timeOrDuration) : timeOrDuration
   }
 
   deriveConfig (ctx, staticProps, dynamicProps) {

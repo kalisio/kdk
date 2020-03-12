@@ -5,6 +5,7 @@ import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import { Dialog } from 'quasar'
 import { setGatewayJwt } from '../utils'
+import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
 
 export default function (name) {
   return {
@@ -33,11 +34,6 @@ export default function (name) {
       },
       currentVariables () {
         return this.hasSelectableLevels ? this.variablesForCurrentLevel : this.variables
-      },
-      timelineEnabled () {
-        // For now only weather forecast requires timeline
-        return (_.values(this.layers).find(layer => layer.isVisible && layer.tags && layer.tags.includes('weather')) ||
-            ((typeof this.isTimeseriesOpen === 'function') && this.isTimeseriesOpen()))
       }
     },
     methods: {
@@ -276,8 +272,83 @@ export default function (name) {
             })
           }
         }
+        /**/
+        if (layer.meteo_model ||
+            layer.time_based ||
+            (layer.leaflet && layer.leaflet.type.indexOf('weacast') !== -1)) {
+          actions.push({
+            name: 'sync-timeline',
+            label: this.$t('mixins.activity.SYNCHRONIZE_TIMELINE'),
+            icon: 'sync',
+            handler: () => this.onSynchronizeTimeline(layer)
+          })
+        }
+        /**/
         this.$set(layer, 'actions', actions)
         return actions
+      },
+      getMeteoModelSourceTimeRange (layer) {
+        let begin = null
+        let end = null
+
+        const source = layer.meteo_model
+        for (const item of source) {
+          // only consider items for which associated forecast model is the current one
+          if (item.model !== this.forecastModel.name) continue
+
+          const itemBegin = makeTime(readAsTimeOrDuration(item.from), this.currentTime)
+          const itemEnd = makeTime(readAsTimeOrDuration(item.to), this.currentTime)
+
+          begin = begin ? moment.min(begin, itemBegin) : itemBegin
+          end = end ? moment.max(end, itemEnd) : itemEnd
+        }
+
+        return {
+          begin,
+          end,
+          step: moment.duration(this.forecastModel.interval, 's')
+        }
+      },
+      getTimeBasedSourceTimeRange (layer) {
+        let begin = null
+        let end = null
+        let step = null
+
+        const source = layer.time_based
+        for (const item of source) {
+          const itemBegin = makeTime(readAsTimeOrDuration(item.from), this.currentTime)
+          const itemEnd = makeTime(readAsTimeOrDuration(item.to), this.currentTime)
+          const itemStep = moment.duration(item.every)
+
+          begin = begin ? moment.min(begin, itemBegin) : itemBegin
+          end = end ? moment.max(end, itemEnd) : itemEnd
+          step = step ? (step.asSeconds() > itemStep.asSeconds() ? itemStep : step) : itemStep
+        }
+
+        return { begin, end, step }
+      },
+      getWeacastTimeRange (layer) {
+        const now = moment()
+        const begin = now.clone().add(this.forecastModel.lowerLimit - this.forecastModel.interval, 's')
+        const end = now.clone().add(this.forecastModel.upperLimit + this.forecastModel.interval, 's')
+        const step = moment.duration(this.forecastModel.interval, 's')
+
+        return { begin, end, step }
+      },
+      onSynchronizeTimeline (layer) {
+        let timeRange = null
+        if (layer.meteo_model) timeRange = this.getMeteoModelSourceTimeRange(layer)
+        else if (layer.time_based) timeRange = this.getTimeBasedSourceTimeRange(layer)
+        else if (layer.leaflet && layer.leaflet.type.indexOf('weacast') !== -1) timeRange = this.getWeacastTimeRange(layer)
+        if (!timeRange) return
+
+        // put reference time in the middle of the timeline
+        const timeline = {}
+        timeline.span = moment.duration(timeRange.end.diff(timeRange.begin))
+        timeline.reference = timeRange.begin.clone().add(timeline.span / 2)
+        timeline.step = timeRange.step
+        timeline.offset = timeline.span / 2
+        this.updateTimeline(timeline)
       },
       onLayerAdded (layer) {
         this.registerLayerActions(layer)
@@ -473,10 +544,18 @@ export default function (name) {
           this.center(position.longitude, position.latitude)
         }
       },
+      getProbeTimeRange () {
+        const start = this.currentTime.clone()
+        const end = start.clone()
+        const halfSpan = parseInt(this.$store.get('timeseries.span')) / 2
+        start.subtract(halfSpan, 'd')
+        end.add(halfSpan, 'd')
+        return { start, end }
+      },
       onProbeLocation () {
         const probe = async (options, event) => {
           this.unsetCursor('probe-cursor')
-          const { start, end } = this.getTimeRange()
+          const { start, end } = this.getProbeTimeRange()
           await this.getForecastForLocation(event.latlng.lng, event.latlng.lat, start, end)
         }
         this.setCursor('probe-cursor')
@@ -489,7 +568,7 @@ export default function (name) {
       getViewKey () {
         return this.appName.toLowerCase() + `-${this.name}-view`
       },
-      shouldRestoreView() {
+      shouldRestoreView () {
         // Use user settings except if the view has explicitly revoked restoration
         if (_.has(this, 'activityOptions.restore.view')) {
           if (!_.get(this, 'activityOptions.restore.view')) return false
@@ -539,6 +618,20 @@ export default function (name) {
         this.clearStoredView()
         this.restoreView()
       },
+      resetTimeline () {
+        // Initilize timeline based on user settings
+        const span = parseInt(this.$store.get('timeline.span'))
+        const offset = parseInt(this.$store.get('timeline.offset'))
+        const step = parseInt(this.$store.get('timeline.step'))
+        const ref = this.$store.get('timeline.reference')
+        const timeline = {
+          span: moment.duration(span, 'd'),
+          offset: moment.duration(offset, 'd'),
+          step: moment.duration(step, 'm'),
+          reference: ref ? moment(ref) : moment().startOf('day')
+        }
+        this.updateTimeline(timeline)
+      },
       async initialize () {
         // Geolocate by default if view has not been restored
         if (!this.restoreView()) {
@@ -563,33 +656,8 @@ export default function (name) {
         } catch (error) {
           logger.error(error)
         }
-      },
-      getTimeRange () {
-        const now = moment.utc()
-        let start = 0
-        let end = 0
 
-        // if user defined a custom width, use it
-        const width = this.$store.get('timelineWidth')
-        if (width) {
-          start = -width * 24 * 60 * 60
-          end = width * 24 * 60 * 60
-        } else {
-          // Start just before the first available data
-          start = this.forecastModel
-            ? this.forecastModel.lowerLimit - this.forecastModel.interval : -7 * 60 * 60 * 24
-          // Override by config ?
-          start = _.get(this, 'activityOptions.timeline.start', start)
-          // Start just after the last available data
-          end = this.forecastModel
-            ? this.forecastModel.upperLimit + this.forecastModel.interval : 7 * 60 * 60 * 24
-          // Override by config ?
-          end = _.get(this, 'activityOptions.timeline.end', end)
-        }
-        return {
-          start: now.clone().add({ seconds: start }),
-          end: now.clone().add({ seconds: end })
-        }
+        this.resetTimeline()
       }
     },
     beforeCreate () {
