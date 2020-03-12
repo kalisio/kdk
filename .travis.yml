@@ -6,42 +6,31 @@ notifications:
     on_success: always
     on_failure: always
 
-env:
-  global:
-  - TESTCAFE_VERSION=1.7.1
-  - TESTCAFE_VUE_SELECTORS_VERSION=3.1.0
-  - TESTCAFE_MONGODB_DRIVER_VERSION=3.1.4
-
 stages:
-- name: TESTCAFE
-  if: commit_message !~ /(skip[ _-]testcafe)/  
+- name: TEST
+  if: commit_message !~ /(skip[ _-]test)/    
 - name: DOC
   if: commit_message !~ /(skip[ _-]doc)/
+- name: EXTRA
+  if: commit_message !~ /(skip[ _-]extra)/  
 
 jobs:
   include:
 
-  - stage: TESTCAFE
+  - stage: TEST
     language: node_js
     node_js:
     - '12'  
-    install: true
-    script: 
-    - cd tools/testcafe && docker build --build-arg TESTCAFE_VERSION=$TESTCAFE_VERSION --build-arg TESTCAFE_VUE_SELECTORS_VERSION=$TESTCAFE_VUE_SELECTORS_VERSION --build-arg MONGDODB_DRIVER_VERSION=$TESTCAFE_MONGODB_DRIVER_VERSION -t kalisio/testcafe:$TESTCAFE_VERSION .
-    before_deploy:
-    - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
-    deploy:
-      provider: script
-      script: docker push kalisio/testcafe:$TESTCAFE_VERSION
-      on:
-        branch: master   
+    services:
+    - docker    
+    script: bash .travis.test.sh
 
   - stage: DOC
     language: node_js
     node_js:
     - '12'
     install: true
-    script: cd docs && yarn install && yarn build
+    script: bash .travis.doc.sh
     deploy:
       provider: pages
       local-dir: docs/.vuepress/dist
@@ -50,3 +39,12 @@ jobs:
       keep-history: true
       on:
         branch: master
+
+  - stage: EXTRA
+    language: node_js
+    node_js:
+    - '12'  
+    services:
+    - docker    
+    install: true
+    script: bash .travis.extra.sh testcafe        
