@@ -91,12 +91,10 @@ Then clone the main app repository and link to modules/plugins to make Node.js p
 git clone https://github.com/kalisio/kApp.git
 cd kApp
 // Client side
-yarn link @kalisio/kdk/core
-yarn link @kalisio/kdk-team
+yarn link @kalisio/kdk
 // API side
 cd api
-yarn link @kalisio/kdk/core
-yarn link @kalisio/kdk-team
+yarn link @kalisio/kdk
 ...
 ```
 
