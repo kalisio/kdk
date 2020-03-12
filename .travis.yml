@@ -12,7 +12,7 @@ stages:
 - name: DOC
   if: commit_message !~ /(skip[ _-]doc)/
 - name: EXTRAS
-  if: commit_message ~ /(extras)/  
+  if: commit_message =~ /(extras)/  
 
 jobs:
   include:

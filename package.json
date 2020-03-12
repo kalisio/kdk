@@ -35,7 +35,7 @@
     "changelog": "github_changelog_generator -u kalisio -p kdk && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
     "compile:core": "shx rm -rf lib/core && babel -d lib/core core/ -s --copy-files",
     "compile:map": "shx rm -rf lib/map && babel -d lib/map map/ -s --copy-files",
-    "compile": "npm run compile:core && npm run compile:map",
+    "compile": "npm-run-all --serial compile:**",
     "watch:core:js": "babel --watch -d lib/core core/ --copy-files",
     "watch:core:vue": "cpx core/**/*.vue lib/core --watch",
     "watch:map:js": "babel --watch -d lib/map map/ --copy-files",
@@ -44,7 +44,7 @@
     "lint": "standard core/**/*.js core/**/*.vue tests/**/*.js --fix",
     "mocha:core": "cross-env NODE_CONFIG_DIR=./tests/core/config/ mocha tests/core/**/*.test.js --require babel-core/register",
     "mocha:map": "cross-env NODE_CONFIG_DIR=./tests/map/config/ mocha tests/map/**/*.test.js --require babel-core/register",
-    "mocha": "npm run mocha:core && npm run mocha:map",
+    "mocha": "npm-run-all --serial mocha:**",
     "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ node node_modules/istanbul/lib/cli cover node_modules/mocha/bin/_mocha -- --require babel-core/register",
     "test": "npm run compile && npm run lint && npm run coverage"
   },
