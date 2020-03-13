@@ -199,7 +199,7 @@
     "METEO_LAYERS": "Meteo forecasts",
     "BUSINESS_LAYERS": "Business layers",
     "FORECASTS_LABEL": "Forecast models",
-    "ARCHIVE_LABEL": "Archived data layers"
+    "ARCHIVE_LAYERS": "Archived data layers"
   },
   "KFeaturesTable": {
     "TITLE": "Data for layer {{layer}}"
