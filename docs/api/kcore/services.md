@@ -93,7 +93,7 @@ This service has to be instanciated at application level, none provided by defau
 
 To create your own service use the following code:
 ```js
-import { Store, LocalSettingsService } from '@kalisio/kdk/core/client'
+import { Store, LocalSettingsService } from '@kalisio/kdk/core.client'
 
 // Setup defaults in global store
 Store.set('app-settings', { x: y, ... })
