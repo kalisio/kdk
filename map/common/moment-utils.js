@@ -8,7 +8,7 @@ export function readAsTimeOrDuration (conf) {
       ret = moment.duration(conf)
     } else {
       // treat as time
-      ret = moment(conf)
+      ret = moment.utc(conf)
     }
 
     ret = ret.isValid() ? ret : null
