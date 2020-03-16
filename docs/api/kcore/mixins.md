@@ -18,7 +18,7 @@ Here is a code sample:
 </template>
 
 <script>
-import { mixins } from '@kalisio/kdk/core/client'
+import { mixins } from '@kalisio/kdk/core.client'
 
 export default {
   name: 'MyComponent',
