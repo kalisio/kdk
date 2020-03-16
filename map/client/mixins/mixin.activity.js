@@ -547,7 +547,7 @@ export default function (name) {
       getProbeTimeRange () {
         const start = this.currentTime.clone()
         const end = start.clone()
-        const halfSpan = parseInt(this.$store.get('timeseries.span')) / 2
+        const halfSpan = this.$store.get('timeseries.span') / 2
         start.subtract(halfSpan, 'd')
         end.add(halfSpan, 'd')
         return { start, end }
@@ -619,18 +619,20 @@ export default function (name) {
         this.restoreView()
       },
       resetTimeline () {
-        // Initilize timeline based on user settings
-        const span = parseInt(this.$store.get('timeline.span'))
-        const offset = parseInt(this.$store.get('timeline.offset'))
-        const step = parseInt(this.$store.get('timeline.step'))
-        const ref = this.$store.get('timeline.reference')
-        const timeline = {
-          span: moment.duration(span, 'd'),
-          offset: moment.duration(offset, 'd'),
-          step: moment.duration(step, 'm'),
-          reference: ref ? moment(ref) : moment().startOf('day')
+        if (typeof this.updateTimeline === 'function') {
+          // Initialize timeline based on user settings
+          const span = this.$store.get('timeline.span')
+          const offset = this.$store.get('timeline.offset')
+          const step = this.$store.get('timeline.step')
+          const ref = this.$store.get('timeline.reference')
+          const timeline = {
+            span: moment.duration(span, 'd'),
+            offset: moment.duration(offset, 'd'),
+            step: moment.duration(step, 'm'),
+            reference: ref ? moment(ref) : moment().startOf('day')
+          }
+          this.updateTimeline(timeline)
         }
-        this.updateTimeline(timeline)
       },
       async initialize () {
         // Geolocate by default if view has not been restored
