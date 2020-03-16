@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import request from 'superagent'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
@@ -134,8 +135,7 @@ describe('account', () => {
     // Add some delay to wait for email reception
     setTimeout(() => {
       gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Reset your password', (err, message) => {
-        if (err) done(err)
-        else {
+        if (_.isNil(err)) {
           // Extract token from email
           message = Buffer.from(message.body.data, 'base64').toString()
           const tokenEntry = 'reset-password/' // Then come the token in the link
@@ -144,12 +144,14 @@ describe('account', () => {
           // Token is the last part of the URL in the <a href="xxx/reset-password/token"> tag
           token = message.substring(firstTokenIndex, lastTokenIndex)
           done()
+        } else {
+          done(err)
         }
       })
-    }, 10000)
+    }, 20000)
   })
   // Let enough time to process
-    .timeout(15000)
+    .timeout(25000)
 
   it('check password policy on user password reset', (done) => {
     accountService.create({
@@ -172,7 +174,7 @@ describe('account', () => {
       action: 'resetPwdLong',
       value: {
         token,
-        password: 'pass;word1'
+        password: 'Pass;word2'
       }
     })
       .then(user => {
@@ -200,7 +202,7 @@ describe('account', () => {
   it('authenticates a user with reset password', () => {
     return request
       .post(`${baseUrl}/authentication`)
-      .send({ email: userObject.email, password: 'pass;word2', strategy: 'local' })
+      .send({ email: userObject.email, password: 'Pass;word2', strategy: 'local' })
       .then(response => {
         expect(response.body.accessToken).toExist()
       })
@@ -211,8 +213,8 @@ describe('account', () => {
       action: 'passwordChange',
       value: {
         user: { email: userObject.email },
-        oldPassword: 'pass;word2',
-        password: 'pass;word1'
+        oldPassword: 'Pass;word2',
+        password: '1234'
       }
     })
       .catch(error => {
@@ -228,8 +230,8 @@ describe('account', () => {
       action: 'passwordChange',
       value: {
         user: { email: userObject.email },
-        oldPassword: 'pass;word1',
-        password: 'pass;word3'
+        oldPassword: 'Pass;word2',
+        password: 'Pass;word1'
       }
     })
       .then(user => {
@@ -257,7 +259,7 @@ describe('account', () => {
   it('authenticates a user with changed password', () => {
     return request
       .post(`${baseUrl}/authentication`)
-      .send({ email: userObject.email, password: 'pass;word3', strategy: 'local' })
+      .send({ email: userObject.email, password: 'Pass;word1', strategy: 'local' })
       .then(response => {
         expect(response.body.accessToken).toExist()
       })
@@ -268,7 +270,7 @@ describe('account', () => {
       action: 'identityChange',
       value: {
         user: { email: userObject.email },
-        password: 'pass;word3',
+        password: 'Pass;word1',
         changes: { email: gmailUser.replace('com', 'xyz') }
       }
     })
@@ -317,7 +319,7 @@ describe('account', () => {
   it('authenticates a user with changed identity', () => {
     return request
       .post(`${baseUrl}/authentication`)
-      .send({ email: userObject.email, password: 'pass;word3', strategy: 'local' })
+      .send({ email: userObject.email, password: 'Pass;word1', strategy: 'local' })
       .then(response => {
         expect(response.body.accessToken).toExist()
       })
