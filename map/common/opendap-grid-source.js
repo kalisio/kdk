@@ -49,20 +49,20 @@ export class OpenDapGridSource extends GridSource {
     const descriptor = await dap.fetchDescriptor(this.config.url)
       .catch(e => { throw new Error(`Failed fetching descriptor from ${this.config.url}`) })
 
-    if (!dap.variableIsGrid(descriptor, this.config.query)) throw new Error(`${this.config.query} is not a grid variable!`)
+    if (!dap.variableIsGrid(descriptor, this.config.variable)) throw new Error(`${this.config.variable} is not a grid variable!`)
     if (!dap.variableIsArray(descriptor, this.config.latitude)) throw new Error(`${this.config.latitude} is expected to be an array variable!`)
     if (!dap.variableIsArray(descriptor, this.config.longitude)) throw new Error(`${this.config.longitude} is expected to be an array variable!`)
 
-    const latIndex = dap.getGridDimensionIndex(descriptor, this.config.query, this.config.latitude)
-    const latCount = dap.getGridDimensionLength(descriptor, this.config.query, latIndex)
-    const lonIndex = dap.getGridDimensionIndex(descriptor, this.config.query, this.config.longitude)
-    const lonCount = dap.getGridDimensionLength(descriptor, this.config.query, lonIndex)
+    const latIndex = dap.getGridDimensionIndex(descriptor, this.config.variable, this.config.latitude)
+    const latCount = dap.getGridDimensionLength(descriptor, this.config.variable, latIndex)
+    const lonIndex = dap.getGridDimensionIndex(descriptor, this.config.variable, this.config.longitude)
+    const lonCount = dap.getGridDimensionLength(descriptor, this.config.variable, lonIndex)
 
     // build grid indexing array
-    const dimensions = this.config.dimensions
+    const dimensions = await this.getDimensionsAsIndices()
     dimensions[this.config.latitude] = `0:${latCount - 1}`
     dimensions[this.config.longitude] = `0:${lonCount - 1}`
-    const indices = dap.makeGridIndices(descriptor, this.config.query, dimensions)
+    const indices = dap.makeGridIndices(descriptor, this.config.variable, dimensions)
     if (indices.length === 0) throw new Error("Couldn't create index array for grid")
 
     this.descriptor = descriptor
@@ -96,9 +96,10 @@ export class OpenDapGridSource extends GridSource {
     if (!query) { return null }
 
     const data = await dap.fetchData(query, abort)
-    const valData = data[0][0]
-    const latData = data[0][this.latIndex + 1]
-    const lonData = data[0][this.lonIndex + 1]
+    const req = data[this.config.variable]
+    const valData = req[0]
+    const latData = req[this.latIndex + 1]
+    const lonData = req[this.lonIndex + 1]
 
     const lat0 = latData[0]
     const lat1 = latData[latData.length - 1]
@@ -112,6 +113,7 @@ export class OpenDapGridSource extends GridSource {
 
     if (this.canUseGrid2D) {
       const indices = this.indices.slice(0, this.indices.length - 2)
+      indices.fill(0)
       const subgrid = dap.getGridValue(valData, indices)
       return new Grid2D(
         databbox, [latData.length, lonData.length],
@@ -177,7 +179,7 @@ export class OpenDapGridSource extends GridSource {
     indices[this.lonIndex] = `${iMinLon}:${strideLon}:${iMaxLon}`
 
     const conf = {}
-    conf[this.config.query] = indices.join('][')
+    conf[this.config.variable] = indices.join('][')
     return dap.makeQuery(this.config.url, conf)
   }
 
@@ -189,8 +191,8 @@ export class OpenDapGridSource extends GridSource {
     const url = dap.makeQuery(this.config.url, query)
     const res = await dap.fetchData(url)
 
-    const latData = res[0]
-    const lonData = res[1]
+    const latData = res[this.config.latitude]
+    const lonData = res[this.config.longitude]
 
     const lat0 = latData[0]
     const lat1 = latData[latData.length - 1]
@@ -206,5 +208,40 @@ export class OpenDapGridSource extends GridSource {
     // deduce whether lat/lon dimensions are store in ascending or descending order
     this.latSortOrder = lat0 < lat1 ? SortOrder.ASCENDING : SortOrder.DESCENDING
     this.lonSortOrder = lon0 < lon1 ? SortOrder.ASCENDING : SortOrder.DESCENDING
+  }
+
+  async getDimensionsAsIndices () {
+    // config.dimensionsAsIndices contains indices
+    // config.dimensionsAsValues contains dimension values for which we
+    // need to lookup actual index
+
+    const dimensions = {}
+    if (this.config.dimensionsAsIndices) {
+      Object.assign(dimensions, this.config.dimensionsAsIndices)
+    }
+    if (this.config.dimensionsAsValues) {
+      // build a request to query the values for each dimension for which we have a value
+      // const requested = _.keys(this.config.dimensionsAsValues)
+      const variables = _.keys(this.config.dimensionsAsValues)
+      const query = dap.makeQuery(this.config.url, variables)
+      const data = await dap.fetchData(query, null)
+      // lookup corresponding indices
+      for (let i = 0; i < variables.length; ++i) {
+        const varValues = data[variables[i]]
+        const varValue = this.config.dimensionsAsValues[variables[i]]
+        let valueIndex = -1
+        for (let j = 0; j < varValues.length && valueIndex === -1; ++j) {
+          if (varValues[j] === varValue)
+            valueIndex = j
+        }
+        if (valueIndex === -1)
+          // value not found :(
+          throw new Error(`Failed looking up value '${varValue}' for dimension named '${variables[i]}'`)
+
+        dimensions[variables[i]] = valueIndex
+      }
+    }
+
+    return dimensions
   }
 }

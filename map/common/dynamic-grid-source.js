@@ -59,9 +59,43 @@ export class DynamicGridSource extends GridSource {
     // compute dynamic ones
     for (const prop of _.keys(dynamicProps)) {
       const value = dynamicProps[prop](ctx)
-      if (value) config[prop] = value
+      if (value) {
+        // prop.sub1.sub2 will set config.prop.sub1.sub2
+        let root = config
+        const sub = prop.split('.')
+        for (let i = 0; i < sub.length - 1; ++i) {
+          if (root[sub[i]] === undefined) root[sub[i]] = {}
+          root = root[sub[i]]
+        }
+        root[sub[sub.length-1]] = value
+      }
     }
 
     return config
+  }
+
+  dynpropGenerator (conf) {
+    if (conf.strTemplate) {
+      // use lodash string template
+      return _.template(conf.strTemplate)
+    }
+    if (conf.intTemplate) {
+      // use loadsh but parseInt the output
+      const strGen = _.template(conf.intTemplate)
+      return function (ctx) {
+        const strValue = strGen(ctx)
+        return parseInt(strValue)
+      }
+    }
+    if (conf.floatTemplate) {
+      // use loadsh but parseFloat the output
+      const strGen = _.template(conf.floatTemplate)
+      return function (ctx) {
+        const strValue = strGen(ctx)
+        return parseFloat(strValue)
+      }
+    }
+
+    return null
   }
 }

@@ -26,6 +26,7 @@ export async function fetchData (query, abort = null) {
   // it sometimes happens that the opendap response is somehow truncated
   // jsdap lib can't parse the buffer because some data is missing ..
   // in this case, let the code make a few attempts before failing for good
+  let dds = null
   let dap = null
   let attempt = 0
 
@@ -57,7 +58,7 @@ export async function fetchData (query, abort = null) {
       }
 
       /* eslint new-cap: ["error", { "newIsCap": false }] */
-      const dds = new parser.ddsParser(ddsTxt).parse()
+      dds = new parser.ddsParser(ddsTxt).parse()
       dap = new xdr.dapUnpacker(data.slice(byteIndex + 7), dds).getValue()
     } catch (err) {
       // on second attempt, rethrow error ...
@@ -65,7 +66,20 @@ export async function fetchData (query, abort = null) {
     }
   }
 
-  return dap
+  // build an object where each key will be the name of a queried variable
+  // and the value will be the queried variable values
+  const data = {}
+  if (dds && dap) {
+    let offset = 0
+    for (const field in dds) {
+      if (dds[field].type) {
+        data[field] = dap[offset]
+        offset += 1
+      }
+    }
+  }
+
+  return data
 }
 
 export function variableIsGrid (descriptor, variable) {
@@ -106,7 +120,13 @@ export function makeGridIndices (descriptor, variable, dimensions) {
 export function makeQuery (base, config) {
   // config is expected to be an object with variables to query as keys
   // and indices to fetch as associated values
-  const variables = _.keys(config).map(variable => `${variable}[${config[variable]}]`)
+  // it can also be a simple list of variables to query with no interval
+  let variables
+  if (Array.isArray(config)) {
+    variables = config
+  } else {
+    variables = _.keys(config).map(variable => `${variable}[${config[variable]}]`)
+  }
   const url = `${base}.dods?` + variables.join(',')
   return encodeURI(url)
 }
@@ -140,29 +160,7 @@ function getFirstGridValue (grid, dimension) {
   return array[0]
 }
 
-/*
-  function* iterateGrid(grid, dimension) {
-  if (dimension > 1) {
-  for (const r of grid)
-  yield* iterateGrid(r, dimension-1)
-  } else {
-  for (const v of grid)
-  yield v
-  }
-  }
-*/
-
 export function getMinMaxGrid (grid, dimension) {
-  /* this implementation is 10x slower on chrome
-     let minVal = getGridValue(grid, dimension)
-     let maxVal = minVal
-     for (const v of iterateGrid(grid, dimension)) {
-     minVal = Math.min(minVal, v)
-     maxVal = Math.max(maxVal, v)
-     }
-     return [minVal, maxVal]
-  */
-
   if (dimension > 1) {
     const init = getFirstGridValue(grid, dimension)
     return grid.reduce((accu, value) => {
@@ -178,6 +176,7 @@ const makeIndicesFunctions = [
   // latSortOrder = SortOrder.ASCENDING, lonSortOrder = SortOrder.ASCENDING
   function (indices, latIndex, lonIndex, ilat, ilon, latCount, lonCount) {
     const local = [...indices]
+    local.fill(0)
     local[latIndex] = ilat
     local[lonIndex] = ilon
     return local
@@ -185,6 +184,7 @@ const makeIndicesFunctions = [
   // latSortOrder = SortOrder.ASCENDING, lonSortOrder = SortOrder.DESCENDING
   function (indices, latIndex, lonIndex, ilat, ilon, latCount, lonCount) {
     const local = [...indices]
+    local.fill(0)
     local[latIndex] = ilat
     local[lonIndex] = lonCount - (ilon + 1)
     return local
@@ -192,6 +192,7 @@ const makeIndicesFunctions = [
   // latSortOrder = SortOrder.DESCENDING, lonSortOrder = SortOrder.ASCENDING
   function (indices, latIndex, lonIndex, ilat, ilon, latCount, lonCount) {
     const local = [...indices]
+    local.fill(0)
     local[latIndex] = latCount - (ilat + 1)
     local[lonIndex] = ilon
     return local
@@ -199,6 +200,7 @@ const makeIndicesFunctions = [
   // latSortOrder = SortOrder.DESCENDING, lonSortOrder = SortOrder.DESCENDING
   function (indices, latIndex, lonIndex, ilat, ilon, latCount, lonCount) {
     const local = [...indices]
+    local.fill(0)
     local[latIndex] = latCount - (ilat + 1)
     local[lonIndex] = lonCount - (ilon + 1)
     return local
@@ -219,6 +221,7 @@ export class OpenDAPGrid extends BaseGrid {
 
     if (converter) {
       const idx = [...indices]
+      idx.fill(0)
       for (let la = 0; la < dimensions[0]; ++la) {
         idx[latIndex] = la
         for (let lo = 0; lo < dimensions[1]; ++lo) {

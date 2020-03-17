@@ -43,8 +43,8 @@ export class MeteoModelGridSource extends DynamicGridSource {
       // handle dynamic properties
       for (const prop of _.keys(item.dynprops)) {
         const value = item.dynprops[prop]
-        // that's a lodash string template, compile it
-        if (value.template) source.dynamicProps[prop] = _.template(value.template)
+        let generator = this.dynpropGenerator(value)
+        if (generator) source.dynamicProps[prop] = generator
       }
 
       this.sources.push(source)
@@ -53,15 +53,6 @@ export class MeteoModelGridSource extends DynamicGridSource {
 
   selectSourceAndDeriveConfig (ctx) {
     const now = moment()
-
-    // update context
-    ctx.runTime = getNearestRunTime(ctx.time, ctx.model.runInterval)
-    ctx.forecastTime = getNearestForecastTime(ctx.time, ctx.model.interval)
-
-    // switch to utc mode, all display methods will display in UTC
-    ctx.time.utc()
-    ctx.runTime.utc()
-    ctx.forecastTime.utc()
 
     let candidate = null
     // select a source for the requested time
@@ -81,8 +72,21 @@ export class MeteoModelGridSource extends DynamicGridSource {
       if (candidate) break
     }
 
-    // derive config for candidate
-    const config = candidate ? this.deriveConfig(ctx, candidate.staticProps, candidate.dynamicProps) : null
+    let config = null
+    if (candidate) {
+      // update context
+      ctx.runTime = getNearestRunTime(ctx.time, ctx.model.runInterval)
+      ctx.forecastTime = getNearestForecastTime(ctx.time, ctx.model.interval)
+      ctx.forecastOffset = moment.duration(ctx.forecastTime.diff(ctx.runTime))
+
+      // switch to utc mode, all display methods will display in UTC
+      ctx.time.utc()
+      ctx.runTime.utc()
+      ctx.forecastTime.utc()
+      
+      config = this.deriveConfig(ctx, candidate.staticProps, candidate.dynamicProps)
+    }
+    
     const source = (candidate && config) ? makeGridSource(candidate.key, this.options) : null
 
     return [source, config]
