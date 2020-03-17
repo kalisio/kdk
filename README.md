@@ -1,7 +1,12 @@
 [![KDK](https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-logo-black-512x168.png)](https://kalisio.github.io/kdk/)
 
 [![Build Status](https://travis-ci.org/kalisio/kdk.png?branch=master)](https://travis-ci.org/kalisio/kdk)
+[![Code Climate](https://codeclimate.com/github/kalisio/kdk/badges/gpa.svg)](https://codeclimate.com/github/kalisio/kdk)
+[![Test Coverage](https://codeclimate.com/github/kalisio/kdk/badges/coverage.svg)](https://codeclimate.com/github/kalisio/kdk/coverage)
+[![Dependency Status](https://img.shields.io/david/kalisio/kdk.svg?style=flat-square)](https://david-dm.org/kalisio/kdk)
+[![Known Vulnerabilities](https://snyk.io/test/github/kalisio/kdk/badge.svg)](https://snyk.io/test/github/kalisio/kdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 _The Kalisio Development Kit_
 
