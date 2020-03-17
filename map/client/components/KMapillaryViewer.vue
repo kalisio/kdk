@@ -1,15 +1,15 @@
 <template>
   <div v-if="isEnabled"
-    id="mapillary-container" 
+    id="mapillary-container"
     style="width:480px; height: 320px; z-index: 1;">
   </div>
 </template>
 
 <script>
-import logger from 'loglevel'
+// import logger from 'loglevel'
 import _ from 'lodash'
 import * as Mapillary from 'mapillary-js'
-import 'mapillary-js/dist/mapillary.min.css';
+import 'mapillary-js/dist/mapillary.min.css'
 
 export default {
   name: 'k-mapillary-viewer',
@@ -42,4 +42,3 @@ export default {
   }
 }
 </script>
-

@@ -9,7 +9,7 @@ export default {
         const cesiumOptions = options.cesium || options
         const infoboxStyle = _.merge({}, this.options.infobox,
           cesiumOptions.infobox, properties.infobox)
-        
+
         if (infoboxStyle.pick) {
           properties = _.pick(properties, infoboxStyle.pick)
         } else if (infoboxStyle.omit) {

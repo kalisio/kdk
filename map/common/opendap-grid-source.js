@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { unitConverters, SortOrder, GridSource, Grid2D } from './grid'
 import * as dap from './opendap-utils'
 
@@ -231,12 +232,12 @@ export class OpenDapGridSource extends GridSource {
         const varValue = this.config.dimensionsAsValues[variables[i]]
         let valueIndex = -1
         for (let j = 0; j < varValues.length && valueIndex === -1; ++j) {
-          if (varValues[j] === varValue)
-            valueIndex = j
+          if (varValues[j] === varValue) { valueIndex = j }
         }
-        if (valueIndex === -1)
+        if (valueIndex === -1) {
           // value not found :(
           throw new Error(`Failed looking up value '${varValue}' for dimension named '${variables[i]}'`)
+        }
 
         dimensions[variables[i]] = valueIndex
       }

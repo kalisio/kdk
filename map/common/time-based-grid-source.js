@@ -37,7 +37,7 @@ export class TimeBasedGridSource extends DynamicGridSource {
       // handle dynamic properties
       for (const prop of _.keys(item.dynprops)) {
         const value = item.dynprops[prop]
-        let generator = this.dynpropGenerator(value)
+        const generator = this.dynpropGenerator(value)
         if (generator) source.dynamicProps[prop] = generator
       }
 

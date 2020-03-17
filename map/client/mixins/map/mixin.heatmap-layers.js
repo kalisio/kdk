@@ -13,7 +13,7 @@ export default {
       const source = _.get(leafletOptions, 'url')
       const sourceTemplate = _.get(leafletOptions, 'urlTemplate')
       if (sourceTemplate) layer.sourceCompiler = _.template(sourceTemplate)
-      
+
       if (options.service) { // Check for feature service layers
         const geoJson = await this.getFeatures(options)
         this.updateLeafletHeatmap(layer, geoJson)
@@ -38,8 +38,8 @@ export default {
       // By default our intensity is based on the number of points only
       // otherwise when provided we use target value
       layer.setData({
-        min: (min ? min : (valueField ? _.min(values) : 0)),
-        max: (max ? max : (valueField ? _.max(values) : 1)),
+        min: (min || (valueField ? _.min(values) : 0)),
+        max: (max || (valueField ? _.max(values) : 1)),
         data: geoJson.features.map(feature => ({
           lng: _.get(feature, 'geometry.coordinates[0]'),
           lat: _.get(feature, 'geometry.coordinates[1]'),
@@ -49,7 +49,7 @@ export default {
     },
     updateHeatmap (name, geoJson) {
       // Retrieve the layer
-      let layer = this.getLeafletLayerByName(name)
+      const layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
       this.updateLeafletHeatmap(layer, geoJson)
     },
@@ -57,7 +57,7 @@ export default {
       const heatmaps = _.values(this.layers).filter(sift({ 'leaflet.type': 'heatmap', isVisible: true }))
       heatmaps.forEach(async heatmap => {
         // Retrieve the layer
-        let layer = this.getLeafletLayerByName(heatmap.name)
+        const layer = this.getLeafletLayerByName(heatmap.name)
         if (layer.sourceCompiler) {
           const geoJson = await fetchGeoJson(layer.sourceCompiler({ time }))
           this.updateLeafletHeatmap(layer, geoJson)

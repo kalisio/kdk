@@ -7,7 +7,7 @@ import sift from 'sift'
 import moment from 'moment'
 import memory from 'feathers-memory'
 import intersect from '@turf/intersect'
-import { weacast, createElementService } from 'weacast-core'
+import { weacast } from 'weacast-core'
 import { makeGridSource, extractGridSourceConfig } from '../../map/common/grid'
 
 // returns the required byte range of the given file
@@ -57,7 +57,7 @@ describe('kMap:grid-source', () => {
     })
 
     it('setup correctly', async () => {
-      const scope = nock('http://kMap.test')
+      nock('http://kMap.test')
         .get('/wcs')
         .query({ SERVICE: 'WCS', VERSION: '1.0.0', REQUEST: 'DescribeCoverage', COVERAGE: wcsOptions.wcs.coverage })
         .replyWithFile(200, __dirname + '/data/DescribeCoverage.xml')
@@ -71,7 +71,7 @@ describe('kMap:grid-source', () => {
     })
 
     it('returns an appropriate grid when requesting data', async () => {
-      const scope = nock('http://kMap.test')
+      nock('http://kMap.test')
         .get('/wcs')
         .query(true)
         .replyWithFile(200, __dirname + '/data/GetCoverage.tif', { 'Content-Type': 'image/tiff' })
@@ -104,7 +104,7 @@ describe('kMap:grid-source', () => {
     })
 
     it('setup correctly', async () => {
-      const scope = nock('http://kMap.test')
+      nock('http://kMap.test')
       // whole dataset dds
         .get('/dataset.grb.dds')
         .replyWithFile(200, __dirname + '/data/dataset.grb.dds')
@@ -128,7 +128,7 @@ describe('kMap:grid-source', () => {
     })
 
     it('returns an appropriate grid when requesting data', async () => {
-      const scope = nock('http://kMap.test')
+      nock('http://kMap.test')
         .get('/dataset.grb.dods')
         .query(true)
         .replyWithFile(200, __dirname + '/data/subdataset.grb.dods')
@@ -157,7 +157,7 @@ describe('kMap:grid-source', () => {
     })
 
     it('setup correctly', async () => {
-      const scope = nock('http://kMap.test')
+      nock('http://kMap.test')
         .get('/data.tif')
         .reply(function (uri, requestBody) {
           const data = readRange(__dirname + '/data/GetCoverage.tif', this.req.headers.range)
@@ -174,7 +174,7 @@ describe('kMap:grid-source', () => {
     })
 
     it('returns an appropriate grid when requesting data', async () => {
-      const scope = nock('http://kMap.test')
+      nock('http://kMap.test')
         .get('/data.tif')
         .reply(function (uri, requestBody) {
           const data = readRange(__dirname + '/data/GetCoverage.tif', this.req.headers.range)

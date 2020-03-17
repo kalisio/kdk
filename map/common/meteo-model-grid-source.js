@@ -43,7 +43,7 @@ export class MeteoModelGridSource extends DynamicGridSource {
       // handle dynamic properties
       for (const prop of _.keys(item.dynprops)) {
         const value = item.dynprops[prop]
-        let generator = this.dynpropGenerator(value)
+        const generator = this.dynpropGenerator(value)
         if (generator) source.dynamicProps[prop] = generator
       }
 
@@ -83,10 +83,10 @@ export class MeteoModelGridSource extends DynamicGridSource {
       ctx.time.utc()
       ctx.runTime.utc()
       ctx.forecastTime.utc()
-      
+
       config = this.deriveConfig(ctx, candidate.staticProps, candidate.dynamicProps)
     }
-    
+
     const source = (candidate && config) ? makeGridSource(candidate.key, this.options) : null
 
     return [source, config]

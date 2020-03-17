@@ -61,9 +61,9 @@ export default {
       const entity = _.get(event, 'target')
       const layer = _.get(event, 'target')
       if (!feature || !entity) return
-      let properties = (this.kActivity.is2D() ?
-        this.kActivity.generateLeafletStyle('infobox', feature, layer, options) :
-        this.kActivity.generateCesiumStyle('infobox', entity, options))
+      const properties = (this.kActivity.is2D()
+        ? this.kActivity.generateLeafletStyle('infobox', feature, layer, options)
+        : this.kActivity.generateCesiumStyle('infobox', entity, options))
       if (!_.isEmpty(properties)) {
         this.properties = properties
         // If already shown update values

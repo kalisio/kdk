@@ -52,13 +52,13 @@ export default {
       return this.$t('KFeaturesChart.TITLE', { layer: this.layer.name })
     },
     properties () {
-      let properties = []
+      const properties = []
       _.forOwn(_.get(this.layer, 'schema.content.properties'), (value, key) => {
         const label = _.get(value, 'field.label', _.get(value, 'field.helper', key))
         // Check if we have a translation key or directly the label content
         properties.push({ value: key, label: (this.$i18n.i18next.exists(label) ? this.$t(label) : label) })
       })
-      //if (properties.length) this.property = properties[0]
+      // if (properties.length) this.property = properties[0]
       return properties
     },
     nbCharts () {
@@ -69,7 +69,7 @@ export default {
   data () {
     const chartTypes = ['pie', 'polarArea', 'radar', 'bar']
     const chartOptions = chartTypes.map(
-        type => ({ value: type, label: this.$i18n.t(`KFeaturesChart.CHART_LABEL_${type.toUpperCase()}`) }))
+      type => ({ value: type, label: this.$i18n.t(`KFeaturesChart.CHART_LABEL_${type.toUpperCase()}`) }))
     const paginationOptions = [{
       value: 0, label: this.$i18n.t('KFeaturesChart.ALL_VALUES')
     }, {
@@ -115,7 +115,7 @@ export default {
         values = await this.$api.getService('features', this.contextId)
           .find({ query: { $distinct: `properties.${this.property.value}` } })
         // We don't have label in that case
-        values = values.map(value => ({ value, label: (value ? value : this.$t('KFeaturesChart.NULL_VALUE_LABEL')) }))
+        values = values.map(value => ({ value, label: (value || this.$t('KFeaturesChart.NULL_VALUE_LABEL')) }))
       }
       return values
     },
@@ -137,7 +137,7 @@ export default {
       const start = (this.currentChart - 1) * this.nbValuesPerChart.value
       const end = (this.nbValuesPerChart.value > 0 ? start + this.nbValuesPerChart.value : this.chartData.length)
       const colors = _.shuffle(chroma.scale('Spectral').colors(end - start))
-      let config = {
+      const config = {
         type,
         data: {
           labels: this.values.map(value => value.label).slice(start, end),
@@ -147,7 +147,7 @@ export default {
         },
         options: {
           responsive: true,
-          title:{
+          title: {
             display: true,
             text: this.property.label + ' - ' +
                   this.$t(`KFeaturesChart.CHART_LABEL_${type.toUpperCase()}`)
@@ -181,10 +181,10 @@ export default {
         _.set(config, 'options.scales.xAxes[0].ticks.minRotation', 70)
         _.set(config, 'options.scales.yAxes[0].ticks.beginAtZero', true)
         _.set(config, 'options.scales.yAxes[0].ticks.precision', 0)
-        //_.set(config, 'options.plugins.labels.fontSize', 0)
+        // _.set(config, 'options.plugins.labels.fontSize', 0)
       } else if (type === 'polarArea') {
         // FIXME: does not work in this case
-        //_.set(config, 'options.scale.display', false)
+        // _.set(config, 'options.scale.display', false)
       }
 
       return config
@@ -211,7 +211,7 @@ export default {
     this.$options.components['k-modal'] = this.$load('frame/KModal')
   },
   beforeDestroy () {
-    
+
   }
 }
 </script>

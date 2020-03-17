@@ -1,6 +1,6 @@
 import _ from 'lodash'
 // import logger from 'loglevel'
-import cesium from 'cesium/Source/Cesium.js'
+import Cesium from 'cesium/Source/Cesium.js'
 
 export default {
   methods: {

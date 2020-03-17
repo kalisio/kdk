@@ -8,7 +8,7 @@ export default {
         const leafletOptions = options.leaflet || options
         const infoboxStyle = Object.assign({}, this.options.infobox,
           leafletOptions.infobox, properties.infobox)
-        
+
         if (infoboxStyle.pick) {
           properties = _.pick(properties, infoboxStyle.pick)
         } else if (infoboxStyle.omit) {

@@ -1,3 +1,5 @@
+import L from 'leaflet'
+
 export default {
   methods: {
     createLeafletMapillary (options) {
@@ -8,7 +10,7 @@ export default {
       if (leafletOptions.interactive) {
         layer.on('mouseover', (event) => {
           if (event.latlng) {
-            let url = "https://images.mapillary.com/" + event.layer.properties.ikey  + "/thumb-320.jpg"
+            const url = 'https://images.mapillary.com/' + event.layer.properties.ikey + '/thumb-320.jpg'
             L.popup()
               .setContent("<img src='" + url + "' width='300'/>")
               .setLatLng(event.latlng)

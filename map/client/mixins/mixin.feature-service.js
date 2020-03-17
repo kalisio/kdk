@@ -125,7 +125,7 @@ export default {
       // Create chunks to avoid reaching some limits (DB, etc.)
       const chunks = _.chunk(features, 5000)
       // Write the chunks
-      let createdFeatures = []
+      const createdFeatures = []
       for (let i = 0; i < chunks.length; ++i) {
         createdFeatures.concat(await this.$api.getService('features').create(chunks[i]))
       }

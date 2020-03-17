@@ -16,10 +16,6 @@ function toRadians (deg) {
 }
 
 class TilesetBuilder {
-  constructor () {
-
-  }
-
   async build (datasetUrl, variable, dimensions, latitude, longitude) {
     const descriptor = await dap.fetchDescriptor(datasetUrl)
 
@@ -186,10 +182,7 @@ class TilesetBuilder {
     minLon = Math.max(minLon, -180.0)
     maxLon = Math.min(maxLon, 180.0)
 
-    /*
-          if (minLon > 20 || maxLon < -20 || maxLat < 40 || minLat > 60)
-          return undefined
-        */
+    // if ((minLon > 20) || (maxLon < -20) || (maxLat < 40) || (minLat > 60)) return undefined
 
     // parameters to buildBatchedTile
     const tileIndices = [...this.indices]
@@ -222,9 +215,6 @@ class TilesetBuilder {
 }
 
 class TileBuilder {
-  constructor () {
-  }
-
   async build (query, indices, latIndex, lonIndex, minMaxVal) {
     const data = await dap.fetchData(query)
 
@@ -243,22 +233,23 @@ class TileBuilder {
     const header = Buffer.alloc(28)
     const featureTableJSONPadding = Buffer.alloc(featureTableJSONPaddingCount, 0x20)
 
-    let byteLength = header.length +
+    /* let byteLength = header.length +
             featureTableJSONBuffer.length + featureTableJSONPaddingCount /* + featureTableBinary.length */
     // + batchTableJSONBuffer.length + batchTableJSONPaddingCount + batchTableBinary.length
 
-    for (const buf of gltf) {
+    /* for (const buf of gltf) {
       byteLength += buf.length
-    }
+    } */
 
-    let hidx = 0
-    hidx += header.write('b3dm', hidx) // magic
-    hidx = header.writeUInt32LE(1, hidx) // version
-    hidx = header.writeUInt32LE(byteLength, hidx) // byteLength
-    hidx = header.writeUInt32LE(featureTableJSONBuffer.length + featureTableJSONPaddingCount, hidx) // featureTableJSONByteLength
-    hidx = header.writeUInt32LE(/* featureTableBinary.length */ 0, hidx) // featureTableBinaryByteLength
-    hidx = header.writeUInt32LE(/* batchTableJSONBuffer.length + batchTableJSONPaddingCount */ 0, hidx) // batchTableJSONByteLength
-    hidx = header.writeUInt32LE(/* batchTableBinary.length */ 0, hidx) // batchTableBinaryByteLength
+    // Is it useful ?
+    // let hidx = 0
+    // hidx += header.write('b3dm', hidx) // magic
+    // hidx = header.writeUInt32LE(1, hidx) // version
+    // hidx = header.writeUInt32LE(byteLength, hidx) // byteLength
+    // hidx = header.writeUInt32LE(featureTableJSONBuffer.length + featureTableJSONPaddingCount, hidx) // featureTableJSONByteLength
+    // hidx = header.writeUInt32LE(/* featureTableBinary.length */ 0, hidx) // featureTableBinaryByteLength
+    // hidx = header.writeUInt32LE(/* batchTableJSONBuffer.length + batchTableJSONPaddingCount */ 0, hidx) // batchTableJSONByteLength
+    // hidx = header.writeUInt32LE(/* batchTableBinary.length */ 0, hidx) // batchTableBinaryByteLength
 
     const buffers = [header, featureTableJSONBuffer, featureTableJSONPadding]
     return buffers.concat(gltf)
@@ -278,8 +269,8 @@ class TileBuilder {
 
     // fill indices
     let iidx = 0
-    const minIdx = 0
-    const maxIdx = vertexCount - 1
+    // const minIdx = 0
+    // const maxIdx = vertexCount - 1
     for (let i = 1; i < lonData.length; ++i) {
       for (let j = 0; j < latData.length - 1; ++j) {
         const i0 = j + (i - 1) * latData.length
@@ -414,18 +405,20 @@ class TileBuilder {
     const gltfJSONChunk = Buffer.alloc(2 * 4)
     const gltfHeader = Buffer.alloc(12)
 
-    let offset = gltfHeader.length + gltfJSONChunk.length + gltfJSONBuffer.length
+    const offset = gltfHeader.length + gltfJSONChunk.length + gltfJSONBuffer.length
     const gltfJSONPaddingCount = (offset % 4 !== 0) ? 4 - offset % 4 : 0
     const gltfJSONPadding = Buffer.alloc(gltfJSONPaddingCount, 0x20)
 
+    /* Is it usefull ?
     let bidx = 0
     bidx = gltfJSONChunk.writeUInt32LE(gltfJSONBuffer.length + gltfJSONPadding.length, bidx) // chunkLength
     bidx = gltfJSONChunk.writeUInt32LE(0x4E4F534A, bidx) // chunkType (JSON)
+    */
 
-    offset += gltfJSONPadding.length
+    // offset += gltfJSONPadding.length
     const gltfBinaryChunk = Buffer.alloc(2 * 4)
 
-    bidx = 0
+    /* bidx = 0
     bidx = gltfBinaryChunk.writeUInt32LE(indices.length + positionPadding.length + positions.length + colors.length, bidx) // chunkLength
     bidx = gltfBinaryChunk.writeUInt32LE(0x004E4942, bidx) // chunkType (binary)
 
@@ -435,6 +428,7 @@ class TileBuilder {
     bidx += gltfHeader.write('glTF', bidx) // magic
     bidx = gltfHeader.writeUInt32LE(2, bidx) // version
     bidx = gltfHeader.writeUInt32LE(offset, bidx) // length
+    */
 
     return [gltfHeader,
       gltfJSONChunk, gltfJSONBuffer, gltfJSONPadding,

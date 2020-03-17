@@ -5,7 +5,7 @@ module.exports = {
   before: {
     all: [coreHooks.marshallTimeQuery, coreHooks.convertObjectIDs(['layer'])],
     find: [coreHooks.marshallComparisonQuery, coreHooks.marshallSortQuery, marshallSpatialQuery,
-           coreHooks.distinct, aggregateFeaturesQuery],
+      coreHooks.distinct, aggregateFeaturesQuery],
     get: [],
     create: [coreHooks.processTimes(['time'])],
     update: [coreHooks.processTimes(['time'])],

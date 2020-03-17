@@ -295,7 +295,7 @@ export default {
     this.resetColorLegend()
     this.kActivity.$on('layer-shown', this.onColorLegendShowLayer)
     this.kActivity.$on('layer-hidden', this.onColorLegendHideLayer)
-    //this.kActivity.$on('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
+    // this.kActivity.$on('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
   },
   beforeDestroy () {
     // Delete reference to the legend layer
@@ -304,7 +304,7 @@ export default {
     this.resetColorLegend()
     this.kActivity.$off('layer-shown', this.onColorLegendShowLayer)
     this.kActivity.$off('layer-hidden', this.onColorLegendHideLayer)
-    //this.kActivity.$off('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
+    // this.kActivity.$off('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
   }
 }
 </script>

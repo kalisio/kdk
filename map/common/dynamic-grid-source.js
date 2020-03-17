@@ -67,7 +67,7 @@ export class DynamicGridSource extends GridSource {
           if (root[sub[i]] === undefined) root[sub[i]] = {}
           root = root[sub[i]]
         }
-        root[sub[sub.length-1]] = value
+        root[sub[sub.length - 1]] = value
       }
     }
 

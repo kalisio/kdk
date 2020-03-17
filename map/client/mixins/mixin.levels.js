@@ -1,6 +1,4 @@
 import _ from 'lodash'
-import Vue from 'vue'
-import KLevelSlider from '../components/KLevelSlider.vue'
 
 export default {
   data () {

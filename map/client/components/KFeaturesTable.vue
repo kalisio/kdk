@@ -65,7 +65,7 @@ export default {
     this.$options.components['k-table'] = this.$load('collection/KTable')
   },
   beforeDestroy () {
-    
+
   }
 }
 </script>

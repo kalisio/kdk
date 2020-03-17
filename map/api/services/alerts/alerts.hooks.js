@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { disallow, iff } from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api'
 import { marshallSpatialQuery } from '../../hooks'

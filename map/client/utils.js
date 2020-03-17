@@ -63,12 +63,12 @@ export function formatGeocodingResult (element) {
 
 // Helper to set a JWT as query param in a target URL
 export function setGatewayUrlJwt (item, path, jwt) {
-  let url = _.get(item, path)
+  const url = _.get(item, path)
   if (!url) return
   if (!url.startsWith(config.gateway)) return
   // FIXME: specific case of Cesium OpenStreetMap provider
   // Because Cesium generates the final url as base url + tile scheme + extension
-  // updating the base url property breaks it, for now we modify the extension 
+  // updating the base url property breaks it, for now we modify the extension
   if ((path === 'cesium.url') && _.get(item, 'cesium.type') === 'OpenStreetMap') {
     const ext = _.get(item, 'cesium.fileExtension', 'png')
     _.set(item, 'cesium.fileExtension', ext + `?${config.gatewayJwtField}=${jwt}`)
@@ -95,7 +95,7 @@ export function setGatewayJwt (layers, jwt) {
 
 // Get JSON schema from GeoJson feature' properties
 export function generatePropertiesSchema (geoJson) {
-  let schema = {
+  const schema = {
     $schema: 'http://json-schema.org/draft-06/schema#',
     type: 'object',
     properties: {
@@ -124,10 +124,10 @@ export function generatePropertiesSchema (geoJson) {
     } else {
       // For null/undefined value we will assume string by default
       _.set(schema, `properties.${key}`, {
-        type, 
+        type,
         field: {
-          component: (type === 'number' ? 'form/KNumberField' :
-            (type === 'boolean' ? 'form/KToggleField' : 'form/KTextField')),
+          component: (type === 'number' ? 'form/KNumberField'
+            : (type === 'boolean' ? 'form/KToggleField' : 'form/KTextField')),
           helper: key,
           label: key
         }

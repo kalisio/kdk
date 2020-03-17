@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import L from 'leaflet'
 import logger from 'loglevel'
 import togeojson from 'togeojson'

@@ -28,7 +28,7 @@ export default {
     delete alerts[id.toString()]
   },
 
-  getConditions(alert) {
+  getConditions (alert) {
     return _.mapKeys(alert.conditions, (value, key) => 'properties.' + key)
   },
 
@@ -117,4 +117,3 @@ export default {
     return alert
   }
 }
-
