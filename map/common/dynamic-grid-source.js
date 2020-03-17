@@ -62,7 +62,7 @@ export class DynamicGridSource extends GridSource {
       if (value) {
         // prop.sub1.sub2 will set config.prop.sub1.sub2
         let root = config
-        const sub = prop.split('.')
+        const sub = prop.split('$')
         for (let i = 0; i < sub.length - 1; ++i) {
           if (root[sub[i]] === undefined) root[sub[i]] = {}
           root = root[sub[i]]
