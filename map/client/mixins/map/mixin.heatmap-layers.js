@@ -1,3 +1,5 @@
+import _ from 'lodash'
+import sift from 'sift'
 import HeatmapOverlay from 'leaflet-heatmap'
 import { fetchGeoJson } from '../../utils'
 
@@ -9,13 +11,19 @@ export default {
       if (leafletOptions.type !== 'heatmap') return
       const layer = this.createLeafletLayer(options)
       const source = _.get(leafletOptions, 'url')
-
+      const sourceTemplate = _.get(leafletOptions, 'urlTemplate')
+      if (sourceTemplate) layer.sourceCompiler = _.template(sourceTemplate)
+      
       if (options.service) { // Check for feature service layers
         const geoJson = await this.getFeatures(options)
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(source)) {
         // Assume source is an URL returning GeoJson
         const geoJson = await fetchGeoJson(source)
+        this.updateLeafletHeatmap(layer, geoJson)
+      } else if (!_.isNil(sourceTemplate)) {
+        // Assume source is an URL returning GeoJson
+        const geoJson = await fetchGeoJson(layer.sourceCompiler({ time: this.currentTime }))
         this.updateLeafletHeatmap(layer, geoJson)
       }
 
@@ -44,10 +52,26 @@ export default {
       let layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
       this.updateLeafletHeatmap(layer, geoJson)
+    },
+    onCurrentTimeChangedHeatmapLayer (time) {
+      const heatmaps = _.values(this.layers).filter(sift({ 'leaflet.type': 'heatmap', isVisible: true }))
+      heatmaps.forEach(async heatmap => {
+        // Retrieve the layer
+        let layer = this.getLeafletLayerByName(heatmap.name)
+        if (layer.sourceCompiler) {
+          const geoJson = await fetchGeoJson(layer.sourceCompiler({ time }))
+          this.updateLeafletHeatmap(layer, geoJson)
+        }
+      })
     }
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletHeatmapLayer)
+    this.$on('current-time-changed', this.onCurrentTimeChangedHeatmapLayer)
+  },
+
+  beforeDestroy () {
+    this.$off('current-time-changed', this.onCurrentTimeChangedHeatmapLayer)
   }
 }
 
