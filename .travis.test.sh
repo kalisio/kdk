@@ -16,5 +16,6 @@ set -a
 . .env
 set +a
 
+yarn lint
 yarn mocha
 
