@@ -583,7 +583,7 @@ export default function (name) {
         const east = bounds[1][1]
         // Store both in URL and local storage, except if the user/view has explicitly revoked restoration
         if (this.shouldRestoreView()) {
-          this.$router.push({ query: Object.assign({ south, west, north, east }, this.$route.query) })
+          this.$router.push({ query: Object.assign({ south, west, north, east }, this.$route.query) }).catch(_ => {})
           window.localStorage.setItem(this.getViewKey(), JSON.stringify(bounds))
         }
       },
@@ -605,13 +605,13 @@ export default function (name) {
           const west = bounds[0][1]
           const north = bounds[1][0]
           const east = bounds[1][1]
-          this.$router.push({ query: Object.assign({ south, west, north, east }, this.$route.query) })
+          this.$router.push({ query: Object.assign({ south, west, north, east }, this.$route.query) }).catch(_ => {})
           this.zoomToBounds(bounds)
         }
         return bounds
       },
       clearStoredView () {
-        this.$router.push({ query: {} })
+        this.$router.push({ query: {} }).catch(_ => {})
         window.localStorage.removeItem(this.getViewKey())
       },
       updateViewSettings () {
