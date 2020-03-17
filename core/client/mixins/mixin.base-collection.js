@@ -12,7 +12,7 @@ const baseCollectionMixin = {
     appendItems: {
       type: Boolean,
       default: false
-    } 
+    }
   },
   computed: {
     nbPages () {

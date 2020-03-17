@@ -60,7 +60,7 @@ export default {
       return _.kebabCase(org.name)
     },
     getInitials (org) {
-      return kCoreUtils.getInitials(org.name)
+      return utils.getInitials(org.name)
     },
     loadService () {
       this._service = this.$api.getService('organisations')

@@ -114,7 +114,7 @@ export default async function () {
     })
     app.createService('authorisations', { servicesPath })
   }
-  
+
   const storeConfig = app.get('storage')
   if (storeConfig) {
     const client = new aws.S3({
@@ -128,18 +128,18 @@ export default async function () {
     createStorageService.call(app, blobService)
   }
 
-  const orgConfig = app.get('organisations') 
+  const orgConfig = app.get('organisations')
   if (orgConfig) {
     createOrganisationService.call(app)
   }
 
   const mailerConfig = app.get('mailer')
   if (mailerConfig) {
-    app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events  
+    app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
     app.createService('account', { servicesPath })
   }
 
-  const pusherConfig = app.get('pusher') 
+  const pusherConfig = app.get('pusher')
   if (pusherConfig) {
     app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
     app.createService('devices', { servicesPath })

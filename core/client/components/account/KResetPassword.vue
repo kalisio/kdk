@@ -99,7 +99,7 @@ export default {
           await this.resetPassword(this.$route.params.token, result.values.password)
           this.message = this.$t('KResetPassword.SUCCESS_MESSAGE')
           this.success = true
-        } catch(error) {
+        } catch (error) {
           const type = _.get(error, 'errors.$className')
           switch (type) {
             case 'badParams':

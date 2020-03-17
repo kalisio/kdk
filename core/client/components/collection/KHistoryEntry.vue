@@ -18,7 +18,7 @@
     </template>
     <!--
       Content section
-    --> 
+    -->
     <q-card class="q-mx-xs">
       <q-card-section>
         <slot name="entry-content">

@@ -34,9 +34,6 @@
 <script>
 export default {
   name: 'k-account-security',
-  components: {
-    KBlock
-  },
   props: {
     email: {
       type: String,

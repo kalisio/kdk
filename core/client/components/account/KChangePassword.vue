@@ -100,7 +100,7 @@ export default {
           await this.changePassword(this.$store.get('user.email'), result.values.oldPassword, result.values.password)
           this.message = this.$t('KChangePassword.SUCCESS_MESSAGE')
           this.success = true
-        } catch(error) {
+        } catch (error) {
           const type = _.get(error, 'errors.$className')
           switch (type) {
             case 'badParams':

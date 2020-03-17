@@ -33,7 +33,7 @@ export default {
   name: 'k-resend-verification-email',
   mixins: [
     mixins.account
-  ],  
+  ],
   data () {
     return {
       title: '',

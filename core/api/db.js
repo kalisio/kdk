@@ -17,10 +17,10 @@ export function isObjectID (id) {
 
 export function idToString (id) {
   return (typeof id === 'object'
-      ? (ObjectID.isValid(id)
-        ? id.toString()
-        : idToString(id._id))
-      : id)
+    ? (ObjectID.isValid(id)
+      ? id.toString()
+      : idToString(id._id))
+    : id)
 }
 
 export function createObjectID (id) {

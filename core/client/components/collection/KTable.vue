@@ -5,7 +5,7 @@
         :title="title"
         :data="items"
         :columns="columns"
-        :visible-columns="visibleColumns" 
+        :visible-columns="visibleColumns"
         :selection="selection"
         :selected.sync="selectedItems"
         @selection="onSelectionChanged"
@@ -147,7 +147,7 @@ export default {
               case 'integer':
                 return value.toFixed(0)
               case 'string':
-                return (format === 'date-time' ? moment.utc(value).format() : value) 
+                return (format === 'date-time' ? moment.utc(value).format() : value)
               default:
                 return value.toString()
             }

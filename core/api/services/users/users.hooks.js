@@ -16,10 +16,12 @@ module.exports = {
         if (!config) return hook
         hook.app.authenticationProviders.forEach(provider => {
           const clientConfig = config[provider]
-          if (_.has(hook, `data.${provider}`)) serialize([
-            { source: `${provider}.profile.` + (clientConfig.nameFieldInProfile || 'displayName'), target: 'name' },
-            { source: `${provider}.profile.` + (clientConfig.emailFieldInProfile || 'emails[0].value'), target: 'email' }
-          ], { throwOnNotFound: true })(hook)
+          if (_.has(hook, `data.${provider}`)) {
+            serialize([
+              { source: `${provider}.profile.` + (clientConfig.nameFieldInProfile || 'displayName'), target: 'name' },
+              { source: `${provider}.profile.` + (clientConfig.emailFieldInProfile || 'emails[0].value'), target: 'email' }
+            ], { throwOnNotFound: true })(hook)
+          }
         })
         return hook
       },

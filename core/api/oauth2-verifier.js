@@ -39,7 +39,7 @@ class OAuth2Verifier extends Verifier {
 
     return this.service.create(entity, { oauth: { provider: name } })
   }
-  
+
   verify (req, accessToken, refreshToken, profile, done) {
     debug('Checking credentials')
     const options = this.options

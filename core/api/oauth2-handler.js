@@ -28,8 +28,7 @@ export default function (options = {}) {
         // Use token in URL or cookie ?
         if (options.tokenAsQueryParameter) {
           Object.defineProperty(res.hook.data, '__redirect', { value: { status: 302, url: `${options.successRedirect}?access_token=${result.accessToken}` } })
-        }
-        else {
+        } else {
           Object.defineProperty(res.hook.data, '__redirect', { value: { status: 302, url: options.successRedirect } })
         }
       }

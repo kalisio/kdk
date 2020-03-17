@@ -233,10 +233,9 @@ export function createWebhook (path, app, options = {}) {
 
   app.post(app.get('apiPath') + '/webhooks/' + webhookPath, async (req, res, next) => {
     const payload = req.body
-    const headers = req.headers
     const config = app.get('authentication')
     res.set('Content-Type', 'application/json')
-    let params = {}
+    const params = {}
     try {
       // Authenticate when required
       if (config) {
@@ -253,7 +252,7 @@ export function createWebhook (path, app, options = {}) {
       if (!isAllowed(payload)) throw new Forbidden('Service not allowed for webhook')
       const service = app.getService(payload.service, payload.context)
       if (!service) throw new BadRequest('Service could not be found')
-      let args = []
+      const args = []
       // Update/Patch/Remove
       if (_.has(payload, 'id')) args.push(_.get(payload, 'id'))
       // Create/Update/Patch
@@ -261,7 +260,7 @@ export function createWebhook (path, app, options = {}) {
       // Params
       args.push(params)
       try {
-        let result = await service[payload.operation].apply(service, args)
+        const result = await service[payload.operation].apply(service, args)
         // Send back result
         res.json(result)
       } catch (error) {

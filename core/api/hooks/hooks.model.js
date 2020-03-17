@@ -262,4 +262,3 @@ export async function distinct (hook) {
   hook.result = await collection.distinct(query.$distinct, _.omit(query, ['$distinct']))
   return hook
 }
-

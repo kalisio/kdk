@@ -354,4 +354,3 @@ export async function removeOrganisationTagsAuthorisations (hook) {
   debug(`Tags unset on ${promises.length} subjects for organisation ` + org._id)
   return hook
 }
-

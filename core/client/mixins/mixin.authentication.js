@@ -5,9 +5,9 @@ const authenticationMixin = {
     async restoreUser (accessToken) {
       const payload = await this.$api.passport.verifyJWT(accessToken)
       // Anonymous user or service account ?
-      const user = (!payload.userId ?
-        { name: this.$t('ANONYMOUS'), anonymous: true } :
-        await this.$api.getService('users').get(payload.userId))
+      const user = (!payload.userId
+        ? { name: this.$t('ANONYMOUS'), anonymous: true }
+        : await this.$api.getService('users').get(payload.userId))
       this.$store.set('user', user)
       return user
     },

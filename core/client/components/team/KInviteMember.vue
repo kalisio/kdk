@@ -41,7 +41,7 @@ import Papa from 'papaparse'
 export default {
   name: 'k-invite-member',
   mixins: [
-    kCoreMixins.refsResolver(['form'])
+    mixins.refsResolver(['form'])
   ],
   props: {
     contextId: {

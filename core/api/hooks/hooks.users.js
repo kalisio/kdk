@@ -252,4 +252,3 @@ export function unregisterDevices (hook) {
   return Promise.all(unregisterPromises)
     .then(results => hook)
 }
-

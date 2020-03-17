@@ -32,9 +32,9 @@ import mixins from '../../mixins'
 export default {
   name: 'k-change-identity',
   mixins: [
-    mixins.authentication, 
+    mixins.authentication,
     mixins.account
-  ],  
+  ],
   data () {
     return {
       title: '',
@@ -78,7 +78,7 @@ export default {
       this.title = this.$t('KChangeIdentity.SUCCESS_TITLE')
       this.message = this.$t('KChangeIdentity.SUCCESS_MESSAGE', { email: user.email })
       this.applied = true
-    } catch(error) {
+    } catch (error) {
       this.title = this.$t('KChangeIdentity.ERROR_TITLE')
       const type = _.get(error, 'errors.$className')
       switch (type) {

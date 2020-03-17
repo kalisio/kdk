@@ -33,7 +33,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-verify-signup',
   mixins: [
-    mixins.authentication, 
+    mixins.authentication,
     mixins.account
   ],
   components: {

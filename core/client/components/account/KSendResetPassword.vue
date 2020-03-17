@@ -31,7 +31,7 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-send-reset-password',
-  mixins: [ 
+  mixins: [
     mixins.account
   ],
   data () {

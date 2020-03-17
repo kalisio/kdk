@@ -94,7 +94,7 @@ export default {
               break
             default:
               this.message = this.$t('KSendChangeIdentity.ERROR_MESSAGE_DEFAULT')
-          } 
+          }
           this.success = false
         }
         this.sent = true
