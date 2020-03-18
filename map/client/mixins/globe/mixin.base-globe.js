@@ -107,7 +107,7 @@ export default {
         return this.viewer.terrainProvider === cesiumLayer
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
         return this.viewer.scene.imageryLayers.contains(cesiumLayer)
-      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
+      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         return this.viewer.scene.primitives.contains(cesiumLayer) && cesiumLayer.show
       } else {
         return this.viewer.dataSources.contains(cesiumLayer)
@@ -125,7 +125,6 @@ export default {
       if (!layer) return
       // Check the visibility state
       if (this.isLayerVisible(name)) return
-
       // Create the Cesium layer on show
       let cesiumLayer = this.getCesiumLayerByName(name)
       if (!cesiumLayer) {
@@ -142,7 +141,7 @@ export default {
         this.viewer.terrainProvider = cesiumLayer
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
         this.viewer.scene.imageryLayers.add(cesiumLayer)
-      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
+      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         cesiumLayer.show = true
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
       } else {
@@ -164,7 +163,7 @@ export default {
         this.viewer.terrainProvider = null
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
         this.viewer.scene.imageryLayers.remove(cesiumLayer, false)
-      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
+      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         cesiumLayer.show = false
       } else {
         this.viewer.dataSources.remove(cesiumLayer, false)

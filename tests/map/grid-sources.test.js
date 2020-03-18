@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'

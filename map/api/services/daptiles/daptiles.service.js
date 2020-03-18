@@ -182,7 +182,7 @@ class TilesetBuilder {
     minLon = Math.max(minLon, -180.0)
     maxLon = Math.min(maxLon, 180.0)
 
-    // if ((minLon > 20) || (maxLon < -20) || (maxLat < 40) || (minLat > 60)) return undefined
+    // if ((minLon > 20) || (maxLon < -20) || (maxLat < 40) || (minLat > 60)) return undefined
 
     // parameters to buildBatchedTile
     const tileIndices = [...this.indices]

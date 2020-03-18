@@ -45,11 +45,11 @@ export default {
     },
     setupScaleControl () {
       // Add a scale control
-      this.scaleControl = new L.control.scale()
+      this.scaleControl = new L.control.scale()   // eslint-disable-line
       this.scaleControl.addTo(this.map)
     },
     setupGeolocateControl () {
-      this.locateControl = new L.control.locate({
+      this.locateControl = new L.control.locate({  // eslint-disable-line
         locateOptions: {
           maxZoom: 16,
           watch: false,
