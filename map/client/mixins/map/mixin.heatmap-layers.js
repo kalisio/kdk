@@ -23,7 +23,7 @@ export default {
         const geoJson = await fetchGeoJson(source)
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(sourceTemplate)) {
-        // Assume source is an URL returning GeoJson
+        // Source is an URL returning GeoJson possibly templated by time
         const geoJson = await fetchGeoJson(layer.sourceCompiler({ time: this.currentTime }))
         this.updateLeafletHeatmap(layer, geoJson)
       }
@@ -54,7 +54,7 @@ export default {
       if (!layer) return // Cannot update invisible layer
       this.updateLeafletHeatmap(layer, geoJson)
     },
-    onCurrentTimeChangedHeatmapLayer (time) {
+    onCurrentTimeChangedHeatmapLayers (time) {
       const heatmaps = _.values(this.layers).filter(sift({ 'leaflet.type': 'heatmap', isVisible: true }))
       heatmaps.forEach(async heatmap => {
         // Retrieve the layer
@@ -68,11 +68,10 @@ export default {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletHeatmapLayer)
-    this.$on('current-time-changed', this.onCurrentTimeChangedHeatmapLayer)
+    this.$on('current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   },
-
   beforeDestroy () {
-    this.$off('current-time-changed', this.onCurrentTimeChangedHeatmapLayer)
+    this.$off('current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }
 
