@@ -3,7 +3,7 @@ import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw-src.js'
 import 'leaflet-draw/dist/leaflet.draw-src.css'
 import { Dialog, uid } from 'quasar'
-import { bindLeafletEvents, LeafletEvents } from '../../utils'
+import { bindLeafletEvents } from '../../utils'
 
 export default {
   methods: {

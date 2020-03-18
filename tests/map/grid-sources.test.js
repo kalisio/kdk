@@ -1,7 +1,8 @@
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
-import fs from 'fs'
 import _ from 'lodash'
+import fs from 'fs'
+import path from 'path'
 import nock from 'nock'
 import sift from 'sift'
 import moment from 'moment'
@@ -60,7 +61,7 @@ describe('kMap:grid-source', () => {
       nock('http://kMap.test')
         .get('/wcs')
         .query({ SERVICE: 'WCS', VERSION: '1.0.0', REQUEST: 'DescribeCoverage', COVERAGE: wcsOptions.wcs.coverage })
-        .replyWithFile(200, __dirname + '/data/DescribeCoverage.xml')
+        .replyWithFile(200, path.join(__dirname, '/data/DescribeCoverage.xml'))
 
       await source.setup(sourceConfig)
       const bbox = source.getBBox()
@@ -74,7 +75,7 @@ describe('kMap:grid-source', () => {
       nock('http://kMap.test')
         .get('/wcs')
         .query(true)
-        .replyWithFile(200, __dirname + '/data/GetCoverage.tif', { 'Content-Type': 'image/tiff' })
+        .replyWithFile(200, path.join(__dirname, '/data/GetCoverage.tif'), { 'Content-Type': 'image/tiff' })
 
       const fetchBBox = [-10, -10, 10, 10]
       const fetchRes = [0.15, 0.15]
@@ -107,17 +108,17 @@ describe('kMap:grid-source', () => {
       nock('http://kMap.test')
       // whole dataset dds
         .get('/dataset.grb.dds')
-        .replyWithFile(200, __dirname + '/data/dataset.grb.dds')
+        .replyWithFile(200, path.join(__dirname, '/data/dataset.grb.dds'))
       // whole dataset das
         .get('/dataset.grb.das')
-        .replyWithFile(200, __dirname + '/data/dataset.grb.das')
+        .replyWithFile(200, path.join(__dirname, '/data/dataset.grb.das'))
       // request made to fetch min/max lat/lon
         .get(uri => uri.includes('?lat'))
-        .replyWithFile(200, __dirname + '/data/lat_lon_bounds.grb.dods')
+        .replyWithFile(200, path.join(__dirname, '/data/lat_lon_bounds.grb.dods'))
       // fetching data
         .get('/dataset.grb.dods')
         .query(true)
-        .replyWithFile(200, __dirname + '/data/dataset.grb.dods')
+        .replyWithFile(200, path.join(__dirname, '/data/dataset.grb.dods'))
 
       await source.setup(sourceConfig)
       const bbox = source.getBBox()
@@ -131,7 +132,7 @@ describe('kMap:grid-source', () => {
       nock('http://kMap.test')
         .get('/dataset.grb.dods')
         .query(true)
-        .replyWithFile(200, __dirname + '/data/subdataset.grb.dods')
+        .replyWithFile(200, path.join(__dirname, '/data/subdataset.grb.dods'))
 
       const fetchBBox = [-10, -10, 10, 10]
       const fetchRes = [0.15, 0.15]
@@ -160,7 +161,7 @@ describe('kMap:grid-source', () => {
       nock('http://kMap.test')
         .get('/data.tif')
         .reply(function (uri, requestBody) {
-          const data = readRange(__dirname + '/data/GetCoverage.tif', this.req.headers.range)
+          const data = readRange(path.join(__dirname, '/data/GetCoverage.tif', this.req.headers.range))
           if (data) return [200, data]
           return [404]
         })
@@ -177,7 +178,7 @@ describe('kMap:grid-source', () => {
       nock('http://kMap.test')
         .get('/data.tif')
         .reply(function (uri, requestBody) {
-          const data = readRange(__dirname + '/data/GetCoverage.tif', this.req.headers.range)
+          const data = readRange(path.join(__dirname, '/data/GetCoverage.tif', this.req.headers.range))
           if (data) return [200, data]
           return [404]
         })

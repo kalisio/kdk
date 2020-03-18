@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import L from 'leaflet'
 import sift from 'sift'
 import HeatmapOverlay from 'leaflet-heatmap'
 import { fetchGeoJson } from '../../utils'
