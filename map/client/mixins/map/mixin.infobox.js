@@ -15,7 +15,7 @@ export default {
           properties = _.omit(properties, infoboxStyle.omit)
         } else if (infoboxStyle.template) {
           const compiler = infoboxStyle.compiler
-          html = compiler({ properties, feature })
+          compiler({ properties, feature })
         }
       }
       return properties

@@ -1,4 +1,3 @@
-import _ from 'lodash'
 // import logger from 'loglevel'
 import Cesium from 'cesium/Source/Cesium.js'
 

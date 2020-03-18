@@ -17,7 +17,7 @@ export default {
         } else if (infoboxStyle.template) {
           const compiler = infoboxStyle.compiler
           // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
-          text = compiler({ feature: { properties }, properties })
+          compiler({ feature: { properties }, properties })
         }
       }
       return properties

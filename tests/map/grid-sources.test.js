@@ -29,7 +29,7 @@ function readRange (file, range) {
 }
 
 // checks that bboxa constains bboxb
-// where bbox = [ minLat, minLon, maxLat, maxLon ]
+// where bbox = [minLat, minLon, maxLat, maxLon]
 function contains (bboxa, bboxb) {
   return bboxa[0] <= bboxb[0] && bboxa[1] <= bboxb[1] && bboxa[2] >= bboxb[2] && bboxa[3] >= bboxb[3]
 }
