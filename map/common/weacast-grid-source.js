@@ -89,23 +89,27 @@ export class WeacastGridSource extends GridSource {
 
     const results = await this.api.getService(this.service).find({ query })
     if (results.length === 0) return null
-    else {
-      // This is to target raw data
-      // return new Grid1D(
-      //   bbox, [width, height],
-      //   results[0].data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
-      //   this.nodata, this.converter)
-      // This is to target tiles instead of raw data
-      const tiles = []
-      for (const tile of results) {
-        const tileBBox = tile.geometry.coordinates[0] // BBox as a polygon
-        const tileBounds = [tileBBox[0][1], tileBBox[0][0], tileBBox[2][1], tileBBox[2][0]]
-        tiles.push(new Grid1D(
-          tileBounds, tile.size,
-          tile.data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
-          this.nodata, this.converter))
+
+    // This is to target raw data
+    // return new Grid1D(
+    //   bbox, [width, height],
+    //   results[0].data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
+    //   this.nodata, this.converter)
+    // This is to target tiles instead of raw data
+    const tiles = []
+    for (const tile of results) {
+      const tileBBox = tile.geometry.coordinates[0] // BBox as a polygon
+      const tileBounds = [tileBBox[0][1], tileBBox[0][0], tileBBox[2][1], tileBBox[2][0]]
+      // normalize bounds when crossing longitude 180/-180
+      if (tileBounds[1] > tileBounds[3]) {
+        tileBounds[1] -= 360.0
       }
-      return new TiledGrid(tiles, this.nodata)
+      tiles.push(new Grid1D(
+        tileBounds, tile.size,
+        tile.data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
+        this.nodata, this.converter))
     }
+
+    return tiles.length > 1 ? new TiledGrid(tiles) : tiles[0]
   }
 }

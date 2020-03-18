@@ -103,6 +103,7 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   createTile (coords, done) {
+    // compute leaflet tile coordinates in wgs84
     const tileSize = this.getTileSize()
     const pixelCoords0 = L.point(coords.x * tileSize.x, coords.y * tileSize.y)
     const pixelCoords1 = L.point(pixelCoords0.x + tileSize.x, pixelCoords0.y + tileSize.y)
@@ -111,52 +112,70 @@ const TiledMeshLayer = L.GridLayer.extend({
 
     const tile = document.createElement('div')
 
+    // bbox we'll request to the grid source
     const reqBBox = [
       Math.min(latLonCoords0.lat, latLonCoords1.lat), Math.min(latLonCoords0.lng, latLonCoords1.lng),
       Math.max(latLonCoords0.lat, latLonCoords1.lat), Math.max(latLonCoords0.lng, latLonCoords1.lng)
     ]
+    // compute an ideal resolution for grid sources that care
     const resolution = [
       this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
       this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
     ]
     tile.fetchController = new AbortController()
+
+    // request data
     this.gridSource.fetch(tile.fetchController.signal, reqBBox, resolution)
       .then(grid => {
         // fetch ended, can't abort anymore
         tile.fetchController = null
-        if (grid && grid.hasData()) {
-          // build mesh
-          const raw = new RawValueHook('in_layerValue')
-          const geometry = buildPixiMeshFromGrid(grid, [raw])
 
-          // compute tile specific uniforms
-          const dataBBox = grid.getBBox()
-          const offsetScale = [
-            dataBBox[0], dataBBox[1],
-            dataBBox[2] - dataBBox[0], dataBBox[3] - dataBBox[1]
-          ]
-          const uniforms = {
-            in_layerBounds: Float32Array.from(reqBBox),
-            in_layerOffsetScale: Float32Array.from(offsetScale),
-            layerUniforms: this.layerUniforms
+        if (grid) {
+          if (grid.hasData()) {
+            // grid may be much larger than request, try to squeeze it
+            const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(reqBBox)
+
+            const minlat = grid.getLat(iminlat)
+            const minlon = grid.getLon(iminlon)
+            const maxlat = grid.getLat(imaxlat)
+            const maxlon = grid.getLon(imaxlon)
+
+            // build mesh
+            const raw = new RawValueHook('in_layerValue')
+            const geometry = buildPixiMeshFromGrid(grid, [raw], iminlat, iminlon, imaxlat, imaxlon)
+
+            // compute tile specific uniforms
+            const uniforms = {
+              in_layerBounds: Float32Array.from(reqBBox),
+              in_layerOffsetScale: Float32Array.of(minlat, minlon, maxlat - minlat, maxlon - minlon),
+              layerUniforms: this.layerUniforms
+            }
+            if (grid.nodata !== undefined) {
+              uniforms.in_nodata = grid.nodata
+            }
+
+            const shader = new PIXI.Shader(this.program, uniforms)
+            const mode = this.conf.debug.meshAsPoints ? PIXI.DRAW_MODES.POINTS : PIXI.DRAW_MODES.TRIANGLE_STRIP
+            tile.mesh = new PIXI.Mesh(geometry, shader, this.pixiState, mode)
+
+            if (this.conf.debug.showTileInfos) {
+              const dims = grid.getDimensions()
+              const res = grid.getResolution()
+              tile.innerHTML =
+                `leaflet tile is ${tileSize.y} x ${tileSize.x} pixels</br>
+                 covering ${reqBBox[0].toPrecision(6)},${reqBBox[1].toPrecision(6)} to ${reqBBox[2].toPrecision(6)},${reqBBox[3].toPrecision(6)}</br>
+                 req res: ${resolution[0].toPrecision(4)} ${resolution[1].toPrecision(4)}</br>
+                 got res: ${res[0].toPrecision(4)} ${res[1].toPrecision(4)}</br>
+                 fetched grid is ${dims[0]} x ${dims[1]}, slimmed down to ${1 + imaxlat - iminlat} x ${1 + imaxlon - iminlon} points`
+              tile.style.outline = '1px solid green'
+            }
+          } else if (this.conf.debug.showTileInfos) {
+            tile.style.outline = '1px solid red'
+            tile.innerHTML = 'no data here (grid was full of nodata)!'
           }
-          if (grid.nodata !== undefined) {
-            uniforms.in_nodata = grid.nodata
-          }
-
-          const shader = new PIXI.Shader(this.program, uniforms)
-          const mode = this.conf.debug.meshAsPoints ? PIXI.DRAW_MODES.POINTS : PIXI.DRAW_MODES.TRIANGLE_STRIP
-          tile.mesh = new PIXI.Mesh(geometry, shader, this.pixiState, mode)
-        }
-
-        if (grid && this.conf.debug.showTileInfos) {
-          const dims = grid.getDimensions()
-          const res = grid.getResolution()
-          tile.innerHTML =
-            `req res: ${resolution[0].toPrecision(4)} ${resolution[1].toPrecision(4)}</br>
-             got res: ${res[0].toPrecision(4)} ${res[1].toPrecision(4)}</br>
-             ${dims[0]} x ${dims[1]} vertex for ${tileSize.y} x ${tileSize.x} pixels`
+        } else if (this.conf.debug.showTileInfos) {
           tile.style.outline = '1px solid red'
+          tile.innerHTML = 'no data here (grid source returned null grid)!'
         }
 
         done(null, tile)

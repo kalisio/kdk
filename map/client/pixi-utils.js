@@ -293,37 +293,35 @@ export class RawValueHook {
   }
 }
 
-export function buildPixiMeshFromGrid (grid, hooks) {
-  const dims = grid.getDimensions()
-  const latCount = dims[0]
-  const lonCount = dims[1]
+export function buildPixiMeshFromGrid (grid, hooks, iminlat, iminlon, imaxlat, imaxlon) {
+  const latCount = 1 + imaxlat - iminlat
+  const lonCount = 1 + imaxlon - iminlon
 
   // const position = new Float32Array(2 * latCount * lonCount)
   const position = new Uint16Array(2 * latCount * lonCount)
   for (const hook of hooks) { hook.initialize(grid) }
 
-  const bbox = grid.getBBox()
-  const minLat = bbox[0]
-  const minLon = bbox[1]
-  const maxLat = bbox[2]
-  const maxLon = bbox[3]
+  const minLat = grid.getLat(iminlat)
+  const minLon = grid.getLon(iminlon)
+  const maxLat = grid.getLat(imaxlat)
+  const maxLon = grid.getLon(imaxlon)
 
   const deltaLat = maxLat - minLat
   const deltaLon = maxLon - minLon
 
   // fill attributes
   let vidx = 0
-  for (let ilon = 0; ilon < lonCount; ++ilon) {
+  for (let ilon = iminlon; ilon <= imaxlon; ++ilon) {
     const lon = grid.getLon(ilon)
-    for (let ilat = 0; ilat < latCount; ++ilat) {
+    for (let ilat = iminlat; ilat <= imaxlat; ++ilat) {
       const lat = grid.getLat(ilat)
 
       position[vidx * 2] = toHalf((lat - minLat) / deltaLat)
       position[vidx * 2 + 1] = toHalf((lon - minLon) / deltaLon)
       /*
-            position[vidx * 2] = lat
-            position[vidx * 2 + 1] = lon
-            */
+      position[vidx * 2] = lat
+      position[vidx * 2 + 1] = lon
+      */
 
       for (const hook of hooks) { hook.iterate(vidx, ilat, ilon) }
 

@@ -16,6 +16,16 @@ export class BaseGrid {
     this.dimensions = dimensions
     this.resolution = [(bbox[2] - bbox[0]) / (dimensions[0] - 1), (bbox[3] - bbox[1]) / (dimensions[1] - 1)]
     this.nodata = nodata
+
+    if (this.bbox[0] >= this.bbox[2] || this.bbox[1] >= this.bbox[3]) {
+      throw new Error("Grid bbox seems weird")
+    }
+    if (this.dimensions[0] <= 0 || this.dimensions[1] <= 0) {
+      throw new Error("Grid dimension is < 0, something's wrong")
+    }
+    if (this.resolution[0] <= 0.0 || this.resolution[1] <= 0.0) {
+      throw new Error("Grid resolution is < 0, something's wrong")
+    }
   }
 
   getDimensions () {
@@ -91,6 +101,34 @@ export class BaseGrid {
     const ilon = (lon - this.bbox[1]) / this.resolution[1]
 
     return [Math.floor(ilat), Math.floor(ilon)]
+  }
+
+  getBestFit (fitBbox) {
+    let iminlat = -1
+    for (let ilat = 0; ilat < this.dimensions[0] - 1 && iminlat === -1; ++ilat) {
+      const lat = this.getLat(ilat + 1)
+      if (lat > fitBbox[0]) iminlat = ilat
+    }
+
+    let imaxlat = -1
+    for (let ilat = this.dimensions[0] - 1; ilat > 0 && imaxlat === -1; --ilat) {
+      const lat = this.getLat(ilat - 1)
+      if (lat < fitBbox[2]) imaxlat = ilat
+    }
+
+    let iminlon = -1
+    for (let ilon = 0; ilon < this.dimensions[1] - 1 && iminlon === -1; ++ilon) {
+      const lon = this.getLon(ilon + 1)
+      if (lon > fitBbox[1]) iminlon = ilon
+    }
+
+    let imaxlon = -1
+    for (let ilon = this.dimensions[1] - 1; ilon > 0 && imaxlon === -1; --ilon) {
+      const lon = this.getLon(ilon - 1)
+      if (lon < fitBbox[3]) imaxlon = ilon
+    }
+
+    return [iminlat, iminlon, imaxlat, imaxlon]
   }
 }
 
@@ -257,6 +295,8 @@ export class Grid2D extends BaseGrid {
   }
 }
 
+// Class to aggregate multiple grids in a single one
+// All grids in the aggregate MUST have the same resolution
 export class TiledGrid extends BaseGrid {
   constructor (tiles, nodata = undefined) {
     const bbox0 = tiles[0].getBBox()
@@ -270,11 +310,10 @@ export class TiledGrid extends BaseGrid {
 
     for (const tile of tiles) {
       // make sure resolution match between tiles
-      /*
-            const res = tile.getResolution()
-            if (res[0] !== this.resolution[0] || res[1] !== this.resolution[1])
-                throw new Error('Resolution does not latch between tiles')
-            */
+      const res = tile.getResolution()
+      if (res[0] !== res[0] || res[1] !== res0[1]) {
+        throw new Error('Resolution does not match between tiles')
+      }
 
       // update grid bbox and make sure it is contiguous
       const bbox = tile.getBBox()
@@ -284,8 +323,8 @@ export class TiledGrid extends BaseGrid {
       this.bbox[3] = Math.max(this.bbox[3], bbox[3])
     }
 
-    this.dimensions[0] = Math.trunc((this.bbox[2] - this.bbox[0]) / this.resolution[0])
-    this.dimensions[1] = Math.trunc((this.bbox[3] - this.bbox[1]) / this.resolution[1])
+    this.dimensions[0] = 1 + Math.trunc((this.bbox[2] - this.bbox[0]) / this.resolution[0])
+    this.dimensions[1] = 1 + Math.trunc((this.bbox[3] - this.bbox[1]) / this.resolution[1])
 
     this.tiles = []
 
@@ -293,7 +332,6 @@ export class TiledGrid extends BaseGrid {
       const bbox = tile.getBBox()
       const meta = {
         tile: tile,
-        // latMin
         iLatMin: Math.floor((bbox[0] - this.bbox[0]) / this.resolution[0]),
         iLatMax: Math.floor((bbox[2] - this.bbox[0]) / this.resolution[0]),
         iLonMin: Math.floor((bbox[1] - this.bbox[1]) / this.resolution[1]),
@@ -313,8 +351,29 @@ export class TiledGrid extends BaseGrid {
       break
     }
 
-    if (!tile) { return 0 }
+    if (!tile) {
+      return 0
+    }
 
     return tile.tile.getValue(ilat - tile.iLatMin, ilon - tile.iLonMin)
+  }
+}
+
+export class SubGrid extends BaseGrid {
+  constructor (grid, subBbox) {
+    const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(subBbox)
+
+    const adjustedDims = [1 + imaxlat - iminlat, 1 + imaxlon - iminlon]
+    const adjustedBbox = [grid.getLat(iminlat), grid.getLon(iminlon), grid.getLat(imaxlat), grid.getLon(imaxlon)]
+
+    super(adjustedBbox, adjustedDims, grid.nodata)
+    // this.resolution = grid.resolution.slice()
+    this.latOffset = iminlat
+    this.lonOffset = iminlon
+    this.implGrid = grid
+  }
+
+  getValue (ilat, ilon) {
+    return this.implGrid.getValue(ilat + this.latOffset, ilon + this.lonOffset)
   }
 }
