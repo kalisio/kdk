@@ -117,6 +117,18 @@ export default {
         })
         // If no interval given this is a manual update
         _.set(leafletOptions, 'start', _.has(leafletOptions, 'interval'))
+      } else if (_.has(leafletOptions, 'sourceTemplate')) {
+        const sourceCompiler = _.template(_.get(leafletOptions, 'sourceTemplate'))
+        // Tell realtime plugin how to update/load data
+        _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
+          try {
+            successCallback(await fetchGeoJson(sourceCompiler({ time: this.currentTime })))
+          } catch (error) {
+            errorCallback(error)
+          }
+        })
+        // But in this case do not try to start update automatically
+        _.set(leafletOptions, 'start', false)
       } else if (!_.has(leafletOptions, 'source')) {
         // Even for manual update leaflet realtime require a src
         _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {})
@@ -279,9 +291,27 @@ export default {
       if (typeof layer._onNewData === 'function') {
         layer._onNewData(layer.options.removeMissing, geoJson || this.toGeoJson(name))
       }
+    },
+    onCurrentTimeChangedGeoJsonLayers (time) {
+      const geoJsonlayers = _.values(this.layers).filter(sift({
+        'leaflet.type': 'geoJson', 
+        'leaflet.realtime': true,
+        'leaflet.sourceTemplate': { $exists: true },
+        isVisible: true
+      }))
+      geoJsonlayers.forEach(async geoJsonlayer => {
+        // Retrieve the layer
+        const layer = this.getLeafletLayerByName(geoJsonlayer.name)
+        // Then force update
+        layer.update()
+      })
     }
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
+    this.$on('current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+  },
+  beforeDestroy () {
+    this.$off('current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }
