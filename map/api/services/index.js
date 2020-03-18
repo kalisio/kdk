@@ -59,13 +59,13 @@ export function removeAlertsService (options) {
 export default async function () {
   const app = this
 
-  const catalogOptions = app.getServiceOptions('catalog')
-  if (!_.get(catalogOptions.disabled)) {
-    createCatalogService.call(app, catalogOptions)
+  const catalogConfig = app.get('catalog')
+  if (catalogConfig) {
+    createCatalogService.call(app)
   }
-  const geocoderOptions = app.getServiceOptions('geocoder')
-  if (!_.get(geocoderOptions.disabled)) {
-    app.createService('geocoder', Object.assign({ servicesPath }, geocoderOptions))
+  const geocoderConfig = app.get('geocoder')
+  if (geocoderConfig) {
+    app.createService('geocoder', { servicesPath })
   }
   // Add app-specific hooks to required services
   app.on('service', async service => {
@@ -77,9 +77,9 @@ export default async function () {
       }
     }
   })
-  const alertsOptions = app.getServiceOptions('alerts')
-  if (!_.get(alertsOptions.disabled)) {
-    createAlertsService.call(app, alertsOptions)
+  const alertsConfig = app.get('alerts')
+  if (alertsConfig) {
+    createAlertsService.call(app)
   }
 
   /*

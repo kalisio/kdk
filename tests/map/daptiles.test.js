@@ -5,7 +5,7 @@ import core, { kalisio, hooks } from '@kalisio/kdk-core'
 // import map from '../src'
 import distribution from '@kalisio/feathers-distributed'
 
-describe('kMap:daptiles', () => {
+describe('map:daptiles', () => {
     let app, server, port, baseUrl, daptilesService
 
     before(() => {

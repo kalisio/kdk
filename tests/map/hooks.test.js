@@ -2,7 +2,7 @@ import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
 import { hooks } from '../../map/api'
 
-describe('kMap:hooks', () => {
+describe('map:hooks', () => {
   before(() => {
     chailint(chai, util)
   })

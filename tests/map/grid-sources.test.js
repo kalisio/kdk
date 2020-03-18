@@ -34,7 +34,7 @@ function contains (bboxa, bboxb) {
   return bboxa[0] <= bboxb[0] && bboxa[1] <= bboxb[1] && bboxa[2] >= bboxb[2] && bboxa[3] >= bboxb[3]
 }
 
-describe('kMap:grid-source', () => {
+describe('map:grid-source', () => {
   let source
   let sourceConfig
 

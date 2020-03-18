@@ -16,7 +16,6 @@ import { TooManyRequests, Forbidden, BadRequest } from '@feathersjs/errors'
 import express from '@feathersjs/express'
 import rest from '@feathersjs/express/rest'
 import socketio from '@feathersjs/socketio'
-import memory from 'feathers-memory'
 import { ObjectID } from 'mongodb'
 import { Database, idToString } from './db'
 import auth, { authSocket } from './authentication'
@@ -148,9 +147,7 @@ export function createService (name, app, options = {}) {
 
   // Initialize our service with any options it requires
   let service
-  if (serviceOptions.memory) {
-    service = memory(serviceOptions.memory)
-  } if (dbService) {
+  if (dbService) {
     service = createFeathersService(serviceOptions)
     dbService = service
   } else if (serviceOptions.proxy) {
