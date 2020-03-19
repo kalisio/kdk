@@ -7,8 +7,8 @@ export default {
       // Ensure DOM ref is here as well
       await this.loadRefs()
       this.setupGlobe(this.$refs.globe, token)
-      this.viewer.camera.moveEnd.addEventListener(this.storeView)
       await this.initialize() // Generic activity initialization
+      this.viewer.camera.moveEnd.addEventListener(this.storeView)
     },
     finalizeGlobe () {
       this.viewer.camera.moveEnd.removeEventListener(this.storeView)

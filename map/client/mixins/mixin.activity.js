@@ -575,6 +575,10 @@ export default function (name) {
         }
         return this.$store.get('restore.view')
       },
+      getRouteBounds() {
+        const currentBounds = _.pick(this.$route.params, ['south', 'west', 'north', 'east'])
+        return _.mapValues(currentBounds, value => _.toNumber(value))
+      },
       storeView () {
         const bounds = this.getBounds()
         const south = bounds[0][0]
@@ -583,7 +587,10 @@ export default function (name) {
         const east = bounds[1][1]
         // Store both in URL and local storage, except if the user/view has explicitly revoked restoration
         if (this.shouldRestoreView()) {
-          this.$router.push({ query: Object.assign({ south, west, north, east }, this.$route.query) }).catch(_ => {})
+          const targetBounds = { south, west, north, east }
+          if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
+            this.$router.replace({ params: targetBounds }).catch(error => {})
+          }
           window.localStorage.setItem(this.getViewKey(), JSON.stringify(bounds))
         }
       },
@@ -592,11 +599,11 @@ export default function (name) {
         if (this.shouldRestoreView()) {
           const savedBounds = window.localStorage.getItem(this.getViewKey())
           if (savedBounds) bounds = JSON.parse(savedBounds)
-        } else if (_.get(this.$route, 'query.south') && _.get(this.$route, 'query.west') &&
-                   _.get(this.$route, 'query.north') && _.get(this.$route, 'query.east')) {
+        } else if (_.get(this.$route, 'params.south') && _.get(this.$route, 'params.west') &&
+                   _.get(this.$route, 'params.north') && _.get(this.$route, 'params.east')) {
           bounds = [
-            [_.get(this.$route, 'query.south'), _.get(this.$route, 'query.west')],
-            [_.get(this.$route, 'query.north'), _.get(this.$route, 'query.east')]
+            [_.get(this.$route, 'params.south'), _.get(this.$route, 'params.west')],
+            [_.get(this.$route, 'params.north'), _.get(this.$route, 'params.east')]
           ]
         }
         // Restore state if required
@@ -605,13 +612,16 @@ export default function (name) {
           const west = bounds[0][1]
           const north = bounds[1][0]
           const east = bounds[1][1]
-          this.$router.push({ query: Object.assign({ south, west, north, east }, this.$route.query) }).catch(_ => {})
+          const targetBounds = { south, west, north, east }
+          if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
+            this.$router.replace({ params: targetBounds }).catch(error => {})
+          }
           this.zoomToBounds(bounds)
         }
         return bounds
       },
       clearStoredView () {
-        this.$router.push({ query: {} }).catch(_ => {})
+        this.$router.replace({ params: {} }).catch(error => {})
         window.localStorage.removeItem(this.getViewKey())
       },
       updateViewSettings () {

@@ -5,8 +5,8 @@ export default {
       // Ensure DOM ref is here as well
       await this.loadRefs()
       this.setupMap(this.$refs.map)
-      this.map.on('moveend', this.storeView)
       await this.initialize() // Generic activity initialization
+      this.map.on('moveend', this.storeView)
     },
     finalizeMap () {
       this.map.off('moveend', this.storeView)
