@@ -46,8 +46,8 @@
 <script>
 import _ from 'lodash'
 import { Dialog } from 'quasar'
-import { mixins } from '../../mixins'
-import { utils } from '../../utils'
+import mixins from '../../mixins'
+import utils from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 
 export default {

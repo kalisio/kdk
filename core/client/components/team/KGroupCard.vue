@@ -24,7 +24,7 @@
 
 <script>
 import _ from 'lodash'
-import { mixins } from '../../mixins'
+import mixins from '../../mixins'
 import { findMembersOfGroup, getRoleForGroup, Roles, RoleNames } from '../../../common/permissions'
 import { Dialog } from 'quasar'
 

@@ -35,8 +35,8 @@
 
 <script>
 import _ from 'lodash'
-import { utils } from '../../utils'
-import { mixins } from '../../mixins'
+import utils from '../../utils'
+import mixins from '../../mixins'
 
 export default {
   name: 'k-organisations-panel',
