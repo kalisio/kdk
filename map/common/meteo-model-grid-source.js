@@ -17,11 +17,15 @@ export class MeteoModelGridSource extends DynamicGridSource {
   }
 
   setModel (model) {
+    if (this.queuedCtx.model === model) return
+
     this.queuedCtx.model = model
     this.queueUpdate()
   }
 
   setTime (time) {
+    if (this.queuedCtx.time && time.isSame(this.queuedCtx.time)) return
+
     this.queuedCtx.time = time.clone()
     this.queueUpdate()
   }
