@@ -119,7 +119,7 @@ const GradientPath = L.PixiOverlay.extend({
     const ctx = canvas.getContext('2d')
     const grd = ctx.createLinearGradient(0, 0, canvas.width, 1)
     for (let i = 0; i < gradient.length; i++) {
-      grd.addColorStop(i / gradient.length, gradient[i])
+      grd.addColorStop(i / (gradient.length - 1), gradient[i])
     }
     ctx.fillStyle = grd
     ctx.fillRect(0, 0, canvas.width, canvas.height)
