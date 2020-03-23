@@ -32,18 +32,13 @@ export default function init () {
   // Create the models listened by the main layout components
   // You must use the patch method on the store to update those models
   // It is generally done using the registerAction on an Activity based component
-  const appBar = { title: '', subtitle: '', toolbar: [], menu: [] }
-  Store.set('appBar', appBar)
-  const search = { field: '', pattern: '', services: [], items: [] }
-  Store.set('searchBar', search)
-  const tabBar = { tabs: [] }
-  Store.set('tabBar', tabBar)
-  const leftDrawer = { component: '', options: {} }
-  Store.set('leftDrawer', leftDrawer)
-  const rightDrawer = { component: '', options: {} }
-  Store.set('rightDrawer', rightDrawer)
-  const fab = { actions: [] }
-  Store.set('fab', fab)
+  Store.set('appBar', { title: '', subtitle: '', toolbar: [], menu: [] })
+  Store.set('searchBar', { field: '', pattern: '', services: [], items: [] })
+  Store.set('tabBar', { tabs: [] })
+  Store.set('leftDrawer', { component: '', options: {} })
+  Store.set('rightDrawer', { component: '', options: {} })
+  Store.set('footer', { component: '', options: {} })
+  Store.set('fab', { actions: [] })
 
   // Listen to the 'patched' event on the users
   const users = api.getService('users')

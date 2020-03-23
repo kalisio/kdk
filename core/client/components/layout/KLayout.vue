@@ -1,45 +1,37 @@
 <template>
   <q-layout ref="layout" v-bind="options">
     <!--
-      The AppBar
+      AppBar, TabBar and SearchBar
     -->
     <q-header>
-      <k-app-bar id="app-bar" :has-left-drawer-toggle="!leftDrawerIsVisible" @left-drawer-toggled="toggleLeftDrawer" />
+      <k-app-bar id="app-bar" :has-left-drawer-toggle="!isLeftDrawerVisible" @left-drawer-toggled="toggleLeftDrawer" />
       <k-tab-bar id="tab-bar" />
       <k-search-bar id="search-bar" />
     </q-header>
     <!--
-      The left drawer
+      Left drawer
     -->
-    <q-drawer v-model="leftDrawerIsVisible" v-bind="options.leftDrawer" side="left" bordered>
-      <div v-if="options.leftDrawer.behavior!=='mobile'" class="row justify-end">
-        <q-btn id="left-drawer-close" flat color="secondary" icon="chevron_left" @click="toggleLeftDrawer" />
-      </div>
-      <div v-if="leftDrawerComponent!=''">
-        <component :is="leftDrawerComponent" v-bind="leftDrawer.options" />
-      </div>
+    <q-drawer v-if="leftDrawerComponent" v-model="isLeftDrawerVisible" v-bind="options.leftDrawer" side="left" bordered>
+      <component :is="leftDrawerComponent" v-bind="leftDrawer.options" />
     </q-drawer>
      <!--
-      The right drawer
+      Right drawer
      -->
-    <q-drawer v-model="rightDrawerIsVisible" v-bind="options.rightDrawer" side="right" bordered>
-      <div v-if="options.rightDrawer.behavior!=='mobile'" class="row justify-start">
-        <q-btn id="right-drawer-close" flat color="secondary" icon="chevron_right" @click="toggleRightDrawer" />
-      </div>
-      <div v-if="rightDrawerComponent!=''">
-        <component :is="rightDrawerComponent" v-bind="rightDrawer.options" />
-      </div>
+    <q-drawer v-if="rightDrawerComponent" v-model="isRightDrawerVisible" v-bind="options.rightDrawer" side="right" bordered>
+      <component :is="rightDrawerComponent" v-bind="rightDrawer.options" />
     </q-drawer>
+     <!--
+      Footer
+     -->    
+    <q-footer v-if="footerComponent" v-model="isFooterVisible" v-bind="options.footer" bordered>
+      <component :is="footerComponent" v-bind="footer.options" />
+    </q-footer> 
     <!--
-      The Content area
+      Page container
     -->
     <q-page-container>
       <router-view />
     </q-page-container>
-    <!--
-     The Fab
-    -->
-    <k-fab />
   </q-layout>
 </template>
 
@@ -55,45 +47,62 @@ export default {
   },
   computed: {
     leftDrawerComponent () {
-      if (!this.leftDrawer || this.leftDrawer.component === '') return ''
+      if (!this.leftDrawer || !this.leftDrawer.component) return null
       const componentKey = _.kebabCase(this.leftDrawer.component)
       this.$options.components[componentKey] = this.$load(this.leftDrawer.component)
       return componentKey
     },
     rightDrawerComponent () {
-      if (!this.rightDrawer || this.rightDrawer.component === '') return ''
+      if (!this.rightDrawer || !this.rightDrawer.component) return null
       const componentKey = _.kebabCase(this.rightDrawer.component)
       this.$options.components[componentKey] = this.$load(this.rightDrawer.component)
+      return componentKey
+    },
+    footerComponent () {
+      if (!this.footer || !this.footer.component) return null
+      const componentKey = _.kebabCase(this.footer.component)
+      this.$options.components[componentKey] = this.$load(this.footer.component)
       return componentKey
     }
   },
   data () {
     return {
       leftDrawer: this.$store.get('leftDrawer'),
-      leftDrawerIsVisible: false,
+      isLeftDrawerVisible: false,
       rightDrawer: this.$store.get('rightDrawer'),
-      rightDrawerIsVisible: false,
+      isRightDrawerVisible: false,
+      footer: this.$store.get('footer'),
+      isFooterVisible: true,
       options: {}
     }
   },
-  methods: {
+  methods: {  
     showLeftDrawer () {
-      this.leftDrawerIsVisible = true
+      this.isLeftDrawerVisible = true
     },
     hideLeftDrawer () {
-      this.leftDrawerIsVisible = false
+      this.isLeftDrawerVisible = false
     },
     toggleLeftDrawer () {
-      this.leftDrawerIsVisible = !this.leftDrawerIsVisible
+      this.isLeftDrawerVisible = !this.isLeftDrawerVisible
     },
     showRightDrawer () {
-      this.rightDrawerIsVisible = true
+      this.isRightDrawerVisible = true
     },
     hideRightDrawer () {
-      this.rightDrawerIsVisible = false
+      this.isRightDrawerVisible = false
     },
     toggleRightDrawer () {
-      this.rightDrawerIsVisible = !this.rightDrawerIsVisible
+      this.isRightDrawerVisible = !this.isRightDrawerVisible
+    },
+    showFooter () {
+      this.isFooterVisible = true
+    },
+    hideFooter () {
+      this.isFooterVisible = false
+    },
+    toggleFooter () {
+      this.isFooterVisible = !this.isFooterVisible
     }
   },
   created () {
@@ -103,18 +112,26 @@ export default {
     this.$options.components['k-app-bar'] = this.$load(_.get(this.options, 'appBar', 'layout/KAppBar'))
     this.$options.components['k-search-bar'] = this.$load(_.get(this.options, 'searchBar', 'layout/KSearchBar'))
     this.$options.components['k-tab-bar'] = this.$load(_.get(this.options, 'tabBar', 'layout/KTabBar'))
-    this.$options.components['k-fab'] = this.$load(_.get(this.options, 'fab', 'layout/KFab'))
     // Setup the left and right drawers
     this.$store.patch('leftDrawer', {
-      component: _.get(this.options, 'leftDrawer.component.name', ''),
+      component: _.get(this.options, 'leftDrawer.component.name', null),
       options: _.get(this.options, 'leftDrawer.component.options', {})
     })
-    this.leftDrawerIsVisible = _.get(this.options, 'leftDrawer.isVisible', false)
     this.$store.patch('rightDrawer', {
-      component: _.get(this.options, 'rightDrawer.component.name', ''),
+      component: _.get(this.options, 'rightDrawer.component.name', null),
       options: _.get(this.options, 'rightDrawer.component.options', {})
     })
-    this.rightDrawerIsVisible = _.get(this.options, 'rightDrawer.isVisible', false)
+    // Setup the footer
+    this.$store.patch('footer', {
+      component: _.get(this.options, 'footer.component.name', null),
+      options: _.get(this.options, 'footer.component.options', {})
+    })
   }
 }
 </script>
+
+<style>
+.q-drawer__opener {
+  width: 0px;
+}
+</style>

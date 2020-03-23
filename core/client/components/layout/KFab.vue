@@ -26,8 +26,6 @@
       <q-btn
         id="modal-action"
         color="secondary"
-        class="fixed"
-        style="right: 18px; bottom: 18px"
         round
         @click="openModal()">
         <q-icon name="keyboard_arrow_up" />
@@ -61,8 +59,6 @@
       :id="fab.actions[0].id"
       color="secondary"
       :icon="fab.actions[0].icon"
-      class="fixed"
-      style="right: 18px; bottom: 18px"
       size="1.15rem"
       round
       @click="onActionTriggered(fab.actions[0])">
