@@ -644,6 +644,11 @@ export default function (name) {
           this.updateTimeline(timeline)
         }
       },
+      timelineSettingChanged (newValue, oldValue) {
+        // filter out updates when no real change
+        if (newValue === oldValue) return
+        this.resetTimeline()
+      },
       async initialize () {
         // Geolocate by default if view has not been restored
         if (!this.restoreView()) {
@@ -688,6 +693,12 @@ export default function (name) {
       // Whenever restore view settings are updated, update view as well
       this.$events.$on('restore-view-changed', this.updateViewSettings)
       this.$events.$on('error', this.onGeolocationError)
+
+      // reset timeline when modifying timeline settings
+      this.$events.$on('timeline-span-changed', this.timelineSettingChanged)
+      this.$events.$on('timeline-offset-changed', this.timelineSettingChanged)
+      this.$events.$on('timeline-step-changed', this.timelineSettingChanged)
+      this.$events.$on('timeline-reference-changed', this.timelineSettingChanged)
     },
     beforeDestroy () {
       this.$off('map-ready', this.onMapReady)
@@ -696,6 +707,11 @@ export default function (name) {
       this.$events.$off('user-position-changed', this.geolocate)
       this.$events.$off('restore-view-changed', this.updateViewSettings)
       this.$events.$off('error', this.onGeolocationError)
+
+      this.$events.$off('timeline-span-changed', this.timelineSettingChanged)
+      this.$events.$off('timeline-offset-changed', this.timelineSettingChanged)
+      this.$events.$off('timeline-step-changed', this.timelineSettingChanged)
+      this.$events.$off('timeline-reference-changed', this.timelineSettingChanged)
     }
   }
 }
