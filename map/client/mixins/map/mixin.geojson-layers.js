@@ -3,6 +3,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import 'leaflet-realtime'
 import { GradientPath } from '../../leaflet/GradientPath'
+import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer'
 import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 
 // Override default Leaflet GeoJson utility to manage some specific use cases
@@ -109,14 +110,25 @@ export default {
           // If query interval not given use 2 x refresh interval as default value
           // this ensures we cover last interval if server/client update processes are not in sync
           if (!queryInterval && leafletOptions.interval) queryInterval = 2 * leafletOptions.interval
-          try {
-            successCallback(await this.getFeatures(options, queryInterval))
-          } catch (error) {
-            errorCallback(error)
+          if (!leafletOptions.tiled) {
+            try {
+              successCallback(await this.getFeatures(options, queryInterval))
+            } catch (error) {
+              errorCallback(error)
+            }
           }
         })
         // If no interval given this is a manual update
         _.set(leafletOptions, 'start', _.has(leafletOptions, 'interval'))
+
+        if (leafletOptions.tiled) {
+          const tiledOptions = {}
+          tiledOptions.activity = this
+          tiledOptions.layerName = options.name
+          tiledOptions.service = this.$api.getService(options.service)
+          const tiledLayer = new TiledFeatureLayer(tiledOptions)
+          this.map.addLayer(tiledLayer)
+        }
       } else if (_.has(leafletOptions, 'sourceTemplate')) {
         const sourceCompiler = _.template(_.get(leafletOptions, 'sourceTemplate'))
         // Tell realtime plugin how to update/load data
