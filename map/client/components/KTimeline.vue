@@ -172,6 +172,8 @@ export default {
     onTimelineUpdated (event) {
       // Only when drag stops to avoid fetching data permanently
       if (event.final) {
+        // stop timeline if it runs
+        this.kActivity.stopTimeline()
         this.kActivity.setCurrentTime(moment.utc(event.value))
       }
     },

@@ -3,6 +3,7 @@
     <div class="row q-gutter-sm">
       <q-btn size="sm" round icon='fas fa-step-backward' color="secondary" @click="onClickBackward"/>
       <q-btn size="sm" round icon='fas fa-step-forward' color="secondary" @click="onClickForward"/>
+      <q-btn size="sm" round :icon='tickingStateIcon' color="secondary" @click="onToggleTickingState"/>
     </div>
     <!--
     <q-fab icon='keyboard_arrow_left' direction='left' color="secondary">
@@ -83,24 +84,31 @@ export default {
         const datetime = moment.utc(value, this.qinputformat)
         this.updateReference(datetime)
       }
+    },
+    tickingStateIcon () {
+      return this.kActivity.timeline.isTicking ? 'fas fa-stop' : 'fas fa-play'
     }
   },
   methods: {
     updateReference (newref) {
       this.reference = newref
-      this.kActivity.centerTimeline(newref)
+      this.kActivity.updateTimeline({ reference: newref })
     },
     onClickForward (event) {
-      const currentTime = this.kActivity.currentTime.clone()
-      currentTime.add(this.kActivity.timeline.step)
-      this.kActivity.setCurrentTime(currentTime)
+      // stop timeline if it runs
+      this.kActivity.stopTimeline()
+      this.kActivity.timelineTick(1)
     },
     onClickBackward (event) {
-      const currentTime = this.kActivity.currentTime.clone()
-      currentTime.subtract(this.kActivity.timeline.step)
-      this.kActivity.setCurrentTime(currentTime)
+      // stop timeline if it runs
+      this.kActivity.stopTimeline()
+      this.kActivity.timelineTick(-1)
+    },
+    onToggleTickingState (event) {
+      this.kActivity.toggleTickingState()
     },
     onClickReset (event) {
+      this.kActivity.stopTimeline()
       this.kActivity.resetTimeline()
     },
     onTimelineChanged (timeline) {
