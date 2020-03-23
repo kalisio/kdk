@@ -1,6 +1,6 @@
 import L from 'leaflet'
 
-function tileToBounds (map, coords, tileSize) {
+function tile2bounds (map, coords, tileSize) {
   const pixelCoords0 = L.point(coords.x * tileSize.x, coords.y * tileSize.y)
   const pixelCoords1 = L.point(pixelCoords0.x + tileSize.x, pixelCoords0.y + tileSize.y)
   const latLonCoords0 = map.wrapLatLng(map.unproject(pixelCoords0, coords.z))
@@ -57,8 +57,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
     let skipTile = false
 
     // check we need to load the tile
-    // we don't have to load it when a tile at an upper zoom level
-    // encompassing the tile is already loaded
+    // we don't have to load it
+    //  - when a tile at an upper zoom levelencompassing the tile is already loaded
+    //  - or when all sub tiles have already been loaded
+    // TODO: we may also check if we have all the sub tiles loaded too ...
     const triplet = {
       x: coords.x,
       y: coords.y,
@@ -126,42 +128,36 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const geojson = event.tile.geojson
     if (!geojson) return
 
-    const triplet = {
-      x: event.coords.x,
-      y: event.coords.y,
-      z: event.coords.z
-    }
-    const tilekey = (triplet.x * 536870912) + (triplet.y * 32) + triplet.z
+    // add tile to loaded tiles set
+    const tilekey = tile2key(event.coords)
     this.loadedTiles.add(tilekey)
 
+    // update geojson layer with new bits
     this.activity.updateLayer(this.layerName, geojson)
   },
 
   onTileUnload (event) {
-    const visible = this.map.getBounds()
-    const bounds = tileToBounds(this.map, event.coords, this.getTileSize()) 
-    if (visible.intersects(bounds)) return
-
     const geojson = event.tile.geojson
     if (!geojson) return
 
-    const triplet = {
-      x: event.coords.x,
-      y: event.coords.y,
-      z: event.coords.z
-    }
-    const tileKey = (triplet.x * 536870912) + (triplet.y * 32) + triplet.z
-    this.loadedTiles.delete(tileKey)
+    // check if we can unload the associated geojson bits
+    // we only unload when the unloaded tile is completely outside
+    // the visible bounds
+    const visible = this.map.getBounds()
+    const bounds = tile2bounds(this.map, event.coords, this.getTileSize())
+    if (visible.intersects(bounds)) return
+
+    // ok, we can unload geosjon, and remove tile from loaded tile set
+    const tilekey = tile2key(event.coords)
+    this.loadedTiles.delete(tilekey)
 
     this.activity.updateLayer(this.layerName, geojson, true)
   },
 
   onZoomStart (event) {
-   
   },
 
   onZoomEnd (event) {
-   
   }
 })
 
