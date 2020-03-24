@@ -2,7 +2,7 @@
   <div
     class="row justify-center items-center" 
     v-bind:class="{ 'k-drawer-opener-left': position === 'left', 'k-drawer-opener-right': position === 'right' }"
-    v-touch-swipe.mouse="onSwipe"
+    v-touch-swipe.mouse.horizontal="onSwipe"
     @mouseover="onMouseOver"
     @mouseleave="onMouseLeave"
     @click="onClick">

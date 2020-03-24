@@ -1,14 +1,16 @@
 <template>
-  <q-page padding>
-    <!--
-      Groups collection
-    -->
-    <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="searchQuery" :list-strategy="'smart'" />
-    <!--
-      Router view to enable routing to modals
-    -->
-    <router-view service="groups" :router="router()"></router-view>
-  </q-page>
+  <k-page padding>
+    <div slot="page-content" >
+      <!--
+        Groups collection
+      -->
+      <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="searchQuery" :list-strategy="'smart'" />
+      <!--
+        Router view to enable routing to modals
+      -->
+      <router-view service="groups" :router="router()"></router-view>
+    </div>
+  </k-page>
 </template>
 
 <script>
@@ -90,6 +92,7 @@ export default {
   },
   created () {
     // Load the required components
+    this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
   }
 }

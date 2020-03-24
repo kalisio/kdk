@@ -47,7 +47,7 @@
 import _ from 'lodash'
 import { Dialog } from 'quasar'
 import mixins from '../../mixins'
-import utils from '../../utils'
+import { getInitials } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 
 export default {
@@ -124,7 +124,7 @@ export default {
       return this.item._id + group._id
     },
     groupInitials (group) {
-      return utils.getInitials(group.name)
+      return getInitials(group.name)
     },
     roleIcon (role) {
       return this.roleIcons[role]

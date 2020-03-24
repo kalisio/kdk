@@ -1,15 +1,17 @@
 <template>
-  <q-page padding>
-    <!--
-      Members collection, cannot use smart strategy here because membership is not managed at service level
-      but using authorisations on users
-     -->
-    <k-grid ref="membersGrid" service="members" :renderer="renderer" :contextId="contextId" :base-query="baseQuery" :filter-query="searchQuery" />
-    <!--
-      Router view to enable routing to modals
-     -->
-    <router-view service="members" :router="router()"></router-view>
-  </q-page>
+  <k-page padding>
+    <div slot="page-content" >
+      <!--
+        Members collection, cannot use smart strategy here because membership is not managed at service level
+        but using authorisations on users
+      -->
+      <k-grid ref="membersGrid" service="members" :renderer="renderer" :contextId="contextId" :base-query="baseQuery" :filter-query="searchQuery" />
+      <!--
+        Router view to enable routing to modals
+      -->
+      <router-view service="members" :router="router()"></router-view>
+    </div>
+  </k-page>
 </template>
 
 <script>
@@ -34,7 +36,7 @@ export default {
         }
       },
       renderer: {
-        component: 'KMemberCard',
+        component: 'team/KMemberCard',
         props: {
           options: {
             tags: 'chip',
@@ -114,6 +116,7 @@ export default {
   },
   created () {
     // Load the required components
+    this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
   },
   beforeDestroy () {

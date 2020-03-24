@@ -1,15 +1,17 @@
 <template>
-  <q-page v-if="objectId !== ''" padding>
-    <div v-if="perspective === 'profile'">
-      <k-editor service="users" :objectId="objectId" perspective="profile"/>
+  <k-page v-if="objectId !== ''" padding>
+    <div slot="page-content" >
+      <div v-if="perspective === 'profile'">
+        <k-editor service="users" :objectId="objectId" perspective="profile"/>
+      </div>
+      <div v-if="perspective === 'security'">
+        <k-account-security :objectId="objectId" :email="email" />
+      </div>
+      <div v-else-if="perspective === 'danger-zone'">
+        <k-account-dz :objectId="objectId" :name="name" />
+      </div>
     </div>
-    <div v-if="perspective === 'security'">
-      <k-account-security :objectId="objectId" :email="email" />
-    </div>
-    <div v-else-if="perspective === 'danger-zone'">
-      <k-account-dz :objectId="objectId" :name="name" />
-    </div>
-  </q-page>
+  </k-page>
 </template>
 
 <script>
@@ -70,6 +72,7 @@ export default {
   },
   created () {
     // Load the required components
+    this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-editor'] = this.$load('editor/KEditor')
     this.$options.components['k-account-security'] = this.$load('account/KAccountSecurity')
     this.$options.components['k-account-dz'] = this.$load('account/KAccountDZ')
