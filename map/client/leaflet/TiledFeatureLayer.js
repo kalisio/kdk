@@ -20,17 +20,12 @@ function tile2key (coords) {
 
 const TiledFeatureLayer = L.GridLayer.extend({
   async initialize (options) {
-    // this.geojsonLayer = options.geojsonLayer
-    this.activity = options.activity
-    this.layerName = options.layerName
-    this.service = options.service
-
+    L.setOptions(this, options)
     // register event callbacks
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.loadedTiles = new Set()
-    // this.scheduledForUnload =
   },
 
   onAdd (map) {
@@ -41,13 +36,11 @@ const TiledFeatureLayer = L.GridLayer.extend({
     // this.zoomEndCallback = this.onZoomEnd.bind(this)
     // map.on('zoomstart', this.zoomStartCallback)
     // map.on('zoomend', this.zoomEndCallback)
-
     L.GridLayer.prototype.onAdd.call(this, map)
   },
 
   onRemove (map) {
     L.GridLayer.prototype.onRemove.call(this, map)
-
     this.map = null
   },
 
@@ -92,8 +85,15 @@ const TiledFeatureLayer = L.GridLayer.extend({
         Math.min(latLonCoords0.lat, latLonCoords1.lat), Math.min(latLonCoords0.lng, latLonCoords1.lng),
         Math.max(latLonCoords0.lat, latLonCoords1.lat), Math.max(latLonCoords0.lng, latLonCoords1.lng)
       ]
+      const reqCenter = [
+        0.5 * (reqBBox[0] + reqBBox[2]),
+        0.5 * (reqBBox[1] + reqBBox[3])
+      ]
+      // Convert distance from degrees to meters
+      const earthRadius = 6356752.31424518
+      const maxDistance = (reqBBox[3] - reqBBox[1]) * (Math.PI * earthRadius) / 180
 
-      const query = {
+      const baseQuery = {
         geometry: {
           $geoIntersects: {
             $geometry: {
@@ -106,39 +106,69 @@ const TiledFeatureLayer = L.GridLayer.extend({
           }
         }
       }
-
-      this.service.find({ query }).then(result => {
-        tile.geojson = result
-        // tile.innerHTML = `coords: ${coords.x} ${coords.y} ${coords.z} ${result.features.length} features in tile ${tileSize.y} x ${tileSize.x}`
+      const leafletOptions = this.options.leaflet || this.options
+      // Using async/await seems to cause problems in Leaflet, we use promises instead
+      let promises = []
+      // Request probes first if any
+      if (this.options.probeService) {
+        promises.push(this.options.activity.getProbeFeatures(Object.assign({ baseQuery }, this.options)))
+      }
+      // Then features
+      let queryInterval
+      if (leafletOptions.queryInterval) queryInterval = leafletOptions.queryInterval
+      // If query interval not given use 2 x refresh interval as default value
+      // this ensures we cover last interval if server/client update processes are not in sync
+      if (!queryInterval && leafletOptions.interval) queryInterval = 2 * leafletOptions.interval
+      // As we use MongoDB aggregation here we need to use the $geoNear stage
+      promises.push(this.options.activity.getFeatures(Object.assign({
+        baseQuery: {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [ reqCenter[1] , reqCenter[0] ] },
+            maxDistance,
+            distanceField: 'distance',
+            spherical: true,
+            query: baseQuery
+          }
+        }
+      }, this.options), queryInterval))
+      Promise.all(promises).then(data => {
+        if (this.options.probeService) {
+          tile.probes = data[0]
+          tile.features = data[1]
+        } else {
+          tile.features = data[0]
+        }
         done(null, tile)
-      }).catch(err => {
-        done(err, tile)
-        throw err
+      })
+      .catch (error => {
+        done(error, tile)
+        throw error
       })
     } else {
-      // tile.style.outline = '1px solid green'
-      // tile.innerHTML = 'skipped!'
       setTimeout(() => { done(null, tile) }, 100)
     }
 
     return tile
   },
 
-  onTileLoad (event) {
-    const geojson = event.tile.geojson
-    if (!geojson) return
+  async onTileLoad (event) {
+    const probes = event.tile.probes
+    const features = event.tile.features
+    if (!probes && !features) return
 
     // add tile to loaded tiles set
     const tilekey = tile2key(event.coords)
     this.loadedTiles.add(tilekey)
 
-    // update geojson layer with new bits
-    this.activity.updateLayer(this.layerName, geojson)
+    // Update realtime layer with probe first then (measure) features
+    if (probes) this.options.activity.updateLayer(this.options.name, probes)
+    if (features) this.options.activity.updateLayer(this.options.name, features)
   },
 
   onTileUnload (event) {
-    const geojson = event.tile.geojson
-    if (!geojson) return
+    const probes = event.tile.probes
+    const features = event.tile.features
+    if (!probes && !features) return
 
     // check if we can unload the associated geojson bits
     // we only unload when the unloaded tile is completely outside
@@ -151,7 +181,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const tilekey = tile2key(event.coords)
     this.loadedTiles.delete(tilekey)
 
-    this.activity.updateLayer(this.layerName, geojson, true)
+    if (probes) this.options.activity.updateLayer(this.options.name, probes, true)
+    else this.options.activity.updateLayer(this.options.name, features, true)
   },
 
   onZoomStart (event) {

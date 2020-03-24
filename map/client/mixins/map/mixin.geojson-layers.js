@@ -110,25 +110,14 @@ export default {
           // If query interval not given use 2 x refresh interval as default value
           // this ensures we cover last interval if server/client update processes are not in sync
           if (!queryInterval && leafletOptions.interval) queryInterval = 2 * leafletOptions.interval
-          if (!leafletOptions.tiled) {
-            try {
-              successCallback(await this.getFeatures(options, queryInterval))
-            } catch (error) {
-              errorCallback(error)
-            }
+          try {
+            successCallback(await this.getFeatures(options, queryInterval))
+          } catch (error) {
+            errorCallback(error)
           }
         })
-        // If no interval given this is a manual update
-        _.set(leafletOptions, 'start', _.has(leafletOptions, 'interval'))
-
-        if (leafletOptions.tiled) {
-          const tiledOptions = {}
-          tiledOptions.activity = this
-          tiledOptions.layerName = options.name
-          tiledOptions.service = this.$api.getService(options.service)
-          const tiledLayer = new TiledFeatureLayer(tiledOptions)
-          this.map.addLayer(tiledLayer)
-        }
+        // If no interval given or tiled source this is a manual update
+        _.set(leafletOptions, 'start', _.has(leafletOptions, 'interval') && !_.has(leafletOptions, 'tiled'))
       } else if (_.has(leafletOptions, 'sourceTemplate')) {
         const sourceCompiler = _.template(_.get(leafletOptions, 'sourceTemplate'))
         // Tell realtime plugin how to update/load data
@@ -218,6 +207,13 @@ export default {
 
         // Specific case of realtime layer where the underlying container also need to be added to map
         if (leafletOptions.realtime) {
+          // Build associated tile layer and bind required events
+          if (leafletOptions.tiled) {
+            const tiledLayer = new TiledFeatureLayer(Object.assign({ activity: this }, options))
+            layer.tiledLayer = tiledLayer
+            layer.on('add', () => tiledLayer.addTo(this.map))
+            layer.on('remove', () => tiledLayer.removeFrom(this.map))
+          }
           // Bind event
           layer.on('update', (data) => this.$emit('layer-updated', Object.assign({ layer: options, leafletLayer: layer }, data)))
           if (leafletOptions.container) layer.once('add', () => leafletOptions.container.addTo(this.map))
@@ -308,14 +304,18 @@ export default {
       const geoJsonlayers = _.values(this.layers).filter(sift({
         'leaflet.type': 'geoJson', 
         'leaflet.realtime': true,
-        'leaflet.sourceTemplate': { $exists: true },
+        $or: [ // Supported by template URL or time-based features
+          { 'leaflet.sourceTemplate': { $exists: true } },
+          { 'service': { $exists: true }, 'variables': { $exists: true } }
+        ],
         isVisible: true
       }))
       geoJsonlayers.forEach(async geoJsonlayer => {
         // Retrieve the layer
         const layer = this.getLeafletLayerByName(geoJsonlayer.name)
         // Then force update
-        layer.update()
+        if (layer.tiledLayer) layer.tiledLayer.redraw()
+        else layer.update()
       })
     }
   },

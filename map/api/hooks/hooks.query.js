@@ -141,7 +141,7 @@ export async function aggregateFeaturesQuery (hook) {
       }
     }
     // The query contains the match stage except options relevent to the aggregation pipeline
-    const match = _.omit(query, ['$groupBy', '$aggregate', '$sort', '$limit', '$skip'])
+    const match = _.omit(query, ['$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
     const aggregateOptions = {}
     // Check if we could provide a hint to the aggregation when targeting feature ID
     if (featureId && _.has(match, 'properties.' + featureId)) {
@@ -154,8 +154,13 @@ export async function aggregateFeaturesQuery (hook) {
       const isGeometry = (element === 'geometry')
       // Geometry is a root property while others are feature properties
       const prefix = (isGeometry ? '' : 'properties.')
+      let pipeline = []
+      // Check for geometry stage
+      if (query.$geoNear) {
+        pipeline.push({ $geoNear: query.$geoNear })
+      }
       // Find matching features only
-      const pipeline = [{ $match: Object.assign({ [prefix + element]: { $exists: true } }, match) }]
+      pipeline.push({ $match: Object.assign({ [prefix + element]: { $exists: true } }, match) })
       // Ensure they are ordered by increasing time by default
       pipeline.push({ $sort: query.$sort || { time: 1 } })
       // Keep track of all feature values
@@ -203,7 +208,9 @@ export async function aggregateFeaturesQuery (hook) {
         })
       }
     }))
+    delete query.$groupBy
     delete query.$aggregate
+    delete query.$geoNear
     // Set result to avoid service DB call
     hook.result = aggregatedResults
   }

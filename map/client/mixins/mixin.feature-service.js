@@ -5,17 +5,7 @@ import { getNearestTime } from '../utils'
 
 export default {
   methods: {
-    async getProbeFeatures (options) {
-      const response = await this.$api.getService(options.probeService).find({})
-      return response
-    },
-    async getProbeFeaturesFromLayer (name) {
-      // Retrieve the layer
-      const layer = this.getLayerByName(name)
-      if (!layer) return
-      return this.getProbeFeatures(layer)
-    },
-    async getFeatures (options, queryInterval) {
+    async getBaseQueryForFeatures (options) {
       // Any base query to process ?
       const baseQuery = {}
       if (options.baseQuery) {
@@ -28,16 +18,31 @@ export default {
           Object.assign(baseQuery, options.baseQuery)
         }
       }
-      // Last available data only for realtime visualization
-      let query = baseQuery
+      return baseQuery
+    },
+    async getProbeFeatures (options) {
+      // Any base query to process ?
+      let query = await this.getBaseQueryForFeatures(options)
+      const response = await this.$api.getService(options.probeService).find({ query })
+      return response
+    },
+    async getProbeFeaturesFromLayer (name) {
+      // Retrieve the layer
+      const layer = this.getLayerByName(name)
+      if (!layer) return
+      return this.getProbeFeatures(layer)
+    },
+    async getFeatures (options, queryInterval) {
+      // Any base query to process ?
+      let query = await this.getBaseQueryForFeatures(options)
       // Check if we have variables to be aggregate in time or not
       if (options.variables) {
         query = Object.assign({
           $groupBy: options.featureId,
           $aggregate: options.variables.map(variable => variable.name)
-        }, baseQuery)
+        }, query)
         // Request feature with at least one data available during last query interval if none given
-        const now = moment.utc()
+        const now = this.currentTime || moment.utc()
         if (typeof queryInterval === 'object') {
           query.time = queryInterval
         } else if (Number.isInteger(queryInterval)) {
@@ -50,6 +55,7 @@ export default {
             }
           })
         } else {
+          // Last available data only for realtime visualization
           Object.assign(query, {
             $limit: 1,
             $sort: { time: -1 },
