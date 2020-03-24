@@ -44,6 +44,11 @@ docker service ps --no-trunc {serviceName}
 ```
 To access host in Docker Desktop Edition on [Windows](https://docs.docker.com/docker-for-windows/networking/) or [Mac](https://docs.docker.com/docker-for-mac/networking/) use the special DNS name `host.docker.internal`.
 
+## Traefik
+
+Extract access logs for a given date time: `cat access.log | grep "10/Mer/2020:02" > access-10-03-2020-03.log`
+Check access logs for a given HTTP error code: `cat access.log | grep "1.0\" 404"` or `cat access.log | grep "2.0\" 404"`
+Gzip access logs: `gzip -c access.log > access.log.gz`
 ## Scaleway
 
 A [step-by-step configuration](https://gist.github.com/cnouguier/a1ecc88f67819a610ae8e4d221789a8c) of a new server with Docker and a single logical volume.
