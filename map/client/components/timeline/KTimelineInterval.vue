@@ -12,9 +12,7 @@
 
 <script>
 export default {
-  name: 'k-time-interval',
-  components: {
-  },
+  name: 'k-timeline-interval',
   props: [
     'interval',
     'formatter',
@@ -22,10 +20,6 @@ export default {
     'color',
     'labelFontSize'
   ],
-  data () {
-    return {
-    }
-  },
   computed: {
     firstTickStyle () {
       return {
@@ -50,8 +44,6 @@ export default {
     intervalLabel () {
       return this.formatter.format(this.interval.value, 'interval', { width: this.intervalDisplayWidth })
     }
-  },
-  methods: {
   }
 }
 </script>
@@ -67,7 +59,7 @@ export default {
 
   .k-interval-label {
     position: absolute;
-    transform: translate(-20px, 6px);
+    transform: translate(-20px, 8px);
     height: 100%;
     text-align: center;
     opacity: 0.8;

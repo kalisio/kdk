@@ -23,7 +23,7 @@
             :dense="true"
             style=""
             @input="onLocationChanged" />
-          <q-btn v-if="(mode === 'toolbar')" icon="search" color="primary" round flat @click="mode = 'searchbar'" >
+          <q-btn v-if="(mode === 'toolbar')" icon="las la-search" color="primary" round flat @click="mode = 'searchbar'" >
             <q-tooltip>{{ $t('KNavigationBar.SEARCH') }}</q-tooltip>
           </q-btn>
         </template>

@@ -9,9 +9,7 @@
 
 <script>
 export default {
-  name: 'k-time-indicator',
-  components: {
-  },
+  name: 'k-timeline-indicator',
   props: [
     'position',
     'time',
@@ -25,10 +23,6 @@ export default {
     'timePointerRight',
     'timePointerHeight'
   ],
-  data () {
-    return {
-    }
-  },
   computed: {
     pointerStyle () {
       return {

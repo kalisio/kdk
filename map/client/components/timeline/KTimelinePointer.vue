@@ -13,7 +13,7 @@
 import { TouchPan } from 'quasar'
 
 export default {
-  name: 'k-time-pointer',
+  name: 'k-timeline-pointer',
   directives: {
     TouchPan
   },

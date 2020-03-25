@@ -103,28 +103,28 @@ export default function (name) {
         }
         if (hasTrackLocationTool) {
           beforeActions.push({
-            name: 'track-location', label: this.$t('mixins.activity.TRACK_LOCATION'), icon: 'track_changes', handler: this.onTrackLocation
+            name: 'track-location', label: this.$t('mixins.activity.TRACK_LOCATION'), icon: 'las la-map-signs', handler: this.onTrackLocation
           })
         }
         const afterActions = []
         if (hasMapTool) {
           afterActions.push({
-            name: 'map-toggle', label: this.$t('mixins.activity.TOGGLE_MAP'), icon: 'map', route: { name: 'map', query: true }
+            name: 'map-toggle', label: this.$t('mixins.activity.TOGGLE_MAP'), icon: 'las la-map', route: { name: 'map', query: true }
           })
         }
         if (hasGlobeTool) {
           afterActions.push({
-            name: 'globe-toggle', label: this.$t('mixins.activity.TOGGLE_GLOBE'), icon: 'terrain', route: { name: 'globe', query: true }
+            name: 'globe-toggle', label: this.$t('mixins.activity.TOGGLE_GLOBE'), icon: 'las la-globe', route: { name: 'globe', query: true }
           })
         }
         if (hasVrTool) {
           afterActions.push({
-            name: 'vr-toggle', label: this.$t('mixins.activity.TOGGLE_VR'), icon: 'burst_mode', handler: this.onToggleVr
+            name: 'vr-toggle', label: this.$t('mixins.activity.TOGGLE_VR'), icon: 'las la-vr-cardboard', handler: this.onToggleVr
           })
         }
         if (hasFullscreenTool) {
           afterActions.push({
-            name: 'fullscreen-toggle', label: this.$t('mixins.activity.TOGGLE_FULLSCREEN'), icon: 'fullscreen', handler: this.onToggleFullscreen
+            name: 'fullscreen-toggle', label: this.$t('mixins.activity.TOGGLE_FULLSCREEN'), icon: 'las la-expand', handler: this.onToggleFullscreen
           })
         }
         if (hasCatalogTool) {

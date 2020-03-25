@@ -1,14 +1,20 @@
 <template>
-  <k-time-controller :style="timelineStyle"
-    :key="timelineRefreshKey"
-    :min="timeline.start"
-    :max="timeline.end"
-    :step="timeline.granularity"
-    :value="timeline.current"
-    :timeInterval="timelineInterval"
-    :timeFormatter="timelineFormatter"
-    @change="onTimelineUpdated"
-  />
+  <q-card flat style="padding-top: 18px;"> 
+    <q-card-section>
+      <k-timeline-bar
+        :key="timelineRefreshKey"
+        :min="timeline.start"
+        :max="timeline.end"
+        :step="timeline.granularity"
+        :value="timeline.current"
+        :timeInterval="timelineInterval"
+        :timeFormatter="timelineFormatter"
+        @change="onTimelineUpdated" />
+    </q-card-section>
+    <q-card-actions>
+      <k-timeline-control />
+    </q-card-actions>
+  </q-card>
 </template>
 
 <script>
@@ -29,13 +35,6 @@ export default {
       timelineInterval: this.getTimelineInterval(),
       timelineFormatter: this.getTimelineFormatter(),
       timelineRefreshKey: 0
-    }
-  },
-  computed: {
-    timelineStyle () {
-      if (this.$q.screen.lt.md) return 'width: 70vw'
-      return 'width: 80vw'
-      // return `width: ${0.8 * this.kActivity.engineContainerWidth} + 'px'`
     }
   },
   methods: {
@@ -131,17 +130,11 @@ export default {
           switch (type) {
             case 'interval':
               if (displayOptions.width >= 110) {
-                if (span < (1000 * 60 * 60 * 24)) {
-                  label = this.kActivity.formatTime('time.long', time)
-                } else {
-                  label = this.kActivity.formatTime('date.long', time)
-                }
+                if (span < (1000 * 60 * 60 * 24)) label = this.kActivity.formatTime('time.long', time)
+                else label = this.kActivity.formatTime('date.long', time)
               } else {
-                if (span < (1000 * 60 * 60 * 24)) {
-                  label = this.kActivity.formatTime('time.short', time)
-                } else {
-                  label = this.kActivity.formatTime('date.short', time)
-                }
+                if (span < (1000 * 60 * 60 * 24)) label = this.kActivity.formatTime('time.short', time)
+                else label = this.kActivity.formatTime('date.short', time)
               }
               break
             case 'pointer':
@@ -191,7 +184,8 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-time-controller'] = this.$load('time/KTimeController')
+    this.$options.components['k-timeline-bar'] = this.$load('timeline/KTimelineBar')
+    this.$options.components['k-timeline-control'] = this.$load('timeline/KTimelineControl')
   },
   mounted () {
     this.kActivity.$on('current-time-changed', this.onTimechanged)
@@ -203,6 +197,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-</style>

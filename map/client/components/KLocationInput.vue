@@ -3,13 +3,13 @@
     <!--
       User location
     -->
-    <q-btn v-if="user" icon="my_location" color="primary" flat dense round @click="geolocate()">
+    <q-btn v-if="user" icon="las la-crosshairs" color="primary" flat dense round @click="geolocate()">
       <q-tooltip>{{ $t('KLocationInput.GEOLOCATE') }}</q-tooltip>
     </q-btn>
     <!--
       Location map
     -->
-    <q-btn v-if="map" icon="place" color="primary" flat dense round>
+    <q-btn v-if="map" icon="las la-map-marker" color="primary" flat dense round>
       <q-tooltip>{{ $t('KLocationInput.LOCATION_MAP') }}</q-tooltip>
       <q-popup-proxy transition-show="scale" transition-hide="scale">
         <k-location-map v-model="location" :editable="map.editable" @input="onUpdated" />

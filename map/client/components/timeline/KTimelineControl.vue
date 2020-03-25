@@ -1,9 +1,9 @@
 <template>
   <div class="row full-width justify-center q-gutter-md">
-    <q-btn size="sm" flat round icon='fas fa-step-backward' color="secondary" @click="onClickBackward" />      
-    <q-btn size="sm" flat round icon='fas fa-sync' color="secondary" @click="onClickReset" />
-    <q-btn size="sm" flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
-    <q-btn size="sm" flat round icon='fas fa-calendar' color="secondary">
+    <q-btn flat round icon='las la-step-backward' color="secondary" @click="onClickBackward" />      
+    <q-btn flat round icon='las la-sync' color="secondary" @click="onClickReset" />
+    <q-btn flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
+    <q-btn flat round icon='las la-calendar' color="secondary">
       <q-popup-proxy transition-show="scale" transition-hide="scale">
         <q-input filled v-model="controlDateTime">
           <template v-slot:prepend>
@@ -23,7 +23,7 @@
         </q-input>
       </q-popup-proxy>
     </q-btn>
-    <q-btn size="sm" flat round icon='fas fa-step-forward' color="secondary" @click="onClickForward" />
+    <q-btn flat round icon='las la-step-forward' color="secondary" @click="onClickForward" />
   </div>
 </template>
 
@@ -75,7 +75,7 @@ export default {
       }
     },
     realtimeIcon () {
-      return this.kActivity.isTimelineTickingRealtime ? 'fas fa-stop' : 'fas fa-play'
+      return this.kActivity.isTimelineTickingRealtime ? 'las la-stop' : 'las la-play'
     }
   },
   methods: {
