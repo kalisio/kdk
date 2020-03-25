@@ -1,40 +1,29 @@
 <template>
-  <div class="row justify-between">
-    <div class="row q-gutter-sm">
-      <q-btn size="sm" round icon='fas fa-step-backward' color="secondary" @click="onClickBackward"/>
-      <q-btn size="sm" round icon='fas fa-step-forward' color="secondary" @click="onClickForward"/>
-      <q-btn size="sm" round :icon='tickingStateIcon' color="secondary" @click="onToggleTickingState"/>
-    </div>
-    <!--
-    <q-fab icon='keyboard_arrow_left' direction='left' color="secondary">
-      <q-fab-action color='secondary' icon='fas fa-sync' />
-      <q-fab-action color='secondary' icon='event' />
-      <q-fab-action color='secondary' icon='access_time' />
-    </q-fab>
-    -->
-    <div class="row q-gutter-sm">
-      <q-btn size="sm" round icon='fas fa-sync' color="secondary" @click="onClickReset"/>
-      <q-btn size="sm" round icon='fas fa-calendar' color="secondary">
-        <q-popup-proxy transition-show="scale" transition-hide="scale">
-          <q-input filled v-model="controlDateTime">
-            <template v-slot:prepend>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy transition-show="scale" transition-hide="scale">
-                  <q-date v-model="controlDate" :mask="qdateMask" today-btn/>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-            <template v-slot:append>
-              <q-icon name="access_time" class="cursor-pointer">
-                <q-popup-proxy transition-show="scale" transition-hide="scale">
-                  <q-time v-model="controlTime" :mask="qtimeMask" now-btn format24h/>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </q-popup-proxy>
-      </q-btn>
-    </div>
+  <div class="row full-width justify-center q-gutter-md">
+    <q-btn size="sm" flat round icon='fas fa-step-backward' color="secondary" @click="onClickBackward" />      
+    <q-btn size="sm" flat round icon='fas fa-sync' color="secondary" @click="onClickReset" />
+    <q-btn size="sm" flat round :icon='tickingStateIcon' color="secondary" @click="onToggleTickingState" />
+    <q-btn size="sm" flat round icon='fas fa-calendar' color="secondary">
+      <q-popup-proxy transition-show="scale" transition-hide="scale">
+        <q-input filled v-model="controlDateTime">
+          <template v-slot:prepend>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy transition-show="scale" transition-hide="scale">
+                <q-date v-model="controlDate" :mask="qdateMask" today-btn />
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+          <template v-slot:append>
+            <q-icon name="access_time" class="cursor-pointer">
+              <q-popup-proxy transition-show="scale" transition-hide="scale">
+                <q-time v-model="controlTime" :mask="qtimeMask" now-btn format24h/>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </q-popup-proxy>
+    </q-btn>
+    <q-btn size="sm" flat round icon='fas fa-step-forward' color="secondary" @click="onClickForward" />
   </div>
 </template>
 

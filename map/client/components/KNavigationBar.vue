@@ -1,46 +1,40 @@
 <template>
   <div>
     <div class="row items-center k-navigation-bar no-wrap">
-      <transition
-        appear
-        enter-active-class="animated fadeInRight"
-        leave-active-class="animated fadeOutRight"> 
-        <div v-if="!isFolded" class="row items-center no-wrap">
-          <!--
-            Before section
-            -->
-          <template v-if="(mode ==='toolbar') && hasBeforeActions">
-            <k-tool-bar :actions="navigationBar.actions.before" />
-          </template>
-          <!--
-            The location input
-            -->
-          <template v-if="hasLocationInput">
-            <q-btn v-if="(mode === 'searchbar')" icon="arrow_back" color="primary" round flat @click="mode = 'toolbar'" >
-              <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
-            </q-btn>
-            <k-location-input
-              :class="(mode === 'searchbar') ? 'full-width q-pr-sm' : ''"
-              :user="(mode === 'toolbar')"
-              :map="null"
-              :search="(mode === 'searchbar')"
-              :dense="true"
-              style=""
-              @input="onLocationChanged" />
-            <q-btn v-if="(mode === 'toolbar')" icon="search" color="primary" round flat @click="mode = 'searchbar'" >
-              <q-tooltip>{{ $t('KNavigationBar.SEARCH') }}</q-tooltip>
-            </q-btn>
-          </template>
-          <!--
-            After section
-            -->
-          <template v-if="(mode === 'toolbar') && hasAfterActions">
-            <k-tool-bar :actions="navigationBar.actions.after" />
-          </template>
-          <q-separator vertical />
-        </div>
-      </transition>
-      <q-btn flat color="primary" :size="isFolded ? 'lg' : 'md'" :icon="isFolded ? 'explore' : 'close'" @click="isFolded=!isFolded" />
+      <div class="row items-center no-wrap">
+        <!--
+          Before section
+          -->
+        <template v-if="(mode ==='toolbar') && hasBeforeActions">
+          <k-tool-bar :actions="navigationBar.actions.before" />
+        </template>
+        <!--
+          The location input
+          -->
+        <template v-if="hasLocationInput">
+          <q-btn v-if="(mode === 'searchbar')" icon="arrow_back" color="primary" round flat @click="mode = 'toolbar'" >
+            <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
+          </q-btn>
+          <k-location-input
+            :class="(mode === 'searchbar') ? 'full-width q-pr-sm' : ''"
+            :user="(mode === 'toolbar')"
+            :map="null"
+            :search="(mode === 'searchbar')"
+            :dense="true"
+            style=""
+            @input="onLocationChanged" />
+          <q-btn v-if="(mode === 'toolbar')" icon="search" color="primary" round flat @click="mode = 'searchbar'" >
+            <q-tooltip>{{ $t('KNavigationBar.SEARCH') }}</q-tooltip>
+          </q-btn>
+        </template>
+        <!--
+          After section
+          -->
+        <template v-if="(mode === 'toolbar') && hasAfterActions">
+          <k-tool-bar :actions="navigationBar.actions.after" />
+        </template>
+        <q-separator vertical />
+      </div>
     </div>
   </div>
 </template>
@@ -59,22 +53,12 @@ export default {
   },
   data () {
     return {
-      isFolded: false,
       isNavigatioBarVisible: true,
-      toggleNavigationBarIcon: 'keyboard_arrow_right',
       navigationBar: this.$store.get('navigationBar'),
       mode: 'toolbar'
     }
   },
   methods: {
-    toggleNavigationBar () {
-      this.isNavigatioBarVisible = !this.isNavigatioBarVisible
-      if (this.isNavigatioBarVisible) this.toggleNavigationBarIcon='close'
-      else  this.toggleNavigationBarIcon='keyboard_arrow_right'
-    },
-    toggleSideNav () {
-      //this.isNavigatioBarVisible = false
-    },
     onLocationChanged (location) {
       if (location) this.kActivity.center(location.longitude, location.latitude)
     }

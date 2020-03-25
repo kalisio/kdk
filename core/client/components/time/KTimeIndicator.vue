@@ -92,7 +92,7 @@ export default {
 <style>
   .k-time-pointer {
     position: absolute;
-    border-radius: 7px;
+    border-radius: 5px;
     font-size: 12px;
     padding-bottom: 6px;
     padding-top: 6px;

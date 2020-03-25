@@ -107,15 +107,15 @@ export default {
 <style>
   .k-interval-pointer {
     position: absolute;
-    bottom: 19px;
-    border-radius: 7px;
+    bottom: 15px;
+    border-radius: 5px;
     font-size: 12px;
     padding-bottom: 6px;
-    padding-top: 6px;
+    padding-top: 3px;
     padding-left: 8px;
     padding-right: 8px;
     cursor: grab;
-    height: 26px;
+    height: 24px;
     white-space: nowrap;
     user-select: none;
     z-index: 300;
