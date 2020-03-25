@@ -89,11 +89,11 @@ export class TimeBasedGridSource extends DynamicGridSource {
       const from = source.from ? makeTime(source.from, now) : null
       const to = source.to ? makeTime(source.to, now) : null
       if (from && to) {
-        candidate = time.isBetween(from, to, '[]') ? source : null
+        candidate = time.isBetween(from, to, 'second', '[]') ? source : null
       } else if (from) {
-        candidate = time.isSameOrAfter(from) ? source : null
+        candidate = time.isSameOrAfter(from, 'second') ? source : null
       } else if (to) {
-        candidate = time.isSameOrBefore(to) ? source : null
+        candidate = time.isSameOrBefore(to, 'second') ? source : null
       }
 
       if (candidate) break
