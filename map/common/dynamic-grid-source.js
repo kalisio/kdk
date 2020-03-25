@@ -6,8 +6,10 @@ export class DynamicGridSource extends GridSource {
     super(options)
 
     this.source = null
-    this.queuedId = null
-    this.queuedCtx = {}
+    this.updateId = null
+    this.updateCtx = {}
+    this.buildCtx = {}
+    this.onDataChanged = this.dataChanged.bind(this)
   }
 
   getBBox () {
@@ -27,29 +29,45 @@ export class DynamicGridSource extends GridSource {
   }
 
   queueUpdate () {
-    if (this.queuedId) return
+    // update already queued, skip
+    if (this.updateId) return
 
-    this.queuedId = setTimeout(() => {
-      this.update(this.queuedCtx)
-      this.queuedId = null
+    // call update in a few secs, let time for other context updates to happen
+    this.updateId = setTimeout(() => {
+      this.update(this.updateCtx)
+      this.updateId = null
     }, 50)
   }
 
-  update (ctx) {
+  update (updateCtx) {
+    // compute potential new context based on update context
+    const newCtx = this.makeBuildContext(updateCtx)
+    // give source a chance to skip update if nothing changes
+    if (this.shouldSkipUpdate(newCtx, this.buildCtx)) return
+
+    // computed context is now the current one
+    this.buildCtx = newCtx
+    // use it to select grid source and derive config for it
+    const [source, config] = this.buildSourceAndConfig(newCtx)
     if (this.source) this.source.off('data-changed', this.onDataChanged)
-    const [source, config] = this.selectSourceAndDeriveConfig(ctx)
     this.source = source
     if (this.source) {
-      this.onDataChanged = this.dataChanged.bind(this)
       this.source.on('data-changed', this.onDataChanged)
       this.source.setup(config)
     } else {
-      // emit 'data-changed' ourselves since no underlying source will
       this.dataChanged()
     }
   }
 
-  selectSourceAndDeriveConfig (ctx) {
+  makeBuildContext (updateCtx) {
+    return Object.assign({}, updateCtx)
+  }
+
+  shouldSkipUpdate (newContext, oldContext) {
+    return false
+  }
+
+  buildSourceAndConfig (ctx) {
     throw new Error('Not implemented')
   }
 

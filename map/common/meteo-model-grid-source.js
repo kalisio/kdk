@@ -17,25 +17,21 @@ export class MeteoModelGridSource extends DynamicGridSource {
   }
 
   setModel (model) {
-    if (this.queuedCtx.model === model) return
-
-    this.queuedCtx.model = model
+    this.updateCtx.model = model
     this.queueUpdate()
   }
 
   setTime (time) {
-    if (this.queuedCtx.time && time.isSame(this.queuedCtx.time)) return
-
-    this.queuedCtx.time = time.clone()
+    this.updateCtx.time = time.clone()
     this.queueUpdate()
   }
 
   async setup (config) {
-    this.sources = []
+    this.candidates = []
 
     for (const item of config) {
       const [key, conf] = extractGridSourceConfig(item)
-      const source = {
+      const candidate = {
         key: key,
         staticProps: conf,
         dynamicProps: {},
@@ -48,51 +44,74 @@ export class MeteoModelGridSource extends DynamicGridSource {
       for (const prop of _.keys(item.dynprops)) {
         const value = item.dynprops[prop]
         const generator = this.dynpropGenerator(value)
-        if (generator) source.dynamicProps[prop] = generator
+        if (generator) candidate.dynamicProps[prop] = generator
       }
 
-      this.sources.push(source)
+      this.candidates.push(candidate)
     }
   }
 
-  selectSourceAndDeriveConfig (ctx) {
-    const now = moment()
+  makeBuildContext (updateCtx) {
+    const ctx = Object.assign({}, updateCtx)
 
-    let candidate = null
-    // select a source for the requested time
-    for (const source of this.sources) {
-      if (source.model !== ctx.model.name) continue
-
-      const from = source.from ? makeTime(source.from, now) : null
-      const to = source.to ? makeTime(source.to, now) : null
-      if (from && to) {
-        candidate = ctx.time.isBetween(from, to) ? source : null
-      } else if (from) {
-        candidate = ctx.time.isAfter(from) ? source : null
-      } else if (to) {
-        candidate = ctx.time.isBefore(to) ? source : null
-      }
-
-      if (candidate) break
-    }
-
-    let config = null
-    if (candidate) {
+    ctx.candidate = this.selectCandidate(updateCtx.time, updateCtx.model.name)
+    if (ctx.candidate) {
       // update context
-      ctx.runTime = getNearestRunTime(ctx.time, ctx.model.runInterval)
-      ctx.forecastTime = getNearestForecastTime(ctx.time, ctx.model.interval)
+      ctx.runTime = getNearestRunTime(updateCtx.time, updateCtx.model.runInterval)
+      ctx.forecastTime = getNearestForecastTime(updateCtx.time, updateCtx.model.interval)
       ctx.forecastOffset = moment.duration(ctx.forecastTime.diff(ctx.runTime))
 
       // switch to utc mode, all display methods will display in UTC
       ctx.time.utc()
       ctx.runTime.utc()
       ctx.forecastTime.utc()
-
-      config = this.deriveConfig(ctx, candidate.staticProps, candidate.dynamicProps)
     }
 
-    const source = (candidate && config) ? makeGridSource(candidate.key, this.options) : null
+    return ctx
+  }
+
+  shouldSkipUpdate (newContext, oldContext) {
+    if (oldContext.candidate !== newContext.candidate) return false
+    if (oldContext.runTime && newContext.runTime && !oldContext.runTime.isSame(newContext.runTime)) return false
+    if (oldContext.forecastTime && newContext.forecastTime && !oldContext.forecastTime.isSame(newContext.forecastTime)) return false
+    return true
+  }
+
+  buildSourceAndConfig (ctx) {
+    let source = null
+    let config = null
+
+    if (ctx.candidate) {
+      config = this.deriveConfig(ctx, ctx.candidate.staticProps, ctx.candidate.dynamicProps)
+      if (config) {
+        source = makeGridSource(ctx.candidate.key, this.options)
+      }
+    }
 
     return [source, config]
+  }
+
+  selectCandidate (time, model) {
+    const now = moment()
+
+    let candidate = null
+    // select a source for the requested time
+    for (const source of this.candidates) {
+      if (source.model !== model) continue
+
+      const from = source.from ? makeTime(source.from, now) : null
+      const to = source.to ? makeTime(source.to, now) : null
+      if (from && to) {
+        candidate = time.isBetween(from, to) ? source : null
+      } else if (from) {
+        candidate = time.isAfter(from) ? source : null
+      } else if (to) {
+        candidate = time.isBefore(to) ? source : null
+      }
+
+      if (candidate) break
+    }
+
+    return candidate
   }
 }

@@ -16,18 +16,16 @@ export class TimeBasedGridSource extends DynamicGridSource {
   }
 
   setTime (time) {
-    if (this.queuedCtx.time && time.isSame(this.queuedCtx.time)) return
-
-    this.queuedCtx.time = time.clone()
+    this.updateCtx.time = time.clone()
     this.queueUpdate()
   }
 
   async setup (config) {
-    this.sources = []
+    this.candidates = []
 
     for (const item of config) {
       const [key, conf] = extractGridSourceConfig(item)
-      const source = {
+      const candidate = {
         key: key,
         staticProps: conf,
         dynamicProps: {},
@@ -40,47 +38,67 @@ export class TimeBasedGridSource extends DynamicGridSource {
       for (const prop of _.keys(item.dynprops)) {
         const value = item.dynprops[prop]
         const generator = this.dynpropGenerator(value)
-        if (generator) source.dynamicProps[prop] = generator
+        if (generator) candidate.dynamicProps[prop] = generator
       }
 
-      this.sources.push(source)
+      this.candidates.push(candidate)
     }
   }
 
-  selectSourceAndDeriveConfig (ctx) {
+  makeBuildContext (updateCtx) {
+    const ctx = Object.assign({}, updateCtx)
+
+    ctx.candidate = this.selectCandidate(ctx.time)
+    if (ctx.candidate) {
+      ctx.stepTime = moment(Math.trunc(ctx.time / ctx.candidate.every) * ctx.candidate.every)
+
+      // switch to utc mode, all display methods will display in UTC
+      ctx.time.utc()
+      ctx.stepTime.utc()
+    }
+
+    return ctx
+  }
+
+  shouldSkipUpdate (newContext, oldContext) {
+    if (oldContext.candidate !== newContext.candidate) return false
+    if (oldContext.stepTime && newContext.stepTime && !oldContext.stepTime.isSame(newContext.stepTime)) return false
+    return true
+  }
+
+  buildSourceAndConfig (ctx) {
+    let source = null
+    let config = null
+
+    if (ctx.candidate) {
+      config = this.deriveConfig(ctx, ctx.candidate.staticProps, ctx.candidate.dynamicProps)
+      if (config) {
+        source = makeGridSource(ctx.candidate.key, this.options)
+      }
+    }
+
+    return [source, config]
+  }
+
+  selectCandidate (time) {
     const now = moment()
 
     let candidate = null
     // select a source for the requested time
-    for (const source of this.sources) {
+    for (const source of this.candidates) {
       const from = source.from ? makeTime(source.from, now) : null
       const to = source.to ? makeTime(source.to, now) : null
       if (from && to) {
-        candidate = ctx.time.isBetween(from, to) ? source : null
+        candidate = time.isBetween(from, to) ? source : null
       } else if (from) {
-        candidate = ctx.time.isAfter(from) ? source : null
+        candidate = time.isAfter(from) ? source : null
       } else if (to) {
-        candidate = ctx.time.isBefore(to) ? source : null
+        candidate = time.isBefore(to) ? source : null
       }
 
       if (candidate) break
     }
 
-    let config = null
-    if (candidate) {
-      // update context
-      ctx.stepTime = moment(Math.trunc(ctx.time / candidate.every) * candidate.every)
-
-      // switch to utc mode, all display methods will display in UTC
-      ctx.time.utc()
-      ctx.stepTime.utc()
-
-      // derive config for candidate
-      config = this.deriveConfig(ctx, candidate.staticProps, candidate.dynamicProps)
-    }
-
-    const source = (candidate && config) ? makeGridSource(candidate.key, this.options) : null
-
-    return [source, config]
+    return candidate
   }
 }
