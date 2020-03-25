@@ -5,9 +5,7 @@
 
     <q-resize-observer @resize="onResize" />
 
-    <div v-bind:style="pointerContainerStyle"
-         class="k-interval-pointer-container"
-    >
+    <div v-bind:style="pointerContainerStyle">
       <k-time-pointer
         :position="position"
         :time="currentValue"
@@ -17,9 +15,7 @@
         :pointerColor="pointerColor"
         :pointerTextColor="pointerTextColor"
         @change="onChangePosition"
-        @changePointer="onChangePointer"
-      />
-
+        @changePointer="onChangePointer" />
       <k-time-indicator
         :position="timeIndicatorPosition"
         :time="timeIndicatorValue"
@@ -31,18 +27,14 @@
         :textColor="pointerTextColor"
         :timePointerLeft="timePointerLeft"
         :timePointerRight="timePointerRight"
-        :timePointerHeight="timePointerHeight"
-      />
+        :timePointerHeight="timePointerHeight" />
     </div>
 
     <div class="k-timecontroller-currenttime" v-bind:style="currentTimeStyle"></div>
-
     <div class="k-timecontroller-activebar" v-bind:style="activeBarStyle"></div>
     <div class="k-timecontroller-bar" v-bind:style="barStyle" ref="timeControllerBar"></div>
 
-    <div v-bind:style="tickContainerStyle"
-         class="k-interval-ticks-container"
-    >
+    <div v-bind:style="tickContainerStyle" class="k-interval-ticks-container">
       <k-time-interval
         v-for="interval in timeIntervals" :key="interval.value"
         :color="color"
@@ -79,7 +71,7 @@ export default {
     activeColor: { type: String, default: colors.getBrand('secondary') },
     pointerColor: { type: String, default: colors.getBrand('secondary') },
     pointerTextColor: { type: String, default: 'white' },
-    labelFontSize: { type: Number, default: 16 }
+    labelFontSize: { type: Number, default: 12 }
   },
   data () {
     return {
@@ -131,13 +123,13 @@ export default {
     },
     tickContainerStyle () {
       return {
-        height: '18px', // TODO make configurable
+        height: '9px', // TODO make configurable
         top: this.barHeight()
       }
     },
     pointerContainerStyle () {
       return {
-        height: '18px', // TODO make configurable
+        height: '9px', // TODO make configurable
         bottom: 0
       }
     },
@@ -202,8 +194,6 @@ export default {
 <style>
   .k-timecontroller-container {
     width: 100%;
-    padding-top: 0;
-    padding-bottom: 12px;
     background-color: transparent;
     position: relative;
     cursor: pointer;

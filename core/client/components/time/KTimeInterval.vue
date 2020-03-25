@@ -62,14 +62,14 @@ export default {
     top: 0;
     width: 1px;
     height: 100%;
-    opacity: 0.5;
+    opacity: 0.8;
   }
 
   .k-interval-label {
     position: absolute;
-    top: 3px;
+    transform: translate(-20px, 6px);
     height: 100%;
     text-align: center;
-    opacity: 0.5;
+    opacity: 0.8;
   }
 </style>
