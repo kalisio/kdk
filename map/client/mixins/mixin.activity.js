@@ -632,14 +632,16 @@ export default function (name) {
         if (typeof this.updateTimeline === 'function') {
           // Initialize timeline based on user settings
           const span = this.$store.get('timeline.span')
-          const offset = this.$store.get('timeline.offset')
+          let offset = this.$store.get('timeline.offset')
           const step = this.$store.get('timeline.step')
           const ref = this.$store.get('timeline.reference')
+          // normalize offset to [0, span[
+          offset = Math.max(0, Math.min(offset, span - 1))
           const timeline = {
             span: moment.duration(span, 'd'),
             offset: moment.duration(offset, 'd'),
             step: moment.duration(step, 'm'),
-            reference: ref ? moment(ref) : moment().startOf('day')
+            reference: ref ? moment(ref) : moment()
           }
           this.updateTimeline(timeline)
         }

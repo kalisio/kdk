@@ -6,6 +6,7 @@ export default {
       timeline: {
         enabled: true,
         isTicking: false,
+        isRealtime: false,
         span: moment.duration('P2D'),
         offset: moment.duration('PT0M'),
         step: moment.duration('PT1H'),
@@ -26,6 +27,9 @@ export default {
         reference: this.timeline.reference,
         step: this.timeline.step
       }
+    },
+    isTimelineTickingRealtime () {
+      return this.timeline.isTicking && this.timeline.isRealtime
     }
   },
   methods: {
@@ -43,22 +47,42 @@ export default {
       if (reference) this.timeline.reference = reference
       if (offset) this.timeline.offset = offset
       if (step) {
-        // reset timer since interval is based on timeline step
-        const resetTimer = this.timeline.isTicking && (step !== this.timeline.step)
+        // reset timer since non realtime interval is based on timeline step
+        const resetTimer = this.timeline.isTicking && !this.timeline.isRealtime && (step !== this.timeline.step)
         if (resetTimer) this.stopTimeline()
         this.timeline.step = step
-        if (resetTimer) this.startTimeline()
+        if (resetTimer) this.startTimeline(false)
       }
 
       this.$emit('timeline-changed', this.absoluteTimeline)
     },
     // make the timeline start ticking
-    startTimeline () {
-      if (this.timeline.isTicking) return
+    startTimeline (realtime) {
+      if (this.timeline.isTicking) {
+        if (this.timeline.isRealtime === realtime) return
+        // otherwise, we have to stop timeline before restarting it in realtime mode
+        this.stopTimeline()
+      }
 
       this.timeline.isTicking = true
-      // every step
-      this.timeline.timerId = setInterval(() => { this.timelineTick(1) }, this.timeline.step.asMilliseconds())
+      this.timeline.isRealtime = realtime
+      if (realtime) {
+        const now = moment()
+        this.updateTimeline({ reference: now })
+        this.setCurrentTime(now)
+
+        // every 30s
+        this.timeline.timerId = setInterval(() => {
+          const now = moment()
+          this.updateTimeline({ reference: now })
+          this.setCurrentTime(now)
+        }, 30 * 1000)
+      } else {
+        // every step
+        this.timeline.timerId = setInterval(() => {
+          this.timelineMove(1)
+        }, this.timeline.step.asMilliseconds())
+      }
     },
     // make the timeline stop ticking
     stopTimeline () {
@@ -67,14 +91,15 @@ export default {
       clearInterval(this.timeline.timerId)
       this.timeline.isTicking = false
     },
-    toggleTickingState () {
-      if (this.timeline.isTicking) this.stopTimeline()
-      else this.startTimeline()
-    },
-    timelineTick (offset) {
+    // move time by timeline step increments
+    timelineMove (offset) {
       const currentTime = this.currentTime.clone()
       currentTime.add(offset * this.timeline.step)
       this.setCurrentTime(currentTime)
     }
+  },
+  beforeDestroy () {
+    // make sure all setInterval get cleared
+    this.stopTimeline()
   }
 }

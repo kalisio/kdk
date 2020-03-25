@@ -2,7 +2,7 @@
   <div class="row full-width justify-center q-gutter-md">
     <q-btn size="sm" flat round icon='fas fa-step-backward' color="secondary" @click="onClickBackward" />      
     <q-btn size="sm" flat round icon='fas fa-sync' color="secondary" @click="onClickReset" />
-    <q-btn size="sm" flat round :icon='tickingStateIcon' color="secondary" @click="onToggleTickingState" />
+    <q-btn size="sm" flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
     <q-btn size="sm" flat round icon='fas fa-calendar' color="secondary">
       <q-popup-proxy transition-show="scale" transition-hide="scale">
         <q-input filled v-model="controlDateTime">
@@ -74,8 +74,8 @@ export default {
         this.updateReference(datetime)
       }
     },
-    tickingStateIcon () {
-      return this.kActivity.timeline.isTicking ? 'fas fa-stop' : 'fas fa-play'
+    realtimeIcon () {
+      return this.kActivity.isTimelineTickingRealtime ? 'fas fa-stop' : 'fas fa-play'
     }
   },
   methods: {
@@ -86,15 +86,19 @@ export default {
     onClickForward (event) {
       // stop timeline if it runs
       this.kActivity.stopTimeline()
-      this.kActivity.timelineTick(1)
+      this.kActivity.timelineMove(1)
     },
     onClickBackward (event) {
       // stop timeline if it runs
       this.kActivity.stopTimeline()
-      this.kActivity.timelineTick(-1)
+      this.kActivity.timelineMove(-1)
     },
-    onToggleTickingState (event) {
-      this.kActivity.toggleTickingState()
+    onToggleRealtime (event) {
+      if (this.kActivity.isTimelineTickingRealtime) {
+        this.kActivity.stopTimeline()
+      } else {
+        this.kActivity.startTimeline(true)
+      }
     },
     onClickReset (event) {
       this.kActivity.stopTimeline()
