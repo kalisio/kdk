@@ -641,7 +641,7 @@ export default function (name) {
             span: moment.duration(span, 'd'),
             offset: moment.duration(offset, 'd'),
             step: moment.duration(step, 'm'),
-            reference: ref ? moment(ref) : moment().startOf('day')
+            reference: ref ? moment(ref) : moment()
           }
           this.updateTimeline(timeline)
         }
