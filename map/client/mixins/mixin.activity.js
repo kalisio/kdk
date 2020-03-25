@@ -575,7 +575,7 @@ export default function (name) {
         }
         return this.$store.get('restore.view')
       },
-      getRouteBounds() {
+      getRouteBounds () {
         const currentBounds = _.pick(this.$route.params, ['south', 'west', 'north', 'east'])
         return _.mapValues(currentBounds, value => _.toNumber(value))
       },
