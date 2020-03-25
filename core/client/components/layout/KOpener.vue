@@ -12,7 +12,7 @@
     @mouseover="onMouseOver"
     @mouseleave="onMouseLeave"
     @click="onClick">
-    <q-icon v-if="icon" :name="icon" color="white" size="md" />
+    <q-icon v-if="icon" :name="icon" color="white" size="sm" />
   </div>
 </template>
 
@@ -60,16 +60,16 @@ export default {
       this.isHovered = true
       switch(this.position) {
         case 'left':
-          this.icon = this.isOpened ? 'chevron_left' : 'chevron_right'
+          this.icon = this.isOpened ? 'las la-angle-left' : 'las la-angle-right'
           break
         case 'right':
-          this.icon = this.isOpened ? 'chevron_right' : 'chevron_left'
+          this.icon = this.isOpened ? 'las la-angle-right' : 'las la-angle-left'
           break
         case 'top':
-          this.icon = this.isOpened ? 'expand_less' : 'expand_more'
+          this.icon = this.isOpened ? 'las la-angle-up' : 'las la-angle-down'
           break
         default: // bottom
-          this.icon = this.isOpened ? 'expand_more' : 'expand_less'
+          this.icon = this.isOpened ? 'las la-angle-down' : 'las la-angle-up'
       }
     },
     onMouseLeave () {
