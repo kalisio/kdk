@@ -74,7 +74,6 @@ export default {
         // every 30s
         this.timeline.timerId = setInterval(() => {
           const now = moment()
-          console.log('rt tick')
           this.updateTimeline({ reference: now })
           this.setCurrentTime(now)
         }, 30 * 1000)
