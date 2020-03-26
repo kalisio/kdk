@@ -137,10 +137,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
       }, this.layer), queryInterval))
       Promise.all(promises).then(data => {
         if (this.layer.probeService) {
-          tile.probes = data[0]
-          tile.features = data[1]
+          tile.probes = (data[0].features.length ? data[0] : null)
+          tile.features = (data[1].features.length ? data[1] : null)
         } else {
-          tile.features = data[0]
+          tile.features = (data[0].features.length ? data[0] : null)
         }
         done(null, tile)
       })
