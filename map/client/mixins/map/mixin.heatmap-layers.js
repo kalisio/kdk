@@ -55,14 +55,24 @@ export default {
       this.updateLeafletHeatmap(layer, geoJson)
     },
     onCurrentTimeChangedHeatmapLayers (time) {
-      const heatmaps = _.values(this.layers).filter(sift({ 'leaflet.type': 'heatmap', isVisible: true }))
-      heatmaps.forEach(async heatmap => {
+      const heatmaps = _.values(this.layers).filter(sift({
+        'leaflet.type': 'heatmap',
+        $or: [ // Supported by template URL or time-based features
+          { 'leaflet.urlTemplate': { $exists: true } },
+          { 'service': { $exists: true }, 'variables': { $exists: true } }
+        ],
+        isVisible: true
+      }))
+      heatmaps.forEach(async options => {
         // Retrieve the layer
-        const layer = this.getLeafletLayerByName(heatmap.name)
-        if (layer.sourceCompiler) {
-          const geoJson = await fetchGeoJson(layer.sourceCompiler({ time }))
+        const layer = this.getLeafletLayerByName(options.name)
+        if (options.service) { // Check for feature service layers
+          const geoJson = await this.getFeatures(options)
           this.updateLeafletHeatmap(layer, geoJson)
-        }
+        } else if (layer.sourceCompiler) {
+            const geoJson = await fetchGeoJson(layer.sourceCompiler({ time }))
+            this.updateLeafletHeatmap(layer, geoJson)
+          }
       })
     }
   },

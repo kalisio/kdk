@@ -19,13 +19,18 @@ function tile2key (coords) {
 }
 
 const TiledFeatureLayer = L.GridLayer.extend({
-  async initialize (options) {
+  initialize (options) {
     L.setOptions(this, options)
     // register event callbacks
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.loadedTiles = new Set()
+  },
+
+  setup (activity, layer) {
+    this.activity = activity
+    this.layer = layer
   },
 
   onAdd (map) {
@@ -106,21 +111,20 @@ const TiledFeatureLayer = L.GridLayer.extend({
           }
         }
       }
-      const leafletOptions = this.options.leaflet || this.options
       // Using async/await seems to cause problems in Leaflet, we use promises instead
       let promises = []
       // Request probes first if any
-      if (this.options.probeService) {
-        promises.push(this.options.activity.getProbeFeatures(Object.assign({ baseQuery }, this.options)))
+      if (this.layer.probeService) {
+        promises.push(this.activity.getProbeFeatures(Object.assign({ baseQuery }, this.layer)))
       }
       // Then features
       let queryInterval
-      if (leafletOptions.queryInterval) queryInterval = leafletOptions.queryInterval
+      if (this.options.queryInterval) queryInterval = this.options.queryInterval
       // If query interval not given use 2 x refresh interval as default value
       // this ensures we cover last interval if server/client update processes are not in sync
-      if (!queryInterval && leafletOptions.interval) queryInterval = 2 * leafletOptions.interval
+      if (!queryInterval && this.options.interval) queryInterval = 2 * this.options.interval
       // As we use MongoDB aggregation here we need to use the $geoNear stage
-      promises.push(this.options.activity.getFeatures(Object.assign({
+      promises.push(this.activity.getFeatures(Object.assign({
         baseQuery: {
           $geoNear: {
             near: { type: 'Point', coordinates: [ reqCenter[1] , reqCenter[0] ] },
@@ -130,9 +134,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
             query: baseQuery
           }
         }
-      }, this.options), queryInterval))
+      }, this.layer), queryInterval))
       Promise.all(promises).then(data => {
-        if (this.options.probeService) {
+        if (this.layer.probeService) {
           tile.probes = data[0]
           tile.features = data[1]
         } else {
@@ -161,8 +165,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.loadedTiles.add(tilekey)
 
     // Update realtime layer with probe first then (measure) features
-    if (probes) this.options.activity.updateLayer(this.options.name, probes)
-    if (features) this.options.activity.updateLayer(this.options.name, features)
+    if (probes) this.activity.updateLayer(this.layer.name, probes)
+    if (features) this.activity.updateLayer(this.layer.name, features)
   },
 
   onTileUnload (event) {
@@ -170,19 +174,31 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const features = event.tile.features
     if (!probes && !features) return
 
+    let unload = false
+    // check for zoom level range first
+    if (this.options.minZoom && (this.map.getZoom() < this.options.minZoom)) unload |= true
+    if (this.options.maxZoom && (this.map.getZoom() > this.options.maxZoom)) unload |= true
     // check if we can unload the associated geojson bits
-    // we only unload when the unloaded tile is completely outside
-    // the visible bounds
-    const visible = this.map.getBounds()
-    const bounds = tile2bounds(this.map, event.coords, this.getTileSize())
-    if (visible.intersects(bounds)) return
+    // we only unload when the unloaded tile is completely outside the visible bounds
+    if (!unload) {
+      const visible = this.map.getBounds()
+      const bounds = tile2bounds(this.map, event.coords, this.getTileSize())
+      if (!visible.intersects(bounds)) unload = true
+    }
+    
+    if (unload) {
+      // ok, we can unload geosjon, and remove tile from loaded tile set
+      const tilekey = tile2key(event.coords)
+      this.loadedTiles.delete(tilekey)
 
-    // ok, we can unload geosjon, and remove tile from loaded tile set
-    const tilekey = tile2key(event.coords)
-    this.loadedTiles.delete(tilekey)
+      if (probes) this.activity.updateLayer(this.layer.name, probes, true)
+      else this.activity.updateLayer(this.layer.name, features, true)
+    }
+  },
 
-    if (probes) this.options.activity.updateLayer(this.options.name, probes, true)
-    else this.options.activity.updateLayer(this.options.name, features, true)
+  redraw () {
+    this.loadedTiles.clear()
+    L.GridLayer.prototype.redraw.call(this)
   },
 
   onZoomStart (event) {

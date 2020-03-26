@@ -209,7 +209,8 @@ export default {
         if (leafletOptions.realtime) {
           // Build associated tile layer and bind required events
           if (leafletOptions.tiled) {
-            const tiledLayer = new TiledFeatureLayer(Object.assign({ activity: this }, options))
+            const tiledLayer = new TiledFeatureLayer(leafletOptions)
+            tiledLayer.setup(this, options)
             layer.tiledLayer = tiledLayer
             layer.on('add', () => tiledLayer.addTo(this.map))
             layer.on('remove', () => tiledLayer.removeFrom(this.map))
@@ -293,10 +294,9 @@ export default {
       /* By default leaflet-realtime only performs add with manual update
         (see https://github.com/perliedman/leaflet-realtime/issues/136)
          but we'd like to perform similarly to automated updates
-      if (remove && (typeof layer.remove === 'function')) layer.remove(geoJson)
-      else if (typeof layer.update === 'function') layer.update(geoJson)
       */
-      if (typeof layer._onNewData === 'function') {
+      if (remove && (typeof layer.remove === 'function')) layer.remove(geoJson)
+      else if (typeof layer._onNewData === 'function') {
         layer._onNewData(layer.options.removeMissing, geoJson || this.toGeoJson(name))
       }
     },
