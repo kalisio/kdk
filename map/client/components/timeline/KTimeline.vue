@@ -1,5 +1,5 @@
 <template>
-  <q-card flat style="padding-top: 18px;"> 
+  <q-card flat class="k-timeline"> 
     <q-card-section>
       <k-timeline-bar
         :key="timelineRefreshKey"
@@ -197,3 +197,15 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+.k-timeline {
+  border: solid 1px lightgrey;
+  border-radius: 5px;
+  padding-top: 18px;
+}
+
+.k-timeline:hover {
+  border: solid 1px $primary;
+}
+</style>

@@ -73,7 +73,7 @@ export default {
 <style lang="stylus">
 .k-navigation-bar {
   border: solid 1px lightgrey;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #ffffff
 }
 
