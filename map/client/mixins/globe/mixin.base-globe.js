@@ -113,6 +113,10 @@ export default {
         return this.viewer.dataSources.contains(cesiumLayer)
       }
     },
+    isLayerDisabled (layer) {
+      // TODO
+      return false
+    },
     getLayerByName (name) {
       return this.layers[name]
     },
@@ -173,6 +177,7 @@ export default {
     async addLayer (layer) {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
+        layer.isDisabled = this.isLayerDisabled(layer)
         // Store the layer and make it reactive
         this.$set(this.layers, layer.name, layer)
         this.$emit('layer-added', layer)

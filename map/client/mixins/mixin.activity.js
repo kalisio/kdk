@@ -380,7 +380,7 @@ export default function (name) {
         // When saving from one engine copy options to the other one so that it will be available in both of them
         _.set(layer, (this.is2D() ? 'cesium' : 'leaflet'), _.get(layer, this.engine))
         let createdLayer = await this.$api.getService('catalog')
-          .create(_.omit(layer, ['actions', 'isVisible']))
+          .create(_.omit(layer, ['actions', 'isVisible', 'isDisabled']))
         // layer._id = createdLayer._id
         // this.registerLayerActions(layer) // Refresh actions due to state change
         // Because we save all features in a single service use filtering to separate layers

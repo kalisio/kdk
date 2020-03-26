@@ -179,6 +179,14 @@ export default {
       const leafetLayer = this.getLeafletLayerByName(name)
       return leafetLayer && this.map.hasLayer(leafetLayer)
     },
+    isLayerDisabled (layer) {
+      const minZoom = _.get(layer, 'leaflet.minZoom')
+      const maxZoom = _.get(layer, 'leaflet.maxZoom')
+      let isDisabled = false
+      if (minZoom && (this.map.getZoom() < minZoom)) isDisabled = true
+      if (maxZoom && (this.map.getZoom() > maxZoom)) isDisabled = true
+      return isDisabled
+    },
     getLayerByName (name) {
       return this.layers[name]
     },
@@ -230,6 +238,7 @@ export default {
     async addLayer (layer) {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
+        layer.isDisabled = this.isLayerDisabled(layer)
         // Store the layer and make it reactive
         this.$set(this.layers, layer.name, layer)
         this.$emit('layer-added', layer)
@@ -308,6 +317,13 @@ export default {
     },
     onMapZoomChanged () {
       this.updateLeafletPanesVisibility()
+      // Update disable state
+      const zoomLayers = _.values(this.layers).filter(sift({
+        $or: [{ 'leaflet.minZoom': { $exists: true } }, { 'leaflet.maxZoom': { $exists: true } }]
+      }))
+      zoomLayers.forEach(async layer => {
+        layer.isDisabled = this.isLayerDisabled(layer)
+      })
     }
   },
   created () {

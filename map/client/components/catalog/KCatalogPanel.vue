@@ -60,9 +60,7 @@ export default {
     // Load the required components
     this.layerCategories.forEach(category => {
       const component = _.get(category, 'component', 'catalog/KLayersSelector')
-      console.log(component)
       const componentKey = _.kebabCase(path.basename(component))
-      console.log(componentKey)
       category['componentKey'] = componentKey
       if (!this.$options.components.componentKey) this.$options.components[componentKey] = this.$load(component)
     })
