@@ -5,22 +5,7 @@ export default {
   data () {
     return {
       currentTime: moment.utc(),
-      currentTimeFormat: this.$store.get('timeFormat') || {
-        time: {
-          short: 'H[h]',
-          long: 'HH:mm'
-        },
-        date: {
-          short: 'DD/MM',
-          long: 'dddd D'
-        },
-        year: {
-          short: 'YY',
-          long: 'YYYY'
-        },
-        utc: true,
-        locale: 'en'
-      }
+      currentTimeFormat: this.$store.get('timeFormat')
     }
   },
   computed: {
@@ -56,10 +41,6 @@ export default {
       this.currentTime = now
       this.$emit('current-time-changed', this.currentTime)
     },
-    setTimeFormat (format) {
-      this.currentTimeFormat = format
-      this.$emit('current-time-format-changed', this.currentTime)
-    },
     formatTime (format, datetime) {
       let currentTime = (datetime ? this.convertToMoment(datetime) : this.currentTime)
       if (!this.currentTimeFormat.utc) {
@@ -71,12 +52,5 @@ export default {
       // Defaults to long mode if not given
       else return currentTime.format(_.get(this.currentTimeFormat, format, _.get(this.currentTimeFormat, format + '.long')))
     }
-  },
-  created () {
-    // Whenever the time format is updated, update data as well
-    this.$events.$on('time-format-changed', this.setTimeFormat)
-  },
-  beforeDestroy () {
-    this.$events.$off('time-format-changed', this.setTimeFormat)
   }
 }
