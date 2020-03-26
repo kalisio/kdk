@@ -1,5 +1,6 @@
 <template>
   <q-list dense>
+    <slot name="panel-header" />
     <template v-for="layer in layers">
       <q-item
         :id="layer.name"
@@ -28,12 +29,13 @@
         </q-tooltip>
       </q-item>
     </template>
+    <slot name="panel-footer" />
   </q-list>
 </template>
 
 <script>
 import _ from 'lodash'
-import { utils as kCoreUtils } from '../../../core/client'
+import { utils } from '../../../../core/client'
 
 export default {
   name: 'k-layers-selector',
@@ -52,7 +54,7 @@ export default {
       return layer.name + '-' + action
     },
     layerIcon (layer) {
-      return kCoreUtils.getIconName(layer, 'icon')
+      return utils.getIconName(layer, 'icon')
     },
     layerActions (layer) {
       // Built-in toggle handler is used to select layer
