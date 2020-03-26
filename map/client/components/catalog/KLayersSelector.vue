@@ -24,7 +24,7 @@
           </q-item-label>
         </q-item-section>
         <q-item-section side>
-          <k-overflow-menu :actions="layerActions(layer)" :context="layer" :dense="$q.screen.lt.md" />
+          <k-overflow-menu :actions="layerActions(layer)" :context="layer" :dense="$q.screen.lt.md" :disable="layer.isDisabled"/>
         </q-item-section>
         <q-tooltip v-if="layer.tooltip">
           {{ layer.tooltip }}

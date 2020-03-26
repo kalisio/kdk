@@ -1,9 +1,9 @@
 <template>
-  <q-btn v-if="actions.length > 0" id="overflow-menu-entry" icon="more_vert" :color="color" flat round :dense="dense">
+  <q-btn v-if="actions.length > 0" id="overflow-menu-entry" icon="more_vert" :color="color" flat round :dense="dense" :disable="disable">
     <q-menu id="overflow-menu" v-model="isVisible">
       <q-list :dense="dense">
         <template v-for="action in actions">
-          <q-item :id="action.name" :key="key(action)" clickable @click="onActionTriggered(action)">
+          <q-item :id="action.name" :key="key(action)" @click="onActionTriggered(action)">
             <q-item-section avatar>
               <q-icon :dense="dense" :name="action.icon" />
             </q-item-section>
@@ -36,6 +36,10 @@ export default {
       default: 'primary'
     },
     dense: {
+      type: Boolean,
+      default: false
+    },
+    disable: {
       type: Boolean,
       default: false
     }
