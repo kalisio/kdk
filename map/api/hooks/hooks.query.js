@@ -49,6 +49,8 @@ export function asGeoJson (options = {}) {
     if (!options.force && !params.asGeoJson) return
     if (query.$distinct) return // Not applicable in this case
     let results = hook.result
+    // Already as GeoJson ?
+    if (results.type === 'FeatureCollection') return
     const pagination = _.pick(results, ['total', 'skip', 'limit'])
     results = Array.isArray(results) ? results : results.data
     results = results
