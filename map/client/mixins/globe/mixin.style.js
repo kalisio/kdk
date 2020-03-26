@@ -1,5 +1,6 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
+import chroma from 'chroma-js'
 import { CesiumStyleMappings, CesiumEntityTypes } from '../../utils'
 
 export default {
@@ -113,7 +114,7 @@ export default {
         const entityStyle = _.cloneDeep(cesiumOptions.entityStyle)
         entityStyleTemplate.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          let value = entry.compiler({ properties })
+          let value = entry.compiler({ properties, chroma })
           const property = entry.property
           // Handle specific case of orientation
           if ((property === 'orientation') && entity.position) {

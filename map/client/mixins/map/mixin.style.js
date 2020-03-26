@@ -1,5 +1,6 @@
 import L from 'leaflet'
 import _ from 'lodash'
+import chroma from 'chroma-js'
 import { LeafletStyleMappings } from '../../utils'
 
 export default {
@@ -92,7 +93,7 @@ export default {
       if (leafletOptions.template) {
         leafletOptions.template.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature }))
+          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma }))
         })
       }
       // We manage panes for z-index, so we need to forward it to marker options
@@ -111,7 +112,7 @@ export default {
       if (leafletOptions.template) {
         leafletOptions.template.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature }))
+          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma }))
         })
       }
       // We manage panes for z-index, so we need to forward it to marker options
