@@ -1,6 +1,6 @@
 <template>
   <k-page padding>
-    <div slot="page-content" >
+    <template v-slot:page-content>
       <!--
         Members collection, cannot use smart strategy here because membership is not managed at service level
         but using authorisations on users
@@ -10,7 +10,7 @@
         Router view to enable routing to modals
       -->
       <router-view service="members" :router="router()"></router-view>
-    </div>
+    </template>
   </k-page>
 </template>
 

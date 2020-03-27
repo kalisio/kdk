@@ -4,7 +4,7 @@
       Left drawer toggle
      -->
     <q-btn id="left-drawer-toggle" v-if="hasLeftDrawerToggle" flat :dense="$q.screen.lt.md" @click="$emit('left-drawer-toggled')">
-      <q-icon name="menu" />
+      <q-icon name="las la-bars" />
     </q-btn>
     <!--
       Title/subtitle section

@@ -111,24 +111,24 @@ export default {
     transition: 0.2s;
   }
   .k-opener-left, .k-opener-right {
-    height: 96px;
-    width: 10px;
+    height: 64px;
+    width: 12px;
   }
   .k-opener-top, .k-opener-bottom {
-    height: 10px;
-    width: 128px;
+    height: 12px;
+    width: 96px;
   }
   .k-opener-left {
-    border-radius: 0px 5px 5px 0px;
+    border-radius: 0px 8px 8px 0px;
   }
   .k-opener-right {
-    border-radius: 5px 0px 0px 5px;
+    border-radius: 8px 0px 0px 8px;
   }
   .k-opener-top {
-    border-radius: 0px 0px 5px 5px;
+    border-radius: 0px 0px 8px 8px;
   }
   .k-opener-bottom {
-    border-radius: 5px 5px 0px 0px;
+    border-radius: 8px 8px 0px 0px;
   }
   .k-opener-left:hover, .k-opener-right:hover, .k-opener-top:hover, .k-opener-bottom:hover {
     cursor: pointer;
