@@ -1,6 +1,6 @@
 <template>
   <k-page v-if="objectId !== ''" padding>
-    <div slot="page-content" >
+    <template v-slot:page-content>
       <div v-if="perspective === 'profile'">
         <k-editor service="users" :objectId="objectId" perspective="profile"/>
       </div>
@@ -10,7 +10,7 @@
       <div v-else-if="perspective === 'danger-zone'">
         <k-account-dz :objectId="objectId" :name="name" />
       </div>
-    </div>
+    </template>
   </k-page>
 </template>
 

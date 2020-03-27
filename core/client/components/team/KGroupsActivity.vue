@@ -1,6 +1,6 @@
 <template>
   <k-page padding>
-    <div slot="page-content" >
+    <template v-slot:page-content>
       <!--
         Groups collection
       -->
@@ -9,7 +9,7 @@
         Router view to enable routing to modals
       -->
       <router-view service="groups" :router="router()"></router-view>
-    </div>
+    </template>
   </k-page>
 </template>
 

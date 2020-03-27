@@ -219,5 +219,9 @@
     "RENDER_LABEL": "Display type",
     "VALUE_LABEL": "Count",
     "PERCENTAGE_LABEL": "Percentage"
+  },
+  "KWeatherLayersSelector": {
+    "FORECASTS_LABEL": "Forecasts",
+    "ARCHIVES_LABEL": "Archives"
   }
 }
