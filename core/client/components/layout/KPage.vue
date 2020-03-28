@@ -69,7 +69,7 @@ export default {
   },
   created () {
     // load the required components
-    this.$options.components['k-opener'] = this.$load('layout/KOpener')
+    this.$options.components['k-opener'] = this.$load('frame/KOpener')
     this.$options.components['k-fab'] = this.$load('layout/KFab')
     // Read drawers configuration to check whether openers have to be displayed or not
     this.hasLeftDrawerOpener = this.$config('layout.leftDrawer.opener', false)
