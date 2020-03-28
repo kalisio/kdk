@@ -10,11 +10,8 @@
         <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
       </div>
     </div>
-    <div v-else class="row justify-center text-center">
-      <div class="q-ma-xl">
-        <q-icon size="3rem" name="error_outline" />
-        <p>{{$t('KList.EMPTY_LIST')}}</p>
-      </div>
+    <div v-else class="absolute-center">
+      <k-label :text="$t('KList.EMPTY_LIST')" icon-size="48px" />
     </div>
   </div>
 </template>
@@ -77,6 +74,8 @@ export default {
   created () {
     // Load the component
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
+    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    // Force the collection to be refreshed
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)

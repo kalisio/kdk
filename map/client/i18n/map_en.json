@@ -189,7 +189,7 @@
     "BACK": "Back"
   },
   "KTimeSeries": {
-    "NO_DATA_AVAILABLE": "No Data Available"
+    "NO_DATA_AVAILABLE": "No data available"
   },
   "KCatalogPanel": {
     "BASE_LAYERS": "Base Layers",
@@ -219,6 +219,9 @@
     "RENDER_LABEL": "Display type",
     "VALUE_LABEL": "Count",
     "PERCENTAGE_LABEL": "Percentage"
+  },
+  "KLayersSelector": {
+    "NO_LAYER_AVAILABLE": "No Layer available"
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Forecasts",

@@ -1,36 +1,41 @@
 <template>
   <q-list dense>
     <slot name="panel-header" />
-    <template v-for="layer in layers">
-      <q-item
-        :id="layer.name"
-        :key="layer.name"
-        :active="layer.isVisible"
-        :disable="layer.isDisabled"
-        :clickable="!layer.isDisabled"
-        active-class="selected"
-        class="cursor-pointer"
-        dense>
-        <q-item-section avatar @click="onLayerClicked(layer)">
-          <q-icon v-if="!layer.iconUrl" :name="layerIcon(layer)" />
-          <img v-else :src="layer.iconUrl" width="32" />
-        </q-item-section>
-        <q-item-section @click="onLayerClicked(layer)">
-          <q-item-label lines="1">
-            {{ layer.name }}
-          </q-item-label>
-          <q-item-label caption lines="2">
-            {{ layer.description }}
-          </q-item-label>
-        </q-item-section>
-        <q-item-section side>
-          <k-overflow-menu :actions="layerActions(layer)" :context="layer" :dense="$q.screen.lt.md" :disable="layer.isDisabled"/>
-        </q-item-section>
-        <q-tooltip v-if="layer.tooltip">
-          {{ layer.tooltip }}
-        </q-tooltip>
-      </q-item>
-    </template>
+    <div v-if="layers.length > 0">
+      <template v-for="layer in layers">
+        <q-item
+          :id="layer.name"
+          :key="layer.name"
+          :active="layer.isVisible"
+          :disable="layer.isDisabled"
+          :clickable="!layer.isDisabled"
+          active-class="selected"
+          class="cursor-pointer"
+          dense>
+          <q-item-section avatar @click="onLayerClicked(layer)">
+            <q-icon v-if="!layer.iconUrl" :name="layerIcon(layer)" />
+            <img v-else :src="layer.iconUrl" width="32" />
+          </q-item-section>
+          <q-item-section @click="onLayerClicked(layer)">
+            <q-item-label lines="1">
+              {{ layer.name }}
+            </q-item-label>
+            <q-item-label caption lines="2">
+              {{ layer.description }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <k-overflow-menu :actions="layerActions(layer)" :context="layer" :dense="$q.screen.lt.md" :disable="layer.isDisabled"/>
+          </q-item-section>
+          <q-tooltip v-if="layer.tooltip">
+            {{ layer.tooltip }}
+          </q-tooltip>
+        </q-item>
+      </template>
+    </div>
+    <div v-else>
+      <k-label :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" alignement="center-top" direction="horizontal" />
+    </div>
     <slot name="panel-footer" />
   </q-list>
 </template>
@@ -79,6 +84,7 @@ export default {
   created () {
     // Loads the required components
     this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
+    this.$options.components['k-label'] = this.$load('frame/KLabel')
   }
 }
 </script>

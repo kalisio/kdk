@@ -8,7 +8,7 @@
   "DONE": "Done",
   "APPLY": "Apply",
   "RETRY": "Retry",
-  "EMPTY": "No elements found",
+  "NO_ITEM": "No elements found",
   "ANONYMOUS": "Anonymous",
   "MEMBERS": "Members",
   "GROUPS": "Groups",
@@ -129,10 +129,14 @@
     "EMAIL_BLOCK_ACTION": "Change"
   },
   "KGrid": {
-    "EMPTY_GRID": "$t(EMPTY)"
+    "EMPTY_GRID": "$t(NO_ITEM)"
   },
   "KList": {
-    "EMPTY_LIST": "$t(EMPTY)"
+    "EMPTY_LIST": "$t(NO_ITEM)"
+  },
+  "KTable": {
+    "EMPTY_TABLE": "$t(NO_ITEM)",
+    "TABLE_COLUMNS": "Properties"
   },
   "KUploader": {
     "dropZone": {
@@ -281,9 +285,6 @@
     "BUG_REPORT_SUBJECT": "[{{appName}}] Bug report - Client v{{clientVersionName}} - API v{{apiVersionName}}",
     "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
     "SYSTEM_DETAILS": "Platform information"
-  },
-  "KTable": {
-    "TABLE_COLUMNS": "Properties"
   },
   "KOrganisationPanel": {
     "NEW_ORGANISATION": "New organisation",

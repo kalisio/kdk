@@ -220,6 +220,9 @@
     "VALUE_LABEL": "Nombre",
     "PERCENTAGE_LABEL": "Pourcentage"
   },
+  "KLayersSelector": {
+    "NO_LAYER_AVAILABLE": "Aucune couche de données"
+  },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Prévisions",
     "ARCHIVES_LABEL": "Archives"

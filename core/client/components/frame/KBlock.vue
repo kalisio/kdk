@@ -23,15 +23,8 @@
 </template>
 
 <script>
-import { QCard, QCardSection, QBtn } from 'quasar'
-
 export default {
   name: 'k-block',
-  components: {
-    QCard,
-    QCardSection,
-    QBtn
-  },
   props: {
     color: {
       type: String,

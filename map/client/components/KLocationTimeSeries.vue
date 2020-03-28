@@ -10,17 +10,9 @@
           <canvas ref="chart"></canvas>
         </div>
         <div v-else class="absolute-center">
-          <div class="full-width column items-center">
-            <div>
-              <q-icon size="3rem" name="error_outline" />
-            </div>
-            <div>
-              {{$t('KTimeSeries.NO_DATA_AVAILABLE')}}
-            </div>
-          </div>
+          <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />
         </div>
       </div>
-
     </k-widget>
   </div>
 </template>
@@ -462,6 +454,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-widget'] = this.$load('frame/KWidget')
+    this.$options.components['k-label'] = this.$load('frame/KLabel')
   },
   mounted () {
     this.width = 512

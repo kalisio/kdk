@@ -62,19 +62,11 @@ export default {
   },
   computed: {
     hasArchiveLayers () {
-      return _.find(this.layers, (layer) => { return layer.tags.includes('archive') }) !== undefined
+      return _.find(this.layers, (layer) => { return layer.tags.includes('archive') })
     },
     filteredLayers () {
-      if (this.mode === 'forecast') return _.filter(this.layers, (layer) => { return !layer.tags.includes('archive') })
-      return _.filter(this.layers, (layer) => { 
-        if (layer.tags.includes('archive')) {
-          // check whether the current model is supported by the layer
-          for (let i = 0; i < layer.meteo_model.length; ++i) {
-            if (layer.meteo_model[i].model === this.model.name) return true
-          }
-        }
-        return false
-      })
+      if (this.mode === 'forecast') return this.forecastLayers()
+      return this.archiveLayers()
     }
   },
   data () {
@@ -89,6 +81,20 @@ export default {
     }
   },
   methods: {
+    forecastLayers () {
+      return _.filter(this.layers, (layer) => { return !layer.tags.includes('archive') })
+    },
+    archiveLayers () {
+      return _.filter(this.layers, (layer) => { 
+        if (layer.tags.includes('archive')) {
+          // check whether the current model is supported by the layer
+          for (let i = 0; i < layer.meteo_model.length; ++i) {
+            if (layer.meteo_model[i].model === this.model.name) return true
+          }
+        }
+        return false
+      })
+    },
     callHandler (action, layer) {
       if (this.forecastModelHandlers[action]) this.forecastModelHandlers[action](layer)
     },
@@ -101,7 +107,6 @@ export default {
     this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
     // Set the current forecast model
     this.model = this.forecastModel
-    console.log(this.model)
   }
 }
 </script>

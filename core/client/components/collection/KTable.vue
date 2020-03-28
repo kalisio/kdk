@@ -26,11 +26,8 @@
         </template>
       </q-table>
     </div>
-    <div v-else class="row justify-center text-center">
-      <div class="q-ma-xl">
-        <q-icon size="3rem" name="error_outline" />
-        <p>{{$t('KList.EMPTY_LIST')}}</p>
-      </div>
+    <div v-else class="absolute-center">
+      <k-label :text="$t('KTable.EMPTY_TABLE')" icon-size="48px" />
     </div>
   </div>
 </template>
@@ -183,6 +180,8 @@ export default {
     }
   },
   async created () {
+    // Load the required components
+    this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')
