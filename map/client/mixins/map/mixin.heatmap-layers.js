@@ -11,9 +11,12 @@ export default {
       // Check for valid types
       if (leafletOptions.type !== 'heatmap') return
       const layer = this.createLeafletLayer(options)
+      // Optimize templating by creating compilers up-front
       const source = _.get(leafletOptions, 'url')
       const sourceTemplate = _.get(leafletOptions, 'urlTemplate')
       if (sourceTemplate) layer.sourceCompiler = _.template(sourceTemplate)
+      const valueTemplate = _.get(leafletOptions, 'valueTemplate')
+      if (valueTemplate) layer.valueCompiler = _.template(valueTemplate)
 
       if (options.service) { // Check for feature service layers
         const geoJson = await this.getFeatures(options)
@@ -31,20 +34,21 @@ export default {
       return layer
     },
     updateLeafletHeatmap (layer, geoJson) {
-      // Otherwise we update data
-      const valueField = _.get(layer, 'cfg.valueField')
+      const valueField = _.get(layer, 'cfg.valueField', 'value')
       const min = _.get(layer, 'cfg.min')
       const max = _.get(layer, 'cfg.max')
-      const values = (valueField ? geoJson.features.map(feature => _.toNumber(_.get(feature, `properties.${valueField}`))) : [])
+      const values = (layer.valueCompiler ?
+        geoJson.features.map(feature => _.toNumber(layer.valueCompiler({ properties: feature.properties, feature }))) :
+        geoJson.features.map(feature => _.toNumber(_.get(feature, `properties.${valueField}`, 1))))
       // By default our intensity is based on the number of points only
       // otherwise when provided we use target value
       layer.setData({
         min: (min || (valueField ? _.min(values) : 0)),
         max: (max || (valueField ? _.max(values) : 1)),
-        data: geoJson.features.map(feature => ({
+        data: geoJson.features.map((feature, index) => ({
           lng: _.get(feature, 'geometry.coordinates[0]'),
           lat: _.get(feature, 'geometry.coordinates[1]'),
-          [valueField]: (valueField ? _.toNumber(_.get(feature, `properties.${valueField}`)) : 1)
+          [valueField]: values[index]
         }))
       })
     },
