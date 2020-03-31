@@ -1,6 +1,45 @@
 import moment from 'moment'
 import { unitConverters, SortOrder, GridSource, Grid1D, TiledGrid } from './grid'
 
+// computes how many equidistant points are required to generate
+// points at most every 'precision' degrees
+function additionalPointsNeeded (lat, lon1, lon2, precision) {
+  /*
+  const p0 = [lon1, lat]
+  const p1 = [lon2, lat]
+  const dist = distance(p0, p1, { units: 'kilometers' })
+  */
+
+  const dist = lon2 - lon1
+  const num = Math.ceil(dist / precision) - 1
+  return Math.max(0, num)
+}
+
+// compute a query polygon where we make sure that
+// we'll have a point at most every 'precision' degrees
+// on longitudinal segments
+function makeMongoPolygon (bbox, precision) {
+  const minLatPoints = additionalPointsNeeded(bbox[0], bbox[1], bbox[3], precision)
+  const maxLatPoints = additionalPointsNeeded(bbox[2], bbox[1], bbox[3], precision)
+  const deltaLon = bbox[3] - bbox[1]
+
+  const polygon = []
+  for (let i = 0; i < minLatPoints + 2; ++i) {
+    const lon = bbox[1] + (i / (minLatPoints + 1)) * deltaLon
+    polygon.push([lon, bbox[0]])
+  }
+
+  for (let i = 0; i < maxLatPoints + 2; ++i) {
+    const lon = bbox[3] - (i / (maxLatPoints + 1)) * deltaLon
+    polygon.push([lon, bbox[2]])
+  }
+
+  // closing point
+  polygon.push([bbox[1], bbox[0]])
+
+  return polygon
+}
+
 export class WeacastGridSource extends GridSource {
   static getKey () {
     return 'weacast'
@@ -33,6 +72,7 @@ export class WeacastGridSource extends GridSource {
     this.converter = unitConverters[config.converter]
     this.time = moment(config.forecastTime).utc().format()
     this.service = config.model + '/' + config.element
+    this.lonResolution = model.tileResolution[0]
 
     this.minMaxLat = [model.bounds[1], model.bounds[3]]
     // Internal tile management requires longitude in [-180, 180]
@@ -57,8 +97,11 @@ export class WeacastGridSource extends GridSource {
   async fetch (abort, bbox, resolution) {
     if (!this.usable) { return null }
 
-    // const width = 1 + Math.trunc((bbox[3] - bbox[1]) / resolution[1])
-    // const height = 1 + Math.trunc((bbox[2] - bbox[0]) / resolution[0])
+    // build a polygon with points longitudaly spaced every lonResolution degrees
+    // otherwise mongodb will connect points using shortest path on sphere
+    // which is not going to be a square lat/lon box
+
+    const polygon = makeMongoPolygon(bbox, this.lonResolution)
 
     const query = {
       time: this.time,
@@ -69,10 +112,7 @@ export class WeacastGridSource extends GridSource {
         $geoIntersects: {
           $geometry: {
             type: 'Polygon',
-            coordinates: [ // BBox as a polygon
-              [[bbox[1], bbox[0]], [bbox[3], bbox[0]],
-                [bbox[3], bbox[2]], [bbox[1], bbox[2]], [bbox[1], bbox[0]]] // Closing point
-            ]
+            coordinates: [polygon]
           }
         }
       }
