@@ -59,7 +59,7 @@ export default {
               return
             } else {
               // It seems the Leaflet realtime plugin takes care of it for us
-              // oldLayer.setStyle(leafletOptions.style(feature))
+              oldLayer.setStyle(leafletOptions.style(feature))
             }
           }
           if (oldLayer.setIcon) {
