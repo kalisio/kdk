@@ -1,36 +1,41 @@
 <template>
-  <k-layers-selector :layers="filteredLayers" :options="options">
-    <template v-slot:panel-header>
-      <div class="q-ma-sm">
-        <q-select v-model="model" :options="forecastModels" filled @input="onModelSelected">
-          <template v-slot:prepend>
-            <q-icon name="las la-globe" />
-          </template>
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
-              <q-item-section avatar>
-                <q-icon v-if="!scope.opt.iconUrl" :name="scope.opt.icon || 'las la-globe'" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label lines="1">
-                  {{ scope.opt.label }}
-                </q-item-label>
-                <q-item-label caption lines="2">
-                  {{ scope.opt.description }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
-      </div>
-    </template>
-    <template v-if="hasArchiveLayers" v-slot:panel-footer>
-      <q-tabs class="q-ma-sm text-primary" no-caps v-model="mode">
-        <q-tab name="forecast" :label="$t('KWeatherLayersSelector.FORECASTS_LABEL')" />
-        <q-tab name="archive" :label="$t('KWeatherLayersSelector.ARCHIVES_LABEL')" />
-      </q-tabs>
-    </template>
-  </k-layers-selector>
+  <div v-if="forecastModels.length > 0">
+    <k-layers-selector :layers="filteredLayers" :options="options">
+      <template v-slot:panel-header>
+        <div class="q-ma-sm">
+          <q-select v-model="model" :options="forecastModels" filled @input="onModelSelected">
+            <template v-slot:prepend>
+              <q-icon name="las la-globe" />
+            </template>
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+                <q-item-section avatar>
+                  <q-icon v-if="!scope.opt.iconUrl" :name="scope.opt.icon || 'las la-globe'" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label lines="1">
+                    {{ scope.opt.label }}
+                  </q-item-label>
+                  <q-item-label caption lines="2">
+                    {{ scope.opt.description }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+      </template>
+      <template v-if="hasArchiveLayers" v-slot:panel-footer>
+        <q-tabs class="q-ma-sm text-primary" no-caps v-model="mode">
+          <q-tab name="forecast" :label="$t('KWeatherLayersSelector.FORECASTS_LABEL')" />
+          <q-tab name="archive" :label="$t('KWeatherLayersSelector.ARCHIVES_LABEL')" />
+        </q-tabs>
+      </template>
+    </k-layers-selector>
+  </div>
+  <div v-else>
+    <k-label :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" alignement="center-top" icon-size="36px" direction="vertical" />
+  </div>
 </template>
 
 <script>
@@ -105,6 +110,7 @@ export default {
   created () {
     // Loads the required components
     this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
+    this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Set the current forecast model
     this.model = this.forecastModel
   }
