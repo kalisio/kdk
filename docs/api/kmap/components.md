@@ -13,9 +13,8 @@ The **k-catalog-panel** is used to list all available layers in [catalog](./serv
 ![Catalog panel](../../assets/layers-panel.png)
 
 This component relies on some others internal components:
-* **k-layers-panel** used to list all available layers of a given category
 * **k-layers-selector** used to list a set of layers and manage the selection
-* **k-forecast-models-selector** used to list all available weather forecast models for related weather layers
+* **k-weather-layers-selector** used to list all available weather related layers (forecasts and archives) and for each model provided by **Weacast**
 
 ## Color legend
 
