@@ -6,7 +6,7 @@
         :key="category.name"
         :icon="category.icon"
         :label="$t(category.label)">
-        <component 
+        <component
           :is="category.componentKey" 
           :layers="layersByCategory[category.name]" 
           :forecastModels="forecastModels"
@@ -21,6 +21,7 @@
 <script>
 import _ from 'lodash'
 import path from 'path'
+import { uid } from 'quasar'
 
 export default {
   name: 'k-catalog-panel',
@@ -56,14 +57,23 @@ export default {
       return layersByCategory
     }
   },
+  watch: {
+    layerCategories: function () {
+      this.refresh()
+    }
+  },
+  methods: {
+    refresh () {
+      this.layerCategories.forEach(category => {
+        const component = _.get(category, 'component', 'catalog/KLayersSelector')
+        const componentKey = _.kebabCase(path.basename(component))
+        category['componentKey'] = componentKey
+        if (!this.$options.components[componentKey]) this.$options.components[componentKey] = this.$load(component)
+      })
+    }
+  },
   created () {
-    // Load the required components
-    this.layerCategories.forEach(category => {
-      const component = _.get(category, 'component', 'catalog/KLayersSelector')
-      const componentKey = _.kebabCase(path.basename(component))
-      category['componentKey'] = componentKey
-      if (!this.$options.components.componentKey) this.$options.components[componentKey] = this.$load(component)
-    })
+    this.refresh()
   }
 }
 </script>
