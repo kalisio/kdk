@@ -20,6 +20,27 @@ export default {
       }
       return baseQuery
     },
+    getFeaturesUpdateInterval (options) {
+      return _.get(options, this.engine, options).interval
+    },
+    getFeaturesQueryInterval (options) {
+      const interval = this.getFeaturesUpdateInterval(options)
+      let queryInterval = _.get(options, this.engine, options).queryInterval
+      // If query interval not given use 2 x refresh interval as default value
+      // this ensures we cover last interval if server/client update processes are not in sync
+      if (!queryInterval && interval) queryInterval = 2 * interval
+      return queryInterval
+    },
+    shouldSkipFeaturesUpdate (lastUpdateTime, options, interval) {
+      // If not given try to compute query interval from options
+      if (!interval) {
+        interval = this.getFeaturesUpdateInterval(options)
+      }
+      if (!interval) return true
+      const now = this.currentTime || moment.utc()
+      // If query interval has elapsed since last update we need to update again
+      return now.isSameOrAfter(lastUpdateTime.clone().add({ milliseconds: interval }))
+    },
     async getProbeFeatures (options) {
       // Any base query to process ?
       let query = await this.getBaseQueryForFeatures(options)
@@ -33,6 +54,10 @@ export default {
       return this.getProbeFeatures(layer)
     },
     async getFeatures (options, queryInterval) {
+      // If not given try to compute query interval from options
+      if (!queryInterval) {
+        queryInterval = this.getFeaturesQueryInterval(options)
+      }
       // Any base query to process ?
       let query = await this.getBaseQueryForFeatures(options)
       // Check if we have variables to be aggregate in time or not

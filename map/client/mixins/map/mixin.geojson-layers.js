@@ -58,7 +58,6 @@ export default {
               // oldLayer.setStyle(leafletOptions.pointToLayer(feature))
               return
             } else {
-              // It seems the Leaflet realtime plugin takes care of it for us
               oldLayer.setStyle(leafletOptions.style(feature))
             }
           }
@@ -94,6 +93,7 @@ export default {
         // Tell realtime plugin how to update/load data
         if (!_.has(leafletOptions, 'removeMissing')) leafletOptions.removeMissing = !options.probeService
         let initialized = !options.probeService // If no probe reference, nothing to be initialized
+        let lastUpdateTime
         _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
           // If the probe location is given by another service use it on initialization
           if (!initialized) {
@@ -105,36 +105,39 @@ export default {
               errorCallback(error)
             }
           }
-          let queryInterval
-          if (leafletOptions.queryInterval) queryInterval = leafletOptions.queryInterval
-          // If query interval not given use 2 x refresh interval as default value
-          // this ensures we cover last interval if server/client update processes are not in sync
-          if (!queryInterval && leafletOptions.interval) queryInterval = 2 * leafletOptions.interval
           try {
-            successCallback(await this.getFeatures(options, queryInterval))
+            // Update only the first time or when required according to data update interval
+            if (!lastUpdateTime || !this.shouldSkipFeaturesUpdate(lastUpdateTime, options)) {
+              lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+              successCallback(await this.getFeatures(options))
+            }
           } catch (error) {
             errorCallback(error)
           }
         })
-        // If no interval given or tiled source this is a manual update
-        _.set(leafletOptions, 'start', _.has(leafletOptions, 'interval') && !_.has(leafletOptions, 'tiled'))
+        // We perform manual update
+        _.set(leafletOptions, 'start', false)
       } else if (_.has(leafletOptions, 'sourceTemplate')) {
         const sourceCompiler = _.template(_.get(leafletOptions, 'sourceTemplate'))
+        let lastFetchedSource
         // Tell realtime plugin how to update/load data
         _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
           try {
-            successCallback(await fetchGeoJson(sourceCompiler({ time: this.currentTime })))
+            const sourceToFetch = sourceCompiler({ time: this.currentTime || moment.utc() })
+            if (!lastFetchedSource || (lastFetchedSource !== sourceToFetch)) {
+              lastFetchedSource = sourceToFetch
+              successCallback(await fetchGeoJson(sourceToFetch))
+            }
           } catch (error) {
             errorCallback(error)
           }
         })
-        // But in this case do not try to start update automatically
+        // We perform manual update
         _.set(leafletOptions, 'start', false)
       } else if (!_.has(leafletOptions, 'source')) {
+        _.set(leafletOptions, 'start', false)
         // Even for manual update leaflet realtime require a src
         _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {})
-        // But in this case do not try to start update automatically
-        _.set(leafletOptions, 'start', false)
       }
     },
     async processGeoJsonLayerOptions (options) {
@@ -222,8 +225,8 @@ export default {
           layer.toGeoJSON = () => ({ type: 'FeatureCollection', features: _.values(layer._features) })
           layer.clearLayers = () => layer._onNewData(true, { type: 'FeatureCollection', features: [] })
           layer.addLayer = (geoJsonLayer) => layer._onNewData(true, geoJsonLayer.toGeoJSON())
-          // If no interval given this is a manual update, we launch a first update though to initialize data
-          if (!_.has(leafletOptions, 'interval')) layer.update()
+          // We launch a first update to initialize data
+          layer.update()
         } else {
           // Specific case of clustered layer where the group is added instead of the geojson layer
           if (leafletOptions.cluster && leafletOptions.container) {
@@ -313,7 +316,7 @@ export default {
       geoJsonlayers.forEach(async geoJsonlayer => {
         // Retrieve the layer
         const layer = this.getLeafletLayerByName(geoJsonlayer.name)
-        // Then force update
+        // Then update
         if (layer.tiledLayer) layer.tiledLayer.redraw()
         else layer.update()
       })

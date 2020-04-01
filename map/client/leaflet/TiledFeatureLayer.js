@@ -117,13 +117,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.layer.probeService) {
         promises.push(this.activity.getProbeFeatures(Object.assign({ baseQuery }, this.layer)))
       }
-      // Then features
-      let queryInterval
-      if (this.options.queryInterval) queryInterval = this.options.queryInterval
-      // If query interval not given use 2 x refresh interval as default value
-      // this ensures we cover last interval if server/client update processes are not in sync
-      if (!queryInterval && this.options.interval) queryInterval = 2 * this.options.interval
-      // As we use MongoDB aggregation here we need to use the $geoNear stage
       promises.push(this.activity.getFeatures(Object.assign({
         baseQuery: {
           $geoNear: {
@@ -134,7 +127,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
             query: baseQuery
           }
         }
-      }, this.layer), queryInterval))
+      }, this.layer)))
       Promise.all(promises).then(data => {
         if (this.layer.probeService) {
           tile.probes = (data[0].features.length ? data[0] : null)

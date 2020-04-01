@@ -19,6 +19,7 @@ export default {
       if (valueTemplate) layer.valueCompiler = _.template(valueTemplate)
 
       if (options.service) { // Check for feature service layers
+        layer.lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
         const geoJson = await this.getFeatures(options)
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(source)) {
@@ -27,7 +28,9 @@ export default {
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(sourceTemplate)) {
         // Source is an URL returning GeoJson possibly templated by time
-        const geoJson = await fetchGeoJson(layer.sourceCompiler({ time: this.currentTime }))
+        const sourceToFetch = layer.sourceCompiler({ time: this.currentTime || moment.utc() })
+        layer.lastFetchedSource = sourceToFetch
+        const geoJson = await fetchGeoJson(sourceToFetch)
         this.updateLeafletHeatmap(layer, geoJson)
       }
 
@@ -71,12 +74,20 @@ export default {
         // Retrieve the layer
         const layer = this.getLeafletLayerByName(options.name)
         if (options.service) { // Check for feature service layers
-          const geoJson = await this.getFeatures(options)
-          this.updateLeafletHeatmap(layer, geoJson)
-        } else if (layer.sourceCompiler) {
-            const geoJson = await fetchGeoJson(layer.sourceCompiler({ time }))
+          // Update only the first time or when required according to data update interval
+          if (!layer.lastUpdateTime || !this.shouldSkipFeaturesUpdate(layer.lastUpdateTime, options)) {
+            layer.lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+            const geoJson = await this.getFeatures(options)
             this.updateLeafletHeatmap(layer, geoJson)
           }
+        } else if (layer.sourceCompiler) {
+          const sourceToFetch = layer.sourceCompiler({ time: this.currentTime || moment.utc() })
+          if (!layer.lastFetchedSource || (layer.lastFetchedSource !== sourceToFetch)) {
+            layer.lastFetchedSource = sourceToFetch
+            const geoJson = await fetchGeoJson(sourceToFetch)
+            this.updateLeafletHeatmap(layer, geoJson)
+          }
+        }
       })
     }
   },
