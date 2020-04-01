@@ -193,7 +193,6 @@ export default {
       this.kActivity.resetTimeline()
     },
     onTimeChanged (time) {
-      console.log(time)
       this.updateTime(moment(time))
     },
     onTimelineChanged (timeline) {
