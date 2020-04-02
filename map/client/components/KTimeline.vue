@@ -5,9 +5,13 @@
      -->
     <div class="full-width row justify-center items-center k-timeline-control">
       <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-backward' color="secondary" @click="onPreviousStepClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-clock' color="secondary" @click="onNowClicked" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-calendar' color="secondary">
+        <q-popup-proxy transition-show="scale" transition-hide="scale">
+          <q-date v-model="date" :mask="calendarDateMask" today-btn minimal />
+        </q-popup-proxy>
+      </q-btn>
       <q-chip dense :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="secondary" text-color="white" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round :icon="timer ? 'las la-stop' : 'las la-play'" color="secondary" @click="onRealtimeClicked" />
       <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-forward' color="secondary" @click="onNextStepClicked" />
     </div>
     <div v-if="!$q.screen.gt.xs" class="full-width row justify-around q-pt-xs">
@@ -63,16 +67,17 @@
 
 <script>
 import moment from 'moment'
-import { colors, debounce } from 'quasar'
+import { colors, debounce, date } from 'quasar'
 
 export default {
   name: 'k-timeline',
   inject: ['kActivity'],
   data () {
-    const now = moment().utc()
     return {
-      time: now,
-      timeline: this.$store.get('timeline')
+      timeline: this.$store.get('timeline'),
+      timer: undefined,
+      time: moment.utc(),
+      calendarDateMask: 'YYYY-MM-DD'
     }
   },
   computed: {
@@ -80,12 +85,12 @@ export default {
       let minutes = []
       let start = moment(this.time).minute(0)
       let end = moment(this.time).minute(59)
-      for (let m = moment(start); m.isBefore(end, 'minute'); m.add(this.timeline.step, 'm')) {
+      for (let m = moment(start); m.isBefore(end); m.add(this.timeline.step, 'm')) {
         minutes.push({
           label: m.minute().toString().padStart(2,0),
-          color: this.time.minute() === m.minute() ? 'secondary' : 'grey-8',
-          textColor: this.time.minute() === m.minute() ? 'white' : 'black',
-          outline: this.time.minute() === m.minute() ? false : true
+          color: m.isSame(this.time,'minute') ? 'secondary' : 'grey-8',
+          textColor: m.isSame(this.time,'minute') ? 'white' : 'black',
+          outline: m.isSame(this.time,'minute') ? false : true
         })
       }
       return minutes
@@ -97,12 +102,12 @@ export default {
       if (this.$q.screen.gt.sm) size = 5
       if (this.$q.screen.gt.md) size = 7
       if (this.$q.screen.gt.lg) size = 10
-      let start = moment(this.time).startOf('hour').subtract(size, 'hour')
-      let end = moment(this.time).endOf('hour').add(size, 'hour')
-      for (let h = moment(start); h.isBefore(end, 'hour'); h.add(1, 'h')) {
+      let start = moment(this.time).subtract(size, 'hour')
+      let end = moment(this.time).add(size + 1, 'hour')
+      for (let h = moment(start); h.isBefore(end); h.add(1, 'h')) {
         hours.push({
           label: this.kActivity.formatTime('time.short', h),
-          class: 'col k-timeline-hour-frame text-caption ' + (this.time.hour() === h.hour() ? 'bg-secondary text-white' : 'bg-grey-4 text-black')
+          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time,'hour') ? 'bg-secondary text-white' : 'bg-grey-4 text-black')
         })
       }
       return hours
@@ -114,30 +119,56 @@ export default {
       if (this.$q.screen.gt.sm) size = 3
       if (this.$q.screen.gt.md) size = 5
       if (this.$q.screen.gt.lg) size = 7
-      let start = moment(this.time).startOf('day').subtract(size, 'day')
-      let end = moment(this.time).endOf('day').add(size, 'day')
-      for (let d = moment(start); d.isBefore(end, 'day'); d.add(1, 'd')) {
+      let start = moment(this.time).subtract(size, 'day')
+      let end = moment(this.time).add(size + 1, 'day')
+      for (let d = moment(start); d.isBefore(end); d.add(1, 'd')) {
         days.push({
           label: this.kActivity.formatTime('date.short', d),
-          color: this.time.date() === d.date() ? 'secondary' : this.monthColors[d.month()],
-          textColor: this.time.date() === d.date() ? 'white' : 'black',
-          outline: this.time.date() === d.date() ? false : true
+          color: d.isSame(this.time, 'date') ? 'secondary' : this.monthColors[d.month()],
+          textColor: d.isSame(this.time, 'date') ? 'white' : 'black',
+          outline: d.isSame(this.time, 'date') ? false : true
         })
       }
       return days
     },
-    realtimeIcon () {
-      return this.kActivity.isTimelineTickingRealtime ? 'las la-stop' : 'las la-play'
-    }
+    date: {
+      get: function () {
+        return this.kActivity.currentTimeFormat.utc ? 
+          this.time.format(this.calendarDateMask) :
+          this.time.local().format(this.calendarDateMask)
+      },
+      set: function (value) {
+        let time = this.kActivity.currentTimeFormat.utc ? moment(value, this.calendarDateMask) : moment(value, this.calendarDateMask).utc()
+        time.minute(this.time.minute())
+        time.hour(this.time.hour())
+        this.setTime(time)
+      }
+    },
   },
   methods: {
-    updateTime (time) {
+    startTimeLoop () {
+      this.setTime(moment.utc())
+      this.kActivity.$off('current-time-changed', this.onTimeChanged)
+      this.timer = setInterval(() => {
+        const now = moment.utc()
+        if (!this.time.isSame(now, 'minute')) {
+          this.time = now 
+          this.kActivity.setCurrentTime(this.time)
+        }
+      }, 15 * 1000)
+    },
+    stopTimeLoop () {
+      clearInterval(this.timer)
+      this.timer = undefined
+      this.kActivity.$on('current-time-changed', this.onTimeChanged)
+    },
+    setTime (time, propagate = true) {
+      if (this.timer) this.stopTimeLoop()
       this.time = time
-      this.kActivity.stopTimeline()
-      this.kActivity.setCurrentTime(time)
+      if (propagate) this.kActivity.setCurrentTime(time)
     },
     onStepClicked (index) {
-      this.updateTime(moment(this.time).minute(index * this.timeline.step))
+      this.setTime(moment(this.time).minute(index * this.timeline.step))
     },
     onPreviousStepClicked () {
       let minutesToSubtract = this.timeline.step
@@ -145,7 +176,7 @@ export default {
       if (remainder > 0) {
         minutesToSubtract = remainder
       } 
-      this.updateTime(moment(this.time).subtract(minutesToSubtract, 'minute'))
+      this.setTime(moment(this.time).subtract(minutesToSubtract, 'minute'))
     },
     onNextStepClicked () {
       let minutesToAdd = this.timeline.step
@@ -153,45 +184,41 @@ export default {
       if (remainder > 0) {
         minutesToAdd = this.timeline.step - remainder
       } 
-      this.updateTime(moment(this.time).add(minutesToAdd, 'minute'))
+      this.setTime(moment(this.time).add(minutesToAdd, 'minute'))
     },
     onHourClicked (index, length) {
-      this.updateTime(moment(this.time).add(index - Math.trunc(length / 2), 'hour'))
+      this.setTime(moment(this.time).add(index - Math.trunc(length / 2), 'hour'))
     },
     onPreviousHourClicked () {
-      this.updateTime(moment(this.time).subtract(1, 'hour'))
+      this.setTime(moment(this.time).subtract(1, 'hour'))
     },
     onNextHourClicked () {
-      this.updateTime(moment(this.time).add(1, 'hour'))
+      this.setTime(moment(this.time).add(1, 'hour'))
     },
     onDayClicked (index, length) {
-      this.updateTime(moment(this.time).add(index - Math.trunc(length / 2), 'day'))
+      this.setTime(moment(this.time).add(index - Math.trunc(length / 2), 'day'))
     },
     onPreviousDayClicked () {
-      this.updateTime(moment(this.time).subtract(1, 'day'))
+      this.setTime(moment(this.time).subtract(1, 'day'))
     },
     onNextDayClicked () {
-      this.updateTime(moment(this.time).add(1, 'day'))
+      this.setTime(moment(this.time).add(1, 'day'))
     },
-    onToggleRealtime () {
-      if (this.kActivity.isTimelineTickingRealtime) this.kActivity.stopTimeline()
-      else this.kActivity.startTimeline(true)
-    },
-    onNowClicked () {
-      this.updateTime(moment.utc())
+    onRealtimeClicked () {
+      if (this.timer) this.stopTimeLoop()
+      else this.startTimeLoop()
     },
     onTimeChanged (time) {
-      this.updateTime(moment(time))
+      this.setTime(time, false)
     }
   },
   created () {
     this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
-    console.log(this.timeline)
   },
   mounted () {
     this.kActivity.$on('current-time-changed', this.onTimeChanged)
-    // Configure the timeline
-    console.log(this.timeline)
+    // Set the time
+    this.setTime(this.kActivity.currentTime)
   },
   beforeDestroy () {
     this.kActivity.$off('current-time-changed', this.onTimeChanged)
