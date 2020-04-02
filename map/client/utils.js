@@ -2,6 +2,7 @@ import _ from 'lodash'
 import math from 'mathjs'
 import config from 'config'
 import { buildUrl } from '../../core/common'
+import { utils as kCoreUtils } from '../../core/client'
 export * from './leaflet/utils'
 export * from './cesium/utils'
 
@@ -104,34 +105,31 @@ export function generatePropertiesSchema (geoJson) {
   // Enumerate all available properties/values in all features
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
   features.forEach(feature => {
-    const properties = _.get(feature, 'properties', {})
+    let properties = _.get(feature, 'properties', {})
+    // FIXME: we don't yet support nested objects in schema 
+    properties = kCoreUtils.dotify(properties)
     _.forOwn(properties, (value, key) => {
       // Property already registered ?
-      if (_.has(schema, `properties.${key}`)) {
-        const property = _.get(schema, `properties.${key}`)
+      if (schema.properties[`{key}`]) {
+        const property = schema.properties[`${key}`]
         // Try to find first non void value to select appropriate type
-        if (_.isNil(property)) _.set(schema, `properties.${key}`, value)
+        if (_.isNil(property)) schema.properties[`${key}`] = value
       } else {
-        _.set(schema, `properties.${key}`, value)
+        schema.properties[`${key}`] = value
       }
     })
   })
   _.forOwn(schema.properties, (value, key) => {
     const type = (typeof value)
-    // FIXME: we don't support nested objects
-    if (type === 'object') {
-      _.unset(schema, `properties.${key}`)
-    } else {
-      // For null/undefined value we will assume string by default
-      _.set(schema, `properties.${key}`, {
-        type,
-        field: {
-          component: (type === 'number' ? 'form/KNumberField'
-            : (type === 'boolean' ? 'form/KToggleField' : 'form/KTextField')),
-          helper: key,
-          label: key
-        }
-      })
+    // For null/undefined value we will assume string by default
+    schema.properties[`${key}`] = {
+      type,
+      field: {
+        component: (type === 'number' ? 'form/KNumberField'
+          : (type === 'boolean' ? 'form/KToggleField' : 'form/KTextField')),
+        helper: key,
+        label: key
+      }
     }
   })
   return schema
