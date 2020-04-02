@@ -1,67 +1,61 @@
 <template>
-  <div class="q-pa-md column k-timeline">
+  <div class="q-pa-xs column k-timeline">
     <!--
-      Hour controls
+      Time controls
      -->
-    <div class="full-width row justify-center items-center">
-      <q-btn dense flat round icon='las la-step-backward' color="secondary" @click="onPreviousStepClicked" />
-      <q-btn dense flat round icon='las la-sync' color="secondary" @click="onClickReset" />
-      <q-chip :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="secondary" text-color="white" />
-      <q-btn dense flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
-      <q-btn dense flat round icon='las la-step-forward' color="secondary" @click="onNextStepClicked" />
+    <div class="full-width row justify-center items-center k-timeline-control">
+      <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-backward' color="secondary" @click="onPreviousStepClicked" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-sync' color="secondary" @click="onClickReset" />
+      <q-chip dense :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="secondary" text-color="white" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
+      <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-forward' color="secondary" @click="onNextStepClicked" />
+    </div>
+    <div v-if="!$q.screen.gt.xs" class="full-width row justify-around q-pt-xs">
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-calendar-minus' @click="onPreviousDayClicked" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-minus-square' @click="onPreviousHourClicked" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-backward' color="secondary" @click="onPreviousStepClicked" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-forward' color="secondary" @click="onNextStepClicked" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-plus-square' @click="onNextHourClicked" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-calendar-plus' @click="onNextDayClicked" />
     </div>
     <!--
-      Hours bar
+      Time bars
      -->
-    <div class="full-width row items-center" @mouseover="stepsBarIsVisible = true" @mouseleave="stepsBarIsVisible = false">
-      <div class="col-xs-2 col-sm-1 row justify-center">
-        <q-btn flat round icon='las la-angle-left' color="secondary" @click="onPreviousHourClicked" />
-      </div>
-      <div class="col column">
-        <transition appear enter-active-class="animated zoomIn" leave-active-class="animated zoomOut">
-          <div v-if="stepsBarIsVisible" class="row justify-center q-ma-xs">
-            <template v-for="(step, index) in steps">
-              <q-chip :key="index" 
-                dense flat size="md" 
-                :outline="step.outline" 
-                :color="step.color" 
-                :text-color="step.textColor" 
-                :label="step.label" 
-                clickable @click="onStepClicked(index)" />
-            </template>
-          </div>
-        </transition>
-        <div class="row full-width">
-          <template v-for="(hour, index) in hours">
-            <div :key="index" :class="hour.class" style="height: 25px"  @click="onHourClicked(index, hours.length)">
-              {{hour.label}}
-            </div>
-          </template>
-        </div>
-      </div>
-      <div class="col-xs-2 col-sm-1 row justify-center">
-        <q-btn flat round icon='las la-angle-right'  color="secondary" @click="onNextHourClicked" />
-      </div>
-    </div>
-    <!--
-      Days bar
-     -->
-    <div class="full-width row items-center" @mouseover="daysBarIsVisible = true" @mouseleave="daysBarIsVisible = false">
-      <div class="col-xs-2 col-sm-1 row justify-center">
-        <q-btn v-if="daysBarIsVisible" flat round icon='las la-angle-left' color="secondary" @click="onPreviousDayClicked" />
-      </div>
-      <div class="col row justify-center k-timeline-days-bar">
-        <template v-for="(day, index) in days">
-          <transition :key="index" appear enter-active-class="animated zoomIn" leave-active-class="animated zoomOut">
-            <div v-if="daysBarIsVisible"   :class="day.class" style="height: 25px"  @click="onDayClicked(index, days.length)">
-              {{day.label}}
-            </div>
-            <div v-else :key="index" :class="day.class" style="height: 8px" />
-          </transition>
+    <div v-if="$q.screen.gt.xs" class="q-pt-sm column">
+      <div class="row justify-center items-center">
+        <template v-for="(step, index) in minutes">
+          <q-chip 
+            :key="index" 
+            dense flat :size="$q.screen.gt.sm ? '12px' : '10px'" 
+            :outline="step.outline" 
+            :color="step.color" 
+            :text-color="step.textColor" 
+            :label="step.label" 
+            clickable @click="onStepClicked(index)" />
         </template>
       </div>
-      <div class="col-xs-2 col-sm-1 row justify-center">
-        <q-btn v-if="daysBarIsVisible" flat round icon='las la-angle-right'  color="secondary" @click="onNextDayClicked" />
+      <div class="full-width row justify-center items-center">
+        <q-btn dense flat round icon='las la-minus-square' color="secondary" @click="onPreviousHourClicked" />
+        <template v-for="(hour, index) in hours">
+          <div :key="index" :class="hour.class" style="height: 25px"  @click="onHourClicked(index, hours.length)">
+            {{hour.label}}
+          </div>          
+        </template>
+        <q-btn flat round icon='las la-plus-square'  color="secondary" @click="onNextHourClicked" />
+      </div>
+      <div class="row justify-center items-center">
+        <q-btn dense flat round icon='las la-calendar-minus' color="secondary" @click="onPreviousDayClicked" />
+        <template v-for="(day, index) in days">
+          <q-chip 
+            :key="index" 
+            dense flat square size="md" 
+            :outline="day.outline" 
+            :color="day.color" 
+            :text-color="day.textColor" 
+            :label="day.label" 
+            clickable @click="onDayClicked(index, days.length)" />
+        </template>
+        <q-btn dense flat round icon='las la-calendar-plus'  color="secondary" @click="onNextDayClicked" />
       </div>
     </div>
   </div>
@@ -69,7 +63,7 @@
 
 <script>
 import moment from 'moment'
-import { colors } from 'quasar'
+import { colors, debounce } from 'quasar'
 
 export default {
   name: 'k-timeline',
@@ -81,37 +75,36 @@ export default {
       begin: moment(now).subtract(15, 'days'),
       end: moment(now).add(15, 'days'),
       step: 10,
-      daysBarIsVisible: false,
-      stepsBarIsVisible: false
     }
   },
   computed: {
-    steps () {
-      let steps = []
-      for (let s = 0; s < 60; s += this.step) {
-        let m = this.time.minute()
-        steps.push({
-          label: this.kActivity.formatTime('time.short', this.time) + s.toString().padStart(2,0),
-          color: m === s ? 'secondary' : 'grey-8',
-          textColor: m === s ? 'white' : 'black',
-          outline: m === s ? false : true
+    minutes () {
+      let minutes = []
+      let start = moment(this.time).minute(0)
+      let end = moment(this.time).minute(59)
+      for (let m = moment(start); m.isBefore(end); m.add(this.step, 'm')) {
+        minutes.push({
+          label: m.minute().toString().padStart(2,0),
+          color: this.time.minute() === m.minute() ? 'secondary' : 'grey-8',
+          textColor: this.time.minute() === m.minute() ? 'white' : 'black',
+          outline: this.time.minute() === m.minute() ? false : true
         })
       }
-      return steps
+      return minutes
     },
     hours () {
       let hours = []
       let size = 0
-      if (this.$q.screen.gt.xs) size = 1
-      if (this.$q.screen.gt.sm) size = 3
-      if (this.$q.screen.gt.md) size = 5
-      if (this.$q.screen.gt.lg) size = 7
+      if (this.$q.screen.gt.xs) size = 2
+      if (this.$q.screen.gt.sm) size = 5
+      if (this.$q.screen.gt.md) size = 7
+      if (this.$q.screen.gt.lg) size = 10
       let start = moment(this.time).startOf('hour').subtract(size, 'hour')
       let end = moment(this.time).endOf('hour').add(size, 'hour')
-      for (let h = moment(start); h.isBefore(end); h.add(1, 'hour')) {
+      for (let h = moment(start); h.isBefore(end); h.add(1, 'h')) {
         hours.push({
           label: this.kActivity.formatTime('time.short', h),
-          class: 'col k-timeline-hour-frame text-caption ' + (this.time.hour() === h.hour() ? 'bg-secondary text-white' : 'bg-white text-black')
+          class: 'col k-timeline-hour-frame text-caption ' + (this.time.hour() === h.hour() ? 'bg-secondary text-white' : 'bg-grey-4 text-black')
         })
       }
       return hours
@@ -123,16 +116,14 @@ export default {
       if (this.$q.screen.gt.sm) size = 3
       if (this.$q.screen.gt.md) size = 5
       if (this.$q.screen.gt.lg) size = 7
-      let start = moment(this.time).startOf('day')
-      let end = moment(this.time).endOf('day')
-      if (size > 0) {
-        start.subtract(size, 'day')
-        end.add(size, 'day')
-      }
-      for (let d = moment(start); d.isBefore(end); d.add(1, 'day')) {
+      let start = moment(this.time).startOf('day').subtract(size, 'day')
+      let end = moment(this.time).endOf('day').add(size, 'day')
+      for (let d = moment(start); d.isBefore(end); d.add(1, 'd')) {
         days.push({
           label: this.kActivity.formatTime('date.short', d),
-          class: 'col k-timeline-day-frame text-caption ' + (this.time.date() === d.date() ? 'bg-secondary text-white' : 'bg-' + this.monthColors[d.month()] +'-2 text-black')
+          color: this.time.date() === d.date() ? 'secondary' : this.monthColors[d.month()],
+          textColor: this.time.date() === d.date() ? 'white' : 'black',
+          outline: this.time.date() === d.date() ? false : true
         })
       }
       return days
@@ -196,20 +187,20 @@ export default {
       this.updateTime(moment(time))
     },
     onTimelineChanged (timeline) {
-      onsole.log(timeline)
       this.begin = moment(timeline.begin)
       this.end = moment(timeline.end)
-      this.step = timeline.step.asMilliseconds() / 1000
+      this.step = timeline.step.minutes()
       this.time = moment(timeline.currentTime)
     }
   },
   created () {
-    this.monthColors = ['red', 'purple', 'indigo', 'blue', 'cyan', 'green', 'pink', 'deep-purple', 'light-blue', 'teal', 'lime', 'amber']
+    this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
   },
   mounted () {
     this.kActivity.$on('current-time-changed', this.onTimeChanged)
     this.kActivity.$on('timeline-changed', this.onTimelineChanged)
-    this.updateTime(this.kActivity.currentTime)
+    // Configure the timeline
+    this.onTimelineChanged(this.kActivity.timeline)
   },
   beforeDestroy () {
     this.kActivity.$off('current-time-changed', this.onTimeChanged)
@@ -227,7 +218,12 @@ export default {
   .k-timeline:hover {
     border: solid 1px $primary
   }
-  .k-timeline-step-frame, .k-timeline-hour-frame, .k-timeline-day-frame {
+  .k-timeline-control {
+    padding: 5px
+    border-bottom: solid 1px lightgrey
+  }
+  .k-timeline-hour-frame {
+    border: solid 1px lightgrey
     padding-top: 2px
     text-align: center
     vertical-align: middle
@@ -237,14 +233,8 @@ export default {
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
   }
-  .k-timeline-hour-frame {
-    border: solid 1px lightgrey
-  }
-  .k-timeline-step-frame:hover, .k-timeline-hour-frame:hover, .k-timeline-day-frame:hover {
+  .k-timeline-hour-frame:hover {
     border-bottom: solid 3px $secondary
     //color: $secondary
-  }
-  .k-timeline-days-bar {
-    border: solid 1px lightgrey
   }
 </style>

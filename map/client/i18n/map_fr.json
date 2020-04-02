@@ -225,6 +225,7 @@
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Prévisions",
-    "ARCHIVES_LABEL": "Archives"
+    "ARCHIVES_LABEL": "Archives",
+    "NO_MODEL_AVAILABLE": "Aucun modèle disponible"
   }
 }

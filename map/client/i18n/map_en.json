@@ -221,10 +221,11 @@
     "PERCENTAGE_LABEL": "Percentage"
   },
   "KLayersSelector": {
-    "NO_LAYER_AVAILABLE": "No Layer available"
+    "NO_LAYER_AVAILABLE": "No layer available"
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Forecasts",
-    "ARCHIVES_LABEL": "Archives"
+    "ARCHIVES_LABEL": "Archives",
+    "NO_MODEL_AVAILABLE": "No model available"
   }
 }

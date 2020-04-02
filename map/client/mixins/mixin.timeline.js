@@ -77,7 +77,7 @@ export default {
           this.updateTimeline({ reference: now })
           this.setCurrentTime(now)
         }, 30 * 1000)
-      } else {
+      } else {
         // every step
         this.timeline.timerId = setInterval(() => {
           this.timelineMove(1)
