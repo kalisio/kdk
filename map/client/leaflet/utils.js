@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { utils as kCoreUtils } from '../../../core/client'
 
 export const LeafletStyleMappings = {
   'z-index': 'pane',
@@ -69,6 +70,7 @@ export const LeafletEvents = {
 }
 
 export function getHtmlTable (properties) {
+  properties = kCoreUtils.dotify(properties)
   properties = _.pickBy(properties, value => !_.isNil(value))
   const keys = _.keys(properties)
   let html
