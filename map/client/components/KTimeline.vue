@@ -5,7 +5,7 @@
      -->
     <div class="full-width row justify-center items-center k-timeline-control">
       <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-backward' color="secondary" @click="onPreviousStepClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-sync' color="secondary" @click="onClickReset" />
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-clock' color="secondary" @click="onNowClicked" />
       <q-chip dense :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="secondary" text-color="white" />
       <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
       <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-forward' color="secondary" @click="onNextStepClicked" />
@@ -22,15 +22,15 @@
       Time bars
      -->
     <div v-if="$q.screen.gt.xs" class="q-pt-sm column">
-      <div class="row justify-center items-center">
-        <template v-for="(step, index) in minutes">
+      <div v-if="timeline.step < 60" class="row justify-center items-center">
+        <template v-for="(minute, index) in minutes">
           <q-chip 
             :key="index" 
             dense flat :size="$q.screen.gt.sm ? '12px' : '10px'" 
-            :outline="step.outline" 
-            :color="step.color" 
-            :text-color="step.textColor" 
-            :label="step.label" 
+            :outline="minute.outline" 
+            :color="minute.color" 
+            :text-color="minute.textColor" 
+            :label="minute.label" 
             clickable @click="onStepClicked(index)" />
         </template>
       </div>
@@ -72,9 +72,7 @@ export default {
     const now = moment().utc()
     return {
       time: now,
-      begin: moment(now).subtract(15, 'days'),
-      end: moment(now).add(15, 'days'),
-      step: 10,
+      timeline: this.$store.get('timeline')
     }
   },
   computed: {
@@ -82,7 +80,7 @@ export default {
       let minutes = []
       let start = moment(this.time).minute(0)
       let end = moment(this.time).minute(59)
-      for (let m = moment(start); m.isBefore(end); m.add(this.step, 'm')) {
+      for (let m = moment(start); m.isBefore(end, 'minute'); m.add(this.timeline.step, 'm')) {
         minutes.push({
           label: m.minute().toString().padStart(2,0),
           color: this.time.minute() === m.minute() ? 'secondary' : 'grey-8',
@@ -101,7 +99,7 @@ export default {
       if (this.$q.screen.gt.lg) size = 10
       let start = moment(this.time).startOf('hour').subtract(size, 'hour')
       let end = moment(this.time).endOf('hour').add(size, 'hour')
-      for (let h = moment(start); h.isBefore(end); h.add(1, 'h')) {
+      for (let h = moment(start); h.isBefore(end, 'hour'); h.add(1, 'h')) {
         hours.push({
           label: this.kActivity.formatTime('time.short', h),
           class: 'col k-timeline-hour-frame text-caption ' + (this.time.hour() === h.hour() ? 'bg-secondary text-white' : 'bg-grey-4 text-black')
@@ -118,7 +116,7 @@ export default {
       if (this.$q.screen.gt.lg) size = 7
       let start = moment(this.time).startOf('day').subtract(size, 'day')
       let end = moment(this.time).endOf('day').add(size, 'day')
-      for (let d = moment(start); d.isBefore(end); d.add(1, 'd')) {
+      for (let d = moment(start); d.isBefore(end, 'day'); d.add(1, 'd')) {
         days.push({
           label: this.kActivity.formatTime('date.short', d),
           color: this.time.date() === d.date() ? 'secondary' : this.monthColors[d.month()],
@@ -139,21 +137,21 @@ export default {
       this.kActivity.setCurrentTime(time)
     },
     onStepClicked (index) {
-      this.updateTime(moment(this.time).minute(index * this.step))
+      this.updateTime(moment(this.time).minute(index * this.timeline.step))
     },
     onPreviousStepClicked () {
-      let minutesToSubtract = this.step
-      let remainder = this.time.minute() % this.step
+      let minutesToSubtract = this.timeline.step
+      let remainder = this.time.minute() % this.timeline.step
       if (remainder > 0) {
         minutesToSubtract = remainder
       } 
       this.updateTime(moment(this.time).subtract(minutesToSubtract, 'minute'))
     },
     onNextStepClicked () {
-      let minutesToAdd = this.step
-      let remainder = this.time.minute() % this.step
+      let minutesToAdd = this.timeline.step
+      let remainder = this.time.minute() % this.timeline.step
       if (remainder > 0) {
-        minutesToAdd = this.step - remainder
+        minutesToAdd = this.timeline.step - remainder
       } 
       this.updateTime(moment(this.time).add(minutesToAdd, 'minute'))
     },
@@ -179,32 +177,24 @@ export default {
       if (this.kActivity.isTimelineTickingRealtime) this.kActivity.stopTimeline()
       else this.kActivity.startTimeline(true)
     },
-    onClickReset () {
-      this.kActivity.stopTimeline()
-      this.kActivity.resetTimeline()
+    onNowClicked () {
+      this.updateTime(moment.utc())
     },
     onTimeChanged (time) {
       this.updateTime(moment(time))
-    },
-    onTimelineChanged (timeline) {
-      this.begin = moment(timeline.begin)
-      this.end = moment(timeline.end)
-      this.step = timeline.step.minutes()
-      this.time = moment(timeline.currentTime)
     }
   },
   created () {
     this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
+    console.log(this.timeline)
   },
   mounted () {
     this.kActivity.$on('current-time-changed', this.onTimeChanged)
-    this.kActivity.$on('timeline-changed', this.onTimelineChanged)
     // Configure the timeline
-    this.onTimelineChanged(this.kActivity.timeline)
+    console.log(this.timeline)
   },
   beforeDestroy () {
     this.kActivity.$off('current-time-changed', this.onTimeChanged)
-    this.kActivity.$off('timeline-changed', this.onTimelineChanged)
   }
 }
 </script>
