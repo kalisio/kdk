@@ -126,3 +126,20 @@ export function processIcon (object, path = 'icon.name') {
   // Process icons for backward compatibility with font awesome 4
   _.set(object, path, getIconName(object, path))
 }
+
+export function dotify(object) {
+  var dotifiedObject = {}
+  function recurse(object, current) {
+    _.forOwn(object, (value, key) => {
+      var newKey = (current ? current + '.' + key : key)  // joined key with dot
+      if (value && typeof value === 'object') {
+        recurse(value, newKey)  // it's a nested object, so do it again
+      } else {
+        dotifiedObject[newKey] = value  // it's not an object, so set the property
+      }
+    })
+  }
+
+  recurse(object)
+  return dotifiedObject
+}
