@@ -224,6 +224,9 @@
   },
   "KLayerStyleForm": {
     "DEFAULT_VISIBILITY": "Visibilité par défaut",
+    "MIN_ZOOM": "Visible from level",
+    "MAX_ZOOM": "Visible until level",
+    "VISIBILITY": "Visibility",
     "POINTS": "Markers",
     "LINES": "Lines",
     "POLYGONS": "Polygons",

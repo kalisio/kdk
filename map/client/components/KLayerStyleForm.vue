@@ -2,16 +2,44 @@
   <div>
     <k-icon-chooser ref="iconChooser" @icon-choosed="onIconChanged" />
     <k-color-chooser ref="colorChooser" @color-choosed="onColorChanged" />
-    <q-list dense class="row">
-      <q-item>
-        <q-item-section>
-          <q-toggle v-model="isVisible"/>
-        </q-item-section>
-        <q-item-section avatar>
-          {{$t('KLayerStyleForm.DEFAULT_VISIBILITY')}}
-        </q-item-section>
-      </q-item>
-    </q-list>
+    <q-expansion-item ref="general" default-opened icon="fas fa-low-vision" :label="$t('KLayerStyleForm.VISIBILITY')" group="group">
+      <q-list dense class="row">
+        <q-item>
+          <q-item-section>
+            <q-toggle v-model="isVisible"/>
+          </q-item-section>
+          <q-item-section avatar>
+            {{$t('KLayerStyleForm.DEFAULT_VISIBILITY')}}
+          </q-item-section>
+        </q-item>
+        <q-item class="col-12">
+          <q-item-section class="col-1">
+            <q-toggle v-model="hasMinZoom"/>
+          </q-item-section>
+          <q-item-section class="col-6">
+          {{$t('KLayerStyleForm.MIN_ZOOM')}}
+          </q-item-section>
+          <q-item-section class="col-4">
+            <q-slider v-model="minZoom" :disable="!hasMinZoom"
+              :min="minViewerZoom" :max="hasMaxZoom ? maxZoom : maxViewerZoom" :step="1"
+              label label-always :label-value="minZoom"/>
+          </q-item-section>
+        </q-item>
+        <q-item class="col-12">
+          <q-item-section class="col-1">
+            <q-toggle v-model="hasMaxZoom"/>
+          </q-item-section>
+          <q-item-section class="col-6">
+          {{$t('KLayerStyleForm.MAX_ZOOM')}}
+          </q-item-section>
+          <q-item-section class="col-4">
+            <q-slider v-model="maxZoom" :disable="!hasMaxZoom"
+              :min="hasMinZoom ? minZoom : minViewerZoom" :max="maxViewerZoom" :step="1"
+              label label-always :label-value="maxZoom"/>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-expansion-item>
     <q-expansion-item ref="points" icon="fas fa-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
@@ -23,7 +51,7 @@
           </q-item-section>
           <q-item-section class="col-4">
             <q-slider v-model="disableClusteringAtZoom" :disable="!clustering"
-              :min="minZoom" :max="maxZoom" :step="1"
+              :min="minViewerZoom" :max="maxViewerZoom" :step="1"
               label label-always :label-value="disableClusteringAtZoom"/>
           </q-item-section>
         </q-item>
@@ -300,10 +328,14 @@ export default {
   },
   data () {
     return {
-      minZoom: null,
-      maxZoom: null,
+      minViewerZoom: null,
+      maxViewerZoom: null,
       property: null,
       isVisible: true,
+      hasMinZoom: false,
+      hasMaxZoom: false,
+      minZoom: 0,
+      maxZoom: 0,
       popup: false,
       popupProperties: [],
       tooltip: false,
@@ -374,7 +406,14 @@ export default {
         styles.push(this.createStyle(propertyName, style))
       }
     },
-    async fillClusteringStyle(values) {
+    fillVisibilityStyle(values) {
+      this.isVisible = _.get(values, 'leaflet.isVisible', true)
+      this.hasMinZoom = _.has(values, 'leaflet.minZoom')
+      if (this.hasMinZoom) this.minZoom = _.get(values, 'leaflet.minZoom')
+      this.hasMaxZoom = _.has(values, 'leaflet.maxZoom')
+      if (this.hasMaxZoom) this.minZoom = _.get(values, 'leaflet.maxZoom')
+    },
+    fillClusteringStyle(values) {
       this.clustering = (_.get(values, 'leaflet.cluster', _.get(this.options, 'cluster')) ? true : false)
       this.disableClusteringAtZoom = _.get(values, 'leaflet.cluster.disableClusteringAtZoom',
         _.get(this.options, 'cluster.disableClusteringAtZoom', 18))
@@ -453,6 +492,8 @@ export default {
     },
     async fill (values) {
       logger.debug('Filling layer style form', values)
+      // Visibility
+      this.fillVisibilityStyle(values)
       // Clustering
       this.fillClusteringStyle(values)
       // Points
@@ -512,10 +553,13 @@ export default {
       values['leaflet.template'] = (hasStyles ? properties : [])
       return values
     },
-    generalValues () {
-      return {
+    visibilityValues () {
+      let values = {
         'leaflet.isVisible': this.isVisible
       }
+      if (this.hasMinZoom) values['leaflet.minZoom'] = this.minZoom
+      if (this.hasMaxZoom) values['leaflet.maxZoom'] = this.maxZoom
+      return values
     },
     clusteringValues () {
       return {
@@ -555,8 +599,8 @@ export default {
       const customizer = (objValue, srcValue) => {
         if (_.isArray(objValue)) return objValue.concat(srcValue)
       }
-      // General properties
-      _.merge(values, this.generalValues())
+      // Visibility properties
+      _.merge(values, this.visibilityValues())
       // Clustering
       _.merge(values, this.clusteringValues())
       // Point style
@@ -644,8 +688,8 @@ export default {
     // Load the required components
     this.$options.components['k-icon-chooser'] = this.$load('input/KIconChooser')
     this.$options.components['k-color-chooser'] = this.$load('input/KColorChooser')
-    this.minZoom = _.get(this.options, 'viewer.minZoom', 1)
-    this.maxZoom = _.get(this.options, 'viewer.maxZoom', 18)
+    this.minViewerZoom = this.minZoom = _.get(this.options, 'viewer.minZoom', 1)
+    this.maxViewerZoom = this.maxZoom = _.get(this.options, 'viewer.maxZoom', 18)
     await this.build()
     this.property = this.properties[0]
     this.$emit('form-ready', this)
