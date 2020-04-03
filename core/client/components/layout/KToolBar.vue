@@ -3,16 +3,20 @@
     <template v-for="action in actions">
       <q-separator v-if="action.name == 'separator'" :key="key(action)" vertical />
       <q-btn v-else
-        :key="key(action)"
+        :key="actionKey(action)"
         :icon="action.icon"
-        :color="action.warning ? 'warning' : color"
+        :color="action.color ? action.color : color"
+        :size="action.size ? action.size: size"
         flat
         round
         :dense="dense"
         @click="onActionTriggered(action)">
-        <q-tooltip>
+        <!-- tooltip -->
+        <q-tooltip v-if="action.label">
           {{action.warning ? action.warning : action.label}}
         </q-tooltip>
+        <!-- badge -->
+        <q-badge v-if="action.badge" v-bind="action.badge" floating transparent />
       </q-btn>
     </template>
   </div>
@@ -36,13 +40,17 @@ export default {
       type: String,
       default: 'primary'
     },
+    size: {
+      type: String,
+      default: 'md'
+    }, 
     dense: {
       type: Boolean,
       default: false
     }
   },
   methods: {
-    key (action) {
+    actionKey (action) {
       return action.name + '-' + uid()
     },
     onActionTriggered (action) {
