@@ -56,9 +56,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     let skipTile = false
 
     // check we need to load the tile
-    // we don't have to load it
-    //  - when a tile at an upper zoom levelencompassing the tile is already loaded
-    //  - or when all sub tiles have already been loaded
+    // we don't have to load it when a tile at an upper zoom level encompassing the tile is already loaded
     // TODO: we may also check if we have all the sub tiles loaded too ...
     const triplet = {
       x: coords.x,

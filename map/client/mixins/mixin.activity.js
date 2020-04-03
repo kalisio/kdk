@@ -542,16 +542,21 @@ export default function (name) {
             label: this.$t('CANCEL')
           }
         }).onOk(async () => {
-          // Stop any running edition
-          if (this.isLayerEdited(layer.name)) await this.editLayer(layer.name)
-          if (layer._id) {
-            // If persistent feature layer remove features as well
-            if (layer.service === 'features') {
-              await this.removeFeatures(layer._id)
+          Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL') })
+          try {
+            // Stop any running edition
+            if (this.isLayerEdited(layer.name)) await this.editLayer(layer.name)
+            if (layer._id) {
+              // If persistent feature layer remove features as well
+              if (layer.service === 'features') {
+                await this.removeFeatures(layer._id)
+              }
+              await this.$api.getService('catalog').remove(layer._id)
             }
-            await this.$api.getService('catalog').remove(layer._id)
+            this.removeLayer(layer.name)
+          } catch (_) {
           }
-          this.removeLayer(layer.name)
+          Loading.hide()
         })
       },
       onMapReady () {

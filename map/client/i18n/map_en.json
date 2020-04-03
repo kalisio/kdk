@@ -40,6 +40,7 @@
       "START_EDIT_DATA_LABEL": "Start data edit",
       "STOP_EDIT_DATA_LABEL": "Stop data edit",
       "REMOVE_LABEL": "Remove",
+      "REMOVING_LABEL": "Please wait while removing layer data",
       "REMOVE_DIALOG_TITLE": "Remove {{layer}} ?",
       "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{layer}}</b> from your workspace ?",
       "ZOOM_TO_LABEL": "Zoom to",
