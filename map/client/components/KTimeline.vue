@@ -4,23 +4,25 @@
       Time controls
      -->
     <div class="full-width row justify-center items-center k-timeline-control">
-      <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-backward' color="secondary" @click="onPreviousStepClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-calendar' color="secondary">
+      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-backward' size="md" color="secondary" @click="onPreviousStepClicked">
+        <q-tooltip>{{$t('KTimeline.PREVIOUS_STEP')}}</q-tooltip>
+      </q-btn>
+      <q-btn  dense flat round icon='las la-calendar' size="md" color="secondary">
+        <q-tooltip>{{$t('KTimeline.SET_DATE')}}</q-tooltip>
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-date v-model="date" :mask="calendarDateMask" today-btn minimal />
         </q-popup-proxy>
       </q-btn>
       <q-chip dense :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="secondary" text-color="white" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round :icon="timer ? 'las la-stop' : 'las la-play'" color="secondary" @click="onRealtimeClicked" />
-      <q-btn v-if="$q.screen.gt.xs" :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-forward' color="secondary" @click="onNextStepClicked" />
+      <q-btn dense flat round icon="las la-clock" size="md" :disable="timer !== undefined" color="secondary" @click="onNowClicked">
+        <q-tooltip>{{$t('KTimeline.SET_NOW')}}</q-tooltip>
+      </q-btn>
+      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-forward' size="md" color="secondary" @click="onNextStepClicked">
+        <q-tooltip>{{$t('KTimeline.NEXT_STEP')}}</q-tooltip>
+      </q-btn>
     </div>
     <div v-if="!$q.screen.gt.xs" class="full-width row justify-around q-pt-xs">
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-calendar-minus' @click="onPreviousDayClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-minus-square' @click="onPreviousHourClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-backward' color="secondary" @click="onPreviousStepClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round icon='las la-step-forward' color="secondary" @click="onNextStepClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-plus-square' @click="onNextHourClicked" />
-      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" dense flat round color="secondary" icon='las la-calendar-plus' @click="onNextDayClicked" />
+      <k-tool-bar :actions="getActions('mobile')" color="secondary" dense />
     </div>
     <!--
       Time bars
@@ -35,20 +37,26 @@
             :color="minute.color" 
             :text-color="minute.textColor" 
             :label="minute.label" 
-            clickable @click="onStepClicked(index)" />
+            clickable @click="onMinutesClicked(index)" />
         </template>
       </div>
       <div class="full-width row justify-center items-center">
-        <q-btn dense flat round icon='las la-minus-square' color="secondary" @click="onPreviousHourClicked" />
+        <q-btn dense flat round icon='las la-minus-square' color="secondary" @click="onPreviousHourClicked">
+          <q-tooltip>{{$t('KTimeline.PREVIOUS_HOUR')}}</q-tooltip>
+        </q-btn>
         <template v-for="(hour, index) in hours">
           <div :key="index" :class="hour.class" style="height: 25px"  @click="onHourClicked(index, hours.length)">
             {{hour.label}}
           </div>          
         </template>
-        <q-btn flat round icon='las la-plus-square'  color="secondary" @click="onNextHourClicked" />
+        <q-btn flat round icon='las la-plus-square'  color="secondary" @click="onNextHourClicked">
+          <q-tooltip>{{$t('KTimeline.NEXT_HOUR')}}</q-tooltip>
+        </q-btn>
       </div>
       <div class="row justify-center items-center">
-        <q-btn dense flat round icon='las la-calendar-minus' color="secondary" @click="onPreviousDayClicked" />
+        <q-btn dense flat round icon='las la-calendar-minus' color="secondary" @click="onPreviousDayClicked">
+          <q-tooltip>{{$t('KTimeline.PREVIOUS_DAY')}}</q-tooltip>
+        </q-btn>
         <template v-for="(day, index) in days">
           <q-chip 
             :key="index" 
@@ -59,13 +67,16 @@
             :label="day.label" 
             clickable @click="onDayClicked(index, days.length)" />
         </template>
-        <q-btn dense flat round icon='las la-calendar-plus'  color="secondary" @click="onNextDayClicked" />
+        <q-btn dense flat round icon='las la-calendar-plus'  color="secondary" @click="onNextDayClicked">
+          <q-tooltip>{{$t('KTimeline.NEXT_DAY')}}</q-tooltip>
+        </q-btn>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import moment from 'moment'
 import { colors, debounce, date } from 'quasar'
 
@@ -143,36 +154,36 @@ export default {
         time.hour(this.time.hour())
         this.setTime(time)
       }
-    },
+    }
   },
   methods: {
+    getActions (scope) {
+      return _.get(this.actions, scope)
+    },
     startTimeLoop () {
       this.setTime(moment.utc())
-      this.kActivity.$off('current-time-changed', this.onTimeChanged)
       this.timer = setInterval(() => {
         const now = moment.utc()
         if (!this.time.isSame(now, 'minute')) {
           this.time = now 
+          this.kActivity.$off('current-time-changed', this.onTimeChanged)
           this.kActivity.setCurrentTime(this.time)
+          this.kActivity.$on('current-time-changed', this.onTimeChanged)
         }
       }, 15 * 1000)
     },
     stopTimeLoop () {
       clearInterval(this.timer)
       this.timer = undefined
-      this.kActivity.$on('current-time-changed', this.onTimeChanged)
     },
     setTime (time, propagate = true) {
       if (this.timer) this.stopTimeLoop()
       this.time = time
       if (propagate) this.kActivity.setCurrentTime(time)
     },
-    onStepClicked (index) {
-      this.setTime(moment(this.time).minute(index * this.timeline.step))
-    },
     onPreviousStepClicked () {
       let minutesToSubtract = this.timeline.step
-      let remainder = this.time.minute() % this.timeline.step
+      let remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
       if (remainder > 0) {
         minutesToSubtract = remainder
       } 
@@ -180,11 +191,14 @@ export default {
     },
     onNextStepClicked () {
       let minutesToAdd = this.timeline.step
-      let remainder = this.time.minute() % this.timeline.step
+      let remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
       if (remainder > 0) {
         minutesToAdd = this.timeline.step - remainder
       } 
       this.setTime(moment(this.time).add(minutesToAdd, 'minute'))
+    },
+    onMinutesClicked (index) {
+      this.setTime(moment(this.time).minute(index * this.timeline.step))
     },
     onHourClicked (index, length) {
       this.setTime(moment(this.time).add(index - Math.trunc(length / 2), 'hour'))
@@ -204,16 +218,29 @@ export default {
     onNextDayClicked () {
       this.setTime(moment(this.time).add(1, 'day'))
     },
-    onRealtimeClicked () {
-      if (this.timer) this.stopTimeLoop()
-      else this.startTimeLoop()
+    onNowClicked () {
+      this.startTimeLoop()
     },
     onTimeChanged (time) {
       this.setTime(time, false)
     }
   },
   created () {
+    // Load the required components
+    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    // Define the colors assgigned to the months
     this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
+    // Define the actions
+    this.actions = {
+      mobile: [
+        { name: 'previousDay', icon: 'las la-calendar-minus', label: this.$t('KTimeline.PREVIOUS_DAY'), handler: this.onPreviousDayClicked },
+        { name: 'previousHour', icon: 'las la-minus-square', label: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
+        { name: 'previousStep', icon: 'las la-step-backward', label: this.$t('KTimeline.PREVIOUS_STEP'), handler: this.onPreviousStepClicked },
+        { name: 'nextStep', icon: 'las la-step-forward', label: this.$t('KTimeline.NEXT_STEP'), handler: this.onNextStepClicked },
+        { name: 'nextHour', icon: 'las la-plus-square', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNectHourClicked },
+        { name: 'nextDay', icon: 'las la-calendar-plus', label: this.$t('KTimeline.NEXT_DAY'), handler: this.onNextDayClicked }
+      ]
+    }
   },
   mounted () {
     this.kActivity.$on('current-time-changed', this.onTimeChanged)
@@ -234,6 +261,7 @@ export default {
   }
   .k-timeline:hover {
     border: solid 1px $primary
+    cursor: pointer
   }
   .k-timeline-control {
     padding: 5px

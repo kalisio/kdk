@@ -275,5 +275,15 @@
     "FORECASTS_LABEL": "Prévisions",
     "ARCHIVES_LABEL": "Archives",
     "NO_MODEL_AVAILABLE": "Aucun modèle disponible"
+  },
+  "KTimeline": {
+    "PREVIOUS_DAY": "Jour précédent",
+    "NEXT_DAY": "Jour suivant ",
+    "PREVIOUS_HOUR": "Heure précédente",
+    "NEXT_HOUR": "Heure suivante",
+    "PREVIOUS_STEP": "Pas précédent",
+    "NEXT_STEP": "Pas suivant",
+    "SET_NOW": "Temps réel",
+    "SET_DATE": "Aller à une date"
   }
 }
