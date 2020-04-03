@@ -407,7 +407,6 @@ export default function (name) {
         if (this.is2D() && features.length > 5000) {
           _.set(layer, 'leaflet.tiled', true)
           _.set(layer, 'leaflet.minZoom', 15)
-          _.set(layer, 'leaflet.isVisible', false)
         }
         try {
           let createdLayer = await this.$api.getService('catalog')
