@@ -233,6 +233,14 @@ export default function (name) {
               handler: () => this.onSaveLayer(layer)
             })
           }
+          if (this.isLayerEditable(layer) && layerActions.includes('filter-data')) {
+            actions.push({
+              name: 'filter-data',
+              label: this.$t('mixins.activity.FILTER_DATA_LABEL'),
+              icon: 'filter_list',
+              handler: () => this.onFilterLayerData(layer)
+            })
+          }
           if (this.isLayerEditable(layer) && layerActions.includes('view-data')) {
             actions.push({
               name: 'view-data',
@@ -414,6 +422,25 @@ export default function (name) {
         } catch (_) {
         }
         Loading.hide()
+      },
+      async onFilterLayerData (layer) {
+        this.filterModal = await this.$createComponent('KFeaturesFilter', {
+          propsData: {
+            contextId: this.contextId,
+            layer
+          }
+        })
+        this.filterModal.$mount()
+        this.filterModal.open()
+        this.filterModal.$on('applied', async () => {
+          // Reset layer with new setup
+          await this.removeLayer(layer.name)
+          await this.addLayer(layer)
+          this.filterModal.close()
+        })
+        this.filterModal.$on('closed', () => {
+          this.filterModal = null
+        })
       },
       async onViewLayerData (layer) {
         this.viewModal = await this.$createComponent('KFeaturesTable', {

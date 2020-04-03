@@ -13,9 +13,9 @@
         <q-pagination v-if="nbCharts > 1" v-model="currentChart" :max="nbCharts" @input="refreshChart" :input="true"/>
       </div>
       <div class="row justify-center text-center">
-        <div v-show="chartData.length === 0" class="q-ma-xl">
-          <q-icon size="3rem" name="insert_chart_outlined" />
-          <span class="text-h5">{{$t('KFeaturesChart.SELECT_PROPERTY_LABEL')}}</span>
+        <div v-show="chartData.length === 0" class="row justify-center text-center text-h5">
+          <k-label iconName="insert_chart_outlined" iconSize="3rem"
+          :text="$t('KFeaturesChart.SELECT_PROPERTY_LABEL')" icon-size="48px" />
         </div>
         <canvas v-show="chartData.length > 0" class="chart q-ma-lg" ref="chart"></canvas>
       </div>
@@ -25,6 +25,7 @@
 
 <script>
 import _ from 'lodash'
+import { Loading } from 'quasar'
 import chroma from 'chroma-js'
 import Chart from 'chart.js'
 import 'chartjs-plugin-labels'
@@ -87,7 +88,7 @@ export default {
 
     return {
       toolbar: [{ name: 'close', icon: 'close', handler: () => this.close() }],
-      property: {},
+      property: null,
       chartType: _.find(chartOptions, { value: 'pie' }),
       chartOptions,
       currentChart: 1,
@@ -113,7 +114,7 @@ export default {
       if (!values) {
         // Otherwise we need to make a DB query
         values = await this.$api.getService('features', this.contextId)
-          .find({ query: { $distinct: `properties.${this.property.value}` } })
+          .find({ query: Object.assign({ $distinct: `properties.${this.property.value}` }, this.layer.baseQuery) })
         // We don't have label in that case
         values = values.map(value => ({ value, label: (value || this.$t('KFeaturesChart.NULL_VALUE_LABEL')) }))
       }
@@ -125,7 +126,7 @@ export default {
       // Then count features for each value
       let data = await Promise.all(this.values.map(async value => {
         const response = await this.$api.getService('features', this.contextId)
-          .find({ query: { $limit: 0, layer: this.layer._id, [`properties.${this.property.value}`]: value.value } })
+          .find({ query: Object.assign({ $limit: 0, [`properties.${this.property.value}`]: value.value }, this.layer.baseQuery) })
         return { value, count: response.total }
       }))
       // Sort data so that we don't have charts mixin large and small numbers when paginating, go large first
@@ -190,16 +191,22 @@ export default {
       return config
     },
     async refreshChart () {
+      Loading.show({ message: this.$t('KFeaturesChart.CHARTING_LABEL') })
       // Destroy previous graph if any
       if (this.chart) {
         this.chart.destroy()
       }
-      // Retrieve data
-      await this.getChartData()
+      try {
+        // Retrieve data
+        await this.getChartData()
+      } catch (_) {
+
+      }
       // We need to force a refresh so that the computed props are correctly updated by Vuejs
       await this.$nextTick()
       this.chart = new Chart(this.$refs.chart.getContext('2d'),
         this.getChartOptions(this.chartType.value))
+      Loading.hide()
     },
     async refreshChartAndPagination () {
       this.currentChart = 1
@@ -209,6 +216,7 @@ export default {
   created () {
     // laod the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
+    this.$options.components['k-label'] = this.$load('frame/KLabel')
   },
   beforeDestroy () {
 

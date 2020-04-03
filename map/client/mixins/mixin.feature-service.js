@@ -125,7 +125,7 @@ export default {
     async getMeasureForFeature (layer, feature, startTime, endTime) {
       this.setCursor('processing-cursor')
       try {
-        const result = await this.getFeatures(Object.assign({
+        const result = await this.getFeatures(_.merge({
           baseQuery: { ['properties.' + layer.featureId]: _.get(feature, 'properties.' + layer.featureId) }
         }, layer), {
           $gte: startTime.format(),

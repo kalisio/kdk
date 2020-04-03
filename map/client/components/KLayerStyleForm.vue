@@ -361,6 +361,7 @@ export default {
       // This could be done externally but adding it here we ensure no one will forget it
       await this.$nextTick()
       this.hasError = false
+      this.property = this.properties[0]
     },
     async loadStyleComponents (styles) {
       // Since we use dynamic component loading we need to make sure Vue.js has loaded them
@@ -691,7 +692,6 @@ export default {
     this.minViewerZoom = this.minZoom = _.get(this.options, 'viewer.minZoom', 1)
     this.maxViewerZoom = this.maxZoom = _.get(this.options, 'viewer.maxZoom', 18)
     await this.build()
-    this.property = this.properties[0]
     this.$emit('form-ready', this)
   }
 }

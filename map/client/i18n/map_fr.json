@@ -32,8 +32,9 @@
       "CREATE_LAYER": "Créer une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données",
-      "EDIT_LABEL": "Editer la couche",
+      "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
+      "FILTER_DATA_LABEL": "Filtrer les données",
       "VIEW_DATA_LABEL": "Voir les données",
       "CHART_DATA_LABEL": "Graphique des données",
       "START_EDIT_DATA_LABEL": "Editer les données",
@@ -203,6 +204,12 @@
     "FORECASTS_LABEL": "Modèles de prévision",
     "ARCHIVE_LAYERS": "Couches de données archivées"
   },
+  "KFeaturesFilter": {
+    "TITLE": "Filtre des données de la couche {{layer}}",
+    "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
+    "ADD_FILTER": "Sélectionnez une propriété à associer à un filtre",
+    "REMOVE_FILTER": "Supprimer le filtre associée à cette valeur"
+  },
   "KFeaturesTable": {
     "TITLE": "Données de la couche {{layer}}"
   },
@@ -220,7 +227,8 @@
     "ALL_VALUES": "Toutes",
     "RENDER_LABEL": "Type d'affichage",
     "VALUE_LABEL": "Nombre",
-    "PERCENTAGE_LABEL": "Pourcentage"
+    "PERCENTAGE_LABEL": "Pourcentage",
+    "CHARTING_LABEL": "Veuillez patienter pendant la construction du graphique"
   },
   "KLayerStyleForm": {
     "DEFAULT_VISIBILITY": "Visibilité par défaut",

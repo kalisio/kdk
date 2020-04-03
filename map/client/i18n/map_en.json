@@ -32,8 +32,9 @@
       "CREATE_LAYER": "Create a new layer",
       "SAVE_LABEL": "Save layer",
       "SAVING_LABEL": "Please wait while saving layer data",
-      "EDIT_LABEL": "Edit layer",
+      "EDIT_LABEL": "Edit properties",
       "EDIT_LAYER_STYLE_LABEL": "Edit style",
+      "FILTER_DATA_LABEL": "Filter data",
       "VIEW_DATA_LABEL": "View data",
       "CHART_DATA_LABEL": "Chart data",
       "START_EDIT_DATA_LABEL": "Start data edit",
@@ -203,6 +204,12 @@
     "FORECASTS_LABEL": "Forecast models",
     "ARCHIVE_LAYERS": "Archived data layers"
   },
+  "KFeaturesFilter": {
+    "TITLE": "Data filter for layer {{layer}}",
+    "SELECT_PROPERTY_LABEL": "Select a target property to start",
+    "ADD_FILTER": "Select a target property to add a filter on",
+    "REMOVE_FILTER": "Remove filter for this value"
+  },
   "KFeaturesTable": {
     "TITLE": "Data for layer {{layer}}"
   },
@@ -220,7 +227,8 @@
     "ALL_VALUES": "All",
     "RENDER_LABEL": "Display type",
     "VALUE_LABEL": "Count",
-    "PERCENTAGE_LABEL": "Percentage"
+    "PERCENTAGE_LABEL": "Percentage",
+    "CHARTING_LABEL": "Please wait while computing chart"
   },
   "KLayerStyleForm": {
     "DEFAULT_VISIBILITY": "Visibilité par défaut",
