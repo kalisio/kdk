@@ -140,13 +140,13 @@ export default {
           format: (value) => {
             switch (type) {
               case 'number':
-                return value.toFixed(2)
+                return (value ? value.toFixed(2) : '')
               case 'integer':
-                return value.toFixed(0)
+                return (value ? value.toFixed(0) : '')
               case 'string':
-                return (format === 'date-time' ? moment.utc(value).format() : value)
+                return (value ? (format === 'date-time' ? moment.utc(value).format() : value) : '')
               default:
-                return value.toString()
+                return (value ? value.toString() : '')
             }
           }
         })

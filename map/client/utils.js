@@ -105,9 +105,8 @@ export function generatePropertiesSchema (geoJson) {
   // Enumerate all available properties/values in all features
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
   features.forEach(feature => {
-    let properties = _.get(feature, 'properties', {})
     // FIXME: we don't yet support nested objects in schema 
-    properties = kCoreUtils.dotify(properties)
+    const properties = (feature.properties ? kCoreUtils.dotify(feature.properties) : {})
     _.forOwn(properties, (value, key) => {
       // Property already registered ?
       if (schema.properties[`{key}`]) {
@@ -120,8 +119,9 @@ export function generatePropertiesSchema (geoJson) {
     })
   })
   _.forOwn(schema.properties, (value, key) => {
-    const type = (typeof value)
+    let type = (typeof value)
     // For null/undefined value we will assume string by default
+    if ((type === 'object') || (type === 'undefined')) type = 'string'
     schema.properties[`${key}`] = {
       type,
       field: {
