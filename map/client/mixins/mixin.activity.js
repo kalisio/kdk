@@ -3,7 +3,7 @@ import sift from 'sift'
 import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
-import { Dialog } from 'quasar'
+import { Loading, Dialog } from 'quasar'
 import { setGatewayJwt } from '../utils'
 import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
 
@@ -205,6 +205,11 @@ export default function (name) {
         // Only possible on user-defined layers by default
         else return (!layer._id || (layer.service === 'features'))
       },
+      isLayerStyleEditable (layer) {
+        if (_.has(layer, 'isStyleEditable')) return _.get(layer, 'isStyleEditable')
+        // Only possible when GeoJson by default
+        return ((_.get(layer, `${this.engine}.type`) === 'geoJson'))
+      },
       registerLayerActions (layer) {
         let defaultActions = ['zoom-to', 'save', 'edit', 'remove']
         if (this.is2D()) defaultActions = defaultActions.concat(['edit-data'])
@@ -251,17 +256,25 @@ export default function (name) {
               icon: 'description',
               handler: () => this.onEditLayer(layer)
             })
-            // Supported by underlying engine ?
-            if ((typeof this.editLayer === 'function') && layerActions.includes('edit-data')) {
-              actions.push({
-                name: 'edit-data',
-                label: this.isLayerEdited(layer.name)
-                  ? this.$t('mixins.activity.STOP_EDIT_DATA_LABEL')
-                  : this.$t('mixins.activity.START_EDIT_DATA_LABEL'),
-                icon: 'edit_location',
-                handler: () => this.onEditLayerData(layer)
-              })
-            }
+          }
+          if (this.isLayerStyleEditable(layer) && layerActions.includes('edit-style')) {
+            actions.push({
+              name: 'edit-style',
+              label: this.$t('mixins.activity.EDIT_LAYER_STYLE_LABEL'),
+              icon: 'fas fa-border-style',
+              handler: () => this.onEditLayerStyle(layer)
+            })
+          }
+          // Supported by underlying engine ?
+          if ((typeof this.editLayer === 'function') && this.isLayerEditable(layer) && layerActions.includes('edit-data')) {
+            actions.push({
+              name: 'edit-data',
+              label: this.isLayerEdited(layer.name)
+                ? this.$t('mixins.activity.STOP_EDIT_DATA_LABEL')
+                : this.$t('mixins.activity.START_EDIT_DATA_LABEL'),
+              icon: 'edit_location',
+              handler: () => this.onEditLayerData(layer)
+            })
           }
           if (this.isLayerRemovable(layer) && layerActions.includes('remove')) {
             actions.push({
@@ -372,25 +385,35 @@ export default function (name) {
         this.zoomToLayer(layer.name)
       },
       async onSaveLayer (layer) {
+        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL') })
         // Change data source from in-memory to features service
         _.merge(layer, {
           service: 'features',
           [this.engine]: { source: '/api/features' }
         })
         // When saving from one engine copy options to the other one so that it will be available in both of them
-        _.set(layer, (this.is2D() ? 'cesium' : 'leaflet'), _.get(layer, this.engine))
-        let createdLayer = await this.$api.getService('catalog')
-          .create(_.omit(layer, ['actions', 'isVisible', 'isDisabled']))
-        // layer._id = createdLayer._id
-        // this.registerLayerActions(layer) // Refresh actions due to state change
-        // Because we save all features in a single service use filtering to separate layers
-        // We use the generated DB ID as layer ID on features
-        await this.createFeatures(this.toGeoJson(layer.name), createdLayer._id)
-        // Update filter in layer as well
-        createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
-        // Reset layer with new setup
-        await this.removeLayer(layer.name)
-        await this.addLayer(createdLayer)
+        _.set(layer, (this.is2D() ? 'cesium' : 'leaflet'), Object.assign({}, _.get(layer, this.engine)))
+        const geoJson = this.toGeoJson(layer.name)
+        const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+        // If too much data use tiling
+        if (this.is2D() && features.length > 5000) {
+          _.set(layer, 'leaflet.tiled', true)
+          _.set(layer, 'leaflet.minZoom', 15)
+          _.set(layer, 'leaflet.isVisible', false)
+        }
+        try {
+          let createdLayer = await this.$api.getService('catalog')
+            .create(_.omit(layer, ['actions', 'isVisible', 'isDisabled']))
+          // We use the generated DB ID as layer ID on features
+          await this.createFeatures(geoJson, createdLayer._id)
+          // Because we save all features in a single service use filtering to separate layers
+          createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
+          // Reset layer with new setup
+          await this.removeLayer(layer.name)
+          await this.addLayer(createdLayer)
+        } catch (_) {
+        }
+        Loading.hide()
       },
       async onViewLayerData (layer) {
         this.viewModal = await this.$createComponent('KFeaturesTable', {
@@ -444,7 +467,35 @@ export default function (name) {
           }
           Object.assign(layer, updatedLayer)
           this.editModal.close()
+        })
+        this.editModal.$on('closed', () => {
           this.editModal = null
+        })
+      },
+      async onEditLayerStyle (layer) {
+        this.editStyleModal = await this.$createComponent('KLayerStyleEditor', {
+          propsData: {
+            contextId: this.contextId,
+            layer,
+            options: this.options
+          }
+        })
+        this.editStyleModal.$mount()
+        this.editStyleModal.open()
+        this.editStyleModal.$on('applied', async () => {
+          // Keep track of data as we will reset the layer
+          let geoJson = this.toGeoJson(layer.name)
+          // Reset layer with new setup
+          await this.removeLayer(layer.name)
+          await this.addLayer(layer)
+          // Update data only when in memory as reset has lost it
+          if (!layer._id) {
+            this.updateLayer(layer.name, geoJson)
+          }
+          this.editStyleModal.close()
+        })
+        this.editStyleModal.$on('closed', () => {
+          this.editStyleModal = null
         })
       },
       async onEditLayerData (layer) {
@@ -508,13 +559,15 @@ export default function (name) {
         this.createModal.open()
         this.createModal.$on('applied', async createdLayer => {
           this.createModal.close()
-          this.createModal = null
           // Update filter in layer as well
           createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
           // Create an empty layer used as a container
           await this.addLayer(createdLayer)
           // Start editing
           await this.onEditLayerData(createdLayer)
+        })
+        this.createModal.$on('closed', () => {
+          this.createModal = null
         })
       },
       onGeolocate () {

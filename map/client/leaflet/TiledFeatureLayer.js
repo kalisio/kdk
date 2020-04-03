@@ -1,4 +1,5 @@
 import L from 'leaflet'
+import _ from 'lodash'
 
 function tile2bounds (map, coords, tileSize) {
   const pixelCoords0 = L.point(coords.x * tileSize.x, coords.y * tileSize.y)
@@ -115,10 +116,11 @@ const TiledFeatureLayer = L.GridLayer.extend({
       let promises = []
       // Request probes first if any
       if (this.layer.probeService) {
-        promises.push(this.activity.getProbeFeatures(Object.assign({ baseQuery }, this.layer)))
+        promises.push(this.activity.getProbeFeatures(_.merge({ baseQuery }, this.layer)))
       }
-      promises.push(this.activity.getFeatures(Object.assign({
-        baseQuery: {
+      // Aggregation requires a specific operator
+      if (this.layer.variables) {
+        baseQuery = {
           $geoNear: {
             near: { type: 'Point', coordinates: [ reqCenter[1] , reqCenter[0] ] },
             maxDistance,
@@ -127,7 +129,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
             query: baseQuery
           }
         }
-      }, this.layer)))
+      }
+      promises.push(this.activity.getFeatures(_.merge({ baseQuery }, this.layer)))
       Promise.all(promises).then(data => {
         if (this.layer.probeService) {
           tile.probes = (data[0].features.length ? data[0] : null)

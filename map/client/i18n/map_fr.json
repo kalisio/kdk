@@ -31,7 +31,9 @@
     "activity": {
       "CREATE_LAYER": "Créer une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
+      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données",
       "EDIT_LABEL": "Editer la couche",
+      "EDIT_LAYER_STYLE_LABEL": "Editer le style",
       "VIEW_DATA_LABEL": "Voir les données",
       "CHART_DATA_LABEL": "Graphique des données",
       "START_EDIT_DATA_LABEL": "Editer les données",
@@ -219,6 +221,40 @@
     "RENDER_LABEL": "Type d'affichage",
     "VALUE_LABEL": "Nombre",
     "PERCENTAGE_LABEL": "Pourcentage"
+  },
+  "KLayerStyleForm": {
+    "DEFAULT_VISIBILITY": "Visibilité par défaut",
+    "POINTS": "Icônes",
+    "LINES": "Lignes",
+    "POLYGONS": "Polygones",
+    "DEFAULT_POINT_STYLE": "Icône par défaut",
+    "POINT_CLUSTERING": "Regrouper les icônes jusqu'au niveau",
+    "ADD_POINT_STYLE": "Sélectionnez une propriété à associer à une icône",
+    "REMOVE_POINT_STYLE": "Supprimer l'icône associée à cette valeur",
+    "DEFAULT_LINE_STYLE": "Style de ligne par défaut",
+    "LINE_WIDTH": "Largeur ",
+    "LINE_OPACITY": "Opacité ",
+    "ADD_LINE_STYLE": "Sélectionnez une propriété à associer à un style",
+    "REMOVE_LINE_STYLE": "Supprimer le style associée à cette valeur",
+    "DEFAULT_POLYGON_LINE_STYLE": "Style de contour par défaut",
+    "DEFAULT_POLYGON_FILL_STYLE": "Style de remplissage par défaut",
+    "POLYGON_LINE_WIDTH": "Largeur ",
+    "POLYGON_LINE_OPACITY": "Opacité ",
+    "POLYGON_FILL_OPACITY": "Opacité ",
+    "ADD_POLYGON_STYLE": "Sélectionnez une propriété à associer à un style",
+    "REMOVE_POLYGON_STYLE": "Supprimer le style associée à cette valeur",
+    "POPUP": "Bulle contextuelle",
+    "ADD_POPUP": "Sélectionnez des propriétés à afficher dans la bulle",
+    "TOOLTIP": "Bulle d'information",
+    "ADD_TOOLTIP": "Sélectionnez une propriété à afficher dans la bulle",
+    "INFOBOX": "Boîte d'information",
+    "ADD_INFOBOX": "Sélectionnez des propriétés à afficher dans la boîte",
+    "IF": "Si",
+    "EQUALS": "vaut",
+    "THEN": "alors l'icône est"
+  },
+  "KLayerStyleEditor": {
+    "EDIT_LAYER_STYLE_TITLE": "Editer le style de la couche"
   },
   "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "Aucune couche de données"

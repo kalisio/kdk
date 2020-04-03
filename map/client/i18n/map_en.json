@@ -31,7 +31,9 @@
     "activity": {
       "CREATE_LAYER": "Create a new layer",
       "SAVE_LABEL": "Save layer",
+      "SAVING_LABEL": "Please wait while saving layer data",
       "EDIT_LABEL": "Edit layer",
+      "EDIT_LAYER_STYLE_LABEL": "Edit style",
       "VIEW_DATA_LABEL": "View data",
       "CHART_DATA_LABEL": "Chart data",
       "START_EDIT_DATA_LABEL": "Start data edit",
@@ -219,6 +221,40 @@
     "RENDER_LABEL": "Display type",
     "VALUE_LABEL": "Count",
     "PERCENTAGE_LABEL": "Percentage"
+  },
+  "KLayerStyleForm": {
+    "DEFAULT_VISIBILITY": "Visibilité par défaut",
+    "POINTS": "Markers",
+    "LINES": "Lines",
+    "POLYGONS": "Polygons",
+    "DEFAULT_POINT_STYLE": "Default icon",
+    "POINT_CLUSTERING": "Cluster icons until level",
+    "ADD_POINT_STYLE": "Select a target property to add an icon for",
+    "REMOVE_POINT_STYLE": "Remove icon for this value",
+    "DEFAULT_LINE_STYLE": "Default line style",
+    "LINE_WIDTH": "Width ",
+    "LINE_OPACITY": "Opacity ",
+    "ADD_LINE_STYLE": "Select a target property to add a style for",
+    "REMOVE_LINE_STYLE": "Remove style for this value",
+    "DEFAULT_POLYGON_LINE_STYLE": "Default boundary style",
+    "DEFAULT_POLYGON_FILL_STYLE": "Default fill style",
+    "POLYGON_LINE_WIDTH": "Width ",
+    "POLYGON_LINE_OPACITY": "Opacity ",
+    "POLYGON_FILL_OPACITY": "Opacity ",
+    "ADD_POLYGON_STYLE": "Select a target property to add a style for",
+    "REMOVE_POLYGON_STYLE": "Remove style for this value",
+    "POPUP": "Popup",
+    "ADD_POPUP": "Select target properties to use as popup",
+    "TOOLTIP": "Tooltip",
+    "ADD_TOOLTIP": "Select a target property to use as tooltip",
+    "INFOBOX": "Information box",
+    "ADD_INFOBOX": "Select target properties to use as information box",
+    "IF": "If",
+    "EQUALS": "is",
+    "THEN": "then icon is"
+  },
+  "KLayerStyleEditor": {
+    "EDIT_LAYER_STYLE_TITLE": "Edit layer style"
   },
   "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "No layer available"

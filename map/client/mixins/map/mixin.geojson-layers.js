@@ -91,7 +91,9 @@ export default {
       // Check for feature service layers
       if (options.service) {
         // Tell realtime plugin how to update/load data
-        if (!_.has(leafletOptions, 'removeMissing')) leafletOptions.removeMissing = !options.probeService
+        if (!_.has(leafletOptions, 'removeMissing')) {
+          leafletOptions.removeMissing = !options.probeService && !leafletOptions.tiled
+        }
         let initialized = !options.probeService // If no probe reference, nothing to be initialized
         let lastUpdateTime
         _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
