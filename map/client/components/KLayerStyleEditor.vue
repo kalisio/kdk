@@ -36,11 +36,15 @@ export default {
   },
   methods: {
     async open () {
-      this.setRefs(['modal'])
-      await this.loadRefs()
-      await this.$refs.modal.open()
-      this.setRefs(['form'])
-      await this.loadRefs()
+      if (!this.$refs.modal) {
+        this.setRefs(['modal'])
+        await this.loadRefs()
+      }
+      this.$refs.modal.open()
+      if (!this.$refs.form) {
+        this.setRefs(['form'])
+        await this.loadRefs()
+      }
       this.$refs.form.fill(_.pick(this.layer, ['leaflet']))
     },
     close () {
