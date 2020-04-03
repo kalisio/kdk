@@ -90,35 +90,39 @@ export default {
       }
       // Check for feature service layers
       if (options.service) {
+        // We perform manual update
+        _.set(leafletOptions, 'start', false)
         // Tell realtime plugin how to update/load data
-        if (!_.has(leafletOptions, 'removeMissing')) {
-          leafletOptions.removeMissing = !options.probeService && !leafletOptions.tiled
-        }
-        let initialized = !options.probeService // If no probe reference, nothing to be initialized
-        let lastUpdateTime
-        _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
-          // If the probe location is given by another service use it on initialization
-          if (!initialized) {
+        if (leafletOptions.tiled) {
+          leafletOptions.removeMissing = false
+          // Fetching is managed by tiles but even for manual update leaflet realtime require a src
+          _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {})
+        } else {
+          leafletOptions.removeMissing = !options.probeService
+          let initialized = !options.probeService // If no probe reference, nothing to be initialized
+          let lastUpdateTime
+          _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
+            // If the probe location is given by another service use it on initialization
+            if (!initialized) {
+              try {
+                // Use probes as reference
+                successCallback(await this.getProbeFeatures(options))
+                initialized = true
+              } catch (error) {
+                errorCallback(error)
+              }
+            }
             try {
-              // Use probes as reference
-              successCallback(await this.getProbeFeatures(options))
-              initialized = true
+              // Update only the first time or when required according to data update interval
+              if (!lastUpdateTime || !this.shouldSkipFeaturesUpdate(lastUpdateTime, options)) {
+                lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+                successCallback(await this.getFeatures(options))
+              }
             } catch (error) {
               errorCallback(error)
             }
-          }
-          try {
-            // Update only the first time or when required according to data update interval
-            if (!lastUpdateTime || !this.shouldSkipFeaturesUpdate(lastUpdateTime, options)) {
-              lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
-              successCallback(await this.getFeatures(options))
-            }
-          } catch (error) {
-            errorCallback(error)
-          }
-        })
-        // We perform manual update
-        _.set(leafletOptions, 'start', false)
+          })
+        }
       } else if (_.has(leafletOptions, 'sourceTemplate')) {
         const sourceCompiler = _.template(_.get(leafletOptions, 'sourceTemplate'))
         let lastFetchedSource

@@ -76,6 +76,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
       triplet.z -= 1
     }
 
+    // Check for zoom level range first
+    if (this.options.minZoom && (this.map.getZoom() < this.options.minZoom)) skipTile = true
+    if (this.options.maxZoom && (this.map.getZoom() > this.options.maxZoom)) skipTile = true
+
     if (!skipTile) {
       // tile.style.outline = '1px solid red'
 
@@ -97,7 +101,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       const earthRadius = 6356752.31424518
       const maxDistance = (reqBBox[3] - reqBBox[1]) * (Math.PI * earthRadius) / 180
 
-      const baseQuery = {
+      let baseQuery = {
         geometry: {
           $geoIntersects: {
             $geometry: {
@@ -169,7 +173,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     if (!probes && !features) return
 
     let unload = false
-    // check for zoom level range first
+    // Check for zoom level range first
     if (this.options.minZoom && (this.map.getZoom() < this.options.minZoom)) unload |= true
     if (this.options.maxZoom && (this.map.getZoom() > this.options.maxZoom)) unload |= true
     // check if we can unload the associated geojson bits
