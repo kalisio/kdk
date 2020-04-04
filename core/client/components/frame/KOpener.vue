@@ -2,15 +2,18 @@
   <div
     class="row justify-center items-center" 
     v-bind:class="{ 
-      'k-opener-left': position === 'left', 
-      'k-opener-right': position === 'right', 
+      'k-opener-left': position === 'left',
+      'k-opener-left-hovered': (position === 'left') && isHovered && isDesktop,
+      'k-opener-right': position === 'right',
+      'k-opener-right-hovered': (position === 'right') && isHovered && isDesktop,
       'k-opener-top': position === 'top', 
-      'k-opener-bottom': position === 'bottom' 
+      'k-opener-top-hovered': (position === 'top') && isHovered && isDesktop,
+      'k-opener-bottom': position === 'bottom',
+      'k-opener-bottom-hovered': (position === 'bottom') && isHovered && isDesktop
     }"
     :style="computedStyle"
+    v-on="isDesktop ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
     v-touch-swipe.mouse="onSwipe"
-    @mouseover="onMouseOver"
-    @mouseleave="onMouseLeave"
     @click="onClick">
     <q-icon v-if="icon" :name="icon" color="white" size="sm" />
   </div>
@@ -46,6 +49,7 @@ export default {
   data () {
     return {
       isOpened: this.value,
+      isDesktop: this.$q.platform.is.desktop,
       isHovered: false,
       icon: null
     }
@@ -108,7 +112,7 @@ export default {
 <style lang="stylus">
   .k-opener-left, .k-opener-right, .k-opener-top, .k-opener-bottom {
     opacity: 0.75;
-    transition: 0.2s;
+    transition: 0.1s;
   }
   .k-opener-left, .k-opener-right {
     height: 64px;
@@ -130,14 +134,14 @@ export default {
   .k-opener-bottom {
     border-radius: 8px 8px 0px 0px;
   }
-  .k-opener-left:hover, .k-opener-right:hover, .k-opener-top:hover, .k-opener-bottom:hover {
+  .k-opener-left-hovered, .k-opener-right-hovered, .k-opener-top-hovered, .k-opener-bottom-hovered {
     cursor: pointer;
     opacity: 1;
   }
-  .k-opener-left:hover, .k-opener-right:hover {
+  .k-opener-left-hovered, .k-opener-right-hovered {
     width: 32px;
   }
-  .k-opener-top:hover, .k-opener-bottom:hover {
+  .k-opener-top-hovered, .k-opener-bottom-hovered {
     height: 32px;
   }
 </style>
