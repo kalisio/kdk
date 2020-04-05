@@ -4,7 +4,7 @@
       <q-expansion-item 
         v-if="layersByCategory[category.name].length > 0"
         :key="category.name"
-        header-class="text-primary"
+        header-class="text-primary bg-grey-4"
         :icon="category.icon"
         :label="$t(category.label)"
         expand-separator>
