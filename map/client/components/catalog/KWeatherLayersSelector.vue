@@ -3,7 +3,7 @@
     <k-layers-selector :layers="filteredLayers" :options="options">
       <template v-slot:panel-header>
         <div class="q-ma-sm">
-          <q-select v-model="model" :options="forecastModels" filled @input="onModelSelected">
+          <q-select v-model="model" :options="forecastModels" filled @input="onModelChanged">
             <template v-slot:prepend>
               <q-icon name="las la-globe" />
             </template>
@@ -26,7 +26,7 @@
         </div>
       </template>
       <template v-if="hasArchiveLayers" v-slot:panel-footer>
-        <q-tabs class="q-ma-sm text-primary" no-caps v-model="mode">
+        <q-tabs class="q-ma-sm text-primary" no-caps v-model="mode" @input="onModeChanged">
           <q-tab name="forecast" :label="$t('KWeatherLayersSelector.FORECASTS_LABEL')" />
           <q-tab name="archive" :label="$t('KWeatherLayersSelector.ARCHIVES_LABEL')" />
         </q-tabs>
@@ -70,8 +70,8 @@ export default {
       return _.find(this.layers, (layer) => { return layer.tags.includes('archive') })
     },
     filteredLayers () {
-      if (this.mode === 'forecast') return this.forecastLayers()
-      return this.archiveLayers()
+      if (this.mode === 'forecast') return this.filterForecastLayers()
+      return this.filterArchiveLayers()
     }
   },
   data () {
@@ -86,25 +86,39 @@ export default {
     }
   },
   methods: {
-    forecastLayers () {
-      return _.filter(this.layers, (layer) => { return !layer.tags.includes('archive') })
+    hideLayer (layer) {
+      if (layer.isVisible) {
+        let action = _.find(layer.actions, { 'name': 'toggle' })
+        if (action) action.handler()
+      }
     },
-    archiveLayers () {
-      return _.filter(this.layers, (layer) => { 
+    filterForecastLayers () {
+      let forecastLayers = []
+      _.forEach(this.layers, (layer) => {
+        if (!layer.tags.includes('archive')) forecastLayers.push(layer)
+        else this.hideLayer(layer)
+      })
+      return forecastLayers
+    },
+    filterArchiveLayers () {
+      let archiveLayers = []
+      _.forEach(this.layers, (layer) => {
         if (layer.tags.includes('archive')) {
           // check whether the current model is supported by the layer
-          for (let i = 0; i < layer.meteo_model.length; ++i) {
-            if (layer.meteo_model[i].model === this.model.name) return true
-          }
+          if (_.find(layer.meteo_model, { 'model': this.model.name})) archiveLayers.push(layer)
+          else this.hideLayer(layer)
         }
-        return false
+        else this.hideLayer(layer)
       })
+      return archiveLayers
     },
     callHandler (action, layer) {
       if (this.forecastModelHandlers[action]) this.forecastModelHandlers[action](layer)
     },
-    onModelSelected (model) {
+    onModelChanged (model) {
       this.callHandler('toggle', model)
+    },
+    onModeChanged (mode) {
     }
   },
   created () {

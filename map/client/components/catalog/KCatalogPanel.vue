@@ -1,11 +1,13 @@
 <template>
   <q-list dense bordered>
     <template v-for="category in layerCategories">
-      <q-expansion-item expand-separator
+      <q-expansion-item 
         v-if="layersByCategory[category.name].length > 0"
-        :key="itemKey(category)"
+        :key="category.name"
+        header-class="text-primary"
         :icon="category.icon"
-        :label="$t(category.label)">
+        :label="$t(category.label)"
+        expand-separator>
         <component
           :is="category.componentKey" 
           :layers="layersByCategory[category.name]" 
@@ -63,9 +65,6 @@ export default {
     }
   },
   methods: {
-    itemKey (category) {
-      return category.name + '-' + uid()
-    },
     refresh () {
       this.layerCategories.forEach(category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
