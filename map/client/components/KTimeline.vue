@@ -4,25 +4,28 @@
       Time controls
      -->
     <div class="full-width row justify-center items-center k-timeline-control">
-      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-backward' size="md" color="secondary" @click="onPreviousStepClicked">
+      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-backward' size="md" color="primary" @click="onPreviousStepClicked">
         <q-tooltip>{{$t('KTimeline.PREVIOUS_STEP')}}</q-tooltip>
       </q-btn>
-      <q-btn  dense flat round icon='las la-calendar' size="md" color="secondary">
+      <q-btn  dense flat round icon='las la-calendar' size="md" color="primary">
         <q-tooltip>{{$t('KTimeline.SET_DATE')}}</q-tooltip>
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-date v-model="date" :mask="calendarDateMask" today-btn minimal />
         </q-popup-proxy>
       </q-btn>
-      <q-chip dense :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="secondary" text-color="white" />
-      <q-btn dense flat round icon="las la-clock" size="md" :disable="timer !== undefined" color="secondary" @click="onNowClicked">
+      <q-chip dense :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="primary" text-color="white" />
+      <q-btn dense flat round icon="las la-clock" size="md" color="primary" @click="onNowClicked">
         <q-tooltip>{{$t('KTimeline.SET_NOW')}}</q-tooltip>
+        <q-badge v-if="timer !== undefined" floating transparent color="green">
+          <q-icon name="las la-play" size="10px" color="white'" />
+        </q-badge>
       </q-btn>
-      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-forward' size="md" color="secondary" @click="onNextStepClicked">
+      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-forward' size="md" color="primary" @click="onNextStepClicked">
         <q-tooltip>{{$t('KTimeline.NEXT_STEP')}}</q-tooltip>
       </q-btn>
     </div>
     <div v-if="!$q.screen.gt.xs" class="full-width row justify-around q-pt-xs">
-      <k-tool-bar :actions="getActions('mobile')" color="secondary" dense />
+      <k-tool-bar :actions="getActions('mobile')" color="primary" dense />
     </div>
     <!--
       Time bars
@@ -32,8 +35,7 @@
         <template v-for="(minute, index) in minutes">
           <q-chip 
             :key="index" 
-            dense flat :size="$q.screen.gt.sm ? '12px' : '10px'" 
-            :outline="minute.outline" 
+            dense flat outline :size="$q.screen.gt.sm ? '12px' : '10px'" 
             :color="minute.color" 
             :text-color="minute.textColor" 
             :label="minute.label" 
@@ -41,7 +43,7 @@
         </template>
       </div>
       <div class="full-width row justify-center items-center">
-        <q-btn dense flat round icon='las la-minus-square' color="secondary" @click="onPreviousHourClicked">
+        <q-btn dense flat round icon='las la-angle-left' color="primary" @click="onPreviousHourClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_HOUR')}}</q-tooltip>
         </q-btn>
         <template v-for="(hour, index) in hours">
@@ -49,25 +51,24 @@
             {{hour.label}}
           </div>          
         </template>
-        <q-btn flat round icon='las la-plus-square'  color="secondary" @click="onNextHourClicked">
+        <q-btn flat round icon='las la-angle-right'  color="primary" @click="onNextHourClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_HOUR')}}</q-tooltip>
         </q-btn>
       </div>
       <div class="row justify-center items-center">
-        <q-btn dense flat round icon='las la-calendar-minus' color="secondary" @click="onPreviousDayClicked">
+        <q-btn dense flat round icon='las la-calendar-minus' color="primary" @click="onPreviousDayClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_DAY')}}</q-tooltip>
         </q-btn>
         <template v-for="(day, index) in days">
           <q-chip 
             :key="index" 
-            dense flat square size="md" 
-            :outline="day.outline" 
+            dense flat square outline size="md" 
             :color="day.color" 
             :text-color="day.textColor" 
             :label="day.label" 
             clickable @click="onDayClicked(index, days.length)" />
         </template>
-        <q-btn dense flat round icon='las la-calendar-plus'  color="secondary" @click="onNextDayClicked">
+        <q-btn dense flat round icon='las la-calendar-plus'  color="primary" @click="onNextDayClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_DAY')}}</q-tooltip>
         </q-btn>
       </div>
@@ -78,7 +79,7 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import { colors, debounce, date } from 'quasar'
+import { colors } from 'quasar'
 
 export default {
   name: 'k-timeline',
@@ -99,9 +100,8 @@ export default {
       for (let m = moment(start); m.isBefore(end); m.add(this.timeline.step, 'm')) {
         minutes.push({
           label: m.minute().toString().padStart(2,0),
-          color: m.isSame(this.time,'minute') ? 'secondary' : 'grey-8',
+          color: m.isSame(this.time,'minute') ? 'primary' : 'grey-7',
           textColor: m.isSame(this.time,'minute') ? 'white' : 'black',
-          outline: m.isSame(this.time,'minute') ? false : true
         })
       }
       return minutes
@@ -118,7 +118,7 @@ export default {
       for (let h = moment(start); h.isBefore(end); h.add(1, 'h')) {
         hours.push({
           label: this.kActivity.formatTime('time.short', h),
-          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time,'hour') ? 'bg-secondary text-white' : 'bg-grey-4 text-black')
+          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time,'hour') ? 'k-timeline-hour-selected' : '') // bg-secondary text-white' : 'bg-white text-primary' )
         })
       }
       return hours
@@ -135,9 +135,8 @@ export default {
       for (let d = moment(start); d.isBefore(end); d.add(1, 'd')) {
         days.push({
           label: this.kActivity.formatTime('date.short', d),
-          color: d.isSame(this.time, 'date') ? 'secondary' : this.monthColors[d.month()],
+          color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
           textColor: d.isSame(this.time, 'date') ? 'white' : 'black',
-          outline: d.isSame(this.time, 'date') ? false : true
         })
       }
       return days
@@ -234,10 +233,10 @@ export default {
     this.actions = {
       mobile: [
         { name: 'previousDay', icon: 'las la-calendar-minus', label: this.$t('KTimeline.PREVIOUS_DAY'), handler: this.onPreviousDayClicked },
-        { name: 'previousHour', icon: 'las la-minus-square', label: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
+        { name: 'previousHour', icon: 'las la-angle-left', label: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
         { name: 'previousStep', icon: 'las la-step-backward', label: this.$t('KTimeline.PREVIOUS_STEP'), handler: this.onPreviousStepClicked },
         { name: 'nextStep', icon: 'las la-step-forward', label: this.$t('KTimeline.NEXT_STEP'), handler: this.onNextStepClicked },
-        { name: 'nextHour', icon: 'las la-plus-square', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNectHourClicked },
+        { name: 'nextHour', icon: 'las la-angle-right', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNectHourClicked },
         { name: 'nextDay', icon: 'las la-calendar-plus', label: this.$t('KTimeline.NEXT_DAY'), handler: this.onNextDayClicked }
       ]
     }
@@ -261,15 +260,26 @@ export default {
   }
   .k-timeline:hover {
     border: solid 1px $primary
-    cursor: pointer
+    cursor: mouse
   }
   .k-timeline-control {
     padding: 5px
     border-bottom: solid 1px lightgrey
   }
   .k-timeline-hour-frame {
-    border: solid 1px lightgrey
-    padding-top: 2px
+    border-bottom: solid 5px $grey-5
+    border-left: solid 1px white
+    border-right: solid 1px white
+    text-align: center
+    vertical-align: middle
+    user-select: none; /* supported by Chrome and Opera */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+  }
+  .k-timeline-hour-selected {
+    border-bottom: solid 5px $primary
     text-align: center
     vertical-align: middle
     user-select: none; /* supported by Chrome and Opera */
@@ -279,7 +289,7 @@ export default {
     -ms-user-select: none; /* Internet Explorer/Edge */
   }
   .k-timeline-hour-frame:hover {
-    border-bottom: solid 3px $secondary
-    //color: $secondary
+    border-bottom: solid 5px $primary
+    //color: $primary
   }
 </style>
