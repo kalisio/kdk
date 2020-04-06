@@ -17,6 +17,7 @@ export class TimeBasedGridSource extends DynamicGridSource {
 
   setTime (time) {
     this.updateCtx.time = time.clone()
+    this.updateCtx.time.utc()
     this.queueUpdate()
   }
 
