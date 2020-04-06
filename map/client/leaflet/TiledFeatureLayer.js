@@ -1,14 +1,6 @@
 import L from 'leaflet'
 import _ from 'lodash'
 
-function tile2bounds (map, coords, tileSize) {
-  const pixelCoords0 = L.point(coords.x * tileSize.x, coords.y * tileSize.y)
-  const pixelCoords1 = L.point(pixelCoords0.x + tileSize.x, pixelCoords0.y + tileSize.y)
-  const latLonCoords0 = map.wrapLatLng(map.unproject(pixelCoords0, coords.z))
-  const latLonCoords1 = map.wrapLatLng(map.unproject(pixelCoords1, coords.z))
-  return L.latLngBounds(latLonCoords0, latLonCoords1)
-}
-
 function tile2key (coords) {
   // JS Number.MAX_SAFE_INTEGER = 2^53 - 1, so 53 bits available
   // put z value on  5 bits (0 - 32)
@@ -35,7 +27,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
-    this.map = map
     // be notified when zoom starts
     // keep a ref on bound objects to be able to remove them later
     // this.zoomStartCallback = this.onZoomStart.bind(this)
@@ -47,7 +38,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
   onRemove (map) {
     L.GridLayer.prototype.onRemove.call(this, map)
-    this.map = null
   },
 
   createTile (coords, done) {
@@ -77,22 +67,14 @@ const TiledFeatureLayer = L.GridLayer.extend({
     }
 
     // Check for zoom level range first
-    if (this.options.minZoom && (this.map.getZoom() < this.options.minZoom)) skipTile = true
-    if (this.options.maxZoom && (this.map.getZoom() > this.options.maxZoom)) skipTile = true
+    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
+    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) skipTile = true
 
     if (!skipTile) {
       // tile.style.outline = '1px solid red'
 
-      const tileSize = this.getTileSize()
-      const pixelCoords0 = L.point(coords.x * tileSize.x, coords.y * tileSize.y)
-      const pixelCoords1 = L.point(pixelCoords0.x + tileSize.x, pixelCoords0.y + tileSize.y)
-      const latLonCoords0 = this.map.wrapLatLng(this.map.unproject(pixelCoords0, coords.z))
-      const latLonCoords1 = this.map.wrapLatLng(this.map.unproject(pixelCoords1, coords.z))
-
-      const reqBBox = [
-        Math.min(latLonCoords0.lat, latLonCoords1.lat), Math.min(latLonCoords0.lng, latLonCoords1.lng),
-        Math.max(latLonCoords0.lat, latLonCoords1.lat), Math.max(latLonCoords0.lng, latLonCoords1.lng)
-      ]
+      const bounds = this._tileCoordsToBounds(coords)
+      const reqBBox = [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()]
       const reqCenter = [
         0.5 * (reqBBox[0] + reqBBox[2]),
         0.5 * (reqBBox[1] + reqBBox[3])
@@ -115,7 +97,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
         }
       }
       // Using async/await seems to cause problems in Leaflet, we use promises instead
-      let promises = []
+      const promises = []
       // Request probes first if any
       if (this.layer.probeService) {
         promises.push(this.activity.getProbeFeatures(_.merge({ baseQuery }, this.layer)))
@@ -174,13 +156,13 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
     let unload = false
     // Check for zoom level range first
-    if (this.options.minZoom && (this.map.getZoom() < this.options.minZoom)) unload |= true
-    if (this.options.maxZoom && (this.map.getZoom() > this.options.maxZoom)) unload |= true
+    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) unload |= true
+    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) unload |= true
     // check if we can unload the associated geojson bits
     // we only unload when the unloaded tile is completely outside the visible bounds
     if (!unload) {
-      const visible = this.map.getBounds()
-      const bounds = tile2bounds(this.map, event.coords, this.getTileSize())
+      const visible = this._map.getBounds()
+      const bounds = this._tileCoordsToBounds(event.coords)
       if (!visible.intersects(bounds)) unload = true
     }
     
