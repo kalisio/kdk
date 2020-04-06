@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import L from 'leaflet'
 import chroma from 'chroma-js'
 import * as PIXI from 'pixi.js'
@@ -8,7 +9,7 @@ import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils'
 
 const TiledMeshLayer = L.GridLayer.extend({
-  async initialize (options) {
+  initialize (options) {
     this.conf = {}
     // keep color scale options
     this.conf.chromajs = options.chromajs
@@ -72,8 +73,15 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
-    this.map = map
     map.addLayer(this.pixiLayer)
+
+    // This gets computed by pixi layer when it gets added to a map.
+    // This uniform is supposed to reflect the visualization zoom level
+    // to correctly project from wgs84 to web mercator in the shader
+    // BUT since pixi already handles zoom with the container's scale matrix
+    // we use the constant zoom level that was defined when the pixi layer
+    // was added to the map.
+    this.layerUniforms.uniforms.in_zoomLevel = this.pixiLayer._initialZoom
 
     // be notified when zoom starts
     // keep a ref on bound objects to be able to remove them later
@@ -93,27 +101,18 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.zoomEndCallback = null
 
     map.removeLayer(this.pixiLayer)
-    this.map = null
 
     L.GridLayer.prototype.onRemove.call(this, map)
   },
 
   createTile (coords, done) {
-    // compute leaflet tile coordinates in wgs84
-    const tileSize = this.getTileSize()
-    const pixelCoords0 = L.point(coords.x * tileSize.x, coords.y * tileSize.y)
-    const pixelCoords1 = L.point(pixelCoords0.x + tileSize.x, pixelCoords0.y + tileSize.y)
-    const latLonCoords0 = this.map.wrapLatLng(this.map.unproject(pixelCoords0, coords.z))
-    const latLonCoords1 = this.map.wrapLatLng(this.map.unproject(pixelCoords1, coords.z))
-
     const tile = document.createElement('div')
 
     // bbox we'll request to the grid source
-    const reqBBox = [
-      Math.min(latLonCoords0.lat, latLonCoords1.lat), Math.min(latLonCoords0.lng, latLonCoords1.lng),
-      Math.max(latLonCoords0.lat, latLonCoords1.lat), Math.max(latLonCoords0.lng, latLonCoords1.lng)
-    ]
+    const bounds = this._tileCoordsToBounds(coords)
+    const reqBBox = [bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast()]
     // compute an ideal resolution for grid sources that care
+    const tileSize = this.getTileSize()
     const resolution = [
       this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
       this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
@@ -190,7 +189,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     if (!mesh) return
 
     mesh.zoomLevel = event.coords.z
-    mesh.visible = (mesh.zoomLevel === this.map.getZoom())
+    mesh.visible = (mesh.zoomLevel === this._map.getZoom())
     this.pixiRoot.addChild(mesh)
     if (mesh.visible) {
       this.pixiLayer.redraw()
@@ -221,7 +220,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     // zoom level 'n' tiles are still visible
     // and zoom level 'n+1' are being loaded on top of them
     // when alpha blending is used, this is annoying
-    const zoomLevel = this.map.getZoom()
+    const zoomLevel = this._map.getZoom()
     for (const mesh of this.pixiRoot.children) {
       if (mesh.zoomLevel === zoomLevel) mesh.visible = false
     }
@@ -233,7 +232,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     // on zoomstart event
     // this is important when quickly zoomin in and out
     // because some meshes may not have been evicted yet
-    const zoomLevel = this.map.getZoom()
+    const zoomLevel = this._map.getZoom()
     for (const mesh of this.pixiRoot.children) {
       if (mesh.zoomLevel === zoomLevel) mesh.visible = true
     }
@@ -405,7 +404,6 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   renderPixiLayer (utils) {
-    this.layerUniforms.uniforms.in_zoomLevel = this.pixiLayer._initialZoom
     const renderer = utils.getRenderer()
     renderer.render(this.pixiRoot)
   },
