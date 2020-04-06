@@ -10,6 +10,7 @@ import popup from './mixin.popup'
 import infobox from './mixin.infobox'
 import activity from './mixin.map-activity'
 import tiledMeshLayers from './mixin.tiled-mesh-layers'
+import tiledWindLayers from './mixin.tiled-wind-layers'
 import heatmapLayers from './mixin.heatmap-layers'
 import mapillary from './mixin.mapillary'
 
@@ -26,6 +27,7 @@ export default {
   infobox,
   activity,
   tiledMeshLayers,
+  tiledWindLayers,
   heatmapLayers,
   mapillary
 }
