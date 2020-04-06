@@ -1,15 +1,6 @@
 import L from 'leaflet'
 import _ from 'lodash'
-
-function tile2key (coords) {
-  // JS Number.MAX_SAFE_INTEGER = 2^53 - 1, so 53 bits available
-  // put z value on  5 bits (0 - 32)
-  // put y value on 24 bits (0 - 16777216)
-  // put x value on 24 bits (0 - 16777216)
-  // shift y by 5 bits (* 32)
-  // shift x by 5+24 bits (* 536870912)
-  return (coords.x * 536870912) + (coords.y * 32) + coords.z
-}
+import { tile2key } from 'utils'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
