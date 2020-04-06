@@ -74,7 +74,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // tile.style.outline = '1px solid red'
 
       const bounds = this._tileCoordsToBounds(coords)
-      const reqBBox = [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()]
+      const reqBBox = [bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast()]
       const reqCenter = [
         0.5 * (reqBBox[0] + reqBBox[2]),
         0.5 * (reqBBox[1] + reqBBox[3])
