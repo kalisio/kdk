@@ -280,7 +280,7 @@ export default {
       let position = entity.position
       if (!position) {
         if (entity.polygon) {
-          position = Cesium.BoundingSphere.fromPoints(entity.polygon.positions.getValue()).center
+          position = Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center
         } else if (entity.polyline) {
           position = Cesium.BoundingSphere.fromPoints(entity.polyline.positions.getValue()).center
         }
