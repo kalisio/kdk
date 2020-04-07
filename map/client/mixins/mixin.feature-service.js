@@ -154,7 +154,7 @@ export default {
         feature.layer = layerId
       })
       // Create chunks to avoid reaching some limits (DB, etc.)
-      const chunks = _.chunk(features, 5000)
+      const chunks = _.chunk(features, 1000)
       // Write the chunks
       const createdFeatures = []
       for (let i = 0; i < chunks.length; ++i) {
