@@ -368,9 +368,19 @@ export default {
       // Use wind barbs on weather probed features
       const isWeatherProbe = (_.has(this.kActivity.probedLocation, `properties.${windDirection}`) &&
                               _.has(this.kActivity.probedLocation, `properties.${windSpeed}`))
-      this.kActivity.updateLayer(name, isWeatherProbe
+      const feature = (isWeatherProbe
         ? this.kActivity.getProbedLocationForecastAtCurrentTime()
         : this.kActivity.getProbedLocationMeasureAtCurrentTime())
+      // Add styling information
+      feature.style = {
+        'marker-type': 'circleMarker',
+        radius: 10,
+        stroke: 'red',
+        'stroke-opacity': 1,
+        'fill-opacity': 0.5,
+        'fill-color': 'green'
+      }
+      this.kActivity.updateLayer(name, feature)
     },
     async onShowProbedLocationLayer (layer) {
       // Show timeseries on probed location
@@ -403,9 +413,7 @@ export default {
           await this.kActivity.getForecastForFeature(_.get(feature, this.kActivity.probe.featureId), start, end)
         }
       } else if (options.variables && options.service) { // Static measure probe
-        const startTime = this.kActivity.currentTime.clone().subtract({ seconds: options.history })
-        const endTime = this.kActivity.currentTime.clone()
-        await this.kActivity.getMeasureForFeature(options, feature, startTime, endTime)
+        await this.kActivity.getMeasureForFeature(options, feature, start, end)
       } else if (isWeatherProbe) { // Dynamic weacast probe
         this.kActivity.getForecastForLocation(event.latlng.lng, event.latlng.lat, start, end)
       } else {
