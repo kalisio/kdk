@@ -78,6 +78,7 @@
 
 <script>
 import _ from 'lodash'
+import logger from 'loglevel'
 import moment from 'moment'
 import { colors } from 'quasar'
 
@@ -95,9 +96,9 @@ export default {
   computed: {
     minutes () {
       let minutes = []
-      let start = moment(this.time).minute(0)
-      let end = moment(this.time).minute(59)
-      for (let m = moment(start); m.isBefore(end); m.add(this.timeline.step, 'm')) {
+      let start = moment.utc(this.time).minute(0)
+      let end = moment.utc(this.time).minute(59)
+      for (let m = moment.utc(start); m.isBefore(end); m.add(this.timeline.step, 'm')) {
         minutes.push({
           label: m.minute().toString().padStart(2,0),
           color: m.isSame(this.time,'minute') ? 'primary' : 'grey-7',
@@ -113,9 +114,9 @@ export default {
       if (this.$q.screen.gt.sm) size = 5
       if (this.$q.screen.gt.md) size = 7
       if (this.$q.screen.gt.lg) size = 10
-      let start = moment(this.time).subtract(size, 'hour')
-      let end = moment(this.time).add(size + 1, 'hour')
-      for (let h = moment(start); h.isBefore(end); h.add(1, 'h')) {
+      let start = moment.utc(this.time).subtract(size, 'hour')
+      let end = moment.utc(this.time).add(size + 1, 'hour')
+      for (let h = moment.utc(start); h.isBefore(end); h.add(1, 'h')) {
         hours.push({
           label: this.kActivity.formatTime('time.short', h),
           class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time,'hour') ? 'k-timeline-hour-selected' : '') // bg-secondary text-white' : 'bg-white text-primary' )
@@ -130,9 +131,9 @@ export default {
       if (this.$q.screen.gt.sm) size = 3
       if (this.$q.screen.gt.md) size = 5
       if (this.$q.screen.gt.lg) size = 7
-      let start = moment(this.time).subtract(size, 'day')
-      let end = moment(this.time).add(size + 1, 'day')
-      for (let d = moment(start); d.isBefore(end); d.add(1, 'd')) {
+      let start = moment.utc(this.time).subtract(size, 'day')
+      let end = moment.utc(this.time).add(size + 1, 'day')
+      for (let d = moment.utc(start); d.isBefore(end); d.add(1, 'd')) {
         days.push({
           label: this.kActivity.formatTime('date.short', d),
           color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
@@ -145,12 +146,21 @@ export default {
       get: function () {
         return this.kActivity.currentTimeFormat.utc ? 
           this.time.format(this.calendarDateMask) :
-          this.time.local().format(this.calendarDateMask)
+          moment(this.time).local().format(this.calendarDateMask)
       },
       set: function (value) {
-        let time = this.kActivity.currentTimeFormat.utc ? moment(value, this.calendarDateMask) : moment(value, this.calendarDateMask).utc()
-        time.minute(this.time.minute())
-        time.hour(this.time.hour())
+        let time
+        if (this.kActivity.currentTimeFormat.utc) {
+          time = moment.utc(value, this.calendarDateMask)
+          time.hour(this.time.hour())
+          time.minute(this.time.minute())
+        } else {
+          time = moment(value, this.calendarDateMask)
+          let localTime = moment(this.time.valueOf())
+          time.hour(localTime.hour())
+          time.minute(localTime.minute())
+          time = moment.utc(time)
+        }
         this.setTime(time)
       }
     }
@@ -176,9 +186,19 @@ export default {
       this.timer = undefined
     },
     setTime (time, propagate = true) {
+      if (!time.isValid()) {
+        logger.error('time is invalid')
+        return
+      }
+      if (time.utcOffset() > 0) {
+        logger.error('time should be defined in UTC')
+        return
+      }
       if (this.timer) this.stopTimeLoop()
-      this.time = time
-      if (propagate) this.kActivity.setCurrentTime(time)
+      this.time = time.clone()
+      this.kActivity.$off('current-time-changed', this.onTimeChanged)
+      if (propagate) this.kActivity.setCurrentTime(moment.utc(time))
+      this.kActivity.$on('current-time-changed', this.onTimeChanged)
     },
     onPreviousStepClicked () {
       let minutesToSubtract = this.timeline.step
@@ -186,7 +206,7 @@ export default {
       if (remainder > 0) {
         minutesToSubtract = remainder
       } 
-      this.setTime(moment(this.time).subtract(minutesToSubtract, 'minute'))
+      this.setTime(this.time.subtract(minutesToSubtract, 'minute'))
     },
     onNextStepClicked () {
       let minutesToAdd = this.timeline.step
@@ -194,28 +214,28 @@ export default {
       if (remainder > 0) {
         minutesToAdd = this.timeline.step - remainder
       } 
-      this.setTime(moment(this.time).add(minutesToAdd, 'minute'))
+      this.setTime(this.time.add(minutesToAdd, 'minute'))
     },
     onMinutesClicked (index) {
-      this.setTime(moment(this.time).minute(index * this.timeline.step))
+      this.setTime(this.time.minute(index * this.timeline.step))
     },
     onHourClicked (index, length) {
-      this.setTime(moment(this.time).add(index - Math.trunc(length / 2), 'hour'))
+      this.setTime(this.time.add(index - Math.trunc(length / 2), 'hour'))
     },
     onPreviousHourClicked () {
-      this.setTime(moment(this.time).subtract(1, 'hour'))
+      this.setTime(this.time.subtract(1, 'hour'))
     },
     onNextHourClicked () {
-      this.setTime(moment(this.time).add(1, 'hour'))
+      this.setTime(this.time.add(1, 'hour'))
     },
     onDayClicked (index, length) {
-      this.setTime(moment(this.time).add(index - Math.trunc(length / 2), 'day'))
+      this.setTime(this.time.add(index - Math.trunc(length / 2), 'day'))
     },
     onPreviousDayClicked () {
-      this.setTime(moment(this.time).subtract(1, 'day'))
+      this.setTime(this.time.subtract(1, 'day'))
     },
     onNextDayClicked () {
-      this.setTime(moment(this.time).add(1, 'day'))
+      this.setTime(this.time.add(1, 'day'))
     },
     onNowClicked () {
       this.startTimeLoop()
@@ -244,7 +264,7 @@ export default {
   mounted () {
     this.kActivity.$on('current-time-changed', this.onTimeChanged)
     // Set the time
-    this.setTime(this.kActivity.currentTime)
+    this.setTime(this.kActivity.currentTime, false)
   },
   beforeDestroy () {
     this.kActivity.$off('current-time-changed', this.onTimeChanged)
