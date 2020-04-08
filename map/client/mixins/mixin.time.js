@@ -30,7 +30,8 @@ export default {
   methods: {
     convertToMoment (datetime) {
       if (moment.isMoment(datetime)) {
-        return datetime
+        // Clone to avoid mutating and force UTC mode
+        return moment.utc(datetime.valueOf())
       } else { // Convert from Date, string or milliseconds (ie EPOCH)
         return moment.utc(datetime)
       }
