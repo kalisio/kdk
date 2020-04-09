@@ -11,7 +11,7 @@ export default {
     }
   },
   methods: {
-    createLeafletMapillary (options) {
+    createLeafletMapillaryCorverage (options) {
       const leafletOptions = options.leaflet || options
       // Check for valid types
       if (leafletOptions.type !== 'vectorGrid.protobuf') return
@@ -28,7 +28,7 @@ export default {
     },
     addMapillaryMarker () {
       const markerIcon = L.icon({
-        iconUrl: './statics/mapillary-icon.png',
+        iconUrl: './statics/mapillary-marker.png',
         iconSize: [36, 36],
         iconAnchor: [16, 16]
       })
@@ -60,6 +60,6 @@ export default {
       return
     }
     // Register the mapillary coverage
-    this.registerLeafletConstructor(this.createLeafletMapillary)
+    this.registerLeafletConstructor(this.createLeafletMapillaryCorverage)
   }
 }
