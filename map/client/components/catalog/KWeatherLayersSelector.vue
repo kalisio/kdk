@@ -1,7 +1,7 @@
 <template>
   <div v-if="forecastModels.length > 0">
     <k-layers-selector :layers="filteredLayers" :options="options">
-      <template v-slot:panel-header>
+      <template v-slot:header>
         <div class="q-ma-sm">
           <q-select v-model="model" :options="forecastModels" filled @input="onModelChanged">
             <template v-slot:prepend>
@@ -25,7 +25,7 @@
           </q-select>
         </div>
       </template>
-      <template v-if="hasArchiveLayers" v-slot:panel-footer>
+      <template v-if="hasArchiveLayers" v-slot:footer>
         <q-tabs class="q-ma-sm text-primary" no-caps v-model="mode" @input="onModeChanged">
           <q-tab name="forecast" :label="$t('KWeatherLayersSelector.FORECASTS_LABEL')" />
           <q-tab name="archive" :label="$t('KWeatherLayersSelector.ARCHIVES_LABEL')" />

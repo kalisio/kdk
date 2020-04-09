@@ -1,6 +1,6 @@
 <template>
   <q-list dense>
-    <slot name="panel-header" />
+    <slot name="header" />
     <div v-if="layers.length > 0">
       <template v-for="layer in layers">
         <q-item
@@ -36,7 +36,7 @@
     <div v-else>
       <k-label :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" alignement="center-top" direction="horizontal" />
     </div>
-    <slot name="panel-footer" />
+    <slot name="footer" />
   </q-list>
 </template>
 
