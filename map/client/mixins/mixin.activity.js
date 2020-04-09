@@ -317,6 +317,8 @@ export default function (name) {
         // Then for data sources, depending on the layer type configuration is not at the same place
         let sources = _.get(layer, 'meteo_model', _.get(layer, 'time_based', [layer]))
         sources.forEach(source => {
+          // only consider meteo sources for which associated forecast model is the current one
+          if (source.model && (source.model !== this.forecastModel.name)) continue
           if (source.from) {
             const from = makeTime(readAsTimeOrDuration(source.from), this.currentTime)
             start = (start ? moment.min(start, from) : from)
