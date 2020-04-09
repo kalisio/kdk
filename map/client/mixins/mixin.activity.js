@@ -293,83 +293,54 @@ export default function (name) {
             })
           }
         }
-        /**/
-        if (layer.meteo_model ||
-            layer.time_based ||
-            (layer.leaflet && layer.leaflet.type.indexOf('weacast') !== -1)) {
+        // Check if the layr has a valid data time range to add sync action with timeline
+        if (this.getLayerTimeRange(layer)) {
           actions.push({
             name: 'sync-timeline',
-            label: this.$t('mixins.activity.SYNCHRONIZE_TIMELINE'),
+            label: this.$t('mixins.activity.SYNCHRONIZE_TIMELINE_LABEL'),
             icon: 'sync',
             handler: () => this.onSynchronizeTimeline(layer)
           })
         }
-        /**/
+        // Store the actions and make it reactive
         this.$set(layer, 'actions', actions)
         return actions
       },
-      getMeteoModelSourceTimeRange (layer) {
-        let begin = null
-        let end = null
-
-        const source = layer.meteo_model
-        for (const item of source) {
-          // only consider items for which associated forecast model is the current one
-          if (item.model !== this.forecastModel.name) continue
-
-          const itemBegin = makeTime(readAsTimeOrDuration(item.from), this.currentTime)
-          const itemEnd = makeTime(readAsTimeOrDuration(item.to), this.currentTime)
-
-          begin = begin ? moment.min(begin, itemBegin) : itemBegin
-          end = end ? moment.max(end, itemEnd) : itemEnd
+      getLayerTimeRange (layer) {
+        const now = moment.utc()
+        let start, end, step
+        // Check for Weacast layers first
+        if (_.get(layer, 'leaflet.type', '').startsWith('weacast')) {
+          start = now.clone().add(this.forecastModel.lowerLimit - this.forecastModel.interval, 's')
+          end = now.clone().add(this.forecastModel.upperLimit + this.forecastModel.interval, 's')
         }
-
-        return {
-          begin,
-          end,
-          step: moment.duration(this.forecastModel.interval, 's')
-        }
-      },
-      getTimeBasedSourceTimeRange (layer) {
-        let begin = null
-        let end = null
-        let step = null
-
-        const source = layer.time_based
-        for (const item of source) {
-          const itemBegin = makeTime(readAsTimeOrDuration(item.from), this.currentTime)
-          const itemEnd = makeTime(readAsTimeOrDuration(item.to), this.currentTime)
-          const itemStep = moment.duration(item.every)
-
-          begin = begin ? moment.min(begin, itemBegin) : itemBegin
-          end = end ? moment.max(end, itemEnd) : itemEnd
-          step = step ? (step.asSeconds() > itemStep.asSeconds() ? itemStep : step) : itemStep
-        }
-
-        return { begin, end, step }
-      },
-      getWeacastTimeRange (layer) {
-        const now = moment()
-        const begin = now.clone().add(this.forecastModel.lowerLimit - this.forecastModel.interval, 's')
-        const end = now.clone().add(this.forecastModel.upperLimit + this.forecastModel.interval, 's')
-        const step = moment.duration(this.forecastModel.interval, 's')
-
-        return { begin, end, step }
+        // Then for data sources, depending on the layer type configuration is not at the same place
+        let sources = _.get(layer, 'meteo_model', _.get(layer, 'time_based', [layer]))
+        sources.forEach(source => {
+          if (source.from) {
+            const from = makeTime(readAsTimeOrDuration(source.from), this.currentTime)
+            start = (start ? moment.min(start, from) : from)
+          }
+          if (source.to) {
+            const to = makeTime(readAsTimeOrDuration(source.to), this.currentTime)
+            end = (end ? moment.max(end, to) : to)
+          }
+          if (source.every) {
+            const every = moment.duration(source.every)
+            step = (step ? (step.asSeconds() > every.asSeconds() ? every : step) : every)
+          }
+        })
+        // No a valid source ?
+        if (!start && !end) return null
+        // When there is not step provided this means it's a meteorological source
+        if (!step) step = moment.duration(this.forecastModel.interval, 's')
+        return { start, end, step }
       },
       onSynchronizeTimeline (layer) {
-        let timeRange = null
-        if (layer.meteo_model) timeRange = this.getMeteoModelSourceTimeRange(layer)
-        else if (layer.time_based) timeRange = this.getTimeBasedSourceTimeRange(layer)
-        else if (layer.leaflet && layer.leaflet.type.indexOf('weacast') !== -1) timeRange = this.getWeacastTimeRange(layer)
+        const timeRange = this.getLayerTimeRange(layer)
         if (!timeRange) return
-
-        // put reference time in the middle of the timeline
-        const timeline = {}
-        timeline.span = moment.duration(timeRange.end.diff(timeRange.begin))
-        timeline.reference = timeRange.begin.clone().add(timeline.span / 2)
-        timeline.step = timeRange.step
-        timeline.offset = timeline.span / 2
-        this.updateTimeline(timeline)
+        // Setup timeline accordingly
+        this.$store.patch('timeline', { source: timeRange })
       },
       onLayerAdded (layer) {
         this.registerLayerActions(layer)
