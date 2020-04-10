@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center no-wrap">
     <template v-for="action in actions">
-      <q-separator v-if="action.name == 'separator'" :key="key(action)" vertical />
+      <q-separator v-if="action.name === 'separator'" :key="actionKey(action)" vertical />
       <q-btn v-else
         :key="actionKey(action)"
         :icon="action.icon"

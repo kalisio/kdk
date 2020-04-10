@@ -1,22 +1,17 @@
 <template>
   <div v-show="isOpened" class="k-widget">
-    <div class="row">
+    <div class="row justify-between no-wrap">
       <!--
         Title section
       -->
-      <div class="col-8 text-h5 q-pa-md">
+      <div class="q-pl-sm q-pt-xs text-subtitle1">
         {{title}}
       </div>
       <!--
        Toolbar section
       -->
-      <div class="col-4 text-right">
-        <template v-for="action in toolbar">
-          <q-btn :id="action.name" v-bind:key="action.name" flat round small color="primary" @click="action.handler">
-            <q-icon :name="action.icon" />
-            <q-tooltip v-if="action.label">{{action.label}}</q-tooltip>
-          </q-btn>
-        </template>
+      <div>
+        <k-tool-bar :actions="actions" dense />
       </div>
     </div>
     <!--
@@ -36,7 +31,7 @@ export default {
     }
   },
   computed: {
-    toolbar () {
+    actions () {
       return [
         {
           name: 'change-mode',
@@ -88,6 +83,10 @@ export default {
     isMinimized () {
       return (this.mode === 'minimized')
     }
+  },
+  created () {
+    // Load the required components
+    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
   }
 }
 </script>
@@ -95,7 +94,7 @@ export default {
 <style lang="stylus">
 .k-widget
   border: solid 1px lightgrey;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #ffffff
 
 .k-widget:hover
