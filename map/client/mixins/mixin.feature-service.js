@@ -21,18 +21,18 @@ export default {
       return baseQuery
     },
     getFeaturesUpdateInterval (options) {
-      const interval = (_.has(options, 'every') ?
-        _.get(options, 'every') :
+      const interval = (_.has(options, 'every')
+        ? _.get(options, 'every')
         // Backward compatibility with old configuration style
-        _.get(options, this.engine, options).interval)
+        : _.get(options, this.engine, options).interval)
       return moment.duration(interval)
     },
     getFeaturesQueryInterval (options) {
       const interval = this.getFeaturesUpdateInterval(options)
-      let queryInterval = (_.has(options, 'queryFrom') ?
-        _.get(options, 'queryFrom') : 
+      let queryInterval = (_.has(options, 'queryFrom')
+        ? _.get(options, 'queryFrom')
         // Backward compatibility with old configuration style
-        _.get(options, this.engine, options).queryInterval)
+        : _.get(options, this.engine, options).queryInterval)
       // If query interval not given use 2 x refresh interval as default value
       // this ensures we cover last interval if server/client update processes are not in sync
       if (!queryInterval && interval) queryInterval = moment.duration(-2 * interval.asMilliseconds())
@@ -50,7 +50,7 @@ export default {
     },
     async getProbeFeatures (options) {
       // Any base query to process ?
-      let query = await this.getBaseQueryForFeatures(options)
+      const query = await this.getBaseQueryForFeatures(options)
       const response = await this.$api.getService(options.probeService).find({ query })
       return response
     },
@@ -77,8 +77,8 @@ export default {
         const now = this.currentTime || moment.utc()
         if (moment.isDuration(queryInterval)) {
           // Depending on the duration format we might have negative or positive values
-          const gte = (queryInterval.asMilliseconds() > 0 ?
-            now.clone().subtract(queryInterval) : now.clone().add(queryInterval))
+          const gte = (queryInterval.asMilliseconds() > 0
+            ? now.clone().subtract(queryInterval) : now.clone().add(queryInterval))
           const lte = now
           Object.assign(query, {
             $limit: 1,
@@ -167,7 +167,7 @@ export default {
       // Create chunks to avoid reaching some limits (DB, etc.)
       const chunks = _.chunk(features, 5000)
       // Write the chunks
-      const createdFeatures = []
+      let createdFeatures = []
       for (let i = 0; i < chunks.length; i++) {
         const result = await this.$api.getService('features').create(chunks[i])
         createdFeatures = createdFeatures.concat(result)

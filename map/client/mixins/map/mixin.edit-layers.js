@@ -12,7 +12,7 @@ export default {
     },
     getGeoJsonEditOptions (options) {
       // Retrieve base options first
-      const { onEachFeature, style, pointToLayer } = this.getGeoJsonOptions(options)
+      const { onEachFeature } = this.getGeoJsonOptions(options)
       return {
         onEachFeature,
         // Use default styling when editing as dynamic styling can conflict

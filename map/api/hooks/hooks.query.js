@@ -156,7 +156,7 @@ export async function aggregateFeaturesQuery (hook) {
       const isGeometry = (element === 'geometry')
       // Geometry is a root property while others are feature properties
       const prefix = (isGeometry ? '' : 'properties.')
-      let pipeline = []
+      const pipeline = []
       // Check for geometry stage
       if (query.$geoNear) {
         pipeline.push({ $geoNear: query.$geoNear })

@@ -33,12 +33,12 @@
     <div v-if="$q.screen.gt.xs" class="q-pt-sm column">
       <div v-if="timeline.step < 60" class="row justify-center items-center">
         <template v-for="(minute, index) in minutes">
-          <q-chip 
-            :key="index" 
-            dense flat outline :size="$q.screen.gt.sm ? '12px' : '10px'" 
-            :color="minute.color" 
-            :text-color="minute.textColor" 
-            :label="minute.label" 
+          <q-chip
+            :key="index"
+            dense flat outline :size="$q.screen.gt.sm ? '12px' : '10px'"
+            :color="minute.color"
+            :text-color="minute.textColor"
+            :label="minute.label"
             clickable @click="onMinutesClicked(index)" />
         </template>
       </div>
@@ -49,7 +49,7 @@
         <template v-for="(hour, index) in hours">
           <div :key="index" :class="hour.class" style="height: 25px"  @click="onHourClicked(index, hours.length)">
             {{hour.label}}
-          </div>          
+          </div>
         </template>
         <q-btn flat round icon='las la-angle-right'  color="primary" @click="onNextHourClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_HOUR')}}</q-tooltip>
@@ -60,12 +60,12 @@
           <q-tooltip>{{$t('KTimeline.PREVIOUS_DAY')}}</q-tooltip>
         </q-btn>
         <template v-for="(day, index) in days">
-          <q-chip 
-            :key="index" 
-            dense flat square outline size="md" 
-            :color="day.color" 
-            :text-color="day.textColor" 
-            :label="day.label" 
+          <q-chip
+            :key="index"
+            dense flat square outline size="md"
+            :color="day.color"
+            :text-color="day.textColor"
+            :label="day.label"
             clickable @click="onDayClicked(index, days.length)" />
         </template>
         <q-btn dense flat round icon='las la-calendar-plus'  color="primary" @click="onNextDayClicked">
@@ -80,7 +80,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
-import { colors } from 'quasar'
 
 export default {
   name: 'k-timeline',
@@ -95,58 +94,58 @@ export default {
   },
   computed: {
     minutes () {
-      let minutes = []
-      let start = moment.utc(this.time).minute(0)
-      let end = moment.utc(this.time).minute(59)
+      const minutes = []
+      const start = moment.utc(this.time).minute(0)
+      const end = moment.utc(this.time).minute(59)
       for (let m = moment.utc(start); m.isBefore(end); m.add(this.timeline.step, 'm')) {
         minutes.push({
-          label: m.minute().toString().padStart(2,0),
-          color: m.isSame(this.time,'minute') ? 'primary' : 'grey-7',
-          textColor: m.isSame(this.time,'minute') ? 'white' : 'black',
+          label: m.minute().toString().padStart(2, 0),
+          color: m.isSame(this.time, 'minute') ? 'primary' : 'grey-7',
+          textColor: m.isSame(this.time, 'minute') ? 'white' : 'black'
         })
       }
       return minutes
     },
     hours () {
-      let hours = []
+      const hours = []
       let size = 0
       if (this.$q.screen.gt.xs) size = 2
       if (this.$q.screen.gt.sm) size = 5
       if (this.$q.screen.gt.md) size = 7
       if (this.$q.screen.gt.lg) size = 10
-      let start = moment.utc(this.time).subtract(size, 'hour')
-      let end = moment.utc(this.time).add(size + 1, 'hour')
+      const start = moment.utc(this.time).subtract(size, 'hour')
+      const end = moment.utc(this.time).add(size + 1, 'hour')
       for (let h = moment.utc(start); h.isBefore(end); h.add(1, 'h')) {
         hours.push({
           label: this.kActivity.formatTime('time.short', h),
-          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time,'hour') ? 'k-timeline-hour-selected' : '') // bg-secondary text-white' : 'bg-white text-primary' )
+          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time, 'hour') ? 'k-timeline-hour-selected' : '') // bg-secondary text-white' : 'bg-white text-primary' )
         })
       }
       return hours
-    },  
+    },
     days () {
-      let days = []
+      const days = []
       let size = 0
       if (this.$q.screen.gt.xs) size = 1
       if (this.$q.screen.gt.sm) size = 3
       if (this.$q.screen.gt.md) size = 5
       if (this.$q.screen.gt.lg) size = 7
-      let start = moment.utc(this.time).subtract(size, 'day')
-      let end = moment.utc(this.time).add(size + 1, 'day')
+      const start = moment.utc(this.time).subtract(size, 'day')
+      const end = moment.utc(this.time).add(size + 1, 'day')
       for (let d = moment.utc(start); d.isBefore(end); d.add(1, 'd')) {
         days.push({
           label: this.kActivity.formatTime('date.short', d),
           color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
-          textColor: d.isSame(this.time, 'date') ? 'white' : 'black',
+          textColor: d.isSame(this.time, 'date') ? 'white' : 'black'
         })
       }
       return days
     },
     date: {
       get: function () {
-        return this.kActivity.currentTimeFormat.utc ? 
-          this.time.format(this.calendarDateMask) :
-          moment(this.time).local().format(this.calendarDateMask)
+        return this.kActivity.currentTimeFormat.utc
+          ? this.time.format(this.calendarDateMask)
+          : moment(this.time).local().format(this.calendarDateMask)
       },
       set: function (value) {
         let time
@@ -156,7 +155,7 @@ export default {
           time.minute(this.time.minute())
         } else {
           time = moment(value, this.calendarDateMask)
-          let localTime = moment(this.time.valueOf())
+          const localTime = moment(this.time.valueOf())
           time.hour(localTime.hour())
           time.minute(localTime.minute())
           time = moment.utc(time)
@@ -174,7 +173,7 @@ export default {
       this.timer = setInterval(() => {
         const now = moment.utc()
         if (!this.time.isSame(now, 'minute')) {
-          this.time = now 
+          this.time = now
           this.kActivity.$off('current-time-changed', this.onTimeChanged)
           this.kActivity.setCurrentTime(this.time)
           this.kActivity.$on('current-time-changed', this.onTimeChanged)
@@ -202,18 +201,18 @@ export default {
     },
     onPreviousStepClicked () {
       let minutesToSubtract = this.timeline.step
-      let remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
       if (remainder > 0) {
         minutesToSubtract = remainder
-      } 
+      }
       this.setTime(this.time.subtract(minutesToSubtract, 'minute'))
     },
     onNextStepClicked () {
       let minutesToAdd = this.timeline.step
-      let remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
       if (remainder > 0) {
         minutesToAdd = this.timeline.step - remainder
-      } 
+      }
       this.setTime(this.time.add(minutesToAdd, 'minute'))
     },
     onMinutesClicked (index) {

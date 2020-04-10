@@ -1,5 +1,5 @@
 <template>
-  <q-card flat class="k-timeline"> 
+  <q-card flat class="k-timeline">
     <q-card-section>
       <k-timeline-bar
         :key="timelineRefreshKey"

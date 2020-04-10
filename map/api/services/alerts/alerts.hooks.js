@@ -19,7 +19,7 @@ module.exports = {
       coreHooks.processTimes(['expireAt', 'status.checkedAt', 'status.triggeredAt']),
       coreHooks.convertToString(['conditions'])
     ],
-    remove: [async hook => await hook.service.unregisterAlert(hook.id)]
+    remove: [async hook => { await hook.service.unregisterAlert(hook.id) }]
   },
 
   after: {
@@ -35,7 +35,7 @@ module.exports = {
     create: [
       coreHooks.unprocessTimes(['expireAt', 'status.checkedAt', 'status.triggeredAt']),
       coreHooks.convertToJson(['conditions']),
-      async hook => await hook.service.registerAlert(hook.result)
+      async hook => { await hook.service.registerAlert(hook.result) }
     ],
     update: [],
     patch: [

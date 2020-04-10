@@ -88,12 +88,12 @@ export default {
   methods: {
     hideLayer (layer) {
       if (layer.isVisible) {
-        let action = _.find(layer.actions, { 'name': 'toggle' })
+        const action = _.find(layer.actions, { name: 'toggle' })
         if (action) action.handler()
       }
     },
     filterForecastLayers () {
-      let forecastLayers = []
+      const forecastLayers = []
       _.forEach(this.layers, (layer) => {
         if (!layer.tags.includes('archive')) forecastLayers.push(layer)
         else this.hideLayer(layer)
@@ -101,14 +101,13 @@ export default {
       return forecastLayers
     },
     filterArchiveLayers () {
-      let archiveLayers = []
+      const archiveLayers = []
       _.forEach(this.layers, (layer) => {
         if (layer.tags.includes('archive')) {
           // check whether the current model is supported by the layer
-          if (_.find(layer.meteo_model, { 'model': this.model.name})) archiveLayers.push(layer)
+          if (_.find(layer.meteo_model, { model: this.model.name })) archiveLayers.push(layer)
           else this.hideLayer(layer)
-        }
-        else this.hideLayer(layer)
+        } else this.hideLayer(layer)
       })
       return archiveLayers
     },
@@ -130,4 +129,3 @@ export default {
   }
 }
 </script>
-

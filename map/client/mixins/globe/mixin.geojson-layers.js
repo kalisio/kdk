@@ -1,5 +1,7 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
+import moment from 'moment'
+import sift from 'sift'
 import { fetchGeoJson } from '../../utils'
 
 export default {
@@ -249,11 +251,11 @@ export default {
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       const geoJsonlayers = _.values(this.layers).filter(sift({
-        'cesium.type': 'geoJson', 
+        'cesium.type': 'geoJson',
         'cesium.realtime': true,
         $or: [ // Supported by template URL or time-based features
           { 'cesium.sourceTemplate': { $exists: true } },
-          { 'service': { $exists: true }, 'variables': { $exists: true } }
+          { service: { $exists: true }, variables: { $exists: true } }
         ],
         isVisible: true
       }))

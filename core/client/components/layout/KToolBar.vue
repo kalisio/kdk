@@ -43,7 +43,7 @@ export default {
     size: {
       type: String,
       default: 'md'
-    }, 
+    },
     dense: {
       type: Boolean,
       default: false

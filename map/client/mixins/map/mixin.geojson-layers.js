@@ -1,5 +1,7 @@
 import L from 'leaflet'
 import _ from 'lodash'
+import moment from 'moment'
+import sift from 'sift'
 import logger from 'loglevel'
 import 'leaflet-realtime'
 import { GradientPath } from '../../leaflet/GradientPath'
@@ -311,11 +313,11 @@ export default {
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       const geoJsonlayers = _.values(this.layers).filter(sift({
-        'leaflet.type': 'geoJson', 
+        'leaflet.type': 'geoJson',
         'leaflet.realtime': true,
         $or: [ // Supported by template URL or time-based features
           { 'leaflet.sourceTemplate': { $exists: true } },
-          { 'service': { $exists: true }, 'variables': { $exists: true } }
+          { service: { $exists: true }, variables: { $exists: true } }
         ],
         isVisible: true
       }))

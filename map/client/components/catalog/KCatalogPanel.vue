@@ -1,7 +1,7 @@
 <template>
   <q-list dense bordered>
     <template v-for="category in layerCategories">
-      <q-expansion-item 
+      <q-expansion-item
         v-if="layersByCategory[category.name].length > 0"
         :key="category.name"
         header-class="text-primary"
@@ -9,8 +9,8 @@
         :label="$t(category.label)"
         expand-separator>
         <component
-          :is="category.componentKey" 
-          :layers="layersByCategory[category.name]" 
+          :is="category.componentKey"
+          :layers="layersByCategory[category.name]"
           :forecastModels="forecastModels"
           :forecastModelHandlers="forecastModelHandlers"
           :forecastModel="forecastModel"
@@ -21,9 +21,9 @@
 </template>
 
 <script>
+import sift from 'sift'
 import _ from 'lodash'
 import path from 'path'
-import { uid } from 'quasar'
 
 export default {
   name: 'k-catalog-panel',
@@ -69,7 +69,7 @@ export default {
       this.layerCategories.forEach(category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
         const componentKey = _.kebabCase(path.basename(component))
-        category['componentKey'] = componentKey
+        category.componentKey = componentKey
         if (!this.$options.components[componentKey]) this.$options.components[componentKey] = this.$load(component)
       })
     }

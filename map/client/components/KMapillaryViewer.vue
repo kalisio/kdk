@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import * as Mapillary from 'mapillary-js'
 import 'mapillary-js/dist/mapillary.min.css'
 
@@ -35,8 +34,8 @@ export default {
   },
   computed: {
     widgetStyle () {
-      if (this.mode === 'minimized') return "min-height: 35vh;"
-      else return "width: 100vw; height: 100vh"
+      if (this.mode === 'minimized') return 'min-height: 35vh;'
+      else return 'width: 100vw; height: 100vh'
     }
   },
   methods: {

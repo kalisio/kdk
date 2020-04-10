@@ -8,27 +8,23 @@ export default {
       // Check for valid type
       if (cesiumOptions.type !== 'opendap') return
 
-      const urlPromise = new Promise(async (resolve, reject) => {
-        try {
-          const accessToken = await this.$api.passport.getJWT()
-          const url = new Cesium.Resource({
-            url: 'http://localhost:8081/api/daptiles/tileset.json',
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            },
-            queryParameters: {
-              file: 'mf-arpege-01/2019/06/15/11360000000.20190615180000.grib',
-              query: 'Temperature_height_above_ground',
-              dimensions: JSON.stringify({ time2: 0, height_above_ground1: 0 }),
-              latitude: 'lat',
-              longitude: 'lon'
-            }
-          })
-          resolve(url)
-        } catch (e) {
-          reject(e)
-        }
-      })
+      const urlPromise = async () => {
+        const accessToken = await this.$api.passport.getJWT()
+        const url = new Cesium.Resource({
+          url: 'http://localhost:8081/api/daptiles/tileset.json',
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          },
+          queryParameters: {
+            file: 'mf-arpege-01/2019/06/15/11360000000.20190615180000.grib',
+            query: 'Temperature_height_above_ground',
+            dimensions: JSON.stringify({ time2: 0, height_above_ground1: 0 }),
+            latitude: 'lat',
+            longitude: 'lon'
+          }
+        })
+        return url
+      }
 
       var tileset = new Cesium.Cesium3DTileset({
         url: urlPromise

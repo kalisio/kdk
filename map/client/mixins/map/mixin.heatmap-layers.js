@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import moment from 'moment'
 import sift from 'sift'
 import HeatmapOverlay from 'leaflet-heatmap'
 import { fetchGeoJson } from '../../utils'
@@ -40,9 +41,9 @@ export default {
       const valueField = _.get(layer, 'cfg.valueField', 'value')
       const min = _.get(layer, 'cfg.min')
       const max = _.get(layer, 'cfg.max')
-      const values = (layer.valueCompiler ?
-        geoJson.features.map(feature => _.toNumber(layer.valueCompiler({ properties: feature.properties, feature }))) :
-        geoJson.features.map(feature => _.toNumber(_.get(feature, `properties.${valueField}`, 1))))
+      const values = (layer.valueCompiler
+        ? geoJson.features.map(feature => _.toNumber(layer.valueCompiler({ properties: feature.properties, feature })))
+        : geoJson.features.map(feature => _.toNumber(_.get(feature, `properties.${valueField}`, 1))))
       // By default our intensity is based on the number of points only
       // otherwise when provided we use target value
       layer.setData({
@@ -66,7 +67,7 @@ export default {
         'leaflet.type': 'heatmap',
         $or: [ // Supported by template URL or time-based features
           { 'leaflet.urlTemplate': { $exists: true } },
-          { 'service': { $exists: true }, 'variables': { $exists: true } }
+          { service: { $exists: true }, variables: { $exists: true } }
         ],
         isVisible: true
       }))

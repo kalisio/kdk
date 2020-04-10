@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import path from 'path'
 import makeDebug from 'debug'
 const modelsPath = path.join(__dirname, '..', 'models')

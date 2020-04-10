@@ -77,7 +77,7 @@ export default {
       return _.get(this.layer, 'schema.content.properties', {})
     },
     properties () {
-      let properties = []
+      const properties = []
       _.forOwn(this.fields, (value, key) => {
         // Use helper or ID
         properties.push({
@@ -104,9 +104,12 @@ export default {
       if (!this.$options.components[componentKey]) {
         this.$options.components[componentKey] = this.$load(properties.field.component)
       }
-      let filter = {
-        key: uid().toString(), componentKey, property, properties,
-        onValueChanged: (field, value) => filter.value = value
+      const filter = {
+        key: uid().toString(),
+        componentKey,
+        property,
+        properties,
+        onValueChanged: (field, value) => { filter.value = value }
       }
       return Object.assign(filter, options)
     },
@@ -118,7 +121,7 @@ export default {
       this.property = this.properties[0]
       _.forOwn(this.layer.baseQuery, (queryValue, queryKey) => {
         const property = _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
-        if (property) this.filters.push(this.createFilter(property, {value: queryValue }))
+        if (property) this.filters.push(this.createFilter(property, { value: queryValue }))
       })
       // Set the refs to be resolved
       if (this.filters.length) {
@@ -144,7 +147,9 @@ export default {
         if (property && !_.find(this.filters, { property })) delete this.layer.baseQuery[queryKey]
       })
       // Manage updated filters or newly added filters
-      this.filters.forEach(filter => this.layer.baseQuery[`properties.${filter.property}`] = filter.value)
+      this.filters.forEach(filter => {
+        this.layer.baseQuery[`properties.${filter.property}`] = filter.value
+      })
       // Update icon to reflect there is a filter on
       if (this.filters.length) this.layer.icon = 'filter_list'
       else this.layer.icon = 'insert_drive_file'

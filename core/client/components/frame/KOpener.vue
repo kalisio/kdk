@@ -1,12 +1,12 @@
 <template>
   <div
-    class="row justify-center items-center" 
-    v-bind:class="{ 
+    class="row justify-center items-center"
+    v-bind:class="{
       'k-opener-left': position === 'left',
       'k-opener-left-hovered': (position === 'left') && isHovered && isDesktop,
       'k-opener-right': position === 'right',
       'k-opener-right-hovered': (position === 'right') && isHovered && isDesktop,
-      'k-opener-top': position === 'top', 
+      'k-opener-top': position === 'top',
       'k-opener-top-hovered': (position === 'top') && isHovered && isDesktop,
       'k-opener-bottom': position === 'bottom',
       'k-opener-bottom-hovered': (position === 'bottom') && isHovered && isDesktop
@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     computedStyle () {
-      return 'background-color:' + colors.getBrand(this.color);
+      return 'background-color:' + colors.getBrand(this.color)
     }
   },
   data () {
@@ -62,7 +62,7 @@ export default {
   methods: {
     onMouseOver () {
       this.isHovered = true
-      switch(this.position) {
+      switch (this.position) {
         case 'left':
           this.icon = this.isOpened ? 'las la-angle-left' : 'las la-angle-right'
           break
@@ -84,7 +84,7 @@ export default {
       this.trigger()
     },
     onSwipe ({ evt, ...info }) {
-      switch(this.position) {
+      switch (this.position) {
         case 'left':
           if (info.direction === 'left' && this.isOpened) this.trigger()
           if (info.direction === 'right' && !this.isOpened) this.trigger()
