@@ -3,7 +3,7 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 import AbortController from 'abort-controller'
 
-import { tile2key } from './utils'
+// import { tile2key } from './utils'
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 
 const TiledWindLayer = L.GridLayer.extend({
@@ -102,15 +102,8 @@ const TiledWindLayer = L.GridLayer.extend({
     Object.assign(this.uFlow.header, modelHeader)
     Object.assign(this.vFlow.header, modelHeader)
 
-    /*
-    this.uFlow.origin = [model.bounds[1], model.bounds[3]]
-    this.vFlow.origin = [model.bounds[1], model.bounds[3]]
-    */
-
-    const remapLon = model.bounds[2] > 180.0
-    // const invertedLat = model.origin[1] - ((model.size[1] - 1) * model.resolution[1])
-    // this.windOrigin = [invertedLat, remapLon ? model.origin[0] - 180.0 : model.origin[0]]
-    this.windOrigin = [model.origin[1], remapLon ? model.origin[0] - 180.0 : model.origin[0]]
+    const invertedLat = model.origin[1] - ((model.size[1] - 1) * model.resolution[1]) // velocity layer expects latitude to decrease with increasing array index
+    this.windOrigin = [invertedLat, model.origin[0]]
 
     // generate corresponding _empty_ array
     this.uFlow.data = Array.from({ length: modelHeader.nx * modelHeader.ny }, (v, i) => undefined)
@@ -150,69 +143,27 @@ const TiledWindLayer = L.GridLayer.extend({
 
   updateWindArray (grid, element, reqBBox) {
     const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(reqBBox)
-    // const startlat = grid.getLat(imaxlat)
-    /*
     const startlat = grid.getLat(iminlat)
     const startlon = grid.getLon(iminlon)
-    */
-    
-    /*
-    const istartlat = Math.floor((startlat - element.origin[0]) / element.header.dy)
-    const istartlon = Math.floor((startlon - element.origin[1]) / element.header.dx)
-    */
-    // find out where this lat/lon should end up in the wind array
-    // wind array assumes descending lat with ascending indices
-    // const istartlat = Math.floor((this.windOrigin[0] - startlat) / element.header.dy)
-    /*
-    const istartlat = Math.floor((startlat - this.windOrigin[0]) / element.header.dy)
-    const istartlon = Math.floor((startlon - this.windOrigin[1]) / element.header.dy)
-    */
 
-    /*
-    let mini = element.header.nx * element.header.ny
-    let maxi = 0
-    */
-    
+    // find out where this lat/lon should end up in the wind array
+    const istartlat = Math.floor((startlat - this.windOrigin[0]) / element.header.dy)
+    const istartlon = Math.floor((startlon - this.windOrigin[1]) / element.header.dx)
+
     for (let ilon = iminlon; ilon <= imaxlon; ++ilon) {
       for (let ilat = iminlat; ilat <= imaxlat; ++ilat) {
-        const lat = grid.getLat(ilat)
-        const lon = grid.getLon(ilon)
-        // compute where this ends up in wind array
-        const ix = (lon - this.windOrigin[1]) / element.header.dx
-        const iy = (this.windOrigin[0] - lat) / element.header.dy
-        const idx = ix + iy * element.header.nx
-        
-        if (idx < 0 || idx >= element.data.length)  {
-          console.log("shit!")
-        }
-        if (idx === 0) {
-          console.log(`lat/lon@0=${grid.getLat(ilat)},${grid.getLon(ilon)} expected ${element.la1},${element.lo1}`)
-        }
-        element.data[idx] = grid.getValue(ilat, ilon)
-        
-        /*
         const val = grid.getValue(ilat, ilon)
         const ix = istartlon + (ilon - iminlon)
         const iy = istartlat + (ilat - iminlat)
-        // wind array is stored 1d, lon major (ascending), lat (descending)
-        const idx = ix + (element.header.ny - (iy + 1)) * element.header.nx
-        mini = Math.min(mini, idx)
-        maxi = Math.max(maxi, idx)
-        if (idx < 0 || idx >= element.data.length)  {
-          console.log("shit!")
-        }
-        if (idx === 0) {
-          console.log(`lat/lon@0=${grid.getLat(ilat)},${grid.getLon(ilon)} expected ${element.la1},${element.lo1}`)
-        }
-        if (idx < 100) {
-          console.log(`idx=${idx}, lat/lon@0=${grid.getLat(ilat)},${grid.getLon(ilon)} expected ${element.la1},${element.lo1}`)
-        }
+        // wind array assumes descending lat with ascending indices (flipped y)
+        const idx = ix + (element.header.ny - 1 - iy) * element.header.nx
         element.data[idx] = val
-        */
+
+        if (idx < 0 || idx >= element.data.length) {
+          console.log('oh no!')
+        }
       }
     }
-
-    // console.log(`mini=${mini} maxi=${maxi}`)
   },
 
   createTile (coords, done) {
@@ -257,16 +208,26 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   onTileLoad (event) {
+    /*
     // add tile to loaded tiles set
     const tilekey = tile2key(event.coords)
     this.loadedTiles.add(tilekey)
-
+    */
     // this.velocityLayer.setData([this.uFlow, this.vFlow])
   },
 
   onTileUnload (event) {
+    // tile unloaded
+    if (event.tile.fetchController) {
+      // fetch controller still present, abort fetching underlying data
+      event.tile.fetchController.abort()
+      event.tile.fetchController = null
+    }
+
+    /*
     const tilekey = tile2key(event.coords)
     this.loadedTiles.delete(tilekey)
+    */
   }
 })
 
