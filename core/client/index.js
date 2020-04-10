@@ -35,9 +35,10 @@ export default function init () {
   Store.set('appBar', { title: '', subtitle: '', toolbar: [], menu: [] })
   Store.set('searchBar', { field: '', pattern: '', services: [], items: [] })
   Store.set('tabBar', { tabs: [] })
-  Store.set('leftDrawer', { component: '', options: {} })
-  Store.set('rightDrawer', { component: '', options: {} })
-  Store.set('footer', { component: '', options: {} })
+  Store.set('leftDrawer', { component: '', props: {} })
+  Store.set('rightDrawer', { component: '', props: {} })
+  Store.set('footer', { component: '', props: {} })
+  Store.set('window', { widgets: [] })
   Store.set('fab', { actions: [] })
 
   // Listen to the 'patched' event on the users

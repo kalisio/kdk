@@ -12,19 +12,19 @@
       Left drawer
     -->
     <q-drawer v-if="leftDrawerComponent" v-model="isLeftDrawerVisible" v-bind="options.leftDrawer" side="left" bordered>
-      <component :is="leftDrawerComponent" v-bind="leftDrawer.options" />
+      <component :is="leftDrawerComponent" v-bind="leftDrawer.props" />
     </q-drawer>
      <!--
       Right drawer
      -->
     <q-drawer v-if="rightDrawerComponent" v-model="isRightDrawerVisible" v-bind="options.rightDrawer" side="right" bordered>
-      <component :is="rightDrawerComponent" v-bind="rightDrawer.options" />
+      <component :is="rightDrawerComponent" v-bind="rightDrawer.props" />
     </q-drawer>
      <!--
       Footer
      -->    
     <q-footer v-if="footerComponent" v-model="isFooterVisible" v-bind="options.footer" bordered>
-      <component :is="footerComponent" v-bind="footer.options" />
+      <component :is="footerComponent" v-bind="footer.props" />
     </q-footer> 
     <!--
       Page container

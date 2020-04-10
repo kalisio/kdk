@@ -69,22 +69,43 @@ const baseActivityMixin = {
       // Patch all fields to reset search
       this.$store.patch('searchBar', { field: '', pattern: '', services: [], items: [] })
     },
-    setLeftDrawer (component, options) {
-      this.$store.patch('leftDrawer', { component: component, options: options })
+    setLeftDrawer (component, props) {
+      this.$store.patch('leftDrawer', { component, props })
     },
     clearLeftDrawer () {
-      this.$store.patch('leftDrawer', { component: '', content: {} })
+      this.$store.patch('leftDrawer', { component: '', props: {} })
     },
-    setRightDrawer (component, options) {
-      this.$store.patch('rightDrawer', { component: component, options: options })
+    setRightDrawer (component, props) {
+      this.$store.patch('rightDrawer', { component, props })
     },
     clearRightDrawer () {
-      this.$store.patch('rightDrawer', { component: '', content: {} })
+      this.$store.patch('rightDrawer', { component: '', props: {} })
+    },
+    setFooter (component, props) {
+      this.$store.patch('footer', { component, props })
+    },
+    clearFooter () {
+      this.$store.patch('footer', { component: '', props: {} })
+    },
+    registerWidget (name, icon, component, props) {
+      const widgets = this.$store.get('window.widgets')
+      widgets.push({ name, icon, component, props })
+      this.$store.patch('window', { widgets: widgets })
+    },
+    unrgisterWidget (name) {
+      const widgets = _.filter(this.$store.get('window.widgets'), { name })
+      this.$store.patch('window', { widgets: widgets })
+    },
+    clearWidgets () {
+      this.$store.patch('window', { widgets: [] })
     },
     clearActivity () {
       this.clearTitle()
       this.clearSearchBar()
       this.clearActions()
+      this.clearRightDrawer()
+      this.clearFooter()
+      this.clearWidgets()
     },
     refreshActivity () {
       // This method should be overriden in activities
