@@ -1,7 +1,7 @@
 <template>
-  <div 
+  <div
     class="fit row"
-    v-bind:class="{ 
+    v-bind:class="{
       'justify-start': alignement === 'left-top' || alignement === 'left-center' || alignement === 'left-bottom',
       'justify-center': alignement === 'center-top' || alignement === 'center-center' || alignement === 'center-bottom',
       'justify-end': alignement === 'right-top' || alignement === 'right-center' || alignement === 'right-bottom',
@@ -9,7 +9,7 @@
       'items-center': alignement === 'left-center' || alignement === 'center-center' || alignement === 'right-center',
       'items-end':alignement === 'left-bottom' || alignement === 'center-bottom' || alignement === 'right-bottom',
     }">
-    <div 
+    <div
       class="items-center q-gutter-sm"
       v-bind:class="{
         'column justify-center': direction === 'vertical',
@@ -54,4 +54,3 @@ export default {
   }
 }
 </script>
-

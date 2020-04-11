@@ -18,7 +18,7 @@ export class BaseGrid {
     this.nodata = nodata
 
     if (this.bbox[0] >= this.bbox[2] || this.bbox[1] >= this.bbox[3]) {
-      throw new Error("Grid bbox seems weird")
+      throw new Error('Grid bbox seems weird')
     }
     if (this.dimensions[0] <= 0 || this.dimensions[1] <= 0) {
       throw new Error("Grid dimension is < 0, something's wrong")
@@ -311,7 +311,7 @@ export class TiledGrid extends BaseGrid {
     for (const tile of tiles) {
       // make sure resolution match between tiles
       const res = tile.getResolution()
-      if (res[0] !== res[0] || res[1] !== res0[1]) {
+      if (res[0] !== res0[0] || res[1] !== res0[1]) {
         throw new Error('Resolution does not match between tiles')
       }
 

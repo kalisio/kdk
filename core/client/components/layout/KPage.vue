@@ -49,22 +49,22 @@ export default {
   },
   watch: {
     'klayout.isLeftDrawerVisible': function (isVisible) {
-      this.isLeftDrawerOpened=isVisible
+      this.isLeftDrawerOpened = isVisible
     },
     isLeftDrawerOpened: function (isOpened) {
-      this.klayout.isLeftDrawerVisible=isOpened
+      this.klayout.isLeftDrawerVisible = isOpened
     },
     'klayout.isRightDrawerVisible': function (isVisible) {
-      this.isRightDrawerOpened=isVisible
+      this.isRightDrawerOpened = isVisible
     },
     isRightDrawerOpened: function (isOpened) {
-      this.klayout.isRightDrawerVisible=isOpened
+      this.klayout.isRightDrawerVisible = isOpened
     },
     'klayout.isFooterVisible': function (isVisible) {
-      this.isRightDrawerOpened=isVisible
+      this.isRightDrawerOpened = isVisible
     },
     isFooterOpened: function (isOpened) {
-      this.klayout.isFooterVisible=isOpened
+      this.klayout.isFooterVisible = isOpened
     }
   },
   methods: {

@@ -22,7 +22,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-grid',
   mixins: [
-    mixins.service, 
+    mixins.service,
     mixins.baseCollection
   ],
   props: {

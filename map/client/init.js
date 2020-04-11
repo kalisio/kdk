@@ -1,6 +1,7 @@
 import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store, utils as kCoreUtils } from '../../core/client'
+import moment from 'moment'
 
 export default function init () {
   const api = this
@@ -40,10 +41,10 @@ export default function init () {
   })
   // Default timeline parameters
   Store.set('timeline', {
-    span: 15, // days
-    offset: 7, // days
-    step: 60, // minutes
-    reference: null // now
+    start: moment.utc().subtract(3, 'months'),
+    end: moment.utc().add(15, 'days'),
+    step: 60,
+    source: {} // constaint
   })
   // Default timeseries parameters
   Store.set('timeseries', {

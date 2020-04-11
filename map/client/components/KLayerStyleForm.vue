@@ -306,7 +306,7 @@ export default {
       return _.get(this.layer, 'schema.content.properties', {})
     },
     properties () {
-      let properties = []
+      const properties = []
       _.forOwn(this.fields, (value, key) => {
         // Use helper or ID
         properties.push({
@@ -370,15 +370,15 @@ export default {
       await this.loadRefs()
       styles.forEach(style => this.$refs[style.key][0].fill(style.value))
     },
-    processTemplates(values, properties, defaultStyle, styles) {
+    processTemplates (values, properties, defaultStyle, styles) {
       // We have styles for a set of values templated using if statements
       // Split after else statement to get default style values
       const templates = properties.map(property => _.get(values, `leaflet.${property}`).split('} else {'))
       properties.forEach((property, index) => {
         // Conversion from palette to RGB color is required
-        const value = (property.includes('color') ?
-          kCoreUtils.getPaletteFromColor(templates[index][1].match(/%>([^<%]+)<%/)[1]) :
-          templates[index][1].match(/%>([^<%]+)<%/)[1])
+        const value = (property.includes('color')
+          ? kCoreUtils.getPaletteFromColor(templates[index][1].match(/%>([^<%]+)<%/)[1])
+          : templates[index][1].match(/%>([^<%]+)<%/)[1])
         defaultStyle[property] = value
       })
       // Match properties equality to get property names
@@ -394,32 +394,32 @@ export default {
         // Take care that toString() is used to convert numbers to strings in templates
         const isNumber = propertyName.includes('.toString()')
         propertyName = propertyName.replace('.toString()', '')
-        let style = {}
+        const style = {}
         properties.forEach((property, index) => {
           const value = regexs[index].exec(templates[index][0])[1].trim()
           // Conversion from palette to RGB color is required
-          style[property] = (property.includes('color') ?
-            kCoreUtils.getPaletteFromColor(value) :
-            (_.isNumber(value) ? Number(value) : value))
+          style[property] = (property.includes('color')
+            ? kCoreUtils.getPaletteFromColor(value)
+            : (_.isNumber(value) ? Number(value) : value))
         })
         style.value = propertyValue[1].replace('"', '').trim()
         if (isNumber) style.value = _.toNumber(style.value)
         styles.push(this.createStyle(propertyName, style))
       }
     },
-    fillVisibilityStyle(values) {
+    fillVisibilityStyle (values) {
       this.isVisible = _.get(values, 'leaflet.isVisible', true)
       this.hasMinZoom = _.has(values, 'leaflet.minZoom')
       if (this.hasMinZoom) this.minZoom = _.get(values, 'leaflet.minZoom')
       this.hasMaxZoom = _.has(values, 'leaflet.maxZoom')
       if (this.hasMaxZoom) this.minZoom = _.get(values, 'leaflet.maxZoom')
     },
-    fillClusteringStyle(values) {
-      this.clustering = (_.get(values, 'leaflet.cluster', _.get(this.options, 'cluster')) ? true : false)
+    fillClusteringStyle (values) {
+      this.clustering = (!!_.get(values, 'leaflet.cluster', _.get(this.options, 'cluster')))
       this.disableClusteringAtZoom = _.get(values, 'leaflet.cluster.disableClusteringAtZoom',
         _.get(this.options, 'cluster.disableClusteringAtZoom', 18))
     },
-    async fillIconStyles(values) {
+    async fillIconStyles (values) {
       this.iconStyles = []
       const templates = _.get(values, 'leaflet.template', [])
       // When no template we have a single default icon
@@ -434,7 +434,7 @@ export default {
         await this.loadStyleComponents(this.iconStyles)
       }
     },
-    async fillLineStyles(values) {
+    async fillLineStyles (values) {
       this.lineStyles = []
       const templates = _.get(values, 'leaflet.template', [])
       // When no template we have a single default style
@@ -451,7 +451,7 @@ export default {
         await this.loadStyleComponents(this.lineStyles)
       }
     },
-    async fillPolygonStyles(values) {
+    async fillPolygonStyles (values) {
       this.polygonStyles = []
       const templates = _.get(values, 'leaflet.template', [])
       // When no template we have a single default style
@@ -466,30 +466,34 @@ export default {
         await this.loadStyleComponents(this.polygonStyles)
       }
     },
-    async fillPopupStyles(values) {
-      this.popup = (_.get(values, 'leaflet.popup') ? true : false)
+    async fillPopupStyles (values) {
+      this.popup = (!!_.get(values, 'leaflet.popup'))
       this.popupProperties = _.get(values, 'leaflet.popup.pick',
         _.get(this.options, 'popup.pick', this.properties.map(property => property.value)))
       // Jump to select data model
-      if (this.popupProperties) this.popupProperties = this.popupProperties.map(property =>
-        _.find(this.properties, { value: property })
-      )
+      if (this.popupProperties) {
+        this.popupProperties = this.popupProperties.map(property =>
+          _.find(this.properties, { value: property })
+        )
+      }
     },
-    async fillTooltipStyles(values) {
-      this.tooltip = (_.get(values, 'leaflet.tooltip') ? true : false)
+    async fillTooltipStyles (values) {
+      this.tooltip = (!!_.get(values, 'leaflet.tooltip'))
       this.tooltipProperty = _.get(values, 'leaflet.tooltip.property',
         _.get(this.options, 'tooltip.property', null))
       // Jump to select data model
       if (this.tooltipProperty) this.tooltipProperty = _.find(this.properties, { value: this.tooltipProperty })
     },
-    async fillInfoBoxStyles(values) {
-      this.infobox = (_.get(values, 'leaflet.infobox') ? true : false)
+    async fillInfoBoxStyles (values) {
+      this.infobox = (!!_.get(values, 'leaflet.infobox'))
       this.infoboxProperties = _.get(values, 'leaflet.infobox.pick',
         _.get(this.options, 'infobox.pick', this.properties.map(property => property.value)))
       // Jump to select data model
-      if (this.infoboxProperties) this.infoboxProperties = this.infoboxProperties.map(property =>
-        _.find(this.properties, { value: property })
-      )
+      if (this.infoboxProperties) {
+        this.infoboxProperties = this.infoboxProperties.map(property =>
+          _.find(this.properties, { value: property })
+        )
+      }
     },
     async fill (values) {
       logger.debug('Filling layer style form', values)
@@ -518,31 +522,31 @@ export default {
         values
       }
     },
-    generateTemplates(properties, defaultStyle, styles) {
+    generateTemplates (properties, defaultStyle, styles) {
       const hasStyles = (styles.length > 0)
-      let values = {}
-      let templates = properties.map(property => '')
+      const values = {}
+      const templates = properties.map(property => '')
       // Process all styles
       styles.forEach(style => {
         properties.forEach((property, index) => {
           // Conversion from palette to RGB color is required
-          const value = (property.includes('color') ?
-            kCoreUtils.getColorFromPalette(style[property]) :
-            style[property])
+          const value = (property.includes('color')
+            ? kCoreUtils.getColorFromPalette(style[property])
+            : style[property])
           const propertyName = style.property
           const propertyValue = style.value
           // Generate style value for given property value
-          templates[index] += (typeof propertyValue === 'number' ?
-            `if (properties.${propertyName}.toString() === "${propertyValue}") { %>${value}<% } else ` :
-            `if (properties.${propertyName} === "${propertyValue}") { %>${value}<% } else `)
+          templates[index] += (typeof propertyValue === 'number'
+            ? `if (properties.${propertyName}.toString() === "${propertyValue}") { %>${value}<% } else `
+            : `if (properties.${propertyName} === "${propertyValue}") { %>${value}<% } else `)
         })
       })
       // Process default style
       properties.forEach((property, index) => {
         // Conversion from palette to RGB color is required
-        const value = (property.includes('color') ?
-          kCoreUtils.getColorFromPalette(defaultStyle[property]) :
-          defaultStyle[property])
+        const value = (property.includes('color')
+          ? kCoreUtils.getColorFromPalette(defaultStyle[property])
+          : defaultStyle[property])
         // Avoid converting numbers to string on default values
         if (hasStyles) templates[index] += `{ %>${value}<% }`
         else templates[index] = value
@@ -555,7 +559,7 @@ export default {
       return values
     },
     visibilityValues () {
-      let values = {
+      const values = {
         'leaflet.isVisible': this.isVisible
       }
       if (this.hasMinZoom) values['leaflet.minZoom'] = this.minZoom
@@ -567,34 +571,34 @@ export default {
         'leaflet.cluster': (this.clustering ? { disableClusteringAtZoom: this.disableClusteringAtZoom } : false)
       }
     },
-    iconStylesValues() {
-      let values = this.generateTemplates(['marker-color', 'icon-classes'], this.defaultIcon, this.iconStyles)
+    iconStylesValues () {
+      const values = this.generateTemplates(['marker-color', 'icon-classes'], this.defaultIcon, this.iconStyles)
       values['leaflet.icon-color'] = '#FFFFFF'
       return values
     },
-    lineStylesValues() {
+    lineStylesValues () {
       return this.generateTemplates(['stroke-color', 'stroke-width', 'stroke-opacity'], this.defaultLine, this.lineStyles)
     },
-    polygonStylesValues() {
+    polygonStylesValues () {
       return this.generateTemplates(['fill-color', 'fill-opacity'], this.defaultPolygon, this.polygonStyles)
     },
-    popupStylesValues() {
+    popupStylesValues () {
       return {
         'leaflet.popup': (this.popup ? { pick: this.popupProperties.map(property => property.value) } : undefined)
       }
     },
-    tooltipStylesValues() {
+    tooltipStylesValues () {
       return {
         'leaflet.tooltip': (this.tooltip ? { property: this.tooltipProperty.value } : undefined)
       }
     },
-    infoBoxStylesValues() {
+    infoBoxStylesValues () {
       return {
         'leaflet.infobox': (this.infobox ? { pick: this.popupProperties.map(property => property.value) } : undefined)
       }
     },
     values () {
-      let values = {}
+      const values = {}
       // Be default lodash merges objects only not arrays
       // As the template style property is one we need this
       const customizer = (objValue, srcValue) => {
@@ -626,9 +630,12 @@ export default {
       if (!this.$options.components[componentKey]) {
         this.$options.components[componentKey] = this.$load(properties.field.component)
       }
-      let style = {
-        key: uid().toString(), componentKey, property, properties,
-        onValueChanged: (field, value) => style.value = value
+      const style = {
+        key: uid().toString(),
+        componentKey,
+        property,
+        properties,
+        onValueChanged: (field, value) => { style.value = value }
       }
       return Object.assign(style, options)
     },

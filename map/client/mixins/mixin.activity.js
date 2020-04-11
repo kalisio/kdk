@@ -308,23 +308,26 @@ export default function (name) {
       },
       getLayerTimeRange (layer) {
         const now = moment.utc()
-        let start, end, step
+        let start, end, step, sources
         // Check for Weacast layers first
         if (_.get(layer, 'leaflet.type', '').startsWith('weacast')) {
-          start = now.clone().add(this.forecastModel.lowerLimit - this.forecastModel.interval, 's')
-          end = now.clone().add(this.forecastModel.upperLimit + this.forecastModel.interval, 's')
+          sources = [{
+            from: `P${this.forecastModel.lowerLimit - this.forecastModel.interval}S`,
+            to: `P${this.forecastModel.upperLimit + this.forecastModel.interval}S`
+          }]
+        } else {
+          // Then for data sources, depending on the layer type configuration is not at the same place
+          sources = _.get(layer, 'meteo_model', _.get(layer, 'time_based', [layer]))
         }
-        // Then for data sources, depending on the layer type configuration is not at the same place
-        let sources = _.get(layer, 'meteo_model', _.get(layer, 'time_based', [layer]))
         sources.forEach(source => {
           // only consider meteo sources for which associated forecast model is the current one
           if (source.model && (source.model !== this.forecastModel.name)) return
           if (source.from) {
-            const from = makeTime(readAsTimeOrDuration(source.from), this.currentTime)
+            const from = makeTime(readAsTimeOrDuration(source.from), now)
             start = (start ? moment.min(start, from) : from)
           }
           if (source.to) {
-            const to = makeTime(readAsTimeOrDuration(source.to), this.currentTime)
+            const to = makeTime(readAsTimeOrDuration(source.to), now)
             end = (end ? moment.max(end, to) : to)
           }
           if (source.every) {
@@ -342,7 +345,14 @@ export default function (name) {
         const timeRange = this.getLayerTimeRange(layer)
         if (!timeRange) return
         // Setup timeline accordingly
-        this.$store.patch('timeline', { source: timeRange })
+        this.$store.patch('timeline', {
+          source: {
+            name: layer.name,
+            step: timeRange.step.asMinutes(),
+            start: timeRange.start,
+            end: timeRange.end
+          }
+        })
       },
       onLayerAdded (layer) {
         this.registerLayerActions(layer)
@@ -483,7 +493,7 @@ export default function (name) {
         this.editStyleModal.open()
         this.editStyleModal.$on('applied', async () => {
           // Keep track of data as we will reset the layer
-          let geoJson = this.toGeoJson(layer.name)
+          const geoJson = this.toGeoJson(layer.name)
           // Reset layer with new setup
           await this.removeLayer(layer.name)
           await this.addLayer(layer)
@@ -646,7 +656,7 @@ export default function (name) {
         if (this.shouldRestoreView()) {
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            this.$router.replace({ params: targetBounds }).catch(error => {})
+            this.$router.replace({ params: targetBounds }).catch(_ => {})
           }
           window.localStorage.setItem(this.getViewKey(), JSON.stringify(bounds))
         }
@@ -671,14 +681,14 @@ export default function (name) {
           const east = bounds[1][1]
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            this.$router.replace({ params: targetBounds }).catch(error => {})
+            this.$router.replace({ params: targetBounds }).catch(_ => {})
           }
           this.zoomToBounds(bounds)
         }
         return bounds
       },
       clearStoredView () {
-        this.$router.replace({ params: {} }).catch(error => {})
+        this.$router.replace({ params: {} }).catch(_ => {})
         window.localStorage.removeItem(this.getViewKey())
       },
       updateViewSettings () {

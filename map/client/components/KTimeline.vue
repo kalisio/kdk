@@ -13,7 +13,7 @@
           <q-date v-model="date" :mask="calendarDateMask" today-btn minimal />
         </q-popup-proxy>
       </q-btn>
-      <q-chip dense :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="primary" text-color="white" />
+      <q-chip :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="primary" text-color="white" :dense="$q.screen.lt.sm" />
       <q-btn dense flat round icon="las la-clock" size="md" color="primary" @click="onNowClicked">
         <q-tooltip>{{$t('KTimeline.SET_NOW')}}</q-tooltip>
         <q-badge v-if="timer !== undefined" floating transparent color="green">
@@ -31,47 +31,51 @@
       Time bars
      -->
     <div v-if="$q.screen.gt.xs" class="q-pt-sm column">
-      <div v-if="timeline.step < 60" class="row justify-center items-center">
+      <div v-if="minutes.length > 0" class="row justify-center items-center">
         <template v-for="(minute, index) in minutes">
-          <q-chip 
-            :key="index" 
-            dense flat outline :size="$q.screen.gt.sm ? '12px' : '10px'" 
-            :color="minute.color" 
-            :text-color="minute.textColor" 
-            :label="minute.label" 
+          <q-chip
+            :key="index"
+            dense flat outline :size="$q.screen.gt.sm ? '12px' : '10px'"
+            :color="minute.color"
+            :text-color="minute.textColor"
+            :label="minute.label"
             clickable @click="onMinutesClicked(index)" />
         </template>
       </div>
-      <div class="full-width row justify-center items-center">
+      <div v-if="hours.length > 0" class="full-width row justify-center items-center">
         <q-btn dense flat round icon='las la-angle-left' color="primary" @click="onPreviousHourClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_HOUR')}}</q-tooltip>
         </q-btn>
         <template v-for="(hour, index) in hours">
           <div :key="index" :class="hour.class" style="height: 25px"  @click="onHourClicked(index, hours.length)">
             {{hour.label}}
-          </div>          
+          </div>
         </template>
         <q-btn flat round icon='las la-angle-right'  color="primary" @click="onNextHourClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_HOUR')}}</q-tooltip>
         </q-btn>
       </div>
-      <div class="row justify-center items-center">
+      <div class="full-width row justify-center items-center">
         <q-btn dense flat round icon='las la-calendar-minus' color="primary" @click="onPreviousDayClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_DAY')}}</q-tooltip>
         </q-btn>
         <template v-for="(day, index) in days">
-          <q-chip 
-            :key="index" 
-            dense flat square outline size="md" 
-            :color="day.color" 
-            :text-color="day.textColor" 
-            :label="day.label" 
+          <q-chip
+            class="col"
+            :key="index"
+            dense flat square outline size="md"
+            :color="day.color"
+            :text-color="day.textColor"
+            :label="day.label"
             clickable @click="onDayClicked(index, days.length)" />
         </template>
         <q-btn dense flat round icon='las la-calendar-plus'  color="primary" @click="onNextDayClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_DAY')}}</q-tooltip>
         </q-btn>
       </div>
+    </div>
+    <div v-if="constraint" class="row full-width justify-center q-pa-xs">
+      <q-chip icon="las la-link" :label="this.timeline.source.name" removable v-model="constraint" color="secondary" text-color="white" dense />
     </div>
   </div>
 </template>
@@ -80,7 +84,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
-import { colors } from 'quasar'
 
 export default {
   name: 'k-timeline',
@@ -95,58 +98,70 @@ export default {
   },
   computed: {
     minutes () {
-      let minutes = []
-      let start = moment.utc(this.time).minute(0)
-      let end = moment.utc(this.time).minute(59)
-      for (let m = moment.utc(start); m.isBefore(end); m.add(this.timeline.step, 'm')) {
-        minutes.push({
-          label: m.minute().toString().padStart(2,0),
-          color: m.isSame(this.time,'minute') ? 'primary' : 'grey-7',
-          textColor: m.isSame(this.time,'minute') ? 'white' : 'black',
-        })
+      const minutes = []
+      const step = this.getStep('m')
+      if (step > 0) {
+        const start = moment.utc(this.time).minute(0)
+        const end = moment.utc(this.time).minute(59)
+        for (let m = moment.utc(start); m.isBefore(end); m.add(step, 'm')) {
+          minutes.push({
+            label: m.minute().toString().padStart(2, 0),
+            color: m.isSame(this.time, 'minute') ? 'primary' : 'grey-7',
+            textColor: m.isSame(this.time, 'minute') ? 'white' : 'black'
+          })
+        }
       }
       return minutes
     },
     hours () {
-      let hours = []
-      let size = 0
-      if (this.$q.screen.gt.xs) size = 2
-      if (this.$q.screen.gt.sm) size = 5
-      if (this.$q.screen.gt.md) size = 7
-      if (this.$q.screen.gt.lg) size = 10
-      let start = moment.utc(this.time).subtract(size, 'hour')
-      let end = moment.utc(this.time).add(size + 1, 'hour')
-      for (let h = moment.utc(start); h.isBefore(end); h.add(1, 'h')) {
-        hours.push({
-          label: this.kActivity.formatTime('time.short', h),
-          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time,'hour') ? 'k-timeline-hour-selected' : '') // bg-secondary text-white' : 'bg-white text-primary' )
-        })
+      const hours = []
+      const step = this.getStep('h')
+      if (step > 0) {
+        let size = 0
+        if (this.$q.screen.gt.xs) size = 2
+        if (this.$q.screen.gt.sm) size = 5
+        if (this.$q.screen.gt.md) size = 8
+        if (this.$q.screen.gt.lg) size = 10
+        if (step >1) {
+          this.time = moment.utc(this.time).startOf('day').add(Math.round(this.time.hour()/step) * step, 'h').minute(0)
+        }
+        const start = moment.utc(this.time).subtract(size * step, 'hour')
+        const end = moment.utc(this.time).add((size + 1) * step, 'hour')
+        for (let h = moment.utc(start); h.isBefore(end); h.add(step, 'h')) {
+          hours.push({
+            label: this.kActivity.formatTime('time.short', h),
+            class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time, 'hour') ? 'k-timeline-hour-selected' : '') 
+          })
+        }
       }
       return hours
-    },  
+    },
     days () {
-      let days = []
-      let size = 0
-      if (this.$q.screen.gt.xs) size = 1
-      if (this.$q.screen.gt.sm) size = 3
-      if (this.$q.screen.gt.md) size = 5
-      if (this.$q.screen.gt.lg) size = 7
-      let start = moment.utc(this.time).subtract(size, 'day')
-      let end = moment.utc(this.time).add(size + 1, 'day')
-      for (let d = moment.utc(start); d.isBefore(end); d.add(1, 'd')) {
-        days.push({
-          label: this.kActivity.formatTime('date.short', d),
-          color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
-          textColor: d.isSame(this.time, 'date') ? 'white' : 'black',
-        })
+      const days = []
+      const step = this.getStep('d')
+      if (step > 0) {
+        let size = 0
+        if (this.$q.screen.gt.xs) size = 2
+        if (this.$q.screen.gt.sm) size = 4
+        if (this.$q.screen.gt.md) size = 6
+        if (this.$q.screen.gt.lg) size = 8
+        const start = moment.utc(this.time).subtract(size * step, 'day')
+        const end = moment.utc(this.time).add((size + 1) * step, 'day')
+        for (let d = moment.utc(start); d.isBefore(end); d.add(step, 'd')) {
+          days.push({
+            label: this.kActivity.formatTime('date.short', d),
+            color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
+            textColor: d.isSame(this.time, 'date') ? 'white' : 'black'
+          })
+        }
       }
       return days
     },
     date: {
       get: function () {
-        return this.kActivity.currentTimeFormat.utc ? 
-          this.time.format(this.calendarDateMask) :
-          moment(this.time).local().format(this.calendarDateMask)
+        return this.kActivity.currentTimeFormat.utc
+          ? this.time.format(this.calendarDateMask)
+          : moment(this.time).local().format(this.calendarDateMask)
       },
       set: function (value) {
         let time
@@ -156,16 +171,39 @@ export default {
           time.minute(this.time.minute())
         } else {
           time = moment(value, this.calendarDateMask)
-          let localTime = moment(this.time.valueOf())
+          const localTime = moment(this.time.valueOf())
           time.hour(localTime.hour())
           time.minute(localTime.minute())
           time = moment.utc(time)
         }
         this.setTime(time)
       }
+    },
+    constraint: {
+      get: function () {
+        if (_.isNil(this.timeline.source.name)) return false
+        /*const remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.source.step
+        if (remainder > 0) {
+          const minutesToPrevious = remainder
+          const minutesToNext = this.timeline.source.step - remainder
+          if (minutesToPrevious < minutesToNext) this.setTime(this.time.subtract(minutesToPrevious, 'minute'))
+          else this.setTime(this.time.add(minutesToNext, 'minute'))
+        }*/
+        return true
+      },
+      set: function (value) {
+        if (!value) this.$store.patch('timeline', { source: {} })
+      }
     }
   },
   methods: {
+    getStep (key) {
+      let step = this.timeline.source.step || this.timeline.step
+      if (key === 'd') return 1  // one day
+      if (key === 'h') return step < 1440 ? Math.max(1, step / 60) : 0
+      if (key === 'm') return step < 60 ? step : 0
+      return step
+    },
     getActions (scope) {
       return _.get(this.actions, scope)
     },
@@ -174,7 +212,7 @@ export default {
       this.timer = setInterval(() => {
         const now = moment.utc()
         if (!this.time.isSame(now, 'minute')) {
-          this.time = now 
+          this.time = now
           this.kActivity.$off('current-time-changed', this.onTimeChanged)
           this.kActivity.setCurrentTime(this.time)
           this.kActivity.$on('current-time-changed', this.onTimeChanged)
@@ -187,11 +225,11 @@ export default {
     },
     setTime (time, propagate = true) {
       if (!time.isValid()) {
-        logger.error('time is invalid')
+        logger.error('the provided time is invalid')
         return
       }
       if (time.utcOffset() > 0) {
-        logger.error('time should be defined in UTC')
+        logger.error('the provided time should be in UTC')
         return
       }
       if (this.timer) this.stopTimeLoop()
@@ -201,41 +239,41 @@ export default {
       this.kActivity.$on('current-time-changed', this.onTimeChanged)
     },
     onPreviousStepClicked () {
-      let minutesToSubtract = this.timeline.step
-      let remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
+      let minutesToSubtract = this.getStep()
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.getStep()
       if (remainder > 0) {
         minutesToSubtract = remainder
-      } 
+      }
       this.setTime(this.time.subtract(minutesToSubtract, 'minute'))
     },
     onNextStepClicked () {
-      let minutesToAdd = this.timeline.step
-      let remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.step
+      let minutesToAdd = this.getStep()
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.getStep()
       if (remainder > 0) {
-        minutesToAdd = this.timeline.step - remainder
-      } 
+        minutesToAdd = this.getStep() - remainder
+      }
       this.setTime(this.time.add(minutesToAdd, 'minute'))
     },
     onMinutesClicked (index) {
-      this.setTime(this.time.minute(index * this.timeline.step))
+      this.setTime(this.time.minute(index * this.getStep('m')))
     },
     onHourClicked (index, length) {
-      this.setTime(this.time.add(index - Math.trunc(length / 2), 'hour'))
+      this.setTime(this.time.add((index - Math.trunc(length / 2)) * this.getStep('h'), 'hour'))
     },
     onPreviousHourClicked () {
-      this.setTime(this.time.subtract(1, 'hour'))
+      this.setTime(this.time.subtract(this.getStep('h'), 'hour'))
     },
     onNextHourClicked () {
-      this.setTime(this.time.add(1, 'hour'))
+      this.setTime(this.time.add(this.getStep('h'), 'hour'))
     },
     onDayClicked (index, length) {
-      this.setTime(this.time.add(index - Math.trunc(length / 2), 'day'))
+      this.setTime(this.time.add((index - Math.trunc(length / 2)) * this.getStep('d'), 'day'))
     },
     onPreviousDayClicked () {
-      this.setTime(this.time.subtract(1, 'day'))
+      this.setTime(this.time.subtract(this.getStep('d'), 'day'))
     },
     onNextDayClicked () {
-      this.setTime(this.time.add(1, 'day'))
+      this.setTime(this.time.add(this.getStep('d'), 'day'))
     },
     onNowClicked () {
       this.startTimeLoop()
@@ -300,13 +338,6 @@ export default {
   }
   .k-timeline-hour-selected {
     border-bottom: solid 5px $primary
-    text-align: center
-    vertical-align: middle
-    user-select: none; /* supported by Chrome and Opera */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
   }
   .k-timeline-hour-frame:hover {
     border-bottom: solid 5px $primary

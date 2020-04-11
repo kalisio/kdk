@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import sift from 'sift'
 import logger from 'loglevel'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'

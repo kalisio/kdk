@@ -19,7 +19,7 @@ export default {
       if (leafletOptions.interactive) {
         layer.on('click', (event) => {
           if (event.latlng) {
-            this.$refs.page.openWindow('mapillary-viewer')
+            this.$refs.page.openWindow('mapillary')
             this.mapillary.location = event.latlng
           }
         })

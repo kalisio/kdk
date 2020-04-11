@@ -22,10 +22,10 @@
     </q-drawer>
      <!--
       Footer
-     -->    
+     -->
     <q-footer v-if="footerComponent" v-model="isFooterVisible" v-bind="options.footer" bordered>
       <component :is="footerComponent" v-bind="footer.props" />
-    </q-footer> 
+    </q-footer>
     <!--
       Page container
     -->
@@ -76,7 +76,7 @@ export default {
       options: {}
     }
   },
-  methods: {  
+  methods: {
     showLeftDrawer () {
       this.isLeftDrawerVisible = true
     },

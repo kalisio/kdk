@@ -90,7 +90,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
               type: 'Polygon',
               coordinates: [ // BBox as a polygon
                 [[reqBBox[1], reqBBox[0]], [reqBBox[3], reqBBox[0]],
-                 [reqBBox[3], reqBBox[2]], [reqBBox[1], reqBBox[2]], [reqBBox[1], reqBBox[0]]] // Closing point
+                  [reqBBox[3], reqBBox[2]], [reqBBox[1], reqBBox[2]], [reqBBox[1], reqBBox[0]]] // Closing point
               ]
             }
           }
@@ -106,7 +106,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.layer.variables) {
         baseQuery = {
           $geoNear: {
-            near: { type: 'Point', coordinates: [ reqCenter[1] , reqCenter[0] ] },
+            near: { type: 'Point', coordinates: [reqCenter[1], reqCenter[0]] },
             maxDistance,
             distanceField: 'distance',
             spherical: true,
@@ -124,10 +124,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
         }
         done(null, tile)
       })
-      .catch (error => {
-        done(error, tile)
-        throw error
-      })
+        .catch(error => {
+          done(error, tile)
+          throw error
+        })
     } else {
       setTimeout(() => { done(null, tile) }, 100)
     }
@@ -165,7 +165,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       const bounds = this._tileCoordsToBounds(event.coords)
       if (!visible.intersects(bounds)) unload = true
     }
-    
+
     if (unload) {
       // ok, we can unload geosjon, and remove tile from loaded tile set
       const tilekey = tile2key(event.coords)

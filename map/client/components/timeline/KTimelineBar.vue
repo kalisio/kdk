@@ -67,7 +67,7 @@ export default {
     max: null, // max value: time until
     step: null, // step (granularity): 'h' (hour) or 'm' (minute)
     value: null, // value: initial time
-    timeInterval: null, 
+    timeInterval: null,
     timeFormatter: null,
     lineHeight: { type: Number, default: 4 },
     color: { type: String, default: colors.getBrand('primary') },

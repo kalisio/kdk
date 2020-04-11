@@ -67,7 +67,7 @@ export default {
         _.set(layer, 'schema.content', schema)
         // Generate temporary IDs for features
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-        features.forEach(feature => feature._id = uid().toString())
+        features.forEach(feature => { feature._id = uid().toString() })
         // Create an empty layer used as a container
         await this.addLayer(layer)
         // Set data

@@ -1,6 +1,6 @@
 <template>
   <div class="row full-width justify-center q-gutter-md">
-    <q-btn flat round icon='las la-step-backward' color="secondary" @click="onClickBackward" />      
+    <q-btn flat round icon='las la-step-backward' color="secondary" @click="onClickBackward" />
     <q-btn flat round icon='las la-sync' color="secondary" @click="onClickReset" />
     <q-btn flat round :icon='realtimeIcon' color="secondary" @click="onToggleRealtime" />
     <q-btn flat round icon='las la-calendar' color="secondary">
