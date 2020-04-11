@@ -270,6 +270,11 @@
     "MINIMIZE_ACTION": "Aggrandir",
     "MAXIMIZE_ACTION": "Réduire"
   },
+  "KWindow": {
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "MINIMIZE_ACTION": "Aggrandir",
+    "MAXIMIZE_ACTION": "Réduire"
+  },
   "KAbout": {
     "SIDENAV": "A propos",
     "TITLE": "A propos",

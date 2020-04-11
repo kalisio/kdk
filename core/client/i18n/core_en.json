@@ -270,6 +270,11 @@
     "MINIMIZE_ACTION": "Minimize",
     "MAXIMIZE_ACTION": "Maximize"
   },
+  "KWindow": {
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "MINIMIZE_ACTION": "Minimize",
+    "MAXIMIZE_ACTION": "Maximize"
+  },
   "KAbout": {
     "SIDENAV": "About",
     "TITLE": "About",
