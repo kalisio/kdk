@@ -92,6 +92,18 @@ export default function (name) {
           })
           beforeActions.push({ name: 'separator' })
         }
+        if (hasMapTool) {
+          beforeActions.push({
+            name: 'map-toggle', label: this.$t('mixins.activity.TOGGLE_MAP'), icon: 'las la-map', route: { name: 'map', query: true }
+          })
+          beforeActions.push({ name: 'separator' })
+        }
+        if (hasGlobeTool) {
+          beforeActions.push({
+            name: 'globe-toggle', label: this.$t('mixins.activity.TOGGLE_GLOBE'), icon: 'las la-globe', route: { name: 'globe', query: true }
+          })
+          beforeActions.push({ name: 'separator' })
+        }
         if (hasZoomTool) {
           beforeActions.push({
             name: 'zoom-in', label: this.$t('mixins.activity.ZOOM_IN'), icon: 'add', handler: this.onZoomIn
@@ -107,16 +119,6 @@ export default function (name) {
           })
         }
         const afterActions = []
-        if (hasMapTool) {
-          afterActions.push({
-            name: 'map-toggle', label: this.$t('mixins.activity.TOGGLE_MAP'), icon: 'las la-map', route: { name: 'map', query: true }
-          })
-        }
-        if (hasGlobeTool) {
-          afterActions.push({
-            name: 'globe-toggle', label: this.$t('mixins.activity.TOGGLE_GLOBE'), icon: 'las la-globe', route: { name: 'globe', query: true }
-          })
-        }
         if (hasVrTool) {
           afterActions.push({
             name: 'vr-toggle', label: this.$t('mixins.activity.TOGGLE_VR'), icon: 'las la-vr-cardboard', handler: this.onToggleVr
