@@ -55,13 +55,12 @@
           <q-tooltip>{{$t('KTimeline.NEXT_HOUR')}}</q-tooltip>
         </q-btn>
       </div>
-      <div class="full-width row justify-center items-center">
+      <div class="row justify-center items-center">
         <q-btn dense flat round icon='las la-calendar-minus' color="primary" @click="onPreviousDayClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_DAY')}}</q-tooltip>
         </q-btn>
         <template v-for="(day, index) in days">
           <q-chip
-            class="col"
             :key="index"
             dense flat square outline size="md"
             :color="day.color"
@@ -99,7 +98,7 @@ export default {
   computed: {
     minutes () {
       const minutes = []
-      const step = this.getStep('m')
+      const step = this.getStep()
       if (step > 0) {
         const start = moment.utc(this.time).minute(0)
         const end = moment.utc(this.time).minute(59)
@@ -115,45 +114,36 @@ export default {
     },
     hours () {
       const hours = []
-      const step = this.getStep('h')
-      if (step > 0) {
-        let size = 0
-        if (this.$q.screen.gt.xs) size = 2
-        if (this.$q.screen.gt.sm) size = 5
-        if (this.$q.screen.gt.md) size = 8
-        if (this.$q.screen.gt.lg) size = 10
-        if (step >1) {
-          this.time = moment.utc(this.time).startOf('day').add(Math.round(this.time.hour()/step) * step, 'h').minute(0)
-        }
-        const start = moment.utc(this.time).subtract(size * step, 'hour')
-        const end = moment.utc(this.time).add((size + 1) * step, 'hour')
-        for (let h = moment.utc(start); h.isBefore(end); h.add(step, 'h')) {
-          hours.push({
-            label: this.kActivity.formatTime('time.short', h),
-            class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time, 'hour') ? 'k-timeline-hour-selected' : '') 
-          })
-        }
+      let size = 0
+      if (this.$q.screen.gt.xs) size = 2
+      if (this.$q.screen.gt.sm) size = 5
+      if (this.$q.screen.gt.md) size = 8
+      if (this.$q.screen.gt.lg) size = 10
+      const start = moment.utc(this.time).subtract(size, 'hour')
+      const end = moment.utc(this.time).add((size + 1), 'hour')
+      for (let h = moment.utc(start); h.isBefore(end); h.add(1, 'h')) {
+        hours.push({
+          label: this.kActivity.formatTime('time.short', h),
+          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time, 'hour') ? 'k-timeline-hour-selected' : '') 
+        })
       }
       return hours
     },
     days () {
       const days = []
-      const step = this.getStep('d')
-      if (step > 0) {
-        let size = 0
-        if (this.$q.screen.gt.xs) size = 2
-        if (this.$q.screen.gt.sm) size = 4
-        if (this.$q.screen.gt.md) size = 6
-        if (this.$q.screen.gt.lg) size = 8
-        const start = moment.utc(this.time).subtract(size * step, 'day')
-        const end = moment.utc(this.time).add((size + 1) * step, 'day')
-        for (let d = moment.utc(start); d.isBefore(end); d.add(step, 'd')) {
-          days.push({
-            label: this.kActivity.formatTime('date.short', d),
-            color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
-            textColor: d.isSame(this.time, 'date') ? 'white' : 'black'
-          })
-        }
+      let size = 0
+      if (this.$q.screen.gt.xs) size = 1
+      if (this.$q.screen.gt.sm) size = 3
+      if (this.$q.screen.gt.md) size = 5
+      if (this.$q.screen.gt.lg) size = 7
+      const start = moment.utc(this.time).subtract(size, 'day')
+      const end = moment.utc(this.time).add(size + 1, 'day')
+      for (let d = moment.utc(start); d.isBefore(end); d.add(1, 'd')) {
+        days.push({
+          label: this.kActivity.formatTime('date.short', d),
+          color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
+          textColor: d.isSame(this.time, 'date') ? 'white' : 'black'
+        })
       }
       return days
     },
@@ -182,13 +172,6 @@ export default {
     constraint: {
       get: function () {
         if (_.isNil(this.timeline.source.name)) return false
-        /*const remainder = (this.time.minute() + this.time.hour() * 60) % this.timeline.source.step
-        if (remainder > 0) {
-          const minutesToPrevious = remainder
-          const minutesToNext = this.timeline.source.step - remainder
-          if (minutesToPrevious < minutesToNext) this.setTime(this.time.subtract(minutesToPrevious, 'minute'))
-          else this.setTime(this.time.add(minutesToNext, 'minute'))
-        }*/
         return true
       },
       set: function (value) {
@@ -197,12 +180,8 @@ export default {
     }
   },
   methods: {
-    getStep (key) {
-      let step = this.timeline.source.step || this.timeline.step
-      if (key === 'd') return 1  // one day
-      if (key === 'h') return step < 1440 ? Math.max(1, step / 60) : 0
-      if (key === 'm') return step < 60 ? step : 0
-      return step
+    getStep () {
+      return this.timeline.source.step || this.timeline.step
     },
     getActions (scope) {
       return _.get(this.actions, scope)
@@ -255,25 +234,25 @@ export default {
       this.setTime(this.time.add(minutesToAdd, 'minute'))
     },
     onMinutesClicked (index) {
-      this.setTime(this.time.minute(index * this.getStep('m')))
+      this.setTime(this.time.minute(index * this.getStep()))
     },
     onHourClicked (index, length) {
-      this.setTime(this.time.add((index - Math.trunc(length / 2)) * this.getStep('h'), 'hour'))
+      this.setTime(this.time.add((index - Math.trunc(length / 2)), 'hour'))
     },
     onPreviousHourClicked () {
-      this.setTime(this.time.subtract(this.getStep('h'), 'hour'))
+      this.setTime(this.time.subtract(1, 'hour'))
     },
     onNextHourClicked () {
-      this.setTime(this.time.add(this.getStep('h'), 'hour'))
+      this.setTime(this.time.add(1, 'hour'))
     },
     onDayClicked (index, length) {
-      this.setTime(this.time.add((index - Math.trunc(length / 2)) * this.getStep('d'), 'day'))
+      this.setTime(this.time.add((index - Math.trunc(length / 2)), 'day'))
     },
     onPreviousDayClicked () {
-      this.setTime(this.time.subtract(this.getStep('d'), 'day'))
+      this.setTime(this.time.subtract(1, 'day'))
     },
     onNextDayClicked () {
-      this.setTime(this.time.add(this.getStep('d'), 'day'))
+      this.setTime(this.time.add(1, 'day'))
     },
     onNowClicked () {
       this.startTimeLoop()
