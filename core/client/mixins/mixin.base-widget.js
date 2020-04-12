@@ -10,7 +10,7 @@ const baseWidgetMixin = {
   },
   computed: {
     widgetStyle () {
-      if (this.mode === 'minimized') return 'min-height: 35vh;'
+      if (this.mode === 'minimized') return 'height: 30vh;'
       else return 'height: 100vh'
     }
   }
