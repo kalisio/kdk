@@ -6,7 +6,7 @@
           Before section
           -->
         <template v-if="(mode ==='toolbar') && hasBeforeActions">
-          <k-tool-bar :actions="navigationBar.actions.before" />
+          <k-tool-bar :actions="navigationBar.actions.before" color="primary" />
         </template>
         <!--
           The location input
@@ -31,7 +31,7 @@
           After section
           -->
         <template v-if="(mode === 'toolbar') && hasAfterActions">
-          <k-tool-bar :actions="navigationBar.actions.after" />
+          <k-tool-bar :actions="navigationBar.actions.after" color="primary" />
         </template>
         <q-separator vertical />
       </div>
