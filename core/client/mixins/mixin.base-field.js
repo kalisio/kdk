@@ -2,6 +2,10 @@ import _ from 'lodash'
 
 const baseFieldMixin = {
   props: {
+    values: {
+      type: Object,
+      default: () => { return null }
+    },
     properties: {
       type: Object,
       required: true
@@ -53,6 +57,13 @@ const baseFieldMixin = {
       error: ''
     }
   },
+  watch: {
+    values: function () {
+      console.log('values changed')
+      const value = this.values[this.properties.name]
+      if (value) this.model = value
+    }
+  },
   methods: {
     emptyModel () {
       return ''
@@ -90,6 +101,12 @@ const baseFieldMixin = {
     },
     submitted (object, field) {
       // To be overloaded if you need to perform specific operations after the form has been submitted
+    }
+  },
+  created () {
+    if (this.values) {
+      const value = this.values[this.properties.name]
+      if (value) this.model = value
     }
   }
 }

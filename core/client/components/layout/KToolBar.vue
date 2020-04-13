@@ -1,5 +1,10 @@
 <template>
-  <div class="row items-center no-wrap">
+  <div class="row items-center no-wrap"
+    v-bind:class="{
+      'row items-center no-wrap': direction === 'horizontal',
+      'column content-center': direction === 'vertical'
+    }"
+  >
     <template v-for="action in actions">
       <q-separator v-if="action.name === 'separator'" :key="actionKey(action)" vertical />
       <q-btn v-else
@@ -38,7 +43,7 @@ export default {
     },
     color: {
       type: String,
-      default: 'primary'
+      default: 'grey-9'
     },
     size: {
       type: String,
@@ -47,6 +52,13 @@ export default {
     dense: {
       type: Boolean,
       default: false
+    },
+    direction: {
+      type: String,
+      default: 'horizontal',
+      validator: (value) => {
+        return ['horizontal', 'vertical'].includes(value)
+      } 
     }
   },
   methods: {

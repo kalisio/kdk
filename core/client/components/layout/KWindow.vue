@@ -15,7 +15,7 @@
           <q-tab :key="index" :name="widget.name" :icon="widget.icon" />
         </template>
       </q-tabs>
-      <k-tool-bar :actions="actions" size="sm" />
+      <k-tool-bar class="q-pa-xs" :actions="actions" size="sm" />
     </div>
     <!--
       Tab panes
@@ -39,8 +39,7 @@ export default {
   computed: {
     actions () {
       return [
-        {
-          name: 'change-mode',
+        { name: 'change-mode',
           label: this.$t(this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION'),
           icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
           handler: () => this.toggleMode()

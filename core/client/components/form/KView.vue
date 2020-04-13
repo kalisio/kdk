@@ -1,33 +1,39 @@
 <template>
-  <div class="column q-pa-md">
-    <!-- Non-grouped fields first -->
-    <div v-for="field in fields" :key="field.name" >
-      <div v-if="!field.group" class="row">
-        <span class="col-6 text-caption">{{ $t(field.field.label) }}</span>
-        <component class="col-6"
-          :key="field.name + '-value'"
+  <div class="column">
+    <!-- 
+      Non-grouped fields 
+     -->
+    <template v-for="field in fields">
+      <div v-if="!field.group" :key="field.name" class="row">
+        <span class="col-xs-5 col-sm-4 col-3 text-caption">
+          {{ $t(field.field.label) }}
+        </span>
+        <component class="col"        
           :is="field.componentKey"
-          :ref="field.name"
+          v-bind="$props"
           :properties="field"
-          :display="display"
+          :display="options"
           :readOnly="true" />
-        <q-separator v-if="display.separators" class="col-12"/>
+        <q-separator v-if="options.separators" class="col-12" />
       </div>
-    </div>
-    <!-- Grouped fields then -->
+    </template>
+    <!-- 
+      Grouped fields 
+     -->
     <template v-for="group in groups">
       <q-expansion-item :key="group" icon="wrap_text" :group="group" :label="$t(group)">
         <template v-for="field in fields">
-          <div v-if="field.group === group" class="row">
-            <span class="col-6 text-caption">{{ $t(field.field.label) }}</span>
-            <component class="col-6"
-              :key="field.name"
+          <div v-if="field.group === group" :key="field.group + field.name" class="row">
+            <span class="col-xs-5 col-sm-4 col-3 text-caption">
+              {{ $t(field.field.label) }}
+            </span>
+            <component class="col"
               :is="field.componentKey"
-              :ref="field.name"
+              v-bind="$props"
               :properties="field"
-              :display="display"
+              :display="options"
               :readOnly="true" />
-            <q-separator v-if="display.separators" class="col-12"/>
+            <q-separator v-if="options.separators" class="col-12" />
           </div>
         </template>
       </q-expansion-item>
@@ -37,20 +43,19 @@
 
 <script>
 import _ from 'lodash'
-import logger from 'loglevel'
-import mixins from '../../mixins'
 
 export default {
   name: 'k-view',
-  mixins: [
-    mixins.refsResolver()
-  ],
   props: {
     schema: {
       type: Object,
       default: null
     },
-    display: {
+    values: {
+      type: Object,
+      default: null
+    },
+    options: {
       type: Object,
       default: () => {
         return {
@@ -69,24 +74,15 @@ export default {
     }
   },
   watch: {
-    schema: async function (schema) {
-      if (this.schema) {
-        logger.debug('Updating view', this.schema.$id)
-        await this.build()
-        this.$emit('view-ready', this)
-      }
+    schema: function () {
+      this.refresh() 
     }
   },
   methods: {
-    getField (field) {
-      return this.$refs[field][0]
-    },
-    buildFields  () {
+    refresh  () {
       // Clear the fields states
       this.fields = []
       this.groups = []
-      this.nbExpectedFields = Object.keys(this.schema.properties).length
-      this.nbReadyFields = 0
       // Build the fields
       // 1- assign a name corresponding to the key to enable a binding between properties and fields
       // 2- assign a component key corresponding to the component path
@@ -106,39 +102,10 @@ export default {
           this.$options.components[componentKey] = this.$load(field.field.component)
         }
       })
-      // Set the refs to be resolved
-      this.setRefs(this.fields.map(field => field.name))
-      return this.loadRefs()
-    },
-    async build () {
-      // Since schema is injected in form we need to make sure Vue.js has processed props
-      // This could be done externally but adding it here we ensure no one will forget it
-      await this.$nextTick()
-      if (!this.schema) throw Error('Cannot build the form without schema')
-      logger.debug('Building view', this.schema.$id)
-      // Test in cache first
-      return this.buildFields()
-    },
-    fill (values) {
-      logger.debug('Filling form', this.schema.$id, values)
-      if (!this.loadRefs().isFulfilled()) throw Error('Cannot fill the view while not ready')
-      this.fields.forEach(field => {
-        if (_.has(values, field.name)) {
-          this.getField(field.name).fill(_.get(values, field.name), values)
-        } else {
-          // The field has no value, then assign a default one
-          this.getField(field.name).clear()
-        }
-      })
     }
   },
-  async created () {
-    logger.debug('Creating view', this.schema ? this.schema.$id : 'without schema')
-    if (this.schema) {
-      logger.debug('Initializing view', this.schema.$id)
-      await this.build()
-      this.$emit('view-ready', this)
-    }
+  created () {
+    if (this.schema) this.refresh()
   }
 }
 </script>
