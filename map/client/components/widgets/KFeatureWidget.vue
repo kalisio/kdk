@@ -7,7 +7,7 @@
       </q-scroll-area>
     </div>
     <div v-else class="absolute-center">
-      <k-label :text="$t('KFeatureInfoBox.NO_FEATURE_SELECTED')" icon-size="48px" />
+      <k-label :text="$t('KFeatureWidget.NO_FEATURE_SELECTED')" icon-size="48px" />
     </div>
   </div>
 </template>
