@@ -1,8 +1,8 @@
 <template>
-  <div :style="widgetStyle">
-    <div v-if="selection" class="fit row q-pa-xs">
-      <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense  />
-      <q-scroll-area :thumb-style="thumbStyle" :bar-style="barStyle" class="col fit">
+  <div :style="widgetStyle()">
+    <div v-if="selection" class="fit row">
+      <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
+      <q-scroll-area class="col fit" :thumb-style="thumbStyle" :bar-style="barStyle">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :options="viewOptions" />
       </q-scroll-area>
     </div>
@@ -17,7 +17,6 @@ import _ from 'lodash'
 import centroid from '@turf/centroid'
 import { colors, copyToClipboard } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
-import utils from '../../../../core/client/utils'
 
 export default {
   name: 'k-feature-widget',
@@ -59,8 +58,8 @@ export default {
       },
       schema: null,
       properties: null,
-      selection: false,
-      actions: []
+      actions: [],
+      selection: false
     }
   },
   watch: {
@@ -91,32 +90,34 @@ export default {
     onCenterOn () {
       this.kActivity.centerOnSelection()
     },
-    onCopyClipboard () {
-      if (this.feature) copyToClipboard(JSON.stringify(this.feature))
-      .then(() => {
-        this.$toast({
-          type: 'warning',
-          html: this.$t('KFeatureWidget.FEATURE_COPIED_TO_CLIPBOARD')
-        })
-      })
-      .catch(() => {
-        this.$toast({
-          type: 'error',
-          html: this.$t('KFeatureWidget.CANNOT_COPY_FEATURE_TO_CLIPBOARD')
-        })
-      })
+    onCopyProperties () {
+      if (this.feature) copyToClipboard(JSON.stringify(this.feature.properties))
+      .then(() => this.$toast({ type: 'warning', html: this.$t('KFeatureWidget.PROPERTIES_COPIED') }))
+      .catch(() => this.$toast({ type: 'error', html: this.$t('KFeatureWidget.CANNOT_COPY_PROPERTIES') }))
+    },
+    onDownloadFeature () {
+      if (this.feature) {
+        const uri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(this.feature));
+        let linkElement = document.createElement('a');
+        linkElement.setAttribute('href', uri);
+        linkElement.setAttribute('download', 'feature.geojson');
+        linkElement.click()
+      }
     }
   },
   created () {
     // laod the required components
-    this.$options.components['k-view'] = this.$load('form/KView')
     this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-view'] = this.$load('form/KView')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
     this.actions = [
       { name: 'centerOn', icon: 'las la-eye', label: this.$t('KFeatureWidget.CENTER_ON'), handler: this.onCenterOn },
-      { name: 'copyClipboard', icon: 'las la-clipboard', label: this.$t('KFeatureWidget.COPY_TO_CLIPBOARD'), handler: this.onCopyClipboard }, 
+      { name: 'copyProperties', icon: 'las la-clipboard', label: this.$t('KFeatureWidget.COPY_PROPERTIES'), handler: this.onCopyProperties }, 
+      { name: 'downloadFeature', icon: 'img:statics/json-icon.svg', label: this.$t('KFeatureWidget.DOWNLOAD_FEATURE'), handler: this.onDownloadFeature }, 
     ]
+    // override the default widget height
+    this.widgetHeight = '25vh'
     // Refresh the component
     this.refresh()
   }
