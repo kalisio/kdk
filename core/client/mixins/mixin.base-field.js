@@ -59,12 +59,15 @@ const baseFieldMixin = {
   },
   watch: {
     values: function () {
-      console.log('values changed')
-      const value = this.values[this.properties.name]
-      if (value) this.model = value
+      if (this.values) this.updateValue(this.values[this.properties.name])
+      else this.clear()
     }
   },
   methods: {
+    updateValue (value) {
+      if (_.isNil(value)) this.clear()
+      else this.fill(value)
+    },
     emptyModel () {
       return ''
     },
@@ -104,10 +107,7 @@ const baseFieldMixin = {
     }
   },
   created () {
-    if (this.values) {
-      const value = this.values[this.properties.name]
-      if (value) this.model = value
-    }
+    if (this.values) this.updateValue(this.values[this.properties.name])
   }
 }
 
