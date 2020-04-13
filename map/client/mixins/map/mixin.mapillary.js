@@ -45,7 +45,6 @@ export default {
   },
   created () {
     // Initialize the component
-    this.mapillaryCoverage = null
     this.mapillaryMarker = null
     this.mapillaryClientID = null
     // Check whether Mapillary is suppoted

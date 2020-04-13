@@ -1,5 +1,5 @@
 <template>
-  <div id="mapillary-container" :style="widgetStyle">
+  <div id="mapillary-container" :style="widgetStyle()">
     <q-resize-observer @resize="onResized" />
   </div>
 </template>
@@ -29,6 +29,10 @@ export default {
     onResized () {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
     }
+  },
+  created () {
+    // override the default widget height
+    this.widgetHeight = '40vh'
   },
   mounted () {
     // Create the viewer
