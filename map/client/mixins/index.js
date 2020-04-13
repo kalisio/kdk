@@ -1,5 +1,6 @@
 import geolocation from './mixin.geolocation'
 import navigator from './mixin.navigator'
+import featureSelection from './mixin.feature-selection'
 import featureService from './mixin.feature-service'
 import time from './mixin.time'
 import weacast from './mixin.weacast'
@@ -11,6 +12,7 @@ import timeline from './mixin.timeline'
 export default {
   geolocation,
   navigator,
+  featureSelection,
   featureService,
   time,
   weacast,
