@@ -92,7 +92,7 @@ export default {
     },
     onCopyProperties () {
       if (this.feature) copyToClipboard(JSON.stringify(this.feature.properties))
-      .then(() => this.$toast({ type: 'warning', html: this.$t('KFeatureWidget.PROPERTIES_COPIED') }))
+      .then(() => this.$toast({ type: 'positive', html: this.$t('KFeatureWidget.PROPERTIES_COPIED') }))
       .catch(() => this.$toast({ type: 'error', html: this.$t('KFeatureWidget.CANNOT_COPY_PROPERTIES') }))
     },
     onDownloadFeature () {

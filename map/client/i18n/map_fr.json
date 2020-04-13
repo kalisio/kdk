@@ -285,5 +285,13 @@
     "NEXT_STEP": "Pas suivant",
     "SET_NOW": "Temps réel",
     "SET_DATE": "Aller à une date"
+  },
+  "KFeatureWidget": {
+    "NO_FEATURE_SELECTED": "Aucun objet sélectionné",
+    "PROPERTIES_COPIED": "Valeurs copiées en mémoire",
+    "CANNOT_COPY_PROPERTIES": "Impossible de copier les valeurs en mémoire",
+    "CENTER_ON": "Centrer la vue sur l'objet",
+    "COPY_PROPERTIES": "Copier les valeurs en mémoire",
+    "DOWNLOAD_FEATURE": "Télécharger l'objet"
   }
 }
