@@ -8,9 +8,14 @@ const baseWidgetMixin = {
       }
     }
   },
-  computed: {
+  data () {
+    return {
+      widgetHeight: '30vh'
+    }
+  },
+  methods: {
     widgetStyle () {
-      if (this.mode === 'minimized') return 'height: 30vh;'
+      if (this.mode === 'minimized') return 'height: ' + this.widgetHeight
       else return 'height: 100vh'
     }
   }
