@@ -8,7 +8,7 @@ const multipart = multer().single('file')
 const modelsPath = path.join(__dirname, '..', 'models')
 const servicesPath = path.join(__dirname, '..', 'services')
 
-const debug = makeDebug('kalisio:kCore:services')
+const debug = makeDebug('kdk:core:services')
 
 export function createTagService (options = {}) {
   const app = this

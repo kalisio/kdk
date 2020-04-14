@@ -4,7 +4,7 @@ import sift from 'sift'
 import request from 'superagent'
 import { CronJob } from 'cron'
 import makeDebug from 'debug'
-const debug = makeDebug('kalisio:kMap:alerts:service')
+const debug = makeDebug('kdk:map:alerts:service')
 
 // Alert map
 const alerts = {}

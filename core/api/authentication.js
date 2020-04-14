@@ -15,8 +15,8 @@ import OAuth2Verifier from './oauth2-verifier'
 import OAuth2Handler from './oauth2-handler'
 import PasswordValidator from 'password-validator'
 
-const debug = makeDebug('kalisio:kCore:authentication')
-const debugLimiter = makeDebug('kalisio:kCore:authentication:limiter')
+const debug = makeDebug('kdk:core:authentication')
+const debugLimiter = makeDebug('kdk:core:authentication:limiter')
 
 function tooManyRequests (socket, message, key) {
   debug(message)

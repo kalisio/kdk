@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-const debug = makeDebug('kalisio:kNotify:authentication:hooks')
+const debug = makeDebug('kdk:core:authentication:hooks')
 
 export async function verifyGuest (hook) {
   if (hook.type !== 'after') {

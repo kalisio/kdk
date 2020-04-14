@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
-const debug = makeDebug('kalisio:kNotify:account:hooks')
+const debug = makeDebug('kdk:core:account:hooks')
 
 export async function populateAccountUser (hook) {
   if (hook.type !== 'before') {

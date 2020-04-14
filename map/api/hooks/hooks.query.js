@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { marshallGeometry } from '../marshall'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kMap:query:hooks')
+const debug = makeDebug('kdk:map:query:hooks')
 
 export function marshallGeometryQuery (hook) {
   const query = hook.params.query

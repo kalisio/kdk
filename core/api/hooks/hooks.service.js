@@ -3,7 +3,7 @@ import { SKIP } from '@feathersjs/feathers'
 import { RateLimiter } from 'limiter'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kCore:service:hooks')
+const debug = makeDebug('kdk:core:service:hooks')
 
 export function skipEvents (hook) {
   return SKIP

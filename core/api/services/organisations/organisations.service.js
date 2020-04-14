@@ -8,7 +8,7 @@ import { createTagService, createStorageService } from '../.'
 const servicesPath = path.join(__dirname, '..', '..', 'services')
 const modelsPath = path.join(__dirname, '..', '..', 'models')
 
-const debug = makeDebug('kalisio:kTeam:organisations:service')
+const debug = makeDebug('kdk:core:organisations:service')
 
 export default function (name, app, options) {
   const config = app.get('storage')

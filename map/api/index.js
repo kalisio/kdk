@@ -9,7 +9,7 @@ export { hooks }
 export * from './marshall'
 export * from '../common'
 
-const debug = makeDebug('kalisio:kMap')
+const debug = makeDebug('kdk:map')
 
 export default function init () {
   const app = this

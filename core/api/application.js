@@ -20,8 +20,8 @@ import { ObjectID } from 'mongodb'
 import { Database, idToString } from './db'
 import auth, { authSocket } from './authentication'
 
-const debug = makeDebug('kalisio:kCore:application')
-const debugLimiter = makeDebug('kalisio:kCore:application:limiter')
+const debug = makeDebug('kdk:core:application')
+const debugLimiter = makeDebug('kdk:core:application:limiter')
 
 function tooManyRequests (socket, message, key) {
   debug(message)

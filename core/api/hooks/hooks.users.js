@@ -7,7 +7,7 @@ import { Roles, RoleNames } from '../../common/permissions'
 
 const verifyHooks = require('feathers-authentication-management').hooks
 
-const debug = makeDebug('kalisio:kCore:users:hooks')
+const debug = makeDebug('kdk:core:users:hooks')
 
 export function enforcePasswordPolicy (options = {}) {
   return async function (hook) {

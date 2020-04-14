@@ -5,7 +5,7 @@ import { marshallTimes, unmarshallTimes } from '../marshall'
 import { discard, disallow, getItems, replaceItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kCore:model:hooks')
+const debug = makeDebug('kdk:core:model:hooks')
 
 // Need to convert from server side types (moment dates) to basic JS types when "writing" to DB adapters
 export function processTimes (properties) {
