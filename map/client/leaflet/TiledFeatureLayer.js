@@ -1,6 +1,6 @@
 import L from 'leaflet'
 import _ from 'lodash'
-import { tile2key } from 'utils'
+import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
@@ -34,28 +34,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
   createTile (coords, done) {
     const tile = document.createElement('div')
 
-    let skipTile = false
-
     // check we need to load the tile
     // we don't have to load it when a tile at an upper zoom level encompassing the tile is already loaded
     // TODO: we may also check if we have all the sub tiles loaded too ...
-    const triplet = {
-      x: coords.x,
-      y: coords.y,
-      z: coords.z
-    }
-
-    while (triplet.z > 1) {
-      const tilekey = tile2key(triplet)
-      if (this.loadedTiles.has(tilekey)) {
-        skipTile = true
-        break
-      }
-
-      triplet.x = Math.ceil(triplet.x / 2)
-      triplet.y = Math.ceil(triplet.y / 2)
-      triplet.z -= 1
-    }
+    let skipTile = tileSetContainsParent(this.loadedTiles, coords)
 
     // Check for zoom level range first
     if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true

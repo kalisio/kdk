@@ -97,3 +97,24 @@ export function tile2key (coords) {
   // shift x by 5+24 bits (* 536870912)
   return (coords.x * 536870912) + (coords.y * 32) + coords.z
 }
+
+export function tileSetContainsParent (tileset, coords) {
+  const triplet = {
+    x: coords.x,
+    y: coords.y,
+    z: coords.z
+  }
+
+  while (triplet.z > 1) {
+    const tilekey = tile2key(triplet)
+    if (tileset.has(tilekey)) {
+      return true
+    }
+
+    triplet.x = Math.ceil(triplet.x / 2)
+    triplet.y = Math.ceil(triplet.y / 2)
+    triplet.z -= 1
+  }
+
+  return false
+}

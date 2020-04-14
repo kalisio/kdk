@@ -1,44 +1,31 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import chroma from 'chroma-js'
-import AbortController from 'abort-controller'
 
-// import { tile2key } from './utils'
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
+import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options) {
     L.Util.setOptions(this, options)
 
-    let domain = null
-    const classes = _.get(options, 'chromajs.classes', null)
-    if (!classes) {
-      domain = _.get(options, 'chromajs.domain', null)
-    }
-
-    const invert = _.get(options, 'chromajs.invertScale', false)
-    const colors = _.get(options, 'chromajs.scale', null)
-    const scale = chroma.scale(colors)
-
-    if (domain) {
-      this.colorMap = scale.domain(invert ? domain.slice().reverse() : domain)
-    } else if (classes) {
-      this.colorMap = scale.classes(invert ? classes.slice().reverse() : classes)
-    }
-
-    // register event callbacks
-    this.on('tileload', (event) => { this.onTileLoad(event) })
-    this.on('tileunload', (event) => { this.onTileUnload(event) })
-    // this.on('load', (event) => { this.velocityLayer.setData([this.uFlow, this.vFlow]) })
-
+    // number of tiles currently being loaded
+    this.pendingTiles = 0
+    // set of loaded tiles
     this.loadedTiles = new Set()
 
     this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
-    // instanciate grid source
+    // build colormap
+    const domain = _.get(options, 'chromajs.domain', null)
+    const colors = _.get(options, 'chromajs.scale', null)
+    const invert = _.get(options, 'chromajs.invertScale', false)
+    const scale = chroma.scale(colors)
+    this.colorMap = scale.domain(invert ? domain.slice().reverse() : domain)
+
+    // instanciate grid sources (one for each component)
     const [uKey, uConf] = extractGridSourceConfig(options.u)
     const [vKey, vConf] = extractGridSourceConfig(options.v)
-    // instanciate grid source
     this.uSource = makeGridSource(uKey, { weacastApi: options.weacastApi })
     this.vSource = makeGridSource(vKey, { weacastApi: options.weacastApi })
     this.onDataChangedCallback = this.onDataChanged.bind(this)
@@ -49,22 +36,43 @@ const TiledWindLayer = L.GridLayer.extend({
 
     // build the underlying velocity layer
     const velocityOptions = Object.assign({
-      displayValues: true,
-      displayOptions: {
-        velocityType: 'Wind',
-        position: 'bottomright',
-        emptyString: 'No wind data',
-        angleConvention: 'bearingCW',
-        speedUnit: 'kt'
-      },
+      displayValues: false,
       minVelocity: this.colorMap.domain()[0],
       maxVelocity: this.colorMap.domain()[1],
-      velocityScale: 0.01,      // modifier for particle animations, arbitrarily defaults to 0.005
-      colorScale: (this.options.invertScale ? this.colorMap.colors().reverse() : this.colorMap.colors()),
-      data: null                // data will be requested on-demand
+      velocityScale: 0.01,
+      colorScale: (invert ? this.colorMap.colors().reverse() : this.colorMap.colors()),
+      data: null
     }, options)
     this.velocityLayer = L.velocityLayer(velocityOptions)
 
+    // hack into velocity layer internals ...
+    // override velocity layer's onDrawLayer to support our tiled management
+    this.velocityLayer.onDrawLayer = (overlay, params) => {
+      if (!this.velocityLayer._windy) {
+        this.velocityLayer._initWindy(this.velocityLayer)
+
+        // disable some velocity layer event handling since we override some of it
+        // no need to stop animation when panning
+        this._map.off('dragstart', this.velocityLayer._windy.stop)
+        this._map.off('dragend', this.velocityLayer._clearAndRestart)
+        // this._map.off('zoomstart', this.velocityLayer._windy.stop)
+        // this._map.off('zoomend', this.velocityLayer._clearAndRestart)
+        // this._map.off('resize', this.velocityLayer._clearWind)
+
+        // use a timeout here because _startWindy is heavy and would block a lot
+        setTimeout(() => { this.velocityLayer._startWindy() }, 400)
+      } else {
+        if (this.pendingTiles === 0) {
+          // clear and restart animation will do just fine
+          this.velocityLayer._clearAndRestart()
+        } else {
+          // otherwise just clear, last pending tile will restart the wind
+          this.velocityLayer._clearWind()
+        }
+      }
+    }
+
+    // structs for the veocity layer
     this.uFlow = {
       header: {
         parameterCategory: 2,
@@ -79,6 +87,18 @@ const TiledWindLayer = L.GridLayer.extend({
       },
       data: []
     }
+
+    // register event callbacks
+    this.on('tileloadstart', (event) => {
+      ++this.pendingTiles
+    })
+    this.on('tileload', (event) => {
+      this.onTileLoad(event)
+      this.decrementPendingTiles()
+    })
+    this.on('tileerror', (event) => {
+      this.decrementPendingTiles()
+    })
   },
 
   setTime (time) {
@@ -120,18 +140,14 @@ const TiledWindLayer = L.GridLayer.extend({
 
   onDataChanged () {
     this.redraw()
+
+    this.fire('data', [this.uSource, this.vSource])
   },
 
-  /*
-    getEvents () {
-    const events = L.GridLayer.prototype.getEvents.call(this)
-
-    // add our custom needs here
-    return events
-    },
-  */
-
   onAdd (map) {
+    this.loadedTiles.clear()
+    this.pendingTiles = 0
+
     L.GridLayer.prototype.onAdd.call(this, map)
     map.addLayer(this.velocityLayer)
   },
@@ -158,76 +174,78 @@ const TiledWindLayer = L.GridLayer.extend({
         // wind array assumes descending lat with ascending indices (flipped y)
         const idx = ix + (element.header.ny - 1 - iy) * element.header.nx
         element.data[idx] = val
-
-        if (idx < 0 || idx >= element.data.length) {
-          console.log('oh no!')
-        }
       }
     }
   },
 
   createTile (coords, done) {
-    // bbox we'll request to the grid source
-    const bounds = this._tileCoordsToBounds(coords)
-    const reqBBox = [bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast()]
-
-    // compute an ideal resolution for grid sources that care
-    const tileSize = this.getTileSize()
-    const resolution = [
-      this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
-      this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
-    ]
-
     const tile = document.createElement('div')
-    tile.fetchController = new AbortController()
 
-    // request data
-    const uPromise = this.uSource.fetch(tile.fetchController.signal, reqBBox, resolution)
-    const vPromise = this.vSource.fetch(tile.fetchController.signal, reqBBox, resolution)
+    // check we need to load the tile
+    // we don't have to load it when a tile at an upper zoom level encompassing the tile is already loaded
+    // TODO: we may also check if we have all the sub tiles loaded too ...
+    const skipTile = tileSetContainsParent(this.loadedTiles, coords)
 
-    Promise.all([uPromise, vPromise]).then(grids => {
-      // fetch ended, can't abort anymore
-      tile.fetchController = null
+    // Check for zoom level range first
+    // if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
+    // if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) skipTile = true
 
-      const uGrid = grids[0]
-      const vGrid = grids[1]
+    if (!skipTile) {
+      // bbox we'll request to the grid source
+      const bounds = this._tileCoordsToBounds(coords)
+      const reqBBox = [bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast()]
 
-      if (uGrid && vGrid) {
-        // fill in big arrays
-        this.updateWindArray(uGrid, this.uFlow, reqBBox)
-        this.updateWindArray(vGrid, this.vFlow, reqBBox)
-      }
+      // compute an ideal resolution for grid sources that care
+      const tileSize = this.getTileSize()
+      const resolution = [
+        this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
+        this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
+      ]
 
-      done(null, tile)
-    }).catch(err => {
-      done(err, tile)
-      throw err
-    })
+      // request data
+      const uPromise = this.uSource.fetch(null, reqBBox, resolution)
+      const vPromise = this.vSource.fetch(null, reqBBox, resolution)
+
+      Promise.all([uPromise, vPromise]).then(grids => {
+        const uGrid = grids[0]
+        const vGrid = grids[1]
+
+        if (uGrid && vGrid) {
+          // fill in big arrays
+          this.updateWindArray(uGrid, this.uFlow, reqBBox)
+          this.updateWindArray(vGrid, this.vFlow, reqBBox)
+        }
+
+        done(null, tile)
+      }).catch(err => {
+        done(err, tile)
+        throw err
+      })
+    } else {
+      setTimeout(() => { done(null, tile) }, 100)
+    }
 
     return tile
   },
 
   onTileLoad (event) {
-    /*
     // add tile to loaded tiles set
     const tilekey = tile2key(event.coords)
     this.loadedTiles.add(tilekey)
-    */
-    // this.velocityLayer.setData([this.uFlow, this.vFlow])
   },
 
-  onTileUnload (event) {
-    // tile unloaded
-    if (event.tile.fetchController) {
-      // fetch controller still present, abort fetching underlying data
-      event.tile.fetchController.abort()
-      event.tile.fetchController = null
+  decrementPendingTiles () {
+    --this.pendingTiles
+    if (this.pendingTiles === 0) {
+      // last pending tile triggers a wind restart
+      this.velocityLayer._clearAndRestart()
     }
+  },
 
-    /*
-    const tilekey = tile2key(event.coords)
-    this.loadedTiles.delete(tilekey)
-    */
+  redraw () {
+    this.loadedTiles.clear()
+
+    L.GridLayer.prototype.redraw.call(this)
   }
 })
 

@@ -1,6 +1,5 @@
 import _ from 'lodash'
 
-// import { extractGridSourceConfig } from '../../../common/grid'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer'
 
 export default {
@@ -14,10 +13,6 @@ export default {
       // Copy options
       const colorMap = _.get(options, 'variables[0].chromajs', null)
       if (colorMap) Object.assign(leafletOptions, { chromajs: colorMap })
-      /*
-      const [gridKey, gridConf] = extractGridSourceConfig(options)
-      leafletOptions[gridKey] = gridConf
-      */
       Object.assign(leafletOptions, _.pick(options, ['u', 'v']))
 
       leafletOptions.weacastApi = this.weacastApi
