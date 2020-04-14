@@ -176,6 +176,21 @@ const TiledWindLayer = L.GridLayer.extend({
         element.data[idx] = val
       }
     }
+
+    /*
+    for (let ilon = iminlon; ilon <= imaxlon; ++ilon) {
+      for (let ilat = iminlat; ilat <= imaxlat; ++ilat) {
+        const val = grid.getValue(ilat, ilon)
+        const lat = grid.getLat(ilat)
+        const lon = grid.getLon(ilon)
+        const ix = Math.floor((lon - this.windOrigin[1]) / element.header.dx)
+        const iy = Math.floor((lat - this.windOrigin[0]) / element.header.dy)
+        // wind array assumes descending lat with ascending indices (flipped y)
+        const idx = ix + (element.header.ny - 1 - iy) * element.header.nx
+        element.data[idx] = val
+      }
+    }
+    */
   },
 
   createTile (coords, done) {
@@ -184,7 +199,8 @@ const TiledWindLayer = L.GridLayer.extend({
     // check we need to load the tile
     // we don't have to load it when a tile at an upper zoom level encompassing the tile is already loaded
     // TODO: we may also check if we have all the sub tiles loaded too ...
-    const skipTile = tileSetContainsParent(this.loadedTiles, coords)
+    // const skipTile = tileSetContainsParent(this.loadedTiles, coords)
+    const skipTile = false
 
     // Check for zoom level range first
     // if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
