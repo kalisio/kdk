@@ -25,6 +25,7 @@
 
 <script>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { Loading } from 'quasar'
 import chroma from 'chroma-js'
 import Chart from 'chart.js'
@@ -199,8 +200,9 @@ export default {
       try {
         // Retrieve data
         await this.getChartData()
-      } catch (_) {
-
+      } catch (error) {
+        // User error message on operation should be raised by error hook, otherwise this is more a coding error
+        logger.error(error)
       }
       // We need to force a refresh so that the computed props are correctly updated by Vuejs
       await this.$nextTick()

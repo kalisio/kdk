@@ -403,7 +403,9 @@ export default function (name) {
           // Reset layer with new setup
           await this.removeLayer(layer.name)
           await this.addLayer(createdLayer)
-        } catch (_) {
+        } catch (error) {
+          // User error message on operation should be raised by error hook, otherwise this is more a coding error
+          logger.error(error)
         }
         Loading.hide()
       },
@@ -538,7 +540,9 @@ export default function (name) {
               await this.$api.getService('catalog').remove(layer._id)
             }
             this.removeLayer(layer.name)
-          } catch (_) {
+          } catch (error) {
+            // User error message on operation should be raised by error hook, otherwise this is more a coding error
+            logger.error(error)
           }
           Loading.hide()
         })

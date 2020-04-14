@@ -98,6 +98,7 @@ export default {
         try {
           await this.register(result.values)
         } catch (_) {
+          this.$toast({ message: this.$t('KRegister.REGISTER_ERROR') })
         }
         this.loading = false
       }

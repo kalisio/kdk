@@ -93,7 +93,8 @@
     "ACCEPT_TERMS_ERROR_LABEL": "You must accept our terms and policies to register",
     "APPLY_BUTTON": "Register",
     "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?",
-    "EMAIL_ALREADY_TAKEN": "Email already taken !"
+    "EMAIL_ALREADY_TAKEN": "Email already taken !",
+    "REGISTER_ERROR": "Wrong input or service unavailable, please try again"
   },
   "KChangeEndpoint": {
     "TITLE": "Change endpoint",

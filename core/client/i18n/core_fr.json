@@ -93,7 +93,8 @@
     "ACCEPT_TERMS_ERROR_LABEL": "Vous devez accepter nos conditions générales pour vous enregistrer",
     "APPLY_BUTTON": "S'enregistrer",
     "ALREADY_HAVE_AN_ACCOUNT_LINK": "Déjà un compte ?",
-    "EMAIL_ALREADY_TAKEN": "Mail déjà pris !"
+    "EMAIL_ALREADY_TAKEN": "Mail déjà pris !",
+    "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer"
   },
   "KChangeEndpoint": {
     "TITLE": "Changer l'adresse du serveur ?",

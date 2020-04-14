@@ -227,7 +227,9 @@ export default function baseEditorMixin (formRefs) {
             } else {
               logger.warn('Invalid editor mode')
             }
-          } catch (_) {
+          } catch (error) {
+            // User error message on operation should be raised by error hook, otherwise this is more a coding error
+            logger.error(error)
           }
           this.applyInProgress = false
         }

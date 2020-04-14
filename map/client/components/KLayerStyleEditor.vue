@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import logger from 'loglevel'
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../core/client'
 
@@ -60,7 +61,9 @@ export default {
       if (this.layer._id) {
         try {
           await this.$api.getService('catalog', this.contextId).patch(this.layer._id, result.values)
-        } catch (_) {
+        } catch (error) {
+          // User error message on operation should be raised by error hook, otherwise this is more a coding error
+          logger.error(error)
         }
       }
       // Update in memory
