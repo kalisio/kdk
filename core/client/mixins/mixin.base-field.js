@@ -59,7 +59,7 @@ const baseFieldMixin = {
   },
   watch: {
     values: function () {
-      if (this.values) this.updateValue(this.values[this.properties.name])
+      if (this.values) this.updateValue(_.get(this.values, this.properties.name))
       else this.clear()
     }
   },
@@ -107,7 +107,7 @@ const baseFieldMixin = {
     }
   },
   created () {
-    if (this.values) this.updateValue(this.values[this.properties.name])
+    if (this.values) this.updateValue(_.get(this.values, this.properties.name))
   }
 }
 

@@ -4,17 +4,20 @@
       Non-grouped fields 
      -->
     <template v-for="field in fields">
-      <div v-if="!field.group" :key="field.name" class="row">
+      <div v-if="!field.group" :key="field.name" class="row" 
+        v-bind:class="{'k-view-row': options.separators }"
+      >
+        <!-- Field label -->
         <span class="col-xs-5 col-sm-4 col-3 text-caption">
           {{ $t(field.field.label) }}
         </span>
+        <!-- Field value -->
         <component class="col"        
           :is="field.componentKey"
           v-bind="$props"
           :properties="field"
           :display="options"
           :readOnly="true" />
-        <q-separator v-if="options.separators" class="col-12" />
       </div>
     </template>
     <!-- 
@@ -23,17 +26,20 @@
     <template v-for="group in groups">
       <q-expansion-item :key="group" icon="wrap_text" :group="group" :label="$t(group)">
         <template v-for="field in fields">
-          <div v-if="field.group === group" :key="field.group + field.name" class="row">
+          <div v-if="field.group === group" :key="field.group + field.name" class="row"
+            v-bind:class="{'k-view-row': options.separators }"
+          >
+            <!-- Field label -->
             <span class="col-xs-5 col-sm-4 col-3 text-caption">
               {{ $t(field.field.label) }}
             </span>
+            <!-- Field value -->
             <component class="col"
               :is="field.componentKey"
               v-bind="$props"
               :properties="field"
               :display="options"
               :readOnly="true" />
-            <q-separator v-if="options.separators" class="col-12" />
           </div>
         </template>
       </q-expansion-item>
@@ -109,3 +115,12 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .k-view-row {
+    border-bottom: solid 1px lighten($primary, 87%)
+  }
+  .k-view-row:hover {
+    background: lighten($secondary, 87%)
+  }
+</style>
