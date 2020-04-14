@@ -38,7 +38,7 @@ export default {
   data () {
     return {
       widgetOffset: [0 ,0],
-      fabOffset: [8, 8],
+      fabOffset: [16, 16],
       hasLeftDrawerOpener: false,
       isLeftDrawerOpened: this.klayout.isLeftDrawerVisible,
       hasRightDrawerOpener: false,
