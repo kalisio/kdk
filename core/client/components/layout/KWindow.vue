@@ -15,7 +15,7 @@
           <q-tab :key="index" :name="widget.name" :icon="widget.icon" />
         </template>
       </q-tabs>
-      <k-tool-bar class="q-pa-xs" :actions="actions" size="sm" />
+      <k-tool-bar class="q-pa-sm" :actions="actions" color="primary" size="sm" />
     </div>
     <!--
       Tab panes
