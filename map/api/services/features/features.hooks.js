@@ -1,6 +1,11 @@
 import { hooks as coreHooks } from '../../../../core/api'
 import { marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson } from '../../hooks'
 
+function emptyResult (hook) {
+  if (Array.isArray(hook.result)) hook.result = []
+  return hook
+}
+
 module.exports = {
   before: {
     all: [coreHooks.marshallTimeQuery, coreHooks.convertObjectIDs(['layer'])],
@@ -17,10 +22,11 @@ module.exports = {
     all: [coreHooks.unprocessTimes(['time'])],
     find: [asGeoJson({ force: true })],
     get: [],
-    create: [coreHooks.skipEvents], // Avoid emitting events on feature edition
-    update: [coreHooks.skipEvents],
-    patch: [coreHooks.skipEvents],
-    remove: [coreHooks.skipEvents]
+    // Avoid emitting events/results on feature edition as we can proceed with big batches
+    create: [emptyResult, coreHooks.skipEvents],
+    update: [emptyResult, coreHooks.skipEvents],
+    patch: [emptyResult, coreHooks.skipEvents],
+    remove: [emptyResult, coreHooks.skipEvents]
   },
 
   error: {
