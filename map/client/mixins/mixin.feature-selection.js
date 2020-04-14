@@ -45,13 +45,23 @@ export default {
         this.selectionHighlight = null
       }
     },
-    onFeatureClicked (feature, layer, options) {
+    onFeatureClicked (options, event) {
+      // Retrieve tje feature and the options
+      if (!options || !options.schema) return
+      const feature = _.get(event, 'target.feature')
+      const entity = _.get(event, 'target')
+      const layer = _.get(event, 'target')
+      if (!feature || !entity) return
+      // Remove the highligtht a selection is already active
       if (this.hasSelection) this.removeSelectionHighlight()
-      this.selection.feature = feature
+      // Updatd the selection
+      this.selection.feature = feature || entity
       this.selection.layer = layer
       this.selection.options = options
       this.hasSelection = true
+      // Add the highlight
       this.addSelectionHighlight()
+      // Open the widget
       if (this.$refs.page) this.$refs.page.openWindow('feature')
     },
     onLayerShown (layer) {
@@ -74,13 +84,13 @@ export default {
     this.selectionHighlight = null
   },
   mounted () {
-    this.$on('feature-clicked', this.onFeatureClicked)
+    this.$on('click', this.onFeatureClicked)
     this.$on('layer-shown', this.onLayerShown)
     this.$on('layer-hidden', this.onLayerHidden)
     this.$on('layer-removed', this.onLayerRemoved)
   },
   beforeDestroy () {
-    this.$off('feature-clicked', this.onFeatureClicked)
+    this.$off('click', this.onFeatureClicked)
     this.$off('layer-shown', this.onLayerShown)
     this.$off('layer-hidden', this.onLayerHidden)
     this.$off('layer-removed', this.onLayerRemoved)
