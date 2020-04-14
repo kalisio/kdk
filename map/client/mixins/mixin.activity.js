@@ -227,7 +227,8 @@ export default function (name) {
               handler: () => this.onZoomToLayer(layer)
             })
           }
-          if (this.isLayerStorable(layer) && !layer._id && layerActions.includes('save')) {
+          // Supported by underlying engine ?
+          if ((typeof this.toGeoJson === 'function') && this.isLayerStorable(layer) && !layer._id && layerActions.includes('save')) {
             actions.push({
               name: 'save',
               label: this.$t('mixins.activity.SAVE_LABEL'),
