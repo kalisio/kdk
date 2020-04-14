@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-const debug = makeDebug('kalisio:kTeam:groups:hooks')
+const debug = makeDebug('kdk:core:groups:hooks')
 
 export function createGroupAuthorisations (hook) {
   const app = hook.app

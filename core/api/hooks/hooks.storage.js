@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { populateObject, unpopulateObject } from './hooks.query'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kCore:storage:hooks')
+const debug = makeDebug('kdk:core:storage:hooks')
 
 function isAttachmentEqual (file1, file2) {
   return file1._id === file2._id

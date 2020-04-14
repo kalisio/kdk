@@ -3,7 +3,7 @@ import * as dap from '../../common/opendap-utils.js'
 import cesium from 'cesium'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kMap:daptiles:service')
+const debug = makeDebug('kdk:map:daptiles:service')
 
 // middleware global: https://github.com/kalisio/aktnmap/blob/master/api/src/services/index.js#L19
 // middleware sur service: https://github.com/kalisio/kCore/blob/master/src/services/index.js#L41

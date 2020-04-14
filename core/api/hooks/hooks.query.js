@@ -4,7 +4,7 @@ import { marshallComparisonFields, marshallSortFields, marshallTime } from '../m
 import { ObjectID } from 'mongodb'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kCore:query:hooks')
+const debug = makeDebug('kdk:core:query:hooks')
 
 export function marshallTimeQuery (hook) {
   const query = hook.params.query

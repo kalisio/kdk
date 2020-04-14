@@ -4,7 +4,7 @@ import { GeneralError } from '@feathersjs/errors'
 import SNS from 'sns-mobile'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kNotify:pusher:service')
+const debug = makeDebug('kdk:core:pusher:service')
 const defaultTopicField = 'topics'
 
 export default function (name, app, options) {

@@ -7,7 +7,7 @@ import { objectifyIDs } from '../db'
 import { hasServiceAbilities, hasResourceAbilities, getQueryForAbilities, Roles, RoleNames, countSubjectsForResource } from '../../common/permissions'
 import { isTagEqual } from './hooks.tags'
 
-const debug = makeDebug('kalisio:kCore:authorisations:hooks')
+const debug = makeDebug('kdk:core:authorisations:hooks')
 
 export function createJWT (options = {}) {
   return async function (hook) {

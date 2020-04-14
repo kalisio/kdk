@@ -3,7 +3,7 @@ import makeDebug from 'debug'
 const modelsPath = path.join(__dirname, '..', 'models')
 const servicesPath = path.join(__dirname, '..', 'services')
 
-const debug = makeDebug('kalisio:kMap:services')
+const debug = makeDebug('kdk:map:services')
 
 export function createFeaturesService (options = {}) {
   const app = this

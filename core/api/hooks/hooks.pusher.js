@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { getItems } from 'feathers-hooks-common'
 import { populateObject } from './hooks.query'
 
-const debug = makeDebug('kalisio:kNotify:pusher:hooks')
+const debug = makeDebug('kdk:core:pusher:hooks')
 
 export function populatePushObject (hook) {
   if (hook.type !== 'before') {

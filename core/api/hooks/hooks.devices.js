@@ -2,7 +2,7 @@ import emails from 'email-templates'
 import path from 'path'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kNotify:devices:hooks')
+const debug = makeDebug('kdk:core:devices:hooks')
 
 export async function sendNewDeviceEmail (hook) {
   if (hook.type !== 'after') {

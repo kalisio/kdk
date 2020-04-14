@@ -4,7 +4,7 @@ import makeDebug from 'debug'
 import mongodb, { ObjectID } from 'mongodb'
 import errors from '@feathersjs/errors'
 
-const debug = makeDebug('kalisio:kCore:db')
+const debug = makeDebug('kdk:core:db')
 
 // This ensure moment objects are correctly serialized in MongoDB
 Object.getPrototypeOf(moment()).toBSON = function () {

@@ -4,7 +4,7 @@ import { getItems } from 'feathers-hooks-common'
 import { populateObject, unpopulateObject } from './hooks.query'
 import makeDebug from 'debug'
 
-const debug = makeDebug('kalisio:kCore:tags:hooks')
+const debug = makeDebug('kdk:core:tags:hooks')
 
 export function isTagEqual (tag1, tag2) {
   let equal = (tag1.value === tag2.value && tag1.scope === tag2.scope)
