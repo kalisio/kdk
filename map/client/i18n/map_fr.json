@@ -288,10 +288,12 @@
   },
   "KFeatureWidget": {
     "NO_FEATURE_SELECTED": "Aucun objet sélectionné",
+    "CENTER_ON": "Centrer la vue sur l'objet",
+    "COPY_PROPERTIES": "Copier les valeurs en mémoire",    
     "PROPERTIES_COPIED": "Valeurs copiées en mémoire",
     "CANNOT_COPY_PROPERTIES": "Impossible de copier les valeurs en mémoire",
-    "CENTER_ON": "Centrer la vue sur l'objet",
-    "COPY_PROPERTIES": "Copier les valeurs en mémoire",
-    "DOWNLOAD_FEATURE": "Télécharger l'objet"
+    "EXPORT_FEATURE": "Exporter l'object",
+    "FEATURE_EXPORTED": "Objet exporté dans le fichier {{file}}",
+    "CANNOT_EXPORT_FEATURE": "Impossible d'exporter l'objet"
   }
 }

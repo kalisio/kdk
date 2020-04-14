@@ -288,10 +288,12 @@
   },
   "KFeatureWidget": {
     "NO_FEATURE_SELECTED": "No object selected",
+    "CENTER_ON": "Center the view on the object",    
+    "COPY_PROPERTIES": "Copy the values to the clipboard",    
     "PROPERTIES_COPIED": "Values copied to clipboard",
-    "CANNOT_COPY_PROPERTIES": "Impossible to copy the values to clipboard",
-    "CENTER_ON": "Center the view on the object",
-    "COPY_PROPERTIES": "Copy the values to the clipboard",
-    "DOWNLOAD_FEATURE": "Download the object"    
+    "CANNOT_COPY_PROPERTIES": "Impossible to copy the values to clipboard. Your browser does not support this functionality",
+    "EXPORT_FEATURE": "Export the object",
+    "FEATURE_EXPORTED": "Object exported to file {{file}}",
+    "CANNOT_EXPORT_FEATURE": "Impossible to export the object. Your browser does not support this functionality"
   }
 }

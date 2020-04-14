@@ -15,7 +15,7 @@
 <script>
 import _ from 'lodash'
 import centroid from '@turf/centroid'
-import { colors, copyToClipboard } from 'quasar'
+import { colors, copyToClipboard, exportFile  } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
@@ -92,16 +92,19 @@ export default {
     },
     onCopyProperties () {
       if (this.feature) copyToClipboard(JSON.stringify(this.feature.properties))
-      .then(() => this.$toast({ type: 'positive', html: this.$t('KFeatureWidget.PROPERTIES_COPIED') }))
-      .catch(() => this.$toast({ type: 'error', html: this.$t('KFeatureWidget.CANNOT_COPY_PROPERTIES') }))
+      .then(() => this.$toast({ type: 'positive', message: this.$t('KFeatureWidget.PROPERTIES_COPIED') }))
+      .catch(() => this.$toast({ type: 'error', message: this.$t('KFeatureWidget.CANNOT_COPY_PROPERTIES') }))
     },
-    onDownloadFeature () {
+    onExportFeature () {
       if (this.feature) {
-        const uri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(this.feature));
-        let linkElement = document.createElement('a');
-        linkElement.setAttribute('href', uri);
-        linkElement.setAttribute('download', 'feature.geojson');
-        linkElement.click()
+        const name = _.get(this.feature, 'name', 'feature') || 
+                     _.get(this.feature, 'label', 'feature') || 
+                     _.get(this.feature, 'properties.name', 'feature') || 
+                     _.get(this.feature, 'properties.label', 'feature')
+        const file = name + '.geojson'
+        const status = exportFile(file, JSON.stringify(this.feature))
+        if (status) this.$toast({ type: 'error', message: this.$t('KFeatureWidget.FEATURE_EXPORTED', { file }) })
+        else this.$toast({ type: 'error', message: this.$t('KFeatureWidget.CANNOT_EXPORT_FEATURE') })
       }
     }
   },
@@ -114,7 +117,7 @@ export default {
     this.actions = [
       { name: 'centerOn', icon: 'las la-eye', label: this.$t('KFeatureWidget.CENTER_ON'), handler: this.onCenterOn },
       { name: 'copyProperties', icon: 'las la-clipboard', label: this.$t('KFeatureWidget.COPY_PROPERTIES'), handler: this.onCopyProperties }, 
-      { name: 'downloadFeature', icon: 'img:statics/json-icon.svg', label: this.$t('KFeatureWidget.DOWNLOAD_FEATURE'), handler: this.onDownloadFeature }, 
+      { name: 'exportFeature', icon: 'img:statics/json-icon.svg', label: this.$t('KFeatureWidget.EXPORT_FEATURE'), handler: this.onExportFeature }, 
     ]
     // override the default widget height
     this.widgetHeight = '25vh'
