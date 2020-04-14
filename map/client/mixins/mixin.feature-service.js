@@ -167,12 +167,9 @@ export default {
       // Create chunks to avoid reaching some limits (DB, etc.)
       const chunks = _.chunk(features, 5000)
       // Write the chunks
-      let createdFeatures = []
       for (let i = 0; i < chunks.length; i++) {
-        const result = await this.$api.getService('features').create(chunks[i])
-        createdFeatures = createdFeatures.concat(result)
+        await this.$api.getService('features').create(chunks[i])
       }
-      return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: createdFeatures }) : createdFeatures)
     },
     async editFeaturesGeometry (geoJson) {
       const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
