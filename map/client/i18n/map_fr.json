@@ -31,7 +31,9 @@
     "activity": {
       "CREATE_LAYER": "Créer une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
-      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données",
+      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
+      "SAVE_DIALOG_TITLE": "Tuilage de la couche {{layer}}",
+      "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom",
       "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
       "FILTER_DATA_LABEL": "Filtrer les données",

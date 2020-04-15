@@ -379,7 +379,6 @@ export default function (name) {
         this.zoomToLayer(layer.name)
       },
       async onSaveLayer (layer) {
-        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL') })
         // Change data source from in-memory to features service
         _.merge(layer, {
           service: 'features',
@@ -394,16 +393,28 @@ export default function (name) {
           _.set(layer, 'leaflet.tiled', true)
           _.set(layer, 'leaflet.minZoom', 15)
         }
+        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }) })
         try {
           let createdLayer = await this.$api.getService('catalog')
             .create(_.omit(layer, ['actions', 'isVisible', 'isDisabled']))
+          const chunkSize = _.get(this, 'activityOptions.featuresChunkSize', 5000)
           // We use the generated DB ID as layer ID on features
-          await this.createFeatures(geoJson, createdLayer._id, _.get(this, 'activityOptions.featuresChunkSize', 5000))
+          await this.createFeatures(geoJson, createdLayer._id, chunkSize, i => {
+            // Update message
+            Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL',
+              { processed: (i + 1) * chunkSize, total: features.length }) })
+          })
           // Because we save all features in a single service use filtering to separate layers
           createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
           // Reset layer with new setup
           await this.removeLayer(layer.name)
           await this.addLayer(createdLayer)
+          Dialog.create({
+            title: this.$t('mixins.activity.SAVE_DIALOG_TITLE', { layer: layer.name }),
+            message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'),
+            html: true,
+            ok: { label: this.$t('OK') }
+          })
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
           logger.error(error)

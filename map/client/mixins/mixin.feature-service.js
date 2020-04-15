@@ -156,7 +156,7 @@ export default {
       }
       this.unsetCursor('processing-cursor')
     },
-    async createFeatures (geoJson, layerId, chunkSize = 5000) {
+    async createFeatures (geoJson, layerId, chunkSize = 5000, processCallback) {
       if (!layerId) return
       const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
       features.forEach(feature => {
@@ -169,6 +169,7 @@ export default {
       // Write the chunks
       for (let i = 0; i < chunks.length; i++) {
         await this.$api.getService('features').create(chunks[i])
+        if (typeof processCallback === 'function') processCallback(i, chunks[i])
       }
     },
     async editFeaturesGeometry (geoJson) {
