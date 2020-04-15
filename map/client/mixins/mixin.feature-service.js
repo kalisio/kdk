@@ -156,7 +156,7 @@ export default {
       }
       this.unsetCursor('processing-cursor')
     },
-    async createFeatures (geoJson, layerId) {
+    async createFeatures (geoJson, layerId, chunkSize = 5000) {
       if (!layerId) return
       const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
       features.forEach(feature => {
@@ -165,7 +165,7 @@ export default {
         feature.layer = layerId
       })
       // Create chunks to avoid reaching some limits (DB, etc.)
-      const chunks = _.chunk(features, 5000)
+      const chunks = _.chunk(features, chunkSize)
       // Write the chunks
       for (let i = 0; i < chunks.length; i++) {
         await this.$api.getService('features').create(chunks[i])

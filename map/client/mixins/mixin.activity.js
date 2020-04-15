@@ -398,7 +398,7 @@ export default function (name) {
           let createdLayer = await this.$api.getService('catalog')
             .create(_.omit(layer, ['actions', 'isVisible', 'isDisabled']))
           // We use the generated DB ID as layer ID on features
-          await this.createFeatures(geoJson, createdLayer._id)
+          await this.createFeatures(geoJson, createdLayer._id, _.get(this, 'activityOptions.featuresChunkSize', 5000))
           // Because we save all features in a single service use filtering to separate layers
           createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
           // Reset layer with new setup
