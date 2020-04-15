@@ -26,18 +26,20 @@ export default {
       this.center(..._.get(centroid(this.selection.feature), 'geometry.coordinates'))
     },
     addSelectionHighlight () {
-      if (this.selection.feature.geometry.type === 'Point') {
-        const coords = this.selection.feature.geometry.coordinates
-        this.selectionHighlight = L.circleMarker([coords[1], coords[0]], { radius: 18, color: colors.getBrand('secondary'), weight: 3 })
-      } else {
-        const bounds = bbox(this.selection.feature)
-        this.selectionHighlight = L.rectangle([[bounds[1], bounds[0]], [bounds[3], bounds[2]]], { color: colors.getBrand('secondary'), weight: 3 })
+      if (this.is2D()) {
+        if (this.selection.feature.geometry.type === 'Point') {
+          const coords = this.selection.feature.geometry.coordinates
+          this.selectionHighlight = L.circleMarker([coords[1], coords[0]], { radius: 18, color: colors.getBrand('secondary'), weight: 3 })
+        } else {
+          const bounds = bbox(this.selection.feature)
+          this.selectionHighlight = L.rectangle([[bounds[1], bounds[0]], [bounds[3], bounds[2]]], { color: colors.getBrand('secondary'), weight: 3 })
+        }
+        this.selectionHighlight.on('click', (event) => {
+          this.removeSelectionHighlight()
+          this.clearSelection()
+        })
+        this.map.addLayer(this.selectionHighlight)
       }
-      this.selectionHighlight.on('click', (event) => {
-        this.removeSelectionHighlight()
-        this.clearSelection()
-      })
-      this.map.addLayer(this.selectionHighlight)
     },
     removeSelectionHighlight () {
       if (this.selectionHighlight) {
