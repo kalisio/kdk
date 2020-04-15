@@ -1,9 +1,13 @@
 <template>
-  <div :style="widgetStyle">
+  <div :style="widgetStyle()">
     <q-resize-observer @resize="onResized" />
-    <div v-if="hasGraph" class="fit column">
-      <span>probedLocationName</span>
-      <canvas ref="chart"></canvas>
+    <div v-if="hasGraph" class="full-width row q-pa-xs">
+      <!-- Title -->
+      <span class="col-12 q-pl-sm">
+        {{ probedLocationName }}
+      </span>
+      <!-- Graph -->
+      <canvas class="col-12" ref="chart"></canvas>
     </div>
     <div v-else class="fit absolute-center">
       <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />
@@ -17,13 +21,12 @@ import moment from 'moment'
 import Chart from 'chart.js'
 import 'chartjs-plugin-annotation'
 import { getTimeInterval } from '../../utils'
-
-// Makes no sense to display a graph under this threshold so we always at least ensure it
-const MIN_HEIGHT = 256
+import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
   name: 'k-time-series-widget',
   inject: ['kActivity'],
+  mixins: [baseWidget],
   props: {
     variables: {
       type: Array,
@@ -32,13 +35,6 @@ export default {
     decimationFactor: {
       type: Number,
       default: 1
-    },
-    mode: {
-      type: String,
-      default: 'minimized',
-      validator: (value) => {
-        return ['minimized', 'maximized'].includes(value)
-      }
     }
   },
   watch: {
@@ -59,10 +55,6 @@ export default {
         name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
       }
       return name || ''
-    },
-    widgetStyle () {
-      if (this.mode === 'minimized') return "height: 300px;"
-      else return "height: 100vh"
     }
   },
   data () {
@@ -71,22 +63,15 @@ export default {
     }
   },
   methods: {
-    /*timeseriesWidgetStyle () {
-      if (this.$refs.timeseriesWidget &&
-          this.$refs.timeseriesWidget.isOpen() &&
-          !this.$refs.timeseriesWidget.isMinimized()) return 'width: 100vw;height: 100vh;'
-      else if (this.$q.screen.lt.md) return `width: 100vw;height: 35vh;min-height: ${MIN_HEIGHT}px;`
-      else return `width: 80vw;height: 35vh;min-height: ${MIN_HEIGHT}px;`
-    },*/
     filter (value, index) {
       // We filter one value out of N according to decimation factor
       return (index % this.decimationFactor) === 0
     },
     setupTimeTicks () {
-      if (!this.times || !this.width) return
+      if (!this.times || !this.graphWidth) return
       // Choose the right step size to ensure we have almost 100px between hour ticks
       // If the time interval is less than hour act as if we have only 1 time per hour
-      const pixelsPerTick = this.width / (this.times.length * Math.min(1, this.timeInterval))
+      const pixelsPerTick = this.graphWidth / (this.times.length * Math.min(1, this.timeInterval))
       this.timeStepSize = Math.ceil(Math.max(1, Math.round(100 / pixelsPerTick)))
       // Round to nearest multiple of time interval in hours
       const interval = Math.max(1, Math.floor(this.timeInterval))
@@ -311,23 +296,14 @@ export default {
       }
 
       this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
-      this.chart.canvas.parentNode.style.width = `${this.width}px`
-      this.chart.canvas.parentNode.style.height = `${this.height}px`
+      this.chart.canvas.parentNode.style.width = `${this.graphWidth}px` 
+      this.chart.canvas.parentNode.style.height = `${this.graphHeight}px` 
       this.chart.resize()
     },
-    resizeGraph (width, height) {
-      this.width = width
-      this.height = height
+    async onResized (size) {
+      this.graphWidth = size.width
+      this.graphHeight = Math.floor(size.height * 0.95)
       this.setupGraph()
-    },
-    async onResized () {
-      if (!this.$refs.timeseriesWidget) return
-      // It appears chartjs does not take time ticks into account in chart height
-      // We add a small margin of 20% to take this into account
-      this.resizeGraph(
-        Math.floor(this.$refs.timeseriesWidget.$el.getBoundingClientRect().width),
-        Math.max(Math.floor(this.$refs.timeseriesWidget.$el.getBoundingClientRect().height) * 0.8, MIN_HEIGHT * 0.8)
-      )
     },
     async createProbedLocationLayer () {
       if (!this.kActivity.probedLocation) return
@@ -385,7 +361,6 @@ export default {
       // Show timeseries on probed location
       const name = this.$t('mixins.timeseries.PROBED_LOCATION')
       if (layer.name === name) {
-        this.openTimeseries()
         this.kActivity.center(...this.kActivity.probedLocation.geometry.coordinates)
       }
     },
@@ -394,31 +369,6 @@ export default {
       if (layer.name === this.$t('mixins.timeseries.PROBED_LOCATION')) {
         this.$ref.page.closeWindow()
       }
-    },
-    async onProbeFeatureClicked (options, event) {
-      const feature = _.get(event, 'target.feature')
-      if (!feature) return
-      const windDirection = (this.selectedLevel ? `windDirection-${this.selectedLevel}` : 'windDirection')
-      const windSpeed = (this.selectedLevel ? `windSpeed-${this.selectedLevel}` : 'windSpeed')
-      const isWeatherProbe = (_.has(feature, `properties.${windDirection}`) &&
-                              _.has(feature, `properties.${windSpeed}`) &&
-                              (options.name === this.$t('mixins.timeseries.PROBED_LOCATION')))
-      let hasTimeseries = true
-      // Update timeseries data if required
-      const { start, end } = this.kActivity.getProbeTimeRange()
-      if (options.probe) { // Static weacast probe
-        const probe = await this.kActivity.getForecastProbe(options.probe)
-        if (probe) {
-          await this.kActivity.getForecastForFeature(_.get(feature, this.kActivity.probe.featureId), start, end)
-        }
-      } else if (options.variables && options.service) { // Static measure probe
-        await this.kActivity.getMeasureForFeature(options, feature, start, end)
-      } else if (isWeatherProbe) { // Dynamic weacast probe
-        this.kActivity.getForecastForLocation(event.latlng.lng, event.latlng.lat, start, end)
-      } else {
-        hasTimeseries = false
-      }
-      if (hasTimeseries) this.openTimeseries()
     },
     async updateProbedLocationForecast (model) {
       // Update probed location if any
@@ -440,10 +390,10 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-label'] = this.$load('frame/KLabel')
+    // Setup the component
+    this.onResized()
   },
   mounted () {
-    this.width = 512
-    this.height = 512
     this.kActivity.$on('layer-shown', this.onShowProbedLocationLayer)
     this.kActivity.$on('layer-hidden', this.onHideProbedLocationLayer)
     this.kActivity.$on('probed-location-changed', this.setupGraph)
@@ -453,7 +403,6 @@ export default {
     this.$events.$on('time-format-changed', this.setupGraph)
     this.kActivity.$on('forecast-model-changed', this.updateProbedLocationForecast)
     this.kActivity.$on('forecast-level-changed', this.updateProbedLocationForecast)
-    this.kActivity.$on('click', this.onProbeFeatureClicked)
     // Show map marker
     this.kActivity.showLayer(this.$t('mixins.timeseries.PROBED_LOCATION'))
   },
@@ -467,7 +416,6 @@ export default {
     this.$events.$off('time-format-changed', this.setupGraph)
     this.kActivity.$off('forecast-model-changed', this.updateProbedLocationForecast)
     this.kActivity.$off('forecast-level-changed', this.updateProbedLocationForecast)
-    this.kActivity.$off('click', this.onProbeFeatureClicked)
     // Hide map marker
     this.kActivity.hideLayer(this.$t('mixins.timeseries.PROBED_LOCATION'))
   }

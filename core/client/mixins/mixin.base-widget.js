@@ -10,7 +10,7 @@ const baseWidgetMixin = {
   },
   data () {
     return {
-      widgetHeight: '30vh'
+      widgetHeight: '35vh'
     }
   },
   methods: {
