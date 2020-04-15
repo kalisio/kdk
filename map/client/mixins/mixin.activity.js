@@ -409,12 +409,7 @@ export default function (name) {
           // Reset layer with new setup
           await this.removeLayer(layer.name)
           await this.addLayer(createdLayer)
-          Dialog.create({
-            title: this.$t('mixins.activity.SAVE_DIALOG_TITLE', { layer: layer.name }),
-            message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'),
-            html: true,
-            ok: { label: this.$t('OK') }
-          })
+          this.$toast({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
           logger.error(error)
