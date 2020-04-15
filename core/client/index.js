@@ -38,7 +38,7 @@ export default function init () {
   Store.set('leftDrawer', { component: '', props: {} })
   Store.set('rightDrawer', { component: '', props: {} })
   Store.set('footer', { component: '', props: {} })
-  Store.set('window', { widgets: [] })
+  Store.set('window', { curent: '', widgets: [] })
   Store.set('fab', { actions: [] })
 
   // Listen to the 'patched' event on the users

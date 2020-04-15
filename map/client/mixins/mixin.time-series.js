@@ -26,7 +26,8 @@ export default {
       } else {
         return
       }
-      this.$refs.page.openWindow('time-series')
+      // Open the widget
+      this.openWidget('time-series')
     }
   },
   mounted () {

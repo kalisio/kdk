@@ -266,11 +266,6 @@
   "KFab": {
     "CLOSE_ACTION": "$t(CLOSE)"
   },
-  "KWidget": {
-    "CLOSE_ACTION": "$t(CLOSE)",
-    "MINIMIZE_ACTION": "Minimize",
-    "MAXIMIZE_ACTION": "Maximize"
-  },
   "KWindow": {
     "CLOSE_ACTION": "$t(CLOSE)",
     "MINIMIZE_ACTION": "Minimize",

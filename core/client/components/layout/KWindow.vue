@@ -1,9 +1,10 @@
 <template>
-  <div v-if="isOpened" class="k-window" :style="windowStyle">
+  <div v-if="widget" class="k-window" :style="windowStyle">
     <!-- 
-      Tab bar
+      Window bar
      -->
      <div class="row justify-between items-center q-pb-xs">
+       <!-- Widgets tab bar -->
       <q-tabs
         v-model="widget"
         dense no-caps
@@ -15,10 +16,11 @@
           <q-tab :key="index" :name="widget.name" :icon="widget.icon" />
         </template>
       </q-tabs>
+      <!-- Window actions -->
       <k-tool-bar class="q-pa-sm" :actions="actions" color="primary" size="sm" />
     </div>
     <!--
-      Tab panes
+      Window content
       -->
     <q-tab-panels v-model="widget" animated>
       <template v-for="(widget, index) in widgets">
@@ -37,18 +39,26 @@ import path from 'path'
 export default {
   name: 'k-window',
   computed: {
+    widget: {
+      get: function () {
+        return this.window.current
+      },
+      set: function (value) {
+        this.$store.set('window.current', value)
+      }
+    },
     actions () {
       return [
         { name: 'change-mode',
           label: this.$t(this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION'),
           icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
-          handler: () => this.toggleMode()
+          handler: this.onModeChanged
         },
         {
           name: 'close-action',
           label: this.$t('KWindow.CLOSE_ACTION'),
           icon: 'las la-times',
-          handler: () => this.close()
+          handler: this.onClosed
         }
       ]
     },
@@ -74,40 +84,17 @@ export default {
   data () {
     return {
       window: this.$store.get('window'),
-      widget: '',
-      mode: 'minimized',
-      isOpened: false
+      mode: 'minimized'
     }
   },
   methods: {
-    setMode (mode) {
-      this.mode = mode
-      this.$emit('state-changed', this.mode)
+    onModeChanged () {
+      if (this.mode === 'minimized') this.mode = 'maximized'
+      else this.mode = 'minimized'
     },
-    toggleMode () {
-      this.setMode(this.mode === 'minimized' ? 'maximized' : 'minimized')
-    },
-    open (widget) {
-      this.isOpened = true
-      this.widget = widget
-      this.$emit('state-changed', this.mode)
-    },
-    close () {
-      this.isOpened = false
-      this.$emit('state-changed', 'closed')
-    },
-    toggle () {
-      if (!this.isOpened) {
-        this.open()
-      } else {
-        this.close()
-      }
-    },
-    isOpen () {
-      return this.isOpened
-    },
-    isMinimized () {
-      return (this.mode === 'minimized')
+    onClosed () {
+      const widgets = this.$store.get('window.widgets')
+      this.$store.patch('window', { current: '', widgets })
     }
   },
   created () {

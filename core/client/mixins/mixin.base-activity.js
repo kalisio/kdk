@@ -93,11 +93,26 @@ const baseActivityMixin = {
       this.$store.patch('window', { widgets: widgets })
     },
     unrgisterWidget (name) {
+      const current = this.$store.get('window.current')
       const widgets = _.filter(this.$store.get('window.widgets'), { name })
-      this.$store.patch('window', { widgets: widgets })
+      this.$store.patch('window', { current, widgets })
     },
     clearWidgets () {
-      this.$store.patch('window', { widgets: [] })
+      this.$store.patch('window', { current: '', widgets: [] })
+    },
+    openWidget (widget) {
+      const current = this.$store.get('window.current')
+      if (current !== widget) {
+        const widgets = this.$store.get('window.widgets')
+        this.$store.patch('window', { current: widget, widgets })
+      }
+    },
+    closeWidget () {
+      const current = this.$store.get('window.current')
+      if (current !== '') {
+        const widgets = this.$store.get('window.widgets')
+        this.$store.patch('window', { current: '', widgets })
+      }
     },
     clearActivity () {
       this.clearTitle()

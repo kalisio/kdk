@@ -67,17 +67,6 @@ export default {
       this.klayout.isFooterVisible = isOpened
     }
   },
-  methods: {
-    openWindow (widget) {
-      if (this.$refs.window) this.$refs.window.open(widget)
-    },
-    closeWindow () {
-      if (this.$refs.window) this.$refs.window.close()
-    },
-    toggleWindow () {
-      if (this.$refs.window) this.$refs.window.toggle()
-    }
-  },
   created () {
     // load the required components
     this.$options.components['k-opener'] = this.$load('frame/KOpener')

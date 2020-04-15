@@ -64,7 +64,7 @@ export default {
       // Add the highlight
       this.addSelectionHighlight()
       // Open the widget
-      if (this.$refs.page) this.$refs.page.openWindow('feature')
+      this.openWidget('feature')
     },
     onLayerShown (layer) {
       if (this.hasSelection) {
