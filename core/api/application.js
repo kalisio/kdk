@@ -448,7 +448,8 @@ export function kalisio () {
 
   // Set up plugins and providers
   app.configure(rest())
-  app.configure(socketio({ path: app.get('apiPath') + 'ws' }, setupSockets(app)))
+  const socketioConfig = app.get('socketio') || {}
+  app.configure(socketio(Object.assign({ path: app.get('apiPath') + 'ws' }, socketioConfig), setupSockets(app)))
   app.configure(auth)
 
   // Initialize DB
