@@ -123,6 +123,9 @@ export default {
     this.widgetHeight = '25vh'
     // Refresh the component
     this.refresh()
+  },
+  mounted () {
+    if (this.feature && this.layer && this.options) this.kActivity.centerOnSelection()
   }
 }
 </script>
