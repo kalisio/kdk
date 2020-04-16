@@ -443,7 +443,7 @@ export default {
         this.defaultLine['stroke-color'] = kCoreUtils.getPaletteFromColor(_.get(values, 'leaflet.stroke-color',
           kCoreUtils.getColorFromPalette(_.get(this.options, 'featureStyle.color'), 'red')))
         this.defaultLine['stroke-width'] = _.get(values, 'leaflet.stroke-width',
-          _.get(this.options, 'featureStyle.weight', 1))
+          _.get(this.options, 'featureStyle.weight', 3))
         this.defaultLine['stroke-opacity'] = _.get(values, 'leaflet.stroke-opacity',
           _.get(this.options, 'featureStyle.opacity', 1))
       } else {
