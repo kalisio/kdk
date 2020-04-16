@@ -13,7 +13,6 @@ export default {
                               (options.name === this.$t('mixins.timeseries.PROBED_LOCATION')))
       // Update timeseries data if required
       const { start, end } = this.getProbeTimeRange()
-      console.log(start.format(), end.format())
       if (options.probe) { // Static weacast probe
         const probe = await this.getForecastProbe(options.probe)
         if (probe) {

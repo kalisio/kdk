@@ -61,7 +61,6 @@ export default {
     this.kActivity.addMapillaryMarker()
     // Subcribe to node changes
     this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, (node) => {
-      console.log(node)
       this.kActivity.updateMapillaryLocation(node.latLon.lat, node.latLon.lon)
     })
     // Configure the viewer
