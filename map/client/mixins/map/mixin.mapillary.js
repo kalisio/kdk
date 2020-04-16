@@ -39,16 +39,11 @@ export default {
       this.map.removeLayer(this.mapillaryMarker)
       this.mapillaryMarker = null
     },
-    updateMapillaryLocation (lat, lon) {
-      this.mapillary.location = { lat: lat, lng: lon }
+    updateMapillaryMarker (lat, lon) {
       if (this.mapillaryMarker) this.mapillaryMarker.setLatLng(new L.LatLng(lat, lon))
     },
-    moveCloseToCurrentLocation () {
-      const center = this.map.getCenter()
-      this.updateMapillaryLocation(center.lat, center.lng)
-    },
-    centerOnMapillaryLocation () {
-      if (this.mapillary.location) this.center(this.mapillary.location.lng, this.mapillary.location.lat)
+    saveMapillaryLocation (lat, lon) {
+      this.mapillary.location = { lat: lat, lon: lon }
     }
   },
   created () {

@@ -30,16 +30,30 @@ export default {
     }
   },
   watch: {
-    location: function (location) {
-      if (this.mapillaryViewer) this.mapillaryViewer.moveCloseTo(location.lat, location.lng)
+    location: function () {
+      this.moveCloseTo(this.location.lat, this.location.lng)
     }
   },
   methods: {
-    onCenterOn () {
-      this.kActivity.centerOnMapillaryLocation()
+    moveCloseTo (lat, lon) {
+      this.mapillaryViewer.moveCloseTo(lat, lon)
+      .then(
+        (node) => {
+          this.onCenterOn()
+        }, 
+        (error) => {
+          this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND_CLOSE_TO') })
+        } 
+      )
     },
-    onMoveCloseTo () {
-      this.kActivity.moveCloseToCurrentLocation()
+    onCenterOn () {
+      this.mapillaryViewer.getPosition().then((position) => {
+        this.kActivity.center(position.lon, position.lat)
+      })
+    },
+    onMoveCloseToCurrentLocation () {
+      const center = this.kActivity.map.getCenter()
+      this.moveCloseTo(center.lat, center.lng)
     },
     onResized (size) {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
@@ -51,7 +65,7 @@ export default {
     // Registers the actions
     this.actions = [
       { name: 'centerOn', icon: 'las la-eye', label: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn },
-      { name: 'moveCloseTo', icon: 'las la-street-view', label: this.$t('KMapillaryWidget.MOVE_CLOSE_TO'), handler: this.onMoveCloseTo }
+      { name: 'moveCloseTo', icon: 'las la-street-view', label: this.$t('KMapillaryWidget.MOVE_CLOSE_TO'), handler: this.onMoveCloseToCurrentLocation }
     ]
   },
   mounted () {
@@ -61,19 +75,20 @@ export default {
     this.kActivity.addMapillaryMarker()
     // Subcribe to node changes
     this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, (node) => {
-      this.kActivity.updateMapillaryLocation(node.latLon.lat, node.latLon.lon)
+      this.kActivity.updateMapillaryMarker(node.latLon.lat, node.latLon.lon)
     })
     // Configure the viewer
     if (this.location) {
-      this.mapillaryViewer.moveCloseTo(this.location.lat, this.location.lng)
-      .then(() => this.kActivity.centerOnMapillaryLocation())
-      .catch(() => this.$toast({ type: 'negative', message: this.$t('KMapillaryidget.NO_IMAGE_FOUND_CLOSE_TO') }))
+      this.moveCloseTo(this.location.lat, this.location.lon)
     } else {
-      this.kActivity.moveCloseToCurrentLocation()
+      this.onMoveCloseToCurrentLocation()
     }
   },
   beforeDestroy () {
     // Remove the marker
+    this.mapillaryViewer.getPosition().then((position) => {
+      this.kActivity.saveMapillaryLocation(position.lat, position.lon)
+    })
     this.kActivity.removeMapillaryMarker()
   }
 }
