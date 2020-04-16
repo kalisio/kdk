@@ -29,8 +29,8 @@ export default {
     addMapillaryMarker () {
       const markerIcon = L.icon({
         iconUrl: './statics/mapillary-marker.png',
-        iconSize: [36, 36],
-        iconAnchor: [16, 16]
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
       })
       this.mapillaryMarker = L.marker([0, 0], { icon: markerIcon })
       this.map.addLayer(this.mapillaryMarker)
@@ -39,8 +39,12 @@ export default {
       this.map.removeLayer(this.mapillaryMarker)
       this.mapillaryMarker = null
     },
-    updateMapillaryMarker (lat, lon) {
-      this.mapillaryMarker.setLatLng(new L.LatLng(lat, lon))
+    updateMapillaryLocation (lat, lon) {
+      this.mapillary.location = { lat: lat, lng: lon }
+      if (this.mapillaryMarker) this.mapillaryMarker.setLatLng(new L.LatLng(lat, lon))
+    },
+    centerOnMapillaryLocation () {
+      if (this.mapillary.location) this.center(this.mapillary.location.lng, this.mapillary.location.lat)
     }
   },
   created () {

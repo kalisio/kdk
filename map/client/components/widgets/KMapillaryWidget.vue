@@ -1,6 +1,10 @@
 <template>
-  <div id="mapillary-container" :style="widgetStyle()">
+  <div :style="widgetStyle()">
     <q-resize-observer @resize="onResized" />
+    <div class="fit row">
+      <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
+      <div class="col" id="mapillary-container"></div>
+    </div>
   </div>
 </template>
 
@@ -20,19 +24,31 @@ export default {
       default: () => { return null }
     }
   },
+  data () {
+    return {
+      actions: []
+    }
+  },
   watch: {
     location: function (location) {
       if (this.mapillaryViewer) this.mapillaryViewer.moveCloseTo(location.lat, location.lng)
     }
   },
   methods: {
-    onResized () {
+    onCenterOn () {
+      this.kActivity.centerOnMapillaryLocation()
+    },
+    onResized (size) {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
     }
   },
   created () {
-    // override the default widget height
-    this.widgetHeight = '40vh'
+    // laod the required components
+    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    // Registers the actions
+    this.actions = [
+      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn }
+    ]
   },
   mounted () {
     // Create the viewer
@@ -41,11 +57,13 @@ export default {
     this.kActivity.addMapillaryMarker()
     // Subcribe to node changes
     this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, (node) => {
-      this.kActivity.updateMapillaryMarker(node.latLon.lat, node.latLon.lon)
-      this.kActivity.center(node.latLon.lon, node.latLon.lat)
+      this.kActivity.updateMapillaryLocation(node.latLon.lat, node.latLon.lon)
     })
     // Configure the viewer
-    if (this.location) this.mapillaryViewer.moveCloseTo(this.location.lat, this.location.lng)
+    if (this.location) {
+      this.mapillaryViewer.moveCloseTo(this.location.lat, this.location.lng)
+      this.kActivity.centerOnMapillaryLocation()
+    }
   },
   beforeDestroy () {
     // Remove the marker
