@@ -247,7 +247,7 @@ export function createWebhook (path, app, options = {}) {
         }
       }
       if (!isAllowed(payload)) throw new Forbidden('Service not allowed for webhook')
-      const service = app.getService(payload.service, payload.context)
+      const service = app.getService(payload.service, options.context || payload.context)
       if (!service) throw new BadRequest('Service could not be found')
       const args = []
       // Update/Patch/Remove
