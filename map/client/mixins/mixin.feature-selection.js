@@ -23,7 +23,7 @@ export default {
       this.hasSelection = false
     },
     centerOnSelection () {
-      this.center(..._.get(centroid(this.selection.feature), 'geometry.coordinates'))
+      if (this.hasSelection) this.center(..._.get(centroid(this.selection.feature), 'geometry.coordinates'))
     },
     addSelectionHighlight () {
       if (this.is2D()) {
