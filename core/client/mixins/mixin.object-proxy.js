@@ -11,19 +11,24 @@ const objectProxyMixin = {
       default: ''
     }
   },
+  data () {
+    return {
+      object: null
+    }
+  },
   methods: {
     getObject () {
-      return this._object
+      return this.object
     },
     getObjectId () {
-      return this._object ? this._object._id : ''
+      return this.object ? this.object._id : ''
     },
     hasPerspective (perspective) {
-      return this._object ? this._object[perspective] : false
+      return this.object ? this.object[perspective] : false
     },
     loadObject () {
       if (!this.objectId) {
-        this._object = null
+        this.object = null
         return Promise.resolve(null)
       }
       // Create a new mixin promise if required
@@ -37,7 +42,7 @@ const objectProxyMixin = {
           this.loadService()
             .get(this.objectId, params)
             .then(object => {
-              this._object = object
+              this.object = object
               resolve(object)
             })
             .catch(error => {

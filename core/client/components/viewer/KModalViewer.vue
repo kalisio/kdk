@@ -1,7 +1,7 @@
 <template>
   <k-modal ref="modal" :title="viewerTitle" :toolbar="toolbar" :buttons="[]" :route="router ? true : false" >
     <div slot="modal-content">
-      <k-view ref="view" :schema="schema" />
+      <k-view ref="view" :values="object" :schema="schema" />
     </div>
   </k-modal>
 </template>
@@ -12,11 +12,10 @@ import mixins from '../../mixins'
 export default {
   name: 'k-modal-viewer',
   mixins: [
+    mixins.baseViewer,
     mixins.service,
     mixins.objectProxy,
     mixins.schemaProxy,
-    mixins.baseViewer(['view']),
-    mixins.refsResolver(['view'])
   ],
   props: {
     router: {

@@ -1,6 +1,6 @@
 <template>
   <div class="column justify-center full-width">
-    <k-view ref="view" :schema="schema" />
+    <k-view ref="view" :values="object" :schema="schema" />
   </div>
 </template>
 
@@ -10,11 +10,10 @@ import mixins from '../../mixins'
 export default {
   name: 'k-viewer',
   mixins: [
+    mixins.baseViewer,
     mixins.service,
     mixins.objectProxy,
-    mixins.schemaProxy,
-    mixins.baseViewer(['view']),
-    mixins.refsResolver(['view'])
+    mixins.schemaProxy
   ],
   watch: {
     '$route' (to, from) {
