@@ -1,13 +1,20 @@
 <template>
   <div :style="widgetStyle()">
-    <q-resize-observer @resize="onResized" />
-    <div v-if="hasGraph" class="full-width row q-pa-xs">
-      <!-- Title -->
-      <span class="col-12 q-pl-sm">
-        {{ probedLocationName }}
-      </span>
-      <!-- Graph -->
-      <canvas class="col-12" ref="chart"></canvas>
+    <div v-if="hasGraph" class="fit row">
+      <q-resize-observer @resize="onResized" />
+      <!-- Actions -->
+      <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
+      <div class="col full-width row">
+        
+        <!-- Title -->
+        <span class="col-12 q-pl-sm">
+          {{ probedLocationName }}
+        </span>
+        <!-- Graph -->
+        <div id="chart-container" class="col-12">
+          <canvas ref="chart"></canvas>
+        </div>
+      </div>
     </div>
     <div v-else class="fit absolute-center">
       <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />
@@ -59,7 +66,8 @@ export default {
   },
   data () {
     return {
-      hasGraph: false
+      hasGraph: false,
+      actions: []
     }
   },
   methods: {
@@ -296,13 +304,15 @@ export default {
       }
 
       this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
-      this.chart.canvas.parentNode.style.width = `${this.graphWidth}px` 
-      this.chart.canvas.parentNode.style.height = `${this.graphHeight}px` 
-      this.chart.resize()
+      if (this.graphHeight && this.graphWidth) {
+        this.chart.canvas.parentNode.style.width = `${this.graphWidth}px` 
+        this.chart.canvas.parentNode.style.height = `${this.graphHeight}px` 
+        this.chart.resize()
+      }
     },
     async onResized (size) {
-      this.graphWidth = size.width
-      this.graphHeight = Math.floor(size.height * 0.95)
+      this.graphWidth =  Math.floor(size.width - 50)
+      this.graphHeight = Math.floor(size.height * 0.9)
       this.setupGraph()
     },
     async createProbedLocationLayer () {
@@ -389,9 +399,14 @@ export default {
   },
   created () {
     // Load the required components
+    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
-    // Setup the component
-    this.onResized()
+    // Registers the actions
+    this.actions = [
+      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KTimeSeriesWidget.CENTER_ON'), handler: this.onCenterOn }
+    ]
+    // Refresh the component
+    this.setupGraph()
   },
   mounted () {
     this.kActivity.$on('layer-shown', this.onShowProbedLocationLayer)
