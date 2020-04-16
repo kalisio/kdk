@@ -90,10 +90,15 @@ export default {
     onCenterOn () {
       this.kActivity.centerOnSelection()
     },
-    onCopyProperties () {
-      if (this.feature) copyToClipboard(JSON.stringify(this.feature.properties))
-      .then(() => this.$toast({ type: 'positive', message: this.$t('KFeatureWidget.PROPERTIES_COPIED') }))
-      .catch(() => this.$toast({ type: 'error', message: this.$t('KFeatureWidget.CANNOT_COPY_PROPERTIES') }))
+    async onCopyProperties () {
+      if (this.feature) {
+        try {
+          await copyToClipboard(JSON.stringify(this.feature.properties))
+          this.$toast({ type: 'positive', message: this.$t('KFeatureWidget.PROPERTIES_COPIED') })
+        } catch (_) {
+          this.$toast({ type: 'error', message: this.$t('KFeatureWidget.CANNOT_COPY_PROPERTIES') })
+        }
+      }
     },
     onExportFeature () {
       if (this.feature) {
