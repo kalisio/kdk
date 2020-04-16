@@ -43,6 +43,10 @@ export default {
       this.mapillary.location = { lat: lat, lng: lon }
       if (this.mapillaryMarker) this.mapillaryMarker.setLatLng(new L.LatLng(lat, lon))
     },
+    moveCloseToCurrentLocation () {
+      const center = this.map.getCenter()
+      this.updateMapillaryLocation(center.lat, center.lng)
+    },
     centerOnMapillaryLocation () {
       if (this.mapillary.location) this.center(this.mapillary.location.lng, this.mapillary.location.lat)
     }

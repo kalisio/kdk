@@ -38,6 +38,9 @@ export default {
     onCenterOn () {
       this.kActivity.centerOnMapillaryLocation()
     },
+    onMoveCloseTo () {
+      this.kActivity.moveCloseToCurrentLocation()
+    },
     onResized (size) {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
     }
@@ -47,7 +50,8 @@ export default {
     this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
     // Registers the actions
     this.actions = [
-      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn }
+      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn },
+      { name: 'moveCloseTo', icon: 'las la-street-view', label: this.$t('KMapillaryWidget.MOVE_CLOSE_TO'), handler: this.onMoveCloseTo }
     ]
   },
   mounted () {
@@ -57,12 +61,16 @@ export default {
     this.kActivity.addMapillaryMarker()
     // Subcribe to node changes
     this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, (node) => {
+      console.log(node)
       this.kActivity.updateMapillaryLocation(node.latLon.lat, node.latLon.lon)
     })
     // Configure the viewer
     if (this.location) {
       this.mapillaryViewer.moveCloseTo(this.location.lat, this.location.lng)
-      this.kActivity.centerOnMapillaryLocation()
+      .then(() => this.kActivity.centerOnMapillaryLocation())
+      .catch(() => this.$toast({ type: 'negative', message: this.$t('KMapillaryidget.NO_IMAGE_FOUND_CLOSE_TO') }))
+    } else {
+      this.kActivity.moveCloseToCurrentLocation()
     }
   },
   beforeDestroy () {

@@ -297,5 +297,10 @@
     "EXPORT_FEATURE": "Exporter l'object",
     "FEATURE_EXPORTED": "Objet exporté dans le fichier {{file}}",
     "CANNOT_EXPORT_FEATURE": "Impossible d'exporter l'objet"
+  },
+  "KMapillaryWidget": {
+    "CENTER_ON": "Centrer la vue sur le marqueur Mapillary",
+    "MOVE_CLOSE_TO": "Se positionner à l'image la plus proche",
+    "NO_IMAGE_FOUND_CLOSE_TO": "Aucune image trouvée à proximité de votre position"
   }
 }

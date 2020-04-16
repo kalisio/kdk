@@ -297,5 +297,10 @@
     "EXPORT_FEATURE": "Export the object",
     "FEATURE_EXPORTED": "Object exported to file {{file}}",
     "CANNOT_EXPORT_FEATURE": "Impossible to export the object. Your browser does not support this functionality"
+  },
+  "KMapillaryWidget": {
+    "CENTER_ON": "Center the view on the Mapillary marker",
+    "MOVE_CLOSE_TO": "Move to the closest image",
+    "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
   }
 }
