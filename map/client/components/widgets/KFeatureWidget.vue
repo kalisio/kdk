@@ -75,8 +75,10 @@ export default {
   },
   methods: {
     refresh () {
-      if (this.feature && this.layer && this.options) {
+      if (this.feature && this.options) {
+        // Retrieve the schema
         if (this.schema !== this.options.schema.content) this.schema = this.options.schema.content
+        // If 2D 
         if (this.kActivity.is2D()) {
           this.properties = this.kActivity.generateLeafletStyle('infobox', this.feature, this.layer, this.options)
         } else {

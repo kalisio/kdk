@@ -297,6 +297,7 @@ export default function (name) {
           }
         }
         // Check if the layr has a valid data time range to add sync action with timeline
+        /* TODO
         if (this.getLayerTimeRange(layer)) {
           actions.push({
             name: 'sync-timeline',
@@ -304,7 +305,7 @@ export default function (name) {
             icon: 'sync',
             handler: () => this.onSynchronizeTimeline(layer)
           })
-        }
+        } */
         // Store the actions and make it reactive
         this.$set(layer, 'actions', actions)
         return actions
@@ -344,6 +345,7 @@ export default function (name) {
         if (!step) step = moment.duration(this.forecastModel.interval, 's')
         return { start, end, step }
       },
+      /* TODO
       onSynchronizeTimeline (layer) {
         const timeRange = this.getLayerTimeRange(layer)
         if (!timeRange) return
@@ -356,7 +358,7 @@ export default function (name) {
             end: timeRange.end
           }
         })
-      },
+      }, */
       onLayerAdded (layer) {
         this.registerLayerActions(layer)
       },
@@ -710,29 +712,6 @@ export default function (name) {
         this.clearStoredView()
         this.restoreView()
       },
-      resetTimeline () {
-        if (typeof this.updateTimeline === 'function') {
-          // Initialize timeline based on user settings
-          const span = this.$store.get('timeline.span')
-          let offset = this.$store.get('timeline.offset')
-          const step = this.$store.get('timeline.step')
-          const ref = this.$store.get('timeline.reference')
-          // normalize offset to [0, span[
-          offset = Math.max(0, Math.min(offset, span - 1))
-          const timeline = {
-            span: moment.duration(span, 'd'),
-            offset: moment.duration(offset, 'd'),
-            step: moment.duration(step, 'm'),
-            reference: ref ? moment(ref) : moment()
-          }
-          this.updateTimeline(timeline)
-        }
-      },
-      timelineSettingChanged (newValue, oldValue) {
-        // filter out updates when no real change
-        if (newValue === oldValue) return
-        this.resetTimeline()
-      },
       async initialize () {
         // Geolocate by default if view has not been restored
         if (!this.restoreView()) {
@@ -757,8 +736,6 @@ export default function (name) {
         } catch (error) {
           logger.error(error)
         }
-
-        this.resetTimeline()
       }
     },
     beforeCreate () {
@@ -777,12 +754,6 @@ export default function (name) {
       // Whenever restore view settings are updated, update view as well
       this.$events.$on('restore-view-changed', this.updateViewSettings)
       this.$events.$on('error', this.onGeolocationError)
-
-      // reset timeline when modifying timeline settings
-      this.$events.$on('timeline-span-changed', this.timelineSettingChanged)
-      this.$events.$on('timeline-offset-changed', this.timelineSettingChanged)
-      this.$events.$on('timeline-step-changed', this.timelineSettingChanged)
-      this.$events.$on('timeline-reference-changed', this.timelineSettingChanged)
     },
     beforeDestroy () {
       this.$off('map-ready', this.onMapReady)
@@ -791,11 +762,6 @@ export default function (name) {
       this.$events.$off('user-position-changed', this.geolocate)
       this.$events.$off('restore-view-changed', this.updateViewSettings)
       this.$events.$off('error', this.onGeolocationError)
-
-      this.$events.$off('timeline-span-changed', this.timelineSettingChanged)
-      this.$events.$off('timeline-offset-changed', this.timelineSettingChanged)
-      this.$events.$off('timeline-step-changed', this.timelineSettingChanged)
-      this.$events.$off('timeline-reference-changed', this.timelineSettingChanged)
     }
   }
 }

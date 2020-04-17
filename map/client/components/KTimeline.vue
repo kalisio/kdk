@@ -73,9 +73,6 @@
         </q-btn>
       </div>
     </div>
-    <div v-if="constraint" class="row full-width justify-center q-pa-xs">
-      <q-chip icon="las la-link" :label="this.timeline.source.name" removable v-model="constraint" color="secondary" text-color="white" dense />
-    </div>
   </div>
 </template>
 
@@ -99,7 +96,7 @@ export default {
     minutes () {
       const minutes = []
       const step = this.getStep()
-      if (step > 0) {
+      if (step < 60) {
         const start = moment.utc(this.time).minute(0)
         const end = moment.utc(this.time).minute(59)
         for (let m = moment.utc(start); m.isBefore(end); m.add(step, 'm')) {
@@ -168,20 +165,12 @@ export default {
         }
         this.setTime(time)
       }
-    },
-    constraint: {
-      get: function () {
-        if (_.isNil(this.timeline.source.name)) return false
-        return true
-      },
-      set: function (value) {
-        if (!value) this.$store.patch('timeline', { source: {} })
-      }
     }
   },
   methods: {
     getStep () {
-      return this.timeline.source.step || this.timeline.step
+      // For now we do not handle step > 60 minutes
+      return Math.min(this.timeline.step, 60)
     },
     getActions (scope) {
       return _.get(this.actions, scope)
