@@ -1,13 +1,11 @@
 <template>
-  <q-toolbar v-if="appBar.title!=''">
+  <q-toolbar v-if="appBar.title!=''" class="q-pa-xs">
     <!--
-      Left drawer toggle
+      Leading action
      -->
-    <q-btn id="left-drawer-toggle" v-if="hasLeftDrawerToggle" flat :dense="$q.screen.lt.md" @click="$emit('left-drawer-toggled')">
-      <q-icon name="las la-bars" />
-    </q-btn>
+    <q-btn v-if="appBar.leading" id="app-bar-leading" :icon="appBar.leading.icon" flat :dense="$q.screen.lt.md" @click="onLeadingClicked" />
     <!--
-      Title/subtitle section
+      Title/subtitle 
      -->
     <q-toolbar-title id="app-bar-title">
       {{ appBar.title }}
@@ -16,11 +14,11 @@
       </span>
     </q-toolbar-title>
     <!--
-      Toolbar section
+      Actions
      -->
-     <k-tool-bar :actions="appBar.toolbar" color="white" :dense="$q.screen.lt.md" />
+    <k-tool-bar :actions="appBar.toolbar" color="white" :dense="$q.screen.lt.md" />
     <!--
-      Menu section
+      Overflow menu
      -->
     <k-overflow-menu :actions="appBar.menu" color="white" :dense="$q.screen.lt.md" />
   </q-toolbar>
@@ -29,32 +27,16 @@
 <script>
 export default {
   name: 'k-app-bar',
-  props: {
-    hasLeftDrawerToggle: {
-      type: Boolean,
-      required: true
-    }
-  },
   data () {
     return {
       appBar: this.$store.get('appBar')
     }
   },
-  computed: {
-    hasToolbar () {
-      return this.appBar.toolbar && this.appBar.toolbar.length > 0
-    },
-    hasMenu () {
-      return this.appBar.menu && this.appBar.menu.length > 0
-    }
-  },
   methods: {
-    onActionTriggered (action) {
-      if (this.hasMenu) this.$refs.menu.hide()
-      // If a handler is given call it
-      if (action.handler) action.handler()
-      // If a route is given activate it
-      else if (action.route) this.$router.push(action.route)
+    onLeadingClicked () {
+      const leading = this.appBar.leading
+      if (leading.handler) leading.handler()
+      else if (leading.route) this.$router.push(leading.route)
     }
   },
   created () {

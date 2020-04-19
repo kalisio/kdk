@@ -32,7 +32,7 @@ export default function init () {
   // Create the models listened by the main layout components
   // You must use the patch method on the store to update those models
   // It is generally done using the registerAction on an Activity based component
-  Store.set('appBar', { title: '', subtitle: '', toolbar: [], menu: [] })
+  Store.set('appBar', { leading: null, title: '', subtitle: '', toolbar: [], menu: [] })
   Store.set('searchBar', { field: '', pattern: '', services: [], items: [] })
   Store.set('tabBar', { tabs: [] })
   Store.set('leftDrawer', { component: '', props: {} })

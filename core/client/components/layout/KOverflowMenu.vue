@@ -1,5 +1,5 @@
 <template>
-  <q-btn v-if="actions.length > 0" id="overflow-menu-entry" icon="more_vert" :color="color" flat round :dense="dense" :disable="disable">
+  <q-btn v-if="actions.length > 0" id="overflow-menu-entry" icon="las la-ellipsis-v" :color="color" flat round :dense="dense" :disable="disable">
     <q-menu id="overflow-menu" v-model="isVisible">
       <q-list :dense="dense">
         <template v-for="action in actions">
