@@ -10,13 +10,13 @@
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window ref="window" />
     </q-page-sticky>
-    <q-page-sticky v-if="hasLeftDrawerOpener" position="left">
+    <q-page-sticky v-if="hasLeftDrawerOpener && hasLeftDrawerComponent" position="left">
       <k-opener v-model="isLeftDrawerOpened" position="left"  />
     </q-page-sticky>
-    <q-page-sticky v-if="hasRightDrawerOpener" position="right">
+    <q-page-sticky v-if="hasRightDrawerOpener && hasRightDrawerComponent" position="right">
       <k-opener  v-model="isRightDrawerOpened" position="right" />
     </q-page-sticky>
-    <q-page-sticky v-if="hasFooterOpened" position="bottom">
+    <q-page-sticky v-if="hasFooterOpened && hasFooterComponent" position="bottom">
       <k-opener  v-model="isFooterOpened" position="bottom" />
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
@@ -40,10 +40,13 @@ export default {
       widgetOffset: [0 ,0],
       fabOffset: [16, 16],
       hasLeftDrawerOpener: false,
+      hasLeftDrawerComponent: this.klayout.leftDrawer.component ? true : false,
       isLeftDrawerOpened: this.klayout.isLeftDrawerVisible,
       hasRightDrawerOpener: false,
+      hasRightDrawerComponent: this.klayout.rightDrawer.component ? true : false,
       isRightDrawerOpened: this.klayout.isRightDrawerVisible,
       hasFooterOpened: false,
+      hasFooterComponent: this.klayout.footer.component ? true : false,
       isFooterOpened: this.klayout.isFooterVisible
     }
   },
@@ -51,11 +54,17 @@ export default {
     'klayout.isLeftDrawerVisible': function (isVisible) {
       this.isLeftDrawerOpened = isVisible
     },
+    'klayout.leftDrawer.component': function (component) {
+      this.hasLeftDrawerComponent = component ? true : false
+    },
     isLeftDrawerOpened: function (isOpened) {
       this.klayout.isLeftDrawerVisible = isOpened
     },
     'klayout.isRightDrawerVisible': function (isVisible) {
       this.isRightDrawerOpened = isVisible
+    },
+    'klayout.rightDrawer.component': function (component) {
+      this.hasRightDrawerComponent = component ? true : false
     },
     isRightDrawerOpened: function (isOpened) {
       this.klayout.isRightDrawerVisible = isOpened
@@ -63,6 +72,9 @@ export default {
     'klayout.isFooterVisible': function (isVisible) {
       this.isRightDrawerOpened = isVisible
     },
+    'klayout.footer.component': function (component) {
+      this.hashasFooterComponent = component ? true : false
+    },    
     isFooterOpened: function (isOpened) {
       this.klayout.isFooterVisible = isOpened
     }
