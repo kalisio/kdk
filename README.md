@@ -1,5 +1,6 @@
 [![KDK](https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-logo-black-512x168.png)](https://kalisio.github.io/kdk/)
 
+[![Latest Release](https://img.shields.io/github/v/tag/kalisio/kdk?sort=semver&label=latest)](https://github.com/kalisio/kdk/releases)
 [![Build Status](https://travis-ci.org/kalisio/kdk.png?branch=master)](https://travis-ci.org/kalisio/kdk)
 [![Code Climate](https://codeclimate.com/github/kalisio/kdk/badges/gpa.svg)](https://codeclimate.com/github/kalisio/kdk)
 [![Test Coverage](https://codeclimate.com/github/kalisio/kdk/badges/coverage.svg)](https://codeclimate.com/github/kalisio/kdk/coverage)

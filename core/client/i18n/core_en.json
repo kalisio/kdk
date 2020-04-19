@@ -50,7 +50,8 @@
     "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file",
     "CANNOT_REMOVE_USER": "Your are not allowed to remove this accound.<br>Please remove the organisations owned by <b>{{user}}</b> first.",
     "CANNOT_REMOVE_ORGANISATION": "You are not allowed to remove this organisation.<br>Please remove all the groups first.",
-    "CANNOT_REMOVE_LAST_OWNER": "You are not allowed to remove the last owner of <b>{{resource}}</b>"
+    "CANNOT_REMOVE_LAST_OWNER": "You are not allowed to remove the last owner of <b>{{resource}}</b>",
+    "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {{provider}}, in order to switch to a local account reset your password first"
   },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
@@ -373,5 +374,103 @@
     "BLOCK_ACTION": "Delete",
     "DIALOG_TITLE": "Are you sure you want to delete {{organisation}} ?",
     "DIALOG_HELPER": "Enter the organisation name to confirm the deletion" 
+  },
+  "KChangeIdentity": {
+    "ACTION": "Resend change email",
+    "BACK_LINK": "Go back",
+    "VERIFICATION_TITLE": "Changes verification",
+    "VERIFICATION_MESSAGE": "Please wait while applying your changes",
+    "SUCCESS_TITLE": "Changes applied",
+    "SUCCESS_MESSAGE": "Your email address {{email}} has been changed",
+    "ERROR_TITLE": "Changes error",
+    "ERROR_MESSAGE_ALREADY_APPLIED": "Your changes have already been applied",
+    "ERROR_MESSAGE_BAD_PARAMS": "Your changes have already been verified or your account has been removed",
+    "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to apply your changes has expired, please resend the changes email with the link below",
+    "ERROR_MESSAGE_DEFAULT": "Your changes have not been applied"
+  },
+  "KChangePassword": {
+    "TITLE": "Change your password ?",
+    "MESSAGE": "Please enter your old and new passwords to proceed",
+    "ACTION": "Apply",
+    "BACK_LINK": "Go back",
+    "OLD_PASSWORD_FIELD_HELPER": "Enter your old password",
+    "PASSWORD_FIELD_HELPER": "Enter your new password",
+    "CONFIRM_PASSWORD_FIELD_HELPER": "Confirm your new password",
+    "SUCCESS_MESSAGE": "Password changed, you will receive a confirmation email",
+    "ERROR_MESSAGE_BAD_PARAMS": "Your password has already been changed or your account has been removed",
+    "ERROR_MESSAGE_DEFAULT": "Error while trying to change password, please try again later"
+  },
+  "KResendVerifySignup": {
+    "TITLE": "Resend verification email",
+    "MESSAGE": "We shall send you the signup verification email again",
+    "ACTION": "Send",
+    "EMAIL_FIELD_HELPER": "Enter your email address",
+    "SUCCESS_MESSAGE": "Email sent, please check your inbox",
+    "ERROR_MESSAGE_NOTHING_TO_VERIFY": "Your email address has already been verified",
+    "ERROR_MESSAGE_DEFAULT": "Error while sending email, please check the address and send it again or try again later"
+  },
+  "KResetPassword": {
+    "TITLE": "Reset your password ?",
+    "MESSAGE": "Please enter your new password to proceed",
+    "ACTION": "Reset",
+    "RESEND_LINK": "Resend reset password email",
+    "LOG_IN_LINK": "Log in ?",
+    "PASSWORD_FIELD_HELPER": "Enter your new password",
+    "CONFIRM_PASSWORD_FIELD_HELPER": "Confirm your new password",
+    "SUCCESS_MESSAGE": "Password reset, you will receive a confirmation email",
+    "ERROR_MESSAGE_BAD_PARAMS": "Your password has already been reset or your account has been removed",
+    "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to reset has expired, please resend the reset password email with the link below",
+    "ERROR_MESSAGE_DEFAULT": "Error while trying to reset password, please try again later"
+  },
+  "KSendChangeIdentity": {
+    "TITLE": "Change your email address ?",
+    "MESSAGE": "Please enter your password and new email address to proceed",
+    "ACTION": "Send",
+    "PASSWORD_FIELD_HELPER": "Enter your password",
+    "EMAIL_FIELD_HELPER": "Enter your new email address",
+    "SUCCESS_MESSAGE": "Email sent to your new email account, please check your inbox",
+    "ERROR_MESSAGE_BAD_PASSWORD": "Please enter your correct password and try again",
+    "ERROR_MESSAGE_BAD_PARAMS": "Your identity has already been changed or your account has been removed",
+    "ERROR_MESSAGE_DEFAULT": "Error while sending email, please try again later"
+  }, 
+  "KSendResetPassword": {
+    "TITLE": "Reset my password ?",
+    "MESSAGE": "We shall email you instructions on how to reset your password",
+    "ACTION": "Send",
+    "EMAIL_FIELD_HELPER": "Enter your email address",
+    "SUCCESS_MESSAGE": "Email sent, please check your inbox",
+    "ERROR_MESSAGE_IS_VERIFIED": "Check your inbox and verify your email address first",
+    "ERROR_MESSAGE_DEFAULT": "Error while sending email, please check the address and send it again or try again later"
+  },
+  "KSignupAlert": {
+    "TITLE": "Your email address has not been verified, please check your mailbox",
+    "HELP_LABEL": "Why should I verify my email address ?",
+    "HELP_TEXT": "Verifying your email address improves the security of your account. Once you have verified your email address, both your password and access to your email account are required in order to make any changes to your account credentials, such as your password and contact email address. This helps further protect your account from being stolen by a potential phisher.",
+    "EMAIL_LABEL": "I never received the verification email, what should I do ?",
+    "EMAIL_TEXT": "If you do not receive your signup verification email and you are running a Spam filter, check and make sure the message has not been filtered as spam. Please try adding <b>email-notifications@kalisio.com</b> to your contacts or trusted senders list within your email client and attempt to re-verify your email address. You can also click the button below and we'll send you the email again.",
+    "ACTION": "Resend verification email"
+  },
+  "KVerifySignup": {
+    "TITLE": "Email adress verification",
+    "MESSAGE": "Please wait while verifying your email address",
+    "RESEND_LINK": "Resend verification email",
+    "BACK_LINK": "Log in or back home",
+    "SUCCESS_TITLE": "Email verified",
+    "SUCCESS_MESSAGE": "Your email address {{email}} has been verified",
+    "ERROR_TITLE": "Email address verification error",
+    "ERROR_MESSAGE_NOTHING_TO_VERIFY": "Your email address has already been verified",
+    "ERROR_MESSAGE_BAD_PARAMS": "Your email address has already been verified or your account has been removed",
+    "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to verify your email address has expired, please resend the verification email with the link below",
+    "ERROR_MESSAGE_DEFAULT": "Your email address has not been verified"
+  },
+  "KDeviceCard": {
+    "LAST_ACTIVITY": "Last activity",
+    "SERIAL_NUMBER": "Serial number",
+    "UNLINK_LABEL": "Unlink",
+    "UNLINK_DIALOG_TITLE": "Unlink device {{description}} ?",
+    "UNLINK_DIALOG_MESSAGE": "Are you sure you want to unlink device <b>{{description}}</b> from your account ?<br><br>You will not be able to receive notifications until you reconnect using the device."
+  },
+  "KAccountDevices": {
+    "DEVICES_USED": "Check when specific devices has been used to access your account below"
   }
 }
