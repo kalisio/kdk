@@ -1,8 +1,11 @@
 import L from 'leaflet'
 import _ from 'lodash'
+import moment from 'moment'
+import { buildUrl } from '../../../core/common'
 import { tile2key, tileSetContainsParent } from './utils'
+import { fetchGeoJson } from '../utils'
 
-const TiledFeatureLayer = L.GridLayer.extend({
+const TiledMapillaryLayer = L.GridLayer.extend({
   initialize (options) {
     L.setOptions(this, options)
     // register event callbacks
@@ -45,56 +48,20 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
     if (!skipTile) {
       // tile.style.outline = '1px solid red'
-
       const bounds = this._tileCoordsToBounds(coords)
-      const reqBBox = [bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast()]
-      const reqCenter = [
-        0.5 * (reqBBox[0] + reqBBox[2]),
-        0.5 * (reqBBox[1] + reqBBox[3])
-      ]
-      // Convert distance from degrees to meters
-      const earthRadius = 6356752.31424518
-      const maxDistance = (reqBBox[3] - reqBBox[1]) * (Math.PI * earthRadius) / 180
-
-      let baseQuery = {
-        geometry: {
-          $geoIntersects: {
-            $geometry: {
-              type: 'Polygon',
-              coordinates: [ // BBox as a polygon
-                [[reqBBox[1], reqBBox[0]], [reqBBox[3], reqBBox[0]],
-                  [reqBBox[3], reqBBox[2]], [reqBBox[1], reqBBox[2]], [reqBBox[1], reqBBox[0]]] // Closing point
-              ]
-            }
-          }
-        }
-      }
-      // Using async/await seems to cause problems in Leaflet, we use promises instead
-      const promises = []
-      // Request probes first if any
-      if (this.layer.probeService) {
-        promises.push(this.activity.getProbeFeatures(_.merge({ baseQuery }, this.layer)))
-      }
-      // Aggregation requires a specific operator
-      if (this.layer.variables) {
-        baseQuery = {
-          $geoNear: {
-            near: { type: 'Point', coordinates: [reqCenter[1], reqCenter[0]] },
-            maxDistance,
-            distanceField: 'distance',
-            spherical: true,
-            query: baseQuery
-          }
-        }
-      }
-      promises.push(this.activity.getFeatures(_.merge({ baseQuery }, this.layer)))
-      Promise.all(promises).then(data => {
-        if (this.layer.probeService) {
-          tile.probes = (data[0].features.length ? data[0] : null)
-          tile.features = (data[1].features.length ? data[1] : null)
-        } else {
-          tile.features = (data[0].features.length ? data[0] : null)
-        }
+      const endTime = this.activity.currentTime || moment.utc()
+      const startTime = (_.has(this.layer, 'queryFrom') ?
+        endTime.clone().add(moment.duration(_.get(this.layer, 'queryFrom'))) :
+        endTime.clone().subtract(1, 'years')) // 1 year back by default
+      const request = buildUrl(this.options.url + '/v3/sequences', { 
+        bbox: `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+        client_id: this.activity.mapillaryClientID,
+        start_time: startTime.format(),
+        end_time: endTime.format()
+      })
+      
+      fetchGeoJson(request).then(data => {
+        tile.features = (data.features.length ? data : null)
         done(null, tile)
       })
         .catch(error => {
@@ -109,24 +76,21 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   async onTileLoad (event) {
-    const probes = event.tile.probes
     const features = event.tile.features
-    if (!probes && !features) return
+    if (!features) return
 
     // add tile to loaded tiles set
     const tilekey = tile2key(event.coords)
     this.loadedTiles.add(tilekey)
 
-    // Update realtime layer with probe first then (measure) features
-    if (probes) this.activity.updateLayer(this.layer.name, probes)
-    if (features) this.activity.updateLayer(this.layer.name, features)
+    // Update realtime layer with features
+    this.activity.updateLayer(this.layer.name, features)
   },
 
   onTileUnload (event) {
-    const probes = event.tile.probes
     const features = event.tile.features
-    if (!probes && !features) return
-
+    if (!features) return
+    
     const tilekey = tile2key(event.coords)
     // If tile not available in tile cache then by default we'd like to clear it
     let unload = !this.loadedTiles.has(tilekey)
@@ -144,9 +108,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     if (unload) {
       // ok, we can unload geosjon, and remove tile from loaded tile set
       this.loadedTiles.delete(tilekey)
-
-      if (probes) this.activity.updateLayer(this.layer.name, probes, true)
-      if (features) this.activity.updateLayer(this.layer.name, features, true)
+      this.activity.updateLayer(this.layer.name, features, true)
     }
   },
 
@@ -162,4 +124,4 @@ const TiledFeatureLayer = L.GridLayer.extend({
   }
 })
 
-export { TiledFeatureLayer }
+export { TiledMapillaryLayer }

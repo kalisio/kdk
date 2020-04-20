@@ -1,6 +1,7 @@
 import L from 'leaflet'
 import logger from 'loglevel'
 import * as Mapillary from 'mapillary-js'
+import { TiledMapillaryLayer } from '../../leaflet/TiledMapillaryLayer'
 
 export default {
   data () {
@@ -11,19 +12,31 @@ export default {
     }
   },
   methods: {
-    createLeafletMapillaryCorverage (options) {
+    async createLeafletMapillaryCoverageLayer (options) {
       const leafletOptions = options.leaflet || options
-      // Check for valid types
-      if (leafletOptions.type !== 'vectorGrid.protobuf') return
-      const layer = this.createLeafletLayer(options)
-      if (leafletOptions.interactive) {
-        layer.on('click', (event) => {
-          if (event.latlng) {
-            this.openWidget('mapillary')
-            this.mapillary.location = event.latlng
-          }
-        })
+      // Check for valid type
+      if (leafletOptions.type !== 'mapillary') return
+      if (typeof this.createLeafletGeoJsonLayer !== 'function') {
+        throw new Error('Mapillary layer needs support of GeoJson layer to work correctly')
       }
+      // Based on real-time geojson to be created first
+      let layer = await this.createLeafletGeoJsonLayer(_.merge(options, {
+        featureId: 'key',
+        leaflet: {
+          type: 'geoJson',
+          realtime: true,
+          removeMissing: false,
+          cluster: false
+        }
+      }))
+      // Then tiled layer
+      const tiledLayer = new TiledMapillaryLayer(leafletOptions)
+      tiledLayer.setup(this, options)
+      layer.tiledLayer = tiledLayer
+      tiledLayer.addTo(this.map)
+      layer.on('add', () => tiledLayer.addTo(this.map))
+      layer.on('remove', () => tiledLayer.removeFrom(this.map))
+      this.mapillaryLayer = options
       return layer
     },
     addMapillaryMarker () {
@@ -44,6 +57,23 @@ export default {
     },
     saveMapillaryLocation (lat, lon) {
       this.mapillary.location = { lat: lat, lon: lon }
+    },
+    onMapillaryFeatureClicked (layer, event) {
+      // Not yet initialized or not expected layer ?
+      if (!this.mapillaryLayer || (this.mapillaryLayer.name !== layer.name)) return
+      const leafletLayer = event && event.target
+      if (event.latlng) {
+        this.openWidget('mapillary')
+        this.mapillary.location = event.latlng
+      }
+    },
+    onCurrentTimeChangedMapillaryCoverage (time) {
+      // Not yet initialized ?
+      if (!this.mapillaryLayer) return
+      // Retrieve the layer
+      const layer = this.getLeafletLayerByName(this.mapillaryLayer.name)
+      // Then update tiles
+      if (layer.tiledLayer) layer.tiledLayer.redraw()
     }
   },
   created () {
@@ -62,6 +92,14 @@ export default {
       return
     }
     // Register the mapillary coverage
-    this.registerLeafletConstructor(this.createLeafletMapillaryCorverage)
+    this.registerLeafletConstructor(this.createLeafletMapillaryCoverageLayer)
+  },
+  mounted () {
+    this.$on('click', this.onMapillaryFeatureClicked)
+    this.$on('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)
+  },
+  beforeDestroy () {
+    this.$off('click', this.onMapillaryFeatureClicked)
+    this.$off('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)
   }
 }
