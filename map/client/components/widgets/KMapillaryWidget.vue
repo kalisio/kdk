@@ -10,6 +10,8 @@
 
 <script>
 import _ from 'lodash'
+import moment from 'moment'
+import logger from 'loglevel'
 import * as Mapillary from 'mapillary-js'
 import 'mapillary-js/dist/mapillary.min.css'
 import { baseWidget } from '../../../../core/client/mixins'
@@ -35,21 +37,29 @@ export default {
     }
   },
   methods: {
-    moveCloseTo (lat, lon) {
-      this.mapillaryViewer.moveCloseTo(lat, lon)
-      .then(
-        (node) => {
-          this.onCenterOn()
-        }, 
-        (error) => {
-          this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND_CLOSE_TO') })
-        } 
-      )
+    async moveCloseTo (lat, lon) {
+      try {
+        const node = await this.mapillaryViewer.moveCloseTo(lat, lon)
+        await this.onCenterOn()
+      } catch (error) {
+        logger.error(error)
+        this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND_CLOSE_TO') })
+      }
     },
-    onCenterOn () {
-      this.mapillaryViewer.getPosition().then((position) => {
-        this.kActivity.center(position.lon, position.lat)
-      })
+    setupViewerFilters () {
+      // Not yet initialized ?
+      if (!this.mapillaryViewer || !this.kActivity.mapillaryLayer) return
+      // Update viewer filters
+      const endTime = this.kActivity.currentTime || moment.utc()
+      const startTime = endTime.clone().add(moment.duration(_.get(this.kActivity.mapillaryLayer, 'queryFrom', 'P-1Y'))) // 1 year back by default
+      this.mapillaryViewer.setFilter(['all',
+        ['>=', 'capturedAt', startTime.valueOf()],
+        ['<=', 'capturedAt', endTime.valueOf()],
+      ])
+    },
+    async onCenterOn () {
+      const position = await this.mapillaryViewer.getPosition()
+      this.kActivity.center(position.lon, position.lat)
     },
     onMoveCloseToCurrentLocation () {
       const center = this.kActivity.map.getCenter()
@@ -57,6 +67,12 @@ export default {
     },
     onResized (size) {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
+    },
+    onNodeChanged (node) {
+      this.kActivity.updateMapillaryMarker(node.latLon.lat, node.latLon.lon)
+    },
+    onCurrentTimeChanged (time) {
+      this.setupViewerFilters()
     }
   },
   created () {
@@ -71,25 +87,27 @@ export default {
   mounted () {
     // Create the viewer
     this.mapillaryViewer = new Mapillary.Viewer('mapillary-container', this.kActivity.mapillaryClientID)
+    this.setupViewerFilters()
     // Add the marker to the map
     this.kActivity.addMapillaryMarker()
-    // Subcribe to node changes
-    this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, (node) => {
-      this.kActivity.updateMapillaryMarker(node.latLon.lat, node.latLon.lon)
-    })
+    // Subcribe to changes
+    this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, this.onNodeChanged)
+    this.kActivity.$on('current-time-changed', this.onCurrentTimeChanged)
     // Configure the viewer
     if (this.location) {
-      this.moveCloseTo(this.location.lat, this.location.lon)
+      this.moveCloseTo(this.location.lat, this.location.lng)
     } else {
       this.onMoveCloseToCurrentLocation()
     }
   },
-  beforeDestroy () {
+  async beforeDestroy () {
+    this.mapillaryViewer.off(Mapillary.Viewer.nodechanged, this.onNodeChanged)
+    this.kActivity.$off('current-time-changed', this.onCurrentTimeChanged)
     // Remove the marker
-    this.mapillaryViewer.getPosition().then((position) => {
-      this.kActivity.saveMapillaryLocation(position.lat, position.lon)
-    })
     this.kActivity.removeMapillaryMarker()
+    // And save position
+    const position = await this.mapillaryViewer.getPosition()
+    this.kActivity.saveMapillaryLocation(position.lat, position.lon)
   }
 }
 </script>

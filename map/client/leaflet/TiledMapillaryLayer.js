@@ -50,9 +50,7 @@ const TiledMapillaryLayer = L.GridLayer.extend({
       // tile.style.outline = '1px solid red'
       const bounds = this._tileCoordsToBounds(coords)
       const endTime = this.activity.currentTime || moment.utc()
-      const startTime = (_.has(this.layer, 'queryFrom') ?
-        endTime.clone().add(moment.duration(_.get(this.layer, 'queryFrom'))) :
-        endTime.clone().subtract(1, 'years')) // 1 year back by default
+      const startTime = endTime.clone().add(moment.duration(_.get(this.layer, 'queryFrom', 'P-1Y'))) // 1 year back by default
       const request = buildUrl(this.options.url + '/v3/sequences', { 
         bbox: `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
         client_id: this.activity.mapillaryClientID,
