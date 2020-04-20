@@ -27,12 +27,22 @@ export default {
       }
       // Open the widget
       this.openWidget('time-series')
+    },
+    async onTimeSeriesSelectionChanged () {
+      if (this.selection.feature && this.selection.feature.geometry.type === 'Point') {
+        const coordinates = this.selection.feature.geometry.coordinates
+        const { start, end } = this.getProbeTimeRange()
+        this.getForecastForLocation(coordinates[0], coordinates[1], start, end)
+        this.openWidget('time-series')
+      }
     }
   },
   mounted () {
     this.$on('click', this.onProbeClicked)
+    this.$on('selection-changed', this.onTimeSeriesSelectionChanged)
   },
   beforeDestroy () {
     this.$off('click', this.onProbeClicked)
+    this.$off('selection-changed', this.onTimeSeriesSelectionChanged)
   }
 }

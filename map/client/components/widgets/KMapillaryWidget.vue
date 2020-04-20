@@ -95,7 +95,7 @@ export default {
     this.kActivity.$on('current-time-changed', this.onCurrentTimeChanged)
     // Configure the viewer
     if (this.location) {
-      this.moveCloseTo(this.location.lat, this.location.lng)
+      this.moveCloseTo(this.location.lat, this.location.lon)
     } else {
       this.onMoveCloseToCurrentLocation()
     }

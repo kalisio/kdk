@@ -1,4 +1,5 @@
 import L from 'leaflet'
+import _ from 'lodash'
 import logger from 'loglevel'
 import * as Mapillary from 'mapillary-js'
 import { TiledMapillaryLayer } from '../../leaflet/TiledMapillaryLayer'
@@ -20,7 +21,7 @@ export default {
         throw new Error('Mapillary layer needs support of GeoJson layer to work correctly')
       }
       // Based on real-time geojson to be created first
-      let layer = await this.createLeafletGeoJsonLayer(_.merge(options, {
+      const layer = await this.createLeafletGeoJsonLayer(_.merge(options, {
         featureId: 'key',
         leaflet: {
           type: 'geoJson',
@@ -61,10 +62,15 @@ export default {
     onMapillaryFeatureClicked (layer, event) {
       // Not yet initialized or not expected layer ?
       if (!this.mapillaryLayer || (this.mapillaryLayer.name !== layer.name)) return
-      const leafletLayer = event && event.target
       if (event.latlng) {
         this.openWidget('mapillary')
         this.mapillary.location = event.latlng
+      }
+    },
+    onMapillarySelectionChanged () {
+      if (this.selection.feature && this.selection.feature.geometry.type === 'Point') {
+        const coordinates = this.selection.feature.geometry.coordinates
+        this.mapillary.location = { lat: coordinates[1], lon: coordinates[0] }
       }
     },
     onCurrentTimeChangedMapillaryCoverage (time) {
@@ -96,10 +102,12 @@ export default {
   },
   mounted () {
     this.$on('click', this.onMapillaryFeatureClicked)
+    this.$on('selection-changed', this.onMapillarySelectionChanged)
     this.$on('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)
   },
   beforeDestroy () {
     this.$off('click', this.onMapillaryFeatureClicked)
+    this.$off('selection-changed', this.onMapillarySelectionChanged)
     this.$off('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)
   }
 }

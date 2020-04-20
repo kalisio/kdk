@@ -641,6 +641,7 @@ export default function (name) {
           this.unsetCursor('probe-cursor')
           const { start, end } = this.getProbeTimeRange()
           await this.getForecastForLocation(event.latlng.lng, event.latlng.lat, start, end)
+          this.openWidget('time-series')
         }
         this.setCursor('probe-cursor')
         this.$once('click', probe)

@@ -126,8 +126,6 @@ export default {
       { name: 'copyProperties', icon: 'las la-clipboard', label: this.$t('KFeatureWidget.COPY_PROPERTIES'), handler: this.onCopyProperties }, 
       { name: 'exportFeature', icon: 'img:statics/json-icon.svg', label: this.$t('KFeatureWidget.EXPORT_FEATURE'), handler: this.onExportFeature }, 
     ]
-    // override the default widget height
-    this.widgetHeight = '25vh'
     // Refresh the component
     this.refresh()
   },
