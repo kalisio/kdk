@@ -283,6 +283,7 @@ export default {
     background: #ffffff
     border: solid 1px lightgrey
     border-radius: 5px
+    width: 60vw
   }
   .k-timeline:hover {
     border: solid 1px $primary
