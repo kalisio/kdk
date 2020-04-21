@@ -33,11 +33,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
   createTile (coords, done) {
     const tile = document.createElement('div')
-
-    // check we need to load the tile
-    // we don't have to load it when a tile at an upper zoom level encompassing the tile is already loaded
-    // TODO: we may also check if we have all the sub tiles loaded too ...
-    let skipTile = tileSetContainsParent(this.loadedTiles, coords)
+    let skipTile = false
 
     // Check for zoom level range first
     if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
@@ -112,6 +108,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const probes = event.tile.probes
     const features = event.tile.features
     if (!probes && !features) return
+
+    // Check for zoom level range first as user might have zoomed during loading
+    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) return
+    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) return
 
     // add tile to loaded tiles set
     const tilekey = tile2key(event.coords)
