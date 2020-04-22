@@ -3,22 +3,18 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
-import { tile2key, tileSetContainsParent } from './utils'
+// import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options) {
     L.Util.setOptions(this, options)
 
-    /**/
-    this.weacastApi = options.weacastApi
-    /**/
-
     // is user currently dragging the map ?
     this.userIsDragging = false
-    // number of tiles currently being loaded
-    this.pendingTiles = 0
+    // number of pending wind fetches
+    this.pendingFetchs = 0
     // set of loaded tiles
-    this.loadedTiles = new Set()
+    // this.loadedTiles = new Set()
 
     this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
@@ -54,25 +50,16 @@ const TiledWindLayer = L.GridLayer.extend({
     // hack into velocity layer internals ...
     // override velocity layer's onDrawLayer to support our tiled management
     this.velocityLayer.onDrawLayer = (overlay, params) => {
-      if (!this.velocityLayer._windy) {
-        this.velocityLayer._initWindy(this.velocityLayer)
-
-        // disable some velocity layer event handling since we override some of it
-        // no need to stop animation when panning
-        this._map.off('dragstart', this.velocityLayer._windy.stop)
-        this._map.off('dragend', this.velocityLayer._clearAndRestart)
-        // this._map.off('zoomstart', this.velocityLayer._windy.stop)
-        // this._map.off('zoomend', this.velocityLayer._clearAndRestart)
-        // this._map.off('resize', this.velocityLayer._clearWind)
-
-        // use a timeout here because _startWindy is heavy and would block a lot
-        setTimeout(() => { this.velocityLayer._startWindy() }, 400)
-      } else {
-        if (this.pendingTiles === 0 && !this.userIsDragging) {
-          // clear and restart animation will do just fine
+      if (this.velocityLayer._windy) {
+        // we delay the restart of the wind computation as much as we can
+        // for a restart to happen, we want to make sure that
+        //  - no wind tile are currently being loaded
+        //  - user is not dragging the map
+        // this way we reduce the number of restarts
+        if (this.pendingFetchs === 0 && !this.userIsDragging) {
           this.velocityLayer._clearAndRestart()
         } else {
-          // otherwise just clear, last pending tile will restart the wind
+          // just clear, last pending fetch will restart the wind (see createTile promise.finally() block)
           this.velocityLayer._clearWind()
         }
       }
@@ -93,48 +80,30 @@ const TiledWindLayer = L.GridLayer.extend({
       },
       data: []
     }
-
-    // register event callbacks
-    this.on('tileloadstart', (event) => {
-      ++this.pendingTiles
-    })
-    this.on('tileload', (event) => {
-      this.onTileLoad(event)
-      this.decrementPendingTiles()
-    })
-    this.on('tileerror', (event) => {
-      this.decrementPendingTiles()
-    })
   },
 
   getEvents () {
     const events = L.GridLayer.prototype.getEvents.call(this)
 
+    // listen to 'dragstart' and 'dragend' to know when user is dragging the map
+    // this is used to decide when wind simulation can be restarted
+
     const onDragStart = events.dragstart
     events.dragstart = (event) => {
       this.userIsDragging = true
-      if (onDragStart) {
-        onDragStart.call(this, event)
-      }
+      if (onDragStart) onDragStart.call(this, event)
     }
 
     const onDragEnd = events.dragend
     events.dragend = (event) => {
       this.userIsDragging = false
-      if (onDragEnd) {
-        onDragEnd.call(this, event)
-      }
+      if (onDragEnd) onDragEnd.call(this, event)
     }
 
     return events
   },
 
   setTime (time) {
-    /**/
-    this.globalWindOutOfDate = true
-    this.globalWindTime = time
-    /**/
-
     if (typeof this.uSource.setTime === 'function') {
       this.uSource.setTime(time)
     }
@@ -144,11 +113,6 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   setModel (model) {
-    /**/
-    this.globalWindOutOfDate = true
-    this.globalWindModel = model
-    /**/
-
     const modelHeader = {
       nx: model.size[0],
       ny: model.size[1],
@@ -161,8 +125,12 @@ const TiledWindLayer = L.GridLayer.extend({
     Object.assign(this.vFlow.header, modelHeader)
 
     // generate corresponding _empty_ array
-    this.uFlow.data = Array.from({ length: modelHeader.nx * modelHeader.ny }, (v, i) => undefined)
-    this.vFlow.data = Array.from({ length: modelHeader.nx * modelHeader.ny }, (v, i) => undefined)
+    const size = modelHeader.nx * modelHeader.ny
+    this.uFlow.data = new Array(size)
+    this.vFlow.data = new Array(size)
+    for (let i = 0; i < size; ++i) {
+      this.uFlow.data[i] = this.vFlow.data[i] = 0
+    }
     this.velocityLayer.setData([this.uFlow, this.vFlow])
 
     if (typeof this.uSource.setModel === 'function') {
@@ -180,11 +148,19 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
-    this.loadedTiles.clear()
-    this.pendingTiles = 0
+    // this.loadedTiles.clear()
 
     L.GridLayer.prototype.onAdd.call(this, map)
     map.addLayer(this.velocityLayer)
+
+    this.velocityLayer._initWindy(this.velocityLayer)
+    // disable some velocity layer event handling since we override some of it
+    // no need to stop animation when panning
+    this._map.off('dragstart', this.velocityLayer._windy.stop)
+    this._map.off('dragend', this.velocityLayer._clearAndRestart)
+    // this._map.off('zoomstart', this.velocityLayer._windy.stop)
+    // this._map.off('zoomend', this.velocityLayer._clearAndRestart)
+    // this._map.off('resize', this.velocityLayer._clearWind)
   },
 
   onRemove (map) {
@@ -195,9 +171,8 @@ const TiledWindLayer = L.GridLayer.extend({
   updateWindArray (grid, element, reqBBox, debug) {
     const gridres = grid.getResolution()
     const windres = [element.header.dy, element.header.dx]
-    if (gridres[0] !== windres[0] || gridres[1] !== windres[1]) {
-      console.log('resolution mismatch!')
-    }
+    // make sure resolution match
+    if (gridres[0] !== windres[0] || gridres[1] !== windres[1]) return
 
     const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(reqBBox)
     const startlat = grid.getLat(iminlat)
@@ -207,11 +182,6 @@ const TiledWindLayer = L.GridLayer.extend({
 
     if (istartx < 0) istartx += element.header.nx
 
-    /**/
-    // let minDiff = 40
-    // let maxDiff = 0
-    /**/
-
     for (let ilon = iminlon; ilon <= imaxlon; ++ilon) {
       for (let ilat = iminlat; ilat <= imaxlat; ++ilat) {
         const val = grid.getValue(ilat, ilon)
@@ -219,97 +189,11 @@ const TiledWindLayer = L.GridLayer.extend({
         const iy = (istarty - (ilat - iminlat)) % element.header.ny
         const idx = ix + iy * element.header.nx
         element.data[idx] = val
-
-        /**/
-        // if (element === this.vFlow) {
-        //   const expectedValue = this.globalVWind[idx]
-        //   const diff = Math.abs(expectedValue - val)
-        //   minDiff = Math.min(minDiff, diff)
-        //   maxDiff = Math.max(maxDiff, diff)
-        //   // if (diff > 0.00001) {
-        //   //   const lat = grid.getLat(ilat)
-        //   //   const lon = this.grid2wind(grid.getLon(ilon))
-
-        //   //   ++valueShit
-        //   //   lastShit.ilon = ilon
-        //   //   lastShit.ilat = ilat
-        //   //   lastShit.idx = idx
-        //   //   lastShit.ix = ix
-        //   //   lastShit.iy = iy
-        //   //   lastShit.x = (lon - element.header.lo1) / element.header.dx
-        //   //   lastShit.y = (element.header.la1 - lat) / element.header.dy
-        //   //   lastShit.lat = lat
-        //   //   lastShit.lon = lon
-        //   //   if (!lastWasShit) {
-        //   //     /*
-        //   //     const len = Math.min(grid.getDimensions()[1] - ilon, 6)
-        //   //     const seq = []
-        //   //     for (let i = 0; i < len; ++i) {
-        //   //       seq.push(grid.getValue(ilat, ilon + i))
-        //   //     }
-        //   //     const cd = this.findCandidate(seq)
-        //   //     */
-        //   //     console.log(`first shit ${lastShit.ilon} ${lastShit.ilat} ${lastShit.ix} ${lastShit.iy} ${lastShit.x} ${lastShit.y} ${lastShit.lon} ${lastShit.lat}`)
-        //   //     lastWasShit = true
-        //   //   }
-        //   // } else {
-        //   //   ++valueOk
-        //   //   if (lastWasShit) {
-        //   //     console.log(`last shit ${lastShit.ilon} ${lastShit.ilat} ${lastShit.ix} ${lastShit.iy} ${lastShit.x} ${lastShit.y} ${lastShit.lon} ${lastShit.lat}`)
-        //   //     lastWasShit = false
-        //   //   }
-        //   // }
-        // }
-        /**/
       }
     }
-
-    /**/
-    // if (element === this.vFlow) {
-    //   console.log(`minDiff=${minDiff} maxDiff=${maxDiff}`)
-    // }
-    /**/
-
-    // if (element === this.vFlow) {
-    //   const skrew = (imaxlat - iminlat + 1) * (imaxlon - iminlon + 1)
-    //   const bounds = [grid.getLat(iminlat), grid.getLat(imaxlat), grid.getLon(iminlon), grid.getLon(imaxlon)]
-    //   if (valueShit !== 0) {
-    //     if (valueOk !== 0) {
-    //       const ratio = (valueShit / skrew) * 100
-    //       console.log(`some wrong (${valueShit}) on a total of ${skrew} (${ratio.toPrecision(3)}%) on tile ${bounds.join(',')}`)
-    //     } else {
-    //       console.log(`all wrong on a total of ${skrew} on tile ${bounds.join(',')}`)
-    //     }
-    //   } else {
-    //     // console.log(`all good on a total of ${skrew} on tile ${bounds.join(',')} firstidx=${firstIdx}`)
-    //   }
-    // }
   },
 
   createTile (coords, done) {
-    /**/
-    /*
-    if (this.globalWindOutOfDate) {
-      this.globalVWind = null
-      this.globalWindOutOfDate = false
-      const query = {
-        time: this.globalWindTime.format(),
-        $select: ['forecastTime', 'data', 'minValue', 'maxValue'],
-        $paginate: false,
-        // Resample according to input parameters
-        oLon: this.globalWindModel.origin[0],
-        oLat: this.globalWindModel.origin[1],
-        sLon: this.globalWindModel.size[0],
-        sLat: this.globalWindModel.size[1],
-        dLon: this.globalWindModel.resolution[0],
-        dLat: this.globalWindModel.resolution[1]
-      }
-      const service = `${this.globalWindModel.name}/v-wind`
-      this.globalVWindProm = this.weacastApi.getService(service).find({ query })
-    }
-    */
-    /**/
-
     const tile = document.createElement('div')
 
     // check we need to load the tile
@@ -338,13 +222,10 @@ const TiledWindLayer = L.GridLayer.extend({
       const uPromise = this.uSource.fetch(null, reqBBox, resolution)
       const vPromise = this.vSource.fetch(null, reqBBox, resolution)
 
-      /*
-      Promise.all([uPromise, vPromise, this.globalVWindProm]).then(grids => {
-        if (!this.globalVWind) {
-          this.globalVWind = grids[2][0].data
-        }
-        */
+      ++this.pendingFetchs
+
       Promise.all([uPromise, vPromise]).then(grids => {
+        // data fetched
         const uGrid = grids[0]
         const vGrid = grids[1]
 
@@ -356,8 +237,16 @@ const TiledWindLayer = L.GridLayer.extend({
 
         done(null, tile)
       }).catch(err => {
+        // fetch failed
         done(err, tile)
         throw err
+      }).finally(() => {
+        // in any case
+        --this.pendingFetchs
+        if (this.pendingFetchs === 0 && !this.userIsDragging) {
+          // last pending fetch triggers a wind restart
+          this.velocityLayer._clearAndRestart()
+        }
       })
     } else {
       setTimeout(() => { done(null, tile) }, 100)
@@ -366,40 +255,8 @@ const TiledWindLayer = L.GridLayer.extend({
     return tile
   },
 
-  onTileLoad (event) {
-    // add tile to loaded tiles set
-    const tilekey = tile2key(event.coords)
-    this.loadedTiles.add(tilekey)
-  },
-
-  decrementPendingTiles () {
-    --this.pendingTiles
-    if (this.pendingTiles === 0 && !this.userIsDragging) {
-      // last pending tile triggers a wind restart
-      this.velocityLayer._clearAndRestart()
-
-      /*
-      console.log('scanning undefs')
-      let undefStart = -1
-      for (let i = 0; i < this.vFlow.data.length; ++i) {
-        if (this.vFlow.data[i] === undefined) {
-          if (undefStart === -1) undefStart = i
-        } else {
-          if (undefStart !== -1) {
-            console.log(`undef from ${undefStart} to ${i}`)
-            undefStart = -1
-          }
-        }
-      }
-
-      if (undefStart !== -1)
-        console.log(`undef from ${undefStart} to ${this.vFlow.data.length-1}`)
-      */
-    }
-  },
-
   redraw () {
-    this.loadedTiles.clear()
+    // this.loadedTiles.clear()
 
     L.GridLayer.prototype.redraw.call(this)
   }
