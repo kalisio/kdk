@@ -7,7 +7,7 @@ import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options) {
-    L.Util.setOptions(this, options)
+    L.GridLayer.prototype.initialize.call(this, options)
 
     // is user currently dragging the map ?
     this.userIsDragging = false
