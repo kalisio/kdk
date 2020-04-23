@@ -35,6 +35,44 @@ export function marshallSpatialQuery (hook) {
         }
       }
     }
+    // Shortcut for bbox query
+    if (!_.isNil(query.south) && !_.isNil(query.north) && !_.isNil(query.west) && !_.isNil(query.east)) {
+      const south = _.toNumber(query.south)
+      const north = _.toNumber(query.north)
+      const west = _.toNumber(query.west)
+      const east = _.toNumber(query.east)
+      // Transform to MongoDB spatial request
+      delete query.south
+      delete query.north
+      delete query.west
+      delete query.east
+      const geometryQuery = {
+        $geoIntersects: {
+          $geometry: {
+            type: 'Polygon',
+            coordinates: [ // BBox as a polygon
+              [[west, south], [east, south], [east, north], [west, north], [west, south]] // Closing point
+            ]
+          }
+        }
+      }
+      // Aggregation requires a specific operator
+      if (query.$aggregate) {
+        // Convert distance from degrees to meters
+        const earthRadius = 6356752.31424518
+        const maxDistance = (east - west) * (Math.PI * earthRadius) / 180
+        const center = [ 0.5 * (west + east), 0.5 * (south + north) ]
+        query.$geoNear = {
+          near: { type: 'Point', coordinates: center },
+          maxDistance,
+          distanceField: 'distance',
+          spherical: true,
+          query: { geometry: geometryQuery }
+        }
+      } else {
+        query.geometry = geometryQuery
+      }
+    }
     if (query.geoJson) {
       delete query.geoJson
       hook.params.asGeoJson = true

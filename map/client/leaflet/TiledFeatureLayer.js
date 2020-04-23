@@ -41,47 +41,18 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
     if (!skipTile) {
       // tile.style.outline = '1px solid red'
-
       const bounds = this._tileCoordsToBounds(coords)
-      const reqBBox = [bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast()]
-      const reqCenter = [
-        0.5 * (reqBBox[0] + reqBBox[2]),
-        0.5 * (reqBBox[1] + reqBBox[3])
-      ]
-      // Convert distance from degrees to meters
-      const earthRadius = 6356752.31424518
-      const maxDistance = (reqBBox[3] - reqBBox[1]) * (Math.PI * earthRadius) / 180
-
-      let baseQuery = {
-        geometry: {
-          $geoIntersects: {
-            $geometry: {
-              type: 'Polygon',
-              coordinates: [ // BBox as a polygon
-                [[reqBBox[1], reqBBox[0]], [reqBBox[3], reqBBox[0]],
-                  [reqBBox[3], reqBBox[2]], [reqBBox[1], reqBBox[2]], [reqBBox[1], reqBBox[0]]] // Closing point
-              ]
-            }
-          }
-        }
+      const baseQuery = {
+        south: bounds.getSouth(),
+        north: bounds.getNorth(),
+        west: bounds.getWest(),
+        east: bounds.getEast()
       }
       // Using async/await seems to cause problems in Leaflet, we use promises instead
       const promises = []
       // Request probes first if any
       if (this.layer.probeService) {
         promises.push(this.activity.getProbeFeatures(_.merge({ baseQuery }, this.layer)))
-      }
-      // Aggregation requires a specific operator
-      if (this.layer.variables) {
-        baseQuery = {
-          $geoNear: {
-            near: { type: 'Point', coordinates: [reqCenter[1], reqCenter[0]] },
-            maxDistance,
-            distanceField: 'distance',
-            spherical: true,
-            query: baseQuery
-          }
-        }
       }
       promises.push(this.activity.getFeatures(_.merge({ baseQuery }, this.layer)))
       Promise.all(promises).then(data => {
