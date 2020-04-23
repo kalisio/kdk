@@ -235,7 +235,12 @@ export default {
         barbHeight: 10,
         forceDir: true
       })
-      return L.marker(latlng, { icon, draggable: 'true' })
+      const marker = L.marker(latlng, { icon, draggable: 'true' })
+      marker.on('dragend', (event) => {
+        const { start, end } = this.getProbeTimeRange()
+        this.getForecastForLocation(event.target.getLatLng().lng, event.target.getLatLng().lat, start, end)
+      })
+      return marker
     },
     onCurrentForecastTimeChanged (time) {
       if (this.weacastApi) this.weacastApi.setForecastTime(time)
