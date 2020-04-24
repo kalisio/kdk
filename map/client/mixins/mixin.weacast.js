@@ -214,6 +214,38 @@ export default {
       })
       return feature
     },
+    getProbedLocationForecastTooltip (feature, layer) {
+      // Only wind/temperature can be available at different levels now
+      const windDirection = (this.forecastLevel ? `windDirection-${this.forecastLevel}` : 'windDirection')
+      const windSpeed = (this.forecastLevel ? `windSpeed-${this.forecastLevel}` : 'windSpeed')
+      const temperature = (this.forecastLevel ? `temperature-${this.forecastLevel}` : 'temperature')
+      const direction = _.get(feature, `properties.${windDirection}`)
+      const speed = _.get(feature, `properties.${windSpeed}`)
+      const gust = _.get(feature, 'properties.gust')
+      const t = _.get(feature, `properties.${temperature}`)
+      const precipitations = _.get(feature, 'properties.precipitations')
+      const humidity = _.get(feature, 'properties.humidity')
+      let html = ''
+      if (!_.isNil(speed)) {
+        html += `${speed.toFixed(1)} m/s</br>`
+      }
+      if (!_.isNil(gust)) {
+        html += `max ${gust.toFixed(1)} m/s</br>`
+      }
+      if (!_.isNil(direction)) {
+        html += `${direction.toFixed(1)} °</br>`
+      }
+      if (!_.isNil(precipitations)) {
+        html += `${precipitations.toFixed(1)} mm/h</br>`
+      }
+      if (!_.isNil(humidity)) {
+        html += `${humidity.toFixed(0)} %</br>`
+      }
+      if (!_.isNil(t)) {
+        html += `${t.toFixed(1)} °C</br>`
+      }
+      return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
+    },
     getProbedLocationForecastMarker (feature, latlng) {
       const properties = feature.properties
       if (!properties) return null
@@ -226,11 +258,12 @@ export default {
         deg: _.get(properties, windDirection),
         speed: _.get(properties, windSpeed), // Expressed as m/s
         pointRadius: 10,
-        pointColor: '#2B85C7', // TODO: colorize according to temperature scale if
-        pointStroke: '#111',
+        pointColor: '#2196f3', // TODO: colorize according to temperature scale if
+        pointStroke: '#888888',
         strokeWidth: 2,
-        strokeColor: '#000',
+        strokeColor: '#888888',
         strokeLength: 12,
+        fillColor: '#2196f3',
         barbSpaceing: 4,
         barbHeight: 10,
         forceDir: true
