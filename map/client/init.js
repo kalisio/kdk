@@ -12,7 +12,7 @@ export default function init () {
   api.declareService('geocoder')
 
   // Initialize the nabigation bar
-  const navigationBar = { locationInput: false, actions: { before: [], after: [] } }
+  const navigationBar = { positionIndicator: false, locationInput: false, actions: { before: [], after: [] } }
   Store.set('navigationBar', navigationBar)
 
   // Default time formatting settings
@@ -41,10 +41,7 @@ export default function init () {
   })
   // Default timeline parameters
   Store.set('timeline', {
-    start: moment.utc().subtract(3, 'months'),
-    end: moment.utc().add(15, 'days'),
-    step: 60,
-    source: {} // constaint
+    step: 60
   })
   // Default timeseries parameters
   Store.set('timeseries', {

@@ -3,7 +3,7 @@
     <!--
       User location
     -->
-    <q-btn v-if="user" icon="las la-crosshairs" color="primary" flat dense round @click="geolocate()">
+    <q-btn v-if="user" icon="las la-street-view" color="primary" flat dense round @click="geolocate()">
       <q-tooltip>{{ $t('KLocationInput.GEOLOCATE') }}</q-tooltip>
     </q-btn>
     <!--

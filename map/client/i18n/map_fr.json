@@ -191,8 +191,16 @@
     "GEOLOCATE": "Ma position",
     "LOCATION_MAP": "Carte de localisation"
   },
+  "KPositionIndicator": {
+    "PLACEHOLDER": "Naviguez avec la souris",
+    "COPY": "Copier les coordonnées",
+    "CLEAR": "Effacter",
+    "POSITION_COPIED":"Coordonnées copiées en mémoire",
+    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité"
+  },
   "KNavigationBar": {
-    "SEARCH": "Rechercher",
+    "TRACK": "Afficher les coordonnées",
+    "SEARCH": "Rechercher un lieu",
     "BACK": "Retour"
   },
   "KTimeSeries": {

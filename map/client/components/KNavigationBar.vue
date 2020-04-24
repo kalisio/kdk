@@ -1,59 +1,71 @@
 <template>
-  <div>
-    <div class="row items-center k-navigation-bar no-wrap">
-      <div class="row items-center no-wrap">
-        <!--
-          Before section
-          -->
-        <template v-if="(mode ==='toolbar') && hasBeforeActions">
-          <k-tool-bar :actions="navigationBar.actions.before" color="primary" />
-        </template>
-        <!--
-          The location input
-          -->
-        <template v-if="hasLocationInput">
-          <q-btn v-if="(mode === 'searchbar')" icon="arrow_back" color="primary" round flat @click="mode = 'toolbar'" >
-            <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
-          </q-btn>
-          <k-location-input
-            :class="(mode === 'searchbar') ? 'full-width q-pr-sm' : ''"
-            :user="(mode === 'toolbar')"
-            :map="null"
-            :search="(mode === 'searchbar')"
-            :dense="true"
-            style=""
-            @input="onLocationChanged" />
-          <q-btn v-if="(mode === 'toolbar')" icon="las la-search" color="primary" round flat @click="mode = 'searchbar'" >
-            <q-tooltip>{{ $t('KNavigationBar.SEARCH') }}</q-tooltip>
-          </q-btn>
-        </template>
-        <!--
-          After section
-          -->
-        <template v-if="(mode === 'toolbar') && hasAfterActions">
-          <k-tool-bar :actions="navigationBar.actions.after" color="primary" />
-        </template>
+  <div class="column k-navigation-bar">
+    <div class="row items-center q-gutter-sm no-wrap">
+      <!-- 
+        Track mode
+       -->
+      <template v-if="mode === 'trackbar' && hasPositionIndicator">
+        <q-btn  icon="las la-arrow-left" color="primary" round flat @click="mode = 'toolbar'" >
+          <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
+        </q-btn>
         <q-separator vertical />
-      </div>
+        <k-position-indicator />
+      </template>
+      <!-- 
+        Search mode
+       -->
+      <template v-if="mode === 'searchbar' && hasLocationInput">
+        <q-btn icon="arrow_back" color="primary" round flat @click="mode = 'toolbar'" >
+          <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
+        </q-btn>
+        <q-separator vertical />
+        <k-location-input class="full-width q-pr-sm" :user="false" :map="null" :search="true" :dense="true" style="" @input="onLocationChanged" />
+      </template>
+      <!--
+        Toolbar maode
+       -->
+      <template v-if="mode === 'toolbar'">
+        <!-- Before section -->
+        <k-tool-bar v-if="hasBeforeActions" :actions="navigationBar.actions.before" color="primary" />
+        <!-- Location indicator  -->
+        <q-btn v-if="hasPositionIndicator" icon="las la-crosshairs" color="primary" round flat @click="mode = 'trackbar'" >
+          <q-tooltip>{{ $t('KNavigationBar.TRACK') }}</q-tooltip>
+        </q-btn>
+        <!-- Location input -->
+        <q-btn v-if="hasLocationInput" icon="las la-search" color="primary" round flat @click="mode = 'searchbar'" >
+          <q-tooltip>{{ $t('KNavigationBar.SEARCH') }}</q-tooltip>
+        </q-btn>
+        <k-location-input :user="true" :map="null" :search="false" :dense="true" style="" @input="onLocationChanged" />
+         <!-- After section -->
+        <k-tool-bar v-if="hasAfterActions" :actions="navigationBar.actions.after" color="primary" />
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import formatcoords from 'formatcoords'
 
 export default {
   name: 'k-navigation-bar',
   inject: ['kActivity'],
   computed: {
-    hasBeforeActions () { return _.get(this.navigationBar, 'actions.before', []).length > 0 },
-    hasAfterActions () { return _.get(this.navigationBar, 'actions.after', []).length > 0 },
-    hasLocationInput () { return _.get(this.navigationBar, 'locationInput') },
-    isVisible () { return this.hasBeforeActions || this.hasAfterActions || this.hasLocationInput }
+    hasBeforeActions () { 
+      return _.get(this.navigationBar, 'actions.before', []).length > 0 
+    },
+    hasAfterActions () { 
+      return _.get(this.navigationBar, 'actions.after', []).length > 0 
+    },
+    hasPositionIndicator () { 
+      return _.get(this.navigationBar, 'positionIndicator', true) 
+    },
+    hasLocationInput () { 
+      return _.get(this.navigationBar, 'locationInput', true) 
+    }
   },
   data () {
     return {
-      isNavigatioBarVisible: true,
       navigationBar: this.$store.get('navigationBar'),
       mode: 'toolbar'
     }
@@ -65,6 +77,7 @@ export default {
   },
   created () {
     this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-position-indicator'] = this.$load('KPositionIndicator')
     this.$options.components['k-location-input'] = this.$load('KLocationInput')
   }
 }

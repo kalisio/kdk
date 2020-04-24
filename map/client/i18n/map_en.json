@@ -191,8 +191,16 @@
     "GEOLOCATE": "My position",
     "LOCATION_MAP": "Location map"
   },
+  "KPositionIndicator": {
+    "PLACEHOLDER": "Navigate with the mouse",
+    "COPY": "Copy the coordinates",
+    "CLEAR": "Clear",
+    "POSITION_COPIED":"Position copied to clipboard",
+    "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality"
+  },
   "KNavigationBar": {
-    "SEARCH": "Search",
+    "TRACK": "Display the coordinates",
+    "SEARCH": "Search a location",
     "BACK": "Back"
   },
   "KTimeSeries": {
@@ -293,10 +301,10 @@
     "CENTER_ON": "Center the view on the object",    
     "COPY_PROPERTIES": "Copy the values to the clipboard",    
     "PROPERTIES_COPIED": "Values copied to clipboard",
-    "CANNOT_COPY_PROPERTIES": "Impossible to copy the values to clipboard. Your browser does not support this functionality",
+    "CANNOT_COPY_PROPERTIES": "Unable to copy the values to clipboard. Your browser does not support this functionality",
     "EXPORT_FEATURE": "Export the object",
     "FEATURE_EXPORTED": "Object exported to file {{file}}",
-    "CANNOT_EXPORT_FEATURE": "Impossible to export the object. Your browser does not support this functionality"
+    "CANNOT_EXPORT_FEATURE": "Unable to export the object. Your browser does not support this functionality"
   },
   "KMapillaryWidget": {
     "CENTER_ON": "Center the view on the Mapillary marker",

@@ -43,8 +43,8 @@ export default function (name) {
       is3D () {
         return (this.engine === 'cesium')
       },
-      setNavigationBar (locationInput, beforeActions, afterActions) {
-        const navigationBar = { locationInput, actions: { before: beforeActions, after: afterActions } }
+      setNavigationBar (positionIndicator, locationInput, beforeActions, afterActions) {
+        const navigationBar = { positionIndicator, locationInput, actions: { before: beforeActions, after: afterActions } }
         this.$store.patch('navigationBar', navigationBar)
       },
       clearNavigationBar () {
@@ -53,7 +53,7 @@ export default function (name) {
       },
       registerActivityActions () {
         // FAB
-        let defaultActions = ['track-location', 'probe-location']
+        let defaultActions = ['probe-location']
         if (this.is2D()) defaultActions = defaultActions.concat(['create-layer'])
         const actions = _.get(this, 'activityOptions.actions', defaultActions)
         const hasProbeLocationAction = (typeof this.onProbeLocation === 'function') && actions.includes('probe-location') && this.weacastApi && this.forecastModel
@@ -69,7 +69,7 @@ export default function (name) {
           })
         }
         // Nav bar
-        let defaultTools = ['side-nav', 'zoom', 'track-location', 'location-bar', 'fullscreen', 'catalog']
+        let defaultTools = ['side-nav', 'zoom', 'location-bar', 'fullscreen', 'catalog']
         if (this.engine === 'cesium') defaultTools = defaultTools.concat(['globe', 'vr'])
         else defaultTools = defaultTools.concat(['map'])
         const tools = _.get(this, 'activityOptions.tools', defaultTools)
@@ -79,7 +79,6 @@ export default function (name) {
         const hasVrTool = tools.includes('vr')
         const hasFullscreenTool = (typeof this.onToggleFullscreen === 'function') && tools.includes('fullscreen')
         const hasZoomTool = tools.includes('zoom')
-        const hasTrackLocationTool = (typeof this.createLocationIndicator === 'function') && tools.includes('track-location')
         const hasLocationTool = tools.includes('location-bar')
         const hasCatalogTool = tools.includes('catalog')
         const beforeActions = []
@@ -113,11 +112,6 @@ export default function (name) {
           })
           beforeActions.push({ name: 'separator' })
         }
-        if (hasTrackLocationTool) {
-          beforeActions.push({
-            name: 'track-location', label: this.$t('mixins.activity.TRACK_LOCATION'), icon: 'las la-map-signs', handler: this.onTrackLocation
-          })
-        }
         const afterActions = []
         if (hasVrTool) {
           afterActions.push({
@@ -138,7 +132,7 @@ export default function (name) {
             handler: () => { this.klayout.toggleRightDrawer() }
           })
         }
-        this.setNavigationBar(hasLocationTool, beforeActions, afterActions)
+        this.setNavigationBar(hasLocationTool, hasLocationTool, beforeActions, afterActions)
       },
       // This method should be overriden in activities
       getFeatureActions (feature, layer) {
@@ -611,10 +605,6 @@ export default function (name) {
         if (error.code === 'GEOLOCATION_PERMISSION_DENIED') {
           this.unregisterFabAction('geolocate')
         }
-      },
-      onTrackLocation () {
-        if (!this.locationIndicator) this.createLocationIndicator()
-        else this.removeLocationIndicator()
       },
       geolocate () {
         if (!this.engineReady) {
