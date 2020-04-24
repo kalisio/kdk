@@ -61,7 +61,7 @@ export class WeacastGridSource extends GridSource {
     this.usable = false
 
     this.useCache = true
-    this.setupKey = 0
+    this.cacheKey = 0
   }
 
   getBBox () {
@@ -75,8 +75,8 @@ export class WeacastGridSource extends GridSource {
   async setup (config) {
     this.usable = false
 
-    ++this.setupKey
     this.tileCache = new Map()
+    ++this.cacheKey
 
     if (!this.api) return
 
@@ -90,9 +90,11 @@ export class WeacastGridSource extends GridSource {
     this.lonResolution = model.tileResolution[0]
 
     /**/
-    this.modelOrigin = [model.origin[1], model.origin[0]]
-    this.tileRes = [model.tileResolution[1], model.tileResolution[0]]
+    this.tileOrigin = [model.origin[1], model.origin[0]]
+    this.tileSize = [model.tileResolution[1], model.tileResolution[0]]
     this.wrapLon = model.bounds[2] > 180.0
+    this.maxTileX = ((model.bounds[2] - model.bounds[0]) / model.tileResolution[0]) - 1
+    this.maxTileY = ((model.bounds[3] - model.bounds[1]) / model.tileResolution[1]) - 1
     /**/
 
     this.minMaxLat = [model.bounds[1], model.bounds[3]]
@@ -125,21 +127,21 @@ export class WeacastGridSource extends GridSource {
 
   async fetchWithCache (abort, bbox, resolution) {
     // compute which weacast tile(s) we're going to hit
-    const lon0 = this.wrapLon ? (bbox[1] < 0 ? bbox[1] + 360.0 : bbox[1]) : bbox[1]
-    const lon1 = this.wrapLon ? (bbox[3] < 0 ? bbox[3] + 360.0 : bbox[3]) : bbox[3]
+    const minLon = this.wrapLon ? (bbox[1] < 0 ? bbox[1] + 360.0 : bbox[1]) : bbox[1]
+    const maxLon = this.wrapLon ? (bbox[3] < 0 ? bbox[3] + 360.0 : bbox[3]) : bbox[3]
 
-    const minLon = Math.min(lon0, lon1)
-    const maxLon = Math.max(lon0, lon1)
-
-    const e = Math.floor((minLon - this.modelOrigin[1]) / this.tileRes[1])
-    const w = Math.floor((maxLon - this.modelOrigin[1]) / this.tileRes[1])
-    const n = Math.floor((this.modelOrigin[0] - bbox[2]) / this.tileRes[0])
-    const s = Math.floor((this.modelOrigin[0] - bbox[0]) / this.tileRes[0])
+    const e = Math.max(Math.floor((maxLon - this.tileOrigin[1]) / this.tileSize[1]), 0)
+    const w = Math.min(Math.floor((minLon - this.tileOrigin[1]) / this.tileSize[1]), this.maxTileX)
+    const n = Math.max(Math.floor((this.tileOrigin[0] - bbox[2]) / this.tileSize[0]), 0)
+    const s = Math.min(Math.floor((this.tileOrigin[0] - bbox[0]) / this.tileSize[0]), this.maxTileY)
 
     const hits = []
-    for (let i = e; i <= w; ++i) {
-      for (let j = n; j <= s; ++j) {
-        hits.push(tile2key(i, j))
+    for (let j = n; j <= s; ++j) {
+      if (w > e) {
+        for (let i = 0; i <= e; ++i) hits.push(tile2key(i, j))
+        for (let i = w; i <= this.maxTileX; ++i) hits.push(tile2key(i, j))
+      } else {
+        for (let i = w; i <= e; ++i) hits.push(tile2key(i, j))
       }
     }
 
@@ -165,7 +167,7 @@ export class WeacastGridSource extends GridSource {
       }
     }
 
-    const setupKey = this.setupKey
+    const cacheKey = this.cacheKey
 
     // issue required request
     if (requests.length) {
@@ -180,6 +182,33 @@ export class WeacastGridSource extends GridSource {
       const query = this.makeQuery({ x: Array.from(x.values()), y: Array.from(y.values()) })
       */
 
+      // generate a query with points intersecting required tiles
+      const points = []
+      const offset = [this.tileSize[1] * 0.5, this.tileSize[0] * 0.5]
+      for (let i = 0; i < requests.length; ++i) {
+        const [x, y] = key2tile(requests[i])
+        let tilex = this.tileOrigin[1] + (this.tileSize[1] * x)
+        let tiley = this.tileOrigin[0] - (this.tileSize[0] * y)
+
+        if (tilex >= 180) tilex -= 360.0
+
+        points.push([tilex + offset[0], tiley - offset[1]])
+      }
+      const query = {
+        time: this.time,
+        $select: ['forecastTime', 'data', 'geometry', 'size', 'x', 'y'],
+        $paginate: false,
+        geometry: {
+          $geoIntersects: {
+            $geometry: {
+              type: 'MultiPoint',
+              coordinates: points
+            }
+          }
+        }
+      }
+
+      /*
       for (let i = 0; i < requests.length; ++i) {
         const [x, y] = key2tile(requests[i])
         const query = {
@@ -190,12 +219,13 @@ export class WeacastGridSource extends GridSource {
           x: x,
           y: y
         }
+      */
         const request = new Promise((resolve, reject) => {
           this.api.getService(this.service).find({ query }).then(tiles => {
             const grids = []
 
             // only add to cache when there has been no setup() called since
-            if (setupKey === this.setupKey) {
+            if (cacheKey === this.cacheKey) {
               for (const tile of tiles) {
                 const tileBBox = tile.geometry.coordinates[0] // BBox as a polygon
                 const tileBounds = [tileBBox[0][1], tileBBox[0][0], tileBBox[2][1], tileBBox[2][0]]
@@ -217,17 +247,17 @@ export class WeacastGridSource extends GridSource {
           })
         })
 
+      /*
         this.tileCache.set(requests[i], { request })
         waits.push(request)
       }
+      */
 
-      /*
       for (let i = 0; i < requests.length; ++i) {
         this.tileCache.set(requests[i], { request })
       }
 
       waits.push(request)
-      */
     }
 
     // wait associated requests
