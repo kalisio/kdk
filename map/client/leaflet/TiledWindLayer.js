@@ -31,12 +31,11 @@ const TiledWindLayer = L.GridLayer.extend({
     this.uSource = makeGridSource(uKey, { weacastApi: options.weacastApi })
     this.vSource = makeGridSource(vKey, { weacastApi: options.weacastApi })
     this.onDataChangedCallback = this.onDataChanged.bind(this)
-    // this.uSource.on('data-changed', this.onDataChangedCallback)
+    this.uSource.on('data-changed', this.onDataChangedCallback)
     this.vSource.on('data-changed', this.onDataChangedCallback)
     this.uSource.setup(uConf)
     this.vSource.setup(vConf)
-
-    // this.sourceConf = {}
+    this.numDataChanged = 0
 
     // build the underlying velocity layer
     const velocityOptions = Object.assign({
@@ -110,14 +109,6 @@ const TiledWindLayer = L.GridLayer.extend({
   setTime (time) {
     if (typeof this.uSource.setTime === 'function') this.uSource.setTime(time)
     if (typeof this.vSource.setTime === 'function') this.vSource.setTime(time)
-    
-    /*
-    this.sourceConf.time = time
-    if (this.sourceConf.model && this.sourceConf.time) {
-      this.uSource.setConf(this.sourceConf)
-      this.vSource.setConf(this.sourceConf)
-    }
-    */
   },
 
   setModel (model) {
@@ -141,33 +132,32 @@ const TiledWindLayer = L.GridLayer.extend({
 
     if (typeof this.uSource.setModel === 'function') this.uSource.setModel(model)
     if (typeof this.vSource.setModel === 'function') this.vSource.setModel(model)
-    
-    /*
-    this.sourceConf.model = model
-    if (this.sourceConf.model && this.sourceConf.time) {
-      this.uSource.setConf(this.sourceConf)
-      this.vSource.setConf(this.sourceConf)
-    }
-    */
   },
 
   onDataChanged () {
-    const bbox = this.vSource.getBBox()
-    if (bbox) {
-      // allow grid layer to only request tiles located in those bounds
-      const c1 = L.latLng(bbox[0], bbox[1])
-      const c2 = L.latLng(bbox[2], bbox[3])
-      this.options.bounds = L.latLngBounds(c1, c2)
-    }
+    // we're listening to 2 sources: u and v
+    // so wait every 2 fired events to process anything
+    ++this.numDataChanged
+    if (this.numDataChanged !== 2) return
+    this.numDataChanged = 0
 
-    if (this.defferedOnAdd) {
-      L.GridLayer.prototype.onAdd.call(this, this.defferedOnAdd)
-      this.defferedOnAdd.addLayer(this.velocityLayer)
-      this.velocityLayer.setData([this.uFlow, this.vFlow])
-      this.velocityLayer._initWindy(this.velocityLayer)
-      this._map.off('dragstart', this.velocityLayer._windy.stop)
-      this._map.off('dragend', this.velocityLayer._clearAndRestart)
-      this.defferedOnAdd = null
+    // allow grid layer to only request tiles located in those bounds
+    const points = []
+    const vbbox = this.vSource.getBBox()
+    if (vbbox) {
+      points.push(L.latLng(vbbox[0], vbbox[1]))
+      points.push(L.latLng(vbbox[2], vbbox[3]))
+    }
+    const ubbox = this.uSource.getBBox()
+    if (ubbox) {
+      points.push(L.latLng(ubbox[0], ubbox[1]))
+      points.push(L.latLng(ubbox[2], ubbox[3]))
+    }
+    this.options.bounds = points.length ? L.latLngBounds(points) : null
+
+    // we now have data to display, it may be time to add the layer to the map
+    if (this.pendingAdd) {
+      this.onPendingAdd()
     } else {
       this.redraw()
     }
@@ -178,26 +168,37 @@ const TiledWindLayer = L.GridLayer.extend({
   onAdd (map) {
     // this.loadedTiles.clear()
 
-    // L.GridLayer.prototype.onAdd.call(this, map)
-    // map.addLayer(this.velocityLayer)
+    // defer actual addLayer call to the point where we have data ready to be displayed
+    // otherwise, leaflet will start loading meaningless tiles
+    this.pendingAdd = map
+  },
 
-    // this.velocityLayer._initWindy(this.velocityLayer)
+  onPendingAdd () {
+    const map = this.pendingAdd
+
+    L.GridLayer.prototype.onAdd.call(this, map)
+    map.addLayer(this.velocityLayer)
+    this.velocityLayer.setData([this.uFlow, this.vFlow])
+    this.velocityLayer._initWindy(this.velocityLayer)
     // disable some velocity layer event handling since we override some of it
     // no need to stop animation when panning
-    // this._map.off('dragstart', this.velocityLayer._windy.stop)
-    // this._map.off('dragend', this.velocityLayer._clearAndRestart)
+    this._map.off('dragstart', this.velocityLayer._windy.stop)
+    this._map.off('dragend', this.velocityLayer._clearAndRestart)
     // this._map.off('zoomstart', this.velocityLayer._windy.stop)
     // this._map.off('zoomend', this.velocityLayer._clearAndRestart)
     // this._map.off('resize', this.velocityLayer._clearWind)
 
-    this.defferedOnAdd = map
+    this.pendingAdd = null
   },
 
   onRemove (map) {
-    map.removeLayer(this.velocityLayer)
-    L.GridLayer.prototype.onRemove.call(this, map)
+    if (this.pendingAdd) {
+      this.pendingAdd = null
+    } else {
+      map.removeLayer(this.velocityLayer)
+      L.GridLayer.prototype.onRemove.call(this, map)
+    }
 
-    // this.sourceConf = {}
     this.uSource.invalidate()
     this.vSource.invalidate()
   },
@@ -252,22 +253,13 @@ const TiledWindLayer = L.GridLayer.extend({
         this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
       ]
 
-      // tile.t0 = performance.now()
-      
       // request data
       const uPromise = this.uSource.fetch(null, reqBBox, resolution)
       const vPromise = this.vSource.fetch(null, reqBBox, resolution)
 
       ++this.pendingFetchs
-      if (this.pendingFetchs === 1) {
-        this.numTiles = 0
-        this.t0 = performance.now()
-      }
 
       Promise.all([uPromise, vPromise]).then(grids => {
-        // const t1 = performance.now()
-        // console.log(`tile ${t1 - tile.t0}ms`)
-        
         // data fetched
         const uGrid = grids[0]
         const vGrid = grids[1]
@@ -288,8 +280,6 @@ const TiledWindLayer = L.GridLayer.extend({
         // in any case
         --this.pendingFetchs
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
-          const t1 = performance.now()
-          console.log(`${this.numTiles} batch: ${t1 - this.t0}ms`)
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
         }

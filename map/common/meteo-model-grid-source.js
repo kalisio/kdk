@@ -27,21 +27,6 @@ export class MeteoModelGridSource extends DynamicGridSource {
     this.queueUpdate()
   }
 
-  setConf ({ model, time } = {}) {
-    if (time) {
-      this.updateCtx.time = time.clone()
-      this.updateCtx.time.utc()
-    }
-    if (model) {
-      this.updateCtx.model = model
-    }
-    this.update(this.updateCtx)
-  }
-
-  invalidate () {
-    this.forceUpdate = true
-  }
-
   async setup (config) {
     this.candidates = []
 
@@ -87,11 +72,6 @@ export class MeteoModelGridSource extends DynamicGridSource {
   }
 
   shouldSkipUpdate (newContext, oldContext) {
-    if (this.forceUpdate) {
-      this.forceUpdate = false
-      return false
-    }
-
     if (oldContext.candidate !== newContext.candidate) return false
     if (oldContext.runTime && newContext.runTime && !oldContext.runTime.isSame(newContext.runTime)) return false
     if (oldContext.forecastTime && newContext.forecastTime && !oldContext.forecastTime.isSame(newContext.forecastTime)) return false

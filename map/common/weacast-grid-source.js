@@ -86,9 +86,7 @@ export class WeacastGridSource extends GridSource {
       $paginate: false
     }
 
-    const srv = this.api.getService(this.service)
-    const results = srv.find({ query })
-    // const results = await this.api.getService(this.service).find({ query })
+    const results = await this.api.getService(this.service).find({ query })
     if (results.length > 0) this.minMaxVal = [results[0].minValue, results[0].maxValue]
 
     this.usable = true

@@ -28,6 +28,11 @@ export class DynamicGridSource extends GridSource {
     return this.source ? this.source.fetch(abort, bbox, resolution) : null
   }
 
+  invalidate () {
+    // next update can't be skipped
+    this.forceUpdate = true
+  }
+
   queueUpdate () {
     // update already queued, skip
     if (this.updateId) return
@@ -43,7 +48,7 @@ export class DynamicGridSource extends GridSource {
     // compute potential new context based on update context
     const newCtx = this.makeBuildContext(updateCtx)
     // give source a chance to skip update if nothing changes
-    if (this.shouldSkipUpdate(newCtx, this.buildCtx)) return
+    if (!this.forceUpdate && this.shouldSkipUpdate(newCtx, this.buildCtx)) return
 
     // computed context is now the current one
     this.buildCtx = newCtx
