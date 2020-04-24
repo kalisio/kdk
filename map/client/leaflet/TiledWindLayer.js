@@ -204,10 +204,12 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   updateWindArray (grid, element, reqBBox, debug) {
+    /*
     const gridres = grid.getResolution()
     const windres = [element.header.dy, element.header.dx]
     // make sure resolution match
     if (gridres[0] !== windres[0] || gridres[1] !== windres[1]) return
+    */
 
     const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(reqBBox)
     const startlat = grid.getLat(iminlat)
@@ -237,6 +239,11 @@ const TiledWindLayer = L.GridLayer.extend({
     // const skipTile = tileSetContainsParent(this.loadedTiles, coords)
     const skipTile = false
 
+    /*
+    tile.style.outline = '1px solid red'
+    tile.innerHTML = 'requested'
+    */
+
     // Check for zoom level range first
     // if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
     // if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) skipTile = true
@@ -258,13 +265,18 @@ const TiledWindLayer = L.GridLayer.extend({
       const vPromise = this.vSource.fetch(null, reqBBox, resolution)
 
       ++this.pendingFetchs
-
+      /*
+      if (this.pendingFetchs === 1) {
+        this.numTiles = 0
+      }
+      */
+      
       Promise.all([uPromise, vPromise]).then(grids => {
         // data fetched
         const uGrid = grids[0]
         const vGrid = grids[1]
 
-        ++this.numTiles
+        // ++this.numTiles
         
         if (uGrid && vGrid) {
           // fill in big arrays
@@ -280,6 +292,7 @@ const TiledWindLayer = L.GridLayer.extend({
         // in any case
         --this.pendingFetchs
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
+          // console.log(`batched ${this.numTiles}`)
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
         }
