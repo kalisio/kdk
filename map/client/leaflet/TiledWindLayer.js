@@ -31,10 +31,12 @@ const TiledWindLayer = L.GridLayer.extend({
     this.uSource = makeGridSource(uKey, { weacastApi: options.weacastApi })
     this.vSource = makeGridSource(vKey, { weacastApi: options.weacastApi })
     this.onDataChangedCallback = this.onDataChanged.bind(this)
-    this.uSource.on('data-changed', this.onDataChangedCallback)
+    // this.uSource.on('data-changed', this.onDataChangedCallback)
     this.vSource.on('data-changed', this.onDataChangedCallback)
     this.uSource.setup(uConf)
     this.vSource.setup(vConf)
+
+    // this.sourceConf = {}
 
     // build the underlying velocity layer
     const velocityOptions = Object.assign({
@@ -50,6 +52,8 @@ const TiledWindLayer = L.GridLayer.extend({
     // hack into velocity layer internals ...
     // override velocity layer's onDrawLayer to support our tiled management
     this.velocityLayer.onDrawLayer = (overlay, params) => {
+      if (!this._map) return
+
       if (this.velocityLayer._windy) {
         // we delay the restart of the wind computation as much as we can
         // for a restart to happen, we want to make sure that
@@ -104,12 +108,16 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   setTime (time) {
-    if (typeof this.uSource.setTime === 'function') {
-      this.uSource.setTime(time)
+    if (typeof this.uSource.setTime === 'function') this.uSource.setTime(time)
+    if (typeof this.vSource.setTime === 'function') this.vSource.setTime(time)
+    
+    /*
+    this.sourceConf.time = time
+    if (this.sourceConf.model && this.sourceConf.time) {
+      this.uSource.setConf(this.sourceConf)
+      this.vSource.setConf(this.sourceConf)
     }
-    if (typeof this.vSource.setTime === 'function') {
-      this.vSource.setTime(time)
-    }
+    */
   },
 
   setModel (model) {
@@ -121,6 +129,7 @@ const TiledWindLayer = L.GridLayer.extend({
       dx: model.resolution[0],
       dy: model.resolution[1]
     }
+
     Object.assign(this.uFlow.header, modelHeader)
     Object.assign(this.vFlow.header, modelHeader)
 
@@ -128,21 +137,40 @@ const TiledWindLayer = L.GridLayer.extend({
     const size = modelHeader.nx * modelHeader.ny
     this.uFlow.data = new Array(size)
     this.vFlow.data = new Array(size)
-    for (let i = 0; i < size; ++i) {
-      this.uFlow.data[i] = this.vFlow.data[i] = 0
-    }
-    this.velocityLayer.setData([this.uFlow, this.vFlow])
+    for (let i = 0; i < size; ++i) this.uFlow.data[i] = this.vFlow.data[i] = 0
 
-    if (typeof this.uSource.setModel === 'function') {
-      this.uSource.setModel(model)
+    if (typeof this.uSource.setModel === 'function') this.uSource.setModel(model)
+    if (typeof this.vSource.setModel === 'function') this.vSource.setModel(model)
+    
+    /*
+    this.sourceConf.model = model
+    if (this.sourceConf.model && this.sourceConf.time) {
+      this.uSource.setConf(this.sourceConf)
+      this.vSource.setConf(this.sourceConf)
     }
-    if (typeof this.vSource.setModel === 'function') {
-      this.vSource.setModel(model)
-    }
+    */
   },
 
   onDataChanged () {
-    this.redraw()
+    const bbox = this.vSource.getBBox()
+    if (bbox) {
+      // allow grid layer to only request tiles located in those bounds
+      const c1 = L.latLng(bbox[0], bbox[1])
+      const c2 = L.latLng(bbox[2], bbox[3])
+      this.options.bounds = L.latLngBounds(c1, c2)
+    }
+
+    if (this.defferedOnAdd) {
+      L.GridLayer.prototype.onAdd.call(this, this.defferedOnAdd)
+      this.defferedOnAdd.addLayer(this.velocityLayer)
+      this.velocityLayer.setData([this.uFlow, this.vFlow])
+      this.velocityLayer._initWindy(this.velocityLayer)
+      this._map.off('dragstart', this.velocityLayer._windy.stop)
+      this._map.off('dragend', this.velocityLayer._clearAndRestart)
+      this.defferedOnAdd = null
+    } else {
+      this.redraw()
+    }
 
     this.fire('data', [this.uSource, this.vSource])
   },
@@ -150,22 +178,28 @@ const TiledWindLayer = L.GridLayer.extend({
   onAdd (map) {
     // this.loadedTiles.clear()
 
-    L.GridLayer.prototype.onAdd.call(this, map)
-    map.addLayer(this.velocityLayer)
+    // L.GridLayer.prototype.onAdd.call(this, map)
+    // map.addLayer(this.velocityLayer)
 
-    this.velocityLayer._initWindy(this.velocityLayer)
+    // this.velocityLayer._initWindy(this.velocityLayer)
     // disable some velocity layer event handling since we override some of it
     // no need to stop animation when panning
-    this._map.off('dragstart', this.velocityLayer._windy.stop)
-    this._map.off('dragend', this.velocityLayer._clearAndRestart)
+    // this._map.off('dragstart', this.velocityLayer._windy.stop)
+    // this._map.off('dragend', this.velocityLayer._clearAndRestart)
     // this._map.off('zoomstart', this.velocityLayer._windy.stop)
     // this._map.off('zoomend', this.velocityLayer._clearAndRestart)
     // this._map.off('resize', this.velocityLayer._clearWind)
+
+    this.defferedOnAdd = map
   },
 
   onRemove (map) {
     map.removeLayer(this.velocityLayer)
     L.GridLayer.prototype.onRemove.call(this, map)
+
+    // this.sourceConf = {}
+    this.uSource.invalidate()
+    this.vSource.invalidate()
   },
 
   updateWindArray (grid, element, reqBBox, debug) {
@@ -218,23 +252,33 @@ const TiledWindLayer = L.GridLayer.extend({
         this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
       ]
 
+      // tile.t0 = performance.now()
+      
       // request data
       const uPromise = this.uSource.fetch(null, reqBBox, resolution)
       const vPromise = this.vSource.fetch(null, reqBBox, resolution)
 
       ++this.pendingFetchs
+      if (this.pendingFetchs === 1) {
+        this.numTiles = 0
+        this.t0 = performance.now()
+      }
 
       Promise.all([uPromise, vPromise]).then(grids => {
+        // const t1 = performance.now()
+        // console.log(`tile ${t1 - tile.t0}ms`)
+        
         // data fetched
         const uGrid = grids[0]
         const vGrid = grids[1]
 
+        ++this.numTiles
+        
         if (uGrid && vGrid) {
           // fill in big arrays
           this.updateWindArray(uGrid, this.uFlow, reqBBox)
           this.updateWindArray(vGrid, this.vFlow, reqBBox)
         }
-
         done(null, tile)
       }).catch(err => {
         // fetch failed
@@ -244,6 +288,8 @@ const TiledWindLayer = L.GridLayer.extend({
         // in any case
         --this.pendingFetchs
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
+          const t1 = performance.now()
+          console.log(`${this.numTiles} batch: ${t1 - this.t0}ms`)
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
         }

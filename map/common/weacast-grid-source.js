@@ -86,7 +86,9 @@ export class WeacastGridSource extends GridSource {
       $paginate: false
     }
 
-    const results = await this.api.getService(this.service).find({ query })
+    const srv = this.api.getService(this.service)
+    const results = srv.find({ query })
+    // const results = await this.api.getService(this.service).find({ query })
     if (results.length > 0) this.minMaxVal = [results[0].minValue, results[0].maxValue]
 
     this.usable = true
@@ -127,7 +129,10 @@ export class WeacastGridSource extends GridSource {
             */
     }
 
+    // const t0 = performance.now()
     const results = await this.api.getService(this.service).find({ query })
+    // const t1 = performance.now()
+    // console.log(`req took ${t1 - t0}ms`)
     if (results.length === 0) return null
 
     // This is to target raw data
