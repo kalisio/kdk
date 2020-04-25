@@ -5,7 +5,7 @@
      -->
     <q-btn v-if="appBar.leading" id="app-bar-leading" :icon="appBar.leading.icon" flat :dense="$q.screen.lt.md" @click="onLeadingClicked" />
     <!--
-      Title/subtitle 
+      Title/subtitle
      -->
     <q-toolbar-title id="app-bar-title">
       {{ appBar.title }}

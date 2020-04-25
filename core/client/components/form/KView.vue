@@ -1,10 +1,10 @@
 <template>
   <div class="column">
-    <!-- 
-      Non-grouped fields 
+    <!--
+      Non-grouped fields
      -->
     <template v-for="field in fields">
-      <div v-if="!field.group" :key="field.name" class="row" 
+      <div v-if="!field.group" :key="field.name" class="row"
         v-bind:class="{'k-view-row': options.separators }"
       >
         <!-- Field label -->
@@ -12,7 +12,7 @@
           {{ $t(field.field.label) }}
         </span>
         <!-- Field value -->
-        <component class="col"        
+        <component class="col"
           :is="field.componentKey"
           v-bind="$props"
           :properties="field"
@@ -20,8 +20,8 @@
           :readOnly="true" />
       </div>
     </template>
-    <!-- 
-      Grouped fields 
+    <!--
+      Grouped fields
      -->
     <template v-for="group in groups">
       <q-expansion-item :key="group" icon="wrap_text" :group="group" :label="$t(group)">
@@ -81,7 +81,7 @@ export default {
   },
   watch: {
     schema: function () {
-      this.refresh() 
+      this.refresh()
     }
   },
   methods: {

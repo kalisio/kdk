@@ -1,6 +1,6 @@
 <template>
   <div v-if="widget" class="k-window" :style="windowStyle">
-    <!-- 
+    <!--
       Window bar
      -->
      <div class="row justify-between items-center q-pb-xs">
@@ -49,7 +49,8 @@ export default {
     },
     actions () {
       return [
-        { name: 'change-mode',
+        {
+          name: 'change-mode',
           label: this.$t(this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION'),
           icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
           handler: this.onModeChanged
@@ -64,21 +65,21 @@ export default {
     },
     widgets () {
       _.forEach(this.window.widgets, (widget) => {
-        if (! widget.key) {
+        if (!widget.key) {
           const componentName = _.get(widget, 'component')
           const componentKey = _.kebabCase(path.basename(componentName))
-          widget['componentKey'] = componentKey
+          widget.componentKey = componentKey
           this.$options.components[componentKey] = this.$load(componentName)
         }
       })
       return this.window.widgets
     },
     windowStyle () {
-      if (this.mode === 'maximized') return "width: 100vw"
-      return this.$q.screen.gt.lg ? "width: 55vw" :
-             this.$q.screen.gt.md ? "width: 70vw" :
-             this.$q.screen.gt.sm ? "width: 85vw" :
-             "width: 100vw"
+      if (this.mode === 'maximized') return 'width: 100vw'
+      return this.$q.screen.gt.lg ? 'width: 55vw'
+        : this.$q.screen.gt.md ? 'width: 70vw'
+          : this.$q.screen.gt.sm ? 'width: 85vw'
+            : 'width: 100vw'
     }
   },
   data () {

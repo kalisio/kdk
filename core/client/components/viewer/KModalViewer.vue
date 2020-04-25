@@ -15,7 +15,7 @@ export default {
     mixins.baseViewer,
     mixins.service,
     mixins.objectProxy,
-    mixins.schemaProxy,
+    mixins.schemaProxy
   ],
   props: {
     router: {

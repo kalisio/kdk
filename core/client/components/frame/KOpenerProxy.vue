@@ -12,6 +12,7 @@
 
 <script>
 import path from 'path'
+import _ from 'lodash'
 
 export default {
   name: 'k-opener-proxy',
@@ -34,12 +35,12 @@ export default {
     opened: {
       type: Boolean,
       default: false
-    },
+    }
   },
   data () {
     return {
       componentKey: undefined,
-      isOpened: false,
+      isOpened: false
     }
   },
   created () {

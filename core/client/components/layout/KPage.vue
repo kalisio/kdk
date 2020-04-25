@@ -37,16 +37,16 @@ export default {
   },
   data () {
     return {
-      widgetOffset: [0 ,0],
+      widgetOffset: [0, 0],
       fabOffset: [16, 16],
       hasLeftDrawerOpener: false,
-      hasLeftDrawerComponent: this.klayout.leftDrawer.component ? true : false,
+      hasLeftDrawerComponent: !!this.klayout.leftDrawer.component,
       isLeftDrawerOpened: this.klayout.isLeftDrawerVisible,
       hasRightDrawerOpener: false,
-      hasRightDrawerComponent: this.klayout.rightDrawer.component ? true : false,
+      hasRightDrawerComponent: !!this.klayout.rightDrawer.component,
       isRightDrawerOpened: this.klayout.isRightDrawerVisible,
       hasFooterOpened: false,
-      hasFooterComponent: this.klayout.footer.component ? true : false,
+      hasFooterComponent: !!this.klayout.footer.component,
       isFooterOpened: this.klayout.isFooterVisible
     }
   },
@@ -55,7 +55,7 @@ export default {
       this.isLeftDrawerOpened = isVisible
     },
     'klayout.leftDrawer.component': function (component) {
-      this.hasLeftDrawerComponent = component ? true : false
+      this.hasLeftDrawerComponent = !!component
     },
     isLeftDrawerOpened: function (isOpened) {
       this.klayout.isLeftDrawerVisible = isOpened
@@ -64,7 +64,7 @@ export default {
       this.isRightDrawerOpened = isVisible
     },
     'klayout.rightDrawer.component': function (component) {
-      this.hasRightDrawerComponent = component ? true : false
+      this.hasRightDrawerComponent = !!component
     },
     isRightDrawerOpened: function (isOpened) {
       this.klayout.isRightDrawerVisible = isOpened
@@ -73,8 +73,8 @@ export default {
       this.isRightDrawerOpened = isVisible
     },
     'klayout.footer.component': function (component) {
-      this.hashasFooterComponent = component ? true : false
-    },    
+      this.hashasFooterComponent = !!component
+    },
     isFooterOpened: function (isOpened) {
       this.klayout.isFooterVisible = isOpened
     }

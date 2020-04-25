@@ -58,7 +58,7 @@ export default {
       default: 'horizontal',
       validator: (value) => {
         return ['horizontal', 'vertical'].includes(value)
-      } 
+      }
     }
   },
   methods: {

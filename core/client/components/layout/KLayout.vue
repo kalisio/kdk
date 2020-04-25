@@ -111,7 +111,7 @@ export default {
     this.$options.components['k-search-bar'] = this.$load('layout/KSearchBar')
     this.$options.components['k-tab-bar'] = this.$load('layout/KTabBar')
     // Load the options from the configuration
-    this.options = this.$config('layout')    
+    this.options = this.$config('layout')
     // Setup the left and right drawers
     this.$store.patch('leftDrawer', {
       component: _.get(this.options, 'leftDrawer.component.name', null),
