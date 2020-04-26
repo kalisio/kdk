@@ -63,8 +63,8 @@ export default {
       // Not yet initialized or not expected layer ?
       if (!this.mapillaryLayer || (this.mapillaryLayer.name !== layer.name)) return
       if (event.latlng) {
+        this.mapillary.location = { lat: event.latlng.lat, lon: event.latlng.lng }
         this.openWidget('mapillary')
-        this.mapillary.location = event.latlng
       }
     },
     onMapillarySelectionChanged () {
