@@ -64,9 +64,9 @@ export default {
       this.mapillaryMarker = L.marker([lat, lon], { icon: markerIcon })
       // Add it to the map
       this.map.addLayer(this.mapillaryMarker)
-    },
-    saveMapillaryLocation (lat, lon) {
-      this.mapillary.location = { lat: lat, lon: lon }
+      // Backup the position without reactivity
+      this.mapillary.location.lat = lat
+      this.mapillary.location.lon = lon
     },
     onMapillaryFeatureClicked (layer, event) {
       // Not yet initialized or not expected layer ?

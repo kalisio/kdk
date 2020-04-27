@@ -130,7 +130,13 @@ export default {
     this.refresh()
   },
   mounted () {
-    if (this.feature && this.layer && this.options) this.kActivity.centerOnSelection()
-  }
+    if (this.feature && this.layer && this.options) {
+      this.kActivity.centerOnSelection()
+      this.kActivity.addSelectionHighlight()
+    }
+  },
+  beforeDestroy() {
+    this.kActivity.removeSelectionHighlight()
+  },
 }
 </script>
