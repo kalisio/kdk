@@ -43,7 +43,7 @@ export default {
         }
       },
       renderer: {
-        component: 'KGroupCard',
+        component: 'team/KGroupCard',
         props: {
           options: {
             avatar: { size: '40px' }
