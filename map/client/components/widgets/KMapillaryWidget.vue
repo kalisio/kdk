@@ -61,6 +61,10 @@ export default {
       const position = await this.mapillaryViewer.getPosition()
       this.kActivity.center(position.lon, position.lat)
     },
+    onMoveCloseToCurrentLocation () {
+      const center = this.kActivity.map.getCenter()
+      this.moveCloseTo(center.lat, center.lng)
+    },
     onResized (size) {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
     },
@@ -101,9 +105,6 @@ export default {
     this.kActivity.$off('current-time-changed', this.onCurrentTimeChanged)
     // Remove the marker
     this.kActivity.removeMapillaryMarker()
-    // And save position
-    const position = await this.mapillaryViewer.getPosition()
-    this.kActivity.saveMapillaryLocation(position.lat, position.lon)
   }
 }
 </script>

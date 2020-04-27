@@ -32,7 +32,7 @@ export default {
       }
     },
     addSelectionHighlight () {
-      if (this.is2D()) {
+      if (this.is2D() && !this.selectionHighlight) {
         if (this.selection.feature.geometry.type === 'Point') {
           const coords = this.selection.feature.geometry.coordinates
           this.selectionHighlight = L.circleMarker([coords[1], coords[0]], { radius: 18, color: colors.getBrand('secondary'), weight: 3 })
@@ -48,8 +48,10 @@ export default {
       }
     },
     removeSelectionHighlight () {
-      this.map.removeLayer(this.selectionHighlight)
-      this.selectionHighlight = null
+      if (this.selectionHighlight) {
+        this.map.removeLayer(this.selectionHighlight)
+        this.selectionHighlight = null
+      }
     },
     onFeatureClicked (options, event) {
       // Retrieve tje feature and the options
