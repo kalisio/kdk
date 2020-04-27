@@ -33,7 +33,7 @@ export default {
   },
   watch: {
     location: function () {
-      this.moveCloseTo(this.location.lat, this.location.lng)
+      this.moveCloseTo(this.location.lat, this.location.lon)
     }
   },
   methods: {
@@ -61,15 +61,12 @@ export default {
       const position = await this.mapillaryViewer.getPosition()
       this.kActivity.center(position.lon, position.lat)
     },
-    onMoveCloseToCurrentLocation () {
-      const center = this.kActivity.map.getCenter()
-      this.moveCloseTo(center.lat, center.lng)
-    },
     onResized (size) {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
     },
-    onNodeChanged (node) {
-      this.kActivity.updateMapillaryMarker(node.latLon.lat, node.latLon.lon)
+    async onNodeChanged (node) {
+      const bearing = await this.mapillaryViewer.getBearing()
+      this.kActivity.updateMapillaryMarker(node.latLon.lat, node.latLon.lon, bearing)
     },
     onCurrentTimeChanged (time) {
       this.setupViewerFilters()
@@ -80,8 +77,7 @@ export default {
     this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
     // Registers the actions
     this.actions = [
-      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn },
-      { name: 'moveCloseTo', icon: 'las la-street-view', label: this.$t('KMapillaryWidget.MOVE_CLOSE_TO'), handler: this.onMoveCloseToCurrentLocation }
+      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn }
     ]
   },
   mounted () {
