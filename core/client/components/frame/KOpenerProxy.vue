@@ -13,7 +13,6 @@
 <script>
 import _ from 'lodash'
 import path from 'path'
-import _ from 'lodash'
 
 export default {
   name: 'k-opener-proxy',
