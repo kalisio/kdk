@@ -17,6 +17,7 @@ import _ from 'lodash'
 import centroid from '@turf/centroid'
 import { colors, copyToClipboard, exportFile  } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
+import { generatePropertiesSchema } from '../../utils'
 
 export default {
   name: 'k-feature-widget',
@@ -76,8 +77,12 @@ export default {
   methods: {
     refresh () {
       if (this.feature && this.options) {
-        // Retrieve the schema
-        if (this.schema !== this.options.schema.content) this.schema = this.options.schema.content
+        // Is there any schema ?
+        if (this.options.schema) {
+          if (this.schema !== this.options.schema.content) this.schema = this.options.schema.content
+        } else {
+          this.schema = generatePropertiesSchema(this.feature)
+        }
         // If 2D 
         if (this.kActivity.is2D()) {
           this.properties = this.kActivity.generateLeafletStyle('infobox', this.feature, this.layer, this.options)

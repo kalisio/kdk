@@ -54,8 +54,9 @@ export default {
       }
     },
     onFeatureClicked (options, event) {
-      // Retrieve tje feature and the options
-      if (!options || !options.schema) return
+      // Check the options
+      if (!options) return
+      // Retrieve the feature
       const feature = _.get(event, 'target.feature')
       const entity = _.get(event, 'target')
       const layer = _.get(event, 'target')
