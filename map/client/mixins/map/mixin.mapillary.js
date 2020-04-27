@@ -57,9 +57,9 @@ export default {
       // Remove the existing marker
       this.map.removeLayer(this.mapillaryMarker)
       // Create a new one with the corresponding rotation
-      const angle=bearing + 225 // because if the initial rotation of the icon
+      const angle = bearing + 225 // because if the initial rotation of the icon
       const markerIcon = L.divIcon({
-        html: `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${angle}deg); width: 40p; height: 40px;" src="./statics/mapillary-marker.png">`  
+        html: `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${angle}deg); width: 40p; height: 40px;" src="./statics/mapillary-marker.png">`
       })
       this.mapillaryMarker = L.marker([lat, lon], { icon: markerIcon })
       // Add it to the map
