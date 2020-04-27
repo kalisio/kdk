@@ -1,5 +1,6 @@
 <template>
   <q-list dense bordered>
+    <slot name="header" />
     <template v-for="category in layerCategories">
       <q-expansion-item
         v-if="layersByCategory[category.name].length > 0"
@@ -17,6 +18,7 @@
           :options="category.options"></component>
       </q-expansion-item>
     </template>
+    <slot name="footer" />
   </q-list>
 </template>
 

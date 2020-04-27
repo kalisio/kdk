@@ -100,7 +100,7 @@ export default {
       logger.warn('Mapillary is not supported on your platform')
       return
     }
-    // Chec whether the clientID is initailized
+    // Check whether the clientID is initailized
     this.mapillaryClientID = this.$store.get('capabilities.api.mapillary.clientID')
     if (!this.mapillaryClientID) {
       logger.warn('You must provide a clientID to use Mapillary')
