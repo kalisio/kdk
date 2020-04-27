@@ -137,6 +137,6 @@ export default {
   },
   beforeDestroy() {
     this.kActivity.removeSelectionHighlight()
-  },
+  }
 }
 </script>
