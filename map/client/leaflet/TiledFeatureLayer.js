@@ -35,9 +35,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const tile = document.createElement('div')
     let skipTile = false
 
-    // Check for zoom level range first
-    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
-    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) skipTile = true
+    // Check for zoom level range first,
+    // it appears that zoom level has not yet changed in map on creation so that we use the tile one
+    if (this.options.minZoom && (coords.zoom < this.options.minZoom)) skipTile = true
+    if (this.options.maxZoom && (coords.zoom > this.options.maxZoom)) skipTile = true
 
     if (!skipTile) {
       // tile.style.outline = '1px solid red'
@@ -117,7 +118,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
       this.loadedTiles.delete(tilekey)
 
       if (probes) this.activity.updateLayer(this.layer.name, probes, true)
-      if (features) this.activity.updateLayer(this.layer.name, features, true)
+      // No need to remove measures as they are 'attached' to probes
+      //if (features) this.activity.updateLayer(this.layer.name, features, true)
     }
   },
 

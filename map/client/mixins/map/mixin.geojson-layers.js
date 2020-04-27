@@ -306,7 +306,13 @@ export default {
         (see https://github.com/perliedman/leaflet-realtime/issues/136)
          but we'd like to perform similarly to automated updates
       */
-      if (remove && (typeof layer.remove === 'function')) layer.remove(geoJson)
+      if (remove && (typeof layer.remove === 'function')) {
+        let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+        // Filter features to ensure some have not been already removed
+        // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
+        features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
+        layer.remove(features)
+      }
       else if (typeof layer._onNewData === 'function') {
         layer._onNewData(layer.options.removeMissing, geoJson || this.toGeoJson(name))
       }
