@@ -154,6 +154,7 @@ export async function aggregateFeaturesQuery (hook) {
   if (query.$aggregate) {
     const collection = service.Model
     const featureId = (service.options ? service.options.featureId : '')
+    const featureIdType = (service.options ? service.options.featureIdType : 'string')
     const ids = typeof query.$groupBy === 'string' // Group by matching ID(s), ie single ID or array of field to create a compound ID
       ? { [query.$groupBy]: '$properties.' + query.$groupBy }
     // Aggregated in an accumulator to avoid conflict with feature properties
@@ -183,8 +184,10 @@ export async function aggregateFeaturesQuery (hook) {
     // The query contains the match stage except options relevent to the aggregation pipeline
     const match = _.omit(query, ['$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
     const aggregateOptions = {}
-    // Check if we could provide a hint to the aggregation when targeting feature ID
+    // Check for any required type conversion (eg HTTP requests)
     if (featureId && _.has(match, 'properties.' + featureId)) {
+      if (featureIdType === 'number') _.set(match, 'properties.' + featureId, _.toNumber(_.get(match, 'properties.' + featureId)))
+      // Check if we could provide a hint to the aggregation when targeting feature ID
       aggregateOptions.hint = { ['properties.' + featureId]: 1 }
     }
     // Ensure we do not mix results with/without relevant element values
