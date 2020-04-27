@@ -380,6 +380,11 @@ export default {
         this.$ref.page.closeWindow()
       }
     },
+    onCenterOn () {
+      if (this.kActivity.locationProbed) {
+        console.log(this.kActivity.locationProbed)
+      }
+    },
     async updateProbedLocationForecast (model) {
       // Update probed location if any
       if (this.kActivity.probedLocation) {

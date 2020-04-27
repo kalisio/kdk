@@ -3,9 +3,19 @@ import _ from 'lodash'
 
 export default {
   methods: {
-    async onProbeClicked (options, event) {
+    async onTimeSeriesProbeClicked (options, event) {
       const feature = _.get(event, 'target.feature')
       if (!feature) return
+      await this.probeTimeSeries(feature, options)
+      // Open the widget
+      this.openWidget('time-series')
+    },
+    async onTimeSeriesSelectionChanged () {
+      if (this.selection.feature && this.selection.feature.geometry.type === 'Point') {
+        await this.probeTimeSeries(this.selection.feature, this.selection.options)
+      }
+    },
+    async probeTimeSeries (feature, options) {
       const windDirection = (this.selectedLevel ? `windDirection-${this.selectedLevel}` : 'windDirection')
       const windSpeed = (this.selectedLevel ? `windSpeed-${this.selectedLevel}` : 'windSpeed')
       const isWeatherProbe = (_.has(feature, `properties.${windDirection}`) &&
@@ -21,28 +31,17 @@ export default {
       } else if (options.variables && options.service) { // Static measure probe
         await this.getMeasureForFeature(options, feature, start, end)
       } else if (isWeatherProbe) { // Dynamic weacast probe
-        this.getForecastForLocation(event.latlng.lng, event.latlng.lat, start, end)
-      } else {
-        return
-      }
-      // Open the widget
-      this.openWidget('time-series')
-    },
-    async onTimeSeriesSelectionChanged () {
-      if (this.selection.feature && this.selection.feature.geometry.type === 'Point') {
-        const coordinates = this.selection.feature.geometry.coordinates
-        const { start, end } = this.getProbeTimeRange()
-        this.getForecastForLocation(coordinates[0], coordinates[1], start, end)
-        this.openWidget('time-series')
+        const position = feature.geometry.coordinates
+        await this.getForecastForLocation(position[0], position[1], start, end)
       }
     }
   },
   mounted () {
-    this.$on('click', this.onProbeClicked)
+    this.$on('click', this.onTimeSeriesProbeClicked)
     this.$on('selection-changed', this.onTimeSeriesSelectionChanged)
   },
   beforeDestroy () {
-    this.$off('click', this.onProbeClicked)
+    this.$off('click', this.onTimeSeriesProbeClicked)
     this.$off('selection-changed', this.onTimeSeriesSelectionChanged)
   }
 }
