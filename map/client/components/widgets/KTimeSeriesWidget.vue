@@ -381,8 +381,9 @@ export default {
       }
     },
     onCenterOn () {
-      if (this.kActivity.locationProbed) {
-        console.log(this.kActivity.locationProbed)
+      if (this.kActivity.probedLocation) {
+        const position = this.kActivity.probedLocation.geometry.coordinates
+        this.kActivity.center(position[0], position[1])
       }
     },
     async updateProbedLocationForecast (model) {
