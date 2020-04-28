@@ -59,8 +59,6 @@ export class WeacastGridSource extends GridSource {
 
     this.api = options.weacastApi
     this.usable = false
-
-    this.useCache = true
   }
 
   getBBox () {
@@ -73,8 +71,6 @@ export class WeacastGridSource extends GridSource {
 
   async setup (config) {
     this.usable = false
-
-    this.tileCache = new Map()
     ++this.sourceKey
 
     if (!this.api) return
@@ -88,13 +84,18 @@ export class WeacastGridSource extends GridSource {
     this.service = config.model + '/' + config.element
     this.lonResolution = model.tileResolution[0]
 
-    /**/
-    this.tileOrigin = [model.origin[1], model.origin[0]]
-    this.tileSize = [model.tileResolution[1], model.tileResolution[0]]
-    this.wrapLon = model.bounds[2] > 180.0
-    this.maxTileX = ((model.bounds[2] - model.bounds[0]) / model.tileResolution[0]) - 1
-    this.maxTileY = ((model.bounds[3] - model.bounds[1]) / model.tileResolution[1]) - 1
-    /**/
+    this.useCache = config.useCache
+    if (this.useCache) {
+      this.tileCache = new Map()
+
+      this.tileOrigin = [model.origin[1], model.origin[0]]
+      this.tileSize = [model.tileResolution[1], model.tileResolution[0]]
+      this.wrapLon = model.bounds[2] > 180.0
+      this.maxTileX = ((model.bounds[2] - model.bounds[0]) / model.tileResolution[0]) - 1
+      this.maxTileY = ((model.bounds[3] - model.bounds[1]) / model.tileResolution[1]) - 1
+    } else {
+      this.tileCache = null
+    }
 
     this.minMaxLat = [model.bounds[1], model.bounds[3]]
     // Internal tile management requires longitude in [-180, 180]
