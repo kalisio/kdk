@@ -16,7 +16,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   getEvents () {
-    const events = L.GridLayer.prototype.getEvents.call(this, map)
+    const events = L.GridLayer.prototype.getEvents.call(this)
 
     /*
     const onZoomEnd = events.zoomend
