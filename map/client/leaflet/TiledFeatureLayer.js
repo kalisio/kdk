@@ -117,9 +117,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // ok, we can unload geosjon, and remove tile from loaded tile set
       this.loadedTiles.delete(tilekey)
 
-      if (probes) this.activity.updateLayer(this.layer.name, probes, true)
       // No need to remove measures as they are 'attached' to probes
-      //if (features) this.activity.updateLayer(this.layer.name, features, true)
+      if (probes) this.activity.updateLayer(this.layer.name, probes, true)
+      else if (features) this.activity.updateLayer(this.layer.name, features, true)
     }
   },
 
