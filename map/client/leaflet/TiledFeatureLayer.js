@@ -1,13 +1,15 @@
 import L from 'leaflet'
 import _ from 'lodash'
+import bbox from '@turf/bbox'
 import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
     L.GridLayer.prototype.initialize.call(this, options)
 
+    this.enableDebug = _.get(options, 'enableDebug', true)
+
     // register event callbacks
-    this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.loadedTiles = new Set()
@@ -19,30 +21,28 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
-    // be notified when zoom starts
-    // keep a ref on bound objects to be able to remove them later
-    // this.zoomStartCallback = this.onZoomStart.bind(this)
-    // this.zoomEndCallback = this.onZoomEnd.bind(this)
-    // map.on('zoomstart', this.zoomStartCallback)
-    // map.on('zoomend', this.zoomEndCallback)
+    this.loadedTiles.clear()
     L.GridLayer.prototype.onAdd.call(this, map)
   },
 
   onRemove (map) {
     L.GridLayer.prototype.onRemove.call(this, map)
+    this.loadedTiles.clear()
   },
 
-  createTile (coords, done) {
+  createTile (coords) {
     const tile = document.createElement('div')
-    let skipTile = false
+    if (this.enableDebug) {
+      tile.style.outline = '1px solid blue'
+      tile.innerHTML = `${coords.x} ${coords.y} ${coords.z} :`
+    }
 
-    // Check for zoom level range first,
-    // it appears that zoom level has not yet changed in map on creation so that we use the tile one
-    if (this.options.minZoom && (coords.zoom < this.options.minZoom)) skipTile = true
-    if (this.options.maxZoom && (coords.zoom > this.options.maxZoom)) skipTile = true
-
+    const skipTile = tileSetContainsParent(this.loadedTiles, coords)
     if (!skipTile) {
-      // tile.style.outline = '1px solid red'
+      if (this.enableDebug) {
+        tile.innerHTML += ' requested'
+      }
+
       const bounds = this._tileCoordsToBounds(coords)
       const baseQuery = {
         south: bounds.getSouth(),
@@ -64,35 +64,38 @@ const TiledFeatureLayer = L.GridLayer.extend({
         } else {
           tile.features = (data[0].features.length ? data[0] : null)
         }
-        done(null, tile)
+
+        // add tile to loaded tiles set
+        this.loadedTiles.add(tile2key(coords))
+
+        // Update realtime layer with probe first then (measure) features
+        if (tile.probes) this.activity.updateLayer(this.layer.name, tile.probes)
+        if (tile.features) {
+          // compute features bbox
+          const box = bbox(tile.features)
+          tile.featuresBbox = L.latLngBounds(L.latLng(box[1], box[0]), L.latLng(box[3], box[2]))
+          this.activity.updateLayer(this.layer.name, tile.features)
+        }
+
+        if (this.enableDebug) {
+          tile.style.outline = '1px solid green'
+          tile.innerHTML += ', added to loadedTiles'
+        }
+      }).catch(error => {
+        if (this.enableDebug) {
+          tile.style.outline = '1px solid red'
+          tile.innerHTML += `, failed (${error})`
+        }
+        throw error
       })
-        .catch(error => {
-          done(error, tile)
-          throw error
-        })
     } else {
-      setTimeout(() => { done(null, tile) }, 100)
+      if (this.enableDebug) {
+        tile.style.outline = '1px solid green'
+        tile.innerHTML += ' skipped'
+      }
     }
 
     return tile
-  },
-
-  async onTileLoad (event) {
-    const probes = event.tile.probes
-    const features = event.tile.features
-    if (!probes && !features) return
-
-    // Check for zoom level range first as user might have zoomed during loading
-    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) return
-    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) return
-
-    // add tile to loaded tiles set
-    const tilekey = tile2key(event.coords)
-    this.loadedTiles.add(tilekey)
-
-    // Update realtime layer with probe first then (measure) features
-    if (probes) this.activity.updateLayer(this.layer.name, probes)
-    if (features) this.activity.updateLayer(this.layer.name, features)
   },
 
   onTileUnload (event) {
@@ -100,23 +103,13 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const features = event.tile.features
     if (!probes && !features) return
 
-    const tilekey = tile2key(event.coords)
-    // If tile not available in tile cache then by default we'd like to clear it
-    let unload = !this.loadedTiles.has(tilekey)
-    // Check for zoom level range first
-    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) unload |= true
-    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) unload |= true
-    // check if we can unload the associated geojson bits
-    // we only unload when the unloaded tile is completely outside the visible bounds
-    if (!unload) {
-      const visible = this._map.getBounds()
-      const bounds = this._tileCoordsToBounds(event.coords)
-      if (!visible.intersects(bounds)) unload = true
-    }
+    // only unload when features are completely outside the visible bounds
+    const visible = this._map.getBounds()
+    const unload = !visible.intersects(event.tile.featuresBbox)
 
     if (unload) {
       // ok, we can unload geosjon, and remove tile from loaded tile set
-      this.loadedTiles.delete(tilekey)
+      this.loadedTiles.delete(tile2key(event.coords))
 
       // No need to remove measures as they are 'attached' to probes
       if (probes) this.activity.updateLayer(this.layer.name, probes, true)
@@ -127,12 +120,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
   redraw () {
     this.loadedTiles.clear()
     L.GridLayer.prototype.redraw.call(this)
-  },
-
-  onZoomStart (event) {
-  },
-
-  onZoomEnd (event) {
   }
 })
 
