@@ -26,6 +26,7 @@ export class OpenDapGridSource extends GridSource {
 
   async setup (config) {
     this.usable = false
+    ++this.sourceKey
 
     this.descriptor = null
     this.indices = null
@@ -96,6 +97,8 @@ export class OpenDapGridSource extends GridSource {
     const query = this.makeQuery(bbox, resolution)
     if (!query) { return null }
 
+    const sourceKey = this.sourceKey
+
     const data = await dap.fetchData(query, abort)
     const req = data[this.config.variable]
     const valData = req[0]
@@ -117,12 +120,14 @@ export class OpenDapGridSource extends GridSource {
       indices.fill(0)
       const subgrid = dap.getGridValue(valData, indices)
       return new Grid2D(
+        sourceKey,
         databbox, [latData.length, lonData.length],
         subgrid, this.latIndex < this.lonIndex, this.latSortOrder, this.lonSortOrder,
         this.nodata, this.converter)
     }
 
     return new dap.OpenDAPGrid(
+      sourceKey,
       databbox, [latData.length, lonData.length],
       valData, this.indices, this.latIndex, this.lonIndex,
       this.latSortOrder, this.lonSortOrder,

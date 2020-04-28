@@ -61,7 +61,6 @@ export class WeacastGridSource extends GridSource {
     this.usable = false
 
     this.useCache = true
-    this.cacheKey = 0
   }
 
   getBBox () {
@@ -76,7 +75,7 @@ export class WeacastGridSource extends GridSource {
     this.usable = false
 
     this.tileCache = new Map()
-    ++this.cacheKey
+    ++this.sourceKey
 
     if (!this.api) return
 
@@ -167,21 +166,10 @@ export class WeacastGridSource extends GridSource {
       }
     }
 
-    const cacheKey = this.cacheKey
+    const sourceKey = this.sourceKey
 
     // issue required request
     if (requests.length) {
-      /*
-      const x = new Set()
-      const y = new Set()
-      for (let i = 0; i < requests.length; ++i) {
-        const [ix, iy] = key2tile(requests[i])
-        x.add(ix)
-        y.add(iy)
-      }
-      const query = this.makeQuery({ x: Array.from(x.values()), y: Array.from(y.values()) })
-      */
-
       // generate a query with points intersecting required tiles
       const points = []
       const offset = [this.tileSize[1] * 0.5, this.tileSize[0] * 0.5]
@@ -208,51 +196,35 @@ export class WeacastGridSource extends GridSource {
         }
       }
 
-      /*
-      for (let i = 0; i < requests.length; ++i) {
-        const [x, y] = key2tile(requests[i])
-        const query = {
-          time: this.time,
-          $select: ['forecastTime', 'data', 'geometry', 'size', 'x', 'y'],
-          $paginate: false,
-          geometry: { $exists: true },
-          x: x,
-          y: y
-        }
-      */
-        const request = new Promise((resolve, reject) => {
-          this.api.getService(this.service).find({ query }).then(tiles => {
-            const grids = []
+      const request = new Promise((resolve, reject) => {
+        this.api.getService(this.service).find({ query }).then(tiles => {
+          const grids = []
 
-            // only add to cache when there has been no setup() called since
-            if (cacheKey === this.cacheKey) {
-              for (const tile of tiles) {
-                const tileBBox = tile.geometry.coordinates[0] // BBox as a polygon
-                const tileBounds = [tileBBox[0][1], tileBBox[0][0], tileBBox[2][1], tileBBox[2][0]]
-                // normalize bounds when crossing longitude 180/-180
-                if (tileBounds[1] > tileBounds[3]) tileBounds[1] -= 360.0
+          // only add to cache when there has been no setup() called since
+          if (sourceKey === this.sourceKey) {
+            for (const tile of tiles) {
+              const tileBBox = tile.geometry.coordinates[0] // BBox as a polygon
+              const tileBounds = [tileBBox[0][1], tileBBox[0][0], tileBBox[2][1], tileBBox[2][0]]
+              // normalize bounds when crossing longitude 180/-180
+              if (tileBounds[1] > tileBounds[3]) tileBounds[1] -= 360.0
 
-                const key = tile2key(tile.x, tile.y)
-                const cached = this.tileCache.get(key)
-                cached.grid = new Grid1D(
-                  tileBounds, tile.size,
-                  tile.data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
-                  this.nodata, this.converter)
-                cached.request = null
-                grids.push(cached.grid)
-              }
+              const key = tile2key(tile.x, tile.y)
+              const cached = this.tileCache.get(key)
+              cached.grid = new Grid1D(
+                sourceKey,
+                tileBounds, tile.size,
+                tile.data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
+                this.nodata, this.converter)
+              cached.request = null
+              grids.push(cached.grid)
             }
+          }
 
-            resolve(grids)
-          })
+          resolve(grids)
         })
+      })
 
-      /*
-        this.tileCache.set(requests[i], { request })
-        waits.push(request)
-      }
-      */
-
+      // record pending request
       for (let i = 0; i < requests.length; ++i) {
         this.tileCache.set(requests[i], { request })
       }
@@ -265,7 +237,7 @@ export class WeacastGridSource extends GridSource {
     const allGrids = grids.concat(newGrids.flat())
     if (allGrids.length === 0) return null
 
-    return allGrids.length > 1 ? new TiledGrid(allGrids) : new SubGrid(allGrids[0], bbox)
+    return allGrids.length > 1 ? new TiledGrid(sourceKey, allGrids) : new SubGrid(sourceKey, allGrids[0], bbox)
   }
 
   async fetchWithoutCache (abort, bbox, resolution) {
@@ -286,6 +258,7 @@ export class WeacastGridSource extends GridSource {
       }
     }
 
+    const sourceKey = this.sourceKey
     const results = await this.api.getService(this.service).find({ query })
     if (results.length === 0) return null
 
@@ -303,12 +276,13 @@ export class WeacastGridSource extends GridSource {
       if (tileBounds[1] > tileBounds[3]) tileBounds[1] -= 360.0
 
       const grid = new Grid1D(
+        sourceKey,
         tileBounds, tile.size,
         tile.data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
         this.nodata, this.converter)
       tiles.push(grid)
     }
 
-    return tiles.length > 1 ? new TiledGrid(tiles) : tiles[0]
+    return tiles.length > 1 ? new TiledGrid(sourceKey, tiles) : tiles[0]
   }
 }

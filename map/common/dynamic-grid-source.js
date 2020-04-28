@@ -59,6 +59,7 @@ export class DynamicGridSource extends GridSource {
     if (this.source) {
       this.source.on('data-changed', this.onDataChanged)
       this.source.setup(config)
+      this.sourceKey = this.source.sourceKey
     } else {
       this.dataChanged()
     }

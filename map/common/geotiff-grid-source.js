@@ -22,6 +22,7 @@ export class GeoTiffGridSource extends GridSource {
 
   async setup (config) {
     this.usable = false
+    ++this.sourceKey
 
     this.minMaxLat = null
     this.minMaxLon = null
@@ -53,6 +54,8 @@ export class GeoTiffGridSource extends GridSource {
   async fetch (abort, bbox, resolution) {
     if (!this.usable) { return null }
 
+    const sourceKey = this.sourceKey
+
     const reqMinLat = bbox[0]
     const reqMinLon = bbox[1]
     const reqMaxLat = bbox[2]
@@ -70,6 +73,7 @@ export class GeoTiffGridSource extends GridSource {
     })
 
     return new Grid1D(
+      sourceKey,
       bbox, [height, width],
       data[0], true, SortOrder.DESCENDING, SortOrder.ASCENDING,
       this.nodata, this.converter)

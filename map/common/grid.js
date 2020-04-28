@@ -11,7 +11,8 @@ export const unitConverters = { }
 // Base 2d grid class
 // TODO: add interpolate/bilinearInterpolate and other missing stuff from weacast grid
 export class BaseGrid {
-  constructor (bbox, dimensions, nodata) {
+  constructor (sourceKey, bbox, dimensions, nodata) {
+    this.sourceKey = sourceKey
     this.bbox = bbox
     this.dimensions = dimensions
     this.resolution = [(bbox[2] - bbox[0]) / (dimensions[0] - 1), (bbox[3] - bbox[1]) / (dimensions[1] - 1)]
@@ -135,6 +136,7 @@ export class BaseGrid {
 export class GridSource {
   constructor (options) {
     this.events = {}
+    this.sourceKey = 0
   }
 
   getBBox () {
@@ -185,8 +187,9 @@ export class GridSource {
 
   emit (event) {
     const callbacks = _.get(this.events, event, [])
+    const ctx = { source: this, event: event }
     for (const cb of callbacks) {
-      cb()
+      cb(ctx)
     }
   }
 
@@ -231,8 +234,8 @@ const grid1DAccessFunctions = [
 ]
 
 export class Grid1D extends BaseGrid {
-  constructor (bbox, dimensions, data, latFirst, latSortOrder, lonSortOrder, nodata = undefined, converter = null) {
-    super(bbox, dimensions, nodata)
+  constructor (sourceKey, bbox, dimensions, data, latFirst, latSortOrder, lonSortOrder, nodata = undefined, converter = null) {
+    super(sourceKey, bbox, dimensions, nodata)
 
     this.data = data
 
@@ -273,8 +276,8 @@ const grid2DAccessFunctions = [
 ]
 
 export class Grid2D extends BaseGrid {
-  constructor (bbox, dimensions, data, latFirst, latSortOrder, lonSortOrder, nodata = undefined, converter = null) {
-    super(bbox, dimensions, nodata)
+  constructor (sourceKey, bbox, dimensions, data, latFirst, latSortOrder, lonSortOrder, nodata = undefined, converter = null) {
+    super(sourceKey, bbox, dimensions, nodata)
     this.data = data
 
     const index = lonSortOrder + (latSortOrder * 2) + ((latFirst ? 1 : 0) * 4)
@@ -298,11 +301,11 @@ export class Grid2D extends BaseGrid {
 // Class to aggregate multiple grids in a single one
 // All grids in the aggregate MUST have the same resolution
 export class TiledGrid extends BaseGrid {
-  constructor (tiles, nodata = undefined) {
+  constructor (sourceKey, tiles, nodata = undefined) {
     const bbox0 = tiles[0].getBBox()
     const dim0 = tiles[0].getDimensions()
     const res0 = tiles[0].getResolution()
-    super(bbox0, dim0, nodata)
+    super(sourceKey, bbox0, dim0, nodata)
 
     this.dimensions = [0, 0]
     this.bbox = [bbox0[0], bbox0[1], bbox0[2], bbox0[3]]
@@ -360,13 +363,13 @@ export class TiledGrid extends BaseGrid {
 }
 
 export class SubGrid extends BaseGrid {
-  constructor (grid, subBbox) {
+  constructor (sourceKey, grid, subBbox) {
     const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(subBbox)
 
     const adjustedDims = [1 + imaxlat - iminlat, 1 + imaxlon - iminlon]
     const adjustedBbox = [grid.getLat(iminlat), grid.getLon(iminlon), grid.getLat(imaxlat), grid.getLon(imaxlon)]
 
-    super(adjustedBbox, adjustedDims, grid.nodata)
+    super(sourceKey, adjustedBbox, adjustedDims, grid.nodata)
     // this.resolution = grid.resolution.slice()
     this.latOffset = iminlat
     this.lonOffset = iminlon

@@ -208,8 +208,8 @@ const makeIndicesFunctions = [
 ]
 
 export class OpenDAPGrid extends BaseGrid {
-  constructor (bbox, dimensions, data, indices, latIndex, lonIndex, latSortOrder, lonSortOrder, nodata = undefined, converter = null) {
-    super(bbox, dimensions, nodata)
+  constructor (sourceKey, bbox, dimensions, data, indices, latIndex, lonIndex, latSortOrder, lonSortOrder, nodata = undefined, converter = null) {
+    super(sourceKey, bbox, dimensions, nodata)
 
     this.data = data
     this.indices = indices

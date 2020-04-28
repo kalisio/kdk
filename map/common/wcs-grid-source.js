@@ -23,6 +23,7 @@ export class WcsGridSource extends GridSource {
 
   async setup (config) {
     this.usable = false
+    ++this.sourceKey
 
     this.minMaxLat = null
     this.minMaxLon = null
@@ -57,6 +58,8 @@ export class WcsGridSource extends GridSource {
   async fetch (abort, bbox, resolution) {
     if (!this.usable) { return null }
 
+    const sourceKey = this.sourceKey
+
     const reqMinLat = bbox[0]
     const reqMinLon = bbox[1]
     const reqMaxLat = bbox[2]
@@ -77,6 +80,7 @@ export class WcsGridSource extends GridSource {
     const gridbbox = [databbox[1], databbox[0], databbox[3], databbox[2]]
     const dimensions = [image.getHeight(), image.getWidth()]
     return new Grid1D(
+      sourceKey,
       gridbbox, dimensions,
       (await data)[0], true, SortOrder.DESCENDING, SortOrder.ASCENDING,
       this.nodata, this.converter)
