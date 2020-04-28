@@ -15,9 +15,38 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.loadedTiles = new Set()
   },
 
+  getEvents () {
+    const events = L.GridLayer.prototype.getEvents.call(this, map)
+
+    /*
+    const onZoomEnd = events.zoomend
+    events.zoomend = (event) => {
+      this.handleGeojsonLayerVisibility()
+      if (onZoomEnd) onZoomEnd.call(this, event)
+    }
+    */
+
+    return events
+  },
+
+  handleGeojsonLayerVisibility () {
+    let shouldBeVisible = true
+    if (this.options.minZoom && this._map.getZoom() < this.options.minZoom) shouldBeVisible = false
+    if (this.options.maxZoom && this._map.getZoom() > this.options.maxZoom) shouldBeVisible = false
+
+    if (this.layer.tiledFeatureLayerVisible && !shouldBeVisible) {
+      this._map.removeLayer(this.layer)
+      this.layer.tiledFeatureLayerVisible = false
+    } else if (!this.layer.tiledFeatureLayerVisible && shouldBeVisible) {
+      this._map.addLayer(this.layer)
+      this.layer.tiledFeatureLayerVisible = true
+    }
+  },
+
   setup (activity, layer) {
     this.activity = activity
     this.layer = layer
+    // this.layer.tiledFeatureLayerVisible = true
   },
 
   onAdd (map) {
@@ -58,6 +87,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       }
       promises.push(this.activity.getFeatures(_.merge({ baseQuery }, this.layer)))
       Promise.all(promises).then(data => {
+        // fetch ended, make sure we're still at the zoom level the tile was requested at
         if (this.layer.probeService) {
           tile.probes = (data[0].features.length ? data[0] : null)
           tile.features = (data[1].features.length ? data[1] : null)
@@ -103,9 +133,14 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const features = event.tile.features
     if (!probes && !features) return
 
+    // unload by default
+    let unload = true
+
     // only unload when features are completely outside the visible bounds
-    const visible = this._map.getBounds()
-    const unload = !visible.intersects(event.tile.featuresBbox)
+    if (features) {
+      const visible = this._map.getBounds()
+      unload = !visible.intersects(event.tile.featuresBbox)
+    }
 
     if (unload) {
       // ok, we can unload geosjon, and remove tile from loaded tile set
