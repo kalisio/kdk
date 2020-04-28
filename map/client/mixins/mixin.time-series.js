@@ -6,16 +6,6 @@ export default {
     async onTimeSeriesProbeClicked (options, event) {
       const feature = _.get(event, 'target.feature')
       if (!feature) return
-      await this.probeTimeSeries(feature, options)
-      // Open the widget
-      this.openWidget('time-series')
-    },
-    async onTimeSeriesSelectionChanged () {
-      if (this.selection.feature && this.selection.feature.geometry.type === 'Point') {
-        await this.probeTimeSeries(this.selection.feature, this.selection.options)
-      }
-    },
-    async probeTimeSeries (feature, options) {
       const windDirection = (this.selectedLevel ? `windDirection-${this.selectedLevel}` : 'windDirection')
       const windSpeed = (this.selectedLevel ? `windSpeed-${this.selectedLevel}` : 'windSpeed')
       const isWeatherProbe = (_.has(feature, `properties.${windDirection}`) &&
@@ -33,6 +23,22 @@ export default {
       } else if (isWeatherProbe) { // Dynamic weacast probe
         const position = feature.geometry.coordinates
         await this.getForecastForLocation(position[0], position[1], start, end)
+      } else {
+        return
+      }
+      this.openWidget('time-series')
+    },
+    async onTimeSeriesSelectionChanged () {
+      const feature = this.selection.feature
+      if (feature && feature.geometry.type === 'Point') {
+        const options = this.selection.options
+        const { start, end } = this.getProbeTimeRange()
+        if (options.variables && options.service) { // Static measure probe
+          await this.getMeasureForFeature(options, feature, start, end)
+        } else {
+          const position = feature.geometry.coordinates
+          await this.getForecastForLocation(position[0], position[1], start, end)
+        }
       }
     }
   },
