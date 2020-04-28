@@ -55,7 +55,8 @@ export default {
     },
     onFeatureClicked (options, event) {
       // Check the options
-      if (!options || !this.isLayerSelectable(options)) return
+      // FIXME: need to retrieve original options as here we get processed options by the underlying engine
+      if (!options || !this.isLayerSelectable(this.getLayerByName(options.name))) return
       // Retrieve the feature
       const feature = _.get(event, 'target.feature')
       const entity = _.get(event, 'target')
