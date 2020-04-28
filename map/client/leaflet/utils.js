@@ -119,32 +119,27 @@ export function tileSetContainsParent (tileset, coords) {
   return false
 }
 
-export function computeIdealMaxNativeZoom (gridLayer, dataSetBounds, dataSetTileSize)
-{
+export function computeIdealMaxNativeZoom (gridLayer, dataSetBounds, dataSetTileSize) {
   // compute optimal maxNativeZoom value to ensure
   // the smallest leaflet tile will approximately match a dataset tile
 
-  /*
-  const 
-  
-  let maxNativeZoom = 1
-  do {
-    const coords = L.point(0, maxNativeZoom)
-    coords.z = maxNativeZoom
-    const tileBounds = this._tileCoordsToBounds(coords)
+  // compute tile size farthest from equator
+  const nw = dataSetBounds.getNorthWest()
+  let z = 1
+  while (true) {
+    const nwPoint = gridLayer._map.project(nw, z)
+    const coords = nwPoint.unscaleBy(gridLayer.getTileSize())
+    coords.x = Math.floor(coords.x)
+    coords.y = Math.floor(coords.y)
+    coords.z = z
+
+    const tileBounds = gridLayer._tileCoordsToBounds(coords)
     const tileWidth = tileBounds.getEast() - tileBounds.getWest()
     const tileHeight = tileBounds.getNorth() - tileBounds.getSouth()
-    if (tileWidth < modelTile[0] || tileHeight < modelTile[1]) break
-    ++maxNativeZoom
-  } while (true)
-  
-  const coords = L.point(0, maxNativeZoom)
-  coords.z = maxNativeZoom
-  const tileBounds = this._tileCoordsToBounds(coords)
-  const tileWidth = tileBounds.getEast() - tileBounds.getWest()
-  const tileHeight = tileBounds.getNorth() - tileBounds.getSouth()
-  console.log(`maxNativeZoom = ${coords.z} weacast: ${modelTile[1]}x${modelTile[0]} leaflet: ${tileHeight}x${tileWidth}`)
-  */
+    if (tileWidth < dataSetTileSize.lng || tileHeight < dataSetTileSize.lat) break
 
-  return undefined
+    z += 1
+  }
+
+  return Math.max(1, z - 1)
 }
