@@ -7,7 +7,8 @@ import { fetchGeoJson } from '../utils'
 
 const TiledMapillaryLayer = L.GridLayer.extend({
   initialize (options) {
-    L.setOptions(this, options)
+    L.GridLayer.prototype.initialize.call(this, options)
+
     // register event callbacks
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })

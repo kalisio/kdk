@@ -10,6 +10,8 @@ import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses
 
 const TiledMeshLayer = L.GridLayer.extend({
   initialize (options) {
+    L.GridLayer.prototype.initialize.call(this, options)
+
     this.conf = {}
     // keep color scale options
     this.conf.chromajs = options.chromajs
