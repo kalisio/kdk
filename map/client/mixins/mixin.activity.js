@@ -186,6 +186,15 @@ export default function (name) {
           if (baseLayer) this.showLayer(baseLayer.name)
         }
       },
+      isLayerSelectable (layer) {
+        if (_.has(layer, 'isSelectable')) return _.get(layer, 'isSelectable')
+        // Only possible on user-defined layers by default and when not edited
+        else {
+          if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer.name)) return false
+          else return ((!layer._id && (_.get(layer, `${this.engine}.type`) === 'geoJson')) ||
+                       (layer._id && (layer.service === 'features')))
+        }
+      },
       isLayerStorable (layer) {
         if (_.has(layer, 'isStorable')) return _.get(layer, 'isStorable')
         // Only possible when not yet saved and GeoJson by default

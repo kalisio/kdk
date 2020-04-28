@@ -55,7 +55,7 @@ export default {
     },
     onFeatureClicked (options, event) {
       // Check the options
-      if (!options) return
+      if (!options || !this.isLayerSelectable(options)) return
       // Retrieve the feature
       const feature = _.get(event, 'target.feature')
       const entity = _.get(event, 'target')
