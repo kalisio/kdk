@@ -7,7 +7,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
     L.GridLayer.prototype.initialize.call(this, options)
 
-    this.enableDebug = _.get(options, 'enableDebug', true)
+    this.enableDebug = _.get(options, 'enableDebug', false)
 
     // register event callbacks
     this.on('tileunload', (event) => { this.onTileUnload(event) })
