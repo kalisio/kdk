@@ -111,8 +111,8 @@ export function tileSetContainsParent (tileset, coords) {
       return true
     }
 
-    triplet.x = Math.ceil(triplet.x / 2)
-    triplet.y = Math.ceil(triplet.y / 2)
+    triplet.x = Math.floor(triplet.x / 2)
+    triplet.y = Math.floor(triplet.y / 2)
     triplet.z -= 1
   }
 
