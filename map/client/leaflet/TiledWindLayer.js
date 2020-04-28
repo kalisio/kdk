@@ -16,7 +16,7 @@ const TiledWindLayer = L.GridLayer.extend({
     // set of loaded leaflet tiles
     this.loadedTiles = new Set()
 
-    this.enableDebug = _.get(options, 'enabledDebug', true)
+    this.enableDebug = _.get(options, 'enabledDebug', false)
     this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
     // build colormap
@@ -57,7 +57,7 @@ const TiledWindLayer = L.GridLayer.extend({
       if (this.velocityLayer._windy) {
         // we delay the restart of the wind computation as much as we can
         // for a restart to happen, we want to make sure that
-        //  - no wind tile are currently being loaded
+        //  - no wind tiles are currently being loaded
         //  - user is not dragging the map
         // this way we reduce the number of restarts
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
@@ -213,13 +213,6 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   updateWindArray (grid, element, reqBBox, debug) {
-    /*
-    const gridres = grid.getResolution()
-    const windres = [element.header.dy, element.header.dx]
-    // make sure resolution match
-    if (gridres[0] !== windres[0] || gridres[1] !== windres[1]) return
-    */
-
     const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(reqBBox)
     const startlat = grid.getLat(iminlat)
     const startlon = grid.getLon(iminlon)
@@ -335,6 +328,7 @@ const TiledWindLayer = L.GridLayer.extend({
 
   redraw () {
     this.loadedTiles.clear()
+    this.velocityLayer._clearWind()
 
     L.GridLayer.prototype.redraw.call(this)
   }
