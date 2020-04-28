@@ -313,7 +313,9 @@ const TiledWindLayer = L.GridLayer.extend({
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
-          tile.innerHTML += ', triggered wind restart'
+          if (this.enableDebug) {
+            tile.innerHTML += ', triggered wind restart'
+          }
         }
       })
     } else {
