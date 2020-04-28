@@ -360,6 +360,10 @@ export default {
         : this.kActivity.getProbedLocationMeasureAtCurrentTime())
       this.kActivity.updateLayer(name, feature)
     },
+    async removeProbedLocationLayer () {
+      const name = this.$t('mixins.timeseries.PROBED_LOCATION')
+      await this.kActivity.removeLayer(name)
+    },
     onCenterOn () {
       if (this.kActivity.probedLocation) {
         const position = this.kActivity.probedLocation.geometry.coordinates
@@ -403,7 +407,7 @@ export default {
     this.kActivity.$on('forecast-model-changed', this.updateProbedLocationForecast)
     this.kActivity.$on('forecast-level-changed', this.updateProbedLocationForecast)
     // Show map marker
-    this.kActivity.showLayer(this.$t('mixins.timeseries.PROBED_LOCATION'))
+    this.createProbedLocationLayer()
   },
   beforeDestroy () {
     this.kActivity.$off('probed-location-changed', this.setupGraph)
@@ -414,7 +418,7 @@ export default {
     this.kActivity.$off('forecast-model-changed', this.updateProbedLocationForecast)
     this.kActivity.$off('forecast-level-changed', this.updateProbedLocationForecast)
     // Hide map marker
-    this.kActivity.hideLayer(this.$t('mixins.timeseries.PROBED_LOCATION'))
+    this.removeProbedLocationLayer()
   }
 }
 </script>
