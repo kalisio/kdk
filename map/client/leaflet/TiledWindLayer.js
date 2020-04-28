@@ -3,7 +3,7 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
-// import { tile2key, tileSetContainsParent } from './utils'
+import { tile2key, tileSetContainsParent, computeIdealMaxNativeZoom } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options) {
@@ -13,9 +13,10 @@ const TiledWindLayer = L.GridLayer.extend({
     this.userIsDragging = false
     // number of pending wind fetches
     this.pendingFetchs = 0
-    // set of loaded tiles
-    // this.loadedTiles = new Set()
+    // set of loaded leaflet tiles
+    this.loadedTiles = new Set()
 
+    this.enableDebug = _.get(options, 'enabledDebug', true)
     this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
     // build colormap
@@ -130,6 +131,12 @@ const TiledWindLayer = L.GridLayer.extend({
     this.vFlow.data = new Array(size)
     for (let i = 0; i < size; ++i) this.uFlow.data[i] = this.vFlow.data[i] = 0
 
+    // compute optimal maxNativeZoom value to ensure
+    // the smallest leaflet tile will approximately match a weacast tile
+    const modelBounds = L.latLngBounds(L.latLng(model.bounds[1], model.bounds[0]), L.latLng(model.bounds[3], model.bounds[2]))
+    const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
+    this.options.maxNativeZoom = computeIdealMaxNativeZoom(this, modelBounds, modelTileSize)
+
     if (typeof this.uSource.setModel === 'function') this.uSource.setModel(model)
     if (typeof this.vSource.setModel === 'function') this.vSource.setModel(model)
   },
@@ -140,6 +147,8 @@ const TiledWindLayer = L.GridLayer.extend({
     ++this.numDataChanged
     if (this.numDataChanged !== 2) return
     this.numDataChanged = 0
+
+    this.loadedTiles.clear()
 
     // allow grid layer to only request tiles located in those bounds
     const points = []
@@ -166,8 +175,6 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
-    // this.loadedTiles.clear()
-
     // defer actual addLayer call to the point where we have data ready to be displayed
     // otherwise, leaflet will start loading meaningless tiles
     this.pendingAdd = map
@@ -175,6 +182,7 @@ const TiledWindLayer = L.GridLayer.extend({
 
   onPendingAdd () {
     const map = this.pendingAdd
+    this.loadedTiles.clear()
 
     L.GridLayer.prototype.onAdd.call(this, map)
     map.addLayer(this.velocityLayer)
@@ -201,6 +209,7 @@ const TiledWindLayer = L.GridLayer.extend({
 
     this.uSource.invalidate()
     this.vSource.invalidate()
+    this.loadedTiles.clear()
   },
 
   updateWindArray (grid, element, reqBBox, debug) {
@@ -230,25 +239,28 @@ const TiledWindLayer = L.GridLayer.extend({
     }
   },
 
-  createTile (coords, done) {
+  createTile (coords) {
     const tile = document.createElement('div')
 
     // check we need to load the tile
     // we don't have to load it when a tile at an upper zoom level encompassing the tile is already loaded
     // TODO: we may also check if we have all the sub tiles loaded too ...
-    // const skipTile = tileSetContainsParent(this.loadedTiles, coords)
-    const skipTile = false
-
-    /*
-    tile.style.outline = '1px solid red'
-    tile.innerHTML = 'requested'
-    */
+    const skipTile = tileSetContainsParent(this.loadedTiles, coords)
 
     // Check for zoom level range first
     // if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
     // if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) skipTile = true
 
+    if (this.enableDebug) {
+      tile.style.outline = '1px solid blue'
+      tile.innerHTML = `${coords.x} ${coords.y} ${coords.z} :`
+    }
+
     if (!skipTile) {
+      if (this.enableDebug) {
+        tile.innerHTML += ' requested'
+      }
+
       // bbox we'll request to the grid source
       const bounds = this._tileCoordsToBounds(coords)
       const reqBBox = [bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast()]
@@ -265,47 +277,64 @@ const TiledWindLayer = L.GridLayer.extend({
       const vPromise = this.vSource.fetch(null, reqBBox, resolution)
 
       ++this.pendingFetchs
-      /*
-      if (this.pendingFetchs === 1) {
-        this.numTiles = 0
-      }
-      */
-      
+
       Promise.all([uPromise, vPromise]).then(grids => {
         // data fetched
         const uGrid = grids[0]
         const vGrid = grids[1]
 
-        // ++this.numTiles
-        
         if (uGrid && vGrid) {
-          // fill in big arrays
-          this.updateWindArray(uGrid, this.uFlow, reqBBox)
-          this.updateWindArray(vGrid, this.vFlow, reqBBox)
+          if (uGrid.sourceKey === this.uSource.sourceKey && vGrid.sourceKey === this.vSource.sourceKey) {
+            // fill in big arrays
+            this.updateWindArray(uGrid, this.uFlow, reqBBox)
+            this.updateWindArray(vGrid, this.vFlow, reqBBox)
+            // remember we have data for this leaflet tile
+            this.loadedTiles.add(tile2key(coords))
+
+            if (this.enableDebug) {
+              tile.style.outline = '1px solid green'
+              tile.innerHTML += ', added to loadedTiles'
+            }
+          } else {
+            if (this.enableDebug) {
+              tile.style.outline = '1px solid red'
+              tile.innerHTML += ', discarded (out of date)'
+            }
+          }
+        } else {
+          if (this.enableDebug) {
+            tile.style.outline = '1px solid green'
+            tile.innerHTML += ', empty'
+          }
         }
-        done(null, tile)
       }).catch(err => {
         // fetch failed
-        done(err, tile)
+        if (this.enableDebug) {
+          tile.style.outline = '1px solid red'
+          tile.innerHTML += `, failed (${err})`
+        }
         throw err
       }).finally(() => {
         // in any case
         --this.pendingFetchs
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
-          // console.log(`batched ${this.numTiles}`)
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
+          tile.innerHTML += ', triggered wind restart'
         }
       })
     } else {
-      setTimeout(() => { done(null, tile) }, 100)
+      if (this.enableDebug) {
+        tile.style.outline = '1px solid green'
+        tile.innerHTML += ' skipped'
+      }
     }
 
     return tile
   },
 
   redraw () {
-    // this.loadedTiles.clear()
+    this.loadedTiles.clear()
 
     L.GridLayer.prototype.redraw.call(this)
   }
