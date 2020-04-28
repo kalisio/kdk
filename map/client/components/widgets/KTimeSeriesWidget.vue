@@ -324,9 +324,11 @@ export default {
         await this.kActivity.addLayer({
           name,
           type: 'OverlayLayer',
+          tags: ['hidden'], // Do not show the layer in panel
           icon: 'colorize',
           isStorable: false,
           isEditable: false,
+          isSelectable: false,
           leaflet: {
             type: 'geoJson',
             isVisible: true,
@@ -356,29 +358,7 @@ export default {
       const feature = (isWeatherProbe
         ? this.kActivity.getProbedLocationForecastAtCurrentTime()
         : this.kActivity.getProbedLocationMeasureAtCurrentTime())
-      // Add styling information
-      feature.style = {
-        'marker-type': 'circleMarker',
-        radius: 10,
-        stroke: 'red',
-        'stroke-opacity': 1,
-        'fill-opacity': 0.5,
-        'fill-color': 'green'
-      }
       this.kActivity.updateLayer(name, feature)
-    },
-    async onShowProbedLocationLayer (layer) {
-      // Show timeseries on probed location
-      const name = this.$t('mixins.timeseries.PROBED_LOCATION')
-      if (layer.name === name) {
-        this.kActivity.center(...this.kActivity.probedLocation.geometry.coordinates)
-      }
-    },
-    onHideProbedLocationLayer (layer) {
-      // Hide timeseries on probed location
-      if (layer.name === this.$t('mixins.timeseries.PROBED_LOCATION')) {
-        this.$ref.page.closeWindow()
-      }
     },
     onCenterOn () {
       if (this.kActivity.probedLocation) {
@@ -415,8 +395,6 @@ export default {
     this.setupGraph()
   },
   mounted () {
-    this.kActivity.$on('layer-shown', this.onShowProbedLocationLayer)
-    this.kActivity.$on('layer-hidden', this.onHideProbedLocationLayer)
     this.kActivity.$on('probed-location-changed', this.setupGraph)
     this.kActivity.$on('probed-location-changed', this.createProbedLocationLayer)
     this.kActivity.$on('current-time-changed', this.updateProbedLocationLayer)
@@ -428,8 +406,6 @@ export default {
     this.kActivity.showLayer(this.$t('mixins.timeseries.PROBED_LOCATION'))
   },
   beforeDestroy () {
-    this.kActivity.$off('layer-shown', this.onShowProbedLocationLayer)
-    this.kActivity.$off('layer-hidden', this.onHideProbedLocationLayer)
     this.kActivity.$off('probed-location-changed', this.setupGraph)
     this.kActivity.$off('probed-location-changed', this.createProbedLocationLayer)
     this.kActivity.$off('current-time-changed', this.updateProbedLocationLayer)

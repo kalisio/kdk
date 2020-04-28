@@ -69,7 +69,7 @@ export default function (name) {
           })
         }
         // Nav bar
-        let defaultTools = ['side-nav', 'zoom', 'location-bar', 'fullscreen', 'catalog']
+        let defaultTools = ['side-nav', 'zoom', 'location-bar', 'fullscreen']
         if (this.engine === 'cesium') defaultTools = defaultTools.concat(['globe', 'vr'])
         else defaultTools = defaultTools.concat(['map'])
         const tools = _.get(this, 'activityOptions.tools', defaultTools)
