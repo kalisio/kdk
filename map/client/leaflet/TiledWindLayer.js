@@ -131,7 +131,7 @@ const TiledWindLayer = L.GridLayer.extend({
     this.vFlow.data = new Array(size)
     for (let i = 0; i < size; ++i) this.uFlow.data[i] = this.vFlow.data[i] = 0
 
-    // compute optimal maxNativeZoom value to ensure
+    // compute a good enough maxNativeZoom value to ensure
     // the smallest leaflet tile will approximately match a weacast tile
     const modelBounds = L.latLngBounds(L.latLng(model.bounds[1], model.bounds[0]), L.latLng(model.bounds[3], model.bounds[2]))
     const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
@@ -192,9 +192,6 @@ const TiledWindLayer = L.GridLayer.extend({
     // no need to stop animation when panning
     this._map.off('dragstart', this.velocityLayer._windy.stop)
     this._map.off('dragend', this.velocityLayer._clearAndRestart)
-    // this._map.off('zoomstart', this.velocityLayer._windy.stop)
-    // this._map.off('zoomend', this.velocityLayer._clearAndRestart)
-    // this._map.off('resize', this.velocityLayer._clearWind)
 
     this.pendingAdd = null
   },
@@ -239,10 +236,6 @@ const TiledWindLayer = L.GridLayer.extend({
     // we don't have to load it when a tile at an upper zoom level encompassing the tile is already loaded
     // TODO: we may also check if we have all the sub tiles loaded too ...
     const skipTile = tileSetContainsParent(this.loadedTiles, coords)
-
-    // Check for zoom level range first
-    // if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
-    // if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) skipTile = true
 
     if (this.enableDebug) {
       tile.style.outline = '1px solid blue'
