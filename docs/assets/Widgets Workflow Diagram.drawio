@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-04-29T16:57:51.470Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36" etag="-biGjLIGeZyoDUX7wQgL" version="13.0.2" type="github">
+<mxfile host="app.diagrams.net" modified="2020-04-29T16:58:47.806Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36" etag="esU44gGNb1dYuwXELIN2" version="13.0.2" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -36,7 +36,7 @@
         <mxCell id="ssbct8zx-_CwylW5RjRk-0" value="Perform probing" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="175.32" y="550" width="95" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="ssbct8zx-_CwylW5RjRk-12" value="Update marker" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#66B2FF;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="ssbct8zx-_CwylW5RjRk-12" value="Update location marker" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#66B2FF;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="560" y="650" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="ssbct8zx-_CwylW5RjRk-13" value="Request image" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
@@ -152,7 +152,7 @@
         <mxCell id="vfSfb78cWZUa1gDCjAym-10" value="Window closed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCCC00;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="870" y="160" width="70" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="vfSfb78cWZUa1gDCjAym-11" value="Update marker" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#66B2FF;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="vfSfb78cWZUa1gDCjAym-11" value="Update highlight marker" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#66B2FF;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="972.82" y="740" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="vfSfb78cWZUa1gDCjAym-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=block;endFill=0;endSize=8;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="vfSfb78cWZUa1gDCjAym-11" source="pCW0Gb2x2I5zyQrK6hDG-15">
