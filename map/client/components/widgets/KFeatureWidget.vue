@@ -28,10 +28,6 @@ export default {
       type: Object,
       default: null
     },
-    layer: {
-      type: Object,
-      default: null
-    },
     options: {
       type: Object,
       default: null
@@ -67,9 +63,6 @@ export default {
     feature: function () {
       this.refresh()
     },
-    layer: function () {
-      this.refresh()
-    },
     options: function () {
       this.refresh()
     }
@@ -85,7 +78,7 @@ export default {
         }
         // If 2D 
         if (this.kActivity.is2D()) {
-          this.properties = this.kActivity.generateLeafletStyle('infobox', this.feature, this.layer, this.options)
+          this.properties = this.kActivity.generateLeafletStyle('infobox', this.feature, this.options)
         } else {
           this.properties = this.kActivity.generateCesiumStyle('infobox', this.feature, this.options)
         }

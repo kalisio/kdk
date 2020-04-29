@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 export default {
   methods: {
-    getDefaultInfoBox (feature, layer, options) {
+    getDefaultInfoBox (feature, options) {
       let properties = feature.properties
       if (properties) {
         const leafletOptions = options.leaflet || options

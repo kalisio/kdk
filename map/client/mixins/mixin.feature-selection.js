@@ -9,7 +9,6 @@ export default {
     return {
       selection: {
         feature: null,
-        layer: null,
         options: null
       }
     }
@@ -17,7 +16,6 @@ export default {
   methods: {
     clearSelection () {
       this.selection.feature = null
-      this.selection.layer = null
       this.selection.options = null
       this.hasSelection = false
       this.$emit('selection-changed')
@@ -62,13 +60,12 @@ export default {
       // Retrieve the feature
       const feature = _.get(event, 'target.feature')
       const entity = _.get(event, 'target')
-      const layer = _.get(event, 'target')
       if (!feature || !entity) return
       // Remove the highligtht a selection is already active
       if (this.hasSelection) this.removeSelectionHighlight()
       // Update the selection
       this.selection.feature = feature || entity
-      this.selection.layer = layer
+    
       this.selection.options = options
       this.hasSelection = true
       this.$emit('selection-changed')
