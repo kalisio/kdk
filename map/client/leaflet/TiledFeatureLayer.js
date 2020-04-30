@@ -59,6 +59,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
       if (tile.probes || tile.features) {
         // ref each feature
+        // TODO: we could only add features with refcount = 1
+        // but in case of probes we need to find corresponding features
         featureEach(tile.probes || tile.features, (feature, index) => {
           let refCount = this.featureRefCount.get(feature._id)
           refCount = refCount === undefined ? 1 : refCount + 1
