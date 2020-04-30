@@ -52,6 +52,10 @@ export default {
       // Any base query to process ?
       const query = await this.getBaseQueryForFeatures(options)
       const response = await this.$api.getService(options.probeService).find({ query })
+      if (typeof options.processor === 'function') {
+        const features = (response.type === 'FeatureCollection' ? response.features : [response])
+        features.forEach(feature => options.processor(feature))
+      }
       return response
     },
     async getProbeFeaturesFromLayer (name) {
@@ -100,6 +104,10 @@ export default {
         }
       }
       const response = await this.$api.getService(options.service).find({ query })
+      if (typeof options.processor === 'function') {
+        const features = (response.type === 'FeatureCollection' ? response.features : [response])
+        features.forEach(feature => options.processor(feature))
+      }
       return response
     },
     async getFeaturesFromLayer (name, queryInterval) {

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import togeojson from 'togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
 import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl'
@@ -307,7 +308,18 @@ export default {
       if (pickedObject) {
         emittedEvent.target = pickedObject.id || pickedObject.primitive.id
         if (emittedEvent.target instanceof Cesium.Entity) {
-          if (emittedEvent.target.properties) emittedEvent.target.feature = { properties: emittedEvent.target.properties.getValue(0) }
+          // If feature have been lost at import try to recreate it in order to be compatible with 2D
+          if (!emittedEvent.target.feature) {
+            let feature = {}
+            // FIXME: Generate GeoJson feature if possible (requires Cesium 1.59)
+            if (typeof Cesium.exportKml === 'function') {
+              const kml = Cesium.exportKml({ entities: [emittedEvent.target] })
+              const geoJson = togeojson.kml(kml)
+              if (geoJson.features.length > 0) feature = geoJson.features[0]
+            }
+            feature.properties = (emittedEvent.target.properties ? emittedEvent.target.properties.getValue(0) : {})
+            emittedEvent.target.feature = feature
+          }
           let layer = this.getLayerNameForEntity(emittedEvent.target)
           if (layer) layer = this.getCesiumLayerByName(layer)
           if (layer) options = layer.processedOptions

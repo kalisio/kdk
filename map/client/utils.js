@@ -9,12 +9,16 @@ export * from './cesium/utils'
 // Add knot unit not defined by default
 math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] })
 
-export async function fetchGeoJson (dataSource) {
+export async function fetchGeoJson (dataSource, processor) {
   const response = await fetch(dataSource)
   if (response.status !== 200) {
     throw new Error(`Impossible to fetch ${dataSource}: ` + response.status)
   }
   const data = await response.json()
+  if (typeof processor === 'function') {
+    const features = (data.type === 'FeatureCollection' ? data.features : [data])
+    features.forEach(feature => processor(feature))
+  }
   return data
 }
 

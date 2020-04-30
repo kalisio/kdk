@@ -110,17 +110,13 @@ export default {
           await this.loadGeoJson(measureSource, this.getFeatures(options), cesiumOptions)
           // Then merge with probes
           const probes = dataSource.entities.values
-          const measures = measureSource.entities.values
           for (let i = 0; i < probes.length; i++) {
             const probe = probes[i]
             const probeProperties = probe.properties
-            for (let j = 0; j < measures.length; j++) {
-              const measure = measures[j]
-              // When we found a measure for a probe we update it
-              if (_.get(probeProperties, featureId).getValue() === _.get(measure.properties, featureId).getValue()) {
-                probe.properties = measure.properties
-                probe.description = measure.description
-              }
+            const measure = measureSource.entities.getById(probe.id)
+            if (measure) {
+              probe.properties = measure.properties
+              probe.description = measure.description
             }
           }
         }
@@ -161,7 +157,11 @@ export default {
       const cesiumOptions = options.cesium
       // Check for valid type
       if (cesiumOptions.type !== 'geoJson') return
-
+      // Cesium expect id to be in a 'id' property
+      const featureId = _.get(options, 'featureId')
+      options.processor = (feature) => {
+        feature.id = _.get(feature, 'properties.' + featureId, _.get(feature, featureId))
+      }
       if (this.options.cluster) {
         if (cesiumOptions.cluster) Object.assign(cesiumOptions.cluster, this.options.cluster)
         else cesiumOptions.cluster = Object.assign({}, this.options.cluster)
