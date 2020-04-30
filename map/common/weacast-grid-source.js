@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import moment from 'moment'
 import { unitConverters, SortOrder, GridSource, Grid1D, TiledGrid, SubGrid } from './grid'
 
@@ -84,9 +85,11 @@ export class WeacastGridSource extends GridSource {
     this.service = config.model + '/' + config.element
     this.lonResolution = model.tileResolution[0]
 
-    this.useCache = config.useCache
+    this.useCache = _.get(config, 'useCache', true)
+    this.maxCacheSize = _.get(config, 'maxCacheSize', 0)
     if (this.useCache) {
       this.tileCache = new Map()
+      this.tileCounter = 0
 
       this.tileOrigin = [model.origin[1], model.origin[0]]
       this.tileSize = [model.tileResolution[1], model.tileResolution[0]]
@@ -130,10 +133,10 @@ export class WeacastGridSource extends GridSource {
     const minLon = this.wrapLon ? (bbox[1] < 0 ? bbox[1] + 360.0 : bbox[1]) : bbox[1]
     const maxLon = this.wrapLon ? (bbox[3] < 0 ? bbox[3] + 360.0 : bbox[3]) : bbox[3]
 
-    const e = Math.max(Math.floor((maxLon - this.tileOrigin[1]) / this.tileSize[1]), 0)
-    const w = Math.min(Math.floor((minLon - this.tileOrigin[1]) / this.tileSize[1]), this.maxTileX)
-    const n = Math.max(Math.floor((this.tileOrigin[0] - bbox[2]) / this.tileSize[0]), 0)
-    const s = Math.min(Math.floor((this.tileOrigin[0] - bbox[0]) / this.tileSize[0]), this.maxTileY)
+    const e = Math.min(Math.max(Math.floor((maxLon - this.tileOrigin[1]) / this.tileSize[1]), 0), this.maxTileX)
+    const w = Math.min(Math.max(Math.floor((minLon - this.tileOrigin[1]) / this.tileSize[1]), 0), this.maxTileX)
+    const n = Math.min(Math.max(Math.floor((this.tileOrigin[0] - bbox[2]) / this.tileSize[0]), 0), this.maxTileY)
+    const s = Math.min(Math.max(Math.floor((this.tileOrigin[0] - bbox[0]) / this.tileSize[0]), 0), this.maxTileY)
 
     const hits = []
     for (let j = n; j <= s; ++j) {
@@ -217,6 +220,29 @@ export class WeacastGridSource extends GridSource {
                 tile.data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
                 this.nodata, this.converter)
               cached.request = null
+
+              // take maxCacheSize into account
+              if (this.maxCacheSize !== undefined) {
+                // store a kind of timestamp on tiles
+                cached.tileCounter = this.tileCounter
+                ++this.tileCounter
+
+                // make sure we keep cache size under control
+                if (this.tileCounter > this.maxCacheSize) {
+                  let oldestKey = key
+                  let oldestCounter = cached.tileCounter
+                  for (const [key, tile] of this.tileCache) {
+                    if (tile.tileCounter === undefined) continue
+                    if (tile.tileCounter < oldestCounter) {
+                      oldestCounter = tile.tileCounter
+                      oldestKey = key
+                    }
+                  }
+
+                  this.tileCache.delete(oldestKey)
+                }
+              }
+
               grids.push(cached.grid)
             }
           }
@@ -238,7 +264,8 @@ export class WeacastGridSource extends GridSource {
     const allGrids = grids.concat(newGrids.flat())
     if (allGrids.length === 0) return null
 
-    return allGrids.length > 1 ? new TiledGrid(sourceKey, allGrids) : new SubGrid(sourceKey, allGrids[0], bbox)
+    const grid = allGrids.length > 1 ? new TiledGrid(sourceKey, allGrids) : allGrids[0]
+    return new SubGrid(sourceKey, grid, bbox)
   }
 
   async fetchWithoutCache (abort, bbox, resolution) {
