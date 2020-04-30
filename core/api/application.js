@@ -443,8 +443,9 @@ export function kalisio () {
   app.use(cors(app.get('cors')))
   app.use(helmet(app.get('helmet')))
   app.use(compress(app.get('compression')))
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({ extended: true }))
+  const bodyParserConfig = app.get('bodyParser')
+  app.use(bodyParser.json(_.get(bodyParserConfig, 'json')))
+  app.use(bodyParser.urlencoded(Object.assign({ extended: true }, _.get(bodyParserConfig, 'urlencoded'))))
 
   // Set up plugins and providers
   app.configure(rest())
