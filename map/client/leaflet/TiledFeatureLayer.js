@@ -15,38 +15,22 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.loadedTiles = new Set()
   },
 
+  /*
   getEvents () {
     const events = L.GridLayer.prototype.getEvents.call(this)
 
-    /*
-    const onZoomEnd = events.zoomend
-    events.zoomend = (event) => {
-      this.handleGeojsonLayerVisibility()
-      if (onZoomEnd) onZoomEnd.call(this, event)
+    const onZoomStart = events.zoomstart
+    events.zoomstart = (event) => {
+      if (onZoomStart) onZoomStart.call(this, event)
     }
-    */
 
     return events
   },
-
-  handleGeojsonLayerVisibility () {
-    let shouldBeVisible = true
-    if (this.options.minZoom && this._map.getZoom() < this.options.minZoom) shouldBeVisible = false
-    if (this.options.maxZoom && this._map.getZoom() > this.options.maxZoom) shouldBeVisible = false
-
-    if (this.layer.tiledFeatureLayerVisible && !shouldBeVisible) {
-      this._map.removeLayer(this.layer)
-      this.layer.tiledFeatureLayerVisible = false
-    } else if (!this.layer.tiledFeatureLayerVisible && shouldBeVisible) {
-      this._map.addLayer(this.layer)
-      this.layer.tiledFeatureLayerVisible = true
-    }
-  },
+  */
 
   setup (activity, layer) {
     this.activity = activity
     this.layer = layer
-    // this.layer.tiledFeatureLayerVisible = true
   },
 
   onAdd (map) {
@@ -87,29 +71,37 @@ const TiledFeatureLayer = L.GridLayer.extend({
       }
       promises.push(this.activity.getFeatures(_.merge({ baseQuery }, this.layer)))
       Promise.all(promises).then(data => {
-        // fetch ended, make sure we're still at the zoom level the tile was requested at
+        // fetch ended
         if (this.layer.probeService) {
           tile.probes = (data[0].features.length ? data[0] : null)
           tile.features = (data[1].features.length ? data[1] : null)
         } else {
           tile.features = (data[0].features.length ? data[0] : null)
         }
-
-        // add tile to loaded tiles set
-        this.loadedTiles.add(tile2key(coords))
-
-        // Update realtime layer with probe first then (measure) features
-        if (tile.probes) this.activity.updateLayer(this.layer.name, tile.probes)
+        // compute features bbox
         if (tile.features) {
-          // compute features bbox
           const box = bbox(tile.features)
           tile.featuresBbox = L.latLngBounds(L.latLng(box[1], box[0]), L.latLng(box[3], box[2]))
-          this.activity.updateLayer(this.layer.name, tile.features)
         }
 
-        if (this.enableDebug) {
-          tile.style.outline = '1px solid green'
-          tile.innerHTML += ', added to loadedTiles'
+        // make sure we still care about this tile
+        if (!this.keepTile(tile.featureBbox, coords)) {
+          if (this.enableDebug) {
+            tile.style.outline = '1px solid red'
+            tile.innerHTML += ', discarded'
+          }
+        } else {
+          // add tile to loaded tiles set
+          this.loadedTiles.add(tile2key(coords))
+
+          // Update realtime layer with probe first then (measure) features
+          if (tile.probes) this.activity.updateLayer(this.layer.name, tile.probes)
+          if (tile.features) this.activity.updateLayer(this.layer.name, tile.features)
+
+          if (this.enableDebug) {
+            tile.style.outline = '1px solid green'
+            tile.innerHTML += ', added to loadedTiles'
+          }
         }
       }).catch(error => {
         if (this.enableDebug) {
@@ -133,16 +125,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const features = event.tile.features
     if (!probes && !features) return
 
-    // unload by default
-    let unload = true
-
-    // only unload when features are completely outside the visible bounds
-    if (features) {
-      const visible = this._map.getBounds()
-      unload = !visible.intersects(event.tile.featuresBbox)
-    }
-
-    if (unload) {
+    if (!this.keepTile(event.tile.featuresBbox, event.coords)) {
       // ok, we can unload geosjon, and remove tile from loaded tile set
       this.loadedTiles.delete(tile2key(event.coords))
 
@@ -150,6 +133,19 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (probes) this.activity.updateLayer(this.layer.name, probes, true)
       else if (features) this.activity.updateLayer(this.layer.name, features, true)
     }
+  },
+
+  keepTile (featuresBbox, coords) {
+    const outsideZoomRange = (this.options.minZoom && this.options.minZoom > this._map.getZoom()) ||
+          (this.options.maxZoom && this.options.maxZoom < this._map.getZoom())
+
+    if (outsideZoomRange) return false
+
+    // keep tile data when we're in zoom range && tile has
+    // data in the visible area of the map
+    const visible = this._map.getBounds()
+    const bounds = featuresBbox || this._tileCoordsToBounds(coords)
+    return visible.intersects(bounds)
   },
 
   redraw () {
