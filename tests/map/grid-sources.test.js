@@ -90,8 +90,8 @@ describe('map:grid-source', () => {
     const opendapOptions = {
       opendap: {
         url: 'http://kMap.test/dataset.grb',
-        query: 'Temperature_height_above_ground',
-        dimensions: { time: 0, height_above_ground: 0 },
+        variable: 'Temperature_height_above_ground',
+        dimensionsAsIndices: { time: 0, height_above_ground: 0 },
         latitude: 'lat',
         longitude: 'lon'
       }
@@ -162,7 +162,7 @@ describe('map:grid-source', () => {
       nock('http://kMap.test')
         .get('/data.tif')
         .reply(function (uri, requestBody) {
-          const data = readRange(path.join(__dirname, '/data/GetCoverage.tif', this.req.headers.range))
+          const data = readRange(path.join(__dirname, '/data/GetCoverage.tif'), this.req.headers.range)
           if (data) return [200, data]
           return [404]
         })
@@ -193,14 +193,15 @@ describe('map:grid-source', () => {
   })
 
   describe('weacast', () => {
-    const model = { name: 'gfs-world', interval: 3 * 3600, bounds: [0, -90, 360, 90] }
+    const model = { name: 'gfs-world', interval: 3 * 3600, bounds: [0, -90, 360, 90], origin: [0, 90], tileResolution: [20, 20] }
     const element = { name: 'gust' }
     const service = `${model.name}/${element.name}`
     const weacastOptions = {
       weacast: {
         element: element.name,
         model: model.name,
-        forecastTime: '2019-01-04T01:25:00.000Z'
+        forecastTime: '2019-01-04T01:25:00.000Z',
+        useCache: false
       }
     }
 
