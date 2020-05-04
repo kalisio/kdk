@@ -10,6 +10,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.featureRefCount = new Map()
+    this.getFeatureKey = (feature) => { return feature._id }
   },
 
   setup (activity, layer) {
@@ -62,9 +63,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
         // TODO: we could only add features with refcount = 1
         // but in case of probes we need to find corresponding features
         featureEach(tile.probes || tile.features, (feature, index) => {
-          let refCount = this.featureRefCount.get(feature._id)
+          const key = this.getFeatureKey(feature)
+          let refCount = this.featureRefCount.get(key)
           refCount = refCount === undefined ? 1 : refCount + 1
-          this.featureRefCount.set(feature._id, refCount)
+          this.featureRefCount.set(key, refCount)
         })
 
         if (tile.probes) this.activity.updateLayer(this.layer.name, tile.probes)
@@ -88,10 +90,15 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const remove = []
     // unref each feature, those with refCount = 0 => we can remove
     featureEach(probes || features, (feature, index) => {
-      let refCount = this.featureRefCount.get(feature._id)
+      const key = this.getFeatureKey(feature)
+      let refCount = this.featureRefCount.get(key)
       refCount = refCount - 1
-      this.featureRefCount.set(feature._id, refCount)
-      if (refCount === 0) remove.push(feature)
+      if (refCount === 0) {
+        this.featureRefCount.delete(key)
+        remove.push(feature)
+      } else {
+        this.featureRefCount.set(key, refCount)
+      }
     })
 
     if (remove.length) {
