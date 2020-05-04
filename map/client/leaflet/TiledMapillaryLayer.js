@@ -14,6 +14,8 @@ const TiledMapillaryLayer = L.GridLayer.extend({
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.featureRefCount = new Map()
+    // this uid is ok to use for mapillary sequences
+    // if we want to display other objects, this may need update
     this.getFeatureKey = (feature) => { return feature.properties.key }
   },
 
