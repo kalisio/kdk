@@ -308,6 +308,9 @@ export default {
     setCursor (className) {
       L.DomUtil.addClass(this.map._container, className)
     },
+    isCursor (className) {
+      return L.DomUtil.hasClass(this.map._container, className)
+    },
     unsetCursor (className) {
       L.DomUtil.removeClass(this.map._container, className)
     },

@@ -11,10 +11,24 @@ export default function init () {
   // Declare the services
   api.declareService('geocoder')
 
+  // Create the models listened by the different components
+  // You must use the patch method on the store to update those models
+  // It is generally done by activity based componentq or through a local settings service
   // Initialize the nabigation bar
-  const navigationBar = { positionIndicator: false, locationInput: false, actions: { before: [], after: [] } }
-  Store.set('navigationBar', navigationBar)
-
+  Store.set('navigationBar', {
+    positionIndicator: false,
+    locationInput: false,
+    actions: {
+      before: [],
+      after: []
+    }
+  })
+  // Initialize the selection
+  Store.set('selection', {
+    location: null,
+    feature: null,
+    layer: null
+  })
   // Default time formatting settings
   Store.set('timeFormat', {
     time: {

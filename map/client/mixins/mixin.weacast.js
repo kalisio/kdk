@@ -108,8 +108,6 @@ export default {
           }, { query })
         if (response.features.length > 0) {
           this.probedLocation = response.features[0]
-          // Fake ID used to ensure matching when updating data
-          this.probedLocation._id = 'probe'
           this.$emit('probed-location-changed', this.probedLocation)
         } else throw new Error('Cannot find valid forecast at location')
       } catch (error) {
@@ -177,8 +175,6 @@ export default {
         })
         if (results.length > 0) {
           this.probedLocation = results[0]
-          // Fake ID used to ensure matching when updating data
-          this.probedLocation._id = 'probe'
           this.$emit('probed-location-changed', this.probedLocation)
         } else throw new Error('Cannot find valid forecast for feature')
       } catch (error) {
@@ -268,12 +264,7 @@ export default {
         barbHeight: 10,
         forceDir: true
       })
-      const marker = L.marker(latlng, { icon, draggable: 'true' })
-      marker.on('dragend', (event) => {
-        const { start, end } = this.getProbeTimeRange()
-        this.getForecastForLocation(event.target.getLatLng().lng, event.target.getLatLng().lat, start, end)
-      })
-      return marker
+      return L.marker(latlng, { icon })
     },
     onCurrentForecastTimeChanged (time) {
       if (this.weacastApi) this.weacastApi.setForecastTime(time)

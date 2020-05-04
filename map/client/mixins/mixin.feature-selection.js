@@ -1,95 +1,180 @@
 import bbox from '@turf/bbox'
+import bboxPolygon from '@turf/bbox-polygon'
 import centroid from '@turf/centroid'
 import _ from 'lodash'
 import L from 'leaflet'
-import { colors } from 'quasar'
+import { uid, colors } from 'quasar'
+
+const TOOLS_LAYER = uid()
 
 export default {
   data () {
     return {
-      selection: {
-        feature: null,
-        options: null
-      }
+      selection: this.$store.get('selection')
+    }
+  },
+  computed: {
+    hasFeatureSelection () {
+      return this.selection.feature
     }
   },
   methods: {
-    clearSelection () {
+    getWidgetForLayer () {
+      // FIXME: should not be hard-coded
+      let widget = 'information-box'
+      if (!this.selection.layer || // Dynamic probe at location
+          _.has(this.selection.layer, 'probe') || // Static probe on pre-defined sites
+          _.has(this.selection.layer, 'variables')) { // Measurement history
+        widget = 'time-series'
+      } else if (_.get(this.selection.layer, 'leaflet.type') === 'mapillary') {
+        widget = 'mapillary-viewer'
+      }
+      return widget
+    },
+    clearSelection() {
+      const widget = this.getWidgetForLayer()
       this.selection.feature = null
-      this.selection.options = null
-      this.hasSelection = false
+      this.selection.layer = null
       this.$emit('selection-changed')
-      // Remove the highlight
-      this.removeSelectionHighlight()
+      // Close associated default widget if open,
+      // if the user has switched to another widget it will remain active
+      if (this.isWidgetOpen(widget)) this.closeWidget()
+    },
+    setSelection (location, feature, layer) {
+      this.selection.location = location
+      // If clicked on the same object unselect otherwise select
+      if (feature && (feature === this.selection.feature)) {
+        this.clearSelection()
+      } else {
+        this.selection.feature = feature
+        this.selection.layer = layer
+        this.$emit('selection-changed')
+        // Open associated default widget if none already open,
+        // if the user has open another widget it will remain active
+        const widget = this.getWidgetForLayer()
+        if (!this.hasOpenWidget()) this.openWidget(widget)
+      }
     },
     centerOnSelection () {
-      if (this.hasSelection) {
-        if (this.is2D()) {
-          this.center(..._.get(centroid(this.selection.feature), 'geometry.coordinates'))
-        }
+      if (this.hasFeatureSelection) {
+        this.center(..._.get(centroid(this.selection.feature), 'geometry.coordinates'))
+      } else if (this.selection.location) {
+        this.center(this.selection.location.lng, this.selection.location.lat)
       }
     },
-    addSelectionHighlight () {
-      if (this.is2D() && !this.selectionHighlight) {
-        if (this.selection.feature.geometry.type === 'Point') {
-          const coords = this.selection.feature.geometry.coordinates
-          this.selectionHighlight = L.circleMarker([coords[1], coords[0]], { radius: 18, color: colors.getBrand('secondary'), weight: 3 })
-        } else {
-          const bounds = bbox(this.selection.feature)
-          this.selectionHighlight = L.rectangle([[bounds[1], bounds[0]], [bounds[3], bounds[2]]], { color: colors.getBrand('secondary'), weight: 3 })
-        }
-        this.selectionHighlight.on('click', (event) => {
-          this.removeSelectionHighlight()
-          this.clearSelection()
+    updateSelectionHighlight (id, feature) {
+      if (_.has(this.selectionHighlight, id)) {
+        const highlight = _.merge(_.get(this.selectionHighlight, id), feature)
+        this.updateLayer(TOOLS_LAYER, highlight)
+      }
+    },
+    addSelectionHighlight (id, feature = {}) {
+      // Remove previous selection if any
+      this.removeSelectionHighlight(id)
+      // Start from selected feature or location to build highlight
+      let highlight = (this.selection.feature ?
+        _.cloneDeep(this.selection.feature) :
+        {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [this.selection.location.lng, this.selection.location.lat] }
         })
-        this.map.addLayer(this.selectionHighlight)
+      // Use bbox for line/polygons
+      if (highlight.geometry.type !== 'Point') {
+        const bounds = bbox(this.selection.feature)
+        Object.assign(highlight, bboxPolygon(bbox(this.selection.feature)))
+      }
+      // Add an identifier if we'd like to update it
+      highlight._id = highlight.id = id
+      // Add default styling and additional information provided if any
+      _.merge(highlight, {
+        style: {
+          'marker-type': 'circleMarker',
+          radius: 18,
+          'stroke-color': colors.getBrand('secondary'),
+          'stroke-width': 3,
+          'fill-color': colors.getBrand('secondary'),
+          'fill-opacity': 0.5
+        }
+      }, feature)
+      this.updateLayer(TOOLS_LAYER, highlight)
+      _.set(this.selectionHighlight, id, highlight)
+      return highlight
+    },
+    removeSelectionHighlight (id) {
+      if (_.has(this.selectionHighlight, id)) {
+        this.updateLayer(TOOLS_LAYER, _.get(this.selectionHighlight, id), true)
+        _.unset(this.selectionHighlight, id)
       }
     },
-    removeSelectionHighlight () {
-      if (this.selectionHighlight) {
-        this.map.removeLayer(this.selectionHighlight)
-        this.selectionHighlight = null
+    async createSelectionLayer () {
+      // Get any previous layer or create it the first time
+      const layer = this.getLayerByName(TOOLS_LAYER)
+      if (!layer) {
+        await this.addLayer({
+          name: TOOLS_LAYER,
+          type: 'OverlayLayer',
+          tags: ['hidden'], // Do not show the layer in panel
+          isStorable: false,
+          isEditable: false,
+          isSelectable: false,
+          leaflet: {
+            type: 'geoJson',
+            isVisible: true,
+            realtime: true,
+            popup: { pick: [] }
+          },
+          cesium: {
+            type: 'geoJson',
+            isVisible: true,
+            realtime: true,
+            popup: { pick: [] }
+          }
+        })
       }
+      if (!this.isLayerVisible(TOOLS_LAYER)) await this.showLayer(TOOLS_LAYER)
     },
-    onFeatureClicked (options, event) {
-      // Check the options
-      if (!options) return
-      // FIXME: need to retrieve original options as here we get processed options by the underlying engine
-      options = this.getLayerByName(options.name)
-      if (!options || !this.isLayerSelectable(options)) return
-      // Retrieve the feature
-      const feature = _.get(event, 'target.feature')
-      const entity = _.get(event, 'target')
-      if (!feature || !entity) return
-      // Remove the highligtht a selection is already active
-      if (this.hasSelection) this.removeSelectionHighlight()
+    async removeSelectionLayer () {
+      await this.removeLayer(TOOLS_LAYER)
+    },
+    onFeatureClicked (layer, event) {
+      // Retrieve the location/feature
+      const location = _.get(event, 'latlng')
+      let feature
+      // Check the layer
+      if (layer && layer.name) {
+        // FIXME: need to retrieve original layer options as here we get processed options by the underlying engine
+        layer = this.getLayerByName(layer.name)
+        // Check if selectable
+        if (layer && this.isLayerSelectable(layer)) {
+          // Retrieve the feature and manage 2D/3D entity
+          feature = (this.is2D() ? _.get(event, 'target.feature') : _.get(event, 'target'))
+        }
+      } else if (!this.isCursor('probe-cursor')) {
+        // Avoid updating selection on click if not probe
+        return
+      }
       // Update the selection
-      this.selection.feature = feature || entity
-    
-      this.selection.options = options
-      this.hasSelection = true
-      this.$emit('selection-changed')
-      // Add the highlight
-      this.addSelectionHighlight()
-      // Open the widget
-      this.openWidget('feature')
+      this.setSelection(location, feature, layer)
     },
     onLayerHidden (layer) {
-      if (this.hasSelection) {
-        if (layer.name === this.selection.options.name) this.clearSelection()
+      if (this.hasFeatureSelection) {
+        if (layer.name === this.selection.layer.name) this.clearSelection()
       }
     }
   },
   created () {
-    this.hasSelection = false
-    this.selectionHighlight = null
+    // Set of highligthed features
+    this.selectionHighlight = {}
   },
   mounted () {
+    this.$once('map-ready', () => this.createSelectionLayer())
+    this.$once('globe-ready', () => this.createSelectionLayer())
     this.$on('click', this.onFeatureClicked)
     this.$on('layer-hidden', this.onLayerHidden)
   },
   beforeDestroy () {
     this.$off('click', this.onFeatureClicked)
     this.$off('layer-hidden', this.onLayerHidden)
+    this.removeSelectionLayer()
   }
 }

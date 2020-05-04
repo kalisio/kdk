@@ -35,6 +35,10 @@ export default {
   inject: ['kActivity'],
   mixins: [baseWidget],
   props: {
+    selection: {
+      type: Object,
+      default: () => {}
+    },
     variables: {
       type: Array,
       default: () => []
@@ -46,13 +50,19 @@ export default {
   },
   watch: {
     variables: function () { 
-      this.setupGraph() 
+      this.refresh() 
     },
     decimationFactor: function () { 
-      this.setupGraph() 
+      this.refresh() 
+    },
+    location: function () {
+      this.refresh()
     }
   },
   computed: {
+    location () { return this.selection.location },
+    feature () { return this.selection.feature },
+    layer () { return this.selection.layer },
     probedLocationName () {
       if (!this.kActivity.probedLocation) return ''
       let name = _.get(this.kActivity.probedLocation, 'properties.name') || _.get(this.kActivity.probedLocation, 'properties.NAME')
@@ -315,41 +325,8 @@ export default {
       this.graphHeight = Math.floor(size.height * 0.9)
       this.setupGraph()
     },
-    async createProbedLocationLayer () {
+    updateProbedLocationHighlight () {
       if (!this.kActivity.probedLocation) return
-      const name = this.$t('mixins.timeseries.PROBED_LOCATION')
-      // Get any previous layer or create it the first time
-      const layer = this.kActivity.getLayerByName(name)
-      if (!layer) {
-        await this.kActivity.addLayer({
-          name,
-          type: 'OverlayLayer',
-          tags: ['hidden'], // Do not show the layer in panel
-          icon: 'colorize',
-          isStorable: false,
-          isEditable: false,
-          isSelectable: false,
-          leaflet: {
-            type: 'geoJson',
-            isVisible: true,
-            realtime: true,
-            popup: { pick: [] }
-          },
-          cesium: {
-            type: 'geoJson',
-            isVisible: true,
-            realtime: true,
-            popup: { pick: [] }
-          }
-        })
-      }
-      if (!this.kActivity.isLayerVisible(name)) await this.kActivity.showLayer(name)
-      // Update data
-      this.updateProbedLocationLayer()
-    },
-    updateProbedLocationLayer () {
-      if (!this.kActivity.probedLocation) return
-      const name = this.$t('mixins.timeseries.PROBED_LOCATION')
       const windDirection = (this.kActivity.selectedLevel ? `windDirection-${this.kActivity.selectedLevel}` : 'windDirection')
       const windSpeed = (this.kActivity.selectedLevel ? `windSpeed-${this.kActivity.selectedLevel}` : 'windSpeed')
       // Use wind barbs on weather probed features
@@ -358,33 +335,33 @@ export default {
       const feature = (isWeatherProbe
         ? this.kActivity.getProbedLocationForecastAtCurrentTime()
         : this.kActivity.getProbedLocationMeasureAtCurrentTime())
-      this.kActivity.updateLayer(name, feature)
-    },
-    async removeProbedLocationLayer () {
-      const name = this.$t('mixins.timeseries.PROBED_LOCATION')
-      await this.kActivity.removeLayer(name)
+
+      this.kActivity.updateSelectionHighlight('time-series', feature)
     },
     onCenterOn () {
-      if (this.kActivity.probedLocation) {
-        const position = this.kActivity.probedLocation.geometry.coordinates
-        this.kActivity.center(position[0], position[1])
-      }
+      this.kActivity.centerOnSelection()
     },
-    async updateProbedLocationForecast (model) {
-      // Update probed location if any
-      if (this.kActivity.probedLocation) {
-        const { start, end } = this.kActivity.getProbeTimeRange()
-        // Feature mode
-        if (this.kActivity.probe && this.kActivity.probedLocation.probeId) {
-          const probe = await this.kActivity.getForecastProbe(this.kActivity.probe.name)
-          if (probe) {
-            await this.kActivity.getForecastForFeature(_.get(this.kActivity.probedLocation, this.kActivity.probe.featureId), start, end)
-          }
-        } else { // Location mode
-          await this.kActivity.getForecastForLocation(this.kActivity.probedLocation.geometry.coordinates[0],
-            this.kActivity.probedLocation.geometry.coordinates[1], start, end)
+    async refresh () {
+      this.kActivity.addSelectionHighlight('time-series')
+      this.kActivity.centerOnSelection()
+      // Update timeseries data if required
+      const { start, end } = this.kActivity.getProbeTimeRange()
+      // No feature clicked => dynamic weacast probe at position
+      if (!this.feature) {
+        await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
+      } else if (this.layer.probe) { // Static weacast probe
+        const probe = await this.kActivity.getForecastProbe(this.layer.probe)
+        if (probe) {
+          await this.kActivity.getForecastForFeature(_.get(this.feature, probe.featureId), start, end)
         }
+      } else if (this.layer.variables && this.layer.service) { // Static measure probe
+        await this.kActivity.getMeasureForFeature(this.layer, this.feature, start, end)
+      } else { // dynamic weacast probe at feature position
+        const position = this.feature.geometry.coordinates
+        await this.kActivity.getForecastForLocation(position[0], position[1], start, end)
       }
+      this.setupGraph()
+      this.updateProbedLocationHighlight()
     }
   },
   created () {
@@ -396,29 +373,20 @@ export default {
       { name: 'centerOn', icon: 'las la-eye', label: this.$t('KTimeSeriesWidget.CENTER_ON'), handler: this.onCenterOn }
     ]
     // Refresh the component
-    this.setupGraph()
+    this.refresh()
   },
   mounted () {
-    this.kActivity.$on('probed-location-changed', this.setupGraph)
-    this.kActivity.$on('probed-location-changed', this.createProbedLocationLayer)
-    this.kActivity.$on('current-time-changed', this.updateProbedLocationLayer)
-    this.kActivity.$on('current-time-changed', this.setupGraph)
-    this.$events.$on('time-format-changed', this.setupGraph)
-    this.kActivity.$on('forecast-model-changed', this.updateProbedLocationForecast)
-    this.kActivity.$on('forecast-level-changed', this.updateProbedLocationForecast)
-    // Show map marker
-    this.createProbedLocationLayer()
+    this.kActivity.$on('current-time-changed', this.refresh)
+    this.$events.$on('time-format-changed', this.refresh)
+    this.kActivity.$on('forecast-model-changed', this.refresh)
+    this.kActivity.$on('forecast-level-changed', this.refresh)
   },
   beforeDestroy () {
-    this.kActivity.$off('probed-location-changed', this.setupGraph)
-    this.kActivity.$off('probed-location-changed', this.createProbedLocationLayer)
-    this.kActivity.$off('current-time-changed', this.updateProbedLocationLayer)
-    this.kActivity.$off('current-time-changed', this.setupGraph)
-    this.$events.$off('time-format-changed', this.setupGraph)
-    this.kActivity.$off('forecast-model-changed', this.updateProbedLocationForecast)
-    this.kActivity.$off('forecast-level-changed', this.updateProbedLocationForecast)
-    // Hide map marker
-    this.removeProbedLocationLayer()
+    this.kActivity.$off('current-time-changed', this.refresh)
+    this.$events.$off('time-format-changed', this.refresh)
+    this.kActivity.$off('forecast-model-changed', this.refresh)
+    this.kActivity.$off('forecast-level-changed', this.refresh)
+    this.kActivity.removeSelectionHighlight('time-series')
   }
 }
 </script>

@@ -189,11 +189,7 @@ export default function (name) {
       isLayerSelectable (layer) {
         if (_.has(layer, 'isSelectable')) return _.get(layer, 'isSelectable')
         // Only possible on user-defined layers by default and when not edited
-        else {
-          if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer.name)) return false
-          else return ((!layer._id && (_.get(layer, `${this.engine}.type`) === 'geoJson')) ||
-                       (layer._id && (layer.service === 'features')))
-        }
+        else return true
       },
       isLayerStorable (layer) {
         if (_.has(layer, 'isStorable')) return _.get(layer, 'isStorable')
@@ -636,14 +632,10 @@ export default function (name) {
         return { start, end }
       },
       onProbeLocation () {
-        const probe = async (options, event) => {
-          this.unsetCursor('probe-cursor')
-          const { start, end } = this.getProbeTimeRange()
-          await this.getForecastForLocation(event.latlng.lng, event.latlng.lat, start, end)
-          this.openWidget('time-series')
-        }
         this.setCursor('probe-cursor')
-        this.$once('click', probe)
+        this.$once('click', () => {
+          this.unsetCursor('probe-cursor')
+        })
       },
       onToggleFullscreen () {
         if (!this.$q.fullscreen.isActive) this.$q.fullscreen.request()

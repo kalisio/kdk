@@ -258,6 +258,9 @@ export default {
     setCursor (className) {
       this.viewer.container.classList.add(className)
     },
+    isCursor (className) {
+      return this.viewer.container.classList.contains(className)
+    },
     unsetCursor (className) {
       this.viewer.container.classList.remove(className)
     },

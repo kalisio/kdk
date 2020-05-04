@@ -155,8 +155,6 @@ export default {
         } else {
           this.probedLocation = _.cloneDeep(feature)
         }
-        // Assign a default id
-        this.probedLocation._id = 'probe'
         this.$emit('probed-location-changed', this.probedLocation)
       } catch (error) {
         this.probedLocation = null

@@ -92,7 +92,7 @@ const baseActivityMixin = {
       widgets.push({ name, icon, component, props })
       this.$store.patch('window', { widgets: widgets })
     },
-    unrgisterWidget (name) {
+    unregisterWidget (name) {
       const current = this.$store.get('window.current')
       const widgets = _.filter(this.$store.get('window.widgets'), { name })
       this.$store.patch('window', { current, widgets })
@@ -106,6 +106,14 @@ const baseActivityMixin = {
         const widgets = this.$store.get('window.widgets')
         this.$store.patch('window', { current: widget, widgets })
       }
+    },
+    hasOpenWidget () {
+      const current = this.$store.get('window.current')
+      return current
+    },
+    isWidgetOpen (widget) {
+      const current = this.$store.get('window.current')
+      return (current && (current === widget))
     },
     closeWidget () {
       const current = this.$store.get('window.current')

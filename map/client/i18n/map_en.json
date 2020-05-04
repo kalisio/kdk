@@ -296,7 +296,7 @@
     "SET_NOW": "Real time",
     "SET_DATE": "Go on a date"
   },
-  "KFeatureWidget": {
+  "KInformationBox": {
     "NO_FEATURE_SELECTED": "No object selected",
     "CENTER_ON": "Center the view on the object",    
     "COPY_PROPERTIES": "Copy the values to the clipboard",    

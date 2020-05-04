@@ -109,14 +109,14 @@ export default {
     // Register the mapillary coverage
     this.registerLeafletConstructor(this.createLeafletMapillaryCoverageLayer)
   },
-  mounted () {
+  mounted () {/*
     this.$on('click', this.onMapillaryFeatureClicked)
     this.$on('selection-changed', this.onMapillarySelectionChanged)
-    this.$on('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)
+    this.$on('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)*/
   },
-  beforeDestroy () {
+  beforeDestroy () {/*
     this.$off('click', this.onMapillaryFeatureClicked)
     this.$off('selection-changed', this.onMapillarySelectionChanged)
-    this.$off('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)
+    this.$off('current-time-changed', this.onCurrentTimeChangedMapillaryCoverage)*/
   }
 }
