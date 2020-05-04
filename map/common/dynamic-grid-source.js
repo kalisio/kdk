@@ -48,7 +48,9 @@ export class DynamicGridSource extends GridSource {
     // compute potential new context based on update context
     const newCtx = this.makeBuildContext(updateCtx)
     // give source a chance to skip update if nothing changes
-    if (!this.forceUpdate && this.shouldSkipUpdate(newCtx, this.buildCtx)) return
+    const skipUpdate = this.forceUpdate ? false : this.shouldSkipUpdate(newCtx, this.buildCtx)
+    this.forceUpdate = false
+    if (skipUpdate) return
 
     // computed context is now the current one
     this.buildCtx = newCtx
