@@ -1,8 +1,9 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import moment from 'moment'
+import { featureEach } from '@turf/meta'
+import { featureCollection } from '@turf/helpers'
 import { buildUrl } from '../../../core/common'
-import { tile2key, tileSetContainsParent } from './utils'
 import { fetchGeoJson } from '../utils'
 
 const TiledMapillaryLayer = L.GridLayer.extend({
@@ -10,10 +11,10 @@ const TiledMapillaryLayer = L.GridLayer.extend({
     L.GridLayer.prototype.initialize.call(this, options)
 
     // register event callbacks
-    this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
-    this.loadedTiles = new Set()
+    this.featureRefCount = new Map()
+    this.getFeatureKey = (feature) => { return feature.properties.key }
   },
 
   setup (activity, layer) {
@@ -22,104 +23,86 @@ const TiledMapillaryLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
-    // be notified when zoom starts
-    // keep a ref on bound objects to be able to remove them later
-    // this.zoomStartCallback = this.onZoomStart.bind(this)
-    // this.zoomEndCallback = this.onZoomEnd.bind(this)
-    // map.on('zoomstart', this.zoomStartCallback)
-    // map.on('zoomend', this.zoomEndCallback)
+    this.featureRefCount.clear()
     L.GridLayer.prototype.onAdd.call(this, map)
   },
 
   onRemove (map) {
+    this.featureRefCount.clear()
     L.GridLayer.prototype.onRemove.call(this, map)
   },
 
-  createTile (coords, done) {
+  createTile (coords) {
     const tile = document.createElement('div')
-    let skipTile = false
 
-    // Check for zoom level range first
-    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) skipTile = true
-    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) skipTile = true
+    const bounds = this._tileCoordsToBounds(coords)
+    const endTime = this.activity.currentTime || moment.utc()
+    const startTime = endTime.clone().add(moment.duration(_.get(this.layer, 'queryFrom', 'P-1Y'))) // 1 year back by default
+    const request = buildUrl(this.options.url + '/v3/sequences', {
+      bbox: `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
+      client_id: this.activity.mapillaryClientID,
+      start_time: startTime.format(),
+      end_time: endTime.format()
+    })
 
-    if (!skipTile) {
-      // tile.style.outline = '1px solid red'
-      const bounds = this._tileCoordsToBounds(coords)
-      const endTime = this.activity.currentTime || moment.utc()
-      const startTime = endTime.clone().add(moment.duration(_.get(this.layer, 'queryFrom', 'P-1Y'))) // 1 year back by default
-      const request = buildUrl(this.options.url + '/v3/sequences', { 
-        bbox: `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`,
-        client_id: this.activity.mapillaryClientID,
-        start_time: startTime.format(),
-        end_time: endTime.format()
-      })
-      
-      fetchGeoJson(request).then(data => {
-        tile.features = (data.features.length ? data : null)
-        done(null, tile)
-      })
-        .catch(error => {
-          done(error, tile)
-          throw error
+    fetchGeoJson(request).then(data => {
+      if (tile.tileUnloaded) {
+        // tile was unloaded before fetch completed
+        return
+      }
+
+      tile.features = (data.features.length ? data : null)
+
+      if (tile.features) {
+        // ref each feature
+        // TODO: we could only add features with refcount = 1
+        // but in case of probes we need to find corresponding features
+        featureEach(tile.features, (feature, index) => {
+          const key = this.getFeatureKey(feature)
+          let refCount = this.featureRefCount.get(key)
+          refCount = refCount === undefined ? 1 : refCount + 1
+          this.featureRefCount.set(key, refCount)
         })
-    } else {
-      setTimeout(() => { done(null, tile) }, 100)
-    }
+
+        this.activity.updateLayer(this.layer.name, tile.features)
+      }
+    }).catch(error => {
+      throw error
+    })
 
     return tile
   },
 
-  async onTileLoad (event) {
-    const features = event.tile.features
-    if (!features) return
-
-    // Check for zoom level range first as user might have zoomed during loading
-    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) return
-    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) return
-
-    // add tile to loaded tiles set
-    const tilekey = tile2key(event.coords)
-    this.loadedTiles.add(tilekey)
-
-    // Update realtime layer with features
-    this.activity.updateLayer(this.layer.name, features)
-  },
-
   onTileUnload (event) {
+    // flag tile as unloaded (useful when tile hasn't loaded completely yet)
+    event.tile.tileUnloaded = true
+
     const features = event.tile.features
     if (!features) return
-    
-    const tilekey = tile2key(event.coords)
-    // If tile not available in tile cache then by default we'd like to clear it
-    let unload = !this.loadedTiles.has(tilekey)
-    // Check for zoom level range first
-    if (this.options.minZoom && (this._map.getZoom() < this.options.minZoom)) unload |= true
-    if (this.options.maxZoom && (this._map.getZoom() > this.options.maxZoom)) unload |= true
-    // check if we can unload the associated geojson bits
-    // we only unload when the unloaded tile is completely outside the visible bounds
-    if (!unload) {
-      const visible = this._map.getBounds()
-      const bounds = this._tileCoordsToBounds(event.coords)
-      if (!visible.intersects(bounds)) unload = true
-    }
 
-    if (unload) {
-      // ok, we can unload geosjon, and remove tile from loaded tile set
-      this.loadedTiles.delete(tilekey)
-      this.activity.updateLayer(this.layer.name, features, true)
+    const remove = []
+    // unref each feature, those with refCount = 0 => we can remove
+    featureEach(features, (feature, index) => {
+      const key = this.getFeatureKey(feature)
+      let refCount = this.featureRefCount.get(key)
+      refCount = refCount - 1
+      if (refCount === 0) {
+        remove.push(feature)
+        this.featureRefCount.delete(key)
+      } else {
+        this.featureRefCount.set(key, refCount)
+      }
+    })
+
+    if (remove.length) {
+      const collection = featureCollection(remove)
+      this.activity.updateLayer(this.layer.name, collection, true)
     }
   },
 
   redraw () {
-    this.loadedTiles.clear()
+    this.featureRefCount.clear()
     L.GridLayer.prototype.redraw.call(this)
-  },
-
-  onZoomStart (event) {
-  },
-
-  onZoomEnd (event) {
   }
 })
 
