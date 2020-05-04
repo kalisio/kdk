@@ -213,16 +213,16 @@ const TiledWindLayer = L.GridLayer.extend({
     const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(reqBBox)
     const startlat = grid.getLat(iminlat)
     const startlon = grid.getLon(iminlon)
-    let istartx = Math.round((startlon - element.header.lo1) / element.header.dy)
+    const istartx = Math.round((startlon - element.header.lo1) / element.header.dy)
     const istarty = Math.round((element.header.la1 - startlat) / element.header.dx)
-
-    if (istartx < 0) istartx += element.header.nx
 
     for (let ilon = iminlon; ilon <= imaxlon; ++ilon) {
       for (let ilat = iminlat; ilat <= imaxlat; ++ilat) {
         const val = grid.getValue(ilat, ilon)
-        const ix = (istartx + (ilon - iminlon)) % element.header.nx
-        const iy = (istarty - (ilat - iminlat)) % element.header.ny
+        let ix = istartx + (ilon - iminlon)
+        let iy = istarty - (ilat - iminlat)
+        if (ix < 0) ix += element.header.nx
+        if (iy < 0) iy += element.header.ny
         const idx = ix + iy * element.header.nx
         element.data[idx] = val
       }
