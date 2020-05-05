@@ -15,7 +15,6 @@ export default function (name) {
         forecastModelHandlers: {},
         layerCategories: [],
         variables: [],
-        probedLocation: null,
         engine: 'leaflet',
         engineReady: false,
         engineContainerWidth: null,
