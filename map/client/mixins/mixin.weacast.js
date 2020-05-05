@@ -89,7 +89,7 @@ export default {
           }
         }
       }
-
+      let probedLocation
       this.setCursor('processing-cursor')
       try {
         let elements = this.forecastModel.elements.map(element => element.name)
@@ -107,14 +107,13 @@ export default {
             elements
           }, { query })
         if (response.features.length > 0) {
-          this.probedLocation = response.features[0]
-          this.$emit('probed-location-changed', this.probedLocation)
+          probedLocation = response.features[0]
         } else throw new Error('Cannot find valid forecast at location')
       } catch (error) {
-        this.probedLocation = null
         logger.error(error)
       }
       this.unsetCursor('processing-cursor')
+      return probedLocation
     },
     async getForecastProbe (name) {
       // Not yet ready
@@ -144,6 +143,7 @@ export default {
       // Check if probe is available
       if (!this.probe) return
 
+      let probedLocation
       this.setCursor('processing-cursor')
       try {
         let elements = this.forecastModel.elements.map(element => element.name)
@@ -174,14 +174,13 @@ export default {
           }
         })
         if (results.length > 0) {
-          this.probedLocation = results[0]
-          this.$emit('probed-location-changed', this.probedLocation)
+          probedLocation = results[0]
         } else throw new Error('Cannot find valid forecast for feature')
       } catch (error) {
-        this.probedLocation = null
         logger.error(error)
       }
       this.unsetCursor('processing-cursor')
+      return probedLocation
     },
     getForecastValueAtCurrentTime (times, values) {
       // Check for the right value at time
@@ -196,9 +195,9 @@ export default {
         return values
       }
     },
-    getProbedLocationForecastAtCurrentTime () {
+    getProbedLocationForecastAtCurrentTime (probedLocation) {
       // Create new geojson from raw response containing all times
-      const feature = _.cloneDeep(this.probedLocation)
+      const feature = _.cloneDeep(probedLocation)
       // Then check for the right value at time
       _.forOwn(feature.properties, (value, key) => {
         if (Array.isArray(value)) {

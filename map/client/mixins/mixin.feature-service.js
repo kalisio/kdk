@@ -127,9 +127,9 @@ export default {
         return values
       }
     },
-    getProbedLocationMeasureAtCurrentTime () {
+    getProbedLocationMeasureAtCurrentTime (probedLocation) {
       // Create new geojson from raw response containing all times
-      const feature = _.cloneDeep(this.probedLocation)
+      const feature = _.cloneDeep(probedLocation)
       // Then check for the right value at time
       _.forOwn(feature.properties, (value, key) => {
         if (Array.isArray(value)) {
@@ -142,6 +142,7 @@ export default {
       return feature
     },
     async getMeasureForFeature (layer, feature, startTime, endTime) {
+      let probedLocation
       this.setCursor('processing-cursor')
       try {
         const result = await this.getFeatures(_.merge({
@@ -151,16 +152,15 @@ export default {
           $lte: endTime.format()
         })
         if (result.features.length > 0) {
-          this.probedLocation = result.features[0]
+          probedLocation = result.features[0]
         } else {
-          this.probedLocation = _.cloneDeep(feature)
+          probedLocation = _.cloneDeep(feature)
         }
-        this.$emit('probed-location-changed', this.probedLocation)
       } catch (error) {
-        this.probedLocation = null
         logger.error(error)
       }
       this.unsetCursor('processing-cursor')
+      return probedLocation
     },
     async createFeatures (geoJson, layerId, chunkSize = 5000, processCallback) {
       if (!layerId) return

@@ -34,6 +34,11 @@ export default {
   name: 'k-time-series-widget',
   inject: ['kActivity'],
   mixins: [baseWidget],
+  data () {
+    return {
+      probedLocation: null
+    }
+  },
   props: {
     selection: {
       type: Object,
@@ -64,11 +69,11 @@ export default {
     feature () { return this.selection.feature },
     layer () { return this.selection.layer },
     probedLocationName () {
-      if (!this.kActivity.probedLocation) return ''
-      let name = _.get(this.kActivity.probedLocation, 'properties.name') || _.get(this.kActivity.probedLocation, 'properties.NAME')
-      if (!name && _.has(this.kActivity.probedLocation, 'geometry.coordinates')) {
-        const longitude = _.get(this.kActivity.probedLocation, 'geometry.coordinates[0]')
-        const latitude = _.get(this.kActivity.probedLocation, 'geometry.coordinates[1]')
+      if (!this.probedLocation) return ''
+      let name = _.get(this.probedLocation, 'properties.name') || _.get(this.probedLocation, 'properties.NAME')
+      if (!name && _.has(this.probedLocation, 'geometry.coordinates')) {
+        const longitude = _.get(this.probedLocation, 'geometry.coordinates[0]')
+        const latitude = _.get(this.probedLocation, 'geometry.coordinates[1]')
         name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
       }
       return name || ''
@@ -105,7 +110,7 @@ export default {
     },
     setupAvailableTimes () {
       this.times = []
-      const time = this.kActivity.probedLocation.time || this.kActivity.probedLocation.forecastTime
+      const time = this.probedLocation.time || this.probedLocation.forecastTime
 
       this.variables.forEach(variable => {
         if (time && time[variable.name]) this.times.push(time[variable.name])
@@ -128,8 +133,8 @@ export default {
     },
     setupAvailableDatasets () {
       this.datasets = []
-      const time = this.kActivity.probedLocation.time || this.kActivity.probedLocation.forecastTime
-      const properties = this.kActivity.probedLocation.properties
+      const time = this.probedLocation.time || this.probedLocation.forecastTime
+      const properties = this.probedLocation.properties
 
       this.variables.forEach(variable => {
         const unit = variable.units[0]
@@ -146,7 +151,7 @@ export default {
     },
     setupAvailableYAxes () {
       this.yAxes = []
-      const properties = this.kActivity.probedLocation.properties
+      const properties = this.probedLocation.properties
       let isLeft = true
 
       this.variables.forEach(variable => {
@@ -206,7 +211,7 @@ export default {
       this.chart.update(this.config)
     },
     hasAvailableDatasets () {
-      const keys = Object.keys(this.kActivity.probedLocation.properties)
+      const keys = Object.keys(this.probedLocation.properties)
       for (let i = 0; i < this.variables.length; i++) {
         const name = this.variables[i].name
         if (_.indexOf(keys, name) !== -1) return true
@@ -214,7 +219,7 @@ export default {
       return false
     },
     async setupGraph () {
-      if (!this.kActivity.probedLocation) return
+      if (!this.probedLocation) return
 
       // Destroy previous graph if any
       if (this.chart) {
@@ -326,15 +331,15 @@ export default {
       this.setupGraph()
     },
     updateProbedLocationHighlight () {
-      if (!this.kActivity.probedLocation) return
+      if (!this.probedLocation) return
       const windDirection = (this.kActivity.selectedLevel ? `windDirection-${this.kActivity.selectedLevel}` : 'windDirection')
       const windSpeed = (this.kActivity.selectedLevel ? `windSpeed-${this.kActivity.selectedLevel}` : 'windSpeed')
       // Use wind barbs on weather probed features
-      const isWeatherProbe = (_.has(this.kActivity.probedLocation, `properties.${windDirection}`) &&
-                              _.has(this.kActivity.probedLocation, `properties.${windSpeed}`))
+      const isWeatherProbe = (_.has(this.probedLocation, `properties.${windDirection}`) &&
+                              _.has(this.probedLocation, `properties.${windSpeed}`))
       const feature = (isWeatherProbe
-        ? this.kActivity.getProbedLocationForecastAtCurrentTime()
-        : this.kActivity.getProbedLocationMeasureAtCurrentTime())
+        ? this.kActivity.getProbedLocationForecastAtCurrentTime(this.probedLocation)
+        : this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
 
       this.kActivity.updateSelectionHighlight('time-series', feature)
     },
@@ -348,17 +353,17 @@ export default {
       const { start, end } = this.kActivity.getProbeTimeRange()
       // No feature clicked => dynamic weacast probe at position
       if (!this.feature) {
-        await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
+        this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
       } else if (this.layer.probe) { // Static weacast probe
         const probe = await this.kActivity.getForecastProbe(this.layer.probe)
         if (probe) {
-          await this.kActivity.getForecastForFeature(_.get(this.feature, probe.featureId), start, end)
+          this.probedLocation = await this.kActivity.getForecastForFeature(_.get(this.feature, probe.featureId), start, end)
         }
       } else if (this.layer.variables && this.layer.service) { // Static measure probe
-        await this.kActivity.getMeasureForFeature(this.layer, this.feature, start, end)
+        this.probedLocation = await this.kActivity.getMeasureForFeature(this.layer, this.feature, start, end)
       } else { // dynamic weacast probe at feature position
         const position = this.feature.geometry.coordinates
-        await this.kActivity.getForecastForLocation(position[0], position[1], start, end)
+        this.probedLocation = await this.kActivity.getForecastForLocation(position[0], position[1], start, end)
       }
       this.setupGraph()
       this.updateProbedLocationHighlight()
