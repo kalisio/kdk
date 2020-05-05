@@ -32,13 +32,10 @@ export default {
       return widget
     },
     clearSelection() {
-      const widget = this.getWidgetForLayer()
       this.selection.feature = null
       this.selection.layer = null
       this.$emit('selection-changed')
-      // Close associated default widget if open,
-      // if the user has switched to another widget it will remain active
-      if (this.isWidgetOpen(widget)) this.closeWidget()
+      this.closeWidget()
     },
     setSelection (location, feature, layer) {
       this.selection.location = location
