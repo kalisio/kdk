@@ -43,6 +43,6 @@ export default {
     }
   },
   created () {
-    this.registerLeafletStyle('popup', this.getDefaultPopup)
+    this.registerStyle('popup', this.getDefaultPopup)
   }
 }

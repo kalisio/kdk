@@ -31,6 +31,6 @@ export default {
     }
   },
   created () {
-    this.registerLeafletStyle('tooltip', this.getDefaultTooltip)
+    this.registerStyle('tooltip', this.getDefaultTooltip)
   }
 }

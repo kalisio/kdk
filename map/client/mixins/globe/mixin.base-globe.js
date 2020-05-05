@@ -313,12 +313,18 @@ export default {
         if (emittedEvent.target instanceof Cesium.Entity) {
           // If feature have been lost at import try to recreate it in order to be compatible with 2D
           if (!emittedEvent.target.feature) {
-            let feature = {}
+            let feature = { type: 'Feature' }
             // FIXME: Generate GeoJson feature if possible (requires Cesium 1.59)
             if (typeof Cesium.exportKml === 'function') {
               const kml = Cesium.exportKml({ entities: [emittedEvent.target] })
               const geoJson = togeojson.kml(kml)
               if (geoJson.features.length > 0) feature = geoJson.features[0]
+            } else {
+              const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position.getValue(0))
+              feature.geometry = {
+                type: 'Point',
+                coordinates: [Cesium.Math.toDegrees(position.longitude), Cesium.Math.toDegrees(position.latitude)]
+              }
             }
             feature.properties = (emittedEvent.target.properties ? emittedEvent.target.properties.getValue(0) : {})
             emittedEvent.target.feature = feature

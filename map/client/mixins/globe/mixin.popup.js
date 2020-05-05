@@ -50,7 +50,7 @@ export default {
       }
       // Only for entities from a layer
       if (!this.clickedEntity || !options) return
-      const popup = this.generateCesiumStyle('popup', this.clickedEntity, options)
+      const popup = this.generateStyle('popup', this.clickedEntity, options)
       if (popup) {
         const position = (event.pickedPosition ? event.pickedPosition : this.getPositionForEntity(this.clickedEntity))
         this.popupEntity = this.viewer.entities.add({ position, label: popup })
@@ -58,7 +58,7 @@ export default {
     }
   },
   created () {
-    this.registerCesiumStyle('popup', this.getDefaultPopup)
+    this.registerStyle('popup', this.getDefaultPopup)
     // Perform required conversion from JSON to Cesium objects
     if (this.options.popup) this.options.popup = this.convertToCesiumObjects(this.options.popup)
   },

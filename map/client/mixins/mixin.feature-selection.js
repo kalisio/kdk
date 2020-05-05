@@ -62,12 +62,6 @@ export default {
         this.center(this.selection.location.lng, this.selection.location.lat)
       }
     },
-    updateSelectionHighlight (id, feature) {
-      if (_.has(this.selectionHighlight, id)) {
-        const highlight = _.merge(_.get(this.selectionHighlight, id), feature)
-        this.updateLayer(TOOLS_LAYER, highlight)
-      }
-    },
     addSelectionHighlight (id, feature = {}) {
       // Remove previous selection if any
       this.removeSelectionHighlight(id)
@@ -87,23 +81,30 @@ export default {
       highlight._id = highlight.id = id
       // Add default styling and additional information provided if any
       _.merge(highlight, {
-        style: {
+        properties: {
           'marker-type': 'circleMarker',
-          radius: 18,
+          geodesic: !this.is2D(), // In 3D we use a circle on ground
+          radius: this.is2D() ? 18 : 1000,
           'stroke-color': colors.getBrand('secondary'),
           'stroke-width': 3,
           'fill-color': colors.getBrand('secondary'),
           'fill-opacity': 0.5
         }
       }, feature)
-      this.updateLayer(TOOLS_LAYER, highlight)
       _.set(this.selectionHighlight, id, highlight)
+      this.updateSelectionLayer()
       return highlight
+    },
+    updateSelectionHighlight (id, feature) {
+      if (_.has(this.selectionHighlight, id)) {
+        _.merge(_.get(this.selectionHighlight, id), feature)
+        this.updateSelectionLayer()
+      }
     },
     removeSelectionHighlight (id) {
       if (_.has(this.selectionHighlight, id)) {
-        this.updateLayer(TOOLS_LAYER, _.get(this.selectionHighlight, id), true)
         _.unset(this.selectionHighlight, id)
+        this.updateSelectionLayer()
       }
     },
     async createSelectionLayer () {
@@ -133,6 +134,9 @@ export default {
       }
       if (!this.isLayerVisible(TOOLS_LAYER)) await this.showLayer(TOOLS_LAYER)
     },
+    updateSelectionLayer () {
+      this.updateLayer(TOOLS_LAYER, { type: 'FeatureCollection', features: Object.values(this.selectionHighlight) })
+    },
     async removeSelectionLayer () {
       await this.removeLayer(TOOLS_LAYER)
     },
@@ -147,7 +151,7 @@ export default {
         // Check if selectable
         if (layer && this.isLayerSelectable(layer)) {
           // Retrieve the feature and manage 2D/3D entity
-          feature = (this.is2D() ? _.get(event, 'target.feature') : _.get(event, 'target'))
+          feature = _.get(event, 'target.feature')
         }
       } else if (!this.isCursor('probe-cursor')) {
         // Avoid updating selection on click if not probe

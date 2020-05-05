@@ -31,7 +31,7 @@ export default {
           entitiesToAdd.push({
             id: entity.id,
             position: entity.position.getValue(0),
-            name: entity.name,
+            name: entity.name ? entity.name : entity.id,
             description: entity.description.getValue(0),
             properties: entity.properties.getValue(0),
             ellipse: {

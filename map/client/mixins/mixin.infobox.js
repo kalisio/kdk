@@ -5,23 +5,20 @@ export default {
     getDefaultInfoBox (feature, options) {
       let properties = feature.properties
       if (properties) {
-        const leafletOptions = options.leaflet || options
+        const engineOptions = _.get(options, this.engine, options)
         const infoboxStyle = Object.assign({}, this.options.infobox,
-          leafletOptions.infobox, properties.infobox)
+          engineOptions.infobox, properties.infobox)
 
         if (infoboxStyle.pick) {
           properties = _.pick(properties, infoboxStyle.pick)
         } else if (infoboxStyle.omit) {
           properties = _.omit(properties, infoboxStyle.omit)
-        } else if (infoboxStyle.template) {
-          const compiler = infoboxStyle.compiler
-          compiler({ properties, feature })
         }
       }
       return properties
     }
   },
   created () {
-    this.registerLeafletStyle('infobox', this.getDefaultInfoBox)
+    this.registerStyle('infobox', this.getDefaultInfoBox)
   }
 }

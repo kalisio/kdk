@@ -262,7 +262,7 @@ export default {
           // Then for tooltip/popup
           // First remove previous popup if any
           if (layer.getPopup()) layer.unbindPopup()
-          const popup = this.generateLeafletStyle('popup', feature, layer, options)
+          const popup = this.generateStyle('popup', feature, layer, options)
           if (popup) {
             // Because we build a new popup we need to restore previous state
             const wasOpen = (layer.getPopup() && layer.isPopupOpen())
@@ -272,7 +272,7 @@ export default {
           }
           // First remove previous tooltip if any
           if (layer.getTooltip()) layer.unbindTooltip()
-          const tooltip = this.generateLeafletStyle('tooltip', feature, layer, options)
+          const tooltip = this.generateStyle('tooltip', feature, layer, options)
           if (tooltip) {
             // Because we build a new tooltip we need to restore previous state
             const wasOpen = (layer.getTooltip() && layer.isTooltipOpen())
@@ -283,10 +283,10 @@ export default {
           bindLeafletEvents(layer, LeafletEvents.Feature, this, options)
         },
         style: (feature) => {
-          return this.generateLeafletStyle('featureStyle', feature, options)
+          return this.generateStyle('featureStyle', feature, options)
         },
         pointToLayer: (feature, latlng) => {
-          return this.generateLeafletStyle('markerStyle', feature, latlng, options)
+          return this.generateStyle('markerStyle', feature, latlng, options)
         }
       }
 

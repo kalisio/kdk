@@ -79,11 +79,7 @@ export default {
           return
         }
         // Retirve properties on feature/entity
-        if (this.kActivity.is2D()) {
-          this.properties = this.kActivity.generateLeafletStyle('infobox', this.feature, this.layer)
-        } else {
-          this.properties = this.kActivity.generateCesiumStyle('infobox', this.feature, this.layer)
-        }
+        this.properties = this.kActivity.generateStyle('infobox', this.feature, this.layer)
         this.kActivity.centerOnSelection()
         this.kActivity.addSelectionHighlight('information-box')
       }

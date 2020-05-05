@@ -8,7 +8,7 @@ export default {
     applyStyle (entities, options) {
       for (let i = 0; i < entities.values.length; i++) {
         const entity = entities.values[i]
-        const style = this.generateCesiumStyle('entityStyle', entity, options)
+        const style = this.generateStyle('entityStyle', entity, options)
         // Loop over possible types
         CesiumEntityTypes.forEach(type => {
           if (entity[type] && style[type]) {
@@ -25,7 +25,7 @@ export default {
       }
     },
     applyClusterStyle (entities, cluster, options) {
-      const style = this.generateCesiumStyle('clusterStyle', entities, cluster, options)
+      const style = this.generateStyle('clusterStyle', entities, cluster, options)
       // Loop over possible styles
       const featureTypes = ['billboard', 'label', 'point']
       featureTypes.forEach(type => {
@@ -98,26 +98,6 @@ export default {
         return _.mapValues({ value: style }, mapValue).value
       }
     },
-    registerCesiumStyle (type, generator) {
-      this[type + 'Factory'].push(generator)
-    },
-    unregisterCesiumStyle (type, generator) {
-      _.pull(this[type + 'Factory'], generator)
-    },
-    generateCesiumStyle () {
-      const args = Array.from(arguments)
-      const type = args[0]
-      args.shift()
-      let style
-      // Iterate over all registered generators until we find one
-      // Last registered overrides previous ones (usefull to override default styles)
-      for (let i = this[type + 'Factory'].length - 1; i >= 0; i--) {
-        const generator = this[type + 'Factory'][i]
-        style = generator(...args)
-        if (style) break
-      }
-      return style
-    },
     getDefaultEntityStyle (entity, options) {
       const properties = (entity.properties ? entity.properties.getValue(0) : null)
       const cesiumOptions = options.cesium || options
@@ -170,13 +150,8 @@ export default {
     }
   },
   created () {
-    this.entityStyleFactory = []
-    this.clusterStyleFactory = []
-    this.tooltipFactory = []
-    this.popupFactory = []
-    this.infoboxFactory = []
-    this.registerCesiumStyle('entityStyle', this.getDefaultEntityStyle)
-    this.registerCesiumStyle('clusterStyle', this.getDefaultClusterStyle)
+    this.registerStyle('entityStyle', this.getDefaultEntityStyle)
+    this.registerStyle('clusterStyle', this.getDefaultClusterStyle)
     // Perform required conversion from JSON to Cesium objects
     if (this.options.entityStyle) this.options.entityStyle = this.convertToCesiumObjects(this.options.entityStyle)
     if (this.options.clusterStyle) this.options.clusterStyle = this.convertToCesiumObjects(this.options.clusterStyle)

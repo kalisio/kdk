@@ -61,26 +61,6 @@ export default {
       if (_.has(convertedStyle, 'pane')) _.set(convertedStyle, 'pane', _.get(convertedStyle, 'pane').toString())
       return convertedStyle
     },
-    registerLeafletStyle (type, generator) {
-      this[type + 'Factory'].push(generator)
-    },
-    unregisterLeafletStyle (type, generator) {
-      _.pull(this[type + 'Factory'], generator)
-    },
-    generateLeafletStyle () {
-      const args = Array.from(arguments)
-      const type = args[0]
-      args.shift()
-      let style
-      // Iterate over all registered generators until we find one
-      // Last registered overrides previous ones (usefull to override default styles)
-      for (let i = this[type + 'Factory'].length - 1; i >= 0; i--) {
-        const generator = this[type + 'Factory'][i]
-        style = generator(...args)
-        if (style) break
-      }
-      return style
-    },
     getDefaultMarker (feature, latlng, options) {
       const properties = feature.properties
       const leafletOptions = options.leaflet || options
@@ -121,13 +101,8 @@ export default {
     }
   },
   created () {
-    this.markerStyleFactory = []
-    this.featureStyleFactory = []
-    this.tooltipFactory = []
-    this.popupFactory = []
-    this.infoboxFactory = []
-    this.registerLeafletStyle('markerStyle', this.getDefaultMarker)
-    this.registerLeafletStyle('featureStyle', this.getDefaultStyle)
+    this.registerStyle('markerStyle', this.getDefaultMarker)
+    this.registerStyle('featureStyle', this.getDefaultStyle)
     // Perform required conversion for default feature styling
     if (this.options.featureStyle) this.convertFromSimpleStyleSpec(this.options.featureStyle, 'update-in-place')
     if (this.options.pointStyle) this.convertFromSimpleStyleSpec(this.options.pointStyle, 'update-in-place')

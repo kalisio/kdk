@@ -5,7 +5,7 @@ export default {
     applyTooltips (entities, options) {
       for (let i = 0; i < entities.values.length; i++) {
         const entity = entities.values[i]
-        const tooltip = this.generateCesiumStyle('tooltip', entity, options)
+        const tooltip = this.generateStyle('tooltip', entity, options)
         if (tooltip) {
           // Default tooltip position (can change in sticky mode)
           const position = this.getPositionForEntity(entity)
@@ -78,7 +78,7 @@ export default {
     }
   },
   created () {
-    this.registerCesiumStyle('tooltip', this.getDefaultTooltip)
+    this.registerStyle('tooltip', this.getDefaultTooltip)
     // Perform required conversion from JSON to Cesium objects
     if (this.options.tooltip) this.options.tooltip = this.convertToCesiumObjects(this.options.tooltip)
   },
