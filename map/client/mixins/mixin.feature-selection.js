@@ -141,7 +141,7 @@ export default {
       // Retrieve the location/feature
       const location = _.get(event, 'latlng')
       let feature
-      // Check the layer
+      // Check the target layer
       if (layer && layer.name) {
         // FIXME: need to retrieve original layer options as here we get processed options by the underlying engine
         layer = this.getLayerByName(layer.name)
@@ -149,10 +149,14 @@ export default {
         if (layer && this.isLayerSelectable(layer)) {
           // Retrieve the feature and manage 2D/3D entity
           feature = _.get(event, 'target.feature')
+        } else {
+          layer = undefined
         }
-      } else if (!this.isCursor('probe-cursor')) {
+      } else {
         // Avoid updating selection on click if not probe
-        return
+        if (!this.isCursor('probe-cursor')) return
+        // Otherwise this is a position selection only
+        layer = undefined
       }
       // Update the selection
       this.setSelection(location, feature, layer)
