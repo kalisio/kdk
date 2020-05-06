@@ -150,7 +150,8 @@ export default {
           // Retrieve the feature and manage 2D/3D entity
           feature = _.get(event, 'target.feature')
         } else {
-          layer = undefined
+          // Avoid updating selection on click if not selectable
+          return
         }
       } else {
         // Avoid updating selection on click if not probe
