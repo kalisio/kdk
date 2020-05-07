@@ -13,35 +13,16 @@ export default {
     }
   },
   methods: {
-    async setupWeacast (config) {
-      // If no client config given we assume to proxy the Weacast API internally
-      if (config) {
-        const catalogService = this.$api.getService('catalog')
-        // Check for existing service in catalog overriding default config
-        const response = await catalogService.find({ query: { type: 'service', name: 'weacast' } })
-        if (response.data.length > 0) config.apiUrl = response.data[0].endpoint
-        this.weacastApi = weacast(config)
-        // Ensure we also logout from weacast on app logout
-        this.$api.on('logout', () => this.weacastApi.logout())
-        try {
-          // Transfer app token to Weacast
-          const accessToken = await this.$api.passport.getJWT()
-          const weacastAccessToken = await this.weacastApi.passport.getJWT()
-          if (weacastAccessToken) await this.weacastApi.authenticate()
-          else await this.weacastApi.authenticate({ strategy: 'jwt', accessToken })
-        } catch (error) {
-          logger.error('Cannot initialize Weacast API', error)
-        }
-      } else {
-        this.weacastApi = this.$api
-        // We need to implement time management however
-        this.weacastApi.setForecastTime = (time) => {
-          this.$api.forecastTime = time
-          this.$api.emit('forecast-time-changed', time)
-        }
-        this.weacastApi.getForecastTime = () => {
-          return this.$api.forecastTime
-        }
+    async setupWeacast () {
+      // As we proxy weacast service we use our API
+      this.weacastApi = this.$api
+      // We need to implement time management
+      this.weacastApi.setForecastTime = (time) => {
+        this.$api.forecastTime = time
+        this.$api.emit('forecast-time-changed', time)
+      }
+      this.weacastApi.getForecastTime = () => {
+        return this.$api.forecastTime
       }
       try {
         await this.setupForecastModels()
