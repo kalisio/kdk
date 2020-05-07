@@ -2,7 +2,6 @@ import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import centroid from '@turf/centroid'
 import _ from 'lodash'
-import L from 'leaflet'
 import { uid, colors } from 'quasar'
 
 const TOOLS_LAYER = uid()
@@ -31,7 +30,7 @@ export default {
       }
       return widget
     },
-    clearSelection() {
+    clearSelection () {
       this.selection.feature = null
       this.selection.layer = null
       this.$emit('selection-changed')
@@ -63,15 +62,12 @@ export default {
       // Remove previous selection if any
       this.removeSelectionHighlight(id)
       // Start from selected feature or location to build highlight
-      let highlight = (this.selection.feature ?
-        _.cloneDeep(this.selection.feature) :
-        {
-          type: 'Feature',
-          geometry: { type: 'Point', coordinates: [this.selection.location.lng, this.selection.location.lat] }
-        })
+      const highlight = (this.selection.feature ? _.cloneDeep(this.selection.feature) : {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [this.selection.location.lng, this.selection.location.lat] }
+      })
       // Use bbox for line/polygons
       if (highlight.geometry.type !== 'Point') {
-        const bounds = bbox(this.selection.feature)
         Object.assign(highlight, bboxPolygon(bbox(this.selection.feature)))
       }
       // Add an identifier if we'd like to update it
