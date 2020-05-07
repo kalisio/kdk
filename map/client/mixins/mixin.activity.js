@@ -1,10 +1,12 @@
 import _ from 'lodash'
+import i18next from 'i18next'
 import sift from 'sift'
 import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import { Loading, Dialog } from 'quasar'
 import { setGatewayJwt } from '../utils'
+import { utils as kCoreUtils } from '../../../core/client'
 import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
 
 export default function (name) {
@@ -167,6 +169,11 @@ export default function (name) {
           const layer = catalogLayers[i]
           if (layer[this.engine]) {
             // Process i18n
+            if (layer.i18n) {
+              const locale = kCoreUtils.getAppLocale()
+              const i18n = _.get(layer.i18n, locale)
+              if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
+            }
             if (this.$t(layer.name)) layer.name = this.$t(layer.name)
             if (this.$t(layer.description)) layer.description = this.$t(layer.description)
             // Check for Weacast API availability
@@ -713,7 +720,7 @@ export default function (name) {
         // Retrieve the forecast models
         if (this.setupWeacast) {
           try {
-            await this.setupWeacast(this.$config('weacast'))
+            await this.setupWeacast()
           } catch (error) {
             logger.error(error)
           }

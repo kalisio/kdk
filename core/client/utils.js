@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import config from 'config'
 import { Notify, Loading } from 'quasar'
 
 /**
@@ -85,6 +86,12 @@ export function getLocale () {
     if (languageCodes.length > 0) return languageCodes[0]
   }
   // return undefined by default
+}
+
+export function getAppLocale () {
+  const localeConfig = config.locale || {}
+  const localeBrowser = getLocale()
+  return localeConfig.default || localeBrowser
 }
 
 export function getInitials (name) {
