@@ -44,6 +44,7 @@ export default {
       } else {
         this.selection.feature = feature
         this.selection.layer = layer
+        this.$store.set('selection.states', {})
         this.$emit('selection-changed')
         // Open associated default widget if none already open,
         // if the user has open another widget it will remain active
