@@ -11,7 +11,7 @@ import activity from './mixin.map-activity'
 import tiledMeshLayers from './mixin.tiled-mesh-layers'
 import tiledWindLayers from './mixin.tiled-wind-layers'
 import heatmapLayers from './mixin.heatmap-layers'
-import mapillary from './mixin.mapillary'
+import mapillaryLayers from './mixin.mapillary-layers'
 
 export default {
   baseMap,
@@ -27,5 +27,5 @@ export default {
   tiledMeshLayers,
   tiledWindLayers,
   heatmapLayers,
-  mapillary
+  mapillaryLayers
 }
