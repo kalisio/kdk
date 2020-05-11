@@ -66,14 +66,20 @@ export default {
       this.registerTabAction({
         name: 'members',
         label: this.$t('KMembersActivity.MEMBERS_LABEL'),
-        icon: 'group',
+        icon: 'las la-user-friends',
         route: { name: 'members-activity', params: { contextId: this.contextId } },
         default: true
       })
       this.registerTabAction({
+        name: 'subscribers',
+        label: this.$t('KMembersActivity.SUBSCRIBERS_LABEL'),
+        icon: 'las la-address-book',
+        route: { name: 'subscribers-activity', params: { contextId: this.contextId } }
+      })
+      this.registerTabAction({
         name: 'groups',
         label: this.$t('KMembersActivity.GROUPS_LABEL'),
-        icon: 'group_work',
+        icon: 'las la-sitemap',
         route: { name: 'groups-activity', params: { contextId: this.contextId } }
       })
       // Fab actions

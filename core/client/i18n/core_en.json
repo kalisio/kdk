@@ -11,7 +11,9 @@
   "NO_ITEM": "No elements found",
   "ANONYMOUS": "Anonymous",
   "MEMBERS": "Members",
+  "SUBSCRIBERS": "Subscribers",
   "GROUPS": "Groups",
+  "EDIT": "Edit",
   "REMOVE": "Remove",
   "OWNER": "Owner",
   "MANAGER": "Manager",
@@ -294,6 +296,7 @@
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
+    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)",
     "ADD_USER_LABEL": "Add a user",
     "INVITE_GUEST_LABEL": "Invite guests"
@@ -357,13 +360,22 @@
     "LEAVE_GROUP_DIALOG_TITLE": "Leave the group {{group}} '?",
     "LEAVE_GROUP_DIALOG_MESSAGE": "Are you sure you want <b>{{member}}</b> to leave the group <b>{{group}}</b> ?"
   },
+  "KSubscribersActivity": {
+    "MEMBERS_LABEL": "$t(MEMBERS)",
+    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
+    "GROUPS_LABEL": "$t(GROUPS)"
+  },
+  "KSubscriberCard": {
+    "EDIT_LABEL": "$t(EDIT)"
+  },  
   "KGroupsActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
+    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)",
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {
-    "EDIT_LABEL": "Edit",    
+    "EDIT_LABEL": "$t(EDIT)",    
     "REMOVE_LABEL": "$t(REMOVE)",
     "REMOVE_DIALOG_TITLE": "Remove {{group}} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{group}}</b> from your organisation ?"

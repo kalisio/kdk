@@ -11,8 +11,10 @@
   "NO_ITEM": "Aucun élément",
   "ANONYMOUS": "Anonyme",
   "MEMBERS": "Membres",
+  "SUBSCRIBERS": "Abonnés",
   "GROUPS": "Groupes",
   "REMOVE": "Supprimer",
+  "EDIT": "Editer",
   "OWNER": "Propriétaire",  
   "MANAGER": "Gestionnaire",
   "MEMBER": "Membre",
@@ -294,6 +296,7 @@
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
+    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)",
     "ADD_USER_LABEL": "Ajouter un utilisateur",
     "INVITE_GUEST_LABEL": "Inviter des personnes"
@@ -357,8 +360,17 @@
     "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {{group}} '?",
     "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{{member}}</b> du groupe <b>{{group}}</b> ?"
   },
+  "KSubscribersActivity": {
+    "MEMBERS_LABEL": "$t(MEMBERS)",
+    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
+    "GROUPS_LABEL": "$t(GROUPS)"
+  },
+  "KSubscriberCard": {
+    "EDIT_LABEL": "$t(EDIT)"
+  },
   "KGroupsActivity": {
     "MEMBERS": "$t(MEMBERS)",
+    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS": "$t(GROUPS)",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
