@@ -7,8 +7,8 @@ import { bindLeafletEvents } from '../../utils'
 
 export default {
   methods: {
-    isLayerEdited (name) {
-      return this.editedLayer && (this.editedLayer.name === name)
+    isLayerEdited (layer) {
+      return this.editedLayer && (this.editedLayer.name === layer.name)
     },
     getGeoJsonEditOptions (options) {
       // Retrieve base options first
@@ -24,10 +24,9 @@ export default {
         }
       }
     },
-    async editLayer (name) {
-      const options = this.getLayerByName(name)
-      const leafletLayer = this.getLeafletLayerByName(name)
-      if (!options || !leafletLayer) return
+    async editLayer (layer) {
+      const leafletLayer = this.getLeafletLayerByName(layer.name)
+      if (!leafletLayer) return
 
       if (this.editControl) { // Stop edition
         // Remove UI
@@ -40,11 +39,11 @@ export default {
         this.editedLayerSchema = null
         this.deleteInProgress = false
       } else { // Start edition
-        this.editedLayer = options
+        this.editedLayer = layer
         // Move source layers to edition layers, required as eg clusters are not supported
         const geoJson = leafletLayer.toGeoJSON()
         leafletLayer.clearLayers()
-        this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(options))
+        this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
         this.map.addLayer(this.editableLayer)
         // Add UI
         this.editControl = new L.Control.Draw({
@@ -100,7 +99,7 @@ export default {
       const leafletLayer = event && event.target
       if (!leafletLayer) return
       const feature = _.get(leafletLayer, 'feature')
-      if (!feature || !this.isLayerEdited(layer.name)) return
+      if (!feature || !this.isLayerEdited(layer)) return
       if (!this.editedLayerSchema) return // No edition schema
       // Check if not currently in the edition workspace for removal
       if (this.deleteInProgress) return

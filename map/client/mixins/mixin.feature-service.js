@@ -170,12 +170,18 @@ export default {
         delete feature._id
         feature.layer = layerId
       })
-      // Create chunks to avoid reaching some limits (DB, etc.)
-      const chunks = _.chunk(features, chunkSize)
-      // Write the chunks
-      for (let i = 0; i < chunks.length; i++) {
-        await this.$api.getService('features').create(chunks[i])
-        if (typeof processCallback === 'function') processCallback(i, chunks[i])
+      // Single edition mode
+      if (features.length === 1) {
+        const feature = await this.$api.getService('features').create(features[0])
+        return feature
+      } else {
+        // Create chunks to avoid reaching some limits (DB, etc.)
+        const chunks = _.chunk(features, chunkSize)
+        // Write the chunks
+        for (let i = 0; i < chunks.length; i++) {
+          await this.$api.getService('features').create(chunks[i])
+          if (typeof processCallback === 'function') processCallback(i, chunks[i])
+        }
       }
     },
     async editFeaturesGeometry (geoJson) {

@@ -194,8 +194,8 @@ export default function (name) {
       },
       isLayerSelectable (layer) {
         if (_.has(layer, 'isSelectable')) return _.get(layer, 'isSelectable')
-        // Only possible on user-defined layers by default and when not edited
-        else return true
+        // Possible only when not edited by default
+        else return (typeof this.isLayerEdited === 'function' ? !this.isLayerEdited(layer) : true)
       },
       isLayerStorable (layer) {
         if (_.has(layer, 'isStorable')) return _.get(layer, 'isStorable')
@@ -285,7 +285,7 @@ export default function (name) {
           if ((typeof this.editLayer === 'function') && this.isLayerEditable(layer) && layerActions.includes('edit-data')) {
             actions.push({
               name: 'edit-data',
-              label: this.isLayerEdited(layer.name)
+              label: this.isLayerEdited(layer)
                 ? this.$t('mixins.activity.STOP_EDIT_DATA_LABEL')
                 : this.$t('mixins.activity.START_EDIT_DATA_LABEL'),
               icon: 'edit_location',
@@ -529,7 +529,7 @@ export default function (name) {
       },
       async onEditLayerData (layer) {
         // Start/Stop edition
-        this.editLayer(layer.name)
+        this.editLayer(layer)
         this.registerLayerActions(layer) // Refresh actions due to state change
       },
       async onRemoveLayer (layer) {
@@ -547,7 +547,7 @@ export default function (name) {
           Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL') })
           try {
             // Stop any running edition
-            if (this.isLayerEdited(layer.name)) await this.editLayer(layer.name)
+            if (this.isLayerEdited(layer)) await this.editLayer(layer)
             if (layer._id) {
               // If persistent feature layer remove features as well
               if (layer.service === 'features') {
