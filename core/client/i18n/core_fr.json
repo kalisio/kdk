@@ -369,13 +369,13 @@
     "EDIT_LABEL": "$t(EDIT)"
   },
   "KGroupsActivity": {
-    "MEMBERS": "$t(MEMBERS)",
+    "MEMBERS_LABEL": "$t(MEMBERS)",
     "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
-    "GROUPS": "$t(GROUPS)",
+    "GROUPS_LABEL": "$t(GROUPS)",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
-    "REMOVE": "$t(REMOVE)",
+    "REMOVE_LABEL": "$t(REMOVE)",
     "EDIT_LABEL": "Editer",
     "REMOVE_DIALOG_TITLE": "Supprimer {{group}} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloier supprimer {{group}} de votre organisation ?"
