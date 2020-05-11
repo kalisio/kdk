@@ -7,7 +7,6 @@ import { permissions } from '../../core/common'
 
 /* Scenario story board
 
-
 */
 describe('subscriptions', () => {
   let app, adminDb, server, port, // baseUrl,
