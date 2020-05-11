@@ -116,6 +116,7 @@ export default {
             type: 'geoJson',
             isVisible: true,
             realtime: true,
+            interactive: false,
             popup: { pick: [] }
           },
           cesium: {
