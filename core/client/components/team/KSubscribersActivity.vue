@@ -15,9 +15,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import mixins from '../../mixins'
-import { getRoleForOrganisation } from '../../../common/permissions'
 
 export default {
   name: 'k-subscribers-activity',

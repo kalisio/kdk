@@ -33,7 +33,6 @@ export default {
     clearSelection () {
       this.selection.feature = null
       this.selection.layer = null
-      this.$emit('selection-changed')
       this.closeWidget()
     },
     setSelection (location, feature, layer) {
@@ -45,7 +44,6 @@ export default {
         this.selection.feature = feature
         this.selection.layer = layer
         this.$store.set('selection.states', {})
-        this.$emit('selection-changed')
         // Open associated default widget if none already open,
         // if the user has open another widget it will remain active
         const widget = this.getWidgetForLayer()
@@ -116,6 +114,7 @@ export default {
             type: 'geoJson',
             isVisible: true,
             realtime: true,
+            interactive: false,
             popup: { pick: [] }
           },
           cesium: {

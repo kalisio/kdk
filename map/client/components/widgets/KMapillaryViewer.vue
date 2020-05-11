@@ -18,12 +18,18 @@ import 'mapillary-js/dist/mapillary.min.css'
 import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
-  name: 'k-mapillary-widget',
+  name: 'k-mapillary',
   inject: ['kActivity'],
   mixins: [baseWidget],
   data () {
     return {
+      selection: this.$store.get('selection'),
       actions: []
+    }
+  },
+  watch: {
+    'selection.location': function () {
+      this.refresh()
     }
   },
   methods: {
@@ -56,24 +62,24 @@ export default {
       }
     },
     async refresh () {
-      this.location = undefined
-      this.bearing = undefined
-      this.key = undefined
-      const selection = this.$store.get('selection')
-      if (_.has(selection, 'states.mapillary')) {
+      if (_.has(this.selection, 'states.mapillary')) {
         this.restoreStates()
+        if (this.key) await this.moveToKey(this.key)
+        else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
       } else {
-        this.location = selection.location
-        this.bearing = 0
+        const location = this.selection.location
+        if (location) await this.moveCloseTo(location.lat, location.lng)
       }
-      if (this.key) await this.moveToKey(this.key)
+      /*if (this.key) await this.moveToKey(this.key)
       else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
       this.onCenterOn()
-      this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())
+      this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())*/
     },
     async moveToKey (key) {
       try {
         await this.mapillaryViewer.moveToKey(key)
+        this.onCenterOn()
+        this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())
       } catch (error) {
         logger.error(error)
         this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND') })
@@ -82,6 +88,8 @@ export default {
     async moveCloseTo (lat, lon) {
       try {
         await this.mapillaryViewer.moveCloseTo(lat, lon)
+        this.onCenterOn()
+        this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())
       } catch (error) {
         logger.error(error)
         this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND_CLOSE_TO') })
@@ -129,6 +137,9 @@ export default {
     this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, this.onNodeChanged)
     this.kActivity.$on('current-time-changed', this.onCurrentTimeChanged)
     // Configure the viewer
+    this.location = undefined
+    this.bearing = undefined
+    this.key = undefined
     this.refresh()
   },
   async beforeDestroy () {
