@@ -24,11 +24,52 @@ From the backend `api` folder run the server-side Feathers app, this will also s
 
 Then point your browser to [localhost:8081](http://localhost:8081).
 
-### Running tests
+### Linting the code
+
+The **KDK** relies on [JavaScript standard style](https://github.com/feross/standard).
+
+To lint the code:
+
+```bash
+$yarn lint
+```
+
+You can also lint each of the modules independently using the following commands:
+
+```bash
+$yarn lint:core   # lint the core module
+$yarn lint:map    # lint the map module
+```
+:::
+
+### Running the tests
+
+The **KDK** relies on two different frameworks to perform the tests:
+* API tests are based on [Mocha]((https://mochajs.org/)
+* Client tests are based on [TestCafé]((https://github.com/DevExpress/testcafe)
 
 #### API 
 
 From the root or backend `api` folder run the server-side tests: 
+
+```bash
+$yarn mocha
+```
+
+You can run the tests of each module independently using the following commands:
+
+```bash
+$yarn mocha:core   # test the core module
+$yarn mocha:map    # test the map module
+```
+
+:::tip
+If you need to perform some specific tests, you can use the `-g` or `--grep` option of the `mocha` command:
+
+```bash
+$yarn mocha:core -g "team" # run the team tests
+```
+:::
 
 ```bash
 $yarn test:server`
@@ -36,14 +77,7 @@ $yarn test:server`
 
 This will lint and fix issues in the code according to [JS standard](https://github.com/feross/standard), then execute tests using [Mocha](https://mochajs.org/) and compute code coverage using [Istanbul](https://istanbul.js.org/).
 
-You can also run the linter or the tests independently:
-
-```bash
-$yarn lint
-$yarn mocha
-```
-
-### Client 
+#### Client 
 
 From the root folder run the client-side tests : `yarn/npm run test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). If you already have a built app and a running server you could simply do this to launch TestCafé only: `$ yarn/npm run cafe`
 
