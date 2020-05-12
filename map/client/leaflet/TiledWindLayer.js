@@ -171,7 +171,9 @@ const TiledWindLayer = L.GridLayer.extend({
       this.redraw()
     }
 
-    this.fire('data', [this.uSource, this.vSource])
+    // notify others we have data (for example color legend component)
+    this.fire('data')
+    this.hasData = true
   },
 
   onAdd (map) {
