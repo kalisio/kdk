@@ -29,9 +29,8 @@ export default {
   data () {
     return {
       baseQuery: {
-        subscriber: true,
         $sort: {
-          'profile.name': 1
+          'name': 1
         }
       },
       renderer: {

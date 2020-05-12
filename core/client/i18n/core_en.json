@@ -484,5 +484,17 @@
   },
   "KAccountDevices": {
     "DEVICES_USED": "Check when specific devices has been used to access your account below"
+  },
+  "KSubscribe": {
+    "TITLE": "Subscribe to {{organisation}} ?",
+    "NAME_FIELD_HELPER": "$t(schemas.NAME_FIELD_HELPER)",
+    "PHONE_FIELD_HELPER": "Enter your phone number",
+    "APPLY_BUTTON": "Subscribe"
+  },
+  "KUnsubscribe": {
+    "TITLE": "Unsubscribe from {{organisation}} ?",
+    "NAME_FIELD_HELPER": "$t(schemas.NAME_FIELD_HELPER)",
+    "PHONE_FIELD_HELPER": "Enter your phone number",
+    "APPLY_BUTTON": "Unsubscribe"
   }
 }

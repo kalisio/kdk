@@ -43,9 +43,12 @@ export function defineResourceRules (subject, resource, resourceService, can) {
 
 // Hook computing default abilities for a given user
 export function defineUserAbilities (subject, can, cannot) {
-  // Register
+  // Allow user registration
   can('service', 'users')
   can('create', 'users')
+  // Allow subscriptions management
+  can('service', '*/subscribers')
+  can(['create', 'remove'], 'subscribers')
 
   if (subject && subject._id) {
     // Read user profiles for authorizing
@@ -106,7 +109,7 @@ export function hasServiceAbilities (abilities, service) {
   // Indeed we have for instance a 'groups' service in each organisation
   // Take care that in client we have the service path while on server we have the actual object
   const path = typeof service === 'string' ? service : service.getPath()
-  return abilities.can('service', path)
+  return abilities.can('service', path) || abilities.can('service', _.replace(path, /^.*\//, '*/'))
 }
 
 export function hasResourceAbilities (abilities, operation, resourceType, context, resource) {
@@ -200,6 +203,7 @@ export function defineOrganisationAbilities (subject, can, cannot) {
             can('read', 'members', { context: organisation._id })
             can('service', organisation._id.toString() + '/tags')
             can('read', 'tags', { context: organisation._id })
+            // can('service', organisation._id.toString() + '/subscribers')
             can('service', organisation._id.toString() + '/groups')
             can('service', organisation._id.toString() + '/storage')
             can(['read', 'create', 'remove'], 'storage', { context: organisation._id })
@@ -208,9 +212,26 @@ export function defineOrganisationAbilities (subject, can, cannot) {
             // The unique identifier of a service is its path not its name.
             // Indeed we have for instance a 'groups' service in each organisation.
             can('update', 'members', { context: organisation._id })
+            can('service', organisation._id.toString() + '/subscribers')
+            can('read', 'subscribers', { context: organisation._id })
             can('create', 'groups', { context: organisation._id })
             can(['create', 'remove'], 'tags', { context: organisation._id })
           }
+        }
+      })
+    }
+  }
+}
+
+// Hook computing subscribers abilities for a given user
+export function defineSubscriberAbilities (subject, can, cannot) {
+  if (subject) {
+    if (subject.groups) {
+      subject.groups.forEach(group => {
+        if (group._id) {
+          // Generic rules for resources
+          defineResourceRules(subject, group, 'groups', can)
+          // No specific rules for groups
         }
       })
     }
