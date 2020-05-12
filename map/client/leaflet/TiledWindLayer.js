@@ -266,6 +266,22 @@ const TiledWindLayer = L.GridLayer.extend({
 
       ++this.pendingFetchs
 
+      // robin: i don't use a finally() call since it fails on firefox for obscure reasons
+      // even if it's supported since v58
+      // see : https://github.com/vuejs/vue-cli/issues/2012#issuecomment-410369818
+      // As an alternative i call this from .then() and .catch() ...
+      const doFinally = () => {
+        // in any case
+        --this.pendingFetchs
+        if (this.pendingFetchs === 0 && !this.userIsDragging) {
+          // last pending fetch triggers a wind restart
+          this.velocityLayer._clearAndRestart()
+          if (this.enableDebug) {
+            tile.innerHTML += ', triggered wind restart'
+          }
+        }
+      }
+
       Promise.all([uPromise, vPromise]).then(grids => {
         // data fetched
         const uGrid = grids[0]
@@ -295,23 +311,18 @@ const TiledWindLayer = L.GridLayer.extend({
             tile.innerHTML += ', empty'
           }
         }
+
+        doFinally()
       }).catch(err => {
         // fetch failed
         if (this.enableDebug) {
           tile.style.outline = '1px solid red'
           tile.innerHTML += `, failed (${err})`
         }
+
+        doFinally()
+
         throw err
-      }).finally(() => {
-        // in any case
-        --this.pendingFetchs
-        if (this.pendingFetchs === 0 && !this.userIsDragging) {
-          // last pending fetch triggers a wind restart
-          this.velocityLayer._clearAndRestart()
-          if (this.enableDebug) {
-            tile.innerHTML += ', triggered wind restart'
-          }
-        }
       })
     } else {
       if (this.enableDebug) {
