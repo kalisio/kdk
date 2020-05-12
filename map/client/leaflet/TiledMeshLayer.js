@@ -257,7 +257,10 @@ const TiledMeshLayer = L.GridLayer.extend({
 
     // clear tiles and request again
     this.redraw()
-    this.fire('data', this.gridSource)
+
+    // play nice with color legend component
+    this.fire('data')
+    this.hasData = true
   },
 
   updateColorMap () {
@@ -383,6 +386,18 @@ const TiledMeshLayer = L.GridLayer.extend({
           }
         })
       }
+    } else {
+      // .. no color map code provided, issue unique color
+      features.push({
+        name: 'colormap',
+        varyings: ['vec4 frg_color'],
+        vertex: {
+          code: '  frg_color = vec4(1.0, 0.521, 0.105, 1.1);'
+        },
+        fragment: {
+          code: '  vec4 color = frg_color;'
+        }
+      })
     }
     // feature computing final fragment color
     features.push({
