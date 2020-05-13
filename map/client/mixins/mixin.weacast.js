@@ -202,22 +202,22 @@ export default {
       const precipitations = _.get(feature, 'properties.precipitations')
       const humidity = _.get(feature, 'properties.humidity')
       let html = ''
-      if (!_.isNil(speed)) {
+      if (!_.isNil(speed) && _.isNumber(speed)) {
         html += `${speed.toFixed(1)} m/s</br>`
       }
-      if (!_.isNil(gust)) {
+      if (!_.isNil(gust) && _.isNumber(gust)) {
         html += `max ${gust.toFixed(1)} m/s</br>`
       }
-      if (!_.isNil(direction)) {
+      if (!_.isNil(direction) && _.isNumber(direction)) {
         html += `${direction.toFixed(1)} °</br>`
       }
-      if (!_.isNil(precipitations)) {
+      if (!_.isNil(precipitations) && _.isNumber(precipitations)) {
         html += `${precipitations.toFixed(1)} mm/h</br>`
       }
-      if (!_.isNil(humidity)) {
+      if (!_.isNil(humidity) && _.isNumber(humidity)) {
         html += `${humidity.toFixed(0)} %</br>`
       }
-      if (!_.isNil(t)) {
+      if (!_.isNil(t) && _.isNumber(t)) {
         html += `${t.toFixed(1)} °C</br>`
       }
       return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
