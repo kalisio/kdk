@@ -337,6 +337,8 @@ const TiledWindLayer = L.GridLayer.extend({
   redraw () {
     this.loadedTiles.clear()
     this.velocityLayer._clearWind()
+    this.uFlow.data.fill(0)
+    this.vFlow.data.fill(0)
 
     L.GridLayer.prototype.redraw.call(this)
   }
