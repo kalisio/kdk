@@ -133,7 +133,7 @@ export default {
     async removeSelectionLayer () {
       await this.removeLayer(TOOLS_LAYER)
     },
-    onFeatureClicked (layer, event) {
+    onFeatureSelectionClicked (layer, event) {
       // Retrieve the location/feature
       const location = _.get(event, 'latlng')
       let feature
@@ -158,25 +158,49 @@ export default {
       // Update the selection
       this.setSelection(location, feature, layer)
     },
-    onLayerHidden (layer) {
+    onFeatureSelectionLayerHidden (layer) {
       if (this.hasFeatureSelection) {
         if (layer.name === this.selection.layer.name) this.clearSelection()
+      }
+    },
+    onFeatureSelectionLayerDisabled (layer) {
+      if (this.hasFeatureSelection) {
+        if (layer.name === this.selection.layer.name) {
+          // Backup highlights
+          this.disabledSelectionHighlight = this.selectionHighlight
+          // Clear it
+          this.selectionHighlight = {}
+          this.updateSelectionLayer()
+        }
+      }
+    },
+    onFeatureSelectionLayerEnabled (layer) {
+      if (this.hasFeatureSelection) {
+        if (layer.name === this.selection.layer.name) {
+          // Restore highlights
+          this.selectionHighlight = this.disabledSelectionHighlight
+          this.updateSelectionLayer()
+        }
       }
     }
   },
   created () {
     // Set of highligthed features
     this.selectionHighlight = {}
+    this.$on('click', this.onFeatureSelectionClicked)
+    this.$on('layer-hidden', this.onFeatureSelectionLayerHidden)
+    this.$on('layer-disabled', this.onFeatureSelectionLayerDisabled)
+    this.$on('layer-enabled', this.onFeatureSelectionLayerEnabled)
   },
   mounted () {
     this.$once('map-ready', () => this.createSelectionLayer())
     this.$once('globe-ready', () => this.createSelectionLayer())
-    this.$on('click', this.onFeatureClicked)
-    this.$on('layer-hidden', this.onLayerHidden)
   },
   beforeDestroy () {
-    this.$off('click', this.onFeatureClicked)
-    this.$off('layer-hidden', this.onLayerHidden)
+    this.$off('click', this.onFeatureSelectionClicked)
+    this.$off('layer-hidden', this.onFeatureSelectionLayerHidden)
+    this.$off('layer-disabled', this.onFeatureSelectionLayerDisabled)
+    this.$off('layer-enabled', this.onFeatureSelectionLayerEnabled)
     this.removeSelectionLayer()
   }
 }
