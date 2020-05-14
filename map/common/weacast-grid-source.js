@@ -63,11 +63,11 @@ export class WeacastGridSource extends GridSource {
   }
 
   getBBox () {
-    return [this.minMaxLat[0], this.minMaxLon[0], this.minMaxLat[1], this.minMaxLon[1]]
+    return this.usable ? [this.minMaxLat[0], this.minMaxLon[0], this.minMaxLat[1], this.minMaxLon[1]] : null
   }
 
   getDataBounds () {
-    return this.minMaxVal
+    return this.usable ? this.minMaxVal : null
   }
 
   async setup (config) {
