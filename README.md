@@ -23,7 +23,7 @@ Found a bug ? Missing a Feature ? Want to contribute ? check out our [contributi
 
 ## License
 
-This project is licensed under the MIT License - see the [license file](./LICENSE.md) for details
+This project is licensed under the MIT License - see the [license file](./LICENSE) for details
 
 ## Authors
 
