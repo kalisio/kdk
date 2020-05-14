@@ -259,8 +259,10 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.redraw()
 
     // play nice with color legend component
-    this.fire('data')
-    this.hasData = true
+    if (this.colorMap) {
+      this.fire('data')
+      this.hasData = true
+    }
   },
 
   updateColorMap () {
