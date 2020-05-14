@@ -201,6 +201,7 @@ export default {
       const t = _.get(feature, `properties.${temperature}`)
       const precipitations = _.get(feature, 'properties.precipitations')
       const humidity = _.get(feature, 'properties.humidity')
+      let time = _.get(feature, 'time', _.get(feature, 'forecastTime'))
       let html = ''
       if (!_.isNil(speed) && _.isNumber(speed)) {
         html += `${speed.toFixed(1)} m/s</br>`
@@ -219,6 +220,11 @@ export default {
       }
       if (!_.isNil(t) && _.isNumber(t)) {
         html += `${t.toFixed(1)} °C</br>`
+      }
+      // If we have any value add time information
+      if (html && !_.isNil(time)) {
+        time = moment.utc(time)
+        if (time.isValid()) html += `${this.formatTime('date.short', time)} - ${this.formatTime('time.long', time)}`
       }
       return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
     },
