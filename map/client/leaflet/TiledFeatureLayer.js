@@ -108,7 +108,11 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   redraw () {
+    // remove tiles manually first
+    if (this._map) this._removeAllTiles()
+    // clear feature ref counts since there's no tile anymore
     this.featureRefCount.clear()
+    // request grid layer redraw
     L.GridLayer.prototype.redraw.call(this)
   }
 })
