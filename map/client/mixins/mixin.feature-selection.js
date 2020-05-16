@@ -20,13 +20,19 @@ export default {
   methods: {
     getWidgetForLayer () {
       // FIXME: should not be hard-coded
-      let widget = 'information-box'
-      if (!this.selection.layer || // Dynamic probe at location
-          _.has(this.selection.layer, 'probe') || // Static probe on pre-defined sites
-          _.has(this.selection.layer, 'variables')) { // Measurement history
-        widget = 'time-series'
-      } else if (_.get(this.selection.layer, 'leaflet.type') === 'mapillary') {
-        widget = 'mapillary-viewer'
+      let widget
+      if (this.selection.layer) {
+        widget = 'information-box'
+        if (_.has(this.selection.layer, 'probe') || // Static probe on pre-defined sites
+            _.has(this.selection.layer, 'variables')) { // Measurement history
+          widget = 'time-series'
+        } else if (_.get(this.selection.layer, 'leaflet.type') === 'mapillary') {
+          widget = 'mapillary-viewer'
+        }
+      } else {
+        if (this.isCursor('probe-cursor')) {
+          widget = 'time-series'
+        }
       }
       return widget
     },
@@ -36,9 +42,11 @@ export default {
       this.closeWidget()
     },
     setSelection (location, feature, layer) {
+      console.log(location, feature, layer)
       this.selection.location = location
       // If clicked on the same object unselect otherwise select
       if (feature && (feature === this.selection.feature)) {
+        console.log(feature)
         this.clearSelection()
       } else {
         this.selection.feature = feature
@@ -47,7 +55,8 @@ export default {
         // Open associated default widget if none already open,
         // if the user has open another widget it will remain active
         const widget = this.getWidgetForLayer()
-        if (!this.hasOpenWidget()) this.openWidget(widget)
+        console.log(widget)
+        if (widget && !this.hasOpenWidget()) this.openWidget(widget)
       }
     },
     centerOnSelection () {
@@ -151,7 +160,7 @@ export default {
         }
       } else {
         // Avoid updating selection on click if not probe
-        if (!this.isCursor('probe-cursor')) return
+        if ((!this.isCursor('probe-cursor')) && (!this.isCursor('position-cursor'))) return
         // Otherwise this is a position selection only
         layer = undefined
       }

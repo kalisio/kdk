@@ -192,7 +192,7 @@
     "LOCATION_MAP": "Location map"
   },
   "KPositionIndicator": {
-    "PLACEHOLDER": "Navigate with the mouse",
+    "PLACEHOLDER": "Navigate the see the coordinates",
     "COPY": "Copy the coordinates",
     "CLEAR": "Clear",
     "POSITION_COPIED":"Position copied to clipboard",

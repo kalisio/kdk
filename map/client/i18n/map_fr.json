@@ -192,7 +192,7 @@
     "LOCATION_MAP": "Carte de localisation"
   },
   "KPositionIndicator": {
-    "PLACEHOLDER": "Naviguez avec la souris",
+    "PLACEHOLDER": "Naviguez pour voir les coordonnées",
     "COPY": "Copier les coordonnées",
     "CLEAR": "Effacter",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",

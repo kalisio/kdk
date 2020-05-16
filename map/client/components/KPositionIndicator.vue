@@ -4,7 +4,7 @@
     <span class="q-pl-md q-pr-md">
       {{ position }}
     </span>
-    <k-tool-bar v-if="!isPicking" :actions="actions" color="primary" dense />
+    <k-tool-bar v-if="!isActive" :actions="actions" color="primary" dense />
   </div>
 </template>
 
@@ -18,22 +18,27 @@ export default {
   data () {
     return {
       position: '',
+      selection: this.$store.get('selection'),
       format: this.$store.get('locationFormat') || 'FFf',
       actions: [],
-      isPicking: false
+      isActive: false
+    }
+  },
+  watch: {
+    'selection.location': function () {
+       this.stop()
     }
   },
   methods: {
-    pick () {
-      const pick = async (options, event) => {
-        this.isPicking = false
-        this.kActivity.$off('mousemove', this.onMoved) 
-        this.kActivity.unsetCursor('probe-cursor')
-      }
+    start () {
+      this.kActivity.setCursor('position-cursor')
       this.kActivity.$on('mousemove', this.onMoved)
-      this.kActivity.setCursor('probe-cursor')
-      this.kActivity.$once('click', pick)
-      this.isPicking = true
+      this.isActive = true
+    },
+    stop () {
+      this.isActive = false
+      this.kActivity.$off('mousemove', this.onMoved) 
+      this.kActivity.unsetCursor('position-cursor')
     },
     async onCopy () {
       try {
@@ -45,7 +50,7 @@ export default {
     },
     onClear () {
       this.position = this.$t('KPositionIndicator.PLACEHOLDER')
-      this.pick()
+      this.start()
     },
     onMoved (options, event) {
       if (event.latlng) this.position = formatcoords([event.latlng.lat, event.latlng.lng]).format(this.format)
@@ -62,6 +67,9 @@ export default {
   },
   mounted () {
     this.onClear()
+  },
+  beforeDestroy () {
+     this.stop()
   }
 }
 </script>
