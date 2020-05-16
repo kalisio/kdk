@@ -42,11 +42,9 @@ export default {
       this.closeWidget()
     },
     setSelection (location, feature, layer) {
-      console.log(location, feature, layer)
       this.selection.location = location
       // If clicked on the same object unselect otherwise select
       if (feature && (feature === this.selection.feature)) {
-        console.log(feature)
         this.clearSelection()
       } else {
         this.selection.feature = feature
@@ -55,7 +53,6 @@ export default {
         // Open associated default widget if none already open,
         // if the user has open another widget it will remain active
         const widget = this.getWidgetForLayer()
-        console.log(widget)
         if (widget && !this.hasOpenWidget()) this.openWidget(widget)
       }
     },
