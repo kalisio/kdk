@@ -4,6 +4,13 @@ import logger from 'loglevel'
 import moment from 'moment'
 import { getNearestTime } from '../utils'
 
+/**/
+import { getNearestRunTime, getNearestForecastTime } from 'weacast-core/common'
+// import OpenDapGridSource from '../../common/opendap-grid-source'
+import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
+import { MeteoModelGridSource } from '../../common/meteo-model-grid-source'
+/**/
+
 export default {
   data () {
     return {
@@ -50,6 +57,81 @@ export default {
       this.forecastLevel = level
       this.$emit('forecast-level-changed', this.forecastLevel)
     },
+
+    /**/
+    async getArchiveForLocation (long, lat, startTime, endTime) {
+      this.setCursor('processing-cursor')
+
+      const result = {
+        geometry: {
+          type: 'Point',
+          coordinates: [long, lat]
+        },
+        forecastTime: {},
+        runTime: {},
+        properties: {}
+      }
+
+      const properties = []
+      const sources = []
+      // foreach archive layer with a meteo_model, build corresponding grid source
+      for (const name of _.keys(this.layers)) {
+        const layer = this.layers[name]
+        if (!layer.tags.includes('archive')) continue
+        if (!layer[MeteoModelGridSource.getKey()]) continue
+
+        const [gridKey, gridConf] = extractGridSourceConfig(layer)
+        const source = makeGridSource(gridKey, { })
+        await source.setup(gridConf)
+
+        const prop = layer.variables[0].name
+        result.forecastTime[prop] = []
+        result.runTime[prop] = []
+        result.properties[prop] = []
+        properties.push(prop)
+        sources.push(source)
+      }
+
+      const resolution = [this.forecastModel.resolution[1], this.forecastModel.resolution[0]]
+      const offset = [resolution[0] / 2, resolution[1] / 2]
+      const reqBbox = [lat - offset[0], long - offset[1], lat + offset[0], long + offset[0]]
+
+      const toWait = []
+      const current = startTime.clone()
+      // iterate over time range
+      while (current.isSameOrBefore(endTime)) {
+        const runTime = getNearestRunTime(current, this.forecastModel.runInterval)
+        const forecastTime = getNearestForecastTime(current, this.forecastModel.interval)
+
+        // foreach property, fetch data
+        for (let i = 0; i < properties.length; ++i) {
+          sources[i].setModel(this.forecastModel)
+          sources[i].setTime(current)
+          const p = sources[i].update().then(async () => {
+            const grid = await sources[i].fetch(null, reqBbox, resolution)
+            if (grid) {
+              const prop = properties[i]
+              result.forecastTime[prop].push(forecastTime)
+              result.runTime[prop].push(runTime)
+              // result.properties[prop].push(grid.getValue(0,0))
+              result.properties[prop].push(grid.interpolate(lat, long))
+            }
+          })
+          toWait.push(p)
+        }
+
+        await Promise.allSettled(toWait)
+        toWait.splice(0)
+
+        current.add(this.forecastModel.interval, 's')
+      }
+
+      this.unsetCursor('processing-cursor')
+
+      return result
+    },
+    /**/
+
     async getForecastForLocation (long, lat, startTime, endTime) {
       // Not yet ready
       if (!this.forecastModel) return

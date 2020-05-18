@@ -386,7 +386,13 @@ export default {
       const { start, end } = this.kActivity.getProbeTimeRange()
       // No feature clicked => dynamic weacast probe at position
       if (!this.feature) {
-        this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
+        const now = moment()
+        now.subtract(this.kActivity.forecastModel.interval, 's')
+        if (this.kActivity.currentTime.isSameOrAfter(now)) {
+          this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
+        } else {
+          this.probedLocation = await this.kActivity.getArchiveForLocation(this.location.lng, this.location.lat, start, end)
+        }
       } else if (this.layer.probe) { // Static weacast probe
         const probe = await this.kActivity.getForecastProbe(this.layer.probe)
         if (probe) {

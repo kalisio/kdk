@@ -38,15 +38,18 @@ export class DynamicGridSource extends GridSource {
     if (this.updateId) return
 
     // call update in a few secs, let time for other context updates to happen
-    this.updateId = setTimeout(() => {
-      this.update(this.updateCtx)
-      this.updateId = null
-    }, 50)
+    this.updateId = setTimeout(() => { this.update(this.updateCtx) }, 50)
   }
 
-  update (updateCtx) {
+  async update (updateCtx = null) {
+    // clear scheduled update, if any
+    if (this.updateId) {
+      clearTimeout(this.updateId)
+      this.updateId = null
+    }
+
     // compute potential new context based on update context
-    const newCtx = this.makeBuildContext(updateCtx)
+    const newCtx = this.makeBuildContext(updateCtx || this.updateCtx)
     // give source a chance to skip update if nothing changes
     const skipUpdate = this.forceUpdate ? false : this.shouldSkipUpdate(newCtx, this.buildCtx)
     this.forceUpdate = false
@@ -60,7 +63,7 @@ export class DynamicGridSource extends GridSource {
     this.source = source
     if (this.source) {
       this.source.on('data-changed', this.onDataChanged)
-      this.source.setup(config)
+      await this.source.setup(config)
       this.sourceKey = this.source.sourceKey
     } else {
       this.dataChanged()

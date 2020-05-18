@@ -101,7 +101,50 @@ export class BaseGrid {
     const ilat = (lat - this.bbox[0]) / this.resolution[0]
     const ilon = (lon - this.bbox[1]) / this.resolution[1]
 
-    return [Math.floor(ilat), Math.floor(ilon)]
+    return [ilat, Math.floor(ilat), ilon, Math.floor(ilon)]
+  }
+
+  bilinearInterpolate (x, y, g00, g10, g01, g11) {
+    const rx = (1 - x)
+    const ry = (1 - y)
+    const a = rx * ry
+    const b = x * ry
+    const c = rx * y
+    const d = x * y
+    return g00 * a + g10 * b + g01 * c + g11 * d
+  }
+
+  interpolate (lon, lat) {
+    const indices = this.getIndices(lon, lat)
+    // Check for points outside bbox
+    if (!indices) return undefined
+    const [i, fi, j, fj] = indices
+
+    const ci = fi + 1
+    const cj = fj + 1
+    /*
+    // In this case virtually duplicate first column as last column to simplify interpolation logic
+    if (this.isContinuous && ci >= this.size[0]) {
+      ci = 0
+    }
+    ci = clamp(ci, 0, this.size[0] - 1)
+    const cj = clamp(fj + 1, 0, this.size[1] - 1)
+    */
+
+    const g00 = this.getValue(fi, fj)
+    const g10 = this.getValue(ci, fj)
+    const g01 = this.getValue(fi, cj)
+    const g11 = this.getValue(ci, cj)
+
+    // All four points found, so interpolate the value
+    /*
+    if (isValue(g00) && isValue(g10) && isValue(g01) && isValue(g11)) {
+      return this.bilinearInterpolate(i - fi, j - fj, g00, g10, g01, g11)
+    } else {
+      return undefined
+    }
+    */
+    return this.bilinearInterpolate(i - fi, j - fj, g00, g10, g01, g11)
   }
 
   getBestFit (fitBbox) {
