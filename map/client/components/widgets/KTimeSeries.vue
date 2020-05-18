@@ -241,9 +241,9 @@ export default {
       this.setupAvailableYAxes()
 
       const date = _.get(this.kActivity.currentFormattedTime, 'date.short')
-      const time = _.get(this.kActivity.currentFormattedTime, 'time.short')
+      const time = _.get(this.kActivity.currentFormattedTime, 'time.long')
       const dateFormat = _.get(this.kActivity.currentTimeFormat, 'date.short')
-      const timeFormat = _.get(this.kActivity.currentTimeFormat, 'time.short')
+      const timeFormat = _.get(this.kActivity.currentTimeFormat, 'time.long')
 
       this.config = {
         type: 'line',
