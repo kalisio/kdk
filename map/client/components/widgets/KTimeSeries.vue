@@ -5,7 +5,6 @@
       <!-- Actions -->
       <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
       <div class="col full-width row">
-        
         <!-- Title -->
         <span class="col-12 q-pl-sm">
           {{ probedLocationName }}
@@ -34,12 +33,6 @@ export default {
   name: 'k-time-series-widget',
   inject: ['kActivity'],
   mixins: [baseWidget],
-  data () {
-    return {
-      probedLocation: null,
-      probedLocationName: ''
-    }
-  },
   props: {
     selection: {
       type: Object,
@@ -54,6 +47,17 @@ export default {
       default: 1
     }
   },
+  computed: {
+    location () { 
+      return this.selection.location 
+    },
+    feature () { 
+      return this.selection.feature 
+    },
+    layer () { 
+      return this.selection.layer 
+    }
+  },
   watch: {
     variables: function () { 
       this.refresh() 
@@ -65,13 +69,10 @@ export default {
       this.refresh()
     }
   },
-  computed: {
-    location () { return this.selection.location },
-    feature () { return this.selection.feature },
-    layer () { return this.selection.layer }
-  },
   data () {
     return {
+      probedLocation: null,
+      probedLocationName: '',
       hasGraph: false,
       actions: []
     }
@@ -346,7 +347,9 @@ export default {
         const latitude = _.get(this.probedLocation, 'geometry.coordinates[1]')
         name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
       }
+      
       if (name) this.probedLocationName = name
+      console.log(this.probedLocationName)
     },
     async refresh () {
       this.kActivity.addSelectionHighlight('time-series')
