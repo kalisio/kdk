@@ -33,10 +33,11 @@ export class GeoTiffGridSource extends GridSource {
     this.geotiff = await GeoTIFF.fromUrl(config.url)
 
     // for now only consider first image
-    // const count = await this.geotiff.getImageCount()
+    this.imageCount = await this.geotiff.getImageCount()
     const image = await this.geotiff.getImage()
     if (this.nodata === undefined) {
       // try to get it from image metadata
+      // this.nodata = image.getGDALNoData()
       // const meta = image.getGDALMetadata()
       const meta = image.getFileDirectory()
       this.nodata = parseFloat(meta.GDAL_NODATA)
@@ -56,25 +57,52 @@ export class GeoTiffGridSource extends GridSource {
 
     const sourceKey = this.sourceKey
 
-    const reqMinLat = bbox[0]
-    const reqMinLon = bbox[1]
-    const reqMaxLat = bbox[2]
-    const reqMaxLon = bbox[3]
-    const width = 1 + Math.trunc((bbox[3] - bbox[1]) / resolution[1])
-    const height = 1 + Math.trunc((bbox[2] - bbox[0]) / resolution[0])
+    // select the image with the closest resolution
+    let usedImage = await this.geotiff.getImage(0)
+    for (let i = 1; i < this.imageCount; ++i) {
+      const img = await this.geotiff.getImage(i)
+      const [rx, ry, rz] = img.getResolution()
+      if (Math.abs(rx) >= resolution[1] || Math.abs(ry) >= resolution[0]) break
+      usedImage = img
+    }
 
-    const fetchBbox = [reqMinLon, reqMinLat, reqMaxLon, reqMaxLat]
-    const data = await this.geotiff.readRasters({
-      bbox: fetchBbox,
-      // interleave: true,
-      width: width,
-      height: height,
+    const [rx, ry, rz] = usedImage.getResolution()
+    const [ox, oy, oz] = usedImage.getOrigin()
+    const [sx, sy] = [usedImage.getWidth(), usedImage.getHeight()]
+
+    let left = (bbox[1] - ox) / rx
+    let right = (bbox[3] - ox) / rx
+    let bottom = (bbox[0] - oy) / ry
+    let top = (bbox[2] - oy) / ry
+
+    if (rx < 0) [left, right] = [right, left]
+    if (ry < 0) [bottom, top] = [top, bottom]
+
+    left = Math.min(sx - 1, Math.max(0, Math.floor(left)))
+    right = Math.min(sx - 1, Math.max(0, Math.ceil(right)))
+    bottom = Math.min(sy - 1, Math.max(0, Math.floor(bottom)))
+    top = Math.min(sy - 1, Math.max(0, Math.ceil(top)))
+
+    // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
+    const window = [left, bottom, right + 1, top + 1]
+    const data = await usedImage.readRasters({
+      window: window,
       fillValue: this.nodata
     })
 
+    if (rx < 0) [left, right] = [right, left]
+    if (ry < 0) [bottom, top] = [top, bottom]
+
+    const dataBbox = [
+      oy + (bottom * ry),
+      ox + (left * rx),
+      oy + (top * ry),
+      ox + (right * rx)
+    ]
+
     return new Grid1D(
       sourceKey,
-      bbox, [height, width],
+      dataBbox, [data.height, data.width],
       data[0], true, SortOrder.DESCENDING, SortOrder.ASCENDING,
       this.nodata, this.converter)
   }
