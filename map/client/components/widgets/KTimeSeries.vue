@@ -349,7 +349,6 @@ export default {
       }
       
       if (name) this.probedLocationName = name
-      console.log(this.probedLocationName)
     },
     async refresh () {
       this.kActivity.addSelectionHighlight('time-series')
