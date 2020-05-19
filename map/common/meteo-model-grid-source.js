@@ -10,6 +10,23 @@ export class MeteoModelGridSource extends DynamicGridSource {
     return 'meteo_model'
   }
 
+  static selectImpl (config, time, model) {
+    const now = moment()
+
+    for (const item of config) {
+      if (item.model !== model.name) continue
+
+      const from = item.from ? makeTime(readAsTimeOrDuration(item.from), now) : null
+      const to = item.to ? makeTime(readAsTimeOrDuration(item.to), now) : null
+
+      if (from && to && time.isBetween(from, to)) return item
+      if (from && time.isSameOrAfter(from)) return item
+      if (to && time.isSameOrBefore(to)) return item
+    }
+
+    return null
+  }
+
   constructor (options) {
     super(options)
 

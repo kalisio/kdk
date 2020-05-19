@@ -9,6 +9,7 @@ import { getNearestRunTime, getNearestForecastTime } from 'weacast-core/common'
 // import OpenDapGridSource from '../../common/opendap-grid-source'
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 import { MeteoModelGridSource } from '../../common/meteo-model-grid-source'
+import * as dap from '../../common/opendap-utils.js'
 /**/
 
 export default {
@@ -59,6 +60,70 @@ export default {
     },
 
     /**/
+    async getOpenDapForLocation (long, lat, startTime, endTime) {
+      this.setCursor('processing-cursor')
+
+      const result = {
+        geometry: {
+          type: 'Point',
+          coordinates: [long, lat]
+        },
+        forecastTime: {},
+        runTime: {},
+        properties: {}
+      }
+      
+      const runTime = getNearestRunTime(startTime, this.forecastModel.runInterval)
+      const startForecastTime = getNearestForecastTime(startTime, this.forecastModel.interval)
+      const endForecastTime = getNearestForecastTime(endTime, this.forecastModel.interval)
+
+      const properties = []
+      const sources = []
+      // foreach archive layer with a meteo_model, build corresponding grid source
+      for (const name of _.keys(this.layers)) {
+        const layer = this.layers[name]
+        if (!layer.tags.includes('archive')) continue
+        const meteoModel = layer[MeteoModelGridSource.getKey()]
+        if (!meteoModel) continue
+        const impl = MeteoModelGridSource.selectImpl(meteoModel, startForecastTime, this.forecastModel)
+
+        const prop = layer.variables[0].name
+        result.forecastTime[prop] = []
+        result.runTime[prop] = []
+        result.properties[prop] = []
+        properties.push(prop)
+        sources.push(impl)
+      }
+
+      const startOffset = moment.duration(startForecastTime.diff(runTime)).asHours()
+      const endOffset = moment.duration(endForecastTime.diff(runTime)).asHours()
+
+      // foreach property, fetch data
+      const ctx = { runTime }
+      for (let i = 0; i < properties.length; ++i) {       
+        const url = _.template(sources[i].dynprops.url.strTemplate)(ctx)
+        const p = dap.fetchDescriptor(url).then((desc) => {
+          const values = {
+            time: [startOffset, endOffset]
+          }
+          Object.assign(values, sources[i].opendap.dimensionsAsValues)
+
+          const indices = dap.getIndexForValues(url, values)
+        })
+
+        /*
+        const q = dap.makeQuery(url, query)
+        console.log(q)
+        */
+      }
+
+      this.unsetCursor('processing-cursor')
+
+      return result
+    },
+    /**/
+
+    /**/
     async getArchiveForLocation (long, lat, startTime, endTime) {
       this.setCursor('processing-cursor')
 
@@ -71,6 +136,13 @@ export default {
         runTime: {},
         properties: {}
       }
+
+      // get url template
+      // get static values
+      // assume dynamic value = time ?
+      // fetch dataset descriptor
+      // build query with time range + lat/lon index ?
+      // parse output
 
       const properties = []
       const sources = []
