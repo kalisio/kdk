@@ -62,7 +62,7 @@ export class GeoTiffGridSource extends GridSource {
     for (let i = 1; i < this.imageCount; ++i) {
       const img = await this.geotiff.getImage(i)
       const [rx, ry, rz] = img.getResolution()
-      if (Math.abs(rx) >= resolution[1] || Math.abs(ry) >= resolution[0]) break
+      if (Math.abs(rx) > resolution[1] || Math.abs(ry) > resolution[0]) break
       usedImage = img
     }
 
