@@ -341,6 +341,11 @@ const TiledWindLayer = L.GridLayer.extend({
     this.vFlow.data.fill(0)
 
     L.GridLayer.prototype.redraw.call(this)
+  },
+
+  getBounds () {
+    const bounds = this.options.bounds ? this.options.bounds : L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
+    return this._map ? this._map.wrapLatLngBounds(bounds) : bounds
   }
 })
 

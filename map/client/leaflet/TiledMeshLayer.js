@@ -444,6 +444,11 @@ const TiledMeshLayer = L.GridLayer.extend({
     if (typeof this.gridSource.setModel === 'function') {
       this.gridSource.setModel(model)
     }
+  },
+
+  getBounds () {
+    const bounds = this.options.bounds ? this.options.bounds : L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
+    return this._map ? this._map.wrapLatLngBounds(bounds) : bounds
   }
 })
 
