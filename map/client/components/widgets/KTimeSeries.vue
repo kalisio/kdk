@@ -36,7 +36,8 @@ export default {
   mixins: [baseWidget],
   data () {
     return {
-      probedLocation: null
+      probedLocation: null,
+      probedLocationName: ''
     }
   },
   props: {
@@ -67,17 +68,7 @@ export default {
   computed: {
     location () { return this.selection.location },
     feature () { return this.selection.feature },
-    layer () { return this.selection.layer },
-    probedLocationName () {
-      if (!this.probedLocation) return ''
-      let name = _.get(this.probedLocation, 'properties.name') || _.get(this.probedLocation, 'properties.NAME')
-      if (!name && _.has(this.probedLocation, 'geometry.coordinates')) {
-        const longitude = _.get(this.probedLocation, 'geometry.coordinates[0]')
-        const latitude = _.get(this.probedLocation, 'geometry.coordinates[1]')
-        name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
-      }
-      return name || ''
-    }
+    layer () { return this.selection.layer }
   },
   data () {
     return {
@@ -346,6 +337,17 @@ export default {
     onCenterOn () {
       this.kActivity.centerOnSelection()
     },
+    updateProbedLocationName () {
+      this.probedLocationName = ''
+      if (!this.probedLocation) return
+      let name = _.get(this.probedLocation, 'properties.name') || _.get(this.probedLocation, 'properties.NAME')
+      if (!name && _.has(this.probedLocation, 'geometry.coordinates')) {
+        const longitude = _.get(this.probedLocation, 'geometry.coordinates[0]')
+        const latitude = _.get(this.probedLocation, 'geometry.coordinates[1]')
+        name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
+      }
+      if (name) this.probedLocationName = name
+    },
     async refresh () {
       this.kActivity.addSelectionHighlight('time-series')
       this.kActivity.centerOnSelection()
@@ -365,6 +367,7 @@ export default {
         const position = this.feature.geometry.coordinates
         this.probedLocation = await this.kActivity.getForecastForLocation(position[0], position[1], start, end)
       }
+      this.updateProbedLocationName()
       this.setupGraph()
       this.updateProbedLocationHighlight()
     }
