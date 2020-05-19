@@ -117,6 +117,39 @@ export function makeGridIndices (descriptor, variable, dimensions) {
   return indices
 }
 
+/*
+export function makeGridDescriptor (descriptor, variable) {
+  const varDesc = descriptor[variable]
+  if (varDesc === undefined) return null
+  const gridDesc = {}
+  for (let i = 0; i < varDesc.array.dimensions.length; ++i) {
+    gridDesc[varDesc.array.dimensions[i]] = { index: i }
+  }
+  return gridDesc
+}
+*/
+
+/*
+export async function lookupIndexForValues (url, values) {
+  // build a request to query the values for each dimension for which we have a value
+  // const requested = _.keys(this.config.dimensionsAsValues)
+  const variables = _.keys(values)
+  const query = makeQuery(url, variables)
+  const data = await fetchData(query)
+  // lookup corresponding indices
+  const lookup = {}
+  for (let i = 0; i < variables.length; ++i) {
+    const varValues = data[variables[i]]
+    const varValue = values[variables[i]]
+    let valueIndex = -1
+    for (let j = 0; j < varValues.length && valueIndex === -1; ++j) {
+      if (varValues[j] === varValue) { valueIndex = j }
+    }
+    lookup[variables[i]] = valueIndex
+  }
+}
+*/
+
 export function makeQuery (base, config) {
   // config is expected to be an object with variables to query as keys
   // and indices to fetch as associated values
@@ -239,4 +272,67 @@ export class OpenDAPGrid extends BaseGrid {
     const indices = this.makeIndices(this.indices, this.latIndex, this.lonIndex, ilat, ilon, this.dimensions[0], this.dimensions[1])
     return getGridValue(this.data, indices)
   }
+}
+
+export async function initContext (url) {
+  const ctx = { url }
+  ctx.descriptor = await fetchDescriptor(url)
+  ctx.cache = {}
+  return ctx
+}
+
+export function makeGridDescriptor (ctx, grid) {
+  const varDesc = ctx.descriptor[grid]
+  if (varDesc === undefined) return null
+  const gridDesc = {}
+  for (let i = 0; i < varDesc.array.dimensions.length; ++i) {
+    gridDesc[varDesc.array.dimensions[i]] = { index: i }
+  }
+  return gridDesc
+}
+
+export async function lookupIndexForValues (ctx, values) {
+  // build a request to query the values for each dimension for which we have a value
+  const variables = _.keys(values)
+  // check if we have some in the cache already
+  /*
+  const fromCache = {}
+  for (let i = 0; i < variables.length; ++i) {
+    const values = ctx.cache[variables[i]]
+    if (values) fromCache[variables[i]] = values
+  }
+  */
+  const query = makeQuery(ctx.url, variables)
+  const data = await fetchData(query)
+  // lookup corresponding indices
+  const lookups = {}
+  for (let i = 0; i < variables.length; ++i) {
+    const varValues = data[variables[i]]
+    const varValue = values[variables[i]]
+    const lookup = []
+    if (Array.isArray(varValue)) {
+      for (let j = 0; j < varValue.length; ++j) {
+        lookup.push(varValues.indexOf(varValue[j]))
+      }
+    } else {
+      lookup.push(varValues.indexOf(varValue))
+    }
+    lookups[variables[i]] = lookup
+  }
+  return lookups
+}
+
+export async function query (ctx, grid, dimensions) {
+  const varDesc = ctx.descriptor[grid]
+  const indices = []
+  for (let i = 0; i < varDesc.array.dimensions.length; ++i) {
+    const value = dimensions[varDesc.array.dimensions[i]]
+    if (value === undefined) return null
+    indices.push(value)
+  }
+  const conf = {}
+  conf[grid] = indices.join('][')
+  const query = makeQuery(ctx.url, conf)
+  const data = await fetchData(query)
+  return data
 }

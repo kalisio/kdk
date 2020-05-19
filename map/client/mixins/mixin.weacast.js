@@ -72,7 +72,7 @@ export default {
         runTime: {},
         properties: {}
       }
-      
+
       const runTime = getNearestRunTime(startTime, this.forecastModel.runInterval)
       const startForecastTime = getNearestForecastTime(startTime, this.forecastModel.interval)
       const endForecastTime = getNearestForecastTime(endTime, this.forecastModel.interval)
@@ -99,24 +99,33 @@ export default {
       const endOffset = moment.duration(endForecastTime.diff(runTime)).asHours()
 
       // foreach property, fetch data
-      const ctx = { runTime }
-      for (let i = 0; i < properties.length; ++i) {       
-        const url = _.template(sources[i].dynprops.url.strTemplate)(ctx)
-        const p = dap.fetchDescriptor(url).then((desc) => {
+      const allp = []
+      for (let i = 0; i < properties.length; ++i) {
+        const url = _.template(sources[i].dynprops.url.strTemplate)({ runTime })
+        const p = dap.initContext(url).then(async (ctx) => {
           const values = {
             time: [startOffset, endOffset]
           }
           Object.assign(values, sources[i].opendap.dimensionsAsValues)
 
-          const indices = dap.getIndexForValues(url, values)
-        })
+          const indexes = await dap.lookupIndexForValues(ctx, values)
+          const dimensions = _.mapValues(indexes, (v) => {
+            if (v.length === 1) return `${v[0]}`
+            return `${v[0]}:1:${v[1]}`
+          })
 
+          const data = await dap.query(ctx, sources[i].opendap.variable, dimensions)
+          console.log(data)
+        })
+        allp.push(p)
         /*
         const q = dap.makeQuery(url, query)
         console.log(q)
         */
       }
 
+      await Promise.all(allp)
+      
       this.unsetCursor('processing-cursor')
 
       return result
