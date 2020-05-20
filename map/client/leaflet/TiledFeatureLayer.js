@@ -10,7 +10,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.featureRefCount = new Map()
-    this.getFeatureKey = (feature) => { return feature._id }
+    this.getFeatureKey = (feature) => {
+      const id = _.get(this.layer, 'featureId', '_id')
+      return _.get(feature, 'properties.' + id, _.get(feature, id))
+    }
   },
 
   setup (activity, layer) {
@@ -30,7 +33,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
   createTile (coords) {
     const tile = document.createElement('div')
-
+    const tileSize = this.getTileSize()
     const bounds = this._tileCoordsToBounds(coords)
     const baseQuery = {
       south: bounds.getSouth(),
@@ -38,6 +41,12 @@ const TiledFeatureLayer = L.GridLayer.extend({
       west: bounds.getWest(),
       east: bounds.getEast()
     }
+    if (_.get(this.options, 'debug.showTileInfos')) {
+      tile.style.outline = '1px solid green'
+      tile.innerHTML = `leaflet tile is ${tileSize.y} x ${tileSize.x} pixels</br>
+        covering ${bounds.getSouth().toFixed(2)}, ${bounds.getNorth().toFixed(2)},
+        ${bounds.getWest().toFixed(2)}, ${bounds.getEast().toFixed(2)}</br>`
+     }
     // Using async/await seems to cause problems in Leaflet, we use promises instead
     const promises = []
     // Request probes first if any
@@ -48,6 +57,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
     Promise.all(promises).then(data => {
       if (tile.tileUnloaded) {
         // tile was unloaded before fetch completed
+        if (_.get(this.options, 'debug.showTileInfos')) {
+          tile.innerHTML += `Data discarded as tile has been unloaded`
+        }
         return
       }
 
@@ -71,6 +83,15 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
         if (tile.probes) this.activity.updateLayer(this.layer.name, tile.probes)
         if (tile.features) this.activity.updateLayer(this.layer.name, tile.features)
+
+        if (_.get(this.options, 'debug.showTileInfos')) {
+          if (tile.probes) tile.innerHTML += `fetched ${tile.probes.features.length} probes</br>`
+          if (tile.features) tile.innerHTML += `fetched ${tile.features.features.length} features`
+        }
+      } else {
+        if (_.get(this.options, 'debug.showTileInfos')) {
+          tile.innerHTML += `No data fetched`
+        }
       }
     }).catch(error => {
       throw error

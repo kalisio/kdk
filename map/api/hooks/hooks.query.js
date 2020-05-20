@@ -25,13 +25,23 @@ export function marshallSpatialQuery (hook) {
       delete query.centerLon
       delete query.centerLat
       delete query.distance
-      query.geometry = {
-        $near: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [lon, lat]
-          },
-          $maxDistance: d
+      // Aggregation requires a specific operator
+      if (query.$aggregate) {
+        query.$geoNear = {
+          near: { type: 'Point', coordinates: [lon, lat] },
+          maxDistance: d,
+          distanceField: 'distance',
+          spherical: true
+        }
+      } else {
+        query.geometry = {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [lon, lat]
+            },
+            $maxDistance: d
+          }
         }
       }
     }
@@ -56,22 +66,7 @@ export function marshallSpatialQuery (hook) {
           }
         }
       }
-      // Aggregation requires a specific operator
-      if (query.$aggregate) {
-        // Convert distance from degrees to meters
-        const earthRadius = 6356752.31424518
-        const maxDistance = (east - west) * (Math.PI * earthRadius) / 180
-        const center = [ 0.5 * (west + east), 0.5 * (south + north) ]
-        query.$geoNear = {
-          near: { type: 'Point', coordinates: center },
-          maxDistance,
-          distanceField: 'distance',
-          spherical: true,
-          query: { geometry: geometryQuery }
-        }
-      } else {
-        query.geometry = geometryQuery
-      }
+      query.geometry = geometryQuery
     }
     if (query.geoJson) {
       delete query.geoJson
@@ -160,9 +155,12 @@ export async function aggregateFeaturesQuery (hook) {
     // Aggregated in an accumulator to avoid conflict with feature properties
       : query.$groupBy.reduce((object, id) => Object.assign(object, { [id]: '$properties.' + id }), {})
     const groupBy = { _id: ids }
+    let keys = _.keys(ids)
     // Do we only keep first or last available time ?
     const singleTime = (_.toNumber(query.$limit) === 1)
     if (singleTime) {
+      // When single time no aggregation is performed at all so we only have raw features
+      keys = keys.map(key => 'properties.' + key)
       // In this case no need to aggregate on each element we simply keep the first feature
       // BUG: according to https://jira.mongodb.org/browse/SERVER-9507 MongoDB is not yet
       // able to optimize this kind of operations to avoid full index scan
@@ -235,11 +233,10 @@ export async function aggregateFeaturesQuery (hook) {
         aggregatedResults = elementResults
       } else {
         elementResults.forEach(result => {
+          const resultKeys = _.pick(result, keys)
           const previousResult = aggregatedResults.find(aggregatedResult => {
-            let keys = _.keys(ids)
-            // When single time no aggregation is perofrmed at all so we only have raw features
-            if (singleTime) keys = keys.map(key => 'properties.' + key)
-            return (_.isEqual(_.pick(aggregatedResult, keys), _.pick(result, keys)))
+            const aggregatedResultKeys = _.pick(aggregatedResult, keys)
+            return _.isEqual(aggregatedResultKeys, resultKeys)
           })
           // Merge with previous matching feature if any
           if (previousResult) {
