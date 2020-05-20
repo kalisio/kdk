@@ -2,7 +2,7 @@
 
 # Build testcafe
 if [ $1 == "testcafe" ]; then
-  TESTCAFE_VERSION=1.7.1
+  TESTCAFE_VERSION=1.8.5
   TESTCAFE_VUE_SELECTORS_VERSION=3.1.0
   TESTCAFE_MONGODB_DRIVER_VERSION=3.1.4
   pushd extras/testcafe
