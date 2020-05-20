@@ -46,6 +46,12 @@ export function defineUserAbilities (subject, can, cannot) {
   // Allow user registration
   can('service', 'users')
   can('create', 'users')
+  // Verification email, reset password, etc.
+  can('service', 'account')
+  can('create', 'account')
+  can('service', 'devices')
+  can('update', 'devices')
+  can('remove', 'devices')
   // Allow subscriptions management
   can('service', '*/subscribers')
   can(['create', 'remove'], 'subscribers')
