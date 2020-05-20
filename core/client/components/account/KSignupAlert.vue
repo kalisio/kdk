@@ -9,7 +9,7 @@
         <q-toolbar-title>
           {{$t('KSignupAlert.TITLE')}}
         </q-toolbar-title>
-        <q-btn icon="close" flat dense round v-close-popup />
+        <q-btn id="close-signup-alert" icon="close" flat dense round v-close-popup />
       </q-toolbar>
       <q-expansion-item icon="contact_support" :label="$t('KSignupAlert.HELP_LABEL')">
         <q-card class="bg-warning">

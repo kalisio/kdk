@@ -4,7 +4,7 @@
       AppBar, TabBar and SearchBar
     -->
     <q-header>
-      <k-app-bar id="app-bar" :has-left-drawer-toggle="!isLeftDrawerVisible" @left-drawer-toggled="toggleLeftDrawer" />
+      <k-app-bar id="app-bar" />
       <k-tab-bar id="tab-bar" />
       <k-search-bar id="search-bar" />
     </q-header>
