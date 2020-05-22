@@ -18,7 +18,7 @@ const baseContextMixin = {
   },
   methods: {
     clearActions () {
-      this.$store.patch('appBar', { leading: null, toolbar: [], menu: [] })
+      this.$store.patch('appBar', { toolbar: [], menu: [] })
     },
     // This method could be overriden in app for more dynamic behaviour
     // default one is to get the action list from the configuration and set it in app bar
@@ -38,7 +38,7 @@ const baseContextMixin = {
       this.$store.set('context', context)
       this.contextLoaded = true
       const actions = this.getActionsForContext(context)
-      this.$store.patch('appBar', { leading: actions.leading, toolbar: actions.toolbar, menu: actions.menu })
+      this.$store.patch('appBar', { toolbar: actions.toolbar, menu: actions.menu })
     },
     async refreshContext () {
       if (this.contextId) {
