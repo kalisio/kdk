@@ -5,12 +5,12 @@
       <!--
         Organisations list
       -->
-      <div v-if="items.length > 1">
+      <div v-if="items.length > 0">
         <template  v-for="org in items">
-          <q-item v-ripple clickable :active="org._id === currentOrgId" :id="getId(org)" :key="org._id" @click="setCurrentOrganisation(org)">
-            <q-item-section avatar><q-avatar size="24px" color="primary" text-color="white">{{getInitials(org)}}</q-avatar></q-item-section>
+          <q-item v-ripple clickable :active="org._id === currentOrganisationId" :id="getOrganisationId(org)" :key="org._id" @click="setCurrentOrganisation(org)">
+            <q-item-section avatar><q-avatar size="24px" color="primary" text-color="white">{{ getOrganisationInitials(org) }}</q-avatar></q-item-section>
             <q-item-section>{{org.name}}</q-item-section>
-            <q-item-section v-if="org._id === currentOrgId" side><q-icon name="check" /></q-item-section>
+            <q-item-section v-if="org._id === currentOrganisationId" side><q-icon name="check" /></q-item-section>
           </q-item>
         </template>
       </div>
@@ -35,7 +35,7 @@
 
 <script>
 import _ from 'lodash'
-import utils from '../../utils'
+import { getInitials } from '../../utils'
 import mixins from '../../mixins'
 
 export default {
@@ -52,15 +52,15 @@ export default {
   },
   data () {
     return {
-      currentOrgId: ''
+      currentOrganisationId: ''
     }
   },
   methods: {
-    getId (org) {
+    getOrganisationId (org) {
       return _.kebabCase(org.name)
     },
-    getInitials (org) {
-      return utils.getInitials(org.name)
+    getOrganisationInitials (org) {
+      return getInitials(org.name)
     },
     loadService () {
       this._service = this.$api.getService('organisations')
@@ -78,25 +78,25 @@ export default {
       this.refreshCollection()
     },
     updateCurrentOrganisation () {
-      if (this.currentOrgId) {
-        if (!this.findOrganisation(this.currentOrgId)) {
+      if (this.currentOrganisationId) {
+        if (!this.findOrganisation(this.currentOrganisationId)) {
           this.clearCurrentOrganisation()
           this.sideNav.navigate({ name: 'home' })
         }
       }
     },
     setCurrentOrganisation (org) {
-      this.currentOrgId = org._id
+      this.currentOrganisationId = org._id
       this.sideNav.navigate({ name: 'context', params: { contextId: org._id } })
     },
     clearCurrentOrganisation () {
-      this.currentOrgId = ''
+      this.currentOrganisationId = ''
     },
     createOrganisation () {
       this.$refs.editor.open()
     },
     onOrganisationCreated (org) {
-      this.currentOrgId = org._id
+      this.currentOrganisationId = org._id
       this.$refs.editor.close()
       this.sideNav.navigate({ name: 'context', params: { contextId: org._id } })
     },
@@ -111,7 +111,7 @@ export default {
     // Load the required components
     this.$options.components['k-modal-editor'] = this.$load('editor/KModalEditor')
     // Setup the current org if any
-    if (this.$route.params.contextId) this.currentOrgId = this.$route.params.contextId
+    if (this.$route.params.contextId) this.currentOrganisationId = this.$route.params.contextId
     // Update the list of organisations
     this.updateOrganisations()
     // Required when user permissions change
