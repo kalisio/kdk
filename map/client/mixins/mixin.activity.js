@@ -538,10 +538,12 @@ export default function (name) {
           message: this.$t('mixins.activity.REMOVE_DIALOG_MESSAGE', { layer: layer.name }),
           html: true,
           ok: {
-            label: this.$t('OK')
+            label: this.$t('OK'),
+            flat: true
           },
           cancel: {
-            label: this.$t('CANCEL')
+            label: this.$t('CANCEL'),
+            flat: true
           }
         }).onOk(async () => {
           Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL') })

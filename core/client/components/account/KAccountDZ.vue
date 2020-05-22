@@ -44,10 +44,12 @@ export default {
         },
         persistent: true,
         ok: {
-          label: this.$t('OK')
+          label: this.$t('OK'),
+          flat: true
         },
         cancel: {
-          label: this.$t('CANCEL')
+          label: this.$t('CANCEL'),
+          flat: true
         }
       }).onOk(async (data) => {
         if (data === this.name) {

@@ -135,10 +135,12 @@ export default {
         message: this.$t('mixins.editLayers.REMOVE_FEATURE_DIALOG_MESSAGE'),
         html: true,
         ok: {
-          label: this.$t('OK')
+          label: this.$t('OK'),
+          flat: true
         },
         cancel: {
-          label: this.$t('CANCEL')
+          label: this.$t('CANCEL'),
+          flat: true
         }
       }).onOk(async () => {
         const parentLeafletLayer = this.getLeafletLayerByName(layer.name)

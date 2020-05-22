@@ -73,7 +73,7 @@ export default {
         this.registerPaneAction({
           name: 'tag-member',
           label: this.$t('KMemberCard.TAG_LABEL'),
-          icon: 'local_offer',
+          icon: 'las la-tags',
           route: { name: 'tag-member', params: { contextId: this.contextId, objectId: this.item._id } }
         })
       }
@@ -81,7 +81,7 @@ export default {
         this.registerPaneAction({
           name: 'change-role',
           label: this.$t('KMemberCard.CHANGE_ROLE_LABEL'),
-          icon: 'security',
+          icon: 'las la-graduation-cap',
           route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id, resource: { id: this.contextId, scope: 'organisations', service: 'organisations' } } }
         })
       }

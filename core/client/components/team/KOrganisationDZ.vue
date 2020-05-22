@@ -36,15 +36,15 @@ export default {
           type: 'text',
           model: ''
         },
-        buttons: [
-          {
-            label: this.$t('OK'),
-            preventClose: true
-
-          }, {
-            label: this.$t('CANCEL')
-          }
-        ]
+        persistent: true,
+        ok: {
+          label: this.$t('OK'),
+          flat: true
+        },
+        cancel: {
+          label: this.$t('CANCEL'),
+          flat: true
+        }
       }).onOk(async (data) => {
         if (data === this.name) {
           await this.loadService().remove(this.objectId)

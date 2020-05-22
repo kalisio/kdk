@@ -174,7 +174,8 @@ export default {
           message: this.$t('KInviteMember.ALERT_FILE_IMPORT_MESSAGE'),
           html: true,
           ok: {
-            label: this.$t('OK')
+            label: this.$t('OK'),
+            flat: true
           }
         }).onOk(() => done())
       } else if (errors.length > 0) {
@@ -183,10 +184,12 @@ export default {
           message: this.$t('KInviteMember.CONFIRM_FILE_IMPORT_MESSAGE', { errors: errors.length, records: data.length }),
           html: true,
           ok: {
-            label: this.$t('OK')
+            label: this.$t('OK'),
+            flat: true
           },
           cancel: {
-            label: this.$t('KInviteMember.CANCEL_BUTTON')
+            label: this.$t('KInviteMember.CANCEL_BUTTON'),
+            flat: true
           }
         }).onOk(async () => {
           const usersService = this.$api.getService('users')
