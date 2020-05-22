@@ -5,5 +5,3 @@ export DISPLAY=:1.0
 fluxbox >/dev/null 2>&1 &
 
 testcafe ${BROWSERS} --ports 1337,1338 --speed ${SPEED} -S -s /screenshots -r slack "/tests/*.test.js" "$@"
-
-      
