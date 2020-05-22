@@ -1,22 +1,36 @@
 <template>
-  <div :style="widgetStyle()">
-    <div v-if="hasGraph" class="fit row">
-      <q-resize-observer @resize="onResized" />
+  <div :style='widgetStyle()'>
+    <div v-if='hasGraph' class='fit row'>
+      <q-resize-observer @resize='onResized' />
       <!-- Actions -->
-      <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
-      <div class="col full-width row">
+      <k-tool-bar class='q-pa-sm' :actions='actions' direction='vertical' dense>
+        <div slot='after'>
+          <q-btn icon='las la-history' color='grey-9' size='md' flat round>
+            <q-badge floating outline /><small>{{settings.span / 60}}H</small></q-badge>
+            <q-tooltip>{{$t('KTimeSeries.SPAN')}}</q-tooltip>
+            <q-menu auto-close>
+              <q-list>
+                <q-item v-for="option in spanOptions" clickable @click="onUpdateSpan(option.value)">
+                  <q-item-section>{{ option.label }}</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </div>
+      </k-tool-bar>
+      <div class='col full-width row'>
         <!-- Title -->
-        <span class="col-12 q-pl-sm">
+        <span class='col-12 q-pl-sm'>
           {{ probedLocationName }}
         </span>
         <!-- Graph -->
-        <div id="chart-container" class="col-12">
-          <canvas ref="chart"></canvas>
+        <div id='chart-container' class='col-12'>
+          <canvas ref='chart'></canvas>
         </div>
       </div>
     </div>
-    <div v-else class="fit absolute-center">
-      <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />
+    <div v-else class='fit absolute-center'>
+      <k-label :text='$t('KTimeSeries.NO_DATA_AVAILABLE')' icon-size='48px' />
     </div>
   </div>
 </template>
@@ -74,7 +88,17 @@ export default {
       probedLocation: null,
       probedLocationName: '',
       hasGraph: false,
-      actions: []
+      actions: [],
+      spanOptions: [
+        { label: '3H', value: 180  },
+        { label: '6H', value: 360  },
+        { label: '12H', value: 720 },
+        { label: '24H', value: 1440 },
+        { label: '48H', value: 2880 },
+        { label: '72H', value: 4320 },
+        { label: '96H', value: 5760 }
+      ],
+      settings: this.$store.get('timeseries')
     }
   },
   methods: {
@@ -322,6 +346,9 @@ export default {
       this.graphHeight = Math.floor(size.height * 0.9)
       this.setupGraph()
     },
+    onUpdateSpan (span) {
+      this.$store.set('timeseries.span', span)
+    },
     updateProbedLocationHighlight () {
       if (!this.probedLocation) return
       const windDirection = (this.kActivity.selectedLevel ? `windDirection-${this.kActivity.selectedLevel}` : 'windDirection')
@@ -380,7 +407,7 @@ export default {
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
     this.actions = [
-      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KTimeSeriesWidget.CENTER_ON'), handler: this.onCenterOn }
+      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KTimeSeries.CENTER_ON'), handler: this.onCenterOn }
     ]
     // Refresh the component
     this.refresh()
@@ -388,12 +415,14 @@ export default {
   mounted () {
     this.kActivity.$on('current-time-changed', this.refresh)
     this.$events.$on('time-format-changed', this.refresh)
+    this.$events.$on('timeseries-span-changed', this.refresh)
     this.kActivity.$on('forecast-model-changed', this.refresh)
     this.kActivity.$on('forecast-level-changed', this.refresh)
   },
   beforeDestroy () {
     this.kActivity.$off('current-time-changed', this.refresh)
     this.$events.$off('time-format-changed', this.refresh)
+    this.$events.$off('timeseries-span-changed', this.refresh)
     this.kActivity.$off('forecast-model-changed', this.refresh)
     this.kActivity.$off('forecast-level-changed', this.refresh)
     this.kActivity.removeSelectionHighlight('time-series')

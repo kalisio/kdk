@@ -55,11 +55,11 @@ export default function init () {
   })
   // Default timeline parameters
   Store.set('timeline', {
-    step: 60
+    step: 60 // 1H
   })
   // Default timeseries parameters
   Store.set('timeseries', {
-    span: 1 // days
+    span: 1440 // 24H
   })
 
   if (!Platform.is.cordova) return

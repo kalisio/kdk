@@ -634,9 +634,10 @@ export default function (name) {
       getProbeTimeRange () {
         const start = this.currentTime.clone()
         const end = start.clone()
-        const halfSpan = this.$store.get('timeseries.span') / 2
-        start.subtract(halfSpan, 'd')
-        end.add(halfSpan, 'd')
+        const span = this.$store.get('timeseries.span')
+        // We center on current time with the same span on past/future
+        start.subtract(span, 'm')
+        end.add(span, 'm')
         return { start, end }
       },
       onProbeLocation () {

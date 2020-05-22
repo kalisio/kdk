@@ -204,7 +204,9 @@
     "BACK": "Back"
   },
   "KTimeSeries": {
-    "NO_DATA_AVAILABLE": "No data available"
+    "NO_DATA_AVAILABLE": "No data available",
+    "CENTER_ON": "Center the view on the probed location",
+    "SPAN": "Timeseries span"
   },
   "KCatalogPanel": {
     "BASE_LAYERS": "Base Layers",

@@ -2,9 +2,10 @@
   <div class="row items-center no-wrap"
     v-bind:class="{
       'row items-center no-wrap': direction === 'horizontal',
-      'column content-center': direction === 'vertical'
+      'column content-center no-wrap': direction === 'vertical'
     }"
   >
+    <slot name="before" />
     <template v-for="action in actions">
       <q-separator v-if="action.name === 'separator'" :key="actionKey(action)" vertical />
       <q-btn v-else
@@ -24,6 +25,7 @@
         <q-badge v-if="action.badge" v-bind="action.badge" floating transparent />
       </q-btn>
     </template>
+    <slot name="after" />
   </div>
 </template>
 
