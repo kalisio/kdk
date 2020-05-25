@@ -23,8 +23,10 @@ jobs:
     - '12'  
     services:
     - docker
-    - mongodb    
+    - mongodb
+    before_script: npm install -g codeclimate-test-reporter
     script: bash .travis.test.sh
+    after_script: codeclimate-test-reporter < coverage/lcov.info
 
   - stage: DOC
     language: node_js
