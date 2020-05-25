@@ -24,10 +24,8 @@ set -a
 . .env
 set +a
 
-yarn lint
-check_code $? "Linting"
-
-yarn mocha
+yarn test
 check_code $? "Running tests"
+
 
 
