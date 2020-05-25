@@ -1,7 +1,6 @@
 import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store, utils as kCoreUtils } from '../../core/client'
-import moment from 'moment'
 
 export default function init () {
   const api = this

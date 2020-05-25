@@ -92,7 +92,6 @@ export default {
       entitiesToAdd.forEach(entity => dataSource.entities.add(entity))
     },
     async updateGeoJsonData (dataSource, options, geoJson) {
-      const featureId = _.get(options, 'featureId')
       const cesiumOptions = options.cesium
       const source = _.get(cesiumOptions, 'source')
       const sourceTemplate = _.get(cesiumOptions, 'sourceTemplate')
@@ -112,7 +111,6 @@ export default {
           const probes = dataSource.entities.values
           for (let i = 0; i < probes.length; i++) {
             const probe = probes[i]
-            const probeProperties = probe.properties
             const measure = measureSource.entities.getById(probe.id)
             if (measure) {
               probe.properties = measure.properties

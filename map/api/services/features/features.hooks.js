@@ -1,4 +1,3 @@
-import { iff } from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api'
 import { marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson } from '../../hooks'
 

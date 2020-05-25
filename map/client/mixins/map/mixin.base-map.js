@@ -328,7 +328,7 @@ export default {
       zoomLayers.forEach(async layer => {
         const wasDisabled = layer.isDisabled
         layer.isDisabled = this.isLayerDisabled(layer)
-        if (layer.isDisabled !== wasDisabled) this.$emit(wasDisabled ? 'layer-enabled': 'layer-disabled', layer)
+        if (layer.isDisabled !== wasDisabled) this.$emit(wasDisabled ? 'layer-enabled' : 'layer-disabled', layer)
       })
     }
   },

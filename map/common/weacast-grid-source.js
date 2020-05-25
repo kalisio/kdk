@@ -96,7 +96,7 @@ export class WeacastGridSource extends GridSource {
       this.wrapLon = model.bounds[2] > 180.0
       this.maxTileX = ((model.bounds[2] - model.bounds[0]) / model.tileResolution[0]) - 1
       this.maxTileY = ((model.bounds[3] - model.bounds[1]) / model.tileResolution[1]) - 1
-    } else {
+    } else {
       this.tileCache = null
     }
 
@@ -180,7 +180,7 @@ export class WeacastGridSource extends GridSource {
       for (let i = 0; i < requests.length; ++i) {
         const [x, y] = key2tile(requests[i])
         let tilex = this.tileOrigin[1] + (this.tileSize[1] * x)
-        let tiley = this.tileOrigin[0] - (this.tileSize[0] * y)
+        const tiley = this.tileOrigin[0] - (this.tileSize[0] * y)
 
         if (tilex >= 180) tilex -= 360.0
 

@@ -46,7 +46,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       tile.innerHTML = `leaflet tile is ${tileSize.y} x ${tileSize.x} pixels</br>
         covering ${bounds.getSouth().toFixed(2)}, ${bounds.getNorth().toFixed(2)},
         ${bounds.getWest().toFixed(2)}, ${bounds.getEast().toFixed(2)}</br>`
-     }
+    }
     // Using async/await seems to cause problems in Leaflet, we use promises instead
     const promises = []
     // Request probes first if any
@@ -58,7 +58,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (tile.tileUnloaded) {
         // tile was unloaded before fetch completed
         if (_.get(this.options, 'debug.showTileInfos')) {
-          tile.innerHTML += `Data discarded as tile has been unloaded`
+          tile.innerHTML += 'Data discarded as tile has been unloaded'
         }
         return
       }
@@ -90,7 +90,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
         }
       } else {
         if (_.get(this.options, 'debug.showTileInfos')) {
-          tile.innerHTML += `No data fetched`
+          tile.innerHTML += 'No data fetched'
         }
       }
     }).catch(error => {

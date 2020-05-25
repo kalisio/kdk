@@ -41,7 +41,7 @@ describe('notifications', () => {
     return app.db.connect()
   })
 
-  it('is CommonJS compatible', () => {
+  it('is ES6 compatible', () => {
     expect(typeof core).to.equal('function')
   })
 

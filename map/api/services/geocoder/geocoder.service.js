@@ -38,19 +38,23 @@ export default function (name, app, options) {
       // We limit results to the N best ones from the different providers
       const nbResults = _.get(this, 'paginate.default', 10)
       debug('geocoder service called for create', data)
-      const aggregatedResults = await Promise.all(geocoders.map(geocoder => {
+      const aggregatedResults = await Promise.all(geocoders.map(async geocoder => {
         // We want to wait for all responses ever if some fail
         // FIXME: when definitely available in JS spec should be replaced by Promise.allSettled
-        if (data.address) return this.geocode(geocoder, data.address)
-          .then(results => ({ results })).catch(error => ({ error }))
-        // All geocoders cannot do reverse geocoding
-        else if (geocoder.reverse) {
-          // We support GeoJson feature for reverse geocoding
-          const lon = _.get(data, 'lon', _.get(data, 'longitude', _.get(data, 'geometry.coordinates[0]')))
-          const lat = _.get(data, 'lat', _.get(data, 'latitude', _.get(data, 'geometry.coordinates[1]')))
-          return this.reverse(geocoder, lon, lat)
-            .then(results => ({ results })).catch(error => ({ error }))
-        } else return Promise.resolve({ results: [] })
+        try {
+          let results = []
+          if (data.address) {
+            results = await this.geocode(geocoder, data.address)
+          } else if (geocoder.reverse) { // All geocoders cannot do reverse geocoding
+            // We support GeoJson feature for reverse geocoding
+            const lon = _.get(data, 'lon', _.get(data, 'longitude', _.get(data, 'geometry.coordinates[0]')))
+            const lat = _.get(data, 'lat', _.get(data, 'latitude', _.get(data, 'geometry.coordinates[1]')))
+            results = await this.reverse(geocoder, lon, lat)
+          }
+          return { results }
+        } catch (error) {
+          return { error }
+        }
       }))
       const results = []
       let processing = true
@@ -59,7 +63,7 @@ export default function (name, app, options) {
         const previousCount = results.length
         aggregatedResults.forEach(provider => {
           if (provider.error) {
-            app.logger.error(error)
+            app.logger.error(provider.error)
           } else {
             // Take current best result if any
             const bestResultForProvider = provider.results.shift()

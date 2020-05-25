@@ -45,7 +45,9 @@
     "mocha:core": "cross-env NODE_CONFIG_DIR=./tests/core/config/ mocha tests/core/**/*.test.js --require babel-core/register",
     "mocha:map": "cross-env NODE_CONFIG_DIR=./tests/map/config/ mocha tests/map/**/*.test.js --require babel-core/register",
     "mocha": "npm-run-all --serial mocha:**",
-    "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ node node_modules/istanbul/lib/cli cover node_modules/mocha/bin/_mocha -- --require babel-core/register",
+    "coverage:core": "cross-env NODE_CONFIG_DIR=./tests/core/config/ node node_modules/istanbul/lib/cli cover node_modules/mocha/bin/_mocha -- tests/core/**/*.test.js --require babel-core/register",
+    "coverage:map": "cross-env NODE_CONFIG_DIR=./tests/map/config/ node node_modules/istanbul/lib/cli cover node_modules/mocha/bin/_mocha -- tests/map/**/*.test.js --require babel-core/register",
+    "coverage": "npm-run-all --serial coverage:**",
     "test": "npm run compile && npm run lint && npm run coverage"
   },
   "standard": {

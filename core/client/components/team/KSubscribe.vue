@@ -1,7 +1,7 @@
 <template>
   <k-screen :title="$t('KSubscribe.TITLE', { organisation: organisation.name })">
     <div slot="screen-content">
-      <!-- 
+      <!--
         Subscription
        -->
       <template v-if="status === 'pending' || status === 'running'">
@@ -43,9 +43,9 @@ export default {
   data () {
     return {
       organisation: {
-        name: '',
+        name: ''
       },
-      status: 'pending',  // running or finished
+      status: 'pending', // running or finished
       subscriptionSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/subscribe#',
@@ -109,7 +109,7 @@ export default {
     try {
       const decondedContextData = JSON.parse(atob(this.contextData))
       this.organisation.name = _.get(decondedContextData, 'name')
-    } catch(error) {
+    } catch (error) {
       logger.error(`Invalid context data ${error}`)
     }
   }

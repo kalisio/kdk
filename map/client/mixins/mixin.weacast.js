@@ -2,7 +2,6 @@ import _ from 'lodash'
 import L from 'leaflet'
 import logger from 'loglevel'
 import moment from 'moment'
-import { weacast } from 'weacast-core/client'
 import { getNearestTime } from '../utils'
 
 export default {

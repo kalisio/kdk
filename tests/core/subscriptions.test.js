@@ -9,9 +9,9 @@ import { permissions } from '../../core/common'
 
 */
 describe('subscriptions', () => {
-  let app, adminDb, server, port, // baseUrl,
-    userService, orgService, authorisationService, orgGroupService, orgUserService,
-    userObject, orgObject, groupObject
+  let app, server, port, // baseUrl,
+    userService, orgService, authorisationService,
+    userObject
 
   before(() => {
     chailint(chai, util)
@@ -44,12 +44,9 @@ describe('subscriptions', () => {
       }
     })
     return app.db.connect()
-      .then(db => {
-        adminDb = app.db.instance.admin()
-      })
   })
 
-  it('is CommonJS compatible', () => {
+  it('is ES6 compatible', () => {
     expect(typeof core).to.equal('function')
   })
 

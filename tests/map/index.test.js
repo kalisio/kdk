@@ -30,7 +30,7 @@ describe('kMap', () => {
     return app.db.connect()
   })
 
-  it('is CommonJS compatible', () => {
+  it('is ES6 compatible', () => {
     expect(typeof map).to.equal('function')
   })
 

@@ -105,10 +105,10 @@ export default {
       _.forEach(this.layers, (layer) => {
         if (layer.tags.includes('archive')) {
           // check whether the current model is supported by the layer
-          let meteo_model = _.get(layer, 'meteo_model')
+          let meteoModel = _.get(layer, 'meteo_model')
           // additional check for tiled wind layers
-          if (!meteo_model) meteo_model = _.get(layer, 'u.meteo_model')
-          if (_.find(meteo_model, { model: this.model.name })) archiveLayers.push(layer)
+          if (!meteoModel) meteoModel = _.get(layer, 'u.meteo_model')
+          if (_.find(meteoModel, { model: this.model.name })) archiveLayers.push(layer)
           else this.hideLayer(layer)
         } else this.hideLayer(layer)
       })

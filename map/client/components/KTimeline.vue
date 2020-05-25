@@ -121,7 +121,7 @@ export default {
       for (let h = moment.utc(start); h.isBefore(end); h.add(1, 'h')) {
         hours.push({
           label: this.kActivity.formatTime('time.short', h),
-          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time, 'hour') ? 'k-timeline-hour-selected' : '') 
+          class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time, 'hour') ? 'k-timeline-hour-selected' : '')
         })
       }
       return hours

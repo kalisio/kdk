@@ -22,7 +22,7 @@ describe('kClient', () => {
     app = kalisio()
   })
 
-  it('is CommonJS compatible', () => {
+  it('is ES6 compatible', () => {
     expect(typeof kalisio).to.equal('function')
   })
 

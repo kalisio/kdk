@@ -408,8 +408,9 @@ export default function (name) {
           // We use the generated DB ID as layer ID on features
           await this.createFeatures(geoJson, createdLayer._id, chunkSize, i => {
             // Update message
-            Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL',
-              { processed: (i + 1) * chunkSize, total: features.length }) })
+            Loading.show({
+              message: this.$t('mixins.activity.SAVING_LABEL', { processed: (i + 1) * chunkSize, total: features.length })
+            })
           })
           // Because we save all features in a single service use filtering to separate layers
           createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })

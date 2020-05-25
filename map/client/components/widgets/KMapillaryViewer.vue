@@ -34,10 +34,10 @@ export default {
   },
   methods: {
     saveStates () {
-      this.$store.set('selection.states.mapillary', { 
-        location: this.location, 
+      this.$store.set('selection.states.mapillary', {
+        location: this.location,
         bearing: this.bearing,
-        key: this.key 
+        key: this.key
       })
     },
     restoreStates () {
@@ -51,13 +51,13 @@ export default {
       const lon = this.location ? this.location.lng : 0
       const bearing = 225 + this.bearing || 0
       return {
-        type: "Feature",
+        type: 'Feature',
         properties: {
           'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="./statics/mapillary-marker.png">`
         },
         geometry: {
-          type: "Point",
-          "coordinates": [lon, lat]
+          type: 'Point',
+          coordinates: [lon, lat]
         }
       }
     },
@@ -70,10 +70,10 @@ export default {
         const location = this.selection.location
         if (location) await this.moveCloseTo(location.lat, location.lng)
       }
-      /*if (this.key) await this.moveToKey(this.key)
+      /* if (this.key) await this.moveToKey(this.key)
       else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
       this.onCenterOn()
-      this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())*/
+      this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature()) */
     },
     async moveToKey (key) {
       try {
@@ -103,7 +103,7 @@ export default {
       const startTime = endTime.clone().add(moment.duration(_.get(this.kActivity.mapillaryLayer, 'queryFrom', 'P-1Y'))) // 1 year back by default
       this.mapillaryViewer.setFilter(['all',
         ['>=', 'capturedAt', startTime.valueOf()],
-        ['<=', 'capturedAt', endTime.valueOf()],
+        ['<=', 'capturedAt', endTime.valueOf()]
       ])
     },
     onCenterOn () {

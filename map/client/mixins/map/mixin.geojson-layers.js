@@ -312,8 +312,7 @@ export default {
         // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
         features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
         layer.remove(features)
-      }
-      else if (typeof layer._onNewData === 'function') {
+      } else if (typeof layer._onNewData === 'function') {
         layer._onNewData(layer.options.removeMissing, geoJson || this.toGeoJson(name))
       }
     },

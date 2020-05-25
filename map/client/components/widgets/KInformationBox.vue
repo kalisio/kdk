@@ -14,8 +14,7 @@
 
 <script>
 import _ from 'lodash'
-import centroid from '@turf/centroid'
-import { colors, copyToClipboard, exportFile  } from 'quasar'
+import { colors, copyToClipboard, exportFile } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
 import { generatePropertiesSchema } from '../../utils'
 
@@ -99,9 +98,9 @@ export default {
     },
     onExportFeature () {
       if (this.feature) {
-        const name = _.get(this.feature, 'name', 'feature') || 
-                     _.get(this.feature, 'label', 'feature') || 
-                     _.get(this.feature, 'properties.name', 'feature') || 
+        const name = _.get(this.feature, 'name', 'feature') ||
+                     _.get(this.feature, 'label', 'feature') ||
+                     _.get(this.feature, 'properties.name', 'feature') ||
                      _.get(this.feature, 'properties.label', 'feature')
         const file = name + '.geojson'
         const status = exportFile(file, JSON.stringify(this.feature))
@@ -118,13 +117,13 @@ export default {
     // Registers the actions
     this.actions = [
       { name: 'centerOn', icon: 'las la-eye', label: this.$t('KInformationBox.CENTER_ON'), handler: this.onCenterOn },
-      { name: 'copyProperties', icon: 'las la-clipboard', label: this.$t('KInformationBox.COPY_PROPERTIES'), handler: this.onCopyProperties }, 
-      { name: 'exportFeature', icon: 'img:statics/json-icon.svg', label: this.$t('KInformationBox.EXPORT_FEATURE'), handler: this.onExportFeature }, 
+      { name: 'copyProperties', icon: 'las la-clipboard', label: this.$t('KInformationBox.COPY_PROPERTIES'), handler: this.onCopyProperties },
+      { name: 'exportFeature', icon: 'img:statics/json-icon.svg', label: this.$t('KInformationBox.EXPORT_FEATURE'), handler: this.onExportFeature }
     ]
     // Refresh the component
     this.refresh()
   },
-  beforeDestroy() {
+  beforeDestroy () {
     this.kActivity.removeSelectionHighlight('information-box')
   }
 }

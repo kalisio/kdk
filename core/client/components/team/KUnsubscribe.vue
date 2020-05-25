@@ -1,7 +1,7 @@
 <template>
   <k-screen :title="$t('KUnsubscribe.TITLE')">
     <div slot="screen-content">
-      <!-- 
+      <!--
         Subscription
        -->
       <template v-if="status === 'pending' || status === 'running'">
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import logger from 'loglevel'
 import _ from 'lodash'
 
 export default {
@@ -34,14 +35,14 @@ export default {
       type: String,
       required: true
     },
-     contextData: {
+    contextData: {
       type: String,
       required: true
     }
   },
   data () {
     return {
-      status: 'pending',  // running or finished
+      status: 'pending', // running or finished
       schema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/unsubscribe#',
@@ -86,7 +87,7 @@ export default {
     try {
       const decondedContextData = JSON.parse(atob(this.contextData))
       this.organisation.name = _.get(decondedContextData, 'name')
-    } catch(error) {
+    } catch (error) {
       logger.error(`Invalid context data ${error}`)
     }
   }

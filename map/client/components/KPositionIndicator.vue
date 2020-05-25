@@ -26,7 +26,7 @@ export default {
   },
   watch: {
     'selection.location': function () {
-       this.stop()
+      this.stop()
     }
   },
   methods: {
@@ -37,7 +37,7 @@ export default {
     },
     stop () {
       this.isActive = false
-      this.kActivity.$off('mousemove', this.onMoved) 
+      this.kActivity.$off('mousemove', this.onMoved)
       this.kActivity.unsetCursor('position-cursor')
     },
     async onCopy () {
@@ -69,7 +69,7 @@ export default {
     this.onClear()
   },
   beforeDestroy () {
-     this.stop()
+    this.stop()
   }
 }
 </script>

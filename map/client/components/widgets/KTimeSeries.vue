@@ -64,22 +64,22 @@ export default {
     }
   },
   computed: {
-    location () { 
-      return this.selection.location 
+    location () {
+      return this.selection.location
     },
-    feature () { 
-      return this.selection.feature 
+    feature () {
+      return this.selection.feature
     },
-    layer () { 
-      return this.selection.layer 
+    layer () {
+      return this.selection.layer
     }
   },
   watch: {
-    variables: function () { 
-      this.refresh() 
+    variables: function () {
+      this.refresh()
     },
-    decimationFactor: function () { 
-      this.refresh() 
+    decimationFactor: function () {
+      this.refresh()
     },
     location: function () {
       this.refresh()
@@ -92,8 +92,8 @@ export default {
       hasGraph: false,
       actions: [],
       spanOptions: [
-        { label: '3H', value: 180  },
-        { label: '6H', value: 360  },
+        { label: '3H', value: 180 },
+        { label: '6H', value: 360 },
         { label: '12H', value: 720 },
         { label: '24H', value: 1440 },
         { label: '48H', value: 2880 },
@@ -338,13 +338,13 @@ export default {
 
       this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
       if (this.graphHeight && this.graphWidth) {
-        this.chart.canvas.parentNode.style.width = `${this.graphWidth}px` 
-        this.chart.canvas.parentNode.style.height = `${this.graphHeight}px` 
+        this.chart.canvas.parentNode.style.width = `${this.graphWidth}px`
+        this.chart.canvas.parentNode.style.height = `${this.graphHeight}px`
         this.chart.resize()
       }
     },
     async onResized (size) {
-      this.graphWidth =  Math.floor(size.width - 50)
+      this.graphWidth = Math.floor(size.width - 50)
       this.graphHeight = Math.floor(size.height * 0.9)
       this.setupGraph()
     },
@@ -376,7 +376,7 @@ export default {
         const latitude = _.get(this.probedLocation, 'geometry.coordinates[1]')
         name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
       }
-      
+
       if (name) this.probedLocationName = name
     },
     async refresh () {

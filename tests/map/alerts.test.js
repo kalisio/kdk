@@ -14,7 +14,7 @@ import weacastGfs from 'weacast-gfs'
 import weacastProbe from 'weacast-probe'
 import distribution from '@kalisio/feathers-distributed'
 import core, { kalisio, hooks } from '../../core/api'
-import map, { createFeaturesService } from '../../map/api'
+import map, { createFeaturesService, createAlertsService } from '../../map/api'
 
 describe.skip('map:alerts', () => {
   let app, weacastApp, server, port, externalApp, externalServer, externalPort,
@@ -118,7 +118,7 @@ describe.skip('map:alerts', () => {
   it('registers the alert service', (done) => {
     app.configure(core)
     app.configure(map)
-    alertService = app.getService('alerts')
+    alertService = createAlertsService.call(app)
     expect(alertService).toExist()
     alertService.on('patched', checkAlertEvent)
     spyRegisterAlert = chai.spy.on(alertService, 'registerAlert')

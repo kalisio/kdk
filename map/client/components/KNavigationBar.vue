@@ -1,7 +1,7 @@
 <template>
   <div class="column k-navigation-bar">
     <div class="row items-center q-gutter-sm no-wrap">
-      <!-- 
+      <!--
         Track mode
        -->
       <template v-if="mode === 'trackbar' && hasPositionIndicator">
@@ -11,7 +11,7 @@
         <q-separator vertical />
         <k-position-indicator />
       </template>
-      <!-- 
+      <!--
         Search mode
        -->
       <template v-if="mode === 'searchbar' && hasLocationInput">
@@ -45,23 +45,22 @@
 
 <script>
 import _ from 'lodash'
-import formatcoords from 'formatcoords'
 
 export default {
   name: 'k-navigation-bar',
   inject: ['kActivity'],
   computed: {
-    hasBeforeActions () { 
-      return _.get(this.navigationBar, 'actions.before', []).length > 0 
+    hasBeforeActions () {
+      return _.get(this.navigationBar, 'actions.before', []).length > 0
     },
-    hasAfterActions () { 
-      return _.get(this.navigationBar, 'actions.after', []).length > 0 
+    hasAfterActions () {
+      return _.get(this.navigationBar, 'actions.after', []).length > 0
     },
-    hasPositionIndicator () { 
-      return _.get(this.navigationBar, 'positionIndicator', true) 
+    hasPositionIndicator () {
+      return _.get(this.navigationBar, 'positionIndicator', true)
     },
-    hasLocationInput () { 
-      return _.get(this.navigationBar, 'locationInput', true) 
+    hasLocationInput () {
+      return _.get(this.navigationBar, 'locationInput', true)
     }
   },
   data () {

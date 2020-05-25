@@ -1,7 +1,9 @@
+/*
 import _ from 'lodash'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:core:subscribers:hooks')
+*/
 
 export async function subscribeToOrganisationSubscriptions (hook) {
   /* if (!hook.params.resource || !hook.params.resource.topics) return Promise.resolve(hook)
