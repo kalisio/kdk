@@ -24,14 +24,14 @@ jobs:
     services:
     - docker
     - mongodb    
-    script: bash .travis.test.sh || travis_terminate 1
+    script: bash .travis.test.sh
 
   - stage: DOC
     language: node_js
     node_js:
     - '12'
     install: true
-    script: bash .travis.doc.sh || travis_terminate 1
+    script: bash .travis.doc.sh
     deploy:
       provider: pages
       local-dir: docs/.vuepress/dist
@@ -48,4 +48,4 @@ jobs:
     services:
     - docker    
     install: true
-    script: bash .travis.extras.sh testcafe || travis_terminate 1
+    script: bash .travis.extras.sh testcafe
