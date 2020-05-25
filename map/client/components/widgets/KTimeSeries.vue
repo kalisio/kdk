@@ -6,11 +6,13 @@
       <k-tool-bar class='q-pa-sm' :actions='actions' direction='vertical' dense>
         <div slot='after'>
           <q-btn icon='las la-history' color='grey-9' size='md' flat round>
-            <q-badge floating outline /><small>{{settings.span / 60}}H</small></q-badge>
+            <q-badge floating>
+              <small>{{settings.span / 60}}H</small>
+            </q-badge>
             <q-tooltip>{{$t('KTimeSeries.SPAN')}}</q-tooltip>
             <q-menu auto-close>
               <q-list>
-                <q-item v-for="option in spanOptions" clickable @click="onUpdateSpan(option.value)">
+                <q-item v-for="option in spanOptions" :key="option.value" clickable @click="onUpdateSpan(option.value)">
                   <q-item-section>{{ option.label }}</q-item-section>
                 </q-item>
               </q-list>
@@ -30,7 +32,7 @@
       </div>
     </div>
     <div v-else class='fit absolute-center'>
-      <k-label :text='$t('KTimeSeries.NO_DATA_AVAILABLE')' icon-size='48px' />
+      <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size='48px' />
     </div>
   </div>
 </template>
