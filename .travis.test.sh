@@ -1,5 +1,13 @@
 #!/bin/bash
 
+check_code()
+{
+   if [ $1 -eq 1 ]; then
+	  echo "$2 has failed [error: $1]"
+	  exit 1
+  fi
+}
+
 # Clone the workspace 
 echo -e "machine github.com\n  login $GITHUB_TOKEN" > ~/.netrc
 git clone https://github.com/kalisio/kdk-workspaces workspace
@@ -17,5 +25,9 @@ set -a
 set +a
 
 yarn lint
+check_code $? "Linting"
+
 yarn mocha
+check_code $? "Running tests"
+
 
