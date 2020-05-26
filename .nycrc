@@ -1,0 +1,6 @@
+{
+	"all": true,
+	"include": ["core/**/*.js", "map/**/*.js"],
+	"exclude": ["**/client/**"],
+	"reporter": ["text", "html", "lcov"]
+}
