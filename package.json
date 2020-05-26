@@ -101,7 +101,7 @@
     "email-templates": "^2.7.1",
     "express-rate-limit": "^2.11.0",
     "feathers-authentication-management": "^2.0.1",
-    "feathers-blob": "^1.4.0",
+    "feathers-blob": "^2.2.0",
     "feathers-hooks-common": "^3.0.0",
     "feathers-mailer": "^2.0.0",
     "feathers-mongodb": "^2.8.0",
