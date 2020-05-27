@@ -268,7 +268,7 @@ export default function (name) {
             actions.push({
               name: 'edit',
               label: this.$t('mixins.activity.EDIT_LABEL'),
-              icon: 'description',
+              icon: 'las la-file-alt',
               handler: () => this.onEditLayer(layer)
             })
           }
@@ -295,7 +295,7 @@ export default function (name) {
             actions.push({
               name: 'remove',
               label: this.$t('mixins.activity.REMOVE_LABEL'),
-              icon: 'remove_circle',
+              icon: 'las la-minus-circle',
               handler: () => this.onRemoveLayer(layer)
             })
           }

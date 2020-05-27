@@ -89,7 +89,7 @@ export default {
         this.registerMenuAction({
           name: 'remove-member',
           label: this.$t('KMemberCard.REMOVE_LABEL'),
-          icon: 'remove_circle',
+          icon: 'las la-minus-circle',
           handler: this.removeMember
         })
       }

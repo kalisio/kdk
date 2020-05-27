@@ -170,7 +170,7 @@ export default {
     },
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KIconChooser.CLOSE_ACTION'), icon: 'close', handler: () => this.doClose() }
+        { name: 'close-action', label: this.$t('KIconChooser.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
       ]
     },
     getButtons () {

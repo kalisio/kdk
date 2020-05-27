@@ -88,7 +88,7 @@ export default {
   methods: {
     getModalToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KFab.CLOSE_ACTION'), icon: 'close', handler: () => this.closeModal() }
+        { name: 'close-action', label: this.$t('KFab.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.closeModal() }
       ]
     },
     getModalButtons () {

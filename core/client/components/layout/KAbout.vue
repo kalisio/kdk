@@ -93,7 +93,7 @@ export default {
   methods: {
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KAbout.CLOSE_ACTION'), icon: 'close', handler: () => this.onAboutClosed() }
+        { name: 'close-action', label: this.$t('KAbout.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.onAboutClosed() }
       ]
     },
     onAbout () {

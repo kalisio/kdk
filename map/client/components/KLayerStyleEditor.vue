@@ -32,7 +32,7 @@ export default {
   },
   data () {
     return {
-      toolbar: [{ name: 'close-action', label: this.$i18n.t('CLOSE'), icon: 'close', handler: () => this.close() }],
+      toolbar: [{ name: 'close-action', label: this.$i18n.t('CLOSE'), icon: 'las la-times', handler: () => this.close() }],
       inProgress: false
     }
   },

@@ -53,7 +53,7 @@ export default {
     return {
       toolbar: [{
         name: 'close',
-        icon: 'close',
+        icon: 'las la-times',
         handler: () => {
           this.close()
           if (this.router) this.$router.push(this.router.onDismiss)

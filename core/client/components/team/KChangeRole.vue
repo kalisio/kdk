@@ -56,7 +56,7 @@ export default {
     },
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KChangeRole.CLOSE_ACTION'), icon: 'close', handler: () => this.doClose() }
+        { name: 'close-action', label: this.$t('KChangeRole.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
       ]
     },
     getButtons () {

@@ -45,21 +45,21 @@ export default {
       this.registerTabAction({
         name: 'profile',
         label: this.$t('KAccountActivity.PROFILE'),
-        icon: 'description',
+        icon: 'las la-file-alt',
         route: { name: 'account-activity', params: { perspective: 'profile' } },
         default: this.perspective === 'profile'
       })
       this.registerTabAction({
         name: 'security',
         label: this.$t('KAccountActivity.SECURITY'),
-        icon: 'security',
+        icon: 'las la-shield-alt',
         route: { name: 'account-activity', params: { perspective: 'security' } },
         default: this.perspective === 'security'
       })
       this.registerTabAction({
         name: 'danger-zone',
         label: this.$t('KAccountActivity.DANGER_ZONE'),
-        icon: 'warning',
+        icon: 'las la-exclamation-triangle',
         route: { name: 'account-activity', params: { perspective: 'danger-zone' } },
         default: this.perspective === 'danger-zone'
       })

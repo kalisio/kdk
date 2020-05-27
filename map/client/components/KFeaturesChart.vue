@@ -88,7 +88,7 @@ export default {
     }]
 
     return {
-      toolbar: [{ name: 'close', icon: 'close', handler: () => this.close() }],
+      toolbar: [{ name: 'close', icon: 'las la-times', handler: () => this.close() }],
       property: null,
       chartType: _.find(chartOptions, { value: 'pie' }),
       chartOptions,

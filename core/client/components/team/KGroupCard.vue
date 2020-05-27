@@ -58,7 +58,7 @@ export default {
         this.registerPaneAction({
           name: 'edit-group',
           label: this.$t('KGroupCard.EDIT_LABEL'),
-          icon: 'description',
+          icon: 'las la-file-alt',
           route: { name: 'edit-group', params: { contextId: this.contextId, objectId: this.item._id } }
         })
       }
@@ -66,7 +66,7 @@ export default {
         this.registerMenuAction({
           name: 'remove-group',
           label: this.$t('KGroupCard.REMOVE_LABEL'),
-          icon: 'remove_circle',
+          icon: 'las la-minus-circle',
           handler: this.removeGroup
         })
       }
