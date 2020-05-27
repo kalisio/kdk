@@ -100,10 +100,12 @@ export default {
         message: this.$t('KMemberCard.REMOVE_DIALOG_MESSAGE', { member: member.name }),
         html: true,
         ok: {
-          label: this.$t('OK')
+          label: this.$t('OK'),
+          flat: true
         },
         cancel: {
-          label: this.$t('CANCEL')
+          label: this.$t('CANCEL'),
+          flat: true
         }
       }).onOk(() => {
         const authorisationService = this.$api.getService('authorisations')

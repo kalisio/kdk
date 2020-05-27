@@ -2,8 +2,8 @@
   <k-modal ref="modal" :title="$t('KInviteMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :route="true">
     <div slot="modal-content">
       <q-tabs  align="justify" v-model="mode" inverted>
-        <q-tab name="unique" icon="person"  />
-        <q-tab name="multiple" icon="people"  />
+        <q-tab name="unique" icon="las la-user"  />
+        <q-tab name="multiple" icon="las la-user-friends"  />
       </q-tabs>
       <div>
         <q-tab-panels v-model="mode" animated>
@@ -34,7 +34,8 @@
 
 <script>
 import { Dialog } from 'quasar'
-import { mixins, utils } from '../../mixins'
+import mixins from '../../mixins'
+import { getLocale } from '../../utils'
 import { RoleNames } from '../../../common/permissions'
 import Papa from 'papaparse'
 
@@ -54,7 +55,6 @@ export default {
       mode: 'unique',
       fileError: false,
       fileErrorLabel: '',
-      fileContent: ''
     }
   },
   methods: {
@@ -110,24 +110,22 @@ export default {
         { name: 'invite-button', label: this.$t('KInviteMember.INVITE_BUTTON'), color: 'primary', handler: () => this.doInvite() }
       ]
     },
-    doInvite (event, done) {
+    doInvite () {
       if (this.mode === 'unique') {
         const result = this.$refs.form.validate()
-        if (result.isValid) this.doInviteUnique(result.values, done)
-        else done()
+        if (result.isValid) this.doInviteUnique(result.values)
       } else {
-        if (this.fileContent !== '') {
+        if (this.fileContent) {
           const result = Papa.parse(this.fileContent, { skipEmptyLines: true })
-          this.doInviteMultiple(result.data, done)
+          this.doInviteMultiple(result.data)
         } else {
           this.fileError = true
-          done()
         }
       }
     },
-    async doInviteUnique (data, done) {
+    async doInviteUnique (data) {
       // Add the locale information
-      data.locale = utils.getLocale()
+      data.locale = getLocale()
       // Add the sponsor information
       data.sponsor = {
         id: this.$store.get('user._id'),
@@ -139,18 +137,18 @@ export default {
       // Create the user
       const usersService = this.$api.getService('users')
       await usersService.create(data)
-      done()
       this.doClose()
     },
-    async doInviteMultiple (data, done) {
+    async doInviteMultiple (data) {
       const errors = []
       const guests = []
       const emailExpr = /\S+@\S+\.\S+/
       for (let i = 0; i < data.length; i++) {
         const record = data[i]
+        console.log(record)
         if (record.length === 3 && emailExpr.test(record[1]) && RoleNames.includes(record[2])) {
           const guest = {
-            locale: utils.getLocale(),
+            locale: getLocale(),
             sponsor: {
               id: this.$store.get('user._id'),
               organisationId: this.contextId,
@@ -177,7 +175,7 @@ export default {
             label: this.$t('OK'),
             flat: true
           }
-        }).onOk(() => done())
+        })
       } else if (errors.length > 0) {
         Dialog.create({
           title: this.$t('KInviteMember.CONFIRM_FILE_IMPORT_DIALOG'),
@@ -194,13 +192,11 @@ export default {
         }).onOk(async () => {
           const usersService = this.$api.getService('users')
           for (let i = 0; i < guests.length; ++i) await usersService.create(guests[i])
-          done()
           this.doClose()
-        }).onCancel(() => done())
+        })
       } else {
         const usersService = this.$api.getService('users')
         for (let i = 0; i < guests.length; ++i) await usersService.create(guests[i])
-        done()
         this.doClose()
       }
     },
@@ -210,7 +206,7 @@ export default {
     },
     onInputFileCleared () {
       this.fileError = false
-      this.fileContent = ''
+      this.fileContent = undefined
     },
     onInputFileRejected (file) {
       this.fileError = true
@@ -230,6 +226,8 @@ export default {
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-form'] = this.$load('form/KForm')
     this.$options.components['k-file-input'] = this.$load('input/KFileInput')
+    // Init the file contet
+    this.fileContent
   }
 }
 </script>

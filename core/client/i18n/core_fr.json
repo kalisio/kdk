@@ -354,7 +354,7 @@
     "TAG_LABEL": "Etiqueter",    
     "EXPIRE_AT_LABEL": "L'invitation expire au",
     "CHANGE_ROLE_LABEL": "Changer de rôle",
-    "REMOVE": "$t(REMOVE)",
+    "REMOVE_LABEL": "$t(REMOVE)",
     "REMOVE_DIALOG_TITLE": "Supprimer {{member}} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer <b>{{member}}</b> de votre organisation ?",
     "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {{group}} '?",

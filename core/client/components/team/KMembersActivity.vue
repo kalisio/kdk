@@ -87,13 +87,13 @@ export default {
         this.registerFabAction({
           name: 'add-member',
           label: this.$t('KMembersActivity.ADD_USER_LABEL'),
-          icon: 'person_add',
+          icon: 'las la-user-plus',
           route: { name: 'add-member', params: {} }
         })
         this.registerFabAction({
           name: 'invite-member',
           label: this.$t('KMembersActivity.INVITE_GUEST_LABEL'),
-          icon: 'email',
+          icon: 'las la-envelope',
           route: { name: 'invite-member', params: {} }
         })
       }
