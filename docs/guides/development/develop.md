@@ -1,20 +1,20 @@
 # Develop with KDK
 
+The default Kalisio application template [kApp](https://github.com/kalisio/kApp) provides the basic structure and tools to build and run a KDK-based application. We detail the main commands in the following sections.
+
 ## Web app
 
-The default Kalisio web application template is based on the [Quasar wrapper for Feathers](https://github.com/quasarframework/quasar-wrapper-feathersjs-api).
-
 ### Running for development
-Run the frontend Quasar app (from root project folder): `$ yarn/npm dev`
+Run the frontend app (from root project folder): `$ yarn dev`
 
-Then from the backend `api` folder run the server-side Feathers app: `$ yarn/npm run dev`
+Then from the backend `api` folder run the server-side app: `$ yarn dev`
 
 Then point your browser to [localhost:8080](http://localhost:8080).
 
 ### Building for production
-Build the frontend Quasar app (from root project folder): `$ yarn/npm build`.
+Build the frontend app (from root project folder): `$ yarn build`.
 
-Then from the backend `api` folder build the server-side Feathers app: `$ yarn/npm run build`
+Then from the backend `api` folder build the server-side app: `$ yarn build`
 
 ### Running in production
 
@@ -34,19 +34,19 @@ To lint the code:
 $yarn lint
 ```
 
-You can also lint each of the modules independently using the following commands:
+You can also lint each of the submodules independently using the following commands:
 
 ```bash
-$yarn lint:core   # lint the core module
-$yarn lint:map    # lint the map module
+$yarn lint:core   # lint the core part
+$yarn lint:map    # lint the map part
 ```
 :::
 
 ### Running the tests
 
 The **KDK** relies on two different frameworks to perform the tests:
-* API tests are based on [Mocha]((https://mochajs.org/)
-* Client tests are based on [TestCafé]((https://github.com/DevExpress/testcafe)
+* API tests are based on [Mocha](https://mochajs.org/)
+* Client tests are based on [TestCafé](https://github.com/DevExpress/testcafe)
 
 #### API 
 
@@ -56,7 +56,13 @@ From the root or backend `api` folder run the server-side tests:
 $yarn mocha
 ```
 
-You can run the tests of each module independently using the following commands:
+For coverage use: 
+
+```bash
+$yarn coverage
+```
+
+You can run the tests of each part independently using the following commands:
 
 ```bash
 $yarn mocha:core   # test the core module
@@ -72,14 +78,14 @@ $yarn mocha:core -g "team" # run the team tests
 :::
 
 ```bash
-$yarn test:server`
+$yarn test:server
 ```
 
 This will lint and fix issues in the code according to [JS standard](https://github.com/feross/standard), then execute tests using [Mocha](https://mochajs.org/) and compute code coverage using [Istanbul](https://istanbul.js.org/).
 
 #### Client 
 
-From the root folder run the client-side tests : `yarn/npm run test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). If you already have a built app and a running server you could simply do this to launch TestCafé only: `$ yarn/npm run cafe`
+From the root folder run the client-side tests : `yarn test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). If you already have a built app and a running server you could simply do this to launch TestCafé only: `$ yarn cafe:chrome` or `$ yarn cafe:firefox`
 
 In development mode, you can tell TestCafé to run a specific fixture:
 
@@ -145,9 +151,9 @@ When running the app through Cordova the `domain` entry of the client-side confi
 Build the app in release mode (from project folder): 
 ```
 // Android
-$ yarn/npm run cordova:build:android
+$ yarn cordova:build:android
 // iOS
-$ yarn/npm run cordova:build:ios
+$ yarn cordova:build:ios
 ```
 
 ### Debug
@@ -180,15 +186,15 @@ The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/b
 
 Kalisio modules/plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins so that the module is re-compiled on each file change:
 ```bash
-cd kTeam
-yarn/npm install
-yarn/npm run watch
+cd kdk
+yarn install
+yarn watch
 ```
 
 ### Running tests
 
-To run the module tests including linting and coverage : `$ npm run test`
+To run the module tests including linting and coverage : `$ yarn test`
 
-To speed-up things simply run the tests with: `$ npm run mocha`
+To speed-up things simply run the tests with: `$ yarn mocha`
 
-To speed-up things even more run a single test suite with: `$ npm run mocha -- --grep "test suite name"`
+To speed-up things even more run a single test suite with: `$ yarn mocha -- --grep "test suite name"`

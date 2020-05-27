@@ -31,7 +31,7 @@ It appeared that when performing a new install, adding a new dependency, or laun
 
 As a workaround you will either need to:
 * clear the yarn cache `yarn cache clean` (or `yarn cache clean module` to be more specific)
-* restore the broken links using commands like e.g. `yarn link @kalisio/kdk` in the broken modules/applications
+* restore the broken links using commands like e.g. `yarn link @kalisio/kdk` in the broken applications
 * reinstall all dependencies using `yarn install` in broken modules/applications, and then restore the links as above
 
 ::: tip
@@ -39,7 +39,7 @@ You might also clean all dependencies frist using [`rimraf node_modules`](http:/
 :::
 
 ::: tip
-Errors are often visible when launching the app server but might come from an underlying module. For instance the `TypeError: Cannot read property 'eventMappings' of undefined` error often appears in kCore, probably due to the fact incompatible versions of the same library (e.g. Feathers) are installed. So try first to reinstall and relink the modules before your app, and if you'd like to see if a module is fine running its tests is usually a good indcator: `npm run mocha`.
+Errors are often visible when launching the app server but might come from an underlying module. For instance the `TypeError: Cannot read property 'eventMappings' of undefined` error often appears in modules, probably due to the fact incompatible versions of the same library (e.g. Feathers) are installed. So try first to reinstall and relink the modules before your app, and if you'd like to see if a module is fine running its tests is usually a good indicator: `npm run mocha`.
 :::
 
 ## Running multiple applications side-by-side in development mode

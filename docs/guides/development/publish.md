@@ -8,14 +8,14 @@ In order to be able to generate the changelog for your published app/modules you
 
 ## Plugins/Modules
 
-The same process applies when releasing a patch, minor or major version, i.e. the following tasks are done:
+The same process applies when releasing a patch, minor or major version, i.e. the following tasks are done automatically on release:
 * increase the package version number in the **package.json** file (frontend and backend API)
 * publish the module on the NPM registry
 * create a tag accordingly in the git repository and push it
 * generates the changelog in the git repository and push it
 
 ::: tip
-Modules are published under the `@kalisio` namespace with a `kdk` prefix in NPM, e.g. `kCore` NPM package is named `@kalisio/kdk/core`
+Modules are published under the `@kalisio` namespace in NPM, e.g. `kdk` NPM package is named `@kalisio/kdk`
 :::
 
 ::: warning
@@ -24,7 +24,7 @@ This requires you to have a NPM and GitHub account and be a team member of the K
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
-yarn/npm run release:type
+yarn release:type
 ```
 
 ::: warning
@@ -41,22 +41,22 @@ Before you publish a plugin take care of updating the version of your dependent 
 
 ## Web app
 
-Almost the same process applies as for the plugins/modules except the app is not published on the NPM registry, i.e. the following tasks are to be done:
-* increase the package version number in the **package.json** file (frontend and backend API)
-* create a tag accordingly in the git repository and push it
-* generates the changelog in the git repository and push it
+Almost the same process applies as for the plugins/modules except the app is not published on the NPM registry. Moreover the process is less automated to ensure more flexibility, i.e. the tasks are performed independently using the required commands at the different stages of the application lifecycle.
 
-::: warning
-Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example  perform `yarn upgrade kCore kTeam`
-:::
+Typically, when starting a new version
+* increase the package version number in the **package.json** file (frontend and backend API) so that the generated artefacts will not erase previously published ones
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
-yarn/npm run release:type
+yarn release:type
 ```
 
+Then typically when releasing a new version:
+* create a tag accordingly in the git repository and push it, this will trigger the CI process to build the target artefacts
+* generates the changelog in the git repository and push it
+
 ::: warning
-Depending on the app the push of tags or changlog is more or less automated in order to have more control so that youd could have more scripts to run in order to complete the publication
+Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example perform `yarn upgrade kdk`
 :::
 
 Because Kalisio web app are also released as Docker images you can build it like this:
@@ -68,7 +68,7 @@ Then release it as latest version:
 docker login
 docker push kalisio/kapp
 ```
-And tag it (`version_tag` being the current version number like `1.1.2`)
+And tag it (`version_tag` being the current version number like `1.1.2` or `1.1.0-dev` depending on the flavor)
 ```bash
 docker tag kalisio/kapp kalisio/kapp:version_tag
 docker push kalisio/kapp:version_tag

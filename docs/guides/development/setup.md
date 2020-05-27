@@ -12,7 +12,7 @@ It has the largest ecosystem of open source libraries in the world.
 - [Specific versions.](https://nodejs.org/en/download/)
 
 ::: warning
-Kalisio modules are expected to work with Node.js 8.x
+At the time of writing the KDK modules are expected to work with Node.js 12.x
 :::
 
 ::: tip
@@ -50,10 +50,6 @@ Due to some [changes](http://codetunnel.io/npm-5-changes-to-npm-link/) in the wa
 
 [Install Yarn](https://yarnpkg.com/en/docs/install) on your platform.
 
-#### Install Quasar CLI
-
-Install the Quasar CLI : `$ npm install -g quasar-cli`
-
 #### Install Cordova ecosystem
 
 Follow this [tutorial](https://evothings.com/doc/build/cordova-install-windows.html).
@@ -70,18 +66,9 @@ First clone all the modules/plugins you need and use [yarn/npm link](https://doc
 
 ```bash
 // Clone and link the plugins
-git clone https://github.com/kalisio/kCore.git
-cd kCore
+git clone https://github.com/kalisio/kdk.git
+cd kdk
 yarn link
-
-git clone https://github.com/kalisio/kTeam.git
-cd kTeam
-yarn link
-
-git clone https://github.com/kalisio/kClient.git
-cd kClient
-yarn link
-
 ...
 ```
 
@@ -99,7 +86,7 @@ yarn link @kalisio/kdk
 ```
 
 ::: warning
-Take care that a top-level plugin might depend on another plugin so you will have to link them together, for instance the kTeam plugin depends on the kCore plugin.
+Take care that a top-level module/plugin might depend on another module/plugin so you will have to link them together, for instance the kdk plugin depends on the weacast-core plugin.
 :::
 
 ### Cordova wrapper

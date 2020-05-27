@@ -2,19 +2,19 @@
 
 ## KDK CLI
 
-The KDK CLI is a multiplexer for usual git/npm/yarn commands used when developing KDK-based applications. It allows to easily clone, install, link, unlink, switch branch on all modules and application using a single command.
+The KDK CLI (a.k.a. `kli`) is a multiplexer for usual git/npm/yarn commands used when developing KDK-based applications. It allows to easily clone, install, link, unlink, switch branch on all modules and application using a single command.
 
 ### Installation
 
 Production version:
 ```bash
-npm install -g @kalisio/kdk
+npm install -g @kalisio/kli
 ```
 
-Or to use the master branch:
+Or to use the master branch locally:
 ```bash
-git clone https://github.com/kalisio/kdk.git
-cd kdk
+git clone https://github.com/kalisio/kli.git
+cd kli
 npm install
 npm link
 ```
@@ -25,7 +25,7 @@ The CLI relies on a workspace file defining the dependency tree between your KDK
 ```
 module.exports = {
   // Each key is the repo name of a module or application
-  kCore: {
+  kdk: {
     dependencies: [], // List of dependent KDK modules if any
     branches: ['master', 'test'] // List of branches the module is available on
     // If the current target branch of the CLI is not included it will be skipped
@@ -38,6 +38,11 @@ module.exports = {
 }
 
 ```
+
+::: tip
+The `branch` option can also target a git tag, typically fo production releases.
+:::
+
 All operations will take effect in the current working directory so that subdirectories named according to modules will be created or expected to already exist.
 
 ```
@@ -65,7 +70,7 @@ By default all Git operations target the `kalisio` organization, you can change 
 All operations are performed relative to the CWD by default, you can change this for specific modules only using the `path` option in the workspace file providing a module path relative to the CWD. Like this you can for instance have modules coming from a separate organization isolated into their own directory.
 :::
 
-Sample [workspaces](https://github.com/kalisio/kdk/tree/master/workspaces) for our [application template](https://github.com/kalisio/kApp), [Kano](https://github.com/kalisio/kano) and [Akt'n'Map](https://github.com/kalisio/aktnmap) are provided.
+Sample workspaces for our [application template](https://github.com/kalisio/kApp) and [Kano](https://github.com/kalisio/kano) are provided in the [kli repository](https://github.com/kalisio/kli).
 
 Full CLI usage is the following:
 ```
@@ -75,7 +80,7 @@ Options:
   -V, --version                      output the version number
   -o, --organization [organization]  GitHub organization owing the project (default: "kalisio")
   -d, --debug                        Verbose output for debugging
-  -c, --clone <branch>               Clone git repositories (default: "master")
+  -c, --clone [branch]               Clone git repositories (with optional target branch)
   -p, --pull                         Pull git repositories
   -i, --install                      Perform yarn install
   -l, --link                         Perform yarn link
@@ -91,9 +96,11 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
 
 Then you can open the WebUI at [http://localhost:9393](http://localhost:9393) and see what's going on.
 
-## [Nohup](https://en.wikipedia.org/wiki/Nohup) or [Screen](https://doc.ubuntu-fr.org/screen)
+## [Nohup](https://en.wikipedia.org/wiki/Nohup)
 
 We use it to launch processes in the background on servers, which won't be killed when closing the ssh session.
+
+[Screen](https://doc.ubuntu-fr.org/screen) can also do the job
 
 ## [Tail](https://www.linode.com/docs/tools-reference/tools/view-and-follow-the-end-of-text-files-with-tail)
 

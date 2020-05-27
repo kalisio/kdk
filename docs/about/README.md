@@ -1,6 +1,6 @@
 # About
 
-The **Kalisio Development Kit** (**KDK**) aims to simplify the development of geospatial web applications running on desktop or mobile devices. It is a strongly opiniated stack initially developed to build applications provided as SaaS (i.e. Cloud) solutions like [Akt'n'Map](https://aktnmap.com). However, you can also build legacy applications because of the modularity and the flexibility of the KDK.
+The **Kalisio Development Kit** (**KDK**) aims to simplify the development of geospatial web applications running on desktop or mobile devices. It is a strongly opiniated stack initially developed to build multitenancy applications provided as SaaS (i.e. Cloud) like [Akt'n'Map](https://aktnmap.com). However, you can also build legacy applications because of the modularity and the flexibility of the KDK.
 
 ![Kano application built with the KDK](../assets/kano-weather.png)
 
