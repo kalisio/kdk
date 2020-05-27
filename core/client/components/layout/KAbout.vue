@@ -59,7 +59,7 @@
           <br/>
           <div v-show="showSystemDetails">
             <template v-for="(value, key) in systemDetails">
-              <div class="row justify-center">
+              <div :key="key" class="row justify-center">
                 <cite><strong>{{ key }}</strong>: {{ value }}</cite>
               </div>
             </template>
@@ -97,7 +97,6 @@ export default {
       ]
     },
     onAbout () {
-      this.$store.patch('leftDrawer', { visible: false })
       this.$refs.about.open()
     },
     onAboutClosed () {
