@@ -11,7 +11,6 @@ import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
 
 export default function (name) {
   return {
-    inject: ['klayout'],
     data () {
       return {
         forecastModelHandlers: {},
@@ -88,7 +87,7 @@ export default function (name) {
             name: 'sidenav-toggle',
             label: this.$t('mixins.activity.TOGGLE_SIDENAV'),
             icon: 'menu',
-            handler: () => { this.klayout.toggleLeftDrawer() }
+            handler: () => { this.$store.patch('leftDrawer', { visible: !this.$store.get('leftDrawer.visible') }) }
           })
           beforeActions.push({ name: 'separator' })
         }
@@ -130,7 +129,7 @@ export default function (name) {
             name: 'catalog-toggle',
             label: this.$t('mixins.activity.TOGGLE_CATALOG'),
             icon: 'layers',
-            handler: () => { this.klayout.toggleRightDrawer() }
+            handler: () => { this.$store.patch('rightDrawer', { visible: !this.$store.get('rightDrawer.visible') }) }
           })
         }
         this.setNavigationBar(hasLocationTool, hasLocationTool, beforeActions, afterActions)

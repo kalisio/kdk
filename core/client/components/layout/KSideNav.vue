@@ -27,7 +27,6 @@ export default {
       sideNav: this
     }
   },
-  inject: ['klayout'],
   data () {
     return {
       banner: '',
@@ -36,8 +35,6 @@ export default {
   },
   methods: {
     navigate (route) {
-      // TODO fix this - Quasar v1 does not support "hideCurrentSide"
-      this.klayout.hideLeftDrawer()
       this.$router.push(route)
     }
   },

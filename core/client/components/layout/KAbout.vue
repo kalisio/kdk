@@ -82,7 +82,6 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-about',
-  inject: ['klayout'],
   mixins: [mixins.version],
   data () {
     return {
@@ -98,11 +97,12 @@ export default {
       ]
     },
     onAbout () {
+      this.$store.patch('leftDrawer', { visible: false })
       this.$refs.about.open()
     },
     onAboutClosed () {
       this.$refs.about.close()
-      this.klayout.hideLeftDrawer()
+      this.$store.patch('leftDrawer', { visible: false })
     }
   },
   created () {

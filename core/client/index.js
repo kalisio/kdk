@@ -35,9 +35,9 @@ export default function init () {
   Store.set('appBar', { leading: null, title: '', subtitle: '', toolbar: [], menu: [] })
   Store.set('searchBar', { field: '', pattern: '', services: [], items: [] })
   Store.set('tabBar', { tabs: [] })
-  Store.set('leftDrawer', { component: '', props: {} })
-  Store.set('rightDrawer', { component: '', props: {} })
-  Store.set('footer', { component: '', props: {} })
+  Store.set('leftDrawer', { component: '', props: {}, visible: false })
+  Store.set('rightDrawer', { component: '', props: {}, visible: false })
+  Store.set('footer', { component: '', props: {}, visible: false })
   Store.set('window', { curent: '', widgets: [] })
   Store.set('fab', { actions: [] })
 

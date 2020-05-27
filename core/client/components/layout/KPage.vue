@@ -16,7 +16,7 @@
     <q-page-sticky v-if="hasRightDrawerOpener && hasRightDrawerComponent" position="right">
       <k-opener  v-model="isRightDrawerOpened" position="right" />
     </q-page-sticky>
-    <q-page-sticky v-if="hasFooterOpened && hasFooterComponent" position="bottom">
+    <q-page-sticky v-if="hasFooterOpener && hasFooterComponent" position="bottom">
       <k-opener  v-model="isFooterOpened" position="bottom" />
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
@@ -28,55 +28,57 @@
 <script>
 export default {
   name: 'k-page',
-  inject: ['klayout'],
   props: {
     padding: {
       type: Boolean,
       default: true
     }
   },
+  computed: {
+    isLeftDrawerOpened: {
+      get: function () {
+        return this.leftDrawer.visible
+      },
+      set: function (value) {
+        this.$store.patch('leftDrawer', { visible: value })
+      }
+    },
+    hasLeftDrawerComponent () {
+      return !!this.leftDrawer.component
+    },
+    isRightDrawerOpened: {
+      get: function () {
+        return this.rightDrawer.visible
+      },
+      set: function (value) {
+        this.$store.patch('rightDrawer', { visible: value })
+      }
+    },
+    hasRightDrawerComponent () {
+      return !!this.rightDrawer.component
+    },
+    isFooterOpened: {
+      get: function () {
+        return this.footer.visible
+      },
+      set: function (value) {
+        this.$store.patch('footer', { visible: value })
+      }
+    },
+    hasFooterComponent () {
+      return !!this.footer.component
+    }
+  },
   data () {
     return {
       widgetOffset: [0, 0],
       fabOffset: [16, 16],
+      leftDrawer: this.$store.get('leftDrawer'),
+      rightDrawer: this.$store.get('rightDrawer'),
+      footer: this.$store.get('footer'),
       hasLeftDrawerOpener: false,
-      hasLeftDrawerComponent: !!this.klayout.leftDrawer.component,
-      isLeftDrawerOpened: this.klayout.isLeftDrawerVisible,
       hasRightDrawerOpener: false,
-      hasRightDrawerComponent: !!this.klayout.rightDrawer.component,
-      isRightDrawerOpened: this.klayout.isRightDrawerVisible,
-      hasFooterOpened: false,
-      hasFooterComponent: !!this.klayout.footer.component,
-      isFooterOpened: this.klayout.isFooterVisible
-    }
-  },
-  watch: {
-    'klayout.isLeftDrawerVisible': function (isVisible) {
-      this.isLeftDrawerOpened = isVisible
-    },
-    'klayout.leftDrawer.component': function (component) {
-      this.hasLeftDrawerComponent = !!component
-    },
-    isLeftDrawerOpened: function (isOpened) {
-      this.klayout.isLeftDrawerVisible = isOpened
-    },
-    'klayout.isRightDrawerVisible': function (isVisible) {
-      this.isRightDrawerOpened = isVisible
-    },
-    'klayout.rightDrawer.component': function (component) {
-      this.hasRightDrawerComponent = !!component
-    },
-    isRightDrawerOpened: function (isOpened) {
-      this.klayout.isRightDrawerVisible = isOpened
-    },
-    'klayout.isFooterVisible': function (isVisible) {
-      this.isRightDrawerOpened = isVisible
-    },
-    'klayout.footer.component': function (component) {
-      this.hashasFooterComponent = !!component
-    },
-    isFooterOpened: function (isOpened) {
-      this.klayout.isFooterVisible = isOpened
+      hasFooterOpener: false
     }
   },
   created () {
@@ -87,7 +89,7 @@ export default {
     // Read drawers configuration to check whether openers have to be displayed or not
     this.hasLeftDrawerOpener = this.$config('layout.leftDrawer.opener', false)
     this.hasRightDrawerOpener = this.$config('layout.rightDrawer.opener', false)
-    this.hasFooterOpened = this.$config('layout.footer.opener', false)
+    this.hasFooterOpener = this.$config('layout.footer.opener', false)
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div v-if="isAuthenticated">
-    <k-layout />
+    <k-layout  />
   </div>
 </template>
 
@@ -21,7 +21,7 @@ export default {
   },
   created () {
     // load the layout component
-    this.$options.components['k-layout'] = this.$load(this.$config('home.layout', 'layout/KLayout'))
+    this.$options.components['k-layout'] = this.$load('layout/KLayout')
     // Initialize the user if any
     this.refresh()
     this.$events.$on('user-changed', this.refresh)
