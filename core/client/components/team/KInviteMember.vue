@@ -227,7 +227,7 @@ export default {
     this.$options.components['k-form'] = this.$load('form/KForm')
     this.$options.components['k-file-input'] = this.$load('input/KFileInput')
     // Init the file contet
-    this.fileContent
+    this.fileContent = undefined
   }
 }
 </script>
