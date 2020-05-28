@@ -102,30 +102,53 @@ export default {
       const allp = []
       for (let i = 0; i < properties.length; ++i) {
         const url = _.template(sources[i].dynprops.url.strTemplate)({ runTime })
-        const p = dap.initContext(url).then(async (ctx) => {
-          const values = {
-            time: [startOffset, endOffset]
+        const knowledge = {}
+        knowledge[sources[i].opendap.latitude] = { fixedStep: true }
+        knowledge[sources[i].opendap.longitude] = { fixedStep: true, remap: value => value > 180 ? value - 360 : value }
+        knowledge.time = { cache: true }
+
+        const p = dap.initContext(url, knowledge).then(async (ctx) => {
+          const gridQuery = Object.assign({}, sources[i].opendap.dimensionsAsIndices)
+          const lookupDims = _.keys(sources[i].opendap.dimensionsAsValues)
+          await dap.ensureCached(ctx, url, lookupDims)
+
+          // lookup query indices
+          for (const dimension of lookupDims) {
+            gridQuery[dimension] = ctx[dimension].lookupIndex(sources[i].opendap.dimensionsAsValues[dimension])
           }
-          Object.assign(values, sources[i].opendap.dimensionsAsValues)
 
-          const indexes = await dap.lookupIndexForValues(ctx, values)
-          const dimensions = _.mapValues(indexes, (v) => {
-            if (v.length === 1) return `${v[0]}`
-            return `${v[0]}:1:${v[1]}`
-          })
+          gridQuery[sources[i].opendap.latitude] = Math.floor(ctx[sources[i].opendap.latitude].lookupIndex(lat))
+          gridQuery[sources[i].opendap.longitude] = Math.floor(ctx[sources[i].opendap.longitude].lookupIndex(long))
 
-          const data = await dap.query(ctx, sources[i].opendap.variable, dimensions)
-          console.log(data)
+          // lookup time range
+          gridQuery.time = {
+            start: ctx.time.values.findIndex(v => v >= startOffset),
+            stop: ctx.time.values.findIndex(v => v >= endOffset)
+          }
+          gridQuery.time.start = gridQuery.time.start > 0 ? gridQuery.time.start - 1 : 0
+          gridQuery.time.stop = (gridQuery.time.stop >= 0 && gridQuery.time.stop < ctx.time.length - 1) ? gridQuery.time.stop + 1 : ctx.time.length - 1
+
+          const query = dap.makeGridQuery(ctx, sources[i].opendap.variable, gridQuery)
+          const grid = await dap.fetchGrid(url, query)
+
+          const timeDim = dap.getDimensionIndex(ctx, grid.variable, 'time')
+          const timeData = dap.getGridDimensionData(ctx, grid, timeDim)
+          for (let k = 0; k < timeData.length; ++k) {
+            result.runTime[properties[i]].push(runTime)
+
+            const forecast = moment(startForecastTime).add(moment.duration(timeData[k], 'h'))
+            result.forecastTime[properties[i]].push(forecast)
+
+            grid.indices[timeDim] = k
+            const value = dap.getGridValue(grid.data[0], grid.indices)
+            result.properties[properties[i]].push(value)
+          }
         })
         allp.push(p)
-        /*
-        const q = dap.makeQuery(url, query)
-        console.log(q)
-        */
       }
 
       await Promise.all(allp)
-      
+
       this.unsetCursor('processing-cursor')
 
       return result

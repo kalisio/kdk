@@ -61,8 +61,8 @@ export async function fetchData (query, abort = null) {
       dds = new parser.ddsParser(ddsTxt).parse()
       dap = new xdr.dapUnpacker(data.slice(byteIndex + 7), dds).getValue()
     } catch (err) {
-      // on second attempt, rethrow error ...
-      if (attempt >= 2) throw err
+      // on third attempt, rethrow error ...
+      if (attempt >= 3) throw err
     }
   }
 
@@ -116,39 +116,6 @@ export function makeGridIndices (descriptor, variable, dimensions) {
 
   return indices
 }
-
-/*
-export function makeGridDescriptor (descriptor, variable) {
-  const varDesc = descriptor[variable]
-  if (varDesc === undefined) return null
-  const gridDesc = {}
-  for (let i = 0; i < varDesc.array.dimensions.length; ++i) {
-    gridDesc[varDesc.array.dimensions[i]] = { index: i }
-  }
-  return gridDesc
-}
-*/
-
-/*
-export async function lookupIndexForValues (url, values) {
-  // build a request to query the values for each dimension for which we have a value
-  // const requested = _.keys(this.config.dimensionsAsValues)
-  const variables = _.keys(values)
-  const query = makeQuery(url, variables)
-  const data = await fetchData(query)
-  // lookup corresponding indices
-  const lookup = {}
-  for (let i = 0; i < variables.length; ++i) {
-    const varValues = data[variables[i]]
-    const varValue = values[variables[i]]
-    let valueIndex = -1
-    for (let j = 0; j < varValues.length && valueIndex === -1; ++j) {
-      if (varValues[j] === varValue) { valueIndex = j }
-    }
-    lookup[variables[i]] = valueIndex
-  }
-}
-*/
 
 export function makeQuery (base, config) {
   // config is expected to be an object with variables to query as keys
@@ -274,65 +241,127 @@ export class OpenDAPGrid extends BaseGrid {
   }
 }
 
-export async function initContext (url) {
-  const ctx = { url }
-  ctx.descriptor = await fetchDescriptor(url)
-  ctx.cache = {}
+export async function initContext (url, conf) {
+  const descriptor = await fetchDescriptor(url)
+
+  // init cache from descriptor
+  const ctx = {}
+  for (const variable of _.keys(descriptor)) {
+    const varDesc = descriptor[variable]
+    if (varDesc.type === 'Grid') {
+      // variable is a grid
+      const entry = {
+        isGrid: true,
+        dimensions: [...varDesc.array.dimensions]
+      }
+      ctx[variable] = entry
+    } else if (varDesc.shape && varDesc.shape.length === 1) {
+      // variable is an array
+      const entry = {
+        isArray: true,
+        length: varDesc.shape[0]
+      }
+      ctx[variable] = entry
+    }
+  }
+
+  // fill with additional knowledge
+  const query = {}
+  for (const variable of _.keys(conf)) {
+    const facts = conf[variable]
+    if (facts.fixedStep) {
+      // query first and last values to compute step
+      const lastIndex = ctx[variable].length - 1
+      query[variable] = `0:${lastIndex}:${lastIndex}`
+    }
+    if (facts.cache) {
+      // query the whole array
+      const lastIndex = ctx[variable].length - 1
+      query[variable] = `0:${lastIndex}`
+    }
+  }
+  if (!_.isEmpty(query)) {
+    const q = makeQuery(url, query)
+    const r = await fetchData(q)
+    for (const variable of _.keys(conf)) {
+      const facts = conf[variable]
+      if (facts.fixedStep) {
+        const varValues = r[variable]
+        const remap = facts.remap || (value => value)
+        const entry = ctx[variable]
+        entry.value0 = remap(varValues[0])
+        entry.value1 = remap(varValues[1])
+        entry.valueStep = (entry.value1 - entry.value0) / (entry.length - 1)
+        entry.lookupIndex = (value) => { return (value - entry.value0) / entry.valueStep }
+      }
+      if (facts.cache) {
+        const entry = ctx[variable]
+        entry.values = r[variable]
+        entry.lookupIndex = (value) => { return entry.values.indexOf(value) }
+      }
+    }
+  }
+
   return ctx
 }
 
-export function makeGridDescriptor (ctx, grid) {
-  const varDesc = ctx.descriptor[grid]
-  if (varDesc === undefined) return null
-  const gridDesc = {}
-  for (let i = 0; i < varDesc.array.dimensions.length; ++i) {
-    gridDesc[varDesc.array.dimensions[i]] = { index: i }
-  }
-  return gridDesc
-}
+export async function ensureCached (ctx, url, variables) {
+  const query = {}
+  for (const variable of variables) {
+    const entry = ctx[variable]
+    if (entry.values) continue
 
-export async function lookupIndexForValues (ctx, values) {
-  // build a request to query the values for each dimension for which we have a value
-  const variables = _.keys(values)
-  // check if we have some in the cache already
-  /*
-  const fromCache = {}
-  for (let i = 0; i < variables.length; ++i) {
-    const values = ctx.cache[variables[i]]
-    if (values) fromCache[variables[i]] = values
+    const lastIndex = ctx[variable].length - 1
+    query[variable] = `0:${lastIndex}`
   }
-  */
-  const query = makeQuery(ctx.url, variables)
-  const data = await fetchData(query)
-  // lookup corresponding indices
-  const lookups = {}
-  for (let i = 0; i < variables.length; ++i) {
-    const varValues = data[variables[i]]
-    const varValue = values[variables[i]]
-    const lookup = []
-    if (Array.isArray(varValue)) {
-      for (let j = 0; j < varValue.length; ++j) {
-        lookup.push(varValues.indexOf(varValue[j]))
-      }
-    } else {
-      lookup.push(varValues.indexOf(varValue))
+  if (!_.isEmpty(query)) {
+    const q = makeQuery(url, query)
+    const r = await fetchData(q)
+    for (const variable of variables) {
+      const entry = ctx[variable]
+      entry.values = r[variable]
+      entry.lookupIndex = (value) => { return entry.values.indexOf(value) }
     }
-    lookups[variables[i]] = lookup
   }
-  return lookups
 }
 
-export async function query (ctx, grid, dimensions) {
-  const varDesc = ctx.descriptor[grid]
-  const indices = []
-  for (let i = 0; i < varDesc.array.dimensions.length; ++i) {
-    const value = dimensions[varDesc.array.dimensions[i]]
-    if (value === undefined) return null
-    indices.push(value)
+export function getDimensionIndex (ctx, variable, dimension) {
+  const entry = ctx[variable]
+  if (entry === undefined) return -1
+  if (!entry.isGrid) return -1
+  return entry.dimensions.indexOf(dimension)
+}
+
+export function makeGridQuery (ctx, variable, dimensions) {
+  const entry = ctx[variable]
+  if (entry === undefined) return null
+
+  const indices = new Array(entry.dimensions.length)
+  for (let i = 0; i < indices.length; ++i) {
+    const range = dimensions[entry.dimensions[i]]
+    if (range === undefined) return null
+    if (range.stride && range.stop) indices[i] = `[${range.start}:${range.stride}:${range.stop}]`
+    else if (range.stop) indices[i] = `[${range.start}:${range.stop}]`
+    else indices[i] = `[${range}]`
   }
-  const conf = {}
-  conf[grid] = indices.join('][')
-  const query = makeQuery(ctx.url, conf)
-  const data = await fetchData(query)
-  return data
+
+  return { variable, selection: indices }
+}
+
+export async function fetchGrid (url, query) {
+  const q = encodeURI(`${url}.dods?${query.variable}${query.selection.join('')}`)
+  const r = await fetchData(q)
+  const g = { variable: query.variable, data: r[query.variable], indices: new Array(query.selection.length) }
+  g.indices.fill(0)
+  return g
+}
+
+export function getGridData (ctx, grid, dimensions) {
+  const dims = dimensions || new Array(ctx[grid.variable].dimensions.length)
+  if (!dimensions) dims.fill(0)
+  return getGridValue(grid.data[0], dims)
+}
+
+export function getGridDimensionData (ctx, grid, dimensionIndex) {
+  return grid.data[dimensionIndex + 1] // index@0 is variable data
 }
