@@ -7,4 +7,6 @@
 core/
 map/
 test/
+docs/
 !lib/
+
