@@ -35,6 +35,7 @@ export default {
   },
   methods: {
     navigate (route) {
+      this.$store.patch('leftDrawer', { visible: false })
       this.$router.push(route)
     }
   },
