@@ -53,7 +53,10 @@ export async function DescribeCoverage (url, coverage) {
 export async function GetCoverage (abort, url, coverage, format, bbox, width, height) {
   const query = makeGetCoverageQuery(url, coverage, format, bbox, width, height)
   return fetch(query, { method: 'get', signal: abort })
-    .then(response => response.blob())
+  // using a Blob is problematic with node.js since there's no support for it
+  // instead use an ArrayBuffer
+  // .then(response => response.blob())
+    .then(response => response.arrayBuffer())
 }
 
 export function GetCoverageSpatialBounds (coverage) {

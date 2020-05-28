@@ -46,7 +46,7 @@ export default {
       if (!this.selectableLevelsLayer) return
 
       // send selected value only to associated layer
-      const layer = this.tiledMeshLayers[this.selectableLevelsLayer._id]
+      const layer = this.tiledMeshLayers.get(this.selectableLevelsLayer._id)
       if (!layer) return
 
       layer.setCutValue(value)
