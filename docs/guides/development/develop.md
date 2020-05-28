@@ -20,7 +20,7 @@ Then from the backend `api` folder build the server-side app: `$ yarn build`
 
 > Make sure you built your app first
 
-From the backend `api` folder run the server-side Feathers app, this will also serve the frontend Quasar app : `$ yarn/npm run prod`
+From the backend `api` folder run the server-side Feathers app, this will also serve the frontend Quasar app : `$ yarn prod`
 
 Then point your browser to [localhost:8081](http://localhost:8081).
 
@@ -111,15 +111,15 @@ $yarn cafe:firefox -f "a-fixture" --speed 0.8
 
 Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8). Usually you simply have to open `chrome://inspect` in the Chrome URL.
 
-If you want to launch a specific test use: `npm run mocha -- --grep "My test"`.
+If you want to launch a specific test use: `yarn mocha -- --grep "My test"`.
 
-If you want to pause the debugger when running the tests this should do it: `npm run mocha -- --inspect-brk`.
+If you want to pause the debugger when running the tests this should do it: `yarn mocha -- --inspect-brk`.
 
 If you want to debug replicas you can use the following environment variables to launch two instances of your apps:
 * **PORT / HTTPS_PORT**: API server port for HTTP and HTTPS modes
 * **CLIENT_PORT / HTTPS_CLIENT_PORT**: frontend server port for HTTP and HTTPS modes
 
-For the backend run one instance with `$ yarn/npm run dev` and the other one with `$ yarn/npm run dev:replica` (this will use another port for the Node.js debugger on the second instance and avoid conflict).
+For the backend run one instance with `$ yarn dev` and the other one with `$ yarn dev:replica` (this will use another port for the Node.js debugger on the second instance and avoid conflict).
 
 ## Cordova wrapper
 
@@ -129,9 +129,9 @@ For the backend run one instance with `$ yarn/npm run dev` and the other one wit
 Run your web app as usual first, then build and run the mobile app in debug mode (from project folder):
 ```
 // Android
-$ yarn/npm run cordova:dev:android
+$ yarn cordova:dev:android
 // iOS
-$ yarn/npm run cordova:dev:ios
+$ yarn cordova:dev:ios
 ```
 
 If no device is connected this should launch the emulator, otherwise this should use your device.

@@ -14,6 +14,7 @@ You'll also learn how to create, develop and publish your own app and plugins, w
 
 * [Setup your environment](./development/setup.md)
 * [Develop your app](./development/develop.md)
+* [Configure your app](./development/configure.md)
 * [Deploy your app](./development/deploy.md)
 * [Publish your app](./development/publish.md)
 

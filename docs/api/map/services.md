@@ -36,7 +36,7 @@ No [hooks](./hooks.md) are executed on the `geocoder` service for now.
 Available as a global and a contextual service
 :::
 
-The service can be created using the global **createCatalogService(context, db)** function, if no arguments provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../kcore/application.md#createservice-name-options).
+The service can be created using the global **createCatalogService(context, db)** function, if no arguments provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../core/application.md#createservice-name-options).
 
 Here is a sample code to retrieve all data layer descriptors available in the catalog:
 ```javascript
@@ -100,7 +100,7 @@ The sole [hook](./hooks.md) executed on the `catalog` service is one that sets t
 Available as a global and a contextual service
 :::
 
-The service can be created using the global **createCatalogService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../kcore/application.md#createservice-name-options).
+The service can be created using the global **createCatalogService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../core/application.md#createservice-name-options).
 
 ### Data model
 

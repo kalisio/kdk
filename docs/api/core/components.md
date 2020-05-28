@@ -146,7 +146,7 @@ The **KDK** comes with a set of built-in fields:
 * **k-chips-with-icon-field**: extends the previous chips input in 
 * **k-datetime-field**: a Quasar [Date input](https://quasar.dev/vue-components/date) and [Time input](https://quasar.dev/vue-components/time)
 * **k-email-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `email`
-* **k-icon-field**: an input that allows you to select an icon and to assign it a color among. The list of icons is provided by [FontAwesome](https://fontawesome.com/icons?d=gallery
+* **k-icon-field**: an input that allows you to select an icon and to assign it a color among. The list of icons is provided by [FontAwesome](https://fontawesome.com/icons?d=gallery)
 * **k-item-field**: an input that allows you to select one or multiple items from one service or many services.
 * **k-number-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `number`
 * **k-options-field**: a Quasar [Options group input](https://quasar.dev/vue-components/option-group)
@@ -158,7 +158,7 @@ The **KDK** comes with a set of built-in fields:
 * **k-toggle-field**: a Quasar [Toggle input](https://quasar.dev/vue-components/toggle)
 * **k-url-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `url`
 
-It also has modules that propose additional ones. For instance, the **kMap** module provides the [**k-location-field**](../kmap/components.md#location). You can also add your own field, when implementing it you must rely on the [base field mixin](./mixins.md#base-field). 
+You can add additional ones, for instance, the **map** submodule provides the [**k-location-field**](../map/components.md#location). You can also add your own field, when implementing it you must rely on the [base field mixin](./mixins.md#base-field). 
 
 The properties to declare  a **k-form** are the following:
 * **schema**: the schema object to be used to build the form
@@ -285,12 +285,12 @@ The properties to declare a **k-modal-editor** are identical to those of the **k
 
 ## Authentication
 
-The KDK provides you with some default forms to manage [login](https://github.com/kalisio/kCore/blob/master/src/client/components/KLogin.vue), [logout](https://github.com/kalisio/kCore/blob/master/src/client/components/KLogout.vue), [registration](https://github.com/kalisio/kCore/blob/master/src/client/components/KRegister.vue) and [server endpoint configuration for mobile apps](https://github.com/kalisio/kCore/blob/master/src/client/components/KChangeEndpoint.vue).
+The KDK provides you with some default forms to manage login, logout, registration and server endpoint configuration for mobile apps in the [authentication folder](https://github.com/kalisio/kdk/tree/master/core/client/components/authentication).
 
 ## User Account
 
-The KDK provides you with a default [activity](./components.md#activity) to manage [user accounts](KAccountActivity) containing:
-* an "identity panel" to [edit profile informaiton](https://github.com/kalisio/kCore/blob/master/src/client/components/KIdentityPanel.vue)
-* a "danger zone" for [account removal](https://github.com/kalisio/kCore/blob/master/src/client/components/KAccountDZ.vue)
-* a "security zone" for [password and email change](https://github.com/kalisio/kCore/blob/master/src/client/components/KAccountSecurity.vue)
+The KDK provides you with a default [activity](./components.md#activity) to manage user accounts in the [account folder](https://github.com/kalisio/kdk/tree/master/core/client/components/account):
+* an "identity panel" to edit profile information
+* a "danger zone" for account removal
+* a "security zone" for password and email change
 

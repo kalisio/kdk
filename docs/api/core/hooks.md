@@ -54,7 +54,7 @@ Modify the data structure of operation item (i.e. data/result in before/after ho
 * **throwOnNotFound**: boolean indicating if an error should be raised when either the target service or object is not found
 
 ```js
-import { hooks } from 'kCore'
+import { hooks } from '@kalisio/kdk/core.api'
 // Will transform hook data from { name: 'toto' } to { profile: { name: 'toto' } }
 service.hooks({ before: { create: [ hooks.serialize([{ source: 'name', target: 'profile.name', delete: true }], { throwOnNotFound: true }) ] } })
 ```
@@ -76,7 +76,7 @@ Transform a known set of properties from strings into a [Mongo ObjectIDs](https:
 > Fields are searched on `hook.data` or `hook.params.query`
 
 ```js
-import { hooks } from 'kCore'
+import { hooks } from '@kalisio/kdk/core.api'
 // Will convert data.participant and data.event to ObjectIDs
 service.hooks({ before: { all: [ hooks.convertObjectIDs(['participant', 'event']) ] } })
 ```
@@ -90,7 +90,7 @@ Transform a known set of properties from strings into a Data or [moment](https:/
 > Fields are searched on `hook.data` or `hook.params.query`
 
 ```js
-import { hooks } from 'kCore'
+import { hooks } from '@kalisio/kdk/core.api'
 // Will convert data.expireAt to Date
 service.hooks({ before: { create: [ hooks.convertDates(['expireAt']) ] } })
 ```
