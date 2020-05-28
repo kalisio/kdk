@@ -14,9 +14,10 @@ You'll also learn how to create, develop and publish your own app and plugins, w
 
 * [Setup your environment](./development/setup.md)
 * [Develop your app](./development/develop.md)
+* [Configure your app](./development/configure.md)
 * [Deploy your app](./development/deploy.md)
 * [Publish your app](./development/publish.md)
 
 ## Infrastructure
 
-The setup of application infrastructures is typically powered by our [kaabah](https://github.com/kalisio/kaabah) project.
+The setup of application infrastructures is typically powered by our [kaabah](https://github.com/kalisio/kaabah) project while application deployment is typically powered by our [kargo](https://github.com/kalisio/kargo) project.

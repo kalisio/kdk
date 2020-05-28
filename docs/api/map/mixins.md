@@ -5,7 +5,7 @@
 Make your component automatically retrieve the user's location on initialization or when he has logged in (the [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API) is used under-the-hood):
 * **updatePosition()** launches a geolocation
 
-> Will make the position available in the `user.position` property of the currently authenticated user in the [global store](../kcore/application.md#store).
+> Will make the position available in the `user.position` property of the currently authenticated user in the [global store](../core/application.md#store).
 
 ::: tip
 Will raise an error toast on geolocation error
@@ -119,7 +119,7 @@ Here is an example of a format object:
 ```
 
 ::: tip
-The mixin is in sync with the `timeFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared data/time display format accross all time-based components with a dedicated UI to change settings using e.g. `store.patch('timeFormat', { locale, utc })`.
+The mixin is in sync with the `timeFormat` property of the [global store](../core/application.md#store) so that you can have a shared data/time display format accross all time-based components with a dedicated UI to change settings using e.g. `store.patch('timeFormat', { locale, utc })`.
 :::
 
 This mixin also adds the following internal data properties:
@@ -139,9 +139,9 @@ Make it easier to create 2D/3D mapping activities by providing methods available
 * **onLayerAdded(layer)** layer action handler that will setup available action on layer
 * **onTriggerLayer(layer)** trigger action handler that will hide/show a given layer
 * **onZoomToLayer(layer)** zoom action handler that will zoom to a given layer
-* **onCreateLayer()** create layer action handler that will open an [editor](../kcore/components.md#editors) to define layer properties
+* **onCreateLayer()** create layer action handler that will open an [editor](../core/components.md#editors) to define layer properties
 * **onSaveLayer(layer)** save action handler that will persist a given in-memory layer to persistent storage provided by a [feature service](./services.md#feature-service)
-* **onEditLayer(layer)** edit action handler that will open an [editor](../kcore/components.md#editors) to change layer properties
+* **onEditLayer(layer)** edit action handler that will open an [editor](../core/components.md#editors) to change layer properties
 * **onEditLayerData(layer)** edit data action handler that will (de)activate [feature edition mode](https://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html) to update layer features geometry and properties
 * **onRemoveLayer(layer)** remove action handler that will ask for confirmation before removing a persisted layer
 * **onGeocoding()** geocoding action handler that will open a dialog to search for a location to go to
@@ -171,7 +171,7 @@ Allow to display an indicator on top of the map indicating the current mouse loc
 * **removeLocationIndicator()** removes the indicator
 
 ::: tip
-The mixin is in sync with the `locationFormat` property of the [global store](../kcore/application.md#store) so that you can have a shared location display format accross all mapping components with a dedicated UI to change settings using e.g. `store.patch('locationFormat', 'FFf')`.
+The mixin is in sync with the `locationFormat` property of the [global store](../core/application.md#store) so that you can have a shared location display format accross all mapping components with a dedicated UI to change settings using e.g. `store.patch('locationFormat', 'FFf')`.
 :::
 
 This mixin also adds the following internal data properties:
@@ -441,7 +441,7 @@ You can also draw a path with a different styling on each part like this:
 
 Make it possible to edit features of a [GeoJson layer](./mixins.md#geojson-layer) (geometry and properties):
 * **editLayer(name)** start/stop layer edition on a given layer
-* **updateFeatureProperties(feature, layer, leafletLayer)** update feature properties action handler that will open an [editor](../kcore/components.md#editors) to define feature properties
+* **updateFeatureProperties(feature, layer, leafletLayer)** update feature properties action handler that will open an [editor](../core/components.md#editors) to define feature properties
 
 ::: warning
 It has to be used with the GeoJson layer mixin and will use the configured styling.

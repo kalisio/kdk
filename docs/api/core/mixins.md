@@ -166,7 +166,7 @@ This mixin has been designed to be used with the [service mixin](./mixins.md#ser
 The **baseObject** props is usually used to keep track of existing or additional "hidden" or "internal" properties in addition to the ones edited throught the form.
 :::
 
-Check out a code example [here](https://github.com/kalisio/kCore/blob/master/src/client/components/editor) to see how to create your own editors.
+Check out a code example [here](https://github.com/kalisio/kdk/blob/master/core/client/components/editor) to see how to create your own editors.
 
 ## Base Field
 
@@ -191,7 +191,7 @@ Make it easier to build [form fields](./components.md#editors) from the **proper
 **label**, **helper** and **errorLabel** properties will be automatically internationalized if corresponding values are valid translation keys.
 :::
 
-Check out a code example [here](https://github.com/kalisio/kCore/blob/master/src/client/components/form) to see how to create your own fields.
+Check out a code example [here](https://github.com/kalisio/kdk/blob/master/core/client/components/form) to see how to create your own fields.
 
 ## Version
 

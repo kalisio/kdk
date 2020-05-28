@@ -29,7 +29,7 @@ The most common properties of a tag object are described by the following data m
 
 **TODO**
 
-This data model is manipulated through the [Tag API](./../api/kCore/services.md).
+This data model is manipulated through the [Tag API](./../api/core/services.md).
 
 The details of each property are the following:
 * **scope**: the scope of the tag (i.e. category), e.g. `skill`

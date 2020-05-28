@@ -4,21 +4,46 @@
 * [Feathers](https://feathersjs.com/) on the backend side
 * [Quasar](https://quasar.dev/) on the frontend side
 
-If you are not familiar with those technologies and want to develop with the **KDK**, in addition to read this documentation, we recommend reading [https://github.com/claustres/quasar-feathers-tutorial](https://github.com/claustres/quasar-feathers-tutorial). Indeed, KDK template application is based on the Quasar wrapper for Feathers, while KDK modules are Feathers plugins.
+If you are not familiar with those technologies and want to develop with the **KDK**, we first recommend studying how they work. To get a deeper overview of some of the internals we also recommend you to read our technical articles on Medium:
+* [FeathersJS in production: configuration, API prefixing, logging and error catching](https://blog.feathersjs.com/feathersjs-in-production-configuration-api-prefixing-logging-and-error-catching-2a80e044e233)
+* [How to setup OAuth flow with FeathersJS](https://blog.feathersjs.com/how-to-setup-oauth-flow-with-featherjs-522bdecb10a8)
+* [Enterprise-grade authentication using AWS Cognito and OneLogin with FeathersJS](https://blog.feathersjs.com/enterprise-grade-authentication-using-aws-cognito-and-onelogin-with-feathersjs-d4c6f46ab123)
+* [Access control strategies with FeathersJS](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)
+* [Stress testing your FeathersJS application like in production](https://blog.feathersjs.com/stress-testing-your-feathersjs-application-like-in-production-4b8611ee8d9e)
+* [FeathersJS in production: password policy and rate limiting](https://blog.feathersjs.com/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
+* [Mocking custom service queries with FeathersJS](https://blog.feathersjs.com/mocking-custom-service-queries-with-feathersjs-3aae74003259)
 
-A KDK-based application usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [kApp](https://github.com/kalisio/kApp) as a starting point. In this guide we will use the template as a reference but most commands will be valid for any KDK-based application.
+Our main module is simply called [kdk](https://github.com/kalisio/kdk), available now as a single package [@kalisio/kdk](https://www.npmjs.com/package/@kalisio/kdk), but actually composed of two logical parts:
+* **[core](../../api/core)** containing basic application services and components
+* **[map](../../api/map)** containing required services and components to build geospatial applications
+
+::: tip
+Although bundled together you can only use the core part without the map part, for instance our application template does not use it. Indeed, on the bakend side related services will not be allocated if the map part is not explicitely used, and on the frontend side Webpack will not bundle unused components.
+:::
+
+However, this module also relies on [Weacast](https://weacast.github.io/weacast-docs/) to manage weather data and [feathers-distributed](https://github.com/kalisio/feathers-distributed) is often used to build [microservices architecture]([API](../../architecture/global-architecture.md), we recommend reading this articles on Medium to get a deeper overview:
+* [Introducing Weacast](https://towardsdatascience.com/introducing-weacast-e6e98487b2a8)
+* [A use case of microservices with FeathersJS: building a geospatial platform](https://blog.feathersjs.com/a-use-case-of-microservices-with-feathersjs-building-a-geospatial-platform-56373604db71)
+
+::: warning
+The KDK was previously available as separated modules like [kCore](https://github.com/kalisio/kCore)/[@kalisio/kdk-core](https://www.npmjs.com/package/@kalisio/kdk-core), [kMap](https://github.com/kalisio/kMap)/[@kalisio/kdk-map](https://www.npmjs.com/package/@kalisio/kdk-map), etc. We strongly recommend to upgrade to the latest single package as the features remain similar and development is made easier.
+:::
+
+## Application template
+
+A KDK-based application (a.k.a. kApp) usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [kApp](https://github.com/kalisio/kApp) as a starting point. In this guide we will use the template as a reference but most commands will be valid for any KDK-based application.
 
 The kApp includes all the necessary boilerplate that you will need to get started building your application:
 * [client-side boilerplate](https://quasar.dev/quasar-cli/developing-spa/introduction) in the *root* folder
 * [server-side boilerplate](https://docs.feathersjs.com/guides/basics/generator.html) in the *api* folder
-* [continuous integration/deployment boilerplate](../development/deploy.md) in the *root* and *deploy* folders
+* [continuous integration/deployment boilerplate](../development/deploy.md) in the *root* folder as Dockerfiles and Travis CI scripts
 
 It also includes the minimum viable set of features to start:
-* a [basic application layout](../../api/kcore/components.md#layout) including side navigation, application bar and a right panel
-* ready-to-go [user authentication services](../../api/kcore/services.md#users) and [screens](../../api/kcore/components.md#authentication)
-* a [basic service](../../api/kcore/application.md) to create/remove documents in database
-* a [basic activity](../../api/kcore/mixins.md#base-activity) listing documents using a [k-list](../../api/kcore/components.md#collections)
-* a [basic editor](../../api/kcore/components.md#editors) to fill document properties when creating a new document
+* a [basic application layout](../../api/core/components.md#layout) including side navigation, application bar and a right panel
+* ready-to-go [user authentication services](../../api/core/services.md#users) and [screens](../../api/core/components.md#authentication)
+* a [basic service](../../api/core/application.md) to create/remove documents in database
+* a [basic activity](../../api/core/mixins.md#base-activity) listing documents using a [k-list](../../api/core/components.md#collections)
+* a [basic editor](../../api/core/components.md#editors) to fill document properties when creating a new document
 
 ## Running a kApp from a Docker image
 
@@ -73,15 +98,15 @@ cd kApp
 
 // Client build
 yarn install
-yarn/npm run build
+yarn build
 
 // Server build
 cd api
 yarn install
-yarn/npm run build
+yarn build
 
 // Running the server in production will also serve the client
-yarn/npm run prod
+yarn prod
 ```
 
 Then point your browser to [localhost:8081](http://localhost:8081).
@@ -118,7 +143,7 @@ kApp backend configuration is based on [Feathers](https://docs.feathersjs.com/gu
 * **db**: database configuration
   * **adapter**: the database adapter, for now the only supported one is [`mongodb`](https://github.com/feathersjs/feathers-mongodb)
   * **url**: database URL to access the app database used by drivers such as [mongodb](https://github.com/mongodb/node-mongodb-native)
-* **storage**: storage service configuration used by [kCore](../../api/kcore/services.md#storage-service)
+* **storage**: storage service configuration used by [core](../../api/core/services.md#storage-service)
   * **accessKeyId**: AWS S3 access key
   * **secretAccessKey**: AWS S3 secret access key
   * **bucket**: AWS S3 bucket to be used
@@ -177,17 +202,4 @@ Environment variables for the frontend development server (will override default
 * **PORT / HTTPS_PORT**: backend port for HTTP and HTTPS modes (used to configure proxy)
 * **CLIENT_PORT / HTTPS_CLIENT_PORT**: frontend port for HTTP and HTTPS modes
 
-## To go further
-
-To get a deeper overview of some of the internals we recommend you to read our technical articles on Medium as a source of inspiration:
-* [FeathersJS in production: configuration, API prefixing, logging and error catching](https://blog.feathersjs.com/feathersjs-in-production-configuration-api-prefixing-logging-and-error-catching-2a80e044e233)
-* [How to setup OAuth flow with FeathersJS](https://blog.feathersjs.com/how-to-setup-oauth-flow-with-featherjs-522bdecb10a8)
-* [Enterprise-grade authentication using AWS Cognito and OneLogin with FeathersJS](https://blog.feathersjs.com/enterprise-grade-authentication-using-aws-cognito-and-onelogin-with-feathersjs-d4c6f46ab123)
-* [Access control strategies with FeathersJS](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)
-* [Stress testing your FeathersJS application like in production](https://blog.feathersjs.com/stress-testing-your-feathersjs-application-like-in-production-4b8611ee8d9e)
-* [FeathersJS in production: password policy and rate limiting](https://blog.feathersjs.com/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
-
-::: tip Note
-The Kalisio framework is also inspired by our experience in developing [Weacast](https://weacast.github.io/weacast-docs/), referring to it as a more simple project might help.
-:::
 
