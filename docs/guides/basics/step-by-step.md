@@ -18,7 +18,7 @@ Our main module is simply called [kdk](https://github.com/kalisio/kdk), availabl
 * **[map](../../api/map)** containing required services and components to build geospatial applications
 
 ::: tip
-Although bundled together you can only use the core part without the map part. Indeed, on the bakend side related services will not be allocated if the map part is not explicitely used, and on the frontend side Webpack will not bundle unused components.
+Although bundled together you can only use the core part without the map part, for instance our application template does not use it. Indeed, on the bakend side related services will not be allocated if the map part is not explicitely used, and on the frontend side Webpack will not bundle unused components.
 :::
 
 However, this module also relies on [Weacast](https://weacast.github.io/weacast-docs/) to manage weather data and [feathers-distributed](https://github.com/kalisio/feathers-distributed) is often used to build [microservices architecture]([API](../../architecture/global-architecture.md), we recommend reading this articles on Medium to get a deeper overview:
@@ -98,15 +98,15 @@ cd kApp
 
 // Client build
 yarn install
-yarn/npm run build
+yarn build
 
 // Server build
 cd api
 yarn install
-yarn/npm run build
+yarn build
 
 // Running the server in production will also serve the client
-yarn/npm run prod
+yarn prod
 ```
 
 Then point your browser to [localhost:8081](http://localhost:8081).
@@ -143,7 +143,7 @@ kApp backend configuration is based on [Feathers](https://docs.feathersjs.com/gu
 * **db**: database configuration
   * **adapter**: the database adapter, for now the only supported one is [`mongodb`](https://github.com/feathersjs/feathers-mongodb)
   * **url**: database URL to access the app database used by drivers such as [mongodb](https://github.com/mongodb/node-mongodb-native)
-* **storage**: storage service configuration used by [kCore](../../api/kcore/services.md#storage-service)
+* **storage**: storage service configuration used by [core](../../api/core/services.md#storage-service)
   * **accessKeyId**: AWS S3 access key
   * **secretAccessKey**: AWS S3 secret access key
   * **bucket**: AWS S3 bucket to be used

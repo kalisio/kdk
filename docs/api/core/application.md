@@ -1,14 +1,14 @@
 # Application
 
-Kalisio [core module](https://github.com/kalisio/kCore) offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application right.
+KDK [core](https://github.com/kalisio/kdk/core) offers a thin layer on top of the [FeathersJS application](https://docs.feathersjs.com/api/application.html) mainly to simplify the creation and configuration of services. It also provide some helpful concepts and utilities to structure your application right.
 
 ## Application API
 
 ### Backend setup
 
-Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [server application](https://docs.feathersjs.com/api/application.html). The core module provides the ability to initialize a new Kalisio application instance, attach it to the configured database and setup authentication:
+KDK [core](https://github.com/kalisio/kdk/core) provides a helper to quickly initialize what is required for your [server application](https://docs.feathersjs.com/api/application.html). The core module provides the ability to initialize a new KDK application instance, attach it to the configured database and setup authentication:
 ```javascript
-import { kalisio } from 'kCore'
+import { kalisio } from '@kalisio/kdk/core.api'
 
 // Initialize app
 let app = kalisio()
@@ -18,9 +18,9 @@ await app.db.connect()
 
 ### Client setup
 
-Kalisio [core module](https://github.com/kalisio/kCore) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
+KDK [core](https://github.com/kalisio/kdk/core) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
 ```javascript
-import { kalisio } from 'kCore/client'
+import { kalisio } from '@kalisio/kdk/client.client'
 
 // Initialize API wrapper
 let api = kalisio()

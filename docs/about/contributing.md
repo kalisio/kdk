@@ -67,7 +67,7 @@ We rely on [Semantic Versioning](https://semver.org/) for versioning a release. 
 * `MINOR` version when you add functionality in a backwards-compatible manner
 * `PATCH` version when you make backwards-compatible bug fixes.
 
-The command `npm run release:<type>`, where  `<type>` is either `patch`, `minor` or `major`, helps you to do the release. 
+The command `yarn release:<type>`, where  `<type>` is either `patch`, `minor` or `major`, helps you to do the release. 
 
 It performs the following task for you:
 * increase the package version number in the `package.json` file

@@ -36,7 +36,7 @@ The changelog suffers from the following [issue](https://github.com/github-chang
 :::
 
 ::: warning
-Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kCore` for a plugin depending on the core plugin before publishing it**
+Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kdk` for a plugin depending on the core plugin before publishing it**
 :::
 
 ## Web app
@@ -68,7 +68,7 @@ Then release it as latest version:
 docker login
 docker push kalisio/kapp
 ```
-And tag it (`version_tag` being the current version number like `1.1.2` or `1.1.0-dev` depending on the flavor)
+And tag it (`version_tag` being the current version number like `1.1.2` or `1.1.0-dev` depending on the [flavor](./deploy.md))
 ```bash
 docker tag kalisio/kapp kalisio/kapp:version_tag
 docker push kalisio/kapp:version_tag
