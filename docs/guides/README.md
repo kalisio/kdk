@@ -20,4 +20,4 @@ You'll also learn how to create, develop and publish your own app and plugins, w
 
 ## Infrastructure
 
-The setup of application infrastructures is typically powered by our [kaabah](https://github.com/kalisio/kaabah) project.
+The setup of application infrastructures is typically powered by our [kaabah](https://github.com/kalisio/kaabah) project while application deployment is typically powered by our [kargo](https://github.com/kalisio/kargo) project.

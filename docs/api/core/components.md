@@ -231,7 +231,7 @@ Schemas are usually stored in a specific folder and you must have tell **Webpack
 ### k-modal-editor
 
 There are 2 ways to use the **k-modal-editor**:
-* by declaring the **k-modal-editor** directly in the parent component. Check out the code example [here](https://github.com/kalisio/kTeam/blob/master/src/client/components/KOrganisationsPanel.vue#L26)
+* by declaring the **k-modal-editor** directly in the parent component. Check out the code example [here](https://github.com/kalisio/kdk/blob/master/core/client/components/KOrganisationsPanel.vue)
 * by declaring a route using the the **KModalEditor**. In this case you must:
   * in the template section, define a `router-view` with the following properties:
     *  the targeted `service`

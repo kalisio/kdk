@@ -2,7 +2,7 @@
 
 ## Deployment pipeline
 
-The main purpose of the continuous integration and deployment (CI/CD) pipeline is to create/build application artifacts (Docker images for the web application and mobile application bundles) and deploy it in production-like environments in order to test it. We rely on [Travis CI](https://travis-ci.org) for continuous integration and delivery, as such you need to create the CI/CD pipeline in Travis CI by syncing your GitHub repository.
+The main purpose of the continuous integration and deployment (CI/CD) pipeline is to create/build application artifacts (Docker images for the web application and mobile application bundles) and deploy it in production-like environments in order to test/run it. We rely on [Travis CI](https://travis-ci.org) for continuous integration and delivery, as such you need to create the CI/CD pipeline in Travis CI by syncing your GitHub repository.
 
 You can read this [article](https://medium.com/better-programming/why-we-stopped-using-so-called-best-practices-in-our-ci-cd-process-2ff09811f633) on Medium to get an overview of our global CI/CD pipeline, which is illustrated in the following schema:
 
@@ -11,8 +11,8 @@ You can read this [article](https://medium.com/better-programming/why-we-stopped
 The different operations performed by each stages are the following:
 * **APP**: executes the *travis.app.sh* script to
   * creates the Docker images for the application and testing
-  * executes a script to run backend and frontend tests on the target infrastructure
-  * executes a script to deploy the web application on the target infrastructure
+  * run backend and frontend tests on the target infrastructure
+  * deploy the web application on the target infrastructure
 * **ANDROID**: executes the *travis.android.sh* script to
   * build the Android APK
   * deploy it to Google Play
@@ -55,21 +55,25 @@ The subdomain is usually used to build a fully-qualified domain name for the app
 
 ## Deployment workspace
 
-Each build stage of the CI/CD pipeline first setup the "workspace" required to correctly build the application, i.e. environment variables, application and module source code, configuration files, etc.
-
-The following schema summarizes the different steps performed to setup the workspace:
+Each build stage of the CI/CD pipeline first setup the "workspace" required to correctly build the application, i.e. environment variables, application and module source code, configuration files, etc. The following schema summarizes the different steps performed to setup the workspace in the *travis.env.sh* script:
 
 ![Travis scripts](./../../assets/cd-pipeline-env.svg)
 
-**TO BE COMPLETED**
+In order to simplify and unify as much as possible secrets management we use a private GitHub repository as a secret store for:
+* environment variables through env files
+  * **.env** for application configuration
+  * **.travis.env** for CI/CD configuration
+* configuration files required either by the application or the CI/CD (e.g. mobile application certificates, ssh key to connect to hosting infrastructures, etc.)
+
+Each workspace includes a **common** folder to store shared secrets between all flavor, then a folder dedicated to secrets specific to each flavor as depicted in the following diagram:
+
+![KDK workspace](./../../assets/kdk-workspace.png)
 
 ## Web application deployment
 
 The following schema summarizes the different steps performed to deploy the web application:
 
 ![Travis scripts](./../../assets/cd-pipeline-app.svg)
-
-**TO BE COMPLETED**
 
 ## Mobile applications deployment
 
@@ -80,5 +84,3 @@ The following schema summarizes the different steps performed to deploy the Andr
 The following schema summarizes the different steps performed to deploy the IOS application:
 
 ![Travis scripts](./../../assets/cd-pipeline-ios.svg)
-
-**TO BE COMPLETED**
