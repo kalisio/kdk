@@ -38,3 +38,4 @@ _book/
 
 # VuePress
 docs/.vuepress/dist
+docs/node_modules/
