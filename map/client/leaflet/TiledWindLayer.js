@@ -18,6 +18,7 @@ const TiledWindLayer = L.GridLayer.extend({
 
     this.enableDebug = _.get(options, 'enabledDebug', false)
     this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
+    this.meteoModelOverride = _.get(options, 'meteoModelOverride')
 
     // build colormap
     const domain = _.get(options, 'chromajs.domain', null)
@@ -121,6 +122,11 @@ const TiledWindLayer = L.GridLayer.extend({
       dx: model.resolution[0],
       dy: model.resolution[1]
     }
+
+    // it is possible to override model parameters through the layer conf
+    // check that here
+    const override = this.meteoModelOverride[model.name]
+    if (override) Object.assign(modelHeader, override)
 
     Object.assign(this.uFlow.header, modelHeader)
     Object.assign(this.vFlow.header, modelHeader)
