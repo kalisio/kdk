@@ -100,10 +100,10 @@ export default {
   },
   methods: {
     async onUnsubscribe () {
-      const result = this.$refs.form.validate()
+      // const result = this.$refs.form.validate()
       this.processing = true
-      const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
-      const subscribersService = this.$api.service(subscribersServicePath)
+      // const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
+      // const subscribersService = this.$api.service(subscribersServicePath)
       try {
         // TODO await subscribersService.remove(result.values)
         this.processing = false

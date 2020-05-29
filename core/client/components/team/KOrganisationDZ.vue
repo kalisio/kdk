@@ -1,5 +1,5 @@
 <template>
-  <div v-if="name !== ''">
+  <div v-if="name !== ''" class="q-pa-md">
     <k-block
       color="red"
       :title="$t('KOrganisationDZ.BLOCK_TITLE')"
