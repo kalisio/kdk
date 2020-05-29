@@ -23,7 +23,7 @@
           <q-btn color="primary" @click="stage = 'subscription'">
             {{$t('KSubscribe.CANCEL_BUTTON')}}
           </q-btn>
-          <q-btn color="primary" :loading="processing" :disable="!code" @click="onVerify">
+          <q-btn color="primary" :loading="processing" :disable="!code" @click="onValidate">
             {{$t('KSubscribe.VALIDATE_BUTTON')}}
           </q-btn>
         </div>
@@ -108,17 +108,21 @@ export default {
         this.processing = true
         const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
         const subscribersService = this.$api.service(subscribersServicePath)
-        //await subscribersService.create(result.values)
-        this.processing = false
-        this.stage = 'validation'
+        try {
+          await subscribersService.create(result.values)
+          this.processing = false
+          this.stage = 'validation'
+        } catch (error) {
+          logger.error(error)
+          this.processing = false
+        }
       }
     },
-    onVerify () {
+    onValidate () {
       this.processing = true
-      // Perform the validation
+      // TODO: Perform the validation
       this.processing = false
       this.stage = 'confirmation'
-      console.log(this.stage)
     }
   },
   async created () {

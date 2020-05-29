@@ -4,7 +4,7 @@
       <q-input 
         :key="index" 
         v-model.number="digits[index - 1]" 
-        :rules="[value => !!value]"
+        :rules="[value => Number.isInteger(value)]"
         mask="#" 
         outlined
         no-error-icon
@@ -15,8 +15,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
-
 export default {
   name: 'k-code-input',
   props: {
@@ -39,7 +37,7 @@ export default {
       let code = ''
       for (let i = 0; i < this.size; i++) {
         const digit = this.digits[i]
-        if (_.isNil(digit) || (digit ==='')) {
+        if (!Number.isInteger(digit)) {
           this.$emit('input', undefined)
           return
         }

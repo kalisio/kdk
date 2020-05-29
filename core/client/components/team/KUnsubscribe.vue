@@ -1,24 +1,39 @@
 <template>
-  <k-screen :title="$t('KUnsubscribe.TITLE')">
+  <k-screen :title="title">
     <div slot="screen-content">
       <!--
-        Subscription
+        Ubsubscription stage
        -->
-      <template v-if="status === 'pending' || status === 'running'">
+      <template v-if="stage === 'unsubscription'">
         <div class="column justify-center xs-gutter">
-          <k-form ref="form" :schema="schema" />
+          <k-form ref="form" :schema="unsubscriptionSchema" />
           <div class="row justify-around q-pa-sm">
-            <q-btn color="primary" :loading="status === 'running'" @click="onUnsubscribe">
-              {{$t('KUnsubscribe.APPLY_BUTTON')}}
+            <q-btn color="primary" :loading="processing" @click="onUnsubscribe">
+              {{$t('KUnsubscribe.UNSUBSCRIBE_BUTTON')}}
             </q-btn>
           </div>
         </div>
       </template>
       <!--
-        Confirmation
+        Validation stage
+       -->
+      <template v-if="stage === 'validation'">
+        <k-code-input v-model="code" />
+        <div class="row justify-around q-pa-md">
+          <q-btn color="primary" :loading="processing" :disable="!code" @click="onValidate">
+            {{$t('KUnsubscribe.VALIDATE_BUTTON')}}
+          </q-btn>
+        </div>
+      </template>
+      <!--
+        Confirmation stage
       -->
-      <template v-else>
-
+      <template v-if="stage === 'confirmation'">
+        <div class="row justify-around q-pa-md">
+          <q-btn color="primary" @click="stage = 'unsubscription'">
+            {{$t('KUnsubscribe.CONFIRM_BUTTON')}}
+          </q-btn>
+        </div>
       </template>
     </div>
   </k-screen>
@@ -29,7 +44,7 @@ import logger from 'loglevel'
 import _ from 'lodash'
 
 export default {
-  name: 'k-subscribe',
+  name: 'k-unsubscribe',
   props: {
     contextId: {
       type: String,
@@ -40,10 +55,21 @@ export default {
       required: true
     }
   },
+  computed: {
+    title () {
+      const organisation = this.organisation.name
+      if (this.stage === 'unsubscription') return this.$t('KUnsubscribe.UNSUBSCRIPTION_TITLE', { organisation })
+      if (this.stage === 'validation') return this.$t('KUnsubscribe.VALIDATION_TITLE', { organisation })
+      return this.$t('KUnsubscribe.CONFIRMATION_TITLE', { organisation })
+    }
+  },
   data () {
     return {
-      status: 'pending', // running or finished
-      schema: {
+      organisation: {
+        name: ''
+      },
+      stage: 'unsubscription',
+      unsubscriptionSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/unsubscribe#',
         title: 'Unsubscribe form',
@@ -60,7 +86,6 @@ export default {
           },
           phone: {
             type: 'string',
-            // format: 'phone',
             field: {
               component: 'form/KPhoneField',
               helper: 'KSubscribe.PHONE_FIELD_HELPER'
@@ -68,15 +93,31 @@ export default {
           }
         },
         required: ['name', 'phone']
-      }
+      },
+      code: undefined,
+      processing: false
     }
   },
   methods: {
     async onUnsubscribe () {
       const result = this.$refs.form.validate()
-      if (result.isValid) {
-        this.unsubscribing = true
+      this.processing = true
+      const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
+      const subscribersService = this.$api.service(subscribersServicePath)
+      try {
+        // TODO await subscribersService.remove(result.values)
+        this.processing = false
+        this.stage = 'validation'
+      } catch (error) {
+        logger.error(error)
+        this.processing = false
       }
+    },
+    onValidate () {
+      this.processing = true
+      // TODO: Perform the validation
+      this.processing = false
+      this.stage = 'confirmation'
     }
   },
   created () {
