@@ -36,13 +36,16 @@ export default {
   },
   methods: {
     onChanged () {
-      const isValid = _.every(this.digits, (digit) => !_.isNil(digit) && digit !== '')
-      if (isValid) {
-        const code = _.reduce(this.digits, (code, digit) => { return code + digit.toString() }, '')
-        this.$emit('input', parseInt(code))
-      } else {
-        this.$emit('input', undefined)
+      let code = ''
+      for (let i = 0; i < this.size; i++) {
+        const digit = this.digits[i]
+        if (_.isNil(digit) || (digit ==='')) {
+          this.$emit('input', undefined)
+          return
+        }
+        code = code + digit.toString()
       }
+      this.$emit('input', parseInt(code))
     }
   }
 }
