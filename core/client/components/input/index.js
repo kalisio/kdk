@@ -4,7 +4,6 @@ import KIconChooser from './KIconChooser.vue'
 import KItemChooser from './KItemChooser.vue'
 import KFileInput from './KFileInput.vue'
 import KUploader from './KUploader.vue'
-import KBtn from './KBtn.vue'
 
 export {
   KAutocomplete,
@@ -12,6 +11,5 @@ export {
   KIconChooser,
   KItemChooser,
   KFileInput,
-  KUploader,
-  KBtn
+  KUploader
 }
