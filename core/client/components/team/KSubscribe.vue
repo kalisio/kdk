@@ -1,24 +1,42 @@
 <template>
-  <k-screen :title="$t('KSubscribe.TITLE', { organisation: organisation.name })">
+  <k-screen :title="title">
     <div slot="screen-content">
       <!--
-        Subscription
+        Subscription stage
        -->
-      <template v-if="status === 'pending' || status === 'running'">
+      <template v-if="stage === 'subscription'">
         <div class="column justify-center xs-gutter">
           <k-form ref="form" :schema="subscriptionSchema" />
-          <div class="row justify-around q-pa-sm">
-            <q-btn color="primary" :loading="status === 'running'" @click="onSubscribe">
-              {{$t('KSubscribe.APPLY_BUTTON')}}
+          <div class="row justify-around q-pa-md">
+            <q-btn color="primary" :loading="processing" @click="onSubscribe">
+              {{$t('KSubscribe.SUBSCRIBE_BUTTON')}}
             </q-btn>
           </div>
         </div>
       </template>
       <!--
-        Confirmation
+        Validation stage
        -->
-      <template v-else>
-        <k-form ref="form" :schema="confirmationSchema" />
+      <template v-if="stage === 'validation'">
+        <k-code-input v-model="code" />
+        <div class="row justify-around q-pa-md">
+          <q-btn color="primary" @click="stage = 'subscription'">
+            {{$t('KSubscribe.CANCEL_BUTTON')}}
+          </q-btn>
+          <q-btn color="primary" :loading="processing" :disable="!code" @click="onVerify">
+            {{$t('KSubscribe.VALIDATE_BUTTON')}}
+          </q-btn>
+        </div>
+      </template>
+      <!--
+        Confirmation stage
+      -->
+      <template v-if="stage === 'confirmation'">
+        <div class="row justify-around q-pa-md">
+          <q-btn color="primary" @click="stage = 'subscription'">
+            {{$t('KSubscribe.CONFIRM_BUTTON')}}
+          </q-btn>
+        </div>
       </template>
     </div>
   </k-screen>
@@ -40,12 +58,20 @@ export default {
       required: true
     }
   },
+  computed: {
+    title () {
+      const organisation = this.organisation.name
+      if (this.stage === 'subscription') return this.$t('KSubscribe.SUBSCRIPTION_TITLE', { organisation })
+      if (this.stage === 'validation') return this.$t('KSubscribe.VALIDATION_TITLE', { organisation })
+      return this.$t('KSubscribe.CONFIRMATION_TITLE', { organisation })
+    }
+  },
   data () {
     return {
       organisation: {
         name: ''
       },
-      status: 'pending', // running or finished
+      stage: 'subscription',
       subscriptionSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/subscribe#',
@@ -71,40 +97,35 @@ export default {
         },
         required: ['name', 'phone']
       },
-      confirmationSchema: {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/confimr-subscribtion#',
-        title: 'Subscription confirmation form',
-        type: 'object',
-        properties: {
-          name: {
-            type: 'number',
-            field: {
-              component: 'form/KTextField',
-              helper: 'KSubscribe.CODE_FIELD_HELPER'
-            }
-          }
-        },
-        required: ['number']
-      }
+      code: undefined,
+      processing: false
     }
   },
   methods: {
     async onSubscribe () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
-        this.status = 'running'
+        this.processing = true
         const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
         const subscribersService = this.$api.service(subscribersServicePath)
-        await subscribersService.create(result.values)
-        this.status = 'finished'
+        //await subscribersService.create(result.values)
+        this.processing = false
+        this.stage = 'validation'
       }
+    },
+    onVerify () {
+      this.processing = true
+      // Perform the validation
+      this.processing = false
+      this.stage = 'confirmation'
+      console.log(this.stage)
     }
   },
   async created () {
     // Load the required components
     this.$options.components['k-screen'] = this.$load('frame/KScreen')
     this.$options.components['k-form'] = this.$load('form/KForm')
+    this.$options.components['k-code-input'] = this.$load('input/KCodeInput')
     // Retrieve context data
     try {
       const decondedContextData = JSON.parse(atob(this.contextData))

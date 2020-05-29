@@ -489,7 +489,10 @@
     "TITLE": "Subscribe to {{organisation}} ?",
     "NAME_FIELD_HELPER": "$t(schemas.NAME_FIELD_HELPER)",
     "PHONE_FIELD_HELPER": "Enter your phone number",
-    "APPLY_BUTTON": "Subscribe"
+    "SUBSCRIBE_BUTTON": "Subscribe",
+    "VALIDATE_BUTTON": "Validate",
+    "CONFIMATON_MESSAGE": "Thank you, you are now subscribed to {{organisation}}",
+    "CONFIRM_BUTTON": "Ok"
   },
   "KUnsubscribe": {
     "TITLE": "Unsubscribe from {{organisation}} ?",

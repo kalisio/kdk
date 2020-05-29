@@ -83,6 +83,7 @@ export default {
     // Load the required components
     this.$options.components['k-screen'] = this.$load('frame/KScreen')
     this.$options.components['k-form'] = this.$load('form/KForm')
+    this.$options.components['k-code-input'] = this.$load('input/KCodeInput')
     // Retrieve context data
     try {
       const decondedContextData = JSON.parse(atob(this.contextData))

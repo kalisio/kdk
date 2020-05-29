@@ -486,10 +486,15 @@
     "DEVICES_USED": "Vérifier quand des appareils spécifiques ont eu accès à votre compte ci-dessous"
   },
   "KSubscribe": {
-    "TITLE": "S'abonner à {{organisation}} ?",
+    "SUBSCRIPTION_TITLE": "S'abonner à {{organisation}} ?",
     "NAME_FIELD_HELPER": "$t(schemas.NAME_FIELD_HELPER)",
     "PHONE_FIELD_HELPER": "Saisissez votre numéro de téléphone",
-    "APPLY_BUTTON": "S'abonner"
+    "SUBSCRIBE_BUTTON": "S'abonner",
+    "VALIDATION_TITLE": "Saisissez le code reçu par SMS pour valider votre abonnement à {{organisation}}",
+    "CANCEL_BUTTON": "Annuler",
+    "VALIDATE_BUTTON": "Valider",
+    "CONFIRMATION_TITLE": "Merci, vous êtes maintenant abonné à {{organisation}}",
+    "CONFIRM_BUTTON": "Ok"
   },
   "KUnsubscribe": {
     "TITLE": "Se désabonner de {{organisation}} ?",
