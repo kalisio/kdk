@@ -125,8 +125,10 @@ const TiledWindLayer = L.GridLayer.extend({
 
     // it is possible to override model parameters through the layer conf
     // check that here
-    const override = this.meteoModelOverride[model.name]
-    if (override) Object.assign(modelHeader, override)
+    if (this.meteoModelOverride) {
+      const override = this.meteoModelOverride[model.name]
+      if (override) Object.assign(modelHeader, override)
+    }
 
     Object.assign(this.uFlow.header, modelHeader)
     Object.assign(this.vFlow.header, modelHeader)
