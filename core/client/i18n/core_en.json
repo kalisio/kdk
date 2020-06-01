@@ -366,7 +366,9 @@
     "GROUPS_LABEL": "$t(GROUPS)"
   },
   "KSubscriberCard": {
-    "EDIT_LABEL": "$t(EDIT)"
+    "REMOVE_LABEL": "$t(REMOVE)",
+    "REMOVE_DIALOG_TITLE": "Remove {{subscriber}} ?",
+    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{subscriber}}</b> from your organisation ?"
   },  
   "KGroupsActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",

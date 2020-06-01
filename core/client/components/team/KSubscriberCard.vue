@@ -1,12 +1,6 @@
 <template>
   <k-card v-bind="$props" :itemActions="actions">
     <!--
-      Card icon
-     -->
-    <template v-slot:card-icon>
-      <q-icon size="1.4rem" name="address-card" />
-    </template>
-    <!--
       Card content
      -->
     <template v-slot:card-content>
@@ -32,7 +26,7 @@ export default {
   methods: {
     refreshActions () {
       this.clearActions()
-      if (this.$can('remove', 'authorisations', this.contextId, { resource: this.contextId })) {
+      if (this.$can('remove', 'subscribers', this.contextId, { resource: this.contextId })) {
         this.registerMenuAction({
           name: 'remove-subscriber',
           label: this.$t('KSubscriberCard.REMOVE_LABEL'),
@@ -55,15 +49,8 @@ export default {
           flat: true
         }
       }).onOk(() => {
-        const authorisationService = this.$api.getService('authorisations')
-        authorisationService.remove(this.contextId, {
-          query: {
-            scope: 'organisations',
-            subjects: subscriber._id,
-            subjectsService: this.contextId + '/subscriber',
-            resourcesService: 'organisations'
-          }
-        })
+        const subscribersService = this.$api.getService('subscribers')
+        subscribersService.remove(subscriber._id)
       })
     }
   },
