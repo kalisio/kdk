@@ -37,8 +37,8 @@ export default {
         component: 'team/KSubscriberCard',
         props: {
           options: {
-            tags: 'chip',
-            avatar: { size: '40px' }
+            avatar: { size: '40px' },
+            descriptionField: 'phone'
           }
         }
       }

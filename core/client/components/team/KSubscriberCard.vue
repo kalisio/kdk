@@ -49,7 +49,8 @@ export default {
           flat: true
         }
       }).onOk(() => {
-        const subscribersService = this.$api.getService('subscribers')
+        const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
+        const subscribersService = this.$api.service(subscribersServicePath)
         subscribersService.remove(subscriber._id)
       })
     }

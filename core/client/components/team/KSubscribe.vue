@@ -6,7 +6,7 @@
        -->
       <template v-if="stage === 'subscription'">
         <div class="column justify-center xs-gutter">
-          <k-form ref="form" :schema="subscriptionSchema" />
+          <k-form ref="form" :schema="getSubscriptionSchema()" />
           <div class="row justify-around q-pa-md">
             <q-btn color="primary" :loading="processing" @click="onSubscribe">
               {{$t('KSubscribe.SUBSCRIBE_BUTTON')}}
@@ -72,7 +72,13 @@ export default {
         name: ''
       },
       stage: 'subscription',
-      subscriptionSchema: {
+      code: undefined,
+      processing: false
+    }
+  },
+  methods: {
+    getSubscriptionSchema () {
+      return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/subscribe#',
         title: 'Subscribe form',
@@ -93,15 +99,23 @@ export default {
               component: 'form/KPhoneField',
               helper: 'KSubscribe.PHONE_FIELD_HELPER'
             }
+          },
+          consentTerms: {
+            type: 'boolean',
+            default: false,
+            enum: [true],
+            field: {
+              component: 'form/KToggleField',
+              helper: this.$t('KRegister.ACCEPT_TERMS_HELPER', { domain: this.$config('domain') }),
+              errorLabel: this.$t('KRegister.ACCEPT_TERMS_ERROR_LABEL', { domain: this.$config('domain') }),
+              'checked-icon': 'check',
+              'unchecked-icon': 'clear'
+            }
           }
         },
-        required: ['name', 'phone']
-      },
-      code: undefined,
-      processing: false
-    }
-  },
-  methods: {
+        required: ['name', 'phone', 'consentTermes']
+      }
+    },
     async onSubscribe () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
@@ -132,8 +146,8 @@ export default {
     this.$options.components['k-code-input'] = this.$load('input/KCodeInput')
     // Retrieve context data
     try {
-      const decondedContextData = JSON.parse(atob(this.contextData))
-      this.organisation.name = _.get(decondedContextData, 'name')
+      const decodedContextData = JSON.parse(atob(this.contextData))
+      this.organisation.name = _.get(decodedContextData, 'name')
     } catch (error) {
       logger.error(`Invalid context data ${error}`)
     }

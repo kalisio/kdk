@@ -6,8 +6,8 @@
        -->
       <template v-if="stage === 'unsubscription'">
         <div class="column justify-center xs-gutter">
-          <k-form ref="form" :schema="unsubscriptionSchema" />
-          <div class="row justify-around q-pa-sm">
+          <k-form ref="form" :schema="getUnsubscriptionSchema()" />
+          <div class="row justify-around q-pa-md">
             <q-btn color="primary" :loading="processing" @click="onUnsubscribe">
               {{$t('KUnsubscribe.UNSUBSCRIBE_BUTTON')}}
             </q-btn>
@@ -69,7 +69,13 @@ export default {
         name: ''
       },
       stage: 'unsubscription',
-      unsubscriptionSchema: {
+      code: undefined,
+      processing: false
+    }
+  },
+  methods: {
+    getUnsubscriptionSchema () {
+      return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/unsubscribe#',
         title: 'Unsubscribe form',
@@ -93,19 +99,15 @@ export default {
           }
         },
         required: ['name', 'phone']
-      },
-      code: undefined,
-      processing: false
-    }
-  },
-  methods: {
+      }
+    },
     async onUnsubscribe () {
-      // const result = this.$refs.form.validate()
+      const result = this.$refs.form.validate()
       this.processing = true
       // const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
       // const subscribersService = this.$api.service(subscribersServicePath)
       try {
-        // TODO await subscribersService.remove(result.values)
+        // TODO const subscribers = subscribersService.remove()
         this.processing = false
         this.stage = 'validation'
       } catch (error) {
@@ -127,8 +129,8 @@ export default {
     this.$options.components['k-code-input'] = this.$load('input/KCodeInput')
     // Retrieve context data
     try {
-      const decondedContextData = JSON.parse(atob(this.contextData))
-      this.organisation.name = _.get(decondedContextData, 'name')
+      const decodedContextData = JSON.parse(atob(this.contextData))
+      this.organisation.name = _.get(decodedContextData, 'name')
     } catch (error) {
       logger.error(`Invalid context data ${error}`)
     }
