@@ -13,7 +13,6 @@
         "helper": "schemas.MEMBERS_TAGS_FIELD_HELPER"
       }
     }
-  },
-  "required": ["tags"]
+  }
 }
 
