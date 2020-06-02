@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.1.1](https://github.com/kalisio/kdk/tree/v1.1.1) (2020-06-02)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.1.0...v1.1.1)
+
+**Closed issues:**
+
+- Provide a code input component [\#169](https://github.com/kalisio/kdk/issues/169)
+
 ## [v1.1.0](https://github.com/kalisio/kdk/tree/v1.1.0) (2020-05-28)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.0.0...v1.1.0)
