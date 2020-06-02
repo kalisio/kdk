@@ -95,6 +95,8 @@ export default {
           },
           phone: {
             type: 'string',
+            minLength: 7,
+            maxLength: 15,
             field: {
               component: 'form/KPhoneField',
               helper: 'KSubscribe.PHONE_FIELD_HELPER'
@@ -113,15 +115,14 @@ export default {
             }
           }
         },
-        required: ['name', 'phone', 'consentTermes']
+        required: ['name', 'phone', 'consentTerms']
       }
     },
     async onSubscribe () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
         this.processing = true
-        const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
-        const subscribersService = this.$api.service(subscribersServicePath)
+        const subscribersService = this.$api.getService('subscribers', this.contextId)
         try {
           await subscribersService.create(result.values)
           this.processing = false

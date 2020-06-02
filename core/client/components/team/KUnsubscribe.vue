@@ -20,6 +20,9 @@
       <template v-if="stage === 'validation'">
         <k-code-input v-model="code" />
         <div class="row justify-around q-pa-md">
+          <q-btn color="primary" @click="stage = 'unsubscription'">
+            {{$t('KUnsubscribe.CANCEL_BUTTON')}}
+          </q-btn>
           <q-btn color="primary" :loading="processing" :disable="!code" @click="onValidate">
             {{$t('KUnsubscribe.VALIDATE_BUTTON')}}
           </q-btn>
@@ -81,45 +84,45 @@ export default {
         title: 'Unsubscribe form',
         type: 'object',
         properties: {
-          name: {
-            type: 'string',
-            minLength: 3,
-            maxLength: 128,
-            field: {
-              component: 'form/KTextField',
-              helper: 'KSubscribe.NAME_FIELD_HELPER'
-            }
-          },
           phone: {
             type: 'string',
+            minLength: 7,
+            maxLength: 15,
             field: {
               component: 'form/KPhoneField',
               helper: 'KSubscribe.PHONE_FIELD_HELPER'
             }
           }
         },
-        required: ['name', 'phone']
+        required: ['phone']
       }
     },
     async onUnsubscribe () {
-      // const result = this.$refs.form.validate()
-      this.processing = true
-      // const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
-      // const subscribersService = this.$api.service(subscribersServicePath)
-      try {
-        // TODO const subscribers = subscribersService.remove(TODO)
-        this.processing = false
-        this.stage = 'validation'
-      } catch (error) {
-        logger.error(error)
-        this.processing = false
+      const result = this.$refs.form.validate()
+        if (result.isValid) {
+        this.processing = true
+        try {
+          // SMS 
+          this.processing = false
+          this.phone = result.values.phone
+          this.stage = 'validation'
+        } catch (error) {
+          logger.error(error)
+          this.processing = false
+        }
       }
     },
-    onValidate () {
+    async onValidate () {
       this.processing = true
-      // TODO: Perform the validation
+      const subscribersService = this.$api.getService('subscribers', this.contextId)
+      try {
+        await subscribersService.remove(this.phone, { query: { code: this.code }})
+        this.stage = 'confirmation'
+      } catch (error) {
+        logger.error(error)
+        this.stage = 'unsubscription'
+      }
       this.processing = false
-      this.stage = 'confirmation'
     }
   },
   created () {

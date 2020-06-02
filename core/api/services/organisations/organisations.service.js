@@ -46,6 +46,7 @@ export default function (name, app, options) {
       this.app.createService('subscribers', {
         modelsPath,
         servicesPath,
+        id: 'phone',
         context: organisation,
         db
       })

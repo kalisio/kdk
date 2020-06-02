@@ -1,3 +1,5 @@
+import { preventRemoveSubscriber } from '../../hooks'
+
 module.exports = {
   before: {
     all: [],
@@ -6,7 +8,7 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [preventRemoveSubscriber]
   },
 
   after: {
