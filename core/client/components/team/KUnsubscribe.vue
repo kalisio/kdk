@@ -102,12 +102,12 @@ export default {
       }
     },
     async onUnsubscribe () {
-      const result = this.$refs.form.validate()
+      // const result = this.$refs.form.validate()
       this.processing = true
       // const subscribersServicePath = this.$api.getServicePath('subscribers', this.contextId)
       // const subscribersService = this.$api.service(subscribersServicePath)
       try {
-        // TODO const subscribers = subscribersService.remove()
+        // TODO const subscribers = subscribersService.remove(TODO)
         this.processing = false
         this.stage = 'validation'
       } catch (error) {
