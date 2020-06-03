@@ -54,7 +54,7 @@ export default {
     return {
       mode: 'unique',
       fileError: false,
-      fileErrorLabel: '',
+      fileErrorLabel: ''
     }
   },
   methods: {

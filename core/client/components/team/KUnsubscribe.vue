@@ -99,10 +99,10 @@ export default {
     },
     async onUnsubscribe () {
       const result = this.$refs.form.validate()
-        if (result.isValid) {
+      if (result.isValid) {
         this.processing = true
         try {
-          // SMS 
+          // SMS
           this.processing = false
           this.phone = result.values.phone
           this.stage = 'validation'
@@ -116,7 +116,7 @@ export default {
       this.processing = true
       const subscribersService = this.$api.getService('subscribers', this.contextId)
       try {
-        await subscribersService.remove(this.phone, { query: { code: this.code }})
+        await subscribersService.remove(this.phone, { query: { code: this.code } })
         this.stage = 'confirmation'
       } catch (error) {
         logger.error(error)

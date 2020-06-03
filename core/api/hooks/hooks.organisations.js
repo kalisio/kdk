@@ -214,3 +214,19 @@ export async function preventRemoveOrganisation (hook) {
   }
   return hook
 }
+
+export async function createSubscribersGroup (hook) {
+  if (hook.type !== 'after') {
+    throw new Error('The \'createSubscribersGroup\' hook should only be used as a \'after\' hook.')
+  }
+
+  const app = hook.app
+  const orgId = hook.result._id
+  const orgGroupService = app.getService('groups', orgId)
+  await orgGroupService.create({
+    name: 'KGroup.SUBSCRIBERS_GROUP_NAME',
+    description: 'KGroup.SUBSCRIBERS_GROUP_DESCRIPTION',
+    system: true
+  }, hook.params)
+  return hook
+}
