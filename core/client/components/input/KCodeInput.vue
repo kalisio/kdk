@@ -1,14 +1,14 @@
 <template>
   <div class="row q-gutter-md justify-around no-wrap">
     <template v-for="index in size">
-      <q-input 
-        :key="index" 
-        v-model.number="digits[index - 1]" 
+      <q-input
+        :key="index"
+        v-model.number="digits[index - 1]"
         :rules="[value => Number.isInteger(value)]"
-        mask="#" 
+        mask="#"
         outlined
         no-error-icon
-        input-class="text-center" 
+        input-class="text-center"
         @input="onChanged" />
     </template>
   </div>
@@ -21,7 +21,7 @@ export default {
     value: {
       type: Number,
       default: undefined
-    },  
+    },
     size: {
       type: Number,
       default: 6
