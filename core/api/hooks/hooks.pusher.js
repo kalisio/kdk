@@ -5,6 +5,8 @@ import { populateObject } from './hooks.query'
 
 const debug = makeDebug('kdk:core:pusher:hooks')
 
+const defaultTopicField = 'topics'
+
 export function populatePushObject (hook) {
   if (hook.type !== 'before') {
     throw new Error('The \'populatePushObject\' hook should only be used as a \'before\' hook.')
@@ -22,35 +24,40 @@ export function populatePushObject (hook) {
   else return populateObject({ serviceField: 'pushObjectService', idField: 'pushObject', throwOnNotFound: true })(hook)
 }
 
-export async function createTopic (hook) {
-  if (hook.type !== 'after') {
-    throw new Error('The \'createTopic\' hook should only be used as a \'before\' hook.')
+export function createTopic (options) {
+  return async function (hook) {
+    if (hook.type !== 'after') {
+      throw new Error('The \'createTopic\' hook should only be used as a \'before\' hook.')
+    }
+    const pusherService = hook.app.getService('pusher')
+    const topicField = _.get(options, 'topicField', defaultTopicField)
+    hook.result = await pusherService.create(
+      { action: 'topic', topicField }, {
+        pushObject: hook.result,
+        pushObjectService: hook.service
+      })
+    debug('Added topic to object ' + hook.result._id.toString() + ' from service ' + hook.service.path)
+    return hook
   }
-
-  const pusherService = hook.app.getService('pusher')
-  hook.result = await pusherService.create(
-    { action: 'topic' }, {
-      pushObject: hook.result,
-      pushObjectService: hook.service
-    })
-  debug('Added topic to object ' + hook.result._id.toString() + ' from service ' + hook.service.path)
-  return hook
 }
 
-export async function removeTopic (hook) {
-  if (hook.type !== 'after') {
-    throw new Error('The \'removeTopic\' hook should only be used as a \'after\' hook.')
-  }
+export function removeTopic (options) {
+  return async function (hook) {
+    if (hook.type !== 'after') {
+      throw new Error('The \'removeTopic\' hook should only be used as a \'after\' hook.')
+    }
 
-  const pusherService = hook.app.getService('pusher')
-  await pusherService.remove(hook.result._id.toString(), {
-    query: { action: 'topic' },
-    pushObject: hook.result,
-    pushObjectService: hook.service,
-    patch: hook.method !== 'remove' // Do not patch object when it is deleted
-  })
-  debug('Removed topic on object ' + hook.result._id.toString() + ' from service ' + hook.service.path)
-  return hook
+    const pusherService = hook.app.getService('pusher')
+    const topicField = _.get(options, 'topicField', defaultTopicField)
+    await pusherService.remove(hook.result._id.toString(), {
+      query: { action: 'topic', topicField },
+      pushObject: hook.result,
+      pushObjectService: hook.service,
+      patch: hook.method !== 'remove' // Do not patch object when it is deleted
+    })
+    debug('Removed topic on object ' + hook.result._id.toString() + ' from service ' + hook.service.path)
+    return hook
+  }
 }
 
 export async function subscribeSubjectsToResourceTopic (hook) {
