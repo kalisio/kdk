@@ -1,16 +1,25 @@
 <template>
   <k-card v-bind="$props" :itemActions="actions">
     <!--
-      Card icon
+      Card header
      -->
-    <q-icon slot="card-icon" size="1.4rem" :name="roleIcon(role)">
-      <q-tooltip>{{ $t(roleLabel(role)) }}</q-tooltip>
-    </q-icon>
+    <template v-slot:card-header>
+      <div class="q-pa-xs row justify-end">
+        <q-badge outine color="grey-7">
+          {{ $t(roleLabel(role)) }}
+        </q-badge>
+      </div>
+    </template>
     <!--
       Card content
      -->
     <div slot="card-content">
-      <div class="column full-width justify-center xs-gutter">
+      <q-separator class="card-separator" />
+      <div  v-if="tags.length > 0">
+        <k-tags-pane class="q-pa-sm" :tags="tags" />
+        <q-separator class="card-separator" />
+      </div>
+      <div class="q-pa-sm column full-width justify-center xs-gutter">
         <div class="row justify-start items-center">
           <template v-for="(group, index) in memberGroups">
             <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
@@ -37,6 +46,7 @@
         </div>
       </div>
       <div v-if="expireAt">
+        <q-separator />
         <cite class="text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>
       </div>
     </div>
@@ -47,13 +57,23 @@
 import _ from 'lodash'
 import { Dialog } from 'quasar'
 import mixins from '../../mixins'
-import { getInitials } from '../../utils'
+import { getInitials, processIcon } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 
 export default {
   name: 'k-member-card',
   mixins: [mixins.baseItem],
   computed: {
+    tags () {
+      // Check for custom tags field
+      let tags = this.options.tagsField ? _.get(this.item, this.options.tagsField, '') : this.item.tags
+      // Filter tags from current context
+      tags = _.filter(tags, { context: this.$store.get('context._id') })
+      console.log(tags)
+      // Then process icons
+      tags.forEach(tag => processIcon(tag))
+      return tags
+    },
     memberGroups () {
       return _.filter(this.item.groups, { context: this.contextId })
     },
@@ -119,9 +139,6 @@ export default {
         })
       })
     },
-    tagKey (tag) {
-      return this.item._id + '-' + tag.value
-    },
     groupKey (group) {
       return this.item._id + group._id
     },
@@ -186,6 +203,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')
+    this.$options.components['k-tags-pane'] = this.$load('team/KTagsPane')
     // Load the role configuration
     this.roleIcons = this.$config('roles.icons')
     this.roleLabels = this.$config('roles.labels')

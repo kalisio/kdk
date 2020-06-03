@@ -36,13 +36,7 @@ export default {
         }
       },
       renderer: {
-        component: 'team/KMemberCard',
-        props: {
-          options: {
-            tags: 'chip',
-            avatar: { size: '40px' }
-          }
-        }
+        component: 'team/KMemberCard'
       }
     }
   },

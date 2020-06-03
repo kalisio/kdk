@@ -1,16 +1,21 @@
 <template>
   <k-card v-bind="$props" :itemActions="actions">
     <!--
-      Card icon
+      Card header
      -->
-    <q-icon slot="card-icon" :name="memberRoleIcon" size="1.4rem">
-      <q-tooltip>{{ $t(memberRoleLabel) }}</q-tooltip>
-    </q-icon>
+    <template v-slot:card-header>
+      <div class="q-pa-xs row justify-end">
+        <q-badge outine color="grey-7">
+          {{ $t(memberRoleLabel) }}
+        </q-badge>
+      </div>
+    </template>
     <!--
       Card content
      -->
     <div slot="card-content">
-      <div class="row justify-around items-center">
+      <q-separator />
+      <div class="q-pa-md row justify-around items-center">
         <template v-for="(role, index) in roleNames">
           <q-btn :key="roleKey(role)" flat small rounded color="primary"
             :icon="roleIcons[index]"

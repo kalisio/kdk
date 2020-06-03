@@ -37,7 +37,6 @@ export default {
         component: 'team/KSubscriberCard',
         props: {
           options: {
-            avatar: { size: '40px' },
             descriptionField: 'phone'
           }
         }

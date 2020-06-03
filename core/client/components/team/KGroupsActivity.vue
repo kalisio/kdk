@@ -43,12 +43,7 @@ export default {
         }
       },
       renderer: {
-        component: 'team/KGroupCard',
-        props: {
-          options: {
-            avatar: { size: '40px' }
-          }
-        }
+        component: 'team/KGroupCard'
       }
     }
   },

@@ -1,7 +1,6 @@
 <template>
   <div v-if="readOnly">
-    {{ model }}
-    <!--template v-for="(chip, index) in model">
+    <template v-for="(chip, index) in model">
       <q-chip
         :key="chip.value + '-' + index"
         :icon="chip.icon.name"
@@ -9,14 +8,12 @@
         dense>
         {{chip.value}}
       </q-chip>
-    </template-->
+    </template>
   </div>
   <div v-else>
     <q-field
-      :icon="icon"
       :label="label"
       :error-message="errorLabel"
-      :label-width="labelWidth"
       :error="hasError"
       :disabled="disabled"
       no-error-icon

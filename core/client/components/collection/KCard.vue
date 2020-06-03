@@ -1,79 +1,53 @@
 <template>
-  <div :class="layout()">
-    <q-card @click="onItemSelected">
+  <div :class="getLayout()">
+    <q-card  @click="onItemSelected">
+      <!--
+        Header section
+      -->      
+      <slot name="card-header" />
       <!--
         Title section
       -->
       <slot name="card-title">
         <q-item>
-          <q-item-section avatar v-if="options.avatar">
-            <q-avatar v-if="name" color="primary" text-color="white" :size="options.avatar.size">{{initials}}</q-avatar>
+          <q-item-section top avatar>
+            <slot name="card-avatar">
+              <q-avatar v-if="avatar.type === 'text'" color="primary" text-color="white" >{{ avatar.text }}</q-avatar>
+              <q-avatar v-if="avatar.type === 'icon'" :color="avatar.icon.color" text-color="white" :icon="avatar.icon.name" />
+            </slot>
           </q-item-section>
           <q-item-section>
-          {{ name }}
-          <small><k-text-area :length="20" :text="description" /></small>
+            <span class="text-subtitle1 text-weight-medium ellipsis">{{ name }}</span>
+            <k-text-area :length="30" :text="description" />
           </q-item-section>
-          <q-item-section side><slot name="card-icon"></slot></q-item-section>
         </q-item>
-        <q-separator />
       </slot>
       <!--
         Content section
       -->
-      <q-card-section>
-        <slot name="card-tags">
-          <div v-if="tags && tags.length > 0">
-            <div class="row justify-start items-center">
-              <template v-for="tag in tags">
-                <q-chip v-if="options.tags && options.tags === 'chip'"
-                        :key="key(tag, 'value')"
-                        dense
-                        text-color="white"
-                        :color="tag.icon.color"
-                        :icon="tag.icon.name"
-                        :label="tag.value"/>
-                <q-icon v-else
-                        :key="key(tag, 'value')"
-                        size="24px"
-                        :color="tag.icon.color"
-                        :name="tag.icon.name">
-                  <q-tooltip>{{tag.value}}</q-tooltip>
-                </q-icon>
-              </template>
-            </div>
-            <q-separator />
-          </div>
-        </slot>
-        <slot name="card-content"></slot>
-      </q-card-section>
+      <slot name="card-content" />
       <!--
         Actions section
       -->
       <q-separator />
-      <slot name="card-actions">
-        <q-card-actions class="q-pa-xs" align="right">
-          <!-- Pane -->
-          <k-tool-bar :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
-          <!-- Menu -->
-          <k-overflow-menu :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
-        </q-card-actions>
-      </slot>
+      <q-card-actions class="q-pa-xs" align="right">
+        <!-- Pane -->
+        <k-tool-bar :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
+        <!-- Menu -->
+        <k-overflow-menu :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
+      </q-card-actions>
     </q-card>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import { KTextArea } from '../frame'
-import { getInitials, processIcon } from '../../utils'
+import { getInitials } from '../../utils'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-card',
   mixins: [mixins.baseItem],
-  components: {
-    KTextArea
-  },
   props: {
     itemActions: {
       type: Object,
@@ -86,43 +60,46 @@ export default {
     }
   },
   computed: {
+    avatar () {
+      const icon = this.getIcon()
+      if (icon) {
+        return {
+          type: 'icon',
+          icon
+        }
+      }
+      const name = this.getName()
+      return {
+        type: 'text',
+        text: getInitials(name)
+      }
+    },
     name () {
       // Check for custom name field
-      return (this.options.nameField ? _.get(this.item, this.options.nameField, '') : this.item.name)
-    },
-    initials () {
-      return getInitials(this.name)
+      return this.getName()
     },
     description () {
       // Check for custom description field
-      return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
-    },
-    tags () {
-      // Check for custom tags field
-      let tags = this.options.tagsField ? _.get(this.item, this.options.tagsField, '') : this.item.tags
-      // Filter tags from current context
-      tags = _.filter(tags, { context: this.$store.get('context._id') })
-      // Then process icons
-      tags.forEach(tag => processIcon(tag))
-      return tags
-    }
-  },
-  data () {
-    return {
-      descriptionTruncated: true,
-      descriptionToggle: false
+      return this.getDescription()
     }
   },
   methods: {
-    layout () {
+    getLayout () {
       return _.get(this.options, 'layout', 'col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3')
     },
-    key (object, property) {
-      return this.item._id + '-' + object[property]
+    getIcon () {
+      return this.options.iconField ? _.get(this.item, this.options.iconField, '') : this.item.icon
+    },
+    getName () {
+      return this.options.nameField ? _.get(this.item, this.options.nameField, '') : this.item.name
+    },
+    getDescription () {
+      return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
     }
   },
   created () {
     // Loads the required components
+    this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
     this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
     this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
   }

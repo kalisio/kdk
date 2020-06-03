@@ -1,14 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions">
-    <!--
-      Card content
-     -->
-    <template v-slot:card-content>
-      <div v-if="expireAt">
-        <cite class="text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>
-      </div>
-    </template>
-  </k-card>
+  <k-card v-bind="$props" :itemActions="actions" />
 </template>
 
 <script>
