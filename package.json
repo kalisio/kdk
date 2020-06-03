@@ -125,7 +125,7 @@
     "password-validator": "^4.0.0",
     "s3-blob-store": "2.1.0",
     "sift": "^8.0.0",
-    "sns-mobile": "https://github.com/kalisio/sns-mobile#protocol",
+    "sns-mobile": "https://github.com/kalisio/sns-mobile",
     "superagent": "^5.1.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0",

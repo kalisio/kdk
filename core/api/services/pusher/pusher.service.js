@@ -9,8 +9,8 @@ const defaultTopicField = 'topics'
 
 export default function (name, app, options) {
   const config = app.get('pusher')
-  function generateTopicName (object) {
-    if (config.topicName && (typeof config.topicName === 'function')) return config.topicName(object)
+  function generateTopicName (object, application) {
+    if (config.topicName && (typeof config.topicName === 'function')) return config.topicName(object, application)
     else return object._id.toString()
   }
   // Instanciate a SNS interface for each platform found in config
@@ -34,8 +34,7 @@ export default function (name, app, options) {
       if (typeof message === 'string') {
         message = { title: message, body: message }
       }
-      // Add SMS protocol target in case we have some phone numbers registered to the topic
-      const jsonMessage = { default: message.title, sms: message.body }
+      const jsonMessage = { default: message.title }
       // For stacking we need a unique increasing ID per notification on Android
       let notId = 1
       if (message.createdAt && message.updatedAt) {
@@ -49,7 +48,12 @@ export default function (name, app, options) {
           notId = (new Date(message.updatedAt).getTime() - new Date(message.createdAt).getTime())
         }
       }
-      if (platform === SNS.SUPPORTED_PLATFORMS.IOS) {
+      if (platform === SNS.SUPPORTED_PLATFORMS.SMS) {
+        jsonMessage.sms = message.body
+      } else if (platform === SNS.SUPPORTED_PLATFORMS.EMAIL) {
+        jsonMessage.subject = message.title
+        jsonMessage.email = message.body
+      } else if (platform === SNS.SUPPORTED_PLATFORMS.IOS) {
         // iOS
         const aps = {
           alert: message.title,
@@ -70,6 +74,15 @@ export default function (name, app, options) {
       }
       return jsonMessage
     },
+    getDevices (user) {
+      let devices = []
+      if (user.devices) devices = user.devices
+      // Specific case of SMS, in this case the number replace the device registration ID/arn ARN
+      else if (user.phone) devices.push({ registrationId: user.phone, arn: user.phone, platform: 'SMS' })
+      // Specific case of Email, in this case the address replace the device registration ID/arn ARN
+      else if (user.email) devices.push({ registrationId: user.email, arn: user.email, platform: 'EMAIL' })
+      return devices
+    },
     createDevice (device, user) {
       return new Promise((resolve, reject) => {
         const application = this.getSnsApplication(device.platform)
@@ -78,7 +91,7 @@ export default function (name, app, options) {
           return
         }
         // Check if already registered
-        const devices = user.devices || []
+        const devices = this.getDevices(user)
         const previousDevice = _.find(devices, userDevice => userDevice.registrationId === device.registrationId)
         if (previousDevice) {
           debug('Already registered device with token ' + previousDevice.registrationId + ' and ARN ' + previousDevice.arn + ' for user ' + user._id.toString())
@@ -97,7 +110,7 @@ export default function (name, app, options) {
     updateDevice (registrationId, device, user) {
       return new Promise((resolve, reject) => {
         // Check if already registered
-        const devices = user.devices || []
+        const devices = this.getDevices(user)
         const previousDevice = _.find(devices, userDevice => userDevice.registrationId === device.registrationId)
         if (!previousDevice) {
           reject(new Error('Cannot find device with token ' + device.registrationId + ' and ARN ' + device.arn + ' for user ' + user._id.toString()))
@@ -130,7 +143,7 @@ export default function (name, app, options) {
     removeDevice (registrationId, user) {
       return new Promise((resolve, reject) => {
         // Check if already registered
-        const devices = user.devices || []
+        const devices = this.getDevices(user)
         const device = _.find(devices, device => device.registrationId === registrationId)
         if (!device) {
           debug('Cannot find device with token ' + registrationId + ' for user ' + user._id.toString())
@@ -154,7 +167,7 @@ export default function (name, app, options) {
     publishToDevices (user, message) {
       // Process with each registered platform
       const messagePromises = []
-      const devices = user.devices || []
+      const devices = this.getDevices(user)
       devices.forEach(device => {
         const application = this.getSnsApplication(device.platform)
         messagePromises.push(new Promise((resolve, reject) => {
@@ -185,7 +198,7 @@ export default function (name, app, options) {
       snsApplications.forEach(application => {
         topicPromises.push(new Promise((resolve, reject) => {
           // The topic name will be the object ID
-          application.createTopic(generateTopicName(object), (err, topicArn) => {
+          application.createTopic(generateTopicName(object, application), (err, topicArn) => {
             if (err) {
               reject(err)
             } else {
@@ -271,13 +284,13 @@ export default function (name, app, options) {
       snsApplications.forEach(application => {
         // Then each target user
         users.forEach(user => {
-          const devices = user.devices || []
+          const devices = this.getDevices(user)
           // Then each target device
           devices.forEach(device => {
             if (device.platform.toUpperCase() === application.platform) {
               subscriptionPromises.push(new Promise((resolve, reject) => {
                 const topicArn = _.get(object, topicField + '.' + application.platform)
-                application.subscribeWithProtocol(device.arn, topicArn, 'application', (err, subscriptionArn) => {
+                application.subscribe(device.arn, topicArn, (err, subscriptionArn) => {
                   if (err) {
                     // Be tolerant to SNS errors because some endpoints might have been revoked
                     // reject(new GeneralError(err, { [device.registrationId]: { user: user._id } }))
@@ -285,25 +298,7 @@ export default function (name, app, options) {
                     resolve({ [device.registrationId]: { user: user._id, arn: null } })
                   } else {
                     debug('Subscribed device with token ' + device.registrationId + ' and ARN ' + device.arn + ' to application topic with ARN ' + topicArn)
-                    // Register for SMS as well
-                    if (device.number) {
-                      application.subscribeWithProtocol(device.number, topicArn, 'sms', (err, smsSubscriptionArn) => {
-                        if (err) {
-                          // Be tolerant to SNS errors because some endpoints might have been revoked
-                          // reject(new GeneralError(err, { [device.registrationId]: { user: user._id } }))
-                          debug('Unable to subscribe device number ' + device.number + ' and ARN ' + device.arn + ' to application topic with ARN ' + topicArn, err)
-                          resolve({ [device.registrationId]: { user: user._id, arn: subscriptionArn } })
-                        } else {
-                          debug('Subscribed device number  ' + device.number + ' and ARN ' + device.arn + ' to SMS topic with ARN ' + topicArn)
-                          resolve({
-                            [device.registrationId]: { user: user._id, arn: subscriptionArn },
-                            [device.number]: { user: user._id, arn: smsSubscriptionArn }
-                          })
-                        }
-                      })
-                    } else {
-                      resolve({ [device.registrationId]: { user: user._id, arn: subscriptionArn } })
-                    }
+                    resolve({ [device.registrationId]: { user: user._id, arn: subscriptionArn } })
                   }
                 })
               }))
@@ -344,10 +339,9 @@ export default function (name, app, options) {
           // Remove the given subscribers from the topic
             subscriptions.forEach(subscription => {
               users.forEach(user => {
-                const devices = user.devices || []
+                const devices = this.getDevices(user)
                 devices.forEach(device => {
-                // check for number as well for SMS subscriptions
-                  if ((device.arn === subscription.Endpoint) || (device.number === subscription.Endpoint)) {
+                  if (device.arn === subscription.Endpoint) {
                     unsubscriptionPromises.push(new Promise((resolve, reject) => {
                       const application = this.getSnsApplication(device.platform)
                       const topicArn = _.get(object, topicField + '.' + application.platform)

@@ -5,10 +5,14 @@ import core, { kalisio, hooks } from '../../core/api'
 import { permissions } from '../../core/common'
 import { createGmailClient } from './utils'
 
+const phone = process.env.SNS_PHONE_NUMBER
+
 describe('notifications', () => {
   let app, server, port, baseUrl, gmailClient, gmailUser,
     authenticationService, mailerService, userService, devicesService, pusherService,
-    sns, publisherObject, subscriberObject
+    sns, snsForSms, publisherObject, subscriberObject
+
+  const subscriberPhone = { phone }
   const device = {
     registrationId: 'fakeId',
     platform: 'ANDROID',
@@ -78,6 +82,9 @@ describe('notifications', () => {
     // For now we only test 1 platform, should be sufficient due to SNS facade
     sns = pusherService.getSnsApplication(device.platform)
     expect(sns).toExist()
+    // Also genric SMS platform
+    snsForSms = pusherService.getSnsApplication('SMS')
+    expect(snsForSms).toExist()
   })
 
   it('setup access to gmail', async () => {
@@ -241,6 +248,23 @@ describe('notifications', () => {
   // Let enough time to process
     .timeout(5000)
 
+  it('subscribes a phone to the publisher topic', (done) => {
+    pusherService.create({
+      action: 'subscriptions',
+      pushObject: publisherObject._id.toString(),
+      pushObjectService: 'users'
+    }, {
+      users: [subscriberPhone]
+    })
+    snsForSms.once('subscribed', (subscriptionArn, endpointArn, topicArn) => {
+      expect(publisherObject.topics.SMS).to.equal(topicArn)
+      expect(endpointArn).to.satisfy(arn => (arn === subscriberPhone.phone))
+      done()
+    })
+  })
+  // Let enough time to process
+    .timeout(5000)
+
   it('publishes a message on the publisher topic', (done) => {
     pusherService.create({
       action: 'message',
@@ -248,9 +272,16 @@ describe('notifications', () => {
       pushObjectService: 'users',
       message: 'test-message'
     })
+    let count = 0
     sns.once('publishedMessage', (topicArn, messageId) => {
       expect(publisherObject.topics[device.platform]).to.equal(topicArn)
-      done()
+      count++
+      if (count === 2) done()
+    })
+    snsForSms.once('publishedMessage', (topicArn, messageId) => {
+      expect(publisherObject.topics.SMS).to.equal(topicArn)
+      count++
+      if (count === 2) done()
     })
   })
   // Let enough time to process
@@ -265,6 +296,22 @@ describe('notifications', () => {
       users: [subscriberObject]
     })
     sns.once('unsubscribed', (subscriptionArn) => {
+      // We do not store subscription ARN
+      done()
+    })
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('unsubscribes a phone from the publisher topic', (done) => {
+    pusherService.remove(publisherObject._id.toString(), {
+      query: {
+        action: 'subscriptions',
+        pushObjectService: 'users'
+      },
+      users: [subscriberPhone]
+    })
+    snsForSms.once('unsubscribed', (subscriptionArn) => {
       // We do not store subscription ARN
       done()
     })

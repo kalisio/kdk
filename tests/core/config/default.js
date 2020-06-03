@@ -61,7 +61,8 @@ module.exports = {
     region: 'eu-west-1',
     apiVersion: '2010-03-31',
     platforms: {
-      ANDROID: process.env.SNS_ANDROID_ARN
+      ANDROID: process.env.SNS_ANDROID_ARN,
+      SMS: true
     },
     topicName: (object) => object._id.toString()
   },
