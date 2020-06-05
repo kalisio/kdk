@@ -344,11 +344,22 @@ export default {
       infoboxProperties: [],
       clustering: true,
       disableClusteringAtZoom: 18,
-      defaultIcon: {},
+      // Required to detail style properties upfront for reactivity
+      defaultIcon: {
+        'marker-color': 'blue',
+        'icon-classes': 'fas fa-circle'
+      },
       iconStyles: [],
-      defaultLine: {},
+      defaultLine: {
+        'stroke-color': 'red',
+        'stroke-width': 3,
+        'stroke-opacity': 1
+      },
       lineStyles: [],
-      defaultPolygon: {},
+      defaultPolygon: {
+        'fill-color': 'green',
+        'fill-opacity': 1
+      },
       polygonStyles: [],
       hasError: false,
       error: ''
@@ -640,10 +651,12 @@ export default {
       return Object.assign(style, options)
     },
     onAddIconStyle (property) {
+      // Default icon
+      let color = _.get(this.options, 'pointStyle.icon.options.markerColor')
+      if (color) color = kCoreUtils.getPaletteFromColor(color)
       this.iconStyles.push(this.createStyle(property.value, {
-        // Default icon
-        name: _.get(this.options, 'pointStyle.icon.options.iconClasses', 'fas fa-circle'),
-        color: _.get(this.options, 'pointStyle.icon.options.markerColor', 'blue')
+        'icon-classes': _.get(this.options, 'pointStyle.icon.options.iconClasses', 'fas fa-circle'),
+        'marker-color': color || 'blue'
       }))
     },
     onRemoveIconStyle (style) {
