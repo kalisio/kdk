@@ -14,13 +14,13 @@
       Card content
      -->
     <div slot="card-content">
-      <q-separator class="card-separator" />
-      <div  v-if="tags.length > 0">
+      <q-separator />
+      <template  v-if="tags.length > 0">
         <k-tags-pane class="q-pa-sm" :tags="tags" />
-        <q-separator class="card-separator" />
-      </div>
-      <div class="q-pa-sm column full-width justify-center xs-gutter">
-        <div class="row justify-start items-center">
+        <q-separator />
+      </template>
+      <template v-if=" memberGroups.length > 0">
+        <div class="q-pa-sm row justify-start items-center">
           <template v-for="(group, index) in memberGroups">
             <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
               <q-avatar color="secondary" text-color="white" size="32px">{{groupInitials(group)}}</q-avatar>
@@ -44,11 +44,11 @@
             </q-icon>
           </q-btn>
         </div>
-      </div>
-      <div v-if="expireAt">
         <q-separator />
+      </template>  
+      <template v-if="expireAt">
         <cite class="q-pa-sm text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>
-      </div>
+      </template>
     </div>
   </k-card>
 </template>
@@ -69,7 +69,6 @@ export default {
       let tags = this.options.tagsField ? _.get(this.item, this.options.tagsField, '') : this.item.tags
       // Filter tags from current context
       tags = _.filter(tags, { context: this.$store.get('context._id') })
-      console.log(tags)
       // Then process icons
       tags.forEach(tag => processIcon(tag))
       return tags
