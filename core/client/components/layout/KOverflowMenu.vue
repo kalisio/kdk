@@ -6,6 +6,10 @@
           <q-item :id="action.name" :key="key(action)" clickable @click="onActionTriggered(action)">
             <q-item-section avatar>
               <q-icon :dense="dense" :name="action.icon" />
+              <!-- badge -->
+              <q-badge v-if="action.badge" v-bind="action.badge">
+                <q-icon v-if="action.badge.icon" v-bind="action.badge.icon" />
+              </q-badge>
             </q-item-section>
             <q-item-section>
               {{action.label}}
