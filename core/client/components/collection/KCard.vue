@@ -30,7 +30,7 @@
         Actions section
       -->
       <q-separator />
-      <q-card-actions class="q-pa-xs" align="right">
+      <q-card-actions class="q-pa-sm" align="right">
         <!-- Pane -->
         <k-tool-bar :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
         <!-- Menu -->

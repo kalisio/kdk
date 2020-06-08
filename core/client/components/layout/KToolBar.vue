@@ -22,7 +22,9 @@
           {{action.warning ? action.warning : action.label}}
         </q-tooltip>
         <!-- badge -->
-        <q-badge v-if="action.badge" v-bind="action.badge" floating transparent />
+        <q-badge v-if="action.badge" v-bind="action.badge">
+          <q-icon v-if="action.badge.icon" v-bind="action.badge.icon" />
+        </q-badge>
       </q-btn>
     </template>
     <slot name="after" />
