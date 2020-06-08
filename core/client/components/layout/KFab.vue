@@ -47,9 +47,14 @@
           color="secondary"
           @click="onActionTriggered(action)"
           :icon="action.icon">
+          <!-- tooltip -->
           <q-tooltip v-if="action.label" anchor="center left" self="center right" :offset="[20, 0]">
             {{action.label}}
           </q-tooltip>
+          <!-- badge -->
+          <q-badge v-if="action.badge" v-bind="action.badge">
+            <q-icon v-if="action.badge.icon" v-bind="action.badge.icon" />
+          </q-badge>
         </q-fab-action>
     </q-fab>
     <!--
