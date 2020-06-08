@@ -1,5 +1,5 @@
 <template>
-  <div v-show="isVisible" class="row full-width">
+  <div v-show="isVisible" class="k-search-bar">
     <k-item-chooser
       :multiselect="true"
       :services="services"
@@ -37,3 +37,16 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .k-search-bar {
+    background: #ffffff
+    border: solid 1px lightgrey
+    border-radius: 5px
+    width: 100vw
+  }
+  .k-search-bar:hover {
+    border: solid 1px $primary
+    cursor: mouse
+  }
+</style>

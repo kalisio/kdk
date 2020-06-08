@@ -12,7 +12,9 @@
         @remove="onItemRemoved(item)" />
     </template>
     <k-autocomplete v-if="!isCompleted"
+      class="q-pl-sm full-width"
       ref="autocomplete"
+      :borderless="true"
       :clearable="false"
       :services="services"
       @changed="onAutocompleteChanged" />
@@ -30,9 +32,6 @@ export default {
     KAutocomplete
   },
   computed: {
-    autocompleteSize () {
-      return this.itemslength > 0 ? 'col-5' : 'col-12'
-    },
     isCompleted () {
       return this.multiselect ? false : (this.items.length > 0)
     }
