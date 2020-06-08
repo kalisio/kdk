@@ -13,22 +13,36 @@
           class="cursor-pointer"
           dense>
           <q-item-section avatar @click="onLayerClicked(layer)">
-            <q-icon v-if="!layer.iconUrl" :name="layerIcon(layer)" />
-            <img v-else :src="layer.iconUrl" width="32" />
+            <q-icon v-if="!layer.iconUrl" :name="layerIcon(layer)">
+              <!-- badge -->
+              <q-badge v-if="layer.badge" v-bind="layer.badge">
+                <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
+              </q-badge>
+            </q-icon>
+            <img v-else :src="layer.iconUrl" width="32">
+              <!-- badge -->
+              <q-badge v-if="layer.badge" v-bind="layer.badge">
+                <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
+              </q-badge>
+            </img>
           </q-item-section>
+          <!-- item label -->
           <q-item-section @click="onLayerClicked(layer)">
             <q-item-label lines="1">
               {{ layer.name }}
             </q-item-label>
-            <q-item-label caption lines="2">
+            <q-item-label v-if="options.description" caption lines="2">
               {{ layer.description }}
             </q-item-label>
           </q-item-section>
+          <!-- actions -->
           <q-item-section side>
             <k-overflow-menu :actions="layerActions(layer)" :context="layer" :dense="$q.screen.lt.md"/>
           </q-item-section>
-          <q-tooltip v-if="layer.tooltip">
-            {{ layer.tooltip }}
+          <!-- tooltip -->
+          <q-tooltip v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
+            anchor="center left" self="center right" :offset="[20, 0]">
+            {{ layer.tooltip || layer.description }}
           </q-tooltip>
         </q-item>
       </template>
