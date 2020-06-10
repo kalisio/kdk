@@ -1,5 +1,5 @@
 <template>
-  <div class="row full-width items-baseline q-gutter-sm">
+  <div class="q-pl-sm row items-center q-gutter-sm">
     <template v-for="item in items">
       <q-chip
         dense
@@ -12,7 +12,7 @@
         @remove="onItemRemoved(item)" />
     </template>
     <k-autocomplete v-if="!isCompleted"
-      class="q-pl-sm full-width"
+      class="col"
       ref="autocomplete"
       :borderless="true"
       :clearable="false"
