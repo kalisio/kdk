@@ -151,8 +151,14 @@ export default {
         this.layer.baseQuery[`properties.${filter.property}`] = filter.value
       })
       // Update icon to reflect there is a filter on
-      if (this.filters.length) this.layer.icon = 'filter_list'
-      else this.layer.icon = 'insert_drive_file'
+      if (this.filters.length) {
+        this.layer.badge = {
+          color: 'primary', transparent: true,
+          icon: { name: 'las la-filter', size: '12px' }
+        }
+      } else {
+        delete this.layer.badge
+      }
       this.$emit('applied')
     },
     async open () {
