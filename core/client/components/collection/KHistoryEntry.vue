@@ -19,43 +19,34 @@
     <!--
       Content section
     -->
-    <q-card class="q-mx-xs">
-      <q-card-section>
+    <q-card>
+      <q-card-section class="q-pa-xs">
         <slot name="entry-content">
           <k-text-area :length="50" :text="description" />
         </slot>
-        <!--
-          Actions section
-        -->
-        <q-separator />
-        <slot name="entry-actions">
-          <q-card-actions class="q-pa-xs">
-            <!-- Pane -->
-            <k-tool-bar :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
-            <!-- Menu -->
-            <k-overflow-menu :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
-          </q-card-actions>
-        </slot>
       </q-card-section>
+      <!--
+        Actions section
+      -->
+      <q-separator />
+      <q-card-actions class="q-pa-xs" align="right">
+        <!-- Pane -->
+        <k-tool-bar :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
+        <!-- Menu -->
+        <k-overflow-menu :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
+      </q-card-actions>
     </q-card>
   </q-timeline-entry>
 </template>
 
 <script>
 import _ from 'lodash'
-import { KTextArea } from '../frame'
-import { KToolBar, KOverflowMenu } from '../layout'
 import { getIconName } from '../../utils'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-history-entry',
   mixins: [mixins.baseItem],
-  components: {
-    KTextArea,
-    KToolBar,
-    KOverflowMenu
-  },
   props: {
     itemActions: {
       type: Object,
@@ -65,7 +56,8 @@ export default {
           menu: []
         }
       }
-    }
+    },
+
   },
   computed: {
     name () {
@@ -94,6 +86,12 @@ export default {
     layout () {
       return _.get(this.options, 'layout', 'col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6')
     }
+  },
+  created () {
+    // Loads the required components
+    this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
+    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
   }
 }
 </script>
