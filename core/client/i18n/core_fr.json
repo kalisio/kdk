@@ -144,6 +144,9 @@
     "EMPTY_TABLE": "$t(NO_ITEM)",
     "TABLE_COLUMNS": "Propriétés"
   },
+  "KHistory": {
+    "EMPTY_HISTORY": "$t(NO_ITEM)"
+  },
   "KUploader": {
     "dropZone": {
       "dictDefaultMessage": "Glissez-déposez vos fichiers ou cliquez ici",

@@ -17,7 +17,7 @@
       </q-timeline>
      </div>
     <div v-else class="absolute-center">
-      <k-label :text="$t('KHistory.EMPTY_HSITORY')" icon-size="48px" />
+      <k-label :text="$t('KHistory.EMPTY_HISTORY')" icon-size="48px" />
     </div>
   </div>
 </template>
