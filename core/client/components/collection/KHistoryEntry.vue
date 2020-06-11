@@ -19,10 +19,10 @@
     <!--
       Content section
     -->
-    <q-card>
+    <q-card bordered>
       <q-card-section class="q-pa-xs">
         <slot name="entry-content">
-          <k-text-area :length="50" :text="description" />
+          <k-text-area class="q-pa-xs" :length="50" :text="description" />
         </slot>
       </q-card-section>
       <!--

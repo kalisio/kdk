@@ -1,6 +1,6 @@
 <template>
   <div :class="getLayout()">
-    <q-card  @click="onItemSelected">
+    <q-card bordered @click="onItemSelected">
       <!--
         Header section
       -->      
