@@ -116,31 +116,32 @@ export function removeOrganisationAuthorisations (hook) {
 
 export function updateOrganisationResource (resourceScope) {
   return async function (hook) {
-  if (hook.type !== 'after') {
-    throw new Error('The \'updateOrganisationResource\' hook should only be used as a \'after\' hook.')
-  }
-
-  const app = hook.app
-  // Retrieve the list of members
-  const orgMembersService = app.getService('members', hook.service.getContextId())
-  const members = await orgMembersService.find({
-    query: { [resourceScope]: { $elemMatch: { _id: hook.result._id } } },
-    paginate: false
-  })
-  // Update each members
-  await Promise.all(members.map(member => {
-    const resources = _.get(member, resourceScope, [])
-    let resource = _.find(resources, { _id: hook.result._id })
-    if (resource) {
-      Object.assign(resource, hook.result._id)
-      return orgMembersService.patch(member._id, { [resourceScope]: resources })
-    } else {
-      return Promise.resolve()
+    if (hook.type !== 'after') {
+      throw new Error('The \'updateOrganisationResource\' hook should only be used as a \'after\' hook.')
     }
-  }))
 
-  debug(`Updated resource ${hook.result._id} on scope ${resourceScope} for members of organisation ` + hook.result._id)
-  return hook
+    const app = hook.app
+    // Retrieve the list of members
+    const orgMembersService = app.getService('members', hook.service.getContextId())
+    const members = await orgMembersService.find({
+      query: { [resourceScope]: { $elemMatch: { _id: hook.result._id } } },
+      paginate: false
+    })
+    // Update each members
+    await Promise.all(members.map(member => {
+      const resources = _.get(member, resourceScope, [])
+      let resource = _.find(resources, { _id: hook.result._id })
+      if (resource) {
+        Object.assign(resource, hook.result)
+        return orgMembersService.patch(member._id, { [resourceScope]: resources })
+      } else {
+        return Promise.resolve()
+      }
+    }))
+
+    debug(`Updated resource ${hook.result._id} on scope ${resourceScope} for members of organisation ` + hook.result._id)
+    return hook
+  }
 }
 
 export function removeOrganisationGroups (hook) {
