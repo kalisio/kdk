@@ -1,3 +1,5 @@
+import { updateOrganisationResource } from '../../hooks'
+
 module.exports = {
   before: {
     all: [],
@@ -14,8 +16,8 @@ module.exports = {
     find: [],
     get: [],
     create: [],
-    update: [],
-    patch: [],
+    update: [updateOrganisationResource('groups')],
+    patch: [updateOrganisationResource('groups')],
     remove: []
   },
 
