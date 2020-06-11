@@ -27,8 +27,8 @@
       </template>
       <template v-if="hasArchiveLayers" v-slot:footer>
         <q-tabs class="q-ma-sm text-primary" no-caps v-model="mode" @input="onModeChanged">
-          <q-tab name="forecast" :label="$t('KWeatherLayersSelector.FORECASTS_LABEL')" />
-          <q-tab name="archive" :label="$t('KWeatherLayersSelector.ARCHIVES_LABEL')" />
+          <q-tab name="forecast" id="forecast" :label="$t('KWeatherLayersSelector.FORECASTS_LABEL')" />
+          <q-tab name="archive" id="archive" :label="$t('KWeatherLayersSelector.ARCHIVES_LABEL')" />
         </q-tabs>
       </template>
     </k-layers-selector>
