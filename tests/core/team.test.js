@@ -356,6 +356,38 @@ describe('team', () => {
   // Let enough time to process
     .timeout(10000)
 
+  it('group owner can update an organisation group', () => {
+    return orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
+      { user: user2Object, checkAuthorisation: true })
+      .then(() => {
+        return orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
+      })
+      .then(groups => {
+        expect(groups.data.length > 0).beTrue()
+        groupObject = groups.data[0]
+        expect(groupObject.description).to.equal('test-description')
+        return userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+      })
+      .then(users => {
+        // Should also update group in members authorisations
+        expect(users.data.length > 0).beTrue()
+        user2Object = users.data[0]
+        expect(user2Object.groups[0].description).to.equal('test-description')
+      })
+  })
+  // Let enough time to process
+    .timeout(10000)
+
+  it('non-group owner cannot update the group', (done) => {
+    orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
+      { user: user1Object, checkAuthorisation: true })
+      .catch(error => {
+        expect(error).toExist()
+        expect(error.name).to.equal('Forbidden')
+        done()
+      })
+  })
+
   it('non-group owner cannot add members to the group', (done) => {
     authorisationService.create({
       scope: 'groups',

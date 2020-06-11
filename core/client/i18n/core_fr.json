@@ -12,6 +12,7 @@
   "NO_ITEM": "Aucun élément",
   "ANONYMOUS": "Anonyme",
   "MEMBERS": "Membres",
+  "TAGS": "Etiquettes",
   "SUBSCRIBERS": "Abonnés",
   "GROUPS": "Groupes",
   "REMOVE": "Supprimer",
@@ -65,6 +66,8 @@
     "ORGANISATIONS_NAME_FIELD_HELPER": "Saisissez le nom de l'organisation",
     "ORGANISATIONS_DESCRIPTION_FIELD_HELPER": "Saisissez une description de l'organisation",
     "MEMBERS_TAGS_FIELD_HELPER": "Ajouter des étiquettes pour qualifier le membre",
+    "TAGS_NAME_FIELD_HELPER": "Saisissez le nom de l'étiquette",
+    "TAGS_ICON_FIELD_HELPER": "Choisissez l'icône de l'étiquette",
     "GROUPS_CREATE_TITLE": "Créer un nouveau groupe ?",
     "GROUPS_NAME_FIELD_HELPER": "Saisissez le nom du groupe",
     "GROUPS_DESCRIPTION_FIELD_HELPER": "Saisissez une description du groupe"
@@ -301,6 +304,7 @@
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
+    "TAGS_LABEL": "$t(TAGS)",
     "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)",
     "ADD_USER_LABEL": "Ajouter un utilisateur",
@@ -365,8 +369,18 @@
     "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {{group}} '?",
     "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{{member}}</b> du groupe <b>{{group}}</b> ?"
   },
+  "KTagsActivity": {
+    "MEMBERS_LABEL": "$t(MEMBERS)",
+    "TAGS_LABEL": "$t(TAGS)",
+    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
+    "GROUPS_LABEL": "$t(GROUPS)"
+  },
+  "KTagCard": {
+    "EDIT_LABEL": "$t(EDIT)"
+  },
   "KSubscribersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
+    "TAGS_LABEL": "$t(TAGS)",
     "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)"
   },
@@ -377,13 +391,14 @@
   },
   "KGroupsActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
+    "TAGS_LABEL": "$t(TAGS)",
     "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
     "REMOVE_LABEL": "$t(REMOVE)",
-    "EDIT_LABEL": "Editer",
+    "EDIT_LABEL": "$t(EDIT)",
     "REMOVE_DIALOG_TITLE": "Supprimer {{group}} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloier supprimer {{group}} de votre organisation ?"
   },

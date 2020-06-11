@@ -65,6 +65,12 @@ export default {
         default: true
       })
       this.registerTabAction({
+        name: 'tags',
+        label: this.$t('KMembersActivity.TAGS_LABEL'),
+        icon: 'las la-tags',
+        route: { name: 'tags-activity', params: { contextId: this.contextId } }
+      })
+      this.registerTabAction({
         name: 'subscribers',
         label: this.$t('KMembersActivity.SUBSCRIBERS_LABEL'),
         icon: 'las la-address-book',

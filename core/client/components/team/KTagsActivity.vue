@@ -4,11 +4,11 @@
       <!--
         Groups collection
       -->
-      <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="searchQuery" :list-strategy="'smart'" />
+      <k-grid ref="groups" :contextId="contextId" service="tags" :renderer="renderer" :base-query="baseQuery" :filter-query="searchQuery" :list-strategy="'smart'" />
       <!--
         Router view to enable routing to modals
       -->
-      <router-view service="groups" :router="router()"></router-view>
+      <router-view service="tags" :router="router()"></router-view>
     </template>
   </k-page>
 </template>
@@ -17,7 +17,7 @@
 import mixins from '../../mixins'
 
 export default {
-  name: 'k-groups-activity',
+  name: 'k-tags-activity',
   mixins: [
     mixins.baseActivity
   ],
@@ -43,15 +43,15 @@ export default {
         }
       },
       renderer: {
-        component: 'team/KGroupCard'
+        component: 'team/KTagCard'
       }
     }
   },
   methods: {
     router () {
       return {
-        onApply: { name: 'groups-activity', params: { contextId: this.contextId } },
-        onDismiss: { name: 'groups-activity', params: { contextId: this.contextId } }
+        onApply: { name: 'tags-activity', params: { contextId: this.contextId } },
+        onDismiss: { name: 'tags-activity', params: { contextId: this.contextId } }
       }
     },
     refreshActivity () {
@@ -63,38 +63,29 @@ export default {
       // Tabbar actions
       this.registerTabAction({
         name: 'members',
-        label: this.$t('KGroupsActivity.MEMBERS_LABEL'),
+        label: this.$t('KTagsActivity.MEMBERS_LABEL'),
         icon: 'las la-user-friends',
         route: { name: 'members-activity', params: { contextId: this.contextId } }
       })
       this.registerTabAction({
         name: 'tags',
-        label: this.$t('KGroupsActivity.TAGS_LABEL'),
+        label: this.$t('KTagsActivity.TAGS_LABEL'),
         icon: 'las la-tags',
         route: { name: 'tags-activity', params: { contextId: this.contextId } }
       })
       this.registerTabAction({
         name: 'subscribers',
-        label: this.$t('KGroupsActivity.SUBSCRIBERS_LABEL'),
+        label: this.$t('KTagsActivity.SUBSCRIBERS_LABEL'),
         icon: 'las la-address-book',
         route: { name: 'subscribers-activity', params: { contextId: this.contextId } }
       })
       this.registerTabAction({
         name: 'groups',
-        label: this.$t('KGroupsActivity.GROUPS_LABEL'),
+        label: this.$t('KTagsActivity.GROUPS_LABEL'),
         icon: 'las la-sitemap',
         route: { name: 'groups-activity', params: { contextId: this.contextId } },
         default: true
       })
-      // Fab actions
-      if (this.$can('create', 'groups', this.contextId)) {
-        this.registerFabAction({
-          name: 'create-group',
-          label: this.$t('KGroupsActivity.CREATE_GROUP_LABEL'),
-          icon: 'add',
-          route: { name: 'create-group', params: { contextId: this.contextId } }
-        })
-      }
     }
   },
   created () {
