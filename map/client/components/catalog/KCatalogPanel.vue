@@ -4,7 +4,6 @@
     <template v-for="category in layerCategories">
       <q-expansion-item
         v-if="layersByCategory[category.name].length > 0"
-        :id="category.name"
         :key="category.name"
         header-class="text-primary"
         :icon="category.icon"
