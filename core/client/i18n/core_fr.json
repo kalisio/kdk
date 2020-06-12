@@ -271,8 +271,12 @@
     "INVALID_FILE_TYPE": "Type de fichier invalide, veuillez sélectionner un fichier du bon type."
   },
   "KMediaBrowser": {
-    "LOADING": "Chargement... ",
-    "NO_MEDIA": "Il n'y a rien à voir, ajoutez des médias!"
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "DOWNLOAD_MEDIA_ACTION": "Télécharger le média",
+    "RESTORE_IMAGE_ACTION": "Restaurer l'image",
+    "NO_MEDIA": "Il n'y a aucun médias à voir, ajoutez des médias!",
+    "MEDIA_DOWNLOADED": "{{media}} téléchargé",
+    "CANNOT_DOWNLOAD_MEDIA": "Impossible de télécharger {{media}}"
   },
   "KFab": {
     "CLOSE_ACTION": "$t(CLOSE)"

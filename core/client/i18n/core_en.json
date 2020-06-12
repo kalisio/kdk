@@ -271,8 +271,12 @@
     "INVALID_FILE_TYPE": "Invalid file type, please select the right file type."
   },
   "KMediaBrowser": {
-    "LOADING": "Loading... ",
-    "NO_MEDIA": "There is nothing to show, please add medias first!"
+    "CLOSE_ACTION": "$t(CLOSE)",
+    "DOWNLOAD_MEDIA_ACTION": "Donwload media",
+    "RESTORE_IMAGE_ACTION": "Restore image",
+    "NO_MEDIA": "There is no media to show, please add medias first!",
+    "MEDIA_DOWNLOADED": "{{media}} downloaded",
+    "CANNOT_DOWNLOAD_MEDIA": "Cannot download {{media}}"
   },
   "KFab": {
     "CLOSE_ACTION": "$t(CLOSE)"

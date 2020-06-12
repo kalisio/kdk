@@ -1,37 +1,44 @@
 <template>
-  <div>
-    <q-carousel ref="carousel" v-show="fullscreen" :style="{ 'background-color': backgroundColor }" :class="'text-' + controlColor" :control-color="controlColor"
-      animated :navigation="hasMedia && !zoomedMedia" :arrows="hasMedia && !zoomedMedia" infinite v-model="currentMediaName" @input="onCurrentMediaChanged">
-      <q-carousel-slide v-for="media in medias" :name="media.name" :key="media._id" class="flex-center row">
-        <img v-show="media.uri" style="max-width: 100%; max-height: 100%; object-fit: content;" :src="media.uri" />
-        <div v-if="currentMediaIsFile" class="text-h5">{{currentMediaName}}</div>
-        <div v-show="!media.uri" class="text-h3">
-          <q-spinner-cube/>
-          {{ $t('KMediaBrowser.LOADING') }}
+  <q-carousel 
+    ref="carousel" 
+    v-show="opened" 
+    v-model="currentMediaName"
+    :class="'bg-' + backgroundColor + ' text-' + controlColor" 
+    :control-color="controlColor" 
+    :navigation="hasMedia" 
+    :arrows="hasMedia"
+    animated infinite  
+    @input="onCurrentMediaChanged">
+    <!--
+      Slides
+      -->
+    <template v-for="media in medias">
+      <q-carousel-slide :name="media.name" :key="media._id" class="row justify-center items-center">
+        <div class="fit row k-media-browser-slide">
+          <q-img :style="imageTransform" :src="media.uri" spinner-color="primary" contain @mousewheel="onImageZoomed" v-touch-pan.prevent.mouse="onImagePanned" />
         </div>
       </q-carousel-slide>
-      <q-carousel-slide name="no-media" class="flex-center row text-h3" :disable="hasMedia">
-        {{ $t('KMediaBrowser.NO_MEDIA') }}
-      </q-carousel-slide>
-      <q-carousel-slide name="zoomed-media" :disable="!zoomedMedia" >
-        <img v-if="zoomedMedia" :src="zoomedMedia.uri" />
-      </q-carousel-slide>
-      <template v-slot:control>
-        <q-carousel-control position="top-right" :offset="[0, 0]" style="font-size: 2em; cursor: pointer;">
-          <q-icon v-show="hasMedia && !zoomedMedia" v-if="!currentMediaIsFile" @click="doZoomIn" :color="controlColor" name="zoom_in" />
-          <q-icon v-show="hasMedia && !zoomedMedia" @click="doDownload" :color="controlColor" name="cloud_download" />
-          <q-icon v-show="!zoomedMedia" @click="doHide" :color="controlColor" name="close" />
-          <a ref="downloadLink" v-show="false" :href="currentDownloadLink" :download="currentMediaName"></a>
-          <q-icon v-show="zoomedMedia" @click="doZoomOut" :color="controlColor" style="right: 18px" name="zoom_out" />
-        </q-carousel-control>
-      </template>
-    </q-carousel>
-  </div>
+    </template>
+    <!--
+      Empty slide
+     -->
+    <q-carousel-slide name="no-media" class="flex-center row text-h3" :disable="hasMedia">
+      {{ $t('KMediaBrowser.NO_MEDIA') }}
+    </q-carousel-slide>
+    <!--
+      Actions
+     -->
+    <template v-slot:control>
+      <q-carousel-control position="top-right" :offset="[0, 0]" style="font-size: 2em; cursor: pointer;">
+        <k-tool-bar :actions="actions" :color="controlColor" :dense="$q.screen.lt.md" />
+      </q-carousel-control>
+    </template>
+  </q-carousel>
 </template>
 
 <script>
 import _ from 'lodash'
-import { Platform, QCarousel, QCarouselSlide, QCarouselControl } from 'quasar'
+import { Platform, QCarousel, QCarouselSlide, QCarouselControl, QImg, exportFile } from 'quasar'
 import 'mime-types-browser'
 import mixins from '../../mixins'
 
@@ -43,7 +50,8 @@ export default {
   components: {
     QCarousel,
     QCarouselSlide,
-    QCarouselControl
+    QCarouselControl,
+    QImg
   },
   props: {
     options: {
@@ -56,10 +64,28 @@ export default {
       return (this.medias.length > 0)
     },
     backgroundColor () {
-      return this.options.backgroundColor || 'white'
+      return this.options.backgroundColor || 'black'
     },
     controlColor () {
       return this.options.controlColor || 'primary'
+    },
+    imageTransform () {
+      return 'transform: scale(' + this.scale + ') translate(' + this.translateX + 'px ,' + this.translateY + 'px);'
+    },
+    actions () {
+      let actions = []
+      if (this.currentMedia) {
+        if (!this.currentMediaIsFile) actions.push({ 
+          name: 'restoreImage', label: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), icon: 'las la-undo', handler: this.onImageRestored 
+        })
+        actions.push({ 
+          name: 'downloadMedia', label: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'), icon: 'las la-cloud-download-alt', handler: this.onMediaDownload 
+          })
+      }
+      actions.push({ 
+        name: 'close', label: this.$t('KMediaBrowser.CLOSE_ACTION'), icon: 'las la-times', handler: this.onClose 
+      })
+      return actions
     }
   },
   data () {
@@ -68,24 +94,37 @@ export default {
       currentMedia: null,
       currentMediaName: '',
       currentMediaIsFile: false,
-      currentDownloadLink: null,
-      zoomedMedia: null,
-      fullscreen: false
+      opened: false,
+      panning: false,
+      scale: 1,
+      translateX: 0,
+      translateY: 0
     }
   },
   methods: {
-    doHide () {
-      this.fullscreen = false
+    onImageZoomed (wheelEvent) {
+      let less = this.scale > 1 ? -0.5 : -0.1
+      let more = this.scale > 1 ? 0.5 : 0.1
+      this.scale += wheelEvent.wheelDeltaY < 0 ? less : more
+      this.scale = Math.max(this.scale, 0.025)
+      wheelEvent.preventDefault()
     },
-    doZoomIn () {
-      this.zoomedMedia = this.currentMedia
-      this.$refs.carousel.goTo('zoomed-media')
+    onImagePanned ({ evt, ...info }) {
+      if (this.panning) {
+        this.translateX += info.delta.x / this.scale
+        this.translateY += info.delta.y / this.scale
+      } else if (info.isFirst) {
+        this.panning = true
+      } else if (info.isFinal) {
+        this.panning = false
+      }
     },
-    doZoomOut () {
-      this.zoomedMedia = null
-      this.$refs.carousel.goTo(this.currentMedia.name)
+    onImageRestored () {
+      this.scale = 1
+      this.translateX = 0
+      this.translateY = 0
     },
-    async doDownload () {
+    async onMediaDownload () {
       if (!this.currentMedia) return
       const mimeType = mime.lookup(this.currentMedia.name)
       let uri
@@ -106,7 +145,6 @@ export default {
         buffer[i] = data.charCodeAt(i)
       }
       const blob = new Blob([buffer], { type: mimeType })
-      this.currentDownloadLink = URL.createObjectURL(blob)
       if (Platform.is.cordova) {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fs) => {
           fs.root.getFile(this.currentMedia.name, { create: true, exclusive: false }, (fileEntry) => {
@@ -118,8 +156,13 @@ export default {
         })
       } else {
         // We call Vue.nextTick() to let Vue update its DOM to get the download link ready
-        this.$nextTick(() => this.$refs.downloadLink.click())
+        const status = exportFile(this.currentMedia.name, blob)
+        if (status) this.$toast({ type: 'error', message: this.$t('KMediaBrowser.MEDIA_DOWNLOADED', { media: this.currentMedia.name }) })
+        else this.$toast({ type: 'error', message: this.$t('KMediaBrowser.CANNOT_DOWNLOAD_MEDIA', { media: this.currentMedia.name }) })
       }
+    },
+    onClose () {
+      this.opened = false
     },
     async onCurrentMediaChanged () {
       const index = _.findIndex(this.medias, media => media.name === this.currentMediaName)
@@ -128,7 +171,9 @@ export default {
       const mimeType = mime.lookup(media.name)
       this.currentMedia = media
       this.currentMediaIsFile = !mimeType.startsWith('image/')
-      this.currentDownloadLink = null
+      this.scale = 1
+      this.translateX = 0
+      this.translateY = 0
       // Download image the first time
       if (!media.uri) {
         // We only download images
@@ -145,8 +190,7 @@ export default {
     async show (medias = []) {
       this.medias = medias
       this.currentMedia = null
-      this.zoomedMedia = null
-      this.fullscreen = true
+      this.opened = true
       await this.loadRefs()
       // Then open the modal
       this.$refs.carousel.setFullscreen()
@@ -161,8 +205,28 @@ export default {
       return this.$api.getService(this.options.service || 'storage')
     }
   },
+  created () {
+    // laod the required components
+    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')   
+  },
   async mounted () {
+    // Add handlers
+    document.addEventListener('scroll', this.onScroll)
+    // Notify 
     this.$emit('browser-ready')
+  },
+  beforeDestroy () {
+    // Remove handlers
+    document.removeEventListener('scroll', this.onScroll)
   }
 }
 </script>
+
+<style lang="stylus">
+ .k-media-browser-slide {
+    background: transparent
+    max-width: 85%
+    max-height: 85%
+    overflow: hidden
+  }
+</style>
