@@ -9,18 +9,11 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import mixins from '../../mixins'
-import { RoleNames } from '../../../common/permissions'
 
 export default {
   name: 'k-tag-card',
   mixins: [mixins.baseItem],
-  data () {
-    return {
-      
-    }
-  },
   methods: {
     refreshActions () {
       this.clearActions()
@@ -38,7 +31,6 @@ export default {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')
     this.$options.components['k-tags-pane'] = this.$load('team/KTagsPane')
-    
     // We will use the member role to illustrate the number of users with the tag
     this.roleIcons = this.$config('roles.icons')
   }
