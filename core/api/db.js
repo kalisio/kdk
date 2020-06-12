@@ -131,7 +131,7 @@ export class MongoDatabase extends Database {
           const dbUrl = this._secondaries[dbName]
           this._dbs[dbName] = await mongodb.connect(dbUrl)
         }
-        debug('Connected to secondaries DB ' + this.adapter)
+        if (dbNames.length > 0) debug('Connected to secondaries DB ' + this.adapter)
       }
       return this._db
     } catch (error) {
@@ -146,12 +146,13 @@ export class MongoDatabase extends Database {
       debug('Disconnected from primary DB ' + this.adapter)
       this._db = null
       if (this._secondaries) {
+        const dbNames = _.keys(this._secondaries)
         const dbs = _.values(this._dbs)
         for (let i = 0; i < dbs.length; i++) {
           await dbs[i].close()
         }
         this._dbs = {}
-        debug('Disconnected from secondaries DB ' + this.adapter)
+        if (dbNames.length > 0) debug('Disconnected from secondaries DB ' + this.adapter)
       }
     } catch (error) {
       this.app.logger.error('Could not disconnect from ' + this.adapter + ' database(s)', error)
