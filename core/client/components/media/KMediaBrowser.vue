@@ -14,9 +14,7 @@
       -->
     <template v-for="media in medias">
       <q-carousel-slide :name="media.name" :key="media._id" class="row justify-center items-center">
-        <div class="fit row k-media-browser-slide">
-          <q-img :style="imageTransform" :src="media.uri" spinner-color="primary" contain @mousewheel="onImageZoomed" v-touch-pan.prevent.mouse="onImagePanned" />
-        </div>
+        <k-image-viewer class="fit k-media-browser-slide" :source="media.uri" />
       </q-carousel-slide>
     </template>
     <!--
@@ -38,7 +36,7 @@
 
 <script>
 import _ from 'lodash'
-import { Platform, QCarousel, QCarouselSlide, QCarouselControl, QImg, exportFile } from 'quasar'
+import { Platform, QCarousel, QCarouselSlide, QCarouselControl, exportFile } from 'quasar'
 import 'mime-types-browser'
 import mixins from '../../mixins'
 
@@ -50,8 +48,7 @@ export default {
   components: {
     QCarousel,
     QCarouselSlide,
-    QCarouselControl,
-    QImg
+    QCarouselControl
   },
   props: {
     options: {
@@ -69,13 +66,10 @@ export default {
     controlColor () {
       return this.options.controlColor || 'primary'
     },
-    imageTransform () {
-      return 'transform: scale(' + this.scale + ') translate(' + this.translateX + 'px ,' + this.translateY + 'px);'
-    },
     actions () {
       let actions = []
       if (this.currentMedia) {
-        if (!this.currentMediaIsFile) actions.push({ 
+        if (this.currentMedia.isImage) actions.push({ 
           name: 'restoreImage', label: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), icon: 'las la-undo', handler: this.onImageRestored 
         })
         actions.push({ 
@@ -90,35 +84,13 @@ export default {
   },
   data () {
     return {
+      opened: false,
       medias: [],
       currentMedia: null,
-      currentMediaName: '',
-      currentMediaIsFile: false,
-      opened: false,
-      panning: false,
-      scale: 1,
-      translateX: 0,
-      translateY: 0
+      currentMediaName: ''
     }
   },
   methods: {
-    onImageZoomed (wheelEvent) {
-      let less = this.scale > 1 ? -0.5 : -0.1
-      let more = this.scale > 1 ? 0.5 : 0.1
-      this.scale += wheelEvent.wheelDeltaY < 0 ? less : more
-      this.scale = Math.max(this.scale, 0.025)
-      wheelEvent.preventDefault()
-    },
-    onImagePanned ({ evt, ...info }) {
-      if (this.panning) {
-        this.translateX += info.delta.x / this.scale
-        this.translateY += info.delta.y / this.scale
-      } else if (info.isFirst) {
-        this.panning = true
-      } else if (info.isFinal) {
-        this.panning = false
-      }
-    },
     onImageRestored () {
       this.scale = 1
       this.translateX = 0
@@ -155,14 +127,8 @@ export default {
           })
         })
       } else {
-        // We call Vue.nextTick() to let Vue update its DOM to get the download link ready
-        const status = exportFile(this.currentMedia.name, blob)
-        if (status) this.$toast({ type: 'error', message: this.$t('KMediaBrowser.MEDIA_DOWNLOADED', { media: this.currentMedia.name }) })
-        else this.$toast({ type: 'error', message: this.$t('KMediaBrowser.CANNOT_DOWNLOAD_MEDIA', { media: this.currentMedia.name }) })
+        exportFile(this.currentMedia.name, blob)
       }
-    },
-    onClose () {
-      this.opened = false
     },
     async onCurrentMediaChanged () {
       const index = _.findIndex(this.medias, media => media.name === this.currentMediaName)
@@ -170,10 +136,7 @@ export default {
       const media = this.medias[index]
       const mimeType = mime.lookup(media.name)
       this.currentMedia = media
-      this.currentMediaIsFile = !mimeType.startsWith('image/')
-      this.scale = 1
-      this.translateX = 0
-      this.translateY = 0
+      this.currentMedia.isImage = mimeType.startsWith('image/')
       // Download image the first time
       if (!media.uri) {
         // We only download images
@@ -186,6 +149,9 @@ export default {
         // Required to use $set when modifying an object inside an array to make it reactive
         this.$set(this.medias, index, media)
       }
+    },
+    onClose () {
+      this.opened = false
     },
     async show (medias = []) {
       this.medias = medias
@@ -207,17 +173,13 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')   
+    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-image-viewer'] = this.$load('media/KImageViewer')
+    // Initialize
+    this.touches = []
   },
   async mounted () {
-    // Add handlers
-    document.addEventListener('scroll', this.onScroll)
-    // Notify 
     this.$emit('browser-ready')
-  },
-  beforeDestroy () {
-    // Remove handlers
-    document.removeEventListener('scroll', this.onScroll)
   }
 }
 </script>

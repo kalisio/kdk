@@ -107,6 +107,7 @@
     "feathers-mongodb": "^2.8.0",
     "feathers-mongodb-management": "^0.1.0",
     "geotiff": "^1.0.0-beta.6",
+    "hammerjs": "^2.0.8",
     "helmet": "^3.5.0",
     "jsdap": "^8.1.0",
     "limiter": "^1.1.3",

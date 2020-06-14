@@ -274,9 +274,7 @@
     "CLOSE_ACTION": "$t(CLOSE)",
     "DOWNLOAD_MEDIA_ACTION": "Donwload media",
     "RESTORE_IMAGE_ACTION": "Restore image",
-    "NO_MEDIA": "There is no media to show, please add medias first!",
-    "MEDIA_DOWNLOADED": "{{media}} downloaded",
-    "CANNOT_DOWNLOAD_MEDIA": "Cannot download {{media}}"
+    "NO_MEDIA": "There is no media to show, please add medias first!"
   },
   "KFab": {
     "CLOSE_ACTION": "$t(CLOSE)"
