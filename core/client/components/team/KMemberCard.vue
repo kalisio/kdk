@@ -88,30 +88,44 @@ export default {
   methods: {
     refreshActions () {
       this.clearActions()
-      if (this.$can('update', 'members', this.contextId)) {
-        this.registerPaneAction({
-          name: 'tag-member',
-          label: this.$t('KMemberCard.TAG_LABEL'),
-          icon: 'las la-tags',
-          route: { name: 'tag-member', params: { contextId: this.contextId, objectId: this.item._id } }
-        })
+      if (!this.item.expireAt) {
+        if (this.$can('update', 'members', this.contextId)) {
+          this.registerPaneAction({
+            name: 'tag-member',
+            label: this.$t('KMemberCard.TAG_LABEL'),
+            icon: 'las la-tags',
+            route: { name: 'tag-member', params: { contextId: this.contextId, objectId: this.item._id } }
+          })
+        }
+        if (this.$can('update', 'members', this.contextId)) {
+          this.registerPaneAction({
+            name: 'change-role',
+            label: this.$t('KMemberCard.CHANGE_ROLE_LABEL'),
+            icon: 'las la-graduation-cap',
+            route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id, resource: { id: this.contextId, scope: 'organisations', service: 'organisations' } } }
+          })
+        }
+        if (this.$can('remove', 'authorisations', this.contextId, { resource: this.contextId })) {
+          this.registerMenuAction({
+            name: 'remove-member',
+            label: this.$t('KMemberCard.REMOVE_LABEL'),
+            icon: 'las la-minus-circle',
+            handler: this.removeMember
+          })
+        }
+      } else {
+        if (this.$can('update', 'members', this.contextId)) {
+          this.registerPaneAction({
+            name: 'reissue-invitation',
+            label: this.$t('KMemberCard.REISSUE_INVITATION_LABEL'),
+            icon: 'las la-envelope',
+            handler: this.reissueInvitation
+          })
+        }
       }
-      if (this.$can('update', 'members', this.contextId)) {
-        this.registerPaneAction({
-          name: 'change-role',
-          label: this.$t('KMemberCard.CHANGE_ROLE_LABEL'),
-          icon: 'las la-graduation-cap',
-          route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id, resource: { id: this.contextId, scope: 'organisations', service: 'organisations' } } }
-        })
-      }
-      if (this.$can('remove', 'authorisations', this.contextId, { resource: this.contextId })) {
-        this.registerMenuAction({
-          name: 'remove-member',
-          label: this.$t('KMemberCard.REMOVE_LABEL'),
-          icon: 'las la-minus-circle',
-          handler: this.removeMember
-        })
-      }
+    },
+    reissueInvitation (member) {
+      console.log('reissue invitation')
     },
     removeMember (member) {
       Dialog.create({
