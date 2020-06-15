@@ -13,7 +13,6 @@ export default class SideNav extends BasePage {
 
   // Identity
   async clickIdentity (test) {
-    await this.openSideNav(test)
     await test
       .click(this.identityLink)
       .wait(1000)
