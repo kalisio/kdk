@@ -130,7 +130,7 @@ export function updateOrganisationResource (resourceScope) {
     // Update each members
     await Promise.all(members.map(member => {
       const resources = _.get(member, resourceScope, [])
-      let resource = _.find(resources, { _id: hook.result._id })
+      const resource = _.find(resources, { _id: hook.result._id })
       if (resource) {
         Object.assign(resource, hook.result)
         return orgMembersService.patch(member._id, { [resourceScope]: resources })

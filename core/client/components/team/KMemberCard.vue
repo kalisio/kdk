@@ -45,7 +45,7 @@
           </q-btn>
         </div>
         <q-separator />
-      </template>  
+      </template>
       <template v-if="expireAt">
         <cite class="q-pa-sm text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>
       </template>

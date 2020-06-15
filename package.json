@@ -42,8 +42,8 @@
     "lint:core": "standard core/**/*.js core/**/*.vue tests/core/**/*.js --fix",
     "lint:map": "standard map/**/*.js map/**/*.vue tests/map/**/*.js --fix",
     "lint": "npm-run-all --serial lint:**",
-    "mocha:core": "cross-env NODE_CONFIG_DIR=./tests/core/config/ mocha tests/core/**/*.test.js --require babel-core/register",
-    "mocha:map": "cross-env NODE_CONFIG_DIR=./tests/map/config/ mocha tests/map/**/*.test.js --require babel-core/register",
+    "mocha:core": "cross-env NODE_CONFIG_DIR=./tests/core/config/ mocha tests/core/**/*.test.js --exit --require babel-core/register",
+    "mocha:map": "cross-env NODE_CONFIG_DIR=./tests/map/config/ mocha tests/map/**/*.test.js --exit --require babel-core/register",
     "mocha": "npm-run-all --serial mocha:**",
     "coverage": "nyc npm run mocha",
     "test": "npm run compile && npm run lint && npm run coverage"

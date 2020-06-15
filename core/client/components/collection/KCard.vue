@@ -3,7 +3,7 @@
     <q-card bordered @click="onItemSelected">
       <!--
         Header section
-      -->      
+      -->
       <slot name="card-header" />
       <!--
         Title section

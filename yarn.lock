@@ -6719,7 +6719,7 @@ snapdragon@^0.8.1:
 
 "sns-mobile@https://github.com/kalisio/sns-mobile":
   version "1.3.0"
-  resolved "https://github.com/kalisio/sns-mobile#8b1f702a58ba999b090ed0035b7864282651bfe3"
+  resolved "https://github.com/kalisio/sns-mobile#d68d26634e22fb9052bd963c7ef8a590bf67650f"
   dependencies:
     async "^3.2.0"
     aws-sdk "^2.200.0"

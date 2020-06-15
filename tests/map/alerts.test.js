@@ -16,7 +16,7 @@ import distribution from '@kalisio/feathers-distributed'
 import core, { kalisio, hooks } from '../../core/api'
 import map, { createFeaturesService, createAlertsService } from '../../map/api'
 
-describe.skip('map:alerts', () => {
+describe('map:alerts', () => {
   let app, weacastApp, server, port, externalApp, externalServer, externalPort,
     alertService, vigicruesObsService, uService, vService, probeService,
     alertObject, spyRegisterAlert, spyUnregisterAlert, spyCheckAlert

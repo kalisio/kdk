@@ -1,13 +1,13 @@
 <template>
-  <q-carousel 
-    ref="carousel" 
-    v-show="opened" 
+  <q-carousel
+    ref="carousel"
+    v-show="opened"
     v-model="currentMediaName"
-    :class="'bg-' + backgroundColor + ' text-' + controlColor" 
-    :control-color="controlColor" 
-    :navigation="hasMedia" 
+    :class="'bg-' + backgroundColor + ' text-' + controlColor"
+    :control-color="controlColor"
+    :navigation="hasMedia"
     :arrows="hasMedia"
-    animated infinite  
+    animated infinite
     @input="onCurrentMediaChanged">
     <!--
       Slides
@@ -67,17 +67,19 @@ export default {
       return this.options.controlColor || 'primary'
     },
     actions () {
-      let actions = []
+      const actions = []
       if (this.currentMedia) {
-        if (this.currentMedia.isImage) actions.push({ 
-          name: 'restoreImage', label: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), icon: 'las la-undo', handler: this.onImageRestored
-        })
-        actions.push({ 
-          name: 'downloadMedia', label: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'), icon: 'las la-cloud-download-alt', handler: this.onMediaDownload 
+        if (this.currentMedia.isImage) {
+          actions.push({
+            name: 'restoreImage', label: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), icon: 'las la-undo', handler: this.onImageRestored
           })
+        }
+        actions.push({
+          name: 'downloadMedia', label: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'), icon: 'las la-cloud-download-alt', handler: this.onMediaDownload
+        })
       }
-      actions.push({ 
-        name: 'close', label: this.$t('KMediaBrowser.CLOSE_ACTION'), icon: 'las la-times', handler: this.onClose 
+      actions.push({
+        name: 'close', label: this.$t('KMediaBrowser.CLOSE_ACTION'), icon: 'las la-times', handler: this.onClose
       })
       return actions
     }

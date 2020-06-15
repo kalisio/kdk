@@ -76,7 +76,7 @@ describe('notifications', () => {
     server.once('listening', _ => done())
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('setup access to SNS', () => {
     // For now we only test 1 platform, should be sufficient due to SNS facade
@@ -205,7 +205,7 @@ describe('notifications', () => {
     return Promise.all([operation, events])
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('creates the topic on the publisher object', (done) => {
     pusherService.create({
@@ -227,7 +227,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('subscribes a user to the publisher topic', (done) => {
     pusherService.create({
@@ -246,7 +246,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('subscribes a phone to the publisher topic', (done) => {
     pusherService.create({
@@ -263,7 +263,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('publishes a message on the publisher topic', (done) => {
     pusherService.create({
@@ -285,7 +285,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('unsubscribes a user from the publisher topic', (done) => {
     pusherService.remove(publisherObject._id.toString(), {
@@ -301,7 +301,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('unsubscribes a phone from the publisher topic', (done) => {
     pusherService.remove(publisherObject._id.toString(), {
@@ -317,7 +317,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('removes the topic on the publisher object', (done) => {
     pusherService.remove(publisherObject._id.toString(), {
@@ -339,7 +339,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('a subscriber should be able to update its device when registration ID changes', () => {
     const previousDevice = Object.assign({}, subscriberObject.devices[0])
@@ -367,7 +367,7 @@ describe('notifications', () => {
     return Promise.all([operation, event])
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('a subscriber should be able to recover its device when disabled', () => {
     const previousDevice = Object.assign({}, subscriberObject.devices[1])
@@ -404,7 +404,7 @@ describe('notifications', () => {
     return Promise.all([operation, event])
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('check recovered device email', (done) => {
     // Add some delay to wait for email reception
@@ -440,7 +440,7 @@ describe('notifications', () => {
     return Promise.all([operation, event])
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('removes a subscriber should unregister its device', (done) => {
     userService.remove(subscriberObject._id, { user: subscriberObject })
@@ -450,7 +450,7 @@ describe('notifications', () => {
     })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   // Cleanup
   after(async () => {

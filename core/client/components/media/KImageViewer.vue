@@ -1,7 +1,7 @@
  <template>
   <pinch-zoom class="pinch-zoom-controller">
     <div id="image" class="fit row justify-center items-center">
-      <img :src="source" style="max-width:100%" />
+      <img :src="source" style="max-width:100%; max-height:100%" />
     </div>
   </pinch-zoom>
 </template>
@@ -27,13 +27,6 @@ export default {
   },
   methods: {
     restore () {
-      const controller = document.querySelector('.pinch-zoom-controller')
-      controller.setTransform({
-        scale: 1,
-        x: 0,
-        y: 0,
-        allowChangeEvent: true
-      })
     }
   }
 }
