@@ -87,6 +87,7 @@ export default {
       this.rotate = this.transform.rotate
     },
     onMouseWheel (event) {
+      if (!this.interactive) return
       let less = this.scale > 1 ? -0.5 : -0.1
       let more = this.scale > 1 ? 0.5 : 0.1
       this.scale += event.wheelDeltaY < 0 ? less : more
@@ -94,6 +95,7 @@ export default {
       event.preventDefault()
     },
     onPan (event) {
+      if (!this.interactive) return
       if (!this.first) {
         this.first = event
         this.previousDeltaX = event.deltaX
@@ -108,6 +110,7 @@ export default {
       }
     },
     onPinch (event) {
+      if (!this.interactive) return
       this.scale = event.scale
     }
   },

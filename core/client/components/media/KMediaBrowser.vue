@@ -14,7 +14,7 @@
       -->
     <template v-for="(media) in medias">
       <q-carousel-slide :name="media.name" :key="media._id" class="row justify-center items-center">
-        <k-image-viewer :ref="media._id" class="fit k-media-browser-slide" :source="media.uri" :transform="mediaTransform(media)" />
+        <k-image-viewer :ref="media._id" class="fit k-media-browser-slide" :source="media.uri" :transform="mediaTransform(media)" :interactive="media.isImage" />
       </q-carousel-slide>
     </template>
     <!--
