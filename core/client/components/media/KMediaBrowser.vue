@@ -14,7 +14,7 @@
       -->
     <template v-for="(media) in medias">
       <q-carousel-slide :name="media.name" :key="media._id" class="row justify-center items-center">
-        <k-image-viewer :ref="media._id" class="fit k-media-browser-slide" :source="media.uri" :transform="mediaTransform(media)" :interactive="media.isImage" />
+        <k-image-viewer :ref="media._id" class="fit k-media-browser-slide" :source="media.uri" :interactive="media.isImage" />
       </q-carousel-slide>
     </template>
     <!--
@@ -169,11 +169,7 @@ export default {
     },
     storageService () {
       return this.$api.getService(this.options.service || 'storage')
-    },
-    mediaTransform (media) {
-      if (media.isImage) return { scale: 1, translate: { x: 0, y: 0 }, rotate: 0 }
-      else return { scale: 0.25, translate: { x: 0, y: 0 }, rotate: 0 }
-    },  
+    }
   },
   created () {
     // laod the required components
