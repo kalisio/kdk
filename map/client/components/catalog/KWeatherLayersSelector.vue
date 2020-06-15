@@ -8,7 +8,7 @@
               <q-icon name="las la-globe" />
             </template>
             <template v-slot:option="scope">
-              <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+              <q-item v-bind="scope.itemProps" v-on="scope.itemEvents" :id="scope.opt.name">
                 <q-item-section avatar>
                   <q-icon v-if="!scope.opt.iconUrl" :name="scope.opt.icon || 'las la-globe'" />
                 </q-item-section>
