@@ -1,10 +1,10 @@
  <template>
   <div class="row">
-    <q-img 
-      :style="styleTransform" 
-      :src="source" 
-      spinner-color="primary" 
-      contain 
+    <q-img
+      :style="styleTransform"
+      :src="source"
+      spinner-color="primary"
+      contain
       @mousewheel="onMouseWheel"
       v-pan="onPan"
       v-pinch="onPinch" />
@@ -16,22 +16,22 @@ import { QImg } from 'quasar'
 import Vue from 'vue'
 import Hammer from 'hammerjs'
 
-Vue.directive("pan", {
-  bind: function(el, binding) {
-    if (typeof binding.value === "function") {
+Vue.directive('pan', {
+  bind: function (el, binding) {
+    if (typeof binding.value === 'function') {
       const mc = new Hammer(el)
-      mc.get("pan").set({ direction: Hammer.DIRECTION_ALL })
-      mc.on("pan", binding.value)
+      mc.get('pan').set({ direction: Hammer.DIRECTION_ALL })
+      mc.on('pan', binding.value)
     }
   }
 })
 
-Vue.directive("pinch", {
-  bind: function(el, binding) {
-    if (typeof binding.value === "function") {
+Vue.directive('pinch', {
+  bind: function (el, binding) {
+    if (typeof binding.value === 'function') {
       const mc = new Hammer(el)
-      mc.get("pinch")
-      mc.on("pinch", binding.value);
+      mc.get('pinch')
+      mc.on('pinch', binding.value)
     }
   }
 })
@@ -52,7 +52,7 @@ export default {
         return {
           scale: 1,
           translate: {
-            x: 0, 
+            x: 0,
             y: 0
           },
           rotate: 0
@@ -88,8 +88,8 @@ export default {
     },
     onMouseWheel (event) {
       if (!this.interactive) return
-      let less = this.scale > 1 ? -0.5 : -0.1
-      let more = this.scale > 1 ? 0.5 : 0.1
+      const less = this.scale > 1 ? -0.5 : -0.1
+      const more = this.scale > 1 ? 0.5 : 0.1
       this.scale += event.wheelDeltaY < 0 ? less : more
       this.scale = Math.max(this.scale, 0.025)
       event.preventDefault()

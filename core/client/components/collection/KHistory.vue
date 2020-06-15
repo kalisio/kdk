@@ -4,13 +4,13 @@
       <q-timeline ref="timeline" color="secondary" :layout="layout()">
         <q-infinite-scroll ref="scroll" @load="onScroll" :offset="50">
           <template v-for="item in items">
-            <component 
-              class="row justify-center" 
-              :key="item._id" :id="item._id" 
-              :item="item" 
-              :contextId="contextId" 
-              :is="renderer.component" 
-              v-bind="renderer.props" 
+            <component
+              class="row justify-center"
+              :key="item._id" :id="item._id"
+              :item="item"
+              :contextId="contextId"
+              :is="renderer.component"
+              v-bind="renderer.props"
               item-selected="onItemSelected(item)" />
           </template>
         </q-infinite-scroll>
@@ -30,7 +30,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-history',
   mixins: [
-    mixins.service, 
+    mixins.service,
     mixins.baseCollection
   ],
   components: {
@@ -94,18 +94,18 @@ export default {
       this.items.forEach((item, index) => {
         item.side = (index % 2 ? 'left' : 'right')
       })
-     if (this.done) {
-       if (this.items.length === this.nbTotalItems) this.done(true)
-       else this.done(false)
-     }
+      if (this.done) {
+        if (this.items.length === this.nbTotalItems) this.done(true)
+        else this.done(false)
+      }
     },
     onScroll (index, done) {
-      /*if (this.items.length === this.nbTotalItems) done(true)
-      else {*/
-        this.done = done      
-        this.currentPage++
-        this.refreshCollection()
-      //}
+      /* if (this.items.length === this.nbTotalItems) done(true)
+      else { */
+      this.done = done
+      this.currentPage++
+      this.refreshCollection()
+      // }
     }
   },
   created () {

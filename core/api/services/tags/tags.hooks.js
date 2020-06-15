@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { populateTagResource, addTagIfNew, removeTagIfUnused, tagResource, untagResource, updateOrganisationResource } from '../../hooks'
-import { disallow, iff } from 'feathers-hooks-common'
+import { iff } from 'feathers-hooks-common'
 
 module.exports = {
   before: {

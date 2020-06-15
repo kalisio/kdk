@@ -153,7 +153,8 @@ export default {
       // Update icon to reflect there is a filter on
       if (this.filters.length) {
         this.layer.badge = {
-          color: 'primary', transparent: true,
+          color: 'primary',
+          transparent: true,
           icon: { name: 'las la-filter', size: '12px' }
         }
       } else {
