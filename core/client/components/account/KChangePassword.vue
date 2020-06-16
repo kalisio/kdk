@@ -4,13 +4,13 @@
       <div class="column justify-center sm-gutter">
           <div :class="textClass">
             <p>
-              <q-icon name="check" v-show="changed && success"/>
-              <q-icon name="error" v-show="changed && !success"/>
+              <q-icon name="las la-check" v-show="changed && success"/>
+              <q-icon name="las la-exclamation-circle" v-show="changed && !success"/>
               &nbsp;&nbsp;
               {{message}}.
             </p>
             <p v-show="changed && success">
-              <q-icon name="keyboard_backspace"/>
+              <q-icon name="las la-arrow-left"/>
               &nbsp;&nbsp;
               <a @click="$router.push({name: 'home'})">
                 {{$t('KChangePassword.BACK_LINK')}}

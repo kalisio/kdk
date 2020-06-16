@@ -4,8 +4,8 @@
       <div class="column justify-center sm-gutter">
           <div :class="textClass">
             <p>
-              <q-icon name="check" v-show="sent && success"/>
-              <q-icon name="error" v-show="sent && !success"/>
+              <q-icon name="las la-check" v-show="sent && success"/>
+              <q-icon name="las la-exclamation-circle" v-show="sent && !success"/>
               &nbsp;&nbsp;
               {{message}}.
             </p>

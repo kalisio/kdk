@@ -6,9 +6,9 @@
       :radius="50"
       @close="onCloseMenu">
       <!--q-btn slot="closed-menu-container"
-        round color="secondary" icon="keyboard_arrow_up" /-->
+        round color="secondary" icon="las la-chevron-up" /-->
       <q-btn slot="open-menu-container"
-        round color="secondary" icon="close" />
+        round color="secondary" icon="las la-times" />
       <k-radial-fab-item
         v-for="(action, index) in featureActions"
         :key="index">

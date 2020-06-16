@@ -10,7 +10,7 @@
           <q-item v-ripple clickable :active="org._id === currentOrganisationId" :id="getOrganisationId(org)" :key="org._id" @click="setCurrentOrganisation(org)">
             <q-item-section avatar><q-avatar size="24px" color="primary" text-color="white">{{ getOrganisationInitials(org) }}</q-avatar></q-item-section>
             <q-item-section>{{org.name}}</q-item-section>
-            <q-item-section v-if="org._id === currentOrganisationId" side><q-icon name="check" /></q-item-section>
+            <q-item-section v-if="org._id === currentOrganisationId" side><q-icon name="las la-check" /></q-item-section>
           </q-item>
         </template>
       </div>
@@ -18,7 +18,7 @@
         Create link
       -->
       <q-item v-ripple clickable id="new-organisation" @click="createOrganisation">
-        <q-item-section avatar><q-icon name="add_circle" /></q-item-section>
+        <q-item-section avatar><q-icon name="las la-plus-circle" /></q-item-section>
         <q-item-section>{{$t('KOrganisationPanel.NEW_ORGANISATION')}}</q-item-section>
       </q-item>
     </q-list>

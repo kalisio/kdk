@@ -14,7 +14,7 @@
       <q-list>
         <q-item id="account" @click="onClickAccount" clickable v-ripple>
           <q-item-section>{{name}}</q-item-section>
-          <q-item-section avatar><q-icon name="perm_identity"/></q-item-section>
+          <q-item-section avatar><q-icon name="las la-user-circle"/></q-item-section>
         </q-item>
       </q-list>
     </div>

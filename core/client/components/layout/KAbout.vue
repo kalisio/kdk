@@ -7,7 +7,7 @@
       -->
       <q-item id="show-about" clickable @click="onAbout">
         <q-item-section avatar>
-          <q-icon name="help_outline" />
+          <q-icon name="las la-info-circle" />
         </q-item-section>
         <q-item-section>
           <q-item-label>
@@ -36,24 +36,24 @@
           <!-- More info -->
           <div class="row justify-center">
             <a :href="$config('appWebsite')" target="_blank">
-              <q-icon name="link"/>&nbsp;{{ $t('KAbout.MORE') }} {{ $config('appName') }}
+              <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE') }} {{ $config('appName') }}
             </a>
           </div><br/>
           <div class="row justify-center">
             <a :href="$config('publisherWebsite')" target="_blank">
-              <q-icon name="link"/>&nbsp;{{ $t('KAbout.MORE_PUBLISHER') }} {{ $config('publisher') }}
+              <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE_PUBLISHER') }} {{ $config('publisher') }}
             </a>
           </div><br/>
           <!-- Bug report -->
           <div class="row justify-center">
             <a :href="`mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`">
-              <q-icon name="email"/>&nbsp;{{ $t('KAbout.BUG_REPORT') }}
+              <q-icon name="las la-envelope"/>&nbsp;{{ $t('KAbout.BUG_REPORT') }}
             </a>
           </div><br/>
           <!-- System -->
           <div class="row justify-center" @click="showSystemDetails = !showSystemDetails">
             <a>
-              <q-icon name="perm_device_information"/>&nbsp;{{ $t('KAbout.SYSTEM_DETAILS') }}
+              <q-icon name="las la-laptop-code"/>&nbsp;{{ $t('KAbout.SYSTEM_DETAILS') }}
             </a>
           </div>
           <br/>

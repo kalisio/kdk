@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly">
-    <q-chip v-if="model.name" icon="fas fa-cloud-upload-alt">
+    <q-chip v-if="model.name" icon="las la-cloud-upload-alt">
       {{ model.name }}
     </q-chip>
   </div>
