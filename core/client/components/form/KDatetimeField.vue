@@ -13,12 +13,12 @@
     :prefix="formattedDatetime"
   >
     <template v-slot:prepend>
-      <q-icon name="event" class="cursor-pointer">
+      <q-icon name="las la-calendar" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-date :value="localDatetime" @input="onChangeLocalDatetime" mask="YYYY-MM-DDTHH:mm:ss.SSSZ" v-bind="properties.field" />
         </q-popup-proxy>
       </q-icon>
-      <q-icon name="access_time" class="cursor-pointer">
+      <q-icon name="las la-clock" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-time :value="localDatetime" @input="onChangeLocalDatetime" mask="YYYY-MM-DDTHH:mm:ss.SSSZ" v-bind="properties.field" />
         </q-popup-proxy>

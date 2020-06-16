@@ -5,8 +5,8 @@
           <div :class="textClass">
             <p>
               <q-spinner v-show="applying"/>
-              <q-icon name="check" v-show="applied && !applying"/>
-              <q-icon name="error" v-show="!applied && !applying"/>
+              <q-icon name="las la-check" v-show="applied && !applying"/>
+              <q-icon name="las la-exclamation-circle" v-show="!applied && !applying"/>
               &nbsp;&nbsp;
               {{message}}.
             </p>

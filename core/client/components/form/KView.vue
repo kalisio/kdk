@@ -24,7 +24,7 @@
       Grouped fields
      -->
     <template v-for="group in groups">
-      <q-expansion-item :key="group" icon="wrap_text" :group="group" :label="$t(group)">
+      <q-expansion-item :key="group" icon="las la-file-alt" :group="group" :label="$t(group)">
         <template v-for="field in fields">
           <div v-if="field.group === group" :key="field.group + field.name" class="row"
             v-bind:class="{'k-view-row': options.separators }"

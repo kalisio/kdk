@@ -31,7 +31,7 @@
                     <q-icon :name="roleIcon(roleForGroup(group))" />
                   </q-btn>
                   <q-btn id="leave-group" v-if="canLeaveGroup(group)" flat round small @click="onLeaveGroup(group), $refs.popover[index].hide()">
-                    <q-icon name="remove_circle" />
+                    <q-icon name="las la-minus-circle" />
                   </q-btn>
                 </q-toolbar>
               </q-menu>
@@ -39,7 +39,7 @@
             </q-btn>
           </template>
           <q-btn id="join-group" v-if="canJoinGroup()" flat small round @click="onJoinGroup()">
-            <q-icon name="add_circle" color="grey-7">
+            <q-icon name="las la-plus-circle" color="grey-7">
               <q-tooltip>{{ $t('KMemberCard.JOIN_GROUP_LABEL') }}</q-tooltip>
             </q-icon>
           </q-btn>

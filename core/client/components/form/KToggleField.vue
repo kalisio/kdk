@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly">
-    <q-chip dense :icon="model ? 'check' : 'block'" :color="model ? 'positive' : 'negative'" />
+    <q-chip dense :icon="model ? 'las la-check' : 'las la-ban'" :color="model ? 'positive' : 'negative'" />
   </div>
   <q-field v-else
     :error-message="errorLabel"

@@ -13,7 +13,7 @@
             />
           </q-item-section>
           <q-item-section avatar>
-            <q-btn flat color="primary" icon="delete" @click="onRemoveFilter(filter)">
+            <q-btn flat color="primary" icon="las la-trash" @click="onRemoveFilter(filter)">
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
                 {{$t('KFeaturesFilter.REMOVE_FILTER')}}
               </q-tooltip>
@@ -27,7 +27,7 @@
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
               <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="add" @click="onAddFilter(property)"/>
+                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddFilter(property)"/>
               </template>
             </q-select>
           </q-item-section>

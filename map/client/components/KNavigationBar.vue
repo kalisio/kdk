@@ -15,7 +15,7 @@
         Search mode
        -->
       <template v-if="mode === 'searchbar' && hasLocationInput">
-        <q-btn icon="arrow_back" color="primary" round flat @click="mode = 'toolbar'" >
+        <q-btn icon="las la-arrow-left" color="primary" round flat @click="mode = 'toolbar'" >
           <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
         </q-btn>
         <q-separator vertical />

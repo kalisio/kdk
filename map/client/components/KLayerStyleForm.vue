@@ -2,7 +2,7 @@
   <div>
     <k-icon-chooser ref="iconChooser" @icon-choosed="onIconChanged" />
     <k-color-chooser ref="colorChooser" @color-choosed="onColorChanged" />
-    <q-expansion-item ref="general" default-opened icon="fas fa-low-vision" :label="$t('KLayerStyleForm.VISIBILITY')" group="group">
+    <q-expansion-item ref="general" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.VISIBILITY')" group="group">
       <q-list dense class="row">
         <q-item>
           <q-item-section>
@@ -40,7 +40,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="points" icon="fas fa-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
+    <q-expansion-item ref="points" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -79,7 +79,7 @@
             />
           </q-item-section>
           <q-item-section avatar>
-            <q-btn flat color="primary" icon="delete" @click="onRemoveIconStyle(iconStyle)">
+            <q-btn flat color="primary" icon="las la-trash" @click="onRemoveIconStyle(iconStyle)">
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
                 {{$t('KLayerStyleForm.REMOVE_POINT_STYLE')}}
               </q-tooltip>
@@ -93,14 +93,14 @@
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
               <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="add" @click="onAddIconStyle(property)"/>
+                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddIconStyle(property)"/>
               </template>
             </q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="lines" icon="fas fa-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
+    <q-expansion-item ref="lines" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-4">
@@ -146,7 +146,7 @@
               label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + lineStyle['stroke-opacity']"/>
           </q-item-section>
           <q-item-section avatar>
-            <q-btn flat color="primary" icon="delete" @click="onRemoveLineStyle(lineStyle)">
+            <q-btn flat color="primary" icon="las la-trash" @click="onRemoveLineStyle(lineStyle)">
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
                 {{$t('KLayerStyleForm.REMOVE_LINE_STYLE')}}
               </q-tooltip>
@@ -160,14 +160,14 @@
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
               <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="add" @click="onAddLineStyle(property)"/>
+                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddLineStyle(property)"/>
               </template>
             </q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="polygons" icon="fas fa-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
+    <q-expansion-item ref="polygons" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-4">
@@ -203,7 +203,7 @@
               label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + polygonStyle['fill-opacity']"/>
           </q-item-section>
           <q-item-section avatar>
-            <q-btn flat color="primary" icon="delete" @click="onRemovePolygonStyle(polygonStyle)">
+            <q-btn flat color="primary" icon="las la-trash" @click="onRemovePolygonStyle(polygonStyle)">
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
                 {{$t('KLayerStyleForm.REMOVE_POLYGON_STYLE')}}
               </q-tooltip>
@@ -217,14 +217,14 @@
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
               <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="add" @click="onAddPolygonStyle(property)"/>
+                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddPolygonStyle(property)"/>
               </template>
             </q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="popup" icon="fas fa-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
+    <q-expansion-item ref="popup" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -239,7 +239,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="tooltip" icon="fas fa-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
+    <q-expansion-item ref="tooltip" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -254,7 +254,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="infobox" icon="fas fa-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
+    <q-expansion-item ref="infobox" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -272,7 +272,7 @@
     <q-list v-show="hasError" dense class="row items-center justify-around q-pa-md">
       <q-item>
         <q-item-section side>
-          <q-icon name="warning" color="negative" />
+          <q-icon name="las la-exclamation-circle" color="negative" />
         </q-item-section>
         <q-item-section class="text-negative">
         {{error}}

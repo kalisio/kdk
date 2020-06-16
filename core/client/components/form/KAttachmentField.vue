@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly">
-    <q-chip v-for="file in files" :key="file.name" icon="fas fa-cloud-upload-alt">
+    <q-chip v-for="file in files" :key="file.name" icon="las la-cloud-upload-alt">
       {{ file.name }}
     </q-chip>
   </div>
@@ -22,7 +22,7 @@
           dense
           round
           flat
-          icon="fas fa-cloud-upload-alt"
+          icon="las la-cloud-upload-alt"
           @click="onUpload" />
         <template v-for="file in files">
           <q-chip

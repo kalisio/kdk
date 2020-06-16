@@ -3,12 +3,12 @@
     <q-toolbar class="q-pa-sm bg-secondary text-white">
       <span class="ellipsis-2">{{ location.name }}</span>
       <q-space />
-      <q-btn v-if="editable" icon="home" flat round dense @click="refreshLocation">
+      <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
         <q-tooltip>
           {{ $t('KLocationMap.RESTORE_BUTTON') }}
         </q-tooltip>
       </q-btn>
-      <q-btn icon="center_focus_strong" flat round dense @click="centerMap">
+      <q-btn icon="las la-search-location" flat round dense @click="centerMap">
         <q-tooltip>
           {{ $t('KLocationMap.RECENTER_BUTTON') }}
         </q-tooltip>

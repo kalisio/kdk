@@ -28,14 +28,14 @@
         color="secondary"
         round
         @click="openModal()">
-        <q-icon name="keyboard_arrow_up" />
+        <q-icon name="las la-chevron-up" />
       </q-btn>
     </div>
     <!--
       Render an expandable fab if more than one action is provided
      -->
     <q-fab v-else-if="fab.actions.length > 1"
-      icon="keyboard_arrow_up"
+      icon="las la-chevron-up"
       class="fixed"
       style="right: 18px; bottom: 18px"
       direction ="up"
