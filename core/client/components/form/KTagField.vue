@@ -5,6 +5,7 @@
         :key="chip.value + '-' + index"
         :icon="chip.icon.name"
         :color="chip.icon.color"
+        outline
         dense>
         {{chip.value}}
       </q-chip>
@@ -24,12 +25,12 @@
           <div v-if="tags.length > 0">
             <template v-for="(tag, index) in tags">
               <q-chip
-                dense
-                text-color="white"
                 :key="tag.value + '-' + index "
                 :icon="tag.icon.name"
                 :color="tag.icon.color"
                 :label="tag.value"
+                outline
+                dense
                 @remove="onTagRemoved(tag)"
                 @click="onTagClicked(tag)"
                 removable clickable />

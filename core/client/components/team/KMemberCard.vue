@@ -4,7 +4,7 @@
       Card header
      -->
     <template v-slot:card-header>
-      <div class="q-pa-xs row justify-end">
+      <div class="q-pa-sm row justify-end">
         <q-badge outine color="grey-7">
           {{ $t(roleLabel(role)) }}
         </q-badge>
@@ -47,7 +47,9 @@
         <q-separator />
       </template>
       <template v-if="expireAt">
-        <cite class="q-pa-sm text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>
+        <div class="q-pa-sm">
+          <cite  class="text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>
+        </div>
       </template>
     </div>
   </k-card>

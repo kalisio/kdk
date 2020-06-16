@@ -6,7 +6,7 @@
           :key="chipValue(chip) + '-' + index"
           :icon="chipIcon(chip)"
           :color="chipColor(chip)"
-          text-color="white"
+          outline
           dense>
           {{chipValue(chip)}}
         </q-chip>
@@ -26,13 +26,13 @@
               <q-chip
                 class="chip"
                 :key="chipValue(chip) + '-' + index"
-                text-color="white"
                 :icon="chipIcon(chip)"
                 :color="chipColor(chip)"
                 @remove="onChipRemoved(chip)"
                 @click="onChipClicked(chip)"
                 clickable
                 removable
+                outline
                 dense
               >
                 {{chip.value}}
