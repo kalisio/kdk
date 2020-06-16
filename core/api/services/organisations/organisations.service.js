@@ -43,14 +43,6 @@ export default function (name, app, options) {
         }
       })
       debug('Members service created for organisation ' + organisation.name)
-      this.app.createService('subscribers', {
-        modelsPath,
-        servicesPath,
-        id: 'phone',
-        context: organisation,
-        db
-      })
-      debug('Subscribers service created for organisation ' + organisation.name)
       this.app.createService('groups', {
         modelsPath,
         servicesPath,

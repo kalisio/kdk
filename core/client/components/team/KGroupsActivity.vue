@@ -74,12 +74,6 @@ export default {
         route: { name: 'tags-activity', params: { contextId: this.contextId } }
       })
       this.registerTabAction({
-        name: 'subscribers',
-        label: this.$t('KGroupsActivity.SUBSCRIBERS_LABEL'),
-        icon: 'las la-address-book',
-        route: { name: 'subscribers-activity', params: { contextId: this.contextId } }
-      })
-      this.registerTabAction({
         name: 'groups',
         label: this.$t('KGroupsActivity.GROUPS_LABEL'),
         icon: 'las la-sitemap',

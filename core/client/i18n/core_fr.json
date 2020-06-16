@@ -13,7 +13,6 @@
   "ANONYMOUS": "Anonyme",
   "MEMBERS": "Membres",
   "TAGS": "Etiquettes",
-  "SUBSCRIBERS": "Abonnés",
   "GROUPS": "Groupes",
   "REMOVE": "Supprimer",
   "EDIT": "Editer",
@@ -307,7 +306,6 @@
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
     "TAGS_LABEL": "$t(TAGS)",
-    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)",
     "ADD_USER_LABEL": "Ajouter un utilisateur",
     "INVITE_GUEST_LABEL": "Inviter des personnes"
@@ -374,7 +372,6 @@
   "KTagsActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
     "TAGS_LABEL": "$t(TAGS)",
-    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)"
   },
   "KTagCard": {
@@ -383,7 +380,6 @@
   "KSubscribersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
     "TAGS_LABEL": "$t(TAGS)",
-    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)"
   },
   "KSubscriberCard": {
@@ -394,7 +390,6 @@
   "KGroupsActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
     "TAGS_LABEL": "$t(TAGS)",
-    "SUBSCRIBERS_LABEL": "$t(SUBSCRIBERS)",
     "GROUPS_LABEL": "$t(GROUPS)",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },

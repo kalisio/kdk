@@ -10,7 +10,6 @@ export default function init () {
   api.declareService('tags', { context: true })
   api.declareService('organisations')
   api.declareService('members', { context: true })
-  api.declareService('subscribers', { context: true })
   api.declareService('groups', { context: true })
   api.declareService('storage', { context: true })
   api.declareService('account')
