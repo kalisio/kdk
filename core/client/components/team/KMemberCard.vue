@@ -121,15 +121,15 @@ export default {
             name: 'reissue-invitation',
             label: this.$t('KMemberCard.REISSUE_INVITATION_LABEL'),
             icon: 'las la-envelope',
-            handler: this.reissueInvitation
+            handler: this.resendInvitation
           })
         }
       }
     },
-    reissueInvitation (member) {
+    resendInvitation (member) {
       Dialog.create({
-        title: this.$t('KMemberCard.REISSUE_INVITATION_DIALOG_TITLE', { member: member.name }),
-        message: this.$t('KMemberCard.REISSUE_INVITATION_DIALOG_MESSAGE', { member: member.name }),
+        title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: member.name }),
+        message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: member.name }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -140,9 +140,9 @@ export default {
           flat: true
         }
       }).onOk(() => {
-        const date = new Date(Date.now() + 1000 * 48 * 60 * 60)
+        const newExpiryDate = new Date(Date.now() + 1000 * 48 * 60 * 60)
         const usersService = this.$api.getService('members')
-        usersService.patch(this.item._id, { email: this.item.email, expireAt: date })
+        usersService.patch(this.item._id, { expireAt: newExpiryDate, email: this.item.email })
       })
     },
     removeMember (member) {
