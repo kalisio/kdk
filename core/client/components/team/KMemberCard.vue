@@ -127,7 +127,23 @@ export default {
       }
     },
     reissueInvitation (member) {
-      console.log('reissue invitation')
+      Dialog.create({
+        title: this.$t('KMemberCard.REISSUE_INVITATION_DIALOG_TITLE', { member: member.name }),
+        message: this.$t('KMemberCard.REISSUE_INVITATION_DIALOG_MESSAGE', { member: member.name }),
+        html: true,
+        ok: {
+          label: this.$t('OK'),
+          flat: true
+        },
+        cancel: {
+          label: this.$t('CANCEL'),
+          flat: true
+        }
+      }).onOk(() => {
+        const date = new Date(Date.now() + 1000 * 48 * 60 * 60)
+        const usersService = this.$api.getService('members')
+        usersService.patch(this.item._id, { email: this.item.email, expireAt: date })
+      })
     },
     removeMember (member) {
       Dialog.create({

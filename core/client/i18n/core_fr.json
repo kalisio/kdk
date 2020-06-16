@@ -367,7 +367,8 @@
     "REMOVE_DIALOG_TITLE": "Supprimer {{member}} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer <b>{{member}}</b> de votre organisation ?",
     "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {{group}} '?",
-    "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{{member}}</b> du groupe <b>{{group}}</b> ?"
+    "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{{member}}</b> du groupe <b>{{group}}</b> ?",
+    "REISSUE_INVITATION_DIALOG_MESSAGE": "Voulez vous renvoyer une invitation à {{member}} ?"
   },
   "KTagsActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
