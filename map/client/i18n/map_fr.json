@@ -241,7 +241,12 @@
     "RENDER_LABEL": "Type d'affichage",
     "VALUE_LABEL": "Nombre",
     "PERCENTAGE_LABEL": "Pourcentage",
-    "CHARTING_LABEL": "Veuillez patienter pendant la construction du graphique"
+    "CHARTING_LABEL": "Veuillez patienter pendant la construction du graphique",
+    "CHART_VALUE_LABEL": "Valeur",
+    "CHART_COUNT_LABEL": "Nombre",
+    "CHART_SETTINGS_LABEL": "Configurer le graphique",
+    "CHART_EXPORT_LABEL": "Exporter les données",
+    "CHART_EXPORT_FILE": "Graphique-{{layer}}.cvs"
   },
   "KLayerStyleForm": {
     "DEFAULT_VISIBILITY": "Visibilité par défaut",

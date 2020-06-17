@@ -1,32 +1,46 @@
 <template>
-  <k-modal ref="modal" :title="title" :toolbar="toolbar" :buttons="[]" >
-    <div slot="modal-content">
-      <div class="row justify-center text-center">
-        <q-select class="col-1" v-model="property" :label="$t('KFeaturesChart.PROPERTY_LABEL')" stack-label
-          :options="properties" @input="refreshChart"/>
-        <q-select class="col-1" v-model="chartType" :label="$t('KFeaturesChart.CHART_LABEL')" stack-label
-          :options="chartOptions" @input="refreshChart"/>
-        <q-select class="col-1" v-model="nbValuesPerChart" :label="$t('KFeaturesChart.PAGINATION_LABEL')" stack-label
-          :options="paginationOptions" @input="refreshChartAndPagination"/>
-        <q-select class="col-1" v-model="render" :label="$t('KFeaturesChart.RENDER_LABEL')" stack-label
-          :options="renderOptions" @input="refreshChart"/>
-        <q-pagination v-if="nbCharts > 1" v-model="currentChart" :max="nbCharts" @input="refreshChart" :input="true"/>
-      </div>
-      <div class="row justify-center text-center">
-        <div v-show="chartData.length === 0" class="row justify-center text-center text-h5">
-          <k-label iconName="insert_chart_outlined" iconSize="3rem"
-          :text="$t('KFeaturesChart.SELECT_PROPERTY_LABEL')" icon-size="48px" />
+  <div>
+    <!-- Invisible link used to download data -->
+    <a ref="downloadLink" v-show="false" :href="currentDownloadLink" :download="currentDownloadName"></a>
+    <k-modal ref="modal" :title="title" :toolbar="toolbar" :buttons="[]" >
+      <div slot="modal-content">
+        <!-- Used as target for popup as we cannot reference the button in the modal -->
+        <span ref="chartSettingsTarget" class="float-right"/>
+        <q-popup-proxy ref="chartSettings" :target="$refs.chartSettingsTarget">
+          <div class="q-pa-md">
+            <q-select v-model="property" :label="$t('KFeaturesChart.PROPERTY_LABEL')"
+              :options="properties" @input="refreshChart"/>
+            <q-select v-model="chartType" :label="$t('KFeaturesChart.CHART_LABEL')"
+              :options="chartOptions" @input="refreshChart"/>
+            <q-select v-model="nbValuesPerChart" :label="$t('KFeaturesChart.PAGINATION_LABEL')"
+              :options="paginationOptions" @input="refreshChartAndPagination"/>
+            <q-select v-model="render" :label="$t('KFeaturesChart.RENDER_LABEL')"
+              :options="renderOptions" @input="refreshChart"/>
+          </div>
+        </q-popup-proxy>
+        <div class="row justify-center text-center q-ma-none q-pa-none">
+          <div v-show="chartData.length === 0" class="row justify-center text-center text-h5">
+            <k-label iconName="las la-cog" iconSize="3rem"
+            :text="$t('KFeaturesChart.SELECT_PROPERTY_LABEL')" icon-size="48px" />
+          </div>
+          <div style="width: 90vw">
+            <canvas v-show="chartData.length > 0" class="chart" ref="chart"></canvas>
+          </div>
+          <q-btn v-show="currentChart > 1" size="1rem" flat round color="primary"
+            icon="las la-chevron-left" class="absolute-left" @click="onPreviousChart"/>
+          <q-btn v-show="currentChart < nbCharts" size="1rem" flat round color="primary"
+            icon="las la-chevron-right" class="absolute-right" @click="onNextChart" />
         </div>
-        <canvas v-show="chartData.length > 0" class="chart q-ma-lg" ref="chart"></canvas>
       </div>
-    </div>
-  </k-modal>
+    </k-modal>
+  </div>
 </template>
 
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Loading } from 'quasar'
+import Papa from 'papaparse'
+import { Platform, Loading } from 'quasar'
 import chroma from 'chroma-js'
 import Chart from 'chart.js'
 import 'chartjs-plugin-labels'
@@ -88,7 +102,11 @@ export default {
     }]
 
     return {
-      toolbar: [{ name: 'close', icon: 'las la-times', handler: () => this.close() }],
+      toolbar: [
+        { name: 'settings', icon: 'las la-cog', label: this.$i18n.t('KFeaturesChart.CHART_SETTINGS_LABEL'), handler: () => this.$refs.chartSettings.show() },
+        { name: 'download', icon: 'las la-file-download', label: this.$i18n.t('KFeaturesChart.CHART_SETTINGS_LABEL'), handler: () => this.downloadChartData() },
+        { name: 'close', icon: 'las la-times', handler: () => this.close() }
+      ],
       property: null,
       chartType: _.find(chartOptions, { value: 'pie' }),
       chartOptions,
@@ -97,7 +115,9 @@ export default {
       paginationOptions,
       renderOptions,
       render: _.find(renderOptions, { value: 'value' }),
-      chartData: []
+      chartData: [],
+      currentDownloadLink: null,
+      currentDownloadName: null
     }
   },
   methods: {
@@ -139,6 +159,9 @@ export default {
       const start = (this.currentChart - 1) * this.nbValuesPerChart.value
       const end = (this.nbValuesPerChart.value > 0 ? start + this.nbValuesPerChart.value : this.chartData.length)
       const colors = _.shuffle(chroma.scale('Spectral').colors(end - start))
+      //const title = this.property.label + ' - ' + this.$t(`KFeaturesChart.CHART_LABEL_${type.toUpperCase()}`)
+      let title = this.property.label
+      if (this.nbCharts > 1) title += ` (${this.currentChart}/${this.nbCharts})`
       const config = {
         type,
         data: {
@@ -151,8 +174,7 @@ export default {
           responsive: true,
           title: {
             display: true,
-            text: this.property.label + ' - ' +
-                  this.$t(`KFeaturesChart.CHART_LABEL_${type.toUpperCase()}`)
+            text: title
           }
         }
       }
@@ -213,6 +235,38 @@ export default {
     async refreshChartAndPagination () {
       this.currentChart = 1
       await this.refreshChart()
+    },
+    onNextChart () {
+      this.currentChart++
+      this.refreshChart()
+    },
+    onPreviousChart () {
+      this.currentChart--
+      this.refreshChart()
+    },
+    downloadChartData () {
+      const json = this.values.map((value, index) => ({
+        [this.property.label]: value.label,
+        [this.$t('KFeaturesChart.CHART_COUNT_LABEL')]: this.chartData[index]
+      }))
+      const csv = Papa.unparse(json)
+      // Need to convert to blob
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      this.currentDownloadLink = URL.createObjectURL(blob)
+      this.currentDownloadName = this.$t('KFeaturesChart.CHART_EXPORT_FILE', { layer: this.layer.name })
+      if (Platform.is.cordova) {
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fs) => {
+          fs.root.getFile(this.currentMedia.name, { create: true, exclusive: false }, (fileEntry) => {
+            fileEntry.createWriter((fileWriter) => {
+              fileWriter.write(blob)
+              cordova.plugins.fileOpener2.open(fileEntry.nativeURL, mimeType)
+            })
+          })
+        })
+      } else {
+        // We call Vue.nextTick() to let Vue update its DOM to get the download link ready
+        this.$nextTick(() => this.$refs.downloadLink.click())
+      }
     }
   },
   created () {

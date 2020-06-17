@@ -241,7 +241,12 @@
     "RENDER_LABEL": "Display type",
     "VALUE_LABEL": "Count",
     "PERCENTAGE_LABEL": "Percentage",
-    "CHARTING_LABEL": "Please wait while computing chart"
+    "CHARTING_LABEL": "Please wait while computing chart",
+    "CHART_VALUE_LABEL": "Value",
+    "CHART_COUNT_LABEL": "Count",
+    "CHART_SETTINGS_LABEL": "Configure graph",
+    "CHART_EXPORT_LABEL": "Export data",
+    "CHART_EXPORT_FILE": "Chart-{{layer}}.csv"
   },
   "KLayerStyleForm": {
     "DEFAULT_VISIBILITY": "Visibilité par défaut",
