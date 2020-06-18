@@ -3,16 +3,12 @@
     <!--
       Avatar section
     -->
-    <slot name="item-avatar">
-      <q-item-section @click="onItemSelected" avatar v-if="avatar">
-        <q-avatar>
-          <img :src="avatar">
-        </q-avatar>
-      </q-item-section>
-      <q-item-section @click="onItemSelected" avatar v-if="icon">
-        <q-icon :color="icon.color" :name="icon.name" />
-      </q-item-section>
-    </slot>
+    <q-item-section top avatar>
+      <slot name="item-avatar">
+        <q-avatar v-if="avatar.type === 'text'" color="primary" text-color="white" >{{ avatar.text }}</q-avatar>
+        <q-avatar v-if="avatar.type === 'icon'" :color="avatar.icon.color" text-color="white" :icon="avatar.icon.name" />
+      </slot>
+    </q-item-section>
     <!--
       Content section
     -->
@@ -48,24 +44,6 @@ export default {
     itemActions: {
       type: Array,
       default: () => { return [] }
-    }
-  },
-  computed: {
-    name () {
-      // Check for custom name field
-      return (this.options.nameField ? _.get(this.item, this.options.nameField, '') : this.item.name)
-    },
-    description () {
-      // Check for custom description field
-      return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
-    },
-    avatar () {
-      if (this.item.avatar) return this.item.avatar
-      return undefined
-    },
-    icon () {
-      if (this.item.icon) return this.item.icon
-      return undefined
     }
   },
   methods: {

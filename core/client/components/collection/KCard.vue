@@ -46,7 +46,6 @@
 
 <script>
 import _ from 'lodash'
-import { getInitials } from '../../utils'
 import mixins from '../../mixins'
 
 export default {
@@ -63,42 +62,9 @@ export default {
       }
     }
   },
-  computed: {
-    avatar () {
-      const icon = this.getIcon()
-      if (icon) {
-        return {
-          type: 'icon',
-          icon
-        }
-      }
-      const name = this.getName()
-      return {
-        type: 'text',
-        text: getInitials(name)
-      }
-    },
-    name () {
-      // Check for custom name field
-      return this.getName()
-    },
-    description () {
-      // Check for custom description field
-      return this.getDescription()
-    }
-  },
   methods: {
     getLayout () {
       return _.get(this.options, 'layout', 'col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3')
-    },
-    getIcon () {
-      return this.options.iconField ? _.get(this.item, this.options.iconField, '') : this.item.icon
-    },
-    getName () {
-      return this.options.nameField ? _.get(this.item, this.options.nameField, '') : this.item.name
-    },
-    getDescription () {
-      return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
     }
   },
   created () {
