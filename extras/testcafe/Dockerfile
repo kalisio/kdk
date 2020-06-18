@@ -41,4 +41,4 @@ ENV SPEED=${TESTCAFE_SPEED}
 VOLUME [ "/screenshots" ]
 EXPOSE 1337 1338
 USER user
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+ENTRYPOINT [ "bash", "-x", "/docker-entrypoint.sh" ]
