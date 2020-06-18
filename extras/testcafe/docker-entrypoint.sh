@@ -7,5 +7,7 @@ fluxbox >/dev/null 2>&1 &
 testcafe ${BROWSERS} --ports 1337,1338 --speed ${SPEED} -s path=/screenshots,takeOnFails=true -r slack "/tests/*.test.js" "$@"
 
 if [ -n $S3_ARTEFACTS_PATH ]; then
-   aws s3 sync /screenshots $S3_ARTEFACTS_PATH
+    cd /tmp
+    tar cf screenshots.tar /screenshots
+    aws s3 cp screenshots.tar $S3_ARTEFACTS_PATH
 fi
