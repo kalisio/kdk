@@ -78,9 +78,13 @@ export default function (name, app, options) {
       let devices = []
       if (user.devices) devices = user.devices
       // Specific case of SMS, in this case the number replace the device registration ID/arn ARN
-      else if (user.phone) devices.push({ registrationId: user.phone, arn: user.phone, platform: 'SMS' })
+      else if (user.phone && this.getSnsApplication('SMS')) devices.push({
+        registrationId: user.phone, arn: user.phone, platform: 'SMS'
+      })
       // Specific case of Email, in this case the address replace the device registration ID/arn ARN
-      else if (user.email) devices.push({ registrationId: user.email, arn: user.email, platform: 'EMAIL' })
+      else if (user.email && this.getSnsApplication('EMAIL')) devices.push({
+        registrationId: user.email, arn: user.email, platform: 'EMAIL'
+      })
       return devices
     },
     createDevice (device, user) {
