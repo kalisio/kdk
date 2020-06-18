@@ -104,7 +104,7 @@ export default {
     return {
       toolbar: [
         { name: 'settings', icon: 'las la-cog', label: this.$i18n.t('KFeaturesChart.CHART_SETTINGS_LABEL'), handler: () => this.$refs.chartSettings.show() },
-        { name: 'download', icon: 'las la-file-download', label: this.$i18n.t('KFeaturesChart.CHART_SETTINGS_LABEL'), handler: () => this.downloadChartData() },
+        { name: 'download', icon: 'las la-file-download', label: this.$i18n.t('KFeaturesChart.CHART_EXPORT_LABEL'), handler: () => this.downloadChartData() },
         { name: 'close', icon: 'las la-times', handler: () => this.close() }
       ],
       property: null,
