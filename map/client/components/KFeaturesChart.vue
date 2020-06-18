@@ -159,7 +159,7 @@ export default {
       const start = (this.currentChart - 1) * this.nbValuesPerChart.value
       const end = (this.nbValuesPerChart.value > 0 ? start + this.nbValuesPerChart.value : this.chartData.length)
       const colors = _.shuffle(chroma.scale('Spectral').colors(end - start))
-      //const title = this.property.label + ' - ' + this.$t(`KFeaturesChart.CHART_LABEL_${type.toUpperCase()}`)
+      // const title = this.property.label + ' - ' + this.$t(`KFeaturesChart.CHART_LABEL_${type.toUpperCase()}`)
       let title = this.property.label
       if (this.nbCharts > 1) title += ` (${this.currentChart}/${this.nbCharts})`
       const config = {

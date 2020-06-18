@@ -52,7 +52,7 @@
         </div>
       </template>
     </div>
-  </k-card>      
+  </k-card>
 </template>
 
 <script>
@@ -133,7 +133,7 @@ export default {
         html: true,
         prompt: {
           model: member.email,
-          isValid: email => isEmailValid(email), 
+          isValid: email => isEmailValid(email),
           type: 'email'
         },
         ok: {
