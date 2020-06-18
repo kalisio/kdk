@@ -4,4 +4,8 @@ Xvfb :1 -screen 0 "${SCREEN_WIDTH}x${SCREEN_HEIGHT}x24" >/dev/null 2>&1 &
 export DISPLAY=:1.0
 fluxbox >/dev/null 2>&1 &
 
-testcafe ${BROWSERS} --ports 1337,1338 --speed ${SPEED} -S -s /screenshots -r slack "/tests/*.test.js" "$@"
+testcafe ${BROWSERS} --ports 1337,1338 --speed ${SPEED} -s path=/screenshots,takeOnFails=true -r slack "/tests/*.test.js" "$@"
+
+if [ -n $S3_ARTEFACTS_PATH ]; then
+   aws s3 sync /screenshots $S3_ARTEFACTS_PATH
+fi
