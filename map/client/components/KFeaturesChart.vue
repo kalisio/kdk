@@ -245,13 +245,14 @@ export default {
       this.refreshChart()
     },
     downloadChartData () {
+      const mimeType = 'text/csv;charset=utf-8;'
       const json = this.values.map((value, index) => ({
         [this.property.label]: value.label,
         [this.$t('KFeaturesChart.CHART_COUNT_LABEL')]: this.chartData[index]
       }))
       const csv = Papa.unparse(json)
       // Need to convert to blob
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const blob = new Blob([csv], { type: mimeType })
       this.currentDownloadLink = URL.createObjectURL(blob)
       this.currentDownloadName = this.$t('KFeaturesChart.CHART_EXPORT_FILE', { layer: this.layer.name })
       if (Platform.is.cordova) {
