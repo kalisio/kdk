@@ -36,7 +36,12 @@ export default {
         }
       },
       renderer: {
-        component: 'team/KMemberCard'
+        component: 'team/KMemberCard',
+        props: {
+          options: {
+            descriptionField: 'email'
+          }
+        }
       }
     }
   },

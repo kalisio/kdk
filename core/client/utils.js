@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import emailValidator from 'email-validator'
 import config from 'config'
 import { Notify, Loading } from 'quasar'
 
@@ -97,6 +98,10 @@ export function getAppLocale () {
 export function getInitials (name) {
   const initials = name.toUpperCase().match(/\b\w/g) || []
   return initials.join('')
+}
+
+export function isEmailValid (email) {
+  return emailValidator.validate(email)
 }
 
 Notify.setDefaults({

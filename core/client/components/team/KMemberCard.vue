@@ -2,7 +2,7 @@
   <k-card v-bind="$props" :itemActions="actions">
     <!--
       Card header
-     -->
+    -->
     <template v-slot:card-header>
       <div class="q-pa-sm row justify-end">
         <q-badge outine color="grey-7">
@@ -12,7 +12,7 @@
     </template>
     <!--
       Card content
-     -->
+    -->
     <div slot="card-content">
       <q-separator />
       <template  v-if="tags.length > 0">
@@ -52,14 +52,14 @@
         </div>
       </template>
     </div>
-  </k-card>
+  </k-card>      
 </template>
 
 <script>
 import _ from 'lodash'
 import { Dialog } from 'quasar'
 import mixins from '../../mixins'
-import { getInitials, processIcon } from '../../utils'
+import { getInitials, processIcon, isEmailValid } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 
 export default {
@@ -119,7 +119,7 @@ export default {
         if (this.$can('update', 'members', this.contextId)) {
           this.registerPaneAction({
             name: 'reissue-invitation',
-            label: this.$t('KMemberCard.REISSUE_INVITATION_LABEL'),
+            label: this.$t('KMemberCard.RESEND_INVITATION_LABEL'),
             icon: 'las la-envelope',
             handler: this.resendInvitation
           })
@@ -131,6 +131,11 @@ export default {
         title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: member.name }),
         message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: member.name }),
         html: true,
+        prompt: {
+          model: member.email,
+          isValid: email => isEmailValid(email), 
+          type: 'email'
+        },
         ok: {
           label: this.$t('OK'),
           flat: true
@@ -139,11 +144,13 @@ export default {
           label: this.$t('CANCEL'),
           flat: true
         }
-      }).onOk(() => {
+      }).onOk((email) => {
         const newExpiryDate = new Date(Date.now() + 1000 * 48 * 60 * 60)
         const usersService = this.$api.getService('members')
-        usersService.patch(this.item._id, { expireAt: newExpiryDate, email: this.item.email })
+        usersService.patch(this.item._id, { expireAt: newExpiryDate, email })
       })
+    },
+    onResendInvitation (member) {
     },
     removeMember (member) {
       Dialog.create({

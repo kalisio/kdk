@@ -364,12 +364,13 @@
     "EXPIRE_AT_LABEL": "L'invitation expire au",
     "CHANGE_ROLE_LABEL": "Changer de rôle",
     "REMOVE_LABEL": "$t(REMOVE)",
+    "RESEND_INVITATION_LABEL": "Renvoyer une invitation",
     "REMOVE_DIALOG_TITLE": "Supprimer {{member}} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer <b>{{member}}</b> de votre organisation ?",
     "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {{group}} '?",
     "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{{member}}</b> du groupe <b>{{group}}</b> ?",
-    "RESEND_INVITATION_DIALOG_TITLE": "Renvoyer l'invitation ?",
-    "RESEND_INVITATION_DIALOG_MESSAGE": "Voulez vous renvoyer une invitation à {{member}} ?"
+    "RESEND_INVITATION_DIALOG_TITLE": "Renvoyer une invitation à {{member}} ?",
+    "RESEND_INVITATION_DIALOG_MESSAGE": "L'adresse mail de <b>{{member}}</b> est-elle correcte ?"
   },
   "KTagsActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",

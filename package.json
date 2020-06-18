@@ -99,6 +99,7 @@
     "debug": "^4.1.0",
     "ejs": "^2.5.7",
     "email-templates": "^2.7.1",
+    "email-validator": "^2.0.4",
     "express-rate-limit": "^2.11.0",
     "feathers-authentication-management": "^2.0.1",
     "feathers-blob": "^1.4.0",
