@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { getIconName, getInitials } from '../utils'
 
 const baseItemMixin = {
   props: {
@@ -25,7 +26,56 @@ const baseItemMixin = {
       }
     }
   },
+  computed: {
+    avatar () {
+      const icon = this.getIcon()
+      if (icon) {
+        return {
+          type: 'icon',
+          icon
+        }
+      }
+      const iconName = this.getIconName()
+      const iconColor = this.getIconColor()
+      if (iconName && iconColor) {
+        return {
+          type: 'icon',
+          icon: { name: iconName, color: iconColor }
+        }
+      }
+      const name = this.getName()
+      return {
+        type: 'text',
+        text: getInitials(name)
+      }
+    },
+    name () {
+      return this.getName()
+    },
+    description () {
+      return this.getDescription()
+    }
+  },
   methods: {
+    getIcon () {
+      return this.options.iconField ? _.get(this.item, this.options.iconField, '') : this.item.icon
+    },
+    getIconName () {
+      // Check for custom icon field
+      return this.options.iconNameField ? getIconName(this.item, this.options.iconNameField) : getIconName(this.item, 'icon.name')
+    },
+    getIconColor () {
+      // Check for custom icon field
+      return this.options.iconColorField ? _.get(this.item, this.options.iconColorField, '') : _.get(this.item, 'icon.color', '')
+    },
+    getName () {
+      // Check for custom name field
+      return this.options.nameField ? _.get(this.item, this.options.nameField, '') : this.item.name
+    },
+    getDescription () {
+      // Check for custom description field
+      return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
+    },
     registerPaneAction (action) {
       this.registerAction('pane', action)
     },
