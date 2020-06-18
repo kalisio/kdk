@@ -4,7 +4,7 @@
       Non-grouped fields
      -->
     <template v-for="field in fields">
-      <div v-if="!field.group" :key="field.name" class="row"
+      <div v-if="!field.group" :key="field.name" class="row items-center"
         v-bind:class="{'k-view-row': options.separators }"
       >
         <!-- Field label -->
@@ -26,7 +26,7 @@
     <template v-for="group in groups">
       <q-expansion-item :key="group" icon="las la-file-alt" :group="group" :label="$t(group)">
         <template v-for="field in fields">
-          <div v-if="field.group === group" :key="field.group + field.name" class="row"
+          <div v-if="field.group === group" :key="field.group + field.name" class="row items-center"
             v-bind:class="{'k-view-row': options.separators }"
           >
             <!-- Field label -->
