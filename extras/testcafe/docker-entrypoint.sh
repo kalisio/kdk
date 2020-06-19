@@ -1,4 +1,5 @@
 #!/bin/sh
+
 dbus-daemon --session --fork
 Xvfb :1 -screen 0 "${SCREEN_WIDTH}x${SCREEN_HEIGHT}x24" >/dev/null 2>&1 &
 export DISPLAY=:1.0
@@ -10,7 +11,7 @@ RESULT=$?
 if [ -n $S3_ARTEFACTS_PATH ]; then
     cd /tmp
     tar cf screenshots.tar /screenshots
-    aws s3 cp screenshots.tar $S3_ARTEFACTS_PATH
+    rclone copy source:screenshots.tar dest:$S3_ARTEFACTS_PATH
 fi
 
 exit $RESULT

@@ -11,7 +11,8 @@ ARG TESTCAFE_SCREEN_HEIGHT=720
 RUN \
   apk --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --repository http://dl-cdn.alpinelinux.org/alpine/v3.10/main/ upgrade && \
   apk --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --repository http://dl-cdn.alpinelinux.org/alpine/v3.10/main/ add \
-  libevent nodejs npm chromium firefox-esr xwininfo xvfb dbus eudev ttf-freefont fluxbox procps curl bash
+  libevent nodejs npm chromium firefox-esr xwininfo xvfb dbus eudev ttf-freefont fluxbox procps wget unzip bash \
+  wget -qO - https://downloads.rclone.org/rclone-current-linux-amd64.zip | unzip -p - "rclone-*-linux-amd64/rclone" > /usr/bin/rclone
 
 WORKDIR /opt/testcafe
 RUN adduser -D -h /opt/testcafe user
