@@ -55,7 +55,8 @@
     "CANNOT_REMOVE_ORGANISATION": "Vous n'êtes pas autorisé à supprimer cette organisation.<br>Merci de supprimer tous les groupes préalablement.",
     "CANNOT_REMOVE_LAST_OWNER": "Vous n'êtes pas autorisé à supprimer le dernier propriétaire de <b>{{resource}}</b>",
     "OAUTH2_PROVIDER": "Vous ne pouvez modifier votre compte car il est géré par {{provider}}, pour utiliser un compte local réinitialisez tout d'abord votre mot de passe",
-    "EMAIL_ALREADY_TAKEN": "Un utilisateur semble déjà enregistré avec cette adresse mail"
+    "EMAIL_ALREADY_TAKEN": "Un utilisateur semble déjà enregistré avec cette adresse mail",
+    "DUPLICATED_FILE": "Le fichier {{file}} a déjà été ajouté"
   },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
