@@ -9,7 +9,7 @@ testcafe ${BROWSERS} --ports 1337,1338 --skip-js-errors --speed ${SPEED} -s path
 RESULT=$?
 
 # Upload screenshots somewhere ?
-if [ -n $SCREENSHOTS_RCLONE_PATH ]; then
+if [ -n "$SCREENSHOTS_RCLONE_PATH" ]; then
     cd /tmp
     tar cf screenshots.tar /screenshots
     rclone copy screenshots.tar s3:$SCREENSHOTS_RCLONE_PATH
