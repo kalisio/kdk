@@ -33,18 +33,25 @@ const baseContextMixin = {
       this.$store.set('context', null)
       this.contextLoaded = false
     },
+    updateContextActions (context) {
+      const actions = this.getActionsForContext(context)
+      this.$store.patch('appBar', { toolbar: actions.toolbar, menu: actions.menu })
+    },
     setContext (context) {
       // Set context in store so that contextual services are aware of it
       this.$store.set('context', context)
       this.contextLoaded = true
-      const actions = this.getActionsForContext(context)
-      this.$store.patch('appBar', { toolbar: actions.toolbar, menu: actions.menu })
+      this.updateContextActions(context)
     },
     async refreshContext () {
       if (this.contextId) {
         // Context already set ?
         let context = this.$store.get('context')
-        if (context && context._id === this.contextId) return
+        if (context && context._id === this.contextId) {
+          // Update only actions as they can depend on eg the current route
+          this.updateContextActions(context)
+          return
+        }
         // Otherwise clear so that underlying components will be destroyed
         this.clearContext()
         // Then update the context
