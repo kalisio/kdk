@@ -38,6 +38,9 @@ module.exports = {
         if (hook.params.file) {
           hook.result.name = hook.params.file.originalname
         }
+        if (hook.data.name) {
+          hook.result.name = hook.data.name
+        }
       },
       iff(hook => hook.params.resource, attachToResource), discard('uri')
     ],

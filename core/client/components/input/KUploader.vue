@@ -177,7 +177,8 @@ export default {
     },
     onFileRemoved (removedFile, error, xhr) {
       // the file can be removed if not accepted 
-      if (removedFile.accepted) this.removeFile(removedFile)
+      const accepted = removedFile.accepted || true
+      if (accepted) this.removeFile(removedFile)
     },
     onError (file, error, xhr) {
       // This is required if we don't want the file to be viewed
