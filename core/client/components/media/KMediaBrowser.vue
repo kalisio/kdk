@@ -177,8 +177,6 @@ export default {
     // laod the required components
     this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
     this.$options.components['k-image-viewer'] = this.$load('media/KImageViewer')
-    // Initialize
-    this.touches = []
   },
   async mounted () {
     this.$emit('browser-ready')

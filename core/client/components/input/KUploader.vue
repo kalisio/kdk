@@ -1,5 +1,15 @@
 <template>
-  <drop-zone v-if="dropZoneOptions" ref="dropZone" id="dropZone" @vdropzone-file-added="onFileAdded" @vdropzone-success="onFileUploaded" @vdropzone-removed-file="onFileRemoved" @vdropzone-sending="onFileSending" @vdropzone-thumbnail="onThumbnailGenerated" @vdropzone-error="onError" :options="dropZoneOptions" :destroyDropzone="false"/>
+  <drop-zone v-if="dropZoneOptions" 
+    ref="dropZone" 
+    id="dropZone" 
+    @vdropzone-file-added="onFileAdded" 
+    @vdropzone-success="onFileUploaded" 
+    @vdropzone-removed-file="onFileRemoved" 
+    @vdropzone-sending="onFileSending" 
+    @vdropzone-thumbnail="onThumbnailGenerated" 
+    @vdropzone-error="onError" 
+    :options="dropZoneOptions"
+    :destroyDropzone="false" />
 </template>
 
 <script>
@@ -31,8 +41,6 @@ export default {
       default: () => {}
     }
   },
-  computed: {
-  },
   data () {
     return {
       dropZoneOptions: null,
@@ -51,6 +59,11 @@ export default {
     },
     resourceField () {
       return _.get(this.options, 'resourceField', 'attachments')
+    },
+    checkFile (fileToAdd, done) {
+      const duplicatedFiles = _.filter(this.files, file => file.name === fileToAdd.name)
+      if (duplicatedFiles.length > 1) done(this.$t('errors.DUPLICATED_FILE', { file: fileToAdd.name }))
+      else done()
     },
     addFile (addedFile) {
       this.files.push(addedFile)
@@ -163,7 +176,8 @@ export default {
       this.updateFile(response)
     },
     onFileRemoved (removedFile, error, xhr) {
-      this.removeFile(removedFile)
+      // the file can be removed if not accepted 
+      if (removedFile.accepted) this.removeFile(removedFile)
     },
     onError (file, error, xhr) {
       // This is required if we don't want the file to be viewed
@@ -189,6 +203,7 @@ export default {
       const dictionary = this.$t('KUploader.dropZone', { returnObjects: true, interpolation: { prefix: '[[', suffix: '[[' } })
       // Setup upload URL, credentials, etc. from input options
       this.dropZoneOptions = Object.assign({
+        accept: this.checkFile,
         addRemoveLinks: true,
         // FIXME: for now we send files sequentially
         // Indeed when we attach files to a resource as a post process of form submission
