@@ -12,7 +12,7 @@ RESULT=$?
 if [ -n "$SCREENSHOTS_RCLONE_PATH" ]; then
     cd /tmp
     tar cf screenshots.tar /screenshots
-    rclone copy screenshots.tar s3:$SCREENSHOTS_RCLONE_PATH
+    rclone copy screenshots.tar $SCREENSHOTS_RCLONE_PATH
 fi
 
 exit $RESULT
