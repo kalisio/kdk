@@ -8,7 +8,7 @@ export default class SideNav extends BasePage {
     this.sideNav = VueSelector('k-side-nav')
     this.identityPanel = VueSelector('k-identity-panel')
     this.identityLink = Selector('#account')
-    this.logoutLink = VueSelector('k-links-panel').find('.q-icon').withText('exit_to_app')
+    this.logoutLink = VueSelector('k-links-panel').find('i.la-sign-out-alt')
   }
 
   // Identity
