@@ -3,6 +3,8 @@ FROM alpine:edge
 ARG TESTCAFE_VERSION=1.7.1
 ARG TESTCAFE_VUE_SELECTORS_VERSION=3.1.0
 ARG MONGODB_DRIVER_VERSION=3.1.4
+ARG PIXELMATCH_VERSION=5.2.0
+ARG PNGJS_VERSION=5.0.0
 ARG TESTCAFE_BROWSERS="firefox:headless"
 ARG TESTCAFE_SPEED=0.75
 ARG TESTCAFE_SCREEN_WIDTH=1024
@@ -24,6 +26,8 @@ RUN npm install \
     testcafe-vue-selectors@${TESTCAFE_VUE_SELECTORS_VERSION} \
     testcafe-reporter-slack \
     mongodb@${MONGODB_DRIVER_VERSION} \
+    pixelmatch@${PIXELMATCH_VERSION} \
+    pngjs@{PNGJS_VERSION} \
     && npm cache clean --force \
     && rm -rf /tmp/*
 
