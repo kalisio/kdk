@@ -14,7 +14,8 @@ if [ -n "$SCREENSHOTS_RCLONE_PATH" ]; then
     tar cf screenshots.tar /tmp/screenshots
     rclone copy screenshots.tar $SCREENSHOTS_RCLONE_PATH
     if [ -n "$TESTCAFE_SLACK_WEBHOOK" ]; then
-        curl -X POST -H 'Content-type: application/json' --data '{"text":"Test run screenshots were copied here: $SCREENSHOTS_RCLONE_PATH"}' $TESTCAFE_SLACK_WEBHOOK
+        PAYLOAD=$(printf '{"text":"Test screenshots are here: %s"}' $SCREENSHOTS_RCLONE_PATH)
+        curl -X POST -H 'Content-type: application/json' --data $PAYLOAD $TESTCAFE_SLACK_WEBHOOK
     fi
 fi
 
