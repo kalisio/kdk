@@ -19,7 +19,7 @@ if [ -n "$BUILD_BUCKET" ]; then
 
     # notify on slack
     if [ -n "$TESTCAFE_SLACK_WEBHOOK" ]; then
-        PAYLOAD=$(printf '{"text":"Test artefacts uploaded here: %s"}' $BUILD_BUCKET)
+        PAYLOAD=$(printf '{"text":"To fetch testcafe test artefacts, use:", "attachments":[{"color":"#7b36a6", "text":"*rclone copy %s .*"}]}' $BUILD_BUCKET)
         curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" $TESTCAFE_SLACK_WEBHOOK
     fi
 fi
