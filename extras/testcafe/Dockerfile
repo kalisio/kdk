@@ -27,7 +27,7 @@ RUN npm install \
     testcafe-reporter-slack \
     mongodb@${MONGODB_DRIVER_VERSION} \
     pixelmatch@${PIXELMATCH_VERSION} \
-    pngjs@{PNGJS_VERSION} \
+    pngjs@${PNGJS_VERSION} \
     && npm cache clean --force \
     && rm -rf /tmp/*
 
