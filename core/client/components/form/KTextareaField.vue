@@ -1,9 +1,9 @@
 <template>
-  <textarea v-if="readOnly" readonly rows="6">
+  <textarea v-if="readOnly" readonly rows="6" :id="properties.name + '-field'">
     {{ model }}
   </textarea>
   <q-input v-else
-    :id="properties.name + '-field'"
+    :for="properties.name + '-field'"
     type="textarea"
     v-model="model"
     clearable

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="readOnly">
+  <div v-if="readOnly" :id="properties.name + '-field'">
     <a href="model">{{ model }}</a>
   </div>
   <q-input v-else
-    :id="properties.name + '-field'"
+    :for="properties.name + '-field'"
     type="url"
     v-model="model"
     clearable

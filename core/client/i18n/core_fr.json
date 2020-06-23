@@ -72,6 +72,12 @@
     "GROUPS_NAME_FIELD_HELPER": "Saisissez le nom du groupe",
     "GROUPS_DESCRIPTION_FIELD_HELPER": "Saisissez une description du groupe"
   },
+  "KTour": {
+    "SKIP_LABEL": "Fermer",
+    "NEXT_LABEL": "Suivant",
+    "PREVIOUS_LABEL": "Précédent",
+    "FINISH_LABEL": "Terminer"
+  },
   "KScreen": {
     "CLIENT_VERSION": "Client v",
     "API_VERSION": "API v",
