@@ -1,10 +1,11 @@
 <template>
-  <div v-if="readOnly && model">
+  <div v-if="readOnly && model" :id="properties.name + '-field'">
     <q-chip :color="model.color" dense>
       {{ model.name }}
     </q-chip>
   </div>
   <q-field v-else
+    :for="properties.name + '-field'"
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"

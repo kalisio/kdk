@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="readOnly">
+    <div v-if="readOnly" :id="properties.name + '-field'">
       <template v-for="(chip, index) in model">
         <q-chip
           :key="chipValue(chip) + '-' + index"
@@ -13,6 +13,7 @@
       </template>
     </div>
     <q-field v-else
+      :for="properties.name + '-field'"
       :error-message="errorLabel"
       :error="hasError"
       :disabled="disabled"
@@ -51,7 +52,6 @@
     </q-field>
 
     <k-icon-chooser
-      :id="properties.name + '-field'"
       ref="iconChooser"
       @icon-choosed="onIconChoosed" />
   </div>

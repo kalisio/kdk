@@ -12,6 +12,7 @@
           </q-tab-panel>
           <q-tab-panel name="multiple">
             <q-field
+              for="file-field"
               :error-message="fileErrorLabel"
               :error="fileError">
                 <k-file-input

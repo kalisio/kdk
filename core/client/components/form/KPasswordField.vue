@@ -1,8 +1,8 @@
 <template>
-  <div v-if="readOnly">
+  <div v-if="readOnly" :id="properties.name + '-field'">
   </div>
   <q-input v-else
-    :id="properties.name + '-field'"
+    :for="properties.name + '-field'"
     :type="isPwd ? 'password' : 'text'"
     v-model="model"
     clearable
@@ -15,6 +15,7 @@
   >
     <template v-slot:append>
       <q-icon
+        :id="properties.name + '-field-visibility'"
         :name="isPwd ? 'visibility_off' : 'visibility'"
         class="cursor-pointer"
         @click="isPwd = !isPwd"
