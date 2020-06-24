@@ -2,10 +2,12 @@ import { ClientFunction } from 'testcafe'
 import Screens from './screens'
 import Layout from './layout'
 import SideNav from './side-nav'
+import Account from './account'
 
 export { Screens }
 export { Layout }
 export { SideNav }
+export { Account }
 
 // Access store
 export const getFromStore = ClientFunction((path) => window.$store.get(path))
@@ -23,8 +25,7 @@ export const getWindowInnerWidth = ClientFunction(() => window.innerWidth)
 export const getWindowInnerHeight = ClientFunction(() => window.innerHeight)
 
 // Access routes
-const baseUrl = process.env.APP_URL || process.env.CLIENT_PORT ||
-  (process.env.NODE_ENV === 'production' ? 'http://localhost:8081' : 'http://localhost:8082')
+const baseUrl = process.env.APP_URL || (process.env.CLIENT_PORT ? 'http://localhost:' + process.env.CLIENT_PORT : (process.env.NODE_ENV === 'production' ? 'http://localhost:8081' : 'http://localhost:8082'))
 export const getUrl = (path) => path ? baseUrl + '/#/' + path : baseUrl
 export const goBack = ClientFunction(() => window.history.back())
 
