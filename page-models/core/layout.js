@@ -97,8 +97,8 @@ export default class Layout extends BasePage {
   // SignupAlert
   async closeSignupAlert (test) {
     await test
-      .click(this.signupAlert.find('.q-alert-close').find('.cursor-pointer'))
-      .wait(500)
+      .click(Selector('#close-signup-alert'))
+      .wait(1000)
   }
 
   // Helpers
