@@ -134,7 +134,6 @@ export default {
     },
     onStartTour () {
       this.$emit('tour-started', { tour: this.tourSteps })
-      const delay = _.get(this.$route, 'query.tour')
       if (this.autoPlay) this.autoPlayNextStep()
       this.clickTarget()
       this.openRoute()
