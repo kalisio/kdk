@@ -1,6 +1,7 @@
 <template>
   <div>
     <k-block
+      id="delete-block"
       color="red"
       :title="$t('KAccountDZ.BLOCK_TITLE')"
       :text="$t('KAccountDZ.BLOCK_TEXT')"

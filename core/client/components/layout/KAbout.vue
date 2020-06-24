@@ -5,9 +5,9 @@
       <!--
         About link
       -->
-      <q-item id="show-about" clickable @click="onAbout">
+      <q-item id="about" clickable @click="onAbout">
         <q-item-section avatar>
-          <q-icon name="las la-info-circle" />
+          <q-icon name="las la-info" />
         </q-item-section>
         <q-item-section>
           <q-item-label>
@@ -25,34 +25,34 @@
           <!-- Banner -->
           <div v-if="banner" class="row justify-center"><img class="screen-banner" :src="banner"></div>
           <!-- Version -->
-          <div class="row justify-center">
+          <div id="version-numbers" class="row justify-center">
             <cite v-if="clientVersionName">{{ $t('KAbout.CLIENT_VERSION') }}{{ clientVersionName }}</cite>
             <cite v-if="apiVersionName">&nbsp;-&nbsp;{{ $t('KAbout.API_VERSION') }}{{ apiVersionName }}</cite>
           </div>
-          <div class="row justify-center">
+          <div id="hosting" class="row justify-center">
             <cite>{{ $t('KAbout.DOMAIN') }} <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a></cite>
             <cite>&nbsp;({{ $config('flavor') }})</cite>
           </div><br/>
           <!-- More info -->
           <div class="row justify-center">
-            <a :href="$config('appWebsite')" target="_blank">
+            <a id="app-website" :href="$config('appWebsite')" target="_blank">
               <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE') }} {{ $config('appName') }}
             </a>
           </div><br/>
           <div class="row justify-center">
-            <a :href="$config('publisherWebsite')" target="_blank">
+            <a id="publisher-website" :href="$config('publisherWebsite')" target="_blank">
               <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE_PUBLISHER') }} {{ $config('publisher') }}
             </a>
           </div><br/>
           <!-- Bug report -->
           <div class="row justify-center">
-            <a :href="`mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`">
+            <a id="report-bug" :href="`mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`">
               <q-icon name="las la-envelope"/>&nbsp;{{ $t('KAbout.BUG_REPORT') }}
             </a>
           </div><br/>
           <!-- System -->
           <div class="row justify-center" @click="showSystemDetails = !showSystemDetails">
-            <a>
+            <a id="system-details" >
               <q-icon name="las la-laptop-code"/>&nbsp;{{ $t('KAbout.SYSTEM_DETAILS') }}
             </a>
           </div>

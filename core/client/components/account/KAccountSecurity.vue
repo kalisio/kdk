@@ -4,6 +4,7 @@
       Change password
     -->
     <k-block
+      id="password-block"
       class="col-12"
       color="grey"
       :title="$t('KAccountSecurity.PASSWORD_BLOCK_TITLE')"
@@ -14,6 +15,7 @@
       Change email
     -->
     <k-block
+      id="email-block"
       class="col-12"
       color="orange"
       :title="$t('KAccountSecurity.EMAIL_BLOCK_TITLE')"
@@ -27,7 +29,7 @@
     <!--
       Devices
     -->
-    <k-account-devices class="col-12" />
+    <k-account-devices id="devices-block" class="col-12" />
   </div>
 </template>
 
