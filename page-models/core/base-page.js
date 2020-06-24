@@ -1,16 +1,15 @@
 import _ from 'lodash'
 import { Selector } from 'testcafe'
-import VueSelector from 'testcafe-vue-selectors'
+// import VueSelector from 'testcafe-vue-selectors'
 
 export default class BasePage {
   constructor () {
-    this.error = VueSelector('q-toast')
-    this.idSelector = Selector((id) => { return document.getElementById(id) })
+    this.error = Selector('.q-notification')
   }
 
   // Error helper
   async isErrorVisible () {
-    await this.error.visible
+    return this.error.visible
   }
 
   // Colection helpers
