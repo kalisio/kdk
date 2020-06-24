@@ -104,6 +104,20 @@ export function isEmailValid (email) {
   return emailValidator.validate(email)
 }
 
+export function createThumbnail (imageDataUri, width, height, quality, callback) {
+  const image = document.createElement('img')
+  image.onload = function () {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    // set its dimension to target size
+    canvas.width = width
+    canvas.height = height
+    ctx.drawImage(this, 0, 0, width, height)
+    callback(canvas.toDataURL('image/jpeg', quality))
+  }
+  image.src = imageDataUri
+}
+
 Notify.setDefaults({
   position: 'bottom-left',
   timeout: 5000,
