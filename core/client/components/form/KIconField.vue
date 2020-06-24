@@ -1,9 +1,10 @@
 <template>
-  <div v-if="readOnly && model">
+  <div v-if="readOnly && model" :id="properties.name + '-field'">
     <q-icon :name="model.name" :color="model.color" />
   </div>
   <div v-else>
     <q-field
+      :for="properties.name + '-field'"
       :error-message="errorLabel"
       :error="hasError"
       :disabled="disabled"
@@ -18,7 +19,6 @@
     </q-field>
 
     <k-icon-chooser
-      :id="properties.name + '-field'"
       ref="iconChooser"
       :icon-set="iconSet"
       @icon-choosed="onIconChoosed" />

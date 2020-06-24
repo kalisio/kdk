@@ -1,5 +1,6 @@
 <template>
   <q-field
+    :for="properties.name + '-field'"
     :error-message="errorLabel"
     :error="hasError"
     no-error-icon

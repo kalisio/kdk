@@ -1,8 +1,9 @@
 <template>
-  <div v-if="readOnly">
+  <div v-if="readOnly" :id="properties.name + '-field'">
     <q-chip dense :icon="model ? 'las la-check' : 'las la-ban'" :color="model ? 'positive' : 'negative'" />
   </div>
   <q-field v-else
+    :for="properties.name + '-field'"
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"

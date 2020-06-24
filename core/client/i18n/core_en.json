@@ -72,6 +72,12 @@
     "GROUPS_NAME_FIELD_HELPER": "Enter the name of this group",
     "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description name of this group"
   },
+  "KTour": {
+    "SKIP_LABEL": "Skip",
+    "NEXT_LABEL": "Next",
+    "PREVIOUS_LABEL": "Previous",
+    "FINISH_LABEL": "Finish"
+  },
   "KScreen": {
     "CLIENT_VERSION": "Client v",
     "API_VERSION": "API v",

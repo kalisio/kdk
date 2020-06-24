@@ -1,5 +1,5 @@
 <template>
-  <div v-if="readOnly">
+  <div v-if="readOnly" :id="properties.name + '-field'">
     <q-chip v-for="file in files" :key="file.name" icon="las la-cloud-upload-alt">
       {{ file.name }}
     </q-chip>
@@ -9,6 +9,7 @@
       The field
     -->
     <q-field
+      :for="properties.name + '-field'"
       :error-message="errorLabel"
       :error="hasError"
       :disabled="disabled"

@@ -15,7 +15,7 @@
           </div>
           <div>
             <div class="row justify-around">
-              <q-btn color="primary" :loading="sending" @click="onSend">
+              <q-btn id="reset-password" color="primary" :loading="sending" @click="onSend">
                 {{$t('KSendResetPassword.ACTION')}}
               </q-btn>
             </div>

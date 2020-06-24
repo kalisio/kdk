@@ -1,5 +1,5 @@
 <template>
-  <div v-if="readOnly">
+  <div v-if="readOnly" :id="properties.name + '-field'">
     <template v-for="(chip, index) in model">
       <q-chip
         :key="chip.value + '-' + index"
@@ -13,6 +13,7 @@
   </div>
   <div v-else>
     <q-field
+      :for="properties.name + '-field'"
       :label="label"
       :error-message="errorLabel"
       :error="hasError"

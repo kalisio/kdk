@@ -45,12 +45,3 @@ jobs:
       keep-history: true
       on:
         branch: master
-
-  - stage: EXTRAS
-    language: node_js
-    node_js:
-    - '12'  
-    services:
-    - docker    
-    install: true
-    script: bash .travis.extras.sh testcafe
