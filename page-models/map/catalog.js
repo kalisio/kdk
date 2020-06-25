@@ -26,7 +26,15 @@ export default class Catalog extends BasePage {
   }
 
   async getCategory (category) {
-    return VueSelector('k-catalog-panel').find(`#${category}`)
+    const categories = VueSelector('k-catalog-panel QExpansionItem')
+    const count = await categories.count
+    for (let i = 0; i < count; ++i) {
+      const cat = categories.nth(i)
+      const id = await cat.id
+      if (id === category) return cat
+    }
+
+    throw new Error(`Catalog category '${category}' not found !`)
   }
 
   async getLayer (layer) {
@@ -93,10 +101,11 @@ export default class Catalog extends BasePage {
     const select = VueSelector('k-catalog-panel k-weather-layers-selector QSelect')
     await t.click(select)
     const entry = await this.getMeteoModel(model)
+    const label = await Selector(entry).child('.q-item__section--main').child(0).innerText
     await t
+      .click(entry)
     // robin: test may fail here, in that case, chrome was probably out of focus
     // try again and let chrome window focused ...
-      .click(entry)
-    // .expect(select.getVue(({ computed }) => computed.selectedString)).eql(model, `meteo model '${model}' isn't selected`)
+      .expect(select.getVue(({ computed }) => computed.selectedString)).eql(label, `meteo model '${model}' isn't selected`)
   }
 }
