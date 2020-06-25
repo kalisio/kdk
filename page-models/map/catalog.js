@@ -26,15 +26,7 @@ export default class Catalog extends BasePage {
   }
 
   async getCategory (category) {
-    const categories = VueSelector('k-catalog-panel QExpansionItem')
-    const count = await categories.count
-    for (let i = 0; i < count; ++i) {
-      const cat = categories.nth(i)
-      const label = await cat.getVue(({ props }) => props.label)
-      if (label === category) return cat
-    }
-
-    throw new Error(`Catalog category '${category}' not found !`)
+    return VueSelector('k-catalog-panel').find(`#${category}`)
   }
 
   async getLayer (layer) {

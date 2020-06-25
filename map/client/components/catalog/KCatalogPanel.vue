@@ -5,6 +5,7 @@
       <q-expansion-item
         v-if="layersByCategory[category.name].length > 0"
         :key="category.name"
+        :id="category.name"
         header-class="text-primary"
         :icon="category.icon"
         :label="$t(category.label)"
