@@ -1,23 +1,23 @@
 <template>
-  <q-page :padding="padding">
+  <q-page id="page" :padding="padding">
     <!--
       Specific page content
      -->
-    <slot name="page-content"></slot>
+    <slot id="page-content" name="page-content"></slot>
     <!--
       Managed stickies
      -->
     <q-page-sticky position="top" :offset="widgetOffset">
-      <k-window ref="window" />
+      <k-window id="window" ref="window" />
     </q-page-sticky>
     <q-page-sticky v-if="hasLeftDrawerOpener && hasLeftDrawerComponent" position="left">
-      <k-opener v-model="isLeftDrawerOpened" position="left"  />
+      <k-opener id="left-opener" v-model="isLeftDrawerOpened" position="left"  />
     </q-page-sticky>
     <q-page-sticky v-if="hasRightDrawerOpener && hasRightDrawerComponent" position="right">
-      <k-opener  v-model="isRightDrawerOpened" position="right" />
+      <k-opener id="right-opener" v-model="isRightDrawerOpened" position="right" />
     </q-page-sticky>
     <q-page-sticky v-if="hasFooterOpener && hasFooterComponent" position="bottom">
-      <k-opener  v-model="isFooterOpened" position="bottom" />
+      <k-opener id="bottom-opener" v-model="isFooterOpened" position="bottom" />
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
       <k-fab />

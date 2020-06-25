@@ -35,6 +35,7 @@
       Render an expandable fab if more than one action is provided
      -->
     <q-fab v-else-if="fab.actions.length > 1"
+      id="fab"
       icon="las la-chevron-up"
       class="fixed"
       style="right: 18px; bottom: 18px"

@@ -18,7 +18,7 @@
             class="col-4"
             dense />
         </div>
-        <div class="row justify-start items-center q-gutter-sm">
+        <div id="icons" class="row justify-start items-center q-gutter-sm">
           <template v-for="icon in iconsPage">
             <q-icon
               :key="icon.name"
@@ -37,7 +37,7 @@
           <q-pagination v-model="currentPage" :max="maxPage" :input="true" />
         </div>
         <div class="row justify-between items-center q-gutter-sm">
-          <k-palette shape="round" v-model="selectedIcon.color" />
+          <k-palette id="palette" shape="round" v-model="selectedIcon.color" />
         </div>
 
         <!--For debug purpose only

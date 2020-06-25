@@ -19,6 +19,9 @@
   "OWNER": "Propriétaire",  
   "MANAGER": "Gestionnaire",
   "MEMBER": "Membre",
+  "HELP": "Aide",
+  "NEED_HELP": "Besoin d'aide ?",
+  "CONTEXTUAL_HELP": "Aide contextuelle",
   "errors": {
     "400": "Cette opération ne peut être réalisée: paramètres incorrects",
     "401": "Cette opération ne peut être réalisée: vous devez être authentifié",
@@ -95,7 +98,8 @@
     "APPLY_BUTTON": "Se connecter",
     "FORGOT_YOUR_PASSWORD_LINK": "Mot de passe oublié ?",
     "DONT_HAVE_AN_ACCOUNT_LINK": "Vous n'avez pas de compte ?",
-    "LOGIN_ERROR": "Mauvais identifiants ou service indisponible, veuillez réessayer"
+    "LOGIN_ERROR": "Mauvais identifiants ou service indisponible, veuillez réessayer",
+    "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
   "KRegister": {
     "TITLE": "Enregistrez vous",
@@ -108,7 +112,8 @@
     "APPLY_BUTTON": "S'enregistrer",
     "ALREADY_HAVE_AN_ACCOUNT_LINK": "Déjà un compte ?",
     "EMAIL_ALREADY_TAKEN": "Mail déjà pris !",
-    "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer"
+    "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer",
+    "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
   "KChangeEndpoint": {
     "TITLE": "Changer l'adresse du serveur ?",

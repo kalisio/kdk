@@ -28,8 +28,8 @@
             <!-- links -->
             <div class="row justify-center q-gutter-xs">
               <template v-for="link in links">
-                <a :id="link.id" :key="link.id" @click="$router.push(link.route)">
-                  {{ $t(link.label) }}
+                <a v-if="link.label || link.icon" :id="link.id" :key="link.id" @click="$router.push(link.route)">
+                  <q-icon v-if="link.icon" :name="link.icon"/><span v-if="link.label" >{{ $t(link.label) }}</span>
                 </a>
               </template>
             </div>

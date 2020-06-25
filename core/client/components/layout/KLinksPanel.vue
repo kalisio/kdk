@@ -3,9 +3,9 @@
   <div>
     <q-list>
       <template v-for="(link,index) in links">
-        <q-item v-if="link.label" :key="index" :id="link.id" @click="onLinkClicked(link)" clickable v-ripple>
-          <q-item-section avatar><q-icon :name="link.icon"/></q-item-section>
-          <q-item-section>{{ $t(link.label) }}</q-item-section>
+        <q-item v-if="link.label || link.icon" :key="index" :id="link.id" @click="onLinkClicked(link)" clickable v-ripple>
+          <q-item-section v-if="link.icon" avatar><q-icon :name="link.icon"/></q-item-section>
+          <q-item-section v-if="link.label">{{ $t(link.label) }}</q-item-section>
         </q-item>
         <q-separator v-else :key="index" />
       </template>

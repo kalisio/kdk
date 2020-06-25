@@ -22,20 +22,25 @@
             <q-card-section class="q-pa-xs q-ma-xs" v-if="step.title">
               <div v-html="step.title"></div>
             </q-card-section>
-            <q-separator color="white" v-if="step.title"/>
+            <q-separator v-if="step.title && (step.content || step.link)" color="white"/>
           </div>
           <div slot="content" class="text-white">
             <q-card-section class="q-pa-xs q-ma-xs" v-if="step.content">
               <div v-html="step.content"></div>
             </q-card-section>
+            <q-separator v-if="step.content && step.link" color="white"/>
+            <q-card-section class="q-pa-xs q-ma-xs" v-if="step.link">
+              <span v-html="step.link"></span>
+              <q-icon class="cursor-pointer" size="1.5rem" name="las la-external-link-square-alt" @click="openRoute()"/>
+            </q-card-section>
           </div>
           <div slot="actions" class="row justify-center">
             <q-card-actions align="right">
-              <q-btn v-if="hasPreviousButton()" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" outline @click.prevent="previousStep"></q-btn>
-              <q-btn v-if="hasSkipButton()" id="skip-tour" icon="las la-times" color="primary" text-color="white" outline @click.prevent="tour.skip"></q-btn>
-              <q-btn  v-if="hasFinishButton()" id="finish-tour" icon="las la-times" color="primary" text-color="white" outline @click.prevent="tour.finish"></q-btn>
-              <q-btn v-if="step.params && step.params.route" icon="las la-link" outline text-color="white" @click="openRoute()" />
-              <q-btn v-if="hasNextButton()" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" outline @click.prevent="nextStep"></q-btn>
+              <q-btn v-if="hasPreviousButton(step)" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" dense outline @click.prevent="previousStep"></q-btn>
+              <q-btn v-if="hasSkipButton(step)" id="skip-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.skip"></q-btn>
+              <q-btn  v-if="hasFinishButton(step)" id="finish-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.finish"></q-btn>
+              <q-btn v-if="hasLinkButton(step)" icon="las la-link" dense outline text-color="white" @click="openRoute()" />
+              <q-btn v-if="hasNextButton(step)" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" dense outline @click.prevent="nextStep"></q-btn>
             </q-card-actions>
           </div>
         </v-step>
@@ -54,7 +59,8 @@ export default {
       tourSteps: [],
       tourOptions: {
         highlight: true,
-        useKeyboardNavigation: true,
+        // vue-tour does not allow to override default next/previous step function using the keyboard
+        useKeyboardNavigation: false,
         labels: {
           buttonSkip: this.$i18n.t('KTour.SKIP_LABEL'),
           buttonPrevious: this.$i18n.t('KTour.PREVIOUS_LABEL'),
@@ -82,16 +88,19 @@ export default {
     }
   },
   methods: {
-    hasPreviousButton () {
+    hasLinkButton (step) {
+      return !this.autoPlay && _.has(step, 'params.route') && !_.has(step, 'link') // Only if no link label
+    },
+    hasPreviousButton (step) {
       return !this.autoPlay && !this.getTour().isFirst && _.get(this.getStep(), 'params.previousButton', true)
     },
-    hasNextButton () {
+    hasNextButton (step) {
       return !this.autoPlay && !this.getTour().isLast && _.get(this.getStep(), 'params.nextButton', true)
     },
-    hasSkipButton () {
+    hasSkipButton (step) {
       return !this.getTour().isLast && _.get(this.getStep(), 'params.skipButton', true)
     },
-    hasFinishButton () {
+    hasFinishButton (step) {
       return !this.autoPlay && this.getTour().isLast && _.get(this.getStep(), 'params.finishButton', true)
     },
     getTour () {
@@ -117,6 +126,7 @@ export default {
       this.tourSteps.forEach(step => {
         if (_.has(step, 'title')) _.set(step, 'title', this.$t(_.get(step, 'title')))
         if (_.has(step, 'content')) _.set(step, 'content', this.$t(_.get(step, 'content')))
+        if (_.has(step, 'link')) _.set(step, 'link', this.$t(_.get(step, 'link')))
       })
       if (this.tourSteps.length > 0) {
         if (selected.play) this.playTour(selected.step || 0)
@@ -136,7 +146,7 @@ export default {
     autoPlayNextStep () {
       const delay = _.get(this.getStep(), 'params.autoPlayDelay', this.tourOptions.autoPlayDelay)
       this.playTimer = setTimeout(() => {
-        if (!this.getTour().isLast) this.getTour().nextStep()
+        if (!this.getTour().isLast) this.nextStep()
         else this.getTour().stop()
       }, delay)
     },
@@ -150,8 +160,8 @@ export default {
         }, _.toNumber(delay))
       }
     },
-    clickOnNext (step) {
-      step = this.getStep(step)
+    clickOnNext () {
+      const step = this.getStep()
       let targets = _.get(step, 'params.clickOnNext')
       if (targets) {
         if (!Array.isArray(targets)) targets = [targets]
@@ -161,8 +171,8 @@ export default {
         })
       }
     },
-    clickOnPrevious (step) {
-      step = this.getStep(step)
+    clickOnPrevious () {
+      const step = this.getStep()
       let targets = _.get(step, 'params.clickOnPrevious')
       if (targets) {
         if (!Array.isArray(targets)) targets = [targets]
@@ -172,9 +182,22 @@ export default {
         })
       }
     },
+    openRouteOnNext () {
+      const step = this.getStep()
+      if (_.has(step, 'params.routeOnNext')) {
+        this.$router.push(_.merge({ query: { tour: true } }, _.get(step, 'params.routeOnNext')))
+      }
+    },
+    openRouteOnPrevious () {
+      const step = this.getStep()
+      if (_.has(step, 'params.routeOnPrevious')) {
+        this.$router.push(_.merge({ query: { tour: true } }, _.get(step, 'params.routeOnPrevious')))
+      }
+    },
     nextStep () {
       this.clickOnNext()
-      const step = this.getStep(step)
+      this.openRouteOnNext()
+      const step = this.getStep()
       const delay = _.get(step, 'params.nextDelay', 0)
       this.isStepVisible = false
       setTimeout(() => {
@@ -184,7 +207,8 @@ export default {
     },
     previousStep () {
       this.clickOnPrevious()
-      const step = this.getStep(step)
+      this.openRouteOnPrevious()
+      const step = this.getStep()
       const delay = _.get(step, 'params.previousDelay', 0)
       this.isStepVisible = false
       setTimeout(() => {
@@ -192,8 +216,8 @@ export default {
         this.isStepVisible = true
       }, _.toNumber(delay))
     },
-    openRoute (step) {
-      step = this.getStep(step)
+    openRoute () {
+      const step = this.getStep()
       if (_.has(step, 'params.route')) {
         this.isStepVisible = false
         setTimeout(() => {
@@ -201,6 +225,10 @@ export default {
           this.isStepVisible = true
         }, _.toNumber(_.get(step, 'params.routeDelay', 0)))
       }
+    },
+    clearRoute () {
+      // Remove any param related to tour in route so that we can relaunch the tour
+      this.$router.replace({ params: _.omit(this.$route.params, ['tour', 'tourStep', 'play']) }).catch(_ => {})
     },
     onStartTour () {
       this.$emit('tour-started', { tour: this.tourSteps })
@@ -218,6 +246,7 @@ export default {
     },
     onSkipTour () {
       this.$emit('tour-skipped', { tour: this.tourSteps })
+      this.clearRoute()
     },
     onFinishTour () {
       this.$emit('tour-finished', { tour: this.tourSteps })
@@ -226,6 +255,7 @@ export default {
         this.playTimer = null
         this.autoPlay = false
       }
+      this.clearRoute()
     }
   },
   mounted () {

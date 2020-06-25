@@ -19,6 +19,9 @@
   "OWNER": "Owner",
   "MANAGER": "Manager",
   "MEMBER": "Member",
+  "HELP": "Help",
+  "NEED_HELP": "Help needed ?",
+  "CONTEXTUAL_HELP": "Contextual help",
   "errors": {
     "400": "Operation cannot be performed: bad parameters",
     "401": "Operation cannot be performed: authentication required",
@@ -95,7 +98,8 @@
     "APPLY_BUTTON": "Log in",
     "FORGOT_YOUR_PASSWORD_LINK": "Forgot your password ?",
     "DONT_HAVE_AN_ACCOUNT_LINK": "Don't have an account ?",
-    "LOGIN_ERROR": "Wrong credentials or service unavailable, please try again"
+    "LOGIN_ERROR": "Wrong credentials or service unavailable, please try again",
+    "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
   "KRegister": {
     "TITLE": "Register",
@@ -108,7 +112,8 @@
     "APPLY_BUTTON": "Register",
     "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?",
     "EMAIL_ALREADY_TAKEN": "Email already taken !",
-    "REGISTER_ERROR": "Wrong input or service unavailable, please try again"
+    "REGISTER_ERROR": "Wrong input or service unavailable, please try again",
+    "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
   "KChangeEndpoint": {
     "TITLE": "Change endpoint",

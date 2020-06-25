@@ -9,6 +9,7 @@
     <template v-for="action in actions">
       <q-separator v-if="action.name === 'separator'" :key="actionKey(action)" vertical />
       <q-btn v-else
+        :id="action.name"
         :key="actionKey(action)"
         :icon="action.icon"
         :color="action.color ? action.color : color"

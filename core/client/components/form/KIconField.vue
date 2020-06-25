@@ -11,7 +11,7 @@
       no-error-icon
       bottom-slots
     >
-      <q-chip clickable v-ripple text-color="white" :icon="iconName" :color="model.color" @click="onIconClicked"/>
+      <q-chip id="icon-chooser" clickable v-ripple text-color="white" :icon="iconName" :color="model.color" @click="onIconClicked"/>
       <!-- Helper -->
       <template v-if="helper" v-slot:hint>
         <span v-html="helper"></span>
