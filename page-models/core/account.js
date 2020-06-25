@@ -50,7 +50,7 @@ export default class Account extends BasePage {
 
   async updateEmail (test, email, password) {
     await test
-      .click(Selector('.q-card').nth(1).find('button'))
+      .click(Selector('.q-card button').nth(1))
       .wait(250)
     await test
       .typeText(VueSelector('k-password-field'), password, { replace: true })
@@ -59,7 +59,7 @@ export default class Account extends BasePage {
       .wait(5000)
   }
 
-  async clickDangzerZone (test) {
+  async clickDangerZone (test) {
     await this.layout.clickTabBar(test, '#danger-zone')
   }
 
@@ -70,6 +70,6 @@ export default class Account extends BasePage {
     await test
       .typeText(Selector('.q-dialog-plugin input[type=text]'), name)
       .click(Selector('.q-dialog-plugin button').nth(1))
-      .wait(10000)
+      .wait(5000)
   }
 }
