@@ -23,7 +23,7 @@
           <!-- item label -->
           <q-item-section @click="onLayerClicked(layer)">
             <q-item-label lines="1">
-              {{ layer.name }}
+              {{ layer.label }}
             </q-item-label>
             <q-item-label v-if="options.description" caption lines="2">
               {{ layer.description }}

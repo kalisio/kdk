@@ -173,7 +173,7 @@ export default function (name) {
               const i18n = _.get(layer.i18n, locale)
               if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
             }
-            if (this.$t(layer.name)) layer.name = this.$t(layer.name)
+            if (this.$t(layer.name)) layer.label = this.$t(layer.name)
             if (this.$t(layer.description)) layer.description = this.$t(layer.description)
             // Check for Weacast API availability
             const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
