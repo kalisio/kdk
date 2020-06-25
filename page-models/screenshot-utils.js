@@ -61,7 +61,7 @@ export async function assertScreenshotMatches (t, runKey, refKey, maxDiffRatio =
 /* Make sure screenshot mismatches between run and ref screenshot keys.
  * If refKey is not provided, it will use runKey as refKey.
  */
-export async function assertScreenshotMismatches (t, runKey, refKey, minDiffRatio = 1.0) {
+export async function assertScreenshotMismatches (t, runKey, refKey, minDiffRatio = 50.0) {
   refKey = refKey || runKey
   await t.takeScreenshot({ path: runScreenshot(t, runKey) })
   const diff = diffScreenshots(t, refKey, runKey)
