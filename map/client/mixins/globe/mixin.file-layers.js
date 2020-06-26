@@ -16,6 +16,7 @@ export default {
         // Create an empty layer used as a container
         this.addLayer({
           name: source.name,
+          label: source.name,
           type: 'OverlayLayer',
           icon: 'insert_drive_file',
           cesium: {
