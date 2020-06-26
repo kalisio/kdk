@@ -59,7 +59,7 @@ const baseItemMixin = {
         return getIconName(this.item, this.options.iconNameField)
       } else {
         const icon = this.getIcon()
-        return getIconName(icon, 'name')
+        return (icon ? getIconName(icon, 'name') : '')
       }
     },
     getIconColor () {
@@ -68,7 +68,7 @@ const baseItemMixin = {
         return _.get(this.item, this.options.iconColorField, '')
       } else {
         const icon = this.getIcon()
-        return _.get(icon, 'color', '')
+        return (icon ? _.get(icon, 'color', '') : '')
       }
     },
     getName () {
