@@ -28,16 +28,9 @@ const baseItemMixin = {
   },
   computed: {
     avatar () {
-      const icon = this.getIcon()
-      if (icon) {
-        return {
-          type: 'icon',
-          icon
-        }
-      }
       const iconName = this.getIconName()
       const iconColor = this.getIconColor()
-      if (iconName && iconColor) {
+      if (iconName || iconColor) {
         return {
           type: 'icon',
           icon: { name: iconName, color: iconColor }
@@ -58,15 +51,25 @@ const baseItemMixin = {
   },
   methods: {
     getIcon () {
-      return this.options.iconField ? _.get(this.item, this.options.iconField, '') : this.item.icon
+      return (this.options.iconField ? _.get(this.item, this.options.iconField, '') : this.item.icon)
     },
     getIconName () {
-      // Check for custom icon field
-      return this.options.iconNameField ? getIconName(this.item, this.options.iconNameField) : getIconName(this.item, 'icon.name')
+      // Check for custom icon name field
+      if (this.options.iconNameField) {
+        return getIconName(this.item, this.options.iconNameField)
+      } else {
+        const icon = this.getIcon()
+        return getIconName(icon, 'name')
+      }
     },
     getIconColor () {
-      // Check for custom icon field
-      return this.options.iconColorField ? _.get(this.item, this.options.iconColorField, '') : _.get(this.item, 'icon.color', '')
+      // Check for custom icon color field
+      if (this.options.iconColorField) {
+        return _.get(this.item, this.options.iconColorField, '')
+      } else {
+        const icon = this.getIcon()
+        return _.get(icon, 'color', '')
+      }
     },
     getName () {
       // Check for custom name field
