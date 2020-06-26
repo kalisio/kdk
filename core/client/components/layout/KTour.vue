@@ -150,12 +150,23 @@ export default {
         else this.getTour().stop()
       }, delay)
     },
+    getTarget (target) {
+      const brackets = new RegExp(/\[(.*?)\]/, 'i')
+      // Check if there is an array notation like '#action[1]'
+      // This is useful for id conflict resolution
+      const result = brackets.exec(target)
+      if (result) {
+        target = target.replace(result[0], '')
+        return document.querySelectorAll(target)[_.toNumber(result[1])]
+      }
+      else return document.querySelector(target)
+    },
     clickTarget (step) {
       step = this.getStep(step)
       if (_.has(step, 'params.clickDelay')) {
         const delay = _.get(step, 'params.clickDelay')
         setTimeout(() => {
-          const target = document.querySelector(_.get(step, 'params.clickOn', _.get(step, 'target')))
+          const target = this.getTarget(_.get(step, 'params.clickOn', _.get(step, 'target')))
           if (target) target.click()
         }, _.toNumber(delay))
       }
@@ -166,7 +177,7 @@ export default {
       if (targets) {
         if (!Array.isArray(targets)) targets = [targets]
         targets.forEach(target => {
-          target = document.querySelector(target)
+          target = this.getTarget(target)
           if (target) target.click()
         })
       }
@@ -177,7 +188,7 @@ export default {
       if (targets) {
         if (!Array.isArray(targets)) targets = [targets]
         targets.forEach(target => {
-          target = document.querySelector(target)
+          target = this.getTarget(target)
           if (target) target.click()
         })
       }

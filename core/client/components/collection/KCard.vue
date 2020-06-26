@@ -35,9 +35,9 @@
       <slot name="card-actions">
         <q-card-actions class="q-pa-sm" align="right">
           <!-- Pane -->
-          <k-tool-bar :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
+          <k-tool-bar id="card-toolbar" :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
           <!-- Menu -->
-          <k-overflow-menu :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
+          <k-overflow-menu id="card-overflow-menu" :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
         </q-card-actions>
       </slot>
     </q-card>
