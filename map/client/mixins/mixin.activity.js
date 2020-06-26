@@ -402,7 +402,7 @@ export default function (name) {
         Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }) })
         try {
           let createdLayer = await this.$api.getService('catalog')
-            .create(_.omit(layer, ['actions', 'isVisible', 'isDisabled']))
+            .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
           const chunkSize = _.get(this, 'activityOptions.featuresChunkSize', 5000)
           // We use the generated DB ID as layer ID on features
           await this.createFeatures(geoJson, createdLayer._id, chunkSize, i => {
