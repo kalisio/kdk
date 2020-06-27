@@ -3,11 +3,17 @@ import Screens from './screens'
 import Layout from './layout'
 import SideNav from './side-nav'
 import Account from './account'
+import OrganisationsPanel from './organisations-panel'
+import OrganisationSettings from './organisation-settings'
+import Members from './members'
 
 export { Screens }
 export { Layout }
 export { SideNav }
 export { Account }
+export { OrganisationsPanel }
+export { OrganisationSettings }
+export { Members }
 
 // Access store
 export const getFromStore = ClientFunction((path) => window.$store.get(path))

@@ -46,7 +46,7 @@ export default class Screens extends BasePage {
       .typeText(this.passwordInput, credentials.password, { replace: true })
       .click(this.loginLocalButton)
       // Need this so that we are sure dynamic components, user, etc. have been loaded
-      .wait(1000)
+      .wait(5000)
   }
 
   async loginGoogle (test) {
@@ -94,6 +94,6 @@ export default class Screens extends BasePage {
       .click(this.registerAcceptTerms)
       .click(this.registerButton)
       // Need this so that we are sure dynamic components, user, etc. have been loaded
-      .wait(2000)
+      .wait(5000)
   }
 }

@@ -23,7 +23,7 @@ export default class Layout extends BasePage {
     // TabBar
     this.tabBar = VueSelector('k-tab-bar')
     // Fab
-    this.fab = Selector('#fab')
+    this.fab = Selector('.q-fab')
     // SignupAlert
     this.signupAlert = VueSelector('k-signup-alert')
   }
@@ -79,6 +79,12 @@ export default class Layout extends BasePage {
       .wait(500)
   }
 
+  async clickFab (test) {
+    await test
+      .click(Selector(this.fab))
+      .wait(500)
+  }
+
   // Fab
   async openAndClickFab (test, entry) {
     await test
@@ -88,24 +94,18 @@ export default class Layout extends BasePage {
       .wait(500)
   }
 
-  async clickFab (test, entry) {
-    await test
-      .click(Selector(entry))
-      .wait(500)
-  }
-
   // SignupAlert
   async closeSignupAlert (test) {
     await test
       .click(Selector('#close-signup-alert'))
-      .wait(1000)
+      .wait(500)
   }
 
   // Helpers
   async clickToolbar (test, entry) {
     await test
       .click(this.appBar.find(entry))
-      .wait(3000)
+      .wait(500)
   }
 
   async clickOverflowMenu (test, entry) {
