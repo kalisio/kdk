@@ -4,7 +4,7 @@ import BasePage from './base-page'
 export default class Tags extends BasePage {
   constructor () {
     super()
-    this.members = Selector('.q-page .q-card')
+    this.tags = Selector('.q-page .q-card')
   }
 
   static get OVERFLOW_MENU_ENTRY () {
