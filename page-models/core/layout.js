@@ -23,7 +23,7 @@ export default class Layout extends BasePage {
     // TabBar
     this.tabBar = VueSelector('k-tab-bar')
     // Fab
-    this.fab = Selector('.q-fab')
+    this.fab = Selector('#fab')
     // SignupAlert
     this.signupAlert = VueSelector('k-signup-alert')
   }

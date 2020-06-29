@@ -7,6 +7,7 @@ import OrganisationsPanel from './organisations-panel'
 import OrganisationSettings from './organisation-settings'
 import Members from './members'
 import Tags from './tags'
+import Groups from './groups'
 
 export { Screens }
 export { Layout }
@@ -16,6 +17,7 @@ export { OrganisationsPanel }
 export { OrganisationSettings }
 export { Members }
 export { Tags }
+export { Groups }
 
 // Access store
 export const getFromStore = ClientFunction((path) => window.$store.get(path))

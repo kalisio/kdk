@@ -43,7 +43,7 @@ export default class Members extends BasePage {
   async add (test, name, role) {
     await test
       .typeText(VueSelector('k-item-field'), name, { replace: true })
-      .wait(1000)
+      .wait(2000)
       .click(Selector('.q-menu .q-item').nth(0))
       .wait(250)
       .click(VueSelector('k-select-field'))
@@ -60,7 +60,7 @@ export default class Members extends BasePage {
       .typeText(VueSelector('k-email-field'), email, { replace: true })
       .click(VueSelector('k-select-field'))
       .click(Selector('.q-menu .q-item').nth(role))
-      .wait(500)
+      .wait(250)
       .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
       .wait(2000)
   }
@@ -70,9 +70,9 @@ export default class Members extends BasePage {
     await test
       .wait(500)
       .typeText(VueSelector('k-tag-field'), tag, { replace: true })
-      .wait(500)
+      .wait(2000)
       .click(Selector('.q-menu .q-item').nth(0))
-      .wait(500)
+      .wait(250)
       .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
       .wait(2000)
   }
@@ -87,7 +87,7 @@ export default class Members extends BasePage {
       .wait(2000)
   }
 
-  async remove (test, name) {
+  async delete (test, name) {
     await this.clickOverflowMenu(test, name, '#remove-member')
     await test
       .click(Selector('.q-dialog .q-btn').nth(1))
@@ -95,34 +95,26 @@ export default class Members extends BasePage {
   }
 
   async joinGroup (test, memberName, groupName, role) {
-    const cardId = await this.getItemId(test, this.membersGrid, memberName)
     await test
-      .click(this.idSelector(cardId).find('#join-group'))
+      .click(this.members.withText(memberName).find('#join-group'))
+      .typeText(VueSelector('k-item-field'), groupName, { replace: true })
       .wait(2000)
-    await test
-      .typeText(this.joinGroupModal.find('#group-field'), groupName, { replace: true })
+      .click(Selector('.q-menu .q-item').nth(0))
+      .click(VueSelector('k-select-field'))
+      .wait(250)
+      .click(Selector('.q-menu .q-item').nth(role))
+      .wait(250)
+      .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
       .wait(2000)
-    await test
-      .click(Selector('.q-popover .q-item').nth(0))
-      .wait(500)
-    await test
-      .click(this.joinGroupModal.find('#role-field'))
-      .click(Selector('.q-popover .q-item').nth(role))
-      .wait(500)
-    await test.click(this.joinGroupModal.find('#join-button'))
-      .wait(5000)
   }
 
   async leaveGroup (test, memberName, groupName) {
-    const cardId = await this.getItemId(test, this.membersGrid, memberName)
     await test
-      .click(this.idSelector(cardId).find('#group-button'))
-      .wait(500)
-    await test
-      .click(Selector('.q-toolbar').find('#leave-group'))
-      .wait(500)
-    await test
-      .click(Selector('.modal-buttons button').nth(0))
-      .wait(5000)
+      .click(this.members.withText(memberName).find('#group-button'))
+      .wait(250)
+      .click(Selector('.q-menu').find('#leave-group'))
+      .wait(250)
+      .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
+      .wait(2000)
   }
 }
