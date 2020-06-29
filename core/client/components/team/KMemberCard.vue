@@ -207,10 +207,20 @@ export default {
       return this.$can('remove', 'authorisations', this.item._id, { resource: group._id })
     },
     onChangeRoleInGroup (group) {
-      this.$router.push({ name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id, resource: { id: group._id, scope: 'groups', service: this.contextId + '/groups' } } })
+      this.$router.push({
+        name: 'change-role',
+        params: {
+          contextId: this.contextId,
+          objectId: this.item._id,
+          resource: { id: group._id, scope: 'groups', service: this.contextId + '/groups' }
+        }
+      })
     },
     onJoinGroup () {
-      this.$router.push({ name: 'join-group', params: { contextId: this.contextId, objectId: this.item._id } })
+      this.$router.push({
+        name: 'join-group',
+        params: { contextId: this.contextId, objectId: this.item._id }
+      })
     },
     onLeaveGroup (group) {
       Dialog.create({
