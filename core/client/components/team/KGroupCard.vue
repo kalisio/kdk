@@ -18,6 +18,7 @@
       <div class="q-pa-md row justify-around items-center">
         <template v-for="(role, index) in roleNames">
           <q-btn :key="roleKey(role)" flat small rounded color="primary"
+            :id="role"
             :icon="roleIcons[index]"
             :label="memberStats[role]"
             @click="onMembersClicked(role)"/>

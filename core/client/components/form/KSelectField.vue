@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly">
-    <q-chip dense>
+    <q-chip :id="properties.name + '-field'" dense>
       {{ model }}
     </q-chip>
   </div>

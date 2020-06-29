@@ -59,8 +59,7 @@ export default {
       tourSteps: [],
       tourOptions: {
         highlight: true,
-        // vue-tour does not allow to override default next/previous step function using the keyboard
-        useKeyboardNavigation: false,
+        useKeyboardNavigation: true,
         labels: {
           buttonSkip: this.$i18n.t('KTour.SKIP_LABEL'),
           buttonPrevious: this.$i18n.t('KTour.PREVIOUS_LABEL'),
@@ -212,7 +211,7 @@ export default {
       const delay = _.get(step, 'params.nextDelay', 0)
       this.isStepVisible = false
       setTimeout(() => {
-        this.getTour().nextStep()
+        this.getTour().nextTourStep()
         this.isStepVisible = true
       }, _.toNumber(delay))
     },
@@ -223,7 +222,7 @@ export default {
       const delay = _.get(step, 'params.previousDelay', 0)
       this.isStepVisible = false
       setTimeout(() => {
-        this.getTour().previousStep()
+        this.getTour().previousTourStep()
         this.isStepVisible = true
       }, _.toNumber(delay))
     },
@@ -270,6 +269,12 @@ export default {
     }
   },
   mounted () {
+    // vue-tour does not allow to override tour methods
+    this.getTour().nextTourStep = this.getTour().nextStep
+    this.getTour().nextStep = this.nextStep
+    this.getTour().previousTourStep = this.getTour().previousStep
+    this.getTour().previousStep = this.previousStep
+    
     this.refreshTour()
   },
   created () {
