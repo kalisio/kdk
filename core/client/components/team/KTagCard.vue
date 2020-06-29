@@ -3,7 +3,7 @@
     <div slot="card-label">
       <span class="text-subtitle1 text-weight-medium ellipsis">{{ item.value }}</span>
       <q-btn class="float-right" :key="item._id" flat small rounded color="primary"
-          :icon="roleIcons[0]" :label="item.count"/>
+          id="tag-count" :icon="roleIcons[0]" :label="item.count"/>
     </div>
   </k-card>
 </template>
