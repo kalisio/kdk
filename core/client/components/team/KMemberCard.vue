@@ -19,33 +19,31 @@
         <k-tags-pane class="q-pa-sm" :tags="tags" />
         <q-separator />
       </template>
-      <template v-if=" memberGroups.length > 0">
-        <div class="q-pa-sm row justify-start items-center">
-          <template v-for="(group, index) in memberGroups">
-            <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
-              <q-avatar color="secondary" text-color="white" size="32px">{{groupInitials(group)}}</q-avatar>
-              <q-menu ref="popover">
-                <q-toolbar inverted color="grey-7">
-                  <span style="margin:8px">{{group.name}}</span>
-                  <q-btn id="change-role-group" v-if="canChangeRoleInGroup(group)" flat round small @click="onChangeRoleInGroup(group), $refs.popover[index].hide()">
-                    <q-icon :name="roleIcon(roleForGroup(group))" />
-                  </q-btn>
-                  <q-btn id="leave-group" v-if="canLeaveGroup(group)" flat round small @click="onLeaveGroup(group), $refs.popover[index].hide()">
-                    <q-icon name="las la-minus-circle" />
-                  </q-btn>
-                </q-toolbar>
-              </q-menu>
-              <q-tooltip>{{ group.name }}</q-tooltip>
-            </q-btn>
-          </template>
-          <q-btn id="join-group" v-if="canJoinGroup()" flat small round @click="onJoinGroup()">
-            <q-icon name="las la-plus-circle" color="grey-7">
-              <q-tooltip>{{ $t('KMemberCard.JOIN_GROUP_LABEL') }}</q-tooltip>
-            </q-icon>
+      <div class="q-pa-sm row justify-start items-center">
+        <template v-for="(group, index) in memberGroups">
+          <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
+            <q-avatar color="secondary" text-color="white" size="32px">{{groupInitials(group)}}</q-avatar>
+            <q-menu ref="popover">
+              <q-toolbar inverted color="grey-7">
+                <span style="margin:8px">{{group.name}}</span>
+                <q-btn id="change-role-group" v-if="canChangeRoleInGroup(group)" flat round small @click="onChangeRoleInGroup(group), $refs.popover[index].hide()">
+                  <q-icon :name="roleIcon(roleForGroup(group))" />
+                </q-btn>
+                <q-btn id="leave-group" v-if="canLeaveGroup(group)" flat round small @click="onLeaveGroup(group), $refs.popover[index].hide()">
+                  <q-icon name="las la-minus-circle" />
+                </q-btn>
+              </q-toolbar>
+            </q-menu>
+            <q-tooltip>{{ group.name }}</q-tooltip>
           </q-btn>
-        </div>
-        <q-separator />
-      </template>
+        </template>
+        <q-btn id="join-group" v-if="canJoinGroup()" flat small round @click="onJoinGroup()">
+          <q-icon name="las la-plus-circle" color="grey-7">
+            <q-tooltip>{{ $t('KMemberCard.JOIN_GROUP_LABEL') }}</q-tooltip>
+          </q-icon>
+        </q-btn>
+      </div>
+      <q-separator />
       <template v-if="expireAt">
         <div class="q-pa-sm">
           <cite  class="text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>

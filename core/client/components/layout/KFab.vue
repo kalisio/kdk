@@ -24,12 +24,13 @@
         </div>
       </k-modal>
       <q-btn
-        id="modal-action"
+        id="fab"
         color="secondary"
+        style="right: 12px; bottom: 12px"
+        size="1.15rem"
+        icon="las la-chevron-up"
         round
-        @click="openModal()">
-        <q-icon name="las la-chevron-up" />
-      </q-btn>
+        @click="openModal()" />
     </div>
     <!--
       Render an expandable fab if more than one action is provided
@@ -38,7 +39,7 @@
       id="fab"
       icon="las la-chevron-up"
       class="fixed"
-      style="right: 18px; bottom: 18px"
+      style="right: 12px; bottom: 12px"
       direction ="up"
       color="secondary">
         <q-fab-action
@@ -62,9 +63,10 @@
       Render a non expandable fab if a single action is provided
      -->
     <q-btn v-else-if="fab.actions.length > 0"
-      :id="fab.actions[0].id"
+      id="fab"
       color="secondary"
       :icon="fab.actions[0].icon"
+      style="right: 12px; bottom: 12px"
       size="1.15rem"
       round
       @click="onActionTriggered(fab.actions[0])">
