@@ -20,3 +20,17 @@ export const mockLocationAPI = ClientFunction(() => {
     timestamp: Date.now()
   })
 })
+
+export const getLayers = ClientFunction(() => {
+  const globalCatalogService = window.$api.getService('catalog', '')
+  const catalogService = window.$api.getService('catalog')
+
+  const p = []
+
+  // We get layers coming from global catalog first if any
+  if (globalCatalogService) p.push(globalCatalogService.find())
+  // Then we get layers coming from contextual catalog if any
+  if (catalogService && (catalogService !== globalCatalogService)) p.push(catalogService.find())
+
+  return Promise.all(p).then((responses) => responses.flatMap(r => r.data))
+})
