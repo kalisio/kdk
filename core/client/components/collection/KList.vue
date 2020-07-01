@@ -3,7 +3,7 @@
     <div v-if="items.length > 0" class="row">
       <q-list class="col-12" highlight separator>
         <template v-for="item in items">
-          <component :id="item._id" :key="item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" @item-selected="onItemSelected(item)"/>
+          <component :id="'item-' + item._id" :key="item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" @item-selected="onItemSelected(item)"/>
         </template>
       </q-list>
       <div v-if="nbPages > 1" class="col-12">

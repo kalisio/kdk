@@ -6,7 +6,7 @@
           <template v-for="item in items">
             <component
               class="row justify-center"
-              :key="item._id" :id="item._id"
+              :key="item._id" :id="'item-' + item._id"
               :item="item"
               :contextId="contextId"
               :is="renderer.component"

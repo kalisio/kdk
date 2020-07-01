@@ -156,10 +156,15 @@ export default {
       // This is useful for id conflict resolution
       const result = brackets.exec(target)
       if (result) {
-        target = target.replace(result[0], '')
-        return document.querySelectorAll(target)[_.toNumber(result[1])]
+        if (_.isNumber(result[1])) {
+          const index = _.toNumber(result[1])
+          // Remove the brackets to get all elements of this type
+          const elements = document.querySelectorAll(target.replace(result[0], ''))
+          // Then retrieve the right index
+          if (index < elements.length) return elements[index]
+        }
       }
-      else return document.querySelector(target)
+      return document.querySelector(target)
     },
     clickTarget (step) {
       step = this.getStep(step)
@@ -174,15 +179,24 @@ export default {
     clickOn (param) {
       const step = this.getStep()
       let targets = _.get(step, `params.${param}`)
+      let clicked = false
       if (targets) {
         if (!Array.isArray(targets)) targets = [targets]
         targets.forEach(target => {
           target = this.getTarget(target)
-          if (target) target.click()
+          if (target) try {
+            target.click()
+            clicked |= true
+          } catch (error) {
+            clicked |= false
+          }
         })
       }
+      return clicked
     },
     nextStep () {
+      if ((this.getTour().currentStep >= this.getTour().numberOfSteps - 1) ||
+          (this.getTour().currentStep === -1)) return
       this.clickOn('clickOnNext')
       const step = this.getStep()
       const delay = _.get(step, 'params.nextDelay', 0)
@@ -193,6 +207,7 @@ export default {
       }, _.toNumber(delay))
     },
     previousStep () {
+      if (this.getTour().currentStep <= 0) return
       this.clickOn('clickOnPrevious')
       const step = this.getStep()
       const delay = _.get(step, 'params.previousDelay', 0)
@@ -204,12 +219,11 @@ export default {
     },
     onLink () {
       const step = this.getStep()
-      this.clickOn('clickOnLink')
+      if (this.clickOn('clickOnLink')) this.getTour().stop()
       if (_.has(step, 'params.route')) {
-        this.isStepVisible = false
+        this.getTour().stop()
         setTimeout(() => {
           this.$router.replace(_.get(step, 'params.route'))
-          this.isStepVisible = true
         }, _.toNumber(_.get(step, 'params.routeDelay', 0)))
       }
     },

@@ -7,7 +7,7 @@
       -->
       <div v-if="items.length > 0">
         <template  v-for="org in items">
-          <q-item v-ripple clickable :active="org._id === currentOrganisationId" :id="getOrganisationId(org)" :key="org._id" @click="setCurrentOrganisation(org)">
+          <q-item v-ripple clickable :active="org._id === currentOrganisationId" :id="'link-' + org._id" :key="org._id" @click="setCurrentOrganisation(org)">
             <q-item-section avatar><q-avatar size="24px" color="primary" text-color="white">{{ getOrganisationInitials(org) }}</q-avatar></q-item-section>
             <q-item-section>{{org.name}}</q-item-section>
             <q-item-section v-if="org._id === currentOrganisationId" side><q-icon name="las la-check" /></q-item-section>
@@ -56,9 +56,6 @@ export default {
     }
   },
   methods: {
-    getOrganisationId (org) {
-      return _.kebabCase(org.name)
-    },
     getOrganisationInitials (org) {
       return getInitials(org.name)
     },
