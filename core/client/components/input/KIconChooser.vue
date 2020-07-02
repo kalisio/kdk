@@ -178,7 +178,7 @@ export default {
         { name: 'done-button', label: this.$t('KIconChooser.DONE_BUTTON'), color: 'primary', handler: (event) => this.doDone(event) }
       ]
     },
-    open (defaultIcon, defaultColor) {
+    open (defaultIcon) {
       this.reset()
 
       // Find the page that contains the current selected icon
@@ -186,7 +186,7 @@ export default {
 
       // Assign the selected icon to the default one if any
       if (defaultIcon) {
-        Object.assign(this.selectedIcon, { name: defaultIcon, color: defaultColor })
+        Object.assign(this.selectedIcon, defaultIcon)
         index = _.findIndex(this.allIcons, icon => { return icon.name === this.selectedIcon.name })
       }
 
