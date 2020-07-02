@@ -344,7 +344,7 @@ export default {
       }
     },
     async onResized (size) {
-      this.graphWidth = Math.floor(size.width - 50)
+      this.graphWidth = Math.floor(size.width - 75)
       this.graphHeight = Math.floor(size.height * 0.9)
       this.setupGraph()
     },
