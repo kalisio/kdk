@@ -6,8 +6,8 @@
       'ellipsis-3-lines': ellipsis === '3-lines' && truncate
     }"
     @click="truncate=!truncate"
-    @mouseover="truncate = false"
-    @mouseleave="truncate = true">
+    @mouseover="onMouseOver"
+    @mouseleave="onMouseLeave">
     {{text}}
   </div>
 </template>
@@ -31,6 +31,14 @@ export default {
   data () {
     return {
       truncate: true
+    }
+  },
+  methods: {
+    onMouseOver () {
+      if (!this.$q.platform.is.mobile) this.truncate = false
+    },
+    onMouseLeave () {
+      if (!this.$q.platform.is.mobile) this.truncate = true
     }
   }
 }
