@@ -1,13 +1,13 @@
 <template>
-  <drop-zone v-if="dropZoneOptions" 
-    ref="dropZone" 
-    id="dropZone" 
-    @vdropzone-file-added="onFileAdded" 
-    @vdropzone-success="onFileUploaded" 
-    @vdropzone-removed-file="onFileRemoved" 
-    @vdropzone-sending="onFileSending" 
-    @vdropzone-thumbnail="onThumbnailGenerated" 
-    @vdropzone-error="onError" 
+  <drop-zone v-if="dropZoneOptions"
+    ref="dropZone"
+    id="dropZone"
+    @vdropzone-file-added="onFileAdded"
+    @vdropzone-success="onFileUploaded"
+    @vdropzone-removed-file="onFileRemoved"
+    @vdropzone-sending="onFileSending"
+    @vdropzone-thumbnail="onThumbnailGenerated"
+    @vdropzone-error="onError"
     :options="dropZoneOptions"
     :destroyDropzone="false" />
 </template>
@@ -176,7 +176,7 @@ export default {
       this.updateFile(response)
     },
     onFileRemoved (removedFile, error, xhr) {
-      // the file can be removed if not accepted 
+      // the file can be removed if not accepted
       const accepted = removedFile.accepted || true
       if (accepted) this.removeFile(removedFile)
     },

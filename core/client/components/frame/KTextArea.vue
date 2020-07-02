@@ -5,7 +5,7 @@
       'ellipsis-2-lines': ellipsis === '2-lines' && truncate,
       'ellipsis-3-lines': ellipsis === '3-lines' && truncate
     }"
-    @click="truncate=!truncate" 
+    @click="truncate=!truncate"
     @mouseover="truncate = false"
     @mouseleave="truncate = true">
     {{text}}
@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
-
 export default {
   name: 'k-text-area',
   props: {
@@ -37,4 +35,3 @@ export default {
   }
 }
 </script>
-

@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { getInitials } from '../../utils'
 import mixins from '../../mixins'
 

@@ -103,7 +103,7 @@ export default {
       return !this.autoPlay && this.getTour().isLast && _.get(this.getStep(), 'params.finishButton', true)
     },
     getTour () {
-      return this.$refs['tour']
+      return this.$refs.tour
     },
     getStep (step) {
       step = (_.isNil(step) ? _.get(this.$refs, 'tour.currentStep') : step)
@@ -184,11 +184,13 @@ export default {
         if (!Array.isArray(targets)) targets = [targets]
         targets.forEach(target => {
           target = this.getTarget(target)
-          if (target) try {
-            target.click()
-            clicked |= true
-          } catch (error) {
-            clicked |= false
+          if (target) {
+            try {
+              target.click()
+              clicked |= true
+            } catch (error) {
+              clicked |= false
+            }
           }
         })
       }
@@ -269,7 +271,7 @@ export default {
     this.getTour().nextStep = this.nextStep
     this.getTour().previousTourStep = this.getTour().previousStep
     this.getTour().previousStep = this.previousStep
-    
+
     this.refreshTour()
   },
   created () {
