@@ -19,7 +19,7 @@
           <q-item-section>
             <slot name="card-label">
               <span class="text-subtitle1 text-weight-medium ellipsis">{{ name }}</span>
-              <k-text-area :length="30" :text="description" />
+              <k-text-area :text="description" />
             </slot>
           </q-item-section>
         </q-item>

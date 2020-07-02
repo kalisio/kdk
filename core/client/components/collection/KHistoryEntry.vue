@@ -26,7 +26,7 @@
       <slot name="entry-content">
         <q-item>
           <q-item-section>
-            <k-text-area :length="30" :text="description" />
+            <k-text-area :text="description" />
           </q-item-section>
         </q-item>
       </slot>

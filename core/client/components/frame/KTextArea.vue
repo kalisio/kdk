@@ -1,11 +1,14 @@
 <template>
-  <div>
-    <div v-if="hasToggle">
-      <span v-on:click="toggle()" v-html="textToDisplay" class="text-area" />
-    </div>
-    <div v-else>
-      <span v-html="textToDisplay" />
-    </div>
+  <div
+    v-bind:class="{
+      'ellipsis': ellipsis === '1-line' && truncate,
+      'ellipsis-2-lines': ellipsis === '2-lines' && truncate,
+      'ellipsis-3-lines': ellipsis === '3-lines' && truncate
+    }"
+    @click="truncate=!truncate" 
+    @mouseover="truncate = false"
+    @mouseleave="truncate = true">
+    {{text}}
   </div>
 </template>
 
@@ -19,45 +22,19 @@ export default {
       type: String,
       default: ''
     },
-    length: {
-      type: Number,
-      default: 40
-    }
-  },
-  computed: {
-    textToDisplay () {
-      const nbCharacters = this.text.length
-      // Convert from JS formatted strings to HTML formatted strings as we usually allow multilines in this one
-      let result = this.text.replace(/[\n\r]/g, '<br/>')
-      // Truncate the description if required
-      if (nbCharacters > this.length) {
-        if (this.mustTruncate) {
-          result = _.truncate(result, { length: this.length, separator: ' ' })
-          if (result.indexOf('<br/>') >= 0) result = result.replace('<br/>', '...<br/>')
-          else result += '...'
-        }
+    ellipsis: {
+      type: String,
+      default: '1-line',
+      validator: (value) => {
+        return ['disabled', '1-line', '2-lines', '3-lines'].includes(value)
       }
-      return result
-    },
-    hasToggle () {
-      return this.text.length > this.length
     }
   },
   data () {
     return {
-      mustTruncate: true
-    }
-  },
-  methods: {
-    toggle () {
-      this.mustTruncate = !this.mustTruncate
+      truncate: true
     }
   }
 }
 </script>
 
-<style>
-.text-area {
-  cursor: pointer;
-}
-</style>
