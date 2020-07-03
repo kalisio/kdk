@@ -74,7 +74,8 @@ export default {
         onPreviousStep: this.onPreviousTourStep,
         onNextStep: this.onNextTourStep,
         onSkip: this.onSkipTour,
-        onFinish: this.onFinishTour
+        onFinish: this.onFinishTour,
+        onStop: this.onStopTour
       },
       autoPlay: false,
       isStepVisible: true
@@ -176,86 +177,116 @@ export default {
         }, _.toNumber(delay))
       }
     },
+    getTargetsOn (param) {
+      const step = this.getStep()
+      let targets = _.get(step, `params.${param}`, [])
+      if (!Array.isArray(targets)) targets = [targets]
+      return targets
+    },
     clickOn (param) {
       const step = this.getStep()
-      let targets = _.get(step, `params.${param}`)
+      const targets = this.getTargetsOn(param)
       let clicked = false
-      if (targets) {
-        if (!Array.isArray(targets)) targets = [targets]
-        targets.forEach(target => {
-          target = this.getTarget(target)
-          if (target) {
-            try {
-              target.click()
-              clicked |= true
-            } catch (error) {
-              clicked |= false
-            }
+      targets.forEach(target => {
+        target = this.getTarget(target)
+        if (target) {
+          try {
+            target.click()
+            clicked |= true
+          } catch (error) {
+            clicked |= false
           }
-        })
-      }
+        }
+      })
       return clicked
+    },
+    blockOnMiss () {
+      let missing = false
+      const step = this.getStep(step)
+      if (_.has(step, 'params.blockOnMiss')) {
+        const targets = this.getTargetsOn('blockOnMiss')
+        targets.forEach(target => {
+          if (!this.getTarget(target)) missing = true
+        })
+        if (missing) {
+          this.$toast({ message: this.$t('KTour.MISS_ERROR'), color: 'warning' })
+        }
+      }
+      return missing
     },
     nextStep () {
       if ((this.getTour().currentStep >= this.getTour().numberOfSteps - 1) ||
           (this.getTour().currentStep === -1)) return
+      if (this.blockOnMiss()) return
       this.clickOn('clickOnNext')
-      const step = this.getStep()
+      let step = this.getStep()
       const delay = _.get(step, 'params.nextDelay', 0)
       this.isStepVisible = false
       setTimeout(() => {
         this.getTour().nextTourStep()
         this.isStepVisible = true
+        // Check if target is found, otherwise skip and try go to next step
+        step = this.getStep()
+        const target = this.getTarget(_.get(step, 'target'))
+        if (!target) {
+          if (this.getTour().currentStep < this.getTour().numberOfSteps - 1) this.nextStep()
+          else this.getTour().stop()
+        }
       }, _.toNumber(delay))
     },
     previousStep () {
       if (this.getTour().currentStep <= 0) return
       this.clickOn('clickOnPrevious')
-      const step = this.getStep()
+      let step = this.getStep()
       const delay = _.get(step, 'params.previousDelay', 0)
       this.isStepVisible = false
       setTimeout(() => {
         this.getTour().previousTourStep()
         this.isStepVisible = true
+        // Check if target is found, otherwise skip and try go to previous step
+        step = this.getStep()
+        const target = this.getTarget(_.get(step, 'target'))
+        if (!target) {
+          if (this.getTour().currentStep > 0) this.previousStep()
+          else this.getTour().stop()
+        }
       }, _.toNumber(delay))
     },
     onLink () {
       const step = this.getStep()
       if (this.clickOn('clickOnLink')) this.getTour().stop()
       if (_.has(step, 'params.route')) {
+        // Stop current tour after changing the route otherwise
+        // route guard adding tour query params will be inactive
+        this.$router.replace(_.get(step, 'params.route'))
         this.getTour().stop()
-        setTimeout(() => {
-          this.$router.replace(_.get(step, 'params.route'))
-        }, _.toNumber(_.get(step, 'params.routeDelay', 0)))
       }
     },
     onStartTour () {
-      this.$emit('tour-started', { tour: this.tourSteps })
       this.isRunning = true
       if (this.autoPlay) this.autoPlayNextStep()
       this.clickTarget()
     },
     onPreviousTourStep (currentStep) {
-      this.$emit('tour-previous-step', { tour: this.tourSteps, step: currentStep })
       this.clickTarget(currentStep - 1)
     },
     onNextTourStep (currentStep) {
-      this.$emit('tour-next-step', { tour: this.tourSteps, step: currentStep })
       if (this.autoPlay) this.autoPlayNextStep()
       this.clickTarget(currentStep + 1)
     },
     onSkipTour () {
-      this.$emit('tour-skipped', { tour: this.tourSteps })
       this.isRunning = false
     },
     onFinishTour () {
-      this.$emit('tour-finished', { tour: this.tourSteps })
       this.isRunning = false
       if (this.playTimer) {
         clearInterval(this.playTimer)
         this.playTimer = null
         this.autoPlay = false
       }
+    },
+    onStopTour () {
+      this.isRunning = false
     },
     beforeRoute (to, from, next) {
       // When running a tour, each called route will also be pushed as a tour

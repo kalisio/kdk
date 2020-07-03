@@ -88,7 +88,8 @@
     "SKIP_LABEL": "Skip",
     "NEXT_LABEL": "Next",
     "PREVIOUS_LABEL": "Previous",
-    "FINISH_LABEL": "Finish"
+    "FINISH_LABEL": "Finish",
+    "MISS_ERROR": "Before going further please perform the required actions"
   },
   "KScreen": {
     "CLIENT_VERSION": "Client v",
