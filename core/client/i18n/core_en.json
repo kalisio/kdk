@@ -75,6 +75,15 @@
     "GROUPS_NAME_FIELD_HELPER": "Enter the name of this group",
     "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description name of this group"
   },
+  "KWelcome": {
+    "WELCOME_TITLE": "Welcome !",
+    "WELCOME_MESSAGE": "This quick start guide covers the main application features.",
+    "ONLINE_HELP": "Read first our online help to get an overview of the basic concepts",
+    "CONTEXTUAL_HELP": "To get contextual help whenever your are lost simply click on the following icon",
+    "TOUR_MESSAGE": "Launch now a quick overview tutorial detailing the main menu by clicking on the following icon",
+    "TOUR_LINK_MESSAGE": "Each time a tutorial step exhibits this icon it allows to launch a new one detailing the target feature.",
+    "GOODBYE_MESSAGE": "Thanks for reading this tutorial, you are now ready to use the application !"
+  },
   "KTour": {
     "SKIP_LABEL": "Skip",
     "NEXT_LABEL": "Next",
