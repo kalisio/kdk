@@ -11,7 +11,7 @@ export default class Layout extends BasePage {
     this.appBarLeading = this.appBar.find('#app-bar-leading')
     this.appBarTitle = this.appBar.find('#app-bar-title')
     this.appBarOverflowMenu = Selector('#overflow-menu')
-    this.appBarOverflowMenuEntry = this.appBar.find('#overflow-menu-entry')
+    this.appBarOverflowMenuEntry = this.appBar.find('#app-bar-overflow-menu')
     // Drawers
     this.leftDrawer = Selector('.q-drawer--left')
     this.rightDrawer = Selector('.q-drawer--right')
