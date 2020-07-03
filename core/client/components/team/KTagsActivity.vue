@@ -59,7 +59,7 @@ export default {
       // Title
       this.setTitle(this.$store.get('context.name'))
       // Search bar
-      this.setSearchBar('name')
+      this.setSearchBar('value')
       // Tabbar actions
       this.registerTabAction({
         name: 'members',
