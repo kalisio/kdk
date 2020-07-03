@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { Selector } from 'testcafe'
 
 export default class BasePage {
