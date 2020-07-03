@@ -24,14 +24,14 @@ export default class Members extends BasePage {
     return '#invite-member'
   }
 
-  async clickToolBar (test, member, action) {
+  async clickCardToolBar (test, name, action) {
     await test
-      .click(this.members.withText(member).find(action))
+      .click(this.members.withText(name).find(action))
   }
 
-  async clickOverflowMenu (test, member, entry) {
+  async clickCardOverflowMenu (test, name, entry) {
     await test
-      .click(this.members.withText(member).find('#card-overflow-menu'))
+      .click(this.members.withText(name).find('#card-overflow-menu'))
       .click(Selector('.q-menu').find(entry))
   }
 
@@ -66,7 +66,7 @@ export default class Members extends BasePage {
   }
 
   async tag (test, name, tag) {
-    await this.clickToolBar(test, name, '#tag-member')
+    await this.clickCardToolBar(test, name, '#tag-member')
     await test
       .wait(500)
       .typeText(VueSelector('k-tag-field'), tag, { replace: true })
@@ -78,7 +78,7 @@ export default class Members extends BasePage {
   }
 
   async changeRole (test, name, role) {
-    await this.clickToolBar(test, name, '#change-role')
+    await this.clickCardToolBar(test, name, '#change-role')
     await test
       .click(VueSelector('k-select-field'))
       .click(Selector('.q-menu .q-item').nth(role))
@@ -88,7 +88,7 @@ export default class Members extends BasePage {
   }
 
   async delete (test, name) {
-    await this.clickOverflowMenu(test, name, '#remove-member')
+    await this.clickCardOverflowMenu(test, name, '#remove-member')
     await test
       .click(Selector('.q-dialog .q-btn').nth(1))
       .wait(5000)

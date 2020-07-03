@@ -35,6 +35,19 @@ export default class Layout extends BasePage {
       .wait(500)
   }
 
+  async clickToolbar (test, entry) {
+    await test
+      .click(this.appBar.find(entry))
+      .wait(500)
+  }
+
+  async clickOverflowMenu (test, entry) {
+    await test
+      .click(this.appBarOverflowMenuEntry)
+      .click(this.appBarOverflowMenu.find(entry))
+      .wait(500)
+  }
+
   // TabBar
   async clickTabBar (test, tab) {
     await test
@@ -79,13 +92,13 @@ export default class Layout extends BasePage {
       .wait(500)
   }
 
+  // Fab
   async clickFab (test) {
     await test
       .click(Selector(this.fab))
       .wait(500)
   }
 
-  // Fab
   async openAndClickFab (test, entry) {
     await test
       .click(Selector(this.fab))
@@ -94,24 +107,15 @@ export default class Layout extends BasePage {
       .wait(500)
   }
 
-  // SignupAlert
+  // Misc
   async closeSignupAlert (test) {
     await test
       .click(Selector('#close-signup-alert'))
       .wait(500)
   }
-
-  // Helpers
-  async clickToolbar (test, entry) {
+ 
+  async closeTour (test) {
     await test
-      .click(this.appBar.find(entry))
-      .wait(500)
-  }
-
-  async clickOverflowMenu (test, entry) {
-    await test
-      .click(this.appBarOverflowMenuEntry)
-      .click(this.appBarOverflowMenu.find(entry))
-      .wait(500)
+      .click(Selector('.q-dialog .q-card button[type=button]').nth(0))
   }
 }
