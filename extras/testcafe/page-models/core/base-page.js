@@ -88,10 +88,10 @@ export default class BasePage {
    * diff ratio is higher, test will fail.
    * Pixel comparison uses threshold value [0,1] to flag pixels as mismatching (see pixelmatch module)
    */
-  async assertScreenshotMatches (test, runKey, { refKey = null, maxDiffRatio = 1.0, threshold = 0.1 }) {
-    refKey = refKey || runKey
+  async assertScreenshotMatches (test, runKey, { refKey = null, maxDiffRatio = 1.0, threshold = 0.1 } = {}) {
+    const keyRef = refKey || runKey
     await test.takeScreenshot({ path: runScreenshot(test, runKey) })
-    const diff = diffScreenshots(test, refKey, runKey, { threshold })
+    const diff = diffScreenshots(test, keyRef, runKey, { threshold })
     if (diff.diffRatio > maxDiffRatio) {
       const output = runScreenshot(test, `diff-${runKey}`, true)
       fs.writeFileSync(output, png.PNG.sync.write(diff.diff))
@@ -105,12 +105,12 @@ export default class BasePage {
    * diff ratio is lower, test will fail.
    * Pixel comparison uses threshold value [0,1] to flag pixels as mismatching (see pixelmatch module)
    */
-  async assertScreenshotMismatches (t, runKey, { refKey = null, minDiffRatio = 50.0, threshold = 0.1 }) {
-    refKey = refKey || runKey
-    await t.takeScreenshot({ path: runScreenshot(test, runKey) })
-    const diff = diffScreenshots(test, refKey, runKey, { threshold })
+  async assertScreenshotMismatches (test, runKey, { refKey = null, minDiffRatio = 50.0, threshold = 0.1 } = {}) {
+    const keyRef = refKey || runKey
+    await test.takeScreenshot({ path: runScreenshot(test, runKey) })
+    const diff = diffScreenshots(test, keyRef, runKey, { threshold })
     if (diff.diffRatio < minDiffRatio) {
-      const output = runScreenshot(t, `diff-${runKey}`, true)
+      const output = runScreenshot(test, `diff-${runKey}`, true)
       fs.writeFileSync(output, png.PNG.sync.write(diff.diff))
       throw new Error(`Diff ratio for '${runKey}' is too low: ${diff.diffRatio.toPrecision(2)}%`)
     }
