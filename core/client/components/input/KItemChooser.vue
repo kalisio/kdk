@@ -7,7 +7,7 @@
         color="primary"
         text-color="white"
         :key="item._id"
-        :icon="itemIcon(item)"
+        :icon="itemIconName(item)"
         :label="itemName(item)"
         @remove="onItemRemoved(item)" />
     </template>
@@ -67,10 +67,11 @@ export default {
     }
   },
   methods: {
-    itemIcon (item) {
+    itemIconName (item) {
       // Make this work on either icon object like { name: xxx, color: yyy } or icon names
-      const icon = getIconName(item)
-      return (icon || getIconName(item, 'icon'))
+      const iconName = getIconName(item)
+      if (iconName) return iconName
+      return getIconName(item, 'icon')
     },
     itemName (item) {
       if (item.value) return item.value
