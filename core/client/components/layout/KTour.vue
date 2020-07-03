@@ -184,7 +184,6 @@ export default {
       return targets
     },
     clickOn (param) {
-      const step = this.getStep()
       const targets = this.getTargetsOn(param)
       let clicked = false
       targets.forEach(target => {
