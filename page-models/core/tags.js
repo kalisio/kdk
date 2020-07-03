@@ -15,19 +15,19 @@ export default class Tags extends BasePage {
     return '#tags'
   }
 
-  async clickToolBar (test, member, action) {
+  async clickCardToolBar (test, name, action) {
     await test
-      .click(this.tags.withText(member).find(action))
+      .click(this.tags.withText(name).find(action))
   }
 
-  async clickOverflowMenu (test, member, entry) {
+  async clickCardOverflowMenu (test, name, entry) {
     await test
-      .click(this.tags.withText(member).find('#card-overflow-menu'))
+      .click(this.tags.withText(name).find('#card-overflow-menu'))
       .click(Selector('.q-menu').find(entry))
   }
 
   async checkCount (test, count) {
     const tagsCount = this.tags.count
-    await test.expect(tagsCount).eql(count, 'Invalid members count')
+    await test.expect(tagsCount).eql(count, 'Invalid tags count')
   }
 }
