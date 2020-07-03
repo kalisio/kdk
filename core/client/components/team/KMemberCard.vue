@@ -5,7 +5,7 @@
     -->
     <template v-slot:card-header>
       <div class="q-pa-sm row justify-end">
-        <q-badge outine color="grey-7">
+        <q-badge id="role-badge" outine color="grey-7">
           {{ $t(roleLabel(role)) }}
         </q-badge>
       </div>
@@ -16,7 +16,7 @@
     <div slot="card-content">
       <q-separator />
       <template  v-if="tags.length > 0">
-        <k-tags-pane class="q-pa-sm" :tags="tags" />
+        <k-tags-pane id="tags-pane" class="q-pa-sm" :tags="tags" />
         <q-separator />
       </template>
       <div class="q-pa-sm row justify-start items-center">
