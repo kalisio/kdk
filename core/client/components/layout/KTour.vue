@@ -202,7 +202,6 @@ export default {
     },
     blockOnMiss () {
       let missing = false
-      const step = this.getStep(step)
       if (_.has(step, 'params.blockOnMiss')) {
         const targets = this.getTargetsOn('blockOnMiss')
         targets.forEach(target => {
