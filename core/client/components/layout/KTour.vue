@@ -135,6 +135,8 @@ export default {
     },
     refreshTour () {
       const name = this.$route.name
+      // No tour correspondng to route ?
+      if (!this.$store.has(`tours.${name}`)) return
       const activate = _.get(this.$route, 'query.tour')
       if (activate) {
         const step = _.get(this.$route, 'query.tourStep')
@@ -253,12 +255,16 @@ export default {
     },
     onLink () {
       const step = this.getStep()
-      if (this.clickOn('clickOnLink')) this.getTour().stop()
+      this.clickOn('clickOnLink')
+      // Stop current tour before starting next one
+      this.getTour().stop()
       if (_.has(step, 'params.route')) {
-        // Stop current tour after changing the route otherwise
-        // route guard adding tour query params will be inactive
+        // Keep it as running however so that
+        // route guard adding tour query params will still be active
+        this.isRunning = true
         this.$router.replace(_.get(step, 'params.route'))
-        this.getTour().stop()
+      } else if (_.has(step, 'params.tour')) {
+        this.$store.patch('tours.current', { name: _.get(step, 'params.tour') })
       }
     },
     onStartTour () {
