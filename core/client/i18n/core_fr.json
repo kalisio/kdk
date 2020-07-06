@@ -82,7 +82,8 @@
     "CONTEXTUAL_HELP": "Pour obtenir de l'aide contextuelle lorsque vous êtes perdu cliquez à tout moment sur l'icône",
     "TOUR_MESSAGE": "Lancez maintenant un didacticiel détaillant le menu principal en cliquant sur l'icône",
     "TOUR_LINK_MESSAGE": "A chaque fois qu'une étape d'un didacticiel contient cette icône elle permet d'en lancer un autre détaillant la fonctionnalité visée.",
-    "GOODBYE_MESSAGE": "Merci d'avoir parcouru ce didacticiel, vous êtes maintenant prêt à utiliser l'application !"
+    "GOODBYE_MESSAGE": "Merci d'avoir parcouru ce didacticiel, vous êtes maintenant prêt à utiliser l'application !",
+    "HIDE_WELCOME": "Ne plus afficher ce message de Bievenue"
   },
   "KTour": {
     "SKIP_LABEL": "Fermer",

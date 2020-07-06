@@ -113,8 +113,8 @@ export default class Layout extends BasePage {
       .click(Selector('#close-signup-alert'))
       .wait(500)
   }
- 
-  async closeTour (test) {
+
+  async closeWelcomeDialog (test) {
     await test
       .click(Selector('.q-dialog .q-card button[type=button]').nth(0))
   }
