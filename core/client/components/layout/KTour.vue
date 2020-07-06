@@ -138,6 +138,10 @@ export default {
       if (!tour || (tour === 'false')) return
       // By default use the route name as tour name if tour equals simply true
       let name = this.$route.name
+      // Manage routes with different perspectives
+      if (_.has(this.$route, 'params.perspective')) {
+        name += '/' + _.get(this.$route, 'params.perspective')
+      }
       // This can be overriden when multiple tours target the same route,
       // e.g. when the route has a parameter and each value has its own tour
       if (tour !== 'true') name = tour

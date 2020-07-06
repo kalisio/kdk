@@ -15,7 +15,7 @@
         <div class="col-xs-12 col-sm-10 k-block-text" v-html="text" />
         <!-- Action -->
         <div v-if="action !== ''" class="col-xs-12 col-sm-2 self-center" align="right">
-          <q-btn @click="$emit('action-triggered', action)" :color="color" :disabled="disabled">{{action}}</q-btn>
+          <q-btn id='block-action' @click="$emit('action-triggered', action)" :color="color" :disabled="disabled">{{action}}</q-btn>
         </div>
       </div>
     </q-card-section>
