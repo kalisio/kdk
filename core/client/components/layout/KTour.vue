@@ -134,16 +134,22 @@ export default {
       }
     },
     refreshTour () {
-      const name = this.$route.name
-      // No tour correspondng to route ?
+      let tour = _.get(this.$route, 'query.tour', '').toLowerCase()
+      if (!tour || (tour === 'false')) return
+      // By default use the route name as tour name if tour equals simply true
+      let name = this.$route.name
+      // This can be overriden when multiple tours target the same route,
+      // e.g. when the route has a parameter and each value has its own tour
+      if (tour !== 'true') name = tour
+      // No corresponding tour ?
       if (!this.$store.has(`tours.${name}`)) return
-      const activate = _.get(this.$route, 'query.tour')
-      if (activate) {
-        const step = _.get(this.$route, 'query.tourStep')
-        const play = _.get(this.$route, 'query.play')
-        // Trigger a refresh if required to avoid reentrance
-        const selected = this.$store.get('tours.current', {})
-        if (selected !== name) this.$store.patch('tours.current', { name, step, play })
+      // Trigger a refresh if required to avoid reentrance
+      const selected = this.$store.get('tours.current', {})
+      if (selected !== name) {
+        const step = (_.has(this.$route, 'query.tourStep') ?
+          _.toNumber(_.get(this.$route, 'query.tourStep')) : undefined)
+        const play = _.get(this.$route, 'query.playTour')
+        this.$store.patch('tours.current', { name, step, play })
       }
     },
     autoPlayNextStep () {
@@ -253,6 +259,18 @@ export default {
         }
       }, _.toNumber(delay))
     },
+    stop () {
+      this.isRunning = false
+      if (this.playTimer) {
+        clearInterval(this.playTimer)
+        this.playTimer = null
+        this.autoPlay = false
+      }
+      // Remove any query param related to tour
+      this.$router.replace({
+        params: _.omit(_.get(this.$route, 'params', {}), ['tour', 'playTour', 'tourStep'])
+      }).catch(_ => {})
+    },
     onLink () {
       const step = this.getStep()
       this.clickOn('clickOnLink')
@@ -262,7 +280,7 @@ export default {
         // Keep it as running however so that
         // route guard adding tour query params will still be active
         this.isRunning = true
-        this.$router.replace(_.get(step, 'params.route'))
+        this.$router.replace(_.get(step, 'params.route')).catch(_ => {})
       } else if (_.has(step, 'params.tour')) {
         this.$store.patch('tours.current', { name: _.get(step, 'params.tour') })
       }
@@ -280,18 +298,13 @@ export default {
       this.clickTarget(currentStep + 1)
     },
     onSkipTour () {
-      this.isRunning = false
+      this.stop()
     },
     onFinishTour () {
-      this.isRunning = false
-      if (this.playTimer) {
-        clearInterval(this.playTimer)
-        this.playTimer = null
-        this.autoPlay = false
-      }
+      this.stop()
     },
     onStopTour () {
-      this.isRunning = false
+      this.stop()
     },
     beforeRoute (to, from, next) {
       // When running a tour, each called route will also be pushed as a tour
