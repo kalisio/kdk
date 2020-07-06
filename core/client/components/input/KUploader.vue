@@ -103,24 +103,26 @@ export default {
         this.$emit('file-selection-changed', this.files)
       }
     },
-    onThumbnailGenerated (thumbnailFile, dataUrl) {
-      const mimeType = mime.lookup(thumbnailFile.name)
+    onThumbnailGenerated (sourceFile, dataUrl) {
+      const mimeType = mime.lookup(sourceFile.name)
       // We only store thumbnails for images
       if (!mimeType.startsWith('image/')) return
-      const index = _.findIndex(this.files, file => file.name === thumbnailFile.name)
+      const index = _.findIndex(this.files, file => file.name === sourceFile.name)
       if (index >= 0) {
-        const id = this.generateFileId(thumbnailFile)
+        // Check if thumbnail has already been generated
+        if (sourceFile.thumbnail) return
+        const id = this.generateFileId(sourceFile)
         // When processing uploads on-the-fly send thumbnail to the server once computed
         if (this.autoProcessQueue()) {
           this.storageService().create({ id: id + '.thumbnail', uri: dataUrl })
         } else {
           // Check if the file has already been uploaded because it is an asynchronous process
           // that might happen before the thumbnail has been generated
-          if (thumbnailFile._id) {
+          if (sourceFile._id) {
             this.storageService().create({ id: id + '.thumbnail', uri: dataUrl })
           } else {
             // Otherwise store it temporarily until the file is uploaded
-            thumbnailFile.thumbnail = dataUrl
+            sourceFile.thumbnail = dataUrl
           }
         }
       }
@@ -273,6 +275,8 @@ export default {
         if (file._id && mimeType.startsWith('image/')) {
           // Download thumbnail
           const image = await this.storageService().get(file._id + '.thumbnail')
+          // Indicate that the thumbnail does not need to be stored
+          file.thumbnail = image.uri
           this.dropZoneInstance().emit('thumbnail', file, image.uri)
         }
       })
