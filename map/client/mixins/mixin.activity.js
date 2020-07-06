@@ -4,8 +4,8 @@ import sift from 'sift'
 import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
-import { Loading, Dialog } from 'quasar'
-import { setGatewayJwt } from '../utils'
+import { Loading, Dialog, uid } from 'quasar'
+import { setGatewayJwt, generatePropertiesSchema } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
 import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
 
@@ -66,6 +66,9 @@ export default function (name) {
         if (hasCreateLayerAction) {
           this.registerFabAction({
             name: 'create-layer', label: this.$t('mixins.activity.CREATE_LAYER'), icon: 'add', handler: this.onCreateLayer
+          })
+          this.registerFabAction({
+            name: 'import-layer', label: this.$t('mixins.activity.IMPORT_LAYER'), icon: 'la la-file-import', handler: this.onImportLayer
           })
         }
         // Nav bar
@@ -606,6 +609,42 @@ export default function (name) {
         })
         this.createModal.$on('closed', () => {
           this.createModal = null
+        })
+      },
+      async onImportLayer () {
+        const dialog = await this.$createComponent('KLayerImportDialog', {})
+        dialog.$mount()
+        dialog.open()
+        dialog.$on('imported', async (pickedFile) => {
+          const layer = {
+            name: pickedFile.name,
+            type: 'OverlayLayer',
+            icon: 'insert_drive_file',
+            featureId: '_id',
+            [this.engine]: {
+              type: 'geoJson',
+              isVisible: true,
+              realtime: true
+            }
+          }
+          const reader = new FileReader()
+          reader.onload = async (event) => {
+            const geoJson = JSON.parse(reader.result)
+            // Generate schema for properties
+            const schema = Object.assign({
+              $id: `http://www.kalisio.xyz/schemas/${layer.name}#`,
+              title: layer.name
+            }, generatePropertiesSchema(geoJson))
+            _.set(layer, 'schema.content', schema)
+            // Generate temporary IDs for features
+            const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+            features.forEach(feature => { feature._id = uid().toString() })
+            // Create an empty layer used as a container
+            await this.addLayer(layer)
+            // Set data
+            await this.updateLayer(layer.name, geoJson)
+          }
+          reader.readAsText(pickedFile)
         })
       },
       onGeolocate () {

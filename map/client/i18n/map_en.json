@@ -30,6 +30,7 @@
     },
     "activity": {
       "CREATE_LAYER": "Create a new layer",
+      "IMPORT_LAYER": "Import a local file to create a new layer",
       "SAVE_LABEL": "Save layer",
       "SAVING_LABEL": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
       "SAVE_DIALOG_TITLE": "Tiling layer {{layer}}",
@@ -317,5 +318,11 @@
     "CENTER_ON": "Center the view on the Mapillary marker",
     "MOVE_CLOSE_TO": "Move to the closest image",
     "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
+  },
+  "KLayerImportDialog": {
+    "TITLE": "Layer import",
+    "INPUT_HINT": "Select a file",
+    "CANCEL_BUTTON": "Cancel",
+    "IMPORT_BUTTON": "Import"
   }
 }

@@ -30,6 +30,7 @@
     },
     "activity": {
       "CREATE_LAYER": "Créer une nouvelle couche",
+      "IMPORT_LAYER": "Importer un fichier local pour créer une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
       "SAVE_DIALOG_TITLE": "Tuilage de la couche {{layer}}",
@@ -317,5 +318,11 @@
     "CENTER_ON": "Centrer la vue sur le marqueur Mapillary",
     "MOVE_CLOSE_TO": "Se positionner à l'image la plus proche",
     "NO_IMAGE_FOUND_CLOSE_TO": "Aucune image trouvée à proximité de votre position"
+  },
+  "KLayerImportDialog": {
+    "TITLE": "Importer une couche",
+    "INPUT_HINT": "Sélectionnez un fichier",
+    "CANCEL_BUTTON": "Annuler",
+    "IMPORT_BUTTON": "Importer"
   }
 }
