@@ -1,24 +1,29 @@
 <template>
   <q-dialog v-model="showWelcome" persistent>
-    <q-card class="q-pa-xs q-ma-xs" style="min-width: 50vw">
-      <q-toolbar>
-        <div><img :src="banner"></div>
-        <q-toolbar-title></q-toolbar-title>
-        <q-btn id="close-action" icon="las la-times" flat round dense @click="hide"></q-btn>
-      </q-toolbar>
-      <q-card-section>
+    <q-card class="q-pa-sm" style="min-width: 50vw">
+      <div class="row justify-between">
+        <img :src="banner">
+        <q-btn class="self-start" id="close-action" icon="las la-times" flat round dense @click="hide" />
+      </div>
+      <q-card-section class="q-pa-none">
+        <div class="q-pa-none">
+         
+        </div>
         <q-carousel
+          class="q-pa-none"
           v-model="slide"
           arrows
           swipeable
           animated
           padding
+          vertical
           transition-prev="scale"
           transition-next="scale"
           control-type="flat"
           control-color="primary"
         >
           <q-carousel-slide name="welcome" class="column no-wrap justify-center text-center q-gutter-md">
+             
             <div class="text-h5">{{ $t('KWelcome.WELCOME_TITLE') }}</div>
             <div class="text-subtitle1">{{ $t('KWelcome.WELCOME_MESSAGE') }}</div>
             <div class="text-subtitle1">{{ $t('KWelcome.ONLINE_HELP') }}
@@ -40,12 +45,8 @@
             </div>
             <div class="text-subtitle1">{{ $t('KWelcome.GOODBYE_MESSAGE') }}</div>
           </q-carousel-slide>
-          <template v-slot:control>
-            <q-carousel-control position="bottom" class="text-primary" :offset="[0, 0]" style="cursor: pointer;">
-              <q-checkbox v-model="toggle" @input="onToggleIntroduction" label="Ne plus afficher cette introduction" color="primary" />
-            </q-carousel-control>
-          </template>
         </q-carousel>
+        <q-checkbox v-model="toggle" @input="onToggleIntroduction" :label="$t('KWelcome.HIDE_WELCOME')" color="primary" />
       </q-card-section>
     </q-card>
   </q-dialog>
