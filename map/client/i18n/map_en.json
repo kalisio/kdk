@@ -320,7 +320,7 @@
     "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
   },
   "KLayerImportDialog": {
-    "TITLE": "Layer import",
+    "TITLE": "Import layer",
     "INPUT_HINT": "Select a file",
     "CANCEL_BUTTON": "Cancel",
     "IMPORT_BUTTON": "Import"
