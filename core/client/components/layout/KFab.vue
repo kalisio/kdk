@@ -6,20 +6,20 @@
     <div v-if="fab.actions.length > expandableLimit">
       <k-modal ref="modal" :toolbar="getModalToolbar()" :buttons="getModalButtons()" :options="getModalOptions()" :route="false">
         <div slot="modal-content">
-          <div class="row q-gutter-sm full-width">
-            <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3 col-xl-2" align="center" v-for="action in fab.actions" :key="action.id">
-              <q-btn
-                :id="action.id"
-                color="secondary"
-                round
-                @click="closeModal(action)">
-                <q-icon :name="action.icon" />
-              </q-btn>
-              <br/>
-              <p>
-                {{action.label}}
-              </p>
-            </div>
+          <div class="full-width row q-gutter-xs">
+            <template v-for="action in fab.actions">
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 column items-center q-gutter-sm" align="center" :key="action.id">
+                <q-btn
+                  :id="action.id"
+                  round
+                  :color="getActionColor(action)"
+                  :icon="getActionIcon(action)"
+                  @click="closeModal(action)" />
+                <p>
+                  {{action.label}}
+                </p>
+              </div>
+            </template>
           </div>
         </div>
       </k-modal>
@@ -46,9 +46,9 @@
           v-for="action in fab.actions"
           :id="action.id"
           :key="action.id"
-          color="secondary"
-          @click="onActionTriggered(action)"
-          :icon="action.icon">
+          :color="getActionColor(action)"
+          :icon="getActionIcon(action)"
+          @click="onActionTriggered(action)">
           <!-- tooltip -->
           <q-tooltip v-if="action.label" anchor="center left" self="center right" :offset="[20, 0]">
             {{action.label}}
@@ -64,8 +64,9 @@
      -->
     <q-btn v-else-if="fab.actions.length > 0"
       id="fab"
-      color="secondary"
-      :icon="fab.actions[0].icon"
+      text-color="white"
+      :color="getActionColor(fab.actions[0])"
+      :icon="getActionIcon(fab.actions[0])"
       style="right: 12px; bottom: 12px"
       size="1.15rem"
       round
@@ -79,6 +80,7 @@
 
 <script>
 import _ from 'lodash'
+import { getIconName } from '../../utils'
 
 export default {
   name: 'k-fab',
@@ -109,6 +111,15 @@ export default {
         maxWidth: '80vw',
         minHeight: '20vh'
       }
+    },
+    getActionIcon (action) {
+      const iconName = getIconName(action)
+      if (iconName) return iconName
+      return getIconName(action, 'icon')
+    },
+    getActionColor (action) {
+      console.log(action, _.get(action, 'icon.color', 'secondary'))
+      return _.get(action, 'icon.color', 'secondary')
     },
     openModal () {
       this.$refs.modal.open()
