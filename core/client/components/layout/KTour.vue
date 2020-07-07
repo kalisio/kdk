@@ -134,7 +134,9 @@ export default {
       }
     },
     refreshTour () {
-      let tour = _.get(this.$route, 'query.tour', '').toLowerCase()
+      let tour = _.get(this.$route, 'query.tour', '')
+      // Can be boolean as string
+      if (typeof tour === 'string') tour = tour.toLowerCase()
       if (!tour || (tour === 'false')) return
       // By default use the route name as tour name if tour equals simply true
       let name = this.$route.name
@@ -144,7 +146,8 @@ export default {
       }
       // This can be overriden when multiple tours target the same route,
       // e.g. when the route has a parameter and each value has its own tour
-      if (tour !== 'true') name = tour
+      // Take care that query param can be boolean given as string
+      if ((typeof tour === 'string') && (tour !== 'true')) name = tour
       // No corresponding tour ?
       if (!this.$store.has(`tours.${name}`)) return
       // Trigger a refresh if required to avoid reentrance
@@ -272,7 +275,8 @@ export default {
       }
       // Remove any query param related to tour
       this.$router.replace({
-        params: _.omit(_.get(this.$route, 'params', {}), ['tour', 'playTour', 'tourStep'])
+        query: _.omit(_.get(this.$route, 'query', {}), ['tour', 'playTour', 'tourStep']),
+        params: _.get(this.$route, 'params', {})
       }).catch(_ => {})
     },
     onLink () {
