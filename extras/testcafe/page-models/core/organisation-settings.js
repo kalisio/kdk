@@ -12,6 +12,7 @@ export default class OrganisationsSettings extends BasePage {
     this.editorCreateButton = Selector('.q-card button[type=button]').nth(1)
     this.registerConfirmPasswordInput = VueSelector('k-register k-password-field').nth(1)
     // Billing
+    this.customerBlock = Selector('#customer-block')
     this.customerEditor = VueSelector('organisation-billing k-customer-editor')
     this.cardFieldNumber = Selector('organisation-billing k-customer-editor .Cardfield-number')
     this.cardFieldExpiry = VueSelector('organisation-billing k-customer-editor .Cardfield-expiry')
@@ -34,36 +35,25 @@ export default class OrganisationsSettings extends BasePage {
     return '#danger-zone'
   }
 
-  async getOrganisationBillingState (test) {
-    const billingPane = await VueSelector('organisation-billing').getVue()
-    return billingPane.state
+  async checkCustomerBlockDisabled (test) {
+    await test.expect(this.customerBlock.find('button').hasAttribute('disabled')).ok()
   }
 
-  async canEditOrganisationCustomer (test) {
-    const customerBlock = await VueSelector('organisation-billing k-block').getVue()
-    if (customerBlock.props.disabled) return !customerBlock.props.disabled
-    return true
+  async checkCustomerBlockEnabled (test) {
+    await test.expect(this.customerBlock.find('button').hasAttribute('disabled')).notOk()
   }
 
-  async checkOrganisationCustomer (test, pattern) {
-    const customerBlock = await VueSelector('organisation-billing k-block').getVue()
-    await test.expect(customerBlock.props.text).contains(pattern)
-    return true
-  }
-
-  async updateOrganisationCustomer (test, orgName, customer) {
-    await this.selectOrganisationSettingsTab(test, orgName, '#billing')
+  async updateCustomer (test, customer) {
     await test
-      .click(VueSelector('organisation-billing k-block q-btn'))
+      .click(this.customerBlock.find('button'))
       .wait(250)
-    await test
-      .click(this.customerEditor.find('#email-field'))
-      .click(Selector('.q-popover .q-item').nth(customer.index))
-      .typeText(this.customerEditor.find('#description-field'), customer.description, { replace: true })
-      .typeText(this.customerEditor.find('#vatNumber-field'), customer.vatNumber, { replace: true })
+      .click(Selector('.q-dialog').find('#email-field'))
+      .click(Selector('.q-menu .q-item').nth(customer.index))
+      .typeText(Selector('.q-dialog').find('#description-field'), customer.description, { replace: true })
+      .typeText(Selector('.q-dialog').find('#vatNumber-field'), customer.vatNumber, { replace: true })
     if (customer.card) {
       await test
-        .switchToIframe(Selector('.modal iframe'))
+        .switchToIframe(Selector('.q-dialog iframe'))
         .typeText(Selector('input[type=tel]').nth(0), customer.card.number, { replace: true })
         .typeText(Selector('input[type=tel]').nth(1), customer.card.expiry, { replace: true })
         .typeText(Selector('input[type=tel]').nth(2), customer.card.cvc, { replace: true })
@@ -72,31 +62,40 @@ export default class OrganisationsSettings extends BasePage {
         .wait(2000)
     }
     await test
-      .click(this.customerEditor.find('#update-button'))
-      .wait(5000)
+      .click(Selector('.q-dialog').find('#update-button'))
+      .wait(2000)
   }
 
-  async clearOrganisationCustomerCard (test, orgName) {
-    await this.selectOrganisationSettingsTab(test, orgName, '#billing')
+  async clearCustomerCard (test) {
     await test
-      .click(VueSelector('organisation-billing k-block q-btn'))
+      .click(this.customerBlock.find('button'))
       .wait(250)
-      .click(this.customerEditor.find('#clear-card-button'))
-      .wait(250)
-      .click(this.customerEditor.find('#update-button'))
-      .wait(5000)
+      .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
+      .click(Selector('.q-dialog').find('#update-button'))
+      .wait(2000)
   }
 
-  async canSelectOrganisationPlan (test, plan) {
-    const planAction = await VueSelector('organisation-billing k-plan-chooser').find('#' + plan + '-action').getVue()
-    return !planAction.props.disable
-  }
-
-  async selectOrganisationPlan (test, orgName, plan) {
-    await this.selectOrganisationSettingsTab(test, orgName, '#billing')
+  async checkCustomerCard (test, mustHaveCard) {
     await test
-      .click(VueSelector('organisation-billing k-plan-chooser').find('#' + plan + '-action'))
-      .click(Selector('.modal-buttons button').nth(0))
+      .click(this.customerBlock.find('button'))
+      .wait(250)
+    const cardSelector = Selector('.q-dialog').withText('XXXX-')
+    if (mustHaveCard) await test.expect(cardSelector.visible).ok()
+    else await test.expect(cardSelector.exists).notOk()
+  }
+
+  async checkPlanDisabled (test, name) {
+    await test.expect(Selector('#' + name + '-card').find('button').hasAttribute('disabled')).ok()
+  }
+
+  async checkPlanEnabled (test, name) {
+    await test.expect(Selector('#' + name + '-card').find('button').hasAttribute('disabled')).notOk()
+  }
+
+  async selectPlan (test, name) {
+    await test
+      .click(Selector('#' + name + '-card').find('button'))
+      .click(Selector('.q-dialog .q-btn').nth(1))
       .wait(5000)
   }
 
