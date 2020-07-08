@@ -118,7 +118,6 @@ export default {
       return getIconName(action, 'icon')
     },
     getActionColor (action) {
-      console.log(action, _.get(action, 'icon.color', 'secondary'))
       return _.get(action, 'icon.color', 'secondary')
     },
     openModal () {

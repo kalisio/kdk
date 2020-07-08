@@ -146,7 +146,6 @@ export default {
       const emailExpr = /\S+@\S+\.\S+/
       for (let i = 0; i < data.length; i++) {
         const record = data[i]
-        console.log(record)
         if (record.length === 3 && emailExpr.test(record[1]) && RoleNames.includes(record[2])) {
           const guest = {
             locale: getLocale(),
