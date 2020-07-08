@@ -1,5 +1,4 @@
 import logger from 'loglevel'
-import { ActionSheet } from 'quasar'
 
 export default {
   methods: {
@@ -14,14 +13,17 @@ export default {
           window.navigationApps.forEach((navApp) => {
             const action = {
               label: window.launchnavigator.getAppDisplayName(navApp),
-              handler: () => window.launchnavigator.navigate([latitude, longitude], { app: navApp })
+              id: navApp
             }
             actions.push(action)
           })
-          ActionSheet.create({
+          this.$q.bottomSheet({
             title: this.$t('mixins.navigator.ACTION_SHEET_TITLE'),
-            gallery: true,
+            dark: true,
+            grid: true,
             actions: actions
+          }).onOk(action => {
+            window.launchnavigator.navigate([latitude, longitude], { app: action.id })
           })
         } else if (window.navigationApps.length === 1) {
           window.launchnavigator.navigate([latitude, longitude], { app: window.navigationApps[0] })
