@@ -167,20 +167,28 @@ export default {
       }, delay)
     },
     getTarget (target) {
+      let element = null
       const brackets = new RegExp(/\[(.*?)\]/, 'i')
       // Check if there is an array notation like '#action[1]'
       // This is useful for id conflict resolution
       const result = brackets.exec(target)
       if (result) {
-        if (_.isNumber(result[1])) {
-          const index = _.toNumber(result[1])
+        const index = _.toNumber(result[1])
+        if (_.isNumber(index)) {
           // Remove the brackets to get all elements of this type
           const elements = document.querySelectorAll(target.replace(result[0], ''))
           // Then retrieve the right index
-          if (index < elements.length) return elements[index]
+          if (index < elements.length) element = elements[index]
         }
       }
-      return document.querySelector(target)
+      if (!element) {
+        element = document.querySelector(target)
+        // Do not return invisible target
+        // FIXME: does not work when element is hidden by parent
+        //if (element && getComputedStyle(element).display === 'none') element = null
+        if (element && element.getClientRects().length === 0) element = null
+      }
+      return element
     },
     clickTarget (step) {
       step = this.getStep(step)
@@ -282,15 +290,20 @@ export default {
     onLink () {
       const step = this.getStep()
       this.clickOn('clickOnLink')
-      // Stop current tour before starting next one
-      this.getTour().stop()
       if (_.has(step, 'params.route')) {
+        // Stop current tour before starting next one
+        this.getTour().stop()
         // Keep it as running however so that
         // route guard adding tour query params will still be active
         this.isRunning = true
         this.$router.replace(_.get(step, 'params.route')).catch(_ => {})
       } else if (_.has(step, 'params.tour')) {
+        // Stop current tour before starting next one
+        this.getTour().stop()
         this.$store.patch('tours.current', { name: _.get(step, 'params.tour') })
+      } else if (_.has(step, 'params.nextDelay')) {
+        const delay = _.get(step, 'params.nextDelay')
+        setTimeout(() => this.nextStep(), _.toNumber(delay))
       }
     },
     onStartTour () {

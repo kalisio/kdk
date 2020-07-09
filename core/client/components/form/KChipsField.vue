@@ -25,6 +25,7 @@
           <div class="q-pa-xs">
             <template v-for="(chip, index) in chips">
               <q-chip
+                :id="'chip-' + index" 
                 class="chip"
                 :key="chipValue(chip) + '-' + index"
                 :icon="chipIcon(chip)"
@@ -41,7 +42,7 @@
             </template>
           </div>
           <div :class="inputClass">
-            <q-input type="text" v-model="input" :after="inputActions" @keyup.enter="onChipAdded()"/>
+            <q-input :for="properties.name + '-field'" type="text" v-model="input" :after="inputActions" @keyup.enter="onChipAdded()"/>
           </div>
         </div>
       </template>

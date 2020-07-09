@@ -1,10 +1,10 @@
 <template>
-  <div class="column justify-center full-width">
+  <div :id="getSchemaId() + 'editor'" class="column justify-center full-width">
     <!--
       Form section
     -->
     <div>
-      <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged"/>
+      <k-form :id="getSchemaId() + 'form'" :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em"/>
     </div>
     <!--
