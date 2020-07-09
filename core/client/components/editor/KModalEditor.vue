@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="editorTitle" :toolbar="toolbar" :buttons="buttons" :route="router ? true : false" >
+  <k-modal :id="getSchemaId() + 'editor'" ref="modal" :title="editorTitle" :toolbar="toolbar" :buttons="buttons" :route="router ? true : false" >
     <div slot="modal-content">
       <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em"/>

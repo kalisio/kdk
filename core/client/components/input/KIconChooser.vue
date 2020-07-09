@@ -3,7 +3,7 @@
     <div slot="modal-content">
       <div class="column q-gutter-sm">
         <div class="row justify-between">
-          <q-select
+          <q-select id="icon-categories" 
             v-if="categories"
             :label="$t('KIconChooser.SEARCH_CATEGORY_LABEL')"
             :options="categoryOptions"

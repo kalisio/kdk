@@ -26,7 +26,7 @@
       Create editor
      -->
     <k-modal-editor
-      id="editor"
+      id="organisation-editor"
       ref="editor"
       service="organisations"
       @applied="onOrganisationCreated" />
