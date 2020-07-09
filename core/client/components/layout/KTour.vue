@@ -51,6 +51,7 @@
 
 <script>
 import _ from 'lodash'
+import logger from 'loglevel'
 
 export default {
   name: 'k-tour',
@@ -168,6 +169,7 @@ export default {
     },
     getTarget (target) {
       let element = null
+      let querySelectorAll = false
       const brackets = new RegExp(/\[(.*?)\]/, 'i')
       // Check if there is an array notation like '#action[1]'
       // This is useful for id conflict resolution
@@ -175,14 +177,25 @@ export default {
       if (result) {
         const index = _.toNumber(result[1])
         if (_.isNumber(index)) {
+          // Tag that the request conforms querySelectorAll
+          querySelectorAll = true
           // Remove the brackets to get all elements of this type
-          const elements = document.querySelectorAll(target.replace(result[0], ''))
-          // Then retrieve the right index
-          if (index < elements.length) element = elements[index]
+          try {
+            const elements = document.querySelectorAll(target.replace(result[0], ''))
+            // Then retrieve the right index
+            if (index < elements.length) element = elements[index]
+          } catch (error) {
+            logger.debug('Looking for tour target', error)
+          }
         }
       }
-      if (!element) {
-        element = document.querySelector(target)
+      // If the request does not conform querySelectorAll
+      if (!querySelectorAll && !element) {
+        try {
+          element = document.querySelector(target)
+        } catch (error) {
+          logger.debug('Looking for tour target', error)
+        }
         // Do not return invisible target
         // FIXME: does not work when element is hidden by parent
         //if (element && getComputedStyle(element).display === 'none') element = null
