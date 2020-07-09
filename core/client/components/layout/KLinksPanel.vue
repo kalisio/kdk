@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { openURL } from 'quasar'
 
 export default {
   name: 'k-links-panel',
@@ -31,6 +32,12 @@ export default {
   },
   methods: {
     onLinkClicked (link) {
+      // External URL ?
+      if (link.url) {
+        openURL(link.url)
+        return
+      }
+      // Internal route otherwise
       const route = { name: link.route.name }
       if (link.route.params) {
         const resolvedParams = Object.assign({}, link.route.params)
