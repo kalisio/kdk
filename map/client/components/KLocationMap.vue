@@ -1,22 +1,26 @@
 <template>
-  <q-card class="q-pa-none">
-    <q-toolbar class="q-pa-sm bg-secondary text-white">
-      <span class="ellipsis-2">{{ location.name }}</span>
-      <q-space />
-      <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
-        <q-tooltip>
-          {{ $t('KLocationMap.RESTORE_BUTTON') }}
-        </q-tooltip>
-      </q-btn>
-      <q-btn icon="las la-search-location" flat round dense @click="centerMap">
-        <q-tooltip>
-          {{ $t('KLocationMap.RECENTER_BUTTON') }}
-        </q-tooltip>
-      </q-btn>
-    </q-toolbar>
-    <q-card-section class="bg-secondary q-pa-none">
-      <div ref="map" style="width: 360px; height: 360px; fontWeight: normal; zIndex: 0; position: relative">
-        <q-resize-observer @resize="onMapResized" />
+  <q-card class="q-pa-none" :style="cardStyle">
+    <q-card-section class="fit q-pa-none">
+      <div class="fit column">
+        <div class="col-auto">
+          <q-toolbar class="q-pa-sm bg-secondary text-white">
+            <k-text-area :text="location.name" ellipsis="2-lines" />
+            <q-space />
+            <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
+              <q-tooltip>
+                {{ $t('KLocationMap.RESTORE_BUTTON') }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn icon="las la-search-location" flat round dense @click="centerMap">
+              <q-tooltip>
+                {{ $t('KLocationMap.RECENTER_BUTTON') }}
+              </q-tooltip>
+            </q-btn>
+          </q-toolbar>
+        </div>
+        <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
+          <q-resize-observer @resize="onMapResized" />
+        </div>
       </div>
     </q-card-section>
   </q-card>
@@ -46,6 +50,15 @@ export default {
       type: Boolean,
       default: true
     },
+    size: {
+      type: Object,
+      default: () => {
+        return {
+          width: 360,
+          height: 400
+        }
+      }
+    },
     mapOptions: {
       type: Object,
       default: () => {
@@ -55,15 +68,6 @@ export default {
           minZoom: 2,
           maxZoom: 18,
           zoom: 14
-        }
-      }
-    },
-    modalStyle: {
-      type: Object,
-      default: () => {
-        return {
-          minWidth: '60%',
-          minHeight: '60%'
         }
       }
     },
@@ -78,6 +82,11 @@ export default {
           iconYOffset: 0
         }
       }
+    }
+  },
+  computed: {
+    cardStyle () {
+      return 'width: ' + this.size.width + 'px; height:' + this.size.height + 'px;'
     }
   },
   data () {
@@ -134,7 +143,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
+    this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
   },
   async mounted () {
     await this.loadRefs()
@@ -150,7 +159,7 @@ export default {
 </script>
 
 <style>
-.leaflet-fa-markers .feature-icon {
-    font-size: 14px;
-}
+  .leaflet-fa-markers .feature-icon {
+      font-size: 14px;
+  }
 </style>
