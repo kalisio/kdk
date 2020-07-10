@@ -248,6 +248,7 @@ describe('notifications', () => {
   // Let enough time to process
     .timeout(10000)
 
+if (phone) {
   it('subscribes a phone to the publisher topic', (done) => {
     pusherService.create({
       action: 'subscriptions',
@@ -264,6 +265,7 @@ describe('notifications', () => {
   })
   // Let enough time to process
     .timeout(10000)
+}
 
   it('publishes a message on the publisher topic', (done) => {
     pusherService.create({
@@ -303,6 +305,7 @@ describe('notifications', () => {
   // Let enough time to process
     .timeout(10000)
 
+if (phone) {
   it('unsubscribes a phone from the publisher topic', (done) => {
     pusherService.remove(publisherObject._id.toString(), {
       query: {
@@ -318,6 +321,7 @@ describe('notifications', () => {
   })
   // Let enough time to process
     .timeout(10000)
+}
 
   it('removes the topic on the publisher object', (done) => {
     pusherService.remove(publisherObject._id.toString(), {
