@@ -32,6 +32,7 @@ import formatcoords from 'formatcoords'
 import { colors } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
+import { setGatewayJwt } from '../utils'
 
 export default {
   name: 'k-location-map',
@@ -131,11 +132,16 @@ export default {
       this.isModified = true
     },
     async refreshBaseLayer () {
-      this.layers = {}
       const catalogService = this.$api.getService('catalog', '')
       // Get first visible base layer
       const response = await catalogService.find({ query: { type: 'BaseLayer', 'leaflet.isVisible': true } })
-      if (response.data.length > 0) this.addLayer(response.data[0])
+      if (response.data.length > 0) {
+        const baseLayer = response.data[0]
+        // do we need to inject a token
+        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        if (gatewayToken) setGatewayJwt([baseLayer], gatewayToken)
+        this.addLayer(baseLayer)
+      }
     },
     async onMapResized (size) {
       this.refreshMap()
