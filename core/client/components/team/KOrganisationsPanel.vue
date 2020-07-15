@@ -99,7 +99,8 @@ export default {
     onOrganisationRemoved (org) {
       this.$toast({
         type: 'warning',
-        html: this.$t('KOrganisationPanel.ORGANISATION_REMOVED_WARNING', { organisation: org.name })
+        message: this.$t('KOrganisationPanel.ORGANISATION_REMOVED_WARNING', { organisation: org.name }),
+        html: true
       })
     }
   },
