@@ -216,8 +216,8 @@ export default function (name) {
       },
       isLayerStyleEditable (layer) {
         if (_.has(layer, 'isStyleEditable')) return _.get(layer, 'isStyleEditable')
-        // Only possible when GeoJson by default
-        return ((_.get(layer, `${this.engine}.type`) === 'geoJson'))
+        // Only possible when GeoJson by default and not built-in measures
+        return ((_.get(layer, `${this.engine}.type`) === 'geoJson') && !_.has(layer, 'variables'))
       },
       registerLayerActions (layer) {
         let defaultActions = ['zoom-to', 'save', 'edit', 'remove']
