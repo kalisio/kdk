@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { disallow, iff } from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api'
 import { marshallSpatialQuery } from '../../hooks'
@@ -9,7 +10,7 @@ module.exports = {
     get: [],
     create: [
       // Don't process external feature ID, we should use it as is, eg number/string
-      iff(hook => !hook.data.featureId, coreHooks.convertObjectIDs(['feature'])),
+      iff(hook => !_.get(hook, 'data.layer.featureId'), coreHooks.convertObjectIDs(['feature'])),
       coreHooks.processTimes(['expireAt', 'status.checkedAt', 'status.triggeredAt']),
       coreHooks.convertToString(['conditions'])
     ],

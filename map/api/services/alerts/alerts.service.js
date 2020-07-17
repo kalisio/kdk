@@ -63,15 +63,19 @@ export default {
     const now = moment.utc()
     // Convert conditions to internal data model
     const conditions = this.getConditions(alert)
-    const featureService = this.app.getService(alert.service)
+    const featureService = this.app.getService(_.get(alert, 'layer.service'))
     // Perform aggregation over time range
     const query = Object.assign({
       time: {
         $gte: now.clone().add(_.get(alert, 'period.start', { seconds: 0 })).toDate(),
         $lte: now.clone().add(_.get(alert, 'period.end', { seconds: 24 * 3600 })).toDate()
-      },
-      [alert.featureId ? 'properties.' + alert.featureId : '_id']: alert.feature
+      }
     }, conditions)
+    if (_.has(alert, 'layer.featureId')) {
+      query['properties.' + _.get(alert, 'layer.featureId')] = alert.feature
+    } else {
+      query._id = alert.feature
+    }
 
     const result = await featureService.find({ query })
     return result.features
@@ -105,7 +109,17 @@ export default {
     }
     debug('Alert ' + alert._id.toString() + ' status', status, ' with ' + results.length + ' triggers')
     // As we keep in-memory objects avoid them being mutated by hooks processing operation payload
-    if (options.patch) await this.patch(alert._id.toString(), { status: Object.assign({}, status) })
+    if (options.patch) {
+      await this.patch(alert._id.toString(), { status: Object.assign({}, status) })
+      // DEBUG code to simulate alert closing
+      /*
+      setTimeout(async () => {
+        await this.patch(alert._id.toString(), {
+          status: { active: false, checkedAt: now.clone() }
+        })
+      }, 10000)
+      */
+    }
     // Keep track of changes in memory as well
     Object.assign(alert, { status })
     // If a webhook is configured call it
