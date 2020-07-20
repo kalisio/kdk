@@ -2,11 +2,16 @@ import _ from 'lodash'
 
 import { extractGridSourceConfig } from '../../../common/grid'
 import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer'
+import { OsmBuildingLayer } from '../../leaflet/OsmBuildingLayer'
 
 export default {
   methods: {
     createLeafletTiledMeshLayer (options) {
       const leafletOptions = options.leaflet || options
+
+      if (leafletOptions.type === 'osmBuildingLayer') {
+        return new OsmBuildingLayer(leafletOptions)
+      }
 
       // Check for valid type
       if (leafletOptions.type !== 'tiledMeshLayer') return
