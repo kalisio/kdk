@@ -1,5 +1,5 @@
 <template>
-  <k-text-area v-if="readOnly" :text="model"  length="150" />
+  <k-text-area v-if="readOnly" :text="model"  :length="150" />
   <q-field v-else
     :error-message="errorLabel"
     :error="hasError"
