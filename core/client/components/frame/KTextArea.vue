@@ -1,18 +1,16 @@
 <template>
   <div
-    v-bind:class="{
-      'ellipsis': ellipsis === '1-line' && truncate,
-      'ellipsis-2-lines': ellipsis === '2-lines' && truncate,
-      'ellipsis-3-lines': ellipsis === '3-lines' && truncate
-    }"
     @click="truncate=!truncate"
     @mouseover="onMouseOver"
-    @mouseleave="onMouseLeave">
-    {{text}}
+    @mouseleave="onMouseLeave"
+    v-html="html">
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
+import sanitizeHtml from 'sanitize-html'
+
 export default {
   name: 'k-text-area',
   props: {
@@ -20,12 +18,15 @@ export default {
       type: String,
       default: ''
     },
-    ellipsis: {
-      type: String,
-      default: '1-line',
-      validator: (value) => {
-        return ['disabled', '1-line', '2-lines', '3-lines'].includes(value)
-      }
+    length: {
+      type: Number,
+      default: 50
+    }
+  },
+  computed: {
+    html () {
+      if (!this.truncate) return sanitizeHtml(this.text)
+      return _.truncate(sanitizeHtml(this.text), { length: this.length, separator: '<br>'})
     }
   },
   data () {
@@ -43,3 +44,4 @@ export default {
   }
 }
 </script>
+

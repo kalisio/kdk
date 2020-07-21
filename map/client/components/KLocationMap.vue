@@ -4,7 +4,7 @@
       <div class="fit column">
         <div class="col-auto">
           <q-toolbar class="q-pa-sm bg-secondary text-white">
-            <k-text-area :text="location.name" ellipsis="2-lines" />
+            <k-text-area :text="location.name" />
             <q-space />
             <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
               <q-tooltip>
