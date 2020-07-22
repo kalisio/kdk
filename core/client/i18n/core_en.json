@@ -75,6 +75,160 @@
     "GROUPS_NAME_FIELD_HELPER": "Enter the name of this group",
     "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description name of this group"
   },
+  "tours": {
+    "APP_BAR_OVERFLOW_MENU_LABEL": "When not visible, you can find it using the popup menu.",
+    "APP_BAR_ACTIONS_LABEL": "When not visible, you can find it in the actions bar.",
+    "CARD_OVERFLOW_MENU_LABEL": "Open the popup menu to see more actions.",
+    "REMOVE_CONFIRMATION_LABEL": "A confirmation will be required before final removal.",
+    "login": {
+      "SOCIAL_LABEL": "You can also login using <b>external identifiers</b>.",
+      "GOOGLE_LABEL": "For instance using your Google account.",
+      "LOCAL_LABEL": "You can login using your <b>personal identifiers</b>.",
+      "EMAIL_LABEL": "Enter your email address first.",
+      "PASSWORD_LABEL": "Then enter your password.",
+      "PASSWORD_VISIBILITY_LABEL": "Display you password clearly if there is any doubt about.",
+      "LOGIN_LABEL": "Now, finish by login.",
+      "LOST_PASSWORD_LINK_LABEL": "If you have lost your password launch the <b>recovery procedure</b>",
+      "REGISTER_LINK_LABEL": "If you don't yet have an account launch the <b>registration procedure</b>"
+    },
+    "reset-password": {
+      "RESET_PROCEDURE_LABEL": "If you have lost your password we will send you an email back containing a link to <b>define a new one</b>.",
+      "EMAIL_LABEL": "First, enter the email address you have used to register or to get invited.",
+      "RESET_LABEL": "Now finish by sending the email containing the link (<b>please check the email is not in your spam folder</b>)."
+    },
+    "register": {
+      "LOCAL_LABEL": "You can register to the system by defining your <b>personal identifiers</b>.",
+      "NAME_LABEL": "Enter your name as viewed by others users first.",
+      "EMAIL_LABEL": "Enter the email address you will use to connect and receive security related messages.",
+      "PASSWORD_LABEL": "Choose a password, if it does not comply our security policy an alert will inform you about the rules to follow.",
+      "PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "CONFIRM_PASSWORD_LABEL": "Confirm your password to avoid any error.",
+      "CONFIRM_PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "TERMS_LABEL": "Read and accept our <b><a href='/#/terms'>terms of service</a></b> in order to use the system.",
+      "REGISTER_LABEL": "Last, create your account.",
+      "EMAIL_VERIFICATION_LABEL": "We will send you an email back containing a link to <b>verify your address</b>.",
+      "LOGIN_LINK_LABEL": "You can now login whenever you want using your <b>personal identifiers</b>"
+    },
+    "create-organisation": {
+      "ORGANISATION_NAME_LABEL": "Enter the organisation name as viewed by others users.",
+      "ORGANISATION_DESCRIPTION_LABEL": "Enter a detailed description.",
+      "CREATE_ORGANISATION_LABEL": "Confirm the creation of your new organisation."
+    },
+    "account": {
+      "PROFILE_LABEL": "This tab allows to update your profile information.",
+      "AVATAR_LABEL": "Your avatar visible in the side menu when an image file has been selected.",
+      "NAME_LABEL": "Your name as viewed by others users.",
+      "UPDATE_LABEL": "Confirm the update in order to apply the modifications to your profile information.",
+      "SECURITY_LABEL": "This tab allows to update your <b>personal identifiers</b> and your devices",
+      "PASSWORD_LINK_LABEL": "Launch the <b>password change procedure</b>",
+      "EMAIL_LINK_LABEL": "Launch the <b>email change procedure</b>",
+      "DEVICES_LABEL": "This section list all the mobile devices you have used.",
+      "UNLINK_LABEL": "Check for any suspect activity and unlink outdated mobile devices.",
+      "DANGER_ZONE_LABEL": "This tab allows to remove your account",
+      "DELETE_LABEL": "A manual confirmation will be required before final removal."
+    },
+    "change-password": {
+      "PASSWORD_PROCEDURE_LABEL": "If you want to modify your password you can <b>define a new one</b>.",
+      "OLD_PASSWORD_LABEL": "First, enter your previous password.",
+      "NEW_PASSWORD_LABEL": "Choose a new password, if it does not comply our security policy an alert will inform you about the rules to follow.",
+      "NEW_PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "CONFIRM_NEW_PASSWORD_LABEL": "Confirm your password to avoid any error.",
+      "CHANGE_LABEL": "Last, confirm the modification request.",
+      "CHANGE_EMAIL_LABEL": "A confirmation email will be sent to you (<b>please check the email is not in your spam folder</b>)."
+    },
+    "send-change-identity": {
+      "CHANGE_IDENTITY_PROCEDURE_LABEL": "If you want to modify the email address you use to connect you can <b>select a new one</b>.",
+      "PASSWORD_LABEL": "First, enter your password.",
+      "PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "EMAIL_LABEL": "Enter your <b>new email address</b>.",
+      "CHANGE_LABEL": "Last, confirm the modification request.",
+      "CHANGE_EMAIL_LABEL": "An email containing a link to confirm the modification will be sent to your new address (<b>please check the email is not in your spam folder</b>)."
+    },
+    "groups": {
+      "GROUPS_LABEL": "This tab allows to manage the <b>groups</b> in your organisation.",
+      "GROUP_DEFINITION_LABEL": "A group allows to delegate the management of a shared workspace limited to its members.",
+      "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
+      "SEARCH_LABEL": "Type part of a word contained in the name of your groups in the arising bar to perform a search.",
+      "NEW_GROUP_LABEL": "Create a <b>new group</b> using this button.",
+      "CREATE_GROUP_LINK_LABEL": "How to create a group",
+      "GROUP_CARD_LABEL": "Each group is viewed as a card providing available actions.",
+      "GROUP_MEMBERS_LABEL": "This number shows you the <b>members</b> count of your group.",
+      "GROUP_MANAGERS_LABEL": "This number shows you the <b>managers</b> count of your group.",
+      "GROUP_OWNERS_LABEL": "This number shows you the <b>owners</b> count of your group.",
+      "UPDATE_GROUP_LABEL": "Update properties of your group through this action.",
+      "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
+      "REMOVE_GROUP_LABEL": "Remove your group through this action.",
+      "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
+    },
+    "create-group": {
+      "GROUP_NAME_LABEL": "Choose a name for your group.",
+      "TEMPLATE_ICON_LABEL": "Choose an icon to easily recognize your group.",
+      "CREATE_GROUP_LABEL": "Confirm the creation of your new group."
+    },
+    "members": {
+      "MEMBERS_LABEL": "This tab allows to manage the <b>members</b> in your organisation.",
+      "MEMBER_DEFINITION_LABEL": "A <b>member</b> is a user able to access the shared workspace offered by your organisation.",
+      "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
+      "SEARCH_LABEL": "Type part of a word contained in the name of your members in the arising bar to perform a search.",
+      "SEARCH_MORE_LABEL": "Type also a word contained in the name of a group or a tag associated to your members to filter accordingly.",
+      "ADD_INVITE_MEMBER_LABEL": "Add members to your organisation through this action.",
+      "ADD_MEMBER_LABEL": "If your future member <b>already has an account</b>, <b>add him</b> using this button.",
+      "ADD_MEMBER_LINK_LABEL": "How to add a member",
+      "INVITE_MEMBER_LABEL": "If your future member <b>does not yet have an account</b>, <b>invite him</b> using this button and we will create it .",
+      "INVITE_MEMBER_LINK_LABEL": "How to invite a member",
+      "MEMBER_CARD_LABEL": "Each member is viewed as a card providing available actions.",
+      "ROLE_LABEL": "Visualise the role of your member at a glance.",
+      "TAGS_LABEL": "Visualise his tags at a glance as well.",
+      "GROUP_LABEL": "Select one of the member groups to show available actions.",
+      "CHANGE_GROUP_ROLE_LABEL": "Modifiez le rôle du membre dans le groupe via cette action.",
+      "LEAVE_GROUP_LABEL": "Supprimez le membre du groupe via cette action.",
+      "TAG_MEMBER_LABEL": "Update tags of your member through this action.",
+      "TAGS_LINK_LABEL": "How to manage tags",
+      "JOIN_GROUP_LABEL": "Add your member to a <b>group</b> through this action.",
+      "JOIN_GROUP_LINK_LABEL": "How to manage groups",
+      "CHANGE_ROLE_LABEL": "Update the role of your member through this action.",
+      "CHANGE_ROLE_LINK_LABEL": "How to manage roles",
+      "MEMBER_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
+      "REMOVE_MEMBER_LABEL": "Remove the member from your organisation through this action.",
+      "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
+    },
+    "add-member": {
+      "MEMBER_NAME_LABEL": "Typing <b>the first characters</b> of a user name make it selectable.",
+      "MEMBER_ROLE_LABEL": "Select the user role in your organisation.",
+      "ROLES_LABEL": "A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal, payment, etc.).",
+      "ADD_MEMBER_LABEL": "Confirm joining the user to your organisation."
+    },
+    "invite-member": {
+      "MEMBER_NAME_LABEL": "Typing <b>the first characters</b> of a user name make it selectable.",
+      "MEMBER_EMAIL_LABEL": "Entrez l'adresse mail de la personne.",
+      "INVITATION_EMAIL_LABEL": "An information email containing his temporary password to connect will be sent to your new member (<b>please ask him to check the email is not in his spam folder</b>).",
+      "MEMBER_ROLE_LABEL": "$t(tours.add-member.MEMBER_ROLE_LABEL)",
+      "ROLES_LABEL": "$t(tours.add-member.ROLES_LABEL)",
+      "INVITE_MEMBER_LABEL": "$t(tours.add-member.ADD_MEMBER_LABEL)"
+    },
+    "add-member": {
+      "GROUP_NAME_LABEL": "Typing <b>the first characters</b> of a group name make it selectable.",
+      "MEMBER_ROLE_LABEL": "Select the user role in the group.",
+      "ROLES_LABEL": "A <b>member</b> has a read-only access to your group while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal).",
+      "ADD_MEMBER_LABEL": "Confirm joining the user to the group."
+    },
+    "tag-member": {
+      "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise.",
+      "TAG_REMOVE_LABEL": "Once added select it to update its icon/color and remove it using the cross.",
+      "UPDATE_TAG_LABEL": "Confirm modifying the tags on your members."
+    },
+    "tags": {
+      "TAGS_LABEL": "This tab allows to manage the <b>tags</b> in your organisation.",
+      "TAG_DEFINITION_LABEL": "A tag allows to classify a subset of your organisation members (e.g. a skill or a service).",
+      "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
+      "SEARCH_LABEL": "Type part of a word contained in the name of your tags in the arising bar to perform a search.",
+      "TAG_CARD_LABEL": "Each tag is viewed as a card providing available actions.",
+      "CREATE_TAG_LINK_LABEL": "How to create or remove tags on members",
+      "TAG_COUNT_LABEL": "This number shows you the number of <b>members</b> having your tag.",
+      "REMOVE_TAG_LABEL": "Whenever it is zero the tag is automatically removed.",
+      "UPDATE_TAG_LABEL": "Update properties of your tag through this action, this will update all members having this tag."
+    }
+  },
   "KWelcome": {
     "WELCOME_TITLE": "Welcome !",
     "WELCOME_MESSAGE": "This quick start guide covers the main application features.",
