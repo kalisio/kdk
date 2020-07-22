@@ -43,6 +43,17 @@ export default {
       }
       return tooltip
     },
+    getVigicruesTooltip (entity, options) {
+      const properties = entity.properties
+      if (!properties) return
+      const name = properties.NomEntVigiCru
+      const level = properties.NivSituVigiCruEnt
+      if (name && !_.isNil(level)) return Object.assign({
+        show: false,
+        text: name + '\n'  + this.$t('Layers.VIGICRUES_VIGILANCE_' + level)
+      }, this.options.tooltip)
+      else return null
+    },
     isTooltipOpen (entity) {
       if (this.getNbChildrenForEntity(entity) > 0) {
         return _.get(entity, 'label.show', false)
