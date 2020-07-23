@@ -1,11 +1,11 @@
 <template>
-  <div class="column k-navigation-bar">
+  <div id="navigation-bar" class="column k-navigation-bar">
     <div class="row items-center q-gutter-sm no-wrap">
       <!--
         Track mode
        -->
       <template v-if="mode === 'trackbar' && hasPositionIndicator">
-        <q-btn  icon="las la-arrow-left" color="primary" round flat @click="mode = 'toolbar'" >
+        <q-btn id="navigation-back" icon="las la-arrow-left" color="primary" round flat @click="mode = 'toolbar'" >
           <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
         </q-btn>
         <q-separator vertical />
@@ -15,7 +15,7 @@
         Search mode
        -->
       <template v-if="mode === 'searchbar' && hasLocationInput">
-        <q-btn icon="las la-arrow-left" color="primary" round flat @click="mode = 'toolbar'" >
+        <q-btn id="navigation-back" icon="las la-arrow-left" color="primary" round flat @click="mode = 'toolbar'" >
           <q-tooltip>{{ $t('KNavigationBar.BACK') }}</q-tooltip>
         </q-btn>
         <q-separator vertical />
@@ -28,14 +28,16 @@
         <!-- Before section -->
         <k-tool-bar v-if="hasBeforeActions" :actions="navigationBar.actions.before" color="primary" />
         <!-- Location indicator  -->
-        <q-btn v-if="hasPositionIndicator" icon="las la-crosshairs" color="primary" round flat @click="mode = 'trackbar'" >
+        <q-btn v-if="hasPositionIndicator" id="track-location"
+          icon="las la-crosshairs" color="primary" round flat @click="mode = 'trackbar'" >
           <q-tooltip>{{ $t('KNavigationBar.TRACK') }}</q-tooltip>
         </q-btn>
         <!-- Location input -->
-        <q-btn v-if="hasLocationInput" icon="las la-search" color="primary" round flat @click="mode = 'searchbar'" >
+        <q-btn v-if="hasLocationInput" id="search-location"
+          icon="las la-search" color="primary" round flat @click="mode = 'searchbar'" >
           <q-tooltip>{{ $t('KNavigationBar.SEARCH') }}</q-tooltip>
         </q-btn>
-        <k-location-input :user="true" :map="null" :search="false" :dense="true" style="" @input="onLocationChanged" />
+        <k-location-input id="location-input" :user="true" :map="null" :search="false" :dense="true" style="" @input="onLocationChanged" />
          <!-- After section -->
         <k-tool-bar v-if="hasAfterActions" :actions="navigationBar.actions.after" color="primary" />
       </template>

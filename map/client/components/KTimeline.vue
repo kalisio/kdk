@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-xs column k-timeline">
+  <div id="timeline" class="q-pa-xs column k-timeline">
     <!--
       Time controls
      -->

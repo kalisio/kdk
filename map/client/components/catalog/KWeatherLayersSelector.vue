@@ -3,7 +3,7 @@
     <k-layers-selector :layers="filteredLayers" :options="options">
       <template v-slot:header>
         <div class="q-ma-sm">
-          <q-select v-model="model" :options="forecastModels" filled @input="onModelChanged">
+          <q-select id="forecast-model" v-model="model" :options="forecastModels" filled @input="onModelChanged">
             <template v-slot:prepend>
               <q-icon name="las la-globe" />
             </template>

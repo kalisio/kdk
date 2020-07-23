@@ -180,6 +180,37 @@
     "CATALOG_FEATURE_ID_FIELD_HELPER": "Saisissez un identifiant unique",
     "CATALOG_SCHEMA_FIELD_HELPER": "Sélectionnez un schéma de données"
   },
+  "tours": {
+    "navigation-bar": {
+      "NAVIGATION_BAR_LABEL": "La <b>barre de navigation</b> vous permet d'accéder rapidement à certaines actions récurrentes.",
+      "ZOOM_LABEL": "Zoom avant/arrière en utilisant ces boutons.",
+      "TOGGLE_MAP_LABEL": "Basculez en <b>mode 2D</b> avec ce bouton.",
+      "TOGGLE_GLOBE_LABEL": "Basculez en <b>mode 3D</b> avec ce bouton.",
+      "TRACK_LOCATION_LABEL": "Affichez les coordonnées d'une position via ce bouton.",
+      "LOCATION_TRACKING_LABEL": "Bougez la souris pour afficher les coordonnées du pointeur et cliquez pour les conserver.",
+      "TRACK_BACK_LABEL": "Arrêtez le suivi en retournant aux actions.",
+      "SEARCH_LOCATION_LABEL": "Recherchez une <b>adresse</b> via ce bouton.",
+      "LOCATION_SEARCHING_LABEL": "Tapez tout ou partie de votre adresse puis sélectionnez parmi les propositions pour recentrer la carte.",
+      "SEARCH_BACK_LABEL": "Arrêtez la recherche en retournant aux actions.",
+      "GEOLOCATE_LABEL": "Recentrez la carte sur <b>votre position</b> avec ce bouton.",
+      "TOGGLE_VR_LABEL": "Basculez en mode <b>Réalité Virtuelle</b> (VR) avec ce bouton.",
+      "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
+      "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton."
+    },
+    "catalog-panel": {
+      "CATALOG_LABEL": "Le catalogue</b> permet de gérer les données affichées sur votre carte.",
+      "CATEGORIES_LABEL": "Les données sont organisée en catégories</b>.",
+      "CATEGORY_LABEL": "Sélectionnez une catégorie pour lister les couches</b> de données disponibles.",
+      "SHOW_LAYER_LABEL": "Sélectionnez une couche de données pour l'afficher sur la carte, elle apparait alors en surbrillance dans la liste.",
+      "MIN_LEVEL_LABEL": "Lorsqu'une couche n'est pas visible à votre échelle elle apparait grisée, vous devez zoomer pour la visualiser sur la carte.",
+      "HIDE_LAYER_LABEL": "Une nouvelle sélection la fera disparaitre.",
+      "METEO_MODEL_LABEL": "Concernant les données météorologiques vous pouvez modifier le modèle de prévision si plusieurs sont disponibles.",
+      "METEO_LAYERS_LABEL": "Chaque couche ciblera alors un élément météorologique issu des données du modèle cible."
+    },
+    "timeline": {
+      "TIMELINE_LABEL": "La ligne de temps permet d'accéder aux actions relative à la temporalité des données affichées."
+    }
+  },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",
     "NO_RESULTS": "$t(EMPTY)"

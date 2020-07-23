@@ -180,6 +180,37 @@
     "CATALOG_FEATURE_ID_FIELD_HELPER": "Select a unique ID",
     "CATALOG_SCHEMA_FIELD_HELPER": "Select a data scheme"
   },
+  "tours": {
+    "navigation-bar": {
+      "NAVIGATION_BAR_LABEL": "The navigation bar allows to quickly execute recurring actions.",
+      "ZOOM_LABEL": "Zoom in/out using these buttons.",
+      "TOGGLE_MAP_LABEL": "Switch to 2D map view using this button.",
+      "TOGGLE_GLOBE_LABEL": "Switch to 3D map view using this button.",
+      "TRACK_LOCATION_LABEL": "Display the coordinates of a location using this button.",
+      "LOCATION_TRACKING_LABEL": "Move the mouse to display the coordinates underneath and click to keep track of it.",
+      "TRACK_BACK_LABEL": "Then stop tracking by going back to the actions.",
+      "SEARCH_LOCATION_LABEL": "Seek for an address using this button.",
+      "LOCATION_SEARCHING_LABEL": "Type part of your address and select among the proposed locations to center the map on.",
+      "SEARCH_BACK_LABEL": "Then stop searching by going back to the actions.",
+      "GEOLOCATE_LABEL": "Recenter the map on your location using this button.",
+      "TOGGLE_VR_LABEL": "Switch to Virtual Reality (VR) mode with this button.",
+      "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
+      "TOGGLE_CATALOG_LABEL": "Open the catalog with this button."
+    },
+    "catalog-panel": {
+      "CATALOG_LABEL": "The catalog allows to manage data displayed on your map.",
+      "CATEGORIES_LABEL": "The data are organised into different categories.",
+      "CATEGORY_LABEL": "Select a category to list all available data layers.",
+      "SHOW_LAYER_LABEL": "Select a layer to show it on the map, it will then be highlighted in the list.",
+      "MIN_LEVEL_LABEL": "When a layer is not visible according to your scale it will be disabled, you must zoom in to make it show on the map.",
+      "HIDE_LAYER_LABEL": "A new selection will hide it.",
+      "METEO_MODEL_LABEL": "Regarding meteorological data you can also switch the prediction model if multiple are available.",
+      "METEO_LAYERS_LABEL": "Each layer will then target data of a specific meteorological element from this model."
+    },
+    "timeline": {
+      "TIMELINE_LABEL": "The timeline allows to quickly execute actions related to the time of displayed data."
+    }
+  },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",
     "NO_RESULTS": "$t(EMPTY)"
