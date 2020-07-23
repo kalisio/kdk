@@ -2,7 +2,8 @@ import L from 'leaflet'
 import * as PIXI from 'pixi.js'
 import 'leaflet-pixi-overlay'
 import AbortController from 'abort-controller'
-import { geomEach, coordEach } from '@turf/meta'
+import { featureEach, geomEach, coordEach } from '@turf/meta'
+import tesselate from '@turf/tesselate'
 import { buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils'
 
 const OsmBuildingLayer = L.GridLayer.extend({
@@ -16,7 +17,7 @@ const OsmBuildingLayer = L.GridLayer.extend({
     this.conf.debug = {
       showTileInfos: options.showTileInfos,
       meshAsPoints: options.meshAsPoints,
-      showShader: options.showShader
+      showShader: options.showShader || true
     }
 
     this.pixiRoot = new PIXI.Container()
@@ -24,22 +25,19 @@ const OsmBuildingLayer = L.GridLayer.extend({
       utils => this.renderPixiLayer(utils),
       this.pixiRoot,
       { destroyInteractionManager: true, shouldRedrawOnMove: function () { return true } })
-    // this.layerUniforms = new PIXI.UniformGroup({ in_layerAlpha: options.opacity, in_zoomLevel: 1.0 })
-    this.layerUniforms = { in_layerAlpha: options.opacity, in_zoomLevel: 1.0 }
+    this.layerUniforms = { in_layerAlpha: options.opacity || 1.0, in_zoomLevel: 1.0 }
     this.pixiState = new PIXI.State()
     this.pixiState.culling = true
-    this.pixiState.blendMode = PIXI.BLEND_MODES.SCREEN
+    // this.pixiState.blendMode = PIXI.BLEND_MODES.SCREEN
 
     const features = [
       {
         name: 'geometryCoords',
-        varyings: ['vec2 frg_position'],
         vertex: {
           attributes: ['vec2 in_position'],
           uniforms: ['mat3 translationMatrix', 'mat3 projectionMatrix', 'float in_zoomLevel'],
           functions: [WEBGL_FUNCTIONS.latLonToWebMercator],
-          code: `  frg_position = in_position;
-  vec2 projected = latLonToWebMercator(vec3(frg_position, in_zoomLevel));
+          code: `  vec2 projected = latLonToWebMercator(vec3(in_position, in_zoomLevel));
   gl_Position = vec4((projectionMatrix * translationMatrix * vec3(projected, 1.0)).xy, 0.0, 1.0);`
         }
       },
@@ -55,6 +53,13 @@ const OsmBuildingLayer = L.GridLayer.extend({
     const [vtxCode, frgCode] = buildShaderCode(features)
     this.program = new PIXI.Program(vtxCode, frgCode)
     this.shader = new PIXI.Shader(this.program, this.layerUniforms)
+
+    if (this.conf.debug.showShader) {
+      console.log('Generated vertex shader:')
+      console.log(vtxCode)
+      console.log('Generated fragment shader:')
+      console.log(frgCode)
+    }
 
     // register event callbacks
     // this.on('tileload', (event) => { this.onTileLoad(event) })
@@ -81,7 +86,10 @@ const OsmBuildingLayer = L.GridLayer.extend({
 
     const tile = document.createElement('div')
 
-    const url = `http://data.osmbuildings.org/0.2/anonymous/tile/${coords.z}/${coords.x}/${coords.y}.json`
+    const subdomains = ['a', 'b', 'c', 'd']
+    const balance = Math.floor(Math.random() * subdomains.length)
+
+    const url = `http://${subdomains[balance]}.data.osmbuildings.org/0.2/anonymous/tile/${coords.z}/${coords.x}/${coords.y}.json`
     fetch(url)
       .then(response => {
         if (!response.ok) {
@@ -92,6 +100,7 @@ const OsmBuildingLayer = L.GridLayer.extend({
       })
       .then(response => response.json())
       .then(geojson => {
+        /*
         let numGeom = 0
         let numVertex = 0
         geomEach(geojson, (geometry, featureIndex, featureProps, featureBbox, featureId) => {
@@ -108,22 +117,68 @@ const OsmBuildingLayer = L.GridLayer.extend({
         const position = new Float32Array(numVertex * 2)
 
         geomEach(geojson, (geometry, featureIndex, featureProps, featureBbox, featureId) => {
+          if (featureProps.roofShape || featureProps.roofHeight) {
+            console.log(featureProps)
+          }
           coordEach(geometry, (coord, coordIndex, featureIndex, multiFeatureIndex) => {
-            position[vidx * 2] = coord[0]
-            position[vidx * 2 + 1] = coord[1]
+            position[vidx * 2] = coord[1]
+            position[vidx * 2 + 1] = coord[0]
             index[iidx++] = vidx
             ++vidx
           })
 
           index[iidx++] = restart
         })
+        */
+        
+        geomEach(geojson, (geometry, featureIndex, featureProps, featureBbox, featureId) => {
+          if (featureProps.minHeight || featureProps.minLevel) {
+            console.log(featureProps)
+          }
+        })
+
+        const tris = []
+        featureEach(geojson, (feature, featureIndex) => {
+          if (feature.geometry.type === 'Polygon') {
+            const startsAt = feature.properties.minHeight || feature.properties.minLevel || 0
+            if (startsAt === 0)
+              tris.push(tesselate(feature))
+          }
+        })
+
+        let numVertex = 0
+        tris.forEach(tri => {
+          geomEach(tri, (geometry, featureIndex, featureProps, featureBbox, featureId) => {
+            coordEach(geometry, (coord, coordIndex, featureIndex, multiFeatureIndex) => {
+              if (coordIndex < 3) {
+                ++numVertex
+              }
+            })
+          })
+        })
+
+        let vidx = 0
+        const position = new Float32Array(numVertex * 2)
+        tris.forEach(tri => {
+          geomEach(tri, (geometry, featureIndex, featureProps, featureBbox, featureId) => {
+            coordEach(geometry, (coord, coordIndex, featureIndex, multiFeatureIndex) => {
+              if (coordIndex < 3) {
+                position[vidx * 2] = coord[1]
+                position[vidx * 2 + 1] = coord[0]
+                ++vidx
+              }
+            })
+          })
+        })
 
         const geometry = new PIXI.Geometry()
-                                 .addAttribute('in_position', position, 2, false, PIXI.TYPES.FLOAT_VERTEX)
-                                 .addIndex(index)
+                                 .addAttribute('in_position', position, 2, false, PIXI.TYPES.FLOAT)
+                                 // .addIndex(index)
 
         // const shader = new PIXI.Shader(this.program, this.uniforms)
-        const mesh = new PIXI.Mesh(geometry, this.shader, this.pixiState, PIXI.DRAW_MODES.LINE_STRIP)
+        // const mesh = new PIXI.Mesh(geometry, this.shader, this.pixiState, PIXI.DRAW_MODES.LINE_STRIP)
+        // const mesh = new PIXI.Mesh(geometry, this.shader, this.pixiState, PIXI.DRAW_MODES.TRIANGLE_FAN)
+        const mesh = new PIXI.Mesh(geometry, this.shader, this.pixiState, PIXI.DRAW_MODES.TRIANGLES)
         tile.mesh = mesh
         tile.mesh.visible = true
         this.pixiRoot.addChild(mesh)
