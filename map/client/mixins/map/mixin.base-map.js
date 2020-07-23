@@ -151,8 +151,14 @@ export default {
       }
 
       let layer
+      // We use the source option as the first parameter of leaflet layer constructors,
+      // which is usually the base URL
       if (leafletOptions.source) {
-        layer = _.get(L, leafletOptions.type)(leafletOptions.source, leafletOptions)
+        const source = leafletOptions.source
+        // Remove it from options to avoid sending it twice
+        // and side effects like https://github.com/kalisio/kdk/issues/219
+        delete leafletOptions.source
+        layer = _.get(L, leafletOptions.type)(source, leafletOptions)
       } else {
         layer = _.get(L, leafletOptions.type)(leafletOptions)
       }
