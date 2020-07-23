@@ -68,7 +68,9 @@ export default {
             // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
             return
           }
-          // And coordinates
+          // And coordinates if not static
+          const staticGeometry = _.get(leafletOptions, 'staticGeometry', false)
+          if (staticGeometry) return oldLayer
           const type = feature.geometry.type
           const coordinates = feature.geometry.coordinates
           // FIXME: support others geometry types ?
