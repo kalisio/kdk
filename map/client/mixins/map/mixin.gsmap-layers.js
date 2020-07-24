@@ -13,6 +13,9 @@ export default {
       const colorMap = _.get(options, 'variables[0].chromajs', null)
       if (colorMap) Object.assign(leafletOptions, { chromajs: colorMap })
 
+      // Add current time to options
+      leafletOptions.time = this.currentTime
+
       // Then create layer
       return new GSMaPLayer(leafletOptions)
     }
