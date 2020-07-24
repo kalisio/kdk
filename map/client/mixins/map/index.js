@@ -12,6 +12,7 @@ import tiledMeshLayers from './mixin.tiled-mesh-layers'
 import tiledWindLayers from './mixin.tiled-wind-layers'
 import heatmapLayers from './mixin.heatmap-layers'
 import mapillaryLayers from './mixin.mapillary-layers'
+import gsmapLayers from './mixin.gsmap-layers'
 
 export default {
   baseMap,
@@ -27,5 +28,6 @@ export default {
   tiledMeshLayers,
   tiledWindLayers,
   heatmapLayers,
-  mapillaryLayers
+  mapillaryLayers,
+  gsmapLayers
 }
