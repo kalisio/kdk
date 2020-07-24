@@ -1,4 +1,6 @@
+import _ from 'lodash'
 import L from 'leaflet'
+import chroma from 'chroma-js'
 import moment from 'moment'
 
 const GSMaPLayer = L.TileLayer.extend({
@@ -10,6 +12,20 @@ const GSMaPLayer = L.TileLayer.extend({
 
     const updatedOptions = Object.assign({ tms: true }, options)
     L.TileLayer.prototype.initialize.call(this, url, updatedOptions)
+
+    // colormap legend support
+    const classes = _.get(options, 'chromajs.classes', null)
+    const colors = _.get(options, 'chromajs.scale', null)
+    if (classes && colors) {
+      this.colorMap = chroma.scale(colors).classes(classes)
+
+      this.on('tileload', (event) => {
+        if (!this.hasData) {
+          this.fire('data')
+          this.hasData = true
+        }
+      })
+    }
   },
 
   makeUrl (time) {
