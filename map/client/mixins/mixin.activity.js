@@ -713,7 +713,10 @@ export default function (name) {
         if (this.shouldRestoreView()) {
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            this.$router.replace({ params: targetBounds }).catch(_ => {})
+            const params = _.get(this.$route, 'params', {})
+            this.$router.replace({
+              params: Object.assign({}, params, targetBounds)
+            }).catch(_ => {})
           }
           window.localStorage.setItem(this.getViewKey(), JSON.stringify(bounds))
         }
@@ -738,14 +741,20 @@ export default function (name) {
           const east = bounds[1][1]
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            this.$router.replace({ params: targetBounds }).catch(_ => {})
+            const params = _.get(this.$route, 'params', {})
+            this.$router.replace({
+              params: Object.assign({}, params, targetBounds)
+            }).catch(_ => {})
           }
           this.zoomToBounds(bounds)
         }
         return bounds
       },
       clearStoredView () {
-        this.$router.replace({ params: {} }).catch(_ => {})
+        const params = _.get(this.$route, 'params', {})
+        this.$router.replace({
+          params: _.omit(params, ['south', 'west', 'north', 'east'])
+        }).catch(_ => {})
         window.localStorage.removeItem(this.getViewKey())
       },
       updateViewSettings () {
