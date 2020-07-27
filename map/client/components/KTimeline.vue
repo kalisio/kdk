@@ -4,23 +4,23 @@
       Time controls
      -->
     <div class="full-width row justify-center items-center k-timeline-control">
-      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-backward' size="md" color="primary" @click="onPreviousStepClicked">
+      <q-btn id="timeline-backward" v-if="$q.screen.gt.xs" dense flat round icon='las la-step-backward' size="md" color="primary" @click="onPreviousStepClicked">
         <q-tooltip>{{$t('KTimeline.PREVIOUS_STEP')}}</q-tooltip>
       </q-btn>
-      <q-btn  dense flat round icon='las la-calendar' size="md" color="primary">
+      <q-btn id="timeline-date" dense flat round icon='las la-calendar' size="md" color="primary">
         <q-tooltip>{{$t('KTimeline.SET_DATE')}}</q-tooltip>
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-date v-model="date" :mask="calendarDateMask" today-btn minimal />
         </q-popup-proxy>
       </q-btn>
       <q-chip :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="primary" text-color="white" :dense="$q.screen.lt.sm" />
-      <q-btn dense flat round icon="las la-clock" size="md" color="primary" @click="onNowClicked">
+      <q-btn id="timeline-now" dense flat round icon="las la-clock" size="md" color="primary" @click="onNowClicked">
         <q-tooltip>{{$t('KTimeline.SET_NOW')}}</q-tooltip>
         <q-badge v-if="timer !== undefined" floating transparent color="green">
           <q-icon name="las la-play" size="10px" color="white'" />
         </q-badge>
       </q-btn>
-      <q-btn v-if="$q.screen.gt.xs" dense flat round icon='las la-step-forward' size="md" color="primary" @click="onNextStepClicked">
+      <q-btn v-if="$q.screen.gt.xs" id="timeline-forward" dense flat round icon='las la-step-forward' size="md" color="primary" @click="onNextStepClicked">
         <q-tooltip>{{$t('KTimeline.NEXT_STEP')}}</q-tooltip>
       </q-btn>
     </div>
@@ -34,6 +34,7 @@
       <div v-if="minutes.length > 0" class="row justify-center items-center">
         <template v-for="(minute, index) in minutes">
           <q-chip
+            :id="'timeline-minutes-' + index"
             :key="index"
             dense flat outline :size="$q.screen.gt.sm ? '12px' : '10px'"
             :color="minute.color"
@@ -43,24 +44,26 @@
         </template>
       </div>
       <div v-if="hours.length > 0" class="full-width row justify-center items-center">
-        <q-btn dense flat round icon='las la-angle-left' color="primary" @click="onPreviousHourClicked">
+        <q-btn id="timeline-previous-hour" dense flat round icon='las la-angle-left' color="primary" @click="onPreviousHourClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_HOUR')}}</q-tooltip>
         </q-btn>
         <template v-for="(hour, index) in hours">
-          <div :key="index" :class="hour.class" style="height: 25px"  @click="onHourClicked(index, hours.length)">
+          <div :id="'timeline-hours-' + index" :key="index" :class="hour.class"
+            style="height: 25px"  @click="onHourClicked(index, hours.length)">
             {{hour.label}}
           </div>
         </template>
-        <q-btn flat round icon='las la-angle-right'  color="primary" @click="onNextHourClicked">
+        <q-btn id="timeline-next-hour" flat round icon='las la-angle-right'  color="primary" @click="onNextHourClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_HOUR')}}</q-tooltip>
         </q-btn>
       </div>
       <div class="row justify-center items-center">
-        <q-btn dense flat round icon='las la-calendar-minus' color="primary" @click="onPreviousDayClicked">
+        <q-btn id="timeline-previous-day" dense flat round icon='las la-calendar-minus' color="primary" @click="onPreviousDayClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_DAY')}}</q-tooltip>
         </q-btn>
         <template v-for="(day, index) in days">
           <q-chip
+            :id="'timeline-days-' + index"
             :key="index"
             dense flat square outline size="md"
             :color="day.color"
@@ -68,7 +71,7 @@
             :label="day.label"
             clickable @click="onDayClicked(index, days.length)" />
         </template>
-        <q-btn dense flat round icon='las la-calendar-plus'  color="primary" @click="onNextDayClicked">
+        <q-btn id="timeline-next-day" dense flat round icon='las la-calendar-plus'  color="primary" @click="onNextDayClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_DAY')}}</q-tooltip>
         </q-btn>
       </div>
