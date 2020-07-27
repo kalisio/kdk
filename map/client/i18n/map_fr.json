@@ -221,6 +221,24 @@
       "NEXT_DAY_LABEL": "Avancez dans le temps d'un jour.",
       "PREVIOUS_DAY_LABEL": "Reculez dans le temps d'un jour.",
       "PICK_DAY_LABEL": "Ou choisissez directement un jour."
+    },
+    "fab": {
+      "TIMELINE_LABEL": "Ce bouton permet d'accéder aux actions relatives à la cartographie des données.",
+      "PROBE_LABEL": "Sonder les prévision météorologiques à la position de votre choix.",
+      "PROBE_CURSOR_LABEL": "Une fois l'option sélectionnée choisissez une position sur la carte pour afficher les prévisions.",
+      "CREATE_LAYER_LABEL": "Créer une nouvelle couche de données vierge.",
+      "CREATE_LAYER_LINK_LABEL": "Voir comment créer une nouvelle couche de données",
+      "IMPORT_LAYER_LABEL": "Importer des données existantes dans une nouvelle couche.",
+      "IMPORT_LAYER_LINK_LABEL": "Importer des données cartographiques",
+      "LAYER_NAME_LABEL": "Choisissez un nom pour votre nouvelle couche de données.",
+      "LAYER_DESCRIPTION_LABEL": "Ensuite fournissez une description.",
+      "LAYER_FEATURE_ID_LABEL": "Choisissez un identifiant unique de vos éléments au sein de votre nouvelle couche.",
+      "LAYER_SCHEMA_LABEL": "Enfin, sélectionnez le schéma de données de vos éléments (fichier <a href='https://json-schema.org/'>JSON schema</a>).",
+      "CREATE_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
+      "EDIT_NEW_LAYER_LABEL": "Vous entrerez directement en mode édition dans la carte sur votre nouvelle couche.",
+      "FILE_LABEL": "Choisissez un fichier contenant vos données au format <a href='https://geojson.org/'>GeoJSON</a>.",
+      "CREATE_IMPORT_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
+      "ZOOM_IMPORT_LAYER_LABEL": "La carte sera centrée sur votre nouvelle couche."
     }
   },
   "KLocationField": {

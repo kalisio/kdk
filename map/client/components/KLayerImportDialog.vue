@@ -1,7 +1,7 @@
 <template>
   <k-modal ref="modal" :title="$t('KLayerImportDialog.TITLE')" :buttons="getButtons()">
     <div slot="modal-content">
-      <q-file v-model="pickedFile"
+      <q-file for="file-input" v-model="pickedFile"
         clearable counter
         :counter-label="counterLabel"
         :accept="accept"

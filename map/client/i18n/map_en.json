@@ -221,6 +221,23 @@
       "NEXT_DAY_LABEL": "Go forward in time to the next day.",
       "PREVIOUS_DAY_LABEL": "Go backward in time to the previous day.",
       "PICK_DAY_LABEL": "Or pick a given day."
+    },
+    "fab": {
+      "PROBE_LABEL": "Probe weather forecast data at a specific location.",
+      "PROBE_CURSOR_LABEL": "After selecting this option click on a target location on the map to display related forecast data.",
+      "CREATE_LAYER_LABEL": "Create a new blank data layer.",
+      "CREATE_LAYER_LINK_LABEL": "How to create a new data layer",
+      "IMPORT_LAYER_LABEL": "Import existing data as a new data layer.",
+      "IMPORT_LAYER_LINK_LABEL": "How to import map data",
+      "LAYER_NAME_LABEL": "Enter the name of your new data layer.",
+      "LAYER_DESCRIPTION_LABEL": "Then provide a description for your new data layer.",
+      "LAYER_FEATURE_ID_LABEL": "Choose an identifier to uniquely identify the features of your layer.",
+      "LAYER_SCHEMA_LABEL": "Last, select the data schema of your features (<a href='https://json-schema.org/'>JSON schema</a> file).",
+      "CREATE_NEW_LAYER_LABEL": "Confirm the creation of your new layer.",
+      "EDIT_NEW_LAYER_LABEL": "You will then directly enter in edition mode on the map for your new layer.",
+      "FILE_LABEL": "Choisissez un fichier contenant vos données au format <a href='https://geojson.org/'>GeoJSON</a>.",
+      "CREATE_IMPORT_LAYER_LABEL": "Confirm the creation of your new layer.",
+      "ZOOM_IMPORT_LAYER_LABEL": "The map will be centered on your new layer."
     }
   },
   "KLocationField": {
