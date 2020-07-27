@@ -1,8 +1,6 @@
 <template>
   <div
     @click="truncate=!truncate"
-    @mouseover="onMouseOver"
-    @mouseleave="onMouseLeave"
     v-html="html">
   </div>
 </template>
@@ -32,14 +30,6 @@ export default {
   data () {
     return {
       truncate: true
-    }
-  },
-  methods: {
-    onMouseOver () {
-      if (!this.$q.platform.is.mobile) this.truncate = false
-    },
-    onMouseLeave () {
-      if (!this.$q.platform.is.mobile) this.truncate = true
     }
   }
 }

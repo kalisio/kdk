@@ -7,7 +7,8 @@
     no-error-icon
     bottom-slots
   >
-    <q-editor 
+    <q-editor
+      :id="properties.name + '-field'"
       v-model="model"
       class="full-width"
       content-class="text-grey-8" 
