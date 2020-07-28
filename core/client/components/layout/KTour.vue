@@ -313,7 +313,14 @@ export default {
       } else if (_.has(step, 'params.tour')) {
         // Stop current tour before starting next one
         this.getTour().stop()
-        this.$store.patch('tours.current', { name: _.get(step, 'params.tour') })
+        // Tour name can be prefixed by route if different perspectives are available
+        const name = _.get(step, 'params.tour')
+        const route = this.$route.name
+        if (this.$store.has(`tours.${route}/${name}`)) {
+          this.$store.patch('tours.current', { name: `${route}/${name}` })
+        } else {
+          this.$store.patch('tours.current', { name })
+        }
       } else if (_.has(step, 'params.nextDelay')) {
         const delay = _.get(step, 'params.nextDelay')
         setTimeout(() => this.nextStep(), _.toNumber(delay))

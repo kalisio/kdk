@@ -213,7 +213,7 @@
       "NOW_LABEL": "Stick to real-time using this button.",
       "NEXT_STEP_LABEL": "Go forward in time to the next step as configured in your settings.",
       "PREVIOUS_STEP_LABEL": "Go backward in time to the previous step as configured in your settings.",
-      "SETTINGS_LINK": "How to update your settings in the main menu",
+      "SETTINGS_LINK_LABEL": "How to update your settings in the main menu",
       "PICK_MINUTES_LABEL": "Change the minutes of current time.",
       "NEXT_HOUR_LABEL": "Go forward in time to the next hour.",
       "PREVIOUS_HOUR_LABEL": "Go backward in time to the previous hour.",

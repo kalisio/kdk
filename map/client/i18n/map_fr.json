@@ -213,7 +213,7 @@
       "NOW_LABEL": "Suivez le temps courant via ce bouton.",
       "NEXT_STEP_LABEL": "Avancez dans le temps tel que configuré dans vos paramètres.",
       "PREVIOUS_STEP_LABEL": "Reculez dans le temps tel que configuré dans vos paramètres.",
-      "SETTINGS_LINK": "Mettre à jour vos paramètres dans le menu principal",
+      "SETTINGS_LINK_LABEL": "Mettre à jour vos paramètres dans le menu principal",
       "PICK_MINUTES_LABEL": "Modifiez les minutes du temps courant.",
       "NEXT_HOUR_LABEL": "Avancez dans le temps d'une heure.",
       "PREVIOUS_HOUR_LABEL": "Reculez dans le temps d'une heure.",

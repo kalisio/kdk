@@ -153,6 +153,7 @@ export default {
       }
     },
     onClose () {
+      this.$refs.carousel.exitFullscreen()
       this.opened = false
     },
     async show (medias = []) {

@@ -19,14 +19,18 @@ module.exports = [{
 }, {
   target: '#timeline-forward',
   title: 'tours.timeline.NEXT_STEP_LABEL',
+  link: 'tours.timeline.SETTINGS_LINK_LABEL',
   params: {
-    placement: 'top'
+    placement: 'top',
+    tour: 'home'
   }
 }, {
   target: '#timeline-backward',
   title: 'tours.timeline.PREVIOUS_STEP_LABEL',
+  link: 'tours.timeline.SETTINGS_LINK_LABEL',
   params: {
-    placement: 'top'
+    placement: 'top',
+    tour: 'home'
   }
 }, {
   target: '#timeline-minutes-1',
