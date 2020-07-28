@@ -382,7 +382,6 @@
   "KLayerImportDialog": {
     "TITLE": "Import layer",
     "INPUT_HINT": "Select a file",
-    "CANCEL_BUTTON": "Cancel",
     "IMPORT_BUTTON": "Import"
   }
 }

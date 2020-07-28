@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="$t('KLayerImportDialog.TITLE')" :buttons="getButtons()">
+  <k-modal ref="modal" :title="$t('KLayerImportDialog.TITLE')" :buttons="getButtons()" :toolbar="getToolbar()">
     <div slot="modal-content">
       <q-file for="file-input" v-model="pickedFile"
         clearable counter
@@ -32,10 +32,14 @@ export default {
     }
   },
   methods: {
+    getToolbar () {
+      return [
+        { name: 'close', icon: 'las la-times', handler: () => { this.doCancel() } }
+      ]
+    },
     getButtons () {
       return [
         { name: 'import-button', label: this.$t('KLayerImportDialog.IMPORT_BUTTON'), color: 'primary', handler: () => this.doImport() },
-        { name: 'cancel-button', label: this.$t('KLayerImportDialog.CANCEL_BUTTON'), color: 'primary', handler: () => this.doCancel() }
       ]
     },
     counterLabel ({ totalSize, filesNumber, maxFiles }) {

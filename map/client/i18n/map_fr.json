@@ -383,7 +383,6 @@
   "KLayerImportDialog": {
     "TITLE": "Importer une couche",
     "INPUT_HINT": "Sélectionnez un fichier",
-    "CANCEL_BUTTON": "Annuler",
     "IMPORT_BUTTON": "Importer"
   }
 }
