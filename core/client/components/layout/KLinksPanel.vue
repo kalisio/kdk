@@ -37,10 +37,11 @@ export default {
         openURL(link.url)
         return
       }
-      // Internal route otherwise
-      const route = { name: link.route.name }
+      // Internal route otherwise, if not provided use current one
+      // It means we'd like to only change some query parameters
+      const route = { name: link.route.name || this.$route.name }
       if (link.route.params) {
-        const resolvedParams = Object.assign({}, link.route.params)
+        const resolvedParams = Object.assign({}, this.$route.params, link.route.params)
         if (resolvedParams.context) {
           const context = this.$store.get(resolvedParams.context)
           resolvedParams.context = context
@@ -48,9 +49,9 @@ export default {
         route.params = resolvedParams
       }
       if (link.route.query) {
-        route.query = Object.assign({}, this.$route.query)
+        route.query = Object.assign({}, this.$route.query, link.route.query)
       }
-      this.$router.push(route)
+      this.$router.push(route).catch(_ => {})
     }
   },
   created () {

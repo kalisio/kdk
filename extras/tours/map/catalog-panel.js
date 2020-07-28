@@ -20,7 +20,7 @@ module.exports = [{
   title: 'tours.catalog-panel.SHOW_LAYER_LABEL',
   params: {
     placement: 'bottom',
-    clickOn: '#Layers\\.OSM_DARK',
+    clickOn: '#Layers\\.OSM_DARK * img',
     clickDelay: 1000,
     clickOnPrevious: '#BaseLayers * i',
     previousDelay: 500
@@ -31,7 +31,7 @@ module.exports = [{
   content: 'tours.catalog-panel.MIN_LEVEL_LABEL',
   params: {
     placement: 'bottom',
-    clickOn: '#Layers\\.OSM_BRIGHT',
+    clickOn: '#Layers\\.OSM_BRIGHT * img',
     clickDelay: 1000,
     clickOnNext: ['#BaseLayers * i', '#MeteoLayers * i'],
     nextDelay: 500
