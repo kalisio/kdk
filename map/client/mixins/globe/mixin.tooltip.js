@@ -50,6 +50,7 @@ export default {
       const level = properties.NivSituVigiCruEnt
       if (name && !_.isNil(level)) return Object.assign({
         show: false,
+        sticky: true,
         text: name + '\n'  + this.$t('Layers.VIGICRUES_VIGILANCE_' + level)
       }, this.options.tooltip)
       else return null
