@@ -121,7 +121,7 @@ export default {
       if (Array.isArray(times) && Array.isArray(values)) {
         /// Look for the nearest time
         const nearestTime = getNearestTime(this.currentTime, times.map(time => moment.utc(time)))
-        return (nearestTime.index > 0 ? values[nearestTime.index] : null)
+        return (nearestTime.index >= 0 ? values[nearestTime.index] : null)
       } else {
         // Constant value
         return values
