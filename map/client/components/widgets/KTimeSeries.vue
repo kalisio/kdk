@@ -159,11 +159,11 @@ export default {
         const label = this.$t(variable.label) || variable.label
         // Variable available for feature ?
         if (properties[variable.name]) {
-          this.datasets.push(Object.assign({
+          this.datasets.push(_.merge({
             label: `${label} (${unit})`,
             data: properties[variable.name].map((value, index) => ({ x: new Date(time[variable.name][index]), y: value })).filter(this.filter),
             yAxisID: unit
-          }, variable.chartjs))
+          }, _.omit(variable.chartjs, 'yAxis')))
         }
       })
     },
@@ -177,15 +177,15 @@ export default {
         // Variable available for feature ?
         // Check also if axis already created
         if (properties[variable.name] && !_.find(this.yAxes, axis => axis.id === unit)) {
-          this.yAxes.push({
+          this.yAxes.push(_.merge({
             id: unit,
             position: isLeft ? 'left' : 'right',
             scaleLabel: {
               display: true,
               labelString: unit
             }
-          })
-          // Alternate axes
+          }, _.get(variable.chartjs, 'yAxis', {})))
+          // Alternate axes by default
           isLeft = !isLeft
         }
       })
