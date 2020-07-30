@@ -1,5 +1,5 @@
 <template>
-
+  <div>
   <div class="k-legend shadow-2" :style="colorLegendStyle"
     v-show="visible" @click="onColorLegendClick"
   >
@@ -7,7 +7,7 @@
       :style="colorUnitStyle"
     >
       {{unit}}
-      <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 20]" v-show="hint">{{hint}}</q-tooltip>
+      <q-tooltip v-if="hint" anchor="top middle" self="bottom middle" :offset="[10, 20]" v-show="hint">{{hint}}</q-tooltip>
     </span>
 
     <span class="k-gradient-step"
@@ -23,7 +23,8 @@
       {{unitValue}}
     </span>
   </div>
-
+  <canvas ref="canvas" v-show="visible" :style="canvasStyle"/>
+  </div>
 </template>
 
 <script>
@@ -92,11 +93,17 @@ export default {
         width: '100%',
         height: this.unitHeight + 'px'
       }
+    },
+    canvasStyle () {
+      return {
+        width: '100%',
+        height: this.colorLegendHeight + 'px'
+      }
     }
   },
   methods: {
     getUnitValueStyle (index) {
-      const height = this.colorLegendHeight / this.values.length
+      const height = this.colorLegendHeight / this.unitValues.length
       let top = index * height
       // invert: calculate placement from the bottom of the legend
       if (this.invert) {
@@ -163,6 +170,10 @@ export default {
     },
     hideColorLegend () {
       this.updateColorLegend(null, null)
+
+      const canvas = this.$refs.canvas
+      const ctx = canvas.getContext('2d', { alpha: false })
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
     },
     setColorLegend (visible, unit, hint, colorMap, colors, values, unitValues, showGradient) {
       this.visible = visible
@@ -173,6 +184,35 @@ export default {
       this.values = values
       this.unitValues = unitValues
       this.showGradient = showGradient
+
+      if (visible) {
+        this.drawLegend()
+      }
+    },
+    drawLegend () {
+      /*
+      const canvas = this.$refs.canvas
+      const ctx = canvas.getContext('2d', { alpha: false })
+
+      // draw legend colors
+      if (this.showGradient) {
+        
+      } else {
+        const height = canvas.height / this.colors.length
+        for (let i = 0; i < this.colors.length; ++i) {
+          ctx.fillStyle = this.colors[i]
+          ctx.fillRect(0, i * height, canvas.width, height)
+        }
+      }
+
+      // and associated values
+      const xOffset = 40
+      const yOffset = this.showGradient ? 
+      if (this.showGradient) {
+        
+      } else {
+      }
+      */
     },
     resetColorLegend () {
       this.setColorLegend(false, null, null, null, null, null, null, false)
@@ -260,6 +300,10 @@ export default {
           colors = scale
         }
         // Only one unit, we don't need to convert, return the class values as-is
+        /*
+        unitValues = []
+        for (let i = 1; i < values.length; ++i) { unitValues.push(`${values[i - 1]} - ${values[i]}`) }
+        */
         if (units.length === 1) {
           unitValues = values
         } else {
@@ -331,4 +375,7 @@ export default {
 .k-gradient-step
   position: absolute;
   display: inline-block;
+
+.container
+  display: grid;
 </style>
