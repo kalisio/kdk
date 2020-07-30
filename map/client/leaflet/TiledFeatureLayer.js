@@ -77,9 +77,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
         if (tile.features) {
           // If probe are given we should have a perfect match
           if (tile.probes) {
-            tile.features = tile.features.filter(feature => {
+            tile.features.features = tile.features.features.filter(feature => {
               const key = this.getFeatureKey(feature)
-              return tile.probes.find(probe => key === this.getFeatureKey(probe))
+              return _.find(tile.probes.features, probe => key === this.getFeatureKey(probe))
             })
           }
           this.activity.updateLayer(this.layer.name, tile.features)
