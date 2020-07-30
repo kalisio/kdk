@@ -59,24 +59,30 @@ The data model of a layer descriptor as used by the API is detailed below.
 
 ![Catalog data model](../../assets/catalog-data-model.png)
 
-The catalog is typically populated at application startup with a default set of layers, as a consequence the best is to have a look at some of our application configuration files like the one of [Kano](https://github.com/kalisio/kano/blob/master/api/config/layers.js).
+The catalog is typically populated at application startup with a default set of layers, as a consequence the best is to have a look at some of our application configuration files like the one of [Kano](https://github.com/kalisio/kano/blob/master/api/config/layers).
 
 The details of each property are the following:
-* **name** : the layer name, typically used in the [layers panel](./components.md#layers-panel)
-* **description** : the layer short description, typically used in the [layers panel](./components.md#layers-panel)
+* **name** : the layer name, typically used in the [catalog panel](./components.md#catalog-panel)
+* **description** : the layer short description, typically used in the [catalog panel](./components.md#catalog-panel)
+* **i18n**: layer translations, see [application internationalization](../core/application.md#client-ecosystem) for details
+  * **locale**: translations for a target locale eg `FR`
+     * **Layers**: translation keys/values for layer fields
+     * **Variables**: translation keys/values for variable fields
 * **type** : usually `BaseLayer` for map backgrounds, `TerrainLayer` for 3D terrain, `OverlayLayer` for additionnal data layers
-* **tags** : list of tags to classify the layer
+* **tags** : list of tags (i.e. array of strings) used to classify the layer
 * **icon** : a [Quasar icon](https://quasar.dev/options/app-icons) for the layer, typically used in the [layers panel](./components.md#layers-panel)
 * **iconUrl** : a link to an image to be used as icon for the layer, typically used in the [layers panel](./components.md#layers-panel)
 * **attribution** : data attribution informaiton to be displayed along with the layer
 * **leaflet** : options to be passed to the underlying Leaflet layer constructor
   * **type**: the type of Leaflet layer to be constructed (i.e. class/constructor function name), e.g. `tileLayer` or `geoJson`
   * **source**: if provided this property is reserved for the first argument to be passed to the underlying Leaflet layer constructor, typically the URL or the GeoJson data, in this case the options will be passed as the second argument
+  * **option**: all others fields are considered as options to be passed to the layer constructor
 * **cesium**: options to be passed to the underlying Cesium layer constructor
   * **type**: the type of Cesium layer to be constructed (i.e. class/constructor function name), e.g. `EllipsoidTerrainProvider` or `BingImageryProvider`
+  * **option**: all others fields are considered as options to be passed to the layer constructor
 
 ::: tip
-The `type` and `tags` attributes are typically used by the [layers panel](./components.md#layers-panel) to organize the layer selection in a meaningful way.
+The `type` and `tags` attributes are typically used by the [catalog panel](./components.md#catalog-panel) to organize the layer selection in a meaningful way.
 :::
 
 If the layer is a feature layer based on a [feature service](./services.md#feature-service) the additional properties are the following:
@@ -94,13 +100,13 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 
 The sole [hook](./hooks.md) executed on the `catalog` service is one that sets the default query type to layer (ie `$ne: 'service'`) when not provided.
 
-## Feature service
+## Features service
 
 ::: tip
 Available as a global and a contextual service
 :::
 
-The service can be created using the global **createCatalogService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../core/application.md#createservice-name-options).
+The service can be created using the global **createFeaturesService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../core/application.md#createservice-name-options).
 
 ### Data model
 
@@ -159,9 +165,24 @@ const collection = await app.getService('features').find({
 // Do something with the resulting feature collection
 ```
 
-Such a complex query is fine when using the [Feathers isomorphic API](https://docs.feathersjs.com/api/client.html#universal-isomorphic-api) but if to be expressed manually as REST you have to convert nested objects to array notation like this: `/api/features?probeId=59248de38bb91d28d8155b3c&forecastTime=2017-05-27T07:00:00.000Z&geometry[$near][$maxDistance]=1000000&geometry[$near][$geometry][type]=Point&geometry[$near][$geometry][coordinates][]=5&geometry[$near][$geometry][coordinates][]=43`.
+Such a complex query is fine when using the [Feathers isomorphic API](https://docs.feathersjs.com/api/client.html#universal-isomorphic-api) but if to be expressed manually as HTTP REST request you have to convert nested objects to array notation like this: `/api/features?probeId=59248de38bb91d28d8155b3c&forecastTime=2017-05-27T07:00:00.000Z&geometry[$near][$maxDistance]=1000000&geometry[$near][$geometry][type]=Point&geometry[$near][$geometry][coordinates][]=5&geometry[$near][$geometry][coordinates][]=43`.
 
-You can also filter results according to the computed element values by using the [Feathers common database query API](https://docs.feathersjs.com/api/databases/querying.html), e.g. to get results with a speed between 2 m/s and 5 m/s:
+The service also supports some shortcuts for the most useful types of spatial requests:
+* *proximity filter* will trigger a [`$near`](https://docs.mongodb.com/manual/reference/operator/query/near/) or [`$geoNear`](https://docs.mongodb.com/manual/reference/operator/aggregation/geoNear/) operation (if aggregation is performed)
+  * **centerLon**: location longitude
+  * **centerLat**: location latitude
+  * **distance**: query distance from location in meters
+* *bounding box filter* will trigger a [`$geoIntersects`](https://docs.mongodb.com/manual/reference/operator/query/geoIntersects/) operation
+  * **south**: south coordinates of the bounding box in degrees
+  * **north**: north coordinates of the bounding box in degrees
+  * **west**: west coordinates of the bounding box in degrees
+  * **east**: east coordinates of the bounding box in degrees
+
+::: warning
+Complex spatial queries can raise an issue when using REST HTTP requests due to their length, in that case use shortcuts presented above.
+:::
+
+You can also filter results according to the computed element values by using the [Feathers common database query API](https://docs.feathersjs.com/api/databases/querying.html), e.g. to get results with a speed between 2 m/s and 5 m/s in a given area:
 
 ```javascript
 import api from 'src/api'
@@ -171,7 +192,11 @@ const collection = await api.getService('features').find({
     'properties.speed': {
       $gte: 2,
       $lte: 5
-    }
+    },
+    south: 45,
+    north: 50,
+    west: 5,
+    east: 10
   }
 })
 // Do something with the resulting feature collection
@@ -179,5 +204,43 @@ const collection = await api.getService('features').find({
 
 ### Hooks
 
-The following [hooks](./hooks.md) are executed on the `feature` service:
+The following [hooks](./hooks.md) are executed on the `features` service:
 ![Features hooks](../../assets/feature-hooks.png)
+
+## Alerts service
+
+::: tip
+Available as a global and a contextual service
+:::
+
+The service can be created using the global **createAlertsService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../core/application.md#createservice-name-options).
+
+Alerts are user-defined conditions automatically and continuously evaluated as new time-based data are gathered and target sensor measures or forecast data. It can be viewed as an automated query of the [feature aggregation API](./services.md#feature-service) or [Weacast probe API](https://weacast.github.io/weacast-docs/api/probe.html#probes-api) that will raise an event or trigger a webhook whenever a matching result is found. With alerts you can create triggers which will fire on an occurrence of the selected measure or weather conditions (temperature, humidity, pressure, etc.) in a specified location and period of time.
+
+### Data model
+
+The common model is a [GeoJSON feature](https://tools.ietf.org/html/rfc7946#section-3.2) with the geometry of the source feature for measurements or a [GeoJSON point](https://tools.ietf.org/html/rfc7946#section-3.1.2) for weather.
+
+The data model of an alert as used by the API is detailed below.
+
+![Alert data model](../../assets/alert-data-model.png)
+
+The details of some of the properties are the following:
+* **cron**: a [CRON pattern](https://github.com/kelektiv/node-cron) to schedule the alert check at regular intervals, e.g. `* 0 * * * *` will run it every minute
+* **feature**: the ID of the feature to be checked by the alert
+* **layer**: the layer object owing the feature to be checked by the alert
+* **elements**: array of names corresponding to the probed forecast element values to be checked by the alert (each element has to be declared in the [weacast configuration](https://weacast.github.io/weacast-docs/guides/basics.html#configuring))
+* **period**: time interval used to do the matching between the forecast data and the trigger conditions
+  * **start**: offset which needs to be added to the current timestamp at the moment of validation to compute the beginning of the time interval used to check the conditions, specified as [moment.js duration object](https://momentjs.com/docs/#/manipulating/add/)
+  * **end**: offset which needs to be added to the current timestamp at the moment of validation to compute the end of the time interval used to check the conditions, specified as [moment.js duration object](https://momentjs.com/docs/#/manipulating/add/)
+* **conditions**: query specification which contains nested objects:
+  * **[probed element]**: for each checked element a filter according to the probed values specified using the [Feathers common database query API](https://docs.feathersjs.com/api/databases/querying.html)
+* **geometry** specification of a [geospatial query](https://docs.mongodb.com/manual/reference/operator/query/geoWithin/)
+* **webhook**: webhook to be triggered
+  * **url**: webhook target URL
+  * **xxx**: request body field values that will be POST on the URL
+
+  ### Hooks
+
+The following [hooks](./hooks.md) are executed on the `alerts` service:
+![Alert hooks](../../assets/alert-hooks.png)
