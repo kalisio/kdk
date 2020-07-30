@@ -71,6 +71,19 @@ const TiledFeatureLayer = L.GridLayer.extend({
       }
 
       if (tile.probes || tile.features) {
+        if (tile.probes) {
+          this.activity.updateLayer(this.layer.name, tile.probes)
+        }
+        if (tile.features) {
+          // If probe are given we should have a perfect match
+          if (tile.probes) {
+            tile.features = tile.features.filter(feature => {
+              const key = this.getFeatureKey(feature)
+              return tile.probes.find(probe => key === this.getFeatureKey(probe))
+            })
+          }
+          this.activity.updateLayer(this.layer.name, tile.features)
+        }
         // ref each feature
         // TODO: we could only add features with refcount = 1
         // but in case of probes we need to find corresponding features
@@ -80,9 +93,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
           refCount = refCount === undefined ? 1 : refCount + 1
           this.featureRefCount.set(key, refCount)
         })
-
-        if (tile.probes) this.activity.updateLayer(this.layer.name, tile.probes)
-        if (tile.features) this.activity.updateLayer(this.layer.name, tile.features)
 
         if (_.get(this.options, 'debug.showTileInfos')) {
           if (tile.probes) tile.innerHTML += `fetched ${tile.probes.features.length} probes</br>`
