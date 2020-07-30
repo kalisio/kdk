@@ -37,6 +37,12 @@ const TiledWindLayer = L.GridLayer.extend({
     this.vSource.on('data-changed', this.onDataChangedCallback)
     this.uSource.setup(uConf)
     this.vSource.setup(vConf)
+    // add jwtToken to grid sources conf
+    if (options.jwtToken) {
+      this.uSource.updateCtx.jwtToken = options.jwtToken
+      this.vSource.updateCtx.jwtToken = options.jwtToken
+    }
+
     this.numDataChanged = 0
 
     // build the underlying velocity layer

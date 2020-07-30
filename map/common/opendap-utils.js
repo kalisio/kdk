@@ -7,9 +7,13 @@ import { BaseGrid } from './grid.js'
 export const opendapTypes = new Set(['Float32', 'Float64'])
 
 export async function fetchDescriptor (url) {
+  const question = url.indexOf('?')
+  const ddsUrl = question === -1 ? `${url}.dds` : `${url.substring(0, question)}.dds${url.substring(question)}`
+  const dasUrl = question === -1 ? `${url}.das` : `${url.substring(0, question)}.das${url.substring(question)}`
+
   // request dds & das concurrently
-  const ddsReq = fetch(`${url}.dds`).then(response => response.text())
-  const dasReq = fetch(`${url}.das`).then(response => response.text())
+  const ddsReq = fetch(ddsUrl).then(response => response.text())
+  const dasReq = fetch(dasUrl).then(response => response.text())
   const [ddsTxt, dasTxt] = await Promise.all([ddsReq, dasReq])
 
   /* eslint new-cap: ["error", { "newIsCap": false }] */
@@ -127,7 +131,8 @@ export function makeQuery (base, config) {
   } else {
     variables = _.keys(config).map(variable => `${variable}[${config[variable]}]`)
   }
-  const url = `${base}.dods?` + variables.join(',')
+  const question = base.indexOf('?')
+  const url = (question === -1 ? `${base}.dods?` : `${base.substring(0, question)}.dods${base.substring(question)}&`) + variables.join(',')
   return encodeURI(url)
 }
 

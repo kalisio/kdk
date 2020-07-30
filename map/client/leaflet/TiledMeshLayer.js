@@ -72,6 +72,9 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.onDataChangedCallback = this.onDataChanged.bind(this)
     this.gridSource.on('data-changed', this.onDataChangedCallback)
     this.gridSource.setup(gridConf)
+
+    // add jwtToken to gridSource conf
+    if (options.jwtToken) this.gridSource.updateCtx.jwtToken = options.jwtToken
   },
 
   onAdd (map) {

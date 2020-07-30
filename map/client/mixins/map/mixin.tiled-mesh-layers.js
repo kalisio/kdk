@@ -18,6 +18,8 @@ export default {
       leafletOptions[gridKey] = gridConf
 
       leafletOptions.weacastApi = this.weacastApi
+      const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+      if (gatewayToken) leafletOptions.jwtToken = gatewayToken
 
       return new TiledMeshLayer(leafletOptions)
     },
