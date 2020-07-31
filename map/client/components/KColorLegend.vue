@@ -190,7 +190,6 @@ export default {
       }
     },
     drawLegend () {
-      /*
       const canvas = this.$refs.canvas
       const ctx = canvas.getContext('2d', { alpha: false })
 
@@ -206,13 +205,21 @@ export default {
       }
 
       // and associated values
+      ctx.fillStyle = 'white'
+      ctx.strokeStyle = 'black'
+      
       const xOffset = 40
-      const yOffset = this.showGradient ? 
-      if (this.showGradient) {
-        
-      } else {
-      }
-      */
+      const yOffset = this.showGradient ? 0 : 0
+      //if (this.showGradient) {
+        const height = canvas.height / this.colors.length
+        for (let i = 0; i < this.unitValues.length; ++i) {
+          // ctx.fillStyle = this.colors[i]
+          // ctx.fillRect(0, i * height, canvas.width, height)
+          ctx.strokeText(`${this.unitValues[i]}`, 1 + xOffset, 1 + yOffset + i * height)
+          ctx.fillText(`${this.unitValues[i]}`, xOffset, yOffset + i * height)
+        }
+      //} else {
+    //}
     },
     resetColorLegend () {
       this.setColorLegend(false, null, null, null, null, null, null, false)
