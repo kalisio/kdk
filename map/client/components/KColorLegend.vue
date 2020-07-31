@@ -76,11 +76,15 @@ export default {
       if (!this.unitFrom) return
 
       const units = _.get(this.layer, 'variables[0].units')
-      const index = units.indexOf(this.unitTo)
-      if (index === -1) return
+      if (units.length > 1) {
+        const index = units.indexOf(this.unitTo)
+        if (index === -1) return
 
-      const next = (index + 1) % units.length
-      this.hint = this.$t('mixins.legend.CONVERT_UNITS', { layer: this.layer.name, unit: units[next] })
+        const next = (index + 1) % units.length
+        this.hint = this.$t('mixins.legend.CONVERT_UNITS', { layer: this.layer.name, unit: units[next] })
+      } else {
+        this.hint = null
+      }
     },
     drawLegend () {
       const canvas = this.$refs.canvas
@@ -91,9 +95,14 @@ export default {
       // clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+      ctx.shadowOffsetX = 1
+      ctx.shadowOffsetY = 1
+      ctx.shadowColor = 'black'
+      ctx.shadowBlur = 2
+
       /*
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = 'rgba(255, 255, 255, 1.0)'
+      ctx.fillRect(0, 0, canvas.width - 2, canvas.height - 2)
       */
 
       const fontSize = 12
@@ -105,15 +114,6 @@ export default {
 
       const grad = ctx.createLinearGradient(0, topPadding, 0, topPadding + legendHeight)
       const values = this.scaleToCanvas(grad, this.colorMap, this.unitFrom, this.unitTo)
-
-      ctx.shadowOffsetX = 1
-      ctx.shadowOffsetY = 1
-      ctx.shadowColor = 'black'
-      ctx.shadowBlur = 2
-
-      // draw legend colors
-      ctx.fillStyle = grad
-      ctx.fillRect(0, topPadding, colorWidth, legendHeight)
 
       // draw legend values
       ctx.font = `${fontSize}px sans`
@@ -132,6 +132,17 @@ export default {
         ctx.textBaseline = 'alphabetic'
         ctx.fillText(`${this.unitTo}`, 0, canvas.height - fontSize)
       }
+
+      /*
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 0
+      ctx.shadowColor = 'black'
+      ctx.shadowBlur = 0
+      */
+
+      // draw legend colors
+      ctx.fillStyle = grad
+      ctx.fillRect(0, topPadding, colorWidth, legendHeight)
 
       ctx.restore()
     },
