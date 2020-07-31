@@ -1,36 +1,14 @@
 <template>
-  <div>
-  <div class="k-legend shadow-2" :style="colorLegendStyle"
-    v-show="visible" @click="onColorLegendClick"
-  >
-    <span class="k-unit-box bg-secondary text-white text-caption"
-      :style="colorUnitStyle"
-    >
-      {{unit}}
-      <q-tooltip v-if="hint" anchor="top middle" self="bottom middle" :offset="[10, 20]" v-show="hint">{{hint}}</q-tooltip>
-    </span>
-
-    <span class="k-gradient-step"
-      v-for="gradientStep in gradientSteps" :key="'step'+gradientStep"
-      :style="getGradientStepStyle(gradientStep)"
-    >
-    </span>
-
-    <span class="k-value-step text-white"
-      v-for="(unitValue, index) in unitValues" :key="index"
-      :style="getUnitValueStyle(index)"
-    >
-      {{unitValue}}
-    </span>
-  </div>
-  <canvas ref="canvas" v-show="visible" :style="canvasStyle"/>
-  </div>
+  <canvas ref="canvas" v-show="visible" class='k-legend-canvas' :width="canvasWidth" :height="canvasHeight" @click="onClickLegend">
+    <q-tooltip v-if="hint" anchor="top middle" self="bottom middle" :offset="[10, 20]" v-show="hint">
+      {{hint}}
+    </q-tooltip>
+  </canvas>
 </template>
 
 <script>
 import _ from 'lodash'
 import math from 'mathjs'
-const COLOR_STEPS = 10
 
 // Get the unique global symbol to store event listeners on a leaflet object
 const DATA_LISTENER_KEY = Symbol.for('data-listener')
@@ -38,351 +16,204 @@ const DATA_LISTENER_KEY = Symbol.for('data-listener')
 export default {
   name: 'k-color-legend',
   inject: ['kActivity'],
-  props: {
-    // Height of the unit box (in pixels)
-    unitHeight: {
-      type: Number,
-      default: 42
-    }
-  },
   data () {
     return {
       visible: false,
-      unit: null,
-      hint: null,
-      colorMap: null,
-      colors: null,
-      values: null,
-      unitValues: null,
-      showGradient: false
+      hint: null
     }
   },
   computed: {
-    domainStart () {
-      return this.visible ? this.colorMap.domain()[0] : 0
+    canvasWidth () {
+      return 90
     },
-    domainRange () {
-      return this.visible ? this.colorMap.domain()[1] - this.colorMap.domain()[0] : 0
-    },
-    invert () {
-      return this.visible ? this.values[0] < this.values[this.values.length - 1] : false
-    },
-    // Height of the legend (in pixels) WITHOUT the unit box
-    colorLegendHeight () {
-      const height = 0.50 * this.kActivity.engineContainerHeight
-      return height - this.unitHeight
-    },
-    colorLegendStyle () {
-      return {
-        height: this.colorLegendHeight + 'px',
-        width: '40px',
-        fontSize: '12px'
-      }
-    },
-    // This is a number (the number of gradient steps) used in the Vue "v-for" clause - it must be an integer!
-    gradientSteps () {
-      // If we're not showing a gradient then return zero for the gradient steps,
-      // otherwise use Math.trunc() to make it an integer
-      return this.showGradient ? Math.trunc(this.colorLegendHeight) : 0
-    },
-    gradientStepValue () {
-      return this.domainRange / this.colorLegendHeight
-    },
-    colorUnitStyle () {
-      return {
-        width: '100%',
-        height: this.unitHeight + 'px'
-      }
-    },
-    canvasStyle () {
-      return {
-        width: '100%',
-        height: this.colorLegendHeight + 'px'
-      }
+    canvasHeight () {
+      return 0.5 * this.kActivity.engineContainerHeight
     }
   },
   methods: {
-    getUnitValueStyle (index) {
-      const height = this.colorLegendHeight / this.unitValues.length
-      let top = index * height
-      // invert: calculate placement from the bottom of the legend
-      if (this.invert) {
-        top = this.colorLegendHeight - top
-      // offset it from the color unit box
-      } else {
-        top = this.unitHeight + top
-      }
-      const css = {
-        width: '100%',
-        height: height + 'px',
-        top: top + 'px',
-        'text-shadow': '1px 1px 2px black'
-      }
-      if (!this.showGradient) {
-        css.backgroundColor = this.colors ? this.colors[index] : this.colorMap(this.values[index])
-      }
-      return css
-    },
-    getGradientStepStyle (gradientStep) {
-      let top = gradientStep
-      // invert: calculate placement from the bottom of the legend
-      if (this.invert) {
-        top = this.colorLegendHeight - top
-      }
-      // offset it from the color unit box
-      top = this.unitHeight + top
-      // calculate the domain value at this gradient step
-      const domainValue = this.domainStart + (gradientStep - 1) * this.gradientStepValue
-      return {
-        width: '100%',
-        height: '1px',
-        top: top + 'px',
-        backgroundColor: this.colorMap(domainValue)
-      }
-    },
     async onColorLegendShowLayer (layer, engineLayer) {
-      // Check for valid types
-      const colorMap = _.get(layer, 'variables[0].chromajs')
-      if (!colorMap) return
-      // It is required data is here to get color map object ready
-      if (engineLayer.hasData) this.addColorLegend(layer, engineLayer)
-      // Register to data change
-      engineLayer[DATA_LISTENER_KEY] = () => this.addColorLegend(layer, engineLayer)
+      if (engineLayer.hasData) this.updateColorLegend(layer, engineLayer)
+      engineLayer[DATA_LISTENER_KEY] = () => this.updateColorLegend(layer, engineLayer)
       engineLayer.on('data', engineLayer[DATA_LISTENER_KEY])
     },
     onColorLegendHideLayer (layer) {
-      if (this.legendLayer && ((this.legendLayer._id === layer._id) || (this.legendLayer.name === layer.name))) {
-        this.legendEngineLayer.off('data', this.legendEngineLayer[DATA_LISTENER_KEY])
-        delete this.legendEngineLayer[DATA_LISTENER_KEY]
-        this.hideColorLegend()
+      if (this.layer && ((this.layer._id === layer._id) || (this.layer.name === layer.name))) {
+        this.visible = false
+        this.engineLayer.off('data', this.engineLayer[DATA_LISTENER_KEY])
+        delete this.engineLayer[DATA_LISTENER_KEY]
       }
     },
-    async onColorLegendUpdateForecastLevel () {
-      const layer = this.legendLayer
-      const engineLayer = this.legendEngineLayer
-      this.hideColorLegend()
-      // We let Vue update computed data
-      await this.$nextTick()
-      this.addColorLegend(layer, engineLayer)
-    },
-    addColorLegend (layer, engineLayer) {
-      this.updateColorLegend(layer, engineLayer)
-    },
-    hideColorLegend () {
-      this.updateColorLegend(null, null)
+    onClickLegend (event) {
+      if (!this.unitFrom) return
 
-      const canvas = this.$refs.canvas
-      const ctx = canvas.getContext('2d', { alpha: false })
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-    },
-    setColorLegend (visible, unit, hint, colorMap, colors, values, unitValues, showGradient) {
-      this.visible = visible
-      this.unit = unit
-      this.hint = hint
-      this.colorMap = colorMap
-      this.colors = colors
-      this.values = values
-      this.unitValues = unitValues
-      this.showGradient = showGradient
+      const units = _.get(this.layer, 'variables[0].units')
+      const index = units.indexOf(this.unitTo)
+      if (index === -1) return
 
-      if (visible) {
+      const to = (index + 1) % units.length
+      this.unitTo = units[to]
+
+      this.drawLegend()
+      this.updateHint()
+    },
+    updateColorLegend (layer, engineLayer) {
+      this.layer = layer
+      this.engineLayer = engineLayer
+
+      this.colorMap = _.get(engineLayer, 'colorMap', null)
+      this.visible = this.colorMap !== null
+
+      const units = _.get(layer, 'variables[0].units')
+      this.unitFrom = units ? units[0] : null
+      this.unitTo = units ? units[0] : null
+
+      if (this.visible) {
         this.drawLegend()
+        this.updateHint()
       }
+    },
+    updateHint () {
+      if (!this.unitFrom) return
+
+      const units = _.get(this.layer, 'variables[0].units')
+      const index = units.indexOf(this.unitTo)
+      if (index === -1) return
+
+      const next = (index + 1) % units.length
+      this.hint = this.$t('mixins.legend.CONVERT_UNITS', { layer: this.layer.name, unit: units[next] })
     },
     drawLegend () {
       const canvas = this.$refs.canvas
-      const ctx = canvas.getContext('2d', { alpha: false })
+      const ctx = canvas.getContext('2d', { alpha: true })
+
+      ctx.save()
+
+      // clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      /*
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      */
+
+      const fontSize = 12
+      const topPadding = 10
+      const bottomPadding = 30
+      const legendHeight = canvas.height - (topPadding + bottomPadding)
+      const colorWidth = 30
+      const markWidth = 6
+
+      const grad = ctx.createLinearGradient(0, topPadding, 0, topPadding + legendHeight)
+      const values = this.scaleToCanvas(grad, this.colorMap, this.unitFrom, this.unitTo)
+
+      ctx.shadowOffsetX = 1
+      ctx.shadowOffsetY = 1
+      ctx.shadowColor = 'black'
+      ctx.shadowBlur = 2
 
       // draw legend colors
-      if (this.showGradient) {
-        
-      } else {
-        const height = canvas.height / this.colors.length
-        for (let i = 0; i < this.colors.length; ++i) {
-          ctx.fillStyle = this.colors[i]
-          ctx.fillRect(0, i * height, canvas.width, height)
-        }
-      }
+      ctx.fillStyle = grad
+      ctx.fillRect(0, topPadding, colorWidth, legendHeight)
 
-      // and associated values
+      // draw legend values
+      ctx.font = `${fontSize}px sans`
+      ctx.textBaseline = 'middle'
       ctx.fillStyle = 'white'
-      ctx.strokeStyle = 'black'
-      
-      const xOffset = 40
-      const yOffset = this.showGradient ? 0 : 0
-      //if (this.showGradient) {
-        const height = canvas.height / this.colors.length
-        for (let i = 0; i < this.unitValues.length; ++i) {
-          // ctx.fillStyle = this.colors[i]
-          // ctx.fillRect(0, i * height, canvas.width, height)
-          ctx.strokeText(`${this.unitValues[i]}`, 1 + xOffset, 1 + yOffset + i * height)
-          ctx.fillText(`${this.unitValues[i]}`, xOffset, yOffset + i * height)
-        }
-      //} else {
-    //}
-    },
-    resetColorLegend () {
-      this.setColorLegend(false, null, null, null, null, null, null, false)
-    },
-    updateColorLegend (layer, engineLayer) {
-      this.legendLayer = layer
-      this.legendEngineLayer = engineLayer
 
-      // Reset & hide the color legend
-      if (!this.legendLayer) {
-        this.resetColorLegend()
-      } else {
-        const colorMap = this.legendEngineLayer.colorMap
-        const scale = _.get(this.legendLayer, 'variables[0].chromajs.scale')
-        const units = this.getColorLegendUnits()
-        const unit = !units || units.length === 0 ? null : units[0]
-        const hint = this.getColorLegendHint(units, unit, this.legendLayer.name)
-        const [showGradient, colors, values, unitValues] =
-          this.getColorLegendValues(colorMap, scale, units, unit, COLOR_STEPS)
-        // We don't have units or steps for this layer, hide it
-        if (unit === null || values.length === 0) {
-          this.hideColorLegend()
-        // Units and steps (re)calculated, update the color legend
-        } else {
-          this.setColorLegend(true, unit, hint, colorMap, colors, values, unitValues, showGradient)
-        }
-      }
-    },
-    // Color legend was clicked - toggle to the next unit
-    onColorLegendClick (event) {
-      const colorMap = this.legendEngineLayer.colorMap
-      const scale = _.get(this.legendLayer, 'variables[0].chromajs.scale')
-      const units = this.getColorLegendUnits()
-      // There's only one unit, no toggling to do, we're done
-      if (units.length <= 1) {
-        return
-      }
-      // Get next unit and recalculate hint and steps
-      const nextUnit = this.getNextUnit(units, this.unit)
-      const hint = this.getColorLegendHint(units, nextUnit, this.legendLayer.name)
-      const [showGradient, colors, values, unitValues] =
-        this.getColorLegendValues(colorMap, scale, units, nextUnit, COLOR_STEPS)
-      // Units and steps (re)calculated, update the color legend
-      this.setColorLegend(true, nextUnit, hint, colorMap, colors, values, unitValues, showGradient)
-    },
-    getColorLegendUnits () {
-      return _.get(this.legendLayer, 'variables[0].units')
-    },
-    getColorLegendHint (units, unit, layerName) {
-      if (!units || units.length <= 1 || !unit) {
-        return null
-      }
-      // Determine hint by calling "this.getNextUnit"
-      const nextUnit = this.getNextUnit(units, unit)
-      return this.$t('mixins.legend.CONVERT_UNITS', { layer: layerName, unit: nextUnit })
-    },
-    getColorLegendValues (colorMap, scale, units, unit, steps) {
-      if (!colorMap || !units || units.length === 0 || !unit) return []
-
-      let showGradient
-      let colors
-      let values
-      let unitValues
-      const unitFrom = units[0] // base unit
-      const unitTo = unit
-
-      function valueMap (value) {
-        const unitValue = math.unit(value, unitFrom).toNumber(unitTo)
-        return Math.round(unitValue, 0).toFixed(0)
+      const xOffset = colorWidth + markWidth
+      for (let i = 0; i < values.length; ++i) {
+        const d = values[i][0]
+        const v = values[i][1]
+        ctx.fillText(v, xOffset, topPadding + d * legendHeight)
       }
 
-      const classes = colorMap.classes()
-      // Some tricky logic below:
-      //
-      // - Depending on whether we have one unit or more than one unit, we perform a unit conversion (or not)
-      // - Depending on whether we have 'classes' (predefined values) or not, we display a color 'gradient' or color 'steps'
-      // - Depending on whether the Chroma scale is specified as an array of colors, we pass these as "the" colors to
-      //   display; otherwise, we'll depend on calling "colorMap(value)" (chroma.js) to determine the colors
+      // draw values unit if any
+      if (this.unitTo) {
+        ctx.textBaseline = 'alphabetic'
+        ctx.fillText(`${this.unitTo}`, 0, canvas.height - fontSize)
+      }
+
+      ctx.restore()
+    },
+    scaleToCanvas (grad, scale, unitFrom, unitTo) {
+      const values = []
+
+      const colors = scale.colors()
+      const domain = scale.domain()
+      const classes = scale.classes()
+
       if (classes) {
-        showGradient = false
-        values = classes
-        // Special case: if we have classes, AND the scale is specified as an array of colors, then we take these
-        // as THE "colors" to be displayed by the color legend, so we then bypass "colorMap(value)" for getting the color
-        if (scale && Array.isArray(scale)) {
-          colors = scale
+        // expect N classes and N-1 colors
+        if (colors.length !== (classes.length - 1)) {
+          throw new Error(`Colormap has ${classes.length} classes and ${colors.length} colors, we expect N classes and N-1 colors, fix your colormap !`)
         }
-        // Only one unit, we don't need to convert, return the class values as-is
-        /*
-        unitValues = []
-        for (let i = 1; i < values.length; ++i) { unitValues.push(`${values[i - 1]} - ${values[i]}`) }
-        */
-        if (units.length === 1) {
-          unitValues = values
-        } else {
-          unitValues = values.map(valueMap)
+        for (let i = 0; i < colors.length; ++i) {
+          grad.addColorStop(i / colors.length, colors[i])
+          grad.addColorStop((i + 1) / colors.length, colors[i])
+          values.push([i / colors.length, classes[i]])
         }
+        values.push([1.0, classes[colors.length]])
       } else {
-        showGradient = true
-        values = []
-        const dm = colorMap.domain()[0]
-        const dd = colorMap.domain()[1] - dm
-        for (let i = 0; i < steps; i++) {
-          const value = dm + i / (steps - 1) * dd
-          values.push(value)
+        if (domain.length === colors.length) {
+          // as many colors as domain values
+          const vl = domain[0]
+          const vh = domain[domain.length - 1]
+
+          for (let i = 0; i < domain.length; ++i) {
+            const d = (domain[i] - vl) / (vh - vl)
+            grad.addColorStop(d, colors[i])
+            values.push([d, domain[i]])
+          }
+        } else {
+          // expect 2 domain values, we'll create intermediate values corresponding to colors
+          if (domain.length !== 2) {
+            throw new Error(`Colormap has ${domain.length} domain values, we expect only 2 when domain size is not equal to scale color size, fix your colormap !`)
+          }
+          const off = domain[0]
+          const sca = domain[domain.length - 1] - domain[0]
+          for (let i = 0; i < colors.length; ++i) {
+            const d = i / (colors.length - 1)
+            grad.addColorStop(d, colors[i])
+            const v = off + d * sca
+            values.push([d, v])
+          }
         }
-        unitValues = values.map(valueMap)
       }
 
-      return [showGradient, colors, values, unitValues]
-    },
-    getNextUnit (units, currentUnit) {
-      // No available units
-      if (!units || units.length <= 1 || !currentUnit) return null
+      // maybe convert to some other unit
+      if (unitFrom && unitTo && unitTo !== unitFrom) {
+        for (let i = 0; i < values.length; ++i) {
+          const oldv = values[i][1]
+          const newv = math.unit(oldv, unitFrom).toNumber(unitTo)
+          values[i][1] = newv
+        }
+      }
 
-      // 'Rotate' from the current unit to the next
-      const index = units.findIndex(unit => unit === currentUnit)
-      const newIndex = index === -1 ? null : index === units.length - 1 ? 0 : index + 1
-      const unit = newIndex === null ? null : units[newIndex]
+      // now try to find best way to display those
+      for (let i = 0; i < values.length; ++i) {
+        const oldv = values[i][1]
+        values[i][1] = `${oldv.toFixed(2)}`
+      }
 
-      return unit
+      return values
     }
   },
   mounted () {
-    this.resetColorLegend()
     this.kActivity.$on('layer-shown', this.onColorLegendShowLayer)
     this.kActivity.$on('layer-hidden', this.onColorLegendHideLayer)
-    // this.kActivity.$on('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
   },
   beforeDestroy () {
     // Delete reference to the legend layer
-    this.legendLayer = null
-    this.legendEngineLayer = null
-    this.resetColorLegend()
+    this.layer = null
+    this.engineLayer = null
+
     this.kActivity.$off('layer-shown', this.onColorLegendShowLayer)
     this.kActivity.$off('layer-hidden', this.onColorLegendHideLayer)
-    // this.kActivity.$off('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
   }
 }
 </script>
 
 <style lang="stylus">
-.k-legend
-  position: relative;
-  cursor: pointer;
-  border: none
-
-.k-unit-box
-  position: absolute;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-.k-value-step
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-.k-gradient-step
-  position: absolute;
-  display: inline-block;
-
-.container
-  display: grid;
+  .k-legend-canvas
+    cursor: pointer;
 </style>
