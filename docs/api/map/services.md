@@ -123,7 +123,9 @@ The raw data model of a feature (ie when no aggregation is performed) as used by
 
 ### Time-based feature aggregation
 
-Sometimes it is useful to retrieve a single result aggregating all the times for a given feature instead of multiple single results (i.e. one per time). You can perform such an aggregation based on [MongoDB capabilities](https://docs.mongodb.com/manual/core/aggregation-pipeline/) like this:
+Sometimes it is useful to retrieve a single result aggregating all the times for a given feature instead of multiple single results (i.e. one per time). It can also ease data management when a sensor generates different features for different variables, e.g. one feature owing the measure of one variable and another feature the measure of another variable because they are not probed at the same frequency.
+
+You can perform such an aggregation based on [MongoDB capabilities](https://docs.mongodb.com/manual/core/aggregation-pipeline/) like this:
 
 ```javascript
 let result = await app.getService('features').find({

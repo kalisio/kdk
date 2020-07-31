@@ -9,7 +9,7 @@ graph TB
     hook3 --> hook4(marshallSpatialQuery)
     hook4 --> hook5(aggregateFeaturesQuery)
     hook5 --> FIND[FIND]
-    FIND --> hook6(toFeatureCollection)
+    FIND --> hook6(asGeoJson)
     hook6 --> afterAll
 
     beforeAll --> GET[GET]
