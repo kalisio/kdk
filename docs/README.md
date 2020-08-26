@@ -3,7 +3,7 @@ home: true
 heroImage: https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-256x256.png
 actionText: Learn more about KDK ?
 actionLink: /about/
-footer: MIT Licensed | Copyright © 2017 Kalisio
+footer: MIT Licensed | Copyright © 2017-20xx Kalisio
 ---
 
 <center>

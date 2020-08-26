@@ -237,7 +237,7 @@
     "TOUR_MESSAGE": "Lancez maintenant un didacticiel détaillant le menu principal en cliquant sur l'icône",
     "TOUR_LINK_MESSAGE": "A chaque fois qu'une étape d'un didacticiel contient cette icône elle permet d'en lancer un autre détaillant la fonctionnalité visée.",
     "GOODBYE_MESSAGE": "Merci d'avoir parcouru ce didacticiel, vous êtes maintenant prêt à utiliser l'application !",
-    "HIDE_WELCOME": "Ne plus afficher ce message de Bievenue"
+    "HIDE_WELCOME": "Ne plus afficher ce message de Bienvenue"
   },
   "KTour": {
     "SKIP_LABEL": "Fermer",
