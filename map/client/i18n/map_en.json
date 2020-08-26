@@ -232,10 +232,10 @@
       "LAYER_NAME_LABEL": "Enter the name of your new data layer.",
       "LAYER_DESCRIPTION_LABEL": "Then provide a description for your new data layer.",
       "LAYER_FEATURE_ID_LABEL": "Choose an identifier to uniquely identify the features of your layer.",
-      "LAYER_SCHEMA_LABEL": "Last, select the data schema of your features (<a href='https://json-schema.org/'>JSON schema</a> file).",
+      "LAYER_SCHEMA_LABEL": "Last, select the data schema of your features (JSON schema file).",
       "CREATE_NEW_LAYER_LABEL": "Confirm the creation of your new layer.",
       "EDIT_NEW_LAYER_LABEL": "You will then directly enter in edition mode on the map for your new layer.",
-      "FILE_LABEL": "Choisissez un fichier contenant vos données au format <a href='https://geojson.org/'>GeoJSON</a>.",
+      "FILE_LABEL": "Choisissez un fichier contenant vos données au format GeoJSON.",
       "CREATE_IMPORT_LAYER_LABEL": "Confirm the creation of your new layer.",
       "ZOOM_IMPORT_LAYER_LABEL": "The map will be centered on your new layer."
     }
