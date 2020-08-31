@@ -713,9 +713,9 @@ export default function (name) {
         if (this.shouldRestoreView()) {
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            const params = _.get(this.$route, 'params', {})
             this.$router.replace({
-              params: Object.assign({}, params, targetBounds)
+              query: _.get(this.$route, 'query', {}),
+              params: Object.assign({}, _.get(this.$route, 'params', {}), targetBounds)
             }).catch(_ => {})
           }
           window.localStorage.setItem(this.getViewKey(), JSON.stringify(bounds))
@@ -741,9 +741,9 @@ export default function (name) {
           const east = bounds[1][1]
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            const params = _.get(this.$route, 'params', {})
             this.$router.replace({
-              params: Object.assign({}, params, targetBounds)
+              query: _.get(this.$route, 'query', {}),
+              params: Object.assign({}, _.get(this.$route, 'params', {}), targetBounds)
             }).catch(_ => {})
           }
           this.zoomToBounds(bounds)
@@ -751,9 +751,9 @@ export default function (name) {
         return bounds
       },
       clearStoredView () {
-        const params = _.get(this.$route, 'params', {})
         this.$router.replace({
-          params: _.omit(params, ['south', 'west', 'north', 'east'])
+          query: _.get(this.$route, 'query', {}),
+          params: _.omit(_.get(this.$route, 'params', {}), ['south', 'west', 'north', 'east'])
         }).catch(_ => {})
         window.localStorage.removeItem(this.getViewKey())
       },
