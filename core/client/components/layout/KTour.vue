@@ -176,7 +176,7 @@ export default {
       const result = brackets.exec(target)
       if (result) {
         const index = _.toNumber(result[1])
-        if (_.isNumber(index)) {
+        if (_.isFinite(index)) {
           // Tag that the request conforms querySelectorAll
           querySelectorAll = true
           // Remove the brackets to get all elements of this type
