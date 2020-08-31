@@ -54,7 +54,7 @@ export default {
   },
   watch: {
     defaultItems: function () {
-      this.items = _.clone(this.defaultItems)
+      this.clear()
     },
     services: function () {
       this.clear()
@@ -78,7 +78,7 @@ export default {
       else return item.name
     },
     clear () {
-      this.items = []
+      this.items = _.cloneDeep(this.defaultItems)
       this.pattern = ''
       this.$refs.autocomplete.clear()
     },

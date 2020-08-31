@@ -68,6 +68,14 @@ export default {
           route: { name: 'edit-group', params: { contextId: this.contextId, objectId: this.item._id } }
         })
       }
+      if (this.$can('service', 'members', this.contextId)) {
+        this.registerPaneAction({
+          name: 'list-members',
+          label: this.$t('KGroupCard.LIST_MEMBERS_LABEL'),
+          icon: 'las la-user-circle',
+          handler: this.onListMembers
+        })
+      }
       if (this.$can('remove', 'groups', this.contextId, this.item)) {
         this.registerMenuAction({
           name: 'remove-group',
@@ -113,6 +121,15 @@ export default {
         stats[group.permissions]++
       })
       this.memberStats = Object.assign({}, stats)
+    },
+    onListMembers () {
+      // Setup search bar accordingly
+      this.$store.patch('searchBar', { items: [Object.assign({
+        service: 'groups',
+        field: 'name',
+        icon: 'group_work'
+      }, this.item)] })
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId } })
     },
     onMembersClicked (role) {
     /* FIXME

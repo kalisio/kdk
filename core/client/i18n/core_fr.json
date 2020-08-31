@@ -555,7 +555,8 @@
     "GROUPS_LABEL": "$t(GROUPS)"
   },
   "KTagCard": {
-    "EDIT_LABEL": "$t(EDIT)"
+    "EDIT_LABEL": "$t(EDIT)",
+    "LIST_MEMBERS_LABEL": "Lister les membres possédant l'étiquette"
   },
   "KSubscribersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
@@ -576,6 +577,7 @@
   "KGroupCard": {
     "REMOVE_LABEL": "$t(REMOVE)",
     "EDIT_LABEL": "$t(EDIT)",
+    "LIST_MEMBERS_LABEL": "Lister les membres du groupe",
     "REMOVE_DIALOG_TITLE": "Supprimer {{group}} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloier supprimer {{group}} de votre organisation ?"
   },
