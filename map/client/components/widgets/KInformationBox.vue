@@ -1,13 +1,13 @@
 <template>
   <div :style="widgetStyle()">
-    <div v-if="schema" class="fit row">
+    <div v-if="schema && properties" class="fit row">
       <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
       <q-scroll-area class="col fit" :thumb-style="thumbStyle" :bar-style="barStyle">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :options="viewOptions" />
       </q-scroll-area>
     </div>
     <div v-else class="absolute-center">
-      <k-label :text="$t('KInformationBox.NO_FEATURE_SELECTED')" icon-size="48px" />
+      <k-label :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')" icon-size="48px" />
     </div>
   </div>
 </template>
@@ -67,18 +67,24 @@ export default {
       this.properties = null
       this.schema = null
       if (this.feature && this.layer) {
+        let schema
         // Is there any schema ?
-        if (this.layer.schema) {
-          if (this.schema !== this.layer.schema.content) this.schema = this.layer.schema.content
+        if (_.has(this.layer, 'schema.content')) {
+          schema = this.layer.schema.content
         } else {
-          this.schema = generatePropertiesSchema(this.feature)
+          schema = generatePropertiesSchema(this.feature)
         }
         // Ensure schema is not empty
-        if (Object.keys(this.schema.properties).length === 0) {
+        if (_.isNil(schema) || _.isEmpty(_.get(schema, 'properties', {}))) {
           return
         }
-        // Retirve properties on feature/entity
-        this.properties = this.kActivity.generateStyle('infobox', this.feature, this.layer)
+        // Retrieve properties on feature/entity
+        let properties = this.kActivity.generateStyle('infobox', this.feature, this.layer)
+        if (_.isEmpty(properties)) {
+          return
+        }
+        this.schema = schema
+        this.properties = properties
         this.kActivity.centerOnSelection()
         this.kActivity.addSelectionHighlight('information-box')
       }
