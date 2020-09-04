@@ -194,6 +194,10 @@ export default function (name) {
           if (baseLayer) this.showLayer(baseLayer.name)
         }
       },
+      isUserLayer (layer) {
+        return ((_.get(layer, `${this.engine}.type`) === 'geoJson') &&
+                (!layer._id || (layer.service === 'features')))
+      },
       isLayerSelectable (layer) {
         if (_.has(layer, 'isSelectable')) return _.get(layer, 'isSelectable')
         // Possible only when not edited by default
@@ -201,23 +205,23 @@ export default function (name) {
       },
       isLayerStorable (layer) {
         if (_.has(layer, 'isStorable')) return _.get(layer, 'isStorable')
-        // Only possible when not yet saved and GeoJson by default
-        else return (!layer._id && (_.get(layer, `${this.engine}.type`) === 'geoJson'))
+        // Only possible when user-defined layer and not yet saved
+        else return (this.isUserLayer(layer) && !layer._id)
       },
       isLayerEditable (layer) {
         if (_.has(layer, 'isEditable')) return _.get(layer, 'isEditable')
         // Only possible on user-defined and saved layers by default
-        else return (layer._id && (layer.service === 'features'))
+        else return (this.isUserLayer(layer) && (layer.service === 'features'))
       },
       isLayerRemovable (layer) {
         if (_.has(layer, 'isRemovable')) return _.get(layer, 'isRemovable')
         // Only possible on user-defined layers by default
-        else return (!layer._id || (layer.service === 'features'))
+        else return this.isUserLayer(layer)
       },
       isLayerStyleEditable (layer) {
         if (_.has(layer, 'isStyleEditable')) return _.get(layer, 'isStyleEditable')
-        // Only possible when GeoJson by default and not built-in measures
-        return ((_.get(layer, `${this.engine}.type`) === 'geoJson') && !_.has(layer, 'variables'))
+        // Only possible on user-defined layers by default
+        return this.isUserLayer(layer)
       },
       registerLayerActions (layer) {
         let defaultActions = ['zoom-to', 'save', 'edit', 'remove']
