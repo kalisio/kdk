@@ -365,7 +365,7 @@
     "SET_DATE": "Go on a date"
   },
   "KInformationBox": {
-    "NO_FEATURE_SELECTED": "No object selected",
+    "NO_FEATURE_PROPERTIES": "No information available",
     "CENTER_ON": "Center the view on the object",    
     "COPY_PROPERTIES": "Copy the values to the clipboard",    
     "PROPERTIES_COPIED": "Values copied to clipboard",
