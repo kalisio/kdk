@@ -1,4 +1,5 @@
 import path from 'path'
+import url from 'url'
 import makeDebug from 'debug'
 import logger from 'winston'
 import _ from 'lodash'
@@ -355,27 +356,35 @@ function setupSockets (app) {
       */
       if (apiLimiter && apiLimiter.websocket) {
         const { tokensPerInterval, interval } = apiLimiter.websocket
+        // Function used to filter whitelisted services, defaults to none
+        const services = _.get(apiLimiter.websocket, 'services', (service) => false)
         socket.socketLimiter = new SocketLimiter(tokensPerInterval, interval)
         socket.use((packet, next) => {
           if (packet.length > 0) {
-            // Message are formatted like this 'service_path::service_method'
-            const pathAndMethod = packet[0].split('::')
-            if (pathAndMethod.length > 0) {
-              // const servicePath = pathAndMethod[0]
-              debugLimiter(socket.socketLimiter.getTokensRemaining() + ' remaining API token for socket', socket.id, socket.conn.remoteAddress)
-              if (!socket.socketLimiter.tryRemoveTokens(1)) { // if exceeded
-                tooManyRequests(socket, 'Too many requests in a given amount of time (rate limiting)', 'RATE_LIMITING')
-                // FIXME: calling this causes a client timeout
-                // next(error)
-                // Need to normalize the error object as JSON
-                // let result = {}
-                // Object.getOwnPropertyNames(error).forEach(key => (result[key] = error[key]))
-                // Trying to send error like in https://github.com/feathersjs/transport-commons/blob/auk/src/events.js#L103
-                // does not work either (also generates a client timeout)
-                // socket.emit(`${servicePath} error`, result)
-                // socket.emit(result)
+            // Packets are formatted according to service interface,
+            // e.g. like [service_method, service_path, id or data, params]
+            // Bypass rate limiting on whitelist
+            if ((packet.length > 1) && (typeof packet[1] === 'string')) {
+              const service = app.service(packet[1])
+              if (service && services(service)) {
+                debugLimiter('By-pass rate limiting on whitelisted service operation', socket.id, socket.conn.remoteAddress, packet[0], packet[1])
+                next()
                 return
               }
+            }
+            debugLimiter(socket.socketLimiter.getTokensRemaining() + ' remaining API token for socket', socket.id, socket.conn.remoteAddress)
+            if (!socket.socketLimiter.tryRemoveTokens(1)) { // if exceeded
+              tooManyRequests(socket, 'Too many requests in a given amount of time (rate limiting)', 'RATE_LIMITING')
+              // FIXME: calling this causes a client timeout
+              // next(error)
+              // Need to normalize the error object as JSON
+              // let result = {}
+              // Object.getOwnPropertyNames(error).forEach(key => (result[key] = error[key]))
+              // Trying to send error like in https://github.com/feathersjs/transport-commons/blob/auk/src/events.js#L103
+              // does not work either (also generates a client timeout)
+              // socket.emit(`${servicePath} error`, result)
+              // socket.emit(result)
+              return
             }
           }
           next()
@@ -436,7 +445,25 @@ export function kalisio () {
   }
   const apiLimiter = app.get('apiLimiter')
   if (apiLimiter && apiLimiter.http) {
-    app.use(app.get('apiPath'), new HttpLimiter(apiLimiter.http))
+    // Function used to filter whitelisted services, defaults to none
+    const services = _.get(apiLimiter.http, 'services', (service) => false)
+    const handler = (req, res, next) => {
+      // Bypass rate limiting on whitelist
+      const path = url.parse(req.originalUrl).pathname
+      const service = app.service(path)
+      if (service && services(service)) {
+        debugLimiter('By-pass rate limiting on whitelisted service operation', req.method, path)
+        next()
+      } else {
+        const error = new TooManyRequests('Too many requests in a given amount of time (rate limiting)',
+        { translation: { key: 'RATE_LIMITING' } })
+        res.status(error.code)
+        res.set('Content-Type', 'application/json')
+        res.json(Object.assign({}, error.toJSON()))
+
+      }
+    } 
+    app.use(app.get('apiPath'), new HttpLimiter(Object.assign({ handler }, apiLimiter.http)))
   }
 
   // Enable CORS, security, compression, and body parsing
