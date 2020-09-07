@@ -31,17 +31,23 @@ export default {
       // store displayed layers
       this.tiledMeshLayers.set(layer._id, engineLayer)
       const levels = _.get(layer, 'levels')
-      if (levels) { this.setSelectableLevels(layer, levels) }
-
+      if ((typeof this.setSelectableLevels === 'function') && levels) {
+        this.setSelectableLevels(layer, levels)
+      }
       // setup layer
       engineLayer.setModel(this.forecastModel)
       engineLayer.setTime(this.currentTime)
     },
 
-    onHideTiledMeshLayer (layer) {
+    onHideTiledMeshLayer (layer, engineLayer) {
+      const isTiledMeshLayer = engineLayer instanceof TiledMeshLayer
+      if (!isTiledMeshLayer) return
+      
       this.tiledMeshLayers.delete(layer._id)
       // layer being hidden, hide slider if any was required
-      this.clearSelectableLevels(layer)
+      if (typeof this.clearSelectableLevels === 'function') {
+        this.clearSelectableLevels(layer)
+      }
     },
 
     onSelectedLevelChangedTiledMeshLayer (value) {
