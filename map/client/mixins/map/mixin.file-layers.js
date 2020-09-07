@@ -60,10 +60,7 @@ export default {
         }
         const geoJson = event.layer.toGeoJSON()
         // Generate schema for properties
-        const schema = Object.assign({
-          $id: `http://www.kalisio.xyz/schemas/${layer.name}#`,
-          title: layer.name
-        }, generatePropertiesSchema(geoJson))
+        const schema = generatePropertiesSchema(geoJson, layer.name)
         _.set(layer, 'schema.content', schema)
         // Generate temporary IDs for features
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])

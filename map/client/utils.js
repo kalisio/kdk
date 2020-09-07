@@ -99,8 +99,10 @@ export function setGatewayJwt (layers, jwt) {
 }
 
 // Get JSON schema from GeoJson feature' properties
-export function generatePropertiesSchema (geoJson) {
+export function generatePropertiesSchema (geoJson, name) {
   const schema = {
+    $id: `http://www.kalisio.xyz/schemas/${_.kebabCase(name)}#`,
+    title: name,
     $schema: 'http://json-schema.org/draft-06/schema#',
     type: 'object',
     properties: {
