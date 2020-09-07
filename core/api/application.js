@@ -452,7 +452,7 @@ export function kalisio () {
       let service
       try {
         const serviceUrl = new url.URL(req.originalUrl)
-        const service = app.service(serviceUrl.pathname)
+        service = app.service(serviceUrl.pathname)
       } catch (error) {
         debugLimiter(error)
       }
