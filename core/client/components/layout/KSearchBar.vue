@@ -3,6 +3,7 @@
     <k-item-chooser
       :multiselect="true"
       :services="services"
+      :default-items="items"
       @changed="onItemsChanged" />
   </div>
 </template>
@@ -13,7 +14,8 @@ export default {
   data () {
     return {
       isVisible: false,
-      services: []
+      services: [],
+      items: []
     }
   },
   methods: {
@@ -21,6 +23,7 @@ export default {
       const searchBar = this.$store.get('searchBar')
       this.isVisible = (searchBar.isVisible ? searchBar.field !== '' : false)
       this.services = searchBar.services
+      this.items = searchBar.items
     },
     onItemsChanged (items, pattern) {
       this.$store.patch('searchBar', { pattern: pattern, items: items })

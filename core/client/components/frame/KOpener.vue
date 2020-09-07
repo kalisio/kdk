@@ -85,7 +85,7 @@ export default {
       this.trigger()
     },
     onSwipe ({ evt, ...info }) {
-      if (!info) return
+      if (!info && !info.direction) return
       switch (this.position) {
         case 'left':
           if (info.direction === 'left' && this.isOpened) this.trigger()

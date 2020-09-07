@@ -109,7 +109,7 @@ export default {
       let geoJson = event.layer.toGeoJSON()
       // Generate temporary ID for feature
       const id = _.get(this.editedLayer, 'featureId')
-      if (id) _.set(geoJson, 'properties.' + id, uid().toString())
+      if (id && (id !== '_id')) _.set(geoJson, 'properties.' + id, uid().toString())
       else geoJson._id = uid().toString()
       // Save changes to DB, we use the layer DB ID as layer ID on features
       geoJson = await this.createFeatures(geoJson, this.editedLayer._id)

@@ -72,7 +72,8 @@
       "atob",
       "URL",
       "Blob",
-      "Event"
+      "Event",
+      "MouseEvent"
     ]
   },
   "directories": {

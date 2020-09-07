@@ -25,6 +25,22 @@ export default {
           route: { name: 'edit-tag', params: { contextId: this.contextId, objectId: this.item._id } }
         })
       }
+      if (this.$can('service', 'members', this.contextId)) {
+        this.registerPaneAction({
+          name: 'list-members',
+          label: this.$t('KTagCard.LIST_MEMBERS_LABEL'),
+          icon: 'las la-user-tag',
+          handler: this.onListMembers
+        })
+      }
+    },
+    onListMembers () {
+      // Setup search bar accordingly
+      this.$store.patch('searchBar', { items: [Object.assign({
+        service: 'tags',
+        field: 'value'
+      }, this.item)] })
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId } })
     }
   },
   created () {

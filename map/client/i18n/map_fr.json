@@ -233,10 +233,10 @@
       "LAYER_NAME_LABEL": "Choisissez un nom pour votre nouvelle couche de données.",
       "LAYER_DESCRIPTION_LABEL": "Ensuite fournissez une description.",
       "LAYER_FEATURE_ID_LABEL": "Choisissez un identifiant unique de vos éléments au sein de votre nouvelle couche.",
-      "LAYER_SCHEMA_LABEL": "Enfin, sélectionnez le schéma de données de vos éléments (fichier <a href='https://json-schema.org/'>JSON schema</a>).",
+      "LAYER_SCHEMA_LABEL": "Enfin, sélectionnez le schéma de données de vos éléments (fichier JSON schema).",
       "CREATE_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
       "EDIT_NEW_LAYER_LABEL": "Vous entrerez directement en mode édition dans la carte sur votre nouvelle couche.",
-      "FILE_LABEL": "Choisissez un fichier contenant vos données au format <a href='https://geojson.org/'>GeoJSON</a>.",
+      "FILE_LABEL": "Choisissez un fichier contenant vos données au format GeoJSON.",
       "CREATE_IMPORT_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
       "ZOOM_IMPORT_LAYER_LABEL": "La carte sera centrée sur votre nouvelle couche."
     }
@@ -366,7 +366,7 @@
     "SET_DATE": "Aller à une date"
   },
   "KInformationBox": {
-    "NO_FEATURE_SELECTED": "Aucun objet sélectionné",
+    "NO_FEATURE_PROPERTIES": "Aucune information disponible",
     "CENTER_ON": "Centrer la vue sur l'objet",
     "COPY_PROPERTIES": "Copier les valeurs en mémoire",    
     "PROPERTIES_COPIED": "Valeurs copiées en mémoire",

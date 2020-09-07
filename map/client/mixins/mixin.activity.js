@@ -194,6 +194,10 @@ export default function (name) {
           if (baseLayer) this.showLayer(baseLayer.name)
         }
       },
+      isUserLayer (layer) {
+        return ((_.get(layer, `${this.engine}.type`) === 'geoJson') &&
+                (!layer._id || (layer.service === 'features')))
+      },
       isLayerSelectable (layer) {
         if (_.has(layer, 'isSelectable')) return _.get(layer, 'isSelectable')
         // Possible only when not edited by default
@@ -201,23 +205,23 @@ export default function (name) {
       },
       isLayerStorable (layer) {
         if (_.has(layer, 'isStorable')) return _.get(layer, 'isStorable')
-        // Only possible when not yet saved and GeoJson by default
-        else return (!layer._id && (_.get(layer, `${this.engine}.type`) === 'geoJson'))
+        // Only possible when user-defined layer and not yet saved
+        else return (this.isUserLayer(layer) && !layer._id)
       },
       isLayerEditable (layer) {
         if (_.has(layer, 'isEditable')) return _.get(layer, 'isEditable')
         // Only possible on user-defined and saved layers by default
-        else return (layer._id && (layer.service === 'features'))
+        else return (this.isUserLayer(layer) && (layer.service === 'features'))
       },
       isLayerRemovable (layer) {
         if (_.has(layer, 'isRemovable')) return _.get(layer, 'isRemovable')
         // Only possible on user-defined layers by default
-        else return (!layer._id || (layer.service === 'features'))
+        else return this.isUserLayer(layer)
       },
       isLayerStyleEditable (layer) {
         if (_.has(layer, 'isStyleEditable')) return _.get(layer, 'isStyleEditable')
-        // Only possible when GeoJson by default and not built-in measures
-        return ((_.get(layer, `${this.engine}.type`) === 'geoJson') && !_.has(layer, 'variables'))
+        // Only possible on user-defined layers by default
+        return this.isUserLayer(layer)
       },
       registerLayerActions (layer) {
         let defaultActions = ['zoom-to', 'save', 'edit', 'remove']
@@ -713,9 +717,9 @@ export default function (name) {
         if (this.shouldRestoreView()) {
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            const params = _.get(this.$route, 'params', {})
             this.$router.replace({
-              params: Object.assign({}, params, targetBounds)
+              query: _.get(this.$route, 'query', {}),
+              params: Object.assign({}, _.get(this.$route, 'params', {}), targetBounds)
             }).catch(_ => {})
           }
           window.localStorage.setItem(this.getViewKey(), JSON.stringify(bounds))
@@ -741,9 +745,9 @@ export default function (name) {
           const east = bounds[1][1]
           const targetBounds = { south, west, north, east }
           if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
-            const params = _.get(this.$route, 'params', {})
             this.$router.replace({
-              params: Object.assign({}, params, targetBounds)
+              query: _.get(this.$route, 'query', {}),
+              params: Object.assign({}, _.get(this.$route, 'params', {}), targetBounds)
             }).catch(_ => {})
           }
           this.zoomToBounds(bounds)
@@ -751,9 +755,9 @@ export default function (name) {
         return bounds
       },
       clearStoredView () {
-        const params = _.get(this.$route, 'params', {})
         this.$router.replace({
-          params: _.omit(params, ['south', 'west', 'north', 'east'])
+          query: _.get(this.$route, 'query', {}),
+          params: _.omit(_.get(this.$route, 'params', {}), ['south', 'west', 'north', 'east'])
         }).catch(_ => {})
         window.localStorage.removeItem(this.getViewKey())
       },

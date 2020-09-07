@@ -1,6 +1,7 @@
 <template>
   <div v-if="name !== ''" class="q-pa-md">
     <k-block
+      id="delete-block"
       color="red"
       :title="$t('KOrganisationDZ.BLOCK_TITLE')"
       :text="$t('KOrganisationDZ.BLOCK_TEXT', { organisation: name })"

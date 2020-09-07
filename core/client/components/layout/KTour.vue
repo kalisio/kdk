@@ -130,6 +130,8 @@ export default {
         if (_.has(step, 'link')) _.set(step, 'link', this.$t(_.get(step, 'link')))
       })
       if (this.tourSteps.length > 0) {
+        // Stop previous tour if any
+        if (this.getTour().isRunning) this.getTour().stop()
         if (selected.play) this.playTour(selected.step || 0)
         else this.launchTour(selected.step || 0)
       }
@@ -142,7 +144,7 @@ export default {
       // By default use the route name as tour name if tour equals simply true
       let name = this.$route.name
       // Manage routes with different perspectives
-      if (_.has(this.$route, 'params.perspective')) {
+      if (_.get(this.$route, 'params.perspective')) {
         name += '/' + _.get(this.$route, 'params.perspective')
       }
       // This can be overriden when multiple tours target the same route,
@@ -154,10 +156,12 @@ export default {
       // Trigger a refresh if required to avoid reentrance
       const selected = this.$store.get('tours.current', {})
       if (selected !== name) {
-        const step = (_.has(this.$route, 'query.tourStep') ?
-          _.toNumber(_.get(this.$route, 'query.tourStep')) : undefined)
-        const play = _.get(this.$route, 'query.playTour')
-        this.$store.patch('tours.current', { name, step, play })
+        setTimeout(() => {
+          const step = (_.has(this.$route, 'query.tourStep') ?
+            _.toNumber(_.get(this.$route, 'query.tourStep')) : undefined)
+          const play = _.get(this.$route, 'query.playTour')
+          this.$store.patch('tours.current', { name, step, play })
+        }, _.toNumber(_.get(this.$route, 'query.tourDelay', 0)))
       }
     },
     autoPlayNextStep () {
@@ -176,7 +180,7 @@ export default {
       const result = brackets.exec(target)
       if (result) {
         const index = _.toNumber(result[1])
-        if (_.isNumber(index)) {
+        if (_.isFinite(index)) {
           // Tag that the request conforms querySelectorAll
           querySelectorAll = true
           // Remove the brackets to get all elements of this type
@@ -219,21 +223,46 @@ export default {
       if (!Array.isArray(targets)) targets = [targets]
       return targets
     },
-    clickOn (param) {
+    processElement (param, callback) {
       const targets = this.getTargetsOn(param)
-      let clicked = false
+      let processed = false
       targets.forEach(target => {
         target = this.getTarget(target)
         if (target) {
           try {
-            target.click()
-            clicked |= true
+            callback(target)
+            processed |= true
           } catch (error) {
-            clicked |= false
+            processed |= false
           }
         }
       })
-      return clicked
+      return processed
+    },
+    hoverOn (param) {
+      // Simulate a mouse over
+      return this.processElement(param, target => target.dispatchEvent(new MouseEvent('mouseover', {
+        'view': window,
+        'bubbles': true,
+        'cancelable': true
+      })))
+    },
+    clickOn (param) {
+      // Simulate a click
+      return this.processElement(param, target => target.click())
+    },
+    hoverClickOn (param) {
+      return this.processElement(param, async target => {
+        // Simulate a mouse over
+        target.dispatchEvent(new MouseEvent('mouseover', {
+          'view': window,
+          'bubbles': true,
+          'cancelable': true
+        }))
+        // Then a click: force a refresh first so that DOM will be updated by Vuejs if required
+        await this.$nextTick()
+        target.click()
+      })
     },
     blockOnMiss () {
       let missing = false
@@ -253,7 +282,9 @@ export default {
       if ((this.getTour().currentStep >= this.getTour().numberOfSteps - 1) ||
           (this.getTour().currentStep === -1)) return
       if (this.blockOnMiss()) return
+      this.hoverOn('hoverOnNext')
       this.clickOn('clickOnNext')
+      this.hoverClickOn('hoverClickOnNext')
       let step = this.getStep()
       const delay = _.get(step, 'params.nextDelay', 0)
       this.isStepVisible = false
@@ -271,7 +302,9 @@ export default {
     },
     previousStep () {
       if (this.getTour().currentStep <= 0) return
+      this.hoverOn('hoverOnPrevious')
       this.clickOn('clickOnPrevious')
+      this.hoverClickOn('hoverClickOnPrevious')
       let step = this.getStep()
       const delay = _.get(step, 'params.previousDelay', 0)
       this.isStepVisible = false
@@ -302,7 +335,9 @@ export default {
     },
     onLink () {
       const step = this.getStep()
+      this.hoverOn('hoverOnLink')
       this.clickOn('clickOnLink')
+      this.hoverClickOn('hoverClickOnLink')
       if (_.has(step, 'params.route')) {
         // Stop current tour before starting next one
         this.getTour().stop()

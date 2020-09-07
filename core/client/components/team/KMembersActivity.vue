@@ -53,14 +53,21 @@ export default {
       }
     },
     refreshActivity () {
+      // We allow search items to be internally provided by others activities like tags, etc.
+      // Keep track of it before cleaning
+      const searchItems = this.$store.get('searchBar.items', [])
       this.clearActivity()
       // Title
       this.setTitle(this.$store.get('context.name'))
       // Search bar
       this.setSearchBar('profile.name', [
-        { service: 'groups', field: 'name', baseQuery: {}, icon: { name: 'group_work' } },
+        { service: 'groups', field: 'name', baseQuery: {}, icon: 'group_work' },
         { service: 'tags', field: 'value', baseQuery: {}, icon: 'label' }
-      ])
+      ], searchItems)
+      if (!_.isEmpty(searchItems)) {
+        // We need to refresh the search in this case as we cleared it previously
+        //this.handleSearch()
+      }
       // Tabbar actions
       this.registerTabAction({
         name: 'members',
