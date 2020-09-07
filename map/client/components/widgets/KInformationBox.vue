@@ -72,7 +72,7 @@ export default {
         if (_.has(this.layer, 'schema.content')) {
           schema = this.layer.schema.content
         } else {
-          schema = generatePropertiesSchema(this.feature)
+          schema = generatePropertiesSchema(this.feature, this.layer.name)
         }
         // Ensure schema is not empty
         if (_.isNil(schema) || _.isEmpty(_.get(schema, 'properties', {}))) {
