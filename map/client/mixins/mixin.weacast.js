@@ -258,7 +258,7 @@ export default {
     },
     onWeacastShowLayer (layer, engineLayer) {
       // Check for valid types
-      if (engineLayer instanceof L.weacast.ForecastLayer) {
+      if (!(engineLayer instanceof L.weacast.ForecastLayer)) {
         const levels = _.get(layer, 'levels')
         if (!levels) {
           this.setForecastLevel(null)
@@ -270,7 +270,9 @@ export default {
         }
       }
     },
-    onWeacastHideLayer (layer) {
+    onWeacastHideLayer (layer, engineLayer) {
+      // Check for valid types
+      if (!(engineLayer instanceof L.weacast.ForecastLayer)) return
       if (typeof this.clearSelectableLevels === 'function') {
         this.clearSelectableLevels(layer)
         this.$off('selected-level-changed', this.setForecastLevel)
