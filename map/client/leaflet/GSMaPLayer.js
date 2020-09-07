@@ -31,7 +31,7 @@ const GSMaPLayer = L.TileLayer.extend({
   makeUrl (time) {
     const t = time || moment()
 
-    const baseUrl = 'https://sharaku.eorc.jaxa.jp/cgi-bin/trmm/GSMaP/tilemap/tile_'
+    const baseUrl = 'https://sharaku.eorc.jaxa.jp/cgi-bin/trmm/GSMaP_NOW/tilemap/tile_'
     const timeQuery = `year=${t.year()}&month=${t.month() + 1}&day=${t.date()}&hour=${t.hour()}&min=${t.minute()}&z={z}&x={x}&y={y}`
 
     if (this.product === 'rain12' || this.product === 'rain24' || this.product === 'rain72') {
