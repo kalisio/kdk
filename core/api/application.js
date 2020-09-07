@@ -449,8 +449,13 @@ export function kalisio () {
     const services = _.get(apiLimiter.http, 'services', (service) => false)
     const handler = (req, res, next) => {
       // Bypass rate limiting on whitelist
-      const path = url.parse(req.originalUrl).pathname
-      const service = app.service(path)
+      let service
+      try {
+        const serviceUrl = new url.URL(req.originalUrl)
+        const service = app.service(serviceUrl.pathname)
+      } catch (error) {
+        debugLimiter(error)
+      }
       if (service && services(service)) {
         debugLimiter('By-pass rate limiting on whitelisted service operation', req.method, path)
         next()
