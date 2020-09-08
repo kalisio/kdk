@@ -66,8 +66,13 @@ const TiledWindLayer = L.GridLayer.extend({
         // for a restart to happen, we want to make sure that
         //  - no wind tiles are currently being loaded
         //  - user is not dragging the map
+        //  - we're in allowed zoom level range
         // this way we reduce the number of restarts
-        if (this.pendingFetchs === 0 && !this.userIsDragging) {
+        let allowedZoom = true
+        const zoom = this._map.getZoom()
+        if (this.options.maxZoom && zoom > this.options.maxZoom) allowedZoom = false
+        if (this.options.minZoom && zoom < this.options.minZoom) allowedZoom = false
+        if (this.pendingFetchs === 0 && !this.userIsDragging && allowedZoom) {
           this.velocityLayer._clearAndRestart()
         } else {
           // just clear, last pending fetch will restart the wind (see createTile promise.finally() block)
@@ -147,9 +152,12 @@ const TiledWindLayer = L.GridLayer.extend({
 
     // compute a good enough maxNativeZoom value to ensure
     // the smallest leaflet tile will approximately match a weacast tile
-    const modelBounds = L.latLngBounds(L.latLng(model.bounds[1], model.bounds[0]), L.latLng(model.bounds[3], model.bounds[2]))
-    const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
-    this.options.maxNativeZoom = computeIdealMaxNativeZoom(this, modelBounds, modelTileSize)
+    // robin: this is not needed anymore since weacast grid source
+    // now request weacasts tiles directly and use a cache by default to reuse
+    // already requested weacast tiles.
+    // const modelBounds = L.latLngBounds(L.latLng(model.bounds[1], model.bounds[0]), L.latLng(model.bounds[3], model.bounds[2]))
+    // const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
+    // this.options.maxNativeZoom = computeIdealMaxNativeZoom(this, modelBounds, modelTileSize)
 
     if (typeof this.uSource.setModel === 'function') this.uSource.setModel(model)
     if (typeof this.vSource.setModel === 'function') this.vSource.setModel(model)
