@@ -65,7 +65,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
       if (this.layer.probeService) {
         tile.probes = (data[0].features.length ? data[0] : null)
-        tile.features = (data[1].features.length ? data[1] : null)
+        // Can't have measures without probes
+        if (!tile.probes) tile.features = null
+        else tile.features = (data[1].features.length ? data[1] : null)
       } else {
         tile.features = (data[0].features.length ? data[0] : null)
       }
@@ -75,7 +77,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
           this.activity.updateLayer(this.layer.name, tile.probes)
         }
         if (tile.features) {
-          // If probe are given we should have a perfect match
+          // If probe are given we should have a perfect match with measures
+          // Filter any measure without a corresponding probe
           if (tile.probes) {
             tile.features.features = tile.features.features.filter(feature => {
               const key = this.getFeatureKey(feature)
