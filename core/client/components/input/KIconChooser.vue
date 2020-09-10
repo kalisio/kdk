@@ -84,24 +84,9 @@ export default {
     }
   },
   computed: {
-    shouldFilter () {
-      return this.selectedCategory !== null
-    },
     icons () {
       // Return a filtered or unfiltered list of icons (depending on whether a filter was applied)
-
-      // Do we need to filter?
-      if (this.shouldFilter) {
-        // Do we have a filtered list already?
-        if (!this.filteredIcons) {
-          this.filteredIcons = this.buildFilter()
-        }
-
-      // No need to filter
-      } else {
-        this.filteredIcons = null
-      }
-
+      this.filteredIcons = (this.selectedCategory ? this.getIconsForCategory(this.selectedCategory.value) : null)
       // If we have a filtered list then return it, otherwise return the complete list
       return this.filteredIcons || this.allIcons
     },
@@ -116,19 +101,6 @@ export default {
     }
   },
   methods: {
-    buildFilter () {
-      // Reset the selected icon because it might fall outside of the filtered icons; same for current page
-      this.resetSelectedIcon()
-      this.currentPage = 1
-
-      let selectedIcons = this.allIcons
-
-      if (this.selectedCategory) {
-        selectedIcons = this.getIconsForCategory(this.selectedCategory.value)
-      }
-
-      return selectedIcons
-    },
     getIconsForCategory (category) {
       const categoryIcons = this.categoryInfos[this.selectedCategory.value].icons
       const icons = []
@@ -161,12 +133,18 @@ export default {
       }
     },
     getCategoryOptions (categories) {
-      return categories.map(category => ({ value: category, label: this.$t('KIconChooser.categories.' + category) }))
+      return categories
+        .map(category => ({ value: category, label: this.$t('KIconChooser.categories.' + category) }))
+        // Alphabetical order
+        .sort((c1, c2) => c1.label.localeCompare(c2.label))
     },
     onSelectCategory (value) {
+      // Reset pagination as it might be different for the new category
+      this.currentPage = 1
+      // Similarly reset the selected icon because it might fall outside of the filtered icons
+      this.resetSelectedIcon()
+      // Trigger filtering by updating the category (see computed prop 'icons()')
       this.selectedCategory = value
-      // Trigger filtering by clearing the filtered list (see computed prop 'icons()')
-      this.filteredIcons = null
     },
     getToolbar () {
       return [
@@ -225,9 +203,9 @@ export default {
       this.selectedIcon.color = 'dark'
     },
     async loadMaterialIcons () {
-      // Fetch available material icons from the google repository so we are always in sync
-      const response = await fetch('https://raw.githubusercontent.com/google/material-design-icons/master/iconfont/codepoints')
-
+      // Fetch available material icons from the google repository so we are always in sync for v3
+      // Seems now to be https://raw.githubusercontent.com/google/material-design-icons/font/MaterialIcons-Regular.codepoints
+      const response = await fetch('https://raw.githubusercontent.com/google/material-design-icons/3.0.2/iconfont/codepoints')
       if (response.status !== 200) throw new Error('Impossible to retrieve material-icons code points: ' + response.status)
       const text = await response.text()
 
@@ -245,8 +223,8 @@ export default {
       return { icons, categories: null, categoryInfos: null }
     },
     async loadFontAwesomeIcons () {
-      // Fetch available FA icons from the font awesome repository so we are always in sync
-      const response = await fetch('https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/metadata/icons.yml')
+      // Fetch available FA icons from the font awesome repository so we are always in sync for v5
+      const response = await fetch('https://raw.githubusercontent.com/FortAwesome/Font-Awesome/5.13.1/metadata/icons.yml')
 
       if (response.status !== 200) throw new Error('Impossible to retrieve fontawesome code points: ' + response.status)
       const text = await response.text()
