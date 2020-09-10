@@ -137,10 +137,3 @@ Add the output to your build script:
 before_install:
   - openssl aes-256-cbc -K $encrypted_12c8071d2874_key -iv $encrypted_12c8071d2874_iv -in ssh.pem.enc -out ssh.pem -d
 ```
-
-## MongoDB
-
-Export a given collection from a given DB using a query in a JSON file: `mongoexport -d krawler-test -c world_cities_csv -q "{ 'properties.country': 'France' }" --jsonArray --out file.json`
-
-Export a given collection from a given DB using a query in a CSV file: `mongoexport -d krawler-test -c world_cities_csv -q "{ 'properties.country': 'France' }" --type csv --fields properties.country,properties.pop --out file.csv`
-
