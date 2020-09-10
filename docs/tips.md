@@ -66,4 +66,16 @@ Unfortunately it has been [deprecated](https://github.com/feathersjs-ecosystem/f
 docker run -d --rm --name redis -p 6300:6379 redis:5
 ```
 
-You will need to play with the different options presented above to avoid port conflicts and define as well how your app connects to the Redis instance using the `REDIS_URL` environment variable like `redis://127.0.0.1:6300`.
+You will need to play with the different options presented above to avoid port conflicts and define as well how your app connects to the Redis instance using the `REDIS_URL` environment variable like `redis://127.0.0.1:6300`. You can see the subscriber apps and exchanged messages by connecting to the Redis container:
+```bash
+// Bind it to your prefered port
+docker exec -it redis bash
+> redis-cli
+// Number of subscribers
+> PUBSUB NUMSUB feathers-sync
+1) "feathers-sync"
+2) (integer) 2
+// Monitor messages
+> SUBSCRIBE feathers-sync
+Reading messages...
+```
