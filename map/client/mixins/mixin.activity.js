@@ -521,9 +521,12 @@ export default function (name) {
         this.editStyleModal.$on('applied', async () => {
           // Keep track of data as we will reset the layer
           const geoJson = this.toGeoJson(layer.name)
-          // Reset layer with new setup
+          // Reset layer with new setup but keep track of current visibility state
+          // as adding the layer back will restore default visibility state
+          const isVisible = this.isLayerVisible(layer.name)
           await this.removeLayer(layer.name)
           await this.addLayer(layer)
+          if (isVisible) await this.showLayer(layer.name)
           // Update data only when in memory as reset has lost it
           if (!layer._id) {
             this.updateLayer(layer.name, geoJson)
