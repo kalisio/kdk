@@ -64,7 +64,7 @@ export default {
       this.model = { name: '', color: '' }
     },
     onIconClicked () {
-      this.$refs.iconChooser.open(this.model.name, this.model.color)
+      this.$refs.iconChooser.open(this.model)
     },
     onIconChoosed (icon) {
       this.model = Object.assign({}, icon)
