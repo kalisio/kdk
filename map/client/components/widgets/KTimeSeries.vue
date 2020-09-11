@@ -40,7 +40,9 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
+import logger from 'loglevel'
 import centroid from '@turf/centroid'
+import chroma from 'chroma-js'
 import Chart from 'chart.js'
 import 'chartjs-plugin-annotation'
 import { getTimeInterval } from '../../utils'
@@ -154,14 +156,17 @@ export default {
       this.datasets = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
       const properties = this.probedLocation.properties
-
-      this.variables.forEach(variable => {
+      // Generate a color palette in case the variables does not provide it
+      const colors = _.shuffle(chroma.scale('Spectral').colors(this.variables.length))
+      this.variables.forEach((variable, index) => {
         const unit = variable.units[0]
         const label = this.$t(variable.label) || variable.label
         // Variable available for feature ?
         if (properties[variable.name]) {
           this.datasets.push(_.merge({
             label: `${label} (${unit})`,
+            borderColor: colors[index],
+            backgroundColor: colors[index],
             data: properties[variable.name].map((value, index) => ({ x: new Date(time[variable.name][index]), y: value })).filter(this.filter),
             yAxisID: unit
           }, _.omit(variable.chartjs, 'yAxis')))
@@ -239,110 +244,119 @@ export default {
     },
     async setupGraph () {
       if (!this.probedLocation) return
+      // As we have async operations during the whole chart creation process avoid reentrance
+      // otherwise we might have interleaved calls leading to multiple charts being created
+      if (this.buildingChart) return
+      // Try/Catch required to ensure we reset the build flag
+      try {
+        this.buildingChart = true
+        // Destroy previous graph if any
+        if (this.chart) {
+          this.chart.destroy()
+          this.chart = null
+        }
 
-      // Destroy previous graph if any
-      if (this.chart) {
-        this.chart.destroy()
-        this.chart = null
-      }
+        // Check whether weed need a graph
+        this.hasGraph = this.hasAvailableDatasets()
+        if (!this.hasGraph) return
 
-      // Check whether weed need a graph
-      this.hasGraph = this.hasAvailableDatasets()
-      if (!this.hasGraph) return
+        // We need to force a refresh so that the prop is correctly updated by Vuejs in components
+        await this.$nextTick()
 
-      // We need to force a refresh so that the prop is correctly updated by Vuejs in components
-      await this.$nextTick()
+        // Setup the graph
+        this.setupAvailableTimes()
+        this.setupTimeTicks()
+        this.setupAvailableDatasets()
+        this.setupAvailableYAxes()
 
-      // Setup the graph
-      this.setupAvailableTimes()
-      this.setupTimeTicks()
-      this.setupAvailableDatasets()
-      this.setupAvailableYAxes()
+        const date = _.get(this.kActivity.currentFormattedTime, 'date.short')
+        const time = _.get(this.kActivity.currentFormattedTime, 'time.long')
+        const dateFormat = _.get(this.kActivity.currentTimeFormat, 'date.short')
+        const timeFormat = _.get(this.kActivity.currentTimeFormat, 'time.long')
 
-      const date = _.get(this.kActivity.currentFormattedTime, 'date.short')
-      const time = _.get(this.kActivity.currentFormattedTime, 'time.long')
-      const dateFormat = _.get(this.kActivity.currentTimeFormat, 'date.short')
-      const timeFormat = _.get(this.kActivity.currentTimeFormat, 'time.long')
-
-      this.config = {
-        type: 'line',
-        data: {
-          labels: this.times,
-          datasets: this.datasets
-        },
-        options: {
-          tooltips: {
-            mode: 'x',
-            callbacks: {
-              label: (tooltipItem, data) => {
-                return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.yLabel.toFixed(2)
-              }
-            }
+        this.config = {
+          type: 'line',
+          data: {
+            labels: this.times,
+            datasets: this.datasets
           },
-          scales: {
-            xAxes: [{
-              id: 'time',
-              type: 'time',
-              time: {
-                unit: 'hour',
-                stepSize: this.timeStepSize,
-                displayFormats: {
-                  hour: `${dateFormat} - ${timeFormat}`
-                },
-                tooltipFormat: `${dateFormat} - ${timeFormat}`,
-                parser: (date) => {
-                  if (moment.isMoment(date)) return date
-                  else return moment(typeof date === 'number' ? date : date.toISOString())
+          options: {
+            tooltips: {
+              mode: 'x',
+              callbacks: {
+                label: (tooltipItem, data) => {
+                  return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.yLabel.toFixed(2)
                 }
-              },
-              scaleLabel: {
-                display: false,
-                labelString: 'Date'
               }
-            }],
-            yAxes: this.yAxes
-          },
-          legend: {
-            onClick: (event, legendItem) => this.toggleVariable(legendItem)
-          },
-          responsive: false,
-          maintainAspectRatio: false
-        }
-      }
-      // Is current time visible in data time range ?
-      const currentTime = moment.utc(this.kActivity.currentFormattedTime.iso)
-      if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
-        this.config.options.annotation = {
-          drawTime: 'afterDatasetsDraw',
-          events: ['click'],
-          annotations: [{
-            id: 'current-time',
-            type: 'line',
-            mode: 'vertical',
-            scaleID: 'time',
-            value: currentTime.toDate(),
-            borderColor: 'grey',
-            borderWidth: 2,
-            label: {
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              content: `${date} - ${time}`,
-              position: 'top',
-              enabled: true
             },
-            onClick: (event) => {
-              // The annotation is bound to the `this` variable
-              // console.log('Annotation', event.type, this)
-            }
-          }]
+            scales: {
+              xAxes: [{
+                id: 'time',
+                type: 'time',
+                time: {
+                  unit: 'hour',
+                  stepSize: this.timeStepSize,
+                  displayFormats: {
+                    hour: `${dateFormat} - ${timeFormat}`
+                  },
+                  tooltipFormat: `${dateFormat} - ${timeFormat}`,
+                  parser: (date) => {
+                    if (moment.isMoment(date)) return date
+                    else return moment(typeof date === 'number' ? date : date.toISOString())
+                  }
+                },
+                scaleLabel: {
+                  display: false,
+                  labelString: 'Date'
+                }
+              }],
+              yAxes: this.yAxes
+            },
+            legend: {
+              onClick: (event, legendItem) => this.toggleVariable(legendItem)
+            },
+            responsive: false,
+            maintainAspectRatio: false
+          }
         }
-      }
+        // Is current time visible in data time range ?
+        const currentTime = moment.utc(this.kActivity.currentFormattedTime.iso)
+        if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
+          this.config.options.annotation = {
+            drawTime: 'afterDatasetsDraw',
+            events: ['click'],
+            annotations: [{
+              id: 'current-time',
+              type: 'line',
+              mode: 'vertical',
+              scaleID: 'time',
+              value: currentTime.toDate(),
+              borderColor: 'grey',
+              borderWidth: 2,
+              label: {
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                content: `${date} - ${time}`,
+                position: 'top',
+                enabled: true
+              },
+              onClick: (event) => {
+                // The annotation is bound to the `this` variable
+                // console.log('Annotation', event.type, this)
+              }
+            }]
+          }
+        }
 
-      this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
-      if (this.graphHeight && this.graphWidth) {
-        this.chart.canvas.parentNode.style.width = `${this.graphWidth}px`
-        this.chart.canvas.parentNode.style.height = `${this.graphHeight}px`
-        this.chart.resize()
+        this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
+        if (this.graphHeight && this.graphWidth) {
+          this.chart.canvas.parentNode.style.width = `${this.graphWidth}px`
+          this.chart.canvas.parentNode.style.height = `${this.graphHeight}px`
+          this.chart.resize()
+        }
+      } catch (error) {
+        logger.error(error)
       }
+      this.buildingChart = false
     },
     async onResized (size) {
       this.graphWidth = Math.floor(size.width - 75)

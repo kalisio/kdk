@@ -214,22 +214,28 @@ export default {
       return config
     },
     async refreshChart () {
+      // As we have async operations during the whole chart creation process avoid reentrance
+      // otherwise we might have interleaved calls leading to multiple charts being created
+      if (this.buildingChart) return
       Loading.show({ message: this.$t('KFeaturesChart.CHARTING_LABEL') })
-      // Destroy previous graph if any
-      if (this.chart) {
-        this.chart.destroy()
-      }
+      // Try/Catch required to ensure we reset the build flag
       try {
+        this.buildingChart = true
+        // Destroy previous graph if any
+        if (this.chart) {
+          this.chart.destroy()
+        }
         // Retrieve data
         await this.getChartData()
+        // We need to force a refresh so that the computed props are correctly updated by Vuejs
+        await this.$nextTick()
+        this.chart = new Chart(this.$refs.chart.getContext('2d'),
+          this.getChartOptions(this.chartType.value))
       } catch (error) {
         // User error message on operation should be raised by error hook, otherwise this is more a coding error
         logger.error(error)
       }
-      // We need to force a refresh so that the computed props are correctly updated by Vuejs
-      await this.$nextTick()
-      this.chart = new Chart(this.$refs.chart.getContext('2d'),
-        this.getChartOptions(this.chartType.value))
+      this.buildingChart = false
       Loading.hide()
     },
     async refreshChartAndPagination () {
