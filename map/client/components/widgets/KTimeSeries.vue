@@ -40,6 +40,7 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
+import centroid from '@turf/centroid'
 import Chart from 'chart.js'
 import 'chartjs-plugin-annotation'
 import { getTimeInterval } from '../../utils'
@@ -372,8 +373,10 @@ export default {
       if (!this.probedLocation) return
       let name = _.get(this.probedLocation, 'properties.name') || _.get(this.probedLocation, 'properties.NAME')
       if (!name && _.has(this.probedLocation, 'geometry.coordinates')) {
-        const longitude = _.get(this.probedLocation, 'geometry.coordinates[0]')
-        const latitude = _.get(this.probedLocation, 'geometry.coordinates[1]')
+        // Support linear/polygon geometry as well
+        const location = centroid(this.probedLocation)
+        const longitude = _.get(location, 'geometry.coordinates[0]')
+        const latitude = _.get(location, 'geometry.coordinates[1]')
         name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
       }
 
@@ -395,8 +398,10 @@ export default {
       } else if (this.layer.variables && this.layer.service) { // Static measure probe
         this.probedLocation = await this.kActivity.getMeasureForFeature(this.layer, this.feature, start, end)
       } else { // dynamic weacast probe at feature position
-        const position = this.feature.geometry.coordinates
-        this.probedLocation = await this.kActivity.getForecastForLocation(position[0], position[1], start, end)
+        const location = centroid(this.feature)
+        const longitude = _.get(location, 'geometry.coordinates[0]')
+        const latitude = _.get(location, 'geometry.coordinates[1]')
+        this.probedLocation = await this.kActivity.getForecastForLocation(longitude, latitude, start, end)
       }
       this.updateProbedLocationName()
       this.setupGraph()
