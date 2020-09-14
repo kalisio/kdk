@@ -283,10 +283,22 @@ export default {
       return layer.toGeoJSON()
     },
     zoomToLayer (name, options) {
-      const layer = this.getLeafletLayerByName(name)
+      const layer = this.getLayerByName(name)
       if (!layer) return
-
-      this.map.fitBounds(layer.getBounds(), options)
+      const leafletLayer = this.getLeafletLayerByName(name)
+      if (!leafletLayer) {
+        // Check for layers only visible at a given zoom level
+        // If so simply jump to that level in order to show some data
+        if (this.isLayerDisabled(layer)) {
+          const minZoom = _.get(layer, 'leaflet.minZoom')
+          if (minZoom) {
+            const center = this.getCenter()
+            this.center(center.longitude, center.latitude, minZoom)
+          }
+        }
+        return
+      }
+      this.map.fitBounds(leafletLayer.getBounds(), options)
     },
     zoomToBounds (bounds) {
       this.map.fitBounds(bounds)
