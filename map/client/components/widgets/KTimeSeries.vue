@@ -199,6 +199,14 @@ export default {
     toggleVariable (variableItem) {
       const dataset = this.datasets[variableItem.datasetIndex]
       const metadata = this.chart.getDatasetMeta(variableItem.datasetIndex)
+      // Check if there is only one dataset remaining,
+      // if so it's impossible to hide it otherwise the chart will be empty
+      let nbVisibleDatasets = 0
+      this.datasets.forEach((dataset, index) => {
+        const metadata = this.chart.getDatasetMeta(index)
+        if (!metadata.hidden) nbVisibleDatasets++
+      })
+      if (!metadata.hidden && (nbVisibleDatasets <= 1)) return
       // Check if there is others variables using the same unit axis
       const datasetsWithYAxis = []
       this.datasets.forEach((otherDataset, index) => {
@@ -208,10 +216,10 @@ export default {
         }
       })
 
-      if (_.isNil(metadata.hidden)) {
-        metadata.hidden = !this.chart.data.datasets[variableItem.datasetIndex].hidden
+      if (!metadata.hidden) {
+        metadata.hidden = true
       } else {
-        metadata.hidden = null
+        delete metadata.hidden
       }
 
       // Check if there is another variable using the same unit axis
