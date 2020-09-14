@@ -246,7 +246,10 @@ export default {
       const keys = Object.keys(this.probedLocation.properties)
       for (let i = 0; i < this.variables.length; i++) {
         const name = this.variables[i].name
-        if (_.indexOf(keys, name) !== -1) return true
+        if (_.indexOf(keys, name) !== -1) {
+          const values = this.probedLocation.properties[name]
+          if (values && Array.isArray(values)) return true
+        }
       }
       return false
     },
