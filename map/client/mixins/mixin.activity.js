@@ -60,15 +60,15 @@ export default function (name) {
         const hasCreateLayerAction = (typeof this.onCreateLayer === 'function') && actions.includes('create-layer')
         if (hasProbeLocationAction) {
           this.registerFabAction({
-            name: 'probe', label: this.$t('mixins.activity.PROBE'), icon: 'colorize', handler: this.onProbeLocation
+            name: 'probe', label: this.$t('mixins.activity.PROBE'), icon: 'las la-eye-dropper', handler: this.onProbeLocation
           })
         }
         if (hasCreateLayerAction) {
           this.registerFabAction({
-            name: 'create-layer', label: this.$t('mixins.activity.CREATE_LAYER'), icon: 'add', handler: this.onCreateLayer
+            name: 'create-layer', label: this.$t('mixins.activity.CREATE_LAYER'), icon: 'las la-plus', handler: this.onCreateLayer
           })
           this.registerFabAction({
-            name: 'import-layer', label: this.$t('mixins.activity.IMPORT_LAYER'), icon: 'la la-file-import', handler: this.onImportLayer
+            name: 'import-layer', label: this.$t('mixins.activity.IMPORT_LAYER'), icon: 'las la-file-import', handler: this.onImportLayer
           })
         }
         // Nav bar
@@ -234,7 +234,7 @@ export default function (name) {
             actions.push({
               name: 'zoom-to',
               label: this.$t('mixins.activity.ZOOM_TO_LABEL'),
-              icon: 'zoom_out_map',
+              icon: 'las la-search-location',
               handler: () => this.onZoomToLayer(layer)
             })
           }
@@ -243,7 +243,7 @@ export default function (name) {
             actions.push({
               name: 'save',
               label: this.$t('mixins.activity.SAVE_LABEL'),
-              icon: 'save',
+              icon: 'las la-save',
               handler: () => this.onSaveLayer(layer)
             })
           }
@@ -251,7 +251,7 @@ export default function (name) {
             actions.push({
               name: 'filter-data',
               label: this.$t('mixins.activity.FILTER_DATA_LABEL'),
-              icon: 'filter_list',
+              icon: 'las la-filter',
               handler: () => this.onFilterLayerData(layer)
             })
           }
@@ -259,7 +259,7 @@ export default function (name) {
             actions.push({
               name: 'view-data',
               label: this.$t('mixins.activity.VIEW_DATA_LABEL'),
-              icon: 'view_list',
+              icon: 'las la-th-list',
               handler: () => this.onViewLayerData(layer)
             })
           }
@@ -267,7 +267,7 @@ export default function (name) {
             actions.push({
               name: 'chart-data',
               label: this.$t('mixins.activity.CHART_DATA_LABEL'),
-              icon: 'pie_chart',
+              icon: 'las la-chart-pie',
               handler: () => this.onChartLayerData(layer)
             })
           }
@@ -283,7 +283,7 @@ export default function (name) {
             actions.push({
               name: 'edit-style',
               label: this.$t('mixins.activity.EDIT_LAYER_STYLE_LABEL'),
-              icon: 'fas fa-border-style',
+              icon: 'las la-border-style',
               handler: () => this.onEditLayerStyle(layer)
             })
           }
@@ -294,7 +294,7 @@ export default function (name) {
               label: this.isLayerEdited(layer)
                 ? this.$t('mixins.activity.STOP_EDIT_DATA_LABEL')
                 : this.$t('mixins.activity.START_EDIT_DATA_LABEL'),
-              icon: 'edit_location',
+              icon: 'las la-edit',
               handler: () => this.onEditLayerData(layer)
             })
           }

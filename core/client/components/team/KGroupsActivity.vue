@@ -85,7 +85,7 @@ export default {
         this.registerFabAction({
           name: 'create-group',
           label: this.$t('KGroupsActivity.CREATE_GROUP_LABEL'),
-          icon: 'add',
+          icon: 'las la-plus',
           route: { name: 'create-group', params: { contextId: this.contextId } }
         })
       }
