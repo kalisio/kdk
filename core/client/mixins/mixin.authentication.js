@@ -13,7 +13,6 @@ const authenticationMixin = {
     },
     async register (user) {
       delete user.confirmPassword
-      // TODO: delete user.policiesAccepted
       await this.$api.getService('users').create(user)
       await this.login(user.email, user.password)
     },
