@@ -36,7 +36,7 @@ export function createOrganisationServices (hook) {
     .then(db => {
       debug('DB created for organisation ' + hook.result.name)
       // Jump from infos/stats to real DB object
-      db = app.db.instance.db(hook.result._id.toString())
+      db = app.db.client.db(hook.result._id.toString())
       organisationService.createOrganisationServices(hook.result, db)
       return hook
     })

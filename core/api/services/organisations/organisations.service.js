@@ -70,7 +70,7 @@ export default function (name, app, options) {
       const organisations = await this.find({ paginate: false })
       organisations.forEach(organisation => {
         // Get org DB
-        const db = this.app.db.instance.db(organisation._id.toString())
+        const db = this.app.db.client.db(organisation._id.toString())
         this.createOrganisationServices(organisation, db)
       })
     }

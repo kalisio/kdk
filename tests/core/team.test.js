@@ -27,7 +27,7 @@ describe('team', () => {
     userService, orgService, authorisationService, orgGroupService, orgUserService, orgStorageService,
     joinedOrgUserService, user1Object, user2Object, user3Object, orgObject, groupObject
 
-  before(() => {
+  before(async () => {
     chailint(chai, util)
 
     // Register all default hooks for authorisation
@@ -57,10 +57,8 @@ describe('team', () => {
         })
       }
     })
-    return app.db.connect()
-      .then(db => {
-        adminDb = app.db.instance.admin()
-      })
+    const db = await app.db.connect()
+    adminDb = db.admin()
   })
 
   it('is ES6 compatible', () => {

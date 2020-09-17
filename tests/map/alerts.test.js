@@ -63,7 +63,7 @@ describe('map:alerts', () => {
     webhookCount = 0
   }
 
-  before(() => {
+  before(async () => {
     chailint(chai, util)
     chai.use(spies)
 
@@ -77,7 +77,7 @@ describe('map:alerts', () => {
       error: { all: hooks.log }
     })
     port = app.get('port')
-    return Promise.all([
+    await Promise.all([
       app.db.connect(),
       weacastApp.db.connect()
     ])
@@ -104,7 +104,7 @@ describe('map:alerts', () => {
   it('registers the weacast services', async () => {
     weacastApp.configure(weacastCore)
     await weacastApp.configure(weacastGfs)
-    weacastApp.configure(weacastProbe)
+    await weacastApp.configure(weacastProbe)
     uService = weacastApp.getService('gfs-world/u-wind')
     expect(uService).toExist()
     vService = weacastApp.getService('gfs-world/v-wind')
@@ -292,8 +292,10 @@ describe('map:alerts', () => {
         start: { hours: 0 },
         end: { hours: 48 }
       },
-      service: 'vigicrues-observations',
-      featureId: 'CdStationH',
+      layer: {
+        service: 'vigicrues-observations',
+        featureId: 'CdStationH'
+      },
       feature: 'A282000101',
       conditions: {
         H: { $gte: 0.6 } // Set a large range so that we are sure it will trigger
@@ -352,8 +354,10 @@ describe('map:alerts', () => {
         start: { hours: 0 },
         end: { hours: 48 }
       },
-      service: 'vigicrues-observations',
-      featureId: 'CdStationH',
+      layer: {
+        service: 'vigicrues-observations',
+        featureId: 'CdStationH'
+      },
       feature: 'A282000101',
       conditions: {
         H: { $lt: -10 } // Set an invalid range so that we are sure it will not trigger

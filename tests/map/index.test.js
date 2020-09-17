@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 import core, { kalisio, hooks, permissions } from '../../core/api'
 import map, { permissions as mapPermissions, createFeaturesService, createCatalogService } from '../../map/api'
 
-describe('kMap', () => {
+describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, geocoderService, catalogService, layersArray,
     vigicruesStationsService, vigicruesObsService, adsbObsService, position
@@ -79,7 +79,7 @@ describe('kMap', () => {
     vigicruesStationsService = app.getService(vigicruesStationsLayer.service)
     expect(vigicruesStationsService).toExist()
     // Create the spatial index
-    vigicruesStationsService.Model.ensureIndex({ geometry: '2dsphere' })
+    vigicruesStationsService.Model.createIndex({ geometry: '2dsphere' })
     // Feed the collection
     const stations = require('./data/vigicrues.stations.json').features
     await vigicruesStationsService.create(stations)
@@ -131,7 +131,8 @@ describe('kMap', () => {
             $maxDistance: 100000 // 100 Kms around
           }
         }
-      }
+      },
+      paginate: false
     })
     expect(result.features.length > 0).beTrue()
   })

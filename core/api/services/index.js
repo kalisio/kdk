@@ -89,7 +89,7 @@ export function createOrganisationService (options = {}) {
     const orgMembersService = app.getService('members', organisation)
     if (!orgMembersService) {
       // Jump from infos/stats to real DB object
-      const db = app.db.instance.db(organisation._id.toString())
+      const db = app.db.client.db(organisation._id.toString())
       orgsService.createOrganisationServices(organisation, db)
     }
   })
