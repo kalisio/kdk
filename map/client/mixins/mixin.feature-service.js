@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import explode from '@turf/explode'
 import logger from 'loglevel'
 import moment from 'moment'
 import { getNearestTime } from '../utils'
@@ -175,8 +175,35 @@ export default {
         const feature = await this.$api.getService('features').create(features[0])
         return feature
       } else {
-        // Create chunks to avoid reaching some limits (DB, etc.)
-        const chunks = _.chunk(features, chunkSize)
+        // Create chunks to avoid reaching some limits (upload size, timeout, etc.)
+        // We create chunks according to the number of points and not features.
+        // Indeed otherwise it would create very different chunks depending on the geometry type
+        // (eg a bucket of 1000 polygons can actually contains a lot of points).
+        //const chunks = _.chunk(features, chunkSize)
+        let chunks = []
+        let chunkPoints = 0
+        let chunk = []
+        features.forEach(feature => {
+          const explodedFeature = explode(feature)
+          const nbPoints = explodedFeature.features.length
+          // Check if current chunk is not full
+          if ((chunkPoints + nbPoints) <= chunkSize) {
+            chunkPoints += nbPoints
+            chunk.push(feature)
+          } else {
+            // Otherwise push current chunk if not empty
+            if (chunk.length > 0) {
+              chunks.push(chunk)
+            } else {
+              // It could be that a single feature exceed the chunk size
+              // In that case push it alone hoping it will not be too much large
+              chunks.push([feature])
+            }
+            // Then start new chunk
+            chunk = []
+            chunkPoints = 0
+          }
+        })
         // Write the chunks
         for (let i = 0; i < chunks.length; i++) {
           await this.$api.getService('features').create(chunks[i])
