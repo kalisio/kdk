@@ -411,11 +411,13 @@ export default function (name) {
           let createdLayer = await this.$api.getService('catalog')
             .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
           const chunkSize = _.get(this, 'activityOptions.featuresChunkSize', 5000)
+          let nbFeatures = 0
           // We use the generated DB ID as layer ID on features
-          await this.createFeatures(geoJson, createdLayer._id, chunkSize, i => {
+          await this.createFeatures(geoJson, createdLayer._id, chunkSize, (i, chunk) => {
             // Update message
+            nbFeatures += chunk.length
             Loading.show({
-              message: this.$t('mixins.activity.SAVING_LABEL', { processed: (i + 1) * chunkSize, total: features.length })
+              message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length })
             })
           })
           // Because we save all features in a single service use filtering to separate layers
