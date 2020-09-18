@@ -194,16 +194,16 @@ export default {
             // Otherwise push current chunk if not empty
             if (chunk.length > 0) {
               chunks.push(chunk)
-            } else {
-              // It could be that a single feature exceed the chunk size
-              // In that case push it alone hoping it will not be too much large
-              chunks.push([feature])
             }
             // Then start new chunk
-            chunk = []
-            chunkPoints = 0
+            chunk = [feature]
+            chunkPoints = nbPoints
           }
         })
+        // Push last chunk
+        if (chunk.length > 0) {
+          chunks.push(chunk)
+        }
         // Write the chunks
         for (let i = 0; i < chunks.length; i++) {
           await this.$api.getService('features').create(chunks[i])
