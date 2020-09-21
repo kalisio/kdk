@@ -4,6 +4,7 @@ import sift from 'sift'
 import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
+import explode from '@turf/explode'
 import { Loading, Dialog, uid } from 'quasar'
 import { setGatewayJwt, generatePropertiesSchema } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
@@ -402,7 +403,14 @@ export default function (name) {
         const geoJson = this.toGeoJson(layer.name)
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         // If too much data use tiling
-        if (this.is2D() && features.length > 5000) {
+        // The threshold is based on the number of points and not features.
+        // Indeed otherwise the complexity will be different depending on the geometry type
+        // (eg a bucket of 1000 polygons can actually contains a lot of points).
+        let nbPoints = 0
+        features.forEach(feature => {
+          nbPoints += explode(feature).features.length
+        })
+        if (this.is2D() && (nbPoints > 5000)) {
           _.set(layer, 'leaflet.tiled', true)
           _.set(layer, 'leaflet.minZoom', 15)
         }
