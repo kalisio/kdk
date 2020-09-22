@@ -382,15 +382,27 @@ export default {
       styles.forEach(style => this.$refs[style.key][0].fill(style.value))
     },
     processTemplates (values, properties, defaultStyle, styles) {
-      // We have styles for a set of values templated using if statements
-      // Split after else statement to get default style values
+      // We have styles for a set of feature property values templated using if statements
+      // For instance if I want all linear features with property 'A' equals 'V' to be green,
+      // all linear features with property 'B' equals 'U' to be red, and all others to be blue (default style),
+      // the 'stroke' style property value once converted to template will be the following:
+      // if (properties.A === 'V') { %>#00FF00<% } else
+      // if (properties.B === 'U') { %>#FF0000<% } else
+      // { %>#0000FF<% }
+
+      // First split after each else statement to get default style values
       const templates = properties.map(property => _.get(values, `leaflet.${property}`).split('} else {'))
       properties.forEach((property, index) => {
         // Conversion from palette to RGB color is required
         const value = (property.includes('color')
           ? kCoreUtils.getPaletteFromColor(templates[index][1].match(/%>([^<%]+)<%/)[1])
           : templates[index][1].match(/%>([^<%]+)<%/)[1])
-        defaultStyle[property] = value
+        // Convert to number whenever required
+        if (property.includes('width') || property.includes('opacity')) {
+          defaultStyle[property] = _.toNumber(value)
+        } else {
+          defaultStyle[property] = value
+        }
       })
       // Match properties equality to get property names
       const propertyNameRegex = /properties.([^===]+)===/g
@@ -537,8 +549,16 @@ export default {
       const hasStyles = (styles.length > 0)
       const values = {}
       const templates = properties.map(property => '')
-      // Process all styles
+      // Process all styles, a style is a matching feature property value associated with a style property values.
+      // It is expressed as a if statement in the final template expression of the style property.
+      // For instance if I want all linear features with property 'A' equals 'V' to be green,
+      // all linear features with property 'B' equals 'U' to be red, and all others to be blue (default style),
+      // the 'stroke' style property value once converted to template will be the following:
+      // if (properties.A === 'V') { %>#00FF00<% } else
+      // if (properties.B === 'U') { %>#FF0000<% } else
+      // { %>#0000FF<% }
       styles.forEach(style => {
+        // Process all properties, for each property
         properties.forEach((property, index) => {
           // Conversion from palette to RGB color is required
           const value = (property.includes('color')
@@ -552,7 +572,9 @@ export default {
             : `if (properties.${propertyName} === "${propertyValue}") { %>${value}<% } else `)
         })
       })
-      // Process default style
+      // Process default style for each style property
+      // If there are some styles based on feature property values it will be the last else statement
+      // otherwise it will simply be the sole value in the template expression
       properties.forEach((property, index) => {
         // Conversion from palette to RGB color is required
         const value = (property.includes('color')
