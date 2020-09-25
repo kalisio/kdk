@@ -55,7 +55,7 @@ export default function (name, app, options) {
         jsonMessage.email = message.body
       } else if (platform === SNS.SUPPORTED_PLATFORMS.IOS) {
         // iOS
-        const aps = {
+        let aps = {
           alert: message.title,
           notId
         }
@@ -63,11 +63,11 @@ export default function (name, app, options) {
         jsonMessage.APNS = JSON.stringify({ aps })
       } else {
         // ANDROID
-        const data = {
+        let data = {
           title: message.title,
-          message: message.body,
           notId
         }
+        if (message.body) data.message = message.body
         if (message.sound) data.soundname = message.sound
         if (message.vibration) data.vibrationPattern = message.vibration
         jsonMessage.GCM = JSON.stringify({ data })
