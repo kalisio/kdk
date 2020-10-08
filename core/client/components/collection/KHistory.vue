@@ -113,6 +113,8 @@ export default {
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     this.$on('collection-refreshed', this.onCollectionRefreshed)
+    // Refresh collection
+    this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)
   },
