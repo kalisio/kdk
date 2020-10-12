@@ -135,7 +135,9 @@ export default {
       this.$refs.iconChooser.open(tag.icon)
     },
     onIconChoosed (icon) {
-      this.selectedTag.icon = icon
+      // Avoid referencing the underlying object otherwise
+      // changing the icon on a new tag could affect a previous tag
+      this.selectedTag.icon = Object.assign({}, icon)
       this.updateModel()
     }
   }
