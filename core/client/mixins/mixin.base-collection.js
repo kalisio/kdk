@@ -34,9 +34,14 @@ const baseCollectionMixin = {
         .find({ query })
         .subscribe(response => {
           // Manage GeoJson features collection as well
-          if (response.type === 'FeatureCollection') this.items = response.features
-          else if (this.appendItems) this.items = this.items.concat(response.data)
-          else this.items = response.data
+          if (response.type === 'FeatureCollection') {
+            this.items = response.features
+          } else if (this.appendItems) {
+            // Ensure there is no duplicates when appending
+            this.items = _.unionBy(this.items, response.data, '_id')
+          } else {
+            this.items = response.data
+          }
           this.nbTotalItems = response.total
           this.$emit('collection-refreshed')
         }, error => {
