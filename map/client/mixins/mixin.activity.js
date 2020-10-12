@@ -661,29 +661,6 @@ export default function (name) {
           reader.readAsText(pickedFile)
         })
       },
-      onGeolocate () {
-        // Force a refresh
-        this.clearStoredView()
-        this.updatePosition()
-      },
-      onGeolocationError (error) {
-        // Remove geolocation action if not allowed by user
-        if (error.code === 'GEOLOCATION_PERMISSION_DENIED') {
-          this.unregisterFabAction('geolocate')
-        }
-      },
-      geolocate () {
-        if (!this.engineReady) {
-          // logger.error('Engine not ready to geolocate')
-          return
-        }
-        const position = this.$store.get('user.position')
-        // 3D or 2D centering ?
-        if (this.locateControl) this.locateControl.start()
-        else if (position) {
-          this.center(position.longitude, position.latitude)
-        }
-      },
       getProbeTimeRange () {
         const start = this.currentTime.clone()
         const end = start.clone()
@@ -778,9 +755,12 @@ export default function (name) {
       async initialize () {
         // Geolocate by default if view has not been restored
         if (!this.restoreView()) {
-          if (this.$store.get('user.position')) this.geolocate()
           // Provided by geolocation mixin if available
-          else if (this.updatePosition) await this.updatePosition()
+          if (!this.$store.get('user.position') && this.updatePosition) {
+            await this.updatePosition()
+            const position = this.$store.get('user.position')
+            if (position) this.center(position.longitude, position.latitude)
+          }
         }
         // Retrieve the forecast models
         if (this.setupWeacast) {
@@ -813,18 +793,14 @@ export default function (name) {
       this.$on('map-ready', this.onMapReady)
       this.$on('globe-ready', this.onGlobeReady)
       this.$on('layer-added', this.onLayerAdded)
-      this.$events.$on('user-position-changed', this.geolocate)
       // Whenever restore view settings are updated, update view as well
       this.$events.$on('restore-view-changed', this.updateViewSettings)
-      this.$events.$on('error', this.onGeolocationError)
     },
     beforeDestroy () {
       this.$off('map-ready', this.onMapReady)
       this.$off('globe-ready', this.onGlobeReady)
       this.$off('layer-added', this.onLayerAdded)
-      this.$events.$off('user-position-changed', this.geolocate)
       this.$events.$off('restore-view-changed', this.updateViewSettings)
-      this.$events.$off('error', this.onGeolocationError)
     }
   }
 }

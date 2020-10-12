@@ -33,6 +33,7 @@ export default {
         const user = Store.get('user')
         if (user) {
           Store.set('user.position', position)
+          Store.unset('user.positionError')
         }
         logger.debug('New user position: ', position)
       } catch (error) {
@@ -48,6 +49,11 @@ export default {
           geolocationError.code = 'GEOLOCATION_POSITION_TIMEOUT'
         } else {
           geolocationError.code = 'GEOLOCATION_ERROR'
+        }
+        // Store last error so that component not yet initialized can also check for any
+        const user = Store.get('user')
+        if (user) {
+          Store.set('user.positionError', geolocationError)
         }
         // It seems there is no message when a code is present, however we cannot alter the original error
         // with the new message because it is a read-only property so we refer to it

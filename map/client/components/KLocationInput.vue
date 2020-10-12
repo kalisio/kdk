@@ -3,7 +3,7 @@
     <!--
       User location
     -->
-    <q-btn v-if="user" id="geolocate" icon="las la-street-view" color="primary" flat dense round @click="geolocate()">
+    <q-btn v-if="user" id="geolocate" icon="las la-street-view" color="primary" :flat="!geolocated" dense round @click="geolocate()">
       <q-tooltip>{{ $t('KLocationInput.GEOLOCATE') }}</q-tooltip>
     </q-btn>
     <!--
@@ -68,6 +68,10 @@ export default {
       type: Boolean,
       default: true
     },
+    geolocated: {
+      type: Boolean,
+      default: false
+    },
     map: {
       type: Object,
       default: () => {
@@ -88,12 +92,6 @@ export default {
   computed: {
     locationName () {
       return this.location ? this.location.name : ''
-    },
-    isUserLocationEnabled () {
-      return this.userLocation
-    },
-    isLocationMapEnabled () {
-      return this.locationMap
     }
   },
   data () {
@@ -103,8 +101,8 @@ export default {
     }
   },
   methods: {
-    geolocate () {
-      this.updatePosition()
+    async geolocate () {
+      await this.updatePosition()
       const position = this.$store.get('user.position')
       if (position) {
         this.location = {

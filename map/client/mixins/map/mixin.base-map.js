@@ -323,6 +323,22 @@ export default {
       const east = this.viewBounds.getEast()
       return [[south, west], [north, east]]
     },
+    showUserLocation () {
+      const position = this.$store.get('user.position')
+      if (this.locateControl) {
+        this.locateControl.start()
+      } else if (position) {
+        this.center(position.longitude, position.latitude)
+      }
+    },
+    hideUserLocation () {
+      if (this.locateControl) {
+        this.locateControl.stop()
+      }
+    },
+    isUserLocationVisible () {
+      return (this.locateControl && this.locateControl._active)
+    },
     setCursor (className) {
       L.DomUtil.addClass(this.map._container, className)
     },

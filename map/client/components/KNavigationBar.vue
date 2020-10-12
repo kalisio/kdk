@@ -37,7 +37,7 @@
           icon="las la-search" color="primary" round flat @click="mode = 'searchbar'" >
           <q-tooltip>{{ $t('KNavigationBar.SEARCH') }}</q-tooltip>
         </q-btn>
-        <k-location-input id="location-input" :user="true" :map="null" :search="false" :dense="true" style="" @input="onLocationChanged" />
+        <k-location-input id="location-input" :user="geolocationAvailable" :geolocated="geolocated" :map="null" :search="false" :dense="true" style="" @input="onLocationChanged" />
          <!-- After section -->
         <k-tool-bar v-if="hasAfterActions" :actions="navigationBar.actions.after" color="primary" />
       </template>
@@ -68,18 +68,52 @@ export default {
   data () {
     return {
       navigationBar: this.$store.get('navigationBar'),
-      mode: 'toolbar'
+      mode: 'toolbar',
+      geolocated: false,
+      geolocationAvailable: true
     }
   },
   methods: {
     onLocationChanged (location) {
-      if (location) this.kActivity.center(location.longitude, location.latitude)
+      // On search simply center on requested location
+      // On geolocation toggle user location
+      if (this.mode === 'searchbar') {
+        this.kActivity.center(location.longitude, location.latitude)
+      } else if (!this.kActivity.isUserLocationVisible()) {
+        this.kActivity.showUserLocation()
+        this.geolocated = true
+      } else {
+        this.kActivity.hideUserLocation()
+        this.geolocated = false
+      }
+    },
+    geolocate () {
+      if (!this.kActivity.engineReady) {
+        // logger.error('Engine not ready to geolocate')
+        return
+      }
+      const position = this.$store.get('user.position')
+      if (position) this.kActivity.center(position.longitude, position.latitude)
+    },
+    onGeolocationError (error) {
+      // Remove geolocation action if not allowed by user
+      if (error.code === 'GEOLOCATION_PERMISSION_DENIED') {
+        this.geolocationAvailable = false
+      }
     }
   },
   created () {
     this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
     this.$options.components['k-position-indicator'] = this.$load('KPositionIndicator')
     this.$options.components['k-location-input'] = this.$load('KLocationInput')
+    this.$events.$on('user-position-changed', this.geolocate)
+    this.$events.$on('error', this.onGeolocationError)
+    // Check for any geolocation error that has already occured
+    if (this.$store.has('user.positionError')) this.onGeolocationError(this.$store.get('user.positionError'))
+  },
+  beforeDestroy () {
+    this.$events.$off('user-position-changed', this.geolocate)
+    this.$events.$off('error', this.onGeolocationError)
   }
 }
 </script>
