@@ -255,6 +255,20 @@ export default {
       const east = Cesium.Math.toDegrees(bounds.east)
       return [[south, west], [north, east]]
     },
+    showUserLocation () {
+      const position = this.$store.get('user.position')
+      // TODO: no specific marker yet, simply center
+      if (position) {
+        this.center(position.longitude, position.latitude)
+      }
+    },
+    hideUserLocation () {
+      // TODO: no specific marker to remove yet
+    },
+    isUserLocationVisible () {
+      // TODO: no specific marker to show yet
+      return false
+    },
     setCursor (className) {
       this.viewer.container.classList.add(className)
     },
