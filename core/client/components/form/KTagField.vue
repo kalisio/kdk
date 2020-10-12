@@ -30,11 +30,12 @@
                 :icon="tag.icon.name"
                 :color="tag.icon.color"
                 :label="tag.value"
+                :clickable="!tag._id"
                 outline
                 dense
                 @remove="onTagRemoved(tag)"
                 @click="onTagClicked(tag)"
-                removable clickable />
+                removable />
             </template>
           </div>
           <div>
@@ -114,8 +115,8 @@ export default {
     onTagAdded (newTag) {
       if (typeof newTag === 'string') return
       if (_.findIndex(this.tags, tag => tag.value === newTag.value) === -1) {
-        // Filter the tag data and transform the icon provided by the autocomplete into an icon object
-        const tag = _.pick(newTag, ['value', 'scope', 'icon'])
+        // Filter the required tag data
+        const tag = _.pick(newTag, ['_id', 'value', 'scope', 'icon'])
         this.tags.push(tag)
         this.updateModel()
       }
