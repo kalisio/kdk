@@ -334,7 +334,8 @@ export default {
               const geoJson = togeojson.kml(kml)
               if (geoJson.features.length > 0) feature = geoJson.features[0]
             } else {
-              const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position.getValue(0))
+              const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position ?
+                emittedEvent.target.position.getValue(0) : emittedEvent.pickedPosition)
               feature.geometry = {
                 type: 'Point',
                 coordinates: [Cesium.Math.toDegrees(position.longitude), Cesium.Math.toDegrees(position.latitude)]
