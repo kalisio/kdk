@@ -2,6 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import moment from 'moment'
 import sift from 'sift'
+import centroid from '@turf/centroid'
 import HeatmapOverlay from 'leaflet-heatmap'
 import { fetchGeoJson } from '../../utils'
 
@@ -49,11 +50,14 @@ export default {
       layer.setData({
         min: (min || (valueField ? _.min(values) : 0)),
         max: (max || (valueField ? _.max(values) : 1)),
-        data: geoJson.features.map((feature, index) => ({
-          lng: _.get(feature, 'geometry.coordinates[0]'),
-          lat: _.get(feature, 'geometry.coordinates[1]'),
-          [valueField]: values[index]
-        }))
+        data: geoJson.features.map((feature, index) => {
+          const location = centroid(feature)
+          return {
+            lng: _.get(location, 'geometry.coordinates[0]'),
+            lat: _.get(location, 'geometry.coordinates[1]'),
+            [valueField]: values[index]
+          }
+        })
       })
     },
     updateHeatmap (name, geoJson) {
