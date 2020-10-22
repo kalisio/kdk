@@ -73,7 +73,8 @@
       "URL",
       "Blob",
       "Event",
-      "MouseEvent"
+      "MouseEvent",
+      "AbortController"
     ]
   },
   "directories": {

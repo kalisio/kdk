@@ -3,7 +3,7 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 import * as PIXI from 'pixi.js'
 import 'leaflet-pixi-overlay'
-import AbortController from 'abort-controller'
+import 'abort-controller/polyfill'
 
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils'
