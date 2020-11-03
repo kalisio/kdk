@@ -23,7 +23,7 @@ export default {
     const id = (typeof alert === 'string' ? alert : alert._id)
     const cronJob = alerts[id.toString()]
     if (!cronJob) return
-    debug('Unregistering new alert ', alert)
+    debug('Unregistering alert ', alert)
     cronJob.stop()
     delete alerts[id.toString()]
   },
