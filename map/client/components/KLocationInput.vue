@@ -144,7 +144,13 @@ export default {
     // Load the required components
     this.$options.components['k-location-map'] = this.$load('KLocationMap')
     // Populate the component
-    if (this.value) this.location = this.value
+    if (this.value) {
+      this.location = this.value
+      // Set name as coordinates if not given
+      if (!this.location.name && this.location.latitude && this.location.longitude) {
+        this.location.name = formatcoords(this.location.latitude, this.location.longitude).format(this.$store.get('locationFormat', 'FFf'))
+      }
+    }
   }
 }
 </script>

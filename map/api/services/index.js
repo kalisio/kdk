@@ -70,10 +70,8 @@ export default async function () {
   app.on('service', async service => {
     if (service.name === 'alerts') {
       // On startup restore alerts CRON tasks if service not disabled
-      if (!service.memory) {
-        const alerts = await service.find({ paginate: false })
-        alerts.forEach(alert => service.registerAlert(alert, false))
-      }
+      const alerts = await service.find({ paginate: false })
+      alerts.forEach(alert => service.registerAlert(alert, false))
     }
   })
   const alertsConfig = app.get('alerts')
