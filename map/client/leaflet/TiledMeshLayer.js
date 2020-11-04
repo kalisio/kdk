@@ -5,11 +5,10 @@ import * as PIXI from 'pixi.js'
 import 'leaflet-pixi-overlay'
 import 'abort-controller/polyfill'
 
-import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils'
 
 const TiledMeshLayer = L.GridLayer.extend({
-  initialize (options) {
+  initialize (options, gridSource) {
     L.GridLayer.prototype.initialize.call(this, options)
 
     this.conf = {}
@@ -64,17 +63,10 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
-    // instanciate grid source
-    const [gridKey, gridConf] = extractGridSourceConfig(options)
-    // instanciate grid source
-    this.gridSource = makeGridSource(gridKey, { weacastApi: options.weacastApi })
+    this.gridSource = gridSource
     // keep ref on callback to be able to remove it
     this.onDataChangedCallback = this.onDataChanged.bind(this)
     this.gridSource.on('data-changed', this.onDataChangedCallback)
-    this.gridSource.setup(gridConf)
-
-    // add jwtToken to gridSource conf
-    if (options.jwtToken) this.gridSource.updateCtx.jwtToken = options.jwtToken
   },
 
   onAdd (map) {

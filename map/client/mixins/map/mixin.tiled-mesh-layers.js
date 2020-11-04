@@ -1,27 +1,31 @@
 import _ from 'lodash'
 
-import { extractGridSourceConfig } from '../../../common/grid'
+import { makeGridSource, extractGridSourceConfig } from '../../../common/grid'
 import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer'
 
 export default {
   methods: {
     createLeafletTiledMeshLayer (options) {
-      const leafletOptions = options.leaflet || options
+      const layerOptions = options.leaflet || options
 
       // Check for valid type
-      if (leafletOptions.type !== 'tiledMeshLayer') return
+      if (layerOptions.type !== 'tiledMeshLayer') return
 
       // Copy options
       const colorMap = _.get(options, 'variables[0].chromajs', null)
-      if (colorMap) Object.assign(leafletOptions, { chromajs: colorMap })
+      if (colorMap) Object.assign(layerOptions, { chromajs: colorMap })
+
+      // Build grid source
       const [gridKey, gridConf] = extractGridSourceConfig(options)
-      leafletOptions[gridKey] = gridConf
+      const gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      gridSource.setup(gridConf)
+      if (gridSource.updateCtx) {
+        // define variables for source's dynamic properties
+        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        if (gatewayToken) gridSource.updateCtx.jwtToken = gatewayToken
+      }
 
-      leafletOptions.weacastApi = this.weacastApi
-      const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-      if (gatewayToken) leafletOptions.jwtToken = gatewayToken
-
-      return new TiledMeshLayer(leafletOptions)
+      return new TiledMeshLayer(layerOptions, gridSource)
     },
 
     onShowTiledMeshLayer (layer, engineLayer) {
