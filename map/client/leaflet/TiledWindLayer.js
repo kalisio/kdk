@@ -3,7 +3,7 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
-import { tile2key, tileSetContainsParent, computeIdealMaxNativeZoom } from './utils'
+import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options) {
@@ -27,16 +27,18 @@ const TiledWindLayer = L.GridLayer.extend({
     const scale = chroma.scale(colors)
     this.colorMap = scale.domain(invert ? domain.slice().reverse() : domain)
 
+    const [key, conf] = extractGridSourceConfig(options)
+    this.uSource = makeGridSource(key, { weacastApi: options.weacastApi })
+    this.vSource = makeGridSource(key, { weacastApi: options.weacastApi })
+
     // instanciate grid sources (one for each component)
-    const [uKey, uConf] = extractGridSourceConfig(options.u)
-    const [vKey, vConf] = extractGridSourceConfig(options.v)
-    this.uSource = makeGridSource(uKey, { weacastApi: options.weacastApi })
-    this.vSource = makeGridSource(vKey, { weacastApi: options.weacastApi })
     this.onDataChangedCallback = this.onDataChanged.bind(this)
     this.uSource.on('data-changed', this.onDataChangedCallback)
     this.vSource.on('data-changed', this.onDataChangedCallback)
-    this.uSource.setup(uConf)
-    this.vSource.setup(vConf)
+    this.uSource.setup(conf)
+    this.vSource.setup(conf)
+    this.uSource.updateCtx.component = options.uvComponents.u
+    this.vSource.updateCtx.component = options.uvComponents.v
     // add jwtToken to grid sources conf
     if (options.jwtToken) {
       this.uSource.updateCtx.jwtToken = options.jwtToken
