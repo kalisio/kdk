@@ -1,29 +1,39 @@
 import _ from 'lodash'
 
-import { extractGridSourceConfig } from '../../../common/grid'
+import { makeGridSource, extractGridSourceConfig } from '../../../common/grid'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer'
 
 export default {
   methods: {
     createLeafletTiledWindLayer (options) {
-      const leafletOptions = options.leaflet || options
+      const layerOptions = options.leaflet || options
 
       // Check for valid type
-      if (leafletOptions.type !== 'tiledWindLayer') return
+      if (layerOptions.type !== 'tiledWindLayer') return
 
       // Copy options
       const colorMap = _.get(options, 'variables[0].chromajs', null)
-      if (colorMap) Object.assign(leafletOptions, { chromajs: colorMap })
+      if (colorMap) Object.assign(layerOptions, { chromajs: colorMap })
+
+      // Build u & v grid sources
       const [gridKey, gridConf] = extractGridSourceConfig(options)
-      leafletOptions[gridKey] = gridConf
-      const uvComponents = _.get(options, 'uvComponents')
-      if (uvComponents) Object.assign(leafletOptions, { uvComponents })
+      const uSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      const vSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      uSource.setup(gridConf)
+      vSource.setup(gridConf)
+      if (uSource.updateCtx) {
+        // define variables for source's dynamic properties
+        uSource.updateCtx.component = options.uvComponents.u
+        vSource.updateCtx.component = options.uvComponents.v
 
-      leafletOptions.weacastApi = this.weacastApi
-      const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-      if (gatewayToken) leafletOptions.jwtToken = gatewayToken
+        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        if (gatewayToken) {
+          uSource.updateCtx.jwtToken = gatewayToken
+          vSource.updateCtx.jwtToken = gatewayToken
+        }
+      }
 
-      return new TiledWindLayer(leafletOptions)
+      return new TiledWindLayer(layerOptions, uSource, vSource)
     },
 
     onShowTiledWindLayer (layer, engineLayer) {
