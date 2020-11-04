@@ -37,6 +37,9 @@ export default {
     // Convert conditions to internal data model
     const conditions = this.getConditions(alert)
     const probesService = this.app.getService('probes')
+    if (!probesService) {
+      throw new Error('Cannot check alert ' + alert._id.toString() + ' as target probes service is not available')
+    }
     // Perform aggregation over time range
     const query = Object.assign({
       forecastTime: {
@@ -64,6 +67,9 @@ export default {
     // Convert conditions to internal data model
     const conditions = this.getConditions(alert)
     const featureService = this.app.getService(_.get(alert, 'layer.service'))
+    if (!featureService) {
+      throw new Error('Cannot check alert ' + alert._id.toString() + ' as target features service is not available')
+    }
     // Perform aggregation over time range
     const query = Object.assign({
       time: {
@@ -89,44 +95,48 @@ export default {
       await this.unregisterAlert(alert)
       return
     }
-    const results = (alert.feature ? await this.checkMeasureAlert(alert) : await this.checkWeatherAlert(alert))
-    // FIXME: check for a specific duration where conditions are met
-    const isActive = (results.length > 0)
-    const wasActive = _.get(alert, 'status.active')
-    // Then update alert status
-    const status = {
-      active: isActive,
-      checkedAt: now.clone()
-    }
-    if (isActive) {
-      // If not previously active and it is now add first time stamp
-      if (!wasActive) {
-        status.triggeredAt = now.clone()
-      } else { // Else keep track of previous trigger time stamp
-        status.triggeredAt = _.get(alert, 'status.triggeredAt').clone()
+    try {
+      const results = (alert.feature ? await this.checkMeasureAlert(alert) : await this.checkWeatherAlert(alert))
+      // FIXME: check for a specific duration where conditions are met
+      const isActive = (results.length > 0)
+      const wasActive = _.get(alert, 'status.active')
+      // Then update alert status
+      const status = {
+        active: isActive,
+        checkedAt: now.clone()
       }
-      status.triggers = results
-    }
-    debug('Alert ' + alert._id.toString() + ' status', status, ' with ' + results.length + ' triggers')
-    // As we keep in-memory objects avoid them being mutated by hooks processing operation payload
-    if (options.patch) {
-      await this.patch(alert._id.toString(), { status: Object.assign({}, status) })
-      // DEBUG code to simulate alert closing
-      /*
-      setTimeout(async () => {
-        await this.patch(alert._id.toString(), {
-          status: { active: false, checkedAt: now.clone() }
-        })
-      }, 10000)
-      */
-    }
-    // Keep track of changes in memory as well
-    Object.assign(alert, { status })
-    // If a webhook is configured call it
-    const webhook = alert.webhook
-    if (options.callWebhook && webhook) {
-      const body = Object.assign({ alert: _.omit(alert, ['webhook']) }, _.omit(webhook, ['url']))
-      await request.post(webhook.url, body)
+      if (isActive) {
+        // If not previously active and it is now add first time stamp
+        if (!wasActive) {
+          status.triggeredAt = now.clone()
+        } else { // Else keep track of previous trigger time stamp
+          status.triggeredAt = _.get(alert, 'status.triggeredAt').clone()
+        }
+        status.triggers = results
+      }
+      debug('Alert ' + alert._id.toString() + ' status', status, ' with ' + results.length + ' triggers')
+      // As we keep in-memory objects avoid them being mutated by hooks processing operation payload
+      if (options.patch) {
+        await this.patch(alert._id.toString(), { status: Object.assign({}, status) })
+        // DEBUG code to simulate alert closing
+        /*
+        setTimeout(async () => {
+          await this.patch(alert._id.toString(), {
+            status: { active: false, checkedAt: now.clone() }
+          })
+        }, 10000)
+        */
+      }
+      // Keep track of changes in memory as well
+      Object.assign(alert, { status })
+      // If a webhook is configured call it
+      const webhook = alert.webhook
+      if (options.callWebhook && webhook) {
+        const body = Object.assign({ alert: _.omit(alert, ['webhook']) }, _.omit(webhook, ['url']))
+        await request.post(webhook.url, body)
+      }
+    } catch (error) {
+      this.app.logger.error(error)
     }
     return alert
   }
