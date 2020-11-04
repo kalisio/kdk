@@ -30,7 +30,9 @@ export class MeteoModelGridSource extends DynamicGridSource {
   async setup (config) {
     this.candidates = []
 
-    for (const item of config) {
+    for (const source of config.sources) {
+      const item = Object.assign(Object.assign({}, source), config.default)
+
       const [key, conf] = extractGridSourceConfig(item)
       const candidate = {
         key: key,
