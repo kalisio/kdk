@@ -57,7 +57,10 @@ export default {
       forecast: alert.forecast,
       elements: alert.elements
     }, { query })
-
+    // Check for available data so that we will not close an alert because data is missing
+    if (result.features.length === 0) {
+      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available')
+    }
     // Let sift performs condition matching as in this case MongoDB cannot
     return result.features.filter(sift(conditions))
   },
@@ -70,20 +73,26 @@ export default {
     if (!featureService) {
       throw new Error('Cannot check alert ' + alert._id.toString() + ' as target features service is not available')
     }
-    // Perform aggregation over time range
-    const query = Object.assign({
+    // Build base query for time range and target feature
+    let query = {
       time: {
         $gte: now.clone().add(_.get(alert, 'period.start', { seconds: 0 })).toDate(),
         $lte: now.clone().add(_.get(alert, 'period.end', { seconds: 24 * 3600 })).toDate()
       }
-    }, conditions)
+    }
     if (_.has(alert, 'layer.featureId')) {
       query['properties.' + _.get(alert, 'layer.featureId')] = alert.feature
     } else {
       query._id = alert.feature
     }
-
-    const result = await featureService.find({ query })
+    // Check for available data so that we will not close an alert because data is missing
+    // $limit = 0 performs a simple count query
+    let result = await featureService.find({ query: Object.assign({ $limit: 0 }, query) })
+    if (result.total === 0) {
+      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available')
+    }
+    // Perform aggregation over time range
+    result = await featureService.find({ query: Object.assign(query, conditions) })
     return result.features
   },
 
@@ -136,7 +145,7 @@ export default {
         await request.post(webhook.url, body)
       }
     } catch (error) {
-      this.app.logger.error(error)
+      this.app.logger.error(error.message)
     }
     return alert
   }
