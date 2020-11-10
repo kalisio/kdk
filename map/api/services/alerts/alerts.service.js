@@ -59,7 +59,7 @@ export default {
     }, { query })
     // Check for available data so that we will not close an alert because data is missing
     if (result.features.length === 0) {
-      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available')
+      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available for ' + alert.forecast)
     }
     // Let sift performs condition matching as in this case MongoDB cannot
     return result.features.filter(sift(conditions))
@@ -71,7 +71,7 @@ export default {
     const conditions = this.getConditions(alert)
     const featureService = this.app.getService(_.get(alert, 'layer.service'))
     if (!featureService) {
-      throw new Error('Cannot check alert ' + alert._id.toString() + ' as target features service is not available')
+      throw new Error('Cannot check alert ' + alert._id.toString() + ' as target features service ' + _.get(alert, 'layer.service') + ' is not available')
     }
     // Build base query for time range and target feature
     let query = {
@@ -89,7 +89,7 @@ export default {
     // $limit = 0 performs a simple count query
     let result = await featureService.find({ query: Object.assign({ $limit: 0 }, query) })
     if (result.total === 0) {
-      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available')
+      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available for features service ' + _.get(alert, 'layer.service'))
     }
     // Perform aggregation over time range
     result = await featureService.find({ query: Object.assign(query, conditions) })
