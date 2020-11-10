@@ -24,7 +24,7 @@ This requires you to have a NPM and GitHub account and be a team member of the K
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
-yarn release:type
+npm run release:type
 ```
 
 ::: warning
@@ -48,7 +48,7 @@ Typically, when starting a new version
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
-yarn release:type
+npm run release:type
 ```
 
 Then typically when releasing a new version:
