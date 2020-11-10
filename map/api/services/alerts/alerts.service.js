@@ -74,7 +74,7 @@ export default {
       throw new Error('Cannot check alert ' + alert._id.toString() + ' as target features service ' + _.get(alert, 'layer.service') + ' is not available')
     }
     // Build base query for time range and target feature
-    let query = {
+    const query = {
       time: {
         $gte: now.clone().add(_.get(alert, 'period.start', { seconds: 0 })).toDate(),
         $lte: now.clone().add(_.get(alert, 'period.end', { seconds: 24 * 3600 })).toDate()

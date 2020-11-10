@@ -42,7 +42,7 @@ export default {
     onHideTiledMeshLayer (layer, engineLayer) {
       const isTiledMeshLayer = engineLayer instanceof TiledMeshLayer
       if (!isTiledMeshLayer) return
-      
+
       this.tiledMeshLayers.delete(layer._id)
       // layer being hidden, hide slider if any was required
       if (typeof this.clearSelectableLevels === 'function') {

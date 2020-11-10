@@ -25,7 +25,7 @@
           <div class="q-pa-xs">
             <template v-for="(chip, index) in chips">
               <q-chip
-                :id="'chip-' + index" 
+                :id="'chip-' + index"
                 class="chip"
                 :key="chipValue(chip) + '-' + index"
                 :icon="chipIcon(chip)"

@@ -33,8 +33,8 @@ export default {
       const name = _.get(feature, 'properties.NomEntVigiCru')
       const level = _.get(feature, 'properties.NivSituVigiCruEnt')
       if (name && !_.isNil(level)) {
-        let tooltip = L.tooltip({ permanent: false, sticky: true }, layer)
-        return tooltip.setContent(name + '<br>'  + this.$t('Layers.VIGICRUES_VIGILANCE_' + level))
+        const tooltip = L.tooltip({ permanent: false, sticky: true }, layer)
+        return tooltip.setContent(name + '<br>' + this.$t('Layers.VIGICRUES_VIGILANCE_' + level))
       } else {
         return null
       }

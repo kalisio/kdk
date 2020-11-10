@@ -124,11 +124,13 @@ export default {
     },
     onListMembers () {
       // Setup search bar accordingly
-      this.$store.patch('searchBar', { items: [Object.assign({
-        service: 'groups',
-        field: 'name',
-        icon: 'group_work'
-      }, this.item)] })
+      this.$store.patch('searchBar', {
+        items: [Object.assign({
+          service: 'groups',
+          field: 'name',
+          icon: 'group_work'
+        }, this.item)]
+      })
       this.$router.push({ name: 'members-activity', params: { contextId: this.contextId } })
     },
     onMembersClicked (role) {

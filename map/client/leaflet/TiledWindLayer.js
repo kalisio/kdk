@@ -3,7 +3,7 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 
 import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
-import { tile2key, tileSetContainsParent, computeIdealMaxNativeZoom } from './utils'
+import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options) {

@@ -248,24 +248,24 @@ describe('notifications', () => {
   // Let enough time to process
     .timeout(10000)
 
-if (phone) {
-  it('subscribes a phone to the publisher topic', (done) => {
-    pusherService.create({
-      action: 'subscriptions',
-      pushObject: publisherObject._id.toString(),
-      pushObjectService: 'users'
-    }, {
-      users: [subscriberPhone]
+  if (phone) {
+    it('subscribes a phone to the publisher topic', (done) => {
+      pusherService.create({
+        action: 'subscriptions',
+        pushObject: publisherObject._id.toString(),
+        pushObjectService: 'users'
+      }, {
+        users: [subscriberPhone]
+      })
+      snsForSms.once('subscribed', (subscriptionArn, endpointArn, topicArn) => {
+        expect(publisherObject.topics.SMS).to.equal(topicArn)
+        expect(endpointArn).to.satisfy(arn => (arn === subscriberPhone.phone))
+        done()
+      })
     })
-    snsForSms.once('subscribed', (subscriptionArn, endpointArn, topicArn) => {
-      expect(publisherObject.topics.SMS).to.equal(topicArn)
-      expect(endpointArn).to.satisfy(arn => (arn === subscriberPhone.phone))
-      done()
-    })
-  })
-  // Let enough time to process
-    .timeout(10000)
-}
+    // Let enough time to process
+      .timeout(10000)
+  }
 
   it('publishes a message on the publisher topic', (done) => {
     pusherService.create({
@@ -305,23 +305,23 @@ if (phone) {
   // Let enough time to process
     .timeout(10000)
 
-if (phone) {
-  it('unsubscribes a phone from the publisher topic', (done) => {
-    pusherService.remove(publisherObject._id.toString(), {
-      query: {
-        action: 'subscriptions',
-        pushObjectService: 'users'
-      },
-      users: [subscriberPhone]
-    })
-    snsForSms.once('unsubscribed', (subscriptionArn) => {
+  if (phone) {
+    it('unsubscribes a phone from the publisher topic', (done) => {
+      pusherService.remove(publisherObject._id.toString(), {
+        query: {
+          action: 'subscriptions',
+          pushObjectService: 'users'
+        },
+        users: [subscriberPhone]
+      })
+      snsForSms.once('unsubscribed', (subscriptionArn) => {
       // We do not store subscription ARN
-      done()
+        done()
+      })
     })
-  })
-  // Let enough time to process
-    .timeout(10000)
-}
+    // Let enough time to process
+      .timeout(10000)
+  }
 
   it('removes the topic on the publisher object', (done) => {
     pusherService.remove(publisherObject._id.toString(), {

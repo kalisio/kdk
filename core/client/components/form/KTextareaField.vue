@@ -11,8 +11,8 @@
       :id="properties.name + '-field'"
       v-model="model"
       class="full-width"
-      content-class="text-grey-8" 
-      min-height="5rem" 
+      content-class="text-grey-8"
+      min-height="5rem"
       max-height="10rem"
       :dense="$q.screen.lt.md" />
     <template v-if="helper" v-slot:hint>
