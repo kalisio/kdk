@@ -55,7 +55,7 @@ export default function (name, app, options) {
         jsonMessage.email = message.body
       } else if (platform === SNS.SUPPORTED_PLATFORMS.IOS) {
         // iOS
-        let aps = {
+        const aps = {
           alert: message.title,
           notId
         }
@@ -63,7 +63,7 @@ export default function (name, app, options) {
         jsonMessage.APNS = JSON.stringify({ aps })
       } else {
         // ANDROID
-        let data = {
+        const data = {
           title: message.title,
           notId
         }

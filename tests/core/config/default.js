@@ -62,7 +62,7 @@ module.exports = {
     apiVersion: '2010-03-31',
     platforms: {
       ANDROID: process.env.SNS_ANDROID_ARN,
-      SMS: (process.env.SNS_PHONE_NUMBER ? true : false)
+      SMS: (!!process.env.SNS_PHONE_NUMBER)
     },
     topicName: (object) => object._id.toString()
   },

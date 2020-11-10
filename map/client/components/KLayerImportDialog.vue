@@ -39,7 +39,7 @@ export default {
     },
     getButtons () {
       return [
-        { name: 'import-button', label: this.$t('KLayerImportDialog.IMPORT_BUTTON'), color: 'primary', handler: () => this.doImport() },
+        { name: 'import-button', label: this.$t('KLayerImportDialog.IMPORT_BUTTON'), color: 'primary', handler: () => this.doImport() }
       ]
     },
     counterLabel ({ totalSize, filesNumber, maxFiles }) {

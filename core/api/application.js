@@ -461,13 +461,12 @@ export function kalisio () {
         next()
       } else {
         const error = new TooManyRequests('Too many requests in a given amount of time (rate limiting)',
-        { translation: { key: 'RATE_LIMITING' } })
+          { translation: { key: 'RATE_LIMITING' } })
         res.status(error.code)
         res.set('Content-Type', 'application/json')
         res.json(Object.assign({}, error.toJSON()))
-
       }
-    } 
+    }
     app.use(app.get('apiPath'), new HttpLimiter(Object.assign({ handler }, apiLimiter.http)))
   }
 

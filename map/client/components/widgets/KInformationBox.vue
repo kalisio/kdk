@@ -79,7 +79,7 @@ export default {
           return
         }
         // Retrieve properties on feature/entity
-        let properties = this.kActivity.generateStyle('infobox', this.feature, this.layer)
+        const properties = this.kActivity.generateStyle('infobox', this.feature, this.layer)
         if (_.isEmpty(properties)) {
           return
         }

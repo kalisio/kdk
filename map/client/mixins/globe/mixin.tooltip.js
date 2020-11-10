@@ -48,12 +48,13 @@ export default {
       if (!properties) return
       const name = properties.NomEntVigiCru
       const level = properties.NivSituVigiCruEnt
-      if (name && !_.isNil(level)) return Object.assign({
-        show: false,
-        sticky: true,
-        text: name + '\n'  + this.$t('Layers.VIGICRUES_VIGILANCE_' + level)
-      }, this.options.tooltip)
-      else return null
+      if (name && !_.isNil(level)) {
+        return Object.assign({
+          show: false,
+          sticky: true,
+          text: name + '\n' + this.$t('Layers.VIGICRUES_VIGILANCE_' + level)
+        }, this.options.tooltip)
+      } else return null
     },
     isTooltipOpen (entity) {
       if (this.getNbChildrenForEntity(entity) > 0) {

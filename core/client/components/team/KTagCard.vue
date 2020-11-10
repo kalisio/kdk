@@ -36,10 +36,12 @@ export default {
     },
     onListMembers () {
       // Setup search bar accordingly
-      this.$store.patch('searchBar', { items: [Object.assign({
-        service: 'tags',
-        field: 'value'
-      }, this.item)] })
+      this.$store.patch('searchBar', {
+        items: [Object.assign({
+          service: 'tags',
+          field: 'value'
+        }, this.item)]
+      })
       this.$router.push({ name: 'members-activity', params: { contextId: this.contextId } })
     }
   },
