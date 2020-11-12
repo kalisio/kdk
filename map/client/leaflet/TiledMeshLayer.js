@@ -38,11 +38,10 @@ const TiledMeshLayer = L.GridLayer.extend({
       delete options.maxZoom
       this.conf.maxZoom = maxZoom
     }
+    this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
     // initialize grid layer
     L.GridLayer.prototype.initialize.call(this, options)
-
-    this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
     // setup pixi objects
     this.pixiRoot = new PIXI.Container()
@@ -126,8 +125,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     // compute an ideal resolution for grid sources that care
     const tileSize = this.getTileSize()
     const resolution = [
-      this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
-      this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
+      this.conf.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
+      this.conf.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
     ]
     tile.fetchController = new AbortController()
 

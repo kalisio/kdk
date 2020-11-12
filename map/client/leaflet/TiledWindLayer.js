@@ -8,6 +8,10 @@ const TiledWindLayer = L.GridLayer.extend({
   initialize (options, uSource, vSource) {
     this.conf = {}
 
+    this.conf.enableDebug = _.get(options, 'enabledDebug', false)
+    this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
+    this.conf.meteoModelOverride = _.get(options, 'meteoModelOverride')
+
     // keep {min,max}Zoom options when they're objects
     // this case we expect a zoom value per meteo model
     // and zoom level will be applied in setModel
@@ -31,9 +35,6 @@ const TiledWindLayer = L.GridLayer.extend({
     // set of loaded leaflet tiles
     this.loadedTiles = new Set()
 
-    this.enableDebug = _.get(options, 'enabledDebug', false)
-    this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
-    this.meteoModelOverride = _.get(options, 'meteoModelOverride')
 
     // build colormap
     const domain = _.get(options, 'chromajs.domain', null)
@@ -154,8 +155,8 @@ const TiledWindLayer = L.GridLayer.extend({
 
     // it is possible to override model parameters through the layer conf
     // check that here
-    if (this.meteoModelOverride) {
-      const override = this.meteoModelOverride[model.name]
+    if (this.conf.meteoModelOverride) {
+      const override = this.conf.meteoModelOverride[model.name]
       if (override) Object.assign(modelHeader, override)
     }
 
@@ -287,13 +288,13 @@ const TiledWindLayer = L.GridLayer.extend({
     // TODO: we may also check if we have all the sub tiles loaded too ...
     const skipTile = tileSetContainsParent(this.loadedTiles, coords)
 
-    if (this.enableDebug) {
+    if (this.conf.enableDebug) {
       tile.style.outline = '1px solid blue'
       tile.innerHTML = `${coords.x} ${coords.y} ${coords.z} :`
     }
 
     if (!skipTile) {
-      if (this.enableDebug) {
+      if (this.conf.enableDebug) {
         tile.innerHTML += ' requested'
       }
 
@@ -304,8 +305,8 @@ const TiledWindLayer = L.GridLayer.extend({
       // compute an ideal resolution for grid sources that care
       const tileSize = this.getTileSize()
       const resolution = [
-        this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
-        this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
+        this.conf.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
+        this.conf.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
       ]
 
       // request data
@@ -324,7 +325,7 @@ const TiledWindLayer = L.GridLayer.extend({
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
-          if (this.enableDebug) {
+          if (this.conf.enableDebug) {
             tile.innerHTML += ', triggered wind restart'
           }
         }
@@ -343,18 +344,18 @@ const TiledWindLayer = L.GridLayer.extend({
             // remember we have data for this leaflet tile
             this.loadedTiles.add(tile2key(coords))
 
-            if (this.enableDebug) {
+            if (this.conf.enableDebug) {
               tile.style.outline = '1px solid green'
               tile.innerHTML += ', added to loadedTiles'
             }
           } else {
-            if (this.enableDebug) {
+            if (this.conf.enableDebug) {
               tile.style.outline = '1px solid red'
               tile.innerHTML += ', discarded (out of date)'
             }
           }
         } else {
-          if (this.enableDebug) {
+          if (this.conf.enableDebug) {
             tile.style.outline = '1px solid green'
             tile.innerHTML += ', empty'
           }
@@ -363,7 +364,7 @@ const TiledWindLayer = L.GridLayer.extend({
         doFinally()
       }).catch(err => {
         // fetch failed
-        if (this.enableDebug) {
+        if (this.conf.enableDebug) {
           tile.style.outline = '1px solid red'
           tile.innerHTML += `, failed (${err})`
         }
@@ -373,7 +374,7 @@ const TiledWindLayer = L.GridLayer.extend({
         throw err
       })
     } else {
-      if (this.enableDebug) {
+      if (this.conf.enableDebug) {
         tile.style.outline = '1px solid green'
         tile.innerHTML += ' skipped'
       }
