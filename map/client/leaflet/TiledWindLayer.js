@@ -2,11 +2,10 @@ import _ from 'lodash'
 import L from 'leaflet'
 import chroma from 'chroma-js'
 
-import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
-  initialize (options) {
+  initialize (options, uSource, vSource) {
     L.GridLayer.prototype.initialize.call(this, options)
 
     // is user currently dragging the map ?
@@ -27,22 +26,11 @@ const TiledWindLayer = L.GridLayer.extend({
     const scale = chroma.scale(colors)
     this.colorMap = scale.domain(invert ? domain.slice().reverse() : domain)
 
-    // instanciate grid sources (one for each component)
-    const [uKey, uConf] = extractGridSourceConfig(options.u)
-    const [vKey, vConf] = extractGridSourceConfig(options.v)
-    this.uSource = makeGridSource(uKey, { weacastApi: options.weacastApi })
-    this.vSource = makeGridSource(vKey, { weacastApi: options.weacastApi })
+    this.uSource = uSource
+    this.vSource = vSource
     this.onDataChangedCallback = this.onDataChanged.bind(this)
     this.uSource.on('data-changed', this.onDataChangedCallback)
     this.vSource.on('data-changed', this.onDataChangedCallback)
-    this.uSource.setup(uConf)
-    this.vSource.setup(vConf)
-    // add jwtToken to grid sources conf
-    if (options.jwtToken) {
-      this.uSource.updateCtx.jwtToken = options.jwtToken
-      this.vSource.updateCtx.jwtToken = options.jwtToken
-    }
-
     this.numDataChanged = 0
 
     // build the underlying velocity layer
