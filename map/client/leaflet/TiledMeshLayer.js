@@ -9,9 +9,8 @@ import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses
 
 const TiledMeshLayer = L.GridLayer.extend({
   initialize (options, gridSource) {
-    L.GridLayer.prototype.initialize.call(this, options)
-
     this.conf = {}
+
     // keep color scale options
     this.conf.chromajs = options.chromajs
     // keep rendering options
@@ -26,6 +25,22 @@ const TiledMeshLayer = L.GridLayer.extend({
       meshAsPoints: options.meshAsPoints,
       showShader: options.showShader
     }
+    // keep {min,max}Zoom options when they're objects
+    // this case we expect a zoom value per meteo model
+    // and zoom level will be applied in setModel
+    const minZoom = _.get(options, 'minZoom')
+    if (minZoom && typeof minZoom === 'object') {
+      delete options.minZoom
+      this.conf.minZoom = minZoom
+    }
+    const maxZoom = _.get(options, 'maxZoom')
+    if (maxZoom && typeof maxZoom === 'object') {
+      delete options.maxZoom
+      this.conf.maxZoom = maxZoom
+    }
+
+    // initialize grid layer
+    L.GridLayer.prototype.initialize.call(this, options)
 
     this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
@@ -431,12 +446,20 @@ const TiledMeshLayer = L.GridLayer.extend({
 
   setTime (time) {
     if (typeof this.gridSource.setTime === 'function') {
+      this._resetView()
       this.gridSource.setTime(time)
     }
   },
 
   setModel (model) {
+    // apply per model {min,max}Zoom
+    if (this.conf.minZoom)
+      this.options.minZoom = _.get(this.conf.minZoom, model.name)
+    if (this.conf.maxZoom)
+      this.options.maxZoom = _.get(this.conf.maxZoom, model.name)
+
     if (typeof this.gridSource.setModel === 'function') {
+      this._resetView()
       this.gridSource.setModel(model)
     }
   },

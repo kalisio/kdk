@@ -6,6 +6,22 @@ import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options, uSource, vSource) {
+    this.conf = {}
+
+    // keep {min,max}Zoom options when they're objects
+    // this case we expect a zoom value per meteo model
+    // and zoom level will be applied in setModel
+    const minZoom = _.get(options, 'minZoom')
+    if (minZoom && typeof minZoom === 'object') {
+      delete options.minZoom
+      this.conf.minZoom = minZoom
+    }
+    const maxZoom = _.get(options, 'maxZoom')
+    if (maxZoom && typeof maxZoom === 'object') {
+      delete options.maxZoom
+      this.conf.maxZoom = maxZoom
+    }
+
     L.GridLayer.prototype.initialize.call(this, options)
 
     // is user currently dragging the map ?
@@ -108,11 +124,25 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   setTime (time) {
-    if (typeof this.uSource.setTime === 'function') this.uSource.setTime(time)
-    if (typeof this.vSource.setTime === 'function') this.vSource.setTime(time)
+    const applyU = typeof this.uSource.setTime === 'function'
+    const applyV = typeof this.vSource.setTime === 'function'
+    if (applyU || applyV) {
+      if (!this.pendingAdd)
+        this._resetView()
+      if (applyU)
+        this.uSource.setTime(time)
+      if (applyV)
+        this.vSource.setTime(time)
+    }
   },
 
   setModel (model) {
+    // apply per model {min,max}Zoom
+    if (this.conf.minZoom)
+      this.options.minZoom = _.get(this.conf.minZoom, model.name)
+    if (this.conf.maxZoom)
+      this.options.maxZoom = _.get(this.conf.maxZoom, model.name)
+
     const modelHeader = {
       nx: model.size[0],
       ny: model.size[1],
@@ -147,8 +177,16 @@ const TiledWindLayer = L.GridLayer.extend({
     // const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
     // this.options.maxNativeZoom = computeIdealMaxNativeZoom(this, modelBounds, modelTileSize)
 
-    if (typeof this.uSource.setModel === 'function') this.uSource.setModel(model)
-    if (typeof this.vSource.setModel === 'function') this.vSource.setModel(model)
+    const applyU = typeof this.uSource.setTime === 'function'
+    const applyV = typeof this.vSource.setTime === 'function'
+    if (applyU || applyV) {
+      if (!this.pendingAdd)
+        this._resetView()
+      if (applyU)
+        this.uSource.setModel(model)
+      if (applyV)
+        this.vSource.setModel(model)
+    }
   },
 
   onDataChanged () {
