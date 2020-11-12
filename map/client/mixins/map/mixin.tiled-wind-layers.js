@@ -23,14 +23,13 @@ export default {
       vSource.setup(gridConf)
       if (uSource.updateCtx) {
         // define variables for source's dynamic properties
-        uSource.updateCtx.component = options.uvComponents.u
-        vSource.updateCtx.component = options.uvComponents.v
-
         const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
         if (gatewayToken) {
           uSource.updateCtx.jwtToken = gatewayToken
           vSource.updateCtx.jwtToken = gatewayToken
         }
+        uSource.updateCtx.windComponent = _.get(options, 'meteoElements[0]')
+        vSource.updateCtx.windComponent = _.get(options, 'meteoElements[1]')
       }
 
       return new TiledWindLayer(layerOptions, uSource, vSource)

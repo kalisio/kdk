@@ -23,6 +23,7 @@ export default {
         // define variables for source's dynamic properties
         const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
         if (gatewayToken) gridSource.updateCtx.jwtToken = gatewayToken
+        gridSource.updateCtx.meteoElements = _.get(options, 'meteoElements')
       }
 
       return new TiledMeshLayer(layerOptions, gridSource)
