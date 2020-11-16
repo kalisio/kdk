@@ -24,7 +24,10 @@ export class TimeBasedGridSource extends DynamicGridSource {
   async setup (config) {
     this.candidates = []
 
-    for (const item of config) {
+    for (const source of config.sources) {
+      // use default props and override with current source
+      const item = Object.assign(Object.assign({}, config.default), source)
+
       const [key, conf] = extractGridSourceConfig(item)
       const candidate = {
         key: key,
