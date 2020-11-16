@@ -24,6 +24,10 @@ export class MeteoModelGridSource extends DynamicGridSource {
   setTime (time) {
     this.updateCtx.time = time.clone()
     this.updateCtx.time.utc()
+    // reset runOffset to fetch nearest run time
+    // when there's no data in the nearest run, we may try to fetch
+    // data in the run before the nearest (cf. dataChanged())
+    this.updateCtx.runOffset = 0
     this.queueUpdate()
   }
 
@@ -31,7 +35,8 @@ export class MeteoModelGridSource extends DynamicGridSource {
     this.candidates = []
 
     for (const source of config.sources) {
-      const item = Object.assign(Object.assign({}, source), config.default)
+      // use default props and override with current source
+      const item = Object.assign(Object.assign({}, config.default), source)
 
       const [key, conf] = extractGridSourceConfig(item)
       const candidate = {
@@ -61,6 +66,8 @@ export class MeteoModelGridSource extends DynamicGridSource {
     if (ctx.candidate) {
       // update context
       ctx.runTime = getNearestRunTime(updateCtx.time, updateCtx.model.runInterval)
+      // take runOffset into account
+      ctx.runTime.subtract(ctx.runOffset * updateCtx.model.runInterval, 'seconds')
       ctx.forecastTime = getNearestForecastTime(updateCtx.time, updateCtx.model.interval)
       ctx.forecastOffset = moment.duration(ctx.forecastTime.diff(ctx.runTime))
 
@@ -116,5 +123,23 @@ export class MeteoModelGridSource extends DynamicGridSource {
     }
 
     return candidate
+  }
+
+  dataChanged () {
+    // check if we need to try to fetch data from a previous run
+    // in case the nearest run doesn't exists or fails to provide
+    // required data
+
+    if (this.source && !this.source.usable) {
+      // if we have a selected source but it's not usable
+      if (this.updateCtx.runOffset === 0) {
+        // queue updaty with an offseted run
+        this.updateCtx.runOffset = 1
+        this.queueUpdate()
+        return
+      }
+    }
+
+    super.dataChanged()
   }
 }

@@ -42,15 +42,20 @@ export class WcsGridSource extends GridSource {
     // const coverages = wcs.GetOfferedCoverages(caps)
 
     // use DescribeCoverage to find out bbox
-    const coverage = await wcs.DescribeCoverage(this.config.url, this.config.coverage)
-    const bounds = wcs.GetCoverageSpatialBounds(coverage)
-    const formats = wcs.GetSupportedFormats(coverage)
+    try {
+      const coverage = await wcs.DescribeCoverage(this.config.url, this.config.coverage)
+      const bounds = wcs.GetCoverageSpatialBounds(coverage)
+      const formats = wcs.GetSupportedFormats(coverage)
 
-    this.queryFormat = formats[0]
-    this.minMaxLat = [bounds[0], bounds[2]]
-    this.minMaxLon = [bounds[1], bounds[3]]
-
-    this.usable = true
+      this.queryFormat = formats[0]
+      this.minMaxLat = [bounds[0], bounds[2]]
+      this.minMaxLon = [bounds[1], bounds[3]]
+      this.usable = true
+    } catch (error) {
+      // fetching may fail, in this case the source
+      // will remain in unusable state
+      console.log(`Failed fetching wcs from ${this.config.url}`)
+    }
 
     this.dataChanged()
   }

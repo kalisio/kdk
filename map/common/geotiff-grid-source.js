@@ -30,24 +30,33 @@ export class GeoTiffGridSource extends GridSource {
 
     this.nodata = config.nodata
     this.converter = unitConverters[config.converter]
-    this.geotiff = await GeoTIFF.fromUrl(config.url)
 
-    // for now only consider first image
-    this.imageCount = await this.geotiff.getImageCount()
-    const image = await this.geotiff.getImage()
-    if (this.nodata === undefined) {
-      // try to get it from image metadata
-      // this.nodata = image.getGDALNoData()
-      // const meta = image.getGDALMetadata()
-      const meta = image.getFileDirectory()
-      this.nodata = parseFloat(meta.GDAL_NODATA)
+    try {
+      this.geotiff = await GeoTIFF.fromUrl(config.url)
+    } catch (error) {
+      // fetching may fail, in this case the source
+      // will remain in unusable state
+      this.geotiff = null
+      console.log(`Failed fetching geotiff from ${config.url}`)
     }
 
-    const tiffBbox = image.getBoundingBox()
-    this.minMaxLat = [tiffBbox[1], tiffBbox[3]]
-    this.minMaxLon = [tiffBbox[0], tiffBbox[2]]
+    if (this.geotiff) {
+      // for now only consider first image
+      this.imageCount = await this.geotiff.getImageCount()
+      const image = await this.geotiff.getImage()
+      if (this.nodata === undefined) {
+        // try to get it from image metadata
+        // this.nodata = image.getGDALNoData()
+        // const meta = image.getGDALMetadata()
+        const meta = image.getFileDirectory()
+        this.nodata = parseFloat(meta.GDAL_NODATA)
+      }
 
-    this.usable = true
+      const tiffBbox = image.getBoundingBox()
+      this.minMaxLat = [tiffBbox[1], tiffBbox[3]]
+      this.minMaxLon = [tiffBbox[0], tiffBbox[2]]
+      this.usable = true
+    }
 
     this.dataChanged()
   }

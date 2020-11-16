@@ -48,45 +48,53 @@ export class OpenDapGridSource extends GridSource {
     this.config = config
     this.converter = unitConverters[this.config.converter]
 
-    const descriptor = await dap.fetchDescriptor(this.config.url)
-      .catch(e => { throw new Error(`Failed fetching descriptor from ${this.config.url}`) })
-
-    if (!dap.variableIsGrid(descriptor, this.config.variable)) throw new Error(`${this.config.variable} is not a grid variable!`)
-    if (!dap.variableIsArray(descriptor, this.config.latitude)) throw new Error(`${this.config.latitude} is expected to be an array variable!`)
-    if (!dap.variableIsArray(descriptor, this.config.longitude)) throw new Error(`${this.config.longitude} is expected to be an array variable!`)
-
-    const latIndex = dap.getGridDimensionIndex(descriptor, this.config.variable, this.config.latitude)
-    const latCount = dap.getGridDimensionLength(descriptor, this.config.variable, latIndex)
-    const lonIndex = dap.getGridDimensionIndex(descriptor, this.config.variable, this.config.longitude)
-    const lonCount = dap.getGridDimensionLength(descriptor, this.config.variable, lonIndex)
-
-    // build grid indexing array
-    const dimensions = await this.getDimensionsAsIndices()
-    dimensions[this.config.latitude] = `0:${latCount - 1}`
-    dimensions[this.config.longitude] = `0:${lonCount - 1}`
-    const indices = dap.makeGridIndices(descriptor, this.config.variable, dimensions)
-    if (indices.length === 0) throw new Error("Couldn't create index array for grid")
-
-    this.descriptor = descriptor
-    this.indices = indices
-    this.latCount = latCount
-    this.latIndex = latIndex
-    this.lonCount = lonCount
-    this.lonIndex = lonIndex
-
-    // if lat and lon dimensions are the last in the query, we can
-    // use a Grid2D directly (cheaper on cpu)
-    const last = this.indices.length - 1
-    if ((this.latIndex === last && this.lonIndex === (last - 1)) ||
-        (this.latIndex === (last - 1) && this.lonIndex === last)) {
-      this.canUseGrid2D = true
+    try {
+      this.descriptor = await dap.fetchDescriptor(this.config.url)
+    } catch (error) {
+      // fetching may fail, in this case the source
+      // will remain in unusable state
+      this.descriptor = null
+      console.log(`Failed fetching opendap descriptor from ${this.config.url}`)
     }
 
-    // TODO: store metadata somewhere instead of requesting the whole variable
-    await this.computeMetaDataFromData()
+    if (this.descriptor) {
+      const varIsGrid = dap.variableIsGrid(this.descriptor, this.config.variable)
+      const latIsArray = dap.variableIsArray(this.descriptor, this.config.latitude)
+      const lonIsArray = dap.variableIsArray(this.descriptor, this.config.longitude)
+      if (varIsGrid && latIsArray && lonIsArray) {
+        this.latIndex = dap.getGridDimensionIndex(this.descriptor, this.config.variable, this.config.latitude)
+        this.latCount = dap.getGridDimensionLength(this.descriptor, this.config.variable, this.latIndex)
+        this.lonIndex = dap.getGridDimensionIndex(this.descriptor, this.config.variable, this.config.longitude)
+        this.lonCount = dap.getGridDimensionLength(this.descriptor, this.config.variable, this.lonIndex)
 
-    // flag source as usable
-    this.usable = true
+        // build grid indexing array
+        const dimensions = await this.getDimensionsAsIndices()
+        dimensions[this.config.latitude] = `0:${this.latCount - 1}`
+        dimensions[this.config.longitude] = `0:${this.lonCount - 1}`
+        this.indices = dap.makeGridIndices(this.descriptor, this.config.variable, dimensions)
+        if (this.indices.length !== 0) {
+          // if lat and lon dimensions are the last in the query, we can
+          // use a Grid2D directly (cheaper on cpu)
+          const last = this.indices.length - 1
+          if ((this.latIndex === last && this.lonIndex === (last - 1)) ||
+              (this.latIndex === (last - 1) && this.lonIndex === last)) {
+            this.canUseGrid2D = true
+          }
+
+          // TODO: store metadata somewhere instead of requesting the whole variable
+          await this.computeMetaDataFromData()
+
+          // flag source as usable
+          this.usable = true
+        } else {
+          console.log("Couldn't create index array for grid")
+        }
+      } else {
+        if (!varIsGrid) console.log(`${this.config.variable} is not a grid variable!`)
+        if (!latIsArray) console.log(`${this.config.latitude} is expected to be an array variable!`)
+        if (!lonIsArray) console.log(`${this.config.longitude} is expected to be an array variable!`)
+      }
+    }
 
     this.dataChanged()
   }
