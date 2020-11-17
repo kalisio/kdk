@@ -13,6 +13,9 @@ export default {
     finalizeGlobe () {
       this.viewer.camera.moveEnd.removeEventListener(this.storeView)
     },
+    storeView () {
+      this.storeContext('view')
+    },
     onGlobeResized (size) {
       // Avoid to refresh the layout when leaving the component
       if (this.observe) {

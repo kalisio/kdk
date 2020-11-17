@@ -380,6 +380,7 @@ export default function (name) {
         } else {
           this.hideLayer(layer.name)
         }
+        this.storeContext('layers')
       },
       onZoomIn () {
         const center = this.getCenter()
@@ -680,81 +681,122 @@ export default function (name) {
         if (!this.$q.fullscreen.isActive) this.$q.fullscreen.request()
         else this.$q.fullscreen.exit()
       },
-      getViewKey () {
-        return this.appName.toLowerCase() + `-${this.name}-view`
+      getContextKey (context) {
+        return this.appName.toLowerCase() + `-${this.name}-${context}`
       },
-      shouldRestoreView () {
+      shouldRestoreContext (context) {
         // Use user settings except if the view has explicitly revoked restoration
-        if (_.has(this, 'activityOptions.restore.view')) {
-          if (!_.get(this, 'activityOptions.restore.view')) return false
+        if (_.has(this, `activityOptions.restore.${context}`)) {
+          if (!_.get(this, `activityOptions.restore.${context}`)) return false
         }
-        return this.$store.get('restore.view')
+        return this.$store.get(`restore.${context}`)
       },
-      getRouteBounds () {
-        const currentBounds = _.pick(this.$route.params, ['south', 'west', 'north', 'east'])
-        return _.mapValues(currentBounds, value => _.toNumber(value))
+      getRouteContextParameters (context) {
+        switch (context) {
+          case 'layers':
+            if (_.get(this.$route, 'params.layers')) {
+              return _.pick(this.$route.params, ['layers'])
+            }
+            break
+          case 'view':
+          default:
+            if (_.get(this.$route, 'params.south') && _.get(this.$route, 'params.west') &&
+                _.get(this.$route, 'params.north') && _.get(this.$route, 'params.east')) {
+              const currentBounds = _.pick(this.$route.params, ['south', 'west', 'north', 'east'])
+              return _.mapValues(currentBounds, value => _.toNumber(value))
+            }
+            break
+        }
+        return {}
       },
-      storeView () {
-        const bounds = this.getBounds()
-        const south = bounds[0][0]
-        const west = bounds[0][1]
-        const north = bounds[1][0]
-        const east = bounds[1][1]
+      storeContext (context) {
+        let targetParameters
+        switch (context) {
+          case 'layers':
+            targetParameters = { layers: _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name) }
+            break
+          case 'view':
+          default:
+            const bounds = this.getBounds()
+            const south = bounds[0][0]
+            const west = bounds[0][1]
+            const north = bounds[1][0]
+            const east = bounds[1][1]
+            targetParameters = { south, west, north, east }
+            break
+        }
         // Store both in URL and local storage, except if the user/view has explicitly revoked restoration
-        if (this.shouldRestoreView()) {
-          const targetBounds = { south, west, north, east }
-          if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
+        if (this.shouldRestoreContext(context)) {
+          if (!_.isEqual(this.getRouteContextParameters(context), targetParameters)) {
             this.$router.replace({
               query: _.get(this.$route, 'query', {}),
-              params: Object.assign({}, _.get(this.$route, 'params', {}), targetBounds)
+              params: Object.assign({}, _.get(this.$route, 'params', {}), targetParameters)
             }).catch(_ => {})
           }
-          window.localStorage.setItem(this.getViewKey(), JSON.stringify(bounds))
+          window.localStorage.setItem(this.getContextKey(context), JSON.stringify(targetParameters))
         }
       },
-      restoreView () {
-        let bounds
-        if (this.shouldRestoreView()) {
-          const savedBounds = window.localStorage.getItem(this.getViewKey())
-          if (savedBounds) bounds = JSON.parse(savedBounds)
-        } else if (_.get(this.$route, 'params.south') && _.get(this.$route, 'params.west') &&
-                   _.get(this.$route, 'params.north') && _.get(this.$route, 'params.east')) {
-          bounds = [
-            [_.get(this.$route, 'params.south'), _.get(this.$route, 'params.west')],
-            [_.get(this.$route, 'params.north'), _.get(this.$route, 'params.east')]
-          ]
+      restoreContext (context) {
+        let targetParameters
+        // Restore from local storage or route parameters
+        if (this.shouldRestoreContext(context)) {
+          const savedParameters = window.localStorage.getItem(this.getContextKey(context))
+          if (savedParameters) targetParameters = JSON.parse(savedParameters)
+        } else {
+          targetParameters = this.getRouteContextParameters(context)
         }
-        // Restore state if required
-        if (bounds) {
-          const south = bounds[0][0]
-          const west = bounds[0][1]
-          const north = bounds[1][0]
-          const east = bounds[1][1]
-          const targetBounds = { south, west, north, east }
-          if (!_.isEqual(this.getRouteBounds(), targetBounds)) {
+        // Restore context if possible
+        if (!_.isEmpty(targetParameters)) {
+          if (!_.isEqual(this.getRouteContextParameters(context), targetParameters)) {
             this.$router.replace({
               query: _.get(this.$route, 'query', {}),
-              params: Object.assign({}, _.get(this.$route, 'params', {}), targetBounds)
+              params: Object.assign({}, _.get(this.$route, 'params', {}), targetParameters)
             }).catch(_ => {})
           }
-          this.zoomToBounds(bounds)
+          switch (context) {
+            case 'layers':
+              targetParameters.layers.forEach(layer => this.showLayer(layer))
+              break
+            case 'view':
+            default:
+              this.zoomToBounds([
+                [targetParameters.south, targetParameters.west],
+                [targetParameters.north, targetParameters.east]
+              ])
+              break
+          }
         }
-        return bounds
       },
-      clearStoredView () {
+      clearContext (context) {
+        let parameters
+        switch (context) {
+          case 'layers':
+            parameters = ['layers']
+            break
+          case 'view':
+          default:
+            parameters = ['south', 'west', 'north', 'east']
+            break
+        }
         this.$router.replace({
           query: _.get(this.$route, 'query', {}),
-          params: _.omit(_.get(this.$route, 'params', {}), ['south', 'west', 'north', 'east'])
+          params: _.omit(_.get(this.$route, 'params', {}), parameters)
         }).catch(_ => {})
-        window.localStorage.removeItem(this.getViewKey())
+        window.localStorage.removeItem(this.getContextKey(context))
+      },
+      updateContextSettings (context) {
+        this.clearContext(context)
+        this.restoreContext(context)
       },
       updateViewSettings () {
-        this.clearStoredView()
-        this.restoreView()
+        this.updateContextSettings('view')
+      },
+      updateLayersSettings () {
+        this.updateContextSettings('layers')
       },
       async initialize () {
         // Geolocate by default if view has not been restored
-        if (!this.restoreView()) {
+        if (!this.restoreContext('view')) {
           // Provided by geolocation mixin if available
           if (!this.$store.get('user.position') && this.updatePosition) {
             await this.updatePosition()
@@ -776,6 +818,7 @@ export default function (name) {
         // Retrieve the layers
         try {
           await this.refreshLayers()
+          this.restoreContext('layers')
         } catch (error) {
           logger.error(error)
         }
@@ -793,14 +836,16 @@ export default function (name) {
       this.$on('map-ready', this.onMapReady)
       this.$on('globe-ready', this.onGlobeReady)
       this.$on('layer-added', this.onLayerAdded)
-      // Whenever restore view settings are updated, update view as well
+      // Whenever restore settings are updated, update view as well
       this.$events.$on('restore-view-changed', this.updateViewSettings)
+      this.$events.$on('restore-layers-changed', this.updateLayersSettings)
     },
     beforeDestroy () {
       this.$off('map-ready', this.onMapReady)
       this.$off('globe-ready', this.onGlobeReady)
       this.$off('layer-added', this.onLayerAdded)
       this.$events.$off('restore-view-changed', this.updateViewSettings)
+      this.$events.$off('restore-layers-changed', this.updateLayersSettings)
     }
   }
 }
