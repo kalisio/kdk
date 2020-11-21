@@ -70,7 +70,7 @@ function getAPISidebar () {
     },
     {
       title: 'map',
-      children: [ 'map/', 'map/services', 'map/hooks', 'map/components', 'map/mixins' ]
+      children: [ 'map/', 'map/services', 'map/hooks', 'map/components', 'map/mixins', 'map/map-mixins', 'map/globe-mixins' ]
     }
   ]
 }

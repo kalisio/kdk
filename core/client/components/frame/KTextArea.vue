@@ -24,7 +24,7 @@ export default {
   computed: {
     html () {
       if (!this.truncate) return sanitizeHtml(this.text)
-      return _.truncate(sanitizeHtml(this.text), { length: this.length, separator: '<br>'})
+      return _.truncate(sanitizeHtml(this.text), { length: this.length, separator: '<br>' })
     }
   },
   data () {
@@ -34,4 +34,3 @@ export default {
   }
 }
 </script>
-

@@ -81,7 +81,7 @@ Here is a view of some of the components presented previously:
 
 ## Map
 
-Although some dedicated components do exist, you usually rely on provided [mixins](./mixins.md#map) to build your own map.
+Although some dedicated components do exist, you usually rely on provided [mixins](./map-mixins.md) to build your own map.
 
 Kano provides a good starting point to build your own [Map Activity](https://github.com/kalisio/kano/blob/master/src/components/MapActivity.vue).
 
@@ -98,6 +98,6 @@ value. It is meant to be used in conjunction with the [level mixin](./mixins.md#
 
 ## Globe
 
-No dedicated component exist at the moment, you usually rely on provided [mixins](./mixins.md#globe) to build your own globe.
+No dedicated component exist at the moment, you usually rely on provided [mixins](./globe-mixins.md) to build your own globe.
 
 Kano provides a good starting point to build your own [Globe Activity](https://github.com/kalisio/kano/blob/master/src/components/GlobeActivity.vue).

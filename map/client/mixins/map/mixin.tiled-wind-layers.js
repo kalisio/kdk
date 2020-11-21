@@ -1,25 +1,38 @@
 import _ from 'lodash'
 
+import { makeGridSource, extractGridSourceConfig } from '../../../common/grid'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer'
 
 export default {
   methods: {
     createLeafletTiledWindLayer (options) {
-      const leafletOptions = options.leaflet || options
+      const layerOptions = options.leaflet || options
 
       // Check for valid type
-      if (leafletOptions.type !== 'tiledWindLayer') return
+      if (layerOptions.type !== 'tiledWindLayer') return
 
       // Copy options
       const colorMap = _.get(options, 'variables[0].chromajs', null)
-      if (colorMap) Object.assign(leafletOptions, { chromajs: colorMap })
-      Object.assign(leafletOptions, _.pick(options, ['u', 'v']))
+      if (colorMap) Object.assign(layerOptions, { chromajs: colorMap })
 
-      leafletOptions.weacastApi = this.weacastApi
-      const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-      if (gatewayToken) leafletOptions.jwtToken = gatewayToken
+      // Build u & v grid sources
+      const [gridKey, gridConf] = extractGridSourceConfig(options)
+      const uSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      const vSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      uSource.setup(gridConf)
+      vSource.setup(gridConf)
+      if (uSource.updateCtx) {
+        // define variables for source's dynamic properties
+        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        if (gatewayToken) {
+          uSource.updateCtx.jwtToken = gatewayToken
+          vSource.updateCtx.jwtToken = gatewayToken
+        }
+        uSource.updateCtx.windComponent = _.get(options, 'meteoElements[0]')
+        vSource.updateCtx.windComponent = _.get(options, 'meteoElements[1]')
+      }
 
-      return new TiledWindLayer(leafletOptions)
+      return new TiledWindLayer(layerOptions, uSource, vSource)
     },
 
     onShowTiledWindLayer (layer, engineLayer) {

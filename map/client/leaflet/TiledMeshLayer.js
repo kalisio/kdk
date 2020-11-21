@@ -3,16 +3,14 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 import * as PIXI from 'pixi.js'
 import 'leaflet-pixi-overlay'
-import AbortController from 'abort-controller'
+import 'abort-controller/polyfill'
 
-import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
 import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils'
 
 const TiledMeshLayer = L.GridLayer.extend({
-  initialize (options) {
-    L.GridLayer.prototype.initialize.call(this, options)
-
+  initialize (options, gridSource) {
     this.conf = {}
+
     // keep color scale options
     this.conf.chromajs = options.chromajs
     // keep rendering options
@@ -27,8 +25,23 @@ const TiledMeshLayer = L.GridLayer.extend({
       meshAsPoints: options.meshAsPoints,
       showShader: options.showShader
     }
+    // keep {min,max}Zoom options when they're objects
+    // this case we expect a zoom value per meteo model
+    // and zoom level will be applied in setModel
+    const minZoom = _.get(options, 'minZoom')
+    if (minZoom && typeof minZoom === 'object') {
+      delete options.minZoom
+      this.conf.minZoom = minZoom
+    }
+    const maxZoom = _.get(options, 'maxZoom')
+    if (maxZoom && typeof maxZoom === 'object') {
+      delete options.maxZoom
+      this.conf.maxZoom = maxZoom
+    }
+    this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
-    this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
+    // initialize grid layer
+    L.GridLayer.prototype.initialize.call(this, options)
 
     // setup pixi objects
     this.pixiRoot = new PIXI.Container()
@@ -64,17 +77,10 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
-    // instanciate grid source
-    const [gridKey, gridConf] = extractGridSourceConfig(options)
-    // instanciate grid source
-    this.gridSource = makeGridSource(gridKey, { weacastApi: options.weacastApi })
+    this.gridSource = gridSource
     // keep ref on callback to be able to remove it
     this.onDataChangedCallback = this.onDataChanged.bind(this)
     this.gridSource.on('data-changed', this.onDataChangedCallback)
-    this.gridSource.setup(gridConf)
-
-    // add jwtToken to gridSource conf
-    if (options.jwtToken) this.gridSource.updateCtx.jwtToken = options.jwtToken
   },
 
   onAdd (map) {
@@ -119,8 +125,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     // compute an ideal resolution for grid sources that care
     const tileSize = this.getTileSize()
     const resolution = [
-      this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
-      this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
+      this.conf.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
+      this.conf.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
     ]
     tile.fetchController = new AbortController()
 
@@ -439,12 +445,20 @@ const TiledMeshLayer = L.GridLayer.extend({
 
   setTime (time) {
     if (typeof this.gridSource.setTime === 'function') {
+      this._resetView()
       this.gridSource.setTime(time)
     }
   },
 
   setModel (model) {
+    // apply per model {min,max}Zoom
+    if (this.conf.minZoom)
+      this.options.minZoom = _.get(this.conf.minZoom, model.name)
+    if (this.conf.maxZoom)
+      this.options.maxZoom = _.get(this.conf.maxZoom, model.name)
+
     if (typeof this.gridSource.setModel === 'function') {
+      this._resetView()
       this.gridSource.setModel(model)
     }
   },

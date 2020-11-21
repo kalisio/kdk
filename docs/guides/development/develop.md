@@ -160,6 +160,8 @@ $ yarn cordova:build:ios
 
 Use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/) for the WebView. If you want to also get native errors without running Android Studio use [logcat](https://ourcodeworld.com/articles/read/295/how-to-debug-java-code-in-a-Cordova-android-application-from-your-device-using-adb-in-windows).
 
+If you'd like to debug similarly your iOS Webview you can use the [remotedebug-ios-webkit-adapter](https://github.com/RemoteDebug/remotedebug-ios-webkit-adapter) under Windows.
+
 ### Icons & Splashscreens
 
 It does exist a couple of solutions to generate it for your app:

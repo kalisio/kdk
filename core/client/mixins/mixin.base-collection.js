@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { getLocale } from '../utils'
 
 const baseCollectionMixin = {

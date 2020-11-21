@@ -32,7 +32,7 @@ module.exports = {
   },
   kApp: {
     application: true, // Indicates if this is the main application module
-    dependencies: ['@kalisio/kdk/core'],
+    dependencies: ['@kalisio/kdk'],
     branch: 'master' // Branch the module should be forced on whatever the current target branch of the CLI
   }
 }
@@ -47,15 +47,15 @@ All operations will take effect in the current working directory so that subdire
 
 ```
 // Will clone all repositories
-kdk workspace.js --clone
+kli workspace.js --clone
 // Will install dependencies in all modules and application
-kdk workspace.js --install
+kli workspace.js --install
 // Will perform link between required modules and application
-kdk workspace.js --link
+kli workspace.js --link
 // Will perform unlink between required modules and application
-kdk workspace.js --unlink
+kli workspace.js --unlink
 // Will perform branch switching on all modules and application
-kdk workspace.js --branch test
+kli workspace.js --branch test
 ```
 
 ::: tip

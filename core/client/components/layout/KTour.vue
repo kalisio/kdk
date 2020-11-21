@@ -157,8 +157,8 @@ export default {
       const selected = this.$store.get('tours.current', {})
       if (selected !== name) {
         setTimeout(() => {
-          const step = (_.has(this.$route, 'query.tourStep') ?
-            _.toNumber(_.get(this.$route, 'query.tourStep')) : undefined)
+          const step = (_.has(this.$route, 'query.tourStep')
+            ? _.toNumber(_.get(this.$route, 'query.tourStep')) : undefined)
           const play = _.get(this.$route, 'query.playTour')
           this.$store.patch('tours.current', { name, step, play })
         }, _.toNumber(_.get(this.$route, 'query.tourDelay', 0)))
@@ -202,7 +202,7 @@ export default {
         }
         // Do not return invisible target
         // FIXME: does not work when element is hidden by parent
-        //if (element && getComputedStyle(element).display === 'none') element = null
+        // if (element && getComputedStyle(element).display === 'none') element = null
         if (element && element.getClientRects().length === 0) element = null
       }
       return element
@@ -242,9 +242,9 @@ export default {
     hoverOn (param) {
       // Simulate a mouse over
       return this.processElement(param, target => target.dispatchEvent(new MouseEvent('mouseover', {
-        'view': window,
-        'bubbles': true,
-        'cancelable': true
+        view: window,
+        bubbles: true,
+        cancelable: true
       })))
     },
     clickOn (param) {
@@ -255,9 +255,9 @@ export default {
       return this.processElement(param, async target => {
         // Simulate a mouse over
         target.dispatchEvent(new MouseEvent('mouseover', {
-          'view': window,
-          'bubbles': true,
-          'cancelable': true
+          view: window,
+          bubbles: true,
+          cancelable: true
         }))
         // Then a click: force a refresh first so that DOM will be updated by Vuejs if required
         await this.$nextTick()

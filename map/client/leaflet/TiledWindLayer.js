@@ -2,11 +2,30 @@ import _ from 'lodash'
 import L from 'leaflet'
 import chroma from 'chroma-js'
 
-import { makeGridSource, extractGridSourceConfig } from '../../common/grid'
-import { tile2key, tileSetContainsParent, computeIdealMaxNativeZoom } from './utils'
+import { tile2key, tileSetContainsParent } from './utils'
 
 const TiledWindLayer = L.GridLayer.extend({
-  initialize (options) {
+  initialize (options, uSource, vSource) {
+    this.conf = {}
+
+    this.conf.enableDebug = _.get(options, 'enabledDebug', false)
+    this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
+    this.conf.meteoModelOverride = _.get(options, 'meteoModelOverride')
+
+    // keep {min,max}Zoom options when they're objects
+    // this case we expect a zoom value per meteo model
+    // and zoom level will be applied in setModel
+    const minZoom = _.get(options, 'minZoom')
+    if (minZoom && typeof minZoom === 'object') {
+      delete options.minZoom
+      this.conf.minZoom = minZoom
+    }
+    const maxZoom = _.get(options, 'maxZoom')
+    if (maxZoom && typeof maxZoom === 'object') {
+      delete options.maxZoom
+      this.conf.maxZoom = maxZoom
+    }
+
     L.GridLayer.prototype.initialize.call(this, options)
 
     // is user currently dragging the map ?
@@ -16,9 +35,6 @@ const TiledWindLayer = L.GridLayer.extend({
     // set of loaded leaflet tiles
     this.loadedTiles = new Set()
 
-    this.enableDebug = _.get(options, 'enabledDebug', false)
-    this.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
-    this.meteoModelOverride = _.get(options, 'meteoModelOverride')
 
     // build colormap
     const domain = _.get(options, 'chromajs.domain', null)
@@ -27,22 +43,11 @@ const TiledWindLayer = L.GridLayer.extend({
     const scale = chroma.scale(colors)
     this.colorMap = scale.domain(invert ? domain.slice().reverse() : domain)
 
-    // instanciate grid sources (one for each component)
-    const [uKey, uConf] = extractGridSourceConfig(options.u)
-    const [vKey, vConf] = extractGridSourceConfig(options.v)
-    this.uSource = makeGridSource(uKey, { weacastApi: options.weacastApi })
-    this.vSource = makeGridSource(vKey, { weacastApi: options.weacastApi })
+    this.uSource = uSource
+    this.vSource = vSource
     this.onDataChangedCallback = this.onDataChanged.bind(this)
     this.uSource.on('data-changed', this.onDataChangedCallback)
     this.vSource.on('data-changed', this.onDataChangedCallback)
-    this.uSource.setup(uConf)
-    this.vSource.setup(vConf)
-    // add jwtToken to grid sources conf
-    if (options.jwtToken) {
-      this.uSource.updateCtx.jwtToken = options.jwtToken
-      this.vSource.updateCtx.jwtToken = options.jwtToken
-    }
-
     this.numDataChanged = 0
 
     // build the underlying velocity layer
@@ -120,11 +125,25 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   setTime (time) {
-    if (typeof this.uSource.setTime === 'function') this.uSource.setTime(time)
-    if (typeof this.vSource.setTime === 'function') this.vSource.setTime(time)
+    const applyU = typeof this.uSource.setTime === 'function'
+    const applyV = typeof this.vSource.setTime === 'function'
+    if (applyU || applyV) {
+      if (!this.pendingAdd)
+        this._resetView()
+      if (applyU)
+        this.uSource.setTime(time)
+      if (applyV)
+        this.vSource.setTime(time)
+    }
   },
 
   setModel (model) {
+    // apply per model {min,max}Zoom
+    if (this.conf.minZoom)
+      this.options.minZoom = _.get(this.conf.minZoom, model.name)
+    if (this.conf.maxZoom)
+      this.options.maxZoom = _.get(this.conf.maxZoom, model.name)
+
     const modelHeader = {
       nx: model.size[0],
       ny: model.size[1],
@@ -136,8 +155,8 @@ const TiledWindLayer = L.GridLayer.extend({
 
     // it is possible to override model parameters through the layer conf
     // check that here
-    if (this.meteoModelOverride) {
-      const override = this.meteoModelOverride[model.name]
+    if (this.conf.meteoModelOverride) {
+      const override = this.conf.meteoModelOverride[model.name]
       if (override) Object.assign(modelHeader, override)
     }
 
@@ -159,8 +178,16 @@ const TiledWindLayer = L.GridLayer.extend({
     // const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
     // this.options.maxNativeZoom = computeIdealMaxNativeZoom(this, modelBounds, modelTileSize)
 
-    if (typeof this.uSource.setModel === 'function') this.uSource.setModel(model)
-    if (typeof this.vSource.setModel === 'function') this.vSource.setModel(model)
+    const applyU = typeof this.uSource.setTime === 'function'
+    const applyV = typeof this.vSource.setTime === 'function'
+    if (applyU || applyV) {
+      if (!this.pendingAdd)
+        this._resetView()
+      if (applyU)
+        this.uSource.setModel(model)
+      if (applyV)
+        this.vSource.setModel(model)
+    }
   },
 
   onDataChanged () {
@@ -261,13 +288,13 @@ const TiledWindLayer = L.GridLayer.extend({
     // TODO: we may also check if we have all the sub tiles loaded too ...
     const skipTile = tileSetContainsParent(this.loadedTiles, coords)
 
-    if (this.enableDebug) {
+    if (this.conf.enableDebug) {
       tile.style.outline = '1px solid blue'
       tile.innerHTML = `${coords.x} ${coords.y} ${coords.z} :`
     }
 
     if (!skipTile) {
-      if (this.enableDebug) {
+      if (this.conf.enableDebug) {
         tile.innerHTML += ' requested'
       }
 
@@ -278,8 +305,8 @@ const TiledWindLayer = L.GridLayer.extend({
       // compute an ideal resolution for grid sources that care
       const tileSize = this.getTileSize()
       const resolution = [
-        this.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
-        this.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
+        this.conf.resolutionScale[0] * ((reqBBox[2] - reqBBox[0]) / (tileSize.y - 1)),
+        this.conf.resolutionScale[1] * ((reqBBox[3] - reqBBox[1]) / (tileSize.x - 1))
       ]
 
       // request data
@@ -298,7 +325,7 @@ const TiledWindLayer = L.GridLayer.extend({
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
-          if (this.enableDebug) {
+          if (this.conf.enableDebug) {
             tile.innerHTML += ', triggered wind restart'
           }
         }
@@ -317,18 +344,18 @@ const TiledWindLayer = L.GridLayer.extend({
             // remember we have data for this leaflet tile
             this.loadedTiles.add(tile2key(coords))
 
-            if (this.enableDebug) {
+            if (this.conf.enableDebug) {
               tile.style.outline = '1px solid green'
               tile.innerHTML += ', added to loadedTiles'
             }
           } else {
-            if (this.enableDebug) {
+            if (this.conf.enableDebug) {
               tile.style.outline = '1px solid red'
               tile.innerHTML += ', discarded (out of date)'
             }
           }
         } else {
-          if (this.enableDebug) {
+          if (this.conf.enableDebug) {
             tile.style.outline = '1px solid green'
             tile.innerHTML += ', empty'
           }
@@ -337,7 +364,7 @@ const TiledWindLayer = L.GridLayer.extend({
         doFinally()
       }).catch(err => {
         // fetch failed
-        if (this.enableDebug) {
+        if (this.conf.enableDebug) {
           tile.style.outline = '1px solid red'
           tile.innerHTML += `, failed (${err})`
         }
@@ -347,7 +374,7 @@ const TiledWindLayer = L.GridLayer.extend({
         throw err
       })
     } else {
-      if (this.enableDebug) {
+      if (this.conf.enableDebug) {
         tile.style.outline = '1px solid green'
         tile.innerHTML += ' skipped'
       }

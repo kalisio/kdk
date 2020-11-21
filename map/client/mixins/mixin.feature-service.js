@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import explode from '@turf/explode'
 import logger from 'loglevel'
 import moment from 'moment'
@@ -179,8 +180,8 @@ export default {
         // We create chunks according to the number of points and not features.
         // Indeed otherwise it would create very different chunks depending on the geometry type
         // (eg a bucket of 1000 polygons can actually contains a lot of points).
-        //const chunks = _.chunk(features, chunkSize)
-        let chunks = []
+        // const chunks = _.chunk(features, chunkSize)
+        const chunks = []
         let chunkPoints = 0
         let chunk = []
         features.forEach(feature => {
