@@ -265,7 +265,7 @@ export default {
         { name: 'previousHour', icon: 'las la-angle-left', label: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
         { name: 'previousStep', icon: 'las la-step-backward', label: this.$t('KTimeline.PREVIOUS_STEP'), handler: this.onPreviousStepClicked },
         { name: 'nextStep', icon: 'las la-step-forward', label: this.$t('KTimeline.NEXT_STEP'), handler: this.onNextStepClicked },
-        { name: 'nextHour', icon: 'las la-angle-right', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNectHourClicked },
+        { name: 'nextHour', icon: 'las la-angle-right', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNextHourClicked },
         { name: 'nextDay', icon: 'las la-calendar-plus', label: this.$t('KTimeline.NEXT_DAY'), handler: this.onNextDayClicked }
       ]
     }
