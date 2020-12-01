@@ -32,7 +32,7 @@ If you have a lot of issues/PRs to be integrated in change log please [generate 
 :::
 
 ::: danger
-The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches
+The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches or systematically merge changes to master before generating the changelog so that all issues are closed in Github.
 :::
 
 ::: warning
@@ -41,19 +41,21 @@ Before you publish a plugin take care of updating the version of your dependent 
 
 ## Web app
 
-Almost the same process applies as for the plugins/modules except the app is not published on the NPM registry. Moreover the process is less automated to ensure more flexibility, i.e. the tasks are performed independently using the required commands at the different stages of the application lifecycle.
+Almost the same process applies as for the plugins/modules except the app is not published on the NPM registry but in the Docker Hub. Moreover, the process is less automated to ensure more flexibility, i.e. the tasks are performed independently using the required commands at the different stages of the application lifecycle.
 
-Typically, when starting a new version
-* increase the package version number in the **package.json** file (frontend and backend API) so that the generated artefacts will not erase previously published ones
+Typically, when starting a new version after a release
+* increase the package version number in the **package.json** file (frontend and backend API) of your `master`branch so that the generated artefacts will not erase previously published ones
 
-Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
+Depending on the release typing the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
 npm run release:type
 ```
 
-Then typically when releasing a new version:
+Then typically when releasing a new version starting from your `test` (a.k.a release or staging) branch:
 * create a tag accordingly in the git repository and push it, this will trigger the CI process to build the target artefacts
 * generates the changelog in the git repository and push it
+
+This process usually triggers your [CI/CD](./deploy.md) accordingly.
 
 ::: warning
 Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example perform `yarn upgrade kdk`
