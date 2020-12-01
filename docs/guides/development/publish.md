@@ -28,15 +28,15 @@ npm run release:type
 ```
 
 ::: warning
-If you have a lot of issues/PRs to be integrated in change log please [generate a GitHub token](https://github.com/github-changelog-generator/github-changelog-generator#github-token) to avoid rate-limiting on their API and set the `CHANGELOG_GITHUB_TOKEN` environment variable to your token before publishing**
+If you have a lot of issues/PRs to be integrated in change log please [generate a GitHub token](https://github.com/github-changelog-generator/github-changelog-generator#github-token) to avoid rate-limiting on their API and set the `CHANGELOG_GITHUB_TOKEN` environment variable to your token before publishing
 :::
 
 ::: danger
-The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches or systematically merge changes to master before generating the changelog so that all issues are closed in Github.
+The changelog suffers from the following [issue](https://github.com/github-changelog-generator/github-changelog-generator/issues/497) so you might have to edit the generated changelog when pushing on different branches or systematically merge changes to `master` before generating the changelog so that all issues are closed in Github.
 :::
 
 ::: warning
-Before you publish a plugin take care of updating the version of your dependent plugins to the latest version published, for example  perform `yarn upgrade kdk` for a plugin depending on the core plugin before publishing it**
+Before you publish a module take care of updating the version of your dependent modules to the latest version published, for example  perform `yarn upgrade xxx` for a module depending on the xxx module before publishing it
 :::
 
 ## Web app
@@ -55,10 +55,10 @@ Then typically when releasing a new version starting from your `test` (a.k.a rel
 * create a tag accordingly in the git repository and push it, this will trigger the CI process to build the target artefacts
 * generates the changelog in the git repository and push it
 
-This process usually triggers your [CI/CD](./deploy.md) accordingly.
+This process usually triggers your [CI/CD](./deploy.md) accordingly based on the current branch.
 
 ::: warning
-Before you publish your app take care of updating the version of all dependent plugins to the latest version published, for example perform `yarn upgrade kdk`
+Before you publish your app take care of updating the version of all dependent modules to the latest version published, for example perform `yarn upgrade kdk` to use the latest versin of the KDK.
 :::
 
 Because Kalisio web app are also released as Docker images you can build it like this:
