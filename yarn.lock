@@ -249,6 +249,14 @@
   resolved "https://registry.yarnpkg.com/@feathers-plus/batch-loader/-/batch-loader-0.3.6.tgz#1e096e95fcdffb83fb1a65468e6ef80b416f7d98"
   integrity sha512-r+n31iZ/B5Rl1mLkC9/S20UI445MdkZvE3VBmjupep2t8OuyTYHPkFEgR25HY6khH+RothK1VL3B5eumk9N2QQ==
 
+"@feathersjs/adapter-commons@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-2.0.0.tgz#59f174df0ba92087c43c79a28690d275c4064d86"
+  integrity sha512-Fyb2RpV3pZWscjeSQnuvSfksixipwsY0ObpHbz8k0bdfbjpqT59MWTzVcvYsIJzCCHfD0KcsloiZ6jhW5wL9sg==
+  dependencies:
+    "@feathersjs/commons" "^4.0.0"
+    "@feathersjs/errors" "^3.3.6"
+
 "@feathersjs/authentication-jwt@^2.0.1", "@feathersjs/authentication-jwt@^2.0.10":
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/@feathersjs/authentication-jwt/-/authentication-jwt-2.0.10.tgz#f8ec25d1230552b311af21822c5974cbc5f99b5e"
@@ -374,7 +382,7 @@
     express "^4.16.2"
     uberproto "^2.0.0"
 
-"@feathersjs/feathers@^3.1.3", "@feathersjs/feathers@^3.3.1":
+"@feathersjs/feathers@^3.1.3", "@feathersjs/feathers@^3.1.7", "@feathersjs/feathers@^3.3.1":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@feathersjs/feathers/-/feathers-3.3.1.tgz#fcba030847f8418d711135112f01fad64bfb277c"
   integrity sha512-Mb7Maz03TIIksomXeInmXNb5ykxgsAyBCuJDQHK+oIDrDRR9m+ZbUrslCkMk/s0nr6cW5DmVbWz9s11SCXFW5A==
@@ -1265,7 +1273,7 @@ babel-plugin-transform-strict-mode@^6.24.1:
     babel-runtime "^6.22.0"
     babel-types "^6.24.1"
 
-babel-polyfill@^6.26.0, babel-polyfill@^6.7.4:
+babel-polyfill@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.26.0.tgz#379937abc67d7895970adc621f284cd966cf2153"
   integrity sha1-N5k3q8Z9eJWXCtxiHyhM2WbPIVM=
@@ -2941,7 +2949,7 @@ eventemitter2@6.0.0:
   resolved "https://registry.yarnpkg.com/eventemitter2/-/eventemitter2-6.0.0.tgz#218eb512c3603c5341724b6af7b686a1aa5ab8f5"
   integrity sha512-ZuNWHD7S7IoikyEmx35vPU8H1W0L+oi644+4mSTg7nwXvBQpIwQL7DPjYUF0VMB0jPkNMo3MqD07E7MYrkFmjQ==
 
-events@1.1.1, events@^1.1.1:
+events@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
   integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
@@ -2988,7 +2996,7 @@ express-rate-limit@^5.1.0:
   resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-5.1.3.tgz#656bacce3f093034976346958a0f0199902c9174"
   integrity sha512-TINcxve5510pXj4n9/1AMupkj3iWxl3JuZaWhCdYDlZeoCPqweGZrxbrlqTCFb1CT5wli7s8e2SH/Qz2c9GorA==
 
-express@^4.16.1, express@^4.16.2:
+express@^4.16.2:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
   integrity sha512-mHJ9O79RqluphRrcw2X/GTh3k9tVv8YcoyY4Kkh4WDMUYKRZUq0h1o0w2rrrxBqM7VoeUVqgb27xlEMXTnYt4g==
@@ -3137,12 +3145,12 @@ feathers-blob@^1.4.0:
     mime-types "^2.1.10"
     uberproto "^1.2.0"
 
-feathers-commons@^0.8.0, feathers-commons@^0.8.4, feathers-commons@^0.8.6, feathers-commons@^0.8.7:
+feathers-commons@^0.8.6:
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/feathers-commons/-/feathers-commons-0.8.7.tgz#11c6f25b537745a983e8d61552d7db8932d53782"
   integrity sha1-EcbyW1N3RamD6NYVUtfbiTLVN4I=
 
-feathers-errors@^2.0.1, feathers-errors@^2.4.0, feathers-errors@^2.8.1:
+feathers-errors@^2.4.0:
   version "2.9.2"
   resolved "https://registry.yarnpkg.com/feathers-errors/-/feathers-errors-2.9.2.tgz#96ca0e5fe50cc56f0eccc90ce3fa5e1f8840828d"
   integrity sha512-qwIX97bNW7+1tWVG073+omUA0rCYKJtTtwuzTrrvfrtdr8J8Dk1Fy4iaV9Fa6/YBD5AZu0lsplPE0iu4u/d4GQ==
@@ -3204,28 +3212,18 @@ feathers-memory@^2.2.0:
     sift "^6.0.0"
     uberproto "^2.0.1"
 
-feathers-mongodb-management@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/feathers-mongodb-management/-/feathers-mongodb-management-0.1.0.tgz#2006b0271d87a4dc241da4dc4bbab26d49fae5aa"
-  integrity sha1-IAawJx2HpNwkHaTcS7qybUn65ao=
+feathers-mongodb-management@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/feathers-mongodb-management/-/feathers-mongodb-management-1.0.0.tgz#28ca11ba40606e76908920d66fda37d053a2032f"
+  integrity sha512-D5otC/b1sTLoHVM+cdp6YiXuZ7OvArFSxbOEqxHkCMwS9lzRCnnS8MWdEA13BPOto2LRMNUWEHZQ1WvpwQwxmA==
   dependencies:
-    debug "^2.6.8"
-    feathers "^2.1.4"
-    feathers-commons "^0.8.7"
-    feathers-errors "^2.8.1"
-    feathers-query-filters "^2.1.2"
-
-feathers-mongodb@^2.8.0:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/feathers-mongodb/-/feathers-mongodb-2.9.1.tgz#99d97b508c2feb7fcd51ccff823b73568d00b364"
-  integrity sha512-PpG0Xdo3/3yvGiE42aLUXYWmwF/TViaYFOkriuk0k1MaM4aztZO5tlmbQlvV03QH7VO6svaWJhZWRx5n9Uejqg==
-  dependencies:
-    babel-polyfill "^6.7.4"
-    feathers-commons "^0.8.4"
-    feathers-errors "^2.0.1"
-    feathers-query-filters "^2.0.0"
-    lodash.omit "^4.3.0"
-    uberproto "^1.2.0"
+    "@feathersjs/adapter-commons" "^2.0.0"
+    "@feathersjs/commons" "^4.0.0"
+    "@feathersjs/errors" "^3.3.0"
+    "@feathersjs/feathers" "^3.1.7"
+    debug "^4.0.0"
+    mongodb "^3.6.2"
+    sift "^8.0.0"
 
 feathers-mongodb@^3.0.0:
   version "3.4.0"
@@ -3236,26 +3234,6 @@ feathers-mongodb@^3.0.0:
     "@feathersjs/errors" "^3.3.0"
     lodash.omit "^4.5.0"
     uberproto "^2.0.4"
-
-feathers-query-filters@^2.0.0, feathers-query-filters@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/feathers-query-filters/-/feathers-query-filters-2.1.2.tgz#cdb18224db5e19cc0140d528108e0908d5eb0654"
-  integrity sha1-zbGCJNteGcwBQNUoEI4JCNXrBlQ=
-  dependencies:
-    feathers-commons "^0.8.0"
-
-feathers@^2.1.4:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/feathers/-/feathers-2.2.4.tgz#5ed23e27a8889a4409a408f80fc2f2a5f7dd9175"
-  integrity sha512-9IYKbxRKoDuerLCkYmFkQuKOwyB2SMM1kSUswDzlE0AmdzDrcfocVYb87/BsQx2j6hFkdCVFYkXq3+YPSDMT3w==
-  dependencies:
-    babel-runtime "^6.26.0"
-    debug "^3.1.0"
-    events "^1.1.1"
-    express "^4.16.1"
-    feathers-commons "^0.8.7"
-    rubberduck "^1.1.1"
-    uberproto "^1.2.0"
 
 feature-policy@0.3.0:
   version "0.3.0"
@@ -4809,7 +4787,7 @@ lodash.noop@^3.0.1:
   resolved "https://registry.yarnpkg.com/lodash.noop/-/lodash.noop-3.0.1.tgz#38188f4d650a3a474258439b96ec45b32617133c"
   integrity sha1-OBiPTWUKOkdCWEObluxFsyYXEzw=
 
-lodash.omit@^4.3.0, lodash.omit@^4.5.0:
+lodash.omit@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.omit/-/lodash.omit-4.5.0.tgz#6eb19ae5a1ee1dd9df0b969e66ce0b7fa30b5e60"
   integrity sha1-brGa5aHuHdnfC5aeZs4Lf6MLXmA=
@@ -5133,7 +5111,7 @@ mongodb-core@2.1.20:
     bson "~1.0.4"
     require_optional "~1.0.0"
 
-mongodb@^2.0.35, mongodb@^2.2.26:
+mongodb@^2.0.35:
   version "2.2.36"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.36.tgz#1c573680b2849fb0f47acbba3dc5fa228de975f5"
   integrity sha512-P2SBLQ8Z0PVx71ngoXwo12+FiSfbNfGOClAao03/bant5DgLNkOPAck5IaJcEk4gKlQhDEURzfR3xuBG1/B+IA==
@@ -5761,9 +5739,9 @@ passport-oauth2@1.x.x, passport-oauth2@^1.4.0:
     uid2 "0.0.x"
     utils-merge "1.x.x"
 
-"passport-openidconnect@git+https://github.com/kalisio/passport-openidconnect.git":
+"passport-openidconnect@https://github.com/kalisio/passport-openidconnect":
   version "0.0.2"
-  resolved "git+https://github.com/kalisio/passport-openidconnect.git#82d9f0653334a0538b2c3dc2a8119eefc2eca237"
+  resolved "https://github.com/kalisio/passport-openidconnect#82d9f0653334a0538b2c3dc2a8119eefc2eca237"
   dependencies:
     oauth "0.9.x"
     passport-strategy "1.x.x"
@@ -6450,11 +6428,6 @@ rimraf@^3.0.0:
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   dependencies:
     glob "^7.1.3"
-
-rubberduck@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/rubberduck/-/rubberduck-1.1.1.tgz#cd2cda4b867178135eafc995a71384f5f743db02"
-  integrity sha1-zSzaS4ZxeBNer8mVpxOE9fdD2wI=
 
 run-async@^2.2.0, run-async@^2.4.0:
   version "2.4.0"
