@@ -192,7 +192,7 @@ export default function (name) {
         const hasVisibleBaseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer') && layer.isVisible)
         if (!hasVisibleBaseLayer) {
           const baseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer'))
-          if (baseLayer) this.showLayer(baseLayer.name)
+          if (baseLayer) await this.showLayer(baseLayer.name)
         }
       },
       isUserLayer (layer) {
@@ -374,11 +374,11 @@ export default function (name) {
       onLayerAdded (layer) {
         this.registerLayerActions(layer)
       },
-      onTriggerLayer (layer) {
+      async onTriggerLayer (layer) {
         if (!this.isLayerVisible(layer.name)) {
-          this.showLayer(layer.name)
+          await this.showLayer(layer.name)
         } else {
-          this.hideLayer(layer.name)
+          await this.hideLayer(layer.name)
         }
         this.storeContext('layers')
       },
@@ -682,6 +682,7 @@ export default function (name) {
         else this.$q.fullscreen.exit()
       },
       getContextKey (context) {
+        // Generate a unique key to store context based on app name, map activity name and context type
         return this.appName.toLowerCase() + `-${this.name}-${context}`
       },
       shouldRestoreContext (context) {
@@ -691,17 +692,17 @@ export default function (name) {
         }
         return this.$store.get(`restore.${context}`)
       },
-      getRouteContextParameters (context) {
+      getRouteContext (context) {
         switch (context) {
           case 'layers':
-            if (_.get(this.$route, 'params.layers')) {
-              return _.pick(this.$route.params, ['layers'])
+            if (_.has(this.$route, 'query.layers')) {
+              return _.pick(this.$route.query, ['layers'])
             }
             break
           case 'view':
           default:
-            if (_.get(this.$route, 'params.south') && _.get(this.$route, 'params.west') &&
-                _.get(this.$route, 'params.north') && _.get(this.$route, 'params.east')) {
+            if (_.has(this.$route, 'params.south') && _.has(this.$route, 'params.west') &&
+                _.has(this.$route, 'params.north') && _.has(this.$route, 'params.east')) {
               const currentBounds = _.pick(this.$route.params, ['south', 'west', 'north', 'east'])
               return _.mapValues(currentBounds, value => _.toNumber(value))
             }
@@ -709,11 +710,38 @@ export default function (name) {
         }
         return {}
       },
+      contextAsQuery (context) {
+        // Check if context is stored in route params or query
+        switch (context) {
+          case 'layers':
+            return true
+            break
+          case 'view':
+          default:
+            return false
+            break
+        }
+      },
+      updateRouteContext (context, parameters) {
+        const asQuery = this.contextAsQuery(context)
+        // Clone route context to avoid any side effect
+        const route = {
+          query: Object.assign({}, _.get(this.$route, 'query', {})),
+          params: Object.assign({}, _.get(this.$route, 'params', {}))
+        }
+        // Then update according to context
+        if (asQuery) Object.assign(route.query, parameters)
+        else Object.assign(route.params, parameters)
+        // We catch as replacing with similar params raises a duplicate navigation error
+        this.$router.replace(route).catch(_ => {})
+      },
       storeContext (context) {
         let targetParameters
         switch (context) {
           case 'layers':
-            targetParameters = { layers: _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name) }
+            targetParameters = {
+              layers: _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name).join(',')
+            }
             break
           case 'view':
           default:
@@ -727,35 +755,38 @@ export default function (name) {
         }
         // Store both in URL and local storage, except if the user/view has explicitly revoked restoration
         if (this.shouldRestoreContext(context)) {
-          if (!_.isEqual(this.getRouteContextParameters(context), targetParameters)) {
-            this.$router.replace({
-              query: _.get(this.$route, 'query', {}),
-              params: Object.assign({}, _.get(this.$route, 'params', {}), targetParameters)
-            }).catch(_ => {})
+          if (!_.isEqual(this.getRouteContext(context), targetParameters)) {
+            this.updateRouteContext(context, targetParameters)
           }
           window.localStorage.setItem(this.getContextKey(context), JSON.stringify(targetParameters))
         }
       },
-      restoreContext (context) {
+      async restoreContext (context) {
         let targetParameters
         // Restore from local storage or route parameters
         if (this.shouldRestoreContext(context)) {
           const savedParameters = window.localStorage.getItem(this.getContextKey(context))
           if (savedParameters) targetParameters = JSON.parse(savedParameters)
         } else {
-          targetParameters = this.getRouteContextParameters(context)
+          targetParameters = this.getRouteContext(context)
         }
         // Restore context if possible
         if (!_.isEmpty(targetParameters)) {
-          if (!_.isEqual(this.getRouteContextParameters(context), targetParameters)) {
-            this.$router.replace({
-              query: _.get(this.$route, 'query', {}),
-              params: Object.assign({}, _.get(this.$route, 'params', {}), targetParameters)
-            }).catch(_ => {})
+          if (!_.isEqual(this.getRouteContext(context), targetParameters)) {
+            this.updateRouteContext(context, targetParameters)
           }
           switch (context) {
             case 'layers':
-              targetParameters.layers.forEach(layer => this.showLayer(layer))
+              // Start from a clean state in case some defaults layers have been already activated
+              let layers = _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
+              for (let i = 0; i < layers.length; i++) {
+                await this.hideLayer(layers[i])
+              }
+              // Then active context layers
+              layers = targetParameters.layers.split(',')
+              for (let i = 0; i < layers.length; i++) {
+                await this.showLayer(layers[i])
+              }
               break
             case 'view':
             default:
@@ -766,22 +797,21 @@ export default function (name) {
               break
           }
         }
+        return targetParameters
       },
       clearContext (context) {
+        // In order to clear we simply erase target property values
         let parameters
         switch (context) {
           case 'layers':
-            parameters = ['layers']
+            parameters = { layers: undefined }
             break
           case 'view':
           default:
-            parameters = ['south', 'west', 'north', 'east']
+            parameters = { south: undefined, west: undefined, north: undefined, east: undefined }
             break
         }
-        this.$router.replace({
-          query: _.get(this.$route, 'query', {}),
-          params: _.omit(_.get(this.$route, 'params', {}), parameters)
-        }).catch(_ => {})
+        this.updateRouteContext(context, parameters)
         window.localStorage.removeItem(this.getContextKey(context))
       },
       updateContextSettings (context) {
@@ -796,7 +826,8 @@ export default function (name) {
       },
       async initialize () {
         // Geolocate by default if view has not been restored
-        if (!this.restoreContext('view')) {
+        const viewRestored = await this.restoreContext('view')
+        if (!viewRestored) {
           // Provided by geolocation mixin if available
           if (!this.$store.get('user.position') && this.updatePosition) {
             await this.updatePosition()
@@ -818,7 +849,7 @@ export default function (name) {
         // Retrieve the layers
         try {
           await this.refreshLayers()
-          this.restoreContext('layers')
+          await this.restoreContext('layers')
         } catch (error) {
           logger.error(error)
         }
