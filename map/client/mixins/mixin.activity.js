@@ -695,14 +695,14 @@ export default function (name) {
       getRouteContext (context) {
         switch (context) {
           case 'layers':
-            if (_.has(this.$route, 'query.layers')) {
+            if (_.get(this.$route, 'query.layers')) {
               return _.pick(this.$route.query, ['layers'])
             }
             break
           case 'view':
           default:
-            if (_.has(this.$route, 'params.south') && _.has(this.$route, 'params.west') &&
-                _.has(this.$route, 'params.north') && _.has(this.$route, 'params.east')) {
+            if (_.get(this.$route, 'params.south') && _.get(this.$route, 'params.west') &&
+                _.get(this.$route, 'params.north') && _.get(this.$route, 'params.east')) {
               const currentBounds = _.pick(this.$route.params, ['south', 'west', 'north', 'east'])
               return _.mapValues(currentBounds, value => _.toNumber(value))
             }
