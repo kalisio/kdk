@@ -44,6 +44,7 @@
       "CHART_DATA_LABEL": "Graphique des données",
       "START_EDIT_DATA_LABEL": "Editer les données",
       "STOP_EDIT_DATA_LABEL": "Clôturer l'édition des données",
+      "EDITING_DATA_MESSAGE": "Edition en cours",
       "REMOVE_LABEL": "Supprimer",
       "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
       "REMOVE_DIALOG_TITLE": "Supprimer {{layer}} ?",

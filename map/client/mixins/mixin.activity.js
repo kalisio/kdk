@@ -568,9 +568,30 @@ export default function (name) {
         })
       },
       async onEditLayerData (layer) {
-        // Start/Stop edition
-        this.editLayer(layer)
-        this.registerLayerActions(layer) // Refresh actions due to state change
+        const stop = () => {
+          // Start/Stop edition
+          this.editLayer(layer)
+          // Refresh actions due to state change
+          this.registerLayerActions(layer)
+        }
+        // Close previous edition toast if any
+        // (will call dismiss handler)
+        if (this.editedLayerToast) {
+          this.editedLayerToast()
+          this.editedLayerToast = null
+        } else {
+          stop()
+        }
+        // Create new one
+        if (this.isLayerEdited(layer)) {
+          this.editedLayerToast = this.$toast({
+            type: 'warning', timeout: 0, // persistent
+            position: 'top-left',
+            message: this.$t('mixins.activity.EDITING_DATA_MESSAGE'),
+            caption: this.$t(layer.name),
+            onDismiss: stop
+          })
+        }
       },
       async onRemoveLayer (layer) {
         Dialog.create({

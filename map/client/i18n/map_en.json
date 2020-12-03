@@ -44,6 +44,7 @@
       "CHART_DATA_LABEL": "Chart data",
       "START_EDIT_DATA_LABEL": "Start data edit",
       "STOP_EDIT_DATA_LABEL": "Stop data edit",
+      "EDITING_DATA_MESSAGE": "Editing",
       "REMOVE_LABEL": "Remove",
       "REMOVING_LABEL": "Please wait while removing layer data",
       "REMOVE_DIALOG_TITLE": "Remove {{layer}} ?",
