@@ -33,6 +33,8 @@
       "IMPORT_LAYER": "Importer un fichier local pour créer une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
+      "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {{features.length}} éléments dont la géométrie est invalide (e.g. auto-intersection).</br>En conséquence ces éléments seront supprimés avant la sauvegarde.",
       "SAVE_DIALOG_TITLE": "Tuilage de la couche {{layer}}",
       "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",
       "EDIT_LABEL": "Editer les propriétés",

@@ -33,6 +33,8 @@
       "IMPORT_LAYER": "Import a local file to create a new layer",
       "SAVE_LABEL": "Save layer",
       "SAVING_LABEL": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
+      "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {{features.length}} elements with invalid geometry (e.g. self-intersection).</br>As a consequence they will be removed prior to saving.",
       "SAVE_DIALOG_TITLE": "Tiling layer {{layer}}",
       "SAVE_DIALOG_MESSAGE": "Your layer contains too much elements and has been optimized to be smoothly displayed.</br>As a consequence, it will only be visible at a local scale from a given zoom level.",
       "EDIT_LABEL": "Edit properties",

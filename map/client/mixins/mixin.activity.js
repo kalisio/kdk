@@ -394,6 +394,26 @@ export default function (name) {
         this.zoomToLayer(layer.name)
       },
       async onSaveLayer (layer) {
+        const geoJson = this.toGeoJson(layer.name)
+        // Check for invalid features first
+        const check = this.checkFeatures(geoJson)
+        if (check.kinks.length > 0) {
+          const result = await kCoreUtils.dialog({
+            title: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_TITLE', { features: check.kinks }),
+            message: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_MESSAGE', { features: check.kinks }),
+            html: true,
+            ok: {
+              label: this.$t('OK'),
+              flat: true
+            },
+            cancel: {
+              label: this.$t('CANCEL'),
+              flat: true
+            }
+          })
+          if (!result.ok) return
+        }
+        
         // Change data source from in-memory to features service
         _.merge(layer, {
           service: 'features',
@@ -401,7 +421,6 @@ export default function (name) {
         })
         // When saving from one engine copy options to the other one so that it will be available in both of them
         _.set(layer, (this.is2D() ? 'cesium' : 'leaflet'), Object.assign({}, _.get(layer, this.engine)))
-        const geoJson = this.toGeoJson(layer.name)
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         // If too much data use tiling
         // The threshold is based on the number of points and not features.
@@ -423,7 +442,7 @@ export default function (name) {
           let nbFeatures = 0
           // We use the generated DB ID as layer ID on features
           await this.createFeatures(geoJson, createdLayer._id, chunkSize, (i, chunk) => {
-            // Update message
+            // Update saving message according to new chunk data
             nbFeatures += chunk.length
             Loading.show({
               message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length })

@@ -1,5 +1,8 @@
 import _ from 'lodash'
 import explode from '@turf/explode'
+import kinks from '@turf/kinks'
+import clean from '@turf/clean-coords'
+import { getType } from '@turf/invariant'
 import logger from 'loglevel'
 import moment from 'moment'
 import { getNearestTime } from '../utils'
@@ -163,6 +166,28 @@ export default {
       this.unsetCursor('processing-cursor')
       return probedLocation
     },
+    checkFeatures (geoJson, options = {
+      kinks: true,
+      redundantCoordinates: true
+    }) {
+      let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+      // Filter invalid features
+      let kinksFeatures
+      if (options.kinks) {
+        kinksFeatures = _.remove(features, feature => {
+          const type = getType(feature)
+          return (((type === 'LineString') || (type === 'MultiLineString') ||
+                   (type === 'MultiPolygon') || (type === 'Polygon')) ?
+            (_.get(kinks(feature), 'features', []).length > 0) :
+            false)
+        })
+      }
+      // Removes redundant coordinates
+      if (options.redundantCoordinates) {
+        features.forEach(feature => clean(feature, { mutate: true }))
+      }
+      return { kinks: kinksFeatures }
+    },
     async createFeatures (geoJson, layerId, chunkSize = 5000, processCallback) {
       if (!layerId) return
       const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
@@ -208,7 +233,7 @@ export default {
         // Write the chunks
         for (let i = 0; i < chunks.length; i++) {
           await this.$api.getService('features').create(chunks[i])
-          if (typeof processCallback === 'function') processCallback(i, chunks[i])
+          if (typeof processCallback === 'function') await processCallback(i, chunks[i])
         }
       }
     },

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import emailValidator from 'email-validator'
 import config from 'config'
-import { Notify, Loading } from 'quasar'
+import { Notify, Dialog, Loading } from 'quasar'
 
 /**
  * This function allow you to modify a JS Promise by adding some status properties.
@@ -140,6 +140,16 @@ export function toast (options) {
   }, _.omit(options, ['type'])))
 }
 
+// Simplify Quasar dialog plugin usage with async/await
+export async function dialog (options) {
+  return new Promise((resolve, reject) => {
+    Dialog.create(options)
+    .onOk((data) => resolve({ ok: true, data }))
+    .onCancel(() => resolve({ cancel: true }))
+    .onDismiss(() => resolve({ dismiss: true }))
+  })
+}
+
 // Extract icon name from a given icon property on a given target object
 export function getIconName (object, path = 'icon.name') {
   // Make function work in a generic way, sometimes the provided input is directly the icon name
@@ -155,6 +165,7 @@ export function processIcon (object, path = 'icon.name') {
   _.set(object, path, getIconName(object, path))
 }
 
+// Transform nested object to dot notation
 export function dotify (object) {
   var dotifiedObject = {}
   function recurse (object, current) {
