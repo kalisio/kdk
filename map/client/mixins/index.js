@@ -7,6 +7,7 @@ import featureService from './mixin.feature-service'
 import time from './mixin.time'
 import weacast from './mixin.weacast'
 import activity from './mixin.activity'
+import context from './mixin.context'
 import levels from './mixin.levels'
 
 export default {
@@ -19,5 +20,6 @@ export default {
   style,
   weacast,
   activity,
+  context,
   levels
 }

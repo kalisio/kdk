@@ -12,7 +12,8 @@ export default {
       this.map.off('moveend', this.storeView)
     },
     storeView () {
-      this.storeContext('view')
+      // Check if the activity is using context restoration
+      if (typeof this.storeContext === 'function') this.storeContext('view')
     },
     onMapResized (size) {
       // Avoid to refresh the layout when leaving the component

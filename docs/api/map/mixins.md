@@ -147,22 +147,36 @@ Make it easier to create 2D/3D mapping activities by providing methods available
 * **onGeocoding()** geocoding action handler that will open a dialog to search for a location to go to
 * **onGeolocate()** geolocation action handler that will launch a user's position lookup and go to found user's location
 * **onTrackLocation()** location tracking action handler that will enable/disable a location indicator to display location values
-* **storeView()** stores current view bounds as query parameters and persists as well in local storage 
-* **restoreView()** restores previously stored view bounds from local storage or query parameters
-* **clearStoredView()** clears the stored view bounds so that it will not be restored anymore
 
 ::: tip
 This mixin has to be initialized by providing a unique component/activity name like `mixins.activity('map')`. Indeed, the name is then used to retrieve the configuration associated with the activity from the global frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) according to the following properties:
 * **{name}**: 2D/3D view configuration
 * **[name}Panel**: 2D/3D layers panel configuration
 * **[name}Activity**: 2D/3D activity configuration
-See [Kano configuration options](../kano/configuration.md) for more details.
+See e.g. [Kano configuration options](../kano/configuration.md) for more details.
 :::
 
 This mixin also adds the following internal data properties:
 variables
 * **variables** the set of available variables in catalog layers
 * **probedLocation** the currently probed location feature (weather or measurement)
+
+## Context
+
+Used to be able to restore the user's context in 2D/3D mapping activities by providing methods available in both cases:
+* **storeContext(context)** stores current context as route (query) parameters and persists as well in local storage 
+* **restoreContext(context)** restores previously stored context from local storage or route (query) parameters
+* **clearContext(context)** clears the stored context so that it will not be restored anymore
+* **getRouteContext(context)** gets the context parameters from current route (from either parameters or query)
+* **updateRouteContext(context)** sets the context parameters on the current route (from either parameters or query)
+
+At the present time two types of context are supported, although the system is flexible enough to easily add a new type:
+* `view` to restore current view bounds stored as route parameters
+* `layers` to restore currently active layers in catalog stored as route query parameters
+
+::: tip
+The mixin is in sync with the `restore.context` (context being either `view` or `layers`) property of the [global store](../core/application.md#store) so that you can have a shared restoration flag accross all mapping components with a dedicated UI to change settings using e.g. `store.patch('restore.view', true)`. This can be overriden by a similar property on the activity configuration if you'd like to disable context restoration on a particular activity.
+:::
 
 ## Location indicator
 
