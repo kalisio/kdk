@@ -88,7 +88,18 @@ export default {
       // Restore from local storage or route parameters
       if (this.shouldRestoreContext(context)) {
         const savedParameters = window.localStorage.getItem(this.getContextKey(context))
-        if (savedParameters) targetParameters = JSON.parse(savedParameters)
+        if (savedParameters) {
+          targetParameters = JSON.parse(savedParameters)
+          // Backward compatibility: we previously stored the bounds as an array
+          if (Array.isArray(targetParameters)) {
+            targetParameters = {
+              south: targetParameters[0][0],
+              west: targetParameters[0][1],
+              north: targetParameters[1][0],
+              east: targetParameters[1][1]
+            }
+          }
+        }
       } else {
         targetParameters = this.getRouteContext(context)
       }
