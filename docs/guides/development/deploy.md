@@ -32,10 +32,10 @@ In addition, the *travis.env.sh* script automatically generates a temporary envi
 
 CI/CD comes al well in three different flavors, as defined by the value of the `FLAVOR`/`NODE_APP_INSTANCE` environment variables:
 * **dev**: in order to deploy current development/alpha version, linked to the `master` branch of your code
-* **test**: in order to deploy current staging/beta version, linked to the `test` branch of your code, identified by matching the following regular expression pattern `^test-*|-test$`
-* **prod**: in order to deploy current production version, linked to `tags` on the `test` branch of your code
+* **test**: in order to deploy current staging/beta version, usually linked to the `test` branch of your code, identified by matching the following regular expression pattern `^test-*|-test$`
+* **prod**: in order to deploy current production version, usually linked to specific `tags` on the `test` branch of your code by matching the following regular expression pattern `^prod-v[0-9]+\.[0-9]+\.[0-9]+`
 
-The output Docker image artifacts use the prerelease SemVer notation to identify which flavor has been used to produce it —  `1.0.0-dev` for alpha version, `1.3.0-test` for beta version or `1.4.0` for production.
+The output Docker image artifacts use the prerelease SemVer notation to identify which flavor has been used to produce it —  `1.0.0-dev` for alpha version, `1.0.0-test` for beta version or `1.0.0-prod` for production.
 
 ::: tip
 In the CI/CD process the `FLAVOR`/`NODE_APP_INSTANCE` environment variable is automatically set based on the branch/tag you are pushing. During local development these variables are usually not defined.
@@ -49,7 +49,7 @@ Starting from the following base application setup:
 Each flavor is then attached to a different target infrastructure, subdomain and version tag:
 * **dev**: `SUBDOMAIN=dev.$DOMAIN`, `VERSION_TAG=$VERSION-dev`
 * **test**: `SUBDOMAIN=test.$DOMAIN`, `VERSION_TAG=$VERSION-test`
-* **prod**: `SUBDOMAIN=$DOMAIN`, `VERSION_TAG=$VERSION`
+* **prod**: `SUBDOMAIN=$DOMAIN`, `VERSION_TAG=$VERSION-prod`
 
 The subdomain is usually used to build a fully-qualified domain name for the application based on its name, i.e. `$APP.$SUBDOMAIN`. The version tag defines the name of the created Docker images as `$APP:$VERSION_TAG`.
 
