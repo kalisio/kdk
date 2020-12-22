@@ -186,8 +186,8 @@ export async function aggregateFeaturesQuery (hook) {
     if (featureId && _.has(match, 'properties.' + featureId)) {
       if (featureIdType === 'number') _.set(match, 'properties.' + featureId, _.toNumber(_.get(match, 'properties.' + featureId)))
       // Check if we could provide a hint to the aggregation when targeting feature ID
-      // Could raise a bad hint error if the index does not exist like this, eg compound index
-      //aggregateOptions.hint = { ['properties.' + featureId]: 1 }
+      // Indeed, in that case, we define the appropriate index
+      aggregateOptions.hint = { ['properties.' + featureId]: 1 }
     }
     // Ensure we do not mix results with/without relevant element values
     // by separately querying each element then merging
