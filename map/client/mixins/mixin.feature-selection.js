@@ -2,9 +2,8 @@ import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import centroid from '@turf/centroid'
 import _ from 'lodash'
-import { uid, colors } from 'quasar'
-
-const TOOLS_LAYER = uid()
+import { colors } from 'quasar'
+import { SelectionLayerName } from '../utils'
 
 export default {
   data () {
@@ -107,10 +106,10 @@ export default {
     },
     async createSelectionLayer () {
       // Get any previous layer or create it the first time
-      const layer = this.getLayerByName(TOOLS_LAYER)
+      const layer = this.getLayerByName(SelectionLayerName)
       if (!layer) {
         await this.addLayer({
-          name: TOOLS_LAYER,
+          name: SelectionLayerName,
           type: 'OverlayLayer',
           tags: ['hidden'], // Do not show the layer in panel
           isStorable: false,
@@ -131,13 +130,13 @@ export default {
           }
         })
       }
-      if (!this.isLayerVisible(TOOLS_LAYER)) await this.showLayer(TOOLS_LAYER)
+      if (!this.isLayerVisible(SelectionLayerName)) await this.showLayer(SelectionLayerName)
     },
     updateSelectionLayer () {
-      this.updateLayer(TOOLS_LAYER, { type: 'FeatureCollection', features: Object.values(this.selectionHighlight) })
+      this.updateLayer(SelectionLayerName, { type: 'FeatureCollection', features: Object.values(this.selectionHighlight) })
     },
     async removeSelectionLayer () {
-      await this.removeLayer(TOOLS_LAYER)
+      await this.removeLayer(SelectionLayerName)
     },
     onFeatureSelectionClicked (layer, event) {
       // Retrieve the location/feature

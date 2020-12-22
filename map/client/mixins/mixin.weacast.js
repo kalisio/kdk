@@ -2,7 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import logger from 'loglevel'
 import moment from 'moment'
-import { getNearestTime } from '../utils'
+import { getNearestTime, SelectionLayerName } from '../utils'
 
 export default {
   data () {
@@ -189,7 +189,9 @@ export default {
       })
       return feature
     },
-    getProbedLocationForecastTooltip (feature, layer) {
+    getProbedLocationForecastTooltip (feature, layer, options) {
+      if (options.name !== SelectionLayerName) return
+      
       // Only wind/temperature can be available at different levels now
       const windDirection = (this.forecastLevel ? `windDirection-${this.forecastLevel}` : 'windDirection')
       const windSpeed = (this.forecastLevel ? `windSpeed-${this.forecastLevel}` : 'windSpeed')
@@ -229,7 +231,9 @@ export default {
       }
       return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
     },
-    getProbedLocationForecastMarker (feature, latlng) {
+    getProbedLocationForecastMarker (feature, latlng, options) {
+      if (options.name !== SelectionLayerName) return
+
       const properties = feature.properties
       if (!properties) return null
       const windDirection = (this.forecastLevel ? `windDirection-${this.forecastLevel}` : 'windDirection')

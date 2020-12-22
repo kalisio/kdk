@@ -1,10 +1,13 @@
 import _ from 'lodash'
 import math from 'mathjs'
 import config from 'config'
+import { uid } from 'quasar'
 import { buildUrl } from '../../core/common'
 import { utils as kCoreUtils } from '../../core/client'
 export * from './leaflet/utils'
 export * from './cesium/utils'
+
+export const SelectionLayerName = uid()
 
 // Add knot unit not defined by default
 math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] })
