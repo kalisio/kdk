@@ -21,7 +21,7 @@ export default {
           } else if (popupStyle.template) {
             const compiler = popupStyle.compiler
             // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
-            text = compiler({ feature: { properties }, properties })
+            text = compiler({ feature: { properties }, properties, $t: this.$t })
           }
         }
         // Cesium does not support HTML

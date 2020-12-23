@@ -31,7 +31,7 @@ export default {
           } else if (tooltipStyle.template) {
             const compiler = tooltipStyle.compiler
             // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
-            text = compiler({ feature: { properties }, properties })
+            text = compiler({ feature: { properties }, properties, $t: this.$t })
           }
         }
         if (text) {
@@ -42,19 +42,6 @@ export default {
         }
       }
       return tooltip
-    },
-    getVigicruesTooltip (entity, options) {
-      const properties = entity.properties
-      if (!properties) return
-      const name = properties.NomEntVigiCru
-      const level = properties.NivSituVigiCruEnt
-      if (name && !_.isNil(level)) {
-        return Object.assign({
-          show: false,
-          sticky: true,
-          text: name + '\n' + this.$t('Layers.VIGICRUES_VIGILANCE_' + level)
-        }, this.options.tooltip)
-      } else return null
     },
     isTooltipOpen (entity) {
       if (this.getNbChildrenForEntity(entity) > 0) {

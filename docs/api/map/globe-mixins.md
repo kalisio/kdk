@@ -83,7 +83,7 @@ The mixin automatically registers a default generator that will create a popup d
   * **popup**: set on **entity.properties** or layer descriptor or in the **popup** property of component options
     * **pick**: array of property names to appear in the popup
     * **omit**: array of property names not to appear in the popup
-    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with `feature`, its `properties` and translation function `$t` as context
     * **html**: HTML content of the popup, if provided will override default display
     * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
 
@@ -95,7 +95,7 @@ Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/D
 The mixin automatically registers a default generator that will create a tooltip based on the following options with the following order of precedence
   * **tooltip**: set on **entity.properties** or layer descriptor or in the **tooltip** property of component options
     * **property**: property name to appear in the tooltip
-    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with `feature`, its `properties` and translation function `$t` as context
     * **html**: HTML content of the tooltip, if provided will override default display
     * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
 

@@ -143,7 +143,7 @@ export default {
         const compiler = _.template(_.get(style, 'label.text'))
         // To avoid erasing of initial value due to reference, duplicate
         const labelStyle = _.cloneDeep(_.get(style, 'label'))
-        _.set(labelStyle, 'text', compiler({ entities, cluster }))
+        _.set(labelStyle, 'text', compiler({ entities, cluster, $t: this.$t }))
         _.set(style, 'label', labelStyle)
       }
       return style

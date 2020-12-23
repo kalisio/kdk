@@ -21,7 +21,7 @@ export default {
             properties = _.omit(properties, popupStyle.omit)
           } else if (popupStyle.template) {
             const compiler = popupStyle.compiler
-            html = compiler({ properties, feature })
+            html = compiler({ properties, feature, $t: this.$t })
           }
         }
         // Default HTML table if no template

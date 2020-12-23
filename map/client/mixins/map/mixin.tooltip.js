@@ -19,7 +19,7 @@ export default {
             if (html && (typeof html.toString === 'function')) html = html.toString()
           } else if (tooltipStyle.template) {
             const compiler = tooltipStyle.compiler
-            html = compiler({ properties, feature })
+            html = compiler({ properties, feature, $t: this.$t })
           }
         }
         if (html) {
@@ -28,16 +28,6 @@ export default {
         }
       }
       return tooltip
-    },
-    getVigicruesTooltip (feature, layer) {
-      const name = _.get(feature, 'properties.NomEntVigiCru')
-      const level = _.get(feature, 'properties.NivSituVigiCruEnt')
-      if (name && !_.isNil(level)) {
-        const tooltip = L.tooltip({ permanent: false, sticky: true }, layer)
-        return tooltip.setContent(name + '<br>' + this.$t('Layers.VIGICRUES_VIGILANCE_' + level))
-      } else {
-        return null
-      }
     }
   },
   created () {

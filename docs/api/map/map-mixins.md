@@ -93,7 +93,7 @@ The mixin automatically registers a default generator that will create a popup d
   * **popup**: set on **feature.properties** or layer descriptor or in the **popup** property of component options
     * **pick**: array of property names to appear in the popup
     * **omit**: array of property names not to appear in the popup
-    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with feature and its properties as context
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with `feature`, its `properties` and translation function `$t` as context
     * **text**: text content of the popup, if provided will override default display
     * **options**: Leaflet [popup options](https://leafletjs.com/reference.html#popup-option)
 
@@ -105,7 +105,7 @@ Make it possible to generate [Leaflet tooltips](https://leafletjs.com/reference.
 The mixin automatically registers a default generator that will create a tooltip based on the following options with the following order of precedence
   * **tooltip**: set on **feature.properties** or layer descriptor or in the **tooltip** property of component options
     * **property**: property name to appear in the tooltip
-    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with feature and its properties as context
+    * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with `feature`, its `properties` and translation function `$t` as context
     * **text**: text content of the tooltip, if provided will override default display
     * **options**: Leaflet [tooltip options](https://leafletjs.com/reference.html#tooltip-option)
 
