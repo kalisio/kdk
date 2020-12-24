@@ -18,7 +18,7 @@ import 'mapillary-js/dist/mapillary.min.css'
 import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
-  name: 'k-mapillary',
+  name: 'k-mapillary-viewer',
   inject: ['kActivity'],
   mixins: [baseWidget],
   data () {
