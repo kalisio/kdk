@@ -10,6 +10,16 @@ const baseActivityMixin = {
     }
   },
   methods: {
+    setActivityBar (content, mode = '') {
+      this.$store.patch('activityBar', { content: content, mode: mode })
+    },
+    setActivityBarMode (mode) {
+      const content = this.$store.get('activityBar.content')
+      this.$store.patch('activityBar', { content: content, mode: mode })
+    },
+    clearActivityBar () {
+      this.$store.patch('activityBar', { content: null, mode: '' })
+    },
     registerTabAction (action) {
       this.registerAction('tabBar', action)
       this.$store.patch('tabBar', { tabs: this.getActions('tabBar') })
@@ -124,6 +134,7 @@ const baseActivityMixin = {
     },
     clearActivity () {
       this.clearTitle()
+      this.clearActivityBar()
       this.clearSearchBar()
       this.clearActions()
       this.clearRightDrawer()

@@ -2,10 +2,12 @@
   <q-btn 
     :label="label"
     :icon="icon"
-    :color="color"
+    :color="isToggled ? 'secondary' : color"
     :size="size"
-    flat
-    rounded
+    :flat="!isToggled"
+    :outline="isToggled"
+    :round="label===''"
+    :rounded="label!==''"
     :dense="dense"
     @click="onClicked()">
     <!-- tooltip -->
@@ -47,6 +49,14 @@ export default {
       type: Object,
       default: () => { return null }
     },
+    toggle: {
+      type: Boolean,
+      default: false
+    },
+    toggled: {
+      type: Boolean,
+      default: false
+    },
     dense: {
       type: Boolean,
       default: false
@@ -55,10 +65,17 @@ export default {
       type: [Function, Object]
     }
   },
+  data () {
+    return {
+      isToggled: this.toggled
+    }
+  },
   methods: {
     onClicked () {
+      // Handle the toggle if any
+      if (this.toggle) this.isToggled=!this.isToggled
       // If the handler is a function call it
-      if (typeof this.handler === 'function') this.handler(this.context)
+      if (typeof this.handler === 'function') this.handler(this.context, this.isToggled)
       // If the handler is a string call the router
       else if (typeof this.handler === 'object') this.$router.push(this.handler)
       else console.log('fuck')
@@ -66,7 +83,3 @@ export default {
   }
 }
 </script>
-
-KAction: {
-  name: 
-}

@@ -1,12 +1,12 @@
 <template>
   <div v-bind:class="{
-      'row items-center no-wrap': direction === 'horizontal',
-      'column content-center no-wrap': direction === 'vertical'
+      'row items-center no-wrap q-pl-xs q-pr-xs': direction === 'horizontal',
+      'column content-center no-wrap q-pt-xs q-pb-xs': direction === 'vertical'
     }"
   >
     <slot name="before" />
     <template v-for="component in components">
-      <component :key="component.uid" :is="component.componentKey" v-bind="component" class="q-ma-xs" />
+      <component :key="component.uid" :is="component.componentKey" v-bind="component" class="q-ml-xs q-mr-xs" />
     </template>
     <slot name="after" />
   </div>

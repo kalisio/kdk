@@ -35,6 +35,7 @@ export default function init () {
   Store.set('appBar', { leading: null, title: '', subtitle: '', toolbar: [], menu: [] })
   Store.set('searchBar', { field: '', pattern: '', services: [], items: [] })
   Store.set('tabBar', { tabs: [] })
+  Store.set('activityBar', { content: null, mode: '', visible: true })
   Store.set('leftDrawer', { component: '', props: {}, visible: false })
   Store.set('rightDrawer', { component: '', props: {}, visible: false })
   Store.set('footer', { component: '', props: {}, visible: false })
