@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import logger from 'loglevel'
+
 export default {
   name: 'k-action',
   props: {
@@ -78,7 +80,7 @@ export default {
       if (typeof this.handler === 'function') this.handler(this.context, this.isToggled)
       // If the handler is a string call the router
       else if (typeof this.handler === 'object') this.$router.push(this.handler)
-      else console.log('fuck')
+      else logger.debug('Invalid handler', this.handler)
     }
   }
 }
