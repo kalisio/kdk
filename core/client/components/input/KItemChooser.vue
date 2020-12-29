@@ -14,6 +14,7 @@
     <k-autocomplete v-if="!isCompleted"
       class="col"
       ref="autocomplete"
+      dense
       :borderless="true"
       :clearable="false"
       :services="services"

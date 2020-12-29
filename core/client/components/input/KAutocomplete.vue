@@ -2,6 +2,7 @@
   <q-select
     use-input
     hide-selected
+    dense
     :clearable="clearable"
     :borderless="borderless"
     dropdown-icon=""
@@ -53,6 +54,10 @@ export default {
     clearable: {
       type: Boolean,
       default: true
+    },
+    dense: {
+      type: Boolean,
+      default: false
     },
     processResults: {
       type: Function
