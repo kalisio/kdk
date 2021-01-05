@@ -1,14 +1,6 @@
 <template>
   <q-layout ref="layout" v-bind="config">
     <!--
-      AppBar, TabBar and SearchBar
-    -->
-    <q-header>
-      <k-app-bar id="app-bar" />
-      <k-tab-bar id="tab-bar" />
-      <k-search-bar id="search-bar" />
-    </q-header>
-    <!--
       Left drawer
     -->
     <q-drawer v-if="leftDrawerComponent" v-model="isLeftDrawerVisible" v-bind="config.leftDrawer" side="left" bordered>
@@ -93,10 +85,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-app-bar'] = this.$load('layout/KAppBar')
-    this.$options.components['k-search-bar'] = this.$load('layout/KSearchBar')
-    this.$options.components['k-tab-bar'] = this.$load('layout/KTabBar')
     // Load the options from the configuration
     this.config = this.$config('layout')
     // Setup the left drawer using the configuration

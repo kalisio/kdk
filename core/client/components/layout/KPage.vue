@@ -120,12 +120,12 @@ export default {
 
 <style lang="stylus">
 .k-activity-bar {
-  border: solid 1px $primary;
-  border-radius: 8px;
+  border: solid 1px lightgrey;
+  border-radius: 5px;
   background: #ffffff
 }
 
 .k-activity-bar:hover {
-  border: solid 1px $secondary;
+  border: solid 1px $primary;
 }
 </style>

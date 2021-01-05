@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <k-block
-      id="delete-block"
-      color="red"
-      :title="$t('KAccountDZ.BLOCK_TITLE')"
-      :text="$t('KAccountDZ.BLOCK_TEXT')"
-      :action="$t('KAccountDZ.BLOCK_ACTION')"
-      @action-triggered="onDeleteClicked" />
-  </div>
+  <k-block v-if="user"
+    id="delete-block"
+    color="red"
+    :title="$t('KAccountDZ.BLOCK_TITLE')"
+    :text="$t('KAccountDZ.BLOCK_TEXT')"
+    :action="$t('KAccountDZ.BLOCK_ACTION')"
+    @action-triggered="onDeleteClicked" />
 </template>
 
 <script>
@@ -19,14 +17,9 @@ export default {
   mixins: [
     mixins.service
   ],
-  props: {
-    objectId: {
-      type: String,
-      default: ''
-    },
-    name: {
-      type: String,
-      default: ''
+  data () {
+    return {
+      user: this.$store.get('user')
     }
   },
   methods: {
@@ -53,9 +46,9 @@ export default {
           flat: true
         }
       }).onOk(async (data) => {
-        if (data === this.name) {
+        if (data === this.user.name) {
           try {
-            await this.loadService().remove(this.objectId)
+            await this.loadService().remove(this.user._id)
           } catch (error) {
             // do not logout
             return

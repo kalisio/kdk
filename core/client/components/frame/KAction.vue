@@ -1,6 +1,6 @@
 <template>
   <q-btn 
-    :label="label"
+    :label="$q.screen.gt.xs ? label : ''"
     :icon="icon"
     :color="isToggled ? 'secondary' : color"
     :size="size"
@@ -8,7 +8,8 @@
     :outline="isToggled"
     :round="label===''"
     :rounded="label!==''"
-    :dense="dense"
+    :dense="$q.screen.lt.md"
+    :disabled="!handler"
     @click="onClicked()">
     <!-- tooltip -->
     <q-tooltip v-if="tooltip">
@@ -59,10 +60,6 @@ export default {
       type: Boolean,
       default: false
     },
-    dense: {
-      type: Boolean,
-      default: false
-    },
     handler: {
       type: [Function, Object]
     }
@@ -78,7 +75,7 @@ export default {
       if (this.toggle) this.isToggled=!this.isToggled
       // If the handler is a function call it
       if (typeof this.handler === 'function') this.handler(this.context, this.isToggled)
-      // If the handler is a string call the router
+      // If the handler is a route object call the router
       else if (typeof this.handler === 'object') this.$router.push(this.handler)
       else logger.debug('Invalid handler', this.handler)
     }

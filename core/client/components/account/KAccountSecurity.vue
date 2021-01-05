@@ -1,11 +1,10 @@
 <template>
-  <div class="row q-gutter-md">
+  <div v-if="user" class="full-width column q-gutter-y-md">
     <!--
       Change password
     -->
     <k-block
       id="password-block"
-      class="col-12"
       color="grey"
       :title="$t('KAccountSecurity.PASSWORD_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.PASSWORD_BLOCK_TEXT')"
@@ -16,7 +15,6 @@
     -->
     <k-block
       id="email-block"
-      class="col-12"
       color="orange"
       :title="$t('KAccountSecurity.EMAIL_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.EMAIL_BLOCK_TEXT', { email })"
@@ -25,26 +23,25 @@
     <!--
       Separator
     -->
-    <q-separator />
+    <q-separator inset />
     <!--
       Devices
     -->
-    <k-account-devices id="devices-block" class="col-12" />
+    <k-account-devices id="devices-block" />
   </div>
 </template>
 
 <script>
 export default {
   name: 'k-account-security',
-  props: {
-    email: {
-      type: String,
-      default: ''
-    }
-  },
   data () {
     return {
-      hasDevices: false
+      user: this.$store.get('user')
+    }
+  },
+  computed: {
+    email () {
+      return this.user ? this.user.email : ''
     }
   },
   methods: {

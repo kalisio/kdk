@@ -187,7 +187,6 @@ kApp frontend configuration is based on the same underlying [tool](https://githu
   * **changeEndpoint**: change endpoint screen configuration (only useful for mobile apps)
     * **links**: links displayed at the bottom of the screen,
 * **layout**: layout configuration, see [Quasar docs](https://quasar.dev/layout/layout) for details
-  * **appBar**: component to be used for the app bar, e.g. `'layout/KAppBar'`
   * **sideNav**: component to be used for the side bar, e.g. `'layout/KSideNav'`
 * **sideNav**:
   * **banner**: image to be used as banner
