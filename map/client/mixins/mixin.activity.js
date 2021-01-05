@@ -88,8 +88,8 @@ export default function (name) {
         const beforeActions = []
         if (hasSideNavTool) {
           beforeActions.push({
-            name: 'sidenav-toggle',
-            label: this.$t('mixins.activity.TOGGLE_SIDENAV'),
+            id: 'sidenav-toggle',
+            tooltip: this.$t('mixins.activity.TOGGLE_SIDENAV'),
             icon: 'menu',
             handler: () => { this.$store.patch('leftDrawer', { visible: !this.$store.get('leftDrawer.visible') }) }
           })
@@ -97,41 +97,41 @@ export default function (name) {
         }
         if (hasMapTool) {
           beforeActions.push({
-            name: 'map-toggle', label: this.$t('mixins.activity.TOGGLE_MAP'), icon: 'las la-map', route: { name: 'map', query: true }
+            id: 'map-toggle', tooltip: this.$t('mixins.activity.TOGGLE_MAP'), icon: 'las la-map', route: { name: 'map', query: true }
           })
           beforeActions.push({ name: 'separator' })
         }
         if (hasGlobeTool) {
           beforeActions.push({
-            name: 'globe-toggle', label: this.$t('mixins.activity.TOGGLE_GLOBE'), icon: 'las la-globe', route: { name: 'globe', query: true }
+            id: 'globe-toggle', tooltip: this.$t('mixins.activity.TOGGLE_GLOBE'), icon: 'las la-globe', route: { name: 'globe', query: true }
           })
           beforeActions.push({ name: 'separator' })
         }
         if (hasZoomTool) {
           beforeActions.push({
-            name: 'zoom-in', label: this.$t('mixins.activity.ZOOM_IN'), icon: 'add', handler: this.onZoomIn
+            id: 'zoom-in', label: this.$t('mixins.activity.ZOOM_IN'), icon: 'add', handler: this.onZoomIn
           })
           beforeActions.push({
-            name: 'zoom-out', label: this.$t('mixins.activity.ZOOM_OUT'), icon: 'remove', handler: this.onZoomOut
+            id: 'zoom-out', label: this.$t('mixins.activity.ZOOM_OUT'), icon: 'remove', handler: this.onZoomOut
           })
           beforeActions.push({ name: 'separator' })
         }
         const afterActions = []
         if (hasVrTool) {
           afterActions.push({
-            name: 'vr-toggle', label: this.$t('mixins.activity.TOGGLE_VR'), icon: 'las la-vr-cardboard', handler: this.onToggleVr
+            id: 'vr-toggle', tooltip: this.$t('mixins.activity.TOGGLE_VR'), icon: 'las la-vr-cardboard', handler: this.onToggleVr
           })
         }
         if (hasFullscreenTool) {
           afterActions.push({
-            name: 'fullscreen-toggle', label: this.$t('mixins.activity.TOGGLE_FULLSCREEN'), icon: 'las la-expand', handler: this.onToggleFullscreen
+            id: 'fullscreen-toggle', tooltip: this.$t('mixins.activity.TOGGLE_FULLSCREEN'), icon: 'las la-expand', handler: this.onToggleFullscreen
           })
         }
         if (hasCatalogTool) {
           afterActions.push({ name: 'separator' })
           afterActions.push({
-            name: 'catalog-toggle',
-            label: this.$t('mixins.activity.TOGGLE_CATALOG'),
+            id: 'catalog-toggle',
+            tooltip: this.$t('mixins.activity.TOGGLE_CATALOG'),
             icon: 'layers',
             handler: () => { this.$store.patch('rightDrawer', { visible: !this.$store.get('rightDrawer.visible') }) }
           })

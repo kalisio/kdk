@@ -10,7 +10,7 @@ const baseActivityMixin = {
     }
   },
   methods: {
-    setActivityBar (content, mode = '') {
+    setActivityBar (content, mode = undefined) {
       this.$store.patch('activityBar', { content: content, mode: mode })
     },
     setActivityBarMode (mode) {
