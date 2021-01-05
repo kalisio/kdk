@@ -4,7 +4,7 @@
     <span class="q-pl-md q-pr-md">
       {{ position }}
     </span>
-    <k-tool-bar v-if="!isActive" :actions="actions" color="primary" dense />
+    <k-bar v-if="!isActive" :content="actions" color="primary" />
   </div>
 </template>
 
@@ -58,12 +58,14 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-bar'] = this.$load('frame/KBar')
     // Setup the actions
-    this.actions = [
-      { name: 'copy', icon: 'las la-copy', label: this.$t('KPositionIndicator.COPY'), handler: this.onCopy },
-      { name: 'clear', icon: 'cancel', label: this.$t('KPositionIndicator.CLEAR'), handler: this.onClear }
-    ]
+    this.actions = {
+      default: [
+        { id: 'copy-position', icon: 'las la-copy', tooltip: this.$t('KPositionIndicator.COPY'), handler: this.onCopy },
+        { id: 'clear-position', icon: 'cancel', tooltip: this.$t('KPositionIndicator.CLEAR'), handler: this.onClear }
+      ]
+    }
   },
   mounted () {
     this.onClear()

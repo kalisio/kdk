@@ -3,7 +3,7 @@
     <div v-if='hasGraph' class='fit row'>
       <q-resize-observer @resize='onResized' />
       <!-- Actions -->
-      <k-tool-bar class='q-pa-sm' :actions='actions' direction='vertical' dense>
+      <k-bar class='q-pa-sm' :content='actions' direction='vertical'>
         <div slot='after'>
           <q-btn icon='las la-history' color='grey-9' size='md' flat round>
             <q-badge floating>
@@ -19,7 +19,7 @@
             </q-menu>
           </q-btn>
         </div>
-      </k-tool-bar>
+      </k-bar>
       <div class='col full-width row'>
         <!-- Title -->
         <span class='col-12 q-pl-sm'>
@@ -435,11 +435,11 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-bar'] = this.$load('kargo/KBar')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
     this.actions = [
-      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KTimeSeries.CENTER_ON'), handler: this.onCenterOn }
+      { id: 'center-view', icon: 'las la-eye', label: this.$t('KTimeSeries.CENTER_ON'), handler: this.onCenterOn }
     ]
     // Refresh the component
     this.refresh()

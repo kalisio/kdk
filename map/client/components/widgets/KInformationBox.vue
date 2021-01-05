@@ -1,7 +1,7 @@
 <template>
   <div :style="widgetStyle()">
     <div v-if="schema && properties" class="fit row">
-      <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
+      <k-bar class="q-pa-sm" :content="actions" direction="vertical" />
       <q-scroll-area class="col fit" :thumb-style="thumbStyle" :bar-style="barStyle">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :options="viewOptions" />
       </q-scroll-area>
@@ -117,15 +117,17 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-bar'] = this.$load('frame/KBar')
     this.$options.components['k-view'] = this.$load('form/KView')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
-    this.actions = [
-      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KInformationBox.CENTER_ON'), handler: this.onCenterOn },
-      { name: 'copyProperties', icon: 'las la-clipboard', label: this.$t('KInformationBox.COPY_PROPERTIES'), handler: this.onCopyProperties },
-      { name: 'exportFeature', icon: 'img:statics/json-icon.svg', label: this.$t('KInformationBox.EXPORT_FEATURE'), handler: this.onExportFeature }
-    ]
+    this.actions = {
+      default: [
+        { id: 'center-view', icon: 'las la-eye', tooltip: this.$t('KInformationBox.CENTER_ON'), handler: this.onCenterOn },
+        { id: 'copy-properties', icon: 'las la-clipboard', tooltip: this.$t('KInformationBox.COPY_PROPERTIES'), handler: this.onCopyProperties },
+        { id: 'export-feature', icon: 'img:statics/json-icon.svg', tooltip: this.$t('KInformationBox.EXPORT_FEATURE'), handler: this.onExportFeature }
+      ]
+    }
     // Refresh the component
     this.refresh()
   },

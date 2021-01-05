@@ -37,9 +37,9 @@
       -->
       <q-separator />
       <slot name="card-actions">
-        <q-card-actions class="q-pa-sm" align="right">
+        <q-card-actions class="q-pa-xs" align="right">
           <!-- Pane -->
-          <k-tool-bar id="card-toolbar" :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
+          <k-bar id="card-toolbar" :content="itemActions" mode="pane" :context="item" />
           <!-- Menu -->
           <k-overflow-menu id="card-overflow-menu" :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
         </q-card-actions>
@@ -74,7 +74,7 @@ export default {
   created () {
     // Loads the required components
     this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-bar'] = this.$load('frame/KBar')
     this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
   }
 }

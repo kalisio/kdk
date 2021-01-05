@@ -2,7 +2,7 @@
   <div :style="widgetStyle()">
     <q-resize-observer @resize="onResized" />
     <div class="fit row">
-      <k-tool-bar class="q-pa-sm" :actions="actions" direction="vertical" dense />
+      <k-bar class="q-pa-sm" :content="actions" direction="vertical" />
       <div class="col" id="mapillary-container"></div>
     </div>
   </div>
@@ -70,10 +70,6 @@ export default {
         const location = this.selection.location
         if (location) await this.moveCloseTo(location.lat, location.lng)
       }
-      /* if (this.key) await this.moveToKey(this.key)
-      else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
-      this.onCenterOn()
-      this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature()) */
     },
     async moveToKey (key) {
       try {
@@ -123,11 +119,13 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-bar'] = this.$load('frame/KBar')
     // Registers the actions
-    this.actions = [
-      { name: 'centerOn', icon: 'las la-eye', label: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn }
-    ]
+    this.actions = {
+      default: [
+        { id: 'center', icon: 'las la-eye', tooltip: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn }
+      ]
+    }
   },
   mounted () {
     // Create the viewer

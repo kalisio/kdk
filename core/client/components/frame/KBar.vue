@@ -26,7 +26,7 @@ export default {
     },
     mode: {
       type: String,
-      default: ''
+      default: undefined
     },
     context: {
       type: Object,
@@ -53,7 +53,7 @@ export default {
       let components = []
       const modes = _.keys(this.content)
       if (modes.length > 0) {
-        const mode = this.mode !== '' ? this.mode : modes[0]
+        const mode = this.mode ? this.mode : modes[0]
         _.forEach(_.get(this.content, mode, []), (component) => {
           // Define the component key
           const componentName = _.get(component, 'component', 'frame/KAction')

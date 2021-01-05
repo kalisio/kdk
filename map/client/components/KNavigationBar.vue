@@ -22,11 +22,11 @@
         <k-location-input class="full-width q-pr-sm" :user="false" :map="null" :search="true" :dense="true" style="" @input="onLocationChanged" />
       </template>
       <!--
-        Toolbar maode
+        Toolbar mode
        -->
       <template v-if="mode === 'toolbar'">
         <!-- Before section -->
-        <k-tool-bar v-if="hasBeforeActions" :actions="navigationBar.actions.before" color="primary" />
+        <k-bar v-if="hasBeforeActions" :content="navigationBar.actions" mode="before" color="primary" />
         <!-- Location indicator  -->
         <q-btn v-if="hasPositionIndicator" id="track-location"
           icon="las la-crosshairs" color="primary" round flat @click="mode = 'trackbar'" >
@@ -39,7 +39,7 @@
         </q-btn>
         <k-location-input id="location-input" :user="geolocationAvailable" :geolocated="geolocated" :map="null" :search="false" :dense="true" style="" @input="onLocationChanged" />
          <!-- After section -->
-        <k-tool-bar v-if="hasAfterActions" :actions="navigationBar.actions.after" color="primary" />
+        <k-bar v-if="hasAfterActions" :content="navigationBar.actions" mode="after" color="primary" />
       </template>
     </div>
   </div>
@@ -103,7 +103,7 @@ export default {
     }
   },
   created () {
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-bar'] = this.$load('frame/KBar')
     this.$options.components['k-position-indicator'] = this.$load('KPositionIndicator')
     this.$options.components['k-location-input'] = this.$load('KLocationInput')
     this.$events.$on('user-position-changed', this.geolocate)

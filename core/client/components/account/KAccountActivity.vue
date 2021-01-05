@@ -46,25 +46,25 @@ export default {
       this.clearActivity()
       this.setActivityBar({ 
         'profile': [          
-          { icon: 'las la-arrow-left', handler: this.goBack },
+          { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
           { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
-          { icon: 'las la-user', color: 'primary', label: this.$t('KAccountActivity.PROFILE') },
-          { icon: 'las la-shield-alt', tooltip: this.$t('KAccountActivity.SECURITY'), handler: { name: 'account-activity', params: { mode: 'security' } } },
-          { icon: 'las la-exclamation-triangle', tooltip: this.$t('KAccountActivity.DANGER_ZONE'), handler: { name: 'account-activity', params: { mode: 'danger-zone' } } }
+          { id: 'profile', icon: 'las la-user', color: 'primary', label: this.$t('KAccountActivity.PROFILE') },
+          { id: 'security', icon: 'las la-shield-alt', tooltip: this.$t('KAccountActivity.SECURITY'), handler: { name: 'account-activity', params: { mode: 'security' } } },
+          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: this.$t('KAccountActivity.DANGER_ZONE'), handler: { name: 'account-activity', params: { mode: 'danger-zone' } } }
         ],
         'security': [
-          { icon: 'las la-arrow-left', handler: this.goBack },
+          { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
           { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
-          { icon: 'las la-user', tooltip: this.$t('KAccountActivity.PROFILE'), handler: { name: 'account-activity', params: { mode: 'profile' } } },
-          { icon: 'las la-shield-alt', color: 'primary', label: this.$t('KAccountActivity.SECURITY') },
-          { icon: 'las la-exclamation-triangle', tooltip: this.$t('KAccountActivity.DANGER_ZONE'), handler: { name: 'account-activity', params: { mode: 'danger-zone' } } }
+          { id: 'profile', icon: 'las la-user', tooltip: this.$t('KAccountActivity.PROFILE'), handler: { name: 'account-activity', params: { mode: 'profile' } } },
+          { id: 'security', icon: 'las la-shield-alt', color: 'primary', label: this.$t('KAccountActivity.SECURITY') },
+          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: this.$t('KAccountActivity.DANGER_ZONE'), handler: { name: 'account-activity', params: { mode: 'danger-zone' } } }
         ],
         'danger-zone': [
-          { icon: 'las la-arrow-left', handler: this.goBack },
+          { id: 'go-back', icon: 'las la-arrow-left', handler: this.goBack },
           { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
-          { icon: 'las la-user', tooltip: this.$t('KAccountActivity.PROFILE'), handler: { name: 'account-activity', params: { mode: 'profile' } } },
-          { icon: 'las la-shield-alt', tooltip: this.$t('KAccountActivity.SECURITY'), handler: { name: 'account-activity', params: { mode: 'security' } } },
-          { icon: 'las la-exclamation-triangle', color: 'primary', label: this.$t('KAccountActivity.DANGER_ZONE') }
+          { id: 'profile', icon: 'las la-user', tooltip: this.$t('KAccountActivity.PROFILE'), handler: { name: 'account-activity', params: { mode: 'profile' } } },
+          { id: 'security', icon: 'las la-shield-alt', tooltip: this.$t('KAccountActivity.SECURITY'), handler: { name: 'account-activity', params: { mode: 'security' } } },
+          { id: 'danger-zone', icon: 'las la-exclamation-triangle', color: 'primary', label: this.$t('KAccountActivity.DANGER_ZONE') }
         ],
       }, this.mode)
     },

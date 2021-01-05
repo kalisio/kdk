@@ -17,7 +17,7 @@
         </template>
       </q-tabs>
       <!-- Window actions -->
-      <k-tool-bar class="q-pa-sm" :actions="actions" color="primary" size="sm" />
+      <k-bar class="q-pa-sm" :content="actions" color="primary" />
     </div>
     <!--
       Window content
@@ -48,20 +48,22 @@ export default {
       }
     },
     actions () {
-      return [
-        {
-          name: 'change-mode',
-          label: this.$t(this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION'),
-          icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
-          handler: this.onModeChanged
-        },
-        {
-          name: 'close-action',
-          label: this.$t('KWindow.CLOSE_ACTION'),
-          icon: 'las la-times',
-          handler: this.onClosed
-        }
-      ]
+      return {
+        default: [
+          {
+            id: 'change-mode',
+            icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
+            tooltip: this.$t(this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION'),
+            handler: this.onModeChanged
+          },
+          {
+            id: 'close-action',
+            icon: 'las la-times',
+            tooltip: this.$t('KWindow.CLOSE_ACTION'),
+            handler: this.onClosed
+          }
+        ]
+      }
     },
     widgets () {
       _.forEach(this.window.widgets, (widget) => {
@@ -100,7 +102,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-bar'] = this.$load('frame/KBar')
   }
 }
 </script>
