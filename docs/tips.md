@@ -58,7 +58,7 @@ If you need more than two side-by-side applications then use set [NODE_OPTIONS](
 
 ### Application instances synchronization
 
-If your application is not fully stateless or requires real-time events to be dispatched to clients you will also need to synchronize them using [feathers-sync](https://github.com/feathersjs-ecosystem/feathers-sync). We previously relied on the [mubsub]https://github.com/scttnlsn/mubsub) adapter because as we already use MongoDB it did not require any additional service to be deployed.
+If your application is not fully stateless or requires real-time events to be dispatched to clients you will also need to synchronize them using [feathers-sync](https://github.com/feathersjs-ecosystem/feathers-sync). We previously relied on the [mubsub](https://github.com/scttnlsn/mubsub) adapter because as we already use MongoDB it did not require any additional service to be deployed.
 
 Unfortunately it has been [deprecated](https://github.com/feathersjs-ecosystem/feathers-sync/pull/135). As a consequence we now rely on the [Redis](https://redis.io/) adapter. For development you can easily run a Redis server using Docker:
 ```bash
