@@ -122,7 +122,7 @@ Set the MongoDB [TTL](https://docs.mongodb.com/manual/tutorial/expire-data/) on 
 
 ### rateLimit(options)
 
-> To be used a a before hook
+> To be used a before hook
 > Return a hook function according to provided options
 
 Rate limit the call of a target service (and possibly operation) according to the following options:
@@ -177,7 +177,7 @@ Update cached subject abilities when permissions have changed according to the f
 
 ### enforcePasswordPolicy(options)
 
-> To be used a a before hook
+> To be used a before hook
 > Return a hook function according to provided options
 
 Check password policy when creating/updating the user's password according to the following options:
@@ -189,7 +189,7 @@ Check password policy when creating/updating the user's password according to th
 
 ### storePreviousPassword(options)
 
-> To be used a a before hook
+> To be used a before hook
 > Return a hook function according to provided options
 
 Update the password history when updating the user's password according to the following options:
@@ -201,11 +201,51 @@ Update the password history when updating the user's password according to the f
 
 ### generatePassword(hook)
 
-> To be used a a before hook
+> To be used a before hook
 
 Generate a random password according to password policy (if any) and store it in the **password** item field.
 
 > For more information read about [password policy configuration](../../guides/basics/step-by-step.md#configuring-a-kapp).
+
+## Organisations
+
+### createOrganisationServices(hook)
+
+> To be used an after hook
+
+Create the database used to store organisation data and registered organisation services. Hook `result` is expected to be the organisation object and the organisation ID will be used as the database name.
+
+### removeOrganisationServices(hook)
+
+> To be used an after hook
+
+Delete the database used to store organisation data and registered organisation services. Hook `result` is expected to be the organisation object.
+
+### createOrganisationAuthorisations(hook)
+
+> To be used an after hook
+
+Set default membership of the user as params to organisation owner after creating it. Hook `result` is expected to be the organisation object.
+
+### removeOrganisationAuthorisations(hook)
+
+> To be used an after hook
+
+Removes membership of all users of the organisation after removing it. Hook `result` is expected to be the organisation object.
+
+## Groups
+
+### createGroupAuthorisations(hook)
+
+> To be used an after hook
+
+Set default membership of the user as params to group owner after creating it. Hook `result` is expected to be the group object.
+
+### removeGroupAuthorisations(hook)
+
+> To be used an after hook
+
+Removes membership of all users of the group after removing it. Hook `result` is expected to be the group object.
 
 ## Logs
 

@@ -23,6 +23,25 @@ The details of each property are the following:
 * **tags** : user affected tags if any
 * **devices** : user mobile devices if any, each time the user uses a new device it is registered, provided by [kNotify plugin](./../api/readme.md)
 
+## Device data model
+
+The most common properties of a device object are described by the following data model:
+
+**TODO**
+
+This data model is manipulated through the [Device API](./../api/core/services.md).
+
+The details of each property are the following:
+* **platform**: the platform of the device, e.g. `Android`
+* **model**: the model of the device, e.g. `SM-G930U`
+* **manufacturer**: the manufacturer of the device, e.g. `samsung`
+* **uuid**: UUID of the device
+* **registrationId**: the ID of the associated device in the notification system (APNS or Firebase)
+* **arn**: the ARN of associated SNS device
+* **lastActivity**: the date/time of the last connection of this device
+
+Most data are retrieved using the [cordova-plugin-device](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-device/).
+
 ## Tag data model
 
 The most common properties of a tag object are described by the following data model:
@@ -37,7 +56,6 @@ The details of each property are the following:
 * **count**: the number of tagged objects
 * **context**: the ID of the associated context object providing this tag if any (e.g. the organisation)
 * **topics**: the ARN of associated SNS topics for each platform used to publish messages to tagged objects, provided by [kNotify plugin](./../api/readme.md)
-
 
 ## Organization data model
 
