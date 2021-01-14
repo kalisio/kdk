@@ -166,6 +166,37 @@ graph TB
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
 </mermaid>
 
+## Account service
+
+::: tip
+Available as a global service
+:::
+
+This service is powered by [feathers-authentication-management](https://github.com/feathersjs-ecosystem/feathers-authentication-management).
+
+### Data model
+
+This service consists in associating verification tokens to users so that they can safely reset their password or change their email, please refer to [feathers-authentication-management docs](https://github.com/feathersjs-ecosystem/feathers-authentication-management).
+
+### Hooks
+
+The following [hooks](./hooks.md) are executed on the `account` service:
+
+<mermaid>
+graph TB
+  before{none before all}
+  after{none after all}
+  before -- If reset/change password --> hook1(populateAccountUser)
+  hook1 --> hook2(enforcePasswordPolicy)
+  hook2 --> CREATE[CREATE]
+  CREATE --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+</mermaid>
+
 ## Tags service
 
 ::: tip
@@ -271,6 +302,39 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+</mermaid>
+
+## Databases service
+
+::: tip
+Available as a global service
+:::
+
+This service is powered by [feathers-mongodb-management](https://github.com/feathersjs-ecosystem/feathers-mongodb-management). It acts as a proxy to perform MongoDB operations like creating databases, collections or users.
+
+::: warning
+Service methods are only allowed from the server side
+:::
+
+### Hooks
+
+The following [hooks](./hooks.md) are executed on the `databases` service:
+
+<mermaid>
+graph TB
+  before{"disallow('external')"}
+  after{none after all}
+  before --> FIND[FIND]
+  FIND --> after
+  before --> CREATE[CREATE]
+  CREATE --> after
+  before --> REMOVE[REMOVE]
+  REMOVE --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,CREATE,REMOVE operationClass
 </mermaid>
 
 ## Organisations service
