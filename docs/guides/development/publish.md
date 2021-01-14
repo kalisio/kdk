@@ -9,17 +9,17 @@ In order to be able to generate the changelog for your published app/modules you
 ## Plugins/Modules
 
 The same process applies when releasing a patch, minor or major version, i.e. the following tasks are done automatically on release:
-* increase the package version number in the **package.json** file (frontend and backend API)
-* publish the module on the NPM registry
-* create a tag accordingly in the git repository and push it
-* generates the changelog in the git repository and push it
+1. increase the package version number in the **package.json** file (frontend and backend API)
+2. publish the module on the NPM registry
+3. create a tag accordingly in the git repository and push it
+4. generates the changelog in the git repository and push it
 
 ::: tip
-Modules are published under the `@kalisio` namespace in NPM, e.g. `kdk` NPM package is named `@kalisio/kdk`
+Kalisio maintained modules are published under the `@kalisio` namespace in NPM, e.g. `kdk` NPM package is named `@kalisio/kdk`, but you are free to use another one for your own modules.
 :::
 
 ::: warning
-This requires you to have a NPM and GitHub account and be a team member of the Kalisio organization, if you'd like to become a maintainer please tell us
+This requires you to have a NPM and GitHub account and be a team member of the namespace organization, if you'd like to become a maintainer of Kalisio maintained modules please tell us.
 :::
 
 Depending on the release type the following command will do the job (where type is either `patch`, `minor`, `major`):
@@ -41,25 +41,28 @@ Before you publish a module take care of updating the version of your dependent 
 
 ## Web app
 
-Almost the same process applies as for the plugins/modules except the app is not published on the NPM registry but in the Docker Hub. Moreover, the process is less automated to ensure more flexibility, i.e. the tasks are performed independently using the required commands at the different stages of the application lifecycle.
+Almost the same process applies as for the plugins/modules except the app is not published on the NPM registry but in the Docker Hub. However, the process is less automated to ensure more flexibility so that the build artefacts of the different flavors can be managed independently. In a nutshell, the tasks are performed manually and independently using the required commands at the different stages of the application lifecycle.
 
-Typically, when starting a new version after a release
-* increase the package version number in the **package.json** file (frontend and backend API) of your `master`branch so that the generated artefacts will not erase previously published ones
-
-Depending on the release typing the following command will do the job (where type is either `patch`, `minor`, `major`):
+In order to change the version number in a web app you have to increase the package version number in the **package.json** file (frontend and backend API), and possibly Cordova configuration file, of your branch so that the generated artefacts will not erase previously published ones. Depending on the release typing the following command will do the job (where type is either `patch`, `minor`, `major`):
 ```bash
 npm run release:type
 ```
 
-Then typically when releasing a new version starting from your `test` (a.k.a release or staging) branch:
-* create a tag accordingly in the git repository and push it, this will trigger the CI process to build the target artefacts
-* generates the changelog in the git repository and push it
+Usually, you start a new version by creating a `test` (a.k.a release or staging) branch from your `master` branch. You should then increase the version number (major or minor) of your `master` branch so that the generated artefacts of the new development version will not erase previously published ones, e.g. `npm run release:major`.
 
-This process usually triggers your [CI/CD](./deploy.md) accordingly based on the current branch.
+When you are satisfied enough with your version you typically release it starting from your `test` (a.k.a release or staging) branch:
+1. create a tag accordingly in the git repository and push it,
+2. generates the changelog in the git repository and push it
+
+This process usually triggers your [CI/CD](./deploy.md) process to build the target artefacts.
 
 ::: warning
 Before you publish your app take care of updating the version of all dependent modules to the latest version published, for example perform `yarn upgrade kdk` to use the latest versin of the KDK.
 :::
+
+Then, you should then increase the version patch number of your `test` branch so that the generated artefacts of the new staging version will not erase previously published ones, e.g. `npm run release:patch`. Indeed, a staging branch should only include patch versions not major/minor versions.
+
+### Manual build
 
 Because Kalisio web app are also released as Docker images you can build it like this:
 ```bash
@@ -70,7 +73,7 @@ Then release it as latest version:
 docker login
 docker push kalisio/kapp
 ```
-And tag it (`version_tag` being the current version number like `1.1.2` or `1.1.0-dev` depending on the [flavor](./deploy.md))
+And tag it (`version_tag` being the current version number like `1.1.2-prod` or `1.1.0-dev` depending on the [flavor](./deploy.md))
 ```bash
 docker tag kalisio/kapp kalisio/kapp:version_tag
 docker push kalisio/kapp:version_tag

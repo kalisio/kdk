@@ -98,7 +98,10 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 
 ### Hooks
 
-The sole [hook](./hooks.md) executed on the `catalog` service is one that sets the default query type to layer (ie `$ne: 'service'`) when not provided.
+The sole [hooks](./hooks.md) executed on the `catalog` service are used to convert from/to JS/MongoDB data types:
+* [convertObjectIDs](../core/hooks.md) before hook for layer ID
+* [convertToString](../core/hooks.md) before hook for layer schema
+* [convertToJson](../core/hooks.md) after hook for layer schema
 
 ## Features service
 
@@ -211,7 +214,42 @@ const collection = await api.getService('features').find({
 ### Hooks
 
 The following [hooks](./hooks.md) are executed on the `features` service:
-![Features hooks](../../assets/feature-hooks.png)
+
+<mermaid>
+graph TB
+  beforeAll{marshallTimeQuery}
+  afterAll{after all}
+  afterAll --> hook1(unprocessTime)
+  beforeAll --> hook2(marshallComparisonQuery)
+  hook2 --> hook3(marshallSortQuery)
+  hook3 --> hook4(marshallSpatialQuery)
+  hook4 --> hook5(aggregateFeaturesQuery)
+  hook5 --> FIND[FIND]
+  FIND --> hook6(asGeoJson)
+  hook6 --> afterAll
+  beforeAll --> GET[GET]
+  GET --> afterAll
+  beforeAll --> hook7(processTime)
+  hook7 --> CREATE[CREATE]
+  CREATE --> afterAll
+  beforeAll --> hook8(processTime)
+  hook8 --> UPDATE[UPDATE]
+  UPDATE --> afterAll
+  beforeAll --> hook9(processTime)
+  hook9 --> PATCH[PATCH]
+  PATCH --> afterAll
+  beforeAll --> hook10(marshallComparisonQuery)
+  hook10 --> hook11(marshallSpatialQuery)
+  hook11 --> REMOVE[REMOVE]
+  REMOVE --> afterAll
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+</mermaid>
+
+These are mainly hooks to convert from/to JS/MongoDB data types.
 
 ## Alerts service
 
@@ -254,4 +292,38 @@ The details of some of the properties are the following:
   ### Hooks
 
 The following [hooks](./hooks.md) are executed on the `alerts` service:
-![Alert hooks](../../assets/alert-hooks.png)
+
+<mermaid>
+graph TB
+  beforeAll{before all}
+  afterAll{after all}
+  afterAll --> hook1(unprocessTime)
+  hook1 --> hook2(convertToJson)
+  beforeAll --> hook3(marshallSpatialQuery)
+  hook3 --> FIND[FIND]
+  FIND --> afterAll
+  beforeAll --> GET[GET]
+  GET --> afterAll
+  beforeAll --> hook4(processTime)
+  hook4 --> hook5(convertToString)
+  hook5 --> CREATE[CREATE]
+  CREATE --> hook6(registerAlert)
+  hook6 -- Alert CRON task created --> afterAll
+  beforeAll --> hook7(disallow)
+  hook7 --> UPDATE[UPDATE]
+  UPDATE --> afterAll
+  beforeAll --> hook8(processTime)
+  hook8 --> hook9(convertToString)
+  hook9 --> PATCH[PATCH]
+  PATCH --> afterAll
+  beforeAll --> hook10(unregisterAlert)
+  hook10 -- Alert CRON task deleted --> REMOVE[REMOVE]
+  REMOVE --> afterAll
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+</mermaid>
+
+These are mainly hooks to convert from/to JS/MongoDB data types.
