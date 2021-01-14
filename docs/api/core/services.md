@@ -81,17 +81,23 @@ graph TB
   before{none before all}
   after{none after all}
   before --> UPDATE[UPDATE]
-  UPDATE --> after
+  UPDATE -- If new device --> CREATE
+  UPDATE -- If existing device --> UPDATE_DEVICE[[UPDATE DEVICE<br/>-pusher service-]]
+  UPDATE_DEVICE --> after
   before --> hook1("disallow('external')")
   hook1 --> CREATE[CREATE]
-  CREATE --> after
+  CREATE --> CREATE_DEVICE[[CREATE DEVICE<br/>-pusher service-]]
+  CREATE_DEVICE --> PATCH_USER[[PATCH USER<br/>-users service-]]
+  PATCH_USER --> after
   before --> REMOVE[REMOVE]
-  REMOVE --> after
+  REMOVE --> REMOVE_DEVICE[[REMOVE DEVICE<br/>-pusher service-]]
+  REMOVE_DEVICE -->  PATCH_USER[[PATCH USER<br/>-users service-]]
+  PATCH_USER --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
   class hook1,hook2,hook3,hook4 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
-  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE,CREATE_DEVICE,REMOVE_DEVICE,UPDATE_DEVICE,PATCH_USER operationClass
 </mermaid>
 
 ## Authorisations service
@@ -146,11 +152,13 @@ graph TB
   before -- Subject service as data/params<br/>Resource as data/params --> hook1(populateSubjects)
   hook1 -- Authorisation subjects as params --> hook2(populateResource)
   hook2 -- Authorisation resource as params --> CREATE[CREATE]
-  CREATE --> after
+  CREATE --> PATCH[[PATCH SUBJECT<br/>-subject service-]]
+  PATCH --> after
   before -- Subject service as query/params<br/>Resource id as query/params --> hook3(populateSubjects)
   hook3 -- Authorisation subjects as params --> hook4(populateResource)
   hook4 -- Authorisation resource as params --> REMOVE[REMOVE]
-  REMOVE --> after
+  REMOVE --> PATCH[[PATCH SUBJECT<br/>-subject service-]]
+  PATCH --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
   class hook1,hook2,hook3,hook4 hookClass
@@ -339,10 +347,10 @@ graph TB
   CREATE --> after
   before --> UPDATE[UPDATE]
   UPDATE --> hook1("updateOrgResource('groups')")
-  hook1 -- Updated authorization scopes on members --> after
+  hook1 -- Updated authorization<br/>scopes on members --> after
   before --> PATCH[PATCH]
   PATCH --> hook2("updateOrgResource('groups')")
-  hook2 -- Updated authorization scopes on members --> after
+  hook2 -- Updated authorization<br/>scopes on members --> after
   before --> REMOVE[REMOVE]
   REMOVE --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
@@ -350,6 +358,96 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+</mermaid>
+
+## Pusher service
+
+::: tip
+Available as a global service
+:::
+
+This service relies on [sns-mobile](https://github.com/kalisio/sns-mobile) to manage the link between [AWS SNS](https://aws.amazon.com/sns) and internal resource objects in order to send push notifications to users.
+
+::: warning
+`create` and `remove` methods are the only one allowed from the server side
+:::
+
+### Data model
+
+This service helps (un)registering devices to/from SNS and create/remove SNS topics. This service also helps associating a *resource* object (e.g. a group) with a SNS *topic* to provide push notifications to the users associated with the resource. SNS ARNs are directly stored on the target resource(s) in the `topics` property.
+
+::: tip
+The service is designed to possibly manage a different topic per platform (e.g. ANDROID / IOS), although at the present time the same topic is used by all platforms because by default SNS topics are cross-platforms.
+:::
+
+For instance the topics associated to a group will result in the following structure on the group object:
+```
+{
+    _id: ObjectId('5f568ba1fc54a1002fe6fe37'),
+    name: 'Centre de Castelnaudary',
+    topics: {
+        ANDROID: 'arn:aws:sns:eu-west-1:xxx',
+        IOS: 'arn:aws:sns:eu-west-1:xxx'
+    }
+}
+```
+
+Last but not least, This service helps publishing messages to SNS devices or topics.
+
+As a consequence, the `create`/`remove` operations have to be called with an `action` property indicating the target SNS operations among `device`, `topic`, `subscriptions` and `message`. The payload varies according to the selected target operation:
+* `device`:
+  * **device** as data: device object with SNS ARN and/or registration ID (i.e. token) for APNS or Firebase
+* `topic`:
+  * **pushObject** as params: target resource owing the topic
+  * **pushService** as params: target resource service
+  * **topicField** as data/query: target property to store the topic
+* `subscriptions`
+  * **pushObject** as params: target resource owing the topic
+  * **users** as params: target subject(s) to subscribe to topic
+  * **topicField** as data/query: target property to store the topic
+* `message`
+  * **pushObject** as params: target resource owing the topic if topic
+  * **pushService** as params: target resource service
+  * **message** as data: message payload
+
+### Hooks
+
+The following [hooks](./hooks.md) are executed on the `pusher` service:
+
+<mermaid>
+graph TB
+  before{"disallow('external')"}
+  after{none after all}
+  before -- Resource as data/params --> hook1(populatePushObject)
+  hook1 -- Resource as params --> CREATE[CREATE]
+  CREATE -- If user device --> CREATE_ENDPOINT[CREATE ENDPOINT]
+  CREATE -- If resource topic --> CREATE_TOPIC[CREATE TOPIC]
+  CREATE -- If subscriptions --> SUBSCRIBE[SUBSCRIBE]
+  CREATE -- If message<br/>-device or topic- --> PUBLISH[PUBLISH]
+  CREATE_ENDPOINT --> after
+  CREATE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
+  PATCH --> after
+  SUBSCRIBE --> after
+  PUBLISH --> after
+  before -- Resource id as query/params --> hook2(populatePushObject)
+  hook2 -- Resource as params --> REMOVE[REMOVE]
+  REMOVE -- If user device --> REMOVE_ENDPOINT[REMOVE ENDPOINT]
+  REMOVE -- If resource topic --> REMOVE_TOPIC[REMOVE TOPIC]
+  REMOVE -- If subscriptions --> UNSUBSCRIBE[UNSUBSCRIBE]
+  REMOVE_ENDPOINT --> after
+  REMOVE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
+  PATCH --> after
+  UNSUBSCRIBE --> after
+  before --> UPDATE[UPDATE]
+  UPDATE -- If device --> UPDATE_ENDPOINT[UPDATE ENDPOINT]
+  UPDATE_ENDPOINT --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+  classDef snsOperationClass fill:#63c5da,stroke:#333,stroke-width:2px
+  class CREATE_ENDPOINT,CREATE_TOPIC,SUBSCRIBE,PUBLISH,REMOVE_ENDPOINT,REMOVE_TOPIC,UNSUBSCRIBE,UPDATE_ENDPOINT snsOperationClass
 </mermaid>
 
 ## Local settings service
