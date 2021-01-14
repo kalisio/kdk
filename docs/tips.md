@@ -64,7 +64,7 @@ node --prof app.js
   node --prof-process --preprocess -j .\isolate-0x49489f0-1-v8.log > prof-processed.json
   ```
 
-3. In order to idendify bottlenecks in your app you can either:
+3. In order to identify bottlenecks in your app you can either:
 * Analyze the human-readable file
 * Install [flamebearer](https://github.com/mapbox/flamebearer) and generate the flame graph
 
