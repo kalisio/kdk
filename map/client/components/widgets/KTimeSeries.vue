@@ -22,7 +22,10 @@
       </k-tool-bar>
       <div class='col full-width row'>
         <!-- Title -->
-        <span class='col-12 q-pl-sm'>
+        <span v-if='layerName' class='col-12 q-pl-sm'>
+          {{ layerName }} - {{ probedLocationName }}
+        </span>
+        <span v-else class='col-12 q-pl-sm'>
           {{ probedLocationName }}
         </span>
         <!-- Graph -->
@@ -75,6 +78,9 @@ export default {
     },
     layer () {
       return this.selection.layer
+    },
+    layerName () {
+      return this.selection.layer ? this.$t(this.selection.layer.name) : ''
     }
   },
   watch: {
@@ -396,15 +402,7 @@ export default {
     updateProbedLocationName () {
       this.probedLocationName = ''
       if (!this.probedLocation) return
-      let name = _.get(this.probedLocation, 'properties.name') || _.get(this.probedLocation, 'properties.NAME')
-      if (!name && _.has(this.probedLocation, 'geometry.coordinates')) {
-        // Support linear/polygon geometry as well
-        const location = centroid(this.probedLocation)
-        const longitude = _.get(location, 'geometry.coordinates[0]')
-        const latitude = _.get(location, 'geometry.coordinates[1]')
-        name = this.$t('mixins.timeseries.PROBE') + ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`
-      }
-
+      const name = _.get(this.probedLocation, 'properties.name', _.get(this.probedLocation, 'properties.NAME'))
       if (name) this.probedLocationName = name
     },
     async refresh () {
@@ -415,6 +413,8 @@ export default {
       // No feature clicked => dynamic weacast probe at position
       if (!this.feature) {
         this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
+        _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
+          ` (${this.location.lng.toFixed(2)}°, ${this.location.lat.toFixed(2)}°)`)
       } else if (this.layer.probe) { // Static weacast probe
         const probe = await this.kActivity.getForecastProbe(this.layer.probe)
         if (probe) {
@@ -423,10 +423,13 @@ export default {
       } else if (this.layer.variables && this.layer.service) { // Static measure probe
         this.probedLocation = await this.kActivity.getMeasureForFeature(this.layer, this.feature, start, end)
       } else { // dynamic weacast probe at feature position
+        const name = _.get(this.feature, 'properties.name', _.get(this.feature, 'properties.NAME'))
         const location = centroid(this.feature)
         const longitude = _.get(location, 'geometry.coordinates[0]')
         const latitude = _.get(location, 'geometry.coordinates[1]')
         this.probedLocation = await this.kActivity.getForecastForLocation(longitude, latitude, start, end)
+        _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
+          (name ? ` (${name})` : ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`))
       }
       this.updateProbedLocationName()
       this.setupGraph()

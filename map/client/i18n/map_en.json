@@ -63,8 +63,7 @@
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline"
     },
     "timeseries": {
-      "PROBE": "Probe",
-      "PROBED_LOCATION": "Probe"
+      "FORECAST_PROBE": "Forecast"
     },
     "editLayers": {
       "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",

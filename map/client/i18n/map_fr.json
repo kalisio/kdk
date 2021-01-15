@@ -63,8 +63,7 @@
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement"
     },
     "timeseries": {
-      "PROBE": "Sonde",
-      "PROBED_LOCATION": "Sonde"
+      "FORECAST_PROBE": "Prévisions"
     },
     "editLayers": {
       "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'objet ?",
