@@ -133,7 +133,8 @@ export default {
       // If it has an handler call it
       if (this.handler) this.handler(this.context, this.isToggled)
       // If it is a route update the router
-      else if (this.route) this.$router.push(this.route)
+      // TODO: is there any better solution to avoid redundant navigation 
+      else if (this.route) this.$router.push(this.route).catch(() => {}) 
       // Otherwise log a comment
       else logger.debug('Invalid action: you should define an handler or a route')
     }
