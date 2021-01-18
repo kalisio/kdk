@@ -1,28 +1,32 @@
 <template>
   <div v-bind:class="{
-      'row items-center no-wrap q-pl-xs q-pr-xs': direction === 'horizontal',
-      'column content-center no-wrap q-pt-xs q-pb-xs': direction === 'vertical'
+      'row justify-center': direction === 'horizontal',
+      'column items-stretch content-stretch': direction === 'vertical'
     }"
   >
-    <slot name="before" />
     <template v-for="component in components">
-      <component :key="component.uid" :is="component.componentKey" v-bind="component" class="q-ml-xs q-mr-xs" />
+      <component 
+        v-if="component.status ? component.status() !== 'hidden' : true" 
+        :key="component.uid" 
+        :disabled="component.status ? component.status() === 'disabled' : false"
+        :is="component.componentKey" 
+        v-bind="component" 
+        :renderer="actionRenderer" 
+        :style="component.style" />
     </template>
-    <slot name="after" />
   </div>
 </template>
 
 <script>
-import _ from 'lodash'
 import path from 'path'
 import { uid } from 'quasar'
-
+ 
 export default {
-  name: 'k-bar',
+  name: 'k-panel',
   props: {
     content: {
       type: Object,
-      default: () => { return {} }
+      default: () => { return null }
     },
     mode: {
       type: String,
@@ -46,11 +50,18 @@ export default {
       validator: (value) => {
         return ['horizontal', 'vertical'].includes(value)
       }
+    },
+    actionRenderer: {
+      type: String,
+      default: 'button',
+      validator: (value) => {
+        return ['button', 'item'].includes(value)
+      }
     }
   },
   computed: {
     components () {
-      let components = []
+      const components = []
       const modes = _.keys(this.content)
       if (modes.length > 0) {
         const mode = this.mode ? this.mode : modes[0]

@@ -10,9 +10,9 @@
       Managed stickies
      -->
     <q-page-sticky position="top">
-      <div v-if="activityBar.content" class="column items-center">
-        <k-bar id="activity-bar" v-if="isActivityBarOpened" :content="activityBar.content" :mode="activityBar.mode" class="k-activity-bar" />
-        <k-opener v-if="hasActivityBarOpener" v-model="isActivityBarOpened" position="top" />
+      <div v-if="topPane.content" class="column items-center">
+        <k-panel id="top-pane" v-if="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
+        <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>  
     <q-page-sticky position="top" :offset="widgetOffset">
@@ -24,8 +24,11 @@
     <q-page-sticky v-if="hasRightDrawerOpener && hasRightDrawerComponent" position="right">
       <k-opener v-model="isRightDrawerOpened" position="right" />
     </q-page-sticky>
-    <q-page-sticky v-if="hasFooterOpener && hasFooterComponent" position="bottom">
-      <k-opener v-model="isFooterOpened" position="bottom" />
+    <q-page-sticky position="bottom">
+      <div v-if="bottomPane.content" class="column items-center">
+        <k-panel id="top-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
+        <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
+      </div>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
       <k-fab />
@@ -44,15 +47,19 @@ export default {
   },
   computed: {
     contentStyle () {
-      if (this.padding && this.activityBar.content && this.activityBar.visible) return 'padding-top: 50px'
-      return ''
+      let style = ''
+      if (this.padding) {
+        if (this.topPane.content && this.topPane.visible) style = 'padding-top: 50px' // TODO
+        if (this.bottomPane.content && this.bottomPane.visible) style = 'padding-bottom: 50px' //TODO
+      }
+      return style
     },
-    isActivityBarOpened: {
+    isTopPaneOpened: {
       get: function () {
-        return this.activityBar.visible
+        return this.topPane.visible
       },
       set: function (value) {
-        this.$store.patch('activityBar', { visible: value })
+        this.$store.patch('topPane', { visible: value })
       }
     },
     isLeftDrawerOpened: {
@@ -91,41 +98,41 @@ export default {
   },
   data () {
     return {
-      activityBar: this.$store.get('activityBar'),
-      widgetOffset: [0, 0],
-      fabOffset: [16, 16],
+      topPane: this.$store.get('topPane'),
+      bottomPane: this.$store.get('bottomPane'),
       leftDrawer: this.$store.get('leftDrawer'),
       rightDrawer: this.$store.get('rightDrawer'),
-      footer: this.$store.get('footer'),
-      hasActivityBarOpener: false,
+      hasTopPaneOpener: false,
       hasLeftDrawerOpener: false,
       hasRightDrawerOpener: false,
-      hasFooterOpener: false
+      hasBottomPaneOpener: false,
+      widgetOffset: [0, 0],
+      fabOffset: [16, 16]
     }
   },
   created () {
     // load the required components
-    this.$options.components['k-bar'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-opener'] = this.$load('frame/KOpener')
     this.$options.components['k-window'] = this.$load('layout/KWindow')
     this.$options.components['k-fab'] = this.$load('layout/KFab')
     // Read drawers configuration to check whether openers have to be displayed or not
-    this.hasActivityBarOpener = this.$config('layout.activityBar.opener', false)
+    this.hasTopPaneOpener = this.$config('layout.topPane.opener', false)
+    this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
     this.hasLeftDrawerOpener = this.$config('layout.leftDrawer.opener', false)
     this.hasRightDrawerOpener = this.$config('layout.rightDrawer.opener', false)
-    this.hasFooterOpener = this.$config('layout.footer.opener', false)
   }
 }
 </script>
 
 <style lang="stylus">
-.k-activity-bar {
+.k-pane {
   border: solid 1px lightgrey;
   border-radius: 5px;
   background: #ffffff
 }
 
-.k-activity-bar:hover {
+.k-pane:hover {
   border: solid 1px $primary;
 }
 </style>

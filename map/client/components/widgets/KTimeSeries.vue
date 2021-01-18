@@ -3,7 +3,7 @@
     <div v-if='hasGraph' class='fit row'>
       <q-resize-observer @resize='onResized' />
       <!-- Actions -->
-      <k-bar class='q-pa-sm' :content='actions' direction='vertical'>
+      <k-panel class='q-pa-sm' :content='actions' direction='vertical'>
         <div slot='after'>
           <q-btn icon='las la-history' color='grey-9' size='md' flat round>
             <q-badge floating>
@@ -19,7 +19,7 @@
             </q-menu>
           </q-btn>
         </div>
-      </k-bar>
+      </k-panel>
       <div class='col full-width row'>
         <!-- Title -->
         <span class='col-12 q-pl-sm'>
@@ -435,7 +435,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-bar'] = this.$load('kargo/KBar')
+    this.$options.components['k-panel'] = this.$load('kargo/KBar')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
     this.actions = [

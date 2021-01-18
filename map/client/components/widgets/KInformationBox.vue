@@ -1,7 +1,7 @@
 <template>
   <div :style="widgetStyle()">
     <div v-if="schema && properties" class="fit row">
-      <k-bar class="q-pa-sm" :content="actions" direction="vertical" />
+      <k-panel class="q-pa-sm" :content="actions" direction="vertical" />
       <q-scroll-area class="col fit" :thumb-style="thumbStyle" :bar-style="barStyle">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :options="viewOptions" />
       </q-scroll-area>
@@ -117,7 +117,7 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-bar'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KBar')
     this.$options.components['k-view'] = this.$load('form/KView')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions

@@ -25,7 +25,7 @@
       </q-btn>
     </div>
     <div v-if="!$q.screen.gt.xs" class="full-width row justify-around q-pt-xs">
-      <k-bar :content="actions" mode="mobile" color="primary" />
+      <k-panel :content="actions" mode="mobile" color="primary" />
     </div>
     <!--
       Time bars
@@ -252,7 +252,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-bar'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KBar')
     // Define the colors assgigned to the months
     this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
     // Define the actions

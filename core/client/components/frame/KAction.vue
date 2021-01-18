@@ -1,5 +1,8 @@
 <template>
-  <q-btn 
+  <!--
+    Button renderer
+   -->
+  <q-btn v-if="renderer === 'button'"
     :id="id"
     :label="$q.screen.gt.xs ? label : ''"
     no-caps
@@ -10,8 +13,8 @@
     :outline="isToggled"
     :round="label===''"
     :rounded="label!==''"
-    :dense="$q.screen.lt.md"
-    :disabled="!handler"
+    :dense="dense"
+    :disabled="disabled"
     @click="onClicked()">
     <!-- tooltip -->
     <q-tooltip v-if="tooltip">
@@ -22,6 +25,25 @@
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
   </q-btn>
+  <!--
+    Item renderer
+   -->
+  <q-item v-else-if="renderer === 'item'"
+    :id="id" clickable 
+    :dense="dense"
+    :disabled="disabled"
+    @click="onClicked()">
+    <q-item-section avatar>
+      <q-icon :dense="dense" :name="icon" />
+      <!-- badge -->
+      <q-badge v-if="badge" v-bind="badge">
+        <q-icon v-if="badge.icon" v-bind="badge.icon" />
+      </q-badge>
+    </q-item-section>
+    <q-item-section>
+      {{ label }}
+    </q-item-section>
+  </q-item>
 </template>
 
 <script>
@@ -66,12 +88,32 @@ export default {
       type: Boolean,
       default: false
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     context: {
       type: Object,
       default: () => { return null }
     },
+    status: {
+      type: [Function],
+      default: () => { return null }
+    },
     handler: {
-      type: [Function, Object]
+      type: [Function],
+      default: null
+    },
+    route: {
+      type: [Object],
+      default: () => { return null }
+    },
+    renderer: {
+      type: String,
+      default: 'button',
+      validator: (value) => {
+        return ['button', 'item'].includes(value)
+      }
     }
   },
   data () {
@@ -79,15 +121,21 @@ export default {
       isToggled: this.toggled
     }
   },
+  computed: {
+    dense () {
+      return this.$q.screen.lt.md
+    }
+  },
   methods: {
     onClicked () {
       // Handle the toggle if any
       if (this.toggle) this.isToggled=!this.isToggled
-      // If the handler is a function call it
-      if (typeof this.handler === 'function') this.handler(this.context, this.isToggled)
-      // If the handler is a route object call the router
-      else if (typeof this.handler === 'object') this.$router.push(this.handler)
-      else logger.debug('Invalid handler', this.handler)
+      // If it has an handler call it
+      if (this.handler) this.handler(this.context, this.isToggled)
+      // If it is a route update the router
+      else if (this.route) this.$router.push(this.route)
+      // Otherwise log a comment
+      else logger.debug('Invalid action: you should define an handler or a route')
     }
   }
 }

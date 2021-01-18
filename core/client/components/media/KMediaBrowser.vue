@@ -28,7 +28,7 @@
      -->
     <template v-slot:control>
       <q-carousel-control position="top-right" :offset="[0, 0]" style="font-size: 2em; cursor: pointer;">
-        <k-bar :content="actions" :color="controlColor" />
+        <k-panel :content="actions" :color="controlColor" />
       </q-carousel-control>
     </template>
   </q-carousel>
@@ -176,7 +176,7 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-bar'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KBar')
     this.$options.components['k-image-viewer'] = this.$load('media/KImageViewer')
   },
   async mounted () {

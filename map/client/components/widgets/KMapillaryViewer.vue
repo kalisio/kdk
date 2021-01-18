@@ -2,7 +2,7 @@
   <div :style="widgetStyle()">
     <q-resize-observer @resize="onResized" />
     <div class="fit row">
-      <k-bar class="q-pa-sm" :content="actions" direction="vertical" />
+      <k-panel class="q-pa-sm" :content="actions" direction="vertical" />
       <div class="col" id="mapillary-container"></div>
     </div>
   </div>
@@ -119,7 +119,7 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-bar'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KBar')
     // Registers the actions
     this.actions = {
       default: [

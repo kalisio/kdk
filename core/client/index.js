@@ -32,13 +32,10 @@ export default function init () {
   // Create the models listened by the main layout components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  Store.set('appBar', { leading: null, title: '', subtitle: '', toolbar: [], menu: [] })
-  Store.set('searchBar', { field: '', pattern: '', services: [], items: [] })
-  Store.set('tabBar', { tabs: [] })
-  Store.set('activityBar', { content: null, mode: '', visible: true })
+  Store.set('topPane', { content: null, mode: undefined, visible: true })
+  Store.set('bottomPane', { content: null, mode: undefined, visible: true })  
   Store.set('leftDrawer', { component: '', props: {}, visible: false })
   Store.set('rightDrawer', { component: '', props: {}, visible: false })
-  Store.set('footer', { component: '', props: {}, visible: false })
   Store.set('window', { curent: '', widgets: [] })
   Store.set('fab', { actions: [] })
 

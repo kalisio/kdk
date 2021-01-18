@@ -27,7 +27,7 @@
     -->
     <slot name="item-actions">
       <q-item-section side>
-        <k-overflow-menu :actions="itemActions" :context="item" :dense="$q.screen.lt.md" />
+        <k-overflow-menu :content="itemActions" :context="item" />
       </q-item-section>
     </slot>
   </q-item>
@@ -41,8 +41,8 @@ export default {
   mixins: [mixins.baseItem],
   props: {
     itemActions: {
-      type: Array,
-      default: () => { return [] }
+      type: Object,
+      default: () => { return { default: [] } }
     }
   },
   methods: {
@@ -52,7 +52,7 @@ export default {
   },
   created () {
     // Loads the required components
-    this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
+    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
   }
 }
 </script>

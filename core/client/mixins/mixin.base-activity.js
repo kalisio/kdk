@@ -10,15 +10,37 @@ const baseActivityMixin = {
     }
   },
   methods: {
-    setActivityBar (content, mode = undefined) {
-      this.$store.patch('activityBar', { content: content, mode: mode })
+    setTopPane (content, mode = undefined) {
+      this.$store.patch('topPane', { content: content, mode: mode })
     },
-    setActivityBarMode (mode) {
-      const content = this.$store.get('activityBar.content')
-      this.$store.patch('activityBar', { content: content, mode: mode })
+    setTopPaneMode (mode) {
+      const content = this.$store.get('topPane.content')
+      this.$store.patch('topPane', { content: content, mode: mode })
     },
-    clearActivityBar () {
-      this.$store.patch('activityBar', { content: null, mode: '' })
+    clearTopPane () {
+      this.$store.patch('topPane', { content: null, mode: '' })
+    },
+    setBottomPane (content, mode = undefined) {
+      this.$store.patch('bottomPane', { content: content, mode: mode })
+    },
+    setBottomPaneMode (mode) {
+      const content = this.$store.get('bottomPane.content')
+      this.$store.patch('bottomPane', { content: content, mode: mode })
+    },
+    clearBottomPane () {
+      this.$store.patch('bottomPane', { content: null, mode: '' })
+    },
+    setLeftDrawer (component, props) {
+      this.$store.patch('leftDrawer', { component, props })
+    },
+    clearLeftDrawer () {
+      this.$store.patch('leftDrawer', { component: '', props: {} })
+    },
+    setRightDrawer (component, props) {
+      this.$store.patch('rightDrawer', { component, props })
+    },
+    clearRightDrawer () {
+      this.$store.patch('rightDrawer', { component: '', props: {} })
     },
     registerFabAction (action) {
       this.registerAction('fab', action)
@@ -44,24 +66,6 @@ const baseActivityMixin = {
       this.$store.patch('fab', { actions: [] })
       // Clear the actions
       this.actions = {}
-    },
-    setLeftDrawer (component, props) {
-      this.$store.patch('leftDrawer', { component, props })
-    },
-    clearLeftDrawer () {
-      this.$store.patch('leftDrawer', { component: '', props: {} })
-    },
-    setRightDrawer (component, props) {
-      this.$store.patch('rightDrawer', { component, props })
-    },
-    clearRightDrawer () {
-      this.$store.patch('rightDrawer', { component: '', props: {} })
-    },
-    setFooter (component, props) {
-      this.$store.patch('footer', { component, props })
-    },
-    clearFooter () {
-      this.$store.patch('footer', { component: '', props: {} })
     },
     registerWidget (name, icon, component, props) {
       const widgets = this.$store.get('window.widgets')
@@ -99,11 +103,11 @@ const baseActivityMixin = {
       }
     },
     clearActivity () {
-      this.clearActivityBar()
-      this.clearActions()
+      this.clearTopPane()
+      this.clearBottomPane()
       this.clearRightDrawer()
-      this.clearFooter()
       this.clearWidgets()
+      this.clearActions()
     },
     refreshActivity () {
       // This method should be overriden in activities
