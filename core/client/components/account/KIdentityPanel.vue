@@ -1,66 +1,64 @@
 <template>
-  <div class="column">
+  <div v-if="user" class="column content-center q-pa-sm q-gutter-y-sm" style="background-color: lightgrey;">
     <!--
       User avatar
     -->
-    <div class="self-center" style="padding: 16px">
-      <q-avatar v-if="!avatarImage" size="72px" color="primary" text-color="white">{{initials}}</q-avatar>
-      <q-avatar v-if="avatarImage" size="72px"><img :src="avatarImage"></q-avatar>
+    <div class="row justify-center">
+      <q-avatar v-if="avatar.uri"><img :src="avatar.uri"></q-avatar>
+      <q-avatar v-else size="96px" color="primary" text-color="white">{{ avatar.initials }}</q-avatar>
     </div>
     <!--
       User information
     -->
-    <div>
-      <q-list>
-        <q-item id="account" @click="onClickAccount" clickable v-ripple>
-          <q-item-section>{{name}}</q-item-section>
-          <q-item-section avatar><q-icon name="las la-user-circle"/></q-item-section>
-        </q-item>
-      </q-list>
+    <div class="row justify-center items-center">
+      <span class="text-subtitle1">{{ user.name }}</span>
+      <k-action id="edit-profile" icon="las la-cog" :tooltip="$t('KIdentityPanel.MANAGE')" :route="{ name: 'account-activity', params: { mode: 'profile' } }" />
     </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import { getInitials } from '../../utils'
 
 export default {
   name: 'k-identity-panel',
   data () {
     return {
-      name: '',
-      avatarImage: ''
+      user: this.$store.get('user'),
+      avatar: {
+        Uri: null,
+        initials: null
+      }
     }
   },
-  computed: {
-    initials () { return getInitials(this.name) }
-  },
   methods: {
-    async refreshIdentity () {
-      this.name = this.$store.get('user.name', '')
-      this.objectId = this.$store.get('user._id', '')
-      // This field indicates that the avatar has been set
-      const avatarId = this.$store.get('user.avatar._id', '')
-      if (avatarId) {
-        // Then we need to fetch it from global storage service
-        // Force global context as a storage service might also be available as contextual
-        const data = await this.$api.getService('storage', '').get(avatarId + '.thumbnail')
-        // Get as data URI
-        this.avatarImage = data.uri
+    async refresh () {
+      if (this.user) {
+        const avatarId = _.get(this.user, 'avatar._id', null)
+        if (avatarId) {
+          // Then we need to fetch it from global storage service
+          // Force global context as a storage service might also be available as contextual
+          const data = await this.$api.getService('storage', '').get(avatarId + '.thumbnail')
+          // Get as data URI
+          this.avatar = { uri: data.uri, initials: null }
+        } else {
+          this.avatar = { uri: null, initials: getInitials(this.user.name) }
+        }
       } else {
-        this.avatarImage = ''
+        this.avatar = { uri: null, initials: null }
       }
-    },
-    onClickAccount () {
-      this.$router.push({ name: 'account-activity', params: { mode: 'profile' } })
     }
   },
   created () {
-    this.refreshIdentity()
-    this.$events.$on('user-changed', this.refreshIdentity)
+    // Load the required components
+    this.$options.components['k-action'] = this.$load('frame/KAction')
+    // Initialize the component
+    this.refresh()
+    this.$events.$on('user-changed', this.refresh)
   },
   beforeDestroy () {
-    this.$events.$off('user-changed', this.refreshIdentity)
+    this.$events.$off('user-changed', this.refresh)
   }
 }
 </script>

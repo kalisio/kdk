@@ -293,6 +293,9 @@
     "SIGN_OFF_LABEL": "Thank you for using",
     "LOG_IN_AGAIN_LINK": "Log in again ?"
   },
+  "KIdentityPanel": {
+    "MANAGE": "Manage"
+  },
   "KAccountActivity": {
     "PROFILE": "Profile",
     "SECURITY": "Security",
