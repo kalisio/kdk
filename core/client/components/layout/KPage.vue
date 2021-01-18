@@ -26,8 +26,8 @@
     </q-page-sticky>
     <q-page-sticky position="bottom">
       <div v-if="bottomPane.content" class="column items-center">
-        <k-panel id="bottom-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
+        <k-panel id="bottom-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />        
       </div>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
@@ -62,6 +62,14 @@ export default {
         this.$store.patch('topPane', { visible: value })
       }
     },
+    isBottomPaneOpened: {
+      get: function () {
+        return this.bottomPane.visible
+      },
+      set: function (value) {
+        this.$store.patch('bottomPane', { visible: value })
+      }
+    },
     isLeftDrawerOpened: {
       get: function () {
         return this.leftDrawer.visible
@@ -83,17 +91,6 @@ export default {
     },
     hasRightDrawerComponent () {
       return !!this.rightDrawer.component
-    },
-    isFooterOpened: {
-      get: function () {
-        return this.footer.visible
-      },
-      set: function (value) {
-        this.$store.patch('footer', { visible: value })
-      }
-    },
-    hasFooterComponent () {
-      return !!this.footer.component
     }
   },
   data () {
@@ -103,9 +100,9 @@ export default {
       leftDrawer: this.$store.get('leftDrawer'),
       rightDrawer: this.$store.get('rightDrawer'),
       hasTopPaneOpener: false,
+      hasBottomPaneOpener: false,
       hasLeftDrawerOpener: false,
       hasRightDrawerOpener: false,
-      hasBottomPaneOpener: false,
       widgetOffset: [0, 0],
       fabOffset: [16, 16]
     }
@@ -116,9 +113,12 @@ export default {
     this.$options.components['k-opener'] = this.$load('frame/KOpener')
     this.$options.components['k-window'] = this.$load('layout/KWindow')
     this.$options.components['k-fab'] = this.$load('layout/KFab')
-    // Read drawers configuration to check whether openers have to be displayed or not
+    // Read top/bottom pane configuration
     this.hasTopPaneOpener = this.$config('layout.topPane.opener', false)
+    if (this.$config('layout.topPane.visible', false)) this.$store.patch('topPane', { visible: true })
     this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
+    if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
+    // Read drawers configuration
     this.hasLeftDrawerOpener = this.$config('layout.leftDrawer.opener', false)
     this.hasRightDrawerOpener = this.$config('layout.rightDrawer.opener', false)
   }
