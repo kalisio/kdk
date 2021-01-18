@@ -91,7 +91,7 @@ export default {
   },
   created () {
     // Loads the required components
-    this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
+    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
   }
 }

@@ -11,7 +11,7 @@ export default {
   name: 'k-overflow-menu',
   props: {
     content: {
-      type: Object,
+      type: [Object, Array],
       default: () => { return null }
     },
     mode: {

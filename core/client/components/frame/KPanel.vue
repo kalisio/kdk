@@ -25,7 +25,7 @@ export default {
   name: 'k-panel',
   props: {
     content: {
-      type: Object,
+      type: [Object, Array],
       default: () => { return null }
     },
     mode: {
@@ -62,10 +62,16 @@ export default {
   computed: {
     components () {
       const components = []
-      const modes = _.keys(this.content)
-      if (modes.length > 0) {
-        const mode = this.mode ? this.mode : modes[0]
-        _.forEach(_.get(this.content, mode, []), (component) => {
+      if (this.content) {
+        let content = []
+        if (Array.isArray(this.content)) {
+          content = this.content
+        } else {
+          const modes = _.keys(this.content)
+          const mode = this.mode ? this.mode : modes[0]
+          content = _.get(this.content, mode)
+        }
+        _.forEach(content, (component) => {
           // Define the component key
           const componentName = _.get(component, 'component', 'frame/KAction')
           const componentKey = _.kebabCase(path.basename(componentName))

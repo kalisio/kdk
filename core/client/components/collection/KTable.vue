@@ -21,7 +21,7 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <k-overflow-menu :actions="itemActions" :context="props.row" :dense="$q.screen.lt.md" />
+            <k-overflow-menu :content="itemActions" :context="props.row" :dense="$q.screen.lt.md" />
           </q-td>
         </template>
       </q-table>
@@ -36,14 +36,14 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { QTable, QTd } from 'quasar'
-import { KOverflowMenu } from '../layout'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-table',
   mixins: [mixins.service, mixins.schemaProxy, mixins.baseCollection],
   components: {
-    QTable, QTd, KOverflowMenu
+    QTable, 
+    QTd
   },
   props: {
     itemActions: {
@@ -182,6 +182,7 @@ export default {
   async created () {
     // Load the required components
     this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')

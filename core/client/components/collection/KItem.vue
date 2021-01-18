@@ -42,7 +42,7 @@ export default {
   props: {
     itemActions: {
       type: Object,
-      default: () => { return { default: [] } }
+      default: () => { return [] }
     }
   },
   methods: {

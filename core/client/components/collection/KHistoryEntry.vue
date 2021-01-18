@@ -39,7 +39,7 @@
           <!-- Pane -->
           <k-panel :content="itemActions" mode="pane" :context="item" />
           <!-- Menu -->
-          <k-overflow-menu :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
+          <k-overflow-menu :content="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
         </q-card-actions>
       </slot>
     </q-card>
@@ -84,7 +84,7 @@ export default {
     // Loads the required components
     this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
+    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
   }
 }
 </script>
