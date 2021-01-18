@@ -14,7 +14,7 @@
           dense>
           <q-item-section avatar @click="onLayerClicked(layer)">
             <q-icon v-if="!layer.iconUrl" :name="layerIcon(layer)"></q-icon>
-            <img v-else :src="layer.iconUrl" width="32"></img>
+            <img v-else :src="layer.iconUrl" width="32" />
             <!-- badge -->
             <q-badge v-if="layer.badge" v-bind="layer.badge">
               <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />

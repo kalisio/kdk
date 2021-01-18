@@ -36,10 +36,7 @@
       <q-separator />
       <slot name="entry-actions">
         <q-card-actions class="q-pa-xs" align="right">
-          <!-- Pane -->
           <k-panel :content="itemActions" mode="pane" :context="item" />
-          <!-- Menu -->
-          <k-overflow-menu :content="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
         </q-card-actions>
       </slot>
     </q-card>
@@ -55,15 +52,9 @@ export default {
   mixins: [mixins.baseItem],
   props: {
     itemActions: {
-      type: Object,
-      default: function () {
-        return {
-          pane: [],
-          menu: []
-        }
-      }
+      type: [Object, Array],
+      default: () => { return null }
     }
-
   },
   computed: {
     date () {

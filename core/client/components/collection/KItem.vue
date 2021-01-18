@@ -41,8 +41,8 @@ export default {
   mixins: [mixins.baseItem],
   props: {
     itemActions: {
-      type: Object,
-      default: () => { return [] }
+      type: [Object, Array],
+      default: () => { return null }
     }
   },
   methods: {

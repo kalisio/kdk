@@ -47,22 +47,16 @@ export default {
   },
   props: {
     itemActions: {
-      type: Array,
-      default: function () {
-        return []
-      }
+      type: [Object, Array],
+      default: () => { return null }
     },
     baseQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => { return {} }
     },
     filterQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => { return {} }
     },
     title: {
       type: String
