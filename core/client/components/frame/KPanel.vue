@@ -1,5 +1,6 @@
 <template>
-  <div v-bind:class="{
+  <div :id="id"
+    v-bind:class="{
       'row justify-center': direction === 'horizontal',
       'column items-stretch content-stretch': direction === 'vertical'
     }"
@@ -25,6 +26,10 @@ import { uid } from 'quasar'
 export default {
   name: 'k-panel',
   props: {
+    id: {
+      type: String,
+      required: true
+    },  
     content: {
       type: [Object, Array],
       default: () => { return null }

@@ -28,7 +28,7 @@
      -->
     <template v-slot:control>
       <q-carousel-control position="top-right" :offset="[0, 0]" style="font-size: 2em; cursor: pointer;">
-        <k-panel :content="actions" :color="controlColor" />
+        <k-panel id="media-browser-actions" :content="actions" :color="controlColor" />
       </q-carousel-control>
     </template>
   </q-carousel>

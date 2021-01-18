@@ -26,7 +26,7 @@
     </q-page-sticky>
     <q-page-sticky position="bottom">
       <div v-if="bottomPane.content" class="column items-center">
-        <k-panel id="top-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
+        <k-panel id="bottom-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
       </div>
     </q-page-sticky>

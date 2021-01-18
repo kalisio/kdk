@@ -1,7 +1,7 @@
 <template>
   <div :style="widgetStyle()">
     <div v-if="schema && properties" class="fit row">
-      <k-panel class="q-pa-sm" :content="actions" direction="vertical" />
+      <k-panel id="information-box-actions" class="q-pa-sm" :content="actions" direction="vertical" />
       <q-scroll-area class="col fit" :thumb-style="thumbStyle" :bar-style="barStyle">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :options="viewOptions" />
       </q-scroll-area>

@@ -1,7 +1,7 @@
 <template>
   <q-btn v-if="content" id="overflow-menu-entry" icon="las la-ellipsis-v" flat round :dense="$q.screen.lt.md">
     <q-menu id="overflow-menu" auto-close>
-      <k-panel :content="content" :mode="mode" :context="context" direction="vertical" action-renderer="item" />
+      <k-panel id="menu-entries" :content="content" :mode="mode" :context="context" direction="vertical" action-renderer="item" />
     </q-menu>
   </q-btn>
 </template>

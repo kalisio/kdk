@@ -36,7 +36,7 @@
       <q-separator />
       <slot name="entry-actions">
         <q-card-actions class="q-pa-xs" align="right">
-          <k-panel :content="itemActions" mode="pane" :context="item" />
+          <k-panel id="card-actions" :content="itemActions" mode="pane" :context="item" />
         </q-card-actions>
       </slot>
     </q-card>

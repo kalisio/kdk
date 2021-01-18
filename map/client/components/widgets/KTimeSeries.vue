@@ -3,7 +3,7 @@
     <div v-if='hasGraph' class='fit row'>
       <q-resize-observer @resize='onResized' />
       <!-- Actions -->
-      <k-panel class='q-pa-sm' :content='actions' direction='vertical'>
+      <k-panel id="timeseries-actions" class='q-pa-sm' :content='actions' direction='vertical'>
         <div slot='after'>
           <q-btn icon='las la-history' color='grey-9' size='md' flat round>
             <q-badge floating>

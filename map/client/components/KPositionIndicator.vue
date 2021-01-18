@@ -4,7 +4,7 @@
     <span class="q-pl-md q-pr-md">
       {{ position }}
     </span>
-    <k-panel v-if="!isActive" :content="actions" color="primary" />
+    <k-panel id="positionbox-actions" v-if="!isActive" :content="actions" color="primary" />
   </div>
 </template>
 

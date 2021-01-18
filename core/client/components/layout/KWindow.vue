@@ -17,7 +17,7 @@
         </template>
       </q-tabs>
       <!-- Window actions -->
-      <k-panel class="q-pa-sm" :content="actions" color="primary" />
+      <k-panel id="widget-actions" :content="actions" color="primary" />
     </div>
     <!--
       Window content

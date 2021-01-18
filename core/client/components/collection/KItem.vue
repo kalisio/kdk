@@ -45,11 +45,6 @@ export default {
       default: () => { return null }
     }
   },
-  methods: {
-    key (object, property) {
-      return this.item._id + '-' + object[property]
-    }
-  },
   created () {
     // Loads the required components
     this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')

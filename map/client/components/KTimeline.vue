@@ -25,7 +25,7 @@
       </q-btn>
     </div>
     <div v-if="!$q.screen.gt.xs" class="full-width row justify-around q-pt-xs">
-      <k-panel :content="actions" mode="mobile" color="primary" />
+      <k-panel id="timeline-actions" :content="actions" mode="mobile" color="primary" />
     </div>
     <!--
       Time bars
