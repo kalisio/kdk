@@ -42,6 +42,39 @@ You might also clean all dependencies frist using [`rimraf node_modules`](http:/
 Errors are often visible when launching the app server but might come from an underlying module. For instance the `TypeError: Cannot read property 'eventMappings' of undefined` error often appears in modules, probably due to the fact incompatible versions of the same library (e.g. Feathers) are installed. So try first to reinstall and relink the modules before your app, and if you'd like to see if a module is fine running its tests is usually a good indicator: `yarn mocha`.
 :::
 
+## Profiling applications
+
+In your local development environment you can usually use [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/rendering-tools/js-execution). However, it is trickier to perform profiling on remote production environments, here are the steps.
+
+1. Override the command used to launch your application to activate the [Node.js V8 profiler](https://nodejs.org/en/docs/guides/simple-profiling/):
+
+```
+node --prof app.js
+```
+
+2. Once you have run your tests and recorded the profile, a file named like this `isolate-pid-1-v8.log` should appear in your working directory. Process it using the following commands to get either:
+* a "human-readable" file (txt)
+
+  ```
+  node --prof-process .\isolate-0x49489f0-1-v8.log > prof-processed.txt
+  ```
+* a "machine-readable" file (json)
+
+  ```
+  node --prof-process --preprocess -j .\isolate-0x49489f0-1-v8.log > prof-processed.json
+  ```
+
+3. In order to identify bottlenecks in your app you can either:
+* Analyze the human-readable file
+* Install [flamebearer](https://github.com/mapbox/flamebearer) and generate the flame graph
+
+```
+npm install -g flamebearer
+flamebearer prof-processed.json
+```
+
+* Use the [online flame graph generator](https://mapbox.github.io/flamebearer/) and drag'n'drop your profile
+
 ## Running multiple applications side-by-side
 
 For instance, as Kano depends for some features on a running Weacast API you will need to run both on your local development environment. If your application also uses replication you will need to launch two instances in parallel. The problem is that by default all our apps uses the `8081` port for server and `8080` port for client in development mode, generating a port conflict. Similarly the Node.js debugger uses by default the `9229` port.
