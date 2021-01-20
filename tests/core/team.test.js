@@ -22,7 +22,7 @@ import { permissions } from '../../core/common'
   User 1 removes org (=> and his group)
   User 2 is removed (=> and his org)
 */
-describe('team', () => {
+describe('core:team', () => {
   let app, adminDb, server, port, // baseUrl,
     userService, orgService, authorisationService, orgGroupService, orgUserService, orgStorageService,
     joinedOrgUserService, user1Object, user2Object, user3Object, orgObject, groupObject

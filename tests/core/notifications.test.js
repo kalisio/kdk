@@ -7,7 +7,7 @@ import { createGmailClient } from './utils'
 
 const phone = process.env.SNS_PHONE_NUMBER
 
-describe('notifications', () => {
+describe('core:notifications', () => {
   let app, server, port, baseUrl, gmailClient, gmailUser,
     authenticationService, mailerService, userService, devicesService, pusherService,
     sns, snsForSms, publisherObject, subscriberObject
