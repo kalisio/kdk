@@ -6,7 +6,7 @@ import core, { kalisio, hooks } from '../../core/api'
 import { permissions } from '../../core/common'
 import { createGmailClient } from './utils'
 
-describe('account', () => {
+describe('core:account', () => {
   let app, server, port, baseUrl, token,
     userService, mailerService, accountService, gmailClient, gmailUser, userObject
 
