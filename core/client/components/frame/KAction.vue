@@ -4,7 +4,7 @@
    -->
   <q-btn v-if="renderer === 'button'"
     :id="id"
-    :label="$q.screen.gt.xs ? label : ''"
+    :label="$q.screen.gt.xs ? $t(label) : ''"
     no-caps
     :icon="icon"
     :color="isToggled ? 'secondary' : color"
@@ -18,7 +18,7 @@
     @click="onClicked()">
     <!-- tooltip -->
     <q-tooltip v-if="tooltip">
-      {{ tooltip }}
+      {{ $t(tooltip) }}
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" class="q-py-xs" v-bind="badge">
@@ -41,7 +41,7 @@
       </q-badge>
     </q-item-section>
     <q-item-section>
-      {{ label }}
+      {{ $t(label) }}
     </q-item-section>
   </q-item>
 </template>

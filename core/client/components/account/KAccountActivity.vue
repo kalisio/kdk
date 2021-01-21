@@ -48,23 +48,23 @@ export default {
         'profile': [          
           { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
           { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
-          { id: 'profile', icon: 'las la-user', color: 'primary', label: this.$t('KAccountActivity.PROFILE'), status: () => { return 'disabled' } },
-          { id: 'security', icon: 'las la-shield-alt', tooltip: this.$t('KAccountActivity.SECURITY'), route: { name: 'account-activity', params: { mode: 'security' } } },
-          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: this.$t('KAccountActivity.DANGER_ZONE'), route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
+          { id: 'profile', icon: 'las la-user', color: 'primary', label: 'KAccountActivity.PROFILE', status: () => { return 'disabled' } },
+          { id: 'security', icon: 'las la-shield-alt', tooltip: 'KAccountActivity.SECURITY', route: { name: 'account-activity', params: { mode: 'security' } } },
+          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: 'KAccountActivity.DANGER_ZONE', route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
         ],
         'security': [
           { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
           { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
-          { id: 'profile', icon: 'las la-user', tooltip: this.$t('KAccountActivity.PROFILE'), route: { name: 'account-activity', params: { mode: 'profile' } } },
-          { id: 'security', icon: 'las la-shield-alt', color: 'primary', label: this.$t('KAccountActivity.SECURITY'),status: () => { return 'disabled' } },
-          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: this.$t('KAccountActivity.DANGER_ZONE'), route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
+          { id: 'profile', icon: 'las la-user', tooltip: 'KAccountActivity.PROFILE', route: { name: 'account-activity', params: { mode: 'profile' } } },
+          { id: 'security', icon: 'las la-shield-alt', color: 'primary', label: 'KAccountActivity.SECURITY', status: () => { return 'disabled' } },
+          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: 'KAccountActivity.DANGER_ZONE', route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
         ],
         'danger-zone': [
           { id: 'go-back', icon: 'las la-arrow-left', handler: this.goBack },
           { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
-          { id: 'profile', icon: 'las la-user', tooltip: this.$t('KAccountActivity.PROFILE'), route: { name: 'account-activity', params: { mode: 'profile' } } },
-          { id: 'security', icon: 'las la-shield-alt', tooltip: this.$t('KAccountActivity.SECURITY'), route: { name: 'account-activity', params: { mode: 'security' } } },
-          { id: 'danger-zone', icon: 'las la-exclamation-triangle', color: 'primary', label: this.$t('KAccountActivity.DANGER_ZONE'), status: () => { return 'disabled' } }
+          { id: 'profile', icon: 'las la-user', tooltip: 'KAccountActivity.PROFILE', route: { name: 'account-activity', params: { mode: 'profile' } } },
+          { id: 'security', icon: 'las la-shield-alt', tooltip: 'KAccountActivity.SECURITY', route: { name: 'account-activity', params: { mode: 'security' } } },
+          { id: 'danger-zone', icon: 'las la-exclamation-triangle', color: 'primary', label: 'KAccountActivity.DANGER_ZONE', status: () => { return 'disabled' } }
         ],
       }, this.mode)
     },
