@@ -251,7 +251,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-panel'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Define the colors assgigned to the months
     this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
     // Define the actions

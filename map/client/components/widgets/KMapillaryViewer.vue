@@ -119,7 +119,7 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-panel'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Registers the actions
     this.actions = {
       default: [

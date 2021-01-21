@@ -176,7 +176,7 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-panel'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-image-viewer'] = this.$load('media/KImageViewer')
   },
   async mounted () {

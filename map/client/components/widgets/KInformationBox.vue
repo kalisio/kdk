@@ -117,7 +117,7 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-panel'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-view'] = this.$load('form/KView')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions

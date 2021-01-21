@@ -147,9 +147,9 @@ export function toast (options) {
 export async function dialog (options) {
   return new Promise((resolve, reject) => {
     Dialog.create(options)
-    .onOk((data) => resolve({ ok: true, data }))
-    .onCancel(() => resolve({ cancel: true }))
-    .onDismiss(() => resolve({ dismiss: true }))
+      .onOk((data) => resolve({ ok: true, data }))
+      .onCancel(() => resolve({ cancel: true }))
+      .onDismiss(() => resolve({ dismiss: true }))
   })
 }
 

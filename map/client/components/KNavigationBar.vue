@@ -103,7 +103,7 @@ export default {
     }
   },
   created () {
-    this.$options.components['k-panel'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-position-indicator'] = this.$load('KPositionIndicator')
     this.$options.components['k-location-input'] = this.$load('KLocationInput')
     this.$events.$on('user-position-changed', this.geolocate)

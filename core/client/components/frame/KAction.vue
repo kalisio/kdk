@@ -29,7 +29,7 @@
     Item renderer
    -->
   <q-item v-else-if="renderer === 'item'"
-    :id="id" clickable 
+    :id="id" clickable
     :dense="dense"
     :disabled="disabled"
     @click="onClicked()">
@@ -129,14 +129,14 @@ export default {
   methods: {
     onClicked () {
       // Handle the toggle if any
-      if (this.toggle) this.isToggled=!this.isToggled
+      if (this.toggle) this.isToggled = !this.isToggled
       // If it has an handler call it
       if (this.handler) this.handler(this.context, this.isToggled)
       // If it is a route update the router
-      // TODO: is there any better solution to avoid redundant navigation 
-      else if (this.route) this.$router.push(this.route).catch(() => {}) 
+      // TODO: is there any better solution to avoid redundant navigation
+      else if (this.route) this.$router.push(this.route).catch(() => {})
       // Otherwise log a comment
-      else logger.debug('Invalid action: you should define an handler or a route')
+      else logger.debug(`Invalid action ${this.id}: you should define an handler or a route`)
     }
   }
 }

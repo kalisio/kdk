@@ -438,7 +438,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-panel'] = this.$load('kargo/KBar')
+    this.$options.components['k-panel'] = this.$load('kargo/KPanel')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
     this.actions = [

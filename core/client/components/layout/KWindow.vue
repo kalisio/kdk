@@ -48,22 +48,20 @@ export default {
       }
     },
     actions () {
-      return {
-        default: [
-          {
-            id: 'change-mode',
-            icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
-            tooltip: this.$t(this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION'),
-            handler: this.onModeChanged
-          },
-          {
-            id: 'close-action',
-            icon: 'las la-times',
-            tooltip: this.$t('KWindow.CLOSE_ACTION'),
-            handler: this.onClosed
-          }
-        ]
-      }
+      return [
+        {
+          id: 'change-mode',
+          icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
+          tooltip: this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION',
+          handler: this.onModeChanged
+        },
+        {
+          id: 'close-action',
+          icon: 'las la-times',
+          tooltip: this.$t('KWindow.CLOSE_ACTION'),
+          handler: this.onClosed
+        }
+      ]
     },
     widgets () {
       _.forEach(this.window.widgets, (widget) => {
@@ -102,7 +100,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-panel'] = this.$load('frame/KBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

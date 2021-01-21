@@ -42,7 +42,7 @@ export default {
   name: 'k-table',
   mixins: [mixins.service, mixins.schemaProxy, mixins.baseCollection],
   components: {
-    QTable, 
+    QTable,
     QTd
   },
   props: {

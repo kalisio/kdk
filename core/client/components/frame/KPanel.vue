@@ -6,13 +6,13 @@
     }"
   >
     <template v-for="component in components">
-      <component 
-        v-if="component.status ? component.status() !== 'hidden' : true" 
-        :key="component.uid" 
+      <component
+        v-if="component.status ? component.status() !== 'hidden' : true"
+        :key="component.uid"
         :disabled="component.status ? component.status() === 'disabled' : false"
-        :is="component.componentKey" 
-        v-bind="component" 
-        :renderer="actionRenderer" 
+        :is="component.componentKey"
+        v-bind="component"
+        :renderer="actionRenderer"
         :style="component.style" />
     </template>
   </div>
@@ -22,14 +22,14 @@
 import _ from 'lodash'
 import path from 'path'
 import { uid } from 'quasar'
- 
+
 export default {
   name: 'k-panel',
   props: {
     id: {
       type: String,
       required: true
-    },  
+    },
     content: {
       type: [Object, Array],
       default: () => { return null }
@@ -84,8 +84,8 @@ export default {
           // Load the component if needed
           if ((componentKey[0] === 'k') && (!this.$options.components[componentKey])) this.$options.components[componentKey] = this.$load(componentName)
           // Update the component
-          component['componentKey'] = componentKey
-          component['uid'] = uid()
+          component.componentKey = componentKey
+          component.uid = uid()
           _.defaults(component, this.$props)
           components.push(component)
         })

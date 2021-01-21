@@ -14,7 +14,7 @@
         <k-panel id="top-pane" v-if="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
         <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
-    </q-page-sticky>  
+    </q-page-sticky>
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window id="window" ref="window" />
     </q-page-sticky>
@@ -27,7 +27,7 @@
     <q-page-sticky position="bottom">
       <div v-if="bottomPane.content" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
-        <k-panel id="bottom-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />        
+        <k-panel id="bottom-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
       </div>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
@@ -50,7 +50,7 @@ export default {
       let style = ''
       if (this.padding) {
         if (this.topPane.content && this.topPane.visible) style = 'padding-top: 50px' // TODO
-        if (this.bottomPane.content && this.bottomPane.visible) style = 'padding-bottom: 50px' //TODO
+        if (this.bottomPane.content && this.bottomPane.visible) style = 'padding-bottom: 50px' // TODO
       }
       return style
     },

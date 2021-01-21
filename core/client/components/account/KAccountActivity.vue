@@ -44,28 +44,28 @@ export default {
   methods: {
     refreshActivity () {
       this.clearActivity()
-      this.setTopPane({ 
-        'profile': [          
+      this.setTopPane({
+        profile: [
           { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
-          { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
+          { component: 'QSeparator', vertical: true, color: 'lightgrey' },
           { id: 'profile', icon: 'las la-user', color: 'primary', label: 'KAccountActivity.PROFILE', status: () => { return 'disabled' } },
           { id: 'security', icon: 'las la-shield-alt', tooltip: 'KAccountActivity.SECURITY', route: { name: 'account-activity', params: { mode: 'security' } } },
           { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: 'KAccountActivity.DANGER_ZONE', route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
         ],
-        'security': [
+        security: [
           { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
-          { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
+          { component: 'QSeparator', vertical: true, color: 'lightgrey' },
           { id: 'profile', icon: 'las la-user', tooltip: 'KAccountActivity.PROFILE', route: { name: 'account-activity', params: { mode: 'profile' } } },
           { id: 'security', icon: 'las la-shield-alt', color: 'primary', label: 'KAccountActivity.SECURITY', status: () => { return 'disabled' } },
           { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: 'KAccountActivity.DANGER_ZONE', route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
         ],
         'danger-zone': [
           { id: 'go-back', icon: 'las la-arrow-left', handler: this.goBack },
-          { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
+          { component: 'QSeparator', vertical: true, color: 'lightgrey' },
           { id: 'profile', icon: 'las la-user', tooltip: 'KAccountActivity.PROFILE', route: { name: 'account-activity', params: { mode: 'profile' } } },
           { id: 'security', icon: 'las la-shield-alt', tooltip: 'KAccountActivity.SECURITY', route: { name: 'account-activity', params: { mode: 'security' } } },
           { id: 'danger-zone', icon: 'las la-exclamation-triangle', color: 'primary', label: 'KAccountActivity.DANGER_ZONE', status: () => { return 'disabled' } }
-        ],
+        ]
       }, this.mode)
     },
     goBack () {
@@ -73,7 +73,7 @@ export default {
       else this.$router.push({ name: 'home' })
     }
   },
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.originRoute = from.name ? from : null
     })

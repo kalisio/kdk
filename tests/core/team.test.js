@@ -189,7 +189,6 @@ describe('core:team', () => {
     expect(members.data.length === 1).beTrue()
     expect(members.data[0]._id.toString()).to.deep.equal(user1Object._id.toString())
   })
-  
 
   it('non-members cannot access organisation users', async () => {
     let users = await userService.find({ query: { 'profile.name': user2Object.name }, user: user1Object, checkAuthorisation: true })
@@ -317,7 +316,7 @@ describe('core:team', () => {
   it('non-group owner cannot update the group', async () => {
     try {
       orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
-      { user: user1Object, checkAuthorisation: true })
+        { user: user1Object, checkAuthorisation: true })
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -327,16 +326,16 @@ describe('core:team', () => {
   it('non-group owner cannot add members to the group', async () => {
     try {
       authorisationService.create({
-      scope: 'groups',
-      permissions: 'member',
-      subjects: user1Object._id.toString(),
-      subjectsService: 'users',
-      resource: groupObject._id.toString(),
-      resourcesService: orgObject._id.toString() + '/groups'
-    }, {
-      user: user1Object,
-      checkAuthorisation: true
-    })
+        scope: 'groups',
+        permissions: 'member',
+        subjects: user1Object._id.toString(),
+        subjectsService: 'users',
+        resource: groupObject._id.toString(),
+        resourcesService: orgObject._id.toString() + '/groups'
+      }, {
+        user: user1Object,
+        checkAuthorisation: true
+      })
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -387,16 +386,16 @@ describe('core:team', () => {
   it('group owner cannot be changed to manager when alone', async () => {
     try {
       authorisationService.create({
-      scope: 'groups',
-      permissions: 'manager',
-      subjects: user2Object._id.toString(),
-      subjectsService: 'users',
-      resource: groupObject._id.toString(),
-      resourcesService: orgObject._id.toString() + '/groups'
-    }, {
-      user: user2Object,
-      checkAuthorisation: true
-    })
+        scope: 'groups',
+        permissions: 'manager',
+        subjects: user2Object._id.toString(),
+        subjectsService: 'users',
+        resource: groupObject._id.toString(),
+        resourcesService: orgObject._id.toString() + '/groups'
+      }, {
+        user: user2Object,
+        checkAuthorisation: true
+      })
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -408,15 +407,15 @@ describe('core:team', () => {
   it('group owner cannot be removed when alone', async () => {
     try {
       authorisationService.remove(groupObject._id, {
-      query: {
-        scope: 'groups',
-        subjects: user2Object._id.toString(),
-        subjectsService: 'users',
-        resourcesService: orgObject._id.toString() + '/groups'
-      },
-      user: user2Object,
-      checkAuthorisation: true
-    })
+        query: {
+          scope: 'groups',
+          subjects: user2Object._id.toString(),
+          subjectsService: 'users',
+          resourcesService: orgObject._id.toString() + '/groups'
+        },
+        user: user2Object,
+        checkAuthorisation: true
+      })
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -559,14 +558,14 @@ describe('core:team', () => {
 
   it('removes joined user', async () => {
     const orgs = await orgService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
-      expect(orgs.data.length > 0).beTrue()
-      joinedOrgUserService = app.getService('members', orgs.data[0])
-      const user = await userService.remove(user3Object._id, { user: user3Object, checkAuthorisation: true })
-      let users = await userService.find({ query: { name: user3Object.name }, user: user3Object, checkAuthorisation: true })
-      expect(users.data.length === 0).beTrue()
-      users = await joinedOrgUserService.find({ query: { name: user3Object.name }, user: user2Object, checkAuthorisation: true })
-      // User is not found on the joined org service
-      expect(users.data.length === 0).beTrue()
+    expect(orgs.data.length > 0).beTrue()
+    joinedOrgUserService = app.getService('members', orgs.data[0])
+    const user = await userService.remove(user3Object._id, { user: user3Object, checkAuthorisation: true })
+    let users = await userService.find({ query: { name: user3Object.name }, user: user3Object, checkAuthorisation: true })
+    expect(users.data.length === 0).beTrue()
+    users = await joinedOrgUserService.find({ query: { name: user3Object.name }, user: user2Object, checkAuthorisation: true })
+    // User is not found on the joined org service
+    expect(users.data.length === 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
