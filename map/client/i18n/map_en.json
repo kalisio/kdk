@@ -60,6 +60,8 @@
       "TOGGLE_VR": "VR",
       "TRACK_LOCATION": "Track location",
       "PROBE": "Probe",
+      "TRACK": "Display the coordinates",
+      "SEARCH": "Search a location",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline"
     },
     "timeseries": {
@@ -260,11 +262,6 @@
     "CLEAR": "Clear",
     "POSITION_COPIED":"Position copied to clipboard",
     "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality"
-  },
-  "KNavigationBar": {
-    "TRACK": "Display the coordinates",
-    "SEARCH": "Search a location",
-    "BACK": "Back"
   },
   "KTimeSeries": {
     "NO_DATA_AVAILABLE": "No data available",

@@ -44,15 +44,7 @@ export default function (name) {
       is3D () {
         return (this.engine === 'cesium')
       },
-      setNavigationBar (positionIndicator, locationInput, beforeActions, afterActions) {
-        const navigationBar = { positionIndicator, locationInput, actions: { before: beforeActions, after: afterActions } }
-        this.$store.patch('navigationBar', navigationBar)
-      },
-      clearNavigationBar () {
-        const navigationBar = { locationInput: false, actions: { before: [], afte: [] } }
-        this.$store.patch('navigationBar', navigationBar)
-      },
-      registerActivityActions () {
+      /*registerActivityActions () {
         // FAB
         let defaultActions = ['probe-location']
         if (this.is2D()) defaultActions = defaultActions.concat(['create-layer'])
@@ -137,7 +129,7 @@ export default function (name) {
           })
         }
         this.setNavigationBar(hasLocationTool, hasLocationTool, beforeActions, afterActions)
-      },
+      },*/
       // This method should be overriden in activities
       getFeatureActions (feature, layer) {
         return []

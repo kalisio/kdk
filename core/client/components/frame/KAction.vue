@@ -9,8 +9,7 @@
     :icon="icon"
     :color="isToggled ? 'secondary' : color"
     :size="size"
-    :flat="!isToggled"
-    :outline="isToggled"
+    flat
     :round="label===''"
     :rounded="label!==''"
     :dense="dense"
@@ -131,7 +130,7 @@ export default {
       // Handle the toggle if any
       if (this.toggle) this.isToggled = !this.isToggled
       // If it has an handler call it
-      if (this.handler) this.handler(this.context, this.isToggled)
+      if (this.handler) this.handler(this.context)
       // If it is a route update the router
       // TODO: is there any better solution to avoid redundant navigation
       else if (this.route) this.$router.push(this.route).catch(() => {})

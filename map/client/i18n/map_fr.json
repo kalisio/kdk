@@ -60,6 +60,8 @@
       "TOGGLE_VR": "VR",
       "TRACK_LOCATION": "Suivi de coordonnées",
       "PROBE": "Sonder",
+      "TRACK": "Afficher les coordonnées",
+      "SEARCH": "Rechercher un lieu",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement"
     },
     "timeseries": {
@@ -261,11 +263,6 @@
     "CLEAR": "Effacter",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",
     "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité"
-  },
-  "KNavigationBar": {
-    "TRACK": "Afficher les coordonnées",
-    "SEARCH": "Rechercher un lieu",
-    "BACK": "Retour"
   },
   "KTimeSeries": {
     "NO_DATA_AVAILABLE": "Aucune donnée disponible",

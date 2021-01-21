@@ -83,11 +83,12 @@ export default {
           const componentKey = _.kebabCase(path.basename(componentName))
           // Load the component if needed
           if ((componentKey[0] === 'k') && (!this.$options.components[componentKey])) this.$options.components[componentKey] = this.$load(componentName)
-          // Update the component
-          component.componentKey = componentKey
-          component.uid = uid()
-          _.defaults(component, this.$props)
-          components.push(component)
+          // Clone the component and add the required props
+          let clone = _.clone(component)
+          clone.componentKey = componentKey
+          clone.uid = uid() 
+          _.defaults(clone, this.$props)
+          components.push(clone)
         })
       }
       return components
