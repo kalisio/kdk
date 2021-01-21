@@ -22,7 +22,7 @@ import { permissions } from '../../core/common'
   User 1 removes org (=> and his group)
   User 2 is removed (=> and his org)
 */
-describe('team', () => {
+describe('core:team', () => {
   let app, adminDb, server, port, // baseUrl,
     userService, orgService, authorisationService, orgGroupService, orgUserService, orgStorageService,
     joinedOrgUserService, user1Object, user2Object, user3Object, orgObject, groupObject
@@ -116,13 +116,13 @@ describe('team', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('unregistered users cannot create organisations', (done) => {
-    orgService.create({ name: 'test-org' }, { checkAuthorisation: true })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+  it('unregistered users cannot create organisations', async () => {
+    try {
+      orgService.create({ name: 'test-org' }, { checkAuthorisation: true })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
     /*
     request
     .post(`${baseUrl}/organisations`)
@@ -134,124 +134,102 @@ describe('team', () => {
     */
   })
 
-  it('creates a test user', () => {
-    return userService.create({ email: 'test-1@test.org', name: 'test-user-1' }, { checkAuthorisation: true })
-      .then(user => {
-        user1Object = user
-        return userService.find({ query: { 'profile.name': 'test-user-1' }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-      })
+  it('creates a test user', async () => {
+    user1Object = await userService.create({ email: 'test-1@test.org', name: 'test-user-1' }, { checkAuthorisation: true })
+    const users = await userService.find({ query: { 'profile.name': 'test-user-1' }, checkAuthorisation: true, user: user1Object })
+    expect(users.data.length > 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('creates a private organisation on user registration', () => {
-    return userService.create({ email: 'test-2@test.org', name: 'test-user-2' }, { checkAuthorisation: true })
-      .then(user => {
-        user2Object = user
-        expect(user2Object.organisations).toExist()
-        // By default the user manage its own organisation
-        expect(user2Object.organisations[0].permissions).to.deep.equal('owner')
-        return orgService.find({ query: { name: 'test-user-2' }, user: user2Object, checkAuthorisation: true })
-      })
-      .then(orgs => {
-        expect(orgs.data.length > 0).beTrue()
-      })
+  it('creates a private organisation on user registration', async () => {
+    user2Object = await userService.create({ email: 'test-2@test.org', name: 'test-user-2' }, { checkAuthorisation: true })
+    expect(user2Object.organisations).toExist()
+    // By default the user manage its own organisation
+    expect(user2Object.organisations[0].permissions).to.deep.equal('owner')
+    const orgs = await orgService.find({ query: { name: 'test-user-2' }, user: user2Object, checkAuthorisation: true })
+    expect(orgs.data.length > 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('invites a user to join an organisation', () => {
+  it('invites a user to join an organisation', async () => {
     const sponsor = { id: user2Object._id, organisationId: user2Object.organisations[0]._id, roleGranted: 'member' }
-    return userService.create({ email: 'test-3@test.org', name: 'test-user-3', sponsor: sponsor }, { checkAuthorisation: true })
-      .then(user => {
-        user3Object = user
-        expect(user3Object.organisations).toExist()
-        // By default the user manage its own organisation
-        expect(user3Object.organisations[0].permissions).to.deep.equal('member')
-      })
+    user3Object = await userService.create({ email: 'test-3@test.org', name: 'test-user-3', sponsor: sponsor }, { checkAuthorisation: true })
+    expect(user3Object.organisations).toExist()
+    // By default the user manage its own organisation
+    expect(user3Object.organisations[0].permissions).to.deep.equal('member')
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('creates an organisation', () => {
-    return orgService.create({ name: 'test-org' }, { user: user1Object, checkAuthorisation: true })
-      .then(org => {
-        return orgService.find({ query: { name: 'test-org' }, user: user1Object, checkAuthorisation: true })
-      })
-      .then(orgs => {
-        expect(orgs.data.length > 0).beTrue()
-        orgObject = orgs.data[0]
-        expect(orgObject.name).to.equal('test-org')
-        // This should create a service for organisation groups
-        orgGroupService = app.getService('groups', orgObject)
-        expect(orgGroupService).toExist()
-        // This should create a service for organisation users
-        orgUserService = app.getService('members', orgObject)
-        expect(orgUserService).toExist()
-        // This should create a service for organisation storage
-        orgStorageService = app.getService('storage', orgObject)
-        expect(orgStorageService).toExist()
-      // We do not test creation of the DB here since MongoDB does not actually
-      // creates it until the first document has been inserted (see next tests)
-      })
+  it('creates an organisation', async () => {
+    await orgService.create({ name: 'test-org' }, { user: user1Object, checkAuthorisation: true })
+    const orgs = await orgService.find({ query: { name: 'test-org' }, user: user1Object, checkAuthorisation: true })
+    expect(orgs.data.length > 0).beTrue()
+    orgObject = orgs.data[0]
+    expect(orgObject.name).to.equal('test-org')
+    // This should create a service for organisation groups
+    orgGroupService = app.getService('groups', orgObject)
+    expect(orgGroupService).toExist()
+    // This should create a service for organisation users
+    orgUserService = app.getService('members', orgObject)
+    expect(orgUserService).toExist()
+    // This should create a service for organisation storage
+    orgStorageService = app.getService('storage', orgObject)
+    expect(orgStorageService).toExist()
+    // We do not test creation of the DB here since MongoDB does not actually
+    // creates it until the first document has been inserted (see next tests)
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('checks the subjects as owner on this organisation', () => {
-    return permissions.findMembersOfOrganisation(userService, orgObject._id, permissions.Roles.owner)
-      .then(members => {
-        expect(members.data.length === 1).beTrue()
-        expect(members.data[0]._id.toString()).to.deep.equal(user1Object._id.toString())
-      })
+  it('checks the subjects as owner on this organisation', async () => {
+    const members = await permissions.findMembersOfOrganisation(userService, orgObject._id, permissions.Roles.owner)
+    expect(members.data.length === 1).beTrue()
+    expect(members.data[0]._id.toString()).to.deep.equal(user1Object._id.toString())
+  })
+  
+
+  it('non-members cannot access organisation users', async () => {
+    let users = await userService.find({ query: { 'profile.name': user2Object.name }, user: user1Object, checkAuthorisation: true })
+    // User is found on the global service
+    expect(users.data.length > 0).beTrue()
+    users = await orgUserService.find({ query: { name: user2Object.name }, user: user1Object, checkAuthorisation: true })
+    // User is not found on the org service while no membership
+    expect(users.data.length === 0).beTrue()
   })
 
-  it('non-members cannot access organisation users', () => {
-    return userService.find({ query: { 'profile.name': user2Object.name }, user: user1Object, checkAuthorisation: true })
-      .then(users => {
-      // User is found on the global service
-        expect(users.data.length > 0).beTrue()
-        return orgUserService.find({ query: { name: user2Object.name }, user: user1Object, checkAuthorisation: true })
+  it('non-members cannot manage organisation permissions', async () => {
+    try {
+      authorisationService.create({
+        scope: 'organisations',
+        permissions: 'member',
+        subjects: user2Object._id.toString(),
+        subjectsService: 'users',
+        resource: orgObject._id.toString(),
+        resourcesService: 'organisations'
+      }, {
+        user: user2Object,
+        checkAuthorisation: true
       })
-      .then(users => {
-      // User is not found on the org service while no membership
-        expect(users.data.length === 0).beTrue()
-      })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
 
-  it('non-members cannot manage organisation permissions', (done) => {
-    authorisationService.create({
-      scope: 'organisations',
-      permissions: 'member',
-      subjects: user2Object._id.toString(),
-      subjectsService: 'users',
-      resource: orgObject._id.toString(),
-      resourcesService: 'organisations'
-    }, {
-      user: user2Object,
-      checkAuthorisation: true
-    })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+  it('non-members cannot access organisation storage', async () => {
+    try {
+      orgStorageService.get('file.txt', { user: user2Object, checkAuthorisation: true })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
 
-  it('non-members cannot access organisation storage', (done) => {
-    orgStorageService.get('file.txt', { user: user2Object, checkAuthorisation: true })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
-  })
-
-  it('owner can add organisation members', () => {
-    return authorisationService.create({
+  it('owner can add organisation members', async () => {
+    const authorisation = await authorisationService.create({
       scope: 'organisations',
       permissions: 'member',
       subjects: user2Object._id.toString(),
@@ -262,52 +240,46 @@ describe('team', () => {
       user: user1Object,
       checkAuthorisation: true
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        user2Object = users.data[0]
-        expect(user2Object.organisations[1].permissions).to.deep.equal('member')
-      })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    expect(users.data.length > 0).beTrue()
+    user2Object = users.data[0]
+    expect(user2Object.organisations[1].permissions).to.deep.equal('member')
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('members can access organisation users', () => {
-    return orgUserService.find({ query: { 'profile.name': user1Object.name }, user: user2Object, checkAuthorisation: true })
-      .then(users => {
-      // Found now on the org with membership
-        expect(users.data.length > 0).beTrue()
-      })
+  it('members can access organisation users', async () => {
+    const users = await orgUserService.find({ query: { 'profile.name': user1Object.name }, user: user2Object, checkAuthorisation: true })
+    // Found now on the org with membership
+    expect(users.data.length > 0).beTrue()
   })
 
-  it('members cannot create an organisation group', (done) => {
-    orgGroupService.create({ name: 'test-group' }, { user: user2Object, checkAuthorisation: true })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+  it('members cannot create an organisation group', async () => {
+    try {
+      orgGroupService.create({ name: 'test-group' }, { user: user2Object, checkAuthorisation: true })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('members can access organisation storage', () => {
-    return orgStorageService.create({
+  it('members can access organisation storage', async () => {
+    await orgStorageService.create({
       id: 'file.txt', uri: getBase64DataURI(Buffer.from('some buffered data'), 'text/plain')
     }, {
       user: user2Object, checkAuthorisation: true
     })
-      .then(_ => orgStorageService.get('file.txt', { user: user2Object, checkAuthorisation: true }))
-      .then(_ => orgStorageService.remove('file.txt', { user: user2Object, checkAuthorisation: true }))
+    await orgStorageService.get('file.txt', { user: user2Object, checkAuthorisation: true })
+    await orgStorageService.remove('file.txt', { user: user2Object, checkAuthorisation: true })
   })
   // Let enough time to process
     .timeout(10000)
 
-  it('owner can add organisation managers', () => {
-    return authorisationService.create({
+  it('owner can add organisation managers', async () => {
+    const authorisation = await authorisationService.create({
       scope: 'organisations',
       permissions: 'manager',
       subjects: user2Object._id.toString(),
@@ -317,77 +289,44 @@ describe('team', () => {
     }, {
       user: user1Object, checkAuthorisation: true
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        user2Object = users.data[0]
-        expect(user2Object.organisations[1].permissions).to.deep.equal('manager')
-      })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    expect(users.data.length > 0).beTrue()
+    user2Object = users.data[0]
+    expect(user2Object.organisations[1].permissions).to.deep.equal('manager')
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('manager can create an organisation group', () => {
-    return orgGroupService.create({ name: 'test-group' }, { user: user2Object, checkAuthorisation: true })
-      .then(() => {
-        return orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
-      })
-      .then(groups => {
-        expect(groups.data.length > 0).beTrue()
-        groupObject = groups.data[0]
-        expect(groupObject.name).to.equal('test-group')
-        // Now we have added some documents this should have created DB for organisation
-        return adminDb.listDatabases()
-      })
-      .then(dbs => {
-        expect(dbs.databases.find(db => db.name === orgObject._id.toString())).toExist()
-        return permissions.findMembersOfGroup(userService, groupObject._id, permissions.Roles.owner)
-      })
-      .then(members => {
-        expect(members.data.length === 1).beTrue()
-        expect(members.data[0]._id.toString()).to.deep.equal(user2Object._id.toString())
-      })
+  it('manager can create an organisation group', async () => {
+    await orgGroupService.create({ name: 'test-group' }, { user: user2Object, checkAuthorisation: true })
+    const groups = await orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
+    expect(groups.data.length > 0).beTrue()
+    groupObject = groups.data[0]
+    expect(groupObject.name).to.equal('test-group')
+    // Now we have added some documents this should have created DB for organisation
+    const dbs = await adminDb.listDatabases()
+    expect(dbs.databases.find(db => db.name === orgObject._id.toString())).toExist()
+    const members = await permissions.findMembersOfGroup(userService, groupObject._id, permissions.Roles.owner)
+    expect(members.data.length === 1).beTrue()
+    expect(members.data[0]._id.toString()).to.deep.equal(user2Object._id.toString())
   })
   // Let enough time to process
     .timeout(10000)
 
-  it('group owner can update an organisation group', () => {
-    return orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
-      { user: user2Object, checkAuthorisation: true })
-      .then(() => {
-        return orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
-      })
-      .then(groups => {
-        expect(groups.data.length > 0).beTrue()
-        groupObject = groups.data[0]
-        expect(groupObject.description).to.equal('test-description')
-        return userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        // Should also update group in members authorisations
-        expect(users.data.length > 0).beTrue()
-        user2Object = users.data[0]
-        expect(user2Object.groups[0].description).to.equal('test-description')
-      })
-  })
-  // Let enough time to process
-    .timeout(10000)
-
-  it('non-group owner cannot update the group', (done) => {
-    orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
+  it('non-group owner cannot update the group', async () => {
+    try {
+      orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
       { user: user1Object, checkAuthorisation: true })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
 
-  it('non-group owner cannot add members to the group', (done) => {
-    authorisationService.create({
+  it('non-group owner cannot add members to the group', async () => {
+    try {
+      authorisationService.create({
       scope: 'groups',
       permissions: 'member',
       subjects: user1Object._id.toString(),
@@ -398,15 +337,14 @@ describe('team', () => {
       user: user1Object,
       checkAuthorisation: true
     })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
 
-  it('group owner can add members to his group', () => {
-    return authorisationService.create({
+  it('group owner can add members to his group', async () => {
+    const authorisation = await authorisationService.create({
       scope: 'groups',
       permissions: 'member',
       subjects: user1Object._id.toString(),
@@ -417,22 +355,38 @@ describe('team', () => {
       user: user2Object,
       checkAuthorisation: true
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user2Object })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        user1Object = users.data[0]
-        expect(user1Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
-        expect(user1Object.groups[0].permissions).to.equal('member')
-      })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user2Object })
+    expect(users.data.length > 0).beTrue()
+    user1Object = users.data[0]
+    expect(user1Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
+    expect(user1Object.groups[0].permissions).to.equal('member')
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner cannot be changed to manager when alone', (done) => {
-    authorisationService.create({
+  it('group owner can update an organisation group', async () => {
+    return orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
+      { user: user2Object, checkAuthorisation: true })
+    const groups = await orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
+    expect(groups.data.length > 0).beTrue()
+    groupObject = groups.data[0]
+    expect(groupObject.description).to.equal('test-description')
+    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    // Should also update group in members authorisations
+    expect(users.data.length > 0).beTrue()
+    user2Object = users.data[0]
+    expect(user2Object.groups[0].description).to.equal('test-description')
+    await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user1Object })
+    user1Object = users.data[0]
+    expect(user1Object.groups[0].description).to.equal('test-description')
+  })
+  // Let enough time to process
+    .timeout(10000)
+
+  it('group owner cannot be changed to manager when alone', async () => {
+    try {
+      authorisationService.create({
       scope: 'groups',
       permissions: 'manager',
       subjects: user2Object._id.toString(),
@@ -443,17 +397,17 @@ describe('team', () => {
       user: user2Object,
       checkAuthorisation: true
     })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner cannot be removed when alone', (done) => {
-    authorisationService.remove(groupObject._id, {
+  it('group owner cannot be removed when alone', async () => {
+    try {
+      authorisationService.remove(groupObject._id, {
       query: {
         scope: 'groups',
         subjects: user2Object._id.toString(),
@@ -463,17 +417,16 @@ describe('team', () => {
       user: user2Object,
       checkAuthorisation: true
     })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner can add owners to his group', () => {
-    return authorisationService.create({
+  it('group owner can add owners to his group', async () => {
+    const authorisation = await authorisationService.create({
       scope: 'groups',
       permissions: 'owner',
       subjects: user1Object._id.toString(),
@@ -484,22 +437,18 @@ describe('team', () => {
       user: user2Object,
       checkAuthorisation: true
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user2Object })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        user1Object = users.data[0]
-        expect(user1Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
-        expect(user1Object.groups[0].permissions).to.equal('owner')
-      })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user2Object })
+    expect(users.data.length > 0).beTrue()
+    user1Object = users.data[0]
+    expect(user1Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
+    expect(user1Object.groups[0].permissions).to.equal('owner')
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner can remove group members', () => {
-    return authorisationService.remove(groupObject._id, {
+  it('group owner can remove group members', async () => {
+    const authorisation = await authorisationService.remove(groupObject._id, {
       query: {
         scope: 'groups',
         subjects: user2Object._id.toString(),
@@ -509,74 +458,62 @@ describe('team', () => {
       user: user1Object,
       checkAuthorisation: true
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        expect(users.data.length === 1).beTrue()
-        user2Object = users.data[0]
-        // No more permission set for org groups
-        expect(_.find(user2Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
-      })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    expect(users.data.length === 1).beTrue()
+    user2Object = users.data[0]
+    // No more permission set for org groups
+    expect(_.find(user2Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner can remove his organisation group', () => {
-    return orgGroupService.remove(groupObject._id, { user: user1Object, checkAuthorisation: true })
-      .then(() => {
-        return orgGroupService.find({ query: { name: groupObject.name }, user: user1Object, checkAuthorisation: true })
-      })
-      .then(groups => {
-        expect(groups.data.length === 0).beTrue()
-        return userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        user1Object = users.data[0]
-        // No more permission set for org groups
-        expect(_.find(user1Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
-      })
+  it('group owner can remove his organisation group', async () => {
+    // Ensure we only patch relevent users when updating authorisations
+    const updatedUsersCheck = (user) => {
+      expect(user.name).equal(user1Object.name)
+    }
+    userService.on('patched', updatedUsersCheck)
+    await orgGroupService.remove(groupObject._id, { user: user1Object, checkAuthorisation: true })
+    userService.removeListener('patched', updatedUsersCheck)
+    const groups = await orgGroupService.find({ query: { name: groupObject.name }, user: user1Object, checkAuthorisation: true })
+    expect(groups.data.length === 0).beTrue()
+    const users = await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user1Object })
+    expect(users.data.length > 0).beTrue()
+    user1Object = users.data[0]
+    // No more permission set for org groups
+    expect(_.find(user1Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('restore organisation group to prepare testing org cleanup', () => {
-    return orgGroupService.create({ name: 'test-group' }, { user: user1Object, checkAuthorisation: true })
-      .then(() => {
-        return orgGroupService.find({ query: { name: 'test-group' }, user: user1Object, checkAuthorisation: true })
-      })
-      .then(groups => {
-        expect(groups.data.length > 0).beTrue()
-        groupObject = groups.data[0]
-        return authorisationService.create({
-          scope: 'groups',
-          permissions: 'member',
-          subjects: user2Object._id.toString(),
-          subjectsService: 'users',
-          resource: groupObject._id.toString(),
-          resourcesService: orgObject._id.toString() + '/groups'
-        }, {
-          user: user1Object,
-          checkAuthorisation: true
-        })
-      })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        user2Object = users.data[0]
-        expect(user2Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
-        expect(user2Object.groups[0].permissions).to.equal('member')
-      })
+  it('restore organisation group to prepare testing org cleanup', async () => {
+    await orgGroupService.create({ name: 'test-group' }, { user: user1Object, checkAuthorisation: true })
+    const groups = await orgGroupService.find({ query: { name: 'test-group' }, user: user1Object, checkAuthorisation: true })
+    expect(groups.data.length > 0).beTrue()
+    groupObject = groups.data[0]
+    const authorisation = await authorisationService.create({
+      scope: 'groups',
+      permissions: 'member',
+      subjects: user2Object._id.toString(),
+      subjectsService: 'users',
+      resource: groupObject._id.toString(),
+      resourcesService: orgObject._id.toString() + '/groups'
+    }, {
+      user: user1Object,
+      checkAuthorisation: true
+    })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    user2Object = users.data[0]
+    expect(user2Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
+    expect(user2Object.groups[0].permissions).to.equal('member')
   })
   // Let enough time to process
     .timeout(10000)
 
-  it('owner can remove organisation members', () => {
-    return authorisationService.remove(orgObject._id, {
+  it('owner can remove organisation members', async () => {
+    const authorisation = await authorisationService.remove(orgObject._id, {
       query: {
         scope: 'organisations',
         subjects: user2Object._id.toString(),
@@ -586,127 +523,81 @@ describe('team', () => {
       user: user1Object,
       checkAuthorisation: true
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        user2Object = users.data[0]
-        // No more permission set for org groups
-        expect(_.find(user2Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
-        // No more permission set for org
-        expect(_.find(user2Object.organisations, org => org._id.toString() === orgObject._id.toString())).beUndefined()
-        // Only private org remains
-        expect(_.find(user2Object.organisations, org => org._id.toString() === user2Object._id.toString())).toExist()
-      })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    user2Object = users.data[0]
+    // No more permission set for org groups
+    expect(_.find(user2Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
+    // No more permission set for org
+    expect(_.find(user2Object.organisations, org => org._id.toString() === orgObject._id.toString())).beUndefined()
+    // Only private org remains
+    expect(_.find(user2Object.organisations, org => org._id.toString() === user2Object._id.toString())).toExist()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('owner can remove organisation', () => {
-    return orgGroupService.remove(groupObject._id, { user: user1Object, checkAuthorisation: true })
-      .then(() => {
-        return userService.get(user1Object._id)
-      })
-      .then(user => {
-        user1Object = user
-        return orgService.remove(orgObject._id, { user: user1Object, checkAuthorisation: true })
-      })
-      .then(() => {
-        return orgService.find({ query: { name: 'test-org' }, user: user1Object, checkAuthorisation: true })
-      })
-      .then(orgs => {
-        expect(orgs.data.length === 0).beTrue()
-        return userService.find({ query: {}, checkAuthorisation: true, user: user1Object })
-      })
-      .then(users => {
-        expect(users.data.length === 3).beTrue()
-        user1Object = users.data[0]
-        // No more permission set for org groups
-        expect(_.find(user1Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
-        // No more permission set for org
-        expect(_.find(user1Object.organisations, org => org._id.toString() === orgObject._id.toString())).beUndefined()
-        // Should remove associated DB
-        return adminDb.listDatabases()
-      })
-      .then(dbs => {
-        expect(dbs.databases.find(db => db.name === orgObject._id.toString())).beUndefined()
-      })
+  it('owner can remove organisation', async () => {
+    await orgGroupService.remove(groupObject._id, { user: user1Object, checkAuthorisation: true })
+    const user = await userService.get(user1Object._id)
+    user1Object = user
+    await orgService.remove(orgObject._id, { user: user1Object, checkAuthorisation: true })
+    const orgs = await orgService.find({ query: { name: 'test-org' }, user: user1Object, checkAuthorisation: true })
+    expect(orgs.data.length === 0).beTrue()
+    const users = await userService.find({ query: {}, checkAuthorisation: true, user: user1Object })
+    expect(users.data.length === 3).beTrue()
+    user1Object = users.data[0]
+    // No more permission set for org groups
+    expect(_.find(user1Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
+    // No more permission set for org
+    expect(_.find(user1Object.organisations, org => org._id.toString() === orgObject._id.toString())).beUndefined()
+    // Should remove associated DB
+    const dbs = await adminDb.listDatabases()
+    expect(dbs.databases.find(db => db.name === orgObject._id.toString())).beUndefined()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('removes joined user', () => {
-    return orgService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
-      .then(orgs => {
-        expect(orgs.data.length > 0).beTrue()
-        joinedOrgUserService = app.getService('members', orgs.data[0])
-        return userService.remove(user3Object._id, { user: user3Object, checkAuthorisation: true })
-      })
-      .then(user => {
-        return userService.find({ query: { name: user3Object.name }, user: user3Object, checkAuthorisation: true })
-      })
-      .then(users => {
-        expect(users.data.length === 0).beTrue()
-        return joinedOrgUserService.find({ query: { name: user3Object.name }, user: user2Object, checkAuthorisation: true })
-      })
-      .then(users => {
+  it('removes joined user', async () => {
+    const orgs = await orgService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
+      expect(orgs.data.length > 0).beTrue()
+      joinedOrgUserService = app.getService('members', orgs.data[0])
+      const user = await userService.remove(user3Object._id, { user: user3Object, checkAuthorisation: true })
+      let users = await userService.find({ query: { name: user3Object.name }, user: user3Object, checkAuthorisation: true })
+      expect(users.data.length === 0).beTrue()
+      users = await joinedOrgUserService.find({ query: { name: user3Object.name }, user: user2Object, checkAuthorisation: true })
       // User is not found on the joined org service
-        expect(users.data.length === 0).beTrue()
-      })
+      expect(users.data.length === 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('prevent remove user while owning organisation', (done) => {
-    userService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('Forbidden')
-        done()
-      })
+  it('prevent remove user while owning organisation', async () => {
+    try {
+      userService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('remove private users private organisations before deletion', () => {
-    return orgService.remove(user1Object._id, { user: user1Object, checkAuthorisation: true })
-      .then(() => {
-        return userService.get(user1Object._id)
-      })
-      .then(user => {
-        user1Object = user
-      })
-      .then(() => {
-        return orgService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
-      })
-      .then(() => {
-        return userService.get(user2Object._id)
-      })
-      .then(user => {
-        user2Object = user
-      })
+  it('remove private users private organisations before deletion', async () => {
+    await orgService.remove(user1Object._id, { user: user1Object, checkAuthorisation: true })
+    user1Object = await userService.get(user1Object._id)
+    await orgService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
+    user2Object = await userService.get(user2Object._id)
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('remove users', () => {
-    return userService.remove(user1Object._id, { user: user1Object, checkAuthorisation: true })
-      .then(() => {
-        return userService.find({ query: { name: user1Object.name }, user: user1Object, checkAuthorisation: true })
-      })
-      .then(users => {
-        expect(users.data.length === 0).beTrue()
-      })
-      .then(() => {
-        return userService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
-      })
-      .then(() => {
-        return userService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
-      })
-      .then(users => {
-        expect(users.data.length === 0).beTrue()
-      })
+  it('remove users', async () => {
+    await userService.remove(user1Object._id, { user: user1Object, checkAuthorisation: true })
+    let users = await userService.find({ query: { name: user1Object.name }, user: user1Object, checkAuthorisation: true })
+    expect(users.data.length === 0).beTrue()
+    await userService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
+    users = await userService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
+    expect(users.data.length === 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)

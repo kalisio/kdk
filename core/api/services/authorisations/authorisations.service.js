@@ -17,7 +17,7 @@ export default {
     const context = params.resourcesService.context
     // Make hook usable with query params as well
     const scopeName = data.scope || query.scope // Get scope name first
-    return Promise.all(params.subjects.map(subject => {
+    return Promise.all(params.subjects.map(async subject => {
       // Then retrieve the right scope on the subject
       const scope = _.get(subject, scopeName, [])
       // Then the target resource
@@ -37,16 +37,14 @@ export default {
       // so that if the caller want to get back the update subject he can have it
       _.set(subject, scopeName, scope)
       debug('Updating scope ' + scopeName + ' for subject ' + subject._id + ' on resource ' + params.resource._id + ':', scope)
-      return params.subjectsService.patch(subject._id, {
+      subject = await params.subjectsService.patch(subject._id, {
         [scopeName]: scope
       }, {
         user: params.user
       })
-        .then(subject => {
-          this.updateAbilities(subject)
-          debug('Authorisation ' + data.permissions + ' set for subject ' + subject._id + ' on resource ' + params.resource._id + ' with scope ' + scopeName)
-          return subject
-        })
+      this.updateAbilities(subject)
+      debug('Authorisation ' + data.permissions + ' set for subject ' + subject._id + ' on resource ' + params.resource._id + ' with scope ' + scopeName)
+      return subject
     }))
   },
 
@@ -56,30 +54,29 @@ export default {
   remove (id, params) {
     const query = params.query
     const scopeName = query.scope // Get scope name first
-    return Promise.all(params.subjects.map(subject => {
+    return Promise.all(params.subjects.map(async subject => {
       // Then retrieve the right scope on the subject
       let scope = _.get(subject, scopeName, [])
-      // Then the target resource
-      scope = scope.filter(resource => resource._id && (resource._id.toString() !== id.toString()))
-      // This cover the case when we create the scope on the first auth,
-      // so that if the caller want to get back the update subject he can have it
-      _.set(subject, scopeName, scope)
-      // Skip patching if the subject is currently deleted
-      if (!subject.deleted) {
-        debug('Updating scope ' + scopeName + ' for subject ' + subject._id + ' on resource ' + id + ':', scope)
-        return params.subjectsService.patch(subject._id, {
-          [scopeName]: scope
-        }, {
-          user: params.user
-        })
-          .then(subject => {
-            this.updateAbilities(subject)
-            debug('Authorisation unset for subject ' + subject._id + ' on resource ' + id + ' with scope ' + scopeName)
-            return subject
+      // Remove the target resource if any
+      const resources = _.remove(scope, resource => resource._id && (resource._id.toString() === id.toString()))
+      if (resources.length > 0) {
+        // This cover the case when we create the scope on the first auth,
+        // so that if the caller want to get back the update subject he can have it
+        _.set(subject, scopeName, scope)
+        // Skip patching if the subject is currently deleted
+        if (!subject.deleted) {
+          debug('Updating scope ' + scopeName + ' for subject ' + subject._id + ' on resource ' + id + ':', scope)
+          subject = await params.subjectsService.patch(subject._id, {
+            [scopeName]: scope
+          }, {
+            user: params.user
           })
-      } else {
-        return Promise.resolve(subject)
+          this.updateAbilities(subject)
+          debug('Authorisation unset for subject ' + subject._id + ' on resource ' + id + ' with scope ' + scopeName)
+          return subject
+        }
       }
+      return subject
     }))
   },
 
