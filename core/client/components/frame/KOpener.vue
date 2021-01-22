@@ -1,6 +1,6 @@
 <template>
   <div
-    :id="'opener-' + position"
+    :id="position + '-opener'"
     class="row justify-center items-center"
     v-bind:class="{
       'k-opener-left': position === 'left',

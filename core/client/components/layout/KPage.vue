@@ -10,24 +10,24 @@
       Managed stickies
      -->
     <q-page-sticky position="top">
-      <div v-if="topPane.content" class="column items-center">
-        <k-panel id="top-pane" v-if="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
+      <div id="top-pane" v-show="topPane.content" class="column items-center">
+        <k-panel id="top-panel" v-if="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
         <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window id="window" ref="window" />
     </q-page-sticky>
-    <q-page-sticky v-if="hasLeftDrawerOpener && hasLeftDrawerComponent" position="left">
+    <q-page-sticky v-if="hasLeftDrawerOpener && leftDrawer.content" position="left">
       <k-opener v-model="isLeftDrawerOpened" position="left"  />
     </q-page-sticky>
-    <q-page-sticky v-if="hasRightDrawerOpener && hasRightDrawerComponent" position="right">
+    <q-page-sticky v-if="hasRightDrawerOpener && rightDrawer.content" position="right">
       <k-opener v-model="isRightDrawerOpened" position="right" />
     </q-page-sticky>
     <q-page-sticky position="bottom">
-      <div v-if="bottomPane.content" class="column items-center">
+      <div id="bottom-pane" v-show="bottomPane.content" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
-        <k-panel id="bottom-pane" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
+        <k-panel id="bottom-panel" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
       </div>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
@@ -37,6 +37,9 @@
 </template>
 
 <script>
+import { dom } from 'quasar'
+const { height } = dom
+
 export default {
   name: 'k-page',
   props: {
@@ -49,8 +52,15 @@ export default {
     contentStyle () {
       let style = ''
       if (this.padding) {
-        if (this.topPane.content && this.topPane.visible) style = 'padding-top: 50px' // TODO
-        if (this.bottomPane.content && this.bottomPane.visible) style = 'padding-bottom: 50px' // TODO
+        // TODO compute the height to apply to the padding
+        if (this.topPane.content && this.topPane.visible) {
+          const topPane = document.getElementById('top-pane')
+          if (topPane) style = `padding-top: ${height(topPane)}px`
+        }
+        if (this.bottomPane.content && this.bottomPane.visible) {
+          const bottomPane = document.getElementById('bottom-pane')
+          if (bottomPane) style += `padding-bottom: ${height(bottomPane)}px`
+        }
       }
       return style
     },
@@ -78,9 +88,6 @@ export default {
         this.$store.patch('leftDrawer', { visible: value })
       }
     },
-    hasLeftDrawerComponent () {
-      return !!this.leftDrawer.component
-    },
     isRightDrawerOpened: {
       get: function () {
         return this.rightDrawer.visible
@@ -88,9 +95,6 @@ export default {
       set: function (value) {
         this.$store.patch('rightDrawer', { visible: value })
       }
-    },
-    hasRightDrawerComponent () {
-      return !!this.rightDrawer.component
     }
   },
   data () {
@@ -103,6 +107,8 @@ export default {
       hasBottomPaneOpener: false,
       hasLeftDrawerOpener: false,
       hasRightDrawerOpener: false,
+      topPadding: 0,
+      bottomPadding: 0,
       widgetOffset: [0, 0],
       fabOffset: [16, 16]
     }

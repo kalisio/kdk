@@ -2,7 +2,7 @@
   <div :id="id"
     v-bind:class="{
       'row justify-center': direction === 'horizontal',
-      'column items-stretch content-stretch': direction === 'vertical'
+      'column': direction === 'vertical'
     }"
   >
     <template v-for="component in components">
@@ -12,7 +12,7 @@
         :disabled="component.status ? component.status() === 'disabled' : false"
         :is="component.componentKey"
         v-bind="component"
-        :renderer="actionRenderer"
+        :renderer="component.renderer ? component.renderer: actionRenderer"
         :style="component.style" />
     </template>
   </div>
@@ -82,7 +82,7 @@ export default {
           const componentName = _.get(component, 'component', 'frame/KAction')
           const componentKey = _.kebabCase(path.basename(componentName))
           // Load the component if needed
-          if ((componentKey[0] === 'k') && (!this.$options.components[componentKey])) this.$options.components[componentKey] = this.$load(componentName)
+          if ((componentKey[0] !== 'q') && (!this.$options.components[componentKey])) this.$options.components[componentKey] = this.$load(componentName)
           // Clone the component and add the required props
           let clone = _.clone(component)
           clone.componentKey = componentKey

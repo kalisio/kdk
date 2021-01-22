@@ -1,22 +1,28 @@
 <template>
-  <q-layout ref="layout" v-bind="config">
+  <q-layout v-bind="config">
+    <!--
+      Header
+     -->
+    <q-header v-if="header.content" v-model="isHeaderVisible" v-bind="config.header" bordered>
+      <k-panel id="header" :content="header.content" :mode="header.mode" />
+    </q-header>    
     <!--
       Left drawer
     -->
-    <q-drawer v-if="leftDrawerComponent" v-model="isLeftDrawerVisible" v-bind="config.leftDrawer" side="left" bordered>
-      <component :is="leftDrawerComponent" v-bind="leftDrawer.props" />
+    <q-drawer v-if="leftDrawer.content" v-model="isLeftDrawerVisible" v-bind="config.leftDrawer" side="left" bordered>
+      <k-panel id="left-drawer" :content="leftDrawer.content" :mode="leftDrawer.mode" direction="vertical" />
     </q-drawer>
      <!--
       Right drawer
      -->
-    <q-drawer v-if="rightDrawerComponent" v-model="isRightDrawerVisible" v-bind="config.rightDrawer" side="right" bordered>
-      <component :is="rightDrawerComponent" v-bind="rightDrawer.props" />
+    <q-drawer v-if="rightDrawer.content" v-model="isRightDrawerVisible" v-bind="config.rightDrawer" side="right" bordered>
+      <k-panel id="right-drawer" :content="rightDrawer.content" :mode="rightDrawer.mode" direction="vertical" />
     </q-drawer>
-     <!--
+    <!--
       Footer
      -->
-    <q-footer v-if="footerComponent" v-model="isFooterVisible" v-bind="config.footer" bordered>
-      <component :is="footerComponent" v-bind="footer.props" />
+    <q-footer v-if="footer.content" v-model="isFooterVisible" v-bind="config.footer" bordered>
+      <k-panel id="footer" :content="footer.content" :mode="footer.mode" />
     </q-footer>
     <!--
       Page container
@@ -33,6 +39,14 @@ import _ from 'lodash'
 export default {
   name: 'k-layout',
   computed: {
+    isHeaderVisible: {
+      get: function () {
+        return this.header.visible
+      },
+      set: function (value) {
+        this.$store.patch('header', { visible: value })
+      }
+    },
     isLeftDrawerVisible: {
       get: function () {
         return this.leftDrawer.visible
@@ -40,12 +54,6 @@ export default {
       set: function (value) {
         this.$store.patch('leftDrawer', { visible: value })
       }
-    },
-    leftDrawerComponent () {
-      if (!this.leftDrawer || !this.leftDrawer.component) return null
-      const componentKey = _.kebabCase(this.leftDrawer.component)
-      this.$options.components[componentKey] = this.$load(this.leftDrawer.component)
-      return componentKey
     },
     isRightDrawerVisible: {
       get: function () {
@@ -55,12 +63,6 @@ export default {
         this.$store.patch('rightDrawer', { visible: value })
       }
     },
-    rightDrawerComponent () {
-      if (!this.rightDrawer || !this.rightDrawer.component) return null
-      const componentKey = _.kebabCase(this.rightDrawer.component)
-      this.$options.components[componentKey] = this.$load(this.rightDrawer.component)
-      return componentKey
-    },
     isFooterVisible: {
       get: function () {
         return this.footer.visible
@@ -68,16 +70,11 @@ export default {
       set: function (value) {
         this.$store.patch('footer', { visible: value })
       }
-    },
-    footerComponent () {
-      if (!this.footer || !this.footer.component) return null
-      const componentKey = _.kebabCase(this.footer.component)
-      this.$options.components[componentKey] = this.$load(this.footer.component)
-      return componentKey
     }
   },
   data () {
     return {
+      header: this.$store.get('header'),
       leftDrawer: this.$store.get('leftDrawer'),
       rightDrawer: this.$store.get('rightDrawer'),
       footer: this.$store.get('footer'),
@@ -85,24 +82,29 @@ export default {
     }
   },
   created () {
+    // Load the required component
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Load the options from the configuration
     this.config = this.$config('layout')
-    // Setup the left drawer using the configuration
+    this.$store.patch('header', {
+      content: _.get(this.config, 'header.content', null),
+      mode: _.get(this.config, 'header.mode', undefined),
+      visible: _.get(this.config, 'header.visible', false)
+    })
     this.$store.patch('leftDrawer', {
-      component: _.get(this.config, 'leftDrawer.component.name', null),
-      props: _.get(this.config, 'leftDrawer.component.props', {}),
+      content: _.get(this.config, 'leftDrawer.content', null),
+      mode: _.get(this.config, 'leftDrawer.mode', undefined),
       visible: _.get(this.config, 'leftDrawer.visible', false)
     })
-    // Setup the right drawer using the configuration
     this.$store.patch('rightDrawer', {
-      component: _.get(this.config, 'rightDrawer.component.name', null),
-      props: _.get(this.config, 'rightDrawer.component.props', {}),
+      content: _.get(this.config, 'rightDrawer.content', null),
+      mode: _.get(this.config, 'rightDrawer.mode', undefined),
       visible: _.get(this.config, 'rightDrawer.visible', false)
     })
     // Setup the footer using the configuration
     this.$store.patch('footer', {
-      component: _.get(this.config, 'footer.component.name', null),
-      props: _.get(this.config, 'footer.component.props', {}),
+      content: _.get(this.config, 'footer.content', null),
+      mode: _.get(this.config, 'footer.mode', {}),
       visible: _.get(this.config, 'footer.visible', false)
     })
   }
