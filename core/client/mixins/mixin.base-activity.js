@@ -15,32 +15,40 @@ const baseActivityMixin = {
     },
     setTopPaneMode (mode) {
       const content = this.$store.get('topPane.content')
-      this.$store.patch('topPane', { content: content, mode: mode })
+      this.$store.patch('topPane', { content, mode })
     },
     clearTopPane () {
-      this.$store.patch('topPane', { content: null, mode: '' })
+      this.$store.patch('topPane', { content: null, mode: undefined })
     },
     setBottomPane (content, mode = undefined) {
       this.$store.patch('bottomPane', { content: this.standardizeActions(content), mode: mode })
     },
     setBottomPaneMode (mode) {
       const content = this.$store.get('bottomPane.content')
-      this.$store.patch('bottomPane', { content: content, mode: mode })
+      this.$store.patch('bottomPane', { content, mode })
     },
     clearBottomPane () {
-      this.$store.patch('bottomPane', { content: null, mode: '' })
+      this.$store.patch('bottomPane', { content: null, mode: undefined })
     },
-    setLeftDrawer (component, props) {
-      this.$store.patch('leftDrawer', { component, props })
+    setLeftDrawer (content, mode = undefined) {
+      this.$store.patch('leftDrawer', { content: this.standardizeActions(content), mode: mode })
+    },
+    setLeftDrawerMode (mode) {
+      const content = this.$store.get('leftDrawer.content')
+      this.$store.patch('leftDrawer', { content, mode })
     },
     clearLeftDrawer () {
-      this.$store.patch('leftDrawer', { component: '', props: {} })
+      this.$store.patch('leftDrawer', { content: null, mode: undefined })
     },
-    setRightDrawer (component, props) {
-      this.$store.patch('rightDrawer', { component, props })
+    setRightDrawer (content, mode = undefined) {
+      this.$store.patch('rightDrawer', { content: this.standardizeActions(content), mode: mode })
+    },
+    setRightDrawerMode (mode) {
+      const content = this.$store.get('rightDrawer.content')
+      this.$store.patch('rightDrawer', { content, mode })
     },
     clearRightDrawer () {
-      this.$store.patch('rightDrawer', { component: '', props: {} })
+      this.$store.patch('rightDrawer', { content: null, mode: 'undefined' })
     },
     registerFabAction (action) {
       this.registerAction('fab', action)
