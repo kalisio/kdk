@@ -11,7 +11,10 @@
      -->
     <q-page-sticky position="top">
       <div id="top-pane" v-show="topPane.content" class="column items-center">
-        <k-panel id="top-panel" v-if="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
+        <div>
+          <k-panel id="top-panel" v-if="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
+        </div>
         <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
@@ -27,7 +30,10 @@
     <q-page-sticky position="bottom">
       <div id="bottom-pane" v-show="bottomPane.content" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
-        <k-panel id="bottom-panel" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
+        <div>
+          <k-panel id="bottom-panel" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
+        </div>
       </div>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="fabOffset">
@@ -37,9 +43,6 @@
 </template>
 
 <script>
-import { dom } from 'quasar'
-const { height } = dom
-
 export default {
   name: 'k-page',
   props: {
@@ -50,19 +53,7 @@ export default {
   },
   computed: {
     contentStyle () {
-      let style = ''
-      if (this.padding) {
-        // TODO compute the height to apply to the padding
-        if (this.topPane.content && this.topPane.visible) {
-          const topPane = document.getElementById('top-pane')
-          if (topPane) style = `padding-top: ${height(topPane)}px`
-        }
-        if (this.bottomPane.content && this.bottomPane.visible) {
-          const bottomPane = document.getElementById('bottom-pane')
-          if (bottomPane) style += `padding-bottom: ${height(bottomPane)}px`
-        }
-      }
-      return style
+      return `padding-top: ${this.topPadding}px; padding-bottom: ${this.bottomPadding}px`
     },
     isTopPaneOpened: {
       get: function () {
@@ -111,6 +102,14 @@ export default {
       bottomPadding: 0,
       widgetOffset: [0, 0],
       fabOffset: [16, 16]
+    }
+  },
+  methods: {
+    onTopPaneResized (size) {
+      this.topPadding = size.height
+    },
+    onBottomPaneResized (size) {
+      this.bottomPadding = size.height
     }
   },
   created () {

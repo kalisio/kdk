@@ -5,7 +5,7 @@
      -->
     <q-header v-if="header.content" v-model="isHeaderVisible" v-bind="config.header" bordered>
       <k-panel id="header" :content="header.content" :mode="header.mode" />
-    </q-header>    
+    </q-header>
     <!--
       Left drawer
     -->

@@ -84,9 +84,9 @@ export default {
           // Load the component if needed
           if ((componentKey[0] !== 'q') && (!this.$options.components[componentKey])) this.$options.components[componentKey] = this.$load(componentName)
           // Clone the component and add the required props
-          let clone = _.clone(component)
+          const clone = _.clone(component)
           clone.componentKey = componentKey
-          clone.uid = uid() 
+          clone.uid = uid()
           _.defaults(clone, this.$props)
           components.push(clone)
         })
