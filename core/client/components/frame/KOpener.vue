@@ -39,7 +39,7 @@ export default {
     },
     color: {
       type: String,
-      default: 'secondary'
+      default: 'primary'
     }
   },
   computed: {
@@ -113,11 +113,11 @@ export default {
 
 <style lang="stylus">
   .k-opener-left, .k-opener-right, .k-opener-top, .k-opener-bottom {
-    opacity: 0.75;
+    opacity: 0.85;
     transition: 0.1s;
   }
   .k-opener-left, .k-opener-right {
-    height: 64px;
+    height: 80px;
     width: 12px;
   }
   .k-opener-top, .k-opener-bottom {

@@ -28,12 +28,13 @@
     Item renderer
    -->
   <q-item v-else-if="renderer === 'item'"
-    :id="id" clickable
+    :id="id" 
+    clickable
     :dense="dense"
     :disabled="disabled"
     @click="onClicked()">
     <q-item-section avatar>
-      <q-icon :dense="dense" :name="icon" />
+      <q-icon :dense="dense" :name="icon" :color="color" />
       <!-- badge -->
       <q-badge v-if="badge" v-bind="badge">
         <q-icon v-if="badge.icon" v-bind="badge.icon" />
@@ -43,6 +44,26 @@
       {{ $t(label) }}
     </q-item-section>
   </q-item>
+   <!--
+    Fab renderer
+   -->
+  <q-fab-action v-else-if="renderer === 'fab'"
+    :id="id"
+    no-caps
+    :icon="icon"
+    :color="isToggled ? 'secondary' : color"
+    :label="$t(label)"
+    external-label
+    label-position="left"
+    :size="size"
+    round
+    :disabled="disabled"
+    @click="onClicked()">
+    <!-- badge -->
+    <q-badge v-if="badge" class="q-py-xs" v-bind="badge">
+      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+    </q-badge>
+  </q-fab-action>
 </template>
 
 <script>
@@ -111,7 +132,7 @@ export default {
       type: String,
       default: 'button',
       validator: (value) => {
-        return ['button', 'item'].includes(value)
+        return ['button', 'item', 'fab'].includes(value)
       }
     }
   },
@@ -122,7 +143,7 @@ export default {
   },
   computed: {
     dense () {
-      return this.$q.screen.lt.md
+      return this.$q.screen.lt.sm
     }
   },
   methods: {
@@ -136,6 +157,7 @@ export default {
       else if (this.route) this.$router.push(this.route).catch(() => {})
       // Otherwise log a comment
       else logger.debug(`Invalid action ${this.id}: you should define an handler or a route`)
+      this.$emit('triggered')
     }
   }
 }

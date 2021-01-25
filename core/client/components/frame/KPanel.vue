@@ -81,8 +81,8 @@ export default {
           // Define the component key
           const componentName = _.get(component, 'component', 'frame/KAction')
           const componentKey = _.kebabCase(path.basename(componentName))
-          // Load the component if needed
-          if ((componentKey[0] !== 'q') && (!this.$options.components[componentKey])) this.$options.components[componentKey] = this.$load(componentName)
+          // Load the component if needed. That is to say, do not load any Quasar component and if it has not already been loaded
+          if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) this.$options.components[componentKey] = this.$load(componentName)
           // Clone the component and add the required props
           const clone = _.clone(component)
           clone.componentKey = componentKey

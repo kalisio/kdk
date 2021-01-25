@@ -3,84 +3,54 @@
     <!--
         Render a modal grid action if more than expandableLimit actions are provided
       -->
-    <div v-if="fab.actions.length > expandableLimit">
-      <k-modal ref="modal" :toolbar="getModalToolbar()" :buttons="getModalButtons()" :options="getModalOptions()" :route="false">
-        <div slot="modal-content">
-          <div class="full-width row q-gutter-xs">
-            <template v-for="action in fab.actions">
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 column items-center q-gutter-sm" align="center" :key="action.id">
-                <q-btn
-                  :id="action.id"
-                  round
-                  :color="getActionColor(action)"
-                  :icon="getActionIcon(action)"
-                  @click="closeModal(action)" />
-                <p>
-                  {{action.label}}
-                </p>
-              </div>
-            </template>
-          </div>
+    <q-fab v-if="actions.length > expandableLimit"
+      id="fab"
+      ref="fab"
+      icon="las la-chevron-up"
+      class="fixed"
+      style="right: 12px; bottom: 12px"
+      direction ="up"
+      color="primary"
+      @click="toggle">
+      <q-menu ref="menu" persistent fit anchor="top left" self="bottom right" content-style="background-color: lightgrey">
+        <div class="q-pa-sm row q-gutter-y-sm" style="max-width: 400px">
+          <template v-for="action in actions">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" :key="action.uid">
+              <k-action v-bind="action" renderer="item" @triggered="toggle" />
+            </div>
+          </template>
         </div>
-      </k-modal>
-      <q-btn
-        id="fab"
-        color="secondary"
-        style="right: 12px; bottom: 12px"
-        size="1.15rem"
-        icon="las la-chevron-up"
-        round
-        @click="openModal()" />
-    </div>
+      </q-menu>
+    </q-fab>
     <!--
       Render an expandable fab if more than one action is provided
      -->
-    <q-fab v-else-if="fab.actions.length > 1"
+    <q-fab v-else-if="actions.length > 1"
       id="fab"
       icon="las la-chevron-up"
       class="fixed"
       style="right: 12px; bottom: 12px"
       direction ="up"
-      color="secondary">
-        <q-fab-action
-          v-for="action in fab.actions"
-          :id="action.id"
-          :key="action.id"
-          :color="getActionColor(action)"
-          :icon="getActionIcon(action)"
-          @click="onActionTriggered(action)">
-          <!-- tooltip -->
-          <q-tooltip v-if="action.label" anchor="center left" self="center right" :offset="[20, 0]">
-            {{action.label}}
-          </q-tooltip>
-          <!-- badge -->
-          <q-badge v-if="action.badge" v-bind="action.badge">
-            <q-icon v-if="action.badge.icon" v-bind="action.badge.icon" />
-          </q-badge>
-        </q-fab-action>
+      color="primary">
+      <div v-if="actions.length <= expandableLimit">
+        <template v-for="action in actions">
+          <k-action :key="action.uid" v-bind="action" renderer="fab" />
+        </template>
+      </div>
     </q-fab>
     <!--
       Render a non expandable fab if a single action is provided
      -->
-    <q-btn v-else-if="fab.actions.length > 0"
-      id="fab"
-      text-color="white"
-      :color="getActionColor(fab.actions[0])"
-      :icon="getActionIcon(fab.actions[0])"
-      style="right: 12px; bottom: 12px"
-      size="1.15rem"
-      round
-      @click="onActionTriggered(fab.actions[0])">
-      <q-tooltip v-if="fab.actions[0].label" anchor="center left" self="center right" :offset="[20, 20]">
-        {{fab.actions[0].label}}
-      </q-tooltip>
-    </q-btn>
+    <k-action v-else-if="actions.length === 1"
+      v-bind="actions[0]"
+      :size="actions[0].size ? actions[0].size : '1.15rem'"
+      renderer="fab" />
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import { getIconName } from '../../utils'
+import { uid } from 'quasar'
 
 export default {
   name: 'k-fab',
@@ -95,48 +65,24 @@ export default {
       fab: this.$store.get('fab')
     }
   },
+  computed: {
+    actions () {
+      const actions = []
+      _.forEach(this.fab.actions, (action) => {
+        action['uid'] = uid()
+        actions.push(action)
+      })
+      return actions
+    }
+  },
   methods: {
-    getModalToolbar () {
-      return [
-        { name: 'close-action', label: this.$t('KFab.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.closeModal() }
-      ]
-    },
-    getModalButtons () {
-      return []
-    },
-    getModalOptions () {
-      return {
-        padding: '4px',
-        minWidth: '60vw',
-        maxWidth: '80vw',
-        minHeight: '20vh'
-      }
-    },
-    getActionIcon (action) {
-      const iconName = getIconName(action)
-      if (iconName) return iconName
-      return getIconName(action, 'icon')
-    },
-    getActionColor (action) {
-      return _.get(action, 'icon.color', 'secondary')
-    },
-    openModal () {
-      this.$refs.modal.open()
-    },
-    closeModal (action) {
-      this.$refs.modal.close()
-      if (!_.isNil(action)) this.onActionTriggered(action)
-    },
-    onActionTriggered (action) {
-      // If a handler is given call it
-      if (action.handler) action.handler.call(this)
-      // If a route is given activate it
-      else if (action.route) this.$router.push(action.route)
+    toggle () {
+      this.$refs.menu.toggle()
     }
   },
   created () {
     // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
+    this.$options.components['k-action'] = this.$load('frame/KAction')
   }
 }
 </script>
