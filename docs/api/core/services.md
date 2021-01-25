@@ -100,6 +100,183 @@ graph TB
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE,CREATE_DEVICE,REMOVE_DEVICE,UPDATE_DEVICE,PATCH_USER operationClass
 </mermaid>
 
+## Mailer service
+
+::: tip
+Available as a global service
+:::
+
+This service is powered by [feathers-mailer](https://github.com/feathersjs-ecosystem/feathers-mailer). It acts as a proxy to send emails through an SMTP server.
+
+::: warning
+Service methods are only allowed from the server side. `create` is the sole available method used to send an email.
+:::
+
+::: warning DEPRECATION NOTICE
+The email account can authorise connection by email/password on [https://myaccount.google.com/lesssecureapps](https://myaccount.google.com/lesssecureapps). Before that the domain admin should allow him to manage this setting (*Admin Console > Security > General > Less secure apps settings*). To avoid changing it for all users first create a group, add the user to the group and let the group manage less secure apps setting.
+:::
+
+On 15 february 2021 Gmail API requires OAuth2 authentication to send emails. The simplest solution is to create a [service account](https://medium.com/@imre_7961/nodemailer-with-g-suite-oauth2-4c86049f778a) and to [delegate the domain-wide authority to the service account](https://developers.google.com/identity/protocols/oauth2/service-account) with scope `https://mail.google.com`.
+
+### Hooks
+
+The following [hooks](./hooks.md) are executed on the `databases` service:
+
+<mermaid>
+graph TB
+  before{"disallow('external')"}
+  after{none after all}
+  before --> CREATE[CREATE]
+  CREATE --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,CREATE,REMOVE operationClass
+</mermaid>
+
+## Pusher service
+
+::: tip
+Available as a global service
+:::
+
+This service relies on [sns-mobile](https://github.com/kalisio/sns-mobile), which has a [nice tutorial](http://evanshortiss.com/development/mobile/2014/02/22/sns-push-notifications-using-nodejs.html), to manage the link between [AWS SNS](https://aws.amazon.com/sns) and internal resource objects in order to send push notifications to users.
+
+To get an API access/secret key you need to create a new user in IAM with a role giving access to SNS like `AmazonSNSFullAccess` but in production [you should control access more precisely](http://docs.aws.amazon.com/sns/latest/dg/UsingIAMwithSNS.html).
+
+Since 2017 Google Cloud Messaging (GCM) has become Firebase Cloud Messaging (FCM), to generate an API key follow [this issue](https://stackoverflow.com/questions/39417797/amazon-sns-platform-credentials-are-invalid-when-re-entering-a-gcm-api-key-th) and enter the server key when creating the SNS application on AWS. Although you use the Firebase console you should also see the created API through the Google Cloud console.
+
+::: warning
+`create` and `remove` methods are the only one allowed from the server side
+:::
+
+### Data model
+
+This service helps (un)registering devices to/from SNS and create/remove SNS topics. This service also helps associating a *resource* object (e.g. a group) with a SNS *topic* to provide push notifications to the users associated with the resource. SNS ARNs are directly stored on the target resource(s) in the `topics` property.
+
+::: tip
+The service is designed to possibly manage a different topic per platform (e.g. ANDROID / IOS), although at the present time the same topic is used by all platforms because by default SNS topics are cross-platforms.
+:::
+
+For instance the topics associated to a group will result in the following structure on the group object:
+```
+{
+    _id: ObjectId('5f568ba1fc54a1002fe6fe37'),
+    name: 'Centre de Castelnaudary',
+    topics: {
+        ANDROID: 'arn:aws:sns:eu-west-1:xxx',
+        IOS: 'arn:aws:sns:eu-west-1:xxx'
+    }
+}
+```
+
+Last but not least, This service helps publishing messages to SNS devices or topics.
+
+As a consequence, the `create`/`remove` operations have to be called with an `action` property indicating the target SNS operations among `device`, `topic`, `subscriptions` and `message`. The payload varies according to the selected target operation:
+* `device`:
+  * **device** as data: device object with SNS ARN and/or registration ID (i.e. token) for APNS or Firebase
+* `topic`:
+  * **pushObject** as params: target resource owing the topic
+  * **pushService** as params: target resource service
+  * **topicField** as data/query: target property to store the topic
+* `subscriptions`
+  * **pushObject** as params: target resource owing the topic
+  * **users** as params: target subject(s) to subscribe to topic
+  * **topicField** as data/query: target property to store the topic
+* `message`
+  * **pushObject** as params: target resource owing the topic if topic
+  * **pushService** as params: target resource service
+  * **message** as data: message payload
+
+### Hooks
+
+The following [hooks](./hooks.md) are executed on the `pusher` service:
+
+<mermaid>
+graph TB
+  before{"disallow('external')"}
+  after{none after all}
+  before -- Resource as data/params --> hook1(populatePushObject)
+  hook1 -- Resource as params --> CREATE[CREATE]
+  CREATE -- If user device --> CREATE_ENDPOINT[CREATE ENDPOINT]
+  CREATE -- If resource topic --> CREATE_TOPIC[CREATE TOPIC]
+  CREATE -- If subscriptions --> SUBSCRIBE[SUBSCRIBE]
+  CREATE -- If message<br/>-device or topic- --> PUBLISH[PUBLISH]
+  CREATE_ENDPOINT --> after
+  CREATE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
+  PATCH --> after
+  SUBSCRIBE --> after
+  PUBLISH --> after
+  before -- Resource id as query/params --> hook2(populatePushObject)
+  hook2 -- Resource as params --> REMOVE[REMOVE]
+  REMOVE -- If user device --> REMOVE_ENDPOINT[REMOVE ENDPOINT]
+  REMOVE -- If resource topic --> REMOVE_TOPIC[REMOVE TOPIC]
+  REMOVE -- If subscriptions --> UNSUBSCRIBE[UNSUBSCRIBE]
+  REMOVE_ENDPOINT --> after
+  REMOVE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
+  PATCH --> after
+  UNSUBSCRIBE --> after
+  before --> UPDATE[UPDATE]
+  UPDATE -- If device --> UPDATE_ENDPOINT[UPDATE ENDPOINT]
+  UPDATE_ENDPOINT --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+  classDef snsOperationClass fill:#63c5da,stroke:#333,stroke-width:2px
+  class CREATE_ENDPOINT,CREATE_TOPIC,SUBSCRIBE,PUBLISH,REMOVE_ENDPOINT,REMOVE_TOPIC,UNSUBSCRIBE,UPDATE_ENDPOINT snsOperationClass
+</mermaid>
+
+## Account service
+
+::: tip
+Available as a global service
+:::
+
+This service is powered by [feathers-authentication-management](https://github.com/feathersjs-ecosystem/feathers-authentication-management).
+
+### Data model
+
+This service consists in associating verification tokens to users so that they can safely reset their password or change their email, please refer to [feathers-authentication-management docs](https://github.com/feathersjs-ecosystem/feathers-authentication-management).
+
+### Hooks
+
+The following [hooks](./hooks.md) are executed on the `account` service:
+
+<mermaid>
+graph TB
+  before{none before all}
+  after{none after all}
+  before -- If reset/change password --> hook1(populateAccountUser)
+  hook1 --> hook2(enforcePasswordPolicy)
+  hook2 --> CREATE[CREATE]
+  CREATE --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+</mermaid>
+
+### Testing
+
+To make test run we need two gmail accounts:
+* `email-notifications@kalisio.com` used as email sender
+* `test@kalisio.com` used as user test email
+
+> When testing identity change we also use the `test@kalisio.xyz` address as user test email. However to avoid creating a new account in Google you can simply add an alias for this address to the `test@kalisio.com` account.
+
+The first email account is used by the [mailer service](./services.md#mailer-service) to send email notifications. The second email account requires OAuth2 authentication to be able to read emails using the GMail API. The simplest way is by creating a service account for a JWT-based authentication. Interesting issue to make all the configuration work can be found [here](https://stackoverflow.com/a/29328258), notably you have to delegate domain-wide authority to the service account in order to authorize your app to access user data on behalf of users and authorise the client ID of the service account with scopes `https://mail.google.com/,https://www.googleapis.com/auth/gmail.readonly`.
+
+Standard OAuth2 with refresh token might also be used as detailed [here](https://medium.com/@pandeysoni/nodemailer-service-in-node-js-using-smtp-and-xoauth2-7c638a39a37e) and [here](https://medium.com/@pandeysoni/nodemailer-service-in-node-js-using-smtp-and-xoauth2-7c638a39a37e).
+
+Details on how to use Google APIs from Node.js [here](https://github.com/google/google-api-nodejs-client#authorizing-and-authenticating).
+
+> Some anti-virus or firewalls softwares intercept HTTPS traffic, decrypting it, and then encrypting it using a self-signed certificate causing a "*Self-Signed Certificate in Certificate Chain*" error. If so deactivate the SSL analysys in your software, [this might help](https://github.com/CawaMS/StorageExplorerTroubleshootingGuide/blob/master/se-troubleshooting-guide.md).
+
+
 ## Authorisations service
 
 ::: tip
@@ -159,37 +336,6 @@ graph TB
   hook4 -- Authorisation resource as params --> REMOVE[REMOVE]
   REMOVE --> PATCH[[PATCH SUBJECT<br/>-subject service-]]
   PATCH --> after
-  linkStyle default stroke-width:2px,fill:none,stroke:black
-  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
-  class hook1,hook2,hook3,hook4 hookClass
-  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
-  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
-
-## Account service
-
-::: tip
-Available as a global service
-:::
-
-This service is powered by [feathers-authentication-management](https://github.com/feathersjs-ecosystem/feathers-authentication-management).
-
-### Data model
-
-This service consists in associating verification tokens to users so that they can safely reset their password or change their email, please refer to [feathers-authentication-management docs](https://github.com/feathersjs-ecosystem/feathers-authentication-management).
-
-### Hooks
-
-The following [hooks](./hooks.md) are executed on the `account` service:
-
-<mermaid>
-graph TB
-  before{none before all}
-  after{none after all}
-  before -- If reset/change password --> hook1(populateAccountUser)
-  hook1 --> hook2(enforcePasswordPolicy)
-  hook2 --> CREATE[CREATE]
-  CREATE --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
   class hook1,hook2,hook3,hook4 hookClass
@@ -422,96 +568,6 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
-
-## Pusher service
-
-::: tip
-Available as a global service
-:::
-
-This service relies on [sns-mobile](https://github.com/kalisio/sns-mobile) to manage the link between [AWS SNS](https://aws.amazon.com/sns) and internal resource objects in order to send push notifications to users.
-
-::: warning
-`create` and `remove` methods are the only one allowed from the server side
-:::
-
-### Data model
-
-This service helps (un)registering devices to/from SNS and create/remove SNS topics. This service also helps associating a *resource* object (e.g. a group) with a SNS *topic* to provide push notifications to the users associated with the resource. SNS ARNs are directly stored on the target resource(s) in the `topics` property.
-
-::: tip
-The service is designed to possibly manage a different topic per platform (e.g. ANDROID / IOS), although at the present time the same topic is used by all platforms because by default SNS topics are cross-platforms.
-:::
-
-For instance the topics associated to a group will result in the following structure on the group object:
-```
-{
-    _id: ObjectId('5f568ba1fc54a1002fe6fe37'),
-    name: 'Centre de Castelnaudary',
-    topics: {
-        ANDROID: 'arn:aws:sns:eu-west-1:xxx',
-        IOS: 'arn:aws:sns:eu-west-1:xxx'
-    }
-}
-```
-
-Last but not least, This service helps publishing messages to SNS devices or topics.
-
-As a consequence, the `create`/`remove` operations have to be called with an `action` property indicating the target SNS operations among `device`, `topic`, `subscriptions` and `message`. The payload varies according to the selected target operation:
-* `device`:
-  * **device** as data: device object with SNS ARN and/or registration ID (i.e. token) for APNS or Firebase
-* `topic`:
-  * **pushObject** as params: target resource owing the topic
-  * **pushService** as params: target resource service
-  * **topicField** as data/query: target property to store the topic
-* `subscriptions`
-  * **pushObject** as params: target resource owing the topic
-  * **users** as params: target subject(s) to subscribe to topic
-  * **topicField** as data/query: target property to store the topic
-* `message`
-  * **pushObject** as params: target resource owing the topic if topic
-  * **pushService** as params: target resource service
-  * **message** as data: message payload
-
-### Hooks
-
-The following [hooks](./hooks.md) are executed on the `pusher` service:
-
-<mermaid>
-graph TB
-  before{"disallow('external')"}
-  after{none after all}
-  before -- Resource as data/params --> hook1(populatePushObject)
-  hook1 -- Resource as params --> CREATE[CREATE]
-  CREATE -- If user device --> CREATE_ENDPOINT[CREATE ENDPOINT]
-  CREATE -- If resource topic --> CREATE_TOPIC[CREATE TOPIC]
-  CREATE -- If subscriptions --> SUBSCRIBE[SUBSCRIBE]
-  CREATE -- If message<br/>-device or topic- --> PUBLISH[PUBLISH]
-  CREATE_ENDPOINT --> after
-  CREATE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
-  PATCH --> after
-  SUBSCRIBE --> after
-  PUBLISH --> after
-  before -- Resource id as query/params --> hook2(populatePushObject)
-  hook2 -- Resource as params --> REMOVE[REMOVE]
-  REMOVE -- If user device --> REMOVE_ENDPOINT[REMOVE ENDPOINT]
-  REMOVE -- If resource topic --> REMOVE_TOPIC[REMOVE TOPIC]
-  REMOVE -- If subscriptions --> UNSUBSCRIBE[UNSUBSCRIBE]
-  REMOVE_ENDPOINT --> after
-  REMOVE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
-  PATCH --> after
-  UNSUBSCRIBE --> after
-  before --> UPDATE[UPDATE]
-  UPDATE -- If device --> UPDATE_ENDPOINT[UPDATE ENDPOINT]
-  UPDATE_ENDPOINT --> after
-  linkStyle default stroke-width:2px,fill:none,stroke:black
-  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
-  class hook1,hook2,hook3,hook4 hookClass
-  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
-  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-  classDef snsOperationClass fill:#63c5da,stroke:#333,stroke-width:2px
-  class CREATE_ENDPOINT,CREATE_TOPIC,SUBSCRIBE,PUBLISH,REMOVE_ENDPOINT,REMOVE_TOPIC,UNSUBSCRIBE,UPDATE_ENDPOINT snsOperationClass
 </mermaid>
 
 ## Local settings service
