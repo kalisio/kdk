@@ -41,10 +41,6 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-screen-footer',
-  components: {
-    QBtn,
-    QIcon
-  },
   mixins: [mixins.version],
   methods: {
     canChangeEndpoint () {

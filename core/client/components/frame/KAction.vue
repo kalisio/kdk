@@ -68,6 +68,7 @@
 
 <script>
 import logger from 'loglevel'
+import { openURL } from 'quasar'
 
 export default {
   name: 'k-action',
@@ -128,6 +129,10 @@ export default {
       type: [Object],
       default: () => { return null }
     },
+    url: {
+      type: String,
+      default: null,
+    },
     renderer: {
       type: String,
       default: 'button',
@@ -155,6 +160,8 @@ export default {
       // If it is a route update the router
       // TODO: is there any better solution to avoid redundant navigation
       else if (this.route) this.$router.push(this.route).catch(() => {})
+      // If it an URL then open the link
+      else if (this.url) openURL(this.url)
       // Otherwise log a comment
       else logger.debug(`Invalid action ${this.id}: you should define an handler or a route`)
       this.$emit('triggered')

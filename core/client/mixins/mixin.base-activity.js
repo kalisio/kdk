@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { uid } from 'quasar'
 
 const baseActivityMixin = {
   data () {
@@ -50,18 +49,11 @@ const baseActivityMixin = {
     clearRightDrawer () {
       this.$store.patch('rightDrawer', { content: null, mode: 'undefined' })
     },
-    registerFabAction (action) {
-      this.registerAction('fab', action)
-      this.$store.patch('fab', { actions: this.getActions('fab') })
+    setFabActions (actions) {
+      this.$store.patch('fab', { actions })
     },
-    registerAction (type, action) {
-      action.id = _.kebabCase(action.name)
-      action.uid = uid()
-      if (!this.actions[type]) this.actions[type] = []
-      this.actions[type].push(action)
-    },
-    getActions (type) {
-      return this.actions[type] || []
+    clearFabActions () {
+      this.$store.patch('fab', { actions: null })
     },
     getAction (nameOrId, type) {
       // Ensure we convert to the right case when using name
@@ -114,8 +106,8 @@ const baseActivityMixin = {
       this.clearTopPane()
       this.clearBottomPane()
       this.clearRightDrawer()
+      this.clearFabActions()
       this.clearWidgets()
-      this.clearActions()
     },
     refreshActivity () {
       // This method should be overriden in activities

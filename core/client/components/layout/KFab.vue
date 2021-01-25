@@ -1,38 +1,29 @@
 <template>
-  <div>
+  <div v-if="actions">
     <!--
-        Render a modal grid action if more than expandableLimit actions are provided
-      -->
-    <q-fab v-if="actions.length > expandableLimit"
+      Render an expandable fab if more than one action is provided
+     -->
+    <q-fab v-if="actions.length > 1"
       id="fab"
-      ref="fab"
+      v-model="opened"
       icon="las la-chevron-up"
       class="fixed"
       style="right: 12px; bottom: 12px"
-      direction ="up"
+      direction="up"
       color="primary"
-      @click="toggle">
-      <q-menu ref="menu" persistent fit anchor="top left" self="bottom right" content-style="background-color: lightgrey">
+      persistent>
+      <!-- Render a grid menu if the number of actions is higher than the expandable limit -->
+      <q-menu v-if="actions.length > expandableLimit" v-model="opened" ref="menu" persistent fit anchor="top left" self="bottom right" content-style="background-color: lightgrey">
         <div class="q-pa-sm row q-gutter-y-sm" style="max-width: 400px">
           <template v-for="action in actions">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" :key="action.uid">
-              <k-action v-bind="action" renderer="item" @triggered="toggle" />
+              <k-action v-bind="action" renderer="item" @triggered="opened = false" />
             </div>
           </template>
         </div>
       </q-menu>
-    </q-fab>
-    <!--
-      Render an expandable fab if more than one action is provided
-     -->
-    <q-fab v-else-if="actions.length > 1"
-      id="fab"
-      icon="las la-chevron-up"
-      class="fixed"
-      style="right: 12px; bottom: 12px"
-      direction ="up"
-      color="primary">
-      <div v-if="actions.length <= expandableLimit">
+      <!-- Render an expandable list of actions -->
+      <div v-else>
         <template v-for="action in actions">
           <k-action :key="action.uid" v-bind="action" renderer="fab" />
         </template>
@@ -62,11 +53,13 @@ export default {
   },
   data () {
     return {
-      fab: this.$store.get('fab')
+      fab: this.$store.get('fab'),
+      opened: false
     }
   },
   computed: {
     actions () {
+      if (!this.fab.actions) return null
       const actions = []
       _.forEach(this.fab.actions, (action) => {
         if (!action.status || action.status() !== 'hidden') {
@@ -75,11 +68,6 @@ export default {
         }
       })
       return actions
-    }
-  },
-  methods: {
-    toggle () {
-      this.$refs.menu.toggle()
     }
   },
   created () {
