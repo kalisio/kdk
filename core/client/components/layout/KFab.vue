@@ -69,8 +69,10 @@ export default {
     actions () {
       const actions = []
       _.forEach(this.fab.actions, (action) => {
-        action['uid'] = uid()
-        actions.push(action)
+        if (!action.status || action.status() !== 'hidden') {
+          action['uid'] = uid()
+          actions.push(action)
+        }
       })
       return actions
     }

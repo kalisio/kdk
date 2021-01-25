@@ -7,7 +7,6 @@
   >
     <template v-for="component in components">
       <component
-        v-if="component.status ? component.status() !== 'hidden' : true"
         :key="component.uid"
         :disabled="component.status ? component.status() === 'disabled' : false"
         :is="component.componentKey"
@@ -78,17 +77,19 @@ export default {
           content = _.get(this.content, mode)
         }
         _.forEach(content, (component) => {
-          // Define the component key
-          const componentName = _.get(component, 'component', 'frame/KAction')
-          const componentKey = _.kebabCase(path.basename(componentName))
-          // Load the component if needed. That is to say, do not load any Quasar component and if it has not already been loaded
-          if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) this.$options.components[componentKey] = this.$load(componentName)
-          // Clone the component and add the required props
-          const clone = _.clone(component)
-          clone.componentKey = componentKey
-          clone.uid = uid()
-          _.defaults(clone, this.$props)
-          components.push(clone)
+          if (!component.status || component.status() !== 'hidden') {
+            // Define the component key
+            const componentName = _.get(component, 'component', 'frame/KAction')
+            const componentKey = _.kebabCase(path.basename(componentName))
+            // Load the component if needed. That is to say, do not load any Quasar component and if it has not already been loaded
+            if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) this.$options.components[componentKey] = this.$load(componentName)
+            // Clone the component and add the required props
+            const clone = _.clone(component)
+            clone.componentKey = componentKey
+            clone.uid = uid()
+            _.defaults(clone, this.$props)
+            components.push(clone)
+          }
         })
       }
       return components
