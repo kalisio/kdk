@@ -31,7 +31,7 @@
           </q-item-section>
           <!-- actions -->
           <q-item-section side>
-            <k-overflow-menu :actions="layerActions(layer)" :context="layer" :dense="$q.screen.lt.md"/>
+            <k-overflow-menu :content="layerActions(layer)" :context="layer" />
           </q-item-section>
           <!-- tooltip -->
           <q-tooltip v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"

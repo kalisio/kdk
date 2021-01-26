@@ -3,8 +3,6 @@ import _ from 'lodash'
 const baseActivityMixin = {
   data () {
     return {
-      title: '',
-      actions: {},
       searchQuery: {}
     }
   },
@@ -29,43 +27,20 @@ const baseActivityMixin = {
     clearBottomPane () {
       this.$store.patch('bottomPane', { content: null, mode: undefined })
     },
-    setLeftDrawer (content, mode = undefined) {
-      this.$store.patch('leftDrawer', { content: this.standardizeActions(content), mode: mode })
-    },
-    setLeftDrawerMode (mode) {
-      const content = this.$store.get('leftDrawer.content')
-      this.$store.patch('leftDrawer', { content, mode })
-    },
-    clearLeftDrawer () {
-      this.$store.patch('leftDrawer', { content: null, mode: undefined })
-    },
     setRightDrawer (content, mode = undefined) {
-      this.$store.patch('rightDrawer', { content: this.standardizeActions(content), mode: mode })
+      this.$layout.setRightDrawer(this.standardizeActions(content), mode)
     },
     setRightDrawerMode (mode) {
-      const content = this.$store.get('rightDrawer.content')
-      this.$store.patch('rightDrawer', { content, mode })
+      this.$layout.setRightDrawer(mode)
     },
     clearRightDrawer () {
-      this.$store.patch('rightDrawer', { content: null, mode: 'undefined' })
+      this.$layout.clearRightDrawer()
     },
     setFabActions (actions) {
-      this.$store.patch('fab', { actions })
+      this.$store.patch('fab', { actions: this.standardizeActions(actions) })
     },
     clearFabActions () {
       this.$store.patch('fab', { actions: null })
-    },
-    getAction (nameOrId, type) {
-      // Ensure we convert to the right case when using name
-      const id = _.kebabCase(nameOrId)
-      const actions = this.getActions(type)
-      return _.find(actions, (action) => (action.id === id) || (action.uid === id))
-    },
-    clearActions () {
-      // Clear Fab actions
-      this.$store.patch('fab', { actions: [] })
-      // Clear the actions
-      this.actions = {}
     },
     registerWidget (name, icon, component, props) {
       const widgets = this.$store.get('window.widgets')

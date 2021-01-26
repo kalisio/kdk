@@ -34,8 +34,9 @@
      -->
     <k-action v-else-if="actions.length === 1"
       v-bind="actions[0]"
-      :size="actions[0].size ? actions[0].size : '1.15rem'"
-      renderer="fab" />
+      size="1.15rem"
+      :flat="false"
+      renderer="button" />
   </div>
 </template>
 
@@ -64,6 +65,7 @@ export default {
       _.forEach(this.fab.actions, (action) => {
         if (!action.status || action.status() !== 'hidden') {
           action['uid'] = uid()
+          if (!action.color) action['color'] = 'secondary'
           actions.push(action)
         }
       })

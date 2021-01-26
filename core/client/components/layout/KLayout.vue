@@ -100,8 +100,8 @@ export default {
       this.$layout.setLeftDrawer(_.get(leftDrawer, 'content', null), _.get(leftDrawer, 'mode', undefined), _.get(leftDrawer, 'visible', false))
     }
     if (this.config.rightDrawer) {
-      const rightDrawer = this.config.header
-      this.$layout.rightDrawer(_.get(rightDrawer, 'content', null), _.get(rightDrawer, 'mode', undefined), _.get(rightDrawer, 'visible', false))
+      const rightDrawer = this.config.rightDrawer
+      this.$layout.setRightDrawer(_.get(rightDrawer, 'content', null), _.get(rightDrawer, 'mode', undefined), _.get(rightDrawer, 'visible', false))
     }
   }
 }

@@ -9,7 +9,7 @@
     :icon="icon"
     :color="isToggled ? 'secondary' : color"
     :size="size"
-    flat
+    :flat="flat"
     :round="label===''"
     :rounded="label!==''"
     :dense="dense"
@@ -55,8 +55,7 @@
     :label="$t(label)"
     external-label
     label-position="left"
-    :size="size"
-    round
+	
     :disabled="disabled"
     @click="onClicked()">
     <!-- badge -->
@@ -96,6 +95,10 @@ export default {
     size: {
       type: String,
       default: 'md'
+    },
+    flat: {
+      type: Boolean,
+      default: true
     },
     badge: {
       type: Object,

@@ -76,7 +76,7 @@ export default {
         return this.leftDrawer.visible
       },
       set: function (value) {
-        this.$layout.setLeftDrawerVisivle(value)
+        this.$layout.setLeftDrawerVisible(value)
       }
     },
     isRightDrawerOpened: {
@@ -84,7 +84,7 @@ export default {
         return this.rightDrawer.visible
       },
       set: function (value) {
-        this.$layout.setRightDrawerVisivle(value)
+        this.$layout.setRightDrawerVisible(value)
       }
     }
   },
