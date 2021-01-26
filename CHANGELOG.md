@@ -1,5 +1,15 @@
 # Changelog
 
+## [v1.2.1](https://github.com/kalisio/kdk/tree/v1.2.1) (2021-01-26)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.2.0...v1.2.1)
+
+**Fixed bugs:**
+
+- Logging hook causes high CPU usage [\#287](https://github.com/kalisio/kdk/issues/287)
+- Removing a group causes all members of an organisation to be updated [\#286](https://github.com/kalisio/kdk/issues/286)
+- Less secured apps deprecation notice [\#100](https://github.com/kalisio/kdk/issues/100)
+
 ## [v1.2.0](https://github.com/kalisio/kdk/tree/v1.2.0) (2020-11-10)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.1.1...v1.2.0)
@@ -46,10 +56,10 @@
 - Handle checking an alert without available data [\#265](https://github.com/kalisio/kdk/issues/265)
 - Location field display of location without a name is incorrect [\#264](https://github.com/kalisio/kdk/issues/264)
 - AbortController interface not available under Safari - iOS 10.3 [\#261](https://github.com/kalisio/kdk/issues/261)
-- Editing a tag properties from the member card changes all the tags properties [\#257](https://github.com/kalisio/kdk/issues/257)
 - KHistory duplicates items on route change [\#256](https://github.com/kalisio/kdk/issues/256)
 - Member activity should not allow to update tag icon/color once created [\#254](https://github.com/kalisio/kdk/issues/254)
 - Infobox not displayed in globe when selecting linear or polygon geometries [\#252](https://github.com/kalisio/kdk/issues/252)
+- Editing a tag properties from the member card changes all the tags properties [\#257](https://github.com/kalisio/kdk/issues/257)
 - Error when displaying vigicrues sections without available measures [\#248](https://github.com/kalisio/kdk/issues/248)
 - It should not be possible to hide the last visible variable in time-series widget chart [\#247](https://github.com/kalisio/kdk/issues/247)
 - Special characters displayed as HTML codes in editor title [\#246](https://github.com/kalisio/kdk/issues/246)
@@ -69,8 +79,8 @@
 - KTextArea editor should be rendered using the dense mode on small size screens [\#221](https://github.com/kalisio/kdk/issues/221)
 - Remove the source property from layer options when building the leaflet layer [\#219](https://github.com/kalisio/kdk/issues/219)
 - KTextArea containing multilines or HTML is not displayed correctly anymore [\#217](https://github.com/kalisio/kdk/issues/217)
-- Enable edit style layer action on user-defined layers only [\#213](https://github.com/kalisio/kdk/issues/213)
 - Edit layer style action appears on measure layers [\#212](https://github.com/kalisio/kdk/issues/212)
+- Enable edit style layer action on user-defined layers only [\#213](https://github.com/kalisio/kdk/issues/213)
 - The Location Map cannot request the tiles through the API Gateway [\#211](https://github.com/kalisio/kdk/issues/211)
 - Updating the value of an existing tag makes updateTags hook detect it as a new one [\#210](https://github.com/kalisio/kdk/issues/210)
 - The location map does not truncate the location info when it is too long [\#209](https://github.com/kalisio/kdk/issues/209)
@@ -86,9 +96,9 @@
 - Sporadic error appears with openers [\#191](https://github.com/kalisio/kdk/issues/191)
 - Background color in KSearchBar doest not allow to see anything [\#177](https://github.com/kalisio/kdk/issues/177)
 - Selecting a line/polygon feature with timeseries widget raises an error [\#174](https://github.com/kalisio/kdk/issues/174)
+- UIWebView API deprecation notice [\#47](https://github.com/kalisio/kdk/issues/47)
 - Allow to directly take a picture when uploading a file [\#99](https://github.com/kalisio/kdk/issues/99)
 - Status bar hides app bar on mobiles [\#87](https://github.com/kalisio/kdk/issues/87)
-- UIWebView API deprecation notice [\#47](https://github.com/kalisio/kdk/issues/47)
 
 **Closed issues:**
 
@@ -124,10 +134,6 @@
 - Allow the KToolBar to be vertical [\#117](https://github.com/kalisio/kdk/issues/117)
 - Improve openers design on mobile [\#113](https://github.com/kalisio/kdk/issues/113)
 - Enhance customization of KToolBar [\#112](https://github.com/kalisio/kdk/issues/112)
-- Create a component to provide styling options for feature layers in map [\#110](https://github.com/kalisio/kdk/issues/110)
-- Optimize measure update for time-stamped features in globe [\#96](https://github.com/kalisio/kdk/issues/96)
-- Allow to filter feature layers [\#89](https://github.com/kalisio/kdk/issues/89)
-- Support tiling for feature layers in map [\#82](https://github.com/kalisio/kdk/issues/82)
 - Archived weather layers should be handled within the forecast layers selector [\#75](https://github.com/kalisio/kdk/issues/75)
 - Refactor the CatalogPanel  [\#74](https://github.com/kalisio/kdk/issues/74)
 - Merge KTimeline and KTimelineControl in a unique component  [\#73](https://github.com/kalisio/kdk/issues/73)
@@ -136,9 +142,13 @@
 - Enhance Drawers management [\#70](https://github.com/kalisio/kdk/issues/70)
 - Allow to run e2e on the targeted deployment platform [\#62](https://github.com/kalisio/kdk/issues/62)
 - Allow to apply the CI process when working on a branch [\#61](https://github.com/kalisio/kdk/issues/61)
-- Code coverage not correctly pushed to Code Climate in travis application builds [\#51](https://github.com/kalisio/kdk/issues/51)
+- Support tiling for feature layers in map [\#82](https://github.com/kalisio/kdk/issues/82)
 - Upgrade to latest Node.js LTS [\#48](https://github.com/kalisio/kdk/issues/48)
+- Allow to filter feature layers [\#89](https://github.com/kalisio/kdk/issues/89)
 - Enhance e2e tests across the modules/apps [\#38](https://github.com/kalisio/kdk/issues/38)
+- Optimize measure update for time-stamped features in globe [\#96](https://github.com/kalisio/kdk/issues/96)
+- Create a component to provide styling options for feature layers in map [\#110](https://github.com/kalisio/kdk/issues/110)
+- Code coverage not correctly pushed to Code Climate in travis application builds [\#51](https://github.com/kalisio/kdk/issues/51)
 - Allow to specify the Browsers list to be used when building the testcafe image [\#159](https://github.com/kalisio/kdk/issues/159)
 - Improve timeseries widget with timerange actions [\#152](https://github.com/kalisio/kdk/issues/152)
 - Manage i18n in layer definitions [\#146](https://github.com/kalisio/kdk/issues/146)
@@ -148,8 +158,8 @@
 - Refactor KLocationTimeSeries using the new widget design [\#121](https://github.com/kalisio/kdk/issues/121)
 - Provide basic components to enable Mapillary integration [\#115](https://github.com/kalisio/kdk/issues/115)
 - Enhance KTimeline design to be more responsive [\#109](https://github.com/kalisio/kdk/issues/109)
-- Manage real-time and archive/forecast mode [\#108](https://github.com/kalisio/kdk/issues/108)
 - Merge kdk modules into a single module [\#65](https://github.com/kalisio/kdk/issues/65)
+- Manage real-time and archive/forecast mode [\#108](https://github.com/kalisio/kdk/issues/108)
 
 **Fixed bugs:**
 
@@ -186,8 +196,8 @@
 
 - KView should allow values as props [\#120](https://github.com/kalisio/kdk/issues/120)
 - Enhance KWidget design [\#116](https://github.com/kalisio/kdk/issues/116)
-- Improve application webhook security [\#84](https://github.com/kalisio/kdk/issues/84)
 - Provide an helper component to display a text with an icon  [\#76](https://github.com/kalisio/kdk/issues/76)
+- Improve application webhook security [\#84](https://github.com/kalisio/kdk/issues/84)
 - Provide a KOpener proxy that allows to simplify the use of the KOpener [\#130](https://github.com/kalisio/kdk/issues/130)
 
 ## [v1.0.0](https://github.com/kalisio/kdk/tree/v1.0.0) (2020-01-20)
@@ -196,7 +206,6 @@
 
 **Implemented enhancements:**
 
-- Add a regex to only publish on tags of the form 'vX.X.X' [\#59](https://github.com/kalisio/kdk/issues/59)
 - Allow to run the client test either with firefox or chrome [\#58](https://github.com/kalisio/kdk/issues/58)
 - Enhance branch management in CLI [\#57](https://github.com/kalisio/kdk/issues/57)
 - Migrate to Testcafe 1.7.x [\#56](https://github.com/kalisio/kdk/issues/56)
@@ -207,6 +216,7 @@
 - Enable Greenkeeper to ease dependency upgrades [\#45](https://github.com/kalisio/kdk/issues/45)
 - Add pull command to CLI [\#41](https://github.com/kalisio/kdk/issues/41)
 - Update dependencies across modules/apps [\#39](https://github.com/kalisio/kdk/issues/39)
+- Add a regex to only publish on tags of the form 'vX.X.X' [\#59](https://github.com/kalisio/kdk/issues/59)
 - Migrate to Quasar 1.0 across modules [\#31](https://github.com/kalisio/kdk/issues/31)
 
 **Fixed bugs:**
