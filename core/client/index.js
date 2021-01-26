@@ -1,6 +1,7 @@
 import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store } from './store'
+import { Layout } from './layout'
 import services from './services'
 import * as utils from './utils'
 import * as mixins from './mixins'
@@ -16,6 +17,7 @@ import * as hooks from './hooks'
 export * from './events'
 export * from './api'
 export * from './store'
+export * from './layout'
 export * from './guards'
 export * from '../common'
 export { utils }
@@ -29,13 +31,10 @@ export default function init () {
   logger.debug('Initializing core')
   api.configure(services)
 
-  // Create the models listened by the main layout components
+  // Create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  Store.set('header', { content: null, mode: undefined, visible: false })
-  Store.set('footer', { content: null, mode: undefined, visible: false })
-  Store.set('leftDrawer', { content: null, mode: undefined, visible: false })
-  Store.set('rightDrawer', { content: null, mode: undefined, visible: false })
+  Layout.initialize()
   Store.set('topPane', { content: null, mode: undefined, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, visible: false })
   Store.set('window', { curent: '', widgets: [] })

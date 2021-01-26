@@ -74,10 +74,10 @@ export default {
   },
   data () {
     return {
-      header: this.$store.get('header'),
-      leftDrawer: this.$store.get('leftDrawer'),
-      rightDrawer: this.$store.get('rightDrawer'),
-      footer: this.$store.get('footer'),
+      header: this.$layout.getHeader(),
+      footer: this.$layout.getFooter(),
+      leftDrawer: this.$layout.getLeftDrawer(),
+      rightDrawer: this.$layout.getRightDrawer(),
       config: {}
     }
   },
@@ -86,27 +86,23 @@ export default {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Load the options from the configuration
     this.config = this.$config('layout')
-    this.$store.patch('header', {
-      content: _.get(this.config, 'header.content', null),
-      mode: _.get(this.config, 'header.mode', undefined),
-      visible: _.get(this.config, 'header.visible', false)
-    })
-    this.$store.patch('leftDrawer', {
-      content: _.get(this.config, 'leftDrawer.content', null),
-      mode: _.get(this.config, 'leftDrawer.mode', undefined),
-      visible: _.get(this.config, 'leftDrawer.visible', false)
-    })
-    this.$store.patch('rightDrawer', {
-      content: _.get(this.config, 'rightDrawer.content', null),
-      mode: _.get(this.config, 'rightDrawer.mode', undefined),
-      visible: _.get(this.config, 'rightDrawer.visible', false)
-    })
-    // Setup the footer using the configuration
-    this.$store.patch('footer', {
-      content: _.get(this.config, 'footer.content', null),
-      mode: _.get(this.config, 'footer.mode', {}),
-      visible: _.get(this.config, 'footer.visible', false)
-    })
+    // Configures the components if needed
+    if (this.config.header) {
+      const header = this.config.header
+      this.$layout.setHeader(_.get(header, 'content', null), _.get(header, 'mode', undefined), _.get(header, 'visible', false))
+    }
+    if (this.config.footer) {
+      const footer = this.config.footer
+      this.$layout.setFooter(_.get(footer, 'content', null), _.get(footer, 'mode', undefined), _.get(footer, 'visible', false))
+    }
+    if (this.config.leftDrawer) {
+      const leftDrawer = this.config.leftDrawer
+      this.$layout.setLeftDrawer(_.get(leftDrawer, 'content', null), _.get(leftDrawer, 'mode', undefined), _.get(leftDrawer, 'visible', false))
+    }
+    if (this.config.rightDrawer) {
+      const rightDrawer = this.config.header
+      this.$layout.rightDrawer(_.get(rightDrawer, 'content', null), _.get(rightDrawer, 'mode', undefined), _.get(rightDrawer, 'visible', false))
+    }
   }
 }
 </script>
