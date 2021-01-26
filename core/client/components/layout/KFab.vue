@@ -13,8 +13,8 @@
       color="primary"
       persistent>
       <!-- Render a grid menu if the number of actions is higher than the expandable limit -->
-      <q-menu v-if="actions.length > expandableLimit" v-model="opened" ref="menu" persistent fit anchor="top left" self="bottom right" content-style="background-color: lightgrey">
-        <div class="q-pa-sm row q-gutter-y-sm" style="max-width: 400px">
+      <q-menu v-if="actions.length > expandableLimit" v-model="opened" ref="menu" persistent fit anchor="top left" self="bottom right">
+        <div class="q-pa-sm row q-gutter-sm" style="max-width: 400px">
           <template v-for="action in actions">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" :key="action.uid">
               <k-action v-bind="action" renderer="item" @triggered="opened = false" />
