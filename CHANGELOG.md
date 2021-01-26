@@ -4,37 +4,11 @@
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.2.0...v1.2.1)
 
-**Implemented enhancements:**
-
-- Keep track of currently activated layers [\#268](https://github.com/kalisio/kdk/issues/268)
-- Allow tiled layers with multiple grid sources to have multiple min/max zoom values. [\#250](https://github.com/kalisio/kdk/issues/250)
-- Simplify meteo model configuration in tiled layers [\#241](https://github.com/kalisio/kdk/issues/241)
-- Feature tooltip/popup must be translatable [\#216](https://github.com/kalisio/kdk/issues/216)
-
 **Fixed bugs:**
 
 - Logging hook causes high CPU usage [\#287](https://github.com/kalisio/kdk/issues/287)
 - Removing a group causes all members of an organisation to be updated [\#286](https://github.com/kalisio/kdk/issues/286)
-- Probe tooltip displayed when a feature has a weather property [\#280](https://github.com/kalisio/kdk/issues/280)
-- Hint error when performing aggregation [\#279](https://github.com/kalisio/kdk/issues/279)
-- getFeaturesFromLayer does not work on non-service layers [\#278](https://github.com/kalisio/kdk/issues/278)
-- Next hour button does not work when the time line is rendered in mini mode [\#274](https://github.com/kalisio/kdk/issues/274)
-- Cannot fetch data for archived weather layer [\#259](https://github.com/kalisio/kdk/issues/259)
-- Cannot save GeoJson with invalid geometries [\#251](https://github.com/kalisio/kdk/issues/251)
 - Less secured apps deprecation notice [\#100](https://github.com/kalisio/kdk/issues/100)
-
-**Closed issues:**
-
-- Provide a dense prop to the KAutocomplete component [\#284](https://github.com/kalisio/kdk/issues/284)
--  Provide a filter component to use for filtering collections [\#283](https://github.com/kalisio/kdk/issues/283)
-- Provide an activity bar  [\#282](https://github.com/kalisio/kdk/issues/282)
-- Provide a more generic Bar component [\#281](https://github.com/kalisio/kdk/issues/281)
-- The timeseries widget should have a title \(the name of the layer/sensor\) [\#288](https://github.com/kalisio/kdk/issues/288)
-
-**Merged pull requests:**
-
-- chore\(deps\): bump ini from 1.3.5 to 1.3.8 in /docs [\#277](https://github.com/kalisio/kdk/pull/277) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump node-fetch from 2.6.0 to 2.6.1 [\#267](https://github.com/kalisio/kdk/pull/267) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.2.0](https://github.com/kalisio/kdk/tree/v1.2.0) (2020-11-10)
 
