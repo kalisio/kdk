@@ -60,6 +60,10 @@ This process usually triggers your [CI/CD](./deploy.md) process to build the tar
 Before you publish your app take care of updating the version of all dependent modules to the latest version published, for example perform `yarn upgrade kdk` to use the latest versin of the KDK.
 :::
 
+::: warning
+If you are using our [CLI](../../tools/cli.md#kdk-cli) take care of updating/creating the required workspace file before you publish your app.
+:::
+
 Then, you should then increase the version patch number of your `test` branch so that the generated artefacts of the new staging version will not erase previously published ones, e.g. `npm run release:patch`. Indeed, a staging branch should only include patch versions not major/minor versions.
 
 ### Manual build
