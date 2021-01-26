@@ -76,7 +76,7 @@ export default {
         return this.leftDrawer.visible
       },
       set: function (value) {
-        this.$store.patch('leftDrawer', { visible: value })
+        this.$layout.setLeftDrawerVisivle(value)
       }
     },
     isRightDrawerOpened: {
@@ -84,7 +84,7 @@ export default {
         return this.rightDrawer.visible
       },
       set: function (value) {
-        this.$store.patch('rightDrawer', { visible: value })
+        this.$layout.setRightDrawerVisivle(value)
       }
     }
   },
@@ -92,8 +92,8 @@ export default {
     return {
       topPane: this.$store.get('topPane'),
       bottomPane: this.$store.get('bottomPane'),
-      leftDrawer: this.$store.get('leftDrawer'),
-      rightDrawer: this.$store.get('rightDrawer'),
+      leftDrawer: this.$layout.getLeftDrawer(),
+      rightDrawer: this.$layout.getRightDrawer(),
       hasTopPaneOpener: false,
       hasBottomPaneOpener: false,
       hasLeftDrawerOpener: false,

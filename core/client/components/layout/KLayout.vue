@@ -44,23 +44,7 @@ export default {
         return this.header.visible
       },
       set: function (value) {
-        this.$store.patch('header', { visible: value })
-      }
-    },
-    isLeftDrawerVisible: {
-      get: function () {
-        return this.leftDrawer.visible
-      },
-      set: function (value) {
-        this.$store.patch('leftDrawer', { visible: value })
-      }
-    },
-    isRightDrawerVisible: {
-      get: function () {
-        return this.rightDrawer.visible
-      },
-      set: function (value) {
-        this.$store.patch('rightDrawer', { visible: value })
+        this.$layout.setHeaderVisible(value)
       }
     },
     isFooterVisible: {
@@ -68,7 +52,23 @@ export default {
         return this.footer.visible
       },
       set: function (value) {
-        this.$store.patch('footer', { visible: value })
+        this.$layout.setFooterVisible(value)
+      }
+    },
+    isLeftDrawerVisible: {
+      get: function () {
+        return this.leftDrawer.visible
+      },
+      set: function (value) {
+        this.$layout.setLeftDrawerVisible(value)
+      }
+    },
+    isRightDrawerVisible: {
+      get: function () {
+        return this.rightDrawer.visible
+      },
+      set: function (value) {
+        this.$layout.setRightDrawerVisible(value)
       }
     }
   },
