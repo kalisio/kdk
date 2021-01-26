@@ -29,7 +29,8 @@ Note: some of the previous accounts/IDs are not app specific and can be share ac
 :::
 
 Create required environment variables in a script file you can source before launching your app:
-```
+
+```bash
 export APP_SECRET=xxx
 export GOOGLE_MAIL_USER=xxx
 export GOOGLE_MAIL_PASSWORD=xxx
@@ -46,7 +47,8 @@ export GOOGLE_CLIENT_SECRET=xxx
 ```
 
 Then, retrieve this variables in config files like this:
-```
+
+```js
 github: {
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET

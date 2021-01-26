@@ -59,7 +59,7 @@ ellipse.material = new Cesium.CheckerboardMaterialProperty({
 })
 ```
 will result in the following Json configuration:
-```json
+```js
 ellipse: {
   material: {
     type: 'Cesium.CheckerboardMaterialProperty',
@@ -114,7 +114,7 @@ Marker cluster options are to be provided in the **cluster** property of the Ces
 :::
 
 The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
-```json
+```js
 {
   name: 'Layer',
   description: 'My sites',
@@ -148,7 +148,7 @@ The following options can be set as feature `properties` to manage more geometry
 The same than for [dynamic map style](./map-mixins.md#dynamic-styling) applies for globe. Note however that templating will be applied once the 3D entities have been created, which means that you cannot use templating on [simple style spec options](https://github.com/mapbox/simplestyle-spec) but rather on Cesium object options set on the `entityStyle` layer option.
 
 For instance you can change the marker color or image based on a given features's property like this:
-```json
+```js
 entityStyle: {
   billboard: {
     image: `<% if (properties.visibility < 75) { %>/statics/windyblack.png<% }
@@ -167,7 +167,7 @@ entityStyle: {
 ```
 
 You can also draw a path with a different styling on each part like this:
-```json
+```js
 {
   type: 'FeatureCollection',
   features: [{

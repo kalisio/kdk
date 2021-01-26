@@ -163,7 +163,7 @@ export default {
       // Since schema is injected in form we need to make sure Vue.js has processed props
       // This could be done externally but adding it here we ensure no one will forget it
       await this.$nextTick()
-      if (!this.schema) throw Error('Cannot build the form without schema')
+      if (!this.schema) throw new Error('Cannot build the form without schema')
       logger.debug('Building form', this.schema.$id)
       // Test in cache first
       this.validator = this.ajv.getSchema(this.schema.$id)
@@ -176,7 +176,7 @@ export default {
     },
     fill (values) {
       logger.debug('Filling form', this.schema.$id, values)
-      if (!this.loadRefs().isFulfilled()) throw Error('Cannot fill the form while not ready')
+      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot fill the form while not ready')
       this.fields.forEach(field => {
         if (_.has(values, field.name)) {
           this.getField(field.name).fill(_.get(values, field.name), values)
@@ -197,11 +197,11 @@ export default {
     },
     clear () {
       logger.debug('Clearing form', this.schema.$id)
-      if (!this.loadRefs().isFulfilled()) throw Error('Cannot clear the form while not ready')
+      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot clear the form while not ready')
       this.fields.forEach(field => this.getField(field.name).clear())
     },
     validate () {
-      if (!this.loadRefs().isFulfilled()) throw Error('Cannot validate the form while not ready')
+      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot validate the form while not ready')
       logger.debug('Validating form', this.schema.$id)
       const result = {
         isValid: false,
@@ -231,14 +231,14 @@ export default {
       return result
     },
     async apply (object) {
-      if (!this.loadRefs().isFulfilled()) throw Error('Cannot apply the form while not ready')
+      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot apply the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
         await this.getField(field.name).apply(object, field.name)
       }
     },
     async submitted (object) {
-      if (!this.loadRefs().isFulfilled()) throw Error('Cannot run submitted on the form while not ready')
+      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot run submitted on the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
         await this.getField(field.name).submitted(object, field.name)

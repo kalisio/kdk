@@ -43,10 +43,11 @@ Each service can include a set of *internal* [hooks](https://docs.feathersjs.com
 Each module then exposes a set of *external* [hooks](https://docs.feathersjs.com/api/hooks.html) you can use to extend the capabilities of your application. They are not built-in with the services and are usually added or removed on-demand by your application. The main reason is that you must have control over the order of execution when mixing different hooks to best fit your application logic and avoid any side effect.
 
 We try to organise hooks in different categories:
-* *query*: hooks targetting the processing of input query
-* *data model*: hooks targetting the processing of output data
-* *logs*: hooks targetting logging features
-* *service*: hooks targetting generic service setup
+* *query* for hooks targetting the processing of input query
+* *data model* for hooks targetting the processing of output data
+* *logs* for hooks targetting logging features
+* *service* for hooks targetting generic service setup
+
 Others hooks are usually service-centric and so attached to the target service.
 
 ## Data model

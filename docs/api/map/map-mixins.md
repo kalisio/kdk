@@ -42,7 +42,7 @@ Although DOM-based layers like [Markers](https://leafletjs.com/reference.html#ma
 If you add a `zIndex` option to your layer descriptor we will create a dedicated pane for you under-the-hood so that the layer will be rendered at its right rank. Check the `z-index` value of [the default panes](https://leafletjs.com/reference.html#map-pane) to select the appropriate one.
 
 If you add a `panes` option to your layer descriptor we will create the dedicated panes for you under-the-hood so that you can then set in the `pane` option of any sublayer the pane it will belong to. Each pane must have a unique name and can be visible at specific zoom levels:
-```json
+```js
 {
   name: 'Layer',
   ...
@@ -126,7 +126,7 @@ Marker cluster options are to be provided in the **cluster** property of the Lea
 :::
 
 The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
-```json
+```js
 {
   name: 'Layer',
   description: 'My sites',
@@ -185,7 +185,7 @@ template: ['marker-color', 'marker-symbol']
 ```
 
 You can also draw a path with a different styling on each part like this:
-```json
+```js
 {
   type: 'FeatureCollection',
   features: [{
