@@ -73,7 +73,7 @@ $yarn mocha:map    # test the map module
 If you need to perform some specific tests, you can use the `-g` or `--grep` option of the `mocha` command:
 
 ```bash
-$yarn mocha:core -g "team" # run the team tests
+$yarn mocha:core -g "core:team" # run the team tests
 ```
 :::
 
@@ -127,7 +127,8 @@ For the backend run one instance with `$ yarn dev` and the other one with `$ yar
 
 ### Running for development
 Run your web app as usual first, then build and run the mobile app in debug mode (from project folder):
-```
+
+```bash
 // Android
 $ yarn cordova:dev:android
 // iOS
@@ -148,8 +149,9 @@ When running the app through Cordova the `domain` entry of the client-side confi
 * use [port forwarding](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/local-server)
 
 ### Building for production
-Build the app in release mode (from project folder): 
-```
+Build the app in release mode (from project folder):
+
+```bash
 // Android
 $ yarn cordova:build:android
 // iOS

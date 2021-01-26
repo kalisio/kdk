@@ -22,7 +22,7 @@ npm link
 ### Usage
 
 The CLI relies on a workspace file defining the dependency tree between your KDK-based application and modules like this:
-```
+```js
 module.exports = {
   // Each key is the repo name of a module or application
   kdk: {
@@ -45,7 +45,7 @@ The `branch` option can also target a git tag, typically fo production releases.
 
 All operations will take effect in the current working directory so that subdirectories named according to modules will be created or expected to already exist.
 
-```
+```bash
 // Will clone all repositories
 kli workspace.js --clone
 // Will install dependencies in all modules and application
@@ -73,7 +73,7 @@ All operations are performed relative to the CWD by default, you can change this
 Sample workspaces for our [application template](https://github.com/kalisio/kApp) and [Kano](https://github.com/kalisio/kano) are provided in the [kli repository](https://github.com/kalisio/kli).
 
 Full CLI usage is the following:
-```
+```bash
 Usage: index <workspacefile> [options]
 
 Options:
@@ -122,7 +122,7 @@ To make a command executed by default *right click on settings > Startup > Selec
 ## [Travis CLI](https://github.com/travis-ci/travis.rb#installation)
 
 To encrypt a file in reliable manner use a Linux VM or container because this does not work under Windows. For example with https://hub.docker.com/r/caktux/travis-cli/:
-```
+```bash
 docker pull caktux/travis-cli
 // Mount your project as volume
 // Override the default entry point which automatically launch the travis CLI with provided arguments
@@ -133,7 +133,7 @@ $ travis encrypt-file ssh.pem
 ```
 
 Add the output to your build script:
-```
+```bash
 before_install:
   - openssl aes-256-cbc -K $encrypted_12c8071d2874_key -iv $encrypted_12c8071d2874_iv -in ssh.pem.enc -out ssh.pem -d
 ```

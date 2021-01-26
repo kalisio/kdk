@@ -160,7 +160,7 @@ The service is designed to possibly manage a different topic per platform (e.g. 
 :::
 
 For instance the topics associated to a group will result in the following structure on the group object:
-```
+```js
 {
     _id: ObjectId('5f568ba1fc54a1002fe6fe37'),
     name: 'Centre de Castelnaudary',
@@ -292,7 +292,7 @@ Available as a global service
 An authorisation consists in associating a *resource* object (e.g. a group) with a *subject* object (e.g. a user) according to a *permission* (i.e. a role or a right). The resource object information and the permission are directly stored on the target subject(s) in a property called the *scope* of the authorisation (e.g. `groups` to store all groups a user belongs to). 
 
 For instance the groups a user belongs to with different roles will result in the following structure on the user:
-```
+```js
 groups: [
   {
       _id: ObjectId('5f568ba1fc54a1002fe6fe37'),
@@ -496,7 +496,7 @@ This service exhibits the following methods in addition to standard CRUD operati
 * **unregisterOrganisationServicesHook(hook)**: unregister a previously registered function
 
 A hook function has the following structure:
-```
+```js
 {
   createOrganisationServices: function(organisation, db)
   removeOrganisationServices: function(organisation, db)
