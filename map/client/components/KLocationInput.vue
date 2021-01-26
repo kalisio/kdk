@@ -122,7 +122,7 @@ export default {
       }
       // Build the list of responses
       const geocoderService = this.$api.getService('geocoder')
-      if (!geocoderService) throw Error('Cannot find geocoder service')
+      if (!geocoderService) throw new Error('Cannot find geocoder service')
       const response = await geocoderService.create({ address: pattern })
       const places = []
       response.forEach(element => {

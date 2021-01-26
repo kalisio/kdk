@@ -112,7 +112,7 @@ export default {
       }
       // Need to convert to blob otherwise some browsers complains when the data uri is too long
       const typeAndData = uri.split(',')
-      if (typeAndData.length <= 1) throw Error(this.$t('errors.CANNOT_PROCESS_DOWNLOAD_DATA'))
+      if (typeAndData.length <= 1) throw new Error(this.$t('errors.CANNOT_PROCESS_DOWNLOAD_DATA'))
       const data = atob(typeAndData[1])
       const buffer = new Uint8Array(data.length)
       for (let i = 0; i < buffer.length; i++) {
