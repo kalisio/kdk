@@ -75,7 +75,7 @@ export default {
     // Loads the required components
     this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
+    this.$options.components['k-menu'] = this.$load('frame/KMenu')
   }
 }
 </script>

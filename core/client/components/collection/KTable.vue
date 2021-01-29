@@ -21,7 +21,7 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <k-overflow-menu :content="itemActions" :context="props.row" :dense="$q.screen.lt.md" />
+            <k-menu id="item-actions" :content="itemActions" :context="props.row" action-renderer="item" />
           </q-td>
         </template>
       </q-table>
@@ -176,7 +176,7 @@ export default {
   async created () {
     // Load the required components
     this.$options.components['k-label'] = this.$load('frame/KLabel')
-    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
+    this.$options.components['k-menu'] = this.$load('frame/KMenu')
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')

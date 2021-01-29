@@ -1,6 +1,7 @@
 import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store, utils as kCoreUtils } from '../../core/client'
+import { Geolocation } from './geolocation'
 
 export default function init () {
   const api = this
@@ -13,15 +14,7 @@ export default function init () {
   // Create the models listened by the different components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  // Initialize the nabigation bar
-  Store.set('navigationBar', {
-    positionIndicator: false,
-    locationInput: false,
-    actions: {
-      before: [],
-      after: []
-    }
-  })
+  Geolocation.initialize()
   // Initialize the selection
   Store.set('selection', {
     location: null,

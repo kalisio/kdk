@@ -31,7 +31,7 @@
           </q-item-section>
           <!-- actions -->
           <q-item-section side>
-            <k-overflow-menu :content="layerActions(layer)" :context="layer" />
+            <k-menu :id="`${layer.name}-actions`" :content="layerActions(layer)" :context="layer" action-renderer="item" />
           </q-item-section>
           <!-- tooltip -->
           <q-tooltip v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
@@ -91,7 +91,7 @@ export default {
   },
   created () {
     // Loads the required components
-    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
+    this.$options.components['k-menu'] = this.$load('frame/KMenu')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
   }
 }

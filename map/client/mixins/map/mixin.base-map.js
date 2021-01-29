@@ -324,7 +324,7 @@ export default {
       return [[south, west], [north, east]]
     },
     showUserLocation () {
-      const position = this.$store.get('user.position')
+      const position = this.$geolocation.get().position
       if (this.locateControl) {
         this.locateControl.start()
       } else if (position) {

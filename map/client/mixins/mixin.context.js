@@ -66,7 +66,7 @@ export default {
           }
           break
         case 'view':
-        default:
+        default: 
           const bounds = this.getBounds()
           const south = bounds[0][0]
           const west = bounds[0][1]

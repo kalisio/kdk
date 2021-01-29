@@ -52,16 +52,17 @@
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
+      "LOCATE_USER": "Me localiser",
       "TOGGLE_SIDENAV": "Menu",
-      "TOGGLE_FULLSCREEN": "Plein écran",
+      "TOGGLE_FULLSCREEN": "Basculer en mode plein écran",
       "TOGGLE_CATALOG": "Catalogue",
-      "TOGGLE_MAP": "2D",
-      "TOGGLE_GLOBE": "3D",
-      "TOGGLE_VR": "VR",
-      "TRACK_LOCATION": "Suivi de coordonnées",
+      "TOGGLE_MAP": "Visualiser en 2D",
+      "TOGGLE_GLOBE": "Visualiser en 3D",
+      "TOGGLE_VR": "Basculer en mode VR",
       "PROBE": "Sonder",
-      "TRACK": "Afficher les coordonnées",
-      "SEARCH": "Rechercher un lieu",
+      "DISPLAY_POSITION": "Afficher les coordonnées",
+      "SEARCH_LOCATION": "Rechercher un lieu",
+      "ADD_FAVORITE": "Ajouter aux vues favorites",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement"
     },
     "timeseries": {
@@ -260,7 +261,7 @@
   "KPositionIndicator": {
     "PLACEHOLDER": "Naviguez pour voir les coordonnées",
     "COPY": "Copier les coordonnées",
-    "CLEAR": "Effacter",
+    "CLEAR": "Effacer",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",
     "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité"
   },

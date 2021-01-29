@@ -8,7 +8,7 @@ const baseActivityMixin = {
   },
   methods: {
     setTopPane (content, mode = undefined) {
-      this.$store.patch('topPane', { content: this.standardizeActions(content), mode: mode })
+      this.$store.patch('topPane', { content: this.bindHandlers(content), mode: mode })
     },
     setTopPaneMode (mode) {
       const content = this.$store.get('topPane.content')
@@ -18,7 +18,7 @@ const baseActivityMixin = {
       this.$store.patch('topPane', { content: null, mode: undefined })
     },
     setBottomPane (content, mode = undefined) {
-      this.$store.patch('bottomPane', { content: this.standardizeActions(content), mode: mode })
+      this.$store.patch('bottomPane', { content: this.bindHandlers(content), mode: mode })
     },
     setBottomPaneMode (mode) {
       const content = this.$store.get('bottomPane.content')
@@ -28,7 +28,7 @@ const baseActivityMixin = {
       this.$store.patch('bottomPane', { content: null, mode: undefined })
     },
     setRightDrawer (content, mode = undefined) {
-      this.$layout.setRightDrawer(this.standardizeActions(content), mode)
+      this.$layout.setRightDrawer(this.bindHandlers(content), mode)
     },
     setRightDrawerMode (mode) {
       this.$layout.setRightDrawer(mode)
@@ -37,7 +37,7 @@ const baseActivityMixin = {
       this.$layout.clearRightDrawer()
     },
     setFabActions (actions) {
-      this.$store.patch('fab', { actions: this.standardizeActions(actions) })
+      this.$store.patch('fab', { actions: this.bindHandlers(actions) })
     },
     clearFabActions () {
       this.$store.patch('fab', { actions: null })
@@ -88,19 +88,18 @@ const baseActivityMixin = {
       // This method should be overriden in activities
       this.clearActivity()
     },
-    standardizeActions (content) {
+    bindHandlers (content) {
       const components = _.flatMapDeep(content)
       _.forEach(components, (component) => {
-        if (!component.component || component.component === 'frame/KAction') {
-          // Need to build the handler function if the hander is defined as an object
-          if (typeof component.handler === 'object') {
-            const handler = component.handler
-            if (handler.name) {
-              if (handler.params) component.handler = () => this[handler.name](...handler.params)
-              else component.handler = () => this[handler.name]()
-            }
+        if (component.handler && typeof component.handler === 'object') {
+          const handler = component.handler
+          if (handler.name) {
+            if (handler.params) component.handler = () => this[handler.name](...handler.params)
+            else component.handler = (params) => this[handler.name](params)
           }
         }
+        // Recursively bind the handlers on the sub content object
+        if (component.content) this.bindHandlers(component.content)
       })
       return content
     }

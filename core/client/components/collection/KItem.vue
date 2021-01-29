@@ -27,7 +27,7 @@
     -->
     <slot name="item-actions">
       <q-item-section side>
-        <k-overflow-menu :content="itemActions" :context="item" />
+        <k-menu id="item-actions" :content="itemActions" :context="item" action-renderer="item" />
       </q-item-section>
     </slot>
   </q-item>
@@ -47,7 +47,7 @@ export default {
   },
   created () {
     // Loads the required components
-    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
+    this.$options.components['k-menu'] = this.$load('frame/KMenu')
   }
 }
 </script>

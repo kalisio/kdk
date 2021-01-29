@@ -23,6 +23,9 @@
     <q-badge v-if="badge" class="q-py-xs" v-bind="badge">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
+    <!-- extra content -->
+    <slot name="content">
+    </slot>
   </q-btn>
   <!--
     Item renderer
@@ -44,9 +47,9 @@
       {{ $t(label) }}
     </q-item-section>
   </q-item>
-   <!--
-    Fab renderer
-   -->
+  <!--
+  Fab renderer
+  -->
   <q-fab-action v-else-if="renderer === 'fab'"
     :id="id"
     no-caps
@@ -66,7 +69,6 @@
 </template>
 
 <script>
-import logger from 'loglevel'
 import { openURL } from 'quasar'
 
 export default {
@@ -81,10 +83,6 @@ export default {
       default: ''
     },
     icon: {
-      type: String,
-      default: ''
-    },
-    tooltip: {
       type: String,
       default: ''
     },
@@ -115,6 +113,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    tooltip: {
+      type: String,
+      default: ''
     },
     context: {
       type: Object,
@@ -166,7 +168,6 @@ export default {
       // If it an URL then open the link
       else if (this.url) openURL(this.url)
       // Otherwise log a comment
-      else logger.debug(`Invalid action ${this.id}: you should define an handler or a route`)
       this.$emit('triggered')
     }
   }

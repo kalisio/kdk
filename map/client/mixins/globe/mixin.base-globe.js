@@ -256,18 +256,20 @@ export default {
       return [[south, west], [north, east]]
     },
     showUserLocation () {
-      const position = this.$store.get('user.position')
+      const position = this.$geolocation.get().position
       // TODO: no specific marker yet, simply center
       if (position) {
         this.center(position.longitude, position.latitude)
       }
+      this.userLocation = true
     },
     hideUserLocation () {
       // TODO: no specific marker to remove yet
+      this.userLocation = false
     },
     isUserLocationVisible () {
       // TODO: no specific marker to show yet
-      return false
+      return this.userLocation
     },
     setCursor (className) {
       this.viewer.container.classList.add(className)
@@ -356,6 +358,8 @@ export default {
   created () {
     this.cesiumLayers = {}
     this.cesiumFactory = []
+    // TODO: no specific marker, just keep status
+    this.userLocation = false
   },
   beforeDestroy () {
     Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))

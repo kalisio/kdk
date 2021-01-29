@@ -38,7 +38,7 @@
       <q-separator />
       <slot name="card-actions">
         <q-card-actions class="q-pa-xs" align="right">
-          <k-panel id="card-actions" :content="itemActions" :context="item" />
+          <k-panel id="item-actions" :content="itemActions" :context="item" />
         </q-card-actions>
       </slot>
     </q-card>
@@ -67,7 +67,6 @@ export default {
     // Loads the required components
     this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-overflow-menu'] = this.$load('frame/KOverflowMenu')
   }
 }
 </script>

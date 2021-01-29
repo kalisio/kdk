@@ -20,7 +20,8 @@ export default function (name) {
         engine: 'leaflet',
         engineReady: false,
         engineContainerWidth: null,
-        engineContainerHeight: null
+        engineContainerHeight: null,
+        isTargetVisible: false
       }
     },
     computed: {
@@ -623,6 +624,20 @@ export default function (name) {
           this.unsetCursor('probe-cursor')
         })
       },
+      async onToggleUserLocation () {
+        if (!this.isUserLocationVisible()) {
+          const position = await this.$geolocation.update()
+          if (position) {
+            this.showUserLocation()
+            this.center(position.longitude, position.latitude)
+          }
+        } else {
+          this.hideUserLocation()
+        }
+      },
+      onToggleTarget () {
+        this.isTargetVisible = !this.isTargetVisible
+      },
       onToggleFullscreen () {
         if (!this.$q.fullscreen.isActive) this.$q.fullscreen.request()
         else this.$q.fullscreen.exit()
@@ -633,12 +648,10 @@ export default function (name) {
         // Geolocate by default if view has not been restored
         const viewRestored = (hasContext ? await this.restoreContext('view') : false)
         if (!viewRestored) {
-          // Provided by geolocation mixin if available
-          if (!this.$store.get('user.position') && this.updatePosition) {
-            await this.updatePosition()
-            const position = this.$store.get('user.position')
-            if (position) this.center(position.longitude, position.latitude)
-          }
+          // Provided by geolocation if enabled
+          if (!this.$geolocation.get().position) await this.$geolocation.update()
+          const position = this.$geolocation.get().position
+          if (position) this.center(position.longitude, position.latitude)
         }
         // Retrieve the forecast models
         if (this.setupWeacast) {
