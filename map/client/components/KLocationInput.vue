@@ -54,9 +54,6 @@ import * as mixins from '../mixins'
 
 export default {
   name: 'k-location-input',
-  mixins: [
-    mixins.geolocation
-  ],
   props: {
     value: {
       type: Object,

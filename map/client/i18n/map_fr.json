@@ -12,13 +12,6 @@
     "FILE_IMPORT_ERROR": "L'import du fichier a échoué"
   },
   "mixins": {
-    "geolocation": {
-      "TITLE": "Ma position",
-      "METERS": "mètres",
-      "FEET": "pieds",
-      "POPUP": "Vous êtes à moins de {distance} {unit} de ce point",
-      "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
-    },
     "navigator": {
       "ACTION_SHEET_TITLE": "Selectionnez une application"
     },
@@ -31,8 +24,8 @@
     "activity": {
       "CREATE_LAYER": "Créer une nouvelle couche",
       "IMPORT_LAYER": "Importer un fichier local pour créer une nouvelle couche",
-      "SAVE_LABEL": "Sauvegarder la couche",
-      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
+      "SAVE_LAYAER": "Sauvegarder la couche",
+      "SAVING_LAYER": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
       "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {{features.length}} éléments dont la géométrie est invalide (e.g. auto-intersection).</br>En conséquence ces éléments seront supprimés avant la sauvegarde.",
       "SAVE_DIALOG_TITLE": "Tuilage de la couche {{layer}}",
@@ -63,7 +56,8 @@
       "DISPLAY_POSITION": "Afficher les coordonnées",
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_FAVORITE": "Ajouter aux vues favorites",
-      "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement"
+      "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
+      "TOOLS": "Outils"
     },
     "timeseries": {
       "FORECAST_PROBE": "Prévisions"
@@ -176,6 +170,13 @@
         }
       }
     }
+  },
+  "geolocation": {
+    "TITLE": "Ma position",
+    "METERS": "mètres",
+    "FEET": "pieds",
+    "POPUP": "Vous êtes à moins de {distance} {unit} de ce point",
+    "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
   },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",

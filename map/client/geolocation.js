@@ -10,12 +10,6 @@ export const Geolocation = {
   get () {
     return Store.get('geolocation')
   },
-  getPosition () {
-    return Store.get().position
-  },
-  getError () {
-    return Store.get().error
-  },
   async update () {
     let position = null
     // Get the position

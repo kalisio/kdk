@@ -12,13 +12,6 @@
     "FILE_IMPORT_ERROR": "L'import du fichier a échoué"
   },
   "mixins": {
-    "geolocation": {
-      "TITLE": "My position",
-      "METERS": "meters",
-      "FEET": "feet",
-      "POPUP": "You are within {distance} {unit} from this point",
-      "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
-    },
     "navigator": {
       "ACTION_SHEET_TITLE": "Select an application"
     },
@@ -31,8 +24,8 @@
     "activity": {
       "CREATE_LAYER": "Create a new layer",
       "IMPORT_LAYER": "Import a local file to create a new layer",
-      "SAVE_LABEL": "Save layer",
-      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
+      "SAVE_LAYER": "Save layer",
+      "SAVING_LAYER": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
       "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {{features.length}} elements with invalid geometry (e.g. self-intersection).</br>As a consequence they will be removed prior to saving.",
       "SAVE_DIALOG_TITLE": "Tiling layer {{layer}}",
@@ -63,7 +56,8 @@
       "DISPLAY_POSITION": "Display the coordinates",
       "SEARCH_LOCATION": "Search a location",
       "ADD_FAVORITE": "Add to favorite views",      
-      "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline"
+      "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
+      "TOOLS": "Tools"
     },
     "timeseries": {
       "FORECAST_PROBE": "Forecast"
@@ -176,6 +170,13 @@
         }
       }
     }
+  },
+  "geolocation": {
+    "TITLE": "My position",
+    "METERS": "meters",
+    "FEET": "feet",
+    "POPUP": "You are within {distance} {unit} from this point",
+    "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
   },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",

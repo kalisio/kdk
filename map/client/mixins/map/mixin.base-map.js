@@ -59,11 +59,11 @@ export default {
           enableHighAccuracy: true
         },
         strings: {
-          title: this.$t('mixins.geolocation.TITLE'),
-          metersUnit: this.$t('mixins.geolocation.METERS'),
-          feetUnit: this.$t('mixins.geolocation.FEET'),
-          popup: this.$t('mixins.geolocation.POPUP'),
-          outsideMapBoundsMsg: this.$t('mixins.geolocation.OUTSIDE_MAP_BOUNDS')
+          title: this.$t('geolocation.TITLE'),
+          metersUnit: this.$t('geolocation.METERS'),
+          feetUnit: this.$t('geolocation.FEET'),
+          popup: this.$t('geolocation.POPUP'),
+          outsideMapBoundsMsg: this.$t('geolocation.OUTSIDE_MAP_BOUNDS')
         }
       })
       this.locateControl.addTo(this.map)

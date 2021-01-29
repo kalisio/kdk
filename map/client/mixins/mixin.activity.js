@@ -320,7 +320,6 @@ export default function (name) {
           })
           if (!result.ok) return
         }
-        
         // Change data source from in-memory to features service
         _.merge(layer, {
           service: 'features',
@@ -492,7 +491,8 @@ export default function (name) {
         // Create new one
         if (this.isLayerEdited(layer)) {
           this.editedLayerToast = this.$toast({
-            type: 'warning', timeout: 0, // persistent
+            type: 'warning',
+            timeout: 0, // persistent
             position: 'top-left',
             message: this.$t('mixins.activity.EDITING_DATA_MESSAGE'),
             caption: this.$t(layer.name),
