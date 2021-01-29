@@ -1,14 +1,17 @@
 <template>
   <k-modal ref="modal" :title="title" :toolbar="toolbar" :buttons="[]" >
     <div slot="modal-content">
-      <q-list dense class="row items-center justify-around q-pa-md">
+      <q-list dense class="row items-center justify-around">
         <q-item v-for="filter in filters" :key="filter.key" class="col-12">
+          <q-item-section avatar v-if="filter.operator">
+            <q-select v-model="filter.operator" :label="filter.property" stack-label :options="getOperators(filter)" emit-value map-options/>
+          </q-item-section>
           <q-item-section>
             <component
               :is="filter.componentKey"
               :ref="filter.key"
               :properties="filter.properties"
-              :display="{ icon: true, label: true, labelWidth: 3 }"
+              :display="{ icon: false, label: false }"
               @field-changed="filter.onValueChanged"
             />
           </q-item-section>
@@ -61,12 +64,6 @@ export default {
     contextId: {
       type: String,
       default: ''
-    },
-    featureActions: {
-      type: Array,
-      default: function () {
-        return []
-      }
     }
   },
   computed: {
@@ -96,17 +93,36 @@ export default {
     }
   },
   methods: {
-    createFilter (property, options = {}) {
+    async createFilter (property, options = {}) {
       // Retrieve schema descriptor
       const properties = this.fields[property]
-      const componentKey = _.kebabCase(properties.field.component)
+      let component = properties.field.component
+      // We previously directly used the component type from the schema
+      // but now we prefer to switch to a select field in order to:
+      // - be able to select multiple target values at once
+      // - provide list of possible values for discrete types
+      if (component !== 'form/KNumberField') {
+        component = 'form/KSelectField'
+        properties.field.multiple = true
+        properties.field.chips = true
+        // Get available values
+        const values = await this.$api.getService('features', this.contextId)
+          .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
+        // We don't have label in that case
+        properties.field.options = values.map(value => ({ value, label: value }))
+      }
+      // Remove label as we add it on top of the operator
+      properties.field.helper = ''
+      const componentKey = _.kebabCase(component)
       // Load the required component if not previously loaded
       if (!this.$options.components[componentKey]) {
-        this.$options.components[componentKey] = this.$load(properties.field.component)
+        this.$options.components[componentKey] = this.$load(component)
       }
-      const filter = {
+      let filter = {
         key: uid().toString(),
+        component,
         componentKey,
+        operator: (component !== 'form/KNumberField' ? '$in' : '$eq'),
         property,
         properties,
         onValueChanged: (field, value) => { filter.value = value }
@@ -119,10 +135,24 @@ export default {
       // This could be done externally but adding it here we ensure no one will forget it
       await this.$nextTick()
       this.property = this.properties[0]
-      _.forOwn(this.layer.baseQuery, (queryValue, queryKey) => {
+      const queryKeys = Object.keys(this.layer.baseQuery)
+      for (let i = 0; i < queryKeys.length; i++) {
+        const queryKey = queryKeys[i]
+        // Do not rely on _.get here as the key should use dot notation, e.g. 'properties.xxx'
+        const queryValue = this.layer.baseQuery[queryKey]
         const property = _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
-        if (property) this.filters.push(this.createFilter(property, { value: queryValue }))
-      })
+        if (property) {
+          // Create a filter for each operator as complex filtering can use multiple keys, e.g.
+          // 'properties.xxx': { $gte: y, $lte: z }
+          const operators = Object.keys(queryValue)
+          for (let j = 0; j < operators.length; j++) {
+            const operator = operators[j]
+            const value = queryValue[operator]
+            const filter = await this.createFilter(property, { operator, value })
+            this.filters.push(filter)
+          }
+        }
+      }
       // Set the refs to be resolved
       if (this.filters.length) {
         this.setRefs(this.filters.map(filter => filter.key))
@@ -132,8 +162,36 @@ export default {
       this.filters.forEach(filter => this.$refs[filter.key][0].fill(filter.value))
       logger.debug('Built layer filter', this.filters)
     },
-    onAddFilter (property) {
-      this.filters.push(this.createFilter(property.value))
+    getOperators (filter) {
+      let operators = []
+      if (filter.component === 'form/KNumberField') {
+        operators = operators.concat([{
+          label: this.$i18n.t('KFeaturesFilter.EQUAL'),
+          value: '$eq'
+        },{
+          label: this.$i18n.t('KFeaturesFilter.NOT_EQUAL'),
+          value: '$neq'
+        },  {
+          label: this.$i18n.t('KFeaturesFilter.GREATER_THAN'),
+          value: '$gt'
+        }, {
+          label: this.$i18n.t('KFeaturesFilter.LOWER_THAN'),
+          value: '$lt'
+        }])
+      } else {
+        operators = operators.concat([{
+          label: this.$i18n.t('KFeaturesFilter.IN'),
+          value: '$in'
+        }, {
+          label: this.$i18n.t('KFeaturesFilter.NOT_IN'),
+          value: '$nin'
+        }])
+      }
+      return operators
+    },
+    async onAddFilter (property) {
+      const filter = await this.createFilter(property.value)
+      this.filters.push(filter)
     },
     onRemoveFilter (filter) {
       // Required to update the array to make it reactive
@@ -141,14 +199,20 @@ export default {
     },
     async onApply () {
       logger.debug('Applying layer filter', this.filters)
-      // Manage removed filters
+      // Reset filters
       _.forOwn(this.layer.baseQuery, (queryValue, queryKey) => {
-        const property = _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
-        if (property && !_.find(this.filters, { property })) delete this.layer.baseQuery[queryKey]
+        const field = _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
+        // Do not rely on _.unset here as the key should use dot notation, e.g. 'properties.xxx'
+        if (field) delete this.layer.baseQuery[queryKey]
       })
-      // Manage updated filters or newly added filters
+      // Update filters
       this.filters.forEach(filter => {
-        this.layer.baseQuery[`properties.${filter.property}`] = filter.value
+        const field = this.fields[filter.property]
+        const isNumber = (field.component === 'form/KNumberField')
+        const value = (isNumber && _.isNumber(filter.value) ? _.toNumber(filter.value) : filter.value)
+        // Do not rely on _.get here as the key should use dot notation, e.g. 'properties.xxx'
+        let queryFilter = this.layer.baseQuery[`properties.${filter.property}`] || {}
+        this.layer.baseQuery[`properties.${filter.property}`] = _.merge(queryFilter, { [filter.operator]: value })
       })
       // Update icon to reflect there is a filter on
       if (this.filters.length) {

@@ -284,7 +284,13 @@
     "TITLE": "Data filter for layer {{layer}}",
     "SELECT_PROPERTY_LABEL": "Select a target property to start",
     "ADD_FILTER": "Select a target property to add a filter on",
-    "REMOVE_FILTER": "Remove filter for this value"
+    "REMOVE_FILTER": "Remove filter for this value",
+    "IN": "value in",
+    "NOT_IN": "value not in",
+    "EQUAL": "value equals to",
+    "NOT_EQUAL": "value different from",
+    "GREATER_THAN": "value greater than",
+    "LOWER_THAN": "value lower than"
   },
   "KFeaturesTable": {
     "TITLE": "Data for layer {{layer}}"

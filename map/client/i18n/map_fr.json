@@ -285,7 +285,13 @@
     "TITLE": "Filtre des données de la couche {{layer}}",
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
     "ADD_FILTER": "Sélectionnez une propriété à associer à un filtre",
-    "REMOVE_FILTER": "Supprimer le filtre associée à cette valeur"
+    "REMOVE_FILTER": "Supprimer le filtre associée à cette valeur",
+    "IN": "valeur parmis",
+    "NOT_IN": "valeur différente de",
+    "EQUAL": "valeur égale à",
+    "NOT_EQUAL": "valeur différente de",
+    "GREATER_THAN": "valeur supérieure à",
+    "LOWER_THAN": "valeur inférieure à"
   },
   "KFeaturesTable": {
     "TITLE": "Données de la couche {{layer}}"
