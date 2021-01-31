@@ -12,7 +12,7 @@
     -->
     <div class="row justify-center items-center">
       <span class="text-subtitle1">{{ user.name }}</span>
-      <k-action id="manage-account" icon="las la-cog" :tooltip="$t('KIdentityPanel.MANAGE')" :route="{ name: 'account-activity', params: { mode: 'profile' } }" />
+      <k-action id="manage-account" icon="las la-user-cog" :tooltip="$t('KIdentityPanel.MANAGE')" :route="{ name: 'account-activity', params: { page: 'profile' } }" />
     </div>
   </div>
 </template>

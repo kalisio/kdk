@@ -31,7 +31,7 @@ import { formatGeocodingResult } from '../utils'
 
 export default {
   name: 'k-location-search',
-  inject: ['kActivity'],  
+  inject: ['kActivity'],
   props: {
     dense: {
       type: Boolean,

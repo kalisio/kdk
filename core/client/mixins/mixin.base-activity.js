@@ -14,6 +14,10 @@ const baseActivityMixin = {
       const content = this.$store.get('topPane.content')
       this.$store.patch('topPane', { content, mode })
     },
+    configureTopPane () {
+      const config = this.$config(this.id + '.topPane')
+      if (config) this.setTopPane(config.content, config.mode)
+    },
     clearTopPane () {
       this.$store.patch('topPane', { content: null, mode: undefined })
     },
@@ -24,6 +28,10 @@ const baseActivityMixin = {
       const content = this.$store.get('bottomPane.content')
       this.$store.patch('bottomPane', { content, mode })
     },
+    configureBottomPane () {
+      const config = this.$config(this.id + '.bottomPane')
+      if (config) this.setBottomPane(config.content, config.mode)
+    },
     clearBottomPane () {
       this.$store.patch('bottomPane', { content: null, mode: undefined })
     },
@@ -33,27 +41,39 @@ const baseActivityMixin = {
     setRightDrawerMode (mode) {
       this.$layout.setRightDrawer(mode)
     },
+    configureRightDrawer () {
+      const config = this.$config(this.id + '.rightDrawer')
+      if (config) this.setRightDrawer(config.content, config.mode)
+    },
     clearRightDrawer () {
       this.$layout.clearRightDrawer()
     },
-    setFabActions (actions) {
+    setFab (actions) {
       this.$store.patch('fab', { actions: this.bindHandlers(actions) })
     },
-    clearFabActions () {
+    configureFab () {
+      const config = this.$config(this.id + '.fab')
+      if (config) this.setFab(config.actions)
+    },
+    clearFab () {
       this.$store.patch('fab', { actions: null })
     },
-    registerWidget (name, icon, component, props) {
-      const widgets = this.$store.get('window.widgets')
-      widgets.push({ name, icon, component, props })
-      this.$store.patch('window', { widgets: widgets })
+    setWindow (widgets, current) {
+      this.$store.patch('window', { widgets, current })
     },
-    unregisterWidget (name) {
+    configureWindow () {
+      const config = this.$config(this.id + '.window')
+      if (config) this.setWindow(config.widgets, config.current ? config.current : undefined)
+    },
+    clearWindow () {
+      this.$store.patch('window', { widgets: null, current: undefined })
+    },
+    hasOpenWidget () {
+      return this.$store.get('window.current')
+    },
+    isWidgetOpen (widget) {
       const current = this.$store.get('window.current')
-      const widgets = _.filter(this.$store.get('window.widgets'), { name })
-      this.$store.patch('window', { current, widgets })
-    },
-    clearWidgets () {
-      this.$store.patch('window', { current: '', widgets: [] })
+      return (current && (current === widget))
     },
     openWidget (widget) {
       const current = this.$store.get('window.current')
@@ -61,14 +81,6 @@ const baseActivityMixin = {
         const widgets = this.$store.get('window.widgets')
         this.$store.patch('window', { current: widget, widgets })
       }
-    },
-    hasOpenWidget () {
-      const current = this.$store.get('window.current')
-      return current
-    },
-    isWidgetOpen (widget) {
-      const current = this.$store.get('window.current')
-      return (current && (current === widget))
     },
     closeWidget () {
       const current = this.$store.get('window.current')
@@ -81,12 +93,24 @@ const baseActivityMixin = {
       this.clearTopPane()
       this.clearBottomPane()
       this.clearRightDrawer()
-      this.clearFabActions()
-      this.clearWidgets()
+      this.clearFab()
+      this.clearWindow()
+    },
+    confgureActivity () {
+      this.configureTopPane()
+      this.configureBottomPane()
+      this.configureRightDrawer()
+      this.configureFab()
+      this.configureWindow()
     },
     refreshActivity () {
       // This method should be overriden in activities
       this.clearActivity()
+      this.confgureActivity()
+    },
+    back () {
+      if (this.origin) this.$router.push(this.origin)
+      else this.$router.push({ name: 'home' })
     },
     bindHandlers (content) {
       const components = _.flatMapDeep(content)
@@ -104,7 +128,14 @@ const baseActivityMixin = {
       return content
     }
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.origin = from.name ? from : null
+    })
+  },
   created () {
+    // Identify this activity using the route name
+    this.id = _.get(this.$router, 'history.current.name', undefined)
     // Register the actions
     this.refreshActivity()
     // Whenever the user abilities are updated, update activity as well

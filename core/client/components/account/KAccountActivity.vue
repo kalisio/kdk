@@ -1,13 +1,13 @@
 <template>
   <k-page v-if="user" padding>
     <template v-slot:page-content>
-      <div v-if="mode === 'profile'">
+      <div v-if="page === 'profile'">
         <k-editor service="users" :objectId="user._id" perspective="profile"/>
       </div>
-      <div v-if="mode === 'security'">
+      <div v-if="page === 'security'">
         <k-account-security />
       </div>
-      <div v-else-if="mode === 'danger-zone'">
+      <div v-else-if="page === 'danger-zone'">
         <k-account-dz />
       </div>
     </template>
@@ -23,7 +23,7 @@ export default {
     mixins.baseActivity
   ],
   props: {
-    mode: {
+    page: {
       type: String,
       required: true,
       validator: (value) => {
@@ -37,46 +37,9 @@ export default {
     }
   },
   watch: {
-    mode: function (value) {
+    page: function (value) {
       this.setTopPaneMode(value)
     }
-  },
-  methods: {
-    refreshActivity () {
-      this.clearActivity()
-      this.setTopPane({
-        profile: [
-          { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
-          { component: 'QSeparator', vertical: true, color: 'lightgrey' },
-          { id: 'profile', icon: 'las la-user', color: 'primary', label: 'KAccountActivity.PROFILE', status: () => { return 'disabled' } },
-          { id: 'security', icon: 'las la-shield-alt', tooltip: 'KAccountActivity.SECURITY', route: { name: 'account-activity', params: { mode: 'security' } } },
-          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: 'KAccountActivity.DANGER_ZONE', route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
-        ],
-        security: [
-          { id: 'back', icon: 'las la-arrow-left', handler: this.goBack },
-          { component: 'QSeparator', vertical: true, color: 'lightgrey' },
-          { id: 'profile', icon: 'las la-user', tooltip: 'KAccountActivity.PROFILE', route: { name: 'account-activity', params: { mode: 'profile' } } },
-          { id: 'security', icon: 'las la-shield-alt', color: 'primary', label: 'KAccountActivity.SECURITY', status: () => { return 'disabled' } },
-          { id: 'danger-zone', icon: 'las la-exclamation-triangle', tooltip: 'KAccountActivity.DANGER_ZONE', route: { name: 'account-activity', params: { mode: 'danger-zone' } } }
-        ],
-        'danger-zone': [
-          { id: 'go-back', icon: 'las la-arrow-left', handler: this.goBack },
-          { component: 'QSeparator', vertical: true, color: 'lightgrey' },
-          { id: 'profile', icon: 'las la-user', tooltip: 'KAccountActivity.PROFILE', route: { name: 'account-activity', params: { mode: 'profile' } } },
-          { id: 'security', icon: 'las la-shield-alt', tooltip: 'KAccountActivity.SECURITY', route: { name: 'account-activity', params: { mode: 'security' } } },
-          { id: 'danger-zone', icon: 'las la-exclamation-triangle', color: 'primary', label: 'KAccountActivity.DANGER_ZONE', status: () => { return 'disabled' } }
-        ]
-      }, this.mode)
-    },
-    goBack () {
-      if (this.originRoute) this.$router.push(this.originRoute)
-      else this.$router.push({ name: 'home' })
-    }
-  },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.originRoute = from.name ? from : null
-    })
   },
   created () {
     // Load the required components
