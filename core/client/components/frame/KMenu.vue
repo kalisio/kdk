@@ -63,8 +63,8 @@ export default {
       default: () => { return null }
     },
     toggle: {
-      type: Boolean,
-      default: false
+      type: Object,
+      default: () =>  { return null }
     },
     toggled: {
       type: Boolean,

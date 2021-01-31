@@ -8,7 +8,6 @@
     <template v-for="component in components">
       <component
         :key="component.uid"
-        :disabled="component.status ? component.status() === 'disabled' : false"
         :is="component.componentKey"
         v-bind="component"
         :renderer="component.renderer ? component.renderer: actionRenderer"

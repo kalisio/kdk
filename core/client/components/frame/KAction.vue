@@ -4,10 +4,10 @@
    -->
   <q-btn v-if="renderer === 'button'"
     :id="id"
-    :label="$q.screen.gt.xs ? $t(label) : ''"
+    :label="$q.screen.gt.xs ? $t(computedLabel) : ''"
     no-caps
-    :icon="icon"
-    :color="isToggled ? 'secondary' : color"
+    :icon="computedIcon"
+    :color="computedColor"
     :size="size"
     :flat="flat"
     :round="label===''"
@@ -16,8 +16,8 @@
     :disabled="disabled"
     @click="onClicked()">
     <!-- tooltip -->
-    <q-tooltip v-if="tooltip">
-      {{ $t(tooltip) }}
+    <q-tooltip v-if="computedTooltip">
+      {{ $t(computedTooltip) }}
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" class="q-py-xs" v-bind="badge">
@@ -37,14 +37,14 @@
     :disabled="disabled"
     @click="onClicked()">
     <q-item-section avatar>
-      <q-icon :dense="dense" :name="icon" :color="color" />
+      <q-icon :dense="dense" :name="computedIcon" :color="computedColor" />
       <!-- badge -->
       <q-badge v-if="badge" v-bind="badge">
         <q-icon v-if="badge.icon" v-bind="badge.icon" />
       </q-badge>
     </q-item-section>
     <q-item-section>
-      {{ $t(label) }}
+      {{ $t(computedLabel) }}
     </q-item-section>
   </q-item>
   <!--
@@ -53,12 +53,11 @@
   <q-fab-action v-else-if="renderer === 'fab'"
     :id="id"
     no-caps
-    :icon="icon"
-    :color="isToggled ? 'secondary' : color"
-    :label="$t(label)"
+    :icon="computedIcon"
+    :color="computedColor"
+    :label="$t(computedLabel)" 
     external-label
     label-position="left"
-	
     :disabled="disabled"
     @click="onClicked()">
     <!-- badge -->
@@ -103,12 +102,8 @@ export default {
       default: () => { return null }
     },
     toggle: {
-      type: Boolean,
-      default: false
-    },
-    toggled: {
-      type: Boolean,
-      default: false
+      type: Object,
+      default: () => { return null }
     },
     disabled: {
       type: Boolean,
@@ -120,10 +115,6 @@ export default {
     },
     context: {
       type: Object,
-      default: () => { return null }
-    },
-    status: {
-      type: [Function],
       default: () => { return null }
     },
     handler: {
@@ -148,12 +139,29 @@ export default {
   },
   data () {
     return {
-      isToggled: this.toggled
+      isToggled: this.toggle ? this.toggle.toggled : false
     }
   },
   computed: {
     dense () {
       return this.$q.screen.lt.sm
+    },
+    computedLabel () {
+      if (this.isToggled && this.toggle.label) return this.toggle.label
+      return this.label
+    },
+    computedIcon () {
+      console.log(this.icon)
+      if (this.isToggled && this.toggle.icon) return this.toggle.icon
+      return this.icon
+    },
+    computedColor () {
+      if (this.isToggled) return this.toggle.color ? this.toggle.color : 'secondary'
+      return this.color
+    },
+    computedTooltip () {
+      if (this.isToggled && this.toggle.tooltip) return this.toggle.tooltip
+      return this.tooltip
     }
   },
   methods: {
