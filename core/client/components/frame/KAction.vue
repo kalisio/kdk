@@ -151,7 +151,6 @@ export default {
       return this.label
     },
     computedIcon () {
-      console.log(this.icon)
       if (this.isToggled && this.toggle.icon) return this.toggle.icon
       return this.icon
     },
