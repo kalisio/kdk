@@ -438,11 +438,11 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-panel'] = this.$load('kargo/KPanel')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
     this.actions = [
-      { id: 'center-view', icon: 'las la-eye', label: this.$t('KTimeSeries.CENTER_ON'), handler: this.onCenterOn }
+      { id: 'center-view', icon: 'las la-eye', label: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn }
     ]
     // Refresh the component
     this.refresh()
