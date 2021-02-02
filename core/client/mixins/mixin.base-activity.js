@@ -35,18 +35,19 @@ const baseActivityMixin = {
     clearBottomPane () {
       this.$store.patch('bottomPane', { content: null, mode: undefined })
     },
-    setRightDrawer (content, mode = undefined) {
-      this.$layout.setRightDrawer(this.bindHandlers(content), mode)
+    setRightPane (content, mode = undefined) {
+      this.$store.patch('rightPane', { content: this.bindHandlers(content), mode: mode })
     },
-    setRightDrawerMode (mode) {
-      this.$layout.setRightDrawer(mode)
+    setRightPaneMode (mode) {
+      const content = this.$store.get('rightPane.content')
+      this.$store.patch('rightPane', { content, mode })
     },
-    configureRightDrawer () {
-      const config = this.$config(this.id + '.rightDrawer')
-      if (config) this.setRightDrawer(config.content, config.mode)
+    configureRightPane () {
+      const config = this.$config(this.id + '.rightPane')
+      if (config) this.setRightPane(config.content, config.mode)
     },
-    clearRightDrawer () {
-      this.$layout.clearRightDrawer()
+    clearRightPane () {
+      this.$store.patch('rightPane', { content: null, mode: undefined })
     },
     setFab (actions) {
       this.$store.patch('fab', { actions: this.bindHandlers(actions) })
@@ -92,14 +93,14 @@ const baseActivityMixin = {
     clearActivity () {
       this.clearTopPane()
       this.clearBottomPane()
-      this.clearRightDrawer()
+      this.clearRightPane()
       this.clearFab()
       this.clearWindow()
     },
     confgureActivity () {
       this.configureTopPane()
       this.configureBottomPane()
-      this.configureRightDrawer()
+      this.configureRightPane()
       this.configureFab()
       this.configureWindow()
     },

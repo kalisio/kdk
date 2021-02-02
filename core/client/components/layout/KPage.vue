@@ -12,7 +12,7 @@
     <q-page-sticky position="top">
       <div id="top-pane" v-show="topPane.content" class="column items-center">
         <div>
-          <k-panel id="top-panel" v-if="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
+          <k-panel id="top-panel" v-show="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
         <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
@@ -24,14 +24,23 @@
     <q-page-sticky v-if="hasLeftDrawerOpener && leftDrawer.content" position="left">
       <k-opener v-model="isLeftDrawerOpened" position="left"  />
     </q-page-sticky>
-    <q-page-sticky v-if="hasRightDrawerOpener && rightDrawer.content" position="right">
+    <!--q-page-sticky v-if="hasRightDrawerOpener && rightDrawer.content" position="right">
       <k-opener v-model="isRightDrawerOpened" position="right" />
+    </q-page-sticky-->
+    <q-page-sticky position="right">
+      <div id="right-pane" v-show="rightPane.content" class="row items-center">
+        <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
+        <div>
+          <k-panel id="bottom-panel" v-show="isRightPaneOpened" :content="rightPane.content" :mode="rightPane.mode" class="k-pane" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
+        </div>
+      </div>
     </q-page-sticky>
     <q-page-sticky position="bottom">
       <div id="bottom-pane" v-show="bottomPane.content" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
-          <k-panel id="bottom-panel" v-if="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
+          <k-panel id="bottom-panel" v-show="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
       </div>
@@ -63,14 +72,6 @@ export default {
         this.$store.patch('topPane', { visible: value })
       }
     },
-    isBottomPaneOpened: {
-      get: function () {
-        return this.bottomPane.visible
-      },
-      set: function (value) {
-        this.$store.patch('bottomPane', { visible: value })
-      }
-    },
     isLeftDrawerOpened: {
       get: function () {
         return this.leftDrawer.visible
@@ -79,27 +80,36 @@ export default {
         this.$layout.setLeftDrawerVisible(value)
       }
     },
-    isRightDrawerOpened: {
+    isRightPaneOpened: {
       get: function () {
-        return this.rightDrawer.visible
+        return this.rightPane.visible
       },
       set: function (value) {
-        this.$layout.setRightDrawerVisible(value)
+        this.$store.patch('rightPane', { visible: value })
+      }
+    },
+    isBottomPaneOpened: {
+      get: function () {
+        return this.bottomPane.visible
+      },
+      set: function (value) {
+        this.$store.patch('bottomPane', { visible: value })
       }
     }
   },
   data () {
     return {
-      topPane: this.$store.get('topPane'),
-      bottomPane: this.$store.get('bottomPane'),
       leftDrawer: this.$layout.getLeftDrawer(),
-      rightDrawer: this.$layout.getRightDrawer(),
-      hasTopPaneOpener: false,
-      hasBottomPaneOpener: false,
+      topPane: this.$store.get('topPane'),
+      rightPane: this.$store.get('rightPane'),
+      bottomPane: this.$store.get('bottomPane'),
       hasLeftDrawerOpener: false,
-      hasRightDrawerOpener: false,
+      hasTopPaneOpener: false,
+      hasRightPaneOpener: false,
+      hasBottomPaneOpener: false,
       topPadding: 0,
       bottomPadding: 0,
+      rightPadding: 0,
       widgetOffset: [0, 0],
       fabOffset: [16, 16]
     }
@@ -110,6 +120,9 @@ export default {
     },
     onBottomPaneResized (size) {
       this.bottomPadding = size.height
+    },
+    onRightPaneResized (size) {
+      this.rightPaddding = size.width
     }
   },
   created () {
@@ -118,14 +131,17 @@ export default {
     this.$options.components['k-opener'] = this.$load('frame/KOpener')
     this.$options.components['k-window'] = this.$load('layout/KWindow')
     this.$options.components['k-fab'] = this.$load('layout/KFab')
-    // Read top/bottom pane configuration
+    // Read left drawer configuration
+    this.hasLeftDrawerOpener = this.$config('layout.leftDrawer.opener', false)
+    // Read top pane configuration
     this.hasTopPaneOpener = this.$config('layout.topPane.opener', false)
     if (this.$config('layout.topPane.visible', false)) this.$store.patch('topPane', { visible: true })
+    // Read bottom pane configuration
+    this.hasRightPaneOpener = this.$config('layout.rightPane.opener', false)
+    if (this.$config('layout.rightPane.visible', false)) this.$store.patch('rightPane', { visible: true })
+    // Read bottom pane configuration
     this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
-    // Read drawers configuration
-    this.hasLeftDrawerOpener = this.$config('layout.leftDrawer.opener', false)
-    this.hasRightDrawerOpener = this.$config('layout.rightDrawer.opener', false)
   }
 }
 </script>

@@ -36,6 +36,7 @@ export default function init () {
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
   Store.set('topPane', { content: null, mode: undefined, visible: false })
+  Store.set('rightPane', { content: null, mode: undefined, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, visible: false })
   Store.set('window', { curent: '', widgets: [] })
   Store.set('fab', { actions: [] })

@@ -1,26 +1,28 @@
 <template>
-  <q-list dense bordered>
-    <slot name="header" />
-    <template v-for="category in layerCategories">
-      <q-expansion-item
-        v-if="layersByCategory[category.name].length > 0"
-        :key="category.name"
-        :id="category.name"
-        header-class="text-primary"
-        :icon="category.icon"
-        :label="$t(category.label)"
-        expand-separator>
-        <component
-          :is="category.componentKey"
-          :layers="layersByCategory[category.name]"
-          :forecastModels="forecastModels"
-          :forecastModelHandlers="forecastModelHandlers"
-          :forecastModel="forecastModel"
-          :options="category.options"></component>
-      </q-expansion-item>
-    </template>
-    <slot name="footer" />
-  </q-list>
+  <q-scroll-area :style="`height: 75vh; min-width: ${width}px;`">
+    <q-list dense bordered>
+      <slot name="header" />
+      <template v-for="category in kActivity.layerCategories">
+        <q-expansion-item
+          v-if="layersByCategory[category.name].length > 0"
+          :key="category.name"
+          :id="category.name"
+          header-class="text-primary"
+          :icon="category.icon"
+          :label="$t(category.label)"
+          expand-separator>
+          <component
+            :is="category.componentKey"
+            :layers="layersByCategory[category.name]"
+            :forecastModels="kActivity.forecastModels"
+            :forecastModelHandlers="kActivity.forecastModelHandlers"
+            :forecastModel="kActivity.forecastModel"
+            :options="category.options"></component>
+        </q-expansion-item>
+      </template>
+      <slot name="footer" />
+    </q-list>
+  </q-scroll-area>
 </template>
 
 <script>
@@ -30,7 +32,8 @@ import path from 'path'
 
 export default {
   name: 'k-catalog-panel',
-  props: {
+  inject: ['kActivity'],
+ /* props: {
     layers: {
       type: Object,
       default: () => {}
@@ -52,11 +55,17 @@ export default {
       default: () => {}
     }
   },
+  */
   computed: {
+    width () {
+      if (this.$q.screen.lt.md) return 300
+      if (this.$q.screen.lt.lg) return 350
+      return 400
+    },
     layersByCategory () {
-      const layers = _.values(this.layers)
+      const layers = _.values(this.kActivity.layers)
       const layersByCategory = {}
-      this.layerCategories.forEach(category => {
+      this.kActivity.layerCategories.forEach(category => {
         layersByCategory[category.name] = layers.filter(sift(_.get(category, 'options.filter', {})))
       })
       return layersByCategory
@@ -69,7 +78,7 @@ export default {
   },
   methods: {
     refresh () {
-      this.layerCategories.forEach(category => {
+      this.kActivity.layerCategories.forEach(category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
         const componentKey = _.kebabCase(path.basename(component))
         category.componentKey = componentKey

@@ -12,12 +12,6 @@
     <q-drawer v-if="leftDrawer.content" v-model="isLeftDrawerVisible" v-bind="config.leftDrawer" side="left" bordered>
       <k-panel id="left-drawer" :content="leftDrawer.content" :mode="leftDrawer.mode" direction="vertical" />
     </q-drawer>
-     <!--
-      Right drawer
-     -->
-    <q-drawer v-if="rightDrawer.content" v-model="isRightDrawerVisible" v-bind="config.rightDrawer" side="right" bordered>
-      <k-panel id="right-drawer" :content="rightDrawer.content" :mode="rightDrawer.mode" direction="vertical" />
-    </q-drawer>
     <!--
       Footer
      -->
@@ -62,14 +56,6 @@ export default {
       set: function (value) {
         this.$layout.setLeftDrawerVisible(value)
       }
-    },
-    isRightDrawerVisible: {
-      get: function () {
-        return this.rightDrawer.visible
-      },
-      set: function (value) {
-        this.$layout.setRightDrawerVisible(value)
-      }
     }
   },
   data () {
@@ -77,7 +63,6 @@ export default {
       header: this.$layout.getHeader(),
       footer: this.$layout.getFooter(),
       leftDrawer: this.$layout.getLeftDrawer(),
-      rightDrawer: this.$layout.getRightDrawer(),
       config: {}
     }
   },
@@ -98,10 +83,6 @@ export default {
     if (this.config.leftDrawer) {
       const leftDrawer = this.config.leftDrawer
       this.$layout.setLeftDrawer(_.get(leftDrawer, 'content', null), _.get(leftDrawer, 'mode', undefined), _.get(leftDrawer, 'visible', false))
-    }
-    if (this.config.rightDrawer) {
-      const rightDrawer = this.config.rightDrawer
-      this.$layout.setRightDrawer(_.get(rightDrawer, 'content', null), _.get(rightDrawer, 'mode', undefined), _.get(rightDrawer, 'visible', false))
     }
   }
 }

@@ -150,7 +150,7 @@ export default function (name) {
           if ((typeof this.toGeoJson === 'function') && this.isLayerStorable(layer) && !layer._id && layerActions.includes('save')) {
             actions.push({
               name: 'save',
-              label: this.$t('mixins.activity.SAVE_LABEL'),
+              label: this.$t('mixins.activity.SAVE_LAYER'),
               icon: 'las la-save',
               handler: () => this.onSaveLayer(layer)
             })

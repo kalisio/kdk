@@ -1,6 +1,6 @@
 import { Store } from './store'
 
-const components = ['header', 'footer', 'leftDrawer', 'rightDrawer']
+const components = ['header', 'footer', 'leftDrawer']
 
 // Export singleton
 export const Layout = {
@@ -53,20 +53,5 @@ export const Layout = {
   },
   clearLeftDrawer () {
     Store.patch(components[2], { content: null, mode: undefined, visible: false })
-  },
-  getRightDrawer () {
-    return Store.get(components[3])
-  },
-  setRightDrawer (content, mode, visible) {
-    Store.patch(components[3], { content, mode, visible })
-  },
-  setRightDrawerMode (mode) {
-    Store.patch(components[3], { mode })
-  },
-  setRightDrawerVisible (visible) {
-    Store.patch(components[3], { visible })
-  },
-  clearRightDrawer () {
-    Store.patch(components[3], { content: null, mode: undefined, visible: false })
   }
 }
