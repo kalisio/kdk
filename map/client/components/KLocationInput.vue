@@ -50,7 +50,6 @@
 <script>
 import formatcoords from 'formatcoords'
 import { formatGeocodingResult } from '../utils'
-import * as mixins from '../mixins'
 
 export default {
   name: 'k-location-input',
