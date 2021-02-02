@@ -64,8 +64,8 @@ export default {
       const actions = []
       _.forEach(this.fab.actions, (action) => {
         if (!action.status || action.status() !== 'hidden') {
-          action['uid'] = uid()
-          if (!action.color) action['color'] = 'secondary'
+          action.uid = uid()
+          if (!action.color) action.color = 'secondary'
           actions.push(action)
         }
       })

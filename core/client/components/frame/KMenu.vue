@@ -14,12 +14,12 @@
     :tooltip="tooltip">
     <template v-slot:content>
       <q-menu id="menu" auto-close>
-        <k-panel 
-          id="menu-entries" 
-          :content="content" 
-          :mode="mode" 
-          :context="context" 
-          :action-renderer="actionRenderer" 
+        <k-panel
+          id="menu-entries"
+          :content="content"
+          :mode="mode"
+          :context="context"
+          :action-renderer="actionRenderer"
           direction="vertical" />
       </q-menu>
     </template>
@@ -34,7 +34,7 @@ export default {
   components: { KAction },
   name: 'k-menu',
   props: {
-   id: {
+    id: {
       type: String,
       required: true
     },
@@ -64,7 +64,7 @@ export default {
     },
     toggle: {
       type: Object,
-      default: () =>  { return null }
+      default: () => { return null }
     },
     toggled: {
       type: Boolean,

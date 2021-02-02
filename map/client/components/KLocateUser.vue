@@ -2,7 +2,7 @@
   <k-action 
     id="locate-user" 
     icon="las la-crosshairs" 
-    tooltip="mixins.activity.SHOW_USER_LOCATION" 
+    :tooltip="'mixins.activity.SHOW_USER_LOCATION'" 
     :toggle="{ tooltip: 'mixins.activity.HIDE_USER_LOCATION' }"
     :toggled="isToggled"
     :disabled="!isEnabled "

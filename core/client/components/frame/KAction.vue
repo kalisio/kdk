@@ -31,7 +31,7 @@
     Item renderer
    -->
   <q-item v-else-if="renderer === 'item'"
-    :id="id" 
+    :id="id"
     clickable
     :dense="dense"
     :disabled="disabled"
@@ -55,7 +55,7 @@
     no-caps
     :icon="computedIcon"
     :color="computedColor"
-    :label="$t(computedLabel)" 
+    :label="$t(computedLabel)"
     external-label
     label-position="left"
     :disabled="disabled"
@@ -131,7 +131,7 @@ export default {
     },
     url: {
       type: String,
-      default: null,
+      default: null
     },
     renderer: {
       type: String,
@@ -175,14 +175,14 @@ export default {
   },
   methods: {
     onClicked () {
-      let params = []
+      const params = []
       // Handle the context if needed
       if (this.context) params.push(this.context)
       // Handle the toggle if needed
       if (this.toggle) {
         this.isToggled = !this.isToggled
         params.push(this.isToggled)
-      }     
+      }
       // Handle the URL case
       if (this.url) openURL(this.url)
       // Handle the route case
