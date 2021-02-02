@@ -4,6 +4,7 @@
     icon="las la-crosshairs" 
     tooltip="mixins.activity.SHOW_USER_LOCATION" 
     :toggle="{ tooltip: 'mixins.activity.HIDE_USER_LOCATION' }"
+    :toggled="isToggled"
     :disabled="!isEnabled "
     @triggered="onClicked" />
 </template>
@@ -12,20 +13,15 @@
 export default {
   name: 'k-locate-user',
   inject: ['kActivity'],
-  props: {
-    dense: {
-      type: Boolean,
-      default: true
-    }
-  },
   data () {
     return {
-      isEnabled: false
+      isEnabled: false,
+      isToggled: this.kActivity.isUserLocationVisible()
     }
   },
   methods: {
-    onClicked (isToggled) {
-      if (isToggled) this.kActivity.showUserLocation()
+    onClicked (toggled) {
+      if (toggled) this.kActivity.showUserLocation()
       else this.kActivity.hideUserLocation()
     }
   },

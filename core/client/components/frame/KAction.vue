@@ -105,6 +105,10 @@ export default {
       type: Object,
       default: () => { return null }
     },
+    toggled: {
+      type: Boolean,
+      default: false
+    },
     disabled: {
       type: Boolean,
       default: false
@@ -139,7 +143,13 @@ export default {
   },
   data () {
     return {
-      isToggled: this.toggle ? this.toggle.toggled : false
+      isToggled: this.toggled
+    }
+  },
+  watch: {
+    toggled: function (value) {
+      console.log(value)
+      this.isToggled = value
     }
   },
   computed: {
