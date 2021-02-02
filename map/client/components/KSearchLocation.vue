@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'k-location-search',
+  name: 'k-search-location',
   inject: ['kActivity'],
   props: {
     dense: {

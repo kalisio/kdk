@@ -624,17 +624,6 @@ export default function (name) {
           this.unsetCursor('probe-cursor')
         })
       },
-      async onToggleUserLocation () {
-        if (!this.isUserLocationVisible()) {
-          const position = await this.$geolocation.update()
-          if (position) {
-            this.showUserLocation()
-            this.center(position.longitude, position.latitude)
-          }
-        } else {
-          this.hideUserLocation()
-        }
-      },
       onToggleTarget () {
         this.isTargetVisible = !this.isTargetVisible
       },

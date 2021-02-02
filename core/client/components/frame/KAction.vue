@@ -165,17 +165,26 @@ export default {
   },
   methods: {
     onClicked () {
-      // Handle the toggle if any
-      if (this.toggle) this.isToggled = !this.isToggled
-      // If it has an handler call it
-      if (this.handler) this.handler(this.context)
-      // If it is a route update the router
-      // TODO: is there any better solution to avoid redundant navigation
+      let params = []
+      // Handle the context if needed
+      if (this.context) params.push(this.context)
+      // Handle the toggle if needed
+      if (this.toggle) {
+        this.isToggled = !this.isToggled
+        params.push(this.isToggled)
+      }     
+      // Handle the URL case
+      if (this.url) openURL(this.url)
+      // Handle the route case
       else if (this.route) this.$router.push(this.route).catch(() => {})
-      // If it an URL then open the link
-      else if (this.url) openURL(this.url)
-      // Otherwise log a comment
-      this.$emit('triggered')
+      // Handle the callback case
+      else if (this.handler) {
+        if (params.length > 0) this.handler(...params)
+        else this.handler()
+      }
+      // Notifie the listeners
+      if (params.length > 0) this.$emit('triggered', ...params)
+      else this.$emit('triggered')
     }
   }
 }
