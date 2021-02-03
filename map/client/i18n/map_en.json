@@ -347,9 +347,12 @@
     "ADD_TOOLTIP": "Select a target property to use as tooltip",
     "INFOBOX": "Information box",
     "ADD_INFOBOX": "Select target properties to use as information box",
-    "IF": "If",
-    "EQUALS": "is",
-    "THEN": "then icon is"
+    "IN": "value in",
+    "NOT_IN": "not in",
+    "EQUAL": "equals to",
+    "NOT_EQUAL": "different from",
+    "GREATER_THAN": "greater than",
+    "LOWER_THAN": "lower than"
   },
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Edit layer style"

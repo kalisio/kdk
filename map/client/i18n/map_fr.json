@@ -348,9 +348,12 @@
     "ADD_TOOLTIP": "Sélectionnez une propriété à afficher dans la bulle",
     "INFOBOX": "Boîte d'information",
     "ADD_INFOBOX": "Sélectionnez des propriétés à afficher dans la boîte",
-    "IF": "Si",
-    "EQUALS": "vaut",
-    "THEN": "alors l'icône est"
+    "IN": "parmis",
+    "NOT_IN": "différent(e) de",
+    "EQUAL": "égal(e) à",
+    "NOT_EQUAL": "différent(e) de",
+    "GREATER_THAN": "supérieur(e) à",
+    "LOWER_THAN": "inférieur(e) à"
   },
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Editer le style de la couche"

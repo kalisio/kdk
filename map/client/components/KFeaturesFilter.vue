@@ -71,7 +71,8 @@ export default {
       return this.$t('KFeaturesFilter.TITLE', { layer: this.layer.name })
     },
     fields () {
-      return _.get(this.layer, 'schema.content.properties', {})
+      // Avoid modifying the layer schema as we might update it internally
+      return _.cloneDeep(_.get(this.layer, 'schema.content.properties', {}))
     },
     properties () {
       const properties = []
