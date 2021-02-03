@@ -1,5 +1,5 @@
 <template>
-  <q-scroll-area :style="`height: 75vh; min-width: ${width}px;`">
+  <q-scroll-area :style="panelStyle">
     <q-list dense bordered>
       <slot name="header" />
       <template v-for="category in kActivity.layerCategories">
@@ -57,10 +57,10 @@ export default {
   },
   */
   computed: {
-    width () {
-      if (this.$q.screen.lt.md) return 300
-      if (this.$q.screen.lt.lg) return 350
-      return 400
+    panelStyle () {
+      if (this.$q.screen.lt.md) return 'height: 65vh; min-width: 300px;'
+      if (this.$q.screen.lt.lg) return 'height: 70vh; min-width: 350px;'
+      return 'height: 75vh; min-width: 400px;'
     },
     layersByCategory () {
       const layers = _.values(this.kActivity.layers)

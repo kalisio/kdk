@@ -9,7 +9,7 @@
           :active="layer.isVisible"
           :disable="layer.isDisabled"
           :clickable="!layer.isDisabled"
-          active-class="selected"
+          active-class="text-secondary text-weight-bolder"
           class="cursor-pointer"
           dense>
           <q-item-section avatar @click="onLayerClicked(layer)">
@@ -96,9 +96,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.selected {
-  font-weight: bold;
-}
-</style>

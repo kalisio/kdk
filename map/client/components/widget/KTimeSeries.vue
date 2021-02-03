@@ -4,7 +4,8 @@
       <q-resize-observer @resize='onResized' />
       <!-- Actions -->
       <k-panel id="timeseries-actions" class='q-pa-sm' :content='actions' direction='vertical'>
-        <div slot='after'>
+        <!--TODO
+          div slot='after'>
           <q-btn icon='las la-history' color='grey-9' size='md' flat round>
             <q-badge floating>
               <small>{{settings.span / 60}}H</small>
@@ -18,7 +19,7 @@
               </q-list>
             </q-menu>
           </q-btn>
-        </div>
+        </div-->
       </k-panel>
       <div class='col full-width row'>
         <!-- Title -->

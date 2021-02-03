@@ -19,9 +19,7 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-account-activity',
-  mixins: [
-    mixins.baseActivity
-  ],
+  mixins: [mixins.baseActivity()],
   props: {
     page: {
       type: String,
