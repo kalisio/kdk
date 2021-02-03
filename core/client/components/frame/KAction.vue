@@ -20,7 +20,7 @@
       {{ $t(computedTooltip) }}
     </q-tooltip>
     <!-- badge -->
-    <q-badge v-if="badge" class="q-py-xs" v-bind="badge">
+    <q-badge v-if="badge" v-bind="badge">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
@@ -61,7 +61,7 @@
     :disabled="disabled"
     @click="onClicked()">
     <!-- badge -->
-    <q-badge v-if="badge" class="q-py-xs" v-bind="badge">
+    <q-badge v-if="badge" v-bind="badge">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
   </q-fab-action>
@@ -76,10 +76,6 @@ export default {
     id: {
       type: String,
       required: true
-    },
-    label: {
-      type: String,
-      default: ''
     },
     icon: {
       type: String,
@@ -105,6 +101,14 @@ export default {
       type: Object,
       default: () => { return null }
     },
+    label: {
+      type: String,
+      default: ''
+    },
+    tooltip: {
+      type: String,
+      default: ''
+    },
     toggled: {
       type: Boolean,
       default: false
@@ -112,10 +116,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false
-    },
-    tooltip: {
-      type: String,
-      default: ''
     },
     context: {
       type: Object,
@@ -148,7 +148,6 @@ export default {
   },
   watch: {
     toggled: function (value) {
-      console.log(value)
       this.isToggled = value
     }
   },

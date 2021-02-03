@@ -6,7 +6,6 @@
     :icon="icon"
     :color="color"
     :size="size"
-    :flat="flat"
     :toggle="toggle"
     :toggled="toggled"
     :disabled="disabled"
@@ -53,10 +52,6 @@ export default {
     size: {
       type: String,
       default: 'md'
-    },
-    flat: {
-      type: Boolean,
-      default: true
     },
     badge: {
       type: Object,
