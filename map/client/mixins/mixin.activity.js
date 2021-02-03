@@ -677,4 +677,3 @@ export default {
     this.$off('layer-added', this.onLayerAdded)
   }
 }
-

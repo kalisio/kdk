@@ -1,6 +1,6 @@
 <template>
   <div :style='widgetStyle()'>
-    <div v-if='hasGraph' class='fit row'>
+    <div class='fit row'>
       <q-resize-observer @resize='onResized' />
       <!-- Actions -->
       <k-panel id="timeseries-actions" class='q-pa-sm' :content='actions' direction='vertical'>
@@ -21,7 +21,7 @@
           </q-btn>
         </div-->
       </k-panel>
-      <div class='col full-width row'>
+      <div v-if='hasGraph' class='col full-width row'>
         <!-- Title -->
         <span v-if='layerName' class='col-12 q-pl-sm'>
           {{ layerName }} - {{ probedLocationName }}
@@ -34,9 +34,9 @@
           <canvas ref='chart'></canvas>
         </div>
       </div>
-    </div>
-    <div v-else class='fit absolute-center'>
-      <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size='48px' />
+      <div v-else class='fit absolute-center'>
+        <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size='48px' />
+      </div>
     </div>
   </div>
 </template>
@@ -443,7 +443,16 @@ export default {
     this.$options.components['k-label'] = this.$load('frame/KLabel')
     // Registers the actions
     this.actions = [
-      { id: 'center-view', icon: 'las la-eye', label: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn }
+      { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
+      { component: 'input/KOptionsChooser', icon: 'las la-history', tooltip: 'KTimeSeries.SPAN', handler: this.onUpdateSpan, options: [
+        { label: '3H', value: 180 },
+        { label: '6H', value: 360 },
+        { label: '12H', value: 720 },
+        { label: '24H', value: 1440 },
+        { label: '48H', value: 2880 },
+        { label: '72H', value: 4320 },
+        { label: '96H', value: 5760 }
+      ]}
     ]
     // Refresh the component
     this.refresh()
