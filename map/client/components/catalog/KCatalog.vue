@@ -1,5 +1,5 @@
 <template>
-  <q-scroll-area :style="panelStyle">
+  <q-scroll-area :style="computedStyle">
     <q-list dense bordered>
       <slot name="header" />
       <template v-for="category in kActivity.layerCategories">
@@ -31,44 +31,27 @@ import _ from 'lodash'
 import path from 'path'
 
 export default {
-  name: 'k-catalog-panel',
+  name: 'k-catalog',
   inject: ['kActivity'],
- /* props: {
-    layers: {
-      type: Object,
-      default: () => {}
-    },
-    layerCategories: {
-      type: Array,
-      default: () => []
-    },
-    forecastModels: {
-      type: Array,
-      default: () => []
-    },
-    forecastModelHandlers: {
-      type: Object,
-      default: () => {}
-    },
-    forecastModel: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  */
   computed: {
-    panelStyle () {
+    computedStyle () {
       if (this.$q.screen.lt.md) return 'height: 65vh; min-width: 300px;'
       if (this.$q.screen.lt.lg) return 'height: 70vh; min-width: 350px;'
       return 'height: 75vh; min-width: 400px;'
     },
     layersByCategory () {
-      const layers = _.values(this.kActivity.layers)
+      const layers = _.values(this.layers)
       const layersByCategory = {}
-      this.kActivity.layerCategories.forEach(category => {
+      this.layerCategories.forEach(category => {
         layersByCategory[category.name] = layers.filter(sift(_.get(category, 'options.filter', {})))
       })
       return layersByCategory
+    }
+  },
+  data () {
+    return {
+      layers: this.kActivity.layers,
+      layerCategories: this.kActivity.layerCategories
     }
   },
   watch: {
@@ -78,7 +61,7 @@ export default {
   },
   methods: {
     refresh () {
-      this.kActivity.layerCategories.forEach(category => {
+      this.layerCategories.forEach(category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
         const componentKey = _.kebabCase(path.basename(component))
         category.componentKey = componentKey
