@@ -1,25 +1,15 @@
 <template>
-  <k-place-chooser v-model="location" :dense="dense" />
+  <k-place-chooser @place-chosen="onPlaceChosen" />
 </template>
 
 <script>
 export default {
   name: 'k-search-location',
   inject: ['kActivity'],
-  props: {
-    dense: {
-      type: Boolean,
-      default: true
-    }
-  },
-  data () {
-    return {
-      location: null
-    }
-  },
-  watch: {
-    location: function (value) {
-      if (this.location) this.kActivity.center(this.location.longitude, this.location.latitude)
+  methods: {
+    onPlaceChosen (location) {
+      console.log(location)
+      if (location) this.kActivity.center(location.longitude, location.latitude)
     }
   },
   created () {

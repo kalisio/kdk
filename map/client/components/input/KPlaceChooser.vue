@@ -3,7 +3,7 @@
     id="place-chooser"
     class="q-pl-sm q-pr-sm"
     borderless
-    :dense="dense" 
+    dense 
     clearable
     use-input
     v-model="location"
@@ -14,7 +14,7 @@
     @filter="onSearch"
     @input="onUpdated">
     <template v-slot:prepend>
-      <q-icon :dense="dense" name="search" />
+      <q-icon dense name="search" />
     </template>
     <template v-slot:no-option>
       <q-item>
@@ -32,16 +32,7 @@ import { formatGeocodingResult } from '../../utils'
 export default {
   name: 'k-place-chooser',
   props: {
-    value: {
-      type: Object,
-      deafault: () => {
-        return null
-      }
-    },
-    dense: {
-      type: Boolean,
-      default: true
-    }
+
   },
   data () {
     return {
@@ -72,7 +63,8 @@ export default {
       update(() => { this.options = places })
     },
     onUpdated () {
-      this.$emit('input', this.location)
+      console.log(this.location)
+      this.$emit('place-chosen', this.location)
     }
   }
 }
