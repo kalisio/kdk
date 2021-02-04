@@ -24,6 +24,7 @@ describe('map:alerts', () => {
   let eventCount = 0
   let activeWebhookCount = 0
   let webhookCount = 0
+  let errorCount = 0
 
   function checkAlertEvent (event) {
     const { status } = event
@@ -36,6 +37,9 @@ describe('map:alerts', () => {
       expect(triggers[0].geometry).toExist()
     } else {
       expect(status.triggers).beUndefined()
+    }
+    if (_.get(status, 'error')) {
+      errorCount++
     }
   }
   function checkAlertWebhook (req, res) {
@@ -57,6 +61,7 @@ describe('map:alerts', () => {
   function resetAlertEvent () {
     activeEventCount = 0
     eventCount = 0
+    errorCount = 0
   }
   function resetAlertWebhook () {
     activeWebhookCount = 0
@@ -174,6 +179,7 @@ describe('map:alerts', () => {
     spyCheckAlert.reset()
     expect(eventCount).to.be.at.least(2)
     expect(activeEventCount).to.be.at.least(2)
+    expect(errorCount).to.equal(0)
     expect(webhookCount).to.be.at.least(2)
     expect(activeWebhookCount).to.be.at.least(2)
     results = await alertService.find({ paginate: false, query: {} })
@@ -237,6 +243,7 @@ describe('map:alerts', () => {
     spyCheckAlert.reset()
     expect(eventCount).to.be.at.least(2)
     expect(activeEventCount).to.equal(0)
+    expect(errorCount).to.equal(0)
     expect(webhookCount).to.be.at.least(2)
     expect(activeWebhookCount).to.equal(0)
     results = await alertService.find({ paginate: false, query: {} })
@@ -264,6 +271,67 @@ describe('map:alerts', () => {
   })
   // Let enough time to process
     .timeout(10000)
+
+  it('ensures weather alert impossible to check due to missing data raises error', async () => {
+    const now = moment.utc()
+    alertObject = await alertService.create({
+      cron: '*/5 * * * * *',
+      expireAt: now.clone().add({ days: 1 }),
+      period: {
+        start: { minutes: -5 },
+        end: { minutes: 0 }
+      },
+      forecast: 'gfs-world',
+      elements: ['u-wind', 'v-wind', 'windSpeed'],
+      geometry: {
+        type: 'Point',
+        coordinates: [144.29091388888889, -5.823011111111111]
+      },
+      conditions: {
+        windSpeed: { $gt: 0 }
+      },
+      webhook: {
+        url: 'http://localhost:' + externalPort + '/webhook',
+        type: 'event'
+      }
+    })
+    // Check in-memory object
+    expect(alertObject.status).toExist()
+    expect(alertObject.status.active).beUndefined()
+    expect(alertObject.status.checkedAt).toExist()
+    expect(alertObject.status.error).toExist()
+    expect(alertObject.status.error.code).to.equal(422)
+    expect(alertObject.status.error.data).toExist()
+    expect(alertObject.status.error.data.translation).toExist()
+    expect(alertObject.status.error.data.translation.key).to.equal('CANNOT_CHECK_ALERT_MISSING_DATA')
+    let results = await alertService.find({ paginate: false, query: {} })
+    await alertService.remove(alertObject._id.toString())
+    expect(spyRegisterAlert).to.have.been.called.once
+    spyRegisterAlert.reset()
+    expect(spyCheckAlert).to.have.been.called.at.least(1)
+    spyCheckAlert.reset()
+    expect(spyUnregisterAlert).to.have.been.called.once
+    spyUnregisterAlert.reset()
+    expect(eventCount).to.be.at.least(1)
+    expect(activeEventCount).to.equal(0)
+    expect(errorCount).to.equal(1)
+    expect(webhookCount).to.be.at.least(1)
+    expect(activeWebhookCount).to.equal(0)
+    resetAlertEvent()
+    resetAlertWebhook()
+    // Check in-database object
+    expect(results.length).to.equal(1)
+    expect(results[0].status).toExist()
+    expect(results[0].status.active).beUndefined()
+    expect(results[0].status.checkedAt).toExist()
+    expect(results[0].status.error).toExist()
+    expect(results[0].status.error.code).to.equal(422)
+    expect(results[0].status.error.data).toExist()
+    expect(results[0].status.error.data.translation).toExist()
+    expect(results[0].status.error.data.translation.key).to.equal('CANNOT_CHECK_ALERT_MISSING_DATA')
+  })
+  // Let enough time to process
+    .timeout(5000)
 
   it('create and feed the vigicrues observations service', async () => {
     const tomorrow = moment.utc().add(1, 'days')
@@ -315,6 +383,7 @@ describe('map:alerts', () => {
     spyCheckAlert.reset()
     expect(eventCount).to.be.at.least(2)
     expect(activeEventCount).to.be.at.least(2)
+    expect(errorCount).to.equal(0)
     expect(webhookCount).to.be.at.least(2)
     expect(activeWebhookCount).to.be.at.least(2)
     results = await alertService.find({ paginate: false, query: {} })
@@ -377,6 +446,7 @@ describe('map:alerts', () => {
     spyCheckAlert.reset()
     expect(eventCount).to.be.at.least(2)
     expect(activeEventCount).to.equal(0)
+    expect(errorCount).to.equal(0)
     expect(webhookCount).to.be.at.least(2)
     expect(activeWebhookCount).to.equal(0)
     results = await alertService.find({ paginate: false, query: {} })
@@ -404,6 +474,66 @@ describe('map:alerts', () => {
   })
   // Let enough time to process
     .timeout(10000)
+
+  it('ensures station alert impossible to check due to missing data raises error', async () => {
+    const now = moment.utc()
+    alertObject = await alertService.create({
+      cron: '*/5 * * * * *',
+      expireAt: now.clone().add({ days: 1 }),
+      period: {
+        start: { minutes: 0 },
+        end: { minutes: 1 }
+      },
+      layer: {
+        service: 'vigicrues-observations',
+        featureId: 'CdStationH'
+      },
+      feature: 'A282000101',
+      conditions: {
+        H: { $gt: 0 }
+      },
+      webhook: {
+        url: 'http://localhost:' + externalPort + '/webhook',
+        type: 'event'
+      }
+    })
+     // Check in-memory object
+    expect(alertObject.status).toExist()
+    expect(alertObject.status.active).beUndefined()
+    expect(alertObject.status.checkedAt).toExist()
+    expect(alertObject.status.error).toExist()
+    expect(alertObject.status.error.code).to.equal(422)
+    expect(alertObject.status.error.data).toExist()
+    expect(alertObject.status.error.data.translation).toExist()
+    expect(alertObject.status.error.data.translation.key).to.equal('CANNOT_CHECK_ALERT_MISSING_DATA')
+    let results = await alertService.find({ paginate: false, query: {} })
+    await alertService.remove(alertObject._id.toString())
+    expect(spyRegisterAlert).to.have.been.called.once
+    spyRegisterAlert.reset()
+    expect(spyCheckAlert).to.have.been.called.at.least(1)
+    spyCheckAlert.reset()
+    expect(spyUnregisterAlert).to.have.been.called.once
+    spyUnregisterAlert.reset()
+    expect(eventCount).to.be.at.least(1)
+    expect(activeEventCount).to.equal(0)
+    expect(errorCount).to.equal(1)
+    expect(webhookCount).to.be.at.least(1)
+    expect(activeWebhookCount).to.equal(0)
+    resetAlertEvent()
+    resetAlertWebhook()
+    // Check in-database object
+    expect(results.length).to.equal(1)
+    expect(results[0].status).toExist()
+    expect(results[0].status.active).beUndefined()
+    expect(results[0].status.checkedAt).toExist()
+    expect(results[0].status.error).toExist()
+    expect(results[0].status.error.code).to.equal(422)
+    expect(results[0].status.error.data).toExist()
+    expect(results[0].status.error.data.translation).toExist()
+    expect(results[0].status.error.data.translation.key).to.equal('CANNOT_CHECK_ALERT_MISSING_DATA')
+  })
+  // Let enough time to process
+    .timeout(5000)
 
   // Cleanup
   after(async () => {

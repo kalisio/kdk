@@ -9,7 +9,9 @@
     "GEOLOCATION_POSITION_TIMEOUT": "$t(errors.GEOLOCATION_ERROR)</br>Il semble que le temps alloué pour acquérir l'information a expiré.",
     "CANNOT_PROCESS_SCHEMA_DATA": "Schéma de données invalide ou incomplet",
     "ALERTS_LIMIT": "Trop d'alertes pour les afficher toutes",
-    "FILE_IMPORT_ERROR": "L'import du fichier a échoué"
+    "FILE_IMPORT_ERROR": "L'import du fichier a échoué",
+    "CANNOT_CHECK_ALERT_MISSING_SERVICE": "La dernière vérification a échouée par indisponibilité du service",
+    "CANNOT_CHECK_ALERT_MISSING_DATA": "La dernière vérification a échouée par indisponibilité des données"
   },
   "mixins": {
     "geolocation": {
