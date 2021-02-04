@@ -3,24 +3,7 @@
     <div class='fit row'>
       <q-resize-observer @resize='onResized' />
       <!-- Actions -->
-      <k-panel id="timeseries-actions" class='q-pa-sm' :content='actions' direction='vertical'>
-        <!--TODO
-          div slot='after'>
-          <q-btn icon='las la-history' color='grey-9' size='md' flat round>
-            <q-badge floating>
-              <small>{{settings.span / 60}}H</small>
-            </q-badge>
-            <q-tooltip>{{$t('KTimeSeries.SPAN')}}</q-tooltip>
-            <q-menu auto-close>
-              <q-list>
-                <q-item v-for="option in spanOptions" :key="option.value" clickable @click="onUpdateSpan(option.value)">
-                  <q-item-section>{{ option.label }}</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-        </div-->
-      </k-panel>
+      <k-panel id="timeseries-actions" class='q-pa-sm' :content='actions' direction='vertical' />
       <div v-if='hasGraph' class='col full-width row'>
         <!-- Title -->
         <span v-if='layerName' class='col-12 q-pl-sm'>
@@ -101,15 +84,6 @@ export default {
       probedLocationName: '',
       hasGraph: false,
       actions: [],
-      spanOptions: [
-        { label: '3H', value: 180 },
-        { label: '6H', value: 360 },
-        { label: '12H', value: 720 },
-        { label: '24H', value: 1440 },
-        { label: '48H', value: 2880 },
-        { label: '72H', value: 4320 },
-        { label: '96H', value: 5760 }
-      ],
       settings: this.$store.get('timeseries')
     }
   },
@@ -444,15 +418,15 @@ export default {
     // Registers the actions
     this.actions = [
       { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
-      { component: 'input/KOptionsChooser', icon: 'las la-history', tooltip: 'KTimeSeries.SPAN', handler: this.onUpdateSpan, options: [
+      { component: 'input/KOptionsChooser', id: 'timespan-options', icon: 'las la-history', tooltip: 'KTimeSeries.SPAN', options: [
         { label: '3H', value: 180 },
         { label: '6H', value: 360 },
-        { label: '12H', value: 720 },
+        { label: '12H', value: 720, default: true },
         { label: '24H', value: 1440 },
         { label: '48H', value: 2880 },
         { label: '72H', value: 4320 },
         { label: '96H', value: 5760 }
-      ]}
+      ], on: { event: 'option-chosen', listener: this.onUpdateSpan }}
     ]
     // Refresh the component
     this.refresh()

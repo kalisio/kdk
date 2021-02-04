@@ -9,7 +9,7 @@ export default function (name = undefined) {
     },
     methods: {
       setTopPane (content, mode = undefined) {
-        this.$store.patch('topPane', { content: this.bindHandlers(content), mode: mode })
+        this.$store.patch('topPane', { content: this.bindContent(content), mode: mode })
       },
       setTopPaneMode (mode) {
         const content = this.$store.get('topPane.content')
@@ -23,7 +23,7 @@ export default function (name = undefined) {
         this.$store.patch('topPane', { content: null, mode: undefined })
       },
       setBottomPane (content, mode = undefined) {
-        this.$store.patch('bottomPane', { content: this.bindHandlers(content), mode: mode })
+        this.$store.patch('bottomPane', { content: this.bindContent(content), mode: mode })
       },
       setBottomPaneMode (mode) {
         const content = this.$store.get('bottomPane.content')
@@ -37,7 +37,7 @@ export default function (name = undefined) {
         this.$store.patch('bottomPane', { content: null, mode: undefined })
       },
       setRightPane (content, mode = undefined) {
-        this.$store.patch('rightPane', { content: this.bindHandlers(content), mode: mode })
+        this.$store.patch('rightPane', { content: this.bindContent(content), mode: mode })
       },
       setRightPaneMode (mode) {
         const content = this.$store.get('rightPane.content')
@@ -51,7 +51,7 @@ export default function (name = undefined) {
         this.$store.patch('rightPane', { content: null, mode: undefined })
       },
       setFab (actions) {
-        this.$store.patch('fab', { actions: this.bindHandlers(actions) })
+        this.$store.patch('fab', { actions: this.bindContent(actions) })
       },
       configureFab () {
         const options = _.get(this.activityOptions, 'fab', null)
@@ -114,18 +114,23 @@ export default function (name = undefined) {
         if (this.origin) this.$router.push(this.origin)
         else this.$router.push({ name: 'home' })
       },
-      bindHandlers (content) {
+      bindContent (content) {
         const components = _.flatMapDeep(content)
         _.forEach(components, (component) => {
-          if (component.handler && typeof component.handler === 'object') {
-            const handler = component.handler
-            if (handler.name) {
-              if (handler.params) component.handler = () => this[handler.name](...handler.params)
-              else component.handler = (params) => this[handler.name](params)
-            }
+          // process component handler
+          const handler = component.handler
+          if (_.isObject(handler) && handler.name) {
+            if (handler.params) component.handler = () => this[handler.name](...handler.params)
+            else component.handler = (params) => this[handler.name](params)
+          }
+          // process component listener
+          const listener = component.on ? component.on.listener : null
+          if (_.isObject(listener) && listener.name) {
+            if (listener.params) listener.handler = () => this[listener.name](...listener.params)
+            else component.listener = (params) => this[listener.name](params)
           }
           // Recursively bind the handlers on the sub content object
-          if (component.content) this.bindHandlers(component.content)
+          if (component.content) this.bindContent(component.content)
         })
         return content
       }

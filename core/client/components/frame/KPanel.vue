@@ -11,7 +11,7 @@
         :is="component.componentKey"
         v-bind="component"
         :renderer="component.renderer ? component.renderer: actionRenderer"
-        :style="component.style" />
+        v-on="component.on ? { [component.on.event]: component.on.listener } : {}" />
     </template>
   </div>
 </template>

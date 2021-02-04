@@ -10,7 +10,7 @@
     :badge="badge"
     :disabled="disabled">
     <template v-slot:content>
-      <q-menu id="menu" auto-close>
+      <q-menu :id="`${id}-menu`"  transition-show="scale" transition-hide="scale" auto-close>
         <q-list>
           <q-item v-for="option in options" :key="option.value" clickable @click="onClicked(option)">
             <q-item-section>{{ option.label }}</q-item-section>
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'k-option-chooser',
   props: {
@@ -56,10 +58,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false
-    },
-    handler: {
-      type: [Function],
-      default: null
     }
   },
   computed: {
@@ -72,19 +70,23 @@ export default {
   },
   data () {
     return {
-      option: this.options.length > 0 ? this.options[0] : undefined
+      option: undefined
     }
   },
   methods: {
     onClicked (option) {
       this.option = option
-      if (this.handler) this.handler(option.value)
-      this.$emit('triggered', option.value)
+      this.$emit('option-chosen', option.value)
     }
   },
   created () {
     // load the required components
     this.$options.components['k-action'] = this.$load('frame/KAction')
+    // Set the default option if needed
+    if (this.options.length > 0) {
+      const defaultOption = _.head(_.filter(this.options, 'default'))
+      this.option = defaultOption ? defaultOption : this.options[0]
+    }
   }
 }
 </script>
