@@ -3,6 +3,7 @@ import moment from 'moment'
 import sift from 'sift'
 import request from 'superagent'
 import { CronJob } from 'cron'
+import { Unprocessable } from '@feathersjs/errors'
 import makeDebug from 'debug'
 const debug = makeDebug('kdk:map:alerts:service')
 
@@ -38,7 +39,11 @@ export default {
     const conditions = this.getConditions(alert)
     const probesService = this.app.getService('probes')
     if (!probesService) {
-      throw new Error('Cannot check alert ' + alert._id.toString() + ' as target probes service is not available')
+      throw new Unprocessable('Cannot check alert ' + alert._id.toString() + ' as target probes service is not available', {
+        translation: {
+          key: 'CANNOT_CHECK_ALERT_MISSING_SERVICE'
+        }
+      })
     }
     // Perform aggregation over time range
     const query = Object.assign({
@@ -59,7 +64,11 @@ export default {
     }, { query })
     // Check for available data so that we will not close an alert because data is missing
     if (result.features.length === 0) {
-      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available for ' + alert.forecast)
+      throw new Unprocessable('Cannot check alert ' + alert._id.toString() + ' as no data is available for ' + alert.forecast, {
+        translation: {
+          key: 'CANNOT_CHECK_ALERT_MISSING_DATA'
+        }
+      })
     }
     // Let sift performs condition matching as in this case MongoDB cannot
     return result.features.filter(sift(conditions))
@@ -71,7 +80,11 @@ export default {
     const conditions = this.getConditions(alert)
     const featureService = this.app.getService(_.get(alert, 'layer.service'))
     if (!featureService) {
-      throw new Error('Cannot check alert ' + alert._id.toString() + ' as target features service ' + _.get(alert, 'layer.service') + ' is not available')
+      throw new Unprocessable('Cannot check alert ' + alert._id.toString() + ' as target features service ' + _.get(alert, 'layer.service') + ' is not available', {
+        translation: {
+          key: 'CANNOT_CHECK_ALERT_MISSING_SERVICE'
+        }
+      })
     }
     // Build base query for time range and target feature
     const query = {
@@ -89,7 +102,11 @@ export default {
     // $limit = 0 performs a simple count query
     let result = await featureService.find({ query: Object.assign({ $limit: 0 }, query) })
     if (result.total === 0) {
-      throw new Error('Cannot check alert ' + alert._id.toString() + ' as no data is available for features service ' + _.get(alert, 'layer.service'))
+      throw new Unprocessable('Cannot check alert ' + alert._id.toString() + ' as no data is available for features service ' + _.get(alert, 'layer.service'), {
+        translation: {
+          key: 'CANNOT_CHECK_ALERT_MISSING_DATA'
+        }
+      })
     }
     // Perform aggregation over time range
     result = await featureService.find({ query: Object.assign(query, conditions) })
@@ -104,48 +121,50 @@ export default {
       await this.unregisterAlert(alert)
       return
     }
+    // Then update alert status starting from previous one (i.e. trigger time stamp, etc.)
+    let status = _.get(alert, 'status', {})
+    status.checkedAt = now.clone()
+    // Clean any error state
+    delete status.error
     try {
       const results = (alert.feature ? await this.checkMeasureAlert(alert) : await this.checkWeatherAlert(alert))
       // FIXME: check for a specific duration where conditions are met
       const isActive = (results.length > 0)
-      const wasActive = _.get(alert, 'status.active')
-      // Then update alert status
-      const status = {
-        active: isActive,
-        checkedAt: now.clone()
-      }
+      const wasActive = status.active
+      status.active = isActive
       if (isActive) {
         // If not previously active and it is now add first time stamp
         if (!wasActive) {
           status.triggeredAt = now.clone()
-        } else { // Else keep track of previous trigger time stamp
-          status.triggeredAt = _.get(alert, 'status.triggeredAt').clone()
         }
+        // Update triggers
         status.triggers = results
       }
       debug('Alert ' + alert._id.toString() + ' status', status, ' with ' + results.length + ' triggers')
-      // As we keep in-memory objects avoid them being mutated by hooks processing operation payload
-      if (options.patch) {
-        await this.patch(alert._id.toString(), { status: Object.assign({}, status) })
-        // DEBUG code to simulate alert closing
-        /*
-        setTimeout(async () => {
-          await this.patch(alert._id.toString(), {
-            status: { active: false, checkedAt: now.clone() }
-          })
-        }, 10000)
-        */
-      }
-      // Keep track of changes in memory as well
-      Object.assign(alert, { status })
-      // If a webhook is configured call it
-      const webhook = alert.webhook
-      if (options.callWebhook && webhook) {
-        const body = Object.assign({ alert: _.omit(alert, ['webhook']) }, _.omit(webhook, ['url']))
-        await request.post(webhook.url, body)
-      }
-    } catch (error) {
+    } catch (error) { // Possible if no data
       this.app.logger.error(error.message)
+      status.error = error.toJSON()
+    }
+    
+    // As we keep in-memory objects avoid them being mutated by hooks processing operation payload
+    if (options.patch) {
+      await this.patch(alert._id.toString(), { status: Object.assign({}, status) })
+      // DEBUG code to simulate alert closing
+      /*
+      setTimeout(async () => {
+        await this.patch(alert._id.toString(), {
+          status: { active: false, checkedAt: now.clone() }
+        })
+      }, 10000)
+      */
+    }
+    // Keep track of changes in memory as well
+    Object.assign(alert, { status })
+    // If a webhook is configured call it
+    const webhook = alert.webhook
+    if (options.callWebhook && webhook) {
+      const body = Object.assign({ alert: _.omit(alert, ['webhook']) }, _.omit(webhook, ['url']))
+      await request.post(webhook.url, body)
     }
     return alert
   }
