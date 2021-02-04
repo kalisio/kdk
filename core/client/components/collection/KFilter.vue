@@ -23,15 +23,6 @@ export default {
     items: {
       type: Array,
       default: () => []
-    },
-    value: {
-      type: Object,
-      required: true
-    }
-  },
-  data () {
-    return {
-
     }
   },
   methods: {
@@ -47,7 +38,7 @@ export default {
         const queryPath = item.service + '.' + item.field
         query[queryPath] = item[item.field]
       })
-      Events.$emit('filter-changed', query)
+      this.$emit('filter-changed', query)
     }
   },
   created () {

@@ -1,9 +1,11 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 
 export default function (name = undefined) {
   return {
     data () {
       return {
+        // TODO is it still needed here ? 
         searchQuery: {}
       }
     },
@@ -119,15 +121,23 @@ export default function (name = undefined) {
         _.forEach(components, (component) => {
           // process component handler
           const handler = component.handler
-          if (_.isObject(handler) && handler.name) {
-            if (handler.params) component.handler = () => this[handler.name](...handler.params)
-            else component.handler = (params) => this[handler.name](params)
+          if (handler && typeof handler === 'object') {
+            if (handler.name) {
+              if (handler.params) component.handler = () => this[handler.name](...handler.params)
+              else component.handler = (params) => this[handler.name](params)
+            } else {
+              logger.debug('invalid handler: you must provide the name to the function')
+            }
           }
           // process component listener
           const listener = component.on ? component.on.listener : null
-          if (_.isObject(listener) && listener.name) {
-            if (listener.params) listener.handler = () => this[listener.name](...listener.params)
-            else component.listener = (params) => this[listener.name](params)
+          if (listener && typeof listener === 'object') {
+            if (listener.name) {
+              if (listener.params) listener.handler = () => this[listener.name](...listener.params)
+              else component.listener = (params) => this[listener.name](params)
+            } else {
+              logger.debug('invalid listener: you must provide the name to the function')
+            }
           }
           // Recursively bind the handlers on the sub content object
           if (component.content) this.bindContent(component.content)
