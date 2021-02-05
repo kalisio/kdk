@@ -3,6 +3,7 @@ import * as mapMixins from './mixins/map'
 import * as utils from './utils'
 import init from './init'
 
+export * from './geolocation'
 export { utils }
 export * from '../common'
 
