@@ -4,6 +4,9 @@ import logger from 'loglevel'
 export default function (name = undefined) {
   return {
     methods: {
+      getAppName () {
+        return this.$config('appName')
+      },
       setTopPane (content, mode = undefined) {
         this.$store.patch('topPane', { content: this.bindContent(content), mode: mode })
       },

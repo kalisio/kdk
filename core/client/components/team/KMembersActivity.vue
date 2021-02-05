@@ -55,6 +55,7 @@ export default {
     async refreshActivity () {
       // We allow search items to be internally provided by others activities like tags, etc.
       // Keep track of it before cleaning
+      // TODO : do we use the store anymore ?
       const searchItems = this.$store.get('searchBar.items', [])
       this.clearActivity()
       this.setTopPane({
@@ -134,22 +135,11 @@ export default {
               { service: 'groups', field: 'name', baseQuery: {}, icon: 'las la-sitemap' },
               { service: 'tags', field: 'value', baseQuery: {}, icon: 'las la-tag' }
             ],
-            items: [],
+            items: searchItems,
             on: { event: 'filter-changed', listener: this.onFilterChanged } 
           }
         ]
       })
-     /*
-      this.setSearchBar('profile.name', [
-        { service: 'groups', field: 'name', baseQuery: {}, icon: 'group_work' },
-        { service: 'tags', field: 'value', baseQuery: {}, icon: 'label' }
-      ], searchItems)
-      if (!_.isEmpty(searchItems)) {
-        // We need to refresh the search in this case as the query filter is computed
-        // from search bar config in store as internal data
-        this.handleSearch()
-      }
-      */
       // Fab actions
       this.setFab([
         {

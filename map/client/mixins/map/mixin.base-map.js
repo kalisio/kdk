@@ -36,7 +36,7 @@ export default {
       if (this.map) this.map.invalidateSize()
     },
     setupMap (domEl, options) {
-      const viewerOptions = options || this.options.viewer
+      const viewerOptions = options || this.activityOptions.engine.viewer
       // Initialize the map
       this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)

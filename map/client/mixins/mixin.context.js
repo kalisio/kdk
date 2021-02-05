@@ -5,7 +5,7 @@ export default {
   methods: {
     getContextKey (context) {
       // Generate a unique key to store context based on app name, map activity name and context type
-      return this.appName.toLowerCase() + `-${this.name}-${context}`
+      return this.getAppName().toLowerCase() + `-${this.name}-${context}`
     },
     shouldRestoreContext (context) {
       // Use user settings except if the view has explicitly revoked restoration

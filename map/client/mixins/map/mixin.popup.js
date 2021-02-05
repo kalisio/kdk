@@ -9,7 +9,7 @@ export default {
       let popup
       if (properties) {
         const leafletOptions = options.leaflet || options
-        const popupStyle = Object.assign({}, this.options.popup,
+        const popupStyle = Object.assign({}, this.activityOptions.engine.popup,
           leafletOptions.popup, properties.popup)
         // Default content
         let html = popupStyle.html

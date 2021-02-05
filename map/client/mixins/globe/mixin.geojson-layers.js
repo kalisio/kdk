@@ -160,9 +160,9 @@ export default {
       options.processor = (feature) => {
         feature.id = _.get(feature, 'properties.' + featureId, _.get(feature, featureId))
       }
-      if (this.options.cluster) {
-        if (cesiumOptions.cluster) Object.assign(cesiumOptions.cluster, this.options.cluster)
-        else cesiumOptions.cluster = Object.assign({}, this.options.cluster)
+      if (this.activityOptions.engine.cluster) {
+        if (cesiumOptions.cluster) Object.assign(cesiumOptions.cluster, this.activityOptions.engine.cluster)
+        else cesiumOptions.cluster = Object.assign({}, this.activityOptions.engine.cluster)
       }
       // Merge generic GeoJson options and layer options
       const geoJsonOptions = this.getGeoJsonOptions(options)
@@ -239,7 +239,7 @@ export default {
       return dataSource
     },
     getGeoJsonOptions (options) {
-      return this.options.featureStyle || {}
+      return this.activityOptions.engine.featureStyle || {}
     },
     async updateLayer (name, geoJson) {
       // Retrieve the layer
@@ -268,8 +268,8 @@ export default {
   created () {
     this.registerCesiumConstructor(this.createCesiumGeoJsonLayer)
     // Perform required conversion from JSON to Cesium objects
-    if (this.options.featureStyle) {
-      Object.assign(Cesium.GeoJsonDataSource, this.convertFromSimpleStyleSpec(this.options.featureStyle, 'update-in-place'))
+    if (this.activityOptions.engine.featureStyle) {
+      Object.assign(Cesium.GeoJsonDataSource, this.convertFromSimpleStyleSpec(this.activityOptions.engine.featureStyle, 'update-in-place'))
     }
     this.$on('current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
   },

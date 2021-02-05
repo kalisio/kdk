@@ -7,10 +7,8 @@
 </template>
 
 <script>
-import { Events } from '../../events'
-
 export default {
-  name: 'k-search',
+  name: 'k-filter',
   props: {
     field: {
       type: String,

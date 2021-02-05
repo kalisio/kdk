@@ -24,9 +24,6 @@ export default {
     }
   },
   computed: {
-    appName () {
-      return this.$config('appName')
-    },
     viewStyle () {
       return 'width: 100%; height: 100%; fontWeight: normal; zIndex: 0; position: absolute;'
     },
@@ -448,7 +445,7 @@ export default {
         propsData: {
           contextId: this.contextId,
           layer,
-          options: this.options
+          options: this.activityOptions.engine
         }
       })
       this.editStyleModal.$mount()
@@ -660,11 +657,6 @@ export default {
         logger.error(error)
       }
     }
-  },
-  created () {
-    // Config options: to be done first based on specific config name setup
-    // TODO: Could be better to change the name to engineOptions  ?
-    this.options = this.$config(this.activityName).engine
   },
   mounted () {
     this.$on('map-ready', this.onMapReady)

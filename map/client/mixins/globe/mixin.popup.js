@@ -8,7 +8,7 @@ export default {
       if (entity.properties) {
         let properties = entity.properties.getValue(0)
         const cesiumOptions = options.cesium || options
-        const popupStyle = _.merge({}, this.options.popup,
+        const popupStyle = _.merge({}, this.activityOptions.engine.popup,
           cesiumOptions.popup, properties.popup)
         // Default content
         let text = popupStyle.text
@@ -60,7 +60,7 @@ export default {
   created () {
     this.registerStyle('popup', this.getDefaultPopup)
     // Perform required conversion from JSON to Cesium objects
-    if (this.options.popup) this.options.popup = this.convertToCesiumObjects(this.options.popup)
+    if (this.activityOptions.engine.popup) this.activityOptions.engine.popup = this.convertToCesiumObjects(this.activityOptions.engine.popup)
   },
   mounted () {
     this.$on('click', this.onPopup)

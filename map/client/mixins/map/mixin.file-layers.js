@@ -30,7 +30,7 @@ export default {
           '.kml',
           '.gpx'
         ]
-      }, this.options.fileLayers))
+      }, this.activityOptions.engine.fileLayers))
       // Required to support drag'n'drop because we do not use the built-in control
       this.map._container.addEventListener('dragenter', () => this.map.scrollWheelZoom.disable(), false)
       this.map._container.addEventListener('dragleave', () => this.map.scrollWheelZoom.enable(), false)

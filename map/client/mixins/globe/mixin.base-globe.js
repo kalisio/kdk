@@ -19,7 +19,7 @@ export default {
     refreshGlobe () {
     },
     setupGlobe (domEl, token, options) {
-      const viewerOptions = options || this.options.viewer
+      const viewerOptions = options || this.activityOptions.engine.viewer
       if (token) Cesium.Ion.defaultAccessToken = token
       // If we don't need ion
       else Cesium.Ion.defaultAccessToken = ''
