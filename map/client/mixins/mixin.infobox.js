@@ -6,7 +6,7 @@ export default {
       let properties = feature.properties
       if (properties) {
         const engineOptions = _.get(options, this.engine, options)
-        const infoboxStyle = Object.assign({}, this.options.infobox,
+        const infoboxStyle = Object.assign({}, this.activityOptions.engine.infobox,
           engineOptions.infobox, properties.infobox)
 
         if (infoboxStyle.pick) {

@@ -37,11 +37,9 @@ export default {
       switch (context) {
         case 'layers':
           return true
-          break
         case 'view':
         default:
           return false
-          break
       }
     },
     updateRouteContext (context, parameters) {

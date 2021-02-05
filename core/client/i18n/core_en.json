@@ -206,12 +206,6 @@
       "ROLES_LABEL": "$t(tours.add-member.ROLES_LABEL)",
       "INVITE_MEMBER_LABEL": "$t(tours.add-member.ADD_MEMBER_LABEL)"
     },
-    "add-member": {
-      "GROUP_NAME_LABEL": "Typing <b>the first characters</b> of a group name make it selectable.",
-      "MEMBER_ROLE_LABEL": "Select the user role in the group.",
-      "ROLES_LABEL": "A <b>member</b> has a read-only access to your group while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal).",
-      "ADD_MEMBER_LABEL": "Confirm joining the user to the group."
-    },
     "tag-member": {
       "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise.",
       "TAG_REMOVE_LABEL": "Once added select it to update its icon/color and remove it using the cross.",
