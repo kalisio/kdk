@@ -76,7 +76,8 @@ export default {
           content = _.get(this.content, mode)
         }
         _.forEach(content, (component) => {
-          if (!component.status || component.status() !== 'hidden') {
+          const isVisible = _.get(component, 'visible', true)
+          if (isVisible) {
             // Define the component key
             const componentName = _.get(component, 'component', 'frame/KAction')
             const componentKey = _.kebabCase(path.basename(componentName))

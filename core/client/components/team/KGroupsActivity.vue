@@ -18,9 +18,7 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-groups-activity',
-  mixins: [
-    mixins.baseActivity
-  ],
+  mixins: [mixins.baseActivity()],
   props: {
     contextId: {
       type: String,
@@ -56,9 +54,6 @@ export default {
     },
     refreshActivity () {
       this.clearActivity()
-      // Title
-      this.setTitle(this.$store.get('context.name'))
-      // Search bar
       this.setSearchBar('name')
       // Tabbar actions
       this.registerTabAction({

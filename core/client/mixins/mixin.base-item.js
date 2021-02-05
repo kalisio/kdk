@@ -20,10 +20,7 @@ const baseItemMixin = {
   },
   data () {
     return {
-      actions: {
-        pane: [],
-        menu: []
-      }
+      actions: null
     }
   },
   computed: {
@@ -99,9 +96,11 @@ const baseItemMixin = {
       })
       return action
     },
+    setActions (actions) {
+      this.actions = actions
+    },
     clearActions () {
-      this.actions.menu = []
-      this.actions.pane = []
+      this.actions = null
     },
     // This method should be overriden in items
     refreshActions () {

@@ -11,7 +11,7 @@
       </div>
     </div>
     <div v-else>
-      <k-label :text="$t('KGrid.EMPTY_GRID')" icon-size="48px" />
+      <k-label class="fixed-center" :text="$t('KGrid.EMPTY_GRID')" icon-size="56px" />
     </div>
   </div>
 </template>

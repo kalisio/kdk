@@ -21,7 +21,7 @@ import { getRoleForOrganisation } from '../../../common/permissions'
 
 export default {
   name: 'k-members-activity',
-  mixins: [mixins.baseActivity],
+  mixins: [mixins.baseActivity()],
   props: {
     contextId: {
       type: String,
@@ -57,9 +57,23 @@ export default {
       // Keep track of it before cleaning
       const searchItems = this.$store.get('searchBar.items', [])
       this.clearActivity()
-      // Title
-      this.setTitle(this.$store.get('context.name'))
-      // Search bar
+      this.setTopPane({
+        default: [
+          { id: 'back', icon: 'las la-arrow-left', tooltip: 'KMembersActivity.MY_EVENTS', route: { name: 'events-activity' } },
+          { component: 'QSeparator', vertical: true, color: 'lightgrey' },
+          { id: 'members', icon: 'las la-user-friends', label: 'KMembersActivity.MEMBERS_LABEL', color: 'primary', disabled: true },
+          { id: 'tags', icon: 'las la-tags', tooltip: 'KMembersActivity.TAGS_LABEL', route: { name: 'tags-activity', params: { contextId: this.contextId } } },
+          { id: 'groups', icon: 'las la-sitemap', tooltip: 'KMembersActivity.GROUPS_LABEL', route: { name: 'groups-activity', params: { contextId: this.contextId } } },
+          { id: 'map', icon: 'las la-map', tooltip: 'KMembersActivity.GROUPS_LABEL', route: { name: 'groups-activity', params: { contextId: this.contextId } } },
+          { id: 'filter', icon: 'las la-search', tooltip: 'KMembersActivity.FILTER_MEMBERS', handler: this.setTopPaneMode('filter') }
+        ],
+        filter: [
+          { id: 'back', icon: 'las la-arrow-left', handler: { name: 'setTopPaneMode', params: ['default'] } },
+          { component: 'QSeparator', vertical: true,  color: 'lightgrey' },
+          { component: 'collection/KFilter' }
+        ]
+      })
+     /*
       this.setSearchBar('profile.name', [
         { service: 'groups', field: 'name', baseQuery: {}, icon: 'group_work' },
         { service: 'tags', field: 'value', baseQuery: {}, icon: 'label' }
@@ -69,41 +83,24 @@ export default {
         // from search bar config in store as internal data
         this.handleSearch()
       }
-      // Tabbar actions
-      this.registerTabAction({
-        name: 'members',
-        label: this.$t('KMembersActivity.MEMBERS_LABEL'),
-        icon: 'las la-user-friends',
-        route: { name: 'members-activity', params: { contextId: this.contextId } },
-        default: true
-      })
-      this.registerTabAction({
-        name: 'tags',
-        label: this.$t('KMembersActivity.TAGS_LABEL'),
-        icon: 'las la-tags',
-        route: { name: 'tags-activity', params: { contextId: this.contextId } }
-      })
-      this.registerTabAction({
-        name: 'groups',
-        label: this.$t('KMembersActivity.GROUPS_LABEL'),
-        icon: 'las la-sitemap',
-        route: { name: 'groups-activity', params: { contextId: this.contextId } }
-      })
+      */
       // Fab actions
-      if (this.$can('create', 'authorisations', this.contextId, { resource: this.contextId })) {
-        this.registerFabAction({
-          name: 'add-member',
+      this.setFab([
+        {
+          id: 'add-member',
           label: this.$t('KMembersActivity.ADD_USER_LABEL'),
           icon: 'las la-user-plus',
-          route: { name: 'add-member', params: {} }
-        })
-        this.registerFabAction({
-          name: 'invite-member',
+          route: { name: 'add-member', params: {} },
+          status: this.$can('create', 'authorisations', this.contextId, { resource: this.contextId })
+        },
+        {
+          id: 'invite-member',
           label: this.$t('KMembersActivity.INVITE_GUEST_LABEL'),
           icon: 'las la-envelope',
-          route: { name: 'invite-member', params: {} }
-        })
-      }
+          route: { name: 'invite-member', params: {} },
+          status: this.$can('create', 'authorisations', this.contextId, { resource: this.contextId })
+        }
+      ])
       this.subscribeUsers()
     },
     subscribeUsers () {

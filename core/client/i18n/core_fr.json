@@ -479,9 +479,10 @@
     "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
     "SYSTEM_DETAILS": "Informations système"
   },
-  "KOrganisationPanel": {
-    "NEW_ORGANISATION": "Nouvelle organisation",
-    "ORGANISATION_REMOVED_WARNING": "L'organisation <b>{{organisation}}</b> a été supprimée"
+  "KOrganisationsActivity": {
+    "MY_ORGANISATIONS": "Mes organisations",
+    "SEARCH_ORGANISATION": "Rechercher une organisaion",
+    "CREATE_ORGANISATION": "Créer une organisation"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",

@@ -100,7 +100,7 @@ export default function (name = undefined) {
         this.clearFab()
         this.clearWindow()
       },
-      confgureActivity () {
+      configureActivity () {
         this.configureTopPane()
         this.configureBottomPane()
         this.configureRightPane()
@@ -110,7 +110,7 @@ export default function (name = undefined) {
       refreshActivity () {
         // This method should be overriden in activities
         this.clearActivity()
-        this.confgureActivity()
+        this.configureActivity()
       },
       back () {
         if (this.origin) this.$router.push(this.origin)
