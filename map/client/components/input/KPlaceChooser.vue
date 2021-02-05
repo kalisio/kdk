@@ -63,7 +63,6 @@ export default {
       update(() => { this.options = places })
     },
     onUpdated () {
-      console.log(this.location)
       this.$emit('place-chosen', this.location)
     }
   }

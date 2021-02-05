@@ -3,17 +3,12 @@ import logger from 'loglevel'
 
 export default function (name = undefined) {
   return {
-    data () {
-      return {
-        // TODO is it still needed here ? 
-        searchQuery: {}
-      }
-    },
     methods: {
       setTopPane (content, mode = undefined) {
         this.$store.patch('topPane', { content: this.bindContent(content), mode: mode })
       },
       setTopPaneMode (mode) {
+        console.log(mode)
         const content = this.$store.get('topPane.content')
         this.$store.patch('topPane', { content, mode })
       },
@@ -112,7 +107,7 @@ export default function (name = undefined) {
         this.clearActivity()
         this.configureActivity()
       },
-      back () {
+      goBack () {
         if (this.origin) this.$router.push(this.origin)
         else this.$router.push({ name: 'home' })
       },
