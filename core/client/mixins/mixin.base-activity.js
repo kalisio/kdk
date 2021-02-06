@@ -1,19 +1,32 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 
+function validateMode (content, mode) {
+  const modes = _.keys(content)
+  if (modes.includes(mode)) return mode
+  return _.head(modes)
+}
+
 export default function (name = undefined) {
   return {
     methods: {
       getAppName () {
         return this.$config('appName')
       },
+      getTopPane () {
+        return this.$store.get('topPane')
+      },
+      getTopPaneMode () {
+        return this.getTopPane().mode
+      },
       setTopPane (content, mode = undefined) {
-        this.$store.patch('topPane', { content: this.bindContent(content), mode: mode })
+        this.$store.patch('topPane', { content: this.bindContent(content), mode: validateMode(content, mode) })
       },
       setTopPaneMode (mode) {
-        console.log(mode)
-        const content = this.$store.get('topPane.content')
-        this.$store.patch('topPane', { content, mode })
+        if (mode !== this.getTopPaneMode()) {
+          const content = this.$store.get('topPane.content')
+          this.$store.patch('topPane', { mode: validateMode(content, mode) })
+        }
       },
       configureTopPane () {
         const options = _.get(this.activityOptions, 'topPane', null)
@@ -22,12 +35,20 @@ export default function (name = undefined) {
       clearTopPane () {
         this.$store.patch('topPane', { content: null, mode: undefined })
       },
+      getBottomPane () {
+        return this.$store.get('bottomPane')
+      },
+      getBottomPaneMode () {
+        return this.getBottomPane().mode
+      },
       setBottomPane (content, mode = undefined) {
-        this.$store.patch('bottomPane', { content: this.bindContent(content), mode: mode })
+        this.$store.patch('bottomPane', { content: this.bindContent(content), mode: validateMode(content, mode) })
       },
       setBottomPaneMode (mode) {
-        const content = this.$store.get('bottomPane.content')
-        this.$store.patch('bottomPane', { content, mode })
+        if (mode !== this.getBottomPaneMode()) {
+          const content = this.$store.get('bottomPane.content')
+          this.$store.patch('bottomPane', { mode: validateMode(content, mode) })
+        }
       },
       configureBottomPane () {
         const options = _.get(this.activityOptions, 'bottomPane', null)
@@ -36,12 +57,20 @@ export default function (name = undefined) {
       clearBottomPane () {
         this.$store.patch('bottomPane', { content: null, mode: undefined })
       },
+      getRightPane () {
+        return this.$store.get('bottomPane')
+      },
+      getRightPaneMode () {
+        return this.getRightPane().mode
+      },
       setRightPane (content, mode = undefined) {
-        this.$store.patch('rightPane', { content: this.bindContent(content), mode: mode })
+        this.$store.patch('rightPane', { content: this.bindContent(content), mode: validateMode(content, mode) })
       },
       setRightPaneMode (mode) {
-        const content = this.$store.get('rightPane.content')
-        this.$store.patch('rightPane', { content, mode })
+        if (mode !== this.getRightPaneMode()) {
+          const content = this.$store.get('rightPane.content')
+          this.$store.patch('rightPane', { mode: validateMode(content, mode) })
+        }
       },
       configureRightPane () {
         const options = _.get(this.activityOptions, 'rightPane', null)
@@ -49,6 +78,9 @@ export default function (name = undefined) {
       },
       clearRightPane () {
         this.$store.patch('rightPane', { content: null, mode: undefined })
+      },
+      getFab () {
+        return this.$store.get('fab')
       },
       setFab (actions) {
         this.$store.patch('fab', { actions: this.bindContent(actions) })
@@ -59,6 +91,9 @@ export default function (name = undefined) {
       },
       clearFab () {
         this.$store.patch('fab', { actions: null })
+      },
+      getWindows () {
+        return this.$store.get('window')
       },
       setWindow (widgets, current) {
         this.$store.patch('window', { widgets, current })
@@ -148,12 +183,14 @@ export default function (name = undefined) {
         vm.origin = from.name ? from : null
       })
     },
-    created () {
+    beforeCreate () {
       // Identify this activity using its name or the route name
       if (name) this.activityName = name
       else this.activityName = _.camelCase(_.get(this.$router, 'history.current.name', undefined))
       // Setup the options
       this.activityOptions = this.$config(this.activityName)
+    },
+    created () {
       // Register the actions
       this.refreshActivity()
       // Whenever the user abilities are updated, update activity as well
