@@ -13,6 +13,12 @@ export default function (name = undefined) {
       getAppName () {
         return this.$config('appName')
       },
+      getDefaultPaneMode(options) {
+        // The default mode can be set in the config
+        if (options.mode) return options.mode
+        // Select first key as default mode otherwise
+        else return _.keys(options.content)[0]
+      },
       getTopPane () {
         return this.$store.get('topPane')
       },
@@ -30,7 +36,7 @@ export default function (name = undefined) {
       },
       configureTopPane () {
         const options = _.get(this.activityOptions, 'topPane', null)
-        if (options) this.setTopPane(options.content, options.mode)
+        if (options) this.setTopPane(options.content, this.getDefaultPaneMode(options))
       },
       clearTopPane () {
         this.$store.patch('topPane', { content: null, mode: undefined })
@@ -52,7 +58,7 @@ export default function (name = undefined) {
       },
       configureBottomPane () {
         const options = _.get(this.activityOptions, 'bottomPane', null)
-        if (options) this.setBottomPane(options.content, options.mode)
+        if (options) this.setBottomPane(options.content, this.getDefaultPaneMode(options))
       },
       clearBottomPane () {
         this.$store.patch('bottomPane', { content: null, mode: undefined })
@@ -74,7 +80,7 @@ export default function (name = undefined) {
       },
       configureRightPane () {
         const options = _.get(this.activityOptions, 'rightPane', null)
-        if (options) this.setRightPane(options.content, options.mode)
+        if (options) this.setRightPane(options.content, this.getDefaultPaneMode(options))
       },
       clearRightPane () {
         this.$store.patch('rightPane', { content: null, mode: undefined })
