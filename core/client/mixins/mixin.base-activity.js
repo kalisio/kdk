@@ -96,7 +96,7 @@ export default function (name = undefined) {
         return this.$store.get('window')
       },
       setWindow (widgets, current) {
-        this.$store.patch('window', { widgets, current })
+        this.$store.patch('window', { widgets: this.bindContent(widgets), current })
       },
       configureWindow () {
         const options = _.get(this.activityOptions, 'window', null)
@@ -142,8 +142,6 @@ export default function (name = undefined) {
       },
       refreshActivity () {
         // This method should be overriden in activities
-        this.clearActivity()
-        this.configureActivity()
       },
       goBack () {
         if (this.origin) this.$router.push(this.origin)
@@ -172,6 +170,9 @@ export default function (name = undefined) {
               logger.debug('invalid listener: you must provide the name to the function')
             }
           }
+          // process component props
+          const binding = component.bind ? component.bind : null
+          if (binding) component.props = _.get(this, binding)
           // Recursively bind the handlers on the sub content object
           if (component.content) this.bindContent(component.content)
         })
@@ -192,6 +193,7 @@ export default function (name = undefined) {
     },
     created () {
       // Register the actions
+      this.configureActivity()
       this.refreshActivity()
       // Whenever the user abilities are updated, update activity as well
       this.$events.$on('user-abilities-changed', this.refreshActivity)

@@ -9,7 +9,7 @@
       <component
         :key="component.uid"
         :is="component.componentKey"
-        v-bind="component"
+        v-bind="component.bind ? component.props : component"
         :renderer="component.renderer ? component.renderer: actionRenderer"
         v-on="component.on ? { [component.on.event]: component.on.listener } : {}" />
     </template>
