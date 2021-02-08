@@ -164,7 +164,7 @@ export default {
       return this.icon
     },
     computedColor () {
-      if (this.isToggled) return this.toggle.color ? this.toggle.color : 'secondary'
+      if (this.isToggled) return this.toggle.color || 'secondary'
       return this.color
     },
     computedTooltip () {

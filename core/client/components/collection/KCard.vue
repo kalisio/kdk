@@ -1,5 +1,5 @@
 <template>
-  <div :class="getLayout()">
+  <div>
     <q-card bordered @click="onItemSelected">
       <!--
         Header section
@@ -56,11 +56,6 @@ export default {
     itemActions: {
       type: [Object, Array],
       default: function () { return null }
-    }
-  },
-  methods: {
-    getLayout () {
-      return _.get(this.options, 'layout', 'col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3')
     }
   },
   created () {

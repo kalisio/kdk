@@ -76,15 +76,6 @@ const baseItemMixin = {
       // Check for custom description field
       return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
     },
-    registerPaneAction (action) {
-      this.registerAction('pane', action)
-    },
-    registerMenuAction (action) {
-      this.registerAction('menu', action)
-    },
-    registerAction (type, action) {
-      this.actions[type] = this.actions[type].concat([action])
-    },
     getActions (type) {
       return this.actions[type] || []
     },

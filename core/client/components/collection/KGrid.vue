@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="items.length > 0" class="row">
+    <div v-if="items.length > 0" class="q-pa-sm row q-gutter-sm">
       <template v-for="item in items">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" :key="item._id">
-          <component class="q-pa-sm" :id="'item-' + item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" item-selected="onItemSelected(item)"/>
+        <div :class="getItemClass()" :key="item._id">
+          <component :id="'item-' + item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" item-selected="onItemSelected(item)"/>
         </div>
       </template>
       <div v-if="nbPages > 1" class="col-12">
@@ -31,8 +31,8 @@ export default {
       default: () => {
         return {
           component: 'collection/KCard',
-          options: {},
-          props: {}
+          props: {},
+          class: undefined
         }
       }
     },
@@ -67,6 +67,9 @@ export default {
     }
   },
   methods: {
+    getItemClass () {
+      return this.renderer.class || 'col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2'
+    },
     getCollectionBaseQuery () {
       return this.baseQuery
     },
