@@ -166,8 +166,8 @@ export default function (name = undefined) {
           const listener = component.on ? component.on.listener : null
           if (listener && typeof listener === 'object') {
             if (listener.name) {
-              if (listener.params) listener.handler = () => this[listener.name](...listener.params)
-              else component.listener = (params) => this[listener.name](params)
+              if (listener.params) component.on.listener = () => this[listener.name](...listener.params)
+              else component.on.listener = (params) => this[listener.name](params)
             } else {
               logger.debug('invalid listener: you must provide the name to the function')
             }
