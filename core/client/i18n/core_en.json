@@ -436,6 +436,10 @@
       "writing"                : "writing"
     }
   },
+  "KTimeRangeChooser": {
+    "FROM_DATE": "From",
+    "TO_DATE": "To"
+  },
   "KTagField": {
     "CREATE_TAG": "Create <b>{{tag}}</b>"
   },

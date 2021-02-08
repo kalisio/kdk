@@ -168,8 +168,13 @@ export default {
       return this.color
     },
     computedTooltip () {
-      if (this.isToggled && this.toggle.tooltip) return this.toggle.tooltip
-      return this.tooltip
+      // When toggled send back the toggled tooltip
+      // Check also for translation key or already translated message
+      if (this.isToggled && this.toggle.tooltip) {
+        return (this.$i18n.i18next.exists(this.toggle.tooltip) ? this.$t(this.toggle.tooltip) : this.toggle.tooltip)
+      } else {
+        return (this.$i18n.i18next.exists(this.tooltip) ? this.$t(this.tooltip) : this.tooltip)
+      }
     }
   },
   methods: {
