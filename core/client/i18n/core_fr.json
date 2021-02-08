@@ -442,6 +442,10 @@
       "writing"                : "écriture"
     }
   },
+  "KTimeRangeChooser": {
+    "FROM_DATE": "Depuis le",
+    "TO_DATE": "Jusqu'au"
+  },
   "KTagField": {
     "CREATE_TAG": "Créer <b>{{tag}}</b>"
   },

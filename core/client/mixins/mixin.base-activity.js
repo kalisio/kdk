@@ -162,12 +162,17 @@ export default function (name = undefined) {
           }
           // process component listener
           const listener = component.on ? component.on.listener : null
-          if (listener && typeof listener === 'object') {
-            if (listener.name) {
-              if (listener.params) component.on.listener = () => this[listener.name](...listener.params)
-              else component.on.listener = (params) => this[listener.name](params)
-            } else {
-              logger.debug('invalid listener: you must provide the name to the function')
+          if (listener) {
+            // Could be a structure with name and possibly params specified
+            if (typeof listener === 'object') {
+              if (listener.name) {
+                if (listener.params) component.on.listener = () => this[listener.name](...listener.params)
+                else component.on.listener = (...params) => this[listener.name](...params)
+              } else {
+                logger.debug('invalid listener: you must provide the name to the function')
+              }
+            } else if (typeof listener === 'string') { // Or only name if no params specified
+              component.on.listener = (...params) => this[listener](...params)
             }
           }
           // process component props
