@@ -90,8 +90,10 @@ export default {
     onAutocompleteChanged (value) {
       if (typeof value === 'string') {
         // The input pattern has changed
-        this.pattern = value
-        this.$emit('changed', this.items, this.pattern)
+        if (this.pattern !== value) {
+          this.pattern = value
+          this.$emit('changed', this.items, this.pattern)
+        }
       } else {
         // An item has been selected
         if (_.findIndex(this.items, item => item._id === value._id) === -1) {
@@ -109,6 +111,10 @@ export default {
         }
       }
     }
+  },
+  mounted () {
+    // Initialize
+    this.clear()
   }
 }
 </script>

@@ -123,7 +123,7 @@ export default {
     },
     onListMembers () {
       // Setup search bar accordingly
-      this.$store.patch('searchBar', {
+      this.$store.patch('filter', {
         items: [Object.assign({
           service: 'groups',
           field: 'name',

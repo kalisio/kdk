@@ -34,8 +34,8 @@ export default {
       ])
     },
     onListMembers () {
-      // Setup search bar accordingly
-      this.$store.patch('searchBar', {
+      // Setup filter accordingly
+      this.$store.patch('filter', {
         items: [Object.assign({
           service: 'tags',
           field: 'value'

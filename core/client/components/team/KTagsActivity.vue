@@ -4,7 +4,7 @@
       <!--
         Groups collection
       -->
-      <k-grid ref="groups" :contextId="contextId" service="tags" :renderer="renderer" :base-query="baseQuery" :filter-query="filterQuery" :list-strategy="'smart'" />
+      <k-grid ref="groups" :contextId="contextId" service="tags" :renderer="renderer" :base-query="baseQuery" :filter-query="filter.query" :list-strategy="'smart'" />
       <!--
         Router view to enable routing to modals
       -->

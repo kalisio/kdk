@@ -2,6 +2,7 @@ import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store } from './store'
 import { Layout } from './layout'
+import { Filter } from './filter'
 import services from './services'
 import * as utils from './utils'
 import * as mixins from './mixins'
@@ -17,6 +18,7 @@ import * as hooks from './hooks'
 export * from './events'
 export * from './api'
 export * from './store'
+export * from './filter'
 export * from './layout'
 export * from './guards'
 export * from '../common'
@@ -35,12 +37,12 @@ export default function init () {
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
+  Filter.initialize()
   Store.set('topPane', { content: null, mode: undefined, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, visible: false })
   Store.set('window', { curent: '', widgets: [] })
   Store.set('fab', { actions: [] })
-  Store.set('filter', { pattern: '', items: [], query: {} })
 
   // Listen to the 'patched' event on the users
   const users = api.getService('users')
