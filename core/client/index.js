@@ -40,6 +40,7 @@ export default function init () {
   Store.set('bottomPane', { content: null, mode: undefined, visible: false })
   Store.set('window', { curent: '', widgets: [] })
   Store.set('fab', { actions: [] })
+  Store.set('filter', { pattern: '', items: [], query: {} })
 
   // Listen to the 'patched' event on the users
   const users = api.getService('users')

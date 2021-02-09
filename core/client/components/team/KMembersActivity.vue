@@ -5,7 +5,7 @@
         Members collection, cannot use smart strategy here because membership is not managed at service level
         but using authorisations on users
       -->
-      <k-grid ref="membersGrid" service="members" :renderer="renderer" :contextId="contextId" :base-query="baseQuery" :filter-query="filterQuery" />
+      <k-grid ref="membersGrid" service="members" :renderer="renderer" :contextId="contextId" :base-query="baseQuery" :filter-query="filter.query" />
       <!--
         Router view to enable routing to modals
       -->
@@ -35,6 +35,7 @@ export default {
           'profile.name': 1
         }
       },
+      filter: this.$store.get('filter'),
       renderer: {
         component: 'team/KMemberCard',
         props: {

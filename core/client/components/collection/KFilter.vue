@@ -23,11 +23,11 @@ export default {
     items: {
       type: Array,
       // We allow search items to be internally provided by others activities like tags, etc.
-      default: () => Store.get('searchBar.items', [])
+      default: () => Store.get('filter.items')
     }
   },
   methods: {
-    onItemsChanged (items, pattern) {
+    buildFilterQuery (items, pattern) {
       const query = {}
       // Handle the pattern
       if (pattern !== '') {
@@ -39,7 +39,11 @@ export default {
         const queryPath = item.service + '.' + item.field
         query[queryPath] = item[item.field]
       })
-      this.$emit('filter-changed', query)
+      return query
+    },
+    onItemsChanged (items, pattern) {
+      const query = this.buildFilterQuery(items, pattern)
+      Store.patch('filter', { items, pattern, query })
     }
   },
   created () {

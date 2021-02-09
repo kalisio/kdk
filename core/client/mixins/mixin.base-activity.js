@@ -9,12 +9,7 @@ function validateMode (content, mode) {
 
 export default function (name = undefined) {
   return {
-    data () {
-    return {
-      filterQuery: {},
-    }
-  },
-  methods: {
+    methods: {
       getAppName () {
         return this.$config('appName')
       },
@@ -186,9 +181,6 @@ export default function (name = undefined) {
           if (component.content) this.bindContent(component.content)
         })
         return content
-      },
-      onFilterChanged (filterQuery) {
-        this.filterQuery = filterQuery
       }
     },
     beforeRouteEnter (to, from, next) {

@@ -9,7 +9,7 @@
         service="organisations"
         :renderer="renderer"
         :base-query="baseQuery"
-        :filter-query="filterQuery"
+        :filter-query="filter.query"
         :list-strategy="'smart'" />
      <!--
       Creation editor
@@ -36,6 +36,7 @@ export default {
           name: 1
         }
       },
+      filter: this.$store.get('filter'),
       renderer: {
         component: 'team/KOrganisationCard'
       }

@@ -4,7 +4,7 @@
       <!--
         Groups collection
       -->
-      <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="filterQuery" :list-strategy="'smart'" />
+      <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="filter.query" :list-strategy="'smart'" />
       <!--
         Router view to enable routing to modals
       -->
@@ -40,6 +40,7 @@ export default {
           name: 1
         }
       },
+      filter: this.$store.get('filter'),
       renderer: {
         component: 'team/KGroupCard'
       }

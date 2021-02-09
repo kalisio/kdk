@@ -40,6 +40,7 @@ export default {
           name: 1
         }
       },
+      filter: this.$store.get('filter'),
       renderer: {
         component: 'team/KTagCard'
       }
