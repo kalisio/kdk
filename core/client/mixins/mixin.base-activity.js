@@ -144,14 +144,13 @@ export default function (name = undefined) {
         // This method should be overriden in activities
       },
       goBack () {
-        if (this.origin) this.$router.push(this.origin)
-        else this.$router.push({ name: 'home' })
+        this.$router.back()
       },
       bindParams (params) {
         // A parameter like :xxx means xxx is a property of the component, not a static value
         return params.map(param => param.startsWith(':') ? _.get(this, param) : param)
       },
-      bindHandler(component, path) {
+      bindHandler (component, path) {
         const handler = _.get(component, path)
         // Could be a structure with name and possibly params specified
         if (handler && typeof handler === 'object') {
@@ -182,11 +181,6 @@ export default function (name = undefined) {
         })
         return content
       }
-    },
-    beforeRouteEnter (to, from, next) {
-      next(vm => {
-        vm.origin = from.name ? from : null
-      })
     },
     beforeCreate () {
       // Identify this activity using its name or the route name
