@@ -76,7 +76,6 @@ export default {
     }
   },
   created () {
-    console.log(this.activityName)
     // Load the required components
     this.$options.components['k-page'] = this.$load('layout/KPage')
     // Configure once the activity
