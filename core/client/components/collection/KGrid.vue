@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="items.length > 0" class="q-pa-sm row q-gutter-sm">
+    <div v-if="items.length > 0" class="q-pa-sm row">
       <template v-for="item in items">
         <div :class="getItemClass()" :key="item._id">
           <component :id="'item-' + item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" item-selected="onItemSelected(item)"/>
@@ -32,7 +32,7 @@ export default {
         return {
           component: 'collection/KCard',
           props: {},
-          class: undefined
+          class: 'q-ps-sm'
         }
       }
     },
@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     getItemClass () {
-      return this.renderer.class || 'col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2'
+      return this.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2'
     },
     getCollectionBaseQuery () {
       return this.baseQuery

@@ -1,6 +1,9 @@
 <template>
   <k-page padding>
     <template v-slot:page-content>
+      <!--
+        Component view
+       -->
       <template v-for="component in components">
         <component
           v-if="component.page === page"
@@ -8,6 +11,10 @@
           :is="component.componentKey"
           v-bind="component" />
       </template>
+       <!--
+        Router view to enable routing to modals
+      -->
+      <router-view :router="router()"></router-view>
     </template>
   </k-page>
 </template>
@@ -55,17 +62,27 @@ export default {
     }
   },
   methods: {
+    router () {
+      return {
+        onApply: { name: _.kebabCase(this.activityName) },
+        onDismiss: { name: _.kebabCase(this.activityName) }
+      }
+    },
     refreshActivity () {
       // Nothing to do. Avoid to clear and configure
+    },
+    restoreTopPaneMode () {
+      this.setTopPaneMode(this.page)
     }
   },
   created () {
+    console.log(this.activityName)
     // Load the required components
     this.$options.components['k-page'] = this.$load('layout/KPage')
     // Configure once the activity
     this.configureActivity()
     // Setup the pane mode according the current page
-    this.setTopPaneMode(this.page)
+    this.restoreTopPaneMode()
   }
 }
 </script>

@@ -31,6 +31,7 @@ export default function (name = undefined) {
       configureTopPane () {
         const options = _.get(this.activityOptions, 'topPane', null)
         if (options) this.setTopPane(options.content, options.mode)
+        else this.clearTopPane()
       },
       clearTopPane () {
         this.$store.patch('topPane', { content: null, mode: undefined })
@@ -53,6 +54,7 @@ export default function (name = undefined) {
       configureBottomPane () {
         const options = _.get(this.activityOptions, 'bottomPane', null)
         if (options) this.setBottomPane(options.content, options.mode)
+        else this.clearBottomPane()
       },
       clearBottomPane () {
         this.$store.patch('bottomPane', { content: null, mode: undefined })
@@ -75,6 +77,7 @@ export default function (name = undefined) {
       configureRightPane () {
         const options = _.get(this.activityOptions, 'rightPane', null)
         if (options) this.setRightPane(options.content, options.mode)
+        else this.clearRightPane()
       },
       clearRightPane () {
         this.$store.patch('rightPane', { content: null, mode: undefined })
@@ -88,6 +91,7 @@ export default function (name = undefined) {
       configureFab () {
         const options = _.get(this.activityOptions, 'fab', null)
         if (options) this.setFab(options.actions)
+        else this.clearFab()
       },
       clearFab () {
         this.$store.patch('fab', { actions: null })
