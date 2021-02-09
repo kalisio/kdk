@@ -9,7 +9,12 @@ function validateMode (content, mode) {
 
 export default function (name = undefined) {
   return {
-    methods: {
+    data () {
+    return {
+      filterQuery: {},
+    }
+  },
+  methods: {
       getAppName () {
         return this.$config('appName')
       },
@@ -147,34 +152,33 @@ export default function (name = undefined) {
         if (this.origin) this.$router.push(this.origin)
         else this.$router.push({ name: 'home' })
       },
+      bindParams (params) {
+        // A parameter like :xxx means xxx is a property of the component, not a static value
+        return params.map(param => param.startsWith(':') ? _.get(this, param) : param)
+      },
+      bindHandler(component, path) {
+        const handler = _.get(component, path)
+        // Could be a structure with name and possibly params specified
+        if (handler && typeof handler === 'object') {
+          if (handler.name) {
+            if (handler.params) _.set(component, path, () => _.get(this, handler.name)(...this.bindParams(handler.params)))
+            else _.set(component, path, (...params) => _.get(this, handler.name)(...params))
+          } else {
+            logger.debug(`Invalid handler binding for ${handler}: you must provide the name to the function to be called`)
+          }
+        } else if (typeof handler === 'string') { // Or only name if no params are specified
+          _.set(component, path, (...params) => _.get(this, handler)(...params))
+        }
+      },
       bindContent (content) {
         const components = _.flatMapDeep(content)
         _.forEach(components, (component) => {
-          // process component handler
-          const handler = component.handler
-          if (handler && typeof handler === 'object') {
-            if (handler.name) {
-              if (handler.params) component.handler = () => this[handler.name](...handler.params)
-              else component.handler = (params) => this[handler.name](params)
-            } else {
-              logger.debug('invalid handler: you must provide the name to the function')
-            }
-          }
-          // process component listener
-          const listener = component.on ? component.on.listener : null
-          if (listener) {
-            // Could be a structure with name and possibly params specified
-            if (typeof listener === 'object') {
-              if (listener.name) {
-                if (listener.params) component.on.listener = () => this[listener.name](...listener.params)
-                else component.on.listener = (...params) => this[listener.name](...params)
-              } else {
-                logger.debug('invalid listener: you must provide the name to the function')
-              }
-            } else if (typeof listener === 'string') { // Or only name if no params specified
-              component.on.listener = (...params) => this[listener](...params)
-            }
-          }
+          // Process component visibility state
+          this.bindHandler(component, 'visible')
+          // Process component handler
+          this.bindHandler(component, 'handler')
+          // Process component listener
+          this.bindHandler(component, 'on.listener')
           // process component props
           const binding = component.bind ? component.bind : null
           if (binding) component.props = _.get(this, binding)
@@ -182,6 +186,9 @@ export default function (name = undefined) {
           if (component.content) this.bindContent(component.content)
         })
         return content
+      },
+      onFilterChanged (filterQuery) {
+        this.filterQuery = filterQuery
       }
     },
     beforeRouteEnter (to, from, next) {

@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { Store } from '../../store'
+
 export default {
   name: 'k-filter',
   props: {
@@ -20,7 +22,8 @@ export default {
     },
     items: {
       type: Array,
-      default: () => []
+      // We allow search items to be internally provided by others activities like tags, etc.
+      default: () => Store.get('searchBar.items', [])
     }
   },
   methods: {

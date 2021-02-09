@@ -17,22 +17,21 @@ export default {
   methods: {
     refreshActions () {
       this.clearActions()
-      if (this.$can('update', 'tags', this.contextId, this.item)) {
-        this.registerPaneAction({
+      this.setActions([
+        {
           name: 'edit-tag',
-          label: this.$t('KTagCard.EDIT_LABEL'),
+          tooltip: this.$t('KTagCard.EDIT_LABEL'),
           icon: 'las la-file-alt',
+          visible: this.$can('update', 'tags', this.contextId, this.item),
           route: { name: 'edit-tag', params: { contextId: this.contextId, objectId: this.item._id } }
-        })
-      }
-      if (this.$can('service', 'members', this.contextId)) {
-        this.registerPaneAction({
+        },
+        {
           name: 'list-members',
-          label: this.$t('KTagCard.LIST_MEMBERS_LABEL'),
+          tooltip: this.$t('KTagCard.LIST_MEMBERS_LABEL'),
           icon: 'las la-user-tag',
           handler: this.onListMembers
-        })
-      }
+        }
+      ])
     },
     onListMembers () {
       // Setup search bar accordingly

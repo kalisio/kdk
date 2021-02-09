@@ -178,6 +178,23 @@ export default {
     }
   },
   methods: {
+    bindRouteParams(path) {
+      // When action is created from code we can directly inject the params
+      // From the config we we need to manage dynamic values
+      // Clone route context to avoid losing dynamic parameters in this case
+      const currentParams = _.get(this.$route, path, {})
+      const targetParams = _.get(this.route, path, {})
+      // A parameter like ':xxx' in config means xxx is a dynamic property of the route, not a static value
+      // We split the target params object into two sets: one with static keys and one with dynamic keys
+      const staticParams = Object.entries(targetParams)
+        .filter(([key, value]) => (typeof value !== 'string') || !value.startsWith(':'))
+        .map(([key, value]) => key)
+      const dynamicParams = Object.entries(targetParams)
+        .filter(([key, value]) => (typeof value === 'string') && value.startsWith(':'))
+        .map(([key, value]) => key)
+      // Merge static/dynamic params to build full list
+      return Object.assign({}, _.pick(targetParams, staticParams), _.pick(currentParams, dynamicParams))
+    },
     onClicked () {
       const params = []
       // Handle the context if needed
@@ -190,7 +207,13 @@ export default {
       // Handle the URL case
       if (this.url) openURL(this.url)
       // Handle the route case
-      else if (this.route) this.$router.push(this.route).catch(() => {})
+      else if (this.route) {
+        // Process route params
+        this.$router.push(Object.assign({
+          query: this.bindRouteParams('query'),
+          params: this.bindRouteParams('params')
+        }, _.omit(this.route, ['query', 'params']))).catch(() => {})
+      }
       // Handle the callback case
       else if (this.handler) {
         if (params.length > 0) this.handler(...params)

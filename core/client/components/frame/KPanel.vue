@@ -76,7 +76,11 @@ export default {
           content = _.get(this.content, mode)
         }
         _.forEach(content, (component) => {
-          const isVisible = _.get(component, 'visible', true)
+          let isVisible = _.get(component, 'visible', true)
+          // Can be a functional call
+          if (typeof isVisible === 'function') {
+            isVisible = isVisible()
+          }
           if (isVisible) {
             // Define the component key
             const componentName = _.get(component, 'component', 'frame/KAction')

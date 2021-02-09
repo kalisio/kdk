@@ -478,14 +478,13 @@
     "SYSTEM_DETAILS": "Platform information"
   },
   "KOrganisationsActivity": {
-    "MY_ORGANISATIONS": "My organisations",
-    "SEARCH_ORGANISATION": "Search for an organisation",
-    "CREATE_ORGANISATION": "Create an organisation"
+    "ORGANISATIONS_LABEL": "Organisations",
+    "SEARCH_ORGANISATION_LABEL": "Search for an organisation",
+    "CREATE_ORGANISATION_LABEL": "Create an organisation"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
-    "TAGS_LABEL": "$t(TAGS)",
-    "GROUPS_LABEL": "$t(GROUPS)",
+    "SEARCH_MEMBER_LABEL": "$t(MEMBERS)",
     "ADD_USER_LABEL": "Add a user",
     "INVITE_GUEST_LABEL": "Invite guests"
   },
@@ -552,27 +551,16 @@
     "RESEND_INVITATION_DIALOG_MESSAGE": "Is <b>{{member}}</b>'s email address correct ?"
   },
   "KTagsActivity": {
-    "MEMBERS_LABEL": "$t(MEMBERS)",
     "TAGS_LABEL": "$t(TAGS)",
-    "GROUPS_LABEL": "$t(GROUPS)"
+    "SEARCH_TAG_LABEL": "Search for a tag"
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",    
     "LIST_MEMBERS_LABEL": "List members with tag"
-  },
-  "KSubscribersActivity": {
-    "MEMBERS_LABEL": "$t(MEMBERS)",
-    "GROUPS_LABEL": "$t(GROUPS)"
-  },
-  "KSubscriberCard": {
-    "REMOVE_LABEL": "$t(REMOVE)",
-    "REMOVE_DIALOG_TITLE": "Remove {{subscriber}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{subscriber}}</b> from your organisation ?"
   },  
   "KGroupsActivity": {
-    "MEMBERS_LABEL": "$t(MEMBERS)",
-    "TAGS_LABEL": "$t(TAGS)",
     "GROUPS_LABEL": "$t(GROUPS)",
+    "SEARCH_GROUP_LABEL": "Search for a group",
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {

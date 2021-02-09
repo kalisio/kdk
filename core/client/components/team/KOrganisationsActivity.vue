@@ -9,7 +9,7 @@
         service="organisations"
         :renderer="renderer"
         :base-query="baseQuery"
-        :filter-query="searchQuery"
+        :filter-query="filterQuery"
         :list-strategy="'smart'" />
      <!--
       Creation editor

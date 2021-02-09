@@ -4,7 +4,7 @@
       <!--
         Groups collection
       -->
-      <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="searchQuery" :list-strategy="'smart'" />
+      <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="filterQuery" :list-strategy="'smart'" />
       <!--
         Router view to enable routing to modals
       -->
@@ -54,36 +54,7 @@ export default {
     },
     refreshActivity () {
       this.clearActivity()
-      this.setSearchBar('name')
-      // Tabbar actions
-      this.registerTabAction({
-        name: 'members',
-        label: this.$t('KGroupsActivity.MEMBERS_LABEL'),
-        icon: 'las la-user-friends',
-        route: { name: 'members-activity', params: { contextId: this.contextId } }
-      })
-      this.registerTabAction({
-        name: 'tags',
-        label: this.$t('KGroupsActivity.TAGS_LABEL'),
-        icon: 'las la-tags',
-        route: { name: 'tags-activity', params: { contextId: this.contextId } }
-      })
-      this.registerTabAction({
-        name: 'groups',
-        label: this.$t('KGroupsActivity.GROUPS_LABEL'),
-        icon: 'las la-sitemap',
-        route: { name: 'groups-activity', params: { contextId: this.contextId } },
-        default: true
-      })
-      // Fab actions
-      if (this.$can('create', 'groups', this.contextId)) {
-        this.registerFabAction({
-          name: 'create-group',
-          label: this.$t('KGroupsActivity.CREATE_GROUP_LABEL'),
-          icon: 'las la-plus',
-          route: { name: 'create-group', params: { contextId: this.contextId } }
-        })
-      }
+      this.configureActivity()
     }
   },
   created () {

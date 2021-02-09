@@ -56,15 +56,15 @@ const baseCollectionMixin = {
       }
     },
     getCollectionBaseQuery () {
-      // This method should be overriden in activities
+      // This method should be overriden in collections
       return {}
     },
     getCollectionFilterQuery () {
-      // This method should be overriden in activities
+      // This method should be overriden in collections
       return {}
     },
     getCollectionPaginationQuery () {
-      // This method can be overriden in activities
+      // This method can be overriden in collections
       if (this.nbItemsPerPage > 0) {
         return {
           $limit: this.nbItemsPerPage,
