@@ -14,7 +14,7 @@
        <!--
         Router view to enable routing to modals
       -->
-      <router-view :router="router()"></router-view>
+      <router-view :router="router()" />
     </template>
   </k-page>
 </template>
@@ -67,9 +67,6 @@ export default {
         onApply: { name: _.kebabCase(this.activityName) },
         onDismiss: { name: _.kebabCase(this.activityName) }
       }
-    },
-    refreshActivity () {
-      // Nothing to do. Avoid to clear and configure
     },
     restoreTopPaneMode () {
       this.setTopPaneMode(this.page)

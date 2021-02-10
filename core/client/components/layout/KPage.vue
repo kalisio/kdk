@@ -1,5 +1,5 @@
 <template>
-  <q-page id="page" :padding="padding">
+  <q-page :padding="padding">
     <!--
       Specific page content
      -->
@@ -9,6 +9,7 @@
     <!--
       Managed stickies
      -->
+    <!-- top -->
     <q-page-sticky position="top">
       <div id="top-pane" v-show="topPane.content" class="column items-center">
         <div>
@@ -18,15 +19,14 @@
         <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
+    <!-- window -->
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window id="window" ref="window" />
     </q-page-sticky>
     <q-page-sticky v-if="hasLeftDrawerOpener && leftDrawer.content" position="left">
       <k-opener v-model="isLeftDrawerOpened" position="left"  />
     </q-page-sticky>
-    <!--q-page-sticky v-if="hasRightDrawerOpener && rightDrawer.content" position="right">
-      <k-opener v-model="isRightDrawerOpened" position="right" />
-    </q-page-sticky-->
+    <!-- right -->
     <q-page-sticky position="right">
       <div id="right-pane" v-show="rightPane.content" class="row items-center">
         <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
@@ -36,6 +36,7 @@
         </div>
       </div>
     </q-page-sticky>
+    <!-- bottom -->
     <q-page-sticky position="bottom">
       <div id="bottom-pane" v-show="bottomPane.content" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
@@ -45,6 +46,7 @@
         </div>
       </div>
     </q-page-sticky>
+    <!-- fab -->
     <q-page-sticky position="bottom-right" :offset="fabOffset">
       <k-fab />
     </q-page-sticky>

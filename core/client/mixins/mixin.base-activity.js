@@ -194,7 +194,7 @@ export default function (name = undefined) {
       this.activityOptions = this.$config(this.activityName)
     },
     created () {
-      // Register the actions
+      // Configure the activity
       this.configureActivity()
       this.refreshActivity()
       // Whenever the user abilities are updated, update activity as well
