@@ -4,12 +4,12 @@ import { Store } from './store'
 
 // Export singleton
 export const Filter = {
-	initialize () {
+  initialize () {
     // This object is used to filter the activities based on a search pattern or on specific items
     // The filter then builds the corresponding query
-	  Store.set('filter', { field: 'name', pattern: '', items: [], query: {} })
-	  // Make filter react to external changes to update the query
-	  Events.$on('filter-changed', () => this.updateFilterQuery())
+    Store.set('filter', { field: 'name', pattern: '', items: [], query: {} })
+    // Make filter react to external changes to update the query
+    Events.$on('filter-changed', () => this.updateFilterQuery())
   },
   get () {
     return Store.get('filter')

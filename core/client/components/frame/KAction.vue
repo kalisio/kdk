@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { openURL } from 'quasar'
 
 export default {
@@ -178,7 +179,7 @@ export default {
     }
   },
   methods: {
-    bindRouteParams(path) {
+    bindRouteParams (path) {
       // When action is created from code we can directly inject the params
       // From the config we we need to manage dynamic values
       // Clone route context to avoid losing dynamic parameters in this case

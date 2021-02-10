@@ -13,7 +13,7 @@
         narrow-indicator
       >
         <template v-for="(widget,index) in widgets">
-          <q-tab :key="index" :name="widget.name" :icon="widget.icon" />
+          <q-tab :key="index" :name="widget.id" :icon="widget.icon" />
         </template>
       </q-tabs>
       <!-- Window actions -->
@@ -24,7 +24,7 @@
       -->
     <q-tab-panels v-model="widget" animated>
       <template v-for="(widget, index) in widgets">
-        <q-tab-panel :key="index" :name="widget.name" class="no-padding">
+        <q-tab-panel :key="index" :name="widget.id" class="no-padding">
           <component :is="widget.componentKey" :mode="mode" v-bind="widget.props" style="z-index: 1" />
         </q-tab-panel>
       </template>>
