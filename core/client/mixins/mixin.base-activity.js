@@ -205,14 +205,11 @@ export default function (name = undefined) {
     beforeCreate () {
       // Identify this activity using its name or the route name
       if (name) this.activityName = name
-      else this.activityName = _.camelCase(_.get(this.$router, 'history.current.name', undefined))
+      else this.activityName = _.camelCase(this.$route.name)
       // Setup the options
       this.activityOptions = this.$config(this.activityName)
     },
     created () {
-      // Configure the activity
-      this.configureActivity()
-      this.refreshActivity()
       // Whenever the user abilities are updated, update activity as well
       this.$events.$on('user-abilities-changed', this.refreshActivity)
     },
