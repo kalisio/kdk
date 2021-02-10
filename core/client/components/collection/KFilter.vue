@@ -3,7 +3,8 @@
     :multiselect="true"
     :services="services"
     :default-items="filter.items"
-    @changed="onItemsChanged" />
+    @items-changed="onItemsChanged"
+    @pattern-changed="onPatternChanged" />
 </template>
 
 <script>
@@ -25,9 +26,13 @@ export default {
     }
   },
   methods: {
-    onItemsChanged (items, pattern) {
+    onItemsChanged (items) {
       // Setup the filter, which then automatically updates the query
-      this.$store.patch('filter', { items, pattern })
+      this.$store.patch('filter', { items })
+    },
+    onPatternChanged (pattern) {
+      // Setup the filter, which then automatically updates the query
+      this.$store.patch('filter', { pattern })
     }
   },
   created () {

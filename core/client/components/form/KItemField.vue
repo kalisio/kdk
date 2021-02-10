@@ -17,7 +17,7 @@
       :multiselect="properties.multiselect"
       :default-items="defaultItems"
       :services="properties.services"
-      @changed="updateModel" />
+      @items-changed="updateModel" />
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>
     </template>

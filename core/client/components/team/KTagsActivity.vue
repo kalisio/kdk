@@ -27,10 +27,6 @@ export default {
     id: {
       type: String,
       default: ''
-    },
-    perspective: {
-      type: String,
-      default: ''
     }
   },
   data () {

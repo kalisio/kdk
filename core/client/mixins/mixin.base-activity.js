@@ -150,6 +150,22 @@ export default function (name = undefined) {
       goBack () {
         this.$router.back()
       },
+      refresh () {
+        window.location.reload()
+      },
+      launchTour (name) {
+        // If no name we extract tour name from route name
+        if (!name) {
+          const routeName = this.$route.name
+          let tourName = routeName
+          // Manage routes with different pages
+          if (_.has(this.$route, 'params.page')) {
+            tourName += '/' + _.get(this.$route, 'params.page')
+          }
+          name = tourName
+        }
+        this.$store.patch('tours.current', { name })
+      },
       bindParams (params) {
         // A parameter like :xxx means xxx is a property of the component, not a static value
         return params.map(param => param.startsWith(':') ? _.get(this, param) : param)
