@@ -144,9 +144,6 @@ export default function (name = undefined) {
         this.configureFab()
         this.configureWindow()
       },
-      refreshActivity () {
-        // This method should be overriden in activities
-      },
       goBack () {
         this.$router.back()
       },
@@ -211,10 +208,12 @@ export default function (name = undefined) {
     },
     created () {
       // Whenever the user abilities are updated, update activity as well
-      this.$events.$on('user-abilities-changed', this.refreshActivity)
+      this.$events.$on('user-abilities-changed', this.configureActivity)
+      // Configure the activity
+      this.configureActivity()
     },
     beforeDestroy () {
-      this.$events.$off('user-abilities-changed', this.refreshActivity)
+      this.$events.$off('user-abilities-changed', this.configureActivity)
     }
   }
 }

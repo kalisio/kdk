@@ -53,9 +53,8 @@ export default {
         onDismiss: { name: 'members-activity', params: { contextId: this.contextId } }
       }
     },
-    async refreshActivity () {
-      this.clearActivity()
-      this.configureActivity()
+    configureActivity () {    
+      mixins.baseActivity(this.activityName).methods.configureActivity.call(this)
       this.subscribeUsers()
     },
     subscribeUsers () {
@@ -86,8 +85,6 @@ export default {
     // Load the required components
     this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
-    // Setup the activity
-    this.configureActivity()
   },
   beforeDestroy () {
     this.unsubscribeUsers()

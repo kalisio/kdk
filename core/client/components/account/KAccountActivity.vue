@@ -45,8 +45,6 @@ export default {
     this.$options.components['k-editor'] = this.$load('editor/KEditor')
     this.$options.components['k-account-security'] = this.$load('account/KAccountSecurity')
     this.$options.components['k-account-dz'] = this.$load('account/KAccountDZ')
-    // Setup the activity
-    this.configureActivity()
   }
 }
 </script>
