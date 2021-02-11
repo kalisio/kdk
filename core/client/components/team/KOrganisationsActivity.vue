@@ -56,6 +56,8 @@ export default {
     this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
     this.$options.components['k-modal-editor'] = this.$load('editor/KModalEditor')
+    // Setup the activity
+    this.configureActivity()
   }
 }
 </script>

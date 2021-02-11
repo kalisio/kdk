@@ -86,6 +86,8 @@ export default {
     // Load the required components
     this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
+    // Setup the activity
+    this.configureActivity()
   },
   beforeDestroy () {
     this.unsubscribeUsers()
