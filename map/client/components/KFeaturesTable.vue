@@ -43,7 +43,7 @@ export default {
   },
   data () {
     return {
-      toolbar: [{ name: 'close', icon: 'las la-times', handler: () => this.close() }]
+      toolbar: [{ id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.close() }]
     }
   },
   methods: {

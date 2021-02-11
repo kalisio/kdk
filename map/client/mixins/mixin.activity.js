@@ -137,7 +137,7 @@ export default {
         if (layerActions.includes('zoom-to')) {
           actions.push({
             name: 'zoom-to',
-            label: this.$t('mixins.activity.ZOOM_TO_LABEL'),
+            label: 'mixins.activity.ZOOM_TO_LABEL',
             icon: 'las la-search-location',
             handler: () => this.onZoomToLayer(layer)
           })
@@ -146,7 +146,7 @@ export default {
         if ((typeof this.toGeoJson === 'function') && this.isLayerStorable(layer) && !layer._id && layerActions.includes('save')) {
           actions.push({
             name: 'save',
-            label: this.$t('mixins.activity.SAVE_LAYER'),
+            label: 'mixins.activity.SAVE_LAYER',
             icon: 'las la-save',
             handler: () => this.onSaveLayer(layer)
           })
@@ -154,7 +154,7 @@ export default {
         if (this.isLayerEditable(layer) && layerActions.includes('filter-data')) {
           actions.push({
             name: 'filter-data',
-            label: this.$t('mixins.activity.FILTER_DATA_LABEL'),
+            label: 'mixins.activity.FILTER_DATA_LABEL',
             icon: 'las la-filter',
             handler: () => this.onFilterLayerData(layer)
           })
@@ -162,7 +162,7 @@ export default {
         if (this.isLayerEditable(layer) && layerActions.includes('view-data')) {
           actions.push({
             name: 'view-data',
-            label: this.$t('mixins.activity.VIEW_DATA_LABEL'),
+            label: 'mixins.activity.VIEW_DATA_LABEL',
             icon: 'las la-th-list',
             handler: () => this.onViewLayerData(layer)
           })
@@ -170,7 +170,7 @@ export default {
         if (this.isLayerEditable(layer) && layerActions.includes('chart-data')) {
           actions.push({
             name: 'chart-data',
-            label: this.$t('mixins.activity.CHART_DATA_LABEL'),
+            label: 'mixins.activity.CHART_DATA_LABEL',
             icon: 'las la-chart-pie',
             handler: () => this.onChartLayerData(layer)
           })
@@ -178,7 +178,7 @@ export default {
         if (this.isLayerEditable(layer) && layerActions.includes('edit')) {
           actions.push({
             name: 'edit',
-            label: this.$t('mixins.activity.EDIT_LABEL'),
+            label: 'mixins.activity.EDIT_LABEL',
             icon: 'las la-file-alt',
             handler: () => this.onEditLayer(layer)
           })
@@ -186,7 +186,7 @@ export default {
         if (this.isLayerStyleEditable(layer) && layerActions.includes('edit-style')) {
           actions.push({
             name: 'edit-style',
-            label: this.$t('mixins.activity.EDIT_LAYER_STYLE_LABEL'),
+            label: 'mixins.activity.EDIT_LAYER_STYLE_LABEL',
             icon: 'las la-border-style',
             handler: () => this.onEditLayerStyle(layer)
           })
@@ -196,8 +196,8 @@ export default {
           actions.push({
             name: 'edit-data',
             label: this.isLayerEdited(layer)
-              ? this.$t('mixins.activity.STOP_EDIT_DATA_LABEL')
-              : this.$t('mixins.activity.START_EDIT_DATA_LABEL'),
+              ? 'mixins.activity.STOP_EDIT_DATA_LABEL'
+              : 'mixins.activity.START_EDIT_DATA_LABEL',
             icon: 'las la-edit',
             handler: () => this.onEditLayerData(layer)
           })
@@ -205,7 +205,7 @@ export default {
         if (this.isLayerRemovable(layer) && layerActions.includes('remove')) {
           actions.push({
             name: 'remove',
-            label: this.$t('mixins.activity.REMOVE_LABEL'),
+            label: 'mixins.activity.REMOVE_LABEL',
             icon: 'las la-minus-circle',
             handler: () => this.onRemoveLayer(layer)
           })

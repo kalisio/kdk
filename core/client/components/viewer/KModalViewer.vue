@@ -26,7 +26,7 @@ export default {
   data () {
     return {
       toolbar: [{
-        name: 'close',
+        id: 'close-viewer',
         icon: 'las la-times',
         handler: () => {
           this.close()

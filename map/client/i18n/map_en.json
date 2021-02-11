@@ -24,7 +24,7 @@
     "activity": {
       "CREATE_LAYER": "Create a new layer",
       "IMPORT_LAYER": "Import a local file to create a new layer",
-      "SAVE_LAYER": "Save layer",
+      "SAVE_LAYER": "Save",
       "SAVING_LAYER": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
       "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {{features.length}} elements with invalid geometry (e.g. self-intersection).</br>As a consequence they will be removed prior to saving.",

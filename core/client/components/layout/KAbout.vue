@@ -93,15 +93,15 @@ export default {
   methods: {
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KAbout.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.onAboutClosed() }
+        { id: 'close-action', icon: 'las la-times', tooltip: 'KAbout.CLOSE_ACTION', handler: () => this.onAboutClosed() }
       ]
     },
     onAbout () {
+      this.$layout.setLeftDrawerVisible(false)
       this.$refs.about.open()
     },
     onAboutClosed () {
       this.$refs.about.close()
-      this.$store.patch('leftDrawer', { visible: false })
     }
   },
   created () {

@@ -89,12 +89,12 @@ export default {
   methods: {
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KAddMember.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
+        { id: 'close-action', icon: 'las la-times', tooltip: 'KAddMember.CLOSE_ACTION', handler: () => this.doClose() }
       ]
     },
     getButtons () {
       return [
-        { name: 'join-button', label: this.$t('KJoinGroup.ADD_BUTTON'), color: 'primary', handler: (event, done) => this.doJoin(event, done) }
+        { id: 'join-button', label: 'KJoinGroup.ADD_BUTTON', color: 'primary', handler: (event, done) => this.doJoin(event, done) }
       ]
     },
     loadService () {

@@ -34,16 +34,16 @@ export default {
   computed: {
     buttons () {
       const buttons = [{
-        name: 'apply-button', label: this.applyButton, color: 'primary', handler: () => this.apply()
+        id: 'apply-button', label: this.applyButton, color: 'primary', handler: () => this.apply()
       }]
       if (this.clearButton !== '') {
         buttons.push({
-          name: 'clear-button', label: this.clearButton, color: 'primary', handler: () => this.clear()
+          id: 'clear-button', label: this.clearButton, color: 'primary', handler: () => this.clear()
         })
       }
       if (this.resetButton !== '') {
         buttons.push({
-          name: 'reset-button', label: this.resetButton, color: 'primary', handler: () => this.reset()
+          id: 'reset-button', label: this.resetButton, color: 'primary', handler: () => this.reset()
         })
       }
       return buttons
@@ -52,7 +52,7 @@ export default {
   data () {
     return {
       toolbar: [{
-        name: 'close',
+        id: 'close-editor',
         icon: 'las la-times',
         handler: () => {
           this.close()

@@ -103,12 +103,12 @@ export default {
     },
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KInviteMember.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
+        { id: 'close-action', icon: 'las la-times', tooltip: 'KInviteMember.CLOSE_ACTION', handler: () => this.doClose() }
       ]
     },
     getButtons () {
       return [
-        { name: 'invite-button', label: this.$t('KInviteMember.INVITE_BUTTON'), color: 'primary', handler: () => this.doInvite() }
+        { id: 'invite-button', label: 'KInviteMember.INVITE_BUTTON', color: 'primary', handler: () => this.doInvite() }
       ]
     },
     doInvite () {

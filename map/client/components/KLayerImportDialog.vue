@@ -34,12 +34,12 @@ export default {
   methods: {
     getToolbar () {
       return [
-        { name: 'close', icon: 'las la-times', handler: () => { this.doCancel() } }
+        { id: 'close', tooltip: 'CLOSE', icon: 'las la-times', handler: () => { this.doCancel() } }
       ]
     },
     getButtons () {
       return [
-        { name: 'import-button', label: this.$t('KLayerImportDialog.IMPORT_BUTTON'), color: 'primary', handler: () => this.doImport() }
+        { id: 'import-button', label: 'KLayerImportDialog.IMPORT_BUTTON', color: 'primary', handler: () => this.doImport() }
       ]
     },
     counterLabel ({ totalSize, filesNumber, maxFiles }) {
