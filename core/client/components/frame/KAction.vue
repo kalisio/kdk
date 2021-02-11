@@ -213,7 +213,9 @@ export default {
         this.$router.push(Object.assign({
           query: this.bindRouteParams('query'),
           params: this.bindRouteParams('params')
-        }, _.omit(this.route, ['query', 'params']))).catch(() => {})
+        }, _.omit(this.route, ['query', 'params']))).catch(() => {
+          // for lint
+        })
       }
       // Handle the callback case
       else if (this.handler) {
