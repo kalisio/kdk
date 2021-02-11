@@ -19,9 +19,11 @@ import _ from 'lodash'
 import mixins from '../../mixins'
 import { getRoleForOrganisation } from '../../../common/permissions'
 
+const activityMixin = mixins.baseActivity()
+
 export default {
   name: 'k-members-activity',
-  mixins: [mixins.baseActivity()],
+  mixins: [activityMixin],
   props: {
     contextId: {
       type: String,
@@ -54,7 +56,7 @@ export default {
       }
     },
     configureActivity () {
-      mixins.baseActivity(this.activityName).methods.configureActivity.call(this)
+      activityMixin.methods.configureActivity.call(this)
       this.subscribeUsers()
     },
     subscribeUsers () {

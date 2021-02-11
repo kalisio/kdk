@@ -163,9 +163,23 @@ export default function (name = undefined) {
         }
         this.$store.patch('tours.current', { name })
       },
+      bindParam (param) {
+        return (typeof param === 'string') ?
+          (param.startsWith(':') ? _.get(this, param.substring(1)) : param) :
+          param
+      },
       bindParams (params) {
         // A parameter like :xxx means xxx is a property of the component, not a static value
-        return params.map(param => param.startsWith(':') ? _.get(this, param) : param)
+        // In that case remove trailing : and get property value dynamically
+        if (_.isNil(params)) {
+          return params
+        } else if (Array.isArray(params)) {
+          return params.map(param => this.bindParams(param))
+        } else if (typeof params === 'object') {
+          return _.mapValues(params, (value, key) => this.bindParams(value))
+        } else {
+          return this.bindParam(params)
+        }
       },
       bindHandler (component, path) {
         const handler = _.get(component, path)
@@ -190,7 +204,7 @@ export default function (name = undefined) {
           this.bindHandler(component, 'handler')
           // Process component listener
           this.bindHandler(component, 'on.listener')
-          // process component props
+          // Process component props
           const binding = component.bind ? component.bind : null
           if (binding) component.props = _.get(this, binding)
           // Recursively bind the handlers on the sub content object
