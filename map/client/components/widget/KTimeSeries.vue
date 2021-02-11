@@ -418,15 +418,22 @@ export default {
     // Registers the actions
     this.actions = [
       { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
-      { component: 'input/KOptionsChooser', id: 'timespan-options', icon: 'las la-history', tooltip: 'KTimeSeries.SPAN', options: [
-        { label: '3H', value: 180 },
-        { label: '6H', value: 360 },
-        { label: '12H', value: 720, default: true },
-        { label: '24H', value: 1440 },
-        { label: '48H', value: 2880 },
-        { label: '72H', value: 4320 },
-        { label: '96H', value: 5760 }
-      ], on: { event: 'option-chosen', listener: this.onUpdateSpan }}
+      {
+        component: 'input/KOptionsChooser',
+        id: 'timespan-options',
+        icon: 'las la-history',
+        tooltip: 'KTimeSeries.SPAN',
+        options: [
+          { label: '3H', value: 180 },
+          { label: '6H', value: 360 },
+          { label: '12H', value: 720, default: true },
+          { label: '24H', value: 1440 },
+          { label: '48H', value: 2880 },
+          { label: '72H', value: 4320 },
+          { label: '96H', value: 5760 }
+        ],
+        on: { event: 'option-chosen', listener: this.onUpdateSpan }
+      }
     ]
     // Refresh the component
     this.refresh()

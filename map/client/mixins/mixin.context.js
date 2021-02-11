@@ -64,14 +64,13 @@ export default {
           }
           break
         case 'view':
-        default: 
+        default:
           const bounds = this.getBounds()
           const south = bounds[0][0]
           const west = bounds[0][1]
           const north = bounds[1][0]
           const east = bounds[1][1]
           targetParameters = { south, west, north, east }
-          break
       }
       // Store both in URL and local storage, except if the user/view has explicitly revoked restoration
       if (this.shouldRestoreContext(context)) {

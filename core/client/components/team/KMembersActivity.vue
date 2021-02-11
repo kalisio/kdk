@@ -53,7 +53,7 @@ export default {
         onDismiss: { name: 'members-activity', params: { contextId: this.contextId } }
       }
     },
-    configureActivity () {    
+    configureActivity () {
       mixins.baseActivity(this.activityName).methods.configureActivity.call(this)
       this.subscribeUsers()
     },

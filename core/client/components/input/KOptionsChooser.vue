@@ -85,7 +85,7 @@ export default {
     // Set the default option if needed
     if (this.options.length > 0) {
       const defaultOption = _.head(_.filter(this.options, 'default'))
-      this.option = defaultOption ? defaultOption : this.options[0]
+      this.option = defaultOption || this.options[0]
     }
   }
 }

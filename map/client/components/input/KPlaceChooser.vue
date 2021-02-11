@@ -3,7 +3,7 @@
     id="place-chooser"
     class="q-pl-sm q-pr-sm"
     borderless
-    dense 
+    dense
     clearable
     use-input
     v-model="location"

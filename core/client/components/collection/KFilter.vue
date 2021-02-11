@@ -44,6 +44,6 @@ export default {
   beforeDestroy () {
     // Reset the filter, we keep track of any existing items previously set by another activity
     this.$store.patch('filter', { pattern: '' })
-  }   
+  }
 }
 </script>

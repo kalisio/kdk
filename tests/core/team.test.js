@@ -367,7 +367,7 @@ describe('core:team', () => {
   it('group owner can update an organisation group', async () => {
     return orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
       { user: user2Object, checkAuthorisation: true })
-    const groups = await orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
+  /* const groups = await orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
     expect(groups.data.length > 0).beTrue()
     groupObject = groups.data[0]
     expect(groupObject.description).to.equal('test-description')
@@ -378,7 +378,7 @@ describe('core:team', () => {
     expect(user2Object.groups[0].description).to.equal('test-description')
     await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user1Object })
     user1Object = users.data[0]
-    expect(user1Object.groups[0].description).to.equal('test-description')
+    expect(user1Object.groups[0].description).to.equal('test-description') */
   })
   // Let enough time to process
     .timeout(10000)
@@ -560,7 +560,7 @@ describe('core:team', () => {
     const orgs = await orgService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
     expect(orgs.data.length > 0).beTrue()
     joinedOrgUserService = app.getService('members', orgs.data[0])
-    const user = await userService.remove(user3Object._id, { user: user3Object, checkAuthorisation: true })
+    await userService.remove(user3Object._id, { user: user3Object, checkAuthorisation: true })
     let users = await userService.find({ query: { name: user3Object.name }, user: user3Object, checkAuthorisation: true })
     expect(users.data.length === 0).beTrue()
     users = await joinedOrgUserService.find({ query: { name: user3Object.name }, user: user2Object, checkAuthorisation: true })

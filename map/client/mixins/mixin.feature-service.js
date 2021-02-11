@@ -170,16 +170,16 @@ export default {
       kinks: true,
       redundantCoordinates: true
     }) {
-      let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+      const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
       // Filter invalid features
       let kinksFeatures
       if (options.kinks) {
         kinksFeatures = _.remove(features, feature => {
           const type = getType(feature)
           return (((type === 'LineString') || (type === 'MultiLineString') ||
-                   (type === 'MultiPolygon') || (type === 'Polygon')) ?
-            (_.get(kinks(feature), 'features', []).length > 0) :
-            false)
+                   (type === 'MultiPolygon') || (type === 'Polygon'))
+            ? (_.get(kinks(feature), 'features', []).length > 0)
+            : false)
         })
       }
       // Removes redundant coordinates

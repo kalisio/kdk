@@ -4,8 +4,8 @@
       <div
         :id="category.name"
         class="fit q-pa-sm row content-start q-gutter-y-sm"
-        :key="category.name" 
-        style="height: 100%; min-width: 250px; max-width: 300px; border-radius: 5px; background: linear-gradient(#dfdfdf, #ffffff);" 
+        :key="category.name"
+        style="height: 100%; min-width: 250px; max-width: 300px; border-radius: 5px; background: linear-gradient(#dfdfdf, #ffffff);"
         @dragenter="onDragEnter"
         @dragleave="onDragLeave"
         @dragover="onDragOver"
@@ -14,17 +14,17 @@
           <template v-for="item in getItemsByCategorie(category.name)">
             <div
               :id="item._id"
-              :class="getItemClass()" 
-              :key="item._id" 
-              class="k-card" 
+              :class="getItemClass()"
+              :key="item._id"
+              class="k-card"
               draggable="true"
               droppable="false"
               @dragstart="onDragStart">
-              <component 
-                :item="item" 
-                :contextId="contextId" 
-                :is="renderer.component" 
-                v-bind="renderer.props" 
+              <component
+                :item="item"
+                :contextId="contextId"
+                :is="renderer.component"
+                v-bind="renderer.props"
                 item-selected="onItemSelected(item)" />
             </div>
           </template>
@@ -77,7 +77,7 @@ export default {
       type: String
     }
   },
-  /*computed: {
+  /* computed: {
     columns () {
       const columns = []
       _.forEach(this.categories, (category) => {
@@ -90,7 +90,7 @@ export default {
     return {
       columns: []
     }
-  },*/
+  }, */
   watch: {
     '$route' (to, from) {
       // React to route changes but reusing the same component as this one is generic
@@ -121,7 +121,7 @@ export default {
     getItemsByCategory (category) {
       return this.items
     },
-     // store the id of the draggable element
+    // store the id of the draggable element
     onDragStart (event) {
       event.dataTransfer.setData('itemId', event.target.id)
       event.dataTransfer.dropEffect = 'move'
@@ -148,7 +148,7 @@ export default {
       const itemId = event.dataTransfer.getData('itemId')
       const patch = {}
       _.set(patch, this.categoryField, columnId)
-      await this.servicePatch(itemId, patch)      
+      await this.servicePatch(itemId, patch)
     }
   },
   created () {

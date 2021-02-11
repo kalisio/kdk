@@ -25,7 +25,7 @@ export default {
     }
   },
   methods: {
-    updatePosition (event) {      
+    updatePosition (event) {
       this.position = this.kActivity.getCenter()
     },
     async onCopy () {

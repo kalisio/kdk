@@ -91,9 +91,9 @@ export default {
       if (!this.item.expireAt) {
         this.setActions([
           {
-            id: 'tag-member', 
-            icon: 'las la-tags', 
-            tooltip: 'KMemberCard.TAG_LABEL', 
+            id: 'tag-member',
+            icon: 'las la-tags',
+            tooltip: 'KMemberCard.TAG_LABEL',
             route: { name: 'tag-member', params: { contextId: this.contextId, objectId: this.item._id } },
             visible: this.$can('update', 'members', this.contextId)
           },
@@ -104,8 +104,11 @@ export default {
             route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id, resource: { id: this.contextId, scope: 'organisations', service: 'organisations' } } },
             visible: this.$can('update', 'members', this.contextId)
           },
-          { 
-            id: 'overflow-menu', component: 'frame/KMenu', actionRenderer: 'item', content: [
+          {
+            id: 'overflow-menu',
+            component: 'frame/KMenu',
+            actionRenderer: 'item',
+            content: [
               {
                 id: 'remove-member',
                 icon: 'las la-minus-circle',

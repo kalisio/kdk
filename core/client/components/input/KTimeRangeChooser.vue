@@ -75,7 +75,7 @@ export default {
       return this.formatDate(this.maxDate.toDate())
     },
     tooltip () {
-      return this.$t('KTimeRangeChooser.FROM_DATE') + ' ' + this.formatedMinDate + ' ' + 
+      return this.$t('KTimeRangeChooser.FROM_DATE') + ' ' + this.formatedMinDate + ' ' +
              this.$t('KTimeRangeChooser.TO_DATE') + ' ' + this.formatedMaxDate
     }
   },
@@ -87,7 +87,7 @@ export default {
 
     return {
       minDateSelected: minDateSelected.format('YYYY[/]MM[/]DD'),
-      maxDateSelected: maxDateSelected.format('YYYY[/]MM[/]DD'),
+      maxDateSelected: maxDateSelected.format('YYYY[/]MM[/]DD')
     }
   },
   methods: {
