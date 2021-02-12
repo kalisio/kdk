@@ -31,7 +31,7 @@ import _ from 'lodash'
 import path from 'path'
 
 export default {
-  name: 'k-catalog-panel',
+  name: 'k-catalog',
   props: {
     layers: {
       type: Object,
