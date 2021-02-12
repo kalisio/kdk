@@ -71,7 +71,7 @@ export default {
       if (this.currentMedia) {
         if (this.currentMedia.isImage) {
           actions.push({
-            id: 'restore-image', icon: 'las la-undo', label: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), handler: this.onImageRestored
+            id: 'restore-image', icon: 'las la-undo', tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), handler: this.onImageRestored
           })
         }
         actions.push({
