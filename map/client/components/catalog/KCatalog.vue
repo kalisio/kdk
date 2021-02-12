@@ -2,7 +2,7 @@
   <q-scroll-area :style="computedStyle">
     <q-list dense bordered>
       <slot name="header" />
-      <template v-for="category in kActivity.layerCategories">
+      <template v-for="category in layerCategories">
         <q-expansion-item
           v-if="layersByCategory[category.name].length > 0"
           :key="category.name"
@@ -14,9 +14,9 @@
           <component
             :is="category.componentKey"
             :layers="layersByCategory[category.name]"
-            :forecastModels="kActivity.forecastModels"
-            :forecastModelHandlers="kActivity.forecastModelHandlers"
-            :forecastModel="kActivity.forecastModel"
+            :forecastModels="forecastModels"
+            :forecastModelHandlers="forecastModelHandlers"
+            :forecastModel="forecastModel"
             :options="category.options"></component>
         </q-expansion-item>
       </template>
@@ -31,8 +31,29 @@ import _ from 'lodash'
 import path from 'path'
 
 export default {
-  name: 'k-catalog',
-  inject: ['kActivity'],
+  name: 'k-catalog-panel',
+  props: {
+    layers: {
+      type: Object,
+      default: () => {}
+    },
+    layerCategories: {
+      type: Array,
+      default: () => []
+    },
+    forecastModels: {
+      type: Array,
+      default: () => []
+    },
+    forecastModelHandlers: {
+      type: Object,
+      default: () => {}
+    },
+    forecastModel: {
+      type: Object,
+      default: () => {}
+    }
+  },
   computed: {
     computedStyle () {
       if (this.$q.screen.lt.md) return 'height: 65vh; min-width: 300px;'
@@ -46,12 +67,6 @@ export default {
         layersByCategory[category.name] = layers.filter(sift(_.get(category, 'options.filter', {})))
       })
       return layersByCategory
-    }
-  },
-  data () {
-    return {
-      layers: this.kActivity.layers,
-      layerCategories: this.kActivity.layerCategories
     }
   },
   watch: {
