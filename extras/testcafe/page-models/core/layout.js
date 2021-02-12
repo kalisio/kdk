@@ -1,7 +1,6 @@
 import { Selector } from 'testcafe'
 import VueSelector from 'testcafe-vue-selectors'
 import BasePage from './base-page'
-import { getWindowInnerWidth } from '.'
 
 export default class Layout extends BasePage {
   constructor () {
@@ -21,6 +20,14 @@ export default class Layout extends BasePage {
     this.fab = Selector('#fab')
     // SignupAlert
     this.signupAlert = VueSelector('k-signup-alert')
+  }
+
+  static get ABOUT () {
+    return '#about'
+  }
+
+  static get LOGOUT () {
+    return '#logout'
   }
 
   // Openers
@@ -57,6 +64,42 @@ export default class Layout extends BasePage {
   async clickLeftDrawer (test, action) {
     await test
       .click(this.leftDrawer.find(action))
+      .wait(500)
+  }
+
+  // TopPane
+  async isTopPaneOpened () {
+    const isVisible = await this.topPane.visible
+    return isVisible
+  }
+
+  async clickTopPane (test, action) {
+    await test
+      .click(this.topPane.find(action))
+      .wait(500)
+  }
+
+  // RightPane
+  async isRightPaneOpened () {
+    const isVisible = await this.rightPane.visible
+    return isVisible
+  }
+
+  async clickRightPane (test, action) {
+    await test
+      .click(this.rightPane.find(action))
+      .wait(500)
+  }
+
+  // BottomPane
+  async isBottomPaneOpened () {
+    const isVisible = await this.bottomPane.visible
+    return isVisible
+  }
+
+  async clickBottomPane (test, action) {
+    await test
+      .click(this.bottomPane.find(action))
       .wait(500)
   }
 
