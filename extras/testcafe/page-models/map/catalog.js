@@ -10,23 +10,10 @@ export default class Catalog extends BasePage {
     // testcafe wait for elements to come in foreground before click,
     // so use 0 timeout since it's always visible, but in background
     this.closer = Selector('#map', { timeout: 0 })
-    this.drawer = Selector('.q-drawer--right')
-  }
-
-  async open () {
-    const drawer = Selector(this.drawer, { visibilityCheck: true })
-    await t
-      .click(this.opener)
-      .expect(drawer.exists).ok()
-  }
-
-  async close () {
-    await t
-      .click(this.closer)
   }
 
   async getCategory (category) {
-    const categories = VueSelector('k-catalog-panel QExpansionItem')
+    const categories = VueSelector('k-catalog QExpansionItem')
     const count = await categories.count
     for (let i = 0; i < count; ++i) {
       const cat = categories.nth(i)
@@ -38,7 +25,8 @@ export default class Catalog extends BasePage {
   }
 
   async getLayer (layer) {
-    const layers = VueSelector('k-catalog-panel k-layers-selector QItem')
+    const layers = VueSelector('k-catalog k-layers-selector QItem')
+    console.log(await layers.count)
     const count = await layers.count
     for (let i = 0; i < count; ++i) {
       const lay = layers.nth(i)
@@ -98,7 +86,7 @@ export default class Catalog extends BasePage {
   }
 
   async selectMeteoModel (model) {
-    const select = VueSelector('k-catalog-panel k-weather-layers-selector QSelect')
+    const select = VueSelector('k-catalog k-weather-layers-selector QSelect')
     await t.click(select)
     const entry = await this.getMeteoModel(model)
     const label = await Selector(entry).child('.q-item__section--main').child(0).innerText
