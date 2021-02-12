@@ -31,7 +31,7 @@
       <div id="right-pane" v-show="rightPane.content" class="row items-center">
         <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
-          <k-panel id="bottom-panel" v-show="isRightPaneOpened" :content="rightPane.content" :mode="rightPane.mode" class="k-pane" />
+          <k-panel id="right-panel" v-show="isRightPaneOpened" :content="rightPane.content" :mode="rightPane.mode" class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
         </div>
       </div>

@@ -6,65 +6,21 @@ import { getWindowInnerWidth } from '.'
 export default class Layout extends BasePage {
   constructor () {
     super()
-    // AppBar
-    this.appBar = VueSelector('k-app-bar')
-    this.appBarLeading = this.appBar.find('#app-bar-leading')
-    this.appBarTitle = this.appBar.find('#app-bar-title')
-    this.appBarOverflowMenu = Selector('#overflow-menu')
-    this.appBarOverflowMenuEntry = this.appBar.find('#app-bar-overflow-menu')
-    // Drawers
+    // Drawer
     this.leftDrawer = Selector('.q-drawer--left')
-    this.rightDrawer = Selector('.q-drawer--right')
     // Openers
-    this.leftOpener = Selector('#opener-left')
-    this.rightOpener = Selector('#opener-right')
-    this.topOpener = Selector('#opener-top')
-    this.bottomOpener = Selector('#opener-bottom')
-    // TabBar
-    this.tabBar = VueSelector('k-tab-bar')
+    this.leftOpener = Selector('#left-opener')
+    this.rightOpener = Selector('#right-opener')
+    this.topOpener = Selector('#top-opener')
+    this.bottomOpener = Selector('#bottom-opener')
+    // Panes
+    this.topPane = Selector('#top-pane')
+    this.rightPane = Selector('#right-pane')
+    this.bottomPane = Selector('#bottom-pane')
     // Fab
     this.fab = Selector('#fab')
     // SignupAlert
     this.signupAlert = VueSelector('k-signup-alert')
-  }
-
-  // AppBar
-  async clickLeading (test) {
-    await test
-      .click(this.appBarLeading)
-      .wait(500)
-  }
-
-  async clickToolbar (test, entry) {
-    await test
-      .click(this.appBar.find(entry))
-      .wait(500)
-  }
-
-  async clickOverflowMenu (test, entry) {
-    await test
-      .click(this.appBarOverflowMenuEntry)
-      .click(this.appBarOverflowMenu.find(entry))
-      .wait(500)
-  }
-
-  // TabBar
-  async clickTabBar (test, tab) {
-    await test
-      .click(this.tabBar.find(tab))
-      .wait(500)
-  }
-
-  // Drawers
-  async isLeftDrawerOpened () {
-    const leftPos = await this.leftDrawer.getBoundingClientRectProperty('left')
-    return leftPos >= 0
-  }
-
-  async isRightDrawerOpened () {
-    const rightPos = await this.rightDrawer.getBoundingClientRectProperty('right')
-    const windowWidth = await getWindowInnerWidth()
-    return rightPos <= windowWidth
   }
 
   // Openers
@@ -92,18 +48,30 @@ export default class Layout extends BasePage {
       .wait(500)
   }
 
-  // Fab
-  async clickFab (test) {
+  // Leftdrawer
+  async isLeftDrawerOpened () {
+    const leftPos = await this.leftDrawer.getBoundingClientRectProperty('left')
+    return leftPos >= 0
+  }
+
+  async clickLeftDrawer (test, action) {
     await test
-      .click(Selector(this.fab))
+      .click(this.leftDrawer.find(action))
       .wait(500)
   }
 
-  async openAndClickFab (test, entry) {
+  // Fab
+  async clickFab (test, action) {
+    await test
+      .click(Selector(action))
+      .wait(500)
+  }
+
+  async openAndClickFab (test, action) {
     await test
       .click(Selector(this.fab))
       .wait(500)
-      .click(this.fab.find(entry))
+      .click(this.fab.find(action))
       .wait(500)
   }
 
