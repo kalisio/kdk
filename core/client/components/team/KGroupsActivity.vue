@@ -37,7 +37,8 @@ export default {
         }
       },
       filter: this.$store.get('filter'),
-      renderer: {
+      // Make this configurable from app
+      renderer: this.activityOptions.renderer || {
         component: 'team/KGroupCard'
       }
     }

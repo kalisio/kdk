@@ -62,7 +62,7 @@ import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } fr
 
 export default {
   name: 'k-member-card',
-  mixins: [mixins.baseItem],
+  mixins: [mixins.baseItem()],
   computed: {
     tags () {
       // Check for custom tags field
@@ -86,55 +86,10 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.clearActions()
-      if (!this.item.expireAt) {
-        this.setActions([
-          {
-            id: 'tag-member',
-            icon: 'las la-tags',
-            tooltip: 'KMemberCard.TAG_LABEL',
-            route: { name: 'tag-member', params: { contextId: this.contextId, objectId: this.item._id } },
-            visible: this.$can('update', 'members', this.contextId)
-          },
-          {
-            id: 'change-role',
-            icon: 'las la-graduation-cap',
-            tooltip: 'KMemberCard.CHANGE_ROLE_LABEL',
-            route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id, resource: { id: this.contextId, scope: 'organisations', service: 'organisations' } } },
-            visible: this.$can('update', 'members', this.contextId)
-          },
-          {
-            id: 'overflow-menu',
-            component: 'frame/KMenu',
-            actionRenderer: 'item',
-            content: [
-              {
-                id: 'remove-member',
-                icon: 'las la-minus-circle',
-                label: 'KMemberCard.REMOVE_LABEL',
-                handler: this.removeMember,
-                visible: this.$can('remove', 'authorisations', this.contextId, { resource: this.contextId })
-              }
-            ]
-          }]
-        )
-      } else {
-        this.setActions([
-          {
-            id: 'reissue-invitation',
-            icon: 'las la-envelope',
-            tooltip: 'KMemberCard.RESEND_INVITATION_LABEL',
-            handler: this.resendInvitation,
-            visible: this.$can('update', 'members', this.contextId)
-          }]
-        )
-      }
-    },
-    resendInvitation (member) {
+    resendInvitation () {
       Dialog.create({
-        title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: member.name }),
-        message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: member.name }),
+        title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: this.item.name }),
+        message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: this.item.name }),
         html: true,
         prompt: {
           model: member.email,
@@ -155,12 +110,10 @@ export default {
         usersService.patch(this.item._id, { expireAt: newExpiryDate, email })
       })
     },
-    onResendInvitation (member) {
-    },
-    removeMember (member) {
+    removeMember () {
       Dialog.create({
-        title: this.$t('KMemberCard.REMOVE_DIALOG_TITLE', { member: member.name }),
-        message: this.$t('KMemberCard.REMOVE_DIALOG_MESSAGE', { member: member.name }),
+        title: this.$t('KMemberCard.REMOVE_DIALOG_TITLE', { member: this.item.name }),
+        message: this.$t('KMemberCard.REMOVE_DIALOG_MESSAGE', { member: this.item.name }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -175,7 +128,7 @@ export default {
         authorisationService.remove(this.contextId, {
           query: {
             scope: 'organisations',
-            subjects: member._id,
+            subjects: this.item._id,
             subjectsService: this.contextId + '/members',
             resourcesService: 'organisations'
           }

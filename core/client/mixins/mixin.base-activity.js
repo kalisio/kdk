@@ -1,13 +1,8 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import { Layout } from '../layout'
 
-function validateMode (content, mode) {
-  const modes = _.keys(content)
-  if (modes.includes(mode)) return mode
-  return _.head(modes)
-}
-
-export default function (name = undefined) {
+export default function (name) {
   return {
     methods: {
       getAppName () {
@@ -19,13 +14,13 @@ export default function (name = undefined) {
       getTopPaneMode () {
         return this.getTopPane().mode
       },
-      setTopPane (content, mode = undefined) {
-        this.$store.patch('topPane', { content: this.bindContent(content), mode: validateMode(content, mode) })
+      setTopPane (content, mode) {
+        this.$store.patch('topPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
       },
       setTopPaneMode (mode) {
         if (mode !== this.getTopPaneMode()) {
           const content = this.$store.get('topPane.content')
-          this.$store.patch('topPane', { mode: validateMode(content, mode) })
+          this.$store.patch('topPane', { mode: Layout.validateMode(content, mode) })
         }
       },
       configureTopPane () {
@@ -42,13 +37,13 @@ export default function (name = undefined) {
       getBottomPaneMode () {
         return this.getBottomPane().mode
       },
-      setBottomPane (content, mode = undefined) {
-        this.$store.patch('bottomPane', { content: this.bindContent(content), mode: validateMode(content, mode) })
+      setBottomPane (content, mode) {
+        this.$store.patch('bottomPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
       },
       setBottomPaneMode (mode) {
         if (mode !== this.getBottomPaneMode()) {
           const content = this.$store.get('bottomPane.content')
-          this.$store.patch('bottomPane', { mode: validateMode(content, mode) })
+          this.$store.patch('bottomPane', { mode: Layout.validateMode(content, mode) })
         }
       },
       configureBottomPane () {
@@ -65,13 +60,13 @@ export default function (name = undefined) {
       getRightPaneMode () {
         return this.getRightPane().mode
       },
-      setRightPane (content, mode = undefined) {
-        this.$store.patch('rightPane', { content: this.bindContent(content), mode: validateMode(content, mode) })
+      setRightPane (content, mode) {
+        this.$store.patch('rightPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
       },
       setRightPaneMode (mode) {
         if (mode !== this.getRightPaneMode()) {
           const content = this.$store.get('rightPane.content')
-          this.$store.patch('rightPane', { mode: validateMode(content, mode) })
+          this.$store.patch('rightPane', { mode: Layout.validateMode(content, mode) })
         }
       },
       configureRightPane () {
@@ -86,7 +81,7 @@ export default function (name = undefined) {
         return this.$store.get('fab')
       },
       setFab (actions) {
-        this.$store.patch('fab', { actions: this.bindContent(actions) })
+        this.$store.patch('fab', { actions: Layout.bindContent(actions, this) })
       },
       configureFab () {
         const options = _.get(this.activityOptions, 'fab', null)
@@ -100,7 +95,7 @@ export default function (name = undefined) {
         return this.$store.get('window')
       },
       setWindow (widgets, current) {
-        this.$store.patch('window', { widgets: this.bindContent(widgets), current })
+        this.$store.patch('window', { widgets: Layout.bindContent(widgets, this), current })
       },
       configureWindow () {
         const options = _.get(this.activityOptions, 'window', null)
@@ -163,55 +158,7 @@ export default function (name = undefined) {
         }
         this.$store.patch('tours.current', { name })
       },
-      bindParam (param) {
-        return (typeof param === 'string') ?
-          (param.startsWith(':') ? _.get(this, param.substring(1)) : param) :
-          param
-      },
-      bindParams (params) {
-        // A parameter like :xxx means xxx is a property of the component, not a static value
-        // In that case remove trailing : and get property value dynamically
-        if (_.isNil(params)) {
-          return params
-        } else if (Array.isArray(params)) {
-          return params.map(param => this.bindParams(param))
-        } else if (typeof params === 'object') {
-          return _.mapValues(params, (value, key) => this.bindParams(value))
-        } else {
-          return this.bindParam(params)
-        }
-      },
-      bindHandler (component, path) {
-        const handler = _.get(component, path)
-        // Could be a structure with name and possibly params specified
-        if (handler && typeof handler === 'object') {
-          if (handler.name) {
-            if (handler.params) _.set(component, path, () => _.get(this, handler.name)(...this.bindParams(handler.params)))
-            else _.set(component, path, (...params) => _.get(this, handler.name)(...params))
-          } else {
-            logger.debug(`Invalid handler binding for ${handler}: you must provide the name to the function to be called`)
-          }
-        } else if (typeof handler === 'string') { // Or only name if no params are specified
-          _.set(component, path, (...params) => _.get(this, handler)(...params))
-        }
-      },
-      bindContent (content) {
-        const components = _.flatMapDeep(content)
-        _.forEach(components, (component) => {
-          // Process component visibility state
-          this.bindHandler(component, 'visible')
-          // Process component handler
-          this.bindHandler(component, 'handler')
-          // Process component listener
-          this.bindHandler(component, 'on.listener')
-          // Process component props
-          const binding = component.bind ? component.bind : null
-          if (binding) component.props = _.get(this, binding)
-          // Recursively bind the handlers on the sub content object
-          if (component.content) this.bindContent(component.content)
-        })
-        return content
-      }
+      
     },
     beforeCreate () {
       // Identify this activity using its name or the route name

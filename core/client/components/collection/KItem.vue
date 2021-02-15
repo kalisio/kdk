@@ -27,7 +27,7 @@
     -->
     <slot name="item-actions">
       <q-item-section side>
-        <k-menu id="item-actions" :content="itemActions" :context="item" action-renderer="item" />
+        <k-menu id="item-actions" :content="computedActions" :context="this" action-renderer="item" />
       </q-item-section>
     </slot>
   </q-item>
@@ -38,11 +38,18 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-item',
-  mixins: [mixins.baseItem],
+  mixins: [mixins.baseItem()],
   props: {
     itemActions: {
       type: [Object, Array],
       default: () => { return null }
+    }
+  },
+  computed: {
+    computedActions () {
+      // Actions can be provided externally if the card is reused to create a custom item
+      // Otherwise use actions directly set on the item
+      return this.itemActions || this.actions
     }
   },
   created () {

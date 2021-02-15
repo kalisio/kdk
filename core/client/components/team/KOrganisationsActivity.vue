@@ -37,8 +37,9 @@ export default {
         }
       },
       filter: this.$store.get('filter'),
-      renderer: {
-        component: 'team/KOrganisationCard'
+      // Make this configurable from app
+      renderer: this.activityOptions.renderer || {
+        component: 'collection/KCard'
       }
     }
   },

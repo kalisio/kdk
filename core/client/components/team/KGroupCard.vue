@@ -36,7 +36,7 @@ import { Dialog } from 'quasar'
 
 export default {
   name: 'k-group-card',
-  mixins: [mixins.baseItem],
+  mixins: [mixins.baseItem()],
   computed: {
     memberRoleIcon () {
       const user = this.$store.get('user')
@@ -58,32 +58,6 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.clearActions()
-      this.setActions([
-        {
-          name: 'edit-group',
-          tooltip: this.$t('KGroupCard.EDIT_LABEL'),
-          icon: 'las la-file-alt',
-          visible: this.$can('update', 'groups', this.contextId, this.item),
-          route: { name: 'edit-group', params: { contextId: this.contextId, objectId: this.item._id } }
-        },
-        {
-          name: 'list-members',
-          tooltip: this.$t('KGroupCard.LIST_MEMBERS_LABEL'),
-          icon: 'las la-user-circle',
-          visible: this.$can('service', 'members', this.contextId),
-          handler: this.onListMembers
-        },
-        {
-          name: 'remove-group',
-          tooltip: this.$t('KGroupCard.REMOVE_LABEL'),
-          icon: 'las la-minus-circle',
-          visible: this.$can('remove', 'groups', this.contextId, this.item),
-          handler: this.removeGroup
-        }
-      ])
-    },
     removeGroup (group) {
       Dialog.create({
         title: this.$t('KGroupCard.REMOVE_DIALOG_TITLE', { group: group.name }),

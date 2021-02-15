@@ -13,26 +13,8 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-tag-card',
-  mixins: [mixins.baseItem],
+  mixins: [mixins.baseItem()],
   methods: {
-    refreshActions () {
-      this.clearActions()
-      this.setActions([
-        {
-          name: 'edit-tag',
-          tooltip: this.$t('KTagCard.EDIT_LABEL'),
-          icon: 'las la-file-alt',
-          visible: this.$can('update', 'tags', this.contextId, this.item),
-          route: { name: 'edit-tag', params: { contextId: this.contextId, objectId: this.item._id } }
-        },
-        {
-          name: 'list-members',
-          tooltip: this.$t('KTagCard.LIST_MEMBERS_LABEL'),
-          icon: 'las la-user-tag',
-          handler: this.onListMembers
-        }
-      ])
-    },
     onListMembers () {
       // Setup filter accordingly
       this.$store.patch('filter', {

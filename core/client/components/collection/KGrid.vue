@@ -31,8 +31,7 @@ export default {
       default: () => {
         return {
           component: 'collection/KCard',
-          props: {},
-          class: 'q-ps-sm'
+          props: {}
         }
       }
     },

@@ -23,7 +23,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-device-card',
   mixins: [
-    mixins.baseItem
+    mixins.baseItem()
   ],
   computed: {
     platformIcon () {
@@ -47,19 +47,8 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.clearActions()
-      if (this.$can('remove', 'devices', this.contextId, this.item)) {
-        this.registerPaneAction({
-          name: 'remove-device',
-          label: this.$t('KDeviceCard.UNLINK_LABEL'),
-          icon: 'phonelink_erase',
-          handler: this.removeDevice
-        })
-      }
-    },
-    removeDevice (device) {
-      const description = device.platform + ' ' + device.manufacturer + ' ' + device.model
+    removeDevice () {
+      const description = this.item.platform + ' ' + this.item.manufacturer + ' ' + this.item.model
       Dialog.create({
         title: this.$t('KDeviceCard.UNLINK_DIALOG_TITLE', { description }),
         message: this.$t('KDeviceCard.UNLINK_DIALOG_MESSAGE', { description }),
@@ -74,7 +63,7 @@ export default {
         }
       }).onOk(() => {
         const devicesService = this.$api.getService('devices')
-        devicesService.remove(device.registrationId)
+        devicesService.remove(this.item.registrationId)
       })
     }
   },

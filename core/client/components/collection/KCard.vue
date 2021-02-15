@@ -38,7 +38,7 @@
       <q-separator />
       <slot name="card-actions">
         <q-card-actions class="q-pa-xs" align="right">
-          <k-panel id="item-actions" :content="itemActions" :context="item" />
+          <k-panel id="item-actions" :content="computedActions" :context="this" />
         </q-card-actions>
       </slot>
     </q-card>
@@ -50,11 +50,18 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-card',
-  mixins: [mixins.baseItem],
+  mixins: [mixins.baseItem()],
   props: {
     itemActions: {
       type: [Object, Array],
       default: function () { return null }
+    }
+  },
+  computed: {
+    computedActions () {
+      // Actions can be provided externally if the card is reused to create a custom item
+      // Otherwise use actions directly set on the item
+      return this.itemActions || this.actions
     }
   },
   created () {

@@ -11,7 +11,7 @@
      -->
     <!-- top -->
     <q-page-sticky position="top">
-      <div id="top-pane" v-show="topPane.content" class="column items-center">
+      <div id="top-pane" v-show="topPane.content && topPane.mode" class="column items-center">
         <div>
           <k-panel id="top-panel" v-show="isTopPaneOpened" :content="topPane.content" :mode="topPane.mode" class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
@@ -28,7 +28,7 @@
     </q-page-sticky>
     <!-- right -->
     <q-page-sticky position="right">
-      <div id="right-pane" v-show="rightPane.content" class="row items-center">
+      <div id="right-pane" v-show="rightPane.content && rightPane.mode" class="row items-center">
         <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
           <k-panel id="right-panel" v-show="isRightPaneOpened" :content="rightPane.content" :mode="rightPane.mode" class="k-pane" />
@@ -38,7 +38,7 @@
     </q-page-sticky>
     <!-- bottom -->
     <q-page-sticky position="bottom">
-      <div id="bottom-pane" v-show="bottomPane.content" class="column items-center">
+      <div id="bottom-pane" v-show="bottomPane.content && bottomPane.mode" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
           <k-panel id="bottom-panel" v-show="isBottomPaneOpened" :content="bottomPane.content" :mode="bottomPane.mode" class="k-pane" />

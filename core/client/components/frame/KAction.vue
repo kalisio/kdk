@@ -20,7 +20,7 @@
       {{ $t(computedTooltip) }}
     </q-tooltip>
     <!-- badge -->
-    <q-badge v-if="badge" v-bind="badge">
+    <q-badge v-if="badge" v-bind="badge" :label="badge.label">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
@@ -39,7 +39,7 @@
     <q-item-section avatar>
       <q-icon :dense="dense" :name="computedIcon" :color="computedColor" />
       <!-- badge -->
-      <q-badge v-if="badge" v-bind="badge">
+      <q-badge v-if="badge" v-bind="badge" :label="badge.label">
         <q-icon v-if="badge.icon" v-bind="badge.icon" />
       </q-badge>
     </q-item-section>
@@ -181,25 +181,30 @@ export default {
   methods: {
     bindRouteParams (path) {
       // When action is created from code we can directly inject the params
-      // From the config we we need to manage dynamic values
+      // However, when created from the config we need to manage dynamic values
       // Clone route context to avoid losing dynamic parameters in this case
       const currentParams = _.get(this.$route, path, {})
       const targetParams = _.get(this.route, path, {})
-      // A parameter like ':xxx' in config means xxx is a dynamic property of the route, not a static value
+      // A parameter like ':xxx' in config means xxx is a dynamic property of the route or the context object, not a static value
       // We split the target params object into two sets: one with static keys and one with dynamic keys
       const staticParams = Object.entries(targetParams)
         .filter(([key, value]) => (typeof value !== 'string') || !value.startsWith(':'))
         .map(([key, value]) => key)
+      // Take care that for dynamic parameters we might have a mapping,
+      // eg context: ':item._id', so we need to keep both key and value
       const dynamicParams = Object.entries(targetParams)
         .filter(([key, value]) => (typeof value === 'string') && value.startsWith(':'))
-        .map(([key, value]) => key)
+        .map(([key, value]) => [key, value.substring(1)])
       // Merge static/dynamic params to build full list
-      return Object.assign({}, _.pick(targetParams, staticParams), _.pick(currentParams, dynamicParams))
+      let params = _.pick(targetParams, staticParams)
+      dynamicParams.forEach(([key, value]) => {
+        // If dynamic param is not available in route use this context
+        if (_.has(currentParams, value)) _.set(params, key, _.get(currentParams, value))
+        else _.set(params, key, _.get(this.context, value))
+      })
+      return params
     },
     onClicked () {
-      const params = []
-      // Handle the context if needed
-      if (this.context) params.push(this.context)
       // Handle the toggle if needed
       if (this.toggle) {
         this.isToggled = !this.isToggled
@@ -216,12 +221,10 @@ export default {
         }, _.omit(this.route, ['query', 'params']))).catch(() => {})
       } else if (this.handler) {
         // Handle the callback case
-        if (params.length > 0) this.handler(...params)
-        else this.handler()
+        this.handler.bind(this.context)()
       }
-      // Notifie the listeners
-      if (params.length > 0) this.$emit('triggered', ...params)
-      else this.$emit('triggered')
+      // Notify the listeners
+      this.$emit('triggered')
     }
   }
 }
