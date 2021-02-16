@@ -208,7 +208,6 @@ export default {
       // Handle the toggle if needed
       if (this.toggle) {
         this.isToggled = !this.isToggled
-        params.push(this.isToggled)
       }
       // Handle the URL case
       if (this.url) openURL(this.url)
