@@ -1,4 +1,6 @@
 import _ from 'lodash'
+import { uid } from 'quasar'
+import path from 'path'
 import { Store } from './store'
 
 const components = ['header', 'footer', 'leftDrawer']
@@ -61,7 +63,36 @@ export const Layout = {
     // Otherwise check if it exists or return first content
     const modes = _.keys(content)
     if (modes.includes(mode)) return mode
-    return _.head(modes)
+    else return _.head(modes)
+  },
+  getComponents (content, mode) {
+    let components = []
+    if (Array.isArray(content)) {
+      components = content
+    } else {
+      mode = this.validateMode(content, mode)
+      components = _.get(content, mode)
+    }
+    let processedComponents = []
+    _.forEach(components, (component) => {
+      let isVisible = _.get(component, 'visible', true)
+      // Can be a functional call
+      if (typeof isVisible === 'function') {
+        isVisible = isVisible()
+      }
+      if (isVisible) {
+        // Define the component key
+        const componentName = _.get(component, 'component', 'frame/KAction')
+        const componentKey = _.kebabCase(path.basename(componentName))
+        // Clone the component and add the required props
+        const clone = _.clone(component)
+        clone.componentName = componentName
+        clone.componentKey = componentKey
+        clone.uid = uid()
+        processedComponents.push(clone)
+      }
+    })
+    return processedComponents
   },
   bindParam (param, context) {
     return (typeof param === 'string') ?

@@ -19,8 +19,7 @@ export default {
       engine: 'leaflet',
       engineReady: false,
       engineContainerWidth: null,
-      engineContainerHeight: null,
-      isTargetVisible: false
+      engineContainerHeight: null
     }
   },
   computed: {
@@ -619,9 +618,6 @@ export default {
       this.$once('click', () => {
         this.unsetCursor('probe-cursor')
       })
-    },
-    onToggleTarget () {
-      this.isTargetVisible = !this.isTargetVisible
     },
     onToggleFullscreen () {
       if (!this.$q.fullscreen.isActive) this.$q.fullscreen.request()

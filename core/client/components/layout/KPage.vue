@@ -1,10 +1,11 @@
 <template>
   <q-page :padding="padding">
     <!--
-      Specific page content
+      Specific page content: can be provided as slot and/or by configuration
      -->
     <div :style="contentStyle">
       <slot id="page-content" name="page-content"></slot>
+      <k-content id="page" v-show="page.content && page.mode" :content="page.content" :mode="page.mode" />
     </div>
     <!--
       Managed stickies
@@ -105,6 +106,7 @@ export default {
       topPane: this.$store.get('topPane'),
       rightPane: this.$store.get('rightPane'),
       bottomPane: this.$store.get('bottomPane'),
+      page: this.$store.get('page'),
       hasLeftDrawerOpener: false,
       hasTopPaneOpener: false,
       hasRightPaneOpener: false,
@@ -129,6 +131,7 @@ export default {
   },
   created () {
     // load the required components
+    this.$options.components['k-content'] = this.$load('frame/KContent')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-opener'] = this.$load('frame/KOpener')
     this.$options.components['k-window'] = this.$load('layout/KWindow')

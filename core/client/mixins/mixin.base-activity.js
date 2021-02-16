@@ -77,6 +77,29 @@ export default function (name) {
       clearRightPane () {
         this.$store.patch('rightPane', { content: null, mode: undefined })
       },
+      getPage () {
+        return this.$store.get('page')
+      },
+      getPageMode () {
+        return this.getPage().mode
+      },
+      setPage (content, mode) {
+        this.$store.patch('page', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
+      },
+      setPageMode (mode) {
+        if (mode !== this.getPageMode()) {
+          const content = this.$store.get('page.content')
+          this.$store.patch('page', { mode: Layout.validateMode(content, mode) })
+        }
+      },
+      configurePage () {
+        const options = _.get(this.activityOptions, 'page', null)
+        if (options) this.setPage(options.content, options.mode)
+        else this.clearPage()
+      },
+      clearPage () {
+        this.$store.patch('page', { content: null, mode: undefined })
+      },
       getFab () {
         return this.$store.get('fab')
       },
@@ -129,6 +152,7 @@ export default function (name) {
         this.clearTopPane()
         this.clearBottomPane()
         this.clearRightPane()
+        this.clearPage()
         this.clearFab()
         this.clearWindow()
       },
@@ -136,6 +160,7 @@ export default function (name) {
         this.configureTopPane()
         this.configureBottomPane()
         this.configureRightPane()
+        this.configurePage()
         this.configureFab()
         this.configureWindow()
       },

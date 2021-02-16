@@ -41,6 +41,7 @@ export default function init () {
   Store.set('topPane', { content: null, mode: undefined, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, visible: false })
+  Store.set('page', { content: null, mode: undefined })
   Store.set('window', { curent: '', widgets: [] })
   Store.set('fab', { actions: [] })
 

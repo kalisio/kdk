@@ -1,25 +1,12 @@
 <template>
-  <div :id="id"
-    v-bind:class="{
-      'row justify-center': direction === 'horizontal',
-      'column': direction === 'vertical'
-    }"
-  >
-    <template v-for="component in components">
-      <component
-        :key="component.uid"
-        :is="component.componentKey"
-        v-bind="component.bind ? component.props : component"
-        :renderer="component.renderer ? component.renderer: actionRenderer"
-        v-on="component.on ? { [component.on.event]: component.on.listener } : {}" />
-    </template>
-  </div>
+  <k-content :id="id" v-bind="$props" :class="{
+    'row justify-center': direction === 'horizontal',
+    'column': direction === 'vertical'
+  }">
+  </k-content>
 </template>
 
 <script>
-import _ from 'lodash'
-import path from 'path'
-import { uid } from 'quasar'
 
 export default {
   name: 'k-panel',
@@ -30,7 +17,7 @@ export default {
     },
     content: {
       type: [Object, Array],
-      default: () => { return null }
+      default: () => null
     },
     mode: {
       type: String,
@@ -38,7 +25,7 @@ export default {
     },
     context: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     color: {
       type: String,
@@ -63,41 +50,9 @@ export default {
       }
     }
   },
-  computed: {
-    components () {
-      const components = []
-      if (this.content) {
-        let content = []
-        if (Array.isArray(this.content)) {
-          content = this.content
-        } else {
-          const modes = _.keys(this.content)
-          const mode = this.mode ? this.mode : modes[0]
-          content = _.get(this.content, mode)
-        }
-        _.forEach(content, (component) => {
-          let isVisible = _.get(component, 'visible', true)
-          // Can be a functional call
-          if (typeof isVisible === 'function') {
-            isVisible = isVisible()
-          }
-          if (isVisible) {
-            // Define the component key
-            const componentName = _.get(component, 'component', 'frame/KAction')
-            const componentKey = _.kebabCase(path.basename(componentName))
-            // Load the component if needed. That is to say, do not load any Quasar component and if it has not already been loaded
-            if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) this.$options.components[componentKey] = this.$load(componentName)
-            // Clone the component and add the required props
-            const clone = _.clone(component)
-            clone.componentKey = componentKey
-            clone.uid = uid()
-            _.defaults(clone, this.$props)
-            components.push(clone)
-          }
-        })
-      }
-      return components
-    }
+  created () {
+    // load the required components
+    this.$options.components['k-content'] = this.$load('frame/KContent')
   }
 }
 </script>

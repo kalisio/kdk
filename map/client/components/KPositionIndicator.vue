@@ -1,19 +1,32 @@
 <template>
-  <div id="position-indicator" class="row items-center no-padding">
-    <span class="q-pl-md q-pr-md">
-      {{ formattedPosition }}
-    </span>
-    <k-action id="copy-position" icon="las la-copy" tooltip="KPositionIndicator.COPY" :handler="onCopy" />
+  <div>
+    <div id="position-indicator" class="row items-center no-padding">
+      <span class="q-pl-md q-pr-md">
+        {{ formattedPosition }}
+      </span>
+      <k-action id="copy-position" icon="las la-copy" tooltip="KPositionIndicator.COPY" :handler="onCopy" />
+    </div>
   </div>
 </template>
 
 <script>
 import formatcoords from 'formatcoords'
-import { copyToClipboard } from 'quasar'
+import { copyToClipboard, QIcon } from 'quasar'
+import { Layout } from '../../../../core/client/layout'
 
 export default {
   name: 'k-position-indicator',
   inject: ['kActivity'],
+  props: {
+    color: {
+      type: String,
+      default: 'primary'
+    },
+    size: {
+      type: String,
+      default: '3rem'
+    }
+  },
   data () {
     return {
       position: this.kActivity.getCenter()
@@ -43,13 +56,32 @@ export default {
     // Setup the component
     this.format = this.$store.get('locationFormat') || 'FFf'
   },
-  mounted () {
-    this.kActivity.onToggleTarget()
+  async mounted () {
+    // Update page content with target
+    const target = [{
+      id: 'position-target', component: 'QIcon', name: 'las la-plus', color: this.color, size: this.size, class: 'fixed-center position-indicator'
+    }]
+    Layout.bindContent(target, this.kActivity)
+    let content = this.$store.get('page.content', [])
+    // Required to use splice when modifying an object inside an array to make it reactive
+    content.splice(content.length, 0, target[0])
+    this.$store.patch('page', { content })
     this.kActivity.$on('mousemove', this.updatePosition)
   },
   beforeDestroy () {
+    const content = this.$store.get('page.content', [])
+    // Required to use splice when modifying an object inside an array to make it reactive
+    content.splice(_.findIndex(content, component => component.id === 'position-target'), 1)
+    this.$store.patch('page', { content })
     this.kActivity.$off('mousemove', this.updatePosition)
-    this.kActivity.onToggleTarget()
   }
 }
 </script>
+
+<style lang="stylus">
+ .position-indicator {
+    border-radius: 50%;
+    background-color: #00000020
+ }
+</style>
+
