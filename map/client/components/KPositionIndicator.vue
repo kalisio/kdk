@@ -10,8 +10,9 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import formatcoords from 'formatcoords'
-import { copyToClipboard, QIcon } from 'quasar'
+import { copyToClipboard } from 'quasar'
 import { Layout } from '../../../../core/client/layout'
 
 export default {
