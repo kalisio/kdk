@@ -92,7 +92,7 @@ export default {
         message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: this.item.name }),
         html: true,
         prompt: {
-          model: member.email,
+          model: this.item.email,
           isValid: email => isEmailValid(email),
           type: 'email'
         },

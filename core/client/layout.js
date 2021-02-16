@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import { uid } from 'quasar'
 import path from 'path'
+import logger from 'loglevel'
+import { uid } from 'quasar'
 import { Store } from './store'
 
 const components = ['header', 'footer', 'leftDrawer']
@@ -141,9 +142,8 @@ export const Layout = {
       const handlers = handler.map(h => this.generateHandler(context, h.name || h, h.params))
       // In that specific case the result is a boolean AND operation
       _.set(component, path, (...args) => handlers.reduce((result, h) => result && h(...args), true))
-    }
-    // Could be a structure with name and possibly params specified
-    else if (handler && typeof handler === 'object') {
+    } else if (handler && typeof handler === 'object') {
+      // Could be a structure with name and possibly params specified
       if (handler.name) {
         _.set(component, path, this.generateHandler(context, handler.name, handler.params))
       } else {
