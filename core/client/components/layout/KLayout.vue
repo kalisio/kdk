@@ -4,19 +4,19 @@
       Header
      -->
     <q-header v-if="header.content" v-model="isHeaderVisible" v-bind="config.header" bordered>
-      <k-panel id="header" :content="header.content" :mode="header.mode" />
+      <k-panel id="header" :content="header.content" :mode="header.mode" :filter="header.filter" />
     </q-header>
     <!--
       Left drawer
     -->
     <q-drawer v-if="leftDrawer.content" v-model="isLeftDrawerVisible" v-bind="config.leftDrawer" side="left" bordered>
-      <k-panel id="left-drawer" :content="leftDrawer.content" :mode="leftDrawer.mode" direction="vertical" />
+      <k-panel id="left-drawer" :content="leftDrawer.content" :mode="leftDrawer.mode" :filter="leftDrawer.filter" direction="vertical" />
     </q-drawer>
     <!--
       Footer
      -->
     <q-footer v-if="footer.content" v-model="isFooterVisible" v-bind="config.footer" bordered>
-      <k-panel id="footer" :content="footer.content" :mode="footer.mode" />
+      <k-panel id="footer" :content="footer.content" :mode="footer.mode" :filter="footer.filter" />
     </q-footer>
     <!--
       Page container
@@ -74,15 +74,18 @@ export default {
     // Configures the components if needed
     if (this.config.header) {
       const header = this.config.header
-      this.$layout.setHeader(_.get(header, 'content', null), _.get(header, 'mode', undefined), _.get(header, 'visible', false))
+      this.$layout.setHeader(_.get(header, 'content', null), _.get(header, 'mode', undefined),
+        _.get(header, 'filter', {}), _.get(header, 'visible', false))
     }
     if (this.config.footer) {
       const footer = this.config.footer
-      this.$layout.setFooter(_.get(footer, 'content', null), _.get(footer, 'mode', undefined), _.get(footer, 'visible', false))
+      this.$layout.setFooter(_.get(footer, 'content', null), _.get(footer, 'mode', undefined),
+        _.get(footer, 'filter', {}), _.get(footer, 'visible', false))
     }
     if (this.config.leftDrawer) {
       const leftDrawer = this.config.leftDrawer
-      this.$layout.setLeftDrawer(_.get(leftDrawer, 'content', null), _.get(leftDrawer, 'mode', undefined), _.get(leftDrawer, 'visible', false))
+      this.$layout.setLeftDrawer(_.get(leftDrawer, 'content', null), _.get(leftDrawer, 'mode', undefined),
+        _.get(leftDrawer, 'filter', {}), _.get(leftDrawer, 'visible', false))
     }
   }
 }

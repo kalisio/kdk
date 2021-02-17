@@ -14,8 +14,8 @@ export default function (name) {
       getTopPaneMode () {
         return this.getTopPane().mode
       },
-      setTopPane (content, mode) {
-        this.$store.patch('topPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
+      setTopPane (content, mode, filter) {
+        this.$store.patch('topPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
       setTopPaneMode (mode) {
         if (mode !== this.getTopPaneMode()) {
@@ -24,8 +24,8 @@ export default function (name) {
         }
       },
       configureTopPane () {
-        const options = _.get(this.activityOptions, 'topPane', null)
-        if (options) this.setTopPane(options.content, options.mode)
+        const options = _.get(this.activityOptions, 'topPane')
+        if (options) this.setTopPane(options.content, options.mode, _.get(this.activityOptions, 'topPane.filter', {}))
         else this.clearTopPane()
       },
       clearTopPane () {
@@ -37,8 +37,8 @@ export default function (name) {
       getBottomPaneMode () {
         return this.getBottomPane().mode
       },
-      setBottomPane (content, mode) {
-        this.$store.patch('bottomPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
+      setBottomPane (content, mode, filter) {
+        this.$store.patch('bottomPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
       setBottomPaneMode (mode) {
         if (mode !== this.getBottomPaneMode()) {
@@ -47,8 +47,8 @@ export default function (name) {
         }
       },
       configureBottomPane () {
-        const options = _.get(this.activityOptions, 'bottomPane', null)
-        if (options) this.setBottomPane(options.content, options.mode)
+        const options = _.get(this.activityOptions, 'bottomPane')
+        if (options) this.setBottomPane(options.content, options.mode, _.get(this.activityOptions, 'bottomPane.filter', {}))
         else this.clearBottomPane()
       },
       clearBottomPane () {
@@ -60,8 +60,8 @@ export default function (name) {
       getRightPaneMode () {
         return this.getRightPane().mode
       },
-      setRightPane (content, mode) {
-        this.$store.patch('rightPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
+      setRightPane (content, mode, filter) {
+        this.$store.patch('rightPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
       setRightPaneMode (mode) {
         if (mode !== this.getRightPaneMode()) {
@@ -70,8 +70,8 @@ export default function (name) {
         }
       },
       configureRightPane () {
-        const options = _.get(this.activityOptions, 'rightPane', null)
-        if (options) this.setRightPane(options.content, options.mode)
+        const options = _.get(this.activityOptions, 'rightPane')
+        if (options) this.setRightPane(options.content, options.mode, _.get(this.activityOptions, 'rightPane.filter', {}))
         else this.clearRightPane()
       },
       clearRightPane () {
@@ -83,8 +83,8 @@ export default function (name) {
       getPageMode () {
         return this.getPage().mode
       },
-      setPage (content, mode) {
-        this.$store.patch('page', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode) })
+      setPage (content, mode, filter) {
+        this.$store.patch('page', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
       setPageMode (mode) {
         if (mode !== this.getPageMode()) {
@@ -93,8 +93,8 @@ export default function (name) {
         }
       },
       configurePage () {
-        const options = _.get(this.activityOptions, 'page', null)
-        if (options) this.setPage(options.content, options.mode)
+        const options = _.get(this.activityOptions, 'page')
+        if (options) this.setPage(options.content, options.mode, _.get(this.activityOptions, 'page.filter', {}))
         else this.clearPage()
       },
       clearPage () {
@@ -103,12 +103,12 @@ export default function (name) {
       getFab () {
         return this.$store.get('fab')
       },
-      setFab (actions) {
-        this.$store.patch('fab', { actions: Layout.bindContent(actions, this) })
+      setFab (actions, filter) {
+        this.$store.patch('fab', { actions: Layout.bindContent(actions, this), filter })
       },
       configureFab () {
-        const options = _.get(this.activityOptions, 'fab', null)
-        if (options) this.setFab(options.actions)
+        const options = _.get(this.activityOptions, 'fab')
+        if (options) this.setFab(options.actions, _.get(this.activityOptions, 'fab.filter', {}))
         else this.clearFab()
       },
       clearFab () {
@@ -117,12 +117,12 @@ export default function (name) {
       getWindows () {
         return this.$store.get('window')
       },
-      setWindow (widgets, current) {
-        this.$store.patch('window', { widgets: Layout.bindContent(widgets, this), current })
+      setWindow (widgets, current, filter) {
+        this.$store.patch('window', { widgets: Layout.bindContent(widgets, this), current, filter })
       },
       configureWindow () {
         const options = _.get(this.activityOptions, 'window', null)
-        if (options) this.setWindow(options.widgets, options.current ? options.current : undefined)
+        if (options) this.setWindow(options.widgets, options.current ? options.current : undefined, _.get(this.activityOptions, 'window.filter', {}))
       },
       clearWindow () {
         this.$store.patch('window', { widgets: null, current: undefined })

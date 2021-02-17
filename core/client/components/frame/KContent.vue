@@ -30,6 +30,10 @@ export default {
       type: String,
       default: undefined
     },
+    filter: {
+      type: Object,
+      default: () => ({})
+    },
     context: {
       type: Object,
       default: () => null
@@ -54,7 +58,7 @@ export default {
     components () {
       let components = []
       if (this.content) {
-        components = Layout.getComponents(this.content, this.mode)
+        components = Layout.getComponents(this.content, this.mode, this.filter)
         _.forEach(components, (component) => {
           const { componentKey, componentName } = component
           // Load the component if needed: do not load any Quasar component and avoid loading twice

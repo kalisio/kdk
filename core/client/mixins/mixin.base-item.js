@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import sift from 'sift'
 import { getIconName, getInitials } from '../utils'
 import { Layout } from '../layout'
 
@@ -86,8 +87,12 @@ export default function (name) {
       },
       // This method should be overriden in items
       configureActions () {
-        const actions = _.get(this.itemOptions, 'actions', null)
-        if (actions) this.setActions(actions)
+        let actions = _.get(this.itemOptions, 'actions', null)
+        if (actions) {
+          // Apply filtering
+          actions = actions.filter(sift(_.get(this.itemOptions, 'filter', {})))
+          this.setActions(actions)
+        }
         else this.clearActions()
       },
       onItemSelected () {

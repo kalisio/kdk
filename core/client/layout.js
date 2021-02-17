@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import path from 'path'
 import logger from 'loglevel'
+import sift from 'sift'
 import { uid } from 'quasar'
 import { Store } from './store'
 
@@ -10,14 +11,14 @@ const components = ['header', 'footer', 'leftDrawer']
 export const Layout = {
   initialize () {
     components.forEach(component => {
-      Store.set(component, { content: null, mode: undefined, visible: false })
+      Store.set(component, { content: null, mode: undefined, filter: {}, visible: false })
     })
   },
   getHeader () {
     return Store.get(components[0])
   },
-  setHeader (content, mode, visible) {
-    Store.patch(components[0], { content, mode, visible })
+  setHeader (content, mode, filter, visible) {
+    Store.patch(components[0], { content, mode, filter, visible })
   },
   setHeaderMode (mode) {
     Store.patch(components[0], { mode })
@@ -31,8 +32,8 @@ export const Layout = {
   getFooter () {
     return Store.get(components[1])
   },
-  setFooter (content, mode, visible) {
-    Store.patch(components[1], { content, mode, visible })
+  setFooter (content, mode, filter, visible) {
+    Store.patch(components[1], { content, mode, filter, visible })
   },
   setFooterMode (mode) {
     Store.patch(components[1], { mode })
@@ -46,8 +47,8 @@ export const Layout = {
   getLeftDrawer () {
     return Store.get(components[2])
   },
-  setLeftDrawer (content, mode, visible) {
-    Store.patch(components[2], { content, mode, visible })
+  setLeftDrawer (content, mode, filter, visible) {
+    Store.patch(components[2], { content, mode, filter, visible })
   },
   setLeftDrawerMode (mode) {
     Store.patch(components[2], { mode })
@@ -66,15 +67,19 @@ export const Layout = {
     if (modes.includes(mode)) return mode
     else return _.head(modes)
   },
-  getComponents (content, mode) {
+  getComponents (content, mode, filter = {}) {
     let components = []
+    // Get component config for given mode if any
     if (Array.isArray(content)) {
       components = content
     } else {
       mode = this.validateMode(content, mode)
       components = _.get(content, mode)
     }
+    // Apply filtering
+    components = components.filter(sift(filter))
     let processedComponents = []
+    // Then create component objects
     _.forEach(components, (component) => {
       let isVisible = _.get(component, 'visible', true)
       // Can be a functional call

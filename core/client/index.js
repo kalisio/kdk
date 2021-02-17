@@ -38,12 +38,12 @@ export default function init () {
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
   Filter.initialize()
-  Store.set('topPane', { content: null, mode: undefined, visible: false })
-  Store.set('rightPane', { content: null, mode: undefined, visible: false })
-  Store.set('bottomPane', { content: null, mode: undefined, visible: false })
-  Store.set('page', { content: null, mode: undefined })
-  Store.set('window', { curent: '', widgets: [] })
-  Store.set('fab', { actions: [] })
+  Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
+  Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
+  Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
+  Store.set('page', { content: null, mode: undefined, filter: {} })
+  Store.set('window', { current: '', widgets: [], filter: {} })
+  Store.set('fab', { actions: [], filter: {} })
 
   // Listen to the 'patched' event on the users
   const users = api.getService('users')

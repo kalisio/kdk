@@ -42,6 +42,7 @@
 
 <script>
 import _ from 'lodash'
+import sift from 'sift'
 import { uid } from 'quasar'
 
 export default {
@@ -60,9 +61,12 @@ export default {
   },
   computed: {
     actions () {
-      if (!this.fab.actions) return null
+      let fabActions = this.fab.actions
+      if (!fabActions) return null
       const actions = []
-      _.forEach(this.fab.actions, (action) => {
+      // Apply filtering
+      fabActions = fabActions.filter(sift(this.fab.filter || {}))
+      _.forEach(fabActions, (action) => {
         const isVisible = _.get(action, 'visible', true)
         if (isVisible) {
           action.uid = uid()

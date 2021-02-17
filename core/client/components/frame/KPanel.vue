@@ -23,6 +23,10 @@ export default {
       type: String,
       default: undefined
     },
+    filter: {
+      type: Object,
+      default: () => ({})
+    },
     context: {
       type: Object,
       default: () => null

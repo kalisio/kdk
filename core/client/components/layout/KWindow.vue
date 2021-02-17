@@ -35,6 +35,7 @@
 <script>
 import _ from 'lodash'
 import path from 'path'
+import sift from 'sift'
 
 export default {
   name: 'k-window',
@@ -64,7 +65,10 @@ export default {
       ]
     },
     widgets () {
-      _.forEach(this.window.widgets, (widget) => {
+      let widgets = this.window.widgets
+      // Apply filtering
+      widgets = widgets.filter(sift(this.window.filter || {}))
+      _.forEach(widgets, (widget) => {
         if (!widget.key) {
           const componentName = _.get(widget, 'component')
           const componentKey = _.kebabCase(path.basename(componentName))
@@ -72,7 +76,7 @@ export default {
           this.$options.components[componentKey] = this.$load(componentName)
         }
       })
-      return this.window.widgets
+      return widgets
     },
     windowStyle () {
       if (this.mode === 'maximized') return 'width: 100vw'
