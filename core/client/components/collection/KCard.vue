@@ -38,7 +38,7 @@
       <q-separator />
       <slot name="card-actions">
         <q-card-actions class="q-pa-xs" align="right">
-          <k-panel id="item-actions" :content="computedActions" :context="this" />
+          <k-panel id="item-actions" :content="computedActions" :context="$props" />
         </q-card-actions>
       </slot>
     </q-card>

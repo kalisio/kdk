@@ -47,8 +47,8 @@ export default {
     }
   },
   methods: {
-    removeDevice () {
-      const description = this.item.platform + ' ' + this.item.manufacturer + ' ' + this.item.model
+    removeDevice (context) {
+      const description = context.item.platform + ' ' + context.item.manufacturer + ' ' + context.item.model
       Dialog.create({
         title: this.$t('KDeviceCard.UNLINK_DIALOG_TITLE', { description }),
         message: this.$t('KDeviceCard.UNLINK_DIALOG_MESSAGE', { description }),
@@ -63,7 +63,7 @@ export default {
         }
       }).onOk(() => {
         const devicesService = this.$api.getService('devices')
-        devicesService.remove(this.item.registrationId)
+        devicesService.remove(context.item.registrationId)
       })
     }
   },

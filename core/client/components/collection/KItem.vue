@@ -27,7 +27,7 @@
     -->
     <slot name="item-actions">
       <q-item-section side>
-        <k-menu id="item-actions" :content="computedActions" :context="this" action-renderer="item" />
+        <k-menu id="item-actions" :content="computedActions" :context="$props" action-renderer="item" />
       </q-item-section>
     </slot>
   </q-item>

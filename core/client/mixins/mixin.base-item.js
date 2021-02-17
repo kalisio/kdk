@@ -80,7 +80,9 @@ export default function (name) {
         return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
       },
       setActions (actions) {
-        this.actions = Layout.bindContent(actions, this)
+        // As context is different for each item we need to clone the global action configuration
+        // otheriwse context will always reference the last processed item
+        this.actions = Layout.bindContent(_.cloneDeep(actions), this)
       },
       clearActions () {
         this.actions = null
