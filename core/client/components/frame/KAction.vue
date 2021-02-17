@@ -220,7 +220,7 @@ export default {
         }, _.omit(this.route, ['query', 'params']))).catch(() => {})
       } else if (this.handler) {
         // Handle the callback case
-        this.handler.bind(this.context)()
+        this.handler(this.context)
       }
       // Notify the listeners
       this.$emit('triggered')
