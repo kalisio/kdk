@@ -25,6 +25,31 @@ describe('map:hooks', () => {
     expect(hook.params.query.geometry.$near.$maxDistance).to.equal(1000.5)
   })
 
+  it('marshalls geometry queries using shortcuts', () => {
+    let hook = {
+      type: 'before',
+      params: {
+        query: {
+          longitude: '56', latitude: '0.3', distance: '1000.50'
+        }
+      }
+    }
+    hooks.marshallSpatialQuery(hook)
+    expect(typeof hook.params.query.geometry.$near.$geometry.coordinates[0]).to.equal('number')
+    expect(typeof hook.params.query.geometry.$near.$geometry.coordinates[1]).to.equal('number')
+    expect(hook.params.query.geometry.$near.$geometry.coordinates[0]).to.equal(56)
+    expect(hook.params.query.geometry.$near.$geometry.coordinates[1]).to.equal(0.3)
+    expect(typeof hook.params.query.geometry.$near.$maxDistance).to.equal('number')
+    expect(hook.params.query.geometry.$near.$maxDistance).to.equal(1000.5)
+    // From proximity to location query
+    hook.params.query = { longitude: '56', latitude: '0.3' }
+    hooks.marshallSpatialQuery(hook)
+    expect(typeof hook.params.query.geometry.$geoIntersects.$geometry.coordinates[0]).to.equal('number')
+    expect(typeof hook.params.query.geometry.$geoIntersects.$geometry.coordinates[1]).to.equal('number')
+    expect(hook.params.query.geometry.$geoIntersects.$geometry.coordinates[0]).to.equal(56)
+    expect(hook.params.query.geometry.$geoIntersects.$geometry.coordinates[1]).to.equal(0.3)
+  })
+
   it('convert results as GeoJson', () => {
     const hook = {
       type: 'after',

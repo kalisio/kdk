@@ -225,6 +225,14 @@
     "service": "adsb-observations",
     "featureId": "icao",
     "history": 604800
+  },
+  {
+    "name": "zones",
+    "icon" : "map",
+    "attribution" : "",
+    "type" : "OverlayLayer",
+    "service": "zones",
+    "featureId": "OBJECTID"
   }
 ]
 

@@ -8,7 +8,7 @@ import map, { permissions as mapPermissions, createFeaturesService, createCatalo
 describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, geocoderService, catalogService, layersArray,
-    vigicruesStationsService, vigicruesObsService, adsbObsService, position
+    zonesService, vigicruesStationsService, vigicruesObsService, adsbObsService, position
 
   before(() => {
     chailint(chai, util)
@@ -66,6 +66,48 @@ describe('map:services', () => {
     expect(layersArray.length > 0)
   })
 
+  it('create and feed the zones service', async () => {
+    // Create the service
+    const zonesLayer = _.find(layersArray, { name: 'zones' })
+    expect(zonesLayer).toExist()
+    expect(zonesLayer.service === 'zones').beTrue()
+    createFeaturesService.call(app, {
+      collection: zonesLayer.service,
+      featureId: zonesLayer.featureId
+    })
+    zonesService = app.getService(zonesLayer.service)
+    expect(zonesService).toExist()
+    // Ensure the spatial index
+    const indexes = await zonesService.Model.indexes()
+    expect(indexes.find(index => index.key.geometry)).toExist()
+    // Feed the collection
+    const zones = require('./data/zones.json').features
+    await zonesService.create(zones)
+  })
+
+  it('performs spatial filtering on zones service', async () => {
+    let result = await zonesService.find({
+      query: { longitude: 3.56, latitude: 48.53 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(1)
+    result = await zonesService.find({
+      query: { longitude: 3.50, latitude: 48.54 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(0)
+    result = await zonesService.find({
+      query: { south: 44, north: 44.9, east: 4.7, west: 1.66 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(2)
+    result = await zonesService.find({
+      query: { south: 44, north: 44.9, east: 4, west: 2 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(0)
+  })
+
   it('create and feed the vigicrues stations service', async () => {
     // Create the service
     const vigicruesStationsLayer = _.find(layersArray, { name: 'vigicrues-stations' })
@@ -78,8 +120,6 @@ describe('map:services', () => {
     })
     vigicruesStationsService = app.getService(vigicruesStationsLayer.service)
     expect(vigicruesStationsService).toExist()
-    // Create the spatial index
-    vigicruesStationsService.Model.createIndex({ geometry: '2dsphere' })
     // Feed the collection
     const stations = require('./data/vigicrues.stations.json').features
     await vigicruesStationsService.create(stations)
@@ -249,6 +289,7 @@ describe('map:services', () => {
   // Cleanup
   after(async () => {
     if (server) await server.close()
+    await zonesService.Model.drop()
     await vigicruesStationsService.Model.drop()
     await vigicruesObsService.Model.drop()
     await adsbObsService.Model.drop()
