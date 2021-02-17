@@ -17,19 +17,22 @@ export function marshallSpatialQuery (hook) {
   if (query) {
     if (!_.isNil(query.geometry)) marshallGeometry(query.geometry)
     // Shortcut for proximity query
-    if (!_.isNil(query.centerLon) && !_.isNil(query.centerLat) && !_.isNil(query.distance)) {
-      const lon = _.toNumber(query.centerLon)
-      const lat = _.toNumber(query.centerLat)
-      const d = _.toNumber(query.distance)
+    if ((!_.isNil(query.centerLon) || !_.isNil(query.longitude)) &&
+        (!_.isNil(query.centerLat) || !_.isNil(query.latitude)) && !_.isNil(query.distance)) {
+      const longitude = (_.isNil(query.centerLon) ? _.toNumber(query.longitude) : _.toNumber(query.centerLon))
+      const latitude = (_.isNil(query.centerLat) ? _.toNumber(query.latitude) : _.toNumber(query.centerLat))
+      const distance = _.toNumber(query.distance)
       // Transform to MongoDB spatial request
       delete query.centerLon
+      delete query.longitude
       delete query.centerLat
+      delete query.latitude
       delete query.distance
       // Aggregation requires a specific operator
       if (query.$aggregate) {
         query.$geoNear = {
-          near: { type: 'Point', coordinates: [lon, lat] },
-          maxDistance: d,
+          near: { type: 'Point', coordinates: [longitude, latitude] },
+          maxDistance: distance,
           distanceField: 'distance',
           spherical: true
         }
@@ -38,9 +41,9 @@ export function marshallSpatialQuery (hook) {
           $near: {
             $geometry: {
               type: 'Point',
-              coordinates: [lon, lat]
+              coordinates: [longitude, latitude]
             },
-            $maxDistance: d
+            $maxDistance: distance
           }
         }
       }
@@ -63,6 +66,23 @@ export function marshallSpatialQuery (hook) {
             coordinates: [ // BBox as a polygon
               [[west, south], [east, south], [east, north], [west, north], [west, south]] // Closing point
             ]
+          }
+        }
+      }
+      query.geometry = geometryQuery
+    }
+    // Shortcut for location query
+    if (!_.isNil(query.longitude) && !_.isNil(query.latitude)) {
+      const longitude = _.toNumber(query.longitude)
+      const latitude = _.toNumber(query.latitude)
+      // Transform to MongoDB spatial request
+      delete query.longitude
+      delete query.latitude
+      const geometryQuery = {
+        $geoIntersects: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [longitude, latitude]
           }
         }
       }
