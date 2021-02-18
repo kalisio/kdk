@@ -388,5 +388,16 @@
     "TITLE": "Importer une couche",
     "INPUT_HINT": "Sélectionnez un fichier",
     "IMPORT_BUTTON": "Importer"
+  },
+  "KFavoriteViews": {
+    "FAVORITE_VIEWS_LABEL": "Vues favorites",
+    "LIST_VIEWS": "Vues enregistrées",
+    "ADD_VIEW": "Ajouter une vue",
+    "ADD_BUTTON": "Ajouter",
+    "REMOVE_VIEW": "$t(REMOVE)",
+    "FAVORITE_VIEW_CREATE_TITLE": "Créer une nouvelle vue ?",
+    "FAVORITE_VIEW_NAME_FIELD_HELPER": "Saisissez le nom de la vue",
+    "FAVORITE_VIEW_DESCRIPTION_FIELD_HELPER": "Saisissez la description de la vue",
+    "FAVORITE_VIEW_LAYERS_FIELD_HELPER": "Sauvegarder les couches actives"
   }
 }

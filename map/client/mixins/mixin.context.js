@@ -55,7 +55,7 @@ export default {
       // We catch as replacing with similar params raises a duplicate navigation error
       this.$router.replace(route).catch(_ => {})
     },
-    storeContext (context) {
+    getContextParameters(context) {
       let targetParameters
       switch (context) {
         case 'layers':
@@ -72,6 +72,40 @@ export default {
           const east = bounds[1][1]
           targetParameters = { south, west, north, east }
       }
+      return targetParameters
+    },
+    async setContextParameters(context, targetParameters) {
+      switch (context) {
+        case 'layers':
+          if (!_.has(targetParameters, 'layers')) return
+          // According to current state find which layers need to be (de)activated
+          const activeLayers = _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
+          const targetLayers = targetParameters.layers.split(',')
+          // List of layers to be (de)activated
+          const activedLayers = _.difference(targetLayers, activeLayers)
+          const inactivatedLayers = _.difference(activeLayers, targetLayers)
+          // Take care that 3D requires at least a terrain layer.
+          // So if we try to remove a terrain layer without activating a new one, keep it active
+          // (this can be the case when the view has been saved from the 2D activity and restored in the 3D activity).
+          const inactivatedTerrainLayer = _.find(inactivatedLayers, (name) => this.layers[name].type === 'TerrainLayer')
+          const activatedTerrainLayer = _.find(activedLayers, (name) => this.layers[name].type === 'TerrainLayer')
+          if (inactivatedTerrainLayer && !activatedTerrainLayer) _.pull(inactivatedLayers, inactivatedTerrainLayer)
+          await Promise.all(activedLayers.map(layer => this.showLayer(layer)))
+          await Promise.all(inactivatedLayers.map(layer => this.hideLayer(layer)))
+          break
+        case 'view':
+        default:
+          if (!_.has(targetParameters, 'south') || !_.has(targetParameters, 'west') ||
+              !_.has(targetParameters, 'north') || !_.has(targetParameters, 'east')) return
+          this.zoomToBounds([
+            [targetParameters.south, targetParameters.west],
+            [targetParameters.north, targetParameters.east]
+          ])
+          break
+      }
+    },
+    storeContext (context) {
+      const targetParameters = this.getContextParameters(context)
       // Store both in URL and local storage, except if the user/view has explicitly revoked restoration
       if (this.shouldRestoreContext(context)) {
         if (!_.isEqual(this.getRouteContext(context), targetParameters)) {
@@ -105,27 +139,7 @@ export default {
         if (!_.isEqual(this.getRouteContext(context), targetParameters)) {
           this.updateRouteContext(context, targetParameters)
         }
-        switch (context) {
-          case 'layers':
-            // Start from a clean state in case some defaults layers have been already activated
-            let layers = _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
-            for (let i = 0; i < layers.length; i++) {
-              await this.hideLayer(layers[i])
-            }
-            // Then active context layers
-            layers = targetParameters.layers.split(',')
-            for (let i = 0; i < layers.length; i++) {
-              await this.showLayer(layers[i])
-            }
-            break
-          case 'view':
-          default:
-            this.zoomToBounds([
-              [targetParameters.south, targetParameters.west],
-              [targetParameters.north, targetParameters.east]
-            ])
-            break
-        }
+        this.setContextParameters(context, targetParameters)
       }
       return targetParameters
     },
