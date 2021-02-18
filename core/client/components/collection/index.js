@@ -1,9 +1,17 @@
 import KCard from './KCard.vue'
 import KGrid from './KGrid.vue'
 import KItem from './KItem.vue'
+import KList from './KList.vue'
+import KHistoryEntry from './KHistoryEntry.vue'
+import KHistory from './KHistory.vue'
+import KTable from './KTable.vue'
 
 export {
   KCard,
   KGrid,
-  KItem
+  KItem,
+  KList,
+  KHistoryEntry,
+  KHistory,
+  KTable
 }

@@ -27,7 +27,7 @@
     -->
     <slot name="item-actions">
       <q-item-section side>
-        <k-menu id="item-actions" :content="computedActions" :context="$props" action-renderer="item" />
+        <k-panel id="item-actions" :content="computedActions" :context="$props" action-renderer="item" />
       </q-item-section>
     </slot>
   </q-item>
@@ -54,7 +54,7 @@ export default {
   },
   created () {
     // Loads the required components
-    this.$options.components['k-menu'] = this.$load('frame/KMenu')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

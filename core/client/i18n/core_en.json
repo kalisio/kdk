@@ -73,7 +73,7 @@
     "TAGS_ICON_FIELD_HELPER": "Set the icon of this tag",
     "GROUPS_CREATE_TITLE": "Create a new group ?",
     "GROUPS_NAME_FIELD_HELPER": "Enter the name of this group",
-    "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description name of this group"
+    "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description for this group"
   },
   "tours": {
     "APP_BAR_OVERFLOW_MENU_LABEL": "When not visible, you can find it using the popup menu.",

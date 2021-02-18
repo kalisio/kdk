@@ -12,7 +12,7 @@
     :badge="badge"
     :tooltip="tooltip">
     <template v-slot:content>
-      <q-menu id="menu" auto-close>
+      <q-menu id="menu" :auto-close="autoClose">
         <k-panel
           id="menu-entries"
           :content="content"
@@ -55,11 +55,11 @@ export default {
     },
     badge: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     toggle: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     toggled: {
       type: Boolean,
@@ -73,17 +73,21 @@ export default {
       type: String,
       default: ''
     },
+    autoClose: {
+      type: Boolean,
+      default: true
+    },
     content: {
       type: [Object, Array],
-      default: () => { return null }
+      default: () => null
     },
     mode: {
       type: String,
-      default: () => { return undefined }
+      default: () => undefined
     },
     context: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     actionRenderer: {
       type: String,

@@ -21,7 +21,7 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <k-menu id="item-actions" :content="itemActions" :context="{ item: props.row }" action-renderer="item" />
+            <k-panel id="item-actions" :content="itemActions" :context="{ item: props.row }" action-renderer="item" />
           </q-td>
         </template>
       </q-table>
@@ -114,7 +114,6 @@ export default {
     processSchema () {
       this.columns = [{
         name: 'actions',
-        style: 'width: 24px',
         align: 'center'
       }]
       _.forOwn(this.schema.properties, (value, key) => {
@@ -176,7 +175,7 @@ export default {
   async created () {
     // Load the required components
     this.$options.components['k-label'] = this.$load('frame/KLabel')
-    this.$options.components['k-menu'] = this.$load('frame/KMenu')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')
