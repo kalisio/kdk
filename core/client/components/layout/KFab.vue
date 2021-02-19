@@ -42,7 +42,6 @@
 
 <script>
 import _ from 'lodash'
-import sift from 'sift'
 import { uid } from 'quasar'
 import { Layout } from '../../layout'
 

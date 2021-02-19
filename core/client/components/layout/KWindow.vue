@@ -35,7 +35,6 @@
 <script>
 import _ from 'lodash'
 import path from 'path'
-import sift from 'sift'
 import { Layout } from '../../layout'
 
 export default {
