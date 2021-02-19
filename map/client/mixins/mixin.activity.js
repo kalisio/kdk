@@ -6,6 +6,7 @@ import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import explode from '@turf/explode'
 import { Loading, Dialog, uid } from 'quasar'
+import { Layout } from '../../../core/client/layout'
 import { setGatewayJwt, generatePropertiesSchema } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
 import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
@@ -126,7 +127,18 @@ export default {
       // Only possible on user-defined layers by default
       return this.isUserLayer(layer)
     },
-    registerLayerActions (layer) {
+    configureLayerActions (layer) {
+      let actions = _.get(this.activityOptions, 'layers.actions')
+      if (actions) {
+        // Apply filtering
+        actions = Layout.filterContent(actions, _.get(this.activityOptions, 'layers.filter', {}))
+      }
+      // As context is different for each item we need to clone the global action configuration
+      // otheriwse context will always reference the last processed item
+      actions = Layout.bindContent(_.cloneDeep(actions), this)
+      // Add 'virtual' action used to trigger the layer
+      actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
+      /*
       let defaultActions = ['zoom-to', 'save', 'edit', 'remove']
       if (this.is2D()) defaultActions = defaultActions.concat(['edit-data'])
       const layerActions = _.get(this, 'activityOptions.layerActions', defaultActions)
@@ -210,16 +222,7 @@ export default {
           })
         }
       }
-      // Check if the layr has a valid data time range to add sync action with timeline
-      /* TODO
-      if (this.getLayerTimeRange(layer)) {
-        actions.push({
-          name: 'sync-timeline',
-          label: this.$t('mixins.activity.SYNCHRONIZE_TIMELINE_LABEL'),
-          icon: 'sync',
-          handler: () => this.onSynchronizeTimeline(layer)
-        })
-      } */
+      */
       // Store the actions and make it reactive
       this.$set(layer, 'actions', actions)
       return actions
@@ -274,7 +277,7 @@ export default {
       })
     }, */
     onLayerAdded (layer) {
-      this.registerLayerActions(layer)
+      this.configureLayerActions(layer)
     },
     async onTriggerLayer (layer) {
       if (!this.isLayerVisible(layer.name)) {
@@ -282,7 +285,9 @@ export default {
       } else {
         await this.hideLayer(layer.name)
       }
-      this.storeContext('layers')
+      // Check if the activity is using context restoration
+      const hasContext = (typeof this.storeContext === 'function')
+      if (hasContext) this.storeContext('layers')
     },
     onZoomIn () {
       const center = this.getCenter()
@@ -473,7 +478,7 @@ export default {
         // Start/Stop edition
         this.editLayer(layer)
         // Refresh actions due to state change
-        this.registerLayerActions(layer)
+        this.configureLayerActions(layer)
       }
       // Close previous edition toast if any
       // (will call dismiss handler)

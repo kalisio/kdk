@@ -31,7 +31,7 @@
           </q-item-section>
           <!-- actions -->
           <q-item-section side>
-            <k-menu :id="`${layer.name}-actions`" :content="layerActions(layer)" :context="layer" action-renderer="item" />
+            <k-panel :id="`${layer.name}-actions`" :content="layer.actions" :context="layer" :filter="{ id: { $nin: ['toggle'] } }" action-renderer="item" />
           </q-item-section>
           <!-- tooltip -->
           <q-tooltip v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
@@ -65,18 +65,11 @@ export default {
     }
   },
   methods: {
-    key (layer, action) {
-      return layer.name + '-' + action
-    },
     layerIcon (layer) {
       return utils.getIconName(layer, 'icon')
     },
-    layerActions (layer) {
-      // Built-in toggle handler is used to select layer
-      return _.filter(layer.actions, action => action.name !== 'toggle')
-    },
     toggleLayer (layer) {
-      const toggleAction = _.find(layer.actions, { name: 'toggle' })
+      const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
     },
     onLayerClicked (layer) {
@@ -91,7 +84,7 @@ export default {
   },
   created () {
     // Loads the required components
-    this.$options.components['k-menu'] = this.$load('frame/KMenu')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
   }
 }

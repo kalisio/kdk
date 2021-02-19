@@ -79,7 +79,7 @@ export default function (name) {
         // Check for custom description field
         return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
       },
-      setActions (actions) {
+      setActions (actions, filter = {}) {
         // As context is different for each item we need to clone the global action configuration
         // otheriwse context will always reference the last processed item
         this.actions = Layout.bindContent(_.cloneDeep(actions), this)
@@ -89,10 +89,10 @@ export default function (name) {
       },
       // This method should be overriden in items
       configureActions () {
-        let actions = _.get(this.itemOptions, 'actions', null)
+        let actions = _.get(this.itemOptions, 'actions')
         if (actions) {
           // Apply filtering
-          actions = actions.filter(sift(_.get(this.itemOptions, 'filter', {})))
+          actions = Layout.filterContent(actions, _.get(this.itemOptions, 'filter', {}))
           this.setActions(actions)
         }
         else this.clearActions()

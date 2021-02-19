@@ -44,6 +44,7 @@
 import _ from 'lodash'
 import sift from 'sift'
 import { uid } from 'quasar'
+import { Layout } from '../../layout'
 
 export default {
   name: 'k-fab',
@@ -65,7 +66,7 @@ export default {
       if (!fabActions) return null
       const actions = []
       // Apply filtering
-      fabActions = fabActions.filter(sift(this.fab.filter || {}))
+      fabActions = Layout.filterContent(fabActions, this.fab.filter || {})
       _.forEach(fabActions, (action) => {
         const isVisible = _.get(action, 'visible', true)
         if (isVisible) {

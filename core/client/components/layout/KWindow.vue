@@ -36,6 +36,7 @@
 import _ from 'lodash'
 import path from 'path'
 import sift from 'sift'
+import { Layout } from '../../layout'
 
 export default {
   name: 'k-window',
@@ -67,7 +68,7 @@ export default {
     widgets () {
       let widgets = this.window.widgets
       // Apply filtering
-      widgets = widgets.filter(sift(this.window.filter || {}))
+      widgets = Layout.filterContent(widgets, this.window.filter || {})
       _.forEach(widgets, (widget) => {
         if (!widget.key) {
           const componentName = _.get(widget, 'component')
