@@ -44,7 +44,7 @@ const baseCollectionMixin = {
             this.items = response.data
           }
           this.nbTotalItems = response.total
-          this.$emit('collection-refreshed')
+          this.$emit('collection-refreshed', this.$data)
         }, error => {
           this.$events.$emit('error', error)
         })
@@ -84,8 +84,8 @@ const baseCollectionMixin = {
     onPageChanged () {
       this.refreshCollection()
     },
-    onItemSelected (item) {
-      this.$emit('selection-changed', item)
+    onItemSelected (item, section) {
+      this.$emit('selection-changed', item, section)
     },
     onItemsSelected (items) {
       this.$emit('selection-changed', items)

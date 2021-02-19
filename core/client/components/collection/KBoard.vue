@@ -25,7 +25,7 @@
                 :contextId="contextId"
                 :is="renderer.component"
                 v-bind="renderer.props"
-                item-selected="onItemSelected(item)" />
+                @item-selected="onItemSelected" />
             </div>
           </template>
       </div>

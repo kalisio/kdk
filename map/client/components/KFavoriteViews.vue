@@ -12,7 +12,7 @@
         </div>
       </q-tab-panel>
       <q-tab-panel name="views">
-        <k-list service="catalog" :renderer="viewRenderer" :base-query="{ type: 'View' }" @selection-changed="selectView"/>
+        <k-list ref="list" service="catalog" :renderer="viewRenderer" :base-query="{ type: 'View' }" @collection-refreshed="refreshViews" @selection-changed="selectView"/>
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -90,9 +90,6 @@ export default {
   computed: {
   },
   methods: {
-    removeView (view) {
-      this.$api.getService('catalog').remove(view._id)
-    },
     async onAdd () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
@@ -119,9 +116,32 @@ export default {
         }
       }
     },
-    selectView (view) {
-      this.kActivity.setContextParameters('view', view)
-      this.kActivity.setContextParameters('layers', view)
+    refreshViews (data) {
+      data.items.forEach(view => {
+        // Add required icon
+        view.icon = { name: (view.isDefault ? 'las la-star' : 'star_border') }
+      })
+    },
+    selectView (view, section) {
+      // selecting the avatar makes the view the home view
+      if (section === 'avatar') {
+        this.homeView(view)
+      } else {
+        this.kActivity.setContextParameters('view', view)
+        this.kActivity.setContextParameters('layers', view)
+      }
+    },
+    async homeView (view) {
+      // Get current home view
+      const response = await this.$api.getService('catalog').find({ query: { type: 'View', isDefault: true } })
+      const currentHomeView = (response.data.length > 0 ? response.data[0] : null)
+      // Unset it
+      if (currentHomeView) await this.$api.getService('catalog').patch(currentHomeView._id, { isDefault: false })
+      // Then set new one
+      await this.$api.getService('catalog').patch(view._id, { isDefault: true })
+    },
+    removeView (view) {
+      this.$api.getService('catalog').remove(view._id)
     }
   }
 }

@@ -3,7 +3,7 @@
     <!--
       Avatar section
     -->
-    <q-item-section top avatar>
+    <q-item-section top avatar @click="onItemSelected('avatar')">
       <slot name="item-avatar">
         <q-avatar v-if="avatar.type === 'text'" color="primary" text-color="white" >{{ avatar.text }}</q-avatar>
         <q-avatar v-if="avatar.type === 'icon'" :color="avatar.icon.color" text-color="white" :icon="avatar.icon.name" />
@@ -13,7 +13,7 @@
       Content section
     -->
     <slot name="item-content">
-      <q-item-section @click="onItemSelected">
+      <q-item-section @click="onItemSelected('content')">
         <slot name="item-label">
           <q-item-label>{{ name }}</q-item-label>
         </slot>

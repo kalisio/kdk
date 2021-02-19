@@ -11,7 +11,7 @@
               :contextId="contextId"
               :is="renderer.component"
               v-bind="renderer.props"
-              item-selected="onItemSelected(item)" />
+              @item-selected="onItemSelected" />
           </template>
         </q-infinite-scroll>
       </q-timeline>

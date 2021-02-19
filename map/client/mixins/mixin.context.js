@@ -130,6 +130,11 @@ export default {
               east: targetParameters[1][1]
             }
           }
+        } else {
+          // Check for a home view
+          const response = await this.$api.getService('catalog').find({ query: { type: 'View', isDefault: true } })
+          const homeView = (response.data.length > 0 ? response.data[0] : null)
+          if (homeView) targetParameters = homeView
         }
       } else {
         targetParameters = this.getRouteContext(context)

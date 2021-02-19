@@ -33,7 +33,7 @@ export default function (name) {
         if (iconName || iconColor) {
           return {
             type: 'icon',
-            icon: { name: iconName, color: iconColor }
+            icon: { name: iconName, color: iconColor || 'primary' }
           }
         }
         const name = this.getName()
@@ -97,8 +97,8 @@ export default function (name) {
         }
         else this.clearActions()
       },
-      onItemSelected () {
-        this.$emit('item-selected', this.item)
+      onItemSelected (section) {
+        this.$emit('item-selected', this.item, section)
       }
     },
     beforeCreate () {
