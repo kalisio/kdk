@@ -67,7 +67,7 @@ export const Layout = {
     if (modes.includes(mode)) return mode
     else return _.head(modes)
   },
-  filterContent(content, filter) {
+  filterContent(content, filter = {}) {
     // Handle array and object case
     const isArray = Array.isArray(content)
     let filteredContent = (isArray ? content : [content])
@@ -81,7 +81,7 @@ export const Layout = {
     })
     return (isArray ? filteredContent : filteredContent[0])
   },
-  getComponents (content, mode, filter = {}) {
+  getComponents (content, mode, filter, context) {
     let components = []
     // Get component config for given mode if any
     if (Array.isArray(content)) {
@@ -98,7 +98,7 @@ export const Layout = {
       let isVisible = _.get(component, 'visible', true)
       // Can be a functional call
       if (typeof isVisible === 'function') {
-        isVisible = isVisible()
+        isVisible = isVisible(context)
       }
       if (isVisible) {
         // Define the component key

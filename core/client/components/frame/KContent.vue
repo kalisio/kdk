@@ -58,7 +58,7 @@ export default {
     components () {
       let components = []
       if (this.content) {
-        components = Layout.getComponents(this.content, this.mode, this.filter)
+        components = Layout.getComponents(this.content, this.mode, this.filter, this.context)
         _.forEach(components, (component) => {
           const { componentKey, componentName } = component
           // Load the component if needed: do not load any Quasar component and avoid loading twice
