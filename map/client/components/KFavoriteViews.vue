@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { KList } from '../../../core/client/components/collection'
 import { KForm } from '../../../core/client/components/form'
 
