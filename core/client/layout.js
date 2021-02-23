@@ -115,9 +115,7 @@ export const Layout = {
     return processedComponents
   },
   bindParam (param, context) {
-    return (typeof param === 'string') ?
-      (param.startsWith(':') ? _.get(context, param.substring(1)) : param) :
-      param
+    return (typeof param === 'string') ? (param.startsWith(':') ? _.get(context, param.substring(1)) : param) : param
   },
   bindParams (params, context) {
     // A parameter like :xxx means xxx is a property of the component, not a static value
@@ -137,16 +135,14 @@ export const Layout = {
     // we allow a property value instead of a function and a logical NOT
     const isNot = name.startsWith('!')
     if (isNot) name = name.substring(1)
-    let handler = _.get(context, name)
+    const handler = _.get(context, name)
     return (...args) => {
       let result
       // Function call or property value read ?
       if (typeof handler === 'function') {
         // Provided parameters or simply forward arguments ?
-        result = (params ?
-          handler(...this.bindParams(params, context)) :
-          handler(...args))
-      } else { 
+        result = (params ? handler(...this.bindParams(params, context)) : handler(...args))
+      } else {
         result = handler
       }
       // Logical NOT to be performed ?

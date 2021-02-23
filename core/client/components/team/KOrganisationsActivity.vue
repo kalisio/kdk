@@ -27,7 +27,7 @@
 import mixins from '../../mixins'
 
 export default {
-  name: 'k-organisations-activity',
+  name: 'organisations-activity',
   mixins: [mixins.baseActivity()],
   data () {
     return {

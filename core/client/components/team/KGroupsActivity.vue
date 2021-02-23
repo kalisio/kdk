@@ -17,7 +17,7 @@
 import mixins from '../../mixins'
 
 export default {
-  name: 'k-groups-activity',
+  name: 'groups-activity',
   mixins: [mixins.baseActivity()],
   props: {
     contextId: {
@@ -38,7 +38,7 @@ export default {
       },
       filter: this.$store.get('filter'),
       // Make this configurable from app
-      renderer: this.activityOptions.renderer || {
+      renderer: this.activityOptions || this.activityOptions.renderer || {
         component: 'team/KGroupCard'
       }
     }

@@ -12,7 +12,7 @@
         </div>
       </q-tab-panel>
       <q-tab-panel name="views">
-        <k-list ref="list" service="catalog" :renderer="viewRenderer" :base-query="{ type: 'View' }" @collection-refreshed="refreshViews" @selection-changed="selectView"/>
+        <k-list service="catalog" :renderer="viewRenderer" :base-query="{ type: 'View' }" @collection-refreshed="refreshViews" @selection-changed="selectView" />
       </q-tab-panel>
     </q-tab-panels>
   </div>

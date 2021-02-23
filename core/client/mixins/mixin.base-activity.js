@@ -182,13 +182,11 @@ export default function (name) {
           name = tourName
         }
         this.$store.patch('tours.current', { name })
-      },
-      
+      }
     },
     beforeCreate () {
       // Identify this activity using its name or the route name
-      if (name) this.activityName = name
-      else this.activityName = _.camelCase(this.$route.name)
+      this.activityName = name || _.camelCase(this.$options.name)
       // Setup the options
       this.activityOptions = this.$config(this.activityName)
     },

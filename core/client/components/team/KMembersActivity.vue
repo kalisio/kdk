@@ -22,7 +22,7 @@ import { getRoleForOrganisation } from '../../../common/permissions'
 const activityMixin = mixins.baseActivity()
 
 export default {
-  name: 'k-members-activity',
+  name: 'members-activity',
   mixins: [activityMixin],
   props: {
     contextId: {
