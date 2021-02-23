@@ -7,6 +7,7 @@ import 'leaflet-realtime'
 import { GradientPath } from '../../leaflet/GradientPath'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer'
 import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
+import * as wfs from '../../../common/wfs-utils'
 
 // Override default Leaflet GeoJson utility to manage some specific use cases
 const geometryToLayer = L.GeoJSON.geometryToLayer
@@ -101,6 +102,8 @@ export default {
           leafletOptions.removeMissing = false
           // Fetching is managed by tiles but even for manual update leaflet realtime require a src
           _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {})
+          // Generate fetch function for tiled feature layer
+          leafletOptions.featureSource = (query) => this.getFeatures(_.merge(query, options))
         } else {
           leafletOptions.removeMissing = !options.probeService
           let initialized = !options.probeService // If no probe reference, nothing to be initialized
@@ -126,6 +129,24 @@ export default {
               errorCallback(error)
             }
           })
+        }
+      } else if (options.wfs) {
+        // Features are fetched from a WFS connection
+        _.set(leafletOptions, 'start', false)
+        _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {})
+
+        if (leafletOptions.tiled) {
+          leafletOptions.removeMissing = false
+          // Generate fetch function for tiled feature layer
+          leafletOptions.featureSource = (query) => {
+            const more = {
+              OUTPUTFORMAT: 'GEOJSON', // request as geojson
+              SRSNAME: 'EPSG:4326', // result in 4326
+              BBOX: `${query.south},${query.west},${query.north},${query.east},EPSG:4326` // request bbox
+            }
+            return wfs.GetFeature(options.wfs.url, options.wfs.layers, more)
+          }
+        } else {
         }
       } else if (_.has(leafletOptions, 'sourceTemplate')) {
         const sourceCompiler = _.template(_.get(leafletOptions, 'sourceTemplate'))

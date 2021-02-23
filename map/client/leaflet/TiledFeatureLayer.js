@@ -14,6 +14,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
       const id = _.get(this.layer, 'featureId', '_id')
       return _.get(feature, 'properties.' + id, _.get(feature, id))
     }
+
+    this.featureSource = options.featureSource
   },
 
   setup (activity, layer) {
@@ -53,7 +55,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     if (this.layer.probeService) {
       promises.push(this.activity.getProbeFeatures(_.merge({ baseQuery }, this.layer)))
     }
-    promises.push(this.activity.getFeatures(_.merge({ baseQuery }, this.layer)))
+    promises.push(this.featureSource(baseQuery))
     Promise.all(promises).then(data => {
       if (tile.tileUnloaded) {
         // tile was unloaded before fetch completed
