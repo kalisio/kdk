@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="$t('KAddMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :route="true">
+  <k-modal ref="modal" :title="$t('KAddMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
     <div slot="modal-content" class="column xs-gutter">
       <k-form ref="form" :schema="getSchema()" />
     </div>

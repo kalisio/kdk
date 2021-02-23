@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="$t('KInviteMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :route="true">
+  <k-modal ref="modal" :title="$t('KInviteMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
     <div slot="modal-content">
       <q-tabs  align="justify" v-model="mode" inverted>
         <q-tab name="unique" icon="las la-user"  />

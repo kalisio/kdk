@@ -1,6 +1,6 @@
 <template>
   <div v-if="member !== null">
-    <k-modal ref="modal" :title="title" :toolbar="getToolbar()" :buttons="getButtons()" :route="true">
+    <k-modal ref="modal" :title="title" :toolbar="getToolbar()" :buttons="getButtons()" ::opened="true">
       <div slot="modal-content" class="column xs-gutter">
         <k-form ref="form" :schema="schema" />
       </div>
