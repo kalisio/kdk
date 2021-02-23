@@ -21,7 +21,7 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <k-panel id="item-actions" :content="itemActions" :context="{ item: props.row }" action-renderer="item" />
+            <k-panel id="item-actions" :content="itemActions" :context="{ item: props.row }" />
           </q-td>
         </template>
       </q-table>

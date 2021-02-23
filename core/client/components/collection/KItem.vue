@@ -27,7 +27,7 @@
     -->
     <slot name="item-actions">
       <q-item-section side>
-        <k-panel id="item-actions" :content="computedActions" :context="$props" action-renderer="item" />
+        <k-panel id="item-actions" :content="computedActions" :context="$props" />
       </q-item-section>
     </slot>
   </q-item>
