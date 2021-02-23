@@ -9,6 +9,7 @@ import { Loading, Dialog, uid } from 'quasar'
 import { setGatewayJwt, generatePropertiesSchema } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
 import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
+import * as wfs from '../../common/wfs-utils'
 
 export default function (name) {
   return {
@@ -70,6 +71,9 @@ export default function (name) {
           })
           this.registerFabAction({
             name: 'import-layer', label: this.$t('mixins.activity.IMPORT_LAYER'), icon: 'las la-file-import', handler: this.onImportLayer
+          })
+          this.registerFabAction({
+            name: 'connect-layer', label: this.$t('mixins.activity.CONNECT_LAYER'), icon: 'las la-plug', handler: this.onConnectLayer
           })
         }
         // Nav bar
@@ -413,7 +417,7 @@ export default function (name) {
           })
           if (!result.ok) return
         }
-        
+
         // Change data source from in-memory to features service
         _.merge(layer, {
           service: 'features',
@@ -700,6 +704,51 @@ export default function (name) {
             await this.updateLayer(layer.name, geoJson)
           }
           reader.readAsText(pickedFile)
+        })
+      },
+      async onConnectLayer () {
+        const dialog = await this.$createComponent('KLayerConnectDialog', {})
+        dialog.$mount()
+        dialog.open()
+        dialog.$on('connect', async (parameters) => {
+          const layer = {
+            name: parameters.name,
+            description: parameters.description,
+            type: 'OverlayLayer',
+            icon: parameters.icon,
+            [this.engine]: {
+              isVisible: true
+            }
+          }
+
+          const engine = layer[this.engine]
+
+          if (parameters.service === 'WMS') {
+            engine.type = 'tileLayer.wms'
+            engine.source = parameters.url
+            engine.layers = parameters.layer
+            engine.version = '1.3.0'
+            engine.format = 'image/png'
+            engine.transparent = true
+            engine.bgcolor = 'FFFFFF'
+          } else if (parameters.service === 'WFS') {
+            layer.isStyleEditable = true
+            layer.featureId = parameters.wfs.featureId
+            layer.wfs = {
+              url: parameters.url,
+              layers: parameters.layer
+            }
+
+            // generate properies schema using DescribeFeatureType request
+            const schema = await wfs.DescribeFeatureType(parameters.url, parameters.layer).then((json) => wfs.generatePropertiesSchema(json, layer.name))
+            _.set(layer, 'schema.content', schema)
+
+            engine.type = 'geoJson'
+            engine.realtime = true
+            engine.tiled = true
+          }
+
+          this.addLayer(layer)
         })
       },
       getProbeTimeRange () {

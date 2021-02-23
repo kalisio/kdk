@@ -5,25 +5,31 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wcs
 
-export function makeGetCapabilitiesQuery (url) {
-  return buildUrl(url, {
+export async function GetCapabilities (url) {
+  const query = buildUrl(url, {
     SERVICE: 'WCS',
     VERSION: '1.0.0',
     REQUEST: 'GetCapabilities'
   })
+  return fetch(query)
+    .then(response => response.text())
+    .then(txt => xml2js.parseStringPromise(txt))
 }
 
-export function makeDescribeCoverageQuery (url, coverage) {
-  return buildUrl(url, {
+export async function DescribeCoverage (url, coverage) {
+  const query = buildUrl(url, {
     SERVICE: 'WCS',
     VERSION: '1.0.0',
     REQUEST: 'DescribeCoverage',
     COVERAGE: coverage
   })
+  return fetch(query)
+    .then(response => response.text())
+    .then(txt => xml2js.parseStringPromise(txt))
 }
 
-export function makeGetCoverageQuery (url, coverage, format, bbox, width, height) {
-  return buildUrl(url, {
+export async function GetCoverage (abort, url, coverage, format, bbox, width, height) {
+  const query = buildUrl(url, {
     SERVICE: 'WCS',
     VERSION: '1.0.0',
     REQUEST: 'GetCoverage',
@@ -34,29 +40,19 @@ export function makeGetCoverageQuery (url, coverage, format, bbox, width, height
     HEIGHT: height,
     FORMAT: format
   })
-}
-
-export async function GetCapabilities (url) {
-  const query = makeGetCapabilitiesQuery(url)
-  return fetch(query)
-    .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
-}
-
-export async function DescribeCoverage (url, coverage) {
-  const query = makeDescribeCoverageQuery(url, coverage)
-  return fetch(query)
-    .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
-}
-
-export async function GetCoverage (abort, url, coverage, format, bbox, width, height) {
-  const query = makeGetCoverageQuery(url, coverage, format, bbox, width, height)
   return fetch(query, { method: 'get', signal: abort })
   // using a Blob is problematic with node.js since there's no support for it
   // instead use an ArrayBuffer
   // .then(response => response.blob())
     .then(response => response.arrayBuffer())
+}
+
+export function decodeCapabilities (caps) {
+  const decoded = {
+    availableLayers: []
+  }
+
+  return decoded
 }
 
 export function GetCoverageSpatialBounds (coverage) {

@@ -33,6 +33,7 @@
     "activity": {
       "CREATE_LAYER": "Create a new layer",
       "IMPORT_LAYER": "Import a local file to create a new layer",
+      "CONNECT_LAYER": "Connect to a remote server to create a new layer",
       "SAVE_LABEL": "Save layer",
       "SAVING_LABEL": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
@@ -396,5 +397,15 @@
     "TITLE": "Import layer",
     "INPUT_HINT": "Select a file",
     "IMPORT_BUTTON": "Import"
+  },
+  "KLayerConnectDialog": {
+    "TITLE": "Remote server connection",
+    "URL_HINT": "Server url ...",
+    "LAYER_HINT": "Select a remote layer ...",
+    "LAYER_NAME_HINT": "Layer name ...",
+    "LAYER_DESCRIPTION_HINT": "Layer description ...",
+    "FID_HINT": "Select a property to identify features ...",
+    "LAYER_STYLE_HINT": "Select a layer style ...",
+    "CONNECT_BUTTON": "Connect"
   }
 }

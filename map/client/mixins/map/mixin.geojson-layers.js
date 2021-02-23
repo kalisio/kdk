@@ -144,7 +144,7 @@ export default {
               SRSNAME: 'EPSG:4326', // result in 4326
               BBOX: `${query.south},${query.west},${query.north},${query.east},EPSG:4326` // request bbox
             }
-            return wfs.GetFeature(options.wfs.url, options.wfs.layers, more)
+            return wfs.GetFeature(options.wfs.url, options.wfs.layers, more, { xml2json: false })
           }
         } else {
         }

@@ -5,52 +5,39 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wfs
 
-function makeGetCapabilitiesQuery (url) {
-  return buildUrl(url, {
+export function GetCapabilities (url) {
+  const query = buildUrl(url, {
     SERVICE: 'WFS',
     REQUEST: 'GetCapabilities'
   })
+  return fetch(query)
+    .then(response => response.text())
+    .then(txt => xml2js.parseStringPromise(txt))
 }
 
-function makeDescribeFeatureType (url, typeNames, more = {}) {
-  return buildUrl(url, Object.assign({
+export function DescribeFeatureType (url, typeNames, more = {}) {
+  const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
     VERSION: '2.0.0',
     REQUEST: 'DescribeFeatureType',
     TYPENAMES: typeof typeNames === 'string' ? typeNames : typeNames.join(' ')
   }, more))
+  return fetch(query)
+    .then(response => response.text())
+    .then(txt => xml2js.parseStringPromise(txt))
 }
 
-function makeGetFeature (url, typeNames, more = {}) {
-  return buildUrl(url, Object.assign({
+export function GetFeature (url, typeNames, more = {}, { xml2json = true } = {}) {
+  const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
     VERSION: '2.0.0',
     REQUEST: 'GetFeature',
     TYPENAMES: typeof typeNames === 'string' ? typeNames : typeNames.join(' ')
   }, more))
-}
-
-function issueRequest (req) {
-  return fetch(req)
+  return xml2json ? fetch(query)
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt))
-}
-
-export function GetCapabilities (url) {
-  const query = makeGetCapabilitiesQuery(url)
-  return issueRequest(query)
-}
-
-export function DescribeFeatureType (url, typeNames, more = {}) {
-  const query = makeDescribeFeatureType(url, typeNames, more)
-  return issueRequest(query)
-}
-
-export function GetFeature (url, typeNames, more = {}, { xml2json = true } = {}) {
-  const query = makeGetFeature(url, typeNames, more)
-  // return issueRequest(query)
-  return fetch(query)
-    .then(response => response.json())
+    : fetch(query).then(response => response.json())
 }
 
 export function decodeCapabilities (caps) {
@@ -58,10 +45,8 @@ export function decodeCapabilities (caps) {
     availableLayers: []
   }
 
-  // console.log(caps)
-
   const layers = _.get(caps, 'wfs:WFS_Capabilities.wfs:FeatureTypeList[0].wfs:FeatureType')
-  decoded.availableLayers = layers.map(l => { return { name: l['wfs:Name'][0], title: l['wfs:Title'][0] } })
+  decoded.availableLayers = layers.map(l => { return { id: l['wfs:Name'][0], display: l['wfs:Title'][0] } })
 
   return decoded
 }

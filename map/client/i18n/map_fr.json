@@ -33,6 +33,7 @@
     "activity": {
       "CREATE_LAYER": "Créer une nouvelle couche",
       "IMPORT_LAYER": "Importer un fichier local pour créer une nouvelle couche",
+      "CONNECT_LAYER": "Se connecter à un serveur distant pour créer une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
@@ -397,5 +398,15 @@
     "TITLE": "Importer une couche",
     "INPUT_HINT": "Sélectionnez un fichier",
     "IMPORT_BUTTON": "Importer"
+  },
+  "KLayerConnectDialog": {
+    "TITLE": "Connexion à un serveur distant",
+    "URL_HINT": "Adresse du serveur ...",
+    "LAYER_HINT": "Sélectionnez une couche distante ...",
+    "LAYER_NAME_HINT": "Nom de la couche à créer ...",
+    "LAYER_DESCRIPTION_HINT": "Description de la couche à créer ...",
+    "FID_HINT": "Sélectionnez un propriété d'identification des éléménts ...",
+    "LAYER_STYLE_HINT": "Sélectionnez un style pour la couche ...",
+    "CONNECT_BUTTON": "Se connecter"
   }
 }
