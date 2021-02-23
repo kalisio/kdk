@@ -67,7 +67,7 @@ export const Layout = {
     if (modes.includes(mode)) return mode
     else return _.head(modes)
   },
-  filterContent(content, filter = {}) {
+  filterContent (content, filter = {}) {
     // Handle array and object case
     const isArray = Array.isArray(content)
     let filteredContent = (isArray ? content : [content])
@@ -92,7 +92,7 @@ export const Layout = {
     }
     // Apply filtering
     components = this.filterContent(components, filter)
-    let processedComponents = []
+    const processedComponents = []
     // Then create component objects
     _.forEach(components, (component) => {
       let isVisible = _.get(component, 'visible', true)

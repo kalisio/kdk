@@ -8,7 +8,7 @@
       <!--
         Router view to enable routing to modals
       -->
-      <router-view service="groups" :router="router()"></router-view>
+      <router-view service="groups"></router-view>
     </template>
   </k-page>
 </template>
@@ -40,14 +40,6 @@ export default {
       // Make this configurable from app
       renderer: this.activityOptions.renderer || {
         component: 'team/KGroupCard'
-      }
-    }
-  },
-  methods: {
-    router () {
-      return {
-        onApply: { name: 'groups-activity', params: { contextId: this.contextId } },
-        onDismiss: { name: 'groups-activity', params: { contextId: this.contextId } }
       }
     }
   },

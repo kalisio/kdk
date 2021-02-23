@@ -234,13 +234,12 @@ There are 2 ways to use the **k-modal-editor**:
 * by declaring the **k-modal-editor** directly in the parent component. Check out the code example [here](https://github.com/kalisio/kdk/blob/master/core/client/components/KOrganisationsPanel.vue)
 * by declaring a route using the the **KModalEditor**. In this case you must:
   * in the template section, define a `router-view` with the following properties:
-    *  the targeted `service`
-    *  the `router` function to be triggered when the editor is closed. The function should define the navigation routes when the user cancel or apply the changes in the editor
+    *  the targeted `service
   
 ```html
 <div>
   ....
-  <router-view service="groups" :router="router()"></router-view>
+  <router-view service="groups"></router-view>
 </div>
 ```
   

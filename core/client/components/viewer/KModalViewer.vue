@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="viewerTitle" :toolbar="toolbar" :buttons="[]" :route="router ? true : false" >
+  <k-modal ref="modal" :title="viewerTitle" :toolbar="toolbar" :buttons="[]">
     <div slot="modal-content">
       <k-view ref="view" :values="object" :schema="schema" />
     </div>
@@ -8,30 +8,25 @@
 
 <script>
 import mixins from '../../mixins'
+import { KModal } from '../frame'
 
 export default {
   name: 'k-modal-viewer',
+ components: {
+    KModal
+  },  
   mixins: [
     mixins.baseViewer,
     mixins.service,
     mixins.objectProxy,
     mixins.schemaProxy
   ],
-  props: {
-    router: {
-      type: Object,
-      default: () => { return null }
-    }
-  },
   data () {
     return {
       toolbar: [{
         id: 'close-viewer',
         icon: 'las la-times',
-        handler: () => {
-          this.close()
-          if (this.router) this.$router.push(this.router.onDismiss)
-        }
+        handler: () => this.close()
       }]
     }
   },
@@ -45,18 +40,15 @@ export default {
       this.$emit('closed')
     }
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => { 
+      vm.open()
+      vm.$on('closed', () => vm.$router.push(from))
+    })
+  },
   created () {
     // Loads the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-view'] = this.$load('form/KView')
-    // Refresh the editor only when using a router. Otherwise it will be done when opening the editor
-    if (this.router) this.refresh()
-    this.$on('applied', _ => {
-      if (this.router) {
-        this.close()
-        this.$router.push(this.router.onApply)
-      }
-    })
   }
 }
 </script>

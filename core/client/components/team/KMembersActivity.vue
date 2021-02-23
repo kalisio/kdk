@@ -9,7 +9,7 @@
       <!--
         Router view to enable routing to modals
       -->
-      <router-view service="members" :router="router()"></router-view>
+      <router-view service="members"></router-view>
     </template>
   </k-page>
 </template>
@@ -50,12 +50,6 @@ export default {
     }
   },
   methods: {
-    router () {
-      return {
-        onApply: { name: 'members-activity', params: { contextId: this.contextId } },
-        onDismiss: { name: 'members-activity', params: { contextId: this.contextId } }
-      }
-    },
     configureActivity () {
       activityMixin.methods.configureActivity.call(this)
       this.subscribeUsers()

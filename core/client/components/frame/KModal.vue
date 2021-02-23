@@ -69,10 +69,6 @@ export default {
         }
         return 'min-width: 40vw; max-height: 90vh'
       }
-    },
-    route: {
-      type: Boolean,
-      default: false
     }
   },
   data () {
@@ -96,9 +92,6 @@ export default {
   created () {
     // load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-  },
-  mounted () {
-    if (this.route) this.open()
   }
 }
 </script>

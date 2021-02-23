@@ -8,7 +8,7 @@
       <!--
         Router view to enable routing to modals
       -->
-      <router-view service="tags" :router="router()"></router-view>
+      <router-view service="tags"></router-view>
     </template>
   </k-page>
 </template>
@@ -40,14 +40,6 @@ export default {
       // Make this configurable from app
       renderer: this.activityOptions.renderer || {
         component: 'team/KTagCard'
-      }
-    }
-  },
-  methods: {
-    router () {
-      return {
-        onApply: { name: 'tags-activity', params: { contextId: this.contextId } },
-        onDismiss: { name: 'tags-activity', params: { contextId: this.contextId } }
       }
     }
   },
