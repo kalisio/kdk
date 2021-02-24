@@ -1,17 +1,23 @@
 <template>
   <div>
     <div v-if="items.length > 0" class="row">
-      <q-list class="col-12" highlight separator>
-        <template v-for="item in items">
-          <component :id="'item-' + item._id" :key="item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" @item-selected="onItemSelected"/>
-        </template>
-      </q-list>
+      <div class="col-12">
+        <q-list highlight separator>
+          <template v-for="item in items">
+            <component :id="'item-' + item._id" :key="item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" @item-selected="onItemSelected" />
+          </template>
+        </q-list>
+      </div>
       <div v-if="nbPages > 1" class="col-12">
-        <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
+        <div class="row justify-center">
+          <q-pagination v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true" />
+        </div>
       </div>
     </div>
-    <div v-else class="fixed-center">
-      <k-label :text="$t('KList.EMPTY_LIST')" icon-size="56px" />
+    <div v-else class="absolute-center">
+      <slot id="empty-list" name="empty-list">
+        <k-label :text="$t('KList.EMPTY_LIST')" icon-size="3rem" />
+      </slot>
     </div>
   </div>
 </template>
@@ -21,7 +27,10 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-list',
-  mixins: [mixins.service, mixins.baseCollection],
+  mixins: [
+    mixins.service, 
+    mixins.baseCollection
+  ],
   props: {
     renderer: {
       type: Object,

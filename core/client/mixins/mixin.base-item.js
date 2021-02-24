@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import sift from 'sift'
 import { getIconName, getInitials } from '../utils'
 import { Layout } from '../layout'
 
@@ -94,8 +93,7 @@ export default function (name) {
           // Apply filtering
           actions = Layout.filterContent(actions, _.get(this.itemOptions, 'filter', {}))
           this.setActions(actions)
-        }
-        else this.clearActions()
+        } else this.clearActions()
       },
       onItemSelected (section) {
         this.$emit('item-selected', this.item, section)
@@ -103,12 +101,9 @@ export default function (name) {
     },
     beforeCreate () {
       // Identify this item using its name or the route name
-      if (name) this.itemName = name
-      else {
-        this.itemName = _.camelCase(this.$route.name)
-        // Default association between activity and related items
-        if (this.itemName.endsWith('Activity')) this.itemName = this.itemName.replace('Activity', 'Items')
-      }
+      this.itemName = name || _.camelCase(this.$route.name)
+      // Default association between activity and related items
+      if (this.itemName.endsWith('Activity')) this.itemName = this.itemName.replace('Activity', 'Items')
       // Setup the options
       this.itemOptions = this.$config(this.itemName)
     },
@@ -123,4 +118,3 @@ export default function (name) {
     }
   }
 }
-

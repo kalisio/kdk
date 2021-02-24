@@ -1,35 +1,42 @@
 <template>
-  <div>
-    <q-tabs v-model="tab" >
-      <q-tab name="add" icon="las la-plus" :label="$t('KFavoriteViews.ADD_VIEW')" />
-      <q-tab name="views" icon="las la-star" :label="$t('KFavoriteViews.LIST_VIEWS')" />
-    </q-tabs>
-    <q-tab-panels v-model="tab" animated swipeable vertical transition-prev="jump-up" transition-next="jump-up" >
-      <q-tab-panel name="add">
-        <k-form ref="form" :schema="viewSchema" />
-        <div class="q-pa-sm row justify-center">
-          <q-btn :loading="savingView" color="secondary" id="local" :label="$t('KFavoriteViews.ADD_BUTTON')" @click="onAdd" v-close-popup/>
+  <q-card>
+    <q-card-section v-show="hasToolbar">
+      <k-panel id="favorite-views-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
+    </q-card-section> 
+    <q-card-section v-show="mode === 'list'">
+      <k-list 
+        style="min-height: 50px; min-width: 200px"
+        service="catalog" 
+        :renderer="viewRenderer" 
+        :nbItemsPerPage="8"
+        :base-query="baseQuery" 
+        :filter-query="filter.query" 
+        @collection-refreshed="refreshViews" 
+        @selection-changed="selectView">
+      </k-list>
+    </q-card-section>
+    <q-card-section v-if="mode === 'add'">
+      <div class="colum q-gutter-y-md">
+        <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
+        <div class="q-pa-sm row justify-end">
+          <q-btn :loading="savingView" color="secondary" id="local" :label="$t('KFavoriteViews.ADD_BUTTON')" @click="onAdd"  />
         </div>
-      </q-tab-panel>
-      <q-tab-panel name="views">
-        <k-list service="catalog" :renderer="viewRenderer" :base-query="{ type: 'View' }" @collection-refreshed="refreshViews" @selection-changed="selectView" />
-      </q-tab-panel>
-    </q-tab-panels>
-  </div>
+      </div>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script>
-import { KList } from '../../../core/client/components/collection'
+import _ from 'lodash'
 import { KForm } from '../../../core/client/components/form'
 
 export default {
   name: 'k-favorite-views',
   inject: ['kActivity'],
   components: {
-    KForm,
-    KList
+    KForm
   },
-  props: {
+ /* props: {
     viewRenderer: {
       type: Object,
       default: () => ({
@@ -39,15 +46,41 @@ export default {
             id: 'remove-view', 
             icon: 'las la-trash', 
             tooltip: 'KFavoriteViews.REMOVE_VIEW', 
-            handler: (context) => this.removeView(context.item)
+            handler: this.removeView
           }]
         }
       })
     }
+  }, */
+  computed: {
+    baseQuery () {
+      const alphaSortQuery = { $sort: { name: 1 } }
+      const timeSortQuery = { $sort: { createdAt: -1 } }
+      return Object.assign({ type: 'View' }, this.sort === 'alpha' ? alphaSortQuery : timeSortQuery)
+    },
+    hasToolbar () {
+      if (this.mode === 'list') return this.count > 0 || this.filter.patern !== ''
+      return this.count > 0
+    }
   },
   data () {
     return {
-      tab: 'add',
+      filter: this.$store.get('filter'),
+      mode: 'list',
+      sort: 'alpha',
+      count: 0,
+      toolbar: {
+        list: [
+          { id: 'sort-views', icon: 'las la-clock', tooltip: 'KFavoriteViews.SORT_ALPHA_VIEWS', toggle: { icon: 'las la-sort-alpha-down', color: 'grey-9', tooltip: 'KFavoriteViews.SORT_TIME_VIEWS' }, handler: (toggle) => this.sort = toggle ? 'time' : 'alpha' },
+          { component: 'collection/KFilter', style: "max-width: 200px;" },
+          { component: 'QSpace' },
+          { id: 'add-view', icon: 'img:statics/add-view-icon.png', tooltip: 'KFavoriteViews.NEW_VIEW', size: '1rem', handler: this.toggleMode }
+        ],
+        add: [
+          { id: 'list-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => this.mode = 'list' },
+          { component: 'QSpace'}
+        ],
+      },
       viewSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://www.kalisio.xyz/schemas/favorite-views.create.json#',
@@ -83,12 +116,25 @@ export default {
         },
         required: ['name']
       },
-      savingView: false
+      savingView: false,
+      viewRenderer: {
+        component: 'collection/KItem',
+        props: {
+          itemActions: [{ 
+            id: 'remove-view', 
+            icon: 'las la-trash', 
+            tooltip: 'KFavoriteViews.REMOVE_VIEW', 
+            handler: (context) => this.removeView(context.item)
+          }]
+        }
+      }
     }
   },
-  computed: {
-  },
   methods: {
+    toggleMode () {
+      if (this.mode === 'list') this.mode = 'add'
+      else this.mode = 'list'
+    },
     async onAdd () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
@@ -114,12 +160,18 @@ export default {
           throw error
         }
       }
+      this.mode = 'list'
     },
     refreshViews (data) {
-      data.items.forEach(view => {
-        // Add required icon
-        view.icon = { name: (view.isDefault ? 'las la-star' : 'star_border') }
-      })
+      this.count = data.items.length
+      if (this.count > 0) {
+        data.items.forEach(view => {
+          // Add required icon
+          view.icon = { name: (view.isDefault ? 'las la-star' : 'star_border') }
+        })
+      } else {
+        if (!this.filter.pattern) this.mode = 'add'
+      }
     },
     selectView (view, section) {
       // selecting the avatar makes the view the home view
@@ -142,6 +194,12 @@ export default {
     removeView (view) {
       this.$api.getService('catalog').remove(view._id)
     }
+  },
+  created () {
+    // Load the required components
+    this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    this.$options.components['k-list'] = this.$load('collection/KList')
   }
 }
 </script>

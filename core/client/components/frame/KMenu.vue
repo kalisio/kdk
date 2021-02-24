@@ -12,7 +12,9 @@
     :badge="badge"
     :tooltip="tooltip">
     <template v-slot:content>
-      <q-menu id="menu" :auto-close="autoClose">
+      <q-popup-proxy
+        :persistent="persistent" 
+        :auto-close="autoClose">
         <k-panel
           id="menu-entries"
           :content="content"
@@ -20,7 +22,7 @@
           :context="context"
           :action-renderer="actionRenderer"
           direction="vertical" />
-      </q-menu>
+      </q-popup-proxy>
     </template>
   </k-action>
 </template>
@@ -77,13 +79,17 @@ export default {
       type: Boolean,
       default: true
     },
+    persistent: {
+      type: Boolean,
+      default: false
+    },
     content: {
       type: [Object, Array],
       default: () => null
     },
     mode: {
       type: String,
-      default: () => undefined
+      default: undefined
     },
     context: {
       type: Object,

@@ -14,12 +14,8 @@
     -->
     <slot name="item-content">
       <q-item-section @click="onItemSelected('content')">
-        <slot name="item-label">
-          <q-item-label>{{ name }}</q-item-label>
-        </slot>
-        <slot name="item-sublabel">
-          <q-item-label caption>{{ description }}</q-item-label>
-        </slot>
+        <q-item-label>{{ name }}</q-item-label>
+        <q-item-label caption lines="2">{{ description }}</q-item-label>
       </q-item-section>
     </slot>
     <!--

@@ -26,8 +26,10 @@
         </template>
       </q-table>
     </div>
-    <div v-else class="fixed-center">
-      <k-label :text="$t('KTable.EMPTY_TABLE')" icon-size="56px" />
+    <div v-else class="absolute-center">
+      <div slot="empty-section">
+        <k-label :text="$t('KTable.EMPTY_TABLE')" icon-size="3rem" />
+      </div>
     </div>
   </div>
 </template>

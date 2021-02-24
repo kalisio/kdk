@@ -10,6 +10,9 @@
     :options="options"
     @filter="onSearch"
     @input="onSelected">
+    <template v-slot:prepend>
+      <q-icon class="q-pl-xs" dense name="search" />
+    </template>
     <template v-if="services.length" v-slot:no-option>
       <q-item>
         <q-item-section class="text-grey">{{$t('KAutocomplete.NO_RESULTS')}}</q-item-section>

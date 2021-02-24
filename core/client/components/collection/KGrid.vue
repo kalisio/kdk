@@ -10,8 +10,10 @@
         <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
       </div>
     </div>
-    <div v-else>
-      <k-label class="fixed-center" :text="$t('KGrid.EMPTY_GRID')" icon-size="56px" />
+    <div v-else class="absolute-center">
+      <slot id="empty-grid" name="empty-grid">
+        <k-label :text="$t('KGrid.EMPTY_GRID')" icon-size="3rem" />
+      </slot>
     </div>
   </div>
 </template>
