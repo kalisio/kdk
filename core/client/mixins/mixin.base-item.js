@@ -103,12 +103,9 @@ export default function (name) {
     },
     beforeCreate () {
       // Identify this item using its name or the route name
-      if (name) this.itemName = name
-      else {
-        this.itemName = _.camelCase(this.$route.name)
-        // Default association between activity and related items
-        if (this.itemName.endsWith('Activity')) this.itemName = this.itemName.replace('Activity', 'Items')
-      }
+      this.itemName = name || _.camelCase(this.$options.name)
+      // Default association between activity and related items
+      if (this.itemName.endsWith('Activity')) this.itemName = this.itemName.replace('Activity', 'Items')
       // Setup the options
       this.itemOptions = this.$config(this.itemName)
     },

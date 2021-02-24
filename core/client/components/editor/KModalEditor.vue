@@ -71,7 +71,7 @@ export default {
       vm.open()
       // redirect to the parent route when closing
       // see: https://github.com/vuejs/vue-router/issues/216
-      if (to.matched.length > 1) vm.$on('closed', () => vm.$router.push(to.matched.slice(-2).shift()))
+      if (to.matched.length > 1) vm.$on(['closed', 'applied'], () => vm.$router.push(to.matched.slice(-2).shift()))
     })
   }
 }
