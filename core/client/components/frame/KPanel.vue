@@ -1,9 +1,11 @@
 <template>
-  <k-content :id="id" v-bind="$props" :class="{
-    'row justify-center': direction === 'horizontal',
-    'column': direction === 'vertical'
-  }">
-  </k-content>
+  <k-content 
+    :id="id" 
+    v-bind="$props" 
+    :class="{
+      'row justify-center': direction === 'horizontal',
+      'column': direction === 'vertical'
+    }" />
 </template>
 
 <script>

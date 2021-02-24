@@ -66,9 +66,12 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    next(vm => { 
+    next(vm => {
+      // open the modal 
       vm.open()
-      vm.$on('closed', () => vm.$router.push(from))
+      // redirect to the parent route when closing
+      // see: https://github.com/vuejs/vue-router/issues/216
+      if (to.matched.length > 1) vm.$on('closed', () => vm.$router.push(to.matched.slice(-2).shift()))
     })
   }
 }
