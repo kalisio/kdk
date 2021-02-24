@@ -1,9 +1,9 @@
 <template>
   <k-modal ref="modal" :title="$t('KLayerConnectDialog.TITLE')" :buttons="getButtons()" :toolbar="getToolbar()">
     <div slot="modal-content">
-      <q-input v-model="url" @blur="onUrlLooseFocus" :label="$t('KLayerConnectDialog.URL_HINT')" :loading="detectingService" type="url">
+      <q-input v-model="url" @blur="onUrlLooseFocus" :label="$t('KLayerConnectDialog.URL_HINT')" type="url">
       </q-input>
-      <q-select v-model="selectedLayers" :options="availableLayers" :label="$t('KLayerConnectDialog.LAYER_HINT')" @input="onSelectedLayerChanged">
+      <q-select v-model="selectedLayers" :options="availableLayers" :label="$t('KLayerConnectDialog.LAYER_HINT')" :loading="detectingService" @input="onSelectedLayerChanged">
         <q-badge v-if="service" color="red" floating transparent>
           {{`${service}`}}
         </q-badge>
@@ -25,7 +25,7 @@
       </q-select>
       <q-select v-if="layerStyleRequired" v-model="selectedLayerStyle" :options="availableLayerStyles" label-color="red" :label="$t('KLayerConnectDialog.LAYER_STYLE_HINT')" @input="onSelectedLayerStyleChanged">
         <template v-slot:prepend>
-          <q-icon name="las la-id-card" />
+          <q-icon name="las la-palette" />
         </template>
       </q-select>
     </div>
@@ -125,15 +125,18 @@ export default {
         } else {
           // probe url using different service requests
           const attempts = [
-            { service: 'WMS', req: wms.GetCapabilities },
-            { service: 'WFS', req: wfs.GetCapabilities },
-            { service: 'WCS', req: wcs.GetCapabilities }
+            { service: 'WMS', expects: 'WMS_Capabilities', req: wms.GetCapabilities },
+            { service: 'WFS', expects: 'wfs:WFS_Capabilities', req: wfs.GetCapabilities },
+            { service: 'WCS', expects: '', req: wcs.GetCapabilities }
           ]
 
           for (const attempt of attempts) {
             try {
               capabilities = await attempt.req(probe.baseUrl)
-              if (capabilities) probe.service = attempt.service
+              if (capabilities && capabilities[attempt.expects]) {
+                 probe.service = attempt.service
+                 break
+              }
             } catch (err) {}
           }
         }
@@ -202,7 +205,7 @@ export default {
       if (this.detection) {
         this.service = this.detection.service
         this.featureIdRequired = this.detection.service === 'WFS'
-        // this.layerStyleRequired = this.detection.service === 'WMS'
+        this.layerStyleRequired = this.detection.service === 'WMS'
       }
     },
     async onSelectedLayerChanged (value) {
