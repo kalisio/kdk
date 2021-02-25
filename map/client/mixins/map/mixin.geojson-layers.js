@@ -139,11 +139,11 @@ export default {
           leafletOptions.removeMissing = false
           // Generate fetch function for tiled feature layer
           leafletOptions.featureSource = (query) => {
-            const more = {
+            const more = Object.assign({
               OUTPUTFORMAT: 'GEOJSON', // request as geojson
               SRSNAME: 'EPSG:4326', // result in 4326
               BBOX: `${query.south},${query.west},${query.north},${query.east},EPSG:4326` // request bbox
-            }
+            }, options.wfs.more)
             return wfs.GetFeature(options.wfs.url, options.wfs.layers, more, { xml2json: false })
           }
         } else {

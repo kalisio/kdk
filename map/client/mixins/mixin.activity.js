@@ -716,6 +716,7 @@ export default function (name) {
             description: parameters.description,
             type: 'OverlayLayer',
             icon: parameters.icon,
+            isRemovable: true,
             [this.engine]: {
               isVisible: true
             }
@@ -731,16 +732,19 @@ export default function (name) {
             engine.format = 'image/png'
             engine.transparent = true
             engine.bgcolor = 'FFFFFF'
+            Object.assign(engine, parameters.more)
           } else if (parameters.service === 'WFS') {
             layer.isStyleEditable = true
             layer.featureId = parameters.wfs.featureId
             layer.wfs = {
               url: parameters.url,
-              layers: parameters.layer
+              layers: parameters.layer,
+              more: parameters.more
             }
 
             // generate properies schema using DescribeFeatureType request
-            const schema = await wfs.DescribeFeatureType(parameters.url, parameters.layer).then((json) => wfs.generatePropertiesSchema(json, layer.name))
+            const schema = await wfs.DescribeFeatureType(parameters.url, parameters.layer, parameters.more)
+                                    .then((json) => wfs.generatePropertiesSchema(json, layer.name))
             _.set(layer, 'schema.content', schema)
 
             engine.type = 'geoJson'
