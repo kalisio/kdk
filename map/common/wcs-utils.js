@@ -5,31 +5,31 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wcs
 
-export async function GetCapabilities (url) {
-  const query = buildUrl(url, {
+export async function GetCapabilities (url, more = {}) {
+  const query = buildUrl(url, Object.assign({
     SERVICE: 'WCS',
     VERSION: '1.0.0',
     REQUEST: 'GetCapabilities'
-  })
+  }, more))
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
 }
 
-export async function DescribeCoverage (url, coverage) {
-  const query = buildUrl(url, {
+export async function DescribeCoverage (url, coverage, more = {}) {
+  const query = buildUrl(url, Object.assign({
     SERVICE: 'WCS',
     VERSION: '1.0.0',
     REQUEST: 'DescribeCoverage',
     COVERAGE: coverage
-  })
+  }, more))
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
 }
 
-export async function GetCoverage (abort, url, coverage, format, bbox, width, height) {
-  const query = buildUrl(url, {
+export async function GetCoverage (abort, url, coverage, format, bbox, width, height, more = {}) {
+  const query = buildUrl(url, Object.assign({
     SERVICE: 'WCS',
     VERSION: '1.0.0',
     REQUEST: 'GetCoverage',
@@ -39,7 +39,7 @@ export async function GetCoverage (abort, url, coverage, format, bbox, width, he
     WIDTH: width,
     HEIGHT: height,
     FORMAT: format
-  })
+  }, more))
   return fetch(query, { method: 'get', signal: abort })
   // using a Blob is problematic with node.js since there's no support for it
   // instead use an ArrayBuffer

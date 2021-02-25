@@ -5,14 +5,14 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wms
 
-export function GetCapabilities (url) {
-  const query = buildUrl(url, {
+export function GetCapabilities (url, more = {}) {
+  const query = buildUrl(url, Object.assign({
     SERVICE: 'WMS',
     REQUEST: 'GetCapabilities'
-  })
+  }, more))
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
 }
 
 export function decodeCapabilities (caps) {
@@ -20,7 +20,6 @@ export function decodeCapabilities (caps) {
     availableLayers: []
   }
 
-  // robin: i've seen Layer being children of other Layer ...
   const root = _.get(caps, 'WMS_Capabilities.Capability[0].Layer')
   if (root) {
     const flat = root.slice()

@@ -5,14 +5,14 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wfs
 
-export function GetCapabilities (url) {
-  const query = buildUrl(url, {
+export function GetCapabilities (url, more = {}) {
+  const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
     REQUEST: 'GetCapabilities'
-  })
+  }, more))
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
 }
 
 export function DescribeFeatureType (url, typeNames, more = {}) {
@@ -24,7 +24,7 @@ export function DescribeFeatureType (url, typeNames, more = {}) {
   }, more))
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
 }
 
 export function GetFeature (url, typeNames, more = {}, { xml2json = true } = {}) {
@@ -36,7 +36,7 @@ export function GetFeature (url, typeNames, more = {}, { xml2json = true } = {})
   }, more))
   return xml2json ? fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
     : fetch(query).then(response => response.json())
 }
 
@@ -45,8 +45,8 @@ export function decodeCapabilities (caps) {
     availableLayers: []
   }
 
-  const layers = _.get(caps, 'wfs:WFS_Capabilities.wfs:FeatureTypeList[0].wfs:FeatureType')
-  decoded.availableLayers = layers.map(l => { return { id: l['wfs:Name'][0], display: l['wfs:Title'][0] } })
+  const layers = _.get(caps, 'WFS_Capabilities.FeatureTypeList[0].FeatureType')
+  decoded.availableLayers = layers.map(l => { return { id: l.Name[0], display: l.Title[0] } })
 
   return decoded
 }
@@ -56,7 +56,7 @@ export function decodeFeatureType (json) {
     properties: []
   }
 
-  const elements = _.get(json, 'xsd:schema.xsd:complexType[0].xsd:complexContent[0].xsd:extension[0].xsd:sequence[0].xsd:element')
+  const elements = _.get(json, 'schema.complexType[0].complexContent[0].extension[0].sequence[0].element')
   for (const element of elements) {
     if (element.$.name === 'shape')
       continue
@@ -64,16 +64,16 @@ export function decodeFeatureType (json) {
     const prop = { name: element.$.name, type: '' }
 
     if (element.$.type) {
-      if (element.$.type === 'xsd:int') prop.type = 'number'
-      // else if (element.$.type === '')
+      if (element.$.type === 'xsd:int' || element.$.type === 'int') prop.type = 'number'
+      else if (element.$.type === 'xsd:string' || element.$.type === 'string') prop.type = 'string'
       else console.log(`wfs-utils: unkown prop type ${element.$.type}`)
-    } else if (element['xsd:simpleType']) {
-      const root = _.get(element, 'xsd:simpleType[0].xsd:restriction[0]')
+    } else if (element.simpleType) {
+      const root = _.get(element, 'simpleType[0].restriction[0]')
       if (root) {
-        if (root.$.base === 'xsd:string') {
+        if (root.$.base === 'xsd:string' || root.$.base === 'string') {
           prop.type = 'string'
-          if (root['xsd:maxLength']) {
-            prop.maxLength = _.get(root, 'xsd:maxLength[0].$.value')
+          if (root.maxLength) {
+            prop.maxLength = _.get(root, 'maxLength[0].$.value')
           }
         }
       }
