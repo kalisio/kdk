@@ -391,9 +391,9 @@
   },
   "KFavoriteViews": {
     "FAVORITE_VIEWS_LABEL": "Vues favorites",
-    "LIST_VIEWS": "Vues enregistrées",
-    "ADD_VIEW": "Ajouter une vue",
-    "ADD_BUTTON": "Ajouter",
+    "SORT_VIEWS": "Trier les vues",
+    "CREATE_VIEW": "Créer une nouvelle vue",
+    "ADD_BUTTON": "OK",
     "REMOVE_VIEW": "$t(REMOVE)",
     "FAVORITE_VIEW_CREATE_TITLE": "Créer une nouvelle vue ?",
     "FAVORITE_VIEW_NAME_FIELD_HELPER": "Saisissez le nom de la vue",

@@ -4,16 +4,21 @@
     :id="id"
     :label="label"
     :tooltip="tooltip"
-    :icon="icon"
+    :icon="computedIcon"
     :color="color"
     :size="size"
-    :badge="badge"
+    :badge="computedBadge"
     :disabled="disabled">
     <template v-slot:content>
-      <q-menu :id="`${id}-menu`"  transition-show="scale" transition-hide="scale" auto-close>
+      <q-menu :id="`${id}-menu`" ref="menu" transition-show="scale" transition-hide="scale">
         <q-list>
-          <q-item v-for="option in options" :key="option.value" clickable @click="onClicked(option)">
-            <q-item-section>{{ option.label }}</q-item-section>
+          <q-item v-for="option in computedOptions" :key="option.value" clickable @click="onClicked(option)">
+            <q-item-section v-if="option.icon">
+              <q-icon :name="option.icon" size="1.5rem" />
+            </q-item-section>
+            <q-item-section v-if="option.lablel">
+              {{ option.label }}
+            </q-item-section>
           </q-item>
         </q-list>
       </q-menu>
@@ -49,7 +54,7 @@ export default {
     },
     size: {
       type: String,
-      default: 'sm'
+      default: 'md'
     },
     options: {
       type: [Array],
@@ -61,8 +66,20 @@ export default {
     }
   },
   computed: {
-    badge () {
-      return Object.assign({ floating: true, color: 'secondary' }, this.option)
+    computedOptions () {
+      return _.filter(this.options, (option) => { return option.value != this.option.value })
+    },
+    computedIcon () {
+      if (this.option) {
+        return this.option.icon || this.icon
+      }
+      return undefined
+    },
+    computedBadge () {
+      if (this.option) {
+        if (this.option.badge) return { floating: true, color: 'secondary', label: this.option.badge }
+      }
+      return undefined
     },
     hasOptions () {
       return this.options.length > 0
@@ -77,6 +94,7 @@ export default {
     onClicked (option) {
       this.option = option
       this.$emit('option-chosen', option.value)
+      this.$refs.menu.hide()
     }
   },
   created () {

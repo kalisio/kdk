@@ -36,27 +36,9 @@ export default {
   components: {
     KForm
   },
- /* props: {
-    viewRenderer: {
-      type: Object,
-      default: () => ({
-        component: 'collection/KItem',
-        props: {
-          itemActions: [{ 
-            id: 'remove-view', 
-            icon: 'las la-trash', 
-            tooltip: 'KFavoriteViews.REMOVE_VIEW', 
-            handler: this.removeView
-          }]
-        }
-      })
-    }
-  }, */
   computed: {
     baseQuery () {
-      const alphaSortQuery = { $sort: { name: 1 } }
-      const timeSortQuery = { $sort: { createdAt: -1 } }
-      return Object.assign({ type: 'View' }, this.sort === 'alpha' ? alphaSortQuery : timeSortQuery)
+      return Object.assign({ type: 'View' }, this.sort)
     },
     hasToolbar () {
       if (this.mode === 'list') return this.count > 0 || this.filter.patern !== ''
@@ -67,14 +49,25 @@ export default {
     return {
       filter: this.$store.get('filter'),
       mode: 'list',
-      sort: 'alpha',
+      sort: { $sort: { name: 1 } },
       count: 0,
       toolbar: {
         list: [
-          { id: 'sort-views', icon: 'las la-clock', tooltip: 'KFavoriteViews.SORT_ALPHA_VIEWS', toggle: { icon: 'las la-sort-alpha-down', color: 'grey-9', tooltip: 'KFavoriteViews.SORT_TIME_VIEWS' }, handler: (toggle) => this.sort = toggle ? 'time' : 'alpha' },
+          {
+            component: 'input/KOptionsChooser',
+            id: 'sorter-options',
+            tooltip: 'KFavoriteViews.SORT',
+            options: [
+              { icon: 'las la-sort-alpha-down', value: 'alpha-down', default: true },
+              { icon: 'las la-sort-alpha-up', value: 'alpha-up' },
+              { icon: 'img:statics/sort-clockwise-icon.png', value: 'time-clockwise' },
+              { icon: 'img:statics/sort-anticlockwise-icon.png', value: 'time-anticlockwise' }
+            ],
+            on: { event: 'option-chosen', listener: this.onSortUpdated }
+          },
           { component: 'collection/KFilter', style: "max-width: 200px;" },
           { component: 'QSpace' },
-          { id: 'add-view', icon: 'img:statics/add-view-icon.png', tooltip: 'KFavoriteViews.NEW_VIEW', size: '1rem', handler: this.toggleMode }
+          { id: 'add-view', icon: 'img:statics/add-view-icon.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => this.mode = 'add' }
         ],
         add: [
           { id: 'list-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => this.mode = 'list' },
@@ -131,9 +124,21 @@ export default {
     }
   },
   methods: {
-    toggleMode () {
-      if (this.mode === 'list') this.mode = 'add'
-      else this.mode = 'list'
+    onSortUpdated (sort) {
+      switch (sort) {
+        case 'alpha-down':
+          this.sort = { $sort: { name: 1 } }
+          break
+        case 'alpha-up':
+          this.sort = { $sort: { name: -1 } }
+          break
+        case 'time-clockwise': 
+          this.sort = { $sort: { updatedAt: 1 } }
+          break
+        case 'time-anticlockwise':
+          this.sort = { $sort: { updatedAt: -1 } }
+          break
+      }
     },
     async onAdd () {
       const result = this.$refs.form.validate()

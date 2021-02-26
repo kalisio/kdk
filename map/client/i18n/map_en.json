@@ -390,9 +390,9 @@
   },
   "KFavoriteViews": {
     "FAVORITE_VIEWS_LABEL": "Favorite views",
-    "LIST_VIEWS": "Saved views",
-    "ADD_VIEW": "Add a view",
-    "ADD_BUTTON": "Add",
+    "SORT_VIEWS": "Sort views",
+    "CREATE_VIEW": "Create a new view",
+    "ADD_BUTTON": "OK",
     "REMOVE_VIEW": "$t(REMOVE)",
     "FAVORITE_VIEW_CREATE_TITLE": "Create a new view ?",
     "FAVORITE_VIEW_NAME_FIELD_HELPER": "Enter the name of this view",
