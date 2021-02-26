@@ -5,33 +5,34 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wcs
 
-export async function GetCapabilities (url, more = {}) {
-  const query = buildUrl(url, Object.assign({
-    SERVICE: 'WCS',
-    VERSION: '1.0.0',
-    REQUEST: 'GetCapabilities'
-  }, more))
+export function fetchAsJson (query, {} = {}) {
   return fetch(query)
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
 }
 
-export async function DescribeCoverage (url, coverage, more = {}) {
+export async function GetCapabilities (url, searchParams = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WCS',
-    VERSION: '1.0.0',
+    REQUEST: 'GetCapabilities'
+  }, searchParams))
+  return fetchAsJson(query)
+}
+
+export async function DescribeCoverage (url, version, coverage, searchParams = {}) {
+  const query = buildUrl(url, Object.assign({
+    SERVICE: 'WCS',
+    VERSION: version,
     REQUEST: 'DescribeCoverage',
     COVERAGE: coverage
-  }, more))
-  return fetch(query)
-    .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+  }, searchParams))
+  return fetchAsJson(query)
 }
 
-export async function GetCoverage (abort, url, coverage, format, bbox, width, height, more = {}) {
+export async function GetCoverage (abort, url, version, coverage, format, bbox, width, height, searchParams = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WCS',
-    VERSION: '1.0.0',
+    VERSION: version,
     REQUEST: 'GetCoverage',
     COVERAGE: coverage,
     CRS: 'EPSG:4326',
@@ -39,7 +40,7 @@ export async function GetCoverage (abort, url, coverage, format, bbox, width, he
     WIDTH: width,
     HEIGHT: height,
     FORMAT: format
-  }, more))
+  }, searchParams))
   return fetch(query, { method: 'get', signal: abort })
   // using a Blob is problematic with node.js since there's no support for it
   // instead use an ArrayBuffer

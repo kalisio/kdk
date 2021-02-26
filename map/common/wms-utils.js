@@ -5,18 +5,23 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wms
 
-export function GetCapabilities (url, more = {}) {
-  const query = buildUrl(url, Object.assign({
-    SERVICE: 'WMS',
-    REQUEST: 'GetCapabilities'
-  }, more))
+export function fetchAsJson (query, {} = {}) {
   return fetch(query)
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
 }
 
-export function decodeCapabilities (caps) {
+export function GetCapabilities (url, searchParams = {}) {
+  const query = buildUrl(url, Object.assign({
+    SERVICE: 'WMS',
+    REQUEST: 'GetCapabilities'
+  }, searchParams))
+  return fetchAsJson(query)
+}
+
+export function decodeCapabilities (caps, version = '') {
   const decoded = {
+    version: _.get(caps, 'WMS_Capabilities.$.version'),
     availableLayers: []
   }
 

@@ -5,43 +5,43 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wfs
 
-export function GetCapabilities (url, more = {}) {
+export function fetchAsJson (query, {} = {}) {
+  return fetch(query)
+    .then(response => response.text())
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+}
+
+export function GetCapabilities (url, searchParams = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
     REQUEST: 'GetCapabilities'
-  }, more))
-  return fetch(query)
-    .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+  }, searchParams))
+  return fetchAsJson(query)
 }
 
-export function DescribeFeatureType (url, typeNames, more = {}) {
+export function DescribeFeatureType (url, version, typeNames, searchParams = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
-    VERSION: '2.0.0',
+    VERSION: version,
     REQUEST: 'DescribeFeatureType',
     TYPENAMES: typeof typeNames === 'string' ? typeNames : typeNames.join(' ')
-  }, more))
-  return fetch(query)
-    .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+  }, searchParams))
+  return fetchAsJson(query)
 }
 
-export function GetFeature (url, typeNames, more = {}, { xml2json = true } = {}) {
+export function GetFeature (url, version, typeNames, searchParams = {}, { xml2json = true } = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
-    VERSION: '2.0.0',
+    VERSION: version,
     REQUEST: 'GetFeature',
     TYPENAMES: typeof typeNames === 'string' ? typeNames : typeNames.join(' ')
-  }, more))
-  return xml2json ? fetch(query)
-    .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
-    : fetch(query).then(response => response.json())
+  }, searchParams))
+  return xml2json ? fetchAsJson(query) : fetch(query).then(response => response.json())
 }
 
-export function decodeCapabilities (caps) {
+export function decodeCapabilities (caps, version = '') {
   const decoded = {
+    version: _.get(caps, 'WFS_Capabilities.$.version'),
     availableLayers: []
   }
 
