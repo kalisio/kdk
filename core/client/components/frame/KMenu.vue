@@ -13,7 +13,7 @@
     :tooltip="tooltip">
     <template v-slot:content>
       <q-popup-proxy
-        :persistent="persistent" 
+        :persistent="persistent"
         :auto-close="autoClose">
         <k-panel
           id="menu-entries"

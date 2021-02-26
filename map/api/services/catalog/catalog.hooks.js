@@ -5,7 +5,7 @@ module.exports = {
   before: {
     all: [],
     find: [hook => {
-      let query = _.get(hook, 'params.query', {})
+      const query = _.get(hook, 'params.query', {})
       // By default we only return layers and not views
       if (!query.type) query.type = { $ne: 'View' }
       _.set(hook, 'params.query', query)

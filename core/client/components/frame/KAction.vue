@@ -196,7 +196,7 @@ export default {
         .filter(([key, value]) => (typeof value === 'string') && value.startsWith(':'))
         .map(([key, value]) => [key, value.substring(1)])
       // Merge static/dynamic params to build full list
-      let params = _.pick(targetParams, staticParams)
+      const params = _.pick(targetParams, staticParams)
       dynamicParams.forEach(([key, value]) => {
         // If dynamic param is not available in route use this context
         if (_.has(currentParams, value)) _.set(params, key, _.get(currentParams, value))

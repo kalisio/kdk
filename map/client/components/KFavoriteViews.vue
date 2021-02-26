@@ -2,16 +2,16 @@
   <q-card>
     <q-card-section v-show="hasToolbar">
       <k-panel id="favorite-views-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
-    </q-card-section> 
+    </q-card-section>
     <q-card-section v-show="mode === 'list'">
-      <k-list 
+      <k-list
         style="min-height: 50px; min-width: 200px"
-        service="catalog" 
-        :renderer="viewRenderer" 
+        service="catalog"
+        :renderer="viewRenderer"
         :nbItemsPerPage="8"
-        :base-query="baseQuery" 
-        :filter-query="filter.query" 
-        @collection-refreshed="refreshViews" 
+        :base-query="baseQuery"
+        :filter-query="filter.query"
+        @collection-refreshed="refreshViews"
         @selection-changed="selectView">
       </k-list>
     </q-card-section>
@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { KForm } from '../../../core/client/components/form'
 
 export default {
@@ -65,14 +64,14 @@ export default {
             ],
             on: { event: 'option-chosen', listener: this.onSortUpdated }
           },
-          { component: 'collection/KFilter', style: "max-width: 200px;" },
+          { component: 'collection/KFilter', style: 'max-width: 200px;' },
           { component: 'QSpace' },
-          { id: 'add-view', icon: 'img:statics/add-view-icon.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => this.mode = 'add' }
+          { id: 'add-view', icon: 'img:statics/add-view-icon.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => { this.mode = 'add' } }
         ],
         add: [
-          { id: 'list-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => this.mode = 'list' },
-          { component: 'QSpace'}
-        ],
+          { id: 'list-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => { this.mode = 'list' } },
+          { component: 'QSpace' }
+        ]
       },
       viewSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
@@ -82,7 +81,7 @@ export default {
         type: 'object',
         properties: {
           name: {
-            type: 'string', 
+            type: 'string',
             maxLength: 128,
             minLength: 3,
             field: {
@@ -91,7 +90,7 @@ export default {
             }
           },
           description: {
-            type: 'string', 
+            type: 'string',
             maxLength: 256,
             field: {
               component: 'form/KTextField',
@@ -99,7 +98,7 @@ export default {
             }
           },
           layers: {
-            type: 'boolean', 
+            type: 'boolean',
             default: false,
             field: {
               component: 'form/KToggleField',
@@ -113,10 +112,10 @@ export default {
       viewRenderer: {
         component: 'collection/KItem',
         props: {
-          itemActions: [{ 
-            id: 'remove-view', 
-            icon: 'las la-trash', 
-            tooltip: 'KFavoriteViews.REMOVE_VIEW', 
+          itemActions: [{
+            id: 'remove-view',
+            icon: 'las la-trash',
+            tooltip: 'KFavoriteViews.REMOVE_VIEW',
             handler: (context) => this.removeView(context.item)
           }]
         }
@@ -132,7 +131,7 @@ export default {
         case 'alpha-up':
           this.sort = { $sort: { name: -1 } }
           break
-        case 'time-clockwise': 
+        case 'time-clockwise':
           this.sort = { $sort: { updatedAt: 1 } }
           break
         case 'time-anticlockwise':
@@ -143,7 +142,7 @@ export default {
     async onAdd () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
-        let view = result.values
+        const view = result.values
         const hasLayers = view.layers
         // This flag is only useful in the form but will be replaced
         // by the actual layers when processed

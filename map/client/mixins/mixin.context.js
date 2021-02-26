@@ -55,7 +55,7 @@ export default {
       // We catch as replacing with similar params raises a duplicate navigation error
       this.$router.replace(route).catch(_ => {})
     },
-    getContextParameters(context) {
+    getContextParameters (context) {
       let targetParameters
       switch (context) {
         case 'layers':
@@ -74,7 +74,7 @@ export default {
       }
       return targetParameters
     },
-    async setContextParameters(context, targetParameters) {
+    async setContextParameters (context, targetParameters) {
       switch (context) {
         case 'layers':
           if (!_.has(targetParameters, 'layers')) return

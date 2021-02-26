@@ -28,7 +28,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-list',
   mixins: [
-    mixins.service, 
+    mixins.service,
     mixins.baseCollection
   ],
   props: {

@@ -14,7 +14,7 @@ export default {
   name: 'k-modal-viewer',
   components: {
     KModal
-  },  
+  },
   mixins: [
     mixins.baseViewer,
     mixins.service,
@@ -40,17 +40,17 @@ export default {
       this.$emit('closed')
     }
   },
-    beforeRouteEnter (to, from, next) {
-      next(vm => {
-        // open the modal 
-        vm.open()
-        // redirect to the parent route when closing
-        if (to.matched.length > 1) vm.$on('closed', () => vm.$router.push(to.matched.slice(-2).shift()))
-      })
-    },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // open the modal
+      vm.open()
+      // redirect to the parent route when closing
+      if (to.matched.length > 1) vm.$on('closed', () => vm.$router.push(to.matched.slice(-2).shift()))
+    })
+  },
   created () {
     // Loads the required components
-    this.$options.components['k-view'] = this.$load('form/KView')    
+    this.$options.components['k-view'] = this.$load('form/KView')
   }
 }
 </script>

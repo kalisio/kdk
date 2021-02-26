@@ -67,7 +67,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      // open the modal 
+      // open the modal
       vm.open()
       // redirect to the parent route when closing
       // see: https://github.com/vuejs/vue-router/issues/216

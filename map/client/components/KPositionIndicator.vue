@@ -63,7 +63,7 @@ export default {
       id: 'position-target', component: 'QIcon', name: 'las la-plus', color: this.color, size: this.size, class: 'fixed-center position-indicator'
     }]
     Layout.bindContent(target, this.kActivity)
-    let content = this.$store.get('page.content', [])
+    const content = this.$store.get('page.content', [])
     // Required to use splice when modifying an object inside an array to make it reactive
     content.splice(content.length, 0, target[0])
     this.$store.patch('page', { content })
@@ -85,4 +85,3 @@ export default {
     background-color: #00000020
  }
 </style>
-
