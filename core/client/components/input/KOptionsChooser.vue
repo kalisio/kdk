@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     computedOptions () {
-      return _.filter(this.options, (option) => { return option.value != this.option.value })
+      return _.filter(this.options, (option) => { return option.value !== this.option.value })
     },
     computedIcon () {
       if (this.option) {
