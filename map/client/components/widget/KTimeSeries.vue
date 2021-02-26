@@ -424,13 +424,13 @@ export default {
         icon: 'las la-history',
         tooltip: 'KTimeSeries.SPAN',
         options: [
-          { label: '3H', value: 180 },
-          { label: '6H', value: 360 },
-          { label: '12H', value: 720, default: true },
-          { label: '24H', value: 1440 },
-          { label: '48H', value: 2880 },
-          { label: '72H', value: 4320 },
-          { label: '96H', value: 5760 }
+          { badge: '3H', value: 180 },
+          { badge: '6H', value: 360 },
+          { badge: '12H', value: 720, default: true },
+          { badge: '24H', value: 1440 },
+          { badge: '48H', value: 2880 },
+          { badge: '72H', value: 4320 },
+          { badge: '96H', value: 5760 }
         ],
         on: { event: 'option-chosen', listener: this.onUpdateSpan }
       }
