@@ -707,53 +707,37 @@ export default function (name) {
         })
       },
       async onConnectLayer () {
-        const dialog = await this.$createComponent('KLayerConnectDialog', {})
+        // scan layers to find already used remote urls
+        const availableUrls = new Set()
+        for (const id in this.layers) {
+          const layer = this.layers[id]
+          // search for wms/wfs server urls ...
+          if (layer.wfs) {
+            let url = `${layer.wfs.url}?SERVICE=WFS&REQUEST=GetCapabilities`
+            if (layer.wfs.version) url += `&VERSION=${layer.wfs.version}`
+            availableUrls.add(url)
+          } else if (_.get(layer, 'leaflet.type') === 'tileLayer.wms') {
+            let url = `${layer.leaflet.source}?SERVICE=WMS&REQUEST=GetCapabilities`
+            if (layer.leaflet.version) url += `&VERSION=${layer.leaflet.version}`
+            availableUrls.add(url)
+          }
+        }
+        const dialog = await this.$createComponent('KLayerConnectDialog', {
+          propsData: {
+            availableUrls: Array.from(availableUrls.values()),
+            baseLayer: {
+              type: 'OverlayLayer',
+              icon: 'las la-plug',
+              isRemovable: true,
+              [this.engine]: {
+                isVisible: true
+              }
+            }
+          }
+        })
         dialog.$mount()
         dialog.open()
-        dialog.$on('connect', async (parameters) => {
-          const layer = {
-            name: parameters.name,
-            description: parameters.description,
-            type: 'OverlayLayer',
-            icon: parameters.icon,
-            isRemovable: true,
-            [this.engine]: {
-              isVisible: true
-            }
-          }
-
-          const engine = layer[this.engine]
-
-          if (parameters.service === 'WMS') {
-            engine.type = 'tileLayer.wms'
-            engine.source = parameters.url
-            engine.layers = parameters.layer
-            engine.version = '1.3.0'
-            engine.format = 'image/png'
-            engine.transparent = true
-            engine.bgcolor = 'FFFFFF'
-            Object.assign(engine, parameters.more)
-          } else if (parameters.service === 'WFS') {
-            layer.isStyleEditable = true
-            layer.featureId = parameters.wfs.featureId
-            layer.wfs = {
-              url: parameters.url,
-              layers: parameters.layer,
-              more: parameters.more
-            }
-
-            // generate properies schema using DescribeFeatureType request
-            const schema = await wfs.DescribeFeatureType(parameters.url, parameters.layer, parameters.more)
-                                    .then((json) => wfs.generatePropertiesSchema(json, layer.name))
-            _.set(layer, 'schema.content', schema)
-
-            engine.type = 'geoJson'
-            engine.realtime = true
-            engine.tiled = true
-          }
-
-          this.addLayer(layer)
-        })
+        dialog.$on('applied', createdLayer => this.addLayer(createdLayer))
       },
       getProbeTimeRange () {
         const start = this.currentTime.clone()
