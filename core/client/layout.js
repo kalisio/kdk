@@ -83,6 +83,7 @@ export const Layout = {
   },
   getComponents (content, mode, filter, context) {
     let components = []
+
     // Get component config for given mode if any
     if (Array.isArray(content)) {
       components = content
@@ -105,11 +106,10 @@ export const Layout = {
         const componentName = _.get(component, 'component', 'frame/KAction')
         const componentKey = _.kebabCase(path.basename(componentName))
         // Clone the component and add the required props
-        const clone = _.clone(component)
-        clone.componentName = componentName
-        clone.componentKey = componentKey
-        clone.uid = uid()
-        processedComponents.push(clone)
+        component.componentName = componentName
+        component.componentKey = componentKey
+        component.uid = uid()
+        processedComponents.push(component)
       }
     })
     return processedComponents

@@ -4,7 +4,14 @@
       <!--
         Groups collection
       -->
-      <k-grid ref="groups" :contextId="contextId" service="groups" :renderer="renderer" :base-query="baseQuery" :filter-query="filter.query" :list-strategy="'smart'" />
+      <k-grid
+        id="groups-grid"
+        :contextId="contextId" 
+        service="groups"
+        :renderer="renderer"
+        :base-query="baseQuery" 
+        :filter-query="filter.query"
+        :list-strategy="'smart'" />
       <!--
         Router view to enable routing to modals
       -->
@@ -23,10 +30,6 @@ export default {
     contextId: {
       type: String,
       default: ''
-    },
-    id: {
-      type: String,
-      default: ''
     }
   },
   data () {
@@ -38,7 +41,7 @@ export default {
       },
       filter: this.$store.get('filter'),
       // Make this configurable from app
-      renderer: this.activityOptions || this.activityOptions.renderer || {
+      renderer: this.activityOptions.renderer || {
         component: 'team/KGroupCard'
       }
     }

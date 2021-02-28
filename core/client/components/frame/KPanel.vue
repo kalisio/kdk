@@ -9,7 +9,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'k-panel',
   props: {
@@ -27,7 +26,7 @@ export default {
     },
     filter: {
       type: Object,
-      default: () => ({})
+      default: () => {}
     },
     context: {
       type: Object,

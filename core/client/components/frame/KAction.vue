@@ -96,11 +96,11 @@ export default {
     },
     badge: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     toggle: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     label: {
       type: String,
@@ -120,7 +120,7 @@ export default {
     },
     context: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     handler: {
       type: [Function],
@@ -128,7 +128,7 @@ export default {
     },
     route: {
       type: [Object],
-      default: () => { return null }
+      default: () => null
     },
     url: {
       type: String,
