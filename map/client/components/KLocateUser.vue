@@ -20,7 +20,8 @@ export default {
     }
   },
   methods: {
-    onClicked (toggled) {
+    onClicked (context, toggled) {
+      console.log(context, toggled)
       if (toggled) this.kActivity.showUserLocation()
       else this.kActivity.hideUserLocation()
     }

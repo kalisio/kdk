@@ -38,14 +38,6 @@ export default {
       type: Object,
       default: () => null
     },
-    color: {
-      type: String,
-      default: 'grey-9'
-    },
-    size: {
-      type: String,
-      default: 'md'
-    },
     actionRenderer: {
       type: String,
       default: 'button',
@@ -65,8 +57,8 @@ export default {
           if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) {
             this.$options.components[componentKey] = this.$load(componentName)
           }
-          // Inject own props as default values
-          _.defaults(component, this.$props)
+          // Checks whether an id is defined
+          if (!component.id) component.id = componentKey
         })
       }
       return components

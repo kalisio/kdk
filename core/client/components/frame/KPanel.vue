@@ -32,14 +32,6 @@ export default {
       type: Object,
       default: () => null
     },
-    color: {
-      type: String,
-      default: 'grey-9'
-    },
-    size: {
-      type: String,
-      default: 'md'
-    },
     direction: {
       type: String,
       default: 'horizontal',
