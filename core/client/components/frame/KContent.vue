@@ -59,6 +59,7 @@ export default {
           }
           // Checks whether an id is defined
           if (!component.id) component.id = componentKey
+          if (this.context) component.context = this.context
         })
       }
       return components
