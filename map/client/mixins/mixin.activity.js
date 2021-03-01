@@ -8,8 +8,8 @@ import explode from '@turf/explode'
 import { Loading, Dialog, uid } from 'quasar'
 import { setGatewayJwt, generatePropertiesSchema } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
+import { buildUrl } from '../../../core/common'
 import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
-import * as wfs from '../../common/wfs-utils'
 
 export default function (name) {
   return {
@@ -711,16 +711,37 @@ export default function (name) {
         const availableUrls = new Set()
         for (const id in this.layers) {
           const layer = this.layers[id]
-          // search for wms/wfs server urls ...
+          // search for wms/wfs/wmts/tms server urls ...
+          const searchParams = {}
+          let baseUrl = ''
           if (layer.wfs) {
-            let url = `${layer.wfs.url}?SERVICE=WFS&REQUEST=GetCapabilities`
-            if (layer.wfs.version) url += `&VERSION=${layer.wfs.version}`
-            availableUrls.add(url)
+            baseUrl = layer.wfs.url
+            searchParams.SERVICE = 'WFS'
+            searchParams.REQUEST = 'GetCapabilities'
+            if (layer.wfs.version) searchParams.VERSION = layer.wfs.version
           } else if (_.get(layer, 'leaflet.type') === 'tileLayer.wms') {
-            let url = `${layer.leaflet.source}?SERVICE=WMS&REQUEST=GetCapabilities`
-            if (layer.leaflet.version) url += `&VERSION=${layer.leaflet.version}`
-            availableUrls.add(url)
+            baseUrl = layer.leaflet.source
+            searchParams.SERVICE = 'WMS'
+            searchParams.REQUEST = 'GetCapabilities'
+            if (layer.leaflet.version) searchParams.VERSION = layer.leaflet.version
+          } else if (_.get(layer, 'leaflet.type') === 'tileLayer') {
+            // we'll find REST url here
+            const parsed = new URL(layer.leaflet.source)
+            for (const [k, v] of parsed.searchParams) searchParams[k] = v
+            if (_.get(layer, 'leaflet.tms')) {
+              let slash = layer.leaflet.source.length
+              // http://tms.osgeo.org/1.0.0/vmap0/levelzero/0/0.jpg
+              for (let i = 0; i < 4; ++i) slash = layer.leaflet.source.lastIndexOf('/', slash - 1)
+              baseUrl = layer.leaflet.source.slice(0, slash)
+            } else {
+              let slash = layer.leaflet.source.length
+              // http://www.maps.bob/etopo2/default/WholeWorld_CRS_84/10m/1/3.png
+              for (let i = 0; i < 6; ++i) slash = layer.leaflet.source.lastIndexOf('/', slash - 1)
+              baseUrl = layer.leaflet.source.slice(0, slash)
+              baseUrl += '/WMTSCapabilities.xml'
+            }
           }
+          if (baseUrl) availableUrls.add(buildUrl(baseUrl, searchParams))
         }
         const dialog = await this.$createComponent('KLayerConnectDialog', {
           propsData: {

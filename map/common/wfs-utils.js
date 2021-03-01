@@ -5,7 +5,7 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wfs
 
-export function fetchAsJson (query, {} = {}) {
+function fetchAsJson (query, {} = {}) {
   return fetch(query)
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
@@ -39,16 +39,20 @@ export function GetFeature (url, version, typeNames, searchParams = {}, { xml2js
   return xml2json ? fetchAsJson(query) : fetch(query).then(response => response.json())
 }
 
-export function decodeCapabilities (caps, version = '') {
-  const decoded = {
+export async function discover (url, searchParams = {}, caps = null) {
+  if (!caps) {
+    caps = await GetCapabilities(url, searchParams)
+  }
+
+  const out = {
     version: _.get(caps, 'WFS_Capabilities.$.version'),
     availableLayers: []
   }
 
   const layers = _.get(caps, 'WFS_Capabilities.FeatureTypeList[0].FeatureType')
-  decoded.availableLayers = layers.map(l => { return { id: l.Name[0], display: l.Title[0] } })
+  out.availableLayers = layers.map(l => { return { id: l.Name[0], display: l.Title[0] } })
 
-  return decoded
+  return out
 }
 
 export function decodeFeatureType (json) {
