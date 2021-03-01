@@ -4,7 +4,7 @@
    -->
   <q-btn v-if="renderer === 'button'"
     :id="id"
-    :label="$q.screen.gt.xs ? $t(computedLabel) : ''"
+    :label="$q.screen.gt.xs ? computedLabel : ''"
     no-caps
     :icon="computedIcon"
     :color="computedColor"
@@ -17,7 +17,7 @@
     @click="onClicked()">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
-      {{ $t(computedTooltip) }}
+      {{ computedTooltip }}
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge" :label="badge.label">
@@ -44,7 +44,7 @@
       </q-badge>
     </q-item-section>
     <q-item-section>
-      {{ $t(computedLabel) }}
+      {{ computedLabel }}
     </q-item-section>
   </q-item>
   <!--
@@ -55,7 +55,7 @@
     no-caps
     :icon="computedIcon"
     :color="computedColor"
-    :label="$t(computedLabel)"
+    :label="computedLabel"
     external-label
     label-position="left"
     :disabled="disabled"
@@ -157,8 +157,11 @@ export default {
       return this.$q.screen.lt.sm
     },
     computedLabel () {
-      if (this.isToggled && this.toggle.label) return this.toggle.label
-      return this.label
+      if (this.isToggled && this.toggle.label) {
+        return (this.$i18n.i18next.exists(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
+      } else {
+        return (this.$i18n.i18next.exists(this.label) ? this.$t(this.label) : this.label)
+      }
     },
     computedIcon () {
       if (this.isToggled && this.toggle.icon) return this.toggle.icon
