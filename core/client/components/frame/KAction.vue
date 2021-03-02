@@ -20,7 +20,7 @@
       {{ computedTooltip }}
     </q-tooltip>
     <!-- badge -->
-    <q-badge v-if="badge" v-bind="badge" :label="badge.label">
+    <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
@@ -39,12 +39,12 @@
     <q-item-section avatar>
       <q-icon :dense="dense" :name="computedIcon" :color="computedColor" />
       <!-- badge -->
-      <q-badge v-if="badge" v-bind="badge" :label="badge.label">
+      <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
         <q-icon v-if="badge.icon" v-bind="badge.icon" />
       </q-badge>
     </q-item-section>
     <q-item-section>
-      {{ computedLabel }}
+      {{ $t(computedLabel) }}
     </q-item-section>
   </q-item>
   <!--
@@ -80,7 +80,7 @@ export default {
     },
     icon: {
       type: String,
-      default: ''
+      default: undefined
     },
     color: {
       type: String,
@@ -157,6 +157,7 @@ export default {
       return this.$q.screen.lt.sm
     },
     computedLabel () {
+      // Check also for translation key or already translated message
       if (this.isToggled && this.toggle.label) {
         return (this.$i18n.i18next.exists(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
       } else {
@@ -172,13 +173,19 @@ export default {
       return this.color
     },
     computedTooltip () {
-      // When toggled send back the toggled tooltip
       // Check also for translation key or already translated message
       if (this.isToggled && this.toggle.tooltip) {
         return (this.$i18n.i18next.exists(this.toggle.tooltip) ? this.$t(this.toggle.tooltip) : this.toggle.tooltip)
       } else {
         return (this.$i18n.i18next.exists(this.tooltip) ? this.$t(this.tooltip) : this.tooltip)
       }
+    },
+    computedBadgeLabel () {
+      // Check also for translation key or already translated message
+      if (this.badge && this.badge.label) {
+        return (this.$i18n.i18next.exists(this.badge.label) ? this.$t(this.badge.label) : this.badge.label)
+      }
+      return null
     }
   },
   methods: {

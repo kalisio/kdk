@@ -443,6 +443,7 @@
     }
   },
   "KTimeRangeChooser": {
+    "TIME_RANGE": "Du {{- min}} au {{- max}}",
     "FROM_DATE": "Depuis le",
     "TO_DATE": "Jusqu'au"
   },

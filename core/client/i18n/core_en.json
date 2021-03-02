@@ -437,6 +437,7 @@
     }
   },
   "KTimeRangeChooser": {
+    "TIME_RANGE": "From {{- min}} to {{- max}}",
     "FROM_DATE": "From",
     "TO_DATE": "To"
   },
