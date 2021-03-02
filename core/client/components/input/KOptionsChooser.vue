@@ -1,7 +1,7 @@
 <template>
   <k-action
     v-if="hasOptions"
-    :id="id"
+    id="options-chooser"
     :label="label"
     :tooltip="tooltip"
     :icon="computedIcon"
@@ -10,9 +10,9 @@
     :badge="computedBadge"
     :disabled="disabled">
     <template v-slot:content>
-      <q-menu :id="`${id}-menu`" ref="menu" transition-show="scale" transition-hide="scale">
+      <q-menu id="options-chooser-menu" ref="menu" transition-show="scale" transition-hide="scale">
         <q-list>
-          <q-item v-for="option in computedOptions" :key="option.value" clickable @click="onClicked(option)">
+          <q-item v-for="option in computedOptions" :key="option.key" clickable @click="onClicked(option)">
             <q-item-section v-if="option.icon">
               <q-icon :name="option.icon" size="1.5rem" />
             </q-item-section>
@@ -28,14 +28,11 @@
 
 <script>
 import _ from 'lodash'
+import { uid } from 'quasar'
 
 export default {
   name: 'k-option-chooser',
   props: {
-    id: {
-      type: String,
-      required: true
-    },
     label: {
       type: String,
       default: ''
@@ -67,7 +64,14 @@ export default {
   },
   computed: {
     computedOptions () {
-      return _.filter(this.options, (option) => { return option.value !== this.option.value })
+      let options = []
+      _.forEach(this.options, option => {
+        if (!_.isEqual(option.value, this.option.value)) {
+          option.key = uid()
+          options.push(option)
+        }
+      })
+      return options
     },
     computedIcon () {
       if (this.option) {

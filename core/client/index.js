@@ -3,6 +3,7 @@ import { Platform } from 'quasar'
 import { Store } from './store'
 import { Layout } from './layout'
 import { Filter } from './filter'
+import { Sorter } from './sorter'
 import services from './services'
 import * as utils from './utils'
 import * as mixins from './mixins'
@@ -38,6 +39,7 @@ export default function init () {
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
   Filter.initialize()
+  Sorter.initialize()
   Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })

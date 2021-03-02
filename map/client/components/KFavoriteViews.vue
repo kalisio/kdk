@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     baseQuery () {
-      return Object.assign({ type: 'View' }, this.sort)
+      return Object.assign({ type: 'View' }, this.sorter.query)
     },
     hasToolbar () {
       if (this.mode === 'list') return this.count > 0 || this.filter.patern !== ''
@@ -47,22 +47,21 @@ export default {
   data () {
     return {
       filter: this.$store.get('filter'),
+      sorter: this.$store.get('sorter'),
       mode: 'list',
-      sort: { $sort: { name: 1 } },
       count: 0,
       toolbar: {
         list: [
           {
-            component: 'input/KOptionsChooser',
+            component: 'collection/KSorter',
             id: 'sorter-options',
             tooltip: 'KFavoriteViews.SORT',
             options: [
-              { icon: 'las la-sort-alpha-down', value: 'alpha-down', default: true },
-              { icon: 'las la-sort-alpha-up', value: 'alpha-up' },
-              { icon: 'img:statics/sort-clockwise-icon.png', value: 'time-clockwise' },
-              { icon: 'img:statics/sort-anticlockwise-icon.png', value: 'time-anticlockwise' }
-            ],
-            on: { event: 'option-chosen', listener: this.onSortUpdated }
+              { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
+              { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
+              { icon: 'img:statics/sort-clockwise-icon.png', value: { field: 'updatedAt', order: 1 } },
+              { icon: 'img:statics/sort-anticlockwise-icon.png', value: { field: 'updatedAt', order: -1 } }
+            ]
           },
           { component: 'collection/KFilter', style: 'max-width: 200px;' },
           { component: 'QSpace' },
@@ -123,22 +122,6 @@ export default {
     }
   },
   methods: {
-    onSortUpdated (sort) {
-      switch (sort) {
-        case 'alpha-down':
-          this.sort = { $sort: { name: 1 } }
-          break
-        case 'alpha-up':
-          this.sort = { $sort: { name: -1 } }
-          break
-        case 'time-clockwise':
-          this.sort = { $sort: { updatedAt: 1 } }
-          break
-        case 'time-anticlockwise':
-          this.sort = { $sort: { updatedAt: -1 } }
-          break
-      }
-    },
     async onAdd () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
