@@ -110,14 +110,12 @@ export default {
       savingView: false,
       viewRenderer: {
         component: 'collection/KItem',
-        props: {
-          itemActions: [{
-            id: 'remove-view',
-            icon: 'las la-trash',
-            tooltip: 'KFavoriteViews.REMOVE_VIEW',
-            handler: (context) => this.removeView(context.item)
-          }]
-        }
+        actions: [{
+          id: 'remove-view',
+          icon: 'las la-trash',
+          tooltip: 'KFavoriteViews.REMOVE_VIEW',
+          handler: (context) => this.removeView(context.item)
+        }]
       }
     }
   },
