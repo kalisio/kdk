@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import mixins from '../../mixins'
 
 export default {
