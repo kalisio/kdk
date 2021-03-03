@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions" :options="{ nameField: 'value' }">
+  <k-card v-bind="$props" :actions="itemActions" :options="{ nameField: 'value' }">
     <div slot="card-label">
       <span class="text-subtitle1 text-weight-medium ellipsis">{{ item.value }}</span>
       <q-btn class="float-right" :key="item._id" flat small rounded color="primary"
@@ -13,7 +13,7 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-tag-card',
-  mixins: [mixins.baseItem()],
+  mixins: [mixins.baseItem],
   methods: {
     onListMembers () {
       // Setup filter accordingly

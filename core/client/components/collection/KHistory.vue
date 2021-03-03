@@ -10,7 +10,7 @@
               :item="item"
               :contextId="contextId"
               :is="renderer.component"
-              v-bind="renderer.props"
+              v-bind="renderer"
               @item-selected="onItemSelected" />
           </template>
         </q-infinite-scroll>
@@ -41,9 +41,7 @@ export default {
       type: Object,
       default: () => {
         return {
-          component: 'collection/KHistoryEntry',
-          options: {},
-          props: {}
+          component: 'collection/KHistoryEntry'
         }
       }
     },

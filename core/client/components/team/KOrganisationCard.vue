@@ -8,7 +8,7 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-organisation-card',
-  mixins: [mixins.baseItem()],
+  mixins: [mixins.baseItem],
   created () {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')

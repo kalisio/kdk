@@ -24,7 +24,7 @@
                 :item="item"
                 :contextId="contextId"
                 :is="renderer.component"
-                v-bind="renderer.props"
+                v-bind="renderer"
                 @item-selected="onItemSelected" />
             </div>
           </template>
@@ -56,8 +56,7 @@ export default {
       type: Object,
       default: () => {
         return {
-          component: 'collection/KCard',
-          props: {}
+          component: 'collection/KCard'
         }
       }
     },

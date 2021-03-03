@@ -574,7 +574,7 @@
     "EDIT_LABEL": "$t(EDIT)",
     "LIST_MEMBERS_LABEL": "Lister les membres du groupe",
     "REMOVE_DIALOG_TITLE": "Supprimer {{group}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloier supprimer {{group}} de votre organisation ?"
+    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {{group}} de votre organisation ?"
   },
   "KOrganisationDZ": {
     "BLOCK_TITLE": "Supprimer cette organisation ?",

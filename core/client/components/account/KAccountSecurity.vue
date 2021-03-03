@@ -27,13 +27,19 @@
     <!--
       Devices
     -->
-    <k-account-devices id="devices-block" />
+    <k-account-devices id="devices-block" :renderer="deviceRenderer"/>
   </div>
 </template>
 
 <script>
 export default {
   name: 'k-account-security',
+  props: {
+    deviceRenderer: {
+      type: Object,
+      default: () => ({ component: 'account/KDeviceCard' })
+    }
+  },
   data () {
     return {
       user: this.$store.get('user')

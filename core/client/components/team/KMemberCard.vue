@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions">
+  <k-card v-bind="$props" :actions="itemActions" >
     <!--
       Card header
     -->
@@ -62,7 +62,7 @@ import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } fr
 
 export default {
   name: 'k-member-card',
-  mixins: [mixins.baseItem()],
+  mixins: [mixins.baseItem],
   computed: {
     tags () {
       // Check for custom tags field

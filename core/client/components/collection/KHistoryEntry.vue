@@ -36,7 +36,7 @@
       <q-separator />
       <slot name="entry-actions">
         <q-card-actions class="q-pa-xs" align="right">
-          <k-panel id="card-actions" :content="computedActions" mode="pane" :context="$props" />
+          <k-panel id="card-actions" :content="itemActions" :context="$props" />
         </q-card-actions>
       </slot>
     </q-card>
@@ -49,19 +49,8 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-history-entry',
-  mixins: [mixins.baseItem()],
-  props: {
-    itemActions: {
-      type: [Object, Array],
-      default: () => { return null }
-    }
-  },
+  mixins: [mixins.baseItem],
   computed: {
-    computedActions () {
-      // Actions can be provided externally if the card is reused to create a custom item
-      // Otherwise use actions directly set on the item
-      return this.itemActions || this.actions
-    },
     date () {
       return this.getDate()
     }

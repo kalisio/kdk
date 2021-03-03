@@ -101,16 +101,17 @@ export const Layout = {
       if (typeof isVisible === 'function') {
         isVisible = isVisible(context)
       }
-      if (isVisible) {
-        // Define the component key
-        const componentName = _.get(component, 'component', 'frame/KAction')
-        const componentKey = _.kebabCase(path.basename(componentName))
-        // Clone the component and add the required props
-        component.componentName = componentName
-        component.componentKey = componentKey
-        component.uid = uid()
-        processedComponents.push(component)
-      }
+      // If not a functional call the target property can be a reactive one
+      // so that we "bind" it to the component instead of "filter" it here
+      component.visible = isVisible
+      // Define the component key
+      const componentName = _.get(component, 'component', 'frame/KAction')
+      const componentKey = _.kebabCase(path.basename(componentName))
+      // Clone the component and add the required props
+      component.componentName = componentName
+      component.componentKey = componentKey
+      component.uid = uid()
+      processedComponents.push(component)
     })
     return processedComponents
   },
@@ -135,9 +136,9 @@ export const Layout = {
     // we allow a property value instead of a function and a logical NOT
     const isNot = name.startsWith('!')
     if (isNot) name = name.substring(1)
-    const handler = _.get(context, name)
     return (...args) => {
       let result
+      const handler = _.get(context, name)
       // Function call or property value read ?
       if (typeof handler === 'function') {
         // Provided parameters or simply forward arguments ?

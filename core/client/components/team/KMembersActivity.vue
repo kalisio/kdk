@@ -39,14 +39,12 @@ export default {
       },
       filter: this.$store.get('filter'),
       // Make this configurable from app
-      renderer: this.activityOptions.renderer || {
+      renderer: _.merge({
         component: 'team/KMemberCard',
-        props: {
-          options: {
-            descriptionField: 'email'
-          }
+        options: {
+          descriptionField: 'email'
         }
-      }
+      }, this.activityOptions.items)
     }
   },
   methods: {

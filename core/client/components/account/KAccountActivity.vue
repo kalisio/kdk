@@ -5,7 +5,7 @@
         <k-editor service="users" :objectId="user._id" perspective="profile"/>
       </div>
       <div v-if="page === 'security'">
-        <k-account-security />
+        <k-account-security :device-renderer="deviceRenderer"/>
       </div>
       <div v-else-if="page === 'danger-zone'">
         <k-account-dz />
@@ -31,7 +31,11 @@ export default {
   },
   data () {
     return {
-      user: this.$store.get('user')
+      user: this.$store.get('user'),
+      // Make this configurable from app
+      deviceRenderer: _.merge({
+        component: 'account/KDeviceCard'
+      }, this.activityOptions.devices)
     }
   },
   watch: {

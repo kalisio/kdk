@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions" :options="{ nameField: 'model' }">
+  <k-card v-bind="$props" :actions="itemActions" :options="{ nameField: 'model' }">
     <!--
       Card icon
      -->
@@ -23,7 +23,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-device-card',
   mixins: [
-    mixins.baseItem()
+    mixins.baseItem
   ],
   computed: {
     platformIcon () {

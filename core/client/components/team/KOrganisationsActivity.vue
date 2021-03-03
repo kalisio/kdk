@@ -38,9 +38,9 @@ export default {
       },
       filter: this.$store.get('filter'),
       // Make this configurable from app
-      renderer: this.activityOptions.renderer || {
+      renderer: _.merge({
         component: 'collection/KCard'
-      }
+      }, this.activityOptions.items)
     }
   },
   methods: {

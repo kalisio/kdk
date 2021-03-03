@@ -63,17 +63,19 @@ export default {
       id: 'position-target', component: 'QIcon', name: 'las la-plus', color: this.color, size: this.size, class: 'fixed-center position-indicator'
     }]
     Layout.bindContent(target, this.kActivity)
-    const content = this.$store.get('page.content', [])
+    const content = this.$store.get('page.content') || []
     // Required to use splice when modifying an object inside an array to make it reactive
     content.splice(content.length, 0, target[0])
     this.$store.patch('page', { content })
     this.kActivity.$on('mousemove', this.updatePosition)
   },
   beforeDestroy () {
-    const content = this.$store.get('page.content', [])
+    const content = this.$store.get('page.content') || []
     // Required to use splice when modifying an object inside an array to make it reactive
-    content.splice(_.findIndex(content, component => component.id === 'position-target'), 1)
-    this.$store.patch('page', { content })
+    if (content) {
+      content.splice(_.findIndex(content, component => component.id === 'position-target'), 1)
+      this.$store.patch('page', { content })
+    }
     this.kActivity.$off('mousemove', this.updatePosition)
   }
 }

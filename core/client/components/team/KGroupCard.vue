@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions">
+  <k-card v-bind="$props" :actions="itemActions" >
     <!--
       Card header
      -->
@@ -36,7 +36,7 @@ import { Dialog } from 'quasar'
 
 export default {
   name: 'k-group-card',
-  mixins: [mixins.baseItem()],
+  mixins: [mixins.baseItem],
   computed: {
     memberRoleIcon () {
       const user = this.$store.get('user')
@@ -58,10 +58,10 @@ export default {
     }
   },
   methods: {
-    removeGroup (group) {
+    removeGroup () {
       Dialog.create({
-        title: this.$t('KGroupCard.REMOVE_DIALOG_TITLE', { group: group.name }),
-        message: this.$t('KGroupCard.REMOVE_DIALOG_MESSAGE', { group: group.name }),
+        title: this.$t('KGroupCard.REMOVE_DIALOG_TITLE', { group: this.item.name }),
+        message: this.$t('KGroupCard.REMOVE_DIALOG_MESSAGE', { group: this.item.name }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -73,7 +73,7 @@ export default {
         }
       }).onOk(() => {
         const groupsService = this.$api.getService('groups')
-        groupsService.remove(group._id)
+        groupsService.remove(this.item._id)
       })
     },
     roleKey (role) {

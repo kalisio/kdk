@@ -41,9 +41,9 @@ export default {
       },
       filter: this.$store.get('filter'),
       // Make this configurable from app
-      renderer: this.activityOptions.renderer || {
+      renderer: _.merge({
         component: 'team/KTagCard'
-      }
+      }, this.activityOptions.items)
     }
   },
   created () {

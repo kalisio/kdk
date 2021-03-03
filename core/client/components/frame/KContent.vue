@@ -2,6 +2,7 @@
   <div>
     <template v-for="component in components">
       <component
+        v-if="component.visible"
         :key="component.uid"
         :is="component.componentKey"
         v-bind="component.bind ? component.props : component"
