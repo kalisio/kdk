@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="$t('KInviteMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :route="true">
+  <k-modal ref="modal" :title="$t('KInviteMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
     <div slot="modal-content">
       <q-tabs  align="justify" v-model="mode" inverted>
         <q-tab name="unique" icon="las la-user"  />
@@ -103,12 +103,12 @@ export default {
     },
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KInviteMember.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
+        { id: 'close-action', icon: 'las la-times', tooltip: 'KInviteMember.CLOSE_ACTION', handler: () => this.doClose() }
       ]
     },
     getButtons () {
       return [
-        { name: 'invite-button', label: this.$t('KInviteMember.INVITE_BUTTON'), color: 'primary', handler: () => this.doInvite() }
+        { id: 'invite-button', label: 'KInviteMember.INVITE_BUTTON', color: 'primary', handler: () => this.doInvite() }
       ]
     },
     doInvite () {

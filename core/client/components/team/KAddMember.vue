@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="$t('KAddMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :route="true">
+  <k-modal ref="modal" :title="$t('KAddMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
     <div slot="modal-content" class="column xs-gutter">
       <k-form ref="form" :schema="getSchema()" />
     </div>
@@ -71,12 +71,12 @@ export default {
     },
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KAddMember.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
+        { id: 'close-action', icon: 'las la-times', tooltip: 'KAddMember.CLOSE_ACTION', handler: () => this.doClose() }
       ]
     },
     getButtons () {
       return [
-        { name: 'add-button', label: this.$t('KAddMember.ADD_BUTTON'), color: 'primary', handler: () => this.doAdd() }
+        { id: 'add-button', label: 'KAddMember.ADD_BUTTON', color: 'primary', handler: () => this.doAdd() }
       ]
     },
     async doAdd () {

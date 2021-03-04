@@ -73,7 +73,7 @@
     "TAGS_ICON_FIELD_HELPER": "Set the icon of this tag",
     "GROUPS_CREATE_TITLE": "Create a new group ?",
     "GROUPS_NAME_FIELD_HELPER": "Enter the name of this group",
-    "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description name of this group"
+    "GROUPS_DESCRIPTION_FIELD_HELPER": "Enter a description for this group"
   },
   "tours": {
     "APP_BAR_OVERFLOW_MENU_LABEL": "When not visible, you can find it using the popup menu.",
@@ -206,12 +206,6 @@
       "ROLES_LABEL": "$t(tours.add-member.ROLES_LABEL)",
       "INVITE_MEMBER_LABEL": "$t(tours.add-member.ADD_MEMBER_LABEL)"
     },
-    "add-member": {
-      "GROUP_NAME_LABEL": "Typing <b>the first characters</b> of a group name make it selectable.",
-      "MEMBER_ROLE_LABEL": "Select the user role in the group.",
-      "ROLES_LABEL": "A <b>member</b> has a read-only access to your group while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal).",
-      "ADD_MEMBER_LABEL": "Confirm joining the user to the group."
-    },
     "tag-member": {
       "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise.",
       "TAG_REMOVE_LABEL": "Once added select it to update its icon/color and remove it using the cross.",
@@ -292,6 +286,9 @@
     "TITLE": "You are now logged out",
     "SIGN_OFF_LABEL": "Thank you for using",
     "LOG_IN_AGAIN_LINK": "Log in again ?"
+  },
+  "KIdentityPanel": {
+    "MANAGE": "Manage my account"
   },
   "KAccountActivity": {
     "PROFILE": "Profile",
@@ -439,6 +436,11 @@
       "writing"                : "writing"
     }
   },
+  "KTimeRangeChooser": {
+    "TIME_RANGE": "From {{- min}} to {{- max}}",
+    "FROM_DATE": "From",
+    "TO_DATE": "To"
+  },
   "KTagField": {
     "CREATE_TAG": "Create <b>{{tag}}</b>"
   },
@@ -476,14 +478,14 @@
     "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
     "SYSTEM_DETAILS": "Platform information"
   },
-  "KOrganisationPanel": {
-    "NEW_ORGANISATION": "New organisation",
-    "ORGANISATION_REMOVED_WARNING": "The organisation <b>{{organisation}}</b> has been removed"
+  "KOrganisationsActivity": {
+    "ORGANISATIONS_LABEL": "Organisations",
+    "SEARCH_ORGANISATION_LABEL": "Search for an organisation",
+    "CREATE_ORGANISATION_LABEL": "Create an organisation"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
-    "TAGS_LABEL": "$t(TAGS)",
-    "GROUPS_LABEL": "$t(GROUPS)",
+    "SEARCH_MEMBER_LABEL": "$t(MEMBERS)",
     "ADD_USER_LABEL": "Add a user",
     "INVITE_GUEST_LABEL": "Invite guests"
   },
@@ -550,27 +552,16 @@
     "RESEND_INVITATION_DIALOG_MESSAGE": "Is <b>{{member}}</b>'s email address correct ?"
   },
   "KTagsActivity": {
-    "MEMBERS_LABEL": "$t(MEMBERS)",
     "TAGS_LABEL": "$t(TAGS)",
-    "GROUPS_LABEL": "$t(GROUPS)"
+    "SEARCH_TAG_LABEL": "Search for a tag"
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",    
     "LIST_MEMBERS_LABEL": "List members with tag"
-  },
-  "KSubscribersActivity": {
-    "MEMBERS_LABEL": "$t(MEMBERS)",
-    "GROUPS_LABEL": "$t(GROUPS)"
-  },
-  "KSubscriberCard": {
-    "REMOVE_LABEL": "$t(REMOVE)",
-    "REMOVE_DIALOG_TITLE": "Remove {{subscriber}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{subscriber}}</b> from your organisation ?"
   },  
   "KGroupsActivity": {
-    "MEMBERS_LABEL": "$t(MEMBERS)",
-    "TAGS_LABEL": "$t(TAGS)",
     "GROUPS_LABEL": "$t(GROUPS)",
+    "SEARCH_GROUP_LABEL": "Search for a group",
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {

@@ -85,13 +85,15 @@ export default {
     },
     onItemRemoved (oldItem) {
       this.items = this.items.filter(item => item._id !== oldItem._id)
-      this.$emit('changed', this.items, this.pattern)
+      this.$emit('items-changed', this.items)
     },
     onAutocompleteChanged (value) {
       if (typeof value === 'string') {
         // The input pattern has changed
-        this.pattern = value
-        this.$emit('changed', this.items, this.pattern)
+        if (this.pattern !== value) {
+          this.pattern = value
+          this.$emit('pattern-changed', this.pattern)
+        }
       } else {
         // An item has been selected
         if (_.findIndex(this.items, item => item._id === value._id) === -1) {
@@ -104,11 +106,16 @@ export default {
           }
           this.$refs.autocomplete.clear()
           this.pattern = ''
+          this.$emit('pattern-changed', this.pattern)
           this.items.push(value)
-          this.$emit('changed', this.items, this.pattern)
+          this.$emit('items-changed', this.items)
         }
       }
     }
+  },
+  mounted () {
+    // Initialize
+    this.clear()
   }
 }
 </script>

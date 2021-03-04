@@ -452,10 +452,8 @@ const TiledMeshLayer = L.GridLayer.extend({
 
   setModel (model) {
     // apply per model {min,max}Zoom
-    if (this.conf.minZoom)
-      this.options.minZoom = _.get(this.conf.minZoom, model.name)
-    if (this.conf.maxZoom)
-      this.options.maxZoom = _.get(this.conf.maxZoom, model.name)
+    if (this.conf.minZoom) { this.options.minZoom = _.get(this.conf.minZoom, model.name) }
+    if (this.conf.maxZoom) { this.options.maxZoom = _.get(this.conf.maxZoom, model.name) }
 
     if (typeof this.gridSource.setModel === 'function') {
       this._resetView()

@@ -1,5 +1,5 @@
 <template>
-  <k-modal :id="getSchemaId() + 'editor'" ref="modal" :title="editorTitle" :toolbar="toolbar" :buttons="buttons" :route="router ? true : false" >
+  <k-modal :id="getSchemaId() + 'editor'" ref="modal" :title="editorTitle" :toolbar="toolbar" :buttons="buttons" c>
     <div slot="modal-content">
       <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em"/>
@@ -25,25 +25,19 @@ export default {
     mixins.baseEditor(['form']),
     mixins.refsResolver(['form'])
   ],
-  props: {
-    router: {
-      type: Object,
-      default: () => { return null }
-    }
-  },
   computed: {
     buttons () {
       const buttons = [{
-        name: 'apply-button', label: this.applyButton, color: 'primary', handler: () => this.apply()
+        id: 'apply-button', label: this.applyButton, color: 'primary', handler: () => this.apply()
       }]
       if (this.clearButton !== '') {
         buttons.push({
-          name: 'clear-button', label: this.clearButton, color: 'primary', handler: () => this.clear()
+          id: 'clear-button', label: this.clearButton, color: 'primary', handler: () => this.clear()
         })
       }
       if (this.resetButton !== '') {
         buttons.push({
-          name: 'reset-button', label: this.resetButton, color: 'primary', handler: () => this.reset()
+          id: 'reset-button', label: this.resetButton, color: 'primary', handler: () => this.reset()
         })
       }
       return buttons
@@ -52,12 +46,9 @@ export default {
   data () {
     return {
       toolbar: [{
-        name: 'close',
+        id: 'close-editor',
         icon: 'las la-times',
-        handler: () => {
-          this.close()
-          if (this.router) this.$router.push(this.router.onDismiss)
-        }
+        handler: () => this.close()
       }]
     }
   },
@@ -74,14 +65,13 @@ export default {
       this.$emit('field-changed', field, value)
     }
   },
-  created () {
-    // Refresh the editor only when using a router. Otherwise it will be done when opening the editor
-    if (this.router) this.refresh()
-    this.$on('applied', _ => {
-      if (this.router) {
-        this.close()
-        this.$router.push(this.router.onApply)
-      }
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // open the modal
+      vm.open()
+      // redirect to the parent route when closing
+      // see: https://github.com/vuejs/vue-router/issues/216
+      if (to.matched.length > 1) vm.$on(['closed', 'applied'], () => vm.$router.push(to.matched.slice(-2).shift()))
     })
   }
 }

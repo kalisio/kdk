@@ -17,10 +17,10 @@ export default {
         onEachFeature,
         // Use default styling when editing as dynamic styling can conflict
         style: (feature) => {
-          return Object.assign({}, this.options.editFeatureStyle || this.options.featureStyle)
+          return Object.assign({}, this.activityOptions.engine.editFeatureStyle || this.activityOptions.engine.featureStyle)
         },
         pointToLayer: (feature, latlng) => {
-          return this.createMarkerFromStyle(latlng, Object.assign({}, this.options.editPointStyle || this.options.pointStyle))
+          return this.createMarkerFromStyle(latlng, Object.assign({}, this.activityOptions.engine.editPointStyle || this.activityOptions.engine.pointStyle))
         }
       }
     },
@@ -164,8 +164,8 @@ export default {
   },
   created () {
     // Perform required conversion for default feature styling
-    if (this.options.editFeatureStyle) this.convertFromSimpleStyleSpec(this.options.editFeatureStyle, 'update-in-place')
-    if (this.options.editPointStyle) this.convertFromSimpleStyleSpec(this.options.editPointStyle, 'update-in-place')
+    if (this.activityOptions.engine.editFeatureStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editFeatureStyle, 'update-in-place')
+    if (this.activityOptions.engine.editPointStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editPointStyle, 'update-in-place')
   },
   mounted () {
     // Initialize i18n

@@ -1,17 +1,19 @@
 <template>
   <div>
-    <div v-if="items.length > 0" class="row">
+    <div v-if="items.length > 0" class="q-pa-sm row">
       <template v-for="item in items">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" :key="item._id">
-          <component class="q-pa-sm" :id="'item-' + item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer.props" item-selected="onItemSelected(item)"/>
+        <div :class="getItemClass()" :key="item._id">
+          <component :id="'item-' + item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer" @item-selected="onItemSelected"/>
         </div>
       </template>
       <div v-if="nbPages > 1" class="col-12">
         <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
       </div>
     </div>
-    <div v-else>
-      <k-label :text="$t('KGrid.EMPTY_GRID')" icon-size="48px" />
+    <div v-else class="absolute-center">
+      <slot id="empty-grid" name="empty-grid">
+        <k-label :text="$t('KGrid.EMPTY_GRID')" icon-size="3rem" />
+      </slot>
     </div>
   </div>
 </template>
@@ -30,9 +32,7 @@ export default {
       type: Object,
       default: () => {
         return {
-          component: 'collection/KCard',
-          options: {},
-          props: {}
+          component: 'collection/KCard'
         }
       }
     },
@@ -67,6 +67,9 @@ export default {
     }
   },
   methods: {
+    getItemClass () {
+      return this.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2'
+    },
     getCollectionBaseQuery () {
       return this.baseQuery
     },

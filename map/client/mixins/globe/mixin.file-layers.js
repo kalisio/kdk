@@ -4,7 +4,7 @@ import logger from 'loglevel'
 export default {
   mounted () {
     this.$on('globe-ready', _ => {
-      this.viewer.extend(Cesium.viewerDragDropMixin, this.options.fileLayers)
+      this.viewer.extend(Cesium.viewerDragDropMixin, this.activityOptions.engine.fileLayers)
       this.viewer.dropError.addEventListener((viewerArg, source, error) => {
         logger.error(error)
       })

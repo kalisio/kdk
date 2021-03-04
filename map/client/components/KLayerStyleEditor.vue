@@ -3,7 +3,7 @@
     :title="$t('KLayerStyleEditor.EDIT_LAYER_STYLE_TITLE')"
     :toolbar="toolbar"
     :buttons="[]"
-    :options="{}" :route="false">
+    :options="{}">
     <div slot="modal-content">
       <k-layer-style-form :class="{ 'light-dimmed': inProgress }" ref="form"
         :options="options" :layer="layer"/>
@@ -32,7 +32,7 @@ export default {
   },
   data () {
     return {
-      toolbar: [{ name: 'close-action', label: this.$i18n.t('CLOSE'), icon: 'las la-times', handler: () => this.close() }],
+      toolbar: [{ id: 'close-action', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.close() }],
       inProgress: false
     }
   },

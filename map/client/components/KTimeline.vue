@@ -25,7 +25,7 @@
       </q-btn>
     </div>
     <div v-if="!$q.screen.gt.xs" class="full-width row justify-around q-pt-xs">
-      <k-tool-bar :actions="getActions('mobile')" color="primary" dense />
+      <k-panel id="timeline-actions" :content="actions" mode="mobile" color="primary" />
     </div>
     <!--
       Time bars
@@ -80,7 +80,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
 
@@ -175,9 +174,6 @@ export default {
       // For now we do not handle step > 60 minutes
       return Math.min(this.timeline.step, 60)
     },
-    getActions (scope) {
-      return _.get(this.actions, scope)
-    },
     startTimeLoop () {
       this.setTime(moment.utc())
       this.timer = setInterval(() => {
@@ -255,18 +251,18 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Define the colors assgigned to the months
     this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
     // Define the actions
     this.actions = {
       mobile: [
-        { name: 'previousDay', icon: 'las la-calendar-minus', label: this.$t('KTimeline.PREVIOUS_DAY'), handler: this.onPreviousDayClicked },
-        { name: 'previousHour', icon: 'las la-angle-left', label: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
-        { name: 'previousStep', icon: 'las la-step-backward', label: this.$t('KTimeline.PREVIOUS_STEP'), handler: this.onPreviousStepClicked },
-        { name: 'nextStep', icon: 'las la-step-forward', label: this.$t('KTimeline.NEXT_STEP'), handler: this.onNextStepClicked },
-        { name: 'nextHour', icon: 'las la-angle-right', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNextHourClicked },
-        { name: 'nextDay', icon: 'las la-calendar-plus', label: this.$t('KTimeline.NEXT_DAY'), handler: this.onNextDayClicked }
+        { id: 'previous-day', icon: 'las la-calendar-minus', label: this.$t('KTimeline.PREVIOUS_DAY'), handler: this.onPreviousDayClicked },
+        { id: 'previous-hour', icon: 'las la-angle-left', label: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
+        { id: 'previous-step', icon: 'las la-step-backward', label: this.$t('KTimeline.PREVIOUS_STEP'), handler: this.onPreviousStepClicked },
+        { id: 'next-step', icon: 'las la-step-forward', label: this.$t('KTimeline.NEXT_STEP'), handler: this.onNextStepClicked },
+        { id: 'next-hour', icon: 'las la-angle-right', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNextHourClicked },
+        { id: 'next-day', icon: 'las la-calendar-plus', label: this.$t('KTimeline.NEXT_DAY'), handler: this.onNextDayClicked }
       ]
     }
   },

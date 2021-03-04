@@ -64,7 +64,7 @@ export default {
     getDefaultMarker (feature, latlng, options) {
       const properties = feature.properties
       const leafletOptions = options.leaflet || options
-      const style = Object.assign({}, this.options.pointStyle,
+      const style = Object.assign({}, this.activityOptions.engine.pointStyle,
         leafletOptions.layerStyle,
         this.convertFromSimpleStyleSpec(feature.style || feature.properties))
 
@@ -83,7 +83,7 @@ export default {
     getDefaultStyle (feature, options) {
       const properties = feature.properties
       const leafletOptions = options.leaflet || options
-      const style = Object.assign({}, this.options.featureStyle,
+      const style = Object.assign({}, this.activityOptions.engine.featureStyle,
         leafletOptions.layerStyle,
         this.convertFromSimpleStyleSpec(feature.style || feature.properties))
 
@@ -104,7 +104,7 @@ export default {
     this.registerStyle('markerStyle', this.getDefaultMarker)
     this.registerStyle('featureStyle', this.getDefaultStyle)
     // Perform required conversion for default feature styling
-    if (this.options.featureStyle) this.convertFromSimpleStyleSpec(this.options.featureStyle, 'update-in-place')
-    if (this.options.pointStyle) this.convertFromSimpleStyleSpec(this.options.pointStyle, 'update-in-place')
+    if (this.activityOptions.engine.featureStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.featureStyle, 'update-in-place')
+    if (this.activityOptions.engine.pointStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.pointStyle, 'update-in-place')
   }
 }

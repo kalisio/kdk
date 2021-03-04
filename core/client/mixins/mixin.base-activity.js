@@ -1,178 +1,202 @@
 import _ from 'lodash'
-import { uid } from 'quasar'
+import { Layout } from '../layout'
 
-const baseActivityMixin = {
-  data () {
-    return {
-      title: '',
-      actions: {},
-      searchQuery: {}
+export default function (name) {
+  return {
+    methods: {
+      getAppName () {
+        return this.$config('appName')
+      },
+      getTopPane () {
+        return this.$store.get('topPane')
+      },
+      getTopPaneMode () {
+        return this.getTopPane().mode
+      },
+      setTopPane (content, mode, filter) {
+        this.$store.patch('topPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+      },
+      setTopPaneMode (mode) {
+        if (mode !== this.getTopPaneMode()) {
+          const content = this.$store.get('topPane.content')
+          this.$store.patch('topPane', { mode: Layout.validateMode(content, mode) })
+        }
+      },
+      configureTopPane () {
+        const options = _.get(this.activityOptions, 'topPane')
+        if (options) this.setTopPane(options.content, options.mode, _.get(this.activityOptions, 'topPane.filter', {}))
+        else this.clearTopPane()
+      },
+      clearTopPane () {
+        this.$store.patch('topPane', { content: null, mode: undefined })
+      },
+      getBottomPane () {
+        return this.$store.get('bottomPane')
+      },
+      getBottomPaneMode () {
+        return this.getBottomPane().mode
+      },
+      setBottomPane (content, mode, filter) {
+        this.$store.patch('bottomPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+      },
+      setBottomPaneMode (mode) {
+        if (mode !== this.getBottomPaneMode()) {
+          const content = this.$store.get('bottomPane.content')
+          this.$store.patch('bottomPane', { mode: Layout.validateMode(content, mode) })
+        }
+      },
+      configureBottomPane () {
+        const options = _.get(this.activityOptions, 'bottomPane')
+        if (options) this.setBottomPane(options.content, options.mode, _.get(this.activityOptions, 'bottomPane.filter', {}))
+        else this.clearBottomPane()
+      },
+      clearBottomPane () {
+        this.$store.patch('bottomPane', { content: null, mode: undefined })
+      },
+      getRightPane () {
+        return this.$store.get('bottomPane')
+      },
+      getRightPaneMode () {
+        return this.getRightPane().mode
+      },
+      setRightPane (content, mode, filter) {
+        this.$store.patch('rightPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+      },
+      setRightPaneMode (mode) {
+        if (mode !== this.getRightPaneMode()) {
+          const content = this.$store.get('rightPane.content')
+          this.$store.patch('rightPane', { mode: Layout.validateMode(content, mode) })
+        }
+      },
+      configureRightPane () {
+        const options = _.get(this.activityOptions, 'rightPane')
+        if (options) this.setRightPane(options.content, options.mode, _.get(this.activityOptions, 'rightPane.filter', {}))
+        else this.clearRightPane()
+      },
+      clearRightPane () {
+        this.$store.patch('rightPane', { content: null, mode: undefined })
+      },
+      getPage () {
+        return this.$store.get('page')
+      },
+      getPageMode () {
+        return this.getPage().mode
+      },
+      setPage (content, mode, filter) {
+        this.$store.patch('page', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+      },
+      setPageMode (mode) {
+        if (mode !== this.getPageMode()) {
+          const content = this.$store.get('page.content')
+          this.$store.patch('page', { mode: Layout.validateMode(content, mode) })
+        }
+      },
+      configurePage () {
+        const options = _.get(this.activityOptions, 'page')
+        if (options) this.setPage(options.content, options.mode, _.get(this.activityOptions, 'page.filter', {}))
+        else this.clearPage()
+      },
+      clearPage () {
+        this.$store.patch('page', { content: null, mode: undefined })
+      },
+      getFab () {
+        return this.$store.get('fab')
+      },
+      setFab (actions, filter) {
+        this.$store.patch('fab', { actions: Layout.bindContent(actions, this), filter })
+      },
+      configureFab () {
+        const options = _.get(this.activityOptions, 'fab')
+        if (options) this.setFab(options.actions, _.get(this.activityOptions, 'fab.filter', {}))
+        else this.clearFab()
+      },
+      clearFab () {
+        this.$store.patch('fab', { actions: null })
+      },
+      getWindows () {
+        return this.$store.get('window')
+      },
+      setWindow (widgets, current, filter) {
+        this.$store.patch('window', { widgets: Layout.bindContent(widgets, this), current, filter })
+      },
+      configureWindow () {
+        const options = _.get(this.activityOptions, 'window', null)
+        if (options) this.setWindow(options.widgets, options.current ? options.current : undefined, _.get(this.activityOptions, 'window.filter', {}))
+      },
+      clearWindow () {
+        this.$store.patch('window', { widgets: null, current: undefined })
+      },
+      hasOpenWidget () {
+        return this.$store.get('window.current')
+      },
+      isWidgetOpen (widget) {
+        const current = this.$store.get('window.current')
+        return (current && (current === widget))
+      },
+      openWidget (widget) {
+        const current = this.$store.get('window.current')
+        if (current !== widget) {
+          const widgets = this.$store.get('window.widgets')
+          this.$store.patch('window', { current: widget, widgets })
+        }
+      },
+      closeWidget () {
+        const current = this.$store.get('window.current')
+        if (current !== '') {
+          const widgets = this.$store.get('window.widgets')
+          this.$store.patch('window', { current: '', widgets })
+        }
+      },
+      clearActivity () {
+        this.clearTopPane()
+        this.clearBottomPane()
+        this.clearRightPane()
+        this.clearPage()
+        this.clearFab()
+        this.clearWindow()
+      },
+      configureActivity () {
+        this.configureTopPane()
+        this.configureBottomPane()
+        this.configureRightPane()
+        this.configurePage()
+        this.configureFab()
+        this.configureWindow()
+      },
+      goBack () {
+        this.$router.back()
+      },
+      refresh () {
+        window.location.reload()
+      },
+      launchTour (name) {
+        // If no name we extract tour name from route name
+        if (!name) {
+          const routeName = this.$route.name
+          let tourName = routeName
+          // Manage routes with different pages
+          if (_.has(this.$route, 'params.page')) {
+            tourName += '/' + _.get(this.$route, 'params.page')
+          }
+          name = tourName
+        }
+        this.$store.patch('tours.current', { name })
+      }
+    },
+    beforeCreate () {
+      // Identify this activity using its name or the route name
+      this.activityName = name || _.camelCase(this.$options.name)
+      // Setup the options
+      this.activityOptions = this.$config(this.activityName)
+    },
+    created () {
+      // Whenever the user abilities are updated, update activity as well
+      this.$events.$on('user-abilities-changed', this.configureActivity)
+      // Configure the activity
+      this.configureActivity()
+    },
+    beforeDestroy () {
+      this.$events.$off('user-abilities-changed', this.configureActivity)
     }
-  },
-  methods: {
-    setActivityBar (content, mode = '') {
-      this.$store.patch('activityBar', { content: content, mode: mode })
-    },
-    setActivityBarMode (mode) {
-      const content = this.$store.get('activityBar.content')
-      this.$store.patch('activityBar', { content: content, mode: mode })
-    },
-    clearActivityBar () {
-      this.$store.patch('activityBar', { content: null, mode: '' })
-    },
-    registerTabAction (action) {
-      this.registerAction('tabBar', action)
-      this.$store.patch('tabBar', { tabs: this.getActions('tabBar') })
-    },
-    unregisterTabAction (nameOrId) {
-      this.unregisterAction('tabBar', nameOrId)
-      this.$store.patch('tabBar', { tabs: this.getActions('tabBar') })
-    },
-    registerFabAction (action) {
-      this.registerAction('fab', action)
-      this.$store.patch('fab', { actions: this.getActions('fab') })
-    },
-    unregisterFabAction (nameOrId) {
-      this.unregisterAction('fab', nameOrId)
-      this.$store.patch('fab', { actions: this.getActions('fab') })
-    },
-    registerAction (type, action) {
-      action.id = _.kebabCase(action.name)
-      action.uid = uid()
-      if (!this.actions[type]) this.actions[type] = []
-      this.actions[type].push(action)
-    },
-    unregisterAction (type, nameOrId) {
-      // Ensure we convert to the right case when using name
-      const id = _.kebabCase(nameOrId)
-      if (!this.actions[type]) return
-      _.remove(this.actions[type], (action) => (action.id === id) || (action.uid === id))
-    },
-    getActions (type) {
-      return this.actions[type] || []
-    },
-    getAction (nameOrId, type) {
-      // Ensure we convert to the right case when using name
-      const id = _.kebabCase(nameOrId)
-      const actions = this.getActions(type)
-      return _.find(actions, (action) => (action.id === id) || (action.uid === id))
-    },
-    clearActions () {
-      // Clear tabBar actions
-      this.$store.patch('tabBar', { tabs: [] })
-      // Clear Fab actions
-      this.$store.patch('fab', { actions: [] })
-      // Clear the actions
-      this.actions = {}
-    },
-    setTitle (title) {
-      this.$store.patch('appBar', { title: title })
-    },
-    clearTitle () {
-      this.$store.patch('appBar', { title: '' })
-    },
-    setSearchBar (field, services = [], items = []) {
-      // Patch only activity-specific fields, pattern/items are updated by the search bar
-      this.$store.patch('searchBar', { field, services, items })
-    },
-    clearSearchBar () {
-      // Patch all fields to reset search
-      this.$store.patch('searchBar', { field: '', pattern: '', services: [], items: [] })
-    },
-    setLeftDrawer (component, props) {
-      this.$store.patch('leftDrawer', { component, props })
-    },
-    clearLeftDrawer () {
-      this.$store.patch('leftDrawer', { component: '', props: {} })
-    },
-    setRightDrawer (component, props) {
-      this.$store.patch('rightDrawer', { component, props })
-    },
-    clearRightDrawer () {
-      this.$store.patch('rightDrawer', { component: '', props: {} })
-    },
-    setFooter (component, props) {
-      this.$store.patch('footer', { component, props })
-    },
-    clearFooter () {
-      this.$store.patch('footer', { component: '', props: {} })
-    },
-    registerWidget (name, icon, component, props) {
-      const widgets = this.$store.get('window.widgets')
-      widgets.push({ name, icon, component, props })
-      this.$store.patch('window', { widgets: widgets })
-    },
-    unregisterWidget (name) {
-      const current = this.$store.get('window.current')
-      const widgets = _.filter(this.$store.get('window.widgets'), { name })
-      this.$store.patch('window', { current, widgets })
-    },
-    clearWidgets () {
-      this.$store.patch('window', { current: '', widgets: [] })
-    },
-    openWidget (widget) {
-      const current = this.$store.get('window.current')
-      if (current !== widget) {
-        const widgets = this.$store.get('window.widgets')
-        this.$store.patch('window', { current: widget, widgets })
-      }
-    },
-    hasOpenWidget () {
-      const current = this.$store.get('window.current')
-      return current
-    },
-    isWidgetOpen (widget) {
-      const current = this.$store.get('window.current')
-      return (current && (current === widget))
-    },
-    closeWidget () {
-      const current = this.$store.get('window.current')
-      if (current !== '') {
-        const widgets = this.$store.get('window.widgets')
-        this.$store.patch('window', { current: '', widgets })
-      }
-    },
-    clearActivity () {
-      this.clearTitle()
-      this.clearActivityBar()
-      this.clearSearchBar()
-      this.clearActions()
-      this.clearRightDrawer()
-      this.clearFooter()
-      this.clearWidgets()
-    },
-    refreshActivity () {
-      // This method should be overriden in activities
-      this.clearActivity()
-    },
-    handleSearch () {
-      // Update search query based on activity search config + currently selected pattern/items
-      const search = this.$store.get('searchBar')
-      const query = {}
-      // Handle the pattern
-      if (search.pattern !== '') {
-        query[search.field] = { $search: search.pattern }
-      }
-      // Handle the selection
-      search.items.forEach(item => {
-        // We must have only one item per service
-        const queryPath = item.service + '.' + item.field
-        query[queryPath] = item[item.field]
-      })
-      this.searchQuery = Object.assign({}, query)
-    }
-  },
-  created () {
-    // Register the actions
-    this.refreshActivity()
-    // Whenever the user abilities are updated, update activity as well
-    this.$events.$on('user-abilities-changed', this.refreshActivity)
-    this.$events.$on('search-bar-changed', this.handleSearch)
-  },
-  beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.refreshActivity)
-    this.$events.$off('search-bar-changed', this.handleSearch)
   }
 }
-
-export default baseActivityMixin

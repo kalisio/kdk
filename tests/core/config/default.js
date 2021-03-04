@@ -53,7 +53,7 @@ module.exports = {
       type: 'OAuth2',
       user: process.env.GOOGLE_MAIL_USER,
       // Not required anymore for OAuth2
-      //pass: process.env.GOOGLE_MAIL_PASSWORD
+      // pass: process.env.GOOGLE_MAIL_PASSWORD
       serviceClient: process.env.GOOGLE_MAIL_CLIENT_ID,
       // New lines in env var causes some problems and raises the following error
       // Uncaught Error: error:0909006C:PEM routines:get_name:no start line

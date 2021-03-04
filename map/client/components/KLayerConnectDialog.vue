@@ -140,8 +140,8 @@ export default {
           // fetch content and try to convert to json
           const query = url.href
           caps = await fetch(query)
-                .then(resp => resp.text())
-                .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+            .then(resp => resp.text())
+            .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 
           // look for SERVICE=xxx
           const service = this.findQueryParameter(url.searchParams, 'SERVICE')
@@ -170,7 +170,7 @@ export default {
           }
           if (knownSearchParams) {
             _.keys(probe.searchParams).forEach(k => {
-              if (knownSearchParams.has(k.toUpperCase())) {
+              if (knownSearchParams.has(k.toUpperCase())) {
                 delete probe.searchParams[k]
               }
             })
@@ -329,7 +329,7 @@ export default {
           // be explicit about requested CRS if probe list some
           if (layer.crs) {
             // these are what leaflet supports
-            const candidates = [ 'EPSG:3857', 'EPSG:4326', 'EPSG:3395' ]
+            const candidates = ['EPSG:3857', 'EPSG:4326', 'EPSG:3395']
             for (const c of candidates) {
               if (layer.crs.indexOf(c) !== -1) {
                 createdLayer.leaflet.crs = `CRS.${c.replace(':', '')}`

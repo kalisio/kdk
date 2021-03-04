@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions" :options="{ nameField: 'value' }">
+  <k-card v-bind="$props" :actions="itemActions" :options="{ nameField: 'value' }">
     <div slot="card-label">
       <span class="text-subtitle1 text-weight-medium ellipsis">{{ item.value }}</span>
       <q-btn class="float-right" :key="item._id" flat small rounded color="primary"
@@ -15,28 +15,9 @@ export default {
   name: 'k-tag-card',
   mixins: [mixins.baseItem],
   methods: {
-    refreshActions () {
-      this.clearActions()
-      if (this.$can('update', 'tags', this.contextId, this.item)) {
-        this.registerPaneAction({
-          name: 'edit-tag',
-          label: this.$t('KTagCard.EDIT_LABEL'),
-          icon: 'las la-file-alt',
-          route: { name: 'edit-tag', params: { contextId: this.contextId, objectId: this.item._id } }
-        })
-      }
-      if (this.$can('service', 'members', this.contextId)) {
-        this.registerPaneAction({
-          name: 'list-members',
-          label: this.$t('KTagCard.LIST_MEMBERS_LABEL'),
-          icon: 'las la-user-tag',
-          handler: this.onListMembers
-        })
-      }
-    },
     onListMembers () {
-      // Setup search bar accordingly
-      this.$store.patch('searchBar', {
+      // Setup filter accordingly
+      this.$store.patch('filter', {
         items: [Object.assign({
           service: 'tags',
           field: 'value'

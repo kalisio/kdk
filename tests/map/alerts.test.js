@@ -304,7 +304,7 @@ describe('map:alerts', () => {
     expect(alertObject.status.error.data).toExist()
     expect(alertObject.status.error.data.translation).toExist()
     expect(alertObject.status.error.data.translation.key).to.equal('CANNOT_CHECK_ALERT_MISSING_DATA')
-    let results = await alertService.find({ paginate: false, query: {} })
+    const results = await alertService.find({ paginate: false, query: {} })
     await alertService.remove(alertObject._id.toString())
     expect(spyRegisterAlert).to.have.been.called.once
     spyRegisterAlert.reset()
@@ -497,7 +497,7 @@ describe('map:alerts', () => {
         type: 'event'
       }
     })
-     // Check in-memory object
+    // Check in-memory object
     expect(alertObject.status).toExist()
     expect(alertObject.status.active).beUndefined()
     expect(alertObject.status.checkedAt).toExist()
@@ -506,7 +506,7 @@ describe('map:alerts', () => {
     expect(alertObject.status.error.data).toExist()
     expect(alertObject.status.error.data.translation).toExist()
     expect(alertObject.status.error.data.translation.key).to.equal('CANNOT_CHECK_ALERT_MISSING_DATA')
-    let results = await alertService.find({ paginate: false, query: {} })
+    const results = await alertService.find({ paginate: false, query: {} })
     await alertService.remove(alertObject._id.toString())
     expect(spyRegisterAlert).to.have.been.called.once
     spyRegisterAlert.reset()

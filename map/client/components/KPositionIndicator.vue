@@ -1,44 +1,46 @@
 <template>
-  <div class="row items-center no-padding">
-    <q-icon name="las la-crosshairs" round flat dense size="sm" class="text-grey-7" />
-    <span class="q-pl-md q-pr-md">
-      {{ position }}
-    </span>
-    <k-tool-bar v-if="!isActive" :actions="actions" color="primary" dense />
+  <div>
+    <div id="position-indicator" class="row items-center no-padding">
+      <span class="q-pl-md q-pr-md">
+        {{ formattedPosition }}
+      </span>
+      <k-action id="copy-position" icon="las la-copy" tooltip="KPositionIndicator.COPY" :handler="onCopy" />
+    </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import formatcoords from 'formatcoords'
 import { copyToClipboard } from 'quasar'
+import { Layout } from '../../../../core/client/layout'
 
 export default {
   name: 'k-position-indicator',
   inject: ['kActivity'],
-  data () {
-    return {
-      position: '',
-      selection: this.$store.get('selection'),
-      format: this.$store.get('locationFormat') || 'FFf',
-      actions: [],
-      isActive: false
+  props: {
+    color: {
+      type: String,
+      default: 'primary'
+    },
+    size: {
+      type: String,
+      default: '3rem'
     }
   },
-  watch: {
-    'selection.location': function () {
-      this.stop()
+  data () {
+    return {
+      position: this.kActivity.getCenter()
+    }
+  },
+  computed: {
+    formattedPosition () {
+      return formatcoords(this.position.latitude, this.position.longitude).format(this.format)
     }
   },
   methods: {
-    start () {
-      this.kActivity.setCursor('position-cursor')
-      this.kActivity.$on('mousemove', this.onMoved)
-      this.isActive = true
-    },
-    stop () {
-      this.isActive = false
-      this.kActivity.$off('mousemove', this.onMoved)
-      this.kActivity.unsetCursor('position-cursor')
+    updatePosition (event) {
+      this.position = this.kActivity.getCenter()
     },
     async onCopy () {
       try {
@@ -47,29 +49,41 @@ export default {
       } catch (_) {
         this.$toast({ type: 'error', message: this.$t('KPositionIndicator.CANNOT_COPY_POSITION') })
       }
-    },
-    onClear () {
-      this.position = this.$t('KPositionIndicator.PLACEHOLDER')
-      this.start()
-    },
-    onMoved (options, event) {
-      if (event.latlng) this.position = formatcoords([event.latlng.lat, event.latlng.lng]).format(this.format)
     }
   },
   created () {
     // Load the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
-    // Setup the actions
-    this.actions = [
-      { name: 'copy', icon: 'las la-copy', label: this.$t('KPositionIndicator.COPY'), handler: this.onCopy },
-      { name: 'clear', icon: 'cancel', label: this.$t('KPositionIndicator.CLEAR'), handler: this.onClear }
-    ]
+    this.$options.components['k-action'] = this.$load('frame/KAction')
+    // Setup the component
+    this.format = this.$store.get('locationFormat') || 'FFf'
   },
-  mounted () {
-    this.onClear()
+  async mounted () {
+    // Update page content with target
+    const target = [{
+      id: 'position-target', component: 'QIcon', name: 'las la-plus', color: this.color, size: this.size, class: 'fixed-center position-indicator'
+    }]
+    Layout.bindContent(target, this.kActivity)
+    const content = this.$store.get('page.content') || []
+    // Required to use splice when modifying an object inside an array to make it reactive
+    content.splice(content.length, 0, target[0])
+    this.$store.patch('page', { content })
+    this.kActivity.$on('mousemove', this.updatePosition)
   },
   beforeDestroy () {
-    this.stop()
+    const content = this.$store.get('page.content') || []
+    // Required to use splice when modifying an object inside an array to make it reactive
+    if (content) {
+      content.splice(_.findIndex(content, component => component.id === 'position-target'), 1)
+      this.$store.patch('page', { content })
+    }
+    this.kActivity.$off('mousemove', this.updatePosition)
   }
 }
 </script>
+
+<style lang="stylus">
+ .position-indicator {
+    border-radius: 50%;
+    background-color: #00000020
+ }
+</style>

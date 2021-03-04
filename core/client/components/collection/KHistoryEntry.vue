@@ -36,10 +36,7 @@
       <q-separator />
       <slot name="entry-actions">
         <q-card-actions class="q-pa-xs" align="right">
-          <!-- Pane -->
-          <k-tool-bar :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
-          <!-- Menu -->
-          <k-overflow-menu :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
+          <k-panel id="card-actions" :content="itemActions" :context="$props" />
         </q-card-actions>
       </slot>
     </q-card>
@@ -53,18 +50,6 @@ import mixins from '../../mixins'
 export default {
   name: 'k-history-entry',
   mixins: [mixins.baseItem],
-  props: {
-    itemActions: {
-      type: Object,
-      default: function () {
-        return {
-          pane: [],
-          menu: []
-        }
-      }
-    }
-
-  },
   computed: {
     date () {
       return this.getDate()
@@ -83,8 +68,8 @@ export default {
   created () {
     // Loads the required components
     this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
-    this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    this.$options.components['k-menu'] = this.$load('frame/KMenu')
   }
 }
 </script>

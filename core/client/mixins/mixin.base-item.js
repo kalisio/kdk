@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import { getIconName, getInitials } from '../utils'
+import { Layout } from '../layout'
 
-const baseItemMixin = {
+export default {
   props: {
     contextId: {
       type: String,
@@ -10,6 +11,14 @@ const baseItemMixin = {
     item: {
       type: Object,
       required: true
+    },
+    actions: {
+      type: [Object, Array],
+      default: () => null
+    },
+    filter: {
+      type: Object,
+      default: () => {}
     },
     options: {
       type: Object,
@@ -20,10 +29,7 @@ const baseItemMixin = {
   },
   data () {
     return {
-      actions: {
-        pane: [],
-        menu: []
-      }
+      itemActions: null
     }
   },
   computed: {
@@ -33,7 +39,7 @@ const baseItemMixin = {
       if (iconName || iconColor) {
         return {
           type: 'icon',
-          icon: { name: iconName, color: iconColor }
+          icon: { name: iconName, color: iconColor || 'primary' }
         }
       }
       const name = this.getName()
@@ -79,47 +85,33 @@ const baseItemMixin = {
       // Check for custom description field
       return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
     },
-    registerPaneAction (action) {
-      this.registerAction('pane', action)
-    },
-    registerMenuAction (action) {
-      this.registerAction('menu', action)
-    },
-    registerAction (type, action) {
-      this.actions[type] = this.actions[type].concat([action])
-    },
-    getActions (type) {
-      return this.actions[type] || []
-    },
-    getAction (name) {
-      let action = null
-      _.forOwn(this.actions, (value, key) => {
-        const actionForType = value.find(action => action.name === name)
-        if (actionForType) action = actionForType
-      })
-      return action
+    setActions (actions) {
+      // As context is different for each item we need to clone the global action configuration
+      // otheriwse context will always reference the last processed item
+      this.itemActions = Layout.bindContent(_.cloneDeep(actions), this)
     },
     clearActions () {
-      this.actions.menu = []
-      this.actions.pane = []
+      this.itemActions = null
     },
     // This method should be overriden in items
-    refreshActions () {
-      this.clearActions()
+    configureActions () {
+      if (this.actions) {
+        // Apply filtering
+        const actions = Layout.filterContent(this.actions, this.filter)
+        this.setActions(actions)
+      } else this.clearActions()
     },
-    onItemSelected () {
-      this.$emit('item-selected', this.item)
+    onItemSelected (section) {
+      this.$emit('item-selected', this.item, section)
     }
   },
   created () {
     // Register the actions
-    this.refreshActions()
+    this.configureActions()
     // Whenever the user abilities are updated, update actions as well
-    this.$events.$on('user-abilities-changed', this.refreshActions)
+    this.$events.$on('user-abilities-changed', this.configureActions)
   },
   beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.refreshActions)
+    this.$events.$off('user-abilities-changed', this.configureActions)
   }
 }
-
-export default baseItemMixin

@@ -5,10 +5,10 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wmts
 
-function fetchAsJson (query, {} = {}) {
+function fetchAsJson (query) {
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
 export function GetCapabilities (url, searchParams = {}) {

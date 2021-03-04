@@ -8,11 +8,15 @@ export default class MapActivity extends BasePage {
   }
 
   async click (test) {
-    await test.click(this.map)
+    await test
+      .click(this.map)
+      .wait(1000)
   }
 
   async move (test, dx, dy) {
     await test
       .drag(this.map, dx, dy)
+      .click(this.map)
+      .wait(1000)
   }
 }

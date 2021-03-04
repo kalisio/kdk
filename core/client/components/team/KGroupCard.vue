@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions">
+  <k-card v-bind="$props" :actions="itemActions" >
     <!--
       Card header
      -->
@@ -58,37 +58,10 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.clearActions()
-      if (this.$can('update', 'groups', this.contextId, this.item)) {
-        this.registerPaneAction({
-          name: 'edit-group',
-          label: this.$t('KGroupCard.EDIT_LABEL'),
-          icon: 'las la-file-alt',
-          route: { name: 'edit-group', params: { contextId: this.contextId, objectId: this.item._id } }
-        })
-      }
-      if (this.$can('service', 'members', this.contextId)) {
-        this.registerPaneAction({
-          name: 'list-members',
-          label: this.$t('KGroupCard.LIST_MEMBERS_LABEL'),
-          icon: 'las la-user-circle',
-          handler: this.onListMembers
-        })
-      }
-      if (this.$can('remove', 'groups', this.contextId, this.item)) {
-        this.registerMenuAction({
-          name: 'remove-group',
-          label: this.$t('KGroupCard.REMOVE_LABEL'),
-          icon: 'las la-minus-circle',
-          handler: this.removeGroup
-        })
-      }
-    },
-    removeGroup (group) {
+    removeGroup () {
       Dialog.create({
-        title: this.$t('KGroupCard.REMOVE_DIALOG_TITLE', { group: group.name }),
-        message: this.$t('KGroupCard.REMOVE_DIALOG_MESSAGE', { group: group.name }),
+        title: this.$t('KGroupCard.REMOVE_DIALOG_TITLE', { group: this.item.name }),
+        message: this.$t('KGroupCard.REMOVE_DIALOG_MESSAGE', { group: this.item.name }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -100,7 +73,7 @@ export default {
         }
       }).onOk(() => {
         const groupsService = this.$api.getService('groups')
-        groupsService.remove(group._id)
+        groupsService.remove(this.item._id)
       })
     },
     roleKey (role) {
@@ -124,7 +97,7 @@ export default {
     },
     onListMembers () {
       // Setup search bar accordingly
-      this.$store.patch('searchBar', {
+      this.$store.patch('filter', {
         items: [Object.assign({
           service: 'groups',
           field: 'name',

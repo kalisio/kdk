@@ -143,9 +143,9 @@ export default {
       if (!tour || (tour === 'false')) return
       // By default use the route name as tour name if tour equals simply true
       let name = this.$route.name
-      // Manage routes with different perspectives
-      if (_.get(this.$route, 'params.perspective')) {
-        name += '/' + _.get(this.$route, 'params.perspective')
+      // Manage routes with different pages
+      if (_.get(this.$route, 'params.pages')) {
+        name += '/' + _.get(this.$route, 'params.pages')
       }
       // This can be overriden when multiple tours target the same route,
       // e.g. when the route has a parameter and each value has its own tour
@@ -348,7 +348,7 @@ export default {
       } else if (_.has(step, 'params.tour')) {
         // Stop current tour before starting next one
         this.getTour().stop()
-        // Tour name can be prefixed by route if different perspectives are available
+        // Tour name can be prefixed by route if different pages are available
         const name = _.get(step, 'params.tour')
         const route = this.$route.name
         if (this.$store.has(`tours.${route}/${name}`)) {

@@ -5,10 +5,10 @@ import { buildUrl } from '../../core/common'
 
 // https://www.opengeospatial.org/standards/wfs
 
-function fetchAsJson (query, {} = {}) {
+function fetchAsJson (query) {
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
 export function GetCapabilities (url, searchParams = {}) {
@@ -62,8 +62,7 @@ export function decodeFeatureType (json) {
 
   const elements = _.get(json, 'schema.complexType[0].complexContent[0].extension[0].sequence[0].element')
   for (const element of elements) {
-    if (element.$.name === 'shape')
-      continue
+    if (element.$.name === 'shape') { continue }
 
     const prop = { name: element.$.name, type: '' }
 

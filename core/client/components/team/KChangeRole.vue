@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :title="$t('KChangeRole.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :route="true">
+  <k-modal ref="modal" :title="$t('KChangeRole.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
     <div slot="modal-content" class="column xs-gutter">
       <k-form ref="form" :schema="getSchema()" />
     </div>
@@ -56,12 +56,12 @@ export default {
     },
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KChangeRole.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
+        { id: 'close-action', icon: 'las la-times', label: 'KChangeRole.CLOSE_ACTION', handler: () => this.doClose() }
       ]
     },
     getButtons () {
       return [
-        { name: 'update-button', label: this.$t('KChangeRole.UPDATE_BUTTON'), color: 'primary', handler: () => this.doUpdate() }
+        { id: 'update-button', label: 'KChangeRole.UPDATE_BUTTON', color: 'primary', handler: () => this.doUpdate() }
       ]
     },
     async doUpdate () {

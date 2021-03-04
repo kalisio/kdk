@@ -36,7 +36,7 @@ export default {
       if (this.map) this.map.invalidateSize()
     },
     setupMap (domEl, options) {
-      const viewerOptions = options || this.options.viewer
+      const viewerOptions = options || this.activityOptions.engine.viewer
       // Initialize the map
       this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
@@ -59,11 +59,11 @@ export default {
           enableHighAccuracy: true
         },
         strings: {
-          title: this.$t('mixins.geolocation.TITLE'),
-          metersUnit: this.$t('mixins.geolocation.METERS'),
-          feetUnit: this.$t('mixins.geolocation.FEET'),
-          popup: this.$t('mixins.geolocation.POPUP'),
-          outsideMapBoundsMsg: this.$t('mixins.geolocation.OUTSIDE_MAP_BOUNDS')
+          title: this.$t('geolocation.TITLE'),
+          metersUnit: this.$t('geolocation.METERS'),
+          feetUnit: this.$t('geolocation.FEET'),
+          popup: this.$t('geolocation.POPUP'),
+          outsideMapBoundsMsg: this.$t('geolocation.OUTSIDE_MAP_BOUNDS')
         }
       })
       this.locateControl.addTo(this.map)
@@ -324,7 +324,7 @@ export default {
       return [[south, west], [north, east]]
     },
     showUserLocation () {
-      const position = this.$store.get('user.position')
+      const position = this.$geolocation.get().position
       if (this.locateControl) {
         this.locateControl.start()
       } else if (position) {

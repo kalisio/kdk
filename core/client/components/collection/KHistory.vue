@@ -10,8 +10,8 @@
               :item="item"
               :contextId="contextId"
               :is="renderer.component"
-              v-bind="renderer.props"
-              item-selected="onItemSelected(item)" />
+              v-bind="renderer"
+              @item-selected="onItemSelected" />
           </template>
         </q-infinite-scroll>
       </q-timeline>
@@ -41,9 +41,7 @@ export default {
       type: Object,
       default: () => {
         return {
-          component: 'collection/KHistoryEntry',
-          options: {},
-          props: {}
+          component: 'collection/KHistoryEntry'
         }
       }
     },

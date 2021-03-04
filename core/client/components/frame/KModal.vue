@@ -14,12 +14,7 @@
           <span class="ellipsis">{{ title }}</span>
         </q-toolbar-title>
         <q-space />
-        <template v-for="action in toolbar">
-          <q-btn  class="items-start" :id="action.name" v-bind:key="action.name" flat round dense @click="action.handler">
-            <q-icon :name="action.icon" :color="action.color || 'primary'"/>
-            <q-tooltip v-if="action.label">{{action.label}}</q-tooltip>
-          </q-btn>
-        </template>
+        <k-panel id="modal-toolbar" :content="toolbar" />
       </q-toolbar>
       <!--
         Content section
@@ -31,10 +26,7 @@
         Buttons section
        -->
       <q-card-actions align="right">
-        <template v-for="button in buttons">
-          <q-btn :id="button.name" :key="button.name" flat :color="button.color || 'primary'"
-            :label="button.label" @click="button.handler"/>
-        </template>
+        <k-panel id="modal-buttons" :content="buttons" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -78,7 +70,7 @@ export default {
         return 'min-width: 40vw; max-height: 90vh'
       }
     },
-    route: {
+    opened: {
       type: Boolean,
       default: false
     }
@@ -101,8 +93,12 @@ export default {
       this.$refs.modal.hide()
     }
   },
+  created () {
+    // load the required components
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
+  },
   mounted () {
-    if (this.route) this.open()
+    if (this.opened) this.$refs.modal.show()
   }
 }
 </script>

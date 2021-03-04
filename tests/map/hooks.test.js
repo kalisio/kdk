@@ -26,7 +26,7 @@ describe('map:hooks', () => {
   })
 
   it('marshalls geometry queries using shortcuts', () => {
-    let hook = {
+    const hook = {
       type: 'before',
       params: {
         query: {

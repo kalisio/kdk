@@ -5,25 +5,31 @@ import BasePage from './base-page'
 export default class Account extends BasePage {
   constructor () {
     super()
-    // Profile Tab
+    // Profile
     this.profileEditor = VueSelector('k-account-activity k-editor')
     this.fileInput = Selector('.dz-hidden-input')
-    // Security Tab
-    this.changePasswordButton = VueSelector('k-account-security k-block q-btn').nth(0)
+    // Security
+    this.passwordBlock = Selector('#password-block')
     this.changePasswordScreen = VueSelector('k-change-password')
-    this.changeEmailButton = VueSelector('k-account-security k-block q-btn').nth(1)
+    this.emailBlock = Selector('#email-block')
     this.changeEmailScreen = VueSelector('k-send-change-identity')
+    // Danger zone
+    this.deleteBlock = Selector('#delete-block')
   }
 
-  static get PROFILE_TAB () {
+  static get MANAGE_ACCOUNT () {
+    return '#manage-account'
+  }
+
+  static get PROFILE () {
     return '#profile'
   }
 
-  static get SECURITY_TAB () {
+  static get SECURITY () {
     return '#security'
   }
 
-  static get DANGER_ZONE_TAB () {
+  static get DANGER_ZONE () {
     return '#danger-zone'
   }
 
@@ -39,7 +45,7 @@ export default class Account extends BasePage {
 
   async updatePassword (test, oldPassword, newPassword) {
     await test
-      .click(Selector('.q-card button'))
+      .click(this.passwordBlock.find('button'))
       .wait(250)
       .typeText(VueSelector('k-password-field').nth(0), oldPassword, { replace: true })
       .typeText(VueSelector('k-password-field').nth(1), newPassword, { replace: true })
@@ -50,7 +56,7 @@ export default class Account extends BasePage {
 
   async updateEmail (test, email, password) {
     await test
-      .click(Selector('.q-card button').nth(1))
+      .click(this.emailBlock.find('button'))
       .wait(250)
       .typeText(VueSelector('k-password-field'), password, { replace: true })
       .typeText(VueSelector('k-email-field'), email, { replace: true })
@@ -60,7 +66,7 @@ export default class Account extends BasePage {
 
   async delete (test, name) {
     await test
-      .click(Selector('.q-card button'))
+      .click(this.deleteBlock.find('button'))
       .wait(250)
       .typeText(Selector('.q-dialog-plugin input[type=text]'), name)
       .click(Selector('.q-dialog-plugin button').nth(1))

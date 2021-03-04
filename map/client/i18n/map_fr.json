@@ -14,13 +14,6 @@
     "CANNOT_CHECK_ALERT_MISSING_DATA": "La dernière vérification a échouée par indisponibilité des données"
   },
   "mixins": {
-    "geolocation": {
-      "TITLE": "Ma position",
-      "METERS": "mètres",
-      "FEET": "pieds",
-      "POPUP": "Vous êtes à moins de {distance} {unit} de ce point",
-      "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
-    },
     "navigator": {
       "ACTION_SHEET_TITLE": "Selectionnez une application"
     },
@@ -33,6 +26,7 @@
     "activity": {
       "CREATE_LAYER": "Créer une nouvelle couche",
       "IMPORT_LAYER": "Importer un fichier local pour créer une nouvelle couche",
+      
       "CONNECT_LAYER": "Se connecter à un serveur distant pour créer une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
@@ -55,15 +49,22 @@
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
+      "SHOW_USER_LOCATION": "Afficher ma localisation",      
+      "HIDE_USER_LOCATION": "Masquer ma localisation",
       "TOGGLE_SIDENAV": "Menu",
-      "TOGGLE_FULLSCREEN": "Plein écran",
+      "ENTER_FULLSCREEN": "Basculer en mode plein écran",
+      "EXIT_FULLSCREEN": "Quitter le mode plein écran",
       "TOGGLE_CATALOG": "Catalogue",
-      "TOGGLE_MAP": "2D",
-      "TOGGLE_GLOBE": "3D",
-      "TOGGLE_VR": "VR",
-      "TRACK_LOCATION": "Suivi de coordonnées",
+      "TOGGLE_MAP": "Visualiser en 2D",
+      "TOGGLE_GLOBE": "Visualiser en 3D",
+      "ENTER_VR": "Basculer en mode RV",
+      "EXIT_VR": "Quitter le mode RV",
       "PROBE": "Sonder",
-      "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement"
+      "DISPLAY_POSITION": "Afficher les coordonnées",
+      "SEARCH_LOCATION": "Rechercher un lieu",
+      "ADD_FAVORITE": "Ajouter aux vues favorites",
+      "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
+      "TOOLS": "Outils"
     },
     "timeseries": {
       "FORECAST_PROBE": "Prévisions"
@@ -177,6 +178,13 @@
       }
     }
   },
+  "geolocation": {
+    "TITLE": "Ma position",
+    "METERS": "mètres",
+    "FEET": "pieds",
+    "POPUP": "Vous êtes à moins de {distance} {unit} de ce point",
+    "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
+  },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
     "CATALOG_CREATE_TITLE": "Créer une nouvelles couche de données",
@@ -261,14 +269,9 @@
   "KPositionIndicator": {
     "PLACEHOLDER": "Naviguez pour voir les coordonnées",
     "COPY": "Copier les coordonnées",
-    "CLEAR": "Effacter",
+    "CLEAR": "Effacer",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",
     "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité"
-  },
-  "KNavigationBar": {
-    "TRACK": "Afficher les coordonnées",
-    "SEARCH": "Rechercher un lieu",
-    "BACK": "Retour"
   },
   "KTimeSeries": {
     "NO_DATA_AVAILABLE": "Aucune donnée disponible",
@@ -398,6 +401,17 @@
     "TITLE": "Importer une couche",
     "INPUT_HINT": "Sélectionnez un fichier",
     "IMPORT_BUTTON": "Importer"
+  },
+  "KFavoriteViews": {
+    "FAVORITE_VIEWS_LABEL": "Vues favorites",
+    "SORT_VIEWS": "Trier les vues",
+    "CREATE_VIEW": "Créer une nouvelle vue",
+    "ADD_BUTTON": "OK",
+    "REMOVE_VIEW": "$t(REMOVE)",
+    "FAVORITE_VIEW_CREATE_TITLE": "Créer une nouvelle vue ?",
+    "FAVORITE_VIEW_NAME_FIELD_HELPER": "Saisissez le nom de la vue",
+    "FAVORITE_VIEW_DESCRIPTION_FIELD_HELPER": "Saisissez la description de la vue",
+    "FAVORITE_VIEW_LAYERS_FIELD_HELPER": "Sauvegarder les couches actives"
   },
   "KLayerConnectDialog": {
     "TITLE": "Connexion à un serveur distant",

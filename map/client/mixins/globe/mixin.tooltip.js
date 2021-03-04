@@ -20,7 +20,7 @@ export default {
       if (entity.properties) {
         const properties = entity.properties.getValue(0)
         const cesiumOptions = options.cesium || options
-        const tooltipStyle = _.merge({}, this.options.tooltip,
+        const tooltipStyle = _.merge({}, this.activityOptions.engine.tooltip,
           cesiumOptions.tooltip, properties.tooltip)
         // Default content
         let text = tooltipStyle.text
@@ -80,7 +80,7 @@ export default {
   created () {
     this.registerStyle('tooltip', this.getDefaultTooltip)
     // Perform required conversion from JSON to Cesium objects
-    if (this.options.tooltip) this.options.tooltip = this.convertToCesiumObjects(this.options.tooltip)
+    if (this.activityOptions.engine.tooltip) this.activityOptions.engine.tooltip = this.convertToCesiumObjects(this.activityOptions.engine.tooltip)
   },
   mounted () {
     this.$on('mousemove', this.onTooltip)

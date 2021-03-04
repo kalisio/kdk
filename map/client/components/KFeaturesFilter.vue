@@ -88,7 +88,7 @@ export default {
   },
   data () {
     return {
-      toolbar: [{ name: 'close', icon: 'las la-times', handler: () => this.close() }],
+      toolbar: [{ id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.close() }],
       filters: [],
       property: null
     }
@@ -119,7 +119,7 @@ export default {
       if (!this.$options.components[componentKey]) {
         this.$options.components[componentKey] = this.$load(component)
       }
-      let filter = {
+      const filter = {
         key: uid().toString(),
         component,
         componentKey,
@@ -169,10 +169,10 @@ export default {
         operators = operators.concat([{
           label: this.$i18n.t('KFeaturesFilter.EQUAL'),
           value: '$eq'
-        },{
+        }, {
           label: this.$i18n.t('KFeaturesFilter.NOT_EQUAL'),
           value: '$neq'
-        },  {
+        }, {
           label: this.$i18n.t('KFeaturesFilter.GREATER_THAN'),
           value: '$gt'
         }, {
@@ -212,7 +212,7 @@ export default {
         const isNumber = (field.component === 'form/KNumberField')
         const value = (isNumber && _.isNumber(filter.value) ? _.toNumber(filter.value) : filter.value)
         // Do not rely on _.get here as the key should use dot notation, e.g. 'properties.xxx'
-        let queryFilter = this.layer.baseQuery[`properties.${filter.property}`] || {}
+        const queryFilter = this.layer.baseQuery[`properties.${filter.property}`] || {}
         this.layer.baseQuery[`properties.${filter.property}`] = _.merge(queryFilter, { [filter.operator]: value })
       })
       // Update icon to reflect there is a filter on

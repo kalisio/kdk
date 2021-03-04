@@ -1,6 +1,9 @@
 import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store } from './store'
+import { Layout } from './layout'
+import { Filter } from './filter'
+import { Sorter } from './sorter'
 import services from './services'
 import * as utils from './utils'
 import * as mixins from './mixins'
@@ -16,6 +19,8 @@ import * as hooks from './hooks'
 export * from './events'
 export * from './api'
 export * from './store'
+export * from './filter'
+export * from './layout'
 export * from './guards'
 export * from '../common'
 export { utils }
@@ -29,18 +34,18 @@ export default function init () {
   logger.debug('Initializing core')
   api.configure(services)
 
-  // Create the models listened by the main layout components
+  // Create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  Store.set('appBar', { leading: null, title: '', subtitle: '', toolbar: [], menu: [] })
-  Store.set('searchBar', { field: '', pattern: '', services: [], items: [] })
-  Store.set('tabBar', { tabs: [] })
-  Store.set('activityBar', { content: null, mode: '', visible: true })
-  Store.set('leftDrawer', { component: '', props: {}, visible: false })
-  Store.set('rightDrawer', { component: '', props: {}, visible: false })
-  Store.set('footer', { component: '', props: {}, visible: false })
-  Store.set('window', { curent: '', widgets: [] })
-  Store.set('fab', { actions: [] })
+  Layout.initialize()
+  Filter.initialize()
+  Sorter.initialize()
+  Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
+  Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
+  Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
+  Store.set('page', { content: null, mode: undefined, filter: {} })
+  Store.set('window', { current: '', widgets: [], filter: {} })
+  Store.set('fab', { actions: [], filter: {} })
 
   // Listen to the 'patched' event on the users
   const users = api.getService('users')

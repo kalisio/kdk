@@ -28,7 +28,7 @@
      -->
     <template v-slot:control>
       <q-carousel-control position="top-right" :offset="[0, 0]" style="font-size: 2em; cursor: pointer;">
-        <k-tool-bar :actions="actions" :color="controlColor" :dense="$q.screen.lt.md" />
+        <k-panel id="media-browser-actions" :content="actions" :color="controlColor" />
       </q-carousel-control>
     </template>
   </q-carousel>
@@ -71,17 +71,17 @@ export default {
       if (this.currentMedia) {
         if (this.currentMedia.isImage) {
           actions.push({
-            name: 'restoreImage', label: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), icon: 'las la-undo', handler: this.onImageRestored
+            id: 'restore-image', icon: 'las la-undo', tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), handler: this.onImageRestored
           })
         }
         actions.push({
-          name: 'downloadMedia', label: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'), icon: 'las la-cloud-download-alt', handler: this.onMediaDownload
+          id: 'download-media', icon: 'las la-cloud-download-alt', tooltip: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'), handler: this.onMediaDownload
         })
       }
       actions.push({
-        name: 'close', label: this.$t('KMediaBrowser.CLOSE_ACTION'), icon: 'las la-times', handler: this.onClose
+        name: 'close-browser', icon: 'las la-times', tooltip: this.$t('KMediaBrowser.CLOSE_ACTION'), handler: this.onClose
       })
-      return actions
+      return { default: actions }
     }
   },
   data () {
@@ -176,7 +176,7 @@ export default {
   },
   created () {
     // laod the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-image-viewer'] = this.$load('media/KImageViewer')
   },
   async mounted () {

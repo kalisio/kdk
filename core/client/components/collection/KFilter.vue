@@ -2,15 +2,14 @@
   <k-item-chooser
     :multiselect="true"
     :services="services"
-    :default-items="items"
-    @changed="onItemsChanged" />
+    :default-items="filter.items"
+    @items-changed="onItemsChanged"
+    @pattern-changed="onPatternChanged" />
 </template>
 
 <script>
-import { Events } from '../../events'
-
 export default {
-  name: 'k-search',
+  name: 'k-filter',
   props: {
     field: {
       type: String,
@@ -19,41 +18,32 @@ export default {
     services: {
       type: Array,
       default: () => []
-    },
-    items: {
-      type: Array,
-      default: () => []
-    },
-    value: {
-      type: Object,
-      required: true
     }
   },
   data () {
     return {
-    
+      filter: this.$store.get('filter')
     }
   },
   methods: {
-    onItemsChanged (items, pattern) {
-      const query = {}
-      // Handle the pattern
-      if (pattern !== '') {
-        query[this.field] = { $search: pattern }
-      }
-      // Handle the selection
-      items.forEach(item => {
-        // We must have only one item per service
-        const queryPath = item.service + '.' + item.field
-        query[queryPath] = item[item.field]
-      })
-      Events.$emit('filter-changed', query)
+    onItemsChanged (items) {
+      // Setup the filter, which then automatically updates the query
+      this.$store.patch('filter', { items })
+    },
+    onPatternChanged (pattern) {
+      // Setup the filter, which then automatically updates the query
+      this.$store.patch('filter', { pattern })
     }
   },
   created () {
     // Load the required components
     this.$options.components['k-item-chooser'] = this.$load('input/KItemChooser')
+    // Initialize the filter, we keep track of any existing items previously set by another activity
+    this.$store.patch('filter', { field: this.field, pattern: '' })
+  },
+  beforeDestroy () {
+    // Reset the filter, we keep track of any existing items previously set by another activity
+    this.$store.patch('filter', { pattern: '' })
   }
 }
 </script>
-

@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions">
+  <k-card v-bind="$props" :actions="itemActions" >
     <!--
       Card header
     -->
@@ -86,51 +86,13 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.clearActions()
-      if (!this.item.expireAt) {
-        if (this.$can('update', 'members', this.contextId)) {
-          this.registerPaneAction({
-            name: 'tag-member',
-            label: this.$t('KMemberCard.TAG_LABEL'),
-            icon: 'las la-tags',
-            route: { name: 'tag-member', params: { contextId: this.contextId, objectId: this.item._id } }
-          })
-        }
-        if (this.$can('update', 'members', this.contextId)) {
-          this.registerPaneAction({
-            name: 'change-role',
-            label: this.$t('KMemberCard.CHANGE_ROLE_LABEL'),
-            icon: 'las la-graduation-cap',
-            route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id, resource: { id: this.contextId, scope: 'organisations', service: 'organisations' } } }
-          })
-        }
-        if (this.$can('remove', 'authorisations', this.contextId, { resource: this.contextId })) {
-          this.registerMenuAction({
-            name: 'remove-member',
-            label: this.$t('KMemberCard.REMOVE_LABEL'),
-            icon: 'las la-minus-circle',
-            handler: this.removeMember
-          })
-        }
-      } else {
-        if (this.$can('update', 'members', this.contextId)) {
-          this.registerPaneAction({
-            name: 'reissue-invitation',
-            label: this.$t('KMemberCard.RESEND_INVITATION_LABEL'),
-            icon: 'las la-envelope',
-            handler: this.resendInvitation
-          })
-        }
-      }
-    },
-    resendInvitation (member) {
+    resendInvitation () {
       Dialog.create({
-        title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: member.name }),
-        message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: member.name }),
+        title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: this.item.name }),
+        message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: this.item.name }),
         html: true,
         prompt: {
-          model: member.email,
+          model: this.item.email,
           isValid: email => isEmailValid(email),
           type: 'email'
         },
@@ -148,12 +110,10 @@ export default {
         usersService.patch(this.item._id, { expireAt: newExpiryDate, email })
       })
     },
-    onResendInvitation (member) {
-    },
-    removeMember (member) {
+    removeMember () {
       Dialog.create({
-        title: this.$t('KMemberCard.REMOVE_DIALOG_TITLE', { member: member.name }),
-        message: this.$t('KMemberCard.REMOVE_DIALOG_MESSAGE', { member: member.name }),
+        title: this.$t('KMemberCard.REMOVE_DIALOG_TITLE', { member: this.item.name }),
+        message: this.$t('KMemberCard.REMOVE_DIALOG_MESSAGE', { member: this.item.name }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -168,7 +128,7 @@ export default {
         authorisationService.remove(this.contextId, {
           query: {
             scope: 'organisations',
-            subjects: member._id,
+            subjects: this.item._id,
             subjectsService: this.contextId + '/members',
             resourcesService: 'organisations'
           }

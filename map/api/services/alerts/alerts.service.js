@@ -122,7 +122,7 @@ export default {
       return
     }
     // Then update alert status starting from previous one (i.e. trigger time stamp, etc.)
-    let status = _.get(alert, 'status', {})
+    const status = _.get(alert, 'status', {})
     status.checkedAt = now.clone()
     // Clean any error state
     delete status.error
@@ -145,7 +145,7 @@ export default {
       this.app.logger.error(error.message)
       status.error = error.toJSON()
     }
-    
+
     // As we keep in-memory objects avoid them being mutated by hooks processing operation payload
     if (options.patch) {
       await this.patch(alert._id.toString(), { status: Object.assign({}, status) })

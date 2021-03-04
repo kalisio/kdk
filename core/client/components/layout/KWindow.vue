@@ -13,18 +13,18 @@
         narrow-indicator
       >
         <template v-for="(widget,index) in widgets">
-          <q-tab :key="index" :name="widget.name" :icon="widget.icon" />
+          <q-tab :key="index" :name="widget.id" :icon="widget.icon" />
         </template>
       </q-tabs>
       <!-- Window actions -->
-      <k-tool-bar class="q-pa-sm" :actions="actions" color="primary" size="sm" />
+      <k-panel id="widget-actions" :content="actions" color="primary" />
     </div>
     <!--
       Window content
       -->
     <q-tab-panels v-model="widget" animated>
       <template v-for="(widget, index) in widgets">
-        <q-tab-panel :key="index" :name="widget.name" class="no-padding">
+        <q-tab-panel :key="index" :name="widget.id" class="no-padding">
           <component :is="widget.componentKey" :mode="mode" v-bind="widget.props" style="z-index: 1" />
         </q-tab-panel>
       </template>>
@@ -35,6 +35,7 @@
 <script>
 import _ from 'lodash'
 import path from 'path'
+import { Layout } from '../../layout'
 
 export default {
   name: 'k-window',
@@ -50,21 +51,24 @@ export default {
     actions () {
       return [
         {
-          name: 'change-mode',
-          label: this.$t(this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION'),
+          id: 'change-mode',
           icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
+          tooltip: this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION',
           handler: this.onModeChanged
         },
         {
-          name: 'close-action',
-          label: this.$t('KWindow.CLOSE_ACTION'),
+          id: 'close-action',
           icon: 'las la-times',
+          tooltip: this.$t('KWindow.CLOSE_ACTION'),
           handler: this.onClosed
         }
       ]
     },
     widgets () {
-      _.forEach(this.window.widgets, (widget) => {
+      let widgets = this.window.widgets
+      // Apply filtering
+      widgets = Layout.filterContent(widgets, this.window.filter || {})
+      _.forEach(widgets, (widget) => {
         if (!widget.key) {
           const componentName = _.get(widget, 'component')
           const componentKey = _.kebabCase(path.basename(componentName))
@@ -72,7 +76,7 @@ export default {
           this.$options.components[componentKey] = this.$load(componentName)
         }
       })
-      return this.window.widgets
+      return widgets
     },
     windowStyle () {
       if (this.mode === 'maximized') return 'width: 100vw'
@@ -100,7 +104,7 @@ export default {
   },
   created () {
     // Load the required components
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

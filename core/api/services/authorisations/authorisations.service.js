@@ -56,7 +56,7 @@ export default {
     const scopeName = query.scope // Get scope name first
     return Promise.all(params.subjects.map(async subject => {
       // Then retrieve the right scope on the subject
-      let scope = _.get(subject, scopeName, [])
+      const scope = _.get(subject, scopeName, [])
       // Remove the target resource if any
       const resources = _.remove(scope, resource => resource._id && (resource._id.toString() === id.toString()))
       if (resources.length > 0) {

@@ -50,13 +50,10 @@
 <script>
 import formatcoords from 'formatcoords'
 import { formatGeocodingResult } from '../utils'
-import * as mixins from '../mixins'
+import { Geolocation } from '../geolocation'
 
 export default {
   name: 'k-location-input',
-  mixins: [
-    mixins.geolocation
-  ],
   props: {
     value: {
       type: Object,
@@ -102,8 +99,8 @@ export default {
   },
   methods: {
     async geolocate () {
-      await this.updatePosition()
-      const position = this.$store.get('user.position')
+      await Geolocation.update()
+      const position = this.$store.get('geolocation.position')
       if (position) {
         this.location = {
           name: formatcoords(position.latitude, position.longitude).format(this.$store.get('locationFormat', 'FFf')),

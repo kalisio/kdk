@@ -191,7 +191,7 @@ export default {
     },
     getProbedLocationForecastTooltip (feature, layer, options) {
       if (options.name !== SelectionLayerName) return
-      
+
       // Only wind/temperature can be available at different levels now
       const windDirection = (this.forecastLevel ? `windDirection-${this.forecastLevel}` : 'windDirection')
       const windSpeed = (this.forecastLevel ? `windSpeed-${this.forecastLevel}` : 'windSpeed')

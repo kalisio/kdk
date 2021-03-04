@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions" :options="{ nameField: 'model' }">
+  <k-card v-bind="$props" :actions="itemActions" :options="{ nameField: 'model' }">
     <!--
       Card icon
      -->
@@ -47,19 +47,8 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.clearActions()
-      if (this.$can('remove', 'devices', this.contextId, this.item)) {
-        this.registerPaneAction({
-          name: 'remove-device',
-          label: this.$t('KDeviceCard.UNLINK_LABEL'),
-          icon: 'phonelink_erase',
-          handler: this.removeDevice
-        })
-      }
-    },
-    removeDevice (device) {
-      const description = device.platform + ' ' + device.manufacturer + ' ' + device.model
+    removeDevice (context) {
+      const description = context.item.platform + ' ' + context.item.manufacturer + ' ' + context.item.model
       Dialog.create({
         title: this.$t('KDeviceCard.UNLINK_DIALOG_TITLE', { description }),
         message: this.$t('KDeviceCard.UNLINK_DIALOG_MESSAGE', { description }),
@@ -74,7 +63,7 @@ export default {
         }
       }).onOk(() => {
         const devicesService = this.$api.getService('devices')
-        devicesService.remove(device.registrationId)
+        devicesService.remove(context.item.registrationId)
       })
     }
   },

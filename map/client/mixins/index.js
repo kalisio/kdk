@@ -1,4 +1,3 @@
-import geolocation from './mixin.geolocation'
 import navigator from './mixin.navigator'
 import style from './mixin.style'
 import infobox from './mixin.infobox'
@@ -11,7 +10,6 @@ import context from './mixin.context'
 import levels from './mixin.levels'
 
 export default {
-  geolocation,
   navigator,
   featureSelection,
   featureService,

@@ -1,117 +1,128 @@
 import { Selector } from 'testcafe'
 import VueSelector from 'testcafe-vue-selectors'
 import BasePage from './base-page'
-import { getWindowInnerWidth } from '.'
 
 export default class Layout extends BasePage {
   constructor () {
     super()
-    // AppBar
-    this.appBar = VueSelector('k-app-bar')
-    this.appBarLeading = this.appBar.find('#app-bar-leading')
-    this.appBarTitle = this.appBar.find('#app-bar-title')
-    this.appBarOverflowMenu = Selector('#overflow-menu')
-    this.appBarOverflowMenuEntry = this.appBar.find('#app-bar-overflow-menu')
-    // Drawers
+    // Drawer
     this.leftDrawer = Selector('.q-drawer--left')
-    this.rightDrawer = Selector('.q-drawer--right')
     // Openers
-    this.leftOpener = Selector('#opener-left')
-    this.rightOpener = Selector('#opener-right')
-    this.topOpener = Selector('#opener-top')
-    this.bottomOpener = Selector('#opener-bottom')
-    // TabBar
-    this.tabBar = VueSelector('k-tab-bar')
+    this.leftOpener = Selector('#left-opener')
+    this.rightOpener = Selector('#right-opener')
+    this.topOpener = Selector('#top-opener')
+    this.bottomOpener = Selector('#bottom-opener')
+    // Panes
+    this.topPanel = Selector('#top-panel')
+    this.rightPanel = Selector('#right-panel')
+    this.bottomPanel = Selector('#bottom-panel')
     // Fab
     this.fab = Selector('#fab')
     // SignupAlert
     this.signupAlert = VueSelector('k-signup-alert')
   }
 
-  // AppBar
-  async clickLeading (test) {
-    await test
-      .click(this.appBarLeading)
-      .wait(500)
+  static get ABOUT () {
+    return '#about'
   }
 
-  async clickToolbar (test, entry) {
-    await test
-      .click(this.appBar.find(entry))
-      .wait(500)
-  }
-
-  async clickOverflowMenu (test, entry) {
-    await test
-      .click(this.appBarOverflowMenuEntry)
-      .click(this.appBarOverflowMenu.find(entry))
-      .wait(500)
-  }
-
-  // TabBar
-  async clickTabBar (test, tab) {
-    await test
-      .click(this.tabBar.find(tab))
-      .wait(500)
-  }
-
-  // Drawers
-  async isLeftDrawerOpened () {
-    const leftPos = await this.leftDrawer.getBoundingClientRectProperty('left')
-    return leftPos >= 0
-  }
-
-  async isRightDrawerOpened () {
-    const rightPos = await this.rightDrawer.getBoundingClientRectProperty('right')
-    const windowWidth = await getWindowInnerWidth()
-    return rightPos <= windowWidth
+  static get LOGOUT () {
+    return '#logout'
   }
 
   // Openers
   async clickLeftOpener (test) {
     await test
       .click(this.leftOpener)
-      .wait(500)
+      .wait(1000)
   }
 
   async clickRightOpener (test) {
     await test
       .click(this.rightOpener)
-      .wait(500)
+      .wait(1000)
   }
 
   async clickTopOpener (test) {
     await test
       .click(this.topOpener)
-      .wait(500)
+      .wait(1000)
   }
 
   async clickBottomOpener (test) {
     await test
       .click(this.bottomOpener)
-      .wait(500)
+      .wait(1000)
+  }
+
+  // Leftdrawer
+  async isLeftDrawerOpened () {
+    const leftPos = await this.leftDrawer.getBoundingClientRectProperty('left')
+    return leftPos >= 0
+  }
+
+  async clickLeftDrawer (test, action) {
+    await test
+      .click(this.leftDrawer.find(action))
+      .wait(1000)
+  }
+
+  // TopPane
+  async isTopPaneOpened () {
+    const isVisible = await this.topPanel.visible
+    return isVisible
+  }
+
+  async clickTopPane (test, action) {
+    await test
+      .click(this.topPanel.find(action))
+      .wait(1000)
+  }
+
+  // RightPane
+  async isRightPaneOpened () {
+    const isVisible = await this.rightPanel.visible
+    return isVisible
+  }
+
+  async clickRightPane (test, action) {
+    await test
+      .click(this.rightPanel.find(action))
+      .wait(1000)
+  }
+
+  // BottomPane
+  async isBottomPaneOpened () {
+    const isVisible = await this.bottomPanel.visible
+    return isVisible
+  }
+
+  async clickBottomPane (test, action) {
+    await test
+      .click(this.bottomPanel.find(action))
+      .wait(1000)
   }
 
   // Fab
-  async clickFab (test) {
+  async clickFab (test, action) {
     await test
-      .click(Selector(this.fab))
-      .wait(500)
+      .click(Selector(action))
+      .wait(1000)
   }
 
-  async openAndClickFab (test, entry) {
+  async openAndClickFab (test, action) {
     await test
       .click(Selector(this.fab))
-      .wait(500)
-      .click(this.fab.find(entry))
-      .wait(500)
+      .wait(1000)
+      .click(this.fab.find(action))
+      .wait(1000)
   }
 
   // Misc
   async closeSignupAlert (test) {
     await test
       .click(Selector('#close-signup-alert'))
-      .wait(500)
+      .wait(1000)
   }
 
   async closeWelcomeDialog (test) {

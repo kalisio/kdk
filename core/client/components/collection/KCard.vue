@@ -1,5 +1,5 @@
 <template>
-  <div :class="getLayout()">
+  <div>
     <q-card bordered @click="onItemSelected">
       <!--
         Header section
@@ -37,11 +37,8 @@
       -->
       <q-separator />
       <slot name="card-actions">
-        <q-card-actions class="q-pa-sm" align="right">
-          <!-- Pane -->
-          <k-tool-bar id="card-toolbar" :actions="itemActions.pane" :context="item" :dense="$q.screen.lt.md" />
-          <!-- Menu -->
-          <k-overflow-menu id="card-overflow-menu" :actions="itemActions.menu" :context="item" :dense="$q.screen.lt.md" />
+        <q-card-actions class="q-pa-xs" align="right">
+          <k-panel id="item-actions" :content="itemActions" :context="$props" />
         </q-card-actions>
       </slot>
     </q-card>
@@ -49,33 +46,15 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-card',
   mixins: [mixins.baseItem],
-  props: {
-    itemActions: {
-      type: Object,
-      default: function () {
-        return {
-          pane: [],
-          menu: []
-        }
-      }
-    }
-  },
-  methods: {
-    getLayout () {
-      return _.get(this.options, 'layout', 'col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3')
-    }
-  },
   created () {
     // Loads the required components
     this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
-    this.$options.components['k-tool-bar'] = this.$load('layout/KToolBar')
-    this.$options.components['k-overflow-menu'] = this.$load('layout/KOverflowMenu')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

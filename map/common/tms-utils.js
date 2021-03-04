@@ -3,10 +3,10 @@ import fetch from 'node-fetch'
 import xml2js from 'xml2js'
 import { buildUrl } from '../../core/common'
 
-function fetchAsJson (query, {} = {}) {
+function fetchAsJson (query) {
   return fetch(query)
     .then(response => response.text())
-    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [ xml2js.processors.stripPrefix ] }))
+    .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
 export function TileMapService (tmsUrl, searchParams = {}) {

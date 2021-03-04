@@ -44,7 +44,7 @@ const baseCollectionMixin = {
             this.items = response.data
           }
           this.nbTotalItems = response.total
-          this.$emit('collection-refreshed')
+          this.$emit('collection-refreshed', this.$data)
         }, error => {
           this.$events.$emit('error', error)
         })
@@ -56,15 +56,15 @@ const baseCollectionMixin = {
       }
     },
     getCollectionBaseQuery () {
-      // This method should be overriden in activities
+      // This method should be overriden in collections
       return {}
     },
     getCollectionFilterQuery () {
-      // This method should be overriden in activities
+      // This method should be overriden in collections
       return {}
     },
     getCollectionPaginationQuery () {
-      // This method can be overriden in activities
+      // This method can be overriden in collections
       if (this.nbItemsPerPage > 0) {
         return {
           $limit: this.nbItemsPerPage,
@@ -84,8 +84,8 @@ const baseCollectionMixin = {
     onPageChanged () {
       this.refreshCollection()
     },
-    onItemSelected (item) {
-      this.$emit('selection-changed', item)
+    onItemSelected (item, section) {
+      this.$emit('selection-changed', item, section)
     },
     onItemsSelected (items) {
       this.$emit('selection-changed', items)

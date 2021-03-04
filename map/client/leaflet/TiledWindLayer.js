@@ -35,7 +35,6 @@ const TiledWindLayer = L.GridLayer.extend({
     // set of loaded leaflet tiles
     this.loadedTiles = new Set()
 
-
     // build colormap
     const domain = _.get(options, 'chromajs.domain', null)
     const colors = _.get(options, 'chromajs.scale', null)
@@ -127,22 +126,17 @@ const TiledWindLayer = L.GridLayer.extend({
   setTime (time) {
     const applyU = typeof this.uSource.setTime === 'function'
     const applyV = typeof this.vSource.setTime === 'function'
-    if (applyU || applyV) {
-      if (!this.pendingAdd)
-        this._resetView()
-      if (applyU)
-        this.uSource.setTime(time)
-      if (applyV)
-        this.vSource.setTime(time)
+    if (applyU || applyV) {
+      if (!this.pendingAdd) { this._resetView() }
+      if (applyU) { this.uSource.setTime(time) }
+      if (applyV) { this.vSource.setTime(time) }
     }
   },
 
   setModel (model) {
     // apply per model {min,max}Zoom
-    if (this.conf.minZoom)
-      this.options.minZoom = _.get(this.conf.minZoom, model.name)
-    if (this.conf.maxZoom)
-      this.options.maxZoom = _.get(this.conf.maxZoom, model.name)
+    if (this.conf.minZoom) { this.options.minZoom = _.get(this.conf.minZoom, model.name) }
+    if (this.conf.maxZoom) { this.options.maxZoom = _.get(this.conf.maxZoom, model.name) }
 
     const modelHeader = {
       nx: model.size[0],
@@ -180,13 +174,10 @@ const TiledWindLayer = L.GridLayer.extend({
 
     const applyU = typeof this.uSource.setTime === 'function'
     const applyV = typeof this.vSource.setTime === 'function'
-    if (applyU || applyV) {
-      if (!this.pendingAdd)
-        this._resetView()
-      if (applyU)
-        this.uSource.setModel(model)
-      if (applyV)
-        this.vSource.setModel(model)
+    if (applyU || applyV) {
+      if (!this.pendingAdd) { this._resetView() }
+      if (applyU) { this.uSource.setModel(model) }
+      if (applyV) { this.vSource.setModel(model) }
     }
   },
 

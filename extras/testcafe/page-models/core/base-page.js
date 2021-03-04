@@ -7,6 +7,7 @@ export default class BasePage {
 
   // Error helper
   async isErrorVisible () {
-    return this.error.visible
+    const isVisible = await this.error.visible
+    return isVisible
   }
 }

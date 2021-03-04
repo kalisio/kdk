@@ -21,13 +21,15 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <k-overflow-menu :actions="itemActions" :context="props.row" :dense="$q.screen.lt.md" />
+            <k-panel id="item-actions" :content="itemActions" :context="{ item: props.row }" />
           </q-td>
         </template>
       </q-table>
     </div>
     <div v-else class="absolute-center">
-      <k-label :text="$t('KTable.EMPTY_TABLE')" icon-size="48px" />
+      <div slot="empty-section">
+        <k-label :text="$t('KTable.EMPTY_TABLE')" icon-size="3rem" />
+      </div>
     </div>
   </div>
 </template>
@@ -36,33 +38,27 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { QTable, QTd } from 'quasar'
-import { KOverflowMenu } from '../layout'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-table',
   mixins: [mixins.service, mixins.schemaProxy, mixins.baseCollection],
   components: {
-    QTable, QTd, KOverflowMenu
+    QTable,
+    QTd
   },
   props: {
     itemActions: {
-      type: Array,
-      default: function () {
-        return []
-      }
+      type: [Object, Array],
+      default: () => { return null }
     },
     baseQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => { return {} }
     },
     filterQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => { return {} }
     },
     title: {
       type: String
@@ -120,7 +116,6 @@ export default {
     processSchema () {
       this.columns = [{
         name: 'actions',
-        style: 'width: 24px',
         align: 'center'
       }]
       _.forOwn(this.schema.properties, (value, key) => {
@@ -182,6 +177,7 @@ export default {
   async created () {
     // Load the required components
     this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')

@@ -8,7 +8,7 @@ export default {
       let tooltip
       if (properties) {
         const leafletOptions = options.leaflet || options
-        const tooltipStyle = Object.assign({}, this.options.tooltip,
+        const tooltipStyle = Object.assign({}, this.activityOptions.engine.tooltip,
           leafletOptions.tooltip, properties.tooltip)
         // Default content
         let html = tooltipStyle.html

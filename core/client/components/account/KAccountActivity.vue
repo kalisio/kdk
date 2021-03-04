@@ -1,29 +1,28 @@
 <template>
-  <k-page v-if="objectId !== ''" padding>
+  <k-page v-if="user" padding>
     <template v-slot:page-content>
-      <div v-if="perspective === 'profile'">
-        <k-editor service="users" :objectId="objectId" perspective="profile"/>
+      <div v-if="page === 'profile'">
+        <k-editor service="users" :objectId="user._id" perspective="profile"/>
       </div>
-      <div v-if="perspective === 'security'">
-        <k-account-security :objectId="objectId" :email="email" />
+      <div v-if="page === 'security'">
+        <k-account-security :device-renderer="deviceRenderer"/>
       </div>
-      <div v-else-if="perspective === 'danger-zone'">
-        <k-account-dz :objectId="objectId" :name="name" />
+      <div v-else-if="page === 'danger-zone'">
+        <k-account-dz />
       </div>
     </template>
   </k-page>
 </template>
 
 <script>
+import _ from 'lodash'
 import mixins from '../../mixins'
 
 export default {
-  name: 'k-account-activity',
-  mixins: [
-    mixins.baseActivity
-  ],
+  name: 'account-activity',
+  mixins: [mixins.baseActivity()],
   props: {
-    perspective: {
+    page: {
       type: String,
       required: true,
       validator: (value) => {
@@ -33,41 +32,16 @@ export default {
   },
   data () {
     return {
-      objectId: '',
-      name: '',
-      email: ''
+      user: this.$store.get('user'),
+      // Make this configurable from app
+      deviceRenderer: _.merge({
+        component: 'account/KDeviceCard'
+      }, this.activityOptions.devices)
     }
   },
-  methods: {
-    refreshActivity () {
-      this.clearActivity()
-      this.setTitle(this.$store.get('user.name'))
-      this.registerTabAction({
-        name: 'profile',
-        label: this.$t('KAccountActivity.PROFILE'),
-        icon: 'las la-file-alt',
-        route: { name: 'account-activity', params: { perspective: 'profile' } },
-        default: this.perspective === 'profile'
-      })
-      this.registerTabAction({
-        name: 'security',
-        label: this.$t('KAccountActivity.SECURITY'),
-        icon: 'las la-shield-alt',
-        route: { name: 'account-activity', params: { perspective: 'security' } },
-        default: this.perspective === 'security'
-      })
-      this.registerTabAction({
-        name: 'danger-zone',
-        label: this.$t('KAccountActivity.DANGER_ZONE'),
-        icon: 'las la-exclamation-triangle',
-        route: { name: 'account-activity', params: { perspective: 'danger-zone' } },
-        default: this.perspective === 'danger-zone'
-      })
-    },
-    refreshAccount () {
-      this.objectId = this.$store.get('user._id', '')
-      this.name = this.$store.get('user.name', '')
-      this.email = this.$store.get('user.email', '')
+  watch: {
+    page: function (value) {
+      this.setTopPaneMode(value)
     }
   },
   created () {
@@ -76,12 +50,6 @@ export default {
     this.$options.components['k-editor'] = this.$load('editor/KEditor')
     this.$options.components['k-account-security'] = this.$load('account/KAccountSecurity')
     this.$options.components['k-account-dz'] = this.$load('account/KAccountDZ')
-    // Refresh this component
-    this.refreshAccount()
-    this.$events.$on('user-changed', this.refreshAccount)
-  },
-  beforeDestroy () {
-    this.$events.$off('user-changed', this.refreshAccount)
   }
 }
 </script>

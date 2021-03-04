@@ -4,6 +4,7 @@ import * as globeMixins from './mixins/globe'
 import * as utils from './utils'
 import init from './init'
 
+export * from './geolocation'
 export { utils }
 export * from '../common'
 

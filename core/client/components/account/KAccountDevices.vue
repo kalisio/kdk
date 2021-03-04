@@ -9,7 +9,7 @@
     <div v-if="items.length > 0" class="row">
       <template v-for="item in items">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" :key="item.uuid">
-          <k-device-card class="q-pa-sm" :id="item.uuid" :item="item" />
+          <k-device-card class="q-pa-sm" :id="item.uuid" :item="item" v-bind="renderer" />
         </div>
       </template>
     </div>
@@ -30,6 +30,12 @@ export default {
   mixins: [
     mixins.baseCollection
   ],
+  props: {
+    renderer: {
+      type: Object,
+      default: () => ({ component: 'account/KDeviceCard' })
+    }
+  },
   methods: {
     refreshCollection () {
       this.items = this.$store.get('user.devices', [])

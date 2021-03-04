@@ -32,6 +32,7 @@ import formatcoords from 'formatcoords'
 import { colors } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
+import { Geolocation } from '../geolocation'
 import { setGatewayJwt } from '../utils'
 
 export default {
@@ -100,16 +101,28 @@ export default {
     defaultLocation () {
       return {
         name: '',
-        latitude: this.$store.get('user.position.latitude', 0),
-        longitude: this.$store.get('user.position.longitude', 0)
+        latitude: this.$store.get('geolocation.position.latitude', 0),
+        longitude: this.$store.get('geolocation.position.longitude', 0)
       }
     },
     centerMap () {
       this.center(this.location.longitude, this.location.latitude, this.mapOptions.zoom)
     },
-    refreshLocation () {
+    async refreshLocation () {
       // Updated the location
-      if (this.value) this.location = this.value
+      if (this.value) {
+        this.location = this.value
+      } else {
+        await Geolocation.update()
+        const position = this.$store.get('geolocation.position')
+        if (position) {
+          this.location = {
+            name: formatcoords(position.latitude, position.longitude).format(this.$store.get('locationFormat', 'FFf')),
+            latitude: position.latitude,
+            longitude: position.longitude
+          }
+        }
+      }
       // Center the map
       this.centerMap()
       // Updated the marker
