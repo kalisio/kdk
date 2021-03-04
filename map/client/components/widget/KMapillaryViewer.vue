@@ -53,7 +53,7 @@ export default {
       return {
         type: 'Feature',
         properties: {
-          'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="./statics/mapillary-marker.png">`
+          'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="${this.$load('icons/mapillary-marker.png', 'asset')}">`
         },
         geometry: {
           type: 'Point',
