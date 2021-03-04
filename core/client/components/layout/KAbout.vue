@@ -23,7 +23,7 @@
       <div slot="modal-content">
         <div class="column justify-center">
           <!-- Banner -->
-          <div v-if="banner" class="row justify-center"><img class="screen-banner" :src="banner"></div>
+          <div v-if="banner" class="q-pa-md row justify-center"><img class="screen-banner" :src="banner"></div>
           <!-- Version -->
           <div id="version-numbers" class="row justify-center">
             <cite v-if="clientVersionName">{{ $t('KAbout.CLIENT_VERSION') }}{{ clientVersionName }}</cite>
@@ -64,10 +64,9 @@
               </div>
             </template>
           </div>
-          <br/>
           <!-- KDK -->
-          <div class="row justify-center">
-            <img :src="$load('kdk-icon.png', 'asset')" width="20" height="20" />
+          <div class="row justify-center items-center q-gutter-x-md">
+            <q-icon name="kdk:kdk.png" size="md" />
             <a href="https://kalisio.github.io/kdk" target="_blank">{{ $t('KAbout.KDK_POWERED') }}</a>
           </div>
         </div>

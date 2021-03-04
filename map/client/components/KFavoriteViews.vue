@@ -59,13 +59,13 @@ export default {
             options: [
               { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
               { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
-              { icon: 'img:statics/sort-clockwise-icon.png', value: { field: 'updatedAt', order: 1 } },
-              { icon: 'img:statics/sort-anticlockwise-icon.png', value: { field: 'updatedAt', order: -1 } }
+              { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
+              { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
             ]
           },
           { component: 'collection/KFilter', style: 'max-width: 200px;' },
           { component: 'QSpace' },
-          { id: 'add-view', icon: 'img:statics/add-view-icon.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => { this.mode = 'add' } }
+          { id: 'add-view', icon: 'kdk:view-plus.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => { this.mode = 'add' } }
         ],
         add: [
           { id: 'list-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => { this.mode = 'list' } },

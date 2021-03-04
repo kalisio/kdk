@@ -22,7 +22,7 @@
     -->
     <div class="row justify-center items-center q-gutter-xs">
       <div>
-        <img :src="$load('kdk-icon.png', 'asset')" width="20" height="20" />
+        <q-icon name="kdk:kdk.png" style="font-size: 1.5rem;" />
       </div>
       <div>
         <small>
