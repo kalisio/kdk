@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     baseQuery () {
-      return Object.assign({ type: 'View' }, this.sorter.query)
+      return Object.assign({ type: 'Context' }, this.sorter.query)
     },
     hasToolbar () {
       if (this.mode === 'list') return this.count > 0 || this.filter.patern !== ''
@@ -124,21 +124,9 @@ export default {
       const result = this.$refs.form.validate()
       if (result.isValid) {
         const view = result.values
-        const hasLayers = view.layers
-        // This flag is only useful in the form but will be replaced
-        // by the actual layers when processed
-        delete view.layers
-        // Add required type for catalog
-        view.type = 'View'
-        // Retrieve basic view parameters
-        Object.assign(view, this.kActivity.getContextParameters('view'))
-        // Add layers parameters if required
-        if (hasLayers) {
-          Object.assign(view, this.kActivity.getContextParameters('layers'))
-        }
         this.savingView = true
         try {
-          await this.$api.getService('catalog').create(view)
+          await this.kActivity.saveContext(view)
           this.savingView = false
         } catch (error) {
           this.savingView = false
@@ -159,17 +147,16 @@ export default {
       }
     },
     selectView (view, section) {
-      // selecting the avatar makes the view the home view
+      // Selecting the avatar makes the view the home view
       if (section === 'avatar') {
         this.homeView(view)
       } else {
-        this.kActivity.setContextParameters('view', view)
-        this.kActivity.setContextParameters('layers', view)
+        this.kActivity.loadContext(view)
       }
     },
     async homeView (view) {
       // Get current home view
-      const response = await this.$api.getService('catalog').find({ query: { type: 'View', isDefault: true } })
+      const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
       const currentHomeView = (response.data.length > 0 ? response.data[0] : null)
       // Unset it
       if (currentHomeView) await this.$api.getService('catalog').patch(currentHomeView._id, { isDefault: false })

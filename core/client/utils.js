@@ -185,3 +185,11 @@ export function dotify (object) {
   recurse(object)
   return dotifiedObject
 }
+
+// Regular expression that checks for hex value
+var checkForHexRegExp = new RegExp('^[0-9a-fA-F]{24}$')
+
+// Check if a string is a valid MongoDB Object ID
+export function isObjectID (id) {
+  return (id.length === 24 && checkForHexRegExp.test(id))
+}

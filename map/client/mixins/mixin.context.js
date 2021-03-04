@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import sift from 'sift'
+import { utils as kCoreUtils } from '../../../core/client'
 
 export default {
   methods: {
@@ -131,10 +132,10 @@ export default {
             }
           }
         } else {
-          // Check for a home view
-          const response = await this.$api.getService('catalog').find({ query: { type: 'View', isDefault: true } })
-          const homeView = (response.data.length > 0 ? response.data[0] : null)
-          if (homeView) targetParameters = homeView
+          // Check for a home context
+          const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
+          const homeContext = (response.data.length > 0 ? response.data[0] : null)
+          if (homeContext) targetParameters = homeContext
         }
       } else {
         targetParameters = this.getRouteContext(context)
@@ -162,6 +163,36 @@ export default {
       }
       this.updateRouteContext(context, parameters)
       window.localStorage.removeItem(this.getContextKey(context))
+    },
+    async saveContext (context) {
+      context = Object.assign({}, context)
+      const hasLayers = context.layers
+      // This flag is only useful in the options but will be replaced
+      // by the actual layers when processed
+      delete context.layers
+      // Add required type for catalog
+      context.type = 'Context'
+      // Retrieve basic view parameters
+      Object.assign(context, this.getContextParameters('view'))
+      // Add layers parameters if required
+      if (hasLayers) {
+        Object.assign(context, this.getContextParameters('layers'))
+      }
+      await this.$api.getService('catalog').create(context)
+    },
+    async loadContext (context) {
+      // If not context object retrieve it from catalog first
+      if (typeof context === 'string') {
+        if (kCoreUtils.isObjectID(context)) {
+          context = await this.$api.getService('catalog').get(context)
+        } else {
+          const response = await this.$api.getService('catalog').find({ query: { type: 'Context', name: context } })
+          context = (response.data.length > 0 ? response.data[0] : null)
+        }
+      }
+      if (!context) throw new Error('Cannot find or invalid context')
+      this.setContextParameters('view', context)
+      this.setContextParameters('layers', context)
     },
     updateViewSettings (enabled) {
       if (!enabled) this.clearContext('view')
