@@ -143,7 +143,7 @@ export default {
       if (!media.uri) {
         // We only download images
         if (mimeType === 'application/pdf') {
-          Object.assign(media, { uri: this.$load('pdf-icon.png', 'asset') })
+          Object.assign(media, { uri: this.$load('icons/pdf.png', 'asset') })
         } else {
           const data = await this.storageService().get(media._id)
           Object.assign(media, { uri: data.uri })
