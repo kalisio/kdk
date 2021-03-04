@@ -12,14 +12,18 @@
         :base-query="baseQuery"
         :filter-query="filter.query"
         @collection-refreshed="refreshViews"
-        @selection-changed="selectView">
-      </k-list>
+        @selection-changed="selectView" />
     </q-card-section>
     <q-card-section v-if="mode === 'add'">
       <div class="colum q-gutter-y-md">
         <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
         <div class="q-pa-sm row justify-end">
-          <q-btn :loading="savingView" color="secondary" id="local" :label="$t('KFavoriteViews.ADD_BUTTON')" @click="onAdd"  />
+          <q-btn 
+            :loading="savingView" 
+            color="secondary" 
+            id="local" 
+            :label="$t('KFavoriteViews.ADD_BUTTON')" 
+            @click="onAdd" />
         </div>
       </div>
     </q-card-section>
