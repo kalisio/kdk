@@ -3,6 +3,8 @@
     id="place-chooser"
     class="q-pl-sm q-pr-sm"
     autofocus
+    fill-input
+    hide-selected
     borderless
     dense
     clearable
