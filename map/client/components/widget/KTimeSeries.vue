@@ -299,6 +299,10 @@ export default {
                   scaleLabel: {
                     display: false,
                     labelString: 'Date'
+                  },
+                  ticks: {
+                    minRotation: 20,
+                    maxRotation: 20
                   }
                 }],
                 yAxes: this.yAxes
