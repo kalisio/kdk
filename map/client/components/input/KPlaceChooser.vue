@@ -2,6 +2,7 @@
   <q-select
     id="place-chooser"
     class="q-pl-sm q-pr-sm"
+    autofocus
     borderless
     dense
     clearable
