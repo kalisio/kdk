@@ -165,10 +165,12 @@ variables
 
 Used to be able to restore the user's context in 2D/3D mapping activities by providing methods available in both cases:
 * **storeContext(context)** stores current context as route (query) parameters and persists as well in local storage 
-* **restoreContext(context)** restores previously stored context from local storage or route (query) parameters
+* **restoreContext(context)** restores previously stored context from local storage, catalog (if a default one has been saved) or route (query) parameters
 * **clearContext(context)** clears the stored context so that it will not be restored anymore
 * **getRouteContext(context)** gets the context parameters from current route (from either parameters or query)
 * **updateRouteContext(context)** sets the context parameters on the current route (from either parameters or query)
+* **saveContext (context)** saves the context in the catalog
+* **loadContext (context)** sets the context from either the given parameters or the catalog (if context is an ID or a name)
 
 At the present time two types of context are supported, although the system is flexible enough to easily add a new type:
 * `view` to restore current view bounds stored as route parameters
