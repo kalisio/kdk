@@ -262,3 +262,26 @@ export async function distinct (hook) {
   hook.result = await collection.distinct(query.$distinct, _.omit(query, ['$distinct']))
   return hook
 }
+
+// Check for already existing object according to given service/id field
+export function checkUnique (options = {}) {
+  return async (hook) => {
+    const service = (options.service ? hook.app.getService(options.service) : hook.service)
+    const field = options.field || 'name'
+    const id = _.get(hook, `data.${field}`)
+    // If not updating ID skip
+    if (id) {
+      const result = await service.find({ query: { [options.field]: id } })
+      if (result.total > 0) {
+        let error = new Error(`Object with ${options.field} equals to ${id} already exist for service ${service.name}`)
+        _.set(error, 'data.translation', { key: 'OBJECT_ID_ALREADY_TAKEN' })
+        // Raise error when creating if another object with the same ID exists
+        if (hook.method === 'create') throw error
+        // When updating/patching we should check if it's the same object or not
+        const object = result.data[0]
+        if (object._id.toString() !== hook.id.toString()) throw error
+      }
+    }
+    return hook
+  }
+}
