@@ -67,21 +67,26 @@ export const Layout = {
     if (modes.includes(mode)) return mode
     else return _.head(modes)
   },
-  filterContent (content, filter = {}) {
+  filterContent (content, filter) {
     // Handle array and object case
     const isArray = Array.isArray(content)
-    let filteredContent = (isArray ? content : [content])
+    const modes = _.keys(content)
+    let filteredContent = content
+    // Recurse ?
+    if (!isArray) {
+      if (filteredContent.content) {
+        filteredContent.content = this.filterContent(filteredContent.content, filter)
+      } else modes.forEach(mode => {
+        const contentForMode = filteredContent[mode]
+        filteredContent[mode] = this.filterContent(contentForMode, filter)
+      })
+      filteredContent = [filteredContent]
+    }
     // Apply filtering
     filteredContent = filteredContent.filter(sift(filter))
-    // Then recurse
-    filteredContent.forEach(component => {
-      if (component.content) {
-        component.content = this.filterContent(component.content, filter)
-      }
-    })
     return (isArray ? filteredContent : filteredContent[0])
   },
-  getComponents (content, mode, filter, context) {
+  getComponents (content, mode, context) {
     let components = []
 
     // Get component config for given mode if any
@@ -92,7 +97,7 @@ export const Layout = {
       components = _.get(content, mode)
     }
     // Apply filtering
-    components = this.filterContent(components, filter)
+    //components = this.filterContent(components, filter)
     const processedComponents = []
     // Then create component objects
     _.forEach(components, (component) => {

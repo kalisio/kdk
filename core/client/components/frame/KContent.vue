@@ -49,21 +49,21 @@ export default {
   },
   computed: {
     components () {
-      let components = []
-      if (this.content) {
-        components = Layout.getComponents(_.cloneDeep(this.content), this.mode, this.filter, this.context)
-        _.forEach(components, (component) => {
-          const { componentKey, componentName } = component
-          // Load the component if needed: do not load any Quasar component and avoid loading twice
-          if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) {
-            this.$options.components[componentKey] = this.$load(componentName)
-          }
-          // Checks whether an id is defined
-          if (!component.id) component.id = componentKey
-          if (this.context) component.context = this.context
-        })
-      }
+      const components = Layout.getComponents(this.filteredContent, this.mode, this.context)
+      _.forEach(components, (component) => {
+        const { componentKey, componentName } = component
+        // Load the component if needed: do not load any Quasar component and avoid loading twice
+        if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) {
+          this.$options.components[componentKey] = this.$load(componentName)
+        }
+        // Checks whether an id is defined
+        if (!component.id) component.id = componentKey
+        if (this.context) component.context = this.context
+      })
       return components
+    },
+    filteredContent () {
+      return (this.content ? Layout.filterContent(this.content, this.filter || {}) : [])
     }
   }
 }

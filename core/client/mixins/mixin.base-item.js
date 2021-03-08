@@ -97,7 +97,7 @@ export default {
     configureActions () {
       if (this.actions) {
         // Apply filtering
-        const actions = Layout.filterContent(this.actions, this.filter)
+        const actions = Layout.filterContent(this.actions, this.filter || {})
         this.setActions(actions)
       } else this.clearActions()
     },
