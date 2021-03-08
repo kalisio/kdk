@@ -13,17 +13,20 @@ module.exports = {
     }],
     get: [],
     create: [
+      coreHooks.checkUnique({ field: 'name' }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
       coreHooks.convertToString(['schema.content']),
       setNow('createdAt', 'updatedAt')
     ],
     update: [
+      coreHooks.checkUnique({ field: 'name' }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
       coreHooks.convertToString(['schema.content']),
       discard('createdAt', 'updatedAt'),
       setNow('updatedAt')
     ],
     patch: [
+      coreHooks.checkUnique({ field: 'name' }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
       coreHooks.convertToString(['schema.content']),
       discard('createdAt', 'updatedAt'),
