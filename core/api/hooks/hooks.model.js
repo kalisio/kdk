@@ -272,13 +272,15 @@ export function checkUnique (options = {}) {
     // If not updating ID skip
     if (id) {
       const result = await service.find({ query: { [options.field]: id } })
-      if (result.total > 0) {
+      // Pagination on/off ?
+      const total = (Array.isArray(result) ? result.length : result.total)
+      if (total > 0) {
         let error = new Error(`Object with ${options.field} equals to ${id} already exist for service ${service.name}`)
         _.set(error, 'data.translation', { key: 'OBJECT_ID_ALREADY_TAKEN' })
         // Raise error when creating if another object with the same ID exists
         if (hook.method === 'create') throw error
         // When updating/patching we should check if it's the same object or not
-        const object = result.data[0]
+        const object = (Array.isArray(result) ? result[0] : result.data[0])
         if (object._id.toString() !== hook.id.toString()) throw error
       }
     }

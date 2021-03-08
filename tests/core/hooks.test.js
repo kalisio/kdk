@@ -2,6 +2,7 @@ import feathers from '@feathersjs/feathers'
 import authentication from '@feathersjs/authentication'
 import configuration from '@feathersjs/configuration'
 import express from '@feathersjs/express'
+import memory from 'feathers-memory'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
 import { hooks } from '../../core/api'
@@ -51,6 +52,27 @@ describe('core:hooks', () => {
     expect(hook.data['field._id'].toString()).to.equal(id.toString())
     expect(typeof hook.params.query._id.$in[0]).to.equal('object')
     expect(hook.params.query._id.$in[0].toString()).to.equal(id.toString())
+  })
+
+  it('check uniqueness', async () => {
+    const service = memory({ store: { 0: { name: 'xxx' }, 1: { name: 'yyy' }  }, paginate: { default: 5, max: 5 } })
+    const hook = { type: 'before', method: 'create', data: { name: 'xxx' }, service }
+    await hooks.checkUnique({ field: 'dummy' })(hook)
+    let error
+    try {
+      await hooks.checkUnique({ field: 'name' })(hook)
+    } catch (error) {
+      expect(error).toExist()
+    }
+    hook.method = 'patch'
+    hook.id = 0
+    await hooks.checkUnique({ field: 'dummy' })(hook)
+    hook.id = 1
+    try {
+      await hooks.checkUnique({ field: 'name' })(hook)
+    } catch (error) {
+      expect(error).toExist()
+    }
   })
 
   it('marshalls comparison queries', () => {
