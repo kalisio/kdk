@@ -2,7 +2,14 @@
   <div>
     <!-- Invisible link used to download data -->
     <a ref="downloadLink" v-show="false" :href="currentDownloadLink" :download="currentDownloadName"></a>
-    <k-modal ref="modal" :title="title" :toolbar="toolbar" :buttons="[]" >
+    <k-modal ref="modal" 
+      id="feature-chart-modal"
+      :title="title"
+      :toolbar="toolbar"
+      :maximized="isModalMaximized"
+      v-model="isModalOpened"
+      @opened="$emit('opened')"
+      @closed="$emit('closed')">
       <div slot="modal-content">
         <!-- Used as target for popup as we cannot reference the button in the modal -->
         <span ref="chartSettingsTarget" class="float-right"/>
@@ -48,11 +55,7 @@ import { mixins as kCoreMixins } from '../../../core/client'
 
 export default {
   name: 'k-features-chart',
-  components: {
-  },
-  mixins: [
-    kCoreMixins.refsResolver(['modal'])
-  ],
+  mixins: [kCoreMixins.baseModal],
   props: {
     layer: {
       type: Object,
@@ -105,7 +108,7 @@ export default {
       toolbar: [
         { id: 'settings', icon: 'las la-cog', tooltip: 'KFeaturesChart.CHART_SETTINGS_LABEL', handler: () => this.$refs.chartSettings.show() },
         { id: 'download', icon: 'las la-file-download', tooltip: 'KFeaturesChart.CHART_EXPORT_LABEL', handler: () => this.downloadChartData() },
-        { id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.close() }
+        { id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.closeModal() }
       ],
       property: null,
       chartType: _.find(chartOptions, { value: 'pie' }),
@@ -121,13 +124,8 @@ export default {
     }
   },
   methods: {
-    async open () {
-      await this.loadRefs()
-      this.$refs.modal.openMaximized()
-    },
-    close () {
-      this.$refs.modal.close()
-      this.$emit('closed')
+    open () {
+      this.openModal(true)
     },
     async getPropertyValues () {
       // For enumeration we directly get the values

@@ -1,5 +1,11 @@
 <template>
-  <k-modal ref="modal" :title="$t('KInviteMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
+  <k-modal
+    id="invite-member-modal"
+    :title="$t('KInviteMember.TITLE')" 
+    :buttons="getButtons()" 
+    v-model="isModalOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <div slot="modal-content">
       <q-tabs  align="justify" v-model="mode" inverted>
         <q-tab name="unique" icon="las la-user"  />
@@ -43,6 +49,7 @@ import Papa from 'papaparse'
 export default {
   name: 'k-invite-member',
   mixins: [
+    mixins.baseModal,
     mixins.refsResolver(['form'])
   ],
   props: {
@@ -101,11 +108,6 @@ export default {
         required: ['name', 'email', 'role']
       }
     },
-    getToolbar () {
-      return [
-        { id: 'close-action', icon: 'las la-times', tooltip: 'KInviteMember.CLOSE_ACTION', handler: () => this.doClose() }
-      ]
-    },
     getButtons () {
       return [
         { id: 'invite-button', label: 'KInviteMember.INVITE_BUTTON', color: 'primary', handler: () => this.doInvite() }
@@ -138,7 +140,7 @@ export default {
       // Create the user
       const usersService = this.$api.getService('users')
       await usersService.create(data)
-      this.doClose()
+      this.closeModal()
     },
     async doInviteMultiple (data) {
       const errors = []
@@ -192,17 +194,13 @@ export default {
         }).onOk(async () => {
           const usersService = this.$api.getService('users')
           for (let i = 0; i < guests.length; ++i) await usersService.create(guests[i])
-          this.doClose()
+          this.closeModal()
         })
       } else {
         const usersService = this.$api.getService('users')
         for (let i = 0; i < guests.length; ++i) await usersService.create(guests[i])
-        this.doClose()
+        this.closeModal()
       }
-    },
-    doClose () {
-      this.$refs.modal.close()
-      this.$router.push({ name: 'members-activity' })
     },
     onInputFileCleared () {
       this.fileError = false

@@ -9,6 +9,7 @@ import baseEditor from './mixin.base-editor'
 import baseItem from './mixin.base-item'
 import baseField from './mixin.base-field'
 import baseViewer from './mixin.base-viewer'
+import baseModal from './mixin.base-modal'
 import baseWidget from './mixin.base-widget'
 import objectProxy from './mixin.object-proxy'
 import schemaProxy from './mixin.schema-proxy'
@@ -27,6 +28,7 @@ export default {
   baseItem,
   baseField,
   baseViewer,
+  baseModal,
   baseWidget,
   objectProxy,
   schemaProxy,

@@ -1,5 +1,11 @@
 <template>
-  <k-modal ref="modal" :title="$t('KChangeRole.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
+  <k-modal
+    id="change-role-modal"
+    :title="$t('KChangeRole.TITLE')" 
+    :buttons="getButtons()" 
+    v-model="isModalOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <div slot="modal-content" class="column xs-gutter">
       <k-form ref="form" :schema="getSchema()" />
     </div>
@@ -12,6 +18,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-change-role',
   mixins: [
+    mixins.baseModal,
     mixins.refsResolver(['form'])
   ],
   props: {
@@ -54,11 +61,6 @@ export default {
         required: ['role']
       }
     },
-    getToolbar () {
-      return [
-        { id: 'close-action', icon: 'las la-times', label: 'KChangeRole.CLOSE_ACTION', handler: () => this.doClose() }
-      ]
-    },
     getButtons () {
       return [
         { id: 'update-button', label: 'KChangeRole.UPDATE_BUTTON', color: 'primary', handler: () => this.doUpdate() }
@@ -76,12 +78,8 @@ export default {
           resource: this.resource.id,
           resourcesService: this.resource.service
         })
-        this.doClose()
+        this.closeModal()
       }
-    },
-    doClose () {
-      this.$refs.modal.close()
-      this.$router.push({ name: 'members-activity' })
     }
   },
   created () {

@@ -1,5 +1,11 @@
 <template>
-  <k-modal ref="modal" :title="title" :toolbar="toolbar" :buttons="[]" >
+  <k-modal 
+    id="features-table-modal"
+    :title="title"  
+    :maximized="isModalMaximized"
+    v-model="isModalOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <div slot="modal-content">
       <k-table service="features" :contextId="contextId" :schema-json="schema" :item-actions="featureActions" :base-query="layer.baseQuery" />
     </div>
@@ -12,10 +18,8 @@ import { mixins as kCoreMixins } from '../../../core/client'
 
 export default {
   name: 'k-features-table',
-  components: {
-  },
   mixins: [
-    kCoreMixins.refsResolver(['modal'])
+    kCoreMixins.baseModal
   ],
   props: {
     layer: {
@@ -41,19 +45,9 @@ export default {
       return JSON.stringify(_.get(this.layer, 'schema.content'))
     }
   },
-  data () {
-    return {
-      toolbar: [{ id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.close() }]
-    }
-  },
   methods: {
-    async open () {
-      await this.loadRefs()
-      this.$refs.modal.openMaximized()
-    },
-    close () {
-      this.$refs.modal.close()
-      this.$emit('closed')
+    open () {
+      this.openModal(true)
     }
   },
   created () {

@@ -1,5 +1,11 @@
 <template>
-  <k-modal :id="getSchemaId() + 'editor'" ref="modal" :title="editorTitle" :toolbar="toolbar" :buttons="buttons" c>
+  <k-modal 
+    id="editor-modal"
+    :title="editorTitle" 
+    :buttons="buttons" 
+    v-model="isModalOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <div slot="modal-content">
       <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em"/>
@@ -19,11 +25,12 @@ export default {
     KForm
   },
   mixins: [
+    mixins.baseEditor(['form']),
+    mixins.refsResolver(['form']),
+    mixins.baseModal,
     mixins.service,
     mixins.objectProxy,
-    mixins.schemaProxy,
-    mixins.baseEditor(['form']),
-    mixins.refsResolver(['form'])
+    mixins.schemaProxy
   ],
   computed: {
     buttons () {
@@ -43,36 +50,22 @@ export default {
       return buttons
     }
   },
-  data () {
-    return {
-      toolbar: [{
-        id: 'close-editor',
-        icon: 'las la-times',
-        handler: () => this.close()
-      }]
-    }
-  },
   methods: {
-    open () {
+    openModal () {
       this.refresh()
-      this.$refs.modal.open()
-    },
-    close () {
-      this.$refs.modal.close()
-      this.$emit('closed')
+      this.isModalOpened = true
     },
     onFieldChanged (field, value) {
       this.$emit('field-changed', field, value)
     }
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      // open the modal
-      vm.open()
-      // redirect to the parent route when closing
-      // see: https://github.com/vuejs/vue-router/issues/216
-      if (to.matched.length > 1) vm.$on(['closed', 'applied'], () => vm.$router.push(to.matched.slice(-2).shift()))
-    })
+  created () {
+    // Catch applied event
+    this.$on('applied', this.closeModal)
+  },
+  beforeDestroy () {
+    // Remove event connections
+    this.$off('applied', this.closeModal)
   }
 }
 </script>

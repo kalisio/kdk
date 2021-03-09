@@ -1,5 +1,11 @@
 <template>
-  <k-modal ref="modal" :title="$t('KAddMember.TITLE')" :toolbar="getToolbar()" :buttons="getButtons()" :opened="true">
+  <k-modal
+    id="add-member-modal"
+    :title="$t('KAddMember.TITLE')"
+    :buttons="getButtons()"
+    v-model="isModalOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <div slot="modal-content" class="column xs-gutter">
       <k-form ref="form" :schema="getSchema()" />
     </div>
@@ -12,6 +18,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-add-member',
   mixins: [
+    mixins.baseModal,
     mixins.refsResolver(['form'])
   ],
   props: {
@@ -69,11 +76,6 @@ export default {
         required: ['user', 'role']
       }
     },
-    getToolbar () {
-      return [
-        { id: 'close-action', icon: 'las la-times', tooltip: 'KAddMember.CLOSE_ACTION', handler: () => this.doClose() }
-      ]
-    },
     getButtons () {
       return [
         { id: 'add-button', label: 'KAddMember.ADD_BUTTON', color: 'primary', handler: () => this.doAdd() }
@@ -91,12 +93,8 @@ export default {
           resource: this.contextId,
           resourcesService: 'organisations'
         })
-        this.doClose()
+        this.closeModal()
       }
-    },
-    doClose () {
-      this.$refs.modal.close()
-      this.$router.push({ name: 'members-activity' })
     }
   },
   created () {

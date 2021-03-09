@@ -1,5 +1,7 @@
 <template>
-  <k-modal ref="modal" :title="title" :toolbar="toolbar" :buttons="[]" >
+  <k-modal ref="modal"
+    id="feature-filter-modal"
+    :title="title">
     <div slot="modal-content">
       <q-list dense class="row items-center justify-around">
         <q-item v-for="filter in filters" :key="filter.key" class="col-12">
@@ -54,6 +56,7 @@ export default {
   components: {
   },
   mixins: [
+    kCoreMixins.baseModal,
     kCoreMixins.refsResolver()
   ],
   props: {
@@ -88,7 +91,6 @@ export default {
   },
   data () {
     return {
-      toolbar: [{ id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.close() }],
       filters: [],
       property: null
     }
@@ -230,12 +232,8 @@ export default {
     async open () {
       this.setRefs(['modal'])
       await this.loadRefs()
-      this.$refs.modal.open()
+      this.openModal()
       await this.build()
-    },
-    close () {
-      this.$refs.modal.close()
-      this.$emit('closed')
     }
   },
   created () {

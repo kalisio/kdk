@@ -1,6 +1,12 @@
 <template>
   <div v-if="member !== null">
-    <k-modal ref="modal" :title="title" :toolbar="getToolbar()" :buttons="getButtons()" ::opened="true">
+    <k-modal 
+      id="join-group-modal"
+      :title="title" 
+      :buttons="getButtons()"     
+      v-model="isModalOpened"
+      @opened="$emit('opened')"
+      @closed="$emit('closed')">
       <div slot="modal-content" class="column xs-gutter">
         <k-form ref="form" :schema="schema" />
       </div>
@@ -15,6 +21,7 @@ import mixins from '../../mixins'
 export default {
   name: 'k-join-group',
   mixins: [
+    mixins.baseModal,
     mixins.objectProxy,
     mixins.refsResolver(['form'])
   ],
@@ -87,11 +94,6 @@ export default {
     }
   },
   methods: {
-    getToolbar () {
-      return [
-        { id: 'close-action', icon: 'las la-times', tooltip: 'KAddMember.CLOSE_ACTION', handler: () => this.doClose() }
-      ]
-    },
     getButtons () {
       return [
         { id: 'join-button', label: 'KJoinGroup.ADD_BUTTON', color: 'primary', handler: (event, done) => this.doJoin(event, done) }
@@ -112,12 +114,8 @@ export default {
           resource: result.values.group._id,
           resourcesService: this.contextId + '/groups'
         })
-        this.doClose()
+        this.closeModal()
       }
-    },
-    doClose () {
-      this.$refs.modal.close()
-      this.$router.push({ name: 'members-activity' })
     }
   },
   async created () {

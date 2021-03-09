@@ -14,7 +14,7 @@
           <span class="ellipsis">{{ title }}</span>
         </q-toolbar-title>
         <q-space />
-        <k-panel id="modal-toolbar" :content="toolbar" />
+        <k-panel id="modal-toolbar" :content="toolbarContent" />
       </q-toolbar>
       <!--
         Content section
@@ -42,11 +42,15 @@ export default {
     },
     toolbar: {
       type: Array,
-      default: () => { return [] }
+      default: () => null
     },
     buttons: {
       type: Array,
-      default: () => { return [] }
+      default: () => null
+    },
+    maximized: {
+      type: Boolean,
+      default: false
     },
     contentClass: {
       type: String,
@@ -70,27 +74,38 @@ export default {
         return 'min-width: 40vw; max-height: 90vh'
       }
     },
-    opened: {
+    value: {
       type: Boolean,
       default: false
     }
   },
-  data () {
-    return {
-      maximized: false
+  computed: {
+    toolbarContent () {
+      if (!this.toolbar) {
+        return [
+          { id: 'close-modal', icon: 'las la-times', tooltip: 'KModal.CLOSE_ACTION', handler: () => this.close() }
+        ]
+      }
+      return this.toolbar
+    }
+  },
+  watch: {
+    value: function (opened) {
+      if (opened) this.$refs.modal.show()
+      else this.$refs.modal.hide()
     }
   },
   methods: {
     open () {
-      this.maximized = false
       this.$refs.modal.show()
     },
     openMaximized () {
-      this.maximized = true
+      //this.maximized = true
       this.$refs.modal.show()
     },
     close () {
       this.$refs.modal.hide()
+      this.$emit('input', false)
     }
   },
   created () {
@@ -98,7 +113,7 @@ export default {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   mounted () {
-    if (this.opened) this.$refs.modal.show()
+    if (this.value) this.$refs.modal.show()
   }
 }
 </script>

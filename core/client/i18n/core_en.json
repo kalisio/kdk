@@ -458,6 +458,9 @@
   "KFab": {
     "CLOSE_ACTION": "$t(CLOSE)"
   },
+  "KModal": {
+    "CLOSE_ACTION": "$t(CLOSE)"
+  },
   "KWindow": {
     "CLOSE_ACTION": "$t(CLOSE)",
     "MINIMIZE_ACTION": "Minimize",

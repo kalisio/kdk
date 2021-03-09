@@ -19,7 +19,7 @@
     <!--
       About window
      -->
-    <k-modal :title="$t('KAbout.TITLE')" :toolbar="getToolbar()" id="about" ref="about">
+    <k-modal :title="$t('KAbout.TITLE')" id="about" ref="about">
       <div slot="modal-content">
         <div class="column justify-center">
           <!-- Banner -->
@@ -90,11 +90,6 @@ export default {
     }
   },
   methods: {
-    getToolbar () {
-      return [
-        { id: 'close-action', icon: 'las la-times', tooltip: 'KAbout.CLOSE_ACTION', handler: () => this.onAboutClosed() }
-      ]
-    },
     onAbout () {
       this.$layout.setLeftDrawerVisible(false)
       this.$refs.about.open()

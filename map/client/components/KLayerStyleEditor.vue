@@ -1,9 +1,11 @@
 <template>
   <k-modal ref="modal"
+    id="layer-style-modal"
     :title="$t('KLayerStyleEditor.EDIT_LAYER_STYLE_TITLE')"
-    :toolbar="toolbar"
-    :buttons="[]"
-    :options="{}">
+    :options="{}"
+    v-model="isModalOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <div slot="modal-content">
       <k-layer-style-form :class="{ 'light-dimmed': inProgress }" ref="form"
         :options="options" :layer="layer"/>
@@ -23,16 +25,25 @@ import { mixins as kCoreMixins } from '../../../core/client'
 export default {
   name: 'k-layer-style-editor',
   mixins: [
+    kCoreMixins.baseModal,
     kCoreMixins.refsResolver()
   ],
   props: {
-    layer: { type: Object, required: true },
-    contextId: { type: String, default: '' },
-    options: { type: Object, required: true } // Contains default style options
+    layer: { 
+      type: Object, 
+      required: true 
+    },
+    contextId: {
+      type: String, 
+      default: '' 
+    },
+    options: { // Contains default style options
+      type: Object, 
+      required: true 
+    } 
   },
   data () {
     return {
-      toolbar: [{ id: 'close-action', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.close() }],
       inProgress: false
     }
   },
@@ -42,16 +53,12 @@ export default {
         this.setRefs(['modal'])
         await this.loadRefs()
       }
-      this.$refs.modal.open()
+      this.openModal()
       if (!this.$refs.form) {
         this.setRefs(['form'])
         await this.loadRefs()
       }
       this.$refs.form.fill(_.pick(this.layer, ['leaflet']))
-    },
-    close () {
-      this.$refs.modal.close()
-      this.$emit('closed')
     },
     async onApply () {
       const result = this.$refs.form.validate()

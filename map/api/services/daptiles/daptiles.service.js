@@ -447,7 +447,6 @@ export default function (name, app, options) {
       // console.log(id)
       // console.log(params.query)
       const query = params.query
-      console.log(params)
       // either requesting tile content
       if (id.endsWith('b3dm')) {
         const tile = JSON.parse(query.query)

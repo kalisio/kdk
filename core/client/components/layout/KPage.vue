@@ -5,7 +5,12 @@
      -->
     <div :style="contentStyle">
       <slot id="page-content" name="page-content"></slot>
-      <k-content id="page" v-show="page.content && page.mode" :content="page.content" :mode="page.mode" :filter="page.filter" />
+      <k-content 
+        id="page" 
+        v-show="page.content && page.mode" 
+        :content="page.content" 
+        :mode="page.mode" 
+        :filter="page.filter" />
     </div>
     <!--
       Managed stickies
@@ -14,8 +19,13 @@
     <q-page-sticky position="top">
       <div id="top-pane" v-show="topPane.content && topPane.mode" class="column items-center">
         <div>
-          <k-panel id="top-panel" v-show="isTopPaneOpened" :content="topPane.content"
-                   :mode="topPane.mode" :filter="topPane.filter" class="k-pane" />
+          <k-panel 
+            id="top-panel" 
+            v-show="isTopPaneOpened" 
+            :content="topPane.content"
+            :mode="topPane.mode" 
+            :filter="topPane.filter" 
+            class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
         <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
@@ -33,8 +43,13 @@
       <div id="right-pane" v-show="rightPane.content && rightPane.mode" class="row items-center">
         <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
-          <k-panel id="right-panel" v-show="isRightPaneOpened" :content="rightPane.content"
-                   :mode="rightPane.mode" :filter="rightPane.filter" class="k-pane" />
+          <k-panel 
+            id="right-panel" 
+            v-show="isRightPaneOpened" 
+            :content="rightPane.content"
+            :mode="rightPane.mode" 
+            :filter="rightPane.filter" 
+            class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
         </div>
       </div>
@@ -44,8 +59,13 @@
       <div id="bottom-pane" v-show="bottomPane.content && bottomPane.mode" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
-          <k-panel id="bottom-panel" v-show="isBottomPaneOpened" :content="bottomPane.content"
-                   :mode="bottomPane.mode" :filter="bottomPane.filter" class="k-pane" />
+          <k-panel 
+            id="bottom-panel" 
+            v-show="isBottomPaneOpened" 
+            :content="bottomPane.content"
+            :mode="bottomPane.mode"
+            :filter="bottomPane.filter"
+            class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
       </div>
