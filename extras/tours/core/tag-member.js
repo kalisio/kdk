@@ -3,7 +3,7 @@ module.exports = [{
   content: 'tours.tag-member.TAG_NAME_LABEL',
   params: {
     placement: 'right',
-    clickOnPrevious: '#close-modal',
+    clickOnPrevious: '#close-action',
     previousDelay: 500
   }
 }, {
@@ -11,7 +11,7 @@ module.exports = [{
   content: 'tours.tag-member.UPDATE_TAG_LABEL',
   params: {
     placement: 'left',
-    clickOnNext: '#close-modal',
+    clickOnNext: '#close-action',
     nextDelay: 500
   }
 }]

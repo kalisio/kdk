@@ -83,7 +83,7 @@ export default {
     toolbarContent () {
       if (!this.toolbar) {
         return [
-          { id: 'close-modal', icon: 'las la-times', tooltip: 'KModal.CLOSE_ACTION', handler: () => this.close() }
+          { id: 'close-action', icon: 'las la-times', tooltip: 'KModal.CLOSE_ACTION', handler: () => this.close() }
         ]
       }
       return this.toolbar
