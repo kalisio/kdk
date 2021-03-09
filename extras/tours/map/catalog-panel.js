@@ -45,7 +45,7 @@ module.exports = [{
     previousDelay: 500
   }
 }, {
-  target: '#Layers\\.WIND',
+  target: '#Layers\\.WIND_TILED',
   title: 'tours.catalog-panel.METEO_LAYERS_LABEL',
   params: {
     placement: 'top'
