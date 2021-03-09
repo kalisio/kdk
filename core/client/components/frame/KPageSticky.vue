@@ -1,5 +1,5 @@
 <template>
-  <q-page-sticky v-if="hasContent" :id="id" :position="position" :offset="offset">
+  <q-page-sticky v-if="hasContent" :position="position" :offset="offset">
     <k-content v-bind="$props"></k-content>
   </q-page-sticky>
 </template>
@@ -10,10 +10,6 @@ import _ from 'lodash'
 export default {
   name: 'k-page-sticky',
   props: {
-    id: {
-      type: String,
-      required: true
-    },
     position: {
       type: String,
       required: true
@@ -21,14 +17,6 @@ export default {
     offset: {
       type: Array,
       default: () => [0, 0]
-    },
-    color: {
-      type: String,
-      default: 'grey-9'
-    },
-    size: {
-      type: String,
-      default: 'md'
     },
     content: {
       type: [Object, Array],

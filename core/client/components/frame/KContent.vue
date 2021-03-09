@@ -19,10 +19,6 @@ import { Layout } from '../../layout'
 export default {
   name: 'k-content',
   props: {
-    id: {
-      type: String,
-      required: true
-    },
     content: {
       type: [Object, Array],
       default: () => null
@@ -56,8 +52,6 @@ export default {
         if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) {
           this.$options.components[componentKey] = this.$load(componentName)
         }
-        // Checks whether an id is defined
-        if (!component.id) component.id = componentKey
         if (this.context) component.context = this.context
       })
       return components

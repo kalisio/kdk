@@ -1,6 +1,5 @@
 <template>
   <k-content
-    :id="id"
     v-bind="$props"
     :class="{
       'row justify-center': direction === 'horizontal',
@@ -12,10 +11,6 @@
 export default {
   name: 'k-panel',
   props: {
-    id: {
-      type: String,
-      required: true
-    },
     content: {
       type: [Object, Array],
       default: () => null
