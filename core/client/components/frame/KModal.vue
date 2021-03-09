@@ -25,7 +25,7 @@
       <!--
         Buttons section
        -->
-      <q-card-actions align="right">
+      <q-card-actions v-if="buttons" align="right">
         <k-panel id="modal-buttons" :content="buttons" />
       </q-card-actions>
     </q-card>
@@ -54,7 +54,7 @@ export default {
     },
     contentClass: {
       type: String,
-      default: 'q-pa-xs q-ma-xs'
+      default: 'q-pa-xs'
     },
     contentStyle: {
       type: String,

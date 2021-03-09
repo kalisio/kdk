@@ -24,10 +24,7 @@
       "CONVERT_UNITS": "{{layer}}: convert to {{unit}}"
     },
     "activity": {
-      "CREATE_LAYER": "Create a new layer",
-      "IMPORT_LAYER": "Import a local file to create a new layer",
-
-      "CONNECT_LAYER": "Connect to a remote server to create a new layer",
+      "ADD_LAYER": "Add a new layer",
       "SAVE_LABEL": "Save layer",
       "SAVING_LABEL": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
@@ -411,6 +408,9 @@
     "FAVORITE_VIEW_NAME_FIELD_HELPER": "Enter the name of this view",
     "FAVORITE_VIEW_DESCRIPTION_FIELD_HELPER": "Enter the description of this view",
     "FAVORITE_VIEW_LAYERS_FIELD_HELPER": "Save the active layers"
+  },
+  "KAddLayer": {
+    "TITLE": "Add a new layer"
   },
   "KLayerConnectDialog": {
     "TITLE": "Remote server connection",

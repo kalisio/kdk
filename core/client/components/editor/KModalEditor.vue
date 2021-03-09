@@ -7,8 +7,8 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content">
-      <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged"/>
-      <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em"/>
+      <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged" />
+      <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em" />
     </div>
   </k-modal>
 </template>

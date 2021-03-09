@@ -24,10 +24,7 @@
       "CONVERT_UNITS": "{{layer}}: convertir en {{unit}}"
     },
     "activity": {
-      "CREATE_LAYER": "Créer une nouvelle couche",
-      "IMPORT_LAYER": "Importer un fichier local pour créer une nouvelle couche",
-      
-      "CONNECT_LAYER": "Se connecter à un serveur distant pour créer une nouvelle couche",
+      "ADD_LAYER": "Ajouter une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
@@ -412,6 +409,9 @@
     "FAVORITE_VIEW_NAME_FIELD_HELPER": "Saisissez le nom de la vue",
     "FAVORITE_VIEW_DESCRIPTION_FIELD_HELPER": "Saisissez la description de la vue",
     "FAVORITE_VIEW_LAYERS_FIELD_HELPER": "Sauvegarder les couches actives"
+  },
+  "KAddLayer": {
+    "TITLE": "Ajouter une nouvelle couche"
   },
   "KLayerConnectDialog": {
     "TITLE": "Connexion à un serveur distant",

@@ -2,10 +2,10 @@
   <k-page v-if="user" padding>
     <template v-slot:page-content>
       <div v-if="page === 'profile'">
-        <k-editor service="users" :objectId="user._id" perspective="profile"/>
+        <k-editor service="users" :objectId="user._id" perspective="profile" />
       </div>
       <div v-if="page === 'security'">
-        <k-account-security :device-renderer="deviceRenderer"/>
+        <k-account-security :device-renderer="deviceRenderer" />
       </div>
       <div v-else-if="page === 'danger-zone'">
         <k-account-dz />
