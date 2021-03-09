@@ -144,8 +144,8 @@ export default {
       // By default use the route name as tour name if tour equals simply true
       let name = this.$route.name
       // Manage routes with different pages
-      if (_.get(this.$route, 'params.pages')) {
-        name += '/' + _.get(this.$route, 'params.pages')
+      if (_.get(this.$route, 'params.page')) {
+        name += '/' + _.get(this.$route, 'params.page')
       }
       // This can be overriden when multiple tours target the same route,
       // e.g. when the route has a parameter and each value has its own tour
