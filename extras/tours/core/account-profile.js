@@ -5,6 +5,14 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
+  target: '#home',
+  link: 'tours.account.HOME_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnLink: '#home',
+    tour: 'home'
+  }
+}, {
   target: '#avatar-field',
   content: 'tours.account.AVATAR_LABEL',
   params: {
@@ -29,5 +37,13 @@ module.exports = [{
     placement: 'bottom',
     clickOnLink: '#security',
     tour: 'account-activity/security'
+  }
+}, {
+  target: '#danger-zone',
+  link: 'tours.account.DANGER_ZONE_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnLink: '#danger-zone',
+    tour: 'account-activity/danger-zone'
   }
 }]

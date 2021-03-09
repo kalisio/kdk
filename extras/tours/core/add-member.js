@@ -21,7 +21,7 @@ module.exports = [{
   content: 'tours.add-member.ADD_MEMBER_LABEL',
   params: {
     placement: 'left',
-    clickOnNext: '#close-action',
+    clickOnNext: '#close-modal',
     nextDelay: 500
   }
 }]

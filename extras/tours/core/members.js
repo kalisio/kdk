@@ -11,14 +11,10 @@ module.exports = [{
   params: {
     placement: 'left',
     clickOn: '#app-bar-overflow-menu',
-    clickDelay: 500,
-    clickOnNext: '#app-bar-overflow-menu',
-    nextDelay: 500,
-    clickOnPrevious: '#app-bar-overflow-menu',
-    previousDelay: 500
+    clickDelay: 500
   }
 }, {
-  target: '#search',
+  target: '#search-members',
   title: 'tours.members.SEARCH_LABEL',
   content: 'tours.members.SEARCH_MORE_LABEL',
   params: {
@@ -86,7 +82,8 @@ module.exports = [{
   content: 'tours.members.GROUP_LABEL',
   params: {
     placement: 'right',
-    clickOn: '#group-button'
+    clickOn: '#group-button',
+    clickDelay: 500
   }
 }, {
   target: '#change-role-group',

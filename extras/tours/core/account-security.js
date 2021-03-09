@@ -1,4 +1,18 @@
 module.exports = [{
+  target: '#security',
+  content: 'tours.account.SECURITY_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
+  target: '#home',
+  link: 'tours.account.HOME_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnLink: '#home',
+    tour: 'home'
+  }
+}, {
   target: '#password-block',
   link: 'tours.account.PASSWORD_LINK_LABEL',
   params: {
@@ -18,6 +32,14 @@ module.exports = [{
   content: 'tours.account.UNLINK_LABEL',
   params: {
     placement: 'top'
+  }
+}, {
+  target: '#profile',
+  link: 'tours.account.PROFILE_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnLink: '#profile',
+    tour: 'account-activity/profile'
   }
 }, {
   target: '#danger-zone',

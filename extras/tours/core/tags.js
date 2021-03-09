@@ -11,14 +11,10 @@ module.exports = [{
   params: {
     placement: 'left',
     clickOn: '#app-bar-overflow-menu',
-    clickDelay: 500,
-    clickOnNext: '#app-bar-overflow-menu',
-    nextDelay: 500,
-    clickOnPrevious: '#app-bar-overflow-menu',
-    previousDelay: 500
+    clickDelay: 500
   }
 }, {
-  target: '#search',
+  target: '#search-tag',
   content: 'tours.tags.SEARCH_LABEL',
   link: 'tours.tags.CREATE_TAG_LINK_LABEL',
   params: {
@@ -42,6 +38,12 @@ module.exports = [{
 }, {
   target: '#edit-tag',
   content: 'tours.tags.UPDATE_TAG_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
+  target: '#list-members',
+  content: 'tours.tags.LIST_MEMBERS_LABEL',
   params: {
     placement: 'bottom'
   }

@@ -11,20 +11,16 @@ module.exports = [{
   params: {
     placement: 'left',
     clickOn: '#app-bar-overflow-menu',
-    clickDelay: 500,
-    clickOnNext: '#app-bar-overflow-menu',
-    nextDelay: 500,
-    clickOnPrevious: '#app-bar-overflow-menu',
-    previousDelay: 500
+    clickDelay: 500
   }
 }, {
-  target: '#search',
+  target: '#search-group',
   content: 'tours.groups.SEARCH_LABEL',
   params: {
     placement: 'left'
   }
 }, {
-  target: '#fab',
+  target: '#create-group',
   content: 'tours.groups.NEW_GROUP_LABEL',
   link: 'tours.groups.CREATE_GROUP_LINK_LABEL',
   params: {
@@ -63,20 +59,16 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#card-overflow-menu',
-  content: 'tours.groups.GROUP_OVERFLOW_MENU_LABEL',
+  target: '#list-members',
+  content: 'tours.groups.LIST_GROUP_MEMBERS_LABEL',
   params: {
-    placement: 'top',
-    clickOnNext: '#card-overflow-menu',
-    nextDelay: 500
+    placement: 'bottom'
   }
 }, {
   target: '#remove-group',
   title: 'tours.groups.REMOVE_GROUP_LABEL',
   content: 'tours.groups.REMOVE_CONFIRMATION_LABEL',
   params: {
-    placement: 'left',
-    clickOnPrevious: '#card-overflow-menu',
-    previousDelay: 500
+    placement: 'left'
   }
 }]

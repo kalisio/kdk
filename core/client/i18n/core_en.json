@@ -116,16 +116,17 @@
       "CREATE_ORGANISATION_LABEL": "Confirm the creation of your new organisation."
     },
     "account": {
-      "PROFILE_LABEL": "This tab allows to update your profile information.",
+      "HOME_LABEL": "Go back to your home page using this button",
+      "PROFILE_LABEL": "This activity allows to update your profile information",
       "AVATAR_LABEL": "Your avatar visible in the side menu when an image file has been selected.",
       "NAME_LABEL": "Your name as viewed by others users.",
       "UPDATE_LABEL": "Confirm the update in order to apply the modifications to your profile information.",
-      "SECURITY_LABEL": "This tab allows to update your <b>personal identifiers</b> and your devices",
+      "SECURITY_LABEL": "This activity allows to update your <b>personal identifiers</b> and your devices",
       "PASSWORD_LINK_LABEL": "Launch the <b>password change procedure</b>",
       "EMAIL_LINK_LABEL": "Launch the <b>email change procedure</b>",
       "DEVICES_LABEL": "This section list all the mobile devices you have used.",
       "UNLINK_LABEL": "Check for any suspect activity and unlink outdated mobile devices.",
-      "DANGER_ZONE_LABEL": "This tab allows to remove your account",
+      "DANGER_ZONE_LABEL": "This activity allows to remove your account",
       "DELETE_LABEL": "A manual confirmation will be required before final removal."
     },
     "change-password": {
@@ -146,7 +147,7 @@
       "CHANGE_EMAIL_LABEL": "An email containing a link to confirm the modification will be sent to your new address (<b>please check the email is not in your spam folder</b>)."
     },
     "groups": {
-      "GROUPS_LABEL": "This tab allows to manage the <b>groups</b> in your organisation.",
+      "GROUPS_LABEL": "This activity allows to manage the <b>groups</b> in your organisation.",
       "GROUP_DEFINITION_LABEL": "A group allows to delegate the management of a shared workspace limited to its members.",
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Type part of a word contained in the name of your groups in the arising bar to perform a search.",
@@ -157,6 +158,7 @@
       "GROUP_MANAGERS_LABEL": "This number shows you the <b>managers</b> count of your group.",
       "GROUP_OWNERS_LABEL": "This number shows you the <b>owners</b> count of your group.",
       "UPDATE_GROUP_LABEL": "Update properties of your group through this action.",
+      "LIST_GROUP_MEMBERS_LABEL": "Shows the <b>members</b> of your group.",
       "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_GROUP_LABEL": "Remove your group through this action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
@@ -167,7 +169,7 @@
       "CREATE_GROUP_LABEL": "Confirm the creation of your new group."
     },
     "members": {
-      "MEMBERS_LABEL": "This tab allows to manage the <b>members</b> in your organisation.",
+      "MEMBERS_LABEL": "This activity allows to manage the <b>members</b> in your organisation.",
       "MEMBER_DEFINITION_LABEL": "A <b>member</b> is a user able to access the shared workspace offered by your organisation.",
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Type part of a word contained in the name of your members in the arising bar to perform a search.",
@@ -210,10 +212,11 @@
     "tag-member": {
       "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise.",
       "TAG_REMOVE_LABEL": "Once added select it to update its icon/color and remove it using the cross.",
-      "UPDATE_TAG_LABEL": "Confirm modifying the tags on your members."
+      "UPDATE_TAG_LABEL": "Confirm modifying the tags on your members.",
+      "LIST_MEMBERS_LABEL": "Shows the <b>members</b> with this tag."
     },
     "tags": {
-      "TAGS_LABEL": "This tab allows to manage the <b>tags</b> in your organisation.",
+      "TAGS_LABEL": "This activity allows to manage the <b>tags</b> in your organisation.",
       "TAG_DEFINITION_LABEL": "A tag allows to classify a subset of your organisation members (e.g. a skill or a service).",
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Type part of a word contained in the name of your tags in the arising bar to perform a search.",
