@@ -16,8 +16,8 @@
             <q-item-section v-if="option.icon">
               <q-icon :name="option.icon" size="1.5rem" />
             </q-item-section>
-            <q-item-section v-if="option.label">
-              {{ option.label }}
+            <q-item-section v-if="option.badge">
+              {{ option.badge }}
             </q-item-section>
           </q-item>
         </q-list>
