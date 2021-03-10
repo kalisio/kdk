@@ -148,12 +148,12 @@ export default {
     },
     getToolbar () {
       return [
-        { name: 'close-action', label: this.$t('KIconChooser.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
+        { id: 'close-action', label: this.$t('KIconChooser.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
       ]
     },
     getButtons () {
       return [
-        { name: 'done-button', label: this.$t('KIconChooser.DONE_BUTTON'), color: 'primary', handler: (event) => this.doDone(event) }
+        { id: 'done-button', label: this.$t('KIconChooser.DONE_BUTTON'), color: 'primary', handler: (event) => this.doDone(event) }
       ]
     },
     open (defaultIcon) {

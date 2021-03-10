@@ -218,8 +218,7 @@
     "tag-member": {
       "TAG_NAME_LABEL": "Tapez <b>les premières lettres</b> d'une étiquette pour la sélectionner si elle existe ou la créer sinon.",
       "TAG_REMOVE_LABEL": "Une fois ajoutée sélectionnez-là pour modifier son icône et sa couleur ou utilisez la croix pour la supprimer.",
-      "UPDATE_TAG_LABEL": "Confirmez la modification des étiquettes sur votre membre.",
-      "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette."
+      "UPDATE_TAG_LABEL": "Confirmez la modification des étiquettes sur votre membre."
     },
     "tags": {
       "TAGS_LABEL": "Cette activité vous permet de gérer les <b>étiquettes</b> au sein de votre organisation.",
@@ -230,7 +229,8 @@
       "CREATE_TAG_LINK_LABEL": "Voir comment ajouter ou supprimer des étiquettes sur les membres",
       "TAG_COUNT_LABEL": "Ce nombre vous indique le nombre de <b>membres</b> possédant cette étiquette.",
       "REMOVE_TAG_LABEL": "Lorsqu'il atteint zéro l'étiquette est automatiquement supprimée.",
-      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette."
+      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette.",
+      "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette."
     }
   },
   "KWelcome": {
