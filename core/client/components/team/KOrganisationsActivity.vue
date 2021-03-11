@@ -11,14 +11,10 @@
         :base-query="baseQuery"
         :filter-query="filter.query"
         :list-strategy="'smart'" />
-     <!--
-      Creation editor
-     -->
-    <k-modal-editor
-      id="organisation-editor"
-      ref="editor"
-      service="organisations"
-      @applied="onOrganisationCreated" />
+      <!--
+        Router view to enable routing to modals
+      -->
+      <router-view service="organisations"></router-view>
     </template>
   </k-page>
 </template>
@@ -44,20 +40,10 @@ export default {
       }, this.activityOptions.items)
     }
   },
-  methods: {
-    createOrganisation () {
-      this.$refs.editor.open()
-    },
-    onOrganisationCreated (org) {
-      this.$refs.editor.close()
-      // Do we navigate to the create org ?
-    }
-  },
   created () {
     // Load the required components
     this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
-    this.$options.components['k-modal-editor'] = this.$load('editor/KModalEditor')
   }
 }
 </script>
