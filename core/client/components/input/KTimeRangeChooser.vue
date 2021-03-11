@@ -50,7 +50,7 @@ export default {
     },
     size: {
       type: String,
-      default: 'sm'
+      default: 'm'
     },
     badge: {
       type: Object,
