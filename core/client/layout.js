@@ -6,6 +6,7 @@ import { uid } from 'quasar'
 import { Store } from './store'
 
 const components = ['header', 'footer', 'leftDrawer']
+const handlers = ['handler', 'visible', 'on.listener']
 
 // Export singleton
 export const Layout = {
@@ -176,20 +177,36 @@ export const Layout = {
     // Get back processed handler function
     return _.get(component, path)
   },
+  bindProperties (item, context) {
+    if (typeof item === 'string') {
+      if (item.startsWith(':')) return _.get(context, item.substring(1))
+    } else if (Array.isArray(item)) {
+      for (let i = 0; i < item.length; i++) {
+        item[i] = this.bindProperties(item[i], context)
+      }
+    } else if (typeof item === 'object') {
+      _.forOwn(item, (value, key) => {
+        // Skip 'reserved' property
+        if ((key !== 'content') && (key !== 'bind')) item[key] = this.bindProperties(value, context)
+      })
+    }
+    return item
+  },
   // Perform binding between a configuration object and a given context object
   bindContent (content, context) {
     const components = _.flatMapDeep(content)
     _.forEach(components, (component) => {
-      // Process component visibility state
-      this.bindHandler(component, 'visible', context)
-      // Process component handler
-      this.bindHandler(component, 'handler', context)
-      // Process component listener
-      this.bindHandler(component, 'on.listener', context)
-      // Process component props
+      // Process component handlers
+      handlers.forEach(handler => this.bindHandler(component, handler, context))
+      // Then process component props
+      // FIXME: don't know why but this generic binding function does not seem to work 
+      // It should allow to wrote any property like { label: ':xxx' } and bind it
+      // to a component property from the context like we do for handler
+      //this.bindProperties(component, context)
+      // The only way to make it work is to add props at the root level
       const binding = component.bind ? component.bind : null
       if (binding) component.props = _.get(context, binding)
-      // Recursively bind the handlers on the sub content object
+      // Recursively bind the props/handlers on the sub content object
       if (component.content) this.bindContent(component.content, context)
     })
     return content
