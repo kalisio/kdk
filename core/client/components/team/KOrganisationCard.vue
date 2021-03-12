@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :itemActions="actions">
+  <k-card v-bind="$props" :itemActions="actions" :bind-actions="false">
   </k-card>
 </template>
 

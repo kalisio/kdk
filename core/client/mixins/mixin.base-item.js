@@ -25,6 +25,16 @@ export default {
       default: function () {
         return {}
       }
+    },
+    bindActions: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    actions: function () {
+      // Make configured actions reactive as item actions are built from
+      this.configureActions()
     }
   },
   data () {
@@ -88,18 +98,20 @@ export default {
     setActions (actions) {
       // As context is different for each item we need to clone the global action configuration
       // otheriwse context will always reference the last processed item
-      this.itemActions = Layout.bindContent(_.cloneDeep(actions), this)
+      this.itemActions = (this.bindActions ? Layout.bindContent(_.cloneDeep(actions), this) : actions)
     },
     clearActions () {
       this.itemActions = null
     },
+    filteredActions () {
+      return (this.actions ? Layout.filterContent(this.actions, this.filter || {}) : [])
+    },
     // This method should be overriden in items
     configureActions () {
-      if (this.actions) {
-        // Apply filtering
-        const actions = Layout.filterContent(this.actions, this.filter || {})
-        this.setActions(actions)
-      } else this.clearActions()
+      // Apply filtering
+      const actions = this.filteredActions()
+      if (actions && actions.length > 0) this.setActions(actions)
+      else this.clearActions()
     },
     onItemSelected (section) {
       this.$emit('item-selected', this.item, section)

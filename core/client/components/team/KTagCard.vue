@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :actions="itemActions" :options="{ nameField: 'value' }">
+  <k-card v-bind="$props" :actions="itemActions" :bind-actions="false" :options="{ nameField: 'value' }">
     <div slot="card-label">
       <span class="text-subtitle1 text-weight-medium ellipsis">{{ item.value }}</span>
       <q-btn class="float-right" :key="item._id" flat small rounded color="primary"
