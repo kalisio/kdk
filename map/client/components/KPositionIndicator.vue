@@ -44,7 +44,7 @@ export default {
     },
     async onCopy () {
       try {
-        await copyToClipboard(this.position)
+        await copyToClipboard(this.formattedPosition)
         this.$toast({ type: 'positive', message: this.$t('KPositionIndicator.POSITION_COPIED') })
       } catch (_) {
         this.$toast({ type: 'error', message: this.$t('KPositionIndicator.CANNOT_COPY_POSITION') })
