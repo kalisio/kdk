@@ -8,7 +8,7 @@ export default function init () {
 
   logger.debug('Initializing map')
 
-  // Declare the services
+  // Declare the built-in services, others are optional
   api.declareService('geocoder')
 
   // Create the models listened by the different components

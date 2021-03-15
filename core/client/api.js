@@ -92,6 +92,9 @@ export function kalisio () {
   api.declareService = function (name, options = {}) {
     _.set(api.serviceOptions, name, options)
   }
+  api.getServiceOptions = function (name) {
+    return _.get(api.serviceOptions, name)
+  }
   // Used to create a frontend only service with its options
   api.createService = function (name, options = {}) {
     let servicePath = options.path || name

@@ -38,7 +38,7 @@ export default function init () {
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
-  Filter.initialize()
+  Filter.initialize(api)
   Sorter.initialize()
   Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
