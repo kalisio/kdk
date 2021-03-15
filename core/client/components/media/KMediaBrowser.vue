@@ -79,7 +79,7 @@ export default {
         })
       }
       actions.push({
-        name: 'close-browser', icon: 'las la-times', tooltip: this.$t('KMediaBrowser.CLOSE_ACTION'), handler: this.onClose
+        id: 'close-browser', icon: 'las la-times', tooltip: this.$t('KMediaBrowser.CLOSE_ACTION'), handler: this.onClose
       })
       return { default: actions }
     }
