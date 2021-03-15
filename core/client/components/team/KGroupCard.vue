@@ -80,7 +80,7 @@ export default {
       return this.item._id + '-' + role
     },
     async refreshStats () {
-      // Clear the counters. We use a temporaty object to ensure reactivity
+      // Clear the counters. We use a temporary object to ensure reactivity
       // see: https://v1.vuejs.org/guide/reactivity.html
       const stats = {}
       this.roleNames.forEach(role => {
@@ -96,7 +96,7 @@ export default {
       this.memberStats = Object.assign({}, stats)
     },
     onListMembers () {
-      // Setup search bar accordingly
+      // Setup filter accordingly
       this.$store.patch('filter', {
         items: [Object.assign({
           service: 'groups',
@@ -115,7 +115,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')
-    // Compute the list of groups this member belongs
+    // Compute the count of members belonging to group
     this.roleNames = RoleNames
     this.roleIcons = this.$config('roles.icons')
     this.roleLabels = this.$config('roles.labels')

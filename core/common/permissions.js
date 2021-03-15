@@ -164,7 +164,7 @@ export function getQueryForAbilities (abilities, operation, resourceType) {
 function buildSubjectsQueryForResource (resourceScope, resourceId, role) {
   const query = { [resourceScope]: { $elemMatch: { _id: resourceId } } }
   if (role) {
-    _.set(query[resourceScope], '$elemMatch.permissions', RoleNames[role])
+    _.set(query[resourceScope], '$elemMatch.permissions', (typeof role === 'string' ? role : RoleNames[role]))
   }
   return query
 }
@@ -270,5 +270,5 @@ export function getRoleForGroup (user, organisationId, groupId) {
 }
 
 export function findGroupsWithRole (user, organisationId, role) {
-  return _.filter(user.groups || [], { context: organisationId, permissions: RoleNames[role] })
+  return _.filter(user.groups || [], { context: organisationId, permissions: (typeof role === 'string' ? role : RoleNames[role]) })
 }

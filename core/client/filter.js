@@ -40,6 +40,8 @@ export const Filter = {
     items.forEach(item => {
       // We must have only one item per service
       let itemQuery = { [item.field]: item[item.field] }
+      // Check if base qury
+      if (item.baseQuery) Object.assign(itemQuery, item.baseQuery)
       // Check if the service is contextual
       const options = api.getServiceOptions(item.service)
       // If so add context to distinguish items coming from different ones
