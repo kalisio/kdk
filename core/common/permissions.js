@@ -121,7 +121,7 @@ export function hasResourceAbilities (abilities, operation, resourceType, contex
   const object = Object.assign({}, resource)
   object[RESOURCE_TYPE_KEY] = resourceType
   // Add a virtual context to take it into account for object having no link to it
-  if (context) object.context = (typeof context === 'object' ? context._id.toString() : context)
+  if (context) object.context = (typeof context === 'object' ? context._id.toString() : context.toString())
 
   const result = abilities.can(operation, object)
 

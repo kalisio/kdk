@@ -48,7 +48,7 @@ export async function attachToResource (hook) {
   const attachment = Object.assign({ _id: file._id }, _.omit(file, ['uri']))
   // Add context because attachments might come from different ones on the same target object
   if (context) {
-    attachment.context = (typeof context === 'object' ? context._id : context)
+    attachment.context = (typeof context === 'object' ? context._id.toString() : context.toString())
   }
   if (isArray) {
     // Initialize on first attachment

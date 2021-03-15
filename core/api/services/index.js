@@ -26,7 +26,7 @@ export function removeTagService (options) {
 function proxyStorageId (context) {
   return (id) => {
     if (!context) return id
-    const prefix = (typeof context === 'object' ? context._id.toString() : context) + '/'
+    const prefix = (typeof context === 'object' ? context._id.toString() : context.toString()) + '/'
     // Check if context is already in ID, in this case we have to remove it on output
     if (id.startsWith(prefix)) return id.replace(prefix, '')
     // Otherwise we have to add it on input

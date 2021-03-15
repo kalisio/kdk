@@ -76,7 +76,7 @@ export async function updateTags (hook) {
     // and add also context because tags might come from different ones on the same target object
     newTags = newTags.map(tag => {
       if (tag.context) return tag
-      else return Object.assign({ context: (typeof context === 'object' ? context._id : context) }, tag)
+      else return Object.assign({ context: (typeof context === 'object' ? context._id.toString() : context.toString()) }, tag)
     })
     item.tags = commonTags.concat(newTags)
   } else {
@@ -94,7 +94,7 @@ export async function updateTags (hook) {
       // and add also context because tags might come from different ones on the same target object
       newTags = newTags.map(tag => {
         if (tag.context) return tag
-        else return Object.assign({ context: (typeof context === 'object' ? context._id : context) }, tag)
+        else return Object.assign({ context: (typeof context === 'object' ? context._id.toString() : context.toString()) }, tag)
       })
       item.tags = newTags
     } else {
@@ -201,7 +201,7 @@ export function tagResource (hook) {
     }
     // Add context because tags might come from different ones on the same target object
     if (context) {
-      tag.context = (typeof context === 'object' ? context._id : context)
+      tag.context = (typeof context === 'object' ? context._id.toString() : context.toString())
     }
     resource.tags.push(tag)
     return resourcesService.patch(resource._id.toString(), {

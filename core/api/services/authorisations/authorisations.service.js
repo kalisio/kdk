@@ -26,7 +26,7 @@ export default {
       if (!resource) {
         resource = Object.assign({}, params.resource)
         if (context) {
-          resource.context = (typeof context === 'object' ? context._id : context)
+          resource.context = (typeof context === 'object' ? context._id.toString() : context.toString())
         }
         scope.push(resource)
       }
