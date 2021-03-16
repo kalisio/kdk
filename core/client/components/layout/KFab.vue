@@ -6,7 +6,7 @@
     <q-fab v-if="actions.length > 1"
       id="fab"
       v-model="opened"
-      icon="las la-chevron-up"
+      :icon="icon"
       class="fixed"
       style="right: 12px; bottom: 12px"
       direction="up"
@@ -60,6 +60,9 @@ export default {
     }
   },
   computed: {
+    icon () {
+      return this.fab.icon || 'las la-ellipsis-v'
+    },
     actions () {
       let fabActions = this.fab.actions
       if (!fabActions) return null
