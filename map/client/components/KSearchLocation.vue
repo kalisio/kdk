@@ -15,7 +15,11 @@ export default {
   },
   methods: {
     onPlaceChosen (location) {
-      if (location) this.kActivity.center(location.longitude, location.latitude)
+      if (location) {
+        // Use altitude or zoom level depending on engine
+        if (this.kActivity.is2D()) this.kActivity.center(location.longitude, location.latitude, 18)
+        else this.kActivity.center(location.longitude, location.latitude, 750)
+      }
     }
   },
   created () {
