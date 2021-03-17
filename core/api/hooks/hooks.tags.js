@@ -75,7 +75,7 @@ export async function updateTags (hook) {
     // Update tags to include information added when they are created (eg _id)
     // and add also context because tags might come from different ones on the same target object
     newTags = newTags.map(tag => {
-      if (tag.context) return tag
+      if (!context || tag.context) return tag
       else return Object.assign({ context: (typeof context === 'object' ? context._id.toString() : context.toString()) }, tag)
     })
     item.tags = commonTags.concat(newTags)
@@ -93,7 +93,7 @@ export async function updateTags (hook) {
       let newTags = await Promise.all(addPromises)
       // and add also context because tags might come from different ones on the same target object
       newTags = newTags.map(tag => {
-        if (tag.context) return tag
+        if (!context || tag.context) return tag
         else return Object.assign({ context: (typeof context === 'object' ? context._id.toString() : context.toString()) }, tag)
       })
       item.tags = newTags
