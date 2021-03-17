@@ -37,7 +37,7 @@
       "field": {
         "component": "form/KFileField",
         "helper": "schemas.CATALOG_SCHEMA_FIELD_HELPER",
-        "mime-types": ["application/json"]
+        "mimeTypes": "application/json"
       }
     }
   },

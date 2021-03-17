@@ -14,24 +14,10 @@
       <div>
         <q-tab-panels v-model="mode" animated>
           <q-tab-panel name="unique">
-            <k-form ref="form" :schema="getSchema()" />
+            <k-form ref="uniqueForm" :schema="getUniqueSchema()" />
           </q-tab-panel>
           <q-tab-panel name="multiple">
-            <q-field
-              for="file-field"
-              :error-message="fileErrorLabel"
-              :error="fileError">
-                <k-file-input
-                  :mime-types="['txt/csv', 'application/vnd.ms-excel']"
-                  :clearable="true"
-                  @cleared="onInputFileCleared"
-                  @rejected="onInputFileRejected"
-                  @failed="onInputFileFailed"
-                  @loaded="onInputFileLoaded" />
-              <template v-slot:hint>
-                <span v-html="$t('KInviteMember.FILE_FIELD_HELPER')"></span>
-              </template>
-            </q-field>
+            <k-form ref="multipleForm" :schema="getMultipleSchema()" />
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -60,13 +46,11 @@ export default {
   },
   data () {
     return {
-      mode: 'unique',
-      fileError: false,
-      fileErrorLabel: ''
+      mode: 'unique'
     }
   },
   methods: {
-    getSchema () {
+    getUniqueSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/invite-member',
@@ -108,6 +92,25 @@ export default {
         required: ['name', 'email', 'role']
       }
     },
+    getMultipleSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/invite-members',
+        title: 'Invite Members Form',
+        type: 'object',
+        properties: {
+          file: {
+            type: 'string',
+            field: {
+              component: 'form/KFileField',
+              helper: 'KLayerImportDialog.INPUT_HINT',
+              mimeTypes: 'txt/csv,application/vnd.ms-excel'
+            }
+          }
+        },
+        required: ['file']
+      }
+    },
     getButtons () {
       return [
         { id: 'invite-button', label: 'KInviteMember.INVITE_BUTTON', color: 'primary', handler: () => this.doInvite() }
@@ -115,14 +118,13 @@ export default {
     },
     doInvite () {
       if (this.mode === 'unique') {
-        const result = this.$refs.form.validate()
+        const result = this.$refs.uniqueForm.validate()
         if (result.isValid) this.doInviteUnique(result.values)
       } else {
-        if (this.fileContent) {
-          const result = Papa.parse(this.fileContent, { skipEmptyLines: true })
-          this.doInviteMultiple(result.data)
-        } else {
-          this.fileError = true
+        const result = this.$refs.multipleForm.validate()
+        if (result.isValid) {
+          const parseContent = Papa.parse(result.file.content, { skipEmptyLines: true })
+          this.doInviteMultiple(parseContent.data)
         }
       }
     },
@@ -223,7 +225,6 @@ export default {
     // Load the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-form'] = this.$load('form/KForm')
-    this.$options.components['k-file-input'] = this.$load('input/KFileInput')
     // Init the file contet
     this.fileContent = undefined
   }
