@@ -398,11 +398,6 @@
     "MOVE_CLOSE_TO": "Se positionner à l'image la plus proche",
     "NO_IMAGE_FOUND_CLOSE_TO": "Aucune image trouvée à proximité de votre position"
   },
-  "KLayerImportDialog": {
-    "TITLE": "Importer une couche",
-    "INPUT_HINT": "Sélectionnez un fichier",
-    "IMPORT_BUTTON": "Importer"
-  },
   "KFavoriteViews": {
     "FAVORITE_VIEWS_LABEL": "Vues favorites",
     "SORT_VIEWS": "Trier les vues",
@@ -417,8 +412,11 @@
   "KAddLayer": {
     "TITLE": "Ajouter une nouvelle couche"
   },
-  "KLayerConnectDialog": {
-    "TITLE": "Connexion à un serveur distant",
+  "KImportLayer": {
+    "FILE_LABEL": "Sélectionnez un fichier",
+    "IMPORT_BUTTON": "Importer"
+  },
+  "KConnectLayer": {
     "URL_HINT": "Adresse du serveur ...",
     "LAYER_HINT": "Sélectionnez une couche distante ...",
     "LAYER_NAME_HINT": "Nom de la couche à créer ...",

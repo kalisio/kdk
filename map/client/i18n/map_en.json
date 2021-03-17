@@ -397,11 +397,6 @@
     "MOVE_CLOSE_TO": "Move to the closest image",
     "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
   },
-  "KLayerImportDialog": {
-    "TITLE": "Import layer",
-    "INPUT_HINT": "Select a file",
-    "IMPORT_BUTTON": "Import"
-  },
   "KFavoriteViews": {
     "FAVORITE_VIEWS_LABEL": "Favorite views",
     "SORT_VIEWS": "Sort views",
@@ -416,8 +411,11 @@
   "KAddLayer": {
     "TITLE": "Add a new layer"
   },
-  "KLayerConnectDialog": {
-    "TITLE": "Remote server connection",
+  "KImportLayer": {
+    "FILE_LABEL": "Select a file",
+    "IMPORT_BUTTON": "Import"
+  },
+  "KConnectLayer": {
     "URL_HINT": "Server url ...",
     "LAYER_HINT": "Select a remote layer ...",
     "LAYER_NAME_HINT": "Layer name ...",

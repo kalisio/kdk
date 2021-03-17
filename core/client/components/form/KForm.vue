@@ -1,5 +1,5 @@
 <template>
-  <div class="column q-gutter-sm">
+  <div class="column">
     <!-- Non-grouped fields first -->
     <template v-for="field in fields">
       <slot :name="'before-' + field.name"/>

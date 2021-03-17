@@ -1,7 +1,8 @@
 <template>
   <div slot="modal-content">
-    <q-select v-model="selectedUrl" :options="urlOptions" use-input @filter="filterUrl" @new-value="newUrl" :label="$t('KLayerConnectDialog.URL_HINT')" @input="selectUrl" clearable/>
-    <q-select v-model="selectedLayer" :options="layerOptions" :label="$t('KLayerConnectDialog.LAYER_HINT')" :loading="probingService" @input="selectLayer">
+    <!-- Form section -->
+    <q-select v-model="selectedUrl" :options="urlOptions" use-input @filter="filterUrl" @new-value="newUrl" :label="$t('KConnectLayer.URL_HINT')" @input="selectUrl" clearable/>
+    <q-select v-model="selectedLayer" :options="layerOptions" :label="$t('KConnectLayer.LAYER_HINT')" :loading="probingService" @input="selectLayer">
       <q-badge v-if="service" color="red" floating transparent>
         {{`${service}`}}
       </q-badge>
@@ -9,18 +10,22 @@
         <q-icon name="las la-layer-group" />
       </template>
     </q-select>
-    <q-input v-model="layerName" :label="$t('KLayerConnectDialog.LAYER_NAME_HINT')" clearable/>
-    <q-input v-model="layerDescription" :label="$t('KLayerConnectDialog.LAYER_DESCRIPTION_HINT')" clearable/>
-    <q-select v-if="featureIdRequired" v-model="selectedFeatureId" :options="featureIdOptions" label-color="red" :label="$t('KLayerConnectDialog.FID_HINT')" @input="selectFeatureId" :loading="probingFeatureProps">
+    <q-input v-model="layerName" :label="$t('KConnectLayer.LAYER_NAME_HINT')" clearable/>
+    <q-input v-model="layerDescription" :label="$t('KConnectLayer.LAYER_DESCRIPTION_HINT')" clearable/>
+    <q-select v-if="featureIdRequired" v-model="selectedFeatureId" :options="featureIdOptions" label-color="red" :label="$t('KConnectLayer.FID_HINT')" @input="selectFeatureId" :loading="probingFeatureProps">
       <template v-slot:prepend>
         <q-icon name="las la-id-card" />
       </template>
     </q-select>
-    <q-select v-if="layerStyleRequired" v-model="selectedLayerStyle" :options="layerStyleOptions" label-color="red" :label="$t('KLayerConnectDialog.LAYER_STYLE_HINT')" @input="selectLayerStyle">
+    <q-select v-if="layerStyleRequired" v-model="selectedLayerStyle" :options="layerStyleOptions" label-color="red" :label="$t('KConnectLayer.LAYER_STYLE_HINT')" @input="selectLayerStyle">
       <template v-slot:prepend>
         <q-icon name="las la-palette" />
       </template>
     </q-select>
+    <!-- Buttons section -->
+    <div class="q-pt-md row justify-end">
+      <q-btn id="import-button" color="primary" :label="$t('KConnectLayer.CONNECT_BUTTON')" @click="onConnect"/>
+    </div>
   </div>
 </template>
 
@@ -72,17 +77,6 @@ export default {
     }
   },
   methods: {
-    getButtons () {
-      return [
-        { name: 'connect-button', label: this.$t('KLayerConnectDialog.CONNECT_BUTTON'), color: 'primary', handler: () => this.doConnect() }
-      ]
-    },
-    open () {
-      this.urlOptions = this.availableUrls
-      this.url = null
-
-      this.$refs.modal.open()
-    },
     guessFeatureId () {
       for (const prop of this.featureIdOptions) {
         const lower = prop.toLowerCase()
@@ -284,12 +278,7 @@ export default {
     },
     selectLayerStyle (val) {
     },
-    doCancel () {
-      this.$refs.modal.close()
-    },
-    doConnect () {
-      this.$refs.modal.close()
-
+    onConnect () {
       if (!this.selectedLayer) return
 
       const layerId = this.layerDisplay2id[this.selectedLayer]
@@ -365,7 +354,7 @@ export default {
         }
       }
 
-      this.$emit('connected', createdLayer)
+      this.$emit('done')
     }
   }
 }
