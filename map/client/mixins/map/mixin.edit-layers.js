@@ -76,7 +76,7 @@ export default {
         }
       })
       this.editFeatureModal.$mount()
-      this.editFeatureModal.open()
+      this.editFeatureModal.openModal()
       this.editFeatureModal.$on('applied', async updatedFeature => {
         // Restore popup
         if (popup) leafletLayer.bindPopup(popup)
@@ -86,7 +86,7 @@ export default {
         Object.assign(geoJson, _.pick(updatedFeature, ['properties']))
         this.editableLayer.removeLayer(leafletLayer)
         this.editableLayer.addData(geoJson)
-        this.editFeatureModal.close()
+        this.editFeatureModal.closeModal()
         this.editFeatureModal = null
       })
       this.editFeatureModal.$on('closed', () => {
