@@ -64,11 +64,10 @@ Make it possible to generate Leaflet map objects with style based on (Geo)Json (
     * **options** icon constructor options
   * **type** type name (ie class) of the marker to be created
   * **options** marker constructor options
-* **register/unregisterLeafletStyle(type, generator)** (un)registers a function generating a Leaflet object depending on the given type:
+
+Use **register/unregisterStyle(type, generator)** to (un)register a function generating a Leaflet object depending on the given type:
   * `markerStyle` => **f(feature, latlng, options)** returns a [Leaflet marker](https://leafletjs.com/reference.html#marker)
   * `featureStyle` => **f(feature, options)** returns a [Leaflet style object](https://leafletjs.com/reference.html#path-option)
-  * `tooltip` => **f(feature, layer, options)** returns a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip), see [tooltip mixin](./mixins.md#map-tooltip)
-  * `popup` => **f(feature, layer, options)** returns a [Leaflet popup](https://leafletjs.com/reference.html#popup), see [popup mixin](./mixins.md#map-popup)
 
 ::: tip
 The [simple style spec options](https://github.com/mapbox/simplestyle-spec) does not cover all [Leaflet style options](https://leafletjs.com/reference.html#path-option). However you can use it simply by converting option names from camel case to kebab case.
@@ -86,8 +85,7 @@ The mixin automatically registers defaults styling:
 
 ## Map Popup
 
-Make it possible to generate [Leaflet popups](https://leafletjs.com/reference.html#popup) based on GeoJson feature properties:
-* use **register/unregisterLeafletStyle(`popup`, generator)** to (un)register a function **f(feature, layer, options)** returning a [Leaflet popup](https://leafletjs.com/reference.html#popup)
+Make it possible to generate [Leaflet popups](https://leafletjs.com/reference.html#popup) based on GeoJson feature properties. Use **register/unregisterStyle(`popup`, generator)** to (un)register a function **f(feature, layer, options)** returning a [Leaflet popup](https://leafletjs.com/reference.html#popup)
 
 The mixin automatically registers a default generator that will create a popup displaying a property name/value table based on the following options with the following order of precedence
   * **popup**: set on **feature.properties** or layer descriptor or in the **popup** property of component options
@@ -99,8 +97,7 @@ The mixin automatically registers a default generator that will create a popup d
 
 ## Map Tooltip
 
-Make it possible to generate [Leaflet tooltips](https://leafletjs.com/reference.html#tooltip) based on GeoJson feature properties:
-* use **register/unregisterLeafletStyle(`tooltip`, generator)** to (un)register a function **f(feature, layer, options)** returning a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip)
+Make it possible to generate [Leaflet tooltips](https://leafletjs.com/reference.html#tooltip) based on GeoJson feature properties. Use **register/unregisterStyle(`tooltip`, generator)** to (un)register a function **f(feature, layer, options)** returning a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip)
 
 The mixin automatically registers a default generator that will create a tooltip based on the following options with the following order of precedence
   * **tooltip**: set on **feature.properties** or layer descriptor or in the **tooltip** property of component options

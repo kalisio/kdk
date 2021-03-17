@@ -1,16 +1,5 @@
 # Mixins
 
-## Geolocation
-
-Make your component automatically retrieve the user's location on initialization or when he has logged in (the [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API) is used under-the-hood):
-* **updatePosition()** launches a geolocation
-
-> Will make the position available in the `user.position` property of the currently authenticated user in the [global store](../core/application.md#store).
-
-::: tip
-Will raise an error toast on geolocation error
-:::
-
 ## Navigator
 
 ::: warning
@@ -20,6 +9,21 @@ Only available on mobile devices
 Allow to launch native route navigation apps to go to a given location (the [launch navigator cordova plugin](https://github.com/dpa99c/phonegap-launch-navigator) is used under-the-hood):
 * **canNavigate()** check if navigation is possible (mobile device and navigation app installed)
 * **navigate(longitude, latitude)** launches native route navigation app for the given location
+
+## Style
+
+Used to add styling to layers on your 2D and 3D activities:
+* **register/unregisterStyle (type, generator)** (un)registers the function to create the style object as per the input type (e.g. `markerStyle`, `featureStyle`, `popup`, `infobox` or `tooltip`)
+
+The generator signature and return type depends on the mapping engine, please refer to specific map or globe mixins for more details.
+
+## Infobox
+
+Used to add the default [Infobox](../map/components.md#infobox) style to your 2D and 3D activities.
+
+## Feature Selection
+
+Used to support feature selection on your 2D and 3D activities.
 
 ## Feature Service
 
@@ -163,7 +167,7 @@ variables
 
 ## Context
 
-Used to be able to restore the user's context in 2D/3D mapping activities by providing methods available in both cases:
+Used to be able to restore the user's context, i.e. view extent and active layers, in 2D/3D mapping activities by providing methods available in both cases:
 * **storeContext(context)** stores current context as route (query) parameters and persists as well in local storage 
 * **restoreContext(context)** restores previously stored context from local storage, catalog (if a default one has been saved) or route (query) parameters
 * **clearContext(context)** clears the stored context so that it will not be restored anymore
@@ -179,20 +183,6 @@ At the present time two types of context are supported, although the system is f
 ::: tip
 The mixin is in sync with the `restore.context` (context being either `view` or `layers`) property of the [global store](../core/application.md#store) so that you can have a shared restoration flag accross all mapping components with a dedicated UI to change settings using e.g. `store.patch('restore.view', true)`. This can be overriden by a similar property on the activity configuration if you'd like to disable context restoration on a particular activity.
 :::
-
-## Location indicator
-
-Allow to display an indicator on top of the map indicating the current mouse location:
-* **createLocationIndicator()** installs the indicator
-* **removeLocationIndicator()** removes the indicator
-
-::: tip
-The mixin is in sync with the `locationFormat` property of the [global store](../core/application.md#store) so that you can have a shared location display format accross all mapping components with a dedicated UI to change settings using e.g. `store.patch('locationFormat', 'FFf')`.
-:::
-
-This mixin also adds the following internal data properties:
-* **currentLocation**: current location as [latitude, longitude]
-* **currentLocationFormat**: current location format object to be used for display as supported by [formatcoords](https://github.com/nerik/formatcoords)
 
 ## Levels
 

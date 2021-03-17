@@ -1,8 +1,8 @@
 # Components
 
-## Catalog panel
+## Catalog
 
-The **k-catalog-panel** is used to list all available layers in [catalog](./services.md#catalog-service) and organize them by category. A category is defined by the following properties:
+The **k-catalog** is used to list all available layers in [catalog](./services.md#catalog-service) and organize them by category. A category is defined by the following properties:
 * **name**: internal name,
 * **label**: display label,
 * **icon**: display icon,
@@ -10,7 +10,7 @@ The **k-catalog-panel** is used to list all available layers in [catalog](./serv
   * **exclusive**: `true` if layer selection in the category should be exclusive (defaults to `false`),
   * **filter**: a filter supported by [sift](https://github.com/crcn/sift.js) to select layers from the catalog belonging to the category
 
-![Catalog panel](../../assets/layers-panel.png)
+![Catalog](../../assets/layers-panel.png)
 
 This component relies on some others internal components:
 * **k-layers-selector** used to list a set of layers and manage the selection
@@ -32,33 +32,9 @@ The **k-level-slider** is used to display [available levels](./mixins.md#levels)
 Will automatically hide/show whenever a layer with appropriate configuration is hidden/shown.
 :::
 
-## Location timeseries
+## Position indicator
 
-The **k-location-time-series** is used to display weather probes or measurements at specific locations as a set of timeseries graphs in mapping activities [catalog](./services.md#catalog-service) and allow to show/hide relevent elements.
-
-Here is a view of the widget:
-
-![Timeseries](../../assets/timeseries.png)
-
-The main methods are the following:
-* **createProbedLocationLayer()** updates the marker layer used to locate the probe measurements come from
-* **updateProbedLocationForecast()** updates the probe prediction values whenever the current forecast model has changed (see [Weacast mixin](./mixins.md#weacast))
-* **isTimeseriesOpen()** check if the timeseries widget is currently visible
-* **openTimeseries()** opens the timeseries widget to make it currently visible
-* **closeTimeseries()** closes the timeseries widget to make it currently hidden
-* **toggleTimeseries()** changes the visibility state of the timeseries widget
-
-::: tip
-The component keeps in sync the timeseries widget visibility state and the associated probe marker layer.
-:::
-
-## Location indicator
-
-The **k-location-indicator** is used to display the geographical coordinates of the current mouse position.
-
-::: warning
-To be used with the [location indicator mixin](./mixins.md#location-indicator).
-:::
+The **k-position-indicator** is used to display the geographical coordinates of the current mouse position.
 
 ## Timeline
 
@@ -71,13 +47,44 @@ The main methods are the following:
 * **getTimelineInterval()** default timeline interval function
 * **getTimelineFormatter()** default timeline formatting function
 
-## Navigation Bar
+## Widgets
 
-The **k-navigation-bar** groups together the main actions available on a [mapping activity](./mixins.md#activity). See e.g. [Kano configuration options](../kano/configuration.md) for more details.
+### Timeseries 
 
-Here is a view of some of the components presented previously:
+The **k-time-series-widget** is used to display weather probes or measurements at a specific location as a set of timeseries graphs in mapping activities and allow to show/hide relevent elements.
 
-![Mapping layout](../../assets/kano-components.png)
+Here is a view of the widget:
+
+![Timeseries](../../assets/timeseries.png)
+
+The main methods are the following:
+* **refresh()** updates the marker layer used to locate where the probe measurements come from and updates the probe timeseries graph
+
+::: tip
+The component keeps in sync the timeseries widget visibility state and any change in time format, forecast model (see [Weacast mixin](./mixins.md#weacast)), or current time.
+:::
+
+### Infobox 
+
+The **k-information-box** is used to display feature properties as a table.
+
+The main methods are the following:
+* **refresh()** updates the information box content based on the layer or feature schema
+
+::: tip
+The component allows to copy-paste feature properties or export feature as GeoJson.
+:::
+
+### Mappilary Viewer 
+
+The **k-mapillary-viewer** is used to display street-level imagery coming from [Mapillary](https://www.mapillary.com/).
+
+The main methods are the following:
+* **refresh()** updates the imagery based on the currently selected position or feature
+
+::: tip
+The component keeps in sync the viewer widget and any change in current time.
+:::
 
 ## Map
 
@@ -91,13 +98,16 @@ The **k-location-map** allows to display a location on a map using a marker.
 
 The **k-location-field** provides you with an autocomplete address search input powered by the [geocoder service](./services.md#geocoder-service) to be embedded in a [**k-form**](../core/components.md#forms).
 
-### Level slider
-
-The **k-level-slider** allows to display a slider to select among a range of
-value. It is meant to be used in conjunction with the [level mixin](./mixins.md#level).
-
 ## Globe
 
 No dedicated component exist at the moment, you usually rely on provided [mixins](./globe-mixins.md) to build your own globe.
 
 Kano provides a good starting point to build your own [Globe Activity](https://github.com/kalisio/kano/blob/master/src/components/GlobeActivity.vue).
+
+## Navigation Bar
+
+The **k-navigation-bar** groups together the main actions available on a [mapping activity](./mixins.md#activity). See e.g. [Kano configuration options](../kano/configuration.md) for more details.
+
+Here is a view of some of the components presented previously:
+
+![Mapping layout](../../assets/kano-components.png)

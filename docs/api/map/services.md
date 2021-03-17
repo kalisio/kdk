@@ -32,6 +32,8 @@ No [hooks](./hooks.md) are executed on the `geocoder` service for now.
 
 ## Catalog service
 
+This service aims at storing the definition of the available map layers or map view contexts (extent and active layers).
+
 ::: tip
 Available as a global and a contextual service
 :::
@@ -53,7 +55,21 @@ _.forEach(response.data, (layer) => {
 })
 ```
 
+::: tip
+By default the catalog filters contexts and return layers only if the target object `type` is unspecified.
+:::
+
+Here is a sample code to retrieve the default context (i.e. home view) available in the catalog:
+```javascript
+const catalogService = app.getService('catalog')
+let response = await catalogService.find({ query: { type: 'Context', isDefault: true } })
+this.loadContext(response.data[0])
+
+```
+
 ### Data model
+
+#### Layer
 
 The data model of a layer descriptor as used by the API is detailed below.
 
@@ -89,6 +105,7 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 * **service**: the name of the underlying feature service,
 * **probeService**: the name of the underlying feature service containing probe locations,
 * **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object),
+* **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object),
 * **history**: the expiration period for stored feature
 * **variables**: array of available properties in feature to be [aggregated over time](./services.md#time-based-feature-aggregation), for each entry the following options are available:
   * **name**: property name in feature (relative to the nested `properties` object),
@@ -96,12 +113,24 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
   * **units**: array of target units to be available in the legend, the first unit is the one used to store the data, others will be converted from using [math.js](http://mathjs.org/docs/datatypes/units.html)
   * **chartjs**: options to be passed to [chart.js](https://www.chartjs.org/docs/latest/charts/line.html#dataset-properties) when drawing timeseries
 
+#### User context
+
+A user context consists in a map extent and a set of layers to be activated. It is used to restore a specific user view context at anytime.
+
+The data model of a user context as used by the API is the following:
+* **name** : the context name, typically used when listing favorite views
+* **type** : `Context`
+* **south,west,north,east**: context extent,
+* **layers**: array of active layer names
+
 ### Hooks
 
-The sole [hooks](./hooks.md) executed on the `catalog` service are used to convert from/to JS/MongoDB data types:
+The main [hooks](./hooks.md) executed on the `catalog` service for layers are used to convert from/to JS/MongoDB data types:
 * [convertObjectIDs](../core/hooks.md) before hook for layer ID
 * [convertToString](../core/hooks.md) before hook for layer schema
 * [convertToJson](../core/hooks.md) after hook for layer schema
+
+Additional hooks are run to update contexts whenever a layer name is updated.
 
 ## Features service
 

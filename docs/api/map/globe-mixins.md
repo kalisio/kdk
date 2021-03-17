@@ -34,7 +34,8 @@ This mixin also adds the following internal data properties:
 Make it possible to setup Cesium entities objects with style based on (Geo)Json (feature) properties stored in entities:
 * **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Cesium style options](https://cesiumjs.org/Cesium/Build/Documentation/GeoJsonDataSource.html#.load)
 * **convertToCesiumObjects(style)** helper function to convert from JSON description to Cesium objects
-* **register/unregisterCesiumStyle(type, generator)** (un)registers a function generating a Cesium object depending on the given type:
+
+Use **register/unregisterStyle(type, generator)** to (un)register a function generating a Cesium object depending on the given type:
   * `entityStyle` => **f(entity, options)** returns a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
   * `clusterStyle` => **f(entities, cluster, options)** returns a [Cesium cluster style object](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback)
 
@@ -76,8 +77,7 @@ ellipse: {
 
 ## Globe Popup
 
-Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as popups based on GeoJson feature properties stored in entities:
-* use **register/unregisterCesiumStyle(`popup`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
+Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as popups based on GeoJson feature properties stored in entities. Use **register/unregisterStyle(`popup`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
 
 The mixin automatically registers a default generator that will create a popup displaying a property name/value table based on the following options with the following order of precedence
   * **popup**: set on **entity.properties** or layer descriptor or in the **popup** property of component options
@@ -89,8 +89,7 @@ The mixin automatically registers a default generator that will create a popup d
 
 ## Globe Tooltip
 
-Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as tooltips based on GeoJson feature properties stored in entities:
-* use **register/unregisterCesiumStyle(`tooltip`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
+Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as tooltips based on GeoJson feature properties stored in entities. Use **register/unregisterStyle(`tooltip`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
 
 The mixin automatically registers a default generator that will create a tooltip based on the following options with the following order of precedence
   * **tooltip**: set on **entity.properties** or layer descriptor or in the **tooltip** property of component options
