@@ -103,7 +103,7 @@ export default {
           // Fetching is managed by tiles but even for manual update leaflet realtime require a src
           _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {})
           // Generate fetch function for tiled feature layer
-          leafletOptions.featureSource = (query) => this.getFeatures(_.merge(query, options))
+          leafletOptions.featureSource = (baseQuery) => this.getFeatures(_.merge({ baseQuery }, options))
         } else {
           leafletOptions.removeMissing = !options.probeService
           let initialized = !options.probeService // If no probe reference, nothing to be initialized
