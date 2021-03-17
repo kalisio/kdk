@@ -6,7 +6,7 @@ export default {
   methods: {
     getContextKey (context) {
       // Generate a unique key to store context based on app name, map activity name and context type
-      return this.getAppName().toLowerCase() + `-${this.name}-${context}`
+      return this.getAppName().toLowerCase() + `-${this.activityName}-${context}`
     },
     shouldRestoreContext (context) {
       // Use user settings except if the view has explicitly revoked restoration
@@ -61,7 +61,7 @@ export default {
       switch (context) {
         case 'layers':
           targetParameters = {
-            layers: _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name).join(',')
+            layers: _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
           }
           break
         case 'view':
@@ -82,15 +82,15 @@ export default {
           if (!_.has(targetParameters, 'layers')) return
           // According to current state find which layers need to be (de)activated
           const activeLayers = _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
-          const targetLayers = targetParameters.layers.split(',')
+          const targetLayers = targetParameters.layers
           // List of layers to be (de)activated
           const activedLayers = _.difference(targetLayers, activeLayers)
           const inactivatedLayers = _.difference(activeLayers, targetLayers)
           // Take care that 3D requires at least a terrain layer.
           // So if we try to remove a terrain layer without activating a new one, keep it active
           // (this can be the case when the view has been saved from the 2D activity and restored in the 3D activity).
-          const inactivatedTerrainLayer = _.find(inactivatedLayers, (name) => this.layers[name].type === 'TerrainLayer')
-          const activatedTerrainLayer = _.find(activedLayers, (name) => this.layers[name].type === 'TerrainLayer')
+          const inactivatedTerrainLayer = _.find(inactivatedLayers, (name) => this.hasLayer(name) && (this.getLayerByName(name).type === 'TerrainLayer'))
+          const activatedTerrainLayer = _.find(activedLayers, (name) => this.hasLayer(name) && (this.getLayerByName(name).type === 'TerrainLayer'))
           if (inactivatedTerrainLayer && !activatedTerrainLayer) _.pull(inactivatedLayers, inactivatedTerrainLayer)
           await Promise.all(activedLayers.map(layer => this.showLayer(layer)))
           await Promise.all(inactivatedLayers.map(layer => this.hideLayer(layer)))

@@ -56,12 +56,32 @@ module.exports = [{
     nextDelay: 500
   }
 }, {
+  target: '#manage-favorite-views',
+  title: 'tours.navigation-bar.FAVORITE_VIEWS_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnNext: '#manage-favorite-views',
+    nextDelay: 500
+  }
+}, {
+  target: '#favorite-views',
+  title: 'tours.navigation-bar.FAVORITE_VIEW_LABEL',
+  params: {
+    placement: 'top',
+    clickOnNext: '#manage-favorite-views',
+    nextDelay: 500,
+    clickOnPrevious: '#manage-favorite-views',
+    previousDelay: 500
+  }
+}, {
   target: '#tools',
   title: 'tours.navigation-bar.TOOLS_LABEL',
   params: {
     placement: 'bottom',
     clickOnNext: '#tools',
-    nextDelay: 500
+    nextDelay: 500,
+    clickOnPrevious: '#manage-favorite-views',
+    previousDelay: 500
   }
 }, {
   target: '#display-position',

@@ -200,6 +200,8 @@
       "SEARCH_LOCATION_LABEL": "Seek for an address using this button.",
       "LOCATION_SEARCHING_LABEL": "Type part of your address and select among the proposed locations to center the map on.",
       "SEARCH_BACK_LABEL": "Then stop searching by going back to the actions.",
+      "FAVORITE_VIEWS_LABEL": "List, create and remove your <b>favorite views</b> using this button.",
+      "FAVORITE_VIEW_LABEL": "A favorite view is used to restore your current context later (map extent and active layers).",
       "TOOLS_LABEL": "Select among available tools using this button.",
       "TRACK_LOCATION_LABEL": "Display the coordinates of a location using this button.",
       "COPY_LOCATION_LABEL": "Copy the coordinates in your clipboard using this button.",

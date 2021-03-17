@@ -200,6 +200,8 @@
       "SEARCH_LOCATION_LABEL": "Recherchez une <b>adresse</b> via ce bouton.",
       "LOCATION_SEARCHING_LABEL": "Tapez tout ou partie de votre adresse puis sélectionnez parmi les propositions pour recentrer la carte.",
       "SEARCH_BACK_LABEL": "Arrêtez la recherche en retournant aux actions.",
+      "FAVORITE_VIEWS_LABEL": "Listez, créez ou effacez vos <b>vues favorites</b> via ce bouton.",
+      "FAVORITE_VIEW_LABEL": "Une vue favorite permet de restorer votre contexte actuel (emprise cartographique et couches actives) à un moment ultérieur.",
       "TOOLS_LABEL": "Sélectionnez un outil parmi ceux disponibles via ce bouton.",
       "TRACK_LOCATION_LABEL": "Affichez les coordonnées d'une position via ce bouton.",
       "COPY_LOCATION_LABEL": "Copier vos coordonnées dans le presse-papiers grâce à ce bouton.",

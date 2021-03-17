@@ -7,7 +7,7 @@ import map, { permissions as mapPermissions, createFeaturesService, createCatalo
 
 describe('map:services', () => {
   let app, server, port, // baseUrl,
-    userService, userObject, geocoderService, catalogService, layersArray,
+    userService, userObject, geocoderService, catalogService, defaultLayers,
     zonesService, vigicruesStationsService, vigicruesObsService, adsbObsService, position
 
   before(() => {
@@ -62,13 +62,37 @@ describe('map:services', () => {
     const layers = await fs.readJson('./tests/map/config/layers.json')
     expect(layers.length > 0)
     // Create a global catalog service
-    layersArray = await catalogService.create(layers)
-    expect(layersArray.length > 0)
+    defaultLayers = await catalogService.create(layers)
+    expect(defaultLayers.length > 0)
+  })
+
+  it('manages layers and contexts', async () => {
+    const layer = await catalogService.create({ name: 'dummyLayer', type : 'OverlayLayer' })
+    // Can't duplicate name
+    let doublonLayer
+    try {
+      doublonLayer = await catalogService.create({ name: 'dummyLayer', type : 'OverlayLayer' })
+    } catch (error) {
+      expect(error).toExist()
+    }
+    expect(doublonLayer).beUndefined()
+    let context = await catalogService.create({ name: 'dummyContext', type : 'Context', layers: ['dummyLayer'] })
+    // Check for context filtering by default
+    const response = await catalogService.find({ query: {}, paginate: false })
+    expect(response.length === defaultLayers.length + 1)
+    // Check for automated context update whn layer is renamed/removed
+    await catalogService.patch(layer._id.toString(), { name: 'oldDummyLayer' })
+    context = await catalogService.get(context._id.toString())
+    expect(context.layers).to.deep.equal(['oldDummyLayer'])
+    await catalogService.remove(layer._id.toString())
+    context = await catalogService.get(context._id.toString())
+    expect(context.layers).to.deep.equal([])
+    await catalogService.remove(context._id.toString())
   })
 
   it('create and feed the zones service', async () => {
     // Create the service
-    const zonesLayer = _.find(layersArray, { name: 'zones' })
+    const zonesLayer = _.find(defaultLayers, { name: 'zones' })
     expect(zonesLayer).toExist()
     expect(zonesLayer.service === 'zones').beTrue()
     createFeaturesService.call(app, {
@@ -110,7 +134,7 @@ describe('map:services', () => {
 
   it('create and feed the vigicrues stations service', async () => {
     // Create the service
-    const vigicruesStationsLayer = _.find(layersArray, { name: 'vigicrues-stations' })
+    const vigicruesStationsLayer = _.find(defaultLayers, { name: 'vigicrues-stations' })
     expect(vigicruesStationsLayer).toExist()
     expect(vigicruesStationsLayer.service === 'vigicrues-stations').beTrue()
     createFeaturesService.call(app, {
@@ -127,7 +151,7 @@ describe('map:services', () => {
 
   it('create and feed the vigicrues observations service', async () => {
     // Create the service
-    const vigicruesObsLayer = _.find(layersArray, { name: 'vigicrues-observations' })
+    const vigicruesObsLayer = _.find(defaultLayers, { name: 'vigicrues-observations' })
     expect(vigicruesObsLayer).toExist()
     expect(vigicruesObsLayer.service === 'vigicrues-observations').beTrue()
     createFeaturesService.call(app, {
@@ -144,7 +168,7 @@ describe('map:services', () => {
 
   it('create and feed the ADS-B observations service', async () => {
     // Create the service
-    const adsbObsLayer = _.find(layersArray, { name: 'adsb-observations' })
+    const adsbObsLayer = _.find(defaultLayers, { name: 'adsb-observations' })
     expect(adsbObsLayer).toExist()
     expect(adsbObsLayer.service === 'adsb-observations').beTrue()
     createFeaturesService.call(app, {
@@ -270,11 +294,11 @@ describe('map:services', () => {
     .timeout(10000)
 
   it('clears the layers', async () => {
-    for (let i = 0; i < layersArray.length; ++i) {
-      await catalogService.remove(layersArray[i]._id)
+    for (let i = 0; i < defaultLayers.length; ++i) {
+      await catalogService.remove(defaultLayers[i]._id)
     }
-    layersArray = await catalogService.find()
-    expect(layersArray.length === 0)
+    defaultLayers = await catalogService.find()
+    expect(defaultLayers.length === 0)
   })
 
   it('removes the test user', async () => {

@@ -1,9 +1,9 @@
 <template>
-  <q-card>
+  <q-card id="favorite-views">
     <q-card-section v-show="hasToolbar">
       <k-panel id="favorite-views-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
     </q-card-section>
-    <q-card-section v-show="mode === 'list'">
+    <q-card-section id="favorite-views-list" v-show="mode === 'list'">
       <k-list
         style="min-height: 50px; min-width: 200px"
         service="catalog"
@@ -14,7 +14,7 @@
         @collection-refreshed="refreshViews"
         @selection-changed="selectView" />
     </q-card-section>
-    <q-card-section v-if="mode === 'add'">
+    <q-card-section id="favorite-views-add" v-if="mode === 'add'">
       <div class="colum q-gutter-y-md">
         <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
         <div class="q-pa-sm row justify-end">
@@ -58,7 +58,7 @@ export default {
         list: [
           {
             component: 'collection/KSorter',
-            id: 'sorter-options',
+            id: 'favorite-views-sorter-options',
             tooltip: 'KFavoriteViews.SORT',
             options: [
               { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
@@ -69,10 +69,10 @@ export default {
           },
           { component: 'collection/KFilter', style: 'max-width: 200px;' },
           { component: 'QSpace' },
-          { id: 'add-view', icon: 'kdk:view-plus.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => { this.mode = 'add' } }
+          { id: 'add-favorite-view', icon: 'kdk:view-plus.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => { this.mode = 'add' } }
         ],
         add: [
-          { id: 'list-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => { this.mode = 'list' } },
+          { id: 'list-favorite-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => { this.mode = 'list' } },
           { component: 'QSpace' }
         ]
       },
