@@ -3,7 +3,7 @@
   </div>
   <q-input v-else
     :for="properties.name + '-field'"
-    :type="isPwd ? 'password' : 'text'"
+    :type="isPassword ? 'password' : 'text'"
     v-model="model"
     :label="label"
     clearable
@@ -17,9 +17,9 @@
     <template v-slot:append>
       <q-icon
         :id="properties.name + '-field-visibility'"
-        :name="isPwd ? 'visibility_off' : 'visibility'"
+        :name="isPassword ? 'visibility_off' : 'visibility'"
         class="cursor-pointer"
-        @click="isPwd = !isPwd"
+        @click="isPassword = !isPassword"
       />
     </template>
     <!-- Helper -->
@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import { QField, QInput, QIcon } from 'quasar'
 import mixins from '../../mixins'
 
 export default {
@@ -38,7 +37,7 @@ export default {
   mixins: [mixins.baseField],
   data () {
     return {
-      isPwd: true
+      isPassword: true
     }
   }
 }
