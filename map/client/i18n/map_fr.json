@@ -413,7 +413,9 @@
     "TITLE": "Ajouter une nouvelle couche"
   },
   "KImportLayer": {
-    "FILE_LABEL": "Sélectionnez un fichier",
+    "FILE_LABEL": "Sélectionnez le fichier à importer",
+    "NAME_LABEL": "Saisissez le nom de la couche à créer",
+    "DESCRIPTION_LABEL": "Saisissez une description de la couche à créer",
     "IMPORT_BUTTON": "Importer"
   },
   "KConnectLayer": {

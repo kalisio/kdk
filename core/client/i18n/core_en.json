@@ -450,7 +450,9 @@
   },
   "KFileField": {
     "ERROR_WHILE_LOADING_THE_FILE": "Error while loading the file, did you select a valid file ?",
-    "INVALID_FILE_TYPE": "Invalid file type, please select the right file type."
+    "INVALID_FILE_TYPE": "Invalid file type, please select the right file type",
+    "INVALID_JSON_FILE": "Invalid JSON file",
+    "INVALID_GEOJSON_FILE": "Invalid GeoJSON file"
   },
   "KMediaBrowser": {
     "CLOSE_ACTION": "$t(CLOSE)",

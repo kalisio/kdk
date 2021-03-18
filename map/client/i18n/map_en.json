@@ -412,7 +412,9 @@
     "TITLE": "Add a new layer"
   },
   "KImportLayer": {
-    "FILE_LABEL": "Select a file",
+    "FILE_LABEL": "Select the file to import",
+    "NAME_LABEL": "Enter the name of the layer to be created",
+    "DESCRIPTION_LABEL": "Enter the description of the layer to be created",
     "IMPORT_BUTTON": "Import"
   },
   "KConnectLayer": {

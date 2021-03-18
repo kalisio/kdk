@@ -39,9 +39,9 @@ const baseFieldMixin = {
     },
     errorLabel () {
       // Check for overriden error label
-      const error = _.get(this.properties.field, 'errorLabel', '')
+      let error = _.get(this.properties.field, 'errorLabel', '')
       // If not use default validator error messages
-      if (!error) return this.error
+      if (!error) error = this.error
       // Else check if we have a translation key or directly the error content
       return (this.$i18n.i18next.exists(error) ? this.$t(error) : error)
     },
@@ -79,6 +79,7 @@ const baseFieldMixin = {
     },
     fill (value) {
       this.model = value
+      this.error = ''
     },
     clear () {
       this.fill(_.get(this.properties, 'default', this.emptyModel()))

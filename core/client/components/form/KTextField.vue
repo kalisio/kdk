@@ -6,18 +6,13 @@
     :for="properties.name + '-field'"
     type="text"
     v-model="model"
+    :label="label"
     clearable
     @blur="onChanged"
     :disabled="disabled"
-    :error="hasError"
+    :error="hasError" 
     :error-message="errorLabel"
-    no-error-icon
-    bottom-slots
-  >
-    <template v-if="helper" v-slot:hint>
-      <span v-html="helper"></span>
-    </template>
-  </q-input>
+    bottom-slots />
 </template>
 
 <script>

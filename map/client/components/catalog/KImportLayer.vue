@@ -1,15 +1,16 @@
 <template>
   <div>
     <!-- Form section -->
-    <k-form ref="form" :schema="getSchema()" />
+    <k-form ref="form" :schema="getSchema()" @field-changed="onFieldChanged" />
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
-      <q-btn id="import-button" color="primary" outline :label="$t('KImportLayer.IMPORT_BUTTON')" @click="onImport"/>
+      <q-btn id="import-button" color="primary" :label="$t('KImportLayer.IMPORT_BUTTON')" @click="onImport"/>
     </div>
   </div>
 </template>
 
 <script>
+import path from 'path'
 import { generatePropertiesSchema } from '../../utils'
 import { uid } from 'quasar'
 
@@ -39,12 +40,37 @@ export default {
             type: 'object',
             field: {
               component: 'form/KFileField',
-              helper: 'KImportLayer.FILE_LABEL',
+              label: 'KImportLayer.FILE_LABEL',
               mimeTypes: '.json,.geojson,application/json,application/geo+json'
+            }
+          },
+          name: {
+            type: 'string',
+            maxLength: 128,
+            minLength: 3,            
+            field: { 
+              component: 'form/KTextField',
+              label: 'KImportLayer.NAME_LABEL'
+            }
+          },
+          description: {
+            type: 'string',
+            field: { 
+              component: 'form/KTextField',
+              label: 'KImportLayer.DESCRIPTION_LABEL'
             }
           }
         },
-        required: ['file']
+        required: ['file', 'name']
+      }
+    },
+    onFieldChanged (field, value) {
+      // Setup workflow depending on field state
+      if (field === 'file') {
+        if (value) {
+          const name = path.basename(value.name, path.extname(value.name))
+          this.$refs.form.getField('name').fill(name)
+        }
       }
     },
     async onImport () {
@@ -74,7 +100,7 @@ export default {
         // Assign the features to the layer
         await this.kActivity.updateLayer(layer.name, geoJson)
         this.$emit('done')
-      }
+      } 
     }
   },
   created () {

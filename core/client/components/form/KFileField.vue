@@ -6,12 +6,14 @@
   </div>
   <q-file v-else
     :for="properties.name + '-field'"
-    :error="hasError"
     v-model="file"
-    :label="helper"
+    :label="label"
     clearable
     counter
     :accept="getAcceptedTypes()"
+    :error="hasError"
+    :error-message="errorLabel"
+    bottom-slots
     @clear="onFileCleared"
     @input="onFileChanged"
     @rejected="onFileRejected" />
@@ -50,7 +52,22 @@ export default {
         this.error = ''
         let content = reader.result
         // Provide JSON object directly in this case
-        if (this.getAcceptedTypes().includes('application/json')) content = JSON.parse(content)
+        if (this.getAcceptedTypes().split(',').includes('application/json')) {
+          try {
+            content = JSON.parse(content)
+          } catch(error) {
+            this.error = 'KFileField.INVALID_JSON_FILE'
+            this.model = this.emptyModel()
+            return
+          }
+        }
+        if (this.getAcceptedTypes().split(',').includes('application/geo+json')) {
+          if (_.get(content, 'type') !== 'FeatureCollection') {
+            this.error = 'KFileField.INVALID_GEOJSON_FILE'
+            this.model = this.emptyModel()
+            return
+          }
+        }
         this.model = { name: this.file.name, content }
         this.onChanged()
       })
@@ -58,7 +75,7 @@ export default {
         this.error = 'KFileField.ERROR_WHILE_LOADING_THE_FILE'
         this.model = this.emptyModel()
       })
-      reader.readAsText(this.file)
+      if (this.file) reader.readAsText(this.file)
     },
     onFileRejected (file) {
       this.error = 'KFileField.INVALID_FILE_TYPE'
