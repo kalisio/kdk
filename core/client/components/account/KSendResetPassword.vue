@@ -51,7 +51,7 @@ export default {
             format: 'email',
             field: {
               component: 'form/KEmailField',
-              helper: 'KSendResetPassword.EMAIL_FIELD_HELPER'
+              label: 'KSendResetPassword.EMAIL_FIELD_LABEL'
             }
           }
         },

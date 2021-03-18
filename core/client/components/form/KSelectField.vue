@@ -6,11 +6,12 @@
   </div>
   <q-select v-else
     :id="properties.name + '-field'"
+    v-model="model"
+    :label="label"
     :multiple="multiple"
     :toggle="toggle"
     :radio="radio"
     :use-chips="chips"
-    v-model="model"
     :options="options"
     @change="onChanged"
     @blur="onChanged"
@@ -19,11 +20,10 @@
     :error="hasError"
     :error-message="errorLabel"
     :disabled="disabled"
-    no-error-icon
-    bottom-slots
-  >
+    bottom-slots>
+     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
-      {{helper}}
+      <span v-html="helper"></span>
     </template>
   </q-select>
 </template>

@@ -1,12 +1,16 @@
 <template>
   <q-field
     :for="properties.name + '-field'"
+    :value="model"
+    :label="label"
     :error-message="errorLabel"
     :error="hasError"
     no-error-icon
   >
-    <!-- Location input -->
-    <k-location-input v-model="model" class="full-width" />
+    <!-- Content -->
+    <template v-slot:default>
+      <k-location-input v-model="model" class="full-width" />
+    </template>
     <!--Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>

@@ -50,7 +50,7 @@ export default {
             type: 'string',
             field: {
               component: 'form/KPasswordField',
-              helper: 'KSendChangeIdentity.PASSWORD_FIELD_HELPER'
+              label: 'KSendChangeIdentity.PASSWORD_FIELD_LABEL'
             }
           },
           email: {
@@ -58,7 +58,7 @@ export default {
             format: 'email',
             field: {
               component: 'form/KEmailField',
-              helper: 'KSendChangeIdentity.EMAIL_FIELD_HELPER'
+              label: 'KSendChangeIdentity.EMAIL_FIELD_LABEL'
             }
           }
         },

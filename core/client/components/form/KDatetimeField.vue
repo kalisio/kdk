@@ -4,14 +4,16 @@
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
+    :value="model"
+    :label="label"
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"
     @blur="onChanged"
-    no-error-icon
     bottom-slots
     :prefix="formattedDatetime"
   >
+    <!-- Prepend icons -->
     <template v-slot:prepend>
       <q-icon name="las la-calendar" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">

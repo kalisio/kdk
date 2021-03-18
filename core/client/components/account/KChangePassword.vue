@@ -57,14 +57,14 @@ export default {
             type: 'string',
             field: {
               component: 'form/KPasswordField',
-              helper: 'KChangePassword.OLD_PASSWORD_FIELD_HELPER'
+              label: 'KChangePassword.OLD_PASSWORD_FIELD_LABEL'
             }
           },
           password: {
             type: 'string',
             field: {
               component: 'form/KPasswordField',
-              helper: 'KChangePassword.PASSWORD_FIELD_HELPER'
+              label: 'KChangePassword.PASSWORD_FIELD_LABEL'
             }
           },
           confirmPassword: {
@@ -73,7 +73,7 @@ export default {
             },
             field: {
               component: 'form/KPasswordField',
-              helper: 'KChangePassword.CONFIRM_PASSWORD_FIELD_HELPER'
+              label: 'KChangePassword.CONFIRM_PASSWORD_FIELD_LABEL'
             }
           }
         },

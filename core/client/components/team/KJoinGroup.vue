@@ -66,7 +66,7 @@ export default {
             }],
             field: {
               component: 'form/KItemField',
-              helper: 'KJoinGroup.GROUP_FIELD_HELPER'
+              label: 'KJoinGroup.GROUP_FIELD_LABEL'
             }
           },
           role: {
@@ -74,7 +74,7 @@ export default {
             default: 'member',
             field: {
               component: 'form/KSelectField',
-              helper: 'KJoinGroup.ROLE_FIELD_HELPER',
+              label: 'KJoinGroup.ROLE_FIELD_LABEL',
               type: 'radio',
               options: [
                 { label: this.$t('KAddMember.MEMBER_LABEL'), value: 'member' },

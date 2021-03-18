@@ -5,13 +5,25 @@
   <div v-else>
     <q-field
       :for="properties.name + '-field'"
+      :value="model"
+      :label="label"
       :error-message="errorLabel"
       :error="hasError"
       :disabled="disabled"
-      no-error-icon
       bottom-slots
     >
-      <q-chip id="choosed-icon" clickable v-ripple text-color="white" :icon="iconName" :color="model.color" @click="onIconClicked"/>
+      <!-- Content -->
+      <template v-slot:default>
+        <q-chip 
+          id="choosed-icon" 
+          clickable 
+          dense 
+          v-ripple 
+          text-color="white" 
+          :icon="iconName" 
+          :color="model.color" 
+          @click="onIconClicked" />
+      </template>
       <!-- Helper -->
       <template v-if="helper" v-slot:hint>
         <span v-html="helper"></span>

@@ -11,7 +11,7 @@
       "minLength": 3,
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.ORGANISATIONS_NAME_FIELD_HELPER"
+        "label": "schemas.ORGANISATIONS_NAME_FIELD_LABEL"
       }
     },
     "description": {
@@ -19,7 +19,7 @@
       "maxLength": 256,
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.ORGANISATIONS_DESCRIPTION_FIELD_HELPER"
+        "label": "schemas.ORGANISATIONS_DESCRIPTION_FIELD_LABEL"
       }
     }
   },

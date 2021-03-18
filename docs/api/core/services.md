@@ -616,7 +616,7 @@ For instance the following schema can be used to edit the previous sample:
       "type": "string", 
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.X_FIELD_HELPER"
+        "helper": "schemas.X_FIELD_LABEL"
       }
     }
   },

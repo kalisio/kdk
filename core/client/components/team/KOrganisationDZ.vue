@@ -31,7 +31,7 @@ export default {
     onDeleteClicked () {
       Dialog.create({
         title: this.$t('KOrganisationDZ.DIALOG_TITLE', { organisation: this.name }),
-        message: this.$t('KOrganisationDZ.DIALOG_HELPER'),
+        message: this.$t('KOrganisationDZ.DIALOG_LABEL'),
         html: true,
         prompt: {
           type: 'text',

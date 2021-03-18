@@ -11,7 +11,7 @@
       "minLength": 3,
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.TAGS_NAME_FIELD_HELPER"
+        "label": "schemas.TAGS_NAME_FIELD_LABEL"
       }
     },
     "icon": {
@@ -19,7 +19,7 @@
       "default": { "name": "", "color": "" },
       "field": {
         "component": "form/KIconField",
-        "helper": "schemas.TAGS_ICON_FIELD_HELPER"
+        "label": "schemas.TAGS_ICON_FIELD_LABEL"
       }
     }
   },

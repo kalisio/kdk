@@ -75,7 +75,7 @@ export default {
             type: 'string',
             field: {
               component: 'form/KPasswordField',
-              helper: 'KResetPassword.PASSWORD_FIELD_HELPER'
+              label: 'KResetPassword.PASSWORD_FIELD_LABEL'
             }
           },
           confirmPassword: {
@@ -84,7 +84,7 @@ export default {
             },
             field: {
               component: 'form/KPasswordField',
-              helper: 'KResetPassword.CONFIRM_PASSWORD_FIELD_HELPER'
+              label: 'KResetPassword.CONFIRM_PASSWORD_FIELD_LABEL'
             }
           }
         },

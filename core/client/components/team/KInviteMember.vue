@@ -63,7 +63,7 @@ export default {
             maxLength: 128,
             field: {
               component: 'form/KTextField',
-              helper: 'KInviteMember.NAME_FIELD_HELPER'
+              label: 'KInviteMember.NAME_FIELD_LABEL'
             }
           },
           email: {
@@ -71,7 +71,7 @@ export default {
             format: 'email',
             field: {
               component: 'form/KEmailField',
-              helper: 'KInviteMember.EMAIL_FIELD_HELPER'
+              label: 'KInviteMember.EMAIL_FIELD_LABEL'
             }
           },
           role: {
@@ -79,7 +79,7 @@ export default {
             default: 'member',
             field: {
               component: 'form/KSelectField',
-              helper: 'KInviteMember.ROLE_FIELD_HELPER',
+              label: 'KInviteMember.ROLE_FIELD_LABEL',
               type: 'radio',
               options: [
                 { label: this.$t('KInviteMember.MEMBER_LABEL'), value: 'member' },
@@ -103,7 +103,7 @@ export default {
             type: 'string',
             field: {
               component: 'form/KFileField',
-              helper: 'KLayerImportDialog.INPUT_HINT',
+              label: 'KLayerImportDialog.INPUT_LABEL',
               mimeTypes: 'txt/csv,application/vnd.ms-excel'
             }
           }

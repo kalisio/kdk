@@ -9,7 +9,7 @@
       "type": "object",
       "field": {
         "component": "form/KAttachmentField",
-        "helper": "schemas.AVATAR_FIELD_HELPER",
+        "label": "schemas.AVATAR_FIELD_LABEL",
         "service": "storage",
         "acceptedFiles": "image/*",
         "maxFilesize": 0.5,
@@ -26,7 +26,7 @@
       "minLength": 3,
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.NAME_FIELD_HELPER"
+        "label": "schemas.NAME_FIELD_LABEL"
       }
     }
   },

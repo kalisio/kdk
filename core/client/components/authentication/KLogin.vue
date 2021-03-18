@@ -60,14 +60,14 @@ export default {
             format: 'email',
             field: {
               component: 'form/KEmailField',
-              helper: 'KLogin.EMAIL_FIELD_HELPER'
+              label: 'KLogin.EMAIL_FIELD_LABEL'
             }
           },
           password: {
             type: 'string',
             field: {
               component: 'form/KPasswordField',
-              helper: 'KLogin.PASSWORD_FIELD_HELPER'
+              label: 'KLogin.PASSWORD_FIELD_LABEL'
             }
           }
         },

@@ -14,36 +14,34 @@
     </div>
     <q-field v-else
       :for="properties.name + '-field'"
+      :value="chips"
+      :label="label"
       :error-message="errorLabel"
       :error="hasError"
       :disabled="disabled"
-      no-error-icon
       bottom-slots
-    >
+    > 
+      <!-- Content -->
       <template v-slot:default>
-        <div class="row items-center">
-          <div class="q-pa-xs">
-            <template v-for="(chip, index) in chips">
-              <q-chip
-                :id="'chip-' + index"
-                class="chip"
-                :key="chipValue(chip) + '-' + index"
-                :icon="chipIcon(chip)"
-                :color="chipColor(chip)"
-                @remove="onChipRemoved(chip)"
-                @click="onChipClicked(chip)"
-                clickable
-                removable
-                outline
-                dense
-              >
-                {{chip.value}}
-              </q-chip>
-            </template>
-          </div>
-          <div :class="inputClass">
-            <q-input :for="properties.name + '-field'" type="text" v-model="input" :after="inputActions" @keyup.enter="onChipAdded()"/>
-          </div>
+        <div class="row items-baseline">
+          <template v-for="(chip, index) in chips">
+            <q-chip
+              :id="'chip-' + index"
+              class="chip"
+              :key="chipValue(chip) + '-' + index"
+              :icon="chipIcon(chip)"
+              :color="chipColor(chip)"
+              @remove="onChipRemoved(chip)"
+              @click="onChipClicked(chip)"
+              clickable
+              removable
+              outline
+              dense
+            >
+              {{chip.value}}
+            </q-chip>
+          </template>
+          <q-input class="q-pl-sm col-grow" :for="properties.name + '-field'" autofocus type="text" v-model="input" :after="inputActions" @keyup.enter="onChipAdded()" />
         </div>
       </template>
       <!-- Helper -->
@@ -51,7 +49,6 @@
         <span v-html="helper"></span>
       </template>
     </q-field>
-
     <k-icon-chooser
       ref="iconChooser"
       @icon-choosed="onIconChoosed" />
@@ -71,9 +68,6 @@ export default {
   },
   mixins: [mixins.baseField],
   computed: {
-    inputClass () {
-      return this.chips.length > 0 ? 'col-auto' : 'col-12'
-    },
     inputActions () {
       const actions = []
       if (_.findIndex(this.chips, { value: this.input }) === -1) {

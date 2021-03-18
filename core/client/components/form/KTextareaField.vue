@@ -1,20 +1,25 @@
 <template>
   <k-text-area v-if="readOnly" :text="model"  :length="150" />
   <q-field v-else
+    :value="model"
+    :label="label"
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"
-    no-error-icon
     bottom-slots
   >
-    <q-editor
-      :id="properties.name + '-field'"
-      v-model="model"
-      class="full-width"
-      content-class="text-grey-8"
-      min-height="5rem"
-      max-height="10rem"
-      :dense="$q.screen.lt.md" />
+    <!-- Content -->
+    <template v-slot:default>
+      <q-editor
+        class="q-pa-sm full-width"
+        :id="properties.name + '-field'"
+        v-model="model"
+        content-class="text-grey-8"
+        min-height="5rem"
+        max-height="10rem"
+        :dense="$q.screen.lt.md" />
+    </template>
+    <!-- Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>
     </template>

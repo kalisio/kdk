@@ -52,7 +52,7 @@ export default {
             format: 'email',
             field: {
               component: 'form/KEmailField',
-              helper: 'KResendVerifySignup.EMAIL_FIELD_HELPER'
+              helper: 'KResendVerifySignup.EMAIL_FIELD_LABEL'
             }
           }
         },

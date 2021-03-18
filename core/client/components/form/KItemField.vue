@@ -6,20 +6,20 @@
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
+    :value="model"
+    :label="label"
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"
-    no-error-icon
     bottom-slots
   >
-    <k-item-chooser
-      :id="properties.name + '-field'"
-      :multiselect="properties.multiselect"
-      :default-items="defaultItems"
-      :services="properties.services"
-      @items-changed="updateModel" />
-    <template v-if="helper" v-slot:hint>
-      <span v-html="helper"></span>
+    <template v-slot:default>
+      <k-item-chooser
+        :id="properties.name + '-field'"
+        :multiselect="properties.multiselect"
+        :default-items="defaultItems"
+        :services="properties.services"
+        @items-changed="updateModel" />
     </template>
   </q-field>
 </template>

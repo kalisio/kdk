@@ -11,7 +11,7 @@
       "minLength": 3,
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.CATALOG_NAME_FIELD_HELPER"
+        "label": "schemas.CATALOG_NAME_FIELD_LABEL"
       }
     },
     "description": {
@@ -19,7 +19,7 @@
       "maxLength": 256,
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.CATALOG_DESCRIPTION_FIELD_HELPER"
+        "label": "schemas.CATALOG_DESCRIPTION_FIELD_LABEL"
       }
     },
     "featureId": {
@@ -28,14 +28,14 @@
       "minLength": 1,
       "field": {
         "component": "form/KTextField",
-        "helper": "schemas.CATALOG_FEATURE_ID_FIELD_HELPER"
+        "label": "schemas.CATALOG_FEATURE_ID_FIELD_LABEL"
       }
     },
     "schema": { 
       "type": "object",
       "field": {
         "component": "form/KFileField",
-        "helper": "schemas.CATALOG_SCHEMA_FIELD_HELPER",
+        "label": "schemas.CATALOG_SCHEMA_FIELD_LABEL",
         "mimeTypes": "application/json"
       }
     }

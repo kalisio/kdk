@@ -242,7 +242,7 @@ Internationalization relies on [i18next](https://github.com/i18next/i18next) and
     ...
   },
   "schemas": {
-    "AVATAR_FIELD_HELPER": "Select an avatar",
+    "AVATAR_FIELD_LABEL": "Select an avatar",
     ...
   },
   "KScreen": {

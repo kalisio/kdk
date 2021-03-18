@@ -89,7 +89,7 @@ export default {
             minLength: 3,
             field: {
               component: 'form/KTextField',
-              helper: 'KFavoriteViews.FAVORITE_VIEW_NAME_FIELD_HELPER'
+              label: 'KFavoriteViews.FAVORITE_VIEW_NAME_FIELD_LABEL'
             }
           },
           description: {
@@ -97,7 +97,7 @@ export default {
             maxLength: 256,
             field: {
               component: 'form/KTextField',
-              helper: 'KFavoriteViews.FAVORITE_VIEW_DESCRIPTION_FIELD_HELPER'
+              label: 'KFavoriteViews.FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL'
             }
           },
           layers: {
@@ -105,7 +105,7 @@ export default {
             default: false,
             field: {
               component: 'form/KToggleField',
-              helper: 'KFavoriteViews.FAVORITE_VIEW_LAYERS_FIELD_HELPER'
+              label: 'KFavoriteViews.FAVORITE_VIEW_LAYERS_FIELD_LABEL'
             }
           }
         },

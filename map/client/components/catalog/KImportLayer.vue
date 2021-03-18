@@ -80,7 +80,8 @@ export default {
         const geoJson = file.content
         // Create an empty layer used as a container
         const layer = {
-          name: file.name,
+          name: result.values.name,
+          description: result.values.description,
           type: 'OverlayLayer',
           icon: 'insert_drive_file',
           featureId: '_id',

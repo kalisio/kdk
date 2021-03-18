@@ -185,10 +185,10 @@
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
     "CATALOG_CREATE_TITLE": "Create a new data layer",
-    "CATALOG_NAME_FIELD_HELPER": "Enter a name",
-    "CATALOG_DESCRIPTION_FIELD_HELPER": "Enter a description",
-    "CATALOG_FEATURE_ID_FIELD_HELPER": "Select a unique ID",
-    "CATALOG_SCHEMA_FIELD_HELPER": "Select a data scheme"
+    "CATALOG_NAME_FIELD_LABEL": "Enter a name",
+    "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter a description",
+    "CATALOG_FEATURE_ID_FIELD_LABEL": "Select a unique ID",
+    "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme"
   },
   "tours": {
     "navigation-bar": {
@@ -404,9 +404,9 @@
     "ADD_BUTTON": "OK",
     "REMOVE_VIEW": "$t(REMOVE)",
     "FAVORITE_VIEW_CREATE_TITLE": "Create a new view ?",
-    "FAVORITE_VIEW_NAME_FIELD_HELPER": "Enter the name of this view",
-    "FAVORITE_VIEW_DESCRIPTION_FIELD_HELPER": "Enter the description of this view",
-    "FAVORITE_VIEW_LAYERS_FIELD_HELPER": "Save the active layers"
+    "FAVORITE_VIEW_NAME_FIELD_LABEL": "Enter the name of this view",
+    "FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
+    "FAVORITE_VIEW_LAYERS_FIELD_LABEL": "Save the active layers"
   },
   "KAddLayer": {
     "TITLE": "Add a new layer"

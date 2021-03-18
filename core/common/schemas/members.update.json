@@ -10,7 +10,7 @@
       "scope": "members",
       "field": {
         "component": "form/KTagField",
-        "helper": "schemas.MEMBERS_TAGS_FIELD_HELPER"
+        "label": "schemas.MEMBERS_TAGS_FIELD_LABEL"
       }
     }
   }

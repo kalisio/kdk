@@ -18,9 +18,9 @@
       :error-message="errorLabel"
       :error="hasError"
       :disabled="disabled"
-      no-error-icon
       bottom-slots
-    >
+    > 
+      <!-- Content -->
       <template v-slot:default>
         <div class="row items-baseline q-gutter-sm">
           <div v-if="tags.length > 0">
@@ -50,12 +50,11 @@
           </div>
         </div>
       </template>
-
+      <!-- Helper -->
       <template v-if="helper" v-slot:hint>
         <span v-html="helper"></span>
       </template>
     </q-field>
-
     <k-icon-chooser
       ref="iconChooser"
       @icon-choosed="onIconChoosed" />

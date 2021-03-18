@@ -16,7 +16,12 @@
     bottom-slots
     @clear="onFileCleared"
     @input="onFileChanged"
-    @rejected="onFileRejected" />
+    @rejected="onFileRejected">
+    <!-- Helper -->
+    <template v-if="helper" v-slot:hint>
+      <span v-html="helper"></span>
+    </template>
+  </q-file>
 </template>
 
 <script>
@@ -62,7 +67,8 @@ export default {
           }
         }
         if (this.getAcceptedTypes().split(',').includes('application/geo+json')) {
-          if (_.get(content, 'type') !== 'FeatureCollection') {
+          const type = _.get(content, 'type')
+          if (type !== 'Feature' && type !== 'FeatureCollection') {
             this.error = 'KFileField.INVALID_GEOJSON_FILE'
             this.model = this.emptyModel()
             return

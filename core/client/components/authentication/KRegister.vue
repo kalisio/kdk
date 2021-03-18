@@ -46,7 +46,7 @@ export default {
             maxLength: 128,
             field: {
               component: 'form/KTextField',
-              helper: 'KRegister.NAME_FIELD_HELPER'
+              label: 'KRegister.NAME_FIELD_LABEL'
             }
           },
           email: {
@@ -54,14 +54,14 @@ export default {
             format: 'email',
             field: {
               component: 'form/KEmailField',
-              helper: 'KRegister.EMAIL_FIELD_HELPER'
+              label: 'KRegister.EMAIL_FIELD_LABEL'
             }
           },
           password: {
             type: 'string',
             field: {
               component: 'form/KPasswordField',
-              helper: 'KRegister.PASSWORD_FIELD_HELPER'
+              label: 'KRegister.PASSWORD_FIELD_LABEL'
             }
           },
           confirmPassword: {
@@ -70,7 +70,7 @@ export default {
             },
             field: {
               component: 'form/KPasswordField',
-              helper: 'KRegister.CONFIRM_PASSWORD_FIELD_HELPER'
+              label: 'KRegister.CONFIRM_PASSWORD_FIELD_LABEL'
             }
           },
           consentTerms: {
@@ -79,6 +79,7 @@ export default {
             enum: [true],
             field: {
               component: 'form/KToggleField',
+              label: this.$t('KRegister.ACCEPT_TERMS_LABEL'),
               helper: this.$t('KRegister.ACCEPT_TERMS_HELPER', { domain: this.$config('domain') }),
               errorLabel: this.$t('KRegister.ACCEPT_TERMS_ERROR_LABEL', { domain: this.$config('domain') }),
               'checked-icon': 'check',

@@ -30,7 +30,7 @@ export default {
     onDeleteClicked () {
       Dialog.create({
         title: this.$t('KAccountDZ.DIALOG_TITLE'),
-        message: this.$t('KAccountDZ.DIALOG_HELPER'),
+        message: this.$t('KAccountDZ.DIALOG_LABEL'),
         html: true,
         prompt: {
           type: 'text',

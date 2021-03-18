@@ -55,7 +55,7 @@ export default {
             }],
             field: {
               component: 'form/KItemField',
-              helper: 'KAddMember.USER_FIELD_HELPER'
+              label: 'KAddMember.USER_FIELD_LABEL'
             }
           },
           role: {
@@ -63,7 +63,7 @@ export default {
             default: 'member',
             field: {
               component: 'form/KSelectField',
-              helper: 'KAddMember.ROLE_FIELD_HELPER',
+              label: 'KAddMember.ROLE_FIELD_LABEL',
               type: 'radio',
               options: [
                 { label: this.$t('KAddMember.MEMBER_LABEL'), value: 'member' },

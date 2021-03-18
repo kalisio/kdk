@@ -45,7 +45,7 @@ export default {
             format: 'uri',
             field: {
               component: 'form/KTextField',
-              helper: 'KChangeEndpoint.BASE_URL_FIELD_HELPER'
+              label: 'KChangeEndpoint.BASE_URL_FIELD_LABEL'
             }
           }
         },

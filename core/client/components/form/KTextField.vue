@@ -12,7 +12,12 @@
     :disabled="disabled"
     :error="hasError" 
     :error-message="errorLabel"
-    bottom-slots />
+    bottom-slots>
+    <!-- Helper -->
+    <template v-if="helper" v-slot:hint>
+      <span v-html="helper"></span>
+    </template>
+  </q-input>
 </template>
 
 <script>

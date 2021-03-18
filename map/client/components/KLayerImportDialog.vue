@@ -5,7 +5,7 @@
         clearable counter
         :counter-label="counterLabel"
         :accept="accept"
-        :label="$t('KLayerImportDialog.INPUT_HINT')" />
+        :label="$t('KLayerImportDialog.INPUT_LABEL')" />
     </div>
   </k-modal>
 </template>

@@ -125,14 +125,14 @@ As an example, here is a schema defining a basic form asking for an `email` and 
       "format": "email",
       "field": {
         "component": "form/KTextEmail",
-        "helper": "schemas.EMAIL_FIELD_HELPER"
+        "label": "schemas.EMAIL_FIELD_LABEL"
       }
     }
     "password": {
       "type": "string", 
       "field": {
         "component": "form/KTextPassword",
-        "helper": "schemas.PASSWORD_FIELD_HELPER"
+        "label": "schemas.PASSWORD_FIELD_LABEL"
       }
     }
   },

@@ -48,7 +48,7 @@ export default {
             default: 'member',
             field: {
               component: 'form/KSelectField',
-              helper: 'KChangeRole.ROLE_FIELD_HELPER',
+              label: 'KChangeRole.ROLE_FIELD_LABEL',
               type: 'radio',
               options: [
                 { label: this.$t('KChangeRole.MEMBER_LABEL'), value: 'member' },

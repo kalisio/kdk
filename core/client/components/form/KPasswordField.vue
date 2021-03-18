@@ -5,14 +5,15 @@
     :for="properties.name + '-field'"
     :type="isPwd ? 'password' : 'text'"
     v-model="model"
+    :label="label"
     clearable
     @blur="onChanged"
     :disabled="disabled"
     :error="hasError"
     :error-message="errorLabel"
-    no-error-icon
     bottom-slots
   >
+    <!-- Visibility icon -->
     <template v-slot:append>
       <q-icon
         :id="properties.name + '-field-visibility'"
@@ -21,7 +22,7 @@
         @click="isPwd = !isPwd"
       />
     </template>
-
+    <!-- Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>
     </template>
@@ -34,11 +35,6 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-password-field',
-  components: {
-    QField,
-    QInput,
-    QIcon
-  },
   mixins: [mixins.baseField],
   data () {
     return {

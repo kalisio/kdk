@@ -10,13 +10,14 @@
     -->
     <q-field
       :for="properties.name + '-field'"
+      :value="files"
+      :label="label"
       :error-message="errorLabel"
       :error="hasError"
       :disabled="disabled"
-      no-error-icon
       bottom-slots
     >
-      <!-- Content -->
+      <!-- Upload icon -->
       <template v-slot:prepend>
         <q-btn
           :id="properties.name + '-field'"
@@ -25,32 +26,32 @@
           flat
           icon="las la-cloud-upload-alt"
           @click="onUpload" />
-        <template v-for="file in files">
-          <q-chip
-            :key="file.name"
-            dense
-            color="primary"
-            text-color="white"
-            :label="fileName(file)"
-            @remove="onFileRemoved(file)"
-            removable />
-        </template>
+      </template>
+      <!-- Content -->
+      <template v-slot:default>
+        <div class="full-width row">
+          <template class="col-12" v-for="file in files">
+            <q-chip
+              :key="file.name"
+              dense
+              color="primary"
+              text-color="white"
+              :label="fileName(file)"
+              @remove="onFileRemoved(file)"
+              removable />
+          </template>
+          <k-uploader class="col-12" v-show="isUploaderVisible"
+            ref="uploader"
+            :resource="resource"
+            @file-selection-changed="updateFiles"
+            :options="properties.field" />
+        </div>
       </template>
       <!-- Helper -->
       <template v-if="helper" v-slot:hint>
         <span v-html="helper"></span>
       </template>
     </q-field>
-    <!--
-      The uploader
-    -->
-    <div class="row">
-      <k-uploader class="col-12" v-show="isUploaderVisible"
-        ref="uploader"
-        :resource="resource"
-        @file-selection-changed="updateFiles"
-        :options="properties.field"/>
-    </div>
   </div>
 </template>
 
@@ -59,6 +60,7 @@ import _ from 'lodash'
 import 'mime-types-browser'
 import { KUploader } from '../input'
 import mixins from '../../mixins'
+import { getQueryForAbilities } from '../../../common/permissions'
 
 export default {
   name: 'k-attachment-field',
@@ -68,7 +70,7 @@ export default {
   mixins: [mixins.baseField],
   data () {
     return {
-      isUploaderVisible: false,
+      isUploaderVisible: getQueryForAbilities,
       files: [],
       resource: ''
     }
