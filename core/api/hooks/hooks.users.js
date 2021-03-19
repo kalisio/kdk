@@ -110,7 +110,8 @@ export function preventRemoveUser (hook) {
   // By pass check ?
   if (hook.params.force) return hook
   const user = hook.params.user
-  if (user.organisations) {
+// Check if the target is the current user
+  if ((user._id.toString() === hook.id.toString()) && user.organisations) {
     // We must ensure the user is no more a owner of an organisation
     const owningOrganisations = _.filter(user.organisations, { permissions: RoleNames[Roles.owner] })
     if (!_.isEmpty(owningOrganisations)) {
