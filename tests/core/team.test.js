@@ -155,7 +155,7 @@ describe('core:team', () => {
 
   it('invites a user to join an organisation', async () => {
     const sponsor = { id: user2Object._id, organisationId: user2Object.organisations[0]._id, roleGranted: 'member' }
-    user3Object = await userService.create({ email: 'test-3@test.org', name: 'test-user-3', sponsor: sponsor }, { checkAuthorisation: true })
+    user3Object = await userService.create({ email: 'test-3@test.org', name: 'test-user-3', sponsor }, { checkAuthorisation: true })
     expect(user3Object.organisations).toExist()
     // By default the user manage its own organisation
     expect(user3Object.organisations[0].permissions).to.deep.equal('member')

@@ -62,11 +62,15 @@ export default function (name, app, options) {
         email.link = domainPath + 'change-identity/' + user.verifyToken
         break
       case 'sendInvitation':
-        try {
-          const sponsor = await userService.get(user.sponsor.id)
-          email.sponsor = sponsor.name
-        } catch (error) {
-          // We will not send the sponsor name in this case
+        if (_.has(user, 'sponsor.name')) {
+          email.sponsor = _.get(user, 'sponsor.name')
+        } else if (_.has(user, 'sponsor.id')) {
+          try {
+            const sponsor = await userService.get(user.sponsor.id)
+            email.sponsor = sponsor.name
+          } catch (error) {
+            // We will not send the sponsor name in this case
+          }
         }
         email.subject = 'Welcome'
         email.link = domainPath + 'login'

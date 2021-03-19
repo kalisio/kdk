@@ -4,7 +4,7 @@ var winston = require('winston')
 var containerized = require('containerized')()
 
 var API_PREFIX = '/api'
-console.log(fs.readFileSync(path.join(__dirname, '..', 'data', '10k_most_common_passwords.txt')).toString().split('\n'))
+
 module.exports = {
   port: process.env.PORT || 8081,
 

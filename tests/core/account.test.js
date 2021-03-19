@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { iff, iffElse, when } from 'feathers-hooks-common'
 import request from 'superagent'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
@@ -8,7 +9,7 @@ import { createGmailClient } from './utils'
 
 describe('core:account', () => {
   let app, server, port, baseUrl, token,
-    userService, mailerService, accountService, gmailClient, gmailUser, userObject
+    userService, authenticationService, mailerService, accountService, gmailClient, gmailUser, userObject
 
   before(() => {
     chailint(chai, util)
@@ -40,11 +41,37 @@ describe('core:account', () => {
     expect(userService).toExist()
     userService.hooks({
       before: {
-        create: [hooks.addVerification],
+        create: [
+          // Used for invitation
+          when(hook => hook.data.sponsor,
+          hooks.setExpireAfter(60), // A couple of seconds
+          hooks.generatePassword,
+          // Keep track of clear password before hashing for testing purpose
+          hooks.serialize([{ source: 'password', target: 'clearPassword' }]),
+          hooks.sendInvitationEmail,
+          hooks.hashPassword()),
+          hooks.addVerification
+        ],
         remove: [hooks.unregisterDevices]
       },
       after: {
-        create: [hooks.sendVerificationEmail, hooks.removeVerification]
+        create: [
+          // Invited users will be automatically verified upon first login
+          iff(hook => !hook.result.sponsor, hooks.sendVerificationEmail),
+          hooks.removeVerification
+        ]
+      }
+    })
+    authenticationService = app.getService('authentication')
+    expect(authenticationService).toExist()
+    authenticationService.hooks({
+      before: {
+        create: [],
+        remove: []
+      },
+      after: {
+        // Used for invitation to automatically verify invited users on first login
+        create: [hooks.verifyGuest, hooks.consentGuest]
       }
     })
     mailerService = app.getService('mailer')
@@ -66,6 +93,53 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(5000)
 
+  it('invites a user', () => {
+    return userService.create({
+      email: gmailUser,
+      name: 'test-user',
+      sponsor: { name: 'sponsor' }
+    })
+      .then(user => {
+        userObject = user
+        expect(userObject.password).toExist()
+        expect(userObject.expireAt).toExist()
+        expect(userObject.expireAt instanceof Date).beTrue()
+        expect(userObject.isVerified).toExist()
+        expect(userObject.isVerified).beFalse()
+        expect(userObject.verifyToken).toExist()
+        expect(userObject.consentTerms).beUndefined()
+      })
+  })
+  // Let enough time to process
+    .timeout(10000)
+
+  it('check invitation email', (done) => {
+    // Add some delay to wait for email reception
+    setTimeout(() => {
+      gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Welcome', done)
+    }, 10000)
+  })
+  // Let enough time to process
+    .timeout(15000)
+
+  it('authenticates an invited user', async () => {
+    const response = await request
+      .post(`${baseUrl}/authentication`)
+      .send({ email: userObject.email, password: userObject.clearPassword, strategy: 'local' })
+    expect(response.body.accessToken).toExist()
+    userObject = await userService.get(userObject._id.toString())
+    expect(userObject.consentTerms).toExist()
+    expect(userObject.consentTerms).beTrue()
+    expect(userObject.isVerified).beTrue()
+    expect(userObject.expireAt).to.equal(null)
+  })
+
+  it('removes invited user', () => {
+    return userService.remove(userObject._id.toString(), { user: userObject })
+  })
+  // Let enough time to process
+    .timeout(5000)
+
   it('creates a user', () => {
     return userService.create({
       email: gmailUser,
@@ -77,6 +151,7 @@ describe('core:account', () => {
         expect(userObject.isVerified).toExist()
         expect(userObject.isVerified).beFalse()
         expect(userObject.verifyToken).toExist()
+        expect(userObject.consentTerms).beUndefined()
       })
   })
   // Let enough time to process

@@ -104,10 +104,21 @@ export default {
           label: this.$t('CANCEL'),
           flat: true
         }
-      }).onOk((email) => {
-        const newExpiryDate = new Date(Date.now() + 1000 * 48 * 60 * 60)
-        const usersService = this.$api.getService('members')
-        usersService.patch(this.item._id, { expireAt: newExpiryDate, email })
+      }).onOk(async (email) => {
+        // Extract invitation data from user
+        let user = _.pick(this.item, ['email', 'name', 'locale'])
+        if (email) user.email = email
+        // Add the sponsor information
+        user.sponsor = {
+          id: this.$store.get('user._id'),
+          organisationId: this.contextId,
+          roleGranted: getRoleForOrganisation(this.item, this.contextId)
+        }
+        // Remove the invited user
+        const usersService = this.$api.getService('users')
+        await usersService.remove(this.item._id)
+        // Recreate invitation
+        await usersService.create(user)
       })
     },
     removeMember () {

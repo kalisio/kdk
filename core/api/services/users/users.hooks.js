@@ -1,6 +1,5 @@
 import _ from 'lodash'
-import { serialize, updateAbilities, populatePreviousObject, enforcePasswordPolicy, storePreviousPassword } from '../../hooks'
-const { hashPassword } = require('@feathersjs/authentication-local').hooks
+import { serialize, updateAbilities, populatePreviousObject, hashPassword, enforcePasswordPolicy, storePreviousPassword } from '../../hooks'
 const commonHooks = require('feathers-hooks-common')
 
 module.exports = {

@@ -1,6 +1,9 @@
 import makeDebug from 'debug'
 const debug = makeDebug('kdk:core:authentication:hooks')
 
+// Make it more easy to acces
+export const hashPassword = require('@feathersjs/authentication-local').hooks.hashPassword
+
 export async function verifyGuest (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'verifyGuest\' hook should only be used as a \'after\' hook.')
@@ -44,12 +47,12 @@ export async function consentGuest (hook) {
   }
 
   // Check whether consent has been already checked. If yes, nothing to do
-  if (user.isVerified) {
+  if (user.consentTerms) {
     debug('Logged guest is already verified')
     return hook
   }
 
-  // The user is a guest and need to be verified
+  // The user is a guest and need to be consent
   debug('Consenting logged guest')
   const userService = app.getService('users')
   await userService.patch(user._id, { consentTerms: true, expireAt: null })
