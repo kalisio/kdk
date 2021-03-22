@@ -46,6 +46,7 @@ describe('map:grid-source', () => {
     const wcsOptions = {
       wcs: {
         url: 'http://kMap.test/wcs',
+        version: '1.0.0',
         coverage: 'dummy'
       }
     }

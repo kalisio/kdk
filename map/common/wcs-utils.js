@@ -59,7 +59,7 @@ export function decodeCapabilities (caps) {
 export function GetCoverageSpatialBounds (coverage) {
   // 1.0.0
   // CoverageDescription / CoverageOffering / lonLatEnvelope
-  const envelope = _.get(coverage, 'CoverageDescription.CoverageOffering[0].lonLatEnvelope[0].gml:pos', null)
+  const envelope = _.get(coverage, 'CoverageDescription.CoverageOffering[0].lonLatEnvelope[0].pos', null)
   if (!envelope) { return null }
   // assume lat long & deg & srs = 4326
   // TODO: check it
