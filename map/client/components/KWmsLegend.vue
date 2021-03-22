@@ -8,6 +8,7 @@
 
 <script>
 import _ from 'lodash'
+import fetch from 'node-fetch'
 import { buildUrl } from '../../../core/common'
 
 export default {
@@ -20,7 +21,7 @@ export default {
     }
   },
   methods: {
-    onWmsLegendShowLayer (layer, engineLayer) {
+    async onWmsLegendShowLayer (layer, engineLayer) {
       if (_.get(layer, 'leaflet.type') === 'tileLayer.wms') {
         // lookup wms parameters on the leaflet layer parameters
         const leaflet = layer.leaflet
@@ -34,9 +35,18 @@ export default {
         if (leaflet.styles) {
           params.STYLE = leaflet.styles
         }
-        this.legendUrl = buildUrl(leaflet.source, params)
-        this.visible = true
-        this.wmsLegendLayer = layer
+        const url = buildUrl(leaflet.source, params)
+        // make sure server answers the request before using it
+        try {
+          const response = await fetch(url)
+          this.visible = response.ok
+          if (this.visible) {
+            this.legendUrl = url
+            this.wmsLegendLayer = layer
+          }
+        } catch (error) {
+          this.visible = false
+        }
       } else {
         this.visible = false
       }
