@@ -17,7 +17,7 @@
         content-class="text-grey-8"
         min-height="5rem"
         max-height="10rem"
-        :dense="$q.screen.lt.md" />
+        dense />
     </template>
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>

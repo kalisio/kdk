@@ -6,6 +6,7 @@
     :for="properties.name + '-field'"
     :value="model"
     :label="label"
+    borderless
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"
