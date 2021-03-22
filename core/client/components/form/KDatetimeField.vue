@@ -10,11 +10,12 @@
     :error="hasError"
     :disabled="disabled"
     @blur="onChanged"
+    @input="onChanged"    
     bottom-slots
     :prefix="formattedDatetime"
   >
     <!-- Prepend icons -->
-    <template v-slot:prepend>
+    <template v-slot:before>
       <q-icon name="las la-calendar" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-date :value="localDatetime" @input="onChangeLocalDatetime" mask="YYYY-MM-DDTHH:mm:ss.SSSZ" v-bind="properties.field" />

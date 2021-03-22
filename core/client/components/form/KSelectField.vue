@@ -15,6 +15,7 @@
     :options="options"
     @change="onChanged"
     @blur="onChanged"
+    @input='onChanged'
     emit-value
     map-options
     :error="hasError"
