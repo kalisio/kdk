@@ -26,7 +26,7 @@ export default {
     getServiceFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/select-service',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-select-service',
         type: 'object',
         properties: {
           service: { 
@@ -43,7 +43,7 @@ export default {
     getLayerFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/select-layer#',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-select-layer#',
         type: 'object',
         properties: {
           layer: {
@@ -61,7 +61,7 @@ export default {
     getPropertiesFormSchema () {
       let schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/set-properties#',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-set-properties#',
         type: 'object',
         properties: {
           name: {
@@ -213,7 +213,7 @@ export default {
             tms: true
           }
       }
-
+      console.log(newLayer)
       await this.kActivity.addLayer(newLayer)
       this.$emit('done')
     }

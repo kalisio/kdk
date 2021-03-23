@@ -36,7 +36,7 @@ export default {
     getPropertiesFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/set-properties#',
+        $id: 'http://kalisio.xyz/schemas/create-layer-set-properties#',
         type: 'object',
         properties: {
           name: {
@@ -70,7 +70,7 @@ export default {
     getFeatureIdFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/set-feature-id#',
+        $id: 'http://kalisio.xyz/schemas/create-layer-set-feature-id#',
         type: 'object',
         properties: {
           featureId: {
