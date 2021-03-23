@@ -26,7 +26,7 @@ export default {
     getServiceFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/select-service',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-select-service',
         type: 'object',
         properties: {
           service: { 
@@ -43,7 +43,7 @@ export default {
     getLayerFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/select-layer#',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-select-layer#',
         type: 'object',
         properties: {
           layer: {
@@ -61,7 +61,7 @@ export default {
     getPropertiesFormSchema () {
       let schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/set-properties#',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-set-properties#',
         type: 'object',
         properties: {
           name: {
@@ -86,31 +86,29 @@ export default {
         required: ['name']
       }
       if (this.service) {
-        switch (this.service.protocol) {
-          case 'WFS': 
-            const properties = this.layer ? this.getLayerProperties() : []
-            _.set(schema, 'properties.featureId', {
-              type: 'string', 
-              default: this.guessFeatureId(properties),
-              field: {
-                component: 'form/KSelectField',
-                label: 'KConnectLayer.FEATURE_ID_FIELD_LABEL',
-                options: properties
-              }
-            })
-            break
-          case 'WMS':
-          case 'WMTS':
-            const styles = this.layer ? this.getLayerStyles() : []
-            _.set(schema, 'properties.styleId', {
-              type: 'string',
-              default: this.guessStyleId(styles),
-              field: {
-                component: 'form/KSelectField',
-                label: 'KConnectLayer.STYLE_ID_FIELD_LABEL',
-                options: properties 
-              }
-            })
+        const protocol = this.service.protocol
+        if (protocol === 'WFS') {
+          const properties = this.layer ? this.getLayerProperties() : []
+          _.set(schema, 'properties.featureId', {
+            type: 'string', 
+            default: this.guessFeatureId(properties),
+            field: {
+              component: 'form/KSelectField',
+              label: 'KConnectLayer.FEATURE_ID_FIELD_LABEL',
+              options: properties
+            }
+          })
+        } else if (protocol === 'WMS' || protocol === 'WMTS') {
+          const styles = this.layer ? this.getLayerStyles() : []
+          _.set(schema, 'properties.styleId', {
+            type: 'string',
+            default: this.guessStyleId(styles),
+            field: {
+              component: 'form/KSelectField',
+              label: 'KConnectLayer.STYLE_ID_FIELD_LABEL',
+              options: properties 
+            }
+          })
         }
       }
       return schema
@@ -157,63 +155,58 @@ export default {
         isRemovable: true,
         isStorable: true
       }
-      switch (this.service.protocol) {
-        case 'WMS':
-          newLayer.leaflet = Object.assign({
-            type: 'tileLayer.wms',
-            source: this.service.baseUrl,
-            layers: this.layer.id,
+      if (this.service.protocol === 'WMS') {
+        newLayer.leaflet = Object.assign({
+          type: 'tileLayer.wms',
+          source: this.service.baseUrl,
+          layers: this.layer.id,
+          version: this.service.version,
+          styles: result.values.styleId,
+          format: 'image/png',
+          transparent: true,
+          bgcolor: 'FFFFFFFF'
+        }, this.service.searchParams)
+        // be explicit about requested CRS if probe list some
+        if (this.layer.crs) {
+          // these are what leaflet supports
+          const candidates = ['EPSG:3857', 'EPSG:4326', 'EPSG:3395']
+          for (const c of candidates) {
+            if (this.layer.crs.indexOf(c) !== -1) {
+              newLayer.leaflet.crs = `CRS.${c.replace(':', '')}`
+              break
+            }
+          }
+        }
+      } else if (this.service.protocol === 'WFS') {
+        Object.assign(newLayer, {
+          isStyleEditable: true,
+          featureId: result.values.featureId,
+          wfs: {
+            url: this.service.baseUrl,
             version: this.service.version,
-            styles: result.values.styleId,
-            format: 'image/png',
-            transparent: true,
-            bgcolor: 'FFFFFFFF'
-          }, this.service.searchParams)
-          // be explicit about requested CRS if probe list some
-          if (this.layer.crs) {
-            // these are what leaflet supports
-            const candidates = ['EPSG:3857', 'EPSG:4326', 'EPSG:3395']
-            for (const c of candidates) {
-              if (this.layer.crs.indexOf(c) !== -1) {
-                newLayer.leaflet.crs = `CRS.${c.replace(':', '')}`
-                break
-              }
-            }
+            searchParams: this.service.searchParams,
+            layer: this.layer.id
           }
-          break
-        case 'WFS':
-          Object.assign(newLayer, {
-            isStyleEditable: true,
-            featureId: result.values.featureId,
-            wfs: {
-              url: this.service.baseUrl,
-              version: this.service.version,
-              searchParams: this.service.searchParams,
-              layer: this.layer.id
-            }
-          })
-          newLayer.leaflet = {
-            type: 'geoJson',
-            realtime: true,
-            tiled: true
-          }
-          break
-        case 'WMTS':
-          const layerStyleId = result.values.styleI
-          const tileMatrixSet = this.layer.crs['3857']
-          newLayer.leaflet = {
-            type: 'tilelayer',
-            source: buildUrl(`${this.service.baseUrl}/${this.layer.id}/${layerStyleId}/${tileMatrixSet}/{z}/{y}/{x}.${this.layer.format}`, this.service.searchParams)
-          }
-          break
-        case 'TMS': 
-          newLayer.leafet = {
-            type: 'tileLayer',
-            source: buildUrl(`${layer.url}/{z}/{x}/{y}.${this.layer.format}`, this.service.searchParams),
-            tms: true
-          }
+        })
+        newLayer.leaflet = {
+          type: 'geoJson',
+          realtime: true,
+          tiled: true
+        }
+      } else if (this.service.protocol === 'WMTS') {
+        const layerStyleId = result.values.styleI
+        const tileMatrixSet = this.layer.crs['3857']
+        newLayer.leaflet = {
+          type: 'tilelayer',
+          source: buildUrl(`${this.service.baseUrl}/${this.layer.id}/${layerStyleId}/${tileMatrixSet}/{z}/{y}/{x}.${this.layer.format}`, this.service.searchParams)
+        }
+      } else if (this.service.protocol === 'TMS') {
+        newLayer.leafet = {
+          type: 'tileLayer',
+          source: buildUrl(`${layer.url}/{z}/{x}/{y}.${this.layer.format}`, this.service.searchParams),
+          tms: true
+        }
       }
-
       await this.kActivity.addLayer(newLayer)
       this.$emit('done')
     }

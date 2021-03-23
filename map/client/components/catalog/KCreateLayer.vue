@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'k-create-layer',
   inject: ['kActivity'],
@@ -16,27 +18,13 @@ export default {
     return {
       schema: null,
       featureIdFormKey: 1
-      /*
-      baseObject: {
-        type: 'OverlayLayer',
-        icon: 'insert_drive_file',
-        service: 'features',
-        featureId: '_id',
-        [this.kActivity.engine]: {
-          type: 'geoJson',
-          isVisible: true,
-          realtime: true,
-          source: '/api/features'
-        }
-      }
-      */
     }
   },
   methods: {
     getPropertiesFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/set-properties#',
+        $id: 'http://kalisio.xyz/schemas/create-layer-set-properties#',
         type: 'object',
         properties: {
           name: {
@@ -70,7 +58,7 @@ export default {
     getFeatureIdFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/set-feature-id#',
+        $id: 'http://kalisio.xyz/schemas/create-layer-set-feature-id#',
         type: 'object',
         properties: {
           featureId: {

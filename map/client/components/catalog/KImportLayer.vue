@@ -11,9 +11,9 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import path from 'path'
 import { generatePropertiesSchema } from '../../utils'
-import { uid } from 'quasar'
 
 export default {
   name: 'k-import-layer',
@@ -27,7 +27,7 @@ export default {
     getFileFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/select-file#',
+        $id: 'http://kalisio.xyz/schemas/import-layer-select-file#',
         type: 'object',
         properties: {
           file: { 
@@ -45,7 +45,7 @@ export default {
     getPropertiesFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/set-properties#',
+        $id: 'http://kalisio.xyz/schemas/import-layer-set-properties#',
         type: 'object',
         properties: {
           name: {
