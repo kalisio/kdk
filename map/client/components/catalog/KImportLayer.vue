@@ -5,7 +5,7 @@
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
-      <q-btn id="import-button" color="primary" outline :label="$t('KImportLayer.IMPORT_BUTTON')" @click="onImport"/>
+      <k-action id="inport-action" :label="$t('KImportLayer.IMPORT_BUTTON')" @triggered="onImport" />
     </div>
   </div>
 </template>
@@ -139,6 +139,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-form'] = this.$load('form/KForm')
+    this.$options.components['k-action'] = this.$load('frame/KAction')
     // Set data
     this.file = null
   }

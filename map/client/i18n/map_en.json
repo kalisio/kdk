@@ -429,5 +429,8 @@
     "STYLE_FIELD_LABEL": "Select the style of the new layer",
     "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
     "CONNECT_BUTTON": "Connect"
+  },
+  "KCreateLayer": {
+    "CREATE_BUTTON": "Create"
   }
 }

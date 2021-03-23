@@ -427,8 +427,11 @@
     "LAYER_FIELD_LABEL": "Sélectionnez la couche à laquelle se connecter",
     "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle couche",
-    "STYLE_FIELD_LABEL": "Saisissez le style de la nouvelle couche",
+    "STYLE_FIELD_LABEL": "Sélectionnez le style de la nouvelle couche",
     "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
     "CONNECT_BUTTON": "Connecter"
+  },
+  "KCreateLayer": {
+    "CREATE_BUTTON": "Créer"
   }
 }

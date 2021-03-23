@@ -59,7 +59,7 @@ export default {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/create-layer-set-feature-id#',
-        type: 'string',
+        type: 'object',
         properties: {
           featureId: {
             type: 'string',

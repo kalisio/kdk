@@ -103,7 +103,7 @@ export default {
             default: this.guessDefaultStyle(),
             field: {
               component: 'form/KSelectField',
-              label: 'KConnectLayer.STYLE_ID_FIELD_LABEL',
+              label: 'KConnectLayer.STYLE_FIELD_LABEL',
               options: this.getLayerStyles() 
             }
           })
