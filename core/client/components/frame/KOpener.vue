@@ -12,7 +12,7 @@
       'k-opener-bottom': position === 'bottom',
       'k-opener-bottom-hovered': (position === 'bottom') && isHovered && isDesktop
     }"
-    :style="computedStyle"
+    
     v-on="isDesktop ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
     v-touch-swipe.mouse="onSwipe"
     @click="onClick">
@@ -115,14 +115,16 @@ export default {
   .k-opener-left, .k-opener-right, .k-opener-top, .k-opener-bottom {
     opacity: 0.85;
     transition: 0.1s;
+    background-color: $primary;
+    border: 2px solid $primary + 80%;
   }
   .k-opener-left, .k-opener-right {
-    height: 80px;
-    width: 12px;
+    height: 110px;
+    width: 24px;
   }
   .k-opener-top, .k-opener-bottom {
-    height: 12px;
-    width: 96px;
+    height: 24px;
+    width: 110px;
   }
   .k-opener-left {
     border-radius: 0px 8px 8px 0px;
@@ -141,9 +143,9 @@ export default {
     opacity: 1;
   }
   .k-opener-left-hovered, .k-opener-right-hovered {
-    width: 32px;
+    width: 40px;
   }
   .k-opener-top-hovered, .k-opener-bottom-hovered {
-    height: 32px;
+    height: 40px;
   }
 </style>

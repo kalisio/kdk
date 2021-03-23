@@ -52,11 +52,13 @@
   -->
   <q-fab-action v-else-if="renderer === 'fab'"
     :id="id"
+    class="k-fab-action"
     no-caps
     :icon="computedIcon"
     :color="computedColor"
     :label="computedLabel"
     external-label
+    square
     label-position="left"
     :disabled="disabled"
     @click="onClicked()">
@@ -240,3 +242,9 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .k-fab-action {
+    border: 2px solid $primary + 80%;
+  }
+</style>

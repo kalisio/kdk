@@ -7,8 +7,8 @@
       id="fab"
       v-model="opened"
       :icon="icon"
-      class="fixed"
-      style="right: 12px; bottom: 12px"
+      class="fixed k-fab"
+      vertical-actions-align="right"
       direction="up"
       color="primary"
       persistent>
@@ -73,7 +73,7 @@ export default {
         const isVisible = _.get(action, 'visible', true)
         if (isVisible) {
           action.uid = uid()
-          if (!action.color) action.color = 'secondary'
+          if (!action.color) action.color = 'primary'
           actions.push(action)
         }
       })
@@ -86,3 +86,11 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .k-fab {
+    right: 12px; 
+    bottom: 12px; 
+    border: 2px solid $primary + 80%;
+  }
+</style>
