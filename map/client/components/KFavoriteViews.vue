@@ -78,7 +78,7 @@ export default {
       },
       viewSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://www.kalisio.xyz/schemas/favorite-views.create.json#',
+        $id: 'http://www.kalisio.xyz/schemas/favorite-view.create.json#',
         title: 'KFavoriteViews.FAVORITE_VIEW_CREATE_TITLE',
         description: 'Favorite view creation schema',
         type: 'object',
