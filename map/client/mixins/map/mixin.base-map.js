@@ -200,6 +200,12 @@ export default {
     getLeafletLayerByName (name) {
       return this.leafletLayers[name]
     },
+    getLayers (filter = {}) {
+      return _.values(this.layers).filter(sift(filter))
+    },
+    hasLayers (filter = {}) {
+      return _.values(this.layers).filter(sift(filter)).length > 0
+    },
     async showLayer (name) {
       // Retrieve the layer
       const layer = this.getLayerByName(name)

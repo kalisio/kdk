@@ -63,9 +63,27 @@ export default {
       const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       return (gatewayToken ? setGatewayJwt(layers, gatewayToken) : layers)
     },
+    async getCatalogCategories () {
+      let categories = []
+      // We get categories coming from global catalog first if any
+      const globalCatalogService = this.$api.getService('catalog', '')
+      if (globalCatalogService) {
+        const response = await globalCatalogService.find({ query: { type: 'Category' } })
+        categories = categories.concat(response.data)
+      }
+      // Then we get categories coming from contextual catalog if any
+      const catalogService = this.$api.getService('catalog')
+      if (catalogService && (catalogService !== globalCatalogService)) {
+        const response = await catalogService.find({ query: { type: 'Category' } })
+        categories = categories.concat(response.data)
+      }
+      return categories
+    },
     async refreshLayers () {
       this.layers = {}
-      this.layerCategories = _.get(this, 'activityOptions.catalog.categories', [])
+      // Merge built-in categories with user-defiend ones
+      this.layerCategories = await this.getCatalogCategories()
+      this.layerCategories = this.layerCategories.concat(_.get(this, 'activityOptions.catalog.categories', []))
       this.variables = []
       let catalogLayers = await this.getCatalogLayers()
       // Apply global layer filter
@@ -139,91 +157,6 @@ export default {
       actions = Layout.bindContent(_.cloneDeep(actions), this)
       // Add 'virtual' action used to trigger the layer
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
-      /*
-      let defaultActions = ['zoom-to', 'save', 'edit', 'remove']
-      if (this.is2D()) defaultActions = defaultActions.concat(['edit-data'])
-      const layerActions = _.get(this, 'activityOptions.layerActions', defaultActions)
-      const actions = [{ name: 'toggle', handler: () => this.onTriggerLayer(layer) }]
-      // Add supported actions
-      if (layer.type === 'OverlayLayer') {
-        if (layerActions.includes('zoom-to')) {
-          actions.push({
-            name: 'zoom-to',
-            label: 'mixins.activity.ZOOM_TO_LABEL',
-            icon: 'las la-search-location',
-            handler: () => this.onZoomToLayer(layer)
-          })
-        }
-        // Supported by underlying engine ?
-        if ((typeof this.toGeoJson === 'function') && this.isLayerStorable(layer) && !layer._id && layerActions.includes('save')) {
-          actions.push({
-            name: 'save',
-            label: 'mixins.activity.SAVE_LAYER',
-            icon: 'las la-save',
-            handler: () => this.onSaveLayer(layer)
-          })
-        }
-        if (this.isLayerEditable(layer) && layerActions.includes('filter-data')) {
-          actions.push({
-            name: 'filter-data',
-            label: 'mixins.activity.FILTER_DATA_LABEL',
-            icon: 'las la-filter',
-            handler: () => this.onFilterLayerData(layer)
-          })
-        }
-        if (this.isLayerEditable(layer) && layerActions.includes('view-data')) {
-          actions.push({
-            name: 'view-data',
-            label: 'mixins.activity.VIEW_DATA_LABEL',
-            icon: 'las la-th-list',
-            handler: () => this.onViewLayerData(layer)
-          })
-        }
-        if (this.isLayerEditable(layer) && layerActions.includes('chart-data')) {
-          actions.push({
-            name: 'chart-data',
-            label: 'mixins.activity.CHART_DATA_LABEL',
-            icon: 'las la-chart-pie',
-            handler: () => this.onChartLayerData(layer)
-          })
-        }
-        if (this.isLayerEditable(layer) && layerActions.includes('edit')) {
-          actions.push({
-            name: 'edit',
-            label: 'mixins.activity.EDIT_LABEL',
-            icon: 'las la-file-alt',
-            handler: () => this.onEditLayer(layer)
-          })
-        }
-        if (this.isLayerStyleEditable(layer) && layerActions.includes('edit-style')) {
-          actions.push({
-            name: 'edit-style',
-            label: 'mixins.activity.EDIT_LAYER_STYLE_LABEL',
-            icon: 'las la-border-style',
-            handler: () => this.onEditLayerStyle(layer)
-          })
-        }
-        // Supported by underlying engine ?
-        if ((typeof this.editLayer === 'function') && this.isLayerEditable(layer) && layerActions.includes('edit-data')) {
-          actions.push({
-            name: 'edit-data',
-            label: this.isLayerEdited(layer)
-              ? 'mixins.activity.STOP_EDIT_DATA_LABEL'
-              : 'mixins.activity.START_EDIT_DATA_LABEL',
-            icon: 'las la-edit',
-            handler: () => this.onEditLayerData(layer)
-          })
-        }
-        if (this.isLayerRemovable(layer) && layerActions.includes('remove')) {
-          actions.push({
-            name: 'remove',
-            label: 'mixins.activity.REMOVE_LABEL',
-            icon: 'las la-minus-circle',
-            handler: () => this.onRemoveLayer(layer)
-          })
-        }
-      }
-      */
       // Store the actions and make it reactive
       this.$set(layer, 'actions', actions)
       return actions
@@ -263,20 +196,6 @@ export default {
       if (!step) step = moment.duration(this.forecastModel.interval, 's')
       return { start, end, step }
     },
-    /* TODO
-    onSynchronizeTimeline (layer) {
-      const timeRange = this.getLayerTimeRange(layer)
-      if (!timeRange) return
-      // Setup timeline accordingly
-      this.$store.patch('timeline', {
-        source: {
-          name: layer.name,
-          step: timeRange.step.asMinutes(),
-          start: timeRange.start,
-          end: timeRange.end
-        }
-      })
-    }, */
     onLayerAdded (layer) {
       this.configureLayerActions(layer)
     },

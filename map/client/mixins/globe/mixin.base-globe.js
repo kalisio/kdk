@@ -124,6 +124,12 @@ export default {
     getCesiumLayerByName (name) {
       return this.cesiumLayers[name]
     },
+    getLayers (filter = {}) {
+      return _.values(this.layers).filter(sift(filter))
+    },
+    hasLayers (filter = {}) {
+      return _.values(this.layers).filter(sift(filter)).length > 0
+    },
     async showLayer (name) {
       // Retieve the layer
       const layer = this.getLayerByName(name)

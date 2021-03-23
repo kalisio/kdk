@@ -188,7 +188,16 @@
     "CATALOG_NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la nouvelle couche",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
-    "CATALOG_SCHEMA_FIELD_LABEL": "Sélectionnez un schéma de données"
+    "CATALOG_SCHEMA_FIELD_LABEL": "Sélectionnez un schéma de données",
+    "FAVORITE_VIEW_CREATE_TITLE": "Créer une nouvelle vue ?",
+    "FAVORITE_VIEW_NAME_FIELD_LABEL": "Saisissez le nom de la vue",
+    "FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la vue",
+    "FAVORITE_VIEW_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",
+    "LAYER_CATEGORY_CREATE_TITLE": "Créer une nouvelle catégorie ?",
+    "LAYER_CATEGORY_NAME_FIELD_LABEL": "Saisissez le nom de la catégorie",
+    "LAYER_CATEGORY_ICON_FIELD_LABEL": "Choisissez une icône pour la catégorie",
+    "LAYER_CATEGORY_LAYERS_FIELD_LABEL": "Sélectionnez les couches dans cette catégorie",
+    "LAYER_CATEGORY_EXCLUSIVE_FIELD_LABEL": "Rendre la sélection exclusive au sein de la catégorie"
   },
   "tours": {
     "navigation-bar": {
@@ -406,11 +415,19 @@
     "SORT_VIEWS": "Trier les vues",
     "CREATE_VIEW": "Créer une nouvelle vue",
     "ADD_BUTTON": "OK",
-    "REMOVE_VIEW": "$t(REMOVE)",
-    "FAVORITE_VIEW_CREATE_TITLE": "Créer une nouvelle vue ?",
-    "FAVORITE_VIEW_NAME_FIELD_LABEL": "Saisissez le nom de la vue",
-    "FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la vue",
-    "FAVORITE_VIEW_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives"
+    "VIEW_LIST": "Retour à la liste",
+    "REMOVE_VIEW": "$t(REMOVE)"
+  },
+  "KLayerCategories": {
+    "LAYER_CATEGORIES_LABEL": "Catégories des couches",
+    "TITLE": "Gérer les catégories des couches",
+    "SORT_CATEGORIES": "Trier les catégories",
+    "CREATE_CATEGORY": "Créer une nouvelle catégorie",
+    "ADD_BUTTON": "OK",
+    "EDIT_BUTTON": "OK",
+    "CATEGORY_LIST": "Retour à la liste",
+    "EDIT_CATEGORY": "$t(EDIT)",
+    "REMOVE_CATEGORY": "$t(REMOVE)"
   },
   "KAddLayer": {
     "TITLE": "Ajouter une nouvelle couche"

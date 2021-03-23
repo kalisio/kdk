@@ -7,7 +7,7 @@ const debug = makeDebug('kdk:map:catalog:hooks')
 // By default we only return layers and not contexts in catalog
 export function filterContexts (hook) {
   const query = _.get(hook, 'params.query', {})
-  if (!query.type) query.type = { $ne: 'Context' }
+  if (!query.type) query.type = { $nin: ['Context', 'Category'] }
   _.set(hook, 'params.query', query)
 }
 

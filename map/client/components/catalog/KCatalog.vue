@@ -8,8 +8,8 @@
           :key="category.name"
           :id="category.name"
           header-class="text-primary"
-          :icon="category.icon"
-          :label="$t(category.label)"
+          :icon="category.icon.name || category.icon"
+          :label="$t(category.name)"
           expand-separator>
           <component
             :is="category.componentKey"
@@ -17,7 +17,7 @@
             :forecastModels="forecastModels"
             :forecastModelHandlers="forecastModelHandlers"
             :forecastModel="forecastModel"
-            :options="category.options"></component>
+            :options="category.options || {}"></component>
         </q-expansion-item>
       </template>
       <slot name="footer" />
@@ -54,6 +54,12 @@ export default {
       default: () => {}
     }
   },
+  watch: {
+    layerCategories: function () {
+      // Make configured categories reactive as catalog categoriess are built from
+      this.categorize()
+    }
+  },
   computed: {
     computedStyle () {
       if (this.$q.screen.lt.md) return 'height: 65vh; min-width: 300px;'
@@ -64,18 +70,20 @@ export default {
       const layers = _.values(this.layers)
       const layersByCategory = {}
       this.layerCategories.forEach(category => {
-        layersByCategory[category.name] = layers.filter(sift(_.get(category, 'options.filter', {})))
+        // Built-in categories use filtering while user-defined ones use layers list
+        let filter = {}
+        if (_.has(category, 'options.filter')) {
+          filter = _.get(category, 'options.filter')
+        } else if (_.has(category, 'layers')) {
+          filter = { name: { $in: _.get(category, 'layers') } }
+        }
+        layersByCategory[category.name] = layers.filter(sift(filter))
       })
       return layersByCategory
     }
   },
-  watch: {
-    layerCategories: function () {
-      this.refresh()
-    }
-  },
   methods: {
-    refresh () {
+    categorize () {
       this.layerCategories.forEach(category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
         const componentKey = _.kebabCase(path.basename(component))
@@ -85,7 +93,10 @@ export default {
     }
   },
   created () {
-    this.refresh()
+    // Load the required components
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    // Categorize layers
+    this.categorize()
   }
 }
 </script>

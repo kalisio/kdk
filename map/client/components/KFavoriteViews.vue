@@ -72,14 +72,14 @@ export default {
           { id: 'add-favorite-view', icon: 'kdk:view-plus.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => { this.mode = 'add' } }
         ],
         add: [
-          { id: 'list-favorite-views', icon: 'las la-arrow-left', tooltip: 'KFavoriteViews.NEW_VIEW', handler: () => { this.mode = 'list' } },
+          { id: 'list-favorite-views', icon: 'las la-arrow-left', label: 'KFavoriteViews.VIEW_LIST', handler: () => { this.mode = 'list' } },
           { component: 'QSpace' }
         ]
       },
       viewSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://www.kalisio.xyz/schemas/favorite-view.create.json#',
-        title: 'KFavoriteViews.FAVORITE_VIEW_CREATE_TITLE',
+        title: 'schemas.FAVORITE_VIEW_CREATE_TITLE',
         description: 'Favorite view creation schema',
         type: 'object',
         properties: {
@@ -89,7 +89,7 @@ export default {
             minLength: 3,
             field: {
               component: 'form/KTextField',
-              label: 'KFavoriteViews.FAVORITE_VIEW_NAME_FIELD_LABEL'
+              label: 'schemas.FAVORITE_VIEW_NAME_FIELD_LABEL'
             }
           },
           description: {
@@ -97,7 +97,7 @@ export default {
             maxLength: 256,
             field: {
               component: 'form/KTextField',
-              label: 'KFavoriteViews.FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL'
+              label: 'schemas.FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL'
             }
           },
           layers: {
@@ -105,7 +105,7 @@ export default {
             default: false,
             field: {
               component: 'form/KToggleField',
-              label: 'KFavoriteViews.FAVORITE_VIEW_LAYERS_FIELD_LABEL'
+              label: 'schemas.FAVORITE_VIEW_LAYERS_FIELD_LABEL'
             }
           }
         },
@@ -136,8 +136,8 @@ export default {
           this.savingView = false
           throw error
         }
+        this.mode = 'list'
       }
-      this.mode = 'list'
     },
     refreshViews (data) {
       this.count = data.items.length

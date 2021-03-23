@@ -188,7 +188,16 @@
     "CATALOG_NAME_FIELD_LABEL": "Enter the name of the new layer",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
-    "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme"
+    "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme",
+    "FAVORITE_VIEW_CREATE_TITLE": "Create a new view ?",
+    "FAVORITE_VIEW_NAME_FIELD_LABEL": "Enter the name of this view",
+    "FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
+    "FAVORITE_VIEW_LAYERS_FIELD_LABEL": "Save the active layers",
+    "LAYER_CATEGORY_CREATE_TITLE": "Create a new category?",
+    "LAYER_CATEGORY_NAME_FIELD_LABEL": "Enter the name of this category",
+    "LAYER_CATEGORY_ICON_FIELD_LABEL": "Select an icon for this category",
+    "LAYER_CATEGORY_LAYERS_FIELD_LABEL": "Select the layers in this category",
+    "LAYER_CATEGORY_EXCLUSIVE_FIELD_LABEL": "Make selection exclusive within this category"
   },
   "tours": {
     "navigation-bar": {
@@ -405,11 +414,19 @@
     "SORT_VIEWS": "Sort views",
     "CREATE_VIEW": "Create a new view",
     "ADD_BUTTON": "OK",
-    "REMOVE_VIEW": "$t(REMOVE)",
-    "FAVORITE_VIEW_CREATE_TITLE": "Create a new view ?",
-    "FAVORITE_VIEW_NAME_FIELD_LABEL": "Enter the name of this view",
-    "FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
-    "FAVORITE_VIEW_LAYERS_FIELD_LABEL": "Save the active layers"
+    "VIEW_LIST": "Back to list",
+    "REMOVE_VIEW": "$t(REMOVE)"
+  },
+  "KLayerCategories": {
+    "LAYER_CATEGORIES_LABEL": "Layer categories",
+    "TITLE": "Manage layer categories",
+    "SORT_CATEGORIES": "Sort categories",
+    "CREATE_CATEGORY": "Create a new category",
+    "ADD_BUTTON": "OK",
+    "EDIT_BUTTON": "OK",
+    "CATEGORY_LIST": "Back to list",
+    "EDIT_CATEGORY": "$t(EDIT)",
+    "REMOVE_CATEGORY": "$t(REMOVE)"
   },
   "KAddLayer": {
     "TITLE": "Add a new layer"
