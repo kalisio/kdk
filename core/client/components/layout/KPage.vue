@@ -48,7 +48,8 @@
             v-show="isRightPaneOpened" 
             :content="rightPane.content"
             :mode="rightPane.mode" 
-            :filter="rightPane.filter" 
+            :filter="rightPane.filter"
+            direction="vertical"
             class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
         </div>
