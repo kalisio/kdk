@@ -92,9 +92,11 @@ export default {
       return this.file ? path.basename(this.file.name, path.extname(this.file.name)) : ''
     },
     getProperties () {
-      if (!this.file) return []
-      const properties = _.keys(_.get(this.file, 'schema.properties', {}))
-      return _.map(properties, prop => { return { label: prop, value: prop } })
+      if (this.file) {
+        const properties = _.keys(_.get(this.file, 'schema.properties', {})) 
+        return _.map(properties, prop => { return { label: prop, value: prop } })
+      }
+      return []
     },
     guessFeatureId () {
       if (this.file) {

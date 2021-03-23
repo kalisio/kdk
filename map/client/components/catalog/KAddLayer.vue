@@ -7,20 +7,20 @@
     @closed="$emit('closed')">
     <div slot="modal-content">
       <q-tabs  align="justify" v-model="mode" inverted>
-        <q-tab name="create" icon="las la-edit" />
         <q-tab name="import" icon="las la-desktop" />
         <q-tab name="connect" icon="las la-plug" />
+        <q-tab name="create" icon="las la-edit" />
       </q-tabs>
       <div>
         <q-tab-panels v-model="mode" animated>
-          <q-tab-panel name="create">
-           <k-create-layer @done="closeModal" />
-          </q-tab-panel>
           <q-tab-panel name="import">
            <k-import-layer @done="closeModal" />
           </q-tab-panel>
           <q-tab-panel name="connect">
             <k-connect-layer @done="closeModal" />
+          </q-tab-panel>
+          <q-tab-panel name="create">
+           <k-create-layer @done="closeModal" />
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -42,7 +42,7 @@ export default {
   },
   data () {
     return {
-      mode: 'create'
+      mode: 'import'
     }
   },
   created () {

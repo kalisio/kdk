@@ -59,7 +59,7 @@ export default {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/create-layer-set-feature-id#',
-        type: 'object',
+        type: 'string',
         properties: {
           featureId: {
             type: 'string',
@@ -81,9 +81,11 @@ export default {
       }
     },
     getProperties () {
-      if (!this.schema) return []
-      const properties = _.keys(_.get(this.schema, 'properties', {}))
-      return _.map(properties, prop => { return { label: prop, value: prop } })
+      if (this.schema) {
+        const properties = _.keys(_.get(this.schema, 'properties', {}))
+        return _.map(properties, prop => { return { label: prop, value: prop } })
+      }
+      return []
     },
     guessFeatureId () {
       if (this.schema) {
@@ -94,7 +96,7 @@ export default {
       }
       return ''
     },
-    async onCreate (createdLayer) {
+    async onCreate () {
       const propertiesResult = this.$refs.propertiesForm.validate()
       const featureIdResult = this.$refs.featureIdForm.validate()
       if (!propertiesResult.isValid || !featureIdResult.isValid)  return
@@ -104,13 +106,11 @@ export default {
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'insert_drive_file',
-        service: 'features',
         featureId: featureIdResult.values.featureId,
         [this.kActivity.engine]: {
           type: 'geoJson',
           isVisible: true,
-          realtime: true,
-          source: '/api/features'
+          realtime: true
         },
         schema: this.schema
       }

@@ -88,25 +88,23 @@ export default {
       if (this.service) {
         const protocol = this.service.protocol
         if (protocol === 'WFS') {
-          const properties = this.layer ? this.getLayerProperties() : []
           _.set(schema, 'properties.featureId', {
             type: 'string', 
-            default: this.guessFeatureId(properties),
+            default: this.guessFeatureId(),
             field: {
               component: 'form/KSelectField',
               label: 'KConnectLayer.FEATURE_ID_FIELD_LABEL',
-              options: properties
+              options: this.getLayerProperties()
             }
           })
         } else if (protocol === 'WMS' || protocol === 'WMTS') {
-          const styles = this.layer ? this.getLayerStyles() : []
-          _.set(schema, 'properties.styleId', {
+          _.set(schema, 'properties.style', {
             type: 'string',
-            default: this.guessStyleId(styles),
+            default: this.guessDefaultStyle(),
             field: {
               component: 'form/KSelectField',
               label: 'KConnectLayer.STYLE_ID_FIELD_LABEL',
-              options: styles 
+              options: this.getLayerStyles() 
             }
           })
         }
@@ -115,6 +113,7 @@ export default {
     },
     onServiceFormFieldChanged (field, value) {
       this.service = value
+      this.layer = null
       // Force the other forms to be re-rendered
       this.layerFormKey+=1
       this.propertiesFormKey+=1
@@ -131,8 +130,11 @@ export default {
       if (this.layer) return _.map(this.layer.properties, prop => { return { label: prop, value: prop } })
       return []
     },
-    guessStyleId () {
-      if (this.layer && this.layer.styles.length > 0) return this.layer.styles[0].display
+    guessDefaultStyle () {
+      if (this.layer && this.layer.styles.length > 0) {
+        const defaultStyle = this.layer.styles[0]
+        return defaultStyle.id
+      }
       return ''
     },
     guessFeatureId () {
@@ -161,7 +163,7 @@ export default {
           source: this.service.baseUrl,
           layers: this.layer.id,
           version: this.service.version,
-          styles: result.values.styleId,
+          styles: result.values.style,
           format: 'image/png',
           transparent: true,
           bgcolor: 'FFFFFFFF'
@@ -194,7 +196,7 @@ export default {
           tiled: true
         }
       } else if (this.service.protocol === 'WMTS') {
-        const layerStyleId = result.values.styleI
+        const layerStyleId = result.values.style
         const tileMatrixSet = this.layer.crs['3857']
         newLayer.leaflet = {
           type: 'tilelayer',
