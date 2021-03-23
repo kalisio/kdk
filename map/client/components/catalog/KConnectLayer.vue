@@ -1,361 +1,230 @@
 <template>
-  <div slot="modal-content">
-    <!-- Form section -->
-    <q-select v-model="selectedUrl" :options="urlOptions" use-input @filter="filterUrl" @new-value="newUrl" :label="$t('KConnectLayer.URL_HINT')" @input="selectUrl" clearable/>
-    <q-select v-model="selectedLayer" :options="layerOptions" :label="$t('KConnectLayer.LAYER_HINT')" :loading="probingService" @input="selectLayer">
-      <q-badge v-if="service" color="red" floating transparent>
-        {{`${service}`}}
-      </q-badge>
-      <template v-slot:prepend>
-        <q-icon name="las la-layer-group" />
-      </template>
-    </q-select>
-    <q-input v-model="layerName" :label="$t('KConnectLayer.LAYER_NAME_HINT')" clearable/>
-    <q-input v-model="layerDescription" :label="$t('KConnectLayer.LAYER_DESCRIPTION_HINT')" clearable/>
-    <q-select v-if="featureIdRequired" v-model="selectedFeatureId" :options="featureIdOptions" label-color="red" :label="$t('KConnectLayer.FID_HINT')" @input="selectFeatureId" :loading="probingFeatureProps">
-      <template v-slot:prepend>
-        <q-icon name="las la-id-card" />
-      </template>
-    </q-select>
-    <q-select v-if="layerStyleRequired" v-model="selectedLayerStyle" :options="layerStyleOptions" label-color="red" :label="$t('KConnectLayer.LAYER_STYLE_HINT')" @input="selectLayerStyle">
-      <template v-slot:prepend>
-        <q-icon name="las la-palette" />
-      </template>
-    </q-select>
-    <!-- Buttons section -->
-    <div class="q-pt-md row justify-end">
-      <q-btn id="import-button" color="primary" :label="$t('KConnectLayer.CONNECT_BUTTON')" @click="onConnect"/>
+  <div>
+    <k-form ref="serviceForm" :schema="getServiceFormSchema()" @field-changed="onServiceFormFieldChanged" />
+    <k-form ref="layerForm" :key="layerFormKey" :schema="getLayerFormSchema()" @field-changed="onLayerFormFieldChanged" />
+    <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
+    <div class="row justify-end">
+      <k-action id="connect-action" :label="$t('KConnectLayer.CONNECT_BUTTON')" @triggered="onConnect" />
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import fetch from 'node-fetch'
-import xml2js from 'xml2js'
 import { buildUrl } from '../../../../core/common'
-import * as wms from '../../../common/wms-utils'
-import * as wfs from '../../../common/wfs-utils'
-import * as wmts from '../../../common/wmts-utils'
-import * as tms from '../../../common/tms-utils'
-// import * as wcs from '../../../common/wcs-utils'
 
 export default {
   name: 'k-connect-layer',
   inject: ['kActivity'],
-  props: {
-    availableUrls: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    },
-    baseLayer: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    }
-  },
   data () {
     return {
-      urlOptions: [],
-      selectedUrl: '',
-      layerName: '',
-      layerDescription: '',
-      probingService: false,
-      service: '',
-      layerOptions: [],
-      selectedLayer: '',
-      probingFeatureProps: false,
-      featureIdRequired: false,
-      selectedFeatureId: '',
-      featureIdOptions: [],
-      selectedLayerStyle: '',
-      layerStyleRequired: false,
-      layerStyleOptions: []
+      layerFormKey: 1,
+      propertiesFormKey: 10000
     }
   },
   methods: {
-    guessFeatureId () {
-      for (const prop of this.featureIdOptions) {
-        const lower = prop.toLowerCase()
-        if (lower === 'id' || lower.includes('fid') || lower.includes('featureid')) return prop
-      }
-      return null
-    },
-    guessLayerStyle () {
-      if (this.layerStyleOptions.length === 1) return this.layerStyleOptions[0]
-      return null
-    },
-    findQueryParameter (all, key) {
-      const normalizedKey = key.toUpperCase()
-      for (const p of all) {
-        const k = p[0].toUpperCase()
-        if (k === normalizedKey) return p[1].toUpperCase()
-      }
-      return null
-    },
-    async probeEndpoint (url) {
-      const probe = {
-        baseUrl: null,
-        searchParams: {},
-        service: null,
-        version: '',
-        availableLayers: []
-      }
-
-      // we expect WMS/WFS/WCS/WMTS/TMS get capabilities url here
-
-      /* if user:pwd
-       * var headers = new Headers();
-       headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
-       fetch('https://host.com', {headers: headers})
-       */
-
-      try {
-        let caps = null
-        if (url.protocol === 'http:' || url.protocol === 'https:') {
-          probe.baseUrl = `${url.protocol}//${url.host}${url.pathname}`
-          for (const [k, v] of url.searchParams) probe.searchParams[k] = v
-
-          // fetch content and try to convert to json
-          const query = url.href
-          caps = await fetch(query)
-            .then(resp => resp.text())
-            .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
-
-          // look for SERVICE=xxx
-          const service = this.findQueryParameter(url.searchParams, 'SERVICE')
-          if (service === 'WMS') probe.service = 'WMS'
-          else if (service === 'WMTS') probe.service = 'WMTS'
-          else if (service === 'WFS') probe.service = 'WFS'
-          else if (service === 'WCS') probe.service = 'WCS'
-
-          if (!probe.service) {
-            // might be REST WMTS request, or TMS
-            if (caps.Capabilities) {
-              probe.service = 'WMTS'
-              const lastSlash = url.pathname.lastIndexOf('/')
-              probe.baseUrl = `${url.protocol}//${url.host}${url.pathname.slice(0, lastSlash)}`
-            } else if (caps.TileMapService) {
-              probe.service = 'TMS'
+    getServiceFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/select-service',
+        type: 'object',
+        properties: {
+          service: { 
+            type: 'object',
+            field: {
+              component: 'form/KOwsServiceField',
+              label: 'KConnectLayer.SERVICE_FIELD_LABEL'
             }
           }
-
-          // remove some known search params depending on service
-          const knownSearchParams = new Set()
-          if (probe.service === 'WMS' || probe.service === 'WFS' || probe.service === 'WMTS') {
-            knownSearchParams.add('SERVICE')
-            knownSearchParams.add('REQUEST')
-            knownSearchParams.add('VERSION')
+        },
+        required: ['service']
+      }
+    },
+    getLayerFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/select-layer#',
+        type: 'object',
+        properties: {
+          layer: {
+            type: 'object',
+            field: {
+              component: 'form/KOwsLayerField',
+              label: 'KConnectLayer.LAYER_FIELD_LABEL',
+              service: this.service
+            }
           }
-          if (knownSearchParams) {
-            _.keys(probe.searchParams).forEach(k => {
-              if (knownSearchParams.has(k.toUpperCase())) {
-                delete probe.searchParams[k]
+        },
+        required: ['layer']
+      }
+    },
+    getPropertiesFormSchema () {
+      let schema = {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/set-properties#',
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+            maxLength: 128,
+            minLength: 3,
+            default: this.layer ? this.layer.display : '',            
+            field: { 
+              component: 'form/KTextField',
+              label: 'KConnectLayer.NAME_FIELD_LABEL'
+            }
+          },
+          description: {
+            type: 'string',
+            default: this.layer ? this.layer.display : '',
+            field: { 
+              component: 'form/KTextField',
+              label: 'KConnectLayer.DESCRIPTION_FIELD_LABEL'
+            }
+          }
+        },
+        required: ['name']
+      }
+      if (this.service) {
+        switch (this.service.protocol) {
+          case 'WFS': 
+            const properties = this.layer ? this.getLayerProperties() : []
+            _.set(schema, 'properties.featureId', {
+              type: 'string', 
+              default: this.guessFeatureId(properties),
+              field: {
+                component: 'form/KSelectField',
+                label: 'KConnectLayer.FEATURE_ID_FIELD_LABEL',
+                options: properties
               }
             })
-          }
+            break
+          case 'WMS':
+          case 'WMTS':
+            const styles = this.layer ? this.getLayerStyles() : []
+            _.set(schema, 'properties.styleId', {
+              type: 'string',
+              default: this.guessStyleId(styles),
+              field: {
+                component: 'form/KSelectField',
+                label: 'KConnectLayer.STYLE_ID_FIELD_LABEL',
+                options: properties 
+              }
+            })
         }
-
-        if (probe.service === 'WMS') {
-          const decoded = await wms.discover(probe.baseUrl, probe.searchParams, caps)
-          probe.availableLayers = decoded.availableLayers
-          probe.version = this.findQueryParameter(url.searchParams, 'VERSION')
-          if (!probe.version) probe.version = decoded.version
-        } else if (probe.service === 'WFS') {
-          const decoded = await wfs.discover(probe.baseUrl, probe.searchParams, caps)
-          probe.availableLayers = decoded.availableLayers
-          probe.version = this.findQueryParameter(url.searchParams, 'VERSION')
-          if (!probe.version) probe.version = decoded.version
-        } else if (probe.service === 'WMTS') {
-          const decoded = await wmts.discover(probe.baseUrl, probe.searchParams, caps)
-          probe.availableLayers = decoded.availableLayers
-          probe.version = this.findQueryParameter(url.searchParams, 'VERSION')
-          if (!probe.version) probe.version = decoded.version
-        // } else if (probe.service === 'WCS') {
-        } else if (probe.service === 'TMS') {
-          const decoded = await tms.discover(probe.baseUrl, probe.searchParams, caps)
-          probe.availableLayers = decoded.availableLayers
-          probe.version = decoded.version
-        }
-      } catch (err) { console.error(err) }
-
-      return probe
-    },
-    newUrl (val, done) {
-      // keep in the model when val is a valid url
-      try {
-        const asurl = new URL(val)
-        done(asurl.href, 'add-unique')
-      } catch (err) {}
-    },
-    filterUrl (val, update) {
-      update(() => {
-        if (val === '') {
-          this.urlOptions = this.availableUrls
-        } else {
-          const needle = val.toLowerCase()
-          this.urlOptions = this.availableUrls.filter(v => v.toLowerCase().indexOf(needle) > -1)
-        }
-      })
-    },
-    async selectUrl (val) {
-      this.url = new URL(val)
-
-      this.probe = null
-      this.layerOptions = []
-      this.selectedLayer = ''
-      this.layerDisplay2id = {}
-      this.featureIdRequired = false
-      this.featureIdOptions = []
-      this.layerStyleRequired = false
-      this.layerStyleOptions = []
-      this.layerSchema = {}
-
-      // probe endpoint
-      this.probingService = true
-      this.probe = await this.probeEndpoint(this.url)
-      this.probingService = false
-
-      if (this.probe.availableLayers) {
-        for (const layer of this.probe.availableLayers) this.layerDisplay2id[layer.display] = layer.id
-        this.layerOptions = this.probe.availableLayers.map(l => l.display)
       }
-
-      this.service = this.probe.service
-      this.featureIdRequired = this.probe.service === 'WFS'
+      return schema
     },
-    async selectLayer (val) {
-      if (val === '') return
-
-      if (this.layerName === '') this.layerName = val
-      if (this.layerDescription === '') this.layerDescription = `${this.selectedLayer} - ${this.url.hostname}`
-
-      if (this.probe.service === 'WMS') {
-        // WMS => detect available layer styles
-        const layer = _.find(this.probe.availableLayers, l => l.display === val)
-        this.layerStyleOptions = []
-        this.layerStyleDisplay2id = {}
-        if (layer.styles) {
-          for (const s of layer.styles) this.layerStyleDisplay2id[s.display] = s.id
-          this.layerStyleOptions = layer.styles.map(s => s.display)
+    onServiceFormFieldChanged (field, value) {
+      this.service = value
+      // Force the other forms to be re-rendered
+      this.layerFormKey+=1
+      this.propertiesFormKey+=1
+    },
+    onLayerFormFieldChanged (field, value) {
+      this.layer = value
+      this.propertiesFormKey+=1
+    },
+    getLayerStyles () {
+      if (this.layer) return _.map(this.layer.styles, style => { return { label: style.display, value: style.id }})
+      return []
+    },
+    getLayerProperties () {
+      if (this.layer) return _.map(this.layer.properties, prop => { return { label: prop, value: prop } })
+      return []
+    },
+    guessStyleId () {
+      if (this.layer && this.layer.styles.length > 0) return this.layer.styles[0].display
+      return ''
+    },
+    guessFeatureId () {
+      if (this.layer) {
+        for (const prop of this.layer.properties) {
+          if (prop.toLowerCase().includes('id', 'fid', 'featureid', '_id', 'objectid')) return prop
         }
-
-        this.layerStyleRequired = this.layerStyleOptions.length > 1
-        this.selectedLayerStyle = this.guessLayerStyle()
-      } else if (this.probe.service === 'WFS') {
-        // WFS => detect available properties
-        this.probingFeatureProps = true
-        try {
-          const desc = await wfs.DescribeFeatureType(this.probe.baseUrl, this.probe.version, this.layerDisplay2id[val], this.probe.searchParams)
-          const decoded = wfs.decodeFeatureType(desc)
-          this.featureIdOptions = decoded.properties.map(prop => prop.name)
-          // generate properies schema using DescribeFeatureType request
-          this.layerSchema = wfs.generatePropertiesSchema(desc, val)
-        } catch (err) { console.error(err) }
-        this.probingFeatureProps = false
-
-        this.selectedFeatureId = this.guessFeatureId()
-      } else if (this.probe.service === 'WMTS') {
-        // WMTS => detect layer styles
-        const layer = _.find(this.probe.availableLayers, l => l.display === val)
-        this.layerStyleOptions = []
-        this.layerStyleDisplay2id = {}
-        if (layer.styles) {
-          for (const s of layer.styles) this.layerStyleDisplay2id[s.display] = s.id
-          this.layerStyleOptions = layer.styles.map(s => s.display)
-        }
-
-        this.layerStyleRequired = this.layerStyleOptions.length > 1
-        this.selectedLayerStyle = this.guessLayerStyle()
-
-        this.selectedTileMatrixSet = layer.crs['3857']
       }
+      return ''
     },
-    selectFeatureId (val) {
-    },
-    selectLayerStyle (val) {
-    },
-    onConnect () {
-      if (!this.selectedLayer) return
-
-      const layerId = this.layerDisplay2id[this.selectedLayer]
-      const layer = _.find(this.probe.availableLayers, l => l.id === layerId)
-
-      const createdLayer = Object.assign({}, this.baseLayer, {
-        name: this.layerName,
-        description: this.layerDescription
-      })
-
-      if (this.probe.service === 'WMS') {
-        // const layerStyleId = this.layerStyleDisplay2id[this.selectedLayerStyle]
-        if (createdLayer.leaflet) {
-          Object.assign(createdLayer.leaflet, {
+    async onConnect () {
+      const result = this.$refs.propertiesForm.validate()
+      if (! result.isValid) return
+      // Create the layer accordingly the input fields
+      const newLayer = {
+        name: result.values.name,
+        description: result.values.description,
+        icon: 'las la-plug',
+        type: 'OverlayLayer',
+        isRemovable: true,
+        isStorable: true
+      }
+      switch (this.service.protocol) {
+        case 'WMS':
+          newLayer.leaflet = Object.assign({
             type: 'tileLayer.wms',
-            source: this.probe.baseUrl,
-            layers: layerId,
-            version: this.probe.version,
-            // styles: layerStyleId,
+            source: this.service.baseUrl,
+            layers: this.layer.id,
+            version: this.service.version,
+            styles: result.values.styleId,
             format: 'image/png',
             transparent: true,
             bgcolor: 'FFFFFFFF'
-          }, this.probe.searchParams)
-
+          }, this.service.searchParams)
           // be explicit about requested CRS if probe list some
-          if (layer.crs) {
+          if (this.layer.crs) {
             // these are what leaflet supports
             const candidates = ['EPSG:3857', 'EPSG:4326', 'EPSG:3395']
             for (const c of candidates) {
-              if (layer.crs.indexOf(c) !== -1) {
-                createdLayer.leaflet.crs = `CRS.${c.replace(':', '')}`
+              if (this.layer.crs.indexOf(c) !== -1) {
+                newLayer.leaflet.crs = `CRS.${c.replace(':', '')}`
                 break
               }
             }
           }
-        }
-      } else if (this.probe.service === 'WFS') {
-        Object.assign(createdLayer, {
-          isStyleEditable: true,
-          featureId: this.selectedFeatureId,
-          wfs: {
-            url: this.probe.baseUrl,
-            version: this.probe.version,
-            searchParams: this.probe.searchParams,
-            layer: layerId
-          }
-        })
-        if (createdLayer.leaflet) {
-          Object.assign(createdLayer.leaflet, {
+          break
+        case 'WFS':
+          Object.assign(newLayer, {
+            isStyleEditable: true,
+            featureId: result.values.featureId,
+            wfs: {
+              url: this.service.baseUrl,
+              version: this.service.version,
+              searchParams: this.service.searchParams,
+              layer: this.layer.id
+            }
+          })
+          newLayer.leaflet = {
             type: 'geoJson',
             realtime: true,
             tiled: true
-          })
-        }
-        _.set(createdLayer, 'schema.content', this.layerSchema)
-      } else if (this.probe.service === 'WMTS') {
-        const layerStyleId = this.layerStyleDisplay2id[this.selectedLayerStyle]
-        if (createdLayer.leaflet) {
-          const source = buildUrl(`${this.probe.baseUrl}/${layerId}/${layerStyleId}/${this.selectedTileMatrixSet}/{z}/{y}/{x}.png`, this.probe.searchParams)
-          Object.assign(createdLayer.leaflet, {
+          }
+          break
+        case 'WMTS':
+          const layerStyleId = result.values.styleI
+          const tileMatrixSet = this.layer.crs['3857']
+          newLayer.leaflet = {
+            type: 'tilelayer',
+            source: buildUrl(`${this.service.baseUrl}/${this.layer.id}/${layerStyleId}/${tileMatrixSet}/{z}/{y}/{x}.${this.layer.format}`, this.service.searchParams)
+          }
+          break
+        case 'TMS': 
+          newLayer.leafet = {
             type: 'tileLayer',
-            source: source
-          })
-        }
-      } else if (this.probe.service === 'TMS') {
-        if (createdLayer.leaflet) {
-          const source = buildUrl(`${layer.url}/{z}/{x}/{y}.${layer.format}`, this.probe.searchParams)
-          Object.assign(createdLayer.leaflet, {
-            type: 'tileLayer',
-            source: source,
+            source: buildUrl(`${layer.url}/{z}/{x}/{y}.${this.layer.format}`, this.service.searchParams),
             tms: true
-          })
-        }
+          }
       }
 
+      await this.kActivity.addLayer(newLayer)
       this.$emit('done')
     }
+  },
+  created () {
+    // Load the required components
+    this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-form'] = this.$load('form/KForm')
+    // Required data
+    this.service = null
+    this.layer = null
   }
 }
 </script>

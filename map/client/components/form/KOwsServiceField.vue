@@ -1,0 +1,225 @@
+<template>
+  <div class="column">
+    <q-select
+      ref="select"
+      v-model="request"
+      :label="label"
+      fill-input
+      hide-selected
+      clearable
+      emit-value
+      use-input
+      new-value-mode="add-unique"
+      :error-message="errorLabel"
+      :error="hasError"
+      bottom-slots
+      :options="availableServices"
+      option-label="name"
+      option-value="request"
+      :loading="loading"
+      @clear="onCleared"
+      @input="onUpdated">
+      <template v-slot:append>
+        <k-action v-if="model" id="add-service" icon="add_circle" color="grey-7" :handler="onAddService" />
+      </template>
+      <!-- Options -->
+      <template v-slot:option="scope">
+        <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+          <q-item-section avatar>
+            <q-badge dense>{{ scope.opt.protocol }}</q-badge>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ scope.opt.baseUrl }}</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <k-action id="delete-service" icon="las la-trash" @triggered="onDeleteService(scope.opt)" />
+          </q-item-section>
+        </q-item>
+      </template>
+      <!-- Helper -->
+      <template v-if="helper" v-slot:hint>
+        <span v-html="helper" />
+      </template>
+    </q-select>
+  </div>
+</template>
+
+<script>
+import _ from 'lodash'
+import { mixins as kCoreMixins } from '../../../../core/client'
+import fetch from 'node-fetch'
+import xml2js from 'xml2js'
+import * as wms from '../../../common/wms-utils'
+import * as wfs from '../../../common/wfs-utils'
+import * as wmts from '../../../common/wmts-utils'
+import * as tms from '../../../common/tms-utils'
+
+export default {
+  name: 'k-ows-service-field',
+  mixins: [kCoreMixins.baseField],
+  data () {
+    return {
+      request: '',
+      availableServices: [],
+      loading: false
+    }
+  },
+  computed: {
+    baseQuery () {
+      return Object.assign({ type: 'Service' })
+    },
+  },
+  methods: {
+    emptyModel () {
+      return null
+    },
+    onCleared () {
+      this.error = ''
+      this.request = ''
+      this.model = null
+    },
+    async onUpdated (request) {
+      this.loading = true
+      if (request) {
+        try {
+          const url = new URL(request)
+          const response = await this.probeEndpoint(url)
+          if (response) {
+            this.error = ''
+            this.model = response
+          }
+        } catch (error) {
+          this.error = 'Invalid value'
+          this.model = null
+        }
+      }
+      this.loading = false
+      this.onChanged()
+    },
+    async onAddService () {
+      // Delete the available layers before saving the service
+      const service = _.cloneDeep(this.model)
+      delete service.availableLayers
+      // Save the service
+      await this.$api.getService('catalog').create(service)
+      // Refresh the list of available services
+      this.refreshAvailableServices()
+    },
+    async onDeleteService (service) {
+      await this.$api.getService('catalog').remove(service._id)
+      // Refresh the list of available services
+      this.refreshAvailableServices()
+      // Clear
+      this.model = null
+      this.request = ''
+    },
+    async probeEndpoint (url) {
+      const result = {
+        type: 'Service',
+        name: undefined,
+        request: undefined,
+        baseUrl: undefined,
+        searchParams: {},
+        protocol: undefined,
+        version: undefined,
+        availableLayers: []
+      }
+      // we expect WMS/WFS/WCS/WMTS/TMS get capabilities url here
+      /* if user:pwd
+       * var headers = new Headers();
+       headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
+       fetch('https://host.com', {headers: headers})
+       */
+      try {
+        let caps = null
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+          result.name = url.hostname
+          result.request = url.href
+          result.baseUrl = `${url.protocol}//${url.host}${url.pathname}`
+          for (const [k, v] of url.searchParams) result.searchParams[k] = v
+          // fetch content and try to convert to json
+          const query = url.href
+          caps = await fetch(query)
+            .then(resp => resp.text())
+            .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
+          // look for SERVICE=xxx
+          const protocol = this.findQueryParameter(url.searchParams, 'SERVICE')
+          if (protocol === 'WMS') result.protocol = 'WMS'
+          else if (protocol === 'WMTS') result.protocol = 'WMTS'
+          else if (protocol === 'WFS') result.protocol = 'WFS'
+          else if (protocol === 'WCS') result.protocol = 'WCS'
+          if (!result.protocol) {
+            // might be REST WMTS request, or TMS
+            if (caps.Capabilities) {
+              result.protocol = 'WMTS'
+              const lastSlash = url.pathname.lastIndexOf('/')
+              result.baseUrl = `${url.protocol}//${url.host}${url.pathname.slice(0, lastSlash)}`
+            } else if (caps.TileMapService) {
+              result.protocol = 'TMS'
+            }
+          }
+          // remove some known search params depending on service
+          const knownSearchParams = new Set()
+          if (result.protocol === 'WMS' || result.protocol === 'WFS' || result.protocol === 'WMTS') {
+            knownSearchParams.add('SERVICE')
+            knownSearchParams.add('REQUEST')
+            knownSearchParams.add('VERSION')
+          }
+          if (knownSearchParams) {
+            _.keys(result.searchParams).forEach(k => {
+              if (knownSearchParams.has(k.toUpperCase())) {
+                delete result.searchParams[k]
+              }
+            })
+          }
+        }
+        if (result.protocol === 'WMS') {
+          const decoded = await wms.discover(result.baseUrl, result.searchParams, caps)
+          result.availableLayers = decoded.availableLayers
+          result.version = this.findQueryParameter(url.searchParams, 'VERSION')
+          if (!result.version) result.version = decoded.version
+        } else if (result.protocol === 'WFS') {
+          const decoded = await wfs.discover(result.baseUrl, result.searchParams, caps)
+          result.availableLayers = decoded.availableLayers
+          result.version = this.findQueryParameter(url.searchParams, 'VERSION')
+          if (!result.version) result.version = decoded.version
+        } else if (result.protocol === 'WMTS') {
+          const decoded = await wmts.discover(result.baseUrl, result.searchParams, caps)
+          result.availableLayers = decoded.availableLayers
+          result.version = this.findQueryParameter(url.searchParams, 'VERSION')
+          if (!result.version) result.version = decoded.version
+        // } else if (result.service === 'WCS') {
+        } else if (result.protocol === 'TMS') {
+          const decoded = await tms.discover(result.baseUrl, result.searchParams, caps)
+          result.availableLayers = decoded.availableLayers
+          result.version = decoded.version
+        }
+      } catch (err) { 
+        this.error = 'KServiceField.CANNOT_FETCH_URL'
+        return null
+      }
+      return result
+    },
+    findQueryParameter (all, key) {
+      const normalizedKey = key.toUpperCase()
+      for (const p of all) {
+        const k = p[0].toUpperCase()
+        if (k === normalizedKey) return p[1].toUpperCase()
+      }
+      return null
+    },
+    async refreshAvailableServices () {
+      // Retrieve the list of the available services
+      const response = await this.$api.getService('catalog').find({ query: { type: 'Service' } })
+      this.availableServices = response.data
+    }
+  },
+  async mounted () {
+    this.refreshAvailableServices()
+  },
+  created () {
+    // Load required components
+    this.$options.components['k-action'] = this.$load('frame/KAction')
+  }
+}
+</script>

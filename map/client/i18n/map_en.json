@@ -185,9 +185,9 @@
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
     "CATALOG_CREATE_TITLE": "Create a new data layer",
-    "CATALOG_NAME_FIELD_LABEL": "Enter a name",
-    "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter a description",
-    "CATALOG_FEATURE_ID_FIELD_LABEL": "Select a unique ID",
+    "CATALOG_NAME_FIELD_LABEL": "Enter the name of the new layer",
+    "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
+    "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
     "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme"
   },
   "tours": {
@@ -253,6 +253,9 @@
       "CREATE_IMPORT_LAYER_LABEL": "Confirm the creation of your new layer.",
       "ZOOM_IMPORT_LAYER_LABEL": "The map will be centered on your new layer."
     }
+  },
+  "KOwsLayerField": {
+    "INVALID_URL": "Invalid URL"
   },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",
@@ -412,18 +415,19 @@
     "TITLE": "Add a new layer"
   },
   "KImportLayer": {
-    "FILE_LABEL": "Select the file to import",
-    "NAME_LABEL": "Enter the name of the layer to be created",
-    "DESCRIPTION_LABEL": "Enter the description of the layer to be created",
+    "FILE_FIELD_LABEL": "Select the file to import",
+    "NAME_FIELD_LABEL": "Enter the name of the new layer",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
+    "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
     "IMPORT_BUTTON": "Import"
   },
   "KConnectLayer": {
-    "URL_HINT": "Server url ...",
-    "LAYER_HINT": "Select a remote layer ...",
-    "LAYER_NAME_HINT": "Layer name ...",
-    "LAYER_DESCRIPTION_HINT": "Layer description ...",
-    "FID_HINT": "Select a property to identify features ...",
-    "LAYER_STYLE_HINT": "Select a layer style ...",
+    "SERVICE_FIELD_LABEL": "Enter the query to get the capabilities of the remote service",
+    "LAYER_FIELD_LABEL": "Select the layer to access to",
+    "NAME_FIELD_LABEL": "Enter the name of the new layer",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
+    "STYLE_FIELD_LABEL": "Select the style of the new layer",
+    "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
     "CONNECT_BUTTON": "Connect"
   }
 }

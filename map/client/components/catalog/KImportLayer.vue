@@ -1,10 +1,11 @@
 <template>
   <div>
     <!-- Form section -->
-    <k-form ref="form" :schema="getSchema()" @field-changed="onFieldChanged" />
+    <k-form ref="fileForm" :schema="getFileFormSchema()" @field-changed="onFileFormFieldChanged" />
+    <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
-      <q-btn id="import-button" color="primary" :label="$t('KImportLayer.IMPORT_BUTTON')" @click="onImport"/>
+      <q-btn id="import-button" color="primary" outline :label="$t('KImportLayer.IMPORT_BUTTON')" @click="onImport"/>
     </div>
   </div>
 </template>
@@ -17,96 +18,127 @@ import { uid } from 'quasar'
 export default {
   name: 'k-import-layer',
   inject: ['kActivity'],
-  props: {
-    accept: {
-      type: String,
-      default: '.json,.geojson,application/json,application/geo+json'
-    }
-  },
   data () {
     return {
-      pickedFile: null
+      propertiesFormKey: 1
     }
   },
   methods: {
-    getSchema () {
+    getFileFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/import-layer#',
-        title: 'Import layer',
+        $id: 'http://kalisio.xyz/schemas/select-file#',
         type: 'object',
         properties: {
           file: { 
             type: 'object',
             field: {
               component: 'form/KFileField',
-              label: 'KImportLayer.FILE_LABEL',
+              label: 'KImportLayer.FILE_FIELD_LABEL',
               mimeTypes: '.json,.geojson,application/json,application/geo+json'
             }
-          },
+          }
+        },
+        required: ['file']
+      }
+    },
+    getPropertiesFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/set-properties#',
+        type: 'object',
+        properties: {
           name: {
             type: 'string',
             maxLength: 128,
-            minLength: 3,            
+            minLength: 3, 
+            default: this.getFileName(),
             field: { 
               component: 'form/KTextField',
-              label: 'KImportLayer.NAME_LABEL'
+              label: 'KImportLayer.NAME_FIELD_LABEL'
             }
           },
           description: {
             type: 'string',
+            default: this.getFileName(),
             field: { 
               component: 'form/KTextField',
-              label: 'KImportLayer.DESCRIPTION_LABEL'
+              label: 'KImportLayer.DESCRIPTION_FIELD_LABEL'
+            }
+          },
+          featureId: {
+            type: 'string', 
+            maxLength: 256,
+            minLength: 2,
+            default: this.guessFeatureId(),
+            field: {
+              component: 'form/KSelectField',
+              label: 'KImportLayer.FEATURE_ID_FIELD_LABEL',
+              options: this.getProperties()
             }
           }
         },
-        required: ['file', 'name']
+        required: ['name', 'featureId']
       }
     },
-    onFieldChanged (field, value) {
-      // Setup workflow depending on field state
-      if (field === 'file') {
-        if (value) {
-          const name = path.basename(value.name, path.extname(value.name))
-          this.$refs.form.getField('name').fill(name)
+    onFileFormFieldChanged (field, value) {
+      this.file = value
+      if (value) {
+        this.file.schema = generatePropertiesSchema(value.content, value.name)
+      }
+      this.propertiesFormKey+=1
+    },
+    getFileName () {
+      return this.file ? path.basename(this.file.name, path.extname(this.file.name)) : ''
+    },
+    getProperties () {
+      if (!this.file) return []
+      const properties = _.keys(_.get(this.file, 'schema.properties', {}))
+      return _.map(properties, prop => { return { label: prop, value: prop } })
+    },
+    guessFeatureId () {
+      if (this.file) {
+        const properties = _.keys(_.get(this.file, 'schema.properties', {}))
+        for (const prop of properties) {
+          if (prop.toLowerCase().includes('id', 'fid', 'featureid', '_id', 'objectid')) return prop
         }
       }
+      return ''
     },
     async onImport () {
-      const result = this.$refs.form.validate()
-      if (result.isValid) {
-        const file = result.values.file
-        const geoJson = file.content
-        // Create an empty layer used as a container
-        const layer = {
-          name: result.values.name,
-          description: result.values.description,
-          type: 'OverlayLayer',
-          icon: 'insert_drive_file',
-          featureId: '_id',
-          [this.kActivity.engine]: {
-            type: 'geoJson',
-            isVisible: true,
-            realtime: true
-          },
-          schema: {
-            content: generatePropertiesSchema(geoJson, file.name)
-          }
-        }
-        await this.kActivity.addLayer(layer)
-        // Generate temporary IDs for features
-        const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-        features.forEach(feature => { feature._id = uid().toString() })
-        // Assign the features to the layer
-        await this.kActivity.updateLayer(layer.name, geoJson)
-        this.$emit('done')
-      } 
+      const result = this.$refs.propertiesForm.validate()
+      if (!result.isValid) return
+      // Create the layer accordingly the input fields
+      const geoJson = this.file.content
+      // Create an empty layer used as a container
+      const newLayer = {
+        name: result.values.name,
+        description: result.values.description,
+        type: 'OverlayLayer',
+        icon: 'insert_drive_file',
+        featureId: result.values.featureId,
+        [this.kActivity.engine]: {
+          type: 'geoJson',
+          isVisible: true,
+          realtime: true
+        },
+        schema: this.file.schema
+      }
+      await this.kActivity.addLayer(newLayer)
+      // Generate temporary IDs for features
+      // TODO : is it required anymore ? comment for now
+      /*const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+      features.forEach(feature => { feature._id = uid().toString() })*/
+      // Assign the features to the layer
+      await this.kActivity.updateLayer(newLayer.name, geoJson)
+      this.$emit('done')
     }
   },
   created () {
     // Load the required components
     this.$options.components['k-form'] = this.$load('form/KForm')
+    // Set data
+    this.file = null
   }
 }
 </script>

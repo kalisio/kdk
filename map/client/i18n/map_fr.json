@@ -185,8 +185,8 @@
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
     "CATALOG_CREATE_TITLE": "Créer une nouvelles couche de données",
-    "CATALOG_NAME_FIELD_LABEL": "Choisissez un nom",
-    "CATALOG_DESCRIPTION_FIELD_LABEL": "Saisissez une description",
+    "CATALOG_NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
+    "CATALOG_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la nouvelle couche",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
     "CATALOG_SCHEMA_FIELD_LABEL": "Sélectionnez un schéma de données"
   },
@@ -254,6 +254,9 @@
       "CREATE_IMPORT_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
       "ZOOM_IMPORT_LAYER_LABEL": "La carte sera centrée sur votre nouvelle couche."
     }
+  },
+  "KOwsLayerField": {
+    "INVALID_URL": "URL invalide"
   },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",
@@ -413,18 +416,19 @@
     "TITLE": "Ajouter une nouvelle couche"
   },
   "KImportLayer": {
-    "FILE_LABEL": "Sélectionnez le fichier à importer",
-    "NAME_LABEL": "Saisissez le nom de la couche à créer",
-    "DESCRIPTION_LABEL": "Saisissez une description de la couche à créer",
+    "FILE_FIELD_LABEL": "Sélectionnez le fichier à importer",
+    "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
+    "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle",
+    "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
     "IMPORT_BUTTON": "Importer"
   },
   "KConnectLayer": {
-    "URL_HINT": "Adresse du serveur ...",
-    "LAYER_HINT": "Sélectionnez une couche distante ...",
-    "LAYER_NAME_HINT": "Nom de la couche à créer ...",
-    "LAYER_DESCRIPTION_HINT": "Description de la couche à créer ...",
-    "FID_HINT": "Sélectionnez un propriété d'identification des éléménts ...",
-    "LAYER_STYLE_HINT": "Sélectionnez un style pour la couche ...",
-    "CONNECT_BUTTON": "Se connecter"
+    "SERVICE_FIELD_LABEL": "Saisissez la requête pour récupérer les capacités du service distant",
+    "LAYER_FIELD_LABEL": "Sélectionnez la couche à laquelle se connecter",
+    "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
+    "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle couche",
+    "STYLE_FIELD_LABEL": "Saisissez le style de la nouvelle couche",
+    "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
+    "CONNECT_BUTTON": "Connecter"
   }
 }

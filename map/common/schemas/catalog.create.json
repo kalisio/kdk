@@ -25,7 +25,7 @@
     "featureId": {
       "type": "string", 
       "maxLength": 256,
-      "minLength": 1,
+      "minLength": 2,
       "default": "_id",
       "field": {
         "component": "form/KTextField",
