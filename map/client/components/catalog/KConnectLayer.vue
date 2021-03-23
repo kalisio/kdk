@@ -106,7 +106,7 @@ export default {
             field: {
               component: 'form/KSelectField',
               label: 'KConnectLayer.STYLE_ID_FIELD_LABEL',
-              options: properties 
+              options: styles 
             }
           })
         }
@@ -203,7 +203,7 @@ export default {
       } else if (this.service.protocol === 'TMS') {
         newLayer.leafet = {
           type: 'tileLayer',
-          source: buildUrl(`${layer.url}/{z}/{x}/{y}.${this.layer.format}`, this.service.searchParams),
+          source: buildUrl(`${this.layer.url}/{z}/{x}/{y}.${this.layer.format}`, this.service.searchParams),
           tms: true
         }
       }
