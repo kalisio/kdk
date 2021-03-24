@@ -27,6 +27,20 @@
     <slot name="content">
     </slot>
   </q-btn>
+  <!-- 
+    Form button renderer
+   -->
+  <q-btn v-else-if="renderer === 'form-button'"
+    :id="id"
+    :label="computedLabel"
+    color="primary"
+    :outline="outline"
+    :size="size"
+    :dense="dense"
+    :disabled="disabled"
+    :loading="loading"
+    @click="onClicked()">
+  </q-btn> 
   <!--
     Item renderer
    -->
@@ -96,6 +110,10 @@ export default {
       type: Boolean,
       default: true
     },
+    outline: {
+      type: Boolean,
+      default: false
+    },
     badge: {
       type: Object,
       default: () => null
@@ -120,6 +138,10 @@ export default {
       type: Boolean,
       default: false
     },
+    loading: {
+      type: Boolean,
+      default: false
+    },
     context: {
       type: Object,
       default: () => null
@@ -140,7 +162,7 @@ export default {
       type: String,
       default: 'button',
       validator: (value) => {
-        return ['button', 'item', 'fab'].includes(value)
+        return ['button', 'form-button', 'item', 'fab'].includes(value)
       }
     }
   },

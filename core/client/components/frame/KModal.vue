@@ -26,7 +26,7 @@
         Buttons section
        -->
       <q-card-actions v-if="buttons" align="right">
-        <k-panel id="modal-buttons" :content="buttons" />
+        <k-panel id="modal-buttons" :content="buttons" renderer="form-button" />
       </q-card-actions>
     </q-card>
   </q-dialog>

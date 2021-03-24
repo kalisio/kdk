@@ -60,7 +60,6 @@ import _ from 'lodash'
 import 'mime-types-browser'
 import { KUploader } from '../input'
 import mixins from '../../mixins'
-import { getQueryForAbilities } from '../../../common/permissions'
 
 export default {
   name: 'k-attachment-field',
@@ -70,7 +69,7 @@ export default {
   mixins: [mixins.baseField],
   data () {
     return {
-      isUploaderVisible: getQueryForAbilities,
+      isUploaderVisible: false,
       files: [],
       resource: ''
     }

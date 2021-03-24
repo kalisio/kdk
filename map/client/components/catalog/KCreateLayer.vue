@@ -3,7 +3,11 @@
    <k-form ref="propertiesForm" :schema="getPropertiesFormSchema()" @field-changed="onPropertiesFormFieldChanged" />
     <k-form ref="featureIdForm" :key="featureIdFormKey" :schema="getFeatureIdFormSchema()" />
     <div class="row justify-end">
-      <k-action id="connect-action" :label="$t('KCreateLayer.CREATE_BUTTON')" @triggered="onCreate" />
+      <k-action 
+        id="connect-action" 
+        :label="$t('KCreateLayer.CREATE_BUTTON')" 
+        renderer="form-button" 
+        @triggered="onCreate" />
     </div>
   </div>
 </template>

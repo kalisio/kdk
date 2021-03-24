@@ -413,7 +413,7 @@
     "FAVORITE_VIEWS_LABEL": "Favorite views",
     "SORT_VIEWS": "Sort views",
     "CREATE_VIEW": "Create a new view",
-    "ADD_BUTTON": "OK",
+    "SAVE_BUTTON": "Save",
     "VIEW_LIST": "Back to list",
     "REMOVE_VIEW": "$t(REMOVE)"
   },

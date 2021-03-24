@@ -18,12 +18,12 @@
       <div class="colum q-gutter-y-md">
         <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
         <div class="q-pa-sm row justify-end">
-          <q-btn 
+          <k-action 
+            id="create-view" 
+            :label="$t('KFavoriteViews.SAVE_BUTTON')" 
+            renderer="form-button" 
             :loading="savingView" 
-            color="secondary" 
-            id="local" 
-            :label="$t('KFavoriteViews.ADD_BUTTON')" 
-            @click="onAdd" />
+            @triggered="onSave" />
         </div>
       </div>
     </q-card-section>
@@ -124,7 +124,7 @@ export default {
     }
   },
   methods: {
-    async onAdd () {
+    async onSave () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
         const view = result.values

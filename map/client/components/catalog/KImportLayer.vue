@@ -5,7 +5,7 @@
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
-      <k-action id="inport-action" :label="$t('KImportLayer.IMPORT_BUTTON')" @triggered="onImport" />
+      <k-action id="inport-action" :label="$t('KImportLayer.IMPORT_BUTTON')" renderer="form-button" @triggered="onImport" />
     </div>
   </div>
 </template>

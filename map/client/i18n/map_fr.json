@@ -414,7 +414,7 @@
     "FAVORITE_VIEWS_LABEL": "Vues favorites",
     "SORT_VIEWS": "Trier les vues",
     "CREATE_VIEW": "Créer une nouvelle vue",
-    "ADD_BUTTON": "OK",
+    "SAVE_BUTTON": "Enregistrer",
     "VIEW_LIST": "Retour à la liste",
     "REMOVE_VIEW": "$t(REMOVE)"
   },

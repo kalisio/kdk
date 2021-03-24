@@ -4,7 +4,7 @@
     <k-form ref="layerForm" :key="layerFormKey" :schema="getLayerFormSchema()" @field-changed="onLayerFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <div class="row justify-end">
-      <k-action id="connect-action" :label="$t('KConnectLayer.CONNECT_BUTTON')" @triggered="onConnect" />
+      <k-action id="connect-action" :label="$t('KConnectLayer.CONNECT_BUTTON')" renderer="form-button" @triggered="onConnect" />
     </div>
   </div>
 </template>

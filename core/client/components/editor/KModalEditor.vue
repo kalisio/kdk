@@ -35,16 +35,16 @@ export default {
   computed: {
     buttons () {
       const buttons = [{
-        id: 'apply-button', label: this.applyButton, color: 'primary', handler: () => this.apply()
+        id: 'apply-button', label: this.applyButton, renderer: 'form-button', handler: () => this.apply()
       }]
       if (this.clearButton !== '') {
         buttons.push({
-          id: 'clear-button', label: this.clearButton, color: 'primary', handler: () => this.clear()
+          id: 'clear-button', label: this.clearButton, renderer: 'form-button', outline: 'true', handler: () => this.clear()
         })
       }
       if (this.resetButton !== '') {
         buttons.push({
-          id: 'reset-button', label: this.resetButton, color: 'primary', handler: () => this.reset()
+          id: 'reset-button', label: this.resetButton,renderer: 'form-button', outline: 'true', handler: () => this.reset()
         })
       }
       return buttons
