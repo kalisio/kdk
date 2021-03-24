@@ -4,7 +4,12 @@
     <k-form ref="layerForm" :key="layerFormKey" :schema="getLayerFormSchema()" @field-changed="onLayerFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <div class="row justify-end">
-      <k-action id="connect-action" :label="$t('KConnectLayer.CONNECT_BUTTON')" renderer="form-button" @triggered="onConnect" />
+      <k-action 
+        id="connect-action" 
+        :label="$t('KConnectLayer.CONNECT_BUTTON')" 
+        renderer="form-button"
+        :loading="connecting"
+        @triggered="onConnect" />
     </div>
   </div>
 </template>
@@ -19,7 +24,8 @@ export default {
   data () {
     return {
       layerFormKey: 1,
-      propertiesFormKey: 10000
+      propertiesFormKey: 10000,
+      connecting: false
     }
   },
   methods: {
@@ -148,6 +154,7 @@ export default {
     async onConnect () {
       const result = this.$refs.propertiesForm.validate()
       if (! result.isValid) return
+      this.connecting = true
       // Create the layer accordingly the input fields
       const newLayer = {
         name: result.values.name,
@@ -210,6 +217,7 @@ export default {
         }
       }
       await this.kActivity.addLayer(newLayer)
+      this.connecting = false
       this.$emit('done')
     }
   },

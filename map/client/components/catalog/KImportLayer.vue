@@ -5,7 +5,12 @@
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
-      <k-action id="inport-action" :label="$t('KImportLayer.IMPORT_BUTTON')" renderer="form-button" @triggered="onImport" />
+      <k-action
+        id="inport-action" 
+        :label="$t('KImportLayer.IMPORT_BUTTON')" 
+        renderer="form-button" 
+        :loading="importing"
+        @triggered="onImport" />
     </div>
   </div>
 </template>
@@ -20,7 +25,8 @@ export default {
   inject: ['kActivity'],
   data () {
     return {
-      propertiesFormKey: 1
+      propertiesFormKey: 1,
+      importing: false
     }
   },
   methods: {
@@ -110,6 +116,8 @@ export default {
     async onImport () {
       const result = this.$refs.propertiesForm.validate()
       if (!result.isValid) return
+      this.importing = true
+      console.log(this.importing)
       // Create the layer accordingly the input fields
       const geoJson = this.file.content
       // Create an empty layer used as a container
@@ -133,6 +141,7 @@ export default {
       features.forEach(feature => { feature._id = uid().toString() })*/
       // Assign the features to the layer
       await this.kActivity.updateLayer(newLayer.name, geoJson)
+      this.importing = false
       this.$emit('done')
     }
   },

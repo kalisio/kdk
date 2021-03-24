@@ -6,7 +6,8 @@
       <k-action 
         id="connect-action" 
         :label="$t('KCreateLayer.CREATE_BUTTON')" 
-        renderer="form-button" 
+        renderer="form-button"
+        :loading="creating"        
         @triggered="onCreate" />
     </div>
   </div>
@@ -21,7 +22,8 @@ export default {
   data () {
     return {
       schema: null,
-      featureIdFormKey: 1
+      featureIdFormKey: 1,
+      creating: false
     }
   },
   methods: {
@@ -104,6 +106,7 @@ export default {
       const propertiesResult = this.$refs.propertiesForm.validate()
       const featureIdResult = this.$refs.featureIdForm.validate()
       if (!propertiesResult.isValid || !featureIdResult.isValid)  return
+      this.creating = true
       // Create an empty layer
       const newLayer = {
         name: propertiesResult.values.name,
@@ -122,6 +125,7 @@ export default {
       await this.kActivity.addLayer(newLayer)
       // Start editing
       await this.kActivity.onEditLayerData(newLayer)
+      this.creating = false
       this.$emit('done')
     }
   },
