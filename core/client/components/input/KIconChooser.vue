@@ -20,13 +20,14 @@
         </div>
         <div id="icons" class="row justify-start items-center q-gutter-sm">
           <template v-for="icon in iconsPage">
-            <q-icon
-              :key="icon.name"
-              :color="icon.name !== selectedIcon.name ? 'grey-7' : selectedIcon.color"
-              :name="icon.name"
-              size="2rem"
-              @click="onIconSelected(icon)">
-
+            <q-icon v-if="icon.name === selectedIcon.name" :key="icon.name"
+              style="border-bottom: 0.25rem solid" :color="selectedIcon.color" :name="icon.name" size="2rem">
+              <q-tooltip>
+                {{icon.title}}
+              </q-tooltip>
+            </q-icon>
+            <q-icon v-if="icon.name !== selectedIcon.name" :key="icon.name"
+              color="grey-7" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
               <q-tooltip>
                 {{icon.title}}
               </q-tooltip>
@@ -36,7 +37,7 @@
         <div class="row justify-center items-center q-gutter-sm">
           <q-pagination v-model="currentPage" :max="maxPage" :input="true" />
         </div>
-        <div class="row justify-between items-center q-gutter-sm">
+        <div v-if="palette" class="row justify-between items-center q-gutter-sm">
           <k-palette id="palette" shape="round" v-model="selectedIcon.color" />
         </div>
 
@@ -68,6 +69,10 @@ export default {
       validator: (value) => {
         return ['material-icons', 'line-awesome', 'font-awesome'].includes(value)
       }
+    },
+    palette: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -161,19 +166,20 @@ export default {
     },
     open (defaultIcon) {
       this.reset()
-
       // Find the page that contains the current selected icon
       let index = -1
-
       // Assign the selected icon to the default one if any
       if (defaultIcon) {
-        Object.assign(this.selectedIcon, defaultIcon)
+        // Internally we use icon name + color but it can be configured to ony output icon
+        if (typeof defaultIcon === 'string') {
+          this.selectedIcon.name = defaultIcon
+        } else {
+          Object.assign(this.selectedIcon, defaultIcon)
+        }
         index = _.findIndex(this.allIcons, icon => { return icon.name === this.selectedIcon.name })
       }
-
       if (index === -1) this.currentPage = 1
       else this.currentPage = Math.ceil(index / this.iconsPerPage)
-
       // Open the modal
       this.$refs.modal.open()
     },
@@ -187,7 +193,8 @@ export default {
       return this.selectedIcon.name.length > 0
     },
     doDone (event) {
-      this.$emit('icon-choosed', this.selectedIcon)
+      // Send back icon name + color if required
+      this.$emit('icon-choosed', (this.palette ? this.selectedIcon : this.selectedIcon.name))
       this.doClose()
     },
     doClose (event) {
@@ -305,7 +312,6 @@ export default {
 
     this.allIcons = result.icons
     this.categories = result.categories
-
     this.categoryInfos = result.categoryInfos
   }
 }

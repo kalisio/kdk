@@ -19,9 +19,9 @@
           clickable 
           dense 
           v-ripple 
-          :text-color="inverted ? model.color : 'white'" 
+          :text-color="inverted ? iconColor : 'white'" 
           :icon="iconName" 
-          :color="inverted ? 'white' : model.color" 
+          :color="inverted ? 'white' : iconColor" 
           @click="onIconClicked" />
       </template>
       <!-- Helper -->
@@ -34,6 +34,7 @@
       id="icon-chooser"
       ref="iconChooser"
       :icon-set="iconSet"
+      :palette="color"
       @icon-choosed="onIconChoosed" />
   </div>
 </template>
@@ -61,26 +62,34 @@ export default {
     },
     iconName () {
       return getIconName(this.model, 'name')
+    },
+    iconColor () {
+      // We support icon without a color
+      return _.get(this.model, 'color', 'primary')
     }
   },
   data () {
     return {
       iconSet: _.get(this.properties.field, 'iconSet', 'font-awesome'),
+      color: _.get(this.properties.field, 'color', true),
       inverted: _.get(this.properties.field, 'inverted', false)
     }
   },
   methods: {
     emptyModel () {
-      return { name: '', color: '' }
+      // We support icon without a color, in this case we have a string as model
+      return (this.color ? { name: '', color: '' } : '')
     },
     onCloseClicked () {
-      this.model = { name: '', color: '' }
+      // We support icon without a color, in this case we have a string as model
+      this.model = (this.color ? { name: '', color: '' } : '')
     },
     onIconClicked () {
       this.$refs.iconChooser.open(this.model)
     },
     onIconChoosed (icon) {
-      this.model = Object.assign({}, icon)
+      // We support icon without a color, in this case we have a string as model
+      this.model = (this.color ? Object.assign({}, icon) : icon)
     }
   }
 }
