@@ -4,29 +4,29 @@ import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:map:catalog:hooks')
 
-// By default we only return layers and not contexts in catalog
-export function filterContexts (hook) {
+// By default we only return layers and not other objects in catalog
+export function filterLayers (hook) {
   const query = _.get(hook, 'params.query', {})
-  if (!query.type) query.type = { $nin: ['Context', 'Category'] }
+  if (!query.type) query.type = { $nin: ['Context', 'Service', 'Category'] }
   _.set(hook, 'params.query', query)
 }
 
-// Update layer name in all contexts when renamed/removed
-export async function updateContexts (hook) {
+// Update layer name in all contexts, categories, etc. when renamed/removed
+export async function updateLayerReferences (hook) {
   // Check if it's a layer renaming first
   const type = _.get(hook.params, 'previousItem.type', '')
   if (!type.endsWith('Layer')) return hook
   const previousLayer = _.get(hook.params, 'previousItem')
   const layer = getItems(hook)
   
-  // Retrieve the list of all contexts involving the layer
+  // Retrieve the list of all contexts, categories, etc. involving the layer
   const contexts = await hook.service.find({
-    query: { type: 'Context', layers: previousLayer.name },
+    query: { type: { $in: ['Context', 'Category'] }, layers: previousLayer.name },
     paginate: false
   })
   // Stop when non found
   if (contexts.length === 0) {
-    debug(`No context to update after renaming or removing layer ${layer.name} `)
+    debug(`No context or category to update after renaming or removing layer ${layer.name} `)
     return hook
   }
   // Update each context otherwise
@@ -41,6 +41,6 @@ export async function updateContexts (hook) {
     return hook.service.patch(context._id, { layers })
   }))
 
-  debug(`Updated ${contexts.length} contexts after renaming or removing layer ${layer.name} `)
+  debug(`Updated ${contexts.length} contexts and categories after renaming or removing layer ${layer.name} `)
   return hook
 }

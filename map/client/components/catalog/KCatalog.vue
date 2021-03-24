@@ -7,8 +7,8 @@
           v-if="layersByCategory[category.name].length > 0"
           :key="category.name"
           :id="category.name"
-          header-class="text-primary"
-          :icon="category.icon.name || category.icon"
+          :header-class="getColor(category)"
+          :icon="getIcon(category)"
           :label="$t(category.name)"
           expand-separator>
           <component
@@ -83,6 +83,12 @@ export default {
     }
   },
   methods: {
+    getColor (category) {
+      return 'text-' + _.get(category, 'icon.color', 'primary')
+    },
+    getIcon (category) {
+      return _.get(category, 'icon.name', _.get(category, 'icon', 'las la-layer-group'))
+    },
     categorize () {
       this.layerCategories.forEach(category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')

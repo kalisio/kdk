@@ -1,24 +1,24 @@
 import _ from 'lodash'
 import { setNow, discard } from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api'
-import { filterContexts, updateContexts } from '../../hooks'
+import { filterLayers, updateLayerReferences } from '../../hooks'
 
 module.exports = {
   before: {
     all: [],
     find: [
-      filterContexts
+      filterLayers
     ],
     get: [],
     create: [
-      coreHooks.checkUnique({ field: 'name' }),
+      coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'data.type') } }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
       coreHooks.convertToString(['schema.content']),
       setNow('createdAt', 'updatedAt')
     ],
     update: [
       coreHooks.populatePreviousObject,
-      coreHooks.checkUnique({ field: 'name' }),
+      coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
       coreHooks.convertToString(['schema.content']),
       discard('createdAt', 'updatedAt'),
@@ -26,7 +26,7 @@ module.exports = {
     ],
     patch: [
       coreHooks.populatePreviousObject,
-      coreHooks.checkUnique({ field: 'name' }),
+      coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
       coreHooks.convertToString(['schema.content']),
       discard('createdAt', 'updatedAt'),
@@ -45,14 +45,14 @@ module.exports = {
     get: [],
     create: [],
     update: [
-      updateContexts
+      updateLayerReferences
     ],
     patch: [
-      updateContexts
+      updateLayerReferences
     ],
     remove: [
       setNow('updatedAt'),
-      updateContexts
+      updateLayerReferences
     ]
   },
 

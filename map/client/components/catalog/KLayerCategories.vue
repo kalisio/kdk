@@ -131,11 +131,14 @@ export default {
             }
           },
           icon: {
-            type: 'object',
-            default: { name: 'fas fa-map-marker-alt', color: 'primary' },
+            type: 'string',
+            default: 'las la-map-marker-alt',
             field: {
               component: 'form/KIconField',
-              label: 'schemas.LAYER_CATEGORY_ICON_FIELD_LABEL'
+              label: 'schemas.LAYER_CATEGORY_ICON_FIELD_LABEL',
+              iconSet: 'line-awesome',
+              color: false,
+              inverted: true
             }
           },
           layers: { 
@@ -212,7 +215,9 @@ export default {
     refreshCategories (data) {
       this.count = data.items.length
       if (this.count > 0) {
+        // Add the list of layers as description
         data.items.forEach(category => {
+          category.description = category.layers.join(',')
         })
       } else {
         if (!this.filter.pattern) this.mode = 'add'
