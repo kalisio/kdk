@@ -63,6 +63,32 @@ export default {
       const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       return (gatewayToken ? setGatewayJwt(layers, gatewayToken) : layers)
     },
+    async addCatalogLayer (layer) {
+      // Check if available for current engine
+      if (layer[this.engine]) {
+        // Process i18n
+        if (layer.i18n) {
+          const locale = kCoreUtils.getAppLocale()
+          const i18n = _.get(layer.i18n, locale)
+          if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
+        }
+        if (this.$t(layer.name)) layer.label = this.$t(layer.name)
+        if (this.$t(layer.description)) layer.description = this.$t(layer.description)
+        // Check for Weacast API availability
+        const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
+        if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) return
+        await this.addLayer(layer)
+      }
+      // Filter layers with variables, not just visible ones because we might want to
+      // probe weather even if there is no visual representation (e.g. in globe)
+      if (layer.variables) this.variables = _.uniqBy(this.variables.concat(layer.variables), (variable) => variable.name)
+    },
+    async removeCatalogLayer (layer) {
+      // Check if available for current engine
+      if (layer[this.engine]) {
+        await this.removeLayer(layer.name)
+      }
+    },
     async getCatalogCategories () {
       let categories = []
       // We get categories coming from global catalog first if any
@@ -79,11 +105,14 @@ export default {
       }
       return categories
     },
-    async refreshLayers () {
-      this.layers = {}
+    async refreshLayerCategories () {
       // Merge built-in categories with user-defiend ones
       this.layerCategories = await this.getCatalogCategories()
       this.layerCategories = this.layerCategories.concat(_.get(this, 'activityOptions.catalog.categories', []))
+    },
+    async refreshLayers () {
+      // Clear layers and variables
+      this.layers = {}
       this.variables = []
       let catalogLayers = await this.getCatalogLayers()
       // Apply global layer filter
@@ -91,24 +120,7 @@ export default {
       // Iterate and await layers as creation is async and we need to have all layers ready
       // before checking if there is some background layer
       for (let i = 0; i < catalogLayers.length; i++) {
-        const layer = catalogLayers[i]
-        if (layer[this.engine]) {
-          // Process i18n
-          if (layer.i18n) {
-            const locale = kCoreUtils.getAppLocale()
-            const i18n = _.get(layer.i18n, locale)
-            if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
-          }
-          if (this.$t(layer.name)) layer.label = this.$t(layer.name)
-          if (this.$t(layer.description)) layer.description = this.$t(layer.description)
-          // Check for Weacast API availability
-          const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
-          if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) continue
-          await this.addLayer(layer)
-        }
-        // Filter layers with variables, not just visible ones because we might want to
-        // probe weather even if there is no visual representation (e.g. in globe)
-        if (layer.variables) this.variables = _.uniqBy(this.variables.concat(layer.variables), (variable) => variable.name)
+        await this.addCatalogLayer(catalogLayers[i])
       }
       // We need at least an active background
       const hasVisibleBaseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer') && layer.isVisible)
@@ -145,6 +157,14 @@ export default {
       if (_.has(layer, 'isStyleEditable')) return _.get(layer, 'isStyleEditable')
       // Only possible on user-defined layers by default
       return this.isUserLayer(layer)
+    },
+    async resetLayer (layer) {
+      // Reset layer with new setup but keep track of current visibility state
+      // as adding the layer back will restore default visibility state
+      const isVisible = this.isLayerVisible(layer.name)
+      await this.removeLayer(layer.name)
+      await this.addLayer(layer)
+      if (isVisible) await this.showLayer(layer.name)
     },
     configureLayerActions (layer) {
       let actions = _.get(this.activityOptions, 'layers.actions')
@@ -277,8 +297,7 @@ export default {
         // Because we save all features in a single service use filtering to separate layers
         createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
         // Reset layer with new setup
-        await this.removeLayer(layer.name)
-        await this.addLayer(createdLayer)
+        await this.resetLayer(layer)
         if (_.get(layer, 'leaflet.tiled')) {
           this.$toast({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
         }
@@ -299,8 +318,7 @@ export default {
       this.filterModal.open()
       this.filterModal.$on('applied', async () => {
         // Reset layer with new setup
-        await this.removeLayer(layer.name)
-        await this.addLayer(layer)
+        await this.resetLayer(layer)
         this.filterModal.close()
       })
       this.filterModal.$on('closed', () => {
@@ -377,12 +395,8 @@ export default {
       this.editStyleModal.$on('applied', async () => {
         // Keep track of data as we will reset the layer
         const geoJson = this.toGeoJson(layer.name)
-        // Reset layer with new setup but keep track of current visibility state
-        // as adding the layer back will restore default visibility state
-        const isVisible = this.isLayerVisible(layer.name)
-        await this.removeLayer(layer.name)
-        await this.addLayer(layer)
-        if (isVisible) await this.showLayer(layer.name)
+        // Reset layer with new setup
+        await this.resetLayer(layer)
         // Update data only when in memory as reset has lost it
         if (!layer._id) {
           this.updateLayer(layer.name, geoJson)
@@ -626,10 +640,53 @@ export default {
       }
       // Retrieve the layers
       try {
+        await this.refreshLayerCategories()
         await this.refreshLayers()
         if (hasContext) await this.restoreContext('layers')
       } catch (error) {
         logger.error(error)
+      }
+      // Listen about changes in global/contextual catalog services
+      const globalCatalogService = this.$api.getService('catalog', '')
+      const catalogService = this.$api.getService('catalog')
+      // Keep track of binded listeners as we use the same function with different contexts
+      this.catalogListeners = {}
+      globalCatalogService._serviceEvents.forEach(event => {
+        this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
+        globalCatalogService.on(event, this.catalogListeners[event])
+        if (catalogService && (catalogService !== globalCatalogService)) {
+          catalogService.on(event, this.catalogListeners[event])
+        }
+      })
+    },
+    finalize () {
+      // Stop listening about changes in global/contextual catalog services
+      const globalCatalogService = this.$api.getService('catalog', '')
+      const catalogService = this.$api.getService('catalog')
+      globalCatalogService._serviceEvents.forEach(event => {
+        globalCatalogService.removeListener(event, this.catalogListeners[event])
+        if (catalogService && (catalogService !== globalCatalogService)) {
+          catalogService.removeListener(event, this.catalogListeners[event])
+        }
+      })
+      this.catalogListeners = {}
+    },
+    async onCatalogUpdated (event, object) {
+      console.log(event, object)
+      switch (object.type) {
+        case 'Category':
+          // In any case we rebuild categories
+          this.refreshLayerCategories()
+          break
+        case 'Context':
+        case 'Service':
+          // Nothing to do
+          break
+        default:
+          // Updating a layer requires to remove/add it again
+          if (this.hasLayer(object.name)) await this.removeCatalogLayer(object)
+          if (event !== 'removed') await this.addCatalogLayer(object)
+          break
       }
     }
   },
@@ -642,5 +699,6 @@ export default {
     this.$off('map-ready', this.onMapReady)
     this.$off('globe-ready', this.onGlobeReady)
     this.$off('layer-added', this.onLayerAdded)
+    this.finalize()
   }
 }
