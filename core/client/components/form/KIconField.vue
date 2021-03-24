@@ -19,9 +19,9 @@
           clickable 
           dense 
           v-ripple 
-          text-color="white" 
+          :text-color="inverted ? model.color : 'white'" 
           :icon="iconName" 
-          :color="model.color" 
+          :color="inverted ? 'white' : model.color" 
           @click="onIconClicked" />
       </template>
       <!-- Helper -->
@@ -65,7 +65,8 @@ export default {
   },
   data () {
     return {
-      iconSet: _.get(this.properties.field, 'iconSet', undefined)
+      iconSet: _.get(this.properties.field, 'iconSet', 'font-awesome'),
+      inverted: _.get(this.properties.field, 'inverted', false)
     }
   },
   methods: {

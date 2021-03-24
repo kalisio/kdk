@@ -64,7 +64,10 @@ export default {
   props: {
     iconSet: {
       type: String,
-      default: 'fontawesome'
+      default: 'font-awesome',
+      validator: (value) => {
+        return ['material-icons', 'line-awesome', 'font-awesome'].includes(value)
+      }
     }
   },
   data () {
@@ -224,7 +227,7 @@ export default {
     },
     async loadFontAwesomeIcons () {
       // Fetch available FA icons from the font awesome repository so we are always in sync for v5
-      const response = await fetch('https://raw.githubusercontent.com/FortAwesome/Font-Awesome/5.13.1/metadata/icons.yml')
+      const response = await fetch('https://raw.githubusercontent.com/FortAwesome/Font-Awesome/5.11.2/metadata/icons.yml')
 
       if (response.status !== 200) throw new Error('Impossible to retrieve fontawesome code points: ' + response.status)
       const text = await response.text()
@@ -248,7 +251,7 @@ export default {
       }
     },
     async loadFontAwesomeCategories () {
-      const response = await fetch('https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/metadata/categories.yml')
+      const response = await fetch('https://raw.githubusercontent.com/FortAwesome/Font-Awesome/5.11.2/metadata/categories.yml')
 
       if (response.status !== 200) throw new Error('Impossible to retrieve fontawesome categories: ' + response.status)
       const text = await response.text()
@@ -262,20 +265,22 @@ export default {
       }
     },
     addFontAwsomeIcons (list, value, key) {
+      // We also support lineawesome, which is fontawesome compatible
+      const prefix = (this.iconSet === 'line-awesome' ? 'la' : 'fa')
       if (!value.styles) {
-        this.addFontAwsomeIcon(list, key, 'fa-' + key)
+        this.addFontAwsomeIcon(list, key, `${prefix}-${key}`)
       } else {
         if (value.styles.includes('brands')) {
-          this.addFontAwsomeIcon(list, key, 'fab fa-' + key)
+          this.addFontAwsomeIcon(list, key, `${prefix}b ${prefix}-${key}`)
         } else {
           if (value.styles.includes('regular')) {
-            this.addFontAwsomeIcon(list, key, 'far fa-' + key)
+            this.addFontAwsomeIcon(list, key, `${prefix}r ${prefix}-${key}`)
           }
           if (value.styles.includes('solid')) {
-            this.addFontAwsomeIcon(list, key, 'fas fa-' + key)
+            this.addFontAwsomeIcon(list, key, `${prefix}s ${prefix}-${key}`)
           }
           if (value.styles.includes('light')) {
-            this.addFontAwsomeIcon(list, key, 'fal fa-' + key)
+            this.addFontAwsomeIcon(list, key, `${prefix}l ${prefix}-${key}`)
           }
         }
       }
@@ -294,7 +299,7 @@ export default {
 
     if (this.iconSet === 'material-icons') {
       result = await this.loadMaterialIcons()
-    } else if (this.iconSet === 'fontawesome') {
+    } else {
       result = await this.loadFontAwesomeIcons()
     }
 

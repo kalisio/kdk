@@ -22,7 +22,7 @@
     :error-message="errorLabel"
     :disabled="disabled"
     bottom-slots>
-     <!-- Helper -->
+    <!-- Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>
     </template>
