@@ -1,47 +1,45 @@
 <template>
-  <div class="column">
-    <q-select
-      ref="select"
-      v-model="request"
-      :label="label"
-      fill-input
-      hide-selected
-      clearable
-      emit-value
-      use-input
-      new-value-mode="add-unique"
-      :error-message="errorLabel"
-      :error="hasError"
-      bottom-slots
-      :options="availableServices"
-      option-label="name"
-      option-value="request"
-      :loading="loading"
-      @clear="onCleared"
-      @input="onUpdated">
-      <template v-slot:append>
-        <k-action v-if="model" id="add-service" icon="add_circle" color="grey-7" :handler="onAddService" />
-      </template>
-      <!-- Options -->
-      <template v-slot:option="scope">
-        <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
-          <q-item-section avatar>
-            <q-badge dense>{{ scope.opt.protocol }}</q-badge>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ scope.opt.baseUrl }}</q-item-label>
-          </q-item-section>
-          <q-item-section side>
-            <k-action id="delete-service" icon="las la-trash" @triggered="onDeleteService(scope.opt)" />
-          </q-item-section>
-        </q-item>
-      </template>
-      <!-- Helper -->
-      <template v-if="helper" v-slot:hint>
-        <span v-html="helper" />
-      </template>
-    </q-select>
-  </div>
+  <q-select
+    ref="select"
+    v-model="request"
+    :label="label"
+    fill-input
+    hide-selected
+    clearable
+    emit-value
+    use-input
+    new-value-mode="add-unique"
+    :error-message="errorLabel"
+    :error="hasError"
+    bottom-slots
+    :options="availableServices"
+    option-label="name"
+    option-value="request"
+    :loading="loading"
+    @clear="onCleared"
+    @input="onUpdated">
+    <template v-slot:append>
+      <k-action v-if="canAddService" id="add-service" icon="add_circle" color="grey-7" :handler="onAddService" />
+    </template>
+    <!-- Options -->
+    <template v-slot:option="scope">
+      <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+        <q-item-section avatar>
+          <q-badge dense>{{ scope.opt.protocol }}</q-badge>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ scope.opt.baseUrl }}</q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <k-action id="delete-service" icon="las la-trash" @triggered="onDeleteService(scope.opt)" />
+        </q-item-section>
+      </q-item>
+    </template>
+    <!-- Helper -->
+    <template v-if="helper" v-slot:hint>
+      <span v-html="helper" />
+    </template>
+  </q-select>
 </template>
 
 <script>
@@ -65,9 +63,10 @@ export default {
     }
   },
   computed: {
-    baseQuery () {
-      return Object.assign({ type: 'Service' })
-    },
+    canAddService () {
+      if (!this.model) return false
+      return !_.find(this.availableServices, { 'request': this.model.request })
+    }
   },
   methods: {
     emptyModel () {
@@ -99,6 +98,7 @@ export default {
     async onAddService () {
       // Delete the available layers before saving the service
       const service = _.cloneDeep(this.model)
+      console.log(service)
       delete service.availableLayers
       // Save the service
       await this.$api.getService('catalog').create(service)
@@ -133,9 +133,9 @@ export default {
       try {
         let caps = null
         if (url.protocol === 'http:' || url.protocol === 'https:') {
-          result.name = url.hostname
           result.request = url.href
           result.baseUrl = `${url.protocol}//${url.host}${url.pathname}`
+          result.name = result.baseUrl
           for (const [k, v] of url.searchParams) result.searchParams[k] = v
           // fetch content and try to convert to json
           const query = url.href
