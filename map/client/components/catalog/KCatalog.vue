@@ -77,7 +77,7 @@ export default {
         } else if (_.has(category, 'layers')) {
           filter = { name: { $in: _.get(category, 'layers') } }
         }
-        layersByCategory[category.name] = layers.filter(sift(filter))
+        layersByCategory[category.name] = _.remove(layers, sift(filter))
       })
       return layersByCategory
     }
