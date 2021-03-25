@@ -159,7 +159,7 @@ export default {
             }
           }
         },
-        required: ['name', 'icon', 'layers']
+        required: ['name', 'icon']
       },
       savingCategory: false,
       categoryRenderer: {

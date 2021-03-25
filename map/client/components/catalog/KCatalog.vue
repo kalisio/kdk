@@ -4,7 +4,6 @@
       <slot name="header" />
       <template v-for="category in layerCategories">
         <q-expansion-item
-          v-if="layersByCategory[category.name].length > 0"
           :key="category.name"
           :id="category.name"
           :header-class="getColor(category)"
@@ -67,6 +66,7 @@ export default {
       return 'height: 75vh; min-width: 400px;'
     },
     layersByCategory () {
+      console.log(this.layerCategories)
       const layers = _.values(this.layers)
       const layersByCategory = {}
       this.layerCategories.forEach(category => {

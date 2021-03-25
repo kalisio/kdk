@@ -180,8 +180,8 @@ export default {
       this.connecting = true
       // Create the layer accordingly the input fields
       const newLayer = {
-        name: propertiesResult.name,
-        description: propertiesResult.description,
+        name: propertiesResult.values.name,
+        description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'las la-plug',
         category: categoryResult.values.category,
@@ -194,7 +194,7 @@ export default {
           source: this.service.baseUrl,
           layers: this.layer.id,
           version: this.service.version,
-          styles: propertiesResult.style,
+          styles: propertiesResult.values.style,
           format: 'image/png',
           transparent: true,
           bgcolor: 'FFFFFFFF'
@@ -213,7 +213,7 @@ export default {
       } else if (this.service.protocol === 'WFS') {
         Object.assign(newLayer, {
           isStyleEditable: true,
-          featureId: propertiesResult.featureId,
+          featureId: propertiesResult.values.featureId,
           wfs: {
             url: this.service.baseUrl,
             version: this.service.version,
@@ -227,7 +227,7 @@ export default {
           tiled: true
         }
       } else if (this.service.protocol === 'WMTS') {
-        const layerStyleId = propertiesResult.style
+        const layerStyleId = propertiesResult.values.style
         const tileMatrixSet = this.layer.crs['3857']
         newLayer.leaflet = {
           type: 'tilelayer',
