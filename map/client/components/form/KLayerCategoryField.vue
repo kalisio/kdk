@@ -40,7 +40,7 @@ export default {
   },
   async created () {
     // Build the list of available categories
-    const response = await this.$api.getService('catalog').find({ query: { type: 'Category' } })
+    const response = await this.$api.getService('catalog').find({ query: { type: 'category' } })
     this.availableCategories = response.data
   }
 }
