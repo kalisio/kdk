@@ -1,8 +1,9 @@
 <template>
   <div>
-    <!-- Form section -->
+    <!-- Forms section -->
     <k-form ref="fileForm" :schema="getFileFormSchema()" @field-changed="onFileFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
+    <k-form ref="categoryForm" :schema="getCategoryFormSchema()" />
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
       <k-action
@@ -87,6 +88,22 @@ export default {
         required: ['name', 'featureId']
       }
     },
+    getCategoryFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/import-layer-select-category#',
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            field: {
+              component: 'form/KLayerCategoryField',
+              label: 'KImportLayer.CATEGORY_FIELD_LABEL'
+            }
+          }
+        }
+      }
+    },
     onFileFormFieldChanged (field, value) {
       this.file = value
       if (value) {
@@ -114,19 +131,20 @@ export default {
       return ''
     },
     async onImport () {
-      const result = this.$refs.propertiesForm.validate()
-      if (!result.isValid) return
+      const propertiesResult = this.$refs.propertiesForm.validate()
+      const categoryResult = this.$refs.categoryForm.validate()
+      if (!propertiesResult.isValid || !categoryResult.isValid) return
       this.importing = true
-      console.log(this.importing)
       // Create the layer accordingly the input fields
       const geoJson = this.file.content
       // Create an empty layer used as a container
       const newLayer = {
-        name: result.values.name,
-        description: result.values.description,
+        name: propertiesResult.values.name,
+        description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'insert_drive_file',
-        featureId: result.values.featureId,
+        category: categoryResult.values.category,        
+        featureId: propertiesResult.values.featureId,
         [this.kActivity.engine]: {
           type: 'geoJson',
           isVisible: true,

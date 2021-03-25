@@ -1,8 +1,11 @@
 <template>
   <div>
+    <!-- Forms section -->
     <k-form ref="serviceForm" :schema="getServiceFormSchema()" @field-changed="onServiceFormFieldChanged" />
     <k-form ref="layerForm" :key="layerFormKey" :schema="getLayerFormSchema()" @field-changed="onLayerFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
+    <k-form ref="categoryForm" :schema="getCategoryFormSchema()" />
+    <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
         id="connect-action" 
@@ -65,6 +68,7 @@ export default {
       }
     },
     getPropertiesFormSchema () {
+      let required = ['name']
       let schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/connect-layer-set-properties#',
@@ -103,6 +107,7 @@ export default {
               options: this.getLayerProperties()
             }
           })
+          required.push('featureId')
         } else if (protocol === 'WMS' || protocol === 'WMTS') {
           _.set(schema, 'properties.style', {
             type: 'string',
@@ -115,7 +120,24 @@ export default {
           })
         }
       }
+      _.set(schema, 'required', required)
       return schema
+    },
+    getCategoryFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-select-category#',
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            field: {
+              component: 'form/KLayerCategoryField',
+              label: 'KConnectLayer.CATEGORY_FIELD_LABEL'
+            }
+          }
+        }
+      }
     },
     onServiceFormFieldChanged (field, value) {
       this.service = value
@@ -152,15 +174,17 @@ export default {
       return ''
     },
     async onConnect () {
-      const result = this.$refs.propertiesForm.validate()
-      if (! result.isValid) return
+      const propertiesResult = this.$refs.propertiesForm.validate()
+      const categoryResult = this.$refs.categoryForm.validate()
+      if (! propertiesResult.isValid || !categoryResult.isValid) return
       this.connecting = true
       // Create the layer accordingly the input fields
       const newLayer = {
-        name: result.values.name,
-        description: result.values.description,
-        icon: 'las la-plug',
+        name: propertiesResult.name,
+        description: propertiesResult.description,
         type: 'OverlayLayer',
+        icon: 'las la-plug',
+        category: categoryResult.values.category,
         isRemovable: true,
         isStorable: true
       }
@@ -170,7 +194,7 @@ export default {
           source: this.service.baseUrl,
           layers: this.layer.id,
           version: this.service.version,
-          styles: result.values.style,
+          styles: propertiesResult.style,
           format: 'image/png',
           transparent: true,
           bgcolor: 'FFFFFFFF'
@@ -189,7 +213,7 @@ export default {
       } else if (this.service.protocol === 'WFS') {
         Object.assign(newLayer, {
           isStyleEditable: true,
-          featureId: result.values.featureId,
+          featureId: propertiesResult.featureId,
           wfs: {
             url: this.service.baseUrl,
             version: this.service.version,
@@ -203,7 +227,7 @@ export default {
           tiled: true
         }
       } else if (this.service.protocol === 'WMTS') {
-        const layerStyleId = result.values.style
+        const layerStyleId = propertiesResult.style
         const tileMatrixSet = this.layer.crs['3857']
         newLayer.leaflet = {
           type: 'tilelayer',

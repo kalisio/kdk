@@ -1,7 +1,10 @@
 <template>
   <div>
-   <k-form ref="propertiesForm" :schema="getPropertiesFormSchema()" @field-changed="onPropertiesFormFieldChanged" />
+    <!-- Forms section -->
+    <k-form ref="propertiesForm" :schema="getPropertiesFormSchema()" @field-changed="onPropertiesFormFieldChanged" />
     <k-form ref="featureIdForm" :key="featureIdFormKey" :schema="getFeatureIdFormSchema()" />
+    <k-form ref="categoryForm" :schema="getCategoryFormSchema()" />
+    <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
         id="connect-action" 
@@ -39,21 +42,21 @@ export default {
             minLength: 3,          
             field: { 
               component: 'form/KTextField',
-              label: 'KConnectLayer.NAME_FIELD_LABEL'
+              label: 'KCreateLayer.NAME_FIELD_LABEL'
             }
           },
           description: {
             type: 'string',
             field: { 
               component: 'form/KTextField',
-              label: 'KConnectLayer.DESCRIPTION_FIELD_LABEL'
+              label: 'KCreateLayer.DESCRIPTION_FIELD_LABEL'
             }
           },
           schema: { 
             type: 'object',
             field: {
               component: 'form/KFileField',
-              label: 'schemas.CATALOG_SCHEMA_FIELD_LABEL',
+              label: 'KCreateLayer.CATALOG_SCHEMA_FIELD_LABEL',
               mimeTypes: 'application/json'
             }
           }
@@ -72,12 +75,28 @@ export default {
             default: this.guessFeatureId(),
             field: {
               component: 'form/KSelectField',
-              label: 'KConnectLayer.FEATURE_ID_FIELD_LABEL',
+              label: 'KCreateLayer.FEATURE_ID_FIELD_LABEL',
               options: this.getProperties()
             }
           }
         },
         required: ['featureId']
+      }
+    },
+    getCategoryFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/create-layer-select-category#',
+        type: 'object',
+        properties: {
+          category: {
+            type: 'string',
+            field: {
+              component: 'form/KLayerCategoryField',
+              label: 'KCreateLayer.CATEGORY_FIELD_LABEL'
+            }
+          }
+        }
       }
     },
     onPropertiesFormFieldChanged (field, value) {
@@ -105,7 +124,8 @@ export default {
     async onCreate () {
       const propertiesResult = this.$refs.propertiesForm.validate()
       const featureIdResult = this.$refs.featureIdForm.validate()
-      if (!propertiesResult.isValid || !featureIdResult.isValid)  return
+      const categoryResult = this.$refs.categoryForm.validate()
+      if (!propertiesResult.isValid || !featureIdResult.isValid || !categoryResult.isValid)  return
       this.creating = true
       // Create an empty layer
       const newLayer = {
@@ -113,6 +133,7 @@ export default {
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'insert_drive_file',
+        category: categoryResult.values.category,
         featureId: featureIdResult.values.featureId,
         [this.kActivity.engine]: {
           type: 'geoJson',

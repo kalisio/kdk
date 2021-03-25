@@ -430,25 +430,36 @@
     "REMOVE_CATEGORY": "$t(REMOVE)"
   },
   "KAddLayer": {
-    "TITLE": "Ajouter une nouvelle couche"
+    "TITLE": "Ajouter une nouvelle couche",
+    "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
+    "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle couche",
+    "CATEGORY_FIELD_LABEL": "Sélectionnez ou saisissez une catégorie",
+    "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique"
   },
   "KImportLayer": {
     "FILE_FIELD_LABEL": "Sélectionnez le fichier à importer",
-    "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
-    "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle",
-    "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
+    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
+    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
+    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
+    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
     "IMPORT_BUTTON": "Importer"
   },
   "KConnectLayer": {
     "SERVICE_FIELD_LABEL": "Saisissez la requête pour récupérer les capacités du service distant",
     "LAYER_FIELD_LABEL": "Sélectionnez la couche à laquelle se connecter",
-    "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
-    "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle couche",
+    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
+    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
     "STYLE_FIELD_LABEL": "Sélectionnez le style de la nouvelle couche",
-    "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
+    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
+    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
     "CONNECT_BUTTON": "Connecter"
   },
   "KCreateLayer": {
+    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
+    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
+    "CATALOG_SCHEMA_FIELD_LABEL": "$t(schemas.CATALOG_SCHEMA_FIELD_LABEL)",
+    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",       
+    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",    
     "CREATE_BUTTON": "Créer"
   }
 }

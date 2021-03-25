@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins } from '../../../../core/client'
 
 export default {
   name: 'k-location-field',
