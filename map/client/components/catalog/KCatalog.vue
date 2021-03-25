@@ -2,6 +2,9 @@
   <q-scroll-area :style="computedStyle">
     <q-list dense bordered>
       <slot name="header" />
+      <k-layers-selector
+        :layers="orphanLayers"
+        :options="{ hideIfEmpty: true }" />
       <template v-for="category in layerCategories">
         <q-expansion-item
           :key="category.name"
@@ -66,20 +69,25 @@ export default {
       return 'height: 75vh; min-width: 400px;'
     },
     layersByCategory () {
-      console.log(this.layerCategories)
       const layers = _.values(this.layers)
       const layersByCategory = {}
-      this.layerCategories.forEach(category => {
+      _.forEach(this.layerCategories, category => {
         // Built-in categories use filtering while user-defined ones use layers list
-        let filter = {}
+        let filter = null
         if (_.has(category, 'options.filter')) {
           filter = _.get(category, 'options.filter')
         } else if (_.has(category, 'layers')) {
           filter = { name: { $in: _.get(category, 'layers') } }
-        }
-        layersByCategory[category.name] = _.remove(layers, sift(filter))
+        } 
+        // If the list of layers in category is empty we can have a null filter
+        layersByCategory[category.name] = filter ? _.remove(layers, sift(filter)) : []
       })
       return layersByCategory
+    },
+    orphanLayers () {
+      const categories = _.flatten(_.values(this.layersByCategory))
+      const layers = _.values(this.layers)
+      return _.differenceWith(layers, categories)
     }
   },
   methods: {
@@ -101,6 +109,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
     // Categorize layers
     this.categorize()
   }

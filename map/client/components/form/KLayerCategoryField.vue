@@ -3,14 +3,14 @@
     ref="select"
     v-model="model"
     :label="label"
-    use-input
     use-chips
-    new-value-mode="add-unique"
     clearable
     :error-message="errorLabel"
     :error="hasError"
     bottom-slots
     :options="availableCategories"
+    option-label="name"
+    option-value="name"
     @input="onChanged">
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
 
 export default {
@@ -33,14 +34,11 @@ export default {
   methods: {
     emptyModel () {
       return null
-    },
-    onUpdated () {
-      console.log(this.model)
     }
   },
   async created () {
     // Build the list of available categories
-    const response = await this.$api.getService('catalog').find({ query: { type: 'category' } })
+    const response = await this.$api.getService('catalog').find({ query: { type: 'Category' } })
     this.availableCategories = response.data
   }
 }

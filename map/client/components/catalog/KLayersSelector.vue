@@ -41,8 +41,8 @@
         </q-item>
       </template>
     </div>
-    <div v-else>
-      <k-label :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" alignement="center-top" direction="horizontal" />
+    <div v-else-if="!options.hideIfEmpty">
+      <k-label class="q-pb-md" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" alignement="center-top" direction="horizontal" />
     </div>
     <slot name="footer" />
   </q-list>
