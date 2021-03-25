@@ -122,7 +122,7 @@ export default {
         searchParams: {},
         protocol: undefined,
         version: undefined,
-        availableLayers: []
+        availableLayers: {}
       }
       // we expect WMS/WFS/WCS/WMTS/TMS get capabilities url here
       /* if user:pwd

@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     availableLayers () {
-      return this.service ? this.service.availableLayers : []
+      return this.service ? _.map(this.service.availableLayers, (value, key) => value) : []
     }
   },
   methods: {
