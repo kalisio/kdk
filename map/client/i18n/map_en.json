@@ -418,7 +418,7 @@
     "REMOVE_VIEW": "$t(REMOVE)"
   },
   "KLayerCategories": {
-    "LAYER_CATEGORIES_LABEL": "Layer categories",
+    "LAYER_CATEGORIES_LABEL": "Manage my categories",
     "TITLE": "Manage layer categories",
     "SORT_CATEGORIES": "Sort categories",
     "CREATE_CATEGORY": "Create a new category",
