@@ -211,6 +211,7 @@ export default {
       } else if (this.service.protocol === 'WFS') {
         Object.assign(newLayer, {
           isStyleEditable: true,
+          schema: { content: this.layer.schema },
           featureId: propertiesResult.values.featureId,
           wfs: {
             url: this.service.baseUrl,
