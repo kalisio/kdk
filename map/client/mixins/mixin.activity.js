@@ -145,8 +145,8 @@ export default {
     },
     isLayerEditable (layer) {
       if (_.has(layer, 'isEditable')) return _.get(layer, 'isEditable')
-      // Only possible on user-defined and saved layers by default
-      else return (this.isUserLayer(layer) && (layer.service === 'features'))
+      // Only possible on user-defined layers by default
+      else return this.isUserLayer(layer)
     },
     isLayerRemovable (layer) {
       if (_.has(layer, 'isRemovable')) return _.get(layer, 'isRemovable')
