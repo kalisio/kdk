@@ -16,8 +16,7 @@
       <template v-slot:default>
         <q-chip 
           id="choosed-icon" 
-          clickable 
-          dense 
+          clickable  
           v-ripple 
           :text-color="inverted ? iconColor : 'white'" 
           :icon="iconName" 
