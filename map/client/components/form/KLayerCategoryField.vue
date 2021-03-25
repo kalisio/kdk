@@ -3,9 +3,7 @@
     ref="select"
     v-model="model"
     :label="label"
-    use-input
     use-chips
-    new-value-mode="add-unique"
     clearable
     :error-message="errorLabel"
     :error="hasError"
