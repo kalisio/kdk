@@ -6,52 +6,51 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content">
-      <q-card id="layer-categories">
-        <q-card-section v-show="hasToolbar">
-          <k-panel id="layer-categories-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
-        </q-card-section>
-        <q-card-section id="layer-categories-list" v-show="mode === 'list'">
-          <k-list
-            style="min-height: 50px; min-width: 200px"
-            service="catalog"
-            :renderer="categoryRenderer"
-            :nbItemsPerPage="8"
-            :base-query="baseQuery"
-            :filter-query="filter.query"
-            @collection-refreshed="refreshCategories" />
-        </q-card-section>
-        <q-card-section id="layer-category-add" v-if="mode === 'add'">
-          <div class="colum q-gutter-y-md">
-            <k-form ref="addForm" :schema="categorySchema" style="min-width: 300px" />
-            <div class="q-pa-sm row justify-end">
-              <q-btn 
-                :loading="savingCategory" 
-                color="secondary" 
-                id="add-layer-category" 
-                :label="$t('KLayerCategories.ADD_BUTTON')" 
-                @click="onAdd" />
-            </div>
+      <q-card-section v-show="hasToolbar">
+        <k-panel id="layer-categories-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
+      </q-card-section>
+      <q-card-section id="layer-categories-list" v-show="mode === 'list'">
+        <k-list
+          style="min-height: 50px; min-width: 200px"
+          service="catalog"
+          :renderer="categoryRenderer"
+          :nbItemsPerPage="8"
+          :base-query="baseQuery"
+          :filter-query="filter.query"
+          @collection-refreshed="refreshCategories" />
+      </q-card-section>
+      <q-card-section id="layer-category-add" v-if="mode === 'add'">
+        <div class="colum q-gutter-y-md">
+          <k-form ref="addForm" :schema="categorySchema" style="min-width: 300px" />
+          <div class="q-pa-sm row justify-end">
+            <q-btn 
+              :loading="savingCategory" 
+              color="secondary" 
+              id="add-layer-category" 
+              :label="$t('KLayerCategories.ADD_BUTTON')" 
+              @click="onAdd" />
           </div>
-        </q-card-section>
-        <q-card-section id="layer-category-edit" v-if="mode === 'edit'">
-          <div class="colum q-gutter-y-md">
-            <k-form ref="editForm" :schema="categorySchema" style="min-width: 300px" />
-            <div class="q-pa-sm row justify-end">
-              <q-btn 
-                :loading="savingCategory" 
-                color="secondary" 
-                id="edit-layer-category" 
-                :label="$t('KLayerCategories.EDIT_BUTTON')" 
-                @click="onEdit" />
-            </div>
+        </div>
+      </q-card-section>
+      <q-card-section id="layer-category-edit" v-if="mode === 'edit'">
+        <div class="colum q-gutter-y-md">
+          <k-form ref="editForm" :schema="categorySchema" style="min-width: 300px" />
+          <div class="q-pa-sm row justify-end">
+            <q-btn 
+              :loading="savingCategory" 
+              color="secondary" 
+              id="edit-layer-category" 
+              :label="$t('KLayerCategories.EDIT_BUTTON')" 
+              @click="onEdit" />
           </div>
-        </q-card-section>
-      </q-card>
+        </div>
+      </q-card-section>
     </div>
   </k-modal>
 </template>
 
 <script>
+import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
 import { KForm } from '../../../../core/client/components/form'
 
