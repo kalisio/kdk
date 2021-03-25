@@ -72,7 +72,7 @@ export async function discover (url, searchParams = {}, caps = null) {
     for (const st of _.get(layer, 'Style')) {
       const id = st.Identifier[0]
       const display = _.get(st, 'Title[0]', id || 'default')
-      const legend = _.get(st, 'LegendURL.$.xlink:href')
+      const legend = _.get(st, 'LegendURL[0].$.xlink:href')
       obj.styles[id] = { id, display, legend }
     }
     // lookup available crs
