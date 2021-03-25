@@ -48,14 +48,6 @@ export async function GetCoverage (abort, url, version, coverage, format, bbox, 
     .then(response => response.arrayBuffer())
 }
 
-export function decodeCapabilities (caps) {
-  const decoded = {
-    availableLayers: []
-  }
-
-  return decoded
-}
-
 export function GetCoverageSpatialBounds (coverage) {
   // 1.0.0
   // CoverageDescription / CoverageOffering / lonLatEnvelope

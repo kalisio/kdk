@@ -9,42 +9,32 @@ function fetchAsJson (query) {
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
-export function TileMapService (tmsUrl, searchParams = {}) {
-  const query = buildUrl(tmsUrl, searchParams)
-  return fetchAsJson(query)
-}
-
-export function TileMap (tmsUrl, layer, searchParams = {}) {
-  const query = buildUrl(`${tmsUrl}/${layer}`, searchParams)
-  return fetchAsJson(query)
-}
-
 export async function discover (tmsUrl, searchParams = {}, caps = null) {
   // fetch root caps if not provided
   if (!caps) {
-    caps = await TileMapService(tmsUrl, searchParams)
+    caps = await fetchAsJson(buildUrl(tmsUrl, searchParams))
   }
 
   // decode from caps
   const probe = {
     version: _.get(caps, 'TileMapService.$.version'),
-    availableLayers: []
+    availableLayers: {}
   }
 
   const layerRoot = _.get(caps, 'TileMapService.TileMaps[0].TileMap')
   const allPromises = []
   for (const layer of layerRoot) {
-    const id = _.get(layer, '$.title')
     // fetch detailed layer informations
-    const p = TileMap(tmsUrl, id, searchParams).then(json => {
+    const p = fetchAsJson(buildUrl(layer.$.href, searchParams)).then(json => {
       const obj = {
-        id: id,
-        display: _.get(json, 'TileMap.Abstract[0]'),
-        srs: _.get(layer, '$.srs'),
-        format: _.get(json, 'TileMap.TileFormat[0].$.extension'),
-        url: _.get(layer, '$.href')
+        id: _.get(json, 'TileMap.Title[0]'),
+        display: _.get(json, 'TileMap.Title[0]'),
+        description: _.get(json, 'TileMap.Abstract[0]'),
+        srs: _.get(json, 'TileMap.SRS[0]'),
+        extension: _.get(json, 'TileMap.TileFormat[0].$.extension'),
+        url: layer.$.href
       }
-      probe.availableLayers.push(obj)
+      probe.availableLayers[obj.id] = obj
     })
     allPromises.push(p)
   }

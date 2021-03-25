@@ -46,11 +46,15 @@ export async function discover (url, searchParams = {}, caps = null) {
 
   const out = {
     version: _.get(caps, 'WFS_Capabilities.$.version'),
-    availableLayers: []
+    availableLayers: {}
   }
 
   const layers = _.get(caps, 'WFS_Capabilities.FeatureTypeList[0].FeatureType')
-  out.availableLayers = layers.map(l => { return { id: l.Name[0], display: l.Title[0] } })
+  for (const layer of layers) {
+    const id = layer.Name[0]
+    const display = _.get(layer, 'Title[0]', id)
+    out.availableLayers[id] = { id, display }
+  }
 
   return out
 }

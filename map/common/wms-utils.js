@@ -28,12 +28,13 @@ export async function discover (url, searchParams = {}, caps = null) {
 
   const out = {
     version: _.get(root, '$.version'),
-    availableLayers: []
+    availableLayers: {}
   }
 
   const layerRoot = _.get(root, 'Capability[0].Layer')
   if (layerRoot) {
     const flat = layerRoot.slice()
+    // collect all 'Layer' nodes in a flat array
     for (let i = 0; i < flat.length; ++i) {
       const children = _.get(flat[i], 'Layer')
       if (children) {
@@ -43,70 +44,21 @@ export async function discover (url, searchParams = {}, caps = null) {
 
     flat.forEach(layer => {
       const id = _.get(layer, 'Name[0]')
-      const display = _.get(layer, 'Title[0]')
+      const display = _.get(layer, 'Title[0]', id)
       if (id && display) {
-        const obj = { id, display }
+        const obj = { id, display, styles: {} }
         if (layer.CRS) obj.crs = layer.CRS
-        if (layer.Style) {
-          obj.styles = layer.Style.map(s => {
-            return {
-              id: _.get(s, 'Name[0]'),
-              display: _.get(s, 'Title[0]'),
-              legend: {
-                url: _.get(s, 'LegendURL[0].OnlineResource[0].$.xlink:href'),
-                format: _.get(s, 'LegendURL[0].Format[0]')
-              }
-            }
-          })
+        // lookup styles
+        for (const st of _.get(layer, 'Style', [])) {
+          const id = st.Name[0]
+          const display = _.get(st, 'Title[0]', id || 'default')
+          const legend = _.get(st, 'LegendURL[0].OnlineResource[0].$.xlink:href')
+          obj.styles[id] = { id, display, legend }
         }
-        out.availableLayers.push(obj)
+        out.availableLayers[obj.id] = obj
       }
     })
   }
 
   return out
-}
-
-export function decodeCapabilities (caps, version = '') {
-  const root = caps.WMS_Capabilities ? caps.WMS_Capabilities : caps.WMT_MS_Capabilities
-
-  const decoded = {
-    version: _.get(root, '$.version'),
-    availableLayers: []
-  }
-
-  const layerRoot = _.get(root, 'Capability[0].Layer')
-  if (layerRoot) {
-    const flat = layerRoot.slice()
-    for (let i = 0; i < flat.length; ++i) {
-      const children = _.get(flat[i], 'Layer')
-      if (children) {
-        for (const c of children) flat.push(c)
-      }
-    }
-
-    flat.forEach(layer => {
-      const id = _.get(layer, 'Name[0]')
-      const display = _.get(layer, 'Title[0]')
-      if (id && display) {
-        const obj = { id, display }
-        if (layer.CRS) obj.crs = layer.CRS
-        if (layer.Style) {
-          obj.styles = layer.Style.map(s => {
-            return {
-              id: _.get(s, 'Name[0]'),
-              display: _.get(s, 'Title[0]'),
-              legend: {
-                url: _.get(s, 'LegendURL[0].OnlineResource[0].$.xlink:href'),
-                format: _.get(s, 'LegendURL[0].Format[0]')
-              }
-            }
-          })
-        }
-        decoded.availableLayers.push(obj)
-      }
-    })
-  }
-
-  return decoded
 }
