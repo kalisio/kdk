@@ -66,18 +66,17 @@ export default {
       return 'height: 75vh; min-width: 400px;'
     },
     layersByCategory () {
-      console.log(this.layerCategories)
       const layers = _.values(this.layers)
       const layersByCategory = {}
-      this.layerCategories.forEach(category => {
+      _.forEach(this.layerCategories, category => {
         // Built-in categories use filtering while user-defined ones use layers list
-        let filter = {}
+        let filter = null
         if (_.has(category, 'options.filter')) {
           filter = _.get(category, 'options.filter')
         } else if (_.has(category, 'layers')) {
           filter = { name: { $in: _.get(category, 'layers') } }
-        }
-        layersByCategory[category.name] = _.remove(layers, sift(filter))
+        } 
+        layersByCategory[category.name] = filter ? _.remove(layers, sift(filter)) : []
       })
       return layersByCategory
     }
