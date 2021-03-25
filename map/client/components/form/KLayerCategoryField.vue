@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
 
 export default {
@@ -33,15 +34,12 @@ export default {
   methods: {
     emptyModel () {
       return null
-    },
-    onUpdated () {
-      console.log(this.model)
     }
   },
   async created () {
     // Build the list of available categories
-    const response = await this.$api.getService('catalog').find({ query: { type: 'category' } })
-    this.availableCategories = response.data
+    const response = await this.$api.getService('catalog').find({ query: { type: 'Category' } })
+    this.availableCategories = _.map(response.data, category => { return category.name })
   }
 }
 </script>
