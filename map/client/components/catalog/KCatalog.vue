@@ -2,6 +2,9 @@
   <q-scroll-area :style="computedStyle">
     <q-list dense bordered>
       <slot name="header" />
+      <k-layers-selector
+        :layers="orphanLayers"
+        :options="{ hideIfEmpty: true }" />
       <template v-for="category in layerCategories">
         <q-expansion-item
           :key="category.name"
@@ -76,9 +79,15 @@ export default {
         } else if (_.has(category, 'layers')) {
           filter = { name: { $in: _.get(category, 'layers') } }
         } 
+        // If the list of layers in category is empty we can have a null filter
         layersByCategory[category.name] = filter ? _.remove(layers, sift(filter)) : []
       })
       return layersByCategory
+    },
+    orphanLayers () {
+      const categories = _.flatten(_.values(this.layersByCategory))
+      const layers = _.values(this.layers)
+      return _.differenceWith(layers, categories)
     }
   },
   methods: {
@@ -100,6 +109,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
     // Categorize layers
     this.categorize()
   }
