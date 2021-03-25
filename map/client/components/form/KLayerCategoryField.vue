@@ -9,6 +9,8 @@
     :error="hasError"
     bottom-slots
     :options="availableCategories"
+    option-label="name"
+    option-value="name"
     @input="onChanged">
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
@@ -37,7 +39,7 @@ export default {
   async created () {
     // Build the list of available categories
     const response = await this.$api.getService('catalog').find({ query: { type: 'Category' } })
-    this.availableCategories = _.map(response.data, category => { return category.name })
+    this.availableCategories = response.data
   }
 }
 </script>

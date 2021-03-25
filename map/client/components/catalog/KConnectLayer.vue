@@ -130,7 +130,7 @@ export default {
         type: 'object',
         properties: {
           category: {
-            type: 'string',
+            type: 'object',
             field: {
               component: 'form/KLayerCategoryField',
               label: 'KConnectLayer.CATEGORY_FIELD_LABEL'
@@ -184,7 +184,6 @@ export default {
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'las la-plug',
-        category: categoryResult.values.category,
         isRemovable: true,
         isStorable: true
       }
@@ -240,6 +239,14 @@ export default {
           tms: true
         }
       }
+      // process the category
+      const category = categoryResult.values.category
+      if (category) {
+        const layers = _.get(category, 'layers', [])
+        layers.push(newLayer.name)
+        await this.$api.getService('catalog').patch(category._id, { layers: layers })
+      }
+      // Add the layer
       await this.kActivity.addLayer(newLayer)
       this.connecting = false
       this.$emit('done')

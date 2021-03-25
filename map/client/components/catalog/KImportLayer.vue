@@ -95,7 +95,7 @@ export default {
         type: 'object',
         properties: {
           category: {
-            type: 'string',
+            type: 'object',
             field: {
               component: 'form/KLayerCategoryField',
               label: 'KImportLayer.CATEGORY_FIELD_LABEL'
@@ -142,8 +142,7 @@ export default {
         name: propertiesResult.values.name,
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
-        icon: 'insert_drive_file',
-        category: categoryResult.values.category,        
+        icon: 'insert_drive_file',  
         featureId: propertiesResult.values.featureId,
         [this.kActivity.engine]: {
           type: 'geoJson',
@@ -152,11 +151,14 @@ export default {
         },
         schema: this.file.schema
       }
+      // process the category
+      const category = categoryResult.values.category
+      if (category) {
+        const layers = _.get(category, 'layers', [])
+        layers.push(newLayer.name)
+        await this.$api.getService('catalog').patch(category._id, { layers: layers })
+      }
       await this.kActivity.addLayer(newLayer)
-      // Generate temporary IDs for features
-      // TODO : is it required anymore ? comment for now
-      /*const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-      features.forEach(feature => { feature._id = uid().toString() })*/
       // Assign the features to the layer
       await this.kActivity.updateLayer(newLayer.name, geoJson)
       this.importing = false
