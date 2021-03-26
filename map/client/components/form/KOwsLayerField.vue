@@ -26,7 +26,6 @@ import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
 import * as wfs from '../../../common/wfs-utils'
 
-
 export default {
   name: 'k-ows-layer-field',
   mixins: [kCoreMixins.baseField],
@@ -57,25 +56,26 @@ export default {
             layer.properties = decodedDesc.properties.map(prop => prop.name)
           } catch (error) {
             this.error = 'KOwsLayerField.UNABLE_TO_DESCRIBE_FEATURE_TYPE'
-            layer = null
           }
         } else if (this.service.protocol === 'WMTS') {
           // picked layer must be available with 3857 crs
           if (!_.has(layer.crs, '3857')) {
             this.error = 'KOwsLayerField.UNSUPPORTED_LAYER_CRS'
-            layer = null
           }
         } else if (this.service.protocol === 'TMS') {
           // selected layer must be available with 3857 crs
           if (layer.srs !== 'EPSG:3857') {
             this.error = 'KOwsLayerField.UNSUPPORTED_LAYER_CRS'
-            layer = null
           }
         }
       }
-      this.model = layer
       this.loading = false
-      this.onChanged()
+      if (!this.error) {
+        this.model = layer
+        this.onChanged()
+      } else {
+        layer = null
+      }
     }
   },
   created () {
