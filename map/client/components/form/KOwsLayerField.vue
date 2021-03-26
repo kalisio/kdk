@@ -52,12 +52,23 @@ export default {
         if (this.service.protocol === 'WFS') {
           try {
             const desc = await wfs.DescribeFeatureType(this.service.baseUrl, this.service.version, layer.id, this.service.searchParams)
-            console.log(desc)
             layer.schema = wfs.generatePropertiesSchema(desc, layer.display)
             const decodedDesc = wfs.decodeFeatureType(desc)
             layer.properties = decodedDesc.properties.map(prop => prop.name)
           } catch (error) {
             this.error = 'KOwsLayerField.UNABLE_TO_DESCRIBE_FEATURE_TYPE'
+            layer = null
+          }
+        } else if (this.service.protocol === 'WMTS') {
+          // picked layer must be available with 3857 crs
+          if (!_.has(layer.crs, '3857')) {
+            this.error = 'KOwsLayerField.UNSUPPORTED_LAYER_CRS'
+            layer = null
+          }
+        } else if (this.service.protocol === 'TMS') {
+          // selected layer must be available with 3857 crs
+          if (layer.srs !== 'EPSG:3857') {
+            this.error = 'KOwsLayerField.UNSUPPORTED_LAYER_CRS'
             layer = null
           }
         }

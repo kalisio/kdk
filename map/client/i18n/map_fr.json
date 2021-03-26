@@ -264,8 +264,12 @@
       "ZOOM_IMPORT_LAYER_LABEL": "La carte sera centrée sur votre nouvelle couche."
     }
   },
+  "KOwsServiceField": {
+    "CANNOT_FETCH_URL": "Impossible de récupérer la ressource."
+  },
   "KOwsLayerField": {
-    "INVALID_URL": "URL invalide"
+    "UNABLE_TO_DESCRIBE_FEATURE_TYPE": "Impossible de récupérer la description des propriétés de la couche.",
+    "UNSUPPORTED_LAYER_CRS": "La projection utilisée par cette couche n'est pas supportée."
   },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",

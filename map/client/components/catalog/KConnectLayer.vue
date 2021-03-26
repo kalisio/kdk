@@ -235,42 +235,37 @@ export default {
       } else if (this.service.protocol === 'WMTS') {
         const style = propertiesResult.values.style
 
-        // leaflet only supports epsg 3857, warn if layer has no support for it
-        if (_.has(this.layer.crs, '3857')) {
-          // pick an image format
-          let pickedFormat = ''
-          const supportedFormats = _.map(this.layer.formats, (value, key) => key)
-          const candidateFormats = ['image/png', 'image/jpeg']
-          for (const c of candidateFormats) {
-            if (_.has(this.layer.formats, c)) {
-              pickedFormat = c
-              break
-            }
+        // pick an image format
+        let pickedFormat = ''
+        const supportedFormats = _.map(this.layer.formats, (value, key) => key)
+        const candidateFormats = ['image/png', 'image/jpeg']
+        for (const c of candidateFormats) {
+          if (_.has(this.layer.formats, c)) {
+            pickedFormat = c
+            break
           }
-          // could not find candidate, fallback using first available
-          if (!pickedFormat) pickedFormat = supportedFormats[0]
-
-          newLayer.leaflet = {
-            type: 'tileLayer',
-            source: wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
-              style: style,
-              crs: '3857',
-              format: pickedFormat,
-              searchParams: this.service.searchParams
-            })
-          }
-
-          // add legend url if available in the style
-          const legendUrl = _.get(this.layer.styles, [style, 'legend'])
-          if (legendUrl) newLayer.legendUrl = legendUrl
         }
+        // could not find candidate, fallback using first available
+        if (!pickedFormat) pickedFormat = supportedFormats[0]
+
+        newLayer.leaflet = {
+          type: 'tileLayer',
+          source: wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
+            style: style,
+            crs: '3857',
+            format: pickedFormat,
+            searchParams: this.service.searchParams
+          })
+        }
+
+        // add legend url if available in the style
+        const legendUrl = _.get(this.layer.styles, [style, 'legend'])
+        if (legendUrl) newLayer.legendUrl = legendUrl
       } else if (this.service.protocol === 'TMS') {
-        if (this.layer.srs === 'EPSG:3857') {
-          newLayer.leaflet = {
-            type: 'tileLayer',
-            source: buildUrl(`${this.layer.url}/{z}/{x}/{y}.${this.layer.extension}`, this.service.searchParams),
-            tms: true
-          }
+        newLayer.leaflet = {
+          type: 'tileLayer',
+          source: buildUrl(`${this.layer.url}/{z}/{x}/{y}.${this.layer.extension}`, this.service.searchParams),
+          tms: true
         }
       }
       // process the category

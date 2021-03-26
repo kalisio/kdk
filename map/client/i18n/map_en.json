@@ -263,8 +263,12 @@
       "ZOOM_IMPORT_LAYER_LABEL": "The map will be centered on your new layer."
     }
   },
+  "KOwsServiceField": {
+    "CANNOT_FETCH_URL": "Failed fetching resource."
+  },
   "KOwsLayerField": {
-    "INVALID_URL": "Invalid URL"
+    "UNABLE_TO_DESCRIBE_FEATURE_TYPE": "Failed fetching layer's description.",
+    "UNSUPPORTED_LAYER_CRS": "The projection used by this layer is not supported."
   },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",
