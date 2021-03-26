@@ -3,7 +3,6 @@
     <!-- Forms section -->
     <k-form ref="propertiesForm" :schema="getPropertiesFormSchema()" @field-changed="onPropertiesFormFieldChanged" />
     <k-form ref="featureIdForm" :key="featureIdFormKey" :schema="getFeatureIdFormSchema()" />
-    <k-form ref="categoryForm" :schema="getCategoryFormSchema()" />
     <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
@@ -83,22 +82,6 @@ export default {
         required: ['featureId']
       }
     },
-    getCategoryFormSchema () {
-      return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/create-layer-select-category#',
-        type: 'object',
-        properties: {
-          category: {
-            type: 'object',
-            field: {
-              component: 'form/KLayerCategoryField',
-              label: 'KCreateLayer.CATEGORY_FIELD_LABEL'
-            }
-          }
-        }
-      }
-    },
     onPropertiesFormFieldChanged (field, value) {
       if (field === 'schema') {
         this.schema = value ? value.content : null
@@ -124,8 +107,7 @@ export default {
     async onCreate () {
       const propertiesResult = this.$refs.propertiesForm.validate()
       const featureIdResult = this.$refs.featureIdForm.validate()
-      const categoryResult = this.$refs.categoryForm.validate()
-      if (!propertiesResult.isValid || !featureIdResult.isValid || !categoryResult.isValid)  return
+      if (!propertiesResult.isValid || !featureIdResult.isValid)  return
       this.creating = true
       // Create an empty layer
       const newLayer = {
@@ -140,13 +122,6 @@ export default {
           realtime: true
         },
         schema: this.schema
-      }
-      // process the category
-      const category = categoryResult.values.category
-      if (category) {
-        const layers = _.get(category, 'layers', [])
-        layers.push(newLayer.name)
-        await this.$api.getService('catalog').patch(category._id, { layers: layers })
       }
       // Create the layer
       await this.kActivity.addLayer(newLayer)
