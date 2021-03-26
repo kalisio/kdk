@@ -156,8 +156,9 @@ export default {
       return ''
     },
     async onConnect () {
+      const layerResult = this.$refs.layerForm.validate()
       const propertiesResult = this.$refs.propertiesForm.validate()
-      if (!propertiesResult.isValid) return
+      if (!layerResult.isValid || !propertiesResult.isValid) return
       this.connecting = true
       // Create the layer accordingly the input fields
       const newLayer = {
