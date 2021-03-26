@@ -419,7 +419,7 @@
     "REMOVE_VIEW": "$t(REMOVE)"
   },
   "KLayerCategories": {
-    "LAYER_CATEGORIES_LABEL": "Catégories des couches",
+    "LAYER_CATEGORIES_LABEL": "Gérer mes catégories",
     "TITLE": "Gérer les catégories des couches",
     "SORT_CATEGORIES": "Trier les catégories",
     "CREATE_CATEGORY": "Créer une nouvelle catégorie",

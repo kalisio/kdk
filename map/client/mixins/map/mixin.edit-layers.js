@@ -81,7 +81,9 @@ export default {
         // Restore popup
         if (popup) leafletLayer.bindPopup(popup)
         // Save in DB and in memory
-        await this.editFeaturesProperties(updatedFeature)
+        if (this.editableLayer._id) {
+          await this.editFeaturesProperties(updatedFeature)
+        }
         const geoJson = leafletLayer.toGeoJSON()
         Object.assign(geoJson, _.pick(updatedFeature, ['properties']))
         this.editableLayer.removeLayer(leafletLayer)
@@ -112,16 +114,22 @@ export default {
       if (id && (id !== '_id')) _.set(geoJson, 'properties.' + id, uid().toString())
       else geoJson._id = uid().toString()
       // Save changes to DB, we use the layer DB ID as layer ID on features
-      geoJson = await this.createFeatures(geoJson, this.editedLayer._id)
+      if (this.editableLayer._id) {
+        geoJson = await this.createFeatures(geoJson, this.editedLayer._id)
+      }
       this.editableLayer.addData(geoJson)
     },
     async onFeaturesEdited (event) {
       // Save changes to DB
-      await this.editFeaturesGeometry(event.layers.toGeoJSON())
+      if (this.editableLayer._id) {
+        await this.editFeaturesGeometry(event.layers.toGeoJSON())
+      }
     },
     async onFeaturesDeleted (event) {
       // Save changes to DB
-      await this.removeFeatures(event.layers.toGeoJSON())
+      if (this.editableLayer._id) {
+        await this.removeFeatures(event.layers.toGeoJSON())
+      }
     },
     onStartDeleteFeatures () {
       this.deleteInProgress = true
