@@ -187,16 +187,19 @@ export default {
         isStorable: true
       }
       if (this.service.protocol === 'WMS') {
+        const style = propertiesResult.values.style
+
         newLayer.leaflet = Object.assign({
           type: 'tileLayer.wms',
           source: this.service.baseUrl,
           layers: this.layer.id,
           version: this.service.version,
-          styles: propertiesResult.values.style,
+          styles: style,
           format: 'image/png',
           transparent: true,
           bgcolor: 'FFFFFFFF'
         }, this.service.searchParams)
+
         // be explicit about requested CRS if probe list some
         if (this.layer.crs) {
           // these are what leaflet supports
@@ -208,6 +211,10 @@ export default {
             }
           }
         }
+
+        // add legend url if available in the picked style
+        const legendUrl = _.get(this.layer.styles, [style, 'legend'])
+        if (legendUrl) newLayer.legendUrl = legendUrl
       } else if (this.service.protocol === 'WFS') {
         Object.assign(newLayer, {
           isStyleEditable: true,
@@ -226,6 +233,8 @@ export default {
           tiled: true
         }
       } else if (this.service.protocol === 'WMTS') {
+        const style = propertiesResult.values.style
+
         // leaflet only supports epsg 3857, warn if layer has no support for it
         if (_.has(this.layer.crs, '3857')) {
           // pick an image format
@@ -240,15 +249,20 @@ export default {
           }
           // could not find candidate, fallback using first available
           if (!pickedFormat) pickedFormat = supportedFormats[0]
+
           newLayer.leaflet = {
             type: 'tileLayer',
             source: wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
-              style: propertiesResult.values.style,
+              style: style,
               crs: '3857',
               format: pickedFormat,
               searchParams: this.service.searchParams
             })
           }
+
+          // add legend url if available in the style
+          const legendUrl = _.get(this.layer.styles, [style, 'legend'])
+          if (legendUrl) newLayer.legendUrl = legendUrl
         }
       } else if (this.service.protocol === 'TMS') {
         if (this.layer.srs === 'EPSG:3857') {
