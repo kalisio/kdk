@@ -4,7 +4,6 @@
     <k-form ref="serviceForm" :schema="getServiceFormSchema()" @field-changed="onServiceFormFieldChanged" />
     <k-form ref="layerForm" :key="layerFormKey" :schema="getLayerFormSchema()" @field-changed="onLayerFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
-    <k-form ref="categoryForm" :schema="getCategoryFormSchema()" />
     <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
@@ -124,22 +123,6 @@ export default {
       _.set(schema, 'required', required)
       return schema
     },
-    getCategoryFormSchema () {
-      return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/connect-layer-select-category#',
-        type: 'object',
-        properties: {
-          category: {
-            type: 'object',
-            field: {
-              component: 'form/KLayerCategoryField',
-              label: 'KConnectLayer.CATEGORY_FIELD_LABEL'
-            }
-          }
-        }
-      }
-    },
     onServiceFormFieldChanged (field, value) {
       this.service = value
       this.layer = null
@@ -174,8 +157,7 @@ export default {
     },
     async onConnect () {
       const propertiesResult = this.$refs.propertiesForm.validate()
-      const categoryResult = this.$refs.categoryForm.validate()
-      if (! propertiesResult.isValid || !categoryResult.isValid) return
+      if (!propertiesResult.isValid) return
       this.connecting = true
       // Create the layer accordingly the input fields
       const newLayer = {
@@ -267,13 +249,6 @@ export default {
           source: buildUrl(`${this.layer.url}/{z}/{x}/{y}.${this.layer.extension}`, this.service.searchParams),
           tms: true
         }
-      }
-      // process the category
-      const category = categoryResult.values.category
-      if (category) {
-        const layers = _.get(category, 'layers', [])
-        layers.push(newLayer.name)
-        await this.$api.getService('catalog').patch(category._id, { layers: layers })
       }
       // make leaflet layers visible by default
       if (newLayer.leaflet) newLayer.leaflet.isVisible = true

@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
 
 export default {

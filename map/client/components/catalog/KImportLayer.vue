@@ -3,7 +3,6 @@
     <!-- Forms section -->
     <k-form ref="fileForm" :schema="getFileFormSchema()" @field-changed="onFileFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
-    <k-form ref="categoryForm" :schema="getCategoryFormSchema()" />
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
       <k-action
@@ -88,22 +87,6 @@ export default {
         required: ['name', 'featureId']
       }
     },
-    getCategoryFormSchema () {
-      return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/import-layer-select-category#',
-        type: 'object',
-        properties: {
-          category: {
-            type: 'object',
-            field: {
-              component: 'form/KLayerCategoryField',
-              label: 'KImportLayer.CATEGORY_FIELD_LABEL'
-            }
-          }
-        }
-      }
-    },
     onFileFormFieldChanged (field, value) {
       this.file = value
       if (value) {
@@ -132,8 +115,7 @@ export default {
     },
     async onImport () {
       const propertiesResult = this.$refs.propertiesForm.validate()
-      const categoryResult = this.$refs.categoryForm.validate()
-      if (!propertiesResult.isValid || !categoryResult.isValid) return
+      if (!propertiesResult.isValid) return
       this.importing = true
       // Create the layer accordingly the input fields
       const geoJson = this.file.content
@@ -150,13 +132,6 @@ export default {
           realtime: true
         },
         schema: this.file.schema
-      }
-      // process the category
-      const category = categoryResult.values.category
-      if (category) {
-        const layers = _.get(category, 'layers', [])
-        layers.push(newLayer.name)
-        await this.$api.getService('catalog').patch(category._id, { layers: layers })
       }
       await this.kActivity.addLayer(newLayer)
       // Assign the features to the layer
