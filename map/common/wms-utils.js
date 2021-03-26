@@ -11,12 +11,31 @@ function fetchAsJson (query) {
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
+function parseVersion (version) {
+  const parts = version.split('.')
+  return parseInt(parts[0]) * 1000000 + parseInt(parts[1]) * 1000 + (parts.length > 2 ? parseInt(parts[2]) : 0)
+}
+
 export function GetCapabilities (url, searchParams = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WMS',
     REQUEST: 'GetCapabilities'
   }, searchParams))
   return fetchAsJson(query)
+}
+
+export function makeGetLegendGraphic (url, version, layer, style, searchParams = {}) {
+  const additionalParams = {}
+  if (style) additionalParams.STYLE = style
+  if (!version) version = '1.0.0'
+  if (parseVersion(version) >= parseVersion('1.3.0')) additionalParams.SLD_VERSION = '1.1.0'
+  return buildUrl(url, Object.assign({
+    SERVICE: 'WMS',
+    REQUEST: 'GetLegendGraphic',
+    VERSION: version,
+    FORMAT: 'image/png',
+    LAYER: layer
+  }, additionalParams, searchParams))
 }
 
 export async function discover (url, searchParams = {}, caps = null) {
