@@ -28,6 +28,9 @@
             <q-item-label v-if="options.description" caption lines="2">
               {{ layer.description }}
             </q-item-label>
+            <q-item-label v-if="layer.isDisabled" caption lines="2">
+              {{ $t('KLayersSelector.LAYER_DISABLED') }}
+            </q-item-label>
           </q-item-section>
           <!-- actions -->
           <q-item-section side>

@@ -383,7 +383,8 @@
     "EDIT_LAYER_STYLE_TITLE": "Editer le style de la couche"
   },
   "KLayersSelector": {
-    "NO_LAYER_AVAILABLE": "Aucune couche de données"
+    "NO_LAYER_AVAILABLE": "Aucune couche disponible",
+    "LAYER_DISABLED": "Zoomez d'avantage pour voir cette couche"
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Prévisions",
