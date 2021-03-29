@@ -6,7 +6,7 @@ import { buildUrl } from '../../core/common'
 // https://www.opengeospatial.org/standards/wfs
 
 function fetchAsJson (query) {
-  return fetch(query)
+  return fetch(query, { redirect: 'follow' })
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
@@ -36,7 +36,7 @@ export function GetFeature (url, version, typeNames, searchParams = {}, { xml2js
     REQUEST: 'GetFeature',
     TYPENAMES: typeof typeNames === 'string' ? typeNames : typeNames.join(' ')
   }, searchParams))
-  return xml2json ? fetchAsJson(query) : fetch(query).then(response => response.json())
+  return xml2json ? fetchAsJson(query) : fetch(query, { redirect: 'follow' }).then(response => response.json())
 }
 
 export async function discover (url, searchParams = {}, caps = null) {

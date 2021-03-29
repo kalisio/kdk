@@ -139,7 +139,7 @@ export default {
           for (const [k, v] of url.searchParams) result.searchParams[k] = v
           // fetch content and try to convert to json
           const query = url.href
-          caps = await fetch(query)
+          caps = await fetch(query, { redirect: 'follow' })
             .then(resp => resp.text())
             .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
           // look for SERVICE=xxx

@@ -4,7 +4,7 @@ import xml2js from 'xml2js'
 import { buildUrl } from '../../core/common'
 
 function fetchAsJson (query) {
-  return fetch(query)
+  return fetch(query, { redirect: 'follow' })
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }

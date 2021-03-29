@@ -6,7 +6,7 @@ import { buildUrl } from '../../core/common'
 // https://www.opengeospatial.org/standards/wcs
 
 export function fetchAsJson (query) {
-  return fetch(query)
+  return fetch(query, { redirect: 'follow' })
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }

@@ -247,7 +247,7 @@ export default {
       } else if (this.service.protocol === 'TMS') {
         newLayer.leaflet = {
           type: 'tileLayer',
-          source: buildUrl(`${this.layer.url}/{z}/{x}/{y}.${this.layer.extension}`, this.service.searchParams),
+          source: buildUrl(`${this.layer.url}{z}/{x}/{y}.${this.layer.extension}`, this.service.searchParams),
           tms: true
         }
       }
