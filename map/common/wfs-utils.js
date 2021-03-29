@@ -46,14 +46,29 @@ export async function discover (url, searchParams = {}, caps = null) {
 
   const out = {
     version: _.get(caps, 'WFS_Capabilities.$.version'),
-    availableLayers: {}
+    availableLayers: {},
+    supportsGeoJson: false
   }
 
-  const layers = _.get(caps, 'WFS_Capabilities.FeatureTypeList[0].FeatureType')
-  for (const layer of layers) {
+  // scan layers
+  for (const layer of _.get(caps, 'WFS_Capabilities.FeatureTypeList[0].FeatureType', [])) {
     const id = layer.Name[0]
     const display = _.get(layer, 'Title[0]', id)
     out.availableLayers[id] = { id, display }
+  }
+
+  // list output formats and check GeoJSON is supported
+  for (const operation of _.get(caps, 'WFS_Capabilities.OperationsMetadata[0].Operation', [])) {
+    if (operation.$.name !== 'GetFeature') continue
+    for (const parameter of _.get(operation, 'Parameter')) {
+      if (parameter.$.name !== 'outputFormat') continue
+      for (const format of _.get(parameter, 'AllowedValues[0].Value')) {
+        if (format === 'GEOJSON') {
+          out.supportsGeoJson = true
+          break
+        }
+      }
+    }
   }
 
   return out

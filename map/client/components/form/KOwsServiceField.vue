@@ -87,13 +87,22 @@ export default {
             this.error = ''
             this.model = response
           }
+          if (response.protocol === 'WFS') {
+            // make sure WFS server supports GeoJSON output
+            if (!response.supportsGeoJson) {
+              this.error = 'KOwsServiceField.WFS_MISSING_GEOJSON_SUPPORT'
+            }
+          }
         } catch (error) {
           this.error = 'Invalid value'
-          this.model = null
         }
       }
       this.loading = false
-      this.onChanged()
+      if (!this.error) {
+        this.onChanged()
+      } else {
+        this.model = null
+      }
     },
     async onAddService () {
       // Delete the available layers before saving the service
@@ -122,7 +131,9 @@ export default {
         searchParams: {},
         protocol: undefined,
         version: undefined,
-        availableLayers: {}
+        availableLayers: {},
+        // WFS only
+        supportsGeoJson: false
       }
       // we expect WMS/WFS/WCS/WMTS/TMS get capabilities url here
       /* if user:pwd
@@ -183,6 +194,7 @@ export default {
           result.availableLayers = decoded.availableLayers
           result.version = this.findQueryParameter(url.searchParams, 'VERSION')
           if (!result.version) result.version = decoded.version
+          result.supportsGeoJson = decoded.supportsGeoJson
         } else if (result.protocol === 'WMTS') {
           const decoded = await wmts.discover(result.baseUrl, result.searchParams, caps)
           result.availableLayers = decoded.availableLayers
