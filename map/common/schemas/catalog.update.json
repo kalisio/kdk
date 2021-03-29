@@ -21,25 +21,8 @@
         "component": "form/KTextField",
         "label": "schemas.CATALOG_DESCRIPTION_FIELD_LABEL"
       }
-    },
-    "featureId": {
-      "type": "string", 
-      "maxLength": 256,
-      "minLength": 1,
-      "field": {
-        "component": "form/KTextField",
-        "label": "schemas.CATALOG_FEATURE_ID_FIELD_LABEL"
-      }
-    },
-    "schema": { 
-      "type": "object",
-      "field": {
-        "component": "form/KFileField",
-        "label": "schemas.CATALOG_SCHEMA_FIELD_LABEL",
-        "mimeTypes": "application/json"
-      }
     }
   },
-  "required": ["name", "featureId"]
+  "required": ["name"]
 }
 

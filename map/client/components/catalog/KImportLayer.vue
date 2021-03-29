@@ -114,8 +114,9 @@ export default {
       return ''
     },
     async onImport () {
+      const fileResult = this.$refs.fileForm.validate()
       const propertiesResult = this.$refs.propertiesForm.validate()
-      if (!propertiesResult.isValid) return
+      if (!fileResult.isValid || !propertiesResult.isValid) return
       this.importing = true
       // Create the layer accordingly the input fields
       const geoJson = this.file.content
@@ -131,7 +132,9 @@ export default {
           isVisible: true,
           realtime: true
         },
-        schema: this.file.schema
+        schema: {
+          content: this.file.schema
+        }
       }
       await this.kActivity.addLayer(newLayer)
       // Assign the features to the layer
