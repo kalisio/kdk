@@ -43,12 +43,10 @@ export async function discover (tmsUrl, searchParams = {}, caps = null) {
         let north = parseFloat(boundingBox.$.maxy)
         if (obj.srs === 'EPSG:3857') {
           // approximate 3857 to 4326 projection
-          south = (south * 180) / 20037508.34
-          north = (north * 180) / 20037508.34
           west = (west * 180) / 20037508.34
           east = (east * 180) / 20037508.34
-          north = ((Math.atan(Math.pow(Math.E, (Math.PI / 180) * north))) / (Math.PI / 360)) - 90
-          south = ((Math.atan(Math.pow(Math.E, (Math.PI / 180) * south))) / (Math.PI / 360)) - 90
+          north = (Math.atan(Math.exp(north * Math.PI / 20037508.34)) * 360 / Math.PI) - 90
+          south = (Math.atan(Math.exp(south * Math.PI / 20037508.34)) * 360 / Math.PI) - 90
         }
         obj.extent = { west, east, south, north }
       }
