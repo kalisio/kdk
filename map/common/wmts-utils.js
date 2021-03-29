@@ -86,6 +86,16 @@ export async function discover (url, searchParams = {}, caps = null) {
       const def = _.get(dim, 'Default[0]')
       obj.dimensions[id] = { id, defaultValue: def }
     }
+    // extent
+    if (layer.WGS84BoundingBox) {
+      const loco = layer.WGS84BoundingBox[0].LowerCorner[0].split(' ')
+      const upco = layer.WGS84BoundingBox[0].UpperCorner[0].split(' ')
+      const west = parseFloat(loco[0])
+      const east = parseFloat(upco[0])
+      const south = parseFloat(loco[1])
+      const north = parseFloat(upco[1])
+      obj.extent = { west, east, south, north }
+    }
 
     out.availableLayers[obj.id] = obj
   }

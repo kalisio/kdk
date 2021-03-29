@@ -34,6 +34,24 @@ export async function discover (tmsUrl, searchParams = {}, caps = null) {
         extension: _.get(json, 'TileMap.TileFormat[0].$.extension'),
         url: layer.$.href
       }
+      // extent
+      const boundingBox = _.get(json, 'TileMap.BoundingBox[0]')
+      if (boundingBox) {
+        let west = parseFloat(boundingBox.$.minx)
+        let east = parseFloat(boundingBox.$.maxx)
+        let south = parseFloat(boundingBox.$.miny)
+        let north = parseFloat(boundingBox.$.maxy)
+        if (obj.srs === 'EPSG:3857') {
+          // approximate 3857 to 4326 projection
+          south = (south * 180) / 20037508.34
+          north = (north * 180) / 20037508.34
+          west = (west * 180) / 20037508.34
+          east = (east * 180) / 20037508.34
+          north = ((Math.atan(Math.pow(Math.E, (Math.PI / 180) * north))) / (Math.PI / 360)) - 90
+          south = ((Math.atan(Math.pow(Math.E, (Math.PI / 180) * south))) / (Math.PI / 360)) - 90
+        }
+        obj.extent = { west, east, south, north }
+      }
       probe.availableLayers[obj.id] = obj
     })
     allPromises.push(p)

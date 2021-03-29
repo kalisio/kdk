@@ -74,6 +74,24 @@ export async function discover (url, searchParams = {}, caps = null) {
           const legend = _.get(st, 'LegendURL[0].OnlineResource[0].$.xlink:href')
           obj.styles[id] = { id, display, legend }
         }
+        // extract extent
+        if (layer.EX_GeographicBoundingBox) {
+          const node = layer.EX_GeographicBoundingBox[0]
+          const west = parseFloat(node.westBoundLongitude)
+          const east = parseFloat(node.eastBoundLongitude)
+          const south = parseFloat(node.southBoundLatitude)
+          const north = parseFloat(node.northBoundLatitude)
+          obj.extent = { west, east, south, north }
+        } else if (layer.BoundingBox) {
+          const node = layer.BoundingBox[0]
+          if (node.$.CRS === 'EPSG:4326') {
+            const west = parseFloat(node.$.miny)
+            const east = parseFloat(node.$.maxy)
+            const south = parseFloat(node.$.minx)
+            const north = parseFloat(node.$.maxx)
+            obj.extent = { west, east, south, north }
+          }
+        }
         out.availableLayers[obj.id] = obj
       }
     })

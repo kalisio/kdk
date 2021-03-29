@@ -55,6 +55,17 @@ export async function discover (url, searchParams = {}, caps = null) {
     const id = layer.Name[0]
     const display = _.get(layer, 'Title[0]', id)
     out.availableLayers[id] = { id, display }
+
+    // extent
+    if (layer.WGS84BoundingBox) {
+      const loco = layer.WGS84BoundingBox[0].LowerCorner[0].split(' ')
+      const upco = layer.WGS84BoundingBox[0].UpperCorner[0].split(' ')
+      const west = parseFloat(loco[0])
+      const east = parseFloat(upco[0])
+      const south = parseFloat(loco[1])
+      const north = parseFloat(upco[1])
+      out.availableLayers[id].extent = { west, east, south, north }
+    }
   }
 
   // list output formats and check GeoJSON is supported
