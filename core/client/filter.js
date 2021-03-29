@@ -39,7 +39,7 @@ export const Filter = {
     // Handle the selection
     items.forEach(item => {
       // We must have only one item per service
-      let itemQuery = { [item.field]: item[item.field] }
+      const itemQuery = { [item.field]: item[item.field] }
       // Check if base qury
       if (item.baseQuery) Object.assign(itemQuery, item.baseQuery)
       // Check if the service is contextual
@@ -48,7 +48,7 @@ export const Filter = {
       if (options.context && Store.get('context')) {
         itemQuery.context = Store.get('context._id')
       }
-      Object.assign(query, { [item.service] : { $elemMatch: itemQuery } })
+      Object.assign(query, { [item.service]: { $elemMatch: itemQuery } })
     })
     // Avoid reentrance as we listen to other filter property changes
     if (!_.isEqual(query, this.getQuery())) Store.patch('filter', { query })
