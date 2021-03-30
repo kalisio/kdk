@@ -78,36 +78,31 @@ export default {
       this.model = null
     },
     async onUpdated (request) {
+      let response = null
       this.loading = true
       if (request) {
         try {
           const url = new URL(request)
-          const response = await this.probeEndpoint(url)
+          response = await this.probeEndpoint(url)
           if (response) {
-            this.error = ''
-            this.model = response
-          }
-          if (response.protocol === 'WFS') {
             // make sure WFS server supports GeoJSON output
-            if (!response.supportsGeoJson) {
-              this.error = 'KOwsServiceField.WFS_MISSING_GEOJSON_SUPPORT'
+            if (response.protocol === 'WFS' && !response.supportsGeoJson) {
+              this.error = 'KOwsServiceField.WFS_MISSING_GEOJSON_SUPPORT'   
+            } else {
+              this.error = ''
             }
-          }
+          } 
         } catch (error) {
-          this.error = 'Invalid value'
+          this.error = 'KServiceField.INVALID_URL'
         }
       }
       this.loading = false
-      if (!this.error) {
-        this.onChanged()
-      } else {
-        this.model = null
-      }
+      this.model = response
+      if (this.model) this.onChanged()
     },
     async onAddService () {
       // Delete the available layers before saving the service
       const service = _.cloneDeep(this.model)
-      console.log(service)
       delete service.availableLayers
       // Save the service
       await this.$api.getService('catalog').create(service)
@@ -150,9 +145,11 @@ export default {
           for (const [k, v] of url.searchParams) result.searchParams[k] = v
           // fetch content and try to convert to json
           const query = url.href
+          console.log(query)
           caps = await fetch(query, { redirect: 'follow' })
             .then(resp => resp.text())
             .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
+          console.log(caps)
           // look for SERVICE=xxx
           const protocol = this.findQueryParameter(url.searchParams, 'SERVICE')
           if (protocol === 'WMS') result.protocol = 'WMS'
@@ -169,6 +166,7 @@ export default {
               result.protocol = 'TMS'
             }
           }
+          console.log('1 ', result.protocol)
           // remove some known search params depending on service
           const knownSearchParams = new Set()
           if (result.protocol === 'WMS' || result.protocol === 'WFS' || result.protocol === 'WMTS') {
@@ -177,20 +175,23 @@ export default {
             knownSearchParams.add('VERSION')
           }
           if (knownSearchParams) {
-            _.keys(result.searchParams).forEach(k => {
+            _.forEach(_.keys(result.searchParams), k => {
               if (knownSearchParams.has(k.toUpperCase())) {
                 delete result.searchParams[k]
               }
             })
           }
         }
+        console.log('2 ',result.searchParams)
         if (result.protocol === 'WMS') {
           const decoded = await wms.discover(result.baseUrl, result.searchParams, caps)
           result.availableLayers = decoded.availableLayers
           result.version = this.findQueryParameter(url.searchParams, 'VERSION')
           if (!result.version) result.version = decoded.version
         } else if (result.protocol === 'WFS') {
+          console.log('discover')
           const decoded = await wfs.discover(result.baseUrl, result.searchParams, caps)
+          console.log(decoded)
           result.availableLayers = decoded.availableLayers
           result.version = this.findQueryParameter(url.searchParams, 'VERSION')
           if (!result.version) result.version = decoded.version
@@ -206,6 +207,7 @@ export default {
           result.availableLayers = decoded.availableLayers
           result.version = decoded.version
         }
+        console.log('3 ',result)
       } catch (err) { 
         this.error = 'KServiceField.CANNOT_FETCH_URL'
         return null

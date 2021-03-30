@@ -84,20 +84,20 @@ export default {
     },
     onPropertiesFormFieldChanged (field, value) {
       if (field === 'schema') {
-        this.schema = value ? value.content : null
+        this.schema = value
         this.featureIdFormKey+=1
       }
     },
     getProperties () {
       if (this.schema) {
-        const properties = _.keys(_.get(this.schema, 'properties', {}))
+        const properties = _.keys(_.get(this.schema, 'content.properties', {}))
         return _.map(properties, prop => { return { label: prop, value: prop } })
       }
       return []
     },
     guessFeatureId () {
       if (this.schema) {
-        const properties = _.keys(_.get(this.schema, 'properties', {}))
+        const properties = _.keys(_.get(this.schema, 'content.properties', {}))
         for (const prop of properties) {
           if (prop.toLowerCase().includes('id', 'fid', 'featureid', '_id', 'objectid')) return prop
         }
@@ -121,7 +121,10 @@ export default {
           isVisible: true,
           realtime: true
         },
-        schema: this.schema
+        schema: {
+          name: this.schema.name,
+          content: this.schema.content
+        }
       }
       // Create the layer
       await this.kActivity.addLayer(newLayer)
