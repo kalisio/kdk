@@ -7,7 +7,7 @@
     <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
-        id="connect-action" 
+        id="connect-layer-action" 
         :label="$t('KConnectLayer.CONNECT_BUTTON')" 
         renderer="form-button"
         :loading="connecting"

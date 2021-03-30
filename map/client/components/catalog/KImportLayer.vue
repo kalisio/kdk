@@ -6,7 +6,7 @@
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
       <k-action
-        id="inport-action" 
+        id="import-layer-action" 
         :label="$t('KImportLayer.IMPORT_BUTTON')" 
         renderer="form-button" 
         :loading="importing"

@@ -1,5 +1,6 @@
 <template>
   <q-select
+    :for="properties.name + '-field'"
     ref="select"
     v-model="layer"
     :label="label"

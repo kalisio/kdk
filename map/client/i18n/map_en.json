@@ -209,8 +209,8 @@
       "SEARCH_LOCATION_LABEL": "Seek for an address using this button.",
       "LOCATION_SEARCHING_LABEL": "Type part of your address and select among the proposed locations to center the map on.",
       "SEARCH_BACK_LABEL": "Then stop searching by going back to the actions.",
-      "FAVORITE_VIEWS_LABEL": "List, create and remove your <b>favorite views</b> using this button.",
-      "FAVORITE_VIEW_LABEL": "A favorite view is used to restore your current context later (map extent and active layers).",
+      "FAVORITE_VIEWS_LABEL": "Manage your <b>favorite views</b> using this button. A favorite view is used to restore your current context later,",
+      "FAVORITE_VIEWS_LINK_LABEL": "How to manage your favorite views",
       "TOOLS_LABEL": "Select among available tools using this button.",
       "TRACK_LOCATION_LABEL": "Display the coordinates of a location using this button.",
       "COPY_LOCATION_LABEL": "Copy the coordinates in your clipboard using this button.",
@@ -220,6 +220,16 @@
       "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
       "TOGGLE_CATALOG_LABEL": "Open the catalog with this button."
     },
+    "favorite-views": {
+      "FAVORITE_VIEWS_LIST_LABEL": "View the list of your favorite views.",
+      "FAVORITE_VIEWS_LIST_ACTIONS_LABEL": "Sort your views by name or update time and seek for a target one.",
+      "FAVORITE_VIEW_ACTIONS_LABEL": "Remove a view by using this button.",
+      "ADD_FAVORITE_VIEW_LABEL": "Add a new views using this button.",
+      "FAVORITE_VIEW_NAME_LABEL": "Enter the name of your new views.",
+      "FAVORITE_VIEW_DESCRIPTION_LABEL": "Enter the description of your new views.",
+      "FAVORITE_VIEW_LAYERS_LABEL": "Select if the currently active layers will be restaured with this view.",
+      "CREATE_FAVORITE_VIEW_LABEL": "Confirm the creation of your new favorite view."
+    },
     "catalog-panel": {
       "CATALOG_LABEL": "The catalog allows to manage data displayed on your map.",
       "CATEGORIES_LABEL": "The data are organised into different categories.",
@@ -228,7 +238,18 @@
       "MIN_LEVEL_LABEL": "When a layer is not visible according to your scale it will be disabled, you must zoom in to make it show on the map.",
       "HIDE_LAYER_LABEL": "A new selection will hide it.",
       "METEO_MODEL_LABEL": "Regarding meteorological data you can also switch the prediction model if multiple are available.",
-      "METEO_LAYERS_LABEL": "Each layer will then target data of a specific meteorological element from this model."
+      "METEO_LAYERS_LABEL": "Each layer will then target data of a specific meteorological element from this model.",
+      "MANAGE_LAYER_CATEGORIES_LABEL": "You can manage the categories of your own data layers.",
+      "MANAGE_LAYER_CATEGORIES_LINK_LABEL": "How to manage the categories",
+      "CATEGORIES_LIST_LABEL": "View the list of your categories.",
+      "CATEGORIES_LIST_ACTIONS_LABEL": "Sort your categories by name or update time and seek for a target one.",
+      "CATEGORY_ACTIONS_LABEL": "Update or remove a category by using these buttons.",
+      "ADD_CATEGORY_LABEL": "Add a new category using this button.",
+      "LAYER_CATEGORY_NAME_LABEL": "Enter the name of your new category.",
+      "LAYER_CATEGORY_ICON_LABEL": "Enter the icon of your new category.",
+      "LAYER_CATEGORY_LAYERS_LABEL": "Select the layers to be part of this category.",
+      "LAYER_CATEGORY_EXCLUSIVE_LABEL": "Set if only one layer should be visible at a time in this category.",
+      "CREATE_NEW_LAYER_CATEGORY_LABEL": "Confirm the creation of your new category in the catalog."
     },
     "timeline": {
       "TIMELINE_LABEL": "The timeline allows to quickly execute actions related to the time of displayed data.",
@@ -248,19 +269,28 @@
     "fab": {
       "PROBE_LABEL": "Probe weather forecast data at a specific location.",
       "PROBE_CURSOR_LABEL": "After selecting this option click on a target location on the map to display related forecast data.",
-      "CREATE_LAYER_LABEL": "Create a new blank data layer.",
-      "CREATE_LAYER_LINK_LABEL": "How to create a new data layer",
-      "IMPORT_LAYER_LABEL": "Import existing data as a new data layer.",
-      "IMPORT_LAYER_LINK_LABEL": "How to import map data",
+      "ADD_LAYER_LABEL": "Add a new data layer.",
+      "ADD_LAYER_LINK_LABEL": "How to add a new data layer"
+    },
+    "add-layer": {
+      "ADD_LAYER_LINK_LABEL": "How to add others types of data layers",
+      "FILE_LABEL": "Select your data file in GeoJSON format.",
+      "SERVICE_LABEL": "Enter the URL of the GetCapabilities request for the target OGC service.",
+      "SERVICE_LAYER_LABEL": "Select the target OGC service layer to connect to.",
       "LAYER_NAME_LABEL": "Enter the name of your new data layer.",
       "LAYER_DESCRIPTION_LABEL": "Then provide a description for your new data layer.",
       "LAYER_FEATURE_ID_LABEL": "Choose an identifier to uniquely identify the features of your layer.",
+      "LAYER_STYLE_LABEL": "Select the style to be used for your layer.",
       "LAYER_SCHEMA_LABEL": "Last, select the data schema of your features (JSON schema file).",
-      "CREATE_NEW_LAYER_LABEL": "Confirm the creation of your new layer.",
-      "EDIT_NEW_LAYER_LABEL": "You will then directly enter in edition mode on the map for your new layer.",
-      "FILE_LABEL": "Choisissez un fichier contenant vos données au format GeoJSON.",
-      "CREATE_IMPORT_LAYER_LABEL": "Confirm the creation of your new layer.",
-      "ZOOM_IMPORT_LAYER_LABEL": "The map will be centered on your new layer."
+      "IMPORT_LAYER_LABEL": "Import existing data as a new data layer.",
+      "IMPORT_LAYER_LINK_LABEL": "How to import map data",
+      "IMPORT_NEW_LAYER_LABEL": "Confirm the creation of your new layer and the map will be centered on your new layer.",
+      "CONNECT_LAYER_LABEL": "Connect your layer to a remote OGC service (WMS, WFS, WMTS, TMS).",
+      "CONNECT_LAYER_LINK_LABEL": "How to connect a layer",
+      "CONNECT_NEW_LAYER_LABEL": "Confirm the creation of your new layer.",
+      "CREATE_LAYER_LABEL": "Create a new blank data layer based on a data schema.",
+      "CREATE_LAYER_LINK_LABEL": "How to create a new data layer",
+      "CREATE_NEW_LAYER_LABEL": "Confirm the creation of your new layer and start editing the data on the map."
     }
   },
   "KOwsServiceField": {

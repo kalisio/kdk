@@ -209,8 +209,8 @@
       "SEARCH_LOCATION_LABEL": "Recherchez une <b>adresse</b> via ce bouton.",
       "LOCATION_SEARCHING_LABEL": "Tapez tout ou partie de votre adresse puis sélectionnez parmi les propositions pour recentrer la carte.",
       "SEARCH_BACK_LABEL": "Arrêtez la recherche en retournant aux actions.",
-      "FAVORITE_VIEWS_LABEL": "Listez, créez ou effacez vos <b>vues favorites</b> via ce bouton.",
-      "FAVORITE_VIEW_LABEL": "Une vue favorite permet de restorer votre contexte actuel (emprise cartographique et couches actives) à un moment ultérieur.",
+      "FAVORITE_VIEWS_LABEL": "Gérer vos <b>vues favorites</b> via ce bouton. Une vue favorite vous permet de restorer votre contexte à un moment ultérieur.",
+      "FAVORITE_VIEWS_LINK_LABEL": "Voir comment gérer vos vues favorites",
       "TOOLS_LABEL": "Sélectionnez un outil parmi ceux disponibles via ce bouton.",
       "TRACK_LOCATION_LABEL": "Affichez les coordonnées d'une position via ce bouton.",
       "COPY_LOCATION_LABEL": "Copier vos coordonnées dans le presse-papiers grâce à ce bouton.",
@@ -220,6 +220,16 @@
       "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
       "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton."
     },
+    "favorite-views": {
+      "FAVORITE_VIEWS_LIST_LABEL": "Visualisez la liste de vos vues favorites.",
+      "FAVORITE_VIEWS_LIST_ACTIONS_LABEL": "Triez vos vues par nom ou date de mise à jour et recherchez-en une.",
+      "FAVORITE_VIEW_ACTIONS_LABEL": "Supprimez une vue via ce bouton.",
+      "ADD_FAVORITE_VIEW_LABEL": "Ajoutez une nouvelle vue via ce bouton.",
+      "FAVORITE_VIEW_NAME_LABEL": "Choisissez un nom pour votre nouvelle vue.",
+      "FAVORITE_VIEW_ICON_LABEL": "Choisissez une description pour votre nouvelle vue.",
+      "FAVORITE_VIEW_LAYERS_LABEL": "Choisissez si les couches actuellement actives seront restaurées par votre vue.",
+      "CREATE_NEW_FAVORITE_VIEW_LABEL": "Confirmez la création de votre nouvelle vue favorite."
+    },
     "catalog-panel": {
       "CATALOG_LABEL": "Le catalogue</b> permet de gérer les données affichées sur votre carte.",
       "CATEGORIES_LABEL": "Les données sont organisée en catégories</b>.",
@@ -228,7 +238,18 @@
       "MIN_LEVEL_LABEL": "Lorsqu'une couche n'est pas visible à votre échelle elle apparait grisée, vous devez zoomer pour la visualiser sur la carte.",
       "HIDE_LAYER_LABEL": "Une nouvelle sélection la fera disparaitre.",
       "METEO_MODEL_LABEL": "Concernant les données météorologiques vous pouvez modifier le modèle de prévision si plusieurs sont disponibles.",
-      "METEO_LAYERS_LABEL": "Chaque couche ciblera alors un élément météorologique issu des données de ce modèle."
+      "METEO_LAYERS_LABEL": "Chaque couche ciblera alors un élément météorologique issu des données de ce modèle.",
+      "MANAGE_LAYER_CATEGORIES_LABEL": "Vous pouvez gérer les catégories de vos propres couches de données.",
+      "MANAGE_LAYER_CATEGORIES_LINK_LABEL": "Voir comment gérer les catégories",
+      "CATEGORIES_LIST_LABEL": "Visualisez la liste de vos catégories.",
+      "CATEGORIES_LIST_ACTIONS_LABEL": "Triez vos catégories par nom ou date de mise à jour et recherchez-en une.",
+      "CATEGORY_ACTIONS_LABEL": "Modifiez ou supprimez une catégorie via ces boutons.",
+      "ADD_CATEGORY_LABEL": "Ajoutez une nouvelle catégorie via ce bouton.",
+      "LAYER_CATEGORY_NAME_LABEL": "Choisissez un nom pour votre nouvelle catégorie.",
+      "LAYER_CATEGORY_ICON_LABEL": "Choisissez une icône pour votre nouvelle catégorie.",
+      "LAYER_CATEGORY_LAYERS_LABEL": "Sélectionnez les couches appartenant à cette catégorie.",
+      "LAYER_CATEGORY_EXCLUSIVE_LABEL": "Choisissez si une seule couche doit être active à un instant donné dans cette catégorie.",
+      "CREATE_NEW_LAYER_CATEGORY_LABEL": "Confirmez la création de votre nouvelle catégorie dans le catalogue."
     },
     "timeline": {
       "TIMELINE_LABEL": "La ligne de temps permet d'accéder aux actions relative à la temporalité des données affichées.",
@@ -246,22 +267,32 @@
       "PICK_DAY_LABEL": "Ou choisissez directement un jour."
     },
     "fab": {
-      "TIMELINE_LABEL": "Ce bouton permet d'accéder aux actions relatives à la cartographie des données.",
       "PROBE_LABEL": "Sonder les prévision météorologiques à la position de votre choix.",
       "PROBE_CURSOR_LABEL": "Une fois l'option sélectionnée choisissez une position sur la carte pour afficher les prévisions.",
-      "CREATE_LAYER_LABEL": "Créer une nouvelle couche de données vierge.",
-      "CREATE_LAYER_LINK_LABEL": "Voir comment créer une nouvelle couche de données",
-      "IMPORT_LAYER_LABEL": "Importer des données existantes dans une nouvelle couche.",
-      "IMPORT_LAYER_LINK_LABEL": "Importer des données cartographiques",
+      "ADD_LAYER_LABEL": "Ajouter une nouvelle couche de données.",
+      "ADD_LAYER_LINK_LABEL": "Voir comment ajouter une nouvelle couche de données"
+    },
+    "add-layer": {
+      "ADD_LAYER_LINK_LABEL": "Voir comment ajouter d'autres types de couches de données",
+      "FILE_LABEL": "Choisissez un fichier contenant vos données au format GeoJSON.",
+      "SERVICE_LABEL": "Entrez l'URL de la requête GetCapabilities du service OGC cible.",
+      "SERVICE_LAYER_LABEL": "Choisissez la couche du service OGC à laquelle se connecter.",
       "LAYER_NAME_LABEL": "Choisissez un nom pour votre nouvelle couche de données.",
       "LAYER_DESCRIPTION_LABEL": "Ensuite fournissez une description.",
       "LAYER_FEATURE_ID_LABEL": "Choisissez un identifiant unique de vos éléments au sein de votre nouvelle couche.",
+      "LAYER_STYLE_LABEL": "Choisissez le style à utiliser pour votre couche.",
       "LAYER_SCHEMA_LABEL": "Enfin, sélectionnez le schéma de données de vos éléments (fichier JSON schema).",
-      "CREATE_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
-      "EDIT_NEW_LAYER_LABEL": "Vous entrerez directement en mode édition dans la carte sur votre nouvelle couche.",
-      "FILE_LABEL": "Choisissez un fichier contenant vos données au format GeoJSON.",
+      "IMPORT_LAYER_LABEL": "Importer des données existantes dans une nouvelle couche.",
+      "IMPORT_LAYER_LINK_LABEL": "Voir comment importer des données cartographiques",
       "CREATE_IMPORT_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
-      "ZOOM_IMPORT_LAYER_LABEL": "La carte sera centrée sur votre nouvelle couche."
+      "ZOOM_IMPORT_LAYER_LABEL": "La carte sera centrée sur votre nouvelle couche.",
+      "CONNECT_LAYER_LABEL": "Connecter votre nouvelle couche à un service OGC distant (WMS, WFS, WMTS, TMS).",
+      "CONNECT_LAYER_LINK_LABEL": "Voir comment connecter une nouvelle couche de données",
+      "CONNECT_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
+      "CREATE_LAYER_LABEL": "Créer une nouvelle couche vierge sur la base d'un schéma de données.",
+      "CREATE_LAYER_LINK_LABEL": "Voir comment créer une nouvelle couche de données",
+      "CREATE_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
+      "EDIT_NEW_LAYER_LABEL": "Vous serez alors en mode édition des données de votre nouvelle couche sur la carte."
     }
   },
   "KOwsServiceField": {

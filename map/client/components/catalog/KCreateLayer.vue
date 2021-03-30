@@ -6,7 +6,7 @@
     <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
-        id="connect-action" 
+        id="create-layer-action" 
         :label="$t('KCreateLayer.CREATE_BUTTON')" 
         renderer="form-button"
         :loading="creating"        
