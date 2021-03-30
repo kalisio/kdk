@@ -177,7 +177,6 @@ export default {
           source: this.service.baseUrl,
           layers: this.layer.id,
           version: this.service.version,
-          styles: style,
           format: 'image/png',
           transparent: true,
           bgcolor: 'FFFFFFFF'
@@ -195,9 +194,13 @@ export default {
           }
         }
 
-        // add legend url if available in the picked style
-        const legendUrl = _.get(this.layer.styles, [style, 'legend'])
-        if (legendUrl) newLayer.legendUrl = legendUrl
+        if (style) {
+          newLayer.leaflet.styles = style
+
+          // add legend url if available in the picked style
+          const legendUrl = _.get(this.layer.styles, [style, 'legend'])
+          if (legendUrl) newLayer.legendUrl = legendUrl
+        }
       } else if (this.service.protocol === 'WFS') {
         Object.assign(newLayer, {
           isStyleEditable: true,
