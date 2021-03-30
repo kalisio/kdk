@@ -139,6 +139,8 @@ export default {
       await this.kActivity.addLayer(newLayer)
       // Assign the features to the layer
       await this.kActivity.updateLayer(newLayer.name, geoJson)
+      // Zoom to it
+      this.kActivity.zoomToLayer(newLayer.name)
       this.importing = false
       this.$emit('done')
     }
