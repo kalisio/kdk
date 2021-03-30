@@ -98,7 +98,7 @@ export const Layout = {
       components = _.get(content, mode)
     }
     // Apply filtering
-    //components = this.filterContent(components, filter)
+    // components = this.filterContent(components, filter)
     const processedComponents = []
     // Then create component objects
     _.forEach(components, (component) => {
@@ -202,7 +202,7 @@ export const Layout = {
       // FIXME: don't know why but this generic binding function does not seem to work 
       // It should allow to wrote any property like { label: ':xxx' } and bind it
       // to a component property from the context like we do for handler
-      //this.bindProperties(component, context)
+      // this.bindProperties(component, context)
       // The only way to make it work is to add props at the root level
       const binding = component.bind ? component.bind : null
       if (binding) component.props = _.get(context, binding)

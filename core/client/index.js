@@ -4,6 +4,7 @@ import { Store } from './store'
 import { Layout } from './layout'
 import { Filter } from './filter'
 import { Sorter } from './sorter'
+import { Search } from './search'
 import services from './services'
 import * as utils from './utils'
 import * as mixins from './mixins'
@@ -20,6 +21,8 @@ export * from './events'
 export * from './api'
 export * from './store'
 export * from './filter'
+export * from './sorter'
+export * from './search'
 export * from './layout'
 export * from './guards'
 export * from '../common'
@@ -40,6 +43,7 @@ export default function init () {
   Layout.initialize()
   Filter.initialize(api)
   Sorter.initialize()
+  Search.initialize(api)
   Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })

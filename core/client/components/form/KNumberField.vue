@@ -14,7 +14,10 @@
     :error="hasError"
     :error-message="errorLabel"
     bottom-slot>
-    
+    <!-- Helper -->
+    <template v-if="helper" v-slot:hint>
+      <span v-html="helper"></span>
+    </template>
   </q-input>
 </template>
 

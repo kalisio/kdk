@@ -10,14 +10,15 @@
   >
     <!-- Content -->
     <template v-slot:default>
-      <q-editor
-        class="q-pa-sm full-width"
-        :id="properties.name + '-field'"
-        v-model="model"
-        content-class="text-grey-8"
-        min-height="5rem"
-        max-height="10rem"
-        dense />
+      <div class="q-pt-md full-width">
+        <q-editor
+          :id="properties.name + '-field'"
+          v-model="model"
+          content-class="text-grey-8"
+          min-height="5rem"
+          max-height="10rem"
+          dense />
+      </div>
     </template>
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
