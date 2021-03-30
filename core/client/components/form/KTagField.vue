@@ -39,17 +39,18 @@
           @click="onTagClicked(scope.opt)" 
           removable
           @remove="scope.removeAtIndex(scope.index)"
-          :tabindex="scope.tabindex"
           :color="scope.opt.icon.color"
-          :icon="scope.opt.icon.name"
-          :label="scope.opt.value" />
+          :tabindex="scope.tabindex">
+          <q-icon v-if="scope.opt.name" class="q-pr-sm" :name="scope.opt.icon.name" :color="scope.opt.icon.color" />
+          {{ scope.opt.value }}
+        </q-chip>
       </template>
       <!-- Options display -->
       <template v-slot:option="scope">
         <q-item
           v-bind="scope.itemProps"
           v-on="scope.itemEvents">
-          <q-item-section avatar>
+          <q-item-section v-if="scope.opt.icon.name" avatar>
             <q-icon :name="scope.opt.icon.name" />
           </q-item-section>
           <q-item-section>
@@ -91,8 +92,7 @@ export default {
         iconField: 'icon'
       }],
       tags: [],
-      options: [],
-      searcing: false
+      options: []
     }
   },
   computed: {
@@ -133,8 +133,8 @@ export default {
           value: value,
           scope: this.properties.scope,
           icon: {
-            name: 'las la-tag',
-            color: 'black'
+            name: undefined,
+            color: 'grey7'
           },
           new: true
         }
