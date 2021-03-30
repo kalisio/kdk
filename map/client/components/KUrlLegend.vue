@@ -26,12 +26,19 @@ export default {
       if (!legendUrl) {
         // no legend on layer, try to fetch legend in case of WMS layer
         if (_.get(layer, 'leaflet.type') === 'tileLayer.wms') {
+          // leaflet wms layer uses every other options as request extra parameters
+          const leafletOptions = [
+            'type', 'source', 'isVisible', // these are kdk specific
+            'layers', 'styles', 'format', 'transparent', 'version', 'crs', 'uppercase' // these are leaflet specific
+          ]
+          const searchParams = _.omit(layer.leaflet, leafletOptions)
           // lookup wms parameters on the leaflet layer parameters
           legendUrl = wms.makeGetLegendGraphic(
             layer.leaflet.source,
             _.get(layer.leaflet, 'version', '1.0.0'),
             layer.leaflet.layers,
-            _.get(layer.leaflet, 'styles'))
+            _.get(layer.leaflet, 'styles'),
+            searchParams)
         }
         // TODO: might try in case of WMTS layer too
       }

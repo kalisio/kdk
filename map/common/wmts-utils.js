@@ -73,7 +73,7 @@ export async function discover (url, searchParams = {}, caps = null) {
       const id = st.Identifier[0]
       const display = _.get(st, 'Title[0]', id || 'default')
       const legend = _.get(st, 'LegendURL[0].$.xlink:href')
-      obj.styles[id] = { id, display, legend }
+      obj.styles[id] = { id, display, legend: buildUrl(legend, searchParams) }
     }
     // lookup available crs
     for (const link of _.get(layer, 'TileMatrixSetLink')) {
