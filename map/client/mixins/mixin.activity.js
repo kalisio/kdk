@@ -5,11 +5,10 @@ import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import explode from '@turf/explode'
-import { Loading, Dialog, uid } from 'quasar'
+import { Loading, Dialog } from 'quasar'
 import { Layout } from '../../../core/client/layout'
-import { setGatewayJwt, generatePropertiesSchema } from '../utils'
+import { setGatewayJwt } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
-import { buildUrl } from '../../../core/common'
 import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
 
 export default {
@@ -550,7 +549,6 @@ export default {
       this.catalogListeners = {}
     },
     async onCatalogUpdated (event, object) {
-      console.log(event, object)
       switch (object.type) {
         case 'Category':
           // In any case we rebuild categories

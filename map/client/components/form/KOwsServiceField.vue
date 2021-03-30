@@ -93,7 +93,7 @@ export default {
             }
           } 
         } catch (error) {
-          this.error = 'KServiceField.INVALID_URL'
+          this.error = 'KOwsServiceField.INVALID_URL'
         }
       }
       this.loading = false
@@ -145,11 +145,11 @@ export default {
           for (const [k, v] of url.searchParams) result.searchParams[k] = v
           // fetch content and try to convert to json
           const query = url.href
-          console.log(query)
+  
           caps = await fetch(query, { redirect: 'follow' })
             .then(resp => resp.text())
             .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
-          console.log(caps)
+          
           // look for SERVICE=xxx
           const protocol = this.findQueryParameter(url.searchParams, 'SERVICE')
           if (protocol === 'WMS') result.protocol = 'WMS'
@@ -166,7 +166,7 @@ export default {
               result.protocol = 'TMS'
             }
           }
-          console.log('1 ', result.protocol)
+
           // remove some known search params depending on service
           const knownSearchParams = new Set()
           if (result.protocol === 'WMS' || result.protocol === 'WFS' || result.protocol === 'WMTS') {
@@ -182,16 +182,14 @@ export default {
             })
           }
         }
-        console.log('2 ',result.searchParams)
+
         if (result.protocol === 'WMS') {
           const decoded = await wms.discover(result.baseUrl, result.searchParams, caps)
           result.availableLayers = decoded.availableLayers
           result.version = this.findQueryParameter(url.searchParams, 'VERSION')
           if (!result.version) result.version = decoded.version
         } else if (result.protocol === 'WFS') {
-          console.log('discover')
           const decoded = await wfs.discover(result.baseUrl, result.searchParams, caps)
-          console.log(decoded)
           result.availableLayers = decoded.availableLayers
           result.version = this.findQueryParameter(url.searchParams, 'VERSION')
           if (!result.version) result.version = decoded.version
@@ -207,9 +205,9 @@ export default {
           result.availableLayers = decoded.availableLayers
           result.version = decoded.version
         }
-        console.log('3 ',result)
+
       } catch (err) { 
-        this.error = 'KServiceField.CANNOT_FETCH_URL'
+        this.error = 'KOwsServiceField.CANNOT_FETCH_URL'
         return null
       }
       return result

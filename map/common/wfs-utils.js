@@ -55,7 +55,7 @@ export async function discover (url, searchParams = {}, caps = null) {
     const id = layer.Name[0]
     const display = _.get(layer, 'Title[0]', id)
     out.availableLayers[id] = { id, display }
-    
+
     // extent
     if (layer.WGS84BoundingBox && layer.WGS84BoundingBox[0] !== '') {
       const loco = layer.WGS84BoundingBox[0].LowerCorner[0].split(' ')

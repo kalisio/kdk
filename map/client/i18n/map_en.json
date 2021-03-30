@@ -264,6 +264,7 @@
     }
   },
   "KOwsServiceField": {
+    "INVALID_URL": "Invalid URL",
     "CANNOT_FETCH_URL": "Failed fetching resource.",
     "WFS_MISSING_GEOJSON_SUPPORT": "The WFS service has no support for GeoJSON, which is required."
   },
