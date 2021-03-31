@@ -1,7 +1,11 @@
 <template>
   <k-modal ref="modal"
-    id="feature-filter-modal"
-    :title="title">
+    id="features-filter-modal"
+    :title="title"  
+    :maximized="isModalMaximized"
+    v-model="isModalOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">    
     <div slot="modal-content">
       <q-list dense class="row items-center justify-around">
         <q-item v-for="filter in filters" :key="filter.key" class="col-12">
@@ -53,8 +57,6 @@ import { mixins as kCoreMixins } from '../../../core/client'
 
 export default {
   name: 'k-features-filter',
-  components: {
-  },
   mixins: [
     kCoreMixins.baseModal,
     kCoreMixins.refsResolver()
@@ -239,9 +241,6 @@ export default {
   created () {
     // laod the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
-  },
-  beforeDestroy () {
-
   }
 }
 </script>

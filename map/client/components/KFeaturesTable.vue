@@ -18,9 +18,7 @@ import { mixins as kCoreMixins } from '../../../core/client'
 
 export default {
   name: 'k-features-table',
-  mixins: [
-    kCoreMixins.baseModal
-  ],
+  mixins: [kCoreMixins.baseModal],
   props: {
     layer: {
       type: Object,
@@ -54,9 +52,6 @@ export default {
     // laod the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-table'] = this.$load('collection/KTable')
-  },
-  beforeDestroy () {
-
   }
 }
 </script>
