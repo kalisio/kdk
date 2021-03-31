@@ -94,9 +94,6 @@ export default {
       options: []
     }
   },
-  computed: {
-
-  },
   methods: {
     emptyModel () {
       return []
@@ -122,7 +119,8 @@ export default {
     },
     onSelected (value) {
       this.options = []
-      this.$refs.select.updateInputValue('')
+      if (value) this.$refs.select.updateInputValue('')
+      else this.tags = [] // cleared
       this.updateModel()
     },
     onAdded (value, done) {
