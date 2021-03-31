@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { Search } from '../../search'
 
 export default {
