@@ -19,13 +19,15 @@
      <!-- Value display -->
     <template v-slot:selected-item="scope">
       <q-chip
+        square
         removable
         @remove="scope.removeAtIndex(scope.index)"
         :tabindex="scope.tabindex"
         color="primary"
-        text-color="white"
-        :icon="scope.opt.icon"
-        :label="scope.opt.label" />
+        text-color="white">
+        <q-icon v-if="scope.opt.icon" class="q-pr-sm" :name="scope.opt.icon" />
+        {{ scope.opt.label }}
+      </q-chip>
     </template>
     <!-- Options display -->
     <template v-slot:option="scope">

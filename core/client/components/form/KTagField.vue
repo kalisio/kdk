@@ -41,7 +41,7 @@
           @remove="scope.removeAtIndex(scope.index)"
           :color="scope.opt.icon.color"
           :tabindex="scope.tabindex">
-          <q-icon v-if="scope.opt.name" class="q-pr-sm" :name="scope.opt.icon.name" :color="scope.opt.icon.color" />
+          <q-icon v-if="scope.opt.icon.name" class="q-pr-sm" :name="scope.opt.icon.name" :color="scope.opt.icon.color" />
           {{ scope.opt.value }}
         </q-chip>
       </template>
@@ -88,8 +88,7 @@ export default {
       services: [{
         service: 'tags',
         baseQuery: { scope: this.properties.scope },
-        field: 'value',
-        iconField: 'icon'
+        field: 'value'
       }],
       tags: [],
       options: []
