@@ -296,7 +296,7 @@ export default {
         // Because we save all features in a single service use filtering to separate layers
         createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
         // Reset layer with new setup
-        await this.resetLayer(layer)
+        await this.resetLayer(createdLayer)
         if (_.get(layer, 'leaflet.tiled')) {
           this.$toast({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
         }
