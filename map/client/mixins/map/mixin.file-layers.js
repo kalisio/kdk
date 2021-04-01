@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import path from 'path'
 import logger from 'loglevel'
 import togeojson from 'togeojson'
 import fileLayer from 'leaflet-filelayer'
@@ -47,21 +48,26 @@ export default {
       }, false)
 
       this.loader.on('data:loaded', async event => {
+        const name = (event.filename ?
+          path.basename(event.filename, path.extname(event.filename)) :
+          this.$t('mixins.fileLayers.IMPORTED_DATA_NAME'))
+        const engine = {
+          type: 'geoJson',
+          isVisible: true,
+          realtime: true
+        }
         const layer = {
-          name: event.filename || this.$t('mixins.fileLayers.IMPORTED_DATA_NAME'),
+          name,
           type: 'OverlayLayer',
           icon: 'insert_drive_file',
           featureId: '_id',
-          leaflet: {
-            type: 'geoJson',
-            isVisible: true,
-            realtime: true
-          }
+          leaflet: engine,
+          cesium: engine
         }
         const geoJson = event.layer.toGeoJSON()
         // Generate schema for properties
         const schema = generatePropertiesSchema(geoJson, layer.name)
-        _.set(layer, 'schema.content', schema)
+        _.set(layer, 'schema', { name, content: schema })
         // Generate temporary IDs for features
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         features.forEach(feature => { feature._id = uid().toString() })

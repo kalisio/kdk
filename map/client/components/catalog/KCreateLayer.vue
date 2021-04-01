@@ -110,22 +110,20 @@ export default {
       if (!propertiesResult.isValid || !featureIdResult.isValid)  return
       this.creating = true
       // Create an empty layer
+      const engine = {
+        type: 'geoJson',
+        isVisible: true,
+        realtime: true
+      }
       const newLayer = {
         name: propertiesResult.values.name,
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'insert_drive_file',
         scope: 'user',
-        isStorable: true,
-        isEditable: true,
-        isSelectable: true,
-        isRemovable: true,      
         featureId: featureIdResult.values.featureId,
-        [this.kActivity.engine]: {
-          type: 'geoJson',
-          isVisible: true,
-          realtime: true
-        },
+        leaflet: engine,
+        cesium: engine,
         schema: {
           name: this.schema.name,
           content: this.schema.content

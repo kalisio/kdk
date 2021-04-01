@@ -40,7 +40,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="points" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="points" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -103,7 +103,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="lines" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="lines" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-6">
@@ -173,7 +173,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="polygons" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="polygons" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-7">
@@ -233,7 +233,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="popup" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="popup" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -248,7 +248,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="tooltip" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="tooltip" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -263,7 +263,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="infobox" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="infobox" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -311,6 +311,9 @@ export default {
     options: { type: Object, required: true } // Contains default style options
   },
   computed: {
+    hasFeatureSchema() {
+      return _.has(this.layer, 'schema')
+    },
     fields () {
       // Avoid modifying the layer schema as we might update it internally
       return _.cloneDeep(_.get(this.layer, 'schema.content.properties', {}))
@@ -395,9 +398,10 @@ export default {
       // Retrieve schema descriptor
       const properties = this.fields[property]
       let component = properties.field.component
-      // We previously directly used the component type from the schema
-      // but now we prefer to switch to a select field in order to provide list of possible values for discrete types
-      if (component !== 'form/KNumberField') {
+      // We previously directly used the component type from the schema but now we prefer
+      // to switch to a select field in order to provide list of possible values for discrete types
+      // if possible (ie not in-memory layers)
+      if ((component !== 'form/KNumberField') && (this.layer._id)) {
         component = 'form/KSelectField'
         // Get available values
         const values = await this.$api.getService('features', this.contextId)

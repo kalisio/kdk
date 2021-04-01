@@ -121,22 +121,20 @@ export default {
       // Create the layer accordingly the input fields
       const geoJson = this.file.content
       // Create an empty layer used as a container
+      const engine = {
+        type: 'geoJson',
+        isVisible: true,
+        realtime: true
+      }
       const newLayer = {
         name: propertiesResult.values.name,
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'insert_drive_file',  
         scope: 'user',
-        isStorable: true,
-        isEditable: true,
-        isSelectable: true,   
-        isRemovable: true,
         featureId: propertiesResult.values.featureId,
-        [this.kActivity.engine]: {
-          type: 'geoJson',
-          isVisible: true,
-          realtime: true
-        },
+        leaflet: engine,
+        cesium: engine,
         schema: {
           name: this.file.name,
           content: this.file.schema

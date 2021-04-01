@@ -129,33 +129,37 @@ export default {
       }
     },
     isUserLayer (layer) {
-      return ((_.get(layer, `${this.engine}.type`) === 'geoJson') &&
-              (!layer._id || (layer.service === 'features')))
+      return (_.get(layer, 'scope') === 'user')
+    },
+    isFeatureLayer (layer) {
+      return (_.get(layer, 'service') === 'features')
+    },
+    hasFeatureSchema (layer) {
+      return _.has(layer, 'schema')
     },
     isLayerSelectable (layer) {
-      if (_.has(layer, 'isSelectable')) return _.get(layer, 'isSelectable')
-      // Possible only when not edited by default
-      else return (typeof this.isLayerEdited === 'function' ? !this.isLayerEdited(layer) : true)
+      // Only possible when not edited by default
+      if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return false
+      return _.get(layer, 'isSelectable', true)
     },
     isLayerStorable (layer) {
-      if (_.has(layer, 'isStorable')) return _.get(layer, 'isStorable')
-      // Only possible when user-defined layer and not yet saved
-      else return (this.isUserLayer(layer) && !layer._id)
+      // Only possible when not saved by default
+      if (layer._id) return false
+      return _.get(layer, 'isStorable', this.isUserLayer(layer))
     },
     isLayerEditable (layer) {
-      if (_.has(layer, 'isEditable')) return _.get(layer, 'isEditable')
-      // Only possible on user-defined layers by default
-      else return this.isUserLayer(layer)
+      // Only possible when saved by default
+      if (!layer._id) return false
+      return _.get(layer, 'isEditable', this.isUserLayer(layer))
     },
     isLayerRemovable (layer) {
-      if (_.has(layer, 'isRemovable')) return _.get(layer, 'isRemovable')
-      // Only possible on user-defined layers by default
-      else return this.isUserLayer(layer)
+      return _.get(layer, 'isRemovable', this.isUserLayer(layer))
     },
     isLayerStyleEditable (layer) {
-      if (_.has(layer, 'isStyleEditable')) return _.get(layer, 'isStyleEditable')
-      // Only possible on user-defined layers by default
-      return this.isUserLayer(layer)
+      return _.get(layer, 'isStyleEditable', this.isUserLayer(layer))
+    },
+    isLayerDataEditable (layer) {
+      return _.get(layer, 'isDataEditable', this.isUserLayer(layer) && this.isFeatureLayer(layer))
     },
     async resetLayer (layer) {
       // Reset layer with new setup but keep track of current visibility state
@@ -179,41 +183,6 @@ export default {
       // Store the actions and make it reactive
       this.$set(layer, 'actions', actions)
       return actions
-    },
-    getLayerTimeRange (layer) {
-      const now = moment.utc()
-      let start, end, step, sources
-      // Check for Weacast layers first
-      if (_.get(layer, 'leaflet.type', '').startsWith('weacast')) {
-        sources = [{
-          from: `P${this.forecastModel.lowerLimit - this.forecastModel.interval}S`,
-          to: `P${this.forecastModel.upperLimit + this.forecastModel.interval}S`
-        }]
-      } else {
-        // Then for data sources, depending on the layer type configuration is not at the same place
-        sources = _.get(layer, 'meteo_model', _.get(layer, 'time_based', [layer]))
-      }
-      sources.forEach(source => {
-        // only consider meteo sources for which associated forecast model is the current one
-        if (source.model && (source.model !== this.forecastModel.name)) return
-        if (source.from) {
-          const from = makeTime(readAsTimeOrDuration(source.from), now)
-          start = (start ? moment.min(start, from) : from)
-        }
-        if (source.to) {
-          const to = makeTime(readAsTimeOrDuration(source.to), now)
-          end = (end ? moment.max(end, to) : to)
-        }
-        if (source.every) {
-          const every = moment.duration(source.every)
-          step = (step ? (step.asSeconds() > every.asSeconds() ? every : step) : every)
-        }
-      })
-      // No a valid source ?
-      if (!start && !end) return null
-      // When there is not step provided this means it's a meteorological source
-      if (!step) step = moment.duration(this.forecastModel.interval, 's')
-      return { start, end, step }
     },
     onLayerAdded (layer) {
       this.configureLayerActions(layer)
@@ -240,71 +209,74 @@ export default {
       this.zoomToLayer(layer.name)
     },
     async onSaveLayer (layer) {
-      const geoJson = this.toGeoJson(layer.name)
-      // Check for invalid features first
-      const check = this.checkFeatures(geoJson)
-      if (check.kinks.length > 0) {
-        const result = await kCoreUtils.dialog({
-          title: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_TITLE', { features: check.kinks }),
-          message: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_MESSAGE', { features: check.kinks }),
-          html: true,
-          ok: {
-            label: this.$t('OK'),
-            flat: true
-          },
-          cancel: {
-            label: this.$t('CANCEL'),
-            flat: true
-          }
-        })
-        if (!result.ok) return
-      }
-      // Change data source from in-memory to features service
-      _.merge(layer, {
-        service: 'features',
-        [this.engine]: { source: '/api/features' }
-      })
-      // When saving from one engine copy options to the other one so that it will be available in both of them
-      _.set(layer, (this.is2D() ? 'cesium' : 'leaflet'), Object.assign({}, _.get(layer, this.engine)))
-      const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-      // If too much data use tiling
-      // The threshold is based on the number of points and not features.
-      // Indeed otherwise the complexity will be different depending on the geometry type
-      // (eg a bucket of 1000 polygons can actually contains a lot of points).
-      let nbPoints = 0
-      features.forEach(feature => {
-        nbPoints += explode(feature).features.length
-      })
-      if (this.is2D() && (nbPoints > 5000)) {
-        _.set(layer, 'leaflet.tiled', true)
-        _.set(layer, 'leaflet.minZoom', 15)
-      }
-      Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }) })
-      try {
-        let createdLayer = await this.$api.getService('catalog')
-          .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
-        const chunkSize = _.get(this, 'activityOptions.featuresChunkSize', 5000)
-        let nbFeatures = 0
-        // We use the generated DB ID as layer ID on features
-        await this.createFeatures(geoJson, createdLayer._id, chunkSize, (i, chunk) => {
-          // Update saving message according to new chunk data
-          nbFeatures += chunk.length
-          Loading.show({
-            message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length })
+      // Take care that WFS layers rely on the same type as our own feature layers
+      if (_.has(layer, 'wfs') && _.get(layer, `${this.engine}.type`) === 'geoJson') {
+        const geoJson = this.toGeoJson(layer.name)
+        // Check for invalid features first
+        const check = this.checkFeatures(geoJson)
+        if (check.kinks.length > 0) {
+          const result = await kCoreUtils.dialog({
+            title: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_TITLE', { features: check.kinks }),
+            message: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_MESSAGE', { features: check.kinks }),
+            html: true,
+            ok: {
+              label: this.$t('OK'),
+              flat: true
+            },
+            cancel: {
+              label: this.$t('CANCEL'),
+              flat: true
+            }
           })
-        })
-        // Because we save all features in a single service use filtering to separate layers
-        createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
-        // Reset layer with new setup
-        await this.resetLayer(createdLayer)
-        if (_.get(layer, 'leaflet.tiled')) {
-          this.$toast({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
+          if (!result.ok) return
         }
-      } catch (error) {
-        // User error message on operation should be raised by error hook, otherwise this is more a coding error
-        logger.error(error)
+        // Change data source from in-memory to features service
+        _.set(layer, 'service', 'features')
+        if (_.has(layer, 'leaflet')) _.set(layer, 'leaflet.source', '/api/features')
+        if (_.has(layer, 'cesium')) _.set(layer, 'cesium.source', '/api/features')
+        // If too much data use tiling
+        // The threshold is based on the number of points and not features.
+        // Indeed otherwise the complexity will be different depending on the geometry type
+        // (eg a bucket of 1000 polygons can actually contains a lot of points).
+        let nbPoints = 0
+        features.forEach(feature => {
+          nbPoints += explode(feature).features.length
+        })
+        if (this.is2D() && (nbPoints > 5000)) {
+          _.set(layer, 'leaflet.tiled', true)
+          _.set(layer, 'leaflet.minZoom', 15)
+        }
+        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }) })
+        try {
+          let createdLayer = await this.$api.getService('catalog')
+            .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
+          const chunkSize = _.get(this, 'activityOptions.featuresChunkSize', 5000)
+          let nbFeatures = 0
+          // We use the generated DB ID as layer ID on features
+          await this.createFeatures(geoJson, createdLayer._id, chunkSize, (i, chunk) => {
+            // Update saving message according to new chunk data
+            nbFeatures += chunk.length
+            Loading.show({
+              message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length })
+            })
+          })
+          // Because we save all features in a single service use filtering to separate layers
+          createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
+          // Reset layer with new setup
+          await this.resetLayer(createdLayer)
+          if (_.get(layer, 'leaflet.tiled')) {
+            this.$toast({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
+          }
+        } catch (error) {
+          // User error message on operation should be raised by error hook, otherwise this is more a coding error
+          logger.error(error)
+        }
+        Loading.hide()
+      } else {
+        // Otherwise simply save in catalog
+        await this.$api.getService('catalog')
+          .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
       }
-      Loading.hide()
     },
     async onFilterLayerData (layer) {
       this.filterModal = await this.$createComponent('KFeaturesFilter', {
@@ -453,7 +425,7 @@ export default {
           if (this.isLayerEdited(layer)) await this.editLayer(layer)
           if (layer._id) {
             // If persistent feature layer remove features as well
-            if (layer.service === 'features') {
+            if (this.isFeatureLayer(layer)) {
               await this.removeFeatures(layer._id)
             }
             await this.$api.getService('catalog').remove(layer._id)
