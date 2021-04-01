@@ -118,9 +118,9 @@ export default {
       }
     },
     async restoreContext (context) {
-      let targetParameters
-      // Restore from local storage or route parameters
-      if (this.shouldRestoreContext(context)) {
+      let targetParameters = this.getRouteContext(context)
+      // Restore from local storage/catalog if no route parameters
+      if (this.shouldRestoreContext(context) && _.isEmpty(targetParameters)) {
         const savedParameters = window.localStorage.getItem(this.getContextKey(context))
         if (savedParameters) {
           targetParameters = JSON.parse(savedParameters)
@@ -139,8 +139,6 @@ export default {
           const homeContext = (response.data.length > 0 ? response.data[0] : null)
           if (homeContext) targetParameters = homeContext
         }
-      } else {
-        targetParameters = this.getRouteContext(context)
       }
       // Restore context if possible
       if (!_.isEmpty(targetParameters)) {

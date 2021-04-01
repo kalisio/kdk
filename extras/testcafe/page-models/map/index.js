@@ -3,13 +3,13 @@ import NavigationBar from './navigation-bar'
 import Timeline from './timeline'
 import MapActivity from './map-activity'
 import Catalog from './catalog'
-import LayerImportDialog from './layer-import-dialog'
+import AddLayer from './add-layer'
 
 export { NavigationBar }
 export { Timeline }
 export { MapActivity }
 export { Catalog }
-export { LayerImportDialog }
+export { AddLayer }
 
 // Mock Geolocation API that does not work well in headless browsers
 // See https://github.com/DevExpress/testcafe/issues/1991

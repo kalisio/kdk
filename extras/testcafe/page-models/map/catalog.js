@@ -7,6 +7,10 @@ export default class Catalog extends BasePage {
     super()
   }
 
+  async clickCategories () {
+    await t.click(VueSelector('k-catalog #manage-layer-categories'))
+  }
+
   async getCategory (category) {
     const categories = VueSelector('k-catalog QExpansionItem')
     const count = await categories.count
@@ -50,6 +54,15 @@ export default class Catalog extends BasePage {
       .expect(item.getVue(({ props }) => props.clickable)).ok(`catalog layer '${layer}' is not clickable`)
       .click(item)
       .expect(item.getVue(({ props }) => props.active)).eql(expectActive, `catalog layer '${layer}' active state doesn't match expectation (${expectActive})`)
+  }
+
+  async clickLayerAction (layer, action) {
+    const item = await this.getLayer(layer)
+    await t
+      // Open overflow menu
+      .click(item.find('#layer-actions'))
+      .wait(1000)
+      .click(item.find(`#${action}`))
   }
 
   async clickForecastMode (mode) {
