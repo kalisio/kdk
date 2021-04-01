@@ -13,16 +13,8 @@
       :disabled="disabled"
       bottom-slots
       @clear="onCleared">
-      <!-- Content -->
-      <template v-slot:default>
-        <q-icon
-          size="sm"
-          id="choosed-icon"
-          :name="iconName" 
-          :color="iconColor" />
-      </template>
       <!-- Icon chooser -->
-      <template v-slot:append>
+      <template v-slot:prepend>
         <q-btn
           id="icon-chooser-button"
           round
@@ -35,7 +27,15 @@
           :icon-set="iconSet"
           :palette="color"
           @icon-choosed="onIconChoosed" />
-      </template>      
+      </template>            
+      <!-- Content -->
+      <template v-slot:default>
+        <q-icon
+          size="sm"
+          id="choosed-icon"
+          :name="iconName" 
+          :color="iconColor" />
+      </template>
       <!-- Helper -->
       <template v-if="helper" v-slot:hint>
         <span v-html="helper"></span>
