@@ -15,6 +15,18 @@
     option-value="id"
     :loading="loading"
     @input="onUpdated">
+     <!-- Options display -->
+    <template v-slot:option="scope">
+      <q-item
+        :id="getId(scope.opt)"
+        v-bind="scope.itemProps"
+        v-on="scope.itemEvents"
+      > 
+        <q-item-section>
+          <q-item-label>{{ scope.opt.display }} [{{scope.opt.id }}]</q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper" />
@@ -47,6 +59,9 @@ export default {
     }
   },
   methods: {
+    getId (layer) {
+      return _.kebabCase(layer.id)
+    },
     emptyModel () {
       return null
     },

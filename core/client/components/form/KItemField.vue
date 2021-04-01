@@ -20,7 +20,7 @@
     :options="options"
     @filter="onSearch"
     @input="onSelected">
-     <!-- Value display -->
+    <!-- Value display -->
     <template v-slot:selected-item="scope">
       <q-chip
         removable

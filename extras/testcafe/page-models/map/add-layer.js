@@ -23,17 +23,16 @@ export default class AddLayer extends BasePage {
       .wait(1000)
   }
 
-  async connectLayer (service, layer) {
+  async connectLayer (service, layerId) {
     await t
       .click(this.dialog.find('#connect-layer'))
       .typeText(this.dialog.find('#service-field'), service)
       .pressKey('enter')
       .wait(5000) // Need to wait for capabilities parsing
       .click(this.dialog.find('#layer-field'))
-      .wait(1000)
+      .wait(500)
       // Selection based on text content does not seem to work
-      //.click(Selector('.q-menu').find('.q-item__label').withText(layer))
-      .click(Selector('.q-menu .q-item').nth(layer))
+      .click(Selector('.q-menu').find(`#${layerId}`))
       .wait(1000)
       .click(this.dialog.find('#connect-layer-action'))
       .wait(1000)
