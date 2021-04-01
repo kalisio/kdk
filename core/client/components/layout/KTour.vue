@@ -351,11 +351,14 @@ export default {
         // Tour name can be prefixed by route if different pages are available
         const name = _.get(step, 'params.tour')
         const route = this.$route.name
-        if (this.$store.has(`tours.${route}/${name}`)) {
-          this.$store.patch('tours.current', { name: `${route}/${name}` })
-        } else {
-          this.$store.patch('tours.current', { name })
-        }
+        const delay = _.get(step, 'params.tourDelay', 0)
+        setTimeout(() => {
+          if (this.$store.has(`tours.${route}/${name}`)) {
+            this.$store.patch('tours.current', { name: `${route}/${name}`, step: 0 })
+          } else {
+            this.$store.patch('tours.current', { name, step: 0 })
+          }
+        }, _.toNumber(delay))
       } else if (_.has(step, 'params.nextDelay')) {
         const delay = _.get(step, 'params.nextDelay')
         setTimeout(() => this.nextStep(), _.toNumber(delay))

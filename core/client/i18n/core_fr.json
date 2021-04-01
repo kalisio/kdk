@@ -357,10 +357,6 @@
       }
     }
   },
-  "KAutocomplete": {
-    "PLACEHOLDER": "$t(SEARCH)",
-    "NO_RESULTS": "$t(EMPTY)"
-  },
   "KColorChooser": {
     "CLOSE_ACTION": "$t(CANCEL)",
     "DONE_BUTTON": "$t(DONE)"

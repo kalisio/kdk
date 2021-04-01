@@ -6,7 +6,7 @@
     <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
-        id="connect-action" 
+        id="create-layer-action" 
         :label="$t('KCreateLayer.CREATE_BUTTON')" 
         renderer="form-button"
         :loading="creating"        
@@ -115,6 +115,11 @@ export default {
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'insert_drive_file',
+        scope: 'user',
+        isStorable: true,
+        isEditable: true,
+        isSelectable: true,
+        isRemovable: true,      
         featureId: featureIdResult.values.featureId,
         [this.kActivity.engine]: {
           type: 'geoJson',

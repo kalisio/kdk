@@ -111,9 +111,7 @@ export default {
         await this.addLayer({
           name: SelectionLayerName,
           type: 'OverlayLayer',
-          tags: ['hidden'], // Do not show the layer in panel
-          isStorable: false,
-          isEditable: false,
+          scope: 'system',
           isSelectable: false,
           leaflet: {
             type: 'geoJson',

@@ -25,9 +25,7 @@ export default {
         await this.kActivity.addLayer({
           name: LocationLayerName,
           type: 'OverlayLayer',
-          tags: ['hidden'], // Do not show the layer in panel
-          isStorable: false,
-          isEditable: false,
+          scope: 'system',
           isSelectable: false,
           leaflet: {
             type: 'geoJson',

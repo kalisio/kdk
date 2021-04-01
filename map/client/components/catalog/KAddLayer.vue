@@ -7,9 +7,9 @@
     @closed="$emit('closed')">
     <div slot="modal-content">
       <q-tabs  align="justify" v-model="mode" inverted>
-        <q-tab name="import" icon="las la-desktop" />
-        <q-tab name="connect" icon="las la-plug" />
-        <q-tab name="create" icon="las la-edit" />
+        <q-tab id="import-layer" name="import" icon="las la-desktop" />
+        <q-tab id="connect-layer" name="connect" icon="las la-plug" />
+        <q-tab id="create-layer" name="create" icon="las la-edit" />
       </q-tabs>
       <div>
         <q-tab-panels v-model="mode" animated>

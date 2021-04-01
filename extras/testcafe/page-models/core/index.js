@@ -40,6 +40,7 @@ export const getWindowInnerHeight = ClientFunction(() => window.innerHeight)
 // Access routes
 const baseUrl = process.env.APP_URL || (process.env.CLIENT_PORT ? 'http://localhost:' + process.env.CLIENT_PORT : (process.env.NODE_ENV === 'production' ? 'http://localhost:8081' : 'http://localhost:8082'))
 export const getUrl = (path) => path ? baseUrl + '/#/' + path : baseUrl
+export const getCurrentUrl = ClientFunction(() => window.location.href)
 export const goBack = ClientFunction(() => window.history.back())
 
 // Access console errors

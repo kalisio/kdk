@@ -31,7 +31,7 @@ export const Search = {
           const result = {
             label: _.get(data, serviceDescriptor.field),
             value: _.get(data, serviceDescriptor.field),
-            icon: _.get(data, serviceDescriptor.iconField || 'icon.name')
+            icon: _.get(data, serviceDescriptor.iconField || 'icon.name', _.get(data, 'icon'))
           }
           processIcon(result, 'icon')
           if (serviceDescriptor.subfield) {

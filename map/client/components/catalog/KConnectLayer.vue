@@ -7,7 +7,7 @@
     <!-- Buttons section -->
     <div class="row justify-end">
       <k-action 
-        id="connect-action" 
+        id="connect-layer-action" 
         :label="$t('KConnectLayer.CONNECT_BUTTON')" 
         renderer="form-button"
         :loading="connecting"
@@ -166,8 +166,10 @@ export default {
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'las la-plug',
-        isRemovable: true,
-        isStorable: true
+        scope: 'user',        
+        isStorable: true,
+        isEditable: true,
+        isRemovable: true,   
       }
       if (this.service.protocol === 'WMS') {
         const style = propertiesResult.values.style
@@ -203,7 +205,8 @@ export default {
         }
       } else if (this.service.protocol === 'WFS') {
         Object.assign(newLayer, {
-          isStyleEditable: true,
+          isSelectable: true,   
+          isStyleEditable: false,
           schema: { content: this.layer.schema },
           featureId: propertiesResult.values.featureId,
           wfs: {

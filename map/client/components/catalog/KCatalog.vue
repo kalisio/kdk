@@ -85,9 +85,12 @@ export default {
       return layersByCategory
     },
     orphanLayers () {
+      // Filters system layers
+      const layers = _.values(_.filter(this.layers, layer => {
+        return _.get(layer, 'scope', '') !== 'system'
+      }))
       const categories = _.flatten(_.values(this.layersByCategory))
-      const layers = _.values(this.layers)
-      return _.differenceWith(layers, categories)
+      return _.difference(layers, categories)
     }
   },
   methods: {

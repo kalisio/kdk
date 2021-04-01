@@ -6,7 +6,7 @@
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
       <k-action
-        id="inport-action" 
+        id="import-layer-action" 
         :label="$t('KImportLayer.IMPORT_BUTTON')" 
         renderer="form-button" 
         :loading="importing"
@@ -126,6 +126,11 @@ export default {
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
         icon: 'insert_drive_file',  
+        scope: 'user',
+        isStorable: true,
+        isEditable: true,
+        isSelectable: true,   
+        isRemovable: true,
         featureId: propertiesResult.values.featureId,
         [this.kActivity.engine]: {
           type: 'geoJson',
@@ -133,12 +138,15 @@ export default {
           realtime: true
         },
         schema: {
+          name: this.file.name,
           content: this.file.schema
         }
       }
       await this.kActivity.addLayer(newLayer)
       // Assign the features to the layer
       await this.kActivity.updateLayer(newLayer.name, geoJson)
+      // Zoom to it
+      this.kActivity.zoomToLayer(newLayer.name)
       this.importing = false
       this.$emit('done')
     }
