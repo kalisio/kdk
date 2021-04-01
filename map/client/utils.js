@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import math from 'mathjs'
 import config from 'config'
+import formatcoords from 'formatcoords'
 import { uid } from 'quasar'
 import { buildUrl } from '../../core/common'
 import { utils as kCoreUtils } from '../../core/client'
@@ -142,4 +143,25 @@ export function generatePropertiesSchema (geoJson, name) {
     }
   })
   return schema
+}
+
+export function formatUserCoordinates (lat, lon, formatStr) {
+  if (formatStr === 'aeronautical') {
+    const coords = formatcoords(lat, lon)
+    // longitude group: DDMMML where DD is degree (2 digits mandatory)
+    // MMM unit is in 0.1 minutes (trailing 0 optional)
+    // L is N/S
+    const latDeg = coords.latValues.degreesInt.toString().padStart(2, '0')
+    const latMin = Math.floor(coords.latValues.secondsTotal / 6).toString().padStart(3, '0')
+    const latDir = coords.north ? 'N' : 'S'
+    // longitude group: DDDMMML where DDD is degree (3 digits mandatory)
+    // MMM unit is in 0.1 minutes (trailing 0 optional)
+    // L is W/E
+    const lonDeg = coords.lonValues.degreesInt.toString().padStart(3, '0')
+    const lonMin = Math.floor(coords.lonValues.secondsTotal / 6).toString().padStart(3, '0')
+    const lonDir = coords.east ? 'E' : 'W'
+    return `${latDeg}${latMin}${latDir} ${lonDeg}${lonMin}${lonDir}`
+  }
+
+  return formatcoords(lat, lon).format(formatStr)
 }

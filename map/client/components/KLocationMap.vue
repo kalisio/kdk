@@ -28,12 +28,11 @@
 
 <script>
 import L from 'leaflet'
-import formatcoords from 'formatcoords'
 import { colors } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import { Geolocation } from '../geolocation'
-import { setGatewayJwt } from '../utils'
+import { setGatewayJwt, formatUserCoordinates } from '../utils'
 
 export default {
   name: 'k-location-map',
@@ -117,7 +116,7 @@ export default {
         const position = this.$store.get('geolocation.position')
         if (position) {
           this.location = {
-            name: formatcoords(position.latitude, position.longitude).format(this.$store.get('locationFormat', 'FFf')),
+            name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')),
             latitude: position.latitude,
             longitude: position.longitude
           }
@@ -139,7 +138,7 @@ export default {
       this.isModified = false
     },
     onLocationDragged () {
-      this.location.name = formatcoords(this.marker.getLatLng().lat, this.marker.getLatLng().lng).format(this.$store.get('locationFormat', 'FFf'))
+      this.location.name = formatUserCoordinates(this.marker.getLatLng().lat, this.marker.getLatLng().lng, this.$store.get('locationFormat', 'FFf'))
       this.location.latitude = this.marker.getLatLng().lat
       this.location.longitude = this.marker.getLatLng().lng
       this.isModified = true

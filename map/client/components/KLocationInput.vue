@@ -48,8 +48,7 @@
 </template>
 
 <script>
-import formatcoords from 'formatcoords'
-import { formatGeocodingResult } from '../utils'
+import { formatGeocodingResult, formatUserCoordinates } from '../utils'
 import { Geolocation } from '../geolocation'
 
 export default {
@@ -103,7 +102,7 @@ export default {
       const position = this.$store.get('geolocation.position')
       if (position) {
         this.location = {
-          name: formatcoords(position.latitude, position.longitude).format(this.$store.get('locationFormat', 'FFf')),
+          name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')),
           latitude: position.latitude,
           longitude: position.longitude
         }
@@ -145,7 +144,7 @@ export default {
       this.location = this.value
       // Set name as coordinates if not given
       if (!this.location.name && this.location.latitude && this.location.longitude) {
-        this.location.name = formatcoords(this.location.latitude, this.location.longitude).format(this.$store.get('locationFormat', 'FFf'))
+        this.location.name = formatUserCoordinates(this.location.latitude, this.location.longitude, this.$store.get('locationFormat', 'FFf'))
       }
     }
   }

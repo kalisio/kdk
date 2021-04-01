@@ -11,9 +11,9 @@
 
 <script>
 import _ from 'lodash'
-import formatcoords from 'formatcoords'
 import { copyToClipboard } from 'quasar'
 import { Layout } from '../../../../core/client/layout'
+import { formatUserCoordinates } from '../utils'
 
 export default {
   name: 'k-position-indicator',
@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     formattedPosition () {
-      return formatcoords(this.position.latitude, this.position.longitude).format(this.format)
+      return formatUserCoordinates(this.position.latitude, this.position.longitude, this.$store.get('locationFormat', 'FFf'))
     }
   },
   methods: {
@@ -54,8 +54,6 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-action'] = this.$load('frame/KAction')
-    // Setup the component
-    this.format = this.$store.get('locationFormat') || 'FFf'
   },
   async mounted () {
     // Update page content with target
