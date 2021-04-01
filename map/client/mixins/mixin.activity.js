@@ -210,7 +210,7 @@ export default {
     },
     async onSaveLayer (layer) {
       // Take care that WFS layers rely on the same type as our own feature layers
-      if (_.has(layer, 'wfs') && _.get(layer, `${this.engine}.type`) === 'geoJson') {
+      if (!_.has(layer, 'wfs') && _.get(layer, `${this.engine}.type`) === 'geoJson') {
         const geoJson = this.toGeoJson(layer.name)
         // Check for invalid features first
         const check = this.checkFeatures(geoJson)
@@ -234,6 +234,7 @@ export default {
         _.set(layer, 'service', 'features')
         if (_.has(layer, 'leaflet')) _.set(layer, 'leaflet.source', '/api/features')
         if (_.has(layer, 'cesium')) _.set(layer, 'cesium.source', '/api/features')
+        const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         // If too much data use tiling
         // The threshold is based on the number of points and not features.
         // Indeed otherwise the complexity will be different depending on the geometry type
