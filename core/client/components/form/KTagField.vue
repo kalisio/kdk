@@ -35,13 +35,11 @@
         <q-chip
           outline
           square
-          :clickable="scope.opt.new"
-          @click="onTagClicked(scope.opt)" 
           removable
           @remove="scope.removeAtIndex(scope.index)"
-          :color="scope.opt.icon.color"
+          :color="getColor(scope.opt)"
           :tabindex="scope.tabindex">
-          <q-icon v-if="scope.opt.icon.name" class="q-pr-sm" :name="scope.opt.icon.name" :color="scope.opt.icon.color" />
+          <q-icon v-if="hasIcon(scope.opt)" class="q-pr-sm" :name="getIcon(scope.opt)" :color="getColor(scope.opt)" />
           {{ scope.opt.value }}
         </q-chip>
       </template>
@@ -50,12 +48,11 @@
         <q-item
           v-bind="scope.itemProps"
           v-on="scope.itemEvents">
-          <q-item-section v-if="scope.opt.icon.name" avatar>
-            <q-icon :name="scope.opt.icon.name" />
+          <q-item-section v-if="hasIcon(scope.opt)" avatar>
+            <q-icon :name="getIcon(scope.opt)" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ scope.opt.value }}</q-item-label>
-            <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+            <q-item-label>{{ getLabel(scope.opt) }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>
@@ -95,6 +92,18 @@ export default {
     }
   },
   methods: {
+    getLabel (item) {
+      return _.get(item, item.field)
+    },
+    hasIcon (item) {
+      return !_.isEmpty(this.getIcon())
+    },
+    getIcon (item) {
+      return _.get(item, 'icon.name')
+    },
+    getColor (item) {
+      return _.get(item, 'icon.color')
+    },
     emptyModel () {
       return []
     },
@@ -112,7 +121,7 @@ export default {
       }
       const results = await Search.query(this.services, pattern)
       update(() => {
-        this.options = _.differenceWith(_.map(results, result => { return result.data }), this.tags, (tag1, tag2) => {
+        this.options = _.differenceWith(results, this.tags, (tag1, tag2) => {
           return tag1.value === tag2.value
         })
       })
@@ -130,10 +139,9 @@ export default {
           value: value,
           scope: this.properties.scope,
           icon: {
-            name: undefined,
-            color: 'grey7'
-          },
-          new: true
+            name: '',
+            color: ''
+          }
         }
         done(tag)
         this.$refs.select.updateInputValue('')
@@ -142,20 +150,8 @@ export default {
     },
     updateModel () {
       // filter rendering properties only
-      const tags = _.cloneDeep(this.tags)
-      _.forEach(tags, tag => delete tag.new)
-      this.model = _.concat(tags, this.partition[1])
+      this.model = _.concat(this.tags, this.partition[1])
       this.onChanged()
-    },
-    onTagClicked (tag) {
-      this.selectedTag = tag
-      this.$refs.iconChooser.open(tag.icon)
-    },
-    onIconChoosed (icon) {
-      // Avoid referencing the underlying object otherwise
-      // changing the icon on a new tag could affect a previous tag
-      this.selectedTag.icon = Object.assign({}, icon)
-      this.updateModel()
     }
   }
 }

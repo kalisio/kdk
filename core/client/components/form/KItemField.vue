@@ -29,8 +29,8 @@
         color="primary"
         text-color="white"
       >
-        <q-avatar color="primary" :icon="scope.opt.icon" />
-        {{ scope.opt.label }}
+        <q-avatar color="primary" :icon="getIcon(scope.opt)" />
+        {{ getLabel(scope.opt) }}
       </q-chip>
     </template>
     <!-- Options display -->
@@ -40,10 +40,10 @@
         v-on="scope.itemEvents"
       >
         <q-item-section avatar>
-          <q-icon :name="scope.opt.icon" />
+          <q-icon :name="getIcon(scope.opt)" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ scope.opt.label }}</q-item-label>
+          <q-item-label>{{ getLabel(scope.opt) }}</q-item-label>
           <q-item-label caption>{{ scope.opt.description }}</q-item-label>
         </q-item-section>
       </q-item>
@@ -70,6 +70,12 @@ export default {
     }
   },
   methods: {
+    getLabel (item) {
+      return _.get(item, item.field)
+    },
+    getIcon (item) {
+      return _.get(item, 'icon.name', _.get(item, 'icon', ''))
+    },
     emptyModel () {
       if (this.properties.multiselect) return []
       return null
@@ -87,7 +93,7 @@ export default {
       update(() => {
         if (this.properties.multiselect) {
           this.options = _.differenceWith(results, this.items, (item1, item2) => { 
-            return item1.value === item2.value 
+            return item1.field === item2.field
           })
         } else this.options = results
         this.$refs.select.updateInputValue('')
@@ -95,8 +101,8 @@ export default {
     },
     onSelected (value) {
       if (value) {
-        if (this.properties.multiselect) this.model = _.map(this.items, item => { return item.data })
-        else this.model = this.items.data
+        if (this.properties.multiselect) this.model = this.items
+        else this.model = this.items
       } else this.model = this.emptyModel()
       this.options = []
       this.onChanged()

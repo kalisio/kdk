@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :toolbar="getToolbar()" :buttons="getButtons()">
+  <k-modal ref="modal" :buttons="getButtons()">
     <div slot="modal-content">
       <div class="column q-gutter-sm">
         <div class="row justify-between">
@@ -40,26 +40,19 @@
         <div v-if="palette" class="row justify-between items-center q-gutter-sm">
           <k-palette id="palette" shape="round" v-model="selectedIcon.color" />
         </div>
-
-        <!--For debug purpose only
-        <div class="row justify-start items-center q-gutter-sm">
-          <span class="text-bold">Selected:</span> &nbsp;{{iconSelected() ? selectedIcon.name : '-'}}
-        </div>
-        -->
       </div>
     </div>
   </k-modal>
 </template>
 
 <script>
-import { QIcon, QPagination } from 'quasar'
+import { QPagination } from 'quasar'
 import yaml from 'js-yaml'
 import _ from 'lodash'
 
 export default {
   name: 'k-icon-chooser',
   components: {
-    QIcon,
     QPagination
   },
   props: {
@@ -154,14 +147,9 @@ export default {
       // Trigger filtering by updating the category (see computed prop 'icons()')
       this.selectedCategory = value
     },
-    getToolbar () {
-      return [
-        { id: 'close-action', label: this.$t('KIconChooser.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
-      ]
-    },
     getButtons () {
       return [
-        { id: 'done-button', label: this.$t('KIconChooser.DONE_BUTTON'), color: 'primary', handler: (event) => this.doDone(event) }
+        { id: 'done-button', label: this.$t('KIconChooser.DONE_BUTTON'), color: 'primary', renderer: 'form-button', handler: (event) => this.doDone(event) }
       ]
     },
     open (defaultIcon) {

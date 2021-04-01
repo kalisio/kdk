@@ -136,8 +136,7 @@ export default {
               component: 'form/KIconField',
               label: 'schemas.LAYER_CATEGORY_ICON_FIELD_LABEL',
               iconSet: 'line-awesome',
-              color: false,
-              inverted: true
+              color: false
             }
           },
           layers: { 

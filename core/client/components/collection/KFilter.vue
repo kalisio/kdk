@@ -25,8 +25,8 @@
         :tabindex="scope.tabindex"
         color="primary"
         text-color="white">
-        <q-icon v-if="scope.opt.icon" class="q-pr-sm" :name="scope.opt.icon" />
-        {{ scope.opt.label }}
+        <q-icon class="q-pr-sm" :name="getIcon(scope.opt)" />
+        {{ getLabel(scope.opt) }}
       </q-chip>
     </template>
     <!-- Options display -->
@@ -35,12 +35,11 @@
         v-bind="scope.itemProps"
         v-on="scope.itemEvents"
       >
-        <q-item-section v-if="scope.opt.icon" avatar>
-          <q-icon :name="scope.opt.icon" />
+        <q-item-section avatar>
+          <q-icon :name="getIcon(scope.opt)" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ scope.opt.label }}</q-item-label>
-          <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+          <q-item-label>{{ getLabel(scope.opt) }}</q-item-label>
         </q-item-section>
       </q-item>
     </template>
@@ -49,6 +48,7 @@
 
 <script>
 import _ from 'lodash'
+import { Filter } from '../../filter'
 import { Search } from '../../search'
 
 export default {
@@ -67,10 +67,16 @@ export default {
     return {
       items: [],
       options: [],
-      filter: this.$store.get('filter')
+      filter: Filter.get()
     }
   },
   methods: {
+    getLabel (item) {
+      return _.get(item, item.field)
+    },
+    getIcon (item) {
+      return _.get(item, 'icon.name', _.get(item, 'icon', ''))
+    },
     async onSearch (pattern, update, abort) {
       if (pattern.length < 2) {
         this.$store.patch('filter', { pattern: '' })
@@ -89,16 +95,18 @@ export default {
     },
     onSelected (item) {
       this.options = []
-      this.$store.patch('filter', { items: _.map(this.items, item => { return item.data }) })
-    }
+      if (!item) this.items = []
+      this.$store.patch('filter', { items: this.items })
+    } 
   },
   created () {
     // Initialize the filter, we keep track of any existing items previously set by another activity
     this.$store.patch('filter', { field: this.field, pattern: '' })
+    this.items = Filter.getItems()
   },
   beforeDestroy () {
     // Reset the filter, we keep track of any existing items previously set by another activity
-    this.$store.patch('filter', { pattern: '', items: [] })
+    this.$store.patch('filter', { pattern: '' })
   }
 }
 </script>

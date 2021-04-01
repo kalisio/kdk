@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { processIcon } from './utils'
+import { getIconName, processIcon } from './utils'
 
 // Export singleton
 export const Search = {
@@ -27,19 +27,12 @@ export const Search = {
         response.data.forEach(data => {
           data.service = serviceDescriptor.service
           data.field = serviceDescriptor.field
-          if (!data.icon) data.icon = serviceDescriptor.icon
-          const result = {
-            label: _.get(data, serviceDescriptor.field),
-            value: _.get(data, serviceDescriptor.field),
-            icon: _.get(data, serviceDescriptor.iconField || 'icon.name', _.get(data, 'icon'))
+          const icon = getIconName(data)
+          if (_.isEmpty(icon)) { 
+            data.icon = serviceDescriptor.icon
+            processIcon(data)
           }
-          processIcon(result, 'icon')
-          if (serviceDescriptor.subfield) {
-            data.subfield = serviceDescriptor.subfield
-            result.description = _.get(data, serviceDescriptor.subfield)
-          }
-          Object.assign(result, { data: data })
-          results.push(result)
+          results.push(data)
         })
       }
     }
