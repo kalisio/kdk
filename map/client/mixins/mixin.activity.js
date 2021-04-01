@@ -318,7 +318,7 @@ export default {
       this.filterModal.$on('applied', async () => {
         // Reset layer with new setup
         await this.resetLayer(layer)
-        this.filterModal.close()
+        this.filterModal.closeModal()
       })
       this.filterModal.$on('closed', () => {
         this.filterModal = null
@@ -335,7 +335,7 @@ export default {
             icon: 'zoom_out_map',
             handler: (feature) => {
               this.center(..._.get(centroid(feature), 'geometry.coordinates'))
-              this.viewModal.close()
+              this.viewModal.closeModal()
             }
           }]
         }
@@ -400,7 +400,7 @@ export default {
         if (!layer._id) {
           this.updateLayer(layer.name, geoJson)
         }
-        this.editStyleModal.close()
+        this.editStyleModal.closeModal()
       })
       this.editStyleModal.$on('closed', () => {
         this.editStyleModal = null
