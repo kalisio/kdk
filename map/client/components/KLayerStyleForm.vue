@@ -400,11 +400,11 @@ export default {
       let component = properties.field.component
       // We previously directly used the component type from the schema but now we prefer
       // to switch to a select field in order to provide list of possible values for discrete types
-      // if possible (ie not in-memory layers)
-      if ((component !== 'form/KNumberField') && this.layer._id) {
+      // if possible (not for eg in-memory layers, WFS, etc.)
+      if ((component !== 'form/KNumberField') && _.has(this.layer, 'service')) {
         component = 'form/KSelectField'
         // Get available values
-        const values = await this.$api.getService('features', this.contextId)
+        const values = await this.$api.getService(_.get(this.layer, 'service'), this.contextId)
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
         // We don't have label in that case
         properties.field.options = values.map(value => ({ value, label: value }))

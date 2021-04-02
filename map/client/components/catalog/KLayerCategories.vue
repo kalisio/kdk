@@ -77,9 +77,9 @@ export default {
     }
   },
   data () {
-    // User-defined layers have no tags
+    // User-defined layers only and not in-memory layers
     const layers = _.values(this.kActivity.layers)
-      .filter(layer => !layer.tags)
+      .filter(layer => layer._id && (_.get(layer, 'scope') === 'user'))
       .map(layer => ({ value: layer.name, label: layer.name }))
     return {
       layers,

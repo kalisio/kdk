@@ -111,7 +111,7 @@ export default {
         properties.field.multiple = true
         properties.field.chips = true
         // Get available values
-        const values = await this.$api.getService('features', this.contextId)
+        const values = await this.$api.getService(this.layer.service, this.contextId)
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
         // We don't have label in that case
         properties.field.options = values.map(value => ({ value, label: value }))
