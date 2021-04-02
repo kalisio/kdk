@@ -304,10 +304,11 @@ export default {
           layer,
           featureActions: [{
             name: 'zoom-to',
-            label: this.$t('mixins.activity.ZOOM_TO_LABEL'),
+            tooltip: this.$t('mixins.activity.ZOOM_TO_LABEL'),
             icon: 'zoom_out_map',
-            handler: (feature) => {
-              this.center(..._.get(centroid(feature), 'geometry.coordinates'))
+            handler: (context) => {
+              // Use altitude or zoom level depending on engine
+              this.center(..._.get(centroid(context.item), 'geometry.coordinates'), this.is2D() ? 18 : 750)
               this.viewModal.closeModal()
             }
           }]

@@ -243,7 +243,7 @@
             {{$t('KLayerStyleForm.ADD_POPUP')}}
           </q-item-section>
           <q-item-section class="col-6">
-            <q-select :disable="!popup" v-model="popupProperties" multiple :options="properties"></q-select>
+            <q-select :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties"></q-select>
           </q-item-section>
         </q-item>
       </q-list>
@@ -273,7 +273,7 @@
             {{$t('KLayerStyleForm.ADD_POPUP')}}
           </q-item-section>
           <q-item-section class="col-6">
-            <q-select :disable="!infobox" v-model="infoboxProperties" multiple :options="properties"></q-select>
+            <q-select :disable="!infobox" use-chips v-model="infoboxProperties" multiple :options="properties"></q-select>
           </q-item-section>
         </q-item>
       </q-list>
@@ -401,7 +401,7 @@ export default {
       // We previously directly used the component type from the schema but now we prefer
       // to switch to a select field in order to provide list of possible values for discrete types
       // if possible (ie not in-memory layers)
-      if ((component !== 'form/KNumberField') && (this.layer._id)) {
+      if ((component !== 'form/KNumberField') && this.layer._id) {
         component = 'form/KSelectField'
         // Get available values
         const values = await this.$api.getService('features', this.contextId)
@@ -711,7 +711,7 @@ export default {
     },
     infoBoxStylesValues () {
       return {
-        'leaflet.infobox': (this.infobox ? { pick: this.popupProperties.map(property => property.value) } : undefined)
+        'leaflet.infobox': (this.infobox ? { pick: this.infoboxProperties.map(property => property.value) } : undefined)
       }
     },
     values () {

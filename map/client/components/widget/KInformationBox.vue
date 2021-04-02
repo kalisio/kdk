@@ -70,7 +70,8 @@ export default {
         let schema
         // Is there any schema ?
         if (_.has(this.layer, 'schema.content')) {
-          schema = this.layer.schema.content
+          // As we update the schema does not alter the original one
+          schema = _.cloneDeep(_.get(this.layer, 'schema.content'))
         } else {
           schema = generatePropertiesSchema(this.feature, this.layer.name)
         }
@@ -78,11 +79,16 @@ export default {
         if (_.isNil(schema) || _.isEmpty(_.get(schema, 'properties', {}))) {
           return
         }
-        // Retrieve properties on feature/entity
+        // Retrieve filtered properties on feature/entity
         const properties = this.kActivity.generateStyle('infobox', this.feature, this.layer)
         if (_.isEmpty(properties)) {
           return
         }
+        // Filter schema according to selected properties to avoid displying empty fields
+        const keys = _.keys(properties)
+        _.keys(schema.properties).forEach(key => {
+          if (!keys.includes(key)) _.unset(schema, `properties.${key}`)
+        })
         this.schema = schema
         this.properties = properties
         this.kActivity.centerOnSelection()

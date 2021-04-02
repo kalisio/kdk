@@ -26,6 +26,8 @@ export default function refsResolverMixin (refs) {
         }
       },
       loadRefs () {
+        // Force a refresh in any case refs are already here
+        this.resolveRefs()
         return this.refsPromise
       }
     },

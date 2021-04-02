@@ -134,7 +134,9 @@ export default {
         scope: 'user',
         featureId: propertiesResult.values.featureId,
         leaflet: engine,
-        cesium: engine,
+        // Avoid sharing reference to the same object although options are similar
+        // otherwise updating one will automatically update the other one
+        cesium: Object.assign({}, engine),
         schema: {
           name: this.file.name,
           content: this.file.schema

@@ -60,13 +60,16 @@ export default {
           name,
           type: 'OverlayLayer',
           icon: 'insert_drive_file',
+          scope: 'user',
           featureId: '_id',
           leaflet: engine,
-          cesium: engine
+          // Avoid sharing reference to the same object although options are similar
+          // otherwise updating one will automatically update the other one
+          cesium: Object.assign({}, engine)
         }
         const geoJson = event.layer.toGeoJSON()
         // Generate schema for properties
-        const schema = generatePropertiesSchema(geoJson, layer.name)
+        const schema = generatePropertiesSchema(geoJson, name)
         _.set(layer, 'schema', { name, content: schema })
         // Generate temporary IDs for features
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
@@ -74,9 +77,9 @@ export default {
         // Create an empty layer used as a container
         await this.addLayer(layer)
         // Set data
-        await this.updateLayer(event.filename, geoJson)
+        await this.updateLayer(name, geoJson)
         // Zoom to it
-        this.zoomToLayer(event.filename)
+        this.zoomToLayer(name)
       })
       this.loader.on('data:error', event => {
         logger.error(event.error)
