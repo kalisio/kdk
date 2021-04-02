@@ -443,7 +443,7 @@
     "TO_DATE": "To"
   },
   "KTagField": {
-    "CREATE_TAG": "Create <b>{{tag}}</b>"
+    "CREATE_TAG": "Create <b>c</b>"
   },
   "KFileField": {
     "ERROR_WHILE_LOADING_THE_FILE": "Error while loading the file, did you select a valid file ?",
@@ -535,8 +535,8 @@
     "ADD_BUTTON": "Add"
   },
   "KChangeRole": {
-    "TITLE": "Change role ?",
-    "ROLE_FIELD_LABEL": "Select the role granted to the user",
+    "TITLE": "Change role of {{member}} ?",
+    "ROLE_FIELD_LABEL": "Select the role to be granted to the user",
     "OWNER_LABEL": "$t(OWNER)",
     "MANAGER_LABEL": "$t(MANAGER)",
     "MEMBER_LABEL": "$t(MEMBER)",
