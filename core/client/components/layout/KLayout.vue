@@ -7,12 +7,6 @@
       <k-panel id="header" :content="header.content" :mode="header.mode" :filter="header.filter" />
     </q-header>
     <!--
-      Left drawer
-    -->
-    <q-drawer v-if="leftDrawer.content" v-model="isLeftDrawerVisible" v-bind="config.leftDrawer" side="left" bordered>
-      <k-panel id="left-drawer" :content="leftDrawer.content" :mode="leftDrawer.mode" :filter="leftDrawer.filter" direction="vertical" />
-    </q-drawer>
-    <!--
       Footer
      -->
     <q-footer v-if="footer.content" v-model="isFooterVisible" v-bind="config.footer" bordered>
@@ -48,14 +42,6 @@ export default {
       set: function (value) {
         this.$layout.setFooterVisible(value)
       }
-    },
-    isLeftDrawerVisible: {
-      get: function () {
-        return this.leftDrawer.visible
-      },
-      set: function (value) {
-        this.$layout.setLeftDrawerVisible(value)
-      }
     }
   },
   data () {
@@ -71,28 +57,19 @@ export default {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Load the options from the configuration
     this.config = this.$config('layout')
-    // Configures the components if needed
+    // Configure the header
     if (this.config.header) {
       const header = this.config.header
       this.$layout.setHeader(_.get(header, 'content', null), _.get(header, 'mode', undefined),
         _.get(header, 'filter', {}), _.get(header, 'visible', false))
     }
+    // Configure the footer
     if (this.config.footer) {
       const footer = this.config.footer
       this.$layout.setFooter(_.get(footer, 'content', null), _.get(footer, 'mode', undefined),
         _.get(footer, 'filter', {}), _.get(footer, 'visible', false))
     }
-    if (this.config.leftDrawer) {
-      const leftDrawer = this.config.leftDrawer
-      this.$layout.setLeftDrawer(_.get(leftDrawer, 'content', null), _.get(leftDrawer, 'mode', undefined),
-        _.get(leftDrawer, 'filter', {}), _.get(leftDrawer, 'visible', false))
-    }
   }
 }
 </script>
 
-<style>
-.q-drawer__opener {
-  width: 0px;
-}
-</style>

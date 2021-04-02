@@ -35,8 +35,23 @@
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window id="window" ref="window" />
     </q-page-sticky>
-    <q-page-sticky v-if="hasLeftDrawerOpener && leftDrawer.content" position="left">
-      <k-opener v-model="isLeftDrawerOpened" position="left"  />
+    <!-- left -->
+    <q-page-sticky position="left">
+      <div id="left-pane" v-show="leftPane.content && leftPane.mode" class="row items-center">
+        <div>
+          <k-panel 
+            id="left-panel" 
+            v-show="isLeftPaneOpened"
+            :content="leftPane.content"
+            :mode="leftPane.mode" 
+            :filter="leftPane.filter"
+            direction="vertical"
+            style="height: 100vh; width: 300px;"
+            class="k-pane" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
+        </div>
+        <k-opener v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
+      </div>
     </q-page-sticky>
     <!-- right -->
     <q-page-sticky position="right">
@@ -99,12 +114,12 @@ export default {
         this.$store.patch('topPane', { visible: value })
       }
     },
-    isLeftDrawerOpened: {
+    isLeftPaneOpened: {
       get: function () {
-        return this.leftDrawer.visible
+        return this.leftPane.visible
       },
       set: function (value) {
-        this.$layout.setLeftDrawerVisible(value)
+        this.$store.patch('leftPane', { visible: value })
       }
     },
     isRightPaneOpened: {
@@ -126,16 +141,17 @@ export default {
   },
   data () {
     return {
-      leftDrawer: this.$layout.getLeftDrawer(),
+      leftPane: this.$store.get('leftPane'),
       topPane: this.$store.get('topPane'),
       rightPane: this.$store.get('rightPane'),
       bottomPane: this.$store.get('bottomPane'),
       page: this.$store.get('page'),
-      hasLeftDrawerOpener: false,
+      hasLeftPaneOpener: false,
       hasTopPaneOpener: false,
       hasRightPaneOpener: false,
       hasBottomPaneOpener: false,
       topPadding: 0,
+      leftPadding: 0,
       bottomPadding: 0,
       rightPadding: 0,
       widgetOffset: [0, 0],
@@ -146,11 +162,14 @@ export default {
     onTopPaneResized (size) {
       this.topPadding = size.height
     },
-    onBottomPaneResized (size) {
-      this.bottomPadding = size.height
+    onLeftPaneResized (size) {
+      this.leftPadding = size.width
     },
     onRightPaneResized (size) {
       this.rightPaddding = size.width
+    },
+    onBottomPaneResized (size) {
+      this.bottomPadding = size.height
     }
   },
   created () {
@@ -160,11 +179,12 @@ export default {
     this.$options.components['k-opener'] = this.$load('frame/KOpener')
     this.$options.components['k-window'] = this.$load('layout/KWindow')
     this.$options.components['k-fab'] = this.$load('layout/KFab')
-    // Read left drawer configuration
-    this.hasLeftDrawerOpener = this.$config('layout.leftDrawer.opener', false)
     // Read top pane configuration
     this.hasTopPaneOpener = this.$config('layout.topPane.opener', false)
     if (this.$config('layout.topPane.visible', false)) this.$store.patch('topPane', { visible: true })
+    // Read left pane configuration
+    this.hasLeftPaneOpener = this.$config('layout.leftPane.opener', false)
+    if (this.$config('layout.leftPane.visible', false)) this.$store.patch('leftPane', { visible: true })
     // Read bottom pane configuration
     this.hasRightPaneOpener = this.$config('layout.rightPane.opener', false)
     if (this.$config('layout.rightPane.visible', false)) this.$store.patch('rightPane', { visible: true })

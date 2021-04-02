@@ -5,7 +5,7 @@ import sift from 'sift'
 import { uid } from 'quasar'
 import { Store } from './store'
 
-const components = ['header', 'footer', 'leftDrawer']
+const components = ['header', 'footer']
 const handlers = ['handler', 'visible', 'on.listener']
 
 // Export singleton
@@ -48,18 +48,6 @@ export const Layout = {
   getLeftDrawer () {
     return Store.get(components[2])
   },
-  setLeftDrawer (content, mode, filter, visible) {
-    Store.patch(components[2], { content, mode, filter, visible })
-  },
-  setLeftDrawerMode (mode) {
-    Store.patch(components[2], { mode })
-  },
-  setLeftDrawerVisible (visible) {
-    Store.patch(components[2], { visible })
-  },
-  clearLeftDrawer () {
-    Store.patch(components[2], { content: null, mode: undefined, visible: false })
-  },
   validateMode (content, mode) {
     // Check if mode has been voluntarily unset
     if (_.isNull(mode)) return null
@@ -77,10 +65,12 @@ export const Layout = {
     if (!isArray) {
       if (filteredContent.content) {
         filteredContent.content = this.filterContent(filteredContent.content, filter)
-      } else modes.forEach(mode => {
-        const contentForMode = filteredContent[mode]
-        filteredContent[mode] = this.filterContent(contentForMode, filter)
-      })
+      } else {
+        modes.forEach(mode => {
+          const contentForMode = filteredContent[mode]
+          filteredContent[mode] = this.filterContent(contentForMode, filter)
+        })
+      }
       filteredContent = [filteredContent]
     }
     // Apply filtering
@@ -199,7 +189,7 @@ export const Layout = {
       // Process component handlers
       handlers.forEach(handler => this.bindHandler(component, handler, context))
       // Then process component props
-      // FIXME: don't know why but this generic binding function does not seem to work 
+      // FIXME: don't know why but this generic binding function does not seem to work
       // It should allow to wrote any property like { label: ':xxx' } and bind it
       // to a component property from the context like we do for handler
       // this.bindProperties(component, context)

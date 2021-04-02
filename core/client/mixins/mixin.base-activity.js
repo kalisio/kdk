@@ -30,6 +30,29 @@ export default function (name) {
       clearTopPane () {
         this.$store.patch('topPane', { content: null, mode: undefined })
       },
+      getLeftPane () {
+        return this.$store.get('leftPane')
+      },
+      getLeftPaneMode () {
+        return this.getLeftPane().mode
+      },
+      setLeftPane (content, mode, filter) {
+        this.$store.patch('leftPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+      },
+      setLeftPaneMode (mode) {
+        if (mode !== this.getLeftPaneMode()) {
+          const content = this.$store.get('leftPane.content')
+          this.$store.patch('leftPane', { mode: Layout.validateMode(content, mode) })
+        }
+      },
+      configureLeftPane () {
+        const options = _.get(this.activityOptions, 'leftPane')
+        if (options) this.setLeftPane(options.content, options.mode, _.get(this.activityOptions, 'leftPane.filter', {}))
+        else this.clearLeftPane()
+      },
+      clearLeftPane () {
+        this.$store.patch('leftPane', { content: null, mode: undefined })
+      },
       getBottomPane () {
         return this.$store.get('bottomPane')
       },
@@ -150,6 +173,7 @@ export default function (name) {
       clearActivity () {
         this.clearTopPane()
         this.clearBottomPane()
+        this.clearLeftPane()
         this.clearRightPane()
         this.clearPage()
         this.clearFab()
@@ -157,6 +181,7 @@ export default function (name) {
       },
       configureActivity () {
         this.configureTopPane()
+        this.configureLeftPane()
         this.configureBottomPane()
         this.configureRightPane()
         this.configurePage()

@@ -45,6 +45,7 @@ export default function init () {
   Sorter.initialize()
   Search.initialize(api)
   Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
+  Store.set('leftPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('page', { content: null, mode: undefined, filter: {} })

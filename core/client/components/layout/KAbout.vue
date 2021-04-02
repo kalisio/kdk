@@ -91,7 +91,6 @@ export default {
   },
   methods: {
     onAbout () {
-      this.$layout.setLeftDrawerVisible(false)
       this.$refs.about.open()
     },
     onAboutClosed () {
