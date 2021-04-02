@@ -22,6 +22,18 @@
     :error-message="errorLabel"
     :disabled="disabled"
     bottom-slots>
+    <!-- Options display -->
+    <template v-slot:option="scope">
+      <q-item
+        :id="getId(scope.opt)"
+        v-bind="scope.itemProps"
+        v-on="scope.itemEvents"
+      > 
+        <q-item-section>
+          <q-item-label>{{ scope.opt.label }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>
@@ -59,6 +71,9 @@ export default {
     }
   },
   methods: {
+    getId (option) {
+      return _.kebabCase(option.value)
+    },
     emptyModel () {
       const multiple = _.get(this.properties, 'field.multiple', false)
       if (multiple) return []

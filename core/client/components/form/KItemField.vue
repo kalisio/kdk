@@ -23,6 +23,7 @@
     <!-- Value display -->
     <template v-slot:selected-item="scope">
       <q-chip
+        square
         removable
         @remove="scope.removeAtIndex(scope.index)"
         :tabindex="scope.tabindex"
@@ -36,6 +37,7 @@
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item
+        :id="getId(scope.opt)"
         v-bind="scope.itemProps"
         v-on="scope.itemEvents"
       >
@@ -70,6 +72,9 @@ export default {
     }
   },
   methods: {
+    getId (item) {
+      return _.kebabCase(this.getLabel(item))
+    },
     getLabel (item) {
       return _.get(item, item.field)
     },

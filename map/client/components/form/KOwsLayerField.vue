@@ -15,7 +15,7 @@
     option-value="id"
     :loading="loading"
     @input="onUpdated">
-     <!-- Options display -->
+    <!-- Options display -->
     <template v-slot:option="scope">
       <q-item
         :id="getId(scope.opt)"

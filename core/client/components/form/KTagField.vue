@@ -46,13 +46,14 @@
       <!-- Options display -->
       <template v-slot:option="scope">
         <q-item
+          :id="scope.opt.value"
           v-bind="scope.itemProps"
           v-on="scope.itemEvents">
           <q-item-section v-if="hasIcon(scope.opt)" avatar>
             <q-icon :name="getIcon(scope.opt)" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ getLabel(scope.opt) }}</q-item-label>
+            <q-item-label>{{ scope.opt.value }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>
@@ -61,9 +62,6 @@
         <span v-html="helper"></span>
       </template>
     </q-select>
-    <k-icon-chooser
-      ref="iconChooser"
-      @icon-choosed="onIconChoosed" />
   </div>
 </template>
 
@@ -71,14 +69,10 @@
 import _ from 'lodash'
 import { Store } from '../../store'
 import { Search } from '../../search'
-import { KIconChooser } from '../input'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-tag-field',
-  components: {
-    KIconChooser
-  },
   mixins: [mixins.baseField],
   data () {
     return {
@@ -92,9 +86,6 @@ export default {
     }
   },
   methods: {
-    getLabel (item) {
-      return _.get(item, item.field)
-    },
     hasIcon (item) {
       return !_.isEmpty(this.getIcon())
     },

@@ -3,7 +3,7 @@
     <template v-for="tag in tags">
       <q-chip
         :key="tag.value"
-        :color="tag.icon.color"
+        :color="getColor(tag)"
         text-color="white"
         dense
         outline
@@ -16,12 +16,19 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'k-tags-pane',
   props: {
     tags: {
       type: Array,
       required: true
+    }
+  },
+  methods: {
+    getColor (tag) {
+      return _.isEmpty(tag.icon.color) ? 'grey-7' : tag.icon.color
     }
   }
 }
