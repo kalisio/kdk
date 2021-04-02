@@ -380,21 +380,21 @@ export default {
       })
     },
     async onEditLayerData (layer) {
-      const stop = () => {
+      const toggle = () => {
         // Start/Stop edition
         this.editLayer(layer)
         // Refresh actions due to state change
         this.configureLayerActions(layer)
+        this.editedLayerToast = null
       }
       // Close previous edition toast if any
-      // (will call dismiss handler)
+      // (this will toggle)
       if (this.editedLayerToast) {
         this.editedLayerToast()
-        this.editedLayerToast = null
       } else {
-        stop()
+        toggle()
       }
-      // Create new one
+      // Create new toast if required
       if (this.isLayerEdited(layer)) {
         this.editedLayerToast = this.$toast({
           type: 'warning',
@@ -402,7 +402,7 @@ export default {
           position: 'top-left',
           message: this.$t('mixins.activity.EDITING_DATA_MESSAGE'),
           caption: this.$t(layer.name),
-          onDismiss: stop
+          onDismiss: toggle
         })
       }
     },
