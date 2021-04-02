@@ -565,7 +565,7 @@ export default {
       this.hasMinZoom = _.has(values, 'leaflet.minZoom')
       if (this.hasMinZoom) this.minZoom = _.get(values, 'leaflet.minZoom')
       this.hasMaxZoom = _.has(values, 'leaflet.maxZoom')
-      if (this.hasMaxZoom) this.minZoom = _.get(values, 'leaflet.maxZoom')
+      if (this.hasMaxZoom) this.maxZoom = _.get(values, 'leaflet.maxZoom')
     },
     fillClusteringStyle (values) {
       this.clustering = (!!_.get(values, 'leaflet.cluster', _.get(this.options, 'cluster')))
