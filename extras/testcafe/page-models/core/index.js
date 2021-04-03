@@ -4,7 +4,6 @@ import pixelmatch from 'pixelmatch'
 import { ClientFunction } from 'testcafe'
 import Screens from './screens'
 import Layout from './layout'
-import SideNav from './side-nav'
 import Account from './account'
 import OrganisationsPanel from './organisations-panel'
 import OrganisationSettings from './organisation-settings'
@@ -14,7 +13,6 @@ import Groups from './groups'
 
 export { Screens }
 export { Layout }
-export { SideNav }
 export { Account }
 export { OrganisationsPanel }
 export { OrganisationSettings }

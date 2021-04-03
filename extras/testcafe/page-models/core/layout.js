@@ -5,14 +5,13 @@ import BasePage from './base-page'
 export default class Layout extends BasePage {
   constructor () {
     super()
-    // Drawer
-    this.leftDrawer = Selector('.q-drawer--left')
     // Openers
     this.leftOpener = Selector('#left-opener')
     this.rightOpener = Selector('#right-opener')
     this.topOpener = Selector('#top-opener')
     this.bottomOpener = Selector('#bottom-opener')
     // Panes
+    this.leftPanel = Selector('#left-panel')
     this.topPanel = Selector('#top-panel')
     this.rightPanel = Selector('#right-panel')
     this.bottomPanel = Selector('#bottom-panel')
@@ -56,14 +55,14 @@ export default class Layout extends BasePage {
   }
 
   // Leftdrawer
-  async isLeftDrawerOpened () {
-    const leftPos = await this.leftDrawer.getBoundingClientRectProperty('left')
-    return leftPos >= 0
+  async isLeftPaneOpened () {
+    const isVisible = await this.leftPanel.visible
+    return isVisible
   }
 
-  async clickLeftDrawer (test, action) {
+  async clickLeftPane (test, action) {
     await test
-      .click(this.leftDrawer.find(action))
+      .click(this.leftPanel.find(action))
       .wait(1000)
   }
 

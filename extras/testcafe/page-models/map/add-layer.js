@@ -1,5 +1,4 @@
 import { Selector, t } from 'testcafe'
-import VueSelector from 'testcafe-vue-selectors'
 import BasePage from '../core/base-page'
 
 export default class AddLayer extends BasePage {
@@ -9,15 +8,13 @@ export default class AddLayer extends BasePage {
     this.dialog = Selector('.q-dialog')
   }
 
-  async importLayer (file, ID) {
+  async importLayer (file, featureId) {
     await t
       .click(this.dialog.find('#import-layer'))
       .setFilesToUpload(this.dialog.find('#file-field'), file)
       .click(this.dialog.find('#featureId-field'))
       .wait(1000)
-      // Selection based on text content does not seem to work
-      //.click(Selector('.q-menu').find('.q-item__label').withText(ID))
-      .click(Selector('.q-menu .q-item').nth(ID))
+      .click(Selector('.q-menu').find(`#${featureId}`))
       .wait(1000)
       .click(this.dialog.find('#import-layer-action'))
       .wait(1000)
@@ -38,17 +35,15 @@ export default class AddLayer extends BasePage {
       .wait(1000)
   }
 
-  async createLayer (layer, file, ID) {
+  async createLayer (layer, schema, featureId) {
     await t
       .click(this.dialog.find('#create-layer'))
       .typeText(this.dialog.find('#name-field'), layer)
       .typeText(this.dialog.find('#description-field'), `${layer} description`)
-      .setFilesToUpload(this.dialog.find('#schema-field'), file)
+      .setFilesToUpload(this.dialog.find('#schema-field'), schema)
       .click(this.dialog.find('#featureId-field'))
       .wait(1000)
-      // Selection based on text content does not seem to work
-      //.click(Selector('.q-menu').find('.q-item__label').withText(ID))
-      .click(Selector('.q-menu .q-item').nth(ID))
+      .click(Selector('.q-menu').find(`#${featureId}`))
       .wait(1000)
       .click(this.dialog.find('#create-layer-action'))
       .wait(1000)

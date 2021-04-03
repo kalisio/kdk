@@ -14,45 +14,52 @@ export default class Catalog extends BasePage {
   async getCategory (category) {
     const categories = VueSelector('k-catalog QExpansionItem')
     const count = await categories.count
+    let catergoyObj = null
     for (let i = 0; i < count; ++i) {
-      const cat = categories.nth(i)
-      const id = await cat.id
-      if (id === category) return cat
+      if (!catergoyObj) {
+        const cat = categories.nth(i)
+        const id = await cat.id
+        if (id === category) catergoyObj = cat
+      }
     }
-
-    throw new Error(`Catalog category '${category}' not found !`)
+    if (!catergoyObj) throw new Error(`Catalog category '${category}' not found !`)
+    return catergoyObj
   }
 
   async getLayer (layer) {
     const layers = VueSelector('k-catalog k-layers-selector QItem')
     const count = await layers.count
+    let layerObj = null
     for (let i = 0; i < count; ++i) {
-      const lay = layers.nth(i)
-      const id = await lay.id
-      if (id === layer) return lay
+      if (!layerObj) {
+        const lay = layers.nth(i)
+        const id = await lay.id
+        if (id === layer) layerObj = lay
+      }
     }
-
-    throw new Error(`Catalog layer '${layer}' not found !`)
+    if (!layerObj) throw new Error(`Catalog layer '${layer}' not found !`)
+    return layerObj
   }
 
   async getMeteoModel (model) {
     return Selector('.q-menu').find(`#${model}`)
   }
 
-  async clickCategory (category, expectExpanded) {
+  async clickCategory (test, category, expectExpanded) {
     const item = await this.getCategory(category)
-    await t
+    await test
     // click on the QExpansionItem header (testcafe default is center of element which is not good
     // since expansion item element covers it's content too.
       .click(item.find('.q-item'))
       .expect(item.getVue(({ state }) => state.showing)).eql(expectExpanded, `catalog category '${category}' expanded state doesn't match expectation (${expectExpanded})`)
   }
 
-  async clickLayer (layer, expectActive) {
+  async clickLayer (test, layer, expectActive) {
     const item = await this.getLayer(layer)
-    await t
+    await test
       .expect(item.getVue(({ props }) => props.clickable)).ok(`catalog layer '${layer}' is not clickable`)
       .click(item)
+      .wait(500)
       .expect(item.getVue(({ props }) => props.active)).eql(expectActive, `catalog layer '${layer}' active state doesn't match expectation (${expectActive})`)
   }
 
@@ -65,9 +72,9 @@ export default class Catalog extends BasePage {
       .click(item.find(`#${action}`))
   }
 
-  async clickForecastMode (mode) {
+  async clickForecastMode (test, mode) {
     const item = await this.getForecastMode(mode)
-    await t
+    await test
       .click(item)
       .expect(item.getVue(({ computed }) => computed.isActive)).ok(`forecast mode '${mode}' isn't active`)
   }
