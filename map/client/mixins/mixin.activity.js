@@ -344,6 +344,8 @@ export default {
       this.editModal.$mount()
       this.editModal.openModal()
       this.editModal.$on('applied', updatedLayer => {
+        // Actual layer update should be triggerred by real-time event
+        // but as we might not always use sockets perform it anyway
         // If renamed need to update the layer map accordingly
         if (layer.name !== updatedLayer.name) {
           this.renameLayer(layer.name, updatedLayer.name)
@@ -366,6 +368,8 @@ export default {
       this.editStyleModal.$mount()
       this.editStyleModal.open()
       this.editStyleModal.$on('applied', async () => {
+        // Actual layer update should be triggerred by real-time event
+        // but as we might not always use sockets perform it anyway
         // Keep track of data as we will reset the layer
         const geoJson = this.toGeoJson(layer.name)
         // Reset layer with new setup
@@ -432,6 +436,8 @@ export default {
             }
             await this.$api.getService('catalog').remove(layer._id)
           }
+          // Actual layer removal should be triggerred by real-time event
+          // but as we might not always use sockets perform it anyway
           this.removeLayer(layer.name)
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
@@ -533,8 +539,11 @@ export default {
           // Nothing to do
           break
         default:
-          // Updating a layer requires to remove/add it again
-          if (this.hasLayer(object.name)) await this.removeCatalogLayer(object)
+          // Updating a layer requires to remove/add it again to cover all use cases
+          // (eg style edition, etc.)
+          // Here we find layer by ID as renaming could have occured from another client
+          const layers = this.getLayers({ _id: object._id })
+          if (layers.length > 0) await this.removeCatalogLayer(layers[0])
           if (event !== 'removed') await this.addCatalogLayer(object)
           break
       }
