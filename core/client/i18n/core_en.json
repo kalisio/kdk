@@ -63,6 +63,13 @@
     "OBJECT_ID_ALREADY_TAKEN": "An item with this identifier seems to already exist. Please try again with another value.",
     "DUPLICATED_FILE": "The file {{file}} is already added"
   },
+  "mixins": {
+    "baseItem": {
+      "REMOVE_MESSAGE": "Are you sure you want to remove {{name}} ?",
+      "ITEM_EXPORTED": "Exporting the content of {{name}} within {{file}}",
+      "CANNOT_EXPORT_ITEM": "Cannot export {{name}}. Is your browser support such a feature ?"
+    }
+  },
   "schemas": {
     "OBJECT_NAME": "{{ object.name }}",
     "AVATAR_FIELD_LABEL": "Select an avatar",

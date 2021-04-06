@@ -22,11 +22,11 @@ export default class Layout extends BasePage {
   }
 
   static get ABOUT () {
-    return '#about'
+    return 'about'
   }
 
   static get LOGOUT () {
-    return '#logout'
+    return 'logout'
   }
 
   // Openers
@@ -62,7 +62,7 @@ export default class Layout extends BasePage {
 
   async clickLeftPane (test, action) {
     await test
-      .click(this.leftPanel.find(action))
+      .click(this.leftPanel.find(`#${action}`))
       .wait(1000)
   }
 
@@ -74,7 +74,7 @@ export default class Layout extends BasePage {
 
   async clickTopPane (test, action) {
     await test
-      .click(this.topPanel.find(action))
+      .click(this.topPanel.find(`#${action}`))
       .wait(1000)
   }
 
@@ -86,7 +86,7 @@ export default class Layout extends BasePage {
 
   async clickRightPane (test, action) {
     await test
-      .click(this.rightPanel.find(action))
+      .click(this.rightPanel.find(`#${action}`))
       .wait(1000)
   }
 
@@ -98,7 +98,7 @@ export default class Layout extends BasePage {
 
   async clickBottomPane (test, action) {
     await test
-      .click(this.bottomPanel.find(action))
+      .click(this.bottomPanel.find(`#${action}`))
       .wait(1000)
   }
 
@@ -113,7 +113,7 @@ export default class Layout extends BasePage {
     await test
       .click(Selector(this.fab))
       .wait(1000)
-      .click(this.fab.find(action))
+      .click(this.fab.find(`#${action}`))
       .wait(1000)
   }
 

@@ -7,6 +7,7 @@
             <component
               class="row justify-center"
               :key="item._id" :id="'item-' + item._id"
+              :service="service"
               :item="item"
               :contextId="contextId"
               :is="renderer.component"

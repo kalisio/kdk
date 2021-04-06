@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Dialog, exportFile } from 'quasar'
 import { getIconName, getInitials } from '../utils'
 import { Layout } from '../layout'
 
@@ -7,6 +8,10 @@ export default {
     contextId: {
       type: String,
       default: ''
+    },
+    service: {
+      type: String,
+      required: true
     },
     item: {
       type: Object,
@@ -66,6 +71,12 @@ export default {
     }
   },
   methods: {
+    getName () {
+      return _.get(this.item, this.options.nameField || 'name', '')
+    },
+    getDescription () {
+      return _.get(this.item, this.options.descriptionField || 'description', '')
+    },
     getIcon () {
       return (this.options.iconField ? _.get(this.item, this.options.iconField, '') : this.item.icon)
     },
@@ -87,14 +98,6 @@ export default {
         return (icon ? _.get(icon, 'color', '') : '')
       }
     },
-    getName () {
-      // Check for custom name field
-      return this.options.nameField ? _.get(this.item, this.options.nameField, '') : this.item.name
-    },
-    getDescription () {
-      // Check for custom description field
-      return this.options.descriptionField ? _.get(this.item, this.options.descriptionField, '') : this.item.description
-    },
     setActions (actions) {
       // As context is different for each item we need to clone the global action configuration
       // otheriwse context will always reference the last processed item
@@ -115,6 +118,35 @@ export default {
     },
     onItemSelected (section) {
       this.$emit('item-selected', this.item, section)
+    },
+    editItem () {
+
+    },
+    removeItem () {
+      const name = this.getName()
+      Dialog.create({
+        message: this.$t('mixins.baseItem.REMOVE_MESSAGE', { name }),
+        html: true,
+        ok: {
+          label: this.$t('OK'),
+          flat: true
+        },
+        cancel: {
+          label: this.$t('CANCEL'),
+          flat: true
+        }
+      }).onOk(() => {
+        this.$api.getService(this.service).remove(this.item._id)
+      })
+    },
+    exportItem () {
+      const name = this.getName()
+      const file = name + '.json'
+      if (exportFile(file, JSON.stringify(this.item))) {
+        this.$toast({ type: 'error', message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
+      } else {
+        this.$toast({ type: 'error', message: this.$t('mixins.baseItme.CANNOT_EXPORT_ITEM') })
+      }
     }
   },
   created () {

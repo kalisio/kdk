@@ -42,7 +42,11 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-table',
-  mixins: [mixins.service, mixins.schemaProxy, mixins.baseCollection],
+  mixins: [
+    mixins.service, 
+    mixins.schemaProxy, 
+    mixins.baseCollection
+  ],
   components: {
     QTable,
     QTd

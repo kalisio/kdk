@@ -18,19 +18,19 @@ export default class Account extends BasePage {
   }
 
   static get MANAGE_ACCOUNT () {
-    return '#manage-account'
+    return 'manage-account'
   }
 
   static get PROFILE () {
-    return '#profile'
+    return 'profile'
   }
 
   static get SECURITY () {
-    return '#security'
+    return 'security'
   }
 
   static get DANGER_ZONE () {
-    return '#danger-zone'
+    return 'danger-zone'
   }
 
   async updateProfile (test, avatar, name) {

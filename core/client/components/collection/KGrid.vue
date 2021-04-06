@@ -3,7 +3,14 @@
     <div v-if="items.length > 0" class="q-pa-sm row">
       <template v-for="item in items">
         <div :class="getItemClass()" :key="item._id">
-          <component :id="'item-' + item._id" :item="item" :contextId="contextId" :is="renderer.component" v-bind="renderer" @item-selected="onItemSelected"/>
+          <component 
+            :id="'item-' + item._id" 
+            :service="service"
+            :item="item" 
+            :contextId="contextId" 
+            :is="renderer.component" 
+            v-bind="renderer" 
+            @item-selected="onItemSelected" />
         </div>
       </template>
       <div v-if="nbPages > 1" class="col-12">
