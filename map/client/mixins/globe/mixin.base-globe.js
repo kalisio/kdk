@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import { colors } from 'quasar'
 import togeojson from 'togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
@@ -261,16 +262,30 @@ export default {
       const east = Cesium.Math.toDegrees(bounds.east)
       return [[south, west], [north, east]]
     },
-    showUserLocation () {
+    async showUserLocation () {
       const position = this.$geolocation.get().position
       // TODO: no specific marker yet, simply center
       if (position) {
         this.center(position.longitude, position.latitude)
+        const pinBuilder = new Cesium.PinBuilder()
+        const canvas = await pinBuilder.fromMakiIconId('marker', Cesium.Color.fromCssColorString(colors.getBrand('primary')), 48)
+        this.userLocationEntity = this.viewer.entities.add({
+          name: 'user-location',
+          position: Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude),
+          billboard: {
+            image: canvas.toDataURL(),
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          },
+        })
+        this.viewer.selectedEntity = this.userLocationEntity
+        this.userLocation = true
       }
-      this.userLocation = true
     },
     hideUserLocation () {
-      // TODO: no specific marker to remove yet
+      if (this.userLocationEntity) {
+        this.viewer.entities.remove(this.userLocationEntity)
+        this.userLocationEntity = null
+      }
       this.userLocation = false
     },
     isUserLocationVisible () {

@@ -15,13 +15,13 @@ export default {
         let html = popupStyle.html
         // Custom list given ?
         if (!html) {
-          if (popupStyle.pick) {
+          if (popupStyle.template) {
+            const compiler = popupStyle.compiler
+            html = compiler({ properties, feature, $t: this.$t })
+          } else if (popupStyle.pick) {
             properties = _.pick(properties, popupStyle.pick)
           } else if (popupStyle.omit) {
             properties = _.omit(properties, popupStyle.omit)
-          } else if (popupStyle.template) {
-            const compiler = popupStyle.compiler
-            html = compiler({ properties, feature, $t: this.$t })
           }
         }
         // Default HTML table if no template

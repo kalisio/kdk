@@ -14,14 +14,14 @@ export default {
         let text = popupStyle.text
         // Custom list given ?
         if (!text) {
-          if (popupStyle.pick) {
-            properties = _.pick(properties, popupStyle.pick)
-          } else if (popupStyle.omit) {
-            properties = _.omit(properties, popupStyle.omit)
-          } else if (popupStyle.template) {
+          if (popupStyle.template) {
             const compiler = popupStyle.compiler
             // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
             text = compiler({ feature: { properties }, properties, $t: this.$t })
+          } else if (popupStyle.pick) {
+            properties = _.pick(properties, popupStyle.pick)
+          } else if (popupStyle.omit) {
+            properties = _.omit(properties, popupStyle.omit)
           }
         }
         // Cesium does not support HTML

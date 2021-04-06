@@ -32,13 +32,20 @@ export default {
             isVisible: true,
             realtime: true,
             interactive: false,
-            popup: { pick: [] }
+            popup: { template: '<%= properties.name %>' },
+            'icon-classes': 'fas fa-circle',
+            'marker-color': colors.getBrand('primary'),
+            'icon-color': '#FFFFFF',
+            'icon-x-offset': -2,
+            'icon-y-offset': 0
           },
           cesium: {
             type: 'geoJson',
             isVisible: true,
             realtime: true,
-            popup: { pick: [] }
+            popup: { template: '<%= properties.name %>' },
+            'marker-symbol': 'marker',
+            'marker-color': colors.getBrand('primary')
           }
         })
       }
@@ -46,29 +53,14 @@ export default {
     },
     async updateLocationLayer (location) {
       await this.createLocationLayer()
-      let marker = {
-        _id: LocationLayerName + '-marker',
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [location.longitude, location.latitude] },
-        properties: { html: location.name, text: location.name }
-      }
-      if (this.kActivity.is2D()) {
-        marker.style = {
-          'icon-classes': 'fas fa-circle',
-          'marker-color': colors.getBrand('primary'),
-          'icon-color': '#FFFFFF',
-          'icon-x-offset': -2,
-          'icon-y-offset': 0,
-          popup: { html: location.name }
-        }
-      } else {
-        marker.style = {
-          'marker-symbol': 'marker',
-          'marker-color': colors.getBrand('primary'),
-          popup: { text: location.name }
-        }
-      }
-      await this.kActivity.updateLayer(LocationLayerName, { type: 'FeatureCollection', features: [marker] })
+      await this.kActivity.updateLayer(LocationLayerName, {
+        type: 'FeatureCollection', features: [{
+          _id: LocationLayerName + '-marker',
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [location.longitude, location.latitude] },
+          properties: Object.assign({}, location)
+        }]
+      })
     },
     async removeLocationLayer () {
       await this.kActivity.removeLayer(LocationLayerName)

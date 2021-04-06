@@ -407,7 +407,7 @@ export default {
         const values = await this.$api.getService(_.get(this.layer, 'service'), this.contextId)
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
         // We don't have label in that case
-        properties.field.options = values.map(value => ({ value, label: value }))
+        properties.field.options = values.map(value => ({ value, label: (_.isNil(value) ? 'NIL' : value) }))
       }
       // Remove label as we add it on top of the operator
       properties.field.helper = ''
