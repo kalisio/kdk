@@ -171,6 +171,16 @@ export default {
       if (this.service.protocol === 'WMS') {
         const style = propertiesResult.values.style
 
+        newLayer.cesium = {
+          type: 'WebMapService',
+          url: this.service.baseUrl,
+          layers: this.layer.id,
+          parameters: Object.assign({
+            version: this.service.version,
+            format: 'image/png',
+            transparent: true
+          }, this.service.searchParams)
+        }
         newLayer.leaflet = Object.assign({
           type: 'tileLayer.wms',
           source: this.service.baseUrl,
@@ -195,6 +205,7 @@ export default {
 
         if (style) {
           newLayer.leaflet.styles = style
+          newLayer.cesium.parameters.styles = style
 
           // add legend url if available in the picked style
           const legendUrl = _.get(this.layer.styles, [style, 'legend'])
@@ -232,28 +243,43 @@ export default {
         // could not find candidate, fallback using first available
         if (!pickedFormat) pickedFormat = supportedFormats[0]
 
+        const restUrl = wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
+          style: style,
+          crs: '3857',
+          format: pickedFormat,
+          searchParams: this.service.searchParams
+        })
+        newLayer.cesium = {
+          type: 'WebMapTileService',
+          url: restUrl.replace('{z}', '{TileMatrix}').replace('{x}', '{TileCol}').replace('{y}', '{TileRow}'),
+          format: pickedFormat,
+          layer: this.layer.id,
+          style: style,
+          tileMatrixSetID: this.layer.crs['3857']
+        }
         newLayer.leaflet = {
           type: 'tileLayer',
-          source: wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
-            style: style,
-            crs: '3857',
-            format: pickedFormat,
-            searchParams: this.service.searchParams
-          })
+          source: restUrl
         }
 
         // add legend url if available in the style
         const legendUrl = _.get(this.layer.styles, [style, 'legend'])
         if (legendUrl) newLayer.legendUrl = legendUrl
       } else if (this.service.protocol === 'TMS') {
+        newLayer.cesium = {
+          type: 'TileMapService',
+          url: buildUrl(this.layer.url, this.service.searchParams),
+          fileExtension: this.layer.extension
+        }
         newLayer.leaflet = {
           type: 'tileLayer',
           source: buildUrl(`${this.layer.url}/{z}/{x}/{y}.${this.layer.extension}`, this.service.searchParams),
           tms: true
         }
       }
-      // make leaflet layers visible by default
+      // make layers visible by default
       if (newLayer.leaflet) newLayer.leaflet.isVisible = true
+      if (newLayer.cesium) newLayer.cesium.isVisible = true
       // Add the layer
       await this.kActivity.addLayer(newLayer)
       this.connecting = false
