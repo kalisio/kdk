@@ -119,8 +119,13 @@ export default {
     onItemSelected (section) {
       this.$emit('item-selected', this.item, section)
     },
+    viewItem () {
+      const path = this.$route.fullPath + `/view/${this.item._id}`
+      this.$router.push(path)
+    },
     editItem () {
-
+      const path = this.$route.fullPath + `/edit/${this.item._id}`
+      this.$router.push(path)
     },
     removeItem () {
       const name = this.getName()
