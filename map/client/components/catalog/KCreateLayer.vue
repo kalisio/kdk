@@ -5,11 +5,11 @@
     <k-form ref="featureIdForm" :key="featureIdFormKey" :schema="getFeatureIdFormSchema()" />
     <!-- Buttons section -->
     <div class="row justify-end">
-      <k-action 
-        id="create-layer-action" 
-        :label="$t('KCreateLayer.CREATE_BUTTON')" 
+      <k-action
+        id="create-layer-action"
+        :label="$t('KCreateLayer.CREATE_BUTTON')"
         renderer="form-button"
-        :loading="creating"        
+        :loading="creating"
         @triggered="onCreate" />
     </div>
   </div>
@@ -38,20 +38,20 @@ export default {
           name: {
             type: 'string',
             maxLength: 128,
-            minLength: 3,          
-            field: { 
+            minLength: 3,
+            field: {
               component: 'form/KTextField',
               label: 'KCreateLayer.NAME_FIELD_LABEL'
             }
           },
           description: {
             type: 'string',
-            field: { 
+            field: {
               component: 'form/KTextField',
               label: 'KCreateLayer.DESCRIPTION_FIELD_LABEL'
             }
           },
-          schema: { 
+          schema: {
             type: 'object',
             field: {
               component: 'form/KFileField',
@@ -60,7 +60,7 @@ export default {
             }
           }
         },
-        required: ['name', "schema"]
+        required: ['name', 'schema']
       }
     },
     getFeatureIdFormSchema () {
@@ -85,7 +85,7 @@ export default {
     onPropertiesFormFieldChanged (field, value) {
       if (field === 'schema') {
         this.schema = value
-        this.featureIdFormKey+=1
+        this.featureIdFormKey += 1
       }
     },
     getProperties () {
@@ -107,7 +107,7 @@ export default {
     async onCreate () {
       const propertiesResult = this.$refs.propertiesForm.validate()
       const featureIdResult = this.$refs.featureIdForm.validate()
-      if (!propertiesResult.isValid || !featureIdResult.isValid)  return
+      if (!propertiesResult.isValid || !featureIdResult.isValid) return
       this.creating = true
       // Create an empty layer
       const engine = {

@@ -311,7 +311,7 @@ export default {
     options: { type: Object, required: true } // Contains default style options
   },
   computed: {
-    hasFeatureSchema() {
+    hasFeatureSchema () {
       return _.has(this.layer, 'schema')
     },
     fields () {

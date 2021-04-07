@@ -66,7 +66,7 @@ export default {
   computed: {
     canAddService () {
       if (!this.model) return false
-      return !_.find(this.availableServices, { 'request': this.model.request })
+      return !_.find(this.availableServices, { request: this.model.request })
     }
   },
   methods: {
@@ -88,11 +88,11 @@ export default {
           if (response) {
             // make sure WFS server supports GeoJSON output
             if (response.protocol === 'WFS' && !response.supportsGeoJson) {
-              this.error = 'KOwsServiceField.WFS_MISSING_GEOJSON_SUPPORT'   
+              this.error = 'KOwsServiceField.WFS_MISSING_GEOJSON_SUPPORT'
             } else {
               this.error = ''
             }
-          } 
+          }
         } catch (error) {
           this.error = 'KOwsServiceField.INVALID_URL'
         }
@@ -146,11 +146,11 @@ export default {
           for (const [k, v] of url.searchParams) result.searchParams[k] = v
           // fetch content and try to convert to json
           const query = url.href
-  
+
           caps = await fetch(query, { redirect: 'follow' })
             .then(resp => resp.text())
             .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
-          
+
           // look for SERVICE=xxx
           const protocol = this.findQueryParameter(url.searchParams, 'SERVICE')
           if (protocol === 'WMS') result.protocol = 'WMS'
@@ -206,8 +206,7 @@ export default {
           result.availableLayers = decoded.availableLayers
           result.version = decoded.version
         }
-
-      } catch (err) { 
+      } catch (err) {
         this.error = 'KOwsServiceField.CANNOT_FETCH_URL'
         return null
       }

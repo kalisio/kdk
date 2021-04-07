@@ -72,7 +72,7 @@ export default {
     }
   },
   computed: {
-    isToggled() {
+    isToggled () {
       return this.kActivity.isLayerEdited(this.context)
     }
   },

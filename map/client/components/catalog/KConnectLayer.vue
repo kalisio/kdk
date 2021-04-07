@@ -6,9 +6,9 @@
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <div class="row justify-end">
-      <k-action 
-        id="connect-layer-action" 
-        :label="$t('KConnectLayer.CONNECT_BUTTON')" 
+      <k-action
+        id="connect-layer-action"
+        :label="$t('KConnectLayer.CONNECT_BUTTON')"
         renderer="form-button"
         :loading="connecting"
         @triggered="onConnect" />
@@ -38,7 +38,7 @@ export default {
         $id: 'http://kalisio.xyz/schemas/connect-layer-select-service',
         type: 'object',
         properties: {
-          service: { 
+          service: {
             type: 'object',
             field: {
               component: 'form/KOwsServiceField',
@@ -68,8 +68,8 @@ export default {
       }
     },
     getPropertiesFormSchema () {
-      let required = ['name']
-      let schema = {
+      const required = ['name']
+      const schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/connect-layer-set-properties#',
         type: 'object',
@@ -78,8 +78,8 @@ export default {
             type: 'string',
             maxLength: 128,
             minLength: 3,
-            default: this.layer ? this.layer.display : '',            
-            field: { 
+            default: this.layer ? this.layer.display : '',
+            field: {
               component: 'form/KTextField',
               label: 'KConnectLayer.NAME_FIELD_LABEL'
             }
@@ -87,7 +87,7 @@ export default {
           description: {
             type: 'string',
             default: this.layer ? this.layer.display : '',
-            field: { 
+            field: {
               component: 'form/KTextField',
               label: 'KConnectLayer.DESCRIPTION_FIELD_LABEL'
             }
@@ -127,15 +127,15 @@ export default {
       this.service = value
       this.layer = null
       // Force the other forms to be re-rendered
-      this.layerFormKey+=1
-      this.propertiesFormKey+=1
+      this.layerFormKey += 1
+      this.propertiesFormKey += 1
     },
     onLayerFormFieldChanged (field, value) {
       this.layer = value
-      this.propertiesFormKey+=1
+      this.propertiesFormKey += 1
     },
     getLayerStyles () {
-      if (this.layer) return _.map(this.layer.styles, style => { return { label: style.display, value: style.id }})
+      if (this.layer) return _.map(this.layer.styles, style => { return { label: style.display, value: style.id } })
       return []
     },
     getLayerProperties () {

@@ -5,11 +5,11 @@
      -->
     <div :style="contentStyle">
       <slot id="page-content" name="page-content"></slot>
-      <k-content 
-        id="page" 
-        v-show="page.content && page.mode" 
-        :content="page.content" 
-        :mode="page.mode" 
+      <k-content
+        id="page"
+        v-show="page.content && page.mode"
+        :content="page.content"
+        :mode="page.mode"
         :filter="page.filter" />
     </div>
     <!--
@@ -19,12 +19,12 @@
     <q-page-sticky position="top">
       <div id="top-pane" v-show="topPane.content && topPane.mode" class="column items-center">
         <div>
-          <k-panel 
-            id="top-panel" 
-            v-show="isTopPaneOpened" 
+          <k-panel
+            id="top-panel"
+            v-show="isTopPaneOpened"
             :content="topPane.content"
-            :mode="topPane.mode" 
-            :filter="topPane.filter" 
+            :mode="topPane.mode"
+            :filter="topPane.filter"
             class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
@@ -39,11 +39,11 @@
     <q-page-sticky position="left">
       <div id="left-pane" v-show="leftPane.content && leftPane.mode" class="row items-center">
         <div>
-          <k-panel 
-            id="left-panel" 
+          <k-panel
+            id="left-panel"
             v-show="isLeftPaneOpened"
             :content="leftPane.content"
-            :mode="leftPane.mode" 
+            :mode="leftPane.mode"
             :filter="leftPane.filter"
             direction="vertical"
             style="height: 100vh; width: 300px;"
@@ -58,11 +58,11 @@
       <div id="right-pane" v-show="rightPane.content && rightPane.mode" class="row items-center">
         <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
-          <k-panel 
-            id="right-panel" 
-            v-show="isRightPaneOpened" 
+          <k-panel
+            id="right-panel"
+            v-show="isRightPaneOpened"
             :content="rightPane.content"
-            :mode="rightPane.mode" 
+            :mode="rightPane.mode"
             :filter="rightPane.filter"
             direction="vertical"
             class="k-pane" />
@@ -75,9 +75,9 @@
       <div id="bottom-pane" v-show="bottomPane.content && bottomPane.mode" class="column items-center">
         <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
-          <k-panel 
-            id="bottom-panel" 
-            v-show="isBottomPaneOpened" 
+          <k-panel
+            id="bottom-panel"
+            v-show="isBottomPaneOpened"
             :content="bottomPane.content"
             :mode="bottomPane.mode"
             :filter="bottomPane.filter"

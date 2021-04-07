@@ -78,7 +78,7 @@ export default {
           filter = _.get(category, 'options.filter')
         } else if (_.has(category, 'layers')) {
           filter = { name: { $in: _.get(category, 'layers') } }
-        } 
+        }
         // If the list of layers in category is empty we can have a null filter
         layersByCategory[category.name] = filter ? _.remove(layers, sift(filter)) : []
       })

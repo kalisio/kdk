@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import sift from 'sift'
 import logger from 'loglevel'
 import { colors } from 'quasar'
 import togeojson from 'togeojson'
@@ -274,8 +275,8 @@ export default {
           position: Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude),
           billboard: {
             image: canvas.toDataURL(),
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-          },
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+          }
         })
         this.viewer.selectedEntity = this.userLocationEntity
         this.userLocation = true

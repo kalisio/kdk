@@ -18,11 +18,11 @@
       <div class="colum q-gutter-y-md">
         <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
         <div class="q-pa-sm row justify-end">
-          <k-action 
-            id="create-view" 
-            :label="$t('KFavoriteViews.SAVE_BUTTON')" 
-            renderer="form-button" 
-            :loading="savingView" 
+          <k-action
+            id="create-view"
+            :label="$t('KFavoriteViews.SAVE_BUTTON')"
+            renderer="form-button"
+            :loading="savingView"
             @triggered="onSave" />
         </div>
       </div>

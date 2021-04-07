@@ -106,7 +106,7 @@ export default {
         }
       }).onOk(async (email) => {
         // Extract invitation data from user
-        let user = _.pick(this.item, ['email', 'name', 'locale'])
+        const user = _.pick(this.item, ['email', 'name', 'locale'])
         if (email) user.email = email
         // Add the sponsor information
         user.sponsor = {

@@ -1,7 +1,7 @@
 <template>
-  <k-modal 
+  <k-modal
     id="features-table-modal"
-    :title="title"  
+    :title="title"
     :maximized="isModalMaximized"
     v-model="isModalOpened"
     @opened="$emit('opened')"

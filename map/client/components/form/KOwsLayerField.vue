@@ -21,7 +21,7 @@
         :id="getId(scope.opt)"
         v-bind="scope.itemProps"
         v-on="scope.itemEvents"
-      > 
+      >
         <q-item-section>
           <q-item-label>{{ scope.opt.display }} [{{scope.opt.id }}]</q-item-label>
         </q-item-section>

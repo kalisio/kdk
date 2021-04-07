@@ -20,7 +20,7 @@
       :error="hasError"
       :disabled="disabled"
       bottom-slots
-    > 
+    >
       <!-- Content -->
       <template v-slot:default>
         <div class="row items-baseline">

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { getItems, replaceItems } from 'feathers-hooks-common'
+import { getItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:map:catalog:hooks')
@@ -18,7 +18,7 @@ export async function updateLayerReferences (hook) {
   if (!type.endsWith('Layer')) return hook
   const previousLayer = _.get(hook.params, 'previousItem')
   const layer = getItems(hook)
-  
+
   // Retrieve the list of all contexts, categories, etc. involving the layer
   const contexts = await hook.service.find({
     query: { type: { $in: ['Context', 'Category'] }, layers: previousLayer.name },
@@ -33,7 +33,7 @@ export async function updateLayerReferences (hook) {
   await Promise.all(contexts.map(context => {
     // Update/Remove layer name in layer list
     let layers = context.layers
-    if (hook.method === 'remove') { 
+    if (hook.method === 'remove') {
       _.remove(layers, layerName => layerName === previousLayer.name)
     } else {
       layers = layers.map(layerName => (layerName === previousLayer.name ? layer.name : layerName))

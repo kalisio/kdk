@@ -1,8 +1,8 @@
 <template>
-  <k-modal 
+  <k-modal
     id="editor-modal"
-    :title="editorTitle" 
-    :buttons="buttons" 
+    :title="editorTitle"
+    :buttons="buttons"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -44,7 +44,7 @@ export default {
       }
       if (this.resetButton !== '') {
         buttons.push({
-          id: 'reset-button', label: this.resetButton,renderer: 'form-button', outline: 'true', handler: () => this.reset()
+          id: 'reset-button', label: this.resetButton, renderer: 'form-button', outline: 'true', handler: () => this.reset()
         })
       }
       return buttons

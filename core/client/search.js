@@ -28,7 +28,7 @@ export const Search = {
           data.service = serviceDescriptor.service
           data.field = serviceDescriptor.field
           const icon = getIconName(data)
-          if (_.isEmpty(icon)) { 
+          if (_.isEmpty(icon)) {
             data.icon = serviceDescriptor.icon
             processIcon(data)
           }

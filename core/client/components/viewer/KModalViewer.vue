@@ -1,7 +1,7 @@
 <template>
   <k-modal
     id="modal-viewer"
-    :title="viewerTitle" 
+    :title="viewerTitle"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">

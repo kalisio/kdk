@@ -18,8 +18,8 @@
         <q-btn
           id="icon-chooser-button"
           round
-          flat  
-          icon="las la-icons" 
+          flat
+          icon="las la-icons"
           @click="onIconClicked" />
         <k-icon-chooser
           id="icon-chooser"
@@ -27,13 +27,13 @@
           :icon-set="iconSet"
           :palette="color"
           @icon-choosed="onIconChoosed" />
-      </template>            
+      </template>
       <!-- Content -->
       <template v-slot:default>
         <q-icon
           size="sm"
           id="choosed-icon"
-          :name="iconName" 
+          :name="iconName"
           :color="iconColor" />
       </template>
       <!-- Helper -->

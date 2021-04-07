@@ -1,9 +1,9 @@
 <template>
   <div v-if="member !== null">
-    <k-modal 
+    <k-modal
       id="join-group-modal"
-      :title="title" 
-      :buttons="getButtons()"     
+      :title="title"
+      :buttons="getButtons()"
       v-model="isModalOpened"
       @opened="$emit('opened')"
       @closed="$emit('closed')">

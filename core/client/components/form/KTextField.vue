@@ -11,7 +11,7 @@
     @blur="onChanged"
     @input="onChanged"
     :disabled="disabled"
-    :error="hasError" 
+    :error="hasError"
     :error-message="errorLabel"
     bottom-slots>
     <!-- Helper -->

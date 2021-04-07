@@ -10,7 +10,7 @@
     :error="hasError"
     :disabled="disabled"
     @blur="onChanged"
-    @input="onChanged"    
+    @input="onChanged"
     bottom-slots
     :prefix="formattedDatetime"
   >

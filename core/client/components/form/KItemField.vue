@@ -68,7 +68,7 @@ export default {
   data () {
     return {
       items: null,
-      options: [],
+      options: []
     }
   },
   methods: {
@@ -97,7 +97,7 @@ export default {
       const results = await Search.query(this.properties.services, pattern)
       update(() => {
         if (this.properties.multiselect) {
-          this.options = _.differenceWith(results, this.items, (item1, item2) => { 
+          this.options = _.differenceWith(results, this.items, (item1, item2) => {
             return item1.field === item2.field
           })
         } else this.options = results

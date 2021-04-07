@@ -60,7 +60,7 @@ export default {
         if (this.getAcceptedTypes().split(',').includes('application/json')) {
           try {
             content = JSON.parse(content)
-          } catch(error) {
+          } catch (error) {
             this.error = 'KFileField.INVALID_JSON_FILE'
             this.model = this.emptyModel()
             return
