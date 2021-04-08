@@ -189,39 +189,43 @@ export default {
       })
       return feature
     },
-    getProbedLocationForecastTooltip (feature, layer, options) {
-      if (options.name !== SelectionLayerName) return
-
-      // Only wind/temperature can be available at different levels now
-      const windDirection = (this.forecastLevel ? `windDirection-${this.forecastLevel}` : 'windDirection')
-      const windSpeed = (this.forecastLevel ? `windSpeed-${this.forecastLevel}` : 'windSpeed')
-      const temperature = (this.forecastLevel ? `temperature-${this.forecastLevel}` : 'temperature')
-      const direction = _.get(feature, `properties.${windDirection}`)
-      const speed = _.get(feature, `properties.${windSpeed}`)
-      const gust = _.get(feature, 'properties.gust')
-      const t = _.get(feature, `properties.${temperature}`)
-      const precipitations = _.get(feature, 'properties.precipitations')
-      const humidity = _.get(feature, 'properties.humidity')
-      let time = _.get(feature, 'time', _.get(feature, 'forecastTime'))
-      const name = _.get(feature, 'properties.name', _.get(feature, 'properties.NAME'))
+    getForecastAsHtml(feature, fields = {}) {
+      // Retrieve target fields on feature
+      let windDirection = _.get(fields, 'windDirection', 'properties.windDirection')
+      let windSpeed = _.get(fields, 'windSpeed', 'properties.windSpeed')
+      let gust = _.get(fields, 'gust', 'properties.gust')
+      let temperature = _.get(fields, 'temperature', 'properties.temperature')
+      let precipitations = _.get(fields, 'precipitations', 'properties.precipitations')
+      let humidity = _.get(fields, 'humidity', 'properties.humidity')
+      let time = _.get(fields, 'time', 'forecastTime')
+      let name = _.get(fields, 'name', 'properties.name')
+      // Then get values for fields
+      windDirection = _.get(feature, `${windDirection}`)
+      windSpeed = _.get(feature, `${windSpeed}`)
+      gust = _.get(feature, `${gust}`)
+      temperature = _.get(feature, `${temperature}`)
+      precipitations = _.get(feature, `${precipitations}`)
+      humidity = _.get(feature, `${humidity}`)
+      time = _.get(feature, `${time}`)
+      name = _.get(feature, `${name}`)
       let html = ''
-      if (!_.isNil(speed) && _.isNumber(speed)) {
-        html += `${speed.toFixed(1)} m/s</br>`
+      if (!_.isNil(windSpeed) && _.isFinite(windSpeed)) {
+        html += `${windSpeed.toFixed(1)} m/s</br>`
       }
-      if (!_.isNil(gust) && _.isNumber(gust)) {
+      if (!_.isNil(gust) && _.isFinite(gust)) {
         html += `max ${gust.toFixed(1)} m/s</br>`
       }
-      if (!_.isNil(direction) && _.isNumber(direction)) {
-        html += `${direction.toFixed(1)} °</br>`
+      if (!_.isNil(windDirection) && _.isFinite(windDirection)) {
+        html += `${windDirection.toFixed(1)} °</br>`
       }
-      if (!_.isNil(precipitations) && _.isNumber(precipitations)) {
+      if (!_.isNil(precipitations) && _.isFinite(precipitations)) {
         html += `${precipitations.toFixed(1)} mm/h</br>`
       }
-      if (!_.isNil(humidity) && _.isNumber(humidity)) {
+      if (!_.isNil(humidity) && _.isFinite(humidity)) {
         html += `${humidity.toFixed(0)} %</br>`
       }
-      if (!_.isNil(t) && _.isNumber(t)) {
-        html += `${t.toFixed(1)} °C</br>`
+      if (!_.isNil(temperature) && _.isFinite(temperature)) {
+        html += `${temperature.toFixed(1)} °C</br>`
       }
       // If we have any value add name/time information
       if (html && !_.isNil(time)) {
@@ -229,23 +233,36 @@ export default {
         time = moment.utc(time)
         if (time.isValid()) html += `${this.formatTime('date.short', time)} - ${this.formatTime('time.long', time)}`
       }
-      return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
+      return html
     },
-    getProbedLocationForecastMarker (feature, latlng, options) {
+    getProbedLocationForecastTooltip (feature, layer, options) {
       if (options.name !== SelectionLayerName) return
 
-      const properties = feature.properties
-      if (!properties) return null
-      const windDirection = (this.forecastLevel ? `windDirection-${this.forecastLevel}` : 'windDirection')
-      const windSpeed = (this.forecastLevel ? `windSpeed-${this.forecastLevel}` : 'windSpeed')
-      // const temperature = (this.forecastLevel ? `temperature-${this.forecastLevel}` : 'temperature')
-      if (!_.has(properties, windDirection) || !_.has(properties, windSpeed)) return null
-      // Use wind barbs on probed features
-      const icon = new L.WindBarb.Icon({
-        deg: _.get(properties, windDirection),
-        speed: _.get(properties, windSpeed), // Expressed as m/s
+      // Only wind/temperature can be available at different levels now
+      const html = this.getForecastAsHtml(feature, {
+        windDirection: (this.forecastLevel ? `properties.windDirection-${this.forecastLevel}` : 'properties.windDirection'),
+        windSpeed: (this.forecastLevel ? `properties.windSpeed-${this.forecastLevel}` : 'properties.windSpeed'),
+        temperature: (this.forecastLevel ? `properties.temperature-${this.forecastLevel}` : 'properties.temperature')
+      })
+      return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
+    },
+    createWindBarbMarker(feature, fields = {}) {
+      // Retrieve target fields on feature
+      let windDirection = _.get(fields, 'windDirection', 'properties.windDirection')
+      let windSpeed = _.get(fields, 'windSpeed', 'properties.windSpeed')
+      // TODO: colorize according to temperature scale if ?
+      //let temperature = _.get(fields, 'temperature', 'properties.temperature')
+      // Then get values for fields
+      windDirection = _.get(feature, `${windDirection}`)
+      windSpeed = _.get(feature, `${windSpeed}`)
+      if (_.isNil(windDirection) || !_.isFinite(windDirection) ||
+          _.isNil(windSpeed) || !_.isFinite(windSpeed)) return null
+      // Then get values for fields
+      return new L.WindBarb.Icon({
+        deg: windDirection,
+        speed: windSpeed, // Expressed as m/s
         pointRadius: 10,
-        pointColor: '#2196f3', // TODO: colorize according to temperature scale if
+        pointColor: '#2196f3',
         pointStroke: '#888888',
         strokeWidth: 2,
         strokeColor: '#888888',
@@ -255,7 +272,15 @@ export default {
         barbHeight: 10,
         forceDir: true
       })
-      return L.marker(latlng, { icon })
+    },
+    getProbedLocationForecastMarker (feature, latlng, options) {
+      if (options.name !== SelectionLayerName) return
+      // Use wind barbs on probed features
+      const icon = this.createWindBarbMarker(feature, {
+        windDirection: (this.forecastLevel ? `properties.windDirection-${this.forecastLevel}` : 'properties.windDirection'),
+        windSpeed: (this.forecastLevel ? `properties.windSpeed-${this.forecastLevel}` : 'properties.windSpeed')
+      })
+      return (icon ? L.marker(latlng, { icon }) : null)
     },
     onCurrentForecastTimeChanged (time) {
       if (this.weacastApi) this.weacastApi.setForecastTime(time)
