@@ -25,7 +25,7 @@
             :content="topPane.content"
             :mode="topPane.mode" 
             :filter="topPane.filter" 
-            class="k-pane" />
+            class="k-panel" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
         <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
@@ -46,8 +46,8 @@
             :mode="leftPane.mode" 
             :filter="leftPane.filter"
             direction="vertical"
-            style="height: 100vh; width: 300px;"
-            class="k-pane" />
+            class="k-left-panel"
+            @triggered="setLeftPaneVisible(false)" />"
           <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
         </div>
         <k-opener v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
@@ -65,7 +65,7 @@
             :mode="rightPane.mode" 
             :filter="rightPane.filter"
             direction="vertical"
-            class="k-pane" />
+            class="k-panel" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
         </div>
       </div>
@@ -81,7 +81,7 @@
             :content="bottomPane.content"
             :mode="bottomPane.mode"
             :filter="bottomPane.filter"
-            class="k-pane" />
+            class="k-panel" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
       </div>
@@ -111,7 +111,7 @@ export default {
         return this.topPane.visible
       },
       set: function (value) {
-        this.$store.patch('topPane', { visible: value })
+        this.setTopPaneVisible(value)
       }
     },
     isLeftPaneOpened: {
@@ -119,7 +119,7 @@ export default {
         return this.leftPane.visible
       },
       set: function (value) {
-        this.$store.patch('leftPane', { visible: value })
+        this.setLeftPaneVisible(value)
       }
     },
     isRightPaneOpened: {
@@ -127,7 +127,7 @@ export default {
         return this.rightPane.visible
       },
       set: function (value) {
-        this.$store.patch('rightPane', { visible: value })
+        this.setRightPaneVisible(value)
       }
     },
     isBottomPaneOpened: {
@@ -135,7 +135,7 @@ export default {
         return this.bottomPane.visible
       },
       set: function (value) {
-        this.$store.patch('bottomPane', { visible: value })
+        this.setBottomPaneVisible(value)
       }
     }
   },
@@ -170,6 +170,18 @@ export default {
     },
     onBottomPaneResized (size) {
       this.bottomPadding = size.height
+    },
+    setTopPaneVisible (visible) {
+      this.$store.patch('topPane', { visible })
+    },
+    setLeftPaneVisible (visible) {
+      this.$store.patch('leftPane', { visible })
+    },
+    setRightPaneVisible (visible) {
+      this.$store.patch('rightPane', { visible })
+    },
+    setBottomPaneVisible (visible) {
+      this.$store.patch('bottomPane', { visible })
     }
   },
   created () {
@@ -196,13 +208,18 @@ export default {
 </script>
 
 <style lang="stylus">
-.k-pane {
+.k-panel, .k-left-panel {
   border: solid 1px lightgrey;
   border-radius: 5px;
   background: #ffffff
 }
 
-.k-pane:hover {
+.k-panel:hover, .k-left-panel {
   border: solid 1px $primary;
+}
+
+.k-left-panel {
+  height: 100vh;
+  width: 300px;
 }
 </style>
