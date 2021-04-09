@@ -279,7 +279,7 @@ export function checkUnique (options = {}) {
       // Pagination on/off ?
       const total = (Array.isArray(result) ? result.length : result.total)
       if (total > 0) {
-        let error = new Conflict(`Object with ${options.field} equals to ${id} already exist for service ${service.name}`, {
+        const error = new Conflict(`Object with ${options.field} equals to ${id} already exist for service ${service.name}`, {
           translation: {
             key: 'OBJECT_ID_ALREADY_TAKEN'
           }

@@ -20,19 +20,19 @@ export default class OrganisationsSettings extends BasePage {
   }
 
   static get OVERFLOW_MENU_ENTRY () {
-    return '#settings'
+    return 'settings'
   }
 
   static get PROPERTIES_TAB () {
-    return '#properties'
+    return 'properties'
   }
 
   static get BILLING_TAB () {
-    return '#billing'
+    return 'billing'
   }
 
   static get DANGER_ZONE_TAB () {
-    return '#danger-zone'
+    return 'danger-zone'
   }
 
   async checkCustomerBlockDisabled (test) {

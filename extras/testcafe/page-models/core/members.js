@@ -9,19 +9,19 @@ export default class Members extends BasePage {
   }
 
   static get OVERFLOW_MENU_ENTRY () {
-    return '#members'
+    return 'members'
   }
 
   static get TAB_BAR_ENTRY () {
-    return '#members'
+    return 'members'
   }
 
   static get ADD_MEMBER_FAB_ENTRY () {
-    return '#add-member'
+    return 'add-member'
   }
 
   static get INVITE_MEMBER_FAB_ENTRY () {
-    return '#invite-member'
+    return 'invite-member'
   }
 
   async clickCardToolBar (test, name, action) {

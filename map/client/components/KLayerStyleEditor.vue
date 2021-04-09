@@ -29,18 +29,18 @@ export default {
     kCoreMixins.refsResolver()
   ],
   props: {
-    layer: { 
-      type: Object, 
-      required: true 
+    layer: {
+      type: Object,
+      required: true
     },
     contextId: {
-      type: String, 
-      default: '' 
+      type: String,
+      default: ''
     },
     options: { // Contains default style options
-      type: Object, 
-      required: true 
-    } 
+      type: Object,
+      required: true
+    }
   },
   data () {
     return {

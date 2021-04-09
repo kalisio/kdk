@@ -27,7 +27,7 @@
     <slot name="content">
     </slot>
   </q-btn>
-  <!-- 
+  <!--
     Form button renderer
    -->
   <q-btn v-else-if="renderer === 'form-button'"
@@ -40,7 +40,7 @@
     :disabled="disabled"
     :loading="loading"
     @click="onClicked()">
-  </q-btn> 
+  </q-btn>
   <!--
     Item renderer
    -->

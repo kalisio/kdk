@@ -55,24 +55,26 @@ describe('core:hooks', () => {
   })
 
   it('check uniqueness', async () => {
-    const service = memory({ store: { 0: { name: 'xxx' }, 1: { name: 'yyy' }  }, paginate: { default: 5, max: 5 } })
+    const service = memory({ store: { 0: { name: 'xxx' }, 1: { name: 'yyy' } }, paginate: { default: 5, max: 5 } })
     const hook = { type: 'before', method: 'create', data: { name: 'xxx' }, service }
     await hooks.checkUnique({ field: 'dummy' })(hook)
     let error
     try {
       await hooks.checkUnique({ field: 'name' })(hook)
-    } catch (error) {
-      expect(error).toExist()
+    } catch (err) {
+      error = err
     }
+    expect(error).toExist()
     hook.method = 'patch'
     hook.id = 0
     await hooks.checkUnique({ field: 'dummy' })(hook)
     hook.id = 1
     try {
       await hooks.checkUnique({ field: 'name' })(hook)
-    } catch (error) {
-      expect(error).toExist()
+    } catch (err) {
+      error = err
     }
+    expect(error).toExist()
   })
 
   it('marshalls comparison queries', () => {

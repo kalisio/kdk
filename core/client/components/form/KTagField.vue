@@ -126,7 +126,7 @@ export default {
     onAdded (value, done) {
       // Add the value if and only if it is not an option or it is already added
       if (!_.find(this.options, { value }) && !_.find(this.tags, { value })) {
-        const tag = { 
+        const tag = {
           value: value,
           scope: this.properties.scope,
           icon: {

@@ -48,9 +48,9 @@ export default {
       }, false)
 
       this.loader.on('data:loaded', async event => {
-        const name = (event.filename ?
-          path.basename(event.filename, path.extname(event.filename)) :
-          this.$t('mixins.fileLayers.IMPORTED_DATA_NAME'))
+        const name = (event.filename
+          ? path.basename(event.filename, path.extname(event.filename))
+          : this.$t('mixins.fileLayers.IMPORTED_DATA_NAME'))
         const engine = {
           type: 'geoJson',
           isVisible: true,

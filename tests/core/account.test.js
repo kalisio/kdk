@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { iff, iffElse, when } from 'feathers-hooks-common'
+import { iff, when } from 'feathers-hooks-common'
 import request from 'superagent'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
@@ -44,12 +44,12 @@ describe('core:account', () => {
         create: [
           // Used for invitation
           when(hook => hook.data.sponsor,
-          hooks.setExpireAfter(60), // A couple of seconds
-          hooks.generatePassword,
-          // Keep track of clear password before hashing for testing purpose
-          hooks.serialize([{ source: 'password', target: 'clearPassword' }]),
-          hooks.sendInvitationEmail,
-          hooks.hashPassword()),
+            hooks.setExpireAfter(60), // A couple of seconds
+            hooks.generatePassword,
+            // Keep track of clear password before hashing for testing purpose
+            hooks.serialize([{ source: 'password', target: 'clearPassword' }]),
+            hooks.sendInvitationEmail,
+            hooks.hashPassword()),
           hooks.addVerification
         ],
         remove: [hooks.unregisterDevices]

@@ -2,7 +2,7 @@
   <k-modal
     id="change-role-modal"
     :title="title"
-    :buttons="getButtons()" 
+    :buttons="getButtons()"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -75,16 +75,16 @@ export default {
       }
     },
     getButtons () {
-      return [{ 
-        id: 'update-button', 
-        label: 'KChangeRole.UPDATE_BUTTON', 
-        renderer: 'form-button', 
-        handler: () => this.doUpdate() 
+      return [{
+        id: 'update-button',
+        label: 'KChangeRole.UPDATE_BUTTON',
+        renderer: 'form-button',
+        handler: () => this.doUpdate()
       }]
     },
     loadService () {
       return this.$api.getService('members')
-    },    
+    },
     async doUpdate () {
       const result = this.$refs.form.validate()
       if (result.isValid) {

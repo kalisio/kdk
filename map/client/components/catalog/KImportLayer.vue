@@ -6,9 +6,9 @@
     <!-- Buttons section -->
     <div class="q-pt-md row justify-end">
       <k-action
-        id="import-layer-action" 
-        :label="$t('KImportLayer.IMPORT_BUTTON')" 
-        renderer="form-button" 
+        id="import-layer-action"
+        :label="$t('KImportLayer.IMPORT_BUTTON')"
+        renderer="form-button"
         :loading="importing"
         @triggered="onImport" />
     </div>
@@ -36,7 +36,7 @@ export default {
         $id: 'http://kalisio.xyz/schemas/import-layer-select-file#',
         type: 'object',
         properties: {
-          file: { 
+          file: {
             type: 'object',
             field: {
               component: 'form/KFileField',
@@ -57,9 +57,9 @@ export default {
           name: {
             type: 'string',
             maxLength: 128,
-            minLength: 3, 
+            minLength: 3,
             default: this.getFileName(),
-            field: { 
+            field: {
               component: 'form/KTextField',
               label: 'KImportLayer.NAME_FIELD_LABEL'
             }
@@ -67,13 +67,13 @@ export default {
           description: {
             type: 'string',
             default: this.getFileName(),
-            field: { 
+            field: {
               component: 'form/KTextField',
               label: 'KImportLayer.DESCRIPTION_FIELD_LABEL'
             }
           },
           featureId: {
-            type: 'string', 
+            type: 'string',
             maxLength: 256,
             minLength: 2,
             default: this.guessFeatureId(),
@@ -92,14 +92,14 @@ export default {
       if (value) {
         this.file.schema = generatePropertiesSchema(value.content, value.name)
       }
-      this.propertiesFormKey+=1
+      this.propertiesFormKey += 1
     },
     getFileName () {
       return this.file ? path.basename(this.file.name, path.extname(this.file.name)) : ''
     },
     getProperties () {
       if (this.file) {
-        const properties = _.keys(_.get(this.file, 'schema.properties', {})) 
+        const properties = _.keys(_.get(this.file, 'schema.properties', {}))
         return _.map(properties, prop => { return { label: prop, value: prop } })
       }
       return []
@@ -130,7 +130,7 @@ export default {
         name: propertiesResult.values.name,
         description: propertiesResult.values.description,
         type: 'OverlayLayer',
-        icon: 'insert_drive_file',  
+        icon: 'insert_drive_file',
         scope: 'user',
         featureId: propertiesResult.values.featureId,
         leaflet: engine,

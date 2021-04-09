@@ -218,7 +218,7 @@ export function defineOrganisationAbilities (subject, can, cannot) {
             can('create', 'groups', { context: organisation._id })
             can(['create', 'remove'], 'tags', { context: organisation._id })
             // Remove invited members
-            can(['remove'], 'users', { 'sponsor.organisationId' : organisation._id })
+            can(['remove'], 'users', { 'sponsor.organisationId': organisation._id })
           }
         }
       })

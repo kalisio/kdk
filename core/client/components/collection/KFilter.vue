@@ -86,8 +86,8 @@ export default {
       const results = await Search.query(this.services, pattern)
       update(() => {
         if (results.length > 0) {
-          this.options = _.differenceWith(results, this.items, (item1, item2) => { 
-            return item1.value === item2.value 
+          this.options = _.differenceWith(results, this.items, (item1, item2) => {
+            return item1.value === item2.value
           })
           this.$refs.select.updateInputValue('')
         } else this.$store.patch('filter', { pattern })
@@ -97,7 +97,7 @@ export default {
       this.options = []
       if (!item) this.items = []
       this.$store.patch('filter', { items: this.items })
-    } 
+    }
   },
   created () {
     // Initialize the filter, we keep track of any existing items previously set by another activity

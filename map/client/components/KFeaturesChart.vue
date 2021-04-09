@@ -2,7 +2,7 @@
   <div>
     <!-- Invisible link used to download data -->
     <a ref="downloadLink" v-show="false" :href="currentDownloadLink" :download="currentDownloadName"></a>
-    <k-modal ref="modal" 
+    <k-modal ref="modal"
       id="feature-chart-modal"
       :title="title"
       :toolbar="toolbar"

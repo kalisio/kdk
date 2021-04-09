@@ -9,7 +9,7 @@
     :label="label"
     clearable
     @blur="onChanged"
-    @input="onChanged"    
+    @input="onChanged"
     :disabled="disabled"
     :error="hasError"
     :error-message="errorLabel"

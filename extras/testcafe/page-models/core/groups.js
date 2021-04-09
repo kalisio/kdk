@@ -9,11 +9,11 @@ export default class Groups extends BasePage {
   }
 
   static get OVERFLOW_MENU_ENTRY () {
-    return '#groups'
+    return 'groups'
   }
 
   static get TAB_BAR_ENTRY () {
-    return '#groups'
+    return 'groups'
   }
 
   async clickCardToolBar (test, name, action) {

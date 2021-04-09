@@ -3,13 +3,13 @@
     <div v-if="items.length > 0" class="q-pa-sm row">
       <template v-for="item in items">
         <div :class="getItemClass()" :key="item._id">
-          <component 
-            :id="'item-' + item._id" 
+          <component
+            :id="'item-' + item._id"
             :service="service"
-            :item="item" 
-            :contextId="contextId" 
-            :is="renderer.component" 
-            v-bind="renderer" 
+            :item="item"
+            :contextId="contextId"
+            :is="renderer.component"
+            v-bind="renderer"
             @item-selected="onItemSelected" />
         </div>
       </template>

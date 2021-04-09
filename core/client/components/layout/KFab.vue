@@ -89,8 +89,8 @@ export default {
 
 <style lang="stylus">
   .k-fab {
-    right: 12px; 
-    bottom: 12px; 
+    right: 12px;
+    bottom: 12px;
     border: 2px solid $primary + 80%;
   }
 </style>

@@ -9,11 +9,11 @@ export default class Tags extends BasePage {
   }
 
   static get OVERFLOW_MENU_ENTRY () {
-    return '#tags'
+    return 'tags'
   }
 
   static get TAB_BAR_ENTRY () {
-    return '#tags'
+    return 'tags'
   }
 
   async title (name) {

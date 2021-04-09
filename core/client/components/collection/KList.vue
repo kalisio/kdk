@@ -4,14 +4,14 @@
       <div class="col-12">
         <q-list highlight separator>
           <template v-for="item in items">
-            <component 
-              :id="'item-' + item._id" 
+            <component
+              :id="'item-' + item._id"
               :key="item._id"
               :service="service"
-              :item="item" 
-              :contextId="contextId" 
-              :is="renderer.component" 
-              v-bind="renderer" 
+              :item="item"
+              :contextId="contextId"
+              :is="renderer.component"
+              v-bind="renderer"
               @item-selected="onItemSelected" />
           </template>
         </q-list>

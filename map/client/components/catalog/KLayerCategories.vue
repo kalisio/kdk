@@ -23,11 +23,11 @@
         <div class="colum q-gutter-y-md">
           <k-form ref="addForm" :schema="categorySchema" style="min-width: 300px" />
           <div class="q-pa-sm row justify-end">
-            <q-btn 
-              :loading="savingCategory" 
-              color="secondary" 
-              id="add-layer-category" 
-              :label="$t('KLayerCategories.ADD_BUTTON')" 
+            <q-btn
+              :loading="savingCategory"
+              color="secondary"
+              id="add-layer-category"
+              :label="$t('KLayerCategories.ADD_BUTTON')"
               @click="onAdd" />
           </div>
         </div>
@@ -36,11 +36,11 @@
         <div class="colum q-gutter-y-md">
           <k-form ref="editForm" :schema="categorySchema" style="min-width: 300px" />
           <div class="q-pa-sm row justify-end">
-            <q-btn 
-              :loading="savingCategory" 
-              color="secondary" 
-              id="edit-layer-category" 
-              :label="$t('KLayerCategories.EDIT_BUTTON')" 
+            <q-btn
+              :loading="savingCategory"
+              color="secondary"
+              id="edit-layer-category"
+              :label="$t('KLayerCategories.EDIT_BUTTON')"
               @click="onEdit" />
           </div>
         </div>
@@ -139,7 +139,7 @@ export default {
               color: false
             }
           },
-          layers: { 
+          layers: {
             type: 'array',
             field: {
               component: 'form/KSelectField',
@@ -181,7 +181,7 @@ export default {
     async onAdd () {
       const result = this.$refs.addForm.validate()
       if (result.isValid) {
-        let category = result.values
+        const category = result.values
         // Add required type for catalog
         category.type = 'Category'
         this.savingCategory = true

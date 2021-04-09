@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import i18next from 'i18next'
 import sift from 'sift'
-import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import explode from '@turf/explode'
@@ -9,7 +8,6 @@ import { Loading, Dialog } from 'quasar'
 import { Layout } from '../../../core/client/layout'
 import { setGatewayJwt } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
-import { readAsTimeOrDuration, makeTime } from '../../common/moment-utils'
 
 export default {
   data () {
@@ -538,7 +536,7 @@ export default {
         case 'Service':
           // Nothing to do
           break
-        default:
+        default: {
           // Updating a layer requires to remove/add it again to cover all use cases
           // (eg style edition, etc.)
           // Here we find layer by ID as renaming could have occured from another client
@@ -546,6 +544,7 @@ export default {
           if (layers.length > 0) await this.removeCatalogLayer(layers[0])
           if (event !== 'removed') await this.addCatalogLayer(object)
           break
+        }
       }
     }
   },

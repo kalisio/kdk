@@ -1,11 +1,11 @@
 <template>
   <k-modal ref="modal"
     id="features-filter-modal"
-    :title="title"  
+    :title="title"
     :maximized="isModalMaximized"
     v-model="isModalOpened"
     @opened="$emit('opened')"
-    @closed="$emit('closed')">    
+    @closed="$emit('closed')">
     <div slot="modal-content">
       <q-list dense class="row items-center justify-around">
         <q-item v-for="filter in filters" :key="filter.key" class="col-12">

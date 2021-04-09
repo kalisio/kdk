@@ -12,7 +12,7 @@
       'k-opener-bottom': position === 'bottom',
       'k-opener-bottom-hovered': (position === 'bottom') && isHovered && isDesktop
     }"
-    
+
     v-on="isDesktop ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
     v-touch-swipe.mouse="onSwipe"
     @click="onClick">

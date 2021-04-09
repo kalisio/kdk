@@ -67,11 +67,11 @@ describe('map:services', () => {
   })
 
   it('manages layers, contexts and categories', async () => {
-    const layer = await catalogService.create({ name: 'dummy', type : 'OverlayLayer' })
+    const layer = await catalogService.create({ name: 'dummy', type: 'OverlayLayer' })
     // Can't duplicate name
     let doublonLayer
     try {
-      doublonLayer = await catalogService.create({ name: 'dummy', type : 'OverlayLayer' })
+      doublonLayer = await catalogService.create({ name: 'dummy', type: 'OverlayLayer' })
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Conflict')
@@ -79,8 +79,8 @@ describe('map:services', () => {
     }
     expect(doublonLayer).beUndefined()
     // Can duplicate if we target different types
-    let context = await catalogService.create({ name: 'dummy', type : 'Context', layers: ['dummy'] })
-    let category = await catalogService.create({ name: 'dummy', type : 'Category', layers: ['dummy'] })
+    let context = await catalogService.create({ name: 'dummy', type: 'Context', layers: ['dummy'] })
+    let category = await catalogService.create({ name: 'dummy', type: 'Category', layers: ['dummy'] })
     // Check for context/category filtering by default
     const response = await catalogService.find({ query: {}, paginate: false })
     expect(response.length === defaultLayers.length + 1)

@@ -100,7 +100,7 @@ export default {
       this.$refs.modal.show()
     },
     openMaximized () {
-      //this.maximized = true
+      // this.maximized = true
       this.$refs.modal.show()
     },
     close () {

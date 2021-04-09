@@ -6,9 +6,9 @@
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <div class="row justify-end">
-      <k-action 
-        id="connect-layer-action" 
-        :label="$t('KConnectLayer.CONNECT_BUTTON')" 
+      <k-action
+        id="connect-layer-action"
+        :label="$t('KConnectLayer.CONNECT_BUTTON')"
         renderer="form-button"
         :loading="connecting"
         @triggered="onConnect" />
@@ -38,7 +38,7 @@ export default {
         $id: 'http://kalisio.xyz/schemas/connect-layer-select-service',
         type: 'object',
         properties: {
-          service: { 
+          service: {
             type: 'object',
             field: {
               component: 'form/KOwsServiceField',
@@ -68,8 +68,8 @@ export default {
       }
     },
     getPropertiesFormSchema () {
-      let required = ['name']
-      let schema = {
+      const required = ['name']
+      const schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/connect-layer-set-properties#',
         type: 'object',
@@ -78,8 +78,8 @@ export default {
             type: 'string',
             maxLength: 128,
             minLength: 3,
-            default: this.layer ? this.layer.display : '',            
-            field: { 
+            default: this.layer ? this.layer.display : '',
+            field: {
               component: 'form/KTextField',
               label: 'KConnectLayer.NAME_FIELD_LABEL'
             }
@@ -87,7 +87,7 @@ export default {
           description: {
             type: 'string',
             default: this.layer ? this.layer.display : '',
-            field: { 
+            field: {
               component: 'form/KTextField',
               label: 'KConnectLayer.DESCRIPTION_FIELD_LABEL'
             }
@@ -127,15 +127,15 @@ export default {
       this.service = value
       this.layer = null
       // Force the other forms to be re-rendered
-      this.layerFormKey+=1
-      this.propertiesFormKey+=1
+      this.layerFormKey += 1
+      this.propertiesFormKey += 1
     },
     onLayerFormFieldChanged (field, value) {
       this.layer = value
-      this.propertiesFormKey+=1
+      this.propertiesFormKey += 1
     },
     getLayerStyles () {
-      if (this.layer) return _.map(this.layer.styles, style => { return { label: style.display, value: style.id }})
+      if (this.layer) return _.map(this.layer.styles, style => { return { label: style.display, value: style.id } })
       return []
     },
     getLayerProperties () {
@@ -171,6 +171,16 @@ export default {
       if (this.service.protocol === 'WMS') {
         const style = propertiesResult.values.style
 
+        newLayer.cesium = {
+          type: 'WebMapService',
+          url: this.service.baseUrl,
+          layers: this.layer.id,
+          parameters: Object.assign({
+            version: this.service.version,
+            format: 'image/png',
+            transparent: true
+          }, this.service.searchParams)
+        }
         newLayer.leaflet = Object.assign({
           type: 'tileLayer.wms',
           source: this.service.baseUrl,
@@ -195,6 +205,7 @@ export default {
 
         if (style) {
           newLayer.leaflet.styles = style
+          newLayer.cesium.parameters.styles = style
 
           // add legend url if available in the picked style
           const legendUrl = _.get(this.layer.styles, [style, 'legend'])
@@ -232,28 +243,43 @@ export default {
         // could not find candidate, fallback using first available
         if (!pickedFormat) pickedFormat = supportedFormats[0]
 
+        const restUrl = wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
+          style: style,
+          crs: '3857',
+          format: pickedFormat,
+          searchParams: this.service.searchParams
+        })
+        newLayer.cesium = {
+          type: 'WebMapTileService',
+          url: restUrl.replace('{z}', '{TileMatrix}').replace('{x}', '{TileCol}').replace('{y}', '{TileRow}'),
+          format: pickedFormat,
+          layer: this.layer.id,
+          style: style,
+          tileMatrixSetID: this.layer.crs['3857']
+        }
         newLayer.leaflet = {
           type: 'tileLayer',
-          source: wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
-            style: style,
-            crs: '3857',
-            format: pickedFormat,
-            searchParams: this.service.searchParams
-          })
+          source: restUrl
         }
 
         // add legend url if available in the style
         const legendUrl = _.get(this.layer.styles, [style, 'legend'])
         if (legendUrl) newLayer.legendUrl = legendUrl
       } else if (this.service.protocol === 'TMS') {
+        newLayer.cesium = {
+          type: 'TileMapService',
+          url: buildUrl(this.layer.url, this.service.searchParams),
+          fileExtension: this.layer.extension
+        }
         newLayer.leaflet = {
           type: 'tileLayer',
           source: buildUrl(`${this.layer.url}/{z}/{x}/{y}.${this.layer.extension}`, this.service.searchParams),
           tms: true
         }
       }
-      // make leaflet layers visible by default
+      // make layers visible by default
       if (newLayer.leaflet) newLayer.leaflet.isVisible = true
+      if (newLayer.cesium) newLayer.cesium.isVisible = true
       // Add the layer
       await this.kActivity.addLayer(newLayer)
       this.connecting = false

@@ -54,7 +54,8 @@ export default {
     async updateLocationLayer (location) {
       await this.createLocationLayer()
       await this.kActivity.updateLayer(LocationLayerName, {
-        type: 'FeatureCollection', features: [{
+        type: 'FeatureCollection',
+        features: [{
           _id: LocationLayerName + '-marker',
           type: 'Feature',
           geometry: { type: 'Point', coordinates: [location.longitude, location.latitude] },

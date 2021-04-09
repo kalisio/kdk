@@ -1,8 +1,8 @@
 <template>
   <k-modal
     id="invite-member-modal"
-    :title="$t('KInviteMember.TITLE')" 
-    :buttons="getButtons()" 
+    :title="$t('KInviteMember.TITLE')"
+    :buttons="getButtons()"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
