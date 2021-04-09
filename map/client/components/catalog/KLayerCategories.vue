@@ -78,7 +78,7 @@ export default {
     layers () {
       // User-defined layers only and not in-memory layers
       return _.values(this.kActivity.layers)
-        .filter(layer => (_.get(layer, 'scope') === 'user'))
+        .filter(layer => layer._id && (_.get(layer, 'scope') === 'user'))
         .map(layer => ({ value: layer.name, label: layer.name }))
     },
     categorySchema () {
