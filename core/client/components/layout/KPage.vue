@@ -15,6 +15,24 @@
     <!--
       Managed stickies
      -->
+    <!-- left -->
+    <q-page-sticky position="left">
+      <div id="left-pane" v-show="leftPane.content && leftPane.mode" class="row items-center">
+        <div>
+          <k-panel
+            id="left-panel"
+            v-show="isLeftPaneOpened"
+            :content="leftPane.content"
+            :mode="leftPane.mode"
+            :filter="leftPane.filter"
+            direction="vertical"
+            class="k-left-panel"
+            @triggered="setLeftPaneVisible(false)" />"
+          <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
+        </div>
+        <k-opener v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
+      </div>
+    </q-page-sticky>
     <!-- top -->
     <q-page-sticky position="top">
       <div id="top-pane" v-show="topPane.content && topPane.mode" class="column items-center">
@@ -34,24 +52,6 @@
     <!-- window -->
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window id="window" ref="window" />
-    </q-page-sticky>
-    <!-- left -->
-    <q-page-sticky position="left">
-      <div id="left-pane" v-show="leftPane.content && leftPane.mode" class="row items-center">
-        <div>
-          <k-panel
-            id="left-panel"
-            v-show="isLeftPaneOpened"
-            :content="leftPane.content"
-            :mode="leftPane.mode"
-            :filter="leftPane.filter"
-            direction="vertical"
-            class="k-left-panel"
-            @triggered="setLeftPaneVisible(false)" />"
-          <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
-        </div>
-        <k-opener v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
-      </div>
     </q-page-sticky>
     <!-- right -->
     <q-page-sticky position="right">
@@ -158,6 +158,15 @@ export default {
       fabOffset: [16, 16]
     }
   },
+  watch: {
+    'leftPane.visible': {
+      immediate: true,
+      handler (visible) {
+        if (visible) setTimeout(() => document.addEventListener('click', this.clickOutsideLeftPanelListener), 500)
+        else document.removeEventListener('click', this.clickOutsideLeftPanelListener)
+      }
+    }
+  },
   methods: {
     onTopPaneResized (size) {
       this.topPadding = size.height
@@ -182,6 +191,10 @@ export default {
     },
     setBottomPaneVisible (visible) {
       this.$store.patch('bottomPane', { visible })
+    },
+    clickOutsideLeftPanelListener (event) {
+      let leftPanelElement = document.getElementById('left-panel')
+      if (!leftPanelElement.contains(event.target)) this.setLeftPaneVisible(false)
     }
   },
   created () {
