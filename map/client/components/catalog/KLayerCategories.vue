@@ -74,46 +74,15 @@ export default {
     },
     hasLayers () {
       return this.layers.length > 0
-    }
-  },
-  data () {
-    // User-defined layers only and not in-memory layers
-    const layers = _.values(this.kActivity.layers)
-      .filter(layer => layer._id && (_.get(layer, 'scope') === 'user'))
-      .map(layer => ({ value: layer.name, label: layer.name }))
-    return {
-      layers,
-      filter: this.$store.get('filter'),
-      sorter: this.$store.get('sorter'),
-      mode: 'list',
-      count: 0,
-      toolbar: {
-        list: [
-          {
-            component: 'collection/KSorter',
-            id: 'layer-categories-sorter-options',
-            tooltip: 'KLayerCategories.SORT',
-            options: [
-              { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
-              { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
-              { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
-              { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
-            ]
-          },
-          { component: 'collection/KFilter', style: 'max-width: 200px;' },
-          { component: 'QSpace' },
-          { id: 'add-layer-category', icon: 'las la-plus-circle', tooltip: 'KLayerCategories.CREATE_CATEGORY', size: '1rem', handler: () => { this.mode = 'add' } }
-        ],
-        edit: [
-          { id: 'list-layer-categories', icon: 'las la-arrow-left', label: 'KLayerCategories.CATEGORY_LIST', handler: () => { this.mode = 'list' } },
-          { component: 'QSpace' }
-        ],
-        add: [
-          { id: 'list-layer-categories', icon: 'las la-arrow-left', label: 'KLayerCategories.CATEGORY_LIST', handler: () => { this.mode = 'list' } },
-          { component: 'QSpace' }
-        ]
-      },
-      categorySchema: {
+    },
+    layers () {
+      // User-defined layers only and not in-memory layers
+      return _.values(this.kActivity.layers)
+        .filter(layer => (_.get(layer, 'scope') === 'user'))
+        .map(layer => ({ value: layer.name, label: layer.name }))
+    },
+    categorySchema () {
+      return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://www.kalisio.xyz/schemas/layer-category.create.json#',
         title: 'schemas.LAYER_CATEGORY_CREATE_TITLE',
@@ -146,7 +115,7 @@ export default {
               label: 'schemas.LAYER_CATEGORY_LAYERS_FIELD_LABEL',
               multiple: true,
               chips: true,
-              options: layers
+              options: this.layers
             }
           },
           exclusive: {
@@ -159,6 +128,40 @@ export default {
           }
         },
         required: ['name', 'icon']
+      }
+    }
+  },
+  data () {
+    return {
+      filter: this.$store.get('filter'),
+      sorter: this.$store.get('sorter'),
+      mode: 'list',
+      count: 0,
+      toolbar: {
+        list: [
+          {
+            component: 'collection/KSorter',
+            id: 'layer-categories-sorter-options',
+            tooltip: 'KLayerCategories.SORT',
+            options: [
+              { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
+              { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
+              { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
+              { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
+            ]
+          },
+          { component: 'collection/KFilter', style: 'max-width: 200px;' },
+          { component: 'QSpace' },
+          { id: 'add-layer-category', icon: 'las la-plus-circle', tooltip: 'KLayerCategories.CREATE_CATEGORY', size: '1rem', handler: () => { this.mode = 'add' } }
+        ],
+        edit: [
+          { id: 'list-layer-categories', icon: 'las la-arrow-left', label: 'KLayerCategories.CATEGORY_LIST', handler: () => { this.mode = 'list' } },
+          { component: 'QSpace' }
+        ],
+        add: [
+          { id: 'list-layer-categories', icon: 'las la-arrow-left', label: 'KLayerCategories.CATEGORY_LIST', handler: () => { this.mode = 'list' } },
+          { component: 'QSpace' }
+        ]
       },
       savingCategory: false,
       categoryRenderer: {
