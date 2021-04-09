@@ -35,6 +35,31 @@ export default {
       return new TiledWindLayer(layerOptions, uSource, vSource)
     },
 
+    updateTiledWindLayerZoomBounds (layer, model) {
+      const minZoom = _.get(layer, `leaflet.meteoModelMinZoom[${model.name}]`)
+      const maxZoom = _.get(layer, `leaflet.meteoModelMaxZoom[${model.name}]`)
+
+      if (minZoom) layer.leaflet.minZoom = minZoom
+      else delete layer.leaflet.minZoom
+      if (maxZoom) layer.leaflet.maxZoom = maxZoom
+      else delete layer.leaflet.maxZoom
+      this.updateLayerDisabled(layer)
+
+      // reflect on engine layers
+      const engineLayer = this.getLeafletLayerByName(layer.name)
+      if (engineLayer) {
+        if (minZoom) engineLayer.options.minZoom = minZoom
+        else delete engineLayer.options.minZoom
+        if (maxZoom) engineLayer.options.maxZoom = maxZoom
+        else delete engineLayer.options.maxZoom
+      }
+    },
+
+    onAddTiledWindLayer (layer) {
+      if (!this.forecastModel || _.get(layer, 'leaflet.type') !== 'tiledWindLayer') return
+      this.updateTiledWindLayerZoomBounds(layer, this.forecastModel)
+    },
+
     onShowTiledWindLayer (layer, engineLayer) {
       const isTiledWindLayer = engineLayer instanceof TiledWindLayer
       if (!isTiledWindLayer) return
@@ -52,17 +77,16 @@ export default {
     },
 
     onForecastModelChangedTiledWindLayer (model) {
-      // broadcast to visible layers
-      this.tiledWindLayers.forEach(function (value, key, map) {
-        value.setModel(model)
-      })
+      // update layer & engine layer {min,max}Zoom if required
+      const tiledWindLayers = _.filter(this.layers, (layer) => _.get(layer, 'leaflet.type') === 'tiledWindLayer')
+      for (const layer of tiledWindLayers) this.updateTiledWindLayerZoomBounds(layer, model)
+      // broadcast model to visible layers
+      this.tiledWindLayers.forEach((engineLayer) => { engineLayer.setModel(model) })
     },
 
     onCurrentTimeChangedTiledWindLayer (time) {
-      // broadcast to visible layers
-      this.tiledWindLayers.forEach(function (value, key, map) {
-        value.setTime(time)
-      })
+      // broadcast time to visible layers
+      this.tiledWindLayers.forEach((engineLayer) => { engineLayer.setTime(time) })
     }
   },
 
@@ -70,6 +94,7 @@ export default {
     this.tiledWindLayers = new Map()
     this.registerLeafletConstructor(this.createLeafletTiledWindLayer)
 
+    this.$on('layer-added', this.onAddTiledWindLayer)
     this.$on('layer-shown', this.onShowTiledWindLayer)
     this.$on('layer-hidden', this.onHideTiledWindLayer)
     this.$on('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
@@ -77,6 +102,7 @@ export default {
   },
 
   beforeDestroy () {
+    this.$off('layer-added', this.onAddTiledWindLayer)
     this.$off('layer-shown', this.onShowTiledWindLayer)
     this.$off('layer-hidden', this.onHideTiledWindLayer)
     this.$off('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
