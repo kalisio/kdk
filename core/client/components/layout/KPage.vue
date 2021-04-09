@@ -30,7 +30,7 @@
             @triggered="setLeftPaneVisible(false)" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
         </div>
-        <k-opener v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
+        <k-opener id="left-opener" v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
       </div>
     </q-page-sticky>
     <!-- top -->
@@ -46,7 +46,7 @@
             class="k-panel" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
-        <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
+        <k-opener id="top-opener" v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
     <!-- window -->
@@ -56,7 +56,7 @@
     <!-- right -->
     <q-page-sticky position="right">
       <div id="right-pane" v-show="rightPane.content && rightPane.mode" class="row items-center">
-        <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
+        <k-opener id="right-opener" v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
           <k-panel
             id="right-panel"
@@ -73,7 +73,7 @@
     <!-- bottom -->
     <q-page-sticky position="bottom">
       <div id="bottom-pane" v-show="bottomPane.content && bottomPane.mode" class="column items-center">
-        <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
+        <k-opener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
           <k-panel
             id="bottom-panel"
@@ -196,9 +196,10 @@ export default {
       this.$store.patch('bottomPane', { visible })
     },
     clickOutsideLeftPanelListener (event) {
-      let leftPanelElement = document.getElementById('left-panel')
+      const leftPanelElement = document.getElementById('left-panel')
       if (!leftPanelElement.contains(event.target)) {
-        console.log('clicked outside')
+        const leftOpenerElement = document.getElementById('left-opener')
+        if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
         this.setLeftPaneVisible(false)
       }
     }
