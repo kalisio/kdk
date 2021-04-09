@@ -273,8 +273,10 @@ export default {
         Loading.hide()
       } else {
         // Otherwise simply save in catalog
-        await this.$api.getService('catalog')
+        const createdLayer = await this.$api.getService('catalog')
           .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
+        // Reset layer with new setup
+        await this.resetLayer(createdLayer)
       }
     },
     async onFilterLayerData (layer) {
