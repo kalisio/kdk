@@ -21,7 +21,7 @@
         <div>
           <k-panel
             id="left-panel"
-            v-show="isLeftPaneOpened"
+            v-show="leftPane.visible"
             :content="leftPane.content"
             :mode="leftPane.mode"
             :filter="leftPane.filter"
@@ -39,7 +39,7 @@
         <div>
           <k-panel
             id="top-panel"
-            v-show="isTopPaneOpened"
+            v-show="topPane.visible"
             :content="topPane.content"
             :mode="topPane.mode"
             :filter="topPane.filter"
@@ -60,7 +60,7 @@
         <div>
           <k-panel
             id="right-panel"
-            v-show="isRightPaneOpened"
+            v-show="rightPane.visible"
             :content="rightPane.content"
             :mode="rightPane.mode"
             :filter="rightPane.filter"
@@ -77,7 +77,7 @@
         <div>
           <k-panel
             id="bottom-panel"
-            v-show="isBottomPaneOpened"
+            v-show="bottomPane.visible"
             :content="bottomPane.content"
             :mode="bottomPane.mode"
             :filter="bottomPane.filter"
@@ -162,8 +162,11 @@ export default {
     'leftPane.visible': {
       immediate: true,
       handler (visible) {
-        if (visible) setTimeout(() => document.addEventListener('click', this.clickOutsideLeftPanelListener), 500)
-        else document.removeEventListener('click', this.clickOutsideLeftPanelListener)
+        if (visible) {
+          setTimeout(() => document.addEventListener('click', this.clickOutsideLeftPanelListener, true), 1000)
+        } else {
+          document.removeEventListener('click', this.clickOutsideLeftPanelListener, true)
+        }
       }
     }
   },
@@ -194,7 +197,10 @@ export default {
     },
     clickOutsideLeftPanelListener (event) {
       let leftPanelElement = document.getElementById('left-panel')
-      if (!leftPanelElement.contains(event.target)) this.setLeftPaneVisible(false)
+      if (!leftPanelElement.contains(event.target)) {
+        console.log('clicked outside')
+        this.setLeftPaneVisible(false)
+      }
     }
   },
   created () {
