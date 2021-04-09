@@ -194,6 +194,11 @@ export default {
       if (maxZoom && (this.map.getZoom() > maxZoom)) isDisabled = true
       return isDisabled
     },
+    updateLayerDisabled (layer) {
+      const wasDisabled = layer.isDisabled
+      layer.isDisabled = this.isLayerDisabled(layer)
+      if (layer.isDisabled !== wasDisabled) this.$emit(wasDisabled ? 'layer-enabled' : 'layer-disabled', layer)
+    },
     getLayerByName (name) {
       return this.layers[name]
     },
@@ -363,11 +368,7 @@ export default {
       const zoomLayers = _.values(this.layers).filter(sift({
         $or: [{ 'leaflet.minZoom': { $exists: true } }, { 'leaflet.maxZoom': { $exists: true } }]
       }))
-      zoomLayers.forEach(async layer => {
-        const wasDisabled = layer.isDisabled
-        layer.isDisabled = this.isLayerDisabled(layer)
-        if (layer.isDisabled !== wasDisabled) this.$emit(wasDisabled ? 'layer-enabled' : 'layer-disabled', layer)
-      })
+      zoomLayers.forEach(async layer => { this.updateLayerDisabled(layer) })
     }
   },
   created () {

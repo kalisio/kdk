@@ -12,20 +12,6 @@ const TiledWindLayer = L.GridLayer.extend({
     this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
     this.conf.meteoModelOverride = _.get(options, 'meteoModelOverride')
 
-    // keep {min,max}Zoom options when they're objects
-    // this case we expect a zoom value per meteo model
-    // and zoom level will be applied in setModel
-    const minZoom = _.get(options, 'minZoom')
-    if (minZoom && typeof minZoom === 'object') {
-      delete options.minZoom
-      this.conf.minZoom = minZoom
-    }
-    const maxZoom = _.get(options, 'maxZoom')
-    if (maxZoom && typeof maxZoom === 'object') {
-      delete options.maxZoom
-      this.conf.maxZoom = maxZoom
-    }
-
     L.GridLayer.prototype.initialize.call(this, options)
 
     // is user currently dragging the map ?
@@ -134,10 +120,6 @@ const TiledWindLayer = L.GridLayer.extend({
   },
 
   setModel (model) {
-    // apply per model {min,max}Zoom
-    if (this.conf.minZoom) { this.options.minZoom = _.get(this.conf.minZoom, model.name) }
-    if (this.conf.maxZoom) { this.options.maxZoom = _.get(this.conf.maxZoom, model.name) }
-
     const modelHeader = {
       nx: model.size[0],
       ny: model.size[1],

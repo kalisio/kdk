@@ -25,19 +25,6 @@ const TiledMeshLayer = L.GridLayer.extend({
       meshAsPoints: options.meshAsPoints,
       showShader: options.showShader
     }
-    // keep {min,max}Zoom options when they're objects
-    // this case we expect a zoom value per meteo model
-    // and zoom level will be applied in setModel
-    const minZoom = _.get(options, 'minZoom')
-    if (minZoom && typeof minZoom === 'object') {
-      delete options.minZoom
-      this.conf.minZoom = minZoom
-    }
-    const maxZoom = _.get(options, 'maxZoom')
-    if (maxZoom && typeof maxZoom === 'object') {
-      delete options.maxZoom
-      this.conf.maxZoom = maxZoom
-    }
     this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
     // initialize grid layer
@@ -451,10 +438,6 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   setModel (model) {
-    // apply per model {min,max}Zoom
-    if (this.conf.minZoom) { this.options.minZoom = _.get(this.conf.minZoom, model.name) }
-    if (this.conf.maxZoom) { this.options.maxZoom = _.get(this.conf.maxZoom, model.name) }
-
     if (typeof this.gridSource.setModel === 'function') {
       this._resetView()
       this.gridSource.setModel(model)
