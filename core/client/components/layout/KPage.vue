@@ -27,7 +27,7 @@
             :filter="leftPane.filter"
             direction="vertical"
             class="k-left-panel"
-            @triggered="setLeftPaneVisible(false)" />"
+            @triggered="setLeftPaneVisible(false)" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
         </div>
         <k-opener v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
