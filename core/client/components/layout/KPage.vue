@@ -235,7 +235,7 @@ export default {
   background: #ffffff;
 }
 
-.k-panel:hover, .k-left-panel {
+.k-panel:hover, .k-left-panel:hover {
   border: solid 1px $primary;
 }
 
