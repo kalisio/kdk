@@ -5,7 +5,7 @@
     -->
     <q-item-section top avatar @click="onItemSelected('avatar')">
       <slot name="item-avatar">
-        <k-avatar :object="item" :contextId="contextId" />
+        <k-avatar :object="item" :contextId="contextId" :options="options" />
       </slot>
     </q-item-section>
     <!--

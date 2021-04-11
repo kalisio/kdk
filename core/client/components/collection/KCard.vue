@@ -12,7 +12,7 @@
         <q-item>
           <q-item-section top avatar>
             <slot name="card-avatar">
-              <k-avatar :object="item" :contextId="contextId" />
+              <k-avatar :object="item" :contextId="contextId" :options="options" />
             </slot>
           </q-item-section>
           <q-item-section>
