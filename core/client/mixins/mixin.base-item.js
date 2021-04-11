@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import { Dialog, exportFile } from 'quasar'
-import { getIconName, getInitials } from '../utils'
 import { Layout } from '../layout'
 
 export default {
@@ -48,21 +47,6 @@ export default {
     }
   },
   computed: {
-    avatar () {
-      const iconName = this.getIconName()
-      const iconColor = this.getIconColor()
-      if (iconName || iconColor) {
-        return {
-          type: 'icon',
-          icon: { name: iconName, color: iconColor || 'primary' }
-        }
-      }
-      const name = this.getName()
-      return {
-        type: 'text',
-        text: getInitials(name)
-      }
-    },
     name () {
       return this.getName()
     },
@@ -76,27 +60,6 @@ export default {
     },
     getDescription () {
       return _.get(this.item, this.options.descriptionField || 'description', '')
-    },
-    getIcon () {
-      return (this.options.iconField ? _.get(this.item, this.options.iconField, '') : this.item.icon)
-    },
-    getIconName () {
-      // Check for custom icon name field
-      if (this.options.iconNameField) {
-        return getIconName(this.item, this.options.iconNameField)
-      } else {
-        const icon = this.getIcon()
-        return (icon ? getIconName(icon, 'name') : '')
-      }
-    },
-    getIconColor () {
-      // Check for custom icon color field
-      if (this.options.iconColorField) {
-        return _.get(this.item, this.options.iconColorField, '')
-      } else {
-        const icon = this.getIcon()
-        return (icon ? _.get(icon, 'color', '') : '')
-      }
     },
     setActions (actions) {
       // As context is different for each item we need to clone the global action configuration

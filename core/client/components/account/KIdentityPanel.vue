@@ -1,11 +1,10 @@
 <template>
-  <div v-if="user" class="column content-center q-pa-sm q-gutter-y-sm" style="background-color: lightgrey;">
+  <div v-if="user" class="column content-center q-pa-sm q-gutter-y-sm k-identity-panel">
     <!--
       User avatar
     -->
     <div class="row justify-center">
-      <q-avatar v-if="avatar.uri"><img :src="avatar.uri"></q-avatar>
-      <q-avatar v-else size="96px" color="primary" text-color="white">{{ avatar.initials }}</q-avatar>
+      <k-avatar :key="avatarKey" :object="user" size="8rem" />
     </div>
     <!--
       User information
@@ -24,40 +23,27 @@
 
 <script>
 import _ from 'lodash'
-import { getInitials } from '../../utils'
+import KAvatar from '../frame/KAvatar.vue'
 
 export default {
+  components: { KAvatar },
   name: 'k-identity-panel',
   data () {
     return {
       user: this.$store.get('user'),
-      avatar: {
-        Uri: null,
-        initials: null
-      }
+      avatarKey: 1
     }
   },
   methods: {
     async refresh () {
-      if (this.user) {
-        const avatarId = _.get(this.user, 'avatar._id', null)
-        if (avatarId) {
-          // Then we need to fetch it from global storage service
-          // Force global context as a storage service might also be available as contextual
-          const data = await this.$api.getService('storage', '').get(avatarId + '.thumbnail')
-          // Get as data URI
-          this.avatar = { uri: data.uri, initials: null }
-        } else {
-          this.avatar = { uri: null, initials: getInitials(this.user.name) }
-        }
-      } else {
-        this.avatar = { uri: null, initials: null }
-      }
+      // Force the avatar to be refreshed
+      this.avatarKey++
     }
   },
   created () {
     // Load the required components
     this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
     // Initialize the component
     this.refresh()
     this.$events.$on('user-changed', this.refresh)
@@ -67,3 +53,9 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .k-identity-panel {
+    background-color: lightgrey;
+  }
+</style>

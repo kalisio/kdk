@@ -310,7 +310,7 @@
     "MANAGE": "Gérer mon compte"
   },
   "KAccountActivity": {
-    "PROFILE": "Profil",
+    "PROFILE": "Mon profil",
     "SECURITY": "Securité",
     "DANGER_ZONE": "Zone de danger"
   },
@@ -499,7 +499,7 @@
     "SYSTEM_DETAILS": "Informations système"
   },
   "KOrganisationsActivity": {
-    "ORGANISATIONS_LABEL": "Organisations",
+    "ORGANISATIONS_LABEL": "Mes organisations",
     "SEARCH_ORGANISATION_LABEL": "Rechercher une organisation",
     "CREATE_ORGANISATION_LABEL": "Créer une organisation"
   },
