@@ -164,7 +164,9 @@ export default {
       immediate: true,
       handler (visible) {
         if (visible) {
-          setTimeout(() => document.addEventListener('click', this.clickOutsideLeftPanelListener, true), 1000)
+          setTimeout(() =>  {
+            document.addEventListener('click', this.clickOutsideLeftPanelListener, true)
+          }, 500)
         } else {
           document.removeEventListener('click', this.clickOutsideLeftPanelListener, true)
         }
@@ -198,10 +200,12 @@ export default {
     },
     clickOutsideLeftPanelListener (event) {
       const leftPanelElement = document.getElementById('left-panel')
-      if (!leftPanelElement.contains(event.target)) {
-        const leftOpenerElement = document.getElementById('left-opener')
-        if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
-        this.setLeftPaneVisible(false)
+      if (leftPanelElement) {
+        if (!leftPanelElement.contains(event.target)) {
+          const leftOpenerElement = document.getElementById('left-opener')
+          if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
+          this.setLeftPaneVisible(false)
+        }
       }
     }
   },
