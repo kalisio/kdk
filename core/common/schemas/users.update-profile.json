@@ -5,6 +5,15 @@
   "description": "User profile perspective",
   "type": "object",
   "properties": {
+    "name": {
+      "type": "string", 
+      "maxLength": 128,
+      "minLength": 3,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.NAME_FIELD_LABEL"
+      }
+    },
     "avatar": { 
       "type": "object",
       "field": {
@@ -18,15 +27,6 @@
         "params": {
           "public": true
         }
-      }
-    },
-    "name": {
-      "type": "string", 
-      "maxLength": 128,
-      "minLength": 3,
-      "field": {
-        "component": "form/KTextField",
-        "label": "schemas.NAME_FIELD_LABEL"
       }
     }
   },
