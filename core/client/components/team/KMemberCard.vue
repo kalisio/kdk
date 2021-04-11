@@ -11,6 +11,12 @@
       </div>
     </template>
     <!--
+      Card avater
+    -->
+    <template v-slot:card-avatar>
+      <k-avatar :object="item" size="4rem" />
+    </template>
+    <!--
       Card content
     -->
     <div slot="card-content">
@@ -222,6 +228,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')
+    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
     this.$options.components['k-tags-pane'] = this.$load('team/KTagsPane')
     // Load the role configuration
     this.roleIcons = this.$config('roles.icons')
