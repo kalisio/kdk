@@ -23,7 +23,6 @@
 
 <script>
 export default {
-  components: { KAvatar },
   name: 'k-identity-panel',
   data () {
     return {
