@@ -22,9 +22,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import KAvatar from '../frame/KAvatar.vue'
-
 export default {
   components: { KAvatar },
   name: 'k-identity-panel',
