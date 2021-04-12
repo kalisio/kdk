@@ -61,12 +61,15 @@ export default {
         // Process avatar first
         const avatar = this.getAvatar()
         if (avatar) {
-          const avatarId = _.get(avatar, '_id')
-          if (avatarId) {
-            const data = await this.$api.getService('storage', this.contextId).get(avatarId + '.thumbnail')
-            this.avatar = data.uri
-            return
+          if (!avatar.uri) {
+            const avatarId = _.get(avatar, '_id')
+            if (avatarId) {
+              const data = await this.$api.getService('storage', this.contextId).get(avatarId + '.thumbnail')
+              avatar.uri = data.uri
+            }
           }
+          this.avatar = avatar.uri
+          return
         }
         this.avatar = null
         // Process icon second
