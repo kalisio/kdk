@@ -20,6 +20,7 @@
       :multiple="true"
       hide-dropdown-icon
       use-input
+      autocomplete="off"
       clearable
       new-value-mode="add-unique"
       :error-message="errorLabel"

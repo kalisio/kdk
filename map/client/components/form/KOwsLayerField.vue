@@ -5,6 +5,7 @@
     v-model="layer"
     :label="label"
     fill-input
+    autocomplete="off"
     hide-selected
     use-input
     :error-message="errorLabel"

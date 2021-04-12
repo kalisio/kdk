@@ -6,6 +6,7 @@
     :multiple="true"
     hide-dropdown-icon
     use-input
+    autocomplete="off"
     clearable
     borderless
     dense

@@ -5,6 +5,7 @@
     v-model="request"
     :label="label"
     fill-input
+    autocomplete="off"
     hide-selected
     clearable
     emit-value
