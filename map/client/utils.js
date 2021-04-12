@@ -4,7 +4,7 @@ import config from 'config'
 import formatcoords from 'formatcoords'
 import { uid } from 'quasar'
 import { buildUrl } from '../../core/common'
-import { utils as kCoreUtils } from '../../core/client'
+import { Store, utils as kCoreUtils } from '../../core/client'
 export * from './leaflet/utils'
 export * from './cesium/utils'
 
@@ -74,7 +74,9 @@ export function formatGeocodingResult (element) {
 export function setGatewayUrlJwt (item, path, jwt) {
   const url = _.get(item, path)
   if (!url) return
-  if (!url.startsWith(config.gateway)) return
+  // Check both the default built-in config or the server provided one if any (eg mobile apps)
+  const gateway = Store.get('capabilities.api.gateway', config.gateway)
+  if (!url.startsWith(gateway)) return
   // FIXME: specific case of Cesium OpenStreetMap provider
   // Because Cesium generates the final url as base url + tile scheme + extension
   // updating the base url property breaks it, for now we modify the extension
