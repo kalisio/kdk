@@ -1,5 +1,5 @@
 <template>
-  <q-timeline-entry :class="layout()" :side="item.side" :icon="avatar.icon.name" :color="avatar.icon.color" @click="onItemSelected">
+  <q-timeline-entry :class="layout()" :side="item.side" :icon="iconName" :color="iconColor" @click="onItemSelected">
     <!--
       Title section
     -->
@@ -45,6 +45,7 @@
 
 <script>
 import _ from 'lodash'
+import { getIconName } from '../../utils'
 import mixins from '../../mixins'
 
 export default {
@@ -53,6 +54,16 @@ export default {
   computed: {
     date () {
       return this.getDate()
+    },
+    iconName () {
+      const iconField = _.get(this.options, 'iconField', 'icon')
+      const icon = _.get(this.item, iconField)
+      if (!icon.name) return getIconName(this.item, 'icon')
+      return getIconName(this.item)
+    },
+    iconColor () {
+      const iconField = _.get(this.options, 'iconField', 'icon')
+      return _.get(this.item, iconField + '.color', 'primary')
     }
   },
   methods: {
