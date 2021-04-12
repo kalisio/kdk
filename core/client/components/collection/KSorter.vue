@@ -27,7 +27,7 @@ export default {
     // Load the required components
     this.$options.components['k-options-chooser'] = this.$load('input/KOptionsChooser')
     // Initialize the sorter
-    const defaultOption = _.find(this.options, { default: true })
+    let defaultOption = _.find(this.options, { default: true })
     if (!defaultOption) defaultOption = _.head(this.options) || {}
     this.$store.patch('sorter', defaultOption.value)
   },
