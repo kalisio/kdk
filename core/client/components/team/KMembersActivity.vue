@@ -43,11 +43,7 @@ export default {
   },
   computed: {
     baseQuery () {
-      let query = {
-        $sort: {
-          'profile.name': 1
-        }
-      }
+      let query = _.clone(this.sorter.query)
       if (this.filters.includes('guest')) {
         query = Object.assign(query, { 'expireAt': { $exists: true } })
       }
@@ -63,12 +59,12 @@ export default {
       if (this.filters.includes('guest')) {
         query = Object.assign(query, { 'expireAt': { $exists: true } })
       }
-      console.log(query)
       return query
     }
   },
   data () {
     return {
+      sorter: this.$store.get('sorter'),
       filter: this.$store.get('filter'),
       filters: [],
       // Make this configurable from app

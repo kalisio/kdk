@@ -9,7 +9,7 @@
         :contextId="contextId"
         service="groups"
         :renderer="renderer"
-        :base-query="baseQuery"
+        :base-query="sorter.query"
         :filter-query="filter.query"
         :list-strategy="'smart'" />
       <!--
@@ -35,11 +35,7 @@ export default {
   },
   data () {
     return {
-      baseQuery: {
-        $sort: {
-          name: 1
-        }
-      },
+      sorter: this.$store.get('sorter'),
       filter: this.$store.get('filter'),
       // Make this configurable from app
       renderer: _.merge({
