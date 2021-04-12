@@ -24,6 +24,11 @@ const activityMixin = mixins.baseActivity()
 export default {
   name: 'members-activity',
   mixins: [activityMixin],
+  provide () {
+    return {
+      kActivity: this
+    }
+  },
   props: {
     contextId: {
       type: String,
@@ -72,6 +77,18 @@ export default {
         if (role && !member) this.$refs.membersGrid.refreshCollection()
       }
     },
+    isRoleFilterEnabled () {
+      return this.roleFilter.enabled
+    },
+    isGuestFilterEnabled () {
+      return this.guestFilter.enabled
+    },
+    enableGuestFilter () {
+
+    },
+    disableGuestFilter ()  {
+
+    },
     onFilterChanged (query) {
       this.searchQuery = query
     }
@@ -80,6 +97,15 @@ export default {
     // Load the required components
     this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
+    // Setup additional filters
+    this.guestFilter = {
+      enabled: false,
+      filter: { }
+    }
+    this.roleFilter = {
+      enabled: false,
+      filter: {}
+    }
   },
   beforeDestroy () {
     this.unsubscribeUsers()
