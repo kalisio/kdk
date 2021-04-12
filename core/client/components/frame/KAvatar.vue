@@ -2,10 +2,20 @@
   <div>
     <q-avatar v-if="avatar" :size="size">
       <img :src="avatar">
+      <q-tooltip>
+        {{ name }}
+      </q-tooltip>
     </q-avatar>
-    <q-avatar v-else-if="icon" :size="size" :color="color" text-color="white" :icon="icon" />
+    <q-avatar v-else-if="icon" :size="size" :color="color" text-color="white" :icon="icon">
+      <q-tooltip>
+        {{ name }}
+      </q-tooltip>
+    </q-avatar>
     <q-avatar v-else-if="initials" :size="size" color="primary" text-color="white">
       {{ initials }}
+      <q-tooltip>
+        {{ name }}
+      </q-tooltip>
     </q-avatar>
   </div>
 </template>
@@ -36,6 +46,7 @@ export default {
   },
   data () {
     return {
+      name: null,
       avatar: null,
       icon: null,
       initials: null,
@@ -46,6 +57,7 @@ export default {
     object: {
       immediate: true,
       async handler () {
+        this.name = this.getName()
         // Process avatar first
         const avatar = this.getAvatar()
         if (avatar) {
