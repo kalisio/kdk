@@ -690,26 +690,11 @@
   "KAccountDevices": {
     "DEVICES_USED": "Check when specific devices has been used to access your account below"
   },
-  "KSubscribe": {
-    "SUBSCRIPTION_TITLE": "Subscribe to {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Enter your phone number",
-    "SUBSCRIBE_BUTTON": "Subscribe",
-    "VALIDATION_TITLE": "Enter the SMS code you received to subscribe to {{organisation}}",
-    "CANCEL_BUTTON": "Cancel",
-    "VALIDATE_BUTTON": "Validate",
-    "CONFIMATON_MESSAGE": "Thank you, you are now subscribed to {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
-  },
-  "KUnsubscribe": {
-    "UNSUBSCRIPTION_TITLE": "Unsubscribe from {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Enter your phone number",
-    "UNSUBSCRIBE_BUTTON": "Unsubscribe",
-    "VALIDATION_TITLE": "Enter the SMS code you received to unsubscribe from {{organisation}}",
-    "CANCEL_BUTTON": "Cancel",
-    "VALIDATE_BUTTON": "Validate",
-    "CONFIRMATION_TITLE": "You are now unsubscribed from {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
-  }
+ "KMemberFilter": {
+   "NONE": "None",
+   "OWNER": "Owner",
+   "MANAGER": "Manager",
+   "MEMBER": "Member",
+   "GUEST": "Guest"
+ }
 }

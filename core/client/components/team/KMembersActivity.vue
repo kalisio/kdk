@@ -5,7 +5,13 @@
         Members collection, cannot use smart strategy here because membership is not managed at service level
         but using authorisations on users
       -->
-      <k-grid ref="membersGrid" service="members" :renderer="renderer" :contextId="contextId" :base-query="baseQuery" :filter-query="filter.query" />
+      <k-grid 
+        ref="membersGrid" 
+        service="members" 
+        :renderer="renderer" 
+        :contextId="contextId" 
+        :base-query="baseQuery" 
+        :filter-query="filter.query" />
       <!--
         Router view to enable routing to modals
       -->
@@ -35,14 +41,36 @@ export default {
       required: true
     }
   },
-  data () {
-    return {
-      baseQuery: {
+  computed: {
+    baseQuery () {
+      let query = {
         $sort: {
           'profile.name': 1
         }
-      },
+      }
+      if (this.filters.includes('guest')) {
+        query = Object.assign(query, { 'expireAt': { $exists: true } })
+      }
+      for (const role of ['owner', 'manager', 'member']) {
+        if (this.filters.includes(role)) {
+          query = Object.assign(query, { 'organisations': { $elemMatch: { '_id': this.contextId, 'permissions': role } } })
+        }
+      }
+      return query
+    },
+    filterQuery () {
+      let query = this.filter.query
+      if (this.filters.includes('guest')) {
+        query = Object.assign(query, { 'expireAt': { $exists: true } })
+      }
+      console.log(query)
+      return query
+    }
+  },
+  data () {
+    return {
       filter: this.$store.get('filter'),
+      filters: [],
       // Make this configurable from app
       renderer: _.merge({
         component: 'team/KMemberCard',
@@ -76,36 +104,12 @@ export default {
         // was not in our list he might have been added so refresh
         if (role && !member) this.$refs.membersGrid.refreshCollection()
       }
-    },
-    isRoleFilterEnabled () {
-      return this.roleFilter.enabled
-    },
-    isGuestFilterEnabled () {
-      return this.guestFilter.enabled
-    },
-    enableGuestFilter () {
-
-    },
-    disableGuestFilter ()  {
-
-    },
-    onFilterChanged (query) {
-      this.searchQuery = query
     }
   },
   created () {
     // Load the required components
     this.$options.components['k-page'] = this.$load('layout/KPage')
     this.$options.components['k-grid'] = this.$load('collection/KGrid')
-    // Setup additional filters
-    this.guestFilter = {
-      enabled: false,
-      filter: { }
-    }
-    this.roleFilter = {
-      enabled: false,
-      filter: {}
-    }
   },
   beforeDestroy () {
     this.unsubscribeUsers()

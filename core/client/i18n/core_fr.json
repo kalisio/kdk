@@ -695,27 +695,12 @@
   "KAccountDevices": {
     "DEVICES_USED": "Vérifier quand des appareils spécifiques ont eu accès à votre compte ci-dessous"
   },
-  "KSubscribe": {
-    "SUBSCRIPTION_TITLE": "S'abonner à {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Saisissez votre numéro de téléphone",
-    "SUBSCRIBE_BUTTON": "S'abonner",
-    "VALIDATION_TITLE": "Saisissez le code reçu par SMS pour valider votre abonnement à {{organisation}}",
-    "CANCEL_BUTTON": "Annuler",
-    "VALIDATE_BUTTON": "Valider",
-    "CONFIRMATION_TITLE": "Merci, vous êtes maintenant abonné à {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
-  },
-  "KUnsubscribe": {
-    "UNSUBSCRIPTION_TITLE": "Se désabonner de {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Saisissez votre numéro de téléphone",
-    "UNSUBSCRIBE_BUTTON": "Se désabonner",
-    "VALIDATION_TITLE": "Saisissez le code reçu par SMS pour valider votre désabonnement de {{organisation}}",
-    "CANCEL_BUTTON": "Annuler",
-    "VALIDATE_BUTTON": "Valider",
-    "CONFIRMATION_TITLE": "Vous êtes maintenant désabonné de {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
+  "KMemberFilter": {
+    "NONE": "Aucun",
+    "OWNER": "Propriétaire",
+    "MANAGER": "Gestionnaire",
+    "MEMBER": "Membre",
+    "GUEST": "Invité"
   }
 }
 
