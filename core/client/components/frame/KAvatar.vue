@@ -17,15 +17,20 @@
         {{ name }}
       </q-tooltip>
     </q-avatar>
+    <q-skeleton v-else type="QAvatar" :size="size" />
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import { QSkeleton } from 'quasar'
 import { getIconName, getInitials } from '../../utils'
 
 export default {
   name: 'k-avatar',
+  components: {
+    QSkeleton
+  },
   props: {
     object: {
       type: Object,
