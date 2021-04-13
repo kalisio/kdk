@@ -14,7 +14,7 @@
     :rounded="label!==''"
     :dense="dense"
     :disabled="disabled"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
       {{ computedTooltip }}
@@ -39,7 +39,7 @@
     :dense="dense"
     :disabled="disabled"
     :loading="loading"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
   </q-btn>
   <!--
     Item renderer
@@ -49,7 +49,7 @@
     clickable
     :dense="dense"
     :disabled="disabled"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
     <q-item-section avatar>
       <q-icon :dense="dense" :name="computedIcon" :color="computedColor" />
       <!-- badge -->
@@ -75,7 +75,7 @@
     square
     label-position="left"
     :disabled="disabled"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
@@ -141,6 +141,10 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    propagate: {
+      type: Boolean,
+      default: true
     },
     context: {
       type: Object,
@@ -240,7 +244,8 @@ export default {
       })
       return params
     },
-    onClicked () {
+    onClicked (event) {
+      if (!this.propagate) event.stopPropagation()
       // Handle the toggle if needed
       if (this.toggle) {
         this.isToggled = !this.isToggled
