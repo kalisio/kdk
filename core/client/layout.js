@@ -98,8 +98,8 @@ export const Layout = {
         isVisible = isVisible(context)
       }
       // If not a functional call the target property can be a reactive one
-      // so that we "bind" it to the component instead of "filter" it here
-      component.visible = isVisible
+      // so that we "bind" it to the component instead of "filter" the component here
+      component.isVisible = isVisible
       // Define the component key
       const componentName = _.get(component, 'component', 'frame/KAction')
       const componentKey = _.kebabCase(path.basename(componentName))
