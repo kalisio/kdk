@@ -90,22 +90,35 @@ export default {
       const path = this.$route.fullPath + `/edit/${this.item._id}`
       this.$router.push(path)
     },
-    removeItem () {
-      const name = this.getName()
-      Dialog.create({
-        message: this.$t('mixins.baseItem.REMOVE_MESSAGE', { name }),
-        html: true,
-        ok: {
-          label: this.$t('OK'),
-          flat: true
-        },
-        cancel: {
-          label: this.$t('CANCEL'),
-          flat: true
+    removeItem (prompt) {
+      if (!['none', 'confirm', 'input'].includes(prompt)) return
+      if (prompt === 'confirm' || prompt === 'input') {
+        const name = this.getName()
+        const input = {
+          type: 'text',
+          model: '',
+          isValid: val => val === name
         }
-      }).onOk(() => {
+        Dialog.create({
+          title: this.$t('mixins.baseItem.REMOVE_ITEM_TITLE', { name }),
+          message: prompt === 'input' ? this.$t('mixins.baseItem.REMOVE_ITEM_MESSAGE') : '',
+          html: true,
+          prompt: prompt === 'input' ? input : undefined,
+          persistent: true,
+          ok: {
+            label: this.$t('OK'),
+            flat: true
+          },
+          cancel: {
+            label: this.$t('CANCEL'),
+            flat: true
+          }
+        }).onOk(() => {
+          this.$api.getService(this.service).remove(this.item._id)
+        })
+      } else {
         this.$api.getService(this.service).remove(this.item._id)
-      })
+      }
     },
     exportItem () {
       const name = this.getName()

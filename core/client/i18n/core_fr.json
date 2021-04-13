@@ -65,7 +65,8 @@
   },
   "mixins": {
     "baseItem": {
-      "REMOVE_MESSAGE": "Etes vous sûr de vouloir supprimer {{name}} ?",
+      "REMOVE_ITEM_TITLE": "Etes vous sûr de vouloir supprimer <b>{{name}}</b> ?",
+      "REMOVE_ITEM_MESSAGE": "Merci de saisir le nom pour confirmer la suppression",
       "ITEM_EXPORTED": "Export du contenu de {{name}} dans {{file}}",
       "CANNOT_EXPORT_ITEM": "Impossible d'exporter {{name}}. Votre navigateur supporte t'il la fonctionnalité ?"
     }

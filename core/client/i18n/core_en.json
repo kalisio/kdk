@@ -65,7 +65,8 @@
   },
   "mixins": {
     "baseItem": {
-      "REMOVE_MESSAGE": "Are you sure you want to remove {{name}} ?",
+      "REMOVE_ITEM_TITLE": "Are you sure you want to delete <b>{{name}}</b> ?",
+      "REMOVE_ITEM_MESSAGE": "Please enter the name to confirm the deletion",
       "ITEM_EXPORTED": "Exporting the content of {{name}} within {{file}}",
       "CANNOT_EXPORT_ITEM": "Cannot export {{name}}. Is your browser support such a feature ?"
     }
