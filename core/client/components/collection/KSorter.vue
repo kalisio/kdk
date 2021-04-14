@@ -1,6 +1,7 @@
 <template>
   <k-options-chooser
     :options="options"
+    :tooltip="tooltip"
     @option-chosen="onOptionChanged" />
 </template>
 
@@ -16,6 +17,10 @@ export default {
         { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
         { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
       ]
+    },
+    tooltip: {
+      type: String,
+      default: 'KSorter.SORT'
     }
   },
   methods: {

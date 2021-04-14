@@ -495,12 +495,14 @@
   },
   "KOrganisationsActivity": {
     "ORGANISATIONS_LABEL": "My organisations",
-    "SEARCH_ORGANISATION_LABEL": "Search for an organisation",
-    "CREATE_ORGANISATION_LABEL": "Create an organisation"
+    "CREATE_ORGANISATION_LABEL": "Create an organisation",
+    "SEARCH_ORGANISATIONS": "Rechercher des organisations",
+    "SORT_ORGANISATIONS": "Trier les organisations"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
-    "SEARCH_MEMBER_LABEL": "$t(MEMBERS)",
+    "SORT_MEMBERS": "Sort members",
+    "SEARCH_MEMBERS": "Search members",
     "ADD_USER_LABEL": "Add a user",
     "INVITE_GUEST_LABEL": "Invite guests"
   },
@@ -568,7 +570,8 @@
   },
   "KTagsActivity": {
     "TAGS_LABEL": "$t(TAGS)",
-    "SEARCH_TAG_LABEL": "Search for a tag"
+    "SORT_TAGS": "Sort tags",
+    "SEARCH_TAGS": "Search tags"
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",    
@@ -576,7 +579,8 @@
   },  
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
-    "SEARCH_GROUP_LABEL": "Search for a group",
+    "SORT_GROUPS": "Sort groups",
+    "SEARCH_GROUPS": "Search groups",
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {
@@ -691,11 +695,14 @@
   "KAccountDevices": {
     "DEVICES_USED": "Check when specific devices has been used to access your account below"
   },
- "KMemberFilter": {
-   "NONE": "None",
-   "OWNER": "Owner",
-   "MANAGER": "Manager",
-   "MEMBER": "Member",
-   "GUEST": "Guest"
- }
+  "KMemberFilter": {
+    "NONE": "None",
+    "OWNER": "Owner",
+    "MANAGER": "Manager",
+    "MEMBER": "Member",
+    "GUEST": "Guest"
+  },
+  "KSorter": {
+    "SORT": "Sort"
+  }
 }

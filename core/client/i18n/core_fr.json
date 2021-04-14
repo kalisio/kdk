@@ -501,11 +501,14 @@
   },
   "KOrganisationsActivity": {
     "ORGANISATIONS_LABEL": "Mes organisations",
-    "SEARCH_ORGANISATION_LABEL": "Rechercher une organisation",
-    "CREATE_ORGANISATION_LABEL": "Créer une organisation"
+    "CREATE_ORGANISATION_LABEL": "Créer une organisation",
+    "SEARCH_ORGANISATIONS": "Rechercher des organisations",
+    "SORT_ORGANISATIONS": "Trier les organisations"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
+    "SORT_MEMBERS": "Trier les membres",
+    "SEARCH_MEMBERS": "Rechercher des membres",
     "ADD_USER_LABEL": "Ajouter un utilisateur",
     "INVITE_GUEST_LABEL": "Inviter des personnes"
   },
@@ -573,7 +576,8 @@
   },
   "KTagsActivity": {
     "TAGS_LABEL": "$t(TAGS)",
-    "SEARCH_TAG_LABEL": "Rechercher une étiquette"
+    "SORT_TAGS": "Trier les étiquettes",
+    "SEARCH_TAGS": "Rechercher des étiquettes"
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",
@@ -581,7 +585,8 @@
   },
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
-    "SEARCH_GROUP_LABEL": "Rechercher un groupe",
+    "SORT_GROUPS": "Trier les groupes",
+    "SEARCH_GROUPS": "Rechercher des groupes",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
@@ -702,6 +707,9 @@
     "MANAGER": "Gestionnaire",
     "MEMBER": "Membre",
     "GUEST": "Invité"
+  },
+  "KSorter": {
+    "SORT": "Trier"
   }
 }
 
