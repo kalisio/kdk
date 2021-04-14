@@ -36,8 +36,9 @@
 
 <script>
 import _ from 'lodash'
-import { Platform, QCarousel, QCarouselSlide, QCarouselControl, exportFile } from 'quasar'
+import { QCarousel, QCarouselSlide, QCarouselControl } from 'quasar'
 import 'mime-types-browser'
+import { downloadAsBlob } from '../../utils'
 import mixins from '../../mixins'
 
 export default {
@@ -118,19 +119,7 @@ export default {
       for (let i = 0; i < buffer.length; i++) {
         buffer[i] = data.charCodeAt(i)
       }
-      const blob = new Blob([buffer], { type: mimeType })
-      if (Platform.is.cordova) {
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fs) => {
-          fs.root.getFile(this.currentMedia.name, { create: true, exclusive: false }, (fileEntry) => {
-            fileEntry.createWriter((fileWriter) => {
-              fileWriter.write(blob)
-              cordova.plugins.fileOpener2.open(fileEntry.nativeURL, mimeType)
-            })
-          })
-        })
-      } else {
-        exportFile(this.currentMedia.name, blob)
-      }
+      downloadAsBlob(buffer, this.currentMedia.name, mimeType)
     },
     async onCurrentMediaChanged () {
       const index = _.findIndex(this.medias, media => media.name === this.currentMediaName)
