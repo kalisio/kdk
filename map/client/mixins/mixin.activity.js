@@ -138,7 +138,7 @@ export default {
     isLayerSelectable (layer) {
       // Only possible when not edited by default
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return false
-      return _.get(layer, 'isSelectable', this.isUserLayer(layer))
+      return _.get(layer, 'isSelectable', true)
     },
     isLayerStorable (layer) {
       // Only possible when not saved by default
