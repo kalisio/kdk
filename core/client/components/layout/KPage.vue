@@ -22,7 +22,7 @@
     </q-page-sticky>
     <!-- right -->
     <q-page-sticky position="right">
-      <div id="right-pane" v-show="rightPane.content && rightPane.mode" class="row items-center">
+      <div id="right-pane" v-show="hasRightPaneContent" class="row items-center">
         <k-opener id="right-opener" v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
           <k-panel
@@ -39,7 +39,7 @@
     </q-page-sticky>
     <!-- bottom -->
     <q-page-sticky position="bottom">
-      <div id="bottom-pane" v-show="bottomPane.content && bottomPane.mode" class="column items-center">
+      <div id="bottom-pane" v-show="hasBottomPaneContent" class="column items-center">
         <k-opener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
           <k-panel
@@ -55,7 +55,7 @@
     </q-page-sticky>
     <!-- top -->
     <q-page-sticky position="top">
-      <div id="top-pane" v-show="topPane.content && topPane.mode" class="column items-center">
+      <div id="top-pane" v-show="hasTopPaneContent" class="column items-center">
         <div>
           <k-panel
             id="top-panel"
@@ -75,7 +75,7 @@
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left">
-      <div id="left-pane" v-show="leftPane.content && leftPane.mode" class="row items-center">
+      <div id="left-pane" v-show="hasLeftPaneContent" class="row items-center">
         <div>
           <k-panel
             id="left-panel"
@@ -138,6 +138,26 @@ export default {
       set: function (value) {
         this.setBottomPaneVisible(value)
       }
+    },
+    hasLeftPaneContent () {
+      if (_.isEmpty(this.leftPane.content)) return false
+      if (this.leftPane.mode) return !_.isEmpty(_.get(this.leftPane.content, this.leftPane.mode))
+      return true
+    },
+    hasTopPaneContent () {
+      if (_.isEmpty(this.topPane.content)) return false
+      if (this.topPane.mode) return !_.isEmpty(_.get(this.topPane.content, this.topPane.mode))
+      return true
+    },
+    hasRightPaneContent () {
+      if (_.isEmpty(this.rightPane.content)) return false
+      if (this.rightPane.mode) return !_.isEmpty(_.get(this.rightPane.content, this.rightPane.mode))
+      return true
+    },
+    hasBottomPaneContent () {
+      if (_.isEmpty(this.bottomPane.content)) return false
+      if (this.bottomPane.mode) return !_.isEmpty(_.get(this.bottomPane.content, this.bottomPane.mode))
+      return true
     }
   },
   data () {
