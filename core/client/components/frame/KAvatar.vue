@@ -1,5 +1,6 @@
 <template>
   <div>
+    <q-skeleton v-if="skeleton" type="QAvatar" :size="size" />
     <q-avatar v-if="avatar" :size="size">
       <img :src="avatar">
       <q-tooltip>
@@ -17,7 +18,6 @@
         {{ name }}
       </q-tooltip>
     </q-avatar>
-    <q-skeleton v-else type="QAvatar" :size="size" />
   </div>
 </template>
 
@@ -51,6 +51,7 @@ export default {
   },
   data () {
     return {
+      skeleton: true,
       name: null,
       avatar: null,
       icon: null,
@@ -74,6 +75,7 @@ export default {
             }
           }
           this.avatar = avatar.uri
+          this.skeleton = false
           return
         }
         this.avatar = null
@@ -82,6 +84,7 @@ export default {
         if (icon) {
           this.icon = getIconName(icon, 'name')
           this.color = _.get(icon, 'color', 'primary')
+          this.skeleton = false
           return
         }
         this.icon = null
@@ -89,9 +92,11 @@ export default {
         const name = this.getName()
         if (name) {
           this.initials = getInitials(name)
+          this.skeleton = false
           return
         }
         this.initials = null
+        this.skeleton = false
       }
     }
   },
