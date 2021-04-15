@@ -6,18 +6,20 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#app-bar-overflow-menu',
-  content: 'tours.groups.OVERFLOW_MENU_LABEL',
-  params: {
-    placement: 'left',
-    clickOn: '#app-bar-overflow-menu',
-    clickDelay: 500
-  }
-}, {
   target: '#search-group',
   content: 'tours.groups.SEARCH_LABEL',
   params: {
     placement: 'left'
+  }
+}, {
+  target: '#group-sorter',
+  title: 'tours.groups.SORT_LABEL',
+  params: {
+    placement: 'left',
+    clickOn: '#group-sorter',
+    clickDelay: 500,
+    clickOnNext: '#group-sorter',
+    clickOnPrevious: '#group-sorter'
   }
 }, {
   target: '#create-group',

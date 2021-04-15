@@ -203,7 +203,7 @@
   },
   "tours": {
     "navigation-bar": {
-      "NAVIGATION_BAR_LABEL": "The navigation bar allows to quickly execute recurring actions.",
+      "NAVIGATION_BAR_LABEL": "This bar allows to quickly execute recurring actions on the map.",
       "ZOOM_LABEL": "Zoom in/out using these buttons.",
       "TOGGLE_MAP_LABEL": "Switch to 2D map view using this button.",
       "TOGGLE_GLOBE_LABEL": "Switch to 3D map view using this button.",
@@ -216,7 +216,7 @@
       "TOOLS_LABEL": "Select among available tools using this button.",
       "TRACK_LOCATION_LABEL": "Display the coordinates of a location using this button.",
       "COPY_LOCATION_LABEL": "Copy the coordinates in your clipboard using this button.",
-      "LOCATION_TRACKING_LABEL": "Move the mouse to display the coordinates underneath and click to keep track of it.",
+      "LOCATION_TRACKING_LABEL": "Drag the screen to display the coordinates of its center and release to keep track of it.",
       "TRACK_BACK_LABEL": "Then stop tracking by going back to the actions.",
       "TOGGLE_VR_LABEL": "Switch to Virtual Reality (VR) mode with this button.",
       "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
@@ -227,8 +227,8 @@
       "FAVORITE_VIEWS_LIST_ACTIONS_LABEL": "Sort your views by name or update time and seek for a target one.",
       "FAVORITE_VIEW_ACTIONS_LABEL": "Remove a view by using this button.",
       "ADD_FAVORITE_VIEW_LABEL": "Add a new views using this button.",
-      "FAVORITE_VIEW_NAME_LABEL": "Enter the name of your new views.",
-      "FAVORITE_VIEW_DESCRIPTION_LABEL": "Enter the description of your new views.",
+      "FAVORITE_VIEW_NAME_LABEL": "Enter the name of your new view.",
+      "FAVORITE_VIEW_DESCRIPTION_LABEL": "Enter the description of your new view.",
       "FAVORITE_VIEW_LAYERS_LABEL": "Select if the currently active layers will be restaured with this view.",
       "CREATE_FAVORITE_VIEW_LABEL": "Confirm the creation of your new favorite view."
     },
