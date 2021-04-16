@@ -36,6 +36,13 @@
           "public": true
         }
       }
+    },
+    "color" : {
+      "type": "string",
+      "field": {
+        "component": "form/KColorField",
+        "label": "schemas.COLOR_FIELD_LABEL"
+      }
     }
   },
   "required": ["name"]

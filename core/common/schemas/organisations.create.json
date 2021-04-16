@@ -21,21 +21,6 @@
         "component": "form/KTextField",
         "label": "schemas.ORGANISATIONS_DESCRIPTION_FIELD_LABEL"
       }
-    },
-    "avatar": { 
-      "type": "object",
-      "field": {
-        "component": "form/KAttachmentField",
-        "label": "schemas.AVATAR_FIELD_LABEL",
-        "service": "storage",
-        "acceptedFiles": "image/*",
-        "maxFilesize": 0.5,
-        "autoProcessQueue": false,
-        "storagePath": "avatar",
-        "params": {
-          "public": true
-        }
-      }
     }
   },
   "required": ["name"]
