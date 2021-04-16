@@ -22,15 +22,10 @@
 </template>
 
 <script>
-import { QField, QInput } from 'quasar'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-number-field',
-  components: {
-    QField,
-    QInput
-  },
   mixins: [mixins.baseField]
 }
 </script>

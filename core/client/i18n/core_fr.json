@@ -75,6 +75,7 @@
     "OBJECT_NAME": "{{ object.name }}",
     "AVATAR_FIELD_LABEL": "Choisissez un avatar",
     "NAME_FIELD_LABEL": "Saisissez votre nom",
+    "COLOR_FIELD_LABEL": "Choisissez une couleur",
     "ORGANISATIONS_CREATE_TITLE": "Créer une nouvelle organisation ?",
     "ORGANISATIONS_NAME_FIELD_LABEL": "Saisissez le nom de l'organisation",
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'organisation",

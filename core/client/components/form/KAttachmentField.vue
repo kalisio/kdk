@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    <q-chip v-for="file in files" :key="file.name" icon="las la-cloud-upload-alt">
+    <q-chip v-for="file in files" :key="file.name" square icon="las la-cloud-upload-alt">
       {{ file.name }}
     </q-chip>
   </div>
@@ -33,6 +33,7 @@
           <template class="col-12" v-for="file in files">
             <q-chip
               :key="file.name"
+              square
               dense
               color="primary"
               text-color="white"
