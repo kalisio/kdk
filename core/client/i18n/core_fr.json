@@ -122,6 +122,7 @@
     "create-organisation": {
       "ORGANISATION_NAME_LABEL": "Entrez le nom de l'organisation tel qu'il sera visible par les autres utilisateurs.",
       "ORGANISATION_DESCRIPTION_LABEL": "Entrez une description détaillée.",
+      "ORGANISATION_AVATAR_LABEL": "Choisissez une image ou un logo représentant votre organisation pour ses membres.",
       "CREATE_ORGANISATION_LABEL": "Confirmez la création de la nouvelle organisation."
     },
     "account": {
