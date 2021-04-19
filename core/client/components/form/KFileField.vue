@@ -28,6 +28,7 @@
 import _ from 'lodash'
 import { QFile } from 'quasar'
 import mixins from '../../mixins'
+import Papa from 'papaparse'
 
 export default {
   name: 'k-file-field',
@@ -73,6 +74,15 @@ export default {
             this.model = this.emptyModel()
             return
           }
+        }
+        if (this.getAcceptedTypes().split(',').includes('text/csv')) {
+          const result = Papa.parse(content, { skipEmptyLines: true })
+          if (result.errors.length > 0) {
+            this.error = 'KFileField.INVALID_CSV_FILE'
+            this.model = this.emptyModel()
+            return
+          }
+          content = result.data
         }
         this.model = { name: this.file.name, content }
         this.onChanged()
