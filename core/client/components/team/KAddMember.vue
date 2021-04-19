@@ -276,7 +276,7 @@ export default {
           }
         }
         if (records.length === 0) {
-          exportFile('errors.json', JSON.stringify(errors))
+          exportFile('errors.json', JSON.stringify(errors, null, '\t'))
           Dialog.create({
             message: this.$t('KAddMember.ALERT_FILE_IMPORT_MESSAGE'),
             ok: {
@@ -285,7 +285,7 @@ export default {
             } 
           })
         } else if (!_.isEmpty(errors)) {
-          exportFile('errors.json', JSON.stringify(errors))
+          exportFile('errors.json', JSON.stringify(errors, null, '\t'))
           Dialog.create({
             message: this.$t('KAddMember.CONFIRM_FILE_IMPORT_MESSAGE', { errors: _.keys(errors).length, records: fileContent.length }),
             html: true,
@@ -314,7 +314,7 @@ export default {
         const record = records[i]
         report[record.name] = await this.processRecord(record)
       }
-      exportFile('report.json', JSON.stringify(report))
+      exportFile('report.json', JSON.stringify(report, null, '\t'))
     },
     async processRecord (record) {
       // Check whether the guest has already an acount
