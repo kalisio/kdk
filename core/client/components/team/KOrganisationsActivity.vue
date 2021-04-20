@@ -5,7 +5,7 @@
         Organisations collection
       -->
       <k-grid
-        ref="organisations"
+        ref="organisationsGrid"
         service="organisations"
         :renderer="renderer"
         :base-query="sorter.query"

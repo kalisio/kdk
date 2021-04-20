@@ -5,7 +5,7 @@
         Groups collection
       -->
       <k-grid
-        id="groups-grid"
+        ref="groupsGrid"
         :contextId="contextId"
         service="groups"
         :renderer="renderer"

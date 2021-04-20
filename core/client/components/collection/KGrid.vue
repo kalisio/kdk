@@ -1,27 +1,25 @@
 <template>
-  <div>
-    <div v-if="items.length > 0" class="q-pa-sm row">
-      <template v-for="item in items">
-        <div :class="getItemClass()" :key="item._id">
-          <component
-            :id="'item-' + item._id"
-            :service="service"
-            :item="item"
-            :contextId="contextId"
-            :is="renderer.component"
-            v-bind="renderer"
-            @item-selected="onItemSelected" />
-        </div>
-      </template>
-      <div v-if="nbPages > 1" class="col-12">
-        <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
+  <div v-if="items.length > 0" class="q-pa-sm row">
+    <template v-for="item in items">
+      <div :class="getItemClass()" :key="item._id">
+        <component
+          :id="item._id"
+          :service="service"
+          :item="item"
+          :contextId="contextId"
+          :is="renderer.component"
+          v-bind="renderer"
+          @item-selected="onItemSelected" />
       </div>
+    </template>
+    <div v-if="nbPages > 1" class="col-12">
+      <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
     </div>
-    <div v-else class="absolute-center">
-      <slot id="empty-grid" name="empty-grid">
-        <k-label :text="$t('KGrid.EMPTY_GRID')" icon-size="3rem" />
-      </slot>
-    </div>
+  </div>
+  <div v-else class="absolute-center">
+    <slot id="empty-grid" name="empty-grid">
+      <k-label :text="$t('KGrid.EMPTY_GRID')" icon-size="3rem" />
+    </slot>
   </div>
 </template>
 

@@ -5,6 +5,7 @@ import { ClientFunction } from 'testcafe'
 import Screens from './screens'
 import Layout from './layout'
 import Account from './account'
+import Organisations from './organisations'
 import OrganisationSettings from './organisation-settings'
 import Members from './members'
 import Tags from './tags'
@@ -13,6 +14,7 @@ import Groups from './groups'
 export { Screens }
 export { Layout }
 export { Account }
+export { Organisations }
 export { OrganisationSettings }
 export { Members }
 export { Tags }
