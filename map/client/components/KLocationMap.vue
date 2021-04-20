@@ -3,7 +3,7 @@
     <q-card-section class="fit q-pa-none">
       <div class="fit column">
         <div class="col-auto">
-          <q-toolbar class="q-pa-sm bg-secondary text-white">
+          <q-toolbar class="q-pa-sm bg-accent text-white">
             <k-text-area :text="location.name" />
             <q-space />
             <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">

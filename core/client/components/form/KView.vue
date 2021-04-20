@@ -118,9 +118,9 @@ export default {
 
 <style lang="stylus">
   .k-view-row {
-    border-bottom: solid 1px lighten($primary, 87%)
+    border-bottom: solid 1px var(--q-color-secondary);
   }
   .k-view-row:hover {
-    background: lighten($secondary, 87%)
+    background: var(--q-color-secondary);
   }
 </style>

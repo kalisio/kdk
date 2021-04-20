@@ -81,7 +81,7 @@ export default {
     },
     computedBadge () {
       if (this.option) {
-        if (this.option.badge) return { floating: true, color: 'secondary', label: this.option.badge }
+        if (this.option.badge) return { floating: true, color: 'accent', label: this.option.badge }
       }
       return undefined
     },

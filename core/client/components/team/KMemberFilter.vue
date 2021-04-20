@@ -2,7 +2,7 @@
   <k-action
     id="member-filter"
     icon="las la-filter"
-    :color="filters.length > 0 ? 'secondary' : 'grey-7'">
+    :color="filters.length > 0 ? 'accent' : 'grey-7'">
     <template v-slot:content>
       <q-popup-proxy>
         <q-option-group

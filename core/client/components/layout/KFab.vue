@@ -91,6 +91,6 @@ export default {
   .k-fab {
     right: 12px;
     bottom: 12px;
-    border: 2px solid var(--q-color-accent);
+    border: 2px solid var(--q-color-secondary);
   }
 </style>

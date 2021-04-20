@@ -6,13 +6,13 @@
       :radius="50"
       @close="onCloseMenu">
       <!--q-btn slot="closed-menu-container"
-        round color="secondary" icon="las la-chevron-up" /-->
+        round color="accent" icon="las la-chevron-up" /-->
       <q-btn slot="open-menu-container"
-        round color="secondary" icon="las la-times" />
+        round color="accent" icon="las la-times" />
       <k-radial-fab-item
         v-for="(action, index) in featureActions"
         :key="index">
-        <q-btn round color="secondary" :icon="action.icon" @click="onFeatureActionClicked(action)">
+        <q-btn round color="accent" :icon="action.icon" @click="onFeatureActionClicked(action)">
           <!-- tooltip -->
           <q-tooltip v-if="action.label">
             {{action.label}}

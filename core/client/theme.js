@@ -1,19 +1,22 @@
-import _ from 'lodash'
 import { colors } from 'quasar'
 
 export const Theme = {
   initialize () {
-    this.brandPrimary = colors.getBrand('primary')
+    this.primary = colors.getBrand('primary')
+    this.secondary = colors.getBrand('secondary')
+    this.accent = colors.getBrand('accent')
+    this.dark = colors.getBrand('dark')
   },
-  apply (color) {
-    if (_.isEmpty(color)) this.restore()
-    else {
-      colors.setBrand('primary', color)
-      colors.setBrand('secondary', colors.lighten(color, 25))
-      colors.setBrand('accent', colors.lighten(color, 75))
-    }
+  apply (primary, secondary, accent, dark) {
+    colors.setBrand('primary', primary)
+    colors.setBrand('secondary', secondary || colors.lighten(primary, 80))
+    colors.setBrand('accent', accent || colors.lighten(primary, 20))
+    colors.setBrand('dark', dark || colors.lighten(primary, -20))
   },
   restore () {
-    this.apply(this.brandPrimary)
+    colors.setBrand('primary', this.primary)
+    colors.setBrand('secondary', this.secondary)
+    colors.setBrand('accent', this.accent)
+    colors.setBrand('dark', this.dark)
   }
 }

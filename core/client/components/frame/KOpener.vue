@@ -115,7 +115,7 @@ export default {
     opacity: 0.85;
     transition: 0.1s;
     background-color: var(--q-color-primary);
-    border: 2px solid var(--q-color-accent);
+    border: 2px solid var(--q-color-secondary);
   }
   .k-opener-left, .k-opener-right {
     height: 110px;

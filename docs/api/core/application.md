@@ -205,7 +205,7 @@ Events.$off('myEvent', myCallback)
 
 A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton object: allow to get or update the global state and make any interested component aware of it in real-time through events. The available API is illustrated by this code sample:
 
-```javascript
+```js
 import { Store } from 'kCore/client'
 import { Events } from 'quasar'
 
@@ -219,6 +219,47 @@ Events.$on('myGlobal-changed', myCallback) // When updating a root object
 Events.$on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
 
+### Theme
+
+The **KDK** offers a simple way of theming your application. The application theme is strongly linked with the following four colors:
+
+![Theme colors](../../assets/theme-colors.svg)
+
+You can customize these color schema **statically** and **dynamically**.
+
+* **statically** within the `css/quasar.varaibles.styl`:
+
+```css
+$primary    = #1976d2
+$secondary  = #dc004e
+$accent     = #e33371
+$dark       = #115293
+```
+
+* **dynamically** using the **Theme** singleton:
+
+```js
+import { Theme } from '@kalisio/kdk/core.client'
+const myPrimaryColor = '#afb42b'
+const mySecondaryColor = '#bf360c'
+const myAccentColor = '#e4e65e'
+const myDarkColor = '#7c8500'
+// Apply my theme
+Theme.apply(myPrimaryColor, mySecondaryColor, myAccentColor, myDarkColor)
+// Restore the default theme defined in quasar.varaibles.styl
+Theme.restore()
+```
+
+Even if you can specify four different colors, the **KDK** let you specify the **primary** color only and will compute the other colors according the following rules:
+
+```css
+$secondary  ?= lighten($accent, 80%)
+$accent     ?= lighten($accent, 20%)
+$dark       ?= darken($primary, 20%)
+```
+
+It provides a convenient way to change the theme of the application using just one color.
+
 ### Context
 
 **TODO**
@@ -228,9 +269,9 @@ Events.$on('myGlobal-property-changed', myCallback) // When updating a specific 
 ### Client-side internationalization
 
 Internationalization relies on [i18next](https://github.com/i18next/i18next) and its [Vue plugin](https://github.com/panter/vue-i18next). We don't use [component based localization](https://panter.github.io/vue-i18next/guide/component.html) and prefer to use [component interpolation](https://panter.github.io/vue-i18next/guide/component-interpolation.html). Each module/application has its own set of translation files stored in the *client/i18n* folder. To avoid conflicts the convention we use is the following:
-* a translation used in mulitple components has no prefix
+* a translation used in multiple components has no prefix
 * a translation used in a single component is prefixed by the source component name
-* some prefixs are reserved
+* some prefixes are reserved
   * `errors` for error messages
   * `schemas` for labels in JSON schemas
 

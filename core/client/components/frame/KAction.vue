@@ -197,7 +197,7 @@ export default {
       return this.icon
     },
     computedColor () {
-      if (this.isToggled) return this.toggle.color || 'secondary'
+      if (this.isToggled) return this.toggle.color || 'accent'
       return this.color
     },
     computedTooltip () {

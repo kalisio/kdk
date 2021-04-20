@@ -170,6 +170,6 @@ export default {
 }
 
 .k-card:hover {
-  border: solid 1px $secondary;
+  border: solid 1px $accent;
 }
 </style>

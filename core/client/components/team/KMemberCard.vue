@@ -28,7 +28,7 @@
       <div class="q-pa-sm row justify-start items-center">
         <template v-for="(group, index) in memberGroups">
           <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
-            <q-avatar color="secondary" text-color="white" size="32px">{{groupInitials(group)}}</q-avatar>
+            <q-avatar color="primary" text-color="white" size="32px">{{ groupInitials(group) }}</q-avatar>
             <q-menu ref="popover">
               <q-toolbar inverted color="grey-7">
                 <span style="margin:8px">{{group.name}}</span>
