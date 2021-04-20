@@ -1,22 +1,28 @@
+import _ from 'lodash'
 import { colors } from 'quasar'
+
+const brandColors = ['primary', 'secondary', 'accent', 'dark', 'info', 'positive', 'negative', 'warning']
 
 export const Theme = {
   initialize () {
-    this.primary = colors.getBrand('primary')
-    this.secondary = colors.getBrand('secondary')
-    this.accent = colors.getBrand('accent')
-    this.dark = colors.getBrand('dark')
+    this.default = {}
+    brandColors.forEach(color => { this.default[color] = colors.getBrand(color) })
   },
-  apply (primary, secondary, accent, dark) {
-    colors.setBrand('primary', primary)
-    colors.setBrand('secondary', secondary || colors.lighten(primary, 80))
-    colors.setBrand('accent', accent || colors.lighten(primary, 20))
-    colors.setBrand('dark', dark || colors.lighten(primary, -20))
+  apply (theme) {
+    if (typeof theme === 'string') {
+      colors.setBrand('primary', theme)
+      colors.setBrand('secondary', colors.lighten(theme, 75))
+      colors.setBrand('accent', colors.lighten(theme, 25))
+      colors.setBrand('dark', colors.lighten(theme, -25))
+      colors.setBrand('info', colors.lighten(theme, 25))
+      colors.setBrand('positive', this.default.positive)
+      colors.setBrand('negative', this.default.negative)
+      colors.setBrand('warning', this.default.warning)
+    } else {
+      brandColors.forEach(color => { colors.setBrand(color, _.get(theme, color, this.default[color])) })
+    }
   },
   restore () {
-    colors.setBrand('primary', this.primary)
-    colors.setBrand('secondary', this.secondary)
-    colors.setBrand('accent', this.accent)
-    colors.setBrand('dark', this.dark)
+    brandColors.forEach(color => { colors.setBrand(color, this.default[color]) })
   }
 }
