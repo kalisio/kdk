@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { Dialog, exportFile } from 'quasar'
 import mixins from '../../mixins'
 import { getLocale } from '../../utils'
