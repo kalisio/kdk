@@ -221,9 +221,11 @@ Events.$on('myGlobal-property-changed', myCallback) // When updating a specific 
 
 ### Theme
 
-The **KDK** offers a simple way of theming your application. The application theme is strongly linked with the [Quasar's brand color](https://quasar.dev/style/color-palette#brand-colors) guideline. 
+The **KDK** offers a simple way of theming your application. The application theme is strongly linked with the [Quasar's brand color](https://quasar.dev/style/color-palette#brand-colors) approach. It strongly relies on using a predefined color schema composed of 8 colors:
 
+<center>
 ![Theme colors](../../assets/theme-colors.svg)
+</center>
 
 You can customize these color schema **statically** and **dynamically**.
 
@@ -265,9 +267,9 @@ Even if you can specify four different colors, the **KDK** let you specify the `
 | `accent` | lighten the `primary` by 250% |
 | `secondary` | darken the `primary` by 25% |
 | `info` | equal to `accent` |
-| `positive` | `7bb946` |
-| `negative` | `c74a4a` |
-| `warning` | `d09931` |
+| `positive` | equal to `#7bb946` |
+| `negative` | equal to `#c74a4a` |
+| `warning` | equal to `#d09931` |
 
 It provides a convenient way to change the theme of the application using just one color.
 
