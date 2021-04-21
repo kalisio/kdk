@@ -10,6 +10,7 @@ export const Theme = {
   },
   apply (theme) {
     if (typeof theme === 'string') {
+      // Compute the colors according the primary
       colors.setBrand('primary', theme)
       colors.setBrand('secondary', colors.lighten(theme, 75))
       colors.setBrand('accent', colors.lighten(theme, 25))

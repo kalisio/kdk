@@ -76,8 +76,8 @@ Create a new service attached to the application by name and given a set of opti
 * **memory**: instead of generating a DB adapter service will create a mock with a [feathers-memory](https://github.com/feathersjs-ecosystem/feathers-memory) service instead with provided options
 
 Depending on the options you have to create a *models* and *services* directories containing the required files to declare your services, e.g. your folder/file hierarchy should look like this:
-* *index.js*: contains adefault function instantiating all the services
-* *models* : constains one file per database adapter you'd like to support
+* *index.js*: contains a default function instantiating all the services
+* *models* : contains one file per database adapter you'd like to support
   * *serviceName.model.mongodb.js* : exporting the data model managed by your service in [MongoDB](https://docs.feathersjs.com/api/databases/mongodb.html), 
   * *serviceName.model.levelup.js* : exporting the data model managed by your service in [LevelUP](https://github.com/feathersjs/feathers-levelup), 
   * ...
@@ -114,7 +114,7 @@ The `create`, respectively `remove`, operation on the `authorisations` service w
 3. on a resource (e.g. an organisation).
 
 The permission will be stored directly on the subject (i.e. user) object so that they are already available once authenticated.
-They will be organised by resource types (what is called a *scope*) so that a user being the owner of the *feathers* organisation
+They will be organized by resource types (what is called a *scope*) so that a user being the owner of the *feathers* organisation
 will be structured like this (*organisations* is an *authorization scope* on the user object):
 ```javascript
 {
@@ -221,7 +221,7 @@ Events.$on('myGlobal-property-changed', myCallback) // When updating a specific 
 
 ### Theme
 
-The **KDK** offers a simple way of theming your application. The application theme is strongly linked with the following four colors:
+The **KDK** offers a simple way of theming your application. The application theme is strongly linked with the [Quasar's brand color](https://quasar.dev/style/color-palette#brand-colors) guideline. 
 
 ![Theme colors](../../assets/theme-colors.svg)
 
@@ -230,33 +230,44 @@ You can customize these color schema **statically** and **dynamically**.
 * **statically** within the `css/quasar.varaibles.styl`:
 
 ```css
-$primary    = #1976d2
-$secondary  = #dc004e
-$accent     = #e33371
-$dark       = #115293
+$primary    = #bf360c
+$secondary  ?= lighten($primary, 75%)
+$accent     ?= lighten($primary, 25%)
+$dark       ?= darken($primary, 25%)
+$info       = $accent
+$positive   = #7bb946
+$negative   = #c74a4a
+$warning    = #d09931
 ```
 
 * **dynamically** using the **Theme** singleton:
 
 ```js
 import { Theme } from '@kalisio/kdk/core.client'
-const myPrimaryColor = '#afb42b'
-const mySecondaryColor = '#bf360c'
-const myAccentColor = '#e4e65e'
-const myDarkColor = '#7c8500'
+const myTheme = {
+  primary: '#afb42b',
+  secondary: '#bf360c'
+  accent: '#e4e65e',
+  dark: '#7c8500'
+  // the orther colors will be defined according the quasar.varaibles.styl values
+}
 // Apply my theme
-Theme.apply(myPrimaryColor, mySecondaryColor, myAccentColor, myDarkColor)
-// Restore the default theme defined in quasar.varaibles.styl
+Theme.apply(myTheme)
+// Restore the default colors defined in quasar.varaibles.styl
 Theme.restore()
 ```
 
-Even if you can specify four different colors, the **KDK** let you specify the **primary** color only and will compute the other colors according the following rules:
+Even if you can specify four different colors, the **KDK** let you specify the `primary` color only and will compute the other colors according the following rules:
 
-```css
-$secondary  ?= lighten($accent, 80%)
-$accent     ?= lighten($accent, 20%)
-$dark       ?= darken($primary, 20%)
-```
+| Color | Rule |
+|---|---|
+| `secondary` | lighten the `primary` by 75% |
+| `accent` | lighten the `primary` by 250% |
+| `secondary` | darken the `primary` by 25% |
+| `info` | equal to `accent` |
+| `positive` | `7bb946` |
+| `negative` | `c74a4a` |
+| `warning` | `d09931` |
 
 It provides a convenient way to change the theme of the application using just one color.
 
