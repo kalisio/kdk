@@ -176,6 +176,12 @@ export default {
     },
 
     buildDrawCode (layer, options) {
+      const fnCode = `"use strict;"
+return () => { console.log(window); }`
+      const testFnGen = Function(fnCode)
+      const fn = testFnGen().apply(undefined)
+      fn()
+
       layer.getFeature = []
       layer.drawFunctions = []
       for (const d of options.draw) {
@@ -188,9 +194,11 @@ export default {
         })
 
         const drawCode = `"use strict;"
+// define visible variables for drawing code
 const ctx = this.ctx;
 const info = this.info;
-${d.code}`
+${d.code};
+`
         layer.drawFunctions.push(new Function(drawCode))
       }
       if (!layer.onDrawLayer) {
@@ -206,7 +214,7 @@ ${d.code}`
               offset = layer._map.latLngToContainerPoint(L.latLng(c.geometry.coordinates[1], c.geometry.coordinates[0]))
               ctx.translate(offset.x, offset.y)
             }
-            layer.drawFunctions[i].call({ ctx, info })
+            layer.drawFunctions[i].call({ ctx, info, log: console.log })
             if (feature) {
               ctx.translate(-offset.x, -offset.y)
             }
