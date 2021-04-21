@@ -16,10 +16,22 @@
       Managed stickies
       Be careful of the order
      -->
-    <!-- fab -->
-    <q-page-sticky position="bottom-right" :offset="fabOffset">
-      <k-fab />
-    </q-page-sticky>
+    <!-- bottom -->
+    <q-page-sticky position="bottom">
+      <div id="bottom-pane" v-show="hasBottomPaneContent" class="column items-center">
+        <k-opener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
+        <div>
+          <k-panel
+            id="bottom-panel"
+            v-show="bottomPane.visible"
+            :content="bottomPane.content"
+            :mode="bottomPane.mode"
+            :filter="bottomPane.filter"
+            class="k-pane" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
+        </div>
+      </div>
+    </q-page-sticky>     
     <!-- right -->
     <q-page-sticky position="right">
       <div id="right-pane" v-show="hasRightPaneContent" class="row items-center">
@@ -32,24 +44,8 @@
             :mode="rightPane.mode"
             :filter="rightPane.filter"
             direction="vertical"
-            class="k-panel" />
+            class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
-        </div>
-      </div>
-    </q-page-sticky>
-    <!-- bottom -->
-    <q-page-sticky position="bottom">
-      <div id="bottom-pane" v-show="hasBottomPaneContent" class="column items-center">
-        <k-opener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
-        <div>
-          <k-panel
-            id="bottom-panel"
-            v-show="bottomPane.visible"
-            :content="bottomPane.content"
-            :mode="bottomPane.mode"
-            :filter="bottomPane.filter"
-            class="k-panel" />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
       </div>
     </q-page-sticky>
@@ -63,7 +59,7 @@
             :content="topPane.content"
             :mode="topPane.mode"
             :filter="topPane.filter"
-            class="k-panel" />
+            class="k-pane" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
         <k-opener id="top-opener" v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
@@ -72,6 +68,10 @@
     <!-- window -->
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window id="window" ref="window" />
+    </q-page-sticky>      
+    <!-- fab -->
+    <q-page-sticky position="bottom-right" :offset="fabOffset">
+      <k-fab />
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left">
@@ -84,7 +84,7 @@
             :mode="leftPane.mode"
             :filter="leftPane.filter"
             direction="vertical"
-            class="k-left-panel"
+            class="k-left-pane"
             @triggered="setLeftPaneVisible(false)" />
           <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
         </div>
@@ -255,17 +255,16 @@ export default {
 </script>
 
 <style lang="stylus">
-.k-panel, .k-left-panel {
+.k-pane=, .k-left-pane {
   border: solid 1px lightgrey;
   border-radius: 5px;
-  background: #ffffff;
 }
 
-.k-panel:hover, .k-left-panel:hover {
+.k-pane:hover, .k-left-pane:hover {
   border: solid 1px $primary;
 }
 
-.k-left-panel {
+.k-left-pane {
   height: 100vh;
   width: 300px;
 }
