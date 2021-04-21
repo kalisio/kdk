@@ -33,7 +33,7 @@
           <q-item-label>{{ scope.opt.baseUrl }}</q-item-label>
         </q-item-section>
         <q-item-section side>
-          <k-action id="delete-service" icon="las la-trash" @triggered="onDeleteService(scope.opt)" />
+          <k-action id="delete-service" icon="las la-trash" :propagate="false" @triggered="onDeleteService(scope.opt)" />
         </q-item-section>
       </q-item>
     </template>
