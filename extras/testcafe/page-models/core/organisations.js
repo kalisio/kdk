@@ -8,8 +8,6 @@ export default class Organisations extends BasePage {
     super()
     // Organisations collection
     this.organisations = VueSelector('ref:organisationsGrid QCard')
-    // this.organisations = Selector('.q-page .q-card')
-    this.grid = 'organisationsGrid'
 
     // Organisation create editor
     this.editorNameField = VueSelector('k-text-field').nth(0)

@@ -2,6 +2,8 @@ import * as fs from 'fs'
 import png from 'pngjs'
 import pixelmatch from 'pixelmatch'
 import { ClientFunction } from 'testcafe'
+import BasePage from './base-page'
+import BaseCollection from './base-collection'
 import Screens from './screens'
 import Layout from './layout'
 import Account from './account'
@@ -12,6 +14,8 @@ import Tags from './tags'
 import Groups from './groups'
 
 export { Screens }
+export { BasePage }
+export { BaseCollection }
 export { Layout }
 export { Account }
 export { Organisations }

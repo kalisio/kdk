@@ -119,7 +119,7 @@ export default class Layout extends BasePage {
   // Fab
   async clickFab (test, action) {
     await test
-      .click(Selector(action))
+      .click(Selector(`#${action}`))
       .wait(Layout.SHORT_WAIT)
   }
 

@@ -5,31 +5,20 @@ import BasePage from './base-page'
 export default class Members extends BasePage {
   constructor () {
     super()
-    this.members = Selector('.q-page .q-card')
-  }
-
-  static get OVERFLOW_MENU_ENTRY () {
-    return 'members'
-  }
-
-  static get TAB_BAR_ENTRY () {
-    return 'members'
+    // Members collections
+    this.members = VueSelector('ref:membersGrid QCard')
   }
 
   static get ADD_MEMBER_FAB_ENTRY () {
     return 'add-member'
   }
 
-  static get INVITE_MEMBER_FAB_ENTRY () {
-    return 'invite-member'
-  }
-
-  async clickCardToolBar (test, name, action) {
+  async clickAction (test, name, action) {
     await test
-      .click(this.members.withText(name).find(action))
+      .click(this.members.withText(name).find(`#${action}`))
   }
 
-  async clickCardOverflowMenu (test, name, entry) {
+  async clickMenuEntry (test, name, entry) {
     await test
       .click(this.members.withText(name).find('#card-overflow-menu'))
       .click(Selector('.q-menu').find(entry))
