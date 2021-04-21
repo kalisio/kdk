@@ -164,23 +164,22 @@ export default {
       if (layerOptions.type !== 'kanvasLayer') return
 
       const layer = this.createLeafletLayer(options)
-  //     const code = `
-  //     ctx.fillStyle = "rgba(255,116,0, 0.2)";
-  //     ctx.fillRect(0, 0, info.canvas.width / 2, info.canvas.height/2);
-  //     ctx.fillStyle = "rgba(0,0,0, 0.5)";
-  //     ctx.strokeText("coucou!", 50, 50);
-  // `
-  //     this.setupCanvasLayerDrawCode(layer, code)
       this.buildDrawCode(layer, layerOptions)
       return layer
     },
 
     buildDrawCode (layer, options) {
-      const fnCode = `"use strict;"
-return () => { console.log(window); }`
-      const testFnGen = Function(fnCode)
-      const fn = testFnGen().apply(undefined)
-      fn()
+      const handler = {
+        get: (target, prop, receiver) => { return undefined }
+        /*
+        set: (target, prop, newval) => {},
+        defineProperty: (target, key, descriptor) => {
+          return false
+        }
+        */
+      }
+      const proxy = new Proxy(window, handler)
+      // const proxy = {}
 
       layer.getFeature = []
       layer.drawFunctions = []
@@ -193,11 +192,16 @@ return () => { console.log(window); }`
           return l._features[srcFeature]
         })
 
-        const drawCode = `"use strict;"
-// define visible variables for drawing code
+        const drawCode =
+`// define visible variables for drawing code
 const ctx = this.ctx;
 const info = this.info;
-${d.code};
+with (this.proxy) {
+  // const fn = eval("console.log(L);")
+  // const fn = new Function("console.log(L);")
+
+  ${d.code};
+}
 `
         layer.drawFunctions.push(new Function(drawCode))
       }
@@ -214,31 +218,11 @@ ${d.code};
               offset = layer._map.latLngToContainerPoint(L.latLng(c.geometry.coordinates[1], c.geometry.coordinates[0]))
               ctx.translate(offset.x, offset.y)
             }
-            layer.drawFunctions[i].call({ ctx, info, log: console.log })
+            layer.drawFunctions[i].call({ ctx, info, proxy, log: console.log })
             if (feature) {
               ctx.translate(-offset.x, -offset.y)
             }
           }
-          ctx.restore()
-        }
-      }
-      layer.needRedraw()
-    },
-
-    setupCanvasLayerDrawCode (layer, code) {
-      const drawCode = `"use strict;"
-const ctx = this.ctx;
-const info = this.info;
-${code}`
-      layer.drawFunction = new Function(drawCode)
-      if (!layer.onDrawLayer) {
-        layer.onDrawLayer = (info) => {
-          const ctx = info.canvas.getContext('2d')
-          ctx.save()
-          // ctx.resetTransform()
-          ctx.clearRect(0, 0, info.canvas.width, info.canvas.height)
-          ctx.translate(100, 100)
-          layer.drawFunction.call({ ctx, info })
           ctx.restore()
         }
       }
