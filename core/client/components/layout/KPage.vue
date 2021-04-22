@@ -255,7 +255,7 @@ export default {
 </script>
 
 <style lang="stylus">
-.k-pane=, .k-left-pane {
+.k-pane, .k-left-pane {
   border: solid 1px lightgrey;
   border-radius: 5px;
 }
