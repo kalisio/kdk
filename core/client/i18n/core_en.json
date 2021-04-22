@@ -510,7 +510,7 @@
     "MEMBERS_LABEL": "$t(MEMBERS)",
     "SORT_MEMBERS": "Sort members",
     "SEARCH_MEMBERS": "Search members",
-    "ADD_USER_LABEL": "Add a user",
+    "ADD_USER_LABEL": "Add a member",
     "INVITE_GUEST_LABEL": "Invite guests"
   },
   "KAddMember": {

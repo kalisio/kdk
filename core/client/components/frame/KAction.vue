@@ -9,7 +9,7 @@
     :icon="computedIcon"
     :color="computedColor"
     :size="size"
-    :flat="flat"
+    :flat="true"
     :round="label===''"
     :rounded="label!==''"
     :dense="dense"
@@ -62,9 +62,31 @@
     </q-item-section>
   </q-item>
   <!--
-  Fab renderer
+    Fab renderer
+   -->
+  <q-btn v-else-if="renderer === 'fab'"
+    :id="id"
+    class="k-fab"
+    :icon="computedIcon"
+    :color="computedColor"
+    :size="size"
+    :round="true"
+    :dense="dense"
+    :disabled="disabled"
+    @click="onClicked(arguments[0])">
+    <!-- tooltip -->
+    <q-tooltip v-if="computedTooltip">
+      {{ computedTooltip }}
+    </q-tooltip>
+    <!-- badge -->
+    <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
+      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+    </q-badge>
+  </q-btn>
+  <!--
+  Fab action renderer
   -->
-  <q-fab-action v-else-if="renderer === 'fab'"
+  <q-fab-action v-else-if="renderer === 'fab-action'"
     :id="id"
     class="k-fab-action"
     no-caps
@@ -105,10 +127,6 @@ export default {
     size: {
       type: String,
       default: 'md'
-    },
-    flat: {
-      type: Boolean,
-      default: true
     },
     outline: {
       type: Boolean,
@@ -166,7 +184,7 @@ export default {
       type: String,
       default: 'button',
       validator: (value) => {
-        return ['button', 'form-button', 'item', 'fab'].includes(value)
+        return ['button', 'form-button', 'item', 'fab', 'fab-action'].includes(value)
       }
     }
   },
@@ -271,7 +289,7 @@ export default {
 </script>
 
 <style lang="stylus">
-  .k-fab-action {
-    border: 2px solid $primary + 80%;
+  .k-fab, .k-fab-action {
+    border: 2px solid var(--q-color-secondary);
   }
 </style>

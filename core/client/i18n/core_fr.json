@@ -516,7 +516,7 @@
     "MEMBERS_LABEL": "$t(MEMBERS)",
     "SORT_MEMBERS": "Trier les membres",
     "SEARCH_MEMBERS": "Rechercher des membres",
-    "ADD_USER_LABEL": "Ajouter un utilisateur",
+    "ADD_USER_LABEL": "Ajouter un membre",
     "INVITE_GUEST_LABEL": "Inviter des personnes"
   },
   "KAddMember": {
