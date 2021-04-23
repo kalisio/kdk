@@ -1,6 +1,6 @@
 import L from 'leaflet'
 // import 'leaflet-canvas-layer'
-import turf_centroid from '@turf/centroid'
+// import turf_centroid from '@turf/centroid'
 import turf_destination from '@turf/destination'
 import { point as turf_point } from '@turf/helpers'
 
@@ -90,7 +90,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     },
 
-    //------------------------------------------------------------
+    //---------- --------------------------------------------------
     addTo: function (map) {
         map.addLayer(this);
         return this;
@@ -154,8 +154,192 @@ L.kanvasLayer = function () {
     return new L.KanvasLayer();
 };
 
+const canvasLib = {
+  // vec2 helpers
+  vec2: (pointA, pointB) => { return { x: pointA.x - pointB.x, y: pointA.y - pointB.y } },
+  len2: (vec2) => { return Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y) },
+  scale2: (vec2, value) => { return { x: vec2.x * value, y: vec2.y * value } },
+  norm2: (vec2) => {
+    const len = Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y)
+    return { x: vec2.x / len, y: vec2.y / len }
+  }
+}
 
+const dragonFlyLib = {
+  speedVector: (ctx, acCoords, acBearing, acSpeed) => {
+    // we'll compute points at 1, 2, 5 and 6 mins
+    const conf = {
+      arrow: { dt: 7, color: '#ffffff', tipWidth: 8, tipLength: 16, baseRadius: 4, lineWidth: 1 },
+      stops: [
+        { dt: 1, color: '#ff0000', lineWidth: 4 },
+        { dt: 2, color: '#ffa500', lineWidth: 3 },
+        { dt: 5, color: '#ffffff', lineWidth: 2 }
+      ]
+    }
 
+    ctx.canvas.save()
+
+    // compute arrow end point and stop points
+    const acPoint = turf_point([acCoords.lon, acCoords.lat])
+    const arrowPoint = turf_destination(acPoint, acSpeed * (conf.arrow.dt / 60), acBearing)
+    const stopPoints = conf.stops.map((stop) => turf_destination(acPoint, acSpeed * (stop.dt / 60), acBearing))
+
+    // then project in canvas space
+    const acPos = ctx.latLonToCanvas(acCoords)
+    const arrowPos = ctx.latLonToCanvas({lat: arrowPoint.geometry.coordinates[1], lon: arrowPoint.geometry.coordinates[0]})
+    const acStopPos = stopPoints.map((point) => ctx.latLonToCanvas({lat: point.geometry.coordinates[1], lon: point.geometry.coordinates[0]}))
+
+    const uArrow = ctx.norm2(ctx.vec2(arrowPos, acPos))
+    const tipHalfLength = conf.arrow.tipLength / 2
+    const tipHalfWidth = conf.arrow.tipWidth / 2
+
+    // draw arrow base (circle) + arrow tip
+    ctx.canvas.beginPath()
+    ctx.canvas.arc(acPos.x, acPos.y, conf.arrow.baseRadius, 0, Math.PI * 2)
+    ctx.canvas.moveTo(arrowPos.x, arrowPos.y)
+    const arrowBase = {
+      x: arrowPos.x - (tipHalfLength * uArrow.x),
+      y: arrowPos.y - (tipHalfLength * uArrow.y)
+    }
+    ctx.canvas.lineTo(arrowBase.x + (tipHalfWidth * uArrow.y), arrowBase.y + (tipHalfWidth * uArrow.x))
+    ctx.canvas.lineTo(arrowBase.x - (tipHalfWidth * uArrow.y), arrowBase.y - (tipHalfWidth * uArrow.x))
+    ctx.canvas.closePath()
+    ctx.canvas.fillStyle = conf.arrow.color
+    ctx.canvas.fill()
+
+    // draw arrow line
+    ctx.canvas.beginPath()
+    ctx.canvas.moveTo(acPos.x, acPos.y)
+    ctx.canvas.lineTo(arrowPos.x, arrowPos.y)
+    ctx.canvas.strokeStyle = conf.arrow.color
+    ctx.canvas.lineWidth = conf.arrow.lineWidth
+    ctx.canvas.lineCap = 'butt'
+    ctx.canvas.stroke()
+
+    // draw arcs at configured stops
+    for (let i = 0; i < conf.stops.length; ++i) {
+      ctx.canvas.beginPath()
+      const radius = ctx.len2(ctx.vec2(acStopPos[i], acPos))
+      ctx.canvas.arc(acPos.x, acPos.y, radius, (270 + acBearing - 30) * (Math.PI / 180), (270 + acBearing + 30) * (Math.PI / 180))
+      ctx.canvas.strokeStyle = conf.stops[i].color
+      ctx.canvas.lineWidth = conf.stops[i].lineWidth
+      ctx.canvas.lineCap = 'round'
+      ctx.canvas.stroke()
+    }
+
+    ctx.canvas.restore()
+  },
+  rangeCircles: (ctx, acCoords, acSpeed) => {
+    // 5, 15, 30 and 60 minutes
+    const conf = {
+      stops: [
+        { dt:  5, color: '#ff0000', lineWidth: 4 },
+        { dt: 15, color: '#ffa500', lineWidth: 3 },
+        { dt: 30, color: '#ff0000', lineWidth: 2 },
+        { dt: 60, color: '#ffffff', lineWidth: 2 }
+      ]
+    }
+
+    ctx.canvas.save()
+
+    // compute lat/lon stop points
+    const acPoint = turf_point([acCoords.lon, acCoords.lat])
+    const stopPoints = conf.stops.map((stop) => turf_destination(acPoint, acSpeed * (stop.dt / 60), 0))
+
+    // project in canvas space
+    const acPos = ctx.latLonToCanvas(acCoords)
+    const acStopPos = stopPoints.map((point) => ctx.latLonToCanvas({lat: point.geometry.coordinates[1], lon: point.geometry.coordinates[0]}))
+
+    // draw circles at configured stops
+    for (let i = 0; i < conf.stops.length; ++i) {
+      ctx.canvas.beginPath()
+      const radius = ctx.len2(ctx.vec2(acStopPos[i], acPos))
+      ctx.canvas.arc(acPos.x, acPos.y, radius, 0, Math.PI * 2)
+      ctx.canvas.strokeStyle = conf.stops[i].color
+      ctx.canvas.lineWidth = conf.stops[i].lineWidth
+      ctx.canvas.stroke()
+    }
+
+    ctx.canvas.restore()
+  },
+  contingencySpider: (ctx, acCoords) => {
+    const conf = {
+      legLength: 30,
+      radius: 25,
+      airports: [
+        { aita: 'BIQ', oaci: 'LFBZ', coords: [-1.5312, 43.4534] },
+        { aita: 'TLS', oaci: 'LFBO', coords: [1.3678, 43.6192] },
+        { aita: 'ORY', oaci: 'LFPO', coords: [2.3593, 48.7114] },
+        { aita: 'AJA', oaci: 'LFKJ', coords: [8.8021, 41.9084] }
+      ]
+    }
+
+    ctx.canvas.save()
+
+    // project points in canvas space
+    const acPos = ctx.latLonToCanvas(acCoords)
+    const apVec = conf.airports.map((airport) => {
+      const pos = ctx.latLonToCanvas({ lat: airport.coords[1], lon: airport.coords[0] })
+      return ctx.norm2(ctx.vec2(pos, acPos))
+    })
+
+    ctx.canvas.beginPath()
+    // circle around ac
+    ctx.canvas.arc(acPos.x, acPos.y, conf.radius, 0, Math.PI * 2)
+    // then spider legs
+    for (let i = 0; i < conf.airports.length; ++i) {
+      const base = {
+        x: acPos.x + conf.radius * apVec[i].x,
+        y: acPos.y + conf.radius * apVec[i].y
+      }
+      ctx.canvas.moveTo(base.x, base.y)
+      ctx.canvas.lineTo(base.x + conf.legLength * apVec[i].x, base.y + conf.legLength * apVec[i].y)
+    }
+    ctx.canvas.strokeStyle = '#ffa500'
+    ctx.canvas.stroke()
+
+    // display text on legs
+    ctx.canvas.fillStyle = '#ffffff'
+    for (let i = 0; i < conf.airports.length; ++i) {
+      ctx.canvas.fillText(conf.airports[i].aita, acPos.x + (conf.radius + conf.legLength) * apVec[i].x, acPos.y + (conf.radius + conf.legLength) * apVec[i].y)
+    }
+
+    ctx.canvas.restore()
+  },
+  contingencyRoutes: (ctx, acCoords) => {
+    const conf = {
+      deadRadius: 30,
+      routes: [
+        { points: [[-1.17210, 43.32917], [-1.30806, 43.38709], [-1.32042, 43.56049], [-1.5312, 43.4534]], dash: [5, 15], color: '#ffffff' }
+      ]
+    }
+
+    ctx.canvas.save()
+
+    const acPos = ctx.latLonToCanvas(acCoords)
+
+    for (const route of conf.routes) {
+      // project route points in canvas space
+      const points = route.points.map((point) => ctx.latLonToCanvas({ lat: point[1], lon: point[0] }))
+      const uPoint0 = ctx.norm2(ctx.vec2(points[0], acPos))
+
+      ctx.canvas.beginPath()
+      // first point, just outside dead zone around ac
+      ctx.canvas.moveTo(acPos.x + conf.deadRadius * uPoint0.x, acPos.y + conf.deadRadius * uPoint0.y)
+      // all other route points
+      for (const point of points) ctx.canvas.lineTo(point.x, point.y)
+      ctx.canvas.strokeStyle = route.color
+      ctx.canvas.lineWidth = conf.lineWidth
+      ctx.canvas.setLineDash(route.dash)
+      ctx.canvas.stroke()
+    }
+
+    ctx.canvas.restore()
+  },
+  incapacitationIndicator: (ctx) => {
+
+  }
+}
 
 export default {
   methods: {
@@ -171,246 +355,84 @@ export default {
     },
 
     buildDrawCode (layer, options) {
-      const handler = {
-        get: (target, prop, receiver) => { return undefined }
-        /*
-        set: (target, prop, newval) => {},
-        defineProperty: (target, key, descriptor) => {
-          return false
-        }
-        */
-      }
-      const proxy = new Proxy(window, handler)
-
-      const drawLib = {
-        latLonToCanvas: (lat, lon) => layer._map.latLngToContainerPoint(L.latLng(lat, lon)),
-        speedVector: (ctx, acLat, acLon, acBearing, acSpeed) => {
-          // we'll compute points at 1, 2, 5 and 6 mins
-          const conf = {
-            arrow: { dt: 7, color: '#ffffff', tipWidth: 8, tipLength: 16, baseRadius: 4 },
-            stops: [
-              { dt: 1, color: '#ff0000', lineWidth: 4 },
-              { dt: 2, color: '#ffa500', lineWidth: 3 },
-              { dt: 5, color: '#ffffff', lineWidth: 2 }
-            ]
-          }
-
-          ctx.save()
-
-          const acPoint = turf_point([acLon, acLat])
-          const arrowPoint = turf_destination(acPoint, acSpeed * (conf.arrow.dt / 60), acBearing)
-          const stopPoints = conf.stops.map((stop) => turf_destination(acPoint, acSpeed * (stop.dt / 60), acBearing))
-
-          const acPos = layer._map.latLngToContainerPoint(L.latLng(acPoint.geometry.coordinates[1], acPoint.geometry.coordinates[0]))
-          const arrowPos = layer._map.latLngToContainerPoint(L.latLng(arrowPoint.geometry.coordinates[1], arrowPoint.geometry.coordinates[0]))
-          const acStopPos = stopPoints.map((point) => {
-            const proj = layer._map.latLngToContainerPoint(L.latLng(point.geometry.coordinates[1], point.geometry.coordinates[0]))
-            const x = proj.x - acPos.x
-            const y = proj.y - acPos.y
-            return { x, y, len: Math.sqrt((x * x) + (y * y)) }
-          })
-
-          const arrow = { x: arrowPos.x - acPos.x, y: arrowPos.y - acPos.y }
-          const lenArrow = Math.sqrt(arrow.x * arrow.x + arrow.y * arrow.y)
-          const uArrow = { x: arrow.x / lenArrow, y: arrow.y / lenArrow }
-          const tipHalfLength = conf.arrow.tipLength / 2
-          const tipHalfWidth = conf.arrow.tipWidth / 2
-
-          // draw arrow base (circle) + arrow tip
-          ctx.beginPath()
-          ctx.arc(0, 0, conf.arrow.baseRadius, 0, Math.PI * 2)
-          ctx.moveTo(arrow.x, arrow.y)
-          ctx.lineTo(arrow.x - (tipHalfLength * uArrow.x) + (tipHalfWidth * uArrow.y), arrow.y - (tipHalfLength * uArrow.y) + (tipHalfWidth * uArrow.x))
-          ctx.lineTo(arrow.x - (tipHalfLength * uArrow.x) - (tipHalfWidth * uArrow.y), arrow.y - (tipHalfLength * uArrow.y) - (tipHalfWidth * uArrow.x))
-          ctx.closePath()
-          ctx.fillStyle = conf.arrow.color
-          ctx.fill()
-
-          // draw arrow line
-          ctx.beginPath()
-          ctx.moveTo(0, 0)
-          ctx.lineTo(arrowPos.x - acPos.x, arrowPos.y - acPos.y)
-          ctx.strokeStyle = conf.arrow.color
-          ctx.lineWidth = 1
-          ctx.lineCap = 'butt'
-          ctx.stroke()
-
-          // draw arcs at configured stops
-          for (let i = 0; i < conf.stops.length; ++i) {
-            ctx.beginPath()
-            ctx.arc(0, 0, acStopPos[i].len, (270 + acBearing - 30) * (Math.PI / 180), (270 + acBearing + 30) * (Math.PI / 180))
-            ctx.strokeStyle = conf.stops[i].color
-            ctx.lineWidth = conf.stops[i].lineWidth
-            ctx.lineCap = 'round'
-            ctx.stroke()
-          }
-
-          ctx.restore()
-        },
-        rangeCircles: (ctx, acLat, acLon, acSpeed) => {
-          // 5, 15, 30 and 60 minutes
-          const conf = {
-            stops: [
-              { dt:  5, color: '#ff0000', lineWidth: 4 },
-              { dt: 15, color: '#ffa500', lineWidth: 3 },
-              { dt: 30, color: '#ff0000', lineWidth: 2 },
-              { dt: 60, color: '#ffffff', lineWidth: 2 }
-            ]
-          }
-
-          ctx.save()
-
-          const acPoint = turf_point([acLon, acLat])
-          const stopPoints = conf.stops.map((stop) => turf_destination(acPoint, acSpeed * (stop.dt / 60), 0))
-
-          const acPos = layer._map.latLngToContainerPoint(L.latLng(acPoint.geometry.coordinates[1], acPoint.geometry.coordinates[0]))
-          const acStopPos = stopPoints.map((point) => {
-            const proj = layer._map.latLngToContainerPoint(L.latLng(point.geometry.coordinates[1], point.geometry.coordinates[0]))
-            const x = proj.x - acPos.x
-            const y = proj.y - acPos.y
-            return { x, y, len: Math.sqrt((x * x) + (y * y)) }
-          })
-
-          // draw circles at configured stops
-          for (let i = 0; i < conf.stops.length; ++i) {
-            ctx.beginPath()
-            ctx.arc(0, 0, acStopPos[i].len, 0, Math.PI * 2)
-            ctx.strokeStyle = conf.stops[i].color
-            ctx.lineWidth = conf.stops[i].lineWidth
-            ctx.stroke()
-          }
-
-          ctx.restore()
-        },
-        contingencySpider: (ctx, acLat, acLon) => {
-          const conf = {
-            len: 30,
-            radius: 25,
-            airports: [
-              { aita: 'BIQ', oaci: 'LFBZ', coords: [-1.5312, 43.4534] },
-              { aita: 'TLS', oaci: 'LFBO', coords: [1.3678, 43.6192] },
-              { aita: 'ORY', oaci: 'LFPO', coords: [2.3593, 48.7114] },
-              { aita: 'AJA', oaci: 'LFKJ', coords: [8.8021, 41.9084] }
-            ]
-          }
-
-          ctx.save()
-
-          const acPos = layer._map.latLngToContainerPoint(L.latLng(acLat, acLon))
-          const apPos = conf.airports.map((airport) => layer._map.latLngToContainerPoint(L.latLng(airport.coords[1], airport.coords[0])))
-          apPos.forEach((pos) => {
-            pos.x -= acPos.x
-            pos.y -= acPos.y
-          })
-          const apLen = apPos.map((pos) => Math.sqrt((pos.x * pos.x) + (pos.y * pos.y)))
-
-          ctx.beginPath()
-          ctx.arc(0, 0, conf.radius, 0, Math.PI * 2)
-          for (let i = 0; i < conf.airports.length; ++i) {
-            ctx.moveTo(conf.radius * (apPos[i].x / apLen[i]), conf.radius * (apPos[i].y / apLen[i]))
-            ctx.lineTo((conf.radius + conf.len) * (apPos[i].x / apLen[i]), (conf.radius + conf.len) * (apPos[i].y / apLen[i]))
-          }
-          ctx.strokeStyle = '#ffa500'
-          ctx.stroke()
-
-          ctx.fillStyle = '#ffffff'
-          for (let i = 0; i < conf.airports.length; ++i)
-            ctx.fillText(conf.airports[i].aita, (conf.radius + conf.len) * (apPos[i].x / apLen[i]), (conf.radius + conf.len) * (apPos[i].y / apLen[i]))
-
-          ctx.restore()
-        },
-        contingencyRoutes: (ctx, acLat, acLon) => {
-          const conf = {
-            deadRadius: 30,
-            routes: [
-              { points: [[-1.17210, 43.32917], [-1.30806, 43.38709], [-1.32042, 43.56049], [-1.5312, 43.4534]], dash: [5, 15], color: '#ffffff' }
-            ]
-          }
-
-          ctx.save()
-
-          const acPos = layer._map.latLngToContainerPoint(L.latLng(acLat, acLon))
-
-          for (const route of conf.routes) {
-            const points = route.points.map((point) => layer._map.latLngToContainerPoint(L.latLng(point[1], point[0])))
-            points.forEach((pos) => {
-              pos.x -= acPos.x
-              pos.y -= acPos.y
-            })
-            const len = Math.sqrt(points[0].x * points[0].x + points[0].y * points[0].y)
-            ctx.beginPath()
-            ctx.moveTo(conf.deadRadius * (points[0].x / len), conf.deadRadius * (points[0].y / len))
-            for (const point of points) {
-              ctx.lineTo(point.x, point.y)
-            }
-            ctx.strokeStyle = route.color
-            ctx.lineWidth = conf.lineWidth
-            ctx.setLineDash(route.dash)
-            ctx.stroke()
-          }
-
-          ctx.restore()
-        },
-        incapacitationIndicator: (ctx) => {
-
-        }
-      }
-
-      layer.getFeature = []
-      layer.drawFunctions = []
+      layer.onFeature = []
+      layer.onLayer = []
       for (const d of options.draw) {
-        const [srcLayer, srcFeature] = d.relativeTo.split('?')
-        layer.getFeature.push(() => {
-          const l = this.getLeafletLayerByName(srcLayer)
-          if (!l) return null
-
-          return l._features[srcFeature]
-        })
-
-        const drawCode =
-`// define visible variables for drawing code
-const ctx = this.ctx;
-const info = this.info;
-const lib = this.lib;
-const feature = this.feature;
-with (this.proxy) {
-  // const fn = eval("console.log(L);")
-  // const fn = new Function("console.log(L);")
-
-  // ${d.code};
-  if (feature) {
-    if (info.zoom < 10)
-      lib.rangeCircles(ctx, feature.geometry.coordinates[1], feature.geometry.coordinates[0], 100);
-    else
-      lib.speedVector(ctx, feature.geometry.coordinates[1], feature.geometry.coordinates[0], 0, 100);
-    lib.contingencyRoutes(ctx, feature.geometry.coordinates[1], feature.geometry.coordinates[0])
-    lib.contingencySpider(ctx, feature.geometry.coordinates[1], feature.geometry.coordinates[0])
+        if (d.feature) {
+          const [srcLayer, srcFeature] = d.feature.split('?')
+          const code = `
+// define visible variables
+const ctx = this;
+// with(this.proxy) { ${d.code} }
+with(this.proxy) {
+  const coords = {
+    lat: ctx.feature.geometry.coordinates[1],
+    lon: ctx.feature.geometry.coordinates[0]
   }
+  if (ctx.zoom < 10)
+    ctx.rangeCircles(ctx, coords, 100);
+  else
+    ctx.speedVector(ctx, coords, 0, 100);
+  ctx.contingencyRoutes(ctx, coords)
+  ctx.contingencySpider(ctx, coords)
 }
 `
-        layer.drawFunctions.push(new Function(drawCode))
+          const onFeature = {
+            lookup: () => {
+              const layer = this.getLeafletLayerByName(srcLayer)
+              if (!layer) return null
+
+              return layer._features ? layer._features[srcFeature] : undefined
+            },
+            draw: Function(code)
+          }
+          layer.onFeature.push(onFeature)
+        } else if (d.layer) {
+          const code = `
+// define visible variables
+const ctx = this;
+with(this.proxy) { ${d.code} }
+`
+          const onLayer = {
+            lookup: () => this.getLeafletLayerByName(d.layer),
+            draw: Function(code)
+          }
+          layer.onLayer.push(onLayer)
+        }
       }
+
       if (!layer.onDrawLayer) {
         layer.onDrawLayer = (info) => {
           const ctx = info.canvas.getContext('2d')
           ctx.save()
           ctx.clearRect(0, 0, info.canvas.width, info.canvas.height)
-          for (let i = 0; i < layer.getFeature.length; ++i) {
-            const feature = layer.getFeature[i]()
-            let offset
-            if (feature) {
-              const c = turf_centroid(feature)
-              offset = layer._map.latLngToContainerPoint(L.latLng(c.geometry.coordinates[1], c.geometry.coordinates[0]))
-              ctx.translate(offset.x, offset.y)
-            }
-            layer.drawFunctions[i].call({ ctx, info, lib: drawLib, proxy, log: console.log, feature })
-            if (feature) {
-              ctx.translate(-offset.x, -offset.y)
+
+          // build context for code
+          const context = Object.assign({
+            canvas: ctx,
+            zoom: info.zoom,
+            latLonToCanvas: (coords) => layer._map.latLngToContainerPoint(L.latLng(coords.lat, coords.lon))
+          }, this.canvasLayerDrawContext)
+
+          for (const onFeature of layer.onFeature) {
+            const feature = onFeature.lookup()
+            if (!feature) continue
+            context.feature = feature
+            onFeature.draw.call(context)
+          }
+          for (const onLayer of layer.onLayer) {
+            const layer = onLayer.lookup()
+            if (!layer) continue
+            for (const feature of layer._features) {
+              context.feature = feature
+              onLayer.draw.call(context)
             }
           }
+
           ctx.restore()
         }
       }
+
       layer.needRedraw()
     },
 
@@ -424,6 +446,16 @@ with (this.proxy) {
   },
 
   created () {
+    // a proxy to limit access to variable not defined in draw code scope
+    this.canvasLayerDrawProxy = new Proxy(window, {
+      get: (target, prop, receiver) => { return undefined }
+    })
+    // the base context we'll make available in draw code
+    this.canvasLayerDrawContext = Object.assign({
+      proxy: this.canvasLayerDrawProxy,
+      // log: console.log,
+    }, canvasLib, dragonFlyLib)
+
     this.registerLeafletConstructor(this.createLeafletCanvasLayer)
   },
 
