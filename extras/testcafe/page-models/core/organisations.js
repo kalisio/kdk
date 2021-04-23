@@ -1,14 +1,10 @@
 import { Selector } from 'testcafe'
 import VueSelector from 'testcafe-vue-selectors'
-import BasePage from './base-page'
-import _ from 'lodash'
+import BaseCollection from './base-collection'
 
-export default class Organisations extends BasePage {
+export default class Organisations extends BaseCollection {
   constructor () {
-    super()
-    // Organisations collection
-    this.organisations = VueSelector('ref:organisationsGrid QCard')
-
+    super('organisationsGrid', 'QCard')
     // Organisation create editor
     this.editorNameField = VueSelector('k-text-field').nth(0)
     this.editoDescriptionField = VueSelector('k-text-field').nth(1)
@@ -20,18 +16,6 @@ export default class Organisations extends BasePage {
     return 'organisations'
   }
 
-  async clickAction (test, name, action) {
-    await test
-      // .debug()
-      .click(this.organisations.withText(name).find(`#${action}`))
-  }
-
-  async checkCount (test, count) {
-    const organisations = this.organisations
-    const organisationsCount = await organisations.count
-    await test.expect(organisationsCount).eql(count, 'Invalid organisations count')
-  }
-
   async create (test, name, description) {
     await test
       .click(this.createLink)
@@ -41,12 +25,6 @@ export default class Organisations extends BasePage {
       .typeText(this.editoDescriptionField, description, { replace: true })
       .click(this.editorCreateButton)
       .wait(2000)
-  }
-
-  async setup (test, name) {
-    await test
-      .click(this.organisations.find('#' + _.kebabCase(name)))
-      .wait(250)
   }
 
   async delete (test, name) {

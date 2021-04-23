@@ -1,56 +1,42 @@
 import { Selector } from 'testcafe'
 import VueSelector from 'testcafe-vue-selectors'
-import BasePage from './base-page'
+import BaseCollection from './base-collection'
 
-export default class Members extends BasePage {
+export default class Members extends BaseCollection {
   constructor () {
-    super()
-    // Members collections
-    this.members = VueSelector('ref:membersGrid QCard')
+    super('membersGrid', 'QCard')
   }
 
-  static get ADD_MEMBER_FAB_ENTRY () {
+  static get ADD_MEMBER_ENTRY () {
     return 'add-member'
   }
 
-  async clickAction (test, name, action) {
+  async add (test, email, role) {
     await test
-      .click(this.members.withText(name).find(`#${action}`))
-  }
-
-  async clickMenuEntry (test, name, entry) {
-    await test
-      .click(this.members.withText(name).find('#card-overflow-menu'))
-      .click(Selector('.q-menu').find(entry))
-  }
-
-  async checkCount (test, count) {
-    const membersCount = this.members.count
-    await test.expect(membersCount).eql(count, 'Invalid members count')
-  }
-
-  async add (test, name, role) {
-    await test
-      .typeText(VueSelector('k-item-field'), name, { replace: true })
-      .wait(2000)
-      .click(Selector('.q-menu .q-item').nth(0))
-      .wait(250)
-      .click(VueSelector('k-select-field'))
-      .wait(250)
-      .click(Selector('.q-menu .q-item').nth(role))
-      .wait(250)
-      .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
-      .wait(2000)
-  }
-
-  async invite (test, name, email, role) {
-    await test
-      .typeText(VueSelector('k-text-field'), name, { replace: true })
       .typeText(VueSelector('k-email-field'), email, { replace: true })
+      .wait(250)
+      .click(Selector('.q-dialog').find('#continue-button'))
+      .wait(250)
       .click(VueSelector('k-select-field'))
+      .wait(250)
       .click(Selector('.q-menu .q-item').nth(role))
       .wait(250)
-      .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
+      .click(Selector('.q-dialog').find('#add-button'))
+      .wait(2000)
+  }
+
+  async invite (test, email, name, role) {
+    await test
+      .typeText(VueSelector('k-email-field'), email, { replace: true })
+      .wait(250)
+      .click(Selector('.q-dialog').find('#continue-button'))
+      .wait(250)
+      .typeText(VueSelector('k-text-field'), name, { replace: true })
+      .click(VueSelector('k-select-field'))
+      .wait(250)
+      .click(Selector('.q-menu .q-item').nth(role))
+      .wait(250)
+      .click(Selector('.q-dialog').find('#add-button'))
       .wait(2000)
   }
 
@@ -77,7 +63,7 @@ export default class Members extends BasePage {
   }
 
   async delete (test, name) {
-    await this.clickCardOverflowMenu(test, name, '#remove-member')
+    await this.clickMenuEntry(test, name, 'card-overflow-menu', 'remove-member')
     await test
       .click(Selector('.q-dialog .q-btn').nth(1))
       .wait(5000)
