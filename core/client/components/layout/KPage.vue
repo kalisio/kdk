@@ -197,16 +197,16 @@ export default {
   },
   methods: {
     onTopPaneResized (size) {
-      this.topPadding = size.height
+      this.topPadding = size.height + this.gutter
     },
     onLeftPaneResized (size) {
-      this.leftPadding = size.width
+      this.leftPadding = size.width + this.gutter
     },
     onRightPaneResized (size) {
-      this.rightPaddding = size.width
+      this.rightPaddding = size.width + this.gutter
     },
     onBottomPaneResized (size) {
-      this.bottomPadding = size.height
+      this.bottomPadding = size.height + this.gutter
     },
     setTopPaneVisible (visible) {
       this.$store.patch('topPane', { visible })
@@ -250,6 +250,8 @@ export default {
     // Read bottom pane configuration
     this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
+    // Set extra padding value
+    this.gutter = 8
   }
 }
 </script>

@@ -10,7 +10,12 @@
     :badge="computedBadge"
     :disabled="disabled">
     <template v-slot:content>
-      <q-menu id="options-chooser-menu" ref="menu" transition-show="scale" transition-hide="scale">
+      <q-popup-proxy 
+        id="options-chooser-popup" 
+        class="bg-white"
+        :auto-close="true"
+        transition-show="scale" 
+        transition-hide="scale">
         <q-list>
           <q-item v-for="option in computedOptions" :key="option.key" clickable @click="onClicked(option)">
             <q-item-section v-if="option.icon">
@@ -21,7 +26,7 @@
             </q-item-section>
           </q-item>
         </q-list>
-      </q-menu>
+      </q-popup-proxy>
     </template>
   </k-action>
 </template>
@@ -98,7 +103,6 @@ export default {
     onClicked (option) {
       this.option = option
       this.$emit('option-chosen', option.value)
-      this.$refs.menu.hide()
     }
   },
   created () {

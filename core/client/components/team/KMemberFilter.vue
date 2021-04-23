@@ -4,7 +4,11 @@
     icon="las la-filter"
     :color="filters.length > 0 ? 'accent' : 'grey-7'">
     <template v-slot:content>
-      <q-popup-proxy>
+      <q-popup-proxy 
+        id="member-filter-popup" 
+        class="bg-white"
+        transition-show="scale" 
+        transition-hide="scale">
         <q-option-group
           class="q-pl-xs q-pr-md"
           v-model="filters"

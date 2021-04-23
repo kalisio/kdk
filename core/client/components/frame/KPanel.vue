@@ -1,5 +1,5 @@
 <template>
-  <k-content class="k-panel"
+  <k-content class="bg-white"
     v-bind="$props"
     v-bind:class="{
       'row justify-center': direction === 'horizontal',
@@ -49,9 +49,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-  .k-panel {
-    background-color: #ffffff;
-  }
-</style>

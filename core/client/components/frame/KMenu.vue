@@ -15,7 +15,9 @@
       <q-popup-proxy
         :breakpoint="599"
         :persistent="$q.screen.gt.xs ? persistent : false"
-        :auto-close="autoClose">
+        :auto-close="autoClose"
+        transition-show="scale" 
+        transition-hide="scale">
         <k-panel
           id="menu-entries"
           :content="content"
