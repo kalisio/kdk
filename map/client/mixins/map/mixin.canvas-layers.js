@@ -350,32 +350,20 @@ export default {
       if (layerOptions.type !== 'kanvasLayer') return
 
       const layer = this.createLeafletLayer(options)
-      this.buildDrawCode(layer, layerOptions)
+      this.buildDrawCode(layer, layerOptions.draw)
       return layer
     },
 
-    buildDrawCode (layer, options) {
+    buildDrawCode (layer, drawCode) {
       layer.onFeature = []
       layer.onLayer = []
-      for (const d of options.draw) {
+      for (const d of drawCode) {
         if (d.feature) {
           const [srcLayer, srcFeature] = d.feature.split('?')
           const code = `
 // define visible variables
 const ctx = this;
-// with(this.proxy) { ${d.code} }
-with(this.proxy) {
-  const coords = {
-    lat: ctx.feature.geometry.coordinates[1],
-    lon: ctx.feature.geometry.coordinates[0]
-  }
-  if (ctx.zoom < 10)
-    ctx.rangeCircles(ctx, coords, 100);
-  else
-    ctx.speedVector(ctx, coords, 0, 100);
-  ctx.contingencyRoutes(ctx, coords)
-  ctx.contingencySpider(ctx, coords)
-}
+with(this.proxy) { ${d.code} }
 `
           const onFeature = {
             lookup: () => {
@@ -441,7 +429,7 @@ with(this.proxy) { ${d.code} }
       const layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
 
-      this.setupCanvasLayerDrawCode(layer, newDrawCode)
+      this.buildDrawCode(layer, newDrawCode)
     }
   },
 
