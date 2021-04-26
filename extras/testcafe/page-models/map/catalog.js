@@ -12,6 +12,7 @@ export default class Catalog extends BasePage {
   }
 
   async getCategory (category) {
+    const categoryId = 'KCatalogPanel.' + category
     const categories = VueSelector('k-catalog QExpansionItem')
     const count = await categories.count
     let catergoyObj = null
@@ -19,7 +20,7 @@ export default class Catalog extends BasePage {
       if (!catergoyObj) {
         const cat = categories.nth(i)
         const id = await cat.id
-        if (id === category) catergoyObj = cat
+        if (id === categoryId) catergoyObj = cat
       }
     }
     if (!catergoyObj) throw new Error(`Catalog category '${category}' not found !`)
