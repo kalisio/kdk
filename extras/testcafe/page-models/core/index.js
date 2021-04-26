@@ -104,7 +104,7 @@ function diffScreenshots (test, refKey, runKey, diffOpts = {}) {
  * in a standard location
  */
 export async function takeScreenshot (test, runKey) {
-  await t.takeScreenshot({ path: runScreenshot(test, runKey) })
+  await test.takeScreenshot({ path: runScreenshot(test, runKey) })
 }
 
 /* Makes sure screenshot matches between run and ref screenshot keys.
@@ -115,7 +115,7 @@ export async function takeScreenshot (test, runKey) {
  */
 export async function assertScreenshotMatches (test, runKey, { refKey = null, maxDiffRatio = 1.0, threshold = 0.1 } = {}) {
   const keyRef = refKey || runKey
-  await t.takeScreenshot({ path: runScreenshot(test, runKey) })
+  await test.takeScreenshot({ path: runScreenshot(test, runKey) })
   const diff = diffScreenshots(test, keyRef, runKey, { threshold })
   if (diff.diffRatio > maxDiffRatio) {
     const output = runScreenshot(test, `diff-${runKey}`, true)
@@ -132,7 +132,7 @@ export async function assertScreenshotMatches (test, runKey, { refKey = null, ma
  */
 export async function assertScreenshotMismatches (test, runKey, { refKey = null, minDiffRatio = 50.0, threshold = 0.1 } = {}) {
   const keyRef = refKey || runKey
-  await t.takeScreenshot({ path: runScreenshot(test, runKey) })
+  await test.takeScreenshot({ path: runScreenshot(test, runKey) })
   const diff = diffScreenshots(test, keyRef, runKey, { threshold })
   if (diff.diffRatio < minDiffRatio) {
     const output = runScreenshot(test, `diff-${runKey}`, true)
