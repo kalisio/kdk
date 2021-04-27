@@ -55,8 +55,6 @@ export const checkClientError = async (test) => {
   await test.expect(error[0]).ok()
 }
 
-
-
 // Screenshot helpers
 
 /* Given a screenshot key (a string) this will provide the full path

@@ -11,8 +11,7 @@ export default class Catalog extends BasePage {
   }
   
   // Categories
-  
-  async getCategory (category) {
+  async getCategoryElement (category) {
     const categoryId = 'KCatalogPanel.' + category
     const categoriesCount = await this.categories.count
     let categoryEl = null
@@ -24,13 +23,28 @@ export default class Catalog extends BasePage {
       }
     }
     if (!categoryEl) throw new Error(`Catalog category '${category}' not found !`)
+    return categoryEl
+  }
+  
+  async getCategory (category) {
+    const categoryEl = await this.getCategoryElement(category)
     const categoryVue = await categoryEl.getVue()
     return categoryVue
   }
 
-  async clickCategory (test, category) {
+  async clickCategory (test, category, state) {
+    const categoryEl = await this.getCategoryElement(category)
     await test
-      .click(this.categories.withAttribute('id', `KCatalogPanel.${category}`))
+      .click(categoryEl.find('.q-item'))
+    const categoryVue = await categoryEl.getVue()
+    await test
+      .expect(categoryVue.state.showing).eql(state)
+  }
+
+  async checkCategoryExpanded (test, category, state) {
+    const categoryVue = await this.getCategory(category)
+    await test
+      .expect(categoryVue.state.showing).eql(state)
   }
 
   async manageCategories (test) {
@@ -39,8 +53,7 @@ export default class Catalog extends BasePage {
   }
 
   // layers
-
-  async getLayer (layer) {
+  async getLayerElement (layer) {
     const layersCount = await this.layers.count
     let layerEl = null
     for (let i = 0; i < layersCount; ++i) {
@@ -51,24 +64,41 @@ export default class Catalog extends BasePage {
       }
     }
     if (!layerEl) throw new Error(`Catalog layer '${layer}' not found !`)
+    return layerEl
+  }
+
+  async getLayer (layer) {
+    const layerEl = await this.getLayerElement(layer)
     const layerVue = await layerEl.getVue()
     return layerVue
   }
 
   async clickLayer (test, layer) {
+    const layerEl = await this.getLayerElement(layer)
     await test
-      .click(this.layers.withAttribute('id', `${layer}`))
+      .click(layerEl.find('.q-item__section'))
   }
 
   async clickLayerAction (test, layer, action) {
-    const layerSelector = VueSelector('k-catalog').find(`#${layer}`)
+    const layerEl = await this.getLayerElement(layer)
     await test
-      .click(layerSelector.find('#layer-actions'))
+      .click(layerEl.find('#layer-actions'))
       .click(Selector('.q-menu').find(`#${action}`))
   }
 
-  // Meteo models
+  async checkLayerDisabled (test, layer, state) {
+    const layerVue = await this.getLayer(layer)
+    await test
+      .expect(layerVue.props.disable).eql(state)
+  }
 
+  async checkLayerActive (test, layer, state) {
+    const layerVue = await this.getLayer(layer)
+    await test
+      .expect(layerVue.props.active).eql(state)
+  }
+
+  // Meteo models
   async getMeteoModel (model) {
     return Selector('.q-menu').find(`#${model}`)
   }
