@@ -132,7 +132,6 @@ export async function assertScreenshotMatches (test, runKey, { refKey = null, ma
  */
 export async function assertScreenshotMismatches (test, runKey, { refKey = null, minDiffRatio = 50.0, threshold = 0.1 } = {}) {
   const keyRef = refKey || runKey
-  await test.takeScreenshot({ path: runScreenshot(test, runKey) })
   const diff = diffScreenshots(test, keyRef, runKey, { threshold })
   if (diff.diffRatio < minDiffRatio) {
     const output = runScreenshot(test, `diff-${runKey}`, true)
