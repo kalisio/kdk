@@ -99,7 +99,6 @@ export default {
       const results = await Search.query(this.properties.services, pattern)
       update(() => {
         if (this.properties.multiselect) {
-          console.log(this.properties)
           this.options = _.differenceWith(results, this.items, (item1, item2) => {
             return _.get(item1, item1.field) === _.get(item2, item2.field) && item1.service === item2.service
           })
