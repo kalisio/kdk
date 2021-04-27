@@ -410,12 +410,10 @@ with(this.proxy) { ${d.code} }
     },
 
     setCanvasLayerContext (name, userContext) {
-      console.log(userContext)
       const layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
 
       layer.userDrawContext = userContext
-      console.log(userContext)
     }
   },
 
