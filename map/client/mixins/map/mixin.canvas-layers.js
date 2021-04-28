@@ -328,85 +328,103 @@ export default {
       if (layerOptions.type !== 'kanvasLayer') return
 
       const layer = this.createLeafletLayer(options)
-      this.buildDrawCode(layer, layerOptions.draw)
+      this.setupCanvasLayer(layer, layerOptions.draw)
       return layer
     },
 
-    buildDrawCode (layer, drawCode) {
-      layer.onFeature = []
-      layer.onLayer = []
+    setupCanvasLayer (layer, drawCode) {
+      // helper function to manage listened layers states
+      // since canvas layer draw stuff related to geojson layers
+      // we listen to geojson layers 'update' event to mark our
+      // canvas layer with needRedraw
+      const updateListeners = (canvasLayer, listen) => {
+        for (const layerName in canvasLayer.listenedLayers) {
+          const state = canvasLayer.listenedLayers[layerName]
+          if (state === listen) continue
+          const listenedLayer = this.getLeafletLayerByName(layerName)
+          if (!listenedLayer) continue
+          if (listen) listenedLayer.on('update', canvasLayer.needRedraw, canvasLayer)
+          else listenedLayer.off('update', canvasLayer.needRedraw, canvasLayer)
+          canvasLayer.listenedLayers[layerName] = listen
+        }
+      }
+
+      // disconnect from previous geojson layers
+      updateListeners(layer, false)
+
+      layer.listenedLayers = {}
+      layer.drawCalls = []
+
       for (const d of drawCode) {
+        const drawCode = Function(`
+// define visible variables
+const ctx = this;
+with(this.proxy) { ${d.code} }
+`)
+
         if (d.feature) {
           const [srcLayer, srcFeature] = d.feature.split('?')
-          const code = `
-// define visible variables
-const ctx = this;
-with(this.proxy) { ${d.code} }
-`
-          const onFeature = {
-            lookup: () => {
-              const layer = this.getLeafletLayerByName(srcLayer)
-              if (!layer) return null
-
-              return layer._features ? layer._features[srcFeature] : undefined
-            },
-            draw: Function(code)
-          }
-          layer.onFeature.push(onFeature)
+          layer.drawCalls.push((context) => {
+            const layer = this.getLeafletLayerByName(srcLayer)
+            if (!layer) return
+            const feature = layer._features ? layer._features[srcFeature] : undefined
+            if (!feature) return
+            context.feature = feature
+            drawCode.call(context)
+          })
+          // we'll have to listen source geojson layer 'update' event
+          if (!_.has(layer.listenedLayers, srcLayer)) layer.listenedLayers[srcLayer] = false
         } else if (d.layer) {
-          const code = `
-// define visible variables
-const ctx = this;
-with(this.proxy) { ${d.code} }
-`
-          const onLayer = {
-            lookup: () => this.getLeafletLayerByName(d.layer),
-            draw: Function(code)
-          }
-          layer.onLayer.push(onLayer)
+          layer.drawCalls.push((context) => {
+            const layer = this.getLeafletLayerByName(srcLayer)
+            if (!layer) return
+            for (const feature of layer._features) {
+              context.feature = feature
+              drawCode.call(context)
+            }
+          })
+          // we'll have to listen source geojson layer 'update' event
+          if (!_.has(layer.listenedLayers, d.layer)) layer.listenedLayers[d.layer] = false
         }
       }
 
       if (!layer.onDrawLayer) {
+        // build draw function for the layer
         layer.onDrawLayer = (info) => {
+          // update listener states
+          updateListeners(layer, true)
+
           const ctx = info.canvas.getContext('2d')
+          // build context for draw code
+          // here we merge global canvas layer context,
+          // user defined context and current state context
+          const context = Object.assign(
+            // current state context
+            {
+              canvas: ctx,
+              zoom: info.zoom,
+              latLonToCanvas: (coords) => layer._map.latLngToContainerPoint(L.latLng(coords.lat, coords.lon))
+            },
+            // user defined context
+            layer.userDrawContext,
+            // global context
+            this.canvasLayerDrawContext)
+
+          // draw
           ctx.save()
           ctx.clearRect(0, 0, info.canvas.width, info.canvas.height)
-
-          // build context for code
-          const context = Object.assign({
-            canvas: ctx,
-            zoom: info.zoom,
-            latLonToCanvas: (coords) => layer._map.latLngToContainerPoint(L.latLng(coords.lat, coords.lon))
-          }, layer.userDrawContext, this.canvasLayerDrawContext)
-
-          for (const onFeature of layer.onFeature) {
-            const feature = onFeature.lookup()
-            if (!feature) continue
-            context.feature = feature
-            onFeature.draw.call(context)
-          }
-          for (const onLayer of layer.onLayer) {
-            const layer = onLayer.lookup()
-            if (!layer) continue
-            for (const feature of layer._features) {
-              context.feature = feature
-              onLayer.draw.call(context)
-            }
-          }
-
+          for (const draw of layer.drawCalls) draw(context)
           ctx.restore()
         }
       }
-
-      layer.needRedraw()
     },
 
     updateCanvasLayerDrawCode (name, newDrawCode) {
       const layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
 
-      this.buildDrawCode(layer, newDrawCode)
+      this.setupCanvasLayer(layer, newDrawCode)
+      layer.needRedraw()
     },
 
     setCanvasLayerContext (name, userContext) {
@@ -414,11 +432,12 @@ with(this.proxy) { ${d.code} }
       if (!layer) return // Cannot update invisible layer
 
       layer.userDrawContext = userContext
+      layer.needRedraw()
     }
   },
 
   created () {
-    // a proxy to limit access to variable not defined in draw code scope
+    // a proxy to limit access to variables not defined in draw code scope
     this.canvasLayerDrawProxy = new Proxy(window, {
       get: (target, prop, receiver) => { return undefined }
     })
