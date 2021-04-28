@@ -85,9 +85,11 @@ This will lint and fix issues in the code according to [JS standard](https://git
 
 #### Client 
 
-From the root folder run the client-side tests : `yarn test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). If you already have a built app and a running server you could simply do this to launch TestCafé only: `$ yarn cafe:chrome` or `$ yarn cafe:firefox`
+From the root folder run the client-side tests : `yarn test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). 
 
-In development mode, you can tell TestCafé to run a specific fixture:
+If you already have a built app and a running server you could simply do this to launch TestCafé: `$ yarn cafe:chrome` or `$ yarn cafe:firefox`
+
+In development mode, you can tell **TestCafé** to run a specific fixture:
 
 ```bash
 $yarn cafe:firefox -f "a-fxture"

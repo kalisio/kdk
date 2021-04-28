@@ -2,6 +2,7 @@
    <q-select
     ref="select"
     class="q-pl-sm q-pr-sm"
+    :style="computedStyle"
     v-model="items"
     :multiple="true"
     hide-dropdown-icon
@@ -62,6 +63,13 @@ export default {
     services: {
       type: Array,
       default: () => []
+    }
+  },
+  computed: {
+    computedStyle () {
+      if (this.$q.screen.lt.md) return 'width: 80vw'
+      if (this.$q.screen.lt.lg) return 'width: 60vw'
+      return 'width: 50vw'
     }
   },
   data () {
