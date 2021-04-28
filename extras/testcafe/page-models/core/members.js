@@ -14,46 +14,45 @@ export default class Members extends BaseCollection {
   async add (test, email, role) {
     await test
       .typeText(VueSelector('k-email-field'), email, { replace: true })
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog').find('#continue-button'))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(VueSelector('k-select-field'))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-menu .q-item').nth(role))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog').find('#add-button'))
-      .wait(2000)
+      .wait(MMembers.LONG_WAIT)
   }
 
   async invite (test, email, name, role) {
     await test
       .typeText(VueSelector('k-email-field'), email, { replace: true })
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog').find('#continue-button'))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .typeText(VueSelector('k-text-field'), name, { replace: true })
       .click(VueSelector('k-select-field'))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-menu .q-item').nth(role))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog').find('#add-button'))
-      .wait(2000)
+      .wait(Members.EXTRA_LONG_WAIT)
   }
 
   async tag (test, name, tag) {
-    await this.clickCardToolBar(test, name, '#tag-member')
+    await this.clickAction(test, name, 'tag-member')
     await test
-      .wait(500)
+      .wait(Members.LONG_WAIT)
       .typeText(VueSelector('k-tag-field'), tag, { replace: true })
-      .wait(2000)
-      .click(Selector('.q-menu .q-item').nth(0))
-      .wait(250)
+      .pressKey("enter")
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
-      .wait(2000)
+      .wait(Members.LONG_WAIT)
   }
 
   async changeRole (test, name, role) {
-    await this.clickCardToolBar(test, name, '#change-role')
+    await this.clickAction(test, name, 'change-role')
     await test
       .click(VueSelector('k-select-field'))
       .click(Selector('.q-menu .q-item').nth(role))
@@ -76,9 +75,9 @@ export default class Members extends BaseCollection {
       .wait(2000)
       .click(Selector('.q-menu .q-item').nth(0))
       .click(VueSelector('k-select-field'))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-menu .q-item').nth(role))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
       .wait(2000)
   }
@@ -86,9 +85,9 @@ export default class Members extends BaseCollection {
   async leaveGroup (test, memberName, groupName) {
     await test
       .click(this.members.withText(memberName).find('#group-button'))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-menu').find('#leave-group'))
-      .wait(250)
+      .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
       .wait(2000)
   }

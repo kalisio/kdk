@@ -1,15 +1,15 @@
 import { Selector } from 'testcafe'
 import VueSelector from 'testcafe-vue-selectors'
 import BaseCollection from './base-collection'
+import Layout from './layout'
 
 export default class Organisations extends BaseCollection {
   constructor () {
     super('organisationsGrid', 'QCard')
+    this.layout = new Layout()
     // Organisation create editor
     this.editorNameField = VueSelector('k-text-field').nth(0)
     this.editoDescriptionField = VueSelector('k-text-field').nth(1)
-    this.editorCancelButton = Selector('.q-card button[type=button]').nth(0)
-    this.editorCreateButton = Selector('.q-card button[type=button]').nth(1)
   }
 
   static get ENTRY () {
@@ -17,14 +17,12 @@ export default class Organisations extends BaseCollection {
   }
 
   async create (test, name, description) {
-    await test
-      .click(this.createLink)
-      .wait(250)
+    await this.layout.clickFab(test, 'create-organisation')
     await test
       .typeText(this.editorNameField, name, { replace: true })
       .typeText(this.editoDescriptionField, description, { replace: true })
-      .click(this.editorCreateButton)
-      .wait(2000)
+      .click(Selector('.q-dialog #apply-button'))
+      .wait(Organisations.EXTRA_LONG_WAIT)
   }
 
   async delete (test, name) {
@@ -32,6 +30,6 @@ export default class Organisations extends BaseCollection {
     await test
       .typeText(Selector('.q-dialog-plugin input[type=text]'), name)
       .click(Selector('.q-dialog-plugin button').nth(1))
-      .wait(5000)
+      .wait(Organisations.EXTRA_LONG_WAIT)
   }
 }
