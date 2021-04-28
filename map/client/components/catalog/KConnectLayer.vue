@@ -219,6 +219,7 @@ export default {
             url: this.service.baseUrl,
             version: this.service.version,
             searchParams: this.service.searchParams,
+            outputFormat: this.service.geoJsonOutputFormat,
             layer: this.layer.id
           }
         })

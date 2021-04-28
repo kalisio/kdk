@@ -140,7 +140,7 @@ export default {
           // Generate fetch function for tiled feature layer
           leafletOptions.featureSource = (query) => {
             const searchParams = Object.assign({
-              OUTPUTFORMAT: 'GEOJSON', // request as geojson
+              OUTPUTFORMAT: options.wfs.outputFormat, // request as geojson
               SRSNAME: 'EPSG:4326', // result in 4326
               BBOX: `${query.south},${query.west},${query.north},${query.east},EPSG:4326` // request bbox
             }, options.wfs.searchParams)
