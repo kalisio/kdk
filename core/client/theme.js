@@ -5,6 +5,7 @@ const brandColors = ['primary', 'secondary', 'accent', 'dark', 'info', 'positive
 
 export const Theme = {
   initialize () {
+    if (this.default) return
     this.default = {}
     brandColors.forEach(color => { this.default[color] = colors.getBrand(color) })
   },
@@ -27,3 +28,7 @@ export const Theme = {
     brandColors.forEach(color => { colors.setBrand(color, this.default[color]) })
   }
 }
+
+// Ensure it is initialized here as we can use it before initializing core module
+// so that components will be created with the right theme upfront
+Theme.initialize()
