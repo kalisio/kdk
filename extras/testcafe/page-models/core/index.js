@@ -44,6 +44,7 @@ const baseUrl = process.env.APP_URL || (process.env.CLIENT_PORT ? 'http://localh
 export const getUrl = (path) => path ? baseUrl + '/#/' + path : baseUrl
 export const getCurrentUrl = ClientFunction(() => window.location.href)
 export const goBack = ClientFunction(() => window.history.back())
+export const refresh = ClientFunction(() => document.location.reload())
 
 // Access console errors
 export const checkNoClientError = async (test) => {

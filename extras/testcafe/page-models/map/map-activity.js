@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe'
 import BasePage from '../core/base-page'
-import { getCurrentUrl } from '../core'
+import { getCurrentUrl, refresh } from '../core'
 
 export default class MapActivity extends BasePage {
   constructor () {
@@ -32,12 +32,11 @@ export default class MapActivity extends BasePage {
     // Create URL parser
     url = new URL(url)
     // Remove current bbox from URL if any
-    console.log(url)
     url.hash = url.hash.replace(/[0-9]/g, '')
     // Then push new one
     url.hash += '/' + bbox.join('/')
-    console.log(url)
-    await test
-      .navigateTo(url.toString())
+    await test.navigateTo(url.toString())
+    await refresh()
+    await test.wait(MapActivity.LONG_WAIT)
   }
 }
