@@ -314,8 +314,35 @@ const dragonFlyLib = {
 
     ctx.canvas.restore()
   },
-  incapacitationIndicator: (ctx) => {
+  incapacitationIndicator: (ctx, options) => {
+    const { center, radius, thickness, color, fill } = options
+    if (fill < 0) return
 
+    const c = ctx.latLonToCanvas(center)
+
+    ctx.canvas.save()
+
+    if (fill < 100) {
+      const a = Math.PI * 2 * (fill / 100)
+      const v1 = { x: Math.cos(0), y: Math.sin(0) }
+      const v2 = { x: Math.cos(a), y: Math.sin(a) }
+
+      ctx.canvas.beginPath()
+      ctx.canvas.arc(c.x, c.y, radius, 0, a)
+      ctx.canvas.lineTo(c.x + (radius - thickness) * v2.x, c.y + (radius - thickness) * v2.y)
+      ctx.canvas.arc(c.x, c.y, radius - thickness, a, 0, true)
+      ctx.canvas.lineTo(c.x + radius * v1.x, c.y + radius * v1.y)
+      ctx.canvas.fillStyle = color
+      ctx.canvas.fill()
+    } else {
+      ctx.canvas.beginPath()
+      ctx.canvas.arc(c.x, c.y, radius, 0, Math.PI * 2)
+      ctx.canvas.arc(c.x, c.y, radius - thickness, 0, Math.PI * 2)
+      ctx.canvas.fillStyle = color
+      ctx.canvas.fill('evenodd')
+    }
+
+    ctx.canvas.restore()
   }
 }
 
