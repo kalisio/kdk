@@ -16,6 +16,22 @@ export default class Organisations extends BaseCollection {
     return 'organisations'
   }
 
+  async goToMembers (test, name) {
+    await this.clickAction(test, name, 'organisation-members', Organisations.LONG_WAIT)
+  }
+
+  async goToGroups (test, name) {
+    await this.clickAction(test, name, 'organisation-groups', Organisations.LONG_WAIT)
+  }
+
+  async goToProperties (test, name) {
+    await this.clickAction(test, name, 'edit-organisation', Organisations.LONG_WAIT)
+  }
+
+  async goToBilling (test, name) {
+    await this.clickAction(test, name, 'organisation-billing', Organisations.LONG_WAIT)
+  }
+
   async create (test, name, description) {
     await this.layout.clickFab(test, 'create-organisation')
     await test

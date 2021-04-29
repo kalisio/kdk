@@ -1,10 +1,12 @@
 import { Selector } from 'testcafe'
 import VueSelector from 'testcafe-vue-selectors'
 import BaseCollection from './base-collection'
+import Layout from './layout'
 
 export default class Members extends BaseCollection {
   constructor () {
     super('membersGrid', 'QCard')
+    this.layout = new Layout()
   }
 
   static get ADD_MEMBER_ENTRY () {
@@ -12,6 +14,7 @@ export default class Members extends BaseCollection {
   }
 
   async add (test, email, role) {
+    await this.layout.clickFab(test, 'add-member')
     await test
       .typeText(VueSelector('k-email-field'), email, { replace: true })
       .wait(Members.SHORT_WAIT)
@@ -22,10 +25,11 @@ export default class Members extends BaseCollection {
       .click(Selector('.q-menu .q-item').nth(role))
       .wait(Members.SHORT_WAIT)
       .click(Selector('.q-dialog').find('#add-button'))
-      .wait(MMembers.LONG_WAIT)
+      .wait(Members.LONG_WAIT)
   }
 
   async invite (test, email, name, role) {
+    await this.layout.clickFab(test, 'add-member')
     await test
       .typeText(VueSelector('k-email-field'), email, { replace: true })
       .wait(Members.SHORT_WAIT)
