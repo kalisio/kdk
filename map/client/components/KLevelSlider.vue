@@ -16,7 +16,7 @@
       :tooltip-formatter="getFormatedLevel"
       @change="onLevelChanged"
     />
-    <p class="text-secondary text-caption" style="writing-mode: vertical-lr; transform-origin: 100% 0%; transform: rotate(180deg);">
+    <p class="text-accent text-caption" style="writing-mode: vertical-lr; transform-origin: 100% 0%; transform: rotate(180deg);">
       <b>{{$t(kActivity.selectableLevels.label)}} - {{getFormatedLevel(kActivity.selectedLevel)}}</b>
     </p>
   </div>
@@ -69,22 +69,22 @@ export default {
 
 <style lang="stylus">
 .vue-slider-rail
-  background-color: $secondary;
+  background-color: $primary;
 
 .vue-slider-disabled .vue-slider-rail
-  background-color: $secondary;
+  background-color: $primary;
 
 .vue-slider-process
-  background-color: $secondary;
+  background-color: $primary;
 
 .vue-slider-dot-handle
-  background-color: $secondary;
+  background-color: $primary;
 
 .vue-slider-dot-handle::after
-  background-color: transparentify($secondary, #000);
+  background-color: transparentify($primary, #000);
 
 .vue-slider-dot-tooltip-inner
-  background-color: transparentify($secondary, #000);
+  background-color: transparentify($primary, #000);
 
 .vue-slider-dot-tooltip-text
   width: 60px;
@@ -92,8 +92,8 @@ export default {
   font-size: 1em;
 
 .vue-slider-mark-step
-  background-color: $primary;
+  background-color: $secondary;
 
 .vue-slider-mark-step-active
-  background-color: $primary;
+  background-color: $secondary;
 </style>

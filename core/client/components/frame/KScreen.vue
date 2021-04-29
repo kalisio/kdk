@@ -4,16 +4,16 @@
        Header section
       -->
     <div class="col-12 self-start q-">
-      <k-screen-header class="screen-header" />
+      <k-screen-header class="k-screen-header" />
     </div>
      <!--
        Content section
       -->
-    <div class="screen-frame">
+    <div class="k-screen-frame">
       <!-- Banner -->
       <slot name="screen-banner">
         <div v-if="banner" class="row justify-center">
-          <img class="screen-banner" :src="banner">
+          <img class="k-screen-banner" :src="banner">
         </div>
       </slot>
       <!-- Frame -->
@@ -51,7 +51,7 @@
       Footer section
       -->
     <div class="col-12 self-end">
-      <k-screen-footer class="screen-footer" />
+      <k-screen-footer class="k-screen-footer" />
     </div>
   </div>
 </template>
@@ -102,19 +102,19 @@ export default {
 </script>
 
 <style>
-  .screen-header {
+  .k-screen-header {
     padding: 8px;
   }
-  .screen-banner {
+  .k-screen-banner {
     max-width: 270px;
     max-height: 80px;
     width: auto;
     height: auto;
   }
-  .screen-frame {
+  .k-screen-frame {
     width: 540px;
   }
-  .screen-footer {
+  .k-screen-footer {
     padding: 8px;
   }
 </style>

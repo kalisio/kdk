@@ -13,7 +13,7 @@ export function createFeaturesService (options = {}) {
     fileName: 'features',
     servicesPath,
     modelsPath,
-    paginate: { default: 5000, max: 10000 },
+    paginate: { default: 5000, max: 5000 },
     // FIXME: no real-time events for now since we create big batches,
     // does not seem to be sufficient also require a hook (see https://github.com/feathersjs/feathers/issues/922)
     events: ['features']
@@ -43,7 +43,7 @@ export function createAlertsService (options = {}) {
   const app = this
 
   debug('Creating alerts service with options', options)
-  const paginate = { default: 5000, max: 10000 }
+  const paginate = { default: 5000, max: 5000 }
   return app.createService('alerts', Object.assign({
     servicesPath,
     modelsPath,

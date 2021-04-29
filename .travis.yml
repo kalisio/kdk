@@ -10,7 +10,7 @@ stages:
 - name: TEST
   if: commit_message !~ /(skip[ _-]test)/    
 - name: DOC
-  if: commit_message !~ /(skip[ _-]doc)/
+  if: commit_message =~ /\[build doc\]/
 - name: EXTRAS
   if: commit_message !~ /(skip[ _-]extras)/
 

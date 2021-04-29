@@ -5,7 +5,13 @@
         Members collection, cannot use smart strategy here because membership is not managed at service level
         but using authorisations on users
       -->
-      <k-grid ref="membersGrid" service="members" :renderer="renderer" :contextId="contextId" :base-query="baseQuery" :filter-query="filter.query" />
+      <k-grid 
+        ref="membersGrid" 
+        service="members" 
+        :renderer="renderer" 
+        :contextId="contextId" 
+        :base-query="baseQuery" 
+        :filter-query="filter.query" />
       <!--
         Router view to enable routing to modals
       -->
@@ -24,20 +30,43 @@ const activityMixin = mixins.baseActivity()
 export default {
   name: 'members-activity',
   mixins: [activityMixin],
+  provide () {
+    return {
+      kActivity: this
+    }
+  },
   props: {
     contextId: {
       type: String,
       required: true
     }
   },
+  computed: {
+    baseQuery () {
+      let query = _.clone(this.sorter.query)
+      if (this.filters.includes('guest')) {
+        query = Object.assign(query, { 'expireAt': { $exists: true } })
+      }
+      for (const role of ['owner', 'manager', 'member']) {
+        if (this.filters.includes(role)) {
+          query = Object.assign(query, { 'organisations': { $elemMatch: { '_id': this.contextId, 'permissions': role } } })
+        }
+      }
+      return query
+    },
+    filterQuery () {
+      let query = this.filter.query
+      if (this.filters.includes('guest')) {
+        query = Object.assign(query, { 'expireAt': { $exists: true } })
+      }
+      return query
+    }
+  },
   data () {
     return {
-      baseQuery: {
-        $sort: {
-          'profile.name': 1
-        }
-      },
+      sorter: this.$store.get('sorter'),
       filter: this.$store.get('filter'),
+      filters: [],
       // Make this configurable from app
       renderer: _.merge({
         component: 'team/KMemberCard',
@@ -71,9 +100,6 @@ export default {
         // was not in our list he might have been added so refresh
         if (role && !member) this.$refs.membersGrid.refreshCollection()
       }
-    },
-    onFilterChanged (query) {
-      this.searchQuery = query
     }
   },
   created () {

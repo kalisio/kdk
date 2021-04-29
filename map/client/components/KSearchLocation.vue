@@ -12,7 +12,7 @@ export default {
   inject: ['kActivity'],
   computed: {
     computedStyle () {
-      if (this.$q.screen.lt.md) return 'width: 90vw'
+      if (this.$q.screen.lt.md) return 'width: 80vw'
       if (this.$q.screen.lt.lg) return 'width: 60vw'
       return 'width: 50vw'
     }

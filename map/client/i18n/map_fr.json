@@ -28,7 +28,9 @@
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {{features.length}} éléments dont la géométrie est invalide (e.g. auto-intersection).</br>En conséquence ces éléments seront supprimés avant la sauvegarde.",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {{features.length}} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
+      "DOWNLOAD_INVALID_FEATURES_LABEL": "En sélectionnant cette option vos éléments invalides seront exportés dans un fichier avant l'enregistrement",
+      "INVALID_FEATURES_FILE": "ElementsInvalides.geojson",
       "SAVE_DIALOG_TITLE": "Tuilage de la couche {{layer}}",
       "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",
       "EDIT_LABEL": "Editer les propriétés",
@@ -201,7 +203,7 @@
   },
   "tours": {
     "navigation-bar": {
-      "NAVIGATION_BAR_LABEL": "La <b>barre de navigation</b> vous permet d'accéder rapidement à certaines actions récurrentes.",
+      "NAVIGATION_BAR_LABEL": "Cette barre vous permet d'accéder rapidement à des actions récurrentes sur la carte.",
       "ZOOM_LABEL": "Zoom avant/arrière en utilisant ces boutons.",
       "TOGGLE_MAP_LABEL": "Basculez en <b>mode 2D</b> avec ce bouton.",
       "TOGGLE_GLOBE_LABEL": "Basculez en <b>mode 3D</b> avec ce bouton.",
@@ -214,7 +216,7 @@
       "TOOLS_LABEL": "Sélectionnez un outil parmi ceux disponibles via ce bouton.",
       "TRACK_LOCATION_LABEL": "Affichez les coordonnées d'une position via ce bouton.",
       "COPY_LOCATION_LABEL": "Copier vos coordonnées dans le presse-papiers grâce à ce bouton.",
-      "LOCATION_TRACKING_LABEL": "Bougez la souris pour afficher les coordonnées du pointeur et cliquez pour les conserver.",
+      "LOCATION_TRACKING_LABEL": "Faites glisser la souris pour afficher les coordonnées du centre de l'écran et relachez pour les conserver.",
       "TRACK_BACK_LABEL": "Arrêtez le suivi en retournant aux actions.",
       "TOGGLE_VR_LABEL": "Basculez en mode <b>Réalité Virtuelle</b> (VR) avec ce bouton.",
       "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
@@ -226,7 +228,7 @@
       "FAVORITE_VIEW_ACTIONS_LABEL": "Supprimez une vue via ce bouton.",
       "ADD_FAVORITE_VIEW_LABEL": "Ajoutez une nouvelle vue via ce bouton.",
       "FAVORITE_VIEW_NAME_LABEL": "Choisissez un nom pour votre nouvelle vue.",
-      "FAVORITE_VIEW_ICON_LABEL": "Choisissez une description pour votre nouvelle vue.",
+      "FAVORITE_VIEW_DESCRIPTION_LABEL": "Choisissez une description pour votre nouvelle vue.",
       "FAVORITE_VIEW_LAYERS_LABEL": "Choisissez si les couches actuellement actives seront restaurées par votre vue.",
       "CREATE_NEW_FAVORITE_VIEW_LABEL": "Confirmez la création de votre nouvelle vue favorite."
     },

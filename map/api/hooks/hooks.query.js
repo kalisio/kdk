@@ -37,6 +37,7 @@ export function marshallSpatialQuery (hook) {
           spherical: true
         }
       } else {
+        /* We switched from $near to $geoWithin due to https://github.com/kalisio/kdk/issues/345
         query.geometry = {
           $near: {
             $geometry: {
@@ -44,6 +45,12 @@ export function marshallSpatialQuery (hook) {
               coordinates: [longitude, latitude]
             },
             $maxDistance: distance
+          }
+        }
+        */
+        query.geometry = {
+          $geoWithin: {
+            $centerSphere: [[longitude, latitude], distance / 6378137.0] // Earth radius as in radians
           }
         }
       }

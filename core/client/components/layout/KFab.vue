@@ -25,7 +25,7 @@
       <!-- Render an expandable list of actions -->
       <div v-else>
         <template v-for="action in actions">
-          <k-action :key="action.uid" v-bind="action" renderer="fab" />
+          <k-action :key="action.uid" v-bind="action" renderer="fab-action" />
         </template>
       </div>
     </q-fab>
@@ -35,8 +35,7 @@
     <k-action v-else-if="actions.length === 1"
       v-bind="actions[0]"
       size="1.15rem"
-      :flat="false"
-      renderer="button" />
+      renderer="fab" />
   </div>
 </template>
 
@@ -91,6 +90,6 @@ export default {
   .k-fab {
     right: 12px;
     bottom: 12px;
-    border: 2px solid $primary + 80%;
+    border: 2px solid var(--q-color-secondary);
   }
 </style>

@@ -13,7 +13,6 @@
           <div class="text-subtitle1 text-weight-medium">{{ $t(category.name) }}</div>
           <template v-for="item in getItemsByCategorie(category.name)">
             <div
-              :id="item._id"
               :class="getItemClass()"
               :key="item._id"
               class="k-card"
@@ -21,7 +20,9 @@
               droppable="false"
               @dragstart="onDragStart">
               <component
+                :id="item._id"
                 :item="item"
+                :service="service"
                 :contextId="contextId"
                 :is="renderer.component"
                 v-bind="renderer"
@@ -170,6 +171,6 @@ export default {
 }
 
 .k-card:hover {
-  border: solid 1px $secondary;
+  border: solid 1px $accent;
 }
 </style>

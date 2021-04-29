@@ -13,8 +13,11 @@
     :tooltip="tooltip">
     <template v-slot:content>
       <q-popup-proxy
-        :persistent="persistent"
-        :auto-close="autoClose">
+        :breakpoint="599"
+        :persistent="$q.screen.gt.xs ? persistent : false"
+        :auto-close="autoClose"
+        transition-show="scale" 
+        transition-hide="scale">
         <k-panel
           id="menu-entries"
           :content="content"

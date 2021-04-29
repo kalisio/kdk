@@ -13,6 +13,9 @@ export default function (name) {
       getTopPaneMode () {
         return this.getTopPane().mode
       },
+      isTopPaneVisible () {
+        return this.getTopPane().visible
+      },
       setTopPane (content, mode, filter) {
         this.$store.patch('topPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
@@ -21,6 +24,9 @@ export default function (name) {
           const content = this.$store.get('topPane.content')
           this.$store.patch('topPane', { mode: Layout.validateMode(content, mode) })
         }
+      },
+      setTopPaneVisible (visible) {
+        if (this.isTopPaneVisible() !== visible) this.$store.patch('topPane', { visible })
       },
       configureTopPane () {
         const options = _.get(this.activityOptions, 'topPane')
@@ -36,6 +42,9 @@ export default function (name) {
       getLeftPaneMode () {
         return this.getLeftPane().mode
       },
+      isLeftPaneVisible () {
+        return this.getLeftPane().visible
+      },
       setLeftPane (content, mode, filter) {
         this.$store.patch('leftPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
@@ -44,6 +53,9 @@ export default function (name) {
           const content = this.$store.get('leftPane.content')
           this.$store.patch('leftPane', { mode: Layout.validateMode(content, mode) })
         }
+      },
+      setLeftPaneVisible (visible) {
+        if (this.isLeftPaneVisible() !== visible) this.$store.patch('leftPane', { visible })
       },
       configureLeftPane () {
         const options = _.get(this.activityOptions, 'leftPane')
@@ -59,6 +71,9 @@ export default function (name) {
       getBottomPaneMode () {
         return this.getBottomPane().mode
       },
+      isBottomPaneVisible () {
+        return this.getBottomPane().visible
+      },
       setBottomPane (content, mode, filter) {
         this.$store.patch('bottomPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
@@ -67,6 +82,9 @@ export default function (name) {
           const content = this.$store.get('bottomPane.content')
           this.$store.patch('bottomPane', { mode: Layout.validateMode(content, mode) })
         }
+      },
+      setBottomPaneVisible (visible) {
+        if (this.isBottomPaneVisible() !== visible) this.$store.patch('bottomPane', { visible })
       },
       configureBottomPane () {
         const options = _.get(this.activityOptions, 'bottomPane')
@@ -82,6 +100,9 @@ export default function (name) {
       getRightPaneMode () {
         return this.getRightPane().mode
       },
+      isRightPaneVisible () {
+        return this.getRightPane().visible
+      },
       setRightPane (content, mode, filter) {
         this.$store.patch('rightPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
       },
@@ -90,6 +111,9 @@ export default function (name) {
           const content = this.$store.get('rightPane.content')
           this.$store.patch('rightPane', { mode: Layout.validateMode(content, mode) })
         }
+      },
+      setRightPaneVisible (visible) {
+        if (this.isRightPaneVisible() !== visible) this.$store.patch('rightPane', { visible })
       },
       configureRightPane () {
         const options = _.get(this.activityOptions, 'rightPane')

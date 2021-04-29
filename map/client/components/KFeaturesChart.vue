@@ -47,11 +47,11 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import Papa from 'papaparse'
-import { Platform, Loading } from 'quasar'
+import { Loading } from 'quasar'
 import chroma from 'chroma-js'
 import Chart from 'chart.js'
 import 'chartjs-plugin-labels'
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
 
 export default {
   name: 'k-features-chart',
@@ -249,29 +249,12 @@ export default {
       this.refreshChart()
     },
     downloadChartData () {
-      const mimeType = 'text/csv;charset=utf-8;'
       const json = this.values.map((value, index) => ({
         [this.property.label]: value.label,
         [this.$t('KFeaturesChart.CHART_COUNT_LABEL')]: this.chartData[index]
       }))
       const csv = Papa.unparse(json)
-      // Need to convert to blob
-      const blob = new Blob([csv], { type: mimeType })
-      this.currentDownloadLink = URL.createObjectURL(blob)
-      this.currentDownloadName = this.$t('KFeaturesChart.CHART_EXPORT_FILE', { layer: this.layer.name })
-      if (Platform.is.cordova) {
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fs) => {
-          fs.root.getFile(this.currentMedia.name, { create: true, exclusive: false }, (fileEntry) => {
-            fileEntry.createWriter((fileWriter) => {
-              fileWriter.write(blob)
-              cordova.plugins.fileOpener2.open(fileEntry.nativeURL, mimeType)
-            })
-          })
-        })
-      } else {
-        // We call Vue.nextTick() to let Vue update its DOM to get the download link ready
-        this.$nextTick(() => this.$refs.downloadLink.click())
-      }
+      kCoreUtils.downloadAsBlob(csv, this.$t('KFeaturesChart.CHART_EXPORT_FILE', { layer: this.layer.name }), 'text/csv;charset=utf-8;')
     }
   },
   created () {

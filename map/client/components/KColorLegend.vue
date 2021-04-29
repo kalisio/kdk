@@ -3,7 +3,7 @@
   <div class="k-legend shadow-2" :style="colorLegendStyle"
     v-show="visible" @click="onColorLegendClick"
   >
-    <span class="k-unit-box bg-secondary text-white text-caption"
+    <span class="k-unit-box bg-accent text-white text-caption"
       :style="colorUnitStyle"
     >
       {{unit}}

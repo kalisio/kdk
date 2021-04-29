@@ -216,6 +216,13 @@ export default {
           const result = await kCoreUtils.dialog({
             title: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_TITLE', { features: check.kinks }),
             message: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_MESSAGE', { features: check.kinks }),
+            options: {
+              type: 'toggle',
+              model: [],
+              items: [
+                { label: this.$t('mixins.activity.DOWNLOAD_INVALID_FEATURES_LABEL'), value: 'download' }
+              ]
+            },
             html: true,
             ok: {
               label: this.$t('OK'),
@@ -227,6 +234,11 @@ export default {
             }
           })
           if (!result.ok) return
+          // Export invalid features if required
+          if (_.get(result, 'data', []).includes('download')) {
+            kCoreUtils.downloadAsBlob(JSON.stringify({ type: 'FeatureCollection', features: check.kinks }),
+              this.$t('mixins.activity.INVALID_FEATURES_FILE'), 'application/json;charset=utf-8;')
+          }
         }
         // Change data source from in-memory to features service
         _.set(layer, 'service', 'features')

@@ -31,10 +31,6 @@ export default {
     objectId: {
       type: String,
       required: true
-    },
-    resource: {
-      type: Object,
-      required: true
     }
   },
   computed: {
@@ -90,12 +86,12 @@ export default {
       if (result.isValid) {
         const authorisationService = this.$api.getService('authorisations')
         await authorisationService.create({
-          scope: this.resource.scope,
+          scope: 'organisations',
           permissions: result.values.role,
           subjects: this.objectId,
           subjectsService: this.contextId + '/members',
-          resource: this.resource.id,
-          resourcesService: this.resource.service
+          resource: this.contextId,
+          resourcesService: 'organisations'
         })
         this.closeModal()
       }

@@ -11,6 +11,12 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
+  target: '#remove-view',
+  title: 'tours.favorite-views.FAVORITE_VIEW_ACTIONS_LABEL',
+  params: {
+    placement: 'top'
+  }
+}, {
   target: '#add-favorite-view',
   content: 'tours.favorite-views.ADD_FAVORITE_VIEW_LABEL',
   params: {

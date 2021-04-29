@@ -1,6 +1,5 @@
 <template>
   <div
-    :id="position + '-opener'"
     class="row justify-center items-center"
     v-bind:class="{
       'k-opener-left': position === 'left',
@@ -115,8 +114,8 @@ export default {
   .k-opener-left, .k-opener-right, .k-opener-top, .k-opener-bottom {
     opacity: 0.85;
     transition: 0.1s;
-    background-color: $primary;
-    border: 2px solid $primary + 80%;
+    background-color: var(--q-color-primary);
+    border: 2px solid var(--q-color-secondary);
   }
   .k-opener-left, .k-opener-right {
     height: 110px;

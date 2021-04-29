@@ -33,25 +33,25 @@ export default class Layout extends BasePage {
   async clickLeftOpener (test) {
     await test
       .click(this.leftOpener)
-      .wait(1000)
+      .wait(Layout.SHORT_WAIT)
   }
 
   async clickRightOpener (test) {
     await test
       .click(this.rightOpener)
-      .wait(1000)
+      .wait(Layout.SHORT_WAIT)
   }
 
   async clickTopOpener (test) {
     await test
       .click(this.topOpener)
-      .wait(1000)
+      .wait(Layout.SHORT_WAIT)
   }
 
   async clickBottomOpener (test) {
     await test
       .click(this.bottomOpener)
-      .wait(1000)
+      .wait(Layout.SHORT_WAIT)
   }
 
   // Leftdrawer
@@ -60,10 +60,17 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickLeftPane (test, action) {
+  async clickLeftPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.leftPanel.find(`#${action}`))
-      .wait(1000)
+      .wait(wait)
+  }
+
+  async clickLeftPaneMenuEntry (test, menu, entry) {
+    await this.clickLeftPaneAction(test, menu)
+    await test
+      .click(Selector(`#${entry}`))
+      .wait(wait)
   }
 
   // TopPane
@@ -72,10 +79,17 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickTopPane (test, action) {
+  async clickTopPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.topPanel.find(`#${action}`))
-      .wait(1000)
+      .wait(wait)
+  }
+
+  async clickTopPaneMenuEntry (test, menu, entry, wait = Layout.SHORT_WAIT) {
+    await this.clickTopPaneAction(test, menu)
+    await test
+      .click(Selector(`#${entry}`))
+      .wait(wait)
   }
 
   // RightPane
@@ -84,10 +98,10 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickRightPane (test, action) {
+  async clickRightPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.rightPanel.find(`#${action}`))
-      .wait(1000)
+      .wait(wait)
   }
 
   // BottomPane
@@ -96,32 +110,32 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickBottomPane (test, action) {
+  async clickBottomPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.bottomPanel.find(`#${action}`))
-      .wait(1000)
+      .wait(wait)
   }
 
   // Fab
-  async clickFab (test, action) {
+  async clickFab (test, action, wait = Layout.SHORT_WAIT) {
     await test
-      .click(Selector(action))
-      .wait(1000)
+      .click(Selector(`#${action}`))
+      .wait(wait)
   }
 
-  async openAndClickFab (test, action) {
+  async openAndClickFab (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(Selector(this.fab))
-      .wait(1000)
+      .wait(Layout.SHORT_WAIT)
       .click(this.fab.find(`#${action}`))
-      .wait(1000)
+      .wait(wait)
   }
 
   // Misc
   async closeSignupAlert (test) {
     await test
       .click(Selector('#close-signup-alert'))
-      .wait(1000)
+      .wait(Layout.SHORT_WAIT)
   }
 
   async closeWelcomeDialog (test) {

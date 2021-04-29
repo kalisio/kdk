@@ -65,7 +65,8 @@
   },
   "mixins": {
     "baseItem": {
-      "REMOVE_MESSAGE": "Etes vous sûr de vouloir supprimer {{name}} ?",
+      "REMOVE_ITEM_TITLE": "Etes vous sûr de vouloir supprimer <b>{{name}}</b> ?",
+      "REMOVE_ITEM_MESSAGE": "Merci de saisir le nom pour confirmer la suppression",
       "ITEM_EXPORTED": "Export du contenu de {{name}} dans {{file}}",
       "CANNOT_EXPORT_ITEM": "Impossible d'exporter {{name}}. Votre navigateur supporte t'il la fonctionnalité ?"
     }
@@ -74,6 +75,7 @@
     "OBJECT_NAME": "{{ object.name }}",
     "AVATAR_FIELD_LABEL": "Choisissez un avatar",
     "NAME_FIELD_LABEL": "Saisissez votre nom",
+    "COLOR_FIELD_LABEL": "Choisissez une couleur",
     "ORGANISATIONS_CREATE_TITLE": "Créer une nouvelle organisation ?",
     "ORGANISATIONS_NAME_FIELD_LABEL": "Saisissez le nom de l'organisation",
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'organisation",
@@ -121,6 +123,7 @@
     "create-organisation": {
       "ORGANISATION_NAME_LABEL": "Entrez le nom de l'organisation tel qu'il sera visible par les autres utilisateurs.",
       "ORGANISATION_DESCRIPTION_LABEL": "Entrez une description détaillée.",
+      "ORGANISATION_AVATAR_LABEL": "Choisissez une image ou un logo représentant votre organisation pour ses membres.",
       "CREATE_ORGANISATION_LABEL": "Confirmez la création de la nouvelle organisation."
     },
     "account": {
@@ -159,6 +162,7 @@
       "GROUP_DEFINITION_LABEL": "Un groupe vous permet de déléguer la gestion d'un espace de travail restreint à ses membres.",
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos groupes au sein de la barre qui apparait pour effectuer une recherche.",
+      "SORT_LABEL": "Ordonnez vos groupes par ordre alphabétique ascendant ou descendant via ce bouton.",
       "NEW_GROUP_LABEL": "Créez un <b>nouveau groupe</b> via ce bouton.",
       "CREATE_GROUP_LINK_LABEL": "Voir comment créer un groupe",
       "GROUP_CARD_LABEL": "Chaque groupe est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
@@ -182,6 +186,8 @@
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos membres au sein de la barre qui apparait pour effectuer une recherche.",
       "SEARCH_MORE_LABEL": "Vous pouvez également taper un mot contenu dans le nom d'un groupe ou d'une étiquette portés par vos membres pour filtrer selon ce critère.",
+      "FILTER_LABEL": "Filtrez vos membres selon leurs statut via ce bouton.",
+      "SORT_LABEL": "Ordonnez vos membres par ordre alphabétique ascendant ou descendant via ce bouton.",
       "ADD_INVITE_MEMBER_LABEL": "Ajoutez des membres à votre organisation via ce bouton.",
       "ADD_MEMBER_LABEL": "Si votre futur membre <b>dispose déjà d'un compte</b>, <b>ajoutez-le</b> via ce bouton.",
       "ADD_MEMBER_LINK_LABEL": "Voir comment ajouter un membre",
@@ -233,6 +239,7 @@
       "TAG_DEFINITION_LABEL": "Une étiquette vous permet de catégoriser un sous-ensemble des membres de votre organisation (e.g. une compétence ou un service).",
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos étiquettes au sein de la barre qui apparait pour effectuer une recherche.",
+      "SORT_LABEL": "Ordonnez vos étiquettes par ordre alphabétique ascendant ou descendant via ce bouton.",
       "TAG_CARD_LABEL": "Chaque étiquette est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
       "CREATE_TAG_LINK_LABEL": "Voir comment ajouter ou supprimer des étiquettes sur les membres",
       "TAG_COUNT_LABEL": "Ce nombre vous indique le nombre de <b>membres</b> possédant cette étiquette.",
@@ -310,7 +317,7 @@
     "MANAGE": "Gérer mon compte"
   },
   "KAccountActivity": {
-    "PROFILE": "Profil",
+    "PROFILE": "Mon profil",
     "SECURITY": "Securité",
     "DANGER_ZONE": "Zone de danger"
   },
@@ -463,7 +470,8 @@
     "ERROR_WHILE_LOADING_THE_FILE": "Erreur durant la lecture du fichier, avez-vous sélectionné un fichier valide ?",
     "INVALID_FILE_TYPE": "Type de fichier invalide, veuillez sélectionner un fichier du bon type.",
     "INVALID_JSON_FILE": "Fichier JSON invalide",
-    "INVALID_GEOJSON_FILE": "Fichier GeoJSON invalide"
+    "INVALID_GEOJSON_FILE": "Fichier GeoJSON invalide",
+    "INVALID_CSV_FILE": "Fichier CSV invalide"
   },
   "KMediaBrowser": {
     "CLOSE_ACTION": "$t(CLOSE)",
@@ -499,43 +507,42 @@
     "SYSTEM_DETAILS": "Informations système"
   },
   "KOrganisationsActivity": {
-    "ORGANISATIONS_LABEL": "Organisations",
-    "SEARCH_ORGANISATION_LABEL": "Rechercher une organisation",
-    "CREATE_ORGANISATION_LABEL": "Créer une organisation"
+    "ORGANISATIONS_LABEL": "Mes organisations",
+    "CREATE_ORGANISATION_LABEL": "Créer une organisation",
+    "SEARCH_ORGANISATIONS": "Rechercher des organisations",
+    "SORT_ORGANISATIONS": "Trier les organisations"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
-    "ADD_USER_LABEL": "Ajouter un utilisateur",
+    "SORT_MEMBERS": "Trier les membres",
+    "SEARCH_MEMBERS": "Rechercher des membres",
+    "ADD_USER_LABEL": "Ajouter un membre",
     "INVITE_GUEST_LABEL": "Inviter des personnes"
   },
   "KAddMember": {
-    "TITLE": "Ajouter un membre ?",
-    "USER_FIELD_LABEL": "Sélectionnez l'utilisateur à ajouter",
-    "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer",
-    "OWNER_LABEL": "$t(OWNER)",
-    "MANAGER_LABEL": "$t(MANAGER)",
-    "MEMBER_LABEL": "$t(MEMBER)",
-    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
-    "ADD_BUTTON": "Ajouter"    
-  },
-  "KInviteMember": {
-    "TITLE": "Inviter des personnes ?",
-    "NAME_FIELD_LABEL": "Saisissez le nom de votre invité",
-    "EMAIL_FIELD_LABEL": "Saisissez l'adresse mail de votre invité",
-    "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer à votre invité",
-    "OWNER_LABEL": "$t(OWNER)",
-    "MANAGER_LABEL": "$t(MANAGER)",
-    "MEMBER_LABEL": "$t(MEMBER)",
-    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
-    "ERROR_WHILE_LOADING_THE_FILE": "Erreur durant la lecture du fichier. Avez vous sélectionné un fichier CSV ?",
-    "INVALID_FILE_TYPE": "Type de fichier invalide. Veuillez sélectionner un fichier CSV",
+    "TITLE": "Ajouter une ou plusieurs personnes ?",
+    "EMAIL_FIELD_LABEL": "Saissisez l'adresse mail de la personne à ajouter",
+    "NAME_FIELD_LABEL": "Saisissez le nom de la personne",
+    "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer à la personne",
+    "ADD_MESSAGE": "<b>{{email}}</b> possède déjà un compte. Voulez vous l'ajouter à votre organisation ?",
+    "INVITE_MESSAGE": "<b>{{email}}</b> ne possède pas de compte. Voulez vous l'inviter ?",
     "FILE_FIELD_LABEL": "Sélectionnez le fichier CSV que vous désirez importer",
-    "ALERT_FILE_IMPORT_DIALOG": "Êtes vous sur que votre fichier est correctement formaté ?",
-    "ALERT_FILE_IMPORT_MESSAGE": "Nous n'avons pas pu détecter un enregistrement valide. Merci de Vérifier le format de votre fichier",
-    "CONFIRM_FILE_IMPORT_DIALOG": "Êtes vous sur de vouloir continuer ?",
-    "CONFIRM_FILE_IMPORT_MESSAGE": "Nous avons détecté {{errors}} erreur(s) sur {{records}} enregistrement(s)",
-    "CANCEL_BUTTON": "Annuler",
-    "INVITE_BUTTON": "Inviter"
+    "OWNER_LABEL": "$t(OWNER)",
+    "MANAGER_LABEL": "$t(MANAGER)",
+    "MEMBER_LABEL": "$t(MEMBER)",
+    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
+    "CONTINUE_BUTTON": "Continuer",
+    "BACK_BUTTON": "Revenir",
+    "ADD_BUTTON": "Ajouter",
+    "INVITE_BUTTON": "Inviter",
+    "ALREADY_MEMBER_ERROR": "Cette personne est déjà membre de votre organisation",
+    "INVALID_FIELDS_VALUES_ERROR": "Valeurs invalides",
+    "INVALID_FIELDS_NUMBER_ERROR": "Nombre de champs invalide",
+    "CONTENT_FILE_ERROR": "Êtes vous sur que votre fichier est correctement formaté ?",
+    "ALERT_FILE_IMPORT_MESSAGE": "Aucun enregistrement valide. Merci de Vérifier le format de votre fichier",
+    "CONFIRM_FILE_IMPORT_MESSAGE": "<b>{{errors}} erreur(s)</b> détectées sur {{records}} enregistrement(s). Voulez vous continuer ?",
+    "USER_ADDED_MESSAGE": "Cette personne a été ajoutée",
+    "GUEST_ADDED_MESSAGE": "Cette personne a été invitée"
   },
   "KJoinGroup": {
     "TITLE": "Ajouter {{member}} à un groupe existant ?",
@@ -572,7 +579,8 @@
   },
   "KTagsActivity": {
     "TAGS_LABEL": "$t(TAGS)",
-    "SEARCH_TAG_LABEL": "Rechercher une étiquette"
+    "SORT_TAGS": "Trier les étiquettes",
+    "SEARCH_TAGS": "Rechercher des étiquettes"
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",
@@ -580,7 +588,8 @@
   },
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
-    "SEARCH_GROUP_LABEL": "Rechercher un groupe",
+    "SORT_GROUPS": "Trier les groupes",
+    "SEARCH_GROUPS": "Rechercher des groupes",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
@@ -695,27 +704,15 @@
   "KAccountDevices": {
     "DEVICES_USED": "Vérifier quand des appareils spécifiques ont eu accès à votre compte ci-dessous"
   },
-  "KSubscribe": {
-    "SUBSCRIPTION_TITLE": "S'abonner à {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Saisissez votre numéro de téléphone",
-    "SUBSCRIBE_BUTTON": "S'abonner",
-    "VALIDATION_TITLE": "Saisissez le code reçu par SMS pour valider votre abonnement à {{organisation}}",
-    "CANCEL_BUTTON": "Annuler",
-    "VALIDATE_BUTTON": "Valider",
-    "CONFIRMATION_TITLE": "Merci, vous êtes maintenant abonné à {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
+  "KMemberFilter": {
+    "NONE": "Aucun",
+    "OWNER": "Propriétaire",
+    "MANAGER": "Gestionnaire",
+    "MEMBER": "Membre",
+    "GUEST": "Invité"
   },
-  "KUnsubscribe": {
-    "UNSUBSCRIPTION_TITLE": "Se désabonner de {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Saisissez votre numéro de téléphone",
-    "UNSUBSCRIBE_BUTTON": "Se désabonner",
-    "VALIDATION_TITLE": "Saisissez le code reçu par SMS pour valider votre désabonnement de {{organisation}}",
-    "CANCEL_BUTTON": "Annuler",
-    "VALIDATE_BUTTON": "Valider",
-    "CONFIRMATION_TITLE": "Vous êtes maintenant désabonné de {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
+  "KSorter": {
+    "SORT": "Trier"
   }
 }
 

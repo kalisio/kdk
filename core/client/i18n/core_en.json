@@ -65,7 +65,8 @@
   },
   "mixins": {
     "baseItem": {
-      "REMOVE_MESSAGE": "Are you sure you want to remove {{name}} ?",
+      "REMOVE_ITEM_TITLE": "Are you sure you want to delete <b>{{name}}</b> ?",
+      "REMOVE_ITEM_MESSAGE": "Please enter the name to confirm the deletion",
       "ITEM_EXPORTED": "Exporting the content of {{name}} within {{file}}",
       "CANNOT_EXPORT_ITEM": "Cannot export {{name}}. Is your browser support such a feature ?"
     }
@@ -74,6 +75,7 @@
     "OBJECT_NAME": "{{ object.name }}",
     "AVATAR_FIELD_LABEL": "Select an avatar",
     "NAME_FIELD_LABEL": "Enter your name",
+    "COLOR_FIELD_LABEL": "Pick a color",
     "ORGANISATIONS_CREATE_TITLE": "Create a new organisation ?",
     "ORGANISATIONS_NAME_FIELD_LABEL": "Enter the name of this organisation",
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Enter a description name of this organisation",
@@ -121,6 +123,7 @@
     "create-organisation": {
       "ORGANISATION_NAME_LABEL": "Enter the organisation name as viewed by others users.",
       "ORGANISATION_DESCRIPTION_LABEL": "Enter a detailed description.",
+      "ORGANISATION_AVATAR_LABEL": "Select the image or the logo of your organisation as seen by your members.",
       "CREATE_ORGANISATION_LABEL": "Confirm the creation of your new organisation."
     },
     "account": {
@@ -159,6 +162,7 @@
       "GROUP_DEFINITION_LABEL": "A group allows to delegate the management of a shared workspace limited to its members.",
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Type part of a word contained in the name of your groups in the arising bar to perform a search.",
+      "SORT_LABEL": "Sort your groups by ascending or descending alphabetical order this button.",
       "NEW_GROUP_LABEL": "Create a <b>new group</b> using this button.",
       "CREATE_GROUP_LINK_LABEL": "How to create a group",
       "GROUP_CARD_LABEL": "Each group is viewed as a card providing available actions.",
@@ -182,6 +186,8 @@
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Type part of a word contained in the name of your members in the arising bar to perform a search.",
       "SEARCH_MORE_LABEL": "Type also a word contained in the name of a group or a tag associated to your members to filter accordingly.",
+      "FILTER_LABEL": "Filter your members according to their status using this button.",
+      "SORT_LABEL": "Sort your members by ascending or descending alphabetical order this button.",
       "ADD_INVITE_MEMBER_LABEL": "Add members to your organisation through this action.",
       "ADD_MEMBER_LABEL": "If your future member <b>already has an account</b>, <b>add him</b> using this button.",
       "ADD_MEMBER_LINK_LABEL": "How to add a member",
@@ -227,6 +233,7 @@
       "TAG_DEFINITION_LABEL": "A tag allows to classify a subset of your organisation members (e.g. a skill or a service).",
       "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
       "SEARCH_LABEL": "Type part of a word contained in the name of your tags in the arising bar to perform a search.",
+      "SORT_LABEL": "Sort your tags by ascending or descending alphabetical order this button.",
       "TAG_CARD_LABEL": "Each tag is viewed as a card providing available actions.",
       "CREATE_TAG_LINK_LABEL": "How to create or remove tags on members",
       "TAG_COUNT_LABEL": "This number shows you the number of <b>members</b> having your tag.",
@@ -304,7 +311,7 @@
     "MANAGE": "Manage my account"
   },
   "KAccountActivity": {
-    "PROFILE": "Profile",
+    "PROFILE": "My profile",
     "SECURITY": "Security",
     "DANGER_ZONE": "Danger zone"
   },
@@ -457,7 +464,8 @@
     "ERROR_WHILE_LOADING_THE_FILE": "Error while loading the file, did you select a valid file ?",
     "INVALID_FILE_TYPE": "Invalid file type, please select the right file type",
     "INVALID_JSON_FILE": "Invalid JSON file",
-    "INVALID_GEOJSON_FILE": "Invalid GeoJSON file"
+    "INVALID_GEOJSON_FILE": "Invalid GeoJSON file",
+    "INVALID_CSV_FILE": "Invalid CSV file"
   },
   "KMediaBrowser": {
     "CLOSE_ACTION": "$t(CLOSE)",
@@ -493,44 +501,41 @@
     "SYSTEM_DETAILS": "Platform information"
   },
   "KOrganisationsActivity": {
-    "ORGANISATIONS_LABEL": "Organisations",
-    "SEARCH_ORGANISATION_LABEL": "Search for an organisation",
-    "CREATE_ORGANISATION_LABEL": "Create an organisation"
+    "ORGANISATIONS_LABEL": "My organisations",
+    "CREATE_ORGANISATION_LABEL": "Create an organisation",
+    "SEARCH_ORGANISATIONS": "Rechercher des organisations",
+    "SORT_ORGANISATIONS": "Trier les organisations"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "$t(MEMBERS)",
-    "SEARCH_MEMBER_LABEL": "$t(MEMBERS)",
-    "ADD_USER_LABEL": "Add a user",
+    "SORT_MEMBERS": "Sort members",
+    "SEARCH_MEMBERS": "Search members",
+    "ADD_USER_LABEL": "Add a member",
     "INVITE_GUEST_LABEL": "Invite guests"
   },
   "KAddMember": {
-    "TITLE": "Add a member ?",
-    "USER_FIELD_LABEL": "Select the user to add",
-    "ROLE_FIELD_LABEL": "Select the role granted to the user",
-    "OWNER_LABEL": "$t(OWNER)",
-    "MANAGER_LABEL": "$t(MANAGER)",
-    "MEMBER_LABEL": "$t(MEMBER)",
-    "CLOSE_ACTION": "$t(CLOSE)",
-    "ADD_BUTTON": "Add"
-  },
-  "KInviteMember": {
-    "TITLE": "Invite guests ?",
-    "NAME_FIELD_LABEL": "Enter your guest's name",
-    "EMAIL_FIELD_LABEL": "Enter your guest's email address",
-    "ROLE_FIELD_LABEL": "Select the role granted to your guest",
-    "OWNER_LABEL": "$t(OWNER)",
-    "MANAGER_LABEL": "$t(MANAGER)",
-    "MEMBER_LABEL": "$t(MEMBER)",
-    "CLOSE_ACTION": "$t(CLOSE)",
-    "ERROR_WHILE_LOADING_THE_FILE": "Error while loading the file. Did you select a valid CSV file ?",
-    "INVALID_FILE_TYPE": "Invalid file type. Please select a CSV file",
+    "TITLE": "Add one or more persons ?",
+    "EMAIL_FIELD_LABEL": "Enter the email address of the person to be added",
+    "NAME_FIELD_LABEL": "Enter the name of this person",
+    "ROLE_FIELD_LABEL": "Select the role granted to this person",
+    "ADD_MESSAGE": "<b>{{email}}</b> is already registered. Would you like to add this persion to your organisation ?",
+    "INVITE_MESSAGE": "<b>{{email}}</b> is not registered. Would you like to invite this person ?",
     "FILE_FIELD_LABEL": "Select the CSV file you want to import",
-    "ALERT_FILE_IMPORT_DIALOG": "Are you sure your file is correclty formatted ?",
-    "ALERT_FILE_IMPORT_MESSAGE": "We were not able to detect any valid record. Please ensure your file is correctly formatted",
-    "CONFIRM_FILE_IMPORT_DIALOG": "Are you sure you want to proceed ?",
-    "CONFIRM_FILE_IMPORT_MESSAGE": "We have detected {{errors}} error(s) among {{records}] record(s)",
-    "CANCEL_BUTTON": "Cancel",
-    "INVITE_BUTTON": "Invite"
+    "OWNER_LABEL": "$t(OWNER)",
+    "MANAGER_LABEL": "$t(MANAGER)",
+    "MEMBER_LABEL": "$t(MEMBER)",
+    "CONTINUE_BUTTON": "Continue",
+    "BACK_BUTTON":"Back",
+    "ADD_BUTTON": "Add",
+    "INVITE_BUTTON": "Invite",
+    "ALREADY_MEMBER_ERROR": "This person is already a member of your organisation",
+    "CONTENT_FILE_ERROR": "Are you sure your file is correclty formatted ?",
+    "INVALID_FIELDS_VALUES_ERROR": "Invalid values",
+    "INVALID_FIELDS_NUMBER_ERROR": "Invalid field number",
+    "ALERT_FILE_IMPORT_MESSAGE": "No valid record detected. Please ensure your file is correctly formatted",
+    "CONFIRM_FILE_IMPORT_MESSAGE": "<b>{{errors}} error(s)</b> detected among {{records}] record(s). Would you to continue ?",
+    "USER_ADDED_MESSAGE": "This person as been added",
+    "GUEST_ADDED_MESSAGE": "This person as been invited"
   },
   "KJoinGroup": {
     "TITLE": "Add {{member}} to an existing group ?",
@@ -567,7 +572,8 @@
   },
   "KTagsActivity": {
     "TAGS_LABEL": "$t(TAGS)",
-    "SEARCH_TAG_LABEL": "Search for a tag"
+    "SORT_TAGS": "Sort tags",
+    "SEARCH_TAGS": "Search tags"
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",    
@@ -575,7 +581,8 @@
   },  
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
-    "SEARCH_GROUP_LABEL": "Search for a group",
+    "SORT_GROUPS": "Sort groups",
+    "SEARCH_GROUPS": "Search groups",
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {
@@ -690,26 +697,14 @@
   "KAccountDevices": {
     "DEVICES_USED": "Check when specific devices has been used to access your account below"
   },
-  "KSubscribe": {
-    "SUBSCRIPTION_TITLE": "Subscribe to {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Enter your phone number",
-    "SUBSCRIBE_BUTTON": "Subscribe",
-    "VALIDATION_TITLE": "Enter the SMS code you received to subscribe to {{organisation}}",
-    "CANCEL_BUTTON": "Cancel",
-    "VALIDATE_BUTTON": "Validate",
-    "CONFIMATON_MESSAGE": "Thank you, you are now subscribed to {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
+  "KMemberFilter": {
+    "NONE": "None",
+    "OWNER": "Owner",
+    "MANAGER": "Manager",
+    "MEMBER": "Member",
+    "GUEST": "Guest"
   },
-  "KUnsubscribe": {
-    "UNSUBSCRIPTION_TITLE": "Unsubscribe from {{organisation}} ?",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "PHONE_FIELD_LABEL": "Enter your phone number",
-    "UNSUBSCRIBE_BUTTON": "Unsubscribe",
-    "VALIDATION_TITLE": "Enter the SMS code you received to unsubscribe from {{organisation}}",
-    "CANCEL_BUTTON": "Cancel",
-    "VALIDATE_BUTTON": "Validate",
-    "CONFIRMATION_TITLE": "You are now unsubscribed from {{organisation}}",
-    "CONFIRM_BUTTON": "Ok"
+  "KSorter": {
+    "SORT": "Sort"
   }
 }

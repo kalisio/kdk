@@ -1,7 +1,21 @@
 import _ from 'lodash'
 import emailValidator from 'email-validator'
 import config from 'config'
-import { Notify, Dialog, Loading } from 'quasar'
+import { Platform, Notify, Dialog, Loading, exportFile } from 'quasar'
+
+Notify.setDefaults({
+  position: 'bottom-left',
+  timeout: 5000,
+  textColor: 'white',
+  actions: [{ icon: 'las la-times', color: 'white' }]
+})
+
+Loading.setDefaults({
+  spinnerColor: 'primary',
+  spinnerSize: 140,
+  messageColor: 'white',
+  customClass: 'full-width'
+})
 
 /**
  * This function allow you to modify a JS Promise by adding some status properties.
@@ -118,19 +132,21 @@ export function createThumbnail (imageDataUri, width, height, quality, callback)
   image.src = imageDataUri
 }
 
-Notify.setDefaults({
-  position: 'bottom-left',
-  timeout: 5000,
-  textColor: 'white',
-  actions: [{ icon: 'las la-times', color: 'white' }]
-})
-
-Loading.setDefaults({
-  spinnerColor: 'primary',
-  spinnerSize: 140,
-  messageColor: 'white',
-  customClass: 'full-width'
-})
+export function downloadAsBlob (data, filename, mimeType) {
+  const blob = new Blob([data], { type: mimeType })
+  if (Platform.is.cordova) {
+    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fs) => {
+      fs.root.getFile(filename, { create: true, exclusive: false }, (fileEntry) => {
+        fileEntry.createWriter((fileWriter) => {
+          fileWriter.write(blob)
+          cordova.plugins.fileOpener2.open(fileEntry.nativeURL, mimeType)
+        })
+      })
+    })
+  } else {
+    exportFile(filename, blob)
+  }
+}
 
 export function toast (options) {
   // We deduce the color from the type as it was not initially supported by Quasar.

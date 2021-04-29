@@ -5,9 +5,11 @@
         v-if="component.isVisible"
         :key="component.uid"
         :is="component.componentKey"
+        :context="context"
         v-bind="component.bind ? component.props : component"
         :renderer="component.renderer ? component.renderer: actionRenderer"
-        v-on="component.on ? { [component.on.event]: component.on.listener } : {}" />
+        v-on="component.on ? { [component.on.event]: component.on.listener } : {}" 
+        @triggered="$emit('triggered', arguments)" />
     </template>
   </div>
 </template>
@@ -52,7 +54,6 @@ export default {
         if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) {
           this.$options.components[componentKey] = this.$load(componentName)
         }
-        if (this.context) component.context = this.context
       })
       return components
     },

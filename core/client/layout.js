@@ -49,12 +49,10 @@ export const Layout = {
     return Store.get(components[2])
   },
   validateMode (content, mode) {
-    // Check if mode has been voluntarily unset
-    if (_.isNull(mode)) return null
-    // Otherwise check if it exists or return first content
     const modes = _.keys(content)
+    if (_.isEmpty(modes)) return undefined
     if (modes.includes(mode)) return mode
-    else return _.head(modes)
+    return modes[0]
   },
   filterContent (content, filter) {
     // Handle array and object case

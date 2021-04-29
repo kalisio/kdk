@@ -76,8 +76,8 @@ export async function discover (url, searchParams = {}, caps = null) {
     for (const parameter of _.get(operation, 'Parameter')) {
       if (parameter.$.name !== 'outputFormat') continue
       for (const format of _.get(parameter, 'AllowedValues[0].Value')) {
-        if (format === 'GEOJSON') {
-          out.supportsGeoJson = true
+        if (['geojson', 'json', 'application/json'].includes(_.lowerCase(format))) {
+          out.geoJsonOutputFormat = format
           break
         }
       }

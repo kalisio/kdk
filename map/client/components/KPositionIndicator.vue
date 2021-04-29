@@ -65,7 +65,7 @@ export default {
     // Required to use splice when modifying an object inside an array to make it reactive
     content.splice(content.length, 0, target[0])
     this.$store.patch('page', { content })
-    this.kActivity.$on('mousemove', this.updatePosition)
+    this.kActivity.$on('move', this.updatePosition)
   },
   beforeDestroy () {
     const content = this.$store.get('page.content') || []
@@ -74,7 +74,7 @@ export default {
       content.splice(_.findIndex(content, component => component.id === 'position-target'), 1)
       this.$store.patch('page', { content })
     }
-    this.kActivity.$off('mousemove', this.updatePosition)
+    this.kActivity.$off('move', this.updatePosition)
   }
 }
 </script>

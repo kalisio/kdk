@@ -1,11 +1,9 @@
 import { ClientFunction } from 'testcafe'
-import NavigationBar from './navigation-bar'
 import Timeline from './timeline'
 import MapActivity from './map-activity'
 import Catalog from './catalog'
 import AddLayer from './add-layer'
 
-export { NavigationBar }
 export { Timeline }
 export { MapActivity }
 export { Catalog }

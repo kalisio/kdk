@@ -25,7 +25,7 @@
           <div class="q-pa-sm row justify-end">
             <q-btn
               :loading="savingCategory"
-              color="secondary"
+              color="accent"
               id="add-layer-category"
               :label="$t('KLayerCategories.ADD_BUTTON')"
               @click="onAdd" />
@@ -38,7 +38,7 @@
           <div class="q-pa-sm row justify-end">
             <q-btn
               :loading="savingCategory"
-              color="secondary"
+              color="accent"
               id="edit-layer-category"
               :label="$t('KLayerCategories.EDIT_BUTTON')"
               @click="onEdit" />

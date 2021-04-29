@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="items.length > 0">
-      <q-timeline ref="timeline" color="secondary" :layout="layout()">
+      <q-timeline ref="timeline" color="accent" :layout="layout()">
         <q-infinite-scroll ref="scroll" @load="onScroll" :offset="50">
           <template v-for="item in items">
             <component

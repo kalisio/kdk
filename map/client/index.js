@@ -5,6 +5,7 @@ import * as utils from './utils'
 import init from './init'
 
 export * from './geolocation'
+export * from './canvas-draw-context'
 export { utils }
 export * from '../common'
 

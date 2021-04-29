@@ -171,20 +171,23 @@ export default {
       redundantCoordinates: true
     }) {
       const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+      // Removes redundant coordinates
+      if (options.redundantCoordinates) {
+        features.forEach(feature => clean(feature, { mutate: true }))
+      }
       // Filter invalid features
       let kinksFeatures
       if (options.kinks) {
         kinksFeatures = _.remove(features, feature => {
           const type = getType(feature)
-          return (((type === 'LineString') || (type === 'MultiLineString') ||
-                   (type === 'MultiPolygon') || (type === 'Polygon'))
-            ? (_.get(kinks(feature), 'features', []).length > 0)
-            : false)
+          if ((type === 'LineString') || (type === 'MultiLineString') ||
+              (type === 'MultiPolygon') || (type === 'Polygon')) {
+            const invalidFeatures = kinks(feature)
+            return _.get(invalidFeatures, 'features', []).length > 0
+          } else { // No possible self-intersection on points
+            return false
+          }
         })
-      }
-      // Removes redundant coordinates
-      if (options.redundantCoordinates) {
-        features.forEach(feature => clean(feature, { mutate: true }))
       }
       return { kinks: kinksFeatures }
     },

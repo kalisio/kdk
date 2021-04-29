@@ -10,6 +10,7 @@
     v-model="items"
     :label="label"
     :multiple="properties.multiselect"
+    autocomplete="off"
     hide-dropdown-icon
     use-input
     clearable
@@ -76,7 +77,8 @@ export default {
       return _.kebabCase(this.getLabel(item))
     },
     getLabel (item) {
-      return _.get(item, item.field)
+      const service = _.find(this.properties.services, { service: item.service })
+      return _.get(item, service.field)
     },
     getIcon (item) {
       return _.get(item, 'icon.name', _.get(item, 'icon', ''))
@@ -98,7 +100,7 @@ export default {
       update(() => {
         if (this.properties.multiselect) {
           this.options = _.differenceWith(results, this.items, (item1, item2) => {
-            return item1.field === item2.field
+            return _.get(item1, item1.field) === _.get(item2, item2.field) && item1.service === item2.service
           })
         } else this.options = results
         this.$refs.select.updateInputValue('')

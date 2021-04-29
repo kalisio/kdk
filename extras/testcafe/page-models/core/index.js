@@ -2,19 +2,23 @@ import * as fs from 'fs'
 import png from 'pngjs'
 import pixelmatch from 'pixelmatch'
 import { ClientFunction } from 'testcafe'
+import BasePage from './base-page'
+import BaseCollection from './base-collection'
 import Screens from './screens'
 import Layout from './layout'
 import Account from './account'
-import OrganisationsPanel from './organisations-panel'
+import Organisations from './organisations'
 import OrganisationSettings from './organisation-settings'
 import Members from './members'
 import Tags from './tags'
 import Groups from './groups'
 
 export { Screens }
+export { BasePage }
+export { BaseCollection }
 export { Layout }
 export { Account }
-export { OrganisationsPanel }
+export { Organisations }
 export { OrganisationSettings }
 export { Members }
 export { Tags }
@@ -40,6 +44,7 @@ const baseUrl = process.env.APP_URL || (process.env.CLIENT_PORT ? 'http://localh
 export const getUrl = (path) => path ? baseUrl + '/#/' + path : baseUrl
 export const getCurrentUrl = ClientFunction(() => window.location.href)
 export const goBack = ClientFunction(() => window.history.back())
+export const refresh = ClientFunction(() => document.location.reload())
 
 // Access console errors
 export const checkNoClientError = async (test) => {
@@ -56,17 +61,17 @@ export const checkClientError = async (test) => {
 /* Given a screenshot key (a string) this will provide the full path
  * of the associated reference screenshot file.
  */
-function refScreenshot (t, key) {
-  const screenshotBase = t.testRun.opts.screenshots.path
-  return `${screenshotBase}/ref/${key}.png`
+function refScreenshot (key) {
+  const projectPath = process.cwd()
+  return `${projectPath}/test/data/screenrefs/${key}.png`
 }
 
 /* Given a screenshot key (a string) this will provide the path
  * of the test run screenshot file. If 'absolute' is false this
  * will return the relative path from the screenshot run folder.
  */
-function runScreenshot (t, key, absolute = false) {
-  const screenshotBase = t.testRun.opts.screenshots.path
+function runScreenshot (test, key, absolute = false) {
+  const screenshotBase = test.testRun.opts.screenshots.path
   return absolute ? `${screenshotBase}/run/${key}.png` : `run/${key}.png`
 }
 
@@ -74,9 +79,9 @@ function runScreenshot (t, key, absolute = false) {
  * will perform screenshot comparison and return the diffRatio as
  * a percentage of the number of mismatched pixels.
  */
-function diffScreenshots (t, refKey, runKey, diffOpts = {}) {
-  const refPath = refScreenshot(t, refKey)
-  const runPath = runScreenshot(t, runKey, true)
+function diffScreenshots (test, refKey, runKey, diffOpts = {}) {
+  const refPath = refScreenshot(refKey)
+  const runPath = runScreenshot(test, runKey, true)
   const ref = png.PNG.sync.read(fs.readFileSync(refPath))
   const run = png.PNG.sync.read(fs.readFileSync(runPath))
   const { width, height } = ref
@@ -97,8 +102,8 @@ function diffScreenshots (t, refKey, runKey, diffOpts = {}) {
 /* Just takes a screenshot and write it on disk as PNG
  * in a standard location
  */
-export async function takeScreenshot (t, runKey) {
-  await t.takeScreenshot({ path: runScreenshot(t, runKey) })
+export async function takeScreenshot (test, runKey) {
+  await test.takeScreenshot({ path: runScreenshot(test, runKey) })
 }
 
 /* Makes sure screenshot matches between run and ref screenshot keys.
@@ -107,12 +112,12 @@ export async function takeScreenshot (t, runKey) {
  * diff ratio is higher, test will fail.
  * Pixel comparison uses threshold value [0,1] to flag pixels as mismatching (see pixelmatch module)
  */
-export async function assertScreenshotMatches (t, runKey, { refKey = null, maxDiffRatio = 1.0, threshold = 0.1 } = {}) {
+export async function assertScreenshotMatches (test, runKey, { refKey = null, maxDiffRatio = 1.0, threshold = 0.1 } = {}) {
   const keyRef = refKey || runKey
-  await t.takeScreenshot({ path: runScreenshot(t, runKey) })
-  const diff = diffScreenshots(t, keyRef, runKey, { threshold })
+  await test.takeScreenshot({ path: runScreenshot(test, runKey) })
+  const diff = diffScreenshots(test, keyRef, runKey, { threshold })
   if (diff.diffRatio > maxDiffRatio) {
-    const output = runScreenshot(t, `diff-${runKey}`, true)
+    const output = runScreenshot(test, `diff-${runKey}`, true)
     fs.writeFileSync(output, png.PNG.sync.write(diff.diff))
     throw new Error(`Diff ratio for '${runKey}' is too high: ${diff.diffRatio.toPrecision(2)}%`)
   }
@@ -124,12 +129,11 @@ export async function assertScreenshotMatches (t, runKey, { refKey = null, maxDi
  * diff ratio is lower, test will fail.
  * Pixel comparison uses threshold value [0,1] to flag pixels as mismatching (see pixelmatch module)
  */
-export async function assertScreenshotMismatches (t, runKey, { refKey = null, minDiffRatio = 50.0, threshold = 0.1 } = {}) {
+export async function assertScreenshotMismatches (test, runKey, { refKey = null, minDiffRatio = 50.0, threshold = 0.1 } = {}) {
   const keyRef = refKey || runKey
-  await t.takeScreenshot({ path: runScreenshot(t, runKey) })
-  const diff = diffScreenshots(t, keyRef, runKey, { threshold })
+  const diff = diffScreenshots(test, keyRef, runKey, { threshold })
   if (diff.diffRatio < minDiffRatio) {
-    const output = runScreenshot(t, `diff-${runKey}`, true)
+    const output = runScreenshot(test, `diff-${runKey}`, true)
     fs.writeFileSync(output, png.PNG.sync.write(diff.diff))
     throw new Error(`Diff ratio for '${runKey}' is too low: ${diff.diffRatio.toPrecision(2)}%`)
   }

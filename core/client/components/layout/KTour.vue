@@ -415,7 +415,7 @@ export default {
 
 <style lang="stylus" scoped>
   .v-step
-    background: $secondary;
+    background: var(--q-color-accent);
     z-index: 10000;
   .v-tour__target--highlighted
     box-shadow: 0 0 0 99999px rgba(0,0,0,.4);

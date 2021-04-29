@@ -9,12 +9,12 @@
     :icon="computedIcon"
     :color="computedColor"
     :size="size"
-    :flat="flat"
+    :flat="true"
     :round="label===''"
     :rounded="label!==''"
     :dense="dense"
     :disabled="disabled"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
       {{ computedTooltip }}
@@ -39,7 +39,7 @@
     :dense="dense"
     :disabled="disabled"
     :loading="loading"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
   </q-btn>
   <!--
     Item renderer
@@ -49,7 +49,7 @@
     clickable
     :dense="dense"
     :disabled="disabled"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
     <q-item-section avatar>
       <q-icon :dense="dense" :name="computedIcon" :color="computedColor" />
       <!-- badge -->
@@ -62,9 +62,31 @@
     </q-item-section>
   </q-item>
   <!--
-  Fab renderer
+    Fab renderer
+   -->
+  <q-btn v-else-if="renderer === 'fab'"
+    :id="id"
+    class="k-fab"
+    :icon="computedIcon"
+    :color="computedColor"
+    :size="size"
+    :round="true"
+    :dense="dense"
+    :disabled="disabled"
+    @click="onClicked(arguments[0])">
+    <!-- tooltip -->
+    <q-tooltip v-if="computedTooltip">
+      {{ computedTooltip }}
+    </q-tooltip>
+    <!-- badge -->
+    <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
+      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+    </q-badge>
+  </q-btn>
+  <!--
+  Fab action renderer
   -->
-  <q-fab-action v-else-if="renderer === 'fab'"
+  <q-fab-action v-else-if="renderer === 'fab-action'"
     :id="id"
     class="k-fab-action"
     no-caps
@@ -75,7 +97,7 @@
     square
     label-position="left"
     :disabled="disabled"
-    @click="onClicked()">
+    @click="onClicked(arguments[0])">
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
@@ -105,10 +127,6 @@ export default {
     size: {
       type: String,
       default: 'md'
-    },
-    flat: {
-      type: Boolean,
-      default: true
     },
     outline: {
       type: Boolean,
@@ -142,6 +160,10 @@ export default {
       type: Boolean,
       default: false
     },
+    propagate: {
+      type: Boolean,
+      default: true
+    },
     context: {
       type: Object,
       default: () => null
@@ -162,7 +184,7 @@ export default {
       type: String,
       default: 'button',
       validator: (value) => {
-        return ['button', 'form-button', 'item', 'fab'].includes(value)
+        return ['button', 'form-button', 'item', 'fab', 'fab-action'].includes(value)
       }
     }
   },
@@ -193,7 +215,7 @@ export default {
       return this.icon
     },
     computedColor () {
-      if (this.isToggled) return this.toggle.color || 'secondary'
+      if (this.isToggled) return this.toggle.color || 'accent'
       return this.color
     },
     computedTooltip () {
@@ -240,7 +262,8 @@ export default {
       })
       return params
     },
-    onClicked () {
+    onClicked (event) {
+      if (!this.propagate) event.stopPropagation()
       // Handle the toggle if needed
       if (this.toggle) {
         this.isToggled = !this.isToggled
@@ -266,7 +289,7 @@ export default {
 </script>
 
 <style lang="stylus">
-  .k-fab-action {
-    border: 2px solid $primary + 80%;
+  .k-fab, .k-fab-action {
+    border: 2px solid var(--q-color-secondary);
   }
 </style>

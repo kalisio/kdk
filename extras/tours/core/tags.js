@@ -6,14 +6,6 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#app-bar-overflow-menu',
-  content: 'tours.tags.OVERFLOW_MENU_LABEL',
-  params: {
-    placement: 'left',
-    clickOn: '#app-bar-overflow-menu',
-    clickDelay: 500
-  }
-}, {
   target: '#search-tag',
   content: 'tours.tags.SEARCH_LABEL',
   link: 'tours.tags.CREATE_TAG_LINK_LABEL',
@@ -21,6 +13,16 @@ module.exports = [{
     placement: 'left',
     blockOnMiss: 'div.q-card.q-card--bordered',
     route: { name: 'members-activity' }
+  }
+}, {
+  target: '#tag-sorter',
+  title: 'tours.tags.SORT_LABEL',
+  params: {
+    placement: 'left',
+    clickOn: '#tag-sorter',
+    clickDelay: 500,
+    clickOnNext: '#tag-sorter',
+    clickOnPrevious: '#tag-sorter'
   }
 }, {
   target: 'div.q-card.q-card--bordered',

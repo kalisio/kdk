@@ -9,7 +9,7 @@
           :active="layer.isVisible"
           :disable="layer.isDisabled"
           :clickable="!layer.isDisabled"
-          active-class="text-secondary text-weight-bolder"
+          active-class="text-accent text-weight-bolder"
           class="cursor-pointer"
           dense>
           <q-item-section avatar @click="onLayerClicked(layer)">

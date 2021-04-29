@@ -92,6 +92,7 @@ export default {
   methods: {
     onAbout () {
       this.$refs.about.open()
+      this.$emit('triggered')
     },
     onAboutClosed () {
       this.$refs.about.close()

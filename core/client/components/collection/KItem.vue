@@ -5,8 +5,7 @@
     -->
     <q-item-section top avatar @click="onItemSelected('avatar')">
       <slot name="item-avatar">
-        <q-avatar v-if="avatar.type === 'text'" color="primary" text-color="white" >{{ avatar.text }}</q-avatar>
-        <q-avatar v-if="avatar.type === 'icon'" :color="avatar.icon.color" text-color="white" :icon="avatar.icon.name" />
+        <k-avatar :object="item" :contextId="contextId" :options="options" />
       </slot>
     </q-item-section>
     <!--
@@ -37,6 +36,7 @@ export default {
   mixins: [mixins.baseItem],
   created () {
     // Loads the required components
+    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')    
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }

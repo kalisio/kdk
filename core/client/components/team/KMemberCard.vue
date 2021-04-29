@@ -11,6 +11,12 @@
       </div>
     </template>
     <!--
+      Card avater
+    -->
+    <template v-slot:card-avatar>
+      <k-avatar :object="item" size="4rem" />
+    </template>
+    <!--
       Card content
     -->
     <div slot="card-content">
@@ -22,7 +28,7 @@
       <div class="q-pa-sm row justify-start items-center">
         <template v-for="(group, index) in memberGroups">
           <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
-            <q-avatar color="secondary" text-color="white" size="32px">{{groupInitials(group)}}</q-avatar>
+            <q-avatar color="primary" text-color="white" size="32px">{{ groupInitials(group) }}</q-avatar>
             <q-menu ref="popover">
               <q-toolbar inverted color="grey-7">
                 <span style="margin:8px">{{group.name}}</span>
@@ -222,6 +228,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')
+    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
     this.$options.components['k-tags-pane'] = this.$load('team/KTagsPane')
     // Load the role configuration
     this.roleIcons = this.$config('roles.icons')

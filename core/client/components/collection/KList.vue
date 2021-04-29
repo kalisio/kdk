@@ -1,32 +1,30 @@
 <template>
-  <div>
-    <div v-if="items.length > 0" class="row">
-      <div class="col-12">
-        <q-list highlight separator>
-          <template v-for="item in items">
-            <component
-              :id="'item-' + item._id"
-              :key="item._id"
-              :service="service"
-              :item="item"
-              :contextId="contextId"
-              :is="renderer.component"
-              v-bind="renderer"
-              @item-selected="onItemSelected" />
-          </template>
-        </q-list>
-      </div>
-      <div v-if="nbPages > 1" class="col-12">
-        <div class="row justify-center">
-          <q-pagination v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true" />
-        </div>
+  <div v-if="items.length > 0" class="row">
+    <div class="col-12">
+      <q-list highlight separator>
+        <template v-for="item in items">
+          <component
+            :id="item._id"
+            :key="item._id"
+            :service="service"
+            :item="item"
+            :contextId="contextId"
+            :is="renderer.component"
+            v-bind="renderer"
+            @item-selected="onItemSelected" />
+        </template>
+      </q-list>
+    </div>
+    <div v-if="nbPages > 1" class="col-12">
+      <div class="row justify-center">
+        <q-pagination v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true" />
       </div>
     </div>
-    <div v-else class="absolute-center">
-      <slot id="empty-list" name="empty-list">
-        <k-label :text="$t('KList.EMPTY_LIST')" icon-size="3rem" />
-      </slot>
-    </div>
+  </div>
+  <div v-else class="absolute-center">
+    <slot id="empty-list" name="empty-list">
+      <k-label :text="$t('KList.EMPTY_LIST')" icon-size="3rem" />
+    </slot>
   </div>
 </template>
 

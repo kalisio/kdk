@@ -14,53 +14,32 @@
     </div>
     <!--
       Managed stickies
+      Be careful of the order
      -->
-    <!-- top -->
-    <q-page-sticky position="top">
-      <div id="top-pane" v-show="topPane.content && topPane.mode" class="column items-center">
+    <!-- bottom -->
+    <q-page-sticky position="bottom">
+      <div id="bottom-pane" v-show="hasBottomPaneContent" class="column items-center">
+        <k-opener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
           <k-panel
-            id="top-panel"
-            v-show="isTopPaneOpened"
-            :content="topPane.content"
-            :mode="topPane.mode"
-            :filter="topPane.filter"
+            id="bottom-panel"
+            v-show="bottomPane.visible"
+            :content="bottomPane.content"
+            :mode="bottomPane.mode"
+            :filter="bottomPane.filter"
             class="k-pane" />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
-        <k-opener v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
-    </q-page-sticky>
-    <!-- window -->
-    <q-page-sticky position="top" :offset="widgetOffset">
-      <k-window id="window" ref="window" />
-    </q-page-sticky>
-    <!-- left -->
-    <q-page-sticky position="left">
-      <div id="left-pane" v-show="leftPane.content && leftPane.mode" class="row items-center">
-        <div>
-          <k-panel
-            id="left-panel"
-            v-show="isLeftPaneOpened"
-            :content="leftPane.content"
-            :mode="leftPane.mode"
-            :filter="leftPane.filter"
-            direction="vertical"
-            style="height: 100vh; width: 300px;"
-            class="k-pane" />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
-        </div>
-        <k-opener v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
-      </div>
-    </q-page-sticky>
+    </q-page-sticky>     
     <!-- right -->
     <q-page-sticky position="right">
-      <div id="right-pane" v-show="rightPane.content && rightPane.mode" class="row items-center">
-        <k-opener v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
+      <div id="right-pane" v-show="hasRightPaneContent" class="row items-center">
+        <k-opener id="right-opener" v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
           <k-panel
             id="right-panel"
-            v-show="isRightPaneOpened"
+            v-show="rightPane.visible"
             :content="rightPane.content"
             :mode="rightPane.mode"
             :filter="rightPane.filter"
@@ -70,30 +49,54 @@
         </div>
       </div>
     </q-page-sticky>
-    <!-- bottom -->
-    <q-page-sticky position="bottom">
-      <div id="bottom-pane" v-show="bottomPane.content && bottomPane.mode" class="column items-center">
-        <k-opener v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
+    <!-- top -->
+    <q-page-sticky position="top">
+      <div id="top-pane" v-show="hasTopPaneContent" class="column items-center">
         <div>
           <k-panel
-            id="bottom-panel"
-            v-show="isBottomPaneOpened"
-            :content="bottomPane.content"
-            :mode="bottomPane.mode"
-            :filter="bottomPane.filter"
+            id="top-panel"
+            v-show="topPane.visible"
+            :content="topPane.content"
+            :mode="topPane.mode"
+            :filter="topPane.filter"
             class="k-pane" />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
+        <k-opener id="top-opener" v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
+    <!-- window -->
+    <q-page-sticky position="top" :offset="widgetOffset">
+      <k-window id="window" ref="window" />
+    </q-page-sticky>      
     <!-- fab -->
     <q-page-sticky position="bottom-right" :offset="fabOffset">
       <k-fab />
+    </q-page-sticky>
+    <!-- left -->
+    <q-page-sticky position="left">
+      <div id="left-pane" v-show="hasLeftPaneContent" class="row items-center">
+        <div>
+          <k-panel
+            id="left-panel"
+            v-show="leftPane.visible"
+            :content="leftPane.content"
+            :mode="leftPane.mode"
+            :filter="leftPane.filter"
+            direction="vertical"
+            class="k-left-pane"
+            @triggered="setLeftPaneVisible(false)" />
+          <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
+        </div>
+        <k-opener id="left-opener" v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
+      </div>
     </q-page-sticky>
   </q-page>
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'k-page',
   props: {
@@ -111,7 +114,7 @@ export default {
         return this.topPane.visible
       },
       set: function (value) {
-        this.$store.patch('topPane', { visible: value })
+        this.setTopPaneVisible(value)
       }
     },
     isLeftPaneOpened: {
@@ -119,7 +122,7 @@ export default {
         return this.leftPane.visible
       },
       set: function (value) {
-        this.$store.patch('leftPane', { visible: value })
+        this.setLeftPaneVisible(value)
       }
     },
     isRightPaneOpened: {
@@ -127,7 +130,7 @@ export default {
         return this.rightPane.visible
       },
       set: function (value) {
-        this.$store.patch('rightPane', { visible: value })
+        this.setRightPaneVisible(value)
       }
     },
     isBottomPaneOpened: {
@@ -135,8 +138,28 @@ export default {
         return this.bottomPane.visible
       },
       set: function (value) {
-        this.$store.patch('bottomPane', { visible: value })
+        this.setBottomPaneVisible(value)
       }
+    },
+    hasLeftPaneContent () {
+      if (_.isEmpty(this.leftPane.content)) return false
+      if (this.leftPane.mode) return !_.isEmpty(_.get(this.leftPane.content, this.leftPane.mode))
+      return true
+    },
+    hasTopPaneContent () {
+      if (_.isEmpty(this.topPane.content)) return false
+      if (this.topPane.mode) return !_.isEmpty(_.get(this.topPane.content, this.topPane.mode))
+      return true
+    },
+    hasRightPaneContent () {
+      if (_.isEmpty(this.rightPane.content)) return false
+      if (this.rightPane.mode) return !_.isEmpty(_.get(this.rightPane.content, this.rightPane.mode))
+      return true
+    },
+    hasBottomPaneContent () {
+      if (_.isEmpty(this.bottomPane.content)) return false
+      if (this.bottomPane.mode) return !_.isEmpty(_.get(this.bottomPane.content, this.bottomPane.mode))
+      return true
     }
   },
   data () {
@@ -158,18 +181,54 @@ export default {
       fabOffset: [16, 16]
     }
   },
+  watch: {
+    'leftPane.visible': {
+      immediate: true,
+      handler (visible) {
+        if (visible) {
+          setTimeout(() =>  {
+            document.addEventListener('click', this.clickOutsideLeftPanelListener, true)
+          }, 500)
+        } else {
+          document.removeEventListener('click', this.clickOutsideLeftPanelListener, true)
+        }
+      }
+    }
+  },
   methods: {
     onTopPaneResized (size) {
-      this.topPadding = size.height
+      this.topPadding = size.height + this.gutter
     },
     onLeftPaneResized (size) {
-      this.leftPadding = size.width
+      this.leftPadding = size.width + this.gutter
     },
     onRightPaneResized (size) {
-      this.rightPaddding = size.width
+      this.rightPaddding = size.width + this.gutter
     },
     onBottomPaneResized (size) {
-      this.bottomPadding = size.height
+      this.bottomPadding = size.height + this.gutter
+    },
+    setTopPaneVisible (visible) {
+      this.$store.patch('topPane', { visible })
+    },
+    setLeftPaneVisible (visible) {
+      this.$store.patch('leftPane', { visible })
+    },
+    setRightPaneVisible (visible) {
+      this.$store.patch('rightPane', { visible })
+    },
+    setBottomPaneVisible (visible) {
+      this.$store.patch('bottomPane', { visible })
+    },
+    clickOutsideLeftPanelListener (event) {
+      const leftPanelElement = document.getElementById('left-panel')
+      if (leftPanelElement) {
+        if (!leftPanelElement.contains(event.target)) {
+          const leftOpenerElement = document.getElementById('left-opener')
+          if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
+          this.setLeftPaneVisible(false)
+        }
+      }
     }
   },
   created () {
@@ -191,18 +250,24 @@ export default {
     // Read bottom pane configuration
     this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
+    // Set extra padding value
+    this.gutter = 8
   }
 }
 </script>
 
 <style lang="stylus">
-.k-pane {
+.k-pane, .k-left-pane {
   border: solid 1px lightgrey;
   border-radius: 5px;
-  background: #ffffff
 }
 
-.k-pane:hover {
+.k-pane:hover, .k-left-pane:hover {
   border: solid 1px $primary;
+}
+
+.k-left-pane {
+  height: 100vh;
+  width: 300px;
 }
 </style>

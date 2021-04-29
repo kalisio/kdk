@@ -5,10 +5,10 @@
         Organisations collection
       -->
       <k-grid
-        ref="organisations"
+        ref="organisationsGrid"
         service="organisations"
         :renderer="renderer"
-        :base-query="baseQuery"
+        :base-query="sorter.query"
         :filter-query="filter.query"
         :list-strategy="'smart'" />
       <!--
@@ -28,15 +28,11 @@ export default {
   mixins: [mixins.baseActivity()],
   data () {
     return {
-      baseQuery: {
-        $sort: {
-          name: 1
-        }
-      },
+      sorter: this.$store.get('sorter'),
       filter: this.$store.get('filter'),
       // Make this configurable from app
       renderer: _.merge({
-        component: 'collection/KCard'
+        component: 'collection/KCard',
       }, this.activityOptions.items)
     }
   },
