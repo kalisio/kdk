@@ -7,7 +7,7 @@ export default class Organisations extends BaseCollection {
   constructor () {
     super('organisationsGrid', 'QCard')
     this.layout = new Layout()
-    // Organisation create editor
+    // Organisation editor 
     this.editorNameField = VueSelector('k-text-field').nth(0)
     this.editoDescriptionField = VueSelector('k-text-field').nth(1)
   }
@@ -16,20 +16,36 @@ export default class Organisations extends BaseCollection {
     return 'organisations'
   }
 
+  static get PROPERTIES_ENTRY () {
+    return 'edit-organisation'
+  }
+
+  static get MEMBERS_ENTRY () {
+    return 'organisation-members'
+  }
+
+  static get TAGS_ENTRY () {
+    return 'organisation-members'
+  }
+
+  static get GROUPS_ENTRY () {
+    return 'organisation-members'
+  }
+
+  async goTo (test, name, route, wait = Organisations.LONG_WAIT) {
+    await this.clickAction(test, name, route, wait)
+  }
+
   async goToMembers (test, name) {
-    await this.clickAction(test, name, 'organisation-members', Organisations.LONG_WAIT)
+    await this.goTo(test, name, Organisations.MEMBERS_ENTRY)
+  }
+
+  async goToTags (test, name) {
+    await this.goTo(test, name, Organisations.TAGS_ENTRY)
   }
 
   async goToGroups (test, name) {
-    await this.clickAction(test, name, 'organisation-groups', Organisations.LONG_WAIT)
-  }
-
-  async goToProperties (test, name) {
-    await this.clickAction(test, name, 'edit-organisation', Organisations.LONG_WAIT)
-  }
-
-  async goToBilling (test, name) {
-    await this.clickAction(test, name, 'organisation-billing', Organisations.LONG_WAIT)
+    await this.goTo(test, name, Organisations.GROUPS_ENTRY)
   }
 
   async create (test, name, description) {
@@ -37,6 +53,15 @@ export default class Organisations extends BaseCollection {
     await test
       .typeText(this.editorNameField, name, { replace: true })
       .typeText(this.editoDescriptionField, description, { replace: true })
+      .click(Selector('.q-dialog #apply-button'))
+      .wait(Organisations.EXTRA_LONG_WAIT)
+  }
+
+  async edit (test, name, data) {
+    await this.clickAction(test, name, 'edit-organisation', Organisations.LONG_WAIT)
+    await test
+      .typeText(this.editorNameField, data.name, { replace: true })
+      .typeText(this.editoDescriptionField, data.description, { replace: true })
       .click(Selector('.q-dialog #apply-button'))
       .wait(Organisations.EXTRA_LONG_WAIT)
   }
