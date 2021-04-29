@@ -115,7 +115,10 @@ export default {
       const time = this.probedLocation.time || this.probedLocation.forecastTime
 
       this.variables.forEach(variable => {
-        if (time && time[variable.name]) this.times.push(time[variable.name])
+        // Check if we are targetting a specific level
+        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
+        
+        if (time && time[name]) this.times.push(time[name])
       })
       // Make union of all available times for x-axis
       this.times = _.union(...this.times).map(time => moment.utc(time)).sort((a, b) => a - b).filter(this.filter)
@@ -140,15 +143,17 @@ export default {
       // Generate a color palette in case the variables does not provide it
       const colors = _.shuffle(chroma.scale('Spectral').colors(this.variables.length))
       this.variables.forEach((variable, index) => {
+        // Check if we are targetting a specific level
+        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
         const unit = variable.units[0]
         const label = this.$t(variable.label) || variable.label
         // Variable available for feature ?
-        if (properties[variable.name]) {
+        if (properties[name]) {
           this.datasets.push(_.merge({
             label: `${label} (${unit})`,
             borderColor: colors[index],
             backgroundColor: colors[index],
-            data: properties[variable.name].map((value, index) => ({ x: new Date(time[variable.name][index]), y: value })).filter(this.filter),
+            data: properties[name].map((value, index) => ({ x: new Date(time[name][index]), y: value })).filter(this.filter),
             yAxisID: unit
           }, _.omit(variable.chartjs, 'yAxis')))
         }
@@ -160,10 +165,12 @@ export default {
       let isLeft = true
 
       this.variables.forEach(variable => {
+        // Check if we are targetting a specific level
+        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
         const unit = variable.units[0]
         // Variable available for feature ?
         // Check also if axis already created
-        if (properties[variable.name] && !_.find(this.yAxes, axis => axis.id === unit)) {
+        if (properties[name] && !_.find(this.yAxes, axis => axis.id === unit)) {
           this.yAxes.push(_.merge({
             id: unit,
             position: isLeft ? 'left' : 'right',
@@ -226,7 +233,10 @@ export default {
     hasAvailableDatasets () {
       const keys = Object.keys(this.probedLocation.properties)
       for (let i = 0; i < this.variables.length; i++) {
-        const name = this.variables[i].name
+        let name = this.variables[i].name
+        // Check if we are targetting a specific level
+        if (this.kActivity.selectedLevel) name = `${name}-${this.kActivity.selectedLevel}`
+        
         if (_.indexOf(keys, name) !== -1) {
           const values = this.probedLocation.properties[name]
           if (values && Array.isArray(values)) return true
