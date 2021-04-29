@@ -23,6 +23,18 @@ describe('map:hooks', () => {
     expect(hook.params.query.geometry.$near.$geometry.coordinates[1]).to.equal(0.3)
     expect(typeof hook.params.query.geometry.$near.$maxDistance).to.equal('number')
     expect(hook.params.query.geometry.$near.$maxDistance).to.equal(1000.5)
+    hook.params.query.geometry = {
+      $geoWithin: {
+        $centerSphere: [['56', '0.3'], (1000.50 / 6378137.0).toString()] // Earth radius as in radians
+      }
+    }
+    hooks.marshallGeometryQuery(hook)
+    expect(typeof hook.params.query.geometry.$geoWithin.$centerSphere[0][0]).to.equal('number')
+    expect(typeof hook.params.query.geometry.$geoWithin.$centerSphere[0][1]).to.equal('number')
+    expect(hook.params.query.geometry.$geoWithin.$centerSphere[0][0]).to.equal(56)
+    expect(hook.params.query.geometry.$geoWithin.$centerSphere[0][1]).to.equal(0.3)
+    expect(typeof hook.params.query.geometry.$geoWithin.$centerSphere[1]).to.equal('number')
+    expect(hook.params.query.geometry.$geoWithin.$centerSphere[1]).to.equal(1000.50 / 6378137.0) // Earth radius as in radians
   })
 
   it('marshalls geometry queries using shortcuts', () => {
@@ -35,12 +47,12 @@ describe('map:hooks', () => {
       }
     }
     hooks.marshallSpatialQuery(hook)
-    expect(typeof hook.params.query.geometry.$near.$geometry.coordinates[0]).to.equal('number')
-    expect(typeof hook.params.query.geometry.$near.$geometry.coordinates[1]).to.equal('number')
-    expect(hook.params.query.geometry.$near.$geometry.coordinates[0]).to.equal(56)
-    expect(hook.params.query.geometry.$near.$geometry.coordinates[1]).to.equal(0.3)
-    expect(typeof hook.params.query.geometry.$near.$maxDistance).to.equal('number')
-    expect(hook.params.query.geometry.$near.$maxDistance).to.equal(1000.5)
+    expect(typeof hook.params.query.geometry.$geoWithin.$centerSphere[0][0]).to.equal('number')
+    expect(typeof hook.params.query.geometry.$geoWithin.$centerSphere[0][1]).to.equal('number')
+    expect(hook.params.query.geometry.$geoWithin.$centerSphere[0][0]).to.equal(56)
+    expect(hook.params.query.geometry.$geoWithin.$centerSphere[0][1]).to.equal(0.3)
+    expect(typeof hook.params.query.geometry.$geoWithin.$centerSphere[1]).to.equal('number')
+    expect(hook.params.query.geometry.$geoWithin.$centerSphere[1]).to.equal(1000.5 / 6378137.0) // Earth radius as in radians
     // From proximity to location query
     hook.params.query = { longitude: '56', latitude: '0.3' }
     hooks.marshallSpatialQuery(hook)
