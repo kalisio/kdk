@@ -1,12 +1,5 @@
-import { CanvasDrawContext } from '../../canvas-context'
+import { CanvasDrawContext } from '../../canvas-draw-context'
 import L from 'leaflet'
-// import 'leaflet-canvas-layer'
-// import turf_centroid from '@turf/centroid'
-// import turf_destination from '@turf/destination'
-// import { point as turf_point } from '@turf/helpers'
-// import { featureEach as turf_featureEach } from '@turf/meta'
-// import { coordEach as turf_coordEach } from '@turf/meta'
-// import { coordAll as turf_coordAll } from '@turf/meta'
 
 L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     // -- initialized is called on prototype
