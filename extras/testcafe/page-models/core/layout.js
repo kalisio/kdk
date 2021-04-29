@@ -60,17 +60,17 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickLeftPaneAction (test, action) {
+  async clickLeftPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.leftPanel.find(`#${action}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
   async clickLeftPaneMenuEntry (test, menu, entry) {
     await this.clickLeftPaneAction(test, menu)
     await test
       .click(Selector(`#${entry}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
   // TopPane
@@ -79,17 +79,17 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickTopPaneAction (test, action) {
+  async clickTopPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.topPanel.find(`#${action}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
-  async clickTopPaneMenuEntry (test, menu, entry) {
+  async clickTopPaneMenuEntry (test, menu, entry, wait = Layout.SHORT_WAIT) {
     await this.clickTopPaneAction(test, menu)
     await test
       .click(Selector(`#${entry}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
   // RightPane
@@ -98,10 +98,10 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickRightPaneAction (test, action) {
+  async clickRightPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.rightPanel.find(`#${action}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
   // BottomPane
@@ -110,25 +110,25 @@ export default class Layout extends BasePage {
     return isVisible
   }
 
-  async clickBottomPaneAction (test, action) {
+  async clickBottomPaneAction (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(this.bottomPanel.find(`#${action}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
   // Fab
-  async clickFab (test, action) {
+  async clickFab (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(Selector(`#${action}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
-  async openAndClickFab (test, action) {
+  async openAndClickFab (test, action, wait = Layout.SHORT_WAIT) {
     await test
       .click(Selector(this.fab))
       .wait(Layout.SHORT_WAIT)
       .click(this.fab.find(`#${action}`))
-      .wait(Layout.SHORT_WAIT)
+      .wait(wait)
   }
 
   // Misc

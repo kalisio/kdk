@@ -2,7 +2,6 @@ import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store } from './store'
 import { Layout } from './layout'
-import { Theme } from './theme'
 import { Filter } from './filter'
 import { Sorter } from './sorter'
 import { Search } from './search'
@@ -43,7 +42,6 @@ export default function init () {
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
-  Theme.initialize()
   Filter.initialize(api)
   Sorter.initialize()
   Search.initialize(api)
