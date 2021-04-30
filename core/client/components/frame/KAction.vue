@@ -75,7 +75,7 @@
     :disabled="disabled"
     @click="onClicked(arguments[0])">
     <!-- tooltip -->
-    <q-tooltip v-if="computedTooltip">
+    <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
       {{ computedTooltip }}
     </q-tooltip>
     <!-- badge -->

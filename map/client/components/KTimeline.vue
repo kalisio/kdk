@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
 
@@ -148,13 +149,15 @@ export default {
     },
     date: {
       get: function () {
-        return this.kActivity.currentTimeFormat.utc
-          ? this.time.format(this.calendarDateMask)
-          : moment(this.time).local().format(this.calendarDateMask)
+        const utc = _.get(this.kActivity, 'currentTimeFormat.utc')
+        return utc
+        ? this.time.format(this.calendarDateMask)
+        : moment(this.time).local().format(this.calendarDateMask)
       },
       set: function (value) {
+        const utc = _.get(this.kActivity, 'currentTimeFormat.utc')
         let time
-        if (this.kActivity.currentTimeFormat.utc) {
+        if (utc) {
           time = moment.utc(value, this.calendarDateMask)
           time.hour(this.time.hour())
           time.minute(this.time.minute())
