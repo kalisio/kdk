@@ -30,7 +30,7 @@
 
 <script>
 import mixins from '../../mixins'
-import { QEditor } from 'quasar'
+import { QEditor, Platform } from 'quasar'
 
 export default {
   name: 'k-textarea-field',
@@ -42,7 +42,15 @@ export default {
     editorToolbar: {
       type: Array,
       default () {
-        return [
+        return (this.$q.screen.lt.sm ? [
+          ['bold', 'italic', 'underline', 'strike'],
+          [{
+            label: '',
+            icon: this.$q.iconSet.editor.align,
+            options: ['left', 'center', 'right', 'justify']
+          }],
+          ['undo', 'redo']
+        ] : [
           ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],
           ['quote', 'link', 'hr'],
           [{
@@ -52,7 +60,7 @@ export default {
             options: ['left', 'center', 'right', 'justify']
           }],
           ['undo', 'redo', 'viewsource']
-        ]
+        ])
       }
     }
   },
