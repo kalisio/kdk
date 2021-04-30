@@ -30,7 +30,7 @@
 
 <script>
 import mixins from '../../mixins'
-import { QEditor, Platform } from 'quasar'
+import { QEditor } from 'quasar'
 
 export default {
   name: 'k-textarea-field',
