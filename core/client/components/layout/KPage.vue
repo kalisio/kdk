@@ -65,14 +65,14 @@
         <k-opener id="top-opener" v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
-    <!-- window -->
-    <q-page-sticky position="top" :offset="widgetOffset">
-      <k-window id="window" ref="window" />
-    </q-page-sticky>      
     <!-- fab -->
     <q-page-sticky position="bottom-right" :offset="fabOffset">
       <k-fab />
     </q-page-sticky>
+    <!-- window -->
+    <q-page-sticky position="top" :offset="widgetOffset">
+      <k-window id="window" ref="window" />
+    </q-page-sticky>      
     <!-- left -->
     <q-page-sticky position="left">
       <div id="left-pane" v-show="hasLeftPaneContent" class="row items-center">
@@ -263,7 +263,7 @@ export default {
 }
 
 .k-pane:hover, .k-left-pane:hover {
-  border: solid 1px $primary;
+  border: solid 1px var(--q-color-primary);
 }
 
 .k-left-pane {
