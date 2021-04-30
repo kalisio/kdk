@@ -69,7 +69,11 @@ export default {
       // Apply filtering
       fabActions = Layout.filterContent(fabActions, this.fab.filter || {})
       _.forEach(fabActions, (action) => {
-        const isVisible = _.get(action, 'visible', true)
+        let isVisible = _.get(action, 'visible', true)
+        // Can be a functional call
+        if (typeof isVisible === 'function') {
+          isVisible = isVisible()
+        }
         if (isVisible) {
           action.uid = uid()
           if (!action.color) action.color = 'primary'
