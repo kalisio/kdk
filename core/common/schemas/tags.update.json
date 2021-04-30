@@ -8,7 +8,6 @@
     "value": {
       "type": "string", 
       "maxLength": 128,
-      "minLength": 3,
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TAGS_NAME_FIELD_LABEL"

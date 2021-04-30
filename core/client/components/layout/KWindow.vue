@@ -116,5 +116,5 @@ export default {
   background: #ffffff
 
 .k-window:hover
-  border: solid 1px $primary;
+  border: solid 1px var(--q-color-primary);
 </style>

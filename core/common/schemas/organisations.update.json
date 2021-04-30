@@ -28,7 +28,7 @@
         "component": "form/KAttachmentField",
         "label": "schemas.AVATAR_FIELD_LABEL",
         "service": "storage",
-        "acceptedFiles": "image/*",
+        "acceptedFiles": ".png,.jpg,.jpeg,.webp",
         "maxFilesize": 0.5,
         "autoProcessQueue": false,
         "storagePath": "avatar",
