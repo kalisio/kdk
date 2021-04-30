@@ -45,19 +45,12 @@ export default {
     baseQuery () {
       let query = _.clone(this.sorter.query)
       if (this.filters.includes('guest')) {
-        query = Object.assign(query, { 'expireAt': { $exists: true } })
+        query = Object.assign(query, { 'expireAt': { $ne: null } })
       }
       for (const role of ['owner', 'manager', 'member']) {
         if (this.filters.includes(role)) {
           query = Object.assign(query, { 'organisations': { $elemMatch: { '_id': this.contextId, 'permissions': role } } })
         }
-      }
-      return query
-    },
-    filterQuery () {
-      let query = this.filter.query
-      if (this.filters.includes('guest')) {
-        query = Object.assign(query, { 'expireAt': { $exists: true } })
       }
       return query
     }
