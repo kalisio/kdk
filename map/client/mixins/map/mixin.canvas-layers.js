@@ -164,7 +164,7 @@ export default {
       return layer
     },
 
-    setupCanvasLayer (layer, drawCode) {
+    setupCanvasLayer (layer, drawCode, autoRedraw = false) {
       // helper function to manage listened layers states
       // since canvas layer draw stuff related to geojson layers
       // we listen to geojson layers 'update' event to mark our
@@ -186,6 +186,12 @@ export default {
 
       layer.listenedLayers = {}
       layer.drawCalls = []
+      layer.autoRedraw = autoRedraw
+      layer.latLonToCanvas = (coords) => {
+        const a = layer._map.latLngToLayerPoint(L.latLng(coords.lat, coords.lon))
+        const b = L.DomUtil.getPosition(layer._canvas);
+        return a.subtract(b)
+      }
 
       for (const d of drawCode) {
         const drawCode = Function(`
@@ -234,8 +240,9 @@ with(this.proxy) { ${d.code} }
             // current state context
             {
               canvas: ctx,
+              now: Date.now(),
               zoom: info.zoom,
-              latLonToCanvas: (coords) => layer._map.latLngToContainerPoint(L.latLng(coords.lat, coords.lon))
+              latLonToCanvas: layer.latLonToCanvas
             },
             // user defined context
             layer.userDrawContext,
@@ -247,15 +254,20 @@ with(this.proxy) { ${d.code} }
           ctx.clearRect(0, 0, info.canvas.width, info.canvas.height)
           for (const draw of layer.drawCalls) draw(context)
           ctx.restore()
+
+          if (layer.autoRedraw) {
+            layer._frame = null
+            layer.needRedraw()
+          }
         }
       }
     },
 
-    updateCanvasLayerDrawCode (name, newDrawCode) {
+    updateCanvasLayerDrawCode (name, newDrawCode, autoRedraw) {
       const layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
 
-      this.setupCanvasLayer(layer, newDrawCode)
+      this.setupCanvasLayer(layer, newDrawCode, autoRedraw)
       layer.needRedraw()
     },
 
