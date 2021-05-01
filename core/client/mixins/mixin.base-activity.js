@@ -238,14 +238,16 @@ export default function (name) {
       // Setup the options
       this.activityOptions = this.$config(this.activityName)
     },
-    created () {
+    mounted () {
+      // Configure the activity    
+       this.configureActivity()
       // Whenever the user abilities are updated, update activity as well
       this.$events.$on('user-abilities-changed', this.configureActivity)
-      // Configure the activity
-      this.configureActivity()
     },
     beforeDestroy () {
       this.$events.$off('user-abilities-changed', this.configureActivity)
+      // Clear the activity
+      this.clearActivity()
     }
   }
 }
