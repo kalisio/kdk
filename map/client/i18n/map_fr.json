@@ -372,7 +372,7 @@
     "CHARTING_LABEL": "Veuillez patienter pendant la construction du graphique",
     "CHART_VALUE_LABEL": "Valeur",
     "CHART_COUNT_LABEL": "Nombre",
-    "CHART_SETTINGS_LABEL": "Configurer le graphique",
+    "CHART_SETTINGS_LABEL": "Paramétrage du graphique",
     "CHART_EXPORT_LABEL": "Exporter les données",
     "CHART_EXPORT_FILE": "Graphique-{{layer}}.cvs"
   },

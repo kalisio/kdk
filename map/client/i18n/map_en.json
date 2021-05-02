@@ -370,7 +370,7 @@
     "CHARTING_LABEL": "Please wait while computing chart",
     "CHART_VALUE_LABEL": "Value",
     "CHART_COUNT_LABEL": "Count",
-    "CHART_SETTINGS_LABEL": "Configure graph",
+    "CHART_SETTINGS_LABEL": "Graph settings",
     "CHART_EXPORT_LABEL": "Export data",
     "CHART_EXPORT_FILE": "Chart-{{layer}}.csv"
   },

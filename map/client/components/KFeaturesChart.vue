@@ -11,25 +11,7 @@
       @opened="$emit('opened')"
       @closed="$emit('closed')">
       <div slot="modal-content">
-        <!-- Used as target for popup as we cannot reference the button in the modal -->
-        <span ref="chartSettingsTarget" class="float-right"/>
-        <q-popup-proxy ref="chartSettings" :target="$refs.chartSettingsTarget">
-          <div class="q-pa-md">
-            <q-select v-model="property" :label="$t('KFeaturesChart.PROPERTY_LABEL')"
-              :options="properties" @input="refreshChart"/>
-            <q-select v-model="chartType" :label="$t('KFeaturesChart.CHART_LABEL')"
-              :options="chartOptions" @input="refreshChart"/>
-            <q-select v-model="nbValuesPerChart" :label="$t('KFeaturesChart.PAGINATION_LABEL')"
-              :options="paginationOptions" @input="refreshChartAndPagination"/>
-            <q-select v-model="render" :label="$t('KFeaturesChart.RENDER_LABEL')"
-              :options="renderOptions" @input="refreshChart"/>
-          </div>
-        </q-popup-proxy>
         <div class="row justify-center text-center q-ma-none q-pa-none">
-          <div v-show="chartData.length === 0" class="row justify-center text-center text-h5">
-            <k-label iconName="las la-cog" iconSize="3rem"
-            :text="$t('KFeaturesChart.SELECT_PROPERTY_LABEL')" icon-size="48px" />
-          </div>
           <div style="width: 90vw">
             <canvas v-show="chartData.length > 0" class="chart" ref="chart"></canvas>
           </div>
@@ -38,6 +20,18 @@
           <q-btn v-show="currentChart < nbCharts" size="1rem" flat round color="primary"
             icon="las la-chevron-right" class="absolute-right" @click="onNextChart" />
         </div>
+      </div>
+    </k-modal>
+    <k-modal id="chart-settings-modal" ref="chartSettings" :title="$t('KFeaturesChart.CHART_SETTINGS_LABEL')">
+      <div slot="modal-content">
+        <q-select v-model="property" :label="$t('KFeaturesChart.PROPERTY_LABEL')"
+          :options="properties" @input="refreshChart"/>
+        <q-select v-model="chartType" :label="$t('KFeaturesChart.CHART_LABEL')"
+          :options="chartOptions" @input="refreshChart"/>
+        <q-select v-model="nbValuesPerChart" :label="$t('KFeaturesChart.PAGINATION_LABEL')"
+          :options="paginationOptions" @input="refreshChartAndPagination"/>
+        <q-select v-model="render" :label="$t('KFeaturesChart.RENDER_LABEL')"
+          :options="renderOptions" @input="refreshChart"/>
       </div>
     </k-modal>
   </div>
@@ -55,7 +49,10 @@ import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client
 
 export default {
   name: 'k-features-chart',
-  mixins: [kCoreMixins.baseModal],
+  mixins: [
+    kCoreMixins.refsResolver(['chartSettings']),
+    kCoreMixins.baseModal
+  ],
   props: {
     layer: {
       type: Object,
@@ -106,7 +103,7 @@ export default {
 
     return {
       toolbar: [
-        { id: 'settings', icon: 'las la-cog', tooltip: 'KFeaturesChart.CHART_SETTINGS_LABEL', handler: () => this.$refs.chartSettings.show() },
+        { id: 'settings', icon: 'las la-cog', tooltip: 'KFeaturesChart.CHART_SETTINGS_LABEL', handler: () => this.$refs.chartSettings.open() },
         { id: 'download', icon: 'las la-file-download', tooltip: 'KFeaturesChart.CHART_EXPORT_LABEL', handler: () => this.downloadChartData() },
         { id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.closeModal() }
       ],
@@ -220,9 +217,7 @@ export default {
       try {
         this.buildingChart = true
         // Destroy previous graph if any
-        if (this.chart) {
-          this.chart.destroy()
-        }
+        if (this.chart) this.chart.destroy()
         // Retrieve data
         await this.getChartData()
         // We need to force a refresh so that the computed props are correctly updated by Vuejs
@@ -262,8 +257,12 @@ export default {
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-label'] = this.$load('frame/KLabel')
   },
+  async mounted () {
+    await this.loadRefs()
+    this.$refs.chartSettings.open()
+  },
   beforeDestroy () {
-
+    if (this.chart) this.chart.destroy()
   }
 }
 </script>
