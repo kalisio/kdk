@@ -576,8 +576,9 @@
     "SEARCH_TAGS": "Search tags"
   },
   "KTagCard": {
-    "EDIT_LABEL": "$t(EDIT)",    
-    "LIST_MEMBERS_LABEL": "List members with tag"
+    "EDIT_LABEL": "$t(EDIT)",
+    "MEMBERS_LABEL": "{{count}} member(s)",
+    "VIEW_MEMBERS_LABEL": "View members with tag"
   },  
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
@@ -586,18 +587,10 @@
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {
-    "EDIT_LABEL": "$t(EDIT)",    
-    "LIST_MEMBERS_LABEL": "List members in group",
-    "REMOVE_LABEL": "$t(REMOVE)",
-    "REMOVE_DIALOG_TITLE": "Remove {{group}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{group}}</b> from your organisation ?"
-  },
-  "KOrganisationDZ": {
-    "BLOCK_TITLE": "Delete this organisation ?",
-    "BLOCK_TEXT": "Please note that deleting {{organiation}} will delete any data attached to this organisation.<br>The deletion cannot be undone.",
-    "BLOCK_ACTION": "Delete",
-    "DIALOG_TITLE": "Are you sure you want to delete {{organisation}} ?",
-    "DIALOG_LABEL": "Enter the organisation name to confirm the deletion" 
+    "EDIT_LABEL": "$t(EDIT)", 
+    "REMOVE_LABEL": "$t(REMOVE)",    
+    "MEMBERS_LABEL": "{{count}} member(s)",
+    "VIEW_MEMBERS_LABEL": "View members"
   },
   "KChangeIdentity": {
     "ACTION": "Resend change email",

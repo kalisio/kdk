@@ -584,7 +584,8 @@
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",
-    "LIST_MEMBERS_LABEL": "Lister les membres possédant l'étiquette"
+    "MEMBERS_LABEL": "{{count}} membre(s)",
+    "VIEW_MEMBERS_LABEL": "Voir les membres possédant l'étiquette"
   },
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
@@ -593,18 +594,10 @@
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
+    "EDIT_LABEL": "$t(EDIT)", 
     "REMOVE_LABEL": "$t(REMOVE)",
-    "EDIT_LABEL": "$t(EDIT)",
-    "LIST_MEMBERS_LABEL": "Lister les membres du groupe",
-    "REMOVE_DIALOG_TITLE": "Supprimer {{group}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {{group}} de votre organisation ?"
-  },
-  "KOrganisationDZ": {
-    "BLOCK_TITLE": "Supprimer cette organisation ?",
-    "BLOCK_TEXT": "Notez que la suppresion de <b>{{organisation}}</b> entrainera la suppression de toutes les données qui lui sont attachées.<br>La suppression ne peut pas être annulée.",
-    "BLOCK_ACTION": "Supprimer",
-    "DIALOG_TITLE": "Etes vous sûr de vouloir supprimer {{organisation}} ?",
-    "DIALOG_LABEL": "Saisissez le nom de l'organisation pour confirmer sa suppression" 
+    "MEMBERS_LABEL": "{{count}} membre(s)",
+    "VIEW_MEMBERS_LABEL": "Voir les membres"
   },
   "KChangeIdentity": {
     "ACTION": "Appliquer",
