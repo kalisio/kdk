@@ -25,11 +25,11 @@ export default class Organisations extends BaseCollection {
   }
 
   static get TAGS_ENTRY () {
-    return 'organisation-members'
+    return 'organisation-tags'
   }
 
   static get GROUPS_ENTRY () {
-    return 'organisation-members'
+    return 'organisation-groups'
   }
 
   async goTo (test, name, route, wait = Organisations.LONG_WAIT) {
