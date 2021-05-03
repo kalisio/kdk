@@ -3,7 +3,7 @@
     <q-card-section v-show="hasToolbar">
       <k-panel id="favorite-views-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
     </q-card-section>
-    <q-card-section id="favorite-views-list" v-show="mode === 'list'">
+    <q-card-section id="favorite-views-list" v-if="mode === 'list'">
       <k-list
         style="min-height: 50px; min-width: 200px"
         service="catalog"
@@ -14,12 +14,12 @@
         @collection-refreshed="refreshViews"
         @selection-changed="selectView" />
     </q-card-section>
-    <q-card-section id="favorite-views-add" v-if="mode === 'add'">
+    <q-card-section id="favorite-view-add" v-if="mode === 'add'">
       <div class="colum q-gutter-y-md">
         <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
         <div class="q-pa-sm row justify-end">
           <k-action
-            id="create-view"
+            id="create-favorite-view"
             :label="$t('KFavoriteViews.SAVE_BUTTON')"
             renderer="form-button"
             :loading="savingView"
@@ -44,8 +44,8 @@ export default {
       return Object.assign({ type: 'Context' }, this.sorter.query)
     },
     hasToolbar () {
-      if (this.mode === 'list') return this.count > 0 || this.filter.patern !== ''
-      return this.count > 0
+      if (this.mode === 'list') return (this.count > 0) || (this.filter.patern !== '')
+      return (this.count > 0)
     }
   },
   data () {
@@ -115,7 +115,7 @@ export default {
       viewRenderer: {
         component: 'collection/KItem',
         actions: [{
-          id: 'remove-view',
+          id: 'remove-favorite-favorite-view',
           icon: 'las la-trash',
           tooltip: 'KFavoriteViews.REMOVE_VIEW',
           handler: (context) => this.removeView(context.item)

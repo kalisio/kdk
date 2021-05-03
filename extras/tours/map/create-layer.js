@@ -11,14 +11,14 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#featureId-field',
-  content: 'tours.add-layer.LAYER_FEATURE_ID_LABEL',
+  target: '#schema-field',
+  content: 'tours.add-layer.LAYER_SCHEMA_LABEL',
   params: {
     placement: 'bottom'
   }
 }, {
-  target: '#schema-field',
-  content: 'tours.add-layer.LAYER_SCHEMA_LABEL',
+  target: '#featureId-field',
+  content: 'tours.add-layer.LAYER_FEATURE_ID_LABEL',
   params: {
     placement: 'bottom'
   }

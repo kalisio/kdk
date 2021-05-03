@@ -9,7 +9,7 @@
       <q-card-section v-show="hasToolbar">
         <k-panel id="layer-categories-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
       </q-card-section>
-      <q-card-section id="layer-categories-list" v-show="mode === 'list'">
+      <q-card-section id="layer-categories-list" v-if="mode === 'list'">
         <k-list
           style="min-height: 50px; min-width: 200px"
           service="catalog"
@@ -26,7 +26,7 @@
             <q-btn
               :loading="savingCategory"
               color="accent"
-              id="add-layer-category"
+              id="create-layer-category"
               :label="$t('KLayerCategories.ADD_BUTTON')"
               @click="onAdd" />
           </div>
@@ -69,8 +69,8 @@ export default {
       return Object.assign({ type: 'Category' }, this.sorter.query)
     },
     hasToolbar () {
-      if (this.mode === 'list') return this.count > 0 || this.filter.patern !== ''
-      return this.count > 0
+      if (this.mode === 'list') return (this.count > 0) || (this.filter.patern !== '')
+      return (this.count > 0)
     },
     hasLayers () {
       return this.layers.length > 0

@@ -11,7 +11,7 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#remove-view',
+  target: '#remove-favorite-view',
   title: 'tours.favorite-views.FAVORITE_VIEW_ACTIONS_LABEL',
   params: {
     placement: 'top'
@@ -42,12 +42,12 @@ module.exports = [{
   target: '#layers-field',
   content: 'tours.favorite-views.FAVORITE_VIEW_LAYERS_LABEL',
   params: {
-    placement: 'bottom'
+    placement: 'top'
   }
 }, {
-  target: '#create-view',
+  target: '#create-favorite-view',
   title: 'tours.favorite-views.CREATE_NEW_FAVORITE_VIEW_LABEL',
   params: {
-    placement: 'left'
+    placement: 'top'
   }
 }]

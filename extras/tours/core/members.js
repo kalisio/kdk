@@ -6,7 +6,7 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#search-members',
+  target: '#search-member',
   title: 'tours.members.SEARCH_LABEL',
   content: 'tours.members.SEARCH_MORE_LABEL',
   params: {
