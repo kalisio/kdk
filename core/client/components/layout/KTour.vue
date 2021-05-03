@@ -272,6 +272,7 @@ export default {
         // Need to add a debounce as the focus does not immediately trigger the input
         setTimeout(() => {
           target.value = _.get(step, `params.${text}`)
+          target.dispatchEvent(new Event('input'))
         }, 100)
       })
     },
