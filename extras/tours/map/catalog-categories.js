@@ -48,12 +48,12 @@ module.exports = [{
   target: '#exclusive-field',
   content: 'tours.catalog-panel.LAYER_CATEGORY_EXCLUSIVE_LABEL',
   params: {
-    placement: 'bottom'
+    placement: 'top'
   }
 }, {
-  target: '#add-layer-category',
+  target: '#create-layer-category',
   title: 'tours.catalog-panel.CREATE_NEW_LAYER_CATEGORY_LABEL',
   params: {
-    placement: 'left'
+    placement: 'top'
   }
 }]

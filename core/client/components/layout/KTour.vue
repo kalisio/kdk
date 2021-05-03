@@ -154,8 +154,9 @@ export default {
       // No corresponding tour ?
       if (!this.$store.has(`tours.${name}`)) return
       // Trigger a refresh if required to avoid reentrance
-      const selected = this.$store.get('tours.current', {})
-      if (selected !== name) {
+      const selected = this.$store.get('tours.current.name', '')
+      // Check if we are really on a different tour when multiple tours target the same route
+      if ((selected !== name) && (!selected.startsWith(name + '/'))) {
         setTimeout(() => {
           const step = (_.has(this.$route, 'query.tourStep')
             ? _.toNumber(_.get(this.$route, 'query.tourStep')) : undefined)
