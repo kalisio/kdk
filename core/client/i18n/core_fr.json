@@ -209,13 +209,14 @@
     },
     "add-member": {
       "UNIQUE_TAB_LABEL": "Ajoutez une personne à votre organisaion.",
-      "UNIQUE_EMAIL_LABEL": "Sisissez l'adresse mail de la personne à inviter.",
-      "UNIQUE_CONTINUE_BUTTON_LABEL": "Cliquez ce bouton pour procéder à l'invitation.",
-      "MEMBER_ROLE_LABEL": "Select the user role in your organisation.",
-      "ROLES_LABEL": "A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal, payment, etc.).",
+      "UNIQUE_EMAIL_LABEL": "Saisissez l'adresse mail de la personne à inviter.",
+      "UNIQUE_CONTINUE_BUTTON_LABEL": "Cliquez ce bouton pour procéder à l'invitation ou à l'ajout de la personne si celle-ci possède déjà un compte.",
+      "UNIQUE_NAME_LABEL": "Saisissez le nom de la personne.",
+      "UNIQUE_ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accés en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total (suppression, paiemnent, etc.).",
+      "UNIQUE_ADD_BUTTON_LABEL": "Clmiquez ce bouton pour lancer l'invitation.",
       "MULTIPLE_TAB_LABEL": "Ajoutez plusieurs personnes à l'aide d'un fichier CSV.",
-      "MULITPLE_FILE_LABEL": "Téléchargez le fichier contenant la liste des personnes à inviter. Chaque personne est réprésentée par une ligne contenant les champs <b>nom</b>, <b>adresse email</b> et <b>rôle</b> séparés par un <b>,</b>.",
-      "MULTIPLE_BUTTON_LABEL": "Cliquez ce bouton pour procéder aux invitations."
+      "MULTIPLE_FILE_LABEL": "Téléchargez le fichier contenant la liste des personnes à inviter. Chaque personne est réprésentée par une ligne contenant les champs <b>nom</b>, <b>adresse email</b> et <b>rôle</b> séparés par un <b>,</b>.",
+      "MULTIPLE_ADD_BUTTON_LABEL": "Cliquez ce bouton pour procéder aux invitations."
     },
     "join-group": {
       "GROUP_NAME_LABEL": "Tapez <b>les premières lettres</b> du nom d'un groupe pour le sélectionner.",
