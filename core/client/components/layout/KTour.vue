@@ -2,48 +2,49 @@
   <v-tour name="tour" ref="tour" :steps="tourSteps" :options="tourOptions" :callbacks="tourCallbacks">
     <template slot-scope="tour">
       <q-card>
-        <v-step
-          v-for="(step, index) of tour.steps"
-          v-if="isStepVisible && (tour.currentStep === index)"
-          :key="index"
-          :step="step"
-          :previous-step="tour.previousStep"
-          :next-step="tour.nextStep"
-          :stop="tour.stop"
-          :skip="tour.skip"
-          :finish="tour.finish"
-          :is-first="tour.isFirst"
-          :is-last="tour.isLast"
-          :labels="tour.labels"
-          :highlight="tour.highlight"
-          :debug="tour.debug"
-        >
-          <div slot="header" class="text-white">
-            <q-card-section class="q-pa-xs q-ma-xs" v-if="step.title">
-              <div v-html="step.title"></div>
-            </q-card-section>
-            <q-separator v-if="step.title && (step.content || step.link)" color="white"/>
-          </div>
-          <div slot="content" class="text-white">
-            <q-card-section class="q-pa-xs q-ma-xs" v-if="step.content">
-              <div v-html="step.content"></div>
-            </q-card-section>
-            <q-separator v-if="step.content && step.link" color="white"/>
-            <q-card-section class="q-pa-xs q-ma-xs" v-if="step.link">
-              <span v-html="step.link"></span>
-              <q-icon class="cursor-pointer" size="1.5rem" name="las la-external-link-square-alt" @click="onLink()"/>
-            </q-card-section>
-          </div>
-          <div slot="actions" class="row justify-center">
-            <q-card-actions align="right">
-              <q-btn v-if="hasPreviousButton(step)" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" dense outline @click.prevent="previousStep"></q-btn>
-              <q-btn v-if="hasSkipButton(step)" id="skip-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.skip"></q-btn>
-              <q-btn  v-if="hasFinishButton(step)" id="finish-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.finish"></q-btn>
-              <q-btn v-if="hasLinkButton(step)" icon="las la-link" dense outline text-color="white" @click="onLink()" />
-              <q-btn v-if="hasNextButton(step)" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" dense outline @click.prevent="nextStep"></q-btn>
-            </q-card-actions>
-          </div>
-        </v-step>
+        <template v-for="(step, index) of tour.steps">
+          <v-step
+            v-if="isStepVisible && (tour.currentStep === index)"
+            :key="index"
+            :step="step"
+            :previous-step="tour.previousStep"
+            :next-step="tour.nextStep"
+            :stop="tour.stop"
+            :skip="tour.skip"
+            :finish="tour.finish"
+            :is-first="tour.isFirst"
+            :is-last="tour.isLast"
+            :labels="tour.labels"
+            :highlight="tour.highlight"
+            :debug="tour.debug"
+          >
+            <div slot="header" class="text-white">
+              <q-card-section class="q-pa-xs q-ma-xs" v-if="step.title">
+                <div v-html="step.title"></div>
+              </q-card-section>
+              <q-separator v-if="step.title && (step.content || step.link)" color="white"/>
+            </div>
+            <div slot="content" class="text-white">
+              <q-card-section class="q-pa-xs q-ma-xs" v-if="step.content">
+                <div v-html="step.content"></div>
+              </q-card-section>
+              <q-separator v-if="step.content && step.link" color="white"/>
+              <q-card-section class="q-pa-xs q-ma-xs" v-if="step.link">
+                <span v-html="step.link"></span>
+                <q-icon class="cursor-pointer" size="1.5rem" name="las la-external-link-square-alt" @click="onLink()"/>
+              </q-card-section>
+            </div>
+            <div slot="actions" class="row justify-center">
+              <q-card-actions align="right">
+                <q-btn v-if="hasPreviousButton(step)" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" dense outline @click.prevent="previousStep"></q-btn>
+                <q-btn v-if="hasSkipButton(step)" id="skip-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.skip"></q-btn>
+                <q-btn  v-if="hasFinishButton(step)" id="finish-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.finish"></q-btn>
+                <q-btn v-if="hasLinkButton(step)" icon="las la-link" dense outline text-color="white" @click="onLink()" />
+                <q-btn v-if="hasNextButton(step)" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" dense outline @click.prevent="nextStep"></q-btn>
+              </q-card-actions>
+            </div>
+          </v-step>
+        </template>
       </q-card>
     </template>
   </v-tour>

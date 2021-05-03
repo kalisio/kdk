@@ -1,6 +1,6 @@
 <template>
   <k-modal
-    id="invite-member-modal"
+    id="add-member-modal"
     :title="$t('KAddMember.TITLE')"
     v-model="isModalOpened"
     @opened="$emit('opened')"
