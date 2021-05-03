@@ -16,7 +16,7 @@
     <div slot="card-content">
       <q-list bordered>
         <q-item 
-          :id="'members-' + item._id" 
+          id="list-members" 
           clickable 
           @click="onListMembers">
           <q-item-section avatar>

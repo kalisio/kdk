@@ -166,11 +166,9 @@
       "NEW_GROUP_LABEL": "Créez un <b>nouveau groupe</b> via ce bouton.",
       "CREATE_GROUP_LINK_LABEL": "Voir comment créer un groupe",
       "GROUP_CARD_LABEL": "Chaque groupe est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
-      "GROUP_MEMBERS_LABEL": "Ce nombre vous indique le nombre de <b>membres</b> de votre groupe.",
-      "GROUP_MANAGERS_LABEL": "Ce nombre vous indique le nombre de <b>gestionnaires</b> de votre groupe.",
-      "GROUP_OWNERS_LABEL": "Ce nombre vous indique le nombre de <b>propriétaires</b> de votre groupe.",
+      "GROUP_MEMBERS_LABEL": "Cette section vous indique le nombre de <b>membres</b> de votre groupe.",
+      "LIST_GROUP_MEMBERS_LABEL": "Affichez les <b>membres</b> de votre groupe en la sélectionnant.",
       "UPDATE_GROUP_LABEL": "Modifiez les propriétés de votre groupe via cette action.",
-      "LIST_GROUP_MEMBERS_LABEL": "Affichez les <b>membres</b> de votre groupe.",
       "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_GROUP_LABEL": "Supprimez votre groupe via cette action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
@@ -238,10 +236,10 @@
       "SORT_LABEL": "Ordonnez vos étiquettes par ordre alphabétique ascendant ou descendant via ce bouton.",
       "TAG_CARD_LABEL": "Chaque étiquette est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
       "CREATE_TAG_LINK_LABEL": "Voir comment ajouter ou supprimer des étiquettes sur les membres",
-      "TAG_COUNT_LABEL": "Ce nombre vous indique le nombre de <b>membres</b> possédant cette étiquette.",
+      "TAG_MEMBERS_LABEL": "Cette section vous indique le nombre de <b>membres</b> possédant cette étiquette.",
+      "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette en la sélectionnant.",
       "REMOVE_TAG_LABEL": "Lorsqu'il atteint zéro l'étiquette est automatiquement supprimée.",
-      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette.",
-      "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette."
+      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette."
     }
   },
   "KWelcome": {

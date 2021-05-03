@@ -31,21 +31,15 @@ module.exports = [{
     placement: 'right'
   }
 }, {
-  target: '#tag-count',
-  title: 'tours.tags.TAG_COUNT_LABEL',
-  content: 'tours.tags.REMOVE_TAG_LABEL',
+  target: '#list-members',
+  title: 'tours.tags.TAG_MEMBERS_LABEL',
+  content: 'tours.tags.LIST_MEMBERS_LABEL',
   params: {
     placement: 'bottom'
   }
 }, {
   target: '#edit-tag',
   content: 'tours.tags.UPDATE_TAG_LABEL',
-  params: {
-    placement: 'bottom'
-  }
-}, {
-  target: '#list-members',
-  content: 'tours.tags.LIST_MEMBERS_LABEL',
   params: {
     placement: 'bottom'
   }

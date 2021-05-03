@@ -264,6 +264,17 @@ export default {
         target.click()
       })
     },
+    typeTextOn (param, text) {
+      const step = this.getStep()
+      // Simulate input
+      return this.processElement(param, target => {
+        target.focus()
+        // Need to add a debounce as the focus does not immediately trigger the input
+        setTimeout(() => {
+          target.value = _.get(step, `params.${text}`)
+        }, 100)
+      })
+    },
     blockOnMiss () {
       let missing = false
       const step = this.getStep()
@@ -285,6 +296,7 @@ export default {
       this.hoverOn('hoverOnNext')
       this.clickOn('clickOnNext')
       this.hoverClickOn('hoverClickOnNext')
+      this.typeTextOn('typeTextOnNext', 'textOnNext')
       let step = this.getStep()
       const delay = _.get(step, 'params.nextDelay', 0)
       this.isStepVisible = false
@@ -305,6 +317,7 @@ export default {
       this.hoverOn('hoverOnPrevious')
       this.clickOn('clickOnPrevious')
       this.hoverClickOn('hoverClickOnPrevious')
+      this.typeTextOn('typeTextOnPrevious', 'textOnPrevious')
       let step = this.getStep()
       const delay = _.get(step, 'params.previousDelay', 0)
       this.isStepVisible = false

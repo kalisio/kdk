@@ -13,7 +13,7 @@ export default class Organisations extends BaseCollection {
   }
 
   static get ENTRY () {
-    return 'organisations'
+    return 'my-organisations'
   }
 
   static get PROPERTIES_ENTRY () {
