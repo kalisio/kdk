@@ -114,8 +114,11 @@ export default {
     this.items = Filter.getItems()
   },
   beforeDestroy () {
-    // Reset the filter, we keep track of any existing items previously set by another activity
-    this.$store.patch('filter', { pattern: '' })
+    this.items = []
+    this.options = []
+  },
+  destroyed () {
+    Filter.clear()
   }
 }
 </script>

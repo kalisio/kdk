@@ -39,6 +39,10 @@ export default {
     contextId: {
       type: String,
       required: true
+    },
+    mode: {
+      type: String,
+      default: undefined
     }
   },
   computed: {
@@ -53,6 +57,11 @@ export default {
         }
       }
       return query
+    }
+  },
+  watch: {
+    filter: function (value) {
+      console.log(filter)
     }
   },
   data () {
@@ -73,6 +82,7 @@ export default {
     configureActivity () {
       activityMixin.methods.configureActivity.call(this)
       this.subscribeUsers()
+      if (this.mode) this.setTopPaneMode(this.mode)
     },
     subscribeUsers () {
       // Remove previous listener if any

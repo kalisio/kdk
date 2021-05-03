@@ -44,7 +44,7 @@ export default {
           field: 'value'
         }, this.item)]
       })
-      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId } })
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
   },
   created () {
