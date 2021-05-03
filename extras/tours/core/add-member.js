@@ -1,27 +1,36 @@
 module.exports = [{
-  target: '#user-field',
-  content: 'tours.add-member.MEMBER_NAME_LABEL',
+  target: '#unique-tab',
+  content: 'tours.add-member.UNIQUE_TAB_LABEL',
   params: {
-    placement: 'top'
+    placement: 'right'
   }
 }, {
-  target: '#role-field',
-  title: 'tours.add-member.MEMBER_ROLE_LABEL',
-  content: 'tours.add-member.ROLES_LABEL',
+  target: '#email-field',
+  content: 'tours.add-member.UNQOUE_EMAIL_LABEL',
   params: {
     placement: 'left',
     clickDelay: 500,
-    clickOnNext: '#role-field',
+    clickOnNext: '#multiple-tab',
     nextDelay: 500,
-    clickOnPrevious: '#role-field',
+    clickOnPrevious: '#unique-tab',
     previousDelay: 500
   }
 }, {
-  target: '#add-button',
-  content: 'tours.add-member.ADD_MEMBER_LABEL',
+  target: '#multiple-tab',
+  content: 'tours.add-member.MULTIPLE_TAB_LABEL',
   params: {
-    placement: 'left',
-    clickOnNext: '#close-action',
-    nextDelay: 500
+    placement: 'left'
+  }
+}, {
+  target: '#file-field',
+  content: 'tours.add-member.MULTIPLE_FILE_LABEL',
+  params: {
+    placement: 'left'
+  }
+}, {
+  target: '#add-button',
+  content: 'tours.add-member.MULTIPLE_BUTTON_LABEL',
+  params: {
+    placement: 'left'
   }
 }]

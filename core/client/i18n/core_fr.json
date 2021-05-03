@@ -210,18 +210,14 @@
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
     },
     "add-member": {
-      "MEMBER_NAME_LABEL": "Tapez <b>les premières lettres</b> du nom d'une personne pour la sélectionner.",
-      "MEMBER_ROLE_LABEL": "Choisissez le rôle de la personne au sein de votre organisation.",
-      "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif à votre organisation alors qu'un <b>gestionnaire</b> a un pouvoir d'édition et un <b>propriétaire</b> a un contrôle total (destruction, paiement, etc.).",
-      "ADD_MEMBER_LABEL": "Confirmez l'ajout du membre à votre organisation."
-    },
-    "invite-member": {
-      "MEMBER_NAME_LABEL": "Tapez le nom de la personne tel qu'il sera visible par les autres utilisateurs.",
-      "MEMBER_EMAIL_LABEL": "Entrez l'adresse mail de la personne.",
-      "INVITATION_EMAIL_LABEL": "Un email informant l'utilisateur de son invitation et contenant son mot de passe temporaire pour se connecter lui sera envoyé (<b>demandez-lui de vérifiez que l'email ne soit pas tombé dans ses courriers indésirables</b>).",
-      "MEMBER_ROLE_LABEL": "$t(tours.add-member.MEMBER_ROLE_LABEL)",
-      "ROLES_LABEL": "$t(tours.add-member.ROLES_LABEL)",
-      "INVITE_MEMBER_LABEL": "$t(tours.add-member.ADD_MEMBER_LABEL)"
+      "ADD_UNIQUE_TAB_LABEL": "Ajouter une seule personne à votre organisaion.",
+      "EMAIL_LABEL": "Enter the email of the desired person",
+      "MEMBER_ROLE_LABEL": "Select the user role in your organisation.",
+      "ROLES_LABEL": "A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal, payment, etc.).",
+      "ADD_MEMBER_LABEL": "Confirm joining the user to your organisation.",
+      "ADD_MULTIPLE_TAB_LABEL": "Ajouter plusieurs personnes à l'aide d'un fichier CSV.",
+      "FILE_LABEL": "Télécharger le fichier contenant le nom, l'adresse email et le rôle de chacune des personnes. Chaque personne étant réprésentée par une ligne contenant 3 champs séparés par un <b>,</b>.",
+      "ADD_MULTIPLE_BUTTON_LABEL": "Cliquer le bouton <b>AJOUTER</b> pour procéder aux invitations."
     },
     "join-group": {
       "GROUP_NAME_LABEL": "Tapez <b>les premières lettres</b> du nom d'un groupe pour le sélectionner.",

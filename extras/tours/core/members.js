@@ -48,16 +48,6 @@ module.exports = [{
     route: { name: 'add-member' }
   }
 }, {
-  target: '#invite-member',
-  content: 'tours.members.INVITE_MEMBER_LABEL',
-  link: 'tours.members.INVITE_MEMBER_LINK_LABEL',
-  params: {
-    placement: 'left',
-    clickOnNext: 'div.q-fab__icon-holder',
-    nextDelay: 500,
-    route: { name: 'invite-member' }
-  }
-}, {
   target: 'div.q-card.q-card--bordered',
   content: 'tours.members.MEMBER_CARD_LABEL',
   params: {

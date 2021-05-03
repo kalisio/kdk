@@ -59,11 +59,6 @@ export default {
       return query
     }
   },
-  watch: {
-    filter: function (value) {
-      console.log(filter)
-    }
-  },
   data () {
     return {
       sorter: this.$store.get('sorter'),
