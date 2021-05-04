@@ -1,24 +1,24 @@
 <template>
-  <div :style='widgetStyle()'>
-    <div class='fit row'>
-      <q-resize-observer @resize='onResized' />
+  <div :style="widgetStyle()">
+    <div class="fit row">
+      <q-resize-observer @resize="onResized" />
       <!-- Actions -->
-      <k-panel id="timeseries-actions" class='q-pa-sm' :content='actions' direction='vertical' />
+      <k-panel id="timeseries-actions" class="q-pa-sm" :content="actions" direction="vertical" />
       <div v-if='hasGraph' class='col full-width row'>
         <!-- Title -->
-        <span v-if='layerName' class='col-12 q-pl-sm'>
+        <span v-if="layerName" class="col-12 q-pl-sm">
           {{ layerName }} - {{ probedLocationName }}
         </span>
-        <span v-else class='col-12 q-pl-sm'>
+        <span v-else class="col-12 q-pl-sm">
           {{ probedLocationName }}
         </span>
         <!-- Graph -->
-        <div id='chart-container' class='col-12'>
-          <canvas ref='chart'></canvas>
-        </div>
+        <!--div id="chart-container" class="col-12">
+          <canvas ref="chart"></canvas>
+        </div-->
       </div>
-      <div v-else class='fit absolute-center'>
-        <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size='48px' />
+      <div v-else class="absolute-center">
+        <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />
       </div>
     </div>
   </div>
