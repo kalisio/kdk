@@ -74,21 +74,21 @@ export default class Members extends BaseCollection {
 
   async joinGroup (test, memberName, groupName, role) {
     await test
-      .click(this.members.withText(memberName).find('#join-group'))
+      .click(this.collection.withText(memberName).find('#join-group'))
       .typeText(VueSelector('k-item-field'), groupName, { replace: true })
-      .wait(2000)
+      .wait(Members.LONG_WAIT)
       .click(Selector('.q-menu .q-item').nth(0))
       .click(VueSelector('k-select-field'))
       .wait(Members.SHORT_WAIT)
       .click(Selector('.q-menu .q-item').nth(role))
       .wait(Members.SHORT_WAIT)
-      .click(Selector('.q-dialog .q-card button[type=button]').nth(1))
+      .click(Selector('.q-dialog #join-button'))
       .wait(2000)
   }
 
   async leaveGroup (test, memberName, groupName) {
     await test
-      .click(this.members.withText(memberName).find('#group-button'))
+      .click(this.collection.withText(memberName).find('#group-button'))
       .wait(Members.SHORT_WAIT)
       .click(Selector('.q-menu').find('#leave-group'))
       .wait(Members.SHORT_WAIT)
