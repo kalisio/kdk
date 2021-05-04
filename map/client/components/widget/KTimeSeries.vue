@@ -147,8 +147,8 @@ export default {
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
         const unit = variable.units[0]
         const label = this.$t(variable.label) || variable.label
-        // Variable available for feature ?
-        if (properties[name]) {
+        // Aggregated variable available for feature ?
+        if (properties[name] && Array.isArray(properties[name])) {
           this.datasets.push(_.merge({
             label: `${label} (${unit})`,
             borderColor: colors[index],
