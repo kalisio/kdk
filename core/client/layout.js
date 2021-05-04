@@ -45,9 +45,6 @@ export const Layout = {
   clearFooter () {
     Store.patch(components[1], { content: null, mode: undefined, visible: false })
   },
-  getLeftDrawer () {
-    return Store.get(components[2])
-  },
   validateMode (content, mode) {
     const modes = _.keys(content)
     if (_.isEmpty(modes)) return undefined
