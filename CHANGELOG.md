@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.3.1](https://github.com/kalisio/kdk/tree/v1.3.1) (2021-05-04)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.0...v1.3.1)
+
 ## [v1.3.0](https://github.com/kalisio/kdk/tree/v1.3.0) (2021-05-04)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.2.1...v1.3.0)
