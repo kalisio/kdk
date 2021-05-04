@@ -5,12 +5,12 @@
         Members collection, cannot use smart strategy here because membership is not managed at service level
         but using authorisations on users
       -->
-      <k-grid 
-        ref="membersGrid" 
-        service="members" 
-        :renderer="renderer" 
-        :contextId="contextId" 
-        :base-query="baseQuery" 
+      <k-grid
+        ref="membersGrid"
+        service="members"
+        :renderer="renderer"
+        :contextId="contextId"
+        :base-query="baseQuery"
         :filter-query="filter.query" />
       <!--
         Router view to enable routing to modals
@@ -49,11 +49,11 @@ export default {
     baseQuery () {
       let query = _.clone(this.sorter.query)
       if (this.filters.includes('guest')) {
-        query = Object.assign(query, { 'expireAt': { $ne: null } })
+        query = Object.assign(query, { expireAt: { $ne: null } })
       }
       for (const role of ['owner', 'manager', 'member']) {
         if (this.filters.includes(role)) {
-          query = Object.assign(query, { 'organisations': { $elemMatch: { '_id': this.contextId, 'permissions': role } } })
+          query = Object.assign(query, { organisations: { $elemMatch: { _id: this.contextId, permissions: role } } })
         }
       }
       return query

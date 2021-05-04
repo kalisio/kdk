@@ -71,14 +71,14 @@ export default {
             this.avatar = avatar.uri
             this.skeleton = false
             return
-          } 
+          }
           const avatarId = _.get(avatar, '_id')
           if (avatarId) {
             const data = await this.$api.getService('storage', this.contextId).get(avatarId + '.thumbnail')
             avatar.uri = data.uri
             this.avatar = avatar.uri
             this.skeleton = false
-            return  
+            return
           }
           this.avatar = null
         }

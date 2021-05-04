@@ -31,7 +31,7 @@
           <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
       </div>
-    </q-page-sticky>     
+    </q-page-sticky>
     <!-- right -->
     <q-page-sticky position="right">
       <div id="right-pane" v-show="hasRightPaneContent" class="row items-center">
@@ -72,7 +72,7 @@
     <!-- window -->
     <q-page-sticky position="top" :offset="widgetOffset">
       <k-window id="window" ref="window" />
-    </q-page-sticky>      
+    </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left">
       <div id="left-pane" v-show="hasLeftPaneContent" class="row items-center">
@@ -186,7 +186,7 @@ export default {
       immediate: true,
       handler (visible) {
         if (visible) {
-          setTimeout(() =>  {
+          setTimeout(() => {
             document.addEventListener('click', this.clickOutsideLeftPanelListener, true)
           }, 500)
         } else {

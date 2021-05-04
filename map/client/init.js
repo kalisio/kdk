@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store, utils as kCoreUtils } from '../../core/client'

@@ -36,7 +36,7 @@ export default {
   mixins: [mixins.baseItem],
   created () {
     // Loads the required components
-    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')    
+    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }

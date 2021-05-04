@@ -14,54 +14,54 @@
         <q-tab-panels v-model="mode" animated>
           <q-tab-panel name="unique" class="q-pa-none">
             <div v-if="step === 1">
-              <k-form 
-                key="emailForm" 
-                class="q-pt-lg q-pb-lg" 
-                ref="userEmailForm" 
-                :schema="getUserEmailSchema()" /> 
+              <k-form
+                key="emailForm"
+                class="q-pt-lg q-pb-lg"
+                ref="userEmailForm"
+                :schema="getUserEmailSchema()" />
               <div class="row justify-end">
-                <k-action 
-                  id="continue-button" 
-                  label="KAddMember.CONTINUE_BUTTON" 
+                <k-action
+                  id="continue-button"
+                  label="KAddMember.CONTINUE_BUTTON"
                   :loading="waiting"
-                  renderer="form-button" 
+                  renderer="form-button"
                   :handler="onContinueClicked" />
               </div>
             </div>
             <div v-else>
               <div class="q-pt-lg" v-html="message" />
-              <k-form 
+              <k-form
                 key="propertiesForm"
-                class="q-pt-lg q-pb-lg" 
-                ref="userPropertiesForm" 
+                class="q-pt-lg q-pb-lg"
+                ref="userPropertiesForm"
                 :schema="getUserPropertiesSchema()" />
               <div class="row justify-between">
-                <k-action 
+                <k-action
                   id="back-button"
-                  label="KAddMember.BACK_BUTTON" 
-                  :outline="true" 
-                  renderer="form-button" 
+                  label="KAddMember.BACK_BUTTON"
+                  :outline="true"
+                  renderer="form-button"
                   :handler="() => { step = 1 }" />
-                <k-action 
+                <k-action
                   id="add-button"
                   :label="user ? 'KAddMember.ADD_BUTTON' : 'KAddMember.INVITE_BUTTON'"
-                  :loading="waiting" 
-                  renderer="form-button" 
+                  :loading="waiting"
+                  renderer="form-button"
                   :handler="onAddUniqueClicked" />
               </div>
             </div>
           </q-tab-panel>
           <q-tab-panel name="multiple" class="q-pa-none">
-            <k-form 
-              class="q-pt-lg q-pb-lg" 
-              ref="usersFileForm" 
+            <k-form
+              class="q-pt-lg q-pb-lg"
+              ref="usersFileForm"
               :schema="getUsersFileSchema()" />
             <div class="row justify-end">
-              <k-action 
-                id="add-button" 
-                label="KAddMember.ADD_BUTTON" 
+              <k-action
+                id="add-button"
+                label="KAddMember.ADD_BUTTON"
                 :loading="waiting"
-                renderer="form-button" 
+                renderer="form-button"
                 :handler="onAddMultipleClicked" />
             </div>
           </q-tab-panel>
@@ -133,7 +133,7 @@ export default {
         field: {
           component: 'form/KTextField',
           label: this.user ? '' : 'KAddMember.NAME_FIELD_LABEL',
-          disabled: this.user 
+          disabled: this.user
         }
       }
       const role = {
@@ -160,14 +160,14 @@ export default {
           },
           required: ['role']
         }
-      } 
+      }
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/user-properties',
         type: 'object',
         properties: {
           name: name,
-          role: role,
+          role: role
         },
         required: ['name', 'role']
       }
@@ -270,10 +270,10 @@ export default {
               }
               records.push(record)
             } else {
-              errors[i+1] = this.$t('KAddMember.INVALID_FIELDS_VALUES_ERROR')
+              errors[i + 1] = this.$t('KAddMember.INVALID_FIELDS_VALUES_ERROR')
             }
           } else {
-            errors[i+1] = this.$t('KAddMember.INVALID_FIELDS_NUMBER_ERROR')
+            errors[i + 1] = this.$t('KAddMember.INVALID_FIELDS_NUMBER_ERROR')
           }
         }
         if (records.length === 0) {
@@ -283,7 +283,7 @@ export default {
             ok: {
               label: this.$t('OK'),
               flat: true
-            } 
+            }
           })
         } else if (!_.isEmpty(errors)) {
           exportFile('errors.json', JSON.stringify(errors, null, '\t'))
@@ -310,7 +310,7 @@ export default {
       this.waiting = false
     },
     async processRecords (records) {
-      let report = {}
+      const report = {}
       for (let i = 0; i < records.length; ++i) {
         const record = records[i]
         report[record.name] = await this.processRecord(record)

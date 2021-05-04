@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     onOptionChanged (value) {
-      this.$store.patch('sorter', value) 
+      this.$store.patch('sorter', value)
     }
   },
   created () {

@@ -117,7 +117,7 @@ export default {
       this.variables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
-        
+
         if (time && time[name]) this.times.push(time[name])
       })
       // Make union of all available times for x-axis
@@ -236,7 +236,7 @@ export default {
         let name = this.variables[i].name
         // Check if we are targetting a specific level
         if (this.kActivity.selectedLevel) name = `${name}-${this.kActivity.selectedLevel}`
-        
+
         if (_.indexOf(keys, name) !== -1) {
           const values = this.probedLocation.properties[name]
           if (values && Array.isArray(values)) return true

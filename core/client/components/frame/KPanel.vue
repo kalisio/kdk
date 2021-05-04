@@ -4,7 +4,7 @@
     v-bind:class="{
       'row justify-center': direction === 'horizontal',
       'column': direction === 'vertical'
-    }" 
+    }"
     @triggered="$emit('triggered', arguments)" />
 </template>
 

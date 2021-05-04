@@ -15,9 +15,9 @@
      -->
     <div slot="card-content">
       <q-list bordered>
-        <q-item 
-          id="list-members" 
-          clickable 
+        <q-item
+          id="list-members"
+          clickable
           @click="onListMembers">
           <q-item-section avatar>
             <q-icon name="las la-user-friends" />
@@ -33,15 +33,15 @@
         </q-item>
         <!--TODO display the stats q-separator />
         <template v-for="(role, index) in roleNames">
-          <q-item 
-            :id="role" 
+          <q-item
+            :id="role"
             :key="roleKey(role)">
             <q-item-section avatar>
               <q-icon :name="roleIcons[index]" />
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                {{ memberStats[role] }} 
+                {{ memberStats[role] }}
                 {{ roleLabels[index]}}
               </q-item-label>
             </q-item-section>
@@ -67,7 +67,7 @@ export default {
       roleLabels: []
     }
   },
-   computed: {
+  computed: {
     memberRoleLabel () {
       const user = this.$store.get('user')
       const role = getRoleForGroup(user, this.contextId, this.item._id)
