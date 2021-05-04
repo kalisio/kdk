@@ -12,11 +12,10 @@
     <template v-slot:content>
       <q-popup-proxy 
         id="options-chooser-popup" 
-        class="bg-white"
         :auto-close="true"
         transition-show="scale" 
         transition-hide="scale">
-        <q-list>
+        <q-list class="bg-white"> 
           <q-item v-for="option in computedOptions" :key="option.key" clickable @click="onClicked(option)">
             <q-item-section v-if="option.icon">
               <q-icon :name="option.icon" size="1.5rem" />
