@@ -23,7 +23,7 @@ export default class Groups extends BaseCollection {
     await test
       .typeText(VueSelector('k-text-field').nth(0), data.name, { replace: true })
       .typeText(VueSelector('k-text-field').nth(1), data.description, { replace: true })
-      .click(Selector('.q-dialog #edit-group'))
+      .click(Selector('.q-dialog #apply-button'))
       .wait(Groups.LONG_WAIT)
   }
 
