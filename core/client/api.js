@@ -56,7 +56,7 @@ export function kalisio () {
     }
   }
   api.unregisterMatcher = function (matcher) {
-    matchers = matchers.filter(registeredmatcher => registeredGuard !== matcher)
+    matchers = matchers.filter(registeredMatcher => registeredMatcher !== matcher)
   }
 
   // This avoid managing the API path before each service name

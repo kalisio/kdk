@@ -10,12 +10,12 @@
     :badge="computedBadge"
     :disabled="disabled">
     <template v-slot:content>
-      <q-popup-proxy 
-        id="options-chooser-popup" 
+      <q-popup-proxy
+        id="options-chooser-popup"
         :auto-close="true"
-        transition-show="scale" 
+        transition-show="scale"
         transition-hide="scale">
-        <q-list class="bg-white"> 
+        <q-list class="bg-white">
           <q-item v-for="option in computedOptions" :key="option.key" clickable @click="onClicked(option)">
             <q-item-section v-if="option.icon">
               <q-icon :name="option.icon" size="1.5rem" />

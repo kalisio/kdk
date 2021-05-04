@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-function coordinatesToNumbers(value) {
+function coordinatesToNumbers (value) {
   if (typeof value === 'string') {
     return _.toNumber(value)
   } else if (Array.isArray(value)) {

@@ -8,9 +8,9 @@
      -->
     <div slot="card-content">
       <q-list bordered>
-        <q-item 
-          id="list-members" 
-          clickable 
+        <q-item
+          id="list-members"
+          clickable
           @click="onListMembers">
           <q-item-section avatar>
             <q-icon name="las la-user-friends" />

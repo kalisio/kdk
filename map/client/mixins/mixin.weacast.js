@@ -189,7 +189,7 @@ export default {
       })
       return feature
     },
-    getForecastAsHtml(feature, fields = {}) {
+    getForecastAsHtml (feature, fields = {}) {
       // Retrieve target fields on feature
       let windDirection = _.get(fields, 'windDirection', 'properties.windDirection')
       let windSpeed = _.get(fields, 'windSpeed', 'properties.windSpeed')
@@ -246,12 +246,12 @@ export default {
       })
       return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
     },
-    createWindBarbMarker(feature, fields = {}) {
+    createWindBarbMarker (feature, fields = {}) {
       // Retrieve target fields on feature
       let windDirection = _.get(fields, 'windDirection', 'properties.windDirection')
       let windSpeed = _.get(fields, 'windSpeed', 'properties.windSpeed')
       // TODO: colorize according to temperature scale if ?
-      //let temperature = _.get(fields, 'temperature', 'properties.temperature')
+      // let temperature = _.get(fields, 'temperature', 'properties.temperature')
       // Then get values for fields
       windDirection = _.get(feature, `${windDirection}`)
       windSpeed = _.get(feature, `${windSpeed}`)

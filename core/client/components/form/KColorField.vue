@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { QDialog ,QColor } from 'quasar'
+import { QDialog, QColor } from 'quasar'
 import mixins from '../../mixins'
 
 export default {
@@ -41,7 +41,7 @@ export default {
     return {
       picker: false
     }
-  },  
+  },
   methods: {
     emptyModel () {
       return ''
