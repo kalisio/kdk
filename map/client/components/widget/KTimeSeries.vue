@@ -13,9 +13,9 @@
           {{ probedLocationName }}
         </span>
         <!-- Graph -->
-        <!--div id="chart-container" class="col-12">
+        <div id="chart-container" class="col-12">
           <canvas ref="chart"></canvas>
-        </div-->
+        </div>
       </div>
       <div v-else class="absolute-center">
         <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />

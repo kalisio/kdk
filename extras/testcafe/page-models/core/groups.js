@@ -28,7 +28,7 @@ export default class Groups extends BaseCollection {
   }
 
   async delete (test, name) {
-    await this.clickAction(test, name, 'delete-group')
+    await this.clickAction(test, name, 'remove-group')
     await test
       .click(Selector('.q-dialog .q-btn').nth(1))
       .wait(Groups.EXTRA_LONG_WAIT)
