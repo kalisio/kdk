@@ -2,8 +2,29 @@
   <k-card v-bind="$props" :actions="itemActions" :bind-actions="false" :options="{ nameField: 'value' }">
     <div slot="card-label">
       <span class="text-subtitle1 text-weight-medium ellipsis">{{ item.value }}</span>
-      <q-btn class="float-right" :key="item._id" flat small rounded color="primary"
-          id="tag-count" :icon="roleIcons[0]" :label="item.count"/>
+    </div>
+    <!--
+      Card content
+     -->
+    <div slot="card-content">
+      <q-list bordered>
+        <q-item 
+          id="list-members" 
+          clickable 
+          @click="onListMembers">
+          <q-item-section avatar>
+            <q-icon name="las la-user-friends" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{ $t(`KTagCard.MEMBERS_LABEL`, { count: item.count }) }}
+            </q-item-label>
+            <q-tooltip>
+              {{ $t(`KTagCard.VIEW_MEMBERS_LABEL`) }}
+            </q-tooltip>
+          </q-item-section>
+        </q-item>
+      </q-list>
     </div>
   </k-card>
 </template>
@@ -23,7 +44,7 @@ export default {
           field: 'value'
         }, this.item)]
       })
-      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId } })
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
   },
   created () {

@@ -6,7 +6,7 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#search-members',
+  target: '#search-member',
   title: 'tours.members.SEARCH_LABEL',
   content: 'tours.members.SEARCH_MORE_LABEL',
   params: {
@@ -46,16 +46,6 @@ module.exports = [{
     clickOnPrevious: '#fab',
     previousDelay: 500,
     route: { name: 'add-member' }
-  }
-}, {
-  target: '#invite-member',
-  content: 'tours.members.INVITE_MEMBER_LABEL',
-  link: 'tours.members.INVITE_MEMBER_LINK_LABEL',
-  params: {
-    placement: 'left',
-    clickOnNext: 'div.q-fab__icon-holder',
-    nextDelay: 500,
-    route: { name: 'invite-member' }
   }
 }, {
   target: 'div.q-card.q-card--bordered',

@@ -37,32 +37,15 @@ module.exports = [{
     placement: 'right'
   }
 }, {
-  target: '#member',
-  content: 'tours.groups.GROUP_MEMBERS_LABEL',
-  params: {
-    placement: 'bottom'
-  }
-}, {
-  target: '#manager',
-  content: 'tours.groups.GROUP_MANAGERS_LABEL',
-  params: {
-    placement: 'bottom'
-  }
-}, {
-  target: '#owner',
-  content: 'tours.groups.GROUP_OWNERS_LABEL',
+  target: '#list-members',
+  title: 'tours.groups.GROUP_MEMBERS_LABEL',
+  content: 'tours.groups.LIST_GROUP_MEMBERS_LABEL',
   params: {
     placement: 'bottom'
   }
 }, {
   target: '#edit-group',
   content: 'tours.groups.UPDATE_GROUP_LABEL',
-  params: {
-    placement: 'bottom'
-  }
-}, {
-  target: '#list-members',
-  content: 'tours.groups.LIST_GROUP_MEMBERS_LABEL',
   params: {
     placement: 'bottom'
   }

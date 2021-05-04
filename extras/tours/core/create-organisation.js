@@ -11,12 +11,6 @@ module.exports = [{
     placement: 'top'
   }
 }, {
-  target: '#avatar-field',
-  content: 'tours.create-organisation.ORGANISATION_AVATAR_LABEL',
-  params: {
-    placement: 'top'
-  }
-}, {
   target: '#apply-button',
   content: 'tours.create-organisation.CREATE_ORGANISATION_LABEL',
   params: {

@@ -166,11 +166,9 @@
       "NEW_GROUP_LABEL": "Create a <b>new group</b> using this button.",
       "CREATE_GROUP_LINK_LABEL": "How to create a group",
       "GROUP_CARD_LABEL": "Each group is viewed as a card providing available actions.",
-      "GROUP_MEMBERS_LABEL": "This number shows you the <b>members</b> count of your group.",
-      "GROUP_MANAGERS_LABEL": "This number shows you the <b>managers</b> count of your group.",
-      "GROUP_OWNERS_LABEL": "This number shows you the <b>owners</b> count of your group.",
+      "GROUP_MEMBERS_LABEL": "This section shows you the <b>members</b> count of your group.",
+      "LIST_GROUP_MEMBERS_LABEL": "Shows the <b>members</b> of your group by selecting it.",
       "UPDATE_GROUP_LABEL": "Update properties of your group through this action.",
-      "LIST_GROUP_MEMBERS_LABEL": "Shows the <b>members</b> of your group.",
       "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_GROUP_LABEL": "Remove your group through this action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
@@ -210,18 +208,15 @@
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
     },
     "add-member": {
-      "MEMBER_NAME_LABEL": "Typing <b>the first characters</b> of a user name make it selectable.",
-      "MEMBER_ROLE_LABEL": "Select the user role in your organisation.",
-      "ROLES_LABEL": "A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal, payment, etc.).",
-      "ADD_MEMBER_LABEL": "Confirm joining the user to your organisation."
-    },
-    "invite-member": {
-      "MEMBER_NAME_LABEL": "Typing <b>the first characters</b> of a user name make it selectable.",
-      "MEMBER_EMAIL_LABEL": "Entrez l'adresse mail de la personne.",
-      "INVITATION_EMAIL_LABEL": "An information email containing his temporary password to connect will be sent to your new member (<b>please ask him to check the email is not in his spam folder</b>).",
-      "MEMBER_ROLE_LABEL": "$t(tours.add-member.MEMBER_ROLE_LABEL)",
-      "ROLES_LABEL": "$t(tours.add-member.ROLES_LABEL)",
-      "INVITE_MEMBER_LABEL": "$t(tours.add-member.ADD_MEMBER_LABEL)"
+      "UNIQUE_TAB_LABEL": "Add a unique person to your organisation using his email adress.",
+      "UNIQUE_EMAIL_LABEL": "Enter the email of the desired person",
+      "UNIQUE_CONTINUE_BUTTON_LABEL": "Click this button to procced with the invitation or to add the person if they already have an account.",
+      "UNIQUE_NAME_LABEL": "Enter the name of the person.",
+      "UNIQUE_ROLE_LABEL": "Select its role within your organisation. A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal, payment, etc.).",
+      "UNIQUE_ADD_BUTTON_LABEL": "Click this button to send the invitation.",
+      "MULTIPLE_TAB_LABEL": "Add multiple persons to your organisation using a CSV file.",
+      "MULTIPLE_FILE_LABEL": "Upload the CSV file listing the persons to be invited. Each person is represented by a row containing the fields <b>name</b>, <b>email</b> and <b>role</b> separated using a <b>,</b> separator.",
+      "MULTIPLE_ADD_BUTTON_LABEL": "Click this button to proceed with the invitations."
     },
     "tag-member": {
       "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise.",
@@ -236,10 +231,10 @@
       "SORT_LABEL": "Sort your tags by ascending or descending alphabetical order this button.",
       "TAG_CARD_LABEL": "Each tag is viewed as a card providing available actions.",
       "CREATE_TAG_LINK_LABEL": "How to create or remove tags on members",
-      "TAG_COUNT_LABEL": "This number shows you the number of <b>members</b> having your tag.",
+      "TAG_COUNT_LABEL": "This section shows you the number of <b>members</b> having your tag.",
+      "LIST_MEMBERS_LABEL": "Shows the <b>members</b> with this tag by selecting it.",
       "REMOVE_TAG_LABEL": "Whenever it is zero the tag is automatically removed.",
-      "UPDATE_TAG_LABEL": "Update properties of your tag through this action, this will update all members having this tag.",
-      "LIST_MEMBERS_LABEL": "Shows the <b>members</b> with this tag."
+      "UPDATE_TAG_LABEL": "Update properties of your tag through this action, this will update all members having this tag."
     }
   },
   "KWelcome": {
@@ -576,8 +571,9 @@
     "SEARCH_TAGS": "Search tags"
   },
   "KTagCard": {
-    "EDIT_LABEL": "$t(EDIT)",    
-    "LIST_MEMBERS_LABEL": "List members with tag"
+    "EDIT_LABEL": "$t(EDIT)",
+    "MEMBERS_LABEL": "{{count}} member(s)",
+    "VIEW_MEMBERS_LABEL": "View members with tag"
   },  
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
@@ -586,18 +582,10 @@
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {
-    "EDIT_LABEL": "$t(EDIT)",    
-    "LIST_MEMBERS_LABEL": "List members in group",
-    "REMOVE_LABEL": "$t(REMOVE)",
-    "REMOVE_DIALOG_TITLE": "Remove {{group}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{group}}</b> from your organisation ?"
-  },
-  "KOrganisationDZ": {
-    "BLOCK_TITLE": "Delete this organisation ?",
-    "BLOCK_TEXT": "Please note that deleting {{organiation}} will delete any data attached to this organisation.<br>The deletion cannot be undone.",
-    "BLOCK_ACTION": "Delete",
-    "DIALOG_TITLE": "Are you sure you want to delete {{organisation}} ?",
-    "DIALOG_LABEL": "Enter the organisation name to confirm the deletion" 
+    "EDIT_LABEL": "$t(EDIT)", 
+    "REMOVE_LABEL": "$t(REMOVE)",    
+    "MEMBERS_LABEL": "{{count}} member(s)",
+    "VIEW_MEMBERS_LABEL": "View members"
   },
   "KChangeIdentity": {
     "ACTION": "Resend change email",

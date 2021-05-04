@@ -220,6 +220,65 @@ Make it possible to manage [Weacast map layers](https://weacast.github.io/weacas
 This mixin assumes that your component has initialized its [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property by using e.g. the [Weacast mixin](./mixins.md#weacast)
 :::
 
+## Canvas Layer
+
+Make it possible to draw custom graphic elements on top of other layers using HTML canvas elements. These custom graphic elements are defined by their draw function and are run in the client application, using a controlled draw context. It is not possible for these draw functions to access anything outside the specified context.
+
+* **createLeafletCanvasLayer (options)** is automatically registered to allow creation of such Leaflet layer.
+* **updateCanvasLayerDrawCode (layerName, newDrawCode, autoRedraw)** update the draw code used by the layer named `layerName`. `autoRedraw` is a boolean used to enable automatic refresh of the layer at each displayed frame (required eg. to animate elements). `newDrawCode` is expected to be an array of objects where each object is of the following form :
+  * `{ feature: 'LAYER_NAME?FEATURE_NAME', code: '... some javascript draw code ...' }` will run the given draw code only for the feature named `FEATURE_NAME` in the layer named `LAYER_NAME`.
+  * `{ layer: 'LAYER_NAME', code: '... some javascript draw code ...' }` will run the given draw code for each feature of the layer named `LAYER_NAME`.
+
+* **setCanvasLayerContext (layerName, userContext)** is used to add some user provided members to the draw context. The `userContext` object will be merged with the application draw context and it's member will become available to the draw functions.
+
+The following configuration illustrates a layer used to draw feature property **name** as text at the feature position for all features of the layer named **Airports**.
+
+```js
+{
+  name: 'AirportNames',
+  type: 'OverlayLayer',
+  icon: 'local_airport',
+  leaflet: {
+    type: 'kanvasLayer',
+    isVisible: true,
+    draw: [
+      layer: 'Airports', code: `
+        const props = ctx.feature.properties
+        const coords = {
+          lat: ctx.feature.geometry.coordinates[1],
+          lon: ctx.feature.geometry.coordinates[0]
+        }
+
+        const pos = ctx.latLonToCanvas(coords)
+        ctx.canvas.font = '10px sans-serif'
+        ctx.canvas.fillStyle = '#ffb300'
+        ctx.canvas.fillText(ctx.feature.properties.name, pos.x, pos.y)
+      `
+    ]
+  }
+}
+```
+
+The `ctx` object is the draw context and is the only object available from the draw code.
+
+By default, the following fields are available on the draw context :
+* **canvas** the canvas rendering interface by which the drawing will occur. Draw api is available [here](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D).
+* **now** the time of the draw function call, can be useful to animate things.
+* **zoom** the current map zoom value.
+* **latLonToCanvas (coords)** a helper method to project from latitude/longitude to canvas coordinates (pixels).
+* **vec2 (a, b)** a helper method to build a vec2 object from two points (where points and vec2 are objects with `x` and `y` members ).
+* **len2 (vec)** a helper method to compute length of a vec2 vector.
+* **scale2 (vec, value)** a helper method to scale a vec2 vector by `value`.
+* **norm2 (vec)** a helper method to return the corresponding normalized vec2 vector.
+
+::: tip
+Customizing the draw context is useful to build an application specific library of draw functions and make these available to the layer specified draw code.
+:::
+
+The draw context can be customized:
+ * by the application using the `CanvasDrawContext` singleton. In this case you should call `CanvasDrawContext.merge(contextAdditionObject)`  to merge the content of `contextAdditionObject` with the draw context. This call must be done before the canvas layer mixin is created.
+ * at runtime, by the client using the `setCanvasLayerContext` method.
+
 ## Map Activity
 
 Make it easier to create 2D mapping activities:

@@ -8,34 +8,46 @@ There is no generic activity component within the core module because activities
 
 ## Layout
 
-The basic application layout rely on [Material Design](https://material.io/), as illustred in our [Akt'n'Map](https://github.com/kalisio/aktnmap) application, and is the following:
+The basic application layout relies on [Material Design](https://material.io/) and is composed of a *page* with different *panes* that can de open/closed on-demand, as illustred in our [Kano](https://github.com/kalisio/kano) application:
 
-![Akt'n'Map layout](../../assets/aktnmap-layout.png)
+![Kano layout - 1](../../assets/kano-layout-1.png)
 
-The layout is flexible enough to only use part of it like e.g. the [Kano](https://github.com/kalisio/kano) application which is a map-centered UI with the following layout:
+Here is the layout in a different configuration to show additional components like the *window* composed of different *widgets* to be selected using a *tab* and the *FAB* (floating actions button):
 
-![Kano layout](../../assets/kano-layout.png)
+![Kano layout - 2](../../assets/kano-layout-2.png)
+
+The layout is flexible enough to only use part of it like e.g. the [Akt'n'Map](https://github.com/kalisio/aktnmap) application is not a map-centered UI and the bottom/right panes are not always used for instance. Althought it can be built programmatically it aims at being constructed from the [application configuration](../../guides/basics/step-by-step.md#frontend-side) as well.
 
 The **k-layout** component based on [QLayout](https://quasar.dev/layout/layout) contains the elements that wrap application's content:
-* **k-app-bar**: application bar shown on top of the page - can be overriden using the *header* slot
-* **k-side-nav** : a left side navigation panel (which is shown alongside page content on wide screens) - can be overriden using the *left* slot
-* **k-right-panel** : a right side panel (which can be shown alongside page content on wide screens) - can be overriden using the *right* slot
-* **k-tab-bar**: a navigation with [QTabs](https://quasar.dev/vue-components/tabs) - can be overriden using the *navigation* slot
-* **k-fab**: an action button based on a [Quasar Floating Action Button](https://quasar.dev/layout/floating-action-button) at the bottom right corner of the page
-* **k-search-bar**: a global search bar
-* the embedded content of the page (i.e. the **Activity**) as a [router-view](https://router.vuejs.org/api/#router-view)
+* **header**: page header based on [q-header](https://quasar.dev/layout/header-and-footer)
+* **footer**: page footer based on [q-footer](https://quasar.dev/layout/header-and-footer)
+* **page**: activity components are injected using [nested routes and lazy-loading](https://quasar.dev/layout/routing-with-layouts-and-pages)
+
+The embedded content of the page (i.e. the **Activity**) is a [router-view](https://router.vuejs.org/api/#router-view) pointing to a **k-page** component, which consists of a:
+* **top pane**: a panel shown on top of the page - usually used as an application bar
+* **left pane** : a left side navigation panel - usually used as a main menu
+* **right pane** : a right side panel - usually used as an additional contextual panel
+* **bottom pane**: a panel shown at the bottom of the page
+* **fab**: an action button based on a [Quasar Floating Action Button](https://quasar.dev/layout/floating-action-button) at the bottom right corner of the page
+* **page content**: additional page components to be dynamically injected into the activity
+* **window**: a top window, which can be maximized, composed of a set of widgets to provide additional graphical content
 
 ::: tip
-The application layout is usually wrapped using the **k-home** component that simply load it depending on the authentication state of the user.
+The application layout is usually wrapped using the **k-home** component that simply load it depending on the authentication state of the user. You can directly use the **k-layout** if you'd like.
 :::
 
-Some layout components are fixed for the entire application lifecycle, as such they read their own setup from the [application configuration](../../guides/basics/step-by-step.md#frontend-side): layout, home, side navigation.
+Some layout components are fixed for the entire application lifecycle, as such they read their own setup from the [application configuration](../../guides/basics/step-by-step.md#frontend-side): layout properties, header, footer.
 
-Some components are more dynamic and support to be updated depending on the current activity of the user: application bar, tab bar search bar, right panel, FAB. In this case the configuration is read from the [global store](./application.md#store) and any change watched to keep the components in sync.
+Others components are more dynamic and support to be updated depending on the current activity of the user: panes, window, FAB. In this case the configuration is read from the [global store](./application.md#store) and any change watched to keep the components in sync. The [initial state](./README.md#store-objects) of the store can be fed from the [application configuration](../../guides/basics/step-by-step.md#frontend-side) as well. In this case, a [binding](./README.md#layout) will occur at runtime between the configured content and the target Vue component (i.e. activity or item objects). The default behaviour is to read the configured content of the activity named `my-activity` from the `myActivity` (camel case) property in the application configuration.
 
 ::: tip
 The best thing to do to learn how to configure your application is to have a look to the config files of our production applications like [Akt'n'Map](https://github.com/kalisio/aktnmap/blob/master/config/default.js) and [Kano](https://github.com/kalisio/kano/blob/master/config/default.js)
 :::
+
+In order to provide a consistent look & feel as much as possible, components or user actions (i.e. buttons) in the window, FAB and the different panes are created through the following base components:
+* **k-action**: action button with different rendering mode depending on the context (`button`, `form-button`, `item`, `fab`, `fab-action`, etc.)
+* **k-content**: a list of [dynamic components](https://v3.vuejs.org/guide/component-basics.html#dynamic-components) which default to create **k-action** components from configured properties as a default behaviour
+* **k-panel**: a row/column of stacked **k-content** components (depending on the `horizontal` or `vertical` value of the `direction` property)
 
 ## Collections
 
@@ -96,6 +108,18 @@ However options of the **itemActions** are more complex:
   * **route**: route to be pushed when action is triggerred
   * **handler**: function to be called when action is triggerred
 * **menu**: the list of actions displayed in the menu, each action been described as above
+
+### History
+
+The **k-history** component is powered by [Quasar timeline](https://quasar.dev/vue-components/timeline). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
+
+The same properties as with the **k-grid** component can be used to customize it, the component to be used to render items defaults to `collection/KHistoryEntry`, which is pretty similar to a **k-card**.
+
+### Table
+
+The **k-table** component is powered by [Quasar lists](https://quasar.dev/vue-components/list-and-list-items) and [Quasar pagination](https://quasar.dev/vue-components/pagination). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
+
+The same properties as with the **k-grid** component can be used to customize it. There is no specific component to be used to render items as it relies on the rows of the table. As a consequence, the `item-actions` property has to be directly set on the **k-table** component.
 
 ## Forms 
 

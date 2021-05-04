@@ -26,6 +26,9 @@ export const Filter = {
   getQuery () {
     return Store.get('filter.query')
   },
+  clear () {
+    Store.patch('filter', { field: 'name', pattern: '', items: [], query: {} })
+  },
   // Build query from filter pattern and/or items
   updateFilterQuery (api) {
     const query = {}

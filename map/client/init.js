@@ -3,6 +3,13 @@ import { Platform } from 'quasar'
 import { Store, utils as kCoreUtils } from '../../core/client'
 import { Geolocation } from './geolocation'
 
+function siftMatcher (originalQuery) {
+  // Filter out specific operators others than the reserved ones (starting by $),
+  // which are already filtered by core matcher
+  const keysToOmit = ['geoJson']
+  return _.omit(originalQuery, ...keysToOmit)
+}
+
 export default function init () {
   const api = this
 
@@ -10,6 +17,8 @@ export default function init () {
 
   // Declare the built-in services, others are optional
   api.declareService('geocoder')
+  // Declare our matcher
+  api.registerMatcher(siftMatcher)
 
   // Create the models listened by the different components
   // You must use the patch method on the store to update those models

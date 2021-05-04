@@ -6,11 +6,10 @@
     <template v-slot:content>
       <q-popup-proxy 
         id="member-filter-popup" 
-        class="bg-white"
         transition-show="scale" 
         transition-hide="scale">
         <q-option-group
-          class="q-pl-xs q-pr-md"
+          class="q-pl-xs q-pr-md bg-white"
           v-model="filters"
           :options="options"
           type="toggle" />
@@ -50,4 +49,4 @@ export default {
     ]
   }
 }
-</script>''
+</script>

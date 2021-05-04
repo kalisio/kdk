@@ -23,17 +23,24 @@ function getBaseUrlStorageKey () {
   return config.appName + '-baseUrl'
 }
 
+// Matchers that can be added to customize route guards
+let matchers = []
+
 function siftMatcher (originalQuery) {
   // Filter out Feathers specific operators like $limit, $skip, etc.
   // (copied from https://github.com/feathersjs-ecosystem/feathers-reactive)
   const keysToOmit = Object.keys(originalQuery).filter(key => key.charCodeAt(0) === 36)
-  const query = _.omit(originalQuery, ...keysToOmit)
+  let query = _.omit(originalQuery, ...keysToOmit)
   // Compatibility with fuzzy search that use $search query syntax
   _.forOwn(query, (value, key) => {
     if ((typeof value === 'object') && _.has(value, '$search')) {
       query[key] = { $regex: new RegExp(_.get(value, '$search'), 'i') }
     }
   })
+  // Run registered matchers
+  for (const matcher of matchers) {
+    query = matcher(query)
+  }
   return sift(query)
 }
 
@@ -42,6 +49,15 @@ export function kalisio () {
 
   // Setup our interface
   // -------------------
+
+  api.registerMatcher = function (matcher) {
+    if (!matchers.includes(matcher)) {
+      matchers.push(matcher)
+    }
+  }
+  api.unregisterMatcher = function (matcher) {
+    matchers = matchers.filter(registeredmatcher => registeredGuard !== matcher)
+  }
 
   // This avoid managing the API path before each service name
   // If a context is not given it will be retrieved from the store if any and used for contextual services

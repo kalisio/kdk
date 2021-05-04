@@ -166,11 +166,9 @@
       "NEW_GROUP_LABEL": "Créez un <b>nouveau groupe</b> via ce bouton.",
       "CREATE_GROUP_LINK_LABEL": "Voir comment créer un groupe",
       "GROUP_CARD_LABEL": "Chaque groupe est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
-      "GROUP_MEMBERS_LABEL": "Ce nombre vous indique le nombre de <b>membres</b> de votre groupe.",
-      "GROUP_MANAGERS_LABEL": "Ce nombre vous indique le nombre de <b>gestionnaires</b> de votre groupe.",
-      "GROUP_OWNERS_LABEL": "Ce nombre vous indique le nombre de <b>propriétaires</b> de votre groupe.",
+      "GROUP_MEMBERS_LABEL": "Cette section vous indique le nombre de <b>membres</b> de votre groupe.",
+      "LIST_GROUP_MEMBERS_LABEL": "Affichez les <b>membres</b> de votre groupe en la sélectionnant.",
       "UPDATE_GROUP_LABEL": "Modifiez les propriétés de votre groupe via cette action.",
-      "LIST_GROUP_MEMBERS_LABEL": "Affichez les <b>membres</b> de votre groupe.",
       "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_GROUP_LABEL": "Supprimez votre groupe via cette action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
@@ -210,18 +208,15 @@
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
     },
     "add-member": {
-      "MEMBER_NAME_LABEL": "Tapez <b>les premières lettres</b> du nom d'une personne pour la sélectionner.",
-      "MEMBER_ROLE_LABEL": "Choisissez le rôle de la personne au sein de votre organisation.",
-      "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif à votre organisation alors qu'un <b>gestionnaire</b> a un pouvoir d'édition et un <b>propriétaire</b> a un contrôle total (destruction, paiement, etc.).",
-      "ADD_MEMBER_LABEL": "Confirmez l'ajout du membre à votre organisation."
-    },
-    "invite-member": {
-      "MEMBER_NAME_LABEL": "Tapez le nom de la personne tel qu'il sera visible par les autres utilisateurs.",
-      "MEMBER_EMAIL_LABEL": "Entrez l'adresse mail de la personne.",
-      "INVITATION_EMAIL_LABEL": "Un email informant l'utilisateur de son invitation et contenant son mot de passe temporaire pour se connecter lui sera envoyé (<b>demandez-lui de vérifiez que l'email ne soit pas tombé dans ses courriers indésirables</b>).",
-      "MEMBER_ROLE_LABEL": "$t(tours.add-member.MEMBER_ROLE_LABEL)",
-      "ROLES_LABEL": "$t(tours.add-member.ROLES_LABEL)",
-      "INVITE_MEMBER_LABEL": "$t(tours.add-member.ADD_MEMBER_LABEL)"
+      "UNIQUE_TAB_LABEL": "Ajoutez une personne à votre organisaion.",
+      "UNIQUE_EMAIL_LABEL": "Saisissez l'adresse mail de la personne à inviter.",
+      "UNIQUE_CONTINUE_BUTTON_LABEL": "Cliquez ce bouton pour procéder à l'invitation ou à l'ajout de la personne si celle-ci possède déjà un compte.",
+      "UNIQUE_NAME_LABEL": "Saisissez le nom de la personne.",
+      "UNIQUE_ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accés en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total (suppression, paiemnent, etc.).",
+      "UNIQUE_ADD_BUTTON_LABEL": "Clmiquez ce bouton pour lancer l'invitation.",
+      "MULTIPLE_TAB_LABEL": "Ajoutez plusieurs personnes à l'aide d'un fichier CSV.",
+      "MULTIPLE_FILE_LABEL": "Téléchargez le fichier contenant la liste des personnes à inviter. Chaque personne est réprésentée par une ligne contenant les champs <b>nom</b>, <b>adresse email</b> et <b>rôle</b> séparés par un <b>,</b>.",
+      "MULTIPLE_ADD_BUTTON_LABEL": "Cliquez ce bouton pour procéder aux invitations."
     },
     "join-group": {
       "GROUP_NAME_LABEL": "Tapez <b>les premières lettres</b> du nom d'un groupe pour le sélectionner.",
@@ -242,10 +237,10 @@
       "SORT_LABEL": "Ordonnez vos étiquettes par ordre alphabétique ascendant ou descendant via ce bouton.",
       "TAG_CARD_LABEL": "Chaque étiquette est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
       "CREATE_TAG_LINK_LABEL": "Voir comment ajouter ou supprimer des étiquettes sur les membres",
-      "TAG_COUNT_LABEL": "Ce nombre vous indique le nombre de <b>membres</b> possédant cette étiquette.",
+      "TAG_MEMBERS_LABEL": "Cette section vous indique le nombre de <b>membres</b> possédant cette étiquette.",
+      "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette en la sélectionnant.",
       "REMOVE_TAG_LABEL": "Lorsqu'il atteint zéro l'étiquette est automatiquement supprimée.",
-      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette.",
-      "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette."
+      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette."
     }
   },
   "KWelcome": {
@@ -584,7 +579,8 @@
   },
   "KTagCard": {
     "EDIT_LABEL": "$t(EDIT)",
-    "LIST_MEMBERS_LABEL": "Lister les membres possédant l'étiquette"
+    "MEMBERS_LABEL": "{{count}} membre(s)",
+    "VIEW_MEMBERS_LABEL": "Voir les membres possédant l'étiquette"
   },
   "KGroupsActivity": {
     "GROUPS_LABEL": "$t(GROUPS)",
@@ -593,18 +589,10 @@
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
+    "EDIT_LABEL": "$t(EDIT)", 
     "REMOVE_LABEL": "$t(REMOVE)",
-    "EDIT_LABEL": "$t(EDIT)",
-    "LIST_MEMBERS_LABEL": "Lister les membres du groupe",
-    "REMOVE_DIALOG_TITLE": "Supprimer {{group}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {{group}} de votre organisation ?"
-  },
-  "KOrganisationDZ": {
-    "BLOCK_TITLE": "Supprimer cette organisation ?",
-    "BLOCK_TEXT": "Notez que la suppresion de <b>{{organisation}}</b> entrainera la suppression de toutes les données qui lui sont attachées.<br>La suppression ne peut pas être annulée.",
-    "BLOCK_ACTION": "Supprimer",
-    "DIALOG_TITLE": "Etes vous sûr de vouloir supprimer {{organisation}} ?",
-    "DIALOG_LABEL": "Saisissez le nom de l'organisation pour confirmer sa suppression" 
+    "MEMBERS_LABEL": "{{count}} membre(s)",
+    "VIEW_MEMBERS_LABEL": "Voir les membres"
   },
   "KChangeIdentity": {
     "ACTION": "Appliquer",

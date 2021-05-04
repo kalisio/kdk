@@ -6,7 +6,7 @@ module.exports = [{
   }
 }, {
   target: '#layer-field',
-  content: 'tours.add-layer.SERVICELAYER_LABEL',
+  content: 'tours.add-layer.SERVICE_LAYER_LABEL',
   params: {
     placement: 'bottom'
   }

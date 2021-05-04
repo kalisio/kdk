@@ -4,7 +4,7 @@
       Card header
      -->
     <template v-slot:card-header>
-      <div class="q-pa-xs row justify-end">
+      <div class="q-pa-sm row justify-end">
         <q-badge outine color="grey-7">
           {{ $t(memberRoleLabel) }}
         </q-badge>
@@ -14,16 +14,40 @@
       Card content
      -->
     <div slot="card-content">
-      <q-separator />
-      <div class="q-pa-md row justify-around items-center">
+      <q-list bordered>
+        <q-item 
+          id="list-members" 
+          clickable 
+          @click="onListMembers">
+          <q-item-section avatar>
+            <q-icon name="las la-user-friends" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{ $t(`KGroupCard.MEMBERS_LABEL`, { count: membersCount }) }}
+            </q-item-label>
+            <q-tooltip>
+              {{ $t(`KGroupCard.VIEW_MEMBERS_LABEL`) }}
+            </q-tooltip>
+          </q-item-section>
+        </q-item>
+        <!--TODO display the stats q-separator />
         <template v-for="(role, index) in roleNames">
-          <q-btn :key="roleKey(role)" flat small rounded color="primary"
-            :id="role"
-            :icon="roleIcons[index]"
-            :label="memberStats[role]"
-            @click="onMembersClicked(role)"/>
-        </template>
-      </div>
+          <q-item 
+            :id="role" 
+            :key="roleKey(role)">
+            <q-item-section avatar>
+              <q-icon :name="roleIcons[index]" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                {{ memberStats[role] }} 
+                {{ roleLabels[index]}}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </template-->
+      </q-list>
     </div>
   </k-card>
 </template>
@@ -32,18 +56,18 @@
 import _ from 'lodash'
 import mixins from '../../mixins'
 import { findMembersOfGroup, getRoleForGroup, Roles, RoleNames } from '../../../common/permissions'
-import { Dialog } from 'quasar'
 
 export default {
   name: 'k-group-card',
   mixins: [mixins.baseItem],
-  computed: {
-    memberRoleIcon () {
-      const user = this.$store.get('user')
-      const role = getRoleForGroup(user, this.contextId, this.item._id)
-      if (!_.isUndefined(role)) return this.roleIcons[Roles[role]]
-      else return ''
-    },
+  data () {
+    return {
+      membersCount: 0,
+      memberStats: {},
+      roleLabels: []
+    }
+  },
+   computed: {
     memberRoleLabel () {
       const user = this.$store.get('user')
       const role = getRoleForGroup(user, this.contextId, this.item._id)
@@ -51,31 +75,7 @@ export default {
       else return ''
     }
   },
-  data () {
-    return {
-      memberStats: {},
-      roleLabels: []
-    }
-  },
   methods: {
-    removeGroup () {
-      Dialog.create({
-        title: this.$t('KGroupCard.REMOVE_DIALOG_TITLE', { group: this.item.name }),
-        message: this.$t('KGroupCard.REMOVE_DIALOG_MESSAGE', { group: this.item.name }),
-        html: true,
-        ok: {
-          label: this.$t('OK'),
-          flat: true
-        },
-        cancel: {
-          label: this.$t('CANCEL'),
-          flat: true
-        }
-      }).onOk(() => {
-        const groupsService = this.$api.getService('groups')
-        groupsService.remove(this.item._id)
-      })
-    },
     roleKey (role) {
       return this.item._id + '-' + role
     },
@@ -88,6 +88,7 @@ export default {
       })
       const membersService = this.$api.getService('members', this.contextId)
       const members = await findMembersOfGroup(membersService, this.item._id)
+      this.membersCount = members.data.length
       // filter the subjects according the role in order to count them
       _.forEach(members.data, (user) => {
         const group = _.find(user.groups, { _id: this.item._id })
@@ -104,12 +105,7 @@ export default {
           icon: 'group_work'
         }, this.item)]
       })
-      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId } })
-    },
-    onMembersClicked (role) {
-    /* FIXME
-      this.$router.push({ name: 'edit-group', params: { contextId: this.contextId, objectId: this.item._id, perspective: role } })
-      */
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
   },
   created () {

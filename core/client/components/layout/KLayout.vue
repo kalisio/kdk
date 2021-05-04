@@ -48,7 +48,6 @@ export default {
     return {
       header: this.$layout.getHeader(),
       footer: this.$layout.getFooter(),
-      leftDrawer: this.$layout.getLeftDrawer(),
       config: {}
     }
   },

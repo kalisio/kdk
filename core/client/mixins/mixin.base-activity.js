@@ -17,7 +17,7 @@ export default function (name) {
         return this.getTopPane().visible
       },
       setTopPane (content, mode, filter) {
-        this.$store.patch('topPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+        this.$store.patch('topPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
       },
       setTopPaneMode (mode) {
         if (mode !== this.getTopPaneMode()) {
@@ -46,7 +46,7 @@ export default function (name) {
         return this.getLeftPane().visible
       },
       setLeftPane (content, mode, filter) {
-        this.$store.patch('leftPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+        this.$store.patch('leftPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
       },
       setLeftPaneMode (mode) {
         if (mode !== this.getLeftPaneMode()) {
@@ -75,7 +75,7 @@ export default function (name) {
         return this.getBottomPane().visible
       },
       setBottomPane (content, mode, filter) {
-        this.$store.patch('bottomPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+        this.$store.patch('bottomPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
       },
       setBottomPaneMode (mode) {
         if (mode !== this.getBottomPaneMode()) {
@@ -104,7 +104,7 @@ export default function (name) {
         return this.getRightPane().visible
       },
       setRightPane (content, mode, filter) {
-        this.$store.patch('rightPane', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+        this.$store.patch('rightPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
       },
       setRightPaneMode (mode) {
         if (mode !== this.getRightPaneMode()) {
@@ -130,7 +130,7 @@ export default function (name) {
         return this.getPage().mode
       },
       setPage (content, mode, filter) {
-        this.$store.patch('page', { content: Layout.bindContent(content, this), mode: Layout.validateMode(content, mode), filter })
+        this.$store.patch('page', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
       },
       setPageMode (mode) {
         if (mode !== this.getPageMode()) {
@@ -150,7 +150,7 @@ export default function (name) {
         return this.$store.get('fab')
       },
       setFab (actions, filter) {
-        this.$store.patch('fab', { actions: Layout.bindContent(actions, this), filter })
+        this.$store.patch('fab', { actions: Layout.bindContent(_.cloneDeep(actions), this), filter })
       },
       configureFab () {
         const options = _.get(this.activityOptions, 'fab')
@@ -164,7 +164,7 @@ export default function (name) {
         return this.$store.get('window')
       },
       setWindow (widgets, current, filter) {
-        this.$store.patch('window', { widgets: Layout.bindContent(widgets, this), current, filter })
+        this.$store.patch('window', { widgets: Layout.bindContent(_.cloneDeep(widgets), this), current, filter })
       },
       configureWindow () {
         const options = _.get(this.activityOptions, 'window', null)
@@ -238,14 +238,16 @@ export default function (name) {
       // Setup the options
       this.activityOptions = this.$config(this.activityName)
     },
-    created () {
+    mounted () {
+      // Configure the activity    
+       this.configureActivity()
       // Whenever the user abilities are updated, update activity as well
       this.$events.$on('user-abilities-changed', this.configureActivity)
-      // Configure the activity
-      this.configureActivity()
     },
     beforeDestroy () {
       this.$events.$off('user-abilities-changed', this.configureActivity)
+      // Clear the activity
+      this.clearActivity()
     }
   }
 }

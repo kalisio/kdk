@@ -1,14 +1,14 @@
 <template>
   <k-modal
-    id="invite-member-modal"
+    id="add-member-modal"
     :title="$t('KAddMember.TITLE')"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content">
       <q-tabs  align="justify" v-model="mode" inverted>
-        <q-tab name="unique" icon="las la-user"  />
-        <q-tab name="multiple" icon="las la-user-friends"  />
+        <q-tab id="unique-tab" name="unique" icon="las la-user"  />
+        <q-tab id="multiple-tab" name="multiple" icon="las la-user-friends"  />
       </q-tabs>
       <div>
         <q-tab-panels v-model="mode" animated>
