@@ -7,6 +7,7 @@
         :options="{ hideIfEmpty: true }" />
       <template v-for="category in layerCategories">
         <q-expansion-item
+          v-if="isVisible(category)"
           :key="category.name"
           :id="category.name"
           :header-class="getColor(category)"
@@ -94,6 +95,12 @@ export default {
     }
   },
   methods: {
+    isVisible (category) {
+      // User-defined categories are always visible, even if empty
+      // Built-in categories only if not empty as depending on the configuration
+      // built-in layers might be unavailable
+      return (category._id ? true : this.layersByCategory[category.name].length > 0)
+    },
     getColor (category) {
       return 'text-' + _.get(category, 'icon.color', 'primary')
     },

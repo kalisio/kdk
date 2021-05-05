@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.3.2](https://github.com/kalisio/kdk/tree/v1.3.2) (2021-05-04)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.1...v1.3.2)
+
 ## [v1.3.1](https://github.com/kalisio/kdk/tree/v1.3.1) (2021-05-04)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.0...v1.3.1)
@@ -50,6 +54,7 @@
 - Default role not set when editing member role in group [\#229](https://github.com/kalisio/kdk/issues/229)
 - Location indicator not updated when navigating with keyboard [\#124](https://github.com/kalisio/kdk/issues/124)
 - asGeoJson hook breaks reactivity [\#79](https://github.com/kalisio/kdk/issues/79)
+- Incorrect path in position indicator component [\#349](https://github.com/kalisio/kdk/issues/349)
 - Features chart settings not displayed correctly [\#347](https://github.com/kalisio/kdk/issues/347)
 - Sorter should apply the default option [\#336](https://github.com/kalisio/kdk/issues/336)
 - Disable browser autocomplete on customized q-select based fields [\#334](https://github.com/kalisio/kdk/issues/334)

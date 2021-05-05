@@ -51,10 +51,9 @@ export default {
       if (this.filters.includes('guest')) {
         query = Object.assign(query, { expireAt: { $ne: null } })
       }
-      for (const role of ['owner', 'manager', 'member']) {
-        if (this.filters.includes(role)) {
-          query = Object.assign(query, { organisations: { $elemMatch: { _id: this.contextId, permissions: role } } })
-        }
+      const roleFilters = _.intersection(['owner', 'manager', 'member'], this.filters)
+      if (roleFilters.length > 0) {
+        query = Object.assign(query, { organisations: { $elemMatch: { _id: this.contextId, permissions: { $in: roleFilters } } }})
       }
       return query
     }

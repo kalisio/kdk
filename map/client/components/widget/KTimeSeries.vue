@@ -13,9 +13,9 @@
           {{ probedLocationName }}
         </span>
         <!-- Graph -->
-        <!--div id="chart-container" class="col-12">
+        <div id="chart-container" class="col-12">
           <canvas ref="chart"></canvas>
-        </div-->
+        </div>
       </div>
       <div v-else class="absolute-center">
         <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />
@@ -92,6 +92,9 @@ export default {
       // We filter one value out of N according to decimation factor
       return (index % this.decimationFactor) === 0
     },
+    hasVariable(name, properties) {
+      return (properties[name] && Array.isArray(properties[name]))
+    },
     setupTimeTicks () {
       if (!this.times || !this.graphWidth) return
       // Choose the right step size to ensure we have almost 100px between hour ticks
@@ -148,7 +151,7 @@ export default {
         const unit = variable.units[0]
         const label = this.$t(variable.label) || variable.label
         // Aggregated variable available for feature ?
-        if (properties[name] && Array.isArray(properties[name])) {
+        if (this.hasVariable(name, properties)) {
           this.datasets.push(_.merge({
             label: `${label} (${unit})`,
             borderColor: colors[index],
@@ -170,7 +173,7 @@ export default {
         const unit = variable.units[0]
         // Variable available for feature ?
         // Check also if axis already created
-        if (properties[name] && !_.find(this.yAxes, axis => axis.id === unit)) {
+        if (this.hasVariable(name, properties) && !_.find(this.yAxes, axis => axis.id === unit)) {
           this.yAxes.push(_.merge({
             id: unit,
             position: isLeft ? 'left' : 'right',
