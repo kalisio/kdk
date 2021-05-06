@@ -164,7 +164,7 @@ export default function init () {
       window.device.registrationId = data.registrationId
       // update the user device
       const user = Store.get('user')
-      if (user && device.registrationId) {
+      if (user && window.device.registrationId) {
         const devicesService = api.getService('devices')
         const device = await devicesService.update(window.device.registrationId, window.device)
         logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
