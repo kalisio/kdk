@@ -48,6 +48,8 @@ export default {
         try {
           const response = await fetch(legendUrl)
           this.visible = response.ok
+          // additional check for servers answering with empty body
+          if (this.visible && response.headers.get('content-length') === '0') this.visible = false
           if (this.visible) {
             this.legendUrl = legendUrl
             this.urlLegendLayer = layer

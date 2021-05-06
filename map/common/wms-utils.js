@@ -72,7 +72,7 @@ export async function discover (url, searchParams = {}, caps = null) {
           const id = st.Name[0]
           const display = _.get(st, 'Title[0]', id || 'default')
           const legend = _.get(st, 'LegendURL[0].OnlineResource[0].$.xlink:href')
-          obj.styles[id] = { id, display, legend: buildUrl(legend, searchParams) }
+          obj.styles[id] = { id, display, legend: legend ? buildUrl(legend, searchParams) : undefined }
         }
         // extract extent
         if (layer.EX_GeographicBoundingBox) {

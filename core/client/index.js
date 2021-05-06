@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import logger from 'loglevel'
 import { Platform } from 'quasar'
 import { Store } from './store'
@@ -92,7 +93,7 @@ export default function init () {
   }
   */
 
-  document.addEventListener('deviceready', _ => {
+ /* document.addEventListener('deviceready', _ => {
     // Check for permissions, will launch permission request on failure
     // NOT SURE IF THIS IS REQUIRED
     // permissionsPlugin.hasPermission(notificationPermissions, permissionsCheckSuccess, null)
@@ -137,6 +138,58 @@ export default function init () {
       const devicesService = api.getService('devices')
       // Only possible if registration ID already retrieved
       if (window.device && window.device.registrationId) {
+        const device = await devicesService.update(window.device.registrationId, window.device)
+        logger.debug(`device ${device.uuid} registered with the id ${device.registrationId}`)
+      }
+    })
+  }, false) */
+
+  document.addEventListener('deviceready', () => {
+    // Check for permissions, will launch permission request on failure
+    // NOT SURE IF THIS IS REQUIRED
+    // permissionsPlugin.hasPermission(notificationPermissions, permissionsCheckSuccess, null)
+    window.device = {
+      registrationId: undefined,
+      platform: Platform.platform,
+      uuid: Platform.name + '-' + Platform.platform + '-' + _.kebabCase(Platform.version)
+    }
+
+    const notifier = window.PushNotification.init({
+      android: { vibrate: true, sound: true, forceShow: true },
+      ios: { alert: true, badge: true, sound: true },
+      windows: { }
+    })
+    notifier.on('registration', async (data) => {
+      logger.debug('Push registrationID changed: ' + data.registrationId)
+      // Store the registrationId
+      window.device.registrationId = data.registrationId
+      // update the user device
+      const user = Store.get('user')
+      if (user && window.device.registrationId) {
+        const devicesService = api.getService('devices')
+        const device = await devicesService.update(window.device.registrationId, window.device)
+        logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
+      }
+    })
+    notifier.on('notification', (data) => {
+      // data.message,
+      // data.title,
+      // data.count,
+      // data.sound,
+      // data.image,
+      // data.additionalData
+    })
+    notifier.on('error', (error) => {
+      logger.error(error)
+      utils.toast({
+        message: error.message,
+        timeout: 10000
+      })
+    })
+    api.on('authenticated', async response => {
+      const devicesService = api.getService('devices')
+      // Only possible if registration ID already retrieved
+      if (window.device.registrationId) {
         const device = await devicesService.update(window.device.registrationId, window.device)
         logger.debug(`device ${device.uuid} registered with the id ${device.registrationId}`)
       }

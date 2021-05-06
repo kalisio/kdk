@@ -65,6 +65,11 @@ export default {
     },
     layerName () {
       return this.selection.layer ? this.$t(this.selection.layer.name) : ''
+    },
+    probedVariables () {
+      // If the feature is linked to a layer with variables use it
+      // Otherwise use all available variables to search for those applicable to it
+      return (this.layer && this.layer.variables ? this.layer.variables : this.variables)
     }
   },
   watch: {
@@ -117,7 +122,7 @@ export default {
       this.times = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
 
-      this.variables.forEach(variable => {
+      this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
 
@@ -144,8 +149,8 @@ export default {
       const time = this.probedLocation.time || this.probedLocation.forecastTime
       const properties = this.probedLocation.properties
       // Generate a color palette in case the variables does not provide it
-      const colors = _.shuffle(chroma.scale('Spectral').colors(this.variables.length))
-      this.variables.forEach((variable, index) => {
+      const colors = _.shuffle(chroma.scale('Spectral').colors(this.probedVariables.length))
+      this.probedVariables.forEach((variable, index) => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
         const unit = variable.units[0]
@@ -167,7 +172,7 @@ export default {
       const properties = this.probedLocation.properties
       let isLeft = true
 
-      this.variables.forEach(variable => {
+      this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
         const unit = variable.units[0]
@@ -235,8 +240,8 @@ export default {
     },
     hasAvailableDatasets () {
       const keys = Object.keys(this.probedLocation.properties)
-      for (let i = 0; i < this.variables.length; i++) {
-        let name = this.variables[i].name
+      for (let i = 0; i < this.probedVariables.length; i++) {
+        let name = this.probedVariables[i].name
         // Check if we are targetting a specific level
         if (this.kActivity.selectedLevel) name = `${name}-${this.kActivity.selectedLevel}`
 
