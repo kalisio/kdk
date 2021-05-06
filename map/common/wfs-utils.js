@@ -46,8 +46,7 @@ export async function discover (url, searchParams = {}, caps = null) {
 
   const out = {
     version: _.get(caps, 'WFS_Capabilities.$.version'),
-    availableLayers: {},
-    supportsGeoJson: false
+    availableLayers: {}
   }
 
   // scan layers
@@ -76,9 +75,21 @@ export async function discover (url, searchParams = {}, caps = null) {
     for (const parameter of _.get(operation, 'Parameter')) {
       if (parameter.$.name !== 'outputFormat') continue
       for (const format of _.get(parameter, 'AllowedValues[0].Value')) {
-        if (['geojson', 'json', 'application/json'].includes(_.lowerCase(format))) {
-          out.geoJsonOutputFormat = format
-          break
+        const tokens = _.split(format, ';')
+        let mimeType = tokens[0]
+        if (mimeType === 'application/json') {
+          out.geoJsonOutputFormat = 'json'
+          // Check for the subtype if any
+          if (tokens.length > 0) {
+            const subtypeTokens = _.split(_.trim(tokens[1]), '=')
+            if (subtypeTokens[0] === 'subtype') out.geoJsonOutputFormat = subtypeTokens[1]
+          }
+          return out
+        }
+        mimeType = _.lowerCase(mimeType)
+        if (mimeType === 'json' || mimeType === 'geojson') {
+          out.geoJsonOutputFormat = mimeType
+          return out
         }
       }
     }
