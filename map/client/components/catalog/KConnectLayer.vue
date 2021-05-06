@@ -77,7 +77,7 @@ export default {
           name: {
             type: 'string',
             maxLength: 128,
-            minLength: 3,
+            minLength: 2,
             default: this.layer ? this.layer.display : '',
             field: {
               component: 'form/KTextField',
