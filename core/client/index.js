@@ -150,6 +150,7 @@ export default function init () {
     // permissionsPlugin.hasPermission(notificationPermissions, permissionsCheckSuccess, null)
     window.device = {
       registrationId: undefined,
+      platform: Platform.platform,
       uuid: Platform.name + '-' + Platform.platform + '-' + _.kebabCase(Platform.version)
     }
 
