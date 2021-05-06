@@ -144,11 +144,11 @@ export default function init () {
     })
   }, false) */
 
-  document.addEventListener('deviceready', _ => {
+  document.addEventListener('deviceready', () => {
     // Check for permissions, will launch permission request on failure
     // NOT SURE IF THIS IS REQUIRED
     // permissionsPlugin.hasPermission(notificationPermissions, permissionsCheckSuccess, null)
-    let device = {
+    window.device = {
       registrationId: undefined,
       uuid: Platform.name + '-' + Platform.platform + '-' + _.kebabCase(Platform.version)
     }
@@ -161,12 +161,12 @@ export default function init () {
     notifier.on('registration', async (data) => {
       logger.debug('Push registrationID changed: ' + data.registrationId)
       // Store the registrationId
-      device.registrationId = data.registrationId
+      window.device.registrationId = data.registrationId
       // update the user device
       const user = Store.get('user')
       if (user && device.registrationId) {
         const devicesService = api.getService('devices')
-        const device = await devicesService.update(device.registrationId, device)
+        const device = await devicesService.update(window.device.registrationId, window.device)
         logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
       }
     })
@@ -188,8 +188,8 @@ export default function init () {
     api.on('authenticated', async response => {
       const devicesService = api.getService('devices')
       // Only possible if registration ID already retrieved
-      if (device.registrationId) {
-        const device = await devicesService.update(device.registrationId, device)
+      if (window.device.registrationId) {
+        const device = await devicesService.update(window.device.registrationId, window.device)
         logger.debug(`device ${device.uuid} registered with the id ${device.registrationId}`)
       }
     })
