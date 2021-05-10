@@ -31,6 +31,12 @@ export class MeteoModelGridSource extends DynamicGridSource {
     this.queueUpdate()
   }
 
+  setLevel (level) {
+    if (level !== null) this.updateCtx.level = level
+    else if (this.updateCtx.level) delete this.updateCtx.level
+    this.queueUpdate()
+  }
+
   async setup (config) {
     this.candidates = []
 
@@ -84,6 +90,7 @@ export class MeteoModelGridSource extends DynamicGridSource {
     if (oldContext.candidate !== newContext.candidate) return false
     if (oldContext.runTime && newContext.runTime && !oldContext.runTime.isSame(newContext.runTime)) return false
     if (oldContext.forecastTime && newContext.forecastTime && !oldContext.forecastTime.isSame(newContext.forecastTime)) return false
+    if (oldContext.level !== newContext.level) return false
     return true
   }
 
