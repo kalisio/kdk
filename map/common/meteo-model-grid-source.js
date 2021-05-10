@@ -14,6 +14,8 @@ export class MeteoModelGridSource extends DynamicGridSource {
     super(options)
 
     this.options = options
+    // these members are not mandatory, but still defined in the context
+    this.updateCtx.level = undefined
   }
 
   setModel (model) {
