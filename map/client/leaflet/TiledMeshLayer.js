@@ -429,7 +429,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       this.pixiLayer.redraw()
     } else if (typeof this.gridSource.setLevel === 'function') {
       this._resetView()
-      this.gridSource.setLevel(level)
+      this.gridSource.setLevel(value)
     }
   },
 
