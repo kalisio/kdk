@@ -87,7 +87,7 @@ export default {
       const layer = this.tiledMeshLayers.get(this.selectableLevelsLayer._id)
       if (!layer) return
 
-      layer.setCutValue(value)
+      layer.setLevel(value)
     },
 
     onForecastModelChangedTiledMeshLayer (model) {

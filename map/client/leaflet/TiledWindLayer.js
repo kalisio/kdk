@@ -119,6 +119,16 @@ const TiledWindLayer = L.GridLayer.extend({
     }
   },
 
+  setLevel (level) {
+    const applyU = typeof this.uSource.setLevel === 'function'
+    const applyV = typeof this.vSource.setLevel === 'function'
+    if (applyU || applyV) {
+      if (!this.pendingAdd) { this._resetView() }
+      if (applyU) { this.uSource.setLevel(level) }
+      if (applyV) { this.vSource.setLevel(level) }
+    }
+  },
+
   setModel (model) {
     const modelHeader = {
       nx: model.size[0],
@@ -154,8 +164,8 @@ const TiledWindLayer = L.GridLayer.extend({
     // const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
     // this.options.maxNativeZoom = computeIdealMaxNativeZoom(this, modelBounds, modelTileSize)
 
-    const applyU = typeof this.uSource.setTime === 'function'
-    const applyV = typeof this.vSource.setTime === 'function'
+    const applyU = typeof this.uSource.setModel === 'function'
+    const applyV = typeof this.vSource.setModel === 'function'
     if (applyU || applyV) {
       if (!this.pendingAdd) { this._resetView() }
       if (applyU) { this.uSource.setModel(model) }

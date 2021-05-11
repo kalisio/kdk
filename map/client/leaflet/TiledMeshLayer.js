@@ -423,10 +423,13 @@ const TiledMeshLayer = L.GridLayer.extend({
     renderer.render(this.pixiRoot)
   },
 
-  setCutValue (value) {
+  setLevel (value) {
     if (this.cutValueUniform) {
       this.layerUniforms.uniforms[this.cutValueUniform] = value
       this.pixiLayer.redraw()
+    } else if (typeof this.gridSource.setLevel === 'function') {
+      this._resetView()
+      this.gridSource.setLevel(value)
     }
   },
 

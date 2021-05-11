@@ -67,13 +67,27 @@ export default {
       // store displayed layers
       this.tiledWindLayers.set(layer._id, engineLayer)
 
+      const levels = _.get(layer, 'levels')
+      if ((typeof this.setSelectableLevels === 'function') && levels) {
+        this.setSelectableLevels(layer, levels)
+      }
+
       // setup layer
       engineLayer.setModel(this.forecastModel)
       engineLayer.setTime(this.currentTime)
+      if (this.selectedLevel !== null) engineLayer.setLevel(this.selectedLevel)
     },
 
-    onHideTiledWindLayer (layer) {
+    onHideTiledWindLayer (layer, engineLayer) {
+      const isTiledWindLayer = engineLayer instanceof TiledWindLayer
+      if (!isTiledWindLayer) return
+
       this.tiledWindLayers.delete(layer._id)
+
+      // layer being hidden, hide slider if any was required
+      if (typeof this.clearSelectableLevels === 'function') {
+        this.clearSelectableLevels(layer)
+      }
     },
 
     onForecastModelChangedTiledWindLayer (model) {
@@ -87,6 +101,16 @@ export default {
     onCurrentTimeChangedTiledWindLayer (time) {
       // broadcast time to visible layers
       this.tiledWindLayers.forEach((engineLayer) => { engineLayer.setTime(time) })
+    },
+
+    onSelectedLevelChangedTiledWindLayer (value) {
+      if (!this.selectableLevelsLayer) return
+
+      // send selected value only to associated layer
+      const layer = this.tiledWindLayers.get(this.selectableLevelsLayer._id)
+      if (!layer) return
+
+      layer.setLevel(value)
     }
   },
 
@@ -97,6 +121,7 @@ export default {
     this.$on('layer-added', this.onAddTiledWindLayer)
     this.$on('layer-shown', this.onShowTiledWindLayer)
     this.$on('layer-hidden', this.onHideTiledWindLayer)
+    this.$on('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$on('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
     this.$on('current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   },
@@ -105,6 +130,7 @@ export default {
     this.$off('layer-added', this.onAddTiledWindLayer)
     this.$off('layer-shown', this.onShowTiledWindLayer)
     this.$off('layer-hidden', this.onHideTiledWindLayer)
+    this.$off('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$off('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
     this.$off('current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   }
