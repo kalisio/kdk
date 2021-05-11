@@ -104,8 +104,13 @@ export default {
     },
 
     onSelectedLevelChangedTiledWindLayer (value) {
-      // broadcast level to visible layers
-      this.tiledWindLayers.forEach((engineLayer) => { engineLayer.setLevel(value) })
+      if (!this.selectableLevelsLayer) return
+
+      // send selected value only to associated layer
+      const layer = this.tiledWindLayers.get(this.selectableLevelsLayer._id)
+      if (!layer) return
+
+      layer.setLevel(value)
     }
   },
 
