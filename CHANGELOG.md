@@ -4,27 +4,15 @@
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.2...v1.3.3)
 
-**Implemented enhancements:**
-
-- Provide a specified base layers selector [\#358](https://github.com/kalisio/kdk/issues/358)
-
 **Fixed bugs:**
 
 - Cannot connect to WFS service supporting geojson output [\#354](https://github.com/kalisio/kdk/issues/354)
--  Cordova apps don't respect Apple app privacy guideline [\#352](https://github.com/kalisio/kdk/issues/352)
+- Cordova apps don't respect Apple app privacy guideline [\#352](https://github.com/kalisio/kdk/issues/352)
 - Wrong Y axis in timeseries widget [\#351](https://github.com/kalisio/kdk/issues/351)
 - Empty category in catalog [\#350](https://github.com/kalisio/kdk/issues/350)
 - Enhance collection filtering [\#348](https://github.com/kalisio/kdk/issues/348)
 - Cannot add two layers with different translation keys but the same label [\#147](https://github.com/kalisio/kdk/issues/147)
 - Adding/removing a member does not trigger real-time update for user GUI [\#102](https://github.com/kalisio/kdk/issues/102)
-
-**Merged pull requests:**
-
-- chore\(deps\): bump hosted-git-info from 2.8.8 to 2.8.9 [\#360](https://github.com/kalisio/kdk/pull/360) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump url-parse from 1.4.7 to 1.5.1 in /docs [\#357](https://github.com/kalisio/kdk/pull/357) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.15 to 4.17.21 [\#356](https://github.com/kalisio/kdk/pull/356) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.19 to 4.17.21 in /docs [\#355](https://github.com/kalisio/kdk/pull/355) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump ssri from 6.0.1 to 6.0.2 in /docs [\#344](https://github.com/kalisio/kdk/pull/344) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.3.2](https://github.com/kalisio/kdk/tree/v1.3.2) (2021-05-04)
 
