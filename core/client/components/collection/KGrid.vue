@@ -18,7 +18,7 @@
   </div>
   <div v-else class="absolute-center">
     <slot id="empty-grid" name="empty-grid">
-      <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_LIST')" />
+      <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_GRID')" />
     </slot>
   </div>
 </template>

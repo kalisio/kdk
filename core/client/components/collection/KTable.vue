@@ -28,7 +28,7 @@
     </div>
     <div v-else class="absolute-center">
       <div slot="empty-section">
-        <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_LIST')" />
+        <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
       </div>
     </div>
   </div>
