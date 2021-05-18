@@ -97,7 +97,7 @@ export default {
       // We filter one value out of N according to decimation factor
       return (index % this.decimationFactor) === 0
     },
-    hasVariable(name, properties) {
+    hasVariable (name, properties) {
       return (properties[name] && Array.isArray(properties[name]))
     },
     setupTimeTicks () {

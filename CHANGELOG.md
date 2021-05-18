@@ -1,5 +1,19 @@
 # Changelog
 
+## [v1.3.3](https://github.com/kalisio/kdk/tree/v1.3.3) (2021-05-13)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.2...v1.3.3)
+
+**Fixed bugs:**
+
+- Cannot connect to WFS service supporting geojson output [\#354](https://github.com/kalisio/kdk/issues/354)
+- Cordova apps don't respect Apple app privacy guideline [\#352](https://github.com/kalisio/kdk/issues/352)
+- Wrong Y axis in timeseries widget [\#351](https://github.com/kalisio/kdk/issues/351)
+- Empty category in catalog [\#350](https://github.com/kalisio/kdk/issues/350)
+- Enhance collection filtering [\#348](https://github.com/kalisio/kdk/issues/348)
+- Cannot add two layers with different translation keys but the same label [\#147](https://github.com/kalisio/kdk/issues/147)
+- Adding/removing a member does not trigger real-time update for user GUI [\#102](https://github.com/kalisio/kdk/issues/102)
+
 ## [v1.3.2](https://github.com/kalisio/kdk/tree/v1.3.2) (2021-05-04)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.1...v1.3.2)
@@ -72,6 +86,7 @@
 - Probe tooltip displayed when a feature has a weather property [\#280](https://github.com/kalisio/kdk/issues/280)
 - Hint error when performing aggregation [\#279](https://github.com/kalisio/kdk/issues/279)
 - getFeaturesFromLayer does not work on non-service layers [\#278](https://github.com/kalisio/kdk/issues/278)
+- Tiled features layer not correctly updated when panning [\#273](https://github.com/kalisio/kdk/issues/273)
 - Cannot fetch data for archived weather layer [\#259](https://github.com/kalisio/kdk/issues/259)
 - Cannot save GeoJson with invalid geometries [\#251](https://github.com/kalisio/kdk/issues/251)
 - Less secured apps deprecation notice [\#100](https://github.com/kalisio/kdk/issues/100)

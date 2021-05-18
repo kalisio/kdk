@@ -95,10 +95,11 @@ export default {
   },
   methods: {
     getButtons () {
-      return [{ 
-        id: 'join-button', 
-        label: 'KJoinGroup.ADD_BUTTON', renderer: 'form-button', 
-        handler: (event, done) => this.doJoin(event, done) 
+      return [{
+        id: 'join-button',
+        label: 'KJoinGroup.ADD_BUTTON',
+        renderer: 'form-button',
+        handler: (event, done) => this.doJoin(event, done)
       }]
     },
     loadService () {

@@ -53,7 +53,7 @@ export default {
       }
       const roleFilters = _.intersection(['owner', 'manager', 'member'], this.filters)
       if (roleFilters.length > 0) {
-        query = Object.assign(query, { organisations: { $elemMatch: { _id: this.contextId, permissions: { $in: roleFilters } } }})
+        query = Object.assign(query, { organisations: { $elemMatch: { _id: this.contextId, permissions: { $in: roleFilters } } } })
       }
       return query
     }
