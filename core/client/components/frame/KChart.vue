@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import Chart from 'chart.js'
 import 'chartjs-plugin-annotation'
 
