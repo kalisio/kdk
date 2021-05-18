@@ -1,7 +1,7 @@
 <template>
   <div 
     v-bind:class="{
-      'q-pl-xs p-pr-xs': !$q.screen.gt.xs,
+      'q-pl-xs q-pr-xs': !$q.screen.gt.xs,
       'q-pl-sm q-pr-sm': $q.screen.gt.xs,
       'column content-center': direction === 'vertical',
       'row items-center no-wrap': direction === 'horizontal'
