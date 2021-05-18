@@ -18,7 +18,7 @@
         </div>
       </div>
       <div v-else class="absolute-center">
-        <k-label :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" icon-size="48px" />
+        <k-stamp icon="las la-exclamation-circle"  icon-size="3rem" :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" text-size="1rem" />
       </div>
     </div>
   </div>
@@ -436,7 +436,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     // Registers the actions
     this.actions = [
       { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },

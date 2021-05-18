@@ -255,7 +255,6 @@ export default {
   created () {
     // laod the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
   },
   async mounted () {
     await this.loadRefs()

@@ -7,7 +7,7 @@
       </q-scroll-area>
     </div>
     <div v-else class="absolute-center">
-      <k-label :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')" icon-size="48px" />
+      <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')" />
     </div>
   </div>
 </template>
@@ -125,7 +125,7 @@ export default {
     // laod the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-view'] = this.$load('form/KView')
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     // Registers the actions
     this.actions = {
       default: [

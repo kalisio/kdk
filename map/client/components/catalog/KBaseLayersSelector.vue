@@ -14,8 +14,8 @@
         </div>
       </template>
     </div>
-    <div v-else-if="!options.hideIfEmpty">
-      <k-label class="q-pb-md" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" alignement="center-top" direction="horizontal" />
+    <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pb-sm">
+      <k-stamp icon="las la-exclamation-circle" icons-size="sm" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" direction="horizontal" />
     </div>
   </div>
 </template>
@@ -62,6 +62,9 @@ export default {
     }
   },
   created () {
+    // Load the required components
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+    // Setup the activer layer
     this.activeLayer = _.get(_.find(this.layers, { default: true }), 'name')
     if (!this.activeLayer) this.activeLayer = _.get(_.head(this.layers), 'name')
   }

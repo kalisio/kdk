@@ -18,7 +18,7 @@
       </q-timeline>
      </div>
     <div v-else class="absolute-center">
-      <k-label :text="$t('KHistory.EMPTY_HISTORY')" icon-size="48px" />
+      <k-stamp icon="las la-exclmation-circle" icon-size="3rem" :text="$t('KHistory.EMPTY_HISTORY')" />
     </div>
   </div>
 </template>
@@ -110,7 +110,7 @@ export default {
   created () {
     // Load the component
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     this.$on('collection-refreshed', this.onCollectionRefreshed)
     // Refresh collection
     this.refreshCollection()

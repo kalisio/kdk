@@ -44,8 +44,8 @@
         </q-item>
       </template>
     </div>
-    <div v-else-if="!options.hideIfEmpty">
-      <k-label class="q-pb-md" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" alignement="center-top" direction="horizontal" />
+    <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pb-sm">
+      <k-stamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" direction="horizontal" />
     </div>
     <slot name="footer" />
   </q-list>
@@ -88,7 +88,7 @@ export default {
   created () {
     // Loads the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

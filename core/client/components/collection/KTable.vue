@@ -28,7 +28,7 @@
     </div>
     <div v-else class="absolute-center">
       <div slot="empty-section">
-        <k-label :text="$t('KTable.EMPTY_TABLE')" icon-size="3rem" />
+        <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_LIST')" />
       </div>
     </div>
   </div>
@@ -180,7 +180,7 @@ export default {
   },
   async created () {
     // Load the required components
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)

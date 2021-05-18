@@ -23,7 +23,7 @@
   </div>
   <div v-else class="absolute-center">
     <slot id="empty-list" name="empty-list">
-      <k-label :text="$t('KList.EMPTY_LIST')" icon-size="3rem" />
+      <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KList.EMPTY_LIST')" />
     </slot>
   </div>
 </template>
@@ -87,7 +87,7 @@ export default {
   created () {
     // Load the component
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     // Force the collection to be refreshed
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well

@@ -33,8 +33,8 @@
       </template>
     </k-layers-selector>
   </div>
-  <div v-else>
-    <k-label :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" alignement="center-top" icon-size="36px" direction="vertical" />
+  <div v-else class="row justify-center q-pb-sm">
+    <k-stamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" direction="horizontal" />
   </div>
 </template>
 
@@ -128,7 +128,7 @@ export default {
   created () {
     // Loads the required components
     this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
-    this.$options.components['k-label'] = this.$load('frame/KLabel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     // Set the current forecast model
     this.model = this.forecastModel
   }
