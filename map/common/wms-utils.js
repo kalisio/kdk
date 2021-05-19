@@ -92,6 +92,21 @@ export async function discover (url, searchParams = {}, caps = null) {
             obj.extent = { west, east, south, north }
           }
         }
+        // check for time dimension
+        for (const dimension of _.get(layer, 'Dimension', [])) {
+          if (_.get(dimension, '$.name', '').toLowerCase() === 'time') {
+            _.set(obj, 'timeDimension', {})
+          }
+        }
+        // check for time range
+        if (obj.timeDimension) {
+          for (const extent of _.get(layer, 'Extent', [])) {
+            if (_.get(extent, '$.name', '').toLowerCase() === 'time') {
+              const timeRange = _.get(extent, '_', '').trim()
+              _.set(obj, 'timeDimension.times', timeRange)
+            }
+          }
+        }
         out.availableLayers[obj.id] = obj
       }
     })

@@ -170,6 +170,7 @@ export default {
       }
       if (this.service.protocol === 'WMS') {
         const style = propertiesResult.values.style
+        const timeDimension = this.layer.timeDimension
 
         newLayer.cesium = {
           type: 'WebMapService',
@@ -188,7 +189,8 @@ export default {
           version: this.service.version,
           format: 'image/png',
           transparent: true,
-          bgcolor: 'FFFFFFFF'
+          bgcolor: 'FFFFFFFF',
+          timeDimension
         }, this.service.searchParams)
 
         // be explicit about requested CRS if probe list some
