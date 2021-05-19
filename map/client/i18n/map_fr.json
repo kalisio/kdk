@@ -377,10 +377,12 @@
     "CHART_EXPORT_FILE": "Graphique-{{layer}}.cvs"
   },
   "KLayerStyleForm": {
+    "BASE": "Propriétés de base",
     "DEFAULT_VISIBILITY": "Visibilité par défaut",
     "MIN_ZOOM": "Visible à partir du niveau",
     "MAX_ZOOM": "Visible jusqu'au niveau",
-    "VISIBILITY": "Visibilité",
+    "LAYER_OPACITY": "Couche transparente",
+    "OPACITY": "Opacité",
     "POINTS": "Icônes",
     "LINES": "Lignes",
     "POLYGONS": "Polygones",

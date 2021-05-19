@@ -375,10 +375,12 @@
     "CHART_EXPORT_FILE": "Chart-{{layer}}.csv"
   },
   "KLayerStyleForm": {
+    "BASE": "Base properties",
     "DEFAULT_VISIBILITY": "Visibilité par défaut",
     "MIN_ZOOM": "Visible from level",
     "MAX_ZOOM": "Visible until level",
-    "VISIBILITY": "Visibility",
+    "LAYER_OPACITY": "Transparent layer",
+    "OPACITY": "Opacity",
     "POINTS": "Markers",
     "LINES": "Lines",
     "POLYGONS": "Polygons",
