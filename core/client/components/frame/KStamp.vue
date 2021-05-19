@@ -12,7 +12,7 @@
           {{ $t(text) }}
         </q-tooltip>
       </div>
-      <div v-if="showText" class="q-pl-sm">
+      <div v-if="showText" class="q-pl-sm q-pr-sm">
          {{ $t(text) }}
       </div>
   </div>
