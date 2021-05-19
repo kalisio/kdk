@@ -2,7 +2,7 @@
   <div>
     <k-icon-chooser ref="iconChooser" @icon-choosed="onIconChanged" />
     <k-color-chooser ref="colorChooser" @color-choosed="onColorChanged" />
-    <q-expansion-item ref="general" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.VISIBILITY')" group="group">
+    <q-expansion-item ref="general" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.BASE')" group="group">
       <q-list dense class="row">
         <q-item>
           <q-item-section>
@@ -36,6 +36,19 @@
             <q-slider v-model="maxZoom" :disable="!hasMaxZoom"
               :min="hasMinZoom ? minZoom : minViewerZoom" :max="maxViewerZoom" :step="1"
               label label-always :label-value="maxZoom"/>
+          </q-item-section>
+        </q-item>
+        <q-item v-if="!hasFeatureSchema" class="col-12">
+          <q-item-section class="col-1">
+            <q-toggle v-model="hasOpacity"/>
+          </q-item-section>
+          <q-item-section class="col-6">
+          {{$t('KLayerStyleForm.LAYER_OPACITY')}}
+          </q-item-section>
+          <q-item-section class="col-4">
+            <q-slider v-model="opacity" :disable="!hasOpacity"
+              :min="0" :max="1" :step="0.1"
+              label label-always :label-value="$t('KLayerStyleForm.OPACITY') + ' ' + opacity"/>
           </q-item-section>
         </q-item>
       </q-list>
@@ -349,6 +362,8 @@ export default {
       hasMaxZoom: false,
       minZoom: 0,
       maxZoom: 0,
+      hasOpacity: false,
+      opacity: 0.5,
       popup: false,
       popupProperties: [],
       tooltip: false,
@@ -560,12 +575,14 @@ export default {
       values['leaflet.template'] = (hasStyles ? properties : [])
       return values
     },
-    fillVisibilityStyle (values) {
+    fillBaseStyle (values) {
       this.isVisible = _.get(values, 'leaflet.isVisible', true)
       this.hasMinZoom = _.has(values, 'leaflet.minZoom')
       if (this.hasMinZoom) this.minZoom = _.get(values, 'leaflet.minZoom')
       this.hasMaxZoom = _.has(values, 'leaflet.maxZoom')
       if (this.hasMaxZoom) this.maxZoom = _.get(values, 'leaflet.maxZoom')
+      this.hasOpacity = _.has(values, 'leaflet.opacity')
+      if (this.hasOpacity) this.opacity = _.get(values, 'leaflet.opacity')
     },
     fillClusteringStyle (values) {
       this.clustering = (!!_.get(values, 'leaflet.cluster', _.get(this.options, 'cluster')))
@@ -650,8 +667,8 @@ export default {
     },
     async fill (values) {
       logger.debug('Filling layer style form', values)
-      // Visibility
-      this.fillVisibilityStyle(values)
+      // Base style
+      this.fillBaseStyle(values)
       // Clustering
       this.fillClusteringStyle(values)
       // Points
@@ -675,12 +692,13 @@ export default {
         values
       }
     },
-    visibilityValues () {
+    baseValues () {
       const values = {
         'leaflet.isVisible': this.isVisible
       }
       if (this.hasMinZoom) values['leaflet.minZoom'] = this.minZoom
       if (this.hasMaxZoom) values['leaflet.maxZoom'] = this.maxZoom
+      if (this.hasOpacity) values['leaflet.opacity'] = this.opacity
       return values
     },
     clusteringValues () {
@@ -721,8 +739,8 @@ export default {
       const customizer = (objValue, srcValue) => {
         if (_.isArray(objValue)) return objValue.concat(srcValue)
       }
-      // Visibility properties
-      _.merge(values, this.visibilityValues())
+      // Base properties
+      _.merge(values, this.baseValues())
       // Clustering
       _.merge(values, this.clusteringValues())
       // Point style
