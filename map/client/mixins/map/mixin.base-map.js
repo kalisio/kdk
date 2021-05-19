@@ -15,6 +15,10 @@ import 'leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js'
 import 'Leaflet.Geodesic'
 import 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
+import iso8601 from 'iso8601-js-period' // Required by leaflet.timedimension
+window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
+import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
+import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import { LeafletEvents, bindLeafletEvents } from '../../utils'
 
 // Fix to make Leaflet assets be correctly inserted by webpack
@@ -179,6 +183,32 @@ export default {
       // Use default Leaflet layer constructor if none found
       return (layer || this.createLeafletLayer(processedOptions))
     },
+    createLeafletTimedWmsLayer (options) {
+      let leafletOptions = options.leaflet || options
+      // Check for valid type
+      if (leafletOptions.type !== 'tileLayer.wms') return
+      let layer = this.createLeafletLayer(options)
+      // Specific case of time dimension layer where we embed the underlying WMS layer
+      let timeDimension = _.get(leafletOptions, 'timeDimension')
+      if (timeDimension) {
+        // It appears that sometimes the time resolution is missing, default as 1 day
+        // Please refer to https://www.mapserver.org/ogc/wms_time.html#specifying-time-extents
+        const timeRange = _.get(timeDimension, 'times')
+        if ((typeof timeRange === 'string') && (timeRange.split("/").length === 2)) {
+          _.set(timeDimension, 'times', `${timeRange}/P1D`)
+        }
+        // As we'd like to control time on a per-layer basis create a specific time dimension object
+        layer = this.createLeafletLayer({
+          type: 'timeDimension.layer.wms',
+          source: layer,
+          timeDimension: L.timeDimension(timeDimension),
+          currentTime: this.currentTime
+        })
+        // This allow the layer to conform our internal time interface
+        layer.setCurrentTime = (datetime) => { layer._timeDimension.setCurrentTime(datetime) }
+      }
+      return layer
+    },
     hasLayer (name) {
       return _.has(this.layers, name)
     },
@@ -236,7 +266,7 @@ export default {
       // Ensure base layer will not pop on top of others
       if (layer.type === 'BaseLayer') leafletLayer.bringToBack()
       // Apply the current time if needed
-      if (typeof leafletLayer.setCurrentTime === 'function') leafletLayer.setCurrentTime(this.currentTime)
+      if (typeof leafletLayer.setCurrentTime === 'function' && this.currentTime) leafletLayer.setCurrentTime(this.currentTime)
       this.$emit('layer-shown', layer, leafletLayer)
     },
     hideLayer (name) {
@@ -377,6 +407,8 @@ export default {
     this.leafletFactory = []
     // Default Leaflet layer options requiring conversion from string to actual Leaflet objects
     this.leafletObjectOptions = ['crs', 'rendererFactory']
+    // Register support for WMS-T
+    this.registerLeafletConstructor(this.createLeafletTimedWmsLayer)
     this.$on('zoomend', this.onMapZoomChanged)
     this.$on('current-time-changed', this.onCurrentMapTimeChanged)
   },
