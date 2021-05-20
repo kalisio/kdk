@@ -91,7 +91,6 @@ export default {
       this.$router.push(path)
     },
     removeItem (prompt) {
-      if (!['none', 'confirm', 'input'].includes(prompt)) return
       if (prompt === 'confirm' || prompt === 'input') {
         const name = this.getName()
         const input = {
