@@ -13,38 +13,32 @@ import 'chartjs-plugin-annotation'
 export default {
   name: 'k-chart',
   props: {
-    type: {
-      type: String,
-      default: 'bar'
-    },
-    data: {
+    config: {
       type: Object,
-      default: () => {}
-    },
-    options: {
-      type: Object,
-      default: () => {}
+      required: true,
+      validator: (value) => {
+        return _.has(value, 'type') && _.has(value, 'data') && _.has(value, 'options')
+      }
+    }
+  },
+  watch: {
+    config: {
+      async handler () {
+        this.chart.type = this.config.type
+        this.chart.data.labels = this.config.data.labels
+        this.chart.data.datasets = this.config.data.datasets
+        this.chart.options = this.config.options
+        this.chart.update()
+      }
     }
   },
   methods: {
-    refresh () {
-      // Destroy previous chart
-      if (this.chart) {
-        this.chart.destroy()
-        this.chart = null
-      }
-      // Create new chart
-      if (!_.isEmpty(this.data)) {
-        this.chart = new Chart(this.$refs.chart.getContext('2d'), {
-          type: this.type,
-          data: this.data,
-          options: this.options          
-        })
-      }
-    },
     onResized (size) {
-      if (!this.chart) this.refresh()
+      if (!this.chart) this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
     }
+  },
+  beforeDestroy () {
+    if (this.chart) this.chart.destroy()
   }
 }
 </script>
