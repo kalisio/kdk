@@ -4,7 +4,7 @@
    -->
   <q-btn v-if="renderer === 'button'"
     :id="id"
-    :label="$q.screen.gt.xs ? computedLabel : ''"
+    :label="computedLabel"
     no-caps
     :icon="computedIcon"
     :color="computedColor"
