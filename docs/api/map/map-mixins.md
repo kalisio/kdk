@@ -74,7 +74,7 @@ The [simple style spec options](https://github.com/mapbox/simplestyle-spec) does
 :::
 
 Our mapping extends the simple style spec and can be used to create styles more easily:
-* `weight: mapped as `weight`,
+* `weight`: mapped as `weight`,
 * `radius`: mapped as `radius`,
 * `line-cap`: mapped as `lineCap`,
 * `line-join`: mapped as `lineJoin`,
