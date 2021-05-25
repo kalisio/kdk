@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    <div :style="`width: 50px; height: 18px; border-radius: 3px; background-color: ${model};`" />
+    <k-spot :color="model" width="50px" height="18px" border-radius="3px" />
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
@@ -15,7 +15,7 @@
     @clear="model=''">
     <!-- control -->
     <template v-slot:control>
-      <div :style="`width: 50px; height: 18px; border-radius: 3px; background-color: ${model};`" />
+      <k-spot :color="model" width="50px" height="18px" border-radius="3px" />
       <q-dialog v-model="picker">
         <q-color no-header format-model="hex" v-model="model" @changed="picker = false"/>
       </q-dialog>
@@ -46,6 +46,9 @@ export default {
     emptyModel () {
       return ''
     }
+  },
+  created () {
+    this.$options.components['k-spot'] = this.$load('frame/KSpot')
   }
 }
 </script>
