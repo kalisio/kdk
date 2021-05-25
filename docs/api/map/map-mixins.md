@@ -60,9 +60,9 @@ Make it possible to generate Leaflet map objects with style based on (Geo)Json (
 * **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Leaflet style options](https://leafletjs.com/reference.html#path-option)
 * **createMarkerFromStyle(latlng, style)** helper function create a [Leaflet marker](https://leafletjs.com/reference.html#marker) from marker style options:
   * **icon** icon style options 
-    * **type** type name (ie class) of the icon to be created for the marker
+    * **type** type name (ie constructor function) of the icon to be created for the marker, e.g. [`icon`](https://leafletjs.com/reference.html#icon) (defaults), [`divIcon`](https://leafletjs.com/reference.html#divicon) or [`icon.fontAwesome`](https://github.com/danwild/leaflet-fa-markers)
     * **options** icon constructor options
-  * **type** type name (ie class) of the marker to be created
+  * **type** type name (ie constructor function) of the marker to be created, e.g. `marker` (defaults) or `circleMarker`
   * **options** marker constructor options
 
 Use **register/unregisterStyle(type, generator)** to (un)register a function generating a Leaflet object depending on the given type:
@@ -72,6 +72,26 @@ Use **register/unregisterStyle(type, generator)** to (un)register a function gen
 ::: tip
 The [simple style spec options](https://github.com/mapbox/simplestyle-spec) does not cover all [Leaflet style options](https://leafletjs.com/reference.html#path-option). However you can use it simply by converting option names from camel case to kebab case.
 :::
+
+Our mapping extends the simple style spec and can be used to create styles more easily:
+* `weight: mapped as `weight`,
+* `radius`: mapped as `radius`,
+* `line-cap`: mapped as `lineCap`,
+* `line-join`: mapped as `lineJoin`,
+* `dash-array`: mapped as `dashArray`,
+* `dash-offset`: mapped as `dashOffset`,
+* `marker-size`: mapped as `icon.options.iconSize`,
+* `marker-symbol`: mapped as `icon.options.iconUrl`,
+* `marker-type`: mapped as `type`,
+* `icon-size`: mapped as `icon.options.iconSize`,
+* `icon-anchor`: mapped as `icon.options.iconAnchor`,
+* `icon-class`: mapped as `icon.options.className`,
+* `icon-html`: mapped as `icon.options.html` and automatically switch to `divIcon` constructor function,
+* `icon-classes`: mapped as `icon.options.iconClasses` and automatically switch to `icon.fontAwesome` constructor function,
+* `marker-color`: mapped as `icon.options.markerColor` for `icon.fontAwesome`,
+* `icon-color`: mapped as `icon.options.iconColor` for `icon.fontAwesome`,
+* `icon-x-offset`: mapped as `icon.options.iconXOffset` for `icon.fontAwesome`,
+* `icon-y-offset`: mapped as `icon.options.iconYOffset` for `icon.fontAwesome`
 
 The mixin automatically registers defaults styling:
   * `markerStyle` => will create a marker based on the following options merged with the following order of precedence
