@@ -12,7 +12,9 @@
     <q-btn v-if="map" id="show-location-map" icon="las la-map-marker" color="primary" flat dense round>
       <q-tooltip>{{ $t('KLocationInput.LOCATION_MAP') }}</q-tooltip>
       <q-popup-proxy transition-show="scale" transition-hide="scale">
-        <k-location-map v-model="location" :editable="map.editable" @input="onUpdated" />
+        <q-card>
+          <k-location-map v-model="location" width="350px" height="400px" :editable="map.editable" :toolbar="true" @input="onUpdated" />
+        </q-card>
       </q-popup-proxy>
     </q-btn>
     <!--

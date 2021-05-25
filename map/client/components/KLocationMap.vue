@@ -1,29 +1,27 @@
 <template>
-  <q-card class="q-pa-none" :style="cardStyle">
-    <q-card-section class="fit q-pa-none">
-      <div class="fit column">
-        <div class="col-auto">
-          <q-toolbar class="q-pa-sm bg-accent text-white">
-            <k-text-area :text="location.name" />
-            <q-space />
-            <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
-              <q-tooltip>
-                {{ $t('KLocationMap.RESTORE_BUTTON') }}
-              </q-tooltip>
-            </q-btn>
-            <q-btn icon="las la-search-location" flat round dense @click="centerMap">
-              <q-tooltip>
-                {{ $t('KLocationMap.RECENTER_BUTTON') }}
-              </q-tooltip>
-            </q-btn>
-          </q-toolbar>
-        </div>
-        <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
-          <q-resize-observer @resize="onMapResized" />
-        </div>
+  <div :style="containerStyle">
+    <div class="fit column">
+      <div v-if="toolbar" class="full-width row">
+        <q-toolbar class="q-pl-sm q-pr-sm bg-accent text-white">
+          <k-text-area :text="location.name" />
+          <q-space />
+          <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
+            <q-tooltip>
+              {{ $t('KLocationMap.RESTORE_BUTTON') }}
+            </q-tooltip>
+          </q-btn>
+          <q-btn icon="las la-search-location" flat round dense @click="centerMap">
+            <q-tooltip>
+              {{ $t('KLocationMap.RECENTER_BUTTON') }}
+            </q-tooltip>
+          </q-btn>
+        </q-toolbar>
       </div>
-    </q-card-section>
-  </q-card>
+      <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
+        <q-resize-observer @resize="onMapResized" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -47,18 +45,13 @@ export default {
         return null
       }
     },
-    editable: {
-      type: Boolean,
-      default: true
+    width: {
+      type: String,
+      default: undefined
     },
-    size: {
-      type: Object,
-      default: () => {
-        return {
-          width: 360,
-          height: 400
-        }
-      }
+    height: {
+      type: String,
+      default: '200px'
     },
     mapOptions: {
       type: Object,
@@ -76,18 +69,27 @@ export default {
       type: Object,
       default: () => {
         return {
-          iconClasses: 'fas fa-circle 0.75rem',
+          iconClasses: 'fas fa-circle 0.5rem',
           markerColor: colors.getBrand('primary'),
           iconColor: '#FFFFFF',
           iconXOffset: 1,
           iconYOffset: 0
         }
       }
+    },
+    editable: {
+      type: Boolean,
+      default: false
+    },
+    toolbar: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
-    cardStyle () {
-      return 'width: ' + this.size.width + 'px; height:' + this.size.height + 'px;'
+    containerStyle () {
+      if (this.width) return `width: ${this.height}; height: ${this.height}`
+      return `height: ${this.height}`
     }
   },
   data () {
@@ -130,6 +132,9 @@ export default {
           icon: L.icon.fontAwesome(this.markerStyle),
           draggable: this.editable
         })
+        if (this.location.name) {
+          this.marker.bindPopup(this.location.name)
+        }
         this.marker.addTo(this.map)
         if (this.editable) this.marker.on('drag', this.onLocationDragged)
       } else {
@@ -177,7 +182,11 @@ export default {
 </script>
 
 <style>
+  .leaflet-fa-markers {
+    width: 15px;
+    height: 25px;
+  }
   .leaflet-fa-markers .feature-icon {
-      font-size: 14px;
+    font-size: 14px;
   }
 </style>
