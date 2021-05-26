@@ -183,7 +183,8 @@ export default {
         if (Array.isArray(value)) {
           const times = _.get(feature, 'forecastTime.' + key)
           if (times) {
-            feature.properties[key] = this.getForecastValueAtCurrentTime(times, value)
+            _.set(feature, 'properties.' + key, this.getForecastValueAtCurrentTime(times, value))
+            _.set(feature, 'forecastTime.' + key, this.getForecastValueAtCurrentTime(times, times))
           }
         }
       })
@@ -191,47 +192,87 @@ export default {
     },
     getForecastAsHtml (feature, fields = {}) {
       // Retrieve target fields on feature
-      let windDirection = _.get(fields, 'windDirection', 'properties.windDirection')
-      let windSpeed = _.get(fields, 'windSpeed', 'properties.windSpeed')
-      let gust = _.get(fields, 'gust', 'properties.gust')
-      let temperature = _.get(fields, 'temperature', 'properties.temperature')
-      let precipitations = _.get(fields, 'precipitations', 'properties.precipitations')
-      let humidity = _.get(fields, 'humidity', 'properties.humidity')
-      let time = _.get(fields, 'time', 'forecastTime')
-      let name = _.get(fields, 'name', 'properties.name')
+      const windDirectionField = _.get(fields, 'windDirection', 'properties.windDirection')
+      const windSpeedField = _.get(fields, 'windSpeed', 'properties.windSpeed')
+      const gustField = _.get(fields, 'gust', 'properties.gust')
+      const temperatureField = _.get(fields, 'temperature', 'properties.temperature')
+      const precipitationsField = _.get(fields, 'precipitations', 'properties.precipitations')
+      const humidityField = _.get(fields, 'humidity', 'properties.humidity')
+      const timeField = _.get(fields, 'time', 'forecastTime')
+      const nameField = _.get(fields, 'name', 'properties.name')
       // Then get values for fields
-      windDirection = _.get(feature, `${windDirection}`)
-      windSpeed = _.get(feature, `${windSpeed}`)
-      gust = _.get(feature, `${gust}`)
-      temperature = _.get(feature, `${temperature}`)
-      precipitations = _.get(feature, `${precipitations}`)
-      humidity = _.get(feature, `${humidity}`)
-      time = _.get(feature, `${time}`)
-      name = _.get(feature, `${name}`)
+      const windDirection = _.get(feature, `${windDirectionField}`)
+      const windSpeed = _.get(feature, `${windSpeedField}`)
+      const gust = _.get(feature, `${gustField}`)
+      const temperature = _.get(feature, `${temperatureField}`)
+      const precipitations = _.get(feature, `${precipitationsField}`)
+      const humidity = _.get(feature, `${humidityField}`)
+      let time = _.get(feature, `${timeField}`)
+      // We can have a single time or a map between fields and available times
+      // If a single time is found we will display it once,
+      // otherwise we will display a different time for each field
+      let uniqTime = true
+      if (typeof time === 'object') {
+        const uniqTimes = _.uniq(_.values(time))
+        if (uniqTimes.length > 1) {
+          uniqTime = false
+        } else {
+          // Update time in place with actual value
+          time = uniqTimes[0]
+        }
+      }
+      const getTimeAsHtml = (time) => {
+        if (!_.isNil(time)) {
+          time = moment.utc(time)
+          if (time.isValid()) return ` (${this.formatTime('date.short', time)} - ${this.formatTime('time.long', time)})`
+        }
+        return ''
+      }
       let html = ''
       if (!_.isNil(windSpeed) && _.isFinite(windSpeed)) {
-        html += `${windSpeed.toFixed(1)} m/s</br>`
+        html += `${windSpeed.toFixed(1)} m/s`
+        // Add related time if any
+        if (!uniqTime) html += getTimeAsHtml(_.get(time, windSpeedField.replace('properties.', '')))
+        html += '</br>'
       }
       if (!_.isNil(gust) && _.isFinite(gust)) {
-        html += `max ${gust.toFixed(1)} m/s</br>`
+        html += `max ${gust.toFixed(1)} m/s`
+        // Add related time if any
+        if (!uniqTime) html += getTimeAsHtml(_.get(time, gustField.replace('properties.', '')))
+        html += '</br>'
       }
       if (!_.isNil(windDirection) && _.isFinite(windDirection)) {
-        html += `${windDirection.toFixed(1)} °</br>`
+        html += `${windDirection.toFixed(1)} °`
+        // Add related time if any
+        if (!uniqTime) html += getTimeAsHtml(_.get(time, windDirectionField.replace('properties.', '')))
+        html += '</br>'
       }
       if (!_.isNil(precipitations) && _.isFinite(precipitations)) {
-        html += `${precipitations.toFixed(1)} mm/h</br>`
+        html += `${precipitations.toFixed(1)} mm/h`
+        // Add related time if any
+        if (!uniqTime) html += getTimeAsHtml(_.get(time, precipitationsField.replace('properties.', '')))
+        html += '</br>'
       }
       if (!_.isNil(humidity) && _.isFinite(humidity)) {
-        html += `${humidity.toFixed(0)} %</br>`
+        html += `${humidity.toFixed(0)} %`
+        // Add related time if any
+        if (!uniqTime) html += getTimeAsHtml(_.get(time, humidityField.replace('properties.', '')))
+        html += '</br>'
       }
       if (!_.isNil(temperature) && _.isFinite(temperature)) {
-        html += `${temperature.toFixed(1)} °C</br>`
+        html += `${temperature.toFixed(1)} °C`
+        // Add related time if any
+        if (!uniqTime) html += getTimeAsHtml(_.get(time, temperatureField.replace('properties.', '')))
+        html += '</br>'
       }
       // If we have any value add name/time information
-      if (html && !_.isNil(time)) {
+      if (html) {
+        const name = _.get(feature, `${nameField}`)
         if (!_.isNil(name)) html = `<b><u>${name}</u></b></br>` + html
-        time = moment.utc(time)
-        if (time.isValid()) html += `${this.formatTime('date.short', time)} - ${this.formatTime('time.long', time)}`
+        // If we get a signle time for all field add it at the end
+        if (uniqTime) {
+          html += getTimeAsHtml(time)
+        }
       }
       return html
     },
