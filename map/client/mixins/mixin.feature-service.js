@@ -139,7 +139,8 @@ export default {
         if (Array.isArray(value)) {
           const times = _.get(feature, 'time.' + key)
           if (times) {
-            feature.properties[key] = this.getMeasureValueAtCurrentTime(times, value)
+            _.set(feature, 'properties.' + key, this.getMeasureValueAtCurrentTime(times, value))
+            _.set(feature, 'time.' + key, this.getMeasureValueAtCurrentTime(times, times))
           }
         }
       })
