@@ -6,7 +6,9 @@
     <div v-if="expandable">
       <q-expansion-item
         :icon="icon"
-        :label="title">
+        :label="title"
+        @show="$emit('section-opened')"
+        @hide="$emit('section-closed')">
         <!-- Content section -->
         <div class="q-pl-sm q-pr-sm q-pb-sm">
           <slot name="card-section-content" />
