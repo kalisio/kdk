@@ -5,6 +5,14 @@ import 'leaflet-draw/dist/leaflet.draw-src.css'
 import { Dialog, uid } from 'quasar'
 import { bindLeafletEvents } from '../../utils'
 
+// Please refer to https://github.com/Leaflet/Leaflet.draw/issues/695
+const originalOnTouch = L.Draw.Polyline.prototype._onTouch
+L.Draw.Polyline.prototype._onTouch = function(e) {
+  if (e.originalEvent.pointerType !== 'mouse' ) {
+    return originalOnTouch.call(this, e)
+  }
+}
+
 export default {
   methods: {
     isLayerEdited (layer) {
