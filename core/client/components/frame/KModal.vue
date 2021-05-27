@@ -105,7 +105,6 @@ export default {
   created () {
     // load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    console.log(Screen)
   },
   mounted () {
     if (this.value) this.$refs.modal.show()
