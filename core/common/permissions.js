@@ -160,7 +160,8 @@ export function getQueryForAbilities (abilities, operation, resourceType) {
   const rules = abilities.rulesFor(operation, resourceType)
   const query = toMongoQuery(rules)
   // Remove any context to avoid taking it into account because it is not really stored on objects
-  return (query ? removeContext(query) : null)
+  // We clone the object here because of references to the abilities rules (see https://github.com/kalisio/kdk/issues/384)
+  return (query ? removeContext(_.cloneDeep(query)) : null)
 }
 
 function buildSubjectsQueryForResource (resourceScope, resourceId, role) {
