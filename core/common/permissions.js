@@ -140,7 +140,7 @@ export function removeContext (query) {
     } else if (Array.isArray(value)) {
       value.forEach(item => removeContext(item))
       // Remove empty objects from array
-      _.remove(value, item => _.isEmpty(item))
+      //_.remove(value, item => _.isEmpty(item))
       // Remove empty arrays from query
       if (_.isEmpty(value)) delete query[key]
     } else if (typeof value === 'object') {
