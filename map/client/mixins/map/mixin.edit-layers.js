@@ -38,12 +38,20 @@ export default {
         this.map.pm.setLang(i18next.language)
       }
 
-      const mapEvents = ['zoomend', 'pm:create']
+      const mapEvents = ['pm:create']
       const layerEvents = ['pm:update', 'pm:remove', 'pm:dragend', 'pm:cut', 'pm:rotateend']
 
       if (this.editedLayer) { // Stop edition
         // Make sure we end geoman too
-        // if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableGlobalEditMode()
+        if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
+        // robin: this doesn't seem to work ...
+        // this.map.pm.getGeomanDrawLayers().forEach((layer) => {
+        const layers = []
+        this.map.eachLayer((layer) => {
+          if (layer._drawnByGeoman !== true) return
+          layers.push(layer)
+        })
+        layers.forEach((layer) => { this.map.removeLayer(layer) })
         if (this.map.pm.globalEditModeEnabled()) this.map.pm.disableGlobalEditMode()
         if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
         if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
@@ -156,7 +164,9 @@ export default {
     },
     onMapZoomWhileEditing (event) {
       // Make sure we keep our edition layer on top
-      this.editableLayer.bringToFront()
+      if (this.editableLayer) {
+        this.editableLayer.bringToFront()
+      }
     },
     async onRemoveFeature (feature, layer, leafletLayer) {
       Dialog.create({
