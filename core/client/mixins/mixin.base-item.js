@@ -87,8 +87,12 @@ export default {
       this.$router.push(path)
     },
     editItem () {
-      const path = this.$route.fullPath + `/edit/${this.item._id}`
-      this.$router.push(path)
+      const route = this.$route
+      this.$router.push({
+        path: route.path + `/edit/${this.item._id}`,
+        params: route.params,
+        query: route.query
+      })
     },
     removeItem (prompt) {
       if (prompt === 'confirm' || prompt === 'input') {
