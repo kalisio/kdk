@@ -6,14 +6,6 @@ import i18next from 'i18next'
 import { Dialog, uid } from 'quasar'
 import { bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 
-// Please refer to https://github.com/Leaflet/Leaflet.draw/issues/695
-const originalOnTouch = L.Draw.Polyline.prototype._onTouch
-L.Draw.Polyline.prototype._onTouch = function(e) {
-  if (e.originalEvent.pointerType !== 'mouse' ) {
-    return originalOnTouch.call(this, e)
-  }
-}
-
 export default {
   methods: {
     isLayerEdited (layer) {
@@ -44,10 +36,10 @@ export default {
         this.map.options.pmIgnore = false
         L.PM.reInitLayer(this.map)
         this.map.pm.setLang(i18next.language)
-        bindLeafletEvents(this.map, ['pm:create', 'pm:globalremovalmodetoggled'], this)
       }
 
-      const leafletEvents = ['pm:update', 'pm:remove', 'pm:dragend', 'pm:cut', 'pm:rotateend']
+      const mapEvents = ['zoomend', 'pm:create']
+      const layerEvents = ['pm:update', 'pm:remove', 'pm:dragend', 'pm:cut', 'pm:rotateend']
 
       if (this.editedLayer) { // Stop edition
         // Make sure we end geoman too
@@ -58,14 +50,14 @@ export default {
         if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
 
         // Remove UI
-        unbindLeafletEvents(this.editableLayer, leafletEvents)
+        unbindLeafletEvents(this.map, mapEvents)
+        unbindLeafletEvents(this.editableLayer, layerEvents)
         this.map.pm.removeControls()
         // Set back edited layers to source layer
         this.map.removeLayer(this.editableLayer)
         leafletLayer.addLayer(this.editableLayer)
         this.editedLayer = null
         this.editedLayerSchema = null
-        this.deleteInProgress = false
       } else { // Start edition
         this.editedLayer = layer
         // Move source layers to edition layers, required as eg clusters are not supported
@@ -80,7 +72,8 @@ export default {
           drawMarker: false,      // We don't care about markers
           drawCircleMarker: false // even circle marckers
         })
-        bindLeafletEvents(this.editableLayer, leafletEvents, this)
+        bindLeafletEvents(this.map, mapEvents, this)
+        bindLeafletEvents(this.editableLayer, layerEvents, this)
         this.createdFeatures = []
         this.editedFeatures = []
         this.deletedFeatures = []
@@ -124,12 +117,17 @@ export default {
     async onEditFeatureProperties (layer, event) {
       const leafletLayer = event && event.target
       if (!leafletLayer) return
+      // Check if not currently doing editions
+      if (this.map.pm !== undefined && (
+          this.map.pm.globalRemovalModeEnabled() ||
+          this.map.pm.globalEditModeEnabled() ||
+          this.map.pm.globalDragModeEnabled() ||
+          this.map.pm.globalRotateModeEnabled() ||
+          this.map.pm.globalDrawModeEnabled())) return
       const feature = _.get(leafletLayer, 'feature')
       if (!feature || !this.isLayerEdited(layer)) return
       if (!this.editedLayerSchema) return // No edition schema
       if (!this.editedLayer._id) return // Impossible to edit in-memory layer as it requires a service now
-      // Check if not currently in the edition workspace for removal
-      if (this.deleteInProgress) return
       await this.updateFeatureProperties(feature, layer, leafletLayer)
     },
     async onFeatureCreated (event) {
@@ -156,8 +154,9 @@ export default {
         await this.removeFeatures(event.layer.toGeoJSON())
       }
     },
-    onDeleteFeaturesModeToggled (event) {
-      this.deleteInProgress = event.enabled
+    onMapZoomWhileEditing (event) {
+      // Make sure we keep our edition layer on top
+      this.editableLayer.bringToFront()
     },
     async onRemoveFeature (feature, layer, leafletLayer) {
       Dialog.create({
@@ -180,18 +179,6 @@ export default {
       })
     }
   },
-  beforeCreate () {
-    this.editOptions = {
-      polyline: {},
-      polygon: {
-        allowIntersection: false // Restricts shapes to simple polygons
-      },
-      circle: {},
-      rectangle: {},
-      marker: {},
-      circlemarker: false
-    }
-  },
   created () {
     // Perform required conversion for default feature styling
     if (this.activityOptions.engine.editFeatureStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editFeatureStyle, 'update-in-place')
@@ -202,42 +189,22 @@ export default {
     L.PM.setOptIn(true)
 
     this.$on('click', this.onEditFeatureProperties)
+    this.$on('zoomend', this.onMapZoomWhileEditing)
     this.$on('pm:create', this.onFeatureCreated)
     this.$on('pm:update', this.onFeaturesEdited)
     this.$on('pm:dragend', this.onFeaturesEdited)
     // this.$on('pm:cut', this.onFeaturesEdited)
     this.$on('pm:rotateend', this.onFeaturesEdited)
     this.$on('pm:remove', this.onFeaturesDeleted)
-    this.$on('pm:globalremovalmodetoggled', this.onDeleteFeaturesModeToggled)
-
-    // Initialize i18n
-    // L.drawLocal = this.$t('mixins.editLayers', { returnObjects: true })
-    // this.$on('map-ready', () => {
-    //   // Setup event binding
-    //   bindLeafletEvents(this.map, _.values(L.Draw.Event), this)
-    // })
-    // this.$on('click', this.onEditFeatureProperties)
-    // this.$on('draw:deletestart', this.onStartDeleteFeatures)
-    // this.$on('draw:deletestop', this.onStopDeleteFeatures)
-    // this.$on('draw:created', this.onFeatureCreated)
-    // this.$on('draw:edited', this.onFeaturesEdited)
-    // this.$on('draw:deleted', this.onFeaturesDeleted)
   },
   beforeDestroy () {
     this.$off('click', this.onEditFeatureProperties)
+    this.$off('zoomend', this.onMapZoomWhileEditing)
     this.$off('pm:create', this.onFeatureCreated)
     this.$off('pm:update', this.onFeaturesEdited)
     this.$off('pm:dragend', this.onFeaturesEdited)
     // this.$off('pm:cut', this.onFeaturesEdited)
     this.$off('pm:rotateend', this.onFeaturesEdited)
     this.$off('pm:remove', this.onFeaturesDeleted)
-    this.$off('pm:globalremovalmodetoggled', this.onDeleteFeaturesModeToggled)
-
-    // this.$off('click', this.onEditFeatureProperties)
-    // this.$off('draw:deletestart', this.onStartDeleteFeatures)
-    // this.$off('draw:deletestop', this.onStopDeleteFeatures)
-    // this.$off('draw:created', this.onFeatureCreated)
-    // this.$off('draw:edited', this.onFeaturesEdited)
-    // this.$off('draw:deleted', this.onFeaturesDeleted)
   }
 }
