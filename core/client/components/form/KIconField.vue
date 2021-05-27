@@ -31,6 +31,7 @@
       <!-- Content -->
       <template v-slot:default>
         <q-icon
+          class="q-pt-xs"
           size="sm"
           id="choosed-icon"
           :name="iconName"

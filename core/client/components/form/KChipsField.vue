@@ -23,23 +23,23 @@
     >
       <!-- Content -->
       <template v-slot:default>
-        <div class="row items-baseline">
+        <div class="row items-end">
           <template v-for="(chip, index) in chips">
-            <q-chip
-              :id="'chip-' + index"
-              class="chip"
-              :key="chipValue(chip) + '-' + index"
-              :icon="chipIcon(chip)"
-              :color="chipColor(chip)"
-              @remove="onChipRemoved(chip)"
-              @click="onChipClicked(chip)"
-              clickable
-              removable
-              outline
-              dense
-            >
-              {{chip.value}}
-            </q-chip>
+            <div :key="chipValue(chip) + '-' + index" class="q-pb-sm">
+              <q-chip
+                :id="'chip-' + index"
+                class="chip"
+                :icon="chipIcon(chip)"
+                :color="chipColor(chip)"
+                :label="chip.value"
+                @remove="onChipRemoved(chip)"
+                @click="onChipClicked(chip)"
+                clickable
+                removable
+                outline
+                dense
+                square />
+            </div>
           </template>
           <q-input class="q-pl-sm col-grow" :for="properties.name + '-field'" autofocus type="text" v-model="input" :after="inputActions" @keyup.enter="onChipAdded()" />
         </div>
