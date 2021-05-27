@@ -98,6 +98,13 @@ export default {
       isModified: false
     }
   },
+  watch: {
+    value: {
+      handler () {
+        this.refreshLocation()
+      }
+    }
+  },
   methods: {
     defaultLocation () {
       return {
