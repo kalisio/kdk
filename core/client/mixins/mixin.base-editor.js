@@ -6,15 +6,11 @@ export default function baseEditorMixin (formRefs) {
     props: {
       baseObject: {
         type: Object,
-        default: function () {
-          return {}
-        }
+        default: () => {}
       },
       baseQuery: {
         type: Object,
-        default: function () {
-          return {}
-        }
+        default: () => {}
       },
       schemaName: {
         type: String,
@@ -47,7 +43,6 @@ export default function baseEditorMixin (formRefs) {
     },
     methods: {
       getMode () {
-        console.log(this.objectId)
         if (this.objectId) return 'update'
         return 'create'
       },
