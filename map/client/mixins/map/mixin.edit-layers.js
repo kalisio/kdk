@@ -76,9 +76,9 @@ export default {
         // Add UI
         this.map.pm.addControls({
           position: 'bottomleft',
-          drawCircle: false,      // GeoJSON does not support circles
-          drawMarker: false,      // We don't care about markers
-          drawCircleMarker: false // even circle marckers
+          // GeoJSON does not support circles
+          drawCircle: false,
+          drawCircleMarker: false
         })
         bindLeafletEvents(this.map, mapEvents, this)
         bindLeafletEvents(this.editableLayer, layerEvents, this)
