@@ -21,9 +21,11 @@
       </div>
     </div>
   </div>
-  <div v-else class="absolute-center">
-    <slot id="empty-list" name="empty-list">
-      <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KList.EMPTY_LIST')" />
+  <div v-else>
+    <slot name="empty-section">
+      <div class="row justify-center">
+        <k-stamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KList.EMPTY_LIST')" direction="horizontal" />
+      </div>
     </slot>
   </div>
 </template>

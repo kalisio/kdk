@@ -7,7 +7,18 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content">
-      <k-table service="features" :contextId="contextId" :schema-json="schema" :item-actions="featureActions" :base-query="layer.baseQuery" />
+      <k-table 
+        service="features" 
+        :contextId="contextId" 
+        :schema-json="schema" 
+        :item-actions="featureActions" 
+        :base-query="layer.baseQuery">
+        <template slot="empty-section">
+          <div class="absolute-center">
+            <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
+          </div>
+        </template>
+      </k-table>
     </div>
   </k-modal>
 </template>
@@ -52,6 +63,7 @@ export default {
     // laod the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-table'] = this.$load('collection/KTable')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

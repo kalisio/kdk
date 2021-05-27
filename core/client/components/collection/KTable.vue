@@ -1,34 +1,34 @@
 <template>
-  <div>
-    <div v-if="items.length > 0">
-      <q-table
-        :title="title"
-        :data="items"
-        :columns="columns"
-        :visible-columns="visibleColumns"
-        :selection="selection"
-        :selected.sync="selectedItems"
-        @selection="onSelectionChanged"
-        row-key="_id"
-        :pagination.sync="pagination"
-        :rows-per-page-options="[]"
-        @request="onRequest"
-      >
-        <template v-slot:top="props">
-          <q-select v-model="visibleColumns" multiple borderless dense options-dense
-            :display-value="$t('KTable.TABLE_COLUMNS')" emit-value map-options
-            :options="selectableColumns" option-value="field" style="min-width: 150px"/>
-        </template>
-        <template v-slot:body-cell-actions="props">
-          <q-td :props="props">
-            <k-panel id="item-actions" :content="itemActions" :context="{ item: props.row }" />
-          </q-td>
-        </template>
-      </q-table>
-    </div>
-    <div v-else class="absolute-center">
-      <div slot="empty-section">
-        <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
+  <div v-if="items.length > 0">
+    <q-table
+      :title="title"
+      :data="items"
+      :columns="columns"
+      :visible-columns="visibleColumns"
+      :selection="selection"
+      :selected.sync="selectedItems"
+      @selection="onSelectionChanged"
+      row-key="_id"
+      :pagination.sync="pagination"
+      :rows-per-page-options="[]"
+      @request="onRequest"
+    >
+      <template v-slot:top="props">
+        <q-select v-model="visibleColumns" multiple borderless dense options-dense
+          :display-value="$t('KTable.TABLE_COLUMNS')" emit-value map-options
+          :options="selectableColumns" option-value="field" style="min-width: 150px"/>
+      </template>
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <k-panel id="item-actions" :content="itemActions" :context="{ item: props.row }" />
+        </q-td>
+      </template>
+    </q-table>
+  </div>
+  <div v-else>
+    <div slot="empty-section">
+      <div class="row justify-center">
+        <k-stamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KTable.EMPTY_TABLE')" direction="horizontal" />
       </div>
     </div>
   </div>

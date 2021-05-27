@@ -1,5 +1,5 @@
 <template>
-  <q-item active-class="selected" class="cursor-pointer">
+  <q-item active-class="selected">
     <!--
       Avatar section
     -->

@@ -1,25 +1,27 @@
 <template>
-  <div>
-    <div v-if="items.length > 0">
-      <q-timeline ref="timeline" color="accent" :layout="layout()">
-        <q-infinite-scroll ref="scroll" @load="onScroll" :offset="50">
-          <template v-for="item in items">
-            <component
-              class="row justify-center"
-              :key="item._id" :id="'item-' + item._id"
-              :service="service"
-              :item="item"
-              :contextId="contextId"
-              :is="renderer.component"
-              v-bind="renderer"
-              @item-selected="onItemSelected" />
-          </template>
-        </q-infinite-scroll>
-      </q-timeline>
-     </div>
-    <div v-else class="absolute-center">
-      <k-stamp icon="las la-exclmation-circle" icon-size="3rem" :text="$t('KHistory.EMPTY_HISTORY')" />
-    </div>
+  <div v-if="items.length > 0">
+    <q-timeline ref="timeline" color="accent" :layout="layout()">
+      <q-infinite-scroll ref="scroll" @load="onScroll" :offset="50">
+        <template v-for="item in items">
+          <component
+            class="row justify-center"
+            :key="item._id" :id="'item-' + item._id"
+            :service="service"
+            :item="item"
+            :contextId="contextId"
+            :is="renderer.component"
+            v-bind="renderer"
+            @item-selected="onItemSelected" />
+        </template>
+      </q-infinite-scroll>
+    </q-timeline>
+  </div>
+  <div v-else>
+    <slot name="empty-section">
+      <div class="row justify-center">
+        <k-stamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KHistory.EMPTY_HISTORY')" direction="horizontal" />
+      </div>
+    </slot>
   </div>
 </template>
 

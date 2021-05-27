@@ -16,9 +16,11 @@
       <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
     </div>
   </div>
-  <div v-else class="absolute-center">
-    <slot id="empty-grid" name="empty-grid">
-      <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_GRID')" />
+  <div v-else>
+    <slot name="empty-section">
+      <div class="row justify-center">
+        <k-stamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KGrid.EMPTY_GRID')" direction="horizontal" />
+      </div>
     </slot>
   </div>
 </template>
