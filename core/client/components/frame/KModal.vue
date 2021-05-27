@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import { Screen } from 'quasar'
+
 export default {
   name: 'k-modal',
   props: {
@@ -59,19 +61,11 @@ export default {
     contentStyle: {
       type: String,
       default: () => {
-        if (window.innerWidth < 599) {
-          return 'min-width: 100vw; max-height: 90vh'
-        }
-        if (window.innerWidth < 1023) {
-          return 'min-width: 80vw; max-height: 90vh'
-        }
-        if (window.innerWidth < 1439) {
-          return 'min-width: 60vw; max-height: 90vh'
-        }
-        if (window.innerWidth < 1919) {
-          return 'min-width: 50vw; max-height: 90vh'
-        }
-        return 'min-width: 40vw; max-height: 90vh'
+        if (Screen.lt.sm) return 'min-width: 100vw; max-height: 90vh'
+        if (Screen.lt.md) return 'min-width: 90vw; max-height: 90vh'
+        if (Screen.lt.lg) return 'min-width: 80vw; max-height: 90vh'
+        if (Screen.lt.xl) return 'min-width: 70vw; max-height: 90vh'
+        return 'min-width: 60vw; max-height: 90vh'
       }
     },
     value: {
@@ -111,6 +105,7 @@ export default {
   created () {
     // load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    console.log(Screen)
   },
   mounted () {
     if (this.value) this.$refs.modal.show()
