@@ -16,6 +16,10 @@ export default function baseEditorMixin (formRefs) {
           return {}
         }
       },
+      schemaName: {
+        type: String,
+        default: undefined
+      },
       clearButton: {
         type: String,
         default: ''
@@ -43,6 +47,7 @@ export default function baseEditorMixin (formRefs) {
     },
     methods: {
       getMode () {
+        console.log(this.objectId)
         if (this.objectId) return 'update'
         return 'create'
       },
@@ -177,8 +182,11 @@ export default function baseEditorMixin (formRefs) {
         return query
       },
       getSchemaName () {
+        if (this.schemaName) return this.schemaName
+        let schemaName = _.get(this.$route, 'meta.schemaName')
+        if (schemaName) return schemaName
         // When used with a service by default use the same name for schema as for service
-        let schemaName = this.service + (this.objectId ? '.update' : '.create')
+        schemaName = this.service + (this.objectId ? '.update' : '.create')
         if (this.perspective) {
           schemaName += ('-' + this.perspective)
         }
