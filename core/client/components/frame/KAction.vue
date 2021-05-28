@@ -9,11 +9,11 @@
     :icon="computedIcon"
     :color="computedColor"
     :size="size"
-    :flat="true"
+    flat
     :round="label===''"
     :rounded="label!==''"
     :dense="dense"
-    :disabled="disabled"
+    :disable="disabled"
     @click="onClicked(arguments[0])">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
@@ -37,7 +37,7 @@
     :outline="outline"
     :size="size"
     :dense="dense"
-    :disabled="disabled"
+    :disable="disabled"
     :loading="loading"
     @click="onClicked(arguments[0])">
   </q-btn>
