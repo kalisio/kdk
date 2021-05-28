@@ -13,6 +13,7 @@
     menu-anchor="bottom left"
     menu-self="top left"
     flat
+    no-caps
     fab-mini>
     <k-panel
       id="menu-entries"
