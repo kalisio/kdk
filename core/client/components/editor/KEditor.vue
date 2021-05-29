@@ -37,7 +37,7 @@ export default {
     mixins.refsResolver(['form'])
   ],
   watch: {
-    '$route' (to, from) {
+    $route (to, from) {
       // React to route changes but reusing the same component as this one is generic
       this.refresh()
     }

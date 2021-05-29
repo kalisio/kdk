@@ -84,7 +84,7 @@ export default {
     }
   },
   watch: {
-    '$route' (to, from) {
+    $route (to, from) {
       // React to route changes by loading any tour
       this.refreshTour()
     }
