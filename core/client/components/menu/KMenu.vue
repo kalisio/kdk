@@ -3,7 +3,7 @@
     class="text-body2"
     v-if="hasContent"
     :id="id"
-    :label="label"
+    :label="$t(label)"
     :icon="icon"
     :color="color"
     :size="size"

@@ -4,7 +4,7 @@
       Header section
     -->
     <slot name="card-header">
-      <div class="x-pt-xs q-pl-sm q-pr-sm">
+      <div class="q-pa-sm">
         <k-panel v-if="header" :content="header" :context="$props" />
       </div>
     </slot>
@@ -12,7 +12,7 @@
       Title section
     -->
     <slot name="card-title">
-      <q-item>
+      <q-item class="q-pa-sm">
         <q-item-section top avatar>
           <slot name="card-avatar">
             <k-avatar :object="item" :contextId="contextId" :options="options" />
