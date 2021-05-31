@@ -138,11 +138,9 @@ The [style mixin](./mixins.md#map-style) is mandatory when using this mixin. If 
 
 If your component has a **onLeafletFeature(feature, layer, options)** method it will be called each time a new GeoJson feature is created.
 
-::: tip
-Marker cluster options are to be provided in the **cluster** property of the Leaflet layer options
-:::
+### Clustering
 
-The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
+Marker [clustering options](https://github.com/Leaflet/Leaflet.markercluster#options) are to be provided in the **cluster** property of the Leaflet layer options or in the **cluster** property of component options, with this order of precedence. The following configuration illustrates a GeoJson marker cluster layer using options set on the layer descriptor (see image below):
 ```js
 {
   name: 'Layer',
@@ -169,6 +167,10 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 ```
 
 ![2D marker cluster](../../assets/marker-cluster-2D.png)
+
+::: tip
+If you want to disable a default clustering configuration like `cluster: { disableClusteringAtZoom: 18 }` on a per-layer basis you have to explicitely unset it on your layer options using `cluster: { null }`.
+:::
 
 ### Additional feature types
 
