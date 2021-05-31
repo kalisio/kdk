@@ -31,6 +31,10 @@ export default {
     objectId: {
       type: String,
       required: true
+    },
+    resource: {
+      type: Object,
+      default: () => null
     }
   },
   computed: {
@@ -44,8 +48,19 @@ export default {
     }
   },
   methods: {
+    getScope () {
+      return _.get(this.resource, 'scope', 'organisations')
+    },
+    getResourceId () {
+      return _.get(this.resource, 'id', this.contextId)
+    },
+    getResoureceService ()  {
+      return _.get(this.resource, 'service', 'organisations')
+    },
     getSchema () {
-      const currentRole = _.get(_.find(this.member.organisations, { _id: this.contextId }), 'permissions')
+      const scope = this.getScope()
+      const resourceId = this.getResourceId()
+      const currentRole = _.get(_.find(this.member[scope], { _id: resourceId }), 'permissions')
       const roles = [
         { label: this.$t('KChangeRole.MEMBER_LABEL'), value: 'member' },
         { label: this.$t('KChangeRole.MANAGER_LABEL'), value: 'manager' },
@@ -86,12 +101,12 @@ export default {
       if (result.isValid) {
         const authorisationService = this.$api.getService('authorisations')
         await authorisationService.create({
-          scope: 'organisations',
+          scope: this.getScope(),
           permissions: result.values.role,
           subjects: this.objectId,
           subjectsService: this.contextId + '/members',
-          resource: this.contextId,
-          resourcesService: 'organisations'
+          resource: this.getResourceId(),
+          resourcesService: this.getResoureceService()
         })
         this.closeModal()
       }
