@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { CanvasDrawContext } from '../../canvas-draw-context'
+import { bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 import L from 'leaflet'
 
 L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
@@ -36,11 +37,25 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     this.drawLayer()
   },
   // -------------------------------------------------------------
+  _onLayerClick: function (event) {
+    if (this.clickablePaths.length === 0) return
+
+    const pt = this.latLonToCanvas({ lat: event.latlng.lat, lon: event.latlng.lng })
+
+    const ctx = this._canvas.getContext('2d')
+    ctx.lineWidth = 10
+    for (const { path, feature } of this.clickablePaths) {
+      if (!ctx.isPointInStroke(path, pt.x, pt.y)) continue
+      this.fire('click', Object.assign({}, event, { feature }))
+    }
+  },
+  // -------------------------------------------------------------
   getEvents: function () {
     var events = {
       resize: this._onLayerDidResize,
       moveend: this._onLayerDidMove,
-      zoom: this._onLayerDidMove
+      zoom: this._onLayerDidMove,
+      click: this._onLayerClick
     }
     if (this._map.options.zoomAnimation && L.Browser.any3d) {
       events.zoomanim = this._animateZoom
@@ -158,6 +173,7 @@ export default {
 
       const layer = this.createLeafletLayer(options)
       this.setupCanvasLayer(layer, layerOptions.draw)
+      bindLeafletEvents(layer, ['click'], this, options)
       return layer
     },
 
@@ -188,6 +204,14 @@ export default {
         const a = layer._map.latLngToLayerPoint(L.latLng(coords.lat, coords.lon))
         const b = L.DomUtil.getPosition(layer._canvas)
         return a.subtract(b)
+      }
+
+      layer.clickablePaths = []
+      layer.clearClickablePaths = () => {
+        layer.clickablePaths.length = 0
+      }
+      layer.addClickablePath = (path, feature) => {
+        layer.clickablePaths.push({ path, feature })
       }
 
       for (const d of drawCode) {
@@ -240,7 +264,9 @@ with(this.proxy) { ${d.code} }
               canvas: ctx,
               now: Date.now(),
               zoom: info.zoom,
-              latLonToCanvas: layer.latLonToCanvas
+              latLonToCanvas: layer.latLonToCanvas,
+              clearClickablePaths: layer.clearClickablePaths,
+              addClickablePath: layer.addClickablePath
             },
             // user defined context
             layer.userDrawContext,
