@@ -18,6 +18,7 @@
     @input='onChanged'
     emit-value
     map-options
+    clearable
     :error="hasError"
     :error-message="errorLabel"
     :disabled="disabled"
