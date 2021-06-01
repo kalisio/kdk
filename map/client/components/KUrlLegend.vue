@@ -1,9 +1,7 @@
 <template>
-
-  <div class="k-url-legend" v-if="visible">
-    <img :src="legendUrl" class="shadow-2"/>
+  <div v-if="legendUrls.length > 0" class="k-url-legend">
+    <img v-for="legendUrl in legendUrls" :src="legendUrl" class="shadow-2">
   </div>
-
 </template>
 
 <script>
@@ -16,8 +14,7 @@ export default {
   inject: ['kActivity'],
   data () {
     return {
-      visible: false,
-      legendUrl: ''
+      legendUrls: []
     }
   },
   methods: {
@@ -45,34 +42,33 @@ export default {
 
       // make sure server answers the request before using it
       if (legendUrl) {
+        let visible = false
         try {
           const response = await fetch(legendUrl)
-          this.visible = response.ok
+          visible = response.ok
           // additional check for funny servers answering with empty body ...
-          if (this.visible) {
+          if (visible) {
             const asBlob = await response.blob()
-            this.visible = asBlob ? asBlob.size > 0 : false
+            visible = asBlob ? asBlob.size > 0 : false
           }
-          if (this.visible) {
-            this.legendUrl = legendUrl
-            this.urlLegendLayer = layer
+          if (visible) {
+            this.urlLegendLayers[layer._id] = legendUrl
+            this.legendUrls.push(legendUrl)
           }
         } catch (error) {
-          this.visible = false
         }
-      } else {
-        this.visible = false
       }
     },
     onUrlLegendHideLayer (layer) {
-      if (this.urlLegendLayer && ((this.urlLegendLayer._id === layer._id) || (this.urlLegendLayer.name === layer.name))) {
-        this.visible = false
-        this.urlLegendLayer = null
+      const legendUrl = this.urlLegendLayers[layer._id]
+      if (legendUrl) {
+        const index = this.legendUrls.indexOf(legendUrl)
+        this.legendUrls.splice(index, 1)
       }
     }
   },
   mounted () {
-    this.urlLegendLayer = null
+    this.urlLegendLayers = {}
     this.kActivity.$on('layer-shown', this.onUrlLegendShowLayer)
     this.kActivity.$on('layer-hidden', this.onUrlLegendHideLayer)
   },
@@ -86,8 +82,9 @@ export default {
 
 <style lang="stylus">
 .k-url-legend
-  position: relative;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   border: none;
   padding: 0;
   margin: 0;
