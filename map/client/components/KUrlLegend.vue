@@ -1,6 +1,9 @@
 <template>
-  <div v-if="legendUrls.length > 0" class="k-url-legend">
-    <img v-for="legendUrl in legendUrls" :src="legendUrl" class="shadow-2">
+  <div v-if="legends.length > 0" class="k-url-legend">
+    <div v-for="legend, index in legends" @click="onLegendClick(index)">
+      <img v-if="legend.visible" :src="legend.src" class="shadow-2" ref="imgs"/>
+      <div v-if="!legend.visible">&blacktriangleright;  {{legend.layer}}</div>
+    </div>
   </div>
 </template>
 
@@ -14,10 +17,13 @@ export default {
   inject: ['kActivity'],
   data () {
     return {
-      legendUrls: []
+      legends: []
     }
   },
   methods: {
+    onLegendClick (index) {
+      this.legends[index].visible = !this.legends[index].visible
+    },
     async tryAddLegend (layer) {
       let legendUrl = _.get(layer, 'legendUrl')
       if (!legendUrl) {
@@ -55,7 +61,11 @@ export default {
             // make sure layer is still visible since it may have been hidden in the meantime ...
             if (this.kActivity.isLayerVisible(layer.name)) {
               this.urlLegendLayers[layer._id] = legendUrl
-              this.legendUrls.push(legendUrl)
+              this.legends.push({
+                src: legendUrl,
+                layer: layer.name,
+                visible: true
+              })
             }
           }
         } catch (error) {
@@ -65,7 +75,7 @@ export default {
     tryRemoveLegend (layer) {
       const legendUrl = this.urlLegendLayers[layer._id]
       if (legendUrl) {
-        const index = this.legendUrls.indexOf(legendUrl)
+        const index = this.legends.findIndex((legend) => legend.src === legendUrl)
         this.legendUrls.splice(index, 1)
       }
     },
@@ -100,7 +110,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  border: none;
-  padding: 0;
-  margin: 0;
+  text-overflow: ellipsis;
+  cursor: pointer;
 </style>
