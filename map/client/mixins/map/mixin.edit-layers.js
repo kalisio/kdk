@@ -64,10 +64,12 @@ export default {
         // Set back edited layers to source layer
         this.map.removeLayer(this.editableLayer)
         leafletLayer.addLayer(this.editableLayer)
+        this.$emit('edit-stop', this.editedLayer)
         this.editedLayer = null
         this.editedLayerSchema = null
       } else { // Start edition
         this.editedLayer = layer
+        this.$emit('edit-start', this.editedLayer)
         // Move source layers to edition layers, required as eg clusters are not supported
         const geoJson = leafletLayer.toGeoJSON()
         leafletLayer.clearLayers()
