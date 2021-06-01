@@ -1,8 +1,9 @@
 <template>
-  <div v-if="legends.length > 0" class="k-url-legend">
-    <div v-for="legend, index in legends" @click="onLegendClick(index)">
-      <img v-if="legend.visible" :src="legend.src" class="shadow-2" ref="imgs"/>
-      <div v-if="!legend.visible">&blacktriangleright;  {{legend.layer}}</div>
+  <div v-if="legends.length > 0" class="k-url-legend-container">
+    <div v-for="legend, index in legends" @click="onLegendClick(index)" class="k-url-legend-item text-primary text-caption q-pa-xs q-ma-xs shadow-2">
+      <div v-if="legend.visible">&blacktriangledown;   {{legend.layer}}</div>
+      <img v-if="legend.visible" :src="legend.src"/>
+      <div v-if="!legend.visible">&blacktriangleright;   {{legend.layer}}</div>
     </div>
   </div>
 </template>
@@ -106,10 +107,13 @@ export default {
 </script>
 
 <style lang="stylus">
-.k-url-legend
+.k-url-legend-container
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+.k-url-legend-item
   text-overflow: ellipsis;
   cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.5);
 </style>
