@@ -52,8 +52,11 @@ export default {
             visible = asBlob ? asBlob.size > 0 : false
           }
           if (visible) {
-            this.urlLegendLayers[layer._id] = legendUrl
-            this.legendUrls.push(legendUrl)
+            // make sure layer is still visible since it may have been hidden in the meantime ...
+            if (this.kActivity.isLayerVisible(layer.name)) {
+              this.urlLegendLayers[layer._id] = legendUrl
+              this.legendUrls.push(legendUrl)
+            }
           }
         } catch (error) {
         }
@@ -80,7 +83,7 @@ export default {
 
     // initial scan of already added layers
     this.kActivity.getLayers().forEach((layer) => {
-      if (_.get(layer, 'leaflet.isVisible', false)) {
+      if (this.kActivity.isLayerVisible(layer.name)) {
         this.tryAddLegend(layer)
       }
     })
