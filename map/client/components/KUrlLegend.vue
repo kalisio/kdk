@@ -76,7 +76,7 @@ export default {
       const legendUrl = this.urlLegendLayers[layer._id]
       if (legendUrl) {
         const index = this.legends.findIndex((legend) => legend.src === legendUrl)
-        this.legendUrls.splice(index, 1)
+        this.legends.splice(index, 1)
       }
     },
     onShowLayer (layer, engineLayer) {
