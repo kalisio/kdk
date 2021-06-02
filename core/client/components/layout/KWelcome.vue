@@ -85,7 +85,7 @@ export default {
     show () {
       const show = window.localStorage.getItem(this.getWelcomeKey())
       // Introduction is only for logged users
-      this.showWelcome = (_.isNil(show) ? true : JSON.parse(show))
+      this.showWelcome = (_.isNil(show) ? this.$config('layout.welcome', true) : JSON.parse(show))
     },
     hide () {
       this.showWelcome = false
