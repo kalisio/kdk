@@ -50,7 +50,6 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')
-    this.$options.components['k-tags-pane'] = this.$load('team/KTagsPane')
     // We will use the member role to illustrate the number of users with the tag
     this.roleIcons = this.$config('roles.icons')
   }

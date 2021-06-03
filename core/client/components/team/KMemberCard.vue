@@ -22,7 +22,7 @@
     <div slot="card-content">
       <q-separator />
       <template  v-if="tags.length > 0">
-        <k-tags-pane id="tags-pane" class="q-pa-sm" :tags="tags" />
+        <k-chips-pane id="tags-pane" class="q-pa-sm" :chips="tags" />
         <q-separator />
       </template>
       <div class="q-pa-sm row justify-start items-center">
@@ -229,7 +229,7 @@ export default {
     // Load the required components
     this.$options.components['k-card'] = this.$load('collection/KCard')
     this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
-    this.$options.components['k-tags-pane'] = this.$load('team/KTagsPane')
+    this.$options.components['k-chips-pane'] = this.$load('frame/KChipsPane')
     // Load the role configuration
     this.roleIcons = this.$config('roles.icons')
     this.roleLabels = this.$config('roles.labels')

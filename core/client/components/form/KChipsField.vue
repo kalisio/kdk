@@ -31,10 +31,10 @@
                 class="chip"
                 :icon="chipIcon(chip)"
                 :color="chipColor(chip)"
-                :label="chip.value"
+                :label="chipValue(chip)"
                 @remove="onChipRemoved(chip)"
                 @click="onChipClicked(chip)"
-                clickable
+                :clickable="icon"
                 removable
                 outline
                 dense
@@ -70,7 +70,10 @@ export default {
   computed: {
     inputActions () {
       const actions = []
-      if (_.findIndex(this.chips, { value: this.input }) === -1) {
+      const index = (this.icon ? 
+        _.findIndex(this.chips, { value: this.input }) :
+        _.findIndex(this.chips, this.input))
+      if (index === -1) {
         actions.push({
           icon: 'send',
           content: true,
@@ -87,6 +90,7 @@ export default {
   },
   data () {
     return {
+      icon: _.get(this.properties, 'field.icon', true),
       input: '',
       chips: []
     }
@@ -100,31 +104,32 @@ export default {
       this.chips = this.model.slice()
     },
     chipIcon (chip) {
-      return getIconName(chip)
+      return (this.icon ? getIconName(chip) : undefined)
     },
     chipColor (chip) {
-      return _.get(chip, 'icon.color', 'primary')
+      return (this.icon ? _.get(chip, 'icon.color', 'primary') : 'primary')
     },
     chipValue (chip) {
-      return chip.value || chip.name
+      return (this.icon ? chip.value || chip.name : chip)
     },
     onChipAdded () {
-      const chip = {
+      const chip = (this.icon ? {
         value: this.input,
         icon: {
           name: _.get(this.properties.field, 'icon.name', ''),
           color: _.get(this.properties.field, 'icon.color', 'black')
         }
-      }
+      } : this.input)
       this.chips.push(chip)
       this.input = ''
       this.updateModel()
     },
     onChipRemoved (oldChip) {
-      this.chips = this.chips.filter(chip => chip.value !== oldChip.value)
+      this.chips = this.chips.filter(chip => (this.icon ? chip.value !== oldChip.value : chip !== oldChip))
       this.updateModel()
     },
     onChipClicked (chip) {
+      if (!this.icon) return
       this.selectedChip = chip
       this.$refs.iconChooser.open(chip.icon)
     },
