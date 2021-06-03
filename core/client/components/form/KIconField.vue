@@ -66,7 +66,7 @@ export default {
     },
     iconColor () {
       // We support icon without a color
-      return _.get(this.model, 'color', 'primary')
+      return _.get(this.model, 'color', 'dark')
     }
   },
   data () {
