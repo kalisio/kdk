@@ -21,7 +21,7 @@
         <div id="icons" class="row justify-start items-center q-gutter-sm">
           <template v-for="icon in iconsPage">
             <q-icon v-if="icon.name === selectedIcon.name" :key="icon.name"
-              style="border-bottom: 0.25rem solid" :color="selectedIcon.color" :name="icon.name" size="2rem">
+              style="border-bottom: 0.25rem solid" :color="selectedIcon.color" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
               <q-tooltip>
                 {{icon.title}}
               </q-tooltip>
@@ -176,6 +176,7 @@ export default {
       this.filteredIcons = null
       this.currentPage = 1
       this.resetSelectedIcon()
+      this.resetSelectedColor()
     },
     iconSelected () {
       return this.selectedIcon.name.length > 0
@@ -198,6 +199,8 @@ export default {
     },
     resetSelectedIcon () {
       this.selectedIcon.name = ''
+    },
+    resetSelectedColor () {
       this.selectedIcon.color = 'dark'
     },
     async loadMaterialIcons () {
