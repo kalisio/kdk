@@ -27,7 +27,7 @@ export default {
         }
       }
     },
-    async editLayer (layer) {
+    async editLayer (layer, { allowDraw = true, allowEdit = true, allowDrag = true, allowRemoval = true, allowRotate = true, startEdit = false } = {}) {
       const leafletLayer = this.getLeafletLayerByName(layer.name)
       if (!leafletLayer) return
 
@@ -78,6 +78,16 @@ export default {
         // Add UI
         this.map.pm.addControls({
           position: 'bottomleft',
+          // custom config
+          drawMarker: allowDraw,
+          drawPolyline: allowDraw,
+          drawRectangle: allowDraw,
+          drawPolygon: allowDraw,
+          editMode: allowEdit,
+          dragMode: allowDrag,
+          cutPolygon: false,
+          removalMode: allowRemoval,
+          rotateMode: allowRotate,
           // GeoJSON does not support circles
           drawCircle: false,
           drawCircleMarker: false
@@ -88,6 +98,10 @@ export default {
         this.editedFeatures = []
         this.deletedFeatures = []
         this.editedLayerSchema = JSON.stringify(_.get(this.editedLayer, 'schema.content'))
+
+        if (startEdit) {
+          this.map.pm.enableGlobalEditMode()
+        }
       }
     },
     async updateFeatureProperties (feature, layer, leafletLayer) {

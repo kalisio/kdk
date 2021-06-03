@@ -11,6 +11,10 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     this._frame = null
     this._delegate = null
     L.setOptions(this, options)
+
+    this.clickableFeatures = []
+    this.mousePosition = null
+    this.highlighting = false
   },
 
   delegate: function (del) {
@@ -23,6 +27,70 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
       this._frame = L.Util.requestAnimFrame(this.drawLayer, this)
     }
     return this
+  },
+
+  latLonToCanvas: function (coords) {
+    const a = this._map.latLngToLayerPoint(L.latLng(coords.lat, coords.lon))
+    const b = L.DomUtil.getPosition(this._canvas)
+    return a.subtract(b)
+  },
+
+  clearClickableFeatures: function () {
+    this.clickableFeatures.length = 0
+  },
+
+  addClickableFeature: function (feature, clickablePath, { clickableStrokeWidth = 0, highlightPath = undefined, highlightAsStroke = false, highlightStyle = {} }) {
+    this.clickableFeatures.push({
+      feature,
+      click: { path: clickablePath, strokeWidth: clickableStrokeWidth }
+    })
+    if (highlightPath) {
+      this.clickableFeatures[this.clickableFeatures.length - 1].highlight = {
+        path: highlightPath,
+        asStroke: highlightAsStroke,
+        style: highlightStyle
+      }
+    }
+  },
+
+  hasClickableFeaturesAt: function (latlng) {
+    if (this.clickableFeatures.length === 0) return false
+
+    const pt = this.latLonToCanvas({ lat: latlng.lat, lon: latlng.lng })
+    const ctx = this._canvas.getContext('2d')
+    let inFeature = false
+    for (const feature of this.clickableFeatures) {
+      ctx.save()
+      if (feature.click.strokeWidth) {
+        ctx.lineWidth = feature.click.strokeWidth
+        inFeature = ctx.isPointInStroke(feature.click.path, pt.x, pt.y)
+      } else {
+        inFeature = ctx.isPointInPath(feature.click.path, pt.x, pt.y)
+      }
+      ctx.restore()
+      if (inFeature) return true
+    }
+    return false
+  },
+
+  getClickableFeaturesAt: function (latlng) {
+    if (this.clickableFeatures.length === 0) return []
+
+    const pt = this.latLonToCanvas({ lat: latlng.lat, lon: latlng.lng })
+
+    const indexes = []
+    const ctx = this._canvas.getContext('2d')
+    this.clickableFeatures.forEach((feature, index) => {
+      ctx.save()
+      if (feature.click.strokeWidth) {
+        ctx.lineWidth = feature.click.strokeWidth
+        if (ctx.isPointInStroke(feature.click.path, pt.x, pt.y)) indexes.push(index)
+      } else {
+        if (ctx.isPointInPath(feature.click.path, pt.x, pt.y)) indexes.push(index)
+      }
+      ctx.restore()
+    })
+    return indexes
   },
 
   // -------------------------------------------------------------
@@ -38,16 +106,15 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
   // -------------------------------------------------------------
   _onLayerClick: function (event) {
-    if (this.clickablePaths.length === 0) return
-
-    const pt = this.latLonToCanvas({ lat: event.latlng.lat, lon: event.latlng.lng })
-
-    const ctx = this._canvas.getContext('2d')
-    ctx.lineWidth = 10
-    for (const { path, feature } of this.clickablePaths) {
-      if (!ctx.isPointInStroke(path, pt.x, pt.y)) continue
-      this.fire('click', Object.assign({}, event, { feature }))
-    }
+    const indexes = this.getClickableFeaturesAt(event.latlng)
+    if (indexes.length === 0) return
+    this.fire('click', Object.assign({}, event, { feature: this.clickableFeatures[indexes[0]].feature }))
+  },
+  // -------------------------------------------------------------
+  _onMouseMove: function (event) {
+    this.mousePosition = event.latlng
+    if (!this.hasClickableFeaturesAt(event.latlng) && !this.highlighting) return
+    this.needRedraw()
   },
   // -------------------------------------------------------------
   getEvents: function () {
@@ -55,7 +122,8 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
       resize: this._onLayerDidResize,
       moveend: this._onLayerDidMove,
       zoom: this._onLayerDidMove,
-      click: this._onLayerClick
+      click: this._onLayerClick,
+      mousemove: this._onMouseMove
     }
     if (this._map.options.zoomAnimation && L.Browser.any3d) {
       events.zoomanim = this._animateZoom
@@ -134,6 +202,21 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
       center: center,
       corner: corner
     })
+    const highlightIndexes = this.getClickableFeaturesAt(this.mousePosition)
+    this.highlighting = highlightIndexes.length > 0
+    if (this.highlighting) {
+      const ctx = this._canvas.getContext('2d')
+      for (const index of highlightIndexes) {
+        const feature = this.clickableFeatures[index]
+
+        ctx.save()
+        ctx.globalAlpha = 0.5
+        for (const prop in feature.highlight.style) ctx[prop] = feature.highlight.style[prop]
+        if (feature.highlight.asStroke) ctx.stroke(feature.highlight.path)
+        else ctx.fill(feature.highlight.path)
+        ctx.restore()
+      }
+    }
     this._frame = null
   },
   // -- L.DomUtil.setTransform from leaflet 1.0.0 to work on 0.0.7
@@ -200,19 +283,9 @@ export default {
       layer.listenedLayers = {}
       layer.drawCalls = []
       layer.autoRedraw = autoRedraw
-      layer.latLonToCanvas = (coords) => {
-        const a = layer._map.latLngToLayerPoint(L.latLng(coords.lat, coords.lon))
-        const b = L.DomUtil.getPosition(layer._canvas)
-        return a.subtract(b)
-      }
+      if (layer.userData === undefined) layer.userData = {}
 
-      layer.clickablePaths = []
-      layer.clearClickablePaths = () => {
-        layer.clickablePaths.length = 0
-      }
-      layer.addClickablePath = (path, feature) => {
-        layer.clickablePaths.push({ path, feature })
-      }
+      layer.clearClickableFeatures()
 
       for (const d of drawCode) {
         /* eslint no-new-func: 0 */
@@ -264,12 +337,11 @@ with(this.proxy) { ${d.code} }
               canvas: ctx,
               now: Date.now(),
               zoom: info.zoom,
-              latLonToCanvas: layer.latLonToCanvas,
-              clearClickablePaths: layer.clearClickablePaths,
-              addClickablePath: layer.addClickablePath
+              latLonToCanvas: layer.latLonToCanvas.bind(layer),
+              clearClickableFeatures: layer.clearClickableFeatures.bind(layer),
+              addClickableFeature: layer.addClickableFeature.bind(layer),
+              userData: layer.userData
             },
-            // user defined context
-            layer.userDrawContext,
             // global context
             this.canvasLayerDrawContext)
 
@@ -287,20 +359,29 @@ with(this.proxy) { ${d.code} }
       }
     },
 
-    updateCanvasLayerDrawCode (name, newDrawCode, autoRedraw) {
+    setCanvasLayerDrawCode (name, newDrawCode, autoRedraw = false) {
       const layer = this.getLeafletLayerByName(name)
-      if (!layer) return // Cannot update invisible layer
+      if (!layer) return
 
       this.setupCanvasLayer(layer, newDrawCode, autoRedraw)
       layer.needRedraw()
     },
 
-    setCanvasLayerContext (name, userContext) {
+    setCanvasLayerUserData (name, userData) {
       const layer = this.getLeafletLayerByName(name)
-      if (!layer) return // Cannot update invisible layer
+      if (!layer) return
 
-      layer.userDrawContext = userContext
+      layer.userData = Object.assign(layer.userData, userData)
       layer.needRedraw()
+    },
+
+    setCanvasLayerAutoRedraw (name, autoRedraw) {
+      const layer = this.getLeafletLayerByName(name)
+      if (!layer) return
+
+      const needRedraw = !layer.autoRedraw && autoRedraw
+      layer.autoRedraw = autoRedraw
+      if (needRedraw) layer.needRedraw()
     }
   },
 

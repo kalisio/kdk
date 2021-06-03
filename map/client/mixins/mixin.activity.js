@@ -396,10 +396,15 @@ export default {
         this.editStyleModal = null
       })
     },
-    async onEditLayerData (layer) {
+    editLayerByName (name, editOptions = {}) {
+      const layer = this.getLayerByName(name)
+      if (!layer) return
+      this.onEditLayerData(layer, editOptions)
+    },
+    async onEditLayerData (layer, editOptions = {}) {
       const toggle = () => {
         // Start/Stop edition
-        this.editLayer(layer)
+        this.editLayer(layer, editOptions)
         // Refresh actions due to state change
         this.configureLayerActions(layer)
         this.editedLayerToast = null
