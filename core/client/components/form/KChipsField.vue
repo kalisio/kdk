@@ -103,7 +103,7 @@ export default {
       return getIconName(chip)
     },
     chipColor (chip) {
-      return _.get(chip, 'icon.color', 'primary')
+      return _.get(chip, 'icon.color', 'dark')
     },
     chipValue (chip) {
       return chip.value || chip.name
@@ -113,7 +113,7 @@ export default {
         value: this.input,
         icon: {
           name: _.get(this.properties.field, 'icon.name', ''),
-          color: _.get(this.properties.field, 'icon.color', 'black')
+          color: _.get(this.properties.field, 'icon.color', 'dark')
         }
       }
       this.chips.push(chip)
