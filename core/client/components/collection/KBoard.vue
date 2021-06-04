@@ -3,12 +3,10 @@
     <template v-for="column in columns">
       <div
         :id="column.value"
-        class="col q-pa-sm column content-start q-gutter-y-sm"
+        class="col"
         :key="column.value">
-          <div class="text-subtitle1 text-weight-medium">
-            {{ $t(column.label) }}
-          </div>
           <k-column 
+            :label="column.label"
             :key="column.value" 
             v-bind="column.props" 
             :append-items="true" 
@@ -28,8 +26,8 @@ export default {
       default: () => { return null }
     },
     height: {
-      type: String,
-      default: '80vh'
+      type: Number,
+      required: true
     }
   },
   beforeCreate () {

@@ -1,43 +1,71 @@
 <template>
-  <div v-if="items.length > 0" class="q-pa-sm column">
-    <q-scroll-area :style="`height: ${height}`" @scroll="onScroll">
-      <template v-for="item in items">
-        <component
-          class="q-pl-sm q-pr-md q-pt-sm q-pb-sm"
-          :key="item._id"
-          :id="item._id"
-          :service="service"
-          :item="item"
-          :contextId="contextId"
-          :is="renderer.component"
-          v-bind="renderer"
-          @item-selected="onItemSelected" />
-      </template>
-    </q-scroll-area>
-  </div>
-  <div v-else>
-    <slot name="empty-section">
-      <div class="row justify-center">
-        <k-stamp 
-          icon="las la-exclamation-circle" 
-          icon-size="1.6rem" 
-          :text="$t('KColumn.EMPTY_COLUMN')" 
-          direction="horizontal" />
+  <div class="q-pa-sm column q-gutter-y-sm">
+    <!--
+      Label
+     -->
+    <div v-if="label" class="full-width row justify-center text-subtitle1">
+      {{ $t(label) }}
+    </div>
+    <!-- 
+      Items
+     -->
+    <div v-if="items.length > 0">
+      <q-scroll-area 
+        ref="scrollArea"
+        :style="`height: ${height}px`" 
+        :thumb-style="thumbStyle" 
+        :bar-style="barStyle"
+        @scroll="onScroll">
+        <template v-for="item in items">
+          <component
+            class="q-pl-sm q-pr-md q-pt-sm q-pb-sm"
+            :key="item._id"
+            :id="item._id"
+            :service="service"
+            :item="item"
+            :contextId="contextId"
+            :is="renderer.component"
+            v-bind="renderer"
+            @item-selected="onItemSelected" />
+        </template>
+      </q-scroll-area>
+      <div v-if="scrollAction" class="row justify-center">
+        <k-action 
+          id="scroll-action"
+          icon="las la-angle-double-down"
+          size="md"
+          :handler="this.scrollDown" />
       </div>
-    </slot>
+    </div>
+    <div v-else>
+      <slot name="empty-section">
+        <div class="row justify-center">
+          <k-stamp 
+            icon="las la-exclamation-circle" 
+            icon-size="1.6rem" 
+            :text="$t('KColumn.EMPTY_COLUMN')" 
+            direction="horizontal" />
+        </div>
+      </slot>
+    </div>
   </div>
 </template>
 
 <script>
+import { colors } from 'quasar'
 import mixins from '../../mixins'
 
 export default {
-  name: 'k-grid',
+  name: 'k-column',
   mixins: [
     mixins.service,
     mixins.baseCollection
   ],
   props: {
+    label: {
+      type: String,
+      default: undefined
+    },
     renderer: {
       type: Object,
       default: () => {
@@ -63,8 +91,27 @@ export default {
       default: 'smart'
     },
     height: {
-      type: String,
-      default: '80vh'
+      type: Number,
+      default: 300
+    }
+  },
+  data () {
+    return {
+      scrollAction: false,
+      thumbStyle: {
+        right: '4px',
+        borderRadius: '5px',
+        backgroundColor: colors.getBrand('secondary'),
+        width: '5px',
+        opacity: 0.75
+      },
+      barStyle: {
+        right: '2px',
+        borderRadius: '9px',
+        backgroundColor: colors.getBrand('primary'),
+        width: '9px',
+        opacity: 0.25
+      }
     }
   },
   watch: {
@@ -91,17 +138,31 @@ export default {
       return this.filterQuery
     },
     onScroll (info) {
-      if (info.verticalPercentage > 0.9) {
-        if (this.items.length < this.nbTotalItems) {
+      if (this.items.length < this.nbTotalItems) {
+        if (info.verticalPercentage === 1) { 
           this.currentPage++
           this.refreshCollection()
+          this.scrollAction = true
+        } else {
+          this.scrollAction = info.verticalSize > this.height ? true : false
+        } 
+      } else {
+        if (info.verticalPercentage === 1) {    
+          this.scrollAction = false
+        } else { 
+          this.scrollAction = info.verticalSize > this.height ? true : false
         }
       }
+    },
+    scrollDown () {
+      const position = this.$refs.scrollArea.getScrollPosition()
+      this.$refs.scrollArea.setScrollPosition(position + 200, 250)
     }
   },
   beforeCreate () {
     // Load the component
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+    this.$options.components['k-action'] = this.$load('frame/KAction')
   },
   created () {
     // Load the component
