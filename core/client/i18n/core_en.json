@@ -338,6 +338,9 @@
   "KHistory": {
     "EMPTY_HISTORY": "$t(NO_ITEM)"
   },
+  "KColumn": {
+    "EMPTY_COLUMN": "$t(NO_ITEM)"
+  },
   "KUploader": {
     "dropZone": {
       "dictDefaultMessage": "Drop files or click here",

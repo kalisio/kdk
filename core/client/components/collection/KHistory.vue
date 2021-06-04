@@ -19,7 +19,11 @@
   <div v-else>
     <slot name="empty-section">
       <div class="row justify-center">
-        <k-stamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KHistory.EMPTY_HISTORY')" direction="horizontal" />
+        <k-stamp 
+          icon="las la-exclamation-circle" 
+          icon-size="1.6rem" 
+          :text="$t('KHistory.EMPTY_HISTORY')" 
+          direction="horizontal" />
       </div>
     </slot>
   </div>
@@ -101,12 +105,9 @@ export default {
       }
     },
     onScroll (index, done) {
-      /* if (this.items.length === this.nbTotalItems) done(true)
-      else { */
       this.done = done
       this.currentPage++
       this.refreshCollection()
-      // }
     }
   },
   created () {
