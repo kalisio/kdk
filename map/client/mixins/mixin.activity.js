@@ -440,7 +440,7 @@ export default {
         Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL') })
         try {
           // Stop any running edition
-          this.onEditLayerData(layer)
+          if (this.isLayerEdited(layer)) this.onEditLayerData(layer)
           if (layer._id) {
             // If persistent feature layer remove features as well
             if (this.isFeatureLayer(layer)) {
