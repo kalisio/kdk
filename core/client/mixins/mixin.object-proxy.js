@@ -39,7 +39,7 @@ const objectProxyMixin = {
           if (this.perspective) {
             params = { query: { $select: ['_id', this.perspective] } }
           }
-          this.loadService()
+          this.getService()
             .get(this.objectId, params)
             .then(object => {
               this.object = object

@@ -99,8 +99,6 @@ The context service to be used is the one set in the `context.service` property 
 
 Make it easier to access an underlying service from the **contextId** and **service** props:
 * **getService()** to retrieve the service
-* **loadService()** causes the service to be resolved for current properties values
-* **serviceFind/Get/Update/Patch/Remove()** to perform [service operations](https://docs.feathersjs.com/api/services.html#service-methods)
 
 ## Object Proxy
 

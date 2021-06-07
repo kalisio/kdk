@@ -102,7 +102,7 @@ export default {
         handler: (event, done) => this.doJoin(event, done)
       }]
     },
-    loadService () {
+    getService () {
       return this.$api.getService('members')
     },
     async doJoin () {

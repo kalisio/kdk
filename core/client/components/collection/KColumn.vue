@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-sm column q-gutter-y-sm">
+  <div class="column q-gutter-y-sm">
     <!--
       Label
      -->
@@ -33,7 +33,8 @@
         <k-action 
           id="scroll-action"
           icon="las la-angle-double-down"
-          size="md"
+          color="accent"
+          size="1rem"
           :handler="this.scrollDown" />
       </div>
     </div>
@@ -55,11 +56,13 @@
 import { colors } from 'quasar'
 import mixins from '../../mixins'
 
+const baseCollectionMixin = mixins.baseCollection
+
 export default {
   name: 'k-column',
   mixins: [
     mixins.service,
-    mixins.baseCollection
+    baseCollectionMixin
   ],
   props: {
     label: {
@@ -88,7 +91,7 @@ export default {
     },
     listStrategy: {
       type: String,
-      default: 'smart'
+      default: undefined
     },
     height: {
       type: Number,
@@ -157,6 +160,12 @@ export default {
     scrollDown () {
       const position = this.$refs.scrollArea.getScrollPosition()
       this.$refs.scrollArea.setScrollPosition(position + 200, 250)
+    },
+    refreshCollection () {
+      this.items = []
+      this.currentPage = 1
+      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(0)
+      baseCollectionMixin.methods.refreshCollection.call(this)
     }
   },
   beforeCreate () {
@@ -169,6 +178,7 @@ export default {
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.refreshCollection)
+    this.refreshCollection()
   },
   beforeDestroy () {
     this.$events.$off('user-abilities-changed', this.refreshCollection)

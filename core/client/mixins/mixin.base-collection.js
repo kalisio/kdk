@@ -31,7 +31,8 @@ const baseCollectionMixin = {
     subscribe (query) {
       // Remove previous listener if any
       this.unsubscribe()
-      this.itemListener = this.loadService().watch({ listStrategy: this.listStrategy || 'always' })
+      console.log(this.service, this.contextId, this.getService())
+      this.itemListener = this.getService().watch({ listStrategy: this.listStrategy || 'always' })
         .find({ query })
         .subscribe(response => {
           // Manage GeoJson features collection as well
@@ -91,8 +92,22 @@ const baseCollectionMixin = {
       this.$emit('selection-changed', items)
     }
   },
+  created () {
+    if (this.appendItems) {
+      const service = this.getService()
+      service.on('patched', this.refreshCollection)
+      service.on('updated', this.refreshCollection)
+      service.on('removed', this.refreshCollection)
+    }
+  },  
   beforeDestroy () {
     this.unsubscribe()
+    if (this.appendItems) {
+      const service = this.getService()
+      service.off('patched', this.refreshCollection)
+      service.off('updated', this.refreshCollection)
+      service.off('removed', this.refreshCollection)
+    }
   }
 }
 

@@ -93,7 +93,7 @@ export default {
         handler: () => this.doUpdate()
       }]
     },
-    loadService () {
+    getService () {
       return this.$api.getService('members')
     },
     async doUpdate () {

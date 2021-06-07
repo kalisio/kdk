@@ -215,17 +215,17 @@ export default function baseEditorMixin (formRefs) {
               if (this.perspective !== '') {
                 const data = {}
                 data[this.perspective] = _.omit(object, ['_id'])
-                const response = await this.servicePatch(this.objectId, data, { query })
+                const response = await this.getService().patch(this.objectId, data, { query })
                 // Keep track of ID as it is used to know if we update or create
                 if (object._id) response._id = object._id
                 onServiceResponse(response)
               } else {
-                const response = await this.servicePatch(this.objectId, object, { query })
+                const response = await this.getService().patch(this.objectId, object, { query })
                 onServiceResponse(response)
               }
             } else if (this.getMode() === 'create') {
               // Creation mode => create the item
-              const response = await this.serviceCreate(object, { query })
+              const response = await this.getService().create(object, { query })
               onServiceResponse(response)
             } else {
               logger.warn('Invalid editor mode')
@@ -238,8 +238,6 @@ export default function baseEditorMixin (formRefs) {
         }
       },
       async refresh () {
-        // When the service is available
-        await this.loadService()
         // We can then load the schema/object and local refs in parallel
         await Promise.all([
           this.loadSchema(this.getSchemaName()),

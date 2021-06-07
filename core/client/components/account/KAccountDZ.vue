@@ -23,9 +23,8 @@ export default {
     }
   },
   methods: {
-    loadService () {
-      this._service = this.$api.getService('users')
-      return this._service
+    getService () {
+      return this.$api.getService('users')
     },
     onDeleteClicked () {
       Dialog.create({
@@ -48,7 +47,7 @@ export default {
       }).onOk(async (data) => {
         if (data === this.user.name) {
           try {
-            await this.loadService().remove(this.user._id)
+            await this.getService().remove(this.user._id)
           } catch (error) {
             // do not logout
             return

@@ -19,8 +19,6 @@ const baseViewerMixin = {
       return schemaName
     },
     async refresh () {
-      // When the service is available
-      await this.loadService()
       // We can then load the schema/object and local refs in parallel
       await Promise.all([
         this.loadSchema(this.getSchemaName()),
