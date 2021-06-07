@@ -31,7 +31,6 @@ const baseCollectionMixin = {
     subscribe (query) {
       // Remove previous listener if any
       this.unsubscribe()
-      console.log(this.service, this.contextId, this.getService())
       this.itemListener = this.getService().watch({ listStrategy: this.listStrategy || 'always' })
         .find({ query })
         .subscribe(response => {
@@ -82,6 +81,12 @@ const baseCollectionMixin = {
       // Find the desired items
       this.subscribe(fullQuery)
     },
+    resetCollection () {
+      // Reset pagination and start again refreshing the collection
+      this.items = []
+      this.currentPage = 1
+      this.refreshCollection()
+    },
     onPageChanged () {
       this.refreshCollection()
     },
@@ -90,23 +95,30 @@ const baseCollectionMixin = {
     },
     onItemsSelected (items) {
       this.$emit('selection-changed', items)
+    },
+    onItemsUpdated (items) {
+      // When we append items some items of the previous pages might have been updated.
+      // In this case we need to reset the full collection as Rx only tracks changes on the current page
+      let updatedItems = (Array.isArray(items) ? items : [items])
+      updatedItems = _.intersectionWith(this.items, updatedItems, (item1, item2) => (item1._id.toString() === item2._id.toString()))
+      if (updatedItems.length > 0) this.resetCollection()
     }
   },
   created () {
     if (this.appendItems) {
       const service = this.getService()
-      service.on('patched', this.refreshCollection)
-      service.on('updated', this.refreshCollection)
-      service.on('removed', this.refreshCollection)
+      service.on('patched', this.onItemsUpdated)
+      service.on('updated', this.onItemsUpdated)
+      service.on('removed', this.onItemsUpdated)
     }
   },  
   beforeDestroy () {
     this.unsubscribe()
     if (this.appendItems) {
       const service = this.getService()
-      service.off('patched', this.refreshCollection)
-      service.off('updated', this.refreshCollection)
-      service.off('removed', this.refreshCollection)
+      service.off('patched', this.onItemsUpdated)
+      service.off('updated', this.onItemsUpdated)
+      service.off('removed', this.onItemsUpdated)
     }
   }
 }

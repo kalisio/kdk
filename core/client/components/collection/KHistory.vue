@@ -118,11 +118,11 @@ export default {
     // Refresh collection
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well
-    this.$events.$on('user-abilities-changed', this.refreshCollection)
+    this.$events.$on('user-abilities-changed', this.resetCollection)
   },
   beforeDestroy () {
     this.$off('collection-refreshed', this.onCollectionRefreshed)
-    this.$events.$off('user-abilities-changed', this.refreshCollection)
+    this.$events.$off('user-abilities-changed', this.resetCollection)
   }
 }
 </script>

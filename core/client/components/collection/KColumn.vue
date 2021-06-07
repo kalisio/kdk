@@ -161,11 +161,9 @@ export default {
       const position = this.$refs.scrollArea.getScrollPosition()
       this.$refs.scrollArea.setScrollPosition(position + 200, 250)
     },
-    refreshCollection () {
-      this.items = []
-      this.currentPage = 1
+    resetCollection () {
       if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(0)
-      baseCollectionMixin.methods.refreshCollection.call(this)
+      baseCollectionMixin.methods.resetCollection.call(this)
     }
   },
   beforeCreate () {
@@ -177,11 +175,11 @@ export default {
     // Load the component
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
     // Whenever the user abilities are updated, update collection as well
-    this.$events.$on('user-abilities-changed', this.refreshCollection)
+    this.$events.$on('user-abilities-changed', this.resetCollection)
     this.refreshCollection()
   },
   beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.refreshCollection)
+    this.$events.$off('user-abilities-changed', this.resetCollection)
   }
 }
 </script>
