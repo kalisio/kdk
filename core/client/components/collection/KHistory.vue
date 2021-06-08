@@ -1,32 +1,16 @@
 <template>
-  <div v-if="items.length > 0">
-    <q-timeline ref="timeline" color="accent" :layout="layout()">
-      <q-infinite-scroll ref="scroll" @load="onScroll" :offset="50">
-        <template v-for="item in items">
-          <component
-            class="row justify-center"
-            :key="item._id" :id="'item-' + item._id"
-            :service="service"
-            :item="item"
-            :contextId="contextId"
-            :is="renderer.component"
-            v-bind="renderer"
-            @item-selected="onItemSelected" />
-        </template>
-      </q-infinite-scroll>
-    </q-timeline>
-  </div>
-  <div v-else>
-    <slot name="empty-section">
-      <div class="row justify-center">
-        <k-stamp 
-          icon="las la-exclamation-circle" 
-          icon-size="1.6rem" 
-          :text="$t('KHistory.EMPTY_HISTORY')" 
-          direction="horizontal" />
-      </div>
-    </slot>
-  </div>
+  <q-timeline ref="timeline" color="accent" :layout="layout()">
+    <k-column
+      :service="service"
+      :renderer="renderer"
+      :contextId="contextId" 
+      :baseQuery="baseQuery"
+      :filterQuery="filterQuery"
+      :append-items="true" 
+      :height="height"
+      style="min-width: 100%;" 
+      @collection-refreshed="onCollectionRefreshed" />
+  </q-timeline>
 </template>
 
 <script>
@@ -36,10 +20,7 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-history',
-  mixins: [
-    mixins.service,
-    mixins.baseCollection
-  ],
+  mixins: [mixins.service],
   components: {
     QInfiniteScroll
   },
@@ -54,75 +35,39 @@ export default {
     },
     baseQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => {}
     },
     filterQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => {}
     },
     listStrategy: {
-      type: String
-    }
-  },
-  watch: {
-    $route (to, from) {
-      // React to route changes but reusing the same component as this one is generic
-      this.refreshCollection()
+      type: String,
+      default: 'smart'
     },
-    baseQuery: function () {
-      this.items = []
-      this.currentPage = 1
-      this.refreshCollection()
-    },
-    filterQuery: function () {
-      this.items = []
-      this.currentPage = 1
-      this.refreshCollection()
+     height: {
+      type: Number,
+      required: true
     }
   },
   methods: {
     layout () {
       return _.get(this.options, 'layout', this.$q.screen.lt.sm ? 'dense' : (this.$q.screen.lt.md ? 'comfortable' : 'loose'))
     },
-    getCollectionBaseQuery () {
-      return this.baseQuery
-    },
-    getCollectionFilterQuery () {
-      return this.filterQuery
-    },
-    async onCollectionRefreshed () {
+    async onCollectionRefreshed (items) {
       // FIXME: passing the side as a prop on the entry component does not seem to work
-      this.items.forEach((item, index) => {
+      _.forEach(items, (item, index) => {
         item.side = (index % 2 ? 'left' : 'right')
       })
-      if (this.done) {
-        if (this.items.length === this.nbTotalItems) this.done(true)
-        else this.done(false)
-      }
-    },
-    onScroll (index, done) {
-      this.done = done
-      this.currentPage++
-      this.refreshCollection()
     }
+  },
+  beforeCreate () {
+    this.$options.components['k-column'] = this.$load('collection/KColumn')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   created () {
     // Load the component
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-    this.$on('collection-refreshed', this.onCollectionRefreshed)
-    // Refresh collection
-    this.refreshCollection()
-    // Whenever the user abilities are updated, update collection as well
-    this.$events.$on('user-abilities-changed', this.resetCollection)
-  },
-  beforeDestroy () {
-    this.$off('collection-refreshed', this.onCollectionRefreshed)
-    this.$events.$off('user-abilities-changed', this.resetCollection)
   }
 }
 </script>

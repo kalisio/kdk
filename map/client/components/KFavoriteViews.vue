@@ -139,10 +139,10 @@ export default {
         this.mode = 'list'
       }
     },
-    refreshViews (data) {
-      this.count = data.items.length
+    refreshViews (items) {
+      this.count = items.length
       if (this.count > 0) {
-        data.items.forEach(view => {
+        items.forEach(view => {
           // Add required icon
           view.icon = { name: (view.isDefault ? 'las la-star' : 'star_border') }
         })

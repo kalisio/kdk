@@ -213,11 +213,11 @@ export default {
         this.mode = 'list'
       }
     },
-    refreshCategories (data) {
-      this.count = data.items.length
+    refreshCategories (items) {
+      this.count = items.length
       if (this.count > 0) {
         // Add the list of layers as description
-        data.items.forEach(category => {
+        items.forEach(category => {
           category.description = category.layers.join(',')
         })
       } else {

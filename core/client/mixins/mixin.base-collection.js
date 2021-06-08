@@ -44,7 +44,7 @@ const baseCollectionMixin = {
             this.items = response.data
           }
           this.nbTotalItems = response.total
-          this.$emit('collection-refreshed', this.$data)
+          this.$emit('collection-refreshed', this.items)
         }, error => {
           this.$events.$emit('error', error)
         })
