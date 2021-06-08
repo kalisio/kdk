@@ -102,12 +102,10 @@ export default {
       this.refreshCollection()
     },
     baseQuery: function () {
-      this.refreshCollection()
-      this.currentPage = 1
+      this.resetCollection()
     },
     filterQuery: function () {
-      this.refreshCollection()
-      this.currentPage = 1
+      this.resetCollection()
     }
   },
   methods: {
