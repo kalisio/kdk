@@ -54,7 +54,7 @@ export default {
     getResourceId () {
       return _.get(this.resource, 'id', this.contextId)
     },
-    getResoureceService ()  {
+    getResoureceService () {
       return _.get(this.resource, 'service', 'organisations')
     },
     getSchema () {
