@@ -71,17 +71,13 @@ export default {
   watch: {
     $route (to, from) {
       // React to route changes but reusing the same component as this one is generic
-      this.refreshCollection()
+      this.resetCollection()
     },
     baseQuery: function () {
-      this.items = []
-      this.currentPage = 1
-      this.refreshCollection()
+      this.resetCollection()
     },
     filterQuery: function () {
-      this.items = []
-      this.currentPage = 1
-      this.refreshCollection()
+      this.resetCollection()
     }
   },
   methods: {
