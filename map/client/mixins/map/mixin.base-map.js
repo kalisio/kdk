@@ -16,10 +16,10 @@ import 'Leaflet.Geodesic'
 import 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import iso8601 from 'iso8601-js-period' // Required by leaflet.timedimension
-window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import { LeafletEvents, bindLeafletEvents } from '../../utils'
+window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 // Fix to make Leaflet assets be correctly inserted by webpack
 delete L.Icon.Default.prototype._getIconUrl
@@ -184,17 +184,17 @@ export default {
       return (layer || this.createLeafletLayer(processedOptions))
     },
     createLeafletTimedWmsLayer (options) {
-      let leafletOptions = options.leaflet || options
+      const leafletOptions = options.leaflet || options
       // Check for valid type
       if (leafletOptions.type !== 'tileLayer.wms') return
       let layer = this.createLeafletLayer(options)
       // Specific case of time dimension layer where we embed the underlying WMS layer
-      let timeDimension = _.get(leafletOptions, 'timeDimension')
+      const timeDimension = _.get(leafletOptions, 'timeDimension')
       if (timeDimension) {
         // It appears that sometimes the time resolution is missing, default as 1 day
         // Please refer to https://www.mapserver.org/ogc/wms_time.html#specifying-time-extents
         const timeRange = _.get(timeDimension, 'times')
-        if ((typeof timeRange === 'string') && (timeRange.split("/").length === 2)) {
+        if ((typeof timeRange === 'string') && (timeRange.split('/').length === 2)) {
           _.set(timeDimension, 'times', `${timeRange}/P1D`)
         }
         // As we'd like to control time on a per-layer basis create a specific time dimension object
