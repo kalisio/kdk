@@ -20,7 +20,7 @@
             :forecastModels="forecastModels"
             :forecastModelHandlers="forecastModelHandlers"
             :forecastModel="forecastModel"
-            :options="category.options || {}"></component>
+            :options="category.options || category"></component>
         </q-expansion-item>
       </template>
       <slot name="footer" />
