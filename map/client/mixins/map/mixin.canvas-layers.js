@@ -255,12 +255,17 @@ export default {
       if (layerOptions.type !== 'kanvasLayer') return
 
       const layer = this.createLeafletLayer(options)
-      this.setupCanvasLayer(layer, layerOptions.draw)
+      this.setCanvasLayerDrawCode(layer, layerOptions.draw)
+      if (layerOptions.userData) this.setCanvasLayerUserData(layer, layerOptions.userData)
+      if (layerOptions.autoRedraw) this.setCanvasLayerAutoRedraw(layer, layerOptions.autoRedraw)
       bindLeafletEvents(layer, ['click'], this, options)
       return layer
     },
 
-    setupCanvasLayer (layer, drawCode, autoRedraw = false) {
+    setCanvasLayerDrawCode (layer, drawCode, autoRedraw = false) {
+      const leafletLayer = typeof layer === 'string' ? this.getLeafletLayerByName(layer) : layer
+      if (!leafletLayer) return
+
       // helper function to manage listened layers states
       // since canvas layer draw stuff related to geojson layers
       // we listen to geojson layers 'update' event to mark our
@@ -278,14 +283,14 @@ export default {
       }
 
       // disconnect from previous geojson layers
-      updateListeners(layer, false)
+      updateListeners(leafletLayer, false)
 
-      layer.listenedLayers = {}
-      layer.drawCalls = []
-      layer.autoRedraw = autoRedraw
-      if (layer.userData === undefined) layer.userData = {}
+      leafletLayer.listenedLayers = {}
+      leafletLayer.drawCalls = []
+      leafletLayer.autoRedraw = autoRedraw
+      if (leafletLayer.userData === undefined) leafletLayer.userData = {}
 
-      layer.clearClickableFeatures()
+      leafletLayer.clearClickableFeatures()
 
       for (const d of drawCode) {
         /* eslint no-new-func: 0 */
@@ -297,7 +302,7 @@ with(this.proxy) { ${d.code} }
 
         if (d.feature) {
           const [srcLayer, srcFeature] = d.feature.split('?')
-          layer.drawCalls.push((context) => {
+          leafletLayer.drawCalls.push((context) => {
             const layer = this.getLeafletLayerByName(srcLayer)
             if (!layer) return
             const feature = layer._features ? layer._features[srcFeature] : undefined
@@ -306,26 +311,26 @@ with(this.proxy) { ${d.code} }
             drawCode.call(context)
           })
           // we'll have to listen source geojson layer 'update' event
-          if (!_.has(layer.listenedLayers, srcLayer)) layer.listenedLayers[srcLayer] = false
+          if (!_.has(leafletLayer.listenedLayers, srcLayer)) leafletLayer.listenedLayers[srcLayer] = false
         } else if (d.layer) {
-          layer.drawCalls.push((context) => {
+          leafletLayer.drawCalls.push((context) => {
             const layer = this.getLeafletLayerByName(d.layer)
             if (!layer) return
-            for (const feature of layer._features) {
+            for (const feature of Object.values(layer._features)) {
               context.feature = feature
               drawCode.call(context)
             }
           })
           // we'll have to listen source geojson layer 'update' event
-          if (!_.has(layer.listenedLayers, d.layer)) layer.listenedLayers[d.layer] = false
+          if (!_.has(leafletLayer.listenedLayers, d.layer)) leafletLayer.listenedLayers[d.layer] = false
         }
       }
 
-      if (!layer.onDrawLayer) {
+      if (!leafletLayer.onDrawLayer) {
         // build draw function for the layer
-        layer.onDrawLayer = (info) => {
+        leafletLayer.onDrawLayer = (info) => {
           // update listener states
-          updateListeners(layer, true)
+          updateListeners(leafletLayer, true)
 
           const ctx = info.canvas.getContext('2d')
           // build context for draw code
@@ -337,10 +342,10 @@ with(this.proxy) { ${d.code} }
               canvas: ctx,
               now: Date.now(),
               zoom: info.zoom,
-              latLonToCanvas: layer.latLonToCanvas.bind(layer),
-              clearClickableFeatures: layer.clearClickableFeatures.bind(layer),
-              addClickableFeature: layer.addClickableFeature.bind(layer),
-              userData: layer.userData
+              latLonToCanvas: leafletLayer.latLonToCanvas.bind(leafletLayer),
+              clearClickableFeatures: leafletLayer.clearClickableFeatures.bind(leafletLayer),
+              addClickableFeature: leafletLayer.addClickableFeature.bind(leafletLayer),
+              userData: leafletLayer.userData
             },
             // global context
             this.canvasLayerDrawContext)
@@ -348,40 +353,32 @@ with(this.proxy) { ${d.code} }
           // draw
           ctx.save()
           ctx.clearRect(0, 0, info.canvas.width, info.canvas.height)
-          for (const draw of layer.drawCalls) draw(context)
+          for (const draw of leafletLayer.drawCalls) draw(context)
           ctx.restore()
 
-          if (layer.autoRedraw) {
-            layer._frame = null
-            layer.needRedraw()
+          if (leafletLayer.autoRedraw) {
+            leafletLayer._frame = null
+            leafletLayer.needRedraw()
           }
         }
       }
     },
 
-    setCanvasLayerDrawCode (name, newDrawCode, autoRedraw = false) {
-      const layer = this.getLeafletLayerByName(name)
-      if (!layer) return
+    setCanvasLayerUserData (layer, userData) {
+      const leafletLayer = typeof layer === 'string' ? this.getLeafletLayerByName(layer) : layer
+      if (!leafletLayer) return
 
-      this.setupCanvasLayer(layer, newDrawCode, autoRedraw)
-      layer.needRedraw()
+      leafletLayer.userData = Object.assign(leafletLayer.userData, userData)
+      leafletLayer.needRedraw()
     },
 
-    setCanvasLayerUserData (name, userData) {
-      const layer = this.getLeafletLayerByName(name)
-      if (!layer) return
-
-      layer.userData = Object.assign(layer.userData, userData)
-      layer.needRedraw()
-    },
-
-    setCanvasLayerAutoRedraw (name, autoRedraw) {
-      const layer = this.getLeafletLayerByName(name)
-      if (!layer) return
+    setCanvasLayerAutoRedraw (layer, autoRedraw) {
+      const leafletLayer = typeof layer === 'string' ? this.getLeafletLayerByName(layer) : layer
+      if (!leafletLayer) return
 
       const needRedraw = !layer.autoRedraw && autoRedraw
-      layer.autoRedraw = autoRedraw
-      if (needRedraw) layer.needRedraw()
+      leafletLayer.autoRedraw = autoRedraw
+      if (needRedraw) leafletLayer.needRedraw()
     }
   },
 
