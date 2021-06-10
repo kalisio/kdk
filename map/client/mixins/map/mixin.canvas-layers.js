@@ -214,7 +214,7 @@ with(this.proxy) { ${d.code} }
           layer.drawCalls.push((context) => {
             const layer = this.getLeafletLayerByName(d.layer)
             if (!layer) return
-            for (const feature of layer._features) {
+            for (const feature of Object.values(layer._features)) {
               context.feature = feature
               drawCode.call(context)
             }
