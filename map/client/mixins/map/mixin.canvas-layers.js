@@ -289,6 +289,7 @@ export default {
       leafletLayer.drawCalls = []
       leafletLayer.autoRedraw = autoRedraw
       if (leafletLayer.userData === undefined) leafletLayer.userData = {}
+      if (leafletLayer.compatContext === undefined) leafletLayer.compatContext = {}
 
       leafletLayer.clearClickableFeatures()
 
@@ -347,6 +348,7 @@ with(this.proxy) { ${d.code} }
               addClickableFeature: leafletLayer.addClickableFeature.bind(leafletLayer),
               userData: leafletLayer.userData
             },
+            leafletLayer.compatContext,
             // global context
             this.canvasLayerDrawContext)
 
@@ -362,6 +364,8 @@ with(this.proxy) { ${d.code} }
           }
         }
       }
+
+      leafletLayer.needRedraw()
     },
 
     setCanvasLayerUserData (layer, userData) {
@@ -379,6 +383,20 @@ with(this.proxy) { ${d.code} }
       const needRedraw = !layer.autoRedraw && autoRedraw
       leafletLayer.autoRedraw = autoRedraw
       if (needRedraw) leafletLayer.needRedraw()
+    },
+
+    /* Compatibility methods */
+
+    updateCanvasLayerDrawCode (layerName, newDrawCode, autoRedraw = false) {
+      this.setCanvasLayerDrawCode(layerName, newDrawCode, autoRedraw)
+    },
+
+    setCanvasLayerContext (layerName, context) {
+      const leafletLayer = this.getLeafletLayerByName(layerName)
+      if (!leafletLayer) return
+
+      leafletLayer.compatContext = context
+      leafletLayer.needRedraw()
     }
   },
 
