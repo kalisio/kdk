@@ -18,7 +18,7 @@
         @scroll="onScroll">
         <template v-for="item in items">
           <component
-            class="q-pl-sm q-pr-md q-pt-sm q-pb-sm"
+            class="q-pl-sm q-pr-lg q-pt-sm q-pb-sm"
             :key="item._id"
             :id="item._id"
             :service="service"
@@ -29,7 +29,7 @@
             @item-selected="onItemSelected" />
         </template>
       </q-scroll-area>
-      <div v-if="scrollAction" class="row justify-center">
+      <div v-if="scrollAction" class="row justify-center q-pa-md">
         <k-action 
           id="scroll-action"
           icon="las la-angle-double-down"
@@ -39,7 +39,7 @@
       </div>
     </div>
     <div v-else>
-      <slot name="empty-section">
+      <slot name="empty-column">
         <div class="row justify-center">
           <k-stamp 
             icon="las la-exclamation-circle" 

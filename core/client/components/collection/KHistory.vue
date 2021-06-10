@@ -9,21 +9,35 @@
       :append-items="true" 
       :height="height"
       style="min-width: 100%;" 
-      @collection-refreshed="onCollectionRefreshed" />
+      @collection-refreshed="onCollectionRefreshed">
+      <template slot="empty-column">
+        <slot name="empty-history">
+          <div class="row justify-center">
+            <k-stamp 
+              icon="las la-exclamation-circle" 
+              icon-size="1.6rem" 
+              :text="$t('KColumn.EMPTY_COLUMN')" 
+              direction="horizontal" />
+          </div>
+        </slot>
+      </template>
+    </k-column>
   </q-timeline>
 </template>
 
 <script>
 import _ from 'lodash'
-import { QInfiniteScroll } from 'quasar'
+import KColumn from './KColumn.vue'
+import KStamp from '../frame/KStamp.vue'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-history',
-  mixins: [mixins.service],
-  components: {
-    QInfiniteScroll
+  components: { 
+    KColumn,
+    KStamp
   },
+  mixins: [mixins.service],
   props: {
     renderer: {
       type: Object,
@@ -60,10 +74,6 @@ export default {
         item.side = (index % 2 ? 'left' : 'right')
       })
     }
-  },
-  beforeCreate () {
-    this.$options.components['k-column'] = this.$load('collection/KColumn')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   created () {
     // Load the component

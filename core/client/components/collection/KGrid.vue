@@ -26,10 +26,14 @@
 </template>
 
 <script>
+import KStamp from '../frame/KStamp.vue'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-grid',
+  components: {
+    KStamp
+  },
   mixins: [
     mixins.service,
     mixins.baseCollection
@@ -45,15 +49,11 @@ export default {
     },
     baseQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => {}
     },
     filterQuery: {
       type: Object,
-      default: function () {
-        return {}
-      }
+      default: () => {}
     },
     listStrategy: {
       type: String
@@ -85,7 +85,6 @@ export default {
   created () {
     // Load the component
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     // Refresh collection
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well

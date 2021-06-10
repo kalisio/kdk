@@ -18,8 +18,13 @@
 </template>
 
 <script>
+import KColumn from './KColumn.vue'
+
 export default {
   name: 'k-board',
+   components: { 
+    KColumn
+  },
   props: {
     columns: {
       type: Array,
@@ -29,9 +34,6 @@ export default {
       type: Number,
       required: true
     }
-  },
-  beforeCreate () {
-    this.$options.components['k-column'] = this.$load('collection/KColumn')
   }
 }
 </script>
