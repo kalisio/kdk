@@ -247,11 +247,17 @@ This mixin assumes that your component has initialized its [Weacast client](http
 Make it possible to draw custom graphic elements on top of other layers using HTML canvas elements. These custom graphic elements are defined by their draw function and are run in the client application, using a controlled draw context. It is not possible for these draw functions to access anything outside the specified context.
 
 * **createLeafletCanvasLayer (options)** is automatically registered to allow creation of such Leaflet layer.
-* **updateCanvasLayerDrawCode (layerName, newDrawCode, autoRedraw)** update the draw code used by the layer named `layerName`. `autoRedraw` is a boolean used to enable automatic refresh of the layer at each displayed frame (required eg. to animate elements). `newDrawCode` is expected to be an array of objects where each object is of the following form :
+
+* **setCanvasLayerDrawCode (layerName, drawCode, autoRedraw)** define the draw code used by the layer named `layerName`. `autoRedraw` is a boolean used to enable automatic refresh of the layer at each displayed frame (required eg. to animate elements). `drawCode` is expected to be an array of objects where each object is of the following form :
   * `{ feature: 'LAYER_NAME?FEATURE_NAME', code: '... some javascript draw code ...' }` will run the given draw code only for the feature named `FEATURE_NAME` in the layer named `LAYER_NAME`.
   * `{ layer: 'LAYER_NAME', code: '... some javascript draw code ...' }` will run the given draw code for each feature of the layer named `LAYER_NAME`.
 
-* **setCanvasLayerContext (layerName, userContext)** is used to add some user provided members to the draw context. The `userContext` object will be merged with the application draw context and it's member will become available to the draw functions.
+* **setCanvasLayerUserData (layerName, userData)** is used to add some custom user data to the draw context. The `userData` object parameter will be merged into the `userData` object available on the draw context. This allows users to push partial updates, there's no need to push the whole user data every time a single member changes.
+
+* **setCanvasLayerAutoRedraw (layerName, autoRedraw)** is used to enable or disable automatic redraw of the canvas layer named `layerName`. Automatic redraw may be required for example when animating objects. By default automatic redraw is off, which means that the canvas layer will only redraw when :
+  * the user moves the map
+  * `setCanvasLayerDrawCode` is called
+  * `setCanvasLayerUserData` is called
 
 The following configuration illustrates a layer used to draw feature property **name** as text at the feature position for all features of the layer named **Airports**.
 
@@ -287,19 +293,18 @@ By default, the following fields are available on the draw context :
 * **canvas** the canvas rendering interface by which the drawing will occur. Draw api is available [here](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D).
 * **now** the time of the draw function call, can be useful to animate things.
 * **zoom** the current map zoom value.
-* **latLonToCanvas (coords)** a helper method to project from latitude/longitude to canvas coordinates (pixels).
-* **vec2 (a, b)** a helper method to build a vec2 object from two points (where points and vec2 are objects with `x` and `y` members ).
-* **len2 (vec)** a helper method to compute length of a vec2 vector.
-* **scale2 (vec, value)** a helper method to scale a vec2 vector by `value`.
-* **norm2 (vec)** a helper method to return the corresponding normalized vec2 vector.
+* **latLonToCanvas (coords)** project from latitude/longitude to canvas coordinates (pixels).
+* **addClickableFeature (geojson, path, clickStyle)** add a clickable [path element](https://developer.mozilla.org/en-US/docs/Web/API/Path2D) associated with the `geojson` feature. When clicked, it will emit a 'clicked' event with the associated feature as event data.
+* **clearClickableFeatures ()** clear all the clickable features that have been added so far.
+* **userData** object where all the user data pushed through `setCanvasLayerUserData` has been merged.
+* **vec2 (a, b)** build a vec2 object from two points (where points and vec2 are objects with `x` and `y` members ).
+* **len2 (vec)** compute length of a vec2 vector.
+* **scale2 (vec, value)** scale a vec2 vector by `value`.
+* **norm2 (vec)** return the corresponding normalized vec2 vector.
 
 ::: tip
-Customizing the draw context is useful to build an application specific library of draw functions and make these available to the layer specified draw code.
+It is possible to extend what's available in the draw context from the application using the `CanvasDrawContext` singleton. In this case you should call `CanvasDrawContext.merge(contextAdditionObject)` to merge the content of `contextAdditionObject` with the draw context. This call must be done before the canvas layer mixin is created. This can be useful to build an application specific library of draw functions and make these available to the canvas layer instances.
 :::
-
-The draw context can be customized:
- * by the application using the `CanvasDrawContext` singleton. In this case you should call `CanvasDrawContext.merge(contextAdditionObject)`  to merge the content of `contextAdditionObject` with the draw context. This call must be done before the canvas layer mixin is created.
- * at runtime, by the client using the `setCanvasLayerContext` method.
 
 ## Map Activity
 
