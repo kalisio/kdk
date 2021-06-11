@@ -1,16 +1,19 @@
 <template>
-  <q-page :padding="padding">
+  <q-page :padding="padding" :style-fn="layoutOffsetListener">
     <!--
       Specific page content: can be provided as slot and/or by configuration
      -->
-    <div :style="contentStyle">
-      <slot id="page-content" name="page-content"></slot>
-      <k-content
-        id="page"
-        v-show="page.content && page.mode"
-        :content="page.content"
-        :mode="page.mode"
-        :filter="page.filter" />
+    <div id="page-content-container" :style="contentStyleFunction">
+      <div class="fit">
+        <q-resize-observer @resize="onContentResized" />
+        <slot id="page-content" name="page-content"></slot>
+        <k-content
+          id="page"
+          v-show="page.content && page.mode"
+          :content="page.content"
+          :mode="page.mode"
+          :filter="page.filter" />
+      </div>
     </div>
     <!--
       Managed stickies
@@ -106,8 +109,17 @@ export default {
     }
   },
   computed: {
-    contentStyle () {
-      return `padding-top: ${this.topPadding}px; padding-bottom: ${this.bottomPadding}px`
+    contentStyleFunction () {
+      const layoutPadding = this.padding ? 24 * 2 : 0
+      const widthOffset = layoutPadding
+      const heightOffset = this.layoutOffset + layoutPadding
+      return {
+        paddingTop: `${this.topPadding}px`,
+        paddingBottom: `${this.bottomPadding}px`,
+        paddingRight: `${this.rightPadding}px`,
+        widht: `calc(100vw - ${widthOffset}px)`,
+        height: `calc(100vh - ${heightOffset}px)`
+      }
     },
     isTopPaneOpened: {
       get: function () {
@@ -173,6 +185,7 @@ export default {
       hasTopPaneOpener: false,
       hasRightPaneOpener: false,
       hasBottomPaneOpener: false,
+      layoutOffset: 0,
       topPadding: 0,
       leftPadding: 0,
       bottomPadding: 0,
@@ -196,17 +209,26 @@ export default {
     }
   },
   methods: {
+   layoutOffsetListener (offset) {
+      // Catch layout offset and returns default Quasar function
+      // see https://quasar.dev/layout/page#style-fn
+      this.layoutOffset = offset
+      return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
+    },
+    onContentResized (size) {
+      this.$emit('content-resized', size)
+    },
     onTopPaneResized (size) {
-      this.topPadding = size.height + this.gutter
+      this.topPadding = size.height
     },
     onLeftPaneResized (size) {
-      this.leftPadding = size.width + this.gutter
+      this.leftPadding = size.width
     },
     onRightPaneResized (size) {
-      this.rightPaddding = size.width + this.gutter
+      this.rightPaddding = size.width 
     },
     onBottomPaneResized (size) {
-      this.bottomPadding = size.height + this.gutter
+      this.bottomPadding = size.height 
     },
     setTopPaneVisible (visible) {
       this.$store.patch('topPane', { visible })
@@ -261,11 +283,9 @@ export default {
   border: solid 1px lightgrey;
   border-radius: 5px;
 }
-
 .k-pane:hover, .k-left-pane:hover {
   border: solid 1px var(--q-color-primary);
 }
-
 .k-left-pane {
   height: 100vh;
   width: 300px;
