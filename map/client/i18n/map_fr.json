@@ -315,8 +315,10 @@
     "RECENTER_BUTTON": "Recentrer la carte"
   },
   "KLocationInput": {
-    "GEOLOCATE": "Ma position",
-    "LOCATION_MAP": "Carte de localisation"
+    "SEARCH_LOCATION": "Rechercher une adresse",
+    "GEOLOCATE": "Me localiser",
+    "MY_LOCATION": "Ma position",
+    "LOCATION_MAP": "Placer un repère sur une carte"
   },
   "KPositionIndicator": {
     "PLACEHOLDER": "Naviguez pour voir les coordonnées",

@@ -1,60 +1,59 @@
 <template>
   <div class="row items-center no-wrap">
-    <!--
-      User location
-    -->
-    <q-btn v-if="user" id="geolocate" icon="las la-street-view" color="primary" :flat="!geolocated" dense round @click="geolocate()">
-      <q-tooltip>{{ $t('KLocationInput.GEOLOCATE') }}</q-tooltip>
-    </q-btn>
-    <!--
-      Location map
-    -->
-    <q-btn v-if="map" id="show-location-map" icon="las la-map-marker" color="primary" flat dense round>
-      <q-tooltip>{{ $t('KLocationInput.LOCATION_MAP') }}</q-tooltip>
-      <q-popup-proxy transition-show="scale" transition-hide="scale">
-        <q-card>
-          <k-location-map v-model="location" width="350px" height="400px" :editable="map.editable" :toolbar="true" @input="onUpdated" />
-        </q-card>
-      </q-popup-proxy>
-    </q-btn>
-    <!--
-      Search location
-    -->
-    <q-select
-      id="search-location"
-      v-show="search"
-      class="col-grow"
-      borderless
-      :dense="dense"
-      clearable
-      use-input
-      v-model="location"
-      hide-dropdown-icon
-      :options="options"
-      option-label="name"
-      option-value="name"
-      @filter="onSearch"
-      @input="onUpdated">
-      <template v-slot:prepend>
-        <q-icon :dense="dense" name="search" />
-      </template>
-      <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey">
-            {{ $t('KLocationField.NO_RESULTS') }}
-          </q-item-section>
-        </q-item>
-      </template>
-    </q-select>
+    <div class="col">
+      <q-option-group
+        :options="options"
+        type="radio"
+        v-model="mode"
+        @input="onModeChanged"
+      />
+      <!-- Search location -->
+      <q-select v-show="mode === 'search'"
+        id="search-location"
+        class="col-grow"
+        borderless
+        :dense="dense"
+        clearable
+        use-input
+        v-model="location"
+        hide-dropdown-icon
+        :options="serachOptions"
+        option-label="name"
+        option-value="name"
+        @filter="onSearch"
+        @input="onUpdated">
+        <template v-slot:prepend>
+          <q-icon :dense="dense" name="search" />
+        </template>
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              {{ $t('KLocationField.NO_RESULTS') }}
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+    </div>
+    <!-- Location map -->
+    <div class="col">
+      <div v-show="hasLocation" id="show-location-map" style="width: 100%; height: 250px">
+        <k-location-map v-model="location" :editable="mode === 'map'" :toolbar="true" @input="onUpdated" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
+import { QOptionGroup } from 'quasar'
 import { formatGeocodingResult, formatUserCoordinates } from '../utils'
 import { Geolocation } from '../geolocation'
 
 export default {
   name: 'k-location-input',
+  components: {
+    QOptionGroup,
+  },
   props: {
     value: {
       type: Object,
@@ -88,14 +87,24 @@ export default {
     }
   },
   computed: {
+    hasLocation () {
+      return _.has(this.location, 'latitude') && _.has(this.location, 'longitude')
+    },
     locationName () {
       return this.location ? this.location.name : ''
     }
   },
   data () {
+    let options = []
+    if (this.search) options.push({ label: this.$i18n.t('KLocationInput.SEARCH_LOCATION'), value: 'search' })
+    if (this.user) options.push({ label: this.$i18n.t('KLocationInput.GEOLOCATE'), value: 'user' })
+    if (this.map) options.push({ label: this.$i18n.t('KLocationInput.LOCATION_MAP'), value: 'map' })
+    
     return {
+      mode: null,
+      options,
       location: null,
-      options: []
+      serachOptions: []
     }
   },
   methods: {
@@ -112,6 +121,11 @@ export default {
         this.location = null
       }
       this.$emit('input', this.location)
+    },
+    onModeChanged (mode) {
+      // Reset current location
+      this.location = null
+      if ((mode === 'user') || (mode === 'map')) this.geolocate()
     },
     async onSearch (pattern, update, abort) {
       if (pattern.length < 3) {
@@ -132,7 +146,7 @@ export default {
         }
         places.push(place)
       })
-      update(() => { this.options = places })
+      update(() => { this.serachOptions = places })
     },
     onUpdated (value) {
       this.$emit('input', this.location)
@@ -144,9 +158,18 @@ export default {
     // Populate the component
     if (this.value) {
       this.location = this.value
-      // Set name as coordinates if not given
-      if (!this.location.name && this.location.latitude && this.location.longitude) {
-        this.location.name = formatUserCoordinates(this.location.latitude, this.location.longitude, this.$store.get('locationFormat', 'FFf'))
+      if (this.location.latitude && this.location.longitude) {
+        const coordinates = formatUserCoordinates(this.location.latitude, this.location.longitude, this.$store.get('locationFormat', 'FFf'))
+        // Set name as coordinates if not given
+        if (!this.location.name) {
+          // If name is not given we are in map mode
+          this.location.name = coordinates
+          this.mode = 'map'
+        } else {
+          // If name is not given as coordinates we are in address mode
+          if (this.location.name != coordinates) this.mode = 'search'
+          else this.mode = 'map'
+        }
       }
     }
   }

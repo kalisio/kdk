@@ -313,8 +313,10 @@
     "RECENTER_BUTTON": "Recenter map"
   },
   "KLocationInput": {
-    "GEOLOCATE": "My position",
-    "LOCATION_MAP": "Location map"
+    "SEARCH_LOCATION": "Seek for an address",
+    "GEOLOCATE": "Locate me",
+    "MY_LOCATION": "My location",
+    "LOCATION_MAP": "Pick on a map"
   },
   "KPositionIndicator": {
     "PLACEHOLDER": "Navigate the see the coordinates",

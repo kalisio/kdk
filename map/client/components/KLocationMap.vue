@@ -1,25 +1,23 @@
 <template>
-  <div :style="containerStyle">
-    <div class="fit column">
-      <div v-if="toolbar" class="full-width row">
-        <q-toolbar class="q-pl-sm q-pr-sm bg-accent text-white">
-          <k-text-area :text="location.name" />
-          <q-space />
-          <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
-            <q-tooltip>
-              {{ $t('KLocationMap.RESTORE_BUTTON') }}
-            </q-tooltip>
-          </q-btn>
-          <q-btn icon="las la-search-location" flat round dense @click="centerMap">
-            <q-tooltip>
-              {{ $t('KLocationMap.RECENTER_BUTTON') }}
-            </q-tooltip>
-          </q-btn>
-        </q-toolbar>
-      </div>
-      <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
-        <q-resize-observer @resize="onMapResized" />
-      </div>
+  <div class="fit column">
+    <div v-if="toolbar" class="full-width row">
+      <q-toolbar class="q-pl-sm q-pr-sm bg-accent text-white">
+        <k-text-area :text="location.name" />
+        <q-space />
+        <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
+          <q-tooltip>
+            {{ $t('KLocationMap.RESTORE_BUTTON') }}
+          </q-tooltip>
+        </q-btn>
+        <q-btn icon="las la-search-location" flat round dense @click="centerMap">
+          <q-tooltip>
+            {{ $t('KLocationMap.RECENTER_BUTTON') }}
+          </q-tooltip>
+        </q-btn>
+      </q-toolbar>
+    </div>
+    <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
+      <q-resize-observer @resize="onMapResized" />
     </div>
   </div>
 </template>
@@ -44,14 +42,6 @@ export default {
       default: () => {
         return null
       }
-    },
-    width: {
-      type: String,
-      default: undefined
-    },
-    height: {
-      type: String,
-      default: '200px'
     },
     mapOptions: {
       type: Object,
@@ -86,12 +76,6 @@ export default {
       default: false
     }
   },
-  computed: {
-    containerStyle () {
-      if (this.width) return `width: ${this.height}; height: ${this.height}`
-      return `height: ${this.height}`
-    }
-  },
   data () {
     return {
       location: this.defaultLocation(),
@@ -100,6 +84,11 @@ export default {
   },
   watch: {
     value: {
+      handler () {
+        this.refreshLocation()
+      }
+    },
+    editable: {
       handler () {
         this.refreshLocation()
       }
@@ -134,19 +123,16 @@ export default {
       // Center the map
       this.centerMap()
       // Updated the marker
-      if (!this.marker) {
-        this.marker = L.marker([this.location.latitude, this.location.longitude], {
-          icon: L.icon.fontAwesome(this.markerStyle),
-          draggable: this.editable
-        })
-        if (this.location.name) {
-          this.marker.bindPopup(this.location.name)
-        }
-        this.marker.addTo(this.map)
-        if (this.editable) this.marker.on('drag', this.onLocationDragged)
-      } else {
-        this.marker.setLatLng([this.location.latitude, this.location.longitude])
+      if (this.marker) this.marker.removeFrom(this.map)
+      this.marker = L.marker([this.location.latitude, this.location.longitude], {
+        icon: L.icon.fontAwesome(this.markerStyle),
+        draggable: this.editable
+      })
+      if (this.location.name) {
+        this.marker.bindPopup(this.location.name)
       }
+      this.marker.addTo(this.map)
+      if (this.editable) this.marker.on('drag', this.onLocationDragged)
       this.isModified = false
     },
     onLocationDragged () {
