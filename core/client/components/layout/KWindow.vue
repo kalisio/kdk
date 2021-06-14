@@ -53,7 +53,7 @@ export default {
         {
           id: 'change-mode',
           icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
-          tooltip: this.mode === 'minimized' ? 'KWindow.MINIMIZE_ACTION' : 'KWindow.MAXIMIZE_ACTION',
+          tooltip: this.mode === 'minimized' ? 'KWindow.MAXIMIZE_ACTION' : 'KWindow.MINIMIZE_ACTION',
           handler: this.onModeChanged
         },
         {
