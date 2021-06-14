@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-start items-center q-gutter-sm">
+  <div class="row justify-start items-center q-gutter-x-sm">
     <template v-for="chip in chips">
       <q-chip
         :key="getValue(chip)"
@@ -32,10 +32,11 @@ export default {
       return _.get(chip, 'value', chip)
     },
     getColor (chip) {
-      return _.get(chip, 'icon.color', 'grey-7')
+      const color = _.get(chip, 'icon.color')
+      return _.isEmpty(color) ? 'grey-7' : color
     },
     hasIcon (chip) {
-      return _.get(chip, 'icon')
+      return chip.icon
     },
     getIcon (chip) {
       return getIconName(chip)
