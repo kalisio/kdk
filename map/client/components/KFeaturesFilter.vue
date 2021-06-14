@@ -112,7 +112,7 @@ export default {
         properties.field.chips = true
         // Get available values
         const values = await this.$api.getService(this.layer.service, this.contextId)
-          .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
+          .find({ query: Object.assign({ $distinct: `properties.${property}` }, _.omit(this.layer.baseQuery, this.getCurrentLayerFilters())) })
         // We don't have label in that case
         properties.field.options = values.map(value => ({ value, label: (_.isNil(value) ? 'NIL' : value) }))
       }
@@ -202,13 +202,18 @@ export default {
       // Required to update the array to make it reactive
       this.filters = this.filters.filter(item => item.key !== filter.key)
     },
-    async onApply () {
-      logger.debug('Applying layer filter', this.filters)
-      // Reset filters
-      _.forOwn(this.layer.baseQuery, (queryValue, queryKey) => {
+    getCurrentLayerFilters () {
+      return _.keys(this.layer.baseQuery).filter(queryKey => {
         const field = _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
         // Do not rely on _.unset here as the key should use dot notation, e.g. 'properties.xxx'
         if (field) delete this.layer.baseQuery[queryKey]
+      })
+    },
+    async onApply () {
+      logger.debug('Applying layer filter', this.filters)
+      // Reset filters
+      this.getCurrentLayerFilters().forEach(queryKey => {
+        delete this.layer.baseQuery[queryKey]
       })
       // Update filters
       this.filters.forEach(filter => {
