@@ -1,6 +1,6 @@
 <template>
-  <div class="row items-center no-wrap">
-    <div class="col">
+  <div class="row items-center">
+    <div class="col-12 col-md-5">
       <q-option-group
         :options="options"
         type="radio"
@@ -35,7 +35,7 @@
       </q-select>
     </div>
     <!-- Location map -->
-    <div class="col">
+    <div class="col-12 col-md-7">
       <div v-show="hasLocation || (mode === 'draw')" id="show-location-map" style="width: 100%; height: 250px">
         <k-location-map v-model="location" :editable="mode === 'map'" :drawable="mode === 'draw'" :toolbar="true" @input="onUpdated" />
       </div>
@@ -159,7 +159,8 @@ export default {
     // Populate the component
     if (this.value) {
       this.location = this.value
-      if (this.location.latitude && this.location.longitude) {
+      // Simple location ?
+      if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
         const coordinates = formatUserCoordinates(this.location.latitude, this.location.longitude, this.$store.get('locationFormat', 'FFf'))
         // Set name as coordinates if not given
         if (!this.location.name) {
@@ -171,6 +172,8 @@ export default {
           if (this.location.name !== coordinates) this.mode = 'search'
           else this.mode = 'map'
         }
+      } else if (_.has(this.location, 'coordinates')) { // GeoJson geometry
+        this.mode = 'draw'
       }
     }
   }

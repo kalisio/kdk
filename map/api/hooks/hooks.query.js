@@ -108,6 +108,10 @@ export function asGeoJson (options = {}) {
     const query = params.query
     if (!options.force && !params.asGeoJson) return
     if (query.$distinct) return // Not applicable in this case
+    const longitudeProperty = (options.longitudeProperty || 'longitude')
+    const latitudeProperty = (options.latitudeProperty || 'latitude')
+    const altitudeProperty = (options.altitudeProperty || 'altitude')
+    const geometryProperty = (options.geometryProperty || 'geometry')
     let results = hook.result
     // Already as GeoJson ?
     if (results.type === 'FeatureCollection') return
@@ -115,21 +119,19 @@ export function asGeoJson (options = {}) {
     results = Array.isArray(results) ? results : results.data
     results = results
       .filter(item => {
-        // Item locations are not already in GeoJson feature format so we need to convert if we can
-        if (options.longitudeProperty && options.latitudeProperty) {
-          return _.has(item, options.longitudeProperty) && _.has(item, options.latitudeProperty)
-        } else {
-          return true
-        }
+        // Check if item are not already in GeoJson feature format and we can convert if required
+        return (_.has(item, longitudeProperty) && _.has(item, latitudeProperty)) ||
+               // Check for a geometry property or an already transformed item
+               _.has(item, geometryProperty + '.coordinates')
       })
       .map(item => {
         let coordinates
         // Item locations are not already in GeoJson feature format so we need to convert
         // Keep track of coordinates before picking properties
-        if (options.longitudeProperty && options.latitudeProperty) {
-          coordinates = [_.get(item, options.longitudeProperty), _.get(item, options.latitudeProperty)]
-          if (options.altitudeProperty && _.has(item, options.altitudeProperty)) {
-            coordinates.push(_.get(item, options.altitudeProperty))
+        if (_.has(item, longitudeProperty) && _.has(item, latitudeProperty)) {
+          coordinates = [_.get(item, longitudeProperty), _.get(item, latitudeProperty)]
+          if (_.has(item, altitudeProperty)) {
+            coordinates.push(_.get(item, altitudeProperty))
           }
         }
         if (options.pick) {
@@ -139,10 +141,14 @@ export function asGeoJson (options = {}) {
           item = _.omit(item, options.omit)
         }
         // Item locations are not already in GeoJson feature format so we need to convert
-        if (options.longitudeProperty && options.latitudeProperty) {
-          return Object.assign({ type: 'Feature', geometry: { type: 'Point', coordinates }, properties: {} }, item)
+        if (coordinates) {
+          return Object.assign({
+            type: 'Feature', geometry: { type: 'Point', coordinates }, properties: {}
+          }, _.omit(item, [longitudeProperty, latitudeProperty]))
         } else {
-          return item
+          return Object.assign({
+            type: 'Feature', geometry: _.get(item, geometryProperty), properties: {}
+          }, _.omit(item, [geometryProperty]))
         }
       })
     // Move some data to properties ?

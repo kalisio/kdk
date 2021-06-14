@@ -93,27 +93,31 @@ export default {
   },
   data () {
     return {
-      location: this.defaultLocation(),
-      isModified: false
+      location: this.defaultLocation()
     }
   },
   watch: {
     value: function () {
       this.refreshLocation()
+      this.refreshDraw()
     },
     editable: function () {
       this.refreshLocation()
+      this.refreshDraw()
     },
     drawable: function () {
+      this.refreshLocation()
       this.refreshDraw()
     }
   },
   methods: {
     defaultLocation () {
+      const latitude = this.$store.get('geolocation.position.latitude', 0)
+      const longitude = this.$store.get('geolocation.position.longitude', 0)
       return {
-        name: '',
-        latitude: this.$store.get('geolocation.position.latitude', 0),
-        longitude: this.$store.get('geolocation.position.longitude', 0)
+        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf')),
+        latitude,
+        longitude
       }
     },
     centerMap () {
@@ -124,7 +128,6 @@ export default {
       }
     },
     clearLocation () {
-      this.isModified = false
       if (this.marker) {
         this.marker.off('drag', this.onLocationDragged)
         this.marker.removeFrom(this.map)
@@ -132,9 +135,10 @@ export default {
       }
     },
     clearDraw () {
-      if (this.drawLayer) this.map.removeLayer(this.drawLayer)
-      this.drawLayer = null
-      this.isModified = false
+      if (this.drawLayer) {
+        this.map.removeLayer(this.drawLayer)
+        this.drawLayer = null
+      }
       this.map.pm.disableDraw()
       unbindLeafletEvents(this.map, ['pm:create'])
       this.map.pm.setGlobalOptions({ layerGroup: null })
@@ -142,7 +146,7 @@ export default {
     async refreshLocation () {
       this.clearLocation()
       if (this.drawable) return
-      // Updated the location
+      // Update the location
       if (this.value) {
         this.location = this.value
       } else {
@@ -156,6 +160,7 @@ export default {
           }
         }
       }
+      if (!_.has(this.location, 'latitude') || !_.has(this.location, 'longitude')) return
       // Center the map
       this.centerMap()
       // Create the marker
@@ -176,11 +181,20 @@ export default {
       this.location.name = formatUserCoordinates(this.marker.getLatLng().lat, this.marker.getLatLng().lng, this.$store.get('locationFormat', 'FFf'))
       this.location.latitude = this.marker.getLatLng().lat
       this.location.longitude = this.marker.getLatLng().lng
-      this.isModified = true
+      this.$emit('input', this.location)
     },
     refreshDraw () {
       this.clearDraw()
       if (!this.drawable) return
+      // Update the location
+      if (this.value) {
+        this.location = this.value
+        this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.location })
+        this.map.addLayer(this.drawLayer)
+      }
+      if (!_.has(this.location, 'coordinates')) return
+      // Center the map
+      this.centerMap()
     },
     startDraw(shape) {
       // Clear any previous edition
@@ -195,10 +209,10 @@ export default {
       bindLeafletEvents(this.map, ['pm:create'], this)
     },
     stopDraw() {
-      this.isModified = true
       const geoJson = this.drawLayer.toGeoJSON()
       // The location is the feature geometry
       this.location = _.get(geoJson, 'features[0].geometry')
+      this.$emit('input', this.location)
     },
     onStartLine () {
       this.startDraw('Line')
@@ -237,9 +251,8 @@ export default {
   },
   beforeDestroy () {
     this.$off('pm:create', this.stopDraw)
-  },
-  destroyed () {
-    if (this.isModified) this.$emit('input', this.location)
+    if (this.drawable) this.clearDraw()
+    else this.clearLocation()
   }
 }
 </script>
