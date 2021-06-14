@@ -19,11 +19,20 @@ The generator signature and return type depends on the mapping engine, please re
 
 ## Infobox
 
-Used to add the default [Infobox](../map/components.md#infobox) style to your 2D and 3D activities.
+Used to add [information box](../map/components.md#infobox) style to your 2D and 3D activities. This makes it possible to display metadata provided as GeoJson feature properties.
+
+Use **register/unregisterStyle(`infobox`, generator)** to (un)register a function **f(feature, options)** returning the feature properties to be displayed. The mixin automatically registers a default generator that will create an information box displaying a property name/value table based on the following options with the following order of precedence
+  * **infobox**: set on **feature.properties** or layer descriptor or in the **infobox** property of component options
+    * **pick**: array of property names to appear in the information box
+    * **omit**: array of property names not to appear in the information box
 
 ## Feature Selection
 
-Used to support feature selection on your 2D and 3D activities.
+Used to support feature selection on your 2D and 3D activities. A selected feature will be automtically highlighted on the map and (un)selecting a feature will automatically (hide) show [map widgets](../map/components.md#widgets).
+
+::: tip
+If you'd like to make your features unselectable simply create your layer with the `isSelectable` property set to `false`.
+:::
 
 ## Feature Service
 
