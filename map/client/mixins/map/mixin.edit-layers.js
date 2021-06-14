@@ -1,8 +1,5 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import '@geoman-io/leaflet-geoman-free'
-import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
-import i18next from 'i18next'
 import { Dialog, uid } from 'quasar'
 import { bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 
@@ -15,7 +12,7 @@ export default {
       // Retrieve base options first
       const { onEachFeature } = this.getGeoJsonOptions(options)
       return {
-        // allow interaction with geoman edition
+        // Allow geoman edition
         pmIgnore: false,
         onEachFeature,
         // Use default styling when editing as dynamic styling can conflict
@@ -23,7 +20,8 @@ export default {
           return Object.assign({}, this.activityOptions.engine.editFeatureStyle || this.activityOptions.engine.featureStyle)
         },
         pointToLayer: (feature, latlng) => {
-          return this.createMarkerFromStyle(latlng, Object.assign({}, this.activityOptions.engine.editPointStyle || this.activityOptions.engine.pointStyle))
+          return this.createMarkerFromStyle(latlng, Object.assign({ pmIgnore: false }, // Allow geoman edition
+            this.activityOptions.engine.editPointStyle || this.activityOptions.engine.pointStyle))
         }
       }
     },
@@ -31,31 +29,17 @@ export default {
       const leafletLayer = this.getLeafletLayerByName(layer.name)
       if (!leafletLayer) return
 
-      // Make sure geoman is initialized on the map
-      if (this.map.pm === undefined) {
-        this.map.options.pmIgnore = false
-        L.PM.reInitLayer(this.map)
-        this.map.pm.setLang(i18next.language)
-      }
-
       const mapEvents = ['pm:create']
       const layerEvents = ['pm:update', 'pm:remove', 'pm:dragend', 'pm:cut', 'pm:rotateend']
 
       if (this.editedLayer) { // Stop edition
-        // Make sure we end geoman too
+        // Make sure we end geoman
         if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
-        // robin: this doesn't seem to work ...
-        // this.map.pm.getGeomanDrawLayers().forEach((layer) => {
-        const layers = []
-        this.map.eachLayer((layer) => {
-          if (layer._drawnByGeoman !== true) return
-          layers.push(layer)
-        })
-        layers.forEach((layer) => { this.map.removeLayer(layer) })
         if (this.map.pm.globalEditModeEnabled()) this.map.pm.disableGlobalEditMode()
         if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
         if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
         if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
+        this.map.pm.setGlobalOptions({ layerGroup: null })
 
         // Remove UI
         unbindLeafletEvents(this.map, mapEvents)
@@ -75,6 +59,7 @@ export default {
         leafletLayer.clearLayers()
         this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
         this.map.addLayer(this.editableLayer)
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         // Add UI
         this.map.pm.addControls({
           position: 'bottomleft',
@@ -211,9 +196,6 @@ export default {
     if (this.activityOptions.engine.editPointStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editPointStyle, 'update-in-place')
   },
   mounted () {
-    // Do not create geoman structs everywhere
-    L.PM.setOptIn(true)
-
     this.$on('click', this.onEditFeatureProperties)
     this.$on('zoomend', this.onMapZoomWhileEditing)
     this.$on('pm:create', this.onFeatureCreated)

@@ -18,6 +18,9 @@ import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import iso8601 from 'iso8601-js-period' // Required by leaflet.timedimension
 import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
+import '@geoman-io/leaflet-geoman-free'
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
+import i18next from 'i18next'
 import { LeafletEvents, bindLeafletEvents } from '../../utils'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
@@ -28,6 +31,8 @@ L.Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 })
+// Do not create geoman structs everywhere
+L.PM.setOptIn(true)
 
 export default {
   data () {
@@ -43,6 +48,12 @@ export default {
       const viewerOptions = options || this.activityOptions.engine.viewer
       // Initialize the map
       this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
+      // Make sure geoman is initialized on the map
+      if (this.map.pm === undefined) {
+        this.map.options.pmIgnore = false
+        L.PM.reInitLayer(this.map)
+        this.map.pm.setLang(i18next.language)
+      }
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
       if (_.get(viewerOptions, 'scale', true)) this.setupScaleControl()
       if (_.get(viewerOptions, 'geolocate', true)) this.setupGeolocateControl()

@@ -36,8 +36,8 @@
     </div>
     <!-- Location map -->
     <div class="col">
-      <div v-show="hasLocation" id="show-location-map" style="width: 100%; height: 250px">
-        <k-location-map v-model="location" :editable="mode === 'map'" :toolbar="true" @input="onUpdated" />
+      <div v-show="hasLocation || (mode === 'draw')" id="show-location-map" style="width: 100%; height: 250px">
+        <k-location-map v-model="location" :editable="mode === 'map'" :drawable="mode === 'draw'" :toolbar="true" @input="onUpdated" />
       </div>
     </div>
   </div>
@@ -65,7 +65,7 @@ export default {
       type: Boolean,
       default: true
     },
-    geolocated: {
+    draw: {
       type: Boolean,
       default: false
     },
@@ -99,6 +99,7 @@ export default {
     if (this.search) options.push({ label: this.$i18n.t('KLocationInput.SEARCH_LOCATION'), value: 'search' })
     if (this.user) options.push({ label: this.$i18n.t('KLocationInput.GEOLOCATE'), value: 'user' })
     if (this.map) options.push({ label: this.$i18n.t('KLocationInput.LOCATION_MAP'), value: 'map' })
+    if (this.draw) options.push({ label: this.$i18n.t('KLocationInput.DRAW_MAP'), value: 'draw' })
     
     return {
       mode: null,

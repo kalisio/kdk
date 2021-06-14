@@ -309,6 +309,8 @@
     "NO_RESULTS": "$t(EMPTY)"
   },
   "KLocationMap": {
+    "DRAW_LINE": "Draw a line",
+    "DRAW_POLYGON": "Draw a polygon",
     "RESTORE_BUTTON": "Restore position",
     "RECENTER_BUTTON": "Recenter map"
   },
@@ -316,7 +318,8 @@
     "SEARCH_LOCATION": "Seek for an address",
     "GEOLOCATE": "Locate me",
     "MY_LOCATION": "My location",
-    "LOCATION_MAP": "Pick on a map"
+    "LOCATION_MAP": "Pick on a map",
+    "DRAW_MAP": "Draw on a map"
   },
   "KPositionIndicator": {
     "PLACEHOLDER": "Navigate the see the coordinates",

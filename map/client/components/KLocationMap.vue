@@ -4,6 +4,16 @@
       <q-toolbar class="q-pl-sm q-pr-sm bg-accent text-white">
         <k-text-area :text="location.name" />
         <q-space />
+        <q-btn v-if="drawable" icon="las la-road" flat round dense @click="onStartLine">
+          <q-tooltip>
+            {{ $t('KLocationMap.DRAW_LINE') }}
+          </q-tooltip>
+        </q-btn>
+        <q-btn v-if="drawable" icon="las la-draw-polygon" flat round dense @click="onStartPolygon">
+          <q-tooltip>
+            {{ $t('KLocationMap.DRAW_POLYGON') }}
+          </q-tooltip>
+        </q-btn>
         <q-btn v-if="editable" icon="las la-home" flat round dense @click="refreshLocation">
           <q-tooltip>
             {{ $t('KLocationMap.RESTORE_BUTTON') }}
@@ -25,10 +35,11 @@
 <script>
 import L from 'leaflet'
 import { colors } from 'quasar'
+import i18next from 'i18next'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import { Geolocation } from '../geolocation'
-import { setGatewayJwt, formatUserCoordinates } from '../utils'
+import { setGatewayJwt, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../utils'
 
 export default {
   name: 'k-location-map',
@@ -71,6 +82,10 @@ export default {
       type: Boolean,
       default: false
     },
+    drawable: {
+      type: Boolean,
+      default: false
+    },
     toolbar: {
       type: Boolean,
       default: false
@@ -83,15 +98,14 @@ export default {
     }
   },
   watch: {
-    value: {
-      handler () {
-        this.refreshLocation()
-      }
+    value: function () {
+      this.refreshLocation()
     },
-    editable: {
-      handler () {
-        this.refreshLocation()
-      }
+    editable: function () {
+      this.refreshLocation()
+    },
+    drawable: function () {
+      this.refreshDraw()
     }
   },
   methods: {
@@ -103,9 +117,31 @@ export default {
       }
     },
     centerMap () {
-      this.center(this.location.longitude, this.location.latitude, this.mapOptions.zoom)
+      if (this.drawable) {
+        if (this.drawLayer) this.map.fitBounds(this.drawLayer.getBounds())
+      } else {
+        this.center(this.location.longitude, this.location.latitude, this.mapOptions.zoom)
+      }
+    },
+    clearLocation () {
+      this.isModified = false
+      if (this.marker) {
+        this.marker.off('drag', this.onLocationDragged)
+        this.marker.removeFrom(this.map)
+        this.marker = null
+      }
+    },
+    clearDraw () {
+      if (this.drawLayer) this.map.removeLayer(this.drawLayer)
+      this.drawLayer = null
+      this.isModified = false
+      this.map.pm.disableDraw()
+      unbindLeafletEvents(this.map, ['pm:create'])
+      this.map.pm.setGlobalOptions({ layerGroup: null })
     },
     async refreshLocation () {
+      this.clearLocation()
+      if (this.drawable) return
       // Updated the location
       if (this.value) {
         this.location = this.value
@@ -122,24 +158,53 @@ export default {
       }
       // Center the map
       this.centerMap()
-      // Updated the marker
-      if (this.marker) this.marker.removeFrom(this.map)
-      this.marker = L.marker([this.location.latitude, this.location.longitude], {
-        icon: L.icon.fontAwesome(this.markerStyle),
-        draggable: this.editable
-      })
-      if (this.location.name) {
-        this.marker.bindPopup(this.location.name)
+      // Create the marker
+      if (!this.marker) {
+        this.marker = L.marker([this.location.latitude, this.location.longitude], {
+          icon: L.icon.fontAwesome(this.markerStyle),
+          draggable: this.editable,
+          pmIgnore: true
+        })
+        if (this.location.name) {
+          this.marker.bindPopup(this.location.name)
+        }
+        this.marker.addTo(this.map)
+        if (this.editable) this.marker.on('drag', this.onLocationDragged)
       }
-      this.marker.addTo(this.map)
-      if (this.editable) this.marker.on('drag', this.onLocationDragged)
-      this.isModified = false
     },
     onLocationDragged () {
       this.location.name = formatUserCoordinates(this.marker.getLatLng().lat, this.marker.getLatLng().lng, this.$store.get('locationFormat', 'FFf'))
       this.location.latitude = this.marker.getLatLng().lat
       this.location.longitude = this.marker.getLatLng().lng
       this.isModified = true
+    },
+    refreshDraw () {
+      this.clearDraw()
+      if (!this.drawable) return
+    },
+    startDraw(shape) {
+      // Clear any previous edition
+      this.clearDraw()
+      this.drawLayer = L.geoJson()
+      this.map.addLayer(this.drawLayer)
+      this.map.pm.setGlobalOptions({ layerGroup: this.drawLayer })
+      this.map.pm.enableDraw(shape, {
+        snappable: true,
+        snapDistance: 20,
+      })
+      bindLeafletEvents(this.map, ['pm:create'], this)
+    },
+    stopDraw() {
+      this.isModified = true
+      const geoJson = this.drawLayer.toGeoJSON()
+      // The location is the feature geometry
+      this.location = _.get(geoJson, 'features[0].geometry')
+    },
+    onStartLine () {
+      this.startDraw('Line')
+    },
+    onStartPolygon () {
+      this.startDraw('Polygon')
     },
     async refreshBaseLayer () {
       const catalogService = this.$api.getService('catalog', '')
@@ -165,8 +230,13 @@ export default {
     await this.loadRefs()
     this.setupMap(this.$refs.map, this.mapOptions)
     await this.refreshBaseLayer()
-    this.refreshLocation()
+    if (this.drawable) this.refreshDraw()
+    else this.refreshLocation()
     this.$events.$emit('map-ready')
+    this.$on('pm:create', this.stopDraw)
+  },
+  beforeDestroy () {
+    this.$off('pm:create', this.stopDraw)
   },
   destroyed () {
     if (this.isModified) this.$emit('input', this.location)
