@@ -36,7 +36,10 @@ export default {
       return _.isEmpty(color) ? 'grey-7' : color
     },
     hasIcon (chip) {
-      return chip.icon
+      const icon = chip.icon
+      if (!icon) return false
+      if (typeof icon === 'object') return !_.isEmpty(icon.name)
+      return true
     },
     getIcon (chip) {
       return getIconName(chip)
