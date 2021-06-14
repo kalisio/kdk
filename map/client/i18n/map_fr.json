@@ -379,7 +379,7 @@
     "CHART_COUNT_LABEL": "Nombre",
     "CHART_SETTINGS_LABEL": "Paramétrage du graphique",
     "CHART_EXPORT_LABEL": "Exporter les données",
-    "CHART_EXPORT_FILE": "Graphique-{{layer}}.cvs"
+    "CHART_EXPORT_FILE": "Graphique-{{layer}}.csv"
   },
   "KLayerStyleForm": {
     "BASE": "Propriétés de base",
