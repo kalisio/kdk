@@ -168,7 +168,7 @@ export default {
           this.mode = 'map'
         } else {
           // If name is not given as coordinates we are in address mode
-          if (this.location.name != coordinates) this.mode = 'search'
+          if (this.location.name !== coordinates) this.mode = 'search'
           else this.mode = 'map'
         }
       }
