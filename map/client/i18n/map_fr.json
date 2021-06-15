@@ -313,7 +313,7 @@
   "KLocationMap": {
     "DRAW_LINE": "Dessiner un linéaire",
     "DRAW_POLYGON": "Dessiner une zone",
-    "RESTORE_BUTTON": "Restaurer la position",
+    "LOCATE_BUTTON": "Me localiser",
     "RECENTER_BUTTON": "Recentrer la carte"
   },
   "KLocationInput": {

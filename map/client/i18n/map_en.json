@@ -311,7 +311,7 @@
   "KLocationMap": {
     "DRAW_LINE": "Draw a line",
     "DRAW_POLYGON": "Draw a polygon",
-    "RESTORE_BUTTON": "Restore position",
+    "LOCATE_BUTTON": "Locate me",
     "RECENTER_BUTTON": "Recenter map"
   },
   "KLocationInput": {

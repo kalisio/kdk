@@ -88,7 +88,7 @@ export default {
   },
   computed: {
     hasLocation () {
-      return _.has(this.location, 'latitude') && _.has(this.location, 'longitude')
+      return _.has(this.location, 'type') || (_.has(this.location, 'latitude') && _.has(this.location, 'longitude'))
     },
     locationName () {
       return this.location ? this.location.name : ''
@@ -118,10 +118,8 @@ export default {
           latitude: position.latitude,
           longitude: position.longitude
         }
-      } else {
-        this.location = null
+        this.$emit('input', this.location)
       }
-      this.$emit('input', this.location)
     },
     onModeChanged (mode) {
       // Reset current location
@@ -159,8 +157,10 @@ export default {
     // Populate the component
     if (this.value) {
       this.location = this.value
-      // Simple location ?
-      if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
+      // GeoJson geometry or simple location ?
+      if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
+        this.mode = 'draw'
+      } else if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
         const coordinates = formatUserCoordinates(this.location.latitude, this.location.longitude, this.$store.get('locationFormat', 'FFf'))
         // Set name as coordinates if not given
         if (!this.location.name) {
@@ -172,8 +172,6 @@ export default {
           if (this.location.name !== coordinates) this.mode = 'search'
           else this.mode = 'map'
         }
-      } else if (_.has(this.location, 'coordinates')) { // GeoJson geometry
-        this.mode = 'draw'
       }
     }
   }
