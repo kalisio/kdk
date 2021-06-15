@@ -1,33 +1,36 @@
 <template>
-  <div class="column q-gutter-y-sm">
+  <div class="column full-width">
     <!--
       Label
      -->
-    <div v-if="label" class="full-width row justify-center text-subtitle1">
-      {{ $t(label) }}
+    <div v-if="label" class="full-width row justify-center text-subtitle1 q-pb-md">
+      <q-chip :label="$t(label)" outline square /> 
     </div>
     <!-- 
       Items
      -->
     <div v-if="items.length > 0">
       <q-scroll-area 
+        class="q-pl-lg"
         ref="scrollArea"
-        :style="`height: ${height}px`" 
+        :style="{ height: `${height}px` }"
         :thumb-style="thumbStyle" 
         :bar-style="barStyle"
         @scroll="onScroll">
-        <template v-for="item in items">
-          <component
-            class="q-pl-sm q-pr-lg q-pt-sm q-pb-sm"
-            :key="item._id"
-            :id="item._id"
-            :service="service"
-            :item="item"
-            :contextId="contextId"
-            :is="renderer.component"
-            v-bind="renderer"
-            @item-selected="onItemSelected" />
-        </template>
+        <div class="full-width row justify-center q-gutter-y-md"> 
+          <template v-for="item in items">
+            <div :key="item._id" class="col-12 q-pr-lg">
+              <component    
+                :id="item._id"
+                :service="service"
+                :item="item"
+                :contextId="contextId"
+                :is="renderer.component"
+                v-bind="renderer"
+                @item-selected="onItemSelected" />
+            </div>
+          </template>
+        </div>
       </q-scroll-area>
       <div v-if="scrollAction" class="row justify-center q-pa-md">
         <k-action 
@@ -54,12 +57,18 @@
 
 <script>
 import { colors } from 'quasar'
+import KAction from '../frame/KAction.vue'
+import KStamp from '../frame/KStamp.vue'
 import mixins from '../../mixins'
 
 const baseCollectionMixin = mixins.baseCollection
 
 export default {
   name: 'k-column',
+  components: {
+    KAction,
+    KStamp
+  },
   mixins: [
     mixins.service,
     baseCollectionMixin
@@ -155,21 +164,19 @@ export default {
     },
     scrollDown () {
       const position = this.$refs.scrollArea.getScrollPosition()
-      this.$refs.scrollArea.setScrollPosition(position + 200, 250)
+      this.$refs.scrollArea.setScrollPosition(position + this.scrollOffset, this.scrollDuration)
     },
     resetCollection () {
       if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(0)
       baseCollectionMixin.methods.resetCollection.call(this)
     }
   },
-  beforeCreate () {
-    // Load the component
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-  },
   created () {
     // Load the component
     this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
+    // Configuration
+    this.scrollOffset = 350
+    this.scrollDuration = 250
     // Whenever the user abilities are updated, update collection as well
     this.$events.$on('user-abilities-changed', this.resetCollection)
     this.refreshCollection()

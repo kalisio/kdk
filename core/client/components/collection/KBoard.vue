@@ -5,7 +5,7 @@
         :id="column.value"
         class="col"
         :key="column.value">
-          <k-column 
+          <k-column
             :label="column.label"
             :key="column.value" 
             v-bind="column.props" 
