@@ -203,16 +203,15 @@ export default {
       this.filters = this.filters.filter(item => item.key !== filter.key)
     },
     getCurrentLayerFilters () {
-      return _.keys(this.layer.baseQuery).filter(queryKey => {
-        const field = _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
-        // Do not rely on _.unset here as the key should use dot notation, e.g. 'properties.xxx'
-        if (field) delete this.layer.baseQuery[queryKey]
-      })
+      return _.keys(this.layer.baseQuery).filter(queryKey =>
+        _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
+      )
     },
     async onApply () {
       logger.debug('Applying layer filter', this.filters)
       // Reset filters
       this.getCurrentLayerFilters().forEach(queryKey => {
+        // Do not rely on _.unset here as the key should use dot notation, e.g. 'properties.xxx'
         delete this.layer.baseQuery[queryKey]
       })
       // Update filters
