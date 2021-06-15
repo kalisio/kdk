@@ -72,7 +72,10 @@ export default {
           // And coordinates if not static
           const staticGeometry = _.get(leafletOptions, 'staticGeometry', false)
           if (staticGeometry) return oldLayer
-          const type = feature.geometry.type
+          // The feature is changing its geometry type, recreate it
+          const oldType = _.get(oldLayer, 'feature.geometry.type')
+          const type = _.get(feature, 'geometry.type')
+          if (type !== oldType) return
           const coordinates = feature.geometry.coordinates
           // FIXME: support others geometry types ?
           switch (type) {
