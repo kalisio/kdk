@@ -697,5 +697,20 @@
   },
   "KSorter": {
     "SORT": "Sort"
+  },
+  "KTimeRange": {
+    "START_LABEL": "From",
+    "PICK_START_DATE_LABEL": "Update start date",
+    "END_LABEL": "to",
+    "PICK_END_DATE_LABEL": "Update end date",
+    "LAST_DAY_LABEL": "Last day",
+    "LAST_2_DAYS_LABEL": "Last 2 days",
+    "LAST_3_DAYS_LABEL": "Last 3 days",
+    "LAST_WEEK_LABEL": "Last week",
+    "LAST_2_WEEKS_LABEL": "Last 2 weeks",
+    "LAST_MONTH_LABEL": "Last month",
+    "LAST_3_MONTHS_LABEL": "Last 3 months",
+    "LAST_6_MONTHS_LABEL": "Last 6 months",
+    "LAST_YEAR_LABEL": "Last year"
   }
 }

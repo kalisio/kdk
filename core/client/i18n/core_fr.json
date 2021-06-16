@@ -704,6 +704,21 @@
   },
   "KSorter": {
     "SORT": "Trier"
+  },
+  "KTimeRange": {
+    "START_LABEL": "Du",
+    "PICK_START_DATE_LABEL": "Modifier la date de début",
+    "END_LABEL": "au",
+    "PICK_END_DATE_LABEL": "Modifier la date de fin",
+    "LAST_DAY_LABEL": "Dernier jour",
+    "LAST_2_DAYS_LABEL": "2 derniers jours",
+    "LAST_3_DAYS_LABEL": "3 derniers jours",
+    "LAST_WEEK_LABEL": "Derniere semaine",
+    "LAST_2_WEEKS_LABEL": "2 dernières semaines",
+    "LAST_MONTH_LABEL": "Dernier mois",
+    "LAST_3_MONTHS_LABEL": "3 derniers mois",
+    "LAST_6_MONTHS_LABEL": "6 derniers mois",
+    "LAST_YEAR_LABEL": "Dernière année"
   }
 }
 

@@ -50,7 +50,7 @@
     :dense="dense"
     :disabled="disabled"
     @click="onClicked(arguments[0])">
-    <q-item-section avatar>
+    <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon :dense="dense" :name="computedIcon" :color="computedColor" />
       <!-- badge -->
       <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
