@@ -33,10 +33,10 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import L from 'leaflet'
 import centroid from '@turf/centroid'
 import { colors } from 'quasar'
-import i18next from 'i18next'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import { Geolocation } from '../geolocation'
