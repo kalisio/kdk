@@ -33,7 +33,7 @@ export default {
     },
     getColor (chip) {
       const color = _.get(chip, 'icon.color')
-      return _.isEmpty(color) ? 'grey-7' : color
+      return _.isEmpty(color) ? 'black' : color
     },
     hasIcon (chip) {
       const icon = chip.icon

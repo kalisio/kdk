@@ -1,7 +1,6 @@
 <template>
-  <div>
+  <div class="q-pa-x-xs">
     <q-separator />
-
     <!-- Header section -->
     <div v-if="expandable">
       <q-expansion-item
@@ -17,10 +16,10 @@
     </div>
     <div v-else>
       <q-item>
-        <q-item-section avatar>
-          <q-icon :name="icon" />
+        <q-item-section v-if="icon" avatar>
+          <q-icon :name="icon" color="grey-7" size="sm" />
         </q-item-section>
-        <q-item-section>{{ title }}</q-item-section>
+        <q-item-section class="text-grey-7 text-caption">{{ title }}</q-item-section>
         <q-item-section side>
           <k-panel v-if="actions" :content="actions" />
         </q-item-section>
