@@ -11,7 +11,7 @@
           <!--
             Header section
           -->
-          <slot name="fact-header">
+          <slot name="history-entry-header">
             <div class="q-pa-sm">
               <k-panel v-if="header" :content="header" :context="$props" />
             </div>
@@ -19,7 +19,7 @@
           <!--
             Title section
           -->
-          <slot name="fact-title">
+          <slot name="history-entry-title">
             <q-item class="q-pa-sm">
               <q-item-section top avatar>
                 <slot name="card-avatar">
@@ -27,7 +27,7 @@
                 </slot>
               </q-item-section>
               <q-item-section>
-                <slot name="fact-label">
+                <slot name="history-entry-label">
                   <q-item-label class="text-subtitle1 text-weight-medium">
                     <k-text-area :text="name" />
                   </q-item-label>
@@ -41,11 +41,11 @@
           <!--
             Content section
           -->
-          <slot name="fact-content" />
+          <slot name="history-entry-content" />
           <!--
             Actions section
           -->
-          <slot name="fact-actions">
+          <slot name="history-entry-actions">
             <q-separator v-if="itemActions" />
             <q-card-actions class="q-pa-xs" align="left">
               <k-panel id="card-actions" :content="itemActions" :context="$props" />
@@ -65,7 +65,7 @@
           <!--
             Header section
           -->
-          <slot name="fact-header">
+          <slot name="history-entry-header">
             <div class="q-pa-sm">
               <k-panel v-if="header" :content="header" :context="$props" />
             </div>
@@ -73,7 +73,7 @@
           <!--
             Title section
           -->
-          <slot name="fact-title">
+          <slot name="history-entry-title">
             <q-item class="q-pa-sm">
               <q-item-section top avatar>
                 <slot name="card-avatar">
@@ -81,7 +81,7 @@
                 </slot>
               </q-item-section>
               <q-item-section>
-                <slot name="fact-label">
+                <slot name="history-entry-label">
                   <q-item-label class="text-subtitle1 text-weight-medium">
                     <k-text-area :text="name" />
                   </q-item-label>
@@ -95,11 +95,11 @@
           <!--
             Content section
           -->
-          <slot name="fact-content" />
+          <slot name="history-entry-content" />
           <!--
             Actions section
           -->
-          <slot name="fact-actions">
+          <slot name="history-entry-actions">
             <q-separator v-if="itemActions" />
             <q-card-actions class="q-pa-xs" align="right">
               <k-panel id="card-actions" :content="itemActions" :context="$props" />
