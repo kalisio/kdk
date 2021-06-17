@@ -4,7 +4,7 @@
       Label
      -->
     <div v-if="label" class="full-width row justify-center text-subtitle1 q-pb-md">
-      <q-chip :label="$t(label)" outline square /> 
+      <q-chip :label="$t(label)" square color="grey-9" text-color="white" /> 
     </div>
     <!-- 
       Items

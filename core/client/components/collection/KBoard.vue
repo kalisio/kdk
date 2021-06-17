@@ -1,17 +1,16 @@
 <template>
-  <div class="fit row q-gutter-x-sm no-wrap">
+  <div class="fit row justify-center q-gutter-x-sm no-wrap">
     <template v-for="column in columns">
       <div
         :id="column.value"
-        class="col"
-        :key="column.value">
+        :key="column.value"
+        :style="{ minWidth: `${column.width}px` }">
           <k-column
             :label="column.label"
             :key="column.value" 
             v-bind="column.props" 
             :append-items="true" 
-            :height="height"
-            style="min-width: 100%;" />
+            :height="height" />
       </div>
     </template>
   </div>
@@ -28,7 +27,7 @@ export default {
   props: {
     columns: {
       type: Array,
-      default: () => { return null }
+      default: () => null
     },
     height: {
       type: Number,
@@ -38,3 +37,8 @@ export default {
 }
 </script>
 
+<style lang="stylus">
+body {
+  overflow-y: hidden; /* Hide vertical scrollbar */
+}
+</style>
