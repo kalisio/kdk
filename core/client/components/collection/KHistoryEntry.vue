@@ -1,85 +1,166 @@
 <template>
-  <q-timeline-entry :class="layout()" :side="item.side" :icon="iconName" :color="iconColor" @click="onItemSelected">
-    <!--
-      Title section
-    -->
-    <template v-slot:title>
-      <slot name="entry-title">
-        {{ name }}
-      </slot>
-    </template>
-    <!--
-      Date section
-    -->
-    <template v-slot:subtitle>
-      <slot name="entry-date">
-        <div v-if="date">{{ date.toLocaleString() }}</div>
-      </slot>
-    </template>
-    <!--
-      Card section
-    -->
-    <q-card bordered>
-      <!--
-        Content section
-      -->
-      <slot name="entry-content">
-        <q-item>
-          <q-item-section>
-            <k-text-area :text="description" />
-          </q-item-section>
-        </q-item>
-      </slot>
-      <!--
-        Actions section
-      -->
-      <q-separator />
-      <slot name="entry-actions">
-        <q-card-actions class="q-pa-xs" align="right">
-          <k-panel id="card-actions" :content="itemActions" :context="$props" />
-        </q-card-actions>
-      </slot>
-    </q-card>
-  </q-timeline-entry>
+  <div class="q-lf-lg fit row">
+    <div v-if="separator" class="row full-width">
+      <div class="q-pa-sm col-xs-12 col-sm-3 col-md-12 row justify-center">
+        <q-chip :label="formattedDay" square color="dark" text-color="white" />
+      </div>
+    </div>
+    <div class="row full-width">
+      <div v-if="$q.screen.gt.sm" class="col-5">
+        <q-card v-if="item.side === 'left'" bordered @click="onItemSelected">
+          <!--
+            Header section
+          -->
+          <slot name="fact-header">
+            <div class="q-pa-sm">
+              <k-panel v-if="header" :content="header" :context="$props" />
+            </div>
+          </slot>
+          <!--
+            Title section
+          -->
+          <slot name="fact-title">
+            <q-item class="q-pa-sm">
+              <q-item-section top avatar>
+                <slot name="card-avatar">
+                  <k-avatar :object="item" :contextId="contextId" :options="options" />
+                </slot>
+              </q-item-section>
+              <q-item-section>
+                <slot name="fact-label">
+                  <q-item-label class="text-subtitle1 text-weight-medium">
+                    <k-text-area :text="name" />
+                  </q-item-label>
+                  <q-item-label>
+                    <k-text-area :text="description" />
+                  </q-item-label>
+                </slot>
+              </q-item-section>
+            </q-item>
+          </slot>
+          <!--
+            Content section
+          -->
+          <slot name="fact-content" />
+          <!--
+            Actions section
+          -->
+          <slot name="fact-actions">
+            <q-separator v-if="itemActions" />
+            <q-card-actions class="q-pa-xs" align="left">
+              <k-panel id="card-actions" :content="itemActions" :context="$props" />
+            </q-card-actions>
+          </slot>
+        </q-card>
+      </div>
+      <div class="col-xs-12 col-sm-3 col-md-2 q-pa-sm">
+        <div class="fit column content-center">
+          <div class="col row justify-center k-history-line">
+            <q-chip :label="formattedHours" />
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-8 col-md-5">
+        <q-card v-if="$q.screen.lt.md || item.side === 'right'" bordered @click="onItemSelected">
+          <!--
+            Header section
+          -->
+          <slot name="fact-header">
+            <div class="q-pa-sm">
+              <k-panel v-if="header" :content="header" :context="$props" />
+            </div>
+          </slot>
+          <!--
+            Title section
+          -->
+          <slot name="fact-title">
+            <q-item class="q-pa-sm">
+              <q-item-section top avatar>
+                <slot name="card-avatar">
+                  <k-avatar :object="item" :contextId="contextId" :options="options" />
+                </slot>
+              </q-item-section>
+              <q-item-section>
+                <slot name="fact-label">
+                  <q-item-label class="text-subtitle1 text-weight-medium">
+                    <k-text-area :text="name" />
+                  </q-item-label>
+                  <q-item-label>
+                    <k-text-area :text="description" />
+                  </q-item-label>
+                </slot>
+              </q-item-section>
+            </q-item>
+          </slot>
+          <!--
+            Content section
+          -->
+          <slot name="fact-content" />
+          <!--
+            Actions section
+          -->
+          <slot name="fact-actions">
+            <q-separator v-if="itemActions" />
+            <q-card-actions class="q-pa-xs" align="right">
+              <k-panel id="card-actions" :content="itemActions" :context="$props" />
+            </q-card-actions>
+          </slot>
+        </q-card>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import { getIconName } from '../../utils'
+import moment from 'moment'
 import mixins from '../../mixins'
+import { Time } from '../..'
+import { KPanel, KAvatar, KTextArea } from '../frame'
 
 export default {
   name: 'k-history-entry',
+  components: {
+    KPanel,
+    KAvatar,
+    KTextArea
+  },
   mixins: [mixins.baseItem],
+  props: {
+    header: {
+      type: [Object, Array],
+      default: () => null
+    },
+    dateField: {
+      type: String,
+      default: 'createdAt'
+    }
+  },
+  data () {
+    return {
+      date: moment(_.get(this.item, this.dateField))
+    }
+  },
   computed: {
-    date () {
-      return this.getDate()
+    formattedDay () {
+      return _.capitalize(Time.format(this.date, 'date.long'))
     },
-    iconName () {
-      const iconField = _.get(this.options, 'iconField', 'icon')
-      const icon = _.get(this.item, iconField)
-      if (!icon.name) return getIconName(this.item, 'icon')
-      return getIconName(this.item)
+    formattedHours () {
+      return _.capitalize(Time.format(this.date, 'hour.long'))
     },
-    iconColor () {
-      const iconField = _.get(this.options, 'iconField', 'icon')
-      return _.get(this.item, iconField + '.color', 'primary')
+    separator () {
+      const previousDate = moment(_.get(this.item.previous, this.dateField))
+      if (!this.date.isValid() || !previousDate.isValid()) return true
+      if (this.date.year() !== previousDate.year()) return true
+      if (this.date.month() !== previousDate.month()) return true
+      return this.date.date() !== previousDate.date()
     }
-  },
-  methods: {
-    layout () {
-      return _.get(this.options, 'layout', 'col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6')
-    },
-    getDate () {
-      // Check for custom date field
-      const date = (this.options.dateField ? _.get(this.item, this.options.dateField, '') : this.item.createdAt)
-      return date ? new Date(date) : null
-    }
-  },
-  created () {
-    // Loads the required components
-    this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>
+
+<style lang="stylus">
+.k-history-line {
+  background: linear-gradient($grey-4, $grey-4) no-repeat center/5px 90%;
+}
+</style>
