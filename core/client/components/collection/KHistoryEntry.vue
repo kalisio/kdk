@@ -2,7 +2,7 @@
   <div class="q-lf-lg fit row">
     <div v-if="separator" class="row full-width">
       <div class="q-pa-sm col-xs-12 col-sm-3 col-md-12 row justify-center">
-        <q-chip :label="formattedDay" square color="dark" text-color="white" />
+        <q-chip :label="formattedDay" square color="grey-7" text-color="white" />
       </div>
     </div>
     <div class="row full-width">
@@ -149,6 +149,7 @@ export default {
       return _.capitalize(Time.format(this.date, 'hour.long'))
     },
     separator () {
+      if (!this.item.previous) return true
       const previousDate = moment(_.get(this.item.previous, this.dateField))
       if (!this.date.isValid() || !previousDate.isValid()) return true
       if (this.date.year() !== previousDate.year()) return true
