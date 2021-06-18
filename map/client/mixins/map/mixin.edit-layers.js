@@ -30,7 +30,7 @@ export default {
       if (!leafletLayer) return
 
       const mapEvents = ['pm:create']
-      const layerEvents = ['pm:update', 'pm:remove', 'pm:dragend', 'pm:cut', 'pm:rotateend']
+      const layerEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend']
 
       if (this.editedLayer) { // Stop edition
         // Make sure we end geoman
@@ -158,6 +158,10 @@ export default {
       }
     },
     async onFeaturesDeleted (event) {
+      // This is connected to the 'layerremove' event of the editable layer
+      // but we may also receive 'layerremove' event from the map
+      if (!event.target || event.target !== this.editableLayer) return
+
       // Save changes to DB
       if (this.editedLayer._id) {
         await this.removeFeatures(event.layer.toGeoJSON())
@@ -201,9 +205,8 @@ export default {
     this.$on('pm:create', this.onFeatureCreated)
     this.$on('pm:update', this.onFeaturesEdited)
     this.$on('pm:dragend', this.onFeaturesEdited)
-    // this.$on('pm:cut', this.onFeaturesEdited)
     this.$on('pm:rotateend', this.onFeaturesEdited)
-    this.$on('pm:remove', this.onFeaturesDeleted)
+    this.$on('layerremove', this.onFeaturesDeleted)
   },
   beforeDestroy () {
     this.$off('click', this.onEditFeatureProperties)
@@ -211,8 +214,7 @@ export default {
     this.$off('pm:create', this.onFeatureCreated)
     this.$off('pm:update', this.onFeaturesEdited)
     this.$off('pm:dragend', this.onFeaturesEdited)
-    // this.$off('pm:cut', this.onFeaturesEdited)
     this.$off('pm:rotateend', this.onFeaturesEdited)
-    this.$off('pm:remove', this.onFeaturesDeleted)
+    this.$off('layerremove', this.onFeaturesDeleted)
   }
 }
