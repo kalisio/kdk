@@ -5,7 +5,7 @@
      -->
     <template v-for="field in fields">
       <div v-if="!field.group" :key="field.name" class="row items-center"
-        v-bind:class="{'k-view-row': options.separators }"
+        v-bind:class="{ 'k-view-row': options.separators }"
       >
         <!-- Field label -->
         <span class="col-xs-5 col-sm-4 col-3 text-caption">
@@ -27,7 +27,7 @@
       <q-expansion-item :key="group" icon="las la-file-alt" :group="group" :label="$t(group)">
         <template v-for="field in fields">
           <div v-if="field.group === group" :key="field.group + field.name" class="row items-center"
-            v-bind:class="{'k-view-row': options.separators }"
+            v-bind:class="{ 'k-view-row': options.separators }"
           >
             <!-- Field label -->
             <span class="col-xs-5 col-sm-4 col-3 text-caption">

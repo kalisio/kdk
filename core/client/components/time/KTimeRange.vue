@@ -55,7 +55,6 @@ export default {
         return this.start.format('DD/MM/YY')
       },
       set: function (value) {
-        console.log(value)
         this.start = moment(value, 'DD/MM/YY')
       }
     },
