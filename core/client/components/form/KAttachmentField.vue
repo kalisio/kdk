@@ -87,12 +87,6 @@ export default {
     autoProcessQueue () {
       return _.get(this.properties, 'field.autoProcessQueue', true)
     },
-    storageService () {
-      return this.$api.getService(this.properties.service || 'storage')
-    },
-    resourcesService () {
-      return _.get(this.properties, 'field.resourcesService', '')
-    },
     isObject () {
       return (this.properties.type === 'object')
     },
