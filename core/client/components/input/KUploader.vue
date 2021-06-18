@@ -189,7 +189,13 @@ export default {
       this.$events.$emit('error', { message: error })
     },
     storageService () {
-      return this.$api.getService(this.options.service || 'storage')
+      let service = _.get(this.options, 'service', 'storage')
+      // Inject useful properties such as current object ID, etc.
+      const environment = { id: this.resource }
+      // The template generates the final storage service path
+      service = _.template(service)(environment)
+
+      return this.$api.getService(service)
     },
     dropZone () {
       // Access vue drop zone
@@ -220,10 +226,13 @@ export default {
         // Uploading can require a long time
         timeout: 60 * 60 * 1000 // 1h should be sufficient since we also have size limits
       }, options, dictionary)
-      // Depending on the transport the path starts or not with '/'
-      let servicePath = this.storageService().path
-      if (!servicePath.startsWith('/')) servicePath = '/' + servicePath
-      this.dropZoneOptions.url = this.$api.getBaseUrl() + servicePath
+      // We use a function as the service path might be templated by the underlying resource
+      this.dropZoneOptions.url = () => {
+        // Depending on the transport the path starts or not with '/'
+        let servicePath = this.storageService().path
+        if (!servicePath.startsWith('/')) servicePath = '/' + servicePath
+        return this.$api.getBaseUrl() + servicePath
+      }
       // This is used to ensure the request will be authenticated by Feathers
       this.dropZoneOptions.headers = { Authorization: accessToken }
     },
