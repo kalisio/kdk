@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-x-xs">
+  <div>
     <q-separator />
     <!-- Header section -->
     <div v-if="expandable">
@@ -10,14 +10,14 @@
         @hide="$emit('section-closed')">
         <!-- Content section -->
         <div class="q-pl-sm q-pr-sm q-pb-sm">
-          <slot name="card-section-content" />
+          <slot  />
         </div>
       </q-expansion-item>
     </div>
     <div v-else>
-      <q-item>
+      <q-item class="q-px-md">
         <q-item-section v-if="icon" avatar>
-          <q-icon :name="icon" color="grey-7" size="sm" />
+          <q-icon :name="icon" color="grey-7" szie="xs" />
         </q-item-section>
         <q-item-section class="text-grey-7 text-caption">{{ title }}</q-item-section>
         <q-item-section side>
@@ -26,7 +26,7 @@
       </q-item>
       <!-- Content section -->
       <div class="q-pl-sm q-pr-sm q-pb-sm">
-        <slot name="card-section-content" />
+        <slot  />
       </div>
     </div>
   </div>
