@@ -1,40 +1,50 @@
 <template>
-  <div>
+  <div v-if="hasSlot">
     <q-separator />
-    <!-- Header section -->
     <div v-if="expandable">
+      <!-- Header section -->
       <q-expansion-item
         :icon="icon"
         :label="title"
+        :dense="dense"
         @show="$emit('section-opened')"
         @hide="$emit('section-closed')">
         <!-- Content section -->
-        <div class="q-pl-sm q-pr-sm q-pb-sm">
-          <slot  />
+        <div v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
+          <slot />
         </div>
       </q-expansion-item>
     </div>
     <div v-else>
-      <q-item class="q-px-md">
-        <q-item-section v-if="icon" avatar>
-          <q-icon :name="icon" color="grey-7" szie="xs" />
-        </q-item-section>
-        <q-item-section class="text-grey-7 text-caption">{{ title }}</q-item-section>
-        <q-item-section side>
+      <!-- Header section -->
+      <div v-if="!dense">
+        <div class="row full-width items-center">
+          <q-icon v-if="icon" :name="icon" color="grey-7" size="xs" />
+          <span class="text-grey-7 text-caption">{{ title }}</span>
+          <q-space />
           <k-panel v-if="actions" :content="actions" />
-        </q-item-section>
-      </q-item>
-      <!-- Content section -->
-      <div class="q-pl-sm q-pr-sm q-pb-sm">
-        <slot  />
+        </div>
+        <!-- Content section -->
+        <div v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
+          <slot />
+        </div>
+      </div>
+      <div v-else v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
+        <slot />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
+import { KPanel } from '../frame'
+
 export default {
   name: 'k-card-section',
+  components: {
+    KPanel
+  },
   props: {
     icon: {
       type: String,
@@ -51,11 +61,16 @@ export default {
     expandable: {
       type: Boolean,
       default: false
+    },
+    dense: {
+      type: Boolean,
+      default: false
     }
   },
-  created () {
-    // Loads the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel') 
+  computed: {
+    hasSlot () {
+      return _.has(this.$slots, 'default')
+    }
   }
 }
 </script>
