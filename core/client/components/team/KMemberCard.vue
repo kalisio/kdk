@@ -1,15 +1,9 @@
 <template>
-  <k-card v-bind="$props" :actions="itemActions" :bind-actions="false" >
-    <!--
-      Card header
-    -->
-    <template v-slot:card-header>
-      <div class="q-pa-sm row justify-end">
-        <q-badge id="role-badge" outine color="grey-7">
-          {{ $t(roleLabel(role)) }}
-        </q-badge>
-      </div>
-    </template>
+  <k-card 
+    v-bind="$props"
+    :header="header"
+    :actions="itemActions" 
+    :bind-actions="false">
     <!--
       Card avater
     -->
@@ -20,41 +14,47 @@
       Card content
     -->
     <div slot="card-content">
-      <q-separator />
-      <template  v-if="tags.length > 0">
-        <k-chips-pane id="tags-pane" class="q-pa-sm" :chips="tags" />
-        <q-separator />
-      </template>
-      <div class="q-pa-sm row justify-start items-center">
-        <template v-for="(group, index) in memberGroups">
-          <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
-            <q-avatar color="primary" text-color="white" size="32px">{{ groupInitials(group) }}</q-avatar>
-            <q-menu ref="popover">
-              <q-toolbar inverted color="grey-7">
-                <span style="margin:8px">{{group.name}}</span>
-                <q-btn id="change-role-group" v-if="canChangeRoleInGroup(group)" flat round small @click="onChangeRoleInGroup(group), $refs.popover[index].hide()">
-                  <q-icon :name="roleIcon(roleForGroup(group))" />
-                </q-btn>
-                <q-btn id="leave-group" v-if="canLeaveGroup(group)" flat round small @click="onLeaveGroup(group), $refs.popover[index].hide()">
-                  <q-icon name="las la-minus-circle" />
-                </q-btn>
-              </q-toolbar>
-            </q-menu>
-            <q-tooltip>{{ group.name }}</q-tooltip>
-          </q-btn>
-        </template>
-        <q-btn id="join-group" v-if="canJoinGroup()" flat small round @click="onJoinGroup()">
-          <q-icon name="las la-plus-circle" color="grey-7">
-            <q-tooltip>{{ $t('KMemberCard.JOIN_GROUP_LABEL') }}</q-tooltip>
-          </q-icon>
-        </q-btn>
-      </div>
-      <q-separator />
-      <template v-if="expireAt">
-        <div class="q-pa-sm">
-          <cite  class="text-red" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</cite>
+      <!-- Tags section -->
+      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.TAGS_SECTION')" :actions="tagsActions">
+        <div v-if="hasTags">
+          <k-chips-pane id="tags-pane" class="q-pa-sm" :chips="tags" />
         </div>
-      </template>
+        <div v-else> 
+          {{ $t('KMemberCard.NO_TAGS_LABEL')}}
+        </div>
+      </k-card-section>
+      <!-- Groups section -->
+      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.GROUPS_SECTION')" :actions="groupsActions">
+        <div v-if="hasGroups" class="row justify-start items-center">
+          <template v-for="(group, index) in groups">
+            <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
+              <q-avatar color="primary" text-color="white" size="2rem">{{ groupInitials(group) }}</q-avatar>
+              <q-menu ref="popover">
+                <q-toolbar inverted color="grey-7">
+                  <span style="margin:8px">{{group.name}}</span>
+                  <q-btn id="change-role-group" v-if="canChangeRoleInGroup(group)" flat round small @click="onChangeRoleInGroup(group), $refs.popover[index].hide()">
+                    <q-icon :name="roleIcon(roleForGroup(group))" />
+                  </q-btn>
+                  <q-btn id="leave-group" v-if="canLeaveGroup(group)" flat round small @click="onLeaveGroup(group), $refs.popover[index].hide()">
+                    <q-icon name="las la-minus-circle" />
+                  </q-btn>
+                </q-toolbar>
+              </q-menu>
+              <q-tooltip>{{ group.name }}</q-tooltip>
+            </q-btn>
+          </template>
+        </div>
+        <div v-else>
+          {{ $t('KMemberCard.NO_GROUPS_LABEL')}}
+        </div>
+      </k-card-section>
+      <!-- Expiration section -->
+      <k-card-section v-if="item.expireAt">
+        <div class="row full-width justify-between items-center">
+          <span class="text-warning text-weight-bold" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</span>
+          <k-panel :content="expirationActions" />
+        </div>
+      </k-card-section>
     </div>
   </k-card>
 </template>
@@ -65,11 +65,45 @@ import { Dialog } from 'quasar'
 import mixins from '../../mixins'
 import { getInitials, processIcon, isEmailValid } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
+import { KCard, KCardSection } from '../collection'
+import { KAvatar, KPanel } from '../frame'
 
 export default {
   name: 'k-member-card',
+  components: {
+    KCard,
+    KCardSection,
+    KAvatar,
+    KPanel
+  },
   mixins: [mixins.baseItem],
   computed: {
+    header () {
+      return [
+        { component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' },
+        { component: 'QSpace' },
+        { 
+          id: 'edit-member', icon: 'las la-edit', size: 'sm', tooltip: 'PlanCard.EDIT_ACTION',
+          visible: this.$can('update', 'members', this.contextId, this.item),
+          route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id } }
+        },
+        {
+          id: 'remove-member', icon: 'las la-trash', size: 'sm', tooltip: 'KMemberCard.REMOVE_ACTION',
+          visible: this.$can('remove', 'authorisations', this.contextId, { resource: this.contextId }),
+          handler: () => this.removeMember()
+        }
+      ]
+    },
+    tagsActions () {
+      return [{ 
+        id: 'edit-tags', icon: 'las la-edit', size: 'sm', tooltip: 'KMemberCard.EDIT_ACTION', 
+        visible: !this.item.expireAt && this.$can('update', 'members', this.contextId),
+        route: { name: 'edit-member-tags', params: { contextId: this.contextId, objectId: this.item._id } }
+      }]
+    },
+    hasTags () {
+      return !_.isEmpty(this.tags)
+    },
     tags () {
       // Check for custom tags field
       let tags = this.options.tagsField ? _.get(this.item, this.options.tagsField, '') : this.item.tags
@@ -79,13 +113,29 @@ export default {
       tags.forEach(tag => processIcon(tag))
       return tags
     },
-    memberGroups () {
+    groupsActions () {
+      return [{ 
+        id: 'joing-group', icon: 'las la-plus-circle', size: 'sm', tooltip: 'KMemberCard.JOIN_GROUP_ACTION', 
+        visible: this.canJoinGroup(), handler: () => this.onJoinGroup()
+      }]
+    },   
+    hasGroups () {
+      return !_.isEmpty(this.groups)
+    },
+    groups () {
       return _.filter(this.item.groups, { context: this.contextId })
     },
     role () {
       const role = getRoleForOrganisation(this.item, this.contextId)
       if (!_.isUndefined(role)) return Roles[role]
       return ''
+    },
+    expirationActions () {
+      return [{
+        id: 'reissue-invitation', icon: 'las la-envelope', tooltip: 'KMemberCard.RESEND_INVITATION_LABEL',
+        visible: this.$can('update', 'members', this.contextId),
+        handler: () => this.resendInvitation()
+      }]
     },
     expireAt () {
       return this.item.expireAt ? new Date(this.item.expireAt) : null
@@ -226,9 +276,7 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-card'] = this.$load('collection/KCard')
-    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
+
     this.$options.components['k-chips-pane'] = this.$load('frame/KChipsPane')
     // Load the role configuration
     this.roleIcons = this.$config('roles.icons')

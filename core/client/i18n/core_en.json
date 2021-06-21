@@ -555,8 +555,11 @@
     "UPDATE_BUTTON": "Update"
   },
   "KMemberCard": {
-    "JOIN_GROUP_LABEL": "Join a group",
-    "TAG_LABEL": "Tag",
+    "EDIT_ACTION": "$t(EDIT)",    
+    "REMOVE_ACTION": "$t(REMOVE)",    
+    "TAGS_SECTION": "Tags",
+    "GROUPS_SECTION": "Groups",
+    "JOIN_GROUP_ACTION": "Join a group",
     "EXPIRE_AT_LABEL": "Invitation expire at",
     "CHANGE_ROLE_LABEL": "Change role",
     "REMOVE_LABEL": "$t(REMOVE)",

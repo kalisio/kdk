@@ -562,8 +562,13 @@
     "UPDATE_BUTTON": "Mettre à jour"
   },
   "KMemberCard": {
-    "JOIN_GROUP_LABEL": "Rejoindre un groupe",
-    "TAG_LABEL": "Etiqueter",    
+    "EDIT_ACTION": "$t(EDIT)",    
+    "REMOVE_ACTION": "$t(REMOVE)",
+    "TAGS_SECTION": "Etiquettes",
+    "NO_TAGS_LABEL": "Aucune étiquette",
+    "GROUPS_SECTION": "Groupes",
+    "NO_GROUPS_LABEL": "Aucun groupe",
+    "JOIN_GROUP_ACTION": "Rejoindre un groupe",
     "EXPIRE_AT_LABEL": "L'invitation expire au",
     "CHANGE_ROLE_LABEL": "Changer de rôle",
     "REMOVE_LABEL": "$t(REMOVE)",
