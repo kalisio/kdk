@@ -13,9 +13,9 @@
     <!--
       Card avater
     -->
-    <template v-slot:card-avatar>
+    <div slot="card-avatar">
       <k-avatar :object="item" size="4rem" />
-    </template>
+    </div>
     <!--
       Card content
     -->
