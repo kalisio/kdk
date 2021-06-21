@@ -94,16 +94,22 @@ export default {
       if (this.isMultiple()) return []
       return (this.isObject() ? {} : '')
     },
-    fill (value, object) {
-      // Keep trak of object ID if any because it is required to access the files
-      if (object) this.objectId = object._id
+    async fill (value, object) {
+      // Keep trak of object ID if any because it might be required to build the storage path
+      if (object) {
+        this.resource = object._id
+      }
       this.model = value
       if (this.isMultiple()) {
         this.files = this.model
       } else {
         this.files = (!_.isEmpty(this.model) ? [this.model] : [])
       }
-      if (!this.readOnly) this.$refs.uploader.initialize(this.files)
+      if (!this.readOnly) {
+        // We need to force a refresh so that the prop is correctly updated by Vuejs in child component
+        await this.$nextTick()
+        this.$refs.uploader.initialize(this.files)
+      }
     },
     async apply (object, field) {
       // If not processing uploads on-the-fly upload when the form is being submitted on update
