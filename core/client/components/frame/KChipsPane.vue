@@ -25,11 +25,15 @@ export default {
     chips: {
       type: Array,
       required: true
+    },
+    valuePath: {
+      type: String,
+      default: 'value'
     }
   },
   methods: {
     getValue (chip) {
-      return _.get(chip, 'value', chip)
+      return _.get(chip, this.valuePath, chip)
     },
     getColor (chip) {
       const color = _.get(chip, 'icon.color')
