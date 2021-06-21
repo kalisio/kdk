@@ -1,53 +1,43 @@
 <template>
-  <k-card v-bind="$props" :actions="itemActions" :bind-actions="false" >
-    <!--
-      Card header
-     -->
-    <template v-slot:card-header>
-      <div class="q-pa-sm row justify-end">
-        <q-badge outine color="grey-7">
-          {{ $t(memberRoleLabel) }}
-        </q-badge>
-      </div>
-    </template>
+  <k-card 
+    v-bind="$props"
+    :header="header"
+    :actions="itemActions" 
+    :bind-actions="false">
     <!--
       Card content
      -->
     <div slot="card-content">
-      <q-list bordered>
-        <q-item
-          id="list-members"
-          clickable
-          @click="onListMembers">
-          <q-item-section avatar>
-            <q-icon name="las la-user-friends" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ $t(`KGroupCard.MEMBERS_LABEL`, { count: membersCount }) }}
-            </q-item-label>
-            <q-tooltip>
-              {{ $t(`KGroupCard.VIEW_MEMBERS_LABEL`) }}
-            </q-tooltip>
-          </q-item-section>
-        </q-item>
-        <!--TODO display the stats q-separator />
-        <template v-for="(role, index) in roleNames">
+      <!-- Description -->
+      <k-card-section :title="$t('KGroupCard.DESCRIPTION_SECTION')" :actions="descriptionActions">
+        <div v-if="hasDescription">
+          <k-text-area :text="item.description" />
+        </div>
+        <div v-else> 
+          {{ $t('KGroupCard.NO_DESCRIPTION_LABEL')}}
+        </div>
+      </k-card-section>
+      <!-- Members -->
+      <k-card-section :title="$t('KGroupCard.MEMBERS_SECTION')">
+        <q-list>
           <q-item
-            :id="role"
-            :key="roleKey(role)">
+            id="list-members"
+            clickable
+            @click="onListMembers">
             <q-item-section avatar>
-              <q-icon :name="roleIcons[index]" />
+              <q-icon name="las la-user-friends" />
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                {{ memberStats[role] }}
-                {{ roleLabels[index]}}
+                {{ $t(`KGroupCard.MEMBERS_LABEL`, { count: membersCount }) }}
               </q-item-label>
+              <q-tooltip>
+                {{ $t(`KGroupCard.VIEW_MEMBERS_LABEL`) }}
+              </q-tooltip>
             </q-item-section>
           </q-item>
-        </template-->
-      </q-list>
+        </q-list>
+      </k-card-section>
     </div>
   </k-card>
 </template>
@@ -56,9 +46,16 @@
 import _ from 'lodash'
 import mixins from '../../mixins'
 import { findMembersOfGroup, getRoleForGroup, Roles, RoleNames } from '../../../common/permissions'
+import { KCard, KCardSection } from '../collection'
+import { KTextArea } from '../frame'
 
 export default {
   name: 'k-group-card',
+  components: {
+    KCard,
+    KCardSection,
+    KTextArea
+  },
   mixins: [mixins.baseItem],
   data () {
     return {
@@ -68,6 +65,32 @@ export default {
     }
   },
   computed: {
+    header () {
+      return [
+        { component: 'QBadge', label: this.$t(this.memberRoleLabel), color: 'grey-7' },
+        { component: 'QSpace' },
+        { 
+          id: 'edit-group', icon: 'las la-edit', size: 'sm', tooltip: 'KGroupCard.EDIT_ACTION',
+          visible: this.$can('update', 'groups', this.contextId, this.item),
+          handler: this.editItem
+        },
+        {
+          id: 'remove-group', icon: 'las la-trash', size: 'sm', tooltip: 'KGroupCard.REMOVE_ACTION',
+          visible: this.$can('remove', 'groups', this.contextId, this.item),
+          handler: () => this.removeItem('confirm')
+        }
+      ]
+    },
+    descriptionActions () {
+      return [{ 
+        id: 'edit-description', icon: 'las la-edit', size: 'sm', tooltip: 'KGroupCard.EDIT_ACTION', 
+        visible: this.$can('update', 'groups', this.contextId, this.item),
+        route: { name: 'edit-group-description', params: { contextId: this.contextId, objectId: this.item._id } }
+      }]
+    },
+    hasDescription () {
+      return !_.isEmpty(this.item.description)
+    },
     memberRoleLabel () {
       const user = this.$store.get('user')
       const role = getRoleForGroup(user, this.contextId, this.item._id)
@@ -76,12 +99,8 @@ export default {
     }
   },
   methods: {
-    roleKey (role) {
-      return this.item._id + '-' + role
-    },
     async refreshStats () {
-      // Clear the counters. We use a temporary object to ensure reactivity
-      // see: https://v1.vuejs.org/guide/reactivity.html
+      // TOTO: display stats ?
       const stats = {}
       this.roleNames.forEach(role => {
         stats[role] = 0
@@ -105,12 +124,11 @@ export default {
           icon: 'group_work'
         }, this.item)]
       })
-      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } 
+      })
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-card'] = this.$load('collection/KCard')
     // Compute the count of members belonging to group
     this.roleNames = RoleNames
     this.roleIcons = this.$config('roles.icons')

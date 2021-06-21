@@ -574,7 +574,8 @@
     "SEARCH_TAGS": "Search tags"
   },
   "KTagCard": {
-    "EDIT_LABEL": "$t(EDIT)",
+    "EDIT_ACTION": "$t(EDIT)",
+    "MEMBERS_SECTION": "Members",    
     "MEMBERS_LABEL": "{{count}} member(s)",
     "VIEW_MEMBERS_LABEL": "View members with tag"
   },  
@@ -585,8 +586,11 @@
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {
-    "EDIT_LABEL": "$t(EDIT)", 
-    "REMOVE_LABEL": "$t(REMOVE)",    
+    "EDIT_ACTION": "$t(EDIT)", 
+    "REMOVE_ACTION": "$t(REMOVE)",   
+    "DESCRIPTION_SECTION": "Description",
+    "NO_DESCRIPTION_LABEL": "No description",
+    "MEMBERS_SECTION": "Members",
     "MEMBERS_LABEL": "{{count}} member(s)",
     "VIEW_MEMBERS_LABEL": "View members"
   },
