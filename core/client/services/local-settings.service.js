@@ -52,6 +52,10 @@ export default function (name, api, options) {
           Store.set(value, _.get(settings, key))
         }
       })
+    },
+
+    getSettingsMapping () {
+      return mapping
     }
   }
 }
