@@ -102,16 +102,17 @@ export default {
           this.options = _.differenceWith(results, this.items, (item1, item2) => {
             return _.get(item1, item1.field) === _.get(item2, item2.field) && item1.service === item2.service
           })
-        } else this.options = results
-        this.$refs.select.updateInputValue('')
+        } else this.options = results    
       })
     },
     onSelected (value) {
       if (value) {
+        //FIXME: ???
         if (this.properties.multiselect) this.model = this.items
         else this.model = this.items
       } else this.model = this.emptyModel()
       this.options = []
+      this.$refs.select.updateInputValue('')
       this.onChanged()
     }
   }
