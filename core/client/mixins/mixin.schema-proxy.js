@@ -6,6 +6,10 @@ const schemaProxyMixin = {
     schemaJson: {
       type: String,
       default: ''
+    },
+    schemaProperties: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -20,12 +24,21 @@ const schemaProxyMixin = {
     getSchemaId () {
       return this.schema ? this.schema.$id : ''
     },
+    filterSchema () {
+      // We can filter properties in schema
+      const properties = this.schema.properties
+      Object.keys(properties).forEach(property => {
+        if (!this.schemaProperties.includes(property)) delete properties[property]
+      })
+    },
     async loadSchemaFromResource (schemaName) {
       try {
         this.schema = await this.$load(schemaName, 'schema')
         // FIXME: not yet sure why this is now required, might be related to
         // https://forum.vuejs.org/t/solved-using-standalone-version-but-getting-failed-to-mount-component-template-or-render-function-not-defined/19569/2
         if (this.schema.default) this.schema = this.schema.default
+        // Apply filtering
+        this.filterSchema()
         return this.schema
       } catch (error) {
         Events.$emit('error', error)
@@ -35,6 +48,8 @@ const schemaProxyMixin = {
     async loadSchemaFromJson (json) {
       try {
         this.schema = JSON.parse(json)
+        // Apply filtering
+        this.filterSchema()
         return this.schema
       } catch (error) {
         Events.$emit('error', error)
