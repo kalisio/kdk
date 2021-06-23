@@ -98,12 +98,13 @@ export default {
           this.options = _.differenceWith(results, this.items, (item1, item2) => {
             return item1.value === item2.value
           })
-          this.$refs.select.updateInputValue('')
-        } else this.$store.patch('filter', { pattern })
+        }
+        this.$store.patch('filter', { pattern })
       })
     },
     onSelected (item) {
       this.options = []
+      this.$refs.select.updateInputValue('')
       if (!item) this.items = []
       this.$store.patch('filter', { items: this.items })
     }
