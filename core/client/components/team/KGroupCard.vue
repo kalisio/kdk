@@ -2,21 +2,12 @@
   <k-card 
     v-bind="$props"
     :header="header"
-    :actions="itemActions" 
+    :actions="itemActions"
     :bind-actions="false">
     <!--
       Card content
      -->
     <div slot="card-content">
-      <!-- Description -->
-      <k-card-section :title="$t('KGroupCard.DESCRIPTION_SECTION')" :actions="descriptionActions">
-        <div v-if="hasDescription">
-          <k-text-area :text="item.description" />
-        </div>
-        <div v-else> 
-          {{ $t('KGroupCard.NO_DESCRIPTION_LABEL')}}
-        </div>
-      </k-card-section>
       <!-- Members -->
       <k-card-section :title="$t('KGroupCard.MEMBERS_SECTION')">
         <q-list>
@@ -66,30 +57,9 @@ export default {
   },
   computed: {
     header () {
-      return [
-        { component: 'QBadge', label: this.$t(this.memberRoleLabel), color: 'grey-7' },
-        { component: 'QSpace' },
-        { 
-          id: 'edit-group', icon: 'las la-edit', size: 'sm', tooltip: 'KGroupCard.EDIT_ACTION',
-          visible: this.$can('update', 'groups', this.contextId, this.item),
-          handler: this.editItem
-        },
-        {
-          id: 'remove-group', icon: 'las la-trash', size: 'sm', tooltip: 'KGroupCard.REMOVE_ACTION',
-          visible: this.$can('remove', 'groups', this.contextId, this.item),
-          handler: () => this.removeItem('confirm')
-        }
-      ]
-    },
-    descriptionActions () {
-      return [{ 
-        id: 'edit-description', icon: 'las la-edit', size: 'sm', tooltip: 'KGroupCard.EDIT_ACTION', 
-        visible: this.$can('update', 'groups', this.contextId, this.item),
-        route: { name: 'edit-group-description', params: { contextId: this.contextId, objectId: this.item._id } }
-      }]
-    },
-    hasDescription () {
-      return !_.isEmpty(this.item.description)
+      let components = _.filter(this.itemActions, { scope: 'header' })
+      components.splice(0, 0, { component: 'QBadge', label: this.$t(this.memberRoleLabel), color: 'grey-7' }, { component: 'QSpace' })
+      return components
     },
     memberRoleLabel () {
       const user = this.$store.get('user')

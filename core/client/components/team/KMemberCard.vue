@@ -8,14 +8,22 @@
       Card avater
     -->
     <div slot="card-avatar">
-      <k-avatar :object="item" size="4rem" />
+      <k-avatar :object="item" size="3.2rem" />
     </div>
+    <!--
+      Card descriptions
+    -->
+    <div slot="card-description">
+      <div class="row full-width justify-start">
+        {{ description }}
+      </div>
+    </div>  
     <!--
       Card content
     -->
     <div slot="card-content">
       <!-- Tags section -->
-      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.TAGS_SECTION')" :actions="tagsActions">
+      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.TAGS_SECTION')" :actions="tagsActions" :context="$props">
         <div v-if="hasTags">
           <k-chips-pane id="tags-pane" class="q-pa-sm" :chips="tags" />
         </div>
@@ -24,7 +32,7 @@
         </div>
       </k-card-section>
       <!-- Groups section -->
-      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.GROUPS_SECTION')" :actions="groupsActions">
+      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.GROUPS_SECTION')" :actions="groupsActions" :context="$props">
         <div v-if="hasGroups" class="row justify-start items-center">
           <template v-for="(group, index) in groups">
             <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
@@ -50,8 +58,10 @@
       </k-card-section>
       <!-- Expiration section -->
       <k-card-section v-if="item.expireAt">
-        <div class="row full-width justify-between items-center">
-          <span class="text-warning text-weight-bold" v-if="expireAt">{{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}</span>
+        <div class="row full-width justify-between items-center no-wrap">
+          <span class="text-warning text-weight-bold" v-if="expireAt">
+            {{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}
+          </span>
           <k-panel :content="expirationActions" />
         </div>
       </k-card-section>
@@ -66,7 +76,7 @@ import mixins from '../../mixins'
 import { getInitials, processIcon, isEmailValid } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
-import { KAvatar, KPanel } from '../frame'
+import { KAvatar, KPanel, KChipsPane } from '../frame'
 
 export default {
   name: 'k-member-card',
@@ -74,32 +84,25 @@ export default {
     KCard,
     KCardSection,
     KAvatar,
-    KPanel
+    KPanel,
+    KChipsPane
   },
   mixins: [mixins.baseItem],
   computed: {
     header () {
-      return [
-        { component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' },
-        { component: 'QSpace' },
-        { 
-          id: 'edit-member', icon: 'las la-edit', size: 'sm', tooltip: 'PlanCard.EDIT_ACTION',
-          visible: this.$can('update', 'members', this.contextId, this.item),
-          route: { name: 'change-role', params: { contextId: this.contextId, objectId: this.item._id } }
-        },
-        {
-          id: 'remove-member', icon: 'las la-trash', size: 'sm', tooltip: 'KMemberCard.REMOVE_ACTION',
-          visible: this.$can('remove', 'authorisations', this.contextId, { resource: this.contextId }),
-          handler: () => this.removeMember()
-        }
-      ]
+      let components = _.filter(this.itemActions, { scope: 'header' })
+      components.splice(0, 0, { component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' }, { component: 'QSpace' })
+      return components
+    },
+    role () {
+      const role = getRoleForOrganisation(this.item, this.contextId)
+      if (!_.isUndefined(role)) return Roles[role]
+      return ''
     },
     tagsActions () {
-      return [{ 
-        id: 'edit-tags', icon: 'las la-edit', size: 'sm', tooltip: 'KMemberCard.EDIT_ACTION', 
-        visible: !this.item.expireAt && this.$can('update', 'members', this.contextId),
-        route: { name: 'edit-member-tags', params: { contextId: this.contextId, objectId: this.item._id } }
-      }]
+      console.log(this.itemActions)
+      console.log(_.filter(this.itemActions, { scope: 'tags'}))
+      return _.filter(this.itemActions, { scope: 'tags'})
     },
     hasTags () {
       return !_.isEmpty(this.tags)
@@ -114,10 +117,7 @@ export default {
       return tags
     },
     groupsActions () {
-      return [{ 
-        id: 'joing-group', icon: 'las la-plus-circle', size: 'sm', tooltip: 'KMemberCard.JOIN_GROUP_ACTION', 
-        visible: this.canJoinGroup(), handler: () => this.onJoinGroup()
-      }]
+      return _.filter(this.itemActions, { scope: 'groups'})
     },   
     hasGroups () {
       return !_.isEmpty(this.groups)
@@ -125,17 +125,8 @@ export default {
     groups () {
       return _.filter(this.item.groups, { context: this.contextId })
     },
-    role () {
-      const role = getRoleForOrganisation(this.item, this.contextId)
-      if (!_.isUndefined(role)) return Roles[role]
-      return ''
-    },
     expirationActions () {
-      return [{
-        id: 'reissue-invitation', icon: 'las la-envelope', tooltip: 'KMemberCard.RESEND_INVITATION_LABEL',
-        visible: this.$can('update', 'members', this.contextId),
-        handler: () => this.resendInvitation()
-      }]
+      return _.filter(this.itemActions, { scope: 'expiration'})
     },
     expireAt () {
       return this.item.expireAt ? new Date(this.item.expireAt) : null
@@ -235,18 +226,12 @@ export default {
     },
     onChangeRoleInGroup (group) {
       this.$router.push({
-        name: 'change-role',
+        name: 'edit-member-role',
         params: {
           contextId: this.contextId,
           objectId: this.item._id,
           resource: { id: group._id, scope: 'groups', service: this.contextId + '/groups' }
         }
-      })
-    },
-    onJoinGroup () {
-      this.$router.push({
-        name: 'join-group',
-        params: { contextId: this.contextId, objectId: this.item._id }
       })
     },
     onLeaveGroup (group) {
@@ -276,8 +261,6 @@ export default {
     }
   },
   created () {
-
-    this.$options.components['k-chips-pane'] = this.$load('frame/KChipsPane')
     // Load the role configuration
     this.roleIcons = this.$config('roles.icons')
     this.roleLabels = this.$config('roles.labels')

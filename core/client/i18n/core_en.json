@@ -341,6 +341,10 @@
   "KColumn": {
     "EMPTY_COLUMN": "$t(NO_ITEM)"
   },
+  "KCard": {
+    "DESCRIPTION_SECTION": "Description",
+    "NO_DESCRIPTION_LABEL": "No description"
+  }, 
   "KUploader": {
     "dropZone": {
       "dictDefaultMessage": "Drop files or click here",
@@ -558,12 +562,14 @@
     "EDIT_ACTION": "$t(EDIT)",    
     "REMOVE_ACTION": "$t(REMOVE)",    
     "TAGS_SECTION": "Tags",
+    "NO_TAGS_LABEL": "Update tags",
+    "TAG_ACTION": "Edit tags",
     "GROUPS_SECTION": "Groups",
+    "NO_GROUPS_LABEL": "No groups",
     "JOIN_GROUP_ACTION": "Join a group",
     "EXPIRE_AT_LABEL": "Invitation expire at",
-    "CHANGE_ROLE_LABEL": "Change role",
-    "REMOVE_LABEL": "$t(REMOVE)",
-    "RESEND_INVITATION_LABEL": "Resend an invitation",
+    "CHANGE_ROLE_ACTION": "Change role",
+    "RESEND_INVITATION_ACTION": "Resend an invitation",
     "REMOVE_DIALOG_TITLE": "Remove {{member}} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{member}}</b> from your organisation ?",
     "LEAVE_GROUP_DIALOG_TITLE": "Leave the group {{group}} '?",

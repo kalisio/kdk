@@ -1,7 +1,6 @@
 <template>
   <k-card 
     v-bind="$props"
-    :header="header"
     :actions="itemActions" 
     :bind-actions="false"
     :options="{ nameField: 'value' }">
@@ -45,18 +44,6 @@ export default {
     KCardSection
   },  
   mixins: [mixins.baseItem],
-  computed: {
-    header () {
-      return [
-        { component: 'QSpace' },
-        { 
-          id: 'edit-group', icon: 'las la-edit', size: 'sm', tooltip: 'KTagCard.EDIT_ACTION',
-          visible: this.$can('update', 'tags', this.contextId, this.item),
-          handler: this.editItem
-        }
-      ]
-    }
-  },
   methods: {
     onListMembers () {
       // Setup filter accordingly

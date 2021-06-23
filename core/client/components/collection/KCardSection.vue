@@ -22,7 +22,7 @@
           <q-icon v-if="icon" :name="icon" color="grey-7" size="xs" />
           <span class="text-grey-7 text-caption">{{ title }}</span>
           <q-space />
-          <k-panel v-if="actions" :content="actions" />
+          <k-panel v-if="actions" :content="actions" :context="context" />
         </div>
         <!-- Content section -->
         <div v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
@@ -65,6 +65,10 @@ export default {
     dense: {
       type: Boolean,
       default: false
+    },
+    context: {
+      type: Object,
+      default: () => null
     }
   },
   computed: {

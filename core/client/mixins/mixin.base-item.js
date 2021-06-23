@@ -48,19 +48,13 @@ export default {
   },
   computed: {
     name () {
-      return this.getName()
+      return _.get(this.item, this.options.nameField || 'name', '')
     },
     description () {
-      return this.getDescription()
+      return _.get(this.item, this.options.descriptionField || 'description', '')
     }
   },
   methods: {
-    getName () {
-      return _.get(this.item, this.options.nameField || 'name', '')
-    },
-    getDescription () {
-      return _.get(this.item, this.options.descriptionField || 'description', '')
-    },
     setActions (actions) {
       // As context is different for each item we need to clone the global action configuration
       // otheriwse context will always reference the last processed item
@@ -86,17 +80,19 @@ export default {
       const path = this.$route.fullPath + `/view/${this.item._id}`
       this.$router.push(path)
     },
-    editItem () {
+    editItem (scope = undefined) {
       const route = this.$route
+      let subPath = '/edit/' + this.item._id
+      if (scope)  subPath += `/${scope}`
       this.$router.push({
-        path: route.path + `/edit/${this.item._id}`,
+        path: route.path + subPath,
         params: route.params,
         query: route.query
       })
     },
     removeItem (prompt) {
       if (prompt === 'confirm' || prompt === 'input') {
-        const name = this.getName()
+        const name = this.name
         const input = {
           type: 'text',
           model: '',
@@ -124,7 +120,7 @@ export default {
       }
     },
     exportItem () {
-      const name = this.getName()
+      const name = this.name
       const file = name + '.json'
       if (exportFile(file, JSON.stringify(this.item))) {
         this.$toast({ type: 'error', message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
