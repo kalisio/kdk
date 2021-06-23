@@ -20,12 +20,21 @@ await app.db.connect()
 
 KDK [core](https://github.com/kalisio/kdk/core) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
 ```javascript
-import { kalisio } from '@kalisio/kdk/client.client'
+import { kalisio } from '@kalisio/kdk/core.client'
 
 // Initialize API wrapper
 let api = kalisio()
 // Retrieve a given service
 let users = api.getService('users')
+```
+
+### Isomorphic features
+
+KDK provides some isomorphic features like the [permission system](./application.md#permissions).
+```javascript
+import { permissions } from '@kalisio/kdk/core.common'
+
+...
 ```
 
 ### Configuration
@@ -130,7 +139,7 @@ will be structured like this (*organisations* is an *authorization scope* on the
 
 A hook system allows to register the different rules that should be enforced, [CASL](https://stalniy.github.io/casl/) is used under-the-hood:
 ```javascript
-import { permissions } from '@kalisio/kdk/core'
+import { permissions } from '@kalisio/kdk/core.common'
 
 permissions.defineAbilities.registerHook((subject, can, cannot) => {
   if (subject && subject._id) { // Subject can be null on anonymous access
@@ -206,7 +215,7 @@ Events.$off('myEvent', myCallback)
 A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton object: allow to get or update the global state and make any interested component aware of it in real-time through events. The available API is illustrated by this code sample:
 
 ```js
-import { Store } from 'kCore/client'
+import { Store } from '@kalisio/kdk/core.client'
 import { Events } from 'quasar'
 
 const myCallback = (value, previousValue) => { ... }

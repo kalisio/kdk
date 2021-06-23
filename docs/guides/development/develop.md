@@ -5,6 +5,7 @@ The default Kalisio application template [kApp](https://github.com/kalisio/kApp)
 ## Web app
 
 ### Running for development
+
 Run the frontend app (from root project folder): `$ yarn dev`
 
 Then from the backend `api` folder run the server-side app: `$ yarn dev`
@@ -12,6 +13,7 @@ Then from the backend `api` folder run the server-side app: `$ yarn dev`
 Then point your browser to [localhost:8080](http://localhost:8080).
 
 ### Building for production
+
 Build the frontend app (from root project folder): `$ yarn build`.
 
 Then from the backend `api` folder build the server-side app: `$ yarn build`

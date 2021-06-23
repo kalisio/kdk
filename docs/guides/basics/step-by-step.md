@@ -147,11 +147,11 @@ kApp backend configuration is based on [Feathers](https://docs.feathersjs.com/gu
   * **accessKeyId**: AWS S3 access key
   * **secretAccessKey**: AWS S3 secret access key
   * **bucket**: AWS S3 bucket to be used
-* **mailer**: e-mail service configuration used by [kNotify](../../api/knotify/services.md#mailer-service), compliant with [nodemailer](https://github.com/nodemailer/nodemailer-smtp-transport) options plus custom Kalisio options, e.g.
+* **mailer**: [e-mail service](../../api/core/services.md#mailer-service) configuration, compliant with [nodemailer](https://github.com/nodemailer/nodemailer-smtp-transport) options plus custom Kalisio options, e.g.
   * **service**: e-mail service to be used (like `gmail`)
   * **auth**: user login and password
   * **templateDir**: directory containing the e-mails templates to be used
-* **pusher**: push notification service configuration used by [kNotify](../../api/knotify/services.md#pusher-service)
+* **pusher**: [push notification service](../../api/core/services.md#pusher-service) configuration
   * **accessKeyId**: AWS SNS access key
   * **secretAccessKey**: AWS SNS secret access key
   * **region**: AWS region to be used (like `eu-west-1`)
@@ -169,8 +169,12 @@ Environment variables (will override defaults in config file):
 kApp frontend configuration is based on the same underlying [tool](https://github.com/lorenwest/node-config) that powers [Feathers](https://docs.feathersjs.com/guides/advanced/configuration.html) so the same guidelines are applicable, the default configuration can be found in the `config` folder. The main properties are the following:
 * **apiPath**: the API path prefix
 * **apiTimeout**: the API timeout
+* **apiJwt**: name of the local storage key used to store the JWT used by the internal API
+* **gatewayJwt**: name of the local storage key used to store the JWT used by the API gateway
 * **version**: the web application version number
+* **flavor**: the web application [flavor](../development/deploy.md#deployment-flavors)
 * **domain**: the web application domain name (eg https://kapp.dev.kalisio.xyz)
+* **gateway**: the API gateway domain name (eg https://api.dev.kalisio.xyz)
 * **transport** : the transport to be used between frontend and backend, could be `http` for standard REST or `websocket` for WebSockets
 * **appName**: the name of the app
 * **appLogo**: the image to be used as logo for the app
