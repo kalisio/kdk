@@ -76,9 +76,15 @@ export default {
     onItemSelected (section) {
       this.$emit('item-selected', this.item, section)
     },
+    canViewItem () {
+      return this.$can('read', this.service, this.contextId, this.item)
+    },
     viewItem () {
       const path = this.$route.fullPath + `/view/${this.item._id}`
       this.$router.push(path)
+    },
+    canEditItem () {
+      return this.$can('update', this.service, this.contextId, this.item)
     },
     editItem (scope = undefined) {
       const route = this.$route
@@ -89,6 +95,9 @@ export default {
         params: route.params,
         query: route.query
       })
+    },
+    canRemoveItem () {
+      return this.$can('remove', this.service, this.contextId, this.item)
     },
     removeItem (prompt) {
       if (prompt === 'confirm' || prompt === 'input') {
