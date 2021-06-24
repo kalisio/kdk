@@ -16,7 +16,7 @@
     },
     "description": {
       "type": "string", 
-      "maxLength": 256,
+      "maxLength": 2048,
       "field": {
         "component": "form/KTextField",
         "label": "schemas.GROUPS_DESCRIPTION_FIELD_LABEL"
