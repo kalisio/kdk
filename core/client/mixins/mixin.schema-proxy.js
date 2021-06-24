@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { createQuerablePromise } from '../utils'
 import { Events } from '../events'
 
@@ -8,7 +9,7 @@ const schemaProxyMixin = {
       default: ''
     },
     schemaProperties: {
-      type: Array,
+      type: [String, Array],
       default: () => []
     }
   },
@@ -27,9 +28,16 @@ const schemaProxyMixin = {
     filterSchema () {
       // We can filter properties in schema
       const properties = this.schema.properties
-      Object.keys(properties).forEach(property => {
-        if (!this.schemaProperties.includes(property)) delete properties[property]
-      })
+      // Define the properties filter
+      let proopertiesFilter = (typeof this.schemaProperties === 'string' ? _.split(this.schemaProperties, ',') : this.schemaProperties)
+      if (typeof proopertiesFilter === 'string') propertiesFilter = [propertiesFilter]
+      if (proopertiesFilter.length > 0) {
+        Object.keys(properties).forEach(property => {
+          if (!proopertiesFilter.includes(property)) delete properties[property]
+        })
+        const suffixId = proopertiesFilter.join()
+        this.schema.$id += suffixId
+      }
     },
     async loadSchemaFromResource (schemaName) {
       try {
