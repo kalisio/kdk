@@ -100,9 +100,7 @@ export default {
       return ''
     },
     tagsActions () {
-      console.log(this.itemActions)
-      console.log(_.filter(this.itemActions, { scope: 'tags'}))
-      return _.filter(this.itemActions, { scope: 'tags'})
+      return _.filter(this.itemActions, { scope: 'tags' })
     },
     hasTags () {
       return !_.isEmpty(this.tags)
@@ -117,7 +115,7 @@ export default {
       return tags
     },
     groupsActions () {
-      return _.filter(this.itemActions, { scope: 'groups'})
+      return _.filter(this.itemActions, { scope: 'groups' })
     },   
     hasGroups () {
       return !_.isEmpty(this.groups)
@@ -126,7 +124,7 @@ export default {
       return _.filter(this.item.groups, { context: this.contextId })
     },
     expirationActions () {
-      return _.filter(this.itemActions, { scope: 'expiration'})
+      return _.filter(this.itemActions, { scope: 'expiration' })
     },
     expireAt () {
       return this.item.expireAt ? new Date(this.item.expireAt) : null
