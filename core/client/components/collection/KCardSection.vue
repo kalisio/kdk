@@ -25,11 +25,11 @@
           <k-panel v-if="actions" :content="actions" :context="context" />
         </div>
         <!-- Content section -->
-        <div v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
+        <div class="q-py-sm">
           <slot />
         </div>
       </div>
-      <div v-else v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
+      <div v-else class="q-py-xs">
         <slot />
       </div>
     </div>

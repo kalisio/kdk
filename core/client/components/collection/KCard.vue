@@ -36,7 +36,7 @@
       </slot>
       <slot name="card-description">
         <!-- Description -->
-        <k-card-section v-if="displayDescription" :title="$t('KCard.DESCRIPTION_SECTION')" :actions="descriptionActions">
+        <k-card-section v-if="displayDescription" :title="$t('KCard.DESCRIPTION_SECTION')" :actions="descriptionActions" :dense="dense">
           <div v-if="hasDescription">
             <k-text-area :text="item.description" />
           </div>
