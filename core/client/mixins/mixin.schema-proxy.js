@@ -35,8 +35,10 @@ const schemaProxyMixin = {
         Object.keys(properties).forEach(property => {
           if (!proopertiesFilter.includes(property)) delete properties[property]
         })
-        const suffixId = proopertiesFilter.join()
+        const suffixId = '-' + proopertiesFilter.join()
         this.schema.$id += suffixId
+        this.schema.required = _.intersection(this.schema.required, proopertiesFilter)
+        console.log(this.schema)
       }
     },
     async loadSchemaFromResource (schemaName) {
@@ -45,6 +47,7 @@ const schemaProxyMixin = {
         // FIXME: not yet sure why this is now required, might be related to
         // https://forum.vuejs.org/t/solved-using-standalone-version-but-getting-failed-to-mount-component-template-or-render-function-not-defined/19569/2
         if (this.schema.default) this.schema = this.schema.default
+        this.schema = _.cloneDeep(this.schema)
         // Apply filtering
         this.filterSchema()
         return this.schema
