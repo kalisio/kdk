@@ -81,8 +81,10 @@
     "ORGANISATIONS_NAME_FIELD_LABEL": "Enter the name of this organisation",
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Enter a description name of this organisation",
     "MEMBERS_TAGS_FIELD_LABEL": "Add somes tags to qualify this member",
+    "TAG_NAME": "{{ object.value }}"
     "TAGS_NAME_FIELD_LABEL": "Enter the name of this tag",
     "TAGS_ICON_FIELD_LABEL": "Set the icon of this tag",
+    "TAGS_DESCRIPTION_FIELD_LABEL": "Enter a description of this tag",
     "GROUPS_CREATE_TITLE": "Create a new group ?",
     "GROUPS_NAME_FIELD_LABEL": "Enter the name of this group",
     "GROUPS_DESCRIPTION_FIELD_LABEL": "Enter a description for this group"

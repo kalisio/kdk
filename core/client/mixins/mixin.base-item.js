@@ -86,10 +86,13 @@ export default {
     canEditItem () {
       return this.$can('update', this.service, this.contextId, this.item)
     },
-    editItem (scope = undefined) {
+    editItem (scope = undefined, properties = undefined) {
       const route = this.$route
       let subPath = '/edit/' + this.item._id
-      if (scope)  subPath += `/${scope}`
+      if (scope) {
+        if (properties) subPath += `/${properties}`
+        else subPath += `/${scope}`
+      }
       this.$router.push({
         path: route.path + subPath,
         params: route.params,

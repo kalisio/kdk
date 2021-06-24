@@ -81,8 +81,10 @@
     "ORGANISATIONS_NAME_FIELD_LABEL": "Saisissez le nom de l'organisation",
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'organisation",
     "MEMBERS_TAGS_FIELD_LABEL": "Ajouter des étiquettes pour qualifier le membre",
+    "TAG_NAME": "{{ object.value }}",
     "TAGS_NAME_FIELD_LABEL": "Saisissez le nom de l'étiquette",
     "TAGS_ICON_FIELD_LABEL": "Choisissez l'icône de l'étiquette",
+    "TAGS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'étiquette",
     "GROUPS_CREATE_TITLE": "Créer un nouveau groupe ?",
     "GROUPS_NAME_FIELD_LABEL": "Saisissez le nom du groupe",
     "GROUPS_DESCRIPTION_FIELD_LABEL": "Saisissez une description du groupe"

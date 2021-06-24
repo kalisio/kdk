@@ -38,7 +38,6 @@ const schemaProxyMixin = {
         const suffixId = '-' + proopertiesFilter.join()
         this.schema.$id += suffixId
         this.schema.required = _.intersection(this.schema.required, proopertiesFilter)
-        console.log(this.schema)
       }
     },
     async loadSchemaFromResource (schemaName) {

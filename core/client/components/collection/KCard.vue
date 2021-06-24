@@ -16,7 +16,7 @@
     <div class="column full-width"
       v-bind:class="{ 'q-px-sm q-py-xs q-gutter-y-xs': dense, 'q-px-md q-py-sm q-gutter-y-sm': !dense }">
       <slot name="card-title">
-        <div class="row full-width justify-start items-center">
+        <div class="row full-width justify-start items-center no-wrap">
           <div>
             <slot name="card-avatar">
               <k-avatar 
