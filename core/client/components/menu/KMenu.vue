@@ -1,6 +1,5 @@
 <template>
   <q-btn-dropdown
-    class="text-body2"
     v-if="hasContent"
     :id="id"
     :label="$t(label)"

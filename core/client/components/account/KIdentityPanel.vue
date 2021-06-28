@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user" class="column content-center q-pa-sm q-gutter-y-sm k-identity-panel">
+  <div v-if="user" class="column content-center q-pa-sm q-gutter-y-sm bg-grey-4">
     <!--
       User avatar
     -->
@@ -49,9 +49,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-  .k-identity-panel {
-    background-color: lightgrey;
-  }
-</style>

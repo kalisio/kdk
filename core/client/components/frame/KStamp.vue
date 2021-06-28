@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     v-bind:class="{
       'q-pl-xs q-pr-xs': !$q.screen.gt.xs,
       'q-pl-sm q-pr-sm': $q.screen.gt.xs,
@@ -7,24 +7,25 @@
       'row items-center no-wrap': direction === 'horizontal'
     }">
       <div style="text-align: center">
-        <q-icon :size="iconSize" :name="icon" />
-        <q-tooltip v-if="!showText">
-          {{ $t(text) }}
-        </q-tooltip>
+        <q-icon v-if="showIcon" :size="iconSize" :name="icon" />
+          <q-tooltip v-if="!showText">
+            {{ $t(text) }}
+          </q-tooltip>
       </div>
-      <div v-if="showText" class="q-pl-sm q-pr-sm">
+      <div v-if="showText" class="q-pl-xs q-pr-xs ellipsis-2-lines">
          {{ $t(text) }}
       </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   name: 'k-stamp',
   props: {
     icon: {
       type: String,
-      required: ''
+      default: undefined
     },
     iconSize: {
       type: String,
@@ -47,8 +48,11 @@ export default {
     }
   },
   computed: {
+    showIcon () {
+      return !_.isEmpty(this.icon)
+    },
     showText () {
-      return this.direction === 'vertical' || this.$q.screen.gt.xs
+      return this.direction === 'vertical' || _.isEmpty(this.icon) || this.$q.screen.gt.xs
     }
   }
 }
