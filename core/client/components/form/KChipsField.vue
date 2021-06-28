@@ -34,7 +34,7 @@
                 :label="chipValue(chip)"
                 @remove="onChipRemoved(chip)"
                 @click="onChipClicked(chip)"
-                :clickable="icon"
+                :clickable="Boolean(icon)"
                 removable
                 outline
                 dense
