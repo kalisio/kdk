@@ -88,7 +88,9 @@ export default {
     },
     editItem (scope = undefined, properties = undefined) {
       const route = this.$route
-      let subPath = '/edit/' + this.item._id
+      let subPath = 'edit/' + this.item._id
+      // Add trailing / if required (as sometimes it might be already present)
+      if (!route.path.endsWith('/')) subPath = `/${subPath}`
       if (scope) {
         if (properties) subPath += `/${properties}`
         else subPath += `/${scope}`

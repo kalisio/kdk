@@ -67,7 +67,7 @@ export default function baseEditorMixin (formRefs) {
           if (form.loadRefs().isFulfilled()) {
             if (this.getObject()) {
               if (this.perspective !== '') {
-                form.fill(this.getObject()[this.perspective])
+                form.fill(_.get(this.getObject(), this.perspective))
               } else {
                 form.fill(this.getObject())
               }
@@ -156,10 +156,10 @@ export default function baseEditorMixin (formRefs) {
         // Start from default object or input base object
         // This is used to keep track of existing or additional "hidden" or "internal" properties
         // in addition to the ones edited throught the form
-        const object = {}
+        let object = {}
         const baseObject = this.getObject() || this.baseObject
         if (this.perspective !== '') {
-          Object.assign(object, _.get(baseObject, this.perspective))
+          _.set(object, this.perspective, _.get(baseObject, this.perspective))
           // Keep track of ID as it is used to know if we update or create
           if (baseObject._id) object._id = baseObject._id
         } else {
@@ -178,6 +178,7 @@ export default function baseEditorMixin (formRefs) {
       },
       getSchemaName () {
         if (this.schemaName) return this.schemaName
+        // Can be provided as route metadata
         let schemaName = _.get(this.$route, 'meta.schemaName')
         if (schemaName) return schemaName
         // When used with a service by default use the same name for schema as for service
@@ -214,7 +215,7 @@ export default function baseEditorMixin (formRefs) {
               // Editing mode => patch the item
               if (this.perspective !== '') {
                 const data = {}
-                data[this.perspective] = _.omit(object, ['_id'])
+                data[this.perspective] = _.get(object, this.perspective)
                 const response = await this.getService().patch(this.objectId, data, { query })
                 // Keep track of ID as it is used to know if we update or create
                 if (object._id) response._id = object._id

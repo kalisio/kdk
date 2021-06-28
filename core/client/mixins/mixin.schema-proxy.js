@@ -28,16 +28,18 @@ const schemaProxyMixin = {
     filterSchema () {
       // We can filter properties in schema
       const properties = this.schema.properties
-      // Define the properties filter
-      let proopertiesFilter = (typeof this.schemaProperties === 'string' ? _.split(this.schemaProperties, ',') : this.schemaProperties)
-      if (typeof proopertiesFilter === 'string') propertiesFilter = [propertiesFilter]
-      if (proopertiesFilter.length > 0) {
+      // Define the properties filter, could be either a joined list (eg query string) or an array
+      let propertiesFilter = (typeof this.schemaProperties === 'string' ? _.split(this.schemaProperties, ',') : this.schemaProperties)
+      if (typeof propertiesFilter === 'string') propertiesFilter = [propertiesFilter]
+      if (propertiesFilter.length > 0) {
         Object.keys(properties).forEach(property => {
-          if (!proopertiesFilter.includes(property)) delete properties[property]
+          if (!propertiesFilter.includes(property)) delete properties[property]
         })
-        const suffixId = '-' + proopertiesFilter.join()
+        // Update schema ID so that a filtered schema is not similar to a complete one
+        const suffixId = '-' + propertiesFilter.join()
         this.schema.$id += suffixId
-        this.schema.required = _.intersection(this.schema.required, proopertiesFilter)
+        // Filter as well required properties
+        this.schema.required = _.intersection(this.schema.required, propertiesFilter)
       }
     },
     async loadSchemaFromResource (schemaName) {
