@@ -18,7 +18,9 @@ const GradientPath = L.PixiOverlay.extend({
     L.PixiOverlay.prototype.initialize.call(this,
       utils => this.render(utils),
       this.container, {
-        autoPreventDefault: false
+        autoPreventDefault: false,
+        // see: https://github.com/kalisio/kdk/issues/424
+        projectionZoom: (map) => { return 12 } 
       })
     if (geoJson) this.setData(geoJson)
   },
@@ -143,6 +145,7 @@ const GradientPath = L.PixiOverlay.extend({
         texture = this.createSolidTexture(this.path.gradient, weight)
       }
       this.container.addChild(new PIXI.SimpleRope(texture, points))
+      this.currentZoom = zoom
     }
     this.renderer.render(this.container)
   }
