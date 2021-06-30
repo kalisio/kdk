@@ -7,8 +7,7 @@
 
 <script>
 import _ from 'lodash'
-import Chart from 'chart.js'
-import 'chartjs-plugin-annotation'
+import { Chart } from 'chart.js'
 
 export default {
   name: 'k-chart',
