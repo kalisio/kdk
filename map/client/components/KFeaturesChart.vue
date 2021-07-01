@@ -5,6 +5,7 @@
     <k-modal ref="modal"
       id="feature-chart-modal"
       :title="title"
+      :buttons="buttons"
       :toolbar="toolbar"
       :maximized="isModalMaximized"
       v-model="isModalOpened"
@@ -22,7 +23,11 @@
         </div>
       </div>
     </k-modal>
-    <k-modal id="chart-settings-modal" ref="chartSettings" :title="$t('KFeaturesChart.CHART_SETTINGS_LABEL')">
+    <k-modal 
+      id="chart-settings-modal" 
+      ref="chartSettings" 
+      :title="$t('KFeaturesChart.CHART_SETTINGS_LABEL')"
+      :buttons="[{ id: 'close-action', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.chartSettings.close() }]">
       <div slot="modal-content">
         <q-select v-model="property" :label="$t('KFeaturesChart.PROPERTY_LABEL')"
           :options="properties" @input="refreshChart"/>
@@ -105,7 +110,9 @@ export default {
       toolbar: [
         { id: 'settings', icon: 'las la-cog', tooltip: 'KFeaturesChart.CHART_SETTINGS_LABEL', handler: () => this.$refs.chartSettings.open() },
         { id: 'download', icon: 'las la-file-download', tooltip: 'KFeaturesChart.CHART_EXPORT_LABEL', handler: () => this.downloadChartData() },
-        { id: 'close', icon: 'las la-times', tooltip: 'CLOSE', handler: () => this.closeModal() }
+      ],
+      buttons: [
+        { id: 'close-acation', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() }
       ],
       property: null,
       chartType: _.find(chartOptions, { value: 'pie' }),

@@ -2,6 +2,7 @@
   <k-modal ref="modal"
     id="features-filter-modal"
     :title="title"
+    :buttons="buttons"
     :maximized="isModalMaximized"
     v-model="isModalOpened"
     @opened="$emit('opened')"
@@ -42,9 +43,6 @@
           </q-item-section>
         </q-item>
       </q-list>
-      <div class="row justify-end" style="padding: 12px">
-        <q-btn id="apply-button" color="primary" flat :label="$t('APPLY')" @click="onApply"/>
-      </div>
     </div>
   </k-modal>
 </template>
@@ -74,6 +72,12 @@ export default {
   computed: {
     title () {
       return this.$t('KFeaturesFilter.TITLE', { layer: this.layer.name })
+    },
+    buttons () {
+      return [
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
+        { id: 'apply-button', label: 'APPLY', renderer: 'form-button', handler: () => this.onApply() }
+      ]
     },
     fields () {
       // Avoid modifying the layer schema as we might update it internally

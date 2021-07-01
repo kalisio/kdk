@@ -2,6 +2,7 @@
   <k-modal ref="modal"
     id="layer-style-modal"
     :title="$t('KLayerStyleEditor.EDIT_LAYER_STYLE_TITLE')"
+    :buttons="buttons"
     :options="{}"
     v-model="isModalOpened"
     @opened="$emit('opened')"
@@ -9,9 +10,6 @@
     <div slot="modal-content">
       <k-layer-style-form :class="{ 'light-dimmed': inProgress }" ref="form"
         :options="options" :layer="layer"/>
-      <div class="row justify-end" style="padding: 12px">
-        <q-btn id="apply-button" color="primary" flat :label="$t('APPLY')" @click="onApply"/>
-      </div>
       <q-spinner-cube color="primary" class="fixed-center" v-if="inProgress" size="4em"/>
     </div>
   </k-modal>
@@ -40,6 +38,14 @@ export default {
     options: { // Contains default style options
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    buttons () {
+      return [
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
+        { id: 'apply-button', label: 'APPLY', renderer: 'form-button', handler: () => this.onApply() }
+      ]
     }
   },
   data () {
@@ -79,7 +85,7 @@ export default {
       this.$emit('applied')
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-layer-style-form'] = this.$load('KLayerStyleForm')

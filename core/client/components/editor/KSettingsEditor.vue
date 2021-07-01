@@ -41,7 +41,7 @@ export default {
       this.$refs.editor.closeModal()
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-modal-editor'] = this.$load('editor/KModalEditor')
   }
