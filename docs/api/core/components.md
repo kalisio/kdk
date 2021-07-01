@@ -306,6 +306,18 @@ There are 2 ways to use the **k-modal-editor**:
 The properties to declare a **k-modal-editor** are identical to those of the **k-modal-editor** plus: 
  * **router**: the router function to be triggered when the editor is getting closed. 
 
+## Chart
+
+The **KDK** provides a helper component that allows rendering charts based on  [chart.js](https://www.chartjs.org/). 
+
+In addition and only if needed, it uses [chroma.js](https://gka.github.io/chroma.js/) to provide the `backgoundColor` array in order to render the different datasets of the chart. You can provide the color scale of your choice by setting the `scaleColor` property on each datasets. 
+
+Checkout the [ChartActivity](https://github.com/kalisio/kApp/blob/master/src/components/ChartActivity.vue) to understand how it works.
+
+::: tip
+Have a look at the [choma color scales](https://gka.github.io/chroma.js/#color-scales) to see how to define your color scale.
+:::
+
 ## Authentication
 
 The KDK provides you with some default forms to manage login, logout, registration and server endpoint configuration for mobile apps in the [authentication folder](https://github.com/kalisio/kdk/tree/master/core/client/components/authentication).

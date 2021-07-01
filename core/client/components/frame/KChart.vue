@@ -7,6 +7,7 @@
 
 <script>
 import _ from 'lodash'
+import chroma from 'chroma-js'
 import { Chart } from 'chart.js'
 
 export default {
@@ -23,15 +24,31 @@ export default {
   watch: {
     config: {
       async handler () {
-        this.chart.type = this.config.type
-        this.chart.data.labels = this.config.data.labels
-        this.chart.data.datasets = this.config.data.datasets
-        this.chart.options = this.config.options
-        this.chart.update()
+        if (this.chart.config.type !== this.config.type) {
+          // Create a new chart
+          this.chart.destroy()
+          const config = _.cloneDeep(this.config)
+          this.colorize(config.data.datasets)
+          this.chart = new Chart(this.$refs.chart.getContext('2d'), config)
+        } else {
+          // Update the existing chart
+          this.chart.data.labels = _.cloneDeep(this.config.data.labels)
+          this.chart.data.datasets = _.cloneDeep(this.config.data.datasets)
+          this.colorize(this.chart.data.datasets)
+          this.chart.options = _.cloneDeep(this.config.options)
+          this.chart.update()
+        }
       }
     }
   },
   methods: {
+    colorize (datasets) {
+      _.forEach(datasets, dataset => {
+        if (!dataset.backgroundColor && dataset.colorScale) {
+          dataset.backgroundColor = chroma.scale(dataset.colorScale).colors(dataset.data.length)
+        }
+      })
+    },
     onResized (size) {
       if (!this.chart) this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
     }
