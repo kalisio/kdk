@@ -27,7 +27,6 @@
 
 <script>
 import _ from 'lodash'
-import { colors } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 
 export default {
