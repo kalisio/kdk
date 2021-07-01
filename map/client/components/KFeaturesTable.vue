@@ -72,7 +72,7 @@ export default {
       this.openModal(true)
     }
   },
-  created () {
+  beforeCreate () {
     // laod the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-table'] = this.$load('collection/KTable')
