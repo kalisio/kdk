@@ -420,7 +420,7 @@
   },
   "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "Aucune couche disponible",
-    "LAYER_DISABLED": "Zoomez d'avantage pour voir cette couche"
+    "LAYER_DISABLED": "Zoomez davantage pour voir cette couche"
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Prévisions",
