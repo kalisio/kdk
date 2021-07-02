@@ -8,7 +8,6 @@
     @closed="$emit('closed')">
     <div slot="modal-content">
       <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged" />
-      <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em" />
     </div>
   </k-modal>
 </template>
@@ -34,9 +33,10 @@ export default {
   ],
   computed: {
     buttons () {
-      const buttons = [{
-        id: 'apply-button', label: this.applyButton, renderer: 'form-button', handler: () => this.apply()
-      }]
+      const buttons = [
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
+        { id: 'apply-button', label: this.applyButton, renderer: 'form-button', handler: () => this.apply() }
+      ]
       if (this.clearButton !== '') {
         buttons.push({
           id: 'clear-button', label: this.clearButton, renderer: 'form-button', outline: 'true', handler: () => this.clear()

@@ -95,12 +95,10 @@ export default {
   },
   methods: {
     getButtons () {
-      return [{
-        id: 'join-button',
-        label: 'KJoinGroup.ADD_BUTTON',
-        renderer: 'form-button',
-        handler: (event, done) => this.doJoin(event, done)
-      }]
+      return [
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
+        { id: 'join-button', label: 'KJoinGroup.ADD_BUTTON', renderer: 'form-button', handler: (event, done) => this.doJoin(event, done) }
+      ]
     },
     getService () {
       return this.$api.getService('members')

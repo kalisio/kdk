@@ -2,6 +2,7 @@
   <k-modal
     id="modal-viewer"
     :title="viewerTitle"
+    :buttons="getButtons()"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -24,6 +25,11 @@ export default {
     mixins.schemaProxy
   ],
   methods: {
+    getButtons () {
+      return [
+        { id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() }
+      ]
+    },
     async openModal () {
       await this.refresh()
       this.isModalOpened = true

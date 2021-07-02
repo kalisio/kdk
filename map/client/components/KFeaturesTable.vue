@@ -3,6 +3,7 @@
     id="features-table-modal"
     :title="title"
     :maximized="isModalMaximized"
+    :buttons="buttons"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -12,7 +13,8 @@
         :contextId="contextId" 
         :schema-json="schema" 
         :item-actions="featureActions" 
-        :base-query="layer.baseQuery">
+        :base-query="layer.baseQuery"
+        :style="`height: ${height}px; max-width: ${width}px;`">
         <template slot="empty-section">
           <div class="absolute-center">
             <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
@@ -50,6 +52,17 @@ export default {
     title () {
       return this.$t('KFeaturesTable.TITLE', { layer: this.layer.name })
     },
+    buttons () {
+      return [
+        { id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() },
+      ]
+    },
+    width () {
+      return this.$q.screen.width - 50
+    },
+    height () {
+      return this.$q.screen.height - 80
+    },
     schema () {
       return JSON.stringify(_.get(this.layer, 'schema.content'))
     }
@@ -59,7 +72,7 @@ export default {
       this.openModal(true)
     }
   },
-  created () {
+  beforeCreate () {
     // laod the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-table'] = this.$load('collection/KTable')

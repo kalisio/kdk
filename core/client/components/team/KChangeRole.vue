@@ -86,12 +86,10 @@ export default {
       }
     },
     getButtons () {
-      return [{
-        id: 'update-button',
-        label: 'KChangeRole.UPDATE_BUTTON',
-        renderer: 'form-button',
-        handler: () => this.doUpdate()
-      }]
+      return [
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
+        { id: 'update-button', label: 'KChangeRole.UPDATE_BUTTON', renderer: 'form-button', handler: () => this.doUpdate() }
+      ]
     },
     getService () {
       return this.$api.getService('members')

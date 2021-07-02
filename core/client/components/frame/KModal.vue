@@ -5,7 +5,13 @@
     :maximized="maximized"
     @show="$emit('opened')"
     @hide="$emit('closed')">
-    <q-card :class="contentClass" :style="maximized ? '' : contentStyle">
+    <q-card 
+      v-bind:class="{ 
+        'column full-height': maximized,
+        'q-pa-sm': $q.screen.gt.xs,
+        'q-ps-xs': $q.screen.lt.sm
+      }"
+      :style="computedStyle">
       <!--
          Toolbar section
        -->
@@ -14,29 +20,36 @@
           <span class="ellipsis">{{ title }}</span>
         </q-toolbar-title>
         <q-space />
-        <k-panel id="modal-toolbar" :content="toolbarContent" />
+        <k-panel id="modal-toolbar" :content="toolbar" />
       </q-toolbar>
       <!--
         Content section
        -->
-      <q-card-section>
+      <q-card-section class="col">
         <slot name="modal-content" />
       </q-card-section>
       <!--
         Buttons section
        -->
       <q-card-actions v-if="buttons" align="right">
-        <k-panel id="modal-buttons" :content="buttons" renderer="form-button" />
+        <k-panel 
+          id="modal-buttons" 
+          :content="buttons" 
+          renderer="form-button" 
+          v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script>
-import { Screen } from 'quasar'
+import KPanel from './KPanel.vue'
 
 export default {
   name: 'k-modal',
+  components: {
+    KPanel
+  },
   props: {
     title: {
       type: String,
@@ -54,33 +67,19 @@ export default {
       type: Boolean,
       default: false
     },
-    contentClass: {
-      type: String,
-      default: 'q-pa-xs'
-    },
-    contentStyle: {
-      type: String,
-      default: () => {
-        if (Screen.lt.sm) return 'min-width: 100vw; max-height: 90vh'
-        if (Screen.lt.md) return 'min-width: 90vw; max-height: 90vh'
-        if (Screen.lt.lg) return 'min-width: 80vw; max-height: 90vh'
-        if (Screen.lt.xl) return 'min-width: 70vw; max-height: 90vh'
-        return 'min-width: 60vw; max-height: 90vh'
-      }
-    },
     value: {
       type: Boolean,
       default: false
     }
   },
   computed: {
-    toolbarContent () {
-      if (!this.toolbar) {
-        return [
-          { id: 'close-action', icon: 'las la-times', tooltip: 'KModal.CLOSE_ACTION', handler: () => this.close() }
-        ]
-      }
-      return this.toolbar
+    computedStyle () {
+      if (this.maximized) return ''
+      if (this.$q.screen.lt.sm) return 'min-width: 100vw; max-height: 90vh'
+      if (this.$q.screen.lt.md) return 'min-width: 90vw; max-height: 90vh'
+      if (this.$q.screen.lt.lg) return 'min-width: 80vw; max-height: 90vh'
+      if (this.$q.screen.lt.xl) return 'min-width: 70vw; max-height: 90vh'
+      return 'min-width: 60vw; max-height: 90vh'
     }
   },
   watch: {
@@ -101,10 +100,6 @@ export default {
       this.$refs.modal.hide()
       this.$emit('input', false)
     }
-  },
-  created () {
-    // load the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   mounted () {
     if (this.value) this.$refs.modal.show()
