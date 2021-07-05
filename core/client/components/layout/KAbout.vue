@@ -19,7 +19,11 @@
     <!--
       About window
      -->
-    <k-modal :title="$t('KAbout.TITLE')" id="about" ref="about">
+    <k-modal 
+      :title="$t('KAbout.TITLE')" 
+      id="about" 
+      ref="about"
+      :buttons="getButtons()">
       <div slot="modal-content">
         <div class="column justify-center">
           <!-- Banner -->
@@ -94,8 +98,10 @@ export default {
       this.$refs.about.open()
       this.$emit('triggered')
     },
-    onAboutClosed () {
-      this.$refs.about.close()
+    getButtons () {
+      return [{
+        id: 'close-action', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.about.close()
+      }]
     }
   },
   created () {
