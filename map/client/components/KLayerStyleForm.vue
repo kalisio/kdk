@@ -694,7 +694,10 @@ export default {
     },
     baseValues () {
       const values = {
-        'leaflet.isVisible': this.isVisible
+        'leaflet.isVisible': this.isVisible,
+        // See https://github.com/kalisio/kdk/issues/429
+        // While we cannot edit style in 3D make at least visibility available
+        'cesium.isVisible': this.isVisible
       }
       if (this.hasMinZoom) values['leaflet.minZoom'] = this.minZoom
       if (this.hasMaxZoom) values['leaflet.maxZoom'] = this.maxZoom
