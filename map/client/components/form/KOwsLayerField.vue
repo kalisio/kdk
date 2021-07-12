@@ -11,10 +11,11 @@
     :error-message="errorLabel"
     :error="hasError"
     bottom-slots
-    :options="availableLayers"
+    :options="filteredLayers"
     option-label="display"
     option-value="id"
     :loading="loading"
+    @filter="onFilter"
     @input="onUpdated">
     <!-- Options display -->
     <template v-slot:option="scope">
@@ -46,10 +47,16 @@ export default {
   data () {
     return {
       layer: '',
-      loading: false
+      loading: false,
+      filter: ''
     }
   },
   computed: {
+    filteredLayers () {
+      return this.filter ? 
+        this.availableLayers.filter(layer => layer.display.toLowerCase().includes(this.filter.toLowerCase())) :
+        this.availableLayers
+    },
     availableLayers () {
       // sort alphabetically layers per display
       return this.service ? _.map(this.service.availableLayers, (value, key) => value).sort((a, b) => {
@@ -65,6 +72,11 @@ export default {
     },
     emptyModel () {
       return null
+    },
+    onFilter (val, update, abort) {
+      update(() => {
+        this.filter = val.toLocaleLowerCase()
+      })
     },
     async onUpdated (layer) {
       this.error = ''
