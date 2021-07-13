@@ -23,6 +23,7 @@
   "HELP": "Aide",
   "NEED_HELP": "Besoin d'aide ?",
   "CONTEXTUAL_HELP": "Aide contextuelle",
+  "BACK": "Retour",
   "errors": {
     "400": "Cette opération ne peut être réalisée: paramètres incorrects",
     "401": "Cette opération ne peut être réalisée: vous devez être authentifié",

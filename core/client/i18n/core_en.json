@@ -23,6 +23,7 @@
   "HELP": "Help",
   "NEED_HELP": "Help needed ?",
   "CONTEXTUAL_HELP": "Contextual help",
+  "BACK": "Return",
   "errors": {
     "400": "Operation cannot be performed: bad parameters",
     "401": "Operation cannot be performed: authentication required",
