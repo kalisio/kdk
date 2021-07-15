@@ -14,7 +14,7 @@ module.exports = {
       { text: 'Guides', link: '/guides/' },
       { text: 'Architecture', link: '/architecture/' },
       { text: 'API', link: '/api/' },
-      { text: 'Tips', link: '/tips.md' },
+      { text: 'Tips', link: '/tips/' },
       { text: 'Tools', link: '/tools/' }
     ],
     sidebar: {
@@ -22,6 +22,7 @@ module.exports = {
       '/guides/': getGuidesSidebar(),
       '/architecture/': getArchitectureSidebar(),
       '/api/': getAPISidebar(),
+      '/tips': getTipsSidebar(),
       '/tools/': getToolsSidebar()
     }
   }
@@ -72,6 +73,13 @@ function getAPISidebar () {
       title: 'map',
       children: [ 'map/', 'map/services', 'map/hooks', 'map/components', 'map/mixins', 'map/map-mixins', 'map/globe-mixins' ]
     }
+  ]
+}
+
+function getTipsSidebar () {
+  return [
+    'app-development.md',
+    'mobile-configuraiton'
   ]
 }
 

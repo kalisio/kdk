@@ -1,4 +1,4 @@
-# Tips
+# Application development
 
 ## Generating service account tokens
 
@@ -112,3 +112,5 @@ docker exec -it redis bash
 > SUBSCRIBE feathers-sync
 Reading messages...
 ```
+
+
