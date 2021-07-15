@@ -7,9 +7,8 @@ var API_PREFIX = '/api'
 
 module.exports = {
   port: process.env.PORT || 8081,
-
   apiPath: API_PREFIX,
-
+  domain: 'https://kapp.kalisio.xyz',
   host: 'localhost',
   paginate: {
     default: 10,

@@ -53,9 +53,9 @@ export default {
   },
   computed: {
     filteredLayers () {
-      return this.filter ? 
-        this.availableLayers.filter(layer => layer.display.toLowerCase().includes(this.filter.toLowerCase())) :
-        this.availableLayers
+      return this.filter
+        ? this.availableLayers.filter(layer => layer.display.toLowerCase().includes(this.filter.toLowerCase()))
+        : this.availableLayers
     },
     availableLayers () {
       // sort alphabetically layers per display
