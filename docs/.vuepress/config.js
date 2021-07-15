@@ -79,7 +79,7 @@ function getAPISidebar () {
 function getTipsSidebar () {
   return [
     'app-development.md',
-    'mobile-configuraiton'
+    'mobile-configuration'
   ]
 }
 
