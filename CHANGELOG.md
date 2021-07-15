@@ -16,47 +16,11 @@
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.4...v1.3.5)
 
-**Implemented enhancements:**
-
-- Provide helper function to check view/edit/remove ability on an item [\#422](https://github.com/kalisio/kdk/issues/422)
-- Refactor KHistory to rely on KColumn [\#412](https://github.com/kalisio/kdk/issues/412)
-- Provide a generic time range component [\#411](https://github.com/kalisio/kdk/issues/411)
-- Provide a way to observe the page content size [\#400](https://github.com/kalisio/kdk/issues/400)
-- Make location field more user-friendly [\#399](https://github.com/kalisio/kdk/issues/399)
-- Enhance the location field/map to manage any geometry type [\#397](https://github.com/kalisio/kdk/issues/397)
-- Add ability to emit click events from canvas layer. [\#388](https://github.com/kalisio/kdk/issues/388)
-- Allow in-memory GeoJson be passed on GeoJson layer addition [\#94](https://github.com/kalisio/kdk/issues/94)
-
 **Fixed bugs:**
 
 - Gradient path width changes with min/max map zoom [\#424](https://github.com/kalisio/kdk/issues/424)
 - KItemField clears the input pattern when an item is found [\#421](https://github.com/kalisio/kdk/issues/421)
 - When filtering a collection the pattern is cleared if a filter item is found  [\#420](https://github.com/kalisio/kdk/issues/420)
-- Changing the geometry type in realtime GeoJson layer does not work [\#406](https://github.com/kalisio/kdk/issues/406)
-- Minimize and maximize actions seem mixed up on KWindow [\#402](https://github.com/kalisio/kdk/issues/402)
-- List of values is incomplete when editing the features filter [\#404](https://github.com/kalisio/kdk/issues/404)
-- FR version : data export generates .cvs instead of .csv [\#403](https://github.com/kalisio/kdk/issues/403)
-- HistoryEntry card is not correclty aligned on the left side [\#401](https://github.com/kalisio/kdk/issues/401)
-- Exclusive option not taken into account in user-defined categories [\#395](https://github.com/kalisio/kdk/issues/395)
-
-**Closed issues:**
-
-- Allow to define a path to the value in KChipsPane [\#416](https://github.com/kalisio/kdk/issues/416)
-- Allow to filter a schema according a list of fields when building a form [\#415](https://github.com/kalisio/kdk/issues/415)
-- Card rendering should support a dense mode [\#414](https://github.com/kalisio/kdk/issues/414)
-- Make possible to use a template string for storage service name in uploader [\#413](https://github.com/kalisio/kdk/issues/413)
-- Provide a basic chart container [\#362](https://github.com/kalisio/kdk/issues/362)
-- Provide a generic setttings component [\#317](https://github.com/kalisio/kdk/issues/317)
-
-**Merged pull requests:**
-
-- chore\(deps\): bump socket.io-parser from 3.3.0 to 3.3.2 [\#426](https://github.com/kalisio/kdk/pull/426) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump prismjs from 1.23.0 to 1.24.0 in /docs [\#425](https://github.com/kalisio/kdk/pull/425) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump color-string from 1.5.3 to 1.5.5 [\#419](https://github.com/kalisio/kdk/pull/419) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump color-string from 1.5.3 to 1.5.5 in /docs [\#418](https://github.com/kalisio/kdk/pull/418) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump postcss from 7.0.32 to 7.0.36 in /docs [\#409](https://github.com/kalisio/kdk/pull/409) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump postcss from 7.0.32 to 7.0.36 [\#408](https://github.com/kalisio/kdk/pull/408) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump minimist from 1.2.0 to 1.2.5 in /docs [\#396](https://github.com/kalisio/kdk/pull/396) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.3.4](https://github.com/kalisio/kdk/tree/v1.3.4) (2021-06-08)
 
@@ -64,12 +28,6 @@
 
 **Implemented enhancements:**
 
-- Enhance KMenu rendering with a dropdown icon [\#386](https://github.com/kalisio/kdk/issues/386)
-- Allow to specify a schema name to an editor [\#381](https://github.com/kalisio/kdk/issues/381)
-- Allow location map to be embedded in a card [\#373](https://github.com/kalisio/kdk/issues/373)
-- Provide an helper component to display a color [\#371](https://github.com/kalisio/kdk/issues/371)
-- Provide an helper component to create card sections [\#369](https://github.com/kalisio/kdk/issues/369)
-- Enhance card rendering [\#368](https://github.com/kalisio/kdk/issues/368)
 - Add ability to configure the opacity of a WMS layer in style editor [\#366](https://github.com/kalisio/kdk/issues/366)
 - Support temporal requests for WMS layers [\#363](https://github.com/kalisio/kdk/issues/363)
 
@@ -77,38 +35,19 @@
 
 - Editing toast appear when removing a layer [\#394](https://github.com/kalisio/kdk/issues/394)
 - KChangeRole no longer handle multiple resources [\#389](https://github.com/kalisio/kdk/issues/389)
-- Select field must be clearable [\#387](https://github.com/kalisio/kdk/issues/387)
 - General abilities are lost in query for find operations [\#385](https://github.com/kalisio/kdk/issues/385)
 - User abilities modified in place [\#384](https://github.com/kalisio/kdk/issues/384)
-- KLocationMap is not refreshed when updating the location [\#383](https://github.com/kalisio/kdk/issues/383)
 - Cannot unselect the icon in the KIconChooser [\#382](https://github.com/kalisio/kdk/issues/382)
-- Default edit action in based-item mixin does not handle query params [\#380](https://github.com/kalisio/kdk/issues/380)
-- Collections empty section should not be defined using an absolute position [\#377](https://github.com/kalisio/kdk/issues/377)
 - Wrong date on probe tooltip [\#370](https://github.com/kalisio/kdk/issues/370)
--  Disable hiding action button label when screen gets too small [\#367](https://github.com/kalisio/kdk/issues/367)
 - WMS legend not shown when switching between multiple WMS layers [\#365](https://github.com/kalisio/kdk/issues/365)
 - WMS legend not shown when the layer is active by default [\#364](https://github.com/kalisio/kdk/issues/364)
 - Dragging while editing a polyline/polygon adds a new point [\#361](https://github.com/kalisio/kdk/issues/361)
 - Tiled mesh/wind layers based on a weacast grid source do not work with levels [\#346](https://github.com/kalisio/kdk/issues/346)
 - Deleting the layer while being edited leaves activity in edit mode [\#376](https://github.com/kalisio/kdk/issues/376)
 
-**Closed issues:**
-
-- Allow KChipsField to be used without icon edition [\#390](https://github.com/kalisio/kdk/issues/390)
-
-**Merged pull requests:**
-
-- chore\(deps\): bump ws from 6.2.1 to 6.2.2 in /docs [\#391](https://github.com/kalisio/kdk/pull/391) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump dns-packet from 1.3.1 to 1.3.4 in /docs [\#379](https://github.com/kalisio/kdk/pull/379) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump browserslist from 4.12.0 to 4.16.6 in /docs [\#374](https://github.com/kalisio/kdk/pull/374) ([dependabot[bot]](https://github.com/apps/dependabot))
-
 ## [v1.3.3](https://github.com/kalisio/kdk/tree/v1.3.3) (2021-05-13)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.2...v1.3.3)
-
-**Implemented enhancements:**
-
-- Provide a specified base layers selector [\#358](https://github.com/kalisio/kdk/issues/358)
 
 **Fixed bugs:**
 
@@ -120,14 +59,6 @@
 - Tiled features layer not correctly updated when panning [\#273](https://github.com/kalisio/kdk/issues/273)
 - Cannot add two layers with different translation keys but the same label [\#147](https://github.com/kalisio/kdk/issues/147)
 - Adding/removing a member does not trigger real-time update for user GUI [\#102](https://github.com/kalisio/kdk/issues/102)
-
-**Merged pull requests:**
-
-- chore\(deps\): bump hosted-git-info from 2.8.8 to 2.8.9 [\#360](https://github.com/kalisio/kdk/pull/360) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump url-parse from 1.4.7 to 1.5.1 in /docs [\#357](https://github.com/kalisio/kdk/pull/357) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.15 to 4.17.21 [\#356](https://github.com/kalisio/kdk/pull/356) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.19 to 4.17.21 in /docs [\#355](https://github.com/kalisio/kdk/pull/355) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump ssri from 6.0.1 to 6.0.2 in /docs [\#344](https://github.com/kalisio/kdk/pull/344) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.3.2](https://github.com/kalisio/kdk/tree/v1.3.2) (2021-05-04)
 
