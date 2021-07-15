@@ -20,7 +20,7 @@ const GradientPath = L.PixiOverlay.extend({
       this.container, {
         autoPreventDefault: false,
         // see: https://github.com/kalisio/kdk/issues/424
-        projectionZoom: (map) => { return 12 } 
+        projectionZoom: (map) => { return 12 }
       })
     if (geoJson) this.setData(geoJson)
   },

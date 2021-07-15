@@ -133,6 +133,8 @@ describe('core:account', () => {
     expect(userObject.isVerified).beTrue()
     expect(userObject.expireAt).to.equal(null)
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('removes invited user', () => {
     return userService.remove(userObject._id.toString(), { user: userObject })
@@ -204,7 +206,7 @@ describe('core:account', () => {
       })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('check reset password request email', (done) => {
     // Add some delay to wait for email reception
@@ -263,7 +265,7 @@ describe('core:account', () => {
       })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('check reset password email', (done) => {
     // Add some delay to wait for email reception
@@ -282,6 +284,8 @@ describe('core:account', () => {
         expect(response.body.accessToken).toExist()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('check password policy on user password change', (done) => {
     accountService.create({
@@ -320,7 +324,7 @@ describe('core:account', () => {
       })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('check changed password email', (done) => {
     // Add some delay to wait for email reception
@@ -339,6 +343,8 @@ describe('core:account', () => {
         expect(response.body.accessToken).toExist()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('ask user identity change', () => {
     return accountService.create({
@@ -362,7 +368,7 @@ describe('core:account', () => {
       })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('check identity change email', (done) => {
     // Add some delay to wait for email reception
@@ -399,6 +405,8 @@ describe('core:account', () => {
         expect(response.body.accessToken).toExist()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('removes user', () => {
     return userService.remove(userObject._id, { user: userObject })

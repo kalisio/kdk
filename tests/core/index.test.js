@@ -110,7 +110,7 @@ describe('core:services', () => {
       })
   })
   // Let enough time to process
-    .timeout(10000)
+    .timeout(20000)
 
   it('creates a user', () => {
     // Test password generation
@@ -147,6 +147,8 @@ describe('core:services', () => {
         expect(tags.data[0].scope).to.equal('skills')
       })
   })
+  // Let enough time to process
+    .timeout(10000)
 
   it('changing user password keeps password history', () => {
     return userService.patch(userObject._id.toString(), { password: userObject.password })
@@ -168,6 +170,8 @@ describe('core:services', () => {
         expect(accessToken).toExist()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('unauthorized service cannot be accessed through webhooks', (done) => {
     request
@@ -248,6 +252,8 @@ describe('core:services', () => {
         expect(userObject.tags[1]._id).toExist()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('creates an authorisation', () => {
     return authorisationService.create({
@@ -271,6 +277,8 @@ describe('core:services', () => {
         expect(user.authorisations[0].permissions).to.deep.equal('manager')
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('cannot escalate an authorisation when creating', (done) => {
     authorisationService.create({
@@ -333,6 +341,8 @@ describe('core:services', () => {
         expect(user.authorisations.length === 0).beTrue()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('removes a user tag', () => {
     return tagService.remove(userObject._id, {
@@ -359,6 +369,8 @@ describe('core:services', () => {
         expect(users.data[0].tags.length === 1).beTrue()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('unauthenticates a user', () => {
     return request
@@ -386,6 +398,8 @@ describe('core:services', () => {
         expect(tags.data.length === 0).beTrue()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('registers the log options', (done) => {
     // Inserted manually
