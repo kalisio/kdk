@@ -1,15 +1,62 @@
 # Changelog
 
+## [v1.3.6](https://github.com/kalisio/kdk/tree/v1.3.6) (2021-07-15)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.5...v1.3.6)
+
+**Implemented enhancements:**
+
+- Add filtering capabilities in OWS layer field [\#428](https://github.com/kalisio/kdk/issues/428)
+
+**Fixed bugs:**
+
+- Style editor should allow to control layer visibility in globe [\#429](https://github.com/kalisio/kdk/issues/429)
+
 ## [v1.3.5](https://github.com/kalisio/kdk/tree/v1.3.5) (2021-07-02)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.4...v1.3.5)
+
+**Implemented enhancements:**
+
+- Provide helper function to check view/edit/remove ability on an item [\#422](https://github.com/kalisio/kdk/issues/422)
+- Refactor KHistory to rely on KColumn [\#412](https://github.com/kalisio/kdk/issues/412)
+- Provide a generic time range component [\#411](https://github.com/kalisio/kdk/issues/411)
+- Provide a way to observe the page content size [\#400](https://github.com/kalisio/kdk/issues/400)
+- Make location field more user-friendly [\#399](https://github.com/kalisio/kdk/issues/399)
+- Enhance the location field/map to manage any geometry type [\#397](https://github.com/kalisio/kdk/issues/397)
+- Add ability to emit click events from canvas layer. [\#388](https://github.com/kalisio/kdk/issues/388)
+- Allow in-memory GeoJson be passed on GeoJson layer addition [\#94](https://github.com/kalisio/kdk/issues/94)
 
 **Fixed bugs:**
 
 - Gradient path width changes with min/max map zoom [\#424](https://github.com/kalisio/kdk/issues/424)
 - KItemField clears the input pattern when an item is found [\#421](https://github.com/kalisio/kdk/issues/421)
 - When filtering a collection the pattern is cleared if a filter item is found  [\#420](https://github.com/kalisio/kdk/issues/420)
+- Changing the geometry type in realtime GeoJson layer does not work [\#406](https://github.com/kalisio/kdk/issues/406)
+- Minimize and maximize actions seem mixed up on KWindow [\#402](https://github.com/kalisio/kdk/issues/402)
+- List of values is incomplete when editing the features filter [\#404](https://github.com/kalisio/kdk/issues/404)
+- FR version : data export generates .cvs instead of .csv [\#403](https://github.com/kalisio/kdk/issues/403)
+- HistoryEntry card is not correclty aligned on the left side [\#401](https://github.com/kalisio/kdk/issues/401)
 - Exclusive option not taken into account in user-defined categories [\#395](https://github.com/kalisio/kdk/issues/395)
+
+**Closed issues:**
+
+- Allow to define a path to the value in KChipsPane [\#416](https://github.com/kalisio/kdk/issues/416)
+- Allow to filter a schema according a list of fields when building a form [\#415](https://github.com/kalisio/kdk/issues/415)
+- Card rendering should support a dense mode [\#414](https://github.com/kalisio/kdk/issues/414)
+- Make possible to use a template string for storage service name in uploader [\#413](https://github.com/kalisio/kdk/issues/413)
+- Provide a basic chart container [\#362](https://github.com/kalisio/kdk/issues/362)
+- Provide a generic setttings component [\#317](https://github.com/kalisio/kdk/issues/317)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump socket.io-parser from 3.3.0 to 3.3.2 [\#426](https://github.com/kalisio/kdk/pull/426) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump prismjs from 1.23.0 to 1.24.0 in /docs [\#425](https://github.com/kalisio/kdk/pull/425) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump color-string from 1.5.3 to 1.5.5 [\#419](https://github.com/kalisio/kdk/pull/419) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump color-string from 1.5.3 to 1.5.5 in /docs [\#418](https://github.com/kalisio/kdk/pull/418) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump postcss from 7.0.32 to 7.0.36 in /docs [\#409](https://github.com/kalisio/kdk/pull/409) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump postcss from 7.0.32 to 7.0.36 [\#408](https://github.com/kalisio/kdk/pull/408) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump minimist from 1.2.0 to 1.2.5 in /docs [\#396](https://github.com/kalisio/kdk/pull/396) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.3.4](https://github.com/kalisio/kdk/tree/v1.3.4) (2021-06-08)
 
