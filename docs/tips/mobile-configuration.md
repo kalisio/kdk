@@ -16,7 +16,7 @@ Because the **KDK** relies on [SNS](https://aws.amazon.com/sns/?nc1=h_ls&whats-n
  - Upload you CSR file or create a new one if needed and click **Continue** 
  - Download the created certificate 
 
-2. Obtain app private key (.p12 File) for **SNS**
+2. Obtain the app private key (.p12 File) for **SNS**
 
  - Open **Keychain access** by double clicking the create certificate in the previous step
  - Select the certificcate and export it 
@@ -32,6 +32,6 @@ Because the **KDK** relies on [SNS](https://aws.amazon.com/sns/?nc1=h_ls&whats-n
  - Click **Load Credentials form file**
  - Click **Save changes**
 
- ::: tip
-The following procedure must be performed for each flavor
- :::
+::: tip
+The following procedure must be performed for each flavor: `dev`, `test` and `prod`.
+:::
