@@ -22,7 +22,7 @@ module.exports = {
       '/guides/': getGuidesSidebar(),
       '/architecture/': getArchitectureSidebar(),
       '/api/': getAPISidebar(),
-      '/tips': getTipsSidebar(),
+      '/tips/': getTipsSidebar(),
       '/tools/': getToolsSidebar()
     }
   }
