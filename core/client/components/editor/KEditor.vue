@@ -36,12 +36,6 @@ export default {
     mixins.baseEditor(['form']),
     mixins.refsResolver(['form'])
   ],
-  watch: {
-    $route (to, from) {
-      // React to route changes but reusing the same component as this one is generic
-      this.refresh()
-    }
-  },
   methods: {
     onFieldChanged (field, value) {
       this.$emit('field-changed', field, value)

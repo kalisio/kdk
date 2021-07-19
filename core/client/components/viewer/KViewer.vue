@@ -15,12 +15,6 @@ export default {
     mixins.objectProxy,
     mixins.schemaProxy
   ],
-  watch: {
-    $route (to, from) {
-      // React to route changes but reusing the same component as this one is generic
-      this.refresh()
-    }
-  },
   created () {
     // Load the required components
     this.$options.components['k-view'] = this.$load('form/KView')
