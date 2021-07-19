@@ -154,6 +154,7 @@ export default {
     onClose (value) {
       this.location = null
       this.mode = null
+      this.$emit('input', this.location)
     }
   },
   created () {
