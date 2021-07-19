@@ -36,8 +36,7 @@ const schemaProxyMixin = {
           if (!propertiesFilter.includes(property)) delete properties[property]
         })
         // Update schema ID so that a filtered schema is not similar to a complete one
-        const suffixId = '-' + propertiesFilter.join()
-        this.schema.$id += suffixId
+        this.schema.$id += propertiesFilter.join()
         // Filter as well required properties
         this.schema.required = _.intersection(this.schema.required, propertiesFilter)
       }
