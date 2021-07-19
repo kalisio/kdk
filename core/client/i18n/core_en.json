@@ -23,6 +23,7 @@
   "HELP": "Help",
   "NEED_HELP": "Help needed ?",
   "CONTEXTUAL_HELP": "Contextual help",
+  "BACK": "Return",
   "SETTINGS": "My settings",
   "errors": {
     "400": "Operation cannot be performed: bad parameters",

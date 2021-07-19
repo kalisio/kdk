@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.3.6](https://github.com/kalisio/kdk/tree/v1.3.6) (2021-07-15)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.5...v1.3.6)
+
+**Implemented enhancements:**
+
+- Add filtering capabilities in OWS layer field [\#428](https://github.com/kalisio/kdk/issues/428)
+
+**Fixed bugs:**
+
+- Style editor should allow to control layer visibility in globe [\#429](https://github.com/kalisio/kdk/issues/429)
+
 ## [v1.3.5](https://github.com/kalisio/kdk/tree/v1.3.5) (2021-07-02)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.3.4...v1.3.5)
@@ -9,7 +21,6 @@
 - Gradient path width changes with min/max map zoom [\#424](https://github.com/kalisio/kdk/issues/424)
 - KItemField clears the input pattern when an item is found [\#421](https://github.com/kalisio/kdk/issues/421)
 - When filtering a collection the pattern is cleared if a filter item is found  [\#420](https://github.com/kalisio/kdk/issues/420)
-- Exclusive option not taken into account in user-defined categories [\#395](https://github.com/kalisio/kdk/issues/395)
 
 ## [v1.3.4](https://github.com/kalisio/kdk/tree/v1.3.4) (2021-06-08)
 
