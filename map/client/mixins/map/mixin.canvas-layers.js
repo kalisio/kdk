@@ -15,18 +15,30 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     this.clickableFeatures = []
     this.mousePosition = null
     this.highlighting = false
+    this.autoRedraw = false
   },
 
   delegate: function (del) {
     this._delegate = del
-    return this
+  },
+
+  setAutoRedraw: function (enable) {
+    this.autoRedraw = enable
+    if (enable && this._frame === null) this.needRedraw()
   },
 
   needRedraw: function () {
-    if (!this._frame) {
-      this._frame = L.Util.requestAnimFrame(this.drawLayer, this)
-    }
-    return this
+    if (this._frame !== null) return
+    this._frame = L.Util.requestAnimFrame(this.drawLayer, this)
+  },
+
+  redrawNow: function () {
+    const frame = this._frame
+    const autoRedraw = this.autoRedraw
+    this.autoRedraw = false
+    this.drawLayer()
+    this._frame = frame
+    this.autoRedraw = autoRedraw
   },
 
   latLonToCanvas: function (coords) {
@@ -102,7 +114,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   _onLayerDidMove: function () {
     var topLeft = this._map.containerPointToLayerPoint([0, 0])
     L.DomUtil.setPosition(this._canvas, topLeft)
-    this.drawLayer()
+    this.redrawNow()
   },
   // -------------------------------------------------------------
   _onLayerClick: function (event) {
@@ -135,7 +147,6 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   onAdd: function (map) {
     this._map = map
     this._canvas = L.DomUtil.create('canvas', 'leaflet-layer')
-    this.tiles = {}
 
     var size = this._map.getSize()
     this._canvas.width = size.x
@@ -158,7 +169,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     var del = this._delegate || this
     del.onLayerWillUnmount && del.onLayerWillUnmount() // -- callback
 
-    if (this._frame) {
+    if (this._frame !== null) {
       L.Util.cancelAnimFrame(this._frame)
     }
 
@@ -217,7 +228,10 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
         ctx.restore()
       }
     }
+
     this._frame = null
+    // schedule a new draw if autoRedraw is enabled
+    if (this.autoRedraw) this.needRedraw()
   },
   // -- L.DomUtil.setTransform from leaflet 1.0.0 to work on 0.0.7
   // ------------------------------------------------------------------------------
@@ -287,7 +301,6 @@ export default {
 
       leafletLayer.listenedLayers = {}
       leafletLayer.drawCalls = []
-      leafletLayer.autoRedraw = autoRedraw
       if (leafletLayer.userData === undefined) leafletLayer.userData = {}
       if (leafletLayer.compatContext === undefined) leafletLayer.compatContext = {}
 
@@ -357,14 +370,10 @@ with(this.proxy) { ${d.code} }
           ctx.clearRect(0, 0, info.canvas.width, info.canvas.height)
           for (const draw of leafletLayer.drawCalls) draw(context)
           ctx.restore()
-
-          if (leafletLayer.autoRedraw) {
-            leafletLayer._frame = null
-            leafletLayer.needRedraw()
-          }
         }
       }
 
+      leafletLayer.setAutoRedraw(autoRedraw)
       leafletLayer.needRedraw()
     },
 
@@ -380,9 +389,7 @@ with(this.proxy) { ${d.code} }
       const leafletLayer = typeof layer === 'string' ? this.getLeafletLayerByName(layer) : layer
       if (!leafletLayer) return
 
-      const needRedraw = !layer.autoRedraw && autoRedraw
-      leafletLayer.autoRedraw = autoRedraw
-      if (needRedraw) leafletLayer.needRedraw()
+      leafletLayer.setAutoRedraw(autoRedraw)
     },
 
     /* Compatibility methods */
