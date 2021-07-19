@@ -14,7 +14,7 @@
       Card descriptions
     -->
     <div slot="card-description">
-      <div class="row full-width justify-start">
+      <div class="row full-width justify-start" v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
         {{ description }}
       </div>
     </div>  

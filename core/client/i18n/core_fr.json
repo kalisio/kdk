@@ -352,7 +352,9 @@
   },
   "KCard": {
     "DESCRIPTION_SECTION": "Description",
-    "NO_DESCRIPTION_LABEL": "Aucune description"
+    "NO_DESCRIPTION_LABEL": "Aucune description",
+    "MORE_ACTION": "Plus de détails",
+    "LESS_ACTION": "Moins de détails"    
   },
   "KUploader": {
     "dropZone": {

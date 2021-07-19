@@ -346,7 +346,9 @@
   },
   "KCard": {
     "DESCRIPTION_SECTION": "Description",
-    "NO_DESCRIPTION_LABEL": "No description"
+    "NO_DESCRIPTION_LABEL": "No description",
+    "MORE_ACTION": "More details",
+    "LESS_ACTION": "Less details"
   },
   "KUploader": {
     "dropZone": {

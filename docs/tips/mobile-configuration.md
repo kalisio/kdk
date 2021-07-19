@@ -10,13 +10,13 @@ Because the **KDK** relies on [SNS](https://aws.amazon.com/sns/?nc1=h_ls&whats-n
 
  - Go to  [https://developer.apple.com/](https://developer.apple.com/)
  - Click **Certificates, Identifiers & Profiles**
- - Click **+** on the right of the **Certificates** label
+ - Click **+** on the right side of the **Certificates** label
  - Under Production section, select **Apple Push Notification service SSL (Sandbox & Production)** and click **Continue** 
  - Select the AppId (build Identifier of iOS application) and click **Continue** 
  - Upload you CSR file or create a new one if needed and click **Continue** 
  - Download the created certificate 
 
-2. Obtain the app private key (.p12 File) for **SNS**
+2. Obtain the app private key (.p12 File) for SNS
 
  - Open **Keychain access** by double clicking the create certificate in the previous step
  - Select the certificcate and export it 
@@ -24,7 +24,7 @@ Because the **KDK** relies on [SNS](https://aws.amazon.com/sns/?nc1=h_ls&whats-n
 
 3. Update your SNS Application plarform
 
- - Go to https://console.aws.amazon.com/sns/
+ - Go to [https://console.aws.amazon.com/sns/](https://console.aws.amazon.com/sns/)
  - Click the corresponding application platform and click **Modify**
  - Under certificate type, select **iOS push certificate**
  - Under certificate, click to upload the created private key (.p12 file)

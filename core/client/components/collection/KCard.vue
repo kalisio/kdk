@@ -14,7 +14,7 @@
       Title section
     -->
     <div class="column full-width"
-      v-bind:class="{ 'q-px-sm q-py-xs q-gutter-y-xs': dense, 'q-px-md q-py-sm q-gutter-y-sm': !dense }">
+      v-bind:class="{ 'q-px-sm q-pt-xs q-gutter-y-xs': dense, 'q-px-md q-pt-sm q-gutter-y-sm': !dense }">
       <slot name="card-title">
         <div class="row full-width justify-start items-center no-wrap">
           <div>
@@ -36,7 +36,12 @@
       </slot>
       <slot name="card-description">
         <!-- Description -->
-        <k-card-section v-if="displayDescription" :title="$t('KCard.DESCRIPTION_SECTION')" :actions="descriptionActions" :dense="dense">
+        <k-card-section 
+          :title="$t('KCard.DESCRIPTION_SECTION')" 
+          :actions="descriptionActions" 
+          :hideHeader="!isExpanded" 
+          :dense="dense"
+        >
           <div v-if="hasDescription">
             <k-text-area :text="item.description" />
           </div>
@@ -49,7 +54,7 @@
     <!--
       Content section
     -->
-    <div v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }">
+    <div v-bind:class="{ 'q-px-sm': dense, 'q-px-md': !dense }">
       <slot name="card-content" />
     </div>
     <!--
@@ -63,12 +68,25 @@
         </slot>
       </div>
     </div>
+    <!--
+      Expand action
+    -->
+    <div v-if="expandable">
+      <div class="row justify-center" v-bind:class="{ 'q-px-sm q-py-none': dense, 'q-px-md q-py-xs': !dense }">
+        <k-action 
+          id="expend-action" 
+          :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'" 
+          :tooltip="isExpanded ? 'KCard.LESS_ACTION' : 'KCard.MORE_ACTION'"
+          size="sm" 
+          @triggered="onExpandTriggered" />
+      </div>
+    </div>
   </q-card>
 </template>
 
 <script>
 import _ from 'lodash'
-import { KPanel, KAvatar, KTextArea } from '../frame'
+import { KPanel, KAvatar, KTextArea, KAction } from '../frame'
 import KCardSection from './KCardSection.vue'
 import mixins from '../../mixins'
 
@@ -78,6 +96,7 @@ export default {
     KPanel,
     KAvatar,
     KTextArea,
+    KAction,
     KCardSection
   },
   mixins: [mixins.baseItem],
@@ -93,6 +112,10 @@ export default {
     dense: {
       type: Boolean,
       default: false
+    },
+    expandable: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -105,9 +128,6 @@ export default {
     },
     hasHeader () {
       return !_.isEmpty(this.computedHeader)
-    },
-    displayDescription () {
-      return _.get(this.options, 'displayDescription', true)
     },
     hasDescription () {
       return !_.isEmpty(this.description)
@@ -124,6 +144,18 @@ export default {
     },
     hasFooter () {
       return !_.isEmpty(this.computedFooter)
+    }
+  },
+  data () {
+    return {
+      isExpanded: this.expandable ? false : true
+    }
+  },
+  methods: {
+    onExpandTriggered () {
+      this.isExpanded = !this.isExpanded
+      if (this.isExpanded) this.$emit('expanded')
+      else this.$emit('collapsed')
     }
   }
 }
