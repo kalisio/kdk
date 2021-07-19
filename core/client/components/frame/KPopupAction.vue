@@ -40,7 +40,7 @@ export default {
     KAction,
     KPanel
   },
-  name: 'k-action-popup',
+  name: 'k-popup-action',
   props: {
     id: {
       type: String,

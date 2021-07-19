@@ -232,7 +232,7 @@ export default {
       this.refreshMap()
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
   },
