@@ -24,6 +24,11 @@
             {{ $t('KLocationMap.RECENTER_BUTTON') }}
           </q-tooltip>
         </q-btn>
+        <q-btn v-if="closable" icon="las la-times" flat round dense @click="closeMap">
+          <q-tooltip>
+            {{ $t('KLocationMap.CLOSE_BUTTON') }}
+          </q-tooltip>
+        </q-btn>
       </q-toolbar>
     </div>
     <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
@@ -87,6 +92,10 @@ export default {
       type: Boolean,
       default: false
     },
+    closable: {
+      type: Boolean,
+      default: false
+    },
     toolbar: {
       type: Boolean,
       default: false
@@ -130,6 +139,9 @@ export default {
       } else if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
         this.center(this.location.longitude, this.location.latitude, this.mapOptions.zoom)
       }
+    },
+    closeMap () {
+      this.$emit('close', this.location)
     },
     async geolocate () {
       await Geolocation.update()

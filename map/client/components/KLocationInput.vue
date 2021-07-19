@@ -37,7 +37,8 @@
     <!-- Location map -->
     <div class="col-12 col-md-7">
       <div v-show="hasLocation || (mode === 'draw')" id="show-location-map" style="width: 100%; height: 250px">
-        <k-location-map v-model="location" :editable="mode === 'map'" :drawable="mode === 'draw'" :toolbar="true" @input="onUpdated" />
+        <k-location-map v-model="location" :editable="mode === 'map'" :drawable="mode === 'draw'"
+          :closable="true" :toolbar="true" @input="onUpdated" @close="onClose"/>
       </div>
     </div>
   </div>
@@ -57,7 +58,7 @@ export default {
   props: {
     value: {
       type: Object,
-      deafault: () => {
+      default: () => {
         return null
       }
     },
@@ -149,6 +150,10 @@ export default {
     },
     onUpdated (value) {
       this.$emit('input', this.location)
+    },
+    onClose (value) {
+      this.location = null
+      this.mode = null
     }
   },
   created () {

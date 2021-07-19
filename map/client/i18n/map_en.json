@@ -336,7 +336,8 @@
     "DRAW_LINE": "Draw a line",
     "DRAW_POLYGON": "Draw a polygon",
     "LOCATE_BUTTON": "Locate me",
-    "RECENTER_BUTTON": "Recenter map"
+    "RECENTER_BUTTON": "Recenter map",
+    "CLOSE_BUTTON": "Close map"
   },
   "KLocationInput": {
     "SEARCH_LOCATION": "Seek for an address",

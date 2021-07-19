@@ -338,7 +338,8 @@
     "DRAW_LINE": "Dessiner un linéaire",
     "DRAW_POLYGON": "Dessiner une zone",
     "LOCATE_BUTTON": "Me localiser",
-    "RECENTER_BUTTON": "Recentrer la carte"
+    "RECENTER_BUTTON": "Recentrer la carte",
+    "CLOSE_BUTTON": "Fermer la carte"
   },
   "KLocationInput": {
     "SEARCH_LOCATION": "Rechercher une adresse",
