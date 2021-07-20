@@ -1,7 +1,7 @@
 <template>
   <k-column
     :service="service"
-    :renderer="renderer"
+    :renderer="computedRenderer"
     :contextId="contextId" 
     :baseQuery="computedBaseQuery"
     :filterQuery="filterQuery"
@@ -41,7 +41,7 @@ export default {
       type: Object,
       default: () => {
         return {
-          component: 'collection/KHistoryEntry'
+          component: 'collection/KCard'
         }
       }
     },
@@ -63,6 +63,12 @@ export default {
     }
   },
   computed: {
+    computedRenderer () {
+      return {
+        component: 'collection/KHistoryEntry',
+        renderer: this.renderer
+      }
+    },
     computedBaseQuery () {
       let query = _.clone(this.baseQuery)
       Object.assign(query, _.clone(this.timeRange.query))
@@ -83,10 +89,6 @@ export default {
        item.side = (index % 2 ? 'left' : 'right')
       })
     }
-  },
-  created () {
-    // Load the renderer component
-    this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
   }
 }
 </script>
