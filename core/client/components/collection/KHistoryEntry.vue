@@ -47,11 +47,7 @@ export default {
   props: {
     renderer: {
       type: Object,
-      default: () => {
-        return {
-          component: 'collection/KCard'
-        }
-      }
+      required: true
     },
     dateField: {
       type: String,

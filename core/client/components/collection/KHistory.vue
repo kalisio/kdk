@@ -39,11 +39,7 @@ export default {
   props: {
     renderer: {
       type: Object,
-      default: () => {
-        return {
-          component: 'collection/KCard'
-        }
-      }
+      required: true
     },
     baseQuery: {
       type: Object,
