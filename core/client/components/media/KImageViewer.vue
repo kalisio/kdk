@@ -27,12 +27,14 @@ export default {
   methods: {
     restore () {
       const controller = document.querySelector('.pinch-zoom-controller')
-      controller.setTransform({
-        scale: 1,
-        x: 0,
-        y: 0,
-        allowChangeEvent: true
-      })
+      if (controller) {
+        controller.setTransform({
+          scale: 1,
+          x: 0,
+          y: 0,
+          allowChangeEvent: true
+        })
+      }
     }
   },
   mounted () {
