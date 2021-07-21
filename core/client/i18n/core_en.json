@@ -375,7 +375,7 @@
     }
   },
   "KColorChooser": {
-    "CLOSE_ACTION": "$t(CANCEL)",
+    "CANCEL_BUTTON": "$t(CANCEL)",
     "DONE_BUTTON": "$t(DONE)"
   },
   "KIconChooser": {

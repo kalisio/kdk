@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :toolbar="getToolbar()" :buttons="getButtons()">
+  <k-modal ref="modal" :buttons="getButtons()">
     <div slot="modal-content">
       <div class="column q-gutter-sm">
         <div class="row justify-between items-center q-gutter-sm">
@@ -19,14 +19,22 @@ export default {
     }
   },
   methods: {
-    getToolbar () {
-      return [
-        { id: 'close-action', label: this.$t('KColorChooser.CLOSE_ACTION'), icon: 'las la-times', handler: () => this.doClose() }
-      ]
-    },
     getButtons () {
       return [
-        { id: 'done-button', label: this.$t('KColorChooser.DONE_BUTTON'), color: 'primary', handler: (event) => this.doDone(event) }
+        { 
+          id: 'cancel-action', 
+          label: 'KColorChooser.CANCEL_BUTTON', 
+          icon: 'las la-times', 
+          renderer: 'form-button',
+          outline: true,
+          handler: () => this.doClose() 
+        },
+        { 
+          id: 'done-button', 
+          label: 'KColorChooser.DONE_BUTTON',
+          renderer: 'form-button',
+          handler: (event) => this.doDone(event) 
+        }
       ]
     },
     open (defaultColor) {
@@ -45,7 +53,7 @@ export default {
       this.$refs.modal.close()
     }
   },
-  async created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-palette'] = this.$load('input/KPalette')
