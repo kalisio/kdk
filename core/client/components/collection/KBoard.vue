@@ -1,5 +1,6 @@
 <template>
   <div class="fit row justify-between q-gutter-x-sm no-wrap">
+    <div class="col-0 col-sm-1" />
     <template v-for="column in columns">
       <div
         :id="column.value"
@@ -14,6 +15,7 @@
           :height="height" />
       </div>
     </template>
+    <div class="col-xs-0 col-1" />
   </div>
 </template>
 
