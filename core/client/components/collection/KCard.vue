@@ -109,11 +109,11 @@ export default {
       type: [Object, Array],
       default: () => null
     },
-    dense: {
+    expandable: {
       type: Boolean,
       default: false
     },
-    expandable: {
+    dense: {
       type: Boolean,
       default: false
     }

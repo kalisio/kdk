@@ -3,13 +3,14 @@
     v-bind="$props"
     :actions="itemActions" 
     :bind-actions="false"
-    :options="{ nameField: 'value' }">
+    :options="{ nameField: 'value' }"
+    :dense="dense">
     <!--
       Card content
      -->
     <div slot="card-content">
       <!-- Members -->
-      <k-card-section :title="$t('KTagCard.MEMBERS_SECTION')">      
+      <k-card-section :title="$t('KTagCard.MEMBERS_SECTION')" :dense="dense">      
         <q-list>
           <q-item
             id="list-members"
@@ -44,6 +45,11 @@ export default {
     KCardSection
   },  
   mixins: [mixins.baseItem],
+  computed: {
+    dense () {
+      return this.$q.screen.lt.sm
+    }
+  },
   methods: {
     onListMembers () {
       // Setup filter accordingly

@@ -3,7 +3,8 @@
     v-bind="$props"
     :header="header"
     :actions="itemActions" 
-    :bind-actions="false">
+    :bind-actions="false"
+    :dense="dense">
     <!--
       Card avater
     -->
@@ -23,7 +24,11 @@
     -->
     <div slot="card-content">
       <!-- Tags section -->
-      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.TAGS_SECTION')" :actions="tagsActions" :context="$props">
+      <k-card-section v-if="!item.expireAt" 
+        :title="$t('KMemberCard.TAGS_SECTION')" 
+        :actions="tagsActions" 
+        :context="$props"
+        :dense="dense">
         <div v-if="hasTags">
           <k-chips-pane id="tags-pane" class="q-pa-sm" :chips="tags" />
         </div>
@@ -32,7 +37,11 @@
         </div>
       </k-card-section>
       <!-- Groups section -->
-      <k-card-section v-if="!item.expireAt" :title="$t('KMemberCard.GROUPS_SECTION')" :actions="groupsActions" :context="$props">
+      <k-card-section v-if="!item.expireAt" 
+        :title="$t('KMemberCard.GROUPS_SECTION')" 
+        :actions="groupsActions" 
+        :context="$props"
+        :dense=dense>
         <div v-if="hasGroups" class="row justify-start items-center">
           <template v-for="(group, index) in groups">
             <q-btn id="group-button" :key="groupKey(group)" flat small round color="primary">
@@ -57,7 +66,7 @@
         </div>
       </k-card-section>
       <!-- Expiration section -->
-      <k-card-section v-if="item.expireAt">
+      <k-card-section v-if="item.expireAt" :dense="dense">
         <div class="row full-width justify-between items-center no-wrap">
           <span class="text-warning text-weight-bold" v-if="expireAt">
             {{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}
@@ -128,6 +137,9 @@ export default {
     },
     expireAt () {
       return this.item.expireAt ? new Date(this.item.expireAt) : null
+    },
+    dense () {
+      return this.$q.screen.lt.sm
     }
   },
   methods: {

@@ -3,13 +3,14 @@
     v-bind="$props"
     :header="header"
     :actions="itemActions"
-    :bind-actions="false">
+    :bind-actions="false"
+    :dense="dense">
     <!--
       Card content
      -->
     <div slot="card-content">
       <!-- Members -->
-      <k-card-section :title="$t('KGroupCard.MEMBERS_SECTION')">
+      <k-card-section :title="$t('KGroupCard.MEMBERS_SECTION')" :dense="dense">
         <q-list>
           <q-item
             id="list-members"
@@ -66,6 +67,9 @@ export default {
       const role = getRoleForGroup(user, this.contextId, this.item._id)
       if (!_.isUndefined(role)) return this.roleLabels[Roles[role]]
       else return ''
+    },
+    dense () {
+      return this.$q.screen.lt.sm
     }
   },
   methods: {
