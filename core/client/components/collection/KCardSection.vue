@@ -1,5 +1,5 @@
 <template>
-  <div v-if="hasSlot">
+  <div>
     <q-separator />   
     <!-- 
       Header section 
@@ -47,11 +47,6 @@ export default {
     context: {
       type: Object,
       default: () => null
-    }
-  },
-  computed: {
-    hasSlot () {
-      return _.has(this.$slots, 'default')
     }
   }
 }
