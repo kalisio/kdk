@@ -41,13 +41,20 @@
                 class="q-pt-lg q-pb-lg"
                 ref="userPropertiesForm"
                 :schema="getUserPropertiesSchema()" />
-              <div class="row justify-between">
+              <div class="row justify-start q-gutter-x-sm">
                 <k-action
                   id="back-button"
                   label="KAddMember.BACK_BUTTON"
                   :outline="true"
                   renderer="form-button"
                   :handler="() => { step = 1 }" />
+                <q-space />
+                <k-action
+                  id="cancel-button"
+                  label="KAddMember.CANCEL_BUTTON"
+                  renderer="form-button"
+                  :outline="true"
+                  :handler="() => this.closeModal()" />
                 <k-action
                   id="add-button"
                   :label="user ? 'KAddMember.ADD_BUTTON' : 'KAddMember.INVITE_BUTTON'"
