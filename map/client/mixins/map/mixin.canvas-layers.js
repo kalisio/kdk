@@ -155,7 +155,8 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     var animated = this._map.options.zoomAnimation && L.Browser.any3d
     L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'))
 
-    map._panes.overlayPane.appendChild(this._canvas)
+    const pane = this.options.pane ? map._panes[this.options.pane] : map._panes.overlayPane
+    pane.appendChild(this._canvas)
 
     map.on(this.getEvents(), this)
 
@@ -256,8 +257,8 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   }
 })
 
-L.kanvasLayer = function () {
-  return new L.KanvasLayer()
+L.kanvasLayer = function (options) {
+  return new L.KanvasLayer(options)
 }
 
 export default {
