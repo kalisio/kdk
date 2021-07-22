@@ -11,6 +11,7 @@
             :contextId="contextId"
             :is="renderer.component"
             v-bind="renderer"
+            @item-toggled="onItemToggled"
             @item-selected="onItemSelected" />
         </template>
       </q-list>

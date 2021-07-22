@@ -1,6 +1,14 @@
 <template>
   <q-item active-class="selected">
     <!--
+      Toggle section
+    -->
+    <q-item-section v-if="options.toggle" side top>
+      <slot name="item-toggle">
+        <q-checkbox v-model="toggled" @input="onItemToggled(toggled)"/>
+      </slot>
+    </q-item-section>
+    <!--
       Avatar section
     -->
     <q-item-section top avatar @click="onItemSelected('avatar')">
@@ -29,11 +37,20 @@
 </template>
 
 <script>
+import { QCheckbox } from 'quasar'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-item',
+  components: {
+    QCheckbox
+  },
   mixins: [mixins.baseItem],
+  data () {
+    return {
+      toggled: false
+    }
+  },
   created () {
     // Loads the required components
     this.$options.components['k-avatar'] = this.$load('frame/KAvatar')

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- Invisible link used to download data -->
-    <a ref="downloadLink" v-show="false" :href="currentDownloadLink" :download="currentDownloadName"></a>
     <k-modal ref="modal"
       id="feature-chart-modal"
       :title="title"
@@ -122,9 +120,7 @@ export default {
       paginationOptions,
       renderOptions,
       render: _.find(renderOptions, { value: 'value' }),
-      chartData: [],
-      currentDownloadLink: null,
-      currentDownloadName: null
+      chartData: []
     }
   },
   methods: {

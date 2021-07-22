@@ -73,6 +73,9 @@ export default {
       if (actions && actions.length > 0) this.setActions(actions)
       else this.clearActions()
     },
+    onItemToggled (toggled) {
+      this.$emit('item-toggled', this.item, toggled)
+    },
     onItemSelected (section) {
       this.$emit('item-selected', this.item, section)
     },

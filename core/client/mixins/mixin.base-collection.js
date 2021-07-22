@@ -90,6 +90,9 @@ const baseCollectionMixin = {
     onPageChanged () {
       this.refreshCollection()
     },
+    onItemToggled (item, toggled) {
+      this.$emit('toggle-changed', item, toggled)
+    },
     onItemSelected (item, section) {
       this.$emit('selection-changed', item, section)
     },
