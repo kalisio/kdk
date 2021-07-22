@@ -532,6 +532,7 @@
     "OWNER_LABEL": "$t(OWNER)",
     "MANAGER_LABEL": "$t(MANAGER)",
     "MEMBER_LABEL": "$t(MEMBER)",
+    "CANCEL_BUTTON": "$t(CANCEL)",
     "CONTINUE_BUTTON": "Continue",
     "BACK_BUTTON": "Back",
     "ADD_BUTTON": "Add",

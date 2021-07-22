@@ -19,7 +19,13 @@
                 class="q-pt-lg q-pb-lg"
                 ref="userEmailForm"
                 :schema="getUserEmailSchema()" />
-              <div class="row justify-end">
+              <div class="row justify-end q-gutter-x-sm">
+                <k-action
+                  id="cancel-button"
+                  label="KAddMember.CANCEL_BUTTON"
+                  renderer="form-button"
+                  :outline="true"
+                  :handler="() => this.closeModal()" />
                 <k-action
                   id="continue-button"
                   label="KAddMember.CONTINUE_BUTTON"
