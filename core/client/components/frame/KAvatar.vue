@@ -3,18 +3,18 @@
     <q-skeleton v-if="skeleton" type="QAvatar" :size="size" />
     <q-avatar v-if="avatar" :size="size">
       <img :src="avatar">
-      <q-tooltip>
+      <q-tooltip v-if="name">
         {{ name }}
       </q-tooltip>
     </q-avatar>
     <q-avatar v-else-if="icon" :size="size" :color="color" text-color="white" :icon="icon">
-      <q-tooltip>
+      <q-tooltip v-if="name">
         {{ name }}
       </q-tooltip>
     </q-avatar>
     <q-avatar v-else-if="initials" :size="size" color="primary" text-color="white">
       {{ initials }}
-      <q-tooltip>
+      <q-tooltip v-if="name">
         {{ name }}
       </q-tooltip>
     </q-avatar>
