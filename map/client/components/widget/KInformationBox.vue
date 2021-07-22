@@ -3,7 +3,7 @@
     <div v-if="schema && properties" class="fit row">
       <k-panel id="information-box-actions" class="q-pa-sm" :content="actions" direction="vertical" />
       <q-scroll-area class="col fit" :thumb-style="thumbStyle" :bar-style="barStyle">
-        <k-view class="q-pa-md" :schema="schema" :values="properties" :options="viewOptions" />
+        <k-view class="q-pa-md" :schema="schema" :values="properties" :separators="true" />
       </q-scroll-area>
     </div>
     <div v-else class="absolute-center">
@@ -47,10 +47,6 @@ export default {
         backgroundColor: colors.getBrand('primary'),
         width: '9px',
         opacity: 0.25
-      },
-      viewOptions: {
-        labelWidth: 5,
-        separators: true
       },
       schema: null,
       properties: null,

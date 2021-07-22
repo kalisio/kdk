@@ -11,7 +11,6 @@
           :ref="field.name"
           :required="field.required"
           :properties="field"
-          :display="display"
           @field-changed="onFieldChanged"
         />
       </slot>
@@ -31,7 +30,6 @@
                   :ref="field.name"
                   :required="field.required"
                   :properties="field"
-                  :display="display"
                   @field-changed="onFieldChanged" />
               </slot>
               <slot v-if="field.group === group" :name="'after-' + field.name"/>
@@ -73,16 +71,6 @@ export default {
     clearOnCreate: {
       type: Boolean,
       default: true
-    },
-    display: {
-      type: Object,
-      default: () => {
-        return {
-          icon: false,
-          label: false,
-          labelWidth: 3
-        }
-      }
     }
   },
   data () {

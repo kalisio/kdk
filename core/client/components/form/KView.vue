@@ -5,7 +5,7 @@
      -->
     <template v-for="field in fields">
       <div v-if="!field.group" :key="field.name" class="row items-center"
-        v-bind:class="{ 'k-view-row': options.separators }"
+        v-bind:class="{ 'k-view-row': separators }"
       >
         <!-- Field label -->
         <span class="col-xs-5 col-sm-4 col-3 text-caption">
@@ -16,7 +16,6 @@
           :is="field.componentKey"
           v-bind="$props"
           :properties="field"
-          :display="options"
           :readOnly="true" />
       </div>
     </template>
@@ -27,7 +26,7 @@
       <q-expansion-item :key="group" icon="las la-file-alt" :group="group" :label="$t(group)">
         <template v-for="field in fields">
           <div v-if="field.group === group" :key="field.group + field.name" class="row items-center"
-            v-bind:class="{ 'k-view-row': options.separators }"
+            v-bind:class="{ 'k-view-row': separators }"
           >
             <!-- Field label -->
             <span class="col-xs-5 col-sm-4 col-3 text-caption">
@@ -38,7 +37,6 @@
               :is="field.componentKey"
               v-bind="$props"
               :properties="field"
-              :display="options"
               :readOnly="true" />
           </div>
         </template>
@@ -61,16 +59,9 @@ export default {
       type: Object,
       default: null
     },
-    options: {
-      type: Object,
-      default: () => {
-        return {
-          icon: false,
-          label: false,
-          labelWidth: 3,
-          separators: false
-        }
-      }
+    separators: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

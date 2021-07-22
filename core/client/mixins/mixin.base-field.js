@@ -14,10 +14,6 @@ const baseFieldMixin = {
       type: Boolean,
       default: false
     },
-    display: {
-      type: Object,
-      required: true
-    },
     readOnly: {
       type: Boolean,
       default: false
