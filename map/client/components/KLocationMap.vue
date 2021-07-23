@@ -136,8 +136,12 @@ export default {
     centerMap () {
       if (this.drawLayer) {
         this.map.fitBounds(this.drawLayer.getBounds())
-      } else if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
-        this.center(this.location.longitude, this.location.latitude, this.mapOptions.zoom)
+      } else {
+        const longitude = (_.has(this.location, 'longitude') ?
+          _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
+        const latitude = (_.has(this.location, 'latitude') ?
+          _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
+        this.center(longitude, latitude, this.mapOptions.zoom)
       }
     },
     closeMap () {
@@ -175,8 +179,13 @@ export default {
       if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
         this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.location })
         this.map.addLayer(this.drawLayer)
-      } else if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
-        this.marker = L.marker([this.location.latitude, this.location.longitude], {
+      } else {
+        const longitude = (_.has(this.location, 'longitude') ?
+          _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
+        const latitude = (_.has(this.location, 'latitude') ?
+          _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
+        
+        this.marker = L.marker([latitude, longitude], {
           icon: L.icon.fontAwesome(this.markerStyle),
           draggable: this.editable,
           pmIgnore: true
@@ -194,8 +203,13 @@ export default {
     },
     onLocationDragged () {
       this.location.name = formatUserCoordinates(this.marker.getLatLng().lat, this.marker.getLatLng().lng, this.$store.get('locationFormat', 'FFf'))
-      this.location.latitude = this.marker.getLatLng().lat
-      this.location.longitude = this.marker.getLatLng().lng
+      if (_.has(this.location, 'type') && (_.get(this.location, 'type') === 'Point')) {
+        _.set(this.location, 'geometry.coordinates[0]', this.marker.getLatLng().lng)
+        _.set(this.location, 'geometry.coordinates[1]', this.marker.getLatLng().lat)
+      } else {
+        this.location.longitude = this.marker.getLatLng().lng
+        this.location.latitude = this.marker.getLatLng().lat
+      }
       this.$emit('input', this.location)
     },
     startDraw(shape) {
