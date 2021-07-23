@@ -1,7 +1,9 @@
 <template>
   <k-modal
+    ref="modal"
     id="layer-categorie-modal"
     :title="$t('KLayerCategories.TITLE')"
+    :buttons="getButtons()"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -181,6 +183,11 @@ export default {
     }
   },
   methods: {
+    getButtons () {
+      return [{
+        id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.modal.close() 
+      }]
+    },
     async onAdd () {
       const result = this.$refs.addForm.validate()
       if (result.isValid) {
@@ -218,7 +225,7 @@ export default {
       if (this.count > 0) {
         // Add the list of layers as description
         items.forEach(category => {
-          category.description = category.layers.join(',')
+          if (!_.isEmpty(category.layers)) category.description = category.layers.join(',')
         })
       } else {
         if (!this.filter.pattern) this.mode = 'add'
