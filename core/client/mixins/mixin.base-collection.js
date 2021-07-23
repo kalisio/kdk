@@ -13,6 +13,11 @@ const baseCollectionMixin = {
     appendItems: {
       type: Boolean,
       default: false
+    },
+    // Only invoke refresh at most once per every refreshThrottle milliseconds
+    refreshThrottle: {
+      type: Number,
+      default: 500
     }
   },
   computed: {
@@ -72,15 +77,6 @@ const baseCollectionMixin = {
         }
       } else return {}
     },
-    refreshCollection () {
-      // Add locale to perform sorting (i.e. collation) correctly w.r.t. user's language
-      const fullQuery = Object.assign({ $locale: getLocale() },
-        this.getCollectionBaseQuery(),
-        this.getCollectionFilterQuery(),
-        this.getCollectionPaginationQuery())
-      // Find the desired items
-      this.subscribe(fullQuery)
-    },
     resetCollection () {
       // Reset pagination and start again refreshing the collection
       this.items = []
@@ -108,6 +104,20 @@ const baseCollectionMixin = {
     }
   },
   created () {
+    // Avoid initiating too much request as the same time, this might be the case
+    // when async UI components update simultaneously the base/filter query
+    // see https://github.com/kalisio/kdk/issues/432
+    const refreshCollection = () => {
+      // Add locale to perform sorting (i.e. collation) correctly w.r.t. user's language
+      const fullQuery = Object.assign({ $locale: getLocale() },
+        this.getCollectionBaseQuery(),
+        this.getCollectionFilterQuery(),
+        this.getCollectionPaginationQuery())
+      // Find the desired items
+      this.subscribe(fullQuery)
+    }
+    this.refreshCollection = _.throttle(refreshCollection, this.refreshThrottle, { 'leading': false })
+
     if (this.appendItems) {
       const service = this.getService()
       service.on('patched', this.onItemsUpdated)
