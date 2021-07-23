@@ -37,16 +37,14 @@ export default {
       thumbStyle: {
         right: '4px',
         borderRadius: '5px',
-        backgroundColor: colors.getBrand('secondary'),
-        width: '5px',
-        opacity: 0.75
+        backgroundColor: colors.getBrand('primary'),
+        width: '6px'
       },
       barStyle: {
         right: '2px',
-        borderRadius: '9px',
-        backgroundColor: colors.getBrand('primary'),
-        width: '9px',
-        opacity: 0.25
+        borderRadius: '5px',
+        backgroundColor: colors.getBrand('accent'),
+        width: '10px'
       },
       schema: null,
       properties: null,
