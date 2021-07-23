@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { KPanel } from '../frame'
 
 export default {
