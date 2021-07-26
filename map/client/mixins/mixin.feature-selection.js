@@ -133,8 +133,8 @@ export default {
     updateSelectionLayer () {
       this.updateLayer(SelectionLayerName, { type: 'FeatureCollection', features: Object.values(this.selectionHighlight) })
     },
-    async removeSelectionLayer () {
-      await this.removeLayer(SelectionLayerName)
+    removeSelectionLayer () {
+      this.removeLayer(SelectionLayerName)
     },
     onFeatureSelectionClicked (layer, event) {
       // Retrieve the location/feature
