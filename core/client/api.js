@@ -58,6 +58,7 @@ export function kalisio () {
   api.unregisterMatcher = function (matcher) {
     matchers = matchers.filter(registeredMatcher => registeredMatcher !== matcher)
   }
+  api.matcher = siftMatcher
 
   // This avoid managing the API path before each service name
   // If a context is not given it will be retrieved from the store if any and used for contextual services
