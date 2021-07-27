@@ -4,14 +4,13 @@
     <k-form ref="fileForm" :schema="getFileFormSchema()" @field-changed="onFileFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
-    <div class="q-pt-md row justify-end">
-      <k-action
-        id="import-layer-action"
-        :label="$t('KImportLayer.IMPORT_BUTTON')"
+    <q-card-actions align="right">
+      <k-panel 
+        id="modal-buttons" 
+        :content="getButtons()" 
         renderer="form-button"
-        :loading="importing"
-        @triggered="onImport" />
-    </div>
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+    </q-card-actions>
   </div>
 </template>
 
@@ -30,6 +29,21 @@ export default {
     }
   },
   methods: {
+    getButtons () {
+      return [{
+        id: 'close-action',
+        outline: true,
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: this.onClose
+      }, {
+        id: 'import-layer-action',
+        label: this.$t('KImportLayer.IMPORT_BUTTON'),
+        loading: this.importing,
+        renderer: 'form-button',
+        handler: this.onImport
+      }]
+    },
     getFileFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
@@ -113,6 +127,9 @@ export default {
       }
       return ''
     },
+    onClose () {
+      this.$emit('done')
+    },
     async onImport () {
       const fileResult = this.$refs.fileForm.validate()
       const propertiesResult = this.$refs.propertiesForm.validate()
@@ -155,6 +172,7 @@ export default {
     // Load the required components
     this.$options.components['k-form'] = this.$load('form/KForm')
     this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Set data
     this.file = null
   }

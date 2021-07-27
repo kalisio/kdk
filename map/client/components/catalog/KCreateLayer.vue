@@ -4,14 +4,13 @@
     <k-form ref="propertiesForm" :schema="getPropertiesFormSchema()" @field-changed="onPropertiesFormFieldChanged" />
     <k-form ref="featureIdForm" :key="featureIdFormKey" :schema="getFeatureIdFormSchema()" />
     <!-- Buttons section -->
-    <div class="row justify-end">
-      <k-action
-        id="create-layer-action"
-        :label="$t('KCreateLayer.CREATE_BUTTON')"
+    <q-card-actions align="right">
+      <k-panel 
+        id="modal-buttons" 
+        :content="getButtons()" 
         renderer="form-button"
-        :loading="creating"
-        @triggered="onCreate" />
-    </div>
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+    </q-card-actions>
   </div>
 </template>
 
@@ -29,6 +28,21 @@ export default {
     }
   },
   methods: {
+    getButtons () {
+      return [{
+        id: 'close-action',
+        outline: true,
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: this.onClose
+      }, {
+        id: 'create-layer-action',
+        label: this.$t('KCreateLayer.CREATE_BUTTON'),
+        loading: this.creating,
+        renderer: 'form-button',
+        handler: this.onCreate
+      }]
+    },
     getPropertiesFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
@@ -104,6 +118,9 @@ export default {
       }
       return ''
     },
+    onClose () {
+      this.$emit('done')
+    },
     async onCreate () {
       const propertiesResult = this.$refs.propertiesForm.validate()
       const featureIdResult = this.$refs.featureIdForm.validate()
@@ -143,6 +160,7 @@ export default {
     // Load the required components
     this.$options.components['k-form'] = this.$load('form/KForm')
     this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

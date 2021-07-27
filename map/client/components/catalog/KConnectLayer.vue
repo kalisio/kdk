@@ -5,14 +5,13 @@
     <k-form ref="layerForm" :key="layerFormKey" :schema="getLayerFormSchema()" @field-changed="onLayerFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
-    <div class="row justify-end">
-      <k-action
-        id="connect-layer-action"
-        :label="$t('KConnectLayer.CONNECT_BUTTON')"
+    <q-card-actions align="right">
+      <k-panel 
+        id="modal-buttons" 
+        :content="getButtons()" 
         renderer="form-button"
-        :loading="connecting"
-        @triggered="onConnect" />
-    </div>
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+    </q-card-actions>
   </div>
 </template>
 
@@ -32,6 +31,21 @@ export default {
     }
   },
   methods: {
+    getButtons () {
+      return [{
+        id: 'close-action',
+        outline: true,
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: this.onClose
+      }, {
+        id: 'connect-layer-action',
+        label: this.$t('KConnectLayer.CONNECT_BUTTON'),
+        loading: this.connecting,
+        renderer: 'form-button',
+        handler: this.onConnect
+      }]
+    },
     getServiceFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
@@ -154,6 +168,9 @@ export default {
         }
       }
       return ''
+    },
+    onClose () {
+      this.$emit('done')
     },
     async onConnect () {
       const layerResult = this.$refs.layerForm.validate()
@@ -294,6 +311,7 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-form'] = this.$load('form/KForm')
     // Required data
     this.service = null
