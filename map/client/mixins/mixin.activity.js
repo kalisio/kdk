@@ -399,34 +399,25 @@ export default {
     editLayerByName (name, editOptions = {}) {
       const layer = this.getLayerByName(name)
       if (!layer) return
-      this.onEditLayerData(layer, editOptions)
+      this.startEditLayer(layer)
+      if (editOptions.startEdit) this.setEditMode('edit')
     },
-    async onEditLayerData (layer, editOptions = {}) {
-      const toggle = () => {
-        // Start/Stop edition
-        this.editLayer(layer, editOptions)
-        // Refresh actions due to state change
-        this.configureLayerActions(layer)
-        this.editedLayerToast = null
-      }
-      // Close previous edition toast if any
-      // (this will toggle)
-      if (this.editedLayerToast) {
-        this.editedLayerToast()
-      } else {
-        toggle()
-      }
-      // Create new toast if required
+    onEditLayerData (layer, editOptions = {}) {
       if (this.isLayerEdited(layer)) {
-        this.editedLayerToast = this.$toast({
-          type: 'warning',
-          timeout: 0, // persistent
-          position: 'top-left',
-          message: this.$t('mixins.activity.EDITING_DATA_MESSAGE'),
-          caption: this.$t(layer.name),
-          onDismiss: toggle
-        })
+        this.stopEditLayer()
+      } else {
+        this.startEditLayer(layer)
+        if (editOptions.startEdit) this.setEditMode('edit')
       }
+    },
+    onEditStart (layer) {
+      this.setTopPaneMode('edit-layer-data')
+    },
+    onEditStop (layer) {
+      this.setTopPaneMode('default')
+    },
+    onEndLayerEdition (status) {
+      this.stopEditLayer()
     },
     async onRemoveLayer (layer) {
       Dialog.create({
@@ -571,11 +562,15 @@ export default {
     this.$on('map-ready', this.onMapReady)
     this.$on('globe-ready', this.onGlobeReady)
     this.$on('layer-added', this.onLayerAdded)
+    this.$on('edit-start', this.onEditStart)
+    this.$on('edit-stop', this.onEditStop)
   },
   beforeDestroy () {
     this.$off('map-ready', this.onMapReady)
     this.$off('globe-ready', this.onGlobeReady)
     this.$off('layer-added', this.onLayerAdded)
+    this.$off('edit-start', this.onEditStart)
+    this.$off('edit-stop', this.onEditStop)
     this.finalize()
   }
 }

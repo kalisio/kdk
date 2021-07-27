@@ -531,5 +531,14 @@
     "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
     "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
     "CREATE_BUTTON": "Create"
+  },
+  "KLayerEditMode": {
+    "ADD_POLYGON_FEATURES": "Add polygon features",
+    "ADD_RECTANGLE_FEATURES": "Add rectangle features",
+    "ADD_LINE_FEATURES": "Add linear features",
+    "ADD_POINT_FEATURES": "Add point features",
+    "EDIT_FEATURES": "Edit feature geometry",
+    "DRAG_FEATURES": "Move features",
+    "REMOVE_FEATURES": "Remove features"
   }
 }

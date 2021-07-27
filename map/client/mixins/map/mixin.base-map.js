@@ -52,7 +52,6 @@ export default {
       if (this.map.pm === undefined) {
         this.map.options.pmIgnore = false
         L.PM.reInitLayer(this.map)
-        this.map.pm.setLang(i18next.language)
       }
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
       if (_.get(viewerOptions, 'scale', true)) this.setupScaleControl()

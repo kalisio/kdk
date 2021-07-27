@@ -533,5 +533,14 @@
     "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",       
     "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",    
     "CREATE_BUTTON": "Créer"
+  },
+  "KLayerEditMode": {
+    "ADD_POLYGON_FEATURES": "Ajouter des entités polygonales",
+    "ADD_RECTANGLE_FEATURES": "Ajouter des entités rectangulaires",
+    "ADD_LINE_FEATURES": "Ajouter des entités linéaires",
+    "ADD_POINT_FEATURES": "Ajouter des entités ponctuelles",
+    "EDIT_FEATURES": "Editer la géométrie des entités",
+    "DRAG_FEATURES": "Déplacer des entités",
+    "REMOVE_FEATURES": "Effacer des entités"
   }
 }
