@@ -79,7 +79,7 @@ export default {
 
       this.editedLayer = layer
       this.editingLayer = true
-      this.$emit('edit-start', this.editedLayer)
+      this.$emit('edit-start', { layer: this.editedLayer })
 
       // Move source layers to edition layers, required as eg clusters are not supported
       const geoJson = leafletLayer.toGeoJSON()
@@ -98,7 +98,7 @@ export default {
       this.$on('pm:rotateend', this.onFeaturesEdited)
       this.$on('layerremove', this.onFeaturesDeleted)
     },
-    stopEditLayer () {
+    stopEditLayer (status = 'accept') {
       if (!this.editedLayer) return
 
       const leafletLayer = this.getLeafletLayerByName(this.editedLayer.name)
@@ -117,7 +117,7 @@ export default {
       // Set back edited layers to source layer
       this.map.removeLayer(this.editableLayer)
       leafletLayer.addLayer(this.editableLayer)
-      this.$emit('edit-stop', this.editedLayer)
+      this.$emit('edit-stop', { status, layer: this.editedLayer })
       this.editedLayer = null
       this.editingLayer = false
       this.editedLayerSchema = null

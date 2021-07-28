@@ -410,14 +410,8 @@ export default {
         if (editOptions.startEdit) this.setEditMode('edit')
       }
     },
-    onEditStart (layer) {
-      this.setTopPaneMode('edit-layer-data')
-    },
-    onEditStop (layer) {
-      this.setTopPaneMode('default')
-    },
-    onEndLayerEdition (status) {
-      this.stopEditLayer()
+    onEndLayerEdition (status = 'accept') {
+      this.stopEditLayer(status)
     },
     async onRemoveLayer (layer) {
       Dialog.create({
@@ -562,15 +556,11 @@ export default {
     this.$on('map-ready', this.onMapReady)
     this.$on('globe-ready', this.onGlobeReady)
     this.$on('layer-added', this.onLayerAdded)
-    this.$on('edit-start', this.onEditStart)
-    this.$on('edit-stop', this.onEditStop)
   },
   beforeDestroy () {
     this.$off('map-ready', this.onMapReady)
     this.$off('globe-ready', this.onGlobeReady)
     this.$off('layer-added', this.onLayerAdded)
-    this.$off('edit-start', this.onEditStart)
-    this.$off('edit-stop', this.onEditStop)
     this.finalize()
   }
 }
