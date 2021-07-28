@@ -46,7 +46,8 @@ export default {
       if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
       this.map.pm.setGlobalOptions({ layerGroup: this.map })
 
-      if (mode === 'edit') {
+      if (mode === 'edit-properties') {
+      } else if (mode === 'edit-geometry') {
         this.map.pm.enableGlobalEditMode()
       } else if (mode === 'drag') {
         this.map.pm.enableGlobalDragMode()
@@ -88,6 +89,14 @@ export default {
       bindLeafletEvents(this.map, mapEditEvents, this)
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
       this.editedLayerSchema = JSON.stringify(_.get(this.editedLayer, 'schema.content'))
+
+      this.$on('click', this.onEditFeatureProperties)
+      this.$on('zoomend', this.onMapZoomWhileEditing)
+      this.$on('pm:create', this.onFeatureCreated)
+      this.$on('pm:update', this.onFeaturesEdited)
+      this.$on('pm:dragend', this.onFeaturesEdited)
+      this.$on('pm:rotateend', this.onFeaturesEdited)
+      this.$on('layerremove', this.onFeaturesDeleted)
     },
     stopEditLayer () {
       if (!this.editedLayer) return
@@ -112,6 +121,14 @@ export default {
       this.editedLayer = null
       this.editingLayer = false
       this.editedLayerSchema = null
+
+      this.$off('click', this.onEditFeatureProperties)
+      this.$off('zoomend', this.onMapZoomWhileEditing)
+      this.$off('pm:create', this.onFeatureCreated)
+      this.$off('pm:update', this.onFeaturesEdited)
+      this.$off('pm:dragend', this.onFeaturesEdited)
+      this.$off('pm:rotateend', this.onFeaturesEdited)
+      this.$off('layerremove', this.onFeaturesDeleted)
     },
     async updateFeatureProperties (feature, layer, leafletLayer) {
       // Avoid default popup
@@ -148,15 +165,11 @@ export default {
       })
     },
     async onEditFeatureProperties (layer, event) {
+      if (this.editMode !== 'edit-properties') return
+
       const leafletLayer = event && event.target
       if (!leafletLayer) return
-      // Check if not currently doing editions
-      if (this.map.pm !== undefined && (
-          this.map.pm.globalRemovalModeEnabled() ||
-          this.map.pm.globalEditModeEnabled() ||
-          this.map.pm.globalDragModeEnabled() ||
-          this.map.pm.globalRotateModeEnabled() ||
-          this.map.pm.globalDrawModeEnabled())) return
+
       const feature = _.get(leafletLayer, 'feature')
       if (!feature || !this.isLayerEdited(layer)) return
       if (!this.editedLayerSchema) return // No edition schema
@@ -222,23 +235,5 @@ export default {
     // Perform required conversion for default feature styling
     if (this.activityOptions.engine.editFeatureStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editFeatureStyle, 'update-in-place')
     if (this.activityOptions.engine.editPointStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editPointStyle, 'update-in-place')
-  },
-  mounted () {
-    this.$on('click', this.onEditFeatureProperties)
-    this.$on('zoomend', this.onMapZoomWhileEditing)
-    this.$on('pm:create', this.onFeatureCreated)
-    this.$on('pm:update', this.onFeaturesEdited)
-    this.$on('pm:dragend', this.onFeaturesEdited)
-    this.$on('pm:rotateend', this.onFeaturesEdited)
-    this.$on('layerremove', this.onFeaturesDeleted)
-  },
-  beforeDestroy () {
-    this.$off('click', this.onEditFeatureProperties)
-    this.$off('zoomend', this.onMapZoomWhileEditing)
-    this.$off('pm:create', this.onFeatureCreated)
-    this.$off('pm:update', this.onFeaturesEdited)
-    this.$off('pm:dragend', this.onFeaturesEdited)
-    this.$off('pm:rotateend', this.onFeaturesEdited)
-    this.$off('layerremove', this.onFeaturesDeleted)
   }
 }

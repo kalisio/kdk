@@ -31,10 +31,10 @@
   <k-action
     id="edit-features"
     icon="las la-edit"
-    tooltip="KLayerEditMode.EDIT_FEATURES"
+    tooltip="KLayerEditMode.EDIT_GEOMETRY"
     :toggle="{}"
-    :toggled="editModeToggled"
-    @triggered="onEditMode" />
+    :toggled="editGeometryModeToggled"
+    @triggered="onEditGeometryMode" />
   <k-action
     id="drag-features"
     icon="las la-arrows-alt"
@@ -49,6 +49,13 @@
     :toggle="{}"
     :toggled="removeModeToggled"
     @triggered="onRemoveMode" />
+  <k-action
+    id="edit-properties"
+    icon="las la-address-card"
+    tooltip="KLayerEditMode.EDIT_PROPERTIES"
+    :toggle="{}"
+    :toggled="editPropertiesModeToggled"
+    @triggered="onEditPropertiesMode" />
   </div>
   </template>
 
@@ -61,7 +68,8 @@
       addRectanglesModeToggled () { return this.kActivity.editMode === 'add-rectangles' },
       addLinesModeToggled () { return this.kActivity.editMode === 'add-lines' },
       addPointsModeToggled () { return this.kActivity.editMode === 'add-points' },
-      editModeToggled () { return this.kActivity.editMode === 'edit' },
+      editGeometryModeToggled () { return this.kActivity.editMode === 'edit-geometry' },
+      editPropertiesModeToggled () { return this.kActivity.editMode === 'edit-properties' },
       dragModeToggled () { return this.kActivity.editMode === 'drag' },
       removeModeToggled () { return this.kActivity.editMode === 'remove' }
     },
@@ -70,7 +78,8 @@
       onAddRectanglesMode () { this.kActivity.setEditMode('add-rectangles') },
       onAddLinesMode () { this.kActivity.setEditMode('add-lines') },
       onAddPointsMode () { this.kActivity.setEditMode('add-points') },
-      onEditMode () { this.kActivity.setEditMode('edit') },
+      onEditGeometryMode () { this.kActivity.setEditMode('edit-geometry') },
+      onEditPropertiesMode () { this.kActivity.setEditMode('edit-properties') },
       onDragMode () { this.kActivity.setEditMode('drag') },
       onRemoveMode () { this.kActivity.setEditMode('remove') }
     },

@@ -539,7 +539,8 @@
     "ADD_RECTANGLE_FEATURES": "Ajouter des entités rectangulaires",
     "ADD_LINE_FEATURES": "Ajouter des entités linéaires",
     "ADD_POINT_FEATURES": "Ajouter des entités ponctuelles",
-    "EDIT_FEATURES": "Editer la géométrie des entités",
+    "EDIT_GEOMETRY": "Editer la géométrie des entités",
+    "EDIT_PROPERTIES": "Editer les propriétés des entités",
     "DRAG_FEATURES": "Déplacer des entités",
     "REMOVE_FEATURES": "Effacer des entités"
   }

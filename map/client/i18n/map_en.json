@@ -537,7 +537,8 @@
     "ADD_RECTANGLE_FEATURES": "Add rectangle features",
     "ADD_LINE_FEATURES": "Add linear features",
     "ADD_POINT_FEATURES": "Add point features",
-    "EDIT_FEATURES": "Edit feature geometry",
+    "EDIT_GEOMETRY": "Edit feature geometry",
+    "EDIT_PROPERTIES": "Edit feature properties",
     "DRAG_FEATURES": "Move features",
     "REMOVE_FEATURES": "Remove features"
   }
