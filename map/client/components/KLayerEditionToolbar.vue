@@ -71,13 +71,11 @@
   export default {
     name: 'k-layer-edition-toolbar',
     inject: ['kActivity'],
-    data () {
-      return {
-        currentMode: this.kActivity.editMode
-      }
+    computed: {
+      currentMode () { return this.kActivity.layerEditMode }
     },
     methods: {
-      modeAllowed (mode) { return this.kActivity.allowedEditModes.indexOf(mode) !== -1 },
+      modeAllowed (mode) { return this.kActivity.allowedLayerEditModes.indexOf(mode) !== -1 },
       setMode (mode) { return this.kActivity.setEditMode(mode) }
     },
     created () {
