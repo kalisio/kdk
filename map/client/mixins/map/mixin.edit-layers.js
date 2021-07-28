@@ -10,6 +10,7 @@ const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend
 export default {
   data () {
     return {
+      allowedEditModes: [],
       editingLayer: false,
       editMode: ''
     }
@@ -46,6 +47,8 @@ export default {
       if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
       this.map.pm.setGlobalOptions({ layerGroup: this.map })
 
+      if (this.allowedEditModes.indexOf(mode) === -1) return
+
       if (mode === 'edit-properties') {
       } else if (mode === 'edit-geometry') {
         this.map.pm.enableGlobalEditMode()
@@ -71,14 +74,27 @@ export default {
 
       this.editMode = mode
     },
-    startEditLayer (layer) {
+    startEditLayer (layer, { allowedEditModes = null, editMode = null } = {}) {
       if (this.editedLayer) return
 
       const leafletLayer = this.getLeafletLayerByName(layer.name)
       if (!leafletLayer) return
 
+      this.allowedEditModes = allowedEditModes || [
+        'edit-properties',
+        'edit-geometry',
+        'drag',
+        'rotate',
+        'remove',
+        'add-polygons',
+        'add-rectangles',
+        'add-lines',
+        'add-points'
+      ]
+
       this.editedLayer = layer
       this.editingLayer = true
+      if (allowedEditModes) this.allowedEditModes = allowedEditModes
       this.$emit('edit-start', { layer: this.editedLayer })
 
       // Move source layers to edition layers, required as eg clusters are not supported
@@ -97,6 +113,8 @@ export default {
       this.$on('pm:dragend', this.onFeaturesEdited)
       this.$on('pm:rotateend', this.onFeaturesEdited)
       this.$on('layerremove', this.onFeaturesDeleted)
+
+      if (editMode) this.setEditMode(editMode)
     },
     stopEditLayer (status = 'accept') {
       if (!this.editedLayer) return

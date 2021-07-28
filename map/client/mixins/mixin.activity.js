@@ -397,20 +397,24 @@ export default {
       })
     },
     editLayerByName (name, editOptions = {}) {
+      // this one is used through postRobot to trigger edition
+      // on a layer
       const layer = this.getLayerByName(name)
       if (!layer) return
-      this.startEditLayer(layer)
-      if (editOptions.startEdit) this.setEditMode('edit')
+      this.startEditLayer(layer, editOptions)
     },
-    onEditLayerData (layer, editOptions = {}) {
+    onEditLayerData (layer) {
+      // this one is triggered by a layer action (toggle)
       if (this.isLayerEdited(layer)) {
-        this.stopEditLayer()
+        // always accept editions in the action
+        this.stopEditLayer('accept')
       } else {
-        this.startEditLayer(layer)
-        if (editOptions.startEdit) this.setEditMode('edit')
+        // start editing properties by default
+        this.startEditLayer(layer, { editMode: 'edit-properties' })
       }
     },
     onEndLayerEdition (status = 'accept') {
+      // this one can be triggered from a toolbar to accept or reject changes
       this.stopEditLayer(status)
     },
     async onRemoveLayer (layer) {
