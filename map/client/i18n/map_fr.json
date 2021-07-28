@@ -63,7 +63,9 @@
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_FAVORITE": "Ajouter aux vues favorites",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
-      "TOOLS": "Outils"
+      "TOOLS": "Outils",
+      "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",
+      "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés"
     },
     "timeseries": {
       "FORECAST_PROBE": "Prévisions"
