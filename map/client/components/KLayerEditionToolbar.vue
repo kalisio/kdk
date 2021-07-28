@@ -3,56 +3,56 @@
   <k-action
     id="add-polygons"
     icon="las la-draw-polygon"
-    tooltip="KLayerEditMode.ADD_POLYGON_FEATURES"
+    tooltip="KLayerEditionToolbar.ADD_POLYGON_FEATURES"
     :toggle="{}"
     :toggled="addPolygonsModeToggled"
     @triggered="onAddPolygonsMode" />
   <k-action
     id="add-rectangles"
     icon="las la-vector-square"
-    tooltip="KLayerEditMode.ADD_RECTANGLE_FEATURES"
+    tooltip="KLayerEditionToolbar.ADD_RECTANGLE_FEATURES"
     :toggle="{}"
     :toggled="addRectanglesModeToggled"
     @triggered="onAddRectanglesMode" />
   <k-action
     id="add-lines"
     icon="las la-project-diagram"
-    tooltip="KLayerEditMode.ADD_LINE_FEATURES"
+    tooltip="KLayerEditionToolbar.ADD_LINE_FEATURES"
     :toggle="{}"
     :toggled="addLinesModeToggled"
     @triggered="onAddLinesMode" />
   <k-action
     id="add-points"
     icon="las la-map-marker"
-    tooltip="KLayerEditMode.ADD_POINT_FEATURES"
+    tooltip="KLayerEditionToolbar.ADD_POINT_FEATURES"
     :toggle="{}"
     :toggled="addPointsModeToggled"
     @triggered="onAddPointsMode" />
   <k-action
     id="edit-features"
     icon="las la-edit"
-    tooltip="KLayerEditMode.EDIT_GEOMETRY"
+    tooltip="KLayerEditionToolbar.EDIT_GEOMETRY"
     :toggle="{}"
     :toggled="editGeometryModeToggled"
     @triggered="onEditGeometryMode" />
   <k-action
     id="drag-features"
     icon="las la-arrows-alt"
-    tooltip="KLayerEditMode.DRAG_FEATURES"
+    tooltip="KLayerEditionToolbar.DRAG_FEATURES"
     :toggle="{}"
     :toggled="dragModeToggled"
     @triggered="onDragMode" />
   <k-action
     id="remove-features"
     icon="las la-minus"
-    tooltip="KLayerEditMode.REMOVE_FEATURES"
+    tooltip="KLayerEditionToolbar.REMOVE_FEATURES"
     :toggle="{}"
     :toggled="removeModeToggled"
     @triggered="onRemoveMode" />
   <k-action
     id="edit-properties"
     icon="las la-address-card"
-    tooltip="KLayerEditMode.EDIT_PROPERTIES"
+    tooltip="KLayerEditionToolbar.EDIT_PROPERTIES"
     :toggle="{}"
     :toggled="editPropertiesModeToggled"
     @triggered="onEditPropertiesMode" />
@@ -61,7 +61,7 @@
 
   <script>
   export default {
-    name: 'k-layer-edit-mode',
+    name: 'k-layer-edition-toolbar',
     inject: ['kActivity'],
     computed: {
       addPolygonsModeToggled () { return this.kActivity.editMode === 'add-polygons' },

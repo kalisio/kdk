@@ -536,7 +536,7 @@
     "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",    
     "CREATE_BUTTON": "Créer"
   },
-  "KLayerEditMode": {
+  "KLayerEditionToolbar": {
     "ADD_POLYGON_FEATURES": "Ajouter des entités polygonales",
     "ADD_RECTANGLE_FEATURES": "Ajouter des entités rectangulaires",
     "ADD_LINE_FEATURES": "Ajouter des entités linéaires",
