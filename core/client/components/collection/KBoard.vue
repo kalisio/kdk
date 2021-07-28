@@ -40,8 +40,3 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-body {
-  overflow-y: hidden; /* Hide vertical scrollbar */
-}
-</style>
