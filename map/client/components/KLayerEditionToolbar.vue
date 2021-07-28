@@ -51,7 +51,7 @@
   <k-action
     id="remove-features"
     v-if="modeAllowed('remove')"
-    icon="las la-minus"
+    icon="las la-trash"
     tooltip="KLayerEditionToolbar.REMOVE_FEATURES"
     :toggle="{}"
     :toggled="currentMode === 'remove'"
