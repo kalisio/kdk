@@ -57,19 +57,20 @@ export default {
       } else if (mode === 'rotate') {
         this.map.pm.enableGlobalRotateMode()
       } else if (mode === 'remove') {
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         this.map.pm.enableGlobalRemovalMode()
       } else if (mode === 'add-polygons') {
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         this.map.pm.enableDraw('Polygon', { continueDrawing: true })
-        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
       } else if (mode === 'add-rectangles') {
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         this.map.pm.enableDraw('Rectangle', { continueDrawing: true })
-        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
       } else if (mode === 'add-lines') {
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         this.map.pm.enableDraw('Line', { continueDrawing: true })
-        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
       } else if (mode === 'add-points') {
-        this.map.pm.enableDraw('Marker', { continueDrawing: true })
         this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
+        this.map.pm.enableDraw('Marker', { continueDrawing: true })
       }
 
       this.layerEditMode = mode
