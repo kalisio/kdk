@@ -3,7 +3,18 @@ import L from 'leaflet'
 import { Dialog, uid } from 'quasar'
 import { bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 
+// Events we listen while layer is in edition mode
+const mapEditEvents = ['pm:create']
+const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend']
+
 export default {
+  data () {
+    return {
+      editingLayer: false,
+      allowedLayerEditModes: [],
+      layerEditMode: ''
+    }
+  },
   methods: {
     isLayerEdited (layer) {
       return this.editedLayer && (this.editedLayer.name === layer.name)
@@ -25,69 +36,116 @@ export default {
         }
       }
     },
-    async editLayer (layer, { allowDraw = true, allowEdit = true, allowDrag = true, allowRemoval = true, allowRotate = true, startEdit = false } = {}) {
+    setEditMode (mode) {
+      if (!this.editableLayer) return
+
+      // disable all modes
+      if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
+      if (this.map.pm.globalEditModeEnabled()) this.map.pm.disableGlobalEditMode()
+      if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
+      if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
+      if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
+      this.map.pm.setGlobalOptions({ layerGroup: this.map })
+
+      if (this.allowedLayerEditModes.indexOf(mode) === -1) return
+
+      if (mode === 'edit-properties') {
+      } else if (mode === 'edit-geometry') {
+        this.map.pm.enableGlobalEditMode()
+      } else if (mode === 'drag') {
+        this.map.pm.enableGlobalDragMode()
+      } else if (mode === 'rotate') {
+        this.map.pm.enableGlobalRotateMode()
+      } else if (mode === 'remove') {
+        this.map.pm.enableGlobalRemovalMode()
+      } else if (mode === 'add-polygons') {
+        this.map.pm.enableDraw('Polygon', { continueDrawing: true })
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
+      } else if (mode === 'add-rectangles') {
+        this.map.pm.enableDraw('Rectangle', { continueDrawing: true })
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
+      } else if (mode === 'add-lines') {
+        this.map.pm.enableDraw('Line', { continueDrawing: true })
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
+      } else if (mode === 'add-points') {
+        this.map.pm.enableDraw('Marker', { continueDrawing: true })
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
+      }
+
+      this.layerEditMode = mode
+    },
+    startEditLayer (layer, { allowedEditModes = null, editMode = null } = {}) {
+      if (this.editedLayer) return
+
       const leafletLayer = this.getLeafletLayerByName(layer.name)
       if (!leafletLayer) return
 
-      const mapEvents = ['pm:create']
-      const layerEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend']
+      this.allowedLayerEditModes = allowedEditModes || [
+        'edit-properties',
+        'edit-geometry',
+        'drag',
+        'rotate',
+        'remove',
+        'add-polygons',
+        'add-rectangles',
+        'add-lines',
+        'add-points'
+      ]
 
-      if (this.editedLayer) { // Stop edition
-        // Make sure we end geoman
-        if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
-        if (this.map.pm.globalEditModeEnabled()) this.map.pm.disableGlobalEditMode()
-        if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
-        if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
-        if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
-        this.map.pm.setGlobalOptions({ layerGroup: null })
+      this.editedLayer = layer
+      this.editingLayer = true
+      this.$emit('edit-start', { layer: this.editedLayer })
 
-        // Remove UI
-        unbindLeafletEvents(this.map, mapEvents)
-        unbindLeafletEvents(this.editableLayer, layerEvents)
-        this.map.pm.removeControls()
-        // Set back edited layers to source layer
-        this.map.removeLayer(this.editableLayer)
-        leafletLayer.addLayer(this.editableLayer)
-        this.$emit('edit-stop', this.editedLayer)
-        this.editedLayer = null
-        this.editedLayerSchema = null
-      } else { // Start edition
-        this.editedLayer = layer
-        this.$emit('edit-start', this.editedLayer)
-        // Move source layers to edition layers, required as eg clusters are not supported
-        const geoJson = leafletLayer.toGeoJSON()
-        leafletLayer.clearLayers()
-        this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
-        this.map.addLayer(this.editableLayer)
-        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
-        // Add UI
-        this.map.pm.addControls({
-          position: 'bottomleft',
-          // custom config
-          drawMarker: allowDraw,
-          drawPolyline: allowDraw,
-          drawRectangle: allowDraw,
-          drawPolygon: allowDraw,
-          editMode: allowEdit,
-          dragMode: allowDrag,
-          cutPolygon: false,
-          removalMode: allowRemoval,
-          rotateMode: allowRotate,
-          // GeoJSON does not support circles
-          drawCircle: false,
-          drawCircleMarker: false
-        })
-        bindLeafletEvents(this.map, mapEvents, this)
-        bindLeafletEvents(this.editableLayer, layerEvents, this)
-        this.createdFeatures = []
-        this.editedFeatures = []
-        this.deletedFeatures = []
-        this.editedLayerSchema = JSON.stringify(_.get(this.editedLayer, 'schema.content'))
+      // Move source layers to edition layers, required as eg clusters are not supported
+      const geoJson = leafletLayer.toGeoJSON()
+      leafletLayer.clearLayers()
+      this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
+      this.map.addLayer(this.editableLayer)
+      bindLeafletEvents(this.map, mapEditEvents, this)
+      bindLeafletEvents(this.editableLayer, layerEditEvents, this)
+      this.editedLayerSchema = JSON.stringify(_.get(this.editedLayer, 'schema.content'))
 
-        if (startEdit) {
-          this.map.pm.enableGlobalEditMode()
-        }
-      }
+      this.$on('click', this.onEditFeatureProperties)
+      this.$on('zoomend', this.onMapZoomWhileEditing)
+      this.$on('pm:create', this.onFeatureCreated)
+      this.$on('pm:update', this.onFeaturesEdited)
+      this.$on('pm:dragend', this.onFeaturesEdited)
+      this.$on('pm:rotateend', this.onFeaturesEdited)
+      this.$on('layerremove', this.onFeaturesDeleted)
+
+      if (editMode) this.setEditMode(editMode)
+    },
+    stopEditLayer (status = 'accept') {
+      if (!this.editedLayer) return
+
+      const leafletLayer = this.getLeafletLayerByName(this.editedLayer.name)
+      if (!leafletLayer) return
+
+      // Make sure we end geoman
+      if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
+      if (this.map.pm.globalEditModeEnabled()) this.map.pm.disableGlobalEditMode()
+      if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
+      if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
+      if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
+      this.map.pm.setGlobalOptions({ layerGroup: this.map })
+
+      unbindLeafletEvents(this.map, mapEditEvents)
+      unbindLeafletEvents(this.editableLayer, layerEditEvents)
+      // Set back edited layers to source layer
+      this.map.removeLayer(this.editableLayer)
+      leafletLayer.addLayer(this.editableLayer)
+      this.$emit('edit-stop', { status, layer: this.editedLayer })
+      this.editedLayer = null
+      this.editingLayer = false
+      this.editedLayerSchema = null
+
+      this.$off('click', this.onEditFeatureProperties)
+      this.$off('zoomend', this.onMapZoomWhileEditing)
+      this.$off('pm:create', this.onFeatureCreated)
+      this.$off('pm:update', this.onFeaturesEdited)
+      this.$off('pm:dragend', this.onFeaturesEdited)
+      this.$off('pm:rotateend', this.onFeaturesEdited)
+      this.$off('layerremove', this.onFeaturesDeleted)
     },
     async updateFeatureProperties (feature, layer, leafletLayer) {
       // Avoid default popup
@@ -124,15 +182,11 @@ export default {
       })
     },
     async onEditFeatureProperties (layer, event) {
+      if (this.layerEditMode !== 'edit-properties') return
+
       const leafletLayer = event && event.target
       if (!leafletLayer) return
-      // Check if not currently doing editions
-      if (this.map.pm !== undefined && (
-          this.map.pm.globalRemovalModeEnabled() ||
-          this.map.pm.globalEditModeEnabled() ||
-          this.map.pm.globalDragModeEnabled() ||
-          this.map.pm.globalRotateModeEnabled() ||
-          this.map.pm.globalDrawModeEnabled())) return
+
       const feature = _.get(leafletLayer, 'feature')
       if (!feature || !this.isLayerEdited(layer)) return
       if (!this.editedLayerSchema) return // No edition schema
@@ -198,23 +252,5 @@ export default {
     // Perform required conversion for default feature styling
     if (this.activityOptions.engine.editFeatureStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editFeatureStyle, 'update-in-place')
     if (this.activityOptions.engine.editPointStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editPointStyle, 'update-in-place')
-  },
-  mounted () {
-    this.$on('click', this.onEditFeatureProperties)
-    this.$on('zoomend', this.onMapZoomWhileEditing)
-    this.$on('pm:create', this.onFeatureCreated)
-    this.$on('pm:update', this.onFeaturesEdited)
-    this.$on('pm:dragend', this.onFeaturesEdited)
-    this.$on('pm:rotateend', this.onFeaturesEdited)
-    this.$on('layerremove', this.onFeaturesDeleted)
-  },
-  beforeDestroy () {
-    this.$off('click', this.onEditFeatureProperties)
-    this.$off('zoomend', this.onMapZoomWhileEditing)
-    this.$off('pm:create', this.onFeatureCreated)
-    this.$off('pm:update', this.onFeaturesEdited)
-    this.$off('pm:dragend', this.onFeaturesEdited)
-    this.$off('pm:rotateend', this.onFeaturesEdited)
-    this.$off('layerremove', this.onFeaturesDeleted)
   }
 }

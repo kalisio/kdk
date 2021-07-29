@@ -63,7 +63,9 @@
       "SEARCH_LOCATION": "Search a location",
       "ADD_FAVORITE": "Add to favorite views",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
-      "TOOLS": "Tools"
+      "TOOLS": "Tools",
+      "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
+      "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes"
     },
     "timeseries": {
       "FORECAST_PROBE": "Forecast"
@@ -531,5 +533,15 @@
     "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
     "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
     "CREATE_BUTTON": "Create"
+  },
+  "KLayerEditionToolbar": {
+    "ADD_POLYGON_FEATURES": "Add polygon features",
+    "ADD_RECTANGLE_FEATURES": "Add rectangle features",
+    "ADD_LINE_FEATURES": "Add linear features",
+    "ADD_POINT_FEATURES": "Add point features",
+    "EDIT_GEOMETRY": "Edit feature geometry",
+    "EDIT_PROPERTIES": "Edit feature properties",
+    "DRAG_FEATURES": "Move features",
+    "REMOVE_FEATURES": "Remove features"
   }
 }

@@ -397,36 +397,25 @@ export default {
       })
     },
     editLayerByName (name, editOptions = {}) {
+      // this one is used through postRobot to trigger edition
+      // on a layer
       const layer = this.getLayerByName(name)
       if (!layer) return
-      this.onEditLayerData(layer, editOptions)
+      this.startEditLayer(layer, editOptions)
     },
-    async onEditLayerData (layer, editOptions = {}) {
-      const toggle = () => {
-        // Start/Stop edition
-        this.editLayer(layer, editOptions)
-        // Refresh actions due to state change
-        this.configureLayerActions(layer)
-        this.editedLayerToast = null
-      }
-      // Close previous edition toast if any
-      // (this will toggle)
-      if (this.editedLayerToast) {
-        this.editedLayerToast()
-      } else {
-        toggle()
-      }
-      // Create new toast if required
+    onEditLayerData (layer) {
+      // this one is triggered by a layer action (toggle)
       if (this.isLayerEdited(layer)) {
-        this.editedLayerToast = this.$toast({
-          type: 'warning',
-          timeout: 0, // persistent
-          position: 'top-left',
-          message: this.$t('mixins.activity.EDITING_DATA_MESSAGE'),
-          caption: this.$t(layer.name),
-          onDismiss: toggle
-        })
+        // always accept editions in the action
+        this.stopEditLayer('accept')
+      } else {
+        // start editing properties by default
+        this.startEditLayer(layer, { editMode: 'edit-properties' })
       }
+    },
+    onEndLayerEdition (status = 'accept') {
+      // this one can be triggered from a toolbar to accept or reject changes
+      this.stopEditLayer(status)
     },
     async onRemoveLayer (layer) {
       Dialog.create({
