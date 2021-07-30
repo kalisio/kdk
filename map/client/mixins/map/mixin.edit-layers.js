@@ -75,7 +75,7 @@ export default {
 
       this.layerEditMode = mode
     },
-    startEditLayer (layer, { allowedEditModes = null, editMode = null } = {}) {
+    async startEditLayer (layer, { allowedEditModes = null, editMode = null } = {}) {
       if (this.editedLayer) return
 
       const leafletLayer = this.getLeafletLayerByName(layer.name)
@@ -100,6 +100,19 @@ export default {
       // Move source layers to edition layers, required as eg clusters are not supported
       const geoJson = leafletLayer.toGeoJSON()
       leafletLayer.clearLayers()
+
+      // in-memory edition ?
+      if (this.editedLayer._id === undefined) {
+        // fill '_id' member of feature to push in service
+        let srcId = _.get(this.editedLayer, 'featureId')
+        srcId = (srcId && srcId !== '_id') ? `properties.${srcId}` : '_id'
+        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        features.forEach(async (feature) => {
+          if (srcId) feature._id = _.get(feature, srcId, uid().toString())
+          await this.$api.getService('in-memory-features').create(feature)
+        })
+      }
+
       this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
       this.map.addLayer(this.editableLayer)
       bindLeafletEvents(this.map, mapEditEvents, this)
@@ -116,11 +129,16 @@ export default {
 
       if (editMode) this.setEditMode(editMode)
     },
-    stopEditLayer (status = 'accept') {
+    async stopEditLayer (status = 'accept') {
       if (!this.editedLayer) return
 
       const leafletLayer = this.getLeafletLayerByName(this.editedLayer.name)
       if (!leafletLayer) return
+
+      // for in memory edition, clear service
+      if (this.editedLayer._id === undefined) {
+        // await this.$api.getService('in-memory-features').remove(this.inMemoryId)
+      }
 
       // Make sure we end geoman
       if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
@@ -148,14 +166,24 @@ export default {
       this.$off('pm:rotateend', this.onFeaturesEdited)
       this.$off('layerremove', this.onFeaturesDeleted)
     },
-    async updateFeatureProperties (feature, layer, leafletLayer) {
+    async onEditFeatureProperties (layer, event) {
+      if (!this.editedLayerSchema || this.layerEditMode !== 'edit-properties') return
+
+      const leafletLayer = event && event.target
+      if (!leafletLayer) return
+
+      const feature = _.get(leafletLayer, 'feature')
+      if (!feature || !this.isLayerEdited(layer)) return
+
       // Avoid default popup
       const popup = leafletLayer.getPopup()
       if (popup) leafletLayer.unbindPopup(popup)
 
+      const service = this.editedLayer._id ? 'features' : 'in-memory-features'
+
       this.editFeatureModal = await this.$createComponent('editor/KModalEditor', {
         propsData: {
-          service: 'features',
+          service,
           contextId: this.contextId,
           objectId: feature._id,
           schemaJson: this.editedLayerSchema,
@@ -168,7 +196,11 @@ export default {
         // Restore popup
         if (popup) leafletLayer.bindPopup(popup)
         // Save in DB and in memory
-        await this.editFeaturesProperties(updatedFeature)
+        if (this.editedLayer._id) {
+          await this.editFeaturesProperties(updatedFeature)
+        } else {
+          await this.$api.getService('in-memory-features').patch(updatedFeature._id, _.pick(feature, ['properties']))
+        }
         const geoJson = leafletLayer.toGeoJSON()
         Object.assign(geoJson, _.pick(updatedFeature, ['properties']))
         this.editableLayer.removeLayer(leafletLayer)
@@ -182,18 +214,6 @@ export default {
         this.editFeatureModal = null
       })
     },
-    async onEditFeatureProperties (layer, event) {
-      if (this.layerEditMode !== 'edit-properties') return
-
-      const leafletLayer = event && event.target
-      if (!leafletLayer) return
-
-      const feature = _.get(leafletLayer, 'feature')
-      if (!feature || !this.isLayerEdited(layer)) return
-      if (!this.editedLayerSchema) return // No edition schema
-      if (!this.editedLayer._id) return // Impossible to edit in-memory layer as it requires a service now
-      await this.updateFeatureProperties(feature, layer, leafletLayer)
-    },
     async onFeatureCreated (event) {
       if (this.layerEditMode !== 'add-polygons' &&
           this.layerEditMode !== 'add-rectangles' &&
@@ -202,12 +222,17 @@ export default {
 
       let geoJson = event.layer.toGeoJSON()
       // Generate temporary ID for feature
+      // TODO: is this required ?? since createFeatures drop _id
       const id = _.get(this.editedLayer, 'featureId')
       if (id && (id !== '_id')) _.set(geoJson, 'properties.' + id, uid().toString())
       else geoJson._id = uid().toString()
       // Save changes to DB, we use the layer DB ID as layer ID on features
       if (this.editedLayer._id) {
         geoJson = await this.createFeatures(geoJson, this.editedLayer._id)
+      } else {
+        // make sure we have an _id too
+        if (!geoJson._id) geoJson._id = uid().toString()
+        await this.$api.getService('in-memory-features').create(geoJson)
       }
       this.editableLayer.removeLayer(event.layer)
       this.editableLayer.addData(geoJson)
@@ -218,8 +243,16 @@ export default {
           this.layerEditMode !== 'rotate') return
 
       // Save changes to DB
+      const geoJson = event.layer.toGeoJSON()
       if (this.editedLayer._id) {
-        await this.editFeaturesGeometry(event.layer.toGeoJSON())
+        await this.editFeaturesGeometry(geoJson)
+      } else {
+        /* Not needed
+        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        features.foreach(async (feature) => {
+          await this.$api.getService('in-memory-features').patch(feature._id, _.pick(feature, ['geometry']))
+        })
+        */
       }
     },
     async onFeaturesDeleted (event) {
@@ -230,8 +263,14 @@ export default {
       if (!event.target || event.target !== this.editableLayer) return
 
       // Save changes to DB
+      const geoJson = event.layer.toGeoJSON()
       if (this.editedLayer._id) {
-        await this.removeFeatures(event.layer.toGeoJSON())
+        await this.removeFeatures(geoJson)
+      } else {
+        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        features.foreach(async (feature) => {
+          await this.$api.getService('in-memory-features').remove(feature._id)
+        })
       }
     },
     onMapZoomWhileEditing (event) {
