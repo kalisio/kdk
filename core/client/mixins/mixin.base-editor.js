@@ -8,6 +8,14 @@ export default function baseEditorMixin (formRefs) {
         type: Object,
         default: () => {}
       },
+      // Indicates if the stored object in-memory is only the perspective part (default)
+      // or the full structure, ie { perspective: { xxx = } }
+      // Note: the full structure is always retrieved/sent from/to the service anyway but sometimes
+      // it is easier to manipulate a full-object and edit a nested property seen as a perspective on the front side
+      perspectiveAsObject: {
+        type: Boolean,
+        default: true
+      },
       baseQuery: {
         type: Object,
         default: () => {}
@@ -159,7 +167,11 @@ export default function baseEditorMixin (formRefs) {
         let object = {}
         const baseObject = this.getObject() || this.baseObject
         if (this.perspective !== '') {
-          _.set(object, this.perspective, _.get(baseObject, this.perspective))
+          if (this.perspectiveAsObject) {
+            Object.assign(object, _.get(baseObject, this.perspective))
+          } else {
+            _.set(object, this.perspective, _.get(baseObject, this.perspective))
+          }
           // Keep track of ID as it is used to know if we update or create
           if (baseObject._id) object._id = baseObject._id
         } else {
@@ -215,7 +227,11 @@ export default function baseEditorMixin (formRefs) {
               // Editing mode => patch the item
               if (this.perspective !== '') {
                 const data = {}
-                data[this.perspective] = _.get(object, this.perspective)
+                if (this.perspectiveAsObject) {
+                  _.set(data, this.perspective, _.omit(object, ['_id']))
+                } else {
+                  _.set(data, this.perspective, _.get(object, this.perspective))
+                }
                 const response = await this.getService().patch(this.objectId, data, { query })
                 // Keep track of ID as it is used to know if we update or create
                 if (object._id) response._id = object._id

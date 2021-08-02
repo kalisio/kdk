@@ -214,8 +214,6 @@ export function defineOrganisationAbilities (subject, can, cannot) {
             can(['read', 'create', 'remove'], 'storage', { context: organisation._id })
           }
           if (role >= Roles.manager) {
-            // The unique identifier of a service is its path not its name.
-            // Indeed we have for instance a 'groups' service in each organisation.
             can('update', 'members', { context: organisation._id })
             can('update', 'tags', { context: organisation._id })
             can('create', 'groups', { context: organisation._id })

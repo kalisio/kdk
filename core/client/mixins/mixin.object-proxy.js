@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { createQuerablePromise } from '../utils'
 
 const objectProxyMixin = {
@@ -24,7 +25,7 @@ const objectProxyMixin = {
       return this.object ? this.object._id : ''
     },
     hasPerspective (perspective) {
-      return this.object ? this.object[perspective] : false
+      return this.object ? _.has(this.object, perspective) : false
     },
     loadObject () {
       if (!this.objectId) {
