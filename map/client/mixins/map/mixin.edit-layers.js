@@ -105,11 +105,11 @@ export default {
       if (this.editedLayer._id === undefined) {
         // in this case we have to push features to in memory edition service
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        await Promise.all(features.map(async (feature) => {
+        for (const feature of features) {
           // update features so they contains _id
           const { _id } = await this.$api.getService('in-memory-features').create(feature)
           feature._id = _id
-        }))
+        }
       }
 
       this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
@@ -140,7 +140,11 @@ export default {
 
       // for in memory edition, clear service
       if (this.editedLayer._id === undefined) {
-        // await this.$api.getService('in-memory-features').remove(this.inMemoryId)
+        const geoJson = this.editableLayer.toGeoJSON()
+        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        for (const feature of features) {
+          await this.$api.getService('in-memory-features').remove(feature._id)
+        }
       }
 
       // Make sure we end geoman
@@ -170,13 +174,14 @@ export default {
       this.$off('layerremove', this.onFeaturesDeleted)
     },
     async onEditFeatureProperties (layer, event) {
-      if (!this.editedLayerSchema || this.layerEditMode !== 'edit-properties') return
-
       const leafletLayer = event && event.target
-      if (!leafletLayer) return
-
       const feature = _.get(leafletLayer, 'feature')
-      if (!feature || !this.isLayerEdited(layer)) return
+
+      if (this.layerEditMode !== 'edit-properties' ||
+          !this.isLayerEdited(layer) ||
+          !this.editedLayerSchema ||
+          !leafletLayer ||
+          !feature) return
 
       // Avoid default popup
       const popup = leafletLayer.getPopup()
@@ -218,12 +223,14 @@ export default {
       })
     },
     async onFeatureCreated (event) {
-      if (this.layerEditMode !== 'add-polygons' &&
-          this.layerEditMode !== 'add-rectangles' &&
-          this.layerEditMode !== 'add-lines' &&
-          this.layerEditMode !== 'add-points') return
+      const leafletLayer = event && event.layer
+      if ((this.layerEditMode !== 'add-polygons' &&
+           this.layerEditMode !== 'add-rectangles' &&
+           this.layerEditMode !== 'add-lines' &&
+           this.layerEditMode !== 'add-points') ||
+          !leafletLayer) return
 
-      let geoJson = event.layer.toGeoJSON()
+      let geoJson = leafletLayer.toGeoJSON()
       // Generate a value for the declared featureId if any
       if (this.editedLayer.featureId !== undefined) geoJson.properties[this.editedLayer.featureId] = uid().toString()
       // Save changes to DB, we use the layer DB ID as layer ID on features
@@ -232,29 +239,31 @@ export default {
       } else {
         geoJson = await this.$api.getService('in-memory-features').create(geoJson)
       }
-      this.editableLayer.removeLayer(event.layer)
+      this.editableLayer.removeLayer(leafletLayer)
       this.editableLayer.addData(geoJson)
     },
     async onFeaturesEdited (event) {
-      if (this.layerEditMode !== 'edit-geometry' &&
-          this.layerEditMode !== 'drag' &&
-          this.layerEditMode !== 'rotate') return
+      const leafletLayer = event && event.layer
+      if ((this.layerEditMode !== 'edit-geometry' &&
+           this.layerEditMode !== 'drag' &&
+           this.layerEditMode !== 'rotate') ||
+          !leafletLayer) return
 
       // Save changes to DB
-      const geoJson = event.layer.toGeoJSON()
+      const geoJson = leafletLayer.toGeoJSON()
       if (this.editedLayer._id) {
         await this.editFeaturesGeometry(geoJson)
       } else {
-        /* Not needed
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        features.foreach(async (feature) => {
+        for (const feature of features) {
           await this.$api.getService('in-memory-features').patch(feature._id, _.pick(feature, ['geometry']))
-        })
-        */
+        }
       }
     },
     async onFeaturesDeleted (event) {
-      if (this.layerEditMode !== 'remove') return
+      const leafletLayer = event && event.layer
+      if (this.layerEditMode !== 'remove' ||
+         !leafletLayer) return
 
       // This is connected to the 'layerremove' event of the editable layer
       // but we may also receive 'layerremove' event from the map
@@ -266,9 +275,9 @@ export default {
         await this.removeFeatures(geoJson)
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        features.foreach(async (feature) => {
+        for (const feature of features) {
           await this.$api.getService('in-memory-features').remove(feature._id)
-        })
+        }
       }
     },
     onMapZoomWhileEditing (event) {
