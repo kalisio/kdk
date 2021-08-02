@@ -1,5 +1,6 @@
 <template>
-  <k-card v-bind="$props" :actions="itemActions" :bind-actions="false" :options="{ nameField: 'model' }">
+  <k-card v-bind="$props" :actions="itemActions" :bind-actions="false"
+    :options="{ nameField: 'model' }" :header="header" :dense="dense">
     <!--
       Card icon
      -->
