@@ -36,16 +36,15 @@ export default {
       default: () => ({ component: 'account/KDeviceCard' })
     }
   },
-  methods: {
-    refreshCollection () {
+  created () {
+    // Load the required components
+    this.$options.components['k-device-card'] = this.$load('account/KDeviceCard')
+    // Refresh collection method is added dynamically due to throttle, not used here
+    this.refreshCollection = () => {
       this.items = this.$store.get('user.devices', [])
       this.nbTotalItems = this.items.length
       this.$emit('collection-refreshed')
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-device-card'] = this.$load('account/KDeviceCard')
     this.refreshCollection()
     // Whenever the user is updated, update collection as well
     this.$events.$on('user-changed', this.refreshCollection)
