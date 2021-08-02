@@ -195,6 +195,11 @@ export default {
       await this.updateFeatureProperties(feature, layer, leafletLayer)
     },
     async onFeatureCreated (event) {
+      if (this.layerEditMode !== 'add-polygons' &&
+          this.layerEditMode !== 'add-rectangles' &&
+          this.layerEditMode !== 'add-lines' &&
+          this.layerEditMode !== 'add-points') return
+
       let geoJson = event.layer.toGeoJSON()
       // Generate temporary ID for feature
       const id = _.get(this.editedLayer, 'featureId')
@@ -208,12 +213,18 @@ export default {
       this.editableLayer.addData(geoJson)
     },
     async onFeaturesEdited (event) {
+      if (this.layerEditMode !== 'edit-geometry' &&
+          this.layerEditMode !== 'drag' &&
+          this.layerEditMode !== 'rotate') return
+
       // Save changes to DB
       if (this.editedLayer._id) {
         await this.editFeaturesGeometry(event.layer.toGeoJSON())
       }
     },
     async onFeaturesDeleted (event) {
+      if (this.layerEditMode !== 'remove') return
+
       // This is connected to the 'layerremove' event of the editable layer
       // but we may also receive 'layerremove' event from the map
       if (!event.target || event.target !== this.editableLayer) return
