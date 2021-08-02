@@ -204,6 +204,7 @@ export default {
       if (this.editedLayer._id) {
         geoJson = await this.createFeatures(geoJson, this.editedLayer._id)
       }
+      this.editableLayer.removeLayer(event.layer)
       this.editableLayer.addData(geoJson)
     },
     async onFeaturesEdited (event) {
