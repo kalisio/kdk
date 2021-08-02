@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import { Dialog, uid } from 'quasar'
-import { bindLeafletEvents, unbindLeafletEvents } from '../../utils'
+import { generatePropertiesSchema, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 
 // Events we listen while layer is in edition mode
 const mapEditEvents = ['pm:create']
@@ -103,14 +103,13 @@ export default {
 
       // in-memory edition ?
       if (this.editedLayer._id === undefined) {
-        // fill '_id' member of feature to push in service
-        let srcId = _.get(this.editedLayer, 'featureId')
-        srcId = (srcId && srcId !== '_id') ? `properties.${srcId}` : '_id'
+        // in this case we have to push features to in memory edition service
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        features.forEach(async (feature) => {
-          if (srcId) feature._id = _.get(feature, srcId, uid().toString())
-          await this.$api.getService('in-memory-features').create(feature)
-        })
+        await Promise.all(features.map(async (feature) => {
+          // update features so they contains _id
+          const { _id } = await this.$api.getService('in-memory-features').create(feature)
+          feature._id = _id
+        }))
       }
 
       this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
@@ -118,6 +117,10 @@ export default {
       bindLeafletEvents(this.map, mapEditEvents, this)
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
       this.editedLayerSchema = JSON.stringify(_.get(this.editedLayer, 'schema.content'))
+      if (!this.editedLayerSchema && this.editedLayer._id === undefined) {
+        // generate schema for in memory edition
+        this.editedLayerSchema = generatePropertiesSchema(geoJson, this.editedLayer.name)
+      }
 
       this.$on('click', this.onEditFeatureProperties)
       this.$on('zoomend', this.onMapZoomWhileEditing)
@@ -221,18 +224,13 @@ export default {
           this.layerEditMode !== 'add-points') return
 
       let geoJson = event.layer.toGeoJSON()
-      // Generate temporary ID for feature
-      // TODO: is this required ?? since createFeatures drop _id
-      const id = _.get(this.editedLayer, 'featureId')
-      if (id && (id !== '_id')) _.set(geoJson, 'properties.' + id, uid().toString())
-      else geoJson._id = uid().toString()
+      // Generate a value for the declared featureId if any
+      if (this.editedLayer.featureId !== undefined) geoJson.properties[this.editedLayer.featureId] = uid().toString()
       // Save changes to DB, we use the layer DB ID as layer ID on features
       if (this.editedLayer._id) {
         geoJson = await this.createFeatures(geoJson, this.editedLayer._id)
       } else {
-        // make sure we have an _id too
-        if (!geoJson._id) geoJson._id = uid().toString()
-        await this.$api.getService('in-memory-features').create(geoJson)
+        geoJson = await this.$api.getService('in-memory-features').create(geoJson)
       }
       this.editableLayer.removeLayer(event.layer)
       this.editableLayer.addData(geoJson)
