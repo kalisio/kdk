@@ -23,8 +23,6 @@
 <script>
 import _ from 'lodash'
 import { getIconName } from '../../utils'
-import { dom } from 'quasar'
-const { ready } = dom
 
 export default {
   name: 'k-chips-pane',
