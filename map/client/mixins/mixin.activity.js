@@ -157,8 +157,7 @@ export default {
       return _.get(layer, 'isStyleEditable', this.isUserLayer(layer))
     },
     isLayerDataEditable (layer) {
-      // return _.get(layer, 'isDataEditable', this.isUserLayer(layer) && this.isFeatureLayer(layer))
-      return _.get(layer, 'isDataEditable', this.isUserLayer(layer))
+      return _.get(layer, 'isDataEditable', this.isUserLayer(layer) && this.isFeatureLayer(layer))
     },
     async resetLayer (layer) {
       // Reset layer with new setup but keep track of current visibility state
