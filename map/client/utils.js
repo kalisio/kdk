@@ -147,6 +147,32 @@ export function generatePropertiesSchema (geoJson, name) {
   return schema
 }
 
+export function updatePropertiesSchema (schema) {
+  const props = schema.properties
+  if (!props) return
+
+  const bestGuesses = {
+    undefined: 'form/KTextField',
+    object: 'form/KTextField',
+    string: 'form/KTextField',
+    number: 'form/KNumberField',
+    boolean: 'form/KToggleField'
+  }
+
+  // Loop over declared props and add best guesses to field components based on property type
+  for (const prop in props) {
+    const propEntry = props[prop]
+    if (propEntry.field && propEntry.field.component) continue
+    propEntry.field = {
+      component: bestGuesses[propEntry.type],
+      label: propEntry.label || prop,
+      helper: propEntry.helper || `Please set value for '${prop}'`
+    }
+  }
+
+  return schema
+}
+
 export function formatUserCoordinates (lat, lon, formatStr) {
   if (formatStr === 'aeronautical') {
     const coords = formatcoords(lat, lon)
