@@ -210,7 +210,7 @@ export default {
         if (this.editedLayer._id) {
           await this.editFeaturesProperties(updatedFeature)
         } else {
-          await this.$api.getService('in-memory-features').patch(updatedFeature._id, _.pick(feature, ['properties']))
+          await this.$api.getService('in-memory-features').patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
         }
         const geoJson = leafletLayer.toGeoJSON()
         Object.assign(geoJson, _.pick(updatedFeature, ['properties']))
