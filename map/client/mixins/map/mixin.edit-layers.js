@@ -109,7 +109,7 @@ export default {
           // Generate in memory service _id as string to match what's done with mongo
           feature._id = uid().toString()
           // Service will use the provided _id as object key
-          await this.$api.getService('in-memory-features').create(feature)
+          await this.$api.getService('features-edition').create(feature)
         }
       }
 
@@ -156,7 +156,7 @@ export default {
         const geoJson = this.editableLayer.toGeoJSON()
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         for (const feature of features) {
-          await this.$api.getService('in-memory-features').remove(feature._id)
+          await this.$api.getService('features-edition').remove(feature._id)
         }
       }
 
@@ -190,7 +190,7 @@ export default {
       const popup = leafletLayer.getPopup()
       if (popup) leafletLayer.unbindPopup(popup)
 
-      const service = this.editedLayer._id ? 'features' : 'in-memory-features'
+      const service = this.editedLayer._id ? 'features' : 'features-edition'
 
       this.editFeatureModal = await this.$createComponent('editor/KModalEditor', {
         propsData: {
@@ -210,7 +210,7 @@ export default {
         if (this.editedLayer._id) {
           await this.editFeaturesProperties(updatedFeature)
         } else {
-          await this.$api.getService('in-memory-features').patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
+          await this.$api.getService('features-edition').patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
         }
         const geoJson = leafletLayer.toGeoJSON()
         Object.assign(geoJson, _.pick(updatedFeature, ['properties']))
@@ -246,7 +246,7 @@ export default {
         // Generate in memory service _id as string to match what's done with mongo
         geoJson._id = idValue
         // Service will use the provided _id as object key
-        await this.$api.getService('in-memory-features').create(geoJson)
+        await this.$api.getService('features-edition').create(geoJson)
       }
       this.editableLayer.removeLayer(leafletLayer)
       this.editableLayer.addData(geoJson)
@@ -265,7 +265,7 @@ export default {
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         for (const feature of features) {
-          await this.$api.getService('in-memory-features').patch(feature._id, _.pick(feature, ['geometry']))
+          await this.$api.getService('features-edition').patch(feature._id, _.pick(feature, ['geometry']))
         }
       }
     },
@@ -285,7 +285,7 @@ export default {
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         for (const feature of features) {
-          await this.$api.getService('in-memory-features').remove(feature._id)
+          await this.$api.getService('features-edition').remove(feature._id)
         }
       }
     },

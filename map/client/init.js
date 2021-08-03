@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import memory from 'feathers-memory'
 import { Platform } from 'quasar'
 import { Store, utils as kCoreUtils } from '../../core/client'
 import { Geolocation } from './geolocation'
@@ -20,6 +21,15 @@ export default function init () {
   api.declareService('geocoder')
   // Declare our matcher
   api.registerMatcher(siftMatcher)
+  // Service to support in memory features edition
+  // mixin.edit-layers use it when edited layer is not stored
+  api.createService('features-edition', {
+    service: memory({
+      id: '_id',
+      paginate: { default: 10 },
+      matcher: api.matcher
+    })
+  })
 
   // Create the models listened by the different components
   // You must use the patch method on the store to update those models
