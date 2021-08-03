@@ -139,14 +139,6 @@ export default {
       const leafletLayer = this.getLeafletLayerByName(this.editedLayer.name)
       if (!leafletLayer) return
 
-      // for in memory edition, clear service
-      if (this.editedLayer._id === undefined) {
-        const geoJson = this.editableLayer.toGeoJSON()
-        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        for (const feature of features) {
-          await this.$api.getService('in-memory-features').remove(feature._id)
-        }
-      }
 
       // Make sure we end geoman
       if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
@@ -158,6 +150,16 @@ export default {
 
       unbindLeafletEvents(this.map, mapEditEvents)
       unbindLeafletEvents(this.editableLayer, layerEditEvents)
+
+      // for in memory edition, clear service
+      if (this.editedLayer._id === undefined) {
+        const geoJson = this.editableLayer.toGeoJSON()
+        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        for (const feature of features) {
+          await this.$api.getService('in-memory-features').remove(feature._id)
+        }
+      }
+
       // Set back edited layers to source layer
       this.map.removeLayer(this.editableLayer)
       leafletLayer.addLayer(this.editableLayer)
