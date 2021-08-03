@@ -279,7 +279,7 @@ export default {
       if (!event.target || event.target !== this.editableLayer) return
 
       // Save changes to DB
-      const geoJson = event.layer.toGeoJSON()
+      const geoJson = leafletLayer.toGeoJSON()
       if (this.editedLayer._id) {
         await this.removeFeatures(geoJson)
       } else {
