@@ -112,11 +112,12 @@ export function asGeoJson (options = {}) {
     const latitudeProperty = (options.latitudeProperty || 'latitude')
     const altitudeProperty = (options.altitudeProperty || 'altitude')
     const geometryProperty = (options.geometryProperty || 'geometry')
-    let results = hook.result
+    let results = _.get(hook, options.dataPath || 'result')
     // Already as GeoJson ?
     if (results.type === 'FeatureCollection') return
-    const pagination = _.pick(results, ['total', 'skip', 'limit'])
-    results = Array.isArray(results) ? results : results.data
+    const isPaginated = !_.isNil(results.data)
+    const pagination = (isPaginated ? _.pick(results, ['total', 'skip', 'limit']) : {})
+    results = (isPaginated ? results.data : results)
     results = results
       .filter(item => {
         // Check if item are not already in GeoJson feature format and we can convert if required
@@ -160,16 +161,18 @@ export function asGeoJson (options = {}) {
         })
       })
     }
-    // Copy pagination information so that client can use it anyway
+    // Copy pagination information if any so that client can use it anyway
     if (_.get(options, 'asFeatureCollection', true)) {
-      hook.result = Object.assign({
+      _.set(hook, options.dataPath || 'result', Object.assign({
         type: 'FeatureCollection',
         features: results
-      }, pagination)
-    } else {
-      hook.result = Object.assign({
+      }, pagination)) // If no pagination this merged object will be empty
+    } else if (isPaginated) {
+      _.set(hook, options.dataPath || 'result', Object.assign({
         data: results
-      }, pagination)
+      }, pagination))
+    } else {
+      _.set(hook, options.dataPath || 'result', results)
     }
   }
 }
