@@ -8,14 +8,6 @@ export default function baseEditorMixin (formRefs) {
         type: Object,
         default: () => {}
       },
-      // Indicates if the stored object in-memory is only the perspective part (default)
-      // or the full structure, ie { perspective: { xxx = } }
-      // Note: the full structure is always retrieved/sent from/to the service anyway but sometimes
-      // it is easier to manipulate a full-object and edit a nested property seen as a perspective on the front side
-      perspectiveAsObject: {
-        type: Boolean,
-        default: true
-      },
       baseQuery: {
         type: Object,
         default: () => {}
@@ -183,7 +175,7 @@ export default function baseEditorMixin (formRefs) {
         // Start from default query
         const query = {}
         Object.assign(query, this.baseQuery)
-        if ((this.getMode() === 'update') && (this.perspective !== '')) {
+        if ((this.getMode() === 'update') && this.perspective  && this.perspectiveAsObject) {
           Object.assign(query, { $select: ['_id', this.perspective] })
         }
         return query

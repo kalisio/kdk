@@ -10,6 +10,14 @@ const objectProxyMixin = {
     perspective: {
       type: String,
       default: ''
+    },
+    // Indicates if the stored object in-memory is only the perspective part (default)
+    // or the full structure, ie { perspective: { xxx = } }
+    // Note: the full structure is always retrieved/sent from/to the service anyway but sometimes
+    // it is easier to manipulate a full-object and edit a nested property seen as a perspective on the front side
+    perspectiveAsObject: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -37,7 +45,7 @@ const objectProxyMixin = {
       if (!this.objectPromise || objectChanged) {
         this.objectPromise = createQuerablePromise((resolve, reject) => {
           let params = {}
-          if (this.perspective) {
+          if (this.perspective && this.perspectiveAsObject) {
             params = { query: { $select: ['_id', this.perspective] } }
           }
           this.getService()
