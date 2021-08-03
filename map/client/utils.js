@@ -162,11 +162,13 @@ export function updatePropertiesSchema (schema) {
   // Loop over declared props and add best guesses to field components based on property type
   for (const prop in props) {
     const propEntry = props[prop]
+    // Field already here, skip entry
     if (propEntry.field && propEntry.field.component) continue
+
     propEntry.field = {
       component: bestGuesses[propEntry.type],
-      label: propEntry.label || prop,
-      helper: propEntry.helper || `Please set value for '${prop}'`
+      label: prop,
+      helper: propEntry.description
     }
   }
 
