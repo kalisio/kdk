@@ -65,9 +65,6 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-    // Setup the activer layer
-    // this.activeLayer = _.get(_.find(this.layers, { default: true }), 'name')
-    // if (!this.activeLayer) this.activeLayer = _.get(_.head(this.layers), 'name')
   }
 }
 </script>
