@@ -4,7 +4,7 @@
       <template v-for="layer in layers">
         <div class="col-6 q-pa-xs" :key="layer.name">
           <q-card :id="layer.name">
-            <q-radio class="text-caption" v-model="activeLayer" :val="layer.name" :label="$t(layer.name)" size="xs" @input="onSelectRadio"/>
+            <q-radio class="text-caption" v-model="activeLayer" :val="layer.name" :label="$t(layer.name)" size="xs"/>
             <q-img :src="layer.iconUrl" :ratio="16/9">
               <q-tooltip v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000" anchor="center left" self="center right" :offset="[20, 0]">
                 {{ layer.tooltip || layer.description }}
@@ -39,29 +39,35 @@ export default {
       default: () => {}
     }
   },
-  data () {
-    return {
-      activeLayer: undefined
+  computed: {
+    activeLayer: {
+      get: function () {
+        // active layer is the one visible
+        const selectedLayer = _.find(this.layers, { isVisible: true })
+        return selectedLayer ? selectedLayer.name : null
+      },
+      set: function (newValue) {
+        // when defining activeLayer, just perform the action
+        // get will pickup the visible layer
+        const selectedLayer = _.find(this.layers, { isVisible: true })
+        if (selectedLayer) this.toggleLayer(selectedLayer)
+        const layerToSelect = _.find(this.layers, { name: newValue })
+        if (layerToSelect) this.toggleLayer(layerToSelect)
+      }
     }
   },
   methods: {
     toggleLayer (layer) {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
-    },
-    onSelectRadio (value) {
-      const selectedLayer = _.find(this.layers, { isVisible: true })
-      if (selectedLayer) this.toggleLayer(selectedLayer)
-      const layerToSelect = _.find(this.layers, { name: value })
-      if (layerToSelect) this.toggleLayer(layerToSelect)
     }
   },
   created () {
     // Load the required components
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     // Setup the activer layer
-    this.activeLayer = _.get(_.find(this.layers, { default: true }), 'name')
-    if (!this.activeLayer) this.activeLayer = _.get(_.head(this.layers), 'name')
+    // this.activeLayer = _.get(_.find(this.layers, { default: true }), 'name')
+    // if (!this.activeLayer) this.activeLayer = _.get(_.head(this.layers), 'name')
   }
 }
 </script>
