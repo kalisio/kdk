@@ -107,7 +107,7 @@ export function asGeoJson (options = {}) {
     const params = hook.params
     const query = params.query
     if (!options.force && !params.asGeoJson) return
-    if (query.$distinct) return // Not applicable in this case
+    if (query.$distinct || query.$aggregation) return // Not applicable in this case
     const longitudeProperty = (options.longitudeProperty || 'longitude')
     const latitudeProperty = (options.latitudeProperty || 'latitude')
     const altitudeProperty = (options.altitudeProperty || 'altitude')

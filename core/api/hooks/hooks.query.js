@@ -44,6 +44,18 @@ export function marshallCollationQuery (hook) {
   return hook
 }
 
+export async function aggregationQuery (hook) {
+  const query = hook.params.query
+  if (!query) return
+  const service = hook.service
+  if (query.$aggregation) {
+    const collection = service.Model
+    // Set result to avoid service DB call
+    hook.result = await collection.aggregate(query.$aggregation.pipeline, query.$aggregation.options).toArray()
+  }
+  return hook
+}
+
 export function populateObject (options) {
   return function (hook) {
     const app = hook.app
