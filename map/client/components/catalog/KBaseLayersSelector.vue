@@ -4,7 +4,7 @@
       <template v-for="layer in layers">
         <div class="col-6 q-pa-xs" :key="layer.name">
           <q-card :id="layer.name">
-            <q-radio class="text-caption" v-model="activeLayer" :val="layer.name" :label="$t(layer.name)" size="xs" />
+            <q-radio class="text-caption" v-model="activeLayer" :val="layer.name" :label="$t(layer.name)" size="xs" @input="onSelectRadio"/>
             <q-img :src="layer.iconUrl" :ratio="16/9">
               <q-tooltip v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000" anchor="center left" self="center right" :offset="[20, 0]">
                 {{ layer.tooltip || layer.description }}
@@ -25,9 +25,9 @@ import _ from 'lodash'
 import { QRadio } from 'quasar'
 
 export default {
-  name: 'k-base-laeyrs-selector',
+  name: 'k-base-layers-selector',
   components: {
-    QRadio,
+    QRadio
   },
   props: {
     layers: {
@@ -43,22 +43,17 @@ export default {
     return {
       activeLayer: undefined
     }
-  }, 
-  watch: {
-    activeLayer: {
-      immediate: true,
-      handler () {
-        const selectedLayer = _.find(this.layers, { isVisible: true })
-        if (selectedLayer) this.toggleLayer(selectedLayer)
-        const layerToSelect = _.find(this.layers, { name: this.activeLayer})
-        if (layerToSelect) this.toggleLayer(layerToSelect)
-      }
-    }
   },
   methods: {
     toggleLayer (layer) {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
+    },
+    onSelectRadio (value) {
+      const selectedLayer = _.find(this.layers, { isVisible: true })
+      if (selectedLayer) this.toggleLayer(selectedLayer)
+      const layerToSelect = _.find(this.layers, { name: value })
+      if (layerToSelect) this.toggleLayer(layerToSelect)
     }
   },
   created () {
