@@ -122,6 +122,11 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     if (indexes.length === 0) return
     this.fire('click', Object.assign({}, event, { feature: this.clickableFeatures[indexes[0]].feature }))
   },
+  _onLayerContextMenu: function (event) {
+    const indexes = this.getClickableFeaturesAt(event.latlng)
+    if (indexes.length === 0) return
+    this.fire('contextmenu', Object.assign({}, event, { feature: this.clickableFeatures[indexes[0]].feature }))
+  },
   // -------------------------------------------------------------
   _onMouseMove: function (event) {
     this.mousePosition = event.latlng
@@ -135,6 +140,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
       moveend: this._onLayerDidMove,
       zoom: this._onLayerDidMove,
       click: this._onLayerClick,
+      contextmenu: this._onLayerContextMenu,
       mousemove: this._onMouseMove
     }
     if (this._map.options.zoomAnimation && L.Browser.any3d) {
@@ -273,7 +279,7 @@ export default {
       this.setCanvasLayerDrawCode(layer, layerOptions.draw)
       if (layerOptions.userData) this.setCanvasLayerUserData(layer, layerOptions.userData)
       if (layerOptions.autoRedraw) this.setCanvasLayerAutoRedraw(layer, layerOptions.autoRedraw)
-      bindLeafletEvents(layer, ['click'], this, options)
+      bindLeafletEvents(layer, ['click', 'contextmenu'], this, options)
       return layer
     },
 
