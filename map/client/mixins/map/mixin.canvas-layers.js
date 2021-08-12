@@ -16,6 +16,25 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     this.mousePosition = null
     this.highlighting = false
     this.autoRedraw = false
+
+    if (options.tooltip) {
+      this._tooltip = L.tooltip({})
+      this._tooltipContent = ''
+      // html | property | template
+      if (options.tooltip.html) {
+        this._getTooltipContent = (feature) => { return options.tooltip.html }
+      } else if (options.tooltip.property) {
+        this._getTooltipContent = (feature) => {
+          const val = _.get(feature, options.tooltip.property)
+          return `${val}`
+        }
+      } else if (options.tooltip.template) {
+        const compiler = _.template(options.tooltip.template)
+        this._getTooltipContent = (feature) => {
+          return compiler({ feature, properties: feature.properties })
+        }
+      }
+    }
   },
 
   delegate: function (del) {
@@ -130,7 +149,31 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   // -------------------------------------------------------------
   _onMouseMove: function (event) {
     this.mousePosition = event.latlng
-    if (!this.hasClickableFeaturesAt(event.latlng) && !this.highlighting) return
+
+    let hoveringFeatures = false
+    if (this._tooltip) {
+      // User requires a tooltip, check if we need to close, update or open it
+      const indexes = this.getClickableFeaturesAt(event.latlng)
+      if (indexes.length === 0 && this._map.hasLayer(this._tooltip)) {
+        // Close tooltip
+        this._map.closeTooltip(this._tooltip)
+      } else if (indexes.length) {
+        // Open or update
+        const content = this._getTooltipContent(this.clickableFeatures[indexes[0]].feature)
+        if (content !== this._tooltipContent) {
+          this._tooltip.setLatLng(event.latlng)
+          this._tooltip.setContent(content)
+          this._tooltipContent = content
+        }
+        if (!this._map.hasLayer(this._tooltip)) this._map.openTooltip(this._tooltip)
+        hoveringFeatures = true
+      }
+    } else {
+      hoveringFeatures = this.hasClickableFeaturesAt(event.latlng)
+    }
+
+    // Skip redraw when no feature hovered and we're not highlighting
+    if (!hoveringFeatures && !this.highlighting) return
     this.needRedraw()
   },
   // -------------------------------------------------------------

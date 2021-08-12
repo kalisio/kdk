@@ -139,7 +139,6 @@ export default {
       const leafletLayer = this.getLeafletLayerByName(this.editedLayer.name)
       if (!leafletLayer) return
 
-
       // Make sure we end geoman
       if (this.map.pm.globalDrawModeEnabled()) this.map.pm.disableDraw()
       if (this.map.pm.globalEditModeEnabled()) this.map.pm.disableGlobalEditMode()
