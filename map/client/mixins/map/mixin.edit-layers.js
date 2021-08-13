@@ -20,8 +20,15 @@ export default {
       return this.editedLayer && (this.editedLayer.name === layer.name)
     },
     getGeoJsonEditOptions (options) {
+      let filteredOptions = options
+      if (_.has(filteredOptions, 'leaflet.tooltip') || _.has(filteredOptions, 'leaflet.popup')) {
+        // Disable tooltip & popup features on edited layer
+        filteredOptions = Object.assign({}, options)
+        if (filteredOptions.leaflet.tooltip) delete filteredOptions.leaflet.tooltip
+        if (filteredOptions.leaflet.popup) delete filteredOptions.leaflet.popup
+      }
       // Retrieve base options first
-      const { onEachFeature } = this.getGeoJsonOptions(options)
+      const { onEachFeature } = this.getGeoJsonOptions(filteredOptions)
       return {
         // Allow geoman edition
         pmIgnore: false,
