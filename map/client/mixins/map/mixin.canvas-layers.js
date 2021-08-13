@@ -157,6 +157,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
       if (indexes.length === 0 && this._map.hasLayer(this._tooltip)) {
         // Close tooltip
         this._map.closeTooltip(this._tooltip)
+        this._tooltipContent = ''
       } else if (indexes.length) {
         // Open or update
         const content = this._getTooltipContent(this.clickableFeatures[indexes[0]].feature)
