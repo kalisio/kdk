@@ -22,7 +22,9 @@
     <slot name="item-content">
       <q-item-section @click="onItemSelected('content')">
         <q-item-label>{{ name }}</q-item-label>
-        <q-item-label caption lines="2">{{ description }}</q-item-label>
+        <q-item-label caption lines="2">
+          <span v-html="description" />
+        </q-item-label>
       </q-item-section>
     </slot>
     <!--
