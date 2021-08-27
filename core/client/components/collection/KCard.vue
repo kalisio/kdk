@@ -72,7 +72,7 @@
       Expand action
     -->
     <div v-if="expandable">
-      <div class="row justify-center" v-bind:class="{ 'q-px-sm q-py-none': dense, 'q-px-md q-py-xs': !dense }">
+      <div class="row justify-center">
         <k-action 
           id="expend-action" 
           :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'" 
