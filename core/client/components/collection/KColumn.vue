@@ -11,7 +11,6 @@
      -->
     <div v-if="items.length > 0">
       <q-scroll-area 
-        class="q-pl-lg"
         ref="scrollArea"
         :style="{ height: `${height}px` }"
         :thumb-style="thumbStyle"
