@@ -1,9 +1,13 @@
 <template>
   <div class="q-lf-lg fit row">
-    <div v-if="monthSeparator" class="row full-width items-center">
-      <q-separator class="bg-grey-7" style="height: 3px;" />
+    <div v-if="monthSeparator" class="row full-width justify-center items-center">
+      <div class="col-3">
+        <q-separator class="bg-grey-7" style="height: 3px;" />
+      </div>
       <q-chip :label="formattedMonth" square outline />
-      <q-separator class="bg-grey-7" style="height: 3px;" />
+      <div class="col-3">
+        <q-separator class="bg-grey-7" style="height: 3px;" />
+      </div>
     </div>
     <div v-if="daySeparator" class="row full-width">
       <div class="q-pa-sm col-xs-12 col-sm-3 col-md-12 row justify-center">
