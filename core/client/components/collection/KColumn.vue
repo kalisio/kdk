@@ -18,7 +18,7 @@
         @scroll="onScroll">
         <div class="full-width row justify-center q-gutter-y-md"> 
           <template v-for="item in items">
-            <div :key="item._id" class="col-12 q-pr-lg">
+            <div :key="item._id" class="col-12 q-pr-md">
               <component    
                 :id="item._id"
                 :service="service"
