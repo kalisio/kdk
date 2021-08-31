@@ -199,6 +199,7 @@ export default {
           result.availableLayers = decoded.availableLayers
           result.version = this.findQueryParameter(url.searchParams, 'VERSION')
           if (!result.version) result.version = decoded.version
+          result.getTileUseKvpEncoding = decoded.getTileUseKvpEncoding
         // } else if (result.service === 'WCS') {
         } else if (result.protocol === 'TMS') {
           const decoded = await tms.discover(result.baseUrl, result.searchParams, caps)

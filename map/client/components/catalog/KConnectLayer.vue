@@ -246,15 +246,17 @@ export default {
         // could not find candidate, fallback using first available
         if (!pickedFormat) pickedFormat = supportedFormats[0]
 
-        const restUrl = wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
+        const url = wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
+          version: this.service.version,
           style: style,
           crs: '3857',
           format: pickedFormat,
-          searchParams: this.service.searchParams
+          searchParams: this.service.searchParams,
+          useKvpEncoding: this.service.getTileUseKvpEncoding
         })
         newLayer.cesium = {
           type: 'WebMapTileService',
-          url: restUrl.replace('{z}', '{TileMatrix}').replace('{x}', '{TileCol}').replace('{y}', '{TileRow}'),
+          url: url.replace('{z}', '{TileMatrix}').replace('{x}', '{TileCol}').replace('{y}', '{TileRow}'),
           format: pickedFormat,
           layer: this.layer.id,
           style: style,
@@ -262,7 +264,7 @@ export default {
         }
         newLayer.leaflet = {
           type: 'tileLayer',
-          source: restUrl
+          source: url
         }
 
         // add legend url if available in the style

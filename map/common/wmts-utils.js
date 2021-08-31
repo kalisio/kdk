@@ -26,8 +26,15 @@ export async function discover (url, searchParams = {}, caps = null) {
 
   const out = {
     version: _.get(caps, 'Capabilities.$.version'),
+    getTileUseKvpEncoding: false,
     availableLayers: {}
   }
+
+  // check how the server likes it's GetTile requests
+  const getTileOp = _.get(caps, 'Capabilities.OperationsMetadata[0].Operation', []).find(e => e.$.name === 'GetTile')
+  const constraint = _.get(getTileOp, 'DCP[0].HTTP[0].Get[0].Constraint', []).find(e => e.$.name === 'GetEncoding')
+  const encodings = new Set(_.get(constraint, 'AllowedValues[0].Value', []).map(e => e.toLowerCase()))
+  if (!encodings.has('rest') && encodings.has('kvp')) out.getTileUseKvpEncoding = true
 
   // compute matching between tilematrixset and crs
   const tileMatrixSet2CRS = {}
@@ -103,7 +110,7 @@ export async function discover (url, searchParams = {}, caps = null) {
   return out
 }
 
-export function buildLeafletUrl (baseUrl, layer, { style = '', crs = '', format = '', dims = {}, searchParams = {} } = {}) {
+export function buildLeafletUrl (baseUrl, layer, { version = '', style = '', crs = '', format = '', dims = {}, searchParams = {}, useKvpEncoding = false } = {}) {
   const templateUrl = _.get(layer.formats, `${format}.templateUrl`)
   if (templateUrl) {
     let url = templateUrl.replace(/{Style}/i, style)
@@ -130,5 +137,18 @@ export function buildLeafletUrl (baseUrl, layer, { style = '', crs = '', format 
     'image/jpeg': 'jpg'
   }
   const ext = _.get(fmt2ext, format.toLowerCase(), 'png')
-  return buildUrl(`${baseUrl}/${layer.id}/${style}/${layer.crs[crs]}/{z}/{y}/{x}.${ext}`, searchParams)
+  return useKvpEncoding
+    ? buildUrl(baseUrl, Object.assign({
+      SERVICE: 'WMTS',
+      REQUEST: 'GetTile',
+      VERSION: version,
+      LAYER: layer.id,
+      STYLE: style,
+      FORMAT: format,
+      TILEMATRIXSET: layer.crs[crs],
+      TILEMATRIX: '{z}',
+      TILEROW: '{y}',
+      TILECOL: '{x}'
+    }, searchParams))
+    : buildUrl(`${baseUrl}/${layer.id}/${style}/${layer.crs[crs]}/{z}/{y}/{x}.${ext}`, searchParams)
 }
