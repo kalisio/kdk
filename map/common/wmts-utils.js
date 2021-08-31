@@ -62,21 +62,21 @@ export async function discover (url, searchParams = {}, caps = null) {
       tileUrls[resurl.$.format] = resurl.$.template
     }
     // lookup formats
-    for (const fmt of _.get(layer, 'Format')) {
+    for (const fmt of _.get(layer, 'Format', [])) {
       obj.formats[fmt] = {
         id: fmt,
         templateUrl: tileUrls[fmt]
       }
     }
     // lookup styles
-    for (const st of _.get(layer, 'Style')) {
+    for (const st of _.get(layer, 'Style', [])) {
       const id = st.Identifier[0]
       const display = _.get(st, 'Title[0]', id || 'default')
       const legend = _.get(st, 'LegendURL[0].$.xlink:href')
       obj.styles[id] = { id, display, legend: buildUrl(legend, searchParams) }
     }
     // lookup available crs
-    for (const link of _.get(layer, 'TileMatrixSetLink')) {
+    for (const link of _.get(layer, 'TileMatrixSetLink', [])) {
       const tms = _.get(link, 'TileMatrixSet[0]')
       if (tms) obj.crs[tileMatrixSet2CRS[tms]] = tms
     }
