@@ -8,7 +8,7 @@
             v-ripple 
             class="k-layer-card" 
             v-bind:class="{ 'k-layer-card-active': selectedLayer === layer.name }"
-            @click="onLayerClicked(layer)"
+            @click="selectedLayer = layer"
           >
             <q-img :src="layer.iconUrl" :ratio="16/9">
               <q-icon 
@@ -57,25 +57,28 @@ export default {
       default: () => {}
     }
   },
-  data () {
-    return {
-      selectedLayer: null
+  computed: {
+    selectedLayer: {
+      get: function () {
+        // active layer is the one visible
+        const visibleLayer = _.find(this.layers, { isVisible: true })
+        return visibleLayer ? visibleLayer.name : null
+      },
+      set: function (layer) {
+        // when defining the selected layer, just perform the action
+        // get will pickup the visible layer
+        const layerToUnselect = _.find(this.layers, { isVisible: true })
+        if (layerToUnselect) this.toggleLayer(layerToUnselect)
+        const unselectedLayerName = layerToUnselect ? layerToUnselect.name : undefined
+        const layerNameToSelect = layer.name
+        if (unselectedLayerName !== layerNameToSelect) {
+          const layerToSelect = _.find(this.layers, { name: layerNameToSelect })
+          if (layerToSelect) this.toggleLayer(layerToSelect)
+        } 
+      }
     }
   },
   methods: {
-    onLayerClicked (layer) {
-      const visibleLayer = _.find(this.layers, { isVisible: true })
-      if (visibleLayer) this.toggleLayer(visibleLayer)
-      if (this.selectedLayer !== layer.name) {
-        // Select the new layer
-        this.selectedLayer = layer.name
-        const layerToSelect = _.find(this.layers, { name: layer.name })
-        if (layerToSelect) this.toggleLayer(layerToSelect)
-      } else {
-        // Unselect the layer
-        this.selectedLayer = null
-      }
-    },
     toggleLayer (layer) {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
@@ -84,9 +87,6 @@ export default {
   created () {
     // Load the required components
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-    // Look for the default active layer
-    const defaultLayer = _.find(this.layers, { isVisible: true })
-    if (defaultLayer) this.selectedLayer = defaultLayer.name
   }
 }
 </script>
