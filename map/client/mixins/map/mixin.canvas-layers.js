@@ -47,7 +47,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
 
   needRedraw: function () {
-    if (this._frame !== null) return
+    if (this._frame !== null || this._canvas === null) return
     this._frame = L.Util.requestAnimFrame(this.drawLayer, this)
   },
 
@@ -202,6 +202,9 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     this._canvas.width = size.x
     this._canvas.height = size.y
 
+    var topLeft = this._map.containerPointToLayerPoint([0, 0])
+    L.DomUtil.setPosition(this._canvas, topLeft)
+
     var animated = this._map.options.zoomAnimation && L.Browser.any3d
     L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'))
 
@@ -209,7 +212,6 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     pane.appendChild(this._canvas)
 
     map.on(this.getEvents(), this)
-    this._onLayerDidMove()
 
     var del = this._delegate || this
     del.onLayerDidMount && del.onLayerDidMount() // -- callback
@@ -225,7 +227,8 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
       L.Util.cancelAnimFrame(this._frame)
     }
 
-    map.getPanes().overlayPane.removeChild(this._canvas)
+    const pane = this.options.pane ? map._panes[this.options.pane] : map._panes.overlayPane
+    pane.removeChild(this._canvas)
 
     map.off(this.getEvents(), this)
 
