@@ -209,6 +209,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     pane.appendChild(this._canvas)
 
     map.on(this.getEvents(), this)
+    this._onLayerDidMove()
 
     var del = this._delegate || this
     del.onLayerDidMount && del.onLayerDidMount() // -- callback
@@ -229,6 +230,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     map.off(this.getEvents(), this)
 
     this._canvas = null
+    this._frame = null
   },
 
   // ---------- --------------------------------------------------
