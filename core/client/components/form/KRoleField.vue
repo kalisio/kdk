@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import mixins from '../../mixins'
 import { RoleNames } from '../../../common/permissions'
 import { QOptionGroup } from 'quasar'
