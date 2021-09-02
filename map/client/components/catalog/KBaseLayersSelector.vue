@@ -16,7 +16,7 @@
                 style="width: 100%; background-color: #00000099; padding: 4px"
               >
                 <k-stamp
-                  class="text-secondary"
+                  :class="selectedLayer === layer.name ? 'text-secondary' : 'text-white'"
                   :text="layer.name" 
                   :icon="selectedLayer === layer.name ? 'las la-check-circle': 'las la-circle'"
                   text-size="0.8rem"
