@@ -35,7 +35,7 @@
         <k-panel 
           id="modal-buttons" 
           :content="buttons" 
-          renderer="form-button" 
+          action-renderer="form-button" 
           v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
       </q-card-actions>
     </q-card>

@@ -31,7 +31,7 @@
       id="plan-selector"
       icon="las la-calendar"
       :content="entries" 
-      actionRenderer="item" />
+      action-renderer="item" />
   </div>
 </template>
 
