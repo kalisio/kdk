@@ -25,7 +25,7 @@
               </div>
               <q-tooltip 
                 v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" 
-                :delay="0" 
+                :delay="1200" 
                 anchor="center left" 
                 self="center right" 
                 :offset="[20, 0]"
