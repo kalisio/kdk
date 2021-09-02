@@ -138,7 +138,7 @@ export default {
     },
     toggle: {
       type: Object,
-      default: () => null
+      default: () => {}
     },
     label: {
       type: String,
@@ -204,23 +204,23 @@ export default {
     },
     computedLabel () {
       // Check also for translation key or already translated message
-      if (this.isToggled && this.toggle.label) {
+      if (this.isToggled && _.has(this.toggle, 'label')) {
         return (this.$i18n.i18next.exists(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
       } else {
         return (this.$i18n.i18next.exists(this.label) ? this.$t(this.label) : this.label)
       }
     },
     computedIcon () {
-      if (this.isToggled && this.toggle.icon) return this.toggle.icon
+      if (this.isToggled && _.has(this.toggle, 'icon')) return this.toggle.icon
       return this.icon
     },
     computedColor () {
-      if (this.isToggled) return this.toggle.color || 'accent'
+      if (this.isToggled) return _.get(this.toggle, 'color', 'accent')
       return this.color
     },
     computedTooltip () {
       // Check also for translation key or already translated message
-      if (this.isToggled && this.toggle.tooltip) {
+      if (this.isToggled && _.has(this.toggle, 'tooltip')) {
         return (this.$i18n.i18next.exists(this.toggle.tooltip) ? this.$t(this.toggle.tooltip) : this.toggle.tooltip)
       } else {
         return (this.$i18n.i18next.exists(this.tooltip) ? this.$t(this.tooltip) : this.tooltip)
@@ -228,7 +228,7 @@ export default {
     },
     computedBadgeLabel () {
       // Check also for translation key or already translated message
-      if (this.badge && this.badge.label) {
+      if (this.badge && _.has(this.badge, 'label')) {
         return (this.$i18n.i18next.exists(this.badge.label) ? this.$t(this.badge.label) : this.badge.label)
       } else {
         // Take care that changing this to null or '' breaks the display in Quasar
