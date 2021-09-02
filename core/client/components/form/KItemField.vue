@@ -47,7 +47,7 @@
         </q-item-section>
         <q-item-section>
           <q-item-label>{{ getLabel(scope.opt) }}</q-item-label>
-          <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+          <q-item-label caption>{{ getDescription(scope.opt) }}</q-item-label>
         </q-item-section>
       </q-item>
     </template>
@@ -78,7 +78,11 @@ export default {
     },
     getLabel (item) {
       const service = _.find(this.properties.services, { service: item.service })
-      return _.get(item, service.field)
+      return _.get(item, service.field, 'name')
+    },
+    getDescription (item) {
+      const service = _.find(this.properties.services, { service: item.service })
+      return _.get(item, service.description, 'description')
     },
     getIcon (item) {
       return _.get(item, 'icon.name', _.get(item, 'icon', ''))
