@@ -12,20 +12,20 @@
           >
             <q-img :src="layer.iconUrl" :ratio="16/9">
               <div
-                class="row items-center absolute all-pointer-events"
+                class="absolute all-pointer-events"
                 style="width: 100%; background-color: #00000099; padding: 3px"
               >
                 <k-stamp
                   class="text-secondary"
                   :text="layer.name" 
-                  :icon="selectedLayer === layer.name ? 'las la-check-circle': ''"
+                  :icon="selectedLayer === layer.name ? 'las la-check-circle': 'las la-circle'"
                   text-size="0.8rem"
-                  icon-size="1.5rem" 
+                  icon-size="1.2rem" 
                   direction="horizontal" />
               </div>
               <q-tooltip 
                 v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" 
-                :delay="0" 
+                :delay="1200" 
                 anchor="center left" 
                 self="center right" 
                 :offset="[20, 0]"
