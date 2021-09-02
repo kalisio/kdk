@@ -45,15 +45,9 @@
 
 <script>
 import _ from 'lodash'
-import { QRadio } from 'quasar'
-import KStamp from '../../../../core/client/components/frame/KStamp.vue'
 
 export default {
   name: 'k-base-layers-selector',
-  components: {
-    QRadio,
-    KStamp
-  },
   props: {
     layers: {
       type: Array,
@@ -91,7 +85,7 @@ export default {
       if (toggleAction) toggleAction.handler()
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
