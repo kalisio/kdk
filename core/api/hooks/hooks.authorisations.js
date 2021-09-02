@@ -236,7 +236,7 @@ export async function authorise (hook) {
   return hook
 }
 
-export async function updateAbilities (options = {}) {
+export function updateAbilities (options = {}) {
   return async function (hook) {
     const app = hook.app
     const params = hook.params
