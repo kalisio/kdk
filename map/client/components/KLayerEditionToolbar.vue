@@ -1,72 +1,7 @@
   <template>
     <div class="row items-center justify-center">
       <q-chip class="ellipsis" text-color="accent" icon="las la-layer-group" :label="layerName"/>
-      <div>
-        <k-action
-          id="add-polygons"
-          v-if="modeAllowed('add-polygons')"
-          icon="las la-draw-polygon"
-          tooltip="KLayerEditionToolbar.ADD_POLYGON_FEATURES"
-          :toggle="{}"
-          :toggled="currentMode === 'add-polygons'"
-          @triggered="setMode('add-polygons')" />
-        <k-action
-          id="add-rectangles"
-          v-if="modeAllowed('add-rectangles')"
-          icon="las la-vector-square"
-          tooltip="KLayerEditionToolbar.ADD_RECTANGLE_FEATURES"
-          :toggle="{}"
-          :toggled="currentMode === 'add-rectangles'"
-          @triggered="setMode('add-rectangles')" />
-        <k-action
-          id="add-lines"
-          v-if="modeAllowed('add-lines')"
-          icon="las la-project-diagram"
-          tooltip="KLayerEditionToolbar.ADD_LINE_FEATURES"
-          :toggle="{}"
-          :toggled="currentMode === 'add-lines'"
-          @triggered="setMode('add-lines')" />
-        <k-action
-          id="add-points"
-          v-if="modeAllowed('add-points')"
-          icon="las la-map-marker"
-          tooltip="KLayerEditionToolbar.ADD_POINT_FEATURES"
-          :toggle="{}"
-          :toggled="currentMode === 'add-points'"
-          @triggered="setMode('add-points')" />
-        <k-action
-          id="edit-features"
-          v-if="modeAllowed('edit-geometry')"
-          icon="las la-edit"
-          tooltip="KLayerEditionToolbar.EDIT_GEOMETRY"
-          :toggle="{}"
-          :toggled="currentMode === 'edit-geometry'"
-          @triggered="setMode('edit-geometry')" />
-        <k-action
-          id="drag-features"
-          v-if="modeAllowed('drag')"
-          icon="las la-arrows-alt"
-          tooltip="KLayerEditionToolbar.DRAG_FEATURES"
-          :toggle="{}"
-          :toggled="currentMode === 'drag'"
-          @triggered="setMode('drag')" />
-        <k-action
-          id="remove-features"
-          v-if="modeAllowed('remove')"
-          icon="las la-trash"
-          tooltip="KLayerEditionToolbar.REMOVE_FEATURES"
-          :toggle="{}"
-          :toggled="currentMode === 'remove'"
-          @triggered="setMode('remove')" />
-        <k-action
-          id="edit-properties"
-          v-if="modeAllowed('edit-properties')"
-          icon="las la-address-card"
-          tooltip="KLayerEditionToolbar.EDIT_PROPERTIES"
-          :toggle="{}"
-          :toggled="currentMode === 'edit-properties'"
-          @triggered="setMode('edit-properties')" />
-      </div>
+      <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
     </div>
   </template>
 
@@ -75,15 +10,34 @@
     name: 'k-layer-edition-toolbar',
     inject: ['kActivity'],
     computed: {
-      currentMode () { return this.kActivity.layerEditMode },
-      layerName () { return this.kActivity.editedLayer.name }
+      layerName () { return this.kActivity.editedLayer.name },
+      editMode () { return this.kActivity.layerEditMode },
+      buttons () {
+        const allEditModes = [
+          { id: 'add-polygons', icon: 'las la-draw-polygon', toggled: this.editMode === 'add-polygons', tooltip: 'KLayerEditionToolbar.ADD_POLYGON_FEATURES', handler: () => { this.setMode('add-polygons') } },
+          { id: 'add-rectangles', icon: 'las la-vector-square', toggled: this.editMode === 'add-rectangles', tooltip: 'KLayerEditionToolbar.ADD_RECTANGLE_FEATURES', handler: () => { this.setMode('add-rectangles') } },
+          { id: 'add-lines', icon: 'las la-project-diagram', toggled: this.editMode === 'add-lines', tooltip: 'KLayerEditionToolbar.ADD_LINE_FEATURES', handler: () => { this.setMode('add-lines') } },
+          { id: 'add-points', icon: 'las la-map-marker', toggled: this.editMode === 'add-points', tooltip: 'KLayerEditionToolbar.ADD_POINT_FEATURES', handler: () => { this.setMode('add-points') } },
+          { id: 'edit-geometry', icon: 'las la-edit', toggled: this.editMode === 'edit-geometry', tooltip: 'KLayerEditionToolbar.EDIT_GEOMETRY', handler: () => { this.setMode('edit-geometry') } },
+          { id: 'edit-properties', icon: 'las la-address-card', toggled: this.editMode === 'edit-properties', tooltip: 'KLayerEditionToolbar.EDIT_PROPERTIES', handler: () => { this.setMode('edit-properties') } },
+          { id: 'drag', icon: 'las la-arrows-alt', toggled: this.editMode === 'drag', tooltip: 'KLayerEditionToolbar.DRAG_FEATURES', handler: () => { this.setMode('drag') } },
+          { id: 'remove', icon: 'las la-trash', toggled: this.editMode === 'remove', tooltip: 'KLayerEditionToolbar.REMOVE_FEATURES', handler: () => { this.setMode('remove') } }
+        ]
+        const buttons = []
+        for (const mode of allEditModes) {
+          if (!this.modeAllowed(mode.id)) continue
+          buttons.push(mode)
+        }
+
+        return buttons
+      }
     },
     methods: {
       modeAllowed (mode) { return this.kActivity.allowedLayerEditModes.indexOf(mode) !== -1 },
       setMode (mode) { return this.kActivity.setEditMode(mode) }
     },
     created () {
-      this.$options.components['k-action'] = this.$load('frame/KAction')
+      this.$options.components['k-panel'] = this.$load('frame/KPanel')
     }
   }
   </script>
