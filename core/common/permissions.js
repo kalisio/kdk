@@ -19,6 +19,14 @@ export const RoleNames = [
   'owner'
 ]
 
+export function isSeniorRole (roleName, juniorName) {
+  return Roles[roleName] >= Roles[juniorName]
+}
+
+export function isJuniorRole (roleName, seniorName) {
+  return Roles[roleName] < Roles[seniorName]
+}
+
 // Hooks that can be added to customize abilities computation
 let hooks = []
 
