@@ -140,7 +140,7 @@ export function preventEscalation (hook) {
   return hook
 }
 
-export function authorise (hook) {
+export async function authorise (hook) {
   if (hook.type !== 'before') {
     throw new Error('The \'authorise\' hook should only be used as a \'before\' hook.')
   }
@@ -176,7 +176,7 @@ export function authorise (hook) {
   if (checkAuthorisation) {
     // Build ability for user
     const authorisationService = hook.app.getService('authorisations')
-    const abilities = authorisationService.getAbilities(hook.params.user)
+    const abilities = await authorisationService.getAbilities(hook.params.user)
     hook.params.abilities = abilities
     debug('User abilities are', abilities.rules)
 
@@ -213,32 +213,30 @@ export function authorise (hook) {
     // this has to be implemented by the service itself
     } else if (typeof hook.service.get === 'function') {
       // In this case (single get/update/patch/remove) we need to fetch the item first
-      return hook.service.get(hook.id, Object.assign({ checkAuthorisation: false }, hook.params))
-        .then(resource => {
-          debug('Target resource is', resource)
-          // Then check against the object we'd like to manage
-          if (!hasResourceAbilities(abilities, operation, resourceType, context, resource)) {
-            debug('Resource access not granted')
-            throw new Forbidden(`You are not allowed to perform ${operation} operation on ${resourceType}`)
-          }
-          // Avoid fetching again the object in this case
-          if (operation === 'get') {
-            hook.result = resource
-          }
-          hook.params.authorised = true
-          debug('Resource access granted')
-          return hook
-        })
+      const resource = await hook.service.get(hook.id, Object.assign({ checkAuthorisation: false }, hook.params))
+      debug('Target resource is', resource)
+      // Then check against the object we'd like to manage
+      if (!hasResourceAbilities(abilities, operation, resourceType, context, resource)) {
+        debug('Resource access not granted')
+        throw new Forbidden(`You are not allowed to perform ${operation} operation on ${resourceType}`)
+      }
+      // Avoid fetching again the object in this case
+      if (operation === 'get') {
+        hook.result = resource
+      }
+      hook.params.authorised = true
+      debug('Resource access granted')
+      return hook
     }
   } else {
     debug('Authorisation check skipped, access granted')
   }
 
   hook.params.authorised = true
-  return Promise.resolve(hook)
+  return hook
 }
 
-export function updateAbilities (options = {}) {
+export async function updateAbilities (options = {}) {
   return async function (hook) {
     const app = hook.app
     const params = hook.params
@@ -249,7 +247,7 @@ export function updateAbilities (options = {}) {
     if (options.fetchSubject) {
       subject = await hook.service.get(subject._id.toString())
     }
-    const abilities = authorisationService.updateAbilities(subject)
+    const abilities = await authorisationService.updateAbilities(subject)
     debug('Abilities updated on subject', subject, abilities.rules)
     return hook
   }
@@ -296,36 +294,32 @@ export function preventRemovingLastOwner (resourceScope) {
   }
 }
 
-export function removeOrganisationGroupsAuthorisations (hook) {
+export async function removeOrganisationGroupsAuthorisations (hook) {
   const app = hook.app
   const authorisationService = app.getService('authorisations')
   const org = hook.params.resource
   const user = hook.params.user
   // Unset membership for the all org groups
   const orgGroupService = app.getService('groups', org)
-  return orgGroupService.find({ paginate: false })
-    .then(groups => {
-      return Promise.all(groups.map(group => {
-      // Unset membership on group for the all org users
-        return authorisationService.remove(group._id.toString(), {
-          query: {
-            scope: 'groups'
-          },
-          user,
-          force: hook.params.force,
-          // Because we already have resource set it as objects to avoid populating
-          // Moreover used as an after hook the resource might not already exist anymore
-          subjects: hook.params.subjects,
-          subjectsService: hook.params.subjectsService,
-          resource: group,
-          resourcesService: orgGroupService
-        })
-      }))
+  const groups = await orgGroupService.find({ paginate: false })
+  await Promise.all(groups.map(group => {
+  // Unset membership on group for the all org users
+    return authorisationService.remove(group._id.toString(), {
+      query: {
+        scope: 'groups'
+      },
+      user,
+      force: hook.params.force,
+      // Because we already have resource set it as objects to avoid populating
+      // Moreover used as an after hook the resource might not already exist anymore
+      subjects: hook.params.subjects,
+      subjectsService: hook.params.subjectsService,
+      resource: group,
+      resourcesService: orgGroupService
     })
-    .then(groups => {
-      debug('Authorisations unset on groups for organisation ' + org._id)
-      return hook
-    })
+  }))
+  debug('Authorisations unset on groups for organisation ' + org._id)
+  return hook
 }
 
 export async function removeOrganisationTagsAuthorisations (hook) {

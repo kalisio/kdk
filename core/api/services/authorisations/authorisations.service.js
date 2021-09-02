@@ -42,7 +42,7 @@ export default {
       }, {
         user: params.user
       })
-      this.updateAbilities(subject)
+      await this.updateAbilities(subject)
       debug('Authorisation ' + data.permissions + ' set for subject ' + subject._id + ' on resource ' + params.resource._id + ' with scope ' + scopeName)
       return subject
     }))
@@ -71,7 +71,7 @@ export default {
           }, {
             user: params.user
           })
-          this.updateAbilities(subject)
+          await this.updateAbilities(subject)
           debug('Authorisation unset for subject ' + subject._id + ' on resource ' + id + ' with scope ' + scopeName)
           return subject
         }
@@ -93,7 +93,7 @@ export default {
 
   // Compute abilities for a given user and set it in cache the first time
   // or get it from cache if found
-  getAbilities (subject) {
+  async getAbilities (subject) {
     if (this.cache) {
       if (subject && subject._id) {
         if (this.cache.has(subject._id.toString())) return this.cache.get(subject._id.toString())
@@ -101,8 +101,8 @@ export default {
         if (this.cache.has(ANONYMOUS_USER)) return this.cache.get(ANONYMOUS_USER)
       }
     }
-
-    const abilities = defineAbilities(subject)
+    // Provide app for any complex use case requiring to make requests
+    const abilities = await defineAbilities(subject, this.app)
 
     if (this.cache) {
       if (subject && subject._id) {
@@ -116,7 +116,7 @@ export default {
   },
 
   // Compute abilities for a given user and update it in cache
-  updateAbilities (subject) {
+  async updateAbilities (subject) {
     if (this.cache) {
       if (subject && subject._id) {
         this.cache.del(subject._id.toString())
@@ -125,6 +125,7 @@ export default {
       }
     }
 
-    return this.getAbilities(subject)
+    const abilities = await this.getAbilities(subject)
+    return abilities
   }
 }

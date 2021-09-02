@@ -4,11 +4,11 @@ import { defineAbilities } from '../../common/permissions'
 
 const authorisationMixin = {
   methods: {
-    updateAbilities () {
+    async updateAbilities () {
       const user = Store.get('user')
       let abilities
       if (user) {
-        abilities = defineAbilities(user)
+        abilities = await defineAbilities(user, this.$api)
         Store.set('user.abilities', abilities)
       }
       if (abilities) {
@@ -17,12 +17,12 @@ const authorisationMixin = {
       return abilities
     }
   },
-  created () {
+  async created () {
     // Check if abilities are already computed
     const abilities = Store.get('user.abilities')
     if (!abilities) {
       // Otherwise try to compute them
-      this.updateAbilities()
+      await this.updateAbilities()
     }
     // Whenever the user is updated, update abilities as well
     this.$events.$on('user-changed', this.updateAbilities)

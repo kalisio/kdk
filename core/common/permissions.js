@@ -80,12 +80,14 @@ export function defineUserAbilities (subject, can, cannot) {
 }
 
 // Compute abilities for a given user
-export function defineAbilities (subject) {
+export async function defineAbilities (subject, ...args) {
   const { rules, can, cannot } = AbilityBuilder.extract()
 
-  // Run registered hooks
-  hooks.forEach(hook => hook(subject, can, cannot))
-
+  // Run registered hooks providing any additional arguments used to handle complex use cases
+  await Promise.all(hooks.map(async hook => {
+    await hook(subject, can, cannot, ...args)
+  }))
+  
   // CASL cannot infer the object type from the object itself so we need
   // to tell it how he can find the object type, i.e. service name.
   return new Ability(rules, {
