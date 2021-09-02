@@ -11,16 +11,21 @@
             @click="selectedLayer = layer"
           >
             <q-img :src="layer.iconUrl" :ratio="16/9">
-              <q-icon 
-                v-if="selectedLayer === layer.name" 
-                class="absolute all-pointer-events" 
-                size="24px" 
-                name="las la-check-circle" 
-                color="primary" 
-                style="top: 8px; left: 8px; background-color: #00000033; border-radius: 16px" />
+              <div
+                class="row items-center absolute all-pointer-events"
+                style="width: 100%; background-color: #00000099; padding: 3px"
+              >
+                <k-stamp
+                  class="text-secondary"
+                  :text="layer.name" 
+                  :icon="selectedLayer === layer.name ? 'las la-check-circle': ''"
+                  text-size="0.8rem"
+                  icon-size="1.5rem" 
+                  direction="horizontal" />
+              </div>
               <q-tooltip 
                 v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" 
-                :delay="1000" 
+                :delay="0" 
                 anchor="center left" 
                 self="center right" 
                 :offset="[20, 0]"
@@ -41,11 +46,13 @@
 <script>
 import _ from 'lodash'
 import { QRadio } from 'quasar'
+import KStamp from '../../../../core/client/components/frame/KStamp.vue'
 
 export default {
   name: 'k-base-layers-selector',
   components: {
-    QRadio
+    QRadio,
+    KStamp
   },
   props: {
     layers: {

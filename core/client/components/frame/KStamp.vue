@@ -1,18 +1,18 @@
 <template>
   <div
     v-bind:class="{
-      'q-pl-xs q-pr-xs': !$q.screen.gt.xs,
+      'q-pl-xs q-pr-xs': $q.screen.lt.sm,
       'q-pl-sm q-pr-sm': $q.screen.gt.xs,
-      'column content-center': direction === 'vertical',
-      'row items-center no-wrap': direction === 'horizontal'
+      'column content-center q-gutter-y-sm': direction === 'vertical',
+      'row items-center no-wrap q-gutter-x-sm': direction === 'horizontal'
     }">
-      <div style="text-align: center">
+      <div>
         <q-icon v-if="showIcon" :size="iconSize" :name="icon" />
           <q-tooltip v-if="!showText">
             {{ translatedText }}
           </q-tooltip>
       </div>
-      <div v-if="showText" class="q-pl-xs q-pr-xs ellipsis-2-lines" :style="`font-size: ${textSize}`">
+      <div v-if="showText" class="ellipsis-2-lines" :style="`font-size: ${textSize};`">
          {{ translatedText }}
       </div>
   </div>
