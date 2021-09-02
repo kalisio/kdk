@@ -3,7 +3,7 @@
     v-bind:class="{
       'q-pl-xs q-pr-xs': $q.screen.lt.sm,
       'q-pl-sm q-pr-sm': $q.screen.gt.xs,
-      'column content-center q-gutter-y-sm': direction === 'vertical',
+      'column items-center content-center q-gutter-y-sm': direction === 'vertical',
       'row items-center no-wrap q-gutter-x-sm': direction === 'horizontal'
     }">
       <div>

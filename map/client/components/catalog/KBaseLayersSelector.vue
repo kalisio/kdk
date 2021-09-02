@@ -13,7 +13,7 @@
             <q-img :src="layer.iconUrl" :ratio="16/9">
               <div
                 class="absolute all-pointer-events"
-                style="width: 100%; background-color: #00000099; padding: 3px"
+                style="width: 100%; background-color: #00000099; padding: 4px"
               >
                 <k-stamp
                   class="text-secondary"
