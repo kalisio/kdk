@@ -41,15 +41,10 @@ export default {
   mixins: [mixins.baseField],
   methods: {
     roles () {
-      const roles = [
-        { label: this.$t('MEMBER'), value: 'member' },
-        { label: this.$t('MANAGER'), value: 'manager' },
-        { label: this.$t('OWNER'), value: 'owner' }
-      ]
-      return roles
+      return _.map(RoleNames, role => { return { label: this.$t(_.upperCase(role)), value: role } })
     },
     emptyModel () {
-      return 'member'
+      return RoleNames[0]
     },
     isEmpty () {
       // Can't actually be
