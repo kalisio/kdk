@@ -27,6 +27,18 @@ export function isJuniorRole (roleName, seniorName) {
   return Roles[roleName] < Roles[seniorName]
 }
 
+export function getSeniorRoles (roleName) {
+  const seniorRoles = []
+  _.forEach(Roles, role => { if (Roles[roleName] < role) seniorRoles.push(RoleNames[role]) })
+  return seniorRoles
+}
+
+export function getJuniorRoles (roleName) {
+  const juniorRoles = []
+  _.forEach(Roles, role => { if (Roles[roleName] >= role) juniorRoles.push(RoleNames[role]) })
+  return juniorRoles
+}
+
 // Hooks that can be added to customize abilities computation
 let hooks = []
 
