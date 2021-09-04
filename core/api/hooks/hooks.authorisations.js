@@ -202,7 +202,10 @@ export async function authorise (hook) {
         // This avoid fetching all first then check it one by one
         const dbQuery = objectifyIDs(getQueryForAbilities(abilities, operation, resourceType))
         if (dbQuery) {
-          debug('Target resource conditions are ', dbQuery)
+          hook.params.query = _.transform(hook.params.query, (result, value, key) => {
+            if (key === '$or') result['$and'] = [{ $or: value }]
+            else result[key] = value
+          }, {})
           _.merge(hook.params.query, dbQuery)
         } else {
           hook.result = { total: 0, skip: 0, data: [] }
