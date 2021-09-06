@@ -1,6 +1,15 @@
 import _ from 'lodash'
 import * as PIXI from 'pixi.js'
 
+// Force PIXI to use a WebGL2 context, even on android devices.
+// This is required as long as we use a PIXI version that
+// will prefer using a WebGL1 context on android devices.
+PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2
+
+// Force PIXI to use WebGL even if the performances are not so good. This allows
+// to use PIXI in Chrome Headless mode
+PIXI.settings.FAIL_IF_MAJOR_PERFORMANCE_CAVEAT = false
+
 export const toHalf = (function () {
   var floatView = new Float32Array(1)
   var int32View = new Int32Array(floatView.buffer)

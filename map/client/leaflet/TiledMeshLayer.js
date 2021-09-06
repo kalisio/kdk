@@ -7,11 +7,6 @@ import 'abort-controller/polyfill'
 
 import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils'
 
-// Force PIXI to use a WebGL2 context, even on android devices.
-// This is required as long as we use a PIXI version that
-// will prefer using a WebGL1 context on android devices.
-PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2
-
 const TiledMeshLayer = L.GridLayer.extend({
   initialize (options, gridSource) {
     this.conf = {}
