@@ -4,7 +4,7 @@ import { getBase64DataURI } from 'dauria'
 import request from 'superagent'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks } from '../../core/api'
+import core, { kalisio, hooks } from '../../../core/api'
 
 describe('core:storage', () => {
   let app, server, port, baseUrl, userService, userObject, storageService, storageObject

@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import request from 'superagent'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks, permissions, createTagService } from '../../core/api'
+import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api'
 const { hashPassword } = require('@feathersjs/authentication-local').hooks
 
 describe('core:services', () => {

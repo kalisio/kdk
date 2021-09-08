@@ -5,7 +5,7 @@ import express from '@feathersjs/express'
 import memory from 'feathers-memory'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
-import { hooks } from '../../core/api'
+import { hooks } from '../../../core/api'
 import { ObjectID } from 'mongodb'
 
 describe('core:hooks', () => {

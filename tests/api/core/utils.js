@@ -26,7 +26,7 @@ export const createGmailClient = (gmailApiConfig) => {
             if (err) done(err)
             expect(response.messages).toExist()
             expect(response.messages.length > 0).beTrue()
-            //console.log('Reading last email: ', response.messages[0].id)
+            // console.log('Reading last email: ', response.messages[0].id)
             gmail.users.messages.get({
               auth: jwtClient,
               id: response.messages[0].id,
@@ -36,7 +36,7 @@ export const createGmailClient = (gmailApiConfig) => {
               const message = response.payload
               expect(message).toExist()
               expect(message.headers).toExist()
-              //console.log('Email retrieved')
+              // console.log('Email retrieved')
               const from = _.find(message.headers, header => header.name === 'From')
               expect(from.value).to.equal(fromValue)
               const subject = _.find(message.headers, header => header.name === 'Subject')
@@ -49,7 +49,7 @@ export const createGmailClient = (gmailApiConfig) => {
                 id: response.id,
                 userId: user.email
               }, (err, response) => {
-                //console.log('Email deleted')
+                // console.log('Email deleted')
                 done(err, message)
               })
             })

@@ -1,6 +1,6 @@
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
-import { hooks } from '../../map/api'
+import { hooks } from '../../../map/api'
 
 describe('map:hooks', () => {
   before(() => {

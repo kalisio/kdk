@@ -13,8 +13,8 @@ import weacastCore, { weacast } from 'weacast-core'
 import weacastGfs from 'weacast-gfs'
 import weacastProbe from 'weacast-probe'
 import distribution from '@kalisio/feathers-distributed'
-import core, { kalisio, hooks } from '../../core/api'
-import map, { createFeaturesService, createAlertsService } from '../../map/api'
+import core, { kalisio, hooks } from '../../../core/api'
+import map, { createFeaturesService, createAlertsService } from '../../../map/api'
 
 describe('map:alerts', () => {
   let app, weacastApp, server, port, externalApp, externalServer, externalPort,

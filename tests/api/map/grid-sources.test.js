@@ -10,7 +10,7 @@ import moment from 'moment'
 import memory from 'feathers-memory'
 import intersect from '@turf/intersect'
 import { weacast } from 'weacast-core'
-import { makeGridSource, extractGridSourceConfig } from '../../map/common/grid'
+import { makeGridSource, extractGridSourceConfig } from '../../.././map/common/grid'
 
 // returns the required byte range of the given file
 // range is the raw value of the 'range' http header

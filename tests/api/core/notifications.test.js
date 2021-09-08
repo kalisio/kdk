@@ -1,8 +1,8 @@
 import request from 'superagent'
 import chai, { util, expect } from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks } from '../../core/api'
-import { permissions } from '../../core/common'
+import core, { kalisio, hooks } from '../../../core/api'
+import { permissions } from '../../../core/common'
 import { createGmailClient } from './utils'
 
 const phone = process.env.SNS_PHONE_NUMBER
