@@ -24,7 +24,7 @@ export {
   KModal,
   KOpener,
   KPageSticky,
-  KPanel,  
+  KPanel,
   KPopupAction,
   KScreen,
   KSpot,

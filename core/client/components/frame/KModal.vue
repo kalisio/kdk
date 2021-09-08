@@ -5,8 +5,8 @@
     :maximized="maximized"
     @show="$emit('opened')"
     @hide="$emit('closed')">
-    <q-card 
-      v-bind:class="{ 
+    <q-card
+      v-bind:class="{
         'column full-height': maximized,
         'q-pa-sm': $q.screen.gt.xs,
         'q-ps-xs': $q.screen.lt.sm
@@ -32,10 +32,10 @@
         Buttons section
        -->
       <q-card-actions v-if="buttons" align="right">
-        <k-panel 
-          id="modal-buttons" 
-          :content="buttons" 
-          :action-renderer="'form-button'" 
+        <k-panel
+          id="modal-buttons"
+          :content="buttons"
+          :action-renderer="'form-button'"
           v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
       </q-card-actions>
     </q-card>

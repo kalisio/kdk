@@ -4,22 +4,22 @@
       Label
      -->
     <div v-if="label" class="full-width row justify-center text-subtitle1 q-pb-md">
-      <q-chip :label="$t(label)" square color="grey-9" text-color="white" /> 
+      <q-chip :label="$t(label)" square color="grey-9" text-color="white" />
     </div>
-    <!-- 
+    <!--
       Items
      -->
     <div v-if="items.length > 0">
-      <q-scroll-area 
+      <q-scroll-area
         ref="scrollArea"
         :style="{ height: `${height}px` }"
         :thumb-style="thumbStyle"
         :bar-style="barStyle"
         @scroll="onScroll">
-        <div class="full-width row justify-center q-gutter-y-md"> 
+        <div class="full-width row justify-center q-gutter-y-md">
           <template v-for="item in items">
             <div :key="item._id" class="col-12 q-pr-md">
-              <component    
+              <component
                 :id="item._id"
                 :service="service"
                 :item="item"
@@ -32,7 +32,7 @@
         </div>
       </q-scroll-area>
       <div v-if="scrollAction" class="row justify-center q-pa-md">
-        <k-action 
+        <k-action
           id="scroll-action"
           icon="las la-angle-double-down"
           color="accent"
@@ -43,10 +43,10 @@
     <div v-else>
       <slot name="empty-column">
         <div class="row justify-center">
-          <k-stamp 
-            icon="las la-exclamation-circle" 
-            icon-size="1.6rem" 
-            :text="$t('KColumn.EMPTY_COLUMN')" 
+          <k-stamp
+            icon="las la-exclamation-circle"
+            icon-size="1.6rem"
+            :text="$t('KColumn.EMPTY_COLUMN')"
             direction="horizontal" />
         </div>
       </slot>
@@ -124,7 +124,7 @@ export default {
     }
   },
   watch: {
-    baseQuery ()  {
+    baseQuery () {
       this.resetCollection()
     },
     filterQuery () {
@@ -140,18 +140,18 @@ export default {
     },
     onScroll (info) {
       if (this.items.length < this.nbTotalItems) {
-        if (info.verticalPercentage === 1) { 
+        if (info.verticalPercentage === 1) {
           this.currentPage++
           this.refreshCollection()
           this.scrollAction = true
         } else {
-          this.scrollAction = info.verticalSize > this.height ? true : false
-        } 
+          this.scrollAction = info.verticalSize > this.height
+        }
       } else {
-        if (info.verticalPercentage === 1) {    
+        if (info.verticalPercentage === 1) {
           this.scrollAction = false
-        } else { 
-          this.scrollAction = info.verticalSize > this.height ? true : false
+        } else {
+          this.scrollAction = info.verticalSize > this.height
         }
       }
     },

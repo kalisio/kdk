@@ -1,7 +1,7 @@
 <template>
-  <k-card 
+  <k-card
     v-bind="$props"
-    :actions="itemActions" 
+    :actions="itemActions"
     :bind-actions="false"
     :options="{ nameField: 'value' }"
     :dense="dense">
@@ -10,7 +10,7 @@
      -->
     <div slot="card-content">
       <!-- Members -->
-      <k-card-section :title="$t('KTagCard.MEMBERS_SECTION')" :dense="dense">      
+      <k-card-section :title="$t('KTagCard.MEMBERS_SECTION')" :dense="dense">
         <q-list>
           <q-item
             id="list-members"
@@ -43,7 +43,7 @@ export default {
   components: {
     KCard,
     KCardSection
-  },  
+  },
   mixins: [mixins.baseItem],
   computed: {
     dense () {
@@ -59,8 +59,7 @@ export default {
           field: 'value'
         }, this.item)]
       })
-      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } 
-      })
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
   }
 }

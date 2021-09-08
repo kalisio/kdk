@@ -185,7 +185,7 @@ export default {
   methods: {
     getButtons () {
       return [{
-        id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.modal.close() 
+        id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.modal.close()
       }]
     },
     async onAdd () {

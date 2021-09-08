@@ -107,7 +107,7 @@ export async function defineAbilities (subject, ...args) {
   await Promise.all(hooks.map(async hook => {
     await hook(subject, can, cannot, ...args)
   }))
-  
+
   // CASL cannot infer the object type from the object itself so we need
   // to tell it how he can find the object type, i.e. service name.
   return new Ability(rules, {

@@ -7,7 +7,7 @@ export default class Catalog extends BasePage {
     super()
     this.catalog = VueSelector('k-catalog')
     this.categories = VueSelector('k-catalog QExpansionItem')
-    this.layers = VueSelector('k-catalog QItem')
+    this.layers = VueSelector('k-catalog QCard')
   }
   
   // Categories
@@ -76,7 +76,7 @@ export default class Catalog extends BasePage {
   async clickLayer (test, layer) {
     const layerEl = await this.getLayerElement(layer)
     await test
-      .click(layerEl.find('.q-item__section'))
+      .click(layerEl)
   }
 
   async clickLayerAction (test, layer, action) {

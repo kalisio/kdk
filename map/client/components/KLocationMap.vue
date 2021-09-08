@@ -137,10 +137,10 @@ export default {
       if (this.drawLayer) {
         this.map.fitBounds(this.drawLayer.getBounds())
       } else {
-        const longitude = (_.has(this.location, 'longitude') ?
-          _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
-        const latitude = (_.has(this.location, 'latitude') ?
-          _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
+        const longitude = (_.has(this.location, 'longitude')
+          ? _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
+        const latitude = (_.has(this.location, 'latitude')
+          ? _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
         this.center(longitude, latitude, this.mapOptions.zoom)
       }
     },
@@ -180,11 +180,11 @@ export default {
         this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.location })
         this.map.addLayer(this.drawLayer)
       } else {
-        const longitude = (_.has(this.location, 'longitude') ?
-          _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
-        const latitude = (_.has(this.location, 'latitude') ?
-          _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
-        
+        const longitude = (_.has(this.location, 'longitude')
+          ? _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
+        const latitude = (_.has(this.location, 'latitude')
+          ? _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
+
         this.marker = L.marker([latitude, longitude], {
           icon: L.icon.fontAwesome(this.markerStyle),
           draggable: this.editable,
@@ -193,7 +193,7 @@ export default {
         this.marker.addTo(this.map)
         if (this.editable) this.marker.on('drag', this.onLocationDragged)
       }
-      
+
       // Center the map
       this.centerMap()
     },
@@ -212,7 +212,7 @@ export default {
       }
       this.$emit('input', this.location)
     },
-    startDraw(shape) {
+    startDraw (shape) {
       // Clear any previous edition
       this.clear()
       this.drawLayer = L.geoJson()
@@ -220,11 +220,11 @@ export default {
       this.map.pm.setGlobalOptions({ layerGroup: this.drawLayer })
       this.map.pm.enableDraw(shape, {
         snappable: true,
-        snapDistance: 20,
+        snapDistance: 20
       })
       bindLeafletEvents(this.map, ['pm:create'], this)
     },
-    stopDraw() {
+    stopDraw () {
       const geoJson = this.drawLayer.toGeoJSON()
       // The location is the feature geometry
       const feature = _.get(geoJson, 'features[0]', {})

@@ -209,7 +209,7 @@ export default {
     }
   },
   methods: {
-   layoutOffsetListener (offset) {
+    layoutOffsetListener (offset) {
       // Catch layout offset and returns default Quasar function
       // see https://quasar.dev/layout/page#style-fn
       this.layoutOffset = offset
@@ -225,10 +225,10 @@ export default {
       this.leftPadding = size.width
     },
     onRightPaneResized (size) {
-      this.rightPaddding = size.width 
+      this.rightPaddding = size.width
     },
     onBottomPaneResized (size) {
-      this.bottomPadding = size.height 
+      this.bottomPadding = size.height
     },
     setTopPaneVisible (visible) {
       this.$store.patch('topPane', { visible })

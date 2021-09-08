@@ -21,9 +21,9 @@
         </div>
       </div>
     </k-modal>
-    <k-modal 
-      id="chart-settings-modal" 
-      ref="chartSettings" 
+    <k-modal
+      id="chart-settings-modal"
+      ref="chartSettings"
       :title="$t('KFeaturesChart.CHART_SETTINGS_LABEL')"
       :buttons="[{ id: 'close-action', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.chartSettings.close() }]">
       <div slot="modal-content">
@@ -107,7 +107,7 @@ export default {
     return {
       toolbar: [
         { id: 'settings', icon: 'las la-cog', tooltip: 'KFeaturesChart.CHART_SETTINGS_LABEL', handler: () => this.$refs.chartSettings.open() },
-        { id: 'download', icon: 'las la-file-download', tooltip: 'KFeaturesChart.CHART_EXPORT_LABEL', handler: () => this.downloadChartData() },
+        { id: 'download', icon: 'las la-file-download', tooltip: 'KFeaturesChart.CHART_EXPORT_LABEL', handler: () => this.downloadChartData() }
       ],
       buttons: [
         { id: 'close-acation', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() }

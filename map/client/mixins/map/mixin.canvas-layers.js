@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { CanvasDrawContext } from '../../canvas-draw-context'
-import { bindLeafletEvents, unbindLeafletEvents } from '../../utils'
+import { bindLeafletEvents } from '../../utils'
 import L from 'leaflet'
 
 L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({

@@ -20,6 +20,7 @@ import * as hooks from './hooks'
 
 export * from './events'
 export * from './api'
+export * from './services'
 export * from './store'
 export * from './layout'
 export * from './theme'
@@ -32,7 +33,6 @@ export * from '../common'
 export { utils }
 export { mixins }
 export { hooks }
-export * from './services'
 
 export default function init () {
   const api = this

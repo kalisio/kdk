@@ -1,5 +1,5 @@
 <template>
-  <k-card 
+  <k-card
     v-bind="$props"
     :header="header"
     :actions="itemActions"
@@ -58,7 +58,7 @@ export default {
   },
   computed: {
     header () {
-      let components = _.filter(this.itemActions, { scope: 'header' })
+      const components = _.filter(this.itemActions, { scope: 'header' })
       components.splice(0, 0, { component: 'QBadge', label: this.$t(this.memberRoleLabel), color: 'grey-7' }, { component: 'QSpace' })
       return components
     },
@@ -98,8 +98,7 @@ export default {
           icon: 'group_work'
         }, this.item)]
       })
-      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } 
-      })
+      this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
   },
   created () {

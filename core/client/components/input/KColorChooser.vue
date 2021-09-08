@@ -21,19 +21,19 @@ export default {
   methods: {
     getButtons () {
       return [
-        { 
-          id: 'cancel-action', 
-          label: 'KColorChooser.CANCEL_BUTTON', 
-          icon: 'las la-times', 
+        {
+          id: 'cancel-action',
+          label: 'KColorChooser.CANCEL_BUTTON',
+          icon: 'las la-times',
           renderer: 'form-button',
           outline: true,
-          handler: () => this.doClose() 
+          handler: () => this.doClose()
         },
-        { 
-          id: 'done-button', 
+        {
+          id: 'done-button',
           label: 'KColorChooser.DONE_BUTTON',
           renderer: 'form-button',
-          handler: (event) => this.doDone(event) 
+          handler: (event) => this.doDone(event)
         }
       ]
     },

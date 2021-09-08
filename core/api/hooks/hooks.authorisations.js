@@ -203,7 +203,7 @@ export async function authorise (hook) {
         const dbQuery = objectifyIDs(getQueryForAbilities(abilities, operation, resourceType))
         if (dbQuery) {
           hook.params.query = _.transform(hook.params.query, (result, value, key) => {
-            if (key === '$or') result['$and'] = [{ $or: value }]
+            if (key === '$or') result.$and = [{ $or: value }]
             else result[key] = value
           }, {})
           _.merge(hook.params.query, dbQuery)

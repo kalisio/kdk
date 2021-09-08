@@ -14,7 +14,7 @@
      -->
     <k-modal-editor
       id="editor"
-      ref="editor" 
+      ref="editor"
       service="settings"
       objectId="settings"
       :schema-properties="schemaFilter"

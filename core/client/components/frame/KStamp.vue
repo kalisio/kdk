@@ -38,7 +38,7 @@ export default {
     textSize: {
       type: String,
       default: '1rem'
-    },    
+    },
     direction: {
       type: String,
       default: 'vertical',

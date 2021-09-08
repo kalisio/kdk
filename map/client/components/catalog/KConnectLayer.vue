@@ -6,9 +6,9 @@
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <q-card-actions align="right">
-      <k-panel 
-        id="modal-buttons" 
-        :content="getButtons()" 
+      <k-panel
+        id="modal-buttons"
+        :content="getButtons()"
         renderer="form-button"
         v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
     </q-card-actions>

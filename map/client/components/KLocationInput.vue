@@ -53,7 +53,7 @@ import { Geolocation } from '../geolocation'
 export default {
   name: 'k-location-input',
   components: {
-    QOptionGroup,
+    QOptionGroup
   },
   props: {
     value: {
@@ -96,12 +96,12 @@ export default {
     }
   },
   data () {
-    let options = []
+    const options = []
     if (this.search) options.push({ label: this.$i18n.t('KLocationInput.SEARCH_LOCATION'), value: 'search' })
     if (this.user) options.push({ label: this.$i18n.t('KLocationInput.GEOLOCATE'), value: 'user' })
     if (this.map) options.push({ label: this.$i18n.t('KLocationInput.LOCATION_MAP'), value: 'map' })
     if (this.draw) options.push({ label: this.$i18n.t('KLocationInput.DRAW_MAP'), value: 'draw' })
-    
+
     return {
       mode: null,
       options,

@@ -156,7 +156,7 @@ export default function baseEditorMixin (formRefs) {
         // Start from default object or input base object
         // This is used to keep track of existing or additional "hidden" or "internal" properties
         // in addition to the ones edited throught the form
-        let object = {}
+        const object = {}
         const baseObject = this.getObject() || this.baseObject
         if (this.perspective !== '') {
           if (this.perspectiveAsObject) {
@@ -175,7 +175,7 @@ export default function baseEditorMixin (formRefs) {
         // Start from default query
         const query = {}
         Object.assign(query, this.baseQuery)
-        if ((this.getMode() === 'update') && this.perspective  && this.perspectiveAsObject) {
+        if ((this.getMode() === 'update') && this.perspective && this.perspectiveAsObject) {
           Object.assign(query, { $select: ['_id', this.perspective] })
         }
         return query

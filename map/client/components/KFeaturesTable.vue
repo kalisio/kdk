@@ -8,11 +8,11 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content">
-      <k-table 
-        service="features" 
-        :contextId="contextId" 
-        :schema-json="schema" 
-        :item-actions="featureActions" 
+      <k-table
+        service="features"
+        :contextId="contextId"
+        :schema-json="schema"
+        :item-actions="featureActions"
         :base-query="layer.baseQuery"
         :style="`height: ${height}px; max-width: ${width}px;`">
         <template slot="empty-section">
@@ -54,7 +54,7 @@ export default {
     },
     buttons () {
       return [
-        { id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() },
+        { id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() }
       ]
     },
     width () {

@@ -9,9 +9,9 @@
       >
         <k-column
           :label="column.label"
-          :key="column.value" 
-          v-bind="column.props" 
-          :append-items="true" 
+          :key="column.value"
+          v-bind="column.props"
+          :append-items="true"
           :height="height" />
       </div>
     </template>
@@ -24,7 +24,7 @@ import KColumn from './KColumn.vue'
 
 export default {
   name: 'k-board',
-  components: { 
+  components: {
     KColumn
   },
   props: {
@@ -39,4 +39,3 @@ export default {
   }
 }
 </script>
-

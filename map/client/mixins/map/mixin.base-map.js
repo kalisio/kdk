@@ -20,7 +20,6 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
-import i18next from 'i18next'
 import { LeafletEvents, bindLeafletEvents } from '../../utils'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 

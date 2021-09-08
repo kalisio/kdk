@@ -1,8 +1,8 @@
 <template>
-  <k-card 
+  <k-card
     v-bind="$props"
     :header="header"
-    :actions="itemActions" 
+    :actions="itemActions"
     :bind-actions="false"
     :dense="dense">
     <!--
@@ -18,28 +18,28 @@
       <div class="row full-width justify-start" v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
         {{ description }}
       </div>
-    </div>  
+    </div>
     <!--
       Card content
     -->
     <div slot="card-content">
       <!-- Tags section -->
-      <k-card-section v-if="!item.expireAt" 
-        :title="$t('KMemberCard.TAGS_SECTION')" 
-        :actions="tagsActions" 
+      <k-card-section v-if="!item.expireAt"
+        :title="$t('KMemberCard.TAGS_SECTION')"
+        :actions="tagsActions"
         :context="$props"
         :dense="dense">
         <div v-if="hasTags">
           <k-chips-pane id="tags-pane" class="q-pa-sm" :chips="tags" />
         </div>
-        <div v-else> 
+        <div v-else>
           {{ $t('KMemberCard.NO_TAGS_LABEL')}}
         </div>
       </k-card-section>
       <!-- Groups section -->
-      <k-card-section v-if="!item.expireAt" 
-        :title="$t('KMemberCard.GROUPS_SECTION')" 
-        :actions="groupsActions" 
+      <k-card-section v-if="!item.expireAt"
+        :title="$t('KMemberCard.GROUPS_SECTION')"
+        :actions="groupsActions"
         :context="$props"
         :dense=dense>
         <div v-if="hasGroups" class="row justify-start items-center">
@@ -99,7 +99,7 @@ export default {
   mixins: [mixins.baseItem],
   computed: {
     header () {
-      let components = _.filter(this.itemActions, { scope: 'header' })
+      const components = _.filter(this.itemActions, { scope: 'header' })
       components.splice(0, 0, { component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' }, { component: 'QSpace' })
       return components
     },
@@ -125,7 +125,7 @@ export default {
     },
     groupsActions () {
       return _.filter(this.itemActions, { scope: 'groups' })
-    },   
+    },
     hasGroups () {
       return !_.isEmpty(this.groups)
     },

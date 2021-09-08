@@ -12,7 +12,7 @@ export const Time = {
     // Set the time object within the store
     const now = moment()
     Store.set('time', {
-      range: { 
+      range: {
         start: now.clone().subtract(1, 'months').startOf('day'),
         end: now.clone().endOf('day'),
         query: {}

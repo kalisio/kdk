@@ -70,9 +70,9 @@ export default {
   computed: {
     inputActions () {
       const actions = []
-      const index = (this.icon ? 
-        _.findIndex(this.chips, { value: this.input }) :
-        _.findIndex(this.chips, this.input))
+      const index = (this.icon
+        ? _.findIndex(this.chips, { value: this.input })
+        : _.findIndex(this.chips, this.input))
       if (index === -1) {
         actions.push({
           icon: 'send',

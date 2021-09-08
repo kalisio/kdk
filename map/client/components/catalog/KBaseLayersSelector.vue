@@ -3,10 +3,10 @@
     <div v-if="layers.length > 0" class="full-width row">
       <template v-for="layer in layers">
         <div class="col-6 q-pa-xs" :key="layer.name">
-          <q-card 
-            :id="layer.name" 
-            v-ripple 
-            class="k-layer-card" 
+          <q-card
+            :id="layer.name"
+            v-ripple
+            class="k-layer-card"
             v-bind:class="{ 'k-layer-card-active': selectedLayer === layer.name }"
             @click="selectedLayer = layer"
           >
@@ -17,17 +17,17 @@
               >
                 <k-stamp
                   :class="selectedLayer === layer.name ? 'text-secondary' : 'text-white'"
-                  :text="layer.name" 
+                  :text="layer.name"
                   :icon="selectedLayer === layer.name ? 'las la-check-circle': 'las la-circle'"
                   text-size="0.8rem"
-                  icon-size="1.2rem" 
+                  icon-size="1.2rem"
                   direction="horizontal" />
               </div>
-              <q-tooltip 
-                v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" 
-                :delay="1200" 
-                anchor="center left" 
-                self="center right" 
+              <q-tooltip
+                v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop"
+                :delay="1200"
+                anchor="center left"
+                self="center right"
                 :offset="[20, 0]"
               >
                 {{ layer.tooltip || layer.description }}
@@ -75,7 +75,7 @@ export default {
         if (unselectedLayerName !== layerNameToSelect) {
           const layerToSelect = _.find(this.layers, { name: layerNameToSelect })
           if (layerToSelect) this.toggleLayer(layerToSelect)
-        } 
+        }
       }
     }
   },

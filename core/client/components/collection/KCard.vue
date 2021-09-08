@@ -19,16 +19,16 @@
         <div class="row full-width justify-start items-center no-wrap">
           <div>
             <slot name="card-avatar">
-              <k-avatar 
-                :object="item" 
-                :size="dense ? 'sm' : 'md'" 
-                :contextId="contextId" 
+              <k-avatar
+                :object="item"
+                :size="dense ? 'sm' : 'md'"
+                :contextId="contextId"
                 :options="options" />
             </slot>
           </div>
-          <div 
-            class="text-subtitle1 text-weight-medium ellipsis-2-lines" 
-            v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }" 
+          <div
+            class="text-subtitle1 text-weight-medium ellipsis-2-lines"
+            v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
             style="overflow: hidden">
             {{ name }}
           </div>
@@ -36,16 +36,16 @@
       </slot>
       <slot name="card-description">
         <!-- Description -->
-        <k-card-section 
-          :title="$t('KCard.DESCRIPTION_SECTION')" 
-          :actions="descriptionActions" 
-          :hideHeader="!isExpanded" 
+        <k-card-section
+          :title="$t('KCard.DESCRIPTION_SECTION')"
+          :actions="descriptionActions"
+          :hideHeader="!isExpanded"
           :dense="dense"
         >
           <div v-if="hasDescription">
             <k-text-area :text="item.description" />
           </div>
-          <div v-else> 
+          <div v-else>
             {{ $t('KCard.NO_DESCRIPTION_LABEL')}}
           </div>
         </k-card-section>
@@ -73,11 +73,11 @@
     -->
     <div v-if="expandable">
       <div class="row justify-center">
-        <k-action 
-          id="expend-action" 
-          :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'" 
+        <k-action
+          id="expend-action"
+          :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'"
           :tooltip="isExpanded ? 'KCard.LESS_ACTION' : 'KCard.MORE_ACTION'"
-          size="sm" 
+          size="sm"
           @triggered="onExpandTriggered" />
       </div>
     </div>
@@ -121,7 +121,7 @@ export default {
   computed: {
     computedHeader () {
       if (this.header) return this.header
-      let actions = _.filter(this.itemActions, { scope: 'header' })
+      const actions = _.filter(this.itemActions, { scope: 'header' })
       if (_.isEmpty(actions)) return []
       actions.splice(0, 0, { component: 'QSpace' })
       return actions
@@ -137,7 +137,7 @@ export default {
     },
     computedFooter () {
       if (this.footer) return this.footer
-      let actions = _.filter(this.itemActions, { scope: 'footer' })
+      const actions = _.filter(this.itemActions, { scope: 'footer' })
       if (_.isEmpty(actions)) return []
       actions.splice(0, 0, { component: 'QSpace' })
       return actions
@@ -148,7 +148,7 @@ export default {
   },
   data () {
     return {
-      isExpanded: this.expandable ? false : true
+      isExpanded: !this.expandable
     }
   },
   methods: {

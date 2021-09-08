@@ -9,7 +9,7 @@
         <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
           <q-date id="start-time-popup" v-model="formattedStart" mask="DD/MM/YY"
             :title="formattedStart" :subtitle="$t('KTimeRange.START_LABEL')"
-            @input="onTimeRangeChanged" :options="checkTimeRange" />          
+            @input="onTimeRangeChanged" :options="checkTimeRange" />
         </q-popup-proxy>
       </template>
     </k-action>
@@ -22,7 +22,7 @@
         <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
           <q-date id="end-time-popup" v-model="formattedEnd" mask="DD/MM/YY"
             :title="formattedEnd" :subtitle="$t('KTimeRange.END_LABEL')"
-            @input="onTimeRangeChanged" :options="checkTimeLimit" />          
+            @input="onTimeRangeChanged" :options="checkTimeLimit" />
         </q-popup-proxy>
       </template>
     </k-action>
@@ -30,7 +30,7 @@
     <k-menu
       id="plan-selector"
       icon="las la-calendar"
-      :content="entries" 
+      :content="entries"
       action-renderer="item" />
   </div>
 </template>
@@ -72,40 +72,49 @@ export default {
       start: Time.getRange().start,
       end: Time.getRange().end,
       entries: [
-        { 
-          id: 'last-day', label: 'KTimeRange.LAST_DAY_LABEL', 
+        {
+          id: 'last-day',
+          label: 'KTimeRange.LAST_DAY_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(1, 'days'))
         },
-        { 
-          id: 'last-2-days', label: 'KTimeRange.LAST_2_DAYS_LABEL', 
+        {
+          id: 'last-2-days',
+          label: 'KTimeRange.LAST_2_DAYS_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(2, 'days'))
         },
         {
-          id: 'last-3-days', label: 'KTimeRange.LAST_3_DAYS_LABEL', 
+          id: 'last-3-days',
+          label: 'KTimeRange.LAST_3_DAYS_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(3, 'days'))
         },
-        { 
-          id: 'last-week', label: 'KTimeRange.LAST_WEEK_LABEL', 
+        {
+          id: 'last-week',
+          label: 'KTimeRange.LAST_WEEK_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(1, 'weeks'))
         },
-        { 
-          id: 'last-2-weeks', label: 'KTimeRange.LAST_2_WEEKS_LABEL', 
+        {
+          id: 'last-2-weeks',
+          label: 'KTimeRange.LAST_2_WEEKS_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(2, 'weeks'))
         },
-        { 
-          id: 'last-month', label: 'KTimeRange.LAST_MONTH_LABEL', 
+        {
+          id: 'last-month',
+          label: 'KTimeRange.LAST_MONTH_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(1, 'months'))
         },
-        { 
-          id: 'last-3-months', label: 'KTimeRange.LAST_3_MONTHS_LABEL', 
+        {
+          id: 'last-3-months',
+          label: 'KTimeRange.LAST_3_MONTHS_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(3, 'months'))
         },
-        { 
-          id: 'last-6-months', label: 'KTimeRange.LAST_6_MONTHS_LABEL', 
+        {
+          id: 'last-6-months',
+          label: 'KTimeRange.LAST_6_MONTHS_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(6, 'months'))
         },
-        { 
-          id: 'last-year', label: 'KTimeRange.LAST_YEAR_LABEL', 
+        {
+          id: 'last-year',
+          label: 'KTimeRange.LAST_YEAR_LABEL',
           handler: () => this.quickRangeTriggered(moment.duration(1, 'years'))
         }
       ]

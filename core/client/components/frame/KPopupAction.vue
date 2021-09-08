@@ -36,7 +36,7 @@ import KAction from './KAction.vue'
 import KPanel from './KPanel.vue'
 
 export default {
-  components: { 
+  components: {
     KAction,
     KPanel
   },

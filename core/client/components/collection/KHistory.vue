@@ -2,19 +2,19 @@
   <k-column
     :service="service"
     :renderer="computedRenderer"
-    :contextId="contextId" 
+    :contextId="contextId"
     :baseQuery="computedBaseQuery"
     :filterQuery="filterQuery"
-    :append-items="true" 
+    :append-items="true"
     :height="height"
     @collection-refreshed="onCollectionRefreshed">
     <template slot="empty-column">
       <slot name="empty-history">
         <div class="row justify-center">
-          <k-stamp 
-            icon="las la-exclamation-circle" 
-            icon-size="1.6rem" 
-            :text="$t('KColumn.EMPTY_COLUMN')" 
+          <k-stamp
+            icon="las la-exclamation-circle"
+            icon-size="1.6rem"
+            :text="$t('KColumn.EMPTY_COLUMN')"
             direction="horizontal" />
         </div>
       </slot>
@@ -31,7 +31,7 @@ import mixins from '../../mixins'
 
 export default {
   name: 'k-history',
-  components: { 
+  components: {
     KColumn,
     KStamp
   },
@@ -66,7 +66,7 @@ export default {
       }
     },
     computedBaseQuery () {
-      let query = _.clone(this.baseQuery)
+      const query = _.clone(this.baseQuery)
       Object.assign(query, _.clone(this.timeRange.query))
       Object.assign(query, _.clone(this.sorter.query))
       return query
@@ -80,9 +80,9 @@ export default {
   },
   methods: {
     async onCollectionRefreshed (items) {
-     _.forEach(items, (item, index) => {
-       item.previous = index > 0 ? items[index -1] : undefined
-       item.side = (index % 2 ? 'left' : 'right')
+      _.forEach(items, (item, index) => {
+        item.previous = index > 0 ? items[index - 1] : undefined
+        item.side = (index % 2 ? 'left' : 'right')
       })
     }
   }

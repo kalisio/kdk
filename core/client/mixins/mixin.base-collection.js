@@ -116,7 +116,7 @@ const baseCollectionMixin = {
       // Find the desired items
       this.subscribe(fullQuery)
     }
-    this.refreshCollection = _.throttle(refreshCollection, this.refreshThrottle, { 'leading': false })
+    this.refreshCollection = _.throttle(refreshCollection, this.refreshThrottle, { leading: false })
 
     if (this.appendItems) {
       const service = this.getService()
@@ -124,7 +124,7 @@ const baseCollectionMixin = {
       service.on('updated', this.onItemsUpdated)
       service.on('removed', this.onItemsUpdated)
     }
-  },  
+  },
   beforeDestroy () {
     this.unsubscribe()
     if (this.appendItems) {

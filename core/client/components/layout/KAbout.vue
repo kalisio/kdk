@@ -19,9 +19,9 @@
     <!--
       About window
      -->
-    <k-modal 
-      :title="$t('KAbout.TITLE')" 
-      id="about" 
+    <k-modal
+      :title="$t('KAbout.TITLE')"
+      id="about"
       ref="about"
       :buttons="getButtons()">
       <div slot="modal-content">
