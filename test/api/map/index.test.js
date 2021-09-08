@@ -59,7 +59,7 @@ describe('map:services', () => {
   })
 
   it('registers the default layer catalog', async () => {
-    const layers = await fs.readJson('./tests/map/config/layers.json')
+    const layers = await fs.readJson('./test/api/map/config/layers.json')
     expect(layers.length > 0)
     // Create a global catalog service
     defaultLayers = await catalogService.create(layers)
