@@ -1,4 +1,4 @@
-import { waitForImagesLoaded } from "../core"
+import { waitForImagesLoaded } from '../core'
 
 export async function clickLayerCategory (page, category, wait = 500) {
   const selector = `#KCatalogPanel\\.${category}`

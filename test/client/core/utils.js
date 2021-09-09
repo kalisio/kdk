@@ -1,4 +1,3 @@
-import path from 'path'
 import fs from 'fs'
 import png from 'pngjs'
 import pixelmatch from 'pixelmatch'
@@ -26,7 +25,7 @@ export async function isElementVisible (page, selector) {
  */
 export async function waitForImagesLoaded (page) {
   await page.evaluate(async () => {
-    const imageSelectors = Array.from(document.querySelectorAll("img"));
+    const imageSelectors = Array.from(document.querySelectorAll('img'))
     await Promise.all(imageSelectors.map(img => {
       if (img.complete) return
       return new Promise((resolve, reject) => {

@@ -1,8 +1,8 @@
 import path from 'path'
-import puppeteer  from 'puppeteer'
+import puppeteer from 'puppeteer'
 import { compareImages } from './utils'
 
-const defaultPort =  process.env.CLIENT_PORT || (process.env.NODE_ENV === 'production' ? '8081' : '8082')
+const defaultPort = process.env.CLIENT_PORT || (process.env.NODE_ENV === 'production' ? '8081' : '8082')
 
 export class Runner {
   constructor (options = {}) {

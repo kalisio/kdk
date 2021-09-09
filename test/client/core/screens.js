@@ -7,6 +7,3 @@ export async function login (page, email, password, wait = 2000) {
   await page.click('button')
   await page.waitForTimeout(wait)
 }
-
-
-
