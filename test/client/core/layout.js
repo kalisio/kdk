@@ -1,9 +1,9 @@
 import { isElementVisible } from './utils'
 
-async function clickOpener (page, opener) {
+async function clickOpener (page, opener, wait = 500) {
   const selector = `#${opener}-opener`
   await page.evaluate((selector) => document.querySelector(selector).click(), selector)
-  await page.waitForTimeout(1000)
+  await page.waitForTimeout(wait)
 }
 
 export async function clickTopOpener (page) {
@@ -47,4 +47,10 @@ export async function closeWelcomeDialog (page) {
   const selector = '.q-dialog .q-card button[type=button]'
   await page.waitForSelector(selector)
   await page.click(selector)
+}
+
+export async function logout (page) {
+  await clickLeftOpener(page)
+  await clickAction(page, 'logout')
+  await page.waitForTimeout(1000)
 }
