@@ -22,6 +22,7 @@ export class Runner {
         matchTeshold: 0.1
       }
     })
+    console.log('Runner created with the following options:')
     console.log(this.options)
   }
 
