@@ -1,3 +1,4 @@
+import fs from 'fs'
 import path from 'path'
 import puppeteer from 'puppeteer'
 import { compareImages } from './utils'
@@ -5,29 +6,44 @@ import { compareImages } from './utils'
 const defaultPort = process.env.CLIENT_PORT || (process.env.NODE_ENV === 'production' ? '8081' : '8082')
 
 export class Runner {
-  constructor (options = {}) {
+  constructor (suite, options = {}) {
+    // Compute helper default options
+    const defaultBrowser = process.env.BROWSER || 'chrome'
+    const defaultDataDir = path.join('.', 'test', 'data', suite)
+    const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
+    // Set the runner options using default and overrrident options
     this.options = Object.assign({
       baseUrl: process.env.APP_URL || `http://localhost:${defaultPort}`,
       browser: {
-        product: process.env.BROWSER || 'chrome',
+        product: defaultBrowser,
         headless: process.env.HEADER ? !!process.env.HEADLESS : false,
         defaultViewport: {
           width: +process.env.VIEWPORT_WIDTH || 1024,
           height: +process.env.VIEWPORT_HEIGHT || 768
         }
       },
-      capture: {
-        screenshotsBasePath: './test/data/screenshots',
-        screenrefsBasePath: './test/data/screenrefs',
-        matchTeshold: 0.1
-      }
-    })
+      dataDir: defaultDataDir,
+      runDir: defaultRunDir,
+      screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
+      screenshotsDir: path.join(defaultRunDir, '/screenshots'),
+      matchTeshold: 0.1
+    }, options)
+    // Display the runner options
     console.log('Runner created with the following options:')
     console.log(this.options)
+    // Create the run directory if needed
+    if (!fs.existsSync(this.options.screenshotsDir)) {
+      console.log('Creating runner directory structure')
+      fs.mkdirSync(this.options.screenshotsDir, { recursive: true })
+    }
   }
 
   getUrl (path) {
     return path ? this.options.baseUrl + '/#/' + path : this.options.baseUrl
+  }
+
+  getDataPath (key) {
+    return path.join(this.options.dataDir, key)
   }
 
   async start (path) {
@@ -43,7 +59,7 @@ export class Runner {
 
   async capture (key) {
     await this.page.screenshot({
-      path: path.join(this.options.capture.screenshotsBasePath, key + '.png'),
+      path: path.join(this.options.screenshotsDir, key + '.png'),
       fullPage: true,
       type: 'png'
     })
@@ -51,9 +67,9 @@ export class Runner {
 
   async captureAndMatch (key, diffTolerance = 1.0) {
     await this.capture(key)
-    const runPath = path.join(this.options.capture.screenshotsBasePath, key + '.png')
-    const refPath = path.join(this.options.capture.screenrefsBasePath, key + '.png')
-    const diff = compareImages(runPath, refPath)
+    const runDir = path.join(this.options.screenshotsDir, key + '.png')
+    const refPath = path.join(this.options.screenrefsDir, key + '.png')
+    const diff = compareImages(runDir, refPath)
     return diff.diffRatio <= diffTolerance
   }
 }

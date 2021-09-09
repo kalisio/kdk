@@ -38,13 +38,18 @@ export async function isLeftPaneVisible (page) {
   return isElementVisible(page, '#left-panel')
 }
 
-export async function clickAction (page, action) {
-  const selector = `#${action}`
-  await page.evaluate((selector) => document.querySelector(selector).click(), selector)
+export async function clickFab (page) {
+  return clickAction(page, 'fab')
 }
 
 export async function closeWelcomeDialog (page) {
   const selector = '.q-dialog .q-card button[type=button]'
+  await page.waitForSelector(selector)
+  await page.click(selector)
+}
+
+export async function clickAction (page, action) {
+  const selector = `#${action}`
   await page.waitForSelector(selector)
   await page.click(selector)
 }
