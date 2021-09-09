@@ -74,7 +74,7 @@
     <div v-if="expandable">
       <div class="row justify-center">
         <k-action
-          id="expend-action"
+          id="expand-action"
           :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'"
           :tooltip="isExpanded ? 'KCard.LESS_ACTION' : 'KCard.MORE_ACTION'"
           size="sm"
