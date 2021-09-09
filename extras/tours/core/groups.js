@@ -44,13 +44,19 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#edit-group',
+  target: '#edit-item-header',
   content: 'tours.groups.UPDATE_GROUP_LABEL',
   params: {
     placement: 'bottom'
   }
 }, {
-  target: '#remove-group',
+  target: '#edit-item-description',
+  content: 'tours.groups.UPDATE_GROUP_DESCRIPTION_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
+  target: '#remove-item-header',
   title: 'tours.groups.REMOVE_GROUP_LABEL',
   content: 'tours.groups.REMOVE_CONFIRMATION_LABEL',
   params: {

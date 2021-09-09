@@ -172,7 +172,8 @@
       "GROUP_CARD_LABEL": "Each group is viewed as a card providing available actions.",
       "GROUP_MEMBERS_LABEL": "This section shows you the <b>members</b> count of your group.",
       "LIST_GROUP_MEMBERS_LABEL": "Shows the <b>members</b> of your group by selecting it.",
-      "UPDATE_GROUP_LABEL": "Update properties of your group through this action.",
+      "UPDATE_GROUP_LABEL": "Update the name of your group through this action.",
+      "UPDATE_GROUP_DESCRIPTION_LABEL": "Update the description of your group through this action.",
       "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_GROUP_LABEL": "Remove your group through this action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
@@ -238,7 +239,8 @@
       "TAG_COUNT_LABEL": "This section shows you the number of <b>members</b> having your tag.",
       "LIST_MEMBERS_LABEL": "Shows the <b>members</b> with this tag by selecting it.",
       "REMOVE_TAG_LABEL": "Whenever it is zero the tag is automatically removed.",
-      "UPDATE_TAG_LABEL": "Update properties of your tag through this action, this will update all members having this tag."
+      "UPDATE_TAG_LABEL": "Update properties of your tag through this action, this will update all members having this tag.",
+      "UPDATE_TAG_DESCRIPTION_LABEL": "Update the description of your tag through this action."
     }
   },
   "KWelcome": {

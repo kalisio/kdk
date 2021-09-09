@@ -172,7 +172,8 @@
       "GROUP_CARD_LABEL": "Chaque groupe est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
       "GROUP_MEMBERS_LABEL": "Cette section vous indique le nombre de <b>membres</b> de votre groupe.",
       "LIST_GROUP_MEMBERS_LABEL": "Affichez les <b>membres</b> de votre groupe en la sélectionnant.",
-      "UPDATE_GROUP_LABEL": "Modifiez les propriétés de votre groupe via cette action.",
+      "UPDATE_GROUP_LABEL": "Modifiez le nom de votre groupe via cette action.",
+      "UPDATE_GROUP_DESCRIPTION_LABEL": "Modifiez la description de votre groupe via cette action.",
       "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_GROUP_LABEL": "Supprimez votre groupe via cette action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
@@ -244,7 +245,8 @@
       "TAG_MEMBERS_LABEL": "Cette section vous indique le nombre de <b>membres</b> possédant cette étiquette.",
       "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette en la sélectionnant.",
       "REMOVE_TAG_LABEL": "Lorsqu'il atteint zéro l'étiquette est automatiquement supprimée.",
-      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette."
+      "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette.",
+      "UPDATE_TAG_DESCRIPTION_LABEL": "Modifiez la description de votre étiquette via cette action."
     }
   },
   "KWelcome": {

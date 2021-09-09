@@ -38,8 +38,14 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#edit-tag',
+  target: '#edit-item-header',
   content: 'tours.tags.UPDATE_TAG_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
+  target: '#edit-item-description',
+  content: 'tours.tags.UPDATE_TAG_DESCRIPTION_LABEL',
   params: {
     placement: 'bottom'
   }
