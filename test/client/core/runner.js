@@ -3,11 +3,10 @@ import path from 'path'
 import puppeteer from 'puppeteer'
 import { compareImages } from './utils'
 
-const defaultPort = process.env.CLIENT_PORT || (process.env.NODE_ENV === 'production' ? '8081' : '8082')
-
 export class Runner {
   constructor (suite, options = {}) {
     // Compute helper default options
+    const defaultPort = process.env.CLIENT_PORT || (process.env.NODE_ENV === 'production' ? '8081' : '8082')
     const defaultBrowser = process.env.BROWSER || 'chrome'
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
@@ -49,6 +48,13 @@ export class Runner {
   async start (path) {
     this.browser = await puppeteer.launch(this.options.browser)
     this.page = await this.browser.newPage()
+    // Handle geolocation if needed
+    if (this.options.geolocation) {
+      const context = this.browser.defaultBrowserContext()
+      await context.overridePermissions(this.getUrl(path), ['geolocation'])
+      this.page.setGeolocation(this.options.geolocation)
+    }
+    // Navigate the to given url
     await this.page.goto(this.getUrl(path))
     return this.page
   }
@@ -69,7 +75,7 @@ export class Runner {
     await this.capture(key)
     const runDir = path.join(this.options.screenshotsDir, key + '.png')
     const refPath = path.join(this.options.screenrefsDir, key + '.png')
-    const diff = compareImages(runDir, refPath)
+    const diff = compareImages(runDir, refPath, this.options.matchTeshold)
     return diff.diffRatio <= diffTolerance
   }
 }

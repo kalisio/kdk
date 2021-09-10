@@ -4,8 +4,8 @@
     <div v-if="layers.length > 0">
       <template v-for="layer in layers">
         <q-item
-          :id="layer.name"
-          :key="layer.name"
+          :id="getId(layer)"
+          :key="getId(layer)"
           :active="layer.isVisible"
           :disable="layer.isDisabled"
           :clickable="!layer.isDisabled"
@@ -68,6 +68,9 @@ export default {
     }
   },
   methods: {
+    getId (layer) {
+      return _.kebabCase(layer.name)
+    },
     layerIcon (layer) {
       return utils.getIconName(layer, 'icon')
     },

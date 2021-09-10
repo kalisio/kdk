@@ -1,9 +1,9 @@
-import { isElementVisible } from './utils'
+import { click, isElementVisible } from './utils'
 
-async function clickOpener (page, opener, wait = 500) {
+async function clickOpener (page, opener) {
   const selector = `#${opener}-opener`
   await page.evaluate((selector) => document.querySelector(selector).click(), selector)
-  await page.waitForTimeout(wait)
+  await page.waitForTimeout(500)
 }
 
 export async function clickTopOpener (page) {
@@ -38,24 +38,45 @@ export async function isLeftPaneVisible (page) {
   return isElementVisible(page, '#left-panel')
 }
 
+export async function clickAction (page, action, wait = 250) {
+  const selector = `#${action}`
+  await click(page, selector, wait)
+}
+
+async function clickPaneAction (page, pane, action, wait) {
+  const isPaneVisible = await isElementVisible(page, `#${pane}-panel`)
+  if (!isPaneVisible) await clickOpener(page, pane)
+  await clickAction(page, action, wait)
+  if (!isPaneVisible) await clickOpener(page, pane)
+}
+
+export async function clickTopPaneAction (page, action, wait = 250) {
+  await clickPaneAction(page, 'top', action, wait)
+}
+
+export async function clickRightPaneAction (page, action, wait = 250) {
+  await clickPaneAction(page, 'right', action, wait)
+}
+
+export async function clickBottomPaneAction (page, action, wait = 250) {
+  await clickPaneAction(page, 'bottom', action, wait)
+}
+
+export async function clickLeftPaneAction (page, action, wait = 250) {
+  const isPaneVisible = await isLeftPaneVisible(page)
+  if (!isPaneVisible) await clickLeftOpener(page)
+  await clickAction(page, action, wait)
+}
+
 export async function clickFab (page) {
   return clickAction(page, 'fab')
 }
 
 export async function closeWelcomeDialog (page) {
   const selector = '.q-dialog .q-card button[type=button]'
-  await page.waitForSelector(selector)
-  await page.click(selector)
-}
-
-export async function clickAction (page, action) {
-  const selector = `#${action}`
-  await page.waitForSelector(selector)
-  await page.click(selector)
+  await click(page, selector)
 }
 
 export async function logout (page) {
-  await clickLeftOpener(page)
-  await clickAction(page, 'logout')
-  await page.waitForTimeout(1000)
+  await clickLeftPaneAction(page, 'logout', 1000)
 }

@@ -21,6 +21,31 @@ export async function isElementVisible (page, selector) {
   }, selector)
 }
 
+/* Helper function to click on a given selector
+ */
+export async function click (page, selector, wait = 250) {
+  await page.waitForSelector(selector)
+  await page.click(selector)
+  await page.waitForTimeout(wait)
+}
+
+/* Helper function to input a test on a given selector
+ */
+export async function type (page, selector, text, wait = 250) {
+  await page.waitForSelector(selector)
+  await page.type(selector, text)
+  await page.keyboard.press('Enter')
+  await page.waitForTimeout(wait)
+}
+
+/* Helper function to input a test on a given selector
+ */
+export async function upload (page, selector, filePath, wait = 2000) {
+  const element = await page.$(selector)
+  await element.uploadFile(filePath)
+  await page.waitForTimeout(wait)
+}
+
 /* Helper function that wait until all images are loaded
  */
 export async function waitForImagesLoaded (page) {
