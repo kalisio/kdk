@@ -208,7 +208,6 @@
       "JOIN_GROUP_LINK_LABEL": "How to manage groups",
       "CHANGE_ROLE_LABEL": "Update the role of your member through this action.",
       "CHANGE_ROLE_LINK_LABEL": "How to manage roles",
-      "MEMBER_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_MEMBER_LABEL": "Remove the member from your organisation through this action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
     },
@@ -224,8 +223,8 @@
       "MULTIPLE_ADD_BUTTON_LABEL": "Click this button to proceed with the invitations."
     },
     "tag-member": {
-      "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise.",
-      "TAG_REMOVE_LABEL": "Once added select it to update its icon/color and remove it using the cross.",
+      "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise using the Return key.",
+      "TAG_REMOVE_LABEL": "Once added remove it using the cross.",
       "UPDATE_TAG_LABEL": "Confirm modifying the tags on your members."
     },
     "tags": {

@@ -100,7 +100,7 @@ export default {
   computed: {
     header () {
       const components = _.filter(this.itemActions, { scope: 'header' })
-      components.splice(0, 0, { component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' }, { component: 'QSpace' })
+      components.splice(0, 0, { id: 'role-badge', component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' }, { component: 'QSpace' })
       return components
     },
     role () {

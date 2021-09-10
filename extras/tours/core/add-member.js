@@ -28,13 +28,22 @@ module.exports = [{
   target: '#name-field',
   content: 'tours.add-member.UNIQUE_NAME_LABEL',
   params: {
-    placement: 'left'
+    placement: 'left',
+    clickOnPrevious: '#back-button',
+    typeTextOnPrevious: '#email-field',
+    textOnPrevious: 'guest@organisation.com',
+    previousDelay: 500
   }
 }, {
   target: '#role-field',
   content: 'tours.add-member.UNIQUE_ROLE_LABEL',
   params: {
     placement: 'left',
+    clickDelay: 500,
+    clickOnNext: '#role-field',
+    nextDelay: 500,
+    clickOnPrevious: '#role-field',
+    previousDelay: 500
   }
 }, {
   target: '#add-button',

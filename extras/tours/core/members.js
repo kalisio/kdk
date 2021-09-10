@@ -68,6 +68,14 @@ module.exports = [{
     placement: 'right'
   }
 }, {
+  target: '#edit-item-tags',
+  content: 'tours.members.TAG_MEMBER_LABEL',
+  link: 'tours.members.TAGS_LINK_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnLink: '#edit-item-tags'
+  }
+}, {
   target: '#join-group',
   content: 'tours.members.JOIN_GROUP_LABEL',
   link: 'tours.members.JOIN_GROUP_LINK_LABEL',
@@ -96,36 +104,18 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#tag-member',
-  content: 'tours.members.TAG_MEMBER_LABEL',
-  link: 'tours.members.TAGS_LINK_LABEL',
-  params: {
-    placement: 'bottom',
-    clickOnLink: '#tag-member'
-  }
-}, {
-  target: '#change-role',
+  target: '#edit-member-role',
   content: 'tours.members.CHANGE_ROLE_LABEL',
   link: 'tours.members.CHANGE_ROLE_LINK_LABEL',
   params: {
     placement: 'bottom',
-    clickOnLink: '#change-role'
-  }
-}, {
-  target: '#card-overflow-menu',
-  content: 'tours.members.MEMBER_OVERFLOW_MENU_LABEL',
-  params: {
-    placement: 'top',
-    clickOnNext: '#card-overflow-menu',
-    nextDelay: 500
+    clickOnLink: '#edit-member-role'
   }
 }, {
   target: '#remove-member',
   title: 'tours.members.REMOVE_MEMBER_LABEL',
   content: 'tours.members.REMOVE_CONFIRMATION_LABEL',
   params: {
-    placement: 'left',
-    clickOnPrevious: '#card-overflow-menu',
-    previousDelay: 500
+    placement: 'left'
   }
 }]

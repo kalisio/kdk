@@ -208,7 +208,6 @@
       "JOIN_GROUP_LINK_LABEL": "Voir comment gérer les groupes",
       "CHANGE_ROLE_LABEL": "Modifiez le <b>rôle</b> de votre membre via cette action.",
       "CHANGE_ROLE_LINK_LABEL": "Voir comment gérer les rôles",
-      "MEMBER_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
       "REMOVE_MEMBER_LABEL": "Supprimez un membre de votre organisation via cette action.",
       "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
     },
@@ -230,8 +229,8 @@
       "ADD_MEMBER_LABEL": "Confirmez l'ajout du membre au groupe."
     },
     "tag-member": {
-      "TAG_NAME_LABEL": "Tapez <b>les premières lettres</b> d'une étiquette pour la sélectionner si elle existe ou la créer sinon.",
-      "TAG_REMOVE_LABEL": "Une fois ajoutée sélectionnez-là pour modifier son icône et sa couleur ou utilisez la croix pour la supprimer.",
+      "TAG_NAME_LABEL": "Tapez <b>les premières lettres</b> d'une étiquette pour la sélectionner si elle existe ou la créer sinon via la touche Entrée.",
+      "TAG_REMOVE_LABEL": "Une fois ajoutée utilisez la croix pour la supprimer.",
       "UPDATE_TAG_LABEL": "Confirmez la modification des étiquettes sur votre membre."
     },
     "tags": {
