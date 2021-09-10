@@ -1,4 +1,4 @@
-import { waitForImagesLoaded, isRightPaneVisible, clickRightOpener, click, isElementVisible } from '../core'
+import { waitForImagesLoaded, isRightPaneVisible, clickRightOpener, clickRightPaneAction, click, isElementVisible } from '../core'
 
 export function getSystemLayerCategoryId (category) {
   return 'KCatalogPanel\\.' + category
@@ -14,9 +14,7 @@ export async function isLayerCategoryOpened (page, category) {
 }
 
 export async function clickLayerCategory (page, category, wait = 500) {
-  const selector = `#${category}`
-  await click(page, selector)
-  await page.waitForTimeout(wait)
+  await clickRightPaneAction(page, category, wait)
 }
 
 export async function clickBaseLayer (page, layer, wait = 1000) {
