@@ -112,6 +112,7 @@ export function decodeFeatureType (json) {
     if (element.$.type) {
       if (element.$.type === 'xsd:int' || element.$.type === 'int') prop.type = 'number'
       else if (element.$.type === 'xsd:string' || element.$.type === 'string') prop.type = 'string'
+      else if (element.$.type === 'gml:MultiSurfacePropertyType' || element.$.type === 'gml:PointPropertyType' || element.$.type === 'gml:MultiCurvePropertyType') continue
       else console.log(`wfs-utils: unkown prop type ${element.$.type}`)
     } else if (element.simpleType) {
       const root = _.get(element, 'simpleType[0].restriction[0]')

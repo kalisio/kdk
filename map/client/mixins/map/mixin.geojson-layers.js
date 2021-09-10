@@ -145,7 +145,7 @@ export default {
             const searchParams = Object.assign({
               OUTPUTFORMAT: options.wfs.outputFormat, // request as geojson
               SRSNAME: 'EPSG:4326', // result in 4326
-              BBOX: `${query.south},${query.west},${query.north},${query.east},EPSG:4326` // request bbox
+              BBOX: `${query.south},${query.west},${query.north},${query.east},urn:ogc:def:crs:EPSG::4326` // request bbox
             }, options.wfs.searchParams)
             return wfs.GetFeature(options.wfs.url, options.wfs.version, options.wfs.layer, searchParams, { xml2json: false })
           }
