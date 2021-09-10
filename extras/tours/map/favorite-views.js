@@ -1,5 +1,5 @@
 module.exports = [{
-  target: '#favorite-views-list',
+  target: '#menu-entries',
   title: 'tours.favorite-views.FAVORITE_VIEWS_LIST_LABEL',
   params: {
     placement: 'top'

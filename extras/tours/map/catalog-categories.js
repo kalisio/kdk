@@ -1,5 +1,5 @@
 module.exports = [{
-  target: '#layer-categories-list',
+  target: '#layer-categories-content',
   title: 'tours.catalog-panel.CATEGORIES_LIST_LABEL',
   params: {
     placement: 'top'
@@ -33,7 +33,7 @@ module.exports = [{
     previousDelay: 1000
   }
 }, {
-  target: '#icon-field',
+  target: '#choosed-icon',
   content: 'tours.catalog-panel.LAYER_CATEGORY_ICON_LABEL',
   params: {
     placement: 'bottom'

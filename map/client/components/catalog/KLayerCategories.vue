@@ -1,13 +1,13 @@
 <template>
   <k-modal
     ref="modal"
-    id="layer-categorie-modal"
+    id="layer-categories-modal"
     :title="$t('KLayerCategories.TITLE')"
     :buttons="getButtons()"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
-    <div slot="modal-content">
+    <div slot="modal-content" id="layer-categories-content">
       <q-card-section v-show="hasToolbar">
         <k-panel id="layer-categories-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
       </q-card-section>

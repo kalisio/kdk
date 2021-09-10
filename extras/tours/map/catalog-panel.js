@@ -3,13 +3,13 @@ module.exports = [{
   title: 'tours.catalog-panel.CATALOG_LABEL',
   content: 'tours.catalog-panel.CATEGORIES_LABEL',
   params: {
-    placement: 'bottom'
+    placement: 'top'
   }
 }, {
   target: '#KCatalogPanel\\.BASE_LAYERS',
   title: 'tours.catalog-panel.CATEGORY_LABEL',
   params: {
-    placement: 'bottom',
+    placement: 'top',
     clickOn: '#KCatalogPanel\\.BASE_LAYERS * i',
     clickDelay: 1000,
     clickOnPrevious: '#KCatalogPanel\\.BASE_LAYERS * i',
@@ -19,8 +19,8 @@ module.exports = [{
   target: '#Layers\\.OSM_DARK',
   title: 'tours.catalog-panel.SHOW_LAYER_LABEL',
   params: {
-    placement: 'bottom',
-    clickOn: '#Layers\\.OSM_DARK * img',
+    placement: 'top',
+    clickOn: '#Layers\\.OSM_DARK',
     clickDelay: 1000,
     clickOnPrevious: '#KCatalogPanel\\.BASE_LAYERS * i',
     previousDelay: 500
@@ -30,8 +30,8 @@ module.exports = [{
   title: 'tours.catalog-panel.HIDE_LAYER_LABEL',
   content: 'tours.catalog-panel.MIN_LEVEL_LABEL',
   params: {
-    placement: 'bottom',
-    clickOn: '#Layers\\.OSM_BRIGHT * img',
+    placement: 'top',
+    clickOn: '#Layers\\.OSM_BRIGHT',
     clickDelay: 1000,
     clickOnNext: ['#KCatalogPanel\\.BASE_LAYERS * i', '#KCatalogPanel\\.METEO_LAYERS * i'],
     nextDelay: 500
