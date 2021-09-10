@@ -28,7 +28,7 @@
     </k-action>
     <q-separator vertical size="2" />
     <k-menu
-      id="plan-selector"
+      id="timerange-selector"
       icon="las la-calendar"
       :content="entries"
       action-renderer="item" />
