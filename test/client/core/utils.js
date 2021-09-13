@@ -30,11 +30,12 @@ export async function click (page, selector, wait = 250) {
 }
 
 /* Helper function to input a test on a given selector
+ * set enter to true to run the press 'Enter' key
  */
-export async function type (page, selector, text, wait = 250) {
+export async function type (page, selector, text, enter = false, wait = 250) {
   await page.waitForSelector(selector)
   await page.type(selector, text)
-  await page.keyboard.press('Enter')
+  if (enter) await page.keyboard.press('Enter')
   await page.waitForTimeout(wait)
 }
 
