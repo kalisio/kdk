@@ -176,7 +176,7 @@ export default {
     getTarget (target) {
       let element = null
       let querySelectorAll = false
-      const brackets = new RegExp(/\[(.*?)\]/, 'i')
+      const brackets = new RegExp(/\[([0-9]*?)\]/, 'i')
       // Check if there is an array notation like '#action[1]'
       // This is useful for id conflict resolution
       const result = brackets.exec(target)

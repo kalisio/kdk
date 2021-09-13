@@ -1,5 +1,5 @@
 <template>
-  <div v-if="actions">
+  <div v-if="actions" id="fab-container">
     <!--
       Render an expandable fab if more than one action is provided
      -->
