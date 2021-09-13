@@ -54,6 +54,12 @@ export class Runner {
       await context.overridePermissions(this.getUrl(path), ['geolocation'])
       this.page.setGeolocation(this.options.geolocation)
     }
+    // Handle the local storage if needed
+    if (this.options.localStorage) {
+      await this.page.evaluateOnNewDocument(items => {
+        for (const [key, value] of Object.entries(items)) localStorage.setItem(key, value)     
+      }, this.options.localStorage)
+    }
     // Navigate the to given url
     await this.page.goto(this.getUrl(path))
     return this.page

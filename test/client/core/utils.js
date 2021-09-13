@@ -61,6 +61,12 @@ export async function waitForImagesLoaded (page) {
   })
 }
 
+/* Return the Store value corresponding to the given path
+ */
+export async function getFromStore (page, path) {
+  return page.evaluate((path) => window.$store.get(path), path)
+}
+
 /* Given a reference screenshot  key and a run screenshot key, this
  * will perform screenshot comparison and return the diffRatio as
  * a percentage of the number of mismatched pixels.
