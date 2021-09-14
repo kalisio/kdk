@@ -58,15 +58,17 @@ export async function upload (page, selector, filePath, wait = 2000) {
 /* Helper function that wait until all images are loaded
  */
 export async function waitForImagesLoaded (page) {
-  await page.evaluate(async () => {
+  await page.evaluate(() => {
     const imageSelectors = Array.from(document.querySelectorAll('img'))
-    await Promise.all(imageSelectors.map(img => {
+    const imgPromises = []
+    imageSelectors.forEach((img) => {
       if (img.complete) return
-      return new Promise((resolve, reject) => {
+      imgPromises.push(new Promise((resolve, reject) => {
         img.addEventListener('load', resolve)
         img.addEventListener('error', reject)
-      })
-    }))
+      }))
+    })
+    return Promise.all(imgPromises)
   })
 }
 
