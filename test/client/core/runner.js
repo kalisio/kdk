@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import puppeteer from 'puppeteer'
@@ -11,7 +12,7 @@ export class Runner {
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
     // Set the runner options using default and overrrident options
-    this.options = Object.assign({
+    this.options = _.merge({
       baseUrl: process.env.APP_URL || `http://localhost:${defaultPort}`,
       browser: {
         product: defaultBrowser,
