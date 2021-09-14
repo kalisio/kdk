@@ -1,0 +1,27 @@
+import { countElements } from './utils'
+
+export async function countItems (page) {
+  return countElements(page, `//div[@id="page"]//div[contains(@class, "q-item-type")]`)
+}
+
+export async function countCards (page) {
+  return countElements(page, `//div[@id="page"]//div[contains(@class, "q-card")]`)
+}
+
+export async function clickItemAction (page, name, action, wait = 250) {
+  const xpath = `//div[@id="page"]//div[contains(@class, "q-item-type") and contains(., "${name}")]//button[@id="${action}"]`
+  const elements = await page.$x(xpath)
+  if (elements.length > 0) {
+    elements[0].click()
+    page.waitForTimeout(wait)
+  }
+}
+
+export async function clickCardAction (page, name, action, wait = 250) {
+  const xpath = `//div[@id="page"]//div[contains(@class, "q-card") and contains(., "${name}")]//button[@id="${action}"]`
+  const elements = await page.$x(xpath)
+  if (elements.length > 0) {
+    elements[0].click()
+    page.waitForTimeout(wait)
+  }
+}

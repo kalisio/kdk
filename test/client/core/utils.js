@@ -21,6 +21,14 @@ export async function isElementVisible (page, selector) {
   }, selector)
 }
 
+/* Count the elements that match the given XPath expresion
+ */
+export async function countElements (page, xpath) {
+  const elements = await page.$x(xpath)
+  if (elements) return elements.length
+  return 0
+}
+
 /* Helper function to click on a given selector
  */
 export async function click (page, selector, wait = 250) {
