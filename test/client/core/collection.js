@@ -9,19 +9,19 @@ export async function countCards (page) {
 }
 
 export async function clickItemAction (page, name, action, wait = 250) {
-  const xpath = `//div[@id="page"]//div[contains(@class, "q-item-type") and contains(., "${name}")]//button[@id="${action}"]`
+  const xpath = `//div[contains(@class, "q-page")]//div[contains(@class, "q-item-type") and contains(., "${name}")]//button[@id="${action}"]`
   const elements = await page.$x(xpath)
   if (elements.length > 0) {
     elements[0].click()
-    page.waitForTimeout(wait)
+    await page.waitForTimeout(wait)
   }
 }
 
 export async function clickCardAction (page, name, action, wait = 250) {
-  const xpath = `//div[@id="page"]//div[contains(@class, "q-card") and contains(., "${name}")]//button[@id="${action}"]`
+  const xpath = `//div[contains(@class, "q-page")]//div[contains(@class, "q-card") and contains(., "${name}")]//button[@id="${action}"]`
   const elements = await page.$x(xpath)
   if (elements.length > 0) {
     elements[0].click()
-    page.waitForTimeout(wait)
+    await page.waitForTimeout(wait)
   }
 }

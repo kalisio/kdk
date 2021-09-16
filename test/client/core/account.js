@@ -16,3 +16,9 @@ export async function deleteAccount (page, name) {
     click(page, '.q-dialog button:nth-child(2)')
   ])
 }
+
+export async function closeSignupAlert (page) {
+  await page.waitForTimeout(1000)
+  await click(page, '#close-signup-alert')
+}
+
