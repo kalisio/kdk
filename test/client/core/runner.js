@@ -7,7 +7,7 @@ import { compareImages } from './utils'
 export class Runner {
   constructor (suite, options = {}) {
     // Compute helper default options
-    const defaultPort = process.env.CLIENT_PORT || (process.env.NODE_ENV === 'production' ? '8081' : '8082')
+    const defaultPort = process.env.CLIENT_PORT || '8080'
     const defaultBrowser = process.env.BROWSER || 'chrome'
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
