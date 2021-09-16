@@ -6,6 +6,8 @@ import { compareImages } from './utils'
 
 export class Runner {
   constructor (suite, options = {}) {
+    this.warnings = []
+    this.errors = []
     // Compute helper default options
     const defaultPort = process.env.CLIENT_PORT || '8080'
     const defaultBrowser = process.env.BROWSER || 'chrome'
@@ -61,6 +63,11 @@ export class Runner {
         for (const [key, value] of Object.entries(items)) localStorage.setItem(key, value)     
       }, this.options.localStorage)
     }
+    // Catch errors
+    this.page.on('console', message => {
+      if (message._type === 'error') this.errors.push(message)
+      if (message._type === 'warning') this.warnings.push(message)
+    })
     // Navigate the to given url
     await this.page.goto(this.getUrl(path))
     return this.page
@@ -84,5 +91,29 @@ export class Runner {
     const refPath = path.join(this.options.screenrefsDir, key + '.png')
     const diff = compareImages(runDir, refPath, this.options.matchTeshold)
     return diff.diffRatio <= diffTolerance
+  }
+
+  hasError () {
+    return this.errors.length > 0
+  }
+
+  getErrors () {
+    return this.errors
+  }
+
+  clearErrors () {
+    this.errors = []
+  }
+
+  hasWarning () {
+    return this.warnings.length > 0
+  }
+
+  getWarnings () {
+    return this.warnings
+  }
+
+  clearWarnings () {
+    this.warnings = []
   }
 }
