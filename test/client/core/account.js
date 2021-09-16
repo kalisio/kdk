@@ -11,10 +11,8 @@ export async function deleteAccount (page, name) {
   await manageAccount(page, 'danger-zone')
   await click(page, '#block-action')
   await type(page, '.q-dialog input', name)
-  await Promise.all([
-    page.waitForNavigation(),
-    click(page, '.q-dialog button:nth-child(2)')
-  ])
+  await click(page, '.q-dialog button:nth-child(2)')
+  await page.waitForTimeout(5000)
 }
 
 export async function closeSignupAlert (page) {
