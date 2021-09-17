@@ -68,7 +68,6 @@ export default {
     computedBaseQuery () {
       const query = _.clone(this.baseQuery)
       Object.assign(query, _.clone(this.timeRange.query))
-      Object.assign(query, _.clone(this.sorter.query))
       return query
     }
   },
