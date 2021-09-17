@@ -38,3 +38,19 @@ export async function clickCardAction (page, name, action, wait = 250) {
     await page.waitForTimeout(wait)
   }
 }
+
+export async function isCardExpanded (page, name) {
+  const xpath = `//div[contains(@class, "q-page")]//div[contains(@class, "q-card") and contains(., "${name}")]//i[contains(@class, "la-angle-up")]`
+  const elements = await page.$x(xpath)
+  return elements.length > 0
+}
+
+export async function expandCard (page, name) {
+  let isExpanded = await isCardExpanded(page, name)
+  if (!isExpanded) await clickCardAction(page, name, 'expand-action', 1000)
+}
+
+export async function shrinkCard (page, name) {
+  let isExpanded = await isCardExpanded(page, name)
+  if (isExpanded) await clickCardAction(page, name, 'expand-action', 1000)
+}
