@@ -1,11 +1,11 @@
 import { countElements } from './utils'
 
 export async function countItems (page) {
-  return countElements(page, `//div[@id="page"]//div[contains(@class, "q-item-type")]`)
+  return countElements(page, `//div[contains(@class, "q-page")]//div[contains(@class, "q-item-type")]`)
 }
 
 export async function countCards (page) {
-  return countElements(page, `//div[@id="page"]//div[contains(@class, "q-card")]`)
+  return countElements(page, `//div[contains(@class, "q-page")]//div[contains(@class, "q-card")]`)
 }
 
 export async function clickItemAction (page, name, action, wait = 250) {
