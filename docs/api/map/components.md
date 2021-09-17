@@ -8,6 +8,7 @@ The **k-catalog** is used to list all available layers in [catalog](./services.m
 * **icon**: display icon,
 * **options**:
   * **exclusive**: `true` if layer selection in the category should be exclusive (defaults to `false`),
+  * **open**: `true` if layer category should initially be open in the catalog component (defaults to `false`),
   * **filter**: a filter supported by [sift](https://github.com/crcn/sift.js) to select layers from the catalog belonging to the category
 
 ![Catalog](../../assets/layers-panel.png)
