@@ -13,6 +13,7 @@
           :header-class="getColor(category)"
           :icon="getIcon(category)"
           :label="$t(category.name)"
+          :default-opened="getDefaultOpened(category)"
           expand-separator>
           <component
             :is="category.componentKey"
@@ -106,6 +107,14 @@ export default {
     },
     getIcon (category) {
       return _.get(category, 'icon.name', _.get(category, 'icon', 'las la-layer-group'))
+    },
+    getDefaultOpened (category) {
+      // if category explicitely specify default opened state, use that
+      if (_.has(category, 'options.open')) return category.options.open
+      // otherwise, defaut open when there's only one category
+      // return this.layerCategories.length === 1
+      // robin: to not break existing apps, just return false when options.open is not defined
+      return false
     },
     categorize () {
       this.layerCategories.forEach(category => {
