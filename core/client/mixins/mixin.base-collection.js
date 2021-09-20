@@ -44,7 +44,8 @@ const baseCollectionMixin = {
             this.items = response.features
           } else if (this.appendItems) {
             // Ensure there is no duplicates when appending
-            this.items = _.unionBy(this.items, response.data, '_id')
+            // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
+            this.items = _.unionBy(response.data, this.items, '_id')
           } else {
             this.items = response.data
           }
@@ -99,6 +100,7 @@ const baseCollectionMixin = {
       // When we append items some items of the previous pages might have been updated.
       // In this case we need to reset the full collection as Rx only tracks changes on the current page
       let updatedItems = (Array.isArray(items) ? items : [items])
+      // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
       updatedItems = _.intersectionWith(this.items, updatedItems, (item1, item2) => (item1._id.toString() === item2._id.toString()))
       if (updatedItems.length > 0) this.resetCollection()
     }
