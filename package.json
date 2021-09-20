@@ -170,7 +170,6 @@
     "puppeteer": "^10.2.0",
     "shx": "^0.3.2",
     "standard": "^14.0.0",
-    "superagent": "^5.1.0",
     "weacast-core": "^1.4.0",
     "weacast-gfs": "^1.5.0",
     "weacast-probe": "^1.4.0"
