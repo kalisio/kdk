@@ -3,6 +3,25 @@ import { CanvasDrawContext } from '../../canvas-draw-context'
 import { bindLeafletEvents } from '../../utils'
 import L from 'leaflet'
 
+function forwardEventBehindPane (e, pane) {
+  // backup original event target and display mode
+  const removed = { node: e.target, display: e.target.style.display }
+  // make event target hidden
+  removed.node.style.display = 'none'
+  // query element at position now that our canvas is hidden
+  const target = document.elementFromPoint(e.clientX, e.clientY)
+
+  if (target && target !== pane) {
+    // synthetize a new event on the element
+    const ev = new MouseEvent(e.type, e)
+    const stopped = !target.dispatchEvent(ev)
+    if (stopped || ev._stopped) L.DomEvent.stop(e)
+  }
+
+  // restore display mode on original event target
+  removed.node.style.display = removed.display
+}
+
 L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   // -- initialized is called on prototype
   initialize: function (options) {
@@ -137,17 +156,29 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
   // -------------------------------------------------------------
   _onLayerClick: function (event) {
+    if (event.originalEvent.target !== this._canvas) return
+
     const indexes = this.getClickableFeaturesAt(event.latlng)
-    if (indexes.length === 0) return
-    this.fire('click', Object.assign({}, event, { feature: this.clickableFeatures[indexes[0]].feature }))
+    if (indexes.length) {
+      this.fire('click', Object.assign({}, event, { feature: this.clickableFeatures[indexes[0]].feature }))
+    } else {
+      // let click pass through our canvas when there's no hit
+      const pane = this.options.pane ? this._map._panes[this.options.pane] : this._map._panes.overlayPane
+      forwardEventBehindPane(event.originalEvent, pane)
+    }
   },
+  // -------------------------------------------------------------
   _onLayerContextMenu: function (event) {
+    if (event.originalEvent.target !== this._canvas) return
+
     const indexes = this.getClickableFeaturesAt(event.latlng)
     if (indexes.length === 0) return
     this.fire('contextmenu', Object.assign({}, event, { feature: this.clickableFeatures[indexes[0]].feature }))
   },
   // -------------------------------------------------------------
   _onMouseMove: function (event) {
+    if (event.originalEvent.target !== this._canvas) return
+
     this.mousePosition = event.latlng
 
     let hoveringFeatures = false
