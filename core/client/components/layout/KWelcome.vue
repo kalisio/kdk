@@ -1,14 +1,10 @@
 <template>
   <q-dialog v-model="showWelcome" persistent>
-    <q-card class="q-pa-sm" style="min-width: 50vw">
-      <div class="row justify-between">
+    <q-card class="q-pa-sm column q-gutter-y-md" style="min-width: 50vw">
+      <div class="row justify-center">
         <img :src="banner">
-        <q-btn class="self-start" id="close-action" icon="las la-times" flat round dense @click="hide" />
       </div>
-      <q-card-section class="q-pa-none">
-        <div class="q-pa-none">
-
-        </div>
+      <div class="row justify-center">
         <q-carousel
           class="q-pa-none"
           v-model="slide"
@@ -46,8 +42,13 @@
             <div class="text-subtitle1">{{ $t('KWelcome.GOODBYE_MESSAGE') }}</div>
           </q-carousel-slide>
         </q-carousel>
+      </div>
+      <div class="row justify-center">
+        <k-action id="close-button" label="CLOSE" renderer="form-button" :handler="() => this.hide()" />
+      </div>
+      <div class="row justify-center">
         <q-checkbox v-model="toggle" @input="onToggleIntroduction" :label="$t('KWelcome.HIDE_WELCOME')" color="primary" />
-      </q-card-section>
+      </div>
     </q-card>
   </q-dialog>
 </template>
@@ -55,6 +56,7 @@
 <script>
 import _ from 'lodash'
 import { openURL, QCheckbox, QCarousel, QCarouselSlide, QCarouselControl } from 'quasar'
+import KAction from '../frame/KAction.vue'
 
 export default {
   name: 'k-welcome',
@@ -62,7 +64,8 @@ export default {
     QCheckbox,
     QCarousel,
     QCarouselSlide,
-    QCarouselControl
+    QCarouselControl,
+    KAction
   },
   props: {
     defaultTour: {
