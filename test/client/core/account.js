@@ -31,5 +31,6 @@ export async function deleteAccount (page, name, wait = 3000) {
 export async function closeSignupAlert (page) {
   await page.waitForTimeout(1000)
   await click(page, '#close-signup-alert')
+  await page.waitForTimeout(500)
 }
 

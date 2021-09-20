@@ -73,8 +73,7 @@ export async function clickFab (page) {
 }
 
 export async function closeWelcomeDialog (page) {
-  const selector = '.q-dialog .q-card button[type=button]'
-  await click(page, selector)
+  await click(page, '.q-dialog #close-button')
 }
 
 export async function logout (page) {
