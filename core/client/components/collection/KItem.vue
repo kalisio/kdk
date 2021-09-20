@@ -1,5 +1,5 @@
 <template>
-  <q-item active-class="selected">
+  <q-item class="cursor-pointer" active-class="selected">
     <!--
       Toggle section
     -->

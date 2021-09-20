@@ -30,7 +30,7 @@ import _ from 'lodash'
 import { QBtnDropdown } from 'quasar'
 
 export default {
-  name: 'k-action-popup',
+  name: 'k-menu',
   components: {
     QBtnDropdown
   },
