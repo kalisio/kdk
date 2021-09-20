@@ -14,7 +14,7 @@ module.exports = [{
   target: '#edit-layer-category',
   title: 'tours.catalog-panel.CATEGORY_ACTIONS_LABEL',
   params: {
-    placement: 'top'
+    placement: 'left'
   }
 }, {
   target: '#add-layer-category',
@@ -29,7 +29,7 @@ module.exports = [{
   content: 'tours.catalog-panel.LAYER_CATEGORY_NAME_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: '#list-layer-categories',
+    clickOnPrevious: '#back-button',
     previousDelay: 1000
   }
 }, {

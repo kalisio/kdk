@@ -484,19 +484,23 @@
   },
   "KFavoriteViews": {
     "FAVORITE_VIEWS_LABEL": "Favorite views",
-    "SORT_VIEWS": "Sort views",
+    "SORT": "Sort views",
     "CREATE_VIEW": "Create a new view",
-    "SAVE_BUTTON": "Save",
+    "ADD_BUTTON": "Add",
+    "BACK_BUTTON": "Back",
     "VIEW_LIST": "Back to list",
     "REMOVE_VIEW": "$t(REMOVE)"
   },
   "KLayerCategories": {
     "LAYER_CATEGORIES_LABEL": "Manage my categories",
+    "ADD_TITLE": "Add a new layer category",
+    "UPDATE_TITLE": "Update a layer category",
     "TITLE": "Manage layer categories",
-    "SORT_CATEGORIES": "Sort categories",
+    "SORT": "Sort categories",
     "CREATE_CATEGORY": "Create a new category",
-    "ADD_BUTTON": "OK",
-    "EDIT_BUTTON": "OK",
+    "BACK_BUTTON": "Back",
+    "ADD_BUTTON": "Add",
+    "EDIT_BUTTON": "Update",
     "CATEGORY_LIST": "Back to list",
     "EDIT_CATEGORY": "$t(EDIT)",
     "REMOVE_CATEGORY": "$t(REMOVE)"

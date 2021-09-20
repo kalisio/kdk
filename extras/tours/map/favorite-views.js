@@ -14,7 +14,7 @@ module.exports = [{
   target: '#remove-favorite-view',
   title: 'tours.favorite-views.FAVORITE_VIEW_ACTIONS_LABEL',
   params: {
-    placement: 'top'
+    placement: 'left'
   }
 }, {
   target: '#add-favorite-view',
@@ -29,7 +29,7 @@ module.exports = [{
   content: 'tours.favorite-views.FAVORITE_VIEW_NAME_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: '#list-favorite-views',
+    clickOnPrevious: '#back-button',
     previousDelay: 1000
   }
 }, {

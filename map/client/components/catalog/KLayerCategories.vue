@@ -2,15 +2,13 @@
   <k-modal
     ref="modal"
     id="layer-categories-modal"
-    :title="$t('KLayerCategories.TITLE')"
-    :buttons="getButtons()"
+    :title="title"
+    :toolbar="toolbar"
+    :buttons="buttons"
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content" id="layer-categories-content">
-      <q-card-section v-show="hasToolbar">
-        <k-panel id="layer-categories-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
-      </q-card-section>
       <q-card-section id="layer-categories-list" v-if="mode === 'list'">
         <k-list
           style="min-height: 50px; min-width: 200px"
@@ -22,30 +20,10 @@
           @collection-refreshed="refreshCategories" />
       </q-card-section>
       <q-card-section id="layer-category-add" v-if="mode === 'add'">
-        <div class="colum q-gutter-y-md">
-          <k-form ref="addForm" :schema="categorySchema" style="min-width: 300px" />
-          <div class="q-pa-sm row justify-end">
-            <q-btn
-              :loading="savingCategory"
-              color="accent"
-              id="create-layer-category"
-              :label="$t('KLayerCategories.ADD_BUTTON')"
-              @click="onAdd" />
-          </div>
-        </div>
+        <k-form ref="addForm" :schema="categorySchema" style="min-width: 300px" />
       </q-card-section>
       <q-card-section id="layer-category-edit" v-if="mode === 'edit'">
-        <div class="colum q-gutter-y-md">
-          <k-form ref="editForm" :schema="categorySchema" style="min-width: 300px" />
-          <div class="q-pa-sm row justify-end">
-            <q-btn
-              :loading="savingCategory"
-              color="accent"
-              id="edit-layer-category"
-              :label="$t('KLayerCategories.EDIT_BUTTON')"
-              @click="onEdit" />
-          </div>
-        </div>
+        <k-form ref="editForm" :schema="categorySchema" style="min-width: 300px" />
       </q-card-section>
     </div>
   </k-modal>
@@ -70,9 +48,62 @@ export default {
     baseQuery () {
       return Object.assign({ type: 'Category' }, this.sorter.query)
     },
-    hasToolbar () {
-      if (this.mode === 'list') return (this.count > 0) || (this.filter.patern !== '')
-      return (this.count > 0)
+    title () {
+      if (this.mode === 'add') {
+        return this.$t('KLayerCategories.ADD_TITLE')
+      } else if (this.mode === 'edit') {
+        return this.$t('KLayerCategories.UPDATE_TITLE')
+      } else {
+        return this.$t('KLayerCategories.TITLE')
+      }
+    },
+    toolbar () {
+      if (this.mode === 'list') {
+        return [
+          {
+            component: 'collection/KSorter',
+            id: 'layer-categories-sorter-options',
+            tooltip: 'KLayerCategories.SORT',
+            options: [
+              { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
+              { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
+              { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
+              { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
+            ]
+          },
+          { component: 'collection/KFilter', style: 'max-width: 200px;' },
+          { component: 'QSpace' },
+          { id: 'add-layer-category', icon: 'las la-plus-circle', tooltip: 'KLayerCategories.CREATE_CATEGORY',
+            size: '1rem', handler: () => { this.mode = 'add' } }
+        ]
+      } else {
+        return []
+      }
+    },
+    buttons () {
+      let buttons = []
+      buttons.push({
+        id: 'close-button', label: 'CLOSE', renderer: 'form-button',
+        handler: () => this.$refs.modal.close(), outline: (this.mode !== 'list')
+      })
+      if ((this.mode !== 'list') && (this.count > 0)) {
+        buttons.push({
+          id: 'back-button', label: 'KLayerCategories.BACK_BUTTON', renderer: 'form-button', outline: true,
+          handler: () => { this.mode = 'list' }
+        })
+      }
+      if (this.mode === 'add') {
+        buttons.push({
+          id: 'create-layer-category', label: 'KLayerCategories.ADD_BUTTON', renderer: 'form-button',
+          loading: this.savingCategory, handler: this.onAdd
+        })
+      } else if (this.mode === 'edit') {
+        buttons.push({
+          id: 'edit-layer-category', label: 'KLayerCategories.EDIT_BUTTON', renderer: 'form-button',
+          loading: this.savingCategory, handler: this.onEdit
+        })
+      }
+      return buttons
     },
     hasLayers () {
       return this.layers.length > 0
@@ -139,32 +170,6 @@ export default {
       sorter: this.$store.get('sorter'),
       mode: 'list',
       count: 0,
-      toolbar: {
-        list: [
-          {
-            component: 'collection/KSorter',
-            id: 'layer-categories-sorter-options',
-            tooltip: 'KLayerCategories.SORT',
-            options: [
-              { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
-              { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
-              { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
-              { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
-            ]
-          },
-          { component: 'collection/KFilter', style: 'max-width: 200px;' },
-          { component: 'QSpace' },
-          { id: 'add-layer-category', icon: 'las la-plus-circle', tooltip: 'KLayerCategories.CREATE_CATEGORY', size: '1rem', handler: () => { this.mode = 'add' } }
-        ],
-        edit: [
-          { id: 'list-layer-categories', icon: 'las la-arrow-left', label: 'KLayerCategories.CATEGORY_LIST', handler: () => { this.mode = 'list' } },
-          { component: 'QSpace' }
-        ],
-        add: [
-          { id: 'list-layer-categories', icon: 'las la-arrow-left', label: 'KLayerCategories.CATEGORY_LIST', handler: () => { this.mode = 'list' } },
-          { component: 'QSpace' }
-        ]
-      },
       savingCategory: false,
       categoryRenderer: {
         component: 'collection/KItem',
@@ -183,11 +188,6 @@ export default {
     }
   },
   methods: {
-    getButtons () {
-      return [{
-        id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.modal.close()
-      }]
-    },
     async onAdd () {
       const result = this.$refs.addForm.validate()
       if (result.isValid) {

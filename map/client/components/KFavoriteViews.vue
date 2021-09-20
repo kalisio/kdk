@@ -1,6 +1,6 @@
 <template>
   <q-card id="favorite-views">
-    <q-card-section v-show="hasToolbar">
+    <q-card-section>
       <k-panel id="favorite-views-toolbar" :content="toolbar" :mode="mode" class="no-wrap" />
     </q-card-section>
     <q-card-section id="favorite-views-list" v-if="mode === 'list'">
@@ -15,18 +15,15 @@
         @selection-changed="selectView" />
     </q-card-section>
     <q-card-section id="favorite-view-add" v-if="mode === 'add'">
-      <div class="colum q-gutter-y-md">
-        <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
-        <div class="q-pa-sm row justify-end">
-          <k-action
-            id="create-favorite-view"
-            :label="$t('KFavoriteViews.SAVE_BUTTON')"
-            renderer="form-button"
-            :loading="savingView"
-            @triggered="onSave" />
-        </div>
-      </div>
+      <k-form ref="form" :schema="viewSchema" style="min-width: 300px" />
     </q-card-section>
+    <q-card-actions align="right">
+      <k-panel
+        id="favorite-views-buttons"
+        :content="buttons"
+        :action-renderer="'form-button'"
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+    </q-card-actions>
   </q-card>
 </template>
 
@@ -39,23 +36,19 @@ export default {
   components: {
     KForm
   },
+  props: {
+    closeHandler: {
+      type: Function,
+      default: null
+    }
+  },
   computed: {
     baseQuery () {
       return Object.assign({ type: 'Context' }, this.sorter.query)
     },
-    hasToolbar () {
-      if (this.mode === 'list') return (this.count > 0) || (this.filter.patern !== '')
-      return (this.count > 0)
-    }
-  },
-  data () {
-    return {
-      filter: this.$store.get('filter'),
-      sorter: this.$store.get('sorter'),
-      mode: 'list',
-      count: 0,
-      toolbar: {
-        list: [
+    toolbar () {
+      if (this.mode === 'list') {
+        return [
           {
             component: 'collection/KSorter',
             id: 'favorite-views-sorter-options',
@@ -69,13 +62,42 @@ export default {
           },
           { component: 'collection/KFilter', style: 'max-width: 200px;' },
           { component: 'QSpace' },
-          { id: 'add-favorite-view', icon: 'kdk:view-plus.png', tooltip: 'KFavoriteViews.CREATE_VIEW', size: '1rem', handler: () => { this.mode = 'add' } }
-        ],
-        add: [
-          { id: 'list-favorite-views', icon: 'las la-arrow-left', label: 'KFavoriteViews.VIEW_LIST', handler: () => { this.mode = 'list' } },
-          { component: 'QSpace' }
+          { id: 'add-favorite-view', icon: 'kdk:view-plus.png', tooltip: 'KFavoriteViews.CREATE_VIEW',
+            size: '1rem', handler: () => { this.mode = 'add' } }
         ]
-      },
+      } else {
+        return []
+      }
+    },
+    buttons () {
+      let buttons = []
+      if (this.closeHandler) {
+        buttons.push({
+          id: 'close-button', label: 'CLOSE', renderer: 'form-button',
+          handler: this.closeHandler, outline: (this.mode !== 'list')
+        })
+      }
+      if ((this.mode !== 'list') && (this.count > 0)) {
+        buttons.push({
+          id: 'back-button', label: 'KFavoriteViews.BACK_BUTTON', renderer: 'form-button', outline: true,
+          handler: () => { this.mode = 'list' }
+        })
+      }
+      if (this.mode === 'add') {
+        buttons.push({
+          id: 'create-favorite-view', label: 'KFavoriteViews.ADD_BUTTON', renderer: 'form-button',
+          loading: this.savingView, handler: this.onAdd
+        })
+      }
+      return buttons
+    }
+  },
+  data () {
+    return {
+      filter: this.$store.get('filter'),
+      sorter: this.$store.get('sorter'),
+      mode: 'list',
+      count: 0,
       viewSchema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://www.kalisio.xyz/schemas/favorite-view.create.json#',
@@ -124,7 +146,7 @@ export default {
     }
   },
   methods: {
-    async onSave () {
+    async onAdd () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
         const view = result.values

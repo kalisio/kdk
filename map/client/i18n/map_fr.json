@@ -485,19 +485,23 @@
   },
   "KFavoriteViews": {
     "FAVORITE_VIEWS_LABEL": "Vues favorites",
-    "SORT_VIEWS": "Trier les vues",
+    "SORT": "Trier les vues",
     "CREATE_VIEW": "Créer une nouvelle vue",
-    "SAVE_BUTTON": "Enregistrer",
+    "BACK_BUTTON": "Revenir",
+    "ADD_BUTTON": "Ajouter",
     "VIEW_LIST": "Retour à la liste",
     "REMOVE_VIEW": "$t(REMOVE)"
   },
   "KLayerCategories": {
     "LAYER_CATEGORIES_LABEL": "Gérer mes catégories",
+    "ADD_TITLE": "Ajouter une nouvelle catégorie",
+    "UPDATE_TITLE": "Mettre à jour une catégorie",
     "TITLE": "Gérer les catégories des couches",
-    "SORT_CATEGORIES": "Trier les catégories",
+    "SORT": "Trier les catégories",
     "CREATE_CATEGORY": "Créer une nouvelle catégorie",
-    "ADD_BUTTON": "OK",
-    "EDIT_BUTTON": "OK",
+    "BACK_BUTTON": "Revenir",
+    "ADD_BUTTON": "Ajouter",
+    "EDIT_BUTTON": "Modifier",
     "CATEGORY_LIST": "Retour à la liste",
     "EDIT_CATEGORY": "$t(EDIT)",
     "REMOVE_CATEGORY": "$t(REMOVE)"
