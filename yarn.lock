@@ -257,6 +257,15 @@
     "@feathersjs/commons" "^4.0.0"
     "@feathersjs/errors" "^3.3.6"
 
+"@feathersjs/authentication-client@^1.0.2":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@feathersjs/authentication-client/-/authentication-client-1.0.11.tgz#86352bf4c7179b905c9a977b26f389830c974e72"
+  integrity sha512-4CWQdmdRINMMqHT1/g0N5jqw16u1RjaSPhlZtJZ0OLdqgN3tl5wL+Lb8ThPxihvt1WHiOdwGt141LvWQ446Bsw==
+  dependencies:
+    "@feathersjs/errors" "^3.3.6"
+    debug "^4.0.0"
+    jwt-decode "^2.1.0"
+
 "@feathersjs/authentication-jwt@^2.0.1", "@feathersjs/authentication-jwt@^2.0.10":
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/@feathersjs/authentication-jwt/-/authentication-jwt-2.0.10.tgz#f8ec25d1230552b311af21822c5974cbc5f99b5e"
@@ -5014,6 +5023,11 @@ jws@^3.0.0, jws@^3.1.4, jws@^3.2.2:
   dependencies:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
+
+jwt-decode@^2.1.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-2.2.0.tgz#7d86bd56679f58ce6a84704a657dd392bba81a79"
+  integrity sha1-fYa9VmefWM5qhHBKZX3TkruoGnk=
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"

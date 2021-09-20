@@ -141,6 +141,7 @@
     "xml2js": "^0.4.22"
   },
   "devDependencies": {
+    "@feathersjs/authentication-client": "^1.0.2",
     "@kalisio/feathers-distributed": "^1.0.4",
     "@turf/intersect": "^6.1.3",
     "babel-cli": "^6.24.1",
