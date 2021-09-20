@@ -19,7 +19,6 @@
           control-color="primary"
         >
           <q-carousel-slide name="welcome" class="column no-wrap justify-center text-center q-gutter-md">
-
             <div class="text-h5">{{ $t('KWelcome.WELCOME_TITLE') }}</div>
             <div class="text-subtitle1">{{ $t('KWelcome.WELCOME_MESSAGE') }}</div>
             <div class="text-subtitle1">{{ $t('KWelcome.ONLINE_HELP') }}
