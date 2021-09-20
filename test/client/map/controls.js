@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { clickTopPaneAction, waitForImagesLoaded, getFromStore } from '../core'
+import * as core from '../core'
 
 export async function zoomToExtent (page, bbox) {
   const currentUrl = page.url()
@@ -15,9 +15,9 @@ export async function zoomToExtent (page, bbox) {
 }
 
 export async function zoomToPosition (page, latitude, longitude) {
-  const currentLocation = await getFromStore(page, 'geolocation.position')
+  const currentLocation = await core.getFromStore(page, 'geolocation.position')
   page.setGeolocation({ latitude, longitude })
-  await clickTopPaneAction(page, 'locate-user')
-  await waitForImagesLoaded(page)
+  await core.clickTopPaneAction(page, 'locate-user')
+  await core.waitForImagesLoaded(page)
   page.setGeolocation(currentLocation)
 }
