@@ -246,7 +246,12 @@ This mixin assumes that your component has initialized its [Weacast client](http
 
 Make it possible to draw custom graphic elements on top of other layers using HTML canvas elements. These custom graphic elements are defined by their draw function and are run in the client application, using a controlled draw context. It is not possible for these draw functions to access anything outside the specified context.
 
-* **createLeafletCanvasLayer (options)** is automatically registered to allow creation of such Leaflet layer.
+* **createLeafletCanvasLayer (options)** is automatically registered to allow creation of such Leaflet layer. The following fields can be set on the **options** object:
+  * **draw** an array containing the same information as given to **setCanvasLayerDrawCode** **drawCode** parameter.
+  * **userData** an object containing user data that'll be usable in the draw code.
+  * **autoRedraw** boolean set to true if the canvas should automatically be redrawn every frame.
+  * **pointerEventsEnabled** boolean set to true to enable pointer events on the canvas layer (required if you use clickable elements).
+  * **clickThroughEnabled** boolean set to true to allow click events to go through the canvas layer when no clickable elements were clicked (requires **pointerEventsEnabled** to work).
 
 * **setCanvasLayerDrawCode (layerName, drawCode, autoRedraw)** define the draw code used by the layer named `layerName`. `autoRedraw` is a boolean used to enable automatic refresh of the layer at each displayed frame (required eg. to animate elements). `drawCode` is expected to be an array of objects where each object is of the following form :
   * `{ feature: 'LAYER_NAME?FEATURE_NAME', code: '... some javascript draw code ...' }` will run the given draw code only for the feature named `FEATURE_NAME` in the layer named `LAYER_NAME`.
