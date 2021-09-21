@@ -60,7 +60,7 @@ export class Runner {
     // Handle the local storage if needed
     if (this.options.localStorage) {
       await this.page.evaluateOnNewDocument(items => {
-        for (const [key, value] of Object.entries(items)) localStorage.setItem(key, value)     
+        for (const [key, value] of Object.entries(items)) localStorage.setItem(key, value)
       }, this.options.localStorage)
     }
     // Catch errors

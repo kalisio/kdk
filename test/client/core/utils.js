@@ -43,7 +43,7 @@ export async function click (page, selector, wait = 250) {
 export async function type (page, selector, text, enter = false, replace = false, wait = 250) {
   await page.waitForSelector(selector)
   if (replace) {
-    await page.click(selector, {clickCount: 3})
+    await page.click(selector, { clickCount: 3 })
     await page.keyboard.press('Backspace')
   }
   await page.type(selector, text)

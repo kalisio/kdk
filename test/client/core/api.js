@@ -7,7 +7,6 @@ export class Api {
   constructor (options = {}) {
     // Compute helper default options
     const defaultPort = process.env.PORT || process.env.HTTPS_PORT || 8081
-    const apiPrefix = process.env.API_PREFIX || '/api'
     // Set the runner options using default and overrrident options
     this.options = _.merge({
       baseUrl: process.env.API_URL || `http://localhost:${defaultPort}`,
@@ -15,12 +14,12 @@ export class Api {
     }, options)
   }
 
-  createClient(options = {}) {
+  createClient (options = {}) {
     const client = feathers()
     client.configure(feathers.rest(this.options.baseUrl).superagent(request))
-          .configure(auth(_.merge({
-            path: `${this.options.apiPrefix}/authentication`
-          }, options)))
+      .configure(auth(_.merge({
+        path: `${this.options.apiPrefix}/authentication`
+      }, options)))
     // Display the API options
     console.log('API access created with the following options:')
     console.log(this.options)

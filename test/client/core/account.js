@@ -33,4 +33,3 @@ export async function closeSignupAlert (page) {
   await click(page, '#close-signup-alert')
   await page.waitForTimeout(500)
 }
-

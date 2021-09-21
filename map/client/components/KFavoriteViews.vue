@@ -62,31 +62,45 @@ export default {
           },
           { component: 'collection/KFilter', style: 'max-width: 200px;' },
           { component: 'QSpace' },
-          { id: 'add-favorite-view', icon: 'kdk:view-plus.png', tooltip: 'KFavoriteViews.CREATE_VIEW',
-            size: '1rem', handler: () => { this.mode = 'add' } }
+          {
+            id: 'add-favorite-view',
+            icon: 'kdk:view-plus.png',
+            tooltip: 'KFavoriteViews.CREATE_VIEW',
+            size: '1rem',
+            handler: () => { this.mode = 'add' }
+          }
         ]
       } else {
         return []
       }
     },
     buttons () {
-      let buttons = []
+      const buttons = []
       if (this.closeHandler) {
         buttons.push({
-          id: 'close-button', label: 'CLOSE', renderer: 'form-button',
-          handler: this.closeHandler, outline: (this.mode !== 'list')
+          id: 'close-button',
+          label: 'CLOSE',
+          renderer: 'form-button',
+          handler: this.closeHandler,
+          outline: (this.mode !== 'list')
         })
       }
       if ((this.mode !== 'list') && (this.count > 0)) {
         buttons.push({
-          id: 'back-button', label: 'KFavoriteViews.BACK_BUTTON', renderer: 'form-button', outline: true,
+          id: 'back-button',
+          label: 'KFavoriteViews.BACK_BUTTON',
+          renderer: 'form-button',
+          outline: true,
           handler: () => { this.mode = 'list' }
         })
       }
       if (this.mode === 'add') {
         buttons.push({
-          id: 'create-favorite-view', label: 'KFavoriteViews.ADD_BUTTON', renderer: 'form-button',
-          loading: this.savingView, handler: this.onAdd
+          id: 'create-favorite-view',
+          label: 'KFavoriteViews.ADD_BUTTON',
+          renderer: 'form-button',
+          loading: this.savingView,
+          handler: this.onAdd
         })
       }
       return buttons

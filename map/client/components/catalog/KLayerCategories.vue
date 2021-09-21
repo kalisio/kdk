@@ -73,34 +73,51 @@ export default {
           },
           { component: 'collection/KFilter', style: 'max-width: 200px;' },
           { component: 'QSpace' },
-          { id: 'add-layer-category', icon: 'las la-plus-circle', tooltip: 'KLayerCategories.CREATE_CATEGORY',
-            size: '1rem', handler: () => { this.mode = 'add' } }
+          {
+            id: 'add-layer-category',
+            icon: 'las la-plus-circle',
+            tooltip: 'KLayerCategories.CREATE_CATEGORY',
+            size: '1rem',
+            handler: () => { this.mode = 'add' }
+          }
         ]
       } else {
         return []
       }
     },
     buttons () {
-      let buttons = []
+      const buttons = []
       buttons.push({
-        id: 'close-button', label: 'CLOSE', renderer: 'form-button',
-        handler: () => this.$refs.modal.close(), outline: (this.mode !== 'list')
+        id: 'close-button',
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: () => this.$refs.modal.close(),
+        outline: (this.mode !== 'list')
       })
       if ((this.mode !== 'list') && (this.count > 0)) {
         buttons.push({
-          id: 'back-button', label: 'KLayerCategories.BACK_BUTTON', renderer: 'form-button', outline: true,
+          id: 'back-button',
+          label: 'KLayerCategories.BACK_BUTTON',
+          renderer: 'form-button',
+          outline: true,
           handler: () => { this.mode = 'list' }
         })
       }
       if (this.mode === 'add') {
         buttons.push({
-          id: 'create-layer-category', label: 'KLayerCategories.ADD_BUTTON', renderer: 'form-button',
-          loading: this.savingCategory, handler: this.onAdd
+          id: 'create-layer-category',
+          label: 'KLayerCategories.ADD_BUTTON',
+          renderer: 'form-button',
+          loading: this.savingCategory,
+          handler: this.onAdd
         })
       } else if (this.mode === 'edit') {
         buttons.push({
-          id: 'edit-layer-category', label: 'KLayerCategories.EDIT_BUTTON', renderer: 'form-button',
-          loading: this.savingCategory, handler: this.onEdit
+          id: 'edit-layer-category',
+          label: 'KLayerCategories.EDIT_BUTTON',
+          renderer: 'form-button',
+          loading: this.savingCategory,
+          handler: this.onEdit
         })
       }
       return buttons

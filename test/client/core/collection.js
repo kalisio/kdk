@@ -1,12 +1,11 @@
 import { countElements } from './utils'
 
-
 export async function countItems (page) {
-  return countElements(page, `//div[contains(@class, "q-page")]//div[contains(@class, "q-item-type")]`)
+  return countElements(page, '//div[contains(@class, "q-page")]//div[contains(@class, "q-item-type")]')
 }
 
 export async function countCards (page) {
-  return countElements(page, `//div[contains(@class, "q-page")]//div[contains(@class, "q-card")]`)
+  return countElements(page, '//div[contains(@class, "q-page")]//div[contains(@class, "q-card")]')
 }
 
 export async function itemExists (page, name) {
@@ -46,11 +45,11 @@ export async function isCardExpanded (page, name) {
 }
 
 export async function expandCard (page, name) {
-  let isExpanded = await isCardExpanded(page, name)
+  const isExpanded = await isCardExpanded(page, name)
   if (!isExpanded) await clickCardAction(page, name, 'expand-action', 1000)
 }
 
 export async function shrinkCard (page, name) {
-  let isExpanded = await isCardExpanded(page, name)
+  const isExpanded = await isCardExpanded(page, name)
   if (isExpanded) await clickCardAction(page, name, 'expand-action', 1000)
 }
