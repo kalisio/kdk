@@ -18,7 +18,7 @@ export class Runner {
       baseUrl: process.env.APP_URL || `http://localhost:${defaultPort}`,
       browser: {
         product: defaultBrowser,
-        headless: process.env.HEADER ? !!process.env.HEADLESS : false,
+        headless: process.env.HEADLESS ? !!process.env.HEADLESS : false,
         defaultViewport: {
           width: +process.env.VIEWPORT_WIDTH || 1024,
           height: +process.env.VIEWPORT_HEIGHT || 768
@@ -28,7 +28,7 @@ export class Runner {
       runDir: defaultRunDir,
       screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
       screenshotsDir: path.join(defaultRunDir, '/screenshots'),
-      matchTeshold: 0.1
+      matchTreshold: 0.1
     }, options)
     // Display the runner options
     console.log('Runner created with the following options:')
@@ -89,7 +89,7 @@ export class Runner {
     await this.capture(key)
     const runDir = path.join(this.options.screenshotsDir, key + '.png')
     const refPath = path.join(this.options.screenrefsDir, key + '.png')
-    const diff = compareImages(runDir, refPath, this.options.matchTeshold)
+    const diff = compareImages(runDir, refPath, this.options.matchTreshold)
     return diff.diffRatio <= diffTolerance
   }
 

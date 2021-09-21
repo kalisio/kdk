@@ -7,7 +7,7 @@ export async function manageAccount (page, tab = 'profile') {
   if (tab === 'profile') {
     if (!url.includes('profile')) await clickTopPaneAction(page, 'profile')
   } else if (tab === 'security') {
-    if (!url.includes('security')) await clickTopPaneAction(page, 'secutity')
+    if (!url.includes('security')) await clickTopPaneAction(page, 'security')
   } else {
     if (!url.includes('danger-zone')) await clickTopPaneAction(page, 'danger-zone')
   }

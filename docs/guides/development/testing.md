@@ -11,13 +11,13 @@ In addition to **Mocha** and **Chai**, the **KDK** provides helper functions to 
 
 ### Key concepts
 
-The **KDK** provides you with some capabilities to easily deal with :
+The **KDK** provides you with some capabilities to easily:
 
 * test your UI components: the **Runner class** allows you to manage a **Puppereer** browser as well as the default page attached to this browser. In addition, it provides a useful inteface to override permissions, set items in local storage, catch warnings and error messages from the console, take screenshots and compare them to some reference images. 
 
 * deal with your app's API: the **Api class** allows you to access the differents services exposed by the API.
 
-* structure your project test structure in a simple and clear way: Indeed, the **KDK** assumes that a directory has been assigned to each **test suite** in order to store test data. These directories, are stored in a more general `data` directory and must be named with the **test suite** name. If you have any screenshot references then then they must stored in a decidacted sub directory named `screenrefs`.
+* structure your project test structure: the **KDK** assumes that a directory has been assigned to each **test suite** in order to store test data. These directories, are stored in a more general `data` directory and must be named with the **test suite** name. If you have any screenshot references then then they must stored in a decidacted sub directory named `screenrefs`.
 
 ```bash
 test
@@ -76,8 +76,6 @@ describe(suite, () => {
   })
 })
 ```
-
-The **Runner** helps you in running a **test suite** using **Puppeteer** and structuring the so-called **run** directory. This directory is the location where to store generated assets (data, screenshots...) while running the tests.
 
 ### Map
 
