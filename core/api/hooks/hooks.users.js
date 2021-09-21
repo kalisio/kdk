@@ -93,11 +93,17 @@ export function generatePassword (hook) {
   // If we have a password policy ensure we match it
   if (app.getPasswordPolicy) {
     const validator = app.getPasswordPolicy()
-    do {
-      data.password = generateRandomPassword(validator.options.minLength || 12, false, passwordRule)
-    } while (!validator.validate(data.password))
+    // Check if a compliant password has been provided, otherwise generate it
+    if (!data.password || !validator.validate(data.password)) {
+      do {
+        data.password = generateRandomPassword(validator.options.minLength || 12, false, passwordRule)
+      } while (!validator.validate(data.password))
+    }
   } else {
-    data.password = generateRandomPassword(12, false, passwordRule)
+    // Check if a password has been provided, otherwise generate it
+    if (!data.password) {
+      data.password = generateRandomPassword(12, false, passwordRule)
+    }
   }
   return hook
 }
