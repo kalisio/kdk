@@ -3,6 +3,8 @@ import { CanvasDrawContext } from '../../canvas-draw-context'
 import { bindLeafletEvents } from '../../utils'
 import L from 'leaflet'
 
+// Helper function to forward events when click through is enabled
+// on canvas layers
 function forwardEventBehindPane (e, pane) {
   // backup original event target and display mode
   const removed = { node: e.target, display: e.target.style.display }
@@ -161,7 +163,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     const indexes = this.getClickableFeaturesAt(event.latlng)
     if (indexes.length) {
       this.fire('click', Object.assign({}, event, { feature: this.clickableFeatures[indexes[0]].feature }))
-    } else {
+    } else if (this.options.clickThroughEnabled) {
       // let click pass through our canvas when there's no hit
       const pane = this.options.pane ? this._map._panes[this.options.pane] : this._map._panes.overlayPane
       forwardEventBehindPane(event.originalEvent, pane)
