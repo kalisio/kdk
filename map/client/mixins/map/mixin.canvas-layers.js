@@ -106,7 +106,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
 
   hasClickableFeaturesAt: function (latlng) {
-    if (this.clickableFeatures.length === 0) return false
+    if (!latlng || this.clickableFeatures.length === 0) return false
 
     const pt = this.latLonToCanvas({ lat: latlng.lat, lon: latlng.lng })
     const ctx = this._canvas.getContext('2d')
@@ -126,7 +126,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
 
   getClickableFeaturesAt: function (latlng) {
-    if (this.clickableFeatures.length === 0) return []
+    if (!latlng || this.clickableFeatures.length === 0) return []
 
     const pt = this.latLonToCanvas({ lat: latlng.lat, lon: latlng.lng })
 
@@ -212,16 +212,18 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
   // -------------------------------------------------------------
   getEvents: function () {
-    var events = {
+    const events = {
       resize: this._onLayerDidResize,
       moveend: this._onLayerDidMove,
-      zoom: this._onLayerDidMove,
-      click: this._onLayerClick,
-      contextmenu: this._onLayerContextMenu,
-      mousemove: this._onMouseMove
+      zoom: this._onLayerDidMove
     }
     if (this._map.options.zoomAnimation && L.Browser.any3d) {
       events.zoomanim = this._animateZoom
+    }
+    if (this.options.pointerEventsEnabled) {
+      events.click = this._onLayerClick
+      events.contextmenu = this._onLayerContextMenu
+      events.mousemove = this._onMouseMove
     }
 
     return events
@@ -230,6 +232,8 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   onAdd: function (map) {
     this._map = map
     this._canvas = L.DomUtil.create('canvas', 'leaflet-layer')
+    // disable pointer events if not explicitely enabled
+    if (!this.options.pointerEventsEnabled) this._canvas.style.pointerEvents = 'none'
 
     var size = this._map.getSize()
     this._canvas.width = size.x
