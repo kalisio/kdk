@@ -38,47 +38,59 @@ export class Api {
       return client.service(context ? `${this.options.apiPrefix}/${context}/${name}` : `${this.options.apiPrefix}/${name}`)
     }
 
-    // Helper function used to create an organisation defined by:
+    // Helper function used to create/remove an organisation defined by:
     // - a owner
     // - a list of members with permissions
-    // - a list of groups and group members with permissions
-    // This function does not try to create already existing items but retrieve it
-    // so that it can be used as a before hook even if cleanup has not been done when test fails
+    // - a list of groups
+    // The create functions does not try to create already existing items but retrieve it
+    // so that it can be used as a before hook even if cleanup has not been done when test fails.
+    // When removing previously created structure, the functions swallow errors on non existing items
+    // so that it can be used as a after hook to ensure proper cleanup even if test fails
+
     client.createOrganisation = async (organisation) => {
-      let org, owner
+      let org
       // First initiate owner account with his organisation if required
       const orgOwner = _.get(organisation, 'owner')
-      // If user already exists we should be able to login, otherwise create account
-      try {
-        await client.login(orgOwner)
-        debug(`Connected to API as user ${orgOwner.name} - ${orgOwner._id}`)
-        const response = await client.getService('users').find({ query: { email: orgOwner.email } })
-        owner = response.data[0]
-        debug(`Retrieved organisation owner ${owner.name} - ${owner._id}`)
-      } catch (error) {
-        owner = await client.getService('users').create(orgOwner)
-        debug(`Created organisation owner ${owner.name} - ${owner._id}`)
-        await client.login(orgOwner)
-        debug(`Connected to API as user ${owner.name} - ${owner._id}`)
-      }
+      await client.createUser(orgOwner)
+      // Ensure we are logged as org owner
+      await client.login(orgOwner)
       // Retrieve org
-      const response = await client.getService('organisations').find({ query: { _id: owner._id } })
+      const response = await client.getService('organisations').find({ query: { _id: orgOwner._id } })
       // If not create it
       if (response.total === 0) {
         org = await client.getService('organisations').create(_.pick(organisation, ['name', 'description']))
-        debug(`Created organisation ${org.name} - ${org._id}`)
+        debug(`Created organisation ${org.name} - ID ${org._id}`)
       } else {
         org = response.data[0]
-        debug(`Retrieved organisation ${org.name} - ${org._id}`)
+        debug(`Retrieved organisation ${org.name} - ID ${org._id}`)
       }
       // Keep track of IDs
-      orgOwner._id = owner._id
       organisation._id = org._id
       organisation.name = org.name
+      await client.logout()
+    }
+
+    client.createUser = async (user) => {
+      let createdUser
+      // If user already exists we should be able to login, otherwise create account
+      try {
+        await client.login(user)
+        const response = await client.getService('users').find({ query: { email: user.email } })
+        createdUser = response.data[0]
+        debug(`Retrieved user ${createdUser.name} - ID ${createdUser._id}`)
+      } catch {
+        createdUser = await client.getService('users').create(user)
+        debug(`Created user ${createdUser.name} - ID ${createdUser._id}`)
+      }
+      // Keep track of ID
+      user._id = createdUser._id
+      await client.logout()
     }
 
     client.createMembers = async (organisation) => {
       const orgOwner = _.get(organisation, 'owner')
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
       const members = _.get(organisation, 'members', [])
       for (let i = 0; i < members.length; i++) {
         const orgMember = members[i]
@@ -107,14 +119,18 @@ export class Api {
             resource: organisation._id,
             resourcesService: 'organisations'
           })
-          debug(`Added organisation member ${member.name} - ${member._id} - ${orgMember.permissions}`)
+          debug(`Added organisation member ${member.name} - ID ${member._id} - ${orgMember.permissions}`)
         }
         // Keep track of IDs
         orgMember._id = member._id
       }
+      await client.logout()
     }
 
     client.createGroups = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
       const groups = _.get(organisation, 'groups', [])
       for (let i = 0; i < groups.length; i++) {
         const orgGroup = groups[i]
@@ -124,35 +140,50 @@ export class Api {
         // If not existing create it
         if (response.total === 0) {
           group = await client.getService('groups', organisation).create(_.pick(orgGroup, ['name', 'description']))
-          debug(`Created organisation group ${group.name} - ${group._id}`)
+          debug(`Created organisation group ${group.name} - ID ${group._id}`)
         } else {
           group = response.data[0]
-          debug(`Retrieved organisation group ${group.name} - ${group._id}`)
+          debug(`Retrieved organisation group ${group.name} - ID ${group._id}`)
         }
         // Keep track of IDs
         orgGroup._id = group._id
       }
+      await client.logout()
     }
 
-    // Remove previously created structure, this function swallow errors on non existing items
-    // so that it can be used as a after hook to ensure proper cleanup even if test fails
     client.removeOrganisation = async (organisation) => {
       const orgOwner = _.get(organisation, 'owner')
+      await client.removeUser(orgOwner)
+      // TODO: remove org if not private user org
+    }
+
+    client.removeUser = async (user) => {
+      // Ensure we are logged as user first
       try {
-        await client.getService('organisations').remove(organisation._id)
-        debug(`Removed organisation ${organisation._id}`)
-      } catch {
-        debug(`Impossible to remove organisation ${organisation._id}`)
+        await client.login(user)
+      } catch (error) {
+        debug(`Impossible to connect as user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
       }
       try {
-        await client.getService('users').remove(orgOwner._id)
-        debug(`Removed user ${orgOwner._id}`)
-      } catch {
-        debug(`Impossible to remove user ${orgOwner.name} - ${orgOwner._id}`)
+        await client.getService('organisations').remove(user._id)
+        debug(`Removed ${user.name} user organisation with ID ${user._id}`)
+      } catch (error) {
+        debug(`Impossible to remove ${user.name} user organisation with ID ${user._id}:`, error.name || error.code || error.message)
       }
+      try {
+        await client.getService('users').remove(user._id)
+        debug(`Removed user ${user.name} - ID ${user._id}`)
+        await client.logout()
+      } catch (error) {
+        debug(`Impossible to remove user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
+      }
+      await client.logout()
     }
 
     client.removeMembers = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
       const members = _.get(organisation, 'members', [])
       for (let i = 0; i < members.length; i++) {
         const orgMember = members[i]
@@ -172,20 +203,22 @@ export class Api {
               resourcesService: 'organisations'
             }
           })
-          debug(`Removed member ${orgMember.name} from organisation ${organisation._id}`)
-        } catch {
-          debug(`Impossible to remove member ${orgMember.name} from organisation ${organisation._id}`)
+          debug(`Removed member ${orgMember.name} from organisation with ID ${organisation._id}`)
+        } catch (error) {
+          debug(`Impossible to remove member ${orgMember.name} from organisation with ID ${organisation._id}:`, error.name || error.code || error.message)
         }
-        try {
-          await client.getService('users').remove(orgMember._id)
-          debug(`Removed user ${orgMember._id}`)
-        } catch {
-          debug(`Impossible to remove user ${orgMember.name} - ${orgMember._id}`)
-        }
+      }
+      await client.logout()
+      // Now remove member accounts
+      for (let i = 0; i < members.length; i++) {
+        await client.removeUser(members[i])
       }
     }
 
     client.removeGroups = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
       const groups = _.get(organisation, 'groups', [])
       for (let i = 0; i < groups.length; i++) {
         const orgGroup = groups[i]
@@ -198,11 +231,12 @@ export class Api {
             }
           }
           await client.getService('groups', organisation).remove(orgGroup._id)
-          debug(`Removed group ${orgGroup.name} from organisation ${organisation._id}`)
-        } catch {
-          debug(`Impossible to remove group ${orgGroup.name} from organisation ${organisation._id}`)
+          debug(`Removed group ${orgGroup.name} from organisation with ID ${organisation._id}`)
+        } catch (error) {
+          debug(`Impossible to remove group ${orgGroup.name} from organisation with ID ${organisation._id}:`, error.name || error.code || error.message)
         }
       }
+      await client.logout()
     }
 
     return client
