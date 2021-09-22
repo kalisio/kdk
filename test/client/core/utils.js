@@ -37,6 +37,16 @@ export async function click (page, selector, wait = 250) {
   await page.waitForTimeout(wait)
 }
 
+/* Helper function to click on a given selector then select given entry
+ */
+export async function clickSelect (page, selector, entry, wait = 250) {
+  await page.waitForSelector(selector)
+  await page.click(selector)
+  await page.waitForSelector(entry)
+  await page.click(entry)
+  await page.waitForTimeout(wait)
+}
+
 /* Helper function to input a test on a given selector
  * set enter to true to run the press 'Enter' key
  */

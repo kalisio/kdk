@@ -99,15 +99,14 @@ export class Api {
         const response = await client.getService('users').find({ query: { email: orgMember.email } })
         // If not create it, otherwise add it
         if (response.total === 0) {
-          member = await client.getService('users').create({
-            email: orgMember.email,
-            name: orgMember.name,
+          member = await client.getService('users').create(Object.assign({
             sponsor: {
               id: orgOwner._id,
               organisationId: organisation._id,
               roleGranted: orgMember.permissions
-            }
-          })
+            },
+            suggestedPassword: orgMember.password
+          }, _.pick(orgMember, ['name', 'email'])))
           debug(`Created organisation member ${member.name} - ${member._id} - ${orgMember.permissions}`)
         } else {
           member = response.data[0]
@@ -125,6 +124,11 @@ export class Api {
         orgMember._id = member._id
       }
       await client.logout()
+      // If we'd like to be able to manage guest members we need to login
+      for (let i = 0; i < members.length; i++) {
+        await client.login(members[i])
+        await client.logout()
+      }
     }
 
     client.createGroups = async (organisation) => {
@@ -173,7 +177,6 @@ export class Api {
       try {
         await client.getService('users').remove(user._id)
         debug(`Removed user ${user.name} - ID ${user._id}`)
-        await client.logout()
       } catch (error) {
         debug(`Impossible to remove user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
       }

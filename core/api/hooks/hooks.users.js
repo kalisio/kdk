@@ -82,30 +82,40 @@ export function storePreviousPassword (options = {}) {
   }
 }
 
-export function generatePassword (hook) {
-  if (hook.type !== 'before') {
-    throw new Error('The \'generatePassword\' hook should only be used as a \'before\' hook.')
-  }
-  const app = hook.app
-  const data = hook.data
-  // Generate a password
-  const passwordRule = new RegExp('[\\w\\d\\?\\-]')
-  // If we have a password policy ensure we match it
-  if (app.getPasswordPolicy) {
-    const validator = app.getPasswordPolicy()
-    // Check if a compliant password has been provided, otherwise generate it
-    if (!data.password || !validator.validate(data.password)) {
-      do {
-        data.password = generateRandomPassword(validator.options.minLength || 12, false, passwordRule)
-      } while (!validator.validate(data.password))
+export function generatePassword (options = {}) {
+  return function (hook) {
+    if (hook.type !== 'before') {
+      throw new Error('The \'generatePassword\' hook should only be used as a \'before\' hook.')
     }
-  } else {
-    // Check if a password has been provided, otherwise generate it
-    if (!data.password) {
-      data.password = generateRandomPassword(12, false, passwordRule)
+    const app = hook.app
+    const data = hook.data
+    const passwordField = options.passwordField || 'password'
+    const suggestedPasswordField = options.suggestedPasswordField || 'password'
+    // If a password is already provided and compliant with rules we will use it
+    if (_.get(data, suggestedPasswordField)) {
+      _.set(data, passwordField, _.get(data, suggestedPasswordField))
+      // Avoid leaking clear password
+      _.unset(data, suggestedPasswordField)
     }
+    // Generated password rule
+    const passwordRule = new RegExp('[\\w\\d\\?\\-]')
+    // If we have a password policy ensure we match it
+    if (app.getPasswordPolicy) {
+      const validator = app.getPasswordPolicy()
+      // Check if a compliant password has been provided, otherwise generate it
+      if (!_.get(data, passwordField) || !validator.validate(_.get(data, passwordField))) {
+        do {
+          _.set(data, passwordField, generateRandomPassword(validator.options.minLength || 12, false, passwordRule))
+        } while (!validator.validate(_.get(data, passwordField)))
+      }
+    } else {
+      // Check if a password has been provided, otherwise generate it
+      if (!_.get(data, passwordField)) {
+        _.set(data, passwordField, passwordFieldgenerateRandomPassword(12, false, passwordRule))
+      }
+    }
+    return hook
   }
-  return hook
 }
 
 export function preventRemoveUser (hook) {
