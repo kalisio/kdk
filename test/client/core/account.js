@@ -20,7 +20,25 @@ export async function updateAccountProfile (page, name, avatarPath, wait = 3000)
   await clickAction(page, 'apply-button', wait)
 }
 
-export async function deleteAccount (page, name, wait = 3000) {
+export async function updateAccountPassword (page, oldPassword, newPassword, wait = 1000) {
+  await manageAccount(page, 'security')
+  await click(page, '#password-block button', 1000)
+  await type(page, '#oldPassword-field', oldPassword)
+  await type(page, '#password-field', newPassword)
+  await type(page, '#confirmPassword-field', newPassword)
+  await click(page, 'button', 20000)
+  await click(page, '.la-arrow-left', wait)
+}
+
+export async function updateAccountEmail (page, password, email, wait = 5000) {
+  await manageAccount(page, 'security')
+  await click(page, '#email-block button', 1000)
+  await type(page, '#password-field', password)
+  await type(page, '#email-field', email)
+  await click(page, 'button', wait)
+}
+
+export async function deleteAccount (page, name, wait = 5000) {
   await manageAccount(page, 'danger-zone')
   await click(page, '#block-action')
   await type(page, '.q-dialog input', name)
