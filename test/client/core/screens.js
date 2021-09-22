@@ -1,8 +1,15 @@
 import { click, type } from './utils'
 
-export async function login (page, email, password, wait = 2000) {
-  await type(page, '#email-field', email)
-  await type(page, '#password-field', password)
+export async function goToLoginScreen (page) {
+  await Promise.all([
+    page.waitForNavigation(),
+    click(page, '#login-link')
+  ])
+}
+
+export async function login (page, user, wait = 2000) {
+  await type(page, '#email-field', user.email)
+  await type(page, '#password-field', user.password)
   await Promise.all([
     page.waitForNavigation(),
     click(page, 'button', wait)
@@ -16,11 +23,11 @@ export async function goToRegisterScreen (page) {
   ])
 }
 
-export async function register (page, name, email, password, wait = 5000) {
-  await type(page, '#name-field', name)
-  await type(page, '#email-field', email)
-  await type(page, '#password-field', password)
-  await type(page, '#confirmPassword-field', password)
+export async function register (page, user, wait = 5000) {
+  await type(page, '#name-field', user.name)
+  await type(page, '#email-field', user.email)
+  await type(page, '#password-field', user.password)
+  await type(page, '#confirmPassword-field', user.password)
   await click(page, '.q-toggle')
   await Promise.all([
     page.waitForNavigation(),

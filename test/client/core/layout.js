@@ -76,6 +76,10 @@ export async function closeWelcomeDialog (page) {
   await click(page, '.q-dialog #close-button')
 }
 
+export async function isToastVisible (page) {
+  return isElementVisible(page, '[role="alert"]')
+}
+
 export async function logout (page) {
   await clickLeftPaneAction(page, 'logout', 1000)
 }
