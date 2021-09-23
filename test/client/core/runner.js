@@ -27,7 +27,8 @@ export class Runner {
         defaultViewport: {
           width: +process.env.VIEWPORT_WIDTH || 1024,
           height: +process.env.VIEWPORT_HEIGHT || 768
-        }
+        },
+        args: process.env.BROWSER_ARGS || ''
       },
       dataDir: defaultDataDir,
       runDir: defaultRunDir,
