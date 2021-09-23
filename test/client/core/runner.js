@@ -28,7 +28,7 @@ export class Runner {
           width: +process.env.VIEWPORT_WIDTH || 1024,
           height: +process.env.VIEWPORT_HEIGHT || 768
         },
-        args: process.env.BROWSER_ARGS || ''
+        args: process.env.BROWSER_ARGS || []
       },
       dataDir: defaultDataDir,
       runDir: defaultRunDir,
@@ -37,6 +37,7 @@ export class Runner {
       mode: 'run',
       matchTreshold: 0.1
     }, options)
+    this.options.browser.args = _.concat(process.env.BROWSER_ARGS || [], options.browser.args)
     // Display the runner options
     console.log('Runner created with the following options:')
     console.log(this.options)
