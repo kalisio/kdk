@@ -25,7 +25,7 @@ export class Api {
       }, options)))
     // Display the API options
     debug('API access created with the following options: ', this.options)
-    
+
     client.login = async (user) => {
       const response = await client.authenticate({
         strategy: 'local', email: user.email, password: user.password

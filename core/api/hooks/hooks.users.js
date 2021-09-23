@@ -111,7 +111,7 @@ export function generatePassword (options = {}) {
     } else {
       // Check if a password has been provided, otherwise generate it
       if (!_.get(data, passwordField)) {
-        _.set(data, passwordField, passwordFieldgenerateRandomPassword(12, false, passwordRule))
+        _.set(data, passwordField, generateRandomPassword(12, false, passwordRule))
       }
     }
     return hook
