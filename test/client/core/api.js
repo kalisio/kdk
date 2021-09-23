@@ -78,7 +78,7 @@ export class Api {
         const response = await client.getService('users').find({ query: { email: user.email } })
         createdUser = response.data[0]
         debug(`Retrieved user ${createdUser.name} - ID ${createdUser._id}`)
-      } catch {
+      } catch (error) {
         createdUser = await client.getService('users').create(user)
         debug(`Created user ${createdUser.name} - ID ${createdUser._id}`)
       }
