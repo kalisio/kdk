@@ -10,12 +10,17 @@ export class Runner {
     this.errors = []
     // Compute helper default options
     const defaultPort = process.env.CLIENT_PORT || '8080'
+    let domain = `http://localhost:${defaultPort}`
+    // Override defaults if env provided, we need the app name in this case
+    if (process.env.SUBDOMAIN) {
+      domain = `https://${options.appName}.` + process.env.SUBDOMAIN
+    }
     const defaultBrowser = process.env.BROWSER || 'chrome'
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
     // Set the runner options using default and overrrident options
     this.options = _.merge({
-      baseUrl: process.env.APP_URL || `http://localhost:${defaultPort}`,
+      baseUrl: domain,
       browser: {
         product: defaultBrowser,
         headless: process.env.HEADLESS ? !!process.env.HEADLESS : false,
@@ -28,6 +33,7 @@ export class Runner {
       runDir: defaultRunDir,
       screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
       screenshotsDir: path.join(defaultRunDir, '/screenshots'),
+      mode: 'run',
       matchTreshold: 0.1
     }, options)
     // Display the runner options
@@ -78,8 +84,10 @@ export class Runner {
   }
 
   async capture (key) {
+    // If run mode store in screenshots dir, otherwise in screenrefs dir
+    const dir = (this.options.mode === 'run' ? this.options.screenshotsDir : this.options.screenrefsDir)
     await this.page.screenshot({
-      path: path.join(this.options.screenshotsDir, key + '.png'),
+      path: path.join(dir, key + '.png'),
       fullPage: true,
       type: 'png'
     })
@@ -87,10 +95,15 @@ export class Runner {
 
   async captureAndMatch (key, diffTolerance = 1.0) {
     await this.capture(key)
-    const runDir = path.join(this.options.screenshotsDir, key + '.png')
-    const refPath = path.join(this.options.screenrefsDir, key + '.png')
-    const diff = compareImages(runDir, refPath, this.options.matchTreshold)
-    return diff.diffRatio <= diffTolerance
+    // If run mode compare, otherwise skip as we only want to record screenrefs
+    if (this.options.mode === 'run') {
+      const runDir = path.join(this.options.screenshotsDir, key + '.png')
+      const refPath = path.join(this.options.screenrefsDir, key + '.png')
+      const diff = compareImages(runDir, refPath, this.options.matchTreshold)
+      return diff.diffRatio <= diffTolerance
+    } else {
+      return true
+    }
   }
 
   hasError () {

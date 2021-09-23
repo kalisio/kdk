@@ -10,9 +10,14 @@ export class Api {
   constructor (options = {}) {
     // Compute helper default options
     const defaultPort = process.env.PORT || process.env.HTTPS_PORT || 8081
+    let domain = `http://localhost:${defaultPort}`
+    // Override defaults if env provided, we need the app name in this case
+    if (process.env.SUBDOMAIN) {
+      domain = `https://${options.appName}.` + process.env.SUBDOMAIN
+    }
     // Set the runner options using default and overrrident options
     this.options = _.merge({
-      baseUrl: process.env.API_URL || `http://localhost:${defaultPort}`,
+      baseUrl: domain,
       apiPrefix: process.env.API_PREFIX || '/api'
     }, options)
   }
