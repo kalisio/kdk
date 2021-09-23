@@ -4,6 +4,12 @@ import path from 'path'
 import puppeteer from 'puppeteer'
 import { compareImages } from './utils'
 
+function merger(objValue, srcValue) {
+  if (_.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
+
 export class Runner {
   constructor (suite, options = {}) {
     this.warnings = []
@@ -19,7 +25,7 @@ export class Runner {
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
     // Set the runner options using default and overrrident options
-    this.options = _.merge({
+    this.options = _.mergeWith({
       baseUrl: domain,
       browser: {
         product: defaultBrowser,
@@ -28,7 +34,7 @@ export class Runner {
           width: +process.env.VIEWPORT_WIDTH || 1024,
           height: +process.env.VIEWPORT_HEIGHT || 768
         },
-        args: process.env.BROWSER_ARGS || []
+        args: process.env.BROWSER_ARGS ? _.split(process.env.BROWSER_ARGS, ' ') : []
       },
       dataDir: defaultDataDir,
       runDir: defaultRunDir,
@@ -36,8 +42,7 @@ export class Runner {
       screenshotsDir: path.join(defaultRunDir, '/screenshots'),
       mode: 'run',
       matchTreshold: 0.1
-    }, options)
-    this.options.browser.args = _.concat(process.env.BROWSER_ARGS || [], options.browser.args)
+    }, options, merger)
     // Display the runner options
     console.log('Runner created with the following options:')
     console.log(this.options)
