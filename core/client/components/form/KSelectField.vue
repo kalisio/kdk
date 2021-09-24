@@ -18,7 +18,7 @@
     @input='onChanged'
     emit-value
     map-options
-    clearable
+    :clearable="clearable"
     :error="hasError"
     :error-message="errorLabel"
     :disabled="disabled"
@@ -50,6 +50,9 @@ export default {
   name: 'k-select-field',
   mixins: [mixins.baseField],
   computed: {
+    clearable () {
+      return _.get(this.properties, 'field.clearable', true)
+    },
     multiple () {
       return _.get(this.properties, 'field.multiple', false)
     },
