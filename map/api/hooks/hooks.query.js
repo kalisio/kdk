@@ -122,8 +122,8 @@ export function asGeoJson (options = {}) {
       .filter(item => {
         // Check if item are not already in GeoJson feature format and we can convert if required
         return (_.has(item, longitudeProperty) && _.has(item, latitudeProperty)) ||
-               // Check for a geometry property or an already transformed item
-               _.has(item, geometryProperty + '.coordinates')
+               // Check for a geometry property (previosuly provided or already transformed item)
+               _.has(item, geometryProperty)
       })
       .map(item => {
         let coordinates

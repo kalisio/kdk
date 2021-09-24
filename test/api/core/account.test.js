@@ -45,7 +45,7 @@ describe('core:account', () => {
           // Used for invitation
           when(hook => hook.data.sponsor,
             hooks.setExpireAfter(60), // A couple of seconds
-            hooks.generatePassword,
+            hooks.generatePassword(),
             // Keep track of clear password before hashing for testing purpose
             hooks.serialize([{ source: 'password', target: 'clearPassword' }]),
             hooks.sendInvitationEmail,

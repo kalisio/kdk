@@ -4,9 +4,9 @@ import path from 'path'
 import puppeteer from 'puppeteer'
 import { compareImages } from './utils'
 
-function merger(objValue, srcValue) {
+function merger (objValue, srcValue) {
   if (_.isArray(objValue)) {
-    return objValue.concat(srcValue);
+    return objValue.concat(srcValue)
   }
 }
 

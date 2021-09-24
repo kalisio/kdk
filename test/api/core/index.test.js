@@ -114,7 +114,7 @@ describe('core:services', () => {
 
   it('creates a user', () => {
     // Test password generation
-    const hook = hooks.generatePassword({ type: 'before', data: {}, params: {}, app })
+    const hook = hooks.generatePassword()({ type: 'before', data: {}, params: {}, app })
     return userService.create({
       email: 'test@test.org',
       password: hook.data.password,
@@ -171,7 +171,7 @@ describe('core:services', () => {
       })
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('unauthorized service cannot be accessed through webhooks', (done) => {
     request
