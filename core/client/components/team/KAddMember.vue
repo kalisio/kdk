@@ -153,14 +153,9 @@ export default {
         type: 'string',
         default: 'member',
         field: {
-          component: 'form/KSelectField',
+          component: 'form/KRoleField',
           label: 'KAddMember.ROLE_FIELD_LABEL',
-          type: 'radio',
-          options: [
-            { label: this.$t('KAddMember.MEMBER_LABEL'), value: 'member' },
-            { label: this.$t('KAddMember.MANAGER_LABEL'), value: 'manager' },
-            { label: this.$t('KAddMember.OWNER_LABEL'), value: 'owner' }
-          ]
+          default: 'member'
         }
       }
       if (this.user) {
