@@ -87,7 +87,8 @@ export class Runner {
   }
 
   async stop () {
-    await this.browser.close()
+    // Ensure it has been correctly initialized
+    if (this.browser) await this.browser.close()
   }
 
   async capture (key) {

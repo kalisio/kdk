@@ -160,6 +160,48 @@ export class Api {
       await client.logout()
     }
 
+    // To be called after members creation
+    client.tagMembers = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
+      const members = _.get(organisation, 'members', [])
+      for (let i = 0; i < members.length; i++) {
+        const orgMember = members[i]
+        await client.getService('members', organisation).patch(orgMember._id, {
+          // Scope can be omitted for convenience
+          tags: orgMember.tags.map(tag => Object.assign({ scope: 'members' }, tag))
+        })
+      }
+      await client.logout()
+    }
+
+    // To be called after members/groups creation
+    client.groupMembers = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      const orgGroups = _.get(organisation, 'groups', [])
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
+      const members = _.get(organisation, 'members', [])
+      for (let i = 0; i < members.length; i++) {
+        const orgMember = members[i]
+        const groups = _.get(orgMember, 'groups', [])
+        for (let j = 0; j < groups.length; j++) {
+          const group = groups[j]
+          const orgGroup = _.find(orgGroups, { name: group.name })
+          await client.getService('authorisations').create({
+            scope: 'groups',
+            permissions: group.permissions,
+            subjects: orgMember._id,
+            subjectsService: organisation._id + '/members',
+            resource: orgGroup._id,
+            resourcesService: organisation._id + '/groups'
+          })
+        }
+      }
+      await client.logout()
+    }
+
     client.removeOrganisation = async (organisation) => {
       const orgOwner = _.get(organisation, 'owner')
       await client.removeUser(orgOwner)
