@@ -7,13 +7,10 @@ export async function goToLoginScreen (page) {
   ])
 }
 
-export async function login (page, user, wait = 2000) {
+export async function login (page, user, wait = 3000) {
   await type(page, '#email-field', user.email)
   await type(page, '#password-field', user.password)
-  await Promise.all([
-    page.waitForNavigation(),
-    click(page, 'button', wait)
-  ])
+  await click(page, 'button', wait)
 }
 
 export async function goToRegisterScreen (page) {
@@ -29,8 +26,5 @@ export async function register (page, user, wait = 5000) {
   await type(page, '#password-field', user.password)
   await type(page, '#confirmPassword-field', user.password)
   await click(page, '.q-toggle')
-  await Promise.all([
-    page.waitForNavigation(),
-    click(page, 'button', wait)
-  ])
+  await click(page, 'button', wait)
 }
