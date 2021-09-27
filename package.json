@@ -39,7 +39,7 @@
     "watch:core:vue": "cpx core/**/*.vue lib/core --watch",
     "watch:map:js": "babel --watch -d lib/map map/ --copy-files",
     "watch:map:vue": "cpx map/**/*.vue lib/map --watch",
-    "watch:test:client": "cpx \"test/client/**/*.js\" lib/test/client --watch",
+    "watch:test:client": "cpx test/client/**/*.js lib/test/client --watch",
     "watch": "npm-run-all --parallel watch:**",
     "lint:core": "standard core/**/*.js core/**/*.vue --fix",
     "lint:map": "standard map/**/*.js map/**/*.vue --fix",
