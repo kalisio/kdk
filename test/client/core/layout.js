@@ -1,9 +1,13 @@
+import makeDebug from 'debug'
 import { click, isElementVisible } from './utils'
+
+const debug = makeDebug('kdk:core:test:layout')
 
 async function clickOpener (page, opener) {
   const selector = `#${opener}-opener`
   await page.evaluate((selector) => document.querySelector(selector).click(), selector)
   await page.waitForTimeout(500)
+  debug(`Clicked opener ${selector}`)
 }
 
 export async function clickTopOpener (page) {
@@ -41,6 +45,7 @@ export async function isLeftPaneVisible (page) {
 export async function clickAction (page, action, wait = 250) {
   const selector = `#${action}`
   await click(page, selector, wait)
+  debug(`Clicked action ${selector}`)
 }
 
 async function clickPaneAction (page, pane, action, wait) {

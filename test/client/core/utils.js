@@ -1,12 +1,17 @@
+import makeDebug from 'debug'
 import fs from 'fs'
 import png from 'pngjs'
 import pixelmatch from 'pixelmatch'
+
+const debug = makeDebug('kdk:core:test:utils')
 
 /* Helper function to check wether an element exists
  * see: https://github.com/puppeteer/puppeteer/issues/545
  */
 export async function elementExists (page, selector) {
-  return !!(await page.$(selector))
+  const exists = !!(await page.$(selector))
+  debug(`Element ${selector} ` + (exists ? 'exists' : 'does not exist'))
+  return exists
 }
 
 /* Helper function to check wether an element is visible
@@ -17,7 +22,9 @@ export async function isElementVisible (page, selector) {
     const element = document.querySelector(selector)
     if (!element) return false
     const style = window.getComputedStyle(element)
-    return style && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0'
+    const visible = (style && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0')
+    debug(`Element ${selector} ` + (visible ? 'visible' : 'invisible'))
+    return visible
   }, selector)
 }
 
@@ -35,6 +42,7 @@ export async function click (page, selector, wait = 250) {
   await page.waitForSelector(selector)
   await page.click(selector)
   await page.waitForTimeout(wait)
+  debug(`Clicked target ${selector}`)
 }
 
 /* Helper function to click on a given selector then select given entry
@@ -42,9 +50,11 @@ export async function click (page, selector, wait = 250) {
 export async function clickSelect (page, selector, entry, wait = 250) {
   await page.waitForSelector(selector)
   await page.click(selector)
+  debug(`Clicked target ${selector}`)
   await page.waitForSelector(entry)
   await page.click(entry)
   await page.waitForTimeout(wait)
+  debug(`Clicked entry ${selector}`)
 }
 
 /* Helper function to input a test on a given selector

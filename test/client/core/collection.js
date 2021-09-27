@@ -1,4 +1,7 @@
+import makeDebug from 'debug'
 import { countElements } from './utils'
+
+const debug = makeDebug('kdk:core:test:collection')
 
 export async function countItems (page, component) {
   return countElements(page, `//div[contains(@component, "${component}")]`)
@@ -22,6 +25,9 @@ export async function clickItemAction (page, component, name, action, wait = 250
   if (elements.length > 0) {
     elements[0].click()
     await page.waitForTimeout(wait)
+    debug(`Clicked action ${action} on item ${name}`)
+  } else {
+    debug(`Action ${action} on item ${name} not found`)
   }
 }
 
