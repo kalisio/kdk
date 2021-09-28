@@ -11,7 +11,7 @@ export async function goToLoginScreen (page) {
   debug('Login screen ready')
 }
 
-export async function login (page, user, wait = 3000) {
+export async function login (page, user, wait = 5000) {
   await type(page, '#email-field', user.email)
   await type(page, '#password-field', user.password)
   await click(page, 'button', wait)
