@@ -36,9 +36,11 @@
     </div>
     <!-- Location map -->
     <div class="col-12 col-md-7">
-      <div v-show="hasLocation || (mode === 'draw')" id="show-location-map" style="width: 100%; height: 250px">
+      <div v-show="showMap" id="show-location-map" style="width: 100%; height: 250px">
         <k-location-map v-model="location" :editable="mode === 'map'" :drawable="mode === 'draw'"
           :closable="true" :toolbar="true" @input="onUpdated" @close="onClose"/>
+      </div>
+      <div v-show="showError" id="show-location-error" v-html="locationErrorMessage">
       </div>
     </div>
   </div>
@@ -88,8 +90,20 @@ export default {
     }
   },
   computed: {
+    locationError () {
+      return this.$store.get('geolocation.error')
+    },
+    locationErrorMessage () {
+      return this.$t(`errors.${this.locationError.code}`)
+    },
     hasLocation () {
-      return _.has(this.location, 'type') || (_.has(this.location, 'latitude') && _.has(this.location, 'longitude'))
+      return _.has(this.location, 'coordinates') || (_.has(this.location, 'latitude') && _.has(this.location, 'longitude'))
+    },
+    showError () {
+      return this.locationError && (this.mode === 'user')
+    },
+    showMap () {
+      return !this.showError && (this.hasLocation || (this.mode === 'draw'))
     },
     locationName () {
       return this.location ? this.location.name : ''
@@ -112,7 +126,7 @@ export default {
   methods: {
     async geolocate () {
       await Geolocation.update()
-      const position = this.$store.get('geolocation.position')
+      const position = this.$store.get('geolocation.position') || { longitude: 0, latitude: 0 }
       if (position) {
         this.location = {
           name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')),

@@ -138,9 +138,9 @@ export default {
         this.map.fitBounds(this.drawLayer.getBounds())
       } else {
         const longitude = (_.has(this.location, 'longitude')
-          ? _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
+          ? _.get(this.location, 'longitude') : _.get(this.location, 'coordinates[0]'))
         const latitude = (_.has(this.location, 'latitude')
-          ? _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
+          ? _.get(this.location, 'latitude') : _.get(this.location, 'coordinates[1]'))
         this.center(longitude, latitude, this.mapOptions.zoom)
       }
     },
@@ -174,28 +174,33 @@ export default {
     },
     refresh () {
       this.clear()
+      // No location
+      const hasLongitude = _.has(this.location, 'longitude')
+      const hasLatitude =  _.has(this.location, 'latitude')
+      const hasGeometry =  _.has(this.location, 'coordinates')
+      if (hasGeometry || (hasLongitude && hasLatitude)) {
+        // GeoJson geometry or simple location ?
+        if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
+          this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.location })
+          this.map.addLayer(this.drawLayer)
+        } else {
+          const longitude = (hasLongitude
+            ? _.get(this.location, 'longitude') : _.get(this.location, 'coordinates[0]'))
+          const latitude = (hasLatitude
+            ? _.get(this.location, 'latitude') : _.get(this.location, 'coordinates[1]'))
 
-      // GeoJson geometry or simple location ?
-      if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
-        this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.location })
-        this.map.addLayer(this.drawLayer)
-      } else {
-        const longitude = (_.has(this.location, 'longitude')
-          ? _.get(this.location, 'longitude') : _.get(this.location, 'geometry.coordinates[0]'))
-        const latitude = (_.has(this.location, 'latitude')
-          ? _.get(this.location, 'latitude') : _.get(this.location, 'geometry.coordinates[1]'))
+          this.marker = L.marker([latitude, longitude], {
+            icon: L.icon.fontAwesome(this.markerStyle),
+            draggable: this.editable,
+            pmIgnore: true
+          })
+          this.marker.addTo(this.map)
+          if (this.editable) this.marker.on('drag', this.onLocationDragged)
+        }
 
-        this.marker = L.marker([latitude, longitude], {
-          icon: L.icon.fontAwesome(this.markerStyle),
-          draggable: this.editable,
-          pmIgnore: true
-        })
-        this.marker.addTo(this.map)
-        if (this.editable) this.marker.on('drag', this.onLocationDragged)
+        // Center the map
+        this.centerMap()
       }
-
-      // Center the map
-      this.centerMap()
     },
     async onGeolocate () {
       await this.geolocate()
@@ -204,8 +209,8 @@ export default {
     onLocationDragged () {
       this.location.name = formatUserCoordinates(this.marker.getLatLng().lat, this.marker.getLatLng().lng, this.$store.get('locationFormat', 'FFf'))
       if (_.has(this.location, 'type') && (_.get(this.location, 'type') === 'Point')) {
-        _.set(this.location, 'geometry.coordinates[0]', this.marker.getLatLng().lng)
-        _.set(this.location, 'geometry.coordinates[1]', this.marker.getLatLng().lat)
+        _.set(this.location, 'coordinates[0]', this.marker.getLatLng().lng)
+        _.set(this.location, 'coordinates[1]', this.marker.getLatLng().lat)
       } else {
         this.location.longitude = this.marker.getLatLng().lng
         this.location.latitude = this.marker.getLatLng().lat
