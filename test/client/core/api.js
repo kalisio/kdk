@@ -216,6 +216,17 @@ export class Api {
         debug(`Impossible to connect as user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
       }
       try {
+        // Try by email if no ID provided
+        if (!user._id) {
+          const response = await client.getService('users').find({ query: { email: user.email } })
+          if (response.total === 1) {
+            user._id = response.data[0]._id
+          }
+        }
+      } catch (error) {
+        debug(`Impossible to find ${user.name} user with email ${user.email}:`, error.name || error.code || error.message)
+      }
+      try {
         await client.getService('organisations').remove(user._id)
         debug(`Removed ${user.name} user organisation with ID ${user._id}`)
       } catch (error) {
