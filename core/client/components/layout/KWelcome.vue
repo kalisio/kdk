@@ -8,11 +8,10 @@
         <q-carousel
           class="q-pa-none"
           v-model="slide"
-          arrows
           swipeable
           animated
           padding
-          vertical
+          navigation
           transition-prev="scale"
           transition-next="scale"
           control-type="flat"
