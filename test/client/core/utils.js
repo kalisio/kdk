@@ -65,6 +65,8 @@ export async function type (page, selector, text, enter = false, replace = false
   if (replace) {
     await page.click(selector, { clickCount: 3 })
     await page.keyboard.press('Backspace')
+  } else {
+    await page.click(selector)
   }
   await page.type(selector, text)
   if (enter) await page.keyboard.press('Enter')

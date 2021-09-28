@@ -1,8 +1,11 @@
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
+import makeDebug from 'debug'
 import puppeteer from 'puppeteer'
 import { compareImages } from './utils'
+
+const debug = makeDebug('kdk:core:test:runner')
 
 function merger (objValue, srcValue) {
   if (_.isArray(objValue)) {
@@ -78,8 +81,14 @@ export class Runner {
     }
     // Catch errors
     this.page.on('console', message => {
-      if (message._type === 'error') this.errors.push(message)
-      if (message._type === 'warning') this.warnings.push(message)
+      if (message._type === 'error') {
+        this.errors.push(message)
+        debug('Console error:', message)
+      }
+      if (message._type === 'warning') {
+        this.warnings.push(message)
+        //debug('Console warning:', message)
+      }
     })
     // Navigate the to given url
     await this.page.goto(this.getUrl(path))
