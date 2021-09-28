@@ -90,11 +90,8 @@ export default {
     }
   },
   computed: {
-    locationError () {
-      return this.$store.get('geolocation.error')
-    },
     locationErrorMessage () {
-      return this.$t(`errors.${this.locationError.code}`)
+      return (this.locationError ? this.$t(`errors.${this.locationError.code}`) : '')
     },
     hasLocation () {
       return _.has(this.location, 'coordinates') || (_.has(this.location, 'latitude') && _.has(this.location, 'longitude'))
@@ -120,21 +117,21 @@ export default {
       mode: null,
       options,
       location: null,
+      locationError: null,
       serachOptions: []
     }
   },
   methods: {
     async geolocate () {
       await Geolocation.update()
+      this.locationError = this.$store.get('geolocation.error')
       const position = this.$store.get('geolocation.position') || { longitude: 0, latitude: 0 }
-      if (position) {
-        this.location = {
-          name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')),
-          latitude: position.latitude,
-          longitude: position.longitude
-        }
-        this.$emit('input', this.location)
+      this.location = {
+        name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')),
+        latitude: position.latitude,
+        longitude: position.longitude
       }
+      this.$emit('input', this.location)
     },
     onModeChanged (mode) {
       // Reset current location
