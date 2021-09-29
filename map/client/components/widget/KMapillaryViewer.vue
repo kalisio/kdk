@@ -13,6 +13,8 @@ import L from 'leaflet'
 import logger from 'loglevel'
 import { Viewer } from 'mapillary-js'
 import 'mapillary-js/dist/mapillary.css'
+import distance from '@turf/distance'
+import { point } from '@turf/helpers'
 import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
@@ -70,21 +72,31 @@ export default {
       }
     },
     async moveCloseTo (lat, lon) {
-      const distance = 0.0001
-      const left = lon - distance
-      const right = lon + distance
-      const top = lat + distance
-      const bottom = lat - distance
+      // Query the images according a bbox that contains the given position
+      const buffer = 0.0002 // around 25m
+      const left = lon - buffer
+      const right = lon + buffer
+      const top = lat + buffer
+      const bottom = lat - buffer
       const token = this.kActivity.mapillaryToken
-      const query = `https://graph.mapillary.com/images?fields=id,computed_geometry&bbox=${left},${bottom},${right},${top}&access_token=${token}`
+      const query = `https://graph.mapillary.com/images?fields=id,computed_geometry&bbox=${left},${bottom},${right},${top}&access_token=${token}&limit=50`
       const response = await fetch(query)
       if (response.status !== 200) {
         throw new Error(`Impossible to fetch ${query}: ` + response.status)
       }
       const data = await response.json()
       const imageCount = data.data.length
+      // If any results then search for the nearest image
       if (imageCount > 0) {
-        this.imageId = data.data[0].id
+        const clickedPosition = point([lon, lat])
+        let minDist
+        _.forEach(data.data, image => {
+          let dist = distance(clickedPosition, image.computed_geometry)
+          if (!minDist || dist < minDist) {
+            minDist = dist
+            this.imageId = image.id
+          }
+        })
         this.refreshView()
       } else {
         this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND_CLOSE_TO') })
