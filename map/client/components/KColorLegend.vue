@@ -7,7 +7,7 @@
       :style="colorUnitStyle"
     >
       {{unit}}
-      <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 20]" v-show="hint">{{hint}}</q-tooltip>
+      <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 20]" v-if="hint">{{hint}}</q-tooltip>
     </span>
 
     <span class="k-gradient-step"
@@ -29,10 +29,9 @@
 <script>
 import _ from 'lodash'
 import math from 'mathjs'
-const COLOR_STEPS = 10
+import { buildColorMap } from '../utils'
 
-// Get the unique global symbol to store event listeners on a leaflet object
-const DATA_LISTENER_KEY = Symbol.for('data-listener')
+const COLOR_STEPS = 10
 
 export default {
   name: 'k-color-legend',
@@ -133,20 +132,26 @@ export default {
         backgroundColor: this.colorMap(domainValue)
       }
     },
+    getColorMapDefinition (layer) {
+      // Can be provided at layer level or variable level,
+      // FIXME: in case of multiple variables we assume a similar color scale
+      return _.get(layer, 'chromajs', _.get(layer, 'variables[0].chromajs'))
+    },
+    getColorMap (layer, engineLayer) {
+      // If the engine layer already has a color map use it, otherwise compute it from definition
+      return engineLayer.colorMap || buildColorMap(this.getColorMapDefinition(layer))
+    },
+    getColorLegendUnits (layer) {
+      return _.get(layer, 'units', _.get(layer, 'variables[0].units'))
+    },
     async onColorLegendShowLayer (layer, engineLayer) {
       // Check for valid types
-      const colorMap = _.get(layer, 'variables[0].chromajs')
+      const colorMap = this.getColorMapDefinition(layer)
       if (!colorMap) return
-      // It is required data is here to get color map object ready
-      if (engineLayer.hasData) this.addColorLegend(layer, engineLayer)
-      // Register to data change
-      engineLayer[DATA_LISTENER_KEY] = () => this.addColorLegend(layer, engineLayer)
-      engineLayer.on('data', engineLayer[DATA_LISTENER_KEY])
+      this.addColorLegend(layer, engineLayer)
     },
     onColorLegendHideLayer (layer) {
       if (this.legendLayer && ((this.legendLayer._id === layer._id) || (this.legendLayer.name === layer.name))) {
-        this.legendEngineLayer.off('data', this.legendEngineLayer[DATA_LISTENER_KEY])
-        delete this.legendEngineLayer[DATA_LISTENER_KEY]
         this.hideColorLegend()
       }
     },
@@ -185,11 +190,11 @@ export default {
       if (!this.legendLayer) {
         this.resetColorLegend()
       } else {
-        const colorMap = this.legendEngineLayer.colorMap
-        const scale = _.get(this.legendLayer, 'variables[0].chromajs.scale')
-        const units = this.getColorLegendUnits()
+        const colorMap = this.getColorMap(this.legendLayer, this.legendEngineLayer)
+        const scale = _.get(this.getColorMapDefinition(this.legendLayer), 'scale')
+        const units = this.getColorLegendUnits(this.legendLayer)
         const unit = !units || units.length === 0 ? null : units[0]
-        const hint = this.getColorLegendHint(units, unit, this.legendLayer.name)
+        const hint = this.getColorLegendHint(units, unit, this.legendLayer.name || this.legendLayer.label)
         const [showGradient, colors, values, unitValues] =
           this.getColorLegendValues(colorMap, scale, units, unit, COLOR_STEPS)
         // We don't have units or steps for this layer, hide it
@@ -203,23 +208,20 @@ export default {
     },
     // Color legend was clicked - toggle to the next unit
     onColorLegendClick (event) {
-      const colorMap = this.legendEngineLayer.colorMap
-      const scale = _.get(this.legendLayer, 'variables[0].chromajs.scale')
-      const units = this.getColorLegendUnits()
+      const colorMap = this.getColorMap(this.legendLayer, this.legendEngineLayer)
+      const scale = _.get(this.getColorMapDefinition(this.legendLayer), 'scale')
+      const units = this.getColorLegendUnits(this.legendLayer)
       // There's only one unit, no toggling to do, we're done
       if (units.length <= 1) {
         return
       }
       // Get next unit and recalculate hint and steps
       const nextUnit = this.getNextUnit(units, this.unit)
-      const hint = this.getColorLegendHint(units, nextUnit, this.legendLayer.name)
+      const hint = this.getColorLegendHint(units, nextUnit, this.legendLayer.name || this.legendLayer.label)
       const [showGradient, colors, values, unitValues] =
         this.getColorLegendValues(colorMap, scale, units, nextUnit, COLOR_STEPS)
       // Units and steps (re)calculated, update the color legend
       this.setColorLegend(true, nextUnit, hint, colorMap, colors, values, unitValues, showGradient)
-    },
-    getColorLegendUnits () {
-      return _.get(this.legendLayer, 'variables[0].units')
     },
     getColorLegendHint (units, unit, layerName) {
       if (!units || units.length <= 1 || !unit) {

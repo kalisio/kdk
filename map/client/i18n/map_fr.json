@@ -368,7 +368,8 @@
     "MEASURE_LAYERS": "Couches des mesures",
     "METEO_LAYERS": "Prévisions météo",
     "BUSINESS_LAYERS": "Couches métier",
-    "CAPTURED_LAYERS": "Prises de vues"
+    "CAPTURED_LAYERS": "Prises de vues",
+    "DEMOGRAPHY_LAYERS": "Couches démographiques"
   },
   "KFeaturesFilter": {
     "TITLE": "Filtre des données de la couche {{layer}}",

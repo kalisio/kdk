@@ -367,7 +367,8 @@
     "MEASURE_LAYERS": "Measure layers",
     "METEO_LAYERS": "Meteo forecasts",
     "BUSINESS_LAYERS": "Business layers",
-    "CAPTURED_LAYERS": "Captured views"
+    "CAPTURED_LAYERS": "Captured views",
+    "DEMOGRAPHY_LAYERS": "Demography layers"
   },
   "KFeaturesFilter": {
     "TITLE": "Data filter for layer {{layer}}",

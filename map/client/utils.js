@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import math from 'mathjs'
+import chroma from 'chroma-js'
 import config from 'config'
 import formatcoords from 'formatcoords'
 import { uid } from 'quasar'
@@ -12,6 +13,23 @@ export const SelectionLayerName = uid()
 
 // Add knot unit not defined by default
 math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] })
+
+// Build a color map from a JS object specification
+export function buildColorMap (options) {
+  let colorMap
+  const classes = _.get(options, 'classes')
+  const domain = _.get(options, 'domain')
+  const scale = _.get(options, 'scale')
+  const invert = _.get(options, 'invertScale')
+  if (scale) {
+    if (classes) {
+      colorMap = chroma.scale(scale).classes(invert ? classes.slice().reverse() : classes)
+    } else if (domain) {
+      colorMap = chroma.scale(scale).domain(invert ? domain.slice().reverse() : domain)
+    }
+  }
+  return colorMap
+}
 
 export async function fetchGeoJson (dataSource, processor) {
   const response = await fetch(dataSource)
