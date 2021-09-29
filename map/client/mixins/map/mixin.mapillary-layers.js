@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { isSupported } from 'mapillary-js'
 import { LeafletEvents, bindLeafletEvents } from '../../utils'
 
 export default {
@@ -39,7 +38,7 @@ export default {
   created () {
     // Initialize the component
     this.mapillaryToken = undefined
-    // Check whether the clientID is initailized
+    // Check whether the token is initailized
     this.mapillaryToken = this.$store.get('capabilities.api.mapillary.token')
     if (!this.mapillaryToken) {
       logger.warn('You must provide a client token to use Mapillary')

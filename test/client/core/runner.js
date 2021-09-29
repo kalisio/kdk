@@ -87,7 +87,7 @@ export class Runner {
       }
       if (message._type === 'warning') {
         this.warnings.push(message)
-        //debug('Console warning:', message)
+        // debug('Console warning:', message)
       }
     })
     // Navigate the to given url

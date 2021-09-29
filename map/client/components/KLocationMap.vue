@@ -176,8 +176,8 @@ export default {
       this.clear()
       // No location
       const hasLongitude = _.has(this.location, 'longitude')
-      const hasLatitude =  _.has(this.location, 'latitude')
-      const hasGeometry =  _.has(this.location, 'coordinates')
+      const hasLatitude = _.has(this.location, 'latitude')
+      const hasGeometry = _.has(this.location, 'coordinates')
       if (hasGeometry || (hasLongitude && hasLatitude)) {
         // GeoJson geometry or simple location ?
         if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {

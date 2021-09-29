@@ -91,7 +91,7 @@ export default {
         const clickedPosition = point([lon, lat])
         let minDist
         _.forEach(data.data, image => {
-          let dist = distance(clickedPosition, image.computed_geometry)
+          const dist = distance(clickedPosition, image.computed_geometry)
           if (!minDist || dist < minDist) {
             minDist = dist
             this.imageId = image.id
@@ -117,7 +117,7 @@ export default {
       this.setupViewerFilters()
     },
     async onImageEvent (viewerImageEvent) {
-      const image = viewerImageEvent.image;
+      const image = viewerImageEvent.image
       this.imageId = image.id
       this.location = image.lngLat
       this.bearing = await this.mapillaryViewer.getBearing()
@@ -140,7 +140,7 @@ export default {
   mounted () {
     // Create the viewer
     this.mapillaryViewer = new Viewer({
-      container: 'mapillary-container', 
+      container: 'mapillary-container',
       accessToken: this.kActivity.mapillaryToken
     })
     // Add event listeners
