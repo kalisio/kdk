@@ -1,6 +1,5 @@
 <template>
   <div :style="widgetStyle()">
-    <q-resize-observer @resize="onResized" />
     <div class="fit row">
       <k-panel id="mapillary-actions" class="q-pa-sm" :content="actions" direction="vertical" />
       <div class="col" id="mapillary-container"></div>
@@ -11,10 +10,9 @@
 <script>
 import _ from 'lodash'
 import L from 'leaflet'
-import moment from 'moment'
 import logger from 'loglevel'
-import * as Mapillary from 'mapillary-js'
-import 'mapillary-js/dist/mapillary.min.css'
+import { Viewer } from 'mapillary-js'
+import 'mapillary-js/dist/mapillary.css'
 import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
@@ -37,14 +35,14 @@ export default {
       this.$store.set('selection.states.mapillary', {
         location: this.location,
         bearing: this.bearing,
-        key: this.key
+        imageId: this.imageId
       })
     },
     restoreStates () {
       const states = this.$store.get('selection.states.mapillary')
       this.location = states.location
       this.bearing = states.bearing
-      this.key = states.key
+      this.imageId = states.imageId
     },
     getMarkerFeature () {
       const lat = this.location ? this.location.lat : 0
@@ -64,76 +62,77 @@ export default {
     async refresh () {
       if (_.has(this.selection, 'states.mapillary')) {
         this.restoreStates()
-        if (this.key) await this.moveToKey(this.key)
+        if (this.imageId) await this.refreshView()
         else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
       } else {
         const location = this.selection.location
         if (location) await this.moveCloseTo(location.lat, location.lng)
       }
     },
-    async moveToKey (key) {
-      try {
-        await this.mapillaryViewer.moveToKey(key)
-        this.onCenterOn()
-        this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())
-      } catch (error) {
-        logger.error(error)
-        this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND') })
-      }
-    },
     async moveCloseTo (lat, lon) {
-      try {
-        await this.mapillaryViewer.moveCloseTo(lat, lon)
-        this.onCenterOn()
-        this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())
-      } catch (error) {
-        logger.error(error)
+      const distance = 0.0001
+      const left = lon - distance
+      const right = lon + distance
+      const top = lat + distance
+      const bottom = lat - distance
+      const token = this.kActivity.mapillaryToken
+      const query = `https://graph.mapillary.com/images?fields=id,computed_geometry&bbox=${left},${bottom},${right},${top}&access_token=${token}`
+      const response = await fetch(query)
+      if (response.status !== 200) {
+        throw new Error(`Impossible to fetch ${query}: ` + response.status)
+      }
+      const data = await response.json()
+      const imageCount = data.data.length
+      if (imageCount > 0) {
+        this.imageId = data.data[0].id
+        this.refreshView()
+      } else {
         this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND_CLOSE_TO') })
       }
     },
-    setupViewerFilters () {
-      // Not yet initialized ?
-      if (!this.mapillaryViewer || !this.kActivity.mapillaryLayer) return
-      // Update viewer filters
-      const endTime = this.kActivity.currentTime || moment.utc()
-      const startTime = endTime.clone().add(moment.duration(_.get(this.kActivity.mapillaryLayer, 'queryFrom', 'P-1Y'))) // 1 year back by default
-      this.mapillaryViewer.setFilter(['all',
-        ['>=', 'capturedAt', startTime.valueOf()],
-        ['<=', 'capturedAt', endTime.valueOf()]
-      ])
-    },
-    onCenterOn () {
+    centerMap () {
       if (this.location) this.kActivity.center(this.location.lng, this.location.lat)
     },
-    onResized (size) {
-      if (this.mapillaryViewer) this.mapillaryViewer.resize()
-    },
-    async onNodeChanged (node) {
-      this.location = L.latLng(node.latLon.lat, node.latLon.lon)
-      this.bearing = await this.mapillaryViewer.getBearing()
-      this.kActivity.updateSelectionHighlight('mapillary', this.getMarkerFeature())
+    async refreshView () {
+      this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())
+      try {
+        await this.mapillaryViewer.moveTo(this.imageId)
+      } catch (error) {
+        logger.error(error)
+      }
     },
     onCurrentTimeChanged (time) {
       this.setupViewerFilters()
+    },
+    async onImageEvent (viewerImageEvent) {
+      const image = viewerImageEvent.image;
+      this.imageId = image.id
+      this.location = image.lngLat
+      this.bearing = await this.mapillaryViewer.getBearing()
+      this.centerMap()
+      this.kActivity.updateSelectionHighlight('mapillary', this.getMarkerFeature())
     }
   },
-  created () {
+  beforeCreate () {
     // laod the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
+  },
+  created () {
     // Registers the actions
     this.actions = {
       default: [
-        { id: 'center', icon: 'las la-eye', tooltip: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.onCenterOn }
+        { id: 'center', icon: 'las la-eye', tooltip: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.centerMap }
       ]
     }
   },
   mounted () {
     // Create the viewer
-    this.mapillaryViewer = new Mapillary.Viewer('mapillary-container', this.kActivity.mapillaryClientID)
-    this.setupViewerFilters()
+    this.mapillaryViewer = new Viewer({
+      container: 'mapillary-container', 
+      accessToken: this.kActivity.mapillaryToken
+    })
     // Add event listeners
-    this.mapillaryViewer.on(Mapillary.Viewer.nodechanged, this.onNodeChanged)
-    this.kActivity.$on('current-time-changed', this.onCurrentTimeChanged)
+    this.mapillaryViewer.on('image', this.onImageEvent)
     // Configure the viewer
     this.location = undefined
     this.bearing = undefined
@@ -142,8 +141,7 @@ export default {
   },
   async beforeDestroy () {
     // Remove event listeners
-    this.mapillaryViewer.off(Mapillary.Viewer.nodechanged, this.onNodeChanged)
-    this.kActivity.$off('current-time-changed', this.onCurrentTimeChanged)
+    this.mapillaryViewer.off('image', this.onNodeChanged)
     // Remove the marker
     this.kActivity.removeSelectionHighlight('mapillary')
     // Save the states

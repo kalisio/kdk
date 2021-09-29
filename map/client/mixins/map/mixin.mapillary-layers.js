@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import * as Mapillary from 'mapillary-js'
-import { TiledMapillaryLayer } from '../../leaflet/TiledMapillaryLayer'
+import { isSupported } from 'mapillary-js'
+import { LeafletEvents, bindLeafletEvents } from '../../utils'
 
 export default {
   methods: {
-    async createLeafletMapillaryCoverageLayer (options) {
+    async createLeafletMapillaryLayer (options) {
       const leafletOptions = options.leaflet || options
       // Check for valid type
       if (leafletOptions.type !== 'mapillary') return
@@ -13,41 +13,39 @@ export default {
         throw new Error('Mapillary layer needs support of GeoJson layer to work correctly')
       }
       // Based on real-time geojson to be created first
-      const layer = await this.createLeafletGeoJsonLayer(_.merge(options, {
-        featureId: 'key',
+      const layer = await this.createLeafletLayer(_.merge(options, {
         leaflet: {
-          type: 'geoJson',
-          realtime: true,
-          removeMissing: false,
-          cluster: false
+          type: 'vectorGrid.protobuf',
+          source: 'https://tiles.mapillary.com/maps/vtp/mly1_public/2/{z}/{x}/{y}?access_token=' + this.mapillaryToken,
+          interactive: true,
+          minZoom: 13,
+          maxNativeZoom: 14,
+          vectorTileLayerStyles: {
+            sequence: function (properties, zoom) {
+              return {
+                weight: zoom > 13 ? 1 : 2,
+                color: '#44BB44',
+                opacity: zoom > 13 ? 0.5 : 1
+              }
+            },
+            image: []
+          }
         }
       }))
-      // Then tiled layer
-      const tiledLayer = new TiledMapillaryLayer(leafletOptions)
-      tiledLayer.setup(this, options)
-      layer.tiledLayer = tiledLayer
-      tiledLayer.addTo(this.map)
-      layer.on('add', () => tiledLayer.addTo(this.map))
-      layer.on('remove', () => tiledLayer.removeFrom(this.map))
-      this.mapillaryLayer = options
+      bindLeafletEvents(layer, LeafletEvents.Feature, this, options)
       return layer
     }
   },
   created () {
     // Initialize the component
-    this.mapillaryClientID = undefined
-    // Check whether Mapillary is suppoted
-    if (!Mapillary.isSupported()) {
-      logger.warn('Mapillary is not supported on your platform')
-      return
-    }
+    this.mapillaryToken = undefined
     // Check whether the clientID is initailized
-    this.mapillaryClientID = this.$store.get('capabilities.api.mapillary.clientID')
-    if (!this.mapillaryClientID) {
-      logger.warn('You must provide a clientID to use Mapillary')
+    this.mapillaryToken = this.$store.get('capabilities.api.mapillary.token')
+    if (!this.mapillaryToken) {
+      logger.warn('You must provide a client token to use Mapillary')
       return
     }
     // Register the mapillary coverage
-    this.registerLeafletConstructor(this.createLeafletMapillaryCoverageLayer)
+    this.registerLeafletConstructor(this.createLeafletMapillaryLayer)
   }
 }
