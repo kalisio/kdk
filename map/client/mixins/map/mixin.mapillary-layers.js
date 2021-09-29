@@ -8,9 +8,6 @@ export default {
       const leafletOptions = options.leaflet || options
       // Check for valid type
       if (leafletOptions.type !== 'mapillary') return
-      if (typeof this.createLeafletGeoJsonLayer !== 'function') {
-        throw new Error('Mapillary layer needs support of GeoJson layer to work correctly')
-      }
       // Based on real-time geojson to be created first
       const layer = await this.createLeafletLayer(_.merge(options, {
         leaflet: {
