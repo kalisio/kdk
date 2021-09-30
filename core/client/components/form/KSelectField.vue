@@ -76,7 +76,18 @@ export default {
   },
   methods: {
     getId (option) {
-      return _.kebabCase(option.value)
+      let id = option.value
+      // Complex object ?
+      if (typeof id === 'object') {
+        // Extract value property or use label if none
+        const valueField = _.get(this.properties, 'field.valueField')
+        if (valueField) id = _.get(id, valueField)
+        else id = option.label
+      } else {
+        // Ensure string not eg number
+        id = id.toString()
+      }
+      return _.kebabCase(id)
     },
     emptyModel () {
       const multiple = _.get(this.properties, 'field.multiple', false)
