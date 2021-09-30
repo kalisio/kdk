@@ -168,9 +168,10 @@ export class Api {
       const members = _.get(organisation, 'members', [])
       for (let i = 0; i < members.length; i++) {
         const orgMember = members[i]
+        const tags = _.get(orgMember, 'tags', [])
         await client.getService('members', organisation).patch(orgMember._id, {
           // Scope can be omitted for convenience
-          tags: orgMember.tags.map(tag => Object.assign({ scope: 'members' }, tag))
+          tags: tags.map(tag => Object.assign({ scope: 'members' }, tag))
         })
       }
       await client.logout()
