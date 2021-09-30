@@ -37,10 +37,10 @@ export async function isCardExpanded (page, component, name) {
   return elements.length > 0
 }
 
-export async function expandCard (page, component, name) {
+export async function expandCard (page, component, name, wait = 1000) {
   const isExpanded = await isCardExpanded(page, component, name)
   if (!isExpanded) {
-    await clickItemAction(page, component, name, 'expand-action', 1000)
+    await clickItemAction(page, component, name, 'expand-action', wait)
   }
 }
 

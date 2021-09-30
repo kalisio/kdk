@@ -150,7 +150,7 @@ export default {
     getButtons () {
       return [
         { id: 'cancel-button', label: 'CANCEL', outline: true, renderer: 'form-button', handler: () => this.doClose() },
-        { id: 'apply-button', label: 'KIconChooser.DONE_BUTTON', renderer: 'form-button', handler: (event) => this.doDone(event) }
+        { id: 'choose-button', label: 'KIconChooser.DONE_BUTTON', renderer: 'form-button', handler: (event) => this.doDone(event) }
       ]
     },
     open (defaultIcon) {

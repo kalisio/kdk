@@ -81,6 +81,24 @@ export async function upload (page, selector, filePath, wait = 2000) {
   await page.waitForTimeout(wait)
 }
 
+/* Select an icon within the icon chooser
+ */
+export async function chooseIcon (page, name, color, wait = 1000) {
+  const iconXpath = `//div[contains(@class, "q-dialog")]//i[contains(@class, "${name}")]`
+  const icons = await page.$x(iconXpath)
+  if (icons.length > 0) {
+    icons[0].click()
+    await page.waitForTimeout(250)
+  }
+  const colorXpath = `//div[contains(@class, "q-dialog")]//button[contains(@class, "${color}")]`
+  const colors = await page.$x(colorXpath)
+  if (colors.length > 0) {
+    colors[0].click()
+    await page.waitForTimeout(250)
+  }
+  await click(page, '.q-dialog #choose-button', wait)
+}
+
 /* Helper function that wait until all images are loaded
  */
 export async function waitForImagesLoaded (page) {
@@ -124,3 +142,4 @@ export function compareImages (image1, image2, threshold) {
   const diffRatio = 100.0 * (numDiffs / (width * height))
   return { diffRatio, diff }
 }
+
