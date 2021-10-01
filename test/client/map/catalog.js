@@ -57,7 +57,7 @@ export async function addLayer (page) {
 
 export async function importLayer (page, filePath, featureId, wait = 2000) {
   await addLayer(page)
-  await core.upload(page, '#file-field', filePath)
+  await core.uploadFile(page, '#file-field', filePath)
   await core.click(page, '#featureId-field', 500)
   await core.click(page, `#${featureId}`, 500)
   await core.clickAction(page, 'import-layer-action')
@@ -81,7 +81,7 @@ export async function createLayer (page, layerName, schemaPath, featureId, wait 
   await core.clickAction(page, 'create-layer')
   await core.type(page, '#name-field', layerName)
   await core.type(page, '#description-field', `${layerName} description`)
-  await core.upload(page, '#schema-field', schemaPath)
+  await core.uploadFile(page, '#schema-field', schemaPath)
   await page.click(page, '#featureId-field', 500)
   await core.click(page, `#${featureId}`)
   await core.clickAction(page, 'create-layer-action', 1000)

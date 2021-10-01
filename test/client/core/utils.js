@@ -83,9 +83,9 @@ export async function type (page, selector, text, enter = false, replace = false
   await page.waitForTimeout(wait)
 }
 
-/* Helper function to input a test on a given selector
+/* Helper function to upload a file on a given selector
  */
-export async function upload (page, selector, filePath, wait = 2000) {
+export async function uploadFile (page, selector, filePath, wait = 2000) {
   const element = await page.$(selector)
   await element.uploadFile(filePath)
   await page.waitForTimeout(wait)

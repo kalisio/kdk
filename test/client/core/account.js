@@ -1,4 +1,4 @@
-import { click, type, upload } from './utils'
+import { click, type, uploadFile } from './utils'
 import { clickAction, clickLeftPaneAction, clickTopPaneAction } from './layout'
 
 export async function manageAccount (page, tab = 'profile') {
@@ -16,7 +16,7 @@ export async function manageAccount (page, tab = 'profile') {
 export async function updateAccountProfile (page, name, avatarPath, wait = 3000) {
   await manageAccount(page, 'profile')
   await type(page, '#name-field', name, false, true)
-  if (avatarPath) await upload(page, '.dz-hidden-input', avatarPath)
+  if (avatarPath) await uploadFile(page, '.dz-hidden-input', avatarPath)
   await clickAction(page, 'apply-button', wait)
 }
 
