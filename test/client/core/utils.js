@@ -51,8 +51,18 @@ export async function clickSelect (page, selector, entry, wait = 250) {
   await page.waitForSelector(selector)
   await page.click(selector)
   debug(`Clicked target ${selector}`)
-  await page.waitForSelector(entry)
-  await page.click(entry)
+  // We handle single/multiple selection
+  if (Array.isArray(entry)) {
+    for (let i = 0; i < entry.length; i++) {
+      await page.waitForSelector(entry[i])
+      await page.click(entry[i])
+    }
+    // In this case we need to close the selector
+    await page.click(selector)
+  } else {
+    await page.waitForSelector(entry)
+    await page.click(entry)
+  }
   await page.waitForTimeout(wait)
   debug(`Clicked entry ${selector}`)
 }
