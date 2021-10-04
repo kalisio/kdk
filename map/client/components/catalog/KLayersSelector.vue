@@ -1,62 +1,62 @@
 <template>
-  <q-list dense>
+  <div>
     <slot name="header" />
     <div v-if="layers.length > 0">
       <template v-for="layer in layers">
-        <q-item
-          :id="getId(layer)"
-          :key="getId(layer)"
-          :active="layer.isVisible"
-          :disable="layer.isDisabled"
-          :clickable="!layer.isDisabled"
-          active-class="text-accent text-weight-bolder"
-          class="cursor-pointer"
-          dense>
-          <q-item-section avatar @click="onLayerClicked(layer)">
-            <q-icon v-if="!layer.iconUrl" :name="layerIcon(layer)"></q-icon>
-            <img v-else :src="layer.iconUrl" width="32" />
-            <!-- badge -->
-            <q-badge v-if="layer.badge" v-bind="layer.badge">
-              <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
-            </q-badge>
-          </q-item-section>
-          <!-- item label -->
-          <q-item-section @click="onLayerClicked(layer)">
-            <q-item-label lines="1">
+        <div :key="getId(layer)" class="row items-center justify-between q-pl-md q-pr-sm no-span">
+          <!-- Layer name -->
+          <div class="column">
+            <div v-bind:class="{ 
+              'text-primary text-weight-bold': layer.isVisible,
+              'text-grey-6': layer.isDisabled
+            }">
               {{ layer.label || layer.name }}
-            </q-item-label>
-            <q-item-label v-if="options.description" caption lines="2">
-              {{ layer.description }}
-            </q-item-label>
-            <q-item-label v-if="layer.isDisabled" caption lines="2">
+              <q-badge v-if="layer.badge" v-bind="layer.badge">
+                <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
+              </q-badge>
+              <q-tooltip 
+                v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
+                anchor="center left" 
+                self="center right" 
+                :offset="[20, 0]">
+                {{ layer.tooltip || layer.description }}
+              </q-tooltip>
+            </div>
+          </div>
+          <q-space />
+          <!-- Layer toggle -->
+          <q-toggle :value="layer.isVisible" :disable="layer.isDisabled" @input="onLayerClicked(layer)">
+            <q-tooltip v-if="layer.isDisabled">
               {{ $t('KLayersSelector.LAYER_DISABLED') }}
-            </q-item-label>
-          </q-item-section>
-          <!-- actions -->
-          <q-item-section side>
-            <k-panel :id="`${layer.name}-actions`" :content="layer.actions" :context="layer" :filter="{ id: { $nin: ['toggle'] } }" action-renderer="item" />
-          </q-item-section>
-          <!-- tooltip -->
-          <q-tooltip v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
-            anchor="center left" self="center right" :offset="[20, 0]">
-            {{ layer.tooltip || layer.description }}
-          </q-tooltip>
-        </q-item>
+            </q-tooltip>
+          </q-toggle>
+          <!-- Layer actions -->
+          <k-panel 
+            :id="`${layer.name}-actions`" 
+            :content="layer.actions" 
+            :context="layer" 
+            :filter="{ id: { $nin: ['toggle'] } }" 
+            action-renderer="item" />
+        </div>
       </template>
     </div>
     <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pb-sm">
       <k-stamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" direction="horizontal" />
     </div>
     <slot name="footer" />
-  </q-list>
+  </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import { QToggle } from 'quasar'
 import { utils } from '../../../../core/client'
 
 export default {
   name: 'k-layers-selector',
+  components: {
+    QToggle
+  },
   props: {
     layers: {
       type: Array,
@@ -88,7 +88,7 @@ export default {
       this.toggleLayer(layer)
     }
   },
-  created () {
+  beforeCreate () {
     // Loads the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
