@@ -178,6 +178,7 @@ kApp frontend configuration is based on the same underlying [tool](https://githu
 * **transport** : the transport to be used between frontend and backend, could be `http` for standard REST or `websocket` for WebSockets
 * **appName**: the name of the app
 * **appLogo**: the image to be used as logo for the app
+* **theme**: the [theme](../../api/core/application.md#theme) to be used
 * **logs**
   * **level**: [log level](https://github.com/pimterry/loglevel#documentation) to be used
 * **screens**: connection screens configuration

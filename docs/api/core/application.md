@@ -236,7 +236,7 @@ The **KDK** offers a simple way of theming your application. The application the
 
 You can customize these color schema **statically** and **dynamically**.
 
-* **statically** within the `css/quasar.varaibles.styl`:
+* **statically** within the `css/quasar.variables.styl`:
 
 ```css
 $primary    = #bf360c
@@ -279,6 +279,10 @@ Even if you can specify four different colors, the **KDK** let you specify the `
 | `warning` | equal to `#d09931` |
 
 It provides a convenient way to change the theme of the application using just one color.
+
+::: tip
+Applications might also make possible to setup the theme object from the frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp)
+:::
 
 ### Context
 
