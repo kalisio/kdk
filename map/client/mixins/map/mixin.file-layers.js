@@ -12,7 +12,10 @@ fileLayer(null, L, togeojson)
 export default {
   mounted () {
     this.$on('map-ready', () => {
-      this.loader = L.FileLayer.fileLoader(this.map, Object.assign({
+      // Instanciate the control to enable the access to the input element. 
+      // This is required to let Puppeteer upload a file
+      // See https://github.com/kalisio/kdk/issues/472
+      this.loaderControl = L.Control.fileLayerLoad(Object.assign({
         // Allows you to use a customized version of L.geoJson.
         // For example if you are using the Proj4Leaflet leaflet plugin,
         // you can pass L.Proj.geoJson and load the files into the
@@ -32,6 +35,10 @@ export default {
           '.gpx'
         ]
       }, this.activityOptions.engine.fileLayers))
+      this.loaderControl.addTo(this.map)
+      // Hide the contoler
+      const loaderControlElements = document.getElementsByClassName('leaflet-control-filelayer')
+      if (loaderControlElements.length > 0) loaderControlElements[0].style.visibility = 'hidden'
       // Required to support drag'n'drop because we do not use the built-in control
       this.map._container.addEventListener('dragenter', () => this.map.scrollWheelZoom.disable(), false)
       this.map._container.addEventListener('dragleave', () => this.map.scrollWheelZoom.enable(), false)
@@ -42,12 +49,11 @@ export default {
       this.map._container.addEventListener('drop', (event) => {
         event.stopPropagation()
         event.preventDefault()
-
-        this.loader.loadMultiple(event.dataTransfer.files)
+        this.loaderControl.loader.loadMultiple(event.dataTransfer.files)
         this.map.scrollWheelZoom.enable()
       }, false)
 
-      this.loader.on('data:loaded', async event => {
+      this.loaderControl.loader.on('data:loaded', async event => {
         const name = (event.filename
           ? path.basename(event.filename, path.extname(event.filename))
           : this.$t('mixins.fileLayers.IMPORTED_DATA_NAME'))
@@ -81,7 +87,7 @@ export default {
         // Zoom to it
         this.zoomToLayer(name)
       })
-      this.loader.on('data:error', event => {
+      this.loaderControl.loader.on('data:error', event => {
         logger.error(event.error)
         this.$events.$emit('error', {
           message: this.$t('errors.FILE_IMPORT_ERROR')
