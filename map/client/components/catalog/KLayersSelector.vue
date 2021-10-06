@@ -3,25 +3,23 @@
     <slot name="header" />
     <div v-if="layers.length > 0">
       <template v-for="layer in layers">
-        <div :key="getId(layer)" class="row items-center justify-between q-pl-md q-pr-sm no-span">
+        <div :key="getId(layer)" :id="getId(layer)" class="row items-center justify-between q-pl-md q-pr-sm no-span">
           <!-- Layer name -->
-          <div class="column">
-            <div v-bind:class="{ 
-              'text-primary text-weight-bold': layer.isVisible,
-              'text-grey-6': layer.isDisabled
-            }">
-              {{ layer.label || layer.name }}
-              <q-badge v-if="layer.badge" v-bind="layer.badge">
-                <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
-              </q-badge>
-              <q-tooltip 
-                v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
-                anchor="center left" 
-                self="center right" 
-                :offset="[20, 0]">
-                {{ layer.tooltip || layer.description }}
-              </q-tooltip>
-            </div>
+          <div v-bind:class="{ 
+            'text-primary text-weight-bold': layer.isVisible,
+            'text-grey-6': layer.isDisabled
+          }">
+            {{ layer.label || layer.name }}
+            <q-badge v-if="layer.badge" v-bind="layer.badge">
+              <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
+            </q-badge>
+            <q-tooltip 
+              v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
+              anchor="center left" 
+              self="center right" 
+              :offset="[20, 0]">
+              {{ layer.tooltip || layer.description }}
+            </q-tooltip>
           </div>
           <q-space />
           <q-icon name="las la-exclamation-circle" size="md" color="warning" v-if="layer.isDisabled">

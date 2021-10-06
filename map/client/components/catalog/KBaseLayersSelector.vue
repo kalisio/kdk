@@ -4,7 +4,7 @@
       <template v-for="layer in layers">
         <div class="col-6 q-pa-xs" :key="layer.name">
           <q-card
-            :id="layer.name"
+            :id="getId(layer)"
             v-ripple
             class="k-layer-card"
             v-bind:class="{ 'k-layer-card-active': selectedLayer === layer.name }"
@@ -80,6 +80,9 @@ export default {
     }
   },
   methods: {
+    getId (layer) {
+      return _.kebabCase(layer.name)
+    },
     toggleLayer (layer) {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()

@@ -1,11 +1,12 @@
+import _ from 'lodash'
 import * as core from '../core'
 
 export function getSystemLayerCategoryId (category) {
-  return 'KCatalogPanel\\.' + category
+  return 'k-catalog-panel-' + _.kebabCase(category)
 }
 
 export function getSystemLayerId (layer) {
-  return 'Layers\\.' + layer
+  return 'layers-' + _.kebabCase(layer)
 }
 
 export async function isLayerCategoryOpened (page, category) {
@@ -39,7 +40,7 @@ export async function clickLayer (page, layer, category = null, wait = 1000) {
     isCategoryOpened = await isLayerCategoryOpened(page, category)
     if (!isCategoryOpened) await clickLayerCategory(page, category)
   }
-  const selector = `#${layer} .q-item__label`
+  const selector = `#${layer} .q-toggle`
   await core.click(page, selector)
   if (category) {
     if (!isCategoryOpened) await clickLayerCategory(page, category)

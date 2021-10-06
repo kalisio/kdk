@@ -260,7 +260,7 @@ export default {
       this.$api.getService('catalog').remove(category._id)
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-action'] = this.$load('frame/KAction')

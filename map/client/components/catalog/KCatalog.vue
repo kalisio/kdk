@@ -8,8 +8,8 @@
       <template v-for="category in layerCategories">
         <q-expansion-item
           v-if="isVisible(category)"
-          :key="category.name"
-          :id="category.name"
+          :key="getId(category)"
+          :id="getId(category)"
           :header-class="getColor(category)"
           :icon="getIcon(category)"
           :label="$t(category.name)"
@@ -96,6 +96,9 @@ export default {
     }
   },
   methods: {
+    getId (category) {
+      return _.kebabCase(category.name)
+    },
     isVisible (category) {
       // User-defined categories are always visible, even if empty
       // Built-in categories only if not empty as depending on the configuration
