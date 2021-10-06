@@ -45,6 +45,18 @@ export async function click (page, selector, wait = 250) {
   debug(`Clicked target ${selector}`)
 }
 
+/* Helper function to click on a given xpath
+ */
+export async function clickXPath (page, xpath, wait = 250) {
+  await page.waitForXPath(xpath)
+  const elements = await page.$x(xpath)
+  if (elements.length > 0) {
+    elements[0].click()
+    await page.waitForTimeout(wait)
+    debug(`Clicked target ${xpath}`)
+  }
+}
+
 /* Helper function to click on a given selector then select given entry
  */
 export async function clickSelect (page, selector, entry, wait = 250) {

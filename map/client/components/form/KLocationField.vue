@@ -9,7 +9,7 @@
   >
     <!-- Content -->
     <template v-slot:default>
-      <k-location-input v-model="model" v-bind="properties.field" class="full-width" />
+      <k-location-input id="location-input" v-model="model" v-bind="properties.field" class="full-width" />
     </template>
     <!--Helper -->
     <template v-if="helper" v-slot:hint>
