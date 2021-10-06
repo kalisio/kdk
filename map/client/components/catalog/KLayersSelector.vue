@@ -24,12 +24,11 @@
             </div>
           </div>
           <q-space />
+          <q-icon name="las la-exclamation-circle" size="md" color="warning" v-if="layer.isDisabled">
+            <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
+          </q-icon>
           <!-- Layer toggle -->
-          <q-toggle :value="layer.isVisible" :disable="layer.isDisabled" @input="onLayerClicked(layer)">
-            <q-tooltip v-if="layer.isDisabled">
-              {{ $t('KLayersSelector.LAYER_DISABLED') }}
-            </q-tooltip>
-          </q-toggle>
+          <q-toggle :value="layer.isVisible" :disable="layer.isDisabled" @input="onLayerClicked(layer)"/>
           <!-- Layer actions -->
           <k-panel 
             :id="`${layer.name}-actions`" 
