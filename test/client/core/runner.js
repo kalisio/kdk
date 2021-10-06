@@ -44,6 +44,7 @@ export class Runner {
       screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
       screenshotsDir: path.join(defaultRunDir, '/screenshots'),
       mode: 'run',
+      writeDiffs: false,
       matchTreshold: 0.1
     }, options, merger)
     // Display the runner options
@@ -100,27 +101,38 @@ export class Runner {
     if (this.browser) await this.browser.close()
   }
 
-  async capture (key) {
+  async capture (key, boundingBox) {
     // If run mode store in screenshots dir, otherwise in screenrefs dir
     const dir = (this.options.mode === 'run' ? this.options.screenshotsDir : this.options.screenrefsDir)
-    await this.page.screenshot({
-      path: path.join(dir, key + '.png'),
-      fullPage: true,
-      type: 'png'
-    })
+    const options = Object.assign(
+      {
+        path: path.join(dir, key + '.png'),
+        type: 'png'
+      }, boundingBox ? { clip: boundingBox } : { fullPage: true })
+    await this.page.screenshot(options)
   }
 
-  async captureAndMatch (key, diffTolerance = 1.0) {
-    await this.capture(key)
+  async captureAndMatch (key, diffTolerance = 1.0, boundingBox = null) {
+    await this.capture(key, boundingBox)
     // If run mode compare, otherwise skip as we only want to record screenrefs
     if (this.options.mode === 'run') {
       const runDir = path.join(this.options.screenshotsDir, key + '.png')
       const refPath = path.join(this.options.screenrefsDir, key + '.png')
-      const diff = compareImages(runDir, refPath, this.options.matchTreshold)
+      const diffFilename = this.options.writeDiffs ? path.join(this.options.screenshotsDir, `diff.${key}.png`) : null
+      const diff = compareImages(runDir, refPath, this.options.matchTreshold, diffFilename)
       return diff.diffRatio <= diffTolerance
     } else {
       return true
     }
+  }
+
+  compareCaptures (key1, key2, threshold) {
+    const dir = this.options.screenshotsDir
+    const img1 = path.join(dir, key1 + '.png')
+    const img2 = path.join(dir, key2 + '.png')
+    const imgDiff = this.options.writeDiffs ? path.join(dir, `diff.${key1}.${key2}.png`) : null
+    const result = compareImages(img1, img2, threshold, imgDiff)
+    return result.diffRatio
   }
 
   hasError () {

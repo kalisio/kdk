@@ -136,8 +136,12 @@ export async function getFromStore (page, path) {
  * will perform screenshot comparison and return the diffRatio as
  * a percentage of the number of mismatched pixels.
  * see: https://github.com/mapbox/pixelmatch
+ * threshold is a value [0, 1], smaller values make the comparison more
+ * sensitive.
+ * diffFilename is the filename where the diff of the images will be written,
+ * if null, no diff will be written
  */
-export function compareImages (image1, image2, threshold) {
+export function compareImages (image1, image2, threshold, diffFilename) {
   const img1 = png.PNG.sync.read(fs.readFileSync(image1))
   const img2 = png.PNG.sync.read(fs.readFileSync(image2))
   const { width, height } = img1
@@ -150,6 +154,6 @@ export function compareImages (image1, image2, threshold) {
   }
   const numDiffs = pixelmatch(img1.data, img2.data, diff.data, width, height, options)
   const diffRatio = 100.0 * (numDiffs / (width * height))
+  if (diffFilename) fs.writeFileSync(diffFilename, png.PNG.sync.write(diff))
   return { diffRatio, diff }
 }
-
