@@ -1,39 +1,39 @@
 module.exports = [{
-  target: '#KCatalogPanel\\.BASE_LAYERS',
+  target: '#k-catalog-panel-base-layers',
   title: 'tours.catalog-panel.CATALOG_LABEL',
   content: 'tours.catalog-panel.CATEGORIES_LABEL',
   params: {
     placement: 'top'
   }
 }, {
-  target: '#KCatalogPanel\\.BASE_LAYERS',
+  target: '#k-catalog-panel-base-layers',
   title: 'tours.catalog-panel.CATEGORY_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#KCatalogPanel\\.BASE_LAYERS * i',
+    clickOn: '#k-catalog-panel-base-layers * i',
     clickDelay: 1000,
-    clickOnPrevious: '#KCatalogPanel\\.BASE_LAYERS * i',
+    clickOnPrevious: '#k-catalog-panel-base-layers * i',
     previousDelay: 500
   }
 }, {
-  target: '#Layers\\.OSM_DARK',
+  target: '#layers-osm-dark',
   title: 'tours.catalog-panel.SHOW_LAYER_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#Layers\\.OSM_DARK',
+    clickOn: '#layers-osm-dark * i',
     clickDelay: 1000,
-    clickOnPrevious: '#KCatalogPanel\\.BASE_LAYERS * i',
+    clickOnPrevious: '#k-catalog-panel-base-layers * i',
     previousDelay: 500
   }
 }, {
-  target: '#Layers\\.OSM_BRIGHT',
+  target: '#layers-osm-bright',
   title: 'tours.catalog-panel.HIDE_LAYER_LABEL',
   content: 'tours.catalog-panel.MIN_LEVEL_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#Layers\\.OSM_BRIGHT',
+    clickOn: '#layers-osm-bright * i',
     clickDelay: 1000,
-    clickOnNext: ['#KCatalogPanel\\.BASE_LAYERS * i', '#KCatalogPanel\\.METEO_LAYERS * i'],
+    clickOnNext: ['#k-catalog-panel-base-layers * i', '#k-catalog-panel-meteo-layers * i'],
     nextDelay: 500
   }
 }, {
@@ -41,11 +41,11 @@ module.exports = [{
   title: 'tours.catalog-panel.METEO_MODEL_LABEL',
   params: {
     placement: 'top',
-    clickOnPrevious: ['#KCatalogPanel\\.METEO_LAYERS * i', '#KCatalogPanel\\.BASE_LAYERS * i'],
+    clickOnPrevious: ['#k-catalog-panel-meteo-layers * i', '#k-catalog-panel-base-layers * i'],
     previousDelay: 500
   }
 }, {
-  target: '#Layers\\.WIND_TILED',
+  target: '#layers-wind-tiled',
   title: 'tours.catalog-panel.METEO_LAYERS_LABEL',
   params: {
     placement: 'top'
