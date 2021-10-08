@@ -50,6 +50,13 @@ export async function clickLayer (page, layer, category = null, wait = 1000) {
   await page.waitForTimeout(wait)
 }
 
+export async function dropFile (page, filePath, wait = 2000) {
+  const loaderSelector = '.leaflet-control-filelayer input[type="file"]'
+  const loader = await page.$(loaderSelector)
+  await loader.uploadFile(filePath)
+  await page.waitForTimeout(wait)
+}
+
 export async function addLayer (page) {
   await core.clickFab(page)
   await core.clickAction(page, 'add-layer')
