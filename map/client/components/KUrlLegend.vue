@@ -25,7 +25,7 @@ export default {
     onLegendClick (index) {
       this.legends[index].visible = !this.legends[index].visible
     },
-    async tryAddLegend (layer) {
+    async getLegend (layer) {
       let legendUrl = _.get(layer, 'legendUrl')
       if (!legendUrl) {
         // no legend on layer, try to fetch legend in case of WMS layer
@@ -49,32 +49,35 @@ export default {
 
       // make sure server answers the request before using it
       if (legendUrl) {
-        let visible = false
         try {
           const response = await fetch(legendUrl)
-          visible = response.ok
           // additional check for funny servers answering with empty body ...
-          if (visible) {
+          if (response.ok) {
             const asBlob = await response.blob()
-            visible = asBlob ? asBlob.size > 0 : false
-          }
-          if (visible) {
-            // make sure layer is still visible since it may have been hidden in the meantime ...
-            if (this.kActivity.isLayerVisible(layer.name)) {
-              this.urlLegendLayers[layer._id] = legendUrl
-              this.legends.push({
-                src: legendUrl,
-                layer: layer.name,
-                visible: true
-              })
-            }
+            if (asBlob.size === 0) legendUrl = null
           }
         } catch (error) {
+          legendUrl = null
+        }
+      }
+
+      return legendUrl
+    },
+    async tryAddLegend (layer) {
+      const legendUrl = await this.getLegend(layer)
+      if (legendUrl) {
+        // make sure layer is still visible since it may have been hidden in the meantime ...
+        if (this.kActivity.isLayerVisible(layer.name)) {
+          this.legends.push({
+            src: legendUrl,
+            layer: layer.name,
+            visible: true
+          })
         }
       }
     },
-    tryRemoveLegend (layer) {
-      const legendUrl = this.urlLegendLayers[layer._id]
+    async tryRemoveLegend (layer) {
+      const legendUrl = await this.getLegend(layer)
       if (legendUrl) {
         const index = this.legends.findIndex((legend) => legend.src === legendUrl)
         this.legends.splice(index, 1)
