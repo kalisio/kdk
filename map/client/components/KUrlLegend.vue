@@ -91,7 +91,6 @@ export default {
     }
   },
   mounted () {
-    this.urlLegendLayers = {}
     this.kActivity.$on('layer-shown', this.onShowLayer)
     this.kActivity.$on('layer-hidden', this.onHideLayer)
 
