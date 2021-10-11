@@ -5,6 +5,7 @@ import sift from 'sift'
 import logger from 'loglevel'
 import 'leaflet-realtime'
 import { GradientPath } from '../../leaflet/GradientPath'
+import { MaskLayer } from '../../leaflet/MaskLayer'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer'
 import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 import * as wfs from '../../../common/wfs-utils'
@@ -27,6 +28,11 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
   if (geometry && properties && properties.gradient) {
     if (geometry.type === 'LineString') {
       return new GradientPath(geojson, options.style(geojson))
+    }
+  }
+  if (geometry && properties && properties.mask) {
+    if (geometry.type === 'Polygon') {
+      return new MaskLayer(geojson, options.style(geojson))
     }
   }
   return geometryToLayer(geojson, options)
