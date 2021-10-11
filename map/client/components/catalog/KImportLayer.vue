@@ -163,7 +163,8 @@ export default {
       // Assign the features to the layer
       await this.kActivity.updateLayer(newLayer.name, geoJson)
       // Zoom to it
-      this.kActivity.zoomToLayer(newLayer.name)
+      if (geoJson.bbox) this.kActivity.zoomToBBox(geoJson.bbox)
+      else this.kActivity.zoomToLayer(newLayer.name)
       this.importing = false
       this.$emit('done')
     }

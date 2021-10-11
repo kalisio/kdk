@@ -351,6 +351,9 @@ export default {
     zoomToBounds (bounds) {
       this.map.fitBounds(bounds)
     },
+    zoomToBBox (bbox) {
+      this.zoomToBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]])
+    },
     center (longitude, latitude, zoomLevel, options) {
       this.map.setView(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
     },

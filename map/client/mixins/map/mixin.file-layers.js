@@ -39,7 +39,8 @@ export default {
       // Hide the contoler
       const loaderControlElements = document.getElementsByClassName('leaflet-control-filelayer')
       if (loaderControlElements.length > 0) loaderControlElements[0].style.visibility = 'hidden'
-      // Required to support drag'n'drop because we do not use the built-in control
+      /* 
+      // Required to support drag'n'drop when not using built-in control
       this.map._container.addEventListener('dragenter', () => this.map.scrollWheelZoom.disable(), false)
       this.map._container.addEventListener('dragleave', () => this.map.scrollWheelZoom.enable(), false)
       this.map._container.addEventListener('dragover', (event) => {
@@ -52,7 +53,7 @@ export default {
         this.loaderControl.loader.loadMultiple(event.dataTransfer.files)
         this.map.scrollWheelZoom.enable()
       }, false)
-
+      */
       this.loaderControl.loader.on('data:loaded', async event => {
         const name = (event.filename
           ? path.basename(event.filename, path.extname(event.filename))
