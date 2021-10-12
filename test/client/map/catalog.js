@@ -40,14 +40,26 @@ export async function clickLayer (page, layer, category = null, wait = 1000) {
     isCategoryOpened = await isLayerCategoryOpened(page, category)
     if (!isCategoryOpened) await clickLayerCategory(page, category)
   }
-  const selector = `#${layer} .q-toggle`
-  await core.click(page, selector)
+  await core.click(page, `#${layer} .q-toggle`)
   if (category) {
     if (!isCategoryOpened) await clickLayerCategory(page, category)
   }
   if (!isCatalogOpened) await core.clickRightOpener(page)
   await core.waitForImagesLoaded(page)
   await page.waitForTimeout(wait)
+}
+
+export async function removeLayer (page, layer, category = null, wait = 1000) {
+  const isCatalogOpened = await core.isRightPaneVisible(page)
+  if (!isCatalogOpened) await core.clickRightOpener(page)
+  let isCategoryOpened
+  if (category) {
+    isCategoryOpened = await isLayerCategoryOpened(page, category)
+    if (!isCategoryOpened) await clickLayerCategory(page, category)
+  }
+  await core.click(page, `#${layer} .q-btn`)
+  await core.clickAction(page, 'remove')
+  await core.click(page, '.q-dialog button:nth-child(2)', wait)
 }
 
 export async function dropFile (page, filePath, wait = 2000) {
