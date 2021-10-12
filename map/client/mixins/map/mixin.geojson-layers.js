@@ -31,7 +31,7 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
     }
   }
   if (geometry && properties && properties.mask) {
-    if (geometry.type === 'Polygon') {
+    if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
       return new MaskLayer(geojson, options.style(geojson))
     }
   }

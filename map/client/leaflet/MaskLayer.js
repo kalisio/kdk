@@ -7,10 +7,6 @@ const MaskLayer = L.Polygon.extend({
   initialize: function (geoJson, options) {
     // Merge the options
     L.setOptions(this, Object.assign({ 
-      color: "#AAAAAA",
-      weight: 1,
-      fillColor: "#AAAAAA",
-      fillOpacity: 0.8,
       interactive: false,
       fitBounds: true,
       restrictBounds: true,
@@ -24,18 +20,32 @@ const MaskLayer = L.Polygon.extend({
        this.options.bounds.getSouthEast()
     ]
     // Construct the mask
+    let mask = []
     const type = _.get(geoJson, 'type')
-    const geometryType = _.get(geoJson, 'geometry.type')
-    const coordinates = _.get(geoJson, 'geometry.coordinates')
-    let holeCoordinates = []
-    if ((type === 'Feature') && (geometryType === 'Polygon') && Array.isArray(coordinates)) {
-      for (let i=0; i < coordinates[0].length; i++) {
-        holeCoordinates.push(new L.LatLng(coordinates[0][i][1], coordinates[0][i][0]))
+    if (type === 'Feature') {
+      const geometryType = _.get(geoJson, 'geometry.type')
+      const coordinates = _.get(geoJson, 'geometry.coordinates')
+      if (geometryType === 'Polygon' && coordinates) {
+        this.addPolygon(coordinates, mask)
+      } else if (geometryType === 'MultiPolygon' && coordinates) {
+        _.forEach(coordinates, polygon => this.addPolygon(polygon, mask))
       }
     } else {
       logger.warn('Invalid/Unsupported GeoJson object for MaskLayer')
     }
-    L.Polygon.prototype.initialize.call(this, [outerBoundsLatLngs, holeCoordinates], this.options)
+    L.Polygon.prototype.initialize.call(this, [outerBoundsLatLngs, mask], this.options)
+  },
+
+  addPolygon (coordinates, mask) {
+    let hole = []
+    _.forEach(coordinates, ring => {
+      let ringHole = []
+      for (let i = 0; i < ring.length; i++) {
+        ringHole.push(new L.LatLng(ring[i][1], ring[i][0]))
+      }
+      hole.push(ringHole)  
+    })
+    mask.push(hole)
   }
 })
 
