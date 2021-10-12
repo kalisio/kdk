@@ -9,7 +9,6 @@ const MaskLayer = L.Polygon.extend({
     L.setOptions(this, Object.assign({ 
       interactive: false,
       fitBounds: true,
-      restrictBounds: true,
       bounds: new L.LatLngBounds([-90, -360], [90, 360])
       }), options)
     // Define the outBounds latlngs array of the mask
