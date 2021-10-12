@@ -5,6 +5,7 @@ import clean from '@turf/clean-coords'
 import { getType } from '@turf/invariant'
 import logger from 'loglevel'
 import moment from 'moment'
+import { Time } from '../../../core/client/time'
 import { getNearestTime } from '../utils'
 
 export default {
@@ -48,7 +49,7 @@ export default {
         interval = this.getFeaturesUpdateInterval(options)
       }
       if (!interval) return true
-      const now = this.currentTime || moment.utc()
+      const now = Time.getCurrentTime()
       // If query interval has elapsed since last update we need to update again
       return now.isSameOrAfter(lastUpdateTime.clone().add(interval))
     },
@@ -82,7 +83,7 @@ export default {
           $aggregate: options.variables.map(variable => variable.name)
         }, query)
         // Request feature with at least one data available during last query interval if none given
-        const now = this.currentTime || moment.utc()
+        const now = Time.getCurrentTime()
         if (moment.isDuration(queryInterval)) {
           // Depending on the duration format we might have negative or positive values
           const gte = (queryInterval.asMilliseconds() > 0
@@ -124,7 +125,7 @@ export default {
       // Check for the right value at time
       if (Array.isArray(times) && Array.isArray(values)) {
         /// Look for the nearest time
-        const nearestTime = getNearestTime(this.currentTime, times.map(time => moment.utc(time)))
+        const nearestTime = getNearestTime(Time.getCurrentTime(), times.map(time => moment.utc(time)))
         return (nearestTime.index >= 0 ? values[nearestTime.index] : null)
       } else {
         // Constant value

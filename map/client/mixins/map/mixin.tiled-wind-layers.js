@@ -1,5 +1,5 @@
 import _ from 'lodash'
-
+import { Time } from '../../../../core/client/time'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer'
 
@@ -74,7 +74,7 @@ export default {
 
       // setup layer
       engineLayer.setModel(this.forecastModel)
-      engineLayer.setTime(this.currentTime)
+      engineLayer.setTime(Time.getCurrentTime())
       if (this.selectedLevel !== null) engineLayer.setLevel(this.selectedLevel)
     },
 
@@ -123,7 +123,7 @@ export default {
     this.$on('layer-hidden', this.onHideTiledWindLayer)
     this.$on('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$on('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
-    this.$on('current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
+    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   },
 
   beforeDestroy () {
@@ -132,6 +132,6 @@ export default {
     this.$off('layer-hidden', this.onHideTiledWindLayer)
     this.$off('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$off('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
-    this.$off('current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
+    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   }
 }

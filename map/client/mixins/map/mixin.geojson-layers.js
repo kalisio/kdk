@@ -4,6 +4,7 @@ import moment from 'moment'
 import sift from 'sift'
 import logger from 'loglevel'
 import 'leaflet-realtime'
+import { Time } from '../../../../core/client/time'
 import { GradientPath } from '../../leaflet/GradientPath'
 import { MaskLayer } from '../../leaflet/MaskLayer'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer'
@@ -131,7 +132,7 @@ export default {
             try {
               // Update only the first time or when required according to data update interval
               if (!lastUpdateTime || !this.shouldSkipFeaturesUpdate(lastUpdateTime, options)) {
-                lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+                lastUpdateTime = Time.getCurrentTime().clone()
                 successCallback(await this.getFeatures(options))
               }
             } catch (error) {
@@ -163,7 +164,7 @@ export default {
         // Tell realtime plugin how to update/load data
         _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
           try {
-            const sourceToFetch = sourceCompiler({ time: this.currentTime || moment.utc() })
+            const sourceToFetch = sourceCompiler({ time: Time.getCurrentTime() })
             if (!lastFetchedSource || (lastFetchedSource !== sourceToFetch)) {
               lastFetchedSource = sourceToFetch
               successCallback(await fetchGeoJson(sourceToFetch))
@@ -369,9 +370,9 @@ export default {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
-    this.$on('current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
   },
   beforeDestroy () {
-    this.$off('current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }

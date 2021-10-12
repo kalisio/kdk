@@ -13,7 +13,7 @@
           <q-date v-model="date" :mask="calendarDateMask" today-btn minimal />
         </q-popup-proxy>
       </q-btn>
-      <q-chip :label="kActivity.formatTime('date.long', time) + ' ' + kActivity.formatTime('time.long', time)" color="primary" text-color="white" :dense="$q.screen.lt.sm" />
+      <q-chip :label="formatTime(time, 'date.long') + ' ' + formatTime(time, 'time.long')" color="primary" text-color="white" :dense="$q.screen.lt.sm" />
       <q-btn id="timeline-now" dense flat round icon="las la-clock" size="md" color="primary" @click="onNowClicked">
         <q-tooltip>{{$t('KTimeline.SET_NOW')}}</q-tooltip>
         <q-badge v-if="timer !== undefined" floating transparent color="green">
@@ -82,26 +82,31 @@
 <script>
 import logger from 'loglevel'
 import moment from 'moment'
+import { Time } from '../../../core/client/time'
 
 export default {
   name: 'k-timeline',
   inject: ['kActivity'],
   data () {
     return {
-      timeline: this.$store.get('timeline'),
       timer: undefined,
       time: moment.utc(),
-      calendarDateMask: 'YYYY-MM-DD'
+      calendarDateMask: 'YYYY-MM-DD',
+      // Make this reactive
+      timeSettings: Time.get()
     }
   },
   computed: {
+    step () {
+      // For now we do not handle step > 60 minutes
+      return Math.min(this.timeSettings.step, 60)
+    },
     minutes () {
       const minutes = []
-      const step = this.getStep()
-      if (step < 60) {
+      if (this.step < 60) {
         const start = moment.utc(this.time).minute(0)
         const end = moment.utc(this.time).minute(59)
-        for (let m = moment.utc(start); m.isBefore(end); m.add(step, 'm')) {
+        for (let m = moment.utc(start); m.isBefore(end); m.add(this.step, 'm')) {
           minutes.push({
             label: m.minute().toString().padStart(2, 0),
             color: m.isSame(this.time, 'minute') ? 'primary' : 'grey-7',
@@ -122,7 +127,7 @@ export default {
       const end = moment.utc(this.time).add((size + 1), 'hour')
       for (let h = moment.utc(start); h.isBefore(end); h.add(1, 'h')) {
         hours.push({
-          label: this.kActivity.formatTime('time.short', h),
+          label: Time.format(h, 'time.short'),
           class: 'col k-timeline-hour-frame text-caption ' + (h.isSame(this.time, 'hour') ? 'k-timeline-hour-selected' : '')
         })
       }
@@ -139,7 +144,7 @@ export default {
       const end = moment.utc(this.time).add(size + 1, 'day')
       for (let d = moment.utc(start); d.isBefore(end); d.add(1, 'd')) {
         days.push({
-          label: this.kActivity.formatTime('date.short', d),
+          label: Time.format(d, 'date.short'),
           color: d.isSame(this.time, 'date') ? 'primary' : this.monthColors[d.month()],
           textColor: d.isSame(this.time, 'date') ? 'white' : 'black'
         })
@@ -148,13 +153,13 @@ export default {
     },
     date: {
       get: function () {
-        return this.kActivity.currentTimeFormat.utc
+        return Time.getFormat().utc
           ? this.time.format(this.calendarDateMask)
           : moment(this.time).local().format(this.calendarDateMask)
       },
       set: function (value) {
         let time
-        if (this.kActivity.currentTimeFormat.utc) {
+        if (Time.getFormat().utc) {
           time = moment.utc(value, this.calendarDateMask)
           time.hour(this.time.hour())
           time.minute(this.time.minute())
@@ -170,9 +175,8 @@ export default {
     }
   },
   methods: {
-    getStep () {
-      // For now we do not handle step > 60 minutes
-      return Math.min(this.timeline.step, 60)
+    formatTime (time, format) {
+      return Time.format(time, format)
     },
     startTimeLoop () {
       this.setTime(moment.utc())
@@ -180,9 +184,9 @@ export default {
         const now = moment.utc()
         if (!this.time.isSame(now, 'minute')) {
           this.time = now
-          this.kActivity.$off('current-time-changed', this.onTimeChanged)
-          this.kActivity.setCurrentTime(this.time)
-          this.kActivity.$on('current-time-changed', this.onTimeChanged)
+          this.$events.$off('time-current-time-changed', this.onTimeChanged)
+          Time.setCurrentTime(this.time)
+          this.$events.$on('time-current-time-changed', this.onTimeChanged)
         }
       }, 15 * 1000)
     },
@@ -201,28 +205,28 @@ export default {
       }
       if (this.timer) this.stopTimeLoop()
       this.time = time.clone()
-      this.kActivity.$off('current-time-changed', this.onTimeChanged)
-      if (propagate) this.kActivity.setCurrentTime(moment.utc(time))
-      this.kActivity.$on('current-time-changed', this.onTimeChanged)
+      this.$events.$off('time-current-time-changed', this.onTimeChanged)
+      if (propagate) Time.setCurrentTime(moment.utc(time))
+      this.$events.$on('time-current-time-changed', this.onTimeChanged)
     },
     onPreviousStepClicked () {
-      let minutesToSubtract = this.getStep()
-      const remainder = (this.time.minute() + this.time.hour() * 60) % this.getStep()
+      let minutesToSubtract = this.step
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.step
       if (remainder > 0) {
         minutesToSubtract = remainder
       }
       this.setTime(this.time.subtract(minutesToSubtract, 'minute'))
     },
     onNextStepClicked () {
-      let minutesToAdd = this.getStep()
-      const remainder = (this.time.minute() + this.time.hour() * 60) % this.getStep()
+      let minutesToAdd = this.step
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.step
       if (remainder > 0) {
-        minutesToAdd = this.getStep() - remainder
+        minutesToAdd = this.step - remainder
       }
       this.setTime(this.time.add(minutesToAdd, 'minute'))
     },
     onMinutesClicked (index) {
-      this.setTime(this.time.minute(index * this.getStep()))
+      this.setTime(this.time.minute(index * this.step))
     },
     onHourClicked (index, length) {
       this.setTime(this.time.add((index - Math.trunc(length / 2)), 'hour'))
@@ -246,7 +250,8 @@ export default {
       this.startTimeLoop()
     },
     onTimeChanged (time) {
-      this.setTime(time, false)
+      // When updating settings the root time object is sent instead of just the current time
+      this.setTime(time.currentTime || time, false)
     }
   },
   created () {
@@ -267,12 +272,12 @@ export default {
     }
   },
   mounted () {
-    this.kActivity.$on('current-time-changed', this.onTimeChanged)
+    this.$events.$on('time-current-time-changed', this.onTimeChanged)
     // Set the time
-    this.setTime(this.kActivity.currentTime, false)
+    this.setTime(Time.getCurrentTime(), false)
   },
   beforeDestroy () {
-    this.kActivity.$off('current-time-changed', this.onTimeChanged)
+    this.$events.$off('time-current-time-changed', this.onTimeChanged)
   }
 }
 </script>

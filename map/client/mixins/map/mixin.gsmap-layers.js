@@ -1,5 +1,5 @@
 import _ from 'lodash'
-
+import { Time } from '../../../../core/client/time'
 import { GSMaPLayer } from '../../leaflet/GSMaPLayer'
 
 export default {
@@ -14,7 +14,7 @@ export default {
       if (colorMap) Object.assign(leafletOptions, { chromajs: colorMap })
 
       // Add current time to options
-      leafletOptions.time = this.currentTime
+      leafletOptions.time = Time.getCurrentTime()
 
       // Then create layer
       return new GSMaPLayer(leafletOptions)

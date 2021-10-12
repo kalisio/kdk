@@ -20,6 +20,7 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
+import { Time } from '../../../../core/client/time'
 import { LeafletEvents, bindLeafletEvents } from '../../utils'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
@@ -211,7 +212,7 @@ export default {
           type: 'timeDimension.layer.wms',
           source: layer,
           timeDimension: L.timeDimension(timeDimension),
-          currentTime: this.currentTime
+          currentTime: Time.getCurrentTime()
         })
         // This allow the layer to conform our internal time interface
         layer.setCurrentTime = (datetime) => { layer._timeDimension.setCurrentTime(datetime) }
@@ -275,7 +276,7 @@ export default {
       // Ensure base layer will not pop on top of others
       if (layer.type === 'BaseLayer') leafletLayer.bringToBack()
       // Apply the current time if needed
-      if (typeof leafletLayer.setCurrentTime === 'function' && this.currentTime) leafletLayer.setCurrentTime(this.currentTime)
+      if (typeof leafletLayer.setCurrentTime === 'function') leafletLayer.setCurrentTime(Time.getCurrentTime())
       this.$emit('layer-shown', layer, leafletLayer)
     },
     hideLayer (name) {
@@ -422,12 +423,12 @@ export default {
     // Register support for WMS-T
     this.registerLeafletConstructor(this.createLeafletTimedWmsLayer)
     this.$on('zoomend', this.onMapZoomChanged)
-    this.$on('current-time-changed', this.onCurrentMapTimeChanged)
+    this.$events.$on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   beforeDestroy () {
     Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
     this.$off('zoomend', this.onMapZoomChanged)
-    this.$off('current-time-changed', this.onCurrentMapTimeChanged)
+    this.$events.$off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   destroyed () {
     if (this.map) this.map.remove()

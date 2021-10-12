@@ -33,6 +33,7 @@ import chroma from 'chroma-js'
 import Chart from 'chart.js'
 import 'chartjs-plugin-annotation'
 import { getTimeInterval } from '../../utils'
+import { Time } from '../../../../core/client/time'
 import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
@@ -278,10 +279,10 @@ export default {
           this.setupAvailableDatasets()
           this.setupAvailableYAxes()
 
-          const date = _.get(this.kActivity.currentFormattedTime, 'date.short')
-          const time = _.get(this.kActivity.currentFormattedTime, 'time.long')
-          const dateFormat = _.get(this.kActivity.currentTimeFormat, 'date.short')
-          const timeFormat = _.get(this.kActivity.currentTimeFormat, 'time.long')
+          const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
+          const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
+          const dateFormat = _.get(Time.getFormat(), 'date.short')
+          const timeFormat = _.get(Time.getFormat(), 'time.long')
 
           this.config = {
             type: 'line',
@@ -333,7 +334,7 @@ export default {
             }
           }
           // Is current time visible in data time range ?
-          const currentTime = moment.utc(this.kActivity.currentFormattedTime.iso)
+          const currentTime = moment.utc(Time.getCurrentFormattedTime().iso)
           if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
             this.config.options.annotation = {
               drawTime: 'afterDatasetsDraw',
@@ -403,6 +404,35 @@ export default {
       if (name) this.probedLocationName = name
     },
     async refresh () {
+      // Select the current span as default option in UX
+      const span = this.$store.get('timeseries.span')
+      const spanOptions = [
+        { badge: '3H', value: 180 },
+        { badge: '6H', value: 360 },
+        { badge: '12H', value: 720 },
+        { badge: '24H', value: 1440 },
+        { badge: '48H', value: 2880 },
+        { badge: '72H', value: 4320 },
+        { badge: '96H', value: 5760 }
+      ]
+      spanOptions.forEach(option => {
+        if (option.value === span) {
+          option.default = true
+        }
+      })
+      // Registers the actions
+      this.actions = [
+        { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
+        {
+          component: 'input/KOptionsChooser',
+          id: 'timespan-options',
+          icon: 'las la-history',
+          tooltip: 'KTimeSeries.SPAN',
+          options: spanOptions,
+          on: { event: 'option-chosen', listener: this.onUpdateSpan }
+        }
+      ]
+      // Then manage selection
       this.kActivity.addSelectionHighlight('time-series')
       this.kActivity.centerOnSelection()
       // Update timeseries data if required
@@ -437,38 +467,18 @@ export default {
     // Load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-    // Registers the actions
-    this.actions = [
-      { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
-      {
-        component: 'input/KOptionsChooser',
-        id: 'timespan-options',
-        icon: 'las la-history',
-        tooltip: 'KTimeSeries.SPAN',
-        options: [
-          { badge: '3H', value: 180 },
-          { badge: '6H', value: 360 },
-          { badge: '12H', value: 720, default: true },
-          { badge: '24H', value: 1440 },
-          { badge: '48H', value: 2880 },
-          { badge: '72H', value: 4320 },
-          { badge: '96H', value: 5760 }
-        ],
-        on: { event: 'option-chosen', listener: this.onUpdateSpan }
-      }
-    ]
     // Refresh the component
     this.refresh()
   },
   mounted () {
-    this.kActivity.$on('current-time-changed', this.refresh)
+    this.$events.$on('time-current-time-changed', this.refresh)
     this.$events.$on('time-format-changed', this.refresh)
     this.$events.$on('timeseries-span-changed', this.refresh)
     this.kActivity.$on('forecast-model-changed', this.refresh)
     this.kActivity.$on('forecast-level-changed', this.refresh)
   },
   beforeDestroy () {
-    this.kActivity.$off('current-time-changed', this.refresh)
+    this.$events.$off('time-current-time-changed', this.refresh)
     this.$events.$off('time-format-changed', this.refresh)
     this.$events.$off('timeseries-span-changed', this.refresh)
     this.kActivity.$off('forecast-model-changed', this.refresh)

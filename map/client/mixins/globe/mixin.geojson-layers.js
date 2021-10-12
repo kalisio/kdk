@@ -2,6 +2,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
 import moment from 'moment'
 import sift from 'sift'
+import { Time } from '../../../../core/client/time'
 import { fetchGeoJson } from '../../utils'
 
 export default {
@@ -104,7 +105,7 @@ export default {
         // Then get last available measures
         // Update only the first time or when required according to data update interval
         if (!dataSource.lastUpdateTime || !this.shouldSkipFeaturesUpdate(dataSource.lastUpdateTime, options)) {
-          dataSource.lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+          dataSource.lastUpdateTime = Time.getCurrentTime().clone()
           const measureSource = new Cesium.GeoJsonDataSource()
           await this.loadGeoJson(measureSource, this.getFeatures(options), cesiumOptions)
           // Then merge with probes
@@ -122,13 +123,13 @@ export default {
         // If no probe reference, nothing to be initialized
         // Update only the first time or when required according to data update interval
         if (!dataSource.lastUpdateTime || !this.shouldSkipFeaturesUpdate(dataSource.lastUpdateTime, options)) {
-          dataSource.lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+          dataSource.lastUpdateTime = Time.getCurrentTime().clone()
           await this.loadGeoJson(dataSource, this.getFeatures(options), cesiumOptions)
         }
       } else if (geoJson) {
         await this.loadGeoJson(dataSource, geoJson, cesiumOptions)
       } else if (sourceTemplate) {
-        const sourceToFetch = dataSource.sourceCompiler({ time: this.currentTime || moment.utc() })
+        const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() })
         if (!dataSource.lastFetchedSource || (dataSource.lastFetchedSource !== sourceToFetch)) {
           dataSource.lastFetchedSource = sourceToFetch
           await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch), cesiumOptions)
@@ -271,9 +272,9 @@ export default {
     if (this.activityOptions.engine.featureStyle) {
       Object.assign(Cesium.GeoJsonDataSource, this.convertFromSimpleStyleSpec(this.activityOptions.engine.featureStyle, 'update-in-place'))
     }
-    this.$on('current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
   },
   beforeDestroy () {
-    this.$off('current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }

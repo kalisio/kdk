@@ -4,6 +4,7 @@ import moment from 'moment'
 import sift from 'sift'
 import centroid from '@turf/centroid'
 import HeatmapOverlay from 'leaflet-heatmap'
+import { Time } from '../../../../core/client/time'
 import { fetchGeoJson } from '../../utils'
 
 export default {
@@ -21,7 +22,7 @@ export default {
       if (valueTemplate) layer.valueCompiler = _.template(valueTemplate)
 
       if (options.service) { // Check for feature service layers
-        layer.lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+        layer.lastUpdateTime = Time.getCurrentTime().clone()
         const geoJson = await this.getFeatures(options)
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(source)) {
@@ -30,7 +31,7 @@ export default {
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(sourceTemplate)) {
         // Source is an URL returning GeoJson possibly templated by time
-        const sourceToFetch = layer.sourceCompiler({ time: this.currentTime || moment.utc() })
+        const sourceToFetch = layer.sourceCompiler({ time: Time.getCurrentTime() })
         layer.lastFetchedSource = sourceToFetch
         const geoJson = await fetchGeoJson(sourceToFetch)
         this.updateLeafletHeatmap(layer, geoJson)
@@ -81,12 +82,12 @@ export default {
         if (options.service) { // Check for feature service layers
           // Update only the first time or when required according to data update interval
           if (!layer.lastUpdateTime || !this.shouldSkipFeaturesUpdate(layer.lastUpdateTime, options)) {
-            layer.lastUpdateTime = (this.currentTime ? this.currentTime.clone() : moment.utc())
+            layer.lastUpdateTime = Time.getCurrentTime().clone()
             const geoJson = await this.getFeatures(options)
             this.updateLeafletHeatmap(layer, geoJson)
           }
         } else if (layer.sourceCompiler) {
-          const sourceToFetch = layer.sourceCompiler({ time: this.currentTime || moment.utc() })
+          const sourceToFetch = layer.sourceCompiler({ time: Time.getCurrentTime() })
           if (!layer.lastFetchedSource || (layer.lastFetchedSource !== sourceToFetch)) {
             layer.lastFetchedSource = sourceToFetch
             const geoJson = await fetchGeoJson(sourceToFetch)
@@ -98,10 +99,10 @@ export default {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletHeatmapLayer)
-    this.$on('current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   },
   beforeDestroy () {
-    this.$off('current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }
 

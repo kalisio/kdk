@@ -5,6 +5,7 @@ import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
+import { Time } from '../../../core/client/time'
 import { Layout } from '../../../core/client/layout'
 import { setGatewayJwt } from '../utils'
 import { utils as kCoreUtils } from '../../../core/client'
@@ -461,7 +462,7 @@ export default {
       this.engine = 'cesium'
     },
     getProbeTimeRange () {
-      const start = this.currentTime.clone()
+      const start = Time.getCurrentTime().clone()
       const end = start.clone()
       const span = this.$store.get('timeseries.span')
       // We center on current time with the same span on past/future

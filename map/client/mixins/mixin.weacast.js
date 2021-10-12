@@ -2,6 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import logger from 'loglevel'
 import moment from 'moment'
+import { Time } from '../../../core/client/time'
 import { getNearestTime, SelectionLayerName } from '../utils'
 
 export default {
@@ -166,7 +167,7 @@ export default {
       // Check for the right value at time
       if (Array.isArray(times) && Array.isArray(values)) {
         // Look for the nearest time
-        const nearestTime = getNearestTime(this.currentTime, times.map(time => moment.utc(time)))
+        const nearestTime = getNearestTime(Time.getCurrentTime(), times.map(time => moment.utc(time)))
         // Check if we found a valid time within interval, otherwise the time is missing
         if ((nearestTime.difference / 1000) > (0.5 * this.forecastModel.interval)) return null
         else return values[nearestTime.index]
@@ -224,7 +225,7 @@ export default {
       const getTimeAsHtml = (time) => {
         if (!_.isNil(time)) {
           time = moment.utc(time)
-          if (time.isValid()) return ` (${this.formatTime('date.short', time)} - ${this.formatTime('time.long', time)})`
+          if (time.isValid()) return ` (${Time.format(time, 'date.short')} - ${Time.format(time, 'time.long')})`
         }
         return ''
       }
@@ -350,14 +351,14 @@ export default {
     }
   },
   created () {
-    this.$on('current-time-changed', this.onCurrentForecastTimeChanged)
+    this.$events.$on('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$on('layer-shown', this.onWeacastShowLayer)
     this.$on('layer-hidden', this.onWeacastHideLayer)
   },
   mounted () {
   },
   beforeDestroy () {
-    this.$off('current-time-changed', this.onCurrentForecastTimeChanged)
+    this.$events.$off('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$off('layer-shown', this.onWeacastShowLayer)
     this.$off('layer-hidden', this.onWeacastHideLayer)
   }

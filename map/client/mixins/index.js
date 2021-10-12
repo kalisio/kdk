@@ -3,7 +3,6 @@ import style from './mixin.style'
 import infobox from './mixin.infobox'
 import featureSelection from './mixin.feature-selection'
 import featureService from './mixin.feature-service'
-import time from './mixin.time'
 import weacast from './mixin.weacast'
 import activity from './mixin.activity'
 import context from './mixin.context'
@@ -13,7 +12,6 @@ export default {
   navigator,
   featureSelection,
   featureService,
-  time,
   infobox,
   style,
   weacast,

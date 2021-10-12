@@ -7,10 +7,8 @@ import { getLocale } from './utils'
 // Export singleton
 export const Time = {
   initialize () {
-    // Set locale globally
-    moment.locale(getLocale())
     // Set the time object within the store
-    const now = moment()
+    const now = moment.utc()
     Store.set('time', {
       range: {
         start: now.clone().subtract(1, 'months').startOf('day'),
@@ -18,7 +16,7 @@ export const Time = {
         query: {}
       },
       format: {
-        hour: {
+        time: {
           short: 'H[h]',
           long: 'HH:mm'
         },
@@ -31,10 +29,20 @@ export const Time = {
           long: 'YYYY'
         },
         utc: false
-      }
+      },
+      currentTime: now,
+      step: 60 // 1H
     })
     // Make filter react to external changes to update the query
     Events.$on('time-range-changed', () => this.updateTimeRangeQuery())
+  },
+  convertToMoment (datetime) {
+    if (moment.isMoment(datetime)) {
+      // Clone to avoid mutating and force UTC mode
+      return moment.utc(datetime.valueOf())
+    } else { // Convert from Date, string or milliseconds (ie EPOCH)
+      return moment.utc(datetime)
+    }
   },
   get () {
     return Store.get('time')
@@ -57,12 +65,44 @@ export const Time = {
   getFormat () {
     return this.get().format
   },
-  format (time, format) {
+  format(datetime, format) {
+    let currentTime = this.convertToMoment(datetime)
     if (!this.getFormat().utc) {
-      // ensure local time
-      time = moment(time.valueOf())
+      // Convert to local time
+      currentTime = moment(currentTime.valueOf())
     }
-    if (format === 'iso') return time.format()
-    return time.format(_.get(this.getFormat(), format, _.get(this.getFormat(), format + '.long')))
+    currentTime.locale(getLocale())
+    if (format === 'iso') return currentTime.format()
+    // Defaults to long mode if not given
+    else return currentTime.format(_.get(this.getFormat(), format, _.get(this.getFormat(), format + '.long')))
+  },
+  getCurrentTime () {
+    return this.get().currentTime
+  },
+  setCurrentTime (datetime) {
+    const now = this.convertToMoment(datetime)
+    if (this.getCurrentTime().isSame(now)) return
+    Store.patch('time.currentTime', now)
+  },
+  getCurrentFormattedTime () {
+    const currentTime = this.getCurrentTime()
+    return {
+      time: {
+        short: this.format(currentTime, 'time.short'),
+        long: this.format(currentTime, 'time.long')
+      },
+      date: {
+        short: this.format(currentTime, 'date.short'),
+        long: this.format(currentTime, 'date.long')
+      },
+      year: {
+        short: this.format(currentTime, 'year.short'),
+        long: this.format(currentTime, 'year.long')
+      },
+      iso: this.format(currentTime, 'iso')
+    }
+  },
+  getStep () {
+    return this.get().step
   }
 }

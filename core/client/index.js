@@ -38,13 +38,14 @@ export default function init () {
   const api = this
 
   logger.debug('Initializing core')
+  // Initialize singletons that might be used globally first
+  Time.initialize()
+  // Then services
   api.configure(services)
-
-  // Create the models listened by the main layout/pages components
+  // Last, create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
-  Time.initialize()
   Filter.initialize(api)
   Sorter.initialize()
   Search.initialize(api)

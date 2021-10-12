@@ -31,10 +31,13 @@ export default function init () {
     })
   })
 
-  // Create the models listened by the different components
+  // Initialize singletons that might be used globally first
+  Geolocation.initialize()
+
+  // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  Geolocation.initialize()
+  
   // Initialize the selection
   Store.set('selection', {
     location: null,
@@ -64,10 +67,6 @@ export default function init () {
   Store.set('restore', {
     view: true,
     layers: false
-  })
-  // Default timeline parameters
-  Store.set('timeline', {
-    step: 60 // 1H
   })
   // Default timeseries parameters
   Store.set('timeseries', {
