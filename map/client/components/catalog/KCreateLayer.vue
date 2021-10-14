@@ -74,7 +74,7 @@ export default {
             }
           }
         },
-        required: ['name', 'schema']
+        required: ['name']
       }
     },
     getFeatureIdFormSchema () {
@@ -93,7 +93,7 @@ export default {
             }
           }
         },
-        required: ['featureId']
+        required: []
       }
     },
     onPropertiesFormFieldChanged (field, value) {
@@ -138,15 +138,20 @@ export default {
         type: 'OverlayLayer',
         icon: 'insert_drive_file',
         scope: 'user',
+        isDataEditable: true, // Flag as editable
         featureId: featureIdResult.values.featureId,
         leaflet: engine,
         // Avoid sharing reference to the same object although options are similar
         // otherwise updating one will automatically update the other one
-        cesium: Object.assign({}, engine),
-        schema: {
-          name: this.schema.name,
-          content: this.schema.content
-        }
+        cesium: Object.assign({}, engine)
+      }
+      if (this.schema) {
+        Object.assign(newLayer, {
+          schema: {
+            name: this.schema.name,
+            content: this.schema.content
+          }
+        })
       }
       // Create the layer
       await this.kActivity.addLayer(newLayer)

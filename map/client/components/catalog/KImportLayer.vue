@@ -149,6 +149,7 @@ export default {
         type: 'OverlayLayer',
         icon: 'insert_drive_file',
         scope: 'user',
+        isDataEditable: true, // Flag as editable
         featureId: propertiesResult.values.featureId,
         leaflet: engine,
         // Avoid sharing reference to the same object although options are similar
