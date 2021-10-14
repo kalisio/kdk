@@ -222,6 +222,9 @@ export default {
       delete this.cesiumLayers[name]
       this.$emit('layer-removed', layer)
     },
+    clearLayers () {
+      Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
+    },
     zoomToBounds (bounds) {
       this.viewer.camera.flyTo({
         duration: 0,
@@ -384,7 +387,7 @@ export default {
     this.userLocation = false
   },
   beforeDestroy () {
-    Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
+    this.clearLayers()
   },
   destroyed () {
     this.viewer.destroy()

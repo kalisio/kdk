@@ -328,6 +328,9 @@ export default {
       delete this.leafletLayers[name]
       this.$emit('layer-removed', layer)
     },
+    clearLayers () {
+      Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
+    },
     toGeoJson (name) {
       const layer = this.getLeafletLayerByName(name)
       if (!layer || (typeof layer.toGeoJSON !== 'function')) return
@@ -426,7 +429,7 @@ export default {
     this.$events.$on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   beforeDestroy () {
-    Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
+    this.clearLayers()
     this.$off('zoomend', this.onMapZoomChanged)
     this.$events.$off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },

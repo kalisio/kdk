@@ -161,6 +161,10 @@ export default {
       // Update the selection
       this.setSelection(location, feature, layer)
     },
+    onFeatureSelectionLayerShown (layer) {
+      // If at least one layer is visible we have to create selection layer
+      if (this.isLayerSelectable(layer)) this.createSelectionLayer()
+    },
     onFeatureSelectionLayerHidden (layer) {
       if (this.hasFeatureSelection) {
         if (layer.name === this.selection.layer.name) this.clearSelection()
@@ -191,16 +195,14 @@ export default {
     // Set of highligthed features
     this.selectionHighlight = {}
     this.$on('click', this.onFeatureSelectionClicked)
+    this.$on('layer-shown', this.onFeatureSelectionLayerShown)
     this.$on('layer-hidden', this.onFeatureSelectionLayerHidden)
     this.$on('layer-disabled', this.onFeatureSelectionLayerDisabled)
     this.$on('layer-enabled', this.onFeatureSelectionLayerEnabled)
   },
-  mounted () {
-    this.$once('map-ready', () => this.createSelectionLayer())
-    this.$once('globe-ready', () => this.createSelectionLayer())
-  },
   beforeDestroy () {
     this.$off('click', this.onFeatureSelectionClicked)
+    this.$off('layer-shown', this.onFeatureSelectionLayerShown)
     this.$off('layer-hidden', this.onFeatureSelectionLayerHidden)
     this.$off('layer-disabled', this.onFeatureSelectionLayerDisabled)
     this.$off('layer-enabled', this.onFeatureSelectionLayerEnabled)

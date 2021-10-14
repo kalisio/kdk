@@ -110,7 +110,7 @@ export default {
     },
     async refreshLayers () {
       // Clear layers and variables
-      Object.keys(this.layers).forEach(layer => this.removeLayer(layer))
+      this.clearLayers()
       this.variables = []
       let catalogLayers = await this.getCatalogLayers()
       // Apply global layer filter

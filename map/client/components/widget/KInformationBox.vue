@@ -61,6 +61,8 @@ export default {
       this.properties = null
       this.schema = null
       if (this.feature && this.layer) {
+        this.kActivity.centerOnSelection()
+        this.kActivity.addSelectionHighlight('information-box')
         let schema
         // Is there any schema ?
         if (_.has(this.layer, 'schema.content')) {
@@ -85,8 +87,6 @@ export default {
         })
         this.schema = schema
         this.properties = properties
-        this.kActivity.centerOnSelection()
-        this.kActivity.addSelectionHighlight('information-box')
       }
     },
     onCenterOn () {
