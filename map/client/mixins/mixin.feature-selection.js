@@ -21,7 +21,7 @@ export default {
       // FIXME: should not be hard-coded
       let widget
       if (this.selection.layer) {
-        widget = 'information-box'
+        widget = _.get(this.selection.layer, 'widget', 'information-box')
         if (_.has(this.selection.layer, 'probe') || // Static probe on pre-defined sites
             _.has(this.selection.layer, 'variables')) { // Measurement history
           widget = 'time-series'
