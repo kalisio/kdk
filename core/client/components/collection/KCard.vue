@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered @click="onItemSelected">
+  <q-card bordered @click="onItemSelected" class="shadow-1">
     <!--
       Header section
     -->

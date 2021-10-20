@@ -4,8 +4,8 @@
    -->
   <q-btn v-if="renderer === 'button'"
     :id="id"
-    :label="computedLabel"
     no-caps
+    no-wrap
     :icon="computedIcon"
     :color="computedColor"
     :size="size"
@@ -15,6 +15,9 @@
     :dense="dense"
     :disable="disabled"
     @click="onClicked(arguments[0])">
+    <div v-if="computedLabel" class="ellipsis q-pl-md">
+      {{ computedLabel }}
+    </div>
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
       {{ computedTooltip }}
@@ -32,7 +35,7 @@
    -->
   <q-btn v-else-if="renderer === 'form-button'"
     :id="id"
-    :label="computedLabel"
+    no-wrap
     color="primary"
     :outline="outline"
     :size="size"
@@ -40,6 +43,9 @@
     :disable="disabled"
     :loading="loading"
     @click="onClicked(arguments[0])">
+    <div class="ellipsis">
+      {{ computedLabel }}
+    </div>
   </q-btn>
   <!--
     Item renderer
