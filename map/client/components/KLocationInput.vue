@@ -106,6 +106,11 @@ export default {
       return this.location ? this.location.name : ''
     }
   },
+  watch: {
+    value: function () {
+      this.refresh()
+    }
+  },
   data () {
     const options = []
     if (this.search) options.push({ label: this.$i18n.t('KLocationInput.SEARCH_LOCATION'), value: 'search' })
@@ -132,6 +137,33 @@ export default {
         longitude: position.longitude
       }
       this.$emit('input', this.location)
+    },
+    clear () {
+      this.location = null
+      this.mode = null
+    },
+    refresh () {
+      if (this.value) {
+        this.location = this.value
+        // GeoJson geometry or simple location ?
+        if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
+          this.mode = 'draw'
+        } else if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
+          const coordinates = formatUserCoordinates(this.location.latitude, this.location.longitude, this.$store.get('locationFormat', 'FFf'))
+          // Set name as coordinates if not given
+          if (!this.location.name) {
+            // If name is not given we are in map mode
+            this.location.name = coordinates
+            this.mode = 'map'
+          } else {
+            // If name is not given as coordinates we are in address mode
+            if (this.location.name !== coordinates) this.mode = 'search'
+            else this.mode = 'map'
+          }
+        }
+      } else {
+        this.clear()
+      }
     },
     onModeChanged (mode) {
       // Reset current location
@@ -163,8 +195,7 @@ export default {
       this.$emit('input', this.location)
     },
     onClose (value) {
-      this.location = null
-      this.mode = null
+      this.clear()
       this.$emit('input', this.location)
     }
   },
@@ -172,25 +203,7 @@ export default {
     // Load the required components
     this.$options.components['k-location-map'] = this.$load('KLocationMap')
     // Populate the component
-    if (this.value) {
-      this.location = this.value
-      // GeoJson geometry or simple location ?
-      if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
-        this.mode = 'draw'
-      } else if (_.has(this.location, 'latitude') && _.has(this.location, 'longitude')) {
-        const coordinates = formatUserCoordinates(this.location.latitude, this.location.longitude, this.$store.get('locationFormat', 'FFf'))
-        // Set name as coordinates if not given
-        if (!this.location.name) {
-          // If name is not given we are in map mode
-          this.location.name = coordinates
-          this.mode = 'map'
-        } else {
-          // If name is not given as coordinates we are in address mode
-          if (this.location.name !== coordinates) this.mode = 'search'
-          else this.mode = 'map'
-        }
-      }
-    }
+    this.refresh()
   }
 }
 </script>
