@@ -101,6 +101,6 @@ export default {
 
 <style lang="stylus">
 .k-history-line {
-  background: linear-gradient($grey-4, $grey-4) no-repeat center/5px 90%;
+  background: linear-gradient($grey-6, $grey-5) no-repeat center/5px 90%;
 }
 </style>

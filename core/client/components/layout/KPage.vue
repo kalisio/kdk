@@ -1,5 +1,5 @@
 <template>
-  <q-page :padding="padding" :style-fn="layoutOffsetListener">
+  <q-page :padding="padding" :style-fn="layoutOffsetListener" :class="`bg-${backgroundColor}`">
     <!--
       Specific page content: can be provided as slot and/or by configuration
      -->
@@ -191,7 +191,8 @@ export default {
       bottomPadding: 0,
       rightPadding: 0,
       widgetOffset: [0, 0],
-      fabOffset: [16, 16]
+      fabOffset: [16, 16],
+      backgroundColor: 'grey-4'
     }
   },
   watch: {
@@ -253,13 +254,15 @@ export default {
       }
     }
   },
-  created () {
+  beforeCreate () {
     // load the required components
     this.$options.components['k-content'] = this.$load('frame/KContent')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-opener'] = this.$load('frame/KOpener')
     this.$options.components['k-window'] = this.$load('layout/KWindow')
     this.$options.components['k-fab'] = this.$load('layout/KFab')
+  },
+  created () {
     // Read top pane configuration
     this.hasTopPaneOpener = this.$config('layout.topPane.opener', false)
     if (this.$config('layout.topPane.visible', false)) this.$store.patch('topPane', { visible: true })
