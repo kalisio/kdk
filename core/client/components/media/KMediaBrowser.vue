@@ -14,7 +14,7 @@
       -->
     <template v-for="(media) in medias">
       <q-carousel-slide :name="media.name" :key="media._id" class="row justify-center items-center">
-        <k-image-viewer :ref="media._id" class="fit k-media-browser-slide" :source="media.uri" :interactive="media.isImage" />
+        <k-image-viewer :ref="media._id" class="fit k-media-browser-slide" :source="media.uri" :interactive="media.isImage" @image-transformed="onImageTrasnformed" />
       </q-carousel-slide>
     </template>
     <!--
@@ -70,9 +70,9 @@ export default {
     actions () {
       const actions = []
       if (this.currentMedia) {
-        if (this.currentMedia.isImage) {
+        if (this.currentMedia.isImage && this.currentMediaTransformed) {
           actions.push({
-            id: 'restore-image', icon: 'las la-undo', tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), handler: this.onImageRestored
+            id: 'restore-image', icon: 'las la-compress-arrows-alt', tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), handler: this.onImageRestored
           })
         }
         actions.push({
@@ -90,14 +90,17 @@ export default {
       opened: false,
       medias: [],
       currentMedia: null,
-      currentMediaName: ''
+      currentMediaName: '',
+      currentMediaTransformed: false
     }
   },
   methods: {
+    onImageTrasnformed () {
+      this.currentMediaTransformed = true
+    },
     onImageRestored () {
-      if (this.$refs[this.currentMedia._id]) {
-        this.$refs[this.currentMedia._id][0].restore()
-      }
+      if (this.$refs[this.currentMedia._id]) this.$refs[this.currentMedia._id][0].restore()
+      this.currentMediaTransformed = false
     },
     async onMediaDownload () {
       if (!this.currentMedia) return
@@ -128,6 +131,7 @@ export default {
       const mimeType = mime.lookup(media.name)
       this.currentMedia = media
       this.currentMedia.isImage = mimeType.startsWith('image/')
+      this.currentMediaTransformed = false
       // Download image the first time
       if (!media.uri) {
         // We only download images
@@ -163,7 +167,7 @@ export default {
       return this.$api.getService(this.options.service || 'storage')
     }
   },
-  created () {
+  beforeCreate () {
     // laod the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-image-viewer'] = this.$load('media/KImageViewer')
