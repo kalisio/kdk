@@ -7,6 +7,8 @@ import { getLocale } from './utils'
 // Export singleton
 export const Time = {
   initialize () {
+    // Set locale globally
+    moment.locale(getLocale())
     // Set the time object within the store
     const now = moment.utc()
     Store.set('time', {
@@ -71,7 +73,6 @@ export const Time = {
       // Convert to local time
       currentTime = moment(currentTime.valueOf())
     }
-    currentTime.locale(getLocale())
     if (format === 'iso') return currentTime.format()
     // Defaults to long mode if not given
     else return currentTime.format(_.get(this.getFormat(), format, _.get(this.getFormat(), format + '.long')))

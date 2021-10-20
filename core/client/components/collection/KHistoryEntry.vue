@@ -76,7 +76,7 @@ export default {
       return _.capitalize(Time.format(this.date, 'date.long'))
     },
     formattedHours () {
-      return _.capitalize(Time.format(this.date, 'hour.long'))
+      return _.capitalize(Time.format(this.date, 'time.long'))
     },
     monthSeparator () {
       if (!this.item.previous) return true
