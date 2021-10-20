@@ -1,5 +1,5 @@
 <template>
-  <q-page :padding="padding" :style-fn="layoutOffsetListener" :class="`bg-${backgroundColor}`">
+  <q-page :padding="padding" :style-fn="layoutOffsetListener">
     <!--
       Specific page content: can be provided as slot and/or by configuration
      -->
@@ -191,8 +191,7 @@ export default {
       bottomPadding: 0,
       rightPadding: 0,
       widgetOffset: [0, 0],
-      fabOffset: [16, 16],
-      backgroundColor: 'grey-4'
+      fabOffset: [16, 16]
     }
   },
   watch: {
@@ -282,6 +281,9 @@ export default {
 </script>
 
 <style lang="stylus">
+body {
+  background-color: #EFEFEF;
+}
 .k-pane, .k-left-pane {
   border: solid 1px lightgrey;
   border-radius: 5px;
