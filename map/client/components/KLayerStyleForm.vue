@@ -53,7 +53,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="points" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
+    <q-expansion-item ref="points" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -77,7 +77,7 @@
             {{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}
           </q-item-section>
         </q-item>
-        <q-item v-for="iconStyle in iconStyles" :key="iconStyle.key" class="col-12">
+        <q-item v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="col-12">
           <q-item-section avatar>
             <q-chip clickable v-ripple text-color="white"
               :icon="iconStyle['icon-classes']" :color="iconStyle['marker-color']" @click="onIconClicked(iconStyle)"/>
@@ -102,7 +102,7 @@
             </q-btn>
           </q-item-section>
         </q-item>
-        <q-item class="col-12">
+        <q-item v-if="hasFeatureSchema" class="col-12">
           <q-item-section avatar class="col-6">
             {{$t('KLayerStyleForm.ADD_POINT_STYLE')}}
           </q-item-section>
@@ -116,7 +116,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="lines" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
+    <q-expansion-item ref="lines" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-6">
@@ -137,7 +137,7 @@
               label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + defaultLine['stroke-opacity']"/>
           </q-item-section>
         </q-item>
-        <q-item v-for="lineStyle in lineStyles" :key="lineStyle.key" class="col-12">
+        <q-item v-if="hasFeatureSchema" v-for="lineStyle in lineStyles" :key="lineStyle.key" class="col-12">
           <q-item-section avatar class="col-3">
             <q-select v-if="lineStyle.operator" v-model="lineStyle.operator" :label="lineStyle.property" stack-label :options="getOperators(lineStyle)" emit-value map-options/>
           </q-item-section>
@@ -172,7 +172,7 @@
             </q-btn>
           </q-item-section>
         </q-item>
-        <q-item class="col-12">
+        <q-item v-if="hasFeatureSchema" class="col-12">
           <q-item-section avatar class="col-6">
             {{$t('KLayerStyleForm.ADD_LINE_STYLE')}}
           </q-item-section>
@@ -186,7 +186,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="polygons" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
+    <q-expansion-item ref="polygons" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-7">
@@ -202,7 +202,7 @@
               label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + defaultPolygon['fill-opacity']"/>
           </q-item-section>
         </q-item>
-        <q-item v-for="polygonStyle in polygonStyles" :key="polygonStyle.key" class="col-12">
+        <q-item v-if="hasFeatureSchema" v-for="polygonStyle in polygonStyles" :key="polygonStyle.key" class="col-12">
           <q-item-section avatar class="col-3">
             <q-select v-if="polygonStyle.operator" v-model="polygonStyle.operator" :label="polygonStyle.property" stack-label :options="getOperators(polygonStyle)" emit-value map-options/>
           </q-item-section>
@@ -232,9 +232,9 @@
             </q-btn>
           </q-item-section>
         </q-item>
-        <q-item class="col-12">
+        <q-item v-if="hasFeatureSchema" class="col-12">
           <q-item-section avatar class="col-6">
-            {{$t('KLayerStyleForm.ADD_LINE_STYLE')}}
+            {{$t('KLayerStyleForm.ADD_POLYGON_STYLE')}}
           </q-item-section>
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
