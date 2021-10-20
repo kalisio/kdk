@@ -13,15 +13,12 @@
       }"
       :style="computedStyle">
       <!--
-         Toolbar section
+         Header section
        -->
-      <q-toolbar>
-        <q-toolbar-title>
-          <span class="ellipsis">{{ title }}</span>
-        </q-toolbar-title>
-        <q-space />
+      <div class="q-pa-md row justify-between items-center">
+        <span class="ellipsis text-h6" v-html="title" />
         <k-panel id="modal-toolbar" :content="toolbar" />
-      </q-toolbar>
+      </div>
       <!--
         Content section
        -->
