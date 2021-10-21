@@ -286,7 +286,7 @@ body {
 }
 .k-pane, .k-left-pane {
   border: solid 1px lightgrey;
-  border-radius: 5px;
+  border-radius: 3px;
 }
 .k-pane:hover, .k-left-pane:hover {
   border: solid 1px var(--q-color-primary);
