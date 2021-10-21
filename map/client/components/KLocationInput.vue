@@ -106,11 +106,6 @@ export default {
       return this.location ? this.location.name : ''
     }
   },
-  watch: {
-    value: function () {
-      this.refresh()
-    }
-  },
   data () {
     const options = []
     if (this.search) options.push({ label: this.$i18n.t('KLocationInput.SEARCH_LOCATION'), value: 'search' })
@@ -127,6 +122,13 @@ export default {
     }
   },
   methods: {
+    async emitValue () {
+      // We'd like to watch external changes but not internal ones, so that we use the API to avoid reentrance
+      this.unwatch()
+      this.$emit('input', this.location)
+      await this.$nextTick()
+      this.unwatch = this.$watch('value', this.refresh)
+    },
     async geolocate () {
       await Geolocation.update()
       this.locationError = this.$store.get('geolocation.error')
@@ -136,7 +138,7 @@ export default {
         latitude: position.latitude,
         longitude: position.longitude
       }
-      this.$emit('input', this.location)
+      this.emitValue()
     },
     clear () {
       this.location = null
@@ -192,11 +194,11 @@ export default {
       update(() => { this.serachOptions = places })
     },
     onUpdated (value) {
-      this.$emit('input', this.location)
+      this.emitValue()
     },
     onClose (value) {
       this.clear()
-      this.$emit('input', this.location)
+      this.emitValue()
     }
   },
   created () {
@@ -204,6 +206,8 @@ export default {
     this.$options.components['k-location-map'] = this.$load('KLocationMap')
     // Populate the component
     this.refresh()
+    // We'd like to watch external changes but not internal ones, so that we use the API instead of watch
+    this.unwatch = this.$watch('value', this.refresh)
   }
 }
 </script>
