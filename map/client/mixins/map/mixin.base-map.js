@@ -2,6 +2,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import L from 'leaflet'
+import i18next from 'i18next'
 import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
 import 'leaflet-fa-markers/L.Icon.FontAwesome.css'
@@ -52,6 +53,7 @@ export default {
       if (this.map.pm === undefined) {
         this.map.options.pmIgnore = false
         L.PM.reInitLayer(this.map)
+        this.map.pm.setLang(i18next.language)
       }
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
       if (_.get(viewerOptions, 'scale', true)) this.setupScaleControl()
