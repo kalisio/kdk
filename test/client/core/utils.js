@@ -39,68 +39,88 @@ export async function countElements (page, xpath) {
 /* Helper function to click on a given selector
  */
 export async function click (page, selector, wait = 250) {
-  await page.waitForSelector(selector)
-  await page.click(selector)
-  await page.waitForTimeout(wait)
-  debug(`Clicked target ${selector}`)
+  try {
+    await page.waitForSelector(selector, { timeout: 2000 })
+    await page.click(selector)
+    await page.waitForTimeout(wait)
+    debug(`Clicked target ${selector}`)
+  } catch (error) {
+    console.error(`click ${selector} failed.`)
+  }
 }
 
 /* Helper function to click on a given xpath
  */
 export async function clickXPath (page, xpath, wait = 250) {
-  await page.waitForXPath(xpath)
-  const elements = await page.$x(xpath)
-  if (elements.length > 0) {
-    elements[0].click()
-    await page.waitForTimeout(wait)
-    debug(`Clicked target ${xpath}`)
+  try {
+    await page.waitForXPath(xpath, { timeout: 2000 })
+    const elements = await page.$x(xpath)
+    if (elements.length > 0) {
+      elements[0].click()
+      await page.waitForTimeout(wait)
+      debug(`Clicked target ${xpath}`)
+    }
+  } catch (error) {
+    console.error(`click ${xpath} failed.`)
   }
 }
 
 /* Helper function to click on a given selector then select given entry
  */
 export async function clickSelect (page, selector, entry, wait = 250) {
-  await page.waitForSelector(selector)
-  await page.click(selector)
-  debug(`Clicked target ${selector}`)
-  // We handle single/multiple selection
-  if (Array.isArray(entry)) {
-    for (let i = 0; i < entry.length; i++) {
-      await page.waitForSelector(entry[i])
-      await page.click(entry[i])
-    }
-    // In this case we need to close the selector
+  try {
+    await page.waitForSelector(selector, { timeout: 2000 })
     await page.click(selector)
-  } else {
-    await page.waitForSelector(entry)
-    await page.click(entry)
+    debug(`Clicked target ${selector}`)
+    // We handle single/multiple selection
+    if (Array.isArray(entry)) {
+      for (let i = 0; i < entry.length; i++) {
+        await page.waitForSelector(entry[i])
+        await page.click(entry[i])
+      }
+      // In this case we need to close the selector
+      await page.click(selector)
+    } else {
+      await page.waitForSelector(entry)
+      await page.click(entry)
+    }
+    await page.waitForTimeout(wait)
+    debug(`Clicked entry ${selector}`)
+  } catch (error) {
+    console.error(`select ${entry} in ${selector} failed.`)
   }
-  await page.waitForTimeout(wait)
-  debug(`Clicked entry ${selector}`)
 }
 
 /* Helper function to input a test on a given selector
  * set enter to true to run the press 'Enter' key
  */
 export async function type (page, selector, text, enter = false, replace = false, wait = 250) {
-  await page.waitForSelector(selector)
-  if (replace) {
-    await page.click(selector, { clickCount: 3 })
-    await page.keyboard.press('Backspace')
-  } else {
-    await page.click(selector)
+  try {
+    await page.waitForSelector(selector, { timeout: 2000 })
+    if (replace) {
+      await page.click(selector, { clickCount: 3 })
+      await page.keyboard.press('Backspace')
+    } else {
+      await page.click(selector)
+    }
+    await page.type(selector, text)
+    if (enter) await page.keyboard.press('Enter')
+    await page.waitForTimeout(wait)
+  } catch (error) {
+    console.error(`type ${test} in ${selector} failed.`)
   }
-  await page.type(selector, text)
-  if (enter) await page.keyboard.press('Enter')
-  await page.waitForTimeout(wait)
 }
 
 /* Helper function to upload a file on a given selector
  */
 export async function uploadFile (page, selector, filePath, wait = 2000) {
-  const element = await page.$(selector)
-  await element.uploadFile(filePath)
-  await page.waitForTimeout(wait)
+  try {
+    const element = await page.$(selector, { timeout: 2000 })
+    await element.uploadFile(filePath)
+    await page.waitForTimeout(wait)
+  } catch (error) {
+    console.error(`upload ${filePath} in ${selector} failed.`)
+  }
 }
 
 /* Select an icon within the icon chooser
