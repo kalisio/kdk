@@ -31,7 +31,7 @@
           </template>
         </div>
       </q-scroll-area>
-      <div v-if="scrollAction" class="row justify-center q-pa-md">
+      <div v-if="scrollAction" class="row justify-center  q-pr-md">
         <k-action
           id="scroll-action"
           icon="las la-angle-double-down"
