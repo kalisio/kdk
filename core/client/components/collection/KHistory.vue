@@ -3,8 +3,8 @@
     :service="service"
     :renderer="computedRenderer"
     :contextId="contextId"
-    :baseQuery="computedBaseQuery"
-    :filterQuery="filterQuery"
+    :baseQuery="baseQuery"
+    :filterQuery="computedFilterQuery"
     :append-items="true"
     :height="height"
     @collection-refreshed="onCollectionRefreshed">
@@ -24,7 +24,7 @@
 
 <script>
 import _ from 'lodash'
-import { Time, Sorter } from '../..'
+import { Store, Time, Sorter } from '../..'
 import KColumn from './KColumn.vue'
 import KStamp from '../frame/KStamp.vue'
 import mixins from '../../mixins'
@@ -40,6 +40,10 @@ export default {
     renderer: {
       type: Object,
       required: true
+    },
+    dateField: {
+      type: String,
+      default: 'createdAt'
     },
     baseQuery: {
       type: Object,
@@ -62,11 +66,12 @@ export default {
     computedRenderer () {
       return {
         component: 'collection/KHistoryEntry',
-        renderer: this.renderer
+        renderer: this.renderer,
+        dateField: this.dateField
       }
     },
-    computedBaseQuery () {
-      const query = _.clone(this.baseQuery)
+    computedFilterQuery () {
+      const query = _.clone(this.filterQuery)
       Object.assign(query, _.clone(this.timeRange.query))
       return query
     }
@@ -84,6 +89,9 @@ export default {
         item.side = (index % 2 ? 'left' : 'right')
       })
     }
+  },
+  created () {
+    Store.patch('time.range', { field: this.dateField })
   }
 }
 </script>
