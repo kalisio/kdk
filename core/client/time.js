@@ -15,6 +15,7 @@ export const Time = {
       range: {
         start: now.clone().subtract(1, 'months').startOf('day'),
         end: now.clone().endOf('day'),
+        field: 'createdAt',
         query: {}
       },
       format: {
@@ -35,6 +36,7 @@ export const Time = {
       currentTime: now,
       step: 60 // 1H
     })
+    this.updateTimeRangeQuery()
     // Make filter react to external changes to update the query
     Events.$on('time-range-changed', () => this.updateTimeRangeQuery())
   },
@@ -60,7 +62,8 @@ export const Time = {
   },
   // Build sort query
   updateTimeRangeQuery () {
-    const query = { createdAt: { $gte: this.getRange().start, $lte: this.getRange().end } }
+    let query = {}
+    query[this.getRange().field]  = { $gte: this.getRange().start.format(), $lte: this.getRange().end.format() }
     // Avoid reentrance as we listen to other filter property changes
     if (!_.isEqual(query, this.getRangeQuery())) Store.patch('time.range', { query })
   },
