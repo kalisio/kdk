@@ -141,7 +141,7 @@ export default {
     onScroll (info) {
       if (this.items.length < this.nbTotalItems) {
         if (info.verticalPercentage === 1) {
-          this.currentPage++
+          if (this.items.length === this.currentPage * this.nbItemsPerPage) this.currentPage++
           this.refreshCollection()
           this.scrollAction = true
         } else {
