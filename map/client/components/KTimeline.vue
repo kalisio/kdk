@@ -71,7 +71,7 @@
             :label="day.label"
             clickable @click="onDayClicked(index, days.length)" />
         </template>
-        <q-btn id="timeline-next-day" dense flat round icon='las la-calendar-plus'  color="primary" @click="onNextDayClicked">
+        <q-btn id="timeline-next-day" dense flat round icon='las la-calendar-plus' color="primary" @click="onNextDayClicked">
           <q-tooltip>{{$t('KTimeline.NEXT_DAY')}}</q-tooltip>
         </q-btn>
       </div>
@@ -262,12 +262,12 @@ export default {
     // Define the actions
     this.actions = {
       mobile: [
-        { id: 'previous-day', icon: 'las la-calendar-minus', label: this.$t('KTimeline.PREVIOUS_DAY'), handler: this.onPreviousDayClicked },
-        { id: 'previous-hour', icon: 'las la-angle-left', label: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
-        { id: 'previous-step', icon: 'las la-step-backward', label: this.$t('KTimeline.PREVIOUS_STEP'), handler: this.onPreviousStepClicked },
-        { id: 'next-step', icon: 'las la-step-forward', label: this.$t('KTimeline.NEXT_STEP'), handler: this.onNextStepClicked },
-        { id: 'next-hour', icon: 'las la-angle-right', label: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNextHourClicked },
-        { id: 'next-day', icon: 'las la-calendar-plus', label: this.$t('KTimeline.NEXT_DAY'), handler: this.onNextDayClicked }
+        { id: 'previous-day', icon: 'las la-calendar-minus', tooltip: this.$t('KTimeline.PREVIOUS_DAY'), handler: this.onPreviousDayClicked },
+        { id: 'previous-hour', icon: 'las la-angle-left', tooltip: this.$t('KTimeline.PREVIOUS_HOUR'), handler: this.onPreviousHourClicked },
+        { id: 'previous-step', icon: 'las la-step-backward', tooltip: this.$t('KTimeline.PREVIOUS_STEP'), handler: this.onPreviousStepClicked },
+        { id: 'next-step', icon: 'las la-step-forward', tooltip: this.$t('KTimeline.NEXT_STEP'), handler: this.onNextStepClicked },
+        { id: 'next-hour', icon: 'las la-angle-right', tooltip: this.$t('KTimeline.NEXT_HOUR'), handler: this.onNextHourClicked },
+        { id: 'next-day', icon: 'las la-calendar-plus', tooltip: this.$t('KTimeline.NEXT_DAY'), handler: this.onNextDayClicked }
       ]
     }
   },
