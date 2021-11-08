@@ -15,7 +15,8 @@
       </div>
     </div>
     <div class="row full-width">
-      <div v-if="$q.screen.gt.sm" class="col-5">
+      <div v-if="$q.screen.gt.sm" class="col-1" />
+      <div v-if="$q.screen.gt.sm" class="col-4">
         <component
           v-if="item.side === 'left'"
           :id="item._id"
@@ -26,12 +27,14 @@
       </div>
       <div class="col-xs-12 col-sm-3 col-md-2 q-pa-sm">
         <div class="fit column content-center">
-          <div class="col row justify-center k-history-line">
+          <div class="col row justify-center" 
+            v-bind:class="{ 'k-history-line': $q.screen.gt.xs }"
+          >
             <q-chip :label="formattedHours" />
           </div>
         </div>
       </div>
-      <div class="col-xs-12 col-sm-8 col-md-5">
+      <div class="col-xs-12 col-sm-8 col-md-4">
         <component
           v-if="$q.screen.lt.md || item.side === 'right'"
           :id="item._id"
@@ -40,6 +43,7 @@
           :is="renderer.component"
           v-bind="renderer" />
       </div>
+      <div v-if="$q.screen.gt.sm" class="col-1" />
     </div>
   </div>
 </template>
