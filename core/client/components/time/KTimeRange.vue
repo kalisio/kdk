@@ -136,9 +136,6 @@ export default {
       Time.patchRange({ start: this.start, end: this.end })
     }
   },
-  created () {
-    this.quickRangeTriggered(moment.duration(1, 'months'))
-  },
   beforeDestroy () {
     // Reset the filter, we keep track of any existing items previously set by another activity
     this.$store.patch('sorter', {})
