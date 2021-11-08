@@ -43,9 +43,13 @@ const baseCollectionMixin = {
           if (response.type === 'FeatureCollection') {
             this.items = response.features
           } else if (this.appendItems) {
-            // Ensure there is no duplicates when appending
-            // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
+            // Append the response ensuring there is no duplicates
             this.items = _.unionBy(response.data, this.items, '_id')
+            // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
+            const sortQuery = _.get(this.getCollectionBaseQuery(), '$sort')
+            if (sortQuery) {
+              this.items = _.orderBy(this.items, _.keys(sortQuery), _.map(_.values(sortQuery), value => { return value > 0 ? 'asc' : 'desc' }))
+            } 
           } else {
             this.items = response.data
           }
