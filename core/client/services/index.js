@@ -35,6 +35,4 @@ export default function init () {
       restoreLayers: 'restore.layers'
     }
   }, config.settings || {})) // Default options can be overriden from app config
-  // Restore previous settings if any
-  settingsService.restoreSettings()
 }
