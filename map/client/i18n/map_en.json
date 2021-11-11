@@ -366,6 +366,7 @@
     "OVERLAY_LAYERS": "My layers",
     "MEASURE_LAYERS": "Measure layers",
     "INFRASTRUCTURE_LAYERS": "Infrastructures",
+    "ADMINISTRATIVE_LAYERS": "Administrative",
     "METEO_LAYERS": "Meteo forecasts",
     "BUSINESS_LAYERS": "Business layers",
     "CAPTURED_LAYERS": "Captured views",
