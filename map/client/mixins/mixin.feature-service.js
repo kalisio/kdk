@@ -182,11 +182,10 @@ export default {
       if (options.kinks) {
         kinksFeatures = _.remove(features, feature => {
           const type = getType(feature)
-          if ((type === 'LineString') || (type === 'MultiLineString') ||
-              (type === 'MultiPolygon') || (type === 'Polygon')) {
+          if ((type === 'MultiPolygon') || (type === 'Polygon')) {
             const invalidFeatures = kinks(feature)
             return _.get(invalidFeatures, 'features', []).length > 0
-          } else { // No possible self-intersection on points
+          } else { // No possible self-intersection on points, self-intersections allowed on lines
             return false
           }
         })
