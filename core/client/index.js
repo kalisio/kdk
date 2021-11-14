@@ -3,6 +3,7 @@ import { Platform } from 'quasar'
 import { Store } from './store'
 import { Layout } from './layout'
 import { Time } from './time'
+import { Reader } from './reader'
 import { Filter } from './filter'
 import { Sorter } from './sorter'
 import { Search } from './search'
@@ -10,6 +11,7 @@ import services from './services'
 import * as utils from './utils'
 import * as mixins from './mixins'
 import * as hooks from './hooks'
+import { readJSON, readCSV} from './readers'
 
 // We faced a bug in babel so that transform-runtime with export * from 'x' generates import statements in transpiled code
 // Tracked here : https://github.com/babel/babel/issues/2877
@@ -26,6 +28,7 @@ export * from './layout'
 export * from './theme'
 export * from './time'
 export * from './filter'
+export * from './reader'
 export * from './sorter'
 export * from './search'
 export * from './guards'
@@ -65,6 +68,10 @@ export default function init () {
       Store.patch('user', user)
     }
   })
+
+  // Register default readers
+  Reader.register('.json', readJSON)
+  Reader.register('.csv', readCSV)
 
   // -----------------------------------------------------------------------
   // | After this we should only have specific cordova initialisation code |

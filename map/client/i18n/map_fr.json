@@ -11,7 +11,10 @@
     "ALERTS_LIMIT": "Trop d'alertes pour les afficher toutes",
     "FILE_IMPORT_ERROR": "L'import du fichier a échoué",
     "CANNOT_CHECK_ALERT_MISSING_SERVICE": "La dernière vérification a échouée par indisponibilité du service",
-    "CANNOT_CHECK_ALERT_MISSING_DATA": "La dernière vérification a échouée par indisponibilité des données"
+    "CANNOT_CHECK_ALERT_MISSING_DATA": "La dernière vérification a échouée par indisponibilité des données",
+    "INVALID_GEOJSON_FILE": "{{file}} n'est pas un fichier GeoJSON valide",
+    "INVALID_GPX_FILE": "{{file}} n'est pas un fichier GPX valide",
+    "INVALID_KML_FILE": "{{file}} n'est pas un fichier KML valide"
   },
   "mixins": {
     "navigator": {

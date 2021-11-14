@@ -2,7 +2,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import { colors } from 'quasar'
-import togeojson from 'togeojson'
+import { kml } from '@tmcw/togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
 import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl'
@@ -357,8 +357,8 @@ export default {
             let feature = { type: 'Feature' }
             // FIXME: Generate GeoJson feature if possible (requires Cesium 1.59)
             if (typeof Cesium.exportKml === 'function') {
-              const kml = Cesium.exportKml({ entities: [emittedEvent.target] })
-              const geoJson = togeojson.kml(kml)
+              const kmlEntities = Cesium.exportKml({ entities: [emittedEvent.target] })
+              const geoJson = kml(kmlEntities)
               if (geoJson.features.length > 0) feature = geoJson.features[0]
             } else {
               const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position

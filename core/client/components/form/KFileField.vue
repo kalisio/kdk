@@ -28,7 +28,7 @@
 import _ from 'lodash'
 import { QFile } from 'quasar'
 import mixins from '../../mixins'
-import Papa from 'papaparse'
+import { Reader } from '../../reader'
 
 export default {
   name: 'k-file-field',
@@ -40,7 +40,7 @@ export default {
     return {
       file: null
     }
-  },
+  },  
   methods: {
     emptyModel () {
       return {}
@@ -52,46 +52,17 @@ export default {
       this.error = ''
       this.model = this.emptyModel()
     },
-    onFileChanged () {
-      const reader = new FileReader()
-      reader.addEventListener('loadend', () => {
-        this.error = ''
-        let content = reader.result
-        // Provide JSON object directly in this case
-        if (this.getAcceptedTypes().split(',').includes('application/json')) {
-          try {
-            content = JSON.parse(content)
-          } catch (error) {
-            this.error = 'KFileField.INVALID_JSON_FILE'
-            this.model = this.emptyModel()
-            return
-          }
+    async onFileChanged () {
+      if (this.file) {
+        try {
+          const content = await Reader.read(this.file)
+          this.model = { name: this.file.name, content }
+          this.onChanged()
+        } catch (error) {
+          this.error = error
+          this.model = this.emptyModel()
         }
-        if (this.getAcceptedTypes().split(',').includes('application/geo+json')) {
-          const type = _.get(content, 'type')
-          if (type !== 'Feature' && type !== 'FeatureCollection') {
-            this.error = 'KFileField.INVALID_GEOJSON_FILE'
-            this.model = this.emptyModel()
-            return
-          }
-        }
-        if (this.getAcceptedTypes().split(',').includes('text/csv')) {
-          const result = Papa.parse(content, { skipEmptyLines: true })
-          if (result.errors.length > 0) {
-            this.error = 'KFileField.INVALID_CSV_FILE'
-            this.model = this.emptyModel()
-            return
-          }
-          content = result.data
-        }
-        this.model = { name: this.file.name, content }
-        this.onChanged()
-      })
-      reader.addEventListener('error', () => {
-        this.error = 'KFileField.ERROR_WHILE_LOADING_THE_FILE'
-        this.model = this.emptyModel()
-      })
-      if (this.file) reader.readAsText(this.file)
+      }
     },
     onFileRejected (file) {
       this.error = 'KFileField.INVALID_FILE_TYPE'

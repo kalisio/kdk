@@ -2,8 +2,9 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import memory from 'feathers-memory'
 import { Platform } from 'quasar'
-import { Store, utils as kCoreUtils } from '../../core/client'
+import { Store, Reader, utils as kCoreUtils } from '../../core/client'
 import { Geolocation } from './geolocation'
+import { readGEOJSON, readKML, readGPX } from './readers'
 
 function siftMatcher (originalQuery) {
   // Filter out specific operators others than the reserved ones (starting by $),
@@ -33,6 +34,9 @@ export default function init () {
 
   // Initialize singletons that might be used globally first
   Geolocation.initialize()
+  Reader.register('.geojson', readGEOJSON)
+  Reader.register('.kml', readKML)
+  Reader.register('.gpx', readGPX)
 
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models
@@ -74,8 +78,8 @@ export default function init () {
   })
 
   if (!Platform.is.cordova) return
-  window.navigationApps = []
 
+  window.navigationApps = []
   document.addEventListener('deviceready', _ => {
     // Declare the navigation apps
     window.launchnavigator.availableApps((result) => {

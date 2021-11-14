@@ -17,6 +17,7 @@
 <script>
 import _ from 'lodash'
 import path from 'path'
+import { uid } from 'quasar'
 import { generatePropertiesSchema } from '../../utils'
 
 export default {
@@ -55,7 +56,7 @@ export default {
             field: {
               component: 'form/KFileField',
               label: 'KImportLayer.FILE_FIELD_LABEL',
-              mimeTypes: '.json,.geojson,application/json,application/geo+json'
+              mimeTypes: '.json,.geojson,.gpx,.kml'
             }
           }
         },
@@ -88,8 +89,6 @@ export default {
           },
           featureId: {
             type: 'string',
-            maxLength: 256,
-            minLength: 2,
             default: this.guessFeatureId(),
             field: {
               component: 'form/KSelectField',
@@ -98,7 +97,7 @@ export default {
             }
           }
         },
-        required: ['name', 'featureId']
+        required: ['name']
       }
     },
     onFileFormFieldChanged (field, value) {
@@ -150,7 +149,7 @@ export default {
         icon: 'insert_drive_file',
         scope: 'user',
         isDataEditable: true, // Flag as editable
-        featureId: propertiesResult.values.featureId,
+        featureId: propertiesResult.values.featureId || '_id',
         leaflet: engine,
         // Avoid sharing reference to the same object although options are similar
         // otherwise updating one will automatically update the other one
@@ -161,6 +160,10 @@ export default {
         }
       }
       await this.kActivity.addLayer(newLayer)
+      // Generates the id if needed
+      if (newLayer.featureId === '_id') {
+        _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
+      }
       // Assign the features to the layer
       await this.kActivity.updateLayer(newLayer.name, geoJson)
       // Zoom to it

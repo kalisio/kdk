@@ -63,7 +63,11 @@
     "OAUTH2_PROVIDER": "Vous ne pouvez modifier votre compte car il est géré par {{provider}}, pour utiliser un compte local réinitialisez tout d'abord votre mot de passe",
     "OBJECT_ID_ALREADY_TAKEN": "Un élément semble déjà enregistré avec cet identifiant. Merci de réessayer avec une autre valeur.",
     "EMAIL_ALREADY_TAKEN": "Un utilisateur semble déjà enregistré avec cette adresse mail",
-    "DUPLICATED_FILE": "Le fichier {{file}} a déjà été ajouté"
+    "DUPLICATED_FILE": "Le fichier {{file}} a déjà été ajouté",
+    "UNSUPPORTED_FILE_FORMAT": "Le format du fichier {{file}} n'est pas supporté",
+    "CANNOT_READ_FILE": "Impossible de lire le fichier {{file}}",
+    "INVALID_JSON_FILE": "{{file}} n'est pas un fichier JSON valide",
+    "INVALID_CSV_FILE": "{{file}} n'est pas un fichier CSV valide"
   },
   "mixins": {
     "baseItem": {
