@@ -21,8 +21,9 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
-import { Time } from '../../../../core/client/time'
-import { LeafletEvents, bindLeafletEvents } from '../../utils'
+import { Time } from '../../../../core/client'
+import { uid } from 'quasar'
+import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 // Fix to make Leaflet assets be correctly inserted by webpack
@@ -306,6 +307,38 @@ export default {
         if (_.get(layer, 'leaflet.isVisible', false)) await this.showLayer(layer.name)
       }
       return layer
+    },
+    async addGeoJsonLayer (layerSpec, geoJson) {
+      const engine = {
+        type: 'geoJson',
+        isVisible: true,
+        realtime: true
+      }
+      const defaultLayer = {
+        type: 'OverlayLayer',
+        scope: 'user',
+        isDataEditable: true,
+        leaflet: engine,
+        // Avoid sharing reference to the same object although options are similar
+        // otherwise updating one will automatically update the other one
+        cesium: Object.assign({}, engine)
+      }
+      _.defaults(layerSpec, defaultLayer)
+      if (!layerSpec.schema) {
+        const schema = generatePropertiesSchema(geoJson, layerSpec.name)
+        layerSpec.schema = { name, content: schema }
+      }
+      if (!layerSpec.featureId) {
+        layerSpec.featureId == '_id'
+        _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
+      }
+      // Create an empty layer used as a container
+      await this.addLayer(layerSpec)
+      // Set the content
+      await this.updateLayer(layerSpec.name, geoJson)
+      // Zoom to it
+      if (geoJson.bbox) this.zoomToBBox(geoJson.bbox)
+      else this.zoomToLayer(layerSpec.name)
     },
     renameLayer (previousName, newName) {
       const layer = this.getLayerByName(previousName)

@@ -17,7 +17,6 @@
 <script>
 import _ from 'lodash'
 import path from 'path'
-import { uid } from 'quasar'
 import { generatePropertiesSchema } from '../../utils'
 
 export default {
@@ -134,41 +133,12 @@ export default {
       const propertiesResult = this.$refs.propertiesForm.validate()
       if (!fileResult.isValid || !propertiesResult.isValid) return
       this.importing = true
-      // Create the layer accordingly the input fields
-      const geoJson = this.file.content
-      // Create an empty layer used as a container
-      const engine = {
-        type: 'geoJson',
-        isVisible: true,
-        realtime: true
-      }
-      const newLayer = {
-        name: propertiesResult.values.name,
-        description: propertiesResult.values.description,
-        type: 'OverlayLayer',
-        icon: 'insert_drive_file',
-        scope: 'user',
-        isDataEditable: true, // Flag as editable
-        featureId: propertiesResult.values.featureId || '_id',
-        leaflet: engine,
-        // Avoid sharing reference to the same object although options are similar
-        // otherwise updating one will automatically update the other one
-        cesium: Object.assign({}, engine),
-        schema: {
-          name: this.file.name,
-          content: this.file.schema
-        }
-      }
-      await this.kActivity.addLayer(newLayer)
-      // Generates the id if needed
-      if (newLayer.featureId === '_id') {
-        _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
-      }
-      // Assign the features to the layer
-      await this.kActivity.updateLayer(newLayer.name, geoJson)
-      // Zoom to it
-      if (geoJson.bbox) this.kActivity.zoomToBBox(geoJson.bbox)
-      else this.kActivity.zoomToLayer(newLayer.name)
+      await this.kActivity.addGeoJsonLayer({
+        name: propertiesResult.values.name, 
+        description: propertiesResult.values.description, 
+        schema: { name: this.file.name, content: this.file.schema },
+        featureId: propertiesResult.values.featureId
+      }, this.file.content)
       this.importing = false
       this.$emit('done')
     }
