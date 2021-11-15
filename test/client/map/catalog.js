@@ -75,11 +75,14 @@ export async function addLayer (page) {
   await page.waitForTimeout(1000)
 }
 
-export async function importLayer (page, filePath, featureId, wait = 2000) {
+export async function importLayer (page, filePath, featureId = undefined, wait = 2000) {
+  console.log(featureId)
   await addLayer(page)
   await core.uploadFile(page, '#file-field', filePath)
-  await core.click(page, '#featureId-field', 500)
-  await core.click(page, `#${featureId}`, 500)
+  if (featureId) {
+    await core.click(page, '#featureId-field', 500)
+    await core.click(page, `#${featureId}`, 500)
+  }
   await core.clickAction(page, 'import-layer-action')
   await core.waitForImagesLoaded(page)
   await page.waitForTimeout(wait)

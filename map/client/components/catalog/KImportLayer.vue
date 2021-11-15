@@ -120,10 +120,10 @@ export default {
       if (this.file) {
         const properties = _.keys(_.get(this.file, 'schema.properties', {}))
         for (const prop of properties) {
-          if (prop.toLowerCase().includes('id', 'fid', 'featureid', '_id', 'objectid')) return prop
+          if (_.indexOf(['id', 'fid', 'featureid', '_id', 'objectid'], prop.toLowerCase()) >= 0) return prop
         }
       }
-      return ''
+      return undefined
     },
     onClose () {
       this.$emit('done')
