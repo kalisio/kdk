@@ -122,12 +122,11 @@ export function asGeoJson (options = {}) {
       .filter(item => {
         // Check if item are not already in GeoJson feature format and we can convert if required
         return (_.has(item, longitudeProperty) && _.has(item, latitudeProperty)) ||
-               // Check for a geometry property (previosuly provided or already transformed item)
-               _.has(item, geometryProperty)
+               // Check for a geometry property (previously provided or already transformed item)
+               (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates'))
       })
       .map(item => {
         let coordinates
-        // Item locations are not already in GeoJson feature format so we need to convert
         // Keep track of coordinates before picking properties
         if (_.has(item, longitudeProperty) && _.has(item, latitudeProperty)) {
           coordinates = [_.get(item, longitudeProperty), _.get(item, latitudeProperty)]
@@ -141,16 +140,17 @@ export function asGeoJson (options = {}) {
         if (options.omit) {
           item = _.omit(item, options.omit)
         }
-        // Item locations are not already in GeoJson feature format so we need to convert
-        if (coordinates) {
-          return Object.assign({
-            type: 'Feature', geometry: { type: 'Point', coordinates }, properties: {}
-          }, _.omit(item, [longitudeProperty, latitudeProperty]))
-        } else {
+        // Item locations are already in GeoJson format
+        if (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) {
           return Object.assign({
             type: 'Feature', geometry: _.get(item, geometryProperty), properties: {}
           }, _.omit(item, [geometryProperty]))
-        }
+        } else if (coordinates) {
+          // Item locations are not already in GeoJson feature format so we need to convert
+          return Object.assign({
+            type: 'Feature', geometry: { type: 'Point', coordinates }, properties: {}
+          }, _.omit(item, [longitudeProperty, latitudeProperty]))
+        } 
       })
     // Move some data to properties ?
     if (options.properties) {
