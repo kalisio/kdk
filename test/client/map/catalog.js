@@ -76,7 +76,6 @@ export async function addLayer (page) {
 }
 
 export async function importLayer (page, filePath, featureId = undefined, wait = 2000) {
-  console.log(featureId)
   await addLayer(page)
   await core.uploadFile(page, '#file-field', filePath)
   if (featureId) {
