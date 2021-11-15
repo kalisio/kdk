@@ -509,6 +509,8 @@ with(this.proxy) { ${d.code} }
     this.canvasLayerDrawContext = Object.assign({
       proxy: this.canvasLayerDrawProxy,
       // log: console.log,
+      // Math constants
+      Math: Math,
       // a few handy helpers for draw code
       vec2: (pointA, pointB) => { return { x: pointA.x - pointB.x, y: pointA.y - pointB.y } },
       len2: (vec2) => { return Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y) },
