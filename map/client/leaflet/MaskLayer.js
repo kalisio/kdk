@@ -1,6 +1,7 @@
 import logger from 'loglevel'
 import _ from 'lodash'
 import L from 'leaflet'
+import bbox from '@turf/bbox'
 
 const MaskLayer = L.Polygon.extend({
 
@@ -22,12 +23,17 @@ const MaskLayer = L.Polygon.extend({
     let mask = []
     const type = _.get(geoJson, 'type')
     if (type === 'Feature') {
+      // Create the new geometry
       const geometryType = _.get(geoJson, 'geometry.type')
       const coordinates = _.get(geoJson, 'geometry.coordinates')
       if (geometryType === 'Polygon' && coordinates) {
         this.addPolygon(coordinates, mask)
       } else if (geometryType === 'MultiPolygon' && coordinates) {
         _.forEach(coordinates, polygon => this.addPolygon(polygon, mask))
+      }
+      // Compute the bbox if needed
+      if (!geoJson.bbox) {
+        geoJson.bbox = bbox(geoJson)
       }
     } else {
       logger.warn('Invalid/Unsupported GeoJson object for MaskLayer')

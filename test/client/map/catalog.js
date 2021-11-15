@@ -63,7 +63,7 @@ export async function removeLayer (page, layer, category = null, wait = 1000) {
 }
 
 export async function dropFile (page, filePath, wait = 2000) {
-  const loaderSelector = '.leaflet-control-filelayer input[type="file"]'
+  const loaderSelector = '#dropFileInput'
   const loader = await page.$(loaderSelector)
   await loader.uploadFile(filePath)
   await page.waitForTimeout(wait)
