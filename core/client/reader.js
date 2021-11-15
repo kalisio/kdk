@@ -11,7 +11,6 @@ export const Reader = {
   async read(file, options) {
     const fileExtension = path.extname(file.name)
     const reader = this.readers[fileExtension]
-    let content
     if (reader) {
       try {
         let content = await reader(file, options)

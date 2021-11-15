@@ -20,10 +20,9 @@ export class Runner {
     // Compute helper default options
     const defaultPort = process.env.CLIENT_PORT || '8080'
     let domain = `http://localhost:${defaultPort}`
-    // Override defaults if env provided, we need the app name in this case
-    if (process.env.SUBDOMAIN) {
-      domain = `https://${options.appName}.` + process.env.SUBDOMAIN
-    }
+    if (process.env.NODE_APP_INSTANCE === 'dev' || process.env.NODE_APP_INSTANCE === 'test' || process.env.NODE_APP_INSTANCE === 'prod') {
+      domain = `https://${options.appName}` + process.env.SUBDOMAIN
+    } 
     const defaultBrowser = process.env.BROWSER || 'chrome'
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
