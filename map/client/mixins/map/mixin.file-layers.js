@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import L from 'leaflet'
 import path from 'path'
 import { Reader } from '../../../../core/client'
 
