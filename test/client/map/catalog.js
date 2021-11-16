@@ -54,7 +54,7 @@ export async function removeLayer (page, layer, wait = 1000) {
     isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
     if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
   }
-  await core.click(page, `#${layer} .q-btn`)
+  await core.click(page, `#${layerId} .q-btn`)
   await core.clickAction(page, 'remove')
   await core.click(page, '.q-dialog button:nth-child(2)', wait)
   if (categoryId) {
