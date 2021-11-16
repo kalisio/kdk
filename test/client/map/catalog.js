@@ -8,7 +8,7 @@ export function getLayerId (layer) {
 export async function getLayerCategoryId (page, layerId) {
   const xpath = `//div[contains(@class, "q-expansion-item q-item-type") and .//div[@id="${layerId}"]]`
   const elements = await page.$x(xpath)
-  if (elements.length > 0) return await (await elements[0].getProperty('id')).jsonValue()
+  if (elements.length > 0) return (await elements[0].getProperty('id')).jsonValue()
   return undefined
 }
 
