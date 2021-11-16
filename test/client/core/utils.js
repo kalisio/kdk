@@ -91,7 +91,7 @@ export async function clickSelect (page, selector, entry, wait = 250) {
   }
 }
 
-/* Helper function to input a test on a given selector
+/* Helper function to input a text on a given selector
  * set enter to true to run the press 'Enter' key
  */
 export async function type (page, selector, text, enter = false, replace = false, wait = 250) {
@@ -107,7 +107,7 @@ export async function type (page, selector, text, enter = false, replace = false
     if (enter) await page.keyboard.press('Enter')
     await page.waitForTimeout(wait)
   } catch (error) {
-    console.error(`type ${test} in ${selector} failed.`)
+    console.error(`type ${text} in ${selector} failed.`)
   }
 }
 

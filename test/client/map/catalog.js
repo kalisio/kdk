@@ -1,65 +1,67 @@
 import _ from 'lodash'
 import * as core from '../core'
 
-export function getSystemLayerCategoryId (category) {
-  return 'k-catalog-panel-' + _.kebabCase(category)
-}
-
-export function getSystemLayerId (layer) {
+export function getLayerId (layer) {
   return 'layers-' + _.kebabCase(layer)
 }
 
-export async function isLayerCategoryOpened (page, category) {
-  const selector = `#${category} .q-expansion-item__content`
+export async function getLayerCategoryId (page, layerId) {
+  const xpath = `//div[contains(@class, "q-expansion-item q-item-type") and .//div[@id="${layerId}"]]`
+  const elements = await page.$x(xpath)
+  if (elements.length > 0) return await (await elements[0].getProperty('id')).jsonValue()
+  return undefined
+}
+
+export async function isLayerCategoryOpened (page, categoryId) {
+  const selector = `#${categoryId} .q-expansion-item__content`
   return core.isElementVisible(page, selector)
 }
 
-export async function clickLayerCategory (page, category, wait = 500) {
-  await core.clickRightPaneAction(page, category, wait)
-}
-
-export async function clickBaseLayer (page, layer, wait = 1000) {
-  const baseLayersCategoryId = getSystemLayerCategoryId('BASE_LAYERS')
+export async function clickLayerCategory (page, categoryId, wait = 500) {
   const isCatalogOpened = await core.isRightPaneVisible(page)
   if (!isCatalogOpened) await core.clickRightOpener(page)
-  const isCategoryOpened = await isLayerCategoryOpened(page, baseLayersCategoryId)
-  if (!isCategoryOpened) await clickLayerCategory(page, baseLayersCategoryId)
-  const selector = '#' + getSystemLayerId(layer)
+  await core.clickRightPaneAction(page, categoryId, wait)
+}
+
+export async function clickLayer (page, layer, wait = 1000) {
+  const layerId = getLayerId(layer)
+  console.log(layerId)
+  const isCatalogOpened = await core.isRightPaneVisible(page)
+  if (!isCatalogOpened) await core.clickRightOpener(page)
+  const categoryId = await getLayerCategoryId(page, layerId)
+  console.log(categoryId)
+  let isCategoryOpened
+  if (categoryId) {
+    isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
+    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
+  }
+  let selector = `#${layerId}`
+  if (categoryId !== 'k-catalog-panel-base-layers') selector += ' .q-toggle'
   await core.click(page, selector)
-  if (!isCategoryOpened) await clickLayerCategory(page, baseLayersCategoryId)
-  if (!isCatalogOpened) await core.clickRightOpener(page)
-  await core.waitForImagesLoaded(page)
-  await page.waitForTimeout(wait)
-}
-
-export async function clickLayer (page, layer, category = null, wait = 1000) {
-  const isCatalogOpened = await core.isRightPaneVisible(page)
-  if (!isCatalogOpened) await core.clickRightOpener(page)
-  let isCategoryOpened
-  if (category) {
-    isCategoryOpened = await isLayerCategoryOpened(page, category)
-    if (!isCategoryOpened) await clickLayerCategory(page, category)
-  }
-  await core.click(page, `#${layer} .q-toggle`)
-  if (category) {
-    if (!isCategoryOpened) await clickLayerCategory(page, category)
+  if (categoryId) {
+    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
   }
   if (!isCatalogOpened) await core.clickRightOpener(page)
   await core.waitForImagesLoaded(page)
   await page.waitForTimeout(wait)
 }
 
-export async function removeLayer (page, layer, category = null, wait = 1000) {
+export async function removeLayer (page, layer, wait = 1000) {
+  const layerId = getLayerId(layer)
   const isCatalogOpened = await core.isRightPaneVisible(page)
   if (!isCatalogOpened) await core.clickRightOpener(page)
+  const categoryId = await getLayerCategoryId(page, layerId)
   let isCategoryOpened
-  if (category) {
-    isCategoryOpened = await isLayerCategoryOpened(page, category)
-    if (!isCategoryOpened) await clickLayerCategory(page, category)
+  if (categoryId) {
+    isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
+    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
   }
   await core.click(page, `#${layer} .q-btn`)
   await core.clickAction(page, 'remove')
   await core.click(page, '.q-dialog button:nth-child(2)', wait)
+  if (categoryId) {
+    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
+  }
 }
 
 export async function dropFile (page, filePath, wait = 2000) {

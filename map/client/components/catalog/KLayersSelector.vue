@@ -66,7 +66,9 @@ export default {
   },
   methods: {
     getId (layer) {
-      return _.kebabCase(layer.name)
+      const name = _.kebabCase(layer.name)
+      if (_.startsWith(name, 'layers-')) return name
+      return 'layers-' + name
     },
     layerIcon (layer) {
       return utils.getIconName(layer, 'icon')
