@@ -205,6 +205,7 @@ export async function aggregateFeaturesQuery (hook) {
     } else {
       Object.assign(groupBy, {
         time: { $push: '$time' }, // Keep track of all times
+        runTime: { $push: '$runTime' }, // Keep track of all run times
         type: { $last: '$type' }, // type is assumed similar for all results, keep last
         properties: { $last: '$properties' } // non-aggregated properties are assumed similar for all results, keep last
       })
@@ -239,8 +240,8 @@ export async function aggregateFeaturesQuery (hook) {
       }
       // Find matching features only
       pipeline.push({ $match: Object.assign({ [prefix + element]: { $exists: true } }, match) })
-      // Ensure they are ordered by increasing time by default
-      pipeline.push({ $sort: query.$sort || { time: 1 } })
+      // Ensure they are ordered by increasing time by default and most recent forecast first
+      pipeline.push({ $sort: query.$sort || { time: 1, runTime: -1 } })
       // Keep track of all feature values
       if (singleTime) {
         pipeline.push({ $group: groupBy })
@@ -257,6 +258,7 @@ export async function aggregateFeaturesQuery (hook) {
       // Rearrange data so that we get ordered arrays indexed by element
       elementResults.forEach(result => {
         result.time = { [element]: result.time }
+        if (result.runTime) result.runTime = { [element]: result.runTime }
         if (!singleTime && !isGeometry) {
           // Set back the element values as properties because we aggregated in an accumulator
           // to avoid conflict with non-aggregated feature properties
@@ -278,6 +280,7 @@ export async function aggregateFeaturesQuery (hook) {
           // Merge with previous matching feature if any
           if (previousResult) {
             Object.assign(previousResult.time, result.time)
+            Object.assign(previousResult.runTime, result.runTime)
             _.set(previousResult, prefix + element, _.get(result, prefix + element))
           } else {
             aggregatedResults.push(result)

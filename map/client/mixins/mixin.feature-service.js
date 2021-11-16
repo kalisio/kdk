@@ -91,7 +91,7 @@ export default {
           const lte = now
           Object.assign(query, {
             $limit: 1,
-            $sort: { time: -1 },
+            $sort: { time: -1, runTime: -1 },
             time: {
               $gte: gte.format(),
               $lte: lte.format()
@@ -103,7 +103,7 @@ export default {
           // Last available data only for realtime visualization
           Object.assign(query, {
             $limit: 1,
-            $sort: { time: -1 },
+            $sort: { time: -1, runTime: -1 },
             time: { $lte: now.format() }
           })
         }

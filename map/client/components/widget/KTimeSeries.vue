@@ -158,11 +158,16 @@ export default {
         const label = this.$t(variable.label) || variable.label
         // Aggregated variable available for feature ?
         if (this.hasVariable(name, properties)) {
+          // Build data structure as expected by visualisation
+          let values = properties[name].map((value, index) => ({ x: time[name][index], y: value }))
+          // Keep only the first available value if multiple are provided for the same time (eg different forecasts)
+          // Then transform to date object as expected by visualisation
+          values = _.uniqBy(values, 'x').map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
           this.datasets.push(_.merge({
             label: `${label} (${unit})`,
             borderColor: colors[index],
             backgroundColor: colors[index],
-            data: properties[name].map((value, index) => ({ x: new Date(time[name][index]), y: value })).filter(this.filter),
+            data: values,
             yAxisID: unit
           }, _.omit(variable.chartjs, 'yAxis')))
         }
