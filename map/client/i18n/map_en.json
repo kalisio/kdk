@@ -449,7 +449,8 @@
     "EQUAL": "equals to",
     "NOT_EQUAL": "different from",
     "GREATER_THAN": "greater than",
-    "LOWER_THAN": "lower than"
+    "LOWER_THAN": "lower than",
+    "CAPTURE_MAP": "Capture map"
   },
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Edit layer style"
@@ -553,5 +554,15 @@
     "EDIT_PROPERTIES": "Edit feature properties",
     "DRAG_FEATURES": "Move features",
     "REMOVE_FEATURES": "Remove features"
+  },
+  "KCaptureToolbar": {
+    "SD": "Standard Definition (4:3, 640 x 480)",
+    "HD": "High Definition (16:9, 1280 x 720)",
+    "FHD": "Full HD (16:9, 1920 x 1080)",
+    "QHD": "Quad HD (16:9, 2560 x 1440)",
+    "2K": "2K (1:1.77, 2048 x 1080)",
+    "4K": "4K or Ultra HD (1:1.9, 3840 x 2160)",
+    "8K": "8K or Full Ultra HD (16∶9, 7680 x 4320)",
+    "CAPTURE_ACTION": "Capture"
   }
 }

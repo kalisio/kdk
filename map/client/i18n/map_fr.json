@@ -68,7 +68,8 @@
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
       "TOOLS": "Outils",
       "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",
-      "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés"
+      "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés",
+      "CAPTURE_MAP": "Capturer la carte"
     },
     "timeseries": {
       "FORECAST_PROBE": "Prévisions"
@@ -554,5 +555,15 @@
     "EDIT_PROPERTIES": "Editer les propriétés des entités",
     "DRAG_FEATURES": "Déplacer des entités",
     "REMOVE_FEATURES": "Effacer des entités"
+  },
+  "KCaptureToolbar": {
+    "SD": "Standard Definition (4:3, 640 x 480)",
+    "HD": "High Definition (16:9, 1280 x 720)",
+    "FHD": "Full HD (16:9, 1920 x 1080)",
+    "QHD": "Quad HD (16:9, 2560 x 1440)",
+    "2K": "2K (1:1.77, 2048 x 1080)",
+    "4K": "4K ou Ultra HD (1:1.9, 3840 x 2160)",
+    "8K": "8K ou Full Ultra HD (16∶9, 7680 x 4320)",
+    "CAPTURE_ACTION": "Capturer"
   }
 }

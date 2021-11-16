@@ -1,17 +1,21 @@
-  <template>
-    <div class="row items-center justify-center">
-      <q-chip class="ellipsis" text-color="accent" icon="las la-layer-group" :label="layerName"/>
-      <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
-    </div>
-  </template>
+<template>
+  <div class="row items-center justify-center">
+    <q-chip class="ellipsis" text-color="accent" icon="las la-layer-group" :label="layerName"/>
+    <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
+  </div>
+</template>
 
 <script>
 export default {
   name: 'k-layer-edition-toolbar',
   inject: ['kActivity'],
   computed: {
-    layerName () { return this.kActivity.editedLayer.name },
-    editMode () { return this.kActivity.layerEditMode },
+    layerName () { 
+      return this.kActivity.editedLayer.name 
+    },
+    editMode () { 
+      return this.kActivity.layerEditMode 
+    },
     buttons () {
       const allEditModes = [
         { id: 'add-polygons', icon: 'las la-draw-polygon', toggled: this.editMode === 'add-polygons', tooltip: 'KLayerEditionToolbar.ADD_POLYGON_FEATURES', handler: () => { this.setMode('add-polygons') } },
@@ -33,10 +37,14 @@ export default {
     }
   },
   methods: {
-    modeAllowed (mode) { return this.kActivity.allowedLayerEditModes.indexOf(mode) !== -1 },
-    setMode (mode) { return this.kActivity.setEditMode(mode) }
+    modeAllowed (mode) { 
+      return this.kActivity.allowedLayerEditModes.indexOf(mode) !== -1 
+    },
+    setMode (mode) { 
+      return this.kActivity.setEditMode(mode) 
+    }
   },
-  created () {
+  beforeCreate () {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
