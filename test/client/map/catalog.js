@@ -25,11 +25,9 @@ export async function clickLayerCategory (page, categoryId, wait = 500) {
 
 export async function clickLayer (page, layer, wait = 1000) {
   const layerId = getLayerId(layer)
-  console.log(layerId)
   const isCatalogOpened = await core.isRightPaneVisible(page)
   if (!isCatalogOpened) await core.clickRightOpener(page)
   const categoryId = await getLayerCategoryId(page, layerId)
-  console.log(categoryId)
   let isCategoryOpened
   if (categoryId) {
     isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
