@@ -280,7 +280,10 @@ export async function aggregateFeaturesQuery (hook) {
           // Merge with previous matching feature if any
           if (previousResult) {
             Object.assign(previousResult.time, result.time)
-            Object.assign(previousResult.runTime, result.runTime)
+            if (result.runTime) {
+              if (previousResult.runTime) Object.assign(previousResult.runTime, result.runTime)
+              else previousResult.runTime = { [element]: result.runTime }
+            }
             _.set(previousResult, prefix + element, _.get(result, prefix + element))
           } else {
             aggregatedResults.push(result)
