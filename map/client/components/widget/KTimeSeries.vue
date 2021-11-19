@@ -32,7 +32,9 @@ import centroid from '@turf/centroid'
 import chroma from 'chroma-js'
 import Chart from 'chart.js'
 import 'chartjs-plugin-annotation'
+import Papa from 'papaparse'
 import { getTimeInterval } from '../../utils'
+import { downloadAsBlob } from '../../../../core/client/utils'
 import { Time } from '../../../../core/client/time'
 import { baseWidget } from '../../../../core/client/mixins'
 
@@ -101,6 +103,10 @@ export default {
     hasVariable (name, properties) {
       return (properties[name] && Array.isArray(properties[name]))
     },
+    getSelectedRunTime () {
+      // Set default run as latest
+      return this.runTime || _.last(this.runTimes)
+    },
     setupTimeTicks () {
       if (!this.times || !this.graphWidth) return
       // Choose the right step size to ensure we have almost 100px between hour ticks
@@ -122,7 +128,7 @@ export default {
     setupAvailableTimes () {
       this.times = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
-
+      
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -145,9 +151,23 @@ export default {
         this.timeRange = null
       }
     },
+    setupAvailableRunTimes () {
+      this.runTimes = []
+      const runTime = this.probedLocation.runTime
+
+      this.probedVariables.forEach(variable => {
+        // Check if we are targetting a specific level
+        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
+
+        if (runTime && runTime[name]) this.runTimes.push(runTime[name])
+      })
+      // Make union of all available run times
+      this.runTimes = _.union(...this.runTimes).map(time => moment.utc(time)).sort((a, b) => a - b)
+    },
     setupAvailableDatasets () {
       this.datasets = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
+      const runTime = this.probedLocation.runTime
       const properties = this.probedLocation.properties
       // Generate a color palette in case the variables does not provide it
       const colors = _.shuffle(chroma.scale('Spectral').colors(this.probedVariables.length))
@@ -160,9 +180,13 @@ export default {
         if (this.hasVariable(name, properties)) {
           // Build data structure as expected by visualisation
           let values = properties[name].map((value, index) => ({ x: time[name][index], y: value }))
-          // Keep only the first available value if multiple are provided for the same time (eg different forecasts)
+          // Keep only selected value if multiple are provided for the same time (eg different forecasts)
+          if (!_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
+            values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
+          }
+          else values = _.uniqBy(values, 'x')
           // Then transform to date object as expected by visualisation
-          values = _.uniqBy(values, 'x').map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
+          values = values.map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
           this.datasets.push(_.merge({
             label: `${label} (${unit})`,
             borderColor: colors[index],
@@ -281,6 +305,7 @@ export default {
           // Setup the graph
           this.setupAvailableTimes()
           this.setupTimeTicks()
+          this.setupAvailableRunTimes()
           this.setupAvailableDatasets()
           this.setupAvailableYAxes()
 
@@ -386,6 +411,14 @@ export default {
     onUpdateSpan (span) {
       this.$store.set('timeseries.span', span)
     },
+    onUpdateRun (runTime) {
+      this.runTime = runTime
+      // Update tooltip action
+      const action = _.find(this.actions, { id: 'run-options' })
+      action.tooltip = this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short')
+        + ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')'
+      this.setupGraph()
+    },
     updateProbedLocationHighlight () {
       if (!this.probedLocation) return
       const windDirection = (this.kActivity.selectedLevel ? `windDirection-${this.kActivity.selectedLevel}` : 'windDirection')
@@ -401,6 +434,20 @@ export default {
     },
     onCenterOn () {
       this.kActivity.centerOnSelection()
+    },
+    onExportSeries () {
+      const json = this.times.map(time => {
+        let row = {
+          [this.$t('KTimeSeries.TIME_LABEL')]: time.toISOString()
+        }
+        this.datasets.forEach(dataset => {
+          const value = _.find(dataset.data, item => item.x.toISOString() === time.toISOString())
+          row[dataset.label] = value ? value.y : null
+        })
+        return row
+      })
+      const csv = Papa.unparse(json)
+      downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
     },
     updateProbedLocationName () {
       this.probedLocationName = ''
@@ -425,9 +472,10 @@ export default {
           option.default = true
         }
       })
-      // Registers the actions
+      // Registers the base actions
       this.actions = [
         { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
+        { id: 'export-feature', icon: 'las la-file-download', tooltip: this.$t('KTimeSeries.EXPORT_SERIES'), handler: this.onExportSeries },
         {
           component: 'input/KOptionsChooser',
           id: 'timespan-options',
@@ -464,8 +512,28 @@ export default {
           (name ? ` (${name})` : ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`))
       }
       this.updateProbedLocationName()
-      this.setupGraph()
+      await this.setupGraph()
       this.updateProbedLocationHighlight()
+
+      // When forecast data are available allow to select wich run to use
+      if (this.runTimes && (this.runTimes.length > 1)) {
+        // Select latest runTime as default option
+        let runOptions = this.runTimes.map(runTime => ({
+          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
+          value: runTime
+        }))
+        _.last(runOptions).default = true
+        // Registers the action
+        this.actions.push({
+          component: 'input/KOptionsChooser',
+          id: 'run-options',
+          icon: 'las la-clock',
+          tooltip: this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short')
+            + ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')',
+          options: runOptions,
+          on: { event: 'option-chosen', listener: this.onUpdateRun }
+        })
+      }
     }
   },
   created () {
