@@ -352,7 +352,7 @@ export default {
         }
       }
       const leafletLayer = this.getLeafletLayerByName(name)
-      if (leafletLayer && leafletLayer.getBounds()) this.map.fitBounds(leafletLayer.getBounds(), options)
+      if (leafletLayer && (typeof leafletLayer.getBounds === 'function')) this.map.fitBounds(leafletLayer.getBounds(), options)
     },
     zoomToBounds (bounds) {
       this.map.fitBounds(bounds)
