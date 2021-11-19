@@ -364,7 +364,10 @@
     "NO_DATA_AVAILABLE": "Aucune donnée disponible",
     "CENTER_ON": "Centrer la vue sur la sonde",
     "SPAN": "Intervalle de la série temporelle",
-    "RUN": "Réseau de prévision"
+    "RUN": "Réseau de prévision",
+    "TIME_LABEL": "Temps",
+    "EXPORT_SERIES": "Exporter les données",
+    "SERIES_EXPORT_FILE": "Series.csv"
   },
   "KCatalogPanel": {
     "BASE_LAYERS": "Fonds cartographiques",

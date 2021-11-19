@@ -32,7 +32,9 @@ import centroid from '@turf/centroid'
 import chroma from 'chroma-js'
 import Chart from 'chart.js'
 import 'chartjs-plugin-annotation'
+import Papa from 'papaparse'
 import { getTimeInterval } from '../../utils'
+import { downloadAsBlob } from '../../../../core/client/utils'
 import { Time } from '../../../../core/client/time'
 import { baseWidget } from '../../../../core/client/mixins'
 
@@ -425,6 +427,20 @@ export default {
     onCenterOn () {
       this.kActivity.centerOnSelection()
     },
+    onExportSeries () {
+      const json = this.times.map(time => {
+        let row = {
+          [this.$t('KTimeSeries.TIME_LABEL')]: time.toISOString()
+        }
+        this.datasets.forEach(dataset => {
+          const value = _.find(dataset.data, item => item.x.toISOString() === time.toISOString())
+          row[dataset.label] = value ? value.y : null
+        })
+        return row
+      })
+      const csv = Papa.unparse(json)
+      downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
+    },
     updateProbedLocationName () {
       this.probedLocationName = ''
       if (!this.probedLocation) return
@@ -458,7 +474,8 @@ export default {
           tooltip: 'KTimeSeries.SPAN',
           options: spanOptions,
           on: { event: 'option-chosen', listener: this.onUpdateSpan }
-        }
+        },
+        { id: 'export-feature', icon: 'las la-file-download', tooltip: this.$t('KTimeSeries.EXPORT_SERIES'), handler: this.onExportSeries }
       ]
       // Then manage selection
       this.kActivity.addSelectionHighlight('time-series')
@@ -493,7 +510,10 @@ export default {
       // When forecast data are available allow to select wich run to use
       if (this.runTimes && (this.runTimes.length > 1)) {
         // Select latest runTime as default option
-        let runOptions = this.runTimes.map(runTime => ({ badge: Time.format(runTime, 'time.short'), value: runTime }))
+        let runOptions = this.runTimes.map(runTime => ({
+          badge: Time.format(runTime, 'time.short'),
+          value: runTime
+        }))
         _.last(runOptions).default = true
         // Registers the action
         this.actions.push({
