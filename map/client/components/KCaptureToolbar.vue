@@ -43,6 +43,7 @@
 
 <script>
 import _ from 'lodash'
+import { Events } from '../../../core/client'
 import { exportFile } from 'quasar'
 
 export default {
@@ -89,7 +90,7 @@ export default {
         if (!isDisabled) {
           const catalogLayer = _.find(catalogLayers, { name })
           if (catalogLayer) {
-            if (layer.isVisible != _.get(catalogLayer, 'leaflet.isVisible', false)) {
+            if (layer.isVisible !== _.get(catalogLayer, 'leaflet.isVisible', false)) {
               layers.push(name)
               console.log(name, layer)
             }
@@ -99,7 +100,6 @@ export default {
 
       // Setup the request url options
       let endpoint = this.$config('gateway') + '/capture'
-      endpoint = 'http://localhost:8090/capture'
       let options = {
         method: 'POST',
         mode: 'cors',
@@ -114,11 +114,15 @@ export default {
       // Perform the request
       try {
         const response = await fetch(endpoint, options) 
-        exportFile('capture.png', response.body)
-        
-      } catch (error) {
+        if (response.ok) {
 
-        // TODO this.$emit(error)
+
+        } else {
+          Events.$emit('error', { message: this.$t('errors.' + response.status) })
+        }       
+      } catch (error) {
+        // Network error
+        Events.$emit('error', { message: this.$t('errors.NETWORK_ERROR') })
       }
     }
   },
