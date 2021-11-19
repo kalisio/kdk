@@ -103,6 +103,10 @@ export default {
     hasVariable (name, properties) {
       return (properties[name] && Array.isArray(properties[name]))
     },
+    getSelectedRunTime () {
+      // Set default run as latest
+      return this.runTime || _.last(this.runTimes)
+    },
     setupTimeTicks () {
       if (!this.times || !this.graphWidth) return
       // Choose the right step size to ensure we have almost 100px between hour ticks
@@ -176,10 +180,10 @@ export default {
         if (this.hasVariable(name, properties)) {
           // Build data structure as expected by visualisation
           let values = properties[name].map((value, index) => ({ x: time[name][index], y: value }))
-          // Set default run as latest
-          const selectedRunTime = this.runTime || _.last(this.runTimes)
           // Keep only selected value if multiple are provided for the same time (eg different forecasts)
-          if (!_.isEmpty(_.get(runTime, name)) && selectedRunTime) values = values.filter((value, index) => (runTime[name][index] === selectedRunTime.toISOString()))
+          if (!_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
+            values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
+          }
           else values = _.uniqBy(values, 'x')
           // Then transform to date object as expected by visualisation
           values = values.map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
@@ -409,6 +413,10 @@ export default {
     },
     onUpdateRun (runTime) {
       this.runTime = runTime
+      // Update tooltip action
+      const action = _.find(this.actions, { id: 'run-options' })
+      action.tooltip = this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short')
+        + ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')'
       this.setupGraph()
     },
     updateProbedLocationHighlight () {
@@ -467,6 +475,7 @@ export default {
       // Registers the base actions
       this.actions = [
         { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
+        { id: 'export-feature', icon: 'las la-file-download', tooltip: this.$t('KTimeSeries.EXPORT_SERIES'), handler: this.onExportSeries },
         {
           component: 'input/KOptionsChooser',
           id: 'timespan-options',
@@ -474,8 +483,7 @@ export default {
           tooltip: 'KTimeSeries.SPAN',
           options: spanOptions,
           on: { event: 'option-chosen', listener: this.onUpdateSpan }
-        },
-        { id: 'export-feature', icon: 'las la-file-download', tooltip: this.$t('KTimeSeries.EXPORT_SERIES'), handler: this.onExportSeries }
+        }
       ]
       // Then manage selection
       this.kActivity.addSelectionHighlight('time-series')
@@ -511,7 +519,7 @@ export default {
       if (this.runTimes && (this.runTimes.length > 1)) {
         // Select latest runTime as default option
         let runOptions = this.runTimes.map(runTime => ({
-          badge: Time.format(runTime, 'time.short'),
+          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
           value: runTime
         }))
         _.last(runOptions).default = true
@@ -520,7 +528,8 @@ export default {
           component: 'input/KOptionsChooser',
           id: 'run-options',
           icon: 'las la-clock',
-          tooltip: 'KTimeSeries.RUN',
+          tooltip: this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short')
+            + ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')',
           options: runOptions,
           on: { event: 'option-chosen', listener: this.onUpdateRun }
         })
