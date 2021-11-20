@@ -454,7 +454,7 @@
     "NOT_EQUAL": "different from",
     "GREATER_THAN": "greater than",
     "LOWER_THAN": "lower than",
-    "CAPTURE_MAP": "Capture map"
+    "CAPTURE_VIEW": "Capture view"
   },
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Edit layer style"
@@ -574,6 +574,7 @@
     "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
     "8K_LABEL": "8K or Full Ultra HD",
     "8K_DESCRIPTION": "16∶9, 7680 x 4320",
-    "CAPTURE_ACTION": "Capture"
+    "CAPTURE_ACTION": "Capture view",
+    "CAPTURING_VIEW": "Waiting for capturing view"
   }
 }

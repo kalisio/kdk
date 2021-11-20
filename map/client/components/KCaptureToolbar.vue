@@ -44,7 +44,7 @@
 <script>
 import _ from 'lodash'
 import { Events } from '../../../core/client'
-import { exportFile } from 'quasar'
+import { exportFile, Notify } from 'quasar'
 
 export default {
   name: 'k-capture-toolbar',
@@ -82,13 +82,20 @@ export default {
     },
     async capture () {
       // Retrieve the layers
+      // TODO: check the visibility for OSM_BRIGHT ?
       let layers = this.kActivity.getContextParameters('layers').layers.map(layer => _.kebabCase(layer))
+      // Retrieve the extension
+      let bbox = this.kActivity.getContextParameters('view')
       // Setup the request url options
       let endpoint = this.$config('gateway') + '/capture'
       let options = {
         method: 'POST',
         mode: 'cors',
-        body: JSON.stringify({ layers, size: { width: +this.width, height: +this.height } }),
+        body: JSON.stringify({ 
+          layers, 
+          bbox: [bbox.west, bbox.south, bbox.east, bbox.north], 
+          size: { width: +this.width, height: +this.height } 
+        }),
         headers: { 
           'Content-Type': 'application/json'
         }
@@ -98,7 +105,15 @@ export default {
       if (jwt) options.headers['Authorization'] = 'Bearer ' + jwt
       // Perform the request
       try {
+        const dismiss = this.$q.notify({
+          group: 'capture',
+          message: this.$t('KCaptureToolbar.CAPTURING_VIEW'),
+          color: 'primary',
+          timeout: 0,
+          spinner: true
+        })
         const response = await fetch(endpoint, options) 
+        dismiss()
         if (response.ok) {
           const arrayBuffer = await response.arrayBuffer()
           exportFile('capture.png', new Uint8Array(arrayBuffer))
