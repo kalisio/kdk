@@ -61,7 +61,7 @@ export default {
       switch (context) {
         case 'layers':
           targetParameters = {
-            layers: _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
+            layers: _.values(this.layers).filter(sift({ isVisible: true, scope: { $nin: ['system'] }, _id: { $exists: true } })).map(layer => layer.name)
           }
           break
         case 'view':

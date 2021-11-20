@@ -81,23 +81,8 @@ export default {
       ]
     },
     async capture () {
-      console.log(this.width, this.height)
-      // Iterate through the layers
-      let layers = []
-      const catalogLayers = await this.kActivity.getCatalogLayers()
-      _.forOwn(this.kActivity.layers, (layer, name) => {
-        const isDisabled = _.get(layer, 'isDisabled', false)
-        if (!isDisabled) {
-          const catalogLayer = _.find(catalogLayers, { name })
-          if (catalogLayer) {
-            if (layer.isVisible !== _.get(catalogLayer, 'leaflet.isVisible', false)) {
-              layers.push(name)
-              console.log(name, layer)
-            }
-          }
-        }
-      })
-
+      // Retrieve the layers
+      let layers = this.kActivity.getContextParameters('layers').layers.map(layer => _.kebabCase(layer))
       // Setup the request url options
       let endpoint = this.$config('gateway') + '/capture'
       let options = {
@@ -115,8 +100,8 @@ export default {
       try {
         const response = await fetch(endpoint, options) 
         if (response.ok) {
-
-
+          const arrayBuffer = await response.arrayBuffer()
+          exportFile('capture.png', new Uint8Array(arrayBuffer))
         } else {
           Events.$emit('error', { message: this.$t('errors.' + response.status) })
         }       
