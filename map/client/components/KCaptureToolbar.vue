@@ -18,8 +18,9 @@
     </q-select>
     <q-input 
       v-model.number="width" 
-      type="number" 
-      mask="(#)###" 
+      type="number"  
+      min="256" max="4000"
+      mask="(#)###"
       borderless
       dense
       input-class="text-center"
@@ -28,9 +29,10 @@
     <q-input 
       v-model.number="height" 
       type="number" 
+      min="256" max="4000"
       mask="(#)###" 
-      dense 
       borderless
+      dense 
       input-class="text-center" 
       style="max-width: 54px" />
     <k-action 
@@ -66,6 +68,18 @@ export default {
           this.width=size[0]
           this.height=size[1]
         }
+      }
+    },
+    width: {
+      handler (value) {
+        if (value < 256) this.width = 256
+        if (value > 4000) this.width = 4000
+      }
+    },
+    height: {
+      handler (value) {
+        if (value < 256) this.height = 256
+        if (value > 4000) this.height = 4000
       }
     }
   },
@@ -104,9 +118,11 @@ export default {
       const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       if (jwt) options.headers['Authorization'] = 'Bearer ' + jwt
       // Perform the request
+      let dismiss = null
       try {
-        const dismiss = this.$q.notify({
+        dismiss = this.$q.notify({
           group: 'capture',
+          icon: 'las la-hourglass-half',
           message: this.$t('KCaptureToolbar.CAPTURING_VIEW'),
           color: 'primary',
           timeout: 0,
@@ -122,6 +138,7 @@ export default {
         }       
       } catch (error) {
         // Network error
+        dismiss()
         Events.$emit('error', { message: this.$t('errors.NETWORK_ERROR') })
       }
     }
