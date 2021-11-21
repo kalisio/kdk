@@ -46,7 +46,7 @@
 <script>
 import _ from 'lodash'
 import { Events } from '../../../core/client'
-import { exportFile, Notify } from 'quasar'
+import { exportFile } from 'quasar'
 
 export default {
   name: 'k-capture-toolbar',
@@ -96,8 +96,12 @@ export default {
     },
     async capture () {
       // Retrieve the layers
-      // TODO: check the visibility for OSM_BRIGHT ?
-      let layers = this.kActivity.getContextParameters('layers').layers.map(layer => _.kebabCase(layer))
+      let layers = []
+      const contextLayers = this.kActivity.getContextParameters('layers').layers
+      _.forEach(contextLayers, layer => {
+        let isVisibleByDefaut = _.get(this.kActivity.layers[layer], 'leaflet.isVisible', false)
+        if (!isVisibleByDefaut) layers.push(_.kebabCase(layer))
+      })
       // Retrieve the extension
       let bbox = this.kActivity.getContextParameters('view')
       // Setup the request url options
