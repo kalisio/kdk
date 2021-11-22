@@ -68,7 +68,8 @@
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
       "TOOLS": "Tools",
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
-      "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes"
+      "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
+      "CAPTURE_VIEW": "Capture view"
     },
     "timeseries": {
       "FORECAST_PROBE": "Forecast"
@@ -453,8 +454,7 @@
     "EQUAL": "equals to",
     "NOT_EQUAL": "different from",
     "GREATER_THAN": "greater than",
-    "LOWER_THAN": "lower than",
-    "CAPTURE_VIEW": "Capture view"
+    "LOWER_THAN": "lower than"
   },
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Edit layer style"
