@@ -5,7 +5,7 @@
       <template v-for="layer in layers">
         <div :key="getId(layer)" :id="getId(layer)" class="row items-center justify-between q-pl-md q-pr-sm no-span">
           <!-- Layer name -->
-          <div v-bind:class="{ 
+          <div v-bind:class="{
             'text-primary text-weight-bold': layer.isVisible,
             'text-grey-6': layer.isDisabled
           }">
@@ -13,10 +13,10 @@
             <q-badge v-if="layer.badge" v-bind="layer.badge">
               <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
             </q-badge>
-            <q-tooltip 
+            <q-tooltip
               v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
-              anchor="center left" 
-              self="center right" 
+              anchor="center left"
+              self="center right"
               :offset="[20, 0]">
               {{ layer.tooltip || layer.description }}
             </q-tooltip>
@@ -28,11 +28,11 @@
           <!-- Layer toggle -->
           <q-toggle :value="layer.isVisible" :disable="layer.isDisabled" @input="onLayerClicked(layer)"/>
           <!-- Layer actions -->
-          <k-panel 
-            :id="`${layer.name}-actions`" 
-            :content="layer.actions" 
-            :context="layer" 
-            :filter="{ id: { $nin: ['toggle'] } }" 
+          <k-panel
+            :id="`${layer.name}-actions`"
+            :content="layer.actions"
+            :context="layer"
+            :filter="{ id: { $nin: ['toggle'] } }"
             action-renderer="item" />
         </div>
       </template>

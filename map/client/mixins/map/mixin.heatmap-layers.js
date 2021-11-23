@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import moment from 'moment'
 import sift from 'sift'
 import centroid from '@turf/centroid'
 import HeatmapOverlay from 'leaflet-heatmap'

@@ -1,6 +1,5 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
-import moment from 'moment'
 import sift from 'sift'
 import { Time } from '../../../../core/client/time'
 import { fetchGeoJson } from '../../utils'

@@ -27,7 +27,7 @@
       </div>
       <div class="col-xs-12 col-sm-3 col-md-2 q-pa-sm">
         <div class="fit column content-center">
-          <div class="col row justify-center" 
+          <div class="col row justify-center"
             v-bind:class="{ 'k-history-line': $q.screen.gt.xs }"
           >
             <q-chip :label="formattedHours" />

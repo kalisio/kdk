@@ -18,7 +18,7 @@ export default function init () {
   api.declareService('devices')
 
   // Setup service for settings edition
-  const settingsService = api.createService('settings', Object.assign({
+  api.createService('settings', Object.assign({
     service: LocalSettingsService,
     propertyMapping: {
       shortTime: 'time.format.time.short',
