@@ -150,7 +150,7 @@ export function asGeoJson (options = {}) {
           return Object.assign({
             type: 'Feature', geometry: { type: 'Point', coordinates }, properties: {}
           }, _.omit(item, [longitudeProperty, latitudeProperty]))
-        } 
+        }
       })
     // Move some data to properties ?
     if (options.properties) {

@@ -12,7 +12,7 @@ fileLayer(null, L, togeojson)
 export default {
   mounted () {
     this.$on('map-ready', () => {
-      // Instanciate the control to enable the access to the input element. 
+      // Instanciate the control to enable the access to the input element.
       // This is required to let Puppeteer upload a file
       // See https://github.com/kalisio/kdk/issues/472
       this.loaderControl = L.Control.fileLayerLoad(Object.assign({
@@ -39,7 +39,7 @@ export default {
       // Hide the contoler
       const loaderControlElements = document.getElementsByClassName('leaflet-control-filelayer')
       if (loaderControlElements.length > 0) loaderControlElements[0].style.visibility = 'hidden'
-      /* 
+      /*
       // Required to support drag'n'drop when not using built-in control
       this.map._container.addEventListener('dragenter', () => this.map.scrollWheelZoom.disable(), false)
       this.map._container.addEventListener('dragleave', () => this.map.scrollWheelZoom.enable(), false)

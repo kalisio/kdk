@@ -6,20 +6,20 @@ const MaskLayer = L.Polygon.extend({
 
   initialize: function (geoJson, options) {
     // Merge the options
-    L.setOptions(this, Object.assign({ 
+    L.setOptions(this, Object.assign({
       interactive: false,
       fitBounds: true,
       bounds: new L.LatLngBounds([-90, -360], [90, 360])
-      }), options)
+    }), options)
     // Define the outBounds latlngs array of the mask
     const outerBoundsLatLngs = [
-       this.options.bounds.getSouthWest(),
-       this.options.bounds.getNorthWest(),
-       this.options.bounds.getNorthEast(),
-       this.options.bounds.getSouthEast()
+      this.options.bounds.getSouthWest(),
+      this.options.bounds.getNorthWest(),
+      this.options.bounds.getNorthEast(),
+      this.options.bounds.getSouthEast()
     ]
     // Construct the mask
-    let mask = []
+    const mask = []
     const type = _.get(geoJson, 'type')
     if (type === 'Feature') {
       const geometryType = _.get(geoJson, 'geometry.type')
@@ -36,17 +36,16 @@ const MaskLayer = L.Polygon.extend({
   },
 
   addPolygon (coordinates, mask) {
-    let hole = []
+    const hole = []
     _.forEach(coordinates, ring => {
-      let ringHole = []
+      const ringHole = []
       for (let i = 0; i < ring.length; i++) {
         ringHole.push(new L.LatLng(ring[i][1], ring[i][0]))
       }
-      hole.push(ringHole)  
+      hole.push(ringHole)
     })
     mask.push(hole)
   }
 })
 
 export { MaskLayer }
-

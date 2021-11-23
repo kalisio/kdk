@@ -62,15 +62,15 @@ export const Time = {
   },
   // Build sort query
   updateTimeRangeQuery () {
-    let query = {}
-    query[this.getRange().field]  = { $gte: this.getRange().start.format(), $lte: this.getRange().end.format() }
+    const query = {}
+    query[this.getRange().field] = { $gte: this.getRange().start.format(), $lte: this.getRange().end.format() }
     // Avoid reentrance as we listen to other filter property changes
     if (!_.isEqual(query, this.getRangeQuery())) Store.patch('time.range', { query })
   },
   getFormat () {
     return this.get().format
   },
-  format(datetime, format) {
+  format (datetime, format) {
     let currentTime = this.convertToMoment(datetime)
     if (!this.getFormat().utc) {
       // Convert to local time

@@ -1,6 +1,5 @@
 import L from 'leaflet'
 import _ from 'lodash'
-import moment from 'moment'
 import sift from 'sift'
 import logger from 'loglevel'
 import 'leaflet-realtime'

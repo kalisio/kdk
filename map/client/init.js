@@ -37,7 +37,7 @@ export default function init () {
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  
+
   // Initialize the selection
   Store.set('selection', {
     location: null,

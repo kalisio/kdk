@@ -49,7 +49,7 @@ const baseCollectionMixin = {
             const sortQuery = _.get(this.getCollectionBaseQuery(), '$sort')
             if (sortQuery) {
               this.items = _.orderBy(this.items, _.keys(sortQuery), _.map(_.values(sortQuery), value => { return value > 0 ? 'asc' : 'desc' }))
-            } 
+            }
           } else {
             this.items = response.data
           }
