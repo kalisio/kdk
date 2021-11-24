@@ -1,31 +1,39 @@
 # Changelog
 
-## [Unreleased](https://github.com/kalisio/kdk/tree/HEAD)
+## [v1.4.1](https://github.com/kalisio/kdk/tree/v1.4.1) (2021-11-24)
 
-[Full Changelog](https://github.com/kalisio/kdk/compare/v1.4.0...HEAD)
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.4.0...v1.4.1)
 
-**Merged pull requests:**
+**Implemented enhancements:**
 
-- chore\(deps\): bump prismjs from 1.24.0 to 1.25.0 in /docs [\#466](https://github.com/kalisio/kdk/pull/466) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump url-parse from 1.5.1 to 1.5.3 in /docs [\#441](https://github.com/kalisio/kdk/pull/441) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump path-parse from 1.0.6 to 1.0.7 in /docs [\#440](https://github.com/kalisio/kdk/pull/440) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump path-parse from 1.0.6 to 1.0.7 [\#439](https://github.com/kalisio/kdk/pull/439) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump socket.io-parser from 3.3.0 to 3.3.2 [\#426](https://github.com/kalisio/kdk/pull/426) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump prismjs from 1.23.0 to 1.24.0 in /docs [\#425](https://github.com/kalisio/kdk/pull/425) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump color-string from 1.5.3 to 1.5.5 [\#419](https://github.com/kalisio/kdk/pull/419) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump color-string from 1.5.3 to 1.5.5 in /docs [\#418](https://github.com/kalisio/kdk/pull/418) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump postcss from 7.0.32 to 7.0.36 in /docs [\#409](https://github.com/kalisio/kdk/pull/409) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump postcss from 7.0.32 to 7.0.36 [\#408](https://github.com/kalisio/kdk/pull/408) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump minimist from 1.2.0 to 1.2.5 in /docs [\#396](https://github.com/kalisio/kdk/pull/396) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump ws from 6.2.1 to 6.2.2 in /docs [\#391](https://github.com/kalisio/kdk/pull/391) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump dns-packet from 1.3.1 to 1.3.4 in /docs [\#379](https://github.com/kalisio/kdk/pull/379) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump browserslist from 4.12.0 to 4.16.6 in /docs [\#374](https://github.com/kalisio/kdk/pull/374) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump hosted-git-info from 2.8.8 to 2.8.9 [\#360](https://github.com/kalisio/kdk/pull/360) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump url-parse from 1.4.7 to 1.5.1 in /docs [\#357](https://github.com/kalisio/kdk/pull/357) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.15 to 4.17.21 [\#356](https://github.com/kalisio/kdk/pull/356) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.19 to 4.17.21 in /docs [\#355](https://github.com/kalisio/kdk/pull/355) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump sanitize-html from 1.27.1 to 2.3.2 [\#353](https://github.com/kalisio/kdk/pull/353) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump ssri from 6.0.1 to 6.0.2 in /docs [\#344](https://github.com/kalisio/kdk/pull/344) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add export data action in timeseries widget  [\#491](https://github.com/kalisio/kdk/issues/491)
+- Enhance feature aggregation to manage forecast data [\#488](https://github.com/kalisio/kdk/issues/488)
+- Provide a map capture component  [\#487](https://github.com/kalisio/kdk/issues/487)
+- The import component does not allow to import GPX [\#484](https://github.com/kalisio/kdk/issues/484)
+- Homogenize client side file reading  [\#483](https://github.com/kalisio/kdk/issues/483)
+- When dropping/importing a GeoJSON file we should zoom to the given bbox if defined [\#475](https://github.com/kalisio/kdk/issues/475)
+- Improve online help [\#33](https://github.com/kalisio/kdk/issues/33)
+- Feature aggregation is slow [\#81](https://github.com/kalisio/kdk/issues/81)
+
+**Fixed bugs:**
+
+- asGeoJson hook does not handle geometry collection [\#493](https://github.com/kalisio/kdk/issues/493)
+- getContextParameters in mixin.context should filter system layers and temporary layers [\#492](https://github.com/kalisio/kdk/issues/492)
+- asGeoJson hook does not return geometry if longitude/latitude properties are also available [\#486](https://github.com/kalisio/kdk/issues/486)
+- Impossible to import map layer with self-intersecting lines [\#485](https://github.com/kalisio/kdk/issues/485)
+- KColumn does not handle pagination correctly [\#482](https://github.com/kalisio/kdk/issues/482)
+- mixin base collection should take into account the sort base query to sort the items [\#481](https://github.com/kalisio/kdk/issues/481)
+- KHistory should take into account a date field [\#480](https://github.com/kalisio/kdk/issues/480)
+- Time range query should take into account a given field [\#479](https://github.com/kalisio/kdk/issues/479)
+- Time range query is not initialized in Time.js [\#478](https://github.com/kalisio/kdk/issues/478)
+- Saved user settings are erased by default values [\#477](https://github.com/kalisio/kdk/issues/477)
+- Mapillary viewer not synchronized correctly with coverage layer [\#133](https://github.com/kalisio/kdk/issues/133)
+- PDF files cannot be selected in KUploader on a mobile application [\#101](https://github.com/kalisio/kdk/issues/101)
+- OAuth2 does not work in mobile apps [\#85](https://github.com/kalisio/kdk/issues/85)
+
+**Closed issues:**
+
+- Enhance timeseries widget to manage multiple forecasts [\#490](https://github.com/kalisio/kdk/issues/490)
 
 ## [v1.4.0](https://github.com/kalisio/kdk/tree/v1.4.0) (2021-10-22)
 
@@ -69,6 +77,7 @@
 - It is not possible to cancel when editing an icon [\#435](https://github.com/kalisio/kdk/issues/435)
 - ChipsPane should allow multiple valuePath to handle various type of objects [\#434](https://github.com/kalisio/kdk/issues/434)
 - Chips label should be truncated when length is too long [\#433](https://github.com/kalisio/kdk/issues/433)
+- Changing min/max zoom when editing style does not work correctly [\#330](https://github.com/kalisio/kdk/issues/330)
 - Destroying the map if a GeoJson layer is visible raises an error [\#328](https://github.com/kalisio/kdk/issues/328)
 
 **Closed issues:**
@@ -78,6 +87,14 @@
 - Event participants : allow to call members in a specific group AND tag ? [\#446](https://github.com/kalisio/kdk/issues/446)
 - Option to see members not within a group [\#445](https://github.com/kalisio/kdk/issues/445)
 - Add a hook to manage standard MongoDB aggregation [\#438](https://github.com/kalisio/kdk/issues/438)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump prismjs from 1.24.0 to 1.25.0 in /docs [\#466](https://github.com/kalisio/kdk/pull/466) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump url-parse from 1.5.1 to 1.5.3 in /docs [\#441](https://github.com/kalisio/kdk/pull/441) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump path-parse from 1.0.6 to 1.0.7 in /docs [\#440](https://github.com/kalisio/kdk/pull/440) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump path-parse from 1.0.6 to 1.0.7 [\#439](https://github.com/kalisio/kdk/pull/439) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump sanitize-html from 1.27.1 to 2.3.2 [\#353](https://github.com/kalisio/kdk/pull/353) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.3.6](https://github.com/kalisio/kdk/tree/v1.3.6) (2021-07-15)
 
@@ -220,7 +237,6 @@
 - Add a feature to manage favorite views in 2D/3D maps [\#299](https://github.com/kalisio/kdk/issues/299)
 - Add a spatial query shortcut for geometries including a given location [\#297](https://github.com/kalisio/kdk/issues/297)
 - The status of an alert should reflect if the last check has failed [\#293](https://github.com/kalisio/kdk/issues/293)
-- Enhance feature layer filter  [\#290](https://github.com/kalisio/kdk/issues/290)
 - Refactor and homogenize the layout [\#285](https://github.com/kalisio/kdk/issues/285)
 - Support realtime update in catalog [\#269](https://github.com/kalisio/kdk/issues/269)
 - Default role not set when editing member role in group [\#229](https://github.com/kalisio/kdk/issues/229)
@@ -235,7 +251,6 @@
 - Sorter should apply the default option [\#336](https://github.com/kalisio/kdk/issues/336)
 - Disable browser autocomplete on customized q-select based fields [\#334](https://github.com/kalisio/kdk/issues/334)
 - Layers with per meteo model min/maxZoom don't update their isDisabled state accordingly [\#331](https://github.com/kalisio/kdk/issues/331)
-- Changing min/max zoom when editing style does not work correctly [\#330](https://github.com/kalisio/kdk/issues/330)
 - preventRemoveUser hook prevents removing others users than the target one [\#318](https://github.com/kalisio/kdk/issues/318)
 - Resend invitation does not encrypt password [\#316](https://github.com/kalisio/kdk/issues/316)
 - populatePreviousObject hook does not work when used on remove operation [\#314](https://github.com/kalisio/kdk/issues/314)
@@ -243,7 +258,6 @@
 - Fastlane cannot be installed anymore on travis [\#308](https://github.com/kalisio/kdk/issues/308)
 - Improve timeseries widget readability [\#305](https://github.com/kalisio/kdk/issues/305)
 - Search by item does not take service context into account [\#294](https://github.com/kalisio/kdk/issues/294)
-- Probe tooltip displayed when a feature has a weather property [\#280](https://github.com/kalisio/kdk/issues/280)
 - Complex service requests do not work in HTTP mode [\#138](https://github.com/kalisio/kdk/issues/138)
 - Location indicator not updated when navigating with keyboard [\#124](https://github.com/kalisio/kdk/issues/124)
 - asGeoJson hook breaks reactivity [\#79](https://github.com/kalisio/kdk/issues/79)
@@ -252,15 +266,6 @@
 
 - chore\(deps\): bump y18n from 4.0.0 to 4.0.1 in /docs [\#325](https://github.com/kalisio/kdk/pull/325) ([dependabot[bot]](https://github.com/apps/dependabot))
 - chore\(deps\): bump y18n from 4.0.0 to 4.0.1 [\#324](https://github.com/kalisio/kdk/pull/324) ([dependabot[bot]](https://github.com/apps/dependabot))
-- build\(deps\): bump elliptic from 6.5.3 to 6.5.4 in /docs [\#309](https://github.com/kalisio/kdk/pull/309) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump prismjs from 1.21.0 to 1.23.0 in /docs [\#302](https://github.com/kalisio/kdk/pull/302) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump ini from 1.3.5 to 1.3.8 in /docs [\#277](https://github.com/kalisio/kdk/pull/277) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump node-fetch from 2.6.0 to 2.6.1 [\#267](https://github.com/kalisio/kdk/pull/267) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump node-fetch from 2.6.0 to 2.6.1 [\#243](https://github.com/kalisio/kdk/pull/243) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump prismjs from 1.20.0 to 1.21.0 in /docs [\#227](https://github.com/kalisio/kdk/pull/227) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump elliptic from 6.5.2 to 6.5.3 in /docs [\#225](https://github.com/kalisio/kdk/pull/225) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.15 to 4.17.19 in /docs [\#215](https://github.com/kalisio/kdk/pull/215) ([dependabot[bot]](https://github.com/apps/dependabot))
-- chore\(deps\): bump lodash from 4.17.15 to 4.17.19 [\#214](https://github.com/kalisio/kdk/pull/214) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.2.1](https://github.com/kalisio/kdk/tree/v1.2.1) (2021-01-26)
 
@@ -268,6 +273,7 @@
 
 **Implemented enhancements:**
 
+- Enhance feature layer filter  [\#290](https://github.com/kalisio/kdk/issues/290)
 - Provide a dense prop to the KAutocomplete component [\#284](https://github.com/kalisio/kdk/issues/284)
 -  Provide a filter component to use for filtering collections [\#283](https://github.com/kalisio/kdk/issues/283)
 - Provide an activity bar  [\#282](https://github.com/kalisio/kdk/issues/282)
@@ -282,6 +288,7 @@
 
 - Logging hook causes high CPU usage [\#287](https://github.com/kalisio/kdk/issues/287)
 - Removing a group causes all members of an organisation to be updated [\#286](https://github.com/kalisio/kdk/issues/286)
+- Probe tooltip displayed when a feature has a weather property [\#280](https://github.com/kalisio/kdk/issues/280)
 - Hint error when performing aggregation [\#279](https://github.com/kalisio/kdk/issues/279)
 - getFeaturesFromLayer does not work on non-service layers [\#278](https://github.com/kalisio/kdk/issues/278)
 - Next hour button does not work when the time line is rendered in mini mode [\#274](https://github.com/kalisio/kdk/issues/274)
@@ -331,6 +338,7 @@
 - History component should provide infinite scroll [\#90](https://github.com/kalisio/kdk/issues/90)
 - UIWebView API deprecation notice [\#47](https://github.com/kalisio/kdk/issues/47)
 - Upgrade Mongo DB driver to v3 [\#44](https://github.com/kalisio/kdk/issues/44)
+- Enhance e2e tests across the modules/apps [\#38](https://github.com/kalisio/kdk/issues/38)
 - Allow to directly take a picture when uploading a file [\#99](https://github.com/kalisio/kdk/issues/99)
 - Extend pusher protocols for SMS/Emails [\#91](https://github.com/kalisio/kdk/issues/91)
 
@@ -437,7 +445,6 @@
 - Improve application webhook security [\#84](https://github.com/kalisio/kdk/issues/84)
 - Upgrade to latest Node.js LTS [\#48](https://github.com/kalisio/kdk/issues/48)
 - Allow to filter feature layers [\#89](https://github.com/kalisio/kdk/issues/89)
-- Enhance e2e tests across the modules/apps [\#38](https://github.com/kalisio/kdk/issues/38)
 - Optimize measure update for time-stamped features in globe [\#96](https://github.com/kalisio/kdk/issues/96)
 - Create a component to provide styling options for feature layers in map [\#110](https://github.com/kalisio/kdk/issues/110)
 - Manage real-time and archive/forecast mode [\#108](https://github.com/kalisio/kdk/issues/108)
