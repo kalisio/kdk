@@ -350,6 +350,8 @@ describe('map:alerts', () => {
       time: moment.utc(observation.time).date(tomorrow.date()).month(tomorrow.month()).year(tomorrow.year())
     })))
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('creates active alert at specific station', async () => {
     const now = moment.utc()

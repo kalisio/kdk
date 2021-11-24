@@ -120,8 +120,10 @@ export function asGeoJson (options = {}) {
     results = (isPaginated ? results.data : results)
     results = results
       .filter(item => {
-        // Check if item are not already in GeoJson feature format and we can convert if required
+        // Check if item is not already in GeoJson feature format and we can convert if required
         return (_.has(item, longitudeProperty) && _.has(item, latitudeProperty)) ||
+               // When performing feature aggregation on geometries the result can be an array
+               Array.isArray(_.get(item, geometryProperty)) ||
                // Check for a geometry property (previously provided or already transformed item)
                (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates'))
       })
@@ -143,12 +145,22 @@ export function asGeoJson (options = {}) {
         // Item locations are already in GeoJson format
         if (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) {
           return Object.assign({
-            type: 'Feature', geometry: _.get(item, geometryProperty), properties: {}
+            type: 'Feature',
+            geometry: _.get(item, geometryProperty),
+            properties: {}
+          }, _.omit(item, [geometryProperty]))
+        } else if (Array.isArray(_.get(item, geometryProperty))) {
+          return Object.assign({
+            type: 'Feature',
+            geometry: { type: 'GeometryCollection', geometries: _.get(item, geometryProperty) },
+            properties: {}
           }, _.omit(item, [geometryProperty]))
         } else if (coordinates) {
           // Item locations are not already in GeoJson feature format so we need to convert
           return Object.assign({
-            type: 'Feature', geometry: { type: 'Point', coordinates }, properties: {}
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates },
+            properties: {}
           }, _.omit(item, [longitudeProperty, latitudeProperty]))
         }
       })
@@ -253,7 +265,7 @@ export async function aggregateFeaturesQuery (hook) {
         _.forOwn(stage, (value, key) => debug('Stage', key, value))
       })
       const elementResults = await collection.aggregate(pipeline, aggregateOptions).toArray()
-      debug(`Generated ${elementResults.length} feature(s) for ${element} element`)
+      debug(`Generated ${elementResults.length} feature(s) for ${element} element`, elementResults)
       // Rearrange data so that we get ordered arrays indexed by element
       elementResults.forEach(result => {
         result.time = { [element]: result.time }
