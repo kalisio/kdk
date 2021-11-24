@@ -4,21 +4,9 @@
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.4.0...v1.4.1)
 
-**Implemented enhancements:**
-
-- Add export data action in timeseries widget  [\#491](https://github.com/kalisio/kdk/issues/491)
-- Enhance feature aggregation to manage forecast data [\#488](https://github.com/kalisio/kdk/issues/488)
-- Provide a map capture component  [\#487](https://github.com/kalisio/kdk/issues/487)
-- The import component does not allow to import GPX [\#484](https://github.com/kalisio/kdk/issues/484)
-- Homogenize client side file reading  [\#483](https://github.com/kalisio/kdk/issues/483)
-- When dropping/importing a GeoJSON file we should zoom to the given bbox if defined [\#475](https://github.com/kalisio/kdk/issues/475)
-- Improve online help [\#33](https://github.com/kalisio/kdk/issues/33)
-- Feature aggregation is slow [\#81](https://github.com/kalisio/kdk/issues/81)
-
 **Fixed bugs:**
 
 - asGeoJson hook does not handle geometry collection [\#493](https://github.com/kalisio/kdk/issues/493)
-- getContextParameters in mixin.context should filter system layers and temporary layers [\#492](https://github.com/kalisio/kdk/issues/492)
 - asGeoJson hook does not return geometry if longitude/latitude properties are also available [\#486](https://github.com/kalisio/kdk/issues/486)
 - Impossible to import map layer with self-intersecting lines [\#485](https://github.com/kalisio/kdk/issues/485)
 - KColumn does not handle pagination correctly [\#482](https://github.com/kalisio/kdk/issues/482)
@@ -30,10 +18,6 @@
 - Mapillary viewer not synchronized correctly with coverage layer [\#133](https://github.com/kalisio/kdk/issues/133)
 - PDF files cannot be selected in KUploader on a mobile application [\#101](https://github.com/kalisio/kdk/issues/101)
 - OAuth2 does not work in mobile apps [\#85](https://github.com/kalisio/kdk/issues/85)
-
-**Closed issues:**
-
-- Enhance timeseries widget to manage multiple forecasts [\#490](https://github.com/kalisio/kdk/issues/490)
 
 ## [v1.4.0](https://github.com/kalisio/kdk/tree/v1.4.0) (2021-10-22)
 
