@@ -279,7 +279,9 @@ describe('map:services', () => {
     expect(feature.time.geometry).toExist()
     expect(feature.time.geometry.length === 4).beTrue()
     expect(feature.time.geometry[0].isBefore(feature.time.geometry[1])).beTrue()
-    expect(feature.geometry.length === 4).beTrue()
+    expect(feature.geometry.type).to.equal('GeometryCollection')
+    expect(feature.geometry.geometries).toExist()
+    expect(feature.geometry.geometries.length === 4).beTrue()
   })
 
   it('geocode an address', async () => {
