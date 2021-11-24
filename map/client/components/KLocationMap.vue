@@ -174,11 +174,13 @@ export default {
     },
     refresh () {
       this.clear()
-      // No location
+      // No location ?
       const hasLongitude = _.has(this.location, 'longitude')
       const hasLatitude = _.has(this.location, 'latitude')
       const hasGeometry = _.has(this.location, 'coordinates')
       if (hasGeometry || (hasLongitude && hasLatitude)) {
+        // No default marker in draw mode
+        if (this.drawable && !hasGeometry) return
         // GeoJson geometry or simple location ?
         if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
           this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.location })
