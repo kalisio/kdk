@@ -153,7 +153,7 @@ export default {
   },
   async beforeDestroy () {
     // Remove event listeners
-    this.mapillaryViewer.off('image', this.onNodeChanged)
+    this.mapillaryViewer.off('image', this.onImageEvent)
     // Remove the marker
     this.kActivity.removeSelectionHighlight('mapillary')
     // Save the states
