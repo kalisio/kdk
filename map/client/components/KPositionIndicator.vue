@@ -81,6 +81,7 @@ export default {
 
 <style lang="stylus">
  .position-indicator {
+    pointer-events: none;
     border-radius: 50%;
     background-color: #00000020
  }
