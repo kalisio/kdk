@@ -332,7 +332,8 @@
   },
   "KOwsLayerField": {
     "UNABLE_TO_DESCRIBE_FEATURE_TYPE": "Failed fetching layer's description.",
-    "UNSUPPORTED_LAYER_CRS": "The projection used by this layer is not supported."
+    "UNSUPPORTED_LAYER_CRS": "The projection used by this layer is not supported.",
+    "UNSUPPORTED_LAYER_FORMAT": "The data format used by this layer is not supported."
   },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",
