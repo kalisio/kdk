@@ -96,6 +96,13 @@ export default {
           if (!_.has(layer.crs, '3857')) {
             this.error = 'KOwsLayerField.UNSUPPORTED_LAYER_CRS'
           }
+          // selected layer must support at least one image format we understand
+          // some WMTS layer only expose application/x-protobuf as format
+          const supportedFormats = _.map(layer.formats, (value, key) => key)
+          const hasImageFormat = supportedFormats.some((format) => format.startsWith('image/'))
+          if (!hasImageFormat) {
+            this.error = 'KOwsLayerField.UNSUPPORTED_LAYER_FORMAT'
+          }
         } else if (this.service.protocol === 'TMS') {
           // selected layer must be available with 3857 crs
           if (layer.srs !== 'EPSG:3857') {

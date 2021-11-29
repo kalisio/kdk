@@ -329,7 +329,8 @@
   },
   "KOwsLayerField": {
     "UNABLE_TO_DESCRIBE_FEATURE_TYPE": "Impossible de récupérer la description des propriétés de la couche.",
-    "UNSUPPORTED_LAYER_CRS": "La projection utilisée par cette couche n'est pas supportée."
+    "UNSUPPORTED_LAYER_CRS": "La projection utilisée par cette couche n'est pas supportée.",
+    "UNSUPPORTED_LAYER_FORMAT": "Le format de données utilisé par cette couche n'est pas supporté."
   },
   "KLocationField": {
     "SEARCH": "$t(SEARCH)",
