@@ -10,6 +10,7 @@
         <k-column
           :label="column.label"
           :key="column.value"
+          :ref="column.value"
           v-bind="column.props"
           :append-items="true"
           :height="height" />
@@ -35,6 +36,11 @@ export default {
     height: {
       type: Number,
       required: true
+    }
+  },
+  methods: {
+    getColumn (value) {
+      return this.$refs[value][0]
     }
   }
 }
