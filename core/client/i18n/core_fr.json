@@ -20,6 +20,7 @@
   "OWNER": "Propriétaire",  
   "MANAGER": "Gestionnaire",
   "MEMBER": "Membre",
+  "UNAMED": "Sans nom",
   "HELP": "Aide",
   "NEED_HELP": "Besoin d'aide ?",
   "CONTEXTUAL_HELP": "Aide contextuelle",

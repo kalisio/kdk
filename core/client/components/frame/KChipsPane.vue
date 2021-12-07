@@ -43,12 +43,12 @@ export default {
   },
   methods: {
     getValue (chip) {
-      if (typeof this.valuePath === 'string') return _.get(chip, this.valuePath)
+      if (typeof this.valuePath === 'string') return _.get(chip, this.valuePath, this.$t('UNAMED'))
       for (let i = 0; i < this.valuePath.length; i++) {
         const path = this.valuePath[i]
         if (_.has(chip, path)) return _.get(chip, path)
       }
-      return undefined
+      return this.$t('UNAMED')
     },
     getColor (chip) {
       const color = _.get(chip, 'icon.color')

@@ -20,6 +20,7 @@
   "OWNER": "Owner",
   "MANAGER": "Manager",
   "MEMBER": "Member",
+  "UNAMED": "Unamed",
   "HELP": "Help",
   "NEED_HELP": "Help needed ?",
   "CONTEXTUAL_HELP": "Contextual help",
