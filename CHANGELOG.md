@@ -14,23 +14,10 @@
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.4.0...v1.4.1)
 
-**Implemented enhancements:**
-
-- Add export data action in timeseries widget  [\#491](https://github.com/kalisio/kdk/issues/491)
-- Enhance timeseries widget to manage multiple forecasts [\#490](https://github.com/kalisio/kdk/issues/490)
-- Enhance feature aggregation to manage forecast data [\#488](https://github.com/kalisio/kdk/issues/488)
-- Provide a map capture component  [\#487](https://github.com/kalisio/kdk/issues/487)
-- The import component does not allow to import GPX [\#484](https://github.com/kalisio/kdk/issues/484)
-- Homogenize client side file reading  [\#483](https://github.com/kalisio/kdk/issues/483)
-- When dropping/importing a GeoJSON file we should zoom to the given bbox if defined [\#475](https://github.com/kalisio/kdk/issues/475)
-- Improve online help [\#33](https://github.com/kalisio/kdk/issues/33)
-- Feature aggregation is slow [\#81](https://github.com/kalisio/kdk/issues/81)
-
 **Fixed bugs:**
 
 - Draw mode in location input exhibits a location marker [\#494](https://github.com/kalisio/kdk/issues/494)
 - asGeoJson hook does not handle geometry collection [\#493](https://github.com/kalisio/kdk/issues/493)
-- getContextParameters in mixin.context should filter system layers and temporary layers [\#492](https://github.com/kalisio/kdk/issues/492)
 - asGeoJson hook does not return geometry if longitude/latitude properties are also available [\#486](https://github.com/kalisio/kdk/issues/486)
 - Impossible to import map layer with self-intersecting lines [\#485](https://github.com/kalisio/kdk/issues/485)
 - KColumn does not handle pagination correctly [\#482](https://github.com/kalisio/kdk/issues/482)
