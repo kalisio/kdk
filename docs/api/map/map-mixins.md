@@ -115,6 +115,10 @@ The mixin automatically registers a default generator that will create a popup d
     * **text**: text content of the popup, if provided will override default display
     * **options**: Leaflet [popup options](https://leafletjs.com/reference.html#popup-option)
 
+::: tip
+If you want to disable a default popup configuration like `popup: { }` (i.e. display all properties) on a per-layer basis you have to explicitely unset it on your layer options using `popup: null` or `popup: false`.
+:::
+
 ## Map Tooltip
 
 Make it possible to generate [Leaflet tooltips](https://leafletjs.com/reference.html#tooltip) based on GeoJson feature properties. Use **register/unregisterStyle(`tooltip`, generator)** to (un)register a function **f(feature, layer, options)** returning a [Leaflet tooltip](https://leafletjs.com/reference.html#tooltip)
@@ -125,6 +129,10 @@ The mixin automatically registers a default generator that will create a tooltip
     * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with `feature`, its `properties` and translation function `$t` as context
     * **text**: text content of the tooltip, if provided will override default display
     * **options**: Leaflet [tooltip options](https://leafletjs.com/reference.html#tooltip-option)
+
+::: tip
+If you want to disable a default tooltip configuration like `tooltip: { property: 'name' }` (i.e. display all properties) on a per-layer basis you have to explicitely unset it on your layer options using `tooltip: null` or `tooltip: false`.
+:::
 
 ## GeoJson Layer
 
@@ -169,7 +177,7 @@ Marker [clustering options](https://github.com/Leaflet/Leaflet.markercluster#opt
 ![2D marker cluster](../../assets/marker-cluster-2D.png)
 
 ::: tip
-If you want to disable a default clustering configuration like `cluster: { disableClusteringAtZoom: 18 }` on a per-layer basis you have to explicitely unset it on your layer options using `cluster: { null }`.
+If you want to disable a default clustering configuration like `cluster: { disableClusteringAtZoom: 18 }` on a per-layer basis you have to explicitely unset it on your layer options using `cluster: null` or `cluster: false`.
 :::
 
 ### Additional feature types

@@ -20,6 +20,10 @@ export default {
       if (entity.properties) {
         const properties = entity.properties.getValue(0)
         const cesiumOptions = options.cesium || options
+        // Check if explicitely disabled first
+        if (_.has(cesiumOptions, 'tooltip') && !_.get(cesiumOptions, 'tooltip')) return
+        if (_.has(properties, 'tooltip') && !_.get(properties, 'tooltip')) return
+        // Otherwise merge options
         const tooltipStyle = _.merge({}, this.activityOptions.engine.tooltip,
           cesiumOptions.tooltip, properties.tooltip)
         // Default content

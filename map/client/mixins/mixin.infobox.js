@@ -6,6 +6,10 @@ export default {
       let properties = feature.properties
       if (properties) {
         const engineOptions = _.get(options, this.engine, options)
+        // Check if explicitely disabled first
+        if (_.has(engineOptions, 'infobox') && !_.get(engineOptions, 'infobox')) return []
+        if (_.has(properties, 'infobox') && !_.get(properties, 'infobox')) return []
+        // Otherwise merge options
         const infoboxStyle = Object.assign({}, this.activityOptions.engine.infobox,
           engineOptions.infobox, properties.infobox)
 

@@ -9,6 +9,10 @@ export default {
       let popup
       if (properties) {
         const leafletOptions = options.leaflet || options
+        // Check if explicitely disabled first
+        if (_.has(leafletOptions, 'popup') && !_.get(leafletOptions, 'popup')) return
+        if (_.has(properties, 'popup') && !_.get(properties, 'popup')) return
+        // Otherwise merge options
         const popupStyle = Object.assign({}, this.activityOptions.engine.popup,
           leafletOptions.popup, properties.popup)
         // Default content

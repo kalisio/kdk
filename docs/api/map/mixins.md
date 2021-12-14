@@ -26,6 +26,10 @@ Use **register/unregisterStyle(`infobox`, generator)** to (un)register a functio
     * **pick**: array of property names to appear in the information box
     * **omit**: array of property names not to appear in the information box
 
+::: tip
+If you want to disable a default information box configuration like `infobox: { }` (i.e. display all properties) on a per-layer basis you have to explicitely unset it on your layer options using `infobox: null` or `infobox: false`.
+:::
+
 ## Feature Selection
 
 Used to support feature selection on your 2D and 3D activities. A selected feature will be automtically highlighted on the map and (un)selecting a feature will automatically (hide) show [map widgets](../map/components.md#widgets).

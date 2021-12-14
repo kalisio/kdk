@@ -38,6 +38,14 @@
               label label-always :label-value="maxZoom"/>
           </q-item-section>
         </q-item>
+        <q-item>
+          <q-item-section>
+            <q-toggle v-model="isSelectable"/>
+          </q-item-section>
+          <q-item-section avatar>
+            {{$t('KLayerStyleForm.SELECTABLE')}}
+          </q-item-section>
+        </q-item>
         <q-item v-if="!hasFeatureSchema" class="col-12">
           <q-item-section class="col-1">
             <q-toggle v-model="hasOpacity"/>
@@ -354,6 +362,7 @@ export default {
       hasMaxZoom: false,
       minZoom: 0,
       maxZoom: 0,
+      isSelectable: true,
       hasOpacity: false,
       opacity: 0.5,
       popup: false,
@@ -575,6 +584,7 @@ export default {
       if (this.hasMaxZoom) this.maxZoom = _.get(values, 'leaflet.maxZoom')
       this.hasOpacity = _.has(values, 'leaflet.opacity')
       if (this.hasOpacity) this.opacity = _.get(values, 'leaflet.opacity')
+      this.isSelectable = _.get(values, 'isSelectable', true)
     },
     fillClusteringStyle (values) {
       this.clustering = (!!_.get(values, 'leaflet.cluster', _.get(this.options, 'cluster')))
@@ -629,7 +639,8 @@ export default {
       }
     },
     async fillPopupStyles (values) {
-      this.popup = (!!_.get(values, 'leaflet.popup'))
+      // Check for popup in layer and default style
+      this.popup = (!!_.get(values, 'leaflet.popup', _.get(this.options, 'popup.pick')))
       this.popupProperties = _.get(values, 'leaflet.popup.pick',
         _.get(this.options, 'popup.pick', this.properties.map(property => property.value)))
       // Jump to select data model
@@ -640,14 +651,16 @@ export default {
       }
     },
     async fillTooltipStyles (values) {
-      this.tooltip = (!!_.get(values, 'leaflet.tooltip'))
+      // Check for tooltip in layer and default style
+      this.tooltip = (!!_.get(values, 'leaflet.tooltip', _.get(this.options, 'tooltip')))
       this.tooltipProperty = _.get(values, 'leaflet.tooltip.property',
         _.get(this.options, 'tooltip.property', null))
       // Jump to select data model
       if (this.tooltipProperty) this.tooltipProperty = _.find(this.properties, { value: this.tooltipProperty })
     },
     async fillInfoBoxStyles (values) {
-      this.infobox = (!!_.get(values, 'leaflet.infobox'))
+      // Check for infobox in layer and default style
+      this.infobox = (!!_.get(values, 'leaflet.infobox', _.get(this.options, 'infobox')))
       this.infoboxProperties = _.get(values, 'leaflet.infobox.pick',
         _.get(this.options, 'infobox.pick', this.properties.map(property => property.value)))
       // Jump to select data model
@@ -689,7 +702,8 @@ export default {
         'leaflet.isVisible': this.isVisible,
         // See https://github.com/kalisio/kdk/issues/429
         // While we cannot edit style in 3D make at least visibility available
-        'cesium.isVisible': this.isVisible
+        'cesium.isVisible': this.isVisible,
+        isSelectable: this.isSelectable
       }
       if (this.hasMinZoom) values['leaflet.minZoom'] = this.minZoom
       if (this.hasMaxZoom) values['leaflet.maxZoom'] = this.maxZoom
@@ -714,17 +728,17 @@ export default {
     },
     popupStylesValues () {
       return {
-        'leaflet.popup': (this.popup ? { pick: this.popupProperties.map(property => property.value) } : undefined)
+        'leaflet.popup': (this.popup ? { pick: this.popupProperties.map(property => property.value) } : false)
       }
     },
     tooltipStylesValues () {
       return {
-        'leaflet.tooltip': (this.tooltip ? { property: this.tooltipProperty.value } : undefined)
+        'leaflet.tooltip': (this.tooltip ? { property: this.tooltipProperty.value } : false)
       }
     },
     infoBoxStylesValues () {
       return {
-        'leaflet.infobox': (this.infobox ? { pick: this.infoboxProperties.map(property => property.value) } : undefined)
+        'leaflet.infobox': (this.infobox ? { pick: this.infoboxProperties.map(property => property.value) } : false)
       }
     },
     values () {

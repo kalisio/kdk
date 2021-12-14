@@ -8,6 +8,10 @@ export default {
       if (entity.properties) {
         let properties = entity.properties.getValue(0)
         const cesiumOptions = options.cesium || options
+        // Check if explicitely disabled first
+        if (_.has(cesiumOptions, 'popup') && !_.get(cesiumOptions, 'popup')) return
+        if (_.has(properties, 'popup') && !_.get(properties, 'popup')) return
+        // Otherwise merge options
         const popupStyle = _.merge({}, this.activityOptions.engine.popup,
           cesiumOptions.popup, properties.popup)
         // Default content

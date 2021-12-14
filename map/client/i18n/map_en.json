@@ -420,9 +420,10 @@
   },
   "KLayerStyleForm": {
     "BASE": "Base properties",
-    "DEFAULT_VISIBILITY": "Visibilité par défaut",
+    "DEFAULT_VISIBILITY": "Visible by default",
     "MIN_ZOOM": "Visible from level",
     "MAX_ZOOM": "Visible until level",
+    "SELECTABLE": "Selectable",
     "LAYER_OPACITY": "Transparent layer",
     "OPACITY": "Opacity",
     "POINTS": "Markers",
