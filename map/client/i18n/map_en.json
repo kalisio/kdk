@@ -578,5 +578,11 @@
     "8K_DESCRIPTION": "16∶9, 7680 x 4320",
     "CAPTURE_ACTION": "Capture view",
     "CAPTURING_VIEW": "Waiting for capturing view"
+  },
+  "KMeasureTool": {
+    "TOOL_BUTTON_LABEL": "Display measure tool",
+    "CLEAR": "Clear measurements",
+    "MEASURE_DISTANCE": "Measure distance",
+    "MEASURE_AREA": "Measure area"
   }
 }

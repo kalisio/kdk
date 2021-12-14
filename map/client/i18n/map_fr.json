@@ -579,5 +579,11 @@
     "8K_DESCRIPTION": "16∶9, 7680 x 4320",
     "CAPTURE_ACTION": "Capturer la vue",
     "CAPTURING_VIEW": "En attente de capture de la vue"
+  },
+  "KMeasureTool": {
+    "TOOL_BUTTON_LABEL": "Afficher l'outil de mesures",
+    "CLEAR": "Effacer les mesures",
+    "MEASURE_DISTANCE": "Mesurer une distance",
+    "MEASURE_AREA": "Mesurer une aire"
   }
 }
