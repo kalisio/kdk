@@ -782,7 +782,10 @@ export default {
     },
     onIconClicked (style) {
       this.editedStyle = style
-      this.$refs.iconChooser.open(style['icon-classes'], style['marker-color'])
+      this.$refs.iconChooser.open({
+        name: style['icon-classes'],
+        color: style['marker-color']
+      })
     },
     onIconChanged (icon) {
       Object.assign(this.editedStyle, {
