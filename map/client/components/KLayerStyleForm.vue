@@ -252,11 +252,9 @@
           <q-item-section class="col-1">
             <q-toggle v-model="popup"/>
           </q-item-section>
-          <q-item-section avatar class="col-5">
-            {{$t('KLayerStyleForm.ADD_POPUP')}}
           </q-item-section>
-          <q-item-section class="col-6">
-            <q-select :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties"></q-select>
+          <q-item-section class="col-11">
+            <q-select :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')"></q-select>
           </q-item-section>
         </q-item>
       </q-list>
@@ -267,11 +265,8 @@
           <q-item-section class="col-1">
             <q-toggle v-model="tooltip"/>
           </q-item-section>
-          <q-item-section avatar class="col-5">
-            {{$t('KLayerStyleForm.ADD_TOOLTIP')}}
-          </q-item-section>
-          <q-item-section class="col-6">
-            <q-select :disable="!tooltip" v-model="tooltipProperty" :options="properties"></q-select>
+          <q-item-section class="col-11">
+            <q-select :disable="!tooltip" v-model="tooltipProperty" :options="properties" :label="$t('KLayerStyleForm.ADD_TOOLTIP')"></q-select>
           </q-item-section>
         </q-item>
       </q-list>
@@ -282,11 +277,8 @@
           <q-item-section class="col-1">
             <q-toggle v-model="infobox"/>
           </q-item-section>
-          <q-item-section avatar class="col-5">
-            {{$t('KLayerStyleForm.ADD_POPUP')}}
-          </q-item-section>
-          <q-item-section class="col-6">
-            <q-select :disable="!infobox" use-chips v-model="infoboxProperties" multiple :options="properties"></q-select>
+          <q-item-section class="col-11">
+            <q-select :disable="!infobox" use-chips v-model="infoboxProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_INFOBOX')"></q-select>
           </q-item-section>
         </q-item>
       </q-list>
