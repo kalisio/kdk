@@ -411,9 +411,10 @@
   },
   "KLayerStyleForm": {
     "BASE": "Propriétés de base",
-    "DEFAULT_VISIBILITY": "Visibilité par défaut",
+    "DEFAULT_VISIBILITY": "Visible par défaut",
     "MIN_ZOOM": "Visible à partir du niveau",
     "MAX_ZOOM": "Visible jusqu'au niveau",
+    "SELECTABLE": "Sélectionnable",
     "LAYER_OPACITY": "Couche transparente",
     "OPACITY": "Opacité",
     "POINTS": "Icônes",

@@ -64,7 +64,8 @@ export default {
         this.setRefs(['form'])
         await this.loadRefs()
       }
-      this.$refs.form.fill(_.pick(this.layer, ['leaflet']))
+      // Pick engine-based and generic styling options
+      this.$refs.form.fill(_.pick(this.layer, ['leaflet', 'isSelectable']))
     },
     async onApply () {
       const result = this.$refs.form.validate()

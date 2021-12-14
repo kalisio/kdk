@@ -87,6 +87,10 @@ The mixin automatically registers a default generator that will create a popup d
     * **html**: HTML content of the popup, if provided will override default display
     * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
 
+::: tip
+If you want to disable a default popup configuration like `popup: { }` (i.e. display all properties) on a per-layer basis you have to explicitely unset it on your layer options using `popup: null` or `popup: false`.
+:::
+
 ## Globe Tooltip
 
 Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as tooltips based on GeoJson feature properties stored in entities. Use **register/unregisterStyle(`tooltip`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
@@ -97,6 +101,10 @@ The mixin automatically registers a default generator that will create a tooltip
     * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with `feature`, its `properties` and translation function `$t` as context
     * **html**: HTML content of the tooltip, if provided will override default display
     * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
+
+::: tip
+If you want to disable a default tooltip configuration like `tooltip: { property: 'name' }` (i.e. display all properties) on a per-layer basis you have to explicitely unset it on your layer options using `tooltip: null` or `tooltip: false`.
+:::
 
 ## GeoJson Layer
 
