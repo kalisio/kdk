@@ -92,8 +92,8 @@ export default {
         case 'layers': {
           if (!_.has(targetParameters, 'layers')) return
           // According to current state find which layers need to be (de)activated
-          const activeLayers = _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
-          const targetLayers = targetParameters.layers
+          const activeLayers = _.values(this.layers).filter(sift({ isVisible: true, scope: { $nin: ['system'] }, _id: { $exists: true } })).map(layer => layer.name)         
+          const targetLayers = _.isArray(targetParameters.layers) ? targetParameters.layers : [targetParameters.layers]
           // List of layers to be (de)activated
           const activedLayers = _.difference(targetLayers, activeLayers)
           const inactivatedLayers = _.difference(activeLayers, targetLayers)
