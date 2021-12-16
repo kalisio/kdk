@@ -100,7 +100,7 @@ export default {
       const contextLayers = this.kActivity.getContextParameters('layers').layers
       _.forEach(contextLayers, layer => {
         let isVisibleByDefaut = _.get(this.kActivity.layers[layer], 'leaflet.isVisible', false)
-        if (!isVisibleByDefaut) layers.push(_.kebabCase(layer))
+        if (!isVisibleByDefaut) layers.push(layer)
       })
       // Retrieve the extension
       let bbox = this.kActivity.getContextParameters('view')
