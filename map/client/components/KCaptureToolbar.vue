@@ -45,7 +45,7 @@
 
 <script>
 import _ from 'lodash'
-import { Events } from '../../../core/client'
+import { Events, Time } from '../../../core/client'
 import { exportFile } from 'quasar'
 
 export default {
@@ -112,7 +112,8 @@ export default {
         body: JSON.stringify({ 
           layers, 
           bbox: [bbox.west, bbox.south, bbox.east, bbox.north], 
-          size: { width: +this.width, height: +this.height } 
+          size: { width: +this.width, height: +this.height },
+          time: Time.getCurrentTime().toISOString()
         }),
         headers: { 
           'Content-Type': 'application/json'

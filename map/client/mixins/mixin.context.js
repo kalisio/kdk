@@ -1,9 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import sift from 'sift'
-import { utils as kCoreUtils } from '../../../core/client'
-import { Time } from '../../../core/client/time'
-import { Store } from '../../../core/client/store'
+import { utils as kCoreUtils, Time, Store } from '../../../core/client'
 
 export default {
   methods: {
