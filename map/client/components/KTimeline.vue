@@ -314,6 +314,5 @@ export default {
   }
   .k-timeline-hour-frame:hover {
     border-bottom: solid 5px $primary
-    //color: $primary
   }
 </style>

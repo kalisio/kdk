@@ -1,6 +1,9 @@
 import _ from 'lodash'
+import moment from 'moment'
 import sift from 'sift'
 import { utils as kCoreUtils } from '../../../core/client'
+import { Time } from '../../../core/client/time'
+import { Store } from '../../../core/client/store'
 
 export default {
   methods: {
@@ -20,6 +23,11 @@ export default {
         case 'layers':
           if (_.get(this.$route, 'query.layers')) {
             return _.pick(this.$route.query, ['layers'])
+          }
+          break
+        case 'time': 
+          if (_.get(this.$route, 'query.time')) {
+            return _.pick(this.$route.query, ['time'])
           }
           break
         case 'view':
@@ -64,6 +72,11 @@ export default {
             layers: _.values(this.layers).filter(sift({ isVisible: true, scope: { $nin: ['system'] }, _id: { $exists: true } })).map(layer => layer.name)
           }
           break
+        case 'time': {
+          targetParameters = {
+            time: Time.getCurrentTime().restoreContext()
+          }
+        }
         case 'view':
         default: {
           const bounds = this.getBounds()
@@ -94,6 +107,11 @@ export default {
           if (inactivatedTerrainLayer && !activatedTerrainLayer) _.pull(inactivatedLayers, inactivatedTerrainLayer)
           await Promise.all(activedLayers.map(layer => this.showLayer(layer)))
           await Promise.all(inactivatedLayers.map(layer => this.hideLayer(layer)))
+          break
+        }
+        case 'time': {
+          if (!_.has(targetParameters, 'time')) return
+          Store.set('time.currentTime', moment(targetParameters.time).utc())
           break
         }
         case 'view':
