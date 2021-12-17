@@ -110,6 +110,7 @@ export default {
         method: 'POST',
         mode: 'cors',
         body: JSON.stringify({ 
+          activity: this.kActivity.is3D() ? 'globe' : 'map',
           layers, 
           bbox: [bbox.west, bbox.south, bbox.east, bbox.north], 
           size: { width: +this.width, height: +this.height },
