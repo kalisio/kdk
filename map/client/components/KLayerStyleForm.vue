@@ -420,8 +420,10 @@ export default {
       if ((component !== 'form/KNumberField') && _.has(this.layer, 'service')) {
         component = 'form/KSelectField'
         // Get available values
-        const values = await this.$api.getService(_.get(this.layer, 'service'), this.contextId)
+        let values = await this.$api.getService(_.get(this.layer, 'service'), this.contextId)
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
+        // Sort them to ease searching
+        values = values.sort()
         // We don't have label in that case
         properties.field.options = values.map(value => ({ value, label: (_.isNil(value) ? 'NIL' : value) }))
       }
