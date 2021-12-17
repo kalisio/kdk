@@ -61,7 +61,7 @@ export default {
       switch (context) {
         case 'layers':
           targetParameters = {
-            layers: _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
+            layers: _.values(this.layers).filter(sift({ isVisible: true, scope: { $nin: ['system'] }, _id: { $exists: true } })).map(layer => layer.name)
           }
           break
         case 'view':
@@ -81,7 +81,7 @@ export default {
         case 'layers': {
           if (!_.has(targetParameters, 'layers')) return
           // According to current state find which layers need to be (de)activated
-          const activeLayers = _.values(this.layers).filter(sift({ isVisible: true })).map(layer => layer.name)
+          const activeLayers = _.values(this.layers).filter(sift({ isVisible: true, scope: { $nin: ['system'] }, _id: { $exists: true } })).map(layer => layer.name)
           const targetLayers = targetParameters.layers
           // List of layers to be (de)activated
           const activedLayers = _.difference(targetLayers, activeLayers)
