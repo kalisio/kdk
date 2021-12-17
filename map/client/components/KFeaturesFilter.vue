@@ -115,8 +115,10 @@ export default {
         properties.field.multiple = true
         properties.field.chips = true
         // Get available values
-        const values = await this.$api.getService(this.layer.service, this.contextId)
+        let values = await this.$api.getService(this.layer.service, this.contextId)
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, _.omit(this.layer.baseQuery, this.getCurrentLayerFilters())) })
+        // Sort them to ease searching
+        values = values.sort()
         // We don't have label in that case
         properties.field.options = values.map(value => ({ value, label: (_.isNil(value) ? 'NIL' : value) }))
       }
