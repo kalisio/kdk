@@ -3,9 +3,9 @@
     <slot name="header" />
     <div v-if="layers.length > 0">
       <template v-for="layer in layers">
-        <div :key="getId(layer)" :id="getId(layer)" class="row items-center justify-between q-pl-md q-pr-sm no-span">
+        <div :key="getId(layer)" :id="getId(layer)" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
           <!-- Layer name -->
-          <div v-bind:class="{
+          <div class="ellipsis" v-bind:class="{
             'text-primary text-weight-bold': layer.isVisible,
             'text-grey-6': layer.isDisabled
           }">
