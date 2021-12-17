@@ -12,7 +12,6 @@ import bearing from '@turf/bearing'
 import length from '@turf/length'
 import area from '@turf/area'
 import { polygon, lineString } from '@turf/helpers'
-import { segmentEach } from '@turf/meta'
 import { getCoords } from '@turf/invariant'
 
 export default {
