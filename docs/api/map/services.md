@@ -21,7 +21,19 @@ const service = app.getService('geocoder')
 const results = await service.create({ address: '29 champs elysée paris' })
 results.forEach(element => {
   let { latitude, longitude, country, state,
-  		streetNumber, streetName, city, zipcode } = element
+  		streetNumber, streetName, city, zipcode, administrativeLevels } = element
+  ...
+})
+```
+
+Reverse geocoding works the same way except the input is based on a **lon/longitude** and **lat/latitude** fields, or a GeoJson feature, specifying the location to be looked for. 
+
+```javascript
+const service = app.getService('geocoder')
+const results = await service.create({ lat: 45.767, lon: 4.833 })
+results.forEach(element => {
+  let { latitude, longitude, country, state,
+      streetNumber, streetName, city, zipcode, administrativeLevels } = element
   ...
 })
 ```
@@ -105,8 +117,10 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 * **service**: the name of the underlying feature service,
 * **probeService**: the name of the underlying feature service containing probe locations,
 * **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object),
-* **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object),
-* **history**: the expiration period for stored feature
+* **from**: the oldest stored feature age in history as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
+* **to**: the newest stored feature age in history as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
+* **every**: the sample frequency of the features as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
+* **queryFrom**: the period to search for data around the current time when displaying the features as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
 * **variables**: array of available properties in feature to be [aggregated over time](./services.md#time-based-feature-aggregation), for each entry the following options are available:
   * **name**: property name in feature (relative to the nested `properties` object),
   * **label**: property label to use in UI,
@@ -115,13 +129,26 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 
 #### User context
 
-A user context consists in a map extent and a set of layers to be activated. It is used to restore a specific user view context at anytime.
+A *user context* consists in a map extent and a set of layers to be activated. It is used to restore a specific user view context at anytime.
 
 The data model of a user context as used by the API is the following:
 * **name** : the context name, typically used when listing favorite views
 * **type** : `Context`
 * **south,west,north,east**: context extent,
 * **layers**: array of active layer names
+
+#### Service
+
+A *service* consists in a description of a third-party web service providing support for [OGC](https://www.ogc.org/) protocols. It is used to easily import layers coming from these services.
+
+The data model of a service as used by the API is the following:
+* **name** : the context name, typically used when listing favorite views
+* **type** : `Service`
+* **request**: full request to perform `GetCapabilities` operation
+* **baseUrl**: base service URL
+* **searchParams**: additional parameters to be used to perform requests to the service
+* **version**: OGC protocol version to be used (e.g. `1.1.1`)
+* **protocol**: OGC protocol to be used (e.g. `WMS`)
 
 ### Hooks
 
@@ -146,16 +173,77 @@ This service does not emit events with individual features because importing lar
 
 ### Data model
 
-The common model is a [GeoJSON feature](https://tools.ietf.org/html/rfc7946#section-3.2) with [GeoJSON point geometry](https://tools.ietf.org/html/rfc7946#section-3.1.2). However, it also supports time-stamped features to manage the temporal evolution of either the geometry (e.g. a moving aircraft) or the attributes/properties (e.g. a probe). As a consequence it also usually contains the following:
-* **time** : the date/time of the "measure" that produced the feature
+The common model is a [GeoJSON feature](https://tools.ietf.org/html/rfc7946#section-3.2) with a [GeoJSON geometry](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1). However, it also supports time-stamped features to manage the temporal evolution of either the geometry (e.g. a moving aircraft) or the attributes/properties (e.g. a probe). As a consequence it can also contains the following additional fields:
+* **time** : the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date/time of the "measure" that produced the feature
 
-The raw data model of a feature (ie when no aggregation is performed) as used by the API is detailed below.
+The raw data model of a feature (i.e. when no aggregation is performed) as used by the API is detailed below.
 
 ![Feature data model](../../assets/feature-data-model.png)
 
+::: tip 
+The default features service response is a [GeoJson Feature Collection](https://datatracker.ietf.org/doc/html/rfc7946#section-3.3) so that it can be directly put on a map. You can avoid this by setting the `asFeatureCollection` query paramter to `false` on your request.
+:::
+
+::: details Example of non aggregated features request result
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "_id": "5f23ce6071b0b00008dff53f",
+      "type": "Feature",
+      "time": "2020-07-31T07:30:00.000Z",
+      "geometry": {
+          "type": "Point",
+          "coordinates": [
+              -0.12606156299146137,
+              45.02191991211479
+          ]
+      },
+      "properties": {
+          "name": "L'Isle à Abzac",
+          "code_station": "#P726151001",
+          "H": 0.397
+      }
+    },
+    {
+      "_id": "5f23caea71b0b00008dfe457",
+      "type": "Feature",
+      "time": "2020-07-31T07:25:00.000Z",
+      "geometry": {
+          "type": "Point",
+          "coordinates": [
+              -0.12606156299146137,
+              45.02191991211479
+          ]
+      },
+      "properties": {
+          "name": "L'Isle à Abzac",
+          "code_station": "#P726151001",
+          "H": 0.398
+      }
+    },
+    ...
+  ]
+}
+```
+:::
+
+### Measure networks
+
+It is usual to create two different feature services for measure networks to get:
+* the list of *stations* (i.e. measurement probes) in the network, which does not handle time information,
+* the list of *observations* (i.e. measures) made by the different stations, which contains time information.
+
+Typically, hydrological data from Hub'eau are managed using two services:
+* `hubeau-stations` for the stations,
+* `hubeau-observations` for the observations.
+
+Each service is associated under-the-hood to a MongoDB collection storing the related data.
+
 ### Time-based feature aggregation
 
-Sometimes it is useful to retrieve a single result aggregating all the times for a given feature instead of multiple single results (i.e. one per time). It can also ease data management when a sensor generates different features for different variables, e.g. one feature owing the measure of one variable and another feature the measure of another variable because they are not probed at the same frequency.
+It can be useful to retrieve a single result aggregating all the times for a given feature (i.e. timeseries) instead of multiple single results (i.e. one per time). It can also ease data management when a sensor generates different features for different *variables* (i.e. physical or logical measured elements), e.g. one feature owing the measure of one variable and another feature the measure of another variable because they are not probed at the same frequency.
 
 You can perform such an aggregation based on [MongoDB capabilities](https://docs.mongodb.com/manual/core/aggregation-pipeline/) like this:
 
@@ -179,6 +267,59 @@ When performing aggregation, **time** will become an object containing a key per
 The data model of a feature as returned by the API when some elements of the feature are aggregated over time is detailed below.
 
 ![Aggregated feature data model](../../assets/aggregated-feature-data-model.png)
+
+::: details Example of aggregated features request result
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "_id": {
+        "code_station": "#X331001001"
+      },
+      "time": {
+        "H": [
+          "2020-07-29T13:40:00.000Z",
+          "2020-07-29T13:45:00.000Z",
+          "2020-07-29T13:50:00.000Z",
+          ...
+        ],
+        "Q": [
+          "2020-07-29T13:40:00.000Z",
+          "2020-07-29T13:45:00.000Z",
+          "2020-07-29T13:50:00.000Z",
+          ...
+        ]
+      },
+      "type": "Feature",
+      "properties": {
+        "name": "La Durance à Cavaillon",
+        "code_station": "#X331001001",
+        "H": [
+          0.815,
+          0.815,
+          0.821,
+          ...
+        ],
+        "Q": [
+          36.87,
+          36.87,
+          37.458,
+          ...
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.032432216493836,
+          43.82748690979179
+        ]
+      }
+    }
+  ]
+}
+```
+:::
 
 ### Advanced feature filtering
 
@@ -318,7 +459,7 @@ The details of some of the properties are the following:
   * **url**: webhook target URL
   * **xxx**: request body field values that will be POST on the URL
 
-  ### Hooks
+### Hooks
 
 The following [hooks](./hooks.md) are executed on the `alerts` service:
 
