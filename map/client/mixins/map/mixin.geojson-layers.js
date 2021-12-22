@@ -57,7 +57,7 @@ export default {
         leafletOptions.updateFeature = function (feature, oldLayer) {
           // A new feature is coming, create it
           if (!oldLayer) return
-          // An existing one is found, simply update styling, etc.
+          // An existing one is found, simply update styling, properties, etc.
           leafletOptions.onEachFeature(feature, oldLayer)
           if (oldLayer.setStyle) {
             // Some vector layers can be used for points, eg circleMarker,
@@ -70,6 +70,9 @@ export default {
               oldLayer.setStyle(leafletOptions.style(feature))
             }
           }
+          let oldProperties = _.get(oldLayer, 'feature.properties')
+          let properties = _.get(feature, 'properties')
+          if (oldProperties && properties) Object.assign(properties, oldProperties)
           if (oldLayer.setIcon) {
             // FIXME: updating icon in place requires to recreate it anyway, so for now we recreate the whole marker
             // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
