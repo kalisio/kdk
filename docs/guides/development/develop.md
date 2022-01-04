@@ -36,81 +36,6 @@ To lint the code:
 $yarn lint
 ```
 
-You can also lint each of the submodules independently using the following commands:
-
-```bash
-$yarn lint:core   # lint the core part
-$yarn lint:map    # lint the map part
-```
-:::
-
-### Running the tests
-
-The **KDK** relies on two different frameworks to perform the tests:
-* API tests are based on [Mocha](https://mochajs.org/)
-* Client tests are based on [TestCafé](https://github.com/DevExpress/testcafe)
-
-#### API 
-
-From the root or backend `api` folder run the server-side tests: 
-
-```bash
-$yarn mocha
-```
-
-For coverage use: 
-
-```bash
-$yarn coverage
-```
-
-You can run the tests of each part independently using the following commands:
-
-```bash
-$yarn mocha:core   # test the core module
-$yarn mocha:map    # test the map module
-```
-
-:::tip
-If you need to perform some specific tests, you can use the `-g` or `--grep` option of the `mocha` command:
-
-```bash
-$yarn mocha:core -g "core:team" # run the team tests
-```
-:::
-
-```bash
-$yarn test:server
-```
-
-This will lint and fix issues in the code according to [JS standard](https://github.com/feross/standard), then execute tests using [Mocha](https://mochajs.org/) and compute code coverage using [Istanbul](https://istanbul.js.org/).
-
-#### Client 
-
-From the root folder run the client-side tests : `yarn test:client`. This will build the client, launch the server then execute tests using [TestCafé](https://github.com/DevExpress/testcafe). 
-
-If you already have a built app and a running server you could simply do this to launch TestCafé: `$ yarn cafe:chrome` or `$ yarn cafe:firefox`
-
-In development mode, you can tell **TestCafé** to run a specific fixture:
-
-```bash
-$yarn cafe:firefox -f "a-fxture"
-```
-
-Or a specific test:
-
-```bash
-$yarn cafe:firefox -t "a-test"
-```
-
-::: tip
-Because the UI components are rendered asynchronously, it is often convenient to reduce the overall test execution speed to ensure the components are visible:
-
-```bash
-$yarn cafe:firefox -f "a-fixture" --speed 0.8
-```
-:::
-
 ### Debugging
 
 Use [Chrome DevTools](https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27), look at this [tutorial video](https://www.youtube.com/watch?v=Xb_0awoShR8). Usually you simply have to open `chrome://inspect` in the Chrome URL.
@@ -192,17 +117,27 @@ The Crosswalk project seems to be [discontinued](https://crosswalk-project.org/b
 
 ## Modules/Plugins
 
-Kalisio modules/plugins are [Feathers plugins](https://docs.feathersjs.com/guides/advanced/creating-a-plugin.html), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins so that the module is re-compiled on each file change:
+Kalisio modules/plugins are [Feathers modules](https://docs.feathersjs.com), so you will find most of the required information in the linked Feathers documentation. Typically for development you will do the following for each required plugins so that the module is re-compiled on each file change:
 ```bash
 cd kdk
 yarn install
 yarn watch
 ```
 
-### Running tests
+### Linting the code
 
-To run the module tests including linting and coverage : `$ yarn test`
+The **KDK** relies on [JavaScript standard style](https://github.com/feross/standard).
 
-To speed-up things simply run the tests with: `$ yarn mocha`
+To lint the code:
 
-To speed-up things even more run a single test suite with: `$ yarn mocha -- --grep "test suite name"`
+```bash
+$yarn lint
+```
+
+You can also lint each of the submodules independently using the following commands:
+
+```bash
+$yarn lint:core   # lint the core part
+$yarn lint:map    # lint the map part
+```
+:::

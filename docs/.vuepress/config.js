@@ -47,7 +47,7 @@ function getGuidesSidebar () {
     },
     {
       title: 'Development',
-      children: ['development/setup', 'development/develop', 'development/configure', 'development/deploy', 'development/publish', 'development/testing' ] 
+      children: ['development/setup', 'development/develop', 'development/test', 'development/configure', 'development/deploy', 'development/publish' ] 
     }
   ]
 }
