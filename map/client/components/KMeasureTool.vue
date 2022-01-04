@@ -113,22 +113,21 @@ export default {
       let tooltip = ''
       let br = ''
       if (prevVertex !== -1) {
-        const a = bearing(coords[prevVertex], coords[marker.coordIndex])
-        tooltip += `${br}In: ${this.formatAngle(a, 'deg')}`
-        br = '<br/>'
-      }
-      if (nextVertex !== -1) {
-        const a = bearing(coords[marker.coordIndex], coords[nextVertex])
-        tooltip += `${br}Out: ${this.formatAngle(a, 'deg')}`
-        br = '<br/>'
-      }
-      if (prevVertex !== -1) {
         const d = distance(coords[prevVertex], coords[marker.coordIndex], { units: 'kilometers' })
         tooltip += `${br}+${this.formatDistance(d, 'km')}`
         br = '<br/>'
       }
       const d = length(lineString(coords), { units: 'kilometers' })
       tooltip += `${br}${this.formatDistance(d, 'km')}`
+      br = '<br/>'
+      if (prevVertex !== -1) {
+        const a = bearing(coords[prevVertex], coords[marker.coordIndex])
+        tooltip += `${br}In: ${this.formatAngle(a, 'deg')}`
+      }
+      if (nextVertex !== -1) {
+        const a = bearing(coords[marker.coordIndex], coords[nextVertex])
+        tooltip += `${br}Out: ${this.formatAngle(a, 'deg')}`
+      }
 
       return tooltip
     },
@@ -171,11 +170,11 @@ export default {
 
       const geoCoords0 = coords[coords.length - 1]
       const geoCoords1 = [ e.latlng.lng, e.latlng.lat ]
-      const b = bearing(geoCoords0, geoCoords1)
-      let content = this.formatAngle(b, 'deg')
       const d = distance(geoCoords0, geoCoords1, { unit: 'kilometers' })
-      content += ' +'
-      content += this.formatDistance(d, 'km')
+      let content = this.formatDistance(d, 'km')
+      const b = bearing(geoCoords0, geoCoords1)
+      content += ' '
+      content += this.formatAngle(b, 'deg')
 
       if (this.measureMode === 'measure-area' && coords.length >= 2) {
         coords.push(geoCoords1)
