@@ -69,7 +69,7 @@
       "TOOLS": "Tools",
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
       "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
-      "CAPTURE_VIEW": "Capture view"
+      "CAPTURE_VIEW": "Capture the view"
     },
     "timeseries": {
       "FORECAST_PROBE": "Forecast"
