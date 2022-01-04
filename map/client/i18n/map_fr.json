@@ -584,6 +584,7 @@
     "TOOL_BUTTON_LABEL": "Afficher l'outil de mesures",
     "CLEAR": "Effacer les mesures",
     "MEASURE_DISTANCE": "Mesurer une distance",
-    "MEASURE_AREA": "Mesurer une aire"
+    "MEASURE_AREA": "Mesurer une aire",
+    "DISPLAY_MEASURE_VALUE": "Afficher les valeurs des mesures"
   }
 }

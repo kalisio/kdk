@@ -580,9 +580,10 @@
     "CAPTURING_VIEW": "Waiting for capturing view"
   },
   "KMeasureTool": {
-    "TOOL_BUTTON_LABEL": "Display measure tool",
-    "CLEAR": "Clear measurements",
-    "MEASURE_DISTANCE": "Measure distance",
-    "MEASURE_AREA": "Measure area"
+    "TOOL_BUTTON_LABEL": "Display the measure tool",
+    "CLEAR": "Clear all measurements",
+    "MEASURE_DISTANCE": "Measure a distance",
+    "MEASURE_AREA": "Measure an area",
+    "DISPLAY_MEASURE_VALUE": "Display measure values"
   }
 }

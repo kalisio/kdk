@@ -32,7 +32,7 @@ export default {
       const allModes = [
         { id: 'measure-distance', icon: 'las la-project-diagram', toggled: this.measureMode === 'measure-distance', tooltip: 'KMeasureTool.MEASURE_DISTANCE', handler: () => { this.setMode('measure-distance') } },
         { id: 'measure-area', icon: 'las la-draw-polygon', toggled: this.measureMode === 'measure-area', tooltip: 'KMeasureTool.MEASURE_AREA', handler: () => { this.setMode('measure-area') } },
-        { id: 'see-measure-value', icon: 'las la-hand-pointer', toggled: this.measureMode === 'see-measure-value', tooltip: 'KMeasureTool.MEASURE_AREA', handler: () => { this.setMode('see-measure-value') } },
+        { id: 'see-measure-value', icon: 'las la-hand-pointer', toggled: this.measureMode === 'see-measure-value', tooltip: 'KMeasureTool.DISPLAY_MEASURE_VALUE', handler: () => { this.setMode('see-measure-value') } },
         { id: 'clear-measurements', icon: 'las la-trash', tooltip: 'KMeasureTool.CLEAR',  handler: () => { this.onClear() } }
       ]
 
