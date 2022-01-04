@@ -1,6 +1,9 @@
 <template>
   <div class="row items-center no-padding">
-    <q-chip class="ellipsis" text-color="accent" icon="las la-ruler-combined" :label="measureValue"/>
+    <span class="q-pl-md q-pr-md" @click="changeUnit">
+      {{ measureValue }}
+    </span>
+    <!-- q-chip class="ellipsis" text-color="accent" icon="las la-ruler-combined" :label="measureValue"/ -->
     <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
   </div>
 </template>
@@ -12,21 +15,12 @@ import bearing from '@turf/bearing'
 import length from '@turf/length'
 import area from '@turf/area'
 import { polygon, lineString } from '@turf/helpers'
-import { getCoords } from '@turf/invariant'
+import { getCoords, getType } from '@turf/invariant'
+import math from 'mathjs'
 
 export default {
   name: 'k-measure-tool',
   inject: ['kActivity'],
-  props: {
-    distanceUnit: {
-      type: String,
-      default: 'kilometers'
-    },
-    areaUnit: {
-      type: String,
-      default: 'kilometers'
-    }
-  },
   data () {
     return {
       measureMode: 'measure-distance',
@@ -61,37 +55,83 @@ export default {
       this.clearAllMeasurements()
       this.setMode(this.measureMode)
     },
+    changeUnit () {
+      if (this.measureMode === 'measure-distance') {
+        this.distanceUnit = this.distanceUnit === 'km' ? 'miles' : 'km'
+        const v = math.unit(this.measureValue)
+        const s = v.to(this.distanceUnit).format({ notation: 'fixed', precision: 3 })
+        this.measureValue = s
+      } else {
+        return
+      }
+
+      // we only need to recompute tooltips on Polygon / LineString.
+      // tooltips on vertex are dynamic
+      for (const layer of this.layers) {
+        const geojson = layer.toGeoJSON()
+        const type = getType(geojson)
+        if (type === 'LineString') {
+          const d = length(geojson, { units: 'kilometers' })
+          layer.bindTooltip(this.formatDistance(d, 'km'), { sticky: true })
+        } else if (type === 'Polygon') {
+          const a = area(geojson)
+          layer.bindTooltip(this.formatArea(a, 'm^2'), { sticky: true })
+        }
+      }
+    },
     clearCurrentMeasurement () {
-      if (this.workingLayer) this.workingLayer.off('pm:vertexadded', this.onVertexAdded)
-      this.workingLayer = null
+      if (this.measurementLayer) this.measurementLayer.off('pm:vertexadded', this.onVertexAdded)
+      this.measurementLayer = null
       if (this.cursorTooltip) this.kActivity.map.removeLayer(this.cursorTooltip)
       this.cursorTooltip = null
-      for (const layer of this.currentMeasurementLayers) this.kActivity.map.removeLayer(layer)
-      this.currentMeasurementLayers = []
+      for (const layer of this.measurementLayers) this.kActivity.map.removeLayer(layer)
+      this.measurementLayers = []
       this.kActivity.map.off('mousemove', this.onMouseMove)
       this.kActivity.map.pm.disableDraw()
-      this.measureValue = '--'
     },
     clearAllMeasurements () {
       this.clearCurrentMeasurement()
-      for (const layer of this.toolLayers) this.kActivity.map.removeLayer(layer)
-      this.toolLayers = []
+      for (const layer of this.layers) this.kActivity.map.removeLayer(layer)
+      this.layers = []
+      this.measureValue = '--'
     },
-    makeDistanceTooltip (geojson, coords, index, latlng) {
-      const totalLen = length(geojson, { unit: this.distanceUnit })
-      const segmentLen = distance(coords[index], coords[index - 1], { unit: this.distanceUnit })
-      const inBearing = bearing(coords[index], coords[index - 1])
-      const outBearing = bearing(coords[index - 1], coords[index])
+    vertexTooltip (marker) {
+      const geojson = this.geojsons[marker.geojsonIndex]
+      const type = getType(geojson)
+      const coords = type === 'Polygon' ? getCoords(geojson)[0] : getCoords(geojson)
+      let nextVertex = -1
+      let prevVertex = -1
 
-      const content = `In: ${inBearing.toFixed(2)}°<br/>
-                       Out: ${outBearing.toFixed(2)}°<br/>
-                       +${segmentLen.toFixed(3)}km<br/>
-                       ${totalLen.toFixed(3)}km`
+      if (type === 'LineString') {
+        nextVertex = marker.coordIndex < coords.length - 1 ? marker.coordIndex + 1 : -1
+        prevVertex = marker.coordIndex > 0 ? marker.coordIndex - 1 : -1
+      } else if (type === 'Polygon') {
+        nextVertex = marker.coordIndex < coords.length - 2 ? marker.coordIndex + 1 : 0
+        prevVertex = marker.coordIndex > 0 ? marker.coordIndex - 1 : coords.length - 2
+      }
 
-      // const marker = L.marker(latlng, { icon: this.markerIcon }).bindTooltip(content)
-      const marker = L.marker(latlng).bindTooltip(content)
-      this.currentMeasurementLayers.push(marker)
-      this.kActivity.map.addLayer(marker)
+      let tooltip = ''
+      let br = ''
+      if (prevVertex !== -1) {
+        const a = bearing(coords[prevVertex], coords[marker.coordIndex])
+        tooltip += `${br}In: ${this.formatAngle(a, 'deg')}`
+        br = '<br/>'
+      }
+      if (nextVertex !== -1) {
+        const a = bearing(coords[marker.coordIndex], coords[nextVertex])
+        tooltip += `${br}Out: ${this.formatAngle(a, 'deg')}`
+        br = '<br/>'
+      }
+      if (prevVertex !== -1) {
+        const d = distance(coords[prevVertex], coords[marker.coordIndex], { units: 'kilometers' })
+        tooltip += `${br}+${this.formatDistance(d, 'km')}`
+        br = '<br/>'
+      }
+      const line = lineString(coords)
+      const d = length(lineString(coords), { units: 'kilometers' })
+      tooltip += `${br}${this.formatDistance(d, 'km')}`
+
+      return tooltip
     },
     onDrawStart (e) {
       // listen for vertex added to shape
@@ -101,40 +141,52 @@ export default {
       this.clearCurrentMeasurement()
     },
     onVertexAdded (e) {
-      if (!this.workingLayer) {
+      const geojson = e.workingLayer.toGeoJSON()
+      const coords = getCoords(geojson)
+
+      if (!this.measurementLayer) {
         // first point added, record working layer and listen to mousemove from now on
-        this.workingLayer = e.workingLayer
+        this.measurementLayer = e.workingLayer
         this.kActivity.map.on('mousemove', this.onMouseMove)
+        this.geojsons.push(geojson)
       } else {
-        const geojson = e.workingLayer.toGeoJSON()
-        const coords = getCoords(geojson)
-        this.makeDistanceTooltip(geojson, coords, coords.length - 1, e.latlng)
+        this.geojsons[this.geojsons.length - 1] = geojson
       }
+
+      // add a marker at vertex position
+      const marker = L.marker(e.latlng, { icon: this.vertexIcon, zIndexOffset: -1000 }).bindTooltip(this.vertexTooltip)
+      marker.geojsonIndex = this.geojsons.length - 1
+      marker.coordIndex = coords.length - 1
+      this.measurementLayers.push(marker)
+      this.kActivity.map.addLayer(marker)
+
+      // also add an arrow in the middle of the segment
+      if (coords.length > 1)
+        this.addArrowIcon(geojson, coords, coords.length - 2)
     },
     onMouseMove (e) {
-      if (!this.workingLayer) return
+      if (!this.measurementLayer) return
 
-      const geojson = this.workingLayer.toGeoJSON()
+      const geojson = this.measurementLayer.toGeoJSON()
       const coords = getCoords(geojson)
 
       const geoCoords0 = coords[coords.length - 1]
       const geoCoords1 = [ e.latlng.lng, e.latlng.lat ]
-      const d = distance(geoCoords0, geoCoords1, { unit: this.distanceUnit })
-      const dstr = `${d.toFixed(3)}km`
       const b = bearing(geoCoords0, geoCoords1)
-      const bstr = `${b.toFixed(2)}°`
-      let astr = ''
+      let content = this.formatAngle(b, 'deg')
+      const d = distance(geoCoords0, geoCoords1, { unit: 'kilometers' })
+      content += ' +'
+      content += this.formatDistance(d, 'km')
 
       if (this.measureMode === 'measure-area' && coords.length >= 2) {
         coords.push(geoCoords1)
         coords.push(coords[0])
         const a = area(polygon([coords]))
-        astr = `${a.toFixed(2)}m²`
-        this.measureValue = astr
+        this.measureValue = this.formatArea(a, 'm^2')
       } else if (this.measureMode === 'measure-distance') {
         coords.push(geoCoords1)
-        const d2 = length(lineString(coords))
-        this.measureValue = `${d2.toFixed(2)}km`
+        const d2 = length(lineString(coords), { units: 'kilometers' })
+        this.measureValue = this.formatDistance(d2, 'km')
       }
 
       if (!this.cursorTooltip) {
@@ -145,44 +197,86 @@ export default {
         this.cursorTooltip.setLatLng(e.latlng)
       }
 
-      this.cursorTooltip.setContent('\t' + bstr + ' ' + dstr + ' ' + astr)
+      this.cursorTooltip.setContent(content)
     },
     onCreate (e) {
       // when a shape is created
-      this.toolLayers.push(e.layer)
-      // when measuring area, add a marker at the last point
-      if (this.measureMode === 'measure-area') {
-        const geojson = e.layer.toGeoJSON()
-        const coords = getCoords(geojson)[0]
-        const last = coords.length - 1
-        this.makeDistanceTooltip(geojson, coords, last, L.latLng(coords[last][1], coords[last][0]))
-        // and add a tooltip on the polygon too
+      this.layers.push(e.layer)
+      const geojson = e.layer.toGeoJSON()
+      if (this.measureMode === 'measure-distance') {
+        const d = length(geojson, { units: 'kilometers' })
+        e.layer.bindTooltip(this.formatDistance(d, 'km'), { sticky: true })
+      } else if (this.measureMode === 'measure-area') {
         const a = area(geojson)
-        e.layer.bindTooltip(`${a.toFixed(2)}m²`)
+        e.layer.bindTooltip(this.formatArea(a, 'm^2'), { sticky: true })
+
+        // also add arrow for closing segment
+        const coords = getCoords(geojson)[0]
+        this.addArrowIcon(geojson, coords, coords.length - 2)
       }
       // move measurement layers to tool layers
-      this.toolLayers = this.toolLayers.concat(this.currentMeasurementLayers)
-      this.currentMeasurementLayers = []
-    }
+      this.layers = this.layers.concat(this.measurementLayers)
+      this.measurementLayers = []
+      // update associated geojson
+      this.geojsons[this.geojsons.length - 1] = e.layer.toGeoJSON()
+    },
+    addArrowIcon (geojson, coords, segment) {
+      const p0 = segment
+      const p1 = segment + 1
+      const b = bearing(coords[p0], coords[p1])
+      const middle = L.latLng((coords[p0][1] + coords[p1][1]) / 2, (coords[p0][0] + coords[p1][0]) / 2)
+      const arrow = L.marker(middle, { icon: this.arrowIcon, zIndexOffset: -1000, rotation: b })
+      // override _setPos to apply rotation too ...
+      // robin: this is highly dependent on the icon you choose !
+      arrow._setPos = (pos) => {
+        this.markerSetPosBackup.call(arrow, pos)
+        // arrow._icon.style[L.DomUtil.TRANSFORM + 'Origin'] = arrow.options.rotationOrigin
+        arrow._icon.style['transform-origin'] = 'center'
+        arrow._icon.style[L.DomUtil.TRANSFORM] += ` rotate(${arrow.options.rotation}deg) translateX(-12px) translateY(-12px)`
+      }
+
+      this.measurementLayers.push(arrow)
+      this.kActivity.map.addLayer(arrow)
+    },
+    formatDistance (value, unit) {
+      const f = math.unit(value, unit)
+      const t = f.to(this.distanceUnit)
+      return t.format({ notation: 'fixed', precision: 3 })
+    },
+    formatArea (value, unit) {
+      const f = math.unit(value, unit)
+      const t = f.to('km^2')
+      return t.format({ notation: 'fixed', precision: 2 }).replace('^2', '²')
+    },
+    formatAngle (value, unit) {
+      const f = math.unit(value, unit)
+      const t = f.to('deg')
+      return t.format({ notation: 'fixed', precision: 2 })
+    },
   },
   created () {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   mounted () {
-    this.toolLayers = []
-    this.currentMeasurementLayers = []
+    this.layers = []
+    this.measurementLayers = []
+    this.geojsons = []
+    this.measureValue = '--'
+    this.distanceUnit = 'km'
+    this.markerSetPosBackup = L.Marker.prototype._setPos
 
     this.kActivity.map.on('pm:drawstart', this.onDrawStart)
     this.kActivity.map.on('pm:drawend', this.onDrawEnd)
     this.kActivity.map.on('pm:create', this.onCreate)
 
-    /*
-    this.markerIcon = L.divIcon({
-      html: '<i class="las la-info-circle"></i>',
-      iconSize: L.point(32, 32),
-      className: 'measure-tool-icon'
+    this.vertexIcon = L.divIcon({
+      className: 'measure-tool-vertex-icon'
     });
-    */
+    this.arrowIcon = L.divIcon({
+      // robin: changing the used icon probably require to update stuff in addArrowIcon
+      html: '<i class="las la-angle-double-up la-3x" style="color: #3388ff"/>',
+      className: 'measure-tool-arrow-icon',
+    });
 
     this.setMode('measure-distance')
   },
@@ -197,9 +291,26 @@ export default {
 </script>
 
 <style lang="stylus">
-  .measure-tool-icon {
-    color: red;
-    text-align: center;
-    line-height: 32px;
+  .measure-tool-vertex-icon {
+    background-color: #ffffff;
+    border: 1px solid #3388ff;
+    border-radius: 50%;
+    margin: -8px 0 0 -8px !important;
+    width: 14px !important;
+    height: 14px !important;
+    outline: 0;
+    transition: opacity ease 0.3s;
+  }
+  .measure-tool-arrow-icon {
+/*
+    background-color: #ffffff;
+    border: 1px solid #3388ff;
+    border-radius: 50%;
+    margin: -8px 0 0 -8px !important;
+    width: 14px !important;
+    height: 14px !important;
+    outline: 0;
+    transition: opacity ease 0.3s;
+*/
   }
 </style>
