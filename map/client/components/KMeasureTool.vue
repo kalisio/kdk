@@ -127,7 +127,6 @@ export default {
         tooltip += `${br}+${this.formatDistance(d, 'km')}`
         br = '<br/>'
       }
-      const line = lineString(coords)
       const d = length(lineString(coords), { units: 'kilometers' })
       tooltip += `${br}${this.formatDistance(d, 'km')}`
 
