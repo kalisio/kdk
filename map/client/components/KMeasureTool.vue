@@ -56,9 +56,10 @@ export default {
       this.setMode(this.measureMode)
     },
     changeUnit () {
-      if (this.measureMode === 'measure-distance') {
+      const v = math.unit(this.measureValue.replace('²', '^2'))
+      const u = v.toJSON()
+      if (u.unit === 'km' || u.unit === 'miles') {
         this.distanceUnit = this.distanceUnit === 'km' ? 'miles' : 'km'
-        const v = math.unit(this.measureValue)
         const s = v.to(this.distanceUnit).format({ notation: 'fixed', precision: 3 })
         this.measureValue = s
       } else {
