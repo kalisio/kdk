@@ -2,6 +2,9 @@
   <div class="row items-center no-padding">
     <span class="q-pl-md q-pr-md" @click="changeUnit">
       {{ measureValue }}
+      <q-tooltip>
+        {{ $t('KMeasureTool.CLICK_TO_CHANGE_UNIT') }}
+      </q-tooltip>
     </span>
     <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
   </div>
@@ -55,12 +58,11 @@ export default {
       this.setMode(this.measureMode)
     },
     changeUnit () {
-      const v = math.unit(this.measureValue.replace('²', '^2'))
-      const u = v.toJSON()
-      if (u.unit === 'km' || u.unit === 'miles') {
+      if (this.measureMode === 'measure-distance') {
         this.distanceUnit = this.distanceUnit === 'km' ? 'miles' : 'km'
-        const s = v.to(this.distanceUnit).format({ notation: 'fixed', precision: 3 })
-        this.measureValue = s
+        const geojson = this.measurementLayer ? this.measurementLayer.toGeoJSON() : this.geojsons[this.geojsons.length - 1]
+        const d = length(geojson, { units: 'kilometers' })
+        this.measureValue = this.formatDistance(d, 'km')
       } else {
         return
       }

@@ -584,6 +584,7 @@
     "CLEAR": "Clear all measurements",
     "MEASURE_DISTANCE": "Measure a distance",
     "MEASURE_AREA": "Measure an area",
-    "DISPLAY_MEASURE_VALUE": "Display measure values"
+    "DISPLAY_MEASURE_VALUE": "Display measure values",
+    "CLICK_TO_CHANGE_UNIT": "Click to change unit"
   }
 }
