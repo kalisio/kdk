@@ -31,6 +31,7 @@ export default {
       const allModes = [
         { id: 'measure-distance', icon: 'las la-project-diagram', toggled: this.measureMode === 'measure-distance', tooltip: 'KMeasureTool.MEASURE_DISTANCE', handler: () => { this.setMode('measure-distance') } },
         { id: 'measure-area', icon: 'las la-draw-polygon', toggled: this.measureMode === 'measure-area', tooltip: 'KMeasureTool.MEASURE_AREA', handler: () => { this.setMode('measure-area') } },
+        { component: 'QSeparator', vertical: true, color: 'lightgrey' },
         { id: 'clear-measurements', icon: 'las la-trash', tooltip: 'KMeasureTool.CLEAR',  handler: () => { this.onClear() } }
       ]
 
@@ -146,6 +147,7 @@ export default {
         this.measurementLayer = e.workingLayer
         this.kActivity.map.on('mousemove', this.onMouseMove)
         this.geojsons.push(geojson)
+        this.measureValue = '--'
       } else {
         this.geojsons[this.geojsons.length - 1] = geojson
       }
@@ -197,7 +199,7 @@ export default {
       }
 
       if (!this.cursorTooltip) {
-        this.cursorTooltip = L.tooltip({ permanent: true })
+        this.cursorTooltip = L.tooltip({ permanent: true, opacity: 0.7 })
         this.cursorTooltip.setLatLng(e.latlng)
         this.kActivity.map.addLayer(this.cursorTooltip)
       } else {
