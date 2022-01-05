@@ -3,7 +3,6 @@
     <span class="q-pl-md q-pr-md" @click="changeUnit">
       {{ measureValue }}
     </span>
-    <!-- q-chip class="ellipsis" text-color="accent" icon="las la-ruler-combined" :label="measureValue"/ -->
     <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
   </div>
 </template>
@@ -32,7 +31,6 @@ export default {
       const allModes = [
         { id: 'measure-distance', icon: 'las la-project-diagram', toggled: this.measureMode === 'measure-distance', tooltip: 'KMeasureTool.MEASURE_DISTANCE', handler: () => { this.setMode('measure-distance') } },
         { id: 'measure-area', icon: 'las la-draw-polygon', toggled: this.measureMode === 'measure-area', tooltip: 'KMeasureTool.MEASURE_AREA', handler: () => { this.setMode('measure-area') } },
-        { id: 'see-measure-value', icon: 'las la-hand-pointer', toggled: this.measureMode === 'see-measure-value', tooltip: 'KMeasureTool.DISPLAY_MEASURE_VALUE', handler: () => { this.setMode('see-measure-value') } },
         { id: 'clear-measurements', icon: 'las la-trash', tooltip: 'KMeasureTool.CLEAR',  handler: () => { this.onClear() } }
       ]
 
@@ -46,9 +44,9 @@ export default {
       this.measureMode = mode
 
       if (this.measureMode === 'measure-distance') {
-        this.kActivity.map.pm.enableDraw('Line', { tooltips: false, continueDrawing: true })
+        this.kActivity.map.pm.enableDraw('Line', { tooltips: false, continueDrawing: true, cursorMarker: false })
       } else if (this.measureMode === 'measure-area') {
-        this.kActivity.map.pm.enableDraw('Polygon', { tooltips: false, continueDrawing: true })
+        this.kActivity.map.pm.enableDraw('Polygon', { tooltips: false, continueDrawing: true, cursorMarker: false })
       }
     },
     onClear () {
@@ -153,15 +151,25 @@ export default {
       }
 
       // add a marker at vertex position
-      const marker = L.marker(e.latlng, { icon: this.vertexIcon, zIndexOffset: -1000 }).bindTooltip(this.vertexTooltip)
+      const marker = L.marker(e.latlng, { icon: this.vertexIcon, zIndexOffset: -10 }).bindTooltip(this.vertexTooltip)
       marker.geojsonIndex = this.geojsons.length - 1
       marker.coordIndex = coords.length - 1
+
+      /*
+      marker._setPos = (pos) => {
+        this.markerSetPosBackup.call(marker, pos)
+        // arrow._icon.style[L.DomUtil.TRANSFORM + 'Origin'] = arrow.options.rotationOrigin
+        // marker._icon.style['transform-origin'] = 'center'
+        // marker._icon.style[L.DomUtil.TRANSFORM] += ` rotate(${arrow.options.rotation}deg) translateX(-12px) translateY(-12px)`
+      }
+      */
+
       this.measurementLayers.push(marker)
       this.kActivity.map.addLayer(marker)
 
       // also add an arrow in the middle of the segment
-      if (coords.length > 1)
-        this.addArrowIcon(geojson, coords, coords.length - 2)
+      // if (coords.length > 1)
+      //   this.addArrowIcon(geojson, coords, coords.length - 2)
     },
     onMouseMove (e) {
       if (!this.measurementLayer) return
@@ -210,8 +218,8 @@ export default {
         e.layer.bindTooltip(this.formatArea(a, 'm^2'), { sticky: true })
 
         // also add arrow for closing segment
-        const coords = getCoords(geojson)[0]
-        this.addArrowIcon(geojson, coords, coords.length - 2)
+        // const coords = getCoords(geojson)[0]
+        // this.addArrowIcon(geojson, coords, coords.length - 2)
       }
       // move measurement layers to tool layers
       this.layers = this.layers.concat(this.measurementLayers)
@@ -219,12 +227,13 @@ export default {
       // update associated geojson
       this.geojsons[this.geojsons.length - 1] = e.layer.toGeoJSON()
     },
+    /*
     addArrowIcon (geojson, coords, segment) {
       const p0 = segment
       const p1 = segment + 1
       const b = bearing(coords[p0], coords[p1])
       const middle = L.latLng((coords[p0][1] + coords[p1][1]) / 2, (coords[p0][0] + coords[p1][0]) / 2)
-      const arrow = L.marker(middle, { icon: this.arrowIcon, zIndexOffset: -1000, rotation: b })
+      const arrow = L.marker(middle, { icon: this.arrowIcon, zIndexOffset: -10, rotation: b })
       // override _setPos to apply rotation too ...
       // robin: this is highly dependent on the icon you choose !
       arrow._setPos = (pos) => {
@@ -237,6 +246,7 @@ export default {
       this.measurementLayers.push(arrow)
       this.kActivity.map.addLayer(arrow)
     },
+    */
     formatDistance (value, unit) {
       const f = math.unit(value, unit)
       const t = f.to(this.distanceUnit)
@@ -250,7 +260,10 @@ export default {
     formatAngle (value, unit) {
       const f = math.unit(value, unit)
       const t = f.to('deg')
-      return t.format({ notation: 'fixed', precision: 2 })
+      // remap from [-180,+180[ to [0,360[
+      const j = t.toJSON()
+      const r = math.unit(j.value < 0.0 ? j.value + 360.0 : j.value, j.unit)
+      return r.format({ notation: 'fixed', precision: 2 })
     },
   },
   created () {
@@ -271,11 +284,13 @@ export default {
     this.vertexIcon = L.divIcon({
       className: 'measure-tool-vertex-icon'
     });
+    /*
     this.arrowIcon = L.divIcon({
       // robin: changing the used icon probably require to update stuff in addArrowIcon
       html: '<i class="las la-angle-double-up la-3x" style="color: #3388ff"/>',
       className: 'measure-tool-arrow-icon',
-    });
+    })
+    */;
 
     this.setMode('measure-distance')
   },
@@ -300,8 +315,8 @@ export default {
     outline: 0;
     transition: opacity ease 0.3s;
   }
+  /*
   .measure-tool-arrow-icon {
-/*
     background-color: #ffffff;
     border: 1px solid #3388ff;
     border-radius: 50%;
@@ -310,6 +325,6 @@ export default {
     height: 14px !important;
     outline: 0;
     transition: opacity ease 0.3s;
-*/
   }
+  */
 </style>
