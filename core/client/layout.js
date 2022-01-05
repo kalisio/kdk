@@ -56,8 +56,8 @@ export const Layout = {
     const isArray = Array.isArray(content)
     const modes = _.keys(content)
     let filteredContent = content
-    // Recurse ?
     if (!isArray) {
+      // Recurse ?
       if (filteredContent.content) {
         filteredContent.content = this.filterContent(filteredContent.content, filter)
       } else {
@@ -67,6 +67,13 @@ export const Layout = {
         })
       }
       filteredContent = [filteredContent]
+    } else {
+      filteredContent.forEach(item => {
+        // Recurse ?
+        if (item.content) {
+          item.content = this.filterContent(item.content, filter)
+        }
+      })
     }
     // Apply filtering
     filteredContent = filteredContent.filter(sift(filter))
