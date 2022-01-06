@@ -23,6 +23,12 @@ import math from 'mathjs'
 export default {
   name: 'k-measure-tool',
   inject: ['kActivity'],
+  props: {
+    initialDistanceUnit: {
+      type: String,
+      default: 'km'
+    },
+  },
   data () {
     return {
       measureMode: 'measure-distance',
@@ -278,7 +284,7 @@ export default {
     this.measurementLayers = []
     this.geojsons = []
     this.measureValue = '--'
-    this.distanceUnit = 'km'
+    this.distanceUnit = this.initialDistanceUnit
     this.markerSetPosBackup = L.Marker.prototype._setPos
 
     this.kActivity.map.on('pm:drawstart', this.onDrawStart)
