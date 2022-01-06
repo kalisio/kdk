@@ -64,6 +64,7 @@ export default {
           $gte: startTime.format(),
           $lte: endTime.format()
         },
+        $sort: { runTime: -1 } // By default retrieve most recent result first,
         geometry: {
           $geoIntersects: {
             $geometry: geometry
@@ -149,6 +150,7 @@ export default {
               $gte: startTime.format(),
               $lte: endTime.format()
             },
+            $sort: { runTime: -1 } // By default retrieve most recent result first,
             [this.probe.featureId]: featureId,
             $groupBy: this.probe.featureId,
             $aggregate: elements
