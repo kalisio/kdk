@@ -11,7 +11,8 @@ export * from './cesium/utils'
 
 export const SelectionLayerName = uid()
 
-// Add knot unit not defined by default
+// Add useful units not defined by default
+math.createUnit('nm', { definition: '1852 m', aliases: ['nm', 'nmi', 'NM'] }) // nautical mile
 math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] })
 
 // Build a color map from a JS object specification

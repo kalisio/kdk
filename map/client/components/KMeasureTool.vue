@@ -59,7 +59,7 @@ export default {
     },
     changeUnit () {
       if (this.measureMode === 'measure-distance') {
-        this.distanceUnit = this.distanceUnit === 'km' ? 'miles' : 'km'
+        this.distanceUnit = this.distanceUnit === 'km' ? 'nm' : 'km'
         const geojson = this.measurementLayer ? this.measurementLayer.toGeoJSON() : this.geojsons[this.geojsons.length - 1]
         const d = length(geojson, { units: 'kilometers' })
         this.measureValue = this.formatDistance(d, 'km')
