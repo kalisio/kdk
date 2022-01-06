@@ -485,6 +485,8 @@ export default {
           on: { event: 'option-chosen', listener: this.onUpdateSpan }
         }
       ]
+      // Clear previous run timle setup if any
+      this.runTime = null
       // Then manage selection
       this.kActivity.addSelectionHighlight('time-series')
       this.kActivity.centerOnSelection()
