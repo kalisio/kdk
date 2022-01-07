@@ -253,7 +253,7 @@ export async function aggregateFeaturesQuery (hook) {
       // Find matching features only
       pipeline.push({ $match: Object.assign({ [prefix + element]: { $exists: true } }, match) })
       // Ensure they are ordered by increasing time by default and most recent forecast first
-      pipeline.push({ $sort: query.$sort || { time: 1, runTime: -1 } })
+      pipeline.push({ $sort: Object.assign({ time: 1, runTime: -1 }, query.$sort) })
       // Keep track of all feature values
       if (singleTime) {
         pipeline.push({ $group: groupBy })
