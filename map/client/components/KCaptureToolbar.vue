@@ -1,9 +1,9 @@
 <template>
   <div class="q-pl-sm q-pr-xs row justify-center items-center no-wrap q-gutter-x-xs">
-    <q-select 
-      v-model="resolution" 
+    <q-select
+      v-model="resolution"
       :options="getResolutions()"
-      dense 
+      dense
       borderless>
       <template v-slot:option="scope">
         <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
@@ -16,9 +16,9 @@
         </q-item>
       </template>
     </q-select>
-    <q-input 
-      v-model.number="width" 
-      type="number"  
+    <q-input
+      v-model.number="width"
+      type="number"
       min="256" max="4000"
       mask="(#)###"
       borderless
@@ -26,19 +26,19 @@
       input-class="text-center"
       style="max-width: 54px" />
     <span>x</span>
-    <q-input 
-      v-model.number="height" 
-      type="number" 
+    <q-input
+      v-model.number="height"
+      type="number"
       min="256" max="4000"
-      mask="(#)###" 
+      mask="(#)###"
       borderless
-      dense 
-      input-class="text-center" 
+      dense
+      input-class="text-center"
       style="max-width: 54px" />
-    <k-action 
-      id="capture-button" 
-      icon="las la-camera" 
-      tooltip="KCaptureToolbar.CAPTURE_ACTION" 
+    <k-action
+      id="capture-button"
+      icon="las la-camera"
+      tooltip="KCaptureToolbar.CAPTURE_ACTION"
       :handler="() => this.capture()" />
   </div>
 </template>
@@ -64,9 +64,9 @@ export default {
       handler (value) {
         if (!value) this.resolution = this.getResolutions()[1]
         else {
-          const size=_.split(this.resolution.value, 'x')
-          this.width=size[0]
-          this.height=size[1]
+          const size = _.split(this.resolution.value, 'x')
+          this.width = size[0]
+          this.height = size[1]
         }
       }
     },
@@ -96,33 +96,33 @@ export default {
     },
     async capture () {
       // Retrieve the layers
-      let layers = []
+      const layers = []
       const contextLayers = this.kActivity.getContextParameters('layers').layers
       _.forEach(contextLayers, layer => {
-        let isVisibleByDefaut = _.get(this.kActivity.layers[layer], 'leaflet.isVisible', false)
+        const isVisibleByDefaut = _.get(this.kActivity.layers[layer], 'leaflet.isVisible', false)
         if (!isVisibleByDefaut) layers.push(layer)
       })
       // Retrieve the extension
-      let bbox = this.kActivity.getContextParameters('view')
+      const bbox = this.kActivity.getContextParameters('view')
       // Setup the request url options
-      let endpoint = this.$config('gateway') + '/capture'
-      let options = {
+      const endpoint = this.$config('gateway') + '/capture'
+      const options = {
         method: 'POST',
         mode: 'cors',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           activity: this.kActivity.is3D() ? 'globe' : 'map',
-          layers, 
-          bbox: [bbox.west, bbox.south, bbox.east, bbox.north], 
+          layers,
+          bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
           size: { width: +this.width, height: +this.height },
           time: Time.getCurrentTime().toISOString()
         }),
-        headers: { 
+        headers: {
           'Content-Type': 'application/json'
         }
       }
       // Add the Authorization header if jwt is defined
       const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-      if (jwt) options.headers['Authorization'] = 'Bearer ' + jwt
+      if (jwt) options.headers.Authorization = 'Bearer ' + jwt
       // Perform the request
       let dismiss = null
       try {
@@ -134,14 +134,14 @@ export default {
           timeout: 0,
           spinner: true
         })
-        const response = await fetch(endpoint, options) 
+        const response = await fetch(endpoint, options)
         dismiss()
         if (response.ok) {
           const arrayBuffer = await response.arrayBuffer()
           exportFile('capture.png', new Uint8Array(arrayBuffer))
         } else {
           Events.$emit('error', { message: this.$t('errors.' + response.status) })
-        }       
+        }
       } catch (error) {
         // Network error
         dismiss()
@@ -154,4 +154,3 @@ export default {
   }
 }
 </script>
-

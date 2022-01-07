@@ -134,8 +134,8 @@ export default {
       if (!fileResult.isValid || !propertiesResult.isValid) return
       this.importing = true
       await this.kActivity.addGeoJsonLayer({
-        name: propertiesResult.values.name, 
-        description: propertiesResult.values.description, 
+        name: propertiesResult.values.name,
+        description: propertiesResult.values.description,
         schema: { name: this.file.name, content: this.file.schema },
         featureId: propertiesResult.values.featureId
       }, this.file.content)

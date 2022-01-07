@@ -128,7 +128,7 @@ export default {
     setupAvailableTimes () {
       this.times = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
-      
+
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -154,7 +154,8 @@ export default {
     setupAvailableRunTimes () {
       this.runTimes = []
       // FIXME: to be used when all issues are correctly fixed in weacast
-      return
+
+      /*
       const runTime = this.probedLocation.runTime
 
       this.probedVariables.forEach(variable => {
@@ -165,6 +166,7 @@ export default {
       })
       // Make union of all available run times
       this.runTimes = _.union(...this.runTimes).map(time => moment.utc(time)).sort((a, b) => a - b)
+      */
     },
     setupAvailableDatasets () {
       this.datasets = []
@@ -185,8 +187,7 @@ export default {
           // Keep only selected value if multiple are provided for the same time (eg different forecasts)
           if (!_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
             values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
-          }
-          else values = _.uniqBy(values, 'x')
+          } else values = _.uniqBy(values, 'x')
           // Then transform to date object as expected by visualisation
           values = values.map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
           this.datasets.push(_.merge({
@@ -417,8 +418,8 @@ export default {
       this.runTime = runTime
       // Update tooltip action
       const action = _.find(this.actions, { id: 'run-options' })
-      action.tooltip = this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short')
-        + ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')'
+      action.tooltip = this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
+        ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')'
       this.setupGraph()
     },
     updateProbedLocationHighlight () {
@@ -439,7 +440,7 @@ export default {
     },
     onExportSeries () {
       const json = this.times.map(time => {
-        let row = {
+        const row = {
           [this.$t('KTimeSeries.TIME_LABEL')]: time.toISOString()
         }
         this.datasets.forEach(dataset => {
@@ -522,7 +523,7 @@ export default {
       // When forecast data are available allow to select wich run to use
       if (this.runTimes && (this.runTimes.length > 1)) {
         // Select latest runTime as default option
-        let runOptions = this.runTimes.map(runTime => ({
+        const runOptions = this.runTimes.map(runTime => ({
           label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
           value: runTime
         }))
@@ -532,8 +533,8 @@ export default {
           component: 'input/KOptionsChooser',
           id: 'run-options',
           icon: 'las la-clock',
-          tooltip: this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short')
-            + ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')',
+          tooltip: this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
+            ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')',
           options: runOptions,
           on: { event: 'option-chosen', listener: this.onUpdateRun }
         })

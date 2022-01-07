@@ -27,7 +27,7 @@ export default {
     initialDistanceUnit: {
       type: String,
       default: 'km'
-    },
+    }
   },
   data () {
     return {
@@ -41,7 +41,7 @@ export default {
         { id: 'measure-distance', icon: 'las la-project-diagram', toggled: this.measureMode === 'measure-distance', tooltip: 'KMeasureTool.MEASURE_DISTANCE', handler: () => { this.setMode('measure-distance') } },
         { id: 'measure-area', icon: 'las la-draw-polygon', toggled: this.measureMode === 'measure-area', tooltip: 'KMeasureTool.MEASURE_AREA', handler: () => { this.setMode('measure-area') } },
         { component: 'QSeparator', vertical: true, color: 'lightgrey' },
-        { id: 'clear-measurements', icon: 'las la-trash', tooltip: 'KMeasureTool.CLEAR',  handler: () => { this.onClear() } }
+        { id: 'clear-measurements', icon: 'las la-trash', tooltip: 'KMeasureTool.CLEAR', handler: () => { this.onClear() } }
       ]
 
       return allModes
@@ -188,7 +188,7 @@ export default {
       const coords = getCoords(geojson)
 
       const geoCoords0 = coords[coords.length - 1]
-      const geoCoords1 = [ e.latlng.lng, e.latlng.lat ]
+      const geoCoords1 = [e.latlng.lng, e.latlng.lat]
       const d = distance(geoCoords0, geoCoords1, { unit: 'kilometers' })
       let content = this.formatDistance(d, 'km')
       const b = bearing(geoCoords0, geoCoords1)
@@ -274,7 +274,7 @@ export default {
       const j = t.toJSON()
       const r = math.unit(j.value < 0.0 ? j.value + 360.0 : j.value, j.unit)
       return r.format({ notation: 'fixed', precision: 2 })
-    },
+    }
   },
   created () {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
@@ -293,14 +293,14 @@ export default {
 
     this.vertexIcon = L.divIcon({
       className: 'measure-tool-vertex-icon'
-    });
+    })
     /*
     this.arrowIcon = L.divIcon({
       // robin: changing the used icon probably require to update stuff in addArrowIcon
       html: '<i class="las la-angle-double-up la-3x" style="color: #3388ff"/>',
       className: 'measure-tool-arrow-icon',
     })
-    */;
+    */
 
     this.setMode('measure-distance')
   },

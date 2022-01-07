@@ -326,10 +326,10 @@ export default {
       _.defaults(layerSpec, defaultLayer)
       if (!layerSpec.schema) {
         const schema = generatePropertiesSchema(geoJson, layerSpec.name)
-        layerSpec.schema = { name, content: schema }
+        layerSpec.schema = { name: layerSpec.name, content: schema }
       }
       if (!layerSpec.featureId) {
-        layerSpec.featureId == '_id'
+        layerSpec.featureId = '_id'
         _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
       }
       // Create an empty layer used as a container

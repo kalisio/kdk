@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import path from 'path'
 import { Reader } from '../../../../core/client'
 
@@ -18,7 +17,7 @@ export default {
     }
   },
   mounted () {
-    this.$on('map-ready', () => { 
+    this.$on('map-ready', () => {
       // Create a dummy dropFileInput element to enable puppeteer
       const container = document.getElementById('q-app')
       const dropFileInput = document.createElement('input')
@@ -29,14 +28,14 @@ export default {
         await this.importFiles(event.target.files)
       })
       container.appendChild(dropFileInput)
-      // Setup drag & drop     
+      // Setup drag & drop
       this.map._container.addEventListener('dragenter', () => this.map.scrollWheelZoom.disable(), false)
       this.map._container.addEventListener('dragleave', () => this.map.scrollWheelZoom.enable(), false)
       this.map._container.addEventListener('dragover', event => {
         event.stopPropagation()
         event.preventDefault()
       }, false)
-      this.map._container.addEventListener('drop', async (event) =>{
+      this.map._container.addEventListener('drop', async (event) => {
         event.stopPropagation()
         event.preventDefault()
         await this.importFiles(event.dataTransfer.files)

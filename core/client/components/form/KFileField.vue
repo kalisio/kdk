@@ -40,7 +40,7 @@ export default {
     return {
       file: null
     }
-  },  
+  },
   methods: {
     emptyModel () {
       return {}

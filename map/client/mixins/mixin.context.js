@@ -23,7 +23,7 @@ export default {
             return _.pick(this.$route.query, ['layers'])
           }
           break
-        case 'time': 
+        case 'time':
           if (_.get(this.$route, 'query.time')) {
             return _.pick(this.$route.query, ['time'])
           }
@@ -74,6 +74,7 @@ export default {
           targetParameters = {
             time: Time.getCurrentTime().restoreContext()
           }
+          break
         }
         case 'view':
         default: {

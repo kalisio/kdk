@@ -10,11 +10,11 @@ export default {
   name: 'k-layer-edition-toolbar',
   inject: ['kActivity'],
   computed: {
-    layerName () { 
-      return this.kActivity.editedLayer.name 
+    layerName () {
+      return this.kActivity.editedLayer.name
     },
-    editMode () { 
-      return this.kActivity.layerEditMode 
+    editMode () {
+      return this.kActivity.layerEditMode
     },
     buttons () {
       const allEditModes = [
@@ -37,11 +37,11 @@ export default {
     }
   },
   methods: {
-    modeAllowed (mode) { 
-      return this.kActivity.allowedLayerEditModes.indexOf(mode) !== -1 
+    modeAllowed (mode) {
+      return this.kActivity.allowedLayerEditModes.indexOf(mode) !== -1
     },
-    setMode (mode) { 
-      return this.kActivity.setEditMode(mode) 
+    setMode (mode) {
+      return this.kActivity.setEditMode(mode)
     }
   },
   beforeCreate () {

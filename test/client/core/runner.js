@@ -22,7 +22,7 @@ export class Runner {
     let domain = `http://localhost:${defaultPort}`
     if (process.env.NODE_APP_INSTANCE === 'dev' || process.env.NODE_APP_INSTANCE === 'test' || process.env.NODE_APP_INSTANCE === 'prod') {
       domain = `https://${options.appName}.` + process.env.SUBDOMAIN
-    } 
+    }
     const defaultBrowser = process.env.BROWSER || 'chrome'
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
