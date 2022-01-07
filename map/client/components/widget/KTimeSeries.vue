@@ -153,6 +153,8 @@ export default {
     },
     setupAvailableRunTimes () {
       this.runTimes = []
+      // FIXME: to be used when all issues are correctly fixed in weacast
+      return
       const runTime = this.probedLocation.runTime
 
       this.probedVariables.forEach(variable => {
