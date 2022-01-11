@@ -72,7 +72,12 @@ export default {
           }
           const oldProperties = _.get(oldLayer, 'feature.properties')
           const properties = _.get(feature, 'properties')
-          if (oldProperties && properties) Object.assign(properties, oldProperties)
+          // Keep track of old properties
+          if (oldProperties && properties) {
+            _.forOwn(oldProperties, (value, key) => {
+              if (!_.has(properties, key)) _.set(properties, key, value)
+            })
+          }
           if (oldLayer.setIcon) {
             // FIXME: updating icon in place requires to recreate it anyway, so for now we recreate the whole marker
             // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
