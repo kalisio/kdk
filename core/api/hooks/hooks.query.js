@@ -1,4 +1,3 @@
-
 import _ from 'lodash'
 import { marshallComparisonFields, marshallSortFields, marshallTime } from '../marshall'
 import { ObjectID } from 'mongodb'
@@ -57,7 +56,7 @@ export async function aggregationQuery (hook) {
 }
 
 export function populateObject (options) {
-  return function (hook) {
+  return async function (hook) {
     const app = hook.app
     const data = hook.data
     const params = hook.params
@@ -69,11 +68,11 @@ export function populateObject (options) {
     // Check if not already done
     if (typeof _.get(params, idProperty) === 'object') {
       debug(`Skipping populating ${idProperty} as already done`)
-      return Promise.resolve(hook)
+      return hook
     }
     if (typeof _.get(params, serviceProperty) === 'object') {
       debug(`Skipping populating ${serviceProperty} as already done`)
-      return Promise.resolve(hook)
+      return hook
     }
 
     // Get service where we can find the object to populate
@@ -84,17 +83,17 @@ export function populateObject (options) {
       service = app.getService(service, context)
       if (!service) {
         if (options.throwOnNotFound) throw new Error(message)
-        else return Promise.resolve(hook)
+        else return hook
       }
     } else if (!service) {
       if (options.throwOnNotFound) throw new Error(`No ${options.serviceField} given to dynamically populate.`)
-      else return Promise.resolve(hook)
+      else return hook
     }
     // Then the object ID
     const id = _.get(data, options.idField) || _.get(query, options.idField) || _.get(hook, 'id')
     if (!id) {
       if (options.throwOnNotFound) throw new Error(`Cannot find the ${options.idField} to dynamically populate.`)
-      else return Promise.resolve(hook)
+      else return hook
     }
     // Then the perspective if any
     const perspective = _.get(data, options.perspectiveField) || _.get(query, options.perspectiveField)
@@ -102,23 +101,36 @@ export function populateObject (options) {
     debug(`Populating ${idProperty} with ID ${id}`)
     // Set the retrieved service on the same field or given one in hook params
     _.set(params, serviceProperty, service)
-    // Let it work with id string or real object
+    // Let it work with id/name string or real object
     if (typeof id === 'string' || ObjectID.isValid(id)) {
       let args = { user: hook.params.user }
-      if (perspective) args = Object.assign(args, { query: { $select: [perspective] } })
-      return service.get(id.toString(), args).then(object => {
-        if (!object) {
-          if (options.throwOnNotFound) throw new Error(`Cannot find object with id ${id} to dynamically populate.`)
-          else return hook
+      let object
+      try {
+        // Get by ID or name ?
+        if (ObjectID.isValid(id)) {
+          if (perspective) Object.assign(args, { query: { $select: [perspective] } })
+          object = await service.get(id.toString(), args)
+        } else {
+          Object.assign(args, { query: { name: id.toString() }, paginate: false })
+          if (perspective) Object.assign(args.query, { $select: [perspective] })
+          const results = await service.find(args)
+          if (results.length >= 0) object = results[0]
         }
-        // Set the retrieved object on the same field or given one in hook params
-        _.set(params, idProperty, object)
-        return hook
-      })
+      } catch (error) {
+        // Not found error is managed hereafter
+        if (error.code !== 404) throw error
+      }
+      if (!object) {
+        if (options.throwOnNotFound) throw new Error(`Cannot find object with id ${id} to dynamically populate.`)
+        else return hook
+      }
+      // Set the retrieved object on the same field or given one in hook params
+      _.set(params, idProperty, object)
+      return hook
     } else {
       // Set the object on the same field or given one in hook params
       _.set(params, idProperty, id)
-      return Promise.resolve(hook)
+      return hook
     }
   }
 }
@@ -138,7 +150,7 @@ export function unpopulateObject (options) {
 }
 
 export function populateObjects (options) {
-  return function (hook) {
+  return async function (hook) {
     const app = hook.app
     const data = hook.data
     const params = hook.params
@@ -150,11 +162,11 @@ export function populateObjects (options) {
     // Check if not already done
     if (Array.isArray(_.get(params, idProperty))) {
       debug(`Skipping populating ${idProperty} as already done`)
-      return Promise.resolve(hook)
+      return hook
     }
     if (typeof _.get(params, serviceProperty) === 'object') {
       debug(`Skipping populating ${serviceProperty} as already done`)
-      return Promise.resolve(hook)
+      return hook
     }
 
     // Get service where we can find the object to populate
@@ -165,11 +177,11 @@ export function populateObjects (options) {
       service = app.getService(service, context)
       if (!service) {
         if (options.throwOnNotFound) throw new Error(message)
-        else return Promise.resolve(hook)
+        else return hook
       }
     } else if (!service) {
       if (options.throwOnNotFound) throw new Error(`No ${options.serviceField} given to dynamically populate.`)
-      else return Promise.resolve(hook)
+      else return hook
     }
 
     // Set the retrieved service on the same field or given one in hook params
@@ -180,29 +192,39 @@ export function populateObjects (options) {
     // If no ID given we perform a find, no pagination to be sure we get all objects
     if (!id) {
       debug(`Populating ${idProperty}`)
-      return service.find({ query: {}, paginate: false, user: hook.params.user }).then(objects => {
-        // Set the retrieved objects on the same field or given one in hook params
-        debug(`Populated ${objects.length} ${idProperty}`)
-        _.set(params, idProperty, objects)
-        return hook
-      })
+      const objects = await service.find({ query: {}, paginate: false, user: hook.params.user })
+      // Set the retrieved objects on the same field or given one in hook params
+      debug(`Populated ${objects.length} ${idProperty}`)
+      _.set(params, idProperty, objects)
+      return hook
     } else {
       debug(`Populating ${idProperty} with ID ${id}`)
-      // Let it work with id string or real object
+      // Let it work with id/name string or real object
       if (typeof id === 'string' || ObjectID.isValid(id)) {
-        return service.get(id.toString(), { user: hook.params.user }).then(object => {
-          if (!object) {
-            if (options.throwOnNotFound) throw new Error(`Cannot find ${options.idField} = ${id} to dynamically populate.`)
-            else return hook
+        let object
+        try {
+          // Get by ID or name ?
+          if (ObjectID.isValid(id)) {
+            object = await service.get(id.toString(), { user: hook.params.user })
+          } else {
+            const results = await service.find({ query: { name: id.toString() }, paginate: false, user: hook.params.user })
+            if (results.length >= 0) object = results[0]
           }
-          // Set the retrieved object on the same field or given one in hook params
-          _.set(params, idProperty, [object])
-          return hook
-        })
+        } catch (error) {
+          // Not found error is managed hereafter
+          if (error.code !== 404) throw error
+        }
+        if (!object) {
+          if (options.throwOnNotFound) throw new Error(`Cannot find ${options.idField} = ${id} to dynamically populate.`)
+          else return hook
+        }
+        // Set the retrieved object on the same field or given one in hook params
+        _.set(params, idProperty, [object])
+        return hook
       } else {
         // Set the object on the same field or given one in hook params
         _.set(params, idProperty, [id])
-        return Promise.resolve(hook)
+        return hook
       }
     }
   }

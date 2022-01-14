@@ -55,6 +55,8 @@ describe('core:services', () => {
     server = app.listen(port)
     server.once('listening', _ => done())
   })
+  // Let enough time to process
+    .timeout(10000)
 
   it('register webhooks', () => {
     app.createWebhook('webhook', { filter: { service: { $in: ['users'] }, operation: 'get' } })
@@ -225,6 +227,7 @@ describe('core:services', () => {
 
   it('creates a user tag', () => {
     return tagService.create({
+      name: 'Manager',
       scope: 'skills',
       value: 'manager'
     }, {
@@ -323,6 +326,54 @@ describe('core:services', () => {
 
   it('removes an authorisation', () => {
     return authorisationService.remove(tagObject._id, {
+      query: {
+        scope: 'authorisations',
+        subjects: userObject._id.toString(),
+        subjectsService: 'users',
+        resourcesService: 'tags'
+      },
+      user: userObject,
+      checkEscalation: true
+    })
+      .then(authorisation => {
+        expect(authorisation).toExist()
+        return userService.get(userObject._id.toString())
+      })
+      .then(user => {
+        expect(user.authorisations).toExist()
+        expect(user.authorisations.length === 0).beTrue()
+      })
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('creates an authorisation by name', () => {
+    return authorisationService.create({
+      scope: 'authorisations',
+      permissions: 'manager',
+      subjects: userObject._id.toString(),
+      subjectsService: 'users',
+      resource: tagObject.name.toString(),
+      resourcesService: 'tags'
+    }, {
+      user: userObject
+    })
+      .then(authorisation => {
+        expect(authorisation).toExist()
+        return userService.get(userObject._id.toString())
+      })
+      .then(user => {
+        userObject = user
+        expect(user.authorisations).toExist()
+        expect(user.authorisations.length > 0).beTrue()
+        expect(user.authorisations[0].permissions).to.deep.equal('manager')
+      })
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('removes an authorisation by name', () => {
+    return authorisationService.remove(tagObject.name, {
       query: {
         scope: 'authorisations',
         subjects: userObject._id.toString(),

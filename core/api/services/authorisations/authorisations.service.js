@@ -22,6 +22,10 @@ export default {
       const scope = _.get(subject, scopeName, [])
       // Then the target resource
       let resource = _.find(scope, resource => resource._id && (resource._id.toString() === params.resource._id.toString()))
+      if (!resource) {
+        // Fallback as name
+        resource = _.find(scope, resource => resource.name && (resource.name === params.resource.name))
+      }
       // On first authorisation create the resource in scope
       if (!resource) {
         resource = Object.assign({}, params.resource)
@@ -58,7 +62,11 @@ export default {
       // Then retrieve the right scope on the subject
       const scope = _.get(subject, scopeName, [])
       // Remove the target resource if any
-      const resources = _.remove(scope, resource => resource._id && (resource._id.toString() === id.toString()))
+      let resources = _.remove(scope, resource => resource._id && (resource._id.toString() === id.toString()))
+      if (resources.length === 0) {
+        // Fallback as name
+        resources = _.remove(scope, resource => resource.name && (resource.name === id))
+      }
       if (resources.length > 0) {
         // This cover the case when we create the scope on the first auth,
         // so that if the caller want to get back the update subject he can have it
