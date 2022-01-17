@@ -1,6 +1,7 @@
 <template>
   <div :style="widgetStyle()">
     <div class="fit row">
+      <q-resize-observer @resize="onResized" />
       <k-panel id="mapillary-actions" class="q-pa-sm" :content="actions" direction="vertical" />
       <div class="col" id="mapillary-container"></div>
     </div>
@@ -123,6 +124,9 @@ export default {
       this.bearing = await this.mapillaryViewer.getBearing()
       this.centerMap()
       this.kActivity.updateSelectionHighlight('mapillary', this.getMarkerFeature())
+    },
+    onResized () {
+      if (this.mapillaryViewer) this.mapillaryViewer.resize()
     }
   },
   beforeCreate () {
