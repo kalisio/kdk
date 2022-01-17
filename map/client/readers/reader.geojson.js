@@ -19,12 +19,17 @@ export function readGEOJSON (file, options) {
       // if valid delete it because of https://github.com/kalisio/kdk/issues/518
       if (content.crs) {
         // we support only named crs and expressed in WGS84
-        const name = _.get(content.crs, 'properties.name', null)
-        if (name !== 'epsg:4326' && name !== 'urn:ogc:def:crs:EPSG::4326') {
-          reject(new Error(i18next.t('errors.INVALID_GEOJSON_CRS', { file: file.name }), { errors: `Invalid CRS ${name}` }))
-          return
+        const name = _.get(content.crs, 'properties.name')
+        if (name) {
+          const crs = name.toLowerCase()
+          const allowedCrs = [ 'epsg:4326', 'urn:ogc:def:crs:OGC:1.3:CRS84', 'urn:ogc:def:crs:EPSG::4326']
+          const isCrsValid = _.some(allowedCrs, (allowrdCrs) => { return crs.toLowerCase() === crs })
+          if (!isCrsValid) {
+            reject(new Error(i18next.t('errors.INVALID_GEOJSON_CRS', { file: file.name }), { errors: `Invalid CRS ${name}` }))
+            return
+          }
+          delete content.crs
         }
-        delete content.crs
       }
       // lint the geosjon file
       const messages = geojsonhint.hint(content, options)
