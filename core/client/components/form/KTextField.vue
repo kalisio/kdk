@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    {{ model }}
+    <div v-html="text" />
   </div>
   <q-input v-else
     :for="properties.name + '-field'"
@@ -22,10 +22,20 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-text-field',
-  mixins: [mixins.baseField]
+  mixins: [mixins.baseField],
+  computed: {
+    text () {
+      if (_.startsWith(this.model, 'http://') || _.startsWith(this.model, 'https://')) {
+        return `<a href='${this.model}' target="_blank">${this.model}</a>`
+      } else {
+        return this.model
+      }
+    }
+  }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    <a href="model">{{ model }}</a>
+    <a href="model" target="_blank">{{ model }}</a>
   </div>
   <q-input v-else
     :for="properties.name + '-field'"
