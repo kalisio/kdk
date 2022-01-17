@@ -103,7 +103,7 @@ export function populateObject (options) {
     _.set(params, serviceProperty, service)
     // Let it work with id/name string or real object
     if (typeof id === 'string' || ObjectID.isValid(id)) {
-      let args = { user: hook.params.user }
+      const args = { user: hook.params.user }
       let object
       try {
         // Get by ID or name ?

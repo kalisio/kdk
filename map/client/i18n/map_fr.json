@@ -13,6 +13,7 @@
     "CANNOT_CHECK_ALERT_MISSING_SERVICE": "La dernière vérification a échouée par indisponibilité du service",
     "CANNOT_CHECK_ALERT_MISSING_DATA": "La dernière vérification a échouée par indisponibilité des données",
     "INVALID_GEOJSON_FILE": "{{file}} n'est pas un fichier GeoJSON valide",
+    "INVALID_GEOJSON_CRS": "{{file}} a un système de coordonnées (CRS) non supporté",
     "INVALID_GPX_FILE": "{{file}} n'est pas un fichier GPX valide",
     "INVALID_KML_FILE": "{{file}} n'est pas un fichier KML valide"
   },

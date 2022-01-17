@@ -13,6 +13,7 @@
     "CANNOT_CHECK_ALERT_MISSING_SERVICE": "Last check failed due to unavailable service",
     "CANNOT_CHECK_ALERT_MISSING_DATA": "Last check failed due to unavailable data",
     "INVALID_GEOJSON_FILE": "{{file}} is not a valid GeoJSON file",
+    "INVALID_GEOJSON_CRS": "{{file}} has an unsupported Coordinates Reference System (CRS)",
     "INVALID_GPX_FILE": "{{file}} is not a valid GPX file",
     "INVALID_KML_FILE": "{{file}} is not a valid KML file"
   },
