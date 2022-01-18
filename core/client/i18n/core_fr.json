@@ -254,6 +254,9 @@
       "UPDATE_TAG_DESCRIPTION_LABEL": "Modifiez la description de votre étiquette via cette action."
     }
   },
+  "reader": {
+    "READING_FILE": "Lecture de {{file}} en cours.<br>Veuillez patienter."
+  },
   "KWelcome": {
     "WELCOME_TITLE": "Bienvenue !",
     "WELCOME_MESSAGE": "Cette prise en main rapide va vous permettre de balayer les principales fonctionnalités de l'application.",

@@ -248,7 +248,10 @@
       "UPDATE_TAG_DESCRIPTION_LABEL": "Update the description of your tag through this action."
     }
   },
-  "KWelcome": {
+  "reader": {
+    "READING_FILE": "Please wait while Reading {{file}}"
+  },
+  "KWelcome": { 
     "WELCOME_TITLE": "Welcome !",
     "WELCOME_MESSAGE": "This quick start guide covers the main application features.",
     "ONLINE_HELP": "Read first our online help to get an overview of the basic concepts",

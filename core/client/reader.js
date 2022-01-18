@@ -1,6 +1,7 @@
 import path from 'path'
 import i18next from 'i18next'
 import { Events } from './events'
+import { Loading } from 'quasar'
 
 // Export singleton
 export const Reader = {
@@ -12,10 +13,14 @@ export const Reader = {
     const fileExtension = path.extname(file.name)
     const reader = this.readers[fileExtension]
     if (reader) {
+      console.log(reader)
+      Loading.show({ message: i18next.t('reader.READING_FILE', { file: file.name }) })
       try {
         const content = await reader(file, options)
+        Loading.hide()
         return content
       } catch (error) {
+        Loading.hide()
         Events.$emit('error', error)
         throw error
       }
