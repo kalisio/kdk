@@ -10,6 +10,7 @@ import KPageSticky from './KPageSticky.vue'
 import KPanel from './KPanel.vue'
 import KPopupAction from './KPopupAction.vue'
 import KScreen from './KScreen.vue'
+import KScrollArea from './KScrollArea.vue'
 import KSpot from './KSpot.vue'
 import KStamp from './KStamp.vue'
 import KTextArea from './KTextArea.vue'
@@ -27,6 +28,7 @@ export {
   KPanel,
   KPopupAction,
   KScreen,
+  KScrollArea,
   KSpot,
   KStamp,
   KTextArea

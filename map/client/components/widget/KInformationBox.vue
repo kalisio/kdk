@@ -2,9 +2,9 @@
   <div :style="widgetStyle()">
     <div v-if="schema && properties" class="fit row">
       <k-panel id="information-box-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-      <q-scroll-area class="col fit" :thumb-style="thumbStyle" :bar-style="barStyle">
+      <k-scroll-area class="col fit">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :separators="true" />
-      </q-scroll-area>
+      </k-scroll-area>
     </div>
     <div v-else class="absolute-center">
       <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')" />
@@ -34,18 +34,6 @@ export default {
   },
   data () {
     return {
-      thumbStyle: {
-        right: '4px',
-        borderRadius: '5px',
-        backgroundColor: colors.getBrand('primary'),
-        width: '6px'
-      },
-      barStyle: {
-        right: '2px',
-        borderRadius: '5px',
-        backgroundColor: colors.getBrand('accent'),
-        width: '10px'
-      },
       schema: null,
       properties: null,
       actions: []
@@ -115,11 +103,14 @@ export default {
       }
     }
   },
-  created () {
+  beforeCreate () {
     // laod the required components
+    this.$options.components['k-scroll-area'] = this.$load('frame/KScrollArea')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-view'] = this.$load('form/KView')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+  },
+  created () {
     // Registers the actions
     this.actions = {
       default: [

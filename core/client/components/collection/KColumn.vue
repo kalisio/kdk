@@ -10,11 +10,9 @@
       Items
      -->
     <div v-if="items.length > 0">
-      <q-scroll-area
+      <k-scroll-area
         ref="scrollArea"
-        :style="{ height: `${height}px` }"
-        :thumb-style="thumbStyle"
-        :bar-style="barStyle"
+        :max-height="height"
         @scroll="onScroll">
         <div class="full-width row justify-center q-gutter-y-md">
           <template v-for="item in items">
@@ -30,7 +28,7 @@
             </div>
           </template>
         </div>
-      </q-scroll-area>
+      </k-scroll-area>
       <div v-if="scrollAction" class="row justify-center  q-pr-md">
         <k-action
           id="scroll-action"
@@ -56,8 +54,7 @@
 
 <script>
 import { colors } from 'quasar'
-import KAction from '../frame/KAction.vue'
-import KStamp from '../frame/KStamp.vue'
+import { KScrollArea, KAction, KStamp } from '../frame'
 import mixins from '../../mixins'
 
 const baseCollectionMixin = mixins.baseCollection
@@ -65,6 +62,7 @@ const baseCollectionMixin = mixins.baseCollection
 export default {
   name: 'k-column',
   components: {
+    KScrollArea,
     KAction,
     KStamp
   },
@@ -108,19 +106,7 @@ export default {
   },
   data () {
     return {
-      scrollAction: false,
-      thumbStyle: {
-        right: '4px',
-        borderRadius: '5px',
-        backgroundColor: colors.getBrand('primary'),
-        width: '6px'
-      },
-      barStyle: {
-        right: '2px',
-        borderRadius: '5px',
-        backgroundColor: colors.getBrand('accent'),
-        width: '10px'
-      }
+      scrollAction: false
     }
   },
   watch: {

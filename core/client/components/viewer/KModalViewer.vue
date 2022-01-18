@@ -7,16 +7,25 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content">
-      <k-view :values="object" :schema="schema" />
+      <k-scroll-area class="q-pl-xs q-pr-lg">
+        <k-view :values="object" :schema="schema" />
+      </k-scroll-area>
     </div>
   </k-modal>
 </template>
 
 <script>
+import { KModal , KScrollArea } from '../frame'
+import { KView } from '../form'
 import mixins from '../../mixins'
 
 export default {
   name: 'k-modal-viewer',
+  components: {
+    KModal,
+    KScrollArea,
+    KView
+  },  
   mixins: [
     mixins.baseViewer,
     mixins.baseModal,
@@ -34,11 +43,6 @@ export default {
       await this.refresh()
       this.isModalOpened = true
     }
-  },
-  created () {
-    // Loads the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-view'] = this.$load('form/KView')
   }
 }
 </script>

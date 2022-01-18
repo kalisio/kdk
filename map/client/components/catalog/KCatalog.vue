@@ -1,5 +1,5 @@
 <template>
-  <q-scroll-area :style="computedStyle">
+  <k-scroll-area :style="computedStyle">
     <q-list dense bordered>
       <slot name="header" />
       <k-layers-selector
@@ -26,7 +26,7 @@
       </template>
       <slot name="footer" />
     </q-list>
-  </q-scroll-area>
+  </k-scroll-area>
 </template>
 
 <script>
@@ -128,10 +128,13 @@ export default {
       })
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
+    this.$options.components['k-scroll-area'] = this.$load('frame/KScrollArea')  
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')  
+    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')  
+  },
+  created () {
     // Categorize layers
     this.categorize()
   }

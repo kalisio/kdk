@@ -9,7 +9,7 @@
       v-bind:class="{
         'column full-height': maximized,
         'q-pa-sm': $q.screen.gt.xs,
-        'q-ps-xs': $q.screen.lt.sm
+        'q-pa-xs': $q.screen.lt.sm
       }"
       :style="computedStyle">
       <!--
@@ -22,7 +22,11 @@
       <!--
         Content section
        -->
-      <q-card-section class="col">
+      <q-card-section class="col"
+        v-bind:class="{
+        'q-pa-sm': $q.screen.gt.xs, 
+        'q-pa-xs': $q.screen.lt.sm
+      }">
         <slot name="modal-content" />
       </q-card-section>
       <!--

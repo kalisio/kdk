@@ -7,13 +7,15 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <div slot="modal-content">
-      <k-form :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged" />
+      <k-scroll-area class="q-pl-xs q-pr-lg">
+        <k-form ref="form" :schema="schema" @field-changed="onFieldChanged" />
+      </k-scroll-area>
     </div>
   </k-modal>
 </template>
 
 <script>
-import { KModal } from '../frame'
+import { KModal , KScrollArea } from '../frame'
 import { KForm } from '../form'
 import mixins from '../../mixins'
 
@@ -21,6 +23,7 @@ export default {
   name: 'k-modal-editor',
   components: {
     KModal,
+    KScrollArea,
     KForm
   },
   mixins: [
