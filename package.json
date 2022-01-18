@@ -96,7 +96,6 @@
     "@feathersjs/express": "^1.2.3",
     "@feathersjs/feathers": "^3.3.1",
     "@feathersjs/socketio": "^3.2.2",
-    "@geoman-io/leaflet-geoman-free": "2.11.3",
     "abort-controller": "^3.0.0",
     "aws-sdk": "^2.200.0",
     "body-parser": "^1.17.1",
