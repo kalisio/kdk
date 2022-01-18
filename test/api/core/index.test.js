@@ -65,6 +65,7 @@ describe('core:services', () => {
   it('unauthorized user cannot access webhooks', (done) => {
     request
       .post(`${baseUrl}/webhooks/webhook`)
+      .set('Content-Type', 'application/json')
       .send({ accessToken: 'xxx', service: 'authorisations' })
       .catch(data => {
         const error = data.response.body
@@ -178,6 +179,7 @@ describe('core:services', () => {
   it('unauthorized service cannot be accessed through webhooks', (done) => {
     request
       .post(`${baseUrl}/webhooks/webhook`)
+      .set('Content-Type', 'application/json')
       .send({ accessToken, service: 'authorisations' })
       .catch(data => {
         const error = data.response.body
@@ -190,6 +192,7 @@ describe('core:services', () => {
   it('unauthorized service operation cannot be accessed through webhooks', (done) => {
     request
       .post(`${baseUrl}/webhooks/webhook`)
+      .set('Content-Type', 'application/json')
       .send({ accessToken, service: 'users', operation: 'create' })
       .catch(data => {
         const error = data.response.body
@@ -202,7 +205,20 @@ describe('core:services', () => {
   it('authenticated user can access service operation through webhooks', () => {
     return request
       .post(`${baseUrl}/webhooks/webhook`)
+      .set('Content-Type', 'application/json')
       .send({ accessToken, service: 'users', id: userObject._id, operation: 'get' })
+      .then(response => {
+        const user = response.body
+        expect(user._id.toString() === userObject._id.toString()).beTrue()
+      })
+  })
+
+  it('authenticated user can access service operation through webhooks and headers', () => {
+    return request
+      .post(`${baseUrl}/webhooks/webhook`)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + accessToken)
+      .send({ service: 'users', id: userObject._id, operation: 'get' })
       .then(response => {
         const user = response.body
         expect(user._id.toString() === userObject._id.toString()).beTrue()

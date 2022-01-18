@@ -232,31 +232,57 @@ export function createWebhook (path, app, options = {}) {
   app.post(app.get('apiPath') + '/webhooks/' + webhookPath, async (req, res, next) => {
     const payload = req.body
     const config = app.get('authentication')
-    res.set('Content-Type', 'application/json')
+    res.set('content-type', 'application/json')
     const params = {}
     try {
+      if (options.preprocessor) {
+        await options.preprocessor(req, res, payload)
+      }
       // Authenticate when required
       if (config) {
         try {
-          const tokenPayload = await app.passport.verifyJWT(payload.accessToken, config)
-          if (tokenPayload.userId) {
-            params.user = await app.getService('users').get(tokenPayload.userId)
-            params.checkAuthorisation = true
+          // Token is in header or payload
+          const header = req.headers['authorization']
+          let accessToken
+          if (header) {
+            // Should be of the form: 'Bearer xxx'
+            const tokens = header.match(/(\S+)\s+(\S+)/)
+            if (tokens.length >= 2) accessToken = tokens[2]
+          } else {
+            accessToken = payload.accessToken
           }
+          const tokenPayload = await app.passport.verifyJWT(accessToken, config)
+          params.user = await app.getService('users').get(tokenPayload.userId)
+          params.checkAuthorisation = true
         } catch (error) {
           throw new Forbidden('Could not verify webhook')
         }
       }
-      if (!isAllowed(payload)) throw new Forbidden('Service not allowed for webhook')
+      if (req.headers['content-type'] !== 'application/json') {
+        throw new BadRequest('Webhooks expect application/json content type')
+      }
+      if (!isAllowed(payload)) throw new Forbidden('Service or operation not allowed for webhook')
       const service = app.getService(payload.service, options.context || payload.context)
       if (!service) throw new BadRequest('Service could not be found')
+      if (typeof service[payload.operation] !== 'function') throw new BadRequest('Service operation could not be found')
       const args = []
-      // Update/Patch/Remove
-      if (_.has(payload, 'id')) args.push(_.get(payload, 'id'))
+      // Get/Update/Patch/Remove
+      const operationsWithId = ['get', 'update', 'patch', 'remove']
+      if (operationsWithId.includes(payload.operation)) {
+        if (!_.has(payload, 'id')) throw new BadRequest('Missing id for operation')
+        args.push(_.get(payload, 'id'))
+      }
       // Create/Update/Patch
-      if (_.has(payload, 'data')) args.push(_.get(payload, 'data'))
+      const operationsWithData = ['create', 'update', 'patch']
+      if (operationsWithData.includes(payload.operation)) {
+        if (!_.has(payload, 'data')) throw new BadRequest('Missing data for operation')
+        args.push(_.get(payload, 'data'))
+      }
       // Params
       args.push(params)
+      if (options.postprocessor) {
+        await options.postprocessor(service, args, payload)
+      }
       try {
         const result = await service[payload.operation].apply(service, args)
         // Send back result
