@@ -14,7 +14,7 @@
 
 <script>
 import _ from 'lodash'
-import { colors, copyToClipboard, exportFile } from 'quasar'
+import { copyToClipboard, exportFile } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
 import { generatePropertiesSchema } from '../../utils'
 

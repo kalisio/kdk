@@ -39,7 +39,7 @@ import { Time } from '../../../../core/client/time'
 import { baseWidget } from '../../../../core/client/mixins'
 
 export default {
-  name: 'k-time-series-widget',
+  name: 'k-time-series',
   inject: ['kActivity'],
   mixins: [baseWidget],
   props: {
