@@ -57,7 +57,7 @@ export default {
         _.set(convertedStyle, 'type', 'marker')
       }
       // Manage panes to make z-index work for all types of layers,
-      // pane name is actually a z-index value
+      // pane name can actually be a z-index value
       if (_.has(convertedStyle, 'pane')) _.set(convertedStyle, 'pane', _.get(convertedStyle, 'pane').toString())
       return convertedStyle
     },

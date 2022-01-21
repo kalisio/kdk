@@ -207,7 +207,10 @@ export default {
     },
     processClusterLayerOptions (options) {
       const leafletOptions = options.leaflet || options
-      leafletOptions.container = this.createLeafletLayer(Object.assign({ type: 'markerClusterGroup' }, leafletOptions.cluster))
+      let clusterOptions = Object.assign({ type: 'markerClusterGroup' }, leafletOptions.cluster)
+      // Transfer pane if any
+      if (leafletOptions.pane) clusterOptions.clusterPane = leafletOptions.pane
+      leafletOptions.container = this.createLeafletLayer(clusterOptions)
     },
     async createLeafletGeoJsonLayer (options) {
       const leafletOptions = options.leaflet || options
@@ -215,6 +218,14 @@ export default {
       if (leafletOptions.type !== 'geoJson') return
 
       try {
+        // min/max zoom are automatically managed on tiled layers by inheriting GridLayer
+        // on non-tiled layers we need to use a pane to manage it
+        const minZoom = _.get(leafletOptions, 'minZoom')
+        const maxZoom = _.get(leafletOptions, 'maxZoom')
+        if (!leafletOptions.tiled && (minZoom || maxZoom)) {
+          leafletOptions.panes = [{ name: options.name, minZoom, maxZoom }]
+          leafletOptions.pane = options.name
+        }
         // If not explicitely disable use defaults for clustering
         if (!_.has(leafletOptions, 'cluster') && this.activityOptions.engine.cluster) {
           // Merge existing config or create a new one on layer
