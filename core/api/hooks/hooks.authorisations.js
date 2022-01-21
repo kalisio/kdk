@@ -208,7 +208,8 @@ export async function authorise (hook) {
           }, {})
           _.merge(hook.params.query, dbQuery)
         } else {
-          hook.result = { total: 0, skip: 0, data: [] }
+          debug('Resource access not granted')
+          throw new Forbidden(`You are not allowed to perform ${operation} operation on ${resourceType}`)
         }
       }
       debug('Resource access granted')
