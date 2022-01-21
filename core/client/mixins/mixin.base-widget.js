@@ -10,13 +10,14 @@ const baseWidgetMixin = {
   },
   data () {
     return {
-      widgetHeight: '30vh'
+      widgetHeight: 0
     }
   },
-  methods: {
+  computed: {
     widgetStyle () {
-      if (this.mode === 'minimized') return 'height: ' + this.widgetHeight
-      else return 'height: 100vh'
+      const screenHeight = this.$q.screen.height
+      this.widgetHeight = this.mode === 'maximized' ? screenHeight : screenHeight * 0.3 // 30vh
+      return `height: ${this.widgetHeight}px`
     }
   }
 }

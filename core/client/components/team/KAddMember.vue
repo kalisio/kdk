@@ -5,7 +5,7 @@
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
-    <div slot="modal-content">
+    <div>
       <q-tabs  align="justify" v-model="mode" inverted>
         <q-tab id="unique-tab" name="unique" icon="las la-user"  />
         <q-tab id="multiple-tab" name="multiple" icon="las la-user-friends"  />

@@ -4,8 +4,9 @@
     :title="$t('KAddLayer.TITLE')"
     v-model="isModalOpened"
     @opened="$emit('opened')"
-    @closed="$emit('closed')">
-    <div slot="modal-content">
+    @closed="$emit('closed')"
+  >
+    <div>
       <q-tabs  align="justify" v-model="mode" inverted>
         <q-tab id="import-layer" name="import" icon="las la-desktop" />
         <q-tab id="connect-layer" name="connect" icon="las la-plug" />

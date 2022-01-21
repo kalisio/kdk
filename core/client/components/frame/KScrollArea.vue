@@ -1,9 +1,12 @@
 <template>
-  <q-scroll-area 
+  <q-scroll-area
+    id="scroll-area"
     :style="innerStyle" 
     :thumb-style="thumbStyle" 
     :bar-style="barStyle" 
-    @scroll="onScrolled">
+    @scroll="onScrolled"
+  >
+    <!-- content -->
     <slot />
   </q-scroll-area>
 </template>
@@ -19,7 +22,7 @@ export default {
   props: {
     maxHeight: {
       type: Number,
-      value: undefined
+      required: true
     }
   },
   computed: {
@@ -45,9 +48,8 @@ export default {
     }
   },
   methods: {
-    onScrolled (info) {
-      const maxHeight = this.maxHeight || window.innerHeight * .7  // 70vh
-      this.height = Math.min(info.verticalSize, maxHeight)
+    onScrolled (info) { 
+      this.height = Math.min(info.verticalSize, this.maxHeight)
     }
   }
 }

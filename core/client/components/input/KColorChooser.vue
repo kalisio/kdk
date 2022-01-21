@@ -1,10 +1,8 @@
 <template>
   <k-modal ref="modal" :buttons="getButtons()">
-    <div slot="modal-content">
-      <div class="column q-gutter-sm">
-        <div class="row justify-between items-center q-gutter-sm">
-          <k-palette shape="round" v-model="selectedColor" />
-        </div>
+    <div class="column q-gutter-sm">
+      <div class="row justify-between items-center q-gutter-sm">
+        <k-palette shape="round" v-model="selectedColor" />
       </div>
     </div>
   </k-modal>

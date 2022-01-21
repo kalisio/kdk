@@ -1,5 +1,5 @@
 <template>
-  <div :style="widgetStyle()">
+  <div :style="widgetStyle">
     <div class="fit row">
       <q-resize-observer @resize="onResized" />
       <!-- Actions -->

@@ -24,55 +24,53 @@
       id="about"
       ref="about"
       :buttons="getButtons()">
-      <div slot="modal-content">
-        <div class="column justify-center">
-          <!-- Banner -->
-          <div v-if="banner" class="q-pa-md row justify-center"><img class="screen-banner" :src="banner"></div>
-          <!-- Version -->
-          <div id="version-numbers" class="row justify-center">
-            <cite v-if="clientVersionName">{{ $t('KAbout.CLIENT_VERSION') }}{{ clientVersionName }}</cite>
-            <cite v-if="apiVersionName">&nbsp;-&nbsp;{{ $t('KAbout.API_VERSION') }}{{ apiVersionName }}</cite>
-          </div>
-          <div id="hosting" class="row justify-center">
-            <cite>{{ $t('KAbout.DOMAIN') }} <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a></cite>
-            <cite>&nbsp;({{ $config('flavor') }})</cite>
-          </div><br/>
-          <!-- More info -->
-          <div class="row justify-center">
-            <a id="app-website" :href="$config('appWebsite')" target="_blank">
-              <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE') }} {{ $config('appName') }}
-            </a>
-          </div><br/>
-          <div class="row justify-center">
-            <a id="publisher-website" :href="$config('publisherWebsite')" target="_blank">
-              <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE_PUBLISHER') }} {{ $config('publisher') }}
-            </a>
-          </div><br/>
-          <!-- Bug report -->
-          <div class="row justify-center">
-            <a id="report-bug" :href="`mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`">
-              <q-icon name="las la-envelope"/>&nbsp;{{ $t('KAbout.BUG_REPORT') }}
-            </a>
-          </div><br/>
-          <!-- System -->
-          <div class="row justify-center" @click="showSystemDetails = !showSystemDetails">
-            <a id="system-details" >
-              <q-icon name="las la-laptop-code"/>&nbsp;{{ $t('KAbout.SYSTEM_DETAILS') }}
-            </a>
-          </div>
-          <br/>
-          <div v-show="showSystemDetails">
-            <template v-for="(value, key) in systemDetails">
-              <div :key="key" class="row justify-center">
-                <cite><strong>{{ key }}</strong>: {{ value }}</cite>
-              </div>
-            </template>
-          </div>
-          <!-- KDK -->
-          <div class="row justify-center items-center q-gutter-x-md">
-            <q-icon name="kdk:kdk.png" size="md" />
-            <a href="https://kalisio.github.io/kdk" target="_blank">{{ $t('KAbout.KDK_POWERED') }}</a>
-          </div>
+      <div class="column justify-center">
+        <!-- Banner -->
+        <div v-if="banner" class="q-pa-md row justify-center"><img class="screen-banner" :src="banner"></div>
+        <!-- Version -->
+        <div id="version-numbers" class="row justify-center">
+          <cite v-if="clientVersionName">{{ $t('KAbout.CLIENT_VERSION') }}{{ clientVersionName }}</cite>
+          <cite v-if="apiVersionName">&nbsp;-&nbsp;{{ $t('KAbout.API_VERSION') }}{{ apiVersionName }}</cite>
+        </div>
+        <div id="hosting" class="row justify-center">
+          <cite>{{ $t('KAbout.DOMAIN') }} <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a></cite>
+          <cite>&nbsp;({{ $config('flavor') }})</cite>
+        </div><br/>
+        <!-- More info -->
+        <div class="row justify-center">
+          <a id="app-website" :href="$config('appWebsite')" target="_blank">
+            <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE') }} {{ $config('appName') }}
+          </a>
+        </div><br/>
+        <div class="row justify-center">
+          <a id="publisher-website" :href="$config('publisherWebsite')" target="_blank">
+            <q-icon name="las la-external-link-alt"/>&nbsp;{{ $t('KAbout.MORE_PUBLISHER') }} {{ $config('publisher') }}
+          </a>
+        </div><br/>
+        <!-- Bug report -->
+        <div class="row justify-center">
+          <a id="report-bug" :href="`mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`">
+            <q-icon name="las la-envelope"/>&nbsp;{{ $t('KAbout.BUG_REPORT') }}
+          </a>
+        </div><br/>
+        <!-- System -->
+        <div class="row justify-center" @click="showSystemDetails = !showSystemDetails">
+          <a id="system-details" >
+            <q-icon name="las la-laptop-code"/>&nbsp;{{ $t('KAbout.SYSTEM_DETAILS') }}
+          </a>
+        </div>
+        <br/>
+        <div v-show="showSystemDetails">
+          <template v-for="(value, key) in systemDetails">
+            <div :key="key" class="row justify-center">
+              <cite><strong>{{ key }}</strong>: {{ value }}</cite>
+            </div>
+          </template>
+        </div>
+        <!-- KDK -->
+        <div class="row justify-center items-center q-gutter-x-md">
+          <q-icon name="kdk:kdk.png" size="md" />
+          <a href="https://kalisio.github.io/kdk" target="_blank">{{ $t('KAbout.KDK_POWERED') }}</a>
         </div>
       </div>
     </k-modal>

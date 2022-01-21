@@ -1,5 +1,5 @@
 <template>
-  <k-scroll-area :style="computedStyle">
+  <k-scroll-area :maxHeight="scrollAreaMaxHeight" :style="innerStyle">
     <q-list dense bordered>
       <slot name="header" />
       <k-layers-selector
@@ -65,10 +65,21 @@ export default {
     }
   },
   computed: {
-    computedStyle () {
-      if (this.$q.screen.lt.md) return 'height: 65vh; min-width: 300px;'
-      if (this.$q.screen.lt.lg) return 'height: 70vh; min-width: 350px;'
-      return 'height: 75vh; min-width: 400px;'
+    innerStyle () {
+      const screenHeight = this.$q.screen.height
+      this.scrollAreaMaxHeight = screenHeight * .75 // 75vh
+      let width = 420
+      if (this.$q.screen.lt.sm) {
+        this.scrollAreaMaxHeight = screenHeight * .60
+        width = 300
+      } else if (this.$q.screen.lt.md) {
+        this.scrollAreaMaxHeight = screenHeight * .65
+        width = 340
+      } else if (this.$q.screen.lt.lg) {
+        this.scrollAreaMaxHeight = screenHeight * .70
+        width = 380
+      }
+      return `height: ${this.scrollAreaMaxHeight}px; width: ${width}px`
     },
     layersByCategory () {
       const layers = _.values(this.layers)
@@ -93,6 +104,11 @@ export default {
       }))
       const categories = _.flatten(_.values(this.layersByCategory))
       return _.difference(layers, categories)
+    }
+  },
+  data () {
+    return {
+      scrollAreaMaxHeight: 0
     }
   },
   methods: {

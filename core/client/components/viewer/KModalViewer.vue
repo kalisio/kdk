@@ -5,12 +5,9 @@
     :buttons="getButtons()"
     v-model="isModalOpened"
     @opened="$emit('opened')"
-    @closed="$emit('closed')">
-    <div slot="modal-content">
-      <k-scroll-area class="q-pl-xs q-pr-lg">
-        <k-view :values="object" :schema="schema" />
-      </k-scroll-area>
-    </div>
+    @closed="$emit('closed')"
+  >
+    <k-view :values="object" :schema="schema" />
   </k-modal>
 </template>
 

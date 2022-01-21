@@ -6,44 +6,43 @@
     :maximized="isModalMaximized"
     v-model="isModalOpened"
     @opened="$emit('opened')"
-    @closed="$emit('closed')">
-    <div slot="modal-content">
-      <q-list dense class="row items-center justify-around">
-        <q-item v-for="filter in filters" :key="filter.key" class="col-12">
-          <q-item-section avatar v-if="filter.operator">
-            <q-select v-model="filter.operator" :label="filter.property" stack-label :options="getOperators(filter)" emit-value map-options/>
-          </q-item-section>
-          <q-item-section>
-            <component
-              :is="filter.componentKey"
-              :ref="filter.key"
-              :properties="filter.properties"
-              :display="{ icon: false, label: false }"
-              @field-changed="filter.onValueChanged"
-            />
-          </q-item-section>
-          <q-item-section avatar>
-            <q-btn flat color="primary" icon="las la-trash" @click="onRemoveFilter(filter)">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
-                {{$t('KFeaturesFilter.REMOVE_FILTER')}}
-              </q-tooltip>
-            </q-btn>
-          </q-item-section>
-        </q-item>
-        <q-item class="col-12">
-          <q-item-section avatar class="col-6">
-            {{$t('KFeaturesFilter.ADD_FILTER')}}
-          </q-item-section>
-          <q-item-section class="col-6">
-            <q-select v-model="property" :options="properties">
-              <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddFilter(property)"/>
-              </template>
-            </q-select>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </div>
+    @closed="$emit('closed')"
+  >
+    <q-list dense class="row items-center justify-around">
+      <q-item v-for="filter in filters" :key="filter.key" class="col-12">
+        <q-item-section avatar v-if="filter.operator">
+          <q-select v-model="filter.operator" :label="filter.property" stack-label :options="getOperators(filter)" emit-value map-options/>
+        </q-item-section>
+        <q-item-section>
+          <component
+            :is="filter.componentKey"
+            :ref="filter.key"
+            :properties="filter.properties"
+            :display="{ icon: false, label: false }"
+            @field-changed="filter.onValueChanged"
+          />
+        </q-item-section>
+        <q-item-section avatar>
+          <q-btn flat color="primary" icon="las la-trash" @click="onRemoveFilter(filter)">
+            <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+              {{$t('KFeaturesFilter.REMOVE_FILTER')}}
+            </q-tooltip>
+          </q-btn>
+        </q-item-section>
+      </q-item>
+      <q-item class="col-12">
+        <q-item-section avatar class="col-6">
+          {{$t('KFeaturesFilter.ADD_FILTER')}}
+        </q-item-section>
+        <q-item-section class="col-6">
+          <q-select v-model="property" :options="properties">
+            <template v-slot:after>
+              <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddFilter(property)"/>
+            </template>
+          </q-select>
+        </q-item-section>
+      </q-item>
+    </q-list>
   </k-modal>
 </template>
 

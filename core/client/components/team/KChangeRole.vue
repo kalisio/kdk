@@ -5,10 +5,9 @@
     :buttons="getButtons()"
     v-model="isModalOpened"
     @opened="$emit('opened')"
-    @closed="$emit('closed')">
-    <div slot="modal-content" class="column xs-gutter">
-      <k-form v-if="member" ref="form" :schema="getSchema()" />
-    </div>
+    @closed="$emit('closed')"
+  >
+    <k-form v-if="member" ref="form" :schema="getSchema()" />
   </k-modal>
 </template>
 

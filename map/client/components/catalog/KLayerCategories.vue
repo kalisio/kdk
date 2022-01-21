@@ -7,8 +7,9 @@
     :buttons="buttons"
     v-model="isModalOpened"
     @opened="$emit('opened')"
-    @closed="$emit('closed')">
-    <div slot="modal-content" id="layer-categories-content">
+    @closed="$emit('closed')"
+  >
+    <div id="layer-categories-content">
       <q-card-section id="layer-categories-list" v-if="mode === 'list'">
         <k-list
           style="min-height: 50px; min-width: 200px"

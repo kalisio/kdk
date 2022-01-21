@@ -6,11 +6,7 @@
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
-    <div slot="modal-content">
-      <k-scroll-area class="q-pl-xs q-pr-lg">
-        <k-form ref="form" :schema="schema" @field-changed="onFieldChanged" />
-      </k-scroll-area>
-    </div>
+      <k-form ref="form" :schema="schema" @field-changed="onFieldChanged" />
   </k-modal>
 </template>
 

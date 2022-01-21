@@ -8,17 +8,16 @@
       :maximized="isModalMaximized"
       v-model="isModalOpened"
       @opened="$emit('opened')"
-      @closed="$emit('closed')">
-      <div slot="modal-content">
-        <div class="row justify-center text-center q-ma-none q-pa-none">
-          <div style="width: 90vw">
-            <canvas v-show="chartData.length > 0" class="chart" ref="chart"></canvas>
-          </div>
-          <q-btn v-show="currentChart > 1" size="1rem" flat round color="primary"
-            icon="las la-chevron-left" class="absolute-left" @click="onPreviousChart"/>
-          <q-btn v-show="currentChart < nbCharts" size="1rem" flat round color="primary"
-            icon="las la-chevron-right" class="absolute-right" @click="onNextChart" />
+      @closed="$emit('closed')"
+    >
+      <div class="row justify-center text-center q-ma-none q-pa-none">
+        <div style="width: 90vw">
+          <canvas v-show="chartData.length > 0" class="chart" ref="chart"></canvas>
         </div>
+        <q-btn v-show="currentChart > 1" size="1rem" flat round color="primary"
+          icon="las la-chevron-left" class="absolute-left" @click="onPreviousChart"/>
+        <q-btn v-show="currentChart < nbCharts" size="1rem" flat round color="primary"
+          icon="las la-chevron-right" class="absolute-right" @click="onNextChart" />
       </div>
     </k-modal>
     <k-modal
@@ -26,7 +25,7 @@
       ref="chartSettings"
       :title="$t('KFeaturesChart.CHART_SETTINGS_LABEL')"
       :buttons="[{ id: 'close-action', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.chartSettings.close() }]">
-      <div slot="modal-content">
+      <div>
         <q-select v-model="property" :label="$t('KFeaturesChart.PROPERTY_LABEL')"
           :options="properties" @input="refreshChart"/>
         <q-select v-model="chartType" :label="$t('KFeaturesChart.CHART_LABEL')"

@@ -7,7 +7,7 @@
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
-    <div slot="modal-content">
+    <div>
       <k-layer-style-form :class="{ 'light-dimmed': inProgress }" ref="form"
         :options="options" :layer="layer"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="inProgress" size="4em"/>

@@ -1,45 +1,43 @@
 <template>
   <k-modal ref="modal" :buttons="getButtons()">
-    <div slot="modal-content">
-      <div class="column q-gutter-sm">
-        <div class="row justify-between">
-          <q-select id="icon-categories"
-            v-if="categories"
-            :label="$t('KIconChooser.SEARCH_CATEGORY_LABEL')"
-            :options="categoryOptions"
-            :value="selectedCategory ? selectedCategory.label : ''"
-            @filter="filterCategoryAutocomplete"
-            @input="onSelectCategory"
-            use-input
-            fill-input
-            hide-selected
-            input-debounce="0"
-            clearable
-            class="col-4"
-            dense />
-        </div>
-        <div id="icons" class="row justify-start items-center q-gutter-sm">
-          <template v-for="icon in iconsPage">
-            <q-icon v-if="icon.name === selectedIcon.name" :key="icon.name"
-              style="border-bottom: 0.25rem solid" :color="selectedIcon.color" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
-              <q-tooltip>
-                {{icon.title}}
-              </q-tooltip>
-            </q-icon>
-            <q-icon v-if="icon.name !== selectedIcon.name" :key="icon.name"
-              color="grey-7" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
-              <q-tooltip>
-                {{icon.title}}
-              </q-tooltip>
-            </q-icon>
-          </template>
-        </div>
-        <div class="row justify-center items-center q-gutter-sm">
-          <q-pagination v-model="currentPage" :max="maxPage" :input="true" />
-        </div>
-        <div v-if="palette" class="row justify-between items-center q-gutter-sm">
-          <k-palette id="palette" shape="round" v-model="selectedIcon.color" />
-        </div>
+    <div class="column q-gutter-sm">
+      <div class="row justify-between">
+        <q-select id="icon-categories"
+          v-if="categories"
+          :label="$t('KIconChooser.SEARCH_CATEGORY_LABEL')"
+          :options="categoryOptions"
+          :value="selectedCategory ? selectedCategory.label : ''"
+          @filter="filterCategoryAutocomplete"
+          @input="onSelectCategory"
+          use-input
+          fill-input
+          hide-selected
+          input-debounce="0"
+          clearable
+          class="col-4"
+          dense />
+      </div>
+      <div id="icons" class="row justify-start items-center q-gutter-sm">
+        <template v-for="icon in iconsPage">
+          <q-icon v-if="icon.name === selectedIcon.name" :key="icon.name"
+            style="border-bottom: 0.25rem solid" :color="selectedIcon.color" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
+            <q-tooltip>
+              {{icon.title}}
+            </q-tooltip>
+          </q-icon>
+          <q-icon v-if="icon.name !== selectedIcon.name" :key="icon.name"
+            color="grey-7" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
+            <q-tooltip>
+              {{icon.title}}
+            </q-tooltip>
+          </q-icon>
+        </template>
+      </div>
+      <div class="row justify-center items-center q-gutter-sm">
+        <q-pagination v-model="currentPage" :max="maxPage" :input="true" />
+      </div>
+      <div v-if="palette" class="row justify-between items-center q-gutter-sm">
+        <k-palette id="palette" shape="round" v-model="selectedIcon.color" />
       </div>
     </div>
   </k-modal>

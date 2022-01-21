@@ -6,22 +6,21 @@
     :buttons="buttons"
     v-model="isModalOpened"
     @opened="$emit('opened')"
-    @closed="$emit('closed')">
-    <div slot="modal-content">
-      <k-table
-        service="features"
-        :contextId="contextId"
-        :schema-json="schema"
-        :item-actions="featureActions"
-        :base-query="layer.baseQuery"
-        :style="`height: ${height}px; max-width: ${width}px;`">
-        <template slot="empty-section">
-          <div class="absolute-center">
-            <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
-          </div>
-        </template>
-      </k-table>
-    </div>
+    @closed="$emit('closed')"
+  >    
+    <k-table
+      service="features"
+      :contextId="contextId"
+      :schema-json="schema"
+      :item-actions="featureActions"
+      :base-query="layer.baseQuery"
+      :style="`height: ${height}px; max-width: ${width}px;`">
+      <template slot="empty-section">
+        <div class="absolute-center">
+          <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
+        </div>
+      </template>
+    </k-table>
   </k-modal>
 </template>
 
