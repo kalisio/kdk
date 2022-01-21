@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import { colors } from 'quasar'
 import { KScrollArea, KAction, KStamp } from '../frame'
 import mixins from '../../mixins'
 
