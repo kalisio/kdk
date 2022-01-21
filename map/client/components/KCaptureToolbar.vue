@@ -105,7 +105,7 @@ export default {
       // Retrieve the extension
       const bbox = this.kActivity.getContextParameters('view')
       // Setup the request url options
-      const endpoint = this.$config('gateway') + '/capture'
+      const endpoint = this.$store.get('capabilities.api.gateway') + '/capture'
       const options = {
         method: 'POST',
         mode: 'cors',
