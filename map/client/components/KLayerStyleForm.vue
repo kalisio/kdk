@@ -707,8 +707,8 @@ export default {
         'cesium.isVisible': this.isVisible,
         isSelectable: this.isSelectable
       }
-      if (this.hasMinZoom) values['leaflet.minZoom'] = this.minZoom
-      if (this.hasMaxZoom) values['leaflet.maxZoom'] = this.maxZoom
+      values['leaflet.minZoom'] = (this.hasMinZoom ? this.minZoom : false)
+      values['leaflet.maxZoom'] = (this.hasMaxZoom ? this.maxZoom : false)
       if (this.hasOpacity) values['leaflet.opacity'] = this.opacity
       return values
     },
