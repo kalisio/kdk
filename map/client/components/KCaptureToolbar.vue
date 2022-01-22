@@ -96,12 +96,13 @@ export default {
     },
     async capture () {
       // Retrieve the layers
-      const layers = []
+      const layers = this.kActivity.getContextParameters('layers').layers
+      /*const layers = []
       const contextLayers = this.kActivity.getContextParameters('layers').layers
       _.forEach(contextLayers, layer => {
         const isVisibleByDefaut = _.get(this.kActivity.layers[layer], 'leaflet.isVisible', false)
         if (!isVisibleByDefaut) layers.push(layer)
-      })
+      })*/
       // Retrieve the extension
       const bbox = this.kActivity.getContextParameters('view')
       // Setup the request url options
