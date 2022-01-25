@@ -23,7 +23,7 @@ export function readGEOJSON (file, options) {
         if (name) {
           const crs = name.toLowerCase()
           const allowedCrs = [ 'epsg:4326', 'urn:ogc:def:crs:OGC:1.3:CRS84', 'urn:ogc:def:crs:EPSG::4326']
-          const isCrsValid = _.some(allowedCrs, (allowrdCrs) => { return crs.toLowerCase() === crs })
+          const isCrsValid = _.some(allowedCrs, (allowrdCrs) => { return allowrdCrs.toLowerCase() === crs })
           if (!isCrsValid) {
             reject(new Error(i18next.t('errors.INVALID_GEOJSON_CRS', { file: file.name }), { errors: `Invalid CRS ${name}` }))
             return
