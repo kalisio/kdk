@@ -13,7 +13,6 @@ export const Reader = {
     const fileExtension = path.extname(file.name)
     const reader = this.readers[fileExtension]
     if (reader) {
-      console.log(reader)
       Loading.show({ message: i18next.t('reader.READING_FILE', { file: file.name }) })
       try {
         const content = await reader(file, options)
