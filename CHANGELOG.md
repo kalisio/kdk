@@ -1,41 +1,13 @@
 # Changelog
 
-## [Unreleased](https://github.com/kalisio/kdk/tree/HEAD)
-
-[Full Changelog](https://github.com/kalisio/kdk/compare/v1.5.1...HEAD)
-
-**Merged pull requests:**
-
-- chore\(deps\): bump follow-redirects from 1.11.0 to 1.14.7 in /docs [\#514](https://github.com/kalisio/kdk/pull/514) ([dependabot[bot]](https://github.com/apps/dependabot))
-
 ## [v1.5.1](https://github.com/kalisio/kdk/tree/v1.5.1) (2022-01-27)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.5.0...v1.5.1)
 
-**Implemented enhancements:**
-
-- Provide a common ScrollArea component [\#526](https://github.com/kalisio/kdk/issues/526)
-- Display a spinner when reading file [\#525](https://github.com/kalisio/kdk/issues/525)
-- Allow to open the url of a text field [\#519](https://github.com/kalisio/kdk/issues/519)
-- Allow authorisations to be set by name [\#516](https://github.com/kalisio/kdk/issues/516)
-- Unify min/max zoom on tiled and non-tiled layers [\#249](https://github.com/kalisio/kdk/issues/249)
-
 **Fixed bugs:**
 
-- dropFileInput element is not removed when switching to another activity [\#535](https://github.com/kalisio/kdk/issues/535)
-- Missing default background layer when capturing the screen [\#534](https://github.com/kalisio/kdk/issues/534)
-- The computed url to access the Kapture service is incorrect [\#532](https://github.com/kalisio/kdk/issues/532)
-- Impossible to remove min/max zoom levels once edited in the style [\#531](https://github.com/kalisio/kdk/issues/531)
-- min/max zoom level does not work on internal feature layers [\#529](https://github.com/kalisio/kdk/issues/529)
-- Authorise hook does not throw a forbidden error on find/patch/update/remove multiple items [\#528](https://github.com/kalisio/kdk/issues/528)
+- Station properties lost when a measure is available [\#510](https://github.com/kalisio/kdk/issues/510)
 - Unable to install latest geoman version \(2.11.4\) [\#521](https://github.com/kalisio/kdk/issues/521)
-- Mapillary widget is not resized when switching to fullscreen  [\#520](https://github.com/kalisio/kdk/issues/520)
-- Geojson import is failing if the linter found an old-style crs  [\#518](https://github.com/kalisio/kdk/issues/518)
-- Scale-dependent visibility can't be reset + spelling mistake [\#398](https://github.com/kalisio/kdk/issues/398)
-
-**Closed issues:**
-
-- Improve webhook with bearer token and processing functions [\#524](https://github.com/kalisio/kdk/issues/524)
 
 ## [v1.5.0](https://github.com/kalisio/kdk/tree/v1.5.0) (2022-01-07)
 
@@ -57,7 +29,6 @@
 - Editing layer style : Marker color selector won't preselect the current color [\#502](https://github.com/kalisio/kdk/issues/502)
 - Edit layer style : Adding space in Tooltip between text and drop menu [\#501](https://github.com/kalisio/kdk/issues/501)
 - None of Popup, Tooltip and Information box display option working in style editor [\#499](https://github.com/kalisio/kdk/issues/499)
-- Station properties lost when a measure is available [\#510](https://github.com/kalisio/kdk/issues/510)
 
 **Merged pull requests:**
 
