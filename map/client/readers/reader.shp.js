@@ -3,7 +3,6 @@ import path from 'path'
 import logger from 'loglevel'
 import i18next from 'i18next'
 import shp from 'shpjs'
-import { features } from 'process'
 
 export const SHPReader = {
   async read (files, options) {
@@ -11,7 +10,7 @@ export const SHPReader = {
       logger.info('invlaid \'files\' arguments')
       return
     }
-    let promises = []
+    const promises = []
     const shpFile = files[0]
     promises.push(new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -78,6 +77,6 @@ export const SHPReader = {
     return geoJson
   },
   getAdditionalFiles () {
-    return [ '.dbf', '.prj', '.shx', '.cpg' ]
+    return ['.dbf', '.prj', '.shx', '.cpg']
   }
 }

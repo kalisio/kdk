@@ -242,7 +242,7 @@ export function createWebhook (path, app, options = {}) {
       if (config) {
         try {
           // Token is in header or payload
-          const header = req.headers['authorization']
+          const header = req.headers.authorization
           let accessToken
           if (header) {
             // Should be of the form: 'Bearer xxx'

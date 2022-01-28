@@ -4,12 +4,12 @@ import { gpx } from '@tmcw/togeojson'
 
 export const GPXReader = {
   read (files, options) {
-    if (files.length != 1) {
+    if (files.length !== 1) {
       logger.debug('invlaid \'fields\' arguments')
       return
     }
     const file = files[0]
-    logger.debug(`reading GPX file ${file.name}`)    
+    logger.debug(`reading GPX file ${file.name}`)
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onloadend = () => {

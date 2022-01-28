@@ -1,9 +1,9 @@
 <template>
   <q-scroll-area
     id="scroll-area"
-    :style="innerStyle" 
-    :thumb-style="thumbStyle" 
-    :bar-style="barStyle" 
+    :style="innerStyle"
+    :thumb-style="thumbStyle"
+    :bar-style="barStyle"
     @scroll="onScrolled"
   >
     <!-- content -->
@@ -48,7 +48,7 @@ export default {
     }
   },
   methods: {
-    onScrolled (info) { 
+    onScrolled (info) {
       this.height = Math.min(info.verticalSize, this.maxHeight)
     }
   }

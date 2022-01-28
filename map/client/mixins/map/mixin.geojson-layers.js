@@ -207,7 +207,7 @@ export default {
     },
     processClusterLayerOptions (options) {
       const leafletOptions = options.leaflet || options
-      let clusterOptions = Object.assign({ type: 'markerClusterGroup' }, leafletOptions.cluster)
+      const clusterOptions = Object.assign({ type: 'markerClusterGroup' }, leafletOptions.cluster)
       // Transfer pane if any
       if (leafletOptions.pane) clusterOptions.clusterPane = leafletOptions.pane
       leafletOptions.container = this.createLeafletLayer(clusterOptions)

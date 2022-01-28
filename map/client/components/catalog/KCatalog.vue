@@ -67,16 +67,16 @@ export default {
   computed: {
     innerStyle () {
       const screenHeight = this.$q.screen.height
-      this.scrollAreaMaxHeight = screenHeight * .75 // 75vh
+      this.scrollAreaMaxHeight = screenHeight * 0.75 // 75vh
       let width = 420
       if (this.$q.screen.lt.sm) {
-        this.scrollAreaMaxHeight = screenHeight * .60
+        this.scrollAreaMaxHeight = screenHeight * 0.60
         width = 300
       } else if (this.$q.screen.lt.md) {
-        this.scrollAreaMaxHeight = screenHeight * .65
+        this.scrollAreaMaxHeight = screenHeight * 0.65
         width = 340
       } else if (this.$q.screen.lt.lg) {
-        this.scrollAreaMaxHeight = screenHeight * .70
+        this.scrollAreaMaxHeight = screenHeight * 0.70
         width = 380
       }
       return `height: ${this.scrollAreaMaxHeight}px; width: ${width}px`
@@ -146,9 +146,9 @@ export default {
   },
   beforeCreate () {
     // Load the required components
-    this.$options.components['k-scroll-area'] = this.$load('frame/KScrollArea')  
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')  
-    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')  
+    this.$options.components['k-scroll-area'] = this.$load('frame/KScrollArea')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
   },
   created () {
     // Categorize layers

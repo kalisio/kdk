@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { KModal , KScrollArea } from '../frame'
+import { KModal, KScrollArea } from '../frame'
 import { KView } from '../form'
 import mixins from '../../mixins'
 
@@ -22,7 +22,7 @@ export default {
     KModal,
     KScrollArea,
     KView
-  },  
+  },
   mixins: [
     mixins.baseViewer,
     mixins.baseModal,

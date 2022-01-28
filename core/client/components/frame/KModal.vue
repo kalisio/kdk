@@ -12,26 +12,26 @@
         'q-pa-sm': $q.screen.gt.xs,
         'q-pa-xs': $q.screen.lt.sm
       }"
-      :style="innerStyle">   
+      :style="innerStyle">
       <!--
          Header section
        -->
-      <div id ="modal-header" 
+      <div id ="modal-header"
         class="row full-width justify-between items-center"
         v-bind:class="{'q-pa-md': $q.screen.gt.xs, 'q-pa-sm': $q.screen.lt.sm }"
       >
         <q-resize-observer @resize="onHeaderResized" />
         <span class="ellipsis text-h6" v-html="title" />
-        <k-panel 
-          id="modal-toolbar" 
-          :content="toolbar" 
+        <k-panel
+          id="modal-toolbar"
+          :content="toolbar"
           v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
       </div>
       <!--
         Content section
        -->
-      <div id="modal-content" 
-        class="col" 
+      <div id="modal-content"
+        class="col"
         v-bind:class="{'q-pa-sm': $q.screen.gt.xs, 'q-pa-xs': $q.screen.lt.sm }"
       >
         <slot name="modal-content">
@@ -43,7 +43,7 @@
       <!--
         Footer section
        -->
-      <div id="modal-footer" v-if="buttons" 
+      <div id="modal-footer" v-if="buttons"
         class="q-pa-md row full-width justify-end"
         v-bind:class="{'q-pa-md': $q.screen.gt.xs, 'q-pa-sm': $q.screen.lt.sm }"
       >
@@ -93,7 +93,7 @@ export default {
   computed: {
     innerStyle () {
       const screenHeight = this.$q.screen.height
-      const modalMaxHeight = this.maximized ?  screenHeight : 0.8 * screenHeight
+      const modalMaxHeight = this.maximized ? screenHeight : 0.8 * screenHeight
       // take into account the header and footer height
       this.scrollAreaMaxHeight = modalMaxHeight - this.headerHeight - this.footerHeight
       // take into account overall padding

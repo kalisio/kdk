@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { KModal , KScrollArea } from '../frame'
+import { KModal, KScrollArea } from '../frame'
 import { KForm } from '../form'
 import mixins from '../../mixins'
 

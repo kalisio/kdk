@@ -310,7 +310,7 @@ export default {
     },
     async addGeoJsonLayer (layerSpec, geoJson) {
       // Check wther the geoJson content is a valid geoJson
-      if(geoJson.type !== 'FeatureCollection' && geoJson.type !== 'Feature') {
+      if (geoJson.type !== 'FeatureCollection' && geoJson.type !== 'Feature') {
         logger.error('invalid geoJson content')
         return
       }
@@ -334,7 +334,7 @@ export default {
         layerSpec.schema = { name: layerSpec.name, content: schema }
       }
       if (!layerSpec.featureId) {
-        if (geoJson.type === 'FeatureCollection') _.forEach(geoJson.features, feature => feature._id = uid().toString())
+        if (geoJson.type === 'FeatureCollection') _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
         else geoJson._id = uid().toString()
       }
       // Create an empty layer used as a container

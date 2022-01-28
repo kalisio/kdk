@@ -4,12 +4,12 @@ import Papa from 'papaparse'
 
 export const CSVReader = {
   read (files, options) {
-    if (files.length != 1) {
+    if (files.length !== 1) {
       logger.debug('invlaid \'fields\' arguments')
       return
     }
     const file = files[0]
-    logger.debug(`reading CSV file ${file.name}`)   
+    logger.debug(`reading CSV file ${file.name}`)
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onloadend = () => {

@@ -2,7 +2,7 @@ import path from 'path'
 import i18next from 'i18next'
 import { Events } from './events'
 import { Loading } from 'quasar'
-import _, { add } from 'lodash'
+import _ from 'lodash'
 
 // Export singleton
 export const Reader = {
@@ -25,8 +25,7 @@ export const Reader = {
         reader = _.find(this.readers, reader => reader.getAdditionalFiles().includes(fileExt))
         if (reader) {
           additionnalFiles.push({ reader: reader.mimeType, file })
-        }
-        else {
+        } else {
           const error = { message: i18next.t('errors.UNSUPPORTED_FILE_FORMAT', { file: file.name }) }
           Events.$emit('error', error)
         }
@@ -34,7 +33,7 @@ export const Reader = {
     }
     // process the additional files
     _.forEach(additionnalFiles, additionnalFile => {
-      const group = _.find(acceptedFiles, acceptedFile => acceptedFile.reader === additionnalFile.reader )
+      const group = _.find(acceptedFiles, acceptedFile => acceptedFile.reader === additionnalFile.reader)
       if (group) group.files.push(additionnalFile.file)
       else {
         const error = { message: i18next.t('errors.UNSUPPORTED_FILE_FORMAT', { file: additionnalFile.name }) }
