@@ -153,12 +153,9 @@ export default {
     },
     setupAvailableRunTimes () {
       this.runTimes = []
-      // FIXME: to be used when all issues are correctly fixed in weacast
-
-      /*
       const runTime = this.probedLocation.runTime
-
       this.probedVariables.forEach(variable => {
+        if (!variable.runTimes) return
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
 
@@ -166,7 +163,6 @@ export default {
       })
       // Make union of all available run times
       this.runTimes = _.union(...this.runTimes).map(time => moment.utc(time)).sort((a, b) => a - b)
-      */
     },
     setupAvailableDatasets () {
       this.datasets = []
@@ -185,7 +181,7 @@ export default {
           // Build data structure as expected by visualisation
           let values = properties[name].map((value, index) => ({ x: time[name][index], y: value }))
           // Keep only selected value if multiple are provided for the same time (eg different forecasts)
-          if (!_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
+          if (variable.runTimes && !_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
             values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
           } else values = _.uniqBy(values, 'x')
           // Then transform to date object as expected by visualisation
