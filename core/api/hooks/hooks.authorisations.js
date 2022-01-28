@@ -208,8 +208,12 @@ export async function authorise (hook) {
           }, {})
           _.merge(hook.params.query, dbQuery)
         } else {
-          debug('Resource access not granted')
-          throw new Forbidden(`You are not allowed to perform ${operation} operation on ${resourceType}`)
+          if (operation === 'find') { // You don't have right to read any items but you have access to the service so the result is empty
+            hook.result = (!_.get(hook, 'params.paginate', true) ? [] : { total: 0, skip: 0, data: [] })
+          } else { // You don't have the right to update/patch/remove any items so any tentative should throw
+            debug('Resource access not granted')
+            throw new Forbidden(`You are not allowed to perform ${operation} operation on ${resourceType}`)
+          }
         }
       }
       debug('Resource access granted')
