@@ -1,15 +1,17 @@
-import path from 'path'
+import _ from 'lodash'
 import { Reader } from '../../../../core/client'
 
 export default {
   methods: {
-    async importFiles (files) {
-      for (let i = 0; i < files.length; ++i) {
-        const file = files.item(i)
+    async importFiles (filelist) {
+      const acceptedFiles = await Reader.filter(filelist)
+      for (let i = 0; i < acceptedFiles.length; i++) {
+        const file = acceptedFiles[i]
         try {
           const content = await Reader.read(file)
-          const name = path.basename(file.name, path.extname(file.name))
-          await this.addGeoJsonLayer({ name, description: file.name }, content)
+          const name = file.name
+          const description = _.join(_.map(file.files, subfile => subfile.name), ',')
+          await this.addGeoJsonLayer({ name, description }, content)
         } catch (error) {
           // nothing to do
         }

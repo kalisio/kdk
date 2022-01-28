@@ -4,7 +4,7 @@ import memory from 'feathers-memory'
 import { Platform } from 'quasar'
 import { Store, Reader, utils as kCoreUtils } from '../../core/client'
 import { Geolocation } from './geolocation'
-import { readGEOJSON, readKML, readGPX } from './readers'
+import { GeoJSONReader, KMLReader, GPXReader, SHPReader } from './readers'
 
 function siftMatcher (originalQuery) {
   // Filter out specific operators others than the reserved ones (starting by $),
@@ -34,9 +34,10 @@ export default function init () {
 
   // Initialize singletons that might be used globally first
   Geolocation.initialize()
-  Reader.register('.geojson', readGEOJSON)
-  Reader.register('.kml', readKML)
-  Reader.register('.gpx', readGPX)
+  Reader.register('.geojson', GeoJSONReader)
+  Reader.register('.kml', KMLReader)
+  Reader.register('.gpx', GPXReader)
+  Reader.register('.shp', SHPReader)
 
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models

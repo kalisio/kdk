@@ -54,12 +54,19 @@ export default {
     },
     async onFileChanged () {
       if (this.file) {
-        try {
-          const content = await Reader.read(this.file)
-          this.model = { name: this.file.name, content }
-          this.onChanged()
-        } catch (error) {
-          this.error = error
+        const acceptedFiles = await Reader.filter([this.file])
+        if (acceptedFiles.length === 1) {
+          const file = acceptedFiles[0]
+          try {
+            const content = await Reader.read(file)
+            this.model = { name: this.file.name, content }
+            this.onChanged()
+          } catch (error) {
+            this.error = error
+            this.model = this.emptyModel()
+          }
+        } else {
+          this.error = 'KFileField.INVALID_FILE_TYPE'
           this.model = this.emptyModel()
         }
       }

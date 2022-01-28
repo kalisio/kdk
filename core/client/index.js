@@ -11,7 +11,7 @@ import services from './services'
 import * as utils from './utils'
 import * as mixins from './mixins'
 import * as hooks from './hooks'
-import { readJSON, readCSV } from './readers'
+import { CSVReader, JSONReader } from './readers'
 
 // We faced a bug in babel so that transform-runtime with export * from 'x' generates import statements in transpiled code
 // Tracked here : https://github.com/babel/babel/issues/2877
@@ -70,8 +70,8 @@ export default function init () {
   })
 
   // Register default readers
-  Reader.register('.json', readJSON)
-  Reader.register('.csv', readCSV)
+  Reader.register('.json', JSONReader)
+  Reader.register('.csv', CSVReader)
 
   // -----------------------------------------------------------------------
   // | After this we should only have specific cordova initialisation code |
