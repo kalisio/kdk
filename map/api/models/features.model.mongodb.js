@@ -6,4 +6,7 @@ module.exports = function (app, options) {
   if (options.featureId) {
     options.Model.createIndex({ ['properties.' + options.featureId]: 1 })
   }
+  if (options.expireAfter || options.ttl) {
+    options.Model.createIndex({ time: 1 }, { expireAfterSeconds: options.expireAfter || options.ttl })
+  }
 }
