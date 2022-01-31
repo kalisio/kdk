@@ -25,7 +25,7 @@ export async function goToRegisterScreen (page) {
   debug('Register screen ready')
 }
 
-export async function register (page, user, wait = 5000) {
+export async function register (page, user, wait = 15000) {
   await type(page, '#name-field', user.name)
   await type(page, '#email-field', user.email)
   await type(page, '#password-field', user.password)

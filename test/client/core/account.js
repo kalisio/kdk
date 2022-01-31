@@ -38,7 +38,7 @@ export async function updateAccountEmail (page, password, email, wait = 5000) {
   await click(page, 'button', wait)
 }
 
-export async function deleteAccount (page, name, wait = 5000) {
+export async function deleteAccount (page, name, wait = 10000) {
   await manageAccount(page, 'danger-zone')
   await click(page, '#block-action')
   await type(page, '.q-dialog input', name)
