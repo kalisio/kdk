@@ -21,7 +21,7 @@ export default {
   mounted () {
     this.$on('map-ready', () => {
       // Create a dummy dropFileInput element to enable puppeteer
-      const container = document.getElementById('map')
+      const container = this.$refs.map
       const dropFileInput = document.createElement('input')
       dropFileInput.setAttribute('id', 'dropFileInput')
       dropFileInput.type = 'file'
