@@ -50,6 +50,8 @@ If you want to debug replicas you can use the following environment variables to
 
 For the backend run one instance with `$ yarn dev` and the other one with `$ yarn dev:replica` (this will use another port for the Node.js debugger on the second instance and avoid conflict).
 
+Look at this [tutorial](https://washamdev.com/debug-a-website-in-ios-safari-on-windows/) will you need to debug the app in Safari from a Windows developmen environment.
+
 ## Cordova wrapper
 
 [Quasar guide](https://quasar.dev/quasar-cli/developing-cordova-apps/introduction) might help.
