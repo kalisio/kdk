@@ -102,29 +102,21 @@ export default {
           await this.loadGeoJson(dataSource, this.getProbeFeatures(options), cesiumOptions)
         }
         // Then get last available measures
-        // Update only the first time or when required according to data update interval
-        if (!dataSource.lastUpdateTime || !this.shouldSkipFeaturesUpdate(dataSource.lastUpdateTime, options)) {
-          dataSource.lastUpdateTime = Time.getCurrentTime().clone()
-          const measureSource = new Cesium.GeoJsonDataSource()
-          await this.loadGeoJson(measureSource, this.getFeatures(options), cesiumOptions)
-          // Then merge with probes
-          const probes = dataSource.entities.values
-          for (let i = 0; i < probes.length; i++) {
-            const probe = probes[i]
-            const measure = measureSource.entities.getById(probe.id)
-            if (measure) {
-              probe.properties = measure.properties
-              probe.description = measure.description
-            }
+        const measureSource = new Cesium.GeoJsonDataSource()
+        await this.loadGeoJson(measureSource, this.getFeatures(options), cesiumOptions)
+        // Then merge with probes
+        const probes = dataSource.entities.values
+        for (let i = 0; i < probes.length; i++) {
+          const probe = probes[i]
+          const measure = measureSource.entities.getById(probe.id)
+          if (measure) {
+            probe.properties = measure.properties
+            probe.description = measure.description
           }
         }
       } else if (options.service) { // Check for feature service layers only, in this case update in place
         // If no probe reference, nothing to be initialized
-        // Update only the first time or when required according to data update interval
-        if (!dataSource.lastUpdateTime || !this.shouldSkipFeaturesUpdate(dataSource.lastUpdateTime, options)) {
-          dataSource.lastUpdateTime = Time.getCurrentTime().clone()
-          await this.loadGeoJson(dataSource, this.getFeatures(options), cesiumOptions)
-        }
+        await this.loadGeoJson(dataSource, this.getFeatures(options), cesiumOptions)
       } else if (geoJson) {
         await this.loadGeoJson(dataSource, geoJson, cesiumOptions)
       } else if (sourceTemplate) {
@@ -260,8 +252,11 @@ export default {
       geoJsonlayers.forEach(async geoJsonlayer => {
         // Retrieve the layer
         const dataSource = this.getCesiumLayerByName(geoJsonlayer.name)
-        // Then update
-        dataSource.updateGeoJson()
+        // Update only the first time or when required according to data update interval
+        if (!dataSource.lastUpdateTime || !this.shouldSkipFeaturesUpdate(dataSource.lastUpdateTime, geoJsonlayer)) {
+          dataSource.lastUpdateTime = Time.getCurrentTime().clone()
+          dataSource.updateGeoJson()
+        }
       })
     }
   },

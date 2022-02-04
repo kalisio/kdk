@@ -51,7 +51,7 @@ export default {
       if (!interval) return true
       const now = Time.getCurrentTime()
       // If query interval has elapsed since last update we need to update again
-      return now.isSameOrAfter(lastUpdateTime.clone().add(interval))
+      return now.isSameOrBefore(lastUpdateTime.clone().add(interval))
     },
     async getProbeFeatures (options) {
       // Any base query to process ?

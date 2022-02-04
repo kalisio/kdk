@@ -124,7 +124,6 @@ export default {
         } else {
           leafletOptions.removeMissing = !options.probeService
           let initialized = !options.probeService // If no probe reference, nothing to be initialized
-          let lastUpdateTime
           _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
             // If the probe location is given by another service use it on initialization
             if (!initialized) {
@@ -137,11 +136,8 @@ export default {
               }
             }
             try {
-              // Update only the first time or when required according to data update interval
-              if (!lastUpdateTime || !this.shouldSkipFeaturesUpdate(lastUpdateTime, options)) {
-                lastUpdateTime = Time.getCurrentTime().clone()
-                successCallback(await this.getFeatures(options))
-              }
+              // Then update features
+              successCallback(await this.getFeatures(options))
             } catch (error) {
               errorCallback(error)
             }
@@ -380,9 +376,15 @@ export default {
       geoJsonlayers.forEach(async geoJsonlayer => {
         // Retrieve the layer
         const layer = this.getLeafletLayerByName(geoJsonlayer.name)
-        // Then update
-        if (layer.tiledLayer) layer.tiledLayer.redraw()
-        else layer.update()
+        // Update only the first time or when required according to data update interval
+        if (!layer.lastUpdateTime || !this.shouldSkipFeaturesUpdate(layer.lastUpdateTime, geoJsonlayer)) {
+          layer.lastUpdateTime = Time.getCurrentTime().clone()
+          if (layer.tiledLayer) {
+            layer.tiledLayer.redraw()
+          } else {
+            layer.update()
+          }
+        }
       })
     }
   },
