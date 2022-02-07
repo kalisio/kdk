@@ -14,7 +14,9 @@ export default function (name, api, options) {
     async get (id) {
       const data = {}
       _.forOwn(mapping, (value, key) => {
-        _.set(data, key, Store.get(value))
+        if (value) {
+          _.set(data, key, Store.get(value))
+        }
       })
       return data
     },
@@ -22,7 +24,7 @@ export default function (name, api, options) {
     async patch (id, data) {
       const previousRootValues = rootPaths.map(rootPath => Store.get(rootPath))
       _.forOwn(data, (value, key) => {
-        if (_.has(mapping, key)) {
+        if (_.get(mapping, key)) {
           Store.set(mapping[key], value)
         }
       })
@@ -36,7 +38,7 @@ export default function (name, api, options) {
     saveSettings () {
       const data = {}
       _.forOwn(mapping, (value, key) => {
-        if (Store.has(value)) {
+        if (value && Store.has(value)) {
           _.set(data, key, Store.get(value))
         }
       })
@@ -48,7 +50,7 @@ export default function (name, api, options) {
       if (!settings) return
       settings = JSON.parse(settings)
       _.forOwn(mapping, (value, key) => {
-        if (_.has(settings, key)) {
+        if (value && _.has(settings, key)) {
           Store.set(value, _.get(settings, key))
         }
       })
