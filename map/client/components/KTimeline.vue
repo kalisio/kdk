@@ -181,14 +181,11 @@ export default {
     startTimeLoop () {
       this.setTime(moment.utc())
       this.timer = setInterval(() => {
-        const now = moment.utc()
-        if (!this.time.isSame(now, 'minute')) {
-          this.time = now
-          this.$events.$off('time-current-time-changed', this.onTimeChanged)
-          Time.setCurrentTime(this.time)
-          this.$events.$on('time-current-time-changed', this.onTimeChanged)
-        }
-      }, 15 * 1000)
+        this.time = moment.utc()
+        this.$events.$off('time-current-time-changed', this.onTimeChanged)
+        Time.setCurrentTime(this.time)
+        this.$events.$on('time-current-time-changed', this.onTimeChanged)
+      }, 1000 * this.timeSettings.interval)
     },
     stopTimeLoop () {
       clearInterval(this.timer)

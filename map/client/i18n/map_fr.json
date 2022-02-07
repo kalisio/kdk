@@ -229,6 +229,7 @@
     "LOCATION_FORMAT_HELPER": "<a target='_blank' href='https://github.com/nerik/formatcoords#formatting'>&#x1F6C8;</a>",
     "TIMELINE_SETTINGS": "Paramètrage du sélecteur temporel",
     "TIMELINE_STEP": "Pas du sélécteur temporel, en minutes",
+    "TIMELINE_INTERVAL": "Fréquence de rafraichissement des données en temps-réel",
     "TIMESERIES_SETTINGS": "Paramètrage des séries temporelles",
     "TIMESERIES_SPAN": "Intervalle des séries temporelles, en heures"
   },

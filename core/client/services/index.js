@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import LocalSettingsService from './local-settings.service'
 import config from 'config'
 
@@ -18,7 +19,7 @@ export default function init () {
   api.declareService('devices')
 
   // Setup service for settings edition
-  api.createService('settings', Object.assign({
+  api.createService('settings', _.merge(config.settings || {}, {
     service: LocalSettingsService,
     propertyMapping: {
       shortTime: 'time.format.time.short',
@@ -29,10 +30,11 @@ export default function init () {
       longYear: 'time.format.year.long',
       utc: 'time.format.utc',
       timelineStep: 'time.step',
+      timelineInterval: 'time.interval',
       timeseriesSpan: 'timeseries.span',
       location: 'locationFormat',
       restoreView: 'restore.view',
       restoreLayers: 'restore.layers'
     }
-  }, config.settings || {})) // Default options can be overriden from app config
+  })) // Default options can be overriden from app config
 }

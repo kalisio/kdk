@@ -229,6 +229,7 @@
     "LOCATION_FORMAT_HELPER": "<a target='_blank' href='https://github.com/nerik/formatcoords#formatting'>&#x1F6C8;</a>",
     "TIMELINE_SETTINGS": "Timeline parameters",
     "TIMELINE_STEP": "Timeline step (in minutes)",
+    "TIMELINE_INTERVAL": "Real-time data refresh update interval",
     "TIMESERIES_SETTINGS": "Timeseries parameters",
     "TIMESERIES_SPAN": "Timeseries span (in hours)"
   },
