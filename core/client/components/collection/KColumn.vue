@@ -141,11 +141,14 @@ export default {
       }
     },
     scrollDown () {
-      const position = this.$refs.scrollArea.getScrollPosition()
-      this.$refs.scrollArea.setScrollPosition(position + this.scrollOffset, this.scrollDuration)
+      const position = this.$refs.scrollArea.getScrollPosition('vertical')
+      this.$refs.scrollArea.setScrollPosition('vertical', position + this.scrollOffset, this.scrollDuration)
     },
     resetCollection () {
-      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(0)
+      if (this.$refs.scrollArea) {
+        console.log(this.$refs.scrollArea)
+        this.$refs.scrollArea.setScrollPosition('vertical', 0)
+      }
       baseCollectionMixin.methods.resetCollection.call(this)
     }
   },
