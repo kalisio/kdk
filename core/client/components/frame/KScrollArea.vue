@@ -1,6 +1,7 @@
 <template>
   <q-scroll-area
     id="scroll-area"
+    ref="scrollArea"
     :style="innerStyle"
     :thumb-style="thumbStyle"
     :bar-style="barStyle"
@@ -50,6 +51,13 @@ export default {
   methods: {
     onScrolled (info) {
       this.height = Math.min(info.verticalSize, this.maxHeight)
+    },
+    setScrollPosition (axis, offset, duration) {
+      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(axis, offset, duration)
+    },
+    getScrollPosition (axis) {
+      if (this.$refs.scrollArea) return this.$refs.scrollArea.getScrollPosition(axis)
+      return
     }
   }
 }
