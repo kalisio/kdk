@@ -73,7 +73,7 @@ export default {
         const index = _.findIndex(units, { name: this.areaUnit })
         this.areaUnit = units[(index + 1) % units.length].name
         const geojson = this.measurementLayer ? this.measurementLayer.toGeoJSON() : this.geojsons[this.geojsons.length - 1]
-        const a = area(geojson, { units: 'kilometers' })
+        const a = area(geojson)
         this.measureValue = this.formatArea(a, 'm^2')
       }
 
