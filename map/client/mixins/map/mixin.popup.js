@@ -1,5 +1,6 @@
 import L from 'leaflet'
 import _ from 'lodash'
+import { Time, Units } from '../../../../core/client'
 import { getHtmlTable } from '../../utils'
 
 export default {
@@ -21,7 +22,7 @@ export default {
         if (!html) {
           if (popupStyle.template) {
             const compiler = popupStyle.compiler
-            html = compiler({ properties, feature, $t: this.$t })
+            html = compiler({ properties, feature, $t: this.$t, Units, Time })
           } else if (popupStyle.pick) {
             properties = _.pick(properties, popupStyle.pick)
           } else if (popupStyle.omit) {

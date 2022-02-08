@@ -71,13 +71,14 @@ export const Time = {
   getFormat () {
     return this.get().format
   },
-  format (datetime, format) {
+  format (datetime, format, options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) {
     let currentTime = this.convertToMoment(datetime)
     if (!this.getFormat().utc) {
       // Convert to local time
       currentTime = moment(currentTime.valueOf())
     }
     if (format === 'iso') return currentTime.format()
+    else if (format === 'locale') return currentTime.toDate().toLocaleString(getLocale(), options)
     // Defaults to long mode if not given
     else return currentTime.format(_.get(this.getFormat(), format, _.get(this.getFormat(), format + '.long')))
   },

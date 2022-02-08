@@ -1,4 +1,5 @@
 import L from 'leaflet'
+import { Time, Units } from '../../../../core/client'
 import _ from 'lodash'
 
 export default {
@@ -23,7 +24,7 @@ export default {
             if (html && (typeof html.toString === 'function')) html = html.toString()
           } else if (tooltipStyle.template) {
             const compiler = tooltipStyle.compiler
-            html = compiler({ properties, feature, $t: this.$t })
+            html = compiler({ properties, feature, $t: this.$t, Units, Time })
           }
         }
         if (html) {

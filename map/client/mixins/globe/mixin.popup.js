@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Time, Units } from '../../../../core/client'
 import { getTextTable } from '../../utils'
 
 export default {
@@ -21,7 +22,7 @@ export default {
           if (popupStyle.template) {
             const compiler = popupStyle.compiler
             // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
-            text = compiler({ feature: { properties }, properties, $t: this.$t })
+            text = compiler({ feature: { properties }, properties, $t: this.$t, Units, Time })
           } else if (popupStyle.pick) {
             properties = _.pick(properties, popupStyle.pick)
           } else if (popupStyle.omit) {
