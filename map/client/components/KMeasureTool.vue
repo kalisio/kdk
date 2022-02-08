@@ -18,17 +18,12 @@ import length from '@turf/length'
 import area from '@turf/area'
 import { polygon, lineString } from '@turf/helpers'
 import { getCoords, getType } from '@turf/invariant'
-import math from 'mathjs'
+import { Units } from '../../../core/client/units'
+import * as math from 'mathjs'
 
 export default {
   name: 'k-measure-tool',
   inject: ['kActivity'],
-  props: {
-    initialDistanceUnit: {
-      type: String,
-      default: 'km'
-    }
-  },
   data () {
     return {
       measureMode: 'measure-distance',
@@ -65,12 +60,21 @@ export default {
     },
     changeUnit () {
       if (this.measureMode === 'measure-distance') {
-        this.distanceUnit = this.distanceUnit === 'km' ? 'nm' : 'km'
+        const units = Units.getUnits('length')
+        // Get current unit and jump to next one
+        const index = _.findIndex(units, { name: this.distanceUnit })
+        this.distanceUnit = units[(index + 1) % units.length].name
         const geojson = this.measurementLayer ? this.measurementLayer.toGeoJSON() : this.geojsons[this.geojsons.length - 1]
         const d = length(geojson, { units: 'kilometers' })
         this.measureValue = this.formatDistance(d, 'km')
       } else {
-        return
+        const units = Units.getUnits('area')
+        // Get current unit and jump to next one
+        const index = _.findIndex(units, { name: this.areaUnit })
+        this.areaUnit = units[(index + 1) % units.length].name
+        const geojson = this.measurementLayer ? this.measurementLayer.toGeoJSON() : this.geojsons[this.geojsons.length - 1]
+        const a = area(geojson, { units: 'kilometers' })
+        this.measureValue = this.formatArea(a, 'm^2')
       }
 
       // we only need to recompute tooltips on Polygon / LineString.
@@ -258,22 +262,13 @@ export default {
     },
     */
     formatDistance (value, unit) {
-      const f = math.unit(value, unit)
-      const t = f.to(this.distanceUnit)
-      return t.format({ notation: 'fixed', precision: 3 })
+      return Units.format(value, unit, this.distanceUnit)
     },
     formatArea (value, unit) {
-      const f = math.unit(value, unit)
-      const t = f.to('km^2')
-      return t.format({ notation: 'fixed', precision: 2 }).replace('^2', '²')
+      return Units.format(value, unit, this.areaUnit)
     },
     formatAngle (value, unit) {
-      const f = math.unit(value, unit)
-      const t = f.to('deg')
-      // remap from [-180,+180[ to [0,360[
-      const j = t.toJSON()
-      const r = math.unit(j.value < 0.0 ? j.value + 360.0 : j.value, j.unit)
-      return r.format({ notation: 'fixed', precision: 2 })
+      return Units.format(value, unit, this.angleUnit)
     }
   },
   created () {
@@ -284,7 +279,9 @@ export default {
     this.measurementLayers = []
     this.geojsons = []
     this.measureValue = '--'
-    this.distanceUnit = this.initialDistanceUnit
+    this.distanceUnit = Units.getDefaultUnit('length')
+    this.areaUnit = Units.getDefaultUnit('area')
+    this.angleUnit = Units.getDefaultUnit('angle')
     this.markerSetPosBackup = L.Marker.prototype._setPos
 
     this.kActivity.map.on('pm:drawstart', this.onDrawStart)

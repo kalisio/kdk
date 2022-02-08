@@ -6,7 +6,7 @@
     <span class="k-unit-box bg-accent text-white text-caption"
       :style="colorUnitStyle"
     >
-      {{unit}}
+      {{unitSymbol}}
       <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 20]" v-if="hint">{{hint}}</q-tooltip>
     </span>
 
@@ -28,7 +28,8 @@
 
 <script>
 import _ from 'lodash'
-import math from 'mathjs'
+import * as math from 'mathjs'
+import { Units } from '../../../core/client/units'
 import { buildColorMap } from '../utils'
 
 const COLOR_STEPS = 10
@@ -47,6 +48,7 @@ export default {
     return {
       visible: false,
       unit: null,
+      unitSymbol: '',
       hint: null,
       colorMap: null,
       colors: null,
@@ -142,6 +144,8 @@ export default {
       return engineLayer.colorMap || buildColorMap(this.getColorMapDefinition(layer))
     },
     getColorLegendUnits (layer) {
+      // Can be provided at layer level or variable level,
+      // FIXME: in case of multiple variables we assume a similar unit
       return _.get(layer, 'units', _.get(layer, 'variables[0].units'))
     },
     async onColorLegendShowLayer (layer, engineLayer) {
@@ -172,6 +176,7 @@ export default {
     setColorLegend (visible, unit, hint, colorMap, colors, values, unitValues, showGradient) {
       this.visible = visible
       this.unit = unit
+      this.unitSymbol = (unit ? Units.getUnitSymbol(unit) : '')
       this.hint = hint
       this.colorMap = colorMap
       this.colors = colors
@@ -193,7 +198,15 @@ export default {
         const colorMap = this.getColorMap(this.legendLayer, this.legendEngineLayer)
         const scale = _.get(this.getColorMapDefinition(this.legendLayer), 'scale')
         const units = this.getColorLegendUnits(this.legendLayer)
-        const unit = !units || units.length === 0 ? null : units[0]
+        let unit = null
+        // If we have multiple units available try to select the default one
+        if (units && units.length > 0) {
+          // Falback to base unit
+          const baseUnit = units[0]
+          // Get default unit for this quantity instead if available
+          const defaultUnit = Units.getDefaultUnit(baseUnit)
+          unit = (units.includes(defaultUnit) ? defaultUnit : baseUnit)
+        }
         const hint = this.getColorLegendHint(units, unit, this.legendLayer.name || this.legendLayer.label)
         const [showGradient, colors, values, unitValues] =
           this.getColorLegendValues(colorMap, scale, units, unit, COLOR_STEPS)
@@ -242,7 +255,7 @@ export default {
       const unitTo = unit
 
       function valueMap (value) {
-        const unitValue = math.unit(value, unitFrom).toNumber(unitTo)
+        const unitValue = Units.convert(value, unitFrom, unitTo)
         return Math.round(unitValue, 0).toFixed(0)
       }
 

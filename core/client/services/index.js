@@ -34,7 +34,13 @@ export default function init () {
       timeseriesSpan: 'timeseries.span',
       location: 'locationFormat',
       restoreView: 'restore.view',
-      restoreLayers: 'restore.layers'
+      restoreLayers: 'restore.layers',
+      defaultLength: 'units.default.length',
+      defaultArea: 'units.default.area',
+      defaultVelocity: 'units.default.velocity',
+      defaultTemperature: 'units.default.temperature',
+      defaultAngle: 'units.default.angle',
+      defaultPrecision: 'units.default.precision'
     }
   })) // Default options can be overriden from app config
 }

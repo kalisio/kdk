@@ -142,6 +142,61 @@
         "label": "schemas.LOCATION_FORMAT_LABEL",
         "helper": "schemas.LOCATION_FORMAT_HELPER"
       }
+    },
+    "defaultLength": {
+      "type": "string",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KUnitField",
+        "label": "schemas.LENGTH_FIELD_LABEL",
+        "quantity": "length"
+      }
+    },
+    "defaultArea": {
+      "type": "string",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KUnitField",
+        "label": "schemas.AREA_FIELD_LABEL",
+        "quantity": "area"
+      }
+    },
+    "defaultVelocity": {
+      "type": "string",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KUnitField",
+        "label": "schemas.VELOCITY_FIELD_LABEL",
+        "quantity": "velocity"
+      }
+    },
+    "defaultTemperature": {
+      "type": "string",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KUnitField",
+        "label": "schemas.TEMPERATURE_FIELD_LABEL",
+        "quantity": "temperature"
+      }
+    },
+    "defaultAngle": {
+      "type": "string",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KUnitField",
+        "label": "schemas.ANGLE_FIELD_LABEL",
+        "quantity": "angle"
+      }
+    },
+    "defaultPrecision": {
+      "type": "number",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KNumberField",
+        "label": "schemas.PRECISION_FIELD_LABEL",
+        "min": 0,
+        "max": 5
+      }
     }
   },
   "required": [

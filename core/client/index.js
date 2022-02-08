@@ -3,6 +3,7 @@ import { Platform } from 'quasar'
 import { Store } from './store'
 import { Layout } from './layout'
 import { Time } from './time'
+import { Units } from './units'
 import { Reader } from './reader'
 import { Filter } from './filter'
 import { Sorter } from './sorter'
@@ -27,6 +28,7 @@ export * from './store'
 export * from './layout'
 export * from './theme'
 export * from './time'
+export * from './units'
 export * from './filter'
 export * from './reader'
 export * from './sorter'
@@ -43,6 +45,7 @@ export default function init () {
   logger.debug('Initializing core')
   // Initialize singletons that might be used globally first
   Time.initialize()
+  Units.initialize()
   // Then services
   api.configure(services)
   // Last, create the models listened by the main layout/pages components

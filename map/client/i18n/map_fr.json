@@ -25,7 +25,7 @@
       "IMPORTED_DATA_NAME": "Mes données"
     },
     "legend": {
-      "CONVERT_UNITS": "{{layer}}: convertir en {{unit}}"
+      "CONVERT_UNITS": "Cliquer pour changer d'unité"
     },
     "activity": {
       "ADD_LAYER": "Ajouter une nouvelle couche",
@@ -207,21 +207,6 @@
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Choisissez une icône pour la catégorie",
     "LAYER_CATEGORY_LAYERS_FIELD_LABEL": "Sélectionnez les couches dans cette catégorie",
     "LAYER_CATEGORY_EXCLUSIVE_FIELD_LABEL": "Rendre la sélection exclusive au sein de la catégorie",
-    "UPDATE_SETTINGS_TITLE": "Vos paramètres",
-    "TIME_FORMAT_SETTINGS": "Format de date et d'heure",
-    "TIME_FORMAT_SHORT_TIME_FIELD_LABEL": "Format d'heure abrégé",
-    "TIME_FORMAT_SHORT_TIME_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
-    "TIME_FORMAT_LONG_TIME_FIELD_LABEL": "Format d'heure complet",
-    "TIME_FORMAT_LONG_TIME_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
-    "TIME_FORMAT_SHORT_DATE_FIELD_LABEL": "Format de jour abrégé",
-    "TIME_FORMAT_SHORT_DATE_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
-    "TIME_FORMAT_LONG_DATE_FIELD_LABEL": "Format de jour complet",
-    "TIME_FORMAT_LONG_DATE_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
-    "TIME_FORMAT_SHORT_YEAR_FIELD_LABEL": "Format d'année abrégé",
-    "TIME_FORMAT_SHORT_YEAR_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
-    "TIME_FORMAT_LONG_YEAR_FIELD_LABEL": "Format d'année complet",
-    "TIME_FORMAT_LONG_YEAR_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
-    "TIME_FORMAT_UTC_FIELD_LABEL": "Mode d'affichage temporel UTC",
     "MAP_SETTINGS": "Paramètres cartographiques",
     "RESTORE_VIEW_FIELD_LABEL": "Sauvegarder l'emprise courante",
     "RESTORE_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",

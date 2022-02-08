@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import math from 'mathjs'
 import chroma from 'chroma-js'
 import config from 'config'
 import formatcoords from 'formatcoords'
@@ -10,10 +9,6 @@ export * from './leaflet/utils'
 export * from './cesium/utils'
 
 export const SelectionLayerName = uid()
-
-// Add useful units not defined by default
-math.createUnit('nm', { definition: '1852 m', aliases: ['nm', 'nmi', 'NM'] }) // nautical mile
-math.createUnit('knot', { definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts'] })
 
 // Build a color map from a JS object specification
 export function buildColorMap (options) {

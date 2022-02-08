@@ -35,6 +35,7 @@ import 'chartjs-plugin-annotation'
 import Papa from 'papaparse'
 import { getTimeInterval } from '../../utils'
 import { downloadAsBlob } from '../../../../core/client/utils'
+import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
 import { baseWidget } from '../../../../core/client/mixins'
 
@@ -174,12 +175,16 @@ export default {
       this.probedVariables.forEach((variable, index) => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
-        const unit = variable.units[0]
+        // Falback to base unit
+        const baseUnit = variable.units[0]
+        // Get default unit for this quantity instead if available
+        const defaultUnit = Units.getDefaultUnit(baseUnit)
+        const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
         const label = this.$t(variable.label) || variable.label
         // Aggregated variable available for feature ?
         if (this.hasVariable(name, properties)) {
           // Build data structure as expected by visualisation
-          let values = properties[name].map((value, index) => ({ x: time[name][index], y: value }))
+          let values = properties[name].map((value, index) => ({ x: time[name][index], y: Units.convert(value, baseUnit, unit) }))
           // Keep only selected value if multiple are provided for the same time (eg different forecasts)
           if (variable.runTimes && !_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
             values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
@@ -187,7 +192,7 @@ export default {
           // Then transform to date object as expected by visualisation
           values = values.map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
           this.datasets.push(_.merge({
-            label: `${label} (${unit})`,
+            label: `${label} (${Units.getUnitSymbol(unit)})`,
             borderColor: colors[index],
             backgroundColor: colors[index],
             data: values,
@@ -204,7 +209,11 @@ export default {
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
-        const unit = variable.units[0]
+        // Falback to base unit
+        const baseUnit = variable.units[0]
+        // Get default unit for this quantity instead if available
+        const defaultUnit = Units.getDefaultUnit(baseUnit)
+        const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
         // Variable available for feature ?
         // Check also if axis already created
         if (this.hasVariable(name, properties) && !_.find(this.yAxes, axis => axis.id === unit)) {
@@ -213,7 +222,7 @@ export default {
             position: isLeft ? 'left' : 'right',
             scaleLabel: {
               display: true,
-              labelString: unit
+              labelString: Units.getUnitSymbol(unit)
             }
           }, _.get(variable.chartjs, 'yAxis', {})))
           // Alternate axes by default

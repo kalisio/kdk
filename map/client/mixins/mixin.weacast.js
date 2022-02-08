@@ -3,6 +3,7 @@ import L from 'leaflet'
 import logger from 'loglevel'
 import moment from 'moment'
 import { Time } from '../../../core/client/time'
+import { Units } from '../../../core/client/units'
 import { getNearestTime, SelectionLayerName } from '../utils'
 
 export default {
@@ -231,25 +232,25 @@ export default {
       }
       let html = ''
       if (!_.isNil(windSpeed) && _.isFinite(windSpeed)) {
-        html += `${windSpeed.toFixed(1)} m/s`
+        html += Units.format(windSpeed, 'm/s')
         // Add related time if any
         if (!uniqTime) html += getTimeAsHtml(_.get(time, windSpeedField.replace('properties.', '')))
         html += '</br>'
       }
       if (!_.isNil(gust) && _.isFinite(gust)) {
-        html += `max ${gust.toFixed(1)} m/s`
+        html += `max ${Units.format(gust, 'm/s')}`
         // Add related time if any
         if (!uniqTime) html += getTimeAsHtml(_.get(time, gustField.replace('properties.', '')))
         html += '</br>'
       }
       if (!_.isNil(windDirection) && _.isFinite(windDirection)) {
-        html += `${windDirection.toFixed(1)} °`
+        html += Units.format(windDirection, 'deg')
         // Add related time if any
         if (!uniqTime) html += getTimeAsHtml(_.get(time, windDirectionField.replace('properties.', '')))
         html += '</br>'
       }
       if (!_.isNil(precipitations) && _.isFinite(precipitations)) {
-        html += `${precipitations.toFixed(1)} mm/h`
+        html += Units.format(precipitations, 'mm/h')
         // Add related time if any
         if (!uniqTime) html += getTimeAsHtml(_.get(time, precipitationsField.replace('properties.', '')))
         html += '</br>'
@@ -261,7 +262,7 @@ export default {
         html += '</br>'
       }
       if (!_.isNil(temperature) && _.isFinite(temperature)) {
-        html += `${temperature.toFixed(1)} °C`
+        html += Units.format(temperature, 'degC')
         // Add related time if any
         if (!uniqTime) html += getTimeAsHtml(_.get(time, temperatureField.replace('properties.', '')))
         html += '</br>'

@@ -27,9 +27,12 @@
 export default {
   name: 'k-settings-editor',
   data () {
+    let mapping = this.$api.getService('settings').getSettingsMapping()
+    // Keep only properties declared in application mapping from the default editor schema
+    // Filter also property forced to null to be discarded
+    mapping = Object.keys(mapping).filter(value => _.get(mapping, value))
     return {
-      // Keep only properties declared in application mapping from the default editor schema
-      schemaFilter: Object.keys(this.$api.getService('settings').getSettingsMapping())
+      schemaFilter: mapping
     }
   },
   methods: {
