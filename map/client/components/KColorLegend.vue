@@ -28,7 +28,6 @@
 
 <script>
 import _ from 'lodash'
-import * as math from 'mathjs'
 import { Units } from '../../../core/client/units'
 import { buildColorMap } from '../utils'
 

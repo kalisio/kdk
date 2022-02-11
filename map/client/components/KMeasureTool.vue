@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import L from 'leaflet'
 import distance from '@turf/distance'
 import bearing from '@turf/bearing'
@@ -19,7 +20,6 @@ import area from '@turf/area'
 import { polygon, lineString } from '@turf/helpers'
 import { getCoords, getType } from '@turf/invariant'
 import { Units } from '../../../core/client/units'
-import * as math from 'mathjs'
 
 export default {
   name: 'k-measure-tool',
