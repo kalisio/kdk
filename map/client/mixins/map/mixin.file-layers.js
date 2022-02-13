@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import path from 'path'
 import { Reader } from '../../../../core/client'
 
 export default {
@@ -9,7 +10,7 @@ export default {
         const file = acceptedFiles[i]
         try {
           const content = await Reader.read(file)
-          const name = file.name
+          const name = path.basename(file.name, path.extname(file.name))
           const description = _.join(_.map(file.files, subfile => subfile.name), ',')
           await this.addGeoJsonLayer({ name, description }, content)
         } catch (error) {
