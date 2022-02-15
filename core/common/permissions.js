@@ -19,26 +19,6 @@ export const RoleNames = [
   'owner'
 ]
 
-export function isSeniorRole (roleName, juniorName) {
-  return Roles[roleName] >= Roles[juniorName]
-}
-
-export function isJuniorRole (roleName, seniorName) {
-  return Roles[roleName] < Roles[seniorName]
-}
-
-export function getSeniorRoles (roleName) {
-  const seniorRoles = []
-  _.forEach(Roles, role => { if (Roles[roleName] < role) seniorRoles.push(RoleNames[role]) })
-  return seniorRoles
-}
-
-export function getJuniorRoles (roleName) {
-  const juniorRoles = []
-  _.forEach(Roles, role => { if (Roles[roleName] >= role) juniorRoles.push(RoleNames[role]) })
-  return juniorRoles
-}
-
 // Hooks that can be added to customize abilities computation
 let hooks = []
 
@@ -231,16 +211,19 @@ export function defineOrganisationAbilities (subject, can, cannot) {
             can('service', organisation._id.toString() + '/members')
             can('read', 'members', { context: organisation._id })
             can('service', organisation._id.toString() + '/tags')
+            // Tags are public
             can('read', 'tags', { context: organisation._id })
+            // Groups are private
             can('service', organisation._id.toString() + '/groups')
             can('service', organisation._id.toString() + '/storage')
             can(['read', 'create', 'remove'], 'storage', { context: organisation._id })
           }
           if (role >= Roles.manager) {
             can('update', 'members', { context: organisation._id })
-            can('update', 'tags', { context: organisation._id })
-            can('create', 'groups', { context: organisation._id })
-            can(['create', 'remove'], 'tags', { context: organisation._id })
+            // Managers can manage all groups/tags
+            can('all', 'groups', { context: organisation._id })
+            can(['create', 'remove'], 'authorisations', { resourcesService: organisation._id.toString() + '/groups', scope: 'groups' })
+            can('all', 'tags', { context: organisation._id })
             // Remove invited members
             can(['remove'], 'users', { 'sponsor.organisationId': organisation._id })
           }
@@ -256,9 +239,15 @@ export function defineGroupAbilities (subject, can, cannot) {
     if (subject.groups) {
       subject.groups.forEach(group => {
         if (group._id) {
-          // Generic rules for resources
-          defineResourceRules(subject, group, 'groups', can)
-          // No specific rules for groups
+          // Specific rules for groups
+          const role = Roles[group.permissions]
+
+          if (role >= Roles.member) {
+            can('read', 'groups', { _id: group._id })
+          }
+          if (role >= Roles.manager) {
+            can(['create', 'remove'], 'authorisations', { resource: group._id, permissions: 'member' })
+          }
         }
       })
     }
@@ -297,4 +286,24 @@ export function getRoleForGroup (user, organisationId, groupId) {
 
 export function findGroupsWithRole (user, organisationId, role) {
   return _.filter(user.groups || [], { context: organisationId, permissions: (typeof role === 'string' ? role : RoleNames[role]) })
+}
+
+export function isSeniorRole (roleName, juniorName) {
+  return Roles[roleName] >= Roles[juniorName]
+}
+
+export function isJuniorRole (roleName, seniorName) {
+  return Roles[roleName] < Roles[seniorName]
+}
+
+export function getSeniorRoles (roleName) {
+  const seniorRoles = []
+  _.forEach(Roles, role => { if (Roles[roleName] < role) seniorRoles.push(RoleNames[role]) })
+  return seniorRoles
+}
+
+export function getJuniorRoles (roleName) {
+  const juniorRoles = []
+  _.forEach(Roles, role => { if (Roles[roleName] >= role) juniorRoles.push(RoleNames[role]) })
+  return juniorRoles
 }

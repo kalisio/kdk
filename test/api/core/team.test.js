@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { getBase64DataURI } from 'dauria'
-import chai, { util, expect } from 'chai'
+import chai, { util, expect, assert } from 'chai'
 import chailint from 'chai-lint'
 import { iffElse, when } from 'feathers-hooks-common'
 import core, { kalisio, hooks } from '../../../core/api'
@@ -10,17 +10,18 @@ import { permissions } from '../../../core/common'
 
   User 2 invites User 3 in its org
   User 1 creates an org
-  User 1 adds User 2 as member
+  User 1 adds User 3 as member
   User 1 adds User 2 as manager
   User 2 creates a group
-  User 2 adds User 1 as group member
-  User 2 adds User 1 as group owner
-  User 1 removes User 2 from group
-  User 1 removes group
+  User 2 adds himself as group member
+  User 2 adds User 3 as group member
+  User 2 adds User 3 as group manager
+  User 3 removes User 2 from group
+  User 2 removes group
   User 1 creates a group and adds User 2 as group member
-  User 1 removes User 2 from org (=> and his group)
+  User 1 removes User 2 from org (=> and from his group)
   User 1 removes org (=> and his group)
-  User 2 is removed (=> and his org)
+  User 2/3 is removed (=> and his org)
 */
 describe('core:team', () => {
   let app, adminDb, server, port, // baseUrl,
@@ -51,7 +52,8 @@ describe('core:team', () => {
       if (service.name === 'groups') {
         service.hooks({
           after: {
-            create: [hooks.createGroupAuthorisations],
+            // Groups can now be created as empty because org managers can manage all groups
+            //create: [hooks.createGroupAuthorisations],
             remove: [hooks.setAsDeleted, hooks.removeGroupAuthorisations]
           }
         })
@@ -96,12 +98,14 @@ describe('core:team', () => {
     authorisationService.hooks({
       before: {
         create: [when(hook => hook.params.resource,
-          hooks.preventRemovingLastOwner('organisations'),
-          hooks.preventRemovingLastOwner('groups'))
+          hooks.preventRemovingLastOwner('organisations'))
+          // Groups can now be left as empty because org managers can manage all groups
+          //hooks.preventRemovingLastOwner('groups'))
         ],
         remove: [when(hook => hook.params.resource && !hook.params.resource.deleted,
-          hooks.preventRemovingLastOwner('organisations'),
-          hooks.preventRemovingLastOwner('groups'))
+          hooks.preventRemovingLastOwner('organisations'))
+          // Groups can now be left as empty because org managers can manage all groups
+          //hooks.preventRemovingLastOwner('groups'))
         ]
       },
       after: {
@@ -118,7 +122,8 @@ describe('core:team', () => {
 
   it('unregistered users cannot create organisations', async () => {
     try {
-      orgService.create({ name: 'test-org' }, { checkAuthorisation: true })
+      await orgService.create({ name: 'test-org' }, { checkAuthorisation: true })
+      assert.fail()
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -201,7 +206,7 @@ describe('core:team', () => {
 
   it('non-members cannot manage organisation permissions', async () => {
     try {
-      authorisationService.create({
+      await authorisationService.create({
         scope: 'organisations',
         permissions: 'member',
         subjects: user2Object._id.toString(),
@@ -212,6 +217,7 @@ describe('core:team', () => {
         user: user2Object,
         checkAuthorisation: true
       })
+      assert.fail()
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -220,7 +226,8 @@ describe('core:team', () => {
 
   it('non-members cannot access organisation storage', async () => {
     try {
-      orgStorageService.get('file.txt', { user: user2Object, checkAuthorisation: true })
+      await orgStorageService.get('file.txt', { user: user2Object, checkAuthorisation: true })
+      assert.fail()
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -231,7 +238,7 @@ describe('core:team', () => {
     const authorisation = await authorisationService.create({
       scope: 'organisations',
       permissions: 'member',
-      subjects: user2Object._id.toString(),
+      subjects: user3Object._id.toString(),
       subjectsService: 'users',
       resource: orgObject._id.toString(),
       resourcesService: 'organisations'
@@ -240,23 +247,24 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user3Object.name }, checkAuthorisation: true, user: user1Object })
     expect(users.data.length > 0).beTrue()
-    user2Object = users.data[0]
-    expect(user2Object.organisations[1].permissions).to.deep.equal('member')
+    user3Object = users.data[0]
+    expect(user3Object.organisations[1].permissions).to.deep.equal('member')
   })
   // Let enough time to process
     .timeout(5000)
 
   it('members can access organisation users', async () => {
-    const users = await orgUserService.find({ query: { 'profile.name': user1Object.name }, user: user2Object, checkAuthorisation: true })
+    const users = await orgUserService.find({ query: { 'profile.name': user1Object.name }, user: user3Object, checkAuthorisation: true })
     // Found now on the org with membership
     expect(users.data.length > 0).beTrue()
   })
 
   it('members cannot create an organisation group', async () => {
     try {
-      orgGroupService.create({ name: 'test-group' }, { user: user2Object, checkAuthorisation: true })
+      await orgGroupService.create({ name: 'test-group' }, { user: user3Object, checkAuthorisation: true })
+      assert.fail()
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -269,10 +277,10 @@ describe('core:team', () => {
     await orgStorageService.create({
       id: 'file.txt', uri: getBase64DataURI(Buffer.from('some buffered data'), 'text/plain')
     }, {
-      user: user2Object, checkAuthorisation: true
+      user: user3Object, checkAuthorisation: true
     })
-    await orgStorageService.get('file.txt', { user: user2Object, checkAuthorisation: true })
-    await orgStorageService.remove('file.txt', { user: user2Object, checkAuthorisation: true })
+    await orgStorageService.get('file.txt', { user: user3Object, checkAuthorisation: true })
+    await orgStorageService.remove('file.txt', { user: user3Object, checkAuthorisation: true })
   })
   // Let enough time to process
     .timeout(10000)
@@ -306,47 +314,20 @@ describe('core:team', () => {
     // Now we have added some documents this should have created DB for organisation
     const dbs = await adminDb.listDatabases()
     expect(dbs.databases.find(db => db.name === orgObject._id.toString())).toExist()
+    /* Now managers are not default owners of group anymore as they can manage all groups by default
     const members = await permissions.findMembersOfGroup(userService, groupObject._id, permissions.Roles.owner)
     expect(members.data.length === 1).beTrue()
     expect(members.data[0]._id.toString()).to.deep.equal(user2Object._id.toString())
+    */
   })
   // Let enough time to process
     .timeout(10000)
 
-  it('non-group owner cannot update the group', async () => {
-    try {
-      orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
-        { user: user1Object, checkAuthorisation: true })
-    } catch (error) {
-      expect(error).toExist()
-      expect(error.name).to.equal('Forbidden')
-    }
-  })
-
-  it('non-group owner cannot add members to the group', async () => {
-    try {
-      authorisationService.create({
-        scope: 'groups',
-        permissions: 'member',
-        subjects: user1Object._id.toString(),
-        subjectsService: 'users',
-        resource: groupObject._id.toString(),
-        resourcesService: orgObject._id.toString() + '/groups'
-      }, {
-        user: user1Object,
-        checkAuthorisation: true
-      })
-    } catch (error) {
-      expect(error).toExist()
-      expect(error.name).to.equal('Forbidden')
-    }
-  })
-
-  it('group owner can add members to his group', async () => {
+  it('manager can add himself to an organisation group', async () => {
     const authorisation = await authorisationService.create({
       scope: 'groups',
       permissions: 'member',
-      subjects: user1Object._id.toString(),
+      subjects: user2Object._id.toString(),
       subjectsService: 'users',
       resource: groupObject._id.toString(),
       resourcesService: orgObject._id.toString() + '/groups'
@@ -355,16 +336,69 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user2Object })
+    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user2Object })
     expect(users.data.length > 0).beTrue()
-    user1Object = users.data[0]
-    expect(user1Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
-    expect(user1Object.groups[0].permissions).to.equal('member')
+    user2Object = users.data[0]
+    expect(user2Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
+    expect(user2Object.groups[0].permissions).to.equal('member')
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner can update an organisation group', async () => {
+  it('manager can add members to an organisation group', async () => {
+    const authorisation = await authorisationService.create({
+      scope: 'groups',
+      permissions: 'member',
+      subjects: user3Object._id.toString(),
+      subjectsService: 'users',
+      resource: groupObject._id.toString(),
+      resourcesService: orgObject._id.toString() + '/groups'
+    }, {
+      user: user2Object,
+      checkAuthorisation: true
+    })
+    expect(authorisation).toExist()
+    const users = await userService.find({ query: { 'profile.name': user3Object.name }, checkAuthorisation: true, user: user2Object })
+    expect(users.data.length > 0).beTrue()
+    user3Object = users.data[0]
+    expect(user3Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
+    expect(user3Object.groups[0].permissions).to.equal('member')
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('non-group manager cannot update his group', async () => {
+    try {
+      await orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
+        { user: user3Object, checkAuthorisation: true })
+      assert.fail()
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
+  })
+
+  it('non-group manager cannot add members to his group', async () => {
+    try {
+      await authorisationService.create({
+        scope: 'groups',
+        permissions: 'member',
+        subjects: user1Object._id.toString(),
+        subjectsService: 'users',
+        resource: groupObject._id.toString(),
+        resourcesService: orgObject._id.toString() + '/groups'
+      }, {
+        user: user3Object,
+        checkAuthorisation: true
+      })
+      assert.fail()
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
+  })
+
+  it('manager can update an organisation group', async () => {
     return orgGroupService.patch(groupObject._id.toString(), { description: 'test-description' },
       { user: user2Object, checkAuthorisation: true })
   /* const groups = await orgGroupService.find({ query: { name: 'test-group' }, user: user2Object, checkAuthorisation: true })
@@ -383,30 +417,11 @@ describe('core:team', () => {
   // Let enough time to process
     .timeout(10000)
 
-  it('group owner cannot be changed to manager when alone', async () => {
-    try {
-      authorisationService.create({
-        scope: 'groups',
-        permissions: 'manager',
-        subjects: user2Object._id.toString(),
-        subjectsService: 'users',
-        resource: groupObject._id.toString(),
-        resourcesService: orgObject._id.toString() + '/groups'
-      }, {
-        user: user2Object,
-        checkAuthorisation: true
-      })
-    } catch (error) {
-      expect(error).toExist()
-      expect(error.name).to.equal('Forbidden')
-    }
-  })
-  // Let enough time to process
-    .timeout(5000)
-
+  // Groups can now be left as empty because org managers can manage all groups
+  /*
   it('group owner cannot be removed when alone', async () => {
     try {
-      authorisationService.remove(groupObject._id, {
+      await authorisationService.remove(groupObject._id, {
         query: {
           scope: 'groups',
           subjects: user2Object._id.toString(),
@@ -416,6 +431,7 @@ describe('core:team', () => {
         user: user2Object,
         checkAuthorisation: true
       })
+      assert.fail()
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')
@@ -423,12 +439,13 @@ describe('core:team', () => {
   })
   // Let enough time to process
     .timeout(5000)
+  */
 
-  it('group owner can add owners to his group', async () => {
+  it('manager can add managers to an organisation group', async () => {
     const authorisation = await authorisationService.create({
       scope: 'groups',
-      permissions: 'owner',
-      subjects: user1Object._id.toString(),
+      permissions: 'manager',
+      subjects: user3Object._id.toString(),
       subjectsService: 'users',
       resource: groupObject._id.toString(),
       resourcesService: orgObject._id.toString() + '/groups'
@@ -437,16 +454,16 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user2Object })
+    const users = await userService.find({ query: { 'profile.name': user3Object.name }, checkAuthorisation: true, user: user2Object })
     expect(users.data.length > 0).beTrue()
-    user1Object = users.data[0]
-    expect(user1Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
-    expect(user1Object.groups[0].permissions).to.equal('owner')
+    user3Object = users.data[0]
+    expect(user3Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
+    expect(user3Object.groups[0].permissions).to.equal('manager')
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner can remove group members', async () => {
+  it('group manager can remove group members', async () => {
     const authorisation = await authorisationService.remove(groupObject._id, {
       query: {
         scope: 'groups',
@@ -454,7 +471,7 @@ describe('core:team', () => {
         subjectsService: 'users',
         resourcesService: orgObject._id.toString() + '/groups'
       },
-      user: user1Object,
+      user: user3Object,
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
@@ -467,21 +484,45 @@ describe('core:team', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('group owner can remove his organisation group', async () => {
+  it('group manager cannot add group managers', async () => {
+    try {
+      await authorisationService.create({
+        scope: 'groups',
+        permissions: 'manager',
+        subjects: user2Object._id.toString(),
+        subjectsService: 'users',
+        resource: groupObject._id.toString(),
+        resourcesService: orgObject._id.toString() + '/groups'
+      }, {
+        user: user3Object,
+        checkAuthorisation: true
+      })
+      assert.fail()
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('manager can remove an organisation group', async () => {
     // Ensure we only patch relevent users when updating authorisations
     const updatedUsersCheck = (user) => {
-      expect(user.name).equal(user1Object.name)
+      expect(user.name).equal(user3Object.name)
     }
     userService.on('patched', updatedUsersCheck)
-    await orgGroupService.remove(groupObject._id, { user: user1Object, checkAuthorisation: true })
+    await orgGroupService.remove(groupObject._id, { user: user2Object, checkAuthorisation: true })
     userService.removeListener('patched', updatedUsersCheck)
-    const groups = await orgGroupService.find({ query: { name: groupObject.name }, user: user1Object, checkAuthorisation: true })
+    const groups = await orgGroupService.find({ query: { name: groupObject.name }, user: user2Object, checkAuthorisation: true })
     expect(groups.data.length === 0).beTrue()
+    /* Now managers are not default owners of group anymore as they can manage all groups by default
     const users = await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user1Object })
     expect(users.data.length > 0).beTrue()
     user1Object = users.data[0]
     // No more permission set for org groups
     expect(_.find(user1Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
+    */
   })
   // Let enough time to process
     .timeout(5000)
@@ -572,7 +613,8 @@ describe('core:team', () => {
 
   it('prevent remove user while owning organisation', async () => {
     try {
-      userService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
+      await userService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
+      assert.fail()
     } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('Forbidden')

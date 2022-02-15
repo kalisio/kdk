@@ -222,17 +222,30 @@ export default {
     },
     canJoinGroup () {
       const user = this.$store.get('user')
-      // Can add members to a group if at least manager/owner of one
+      // Organisation managers can manage all groups
+      const role = getRoleForOrganisation(user, this.contextId)
+      if (Roles[role] >= Roles.manager) return true
+      // Group managers can manage members of their own groups so
+      // can add members to a group if at least manager of one
       const groups = findGroupsWithRole(user, this.contextId, Roles.manager)
-        .concat(findGroupsWithRole(user, this.contextId, Roles.owner))
       // FIXME: we should also filter by the member groups so that if already added to all my groups we don't show the action
       return groups.length > 0
     },
     canChangeRoleInGroup (group) {
-      return this.$can('create', 'authorisations', this.item._id, { resource: group._id })
+      const user = this.$store.get('user')
+      // Organisation managers can manage all groups
+      const role = getRoleForOrganisation(user, this.contextId)
+      if (Roles[role] >= Roles.manager) return true
+      // Group managers can manage members of their own groups
+      else return this.$can('create', 'authorisations', null, { resource: group._id, permissions: 'member' })
     },
     canLeaveGroup (group) {
-      return this.$can('remove', 'authorisations', this.item._id, { resource: group._id })
+      const user = this.$store.get('user')
+      // Organisation managers can manage all groups
+      const role = getRoleForOrganisation(user, this.contextId)
+      if (Roles[role] >= Roles.manager) return true
+      // Group managers can manage members of their own groups
+      else return this.$can('remove', 'authorisations', null, { resource: group._id, permissions: 'member' })
     },
     onChangeRoleInGroup (group) {
       this.$router.push({

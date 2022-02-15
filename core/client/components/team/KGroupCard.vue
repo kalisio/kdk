@@ -47,7 +47,11 @@ export default {
   computed: {
     header () {
       const components = _.filter(this.itemActions, { scope: 'header' })
-      components.splice(0, 0, { component: 'QBadge', label: this.$t(this.memberRoleLabel), color: 'grey-7' }, { component: 'QSpace' })
+      if (this.memberRoleLabel) {
+        components.splice(0, 0, { component: 'QBadge', label: this.$t(this.memberRoleLabel), color: 'grey-7' }, { component: 'QSpace' })
+      } else {
+        components.splice(0, 0, { component: 'QSpace' })
+      }
       return components
     },
     memberRoleLabel () {
