@@ -57,7 +57,6 @@ export default {
     },
     getScrollPosition (axis) {
       if (this.$refs.scrollArea) return this.$refs.scrollArea.getScrollPosition(axis)
-      return
     }
   }
 }

@@ -35,7 +35,7 @@ export const Time = {
       },
       currentTime: now,
       step: 60, // 1H
-      interval: 60, // 1m
+      interval: 60 // 1m
     })
     this.updateTimeRangeQuery()
     // Make filter react to external changes to update the query

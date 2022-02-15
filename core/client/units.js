@@ -7,15 +7,15 @@ import { Store } from './store'
 // Default units organised by physical quantity
 // Each key is the internal mathjs "identifier" of the unit
 const length = {
-  'm': {
+  m: {
     symbol: 'units.METER_SYMBOL',
     label: 'units.METER_LABEL'
   },
-  'mi': {
+  mi: {
     symbol: 'units.MILE_SYMBOL',
     label: 'units.MILE_LABEL'
   },
-  'NM': {
+  NM: {
     symbol: 'units.NAUTICAL_MILE_SYMBOL',
     label: 'units.NAUTICAL_MILE_LABEL',
     definition: '1852 m'
@@ -30,11 +30,11 @@ const area = {
     symbol: 'units.SQUARED_KILOMETER_SYMBOL',
     label: 'units.SQUARED_KILOMETER_LABEL'
   },
-  'acre': {
+  acre: {
     symbol: 'units.ACRE_SYMBOL',
     label: 'units.ACRE_LABEL'
   },
-  'hectare': {
+  hectare: {
     symbol: 'units.HECTARE_SYMBOL',
     label: 'units.HECTARE_LABEL'
   }
@@ -47,33 +47,33 @@ const velocity = {
   'km/h': {
     symbol: 'units.KILOMETER_PER_HOUR_SYMBOL',
     label: 'units.KILOMETER_PER_HOUR_LABEL'
-  }, 
-  'kt':{
+  },
+  kt: {
     symbol: 'units.KNOT_SYMBOL',
     label: 'units.KNOT_LABEL',
     definition: '0.514444 m/s'
   }
 }
 const temperature = {
-  'degC': {
+  degC: {
     symbol: 'units.CELSIUS_SYMBOL',
     label: 'units.CELSIUS_LABEL'
   },
-  'degF': {
+  degF: {
     symbol: 'units.FAHRENHEIT_SYMBOL',
     label: 'units.FAHRENHEIT_LABEL'
   },
-  'K': {
+  K: {
     symbol: 'units.KELVIN_SYMBOL',
     label: 'units.KELVIN_LABEL'
   }
 }
 const angle = {
-  'deg': {
+  deg: {
     symbol: 'units.DEGREE_SYMBOL',
     label: 'units.DEGREE_LABEL'
   },
-  'rad': {
+  rad: {
     symbol: 'units.RADIAN_SYMBOL',
     label: 'units.RADIAN_LABEL'
   }
@@ -89,20 +89,20 @@ const quantities = {
 
 // Export singleton
 export const Units = {
-  
+
   initialize () {
     // Set the units object within the store
     Store.set('units', _.merge(config.units || {},
       quantities, {
-      default: {
-        length: 'm',
-        area: 'm^2',
-        velocity: 'm/s',
-        temperature: 'degC',
-        angle: 'deg',
-        precision: 1
-      }
-    }))
+        default: {
+          length: 'm',
+          area: 'm^2',
+          velocity: 'm/s',
+          temperature: 'degC',
+          angle: 'deg',
+          precision: 1
+        }
+      }))
     // Create units not defined by default in mathjs
     this.getQuantities().forEach(quantity => {
       const units = this.getUnits(quantity)
