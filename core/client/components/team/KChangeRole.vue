@@ -60,12 +60,8 @@ export default {
       const scope = this.getScope()
       const resourceId = this.getResourceId()
       const currentRole = _.get(_.find(this.member[scope], { _id: resourceId }), 'permissions')
-      const roles = [
-        { label: this.$t('KChangeRole.MEMBER_LABEL'), value: 'member' },
-        { label: this.$t('KChangeRole.MANAGER_LABEL'), value: 'manager' },
-        { label: this.$t('KChangeRole.OWNER_LABEL'), value: 'owner' }
-      ]
-      _.remove(roles, role => { return role.value === currentRole })
+      const roles = ['member', 'manager']
+      if (this.getScope() === 'organisations') roles.push('owner')
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/change-role#',
@@ -73,11 +69,11 @@ export default {
         properties: {
           role: {
             type: 'string',
+            default: currentRole,
             field: {
-              component: 'form/KSelectField',
+              component: 'form/KRoleField',
               label: 'KChangeRole.ROLE_FIELD_LABEL',
-              type: 'radio',
-              options: roles
+              roles
             }
           }
         },

@@ -629,9 +629,6 @@
   "KChangeRole": {
     "TITLE": "Changer le rôle de {{member}} ?",
     "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer",
-    "OWNER_LABEL": "$t(OWNER)",
-    "MANAGER_LABEL": "$t(MANAGER)",
-    "MEMBER_LABEL": "$t(MEMBER)",
     "CLOSE_ACTION": "$t(CLOSE_ACTION)",
     "UPDATE_BUTTON": "Mettre à jour"
   },

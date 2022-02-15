@@ -42,15 +42,18 @@ export default {
   mixins: [mixins.baseField],
   methods: {
     roles () {
-      return _.map(RoleNames, role => { return { label: this.$t(_.upperCase(role)), value: role } })
+      return this.roleNames ? _.map(this.roleNames, role => { return { label: this.$t(_.upperCase(role)), value: role } }) : []
     },
     emptyModel () {
-      return RoleNames[0]
+      return this.roleNames ? this.roleNames[0] : ''
     },
     isEmpty () {
       // Can't actually be
       return false
     }
+  },
+  created () {
+    this.roleNames = _.get(this.properties, 'field.roles', RoleNames)
   }
 }
 </script>
