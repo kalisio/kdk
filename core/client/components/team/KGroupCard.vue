@@ -25,7 +25,7 @@
 <script>
 import _ from 'lodash'
 import mixins from '../../mixins'
-import { findMembersOfGroup, getRoleForGroup, Roles, RoleNames } from '../../../common/permissions'
+import { findMembersOfGroup, getRoleForGroup, getRoleForOrganisation, Roles, RoleNames } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
 import { KTextArea } from '../frame'
 
@@ -56,9 +56,12 @@ export default {
     },
     memberRoleLabel () {
       const user = this.$store.get('user')
-      const role = getRoleForGroup(user, this.contextId, this.item._id)
-      if (!_.isUndefined(role)) return this.roleLabels[Roles[role]]
-      else return ''
+      // Organisation managers can manage all groups so that we do not display anything about role
+      let role = getRoleForOrganisation(user, this.contextId)
+      if (Roles[role] >= Roles.manager) return ''
+      // Otherwise the user can be member or manager of the group
+      role = getRoleForGroup(user, this.contextId, this.item._id)
+      return (!_.isUndefined(role) ? this.roleLabels[Roles[role]] : '')
     },
     dense () {
       return this.$q.screen.lt.sm
