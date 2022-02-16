@@ -105,10 +105,12 @@ export default {
       }
     }
   },
-  async created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-form'] = this.$load('form/KForm')
+  },
+  async created () {
     // Load the member
     this.member = await this.loadObject()
   }

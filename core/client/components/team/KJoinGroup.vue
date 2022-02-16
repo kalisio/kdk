@@ -42,8 +42,7 @@ export default {
     },
     schema () {
       if (this.member === null) return {}
-      const role = getRoleForOrganisation(this.member, this.contextId)
-      return {
+      let schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/join-group#',
         title: 'Join Group Form',
@@ -69,19 +68,19 @@ export default {
               component: 'form/KItemField',
               label: 'KJoinGroup.GROUP_FIELD_LABEL'
             }
-          },
-          role: {
-            type: 'string',
-            default: 'member',
-            field: {
-              component: 'form/KRoleField',
-              label: 'KJoinGroup.ROLE_FIELD_LABEL',
-              roles: role === 'manager' ? ['member'] : ['member', 'manager']
-            }
           }
         },
-        required: ['group', 'role']
+        required: ['group']
       }
+      if (this.role !== 'manager') _.set(schema, 'properties.role', {
+        type: 'string',
+        default: false,
+        field: {
+          component: 'form/KToggleField',
+          label: 'KJoinGroup.ROLE_FIELD_LABEL'
+        }
+      })
+      return schema
     }
   },
   data () {
@@ -105,7 +104,7 @@ export default {
         const authorisationService = this.$api.getService('authorisations')
         await authorisationService.create({
           scope: 'groups',
-          permissions: result.values.role,
+          permissions: _.get(result.values.role, false) ? 'manager' : 'member',
           subjects: this.objectId,
           subjectsService: this.contextId + '/members',
           resource: result.values.group._id,
@@ -122,6 +121,7 @@ export default {
   async created () {
     // Load the member
     this.member = await this.loadObject()
+    this.role = getRoleForOrganisation(this.member, this.contextId)
   }
 }
 </script>

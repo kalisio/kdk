@@ -619,7 +619,7 @@
   "KJoinGroup": {
     "TITLE": "Ajouter {{member}} à un groupe existant ?",
     "GROUP_FIELD_LABEL": "Saisissez le nom du groupe",
-    "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer",
+    "ROLE_FIELD_LABEL": "Déléguer la gestion du groupe à ce membre ?",
     "OWNER_LABEL": "$t(OWNER)",
     "MANAGER_LABEL": "$t(MANAGER)",
     "MEMBER_LABEL": "$t(MEMBER)",

@@ -232,10 +232,13 @@ export default {
       return groups.length > 0
     },
     canChangeRoleInGroup (group) {
+      const memberRole = getRoleForOrganisation(this.item, this.contextId)
+      console.log(memberRole, Roles.manager)
+      if (Roles[memberRole] === Roles.manager) return false
       const user = this.$store.get('user')
       // Organisation managers can manage all groups
-      const role = getRoleForOrganisation(user, this.contextId)
-      if (Roles[role] >= Roles.manager) return true
+      const userRole = getRoleForOrganisation(user, this.contextId)
+      if (Roles[userRole] >= Roles.manager) return true
       // Group managers can manage members of their own groups
       else return this.$can('create', 'authorisations', null, { resource: group._id, permissions: 'member' })
     },
