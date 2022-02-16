@@ -51,6 +51,7 @@ export default {
   methods: {
     onScrolled (info) {
       this.height = Math.min(info.verticalSize, this.maxHeight)
+      this.$emit('scroll', info)
     },
     setScrollPosition (axis, offset, duration) {
       if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(axis, offset, duration)
