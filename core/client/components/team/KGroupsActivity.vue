@@ -11,7 +11,7 @@
         :renderer="renderer"
         :base-query="sorter.query"
         :filter-query="filter.query"
-        :list-strategy="'smart'">
+        :list-strategy="'always'">
         <template slot="empty-section">
           <div class="absolute-center">
             <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_GRID')" />
