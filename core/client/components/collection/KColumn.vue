@@ -3,7 +3,10 @@
     <!--
       Label
      -->
-    <div v-if="label" class="full-width row justify-center text-subtitle1 q-pb-md">
+    <div v-if="label" 
+      class="full-width row justify-center text-subtitle1"
+      v-bind:class="{ 'q-pb-sm': dense, 'q-pb-md': !dense }"
+    >
       <q-chip :label="$t(label)" square color="grey-9" text-color="white" />
     </div>
     <!--
@@ -14,9 +17,15 @@
         ref="scrollArea"
         :max-height="height"
         @scroll="onScroll">
-        <div class="full-width row justify-center q-gutter-y-xs">
+        <div 
+          class="full-width row justify-center"
+          v-bind:class="{ 'q-gutter-y-xs': dense, 'q-gutter-y-sm': !dense }"
+        >
           <template v-for="item in items">
-            <div :key="item._id" class="col-12 q-pr-md">
+            <div :key="item._id" 
+              class="col-12"
+              v-bind:class="{ 'q-pr-md': dense, 'q-pr-lg': !dense }"
+            >
               <component
                 :id="item._id"
                 :service="service"
@@ -29,7 +38,10 @@
           </template>
         </div>
       </k-scroll-area>
-      <div v-if="scrollAction" class="row justify-center q-pr-md">
+      <div v-if="scrollAction" 
+        class="row justify-center"
+        v-bind:class="{ 'q-pr-md': dense, 'q-pr-lg': !dense }"
+      >
         <k-action
           id="scroll-action"
           icon="las la-angle-double-down"
@@ -101,6 +113,10 @@ export default {
     height: {
       type: Number,
       default: 300
+    },
+    dense: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
