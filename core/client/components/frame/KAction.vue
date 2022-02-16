@@ -212,9 +212,8 @@ export default {
       // Check also for translation key or already translated message
       if (this.isToggled && _.has(this.toggle, 'label')) {
         return (this.$i18n.i18next.exists(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
-      } else {
-        return (this.$i18n.i18next.exists(this.label) ? this.$t(this.label) : this.label)
       }
+      return (this.$i18n.i18next.exists(this.label) ? this.$t(this.label) : this.label)
     },
     computedIcon () {
       if (this.isToggled && _.has(this.toggle, 'icon')) return this.toggle.icon

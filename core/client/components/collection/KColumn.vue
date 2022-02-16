@@ -14,7 +14,7 @@
         ref="scrollArea"
         :max-height="height"
         @scroll="onScroll">
-        <div class="full-width row justify-center q-gutter-y-md">
+        <div class="full-width row justify-center q-gutter-y-xs">
           <template v-for="item in items">
             <div :key="item._id" class="col-12 q-pr-md">
               <component
@@ -29,7 +29,7 @@
           </template>
         </div>
       </k-scroll-area>
-      <div v-if="scrollAction" class="row justify-center  q-pr-md">
+      <div v-if="scrollAction" class="row justify-center q-pr-md">
         <k-action
           id="scroll-action"
           icon="las la-angle-double-down"
@@ -145,10 +145,7 @@ export default {
       this.$refs.scrollArea.setScrollPosition('vertical', position + this.scrollOffset, this.scrollDuration)
     },
     resetCollection () {
-      if (this.$refs.scrollArea) {
-        console.log(this.$refs.scrollArea)
-        this.$refs.scrollArea.setScrollPosition('vertical', 0)
-      }
+      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition('vertical', 0)
       baseCollectionMixin.methods.resetCollection.call(this)
     }
   },
