@@ -15,6 +15,7 @@
 
 <script>
 import _ from 'lodash'
+import { getRoleForOrganisation } from '../../../common/permissions'
 import mixins from '../../mixins'
 
 export default {
@@ -41,6 +42,7 @@ export default {
     },
     schema () {
       if (this.member === null) return {}
+      const role = getRoleForOrganisation(this.member, this.contextId)
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/join-group#',
@@ -72,14 +74,9 @@ export default {
             type: 'string',
             default: 'member',
             field: {
-              component: 'form/KSelectField',
+              component: 'form/KRoleField',
               label: 'KJoinGroup.ROLE_FIELD_LABEL',
-              type: 'radio',
-              options: [
-                { label: this.$t('KAddMember.MEMBER_LABEL'), value: 'member' },
-                { label: this.$t('KAddMember.MANAGER_LABEL'), value: 'manager' },
-                { label: this.$t('KAddMember.OWNER_LABEL'), value: 'owner' }
-              ]
+              roles: role === 'manager' ? ['member'] : ['member', 'manager']
             }
           }
         },
@@ -118,9 +115,11 @@ export default {
       }
     }
   },
-  async created () {
+  beforeCreate () {
     this.$options.components['k-modal'] = this.$load('frame/KModal')
     this.$options.components['k-form'] = this.$load('form/KForm')
+  },
+  async created () {
     // Load the member
     this.member = await this.loadObject()
   }
