@@ -37,7 +37,7 @@
         </div>
       </template>
     </div>
-    <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pb-sm">
+    <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pa-sm">
       <k-stamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" direction="horizontal" />
     </div>
     <slot name="footer" />
