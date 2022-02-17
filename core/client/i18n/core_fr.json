@@ -285,7 +285,7 @@
     "join-group": {
       "GROUP_NAME_LABEL": "Tapez <b>les premières lettres</b> du nom d'un groupe pour le sélectionner.",
       "MEMBER_ROLE_LABEL": "Choisissez le rôle de la personne au sein du groupe.",
-      "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif au groupe alors qu'un <b>gestionnaire</b> a un pouvoir d'édition et un <b>propriétaire</b> a un contrôle total (destruction).",
+      "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif au groupe alors qu'un <b>gestionnaire</b> a le pouvoir de gérer les membres du groupe (ajout/suppression).",
       "ADD_MEMBER_LABEL": "Confirmez l'ajout du membre au groupe."
     },
     "tag-member": {

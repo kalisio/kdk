@@ -282,6 +282,12 @@
       "MULTIPLE_FILE_LABEL": "Upload the CSV file listing the persons to be invited. Each person is represented by a row containing the fields <b>name</b>, <b>email</b> and <b>role</b> separated using a <b>,</b> separator.",
       "MULTIPLE_ADD_BUTTON_LABEL": "Click this button to proceed with the invitations."
     },
+    "join-group": {
+      "GROUP_NAME_LABEL": "Typing <b>the first characters</b> of a group name to make it selectable.",
+      "MEMBER_ROLE_LABEL": "Choisissez le rôle de la personne au sein du groupe.",
+      "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif au groupe alors qu'un <b>gestionnaire</b> a le pouvoir de gérer les membres du groupe (ajout/suppression).",
+      "ADD_MEMBER_LABEL": "Confirm adding the member to the group."
+    },
     "tag-member": {
       "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise using the Return key.",
       "TAG_REMOVE_LABEL": "Once added remove it using the cross.",
