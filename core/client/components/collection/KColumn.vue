@@ -40,7 +40,7 @@
       </k-scroll-area>
       <div v-if="scrollAction" 
         class="row justify-center"
-        v-bind:class="{ 'q-pr-md': dense, 'q-pr-lg': !dense }"
+        v-bind:class="{ 'q-pr-sm': dense, 'q-pr-md': !dense }"
       >
         <k-action
           id="scroll-action"

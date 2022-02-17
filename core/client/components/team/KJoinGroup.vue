@@ -15,7 +15,7 @@
 
 <script>
 import _ from 'lodash'
-import { getRoleForOrganisation } from '../../../common/permissions'
+import { Roles,   getRoleForOrganisation } from '../../../common/permissions'
 import mixins from '../../mixins'
 
 export default {
@@ -72,7 +72,7 @@ export default {
         },
         required: ['group']
       }
-      if (this.role !== 'manager') _.set(schema, 'properties.role', {
+      if (this.role === Roles.member) _.set(schema, 'properties.role', {
         type: 'string',
         default: false,
         field: {
