@@ -233,8 +233,7 @@ export default {
     },
     canChangeRoleInGroup (group) {
       const memberRole = getRoleForOrganisation(this.item, this.contextId)
-      console.log(memberRole, Roles.manager)
-      if (Roles[memberRole] === Roles.manager) return false
+      if (Roles[memberRole] >= Roles.manager) return false
       const user = this.$store.get('user')
       // Organisation managers can manage all groups
       const userRole = getRoleForOrganisation(user, this.contextId)
