@@ -13,7 +13,9 @@
     dense
     :options="options"
     @filter="onSearch"
-    @input="onSelected">
+    @input="onItemSelected"
+    @input-value="onPatternChanged"
+  >
     <!-- Search icon -->
     <template v-slot:prepend>
       <q-icon class="q-pl-xs" dense name="search" />
@@ -88,7 +90,6 @@ export default {
     },
     async onSearch (pattern, update, abort) {
       if (pattern.length < 2) {
-        this.$store.patch('filter', { pattern: '' })
         abort()
         return
       }
@@ -99,10 +100,12 @@ export default {
             return item1.value === item2.value
           })
         }
-        this.$store.patch('filter', { pattern })
       })
     },
-    onSelected (item) {
+    onPatternChanged (pattern) {
+      this.$store.patch('filter', { pattern })
+    },
+    onItemSelected (item) {
       this.options = []
       this.$refs.select.updateInputValue('')
       if (!item) this.items = []
