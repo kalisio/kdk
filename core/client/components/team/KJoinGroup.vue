@@ -15,7 +15,7 @@
 
 <script>
 import _ from 'lodash'
-import { Roles,   getRoleForOrganisation } from '../../../common/permissions'
+import { Roles, getRoleForOrganisation } from '../../../common/permissions'
 import mixins from '../../mixins'
 
 export default {
@@ -42,7 +42,7 @@ export default {
     },
     schema () {
       if (this.member === null) return {}
-      let schema = {
+      const schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/join-group#',
         title: 'Join Group Form',
@@ -72,14 +72,16 @@ export default {
         },
         required: ['group']
       }
-      if (this.role === Roles.member) _.set(schema, 'properties.role', {
-        type: 'string',
-        default: false,
-        field: {
-          component: 'form/KToggleField',
-          label: 'KJoinGroup.ROLE_FIELD_LABEL'
-        }
-      })
+      if (this.role === Roles.member) {
+        _.set(schema, 'properties.role', {
+          type: 'string',
+          default: false,
+          field: {
+            component: 'form/KToggleField',
+            label: 'KJoinGroup.ROLE_FIELD_LABEL'
+          }
+        })
+      }
       return schema
     }
   },
