@@ -53,7 +53,7 @@ describe('core:team', () => {
         service.hooks({
           after: {
             // Groups can now be created as empty because org managers can manage all groups
-            //create: [hooks.createGroupAuthorisations],
+            // create: [hooks.createGroupAuthorisations],
             remove: [hooks.setAsDeleted, hooks.removeGroupAuthorisations]
           }
         })
@@ -100,12 +100,12 @@ describe('core:team', () => {
         create: [when(hook => hook.params.resource,
           hooks.preventRemovingLastOwner('organisations'))
           // Groups can now be left as empty because org managers can manage all groups
-          //hooks.preventRemovingLastOwner('groups'))
+          // hooks.preventRemovingLastOwner('groups'))
         ],
         remove: [when(hook => hook.params.resource && !hook.params.resource.deleted,
           hooks.preventRemovingLastOwner('organisations'))
           // Groups can now be left as empty because org managers can manage all groups
-          //hooks.preventRemovingLastOwner('groups'))
+          // hooks.preventRemovingLastOwner('groups'))
         ]
       },
       after: {

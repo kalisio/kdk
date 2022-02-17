@@ -3,7 +3,7 @@
     <!--
       Label
      -->
-    <div v-if="label" 
+    <div v-if="label"
       class="full-width row justify-center text-subtitle1"
       v-bind:class="{ 'q-pb-sm': dense, 'q-pb-md': !dense }"
     >
@@ -17,12 +17,12 @@
         ref="scrollArea"
         :max-height="height"
         @scroll="onScroll">
-        <div 
+        <div
           class="full-width row justify-center"
           v-bind:class="{ 'q-gutter-y-xs': dense, 'q-gutter-y-sm': !dense }"
         >
           <template v-for="item in items">
-            <div :key="item._id" 
+            <div :key="item._id"
               class="col-12"
               v-bind:class="{ 'q-pr-md': dense, 'q-pr-lg': !dense }"
             >
@@ -38,7 +38,7 @@
           </template>
         </div>
       </k-scroll-area>
-      <div v-if="scrollAction" 
+      <div v-if="scrollAction"
         class="row justify-center"
         v-bind:class="{ 'q-pr-sm': dense, 'q-pr-md': !dense }"
       >
