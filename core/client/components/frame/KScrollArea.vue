@@ -54,10 +54,11 @@ export default {
       this.$emit('scroll', info)
     },
     setScrollPosition (axis, offset, duration) {
-      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(axis, offset, duration)
+      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(offset, duration)
     },
     getScrollPosition (axis) {
-      if (this.$refs.scrollArea) return this.$refs.scrollArea.getScrollPosition(axis)
+      if (this.$refs.scrollArea) return this.$refs.scrollArea.getScrollPosition()
+      return 0
     }
   }
 }
