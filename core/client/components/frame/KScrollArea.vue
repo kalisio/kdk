@@ -57,7 +57,6 @@ export default {
       if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(offset, duration)
     },
     getScrollPosition (axis) {
-      console.log(this.$refs.scrollArea.getScrollPosition())
       if (this.$refs.scrollArea) return this.$refs.scrollArea.getScrollPosition()
       return 0
     }
