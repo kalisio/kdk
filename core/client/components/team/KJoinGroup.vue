@@ -72,7 +72,7 @@ export default {
         },
         required: ['group']
       }
-      if (this.role === Roles.member) {
+      if (Roles[this.role] === Roles.member) {
         _.set(schema, 'properties.role', {
           type: 'string',
           default: false,
