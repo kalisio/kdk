@@ -1,53 +1,59 @@
 <template>
-   <q-select
-    ref="select"
-    class="q-pl-sm q-pr-sm"
-    :style="computedStyle"
-    v-model="items"
-    :multiple="true"
-    hide-dropdown-icon
-    use-input
-    autocomplete="off"
-    clearable
-    borderless
-    dense
-    :options="options"
-    @filter="onSearch"
-    @input="onItemSelected"
-    @input-value="onPatternChanged"
-  >
-    <!-- Search icon -->
-    <template v-slot:prepend>
-      <q-icon class="q-pl-xs" dense name="search" />
-    </template>
-     <!-- Value display -->
-    <template v-slot:selected-item="scope">
-      <q-chip
-        square
-        removable
-        @remove="scope.removeAtIndex(scope.index)"
-        :tabindex="scope.tabindex"
-        color="primary"
-        text-color="white">
-        <q-icon class="q-pr-sm" :name="getIcon(scope.opt)" />
-        {{ getLabel(scope.opt) }}
-      </q-chip>
-    </template>
-    <!-- Options display -->
-    <template v-slot:option="scope">
-      <q-item
-        v-bind="scope.itemProps"
-        v-on="scope.itemEvents"
-      >
-        <q-item-section avatar>
-          <q-icon :name="getIcon(scope.opt)" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ getLabel(scope.opt) }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </template>
-  </q-select>
+  <div class="q-pa-xs" :style="innerStyle">
+    <q-input
+      v-model="pattern"
+      clearable
+      borderless
+      dense
+      debounce="500"
+      @input="onSearch"
+    >
+      <template v-slot:before>
+        <div class="row">
+          <q-icon class="q-pl-xs" dense name="search" />
+          <template v-for="item in items">
+            <q-chip
+              :key="item.name"
+              square
+              dense
+              removable
+              color="primary"
+              text-color="white"
+              size="md"
+              @remove="onItemRemoved(item._id)"
+            >
+              <q-icon v-if="getItemIcon(item)" class="q-pr-sm" :name="getItemIcon(item)" />
+              {{ getItemLabel(item) }}
+            </q-chip>
+          </template>
+        </div>
+      </template>
+    </q-input>
+    <q-menu
+      v-if="options.length > 0"
+      no-focus
+      no-refocus
+      v-model="hasOptions"
+    >
+      <q-list style="min-width: 100px">
+        <template v-for="option in options">
+          <q-item
+            :key="option.name"
+            clickable
+            @click="onItemSelected(option)"
+            v-close-popup>
+            <q-item-section v-if="getItemIcon(option)" avatar>
+              <q-icon :name="getItemIcon(option)" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ getItemLabel(option) }}</q-item-label>
+              <q-item-label caption>{{ getItemDescription(option) }}</q-item-label>
+            </q-item-section>
+        </q-item>
+        </template>
+      </q-list>
+    </q-menu>
+  </div>
 </template>
 
 <script>
@@ -62,60 +68,76 @@ export default {
       type: String,
       default: 'name'
     },
+    description: {
+      type: String,
+      default: 'description'
+    },
     services: {
       type: Array,
       default: () => []
     }
   },
   computed: {
-    computedStyle () {
+    innerStyle () {
       if (this.$q.screen.lt.md) return 'width: 80vw'
       if (this.$q.screen.lt.lg) return 'width: 60vw'
       return 'width: 50vw'
+    },
+    hasOptions: {
+      get: function () {
+        return this.options.length > 0
+      },
+      set: function (value) {
+        if (!value) this.options = []
+      }
     }
   },
   data () {
     return {
-      items: [],
-      options: [],
-      filter: Filter.get()
+      pattern: Filter.getPattern(),
+      items: Filter.getItems(),
+      options: []
     }
   },
   methods: {
-    getLabel (item) {
+    getItemLabel (item) {
       return _.get(item, item.field)
     },
-    getIcon (item) {
-      return _.get(item, 'icon.name', _.get(item, 'icon', ''))
+    getItemDescription (item) {
+      return _.get(item, this.description)
     },
-    async onSearch (pattern, update, abort) {
-      if (pattern.length < 2) {
-        abort()
-        return
-      }
-      const results = await Search.query(this.services, pattern)
-      update(() => {
-        if (results.length > 0) {
-          this.options = _.differenceWith(results, this.items, (item1, item2) => {
-            return item1.value === item2.value
-          })
-        }
-      })
-    },
-    onPatternChanged (pattern) {
-      this.$store.patch('filter', { pattern })
+    getItemIcon (item) {
+      return _.get(item, 'icon.name', _.get(item, 'icon'))
     },
     onItemSelected (item) {
-      this.options = []
-      this.$refs.select.updateInputValue('')
-      if (!item) this.items = []
-      this.$store.patch('filter', { items: this.items })
+      this.items.push(item)
+      this.pattern = ''
+      this.$store.patch('filter', { items: this.items, pattern: this.pattern })
+    },
+    onItemRemoved (itemId) {
+      this.items = _.filter(this.items, item => { return item._id !== itemId })
+      this.$store.patch('filter', { items: this.items, pattern: this.pattern })
+    },
+    async onSearch (pattern) {
+      // take about a null pattern received when clearing the input
+      if (_.isNull(pattern)) pattern = ''
+      // update the pattern
+      this.pattern = pattern
+      this.$store.patch('filter', { pattern: this.pattern })
+      // run the search if the pattern is not empty
+      if (!_.isEmpty(pattern)) {
+        const results = await Search.query(this.services, pattern)
+        if (results.length > 0) {
+          this.options = _.differenceWith(results, this.items, (item1, item2) => {
+            return item1._id === item2._id
+          })
+        }
+      }
     }
   },
   created () {
     // Initialize the filter, we keep track of any existing items previously set by another activity
     this.$store.patch('filter', { field: this.field, pattern: '' })
-    this.items = Filter.getItems()
   },
   beforeDestroy () {
     this.items = []
