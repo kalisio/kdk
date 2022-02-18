@@ -1,5 +1,8 @@
 <template>
   <div class="q-pa-xs" :style="innerStyle">
+    <!--
+      Input area
+     -->
     <q-input
       v-model="pattern"
       clearable
@@ -29,6 +32,9 @@
         </div>
       </template>
     </q-input>
+    <!--
+      Options menu
+     -->
     <q-menu
       v-if="options.length > 0"
       no-focus

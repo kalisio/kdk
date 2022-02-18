@@ -4,13 +4,21 @@
       Header
      -->
     <q-header v-if="header.content" v-model="isHeaderVisible" v-bind="config.header" bordered>
-      <k-panel id="header" :content="header.content" :mode="header.mode" :filter="header.filter" />
+      <k-panel 
+        id="header" 
+        :content="header.content" 
+        :mode="header.mode" 
+        :filter="header.filter" />
     </q-header>
     <!--
       Footer
      -->
     <q-footer v-if="footer.content" v-model="isFooterVisible" v-bind="config.footer" bordered>
-      <k-panel id="footer" :content="footer.content" :mode="footer.mode" :filter="footer.filter" />
+      <k-panel 
+        id="footer" 
+        :content="footer.content" 
+        :mode="footer.mode" 
+        :filter="footer.filter" />
     </q-footer>
     <!--
       Page container

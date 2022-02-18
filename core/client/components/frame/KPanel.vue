@@ -1,5 +1,5 @@
 <template>
-  <k-content class="bg-white"
+  <k-content
     v-bind="$props"
     v-bind:class="{
       'row items-center justify-center no-wrap': direction === 'horizontal',

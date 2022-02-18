@@ -285,6 +285,7 @@ body {
   background-color: #EFEFEF;
 }
 .k-pane, .k-left-pane {
+  background-color: #FFFFFF
   border: solid 1px lightgrey;
   border-radius: 3px;
 }
