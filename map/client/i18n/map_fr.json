@@ -303,10 +303,10 @@
       "EDIT_NEW_LAYER_LABEL": "Vous serez alors en mode édition des données de votre nouvelle couche sur la carte."
     },
     "create-view": {
-      "NAME_FIELD_LABEL":  "Saisissez un nom pour votre nouvelle vue",
-      "DESCRIPTION_FIELD_LABEL": "Saisissez une description nom pour votre nouvelle vue",
-      "LAYERS_FIELD_LABEL": "Choisissez si les couches actuellement actives seront restaurées par votre vue.",
-      "APPLY_BUTTON_LABEL": "Confirmez la création de votre nouvelle vue"
+      "NAME_FIELD_LABEL":  "Saisissez le nom de la vue",
+      "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la vue",
+      "LAYERS_FIELD_LABEL": "Définissez si les couches actuellement actives seront restaurées par votre vue.",
+      "APPLY_BUTTON_LABEL": "Confirmez la création de la vue"
     }
   },
   "KOwsServiceField": {
