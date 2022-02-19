@@ -57,7 +57,7 @@
     :disabled="disabled"
     @click="onClicked(arguments[0])">
     <q-item-section v-if="computedIcon || badge" avatar>
-      <q-icon :dense="dense" :name="computedIcon" :color="computedColor" />
+      <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
       <!-- badge -->
       <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
         <q-icon v-if="badge.icon" v-bind="badge.icon" />
@@ -109,6 +109,37 @@
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
   </q-fab-action>
+  <!--
+    Tab renderer
+  -->
+  <q-btn v-else-if="renderer === 'tab'"
+    v-bind:class="{'k-tab-active': isToggled }"
+    :id="id"
+    no-caps
+    no-wrap
+    :icon="computedIcon"
+    :color="computedColor"
+    :size="size"
+    flat
+    square
+    :dense="dense"
+    :disable="disabled"
+    @click="onClicked(arguments[0])">
+    <div v-if="computedLabel" class="test-subtitle1">
+      {{ computedLabel }}
+    </div>
+    <!-- tooltip -->
+    <q-tooltip v-if="computedTooltip">
+      {{ computedTooltip }} 
+    </q-tooltip>
+    <!-- badge -->
+    <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
+      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+    </q-badge>
+    <!-- extra content -->
+    <slot name="content">
+    </slot>
+  </q-btn>
 </template>
 
 <script>
@@ -190,7 +221,7 @@ export default {
       type: String,
       default: 'button',
       validator: (value) => {
-        return ['button', 'form-button', 'item', 'fab', 'fab-action'].includes(value)
+        return ['button', 'form-button', 'item', 'fab', 'fab-action', 'tab'].includes(value)
       }
     }
   },
@@ -296,5 +327,8 @@ export default {
 <style lang="stylus">
   .k-fab, .k-fab-action {
     border: 2px solid var(--q-color-secondary);
+  }
+  .k-tab-active {
+    border-bottom: solid 2px;
   }
 </style>

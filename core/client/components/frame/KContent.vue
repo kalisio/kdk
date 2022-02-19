@@ -41,7 +41,7 @@ export default {
       type: String,
       default: 'button',
       validator: (value) => {
-        return ['button', 'form-button', 'item'].includes(value)
+        return ['button', 'form-button', 'item', 'tab'].includes(value)
       }
     }
   },
