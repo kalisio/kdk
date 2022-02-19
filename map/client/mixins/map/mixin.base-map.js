@@ -390,10 +390,13 @@ export default {
         }
       }
       const leafletLayer = this.getLeafletLayerByName(name)
-      if (leafletLayer && (typeof leafletLayer.getBounds === 'function')) this.map.fitBounds(leafletLayer.getBounds(), options)
+      if (leafletLayer && (typeof leafletLayer.getBounds === 'function')) {
+        const bounds = leafletLayer.getBounds()
+        if (bounds.isValid()) this.map.fitBounds(bounds, options)
+      }
     },
     zoomToBounds (bounds) {
-      this.map.fitBounds(bounds)
+      if (bounds.isValid()) this.map.fitBounds(bounds)
     },
     zoomToBBox (bbox) {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
