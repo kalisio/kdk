@@ -63,7 +63,7 @@
         <q-icon v-if="badge.icon" v-bind="badge.icon" />
       </q-badge>
     </q-item-section>
-    <q-item-section>
+    <q-item-section no-wrap>
       {{ $t(computedLabel) }}
     </q-item-section>
   </q-item>

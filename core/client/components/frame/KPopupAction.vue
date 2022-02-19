@@ -13,6 +13,7 @@
     :tooltip="tooltip">
     <template v-slot:content>
       <q-popup-proxy
+        fit
         :breakpoint="599"
         :persistent="$q.screen.gt.xs ? persistent : false"
         :auto-close="autoClose"
