@@ -27,7 +27,7 @@
       </template>
       <slot name="footer" />
     </q-list>
-  </k-scroll-area>    
+  </k-scroll-area>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ import { catalogPanel } from '../../mixins'
 
 export default {
   name: 'k-layers-panel',
-  mixins: [catalogPanel],  
+  mixins: [catalogPanel],
   props: {
     layers: {
       type: Array,

@@ -130,7 +130,7 @@
     </div>
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
-      {{ computedTooltip }} 
+      {{ computedTooltip }}
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
