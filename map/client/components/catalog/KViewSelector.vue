@@ -1,0 +1,43 @@
+<template>
+  <div class="q-pl-md full-width row items-center no-wrap cursor-pointer">
+    <!-- View name -->
+    <div class="ellipsis full-width" @click="$emit('item-selected', item, 'apply-view')">
+      {{ item.name }}
+      <q-tooltip
+        v-if="(item.description) && $q.platform.is.desktop" :delay="500"
+        anchor="center left"
+        self="center right"
+        :offset="[20, 0]">
+        {{ item.description }}
+      </q-tooltip>
+      <q-space />
+    </div>
+    <!-- View favorite action -->
+    <k-action
+      id="set-home-view"
+      icon="las la-star"
+      :color="item.isDefault ? 'primary' : 'grey-5'"
+      :tooltip="$t('KViewsPanel.SET_HOME_VIEW')"
+      @triggered="$emit('item-selected', item, 'set-home-view')" />
+    <!-- View actions -->
+    <k-panel
+      :id="`${item.name}-actions`"
+      :content="itemActions"
+      :context="item" />
+  </div>
+</template>
+
+<script>
+import { baseItem } from '../../../../core/client/mixins'
+
+export default {
+  name: 'k-view-selector',
+  mixins: [baseItem],
+  beforeCreate () {
+    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
+    this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
+  }
+}
+</script>
+

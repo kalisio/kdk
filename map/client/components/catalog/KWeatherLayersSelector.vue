@@ -25,16 +25,10 @@
           </q-select>
         </div>
       </template>
-      <template v-if="hasArchiveLayers" v-slot:footer>
-        <q-tabs class="q-ma-sm text-primary" no-caps v-model="mode" @input="onModeChanged">
-          <q-tab id="forecast" name="forecast" :label="$t('KWeatherLayersSelector.FORECASTS_LABEL')" />
-          <q-tab id="archive" name="archive" :label="$t('KWeatherLayersSelector.ARCHIVES_LABEL')" />
-        </q-tabs>
-      </template>
     </k-layers-selector>
   </div>
   <div v-else class="row justify-center q-pa-sm">
-    <k-stamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" direction="horizontal" />
+    <k-stamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" text-size="0.9rem" direction="horizontal" />
   </div>
 </template>
 
@@ -121,8 +115,6 @@ export default {
     },
     onModelChanged (model) {
       this.callHandler('toggle', model)
-    },
-    onModeChanged (mode) {
     }
   },
   created () {
