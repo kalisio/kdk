@@ -396,7 +396,7 @@ export default {
       }
     },
     zoomToBounds (bounds) {
-      if (bounds.isValid()) this.map.fitBounds(bounds)
+      this.map.fitBounds(bounds)
     },
     zoomToBBox (bbox) {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])

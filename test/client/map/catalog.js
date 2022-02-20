@@ -17,16 +17,21 @@ export async function isLayerCategoryOpened (page, categoryId) {
   return core.isElementVisible(page, selector)
 }
 
-export async function clickLayerCategory (page, categoryId, wait = 500) {
+export async function clickCatalogTab (page, tabId) {
   const isCatalogOpened = await core.isRightPaneVisible(page)
   if (!isCatalogOpened) await core.clickRightOpener(page)
+  await core.click(page, `#${tabId}`)
+  return isCatalogOpened
+}
+
+export async function clickLayerCategory (page, tabId, categoryId, wait = 500) {
+  await clickCatalogTab(page, tabId)
   await core.clickRightPaneAction(page, categoryId, wait)
 }
 
-export async function clickLayer (page, layer, wait = 1000) {
+export async function clickLayer (page, tabId, layer, wait = 1000) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId)
   const layerId = getLayerId(layer)
-  const isCatalogOpened = await core.isRightPaneVisible(page)
-  if (!isCatalogOpened) await core.clickRightOpener(page)
   const categoryId = await getLayerCategoryId(page, layerId)
   let isCategoryOpened
   if (categoryId) {
@@ -44,10 +49,9 @@ export async function clickLayer (page, layer, wait = 1000) {
   await page.waitForTimeout(wait)
 }
 
-export async function removeLayer (page, layer, wait = 1000) {
+export async function removeLayer (page, tabId, layer, wait = 1000) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId)
   const layerId = getLayerId(layer)
-  const isCatalogOpened = await core.isRightPaneVisible(page)
-  if (!isCatalogOpened) await core.clickRightOpener(page)
   const categoryId = await getLayerCategoryId(page, layerId)
   let isCategoryOpened
   if (categoryId) {
