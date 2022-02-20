@@ -14,32 +14,72 @@ export async function clickTopOpener (page) {
   await clickOpener(page, 'top')
 }
 
-export async function clickRightOpener (page) {
-  await clickOpener(page, 'right')
-}
-
-export async function clickBottomOpener (page) {
-  await clickOpener(page, 'bottom')
-}
-
-export async function clickLeftOpener (page) {
-  await clickOpener(page, 'left')
-}
-
 export async function isTopPaneVisible (page) {
   return isElementVisible(page, '#top-panel')
+}
+
+export async function openTopPane (page) {
+  const isOpen = await isTopPaneVisible(page)
+  if (!isOpen) await clickTopOpener(page)
+}
+
+export async function closeTopPane (page) {
+  const isOpen = await isTopPaneVisible(page)
+  if (isOpen) await clickTopOpener(page)
+}
+
+export async function clickRightOpener (page) {
+  await clickOpener(page, 'right')
 }
 
 export async function isRightPaneVisible (page) {
   return isElementVisible(page, '#right-panel')
 }
 
+export async function openRightPane (page) {
+  const isOpen = await isRightpPaneVisible(page)
+  if (!isOpen) await clickRightOpener(page)
+}
+
+export async function closeRightPane (page) {
+  const isOpen = await isRightPaneVisible(page)
+  if (isOpen) await clickRightOpener(page)
+}
+
+export async function clickBottomOpener (page) {
+  await clickOpener(page, 'bottom')
+}
+
 export async function isBottomPaneVisible (page) {
   return isElementVisible(page, '#bottom-panel')
 }
 
+export async function openBottomPane (page) {
+  const isOpen = await isBottomPaneVisible(page)
+  if (!isOpen) await clickBottomOpener(page)
+}
+
+export async function closeBottomPane (page) {
+  const isOpen = await isBottomPaneVisible(page)
+  if (isOpen) await clickBottomOpener(page)
+}
+
+export async function clickLeftOpener (page) {
+  await clickOpener(page, 'left')
+}
+
 export async function isLeftPaneVisible (page) {
   return isElementVisible(page, '#left-panel')
+}
+
+export async function openLeftPane (page) {
+  const isOpen = await isLeftPaneVisible(page)
+  if (!isOpen) await clickLeftOpener(page)
+}
+
+export async function closeLeftPane (page) {
+  const isOpen = await isLeftPaneVisible(page)
+  if (isOpen) await clickLeftOpener(page)
 }
 
 export async function clickAction (page, action, wait = 250) {

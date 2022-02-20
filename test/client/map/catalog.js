@@ -64,6 +64,7 @@ export async function removeLayer (page, tabId, layer, wait = 1000) {
   if (categoryId) {
     if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
   }
+  if (!isCatalogOpened) await core.clickRightOpener(page)
 }
 
 export async function dropFile (page, filePath, wait = 2000) {
