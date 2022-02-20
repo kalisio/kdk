@@ -59,10 +59,6 @@ export default {
     forecastModel: {
       type: Object,
       default: () => {}
-    },
-    scopes: {
-      type: Array,
-      default: () => []
     }
   },
   watch: {
