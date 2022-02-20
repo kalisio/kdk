@@ -37,7 +37,7 @@ export async function isRightPaneVisible (page) {
 }
 
 export async function openRightPane (page) {
-  const isOpen = await isRightpPaneVisible(page)
+  const isOpen = await isRightPaneVisible(page)
   if (!isOpen) await clickRightOpener(page)
 }
 
