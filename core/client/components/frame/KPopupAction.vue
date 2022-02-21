@@ -9,6 +9,7 @@
     :toggle="toggle"
     :toggled="toggled"
     :disabled="disabled"
+    :propagate="propagate"
     :badge="badge"
     :tooltip="tooltip">
     <template v-slot:content>
@@ -90,6 +91,10 @@ export default {
     persistent: {
       type: Boolean,
       default: false
+    },
+    propagate: {
+      type: Boolean,
+      default: true
     },
     content: {
       type: [Object, Array],
