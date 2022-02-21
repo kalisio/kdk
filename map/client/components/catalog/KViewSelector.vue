@@ -1,5 +1,8 @@
 <template>
-  <div class="q-pl-md full-width row items-center no-wrap cursor-pointer">
+  <div
+    class="relative-position q-pl-md full-width row items-center no-wrap cursor-pointer"
+    v-ripple:primary
+  >
     <!-- View name -->
     <div class="ellipsis full-width" @click="$emit('item-selected', item, 'apply-view')">
       {{ item.name }}
@@ -18,6 +21,7 @@
       icon="las la-star"
       :color="item.isDefault ? 'primary' : 'grey-5'"
       :tooltip="$t('KViewsPanel.SET_HOME_VIEW')"
+      :propagate="false"
       @triggered="$emit('item-selected', item, 'set-home-view')" />
     <!-- View actions -->
     <k-panel

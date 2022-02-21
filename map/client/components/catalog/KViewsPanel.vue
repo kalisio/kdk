@@ -2,6 +2,7 @@
   <div class="no-padding" :style="panelStyle">
     <k-panel id="favorite-views-toolbar" :content="toolbar" class="no-wrap q-pl-sm q-pr-md" />
     <k-column
+      class="q-pl-sm"
       service="catalog"
       :renderer="viewRenderer"
       :nbItemsPerPage="20"
@@ -29,11 +30,15 @@ export default {
     },
     toolbar () {
       return [
-        { component: 'collection/KFilter', class: 'full-width' },
+        { 
+          id: 'views-filter',
+          component: 'collection/KFilter',
+          class: 'full-width'
+        },
         { component: 'QSpace' },
         {
           component: 'collection/KSorter',
-          id: 'views-sorter-options',
+          id: 'views-sorter',
           tooltip: 'KViewsPanel.SORT_VIEWS',
           options: [
             { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
@@ -55,6 +60,7 @@ export default {
         actions: [{
           id: 'view-overflowmenu',
           component: 'frame/KPopupAction',
+          propagate: false,
           actionRenderer: 'item',
           content: [{
             id: 'remove-view',

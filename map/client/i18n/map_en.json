@@ -238,8 +238,16 @@
       "TOGGLE_CATALOG_LABEL": "Open the catalog with this button."
     },
     "catalog-panel": {
-      "CATALOG_LABEL": "The catalog allows to manage data displayed on your map.",
+      "CATALOG_LABEL": "The <b>catalog</b> allows to manage data displayed on your map.<br/>The catalogd is divided into 3 different tabs.",
+      "USER_LAYERS": "Your data space. You can import data files, connect to a map server or create a new dataset.",
       "CATEGORIES_LABEL": "The data are organised into different categories.",
+      "USER_VIEWS_LABEL": "Your favorite views.</br>The views allow you to position yourself at defined places while activating some data layers.",
+      "USER_VIEWS_CREATE_LABEL": "How to create a view.",
+      "USER_VIEWS_FILTER_LABEL": "Filter the views",
+      "USER_VIEWS_SORTER_LABEL": "Sort the views",
+      "USER_VIEWS_VIEW_LABEL": "Click on the view to update the map.",
+      "USER_VIEWS_SET_HOME_LABEL": "Set this view as the default view",
+      "USER_VIEWS_REMOVE_LABEL": "Remove the view",
       "CATEGORY_LABEL": "Select a category to list all available data layers.",
       "SHOW_LAYER_LABEL": "Select a layer to show it on the map, it will then be highlighted in the list.",
       "MIN_LEVEL_LABEL": "When a layer is not visible according to your scale it will be disabled, you must zoom in to make it show on the map.",

@@ -1,7 +1,6 @@
 module.exports = [{
   target: '#catalog-tabbar',
   title: 'tours.catalog-panel.CATALOG_LABEL',
-  content: 'tours.catalog-panel.TABBAR_LABEL',
   params: {
     placement: 'top'
   }
@@ -19,22 +18,52 @@ module.exports = [{
   params: {
     placement: 'left',
     clickOnLink: '#manage-layer-categories',
+    clickOnNext: '#user-views-tab',
     nextDelay: 500
   }
 }, {
   target: '#user-views-tab',
   title: 'tours.catalog-panel.USER_VIEWS_LABEL',
+  link: 'tours.catalog-panel.USER_VIEWS_CREATE_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#user-views-tab'
+    hoverClickOnLink: 'div.q-fab__icon-holder',
+    tour: 'fab'
   }
 }, {
-  target: '#catalog-layers-tab',
-  title: 'tours.catalog-panel.CATALOG_LAYERS_LABEL',
-  content: 'tours.catalog-panel.CATEGORIES_LABEL',
+  target: '#user-views-filter',
+  title: 'tours.catalog-panel.USER_VIEWS_FILTER_LABEL',
+  params: {
+    placement: 'top'
+  }
+},  {
+  target: '#user-views-sorter',
+  title: 'tours.catalog-panel.USER_VIEWS_SORTER_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#catalog-layers-tab'
+    blockOnMiss: 'div [component="catalog/KViewSelector"]'
+  }
+}, {
+  target: 'div [component="catalog/KViewSelector"]',
+  title: 'tours.catalog-panel.USER_VIEWS_VIEW_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
+  target: 'div [component="catalog/KViewSelector"] #set-home-view',
+  title: 'tours.catalog-panel.USER_VIEWS_SET_HOME_VIEW_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnNext: 'div [component="catalog/KViewSelector"] #view-overflowmenu',
+    nextDelay: 500
+  }
+}, {
+  target: '#remove-view',
+  title: 'tours.catalog-panel.USER_VIEWS_REMOVE_VIEW_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnNext: '#catalog-layers-tab',
+    nextDelay: 500
   }
 }, {
   target: '#k-catalog-panel-base-layers',

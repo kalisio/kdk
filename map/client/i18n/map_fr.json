@@ -238,8 +238,16 @@
       "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton."
     },
     "catalog-panel": {
-      "CATALOG_LABEL": "Le catalogue</b> permet de gérer les données affichées sur votre carte.",
-      "CATEGORIES_LABEL": "Les données sont organisée en catégories</b>.",
+      "CATALOG_LABEL": "Le <b>catalogue</b> permet de gérer les données affichées sur votre carte.<br/>Le catalogue se décompose en 3 onglets.",
+      "USER_LAYERS": "Votre espace de données.</br>Vous pouvez importer des fichiers, vous connecter à des serveurs cartographiques ou encore créer un nouveau jeu de données.",
+      "CATEGORIES_LABEL": "Les données sont organisée en catégories.",
+      "USER_VIEWS_LABEL": "Vos vues favorites.</br>Les vues vous permettent de vous positionner à des lieux définis tout en activant certaines couches de données.",
+      "USER_VIEWS_CREATE_LABEL": "Voir comment créer une vue",
+      "USER_VIEWS_FILTER_LABEL": "Vous pouvez facilement filtrer les vues à l'aide de ce champs.",
+      "USER_VIEWS_SORTER_LABEL": "Et vous pouvez trier les vues selon différents critères.",
+      "USER_VIEWS_VIEW_LABEL": "Enfin cliquez simplement sur la vue pour mettre à jour la carte.",
+      "USER_VIEWS_SET_HOME_LABEL": "Vous pouvez aussi selectionner cette vue pour en faire la vue par défaut.",
+      "USER_VIEWS_REMOVE_LABEL": "Supprimez la vue.",
       "CATEGORY_LABEL": "Sélectionnez une catégorie pour lister les couches</b> de données disponibles.",
       "SHOW_LAYER_LABEL": "Sélectionnez une couche de données pour l'afficher sur la carte, elle apparait alors en surbrillance dans la liste.",
       "MIN_LEVEL_LABEL": "Lorsqu'une couche n'est pas visible à votre échelle elle apparait grisée, vous devez zoomer pour la visualiser sur la carte.",
