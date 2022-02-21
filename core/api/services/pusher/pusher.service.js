@@ -57,7 +57,7 @@ export default function (name, app, options) {
         // iOS
         const aps = {
           alert: message.title,
-          notId
+          'thread-id': notId.toString()
         }
         if (message.sound) aps.sound = message.sound
         jsonMessage.APNS = JSON.stringify({ aps })
