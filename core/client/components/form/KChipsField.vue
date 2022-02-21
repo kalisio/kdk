@@ -146,8 +146,8 @@ export default {
 }
 </script>
 
-<style>
-.chip {
-  cursor: pointer;
-}
+<style lang="scss">
+  .chip {
+    cursor: pointer;
+  }
 </style>

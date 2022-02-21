@@ -324,7 +324,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
   .k-fab, .k-fab-action {
     border: 2px solid var(--q-color-secondary);
   }

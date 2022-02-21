@@ -1,9 +1,40 @@
 module.exports = [{
-  target: '#k-catalog-panel-base-layers',
+  target: '#catalog-tabbar',
   title: 'tours.catalog-panel.CATALOG_LABEL',
+  content: 'tours.catalog-panel.TABBAR_LABEL',
+  params: {
+    placement: 'top'
+  }
+}, {
+  target: '#user-layers-tab',
+  title: 'tours.catalog-panel.USER_LAYERS_LABEL',
   content: 'tours.catalog-panel.CATEGORIES_LABEL',
   params: {
     placement: 'top'
+  }
+}, {
+  target: '#manage-layer-categories',
+  title: 'tours.catalog-panel.MANAGE_LAYER_CATEGORIES_LABEL',
+  link: 'tours.catalog-panel.MANAGE_LAYER_CATEGORIES_LINK_LABEL',
+  params: {
+    placement: 'left',
+    clickOnLink: '#manage-layer-categories',
+    nextDelay: 500
+  }
+}, {
+  target: '#user-views-tab',
+  title: 'tours.catalog-panel.USER_VIEWS_LABEL',
+  params: {
+    placement: 'top',
+    clickOn: '#user-views-tab'
+  }
+}, {
+  target: '#catalog-layers-tab',
+  title: 'tours.catalog-panel.CATALOG_LAYERS_LABEL',
+  content: 'tours.catalog-panel.CATEGORIES_LABEL',
+  params: {
+    placement: 'top',
+    clickOn: '#catalog-layers-tab'
   }
 }, {
   target: '#k-catalog-panel-base-layers',
@@ -49,14 +80,5 @@ module.exports = [{
   title: 'tours.catalog-panel.METEO_LAYERS_LABEL',
   params: {
     placement: 'top'
-  }
-}, {
-  target: '#manage-layer-categories',
-  title: 'tours.catalog-panel.MANAGE_LAYER_CATEGORIES_LABEL',
-  link: 'tours.catalog-panel.MANAGE_LAYER_CATEGORIES_LINK_LABEL',
-  params: {
-    placement: 'left',
-    clickOnLink: '#manage-layer-categories',
-    nextDelay: 500
   }
 }]

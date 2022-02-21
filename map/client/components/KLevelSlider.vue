@@ -67,33 +67,34 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-.vue-slider-rail
-  background-color: var(--q-color-primary);
-
-.vue-slider-disabled .vue-slider-rail
-  background-color: var(--q-color-primary);
-
-.vue-slider-process
-  background-color: var(--q-color-primary);
-
-.vue-slider-dot-handle
-  background-color: var(--q-color-primary);
-
-.vue-slider-dot-handle::after
-  background-color: var(--q-color-dark);
-
-.vue-slider-dot-tooltip-inner
-  background-color: var(--q-color-dark);
-
-.vue-slider-dot-tooltip-text
-  width: 60px;
-  height: 60px;
-  font-size: 1em;
-
-.vue-slider-mark-step
-  background-color: var(--q-color-accent);
-
-.vue-slider-mark-step-active
-  background-color: var(--q-color-accent);
+<style lang="scss">
+  .vue-slider-rail {
+    background-color: var(--q-color-primary);
+  }
+  .vue-slider-disabled .vue-slider-rail {
+    background-color: var(--q-color-primary);
+  }
+  .vue-slider-process {
+    background-color: var(--q-color-primary);
+  }
+  .vue-slider-dot-handle {
+    background-color: var(--q-color-primary);
+  }
+  .vue-slider-dot-handle::after {
+    background-color: var(--q-color-dark);
+  }
+  .vue-slider-dot-tooltip-inner {
+    background-color: var(--q-color-dark);
+  }
+  .vue-slider-dot-tooltip-text {
+    width: 60px;
+    height: 60px;
+    font-size: 1em;
+  }
+  .vue-slider-mark-step {
+    background-color: var(--q-color-accent);
+  }
+  .vue-slider-mark-step-active {
+    background-color: var(--q-color-accent);
+  }
 </style>

@@ -55,11 +55,11 @@ export default {
 }
 </script>
 
-<style>
-.k-block-content {
-  margin: 8px;
-}
-.k-block-text {
-  padding: 8px;
-}
+<style lang="scss">
+  .k-block-content {
+    margin: 8px;
+  }
+  .k-block-text {
+    padding: 8px;
+  }
 </style>

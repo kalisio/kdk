@@ -323,26 +323,27 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-.k-legend
+<style lang="scss">
+  .k-legend {
   position: relative;
-  cursor: pointer;
-  border: none
-
-.k-unit-box
-  position: absolute;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-.k-value-step
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-.k-gradient-step
-  position: absolute;
-  display: inline-block;
+    cursor: pointer;
+    border: none;
+  }
+  .k-unit-box {
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .k-value-step {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .k-gradient-step {
+    position: absolute;
+    display: inline-block;
+  }
 </style>

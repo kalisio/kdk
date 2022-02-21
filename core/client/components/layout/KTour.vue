@@ -429,10 +429,12 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-  .v-step
+<style lang="scss" scoped>
+  .v-step {
     background: var(--q-color-accent);
     z-index: 10000;
-  .v-tour__target--highlighted
+  }
+  .v-tour__target--highlighted {
     box-shadow: 0 0 0 99999px rgba(0,0,0,.4);
+  }
 </style>

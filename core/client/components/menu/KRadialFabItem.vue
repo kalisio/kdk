@@ -34,22 +34,21 @@ export default {
 }
 </script>
 
-<style>
-.vue-radial-menu-item {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.2s ease;
-  transform: none;
-  user-select: none;
-}
-
-.radial-vue-radial-menu-item-enter,
-.radial-vue-radial-menu-item-leave-to {
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-}
+<style lang="scss">
+  .vue-radial-menu-item {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+    transform: none;
+    user-select: none;
+  }
+  .radial-vue-radial-menu-item-enter,
+  .radial-vue-radial-menu-item-leave-to {
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+  }
 </style>

@@ -101,7 +101,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   .k-screen-header {
     padding: 8px;
   }

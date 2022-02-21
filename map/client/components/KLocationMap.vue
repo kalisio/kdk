@@ -287,7 +287,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   .leaflet-fa-markers {
     width: 15px;
     height: 25px;

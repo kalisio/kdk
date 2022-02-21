@@ -95,7 +95,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
 .k-layer-card:hover {
   cursor: pointer;
 }

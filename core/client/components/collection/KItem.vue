@@ -61,8 +61,8 @@ export default {
 }
 </script>
 
-<style>
-.selected {
-  font-weight: bold;
-}
+<style lang="scss">
+  .selected {
+    font-weight: bold;
+  }
 </style>

@@ -109,12 +109,13 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-.k-window
-  border: solid 1px lightgrey;
-  border-radius: 5px;
-  background: #ffffff
-
-.k-window:hover
-  border: solid 1px var(--q-color-primary);
+<style lang="scss">
+  .k-window {
+    border: solid 1px lightgrey;
+    border-radius: 5px;
+    background: #ffffff;
+  }
+  .k-window:hover {
+    border: solid 1px var(--q-color-primary);
+  }
 </style>

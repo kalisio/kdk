@@ -280,20 +280,20 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-body {
-  background-color: #EFEFEF;
-}
-.k-pane, .k-left-pane {
-  background-color: #FFFFFF
-  border: solid 1px lightgrey;
-  border-radius: 3px;
-}
-.k-pane:hover, .k-left-pane:hover {
-  border: solid 1px var(--q-color-primary);
-}
-.k-left-pane {
-  height: 100vh;
-  width: 300px;
-}
+<style lang="scss">
+  body {
+    background-color: #EFEFEF;
+  }
+  .k-pane, .k-left-pane {
+    background-color: #FFFFFF;
+    border: solid 1px lightgrey;
+    border-radius: 3px;
+  }
+  .k-pane:hover, .k-left-pane:hover {
+    border: solid 1px var(--q-color-primary);
+  }
+  .k-left-pane {
+    height: 100vh;
+    width: 300px;
+  }
 </style>

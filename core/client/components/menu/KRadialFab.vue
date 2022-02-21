@@ -74,28 +74,26 @@ export default {
 }
 </script>
 
-<style>
-.vue-radial-menu-wrapper {
-  position: relative;
-  user-select: none;
-  border-radius: 50%;
-  font-size: 32px;
-  font-weight: bold;
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24), 0 0 0 rgba(0, 0, 0, 0.16);
-}
-
-.vue-radial-menu-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  position: relative;
-  z-index: 6;
-}
-
-.vue-radial-menu-container.open {
-  transform: rotateZ(45deg);
-}
+<style lang="scss">
+  .vue-radial-menu-wrapper {
+    position: relative;
+    user-select: none;
+    border-radius: 50%;
+    font-size: 32px;
+    font-weight: bold;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24), 0 0 0 rgba(0, 0, 0, 0.16);
+  }
+  .vue-radial-menu-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 6;
+  }
+  .vue-radial-menu-container.open {
+    transform: rotateZ(45deg);
+  }
 </style>

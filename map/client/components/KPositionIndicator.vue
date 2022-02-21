@@ -79,10 +79,10 @@ export default {
 }
 </script>
 
-<style lang="stylus">
- .position-indicator {
+<style lang="scss">
+  .position-indicator {
     pointer-events: none;
     border-radius: 50%;
-    background-color: #00000020
- }
+    background-color: #00000020;
+  }
 </style>

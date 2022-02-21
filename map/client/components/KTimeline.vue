@@ -279,27 +279,27 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
   .k-timeline {
-    background: #ffffff
-    border: solid 1px lightgrey
-    border-radius: 5px
-    width: 60vw
+    background: #ffffff;
+    border: solid 1px lightgrey;
+    border-radius: 5px;
+    width: 60vw;
   }
   .k-timeline:hover {
-    border: solid 1px $primary
-    cursor: mouse
+    border: solid 1px $primary;
+    cursor: mouse;
   }
   .k-timeline-control {
-    padding: 5px
-    border-bottom: solid 1px lightgrey
+    padding: 5px;
+    border-bottom: solid 1px lightgrey;
   }
   .k-timeline-hour-frame {
-    border-bottom: solid 5px $grey-5
-    border-left: solid 1px white
-    border-right: solid 1px white
-    text-align: center
-    vertical-align: middle
+    border-bottom: solid 5px $grey-5;
+    border-left: solid 1px white;
+    border-right: solid 1px white;
+    text-align: center;
+    vertical-align: middle;
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
     -khtml-user-select: none; /* Konqueror HTML */
@@ -307,9 +307,9 @@ export default {
     -ms-user-select: none; /* Internet Explorer/Edge */
   }
   .k-timeline-hour-selected {
-    border-bottom: solid 5px $primary
+    border-bottom: solid 5px $primary;
   }
   .k-timeline-hour-frame:hover {
-    border-bottom: solid 5px $primary
+    border-bottom: solid 5px $primary;
   }
 </style>
