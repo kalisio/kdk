@@ -19,6 +19,18 @@ export async function itemActionExists (page, component, name, action) {
   return elements.length === 1
 }
 
+export async function clickItem (page, component, name, wait = 250) {
+  const xpath = `//div[contains(@component, "${component}") and contains(., "${name}")]`
+  const elements = await page.$x(xpath)
+  if (elements.length > 0) {
+    elements[0].click()
+    await page.waitForTimeout(wait)
+    debug(`Clicked item ${name}`)
+  } else {
+    debug(`Item ${name} not found`)
+  }
+}
+
 export async function clickItemAction (page, component, name, action, wait = 250) {
   const xpath = `//div[contains(@component, "${component}") and contains(., "${name}")]//button[@id="${action}"]`
   const elements = await page.$x(xpath)

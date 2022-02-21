@@ -17,10 +17,10 @@ export async function isLayerCategoryOpened (page, categoryId) {
   return core.isElementVisible(page, selector)
 }
 
-export async function clickCatalogTab (page, tabId) {
+export async function clickCatalogTab (page, tabId, wait) {
   const isCatalogOpened = await core.isRightPaneVisible(page)
   if (!isCatalogOpened) await core.clickRightOpener(page)
-  await core.click(page, `#${tabId}`)
+  await core.click(page, `#${tabId}`, wait)
   return isCatalogOpened
 }
 
@@ -36,13 +36,13 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
   let isCategoryOpened
   if (categoryId) {
     isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
-    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
+    if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
   let selector = `#${layerId}`
   if (categoryId !== 'k-catalog-panel-base-layers') selector += ' .q-toggle'
   await core.click(page, selector)
   if (categoryId) {
-    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
+    if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
   }
   if (!isCatalogOpened) await core.clickRightOpener(page)
   await core.waitForImagesLoaded(page)
@@ -56,15 +56,16 @@ export async function removeLayer (page, tabId, layer, wait = 1000) {
   let isCategoryOpened
   if (categoryId) {
     isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
-    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
+    if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
   await core.click(page, `#${layerId} .q-btn`)
   await core.clickAction(page, 'remove')
   await core.click(page, '.q-dialog button:nth-child(2)', wait)
   if (categoryId) {
-    if (!isCategoryOpened) await clickLayerCategory(page, categoryId)
+    if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
   }
   if (!isCatalogOpened) await core.clickRightOpener(page)
+  await page.waitForTimeout(wait)
 }
 
 export async function dropFile (page, filePath, wait = 2000) {
@@ -113,4 +114,34 @@ export async function createLayer (page, layerName, schemaPath, featureId, wait 
   await core.click(page, `#${featureId}`)
   await core.clickAction(page, 'create-layer-action', 1000)
   await page.waitForTimeout(wait)
+}
+
+export async function createView (page, name, saveLayers, wait = 2000) {
+  await core.clickFab(page)
+  await core.clickAction(page, 'create-view')
+  await page.waitForTimeout(1000)
+  await core.type(page, '#name-field', name)
+  await core.type(page, '#description-field', `${name} description`)
+  if (saveLayers) await core.click(page, '#layers-field')
+  await core.clickAction(page, 'apply-button', 1000)
+}
+
+export async function viewExists (page, tabId, name) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
+  const exists = await core.itemExists(page, 'catalog/KViewSelector', name)
+  if (!isCatalogOpened) await core.clickRightOpener(page)
+  return exists
+}
+
+export async function clickView (page, tabId, name, wait = 1000) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
+  await core.clickItem(page, 'catalog/KViewSelector', name)
+  if (!isCatalogOpened) await core.clickRightOpener(page)
+}
+
+export async function removeView (page, tabId, name, wait = 1000) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
+  await core.clickItemAction(page, 'catalog/KViewSelector', name, 'view-overflowmenu', 1000)
+  await core.clickAction(page, 'remove-view', wait)
+  if (!isCatalogOpened) await core.clickRightOpener(page)
 }
