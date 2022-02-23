@@ -12,6 +12,15 @@ module.exports = [{
   params: {
     placement: 'left',
     clickOnLink: '#add-layer',
-    nextDelay: 500
+    tour: 'add-layer',
+  }
+}, {
+  target: '#create-view',
+  title: 'tours.fab.CREATE_VIEW_LABEL',
+  link: 'tours.fab.CREATE_VIEW_LINK_LABEL',
+  params: {
+    placement: 'left',
+    clickOnLink: '#create-view',
+    tour: 'create-view',
   }
 }]

@@ -65,7 +65,7 @@
       "PROBE": "Probe",
       "DISPLAY_POSITION": "Display the coordinates",
       "SEARCH_LOCATION": "Search a location",
-      "ADD_FAVORITE": "Add to favorite views",      
+      "CREATE_VIEW": "Create view",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
       "TOOLS": "Tools",
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
@@ -198,10 +198,10 @@
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
     "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme",
-    "FAVORITE_VIEW_CREATE_TITLE": "Create a new view ?",
-    "FAVORITE_VIEW_NAME_FIELD_LABEL": "Enter the name of this view",
-    "FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
-    "FAVORITE_VIEW_LAYERS_FIELD_LABEL": "Save the active layers",
+    "CREAT_VIEW_TITLE": "Create a new view ?",
+    "CREATE_VIEW_NAME_FIELD_LABEL": "Enter the name of this view",
+    "CREATE_VIEW_DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
+    "CREATE_VIEW_LAYERS_FIELD_LABEL": "Save the active layers",
     "LAYER_CATEGORY_CREATE_TITLE": "Create a new category?",
     "LAYER_CATEGORY_NAME_FIELD_LABEL": "Enter the name of this category",
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Select an icon for this category",
@@ -228,8 +228,6 @@
       "SEARCH_LOCATION_LABEL": "Seek for an address using this button.",
       "LOCATION_SEARCHING_LABEL": "Type part of your address and select among the proposed locations to center the map on.",
       "SEARCH_BACK_LABEL": "Then stop searching by going back to the actions.",
-      "FAVORITE_VIEWS_LABEL": "Manage your <b>favorite views</b> using this button. A favorite view is used to restore your current context later,",
-      "FAVORITE_VIEWS_LINK_LABEL": "How to manage your favorite views",
       "TOOLS_LABEL": "Select among available tools using this button.",
       "TRACK_LOCATION_LABEL": "Display the coordinates of a location using this button.",
       "COPY_LOCATION_LABEL": "Copy the coordinates in your clipboard using this button.",
@@ -246,19 +244,17 @@
       "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
       "TOGGLE_CATALOG_LABEL": "Open the catalog with this button."
     },
-    "favorite-views": {
-      "FAVORITE_VIEWS_LIST_LABEL": "When you have defined some favorite views they are listed here, otherwise you can directly create your first one.",
-      "FAVORITE_VIEWS_LIST_ACTIONS_LABEL": "Sort your views by name or update time and seek for a target one.",
-      "FAVORITE_VIEW_ACTIONS_LABEL": "Remove a view by using this button.",
-      "ADD_FAVORITE_VIEW_LABEL": "Add a new views using this button.",
-      "FAVORITE_VIEW_NAME_LABEL": "Enter the name of your new view.",
-      "FAVORITE_VIEW_DESCRIPTION_LABEL": "Enter the description of your new view.",
-      "FAVORITE_VIEW_LAYERS_LABEL": "Select if the currently active layers will be restaured with this view.",
-      "CREATE_FAVORITE_VIEW_LABEL": "Confirm the creation of your new favorite view."
-    },
     "catalog-panel": {
-      "CATALOG_LABEL": "The catalog allows to manage data displayed on your map.",
+      "CATALOG_LABEL": "The <b>catalog</b> allows to manage data displayed on your map.<br/>The catalogd is divided into 3 different tabs.",
+      "USER_LAYERS": "Your data space. You can import data files, connect to a map server or create a new dataset.",
       "CATEGORIES_LABEL": "The data are organised into different categories.",
+      "USER_VIEWS_LABEL": "Your favorite views.</br>The views allow you to position yourself at defined places while activating some data layers.",
+      "USER_VIEWS_CREATE_LABEL": "How to create a view.",
+      "USER_VIEWS_FILTER_LABEL": "Filter the views",
+      "USER_VIEWS_SORTER_LABEL": "Sort the views",
+      "USER_VIEWS_VIEW_LABEL": "Click on the view to update the map.",
+      "USER_VIEWS_SET_HOME_LABEL": "Set this view as the default view",
+      "USER_VIEWS_REMOVE_LABEL": "Remove the view",
       "CATEGORY_LABEL": "Select a category to list all available data layers.",
       "SHOW_LAYER_LABEL": "Select a layer to show it on the map, it will then be highlighted in the list.",
       "MIN_LEVEL_LABEL": "When a layer is not visible according to your scale it will be disabled, you must zoom in to make it show on the map.",
@@ -296,7 +292,9 @@
       "PROBE_LABEL": "Probe weather forecast data at a specific location.",
       "PROBE_CURSOR_LABEL": "After selecting this option click on a target location on the map to display related forecast data.",
       "ADD_LAYER_LABEL": "Add a new data layer.",
-      "ADD_LAYER_LINK_LABEL": "How to add a new data layer"
+      "ADD_LAYER_LINK_LABEL": "How to add a new data layer",
+      "CREATE_VIEW_LABEL": "Add a new views using this button.",
+      "CREATE_VIEW_LINK_LABEL": "How to create a new view"
     },
     "add-layer": {
       "ADD_LAYER_LINK_LABEL": "How to add others types of data layers",
@@ -317,6 +315,12 @@
       "CREATE_LAYER_LABEL": "Create a new blank data layer based on a data schema.",
       "CREATE_LAYER_LINK_LABEL": "How to create a new data layer",
       "CREATE_NEW_LAYER_LABEL": "Confirm the creation of your new layer and start editing the data on the map."
+    },
+    "create-view": {
+      "NAME_FIELD_LABEL":  "Saisissez un nom pour votre nouvelle vue",
+      "DESCRIPTION_FIELD_LABEL": "Enter the name of your new view.",
+      "LAYERS_FIELD_LABEL": "Select whether the currently active layers will be restaured with this view or not.",
+      "APPLY_BUTTON_LABEL": "Confirm the creation of your new favorite view."
     }
   },
   "KOwsServiceField": {
@@ -375,6 +379,18 @@
     "CAPTURED_LAYERS": "Captured views",
     "DEMOGRAPHY_LAYERS": "Demography layers"
   },
+  "KViewsPanel": {
+    "VIEWS_LABEL": "My views",
+    "SORT_VIEWS": "Sort view",
+    "REMOVE_VIEW": "$t(REMOVE)",
+    "SET_HOME_VIEW": "Default view"
+  },
+  "KUserLayersPanel": {
+    "LAYERS_LABEL": "My data"
+  },
+  "KCatalogLayersPanel": {
+    "LAYERS_LABEL": "Catalog"
+  },  
   "KFeaturesFilter": {
     "TITLE": "Data filter for layer {{layer}}",
     "SELECT_PROPERTY_LABEL": "Select a target property to start",
@@ -488,15 +504,6 @@
     "CENTER_ON": "Center the view on the Mapillary marker",
     "MOVE_CLOSE_TO": "Move to the closest image",
     "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
-  },
-  "KFavoriteViews": {
-    "FAVORITE_VIEWS_LABEL": "Favorite views",
-    "SORT": "Sort views",
-    "CREATE_VIEW": "Create a new view",
-    "ADD_BUTTON": "Add",
-    "BACK_BUTTON": "Back",
-    "VIEW_LIST": "Back to list",
-    "REMOVE_VIEW": "$t(REMOVE)"
   },
   "KLayerCategories": {
     "LAYER_CATEGORIES_LABEL": "Manage my categories",

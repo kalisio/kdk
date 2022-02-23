@@ -108,14 +108,15 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-.k-url-legend-container
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-.k-url-legend-item
-  text-overflow: ellipsis;
-  cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.5);
+<style lang="scss">
+  .k-url-legend-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .k-url-legend-item {
+    text-overflow: ellipsis;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
 </style>

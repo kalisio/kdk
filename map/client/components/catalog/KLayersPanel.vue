@@ -1,5 +1,5 @@
 <template>
-  <k-scroll-area :maxHeight="scrollAreaMaxHeight" :style="innerStyle">
+  <k-scroll-area :maxHeight="scrollAreaMaxHeight" :style="panelStyle">
     <q-list dense bordered>
       <slot name="header" />
       <k-layers-selector
@@ -21,7 +21,8 @@
             :forecastModels="forecastModels"
             :forecastModelHandlers="forecastModelHandlers"
             :forecastModel="forecastModel"
-            :options="category.options || category"></component>
+            :options="category.options || category">
+          </component>
         </q-expansion-item>
       </template>
       <slot name="footer" />
@@ -33,12 +34,14 @@
 import sift from 'sift'
 import _ from 'lodash'
 import path from 'path'
+import { catalogPanel } from '../../mixins'
 
 export default {
-  name: 'k-catalog',
+  name: 'k-layers-panel',
+  mixins: [catalogPanel],
   props: {
     layers: {
-      type: Object,
+      type: Array,
       default: () => {}
     },
     layerCategories: {
@@ -59,30 +62,19 @@ export default {
     }
   },
   watch: {
-    layerCategories: function () {
-      // Make configured categories reactive as catalog categoriess are built from
-      this.categorize()
+    layers: {
+      handler () {
+        this.categorize()
+      }
+    },
+    layerCategories: {
+      handler () {
+        this.categorize()
+      }
     }
   },
   computed: {
-    innerStyle () {
-      const screenHeight = this.$q.screen.height
-      this.scrollAreaMaxHeight = screenHeight * 0.75 // 75vh
-      let width = 420
-      if (this.$q.screen.lt.sm) {
-        this.scrollAreaMaxHeight = screenHeight * 0.60
-        width = 300
-      } else if (this.$q.screen.lt.md) {
-        this.scrollAreaMaxHeight = screenHeight * 0.65
-        width = 340
-      } else if (this.$q.screen.lt.lg) {
-        this.scrollAreaMaxHeight = screenHeight * 0.70
-        width = 380
-      }
-      return `height: ${this.scrollAreaMaxHeight}px; width: ${width}px`
-    },
     layersByCategory () {
-      const layers = _.values(this.layers)
       const layersByCategory = {}
       _.forEach(this.layerCategories, category => {
         // Built-in categories use filtering while user-defined ones use layers list
@@ -93,22 +85,14 @@ export default {
           filter = { name: { $in: _.get(category, 'layers') } }
         }
         // If the list of layers in category is empty we can have a null filter
-        layersByCategory[category.name] = filter ? _.remove(layers, sift(filter)) : []
+        layersByCategory[category.name] = filter ? _.remove(this.layers, sift(filter)) : []
       })
       return layersByCategory
     },
     orphanLayers () {
       // Filters system layers
-      const layers = _.values(_.filter(this.layers, layer => {
-        return _.get(layer, 'scope', '') !== 'system'
-      }))
       const categories = _.flatten(_.values(this.layersByCategory))
-      return _.difference(layers, categories)
-    }
-  },
-  data () {
-    return {
-      scrollAreaMaxHeight: 0
+      return _.difference(this.layers, categories)
     }
   },
   methods: {
@@ -136,7 +120,7 @@ export default {
       return false
     },
     categorize () {
-      this.layerCategories.forEach(category => {
+      _.forEach(this.layerCategories, category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
         const componentKey = _.kebabCase(path.basename(component))
         category.componentKey = componentKey
@@ -146,8 +130,6 @@ export default {
   },
   beforeCreate () {
     // Load the required components
-    this.$options.components['k-scroll-area'] = this.$load('frame/KScrollArea')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
   },
   created () {

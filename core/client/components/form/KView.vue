@@ -107,7 +107,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
   .k-view-row {
     border-bottom: solid 1px var(--q-color-secondary);
   }

@@ -56,15 +56,6 @@ module.exports = [{
     nextDelay: 500
   }
 }, {
-  target: '#manage-favorite-views',
-  title: 'tours.navigation-bar.FAVORITE_VIEWS_LABEL',
-  link: 'tours.navigation-bar.FAVORITE_VIEWS_LINK_LABEL',
-  params: {
-    placement: 'bottom',
-    clickOnLink: '#manage-favorite-views',
-    tour: 'favorite-views'
-  }
-}, {
   target: '#tools',
   title: 'tours.navigation-bar.TOOLS_LABEL',
   params: {

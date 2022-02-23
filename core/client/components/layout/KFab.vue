@@ -90,7 +90,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
   .k-fab {
     right: 12px;
     bottom: 12px;

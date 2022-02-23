@@ -311,7 +311,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
   .measure-tool-vertex-icon {
     background-color: #ffffff;
     border: 1px solid #3388ff;

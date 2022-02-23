@@ -571,10 +571,10 @@ export default {
 }
 </script>
 
-<style>
-.vertical-text {
-    writing-mode: vertical-rl;
-    transform: rotate(-120deg);
-    transform-origin: 150% 110%;
-}
+<style lang="scss">
+  .vertical-text {
+      writing-mode: vertical-rl;
+      transform: rotate(-120deg);
+      transform-origin: 150% 110%;
+  }
 </style>

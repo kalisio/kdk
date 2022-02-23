@@ -392,7 +392,10 @@ export default {
         }
       }
       const leafletLayer = this.getLeafletLayerByName(name)
-      if (leafletLayer && (typeof leafletLayer.getBounds === 'function')) this.map.fitBounds(leafletLayer.getBounds(), options)
+      if (leafletLayer && (typeof leafletLayer.getBounds === 'function')) {
+        const bounds = leafletLayer.getBounds()
+        if (bounds.isValid()) this.map.fitBounds(bounds, options)
+      }
     },
     zoomToBounds (bounds) {
       this.map.fitBounds(bounds)

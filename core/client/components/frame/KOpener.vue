@@ -110,7 +110,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
   .k-opener-left, .k-opener-right, .k-opener-top, .k-opener-bottom {
     opacity: 0.85;
     transition: 0.1s;

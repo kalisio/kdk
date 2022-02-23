@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as core from '../core'
 
-export async function zoomToExtent (page, bbox) {
+export async function zoomToExtent (page, bbox, wait = 2000) {
   const currentUrl = page.url()
   const regexp = /\/-?[0-9.]*\/-?[0-9.]*\/-?[0-9.]*\/-?[0-9.]*/
   let newUrl = _.replace(currentUrl, regexp, '')
@@ -12,9 +12,11 @@ export async function zoomToExtent (page, bbox) {
   // about:blank or navigation to the same URL with a different hash, which would succeed and return null.
   await page.goto(newUrl)
   await page.goto(newUrl)
+  await core.waitForImagesLoaded(page)
+  await page.waitForTimeout(wait)
 }
 
-export async function zoomToPosition (page, latitude, longitude) {
+export async function goToPosition (page, latitude, longitude) {
   const currentLocation = await core.getFromStore(page, 'geolocation.position')
   page.setGeolocation({ latitude, longitude })
   await core.clickTopPaneAction(page, 'locate-user')

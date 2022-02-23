@@ -178,11 +178,11 @@ export default {
 }
 </script>
 
-<style lang="stylus">
- .k-media-browser-slide {
-    background: transparent
-    max-width: 85%
-    max-height: 85%
-    overflow: hidden
+<style lang="scss">
+  .k-media-browser-slide {
+    background: transparent;
+    max-width: 85%;
+    max-height: 85%;
+    overflow: hidden;
   }
 </style>

@@ -65,7 +65,7 @@
       "PROBE": "Sonder",
       "DISPLAY_POSITION": "Afficher les coordonnées",
       "SEARCH_LOCATION": "Rechercher un lieu",
-      "ADD_FAVORITE": "Ajouter aux vues favorites",
+      "CREATE_VIEW": "Créer une vue",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
       "TOOLS": "Outils",
       "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",
@@ -198,10 +198,10 @@
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la nouvelle couche",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
     "CATALOG_SCHEMA_FIELD_LABEL": "Sélectionnez un schéma de données",
-    "FAVORITE_VIEW_CREATE_TITLE": "Créer une nouvelle vue ?",
-    "FAVORITE_VIEW_NAME_FIELD_LABEL": "Saisissez le nom de la vue",
-    "FAVORITE_VIEW_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la vue",
-    "FAVORITE_VIEW_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",
+    "CREATE_VIEW_TITLE": "Créer une nouvelle vue ?",
+    "CREATE_VIEW_NAME_FIELD_LABEL": "Saisissez le nom de la vue",
+    "CREATE_VIEW_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la vue",
+    "CREATE_VIEW_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",
     "LAYER_CATEGORY_CREATE_TITLE": "Créer une nouvelle catégorie ?",
     "LAYER_CATEGORY_NAME_FIELD_LABEL": "Saisissez le nom de la catégorie",
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Choisissez une icône pour la catégorie",
@@ -228,8 +228,6 @@
       "SEARCH_LOCATION_LABEL": "Recherchez une <b>adresse</b> via ce bouton.",
       "LOCATION_SEARCHING_LABEL": "Tapez tout ou partie de votre adresse puis sélectionnez parmi les propositions pour recentrer la carte.",
       "SEARCH_BACK_LABEL": "Arrêtez la recherche en retournant aux actions.",
-      "FAVORITE_VIEWS_LABEL": "Gérer vos <b>vues favorites</b> via ce bouton. Une vue favorite vous permet de restorer votre contexte à un moment ultérieur.",
-      "FAVORITE_VIEWS_LINK_LABEL": "Voir comment gérer vos vues favorites",
       "TOOLS_LABEL": "Sélectionnez un outil parmi ceux disponibles via ce bouton.",
       "TRACK_LOCATION_LABEL": "Affichez les coordonnées d'une position via ce bouton.",
       "COPY_LOCATION_LABEL": "Copier vos coordonnées dans le presse-papiers grâce à ce bouton.",
@@ -246,19 +244,17 @@
       "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
       "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton."
     },
-    "favorite-views": {
-      "FAVORITE_VIEWS_LIST_LABEL": "Lorsque vous disposez de vues favorites elles apparaissent ici, sinon vous pouvez directemment créer votre première.",
-      "FAVORITE_VIEWS_LIST_ACTIONS_LABEL": "Triez vos vues par nom ou date de mise à jour et recherchez-en une.",
-      "FAVORITE_VIEW_ACTIONS_LABEL": "Supprimez une vue via ce bouton.",
-      "ADD_FAVORITE_VIEW_LABEL": "Ajoutez une nouvelle vue via ce bouton.",
-      "FAVORITE_VIEW_NAME_LABEL": "Choisissez un nom pour votre nouvelle vue.",
-      "FAVORITE_VIEW_DESCRIPTION_LABEL": "Choisissez une description pour votre nouvelle vue.",
-      "FAVORITE_VIEW_LAYERS_LABEL": "Choisissez si les couches actuellement actives seront restaurées par votre vue.",
-      "CREATE_NEW_FAVORITE_VIEW_LABEL": "Confirmez la création de votre nouvelle vue favorite."
-    },
     "catalog-panel": {
-      "CATALOG_LABEL": "Le catalogue</b> permet de gérer les données affichées sur votre carte.",
-      "CATEGORIES_LABEL": "Les données sont organisée en catégories</b>.",
+      "CATALOG_LABEL": "Le <b>catalogue</b> permet de gérer les données affichées sur votre carte.<br/>Le catalogue se décompose en 3 onglets.",
+      "USER_LAYERS": "Votre espace de données.</br>Vous pouvez importer des fichiers, vous connecter à des serveurs cartographiques ou encore créer un nouveau jeu de données.",
+      "CATEGORIES_LABEL": "Les données sont organisée en catégories.",
+      "USER_VIEWS_LABEL": "Vos vues favorites.</br>Les vues vous permettent de vous positionner à des lieux définis tout en activant certaines couches de données.",
+      "USER_VIEWS_CREATE_LABEL": "Voir comment créer une vue",
+      "USER_VIEWS_FILTER_LABEL": "Vous pouvez facilement filtrer les vues à l'aide de ce champs.",
+      "USER_VIEWS_SORTER_LABEL": "Et vous pouvez trier les vues selon différents critères.",
+      "USER_VIEWS_VIEW_LABEL": "Enfin cliquez simplement sur la vue pour mettre à jour la carte.",
+      "USER_VIEWS_SET_HOME_LABEL": "Vous pouvez aussi selectionner cette vue pour en faire la vue par défaut.",
+      "USER_VIEWS_REMOVE_LABEL": "Supprimez la vue.",
       "CATEGORY_LABEL": "Sélectionnez une catégorie pour lister les couches</b> de données disponibles.",
       "SHOW_LAYER_LABEL": "Sélectionnez une couche de données pour l'afficher sur la carte, elle apparait alors en surbrillance dans la liste.",
       "MIN_LEVEL_LABEL": "Lorsqu'une couche n'est pas visible à votre échelle elle apparait grisée, vous devez zoomer pour la visualiser sur la carte.",
@@ -296,7 +292,9 @@
       "PROBE_LABEL": "Sonder les prévision météorologiques à la position de votre choix.",
       "PROBE_CURSOR_LABEL": "Une fois l'option sélectionnée choisissez une position sur la carte pour afficher les prévisions.",
       "ADD_LAYER_LABEL": "Ajouter une nouvelle couche de données.",
-      "ADD_LAYER_LINK_LABEL": "Voir comment ajouter une nouvelle couche de données"
+      "ADD_LAYER_LINK_LABEL": "Voir comment ajouter une nouvelle couche de données",
+      "CREATE_VIEW_LABEL": "Crééer une nouvelle vue.",
+      "CREATE_VIEW_LINK_LABEL": "Voir comment crééer une nouvelle vue"
     },
     "add-layer": {
       "ADD_LAYER_LINK_LABEL": "Voir comment ajouter d'autres types de couches de données",
@@ -318,6 +316,12 @@
       "CREATE_LAYER_LINK_LABEL": "Voir comment créer une nouvelle couche de données",
       "CREATE_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
       "EDIT_NEW_LAYER_LABEL": "Vous serez alors en mode édition des données de votre nouvelle couche sur la carte."
+    },
+    "create-view": {
+      "NAME_FIELD_LABEL":  "Saisissez le nom de la vue",
+      "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la vue",
+      "LAYERS_FIELD_LABEL": "Définissez si les couches actuellement actives seront restaurées par votre vue.",
+      "APPLY_BUTTON_LABEL": "Confirmez la création de la vue"
     }
   },
   "KOwsServiceField": {
@@ -376,6 +380,18 @@
     "CAPTURED_LAYERS": "Prises de vues",
     "DEMOGRAPHY_LAYERS": "Couches démographiques"
   },
+  "KViewsPanel": {
+    "VIEWS_LABEL": "Mes vues",
+    "SORT_VIEWS": "Trier les vues",
+    "REMOVE_VIEW": "$t(REMOVE)",
+    "SET_HOME_VIEW": "Vue par défaut"
+  },
+  "KUserLayersPanel": {
+    "LAYERS_LABEL": "Mes données"
+  },
+  "KCatalogLayersPanel": {
+    "LAYERS_LABEL": "Catalogue"
+  }, 
   "KFeaturesFilter": {
     "TITLE": "Filtre des données de la couche {{layer}}",
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
@@ -489,16 +505,7 @@
     "CENTER_ON": "Centrer la vue sur le marqueur Mapillary",
     "MOVE_CLOSE_TO": "Se positionner à l'image la plus proche",
     "NO_IMAGE_FOUND_CLOSE_TO": "Aucune image trouvée à proximité de votre position"
-  },
-  "KFavoriteViews": {
-    "FAVORITE_VIEWS_LABEL": "Vues favorites",
-    "SORT": "Trier les vues",
-    "CREATE_VIEW": "Créer une nouvelle vue",
-    "BACK_BUTTON": "Revenir",
-    "ADD_BUTTON": "Ajouter",
-    "VIEW_LIST": "Retour à la liste",
-    "REMOVE_VIEW": "$t(REMOVE)"
-  },
+  }, 
   "KLayerCategories": {
     "LAYER_CATEGORIES_LABEL": "Gérer mes catégories",
     "ADD_TITLE": "Ajouter une nouvelle catégorie",

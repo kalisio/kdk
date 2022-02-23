@@ -103,7 +103,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="scss">
 .k-history-line {
   background: linear-gradient($grey-6, $grey-5) no-repeat center/5px 90%;
 }

@@ -9,10 +9,12 @@
     :toggle="toggle"
     :toggled="toggled"
     :disabled="disabled"
+    :propagate="propagate"
     :badge="badge"
     :tooltip="tooltip">
     <template v-slot:content>
       <q-popup-proxy
+        fit
         :breakpoint="599"
         :persistent="$q.screen.gt.xs ? persistent : false"
         :auto-close="autoClose"
@@ -89,6 +91,10 @@ export default {
     persistent: {
       type: Boolean,
       default: false
+    },
+    propagate: {
+      type: Boolean,
+      default: true
     },
     content: {
       type: [Object, Array],

@@ -1,5 +1,5 @@
 <template>
-  <k-content class="bg-white"
+  <k-content
     v-bind="$props"
     v-bind:class="{
       'row items-center justify-center no-wrap': direction === 'horizontal',
@@ -39,7 +39,7 @@ export default {
       type: String,
       default: 'button',
       validator: (value) => {
-        return ['button', 'form-button', 'item'].includes(value)
+        return ['button', 'form-button', 'item', 'tab'].includes(value)
       }
     }
   },

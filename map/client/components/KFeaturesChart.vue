@@ -268,10 +268,10 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-.chart {
-  border: solid 1px lightgrey;
-  border-radius: 8px;
-  background: #ffffff
-}
+<style lang="scss">
+  .chart {
+    border: solid 1px lightgrey;
+    border-radius: 8px;
+    background: #ffffff;
+  }
 </style>
