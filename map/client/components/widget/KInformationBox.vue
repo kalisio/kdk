@@ -1,7 +1,9 @@
 <template>
   <div :style="widgetStyle">
     <div v-if="schema && properties" class="fit row">
+      <!-- Actions -->
       <k-panel id="information-box-actions" class="q-pa-sm" :content="actions" direction="vertical" />
+      <!-- Content -->
       <k-scroll-area class="col" :maxHeight="widgetHeight">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :separators="true" />
       </k-scroll-area>

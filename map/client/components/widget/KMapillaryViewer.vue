@@ -2,7 +2,9 @@
   <div :style="widgetStyle">
     <div class="fit row">
       <q-resize-observer @resize="onResized" />
+      <!-- Actions -->
       <k-panel id="mapillary-actions" class="q-pa-sm" :content="actions" direction="vertical" />
+      <!-- Content -->
       <div class="col" id="mapillary-container"></div>
     </div>
   </div>
