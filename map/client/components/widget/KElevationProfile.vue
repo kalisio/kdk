@@ -75,7 +75,7 @@ export default {
           this.kActivity.centerOnSelection()
           // Setup the request url options
           //const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
-          const endpoint = 'https://api.planet.test.kalisio.xyz/elevation?resolution=30'
+          const endpoint = 'https://api.planet.test.kalisio.xyz/elevation'
           const options = {
             method: 'POST',
             mode: 'cors',
@@ -86,7 +86,7 @@ export default {
           }
            // Add the Authorization header if jwt is defined
           // TODO const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-          const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMGU1Nzk3NC03NGRjLTQyYTQtOTYxNi1kODc0NzMzMjhkNjgiLCJuYW1lIjoia2FsaXNpby1pbmZyYS1kZXYiLCJpc3MiOiJrYWxpc2lvIiwiYXVkIjoicGxhbmV0LnRlc3Qua2FsaXNpby54eXoifQ.--oouMnPprn2XAiShwmtNaVpvQr0fRju2Qzn4eK2qeQ'
+          const jwt = process.env.JWT 
           if (jwt) options.headers.Authorization = 'Bearer ' + jwt
           // Perform the request
           let dismiss = null
