@@ -82,7 +82,7 @@ describe('core:notifications', () => {
     // For now we only test 1 platform, should be sufficient due to SNS facade
     sns = pusherService.getSnsApplication(device.platform)
     expect(sns).toExist()
-    // Also genric SMS platform
+    // Also generic SMS platform
     snsForSms = pusherService.getSnsApplication('SMS')
     expect(snsForSms).toExist()
   })
@@ -275,6 +275,8 @@ describe('core:notifications', () => {
       message: 'test-message'
     })
     let count = 0
+    /* Currently the same topic is shared accross platforms and the service avoids publishing multiple times
+       by sending a multi-platform message at once (see https://github.com/kalisio/kdk/issues/557)
     sns.once('publishedMessage', (topicArn, messageId) => {
       expect(publisherObject.topics[device.platform]).to.equal(topicArn)
       count++
@@ -284,6 +286,12 @@ describe('core:notifications', () => {
       expect(publisherObject.topics.SMS).to.equal(topicArn)
       count++
       if (count === 2) done()
+    })
+    */
+    sns.once('publishedMessage', (topicArn, messageId) => {
+      expect(publisherObject.topics[device.platform]).to.equal(topicArn)
+      count++
+      if (count === 1) done()
     })
   })
   // Let enough time to process

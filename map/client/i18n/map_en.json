@@ -235,6 +235,13 @@
       "COPY_LOCATION_LABEL": "Copy the coordinates in your clipboard using this button.",
       "LOCATION_TRACKING_LABEL": "Drag the screen to display the coordinates of its center and release to keep track of it.",
       "TRACK_BACK_LABEL": "Then stop tracking by going back to the actions.",
+      "MEASURE_LABEL": "Activate measure tools using this button.",
+      "MEASURE_DISTANCE_LABEL": "Measure a distance using this button.",
+      "MEASURE_DISTANCE_DETAILS_LABEL": "Draw the line segment(s) you'd like to measure on the map and hover any elements to get measure information.",
+      "MEASURE_AREA_LABEL": "Measure an area using this button.",
+      "MEASURE_AREA_DETAILS_LABEL": "Draw the polygons(s) you'd like to measure on the map and hover any elements to get measure information.",
+      "CLEAR_MEASURE_LABEL": "Clear your current measurements using this button.",
+      "MEASURE_BACK_LABEL": "Then stop measuring by going back to the actions.",
       "TOGGLE_VR_LABEL": "Switch to Virtual Reality (VR) mode with this button.",
       "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
       "TOGGLE_CATALOG_LABEL": "Open the catalog with this button."

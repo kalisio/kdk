@@ -580,9 +580,9 @@ export default {
     },
     fillBaseStyle (values) {
       this.isVisible = _.get(values, 'leaflet.isVisible', true)
-      this.hasMinZoom = _.has(values, 'leaflet.minZoom')
+      this.hasMinZoom = !!_.get(values, 'leaflet.minZoom')
       if (this.hasMinZoom) this.minZoom = _.get(values, 'leaflet.minZoom')
-      this.hasMaxZoom = _.has(values, 'leaflet.maxZoom')
+      this.hasMaxZoom = !!_.get(values, 'leaflet.maxZoom')
       if (this.hasMaxZoom) this.maxZoom = _.get(values, 'leaflet.maxZoom')
       this.hasOpacity = _.has(values, 'leaflet.opacity')
       if (this.hasOpacity) this.opacity = _.get(values, 'leaflet.opacity')

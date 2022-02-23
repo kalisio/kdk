@@ -130,13 +130,15 @@ export default {
       _.forOwn(this.leafletPanes, (pane, paneName) => {
         // Filter only some panes ?
         if (panes && panes.includes(paneName)) return
-        if (!_.has(pane, 'minZoom') && !_.has(pane, 'maxZoom')) return
+        const hasMinZoom = !!_.get(pane, 'minZoom')
+        const hasMaxZoom = !!_.get(pane, 'maxZoom')
+        if (!hasMinZoom && !hasMaxZoom) return
         if (!pane.style) pane.style = {}
-        if (_.has(pane, 'minZoom') && (zoom < _.get(pane, 'minZoom'))) {
+        if (hasMinZoom && (zoom < _.get(pane, 'minZoom'))) {
           pane.style.display = 'none'
           return
         }
-        if (_.has(pane, 'maxZoom') && (zoom > _.get(pane, 'maxZoom'))) {
+        if (hasMaxZoom && (zoom > _.get(pane, 'maxZoom'))) {
           pane.style.display = 'none'
           return
         }

@@ -235,6 +235,13 @@
       "COPY_LOCATION_LABEL": "Copier vos coordonnées dans le presse-papiers grâce à ce bouton.",
       "LOCATION_TRACKING_LABEL": "Faites glisser la souris pour afficher les coordonnées du centre de l'écran et relachez pour les conserver.",
       "TRACK_BACK_LABEL": "Arrêtez le suivi en retournant aux actions.",
+      "MEASURE_LABEL": "Faites des mesures via ce bouton.",
+      "MEASURE_DISTANCE_LABEL": "Mesurez une distance via ce bouton.",
+      "MEASURE_DISTANCE_DETAILS_LABEL": "Dessinez le(s) segment(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
+      "MEASURE_AREA_LABEL": "Mesurez une aire via ce bouton.",
+      "MEASURE_AREA_DETAILS_LABEL": "Dessinez le(s) polygône(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
+      "CLEAR_MEASURE_LABEL": "Effacez vos mesures via ce bouton.",
+      "MEASURE_BACK_LABEL": "Arrêtez de mesurer en retournant aux actions.",
       "TOGGLE_VR_LABEL": "Basculez en mode <b>Réalité Virtuelle</b> (VR) avec ce bouton.",
       "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
       "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton."

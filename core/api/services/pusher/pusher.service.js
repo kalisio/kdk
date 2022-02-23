@@ -29,6 +29,8 @@ export default function (name, app, options) {
     getSnsApplication (platform) {
       return _.find(snsApplications, application => application.platform === platform.toUpperCase())
     },
+    // Generate the SNS payload for given message and target platform
+    // If platform is not provided it generates a multi-platform payload
     getMessagePayload (message, platform) {
       // Transform in internal data structure if only a string is given
       if (typeof message === 'string') {
@@ -48,20 +50,23 @@ export default function (name, app, options) {
           notId = (new Date(message.updatedAt).getTime() - new Date(message.createdAt).getTime())
         }
       }
-      if (platform === SNS.SUPPORTED_PLATFORMS.SMS) {
+      if (_.isNil(platform) || (platform === SNS.SUPPORTED_PLATFORMS.SMS)) {
         jsonMessage.sms = message.body
-      } else if (platform === SNS.SUPPORTED_PLATFORMS.EMAIL) {
+      }
+      if (_.isNil(platform) || (platform === SNS.SUPPORTED_PLATFORMS.EMAIL)) {
         jsonMessage.subject = message.title
         jsonMessage.email = message.body
-      } else if (platform === SNS.SUPPORTED_PLATFORMS.IOS) {
+      }
+      if (_.isNil(platform) || (platform === SNS.SUPPORTED_PLATFORMS.IOS)) {
         // iOS
         const aps = {
           alert: message.title,
-          notId
+          'thread-id': notId.toString()
         }
         if (message.sound) aps.sound = message.sound
         jsonMessage.APNS = JSON.stringify({ aps })
-      } else {
+      }
+      if (_.isNil(platform) || (platform === SNS.SUPPORTED_PLATFORMS.ANDROID)) {
         // ANDROID
         const data = {
           title: message.title,
@@ -224,24 +229,43 @@ export default function (name, app, options) {
       }
     },
     publishToPlatformTopics (object, message, topicField) {
-      // Process with each registered platform
-      const messagePromises = []
-      snsApplications.forEach(application => {
-        messagePromises.push(new Promise((resolve, reject) => {
-          const topicArn = _.get(object, topicField + '.' + application.platform)
-          const jsonMessage = this.getMessagePayload(message, application.platform)
+      // Check if the same topic is shared accross platforms to avoid publishing multiple times
+      // (see https://github.com/kalisio/kdk/issues/557)
+      const topics = _.uniq(snsApplications.map(application => _.get(object, topicField + '.' + application.platform)))
+      if (topics.length === 1) {
+        const topicArn = topics[0]
+        const application = snsApplications[0]
+        const jsonMessage = this.getMessagePayload(message)
+        return new Promise((resolve, reject) => {
           application.publishToTopic(topicArn, jsonMessage, (err, messageId) => {
             if (err) {
               reject(err)
             } else {
-              debug('Published message ' + messageId + ' to topic ' + object._id.toString() + ' with ARN ' + topicArn + ' for platform ' + application.platform, jsonMessage)
-              resolve({ [application.platform]: messageId })
+              debug('Published message ' + messageId + ' to topic ' + object._id.toString() + ' with ARN ' + topicArn + ' for all platforms', jsonMessage)
+              resolve({ messageId })
             }
           })
-        }))
-      })
-      return Promise.all(messagePromises)
-        .then(results => results.reduce((messageIds, messageId) => Object.assign(messageIds, messageId), {}))
+        })
+      } else {
+        // Process with each registered platform
+        const messagePromises = []
+        snsApplications.forEach(application => {
+          messagePromises.push(new Promise((resolve, reject) => {
+            const topicArn = _.get(object, topicField + '.' + application.platform)
+            const jsonMessage = this.getMessagePayload(message, application.platform)
+            application.publishToTopic(topicArn, jsonMessage, (err, messageId) => {
+              if (err) {
+                reject(err)
+              } else {
+                debug('Published message ' + messageId + ' to topic ' + object._id.toString() + ' with ARN ' + topicArn + ' for platform ' + application.platform, jsonMessage)
+                resolve({ [application.platform]: messageId })
+              }
+            })
+          }))
+        })
+        return Promise.all(messagePromises)
+          .then(results => results.reduce((messageIds, messageId) => Object.assign(messageIds, messageId), {}))
+      }
     },
     async removePlatformTopics (object, service, topicField, patch = true) {
       // First get all subscribers of the topic because we do not store them
