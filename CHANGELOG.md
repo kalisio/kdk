@@ -1,13 +1,77 @@
 # Changelog
 
+## [Unreleased](https://github.com/kalisio/kdk/tree/HEAD)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.6.0...HEAD)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump url-parse from 1.5.3 to 1.5.7 in /docs [\#552](https://github.com/kalisio/kdk/pull/552) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v1.6.0](https://github.com/kalisio/kdk/tree/v1.6.0) (2022-02-23)
+
+[Full Changelog](https://github.com/kalisio/kdk/compare/v1.5.1...v1.6.0)
+
+**Implemented enhancements:**
+
+- Provide a Tab style action [\#554](https://github.com/kalisio/kdk/issues/554)
+- Allow to customize the catalog using panels [\#553](https://github.com/kalisio/kdk/issues/553)
+- Migrate from Stylus to SCSS [\#550](https://github.com/kalisio/kdk/issues/550)
+- Organisation managers should be able to manage all groups [\#548](https://github.com/kalisio/kdk/issues/548)
+- Make timeline update interval configurable [\#543](https://github.com/kalisio/kdk/issues/543)
+- Units management system [\#542](https://github.com/kalisio/kdk/issues/542)
+- Allow to define TTL for service collection [\#539](https://github.com/kalisio/kdk/issues/539)
+- Add shapefile support [\#538](https://github.com/kalisio/kdk/issues/538)
+- Enhance timeseries widget to manage multiple forecasts [\#490](https://github.com/kalisio/kdk/issues/490)
+
+**Fixed bugs:**
+
+- KActionPopup should handle the propagate prop of the KAction [\#558](https://github.com/kalisio/kdk/issues/558)
+- filter is not refreshed when the focus is lost [\#551](https://github.com/kalisio/kdk/issues/551)
+- Realtime layers with update interval not correctly updated when time changes [\#540](https://github.com/kalisio/kdk/issues/540)
+- FeatureId generation does not handle any types of GeoJson [\#536](https://github.com/kalisio/kdk/issues/536)
+
+**Closed issues:**
+
+- Improve webhook with bearer token and processing functions [\#523](https://github.com/kalisio/kdk/issues/523)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump follow-redirects from 1.14.7 to 1.14.8 in /docs [\#549](https://github.com/kalisio/kdk/pull/549) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump ajv from 6.11.0 to 6.12.6 in /docs [\#547](https://github.com/kalisio/kdk/pull/547) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump pathval from 1.1.0 to 1.1.1 [\#546](https://github.com/kalisio/kdk/pull/546) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump node-fetch from 2.6.1 to 2.6.7 [\#537](https://github.com/kalisio/kdk/pull/537) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump shelljs from 0.8.3 to 0.8.5 [\#517](https://github.com/kalisio/kdk/pull/517) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump follow-redirects from 1.11.0 to 1.14.7 in /docs [\#514](https://github.com/kalisio/kdk/pull/514) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.5.1](https://github.com/kalisio/kdk/tree/v1.5.1) (2022-01-27)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.5.0...v1.5.1)
 
+**Implemented enhancements:**
+
+- Provide a common ScrollArea component [\#526](https://github.com/kalisio/kdk/issues/526)
+- Display a spinner when reading file [\#525](https://github.com/kalisio/kdk/issues/525)
+- Allow to open the url of a text field [\#519](https://github.com/kalisio/kdk/issues/519)
+- Allow authorisations to be set by name [\#516](https://github.com/kalisio/kdk/issues/516)
+- Unify min/max zoom on tiled and non-tiled layers [\#249](https://github.com/kalisio/kdk/issues/249)
+
 **Fixed bugs:**
 
-- Station properties lost when a measure is available [\#510](https://github.com/kalisio/kdk/issues/510)
+- dropFileInput element is not removed when switching to another activity [\#535](https://github.com/kalisio/kdk/issues/535)
+- Missing default background layer when capturing the screen [\#534](https://github.com/kalisio/kdk/issues/534)
+- The computed url to access the Kapture service is incorrect [\#532](https://github.com/kalisio/kdk/issues/532)
+- Impossible to remove min/max zoom levels once edited in the style [\#531](https://github.com/kalisio/kdk/issues/531)
+- min/max zoom level does not work on internal feature layers [\#529](https://github.com/kalisio/kdk/issues/529)
+- Authorise hook does not throw a forbidden error on find/patch/update/remove multiple items [\#528](https://github.com/kalisio/kdk/issues/528)
 - Unable to install latest geoman version \(2.11.4\) [\#521](https://github.com/kalisio/kdk/issues/521)
+- Mapillary widget is not resized when switching to fullscreen  [\#520](https://github.com/kalisio/kdk/issues/520)
+- Geojson import is failing if the linter found an old-style crs  [\#518](https://github.com/kalisio/kdk/issues/518)
+- Scale-dependent visibility can't be reset + spelling mistake [\#398](https://github.com/kalisio/kdk/issues/398)
+
+**Closed issues:**
+
+- Improve webhook with bearer token and processing functions [\#524](https://github.com/kalisio/kdk/issues/524)
 
 ## [v1.5.0](https://github.com/kalisio/kdk/tree/v1.5.0) (2022-01-07)
 
@@ -17,6 +81,7 @@
 
 - The capture action should take into account the current activity \(map or globe\) [\#507](https://github.com/kalisio/kdk/issues/507)
 - Handle the current time within the map context [\#503](https://github.com/kalisio/kdk/issues/503)
+- Features filter should sort the list of values alphabetically to ease selection [\#405](https://github.com/kalisio/kdk/issues/405)
 - Provide measurements capabilities [\#359](https://github.com/kalisio/kdk/issues/359)
 
 **Fixed bugs:**
@@ -29,6 +94,7 @@
 - Editing layer style : Marker color selector won't preselect the current color [\#502](https://github.com/kalisio/kdk/issues/502)
 - Edit layer style : Adding space in Tooltip between text and drop menu [\#501](https://github.com/kalisio/kdk/issues/501)
 - None of Popup, Tooltip and Information box display option working in style editor [\#499](https://github.com/kalisio/kdk/issues/499)
+- Station properties lost when a measure is available [\#510](https://github.com/kalisio/kdk/issues/510)
 
 **Merged pull requests:**
 
@@ -73,7 +139,7 @@
 - Time range query should take into account a given field [\#479](https://github.com/kalisio/kdk/issues/479)
 - Time range query is not initialized in Time.js [\#478](https://github.com/kalisio/kdk/issues/478)
 - Saved user settings are erased by default values [\#477](https://github.com/kalisio/kdk/issues/477)
-- Mapillary viewer not synchronized correctly with coverage layer [\#133](https://github.com/kalisio/kdk/issues/133)
+- PDF files cannot be selected in KUploader on a mobile application [\#101](https://github.com/kalisio/kdk/issues/101)
 - OAuth2 does not work in mobile apps [\#85](https://github.com/kalisio/kdk/issues/85)
 
 ## [v1.4.0](https://github.com/kalisio/kdk/tree/v1.4.0) (2021-10-22)
@@ -100,7 +166,7 @@
 - Close or cancel modal actions should be rendered using a form button [\#427](https://github.com/kalisio/kdk/issues/427)
 - Support GetTile requests for WMTS layers [\#423](https://github.com/kalisio/kdk/issues/423)
 - Homogenize team cards  [\#417](https://github.com/kalisio/kdk/issues/417)
-- Allow to define a path to the value in KChipsPane [\#416](https://github.com/kalisio/kdk/issues/416)
+- Enhance time management [\#410](https://github.com/kalisio/kdk/issues/410)
 - Use geoman instead of leaflet-draw in edit layer mixin [\#378](https://github.com/kalisio/kdk/issues/378)
 - Mapillary v3 API has been retired, update mapillary widget/layer to use v4 API [\#300](https://github.com/kalisio/kdk/issues/300)
 - Provide a kanban component [\#296](https://github.com/kalisio/kdk/issues/296)
@@ -152,18 +218,16 @@
 **Implemented enhancements:**
 
 - Provide helper function to check view/edit/remove ability on an item [\#422](https://github.com/kalisio/kdk/issues/422)
+- Allow to define a path to the value in KChipsPane [\#416](https://github.com/kalisio/kdk/issues/416)
 - Allow to filter a schema according a list of fields when building a form [\#415](https://github.com/kalisio/kdk/issues/415)
 - Card rendering should support a dense mode [\#414](https://github.com/kalisio/kdk/issues/414)
 - Make possible to use a template string for storage service name in uploader [\#413](https://github.com/kalisio/kdk/issues/413)
 - Refactor KHistory to rely on KColumn [\#412](https://github.com/kalisio/kdk/issues/412)
 - Provide a generic time range component [\#411](https://github.com/kalisio/kdk/issues/411)
-- Enhance time management [\#410](https://github.com/kalisio/kdk/issues/410)
-- Features filter should sort the list of values alphabetically to ease selection [\#405](https://github.com/kalisio/kdk/issues/405)
 - Provide a way to observe the page content size [\#400](https://github.com/kalisio/kdk/issues/400)
 - Make location field more user-friendly [\#399](https://github.com/kalisio/kdk/issues/399)
 - Enhance the location field/map to manage any geometry type [\#397](https://github.com/kalisio/kdk/issues/397)
 - Add ability to emit click events from canvas layer. [\#388](https://github.com/kalisio/kdk/issues/388)
-- Enhance KMenu rendering with a dropdown icon [\#386](https://github.com/kalisio/kdk/issues/386)
 - Provide a basic chart container [\#362](https://github.com/kalisio/kdk/issues/362)
 - Provide a generic setttings component [\#317](https://github.com/kalisio/kdk/issues/317)
 - Allow in-memory GeoJson be passed on GeoJson layer addition [\#94](https://github.com/kalisio/kdk/issues/94)
@@ -178,6 +242,7 @@
 - List of values is incomplete when editing the features filter [\#404](https://github.com/kalisio/kdk/issues/404)
 - FR version : data export generates .cvs instead of .csv [\#403](https://github.com/kalisio/kdk/issues/403)
 - HistoryEntry card is not correclty aligned on the left side [\#401](https://github.com/kalisio/kdk/issues/401)
+- Exclusive option not taken into account in user-defined categories [\#395](https://github.com/kalisio/kdk/issues/395)
 
 ## [v1.3.4](https://github.com/kalisio/kdk/tree/v1.3.4) (2021-06-08)
 
@@ -186,6 +251,7 @@
 **Implemented enhancements:**
 
 - Allow KChipsField to be used without icon edition [\#390](https://github.com/kalisio/kdk/issues/390)
+- Enhance KMenu rendering with a dropdown icon [\#386](https://github.com/kalisio/kdk/issues/386)
 - Allow to specify a schema name to an editor [\#381](https://github.com/kalisio/kdk/issues/381)
 - Collections empty section should not be defined using an absolute position [\#377](https://github.com/kalisio/kdk/issues/377)
 - Allow location map to be embedded in a card [\#373](https://github.com/kalisio/kdk/issues/373)
@@ -198,7 +264,6 @@
 
 **Fixed bugs:**
 
-- Exclusive option not taken into account in user-defined categories [\#395](https://github.com/kalisio/kdk/issues/395)
 - Editing toast appear when removing a layer [\#394](https://github.com/kalisio/kdk/issues/394)
 - KChangeRole no longer handle multiple resources [\#389](https://github.com/kalisio/kdk/issues/389)
 - Select field must be clearable [\#387](https://github.com/kalisio/kdk/issues/387)
@@ -374,11 +439,13 @@
 - Improve layer selector display [\#178](https://github.com/kalisio/kdk/issues/178)
 - Allow to display an icon within a badge assigned to an action of KToolBar [\#176](https://github.com/kalisio/kdk/issues/176)
 - Check unique hook should raise a specific error message [\#175](https://github.com/kalisio/kdk/issues/175)
+- Provide a code input component [\#169](https://github.com/kalisio/kdk/issues/169)
 - Tiled mesh/wind layers should support min zoom level [\#160](https://github.com/kalisio/kdk/issues/160)
 - Zoom to layer action does not work on tiled layers in map [\#123](https://github.com/kalisio/kdk/issues/123)
 - iOS build should rely on iOS SDK 13 [\#67](https://github.com/kalisio/kdk/issues/67)
 - History component should provide infinite scroll [\#90](https://github.com/kalisio/kdk/issues/90)
 - UIWebView API deprecation notice [\#47](https://github.com/kalisio/kdk/issues/47)
+- Upgrade Mongo DB driver to v3 [\#44](https://github.com/kalisio/kdk/issues/44)
 - Allow to directly take a picture when uploading a file [\#99](https://github.com/kalisio/kdk/issues/99)
 - Extend pusher protocols for SMS/Emails [\#91](https://github.com/kalisio/kdk/issues/91)
 
@@ -441,10 +508,6 @@
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.1.0...v1.1.1)
 
-**Implemented enhancements:**
-
-- Provide a code input component [\#169](https://github.com/kalisio/kdk/issues/169)
-
 ## [v1.1.0](https://github.com/kalisio/kdk/tree/v1.1.0) (2020-05-28)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.0.0...v1.1.0)
@@ -485,7 +548,6 @@
 - Improve application webhook security [\#84](https://github.com/kalisio/kdk/issues/84)
 - Upgrade to latest Node.js LTS [\#48](https://github.com/kalisio/kdk/issues/48)
 - Allow to filter feature layers [\#89](https://github.com/kalisio/kdk/issues/89)
-- Upgrade Mongo DB driver to v3 [\#44](https://github.com/kalisio/kdk/issues/44)
 - Enhance e2e tests across the modules/apps [\#38](https://github.com/kalisio/kdk/issues/38)
 - Optimize measure update for time-stamped features in globe [\#96](https://github.com/kalisio/kdk/issues/96)
 - Create a component to provide styling options for feature layers in map [\#110](https://github.com/kalisio/kdk/issues/110)
@@ -512,12 +574,12 @@
 - Error raised on clustered tile layers [\#140](https://github.com/kalisio/kdk/issues/140)
 - Timeseries do not update correctly when changing time [\#139](https://github.com/kalisio/kdk/issues/139)
 - Timeseries widget not synchronized when disabling/removing a layer [\#135](https://github.com/kalisio/kdk/issues/135)
+- Mapillary viewer not synchronized correctly with coverage layer [\#133](https://github.com/kalisio/kdk/issues/133)
 - Openers shoud be displayed only a component is assgined to the drawers or footer [\#131](https://github.com/kalisio/kdk/issues/131)
 - min zoom level not correctly handled in tiled map layers [\#126](https://github.com/kalisio/kdk/issues/126)
 - If a geocoder does not respond the geocoder service does not respond [\#125](https://github.com/kalisio/kdk/issues/125)
 - Weacast grid source is missing some data when requesting a tile [\#77](https://github.com/kalisio/kdk/issues/77)
 - KFab should be instanciated within a QPage [\#69](https://github.com/kalisio/kdk/issues/69)
-- PDF files cannot be selected in KUploader on a mobile application [\#101](https://github.com/kalisio/kdk/issues/101)
 
 **Closed issues:**
 
