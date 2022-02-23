@@ -216,10 +216,13 @@ export default {
       try {
         // min/max zoom are automatically managed on tiled layers by inheriting GridLayer
         // on non-tiled layers we need to use a pane to manage it
-        const minZoom = _.get(leafletOptions, 'minZoom')
-        const maxZoom = _.get(leafletOptions, 'maxZoom')
-        if (!leafletOptions.tiled && (minZoom || maxZoom)) {
-          leafletOptions.panes = [{ name: options.name, minZoom, maxZoom }]
+        const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
+        const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
+        if (!leafletOptions.tiled && (hasMinZoom || hasMaxZoom)) {
+          let pane = { name: options.name }
+          if (hasMinZoom) pane.minZoom = _.get(leafletOptions, 'minZoom')
+          if (hasMaxZoom) pane.maxZoom = _.get(leafletOptions, 'maxZoom')
+          leafletOptions.panes = [pane]
           leafletOptions.pane = options.name
         }
         // If not explicitely disable use defaults for clustering
@@ -267,7 +270,14 @@ export default {
         if (leafletOptions.realtime) {
           // Build associated tile layer and bind required events
           if (leafletOptions.tiled) {
-            const tiledLayer = new TiledFeatureLayer(leafletOptions)
+            // In our options minZoom/maxZoom can be set to false
+            // but Leaflet only expect it if fixed to a given number
+            const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
+            const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
+            let zoomLevelsToOmit = []
+            if (!hasMinZoom) zoomLevelsToOmit.push('minZoom')
+            if (!hasMaxZoom) zoomLevelsToOmit.push('maxZoom')
+            const tiledLayer = new TiledFeatureLayer(_.omit(leafletOptions, zoomLevelsToOmit))
             tiledLayer.setup(this, options)
             layer.tiledLayer = tiledLayer
             layer.on('add', () => tiledLayer.addTo(this.map))
