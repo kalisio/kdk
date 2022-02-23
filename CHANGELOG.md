@@ -1,22 +1,11 @@
 # Changelog
 
-## [Unreleased](https://github.com/kalisio/kdk/tree/HEAD)
-
-[Full Changelog](https://github.com/kalisio/kdk/compare/v1.6.0...HEAD)
-
-**Merged pull requests:**
-
-- chore\(deps\): bump url-parse from 1.5.3 to 1.5.7 in /docs [\#552](https://github.com/kalisio/kdk/pull/552) ([dependabot[bot]](https://github.com/apps/dependabot))
-
 ## [v1.6.0](https://github.com/kalisio/kdk/tree/v1.6.0) (2022-02-23)
 
 [Full Changelog](https://github.com/kalisio/kdk/compare/v1.5.1...v1.6.0)
 
 **Implemented enhancements:**
 
-- Provide a Tab style action [\#554](https://github.com/kalisio/kdk/issues/554)
-- Allow to customize the catalog using panels [\#553](https://github.com/kalisio/kdk/issues/553)
-- Migrate from Stylus to SCSS [\#550](https://github.com/kalisio/kdk/issues/550)
 - Organisation managers should be able to manage all groups [\#548](https://github.com/kalisio/kdk/issues/548)
 - Make timeline update interval configurable [\#543](https://github.com/kalisio/kdk/issues/543)
 - Units management system [\#542](https://github.com/kalisio/kdk/issues/542)
@@ -26,7 +15,6 @@
 
 **Fixed bugs:**
 
-- KActionPopup should handle the propagate prop of the KAction [\#558](https://github.com/kalisio/kdk/issues/558)
 - filter is not refreshed when the focus is lost [\#551](https://github.com/kalisio/kdk/issues/551)
 - Realtime layers with update interval not correctly updated when time changes [\#540](https://github.com/kalisio/kdk/issues/540)
 - FeatureId generation does not handle any types of GeoJson [\#536](https://github.com/kalisio/kdk/issues/536)
