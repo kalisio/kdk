@@ -69,7 +69,8 @@ module.exports = [{
   title: 'tours.navigation-bar.TOOLS_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: '#tools',
+    clickOn: '#tools',
+    clickDelay: 500,
     nextDelay: 500
   }
 }, {
@@ -103,6 +104,53 @@ module.exports = [{
     nextDelay: 500
   }
 }, {
+  target: '#tools',
+  title: 'tours.navigation-bar.TOOLS_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOn: '#tools',
+    clickDelay: 500,
+    nextDelay: 500
+  }
+}, {
+  target: '#measure-tool',
+  title: 'tours.navigation-bar.MEASURE_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnNext: '#measure-tool',
+    nextDelay: 500
+  }
+}, {
+  target: '#measure-distance',
+  title: 'tours.navigation-bar.MEASURE_DISTANCE_LABEL',
+  content: 'tours.navigation-bar.MEASURE_DISTANCE_DETAILS_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnPrevious: '#back',
+    previousDelay: 500
+  }
+}, {
+  target: '#measure-area',
+  title: 'tours.navigation-bar.MEASURE_AREA_LABEL',
+  content: 'tours.navigation-bar.MEASURE_AREA_DETAILS_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
+  target: '#clear-measurements',
+  title: 'tours.navigation-bar.CLEAR_MEASURE_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
+  target: '#back',
+  title: 'tours.navigation-bar.MEASURE_BACK_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnNext: '#back',
+    nextDelay: 500
+  }
+}, , {
   target: '#toggle-vr',
   title: 'tours.navigation-bar.TOGGLE_VR_LABEL',
   params: {
