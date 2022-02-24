@@ -587,5 +587,17 @@
     "MEASURE_AREA": "Measure an area",
     "DISPLAY_MEASURE_VALUE": "Display measure values",
     "CLICK_TO_CHANGE_UNIT": "Click to change unit"
+  },
+  "KElevationProfile": {
+    "NO_DATA_AVAILABLE": "No profile available",
+    "INVALID_GEOMETRY": "Selected object geometry is invalid",
+    "COMPUTING_PROFILE": "Profile computation in progress",
+    "CENTER_ON": "Center the view on the object",    
+    "COPY_PROFILE": "Copy the profile to the clipboard",    
+    "PROFILE_COPIED": "Profile copied to clipboard",
+    "CANNOT_COPY_PROFILE": "Unable to copy the profile to clipboard. Your browser does not support this functionality",
+    "EXPORT_PROFILE": "Export the profile",
+    "PROFILE_EXPORTED": "Profile exported to file {{file}}",
+    "CANNOT_EXPORT_PROFILE": "Unable to export the profile. Your browser does not support this functionality"
   }
 }

@@ -17,7 +17,7 @@ const baseWidgetMixin = {
     widgetStyle () {
       const screenHeight = this.$q.screen.height
       this.widgetHeight = this.mode === 'maximized' ? screenHeight : screenHeight * 0.3 // 30vh
-      return `height: ${this.widgetHeight}px`
+      return `height: ${this.widgetHeight}px;`
     }
   }
 }

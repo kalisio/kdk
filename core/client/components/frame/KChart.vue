@@ -1,5 +1,5 @@
 <template>
-  <div id="chart-container" class="row">
+  <div id="chart-container">
     <q-resize-observer @resize="onResized" />
     <canvas class="col-12" ref="chart"></canvas>
   </div>
@@ -51,6 +51,7 @@ export default {
     },
     onResized (size) {
       if (!this.chart) this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
+      else this.chart.resize()
     }
   },
   beforeDestroy () {

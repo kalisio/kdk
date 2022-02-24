@@ -34,11 +34,39 @@ export default {
       default: null
     }
   },
+  computed: {
+    actions () {
+      return  {
+        default: [
+          { 
+            id: 'center-view', 
+            icon: 'las la-eye', 
+            tooltip: this.$t('KInformationBox.CENTER_ON'),
+            disabled: this.feature ? false : true,
+            handler: this.onCenterOn 
+          },
+          { 
+            id: 'copy-properties', 
+            icon: 'las la-clipboard', 
+            tooltip: this.$t('KInformationBox.COPY_PROPERTIES'), 
+            disabled: this.properties ? false : true,
+            handler: this.onCopyProperties
+          },
+          { 
+            id: 'export-feature', 
+            icon: 'img:statics/json-icon.svg', 
+            tooltip: this.$t('KInformationBox.EXPORT_FEATURE'), 
+            disabled: this.feature ? false : true,
+            handler: this.onExportFeature
+          }
+        ]
+      }
+    }
+  },
   data () {
     return {
       schema: null,
-      properties: null,
-      actions: []
+      properties: null
     }
   },
   watch: {
@@ -94,10 +122,12 @@ export default {
     },
     onExportFeature () {
       if (this.feature) {
-        const name = _.get(this.feature, 'name', 'feature') ||
-                     _.get(this.feature, 'label', 'feature') ||
-                     _.get(this.feature, 'properties.name', 'feature') ||
-                     _.get(this.feature, 'properties.label', 'feature')
+        const name =  _.get(this.feature, 'name') ||
+                      _.get(this.feature, 'label') ||
+                      _.get(this.feature, 'properties.name') ||
+                      _.get(this.feature, 'properties.label') ||
+                      _.get(this.layer, 'name') ||
+                      _.get(this.layer, 'properties.name')
         const file = name + '.geojson'
         const status = exportFile(file, JSON.stringify(this.feature))
         if (status) this.$toast({ type: 'error', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
@@ -113,14 +143,6 @@ export default {
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   created () {
-    // Registers the actions
-    this.actions = {
-      default: [
-        { id: 'center-view', icon: 'las la-eye', tooltip: this.$t('KInformationBox.CENTER_ON'), handler: this.onCenterOn },
-        { id: 'copy-properties', icon: 'las la-clipboard', tooltip: this.$t('KInformationBox.COPY_PROPERTIES'), handler: this.onCopyProperties },
-        { id: 'export-feature', icon: 'img:statics/json-icon.svg', tooltip: this.$t('KInformationBox.EXPORT_FEATURE'), handler: this.onExportFeature }
-      ]
-    }
     // Refresh the component
     this.refresh()
   },
