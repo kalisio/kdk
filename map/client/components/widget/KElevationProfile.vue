@@ -8,18 +8,15 @@
         {{ featureName }} 
       </span>
       <!-- Graph -->
-      <k-chart 
-        ref="chart"
-        class="q-pa-xs full-width"
-         />
+      <k-chart ref="chart" class="q-pa-xs full-width" />
     </div>
     <!--div v-else class="absolute-center">
       <k-stamp 
         icon="las la-exclamation-circle"  
         icon-size="3rem" 
         :text="$t('KElevationProfile.NO_DATA_AVAILABLE')" 
-        text-size="1rem" /-->
-    </div>
+        text-size="1rem" />
+    </div-->
   </div>
 </template>
 

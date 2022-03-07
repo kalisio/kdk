@@ -271,6 +271,7 @@ export default {
           const dateFormat = _.get(Time.getFormat(), 'date.short')
           const timeFormat = _.get(Time.getFormat(), 'time.long')
           // Is current time visible in data time range ?
+          /* TODO
           const currentTime = moment.utc(Time.getCurrentFormattedTime().iso)
           if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
             this.chartOptions.annotation = {
@@ -296,7 +297,7 @@ export default {
                 }
               }]
             }
-          }
+          }*/
           await this.loadRefs()
           this.$refs.chart.update({
             type: 'line',
