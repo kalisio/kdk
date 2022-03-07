@@ -17,7 +17,7 @@ import distance from '@turf/distance'
 import bearing from '@turf/bearing'
 import length from '@turf/length'
 import area from '@turf/area'
-import { polygon, lineString } from '@turf/helpers'
+import { polygon, lineString, featureCollection } from '@turf/helpers'
 import { getCoords, getType } from '@turf/invariant'
 import { Units } from '../../../core/client/units'
 
@@ -106,6 +106,7 @@ export default {
       for (const layer of this.layers) this.kActivity.map.removeLayer(layer)
       this.layers = []
       this.measureValue = '--'
+      this.geojsons = []
     },
     vertexTooltip (marker) {
       const geojson = this.geojsons[marker.geojsonIndex]
@@ -288,9 +289,10 @@ export default {
     this.kActivity.map.on('pm:drawend', this.onDrawEnd)
     this.kActivity.map.on('pm:create', this.onCreate)
 
-    this.vertexIcon = L.divIcon({
-      className: 'measure-tool-vertex-icon'
-    })
+    // add a method on the activity to serialize measure tool layers as GeoJSON
+    this.kActivity.getMeasureToolLayers = () => { return featureCollection(this.geojsons) }
+
+    this.vertexIcon = L.divIcon({ className: 'measure-tool-vertex-icon' })
     /*
     this.arrowIcon = L.divIcon({
       // robin: changing the used icon probably require to update stuff in addArrowIcon
@@ -307,6 +309,9 @@ export default {
     this.kActivity.map.off('pm:drawstart', this.onDrawStart)
     this.kActivity.map.off('pm:drawend', this.onDrawEnd)
     this.kActivity.map.off('pm:create', this.onCreate)
+
+    // remove method to fetch layers
+    delete this.kActivity.getMeasureToolLayers
   }
 }
 </script>
