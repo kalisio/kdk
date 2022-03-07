@@ -5,16 +5,16 @@
     <div class='col fit row'>
       <!-- Title -->
       <span v-if="featureName" class="col-12 q-pa-sm">
-        {{ featureName }} 
+        {{ featureName }}
       </span>
       <!-- Graph -->
       <k-chart ref="chart" class="q-pa-xs full-width" />
     </div>
     <!--div v-else class="absolute-center">
-      <k-stamp 
-        icon="las la-exclamation-circle"  
-        icon-size="3rem" 
-        :text="$t('KElevationProfile.NO_DATA_AVAILABLE')" 
+      <k-stamp
+        icon="las la-exclamation-circle"
+        icon-size="3rem"
+        :text="$t('KElevationProfile.NO_DATA_AVAILABLE')"
         text-size="1rem" />
     </div-->
   </div>
@@ -50,27 +50,27 @@ export default {
              _.get(this.layer, 'properties.name')
     },
     actions () {
-      return  {
+      return {
         default: [
-          { 
-            id: 'center-view', 
-            icon: 'las la-eye', 
+          {
+            id: 'center-view',
+            icon: 'las la-eye',
             tooltip: this.$t('KElevationProfile.CENTER_ON'),
-            disabled: this.feature ? false : true,
-            handler: this.onCenterOn 
+            disabled: !this.feature,
+            handler: this.onCenterOn
           },
-          { 
-            id: 'copy-properties', 
-            icon: 'las la-clipboard', 
-            tooltip: this.$t('KElevationProfile.COPY_PROFILE'), 
-            disabled: this.profile ? false : true,
+          {
+            id: 'copy-properties',
+            icon: 'las la-clipboard',
+            tooltip: this.$t('KElevationProfile.COPY_PROFILE'),
+            disabled: !this.profile,
             handler: this.onCopyProfile
           },
-          { 
-            id: 'export-feature', 
-            icon: 'img:statics/json-icon.svg', 
-            tooltip: this.$t('KElevationProfile.EXPORT_PROFILE'), 
-            disabled: this.profile ? false : true,
+          {
+            id: 'export-feature',
+            icon: 'img:statics/json-icon.svg',
+            tooltip: this.$t('KElevationProfile.EXPORT_PROFILE'),
+            disabled: !this.profile,
             handler: this.onExportProfile
           }
         ]
@@ -95,7 +95,7 @@ export default {
       this.profile = null
       if (this.feature && this.layer) {
         const geometry = _.get(this.feature, 'geometry.type')
-        if (geometry==='LineString') {
+        if (geometry === 'LineString') {
           this.kActivity.centerOnSelection()
           // Setuip the computation options
           this.feature.resolution = 90
@@ -109,7 +109,7 @@ export default {
               'Content-Type': 'application/json'
             }
           }
-           // Add the Authorization header if jwt is defined
+          // Add the Authorization header if jwt is defined
           const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
           if (jwt) options.headers.Authorization = 'Bearer ' + jwt
           // Perform the request
@@ -127,15 +127,15 @@ export default {
             dismiss()
             if (response.ok) {
               this.profile = await response.json()
-              let heights = []
-              let labels = []
+              const heights = []
+              const labels = []
               let distance = 0
               _.forEach(this.profile.features, feature => {
-                  heights.push(_.get(feature, 'properties.z', 0))
-                  labels.push(distance)
-                  distance+=this.feature.resolution
+                heights.push(_.get(feature, 'properties.z', 0))
+                labels.push(distance)
+                distance += this.feature.resolution
               })
-              this.$refs.chart.update({ 
+              this.$refs.chart.update({
                 type: 'line',
                 data: {
                   labels: labels,
@@ -203,7 +203,7 @@ export default {
   },
   beforeCreate () {
     // laod the required components
-    this.$options.components['k-chart'] = this.$load('chart/KChart')    
+    this.$options.components['k-chart'] = this.$load('chart/KChart')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }

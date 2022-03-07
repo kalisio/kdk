@@ -219,7 +219,7 @@ export default {
         const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
         const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
         if (!leafletOptions.tiled && (hasMinZoom || hasMaxZoom)) {
-          let pane = { name: options.name }
+          const pane = { name: options.name }
           if (hasMinZoom) pane.minZoom = _.get(leafletOptions, 'minZoom')
           if (hasMaxZoom) pane.maxZoom = _.get(leafletOptions, 'maxZoom')
           leafletOptions.panes = [pane]
@@ -274,7 +274,7 @@ export default {
             // but Leaflet only expect it if fixed to a given number
             const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
             const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
-            let zoomLevelsToOmit = []
+            const zoomLevelsToOmit = []
             if (!hasMinZoom) zoomLevelsToOmit.push('minZoom')
             if (!hasMaxZoom) zoomLevelsToOmit.push('maxZoom')
             const tiledLayer = new TiledFeatureLayer(_.omit(leafletOptions, zoomLevelsToOmit))

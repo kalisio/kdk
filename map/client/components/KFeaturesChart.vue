@@ -12,18 +12,18 @@
     >
       <div class="row justify-around items-center q-ma-none q-pa-none">
         <!-- Previsious chart -->
-        <q-btn 
-          v-show="currentChart > 1" 
+        <q-btn
+          v-show="currentChart > 1"
           size="1rem" flat round color="primary"
-          icon="las la-chevron-left" 
+          icon="las la-chevron-left"
           @click="onPreviousChart"/>
         <!-- Current chart --->
         <k-stats-chart ref="chart" :style="chartStyle" />
         <!-- Netx chart -->
-        <q-btn 
-          v-show="currentChart < nbCharts" 
+        <q-btn
+          v-show="currentChart < nbCharts"
           size="1rem" flat round color="primary"
-          icon="las la-chevron-right" 
+          icon="las la-chevron-right"
           @click="onNextChart" />
       </div>
     </k-modal>
@@ -33,28 +33,28 @@
       :title="$t('KFeaturesChart.CHART_SETTINGS_LABEL')"
       :buttons="[{ id: 'close-action', label: 'CLOSE', renderer: 'form-button', handler: () => this.$refs.chartSettings.close() }]">
       <div>
-        <q-select 
-          v-model="selectedProperty" 
+        <q-select
+          v-model="selectedProperty"
           :label="$t('KFeaturesChart.PROPERTY_LABEL')"
-          :options="properties" 
+          :options="properties"
           @input="refreshChart"/>
-        <q-select 
+        <q-select
           :disable="selectedProperty ? false: true"
-          v-model="selectedChartType" 
+          v-model="selectedChartType"
           :label="$t('KFeaturesChart.CHART_LABEL')"
-          :options="availableChartTypes" 
+          :options="availableChartTypes"
           @input="refreshChart"/>
-        <q-select 
+        <q-select
           :disable="selectedProperty ? false: true"
-          v-model="nbValuesPerChart" 
+          v-model="nbValuesPerChart"
           :label="$t('KFeaturesChart.PAGINATION_LABEL')"
-          :options="paginationOptions" 
+          :options="paginationOptions"
           @input="refreshChartAndPagination"/>
-        <!-- TODO q-select 
+        <!-- TODO q-select
           :disable="selectedProperty ? false: true"
-          v-model="render" 
+          v-model="render"
           :label="$t('KFeaturesChart.RENDER_LABEL')"
-          :options="renderOptions" 
+          :options="renderOptions"
           @input="refreshChart"/-->
       </div>
     </k-modal>
@@ -65,7 +65,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import Papa from 'papaparse'
-import { colors, Loading } from 'quasar'
+import { Loading } from 'quasar'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
 
 export default {
@@ -100,12 +100,12 @@ export default {
     },
     chartStyle () {
       const min = Math.min(this.$q.screen.width, this.$q.screen.height)
-      return `width: ${min * .75}px;`
+      return `width: ${min * 0.75}px;`
     },
     nbCharts () {
       if (!this.chartData.length || (this.nbValuesPerChart.value === 0)) return 1
       else return Math.ceil(this.chartData.length / this.nbValuesPerChart.value)
-    },
+    }
   },
   data () {
     const availableChartTypes = ['pie', 'polarArea', 'radar', 'bar'].map(
@@ -186,14 +186,16 @@ export default {
         // Update chart options
         const start = (this.currentChart - 1) * this.nbValuesPerChart.value
         const end = (this.nbValuesPerChart.value > 0 ? start + this.nbValuesPerChart.value : this.chartData.length)
+        /* TODO
         let title = this.selectedProperty.label
         if (this.nbCharts > 1) title += ` (${this.currentChart}/${this.nbCharts})`
+        */
         // Update the chart
-        this.$refs.chart.update({ 
+        this.$refs.chart.update({
           type: this.selectedChartType.value,
           data: {
             labels: _.map(this.values, value => value.label).slice(start, end),
-            datasets:  [{
+            datasets: [{
               data: this.chartData.slice(start, end),
               colorScale: 'Accent'
             }]
@@ -239,4 +241,3 @@ export default {
   }
 }
 </script>
-

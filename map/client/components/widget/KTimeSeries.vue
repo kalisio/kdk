@@ -12,15 +12,15 @@
           {{ probedLocationName }}
         </span>
         <!-- Graph -->
-        <k-chart 
+        <k-chart
           ref="chart"
           class="q-pa-xs full-width" />
       </div>
       <div v-else class="absolute-center">
-        <k-stamp 
+        <k-stamp
           icon="las la-exclamation-circle"
           icon-size="3rem"
-          :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" 
+          :text="$t('KTimeSeries.NO_DATA_AVAILABLE')"
           text-size="1rem" />
       </div>
     </div>
@@ -113,7 +113,7 @@ export default {
       // Set default run as latest
       return this.runTime || _.last(this.runTimes)
     },
-   /* setupTimeTicks () {
+    /* setupTimeTicks () {
       if (!this.times || !this.graphWidth) return
       // Choose the right step size to ensure we have almost 100px between hour ticks
       // If the time interval is less than hour act as if we have only 1 time per hour
@@ -210,7 +210,7 @@ export default {
       this.yAxes = {}
       const properties = this.probedLocation.properties
       let isLeft = true
-      let counter = 0
+      const counter = 0
 
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
@@ -256,7 +256,7 @@ export default {
       if (this.buildingChart) return
       // Try/Catch required to ensure we reset the build flag
       try {
-        this.buildingChart = true        
+        this.buildingChart = true
         // Check whether weed need a graph
         this.hasChart = this.hasAvailableDatasets()
         if (this.hasChart) {
@@ -266,8 +266,10 @@ export default {
           this.setupAvailableRunTimes()
           this.setupAvailableDatasets()
           this.setupAvailableYAxes()
+          /* TODO
           const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
           const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
+          */
           const dateFormat = _.get(Time.getFormat(), 'date.short')
           const timeFormat = _.get(Time.getFormat(), 'time.long')
           // Is current time visible in data time range ?
@@ -297,7 +299,7 @@ export default {
                 }
               }]
             }
-          }*/
+          } */
           await this.loadRefs()
           this.$refs.chart.update({
             type: 'line',
@@ -334,7 +336,7 @@ export default {
                   ticks: {
                     autoskip: true,
                     maxRotation: 20,
-                    font: function(context) {
+                    font: function (context) {
                       if (context.tick && context.tick.major) {
                         return {
                           weight: 'bold'
@@ -348,7 +350,7 @@ export default {
                 datalabels: {
                   display: false
                 }
-              },
+              }
             }, { scales: this.yAxes })
           })
         }

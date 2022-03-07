@@ -8,8 +8,8 @@ import KChart from './KChart.vue'
 
 export default {
   name: 'k-stats-chart',
-  components: { 
-    KChart 
+  components: {
+    KChart
   },
   methods: {
     customizeDatasets (type, datasets) {
@@ -18,22 +18,22 @@ export default {
         if (!dataset.max) dataset.max = _.max(dataset.data)
         if (!dataset.sum) dataset.sum = _.sum(dataset.data)
       })
-      //return this.datasets
+      // return this.datasets
     },
     customizeOptions (type, options) {
       const defaultOptions = {
         maintainAspectRatio: true,
         plugins: {
           title: {
-            display: this.title ? true : false,
+            display: !!this.title,
             text: this.title
           },
-          legend: {  
-            display:['radar', 'bar'].includes(type) ? false : true,
+          legend: {
+            display: !['radar', 'bar'].includes(type),
             position: this.$q.screen.lt.sm ? 'bottom' : 'left'
           },
           datalabels: {
-            backgroundColor: function(context) {
+            backgroundColor: function (context) {
               return context.dataset.backgroundColor
             },
             display: 'auto',
@@ -46,7 +46,7 @@ export default {
             font: {
               weight: 'bold'
             },
-            formatter: function(value, context) {
+            formatter: function (value, context) {
               return value
             },
             padding: 6

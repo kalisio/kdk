@@ -19,11 +19,11 @@ export default {
     return {
       hasData: false
     }
-  },  
+  },
   methods: {
     update (config) {
       const type = _.get(this.chart, 'type')
-      config.options.onResize=this.onResized
+      config.options.onResize = this.onResized
       // Is the chart type different
       if (config.type !== type) {
         // Create a new chart

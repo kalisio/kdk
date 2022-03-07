@@ -3,5 +3,5 @@ import KStatsChart from './KStatsChart.vue'
 
 export {
   KChart,
-  KStatCharts
+  KStatsChart
 }

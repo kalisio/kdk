@@ -30,7 +30,7 @@ export default {
     },
     toolbar () {
       return [
-        { 
+        {
           id: 'views-filter',
           component: 'collection/KFilter',
           class: 'full-width'

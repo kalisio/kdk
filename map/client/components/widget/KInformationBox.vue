@@ -9,10 +9,10 @@
       </k-scroll-area>
     </div>
     <div v-else class="absolute-center">
-      <k-stamp 
-        icon="las la-exclamation-circle" 
-        icon-size="3rem" 
-        :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')" 
+      <k-stamp
+        icon="las la-exclamation-circle"
+        icon-size="3rem"
+        :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')"
         text-size="1rem" />
     </div>
   </div>
@@ -40,27 +40,27 @@ export default {
   },
   computed: {
     actions () {
-      return  {
+      return {
         default: [
-          { 
-            id: 'center-view', 
-            icon: 'las la-eye', 
+          {
+            id: 'center-view',
+            icon: 'las la-eye',
             tooltip: this.$t('KInformationBox.CENTER_ON'),
-            disabled: this.feature ? false : true,
-            handler: this.onCenterOn 
+            disabled: !this.feature,
+            handler: this.onCenterOn
           },
-          { 
-            id: 'copy-properties', 
-            icon: 'las la-clipboard', 
-            tooltip: this.$t('KInformationBox.COPY_PROPERTIES'), 
-            disabled: this.properties ? false : true,
+          {
+            id: 'copy-properties',
+            icon: 'las la-clipboard',
+            tooltip: this.$t('KInformationBox.COPY_PROPERTIES'),
+            disabled: !this.properties,
             handler: this.onCopyProperties
           },
-          { 
-            id: 'export-feature', 
-            icon: 'img:statics/json-icon.svg', 
-            tooltip: this.$t('KInformationBox.EXPORT_FEATURE'), 
-            disabled: this.feature ? false : true,
+          {
+            id: 'export-feature',
+            icon: 'img:statics/json-icon.svg',
+            tooltip: this.$t('KInformationBox.EXPORT_FEATURE'),
+            disabled: !this.feature,
             handler: this.onExportFeature
           }
         ]
@@ -126,7 +126,7 @@ export default {
     },
     onExportFeature () {
       if (this.feature) {
-        const name =  _.get(this.feature, 'name') ||
+        const name = _.get(this.feature, 'name') ||
                       _.get(this.feature, 'label') ||
                       _.get(this.feature, 'properties.name') ||
                       _.get(this.feature, 'properties.label') ||
