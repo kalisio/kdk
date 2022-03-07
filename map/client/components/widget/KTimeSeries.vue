@@ -1,24 +1,27 @@
 <template>
   <div :style="widgetStyle">
     <div class="fit row">
-      <q-resize-observer @resize="onResized" />
       <!-- Actions -->
       <k-panel id="timeseries-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-      <div v-if='hasGraph' class='col full-width row'>
+      <div v-if="hasChart" class='col fit row'>
         <!-- Title -->
-        <span v-if="layerName" class="col-12 q-pl-sm">
+        <span v-if="layerName" class="col-12 q-pa-sm">
           {{ layerName }} - {{ probedLocationName }}
         </span>
-        <span v-else class="col-12 q-pl-sm">
+        <span v-else class="col-12 q-pa-sm">
           {{ probedLocationName }}
         </span>
         <!-- Graph -->
-        <div id="chart-container" class="col-12">
-          <canvas ref="chart"></canvas>
-        </div>
+        <k-chart 
+          ref="chart"
+          class="q-pa-xs full-width" />
       </div>
       <div v-else class="absolute-center">
-        <k-stamp icon="las la-exclamation-circle"  icon-size="3rem" :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" text-size="1rem" />
+        <k-stamp 
+          icon="las la-exclamation-circle"
+          icon-size="3rem"
+          :text="$t('KTimeSeries.NO_DATA_AVAILABLE')" 
+          text-size="1rem" />
       </div>
     </div>
   </div>
@@ -30,19 +33,21 @@ import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import chroma from 'chroma-js'
-import Chart from 'chart.js'
-import 'chartjs-plugin-annotation'
 import Papa from 'papaparse'
 import { getTimeInterval } from '../../utils'
 import { downloadAsBlob } from '../../../../core/client/utils'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
-import { baseWidget } from '../../../../core/client/mixins'
+import { baseWidget, refsResolver } from '../../../../core/client/mixins'
+import 'chartjs-adapter-moment'
 
 export default {
   name: 'k-time-series',
   inject: ['kActivity'],
-  mixins: [baseWidget],
+  mixins: [
+    baseWidget,
+    refsResolver(['chart'])
+  ],
   props: {
     selection: {
       type: Object,
@@ -89,9 +94,9 @@ export default {
   },
   data () {
     return {
+      hasChart: null,
       probedLocation: null,
       probedLocationName: '',
-      hasGraph: false,
       actions: [],
       settings: this.$store.get('timeseries')
     }
@@ -108,7 +113,7 @@ export default {
       // Set default run as latest
       return this.runTime || _.last(this.runTimes)
     },
-    setupTimeTicks () {
+   /* setupTimeTicks () {
       if (!this.times || !this.graphWidth) return
       // Choose the right step size to ensure we have almost 100px between hour ticks
       // If the time interval is less than hour act as if we have only 1 time per hour
@@ -118,14 +123,14 @@ export default {
       const interval = Math.max(1, Math.floor(this.timeInterval))
       this.timeStepSize = Math.ceil(this.timeStepSize / interval) * interval
       // We can update in place when possible
-      if (this.chart) {
+     if (this.chart) {
         const xAxis = _.find(this.config.options.scales.xAxes, axis => axis.type === 'time')
         if (xAxis && xAxis.time) {
           xAxis.time.stepSize = this.timeStepSize
           this.chart.update(this.config)
         }
       }
-    },
+    }, */
     setupAvailableTimes () {
       this.times = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
@@ -196,15 +201,16 @@ export default {
             borderColor: colors[index],
             backgroundColor: colors[index],
             data: values,
-            yAxisID: unit
+            yAxisID: `y${index}`
           }, _.omit(variable.chartjs, 'yAxis')))
         }
       })
     },
     setupAvailableYAxes () {
-      this.yAxes = []
+      this.yAxes = {}
       const properties = this.probedLocation.properties
       let isLeft = true
+      let counter = 0
 
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
@@ -217,64 +223,18 @@ export default {
         // Variable available for feature ?
         // Check also if axis already created
         if (this.hasVariable(name, properties) && !_.find(this.yAxes, axis => axis.id === unit)) {
-          this.yAxes.push(_.merge({
-            id: unit,
+          this.yAxes[`y${counter}`] = _.merge({
+            display: 'auto',
             position: isLeft ? 'left' : 'right',
-            scaleLabel: {
+            title: {
               display: true,
-              labelString: Units.getUnitSymbol(unit)
+              text: Units.getUnitSymbol(unit)
             }
-          }, _.get(variable.chartjs, 'yAxis', {})))
+          }, _.get(variable.chartjs, 'yAxis', {}))
           // Alternate axes by default
           isLeft = !isLeft
         }
       })
-    },
-    toggleVariable (variableItem) {
-      const dataset = this.datasets[variableItem.datasetIndex]
-      const metadata = this.chart.getDatasetMeta(variableItem.datasetIndex)
-      // Check if there is only one dataset remaining,
-      // if so it's impossible to hide it otherwise the chart will be empty
-      let nbVisibleDatasets = 0
-      this.datasets.forEach((dataset, index) => {
-        const metadata = this.chart.getDatasetMeta(index)
-        if (!metadata.hidden) nbVisibleDatasets++
-      })
-      if (!metadata.hidden && (nbVisibleDatasets <= 1)) return
-      // Check if there is others variables using the same unit axis
-      const datasetsWithYAxis = []
-      this.datasets.forEach((otherDataset, index) => {
-        if ((dataset.label !== otherDataset.label) &&
-            (dataset.yAxisID === otherDataset.yAxisID)) {
-          datasetsWithYAxis.push(index)
-        }
-      })
-
-      if (!metadata.hidden) {
-        metadata.hidden = true
-      } else {
-        delete metadata.hidden
-      }
-
-      // Check if there is another variable using the same unit axis
-      const yAxis = _.find(this.config.options.scales.yAxes, axis => axis.id === dataset.yAxisID)
-      if (metadata.hidden) {
-        let hideYAxis = true
-        datasetsWithYAxis.forEach(otherDataset => {
-          const otherMetadata = this.chart.getDatasetMeta(otherDataset)
-          if (!otherMetadata.hidden) hideYAxis = false
-        })
-        if (hideYAxis) yAxis.display = false
-      } else {
-        let showYAxis = true
-        datasetsWithYAxis.forEach(otherDataset => {
-          const otherMetadata = this.chart.getDatasetMeta(otherDataset)
-          if (!otherMetadata.hidden) showYAxis = false
-        })
-        if (showYAxis) yAxis.display = true
-      }
-
-      this.chart.update(this.config)
     },
     hasAvailableDatasets () {
       const keys = Object.keys(this.probedLocation.properties)
@@ -282,7 +242,6 @@ export default {
         let name = this.probedVariables[i].name
         // Check if we are targetting a specific level
         if (this.kActivity.selectedLevel) name = `${name}-${this.kActivity.selectedLevel}`
-
         if (_.indexOf(keys, name) !== -1) {
           const values = this.probedLocation.properties[name]
           if (values && Array.isArray(values)) return true
@@ -297,84 +256,24 @@ export default {
       if (this.buildingChart) return
       // Try/Catch required to ensure we reset the build flag
       try {
-        this.buildingChart = true
-        // Destroy previous graph if any
-        if (this.chart) {
-          this.chart.destroy()
-          this.chart = null
-        }
-
+        this.buildingChart = true        
         // Check whether weed need a graph
-        this.hasGraph = this.hasAvailableDatasets()
-        if (this.hasGraph) {
-          // We need to force a refresh so that the prop is correctly updated by Vuejs in components
-          await this.$nextTick()
-
-          // Setup the graph
+        this.hasChart = this.hasAvailableDatasets()
+        if (this.hasChart) {
+          // Compute chart data
           this.setupAvailableTimes()
-          this.setupTimeTicks()
+          // TODO: is it still needed ? this.setupTimeTicks()
           this.setupAvailableRunTimes()
           this.setupAvailableDatasets()
           this.setupAvailableYAxes()
-
           const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
           const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
           const dateFormat = _.get(Time.getFormat(), 'date.short')
           const timeFormat = _.get(Time.getFormat(), 'time.long')
-
-          this.config = {
-            type: 'line',
-            data: {
-              labels: this.times,
-              datasets: this.datasets
-            },
-            options: {
-              tooltips: {
-                mode: 'x',
-                callbacks: {
-                  label: (tooltipItem, data) => {
-                    return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.yLabel.toFixed(2)
-                  }
-                }
-              },
-              scales: {
-                xAxes: [{
-                  id: 'time',
-                  type: 'time',
-                  time: {
-                    unit: 'hour',
-                    stepSize: this.timeStepSize,
-                    displayFormats: {
-                      hour: `${dateFormat} - ${timeFormat}`
-                    },
-                    tooltipFormat: `${dateFormat} - ${timeFormat}`,
-                    parser: (date) => {
-                      if (moment.isMoment(date)) return date
-                      else return moment(typeof date === 'number' ? date : date.toISOString())
-                    }
-                  },
-                  scaleLabel: {
-                    display: false,
-                    labelString: 'Date'
-                  },
-                  ticks: {
-                    minRotation: 20,
-                    maxRotation: 20
-                  }
-                }],
-                yAxes: this.yAxes
-              },
-              legend: {
-                onClick: (event, legendItem) => this.toggleVariable(legendItem)
-              },
-              responsive: false,
-              maintainAspectRatio: false
-            }
-          }
           // Is current time visible in data time range ?
           const currentTime = moment.utc(Time.getCurrentFormattedTime().iso)
           if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
-            this.config.options.annotation = {
+            this.chartOptions.annotation = {
               drawTime: 'afterDatasetsDraw',
               events: ['click'],
               annotations: [{
@@ -398,23 +297,64 @@ export default {
               }]
             }
           }
-
-          this.chart = new Chart(this.$refs.chart.getContext('2d'), this.config)
-          if (this.graphHeight && this.graphWidth) {
-            this.chart.canvas.parentNode.style.width = `${this.graphWidth}px`
-            this.chart.canvas.parentNode.style.height = `${this.graphHeight}px`
-            this.chart.resize()
-          }
+          await this.loadRefs()
+          this.$refs.chart.update({
+            type: 'line',
+            data: {
+              labels: this.times,
+              datasets: this.datasets
+            },
+            options: _.merge({
+              maintainAspectRatio: false,
+              tooltips: {
+                mode: 'x',
+                callbacks: {
+                  label: (tooltipItem, data) => {
+                    return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.yLabel.toFixed(2)
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  id: 'time',
+                  type: 'time',
+                  time: {
+                    unit: 'hour',
+                    stepSize: this.timeStepSize,
+                    displayFormats: {
+                      hour: `${dateFormat} - ${timeFormat}`
+                    },
+                    tooltipFormat: `${dateFormat} - ${timeFormat}`,
+                    parser: (date) => {
+                      if (moment.isMoment(date)) return date
+                      else return moment(typeof date === 'number' ? date : date.toISOString())
+                    }
+                  },
+                  ticks: {
+                    autoskip: true,
+                    maxRotation: 20,
+                    font: function(context) {
+                      if (context.tick && context.tick.major) {
+                        return {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              plugins: {
+                datalabels: {
+                  display: false
+                }
+              },
+            }, { scales: this.yAxes })
+          })
         }
       } catch (error) {
         logger.error(error)
       }
       this.buildingChart = false
-    },
-    async onResized (size) {
-      this.graphWidth = Math.floor(size.width - 75)
-      this.graphHeight = Math.floor(size.height * 0.9)
-      this.setupGraph()
     },
     onUpdateSpan (span) {
       this.$store.set('timeseries.span', span)
@@ -546,10 +486,13 @@ export default {
       }
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
+    this.$options.components['k-chart'] = this.$load('chart/KChart')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+  },
+  created () {
     // Refresh the component
     this.refresh()
   },

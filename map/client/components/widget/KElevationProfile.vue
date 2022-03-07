@@ -2,20 +2,23 @@
   <div class="row" :style="widgetStyle">
     <!-- Actions -->
     <k-panel id="elevation-profile-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-    <div v-if='profile' class='col fit row'>
+    <div class='col fit row'>
       <!-- Title -->
       <span v-if="featureName" class="col-12 q-pa-sm">
         {{ featureName }} 
       </span>
       <!-- Graph -->
-      <k-chart class="q-pa-xs full-width" :config="chartConfig" />
+      <k-chart 
+        ref="chart"
+        class="q-pa-xs full-width"
+         />
     </div>
-    <div v-else class="absolute-center">
+    <!--div v-else class="absolute-center">
       <k-stamp 
         icon="las la-exclamation-circle"  
         icon-size="3rem" 
         :text="$t('KElevationProfile.NO_DATA_AVAILABLE')" 
-        text-size="1rem" />
+        text-size="1rem" /-->
     </div>
   </div>
 </template>
@@ -25,18 +28,6 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { baseWidget } from '../../../../core/client/mixins'
 import { colors, copyToClipboard, exportFile } from 'quasar'
-import { Chart, PointElement, LineElement, ArcElement, LineController, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js'
-
-Chart.register(
-  PointElement,
-  LineElement,
-  ArcElement,
-  LineController,
-  CategoryScale,  
-  LinearScale,
-  Filler,
-  Tooltip
-)
 
 export default {
   name: 'k-elevation-profile',
@@ -60,24 +51,6 @@ export default {
              _.get(this.feature, 'properties.label') ||
              _.get(this.layer, 'name') ||
              _.get(this.layer, 'properties.name')
-    },
-    chartConfig () {
-      return {
-        type: 'line',
-        data: {
-          labels: this.chartLabels,
-          datasets: this.chartDatasets
-        },
-        options: {
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              type: 'linear',
-              beginAtZero: true
-            }
-          }
-        }
-      }
     },
     actions () {
       return  {
@@ -109,9 +82,7 @@ export default {
   },
   data () {
     return {
-      profile: null,
-      chartLabels: [],
-      chartDatasets: []
+      profile: null
     }
   },
   watch: {
@@ -130,7 +101,7 @@ export default {
         if (geometry==='LineString') {
           this.kActivity.centerOnSelection()
           // Setuip the computation options
-          this.feature.resolution = '90'
+          this.feature.resolution = 90
           // Setup the request url options
           const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
           const options = {
@@ -142,7 +113,7 @@ export default {
             }
           }
            // Add the Authorization header if jwt is defined
-          const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))          
+          const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
           if (jwt) options.headers.Authorization = 'Bearer ' + jwt
           // Perform the request
           let dismiss = null
@@ -165,16 +136,38 @@ export default {
               _.forEach(this.profile.features, feature => {
                   heights.push(_.get(feature, 'properties.z', 0))
                   labels.push(distance)
-                  distance+=90
+                  distance+=this.feature.resolution
               })
-              this.chartLabels=labels
-              this.chartDatasets = [{
-                data: heights,
-                fill: true,
-                borderColor: colors.getBrand('primary'),
-                backgroundColor: colors.getBrand('accent'),
-                pointRadius: 0
-              }]
+              this.$refs.chart.update({ 
+                type: 'line',
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    data: heights,
+                    fill: true,
+                    borderColor: colors.getBrand('primary'),
+                    backgroundColor: colors.getBrand('accent'),
+                    pointRadius: 3
+                  }]
+                },
+                options: {
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      type: 'linear',
+                      beginAtZero: true
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      display: false
+                    },
+                    datalabels: {
+                      display: false
+                    }
+                  }
+                }
+              })
             } else {
               this.$toast({ type: 'negative', message: this.$t('errors.' + response.status) })
             }
@@ -213,8 +206,8 @@ export default {
   },
   beforeCreate () {
     // laod the required components
+    this.$options.components['k-chart'] = this.$load('chart/KChart')    
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-chart'] = this.$load('frame/KChart')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }

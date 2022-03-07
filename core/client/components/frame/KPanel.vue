@@ -9,8 +9,13 @@
 </template>
 
 <script>
+import KContent from './KContent.vue'
+
 export default {
   name: 'k-panel',
+  components: {
+    KContent
+  },
   props: {
     content: {
       type: [Object, Array],
@@ -42,10 +47,6 @@ export default {
         return ['button', 'form-button', 'item', 'tab'].includes(value)
       }
     }
-  },
-  created () {
-    // load the required components
-    this.$options.components['k-content'] = this.$load('frame/KContent')
   }
 }
 </script>

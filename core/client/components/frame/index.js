@@ -1,7 +1,6 @@
 import KAction from './KAction.vue'
 import KAvatar from './KAvatar.vue'
 import KBlock from './KBlock.vue'
-import KChart from './KChart.vue'
 import KChipsPane from './KChipsPane.vue'
 import KContent from './KContent.vue'
 import KModal from './KModal.vue'
@@ -19,7 +18,6 @@ export {
   KAction,
   KAvatar,
   KBlock,
-  KChart,
   KChipsPane,
   KContent,
   KModal,

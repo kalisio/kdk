@@ -9,7 +9,11 @@
       </k-scroll-area>
     </div>
     <div v-else class="absolute-center">
-      <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')" />
+      <k-stamp 
+        icon="las la-exclamation-circle" 
+        icon-size="3rem" 
+        :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')" 
+        text-size="1rem" />
     </div>
   </div>
 </template>
