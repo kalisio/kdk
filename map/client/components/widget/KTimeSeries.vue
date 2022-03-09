@@ -113,7 +113,7 @@ export default {
       // Set default run as latest
       return this.runTime || _.last(this.runTimes)
     },
-    /* setupTimeTicks () {
+    /* TODO setupTimeTicks () {
       if (!this.times || !this.graphWidth) return
       // Choose the right step size to ensure we have almost 100px between hour ticks
       // If the time interval is less than hour act as if we have only 1 time per hour
@@ -201,6 +201,8 @@ export default {
             borderColor: colors[index],
             backgroundColor: colors[index],
             data: values,
+            cubicInterpolationMode: 'monotone',
+            tension: 0.4,
             yAxisID: `y${index}`
           }, _.omit(variable.chartjs, 'yAxis')))
         }
@@ -211,7 +213,6 @@ export default {
       const properties = this.probedLocation.properties
       let isLeft = true
       const counter = 0
-
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -266,14 +267,11 @@ export default {
           this.setupAvailableRunTimes()
           this.setupAvailableDatasets()
           this.setupAvailableYAxes()
-          /* TODO
           const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
           const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
-          */
           const dateFormat = _.get(Time.getFormat(), 'date.short')
           const timeFormat = _.get(Time.getFormat(), 'time.long')
           // Is current time visible in data time range ?
-          /* TODO
           const currentTime = moment.utc(Time.getCurrentFormattedTime().iso)
           if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
             this.chartOptions.annotation = {
@@ -292,14 +290,10 @@ export default {
                   content: `${date} - ${time}`,
                   position: 'top',
                   enabled: true
-                },
-                onClick: (event) => {
-                  // The annotation is bound to the `this` variable
-                  // console.log('Annotation', event.type, this)
                 }
               }]
             }
-          } */
+          }
           await this.loadRefs()
           this.$refs.chart.update({
             type: 'line',
@@ -309,6 +303,7 @@ export default {
             },
             options: _.merge({
               maintainAspectRatio: false,
+              spanGaps:  1000 * 60 * 30, // 1 hour
               tooltips: {
                 mode: 'x',
                 callbacks: {
@@ -409,14 +404,15 @@ export default {
     async refresh () {
       // Select the current span as default option in UX
       const span = this.$store.get('timeseries.span')
+      console.log(span)
       const spanOptions = [
-        { badge: '3H', value: 180 },
-        { badge: '6H', value: 360 },
-        { badge: '12H', value: 720 },
-        { badge: '24H', value: 1440 },
-        { badge: '48H', value: 2880 },
-        { badge: '72H', value: 4320 },
-        { badge: '96H', value: 5760 }
+        { badge: '3h', value: 180 },
+        { badge: '6h', value: 360 },
+        { badge: '12h', value: 720 },
+        { badge: '24h', value: 1440 },
+        { badge: '48h', value: 2880 },
+        { badge: '72h', value: 4320 },
+        { badge: '96h', value: 5760 }
       ]
       spanOptions.forEach(option => {
         if (option.value === span) {
@@ -426,7 +422,6 @@ export default {
       // Registers the base actions
       this.actions = [
         { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
-        { id: 'export-feature', icon: 'las la-file-download', tooltip: this.$t('KTimeSeries.EXPORT_SERIES'), handler: this.onExportSeries },
         {
           component: 'input/KOptionsChooser',
           id: 'timespan-options',
@@ -434,7 +429,8 @@ export default {
           tooltip: 'KTimeSeries.SPAN',
           options: spanOptions,
           on: { event: 'option-chosen', listener: this.onUpdateSpan }
-        }
+        },
+        { id: 'export-feature', icon: 'las la-file-download', tooltip: this.$t('KTimeSeries.EXPORT_SERIES'), handler: this.onExportSeries }
       ]
       // Clear previous run timle setup if any
       this.runTime = null
@@ -517,10 +513,3 @@ export default {
 }
 </script>
 
-<style lang="scss">
-  .vertical-text {
-      writing-mode: vertical-rl;
-      transform: rotate(-120deg);
-      transform-origin: 150% 110%;
-  }
-</style>

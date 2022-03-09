@@ -23,6 +23,12 @@ export default {
     customizeOptions (type, options) {
       const defaultOptions = {
         maintainAspectRatio: true,
+        layout: {
+          padding: {
+            top: 32,
+            bottom: 32
+          }
+        },
         plugins: {
           title: {
             display: !!this.title,
@@ -46,9 +52,9 @@ export default {
             font: {
               weight: 'bold'
             },
-            formatter: function (value, context) {
-              return value
-            },
+            /*formatter: function (value, context) {
+              return value + '/' + Math.round(100 * value / context.dataset.sum) + '%'
+            },*/
             padding: 6
           }
         }

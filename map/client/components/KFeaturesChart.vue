@@ -186,10 +186,8 @@ export default {
         // Update chart options
         const start = (this.currentChart - 1) * this.nbValuesPerChart.value
         const end = (this.nbValuesPerChart.value > 0 ? start + this.nbValuesPerChart.value : this.chartData.length)
-        /* TODO
         let title = this.selectedProperty.label
         if (this.nbCharts > 1) title += ` (${this.currentChart}/${this.nbCharts})`
-        */
         // Update the chart
         this.$refs.chart.update({
           type: this.selectedChartType.value,
@@ -197,10 +195,17 @@ export default {
             labels: _.map(this.values, value => value.label).slice(start, end),
             datasets: [{
               data: this.chartData.slice(start, end),
-              colorScale: 'Accent'
+              colorScale: 'Dark2'
             }]
           },
-          options: {}
+          options: {
+            plugins: {
+              title: {
+                display: true,
+                text: title
+              }
+            }
+          }
         })
       } catch (error) {
         // User error message on operation should be raised by error hook, otherwise this is more a coding error
