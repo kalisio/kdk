@@ -60,9 +60,6 @@ export default {
     }
   },
   computed: {
-    hasArchiveLayers () {
-      return _.find(this.layers, (layer) => { return layer.tags.includes('archive') })
-    },
     filteredLayers () {
       if (this.mode === 'forecast') return this.filterForecastLayers()
       return this.filterArchiveLayers()
@@ -117,10 +114,12 @@ export default {
       this.callHandler('toggle', model)
     }
   },
-  created () {
+  beforeCreate () {
     // Loads the required components
     this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+  },
+  created () {
     // Set the current forecast model
     this.model = this.forecastModel
   }
