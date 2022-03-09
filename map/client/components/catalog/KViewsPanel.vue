@@ -62,6 +62,7 @@ export default {
           component: 'frame/KPopupAction',
           propagate: false,
           actionRenderer: 'item',
+          visible: { name: '$can', params: ['create', 'catalog'] },
           content: [{
             id: 'remove-view',
             icon: 'las la-trash',
