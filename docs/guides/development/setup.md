@@ -41,7 +41,7 @@ Under Windows we recommand using [Tortoise Git](https://tortoisegit.org/) and to
 - [Windows.](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
 
 ::: warning
-Kalisio modules are expected to work with MongoDB 3.x
+Kalisio modules are expected to work with MongoDB 3.x and MongoDB 4.x
 :::
 
 ::: tip
