@@ -158,7 +158,7 @@ export default {
       const runTime = this.probedLocation.runTime
       const properties = this.probedLocation.properties
       // Generate a color palette in case the variables does not provide it
-      const colors = _.shuffle(chroma.scale('Spectral').colors(this.probedVariables.length))
+      // TODO const colors = _.shuffle(chroma.scale('Spectral').colors(this.probedVariables.length))
       this.probedVariables.forEach((variable, index) => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -180,8 +180,9 @@ export default {
           values = values.map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
           this.datasets.push(_.merge({
             label: `${label} (${Units.getUnitSymbol(unit)})`,
-            borderColor: colors[index],
-            backgroundColor: colors[index],
+            colorScale: 'Dark2',
+            // TODO borderColor: colors[index],
+            //backgroundColor: colors[index],
             data: values,
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
@@ -246,7 +247,8 @@ export default {
           // Compute chart data
           this.setupAvailableTimes()
           // Compute appropriate time span gaps
-          const timeSpanGaps = Math.abs(moment.duration(_.get(this.layer, 'queryFrom', 0)))
+          const scrapTimeSpan = _.get(this.layer, 'queryFrom')
+          const timeSpanGaps = scrapTimeSpan ? Math.abs(moment.duration(scrapTimeSpan)) : undefined
           this.setupAvailableRunTimes()
           this.setupAvailableDatasets()
           this.setupAvailableYAxes()
