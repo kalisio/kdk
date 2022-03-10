@@ -263,6 +263,8 @@ export default {
         if (this.hasChart) {
           // Compute chart data
           this.setupAvailableTimes()
+          // Compute appropriate time span gaps
+          const timeSpanGaps = Math.abs(moment.duration(_.get(this.layer, 'queryFrom', 0)))
           // TODO: is it still needed ? this.setupTimeTicks()
           this.setupAvailableRunTimes()
           this.setupAvailableDatasets()
@@ -272,23 +274,21 @@ export default {
           const dateFormat = _.get(Time.getFormat(), 'date.short')
           const timeFormat = _.get(Time.getFormat(), 'time.long')
           // Is current time visible in data time range ?
-          const currentTime = moment.utc(Time.getCurrentFormattedTime().iso)
+          const currentTime = Time.getCurrentTime()
+          let annotation = {}
           if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
-            this.chartOptions.annotation = {
-              drawTime: 'afterDatasetsDraw',
-              events: ['click'],
+            annotation = {
               annotations: [{
-                id: 'current-time',
                 type: 'line',
                 mode: 'vertical',
-                scaleID: 'time',
+                scaleID: 'x',
                 value: currentTime.toDate(),
                 borderColor: 'grey',
-                borderWidth: 2,
+                borderWidth: 1,
                 label: {
                   backgroundColor: 'rgba(0,0,0,0.5)',
-                  content: `${date} - ${time}`,
-                  position: 'top',
+                  content: `${time}`,
+                  position: 'start',
                   enabled: true
                 }
               }]
@@ -303,7 +303,7 @@ export default {
             },
             options: _.merge({
               maintainAspectRatio: false,
-              spanGaps:  1000 * 60 * 30, // 1 hour
+              spanGaps:  timeSpanGaps,
               tooltips: {
                 mode: 'x',
                 callbacks: {
@@ -344,7 +344,8 @@ export default {
               plugins: {
                 datalabels: {
                   display: false
-                }
+                },
+                annotation
               }
             }, { scales: this.yAxes })
           })
@@ -404,7 +405,6 @@ export default {
     async refresh () {
       // Select the current span as default option in UX
       const span = this.$store.get('timeseries.span')
-      console.log(span)
       const spanOptions = [
         { badge: '3h', value: 180 },
         { badge: '6h', value: 360 },
