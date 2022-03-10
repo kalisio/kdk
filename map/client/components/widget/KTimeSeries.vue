@@ -113,24 +113,6 @@ export default {
       // Set default run as latest
       return this.runTime || _.last(this.runTimes)
     },
-    /* TODO setupTimeTicks () {
-      if (!this.times || !this.graphWidth) return
-      // Choose the right step size to ensure we have almost 100px between hour ticks
-      // If the time interval is less than hour act as if we have only 1 time per hour
-      const pixelsPerTick = this.graphWidth / (this.times.length * Math.min(1, this.timeInterval))
-      this.timeStepSize = Math.ceil(Math.max(1, Math.round(100 / pixelsPerTick)))
-      // Round to nearest multiple of time interval in hours
-      const interval = Math.max(1, Math.floor(this.timeInterval))
-      this.timeStepSize = Math.ceil(this.timeStepSize / interval) * interval
-      // We can update in place when possible
-     if (this.chart) {
-        const xAxis = _.find(this.config.options.scales.xAxes, axis => axis.type === 'time')
-        if (xAxis && xAxis.time) {
-          xAxis.time.stepSize = this.timeStepSize
-          this.chart.update(this.config)
-        }
-      }
-    }, */
     setupAvailableTimes () {
       this.times = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
@@ -265,11 +247,10 @@ export default {
           this.setupAvailableTimes()
           // Compute appropriate time span gaps
           const timeSpanGaps = Math.abs(moment.duration(_.get(this.layer, 'queryFrom', 0)))
-          // TODO: is it still needed ? this.setupTimeTicks()
           this.setupAvailableRunTimes()
           this.setupAvailableDatasets()
           this.setupAvailableYAxes()
-          const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
+          //const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
           const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
           const dateFormat = _.get(Time.getFormat(), 'date.short')
           const timeFormat = _.get(Time.getFormat(), 'time.long')
