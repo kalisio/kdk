@@ -1,6 +1,15 @@
 <template>
-  <div id="chart-container">
-    <canvas class="q-pa-xs col-12" ref="chart"></canvas>
+  <div>
+    <div class="fit">
+      <canvas ref="chart"></canvas>
+    </div>
+    <div v-show="!hasData" class="absolute-center">
+      <k-stamp
+        icon="las la-exclamation-circle"
+        icon-size="3rem"
+        :text="$t('KChart.NO_DATA_AVAILABLE')"
+        text-size="1rem" />
+    </div>
   </div>
 </template>
 
@@ -17,57 +26,77 @@ export default {
   name: 'k-chart',
   data () {
     return {
-      hasData: false
+      hasData : false
     }
   },
   methods: {
     update (config) {
-      const type = _.get(this.chart, 'type')
-      config.options.onResize = this.onResized
-      // Is the chart type different
-      if (config.type !== type) {
-        // Create a new chart
-        if (this.chart) this.chart.destroy()
-        if (!_.isEmpty(config.data.datasets)) {
-          this.colorize(config.data.datasets)
+      this.hasData = !_.isEmpty(_.get(config, 'data.datasets'))
+      if (this.hasData) {
+        this.customize(config)
+        if (!this.chart) {
           this.chart = new Chart(this.$refs.chart.getContext('2d'), config)
-          this.hasDatas = true
         } else {
-          this.chart = null
-          this.hasData = false
+          if (this.chart.type !== config.type) {
+            this.chart.destroy()
+            this.chart = new Chart(this.$refs.chart.getContext('2d'), config)
+          } else {
+            // Update the existing chart
+            this.chart.data.labels = config.labels
+            this.chart.data.datasets = config.datasets
+            this.chart.options = config.options
+            this.chart.update()
+          }
         }
+        // Store whether the chart has a legend
+        this.hasLegend = _.get(this.chart.options, 'plugins.legend.display')
+        // Forece the chart to be reiszed
+        this.chart.resize()
       } else {
-        // Update the existing chart
-        this.chart.data.labels = config.labels
-        this.chart.data.datasets = config.datasets
-        this.chart.options = config.options
-        this.colorize(this.chart.data.datasets)
-        this.chart.update()
+        // clear the chart if needed
+        if (this.chart) {
+          this.chart.destroy()
+          this.chart = null
+        }
       }
-      // Store whether the chart has a legend
-      this.hasLegend = _.get(this.chart.options, 'plugins.legend.display')
-      // Forece the chart to be reiszed
-      if (this.chart) this.chart.resize()
     },
-    colorize (datasets) {
+    customize (config) {
+      const datasets = _.get(config, 'data.datasets')
       _.forEach(datasets, dataset => {
-        if (dataset.colorScale) {
-          if (this.type !== 'radar') dataset.backgroundColor = chroma.scale(dataset.colorScale).colors(dataset.data.length)
-          else dataset.backgroundColor = chroma.scale(dataset.colorScale).colors(1)
+        if (!dataset.backgroundColor) {
+          const colorScale = _.get(dataset, 'colorScale', 'Dark2')
+          dataset.backgroundColor = chroma.scale(colorScale).colors(config.type !== 'radar' ? dataset.data.length : 1)
+          if (!dataset.borderColor) dataset.borderColor = dataset.backgroundColor
+        }
+      })
+      _.merge(config.options, {
+        responsive: true,
+        onResize: this.onResized,
+        plugins: {
+          legend: {
+            labels: {
+              boxWidth: 20
+            }
+          }
         }
       })
     },
-    onResized (size) {
+    onResized (chart) {
       if (this.$q.screen.lt.sm) {
         // Hide the legend if exists
-        if (this.hasLegend) this.chart.options.plugins.legend.display = false
+        if (this.hasLegend && this.chart) this.chart.options.plugins.legend.display = false
       } else {
         // Restore the legend if exists
-        if (this.hasLegend) this.chart.options.plugins.legend.display = true
+        if (this.hasLegend && this.chart) this.chart.options.plugins.legend.display = true
       }
     }
   },
+    beforeCreate () {
+    // Load the required components
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+  },
   beforeDestroy () {
+    // Clear the chart if any
     if (this.chart) this.chart.destroy()
   }
 }

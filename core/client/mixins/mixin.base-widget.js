@@ -8,6 +8,13 @@ const baseWidgetMixin = {
       }
     }
   },
+  watch: {
+    mode: {
+      handler () {
+        this.$emit('mode-changed', this.mode)
+      }
+    }
+  },
   data () {
     return {
       widgetHeight: 0

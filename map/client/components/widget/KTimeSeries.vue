@@ -1,27 +1,10 @@
 <template>
   <div :style="widgetStyle">
-    <div class="fit row">
-      <!-- Actions -->
+    <div class="fit row no-wrap">
       <k-panel id="timeseries-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-      <div v-if="hasChart" class='col fit row'>
-        <!-- Title -->
-        <span v-if="layerName" class="col-12 q-pa-sm">
-          {{ layerName }} - {{ probedLocationName }}
-        </span>
-        <span v-else class="col-12 q-pa-sm">
-          {{ probedLocationName }}
-        </span>
-        <!-- Graph -->
-        <k-chart
-          ref="chart"
-          class="q-pa-xs full-width" />
-      </div>
-      <div v-else class="absolute-center">
-        <k-stamp
-          icon="las la-exclamation-circle"
-          icon-size="3rem"
-          :text="$t('KTimeSeries.NO_DATA_AVAILABLE')"
-          text-size="1rem" />
+      <div class="col column">
+        <span class="full-width q-pa-sm">{{ title }}</span>
+        <k-chart ref="chart" class="col full-width q-pa-sm" />
       </div>
     </div>
   </div>
@@ -32,7 +15,6 @@ import _ from 'lodash'
 import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
-import chroma from 'chroma-js'
 import Papa from 'papaparse'
 import { getTimeInterval } from '../../utils'
 import { downloadAsBlob } from '../../../../core/client/utils'
@@ -63,6 +45,15 @@ export default {
     }
   },
   computed: {
+    title () {
+      // Compute the layer name if any
+      const layerName = this.selection.layer ? this.$t(this.selection.layer.name) : undefined
+      // Compute the probe location name
+      const probeName = this.probedLocation ? _.get(this.probedLocation, 'properties.name', _.get(this.probedLocation, 'properties.NAME')) : undefined
+      if (layerName && probeName) return `${layerName} - ${probeName}`
+      if (probeName) return probeName
+      return ''
+    },
     location () {
       return this.selection.location
     },
@@ -71,9 +62,6 @@ export default {
     },
     layer () {
       return this.selection.layer
-    },
-    layerName () {
-      return this.selection.layer ? this.$t(this.selection.layer.name) : ''
     },
     probedVariables () {
       // If the feature is linked to a layer with variables use it
@@ -96,7 +84,6 @@ export default {
     return {
       hasChart: null,
       probedLocation: null,
-      probedLocationName: '',
       actions: [],
       settings: this.$store.get('timeseries')
     }
@@ -157,8 +144,6 @@ export default {
       const time = this.probedLocation.time || this.probedLocation.forecastTime
       const runTime = this.probedLocation.runTime
       const properties = this.probedLocation.properties
-      // Generate a color palette in case the variables does not provide it
-      // TODO const colors = _.shuffle(chroma.scale('Spectral').colors(this.probedVariables.length))
       this.probedVariables.forEach((variable, index) => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -180,9 +165,6 @@ export default {
           values = values.map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
           this.datasets.push(_.merge({
             label: `${label} (${Units.getUnitSymbol(unit)})`,
-            colorScale: 'Dark2',
-            // TODO borderColor: colors[index],
-            //backgroundColor: colors[index],
             data: values,
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
@@ -242,8 +224,7 @@ export default {
       try {
         this.buildingChart = true
         // Check whether weed need a graph
-        this.hasChart = this.hasAvailableDatasets()
-        if (this.hasChart) {
+        //if (this.hasAvailableDatasets()) {
           // Compute chart data
           this.setupAvailableTimes()
           // Compute appropriate time span gaps
@@ -328,11 +309,16 @@ export default {
                 datalabels: {
                   display: false
                 },
-                annotation
+                annotation,
+                decimation: {
+                  enabled: true,
+                  algorithm: 'lttb',
+                  samples: 20
+                }
               }
             }, { scales: this.yAxes })
           })
-        }
+        //}
       } catch (error) {
         logger.error(error)
       }
@@ -378,12 +364,6 @@ export default {
       })
       const csv = Papa.unparse(json)
       downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
-    },
-    updateProbedLocationName () {
-      this.probedLocationName = ''
-      if (!this.probedLocation) return
-      const name = _.get(this.probedLocation, 'properties.name', _.get(this.probedLocation, 'properties.NAME'))
-      if (name) this.probedLocationName = name
     },
     async refresh () {
       // Select the current span as default option in UX
@@ -443,7 +423,6 @@ export default {
         _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
           (name ? ` (${name})` : ` (${longitude.toFixed(2)}°, ${latitude.toFixed(2)}°)`))
       }
-      this.updateProbedLocationName()
       await this.setupGraph()
       this.updateProbedLocationHighlight()
 
@@ -479,14 +458,14 @@ export default {
     this.refresh()
   },
   mounted () {
-    this.$events.$on('time-current-time-changed', this.refresh)
+    this.$on('time-current-time-changed', this.refresh)
     this.$events.$on('time-format-changed', this.refresh)
     this.$events.$on('timeseries-span-changed', this.refresh)
     this.kActivity.$on('forecast-model-changed', this.refresh)
     this.kActivity.$on('forecast-level-changed', this.refresh)
   },
   beforeDestroy () {
-    this.$events.$off('time-current-time-changed', this.refresh)
+    this.$off('time-current-time-changed', this.refresh)
     this.$events.$off('time-format-changed', this.refresh)
     this.$events.$off('timeseries-span-changed', this.refresh)
     this.kActivity.$off('forecast-model-changed', this.refresh)

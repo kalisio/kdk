@@ -1,22 +1,12 @@
 <template>
-  <div class="row" :style="widgetStyle">
-    <!-- Actions -->
-    <k-panel id="elevation-profile-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-    <div class='col fit row'>
-      <!-- Title -->
-      <span v-if="featureName" class="col-12 q-pa-sm">
-        {{ featureName }}
-      </span>
-      <!-- Graph -->
-      <k-chart ref="chart" class="q-pa-xs full-width" />
+  <div :style="widgetStyle">
+    <div class="fit row no-wrap">
+      <k-panel id="elevation-profile-actions" class="q-pa-sm" :content="actions" direction="vertical" />
+      <div class="col column">
+        <span class="full-width q-pa-sm">{{ title }}</span>
+        <k-chart ref="chart" class="col full-width q-pa-sm" />
+      </div>
     </div>
-    <!--div v-else class="absolute-center">
-      <k-stamp
-        icon="las la-exclamation-circle"
-        icon-size="3rem"
-        :text="$t('KElevationProfile.NO_DATA_AVAILABLE')"
-        text-size="1rem" />
-    </div-->
   </div>
 </template>
 
@@ -41,7 +31,7 @@ export default {
     }
   },
   computed: {
-    featureName () {
+    title () {
       return _.get(this.feature, 'name') ||
              _.get(this.feature, 'label') ||
              _.get(this.feature, 'properties.name') ||
@@ -194,7 +184,7 @@ export default {
     },
     onExportProfile () {
       if (this.profile) {
-        const file = this.featureName + '.geojson'
+        const file = this.title + '.geojson'
         const status = exportFile(file, JSON.stringify(this.profile))
         if (status) this.$toast({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
         else this.$toast({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })

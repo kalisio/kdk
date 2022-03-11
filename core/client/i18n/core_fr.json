@@ -799,6 +799,9 @@
     "LAST_3_MONTHS_LABEL": "3 derniers mois",
     "LAST_6_MONTHS_LABEL": "6 derniers mois",
     "LAST_YEAR_LABEL": "Dernière année"
+  },
+  "KChart": {
+    "NO_DATA_AVAILABLE": "Aucune donnée disponible"
   }
 }
 

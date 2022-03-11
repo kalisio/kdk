@@ -14,9 +14,13 @@ export default {
   methods: {
     customizeDatasets (type, datasets) {
       _.forEach(datasets, dataset => {
+        // Compute the stats
         if (!dataset.min) dataset.min = _.min(dataset.data)
         if (!dataset.max) dataset.max = _.max(dataset.data)
         if (!dataset.sum) dataset.sum = _.sum(dataset.data)
+        // Clear the colors
+        dataset.backgroundColor = undefined
+        dataset.borderColor = undefined
       })
       // return this.datasets
     },
