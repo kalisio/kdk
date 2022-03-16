@@ -48,7 +48,17 @@ const baseCollectionMixin = {
             // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
             const sortQuery = _.get(this.getCollectionBaseQuery(), '$sort')
             if (sortQuery) {
-              this.items = _.orderBy(this.items, _.keys(sortQuery), _.map(_.values(sortQuery), value => { return value > 0 ? 'asc' : 'desc' }))
+              // By default orderBy is case sensitive while using collation we want to perform case insensitive sort
+              this.items = _.orderBy(this.items,
+                // Sort function for each sort property
+                _.map(_.keys(sortQuery), property => {
+                  return item => {
+                    const value = _.get(item, property)
+                    return (typeof value === 'string' ? value.toLowerCase() : value)
+                  }
+                }),
+                // Sort order for each sort property
+                _.map(_.values(sortQuery), value => { return value > 0 ? 'asc' : 'desc' }))
             }
           } else {
             this.items = response.data
