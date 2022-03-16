@@ -107,6 +107,7 @@ export function setGatewayJwt (layers, jwt) {
   // If we need to use API gateway forward token as query parameter
   // (Leaflet does not support anything else by default as it mainly uses raw <img> tags)
   layers.forEach(layer => {
+    setGatewayUrlJwt(layer, 'url', jwt)
     setGatewayUrlJwt(layer, 'iconUrl', jwt)
     setGatewayUrlJwt(layer, 'leaflet.source', jwt)
     setGatewayUrlJwt(layer, 'opendap.url', jwt)
