@@ -74,7 +74,7 @@
   "units": {
     "METER_SYMBOL": "m",
     "MILE_SYMBOL": "mi",
-    "NAUTICAL_MILE_SYMBOL": "m",
+    "NAUTICAL_MILE_SYMBOL": "NM",
     "SQUARED_METER_SYMBOL": "m²",
     "SQUARED_KILOMETER_SYMBOL": "km²",
     "ACRE_SYMBOL": "a",
