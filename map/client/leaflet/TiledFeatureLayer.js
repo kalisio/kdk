@@ -55,7 +55,13 @@ const TiledFeatureLayer = L.GridLayer.extend({
     if (this.layer.probeService) {
       promises.push(this.activity.getProbeFeatures(_.merge({ baseQuery }, this.layer)))
     }
-    promises.push(this.featureSource(baseQuery))
+    const minFeatureZoom = _.get(this.options, 'minFeatureZoom', this._map.getMinZoom())
+    const maxFeatureZoom = _.get(this.options, 'maxFeatureZoom', this._map.getMaxZoom())
+    // Map zoom will be changed after tile creation
+    const tileZoom = this._map.getZoom() + 1
+    if ((tileZoom >= minFeatureZoom) && (tileZoom <= maxFeatureZoom)) {
+      promises.push(this.featureSource(baseQuery))
+    }
     Promise.all(promises).then(data => {
       if (tile.tileUnloaded) {
         // tile was unloaded before fetch completed
@@ -69,7 +75,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
         tile.probes = (data[0].features.length ? data[0] : null)
         // Can't have measures without probes
         if (!tile.probes) tile.features = null
-        else tile.features = (data[1].features.length ? data[1] : null)
+        // Else check if features are also here
+        else if (data.length > 1) tile.features = (data[1].features.length ? data[1] : null)
       } else {
         tile.features = (data[0].features.length ? data[0] : null)
       }
