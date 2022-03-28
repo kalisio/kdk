@@ -84,7 +84,6 @@ export default {
   },
   data () {
     return {
-      hasChart: null,
       probedLocation: null,
       actions: [],
       settings: this.$store.get('timeseries')
@@ -192,7 +191,7 @@ export default {
         // Check also if axis already created
         if (this.hasVariable(name, properties) && !_.find(this.yAxes, axis => axis.id === unit)) {
           this.yAxes[`y${counter}`] = _.merge({
-            display: 'auto',
+            display: 'true',
             position: isLeft ? 'left' : 'right',
             title: {
               display: true,
@@ -252,7 +251,7 @@ export default {
                 borderColor: 'grey',
                 borderWidth: 1,
                 label: {
-                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  backgroundColor: 'rgba(0,0,0,0.65)',
                   content: `${time}`,
                   position: 'start',
                   enabled: true
@@ -460,14 +459,14 @@ export default {
     this.refresh()
   },
   mounted () {
-    this.$on('time-current-time-changed', this.refresh)
+    this.$events.$on('time-current-time-changed', this.refresh)
     this.$events.$on('time-format-changed', this.refresh)
     this.$events.$on('timeseries-span-changed', this.refresh)
     this.kActivity.$on('forecast-model-changed', this.refresh)
     this.kActivity.$on('forecast-level-changed', this.refresh)
   },
   beforeDestroy () {
-    this.$off('time-current-time-changed', this.refresh)
+    this.$events.$off('time-current-time-changed', this.refresh)
     this.$events.$off('time-format-changed', this.refresh)
     this.$events.$off('timeseries-span-changed', this.refresh)
     this.kActivity.$off('forecast-model-changed', this.refresh)
@@ -476,4 +475,3 @@ export default {
   }
 }
 </script>
-
