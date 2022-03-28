@@ -27,7 +27,6 @@ const baseWidgetMixin = {
       if (windowBarElement) {
         screenHeight -= parseInt(window.getComputedStyle(windowBarElement).getPropertyValue('height'))
       }
-      console.log(screenHeight)
       this.widgetHeight = this.mode === 'maximized' ? screenHeight : screenHeight * 0.3 // 30vh
       return `height: ${this.widgetHeight}px;`
     }
