@@ -3,7 +3,7 @@
     <!--
       Window bar
      -->
-     <div class="row justify-between items-center q-pb-xs">
+     <div id="window-bar" class="row justify-between items-center q-pb-xs">
        <!-- Widgets tab bar -->
       <q-tabs
         v-model="widget"

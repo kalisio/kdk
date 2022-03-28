@@ -1,6 +1,6 @@
 <template>
   <div :style="widgetStyle">
-    <div class="fit row">
+    <div class="fit row no-wrap">
       <q-resize-observer @resize="onResized" />
       <!-- Actions -->
       <k-panel id="mapillary-actions" class="q-pa-sm" :content="actions" direction="vertical" />

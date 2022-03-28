@@ -22,7 +22,12 @@ const baseWidgetMixin = {
   },
   computed: {
     widgetStyle () {
-      const screenHeight = this.$q.screen.height
+      let screenHeight = this.$q.screen.height
+      const windowBarElement = document.getElementById('window-bar')
+      if (windowBarElement) {
+        screenHeight -= parseInt(window.getComputedStyle(windowBarElement).getPropertyValue('height'))
+      }
+      console.log(screenHeight)
       this.widgetHeight = this.mode === 'maximized' ? screenHeight : screenHeight * 0.3 // 30vh
       return `height: ${this.widgetHeight}px;`
     }

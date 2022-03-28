@@ -1,7 +1,9 @@
 <template>
   <div :style="widgetStyle">
     <div class="fit row no-wrap">
+      <!-- Actions -->
       <k-panel id="elevation-profile-actions" class="q-pa-sm" :content="actions" direction="vertical" />
+      <!-- Content -->
       <div class="col column">
         <span class="full-width q-pa-sm">{{ title }}</span>
         <k-chart ref="chart" class="col full-width q-pa-sm" />
@@ -87,7 +89,7 @@ export default {
         const geometry = _.get(this.feature, 'geometry.type')
         if (geometry === 'LineString') {
           this.kActivity.centerOnSelection()
-          // Setuip the computation options
+          // Setup the computation options
           this.feature.resolution = 90
           // Setup the request url options
           const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
