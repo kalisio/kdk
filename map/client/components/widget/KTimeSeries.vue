@@ -188,9 +188,7 @@ export default {
         const defaultUnit = Units.getDefaultUnit(baseUnit)
         const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
         // Variable available for feature ?
-        // Check also if axis already created
-        console.log(name, properties)
-        if (this.hasVariable(name, properties)) {// && !_.find(this.yAxes, axis => axis.unit === unit)) {
+        if (this.hasVariable(name, properties)) {
           this.yAxes[`y${axisId}`] = _.merge({
             unit: unit,
             display: 'auto',
