@@ -190,12 +190,16 @@ export default {
         // Variable available for feature ?
         // Check also if axis already created
         if (this.hasVariable(name, properties) && !_.find(this.yAxes, axis => axis.id === unit)) {
+          console.log(`setup y${counter}`)
           this.yAxes[`y${counter}`] = _.merge({
-            display: 'true',
+            display: 'auto',
             position: isLeft ? 'left' : 'right',
-            title: {
-              display: true,
+            /*title: {
+              display: false,
               text: Units.getUnitSymbol(unit)
+            },*/
+            ticks: {
+              color: this.datasets[counter].backgroundColor
             }
           }, _.get(variable.chartjs, 'yAxis', {}))
           // Alternate axes by default
