@@ -177,8 +177,7 @@ export default {
     setupAvailableYAxes () {
       this.yAxes = {}
       const properties = this.probedLocation.properties
-      let isLeft = true
-      const counter = 0
+      let counter = 0
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -189,11 +188,11 @@ export default {
         const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
         // Variable available for feature ?
         // Check also if axis already created
-        if (this.hasVariable(name, properties) && !_.find(this.yAxes, axis => axis.id === unit)) {
-          console.log(`setup y${counter}`)
+        if (this.hasVariable(name, properties)) {// && !_.find(this.yAxes, axis => axis.unit === unit)) {
           this.yAxes[`y${counter}`] = _.merge({
+            unit: unit,
             display: 'auto',
-            position: isLeft ? 'left' : 'right',
+            position: (counter + 1) % 2 ? 'left' : 'right',
             /*title: {
               display: false,
               text: Units.getUnitSymbol(unit)
@@ -202,8 +201,7 @@ export default {
               color: this.datasets[counter].backgroundColor
             }
           }, _.get(variable.chartjs, 'yAxis', {}))
-          // Alternate axes by default
-          isLeft = !isLeft
+          counter++
         }
       })
     },
