@@ -145,6 +145,7 @@ export default {
       const time = this.probedLocation.time || this.probedLocation.forecastTime
       const runTime = this.probedLocation.runTime
       const properties = this.probedLocation.properties
+      let axisId = 0
       this.probedVariables.forEach((variable, index) => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -169,7 +170,7 @@ export default {
             data: values,
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
-            yAxisID: `y${index}`
+            yAxisID: `y${axisId++}`
           }, _.omit(variable.chartjs, 'yAxis')))
         }
       })
@@ -177,7 +178,7 @@ export default {
     setupAvailableYAxes () {
       this.yAxes = {}
       const properties = this.probedLocation.properties
-      let counter = 0
+      let axisId = 0
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
@@ -188,20 +189,21 @@ export default {
         const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
         // Variable available for feature ?
         // Check also if axis already created
+        console.log(name, properties)
         if (this.hasVariable(name, properties)) {// && !_.find(this.yAxes, axis => axis.unit === unit)) {
-          this.yAxes[`y${counter}`] = _.merge({
+          this.yAxes[`y${axisId}`] = _.merge({
             unit: unit,
             display: 'auto',
-            position: (counter + 1) % 2 ? 'left' : 'right',
+            position: (axisId + 1 )% 2 ? 'left' : 'right',
             /*title: {
               display: false,
               text: Units.getUnitSymbol(unit)
             },*/
             ticks: {
-              color: this.datasets[counter].backgroundColor
+              color: this.datasets[axisId].backgroundColor
             }
           }, _.get(variable.chartjs, 'yAxis', {}))
-          counter++
+          axisId++
         }
       })
     },
@@ -226,102 +228,99 @@ export default {
       // Try/Catch required to ensure we reset the build flag
       try {
         this.buildingChart = true
-        // Check whether weed need a graph
-        //if (this.hasAvailableDatasets()) {
-          // Compute chart data
-          this.setupAvailableTimes()
-          // Compute appropriate time span gaps
-          const scrapTimeSpan = _.get(this.layer, 'queryFrom')
-          const timeSpanGaps = scrapTimeSpan ? Math.abs(moment.duration(scrapTimeSpan)) : undefined
-          this.setupAvailableRunTimes()
-          this.setupAvailableDatasets()
-          this.setupAvailableYAxes()
-          //const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
-          const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
-          const dateFormat = _.get(Time.getFormat(), 'date.short')
-          const timeFormat = _.get(Time.getFormat(), 'time.long')
-          // Is current time visible in data time range ?
-          const currentTime = Time.getCurrentTime()
-          let annotation = {}
-          if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
-            annotation = {
-              annotations: [{
-                type: 'line',
-                mode: 'vertical',
-                scaleID: 'x',
-                value: currentTime.toDate(),
-                borderColor: 'grey',
-                borderWidth: 1,
-                label: {
-                  backgroundColor: 'rgba(0,0,0,0.65)',
-                  content: `${time}`,
-                  position: 'start',
-                  enabled: true
-                }
-              }]
-            }
+        // Compute chart data
+        this.setupAvailableTimes()
+        // Compute appropriate time span gaps
+        const scrapTimeSpan = _.get(this.layer, 'queryFrom')
+        const timeSpanGaps = scrapTimeSpan ? Math.abs(moment.duration(scrapTimeSpan)) : undefined
+        this.setupAvailableRunTimes()
+        this.setupAvailableDatasets()
+        this.setupAvailableYAxes()
+        //const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
+        const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
+        const dateFormat = _.get(Time.getFormat(), 'date.short')
+        const timeFormat = _.get(Time.getFormat(), 'time.long')
+        // Is current time visible in data time range ?
+        const currentTime = Time.getCurrentTime()
+        let annotation = {}
+        if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
+          annotation = {
+            annotations: [{
+              type: 'line',
+              mode: 'vertical',
+              scaleID: 'x',
+              value: currentTime.toDate(),
+              borderColor: 'grey',
+              borderWidth: 1,
+              label: {
+                backgroundColor: 'rgba(0,0,0,0.65)',
+                content: `${time}`,
+                position: 'start',
+                enabled: true
+              }
+            }]
           }
-          await this.loadRefs()
-          this.$refs.chart.update({
-            type: 'line',
-            data: {
-              labels: this.times,
-              datasets: this.datasets
-            },
-            options: _.merge({
-              maintainAspectRatio: false,
-              spanGaps:  timeSpanGaps,
-              tooltips: {
-                mode: 'x',
-                callbacks: {
-                  label: (tooltipItem, data) => {
-                    return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.yLabel.toFixed(2)
-                  }
+        }
+        await this.loadRefs()
+        this.$refs.chart.update({
+          type: 'line',
+          data: {
+            labels: this.times,
+            datasets: this.datasets
+          },
+          options: _.merge({
+            maintainAspectRatio: false,
+            spanGaps:  timeSpanGaps,
+            tooltips: {
+              mode: 'x',
+              callbacks: {
+                label: (tooltipItem, data) => {
+                  return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.yLabel.toFixed(2)
                 }
-              },
-              scales: {
-                x: {
-                  id: 'time',
-                  type: 'time',
-                  time: {
-                    unit: 'hour',
-                    stepSize: this.timeStepSize,
-                    displayFormats: {
-                      hour: `${dateFormat} - ${timeFormat}`
-                    },
-                    tooltipFormat: `${dateFormat} - ${timeFormat}`,
-                    parser: (date) => {
-                      if (moment.isMoment(date)) return date
-                      else return moment(typeof date === 'number' ? date : date.toISOString())
-                    }
+              }
+            },
+            scales: {
+              x: {
+                id: 'time',
+                type: 'time',
+                time: {
+                  unit: 'hour',
+                  stepSize: this.timeStepSize,
+                  displayFormats: {
+                    hour: `${dateFormat} - ${timeFormat}`
                   },
-                  ticks: {
-                    autoskip: true,
-                    maxRotation: 20,
-                    font: function (context) {
-                      if (context.tick && context.tick.major) {
-                        return {
-                          weight: 'bold'
-                        }
+                  tooltipFormat: `${dateFormat} - ${timeFormat}`,
+                  parser: (date) => {
+                    if (moment.isMoment(date)) return date
+                    else return moment(typeof date === 'number' ? date : date.toISOString())
+                  }
+                },
+                ticks: {
+                  autoskip: true,
+                  maxRotation: 20,
+                  font: function (context) {
+                    if (context.tick && context.tick.major) {
+                      return {
+                        weight: 'bold'
                       }
                     }
                   }
                 }
-              },
-              plugins: {
-                datalabels: {
-                  display: false
-                },
-                annotation,
-                decimation: {
-                  enabled: true,
-                  algorithm: 'lttb',
-                  samples: 20
-                }
               }
-            }, { scales: this.yAxes })
-          })
-        //}
+            },
+            plugins: {
+              datalabels: {
+                display: false
+              },
+              annotation,
+              decimation: {
+                enabled: true,
+                algorithm: 'lttb',
+                samples: 20
+              }
+            }
+          }, { scales: this.yAxes })
+        })
       } catch (error) {
         logger.error(error)
       }
