@@ -141,7 +141,7 @@
     "TIME_FORMAT_SHORT_YEAR_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
     "TIME_FORMAT_LONG_YEAR_FIELD_LABEL": "Long year format",
     "TIME_FORMAT_LONG_YEAR_FIELD_HELPER": "<a target='_blank' href='https://momentjs.com/docs/#/displaying/format/'>&#x1F6C8;</a>",
-    "TIME_FORMAT_UTC_FIELD_LABEL": "UTC time display mode",
+    "TIME_FORMAT_TIMEZONE_FIELD_LABEL": "Target timezone to use",
     "UNITS_SETTINGS": "Units settings",
     "LENGTH_FIELD_LABEL": "Default length unit",
     "AREA_FIELD_LABEL": "Default area unit",

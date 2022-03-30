@@ -255,7 +255,7 @@ export default {
       const response = await catalogService.find({ query: { type: 'BaseLayer', 'leaflet.isVisible': true } })
       if (response.data.length > 0) {
         const baseLayer = response.data[0]
-        // do we need to inject a token
+        // Do we need to inject a token ?
         const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
         if (gatewayToken) setGatewayJwt([baseLayer], gatewayToken)
         this.addLayer(baseLayer)

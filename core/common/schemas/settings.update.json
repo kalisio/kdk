@@ -59,12 +59,12 @@
         "helper": "schemas.TIME_FORMAT_LONG_YEAR_FIELD_HELPER"
       }
     },
-    "utc": {
-      "type": "boolean",
+    "timezone": {
+      "type": "string",
       "group": "schemas.TIME_FORMAT_SETTINGS",
       "field": {
-        "component": "form/KToggleField",
-        "label": "schemas.TIME_FORMAT_UTC_FIELD_LABEL"
+        "component": "form/KTimezoneField",
+        "label": "schemas.TIME_FORMAT_TIMEZONE_FIELD_LABEL"
       }
     },
     "timelineStep": {

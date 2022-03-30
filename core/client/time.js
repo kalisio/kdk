@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import moment from 'moment'
+import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
 import { Events } from './events'
 import { Store } from './store'
 import { getLocale } from './utils'
@@ -11,6 +11,8 @@ export const Time = {
     moment.locale(getLocale())
     // Set the time object within the store
     const now = moment.utc()
+    // Try to guess user timezone
+    const timezone = moment.tz.guess() || ''
     Store.set('time', {
       range: {
         start: now.clone().subtract(1, 'months').startOf('day'),
@@ -31,7 +33,7 @@ export const Time = {
           short: 'YY',
           long: 'YYYY'
         },
-        utc: false
+        timezone
       },
       currentTime: now,
       step: 60, // 1H
@@ -71,11 +73,14 @@ export const Time = {
   getFormat () {
     return this.get().format
   },
+  getFormatTimezone () {
+    return this.getFormat().timezone
+  },
   format (datetime, format, options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) {
     let currentTime = this.convertToMoment(datetime)
-    if (!this.getFormat().utc) {
-      // Convert to local time
-      currentTime = moment(currentTime.valueOf())
+    // Convert to local time
+    if (this.getFormatTimezone()) {
+      currentTime.tz(this.getFormatTimezone())
     }
     if (format === 'iso') return currentTime.format()
     else if (format === 'locale') return currentTime.toDate().toLocaleString(getLocale(), options)

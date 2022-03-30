@@ -28,7 +28,7 @@ export default function init () {
       longDate: 'time.format.date.long',
       shortYear: 'time.format.year.short',
       longYear: 'time.format.year.long',
-      utc: 'time.format.utc',
+      timezone: 'time.format.timezone',
       timelineStep: 'time.step',
       timelineInterval: 'time.interval',
       timeseriesSpan: 'timeseries.span',
