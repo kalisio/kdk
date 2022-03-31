@@ -84,12 +84,12 @@ export default {
       }]
       const windowControls = [
         {
-          id: 'reset-action',
+          id: 'pin-action',
           icon: 'las la-angle-up',
           tooltip: 'KWindow.RESET_ACTION',
           dense: true,
           visible: this.mode === 'floating',
-          handler: this.onReset
+          handler: this.onPinned
         },
         {
           id: 'maximize-action',
@@ -118,8 +118,21 @@ export default {
       return _.concat(widgetMenu, this.window.widgetActions, [{ component: 'QSpace' }], windowControls)
     },
     windowStyle () {
-      const size = this.window.size
-      if (size) return { width: `${size[0]}px`, height: `${size[1]}px` }
+      if (this.mode === 'pinned') {
+        let width = this.$q.screen.width
+        if (this.$q.screen.gt.lg) width = 0.5 * this.$q.screen.width
+        if (this.$q.screen.gt.md) width = 0.6 * this.$q.screen.width
+        if (this.$q.screen.gt.sm) width = 0.8 * this.$q.screen.width
+        const height = this.$q.screen.height * 0.3
+        const x = this.$q.screen.width / 2 - width / 2
+        const y = 0
+        this.$store.patch('window', { position: [x, y], size: [width, height] })
+      } else if (this.mode === 'floating') {
+        const size = this.window.size
+        if (size) return { width: `${size[0]}px`, height: `${size[1]}px` }  
+      } else {
+        this.$store.patch('window', { size: [this.$q.screen.width, this.$q.screen.height ]})
+      }
     }
   },
   data () {
@@ -132,22 +145,14 @@ export default {
     getGeometryKey () {
       return this.$config('appName').toLowerCase() + '-window-geometry'
     },
-    onReset () {
-      let width = this.$q.screen.width
-      if (this.$q.screen.gt.lg) width = 0.5 * this.$q.screen.width
-      if (this.$q.screen.gt.md) width = 0.6 * this.$q.screen.width
-      if (this.$q.screen.gt.sm) width = 0.8 * this.$q.screen.width
-      const height = this.$q.screen.height * 0.3
-      const x = this.$q.screen.width / 2 - width / 2
-      const y = 0
-      this.$store.patch('window', { position: [x, y], size: [width, height] })
+    onPinned () {
       window.localStorage.removeItem(this.getGeometryKey())
-      this.mode = 'pinned'
+      this.mode = 'pinned'      
     },
-    onMaximized () {
+    onMaximized () {     
       this.$store.patch('window', { backupPosition: this.$store.get('window.position'), backupSize: this.$store.get('window.size'), backupMode: this.mode })
-      this.$store.patch('window', { position: [0, 0], size: [this.$q.screen.width, this.$q.screen.height] })
-      this.mode = 'maximized'
+      this.$store.patch('window', { position: [0, 0] })
+      this.mode = 'maximized' 
     },
     onRestored () {
       this.$store.patch('window', { position: this.$store.get('window.backupPosition'), size: this.$store.get('window.backupSize') })
@@ -204,6 +209,9 @@ export default {
 </script>
 
 <style lang="scss">
+  body {
+    overflow: hidden;
+  }
   .k-window {
     border: solid 1px lightgrey;
     border-radius: 5px;
