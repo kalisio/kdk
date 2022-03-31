@@ -558,8 +558,9 @@
   },
   "KWindow": {
     "CLOSE_ACTION": "$t(CLOSE)",
-    "MINIMIZE_ACTION": "Réduire",
-    "MAXIMIZE_ACTION": "Agrandir"
+    "RESET_ACTION": "Réinitialiser",
+    "RESTORE_ACTION": "Restaurer",
+    "MAXIMIZE_ACTION": "Maximiser"
   },
   "KAbout": {
     "SIDENAV": "A propos",

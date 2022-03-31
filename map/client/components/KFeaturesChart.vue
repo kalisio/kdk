@@ -100,7 +100,7 @@ export default {
     },
     chartStyle () {
       const min = Math.min(this.$q.screen.width, this.$q.screen.height)
-      return `width: ${min * 0.75}px;`
+      return `maxWidth: ${min * 0.75}px;`
     },
     nbCharts () {
       if (!this.chartData.length || (this.nbValuesPerChart.value === 0)) return 1

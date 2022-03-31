@@ -1,34 +1,34 @@
 <template>
-  <div v-if="widget" class="k-window" :style="windowStyle">
+  <div v-if="widget" class="k-window fit column" :style="windowStyle">
     <!--
-      Window bar
+      Window header
      -->
-     <div id="window-bar" class="row justify-between items-center q-pb-xs">
-       <!-- Widgets tab bar -->
-      <q-tabs
-        v-model="widget"
-        dense no-caps
-        active-color="primary"
-        align="left"
-        narrow-indicator
-      >
-        <template v-for="(widget,index) in widgets">
-          <q-tab :key="index" :name="widget.id" :icon="widget.icon" />
-        </template>
-      </q-tabs>
-      <!-- Window actions -->
-      <k-panel id="widget-actions" :content="actions" color="primary" />
+    <div 
+      id="window-header" 
+      class="k-window-header q-pt-xs" 
+      v-touch-pan.prevent.mouse="onMoved">
+      <k-panel id="window-actions" :content="actions" />
     </div>
     <!--
       Window content
       -->
-    <q-tab-panels v-model="widget" animated>
-      <template v-for="(widget, index) in widgets">
-        <q-tab-panel :key="index" :name="widget.id" class="no-padding">
-          <component :is="widget.componentKey" :mode="mode" v-bind="widget.props" style="z-index: 1" />
-        </q-tab-panel>
-      </template>>
-    </q-tab-panels>
+    <div class="col">
+      <q-tab-panels v-model="widget" animated>
+        <template v-for="(widget, index) in widgets">
+          <q-tab-panel :key="index" :name="widget.id" class="no-padding">
+            <component :is="widget.componentKey" :mode="mode" v-bind="widget.props" style="z-index: 1;" />
+          </q-tab-panel>
+        </template>>
+      </q-tab-panels>
+    </div>
+    <!--
+      Window footer
+     -->   
+    <div
+      id="window-footer"
+      class="k-window-footer row justify-end items-center">
+      <q-icon v-if="mode !== 'maximized'" name="las la-slash" size="10px" v-touch-pan.prevent.mouse="onResized" />
+    </div>
   </div>
 </template>
 
@@ -48,22 +48,6 @@ export default {
         this.$store.set('window.current', value)
       }
     },
-    actions () {
-      return [
-        {
-          id: 'change-mode',
-          icon: this.mode === 'minimized' ? 'las la-expand' : 'las la-compress',
-          tooltip: this.mode === 'minimized' ? 'KWindow.MAXIMIZE_ACTION' : 'KWindow.MINIMIZE_ACTION',
-          handler: this.onModeChanged
-        },
-        {
-          id: 'close-action',
-          icon: 'las la-times',
-          tooltip: this.$t('KWindow.CLOSE_ACTION'),
-          handler: this.onClosed
-        }
-      ]
-    },
     widgets () {
       let widgets = this.window.widgets
       // Apply filtering
@@ -76,35 +60,129 @@ export default {
           this.$options.components[componentKey] = this.$load(componentName)
         }
       })
+      console.log(widgets)
       return widgets
     },
+    actions () {
+      let widgetMenuItems = []
+      _.forEach(this.widgets, widget => {
+        widgetMenuItems.push({
+          id: widget.id,
+          label: widget.label,
+          icon: widget.icon,
+          dense: true,
+          handler: () => this.widget = widget.id
+        })
+      })
+      const widgetMenu = [{
+        id: 'widgets-menu-items',
+        component: 'menu/KMenu',
+        icon: 'las la-cube',
+        tooltip: 'Widgets',
+        dense: true,
+        actionRenderer: 'item',
+        content: widgetMenuItems
+      }]
+      const windowControls = [
+        {
+          id: 'reset-action',
+          icon: 'las la-angle-up',
+          tooltip: 'KWindow.RESET_ACTION',
+          dense: true,
+          visible: this.mode === 'floating',
+          handler: this.onReset
+        },
+        {
+          id: 'maximize-action',
+          icon: 'las la-expand',
+          tooltip: 'KWindow.MAXIMIZE_ACTION',
+          dense: true,
+          visible: this.mode !== 'maximized',
+          handler: this.onMaximized
+        },
+        {
+          id: 'restore-action',
+          icon: 'las la-compress',
+          tooltip: 'KWindow.RESTORE_ACTION',
+          dense: true,
+          visible: this.mode === 'maximized',
+          handler: this.onRestored
+        },
+        {
+          id: 'close-action',
+          icon: 'las la-times',
+          tooltip: this.$t('KWindow.CLOSE_ACTION'),
+          dense: true,
+          handler: this.onClosed
+        }
+      ]
+      return _.concat(widgetMenu, this.window.widgetActions, [{ component: 'QSpace' }], windowControls)
+    },
     windowStyle () {
-      if (this.mode === 'maximized') return 'width: 100vw'
-      return this.$q.screen.gt.lg ? 'width: 55vw'
-        : this.$q.screen.gt.md ? 'width: 70vw'
-          : this.$q.screen.gt.sm ? 'width: 85vw'
-            : 'width: 100vw'
+      const size = this.window.size
+      return { width: `${size[0]}px`, height: `${size[1]}px` }
     }
   },
   data () {
     return {
       window: this.$store.get('window'),
-      mode: 'minimized'
+      mode: 'pinned'
     }
   },
   methods: {
-    onModeChanged () {
-      if (this.mode === 'minimized') this.mode = 'maximized'
-      else this.mode = 'minimized'
+    onReset () {
+      let width = this.$q.screen.width
+      if (this.$q.screen.gt.lg) width = 0.5 * this.$q.screen.width
+      if (this.$q.screen.gt.md) width = 0.6 * this.$q.screen.width 
+      if (this.$q.screen.gt.sm) width = 0.8 * this.$q.screen.width 
+      let height = this.$q.screen.height * .3
+      let x = this.$q.screen.width / 2 - width / 2
+      let y = 0
+      this.$store.patch('window', { position: [x, y], size: [width, height] })
+      this.mode = 'pinned'
+    },
+    onMaximized () {
+      this.$store.patch('window', { backupPosition: this.$store.get('window.position'), backupSize: this.$store.get('window.size'), backupMode: this.mode })
+      this.$store.patch('window', { position: [0, 0], size: [this.$q.screen.width, this.$q.screen.height ]})
+      this.mode = 'maximized'
+    },
+    onRestored () {
+      this.$store.patch('window', { position: this.$store.get('window.backupPosition'), size: this.$store.get('window.backupSize') })
+      this.mode = this.$store.get('window.backupMode')
     },
     onClosed () {
       const widgets = this.$store.get('window.widgets')
       this.$store.patch('window', { current: '', widgets })
+    },
+    onMoved (event) {
+      if (this.mode !== 'maximized') {
+        this.mode = 'floating'
+        const position = this.$store.get('window.position')
+        this.$store.patch('window', { position: [ position[0] + event.delta.x, position[1] + event.delta.y ] })
+      }
+    },
+    onResized (event) {
+      if (this.mode !== 'maximized') {
+        this.mode = 'floating'
+        const size = this.$store.get('window.size')
+        this.$store.patch('window', { size: [ size[0] + event.delta.x, size[1] + event.delta.y ] })
+      }
     }
   },
-  created () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
+  },
+  created () {
+    let position = this.window.position
+    let size = this.window.size
+    if (!size) {
+      size = [ this.$q.screen.width * .5, this.$q.screen.height *.25 ]
+    }
+    if (!position) {
+      position = [ this.$q.screen.width / 2 - size[0] / 2, 0]
+    }
+    this.$store.patch('window', { position, size })
   }
 }
 </script>
@@ -117,5 +195,17 @@ export default {
   }
   .k-window:hover {
     border: solid 1px var(--q-color-primary);
+  }
+  .k-window-header {
+     border-radius: 5px;
+  }
+  .k-window-header:hover {
+    background: #eeeeee
+  }
+  .k-window-footer {
+     border-radius: 5px;
+  }
+  .k-window-footer:hover {
+     cursor: nwse-resize
   }
 </style>

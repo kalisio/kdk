@@ -73,8 +73,8 @@
       <k-fab />
     </q-page-sticky>
     <!-- window -->
-    <q-page-sticky position="top" :offset="widgetOffset">
-      <k-window id="window" ref="window" />
+    <q-page-sticky position="top-left" :offset="window.position">
+      <k-window id="window" />
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left">
@@ -181,6 +181,7 @@ export default {
       rightPane: this.$store.get('rightPane'),
       bottomPane: this.$store.get('bottomPane'),
       page: this.$store.get('page'),
+      window: this.$store.get('window'),
       hasLeftPaneOpener: false,
       hasTopPaneOpener: false,
       hasRightPaneOpener: false,
@@ -189,8 +190,7 @@ export default {
       topPadding: 0,
       leftPadding: 0,
       bottomPadding: 0,
-      rightPadding: 0,
-      widgetOffset: [0, 0],
+      rightPadding: 0,      
       fabOffset: [16, 16]
     }
   },

@@ -359,6 +359,7 @@
     "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality"
   },
   "KTimeSeries": {
+    "LABEL": "Time Series",
     "NO_DATA_AVAILABLE": "No data available",
     "CENTER_ON": "Center the view on the probed location",
     "SPAN": "Timeseries span",
@@ -491,6 +492,7 @@
     "SET_DATE": "Go on a date"
   },
   "KInformationBox": {
+    "LABEL": "Information box",
     "NO_FEATURE_PROPERTIES": "No information available",
     "CENTER_ON": "Center the view on the object",    
     "COPY_PROPERTIES": "Copy the values to the clipboard",    
@@ -500,7 +502,8 @@
     "FEATURE_EXPORTED": "Object exported to file {{file}}",
     "CANNOT_EXPORT_FEATURE": "Unable to export the object. Your browser does not support this functionality"
   },
-  "KMapillaryWidget": {
+  "KMapillaryViewer": {
+    "LABEL": "Mapillary Viewer",
     "CENTER_ON": "Center the view on the Mapillary marker",
     "MOVE_CLOSE_TO": "Move to the closest image",
     "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
@@ -589,6 +592,7 @@
     "CLICK_TO_CHANGE_UNIT": "Click to change unit"
   },
   "KElevationProfile": {
+    "LABEL": "Elevation profile",
     "NO_DATA_AVAILABLE": "No profile available",
     "INVALID_GEOMETRY": "Selected object geometry is invalid",
     "COMPUTING_PROFILE": "Profile computation in progress",

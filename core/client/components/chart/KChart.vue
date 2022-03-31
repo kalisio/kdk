@@ -1,15 +1,12 @@
 <template>
-  <div>
-    <div class="fit">
-      <canvas ref="chart"></canvas>
-    </div>
-    <div v-show="!hasData" class="absolute-center">
-      <k-stamp
-        icon="las la-exclamation-circle"
-        icon-size="3rem"
-        :text="$t('KChart.NO_DATA_AVAILABLE')"
-        text-size="1rem" />
-    </div>
+  <div class="fit">
+    <canvas ref="chart"></canvas>
+    <k-stamp
+      v-show="!hasData" class="absolute-center"
+      icon="las la-exclamation-circle"
+      icon-size="3rem"
+      :text="$t('KChart.NO_DATA_AVAILABLE')"
+      text-size="1rem" />
   </div>
 </template>
 

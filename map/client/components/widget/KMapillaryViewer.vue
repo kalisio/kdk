@@ -1,12 +1,6 @@
 <template>
-  <div :style="widgetStyle">
-    <div class="fit row no-wrap">
-      <q-resize-observer @resize="onResized" />
-      <!-- Actions -->
-      <k-panel id="mapillary-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-      <!-- Content -->
-      <div class="col" id="mapillary-container"></div>
-    </div>
+  <div id="mapillary-widget" class="column" :style="widgetStyle">
+    <div class="col" id="mapillary-container" />
   </div>
 </template>
 
@@ -24,15 +18,26 @@ export default {
   name: 'k-mapillary-viewer',
   inject: ['kActivity'],
   mixins: [baseWidget],
+  computed: {
+    actions () {
+      return [
+        { id: 'center', icon: 'las la-eye', tooltip: this.$t('KMapillaryViewer.CENTER_ON'), handler: this.centerMap }
+      ]
+    }
+  },
   data () {
     return {
       selection: this.$store.get('selection'),
-      actions: []
     }
   },
   watch: {
     'selection.location': function () {
       this.refresh()
+    },
+    widgetHeight: {
+      handler () {
+        if (this.mapillaryViewer) this.mapillaryViewer.resize()
+      }
     }
   },
   methods: {
@@ -64,6 +69,18 @@ export default {
         }
       }
     },
+     refreshActions () {
+       this.$store.patch('window', { widgetActions: [
+          { 
+            id: 'center', 
+            icon: 'las la-eye', 
+            tooltip: 'KMapillaryViewer.CENTER_ON', 
+            visible: this.imageId,
+            handler: this.centerMap 
+          }
+        ]
+       })
+    },
     async refresh () {
       if (_.has(this.selection, 'states.mapillary')) {
         this.restoreStates()
@@ -73,6 +90,8 @@ export default {
         const location = this.selection.location
         if (location) await this.moveCloseTo(location.lat, location.lng)
       }
+      // Refresh the actions
+      this.refreshActions()
     },
     async moveCloseTo (lat, lon) {
       // Query the images according a bbox that contains the given position
@@ -102,7 +121,7 @@ export default {
         })
         this.refreshView()
       } else {
-        this.$toast({ type: 'negative', message: this.$t('KMapillaryWidget.NO_IMAGE_FOUND_CLOSE_TO') })
+        this.$toast({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
       }
     },
     centerMap () {
@@ -126,23 +145,20 @@ export default {
       this.bearing = await this.mapillaryViewer.getBearing()
       this.centerMap()
       this.kActivity.updateSelectionHighlight('mapillary', this.getMarkerFeature())
-    },
-    onResized () {
-      if (this.mapillaryViewer) this.mapillaryViewer.resize()
     }
   },
   beforeCreate () {
     // laod the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
-  created () {
+  /*created () {
     // Registers the actions
     this.actions = {
       default: [
-        { id: 'center', icon: 'las la-eye', tooltip: this.$t('KMapillaryWidget.CENTER_ON'), handler: this.centerMap }
+        { id: 'center', icon: 'las la-eye', tooltip: this.$t('KMapillaryViewer.CENTER_ON'), handler: this.centerMap }
       ]
     }
-  },
+  },*/
   mounted () {
     // Create the viewer
     this.mapillaryViewer = new Viewer({

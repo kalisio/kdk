@@ -558,7 +558,8 @@
   },
   "KWindow": {
     "CLOSE_ACTION": "$t(CLOSE)",
-    "MINIMIZE_ACTION": "Minimize",
+    "RESET_ACTION": "Reset",
+    "RESTORE_ACTION": "Restore",
     "MAXIMIZE_ACTION": "Maximize"
   },
   "KAbout": {

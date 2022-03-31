@@ -360,6 +360,7 @@
     "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité"
   },
   "KTimeSeries": {
+    "LABEL": "Séries chronologiques",
     "NO_DATA_AVAILABLE": "Aucune donnée disponible",
     "CENTER_ON": "Centrer la vue sur la sonde",
     "SPAN": "Intervalle de la série temporelle",
@@ -492,6 +493,7 @@
     "SET_DATE": "Aller à une date"
   },
   "KInformationBox": {
+    "LABEL": "Boîte d'information",
     "NO_FEATURE_PROPERTIES": "Aucune information disponible",
     "CENTER_ON": "Centrer la vue sur l'objet",
     "COPY_PROPERTIES": "Copier les valeurs en mémoire",    
@@ -501,7 +503,8 @@
     "FEATURE_EXPORTED": "Objet exporté dans le fichier {{file}}",
     "CANNOT_EXPORT_FEATURE": "Impossible d'exporter l'objet"
   },
-  "KMapillaryWidget": {
+  "KMapillaryViewer": {
+    "LABEL": "Visuel Mapillary",
     "CENTER_ON": "Centrer la vue sur le marqueur Mapillary",
     "MOVE_CLOSE_TO": "Se positionner à l'image la plus proche",
     "NO_IMAGE_FOUND_CLOSE_TO": "Aucune image trouvée à proximité de votre position"
@@ -590,6 +593,7 @@
     "CLICK_TO_CHANGE_UNIT": "Cliquer pour changer d'unité"
   },
   "KElevationProfile": {
+    "LABEL": "Profil d'élévation",
     "NO_DATA_AVAILABLE": "Aucun profil",
     "INVALID_GEOMETRY": "Géométrie de l'objet sélectionné invalide",
     "COMPUTING_PROFILE": "Calcul du profil en cours",

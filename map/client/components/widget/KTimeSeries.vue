@@ -1,14 +1,6 @@
 <template>
-  <div :style="widgetStyle">
-    <div class="fit row no-wrap">
-      <!-- Actions -->
-      <k-panel id="timeseries-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-      <!-- Content -->
-      <div class="col column">
-        <span class="full-width q-pa-sm">{{ title }}</span>
-        <k-chart ref="chart" class="col full-width q-pa-sm" />
-      </div>
-    </div>
+  <div id="time-series" class="column" :style="widgetStyle">
+    <k-chart ref="chart" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
 
@@ -85,7 +77,6 @@ export default {
   data () {
     return {
       probedLocation: null,
-      actions: [],
       settings: this.$store.get('timeseries')
     }
   },
@@ -193,10 +184,6 @@ export default {
             unit: unit,
             display: 'auto',
             position: (axisId + 1 )% 2 ? 'left' : 'right',
-            /*title: {
-              display: false,
-              text: Units.getUnitSymbol(unit)
-            },*/
             ticks: {
               color: this.datasets[axisId].backgroundColor
             }
@@ -307,6 +294,11 @@ export default {
               }
             },
             plugins: {
+              title: {
+                display: true,
+                text: this.title,
+                align: 'start'
+              },
               datalabels: {
                 display: false
               },
@@ -365,7 +357,7 @@ export default {
       const csv = Papa.unparse(json)
       downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
     },
-    async refresh () {
+    refreshActions () {
       // Select the current span as default option in UX
       const span = this.$store.get('timeseries.span')
       const spanOptions = [
@@ -383,18 +375,31 @@ export default {
         }
       })
       // Registers the base actions
-      this.actions = [
-        { id: 'center-view', icon: 'las la-eye', tooltip: 'KTimeSeries.CENTER_ON', handler: this.onCenterOn },
-        {
-          component: 'input/KOptionsChooser',
-          id: 'timespan-options',
-          icon: 'las la-history',
-          tooltip: 'KTimeSeries.SPAN',
-          options: spanOptions,
-          on: { event: 'option-chosen', listener: this.onUpdateSpan }
-        },
-        { id: 'export-feature', icon: 'las la-file-download', tooltip: this.$t('KTimeSeries.EXPORT_SERIES'), handler: this.onExportSeries }
-      ]
+      this.$store.patch('window', { widgetActions: [
+          { 
+            id: 'center-view', 
+            icon: 'las la-eye', 
+            tooltip: 'KTimeSeries.CENTER_ON', 
+            handler: this.onCenterOn 
+          },
+          {
+            component: 'input/KOptionsChooser',
+            id: 'timespan-options',
+            icon: 'las la-history',
+            tooltip: 'KTimeSeries.SPAN',
+            options: spanOptions,
+            on: { event: 'option-chosen', listener: this.onUpdateSpan }
+          },
+          { 
+            id: 'export-feature', 
+            icon: 'las la-file-download', 
+            tooltip: 'KTimeSeries.EXPORT_SERIES', 
+            handler: this.onExportSeries 
+          }
+        ]
+      })
+    },
+    async refresh () {
       // Clear previous run timle setup if any
       this.runTime = null
       // Then manage selection
@@ -445,6 +450,7 @@ export default {
           on: { event: 'option-chosen', listener: this.onUpdateRun }
         })
       }
+      this.refreshActions()
     }
   },
   beforeCreate () {

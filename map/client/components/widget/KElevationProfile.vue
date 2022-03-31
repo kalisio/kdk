@@ -1,13 +1,8 @@
 <template>
-  <div :style="widgetStyle">
-    <div class="fit row no-wrap">
-      <!-- Actions -->
-      <k-panel id="elevation-profile-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-      <!-- Content -->
-      <div class="col column">
-        <span class="full-width q-pa-sm">{{ title }}</span>
-        <k-chart ref="chart" class="col full-width q-pa-sm" />
-      </div>
+  <div id="elevation-profile" class="column" :style="widgetStyle">
+    <div class="col">
+      <span class="full-width q-pa-sm">{{ title }}</span>
+      <k-chart ref="chart" class="q-pa-sm" />
     </div>
   </div>
 </template>
@@ -40,33 +35,6 @@ export default {
              _.get(this.feature, 'properties.label') ||
              _.get(this.layer, 'name') ||
              _.get(this.layer, 'properties.name')
-    },
-    actions () {
-      return {
-        default: [
-          {
-            id: 'center-view',
-            icon: 'las la-eye',
-            tooltip: this.$t('KElevationProfile.CENTER_ON'),
-            disabled: !this.feature,
-            handler: this.onCenterOn
-          },
-          {
-            id: 'copy-properties',
-            icon: 'las la-clipboard',
-            tooltip: this.$t('KElevationProfile.COPY_PROFILE'),
-            disabled: !this.profile,
-            handler: this.onCopyProfile
-          },
-          {
-            id: 'export-feature',
-            icon: 'img:statics/json-icon.svg',
-            tooltip: this.$t('KElevationProfile.EXPORT_PROFILE'),
-            disabled: !this.profile,
-            handler: this.onExportProfile
-          }
-        ]
-      }
     }
   },
   data () {
@@ -83,6 +51,32 @@ export default {
     }
   },
   methods: {
+    refreshActions () {
+      this.$store.patch('window', { widgetActions: [
+          {
+            id: 'center-view',
+            icon: 'las la-eye',
+            tooltip: this.$t('KElevationProfile.CENTER_ON'),
+            visible: this.feature,
+            handler: this.onCenterOn
+          },
+          {
+            id: 'copy-properties',
+            icon: 'las la-clipboard',
+            tooltip: this.$t('KElevationProfile.COPY_PROFILE'),
+            visible: this.profile,
+            handler: this.onCopyProfile
+          },
+          {
+            id: 'export-feature',
+            icon: 'img:statics/json-icon.svg',
+            tooltip: this.$t('KElevationProfile.EXPORT_PROFILE'),
+            visible: this.profile,
+            handler: this.onExportProfile
+          }
+        ]
+      })
+    },
     async refresh () {
       this.profile = null
       if (this.feature && this.layer) {
@@ -170,6 +164,8 @@ export default {
           this.$toast({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         }
       }
+      // Refresh the actions
+      this.refreshActions()
     },
     onCenterOn () {
       this.kActivity.centerOnSelection()

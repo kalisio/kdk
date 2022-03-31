@@ -1,9 +1,6 @@
 <template>
-  <div :style="widgetStyle">
+  <div id="information-box" class="column" :style="widgetStyle">
     <div v-if="schema && properties" class="fit row">
-      <!-- Actions -->
-      <k-panel id="information-box-actions" class="q-pa-sm" :content="actions" direction="vertical" />
-      <!-- Content -->
       <k-scroll-area class="col" :maxHeight="widgetHeight">
         <k-view class="q-pa-md" :schema="schema" :values="properties" :separators="true" />
       </k-scroll-area>
@@ -38,35 +35,6 @@ export default {
       default: null
     }
   },
-  computed: {
-    actions () {
-      return {
-        default: [
-          {
-            id: 'center-view',
-            icon: 'las la-eye',
-            tooltip: this.$t('KInformationBox.CENTER_ON'),
-            disabled: !this.feature,
-            handler: this.onCenterOn
-          },
-          {
-            id: 'copy-properties',
-            icon: 'las la-clipboard',
-            tooltip: this.$t('KInformationBox.COPY_PROPERTIES'),
-            disabled: !this.properties,
-            handler: this.onCopyProperties
-          },
-          {
-            id: 'export-feature',
-            icon: 'img:statics/json-icon.svg',
-            tooltip: this.$t('KInformationBox.EXPORT_FEATURE'),
-            disabled: !this.feature,
-            handler: this.onExportFeature
-          }
-        ]
-      }
-    }
-  },
   data () {
     return {
       schema: null,
@@ -74,11 +42,40 @@ export default {
     }
   },
   watch: {
-    feature: function () {
-      this.refresh()
+    feature: {
+      handler () {
+        this.refresh()
+      },
+      immediate: true
     }
   },
   methods: {
+    refreshActions () {
+      this.$store.patch('window', { widgetActions: [
+          {
+            id: 'center-view',
+            icon: 'las la-eye',
+            tooltip: this.$t('KInformationBox.CENTER_ON'),
+            visible: this.feature,
+            handler: this.onCenterOn
+          },
+          {
+            id: 'copy-properties',
+            icon: 'las la-clipboard',
+            tooltip: this.$t('KInformationBox.COPY_PROPERTIES'),
+            visible: this.properties,
+            handler: this.onCopyProperties
+          },
+          {
+            id: 'export-feature',
+            icon: 'img:statics/json-icon.svg',
+            tooltip: this.$t('KInformationBox.EXPORT_FEATURE'),
+            visible: this.feature,
+            handler: this.onExportFeature
+          }
+        ]
+      })
+    },
     refresh () {
       this.properties = null
       this.schema = null
@@ -109,7 +106,10 @@ export default {
         })
         this.schema = schema
         this.properties = properties
-      }
+        
+      } 
+      // Refresh the actions
+      this.refreshActions()
     },
     onCenterOn () {
       this.kActivity.centerOnSelection()
@@ -145,10 +145,6 @@ export default {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-view'] = this.$load('form/KView')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-  },
-  created () {
-    // Refresh the component
-    this.refresh()
   },
   beforeDestroy () {
     this.kActivity.removeSelectionHighlight('information-box')

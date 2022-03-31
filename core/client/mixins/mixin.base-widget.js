@@ -1,34 +1,27 @@
 const baseWidgetMixin = {
-  props: {
-    mode: {
-      type: String,
-      default: 'minimized',
-      validator: (value) => {
-        return ['minimized', 'maximized'].includes(value)
+  computed: {
+    widgetStyle () {
+      const widgetWidth = this.window.size[0]
+      let widgetHeight = this.window.size[1]
+      const windowHeaderElement = document.getElementById('window-header')
+      if (windowHeaderElement) {
+        widgetHeight -= parseInt(window.getComputedStyle(windowHeaderElement).getPropertyValue('height'))
       }
-    }
-  },
-  watch: {
-    mode: {
-      handler () {
-        this.$emit('mode-changed', this.mode)
+      const windowFooterElement = document.getElementById('window-footer')
+      if (windowFooterElement) {
+        widgetHeight -= parseInt(window.getComputedStyle(windowFooterElement).getPropertyValue('height'))
       }
+      this.widgetHeight = widgetHeight
+      return `minWidth: ${widgetWidth}px;
+              maxWidth: ${widgetWidth}px;
+              minHeight: ${widgetHeight}px; 
+              maxHeight: ${widgetHeight}px;`
     }
   },
   data () {
     return {
+      window: this.$store.get('window'),
       widgetHeight: 0
-    }
-  },
-  computed: {
-    widgetStyle () {
-      let screenHeight = this.$q.screen.height
-      const windowBarElement = document.getElementById('window-bar')
-      if (windowBarElement) {
-        screenHeight -= parseInt(window.getComputedStyle(windowBarElement).getPropertyValue('height'))
-      }
-      this.widgetHeight = this.mode === 'maximized' ? screenHeight : screenHeight * 0.3 // 30vh
-      return `height: ${this.widgetHeight}px;`
     }
   }
 }
