@@ -602,7 +602,7 @@
     "INVALID_GEOMETRY": "Géométrie de l'objet sélectionné invalide",
     "COMPUTING_PROFILE": "Calcul du profil en cours",
     "CENTER_ON": "Center la vue sur l'objet",    
-    "COPY_PROFILE": "Copier le profile en mémoire",    
+    "COPY_PROFILE": "Copier le profil en mémoire",    
     "PROFILE_COPIED": "Profil copiié en mémoire",
     "CANNOT_COPY_PROFILE": "Impossible de copier le profil en mémoire",
     "EXPORT_PROFILE": "Exporter le profil",

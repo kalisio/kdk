@@ -1,9 +1,6 @@
 <template>
   <div id="elevation-profile" class="column" :style="widgetStyle">
-    <div class="col">
-      <span class="full-width q-pa-sm">{{ title }}</span>
-      <k-chart ref="chart" class="q-pa-sm" />
-    </div>
+    <k-chart ref="chart" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
 
@@ -143,6 +140,11 @@ export default {
                     }
                   },
                   plugins: {
+                    title: {
+                      display: true,
+                      text: this.title,
+                      align: 'start'
+                    },
                     legend: {
                       display: false
                     },

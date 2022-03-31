@@ -119,7 +119,7 @@ export default {
     },
     windowStyle () {
       const size = this.window.size
-      return { width: `${size[0]}px`, height: `${size[1]}px` }
+      if (size) return { width: `${size[0]}px`, height: `${size[1]}px` }
     }
   },
   data () {
@@ -129,6 +129,9 @@ export default {
     }
   },
   methods: {
+    getGeometryKey () {
+      return this.$config('appName').toLowerCase() + '-window-geometry'
+    },
     onReset () {
       let width = this.$q.screen.width
       if (this.$q.screen.gt.lg) width = 0.5 * this.$q.screen.width
@@ -138,6 +141,7 @@ export default {
       const x = this.$q.screen.width / 2 - width / 2
       const y = 0
       this.$store.patch('window', { position: [x, y], size: [width, height] })
+      window.localStorage.removeItem(this.getGeometryKey())
       this.mode = 'pinned'
     },
     onMaximized () {
@@ -156,15 +160,29 @@ export default {
     onMoved (event) {
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
-        const position = this.$store.get('window.position')
-        this.$store.patch('window', { position: [position[0] + event.delta.x, position[1] + event.delta.y] })
+        const currentPosition = this.$store.get('window.position')
+        const newPosition = [currentPosition[0] + event.delta.x, currentPosition[1] + event.delta.y]
+        this.$store.patch('window', { position: newPosition })
+        if (event.isFinal) {
+          window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({ 
+            position: newPosition, 
+            size: this.$store.get('window.size')
+          }))
+        }
       }
     },
     onResized (event) {
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
-        const size = this.$store.get('window.size')
-        this.$store.patch('window', { size: [size[0] + event.delta.x, size[1] + event.delta.y] })
+        const currentSize = this.$store.get('window.size')
+        const newSize = [currentSize[0] + event.delta.x, currentSize[1] + event.delta.y]
+        this.$store.patch('window', { size: newSize })
+        if (event.isFinal) {
+          window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({ 
+            position: this.$store.get('window.position'),
+            size: newSize
+          }))
+        }
       }
     }
   },
@@ -173,15 +191,14 @@ export default {
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   created () {
-    let position = this.window.position
-    let size = this.window.size
-    if (!size) {
-      size = [this.$q.screen.width * 0.5, this.$q.screen.height * 0.25]
+    const geometry = window.localStorage.getItem(this.getGeometryKey())
+    if (geometry) {
+      const geometryObject = JSON.parse(geometry)
+      this.$store.patch('window', { position: geometryObject.position, size: geometryObject.size })
+      this.mode = 'floating'
+    } else {
+      this.onReset()
     }
-    if (!position) {
-      position = [this.$q.screen.width / 2 - size[0] / 2, 0]
-    }
-    this.$store.patch('window', { position, size })
   }
 }
 </script>

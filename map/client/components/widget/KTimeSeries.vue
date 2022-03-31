@@ -440,16 +440,6 @@ export default {
           value: runTime
         }))
         _.last(runOptions).default = true
-        // Registers the action
-        this.actions.push({
-          component: 'input/KOptionsChooser',
-          id: 'run-options',
-          icon: 'las la-clock',
-          tooltip: this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
-            ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')',
-          options: runOptions,
-          on: { event: 'option-chosen', listener: this.onUpdateRun }
-        })
       }
       this.refreshActions()
     }
