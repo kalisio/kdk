@@ -24,7 +24,7 @@
             id="timezone-map"
             icon="las la-map-marker"
             color="primary"
-            :handler="onTimezoneMap"
+            :handler="openTimezoneMap"
             :tooltip="$t('KTimezoneField.TIMEZONE_MAP_TOOLTIP')" />
         </template>
         <!-- Options display -->
@@ -48,7 +48,7 @@
         :title="$t('KTimezoneField.TIMEZONE_MAP_TITLE')"
         :buttons="getTimezoneMapModalButtons()"
         :options="{}">
-        <k-timezone-map id="timezones-map" style="min-height: 250px;" :value="this.model" @timezone-selected="fill"/>
+        <k-timezone-map id="timezones-map" style="min-height: 250px;" :value="this.model" @timezone-selected="onMapTimezoneSelected"/>
       </k-modal>
     </div>
   </div>
@@ -70,17 +70,26 @@ export default {
   mixins: [kCoreMixins.baseField],
   data () {
     return {
-      options: timezones.map(timezone => ({ value: timezone, label: timezone }))
+      options: timezones.map(timezone => ({ value: timezone, label: timezone })),
+      mapTimezone: ''
     }
   },
   methods: {
     getTimezoneMapModalButtons () {
       return [
-        { id: 'close-button', label: 'CLOSE', renderer: 'form-button', outline: true, handler: () => this.$refs.timezoneMapModal.close() }
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeTimezoneMap() },
+        { id: 'apply-button', label: 'APPLY', renderer: 'form-button', handler: () => this.closeTimezoneMap(true) }
       ]
     },
-    onTimezoneMap () {
+    onMapTimezoneSelected (timezone) {
+      this.mapTimezone = timezone
+    },
+    openTimezoneMap () {
       this.$refs.timezoneMapModal.open()
+    },
+    closeTimezoneMap (fill = false) {
+      this.$refs.timezoneMapModal.close()
+      if (fill) this.fill(this.mapTimezone)
     },
     onAutocomplete (value, update) {
       // Check for any matching country also

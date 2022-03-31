@@ -6,6 +6,8 @@
 
 <script>
 import _ from 'lodash'
+import L from 'leaflet'
+import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
 import { colors } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
@@ -88,6 +90,16 @@ export default {
         })
       )
     },
+    getTimezoneTooltip (feature, layer) {
+      const name = _.get(feature, 'properties.name')
+      let tooltip
+      if (name) { 
+        const isSelected = (this.timezone === name)
+        tooltip = L.tooltip({ permanent: isSelected }, layer)
+        tooltip.setContent(name)
+      }
+      return tooltip
+    },
     async refreshTimezonesLayer () {
       const layer = this.getLayerByName('Timezones')
       if (!layer) {
@@ -135,13 +147,13 @@ export default {
         pointStyle: {
         },
         tooltip: {
-          property: 'name'
         }
       }
     }
   },
   created () {
     this.registerStyle('markerStyle', this.getTimezoneMarker)
+    this.registerStyle('tooltip', this.getTimezoneTooltip)
     this.$on('click', this.onTimezoneSelected)
   },
   async mounted () {
