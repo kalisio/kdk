@@ -7,7 +7,6 @@
 <script>
 import _ from 'lodash'
 import L from 'leaflet'
-import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
 import { colors } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
@@ -93,7 +92,7 @@ export default {
     getTimezoneTooltip (feature, layer) {
       const name = _.get(feature, 'properties.name')
       let tooltip
-      if (name) { 
+      if (name) {
         const isSelected = (this.timezone === name)
         tooltip = L.tooltip({ permanent: isSelected }, layer)
         tooltip.setContent(name)

@@ -3,7 +3,7 @@
     v-bind:class="{
       'q-pl-xs q-pr-xs': $q.screen.lt.sm,
       'q-pl-sm q-pr-sm': $q.screen.gt.xs,
-      'column items-center content-center q-gutter-y-sm': direction === 'vertical',
+      'column items-center q-gutter-y-sm': direction === 'vertical',
       'row items-center no-wrap q-gutter-x-sm': direction === 'horizontal'
     }">
       <div>
@@ -12,7 +12,9 @@
             {{ translatedText }}
           </q-tooltip>
       </div>
-      <div v-if="showText" class="ellipsis-2-lines" :style="`font-size: ${textSize};`">
+      <div v-if="showText" class="ellipsis-2-lines" :style="`font-size: ${textSize};`"
+        v-bind:class="{'text-center': direction === 'vertical' }"
+      >
          {{ translatedText }}
       </div>
   </div>

@@ -15,7 +15,7 @@
     <div class="col">
       <q-tab-panels v-model="widget" animated>
         <template v-for="(widget, index) in widgets">
-          <q-tab-panel :key="index" :name="widget.id" class="no-padding">
+          <q-tab-panel :key="index" :name="widget.id" class="no-padding" style="overflow: hidden">
             <component :is="widget.componentKey" :mode="mode" v-bind="widget.props" style="z-index: 1;" />
           </q-tab-panel>
         </template>>
@@ -129,9 +129,9 @@ export default {
         this.$store.patch('window', { position: [x, y], size: [width, height] })
       } else if (this.mode === 'floating') {
         const size = this.window.size
-        if (size) return { width: `${size[0]}px`, height: `${size[1]}px` }  
+        if (size) return { width: `${size[0]}px`, height: `${size[1]}px` }
       } else {
-        this.$store.patch('window', { size: [this.$q.screen.width, this.$q.screen.height ]})
+        this.$store.patch('window', { size: [this.$q.screen.width, this.$q.screen.height] })
       }
     }
   },
@@ -147,12 +147,12 @@ export default {
     },
     onPinned () {
       window.localStorage.removeItem(this.getGeometryKey())
-      this.mode = 'pinned'      
+      this.mode = 'pinned'
     },
-    onMaximized () {     
+    onMaximized () {
       this.$store.patch('window', { backupPosition: this.$store.get('window.position'), backupSize: this.$store.get('window.size'), backupMode: this.mode })
       this.$store.patch('window', { position: [0, 0] })
-      this.mode = 'maximized' 
+      this.mode = 'maximized'
     },
     onRestored () {
       this.$store.patch('window', { position: this.$store.get('window.backupPosition'), size: this.$store.get('window.backupSize') })
@@ -169,8 +169,8 @@ export default {
         const newPosition = [currentPosition[0] + event.delta.x, currentPosition[1] + event.delta.y]
         this.$store.patch('window', { position: newPosition })
         if (event.isFinal) {
-          window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({ 
-            position: newPosition, 
+          window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({
+            position: newPosition,
             size: this.$store.get('window.size')
           }))
         }
@@ -183,7 +183,7 @@ export default {
         const newSize = [currentSize[0] + event.delta.x, currentSize[1] + event.delta.y]
         this.$store.patch('window', { size: newSize })
         if (event.isFinal) {
-          window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({ 
+          window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({
             position: this.$store.get('window.position'),
             size: newSize
           }))
@@ -209,9 +209,6 @@ export default {
 </script>
 
 <style lang="scss">
-  body {
-    overflow: hidden;
-  }
   .k-window {
     border: solid 1px lightgrey;
     border-radius: 5px;
