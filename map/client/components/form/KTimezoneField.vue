@@ -1,0 +1,115 @@
+<template>
+  <div>
+    <div v-if="readOnly" :id="properties.name + '-field'">
+      {{ model }}
+    </div>
+    <div v-else>
+      <q-select
+        :id="properties.name + '-field'"
+        v-model="model"
+        :label="label"
+        :options="options"
+        use-input
+        @input='onChanged'
+        @filter="onAutocomplete"
+        emit-value
+        map-options
+        :error="hasError"
+        :error-message="errorLabel"
+        :disabled="disabled"
+        bottom-slots>
+        <!-- Map display -->
+        <template v-slot:prepend>
+          <k-action
+            id="timezone-map"
+            icon="las la-map-marker"
+            color="primary"
+            :handler="onTimezoneMap"
+            :tooltip="$t('KTimezoneField.TIMEZONE_MAP_TOOLTIP')" />
+        </template>
+        <!-- Options display -->
+        <template v-slot:option="scope">
+          <q-item
+            :id="scope.opt.value"
+            v-bind="scope.itemProps"
+            v-on="scope.itemEvents"
+          >
+            <q-item-section>
+              <q-item-label>{{ scope.opt.label }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+        <!-- Helper -->
+        <template v-if="helper" v-slot:hint>
+          <span v-html="helper"></span>
+        </template>
+      </q-select>
+      <k-modal ref="timezoneMapModal"
+        :title="$t('KTimezoneField.TIMEZONE_MAP_TITLE')"
+        :buttons="getTimezoneMapModalButtons()"
+        :options="{}">
+        <k-timezone-map id="timezones-map" style="min-height: 250px;" :value="this.model" @timezone-selected="fill"/>
+      </k-modal>
+    </div>
+  </div>
+</template>
+
+<script>
+import _ from 'lodash'
+import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
+import { mixins as kCoreMixins } from '../../../../core/client'
+import meta from 'moment-timezone/data/meta/latest.json'
+
+const timezones = moment.tz.names()
+// Timezone names contains additional "usual" timezone namings like GMT+1, etc.
+//const timezones = _.keys(meta.zones)
+const countries = _.values(meta.countries)
+
+export default {
+  name: 'k-timezone-field',
+  mixins: [kCoreMixins.baseField],
+  data () {
+    return {
+      options: timezones.map(timezone => ({ value: timezone, label: timezone }))
+    }
+  },
+  methods: {
+    getTimezoneMapModalButtons () {
+      return [
+        { id: 'close-button', label: 'CLOSE', renderer: 'form-button', outline: true, handler: () => this.$refs.timezoneMapModal.close() }
+      ]
+    },
+    onTimezoneMap () {
+      this.$refs.timezoneMapModal.open()
+    },
+    onAutocomplete (value, update) {
+      // Check for any matching country also
+      const matchingCountries = countries.filter(country => country.name.toLocaleLowerCase().includes(value.toLocaleLowerCase()))
+      update(() => {
+        this.options = timezones
+          .filter(timezone => {
+            // Filter applies to timezone names or country names
+            const matchTimezone = timezone.toLocaleLowerCase().includes(value.toLocaleLowerCase())
+            if (matchTimezone) return true
+            // We have the list of timezones associated to each matching country
+            for (let i = 0; i < matchingCountries.length; i++) {
+              const matchingTimezones = matchingCountries[i].zones
+              if (matchingTimezones.includes(timezone)) return true
+            }
+            return false
+          })
+          .map(timezone => ({ value: timezone, label: timezone }))
+      })
+    }
+  },
+  created () {
+    // Load the required components
+    this.$options.components['k-action'] = this.$load('frame/KAction')
+    this.$options.components['k-modal'] = this.$load('frame/KModal')
+    this.$options.components['k-timezone-map'] = this.$load('KTimezoneMap')
+
+    // Load metadata
+    this.meta = require('moment-timezone/data/meta/latest.json')
+  }
+}
+</script>

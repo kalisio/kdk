@@ -351,6 +351,10 @@
     "LOCATION_MAP": "Pick on a map",
     "DRAW_MAP": "Draw on a map"
   },
+  "KTimezoneField": {
+    "TIMEZONE_MAP_TOOLTIP": "Select timezone on a map",
+    "TIMEZONE_MAP_TITLE": "Select the target timezone"
+  },
   "KPositionIndicator": {
     "PLACEHOLDER": "Navigate the see the coordinates",
     "COPY": "Copy the coordinates",

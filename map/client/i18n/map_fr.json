@@ -352,6 +352,10 @@
     "LOCATION_MAP": "Placer un repère sur une carte",
     "DRAW_MAP": "Dessiner sur une carte"
   },
+  "KTimezoneField": {
+    "TIMEZONE_MAP_TOOLTIP": "Choisir le fuseau sur une carte",
+    "TIMEZONE_MAP_TITLE": "Sélectionnez le fuseau cible"
+  },
   "KPositionIndicator": {
     "PLACEHOLDER": "Naviguez pour voir les coordonnées",
     "COPY": "Copier les coordonnées",

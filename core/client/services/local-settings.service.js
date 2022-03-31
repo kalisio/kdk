@@ -49,6 +49,10 @@ export default function (name, api, options) {
       let settings = window.localStorage.getItem(settingsKey)
       if (!settings) return
       settings = JSON.parse(settings)
+      // Backward compatibility when changed utc mode to timezone setting
+      if (_.get(settings, 'utc') && _.has(mapping, 'timezone') && !_.get(settings, 'timezone')) {
+        _.set(settings, 'timezone', 'UTC')
+      }
       _.forOwn(mapping, (value, key) => {
         if (value && _.has(settings, key)) {
           Store.set(value, _.get(settings, key))

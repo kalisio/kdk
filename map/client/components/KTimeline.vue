@@ -153,24 +153,22 @@ export default {
     },
     date: {
       get: function () {
-        return Time.getFormat().utc
-          ? this.time.format(this.calendarDateMask)
+        // Assume locale if timezone not provided
+        return Time.getFormatTimezone()
+          ? moment(this.time).tz(Time.getFormatTimezone()).format(this.calendarDateMask)
           : moment(this.time).local().format(this.calendarDateMask)
       },
       set: function (value) {
         let time
-        if (Time.getFormat().utc) {
-          time = moment.utc(value, this.calendarDateMask)
-          time.hour(this.time.hour())
-          time.minute(this.time.minute())
+        // Assume locale if timezone not provided
+        if (Time.getFormatTimezone()) {
+          time = moment.tz(value, this.calendarDateMask, this.getFormatTimezone())
         } else {
           time = moment(value, this.calendarDateMask)
-          const localTime = moment(this.time.valueOf())
-          time.hour(localTime.hour())
-          time.minute(localTime.minute())
-          time = moment.utc(time)
         }
-        this.setTime(time)
+        time.hour(this.time.hour())
+        time.minute(this.time.minute())
+        this.setTime(moment.utc(time))
       }
     }
   },

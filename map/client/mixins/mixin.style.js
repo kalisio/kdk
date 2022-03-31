@@ -13,6 +13,7 @@ export default {
     generateStyle () {
       const args = Array.from(arguments)
       const type = args[0]
+      if (!this[type + 'Factory']) return
       args.shift()
       let style
       // Iterate over all registered generators until we find one
