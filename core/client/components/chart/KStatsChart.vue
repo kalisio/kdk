@@ -56,9 +56,9 @@ export default {
             font: {
               weight: 'bold'
             },
-            /*formatter: function (value, context) {
+            /* formatter: function (value, context) {
               return value + '/' + Math.round(100 * value / context.dataset.sum) + '%'
-            },*/
+            }, */
             padding: 6
           }
         }

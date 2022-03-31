@@ -77,7 +77,7 @@ export const Time = {
     return this.getFormat().timezone
   },
   format (datetime, format, options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) {
-    let currentTime = this.convertToMoment(datetime)
+    const currentTime = this.convertToMoment(datetime)
     // Convert to local time
     if (this.getFormatTimezone()) {
       currentTime.tz(this.getFormatTimezone())

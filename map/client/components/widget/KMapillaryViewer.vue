@@ -27,7 +27,7 @@ export default {
   },
   data () {
     return {
-      selection: this.$store.get('selection'),
+      selection: this.$store.get('selection')
     }
   },
   watch: {
@@ -69,17 +69,18 @@ export default {
         }
       }
     },
-     refreshActions () {
-       this.$store.patch('window', { widgetActions: [
-          { 
-            id: 'center', 
-            icon: 'las la-eye', 
-            tooltip: 'KMapillaryViewer.CENTER_ON', 
+    refreshActions () {
+      this.$store.patch('window', {
+        widgetActions: [
+          {
+            id: 'center',
+            icon: 'las la-eye',
+            tooltip: 'KMapillaryViewer.CENTER_ON',
             visible: this.imageId,
-            handler: this.centerMap 
+            handler: this.centerMap
           }
         ]
-       })
+      })
     },
     async refresh () {
       if (_.has(this.selection, 'states.mapillary')) {
@@ -151,14 +152,14 @@ export default {
     // laod the required components
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
-  /*created () {
+  /* created () {
     // Registers the actions
     this.actions = {
       default: [
         { id: 'center', icon: 'las la-eye', tooltip: this.$t('KMapillaryViewer.CENTER_ON'), handler: this.centerMap }
       ]
     }
-  },*/
+  }, */
   mounted () {
     // Create the viewer
     this.mapillaryViewer = new Viewer({

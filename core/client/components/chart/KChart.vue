@@ -23,7 +23,7 @@ export default {
   name: 'k-chart',
   data () {
     return {
-      hasData : false
+      hasData: false
     }
   },
   methods: {
@@ -88,7 +88,7 @@ export default {
       }
     }
   },
-    beforeCreate () {
+  beforeCreate () {
     // Load the required components
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },

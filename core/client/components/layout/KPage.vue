@@ -190,7 +190,7 @@ export default {
       topPadding: 0,
       leftPadding: 0,
       bottomPadding: 0,
-      rightPadding: 0,      
+      rightPadding: 0,
       fabOffset: [16, 16]
     }
   },

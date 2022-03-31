@@ -51,7 +51,8 @@ export default {
   },
   methods: {
     refreshActions () {
-      this.$store.patch('window', { widgetActions: [
+      this.$store.patch('window', {
+        widgetActions: [
           {
             id: 'center-view',
             icon: 'las la-eye',
@@ -106,8 +107,7 @@ export default {
         })
         this.schema = schema
         this.properties = properties
-        
-      } 
+      }
       // Refresh the actions
       this.refreshActions()
     },

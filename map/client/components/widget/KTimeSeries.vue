@@ -183,7 +183,7 @@ export default {
           this.yAxes[`y${axisId}`] = _.merge({
             unit: unit,
             display: 'auto',
-            position: (axisId + 1 )% 2 ? 'left' : 'right',
+            position: (axisId + 1) % 2 ? 'left' : 'right',
             ticks: {
               color: this.datasets[axisId].backgroundColor
             }
@@ -221,7 +221,7 @@ export default {
         this.setupAvailableRunTimes()
         this.setupAvailableDatasets()
         this.setupAvailableYAxes()
-        //const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
+        // const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
         const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
         const dateFormat = _.get(Time.getFormat(), 'date.short')
         const timeFormat = _.get(Time.getFormat(), 'time.long')
@@ -255,7 +255,7 @@ export default {
           },
           options: _.merge({
             maintainAspectRatio: false,
-            spanGaps:  timeSpanGaps,
+            spanGaps: timeSpanGaps,
             tooltips: {
               mode: 'x',
               callbacks: {
@@ -375,12 +375,13 @@ export default {
         }
       })
       // Registers the base actions
-      this.$store.patch('window', { widgetActions: [
-          { 
-            id: 'center-view', 
-            icon: 'las la-eye', 
-            tooltip: 'KTimeSeries.CENTER_ON', 
-            handler: this.onCenterOn 
+      this.$store.patch('window', {
+        widgetActions: [
+          {
+            id: 'center-view',
+            icon: 'las la-eye',
+            tooltip: 'KTimeSeries.CENTER_ON',
+            handler: this.onCenterOn
           },
           {
             component: 'input/KOptionsChooser',
@@ -390,11 +391,11 @@ export default {
             options: spanOptions,
             on: { event: 'option-chosen', listener: this.onUpdateSpan }
           },
-          { 
-            id: 'export-feature', 
-            icon: 'las la-file-download', 
-            tooltip: 'KTimeSeries.EXPORT_SERIES', 
-            handler: this.onExportSeries 
+          {
+            id: 'export-feature',
+            icon: 'las la-file-download',
+            tooltip: 'KTimeSeries.EXPORT_SERIES',
+            handler: this.onExportSeries
           }
         ]
       })

@@ -62,7 +62,7 @@ import meta from 'moment-timezone/data/meta/latest.json'
 
 const timezones = moment.tz.names()
 // Timezone names contains additional "usual" timezone namings like GMT+1, etc.
-//const timezones = _.keys(meta.zones)
+// const timezones = _.keys(meta.zones)
 const countries = _.values(meta.countries)
 
 export default {

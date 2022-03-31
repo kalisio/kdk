@@ -6,7 +6,6 @@
 
 <script>
 import _ from 'lodash'
-import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
 import { colors } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
@@ -23,7 +22,7 @@ const timezones = _.values(meta.zones).map(timezone => ({
   },
   properties: {
     name: timezone.name
-  },
+  }
 }))
 
 export default {

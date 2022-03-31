@@ -3,9 +3,9 @@
     <!--
       Window header
      -->
-    <div 
-      id="window-header" 
-      class="k-window-header q-pt-xs" 
+    <div
+      id="window-header"
+      class="k-window-header q-pt-xs"
       v-touch-pan.prevent.mouse="onMoved">
       <k-panel id="window-actions" :content="actions" />
     </div>
@@ -23,7 +23,7 @@
     </div>
     <!--
       Window footer
-     -->   
+     -->
     <div
       id="window-footer"
       class="k-window-footer row justify-end items-center">
@@ -60,18 +60,17 @@ export default {
           this.$options.components[componentKey] = this.$load(componentName)
         }
       })
-      console.log(widgets)
       return widgets
     },
     actions () {
-      let widgetMenuItems = []
+      const widgetMenuItems = []
       _.forEach(this.widgets, widget => {
         widgetMenuItems.push({
           id: widget.id,
           label: widget.label,
           icon: widget.icon,
           dense: true,
-          handler: () => this.widget = widget.id
+          handler: () => { this.widget = widget.id }
         })
       })
       const widgetMenu = [{
@@ -133,17 +132,17 @@ export default {
     onReset () {
       let width = this.$q.screen.width
       if (this.$q.screen.gt.lg) width = 0.5 * this.$q.screen.width
-      if (this.$q.screen.gt.md) width = 0.6 * this.$q.screen.width 
-      if (this.$q.screen.gt.sm) width = 0.8 * this.$q.screen.width 
-      let height = this.$q.screen.height * .3
-      let x = this.$q.screen.width / 2 - width / 2
-      let y = 0
+      if (this.$q.screen.gt.md) width = 0.6 * this.$q.screen.width
+      if (this.$q.screen.gt.sm) width = 0.8 * this.$q.screen.width
+      const height = this.$q.screen.height * 0.3
+      const x = this.$q.screen.width / 2 - width / 2
+      const y = 0
       this.$store.patch('window', { position: [x, y], size: [width, height] })
       this.mode = 'pinned'
     },
     onMaximized () {
       this.$store.patch('window', { backupPosition: this.$store.get('window.position'), backupSize: this.$store.get('window.size'), backupMode: this.mode })
-      this.$store.patch('window', { position: [0, 0], size: [this.$q.screen.width, this.$q.screen.height ]})
+      this.$store.patch('window', { position: [0, 0], size: [this.$q.screen.width, this.$q.screen.height] })
       this.mode = 'maximized'
     },
     onRestored () {
@@ -158,14 +157,14 @@ export default {
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
         const position = this.$store.get('window.position')
-        this.$store.patch('window', { position: [ position[0] + event.delta.x, position[1] + event.delta.y ] })
+        this.$store.patch('window', { position: [position[0] + event.delta.x, position[1] + event.delta.y] })
       }
     },
     onResized (event) {
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
         const size = this.$store.get('window.size')
-        this.$store.patch('window', { size: [ size[0] + event.delta.x, size[1] + event.delta.y ] })
+        this.$store.patch('window', { size: [size[0] + event.delta.x, size[1] + event.delta.y] })
       }
     }
   },
@@ -177,10 +176,10 @@ export default {
     let position = this.window.position
     let size = this.window.size
     if (!size) {
-      size = [ this.$q.screen.width * .5, this.$q.screen.height *.25 ]
+      size = [this.$q.screen.width * 0.5, this.$q.screen.height * 0.25]
     }
     if (!position) {
-      position = [ this.$q.screen.width / 2 - size[0] / 2, 0]
+      position = [this.$q.screen.width / 2 - size[0] / 2, 0]
     }
     this.$store.patch('window', { position, size })
   }
