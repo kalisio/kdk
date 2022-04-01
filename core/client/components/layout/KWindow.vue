@@ -87,7 +87,7 @@ export default {
         {
           id: 'pin-action',
           icon: 'las la-angle-up',
-          tooltip: 'KWindow.RESET_ACTION',
+          tooltip: 'KWindow.PIN_ACTION',
           dense: true,
           size: 'sm',
           visible: this.mode === 'floating',

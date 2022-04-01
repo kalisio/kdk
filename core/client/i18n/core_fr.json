@@ -558,7 +558,7 @@
   },
   "KWindow": {
     "CLOSE_ACTION": "$t(CLOSE)",
-    "RESET_ACTION": "Réinitialiser",
+    "PIN_ACTION": "Epingler",
     "RESTORE_ACTION": "Restaurer",
     "MAXIMIZE_ACTION": "Maximiser"
   },
