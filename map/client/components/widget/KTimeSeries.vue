@@ -272,7 +272,7 @@ export default {
                   unit: 'hour',
                   stepSize: this.timeStepSize,
                   displayFormats: {
-                    hour: `${dateFormat} - ${timeFormat}`
+                    hour: `${timeFormat}`
                   },
                   tooltipFormat: `${dateFormat} - ${timeFormat}`,
                   parser: (date) => {
@@ -387,7 +387,7 @@ export default {
             component: 'input/KOptionsChooser',
             id: 'timespan-options',
             icon: 'las la-history',
-            tooltip: 'KTimeSeries.SPAN',
+            tooltip: 'KTimeSeries.SPAN',         
             options: spanOptions,
             on: { event: 'option-chosen', listener: this.onUpdateSpan }
           },

@@ -27,7 +27,7 @@
     <div
       id="window-footer"
       class="k-window-footer row justify-end items-center">
-      <q-icon v-if="mode !== 'maximized'" name="las la-slash" size="10px" v-touch-pan.prevent.mouse="onResized" />
+      <q-icon v-if="mode !== 'maximized'" class="k-window-grip" name="las la-slash" size="10px" v-touch-pan.prevent.mouse="onResized" />
     </div>
   </div>
 </template>
@@ -79,6 +79,7 @@ export default {
         icon: 'las la-cube',
         tooltip: 'Widgets',
         dense: true,
+        size: 'sm',
         actionRenderer: 'item',
         content: widgetMenuItems
       }]
@@ -88,6 +89,7 @@ export default {
           icon: 'las la-angle-up',
           tooltip: 'KWindow.RESET_ACTION',
           dense: true,
+          size: 'sm',
           visible: this.mode === 'floating',
           handler: this.onPinned
         },
@@ -96,6 +98,7 @@ export default {
           icon: 'las la-expand',
           tooltip: 'KWindow.MAXIMIZE_ACTION',
           dense: true,
+          size: 'sm',
           visible: this.mode !== 'maximized',
           handler: this.onMaximized
         },
@@ -104,6 +107,7 @@ export default {
           icon: 'las la-compress',
           tooltip: 'KWindow.RESTORE_ACTION',
           dense: true,
+          size: 'sm',
           visible: this.mode === 'maximized',
           handler: this.onRestored
         },
@@ -112,6 +116,7 @@ export default {
           icon: 'las la-times',
           tooltip: this.$t('KWindow.CLOSE_ACTION'),
           dense: true,
+          size: 'sm',
           handler: this.onClosed
         }
       ]
@@ -226,7 +231,7 @@ export default {
   .k-window-footer {
      border-radius: 5px;
   }
-  .k-window-footer:hover {
+  .k-window-grip:hover {
      cursor: nwse-resize
   }
 </style>
