@@ -12,7 +12,7 @@ check_code()
 echo -e "machine github.com\n  login $GITHUB_TOKEN" > ~/.netrc
 git clone https://github.com/kalisio/kdk-workspaces workspace
 
-git clone https://github.com/kalisio/feathers-distributed && cd feathers-distributed && yarn install && yarn link && cd ..
+git clone -b v1.0.5 https://github.com/kalisio/feathers-distributed && cd feathers-distributed && yarn install && yarn link && cd ..
 yarn link @kalisio/feathers-distributed
 
 git clone https://github.com/weacast/weacast-core && cd weacast-core && yarn install && yarn link && cd ..
