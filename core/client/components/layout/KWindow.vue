@@ -207,7 +207,7 @@ export default {
       this.$store.patch('window', { position: geometryObject.position, size: geometryObject.size })
       this.mode = 'floating'
     } else {
-      this.onReset()
+      this.onPinned()
     }
   }
 }
