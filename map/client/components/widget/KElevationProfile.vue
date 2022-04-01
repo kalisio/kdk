@@ -9,6 +9,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { baseWidget } from '../../../../core/client/mixins'
 import { colors, copyToClipboard, exportFile } from 'quasar'
+import length from '@turf/length'
 
 export default {
   name: 'k-elevation-profile',
@@ -76,13 +77,17 @@ export default {
       })
     },
     async refresh () {
+      const nbOfPoints = 200
+      const maxResolution = 30
       this.profile = null
+      this.refreshActions()
       if (this.feature && this.layer) {
         const geometry = _.get(this.feature, 'geometry.type')
         if (geometry === 'LineString') {
           this.kActivity.centerOnSelection()
           // Setup the computation options
-          this.feature.resolution = 90
+          const featureLength = length(this.feature, { units: 'kilometers' }) * 1000 // in meter
+          this.feature.resolution = Math.max(featureLength / nbOfPoints, maxResolution)
           // Setup the request url options
           const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
           const options = {
