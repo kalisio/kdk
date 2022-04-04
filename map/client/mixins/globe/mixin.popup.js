@@ -13,7 +13,8 @@ export default {
         if (_.has(cesiumOptions, 'popup') && !_.get(cesiumOptions, 'popup')) return
         if (_.has(properties, 'popup') && !_.get(properties, 'popup')) return
         // Otherwise merge options
-        const popupStyle = _.merge({}, this.activityOptions.engine.popup,
+        const popupStyle = _.merge({},
+          _.get(this, 'activityOptions.engine.popup'),
           cesiumOptions.popup, properties.popup)
         // Default content
         let text = popupStyle.text
@@ -65,7 +66,9 @@ export default {
   created () {
     this.registerStyle('popup', this.getDefaultPopup)
     // Perform required conversion from JSON to Cesium objects
-    if (this.activityOptions.engine.popup) this.activityOptions.engine.popup = this.convertToCesiumObjects(this.activityOptions.engine.popup)
+    if (_.has(this, 'activityOptions.engine.popup')) {
+      _.set(this, 'activityOptions.engine.popup', this.convertToCesiumObjects(_.get(this, 'activityOptions.engine.popup')))
+    }
   },
   mounted () {
     this.$on('click', this.onPopup)

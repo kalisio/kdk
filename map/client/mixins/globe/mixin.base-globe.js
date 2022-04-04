@@ -21,7 +21,22 @@ export default {
     refreshGlobe () {
     },
     setupGlobe (domEl, token, options) {
-      const viewerOptions = options || this.activityOptions.engine.viewer
+      const viewerOptions = options ||
+        // For activities
+        _.get(this, 'activityOptions.engine.viewer', {
+          sceneMode: 3, // SceneMode.COLUMBUS_VIEW = 1, SceneMode.SCENE3D = 3,
+          sceneModePicker: false,
+          infoBox: false,
+          scene3DOnly: true,
+          homeButton: false,
+          geocoder: false,
+          navigationHelpButton: false,
+          baseLayerPicker: false,
+          vrButton: false,
+          fullscreenButton: false,
+          animation: false,
+          timeline: false
+        })
       if (token) Cesium.Ion.defaultAccessToken = token
       // If we don't need ion
       else Cesium.Ion.defaultAccessToken = ''

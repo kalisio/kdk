@@ -127,29 +127,6 @@ export default {
       }
     }
   },
-  beforeCreate () {
-    // Setup the options
-    this.activityOptions = {
-      engine: {
-        viewer: {
-          maxBounds: [[-90, -180], [90, 180]],
-          maxBoundsViscosity: 0.25,
-          minZoom: 3,
-          maxZoom: 6,
-          zoom: 3,
-          center: [0, 0],
-          scale: false,
-          geolocate: false
-        },
-        featureStyle: {
-        },
-        pointStyle: {
-        },
-        tooltip: {
-        }
-      }
-    }
-  },
   created () {
     this.registerStyle('markerStyle', this.getTimezoneMarker)
     this.registerStyle('tooltip', this.getTimezoneTooltip)
@@ -158,7 +135,16 @@ export default {
   async mounted () {
     // Initialize component
     await this.loadRefs()
-    this.setupMap(this.$refs.map)
+    this.setupMap(this.$refs.map, {
+      maxBounds: [[-90, -180], [90, 180]],
+      maxBoundsViscosity: 0.25,
+      minZoom: 3,
+      maxZoom: 6,
+      zoom: 3,
+      center: [0, 0],
+      scale: false,
+      geolocate: false
+    })
     await this.refreshBaseLayer()
     this.setTimezone(this.value)
     this.$events.$emit('map-ready')

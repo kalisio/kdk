@@ -13,7 +13,8 @@ export default {
         if (_.has(leafletOptions, 'tooltip') && !_.get(leafletOptions, 'tooltip')) return
         if (_.has(properties, 'tooltip') && !_.get(properties, 'tooltip')) return
         // Otherwise merge options
-        const tooltipStyle = Object.assign({}, this.activityOptions.engine.tooltip,
+        const tooltipStyle = Object.assign({},
+          _.get(this, 'activityOptions.engine.tooltip'),
           leafletOptions.tooltip, properties.tooltip)
         // Default content
         let html = tooltipStyle.html

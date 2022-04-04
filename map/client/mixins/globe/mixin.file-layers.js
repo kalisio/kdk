@@ -1,10 +1,18 @@
+import _ from 'lodash'
 import Cesium from 'cesium/Source/Cesium.js'
 import logger from 'loglevel'
 
 export default {
   mounted () {
     this.$on('globe-ready', _ => {
-      this.viewer.extend(Cesium.viewerDragDropMixin, this.activityOptions.engine.fileLayers)
+      this.viewer.extend(Cesium.viewerDragDropMixin,
+        // For activities
+        _.get(this, 'activityOptions.engine.fileLayers', {
+          clearOnDrop: false,
+          flyToOnDrop: true,
+          clampToGround: true
+        })
+      )
       this.viewer.dropError.addEventListener((viewerArg, source, error) => {
         logger.error(error)
       })

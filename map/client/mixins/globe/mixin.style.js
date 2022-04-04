@@ -101,7 +101,7 @@ export default {
     getDefaultEntityStyle (entity, options) {
       const properties = (entity.properties ? entity.properties.getValue(0) : null)
       const cesiumOptions = options.cesium || options
-      let style = _.merge({}, this.activityOptions.engine.entityStyle || {})
+      let style = _.merge({}, _.get(this, 'activityOptions.engine.entityStyle'))
       // We allow to template entity style properties according to feature,
       // because it can be slow you have to specify a subset of properties
       const entityStyleTemplate = _.get(cesiumOptions, 'entityStyleTemplate')
@@ -136,7 +136,7 @@ export default {
     getDefaultClusterStyle (entities, cluster, options) {
       const cesiumOptions = options.cesium || options
       const style = _.merge({},
-        this.activityOptions.engine.clusterStyle || {},
+        _.get(this, 'activityOptions.engine.clusterStyle'),
         cesiumOptions.clusterStyle || {})
       // Look for templated options
       if (_.has(style, 'label.text')) {
@@ -153,7 +153,11 @@ export default {
     this.registerStyle('entityStyle', this.getDefaultEntityStyle)
     this.registerStyle('clusterStyle', this.getDefaultClusterStyle)
     // Perform required conversion from JSON to Cesium objects
-    if (this.activityOptions.engine.entityStyle) this.activityOptions.engine.entityStyle = this.convertToCesiumObjects(this.activityOptions.engine.entityStyle)
-    if (this.activityOptions.engine.clusterStyle) this.activityOptions.engine.clusterStyle = this.convertToCesiumObjects(this.activityOptions.engine.clusterStyle)
+    if (_.has(this, 'activityOptions.engine.entityStyle')) {
+      _.set(this, 'activityOptions.engine.entityStyle', this.convertToCesiumObjects(_.get(this, 'activityOptions.engine.entityStyle')))
+    }
+    if (_.has(this, 'activityOptions.engine.clusterStyle')) {
+      _.set(this, 'activityOptions.engine.clusterStyle', this.convertToCesiumObjects(_.get(this, 'activityOptions.engine.clusterStyle')))
+    }
   }
 }

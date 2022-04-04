@@ -14,7 +14,7 @@ export default {
         if (_.has(leafletOptions, 'popup') && !_.get(leafletOptions, 'popup')) return
         if (_.has(properties, 'popup') && !_.get(properties, 'popup')) return
         // Otherwise merge options
-        const popupStyle = Object.assign({}, this.activityOptions.engine.popup,
+        const popupStyle = Object.assign({}, _.get(this, 'activityOptions.engine.popup'),
           leafletOptions.popup, properties.popup)
         // Default content
         let html = popupStyle.html

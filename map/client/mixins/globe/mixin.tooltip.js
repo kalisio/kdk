@@ -25,7 +25,7 @@ export default {
         if (_.has(cesiumOptions, 'tooltip') && !_.get(cesiumOptions, 'tooltip')) return
         if (_.has(properties, 'tooltip') && !_.get(properties, 'tooltip')) return
         // Otherwise merge options
-        const tooltipStyle = _.merge({}, this.activityOptions.engine.tooltip,
+        const tooltipStyle = _.merge({}, _.get(this, 'activityOptions.engine.tooltip', {}),
           cesiumOptions.tooltip, properties.tooltip)
         // Default content
         let text = tooltipStyle.text
@@ -85,7 +85,9 @@ export default {
   created () {
     this.registerStyle('tooltip', this.getDefaultTooltip)
     // Perform required conversion from JSON to Cesium objects
-    if (this.activityOptions.engine.tooltip) this.activityOptions.engine.tooltip = this.convertToCesiumObjects(this.activityOptions.engine.tooltip)
+    if (_.has(this, 'activityOptions.engine.tooltip')) {
+      _.set(this, 'activityOptions.engine.tooltip', this.convertToCesiumObjects(_.get(this, 'activityOptions.engine.tooltip')))
+    }
   },
   mounted () {
     this.$on('mousemove', this.onTooltip)

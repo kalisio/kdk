@@ -226,10 +226,10 @@ export default {
           leafletOptions.pane = options.name
         }
         // If not explicitely disable use defaults for clustering
-        if (!_.has(leafletOptions, 'cluster') && this.activityOptions.engine.cluster) {
+        if (!_.has(leafletOptions, 'cluster') && _.has(this, 'activityOptions.engine.cluster')) {
           // Merge existing config or create a new one on layer
-          if (leafletOptions.cluster) Object.assign(leafletOptions.cluster, this.activityOptions.engine.cluster)
-          else leafletOptions.cluster = Object.assign({}, this.activityOptions.engine.cluster)
+          if (leafletOptions.cluster) Object.assign(leafletOptions.cluster, _.get(this, 'activityOptions.engine.cluster'))
+          else leafletOptions.cluster = Object.assign({}, _.get(this, 'activityOptions.engine.cluster'))
         }
         // Specific case of clustered layer where we first need to create an underlying group
         if (leafletOptions.cluster) {

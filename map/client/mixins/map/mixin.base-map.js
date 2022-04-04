@@ -47,7 +47,18 @@ export default {
       if (this.map) this.map.invalidateSize()
     },
     setupMap (domEl, options) {
-      const viewerOptions = options || this.activityOptions.engine.viewer
+      const viewerOptions = options ||
+        // For activities
+        _.get(this, 'activityOptions.engine.viewer', {
+          minZoom: 3,
+          maxZoom: 21,
+          center: [47, 3],
+          zoom: 6,
+          maxBounds: [[-90, -180], [90, 180]],
+          maxBoundsViscosity: 0.25,
+          scale: false,
+          geolocate: false
+        })
       // Initialize the map
       this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
       // Make sure geoman is initialized on the map

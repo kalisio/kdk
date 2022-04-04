@@ -35,11 +35,12 @@ export default {
         onEachFeature,
         // Use default styling when editing as dynamic styling can conflict
         style: (feature) => {
-          return Object.assign({}, this.activityOptions.engine.editFeatureStyle || this.activityOptions.engine.featureStyle)
+          return Object.assign({},
+            _.get(this, 'activityOptions.engine.editFeatureStyle', _.get(this, 'activityOptions.engine.featureStyle')))
         },
         pointToLayer: (feature, latlng) => {
           return this.createMarkerFromStyle(latlng, Object.assign({ pmIgnore: false }, // Allow geoman edition
-            this.activityOptions.engine.editPointStyle || this.activityOptions.engine.pointStyle))
+            _.get(this, 'activityOptions.engine.editPointStyle', _.get(this, 'activityOptions.engine.pointStyle'))))
         }
       }
     },
@@ -324,7 +325,11 @@ export default {
   },
   created () {
     // Perform required conversion for default feature styling
-    if (this.activityOptions.engine.editFeatureStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editFeatureStyle, 'update-in-place')
-    if (this.activityOptions.engine.editPointStyle) this.convertFromSimpleStyleSpec(this.activityOptions.engine.editPointStyle, 'update-in-place')
+    if (_.has(this, 'activityOptions.engine.editFeatureStyle')) {
+      this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editFeatureStyle'), 'update-in-place')
+    }
+    if (_.has(this, 'this.activityOptions.engine.editPointStyle')) {
+      this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editPointStyle'), 'update-in-place')
+    }
   }
 }
