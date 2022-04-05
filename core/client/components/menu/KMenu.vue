@@ -14,7 +14,8 @@
     menu-self="top left"
     flat
     no-caps
-    fab-mini>
+    fab-mini
+    @click="onClicked(arguments[0])">
     <k-panel
       id="menu-entries"
       :content="content"
@@ -75,6 +76,10 @@ export default {
       type: String,
       default: undefined
     },
+    propagate: {
+      type: Boolean,
+      default: true
+    },
     context: {
       type: Object,
       default: () => null
@@ -93,6 +98,11 @@ export default {
     },
     hasContent () {
       return !_.isEmpty(this.content)
+    }
+  },
+  methods: {
+    onClicked (event) {
+      if (!this.propagate) event.stopPropagation()
     }
   },
   created () {
