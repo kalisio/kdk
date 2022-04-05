@@ -6,8 +6,8 @@
     :id="id"
     no-caps
     no-wrap
-    :icon="computedIcon"
     :color="computedColor"
+    :label="computedLabel"
     :size="size"
     flat
     :round="label===''"
@@ -15,9 +15,8 @@
     :dense="dense"
     :disable="disabled"
     @click="onClicked(arguments[0])">
-    <div v-if="computedLabel" class="ellipsis q-pl-md">
-      {{ computedLabel }}
-    </div>
+    <!-- icon -->
+    <q-icon v-if="computedIcon" :name="computedIcon" />
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
       {{ computedTooltip }}
