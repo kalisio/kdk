@@ -69,7 +69,6 @@ export default {
           id: widget.id,
           label: widget.label,
           icon: widget.icon,
-          dense: true,
           handler: () => { this.widget = widget.id }
         })
       })
@@ -78,7 +77,6 @@ export default {
         component: 'menu/KMenu',
         icon: 'las la-cube',
         tooltip: 'Widgets',
-        dense: true,
         size: 'sm',
         actionRenderer: 'item',
         content: widgetMenuItems
@@ -88,7 +86,6 @@ export default {
           id: 'pin-action',
           icon: 'las la-angle-up',
           tooltip: 'KWindow.PIN_ACTION',
-          dense: true,
           size: 'sm',
           visible: this.mode === 'floating',
           handler: this.onPinned
@@ -97,7 +94,6 @@ export default {
           id: 'maximize-action',
           icon: 'las la-expand',
           tooltip: 'KWindow.MAXIMIZE_ACTION',
-          dense: true,
           size: 'sm',
           visible: this.mode !== 'maximized',
           handler: this.onMaximized
@@ -106,7 +102,6 @@ export default {
           id: 'restore-action',
           icon: 'las la-compress',
           tooltip: 'KWindow.RESTORE_ACTION',
-          dense: true,
           size: 'sm',
           visible: this.mode === 'maximized',
           handler: this.onRestored
@@ -115,7 +110,6 @@ export default {
           id: 'close-action',
           icon: 'las la-times',
           tooltip: this.$t('KWindow.CLOSE_ACTION'),
-          dense: true,
           size: 'sm',
           handler: this.onClosed
         }
