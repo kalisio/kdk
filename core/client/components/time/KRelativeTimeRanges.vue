@@ -3,11 +3,12 @@
     id="time-ranges"
     :content="content"
     action-renderer="item"
-    :dense="dense" 
+    :dense="dense"
     direction="vertical" />
 </template>
 
 <script>
+import _ from 'lodash'
 import moment from 'moment'
 import { Time } from '../../time'
 import KPanel from '../frame/KPanel.vue'
@@ -29,7 +30,7 @@ export default {
   },
   computed: {
     content () {
-      return  _.filter(this.defaultRanges, range => {
+      return _.filter(this.defaultRanges, range => {
         return _.indexOf(this.ranges, range.id) > -1
       })
     }

@@ -10,7 +10,7 @@ export default {
         if (_.has(engineOptions, 'infobox') && !_.get(engineOptions, 'infobox')) return []
         if (_.has(properties, 'infobox') && !_.get(properties, 'infobox')) return []
         // Otherwise merge options
-        const infoboxStyle = Object.assign({}, 
+        const infoboxStyle = Object.assign({},
           _.get(this, 'activityOptions.engine.infobox'),
           engineOptions.infobox, properties.infobox)
 

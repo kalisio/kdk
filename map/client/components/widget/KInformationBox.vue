@@ -80,6 +80,7 @@ export default {
     refresh () {
       this.properties = null
       this.schema = null
+      this.refreshActions()
       if (this.feature && this.layer) {
         this.kActivity.centerOnSelection()
         this.kActivity.addSelectionHighlight('information-box')
@@ -107,9 +108,9 @@ export default {
         })
         this.schema = schema
         this.properties = properties
+        // Refresh the actions
+        this.refreshActions()
       }
-      // Refresh the actions
-      this.refreshActions()
     },
     onCenterOn () {
       this.kActivity.centerOnSelection()

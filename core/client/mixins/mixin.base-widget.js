@@ -4,7 +4,7 @@ const baseWidgetMixin = {
       const widgetSize = this.window.size
       if (widgetSize) {
         // compute the widget size
-        let widgetWidth = this.window.size[0]
+        const widgetWidth = this.window.size[0]
         let widgetHeight = this.window.size[1]
         const windowHeaderElement = document.getElementById('window-header')
         if (windowHeaderElement) {

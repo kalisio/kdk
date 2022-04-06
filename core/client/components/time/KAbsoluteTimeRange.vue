@@ -4,13 +4,13 @@
       {{ startDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_DATE_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
-        <q-date 
-          id="start-time-popup" 
-          v-model="startDate" 
+        <q-date
+          id="start-time-popup"
+          v-model="startDate"
           mask="DD/MM"
-          :title="startDate" 
+          :title="startDate"
           :subtitle="$t('KAbsoluteTimeRange.PICK_START_DATE_LABEL')"
-          @input="onTimeRangeChanged" 
+          @input="onTimeRangeChanged"
           :options="checkStartDate" />
         </q-popup-proxy>
     </div>
@@ -19,13 +19,13 @@
       {{ startTime }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_TIME_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
-        <q-time 
-          id="start-time-popup" 
+        <q-time
+          id="start-time-popup"
           v-model="startTime"
           mask="HH:mm"
-          :title="startTime" 
+          :title="startTime"
           :subtitle="$t('KAbsoluteTimeRange.PICK_START_TIME_LABEL')"
-          @input="onTimeRangeChanged" 
+          @input="onTimeRangeChanged"
           :options="checkStartTime" />
         </q-popup-proxy>
     </div>
@@ -34,13 +34,13 @@
       {{ endDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_END_DATE_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
-        <q-date 
-          id="start-time-popup" 
-          v-model="endDate" 
+        <q-date
+          id="start-time-popup"
+          v-model="endDate"
           mask="DD/MM"
-          :title="endDate" 
+          :title="endDate"
           :subtitle="$t('KAbsoluteTimeRange.PICK_END_DATE_LABEL')"
-          @input="onTimeRangeChanged" 
+          @input="onTimeRangeChanged"
           :options="checkEndDate" />
         </q-popup-proxy>
     </div>
@@ -49,13 +49,13 @@
       {{ endTime }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_END_TIME_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
-        <q-time 
-          id="end-time-popup" 
-          v-model="endTime" 
+        <q-time
+          id="end-time-popup"
+          v-model="endTime"
           mask="HH:mm"
-          :title="endTime" 
+          :title="endTime"
           :subtitle="$t('KAbsoluteTimeRange.PICK_END_TIME_LABEL')"
-          @input="onTimeRangeChanged" 
+          @input="onTimeRangeChanged"
           :options="checkEndTime" />
         </q-popup-proxy>
     </div>
@@ -80,7 +80,7 @@ export default {
         return Time.format(this.start, 'date.short')
       },
       set: function (value) {
-        const date = moment(value,'DD/MM')
+        const date = moment(value, 'DD/MM')
         this.start.set({ month: date.month(), date: date.date() })
       }
     },
@@ -98,7 +98,7 @@ export default {
         return Time.format(this.end, 'date.short')
       },
       set: function (value) {
-        const date = moment(value,'DD/MM')
+        const date = moment(value, 'DD/MM')
         this.end.set({ month: date.month(), date: date.date() })
       }
     },
@@ -115,16 +115,16 @@ export default {
   data () {
     return {
       start: Time.getRange().start,
-      end: Time.getRange().end,
+      end: Time.getRange().end
     }
   },
   methods: {
     checkStartDate (date) {
-      const dateToCheck = moment({ 
+      const dateToCheck = moment({
         year: date.substring(0, 4),
         month: date.substring(5, 7) - 1,
         date: date.substring(8, 10),
-        hour: this.start.hour(), 
+        hour: this.start.hour(),
         minute: this.start.minute()
       }).utc()
       return dateToCheck.isBefore(this.end)
@@ -140,11 +140,11 @@ export default {
       return timeToCheck.isBefore(this.end)
     },
     checkEndDate (date) {
-      const dateToCheck = moment({ 
+      const dateToCheck = moment({
         year: date.substring(0, 4),
         month: date.substring(5, 7) - 1,
         date: date.substring(8, 10),
-        hour: this.end.hour(), 
+        hour: this.end.hour(),
         minute: this.end.minute()
       }).utc()
       return dateToCheck.isAfter(this.start)

@@ -205,7 +205,7 @@ export default {
         const timeSpanGaps = scrapTimeSpan ? Math.abs(moment.duration(scrapTimeSpan)) : undefined
         this.setupAvailableRunTimes()
         this.setupAvailableDatasets()
-        this.setupAvailableYAxes()    
+        this.setupAvailableYAxes()
         // Is current time visible in data time range ?
         const currentTime = Time.getCurrentTime()
         let annotation = {}
@@ -251,7 +251,7 @@ export default {
                 type: 'time',
                 time: {
                   unit: 'hour',
-                  tooltipFormat: `${Time.getFormat().date.long} - ${Time.getFormat().time.long}`,
+                  tooltipFormat: `${Time.getFormat().date.long} - ${Time.getFormat().time.long}`
                 },
                 ticks: {
                   autoskip: true,
@@ -259,9 +259,9 @@ export default {
                   major: {
                     enabled: true
                   },
-                  callback: function(value, index, values) {
+                  callback: function (value, index, values) {
                     if (values[index] !== undefined) {
-                      if (values[index].major==true) {
+                      if (values[index].major === true) {
                         return Time.format(moment(values[index].value), 'date.short')
                       } else {
                         return Time.format(moment(values[index].value), 'time.short')
@@ -342,19 +342,19 @@ export default {
     },
     refreshActions () {
       this.$store.patch('window', {
-        widgetActions:  [
+        widgetActions: [
           {
             id: 'absolute-time-range',
-            component: 'time/KAbsoluteTimeRange',
+            component: 'time/KAbsoluteTimeRange'
           },
-          { 
+          {
             id: 'relative-time-ranges',
             component: 'menu/KMenu',
             icon: 'las la-history',
             tooltip: 'KTimeSeries.SPAN',
             content: [{
               component: 'time/KRelativeTimeRanges',
-              ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours', 'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week'],
+              ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours', 'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week']
             }]
           },
           {
