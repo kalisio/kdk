@@ -85,7 +85,7 @@ export const Time = {
     if (format === 'iso') return currentTime.format()
     else if (format === 'locale') return currentTime.toDate().toLocaleString(getLocale(), options)
     // Defaults to long mode if not given
-    else return currentTime.format(_.get(this.getFormat(), format, _.get(this.getFormat(), format + '.long')))
+    else return currentTime.format(_.get(this.getFormat(), format))
   },
   getCurrentTime () {
     return this.get().currentTime

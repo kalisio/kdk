@@ -530,11 +530,6 @@
       "writing": "writing"
     }
   },
-  "KTimeRangeChooser": {
-    "TIME_RANGE": "From {{- min}} to {{- max}}",
-    "FROM_DATE": "From",
-    "TO_DATE": "To"
-  },
   "KTagField": {
     "CREATE_TAG": "Create <b>c</b>"
   },
@@ -785,11 +780,18 @@
   "KSorter": {
     "SORT": "Sort"
   },
-  "KTimeRange": {
-    "START_LABEL": "From",
+  "KAbsoluteTimeRange": {
     "PICK_START_DATE_LABEL": "Update start date",
-    "END_LABEL": "to",
+    "PICK_START_TIME_LABEL": "Update start time",
     "PICK_END_DATE_LABEL": "Update end date",
+    "PICK_END_TIME_LABEL": "Update end time"
+  },
+  "KRelativeTimeRanges": {
+    "LAST_HOUR": "Last hour",
+    "LAST_2_HOURS": "Last 2 hours",
+    "LAST_3_HOURS": "Last 3 hours",
+    "LAST_6_HOURS": "Last 6 hours",
+    "LAST_12_HOURS": "Last 12 hours",
     "LAST_DAY_LABEL": "Last day",
     "LAST_2_DAYS_LABEL": "Last 2 days",
     "LAST_3_DAYS_LABEL": "Last 3 days",

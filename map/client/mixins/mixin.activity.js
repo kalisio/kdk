@@ -461,15 +461,6 @@ export default {
       this.engineReady = true
       this.engine = 'cesium'
     },
-    getProbeTimeRange () {
-      const start = Time.getCurrentTime().clone()
-      const end = start.clone()
-      const span = this.$store.get('timeseries.span')
-      // We center on current time with the same span on past/future
-      start.subtract(span, 'm')
-      end.add(span, 'm')
-      return { start, end }
-    },
     onProbeLocation () {
       this.setCursor('probe-cursor')
       this.$once('click', () => {

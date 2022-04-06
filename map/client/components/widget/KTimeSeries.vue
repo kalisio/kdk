@@ -32,10 +32,6 @@ export default {
     variables: {
       type: Array,
       default: () => []
-    },
-    decimationFactor: {
-      type: Number,
-      default: 1
     }
   },
   computed: {
@@ -67,24 +63,16 @@ export default {
     variables: function () {
       this.refresh()
     },
-    decimationFactor: function () {
-      this.refresh()
-    },
     location: function () {
       this.refresh()
     }
   },
   data () {
     return {
-      probedLocation: null,
-      settings: this.$store.get('timeseries')
+      probedLocation: null
     }
   },
   methods: {
-    filter (value, index) {
-      // We filter one value out of N according to decimation factor
-      return (index % this.decimationFactor) === 0
-    },
     hasVariable (name, properties) {
       return (properties[name] && Array.isArray(properties[name]))
     },
@@ -95,15 +83,13 @@ export default {
     setupAvailableTimes () {
       this.times = []
       const time = this.probedLocation.time || this.probedLocation.forecastTime
-
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
-
         if (time && time[name]) this.times.push(time[name])
       })
       // Make union of all available times for x-axis
-      this.times = _.union(...this.times).map(time => moment.utc(time)).sort((a, b) => a - b).filter(this.filter)
+      this.times = _.union(...this.times).map(time => moment.utc(time)).sort((a, b) => a - b)
       // Compute min time interval
       if (this.times.length > 1) {
         // Convert to hours
@@ -155,7 +141,7 @@ export default {
             values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
           } else values = _.uniqBy(values, 'x')
           // Then transform to date object as expected by visualisation
-          values = values.map((value) => Object.assign(value, { x: new Date(value.x) })).filter(this.filter)
+          values = values.map((value) => Object.assign(value, { x: new Date(value.x).getTime() }))
           this.datasets.push(_.merge({
             label: `${label} (${Units.getUnitSymbol(unit)})`,
             data: values,
@@ -213,18 +199,13 @@ export default {
       // Try/Catch required to ensure we reset the build flag
       try {
         this.buildingChart = true
-        // Compute chart data
-        this.setupAvailableTimes()
+        // TODO this.setupAvailableTimes()
         // Compute appropriate time span gaps
         const scrapTimeSpan = _.get(this.layer, 'queryFrom')
         const timeSpanGaps = scrapTimeSpan ? Math.abs(moment.duration(scrapTimeSpan)) : undefined
         this.setupAvailableRunTimes()
         this.setupAvailableDatasets()
-        this.setupAvailableYAxes()
-        // const date = _.get(Time.getCurrentFormattedTime(), 'date.short')
-        const time = _.get(Time.getCurrentFormattedTime(), 'time.long')
-        const dateFormat = _.get(Time.getFormat(), 'date.short')
-        const timeFormat = _.get(Time.getFormat(), 'time.long')
+        this.setupAvailableYAxes()    
         // Is current time visible in data time range ?
         const currentTime = Time.getCurrentTime()
         let annotation = {}
@@ -239,7 +220,7 @@ export default {
               borderWidth: 1,
               label: {
                 backgroundColor: 'rgba(0,0,0,0.65)',
-                content: `${time}`,
+                content: _.get(Time.getCurrentFormattedTime(), 'time.long'),
                 position: 'start',
                 enabled: true
               }
@@ -255,6 +236,7 @@ export default {
           },
           options: _.merge({
             maintainAspectRatio: false,
+            parsing: false,
             spanGaps: timeSpanGaps,
             tooltips: {
               mode: 'x',
@@ -266,23 +248,26 @@ export default {
             },
             scales: {
               x: {
-                id: 'time',
                 type: 'time',
                 time: {
                   unit: 'hour',
-                  stepSize: this.timeStepSize,
-                  displayFormats: {
-                    hour: `${timeFormat}`
-                  },
-                  tooltipFormat: `${dateFormat} - ${timeFormat}`,
-                  parser: (date) => {
-                    if (moment.isMoment(date)) return date
-                    else return moment(typeof date === 'number' ? date : date.toISOString())
-                  }
+                  tooltipFormat: `${Time.getFormat().date.long} - ${Time.getFormat().time.long}`,
                 },
                 ticks: {
                   autoskip: true,
                   maxRotation: 20,
+                  major: {
+                    enabled: true
+                  },
+                  callback: function(value, index, values) {
+                    if (values[index] !== undefined) {
+                      if (values[index].major==true) {
+                        return Time.format(moment(values[index].value), 'date.short')
+                      } else {
+                        return Time.format(moment(values[index].value), 'time.short')
+                      }
+                    }
+                  },
                   font: function (context) {
                     if (context.tick && context.tick.major) {
                       return {
@@ -306,7 +291,8 @@ export default {
               decimation: {
                 enabled: true,
                 algorithm: 'lttb',
-                samples: 20
+                threshold: 1,
+                samples: this.widgetWidth / 8
               }
             }
           }, { scales: this.yAxes })
@@ -315,9 +301,6 @@ export default {
         logger.error(error)
       }
       this.buildingChart = false
-    },
-    onUpdateSpan (span) {
-      this.$store.set('timeseries.span', span)
     },
     onUpdateRun (runTime) {
       this.runTime = runTime
@@ -358,43 +341,34 @@ export default {
       downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
     },
     refreshActions () {
-      // Select the current span as default option in UX
-      const span = this.$store.get('timeseries.span')
-      const spanOptions = [
-        { badge: '3h', value: 180 },
-        { badge: '6h', value: 360 },
-        { badge: '12h', value: 720 },
-        { badge: '24h', value: 1440 },
-        { badge: '48h', value: 2880 },
-        { badge: '72h', value: 4320 },
-        { badge: '96h', value: 5760 }
-      ]
-      spanOptions.forEach(option => {
-        if (option.value === span) {
-          option.default = true
-        }
-      })
-      // Registers the base actions
       this.$store.patch('window', {
-        widgetActions: [
+        widgetActions:  [
+          {
+            id: 'absolute-time-range',
+            component: 'time/KAbsoluteTimeRange',
+          },
+          { 
+            id: 'relative-time-ranges',
+            component: 'menu/KMenu',
+            icon: 'las la-history',
+            tooltip: 'KTimeSeries.SPAN',
+            content: [{
+              component: 'time/KRelativeTimeRanges',
+              ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours', 'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week'],
+            }]
+          },
           {
             id: 'center-view',
             icon: 'las la-eye',
             tooltip: 'KTimeSeries.CENTER_ON',
+            visible: this.probedVariables,
             handler: this.onCenterOn
-          },
-          {
-            component: 'input/KOptionsChooser',
-            id: 'timespan-options',
-            icon: 'las la-history',
-            tooltip: 'KTimeSeries.SPAN',         
-            options: spanOptions,
-            on: { event: 'option-chosen', listener: this.onUpdateSpan }
           },
           {
             id: 'export-feature',
             icon: 'las la-file-download',
             tooltip: 'KTimeSeries.EXPORT_SERIES',
+            visible: this.probedVariables,
             handler: this.onExportSeries
           }
         ]
@@ -403,11 +377,14 @@ export default {
     async refresh () {
       // Clear previous run timle setup if any
       this.runTime = null
+      this.probedLocation = null
+      // Refresh actions
+      this.refreshActions()
       // Then manage selection
       this.kActivity.addSelectionHighlight('time-series')
       this.kActivity.centerOnSelection()
       // Update timeseries data if required
-      const { start, end } = this.kActivity.getProbeTimeRange()
+      const { start, end } = Time.getRange()
       // No feature clicked => dynamic weacast probe at position
       if (!this.feature) {
         this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
@@ -431,7 +408,6 @@ export default {
       }
       await this.setupGraph()
       this.updateProbedLocationHighlight()
-
       // When forecast data are available allow to select wich run to use
       if (this.runTimes && (this.runTimes.length > 1)) {
         // Select latest runTime as default option
@@ -447,15 +423,23 @@ export default {
   beforeCreate () {
     // Load the required components
     this.$options.components['k-chart'] = this.$load('chart/KChart')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   created () {
     // Refresh the component
     this.refresh()
+    // Configure the time range
+    // TODO ? local storage
+    const start = moment(Time.getCurrentTime())
+    const end = moment(Time.getCurrentTime())
+    const span = this.$store.get('timeseries.span')
+    // We center on current time with the same span on past/future
+    start.subtract(span, 'm')
+    end.add(span, 'm')
+    Time.patchRange({ start, end })
   },
   mounted () {
     this.$events.$on('time-current-time-changed', this.refresh)
+    this.$events.$on('time-range-changed', this.refresh)
     this.$events.$on('time-format-changed', this.refresh)
     this.$events.$on('timeseries-span-changed', this.refresh)
     this.kActivity.$on('forecast-model-changed', this.refresh)
@@ -463,6 +447,7 @@ export default {
   },
   beforeDestroy () {
     this.$events.$off('time-current-time-changed', this.refresh)
+    this.$events.$off('time-range-changed', this.refresh)
     this.$events.$off('time-format-changed', this.refresh)
     this.$events.$off('timeseries-span-changed', this.refresh)
     this.kActivity.$off('forecast-model-changed', this.refresh)
