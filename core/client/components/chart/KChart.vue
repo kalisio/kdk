@@ -14,10 +14,11 @@
 import _ from 'lodash'
 import chroma from 'chroma-js'
 import { Chart, registerables } from 'chart.js'
-import ChartDataLabels from 'chartjs-plugin-datalabels'
-import Annotation from 'chartjs-plugin-annotation'
+import ChartDataLabelsPlugin from 'chartjs-plugin-datalabels'
+import ChartAnnotationPlugin from 'chartjs-plugin-annotation'
+import ChartZoomPlugin from 'chartjs-plugin-zoom'
 
-Chart.register(...registerables, ChartDataLabels, Annotation)
+Chart.register(...registerables, ChartDataLabelsPlugin, ChartAnnotationPlugin, ChartZoomPlugin)
 
 export default {
   name: 'k-chart',

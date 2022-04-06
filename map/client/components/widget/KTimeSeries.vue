@@ -236,6 +236,7 @@ export default {
           },
           options: _.merge({
             maintainAspectRatio: false,
+            animation: false,
             parsing: false,
             spanGaps: timeSpanGaps,
             tooltips: {
@@ -288,6 +289,25 @@ export default {
                 display: false
               },
               annotation,
+              zoom:{
+                pan: {
+                  enabled: true,
+                  mode: 'x',
+                  onPanComplete: this.onZoomed
+                },
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                    speed: 0.5
+                  },
+                  drag: {
+                    enabled: true,
+                    modifierKey: 'ctrl'
+                  },
+                  mode: 'x',
+                  onZoomComplete: this.onZoomed
+                }
+              },
               decimation: {
                 enabled: true,
                 algorithm: 'lttb',
@@ -322,6 +342,11 @@ export default {
         : this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
 
       this.kActivity.updateSelectionHighlight('time-series', feature)
+    },
+    onZoomed ({ chart }) {
+      const start = moment(_.get(chart, 'scales.x.min'))
+      const end = moment(_.get(chart, 'scales.x.max'))
+      Time.patchRange({ start, end })
     },
     onCenterOn () {
       this.kActivity.centerOnSelection()
@@ -424,10 +449,15 @@ export default {
     // Load the required components
     this.$options.components['k-chart'] = this.$load('chart/KChart')
   },
-  created () {
-    // Refresh the component
-    this.refresh()
-    // Configure the time range
+  mounted () {
+    // Setup listeners
+    this.$events.$on('time-current-time-changed', this.refresh)
+    this.$events.$on('time-range-changed', this.refresh)
+    this.$events.$on('time-format-changed', this.refresh)
+    this.$events.$on('timeseries-span-changed', this.refresh)
+    this.kActivity.$on('forecast-model-changed', this.refresh)
+    this.kActivity.$on('forecast-level-changed', this.refresh)
+    // Initialize the time range
     // TODO ? local storage
     const start = moment(Time.getCurrentTime())
     const end = moment(Time.getCurrentTime())
@@ -437,15 +467,8 @@ export default {
     end.add(span, 'm')
     Time.patchRange({ start, end })
   },
-  mounted () {
-    this.$events.$on('time-current-time-changed', this.refresh)
-    this.$events.$on('time-range-changed', this.refresh)
-    this.$events.$on('time-format-changed', this.refresh)
-    this.$events.$on('timeseries-span-changed', this.refresh)
-    this.kActivity.$on('forecast-model-changed', this.refresh)
-    this.kActivity.$on('forecast-level-changed', this.refresh)
-  },
   beforeDestroy () {
+    // Release listeners
     this.$events.$off('time-current-time-changed', this.refresh)
     this.$events.$off('time-range-changed', this.refresh)
     this.$events.$off('time-format-changed', this.refresh)
