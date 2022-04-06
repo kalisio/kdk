@@ -162,7 +162,7 @@ export default {
         let time
         // Assume locale if timezone not provided
         if (Time.getFormatTimezone()) {
-          time = moment.tz(value, this.calendarDateMask, this.getFormatTimezone())
+          time = moment.tz(value, this.calendarDateMask, Time.getFormatTimezone())
         } else {
           time = moment(value, this.calendarDateMask)
         }
