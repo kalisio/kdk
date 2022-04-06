@@ -29,11 +29,13 @@
 <script>
 import _ from 'lodash'
 import { QBtnDropdown } from 'quasar'
+import KPanel from '../frame/KPanel.vue'
 
 export default {
   name: 'k-menu',
   components: {
-    QBtnDropdown
+    QBtnDropdown,
+    KPanel
   },
   props: {
     id: {
@@ -104,10 +106,6 @@ export default {
     onClicked (event) {
       if (!this.propagate) event.stopPropagation()
     }
-  },
-  created () {
-    // load the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>
