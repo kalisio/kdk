@@ -162,6 +162,7 @@ export default {
       this.$store.patch('window', { current: '', widgets })
     },
     onMoved (event) {
+      if (!event) return
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
         const currentPosition = this.$store.get('window.position')
@@ -176,6 +177,7 @@ export default {
       }
     },
     onResized (event) {
+      if (!event) return
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
         const currentSize = this.$store.get('window.size')
