@@ -15,7 +15,7 @@
     </div>
     <div>&nbsp;</div>
     <div class="k-datetime text-body2">
-      {{ startTime }}
+      {{ formattedStartTime }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_TIME_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
         <q-time
@@ -42,7 +42,7 @@
     </div>
     <div>&nbsp;</div>
     <div class="k-datetime text-body2">
-      {{ endTime }}
+      {{ formattedEndTime }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_END_TIME_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
         <q-time

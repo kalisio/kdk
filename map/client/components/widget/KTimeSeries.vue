@@ -82,30 +82,6 @@ export default {
       // Set default run as latest
       return this.runTime || _.last(this.runTimes)
     },
-    setupAvailableTimes () {
-      this.times = []
-      const time = this.probedLocation.time || this.probedLocation.forecastTime
-      this.probedVariables.forEach(variable => {
-        // Check if we are targetting a specific level
-        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
-        if (time && time[name]) this.times.push(time[name])
-      })
-      // Make union of all available times for x-axis
-      this.times = _.union(...this.times).map(time => moment.utc(time)).sort((a, b) => a - b)
-      // Compute min time interval
-      if (this.times.length > 1) {
-        // Convert to hours
-        this.timeInterval = getTimeInterval(this.times) / (3600 * 1000)
-      } else {
-        this.timeInterval = 1 // 1h by default
-      }
-      // Then range
-      if (this.times.length > 1) {
-        this.timeRange = [this.times[0], this.times[this.times.length - 1]]
-      } else {
-        this.timeRange = null
-      }
-    },
     setupAvailableRunTimes () {
       this.runTimes = []
       const runTime = this.probedLocation.runTime
@@ -211,8 +187,9 @@ export default {
         this.setupAvailableYAxes()
         // Is current time visible in data time range ?
         const currentTime = Time.getCurrentTime()
+        const timeRange = Time.getRange()
         let annotation = {}
-        if (this.timeRange && currentTime.isBetween(...this.timeRange)) {
+        if (currentTime.isBetween(timeRange.start, timeRange.end)) {
           annotation = {
             annotations: [{
               type: 'line',
@@ -357,16 +334,27 @@ export default {
       this.kActivity.centerOnSelection()
     },
     onExportSeries () {
-      const json = this.times.map(time => {
+      let times = []
+      const time = this.probedLocation.time || this.probedLocation.forecastTime
+      this.probedVariables.forEach(variable => {
+        // Check if we are targetting a specific level
+        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
+        if (time && time[name]) times.push(time[name])
+      })
+      // Make union of all available times for x-axis
+      times = _.union(...times).map(time => moment.utc(time)).sort((a, b) => a - b)
+      // Convert to json
+      const json = times.map(time => {
         const row = {
           [this.$t('KTimeSeries.TIME_LABEL')]: time.toISOString()
         }
         this.datasets.forEach(dataset => {
-          const value = _.find(dataset.data, item => item.x.toISOString() === time.toISOString())
+          const value = _.find(dataset.data, item => moment(item.x).toISOString() === time.toISOString())
           row[dataset.label] = value ? value.y : null
         })
         return row
       })
+      // Convert to csv
       const csv = Papa.unparse(json)
       downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
     },
@@ -469,13 +457,9 @@ export default {
     this.kActivity.$on('forecast-model-changed', this.refresh)
     this.kActivity.$on('forecast-level-changed', this.refresh)
     // Initialize the time range
-    // TODO ? local storage
-    const start = moment(Time.getCurrentTime())
-    const end = moment(Time.getCurrentTime())
     const span = this.$store.get('timeseries.span')
-    // We center on current time with the same span on past/future
-    start.subtract(span, 'm')
-    end.add(span, 'm')
+    const start = moment(Time.getCurrentTime()).subtract(span, 'm')
+    const end = moment(Time.getCurrentTime()).add(span, 'm')
     Time.patchRange({ start, end })
   },
   beforeDestroy () {
