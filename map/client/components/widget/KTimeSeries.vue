@@ -10,7 +10,6 @@ import moment from 'moment'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import Papa from 'papaparse'
-import { getTimeInterval } from '../../utils'
 import { downloadAsBlob } from '../../../../core/client/utils'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
@@ -320,7 +319,7 @@ export default {
       }
     },
     onZoomStarted ({ chart }) {
-      this.zoomHistory.push({ 
+      this.zoomHistory.push({
         start: moment(Time.getRange().start),
         end: moment(Time.getRange().end)
       })

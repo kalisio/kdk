@@ -71,29 +71,29 @@ export default {
   computed: {
     formattedStartDate () {
       return Time.format(this.range.start, 'date.short')
-    },  
+    },
     startDate: {
       get: function () {
         return this.range.start.format('DD/MM/YYYY')
       },
       set: function (value) {
         const date = moment(value, 'DD/MM/YYYY')
-        this.range = { 
-          start: this.range.start.set({ year: date.year(), month: date.month(), date: date.date() }), 
-          end: this.range.end 
+        this.range = {
+          start: this.range.start.set({ year: date.year(), month: date.month(), date: date.date() }),
+          end: this.range.end
         }
       }
     },
     formattedStartTime () {
       return Time.format(this.range.start, 'time.long')
-    },  
+    },
     startTime: {
       get: function () {
         return this.range.start.format('HH:mm')
       },
       set: function (value) {
         const time = moment(value, 'HH:mm')
-        this.range = { 
+        this.range = {
           start: this.range.start.set({ hour: time.hour(), minute: time.minute() }),
           end: this.range.end
         }
