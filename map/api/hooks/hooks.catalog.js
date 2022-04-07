@@ -1,8 +1,24 @@
 import _ from 'lodash'
-import { getItems } from 'feathers-hooks-common'
+import sift from 'sift'
+import { getItems, replaceItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:map:catalog:hooks')
+
+// By default we only return layers and not other objects in catalog
+export function getDefaultCategories (hook) {
+  const query = _.get(hook, 'params.query', {})
+  if (query.type === 'Category') {
+    const catalog = hook.app.get('catalog')
+    let defaultCategories = catalog ? catalog.categories || [] : []
+    // Add implicit type
+    defaultCategories = defaultCategories.map(category => Object.assign(category, { type: 'Category' }))
+    // Then filter according to query
+    defaultCategories = defaultCategories.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
+    const item = getItems(hook)
+    replaceItems(hook, item.concat(defaultCategories.map(category => Object.assign(category, { type: 'Category' }))))
+  }
+}
 
 // By default we only return layers and not other objects in catalog
 export function filterLayers (hook) {

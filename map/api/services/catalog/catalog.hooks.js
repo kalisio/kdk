@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { setNow, discard } from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api'
-import { filterLayers, updateLayerReferences } from '../../hooks'
+import { filterLayers, updateLayerReferences, getDefaultCategories } from '../../hooks'
 
 module.exports = {
   before: {
@@ -41,7 +41,10 @@ module.exports = {
     all: [
       coreHooks.convertToJson(['schema.content'])
     ],
-    find: [],
+    find: [
+      // Merge built-in categories with user-defined ones
+      getDefaultCategories
+    ],
     get: [],
     create: [],
     update: [

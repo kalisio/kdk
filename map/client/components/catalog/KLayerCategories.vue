@@ -47,7 +47,8 @@ export default {
   },
   computed: {
     baseQuery () {
-      return Object.assign({ type: 'Category' }, this.sorter.query)
+      // Built-in categories do not have _id
+      return Object.assign({ type: 'Category', _id: { $exists: true } }, this.sorter.query)
     },
     title () {
       if (this.mode === 'add') {

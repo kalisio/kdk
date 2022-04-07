@@ -373,18 +373,6 @@
     "EXPORT_SERIES": "Export data",
     "SERIES_EXPORT_FILE": "Series.csv"
   },
-  "KCatalogPanel": {
-    "BASE_LAYERS": "Base Layers",
-    "TERRAIN_LAYERS": "Terrain layers",
-    "OVERLAY_LAYERS": "My layers",
-    "MEASURE_LAYERS": "Measure layers",
-    "INFRASTRUCTURE_LAYERS": "Infrastructures",
-    "ADMINISTRATIVE_LAYERS": "Administrative",
-    "METEO_LAYERS": "Meteo forecasts",
-    "BUSINESS_LAYERS": "Business layers",
-    "CAPTURED_LAYERS": "Captured views",
-    "DEMOGRAPHY_LAYERS": "Demography layers"
-  },
   "KViewsPanel": {
     "VIEWS_LABEL": "My views",
     "SORT_VIEWS": "Sort view",

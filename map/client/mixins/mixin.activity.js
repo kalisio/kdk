@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import i18next from 'i18next'
-import sift from 'sift'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import explode from '@turf/explode'
@@ -102,18 +101,29 @@ export default {
       }
       return categories
     },
+    async addCatalogCategory (category) {
+      // Process i18n
+      if (category.i18n) {
+        const locale = kCoreUtils.getAppLocale()
+        const i18n = _.get(category.i18n, locale)
+        if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
+      }
+      if (this.$t(category.name)) category.label = this.$t(category.name)
+      if (this.$t(category.description)) category.description = this.$t(category.description)
+      this.layerCategories.push(category)
+    },
     async refreshLayerCategories () {
-      // Merge built-in categories with user-defiend ones
-      this.layerCategories = await this.getCatalogCategories()
-      this.layerCategories = this.layerCategories.concat(_.get(this, 'activityOptions.catalog.categories', []))
+      this.layerCategories = []
+      const layerCategories = await this.getCatalogCategories()
+      for (let i = 0; i < layerCategories.length; i++) {
+        this.addCatalogCategory(layerCategories[i])
+      }
     },
     async refreshLayers () {
       // Clear layers and variables
       this.clearLayers()
       this.variables = []
-      let catalogLayers = await this.getCatalogLayers()
-      // Apply global layer filter
-      catalogLayers = catalogLayers.filter(sift(_.get(this, 'activityOptions.catalog.filter', {})))
+      const catalogLayers = await this.getCatalogLayers()
       // Iterate and await layers as creation is async and we need to have all layers ready
       // before checking if there is some background layer
       for (let i = 0; i < catalogLayers.length; i++) {
