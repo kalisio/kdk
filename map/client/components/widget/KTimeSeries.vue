@@ -335,7 +335,10 @@ export default {
       this.kActivity.updateSelectionHighlight('time-series', feature)
     },
     onZoomRestored () {
-      Time.patchRange(this.zoomHistory.pop())
+      if (!_.isEmpty(this.zoomHistory)) {
+        Time.patchRange(_.last(this.zoomHistory))
+        this.zoomHistory = _.slice(this.zoomHistory, 0, this.zoomHistory.length - 1)
+      }
     },
     onZoomStarted ({ chart }) {
       this.zoomHistory.push({ 
