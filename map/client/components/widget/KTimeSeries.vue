@@ -16,6 +16,7 @@ import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
 import { baseWidget, refsResolver } from '../../../../core/client/mixins'
 import 'chartjs-adapter-moment'
+import { colors } from 'quasar'
 
 export default {
   name: 'k-time-series',
@@ -291,10 +292,11 @@ export default {
                 display: false
               },
               annotation,
-              zoom:{
+              zoom: {
                 zoom: {
                   drag: {
                     enabled: true,
+                    backgroundColor: colors.getBrand('secondary')
                   },
                   mode: 'x',
                   onZoomStart: this.onZoomStarted,

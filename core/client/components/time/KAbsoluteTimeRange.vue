@@ -1,15 +1,14 @@
 <template>
   <div class="row justify-start items-center q-pl-sm q-pr-sm no-wrap">
     <div class="k-datetime text-body2">
-      {{ startDate }}
+      {{ formattedStartDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_DATE_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
         <q-date
           id="start-time-popup"
           v-model="startDate"
-          mask="DD/MM"
+          mask="DD/MM/YYYY"
           :title="startDate"
-          :subtitle="$t('KAbsoluteTimeRange.PICK_START_DATE_LABEL')"
           @input="onTimeRangeChanged"
           :options="checkStartDate" />
         </q-popup-proxy>
@@ -23,23 +22,20 @@
           id="start-time-popup"
           v-model="startTime"
           mask="HH:mm"
-          :title="startTime"
-          :subtitle="$t('KAbsoluteTimeRange.PICK_START_TIME_LABEL')"
           @input="onTimeRangeChanged"
           :options="checkStartTime" />
         </q-popup-proxy>
     </div>
     <div>&nbsp;-&nbsp;</div>
     <div class="k-datetime text-body2">
-      {{ endDate }}
+      {{ formattedEndDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_END_DATE_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
         <q-date
           id="start-time-popup"
           v-model="endDate"
-          mask="DD/MM"
+          mask="DD/MM/YYYY"
           :title="endDate"
-          :subtitle="$t('KAbsoluteTimeRange.PICK_END_DATE_LABEL')"
           @input="onTimeRangeChanged"
           :options="checkEndDate" />
         </q-popup-proxy>
@@ -53,8 +49,6 @@
           id="end-time-popup"
           v-model="endTime"
           mask="HH:mm"
-          :title="endTime"
-          :subtitle="$t('KAbsoluteTimeRange.PICK_END_TIME_LABEL')"
           @input="onTimeRangeChanged"
           :options="checkEndTime" />
         </q-popup-proxy>
@@ -75,42 +69,64 @@ export default {
     }
   },
   computed: {
+    formattedStartDate () {
+      return Time.format(this.range.start, 'date.short')
+    },  
     startDate: {
       get: function () {
-        return Time.format(this.range.start, 'date.short')
+        return this.range.start.format('DD/MM/YYYY')
       },
       set: function (value) {
-        console.log('startDate: ', value)
-        const date = moment(value, 'DD/MM')
-        this.range.start.set({ month: date.month(), date: date.date() })
+        const date = moment(value, 'DD/MM/YYYY')
+        this.range = { 
+          start: this.range.start.set({ year: date.year(), month: date.month(), date: date.date() }), 
+          end: this.range.end 
+        }
       }
     },
+    formattedStartTime () {
+      return Time.format(this.range.start, 'time.long')
+    },  
     startTime: {
       get: function () {
-        return Time.format(this.range.start, 'time.long')
+        return this.range.start.format('HH:mm')
       },
       set: function (value) {
-        console.log('startTime: ', value)
-        const time = moment(value, 'HH:mm').utc()
-        this.range.start.set({ hour: time.hour(), minute: time.minute() })
+        const time = moment(value, 'HH:mm')
+        this.range = { 
+          start: this.range.start.set({ hour: time.hour(), minute: time.minute() }),
+          end: this.range.end
+        }
       }
+    },
+    formattedEndDate () {
+      return Time.format(this.range.end, 'date.short')
     },
     endDate: {
       get: function () {
-        return Time.format(this.range.end, 'date.short')
+        return this.range.end.format('DD/MM/YYYY')
       },
       set: function (value) {
         const date = moment(value, 'DD/MM')
-        this.range.end.set({ month: date.month(), date: date.date() })
+        this.range = {
+          start: this.range.start,
+          end: this.range.end.set({ month: date.month(), date: date.date() })
+        }
       }
+    },
+    formattedEndTime () {
+      return Time.format(this.range.end, 'time.long')
     },
     endTime: {
       get: function () {
-        return Time.format(this.range.end, 'time.long')
+        return this.range.end.format('HH:mm')
       },
       set: function (value) {
-        const time = moment(value, 'HH:mm').utc()
-        this.range.end.set({ hour: time.hour(), minute: time.minute() })
+        const time = moment(value, 'HH:mm')
+        this.range = {
+          start: this.range.start,
+          end: this.range.end.set({ hour: time.hour(), minute: time.minute() })
+        }
       }
     }
   },
