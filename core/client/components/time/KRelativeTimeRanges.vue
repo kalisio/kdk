@@ -37,9 +37,9 @@ export default {
   },
   methods: {
     rangeTriggered (duration) {
-      this.end = moment(Time.getCurrentTime())
-      this.start = moment(Time.getCurrentTime()).subtract(duration)
-      Time.patchRange({ start: this.start, end: this.end })
+      const end = moment(Time.getCurrentTime())
+      const start = moment(Time.getCurrentTime()).subtract(duration)
+      Time.patchRange({ start: start, end: end })
     }
   },
   created () {

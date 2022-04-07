@@ -69,7 +69,8 @@ export default {
   },
   data () {
     return {
-      probedLocation: null
+      probedLocation: null,
+      zoomHistory: []
     }
   },
   methods: {
@@ -141,6 +142,7 @@ export default {
             values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
           } else values = _.uniqBy(values, 'x')
           // Then transform to date object as expected by visualisation
+          // To enable decimation the x, e.g. time, values should be defined in millisecond (parsing is disable)
           values = values.map((value) => Object.assign(value, { x: new Date(value.x).getTime() }))
           this.datasets.push(_.merge({
             label: `${label} (${Units.getUnitSymbol(unit)})`,
@@ -290,29 +292,18 @@ export default {
               },
               annotation,
               zoom:{
-                pan: {
-                  enabled: true,
-                  mode: 'x',
-                  onPanComplete: this.onZoomed
-                },
                 zoom: {
-                  wheel: {
-                    enabled: true,
-                    speed: 0.5
-                  },
                   drag: {
                     enabled: true,
-                    modifierKey: 'ctrl'
                   },
                   mode: 'x',
-                  onZoomComplete: this.onZoomed
+                  onZoomStart: this.onZoomStarted,
+                  onZoom: this.onZoomed
                 }
               },
               decimation: {
                 enabled: true,
-                algorithm: 'lttb',
-                threshold: 1,
-                samples: this.widgetWidth / 8
+                algorithm: 'lttb'
               }
             }
           }, { scales: this.yAxes })
@@ -342,6 +333,15 @@ export default {
         : this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
 
       this.kActivity.updateSelectionHighlight('time-series', feature)
+    },
+    onZoomRestored () {
+      Time.patchRange(this.zoomHistory.pop())
+    },
+    onZoomStarted ({ chart }) {
+      this.zoomHistory.push({ 
+        start: moment(Time.getRange().start),
+        end: moment(Time.getRange().end)
+      })
     },
     onZoomed ({ chart }) {
       const start = moment(_.get(chart, 'scales.x.min'))
@@ -373,10 +373,16 @@ export default {
             component: 'time/KAbsoluteTimeRange'
           },
           {
+            id: 'restore-time-range',
+            icon: 'las la-undo',
+            tooltip: 'KTimeSeries.RESTORE_TIME_RANGE',
+            visible: !_.isEmpty(this.zoomHistory),
+            handler: this.onZoomRestored
+          },
+          {
             id: 'relative-time-ranges',
             component: 'menu/KMenu',
             icon: 'las la-history',
-            tooltip: 'KTimeSeries.SPAN',
             content: [{
               component: 'time/KRelativeTimeRanges',
               ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours', 'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week']

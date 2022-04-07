@@ -364,6 +364,7 @@
   },
   "KTimeSeries": {
     "LABEL": "Time Series",
+    "RESTORE_TIME_RANGE": "Restore previous view",
     "NO_DATA_AVAILABLE": "No data available",
     "CENTER_ON": "Center the view on the probed location",
     "SPAN": "Timeseries span",

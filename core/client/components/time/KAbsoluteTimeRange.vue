@@ -77,45 +77,46 @@ export default {
   computed: {
     startDate: {
       get: function () {
-        return Time.format(this.start, 'date.short')
+        return Time.format(this.range.start, 'date.short')
       },
       set: function (value) {
+        console.log('startDate: ', value)
         const date = moment(value, 'DD/MM')
-        this.start.set({ month: date.month(), date: date.date() })
+        this.range.start.set({ month: date.month(), date: date.date() })
       }
     },
     startTime: {
       get: function () {
-        return Time.format(this.start, 'time.long')
+        return Time.format(this.range.start, 'time.long')
       },
       set: function (value) {
+        console.log('startTime: ', value)
         const time = moment(value, 'HH:mm').utc()
-        this.start.set({ hour: time.hour(), minute: time.minute() })
+        this.range.start.set({ hour: time.hour(), minute: time.minute() })
       }
     },
     endDate: {
       get: function () {
-        return Time.format(this.end, 'date.short')
+        return Time.format(this.range.end, 'date.short')
       },
       set: function (value) {
         const date = moment(value, 'DD/MM')
-        this.end.set({ month: date.month(), date: date.date() })
+        this.range.end.set({ month: date.month(), date: date.date() })
       }
     },
     endTime: {
       get: function () {
-        return Time.format(this.end, 'time.long')
+        return Time.format(this.range.end, 'time.long')
       },
       set: function (value) {
         const time = moment(value, 'HH:mm').utc()
-        this.end.set({ hour: time.hour(), minute: time.minute() })
+        this.range.end.set({ hour: time.hour(), minute: time.minute() })
       }
     }
   },
   data () {
     return {
-      start: Time.getRange().start,
-      end: Time.getRange().end
+      range: Time.getRange()
     }
   },
   methods: {
@@ -124,43 +125,43 @@ export default {
         year: date.substring(0, 4),
         month: date.substring(5, 7) - 1,
         date: date.substring(8, 10),
-        hour: this.start.hour(),
-        minute: this.start.minute()
+        hour: this.range.start.hour(),
+        minute: this.range.start.minute()
       }).utc()
-      return dateToCheck.isBefore(this.end)
+      return dateToCheck.isBefore(this.range.end)
     },
     checkStartTime (hour, minute) {
       const timeToCheck = moment({
-        year: this.start.year(),
-        month: this.start.month(),
-        date: this.start.date(),
+        year: this.range.start.year(),
+        month: this.range.start.month(),
+        date: this.range.start.date(),
         hour: hour,
         minute: minute
       }).utc()
-      return timeToCheck.isBefore(this.end)
+      return timeToCheck.isBefore(this.range.end)
     },
     checkEndDate (date) {
       const dateToCheck = moment({
         year: date.substring(0, 4),
         month: date.substring(5, 7) - 1,
         date: date.substring(8, 10),
-        hour: this.end.hour(),
-        minute: this.end.minute()
+        hour: this.range.end.hour(),
+        minute: this.range.end.minute()
       }).utc()
-      return dateToCheck.isAfter(this.start)
+      return dateToCheck.isAfter(this.range.start)
     },
     checkEndTime (hour, minute) {
       const timeToCheck = moment({
-        year: this.end.year(),
-        month: this.end.month(),
-        date: this.end.date(),
+        year: this.range.end.year(),
+        month: this.range.end.month(),
+        date: this.range.end.date(),
         hour: hour,
         minute: minute
       }).utc()
-      return timeToCheck.isAfter(this.start)
+      return timeToCheck.isAfter(this.range.start)
     },
     onTimeRangeChanged () {
-      Time.patchRange({ start: this.start, end: this.end })
+      Time.patchRange({ start: this.range.start, end: this.range.end })
     }
   }
 }

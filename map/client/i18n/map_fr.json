@@ -365,6 +365,7 @@
   },
   "KTimeSeries": {
     "LABEL": "Séries chronologiques",
+    "RESTORE_TIME_RANGE": "Restaurer la vue précédente",
     "NO_DATA_AVAILABLE": "Aucune donnée disponible",
     "CENTER_ON": "Centrer la vue sur la sonde",
     "SPAN": "Intervalle de la série temporelle",
