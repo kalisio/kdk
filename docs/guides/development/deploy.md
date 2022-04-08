@@ -35,7 +35,7 @@ CI/CD comes al well in three different flavors, as defined by the value of the `
 * **test**: in order to deploy current staging/beta version, usually linked to the `test` branch of your code, identified by matching the following regular expression pattern `^test-*|-test$`
 * **prod**: in order to deploy current production version, usually linked to specific `tags` on the `test` branch of your code by matching the following regular expression pattern `^prod-v[0-9]+\.[0-9]+\.[0-9]+`
 
-The output Docker image artifacts use the prerelease SemVer notation to identify which flavor has been used to produce it —  `1.0.0-dev` for alpha version, `1.0.0-test` for beta version or `1.0.0-prod` for production.
+The Docker image artifacts use the prerelease SemVer notation for tags to identify which flavor has been used to produce it —  `1.0.0-dev` for alpha version, `1.0.0-test` for beta version or `1.0.0-prod` for production. There is also a shortcut for the latest available version of each flavor: `dev`, `test` and `prod`.
 
 ::: tip
 In the CI/CD process the `FLAVOR`/`NODE_APP_INSTANCE` environment variable is automatically set based on the branch/tag you are pushing. During local development these variables are usually not defined.
