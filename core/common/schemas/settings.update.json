@@ -206,6 +206,7 @@
     "longDate",
     "shortYear",
     "longYear",
+    "timezone",
     "location"
   ]
 }

@@ -8,7 +8,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import { colors } from 'quasar'
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as kMapMixins from '../mixins'
 import { setGatewayJwt } from '../utils'
@@ -95,7 +95,7 @@ export default {
       if (name) {
         const isSelected = (this.timezone === name)
         tooltip = L.tooltip({ permanent: isSelected }, layer)
-        tooltip.setContent(name)
+        tooltip.setContent(kCoreUtils.getTimezoneLabel(name))
       }
       return tooltip
     },

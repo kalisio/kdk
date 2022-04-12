@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import emailValidator from 'email-validator'
 import config from 'config'
 import { Platform, Notify, Dialog, Loading, exportFile } from 'quasar'
@@ -208,4 +209,10 @@ var checkForHexRegExp = new RegExp('^[0-9a-fA-F]{24}$')
 // Check if a string is a valid MongoDB Object ID
 export function isObjectID (id) {
   return (id.length === 24 && checkForHexRegExp.test(id))
+}
+
+// Add UTC offset to timezone name
+export function getTimezoneLabel(timezone) {
+  const offset = moment().tz(timezone).format('Z')
+  return `${timezone} (${offset})`
 }

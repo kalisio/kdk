@@ -39,6 +39,14 @@
             </q-item-section>
           </q-item>
         </template>
+        <template v-slot:append>
+          <q-icon
+            v-if="model"
+            class="cursor-pointer"
+            name="cancel"
+            @click.stop="fill('')"
+          />
+        </template>
         <!-- Helper -->
         <template v-if="helper" v-slot:hint>
           <span v-html="helper"></span>
@@ -57,7 +65,7 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
-import { mixins as kCoreMixins } from '../../../../core/client'
+import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../../core/client'
 import meta from 'moment-timezone/data/meta/latest.json'
 
 const timezones = moment.tz.names()
@@ -70,8 +78,7 @@ export default {
   mixins: [kCoreMixins.baseField],
   data () {
     return {
-      options: timezones.map(timezone => ({ value: timezone, label: timezone })),
-      mapTimezone: ''
+      options: timezones.map(timezone => ({ value: timezone, label: kCoreUtils.getTimezoneLabel(timezone) }))
     }
   },
   methods: {
@@ -87,9 +94,13 @@ export default {
     openTimezoneMap () {
       this.$refs.timezoneMapModal.open()
     },
-    closeTimezoneMap (fill = false) {
+    async closeTimezoneMap (fill = false) {
       this.$refs.timezoneMapModal.close()
-      if (fill) this.fill(this.mapTimezone)
+      if (fill) {
+        this.fill(this.mapTimezone)
+        // Seems to be required to correctly update the label in the q-select
+        await this.$nextTick()
+      }
     },
     onAutocomplete (value, update) {
       // Check for any matching country also
@@ -107,7 +118,7 @@ export default {
             }
             return false
           })
-          .map(timezone => ({ value: timezone, label: timezone }))
+          .map(timezone => ({ value: timezone, label: kCoreUtils.getTimezoneLabel(timezone) }))
       })
     }
   },
