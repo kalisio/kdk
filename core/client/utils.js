@@ -212,7 +212,7 @@ export function isObjectID (id) {
 }
 
 // Add UTC offset to timezone name
-export function getTimezoneLabel(timezone) {
+export function getTimezoneLabel (timezone) {
   const offset = moment().tz(timezone).format('Z')
   return `${timezone} (${offset})`
 }

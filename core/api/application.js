@@ -8,7 +8,6 @@ import 'winston-daily-rotate-file'
 import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
-import bodyParser from 'body-parser'
 import { RateLimiter as SocketLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
 import feathers from '@feathersjs/feathers'
@@ -501,8 +500,8 @@ export function kalisio () {
   app.use(helmet(app.get('helmet')))
   app.use(compress(app.get('compression')))
   const bodyParserConfig = app.get('bodyParser')
-  app.use(bodyParser.json(_.get(bodyParserConfig, 'json')))
-  app.use(bodyParser.urlencoded(Object.assign({ extended: true }, _.get(bodyParserConfig, 'urlencoded'))))
+  app.use(express.json(_.get(bodyParserConfig, 'json')))
+  app.use(express.urlencoded(Object.assign({ extended: true }, _.get(bodyParserConfig, 'urlencoded'))))
 
   // Set up plugins and providers
   app.configure(rest())

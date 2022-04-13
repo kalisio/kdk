@@ -86,7 +86,7 @@ describe('core:services', () => {
 
   it('cannot create a user with a weak password', (done) => {
     // Fake password hashing on a user to get a hashed password
-    hashPassword()({ type: 'before', data: { password: 'weak;' }, params: {}, app })
+    hashPassword('email')({ type: 'before', data: { password: 'weak;' }, params: {}, app })
       .then(hook => {
         userService.create({
           email: 'test@test.org',

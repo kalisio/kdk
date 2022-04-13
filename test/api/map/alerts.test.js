@@ -7,7 +7,6 @@ import moment from 'moment'
 import utility from 'util'
 import fs from 'fs-extra'
 import express from 'express'
-import bodyParser from 'body-parser'
 import request from 'superagent'
 import weacastCore, { weacast } from 'weacast-core'
 import weacastGfs from 'weacast-gfs'
@@ -90,7 +89,7 @@ describe('map:alerts', () => {
 
   it('launch external webhook app', (done) => {
     externalApp = express()
-    externalApp.use(bodyParser.json())
+    externalApp.use(express.json())
     externalPort = port + 1
     // Launch the external server
     externalServer = externalApp.listen(externalPort)
