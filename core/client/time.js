@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
+import config from 'config'
 import { Events } from './events'
 import { Store } from './store'
 import { getLocale } from './utils'
@@ -13,7 +14,7 @@ export const Time = {
     const now = moment.utc()
     // Try to guess user timezone
     const timezone = moment.tz.guess() || ''
-    Store.set('time', {
+    Store.set('time', _.merge(config.time || {}, {
       range: {
         start: now.clone().subtract(1, 'months').startOf('day'),
         end: now.clone().endOf('day'),
@@ -38,7 +39,7 @@ export const Time = {
       currentTime: now,
       step: 60, // 1H
       interval: 60 // 1m
-    })
+    }))
     this.updateTimeRangeQuery()
     // Make filter react to external changes to update the query
     Events.$on('time-range-changed', () => this.updateTimeRangeQuery())
