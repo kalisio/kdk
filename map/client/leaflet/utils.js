@@ -98,6 +98,20 @@ export function tile2key (coords) {
   return (coords.x * 536870912) + (coords.y * 32) + coords.z
 }
 
+export function key2tile (key) {
+  // JS Number.MAX_SAFE_INTEGER = 2^53 - 1, so 53 bits available
+  // put z value on  5 bits (0 - 32)
+  // put y value on 24 bits (0 - 16777216)
+  // put x value on 24 bits (0 - 16777216)
+  // shift y by 5 bits (* 32)
+  // shift x by 5+24 bits (* 536870912)
+  const x = Math.floor(key / 536870912)
+  const y = Math.floor((key - (x * 536870912)) / 32)
+  const p = L.point(x, y)
+  p.z = key - ((x * 536870912) + (y * 32))
+  return p
+}
+
 export function tileSetContainsParent (tileset, coords) {
   const triplet = {
     x: coords.x,
@@ -107,9 +121,7 @@ export function tileSetContainsParent (tileset, coords) {
 
   while (triplet.z > 1) {
     const tilekey = tile2key(triplet)
-    if (tileset.has(tilekey)) {
-      return true
-    }
+    if (tileset.has(tilekey)) return true
 
     triplet.x = Math.floor(triplet.x / 2)
     triplet.y = Math.floor(triplet.y / 2)
@@ -117,6 +129,29 @@ export function tileSetContainsParent (tileset, coords) {
   }
 
   return false
+}
+
+export function getParentTileInTileSet (tileset, coords) {
+  const triplet = {
+    x: coords.x,
+    y: coords.y,
+    z: coords.z
+  }
+
+  triplet.x = Math.floor(triplet.x / 2)
+  triplet.y = Math.floor(triplet.y / 2)
+  triplet.z -= 1
+
+  while (triplet.z > 1) {
+    const tilekey = tile2key(triplet)
+    if (tileset.has(tilekey)) return triplet
+
+    triplet.x = Math.floor(triplet.x / 2)
+    triplet.y = Math.floor(triplet.y / 2)
+    triplet.z -= 1
+  }
+
+  return undefined
 }
 
 export function computeIdealMaxNativeZoom (gridLayer, dataSetBounds, dataSetTileSize) {
