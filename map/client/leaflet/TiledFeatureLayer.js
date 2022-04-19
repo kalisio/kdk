@@ -115,7 +115,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     // Try to merge tiles vertically, then horizontally
     const sortedTiles = tiles.sort((a, b) => {
       if (a.coords.x === b.coords.x) {
-        return a.coords.y < b.coords.y ? -1 : a.coords.y !== b.coords.y ? 0 : 1
+        return a.coords.y < b.coords.y ? -1 : a.coords.y !== b.coords.y ? 1 : 0
       }
       return a.coords.x < b.coords.x ? -1 : 1
     })
