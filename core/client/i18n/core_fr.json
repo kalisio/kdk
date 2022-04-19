@@ -792,7 +792,7 @@
     "LAST_2_HOURS_LABEL": "Dernières 2 heures",
     "LAST_3_HOURS_LABEL": "Dernières 3 heures",
     "LAST_6_HOURS_LABEL": "Dernières 6 heures",
-    "LAST_12_HOURS_LABEL": "Dernières 12 houres",
+    "LAST_12_HOURS_LABEL": "Dernières 12 heures",
     "LAST_DAY_LABEL": "Dernier jour",
     "LAST_2_DAYS_LABEL": "2 derniers jours",
     "LAST_3_DAYS_LABEL": "3 derniers jours",
@@ -801,7 +801,21 @@
     "LAST_MONTH_LABEL": "Dernier mois",
     "LAST_3_MONTHS_LABEL": "3 derniers mois",
     "LAST_6_MONTHS_LABEL": "6 derniers mois",
-    "LAST_YEAR_LABEL": "Dernière année"
+    "LAST_YEAR_LABEL": "Dernière année",
+    "NEXT_HOUR_LABEL": "Prochaine heure",
+    "NEXT_2_HOURS_LABEL": "Prochaines 2 heures",
+    "NEXT_3_HOURS_LABEL": "Prochaines 3 heures",
+    "NEXT_6_HOURS_LABEL": "Prochaines 6 heures",
+    "NEXT_12_HOURS_LABEL": "Prochaines 12 heures",
+    "NEXT_DAY_LABEL": "Prochain jour",
+    "NEXT_2_DAYS_LABEL": "2 prochains jours",
+    "NEXT_3_DAYS_LABEL": "3 prochains jours",
+    "NEXT_WEEK_LABEL": "Derniere semaine",
+    "NEXT_2_WEEKS_LABEL": "2 dernières semaines",
+    "NEXT_MONTH_LABEL": "Prochain mois",
+    "NEXT_3_MONTHS_LABEL": "3 prochains mois",
+    "NEXT_6_MONTHS_LABEL": "6 prochains mois",
+    "NEXT_YEAR_LABEL": "Prochaine année"
   },
   "KChart": {
     "NO_DATA_AVAILABLE": "Aucune donnée disponible"

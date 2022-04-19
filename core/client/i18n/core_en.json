@@ -800,7 +800,21 @@
     "LAST_MONTH_LABEL": "Last month",
     "LAST_3_MONTHS_LABEL": "Last 3 months",
     "LAST_6_MONTHS_LABEL": "Last 6 months",
-    "LAST_YEAR_LABEL": "Last year"
+    "LAST_YEAR_LABEL": "Last year",
+    "NEXT_HOUR": "Next hour",
+    "NEXT_2_HOURS": "Next 2 hours",
+    "NEXT_3_HOURS": "Next 3 hours",
+    "NEXT_6_HOURS": "Next 6 hours",
+    "NEXT_12_HOURS": "Next 12 hours",
+    "NEXT_DAY_LABEL": "Next day",
+    "NEXT_2_DAYS_LABEL": "Next 2 days",
+    "NEXT_3_DAYS_LABEL": "Next 3 days",
+    "NEXT_WEEK_LABEL": "Next week",
+    "NEXT_2_WEEKS_LABEL": "Next 2 weeks",
+    "NEXT_MONTH_LABEL": "Next month",
+    "NEXT_3_MONTHS_LABEL": "Next 3 months",
+    "NEXT_6_MONTHS_LABEL": "Next 6 months",
+    "NEXT_YEAR_LABEL": "Next year"
   },
   "KChart": {
     "NO_DATA_AVAILABLE": "No data available"

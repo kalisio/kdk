@@ -377,7 +377,9 @@ export default {
             icon: 'las la-history',
             content: [{
               component: 'time/KRelativeTimeRanges',
-              ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours', 'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week']
+              ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours',
+                       'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week',
+                       'next-12-hours', 'next-day', 'next-2-days', 'next-3-days']
             }]
           },
           {
