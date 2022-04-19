@@ -294,7 +294,7 @@ export default {
     onUpdateRun (runTime) {
       this.runTime = runTime
       // Update tooltip action
-      const action = _.find(this.actions, { id: 'run-options' })
+      const action = _.find(this.$store.get('window.widgetActions'), { id: 'run-options' })
       action.tooltip = this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
         ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')'
       this.setupGraph()
@@ -358,53 +358,70 @@ export default {
       downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
     },
     refreshActions () {
+      let actions = [{
+        id: 'absolute-time-range',
+        component: 'time/KAbsoluteTimeRange'
+      },
+      {
+        id: 'restore-time-range',
+        icon: 'las la-undo',
+        tooltip: 'KTimeSeries.RESTORE_TIME_RANGE',
+        visible: !_.isEmpty(this.zoomHistory),
+        handler: this.onZoomRestored
+      },
+      {
+        id: 'relative-time-ranges',
+        component: 'menu/KMenu',
+        icon: 'las la-history',
+        content: [{
+          component: 'time/KRelativeTimeRanges',
+          ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours',
+                   'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week',
+                   'next-12-hours', 'next-day', 'next-2-days', 'next-3-days']
+        }]
+      }]
+
+      // When forecast data are available allow to select wich run to use
+      if (this.runTimes && (this.runTimes.length > 1)) {
+        // Select latest runTime as default option
+        const runOptions = this.runTimes.map(runTime => ({
+          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
+          value: runTime
+        }))
+        _.last(runOptions).default = true
+        // Registers the action
+        actions.push({
+          id: 'run-options',
+          component: 'input/KOptionsChooser',
+          icon: 'las la-clock',
+          tooltip: this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
+            ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')',
+          options: runOptions,
+          on: { event: 'option-chosen', listener: this.onUpdateRun }
+        })
+      }
+      actions = actions.concat([{
+        id: 'center-view',
+        icon: 'las la-eye',
+        tooltip: 'KTimeSeries.CENTER_ON',
+        visible: this.probedVariables,
+        handler: this.onCenterOn
+      },
+      {
+        id: 'export-feature',
+        icon: 'las la-file-download',
+        tooltip: 'KTimeSeries.EXPORT_SERIES',
+        visible: this.probedVariables,
+        handler: this.onExportSeries
+      }])
       this.$store.patch('window', {
-        widgetActions: [
-          {
-            id: 'absolute-time-range',
-            component: 'time/KAbsoluteTimeRange'
-          },
-          {
-            id: 'restore-time-range',
-            icon: 'las la-undo',
-            tooltip: 'KTimeSeries.RESTORE_TIME_RANGE',
-            visible: !_.isEmpty(this.zoomHistory),
-            handler: this.onZoomRestored
-          },
-          {
-            id: 'relative-time-ranges',
-            component: 'menu/KMenu',
-            icon: 'las la-history',
-            content: [{
-              component: 'time/KRelativeTimeRanges',
-              ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours',
-                       'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week',
-                       'next-12-hours', 'next-day', 'next-2-days', 'next-3-days']
-            }]
-          },
-          {
-            id: 'center-view',
-            icon: 'las la-eye',
-            tooltip: 'KTimeSeries.CENTER_ON',
-            visible: this.probedVariables,
-            handler: this.onCenterOn
-          },
-          {
-            id: 'export-feature',
-            icon: 'las la-file-download',
-            tooltip: 'KTimeSeries.EXPORT_SERIES',
-            visible: this.probedVariables,
-            handler: this.onExportSeries
-          }
-        ]
+        widgetActions: actions
       })
     },
     async refresh () {
       // Clear previous run timle setup if any
       this.runTime = null
       this.probedLocation = null
-      // Refresh actions
-      this.refreshActions()
       // Then manage selection
       this.kActivity.addSelectionHighlight('time-series')
       this.kActivity.centerOnSelection()
@@ -433,15 +450,6 @@ export default {
       }
       await this.setupGraph()
       this.updateProbedLocationHighlight()
-      // When forecast data are available allow to select wich run to use
-      if (this.runTimes && (this.runTimes.length > 1)) {
-        // Select latest runTime as default option
-        const runOptions = this.runTimes.map(runTime => ({
-          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
-          value: runTime
-        }))
-        _.last(runOptions).default = true
-      }
       this.refreshActions()
     }
   },
