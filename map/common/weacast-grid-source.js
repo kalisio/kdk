@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
-import { unitConverters, SortOrder, GridSource, Grid1D, TiledGrid, SubGrid } from './grid'
+import { unitConverters, SortOrder, GridSource, Grid1D, TiledGrid, SubGrid } from './grid.js'
 
 // computes how many equidistant points are required to generate
 // points at most every 'precision' degrees

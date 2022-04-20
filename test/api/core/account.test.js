@@ -38,7 +38,7 @@ describe('core:account', () => {
     expect(typeof core).to.equal('function')
   })
 
-  ionly('registers the services', (done) => {
+  it.only('registers the services', (done) => {
     app.configure(core)
     userService = app.getService('users')
     expect(userService).toExist()

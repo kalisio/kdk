@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import moment from 'moment'
-import { getNearestRunTime, getNearestForecastTime } from 'weacast-core/common'
-import { makeGridSource, extractGridSourceConfig } from './grid'
-import { DynamicGridSource } from './dynamic-grid-source'
-import { readAsTimeOrDuration, makeTime } from './moment-utils'
+import { getNearestRunTime, getNearestForecastTime } from '@weacast/core/common.js'
+import { makeGridSource, extractGridSourceConfig } from './grid.js'
+import { DynamicGridSource } from './dynamic-grid-source.js'
+import { readAsTimeOrDuration, makeTime } from './moment-utils.js'
 
 export class MeteoModelGridSource extends DynamicGridSource {
   static getKey () {

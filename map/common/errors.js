@@ -1,3 +1,3 @@
-import { errors } from '../../core/common'
+import { errors } from '../../core/common/index.js'
 
 export class KGeolocationError extends errors.KError {}

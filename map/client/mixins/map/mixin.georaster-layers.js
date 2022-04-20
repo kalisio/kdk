@@ -4,7 +4,7 @@ import parseGeoraster from 'georaster'
 import moment from 'moment'
 import chroma from 'chroma-js'
 import { GridRenderer } from 'weacast-leaflet'
-import { Grid } from 'weacast-core/client'
+import { Grid } from '@weacast/core/client'
 import { buildColorMap } from '../../utils'
 
 const GeorasterLayer = L.Layer.extend({

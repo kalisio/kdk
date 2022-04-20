@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import moment from 'moment'
-import { makeGridSource, extractGridSourceConfig } from './grid'
-import { DynamicGridSource } from './dynamic-grid-source'
-import { readAsTimeOrDuration, makeTime } from './moment-utils'
+import { makeGridSource, extractGridSourceConfig } from './grid.js'
+import { DynamicGridSource } from './dynamic-grid-source.js'
+import { readAsTimeOrDuration, makeTime } from './moment-utils.js'
 
 export class TimeBasedGridSource extends DynamicGridSource {
   static getKey () {

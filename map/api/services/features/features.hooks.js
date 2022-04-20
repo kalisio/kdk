@@ -7,7 +7,7 @@ function simplifyResult (hook) {
   return hook
 }
 
-module.exports = {
+export default {
   before: {
     all: [coreHooks.marshallTimeQuery, coreHooks.convertObjectIDs(['layer'])],
     find: [coreHooks.marshallComparisonQuery, coreHooks.marshallSortQuery, marshallSpatialQuery,

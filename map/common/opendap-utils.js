@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import fetch from 'node-fetch'
-import parser from 'jsdap/src/parser'
-import xdr from 'jsdap/src/xdr'
+import parser from 'jsdap/src/parser.js'
+import xdr from 'jsdap/src/xdr.js'
 import { BaseGrid } from './grid.js'
 
 export const opendapTypes = new Set(['Float32', 'Float64'])

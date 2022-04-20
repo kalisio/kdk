@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { marshallGeometry } from '../marshall'
+import { marshallGeometry } from '../marshall.js'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:map:query:hooks')

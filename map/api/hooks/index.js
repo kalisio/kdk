@@ -1,2 +1,2 @@
-export * from './hooks.query'
-export * from './hooks.catalog'
+export * from './hooks.query.js'
+export * from './hooks.catalog.js'

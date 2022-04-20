@@ -1,15 +1,15 @@
 // We faced a bug in babel so that transform-runtime with export * from 'x' generates import statements in transpiled code
 // Tracked here : https://github.com/babel/babel/issues/2877
 // We tested the workaround given here https://github.com/babel/babel/issues/2877#issuecomment-270700000 with success so far
-import * as errors from './errors'
-import * as permissions from './permissions'
-import { gridSourceFactories, unitConverters } from './grid'
-import { OpenDapGridSource } from './opendap-grid-source'
-import { WcsGridSource } from './wcs-grid-source'
-import { GeoTiffGridSource } from './geotiff-grid-source'
-import { WeacastGridSource } from './weacast-grid-source'
-import { MeteoModelGridSource } from './meteo-model-grid-source'
-import { TimeBasedGridSource } from './time-based-grid-source'
+import * as errors from './errors.js'
+import * as permissions from './permissions.js'
+import { gridSourceFactories, unitConverters } from './grid.js'
+import { OpenDapGridSource } from './opendap-grid-source.js'
+import { WcsGridSource } from './wcs-grid-source.js'
+import { GeoTiffGridSource } from './geotiff-grid-source.js'
+import { WeacastGridSource } from './weacast-grid-source.js'
+import { MeteoModelGridSource } from './meteo-model-grid-source.js'
+import { TimeBasedGridSource } from './time-based-grid-source.js'
 
 export { errors }
 export { permissions }

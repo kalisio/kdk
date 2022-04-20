@@ -1,9 +1,13 @@
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'
 import fs from 'fs-extra'
-import core, { kalisio, hooks, permissions } from '../../../core/api'
-import map, { permissions as mapPermissions, createFeaturesService, createCatalogService } from '../../../map/api'
+import core, { kalisio, hooks, permissions } from '../../../core/api/index.js'
+import map, {
+  permissions as mapPermissions, createFeaturesService, createCatalogService
+} from '../../../map/api/index.js'
+
+const { util, expect } = chai
 
 describe('map:services', () => {
   let app, server, port, // baseUrl,

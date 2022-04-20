@@ -1,4 +1,4 @@
-module.exports = function (app, options) {
+export default function (app, options) {
   const db = options.db || app.db
   options.Model = db.collection('catalog')
   // We previously had a unique constraint on name but we now have

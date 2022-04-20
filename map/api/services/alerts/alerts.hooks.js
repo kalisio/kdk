@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import { disallow, iff } from 'feathers-hooks-common'
-import { hooks as coreHooks } from '../../../../core/api'
-import { marshallSpatialQuery } from '../../hooks'
+import { hooks as coreHooks } from '../../../../core/api/index.js'
+import { marshallSpatialQuery } from '../../hooks/index.js'
 
-module.exports = {
+export default {
   before: {
     all: [],
     find: [marshallSpatialQuery],

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'
 import fs from 'fs'
@@ -9,8 +9,10 @@ import sift from 'sift'
 import moment from 'moment'
 import memory from 'feathers-memory'
 import intersect from '@turf/intersect'
-import { weacast } from 'weacast-core'
-import { makeGridSource, extractGridSourceConfig } from '../../.././map/common/grid'
+import { weacast } from '@weacast/core'
+import { makeGridSource, extractGridSourceConfig } from '../../.././map/common/grid.js'
+
+const { util, expect } = chai
 
 // returns the required byte range of the given file
 // range is the raw value of the 'range' http header

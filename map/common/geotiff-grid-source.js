@@ -1,5 +1,5 @@
 import * as GeoTIFF from 'geotiff'
-import { unitConverters, SortOrder, GridSource, Grid1D } from './grid'
+import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
 export class GeoTiffGridSource extends GridSource {
   static getKey () {

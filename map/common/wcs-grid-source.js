@@ -1,6 +1,6 @@
 import * as GeoTIFF from 'geotiff'
-import { unitConverters, SortOrder, GridSource, Grid1D } from './grid'
-import * as wcs from './wcs-utils'
+import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
+import * as wcs from './wcs-utils.js'
 
 export class WcsGridSource extends GridSource {
   static getKey () {

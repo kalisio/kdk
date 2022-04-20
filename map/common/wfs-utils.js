@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import fetch from 'node-fetch'
 import xml2js from 'xml2js'
-import { buildUrl } from '../../core/common'
+import { buildUrl } from '../../core/common/index.js'
 
 // https://www.opengeospatial.org/standards/wfs
 

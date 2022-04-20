@@ -1,8 +1,9 @@
 import _ from 'lodash'
 import sift from 'sift'
-import { getItems, replaceItems } from 'feathers-hooks-common'
+import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
 
+const { getItems, replaceItems } = common
 const debug = makeDebug('kdk:map:catalog:hooks')
 
 // By default we only return layers and not other objects in catalog

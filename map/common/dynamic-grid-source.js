@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { GridSource } from './grid'
+import { GridSource } from './grid.js'
 
 export class DynamicGridSource extends GridSource {
   constructor (options) {

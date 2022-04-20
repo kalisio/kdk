@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'
 import _ from 'lodash'
@@ -9,12 +9,14 @@ import fs from 'fs-extra'
 import express from 'express'
 import bodyParser from 'body-parser'
 import request from 'superagent'
-import weacastCore, { weacast } from 'weacast-core'
-import weacastGfs from 'weacast-gfs'
-import weacastProbe from 'weacast-probe'
+import weacastCore, { weacast } from '@weacast/core'
+import weacastGfs from '@weacast/gfs'
+import weacastProbe from '@weacast/probe'
 import distribution from '@kalisio/feathers-distributed'
-import core, { kalisio, hooks } from '../../../core/api'
-import map, { createFeaturesService, createAlertsService } from '../../../map/api'
+import core, { kalisio, hooks } from '../../../core/api/index.js'
+import map, { createFeaturesService, createAlertsService } from '../../../map/api/index.js'
+
+const { util, expect } = chai
 
 describe('map:alerts', () => {
   let app, weacastApp, server, port, externalApp, externalServer, externalPort,

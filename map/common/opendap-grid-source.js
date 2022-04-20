@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { unitConverters, SortOrder, GridSource, Grid2D } from './grid'
-import * as dap from './opendap-utils'
+import { unitConverters, SortOrder, GridSource, Grid2D } from './grid.js'
+import * as dap from './opendap-utils.js'
 
 // https://opendap.github.io/documentation/UserGuideComprehensive.html#Constraint_Expressions
 

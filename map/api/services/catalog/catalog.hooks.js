@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import { setNow, discard } from 'feathers-hooks-common'
-import { hooks as coreHooks } from '../../../../core/api'
-import { filterLayers, updateLayerReferences, getDefaultCategories } from '../../hooks'
+import { hooks as coreHooks } from '../../../../core/api/index.js'
+import { filterLayers, updateLayerReferences, getDefaultCategories } from '../../hooks/index.js'
 
-module.exports = {
+export default {
   before: {
     all: [],
     find: [
