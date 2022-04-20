@@ -1,9 +1,10 @@
 import _ from 'lodash'
 import moment from 'moment'
 import makeDebug from 'debug'
-import { MongoClient, ObjectID } from 'mongodb'
+import mongodb from 'mongodb'
 import errors from '@feathersjs/errors'
 
+const { MongoClient, ObjectID } = mongodb
 const debug = makeDebug('kdk:core:db')
 
 // This ensure moment objects are correctly serialized in MongoDB

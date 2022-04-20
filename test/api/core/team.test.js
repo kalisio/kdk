@@ -1,10 +1,14 @@
 import _ from 'lodash'
-import { getBase64DataURI } from 'dauria'
-import chai, { util, expect, assert } from 'chai'
+import dauria from 'dauria'
+import chai from 'chai'
 import chailint from 'chai-lint'
-import { iffElse, when } from 'feathers-hooks-common'
-import core, { kalisio, hooks } from '../../../core/api'
-import { permissions } from '../../../core/common'
+import common from 'feathers-hooks-common'
+import core, { kalisio, hooks } from '../../../core/api/index.js'
+import { permissions } from '../../../core/common/index.js'
+
+const { iffElse, when } = common
+const { getBase64DataURI } = dauria
+const { util, expect, assert } = chai
 
 /* Scenario story board
 

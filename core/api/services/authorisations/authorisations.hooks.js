@@ -1,6 +1,6 @@
-import { populateSubjects, populateResource } from '../../hooks'
+import { populateSubjects, populateResource } from '../../hooks/index.js'
 
-module.exports = {
+export default {
   before: {
     all: [],
     find: [],

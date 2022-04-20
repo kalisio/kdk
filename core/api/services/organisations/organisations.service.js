@@ -4,7 +4,7 @@ import makeDebug from 'debug'
 import aws from 'aws-sdk'
 import store from 's3-blob-store'
 import BlobService from 'feathers-blob'
-import { createTagService, createStorageService } from '../.'
+import { createTagService, createStorageService } from '../index.js'
 const servicesPath = path.join(__dirname, '..', '..', 'services')
 const modelsPath = path.join(__dirname, '..', '..', 'models')
 

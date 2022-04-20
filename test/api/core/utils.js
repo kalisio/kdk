@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import google from 'googleapis'
-import { expect } from 'chai'
+import chai from 'chai'
+
 const gmail = google.gmail('v1')
+const { expect } = chai
 
 export const createGmailClient = (gmailApiConfig) => {
   return new Promise((resolve, reject) => {

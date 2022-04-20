@@ -1,10 +1,13 @@
 import path from 'path'
 import fs from 'fs-extra'
-import { getBase64DataURI } from 'dauria'
+import dauria from 'dauria'
 import request from 'superagent'
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks } from '../../../core/api'
+import core, { kalisio, hooks } from '../../../core/api/index.js'
+
+const { getBase64DataURI } = dauria
+const { util, expect } = chai
 
 describe('core:storage', () => {
   let app, server, port, baseUrl, userService, userObject, storageService, storageObject

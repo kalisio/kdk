@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
-import { Forbidden } from '@feathersjs/errors'
+import errors from '@feathersjs/errors'
 const debug = makeDebug('kdk:core:organisations:hooks')
+
+const { Forbidden } = errors
 
 export function addOrganisationPlan (hook) {
   if (hook.type !== 'before') {

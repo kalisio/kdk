@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { populateObject, unpopulateObject } from './hooks.query'
+import { populateObject, unpopulateObject } from './hooks.query.js'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:core:storage:hooks')

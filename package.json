@@ -3,7 +3,7 @@
   "description": "Kalisio Development Kit",
   "version": "1.6.0",
   "homepage": "https://github.com/kalisio/kdk",
-  "main": "lib/",
+  "type": "module",
   "keywords": [
     "Kalisio",
     "KDK"
@@ -31,11 +31,9 @@
     "release:minor": "npm version minor && npm publish --access=public",
     "release:major": "npm version major && npm publish --access=public",
     "changelog": "github_changelog_generator -u kalisio -p kdk && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
-    "compile:core": "shx rm -rf lib/core && babel -d lib/core core/ -s --copy-files",
     "compile:map": "shx rm -rf lib/map && babel -d lib/map map/ -s --copy-files",
     "compile:tests:client": "shx rm -rf lib/test/client && babel -d lib/test/client test/client -s --copy-files",
     "compile": "npm-run-all --serial compile:**",
-    "watch:core:js": "babel --watch -d lib/core core/ --copy-files",
     "watch:core:vue": "cpx core/**/*.vue lib/core --watch",
     "watch:map:js": "babel --watch -d lib/map map/ --copy-files",
     "watch:map:vue": "cpx map/**/*.vue lib/map --watch",
@@ -46,7 +44,7 @@
     "lint:test:api": "standard test/api/core/**/*.js test/api/map/**/*.js --fix",
     "lint:test:client": "standard test/client/core/**/*.js test/client/map/**/*.js --fix",
     "lint": "npm-run-all --serial lint:**",
-    "mocha:core": "cross-env NODE_CONFIG_DIR=./test/api/core/config/ mocha test/api/core/**/*.test.js --exit --require babel-core/register",
+    "mocha:core": "cross-env NODE_CONFIG_DIR=./test/api/core/config/ mocha test/api/core/**/*.test.js --exit",
     "mocha:map": "cross-env NODE_CONFIG_DIR=./test/api/map/config/ mocha test/api/map/**/*.test.js --exit --require babel-core/register",
     "mocha": "npm-run-all --serial mocha:**",
     "coverage": "nyc npm run mocha",
@@ -91,7 +89,7 @@
     "@feathersjs/authentication-jwt": "^2.0.1",
     "@feathersjs/authentication-local": "^1.2.1",
     "@feathersjs/authentication-oauth2": "^1.1.0",
-    "@feathersjs/configuration": "^1.0.2",
+    "@feathersjs/configuration": "^4.5.12",
     "@feathersjs/errors": "^3.3.0",
     "@feathersjs/express": "^1.2.3",
     "@feathersjs/feathers": "^3.3.1",
@@ -174,6 +172,5 @@
     "weacast-core": "^1.4.0",
     "weacast-gfs": "^1.5.0",
     "weacast-probe": "^1.4.0"
-  },
-  "peerDependencies": {}
+  }
 }

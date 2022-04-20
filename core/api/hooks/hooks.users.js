@@ -1,11 +1,14 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
 import generateRandomPassword from 'password-generator'
-import { getItems, replaceItems } from 'feathers-hooks-common'
-import { Forbidden, BadRequest } from '@feathersjs/errors'
-import { Roles, RoleNames } from '../../common/permissions'
+import common from 'feathers-hooks-common'
+import errors from '@feathersjs/errors'
+import { Roles, RoleNames } from '../../common/permissions.js'
+import authManagement from 'feathers-authentication-management'
 
-const verifyHooks = require('feathers-authentication-management').hooks
+const { Forbidden, BadRequest } = errors
+const { getItems, replaceItems } = common
+const verifyHooks = authManagement.hooks
 
 const debug = makeDebug('kdk:core:users:hooks')
 

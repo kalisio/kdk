@@ -4,6 +4,11 @@ import multer from 'multer'
 import aws from 'aws-sdk'
 import store from 's3-blob-store'
 import BlobService from 'feathers-blob'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 const multipart = multer().single('file')
 const modelsPath = path.join(__dirname, '..', 'models')
 const servicesPath = path.join(__dirname, '..', 'services')
@@ -101,47 +106,51 @@ export function createOrganisationService (options = {}) {
   })
 }
 
-export default async function () {
+export default function () {
   const app = this
 
-  const authConfig = app.get('authentication')
-  if (authConfig) {
-    app.createService('users', {
-      modelsPath,
-      servicesPath,
-      // Add required OAuth2 provider perspectives
-      perspectives: ['profile'].concat(app.authenticationProviders)
-    })
-    app.createService('authorisations', { servicesPath })
-  }
+  try {
+    const authConfig = app.get('authentication')
+    if (authConfig) {
+      app.createService('users', {
+        modelsPath,
+        servicesPath,
+        // Add required OAuth2 provider perspectives
+        perspectives: ['profile'].concat(app.authenticationProviders)
+      })
+      app.createService('authorisations', { servicesPath })
+    }
 
-  const storeConfig = app.get('storage')
-  if (storeConfig) {
-    const client = new aws.S3({
-      accessKeyId: storeConfig.accessKeyId,
-      secretAccessKey: storeConfig.secretAccessKey
-    })
-    const bucket = storeConfig.bucket
-    debug('S3 core storage client created with config ', storeConfig)
-    const blobStore = store({ client, bucket })
-    const blobService = BlobService({ Model: blobStore, id: '_id' })
-    createStorageService.call(app, blobService)
-  }
+    const storeConfig = app.get('storage')
+    if (storeConfig) {
+      const client = new aws.S3({
+        accessKeyId: storeConfig.accessKeyId,
+        secretAccessKey: storeConfig.secretAccessKey
+      })
+      const bucket = storeConfig.bucket
+      debug('S3 core storage client created with config ', storeConfig)
+      const blobStore = store({ client, bucket })
+      const blobService = BlobService({ Model: blobStore, id: '_id' })
+      createStorageService.call(app, blobService)
+    }
 
-  const orgConfig = app.get('organisations')
-  if (orgConfig) {
-    createOrganisationService.call(app)
-  }
+    const orgConfig = app.get('organisations')
+    if (orgConfig) {
+      createOrganisationService.call(app)
+    }
 
-  const mailerConfig = app.get('mailer')
-  if (mailerConfig) {
-    app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
-    app.createService('account', { servicesPath })
-  }
+    const mailerConfig = app.get('mailer')
+    if (mailerConfig) {
+      app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+      app.createService('account', { servicesPath })
+    }
 
-  const pusherConfig = app.get('pusher')
-  if (pusherConfig) {
-    app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
-    app.createService('devices', { servicesPath })
+    const pusherConfig = app.get('pusher')
+    if (pusherConfig) {
+      app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+      app.createService('devices', { servicesPath })
+    }
+  } catch (error) {
+    console.error(error)
   }
 }

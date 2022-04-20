@@ -2,10 +2,13 @@ import path from 'path'
 import logger from 'winston'
 import fs from 'fs-extra'
 import request from 'superagent'
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api'
-const { hashPassword } = require('@feathersjs/authentication-local').hooks
+import local from '@feathersjs/authentication-local'
+import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api/index.js'
+
+const { hashPassword } = local.hooks
+const { util, expect } = chai
 
 describe('core:services', () => {
   let app, server, port, baseUrl, accessToken,

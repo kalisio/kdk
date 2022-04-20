@@ -1,8 +1,9 @@
 import makeDebug from 'debug'
 import _ from 'lodash'
-import { getItems } from 'feathers-hooks-common'
-import { populateObject } from './hooks.query'
+import common from 'feathers-hooks-common'
+import { populateObject } from './hooks.query.js'
 
+const { getItems } = common
 const debug = makeDebug('kdk:core:pusher:hooks')
 
 const defaultTopicField = 'topics'

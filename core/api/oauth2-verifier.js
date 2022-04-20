@@ -1,7 +1,8 @@
 import makeDebug from 'debug'
 import _ from 'lodash'
-import { Verifier } from '@feathersjs/authentication-oauth2'
+import oauth from '@feathersjs/authentication-oauth2'
 
+const { Verifier } = oauth
 const debug = makeDebug('feathers-authentication-oauth2:verify')
 
 class OAuth2Verifier extends Verifier {

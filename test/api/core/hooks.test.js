@@ -3,10 +3,13 @@ import authentication from '@feathersjs/authentication'
 import configuration from '@feathersjs/configuration'
 import express from '@feathersjs/express'
 import memory from 'feathers-memory'
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
-import { hooks } from '../../../core/api'
-import { ObjectID } from 'mongodb'
+import { hooks } from '../../../core/api/index.js'
+import mongodb from 'mongodb'
+
+const { ObjectID } = mongodb
+const { util, expect } = chai
 
 describe('core:hooks', () => {
   before(() => {

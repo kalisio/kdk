@@ -1,6 +1,6 @@
-import { updateOrganisationResource } from '../../hooks'
+import { updateOrganisationResource } from '../../hooks/index.js'
 
-module.exports = {
+export default {
   before: {
     all: [],
     find: [],

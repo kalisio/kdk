@@ -3,7 +3,7 @@ import _ from 'lodash'
 import 'winston-daily-rotate-file'
 import { RateLimiter as SocketLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
-import { TooManyRequests } from '@feathersjs/errors'
+import errors from '@feathersjs/errors'
 import authentication from '@feathersjs/authentication'
 import jwt from '@feathersjs/authentication-jwt'
 import local from '@feathersjs/authentication-local'
@@ -11,12 +11,13 @@ import oauth2 from '@feathersjs/authentication-oauth2'
 import GithubStrategy from 'passport-github'
 import GoogleStrategy from 'passport-google-oauth20'
 import CognitoStrategy from 'passport-oauth2-cognito'
-import OAuth2Verifier from './oauth2-verifier'
-import OAuth2Handler from './oauth2-handler'
+import OAuth2Verifier from './oauth2-verifier.js'
+import OAuth2Handler from './oauth2-handler.js'
 import PasswordValidator from 'password-validator'
 
 const debug = makeDebug('kdk:core:authentication')
 const debugLimiter = makeDebug('kdk:core:authentication:limiter')
+const { TooManyRequests } = errors
 
 function tooManyRequests (socket, message, key) {
   debug(message)

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import LruCache from 'lru-cache'
 import makeDebug from 'debug'
-import { defineAbilities } from '../../../common/permissions'
+import { defineAbilities } from '../../../common/permissions.js'
 
 const debug = makeDebug('kdk:core:authorisations:service')
 

@@ -1,7 +1,7 @@
 import { when } from 'feathers-hooks-common'
-import { populateAccountUser, enforcePasswordPolicy } from '../../hooks'
+import { populateAccountUser, enforcePasswordPolicy } from '../../hooks/index.js'
 
-module.exports = {
+export default {
   before: {
     all: [],
     find: [],

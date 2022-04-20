@@ -1,7 +1,7 @@
 import { disallow } from 'feathers-hooks-common'
-import { populatePushObject } from '../../hooks'
+import { populatePushObject } from '../../hooks/index.js'
 
-module.exports = {
+export default {
   before: {
     all: [disallow('external')],
     find: [],

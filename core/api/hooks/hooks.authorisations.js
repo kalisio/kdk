@@ -1,12 +1,17 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
-import { getItems, replaceItems } from 'feathers-hooks-common'
-import { Forbidden } from '@feathersjs/errors'
-import { populateObject, unpopulateObject, populateObjects, unpopulateObjects } from './hooks.query'
-import { objectifyIDs } from '../db'
-import { hasServiceAbilities, hasResourceAbilities, getQueryForAbilities, Roles, RoleNames, countSubjectsForResource } from '../../common/permissions'
-import { isTagEqual } from './hooks.tags'
+import common from 'feathers-hooks-common'
+import errors from '@feathersjs/errors'
+import { populateObject, unpopulateObject, populateObjects, unpopulateObjects } from './hooks.query.js'
+import { objectifyIDs } from '../db.js'
+import {
+  hasServiceAbilities, hasResourceAbilities, getQueryForAbilities,
+  Roles, RoleNames, countSubjectsForResource
+} from '../../common/permissions.js'
+import { isTagEqual } from './hooks.tags.js'
 
+const { getItems, replaceItems } = common
+const { Forbidden } = errors
 const debug = makeDebug('kdk:core:authorisations:hooks')
 
 export function createJWT (options = {}) {

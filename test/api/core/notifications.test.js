@@ -1,10 +1,11 @@
 import request from 'superagent'
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks } from '../../../core/api'
-import { permissions } from '../../../core/common'
-import { createGmailClient } from './utils'
+import core, { kalisio, hooks } from '../../../core/api/index.js'
+import { permissions } from '../../../core/common/index.js'
+import { createGmailClient } from './utils.js'
 
+const { util, expect } = chai
 const phone = process.env.SNS_PHONE_NUMBER
 
 describe('core:notifications', () => {

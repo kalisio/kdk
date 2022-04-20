@@ -1,8 +1,11 @@
 import _ from 'lodash'
-import { serialize, updateAbilities, populatePreviousObject, hashPassword, enforcePasswordPolicy, storePreviousPassword } from '../../hooks'
+import {
+  serialize, updateAbilities, populatePreviousObject, hashPassword,
+  enforcePasswordPolicy, storePreviousPassword
+} from '../../hooks/index.js'
 const commonHooks = require('feathers-hooks-common')
 
-module.exports = {
+export default {
   before: {
     all: [],
     find: [],

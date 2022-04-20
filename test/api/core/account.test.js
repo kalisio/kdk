@@ -1,11 +1,14 @@
 import _ from 'lodash'
-import { iff, when } from 'feathers-hooks-common'
+import common from 'feathers-hooks-common'
 import request from 'superagent'
-import chai, { util, expect } from 'chai'
+import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks } from '../../../core/api'
-import { permissions } from '../../../core/common'
-import { createGmailClient } from './utils'
+import core, { kalisio, hooks } from '../../../core/api/index.js'
+import { permissions } from '../../../core/common/index.js'
+import { createGmailClient } from './utils.js'
+
+const { iff, when } = common
+const { util, expect } = chai
 
 describe('core:account', () => {
   let app, server, port, baseUrl, token,
@@ -35,7 +38,7 @@ describe('core:account', () => {
     expect(typeof core).to.equal('function')
   })
 
-  it('registers the services', (done) => {
+  it.only('registers the services', (done) => {
     app.configure(core)
     userService = app.getService('users')
     expect(userService).toExist()

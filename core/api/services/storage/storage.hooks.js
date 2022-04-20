@@ -1,8 +1,8 @@
 // import { getBase64DataURI } from 'dauria'
 import { disallow, discard, iff } from 'feathers-hooks-common'
-import { populateAttachmentResource, attachToResource, detachFromResource } from '../../hooks'
+import { populateAttachmentResource, attachToResource, detachFromResource } from '../../hooks/index.js'
 
-module.exports = {
+export default {
   before: {
     all: [],
     find: [disallow()],

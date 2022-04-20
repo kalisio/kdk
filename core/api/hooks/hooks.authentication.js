@@ -1,8 +1,10 @@
 import makeDebug from 'debug'
+import local from '@feathersjs/authentication-local'
+
 const debug = makeDebug('kdk:core:authentication:hooks')
 
 // Make it more easy to acces
-export const hashPassword = require('@feathersjs/authentication-local').hooks.hashPassword
+export const hashPassword = local.hooks.hashPassword
 
 export async function verifyGuest (hook) {
   if (hook.type !== 'after') {

@@ -1,11 +1,13 @@
 import _ from 'lodash'
 import moment from 'moment'
-import { Conflict } from '@feathersjs/errors'
-import { objectifyIDs, toObjectIDs } from '../db'
-import { marshallTimes, unmarshallTimes } from '../marshall'
-import { discard, disallow, getItems, replaceItems } from 'feathers-hooks-common'
+import errors from '@feathersjs/errors'
+import { objectifyIDs, toObjectIDs } from '../db.js'
+import { marshallTimes, unmarshallTimes } from '../marshall.js'
+import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
 
+const { Conflict } = errors
+const { discard, disallow, getItems, replaceItems } = common
 const debug = makeDebug('kdk:core:model:hooks')
 
 // Need to convert from server side types (moment dates) to basic JS types when "writing" to DB adapters

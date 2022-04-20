@@ -1,8 +1,9 @@
 import _ from 'lodash'
-import { marshallComparisonFields, marshallSortFields, marshallTime } from '../marshall'
-import { ObjectID } from 'mongodb'
+import { marshallComparisonFields, marshallSortFields, marshallTime } from '../marshall.js'
+import mongodb from 'mongodb'
 import makeDebug from 'debug'
 
+const { ObjectID } = mongodb
 const debug = makeDebug('kdk:core:query:hooks')
 
 export function marshallTimeQuery (hook) {

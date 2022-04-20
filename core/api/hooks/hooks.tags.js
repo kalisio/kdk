@@ -1,9 +1,11 @@
 import _ from 'lodash'
-import { BadRequest } from '@feathersjs/errors'
-import { getItems } from 'feathers-hooks-common'
-import { populateObject, unpopulateObject } from './hooks.query'
+import errors from '@feathersjs/errors'
+import common from 'feathers-hooks-common'
+import { populateObject, unpopulateObject } from './hooks.query.js'
 import makeDebug from 'debug'
 
+const { getItems } = common
+const { BadRequest } = errors
 const debug = makeDebug('kdk:core:tags:hooks')
 
 export function isTagEqual (tag1, tag2) {
