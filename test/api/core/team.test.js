@@ -65,6 +65,7 @@ describe('core:team', () => {
     })
     const db = await app.db.connect()
     adminDb = db.admin()
+    await app.db.instance.dropDatabase()
   })
 
   it('is ES6 compatible', () => {

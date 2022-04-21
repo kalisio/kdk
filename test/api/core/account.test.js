@@ -14,7 +14,7 @@ describe('core:account', () => {
   let app, server, port, baseUrl, token,
     userService, authenticationService, mailerService, accountService, gmailClient, gmailUser, userObject
 
-  before(() => {
+  before(async () => {
     chailint(chai, util)
 
     // Register all default hooks for authorisation
@@ -31,7 +31,8 @@ describe('core:account', () => {
     })
     port = app.get('port')
     baseUrl = `http://localhost:${port}${app.get('apiPath')}`
-    return app.db.connect()
+    await app.db.connect()
+    await app.db.instance.dropDatabase()
   })
 
   it('is ES6 compatible', () => {

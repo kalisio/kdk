@@ -14,7 +14,7 @@ describe('core:services', () => {
   let app, server, port, baseUrl, accessToken,
     userService, userObject, authorisationService, tagService, tagObject
 
-  before(() => {
+  before(async () => {
     chailint(chai, util)
 
     // Register default rules for all users
@@ -29,7 +29,8 @@ describe('core:services', () => {
     })
     port = app.get('port')
     baseUrl = `http://localhost:${port}${app.get('apiPath')}`
-    return app.db.connect()
+    await app.db.connect()
+    await app.db.instance.dropDatabase()
   })
 
   it('is ES6 compatible', () => {

@@ -17,14 +17,15 @@ describe('core:storage', () => {
   const id = 'buffer.txt'
   const file = 'logo.png'
 
-  before(() => {
+  before(async () => {
     chailint(chai, util)
     app = kalisio()
     // Register log hook
     app.hooks({ error: { all: hooks.log } })
     port = app.get('port')
     baseUrl = `http://localhost:${port}${app.get('apiPath')}`
-    return app.db.connect()
+    await app.db.connect()
+    await app.db.instance.dropDatabase()
   })
 
   it('registers the storage service', async () => {
