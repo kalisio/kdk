@@ -38,8 +38,9 @@ describe('core:account', () => {
     expect(typeof core).to.equal('function')
   })
 
-  it.only('registers the services', (done) => {
-    app.configure(core)
+  it('registers the services', async () => {
+    await app.configure(core)
+
     userService = app.getService('users')
     expect(userService).toExist()
     userService.hooks({
@@ -83,7 +84,7 @@ describe('core:account', () => {
     expect(accountService).toExist()
     // Now app is configured launch the server
     server = app.listen(port)
-    server.once('listening', _ => done())
+    await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process
     .timeout(5000)

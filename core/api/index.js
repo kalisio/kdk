@@ -13,10 +13,8 @@ export * from '../common/index.js'
 
 const debug = makeDebug('kdk:core')
 
-export default function init () {
-  const app = this
-
+export default async function init (app) {
   debug('Initializing KDK core')
 
-  app.configure(services)
+  await app.configure(services)
 }

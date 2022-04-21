@@ -122,8 +122,8 @@ describe('map:alerts', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('registers the alert service', (done) => {
-    app.configure(core)
+  it('registers the alert service', async () => {
+    await app.configure(core)
     app.configure(map)
     alertService = createAlertsService.call(app)
     expect(alertService).toExist()
@@ -133,7 +133,7 @@ describe('map:alerts', () => {
     spyCheckAlert = chai.spy.on(alertService, 'checkAlert')
     // Now app is configured launch the server
     server = app.listen(port)
-    server.once('listening', _ => done())
+    await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process
     .timeout(5000)
@@ -346,7 +346,7 @@ describe('map:alerts', () => {
     vigicruesObsService = app.getService('vigicrues-observations')
     expect(vigicruesObsService).toExist()
     // Feed the collection
-    const observations = require('./data/vigicrues.observations.json')
+    const observations = await import('./data/vigicrues.observations.json')
     // Update time to tomorrow so that alert will trigger correctly
     await vigicruesObsService.create(observations.map(observation => Object.assign({}, observation, {
       time: moment.utc(observation.time).date(tomorrow.date()).month(tomorrow.month()).year(tomorrow.year())

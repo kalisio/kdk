@@ -27,15 +27,15 @@ describe('core:storage', () => {
     return app.db.connect()
   })
 
-  it('registers the storage service', (done) => {
-    app.configure(core)
+  it('registers the storage service', async () => {
+    await app.configure(core)
     userService = app.getService('users')
     expect(userService).toExist()
     storageService = app.getService('storage')
     expect(storageService).toExist()
     // Now app is configured launch the server
     server = app.listen(port)
-    server.once('listening', _ => done())
+    await new Promise(resolve => server.once('listening', () => resolve()))
   })
 
   it('creates an object in storage', () => {

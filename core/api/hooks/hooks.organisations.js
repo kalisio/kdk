@@ -20,7 +20,7 @@ export function addOrganisationPlan (hook) {
   return hook
 }
 
-export function createOrganisationServices (hook) {
+export async function createOrganisationServices (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'createOrganisationServices\' hook should only be used as a \'after\' hook.')
   }
@@ -30,21 +30,20 @@ export function createOrganisationServices (hook) {
   const databaseService = app.getService('databases')
 
   // First we create the organisation DB
-  return databaseService.create({
+  const db = await databaseService.create({
     name: hook.result._id.toString()
   }, {
     user: hook.params.user
   })
-    .then(db => {
-      debug('DB created for organisation ' + hook.result.name)
-      // Jump from infos/stats to real DB object
-      db = app.db.client.db(hook.result._id.toString())
-      organisationService.createOrganisationServices(hook.result, db)
-      return hook
-    })
+
+  debug('DB created for organisation ' + hook.result.name)
+  // Jump from infos/stats to real DB object
+  db = app.db.client.db(hook.result._id.toString())
+  await organisationService.createOrganisationServices(hook.result, db)
+  return hook
 }
 
-export function removeOrganisationServices (hook) {
+export async function removeOrganisationServices (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'removeOrganisationServices\' hook should only be used as a \'after\' hook.')
   }
@@ -54,14 +53,13 @@ export function removeOrganisationServices (hook) {
   const databaseService = app.getService('databases')
 
   // Then we remove the organisation DB
-  return databaseService.remove(hook.result._id.toString(), {
+  const db = await databaseService.remove(hook.result._id.toString(), {
     user: hook.params.user
   })
-    .then(db => {
-      debug('DB removed for organisation ' + hook.result.name)
-      organisationService.removeOrganisationServices(hook.result)
-      return hook
-    })
+
+  debug('DB removed for organisation ' + hook.result.name)
+  organisationService.removeOrganisationServices(hook.result)
+  return hook
 }
 
 export function createOrganisationAuthorisations (hook) {

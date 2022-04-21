@@ -1,11 +1,12 @@
 import _ from 'lodash'
 import moment from 'moment'
-import { GeneralError } from '@feathersjs/errors'
+import errors from '@feathersjs/errors'
 import SNS from 'sns-mobile'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:core:pusher:service')
 const defaultTopicField = 'topics'
+const { GeneralError }  = errors
 
 export default function (name, app, options) {
   const config = app.get('pusher')

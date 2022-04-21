@@ -1,10 +1,11 @@
 import accountManager from 'feathers-authentication-management'
-import { BadRequest } from '@feathersjs/errors'
+import errors from '@feathersjs/errors'
 import emails from 'email-templates'
 import path from 'path'
 import makeDebug from 'debug'
 import _ from 'lodash'
 
+const { BadRequest } = errors
 const debug = makeDebug('kdk:core:account:service')
 
 export default function (name, app, options) {

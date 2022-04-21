@@ -1,4 +1,6 @@
-import { disallow } from 'feathers-hooks-common'
+import common from 'feathers-hooks-common'
+
+const { disallow } = common
 
 export default {
   before: {

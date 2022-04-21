@@ -10,7 +10,7 @@ const modelsPath = path.join(__dirname, '..', '..', 'models')
 
 const debug = makeDebug('kdk:core:organisations:service')
 
-export default function (name, app, options) {
+export default async function (name, app, options) {
   const config = app.get('storage')
   const client = new aws.S3({
     accessKeyId: config.accessKeyId,
@@ -33,7 +33,7 @@ export default function (name, app, options) {
       this.organisationServicesHooks = this.organisationServicesHooks.filter(registeredHook => registeredHook !== hook)
     },
 
-    createOrganisationServices (organisation, db) {
+    async createOrganisationServices (organisation, db) {
       this.app.createService('members', {
         servicesPath,
         context: organisation,
@@ -50,11 +50,11 @@ export default function (name, app, options) {
         db
       })
       debug('Groups service created for organisation ' + organisation.name)
-      createTagService.call(this.app, { context: organisation, db })
+      await createTagService.call(this.app, { context: organisation, db })
       debug('Tags service created for organisation ' + organisation.name)
       const blobStore = store({ client, bucket })
       const blobService = BlobService({ Model: blobStore, id: '_id' })
-      createStorageService.call(this.app, blobService, { context: organisation })
+      await createStorageService.call(this.app, blobService, { context: organisation })
       debug('Storage service created for organisation ' + organisation.name)
       // Run registered hooks
       _.forEach(this.organisationServicesHooks, hook => hook.createOrganisationServices.call(this.app, organisation, db))
@@ -71,7 +71,7 @@ export default function (name, app, options) {
       organisations.forEach(organisation => {
         // Get org DB
         const db = this.app.db.client.db(organisation._id.toString())
-        this.createOrganisationServices(organisation, db)
+        await this.createOrganisationServices(organisation, db)
       })
     }
   }

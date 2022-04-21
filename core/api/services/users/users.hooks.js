@@ -3,7 +3,7 @@ import {
   serialize, updateAbilities, populatePreviousObject, hashPassword,
   enforcePasswordPolicy, storePreviousPassword
 } from '../../hooks/index.js'
-const commonHooks = require('feathers-hooks-common')
+import commonHooks from 'feathers-hooks-common'
 
 export default {
   before: {

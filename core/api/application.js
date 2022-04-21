@@ -52,9 +52,9 @@ export function declareService (path, app, service, middlewares = {}) {
   return app.service(feathersPath)
 }
 
-export function configureService (name, service, servicesPath) {
+export async function configureService (name, service, servicesPath) {
   try {
-    const hooks = require(path.join(servicesPath, name, name + '.hooks'))
+    const hooks = (await import(path.join(servicesPath, name, name + '.hooks.js'))).default
     service.hooks(hooks)
     debug(name + ' service hooks configured on path ' + servicesPath)
   } catch (error) {
@@ -67,7 +67,7 @@ export function configureService (name, service, servicesPath) {
   }
 
   try {
-    const channels = require(path.join(servicesPath, name, name + '.channels'))
+    const channels = (await import(path.join(servicesPath, name, `${name}.channels.js`))).default
     _.forOwn(channels, (publisher, event) => {
       if (event === 'all') service.publish(publisher)
       else service.publish(event, publisher)
@@ -120,8 +120,8 @@ export function createProxyService (options) {
   }
 }
 
-function createService (name, app, options = {}) {
-  const createFeathersService = require('feathers-' + app.db.adapter)
+async function createService (name, app, options = {}) {
+  const createFeathersService = (await import('feathers-' + app.db.adapter)).default
 
   const paginate = app.get('paginate')
   const serviceOptions = Object.assign({
@@ -135,7 +135,7 @@ function createService (name, app, options = {}) {
   let dbService = false
   try {
     if (serviceOptions.modelsPath) {
-      const configureModel = require(path.join(serviceOptions.modelsPath, fileName + '.model.' + app.db.adapter))
+      const configureModel = (await import(path.join(serviceOptions.modelsPath, `${fileName}.model.${app.db.adapter}.js`))).default
       configureModel(app, serviceOptions)
       dbService = true
     }
@@ -157,7 +157,7 @@ function createService (name, app, options = {}) {
     service = createProxyService(serviceOptions.proxy)
   } else {
     // Otherwise we expect the service to be provided as a Feathers service interface
-    service = require(path.join(serviceOptions.servicesPath, fileName, fileName + '.service'))
+    service = (await import(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`))).default
     // If we get a function try to call it assuming it will return the service object
     if (typeof service === 'function') {
       service = service(name, app, serviceOptions)
@@ -175,11 +175,11 @@ function createService (name, app, options = {}) {
   }
   service = declareService(servicePath, app, service, serviceOptions.middlewares)
   // Register hooks and event filters
-  service = configureService(fileName, service, serviceOptions.servicesPath)
+  service = await configureService(fileName, service, serviceOptions.servicesPath)
   // Optionnally a specific service mixin can be provided, apply it
   if (dbService && serviceOptions.servicesPath) {
     try {
-      let serviceMixin = require(path.join(serviceOptions.servicesPath, fileName, fileName + '.service'))
+      let serviceMixin = await import(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`))
       // If we get a function try to call it assuming it will return the mixin object
       if (typeof serviceMixin === 'function') {
         serviceMixin = serviceMixin.bind(dbService)(fileName, app, serviceOptions)

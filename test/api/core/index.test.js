@@ -36,8 +36,9 @@ describe('core:services', () => {
     expect(typeof core).to.equal('function')
   })
 
-  it('registers the services', (done) => {
-    app.configure(core)
+  it('registers the services', async () => {
+    await app.configure(core)
+
     userService = app.getService('users')
     expect(userService).toExist()
     // Register tag hooks
@@ -45,7 +46,7 @@ describe('core:services', () => {
       after: { create: hooks.updateTags, remove: hooks.updateTags }
     })
     // Create a global tag service for tests
-    createTagService.call(app)
+    await createTagService.call(app)
     tagService = app.getService('tags')
     expect(tagService).toExist()
     authorisationService = app.getService('authorisations')
@@ -56,7 +57,7 @@ describe('core:services', () => {
     })
     // Now app is configured launch the server
     server = app.listen(port)
-    server.once('listening', _ => done())
+    await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process
     .timeout(10000)

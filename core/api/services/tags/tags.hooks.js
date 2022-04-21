@@ -3,7 +3,9 @@ import {
   populateTagResource, addTagIfNew, removeTagIfUnused,
   tagResource, untagResource, updateOrganisationResource
 } from '../../hooks'
-import { iff } from 'feathers-hooks-common'
+import common from 'feathers-hooks-common'
+
+const { iff } = common
 
 export default {
   before: {

@@ -1,5 +1,7 @@
-import { disallow } from 'feathers-hooks-common'
+import common from 'feathers-hooks-common'
 import { populatePushObject } from '../../hooks/index.js'
+
+const { disallow } = common
 
 export default {
   before: {

@@ -15,10 +15,10 @@ const servicesPath = path.join(__dirname, '..', 'services')
 
 const debug = makeDebug('kdk:core:services')
 
-export function createTagService (options = {}) {
+export async function createTagService (options = {}) {
   const app = this
 
-  app.createService('tags', Object.assign({
+  await app.createService('tags', Object.assign({
     servicesPath,
     modelsPath
   }, options))
@@ -39,11 +39,12 @@ function proxyStorageId (context) {
   }
 }
 
-export function createStorageService (blobService, options = {}) {
+export async function createStorageService (blobService, options = {}) {
   const app = this
   // Closure to keep track of context
   const proxyId = proxyStorageId(options.context)
-  app.createService('storage', Object.assign({
+  
+  await app.createService('storage', Object.assign({
     servicesPath,
     modelsPath,
     // Create a proxy on top of a Feathers blob service,
@@ -72,12 +73,12 @@ export function removeStorageService (options) {
   // TODO
 }
 
-export function createOrganisationService (options = {}) {
+export async function createOrganisationService (options = {}) {
   const app = this
 
   // Create services to manage MongoDB databases, organisations, etc.
-  app.createService('databases', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
-  const orgsService = app.createService('organisations', { modelsPath, servicesPath, perspectives: ['billing'] })
+  await app.createService('databases', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+  const orgsService = await app.createService('organisations', { modelsPath, servicesPath, perspectives: ['billing'] })
 
   // Replication management
   const usersService = app.getService('users')
@@ -95,7 +96,7 @@ export function createOrganisationService (options = {}) {
     if (!orgMembersService) {
       // Jump from infos/stats to real DB object
       const db = app.db.client.db(organisation._id.toString())
-      orgsService.createOrganisationServices(organisation, db)
+      await orgsService.createOrganisationServices(organisation, db)
     }
   })
   orgsService.on('removed', organisation => {
@@ -106,18 +107,18 @@ export function createOrganisationService (options = {}) {
   })
 }
 
-export default function () {
+export default async function () {
   const app = this
 
   const authConfig = app.get('authentication')
   if (authConfig) {
-    app.createService('users', {
+    await app.createService('users', {
       modelsPath,
       servicesPath,
       // Add required OAuth2 provider perspectives
       perspectives: ['profile'].concat(app.authenticationProviders)
     })
-    app.createService('authorisations', { servicesPath })
+    await app.createService('authorisations', { servicesPath })
   }
 
   const storeConfig = app.get('storage')
@@ -130,7 +131,7 @@ export default function () {
     debug('S3 core storage client created with config ', storeConfig)
     const blobStore = store({ client, bucket })
     const blobService = BlobService({ Model: blobStore, id: '_id' })
-    createStorageService.call(app, blobService)
+    await createStorageService.call(app, blobService)
   }
 
   const orgConfig = app.get('organisations')
@@ -140,13 +141,13 @@ export default function () {
 
   const mailerConfig = app.get('mailer')
   if (mailerConfig) {
-    app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
-    app.createService('account', { servicesPath })
+    await app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    await app.createService('account', { servicesPath })
   }
 
   const pusherConfig = app.get('pusher')
   if (pusherConfig) {
-    app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
-    app.createService('devices', { servicesPath })
+    await app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    await app.createService('devices', { servicesPath })
   }
 }

@@ -27,7 +27,7 @@ const { util, expect, assert } = chai
   User 1 removes org (=> and his group)
   User 2/3 is removed (=> and his org)
 */
-describe('core:team', () => {
+describe.only('core:team', () => {
   let app, adminDb, server, port, // baseUrl,
     userService, orgService, authorisationService, orgGroupService, orgUserService, orgStorageService,
     joinedOrgUserService, user1Object, user2Object, user3Object, orgObject, groupObject
@@ -71,8 +71,8 @@ describe('core:team', () => {
     expect(typeof core).to.equal('function')
   })
 
-  it('registers the global services', (done) => {
-    app.configure(core)
+  it('registers the global services', async () => {
+    await app.configure(core)
     userService = app.getService('users')
     userService.hooks({
       before: {
@@ -119,7 +119,7 @@ describe('core:team', () => {
       }
     })
     server = app.listen(port)
-    server.once('listening', _ => done())
+    await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process
     .timeout(5000)
