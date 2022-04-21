@@ -27,7 +27,7 @@ const { util, expect, assert } = chai
   User 1 removes org (=> and his group)
   User 2/3 is removed (=> and his org)
 */
-describe.only('core:team', () => {
+describe('core:team', () => {
   let app, adminDb, server, port, // baseUrl,
     userService, orgService, authorisationService, orgGroupService, orgUserService, orgStorageService,
     joinedOrgUserService, user1Object, user2Object, user3Object, orgObject, groupObject

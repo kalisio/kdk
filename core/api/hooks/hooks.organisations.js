@@ -28,18 +28,21 @@ export async function createOrganisationServices (hook) {
   const app = hook.app
   const organisationService = hook.service
   const databaseService = app.getService('databases')
+  const name = hook.result._id.toString()
 
   // First we create the organisation DB
-  const db = await databaseService.create({
-    name: hook.result._id.toString()
+  await databaseService.create({
+    name
   }, {
     user: hook.params.user
   })
 
   debug('DB created for organisation ' + hook.result.name)
+  
   // Jump from infos/stats to real DB object
-  db = app.db.client.db(hook.result._id.toString())
+  const db = app.db.client.db(name)
   await organisationService.createOrganisationServices(hook.result, db)
+
   return hook
 }
 

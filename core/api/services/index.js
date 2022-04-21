@@ -96,7 +96,7 @@ export async function createOrganisationService (options = {}) {
     if (!orgMembersService) {
       // Jump from infos/stats to real DB object
       const db = app.db.client.db(organisation._id.toString())
-      await orgsService.createOrganisationServices(organisation, db)
+      orgsService.createOrganisationServices(organisation, db)
     }
   })
   orgsService.on('removed', organisation => {
