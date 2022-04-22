@@ -9,7 +9,7 @@ import { tile2key, key2tile, tileSetContainsParent, getParentTileInTileSet } fro
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
     this.enableDebug = _.get(options, 'enableDebug', false)
-    this.enableDebug = false
+    // this.enableDebug = true
     L.GridLayer.prototype.initialize.call(this, options)
 
     this.on('tileunload', (event) => { this.onTileUnload(event) })
@@ -331,8 +331,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
             const corner1 = L.latLng(turfBbox[1], turfBbox[0])
             const corner2 = L.latLng(turfBbox[3], turfBbox[2])
             knownFeature = { geojson: feature, refCount: 0, bbox: L.latLngBounds(corner1, corner2) }
-            this.allFeatures.set(featureId, knownFeature)
-            addCollection.push(feature)
           }
           tiles.forEach((tile) => {
             if (tile.bbox.intersects(knownFeature.bbox)) {
@@ -340,6 +338,12 @@ const TiledFeatureLayer = L.GridLayer.extend({
               tile.features.push(featureId)
             }
           })
+          // Tiles may be outside request bbox when bbox is big because of
+          // underlying service projection
+          if (knownFeature.refCount > 0) {
+            addCollection.push(feature)
+            this.allFeatures.set(featureId, knownFeature)
+          }
         })
         // Add to underlying geojson layer
         if (addCollection.length)
@@ -421,7 +425,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
     tilesToRemove.forEach((tile) => {
       tile.features.forEach((featureId) => {
         const feature = this.allFeatures.get(featureId)
-        if (feature === undefined) debugger
         if (feature.refCount === 1) {
           removeCollection.push(feature.geojson)
           this.allFeatures.delete(featureId)
@@ -437,6 +440,13 @@ const TiledFeatureLayer = L.GridLayer.extend({
     if (this.enableDebug) {
       logger.debug(`TiledFeatureLayer: flyingTiles is ${this.flyingTiles.size} long`)
       logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
+
+      if (this.flyingTiles.size === 0 && this.allFeatures.size !== 0) {
+        logger.debug(`TileFeatureLayer: no more flyingTiles but ${this.allFeatures.size} remaining features !`)
+        this.allFeatures.forEach((feature) => {
+          logger.debug(`TileFeatureLayer: ${this.getFeatureKey(feature.geojson)}: refCount ${feature.refCount}`)
+        })
+      }
     }
   },
 
