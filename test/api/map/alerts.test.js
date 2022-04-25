@@ -12,7 +12,7 @@ import request from 'superagent'
 import weacastCore, { weacast } from '@weacast/core'
 import weacastGfs from '@weacast/gfs'
 import weacastProbe from '@weacast/probe'
-import distribution from '@kalisio/feathers-distributed'
+import distribution, { finalize } from '@kalisio/feathers-distributed'
 import core, { kalisio, hooks } from '../../../core/api/index.js'
 import map, { createFeaturesService, createAlertsService } from '../../../map/api/index.js'
 
@@ -543,8 +543,8 @@ describe('map:alerts', () => {
   after(async () => {
     if (externalServer) await externalServer.close()
     if (server) await server.close()
-    distribution.finalize(app)
-    distribution.finalize(weacastApp)
+    finalize(app)
+    finalize(weacastApp)
     await weacastApp.getService('forecasts').Model.drop()
     await uService.Model.drop()
     await vService.Model.drop()
