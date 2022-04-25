@@ -136,7 +136,7 @@ export default async function () {
 
   const orgConfig = app.get('organisations')
   if (orgConfig) {
-    createOrganisationService.call(app)
+    await createOrganisationService.call(app)
   }
 
   const mailerConfig = app.get('mailer')
