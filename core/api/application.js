@@ -179,10 +179,10 @@ async function createService (name, app, options = {}) {
   // Optionnally a specific service mixin can be provided, apply it
   if (dbService && serviceOptions.servicesPath) {
     try {
-      let serviceMixin = await import(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`))
+      let serviceMixin = (await import(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`))).default
       // If we get a function try to call it assuming it will return the mixin object
       if (typeof serviceMixin === 'function') {
-        serviceMixin = serviceMixin.bind(dbService)(fileName, app, serviceOptions)
+        serviceMixin = await serviceMixin.bind(dbService)(fileName, app, serviceOptions)
       }
       service.mixin(serviceMixin)
     } catch (error) {

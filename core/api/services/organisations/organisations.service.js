@@ -5,6 +5,11 @@ import aws from 'aws-sdk'
 import store from 's3-blob-store'
 import BlobService from 'feathers-blob'
 import { createTagService, createStorageService } from '../index.js'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 const servicesPath = path.join(__dirname, '..', '..', 'services')
 const modelsPath = path.join(__dirname, '..', '..', 'models')
 
@@ -71,7 +76,7 @@ export default async function (name, app, options) {
       organisations.forEach(organisation => {
         // Get org DB
         const db = this.app.db.client.db(organisation._id.toString())
-        await this.createOrganisationServices(organisation, db)
+        this.createOrganisationServices(organisation, db)
       })
     }
   }
