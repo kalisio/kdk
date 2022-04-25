@@ -1,1 +1,1 @@
-module.exports = require('./lib/map/api/index')
+export * from './map/api/index.js'

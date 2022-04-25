@@ -109,7 +109,7 @@ describe('map:alerts', () => {
     .timeout(5000)
 
   it('registers the weacast services', async () => {
-    weacastApp.configure(weacastCore)
+    await weacastApp.configure(weacastCore)
     await weacastApp.configure(weacastGfs)
     await weacastApp.configure(weacastProbe)
     uService = weacastApp.getService('gfs-world/u-wind')
@@ -124,8 +124,8 @@ describe('map:alerts', () => {
 
   it('registers the alert service', async () => {
     await app.configure(core)
-    app.configure(map)
-    alertService = createAlertsService.call(app)
+    await app.configure(map)
+    alertService = await createAlertsService.call(app)
     expect(alertService).toExist()
     alertService.on('patched', checkAlertEvent)
     spyRegisterAlert = chai.spy.on(alertService, 'registerAlert')

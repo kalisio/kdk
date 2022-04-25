@@ -8,10 +8,10 @@ export * from '../common/index.js'
 
 const debug = makeDebug('kdk:map')
 
-export default function init () {
+export default async function init () {
   const app = this
 
   debug('Initializing KDK map')
 
-  app.configure(services)
+  await app.configure(services)
 }

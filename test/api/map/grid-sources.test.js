@@ -11,7 +11,11 @@ import memory from 'feathers-memory'
 import intersect from '@turf/intersect'
 import { weacast } from '@weacast/core'
 import { makeGridSource, extractGridSourceConfig } from '../../.././map/common/grid.js'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 const { util, expect } = chai
 
 // returns the required byte range of the given file

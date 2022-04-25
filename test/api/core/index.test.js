@@ -6,7 +6,11 @@ import chai from 'chai'
 import chailint from 'chai-lint'
 import local from '@feathersjs/authentication-local'
 import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api/index.js'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 const { hashPassword } = local.hooks
 const { util, expect } = chai
 

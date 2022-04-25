@@ -65,11 +65,11 @@ export default async function () {
 
   const catalogConfig = app.get('catalog')
   if (catalogConfig) {
-    createCatalogService.call(app)
+    await createCatalogService.call(app)
   }
   const geocoderConfig = app.get('geocoder')
   if (geocoderConfig) {
-    app.createService('geocoder', { servicesPath })
+    await app.createService('geocoder', { servicesPath })
   }
   // Add app-specific hooks to required services
   app.on('service', async service => {
@@ -81,7 +81,7 @@ export default async function () {
   })
   const alertsConfig = app.get('alerts')
   if (alertsConfig) {
-    createAlertsService.call(app)
+    await createAlertsService.call(app)
   }
 
   /*

@@ -46,7 +46,7 @@ describe('map:services', () => {
     geocoderService = app.getService('geocoder')
     expect(geocoderService).toExist()
     // Create a global catalog service
-    createCatalogService.call(app)
+    await createCatalogService.call(app)
     catalogService = app.getService('catalog')
     expect(catalogService).toExist()
     // Now app is configured launch the server
