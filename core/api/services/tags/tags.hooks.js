@@ -2,7 +2,7 @@ import _ from 'lodash'
 import {
   populateTagResource, addTagIfNew, removeTagIfUnused,
   tagResource, untagResource, updateOrganisationResource
-} from '../../hooks'
+} from '../../hooks/index.js'
 import common from 'feathers-hooks-common'
 
 const { iff } = common

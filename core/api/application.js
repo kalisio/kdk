@@ -3,7 +3,7 @@ import url from 'url'
 import makeDebug from 'debug'
 import logger from 'winston'
 import _ from 'lodash'
-import sift from 'sift'
+import siftModule from 'sift'
 import 'winston-daily-rotate-file'
 import compress from 'compression'
 import cors from 'cors'
@@ -25,6 +25,7 @@ const debugLimiter = makeDebug('kdk:core:application:limiter')
 const { TooManyRequests, Forbidden, BadRequest } = errors
 const { ObjectID } = mongodb
 const { rest } = express
+const sift = siftModule.default
 
 function tooManyRequests (socket, message, key) {
   debug(message)
@@ -54,12 +55,12 @@ export function declareService (path, app, service, middlewares = {}) {
 
 export async function configureService (name, service, servicesPath) {
   try {
-    const hooks = (await import(path.join(servicesPath, name, name + '.hooks.js'))).default
+    const hooks = (await import(url.pathToFileURL(path.join(servicesPath, name, `${name}.hooks.js`)))).default
     service.hooks(hooks)
     debug(name + ' service hooks configured on path ' + servicesPath)
   } catch (error) {
     debug('No ' + name + ' service hooks configured on path ' + servicesPath)
-    if (error.code !== 'MODULE_NOT_FOUND') {
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
       // Log error in this case as this might be linked to a syntax error in required file
       debug(error)
     }
@@ -67,7 +68,7 @@ export async function configureService (name, service, servicesPath) {
   }
 
   try {
-    const channels = (await import(path.join(servicesPath, name, `${name}.channels.js`))).default
+    const channels = (await import(url.pathToFileURL(path.join(servicesPath, name, `${name}.channels.js`)))).default
     _.forOwn(channels, (publisher, event) => {
       if (event === 'all') service.publish(publisher)
       else service.publish(event, publisher)
@@ -75,7 +76,7 @@ export async function configureService (name, service, servicesPath) {
     debug(name + ' service channels configured on path ' + servicesPath)
   } catch (error) {
     debug('No ' + name + ' service channels configured on path ' + servicesPath)
-    if (error.code !== 'MODULE_NOT_FOUND') {
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
       // Log error in this case as this might be linked to a syntax error in required file
       debug(error)
     }
@@ -135,13 +136,13 @@ async function createService (name, app, options = {}) {
   let dbService = false
   try {
     if (serviceOptions.modelsPath) {
-      const configureModel = (await import(path.join(serviceOptions.modelsPath, `${fileName}.model.${app.db.adapter}.js`))).default
+      const configureModel = (await import(url.pathToFileURL(path.join(serviceOptions.modelsPath, `${fileName}.model.${app.db.adapter}.js`)))).default
       configureModel(app, serviceOptions)
       dbService = true
     }
   } catch (error) {
     debug('No ' + fileName + ' service model configured on path ' + serviceOptions.modelsPath)
-    if (error.code !== 'MODULE_NOT_FOUND') {
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
       // Log error in this case as this might be linked to a syntax error in required file
       debug(error)
     }
@@ -157,7 +158,7 @@ async function createService (name, app, options = {}) {
     service = createProxyService(serviceOptions.proxy)
   } else {
     // Otherwise we expect the service to be provided as a Feathers service interface
-    service = (await import(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`))).default
+    service = (await import(url.pathToFileURL(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)))).default
     // If we get a function try to call it assuming it will return the service object
     if (typeof service === 'function') {
       service = service(name, app, serviceOptions)
@@ -179,7 +180,7 @@ async function createService (name, app, options = {}) {
   // Optionnally a specific service mixin can be provided, apply it
   if (dbService && serviceOptions.servicesPath) {
     try {
-      let serviceMixin = (await import(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`))).default
+      let serviceMixin = (await import(url.pathToFileURL(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)))).default
       // If we get a function try to call it assuming it will return the mixin object
       if (typeof serviceMixin === 'function') {
         serviceMixin = await serviceMixin.bind(dbService)(fileName, app, serviceOptions)
@@ -187,7 +188,7 @@ async function createService (name, app, options = {}) {
       service.mixin(serviceMixin)
     } catch (error) {
       debug('No ' + fileName + ' service mixin configured on path ' + serviceOptions.servicesPath)
-      if (error.code !== 'MODULE_NOT_FOUND') {
+      if (error.code !== 'ERR_MODULE_NOT_FOUND') {
         // Log error in this case as this might be linked to a syntax error in required file
         debug(error)
       }
@@ -454,12 +455,14 @@ export function kalisio () {
     }
   }
   // This is used to add hooks/filters to services
-  app.configureService = function (name, service, servicesPath) {
-    return configureService(name, service, servicesPath)
+  app.configureService = async function (name, service, servicesPath) {
+    service = await configureService(name, service, servicesPath)
+    return service
   }
   // This is used to create standard services
-  app.createService = function (name, options) {
-    return createService(name, app, options)
+  app.createService = async function (name, options) {
+    const service = await createService(name, app, options)
+    return service
   }
   // This is used to create webhooks
   app.createWebhook = function (path, options) {

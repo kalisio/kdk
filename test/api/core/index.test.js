@@ -37,7 +37,7 @@ describe('core:services', () => {
     await app.db.instance.dropDatabase()
   })
 
-  it('is ES6 compatible', () => {
+  it('is ES module compatible', () => {
     expect(typeof core).to.equal('function')
   })
 
@@ -83,6 +83,8 @@ describe('core:services', () => {
         done()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('unauthenticated user cannot access services', (done) => {
     tagService.create({}, { checkAuthorisation: true })
@@ -92,6 +94,8 @@ describe('core:services', () => {
         done()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('cannot create a user with a weak password', (done) => {
     // Fake password hashing on a user to get a hashed password
@@ -197,6 +201,8 @@ describe('core:services', () => {
         done()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('unauthorized service operation cannot be accessed through webhooks', (done) => {
     request
@@ -210,6 +216,8 @@ describe('core:services', () => {
         done()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('authenticated user can access service operation through webhooks', () => {
     return request
@@ -221,6 +229,8 @@ describe('core:services', () => {
         expect(user._id.toString() === userObject._id.toString()).beTrue()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('authenticated user can access service operation through webhooks and headers', () => {
     return request
@@ -233,6 +243,8 @@ describe('core:services', () => {
         expect(user._id.toString() === userObject._id.toString()).beTrue()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('authenticated user can access services', () => {
     return userService.find({ query: {}, params: { user: userObject, checkAuthorisation: true } })

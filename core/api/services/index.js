@@ -5,13 +5,11 @@ import aws from 'aws-sdk'
 import store from 's3-blob-store'
 import BlobService from 'feathers-blob'
 import { fileURLToPath } from 'url'
-import { dirname } from 'path'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const multipart = multer().single('file')
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const modelsPath = path.join(__dirname, '..', 'models')
 const servicesPath = path.join(__dirname, '..', 'services')
+const multipart = multer().single('file')
 
 const debug = makeDebug('kdk:core:services')
 
