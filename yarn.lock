@@ -2791,6 +2791,13 @@
   dependencies:
     "ms" "2.0.0"
 
+"debug@~4.3.1", "debug@~4.3.2":
+  "integrity" "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ=="
+  "resolved" "https://registry.npmjs.org/debug/-/debug-4.3.4.tgz"
+  "version" "4.3.4"
+  dependencies:
+    "ms" "2.1.2"
+
 "debug@2.6.9":
   "integrity" "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="
   "resolved" "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz"
@@ -3241,7 +3248,14 @@
     "blob" "0.0.5"
     "has-binary2" "~1.0.2"
 
-"engine.io-parser@~5.0.0", "engine.io-parser@~5.0.3":
+"engine.io-parser@~5.0.0":
+  "integrity" "sha512-BtQxwF27XUNnSafQLvDi0dQ8s3i6VgzSoQMJacpIcGNrlUdfHSKbgm3jmjCVvQluGzqwujQMPAoMai3oYSTurg=="
+  "resolved" "https://registry.npmjs.org/engine.io-parser/-/engine.io-parser-5.0.3.tgz"
+  "version" "5.0.3"
+  dependencies:
+    "@socket.io/base64-arraybuffer" "~1.0.2"
+
+"engine.io-parser@~5.0.3":
   "integrity" "sha512-BtQxwF27XUNnSafQLvDi0dQ8s3i6VgzSoQMJacpIcGNrlUdfHSKbgm3jmjCVvQluGzqwujQMPAoMai3oYSTurg=="
   "resolved" "https://registry.npmjs.org/engine.io-parser/-/engine.io-parser-5.0.3.tgz"
   "version" "5.0.3"
@@ -6503,13 +6517,6 @@
   dependencies:
     "mimic-fn" "^2.1.0"
 
-"optional-require@^1.1.8":
-  "integrity" "sha512-jq83qaUb0wNg9Krv1c5OQ+58EK+vHde6aBPzLvPPqJm89UQWsvSuFy9X/OSNJnFeSOKo7btE0n8Nl2+nE+z5nA=="
-  "resolved" "https://registry.npmjs.org/optional-require/-/optional-require-1.1.8.tgz"
-  "version" "1.1.8"
-  dependencies:
-    "require-at" "^1.0.6"
-
 "optionator@^0.8.2", "optionator@^0.8.3":
   "integrity" "sha512-+IW9pACdk3XWmmTXG8m3upGUJst5XRGzxMRjXzAuJ1XnIFNvfhjjIuYkDvysnPQ7qzqVzLt78BCruntqRhWQbA=="
   "resolved" "https://registry.npmjs.org/optionator/-/optionator-0.8.3.tgz"
@@ -7491,11 +7498,6 @@
   dependencies:
     "resolve-from" "^2.0.0"
     "semver" "^5.1.0"
-
-"require-at@^1.0.6":
-  "integrity" "sha512-7i1auJbMUrXEAZCOQ0VNJgmcT2VOKPRl2YGJwgpHpC9CE91Mv4/4UYIUm4chGJaI381ZDq1JUicFii64Hapd8g=="
-  "resolved" "https://registry.npmjs.org/require-at/-/require-at-1.0.6.tgz"
-  "version" "1.0.6"
 
 "require-directory@^2.1.1":
   "integrity" "sha1-jGStX9MNqxyXbiNE/+f3kqam30I="

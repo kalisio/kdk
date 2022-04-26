@@ -1,7 +1,9 @@
 import _ from 'lodash'
-import { setNow, discard } from 'feathers-hooks-common'
+import common from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import { filterLayers, updateLayerReferences, getDefaultCategories } from '../../hooks/index.js'
+
+const { setNow, discard } = common
 
 export default {
   before: {
