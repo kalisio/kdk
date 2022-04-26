@@ -1,12 +1,15 @@
 import chai from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'
+import path from 'path'
 import fs from 'fs-extra'
+import { fileURLToPath } from 'url'
 import core, { kalisio, hooks, permissions } from '../../../core/api/index.js'
 import map, {
   permissions as mapPermissions, createFeaturesService, createCatalogService
 } from '../../../map/api/index.js'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const { util, expect } = chai
 
 describe('map:services', () => {
@@ -34,7 +37,7 @@ describe('map:services', () => {
     return app.db.connect()
   })
 
-  it('is ES6 compatible', () => {
+  it('is ES module compatible', () => {
     expect(typeof map).to.equal('function')
   })
 
@@ -42,7 +45,7 @@ describe('map:services', () => {
     await app.configure(core)
     userService = app.getService('users')
     expect(userService).toExist()
-    app.configure(map)
+    await app.configure(map)
     geocoderService = app.getService('geocoder')
     expect(geocoderService).toExist()
     // Create a global catalog service
@@ -63,7 +66,7 @@ describe('map:services', () => {
   })
 
   it('registers the default layer catalog', async () => {
-    const layers = await fs.readJson('./test/api/map/config/layers.json')
+    const layers = await fs.readJson(path.join(__dirname, 'config/layers.json'))
     expect(layers.length > 0)
     // Create a global catalog service
     defaultLayers = await catalogService.create(layers)
@@ -108,7 +111,7 @@ describe('map:services', () => {
     const zonesLayer = _.find(defaultLayers, { name: 'zones' })
     expect(zonesLayer).toExist()
     expect(zonesLayer.service === 'zones').beTrue()
-    createFeaturesService.call(app, {
+    await createFeaturesService.call(app, {
       collection: zonesLayer.service,
       featureId: zonesLayer.featureId
     })
@@ -118,7 +121,7 @@ describe('map:services', () => {
     const indexes = await zonesService.Model.indexes()
     expect(indexes.find(index => index.key.geometry)).toExist()
     // Feed the collection
-    const zones = require('./data/zones.json').features
+    const zones = fs.readJsonSync(path.join(__dirname, 'data/zones.json')).features
     await zonesService.create(zones)
   })
 
@@ -150,7 +153,7 @@ describe('map:services', () => {
     const vigicruesStationsLayer = _.find(defaultLayers, { name: 'vigicrues-stations' })
     expect(vigicruesStationsLayer).toExist()
     expect(vigicruesStationsLayer.service === 'vigicrues-stations').beTrue()
-    createFeaturesService.call(app, {
+    await createFeaturesService.call(app, {
       collection: vigicruesStationsLayer.service,
       featureId: vigicruesStationsLayer.featureId,
       history: vigicruesStationsLayer.history
@@ -158,7 +161,7 @@ describe('map:services', () => {
     vigicruesStationsService = app.getService(vigicruesStationsLayer.service)
     expect(vigicruesStationsService).toExist()
     // Feed the collection
-    const stations = require('./data/vigicrues.stations.json').features
+    const stations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.stations.json')).features
     await vigicruesStationsService.create(stations)
   })
 
@@ -167,7 +170,7 @@ describe('map:services', () => {
     const vigicruesObsLayer = _.find(defaultLayers, { name: 'vigicrues-observations' })
     expect(vigicruesObsLayer).toExist()
     expect(vigicruesObsLayer.service === 'vigicrues-observations').beTrue()
-    createFeaturesService.call(app, {
+    await createFeaturesService.call(app, {
       collection: vigicruesObsLayer.service,
       featureId: vigicruesObsLayer.featureId,
       history: vigicruesObsLayer.history
@@ -175,7 +178,7 @@ describe('map:services', () => {
     vigicruesObsService = app.getService(vigicruesObsLayer.service)
     expect(vigicruesObsService).toExist()
     // Feed the collection
-    const observations = require('./data/vigicrues.observations.json')
+    const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.json'))
     await vigicruesObsService.create(observations)
   })
 
@@ -184,7 +187,7 @@ describe('map:services', () => {
     const adsbObsLayer = _.find(defaultLayers, { name: 'adsb-observations' })
     expect(adsbObsLayer).toExist()
     expect(adsbObsLayer.service === 'adsb-observations').beTrue()
-    createFeaturesService.call(app, {
+    await createFeaturesService.call(app, {
       collection: adsbObsLayer.service,
       featureId: adsbObsLayer.featureId,
       history: adsbObsLayer.history
@@ -192,7 +195,7 @@ describe('map:services', () => {
     adsbObsService = app.getService(adsbObsLayer.service)
     expect(adsbObsService).toExist()
     // Feed the collection
-    const observations = require('./data/adsb.observations.json')
+    const observations = fs.readJsonSync(path.join(__dirname, 'data/adsb.observations.json'))
     await adsbObsService.create(observations)
   })
 

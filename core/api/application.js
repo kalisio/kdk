@@ -127,7 +127,8 @@ async function createService (name, app, options = {}) {
   const paginate = app.get('paginate')
   const serviceOptions = Object.assign({
     name: name,
-    paginate
+    paginate,
+    whitelist: ['$exists', '$distinct', '$groupBy', '$search']
   }, options)
   if (serviceOptions.disabled) return undefined
   // For DB services a model has to be provided

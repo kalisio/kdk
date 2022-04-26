@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
-import sift from 'sift'
+import siftModule from 'sift'
 import request from 'superagent'
 import cron from 'cron'
 import errors from '@feathersjs/errors'
@@ -9,6 +9,7 @@ const debug = makeDebug('kdk:map:alerts:service')
 
 const { CronJob } = cron
 const { Unprocessable } = errors
+const sift = siftModule.default
 
 // Alert map
 const alerts = {}

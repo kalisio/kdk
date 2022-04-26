@@ -5,10 +5,10 @@ import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 import nock from 'nock'
-import sift from 'sift'
+import siftModule from 'sift'
 import moment from 'moment'
 import memory from 'feathers-memory'
-import intersect from '@turf/intersect'
+import intersectModule from '@turf/intersect'
 import { weacast } from '@weacast/core'
 import { makeGridSource, extractGridSourceConfig } from '../../.././map/common/grid.js'
 import { fileURLToPath } from 'url'
@@ -17,6 +17,8 @@ import { dirname } from 'path'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const { util, expect } = chai
+const sift = siftModule.default
+const intersect = intersectModule.default
 
 // returns the required byte range of the given file
 // range is the raw value of the 'range' http header
@@ -251,7 +253,7 @@ describe('map:grid-source', () => {
       }
     }
 
-    it('initialize Weacast API mock', () => {
+    it('initialize Weacast API mock', async () => {
       // Add geospatial operator to sift
       const matcher = (query) => sift(query, {
         expressions: {
@@ -265,7 +267,7 @@ describe('map:grid-source', () => {
       })
       const weacastApi = weacast()
       weacastApi.models = [model]
-      weacastApi.createElementService(model, element, memory({ store, matcher }))
+      await weacastApi.createElementService(model, element, memory({ store, matcher }))
       const elementService = weacastApi.getService(service)
       expect(elementService).toExist()
       weacastOptions.weacastApi = weacastApi

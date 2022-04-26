@@ -1,5 +1,5 @@
-import { hooks as coreHooks } from '../../../../core/api'
-import { marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson } from '../../hooks'
+import { hooks as coreHooks } from '../../../../core/api/index.js'
+import { marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson } from '../../hooks/index.js'
 
 function simplifyResult (hook) {
   // Only keep track of object IDs so that caller can at least get them if required
