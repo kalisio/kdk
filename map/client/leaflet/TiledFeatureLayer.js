@@ -9,7 +9,6 @@ import { tile2key, key2tile, tileSetContainsParent, getParentTileInTileSet } fro
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
     this.enableDebug = _.get(options, 'enableDebug', false)
-    // this.enableDebug = true
     L.GridLayer.prototype.initialize.call(this, options)
 
     this.on('tileunload', (event) => { this.onTileUnload(event) })
