@@ -20,21 +20,25 @@ jobs:
   - stage: TEST
     language: node_js
     node_js:
-    - '12'  
+    - '16'  
     services:
     - docker
     - mongodb
-    addons:
-      code_climate:
-        repo_token: 42cc93bb51067210ce09b5b3b98a6d5cc4d9c432f51d5844d4e61c36fff160fc
-    before_script: npm install -g codeclimate-test-reporter
-    script: bash .travis.test.sh
-    after_script: codeclimate-test-reporter < coverage/lcov.info
+    env:
+    - CC_TEST_REPORTER_ID=42cc93bb51067210ce09b5b3b98a6d5cc4d9c432f51d5844d4e61c36fff160fc
+    install:
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - "./cc-test-reporter before-build"
+    script:
+    - bash .travis.test.sh
+    after_script:
+    - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
 
   - stage: DOC
     language: node_js
     node_js:
-    - '12'
+    - '16'
     install: true
     script: bash .travis.doc.sh
     deploy:
