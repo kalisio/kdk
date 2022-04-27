@@ -16,7 +16,11 @@ git clone https://github.com/kalisio/feathers-distributed && cd feathers-distrib
 yarn link @kalisio/feathers-distributed
 
 git clone https://github.com/weacast/weacast && cd weacast && yarn install && cd packages
-cd core && yarn link && cd .. && cd gfs && yarn link && cd .. && cd probe && yarn link && cd ../..
+cd core && yarn link && cd .. && cd gfs && yarn link && cd .. && cd probe && yarn link && cd ..
+cd ../..
+yarn link @weacast/core
+yarn link @weacast/gfs
+yarn link @weacast/probe
 
 # Read extra environment variables (merges common and flavor env)
 cp workspace/.env .env
