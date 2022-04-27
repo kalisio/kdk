@@ -88,7 +88,8 @@ export default {
         if (moment.isDuration(queryInterval)) {
           // Depending on the duration format we might have negative or positive values
           const gte = (queryInterval.asMilliseconds() > 0
-            ? now.clone().subtract(queryInterval) : now.clone().add(queryInterval))
+            ? now.clone().subtract(queryInterval)
+            : now.clone().add(queryInterval))
           const lte = now
           Object.assign(query, {
             $limit: 1,

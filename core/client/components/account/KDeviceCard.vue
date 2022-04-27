@@ -29,9 +29,11 @@ export default {
   computed: {
     platformIcon () {
       const platform = this.item.platform.toLowerCase()
-      return (platform.includes('windows') ? 'fa-windows'
-        : (platform.includes('android') ? 'fa-android'
-          : (platform.includes('ios') ? 'fa-apple' : 'fa-mobile-alt')))
+      return (platform.includes('windows')
+        ? 'fa-windows'
+        : (platform.includes('android')
+            ? 'fa-android'
+            : (platform.includes('ios') ? 'fa-apple' : 'fa-mobile-alt')))
     },
     platform () {
       return _.capitalize(this.item.platform.toLowerCase())

@@ -1,12 +1,11 @@
 import _ from 'lodash'
-import path from 'path'
+import path, { dirname } from 'path'
 import makeDebug from 'debug'
 import aws from 'aws-sdk'
 import store from 's3-blob-store'
 import BlobService from 'feathers-blob'
 import { createTagService, createStorageService } from '../index.js'
 import { fileURLToPath } from 'url'
-import { dirname } from 'path'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

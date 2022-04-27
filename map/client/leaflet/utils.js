@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import L from 'leaflet'
 import { utils as kCoreUtils } from '../../../core/client'
 
 export const LeafletStyleMappings = {

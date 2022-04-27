@@ -138,9 +138,11 @@ export default {
         this.map.fitBounds(this.drawLayer.getBounds())
       } else {
         const longitude = (_.has(this.location, 'longitude')
-          ? _.get(this.location, 'longitude') : _.get(this.location, 'coordinates[0]'))
+          ? _.get(this.location, 'longitude')
+          : _.get(this.location, 'coordinates[0]'))
         const latitude = (_.has(this.location, 'latitude')
-          ? _.get(this.location, 'latitude') : _.get(this.location, 'coordinates[1]'))
+          ? _.get(this.location, 'latitude')
+          : _.get(this.location, 'coordinates[1]'))
         this.center(longitude, latitude, this.mapOptions.zoom)
       }
     },
@@ -187,9 +189,11 @@ export default {
           this.map.addLayer(this.drawLayer)
         } else {
           const longitude = (hasLongitude
-            ? _.get(this.location, 'longitude') : _.get(this.location, 'coordinates[0]'))
+            ? _.get(this.location, 'longitude')
+            : _.get(this.location, 'coordinates[0]'))
           const latitude = (hasLatitude
-            ? _.get(this.location, 'latitude') : _.get(this.location, 'coordinates[1]'))
+            ? _.get(this.location, 'latitude')
+            : _.get(this.location, 'coordinates[1]'))
 
           this.marker = L.marker([latitude, longitude], {
             icon: L.icon.fontAwesome(this.markerStyle),

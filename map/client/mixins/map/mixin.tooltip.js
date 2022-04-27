@@ -21,7 +21,8 @@ export default {
         if (!html) {
           if (tooltipStyle.property) {
             html = (_.has(properties, tooltipStyle.property)
-              ? _.get(properties, tooltipStyle.property) : _.get(feature, tooltipStyle.property))
+              ? _.get(properties, tooltipStyle.property)
+              : _.get(feature, tooltipStyle.property))
             if (html && (typeof html.toString === 'function')) html = html.toString()
           } else if (tooltipStyle.template) {
             const compiler = tooltipStyle.compiler

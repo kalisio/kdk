@@ -3,7 +3,7 @@ import chai from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'
 import fs from 'fs'
-import path from 'path'
+import path, { dirname } from 'path'
 import nock from 'nock'
 import siftModule from 'sift'
 import moment from 'moment'
@@ -12,7 +12,6 @@ import intersectModule from '@turf/intersect'
 import { weacast } from '@weacast/core'
 import { makeGridSource, extractGridSourceConfig } from '../../.././map/common/grid.js'
 import { fileURLToPath } from 'url'
-import { dirname } from 'path'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

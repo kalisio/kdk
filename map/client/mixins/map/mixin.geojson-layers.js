@@ -159,7 +159,6 @@ export default {
             }, options.wfs.searchParams)
             return wfs.GetFeature(options.wfs.url, options.wfs.version, options.wfs.layer, searchParams, { xml2json: false })
           }
-        } else {
         }
       } else if (_.has(leafletOptions, 'sourceTemplate')) {
         const sourceCompiler = _.template(_.get(leafletOptions, 'sourceTemplate'))

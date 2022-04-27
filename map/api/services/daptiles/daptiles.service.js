@@ -261,7 +261,8 @@ class TileBuilder {
     const positions = Buffer.alloc(vertexCount * 3 * 4)
     const colors = Buffer.alloc(vertexCount * 4)
     const indices = vertexCount > 65535
-      ? Buffer.alloc(indexCount * 4) : Buffer.alloc(indexCount * 2)
+      ? Buffer.alloc(indexCount * 4)
+      : Buffer.alloc(indexCount * 2)
 
     const writeIndex = vertexCount > 65535
       ? function (index, offset) { return indices.writeUInt32LE(index, offset) }

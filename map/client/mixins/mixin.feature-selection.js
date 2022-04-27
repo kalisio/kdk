@@ -66,10 +66,12 @@ export default {
       // Remove previous selection if any
       this.removeSelectionHighlight(id)
       // Start from selected feature or location to build highlight
-      const highlight = (this.selection.feature ? _.cloneDeep(this.selection.feature) : {
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [this.selection.location.lng, this.selection.location.lat] }
-      })
+      const highlight = (this.selection.feature
+        ? _.cloneDeep(this.selection.feature)
+        : {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [this.selection.location.lng, this.selection.location.lat] }
+          })
       // Use bbox for line/polygons
       if (highlight.geometry.type !== 'Point') {
         Object.assign(highlight, bboxPolygon(bbox(this.selection.feature)))

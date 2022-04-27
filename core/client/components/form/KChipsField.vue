@@ -113,13 +113,15 @@ export default {
       return (this.icon ? chip.value || chip.name : chip)
     },
     onChipAdded () {
-      const chip = (this.icon ? {
-        value: this.input,
-        icon: {
-          name: _.get(this.properties.field, 'icon.name', ''),
-          color: _.get(this.properties.field, 'icon.color', 'dark')
-        }
-      } : this.input)
+      const chip = (this.icon
+        ? {
+            value: this.input,
+            icon: {
+              name: _.get(this.properties.field, 'icon.name', ''),
+              color: _.get(this.properties.field, 'icon.color', 'dark')
+            }
+          }
+        : this.input)
       this.chips.push(chip)
       this.input = ''
       this.updateModel()

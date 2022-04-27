@@ -58,6 +58,7 @@ export default {
       if (this.allowedLayerEditModes.indexOf(mode) === -1) return
 
       if (mode === 'edit-properties') {
+        // Nothing todo
       } else if (mode === 'edit-geometry') {
         this.map.pm.enableGlobalEditMode()
       } else if (mode === 'drag') {

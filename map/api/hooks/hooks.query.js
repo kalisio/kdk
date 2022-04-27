@@ -155,7 +155,7 @@ export function asGeoJson (options = {}) {
             geometry: { type: 'GeometryCollection', geometries: _.get(item, geometryProperty) },
             properties: {}
           }, _.omit(item, [geometryProperty]))
-        } else if (coordinates) {
+        } else {
           // Item locations are not already in GeoJson feature format so we need to convert
           return Object.assign({
             type: 'Feature',

@@ -41,7 +41,7 @@ export async function createStorageService (blobService, options = {}) {
   const app = this
   // Closure to keep track of context
   const proxyId = proxyStorageId(options.context)
-  
+
   await app.createService('storage', Object.assign({
     servicesPath,
     modelsPath,

@@ -160,7 +160,8 @@ export default {
       if ((selected !== name) && (!selected.startsWith(name + '/'))) {
         setTimeout(() => {
           const step = (_.has(this.$route, 'query.tourStep')
-            ? _.toNumber(_.get(this.$route, 'query.tourStep')) : undefined)
+            ? _.toNumber(_.get(this.$route, 'query.tourStep'))
+            : undefined)
           const play = _.get(this.$route, 'query.playTour')
           this.$store.patch('tours.current', { name, step, play })
         }, _.toNumber(_.get(this.$route, 'query.tourDelay', 0)))
@@ -176,7 +177,7 @@ export default {
     getTarget (target) {
       let element = null
       let querySelectorAll = false
-      const brackets = new RegExp(/\[([0-9]*?)\]/, 'i')
+      const brackets = /\[([0-9]*?)\]/i
       // Check if there is an array notation like '#action[1]'
       // This is useful for id conflict resolution
       const result = brackets.exec(target)

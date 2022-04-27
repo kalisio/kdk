@@ -98,7 +98,8 @@ export function updateSubjectSubscriptions (options) {
     const item = getItems(hook)
     // Field might be on the service object or subject
     let topics = (options.subjectAsItem
-      ? _.get(item, options.field) : _.get(hook.params, 'user.' + options.field))
+      ? _.get(item, options.field)
+      : _.get(hook.params, 'user.' + options.field))
     if (!topics) {
       debug('No subscriptions to update for object ', item)
       return Promise.resolve(hook)

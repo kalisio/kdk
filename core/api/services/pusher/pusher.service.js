@@ -6,7 +6,7 @@ import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:core:pusher:service')
 const defaultTopicField = 'topics'
-const { GeneralError }  = errors
+const { GeneralError } = errors
 
 export default function (name, app, options) {
   const config = app.get('pusher')

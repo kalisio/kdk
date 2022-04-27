@@ -42,25 +42,27 @@ export default {
     editorToolbar: {
       type: Array,
       default () {
-        return (this.$q.screen.lt.sm ? [
-          ['bold', 'italic', 'underline', 'strike'],
-          [{
-            label: '',
-            icon: this.$q.iconSet.editor.align,
-            options: ['left', 'center', 'right', 'justify']
-          }],
-          ['undo', 'redo']
-        ] : [
-          ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],
-          ['quote', 'link', 'hr'],
-          [{
-            label: this.$q.lang.editor.align,
-            icon: this.$q.iconSet.editor.align,
-            fixedLabel: true,
-            options: ['left', 'center', 'right', 'justify']
-          }],
-          ['undo', 'redo', 'viewsource']
-        ])
+        return (this.$q.screen.lt.sm
+          ? [
+              ['bold', 'italic', 'underline', 'strike'],
+              [{
+                label: '',
+                icon: this.$q.iconSet.editor.align,
+                options: ['left', 'center', 'right', 'justify']
+              }],
+              ['undo', 'redo']
+            ]
+          : [
+              ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],
+              ['quote', 'link', 'hr'],
+              [{
+                label: this.$q.lang.editor.align,
+                icon: this.$q.iconSet.editor.align,
+                fixedLabel: true,
+                options: ['left', 'center', 'right', 'justify']
+              }],
+              ['undo', 'redo', 'viewsource']
+            ])
       }
     }
   },

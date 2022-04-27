@@ -187,10 +187,10 @@ export function processIcon (object, path = 'icon.name') {
 
 // Transform nested object to dot notation
 export function dotify (object) {
-  var dotifiedObject = {}
+  const dotifiedObject = {}
   function recurse (object, current) {
     _.forOwn(object, (value, key) => {
-      var newKey = (current ? current + '.' + key : key) // joined key with dot
+      const newKey = (current ? current + '.' + key : key) // joined key with dot
       if (value && typeof value === 'object') {
         recurse(value, newKey) // it's a nested object, so do it again
       } else {
@@ -204,7 +204,7 @@ export function dotify (object) {
 }
 
 // Regular expression that checks for hex value
-var checkForHexRegExp = new RegExp('^[0-9a-fA-F]{24}$')
+const checkForHexRegExp = /^[0-9a-fA-F]{24}$/
 
 // Check if a string is a valid MongoDB Object ID
 export function isObjectID (id) {

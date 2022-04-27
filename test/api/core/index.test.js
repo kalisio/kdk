@@ -1,4 +1,4 @@
-import path from 'path'
+import path, { dirname } from 'path'
 import logger from 'winston'
 import fs from 'fs-extra'
 import request from 'superagent'
@@ -7,7 +7,6 @@ import chailint from 'chai-lint'
 import local from '@feathersjs/authentication-local'
 import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
-import { dirname } from 'path'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

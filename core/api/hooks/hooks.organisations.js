@@ -38,7 +38,7 @@ export async function createOrganisationServices (hook) {
   })
 
   debug('DB created for organisation ' + hook.result.name)
-  
+
   // Jump from infos/stats to real DB object
   const db = app.db.client.db(name)
   await organisationService.createOrganisationServices(hook.result, db)
@@ -56,7 +56,7 @@ export async function removeOrganisationServices (hook) {
   const databaseService = app.getService('databases')
 
   // Then we remove the organisation DB
-  const db = await databaseService.remove(hook.result._id.toString(), {
+  await databaseService.remove(hook.result._id.toString(), {
     user: hook.params.user
   })
 

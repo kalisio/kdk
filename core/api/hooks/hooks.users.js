@@ -101,7 +101,7 @@ export function generatePassword (options = {}) {
       _.unset(data, suggestedPasswordField)
     }
     // Generated password rule
-    const passwordRule = new RegExp('[\\w\\d\\?\\-]')
+    const passwordRule = /[\w\d?-]/
     // If we have a password policy ensure we match it
     if (app.getPasswordPolicy) {
       const validator = app.getPasswordPolicy()
@@ -183,7 +183,7 @@ export function leaveOrganisations (options = { skipPrivate: true }) {
 
     await Promise.all(organisations.map(organisation => {
       // Unset membership on org except private org if required
-      if (options.skipPrivate && organisation._id.toString() === subject._id.toString()) return
+      if (options.skipPrivate && organisation._id.toString() === subject._id.toString()) return Promise.resolve()
       return authorisationService.remove(organisation._id.toString(), {
         query: {
           scope: 'organisations'

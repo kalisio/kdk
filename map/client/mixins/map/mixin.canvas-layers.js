@@ -152,7 +152,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
   // -------------------------------------------------------------
   _onLayerDidMove: function () {
-    var topLeft = this._map.containerPointToLayerPoint([0, 0])
+    const topLeft = this._map.containerPointToLayerPoint([0, 0])
     L.DomUtil.setPosition(this._canvas, topLeft)
     this.redrawNow()
   },
@@ -235,14 +235,14 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     // disable pointer events if not explicitely enabled
     if (!this.options.pointerEventsEnabled) this._canvas.style.pointerEvents = 'none'
 
-    var size = this._map.getSize()
+    const size = this._map.getSize()
     this._canvas.width = size.x
     this._canvas.height = size.y
 
-    var topLeft = this._map.containerPointToLayerPoint([0, 0])
+    const topLeft = this._map.containerPointToLayerPoint([0, 0])
     L.DomUtil.setPosition(this._canvas, topLeft)
 
-    var animated = this._map.options.zoomAnimation && L.Browser.any3d
+    const animated = this._map.options.zoomAnimation && L.Browser.any3d
     L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'))
 
     const pane = this.options.pane ? map._panes[this.options.pane] : map._panes.overlayPane
@@ -250,14 +250,14 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     map.on(this.getEvents(), this)
 
-    var del = this._delegate || this
+    const del = this._delegate || this
     del.onLayerDidMount && del.onLayerDidMount() // -- callback
     this.needRedraw()
   },
 
   // -------------------------------------------------------------
   onRemove: function (map) {
-    var del = this._delegate || this
+    const del = this._delegate || this
     del.onLayerWillUnmount && del.onLayerWillUnmount() // -- callback
 
     if (this._frame !== null) {
@@ -289,14 +289,14 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   // ------------------------------------------------------------------------------
   drawLayer: function () {
     // -- todo make the viewInfo properties  flat objects.
-    var size = this._map.getSize()
-    var bounds = this._map.getBounds()
-    var zoom = this._map.getZoom()
+    const size = this._map.getSize()
+    const bounds = this._map.getBounds()
+    const zoom = this._map.getZoom()
 
-    var center = this.LatLonToMercator(this._map.getCenter())
-    var corner = this.LatLonToMercator(this._map.containerPointToLatLng(this._map.getSize()))
+    const center = this.LatLonToMercator(this._map.getCenter())
+    const corner = this.LatLonToMercator(this._map.containerPointToLatLng(this._map.getSize()))
 
-    var del = this._delegate || this
+    const del = this._delegate || this
     del.onDrawLayer && del.onDrawLayer({
       layer: this,
       canvas: this._canvas,
@@ -329,7 +329,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   // -- L.DomUtil.setTransform from leaflet 1.0.0 to work on 0.0.7
   // ------------------------------------------------------------------------------
   _setTransform: function (el, offset, scale) {
-    var pos = offset || new L.Point(0, 0)
+    const pos = offset || new L.Point(0, 0)
 
     el.style[L.DomUtil.TRANSFORM] =
       (L.Browser.ie3d
@@ -340,9 +340,10 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
 
   // ------------------------------------------------------------------------------
   _animateZoom: function (e) {
-    var scale = this._map.getZoomScale(e.zoom)
+    const scale = this._map.getZoomScale(e.zoom)
     // -- different calc of animation zoom  in leaflet 1.0.3 thanks @peterkarabinovic, @jduggan1
-    var offset = L.Layer ? this._map._latLngBoundsToNewLayerBounds(this._map.getBounds(), e.zoom, e.center).min
+    const offset = L.Layer
+      ? this._map._latLngBoundsToNewLayerBounds(this._map.getBounds(), e.zoom, e.center).min
       : this._map._getCenterOffset(e.center)._multiplyBy(-scale).subtract(this._map._getMapPanePos())
 
     L.DomUtil.setTransform(this._canvas, offset, scale)

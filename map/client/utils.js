@@ -152,7 +152,8 @@ export function generatePropertiesSchema (geoJson, name) {
     schema.properties[`${key}`] = {
       type,
       field: {
-        component: (type === 'number' ? 'form/KNumberField'
+        component: (type === 'number'
+          ? 'form/KNumberField'
           : (type === 'boolean' ? 'form/KToggleField' : 'form/KTextField')),
         helper: key,
         label: key

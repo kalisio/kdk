@@ -59,9 +59,11 @@ export default {
       const { startAngle, endAngle, offset, radius } = this
       const angle = endAngle - startAngle
       const angleStep = angle / Math.max((items.length - 1), 1)
-      const angles = (items.length === 1 ? [0.5 * angle * Math.PI / 180] : items.map(
-        (item, index) => startAngle + (offset + angleStep * index) * Math.PI / 180
-      ))
+      const angles = (items.length === 1
+        ? [0.5 * angle * Math.PI / 180]
+        : items.map(
+          (item, index) => startAngle + (offset + angleStep * index) * Math.PI / 180
+        ))
 
       items.forEach((propData, index) => {
         propData.left =

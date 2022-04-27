@@ -2,9 +2,8 @@ import L from 'leaflet'
 import _ from 'lodash'
 import logger from 'loglevel'
 import bbox from '@turf/bbox'
-import { featureEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
-import { tile2key, key2tile, tileSetContainsParent, getParentTileInTileSet } from './utils'
+import { tile2key, getParentTileInTileSet } from './utils'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
@@ -106,7 +105,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     if (tile) tile.unload = true
     this.modifiedTiles.add(key)
 
-    if (this.enableDebug && tile) tile.div.innerHTML += `</br>unload scheduled`
+    if (this.enableDebug && tile) tile.div.innerHTML += '</br>unload scheduled'
   },
 
   mergeRequests (tiles) {
@@ -121,7 +120,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     })
 
     if (sortedTiles.length) {
-      let z = sortedTiles[0].coords.z
+      const z = sortedTiles[0].coords.z
       const vrequests = []
       sortedTiles.forEach((tile) => {
         let newRequest = true
@@ -169,7 +168,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
       // Compute final query
       requests.forEach((r) => {
-        const minp = L.point(r.minx, r.miny), maxp = L.point(r.maxx, r.maxy)
+        const minp = L.point(r.minx, r.miny); const maxp = L.point(r.maxx, r.maxy)
         minp.z = maxp.z = z
         const bounds = this._tileCoordsToBounds(minp)
         bounds.extend(this._tileCoordsToBounds(maxp))
@@ -184,7 +183,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.enableDebug) {
         let numTilesR = 0
         requests.forEach((r) => { numTilesR += r.tiles.length })
-        if (numTilesR != tiles.length) {
+        if (numTilesR !== tiles.length) {
           logger.debug('TiledFeatureLayer: less requested tiles than expected !')
         }
       }
@@ -193,7 +192,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     /* One request per tile
     tiles.forEach((tile) => {
       const r = {
-        tiles: [ tile ],
+        tiles: [tile],
         query: {
           south: tile.bbox.getSouth(),
           north: tile.bbox.getNorth(),
@@ -307,8 +306,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const featureRequests = this.mergeRequests(tilesWithFeaturesRequest)
     featureRequests.forEach((r) => {
       const promise = this.layer.probeService
-            ? this.activity.getProbeFeatures(_.merge({ baseQuery: r.query }, this.layer))
-            : this.featureSource(r.query)
+        ? this.activity.getProbeFeatures(_.merge({ baseQuery: r.query }, this.layer))
+        : this.featureSource(r.query)
       r.tiles.forEach((tile) => {
         tile.featuresRequest = promise
 
@@ -342,8 +341,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
           })
         })
         // Add to underlying geojson layer
-        if (addCollection.length)
-          this.activity.updateLayer(this.layer.name, featureCollection(addCollection))
+        if (addCollection.length) { this.activity.updateLayer(this.layer.name, featureCollection(addCollection)) }
 
         // Notify tiles their request is done
         tiles.forEach((tile) => {
@@ -357,7 +355,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
             tile.div.innerHTML += `</br>features request success: ${features.length} total, ${tile.features.length} for tile`
           }
         })
-
 
         if (this.enableDebug) logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
       }).catch((err) => {
@@ -421,7 +418,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     tilesToRemove.forEach((tile) => {
       tile.features.forEach((featureId) => {
         const feature = this.allFeatures.get(featureId)
-        if (feature === undefined) debugger
+        if (feature === undefined) debugger // eslint-disable-line
         if (feature.refCount === 1) {
           removeCollection.push(feature.geojson)
           this.allFeatures.delete(featureId)
@@ -431,8 +428,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       })
       this.flyingTiles.delete(tile2key(tile.coords))
     })
-    if (removeCollection.length)
-      this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), true)
+    if (removeCollection.length) { this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), true) }
 
     if (this.enableDebug) {
       logger.debug(`TiledFeatureLayer: flyingTiles is ${this.flyingTiles.size} long`)

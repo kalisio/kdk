@@ -26,7 +26,7 @@ export default {
         return url
       }
 
-      var tileset = new Cesium.Cesium3DTileset({
+      const tileset = new Cesium.Cesium3DTileset({
         url: urlPromise
         // url: 'http://127.0.0.1:3000/tileset.json?file=mf-arpege-05/2019/06/16/18/T6086_G_T_Sol_20190616180000.grib&variable=Temperature_surface&time=0',
         // shadows: Cesium.ShadowMode.DISABLED,
