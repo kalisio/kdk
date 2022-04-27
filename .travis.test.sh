@@ -8,6 +8,8 @@ check_code()
   fi
 }
 
+yarn install
+
 # Clone the workspace 
 echo -e "machine github.com\n  login $GITHUB_TOKEN" > ~/.netrc
 git clone https://github.com/kalisio/kdk-workspaces workspace
