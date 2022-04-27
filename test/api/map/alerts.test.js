@@ -5,7 +5,9 @@ import spies from 'chai-spies'
 import _ from 'lodash'
 import moment from 'moment'
 import utility from 'util'
+import path from 'path'
 import fs from 'fs-extra'
+import { fileURLToPath } from 'url'
 import express from 'express'
 import bodyParser from 'body-parser'
 import request from 'superagent'
@@ -16,6 +18,7 @@ import distribution, { finalize } from '@kalisio/feathers-distributed'
 import core, { kalisio, hooks } from '../../../core/api/index.js'
 import map, { createFeaturesService, createAlertsService } from '../../../map/api/index.js'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const { util, expect } = chai
 
 describe('map:alerts', () => {
@@ -338,7 +341,7 @@ describe('map:alerts', () => {
   it('create and feed the vigicrues observations service', async () => {
     const tomorrow = moment.utc().add(1, 'days')
     // Create the service
-    createFeaturesService.call(app, {
+    await createFeaturesService.call(app, {
       collection: 'vigicrues-observations',
       featureId: 'CdStationH',
       history: 604800
@@ -346,7 +349,7 @@ describe('map:alerts', () => {
     vigicruesObsService = app.getService('vigicrues-observations')
     expect(vigicruesObsService).toExist()
     // Feed the collection
-    const observations = await import('./data/vigicrues.observations.json')
+    const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.json'))
     // Update time to tomorrow so that alert will trigger correctly
     await vigicruesObsService.create(observations.map(observation => Object.assign({}, observation, {
       time: moment.utc(observation.time).date(tomorrow.date()).month(tomorrow.month()).year(tomorrow.year())

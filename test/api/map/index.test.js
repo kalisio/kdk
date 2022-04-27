@@ -1,3 +1,4 @@
+import utility from 'util'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'
@@ -279,6 +280,8 @@ describe('map:services', () => {
       $groupBy: 'icao',
       $aggregate: ['geometry']
     }
+    // Aggregation requires feature ID index to be built so we add some time to do so
+    await utility.promisify(setTimeout)(5000)
     const result = await adsbObsService.find({ query: Object.assign({}, aggregationQuery) })
     expect(result.features.length).to.equal(1)
     const feature = result.features[0]
@@ -290,6 +293,8 @@ describe('map:services', () => {
     expect(feature.geometry.geometries).toExist()
     expect(feature.geometry.geometries.length === 4).beTrue()
   })
+  // Let enough time to process
+    .timeout(10000)
 
   it('geocode an address', async () => {
     const address = '80 chemin des tournesols, 11400 Castelnaudary'
