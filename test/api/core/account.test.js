@@ -250,6 +250,8 @@ describe('core:account', () => {
         done()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('reset user password', () => {
     return accountService.create({
@@ -270,7 +272,7 @@ describe('core:account', () => {
       })
   })
   // Let enough time to process
-    .timeout(10000)
+    .timeout(15000)
 
   it('check reset password email', (done) => {
     // Add some delay to wait for email reception
@@ -308,6 +310,8 @@ describe('core:account', () => {
         done()
       })
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('change user password', () => {
     return accountService.create({
@@ -329,7 +333,7 @@ describe('core:account', () => {
       })
   })
   // Let enough time to process
-    .timeout(10000)
+    .timeout(15000)
 
   it('check changed password email', (done) => {
     // Add some delay to wait for email reception
