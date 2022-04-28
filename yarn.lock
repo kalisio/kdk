@@ -179,9 +179,9 @@
     long-timeout "^0.1.1"
     uuid "^8.3.2"
 
-"@feathersjs/authentication@https://github.com/kalisio/authentication.git":
+"@feathersjs/authentication@https://github.com/kalisio/authentication":
   version "2.1.7"
-  resolved "git+ssh://git@github.com/kalisio/authentication.git#b730e0624b112e9be372dea168702dc740037396"
+  resolved "https://github.com/kalisio/authentication#b730e0624b112e9be372dea168702dc740037396"
   dependencies:
     "@feathersjs/commons" "^2.0.0"
     "@feathersjs/errors" "^3.0.0"
