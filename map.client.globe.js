@@ -1,1 +1,1 @@
-module.exports = require('./lib/map/client/globe')
+export * from './map/client/globe/index.js'
