@@ -8,12 +8,15 @@ check_code()
   fi
 }
 
+echo -e "machine github.com\n  login $GITHUB_TOKEN" > ~/.netrc
+
+# Setup KDK
 yarn install
 
 # Clone the workspace 
-echo -e "machine github.com\n  login $GITHUB_TOKEN" > ~/.netrc
 git clone https://github.com/kalisio/kdk-workspaces workspace
 
+# Clone others direct dependencies we'd like to use for testing
 git clone https://github.com/kalisio/feathers-distributed && cd feathers-distributed && yarn install && yarn link && cd ..
 yarn link @kalisio/feathers-distributed
 
