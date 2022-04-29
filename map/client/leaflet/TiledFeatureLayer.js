@@ -105,7 +105,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     if (tile) tile.unload = true
     this.modifiedTiles.add(key)
 
-    if (this.enableDebug && tile) tile.div.innerHTML += `</br>unload scheduled`
+    if (this.enableDebug && tile) tile.div.innerHTML += '</br>unload scheduled'
   },
 
   mergeRequests (tiles) {
@@ -120,7 +120,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     })
 
     if (sortedTiles.length) {
-      let z = sortedTiles[0].coords.z
+      const z = sortedTiles[0].coords.z
       const vrequests = []
       sortedTiles.forEach((tile) => {
         let newRequest = true
@@ -168,7 +168,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
       // Compute final query
       requests.forEach((r) => {
-        const minp = L.point(r.minx, r.miny), maxp = L.point(r.maxx, r.maxy)
+        const minp = L.point(r.minx, r.miny); const maxp = L.point(r.maxx, r.maxy)
         minp.z = maxp.z = z
         const bounds = this._tileCoordsToBounds(minp)
         bounds.extend(this._tileCoordsToBounds(maxp))
@@ -306,8 +306,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const featureRequests = this.mergeRequests(tilesWithFeaturesRequest)
     featureRequests.forEach((r) => {
       const promise = this.layer.probeService
-            ? this.activity.getProbeFeatures(_.merge({ baseQuery: r.query }, this.layer))
-            : this.featureSource(r.query)
+        ? this.activity.getProbeFeatures(_.merge({ baseQuery: r.query }, this.layer))
+        : this.featureSource(r.query)
       r.tiles.forEach((tile) => {
         tile.featuresRequest = promise
 
@@ -345,8 +345,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
           }
         })
         // Add to underlying geojson layer
-        if (addCollection.length)
-          this.activity.updateLayer(this.layer.name, featureCollection(addCollection))
+        if (addCollection.length) { this.activity.updateLayer(this.layer.name, featureCollection(addCollection)) }
 
         // Notify tiles their request is done
         tiles.forEach((tile) => {
@@ -360,7 +359,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
             tile.div.innerHTML += `</br>features request success: ${features.length} total, ${tile.features.length} for tile`
           }
         })
-
 
         if (this.enableDebug) logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
       }).catch((err) => {
@@ -433,8 +431,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       })
       this.flyingTiles.delete(tile2key(tile.coords))
     })
-    if (removeCollection.length)
-      this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), true)
+    if (removeCollection.length) { this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), true) }
 
     if (this.enableDebug) {
       logger.debug(`TiledFeatureLayer: flyingTiles is ${this.flyingTiles.size} long`)
