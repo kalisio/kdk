@@ -51,7 +51,7 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
 
 export async function saveLayer (page, tabId, layer, wait = 1000) {
   const isCatalogOpened = await clickCatalogTab(page, tabId)
-  const layerId = `#${layer}-actions`
+  const layerId = `${layer}-actions`
   const categoryId = await getLayerCategoryId(page, layerId)
   let isCategoryOpened
   if (categoryId) {

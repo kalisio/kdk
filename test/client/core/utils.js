@@ -213,5 +213,14 @@ export async function zoomInOut (page, in_or_out, times, wait = 250) {
     await page.keyboard.press(action)
     await page.waitForTimeout(wait)
   }
+}
+
+/* Zooms the map to a specific level
+ */
+export async function zoomToLevel (page, level, wait = 250) {
+  const zoom = await getFromStore(page, 'mapActivity.zoom')
+  const diff = level-zoom;
+  const action = (level > zoom) ? 'in':'out';
+  await zoomInOut(page, action, Math.abs(diff),500)
   await page.waitForTimeout(wait)
 }
