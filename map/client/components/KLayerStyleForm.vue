@@ -85,7 +85,7 @@
             {{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}
           </q-item-section>
         </q-item>
-        <q-item v-bind:id="'style-point-schema-' + color" v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="col-12">
+        <q-item v-bind:id="'point-feature-schema-' + color" v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="col-12">
           <q-item-section avatar>
             <q-chip clickable v-ripple text-color="white"
               :icon="iconStyle['icon-classes']" :color="iconStyle['marker-color']" @click="onIconClicked(iconStyle)"/>

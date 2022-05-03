@@ -124,7 +124,7 @@ export async function connectLayer (page, service, layerId, wait = 2000) {
 
 export async function createLayer (page, layerName, schemaPath, featureId, wait = 2000) {
   await addLayer(page)
-  await core.clickAction(page, 'create-layer')
+  await core.clickAction(page, 'create-layer',2000)
   await core.type(page, '#name-field', layerName)
   await core.type(page, '#description-field', `${layerName} description`)
   await core.uploadFile(page, '#schema-field', schemaPath)
