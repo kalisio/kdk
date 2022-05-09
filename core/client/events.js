@@ -1,3 +1,3 @@
-import Vue from 'vue'
+import Emitter from 'tiny-emitter'
 
-export const Events = new Vue()
+export const Events = new Emitter()

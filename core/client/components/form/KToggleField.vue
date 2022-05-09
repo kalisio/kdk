@@ -27,11 +27,11 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-toggle-field',
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   methods: {
     emptyModel () {
       return false

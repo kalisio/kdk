@@ -5,19 +5,10 @@ import feathers from '@feathersjs/client'
 import io from 'socket.io-client'
 import reactive from 'feathers-reactive'
 import config from 'config'
-import { permissions } from '../common'
-import { Store } from './store'
-import Vue from 'vue'
 import { Platform } from 'quasar'
-import { Events } from './events'
-
-// Register some global filters for case conversions
-Vue.filter('kebabCase', (value) => _.kebabCase(value))
-Vue.filter('camelCase', (value) => _.camelCase(value))
-Vue.filter('lowerCase', (value) => _.lowerCase(value))
-Vue.filter('snakeCase', (value) => _.snakeCase(value))
-Vue.filter('startCase', (value) => _.startCase(value))
-Vue.filter('upperCase', (value) => _.upperCase(value))
+import { permissions } from '../common/index.js'
+import { Store } from './store.js'
+import { Events } from './events.js'
 
 function getBaseUrlStorageKey () {
   return config.appName + '-baseUrl'
@@ -207,7 +198,7 @@ export function kalisio () {
     })
     api.configure(feathers.socketio(api.socket, { timeout: config.apiTimeout || 10000 }))
     // Retrieve our specific errors on rate-limiting
-    api.socket.on('rate-limit', (error) => Events.$emit('error', error))
+    api.socket.on('rate-limit', (error) => Events.emit('error', error))
   }
   api.configure(feathers.authentication({
     storage: window.localStorage,

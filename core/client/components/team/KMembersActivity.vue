@@ -28,10 +28,10 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseActivity } from '../../mixins'
 import { getRoleForOrganisation } from '../../../common/permissions'
 
-const activityMixin = mixins.baseActivity()
+const activityMixin = baseActivity()
 
 export default {
   name: 'members-activity',

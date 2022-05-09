@@ -28,13 +28,13 @@
 <script>
 import _ from 'lodash'
 import { QSpinner } from 'quasar'
-import mixins from '../../mixins'
+import { authentication, account } from '../../mixins'
 
 export default {
   name: 'k-verify-signup',
   mixins: [
-    mixins.authentication,
-    mixins.account
+    authentication,
+    account
   ],
   components: {
     QSpinner
@@ -66,10 +66,10 @@ export default {
   created () {
     this.$options.components['k-screen'] = this.$load('frame/KScreen')
     // Check if logged in
-    this.$events.$on('user-changed', this.refreshUser)
+    this.$events.on('user-changed', this.refreshUser)
   },
   beforeDestroy () {
-    this.$events.$off('user-changed', this.refreshUser)
+    this.$events.off('user-changed', this.refreshUser)
   },
   async mounted () {
     this.title = this.$t('KVerifySignup.TITLE')

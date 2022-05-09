@@ -32,8 +32,15 @@
 </template>
 
 <script>
+import KBlock from '../frame/KBlock.vue'
+import KAccountDevices from './KAccountDevices.vue'
+
 export default {
   name: 'k-account-security',
+  components: {
+    KBlock,
+    KAccountDevices
+  },
   props: {
     deviceRenderer: {
       type: Object,
@@ -57,10 +64,6 @@ export default {
     onChangeEmail () {
       this.$router.push({ name: 'send-change-identity' })
     }
-  },
-  created () {
-    this.$options.components['k-block'] = this.$load('frame/KBlock')
-    this.$options.components['k-account-devices'] = this.$load('account/KAccountDevices')
   }
 }
 </script>

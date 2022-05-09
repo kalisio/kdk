@@ -61,11 +61,11 @@
 <script>
 import _ from 'lodash'
 import { Search } from '../../search'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-item-field',
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   data () {
     return {
       items: null,

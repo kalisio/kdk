@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-phone-field',
-  mixins: [mixins.baseField]
+  mixins:[ baseField ]
 }
 </script>

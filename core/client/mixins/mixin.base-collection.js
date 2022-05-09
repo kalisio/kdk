@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import { getLocale } from '../utils'
+import { getLocale } from '../utils.js'
 
-const baseCollectionMixin = {
+export const baseCollection = {
   props: {
     // This value can be overriden in activities if they want to manage pagination by themselves
     // nbItemsPerPage = 0 means that the client does not handle pagination and server defaults will be used
@@ -152,4 +152,3 @@ const baseCollectionMixin = {
   }
 }
 
-export default baseCollectionMixin

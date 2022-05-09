@@ -35,13 +35,13 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 import moment from 'moment'
 import _ from 'lodash'
 
 export default {
   name: 'k-datetime-field',
-  mixins: [mixins.baseField],
+  mixins: [ baseField ],
   data () {
     return {
       locale: _.get(this.properties.field, 'localeValue', this.$q.lang.getLocale())

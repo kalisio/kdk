@@ -1,2 +1,2 @@
-export * from './reader.json'
-export * from './reader.csv'
+export * from './reader.json.js'
+export * from './reader.csv.js'

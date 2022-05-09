@@ -6,9 +6,13 @@
 
 <script>
 import _ from 'lodash'
+import KLayout from './KLayout.vue'
 
 export default {
   name: 'k-home',
+  components: {
+    KLayout
+  },
   data () {
     return {
       isAuthenticated: false
@@ -20,14 +24,12 @@ export default {
     }
   },
   created () {
-    // load the layout component
-    this.$options.components['k-layout'] = this.$load('layout/KLayout')
     // Initialize the user if any
     this.refresh()
-    this.$events.$on('user-changed', this.refresh)
+    this.$events.on('user-changed', this.refresh)
   },
   beforeDestroy () {
-    this.$events.$off('user-changed', this.refresh)
+    this.$events.off('user-changed', this.refresh)
   }
 }
 </script>

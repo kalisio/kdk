@@ -1,14 +1,13 @@
 <template>
   <div class="column">
     <!-- Non-grouped fields first -->
-    <template v-for="field in fields">
+    <template v-for="field in fields" :key="field.name">
       <slot :name="'before-' + field.name"/>
       <slot :name="field.name">
         <component
           v-if="!field.group"
-          :key="field.name"
-          :is="field.componentKey"
-          :ref="field.name"
+          :ref="setupField"
+          :is="field.component"
           :required="field.required"
           :properties="field"
           @field-changed="onFieldChanged"
@@ -17,8 +16,8 @@
       <slot :name="'after-' + field.name"/>
     </template>
     <!-- Grouped fields then -->
-    <template v-for="group in groups">
-      <q-expansion-item :key="group" icon="las la-file-alt" :group="group" :label="$t(group)">
+    <template v-for="group in groups" :key="group">
+      <q-expansion-item icon="las la-file-alt" :group="group" :label="$t(group)">
         <q-card>
           <q-card-section>
             <template v-for="field in fields">
@@ -26,8 +25,7 @@
               <slot v-if="field.group === group" :name="field.name">
                 <component
                   :key="field.name"
-                  :is="field.componentKey"
-                  :ref="field.name"
+                  :is="field.component"
                   :required="field.required"
                   :properties="field"
                   @field-changed="onFieldChanged" />
@@ -46,8 +44,8 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import Ajv from 'ajv'
 import AjvLocalize from 'ajv-i18n'
-import mixins from '../../mixins'
 import { getLocale } from '../../utils'
+import { defineAsyncComponent } from 'vue'
 
 // Create the AJV instance
 const ajv = new Ajv({
@@ -60,9 +58,6 @@ ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
 
 export default {
   name: 'k-form',
-  mixins: [
-    mixins.refsResolver()
-  ],
   props: {
     schema: {
       type: Object,
@@ -76,12 +71,32 @@ export default {
   data () {
     return {
       fields: [],
-      groups: []
+      groups: [],
+      isReady: false
     }
   },
   methods: {
-    getField (field) {
-      return this.$refs[field][0]
+    getField (name) {
+      const field = _.find(this.fields, { name })
+      if (field) return field
+      logger.error(`Cannot find field ${name}`)
+    },
+    setupField (reference) {
+      if (reference) {
+        const name = reference.properties.name
+        const field = this.getField(name)
+        // Assign the reference
+        field.reference = reference
+        // clear this field
+        if (this.clearOnCreate) field.reference.clear()
+        // Check whether the form is ready
+        this.nbSetupFields++
+        if (this.nbSetupFields === this.nbExpectedFields) {
+          logger.debug('Form', this.schema.$id, 'is ready')
+          this.isReady = true
+          this.$emit('form-ready', this)
+        }
+      }
     },
     onFieldChanged (field, value) {
       this.$emit('field-changed', field, value)
@@ -95,12 +110,12 @@ export default {
         const error = this.hasFieldError(field)
         if (error) {
           // Invalidate the field
-          this.getField(field).invalidate(error.message)
+          this.getField(field).reference.invalidate(error.message)
           return
         }
       }
       // Validate the field
-      this.getField(field).validate()
+      this.getField(field).reference.validate()
     },
     hasFieldError (field) {
       for (let i = 0; i < this.validator.errors.length; i++) {
@@ -120,8 +135,9 @@ export default {
       // Clear the fields states
       this.fields = []
       this.groups = []
+      this.ready = false
       this.nbExpectedFields = Object.keys(this.schema.properties).length
-      this.nbReadyFields = 0
+      this.nbSetupFields = 0
       // Build the fields
       // 1- assign a name corresponding to the key to enable a binding between properties and fields
       // 2- assign a component key corresponding to the component path
@@ -137,15 +153,11 @@ export default {
         this.fields.push(field)
         if (field.group && !this.groups.includes(field.group)) this.groups.push(field.group)
         // 3- load the component if not previously loaded
-        if (!this.$options.components[componentKey]) {
-          this.$options.components[componentKey] = this.$load(field.field.component)
-        }
+        field.component = defineAsyncComponent(this.$load(field.field.component))
+        field.reference = null // will be set once te field is rendered through the setupField method
         // 4- Assign whether the field is required or not
         field.required = _.includes(this.schema.required, property)
       })
-      // Set the refs to be resolved
-      this.setRefs(this.fields.map(field => field.name))
-      return this.loadRefs()
     },
     async build () {
       // Since schema is injected in form we need to make sure Vue.js has processed props
@@ -163,33 +175,31 @@ export default {
       return this.buildFields()
     },
     fill (values) {
+      if (!this.isReady) throw new Error('Cannot fill the form while not ready')
       logger.debug('Filling form', this.schema.$id, values)
-      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot fill the form while not ready')
       this.fields.forEach(field => {
         if (_.has(values, field.name)) {
-          this.getField(field.name).fill(_.get(values, field.name), values)
+          this.getField(field.name).reference.fill(_.get(values, field.name), values)
         } else {
           // The field has no value, then assign a default one
-          this.getField(field.name).clear()
+          this.getField(field.name).reference.clear()
         }
       })
     },
     values () {
       const values = {}
       _.forEach(this.fields, field => {
-        if (!this.getField(field.name).isEmpty()) {
-          Object.assign(values, { [field.name]: this.getField(field.name).value() })
-        }
+        if (!field.reference.isEmpty()) values[field.name] = field.reference.value()
       })
       return values
     },
     clear () {
+      if (!this.isReady) throw new Error('Cannot clear the form while not ready')
       logger.debug('Clearing form', this.schema.$id)
-      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot clear the form while not ready')
-      this.fields.forEach(field => this.getField(field.name).clear())
+      _.forEach(this.fields, field => field.reference.clear())
     },
     validate () {
-      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot validate the form while not ready')
+       if (!this.isReady)  throw new Error('Cannot validate the form while not ready')
       logger.debug('Validating form', this.schema.$id)
       const result = {
         isValid: false,
@@ -202,31 +212,29 @@ export default {
         if (AjvLocalize[locale]) {
           AjvLocalize[locale](this.validator.errors)
         }
-        this.fields.forEach(field => {
+        _.forEach(this.fields, field => {
           const error = this.hasFieldError(field.name)
           if (error) {
-            this.getField(field.name).invalidate(error.message)
+            this.field.reference.invalidate(error.message)
           } else {
-            this.getField(field.name).validate()
+            this.field.reference.validate()
           }
         })
         return result
       }
-      this.fields.forEach(field => {
-        this.getField(field.name).validate()
-      })
+      _.forEach(this.fields, field => field.reference.validate())
       result.isValid = true
       return result
     },
     async apply (object) {
-      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot apply the form while not ready')
+       if (!this.isReady) throw new Error('Cannot apply the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
         await this.getField(field.name).apply(object, field.name)
       }
     },
     async submitted (object) {
-      if (!this.loadRefs().isFulfilled()) throw new Error('Cannot run submitted on the form while not ready')
+       if (!this.isReady) throw new Error('Cannot run submitted on the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
         await this.getField(field.name).submitted(object, field.name)
@@ -243,8 +251,6 @@ export default {
     if (this.schema) {
       logger.debug('Initializing form', this.schema.$id)
       await this.build()
-      if (this.clearOnCreate) this.clear()
-      this.$emit('form-ready', this)
     }
   }
 }

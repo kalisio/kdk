@@ -7,8 +7,8 @@
       </div>
     </div>
     <div v-if="items.length > 0" class="row">
-      <template v-for="item in items">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" :key="item.uuid">
+      <template v-for="item in items" :key="item.uuid">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
           <k-device-card class="q-pa-sm" :id="item.uuid" :item="item" v-bind="renderer" />
         </div>
       </template>
@@ -23,13 +23,15 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseCollection } from '../../mixins'
+import KDeviceCard from './KDeviceCard.vue'
 
 export default {
   name: 'k-account-devices',
-  mixins: [
-    mixins.baseCollection
-  ],
+  components: {
+    KDeviceCard
+  },
+  mixins: [ baseCollection ],
   props: {
     renderer: {
       type: Object,
@@ -37,8 +39,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-device-card'] = this.$load('account/KDeviceCard')
     // Refresh collection method is added dynamically due to throttle, not used here
     this.refreshCollection = () => {
       this.items = this.$store.get('user.devices', [])
@@ -47,10 +47,10 @@ export default {
     }
     this.refreshCollection()
     // Whenever the user is updated, update collection as well
-    this.$events.$on('user-changed', this.refreshCollection)
+    this.$events.on('user-changed', this.refreshCollection)
   },
   beforeDestroy () {
-    this.$events.$off('user-changed', this.refreshCollection)
+    this.$events.off('user-changed', this.refreshCollection)
   }
 }
 </script>

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import LocalSettingsService from './local-settings.service'
+import LocalSettingsService from './local-settings.service.js'
 import config from 'config'
 
 export { LocalSettingsService }

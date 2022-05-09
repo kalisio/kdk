@@ -1,4 +1,4 @@
-const accountMixin = {
+export const account = {
   methods: {
     resendVerifySignup (email) {
       return this.accountService.create({
@@ -56,4 +56,3 @@ const accountMixin = {
   }
 }
 
-export default accountMixin

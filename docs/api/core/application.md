@@ -203,9 +203,9 @@ import { Events } from 'quasar'
 
 // Register callback on event
 const myCallback = (object) => { ... }
-Events.$on('myEvent', myCallback)
+Events.on('myEvent', myCallback)
 // Unregister it
-Events.$off('myEvent', myCallback)
+Events.off('myEvent', myCallback)
 ```
 
 > The event bus is notably used to be aware of state changes in the global store (see hereafter)
@@ -224,8 +224,8 @@ Store.set('myGlobal', { ... }) // Set a root object
 Store.patch('myGlobal', { property: value }) // Set a specific group of properties
 Store.set('myGlobal.property', value) // Set a specific property path
 Store.get('myGlobal.property', defaultValue) // defaultValue is returned if path is not found
-Events.$on('myGlobal-changed', myCallback) // When updating a root object
-Events.$on('myGlobal-property-changed', myCallback) // When updating a specific property path
+Events.on('myGlobal-changed', myCallback) // When updating a root object
+Events.on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
 
 ### Theme
@@ -339,7 +339,7 @@ import { BadRequest } from '@feathersjs/errors'
 That way you can generate client-side translation with a generic error handler like in our [application template](https://github.com/kalisio/kApp/blob/master/src/App.vue):
 
 ```js
-Events.$on('error', error => {
+Events.on('error', error => {
   // Translate the message if a translation key exists
   const translation = _.get(error, 'data.translation')
   if (translation) {

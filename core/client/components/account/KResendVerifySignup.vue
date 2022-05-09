@@ -27,13 +27,11 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { account } from '../../mixins'
 
 export default {
   name: 'k-resend-verification-email',
-  mixins: [
-    mixins.account
-  ],
+  mixins: [ account ],
   data () {
     return {
       title: '',

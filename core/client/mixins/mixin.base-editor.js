@@ -1,7 +1,7 @@
 import logger from 'loglevel'
 import _ from 'lodash'
 
-export default function baseEditorMixin (formRefs) {
+export function baseEditor (formRefs) {
   return {
     props: {
       baseObject: {

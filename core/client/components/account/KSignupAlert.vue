@@ -33,11 +33,11 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { account } from '../../mixins'
 
 export default {
   name: 'k-signup-alert',
-  mixins: [mixins.account],
+  mixins: [ account ],
   props: {
     isVerified: {
       type: Boolean,

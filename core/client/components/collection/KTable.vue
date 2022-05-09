@@ -38,14 +38,14 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { QTable, QTd } from 'quasar'
-import mixins from '../../mixins'
+import { service, schemaProxy,baseCollection } from '../../mixins'
 
 export default {
   name: 'k-table',
   mixins: [
-    mixins.service,
-    mixins.schemaProxy,
-    mixins.baseCollection
+    service,
+    schemaProxy,
+    baseCollection
   ],
   components: {
     QTable,
@@ -177,7 +177,7 @@ export default {
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Whenever the user abilities are updated, update collection as well
-    this.$events.$on('user-abilities-changed', this.refreshCollection)
+    this.$events.on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')
     this.processSchema()
     this.refreshCollection()
@@ -186,7 +186,7 @@ export default {
     this.$on('collection-refreshed', this.onCollectionRefreshed)
   },
   beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.refreshCollection)
+    this.$events.off('user-abilities-changed', this.refreshCollection)
     this.$off('collection-refreshed', this.onCollectionRefreshed)
   }
 }

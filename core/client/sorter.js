@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { Events } from './events'
-import { Store } from './store'
+import { Events } from './events.js'
+import { Store } from './store.js'
 
 // Export singleton
 export const Sorter = {
@@ -8,7 +8,7 @@ export const Sorter = {
     // This object is used to sort collections
     Store.set('sorter', { field: 'name', order: '1', query: {} })
     // Make filter react to external changes to update the query
-    Events.$on('sorter-changed', () => this.updateSorterQuery())
+    Events.on('sorter-changed', () => this.updateSorterQuery())
   },
   get () {
     return Store.get('sorter')

@@ -5,15 +5,15 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseViewer, service, objectProxy, schemaProxy } from '../../mixins'
 
 export default {
   name: 'k-viewer',
   mixins: [
-    mixins.baseViewer,
-    mixins.service,
-    mixins.objectProxy,
-    mixins.schemaProxy
+    baseViewer,
+    service,
+    objectProxy,
+    schemaProxy
   ],
   created () {
     // Load the required components

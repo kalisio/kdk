@@ -221,11 +221,11 @@ export default {
   },
   mounted () {
     // Whenever restore settings are updated, update view as well
-    this.$events.$on('restore-view-changed', this.updateViewSettings)
-    this.$events.$on('restore-layers-changed', this.updateLayersSettings)
+    this.$events.on('restore-view-changed', this.updateViewSettings)
+    this.$events.on('restore-layers-changed', this.updateLayersSettings)
   },
   beforeDestroy () {
-    this.$events.$off('restore-view-changed', this.updateViewSettings)
-    this.$events.$off('restore-layers-changed', this.updateLayersSettings)
+    this.$events.off('restore-view-changed', this.updateViewSettings)
+    this.$events.off('restore-layers-changed', this.updateLayersSettings)
   }
 }

@@ -1,8 +1,8 @@
-import path from 'path'
-import i18next from 'i18next'
-import { Events } from './events'
-import { Loading } from 'quasar'
 import _ from 'lodash'
+import path from 'path-browserify'
+import i18next from 'i18next'
+import { Loading } from 'quasar'
+import { Events } from './events.js'
 
 // Export singleton
 export const Reader = {
@@ -27,7 +27,7 @@ export const Reader = {
           additionnalFiles.push({ reader: reader.mimeType, file })
         } else {
           const error = { message: i18next.t('errors.UNSUPPORTED_FILE_FORMAT', { file: file.name }) }
-          Events.$emit('error', error)
+          Events.emit('error', error)
         }
       }
     }
@@ -37,7 +37,7 @@ export const Reader = {
       if (group) group.files.push(additionnalFile.file)
       else {
         const error = { message: i18next.t('errors.UNSUPPORTED_FILE_FORMAT', { file: additionnalFile.name }) }
-        Events.$emit('error', error)
+        Events.emit('error', error)
       }
     })
     return acceptedFiles
@@ -51,7 +51,7 @@ export const Reader = {
       return content
     } catch (error) {
       Loading.hide()
-      Events.$emit('error', error)
+      Events.emit('error', error)
     }
   },
   getSupportedFormats () {

@@ -21,11 +21,8 @@
           class="full-width row justify-center"
           v-bind:class="{ 'q-gutter-y-xs': dense, 'q-gutter-y-sm': !dense }"
         >
-          <template v-for="item in items">
-            <div :key="item._id"
-              class="col-12"
-              v-bind:class="{ 'q-pr-md': dense, 'q-pr-lg': !dense }"
-            >
+          <template v-for="item in items" :key="item._id">
+            <div class="col-12" v-bind:class="{ 'q-pr-md': dense, 'q-pr-lg': !dense }">
               <component
                 :id="item._id"
                 :service="service"
@@ -66,9 +63,7 @@
 
 <script>
 import { KScrollArea, KAction, KStamp } from '../frame'
-import mixins from '../../mixins'
-
-const baseCollectionMixin = mixins.baseCollection
+import { baseCollection, service } from '../../mixins'
 
 export default {
   name: 'k-column',
@@ -78,8 +73,8 @@ export default {
     KStamp
   },
   mixins: [
-    mixins.service,
-    baseCollectionMixin
+    service,
+    baseCollection
   ],
   props: {
     label: {
@@ -162,7 +157,7 @@ export default {
     },
     resetCollection () {
       if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition('vertical', 0)
-      baseCollectionMixin.methods.resetCollection.call(this)
+      baseCollection.methods.resetCollection.call(this)
     }
   },
   created () {
@@ -172,11 +167,11 @@ export default {
     this.scrollOffset = 350
     this.scrollDuration = 250
     // Whenever the user abilities are updated, update collection as well
-    this.$events.$on('user-abilities-changed', this.resetCollection)
+    this.$events.on('user-abilities-changed', this.resetCollection)
     this.refreshCollection()
   },
   beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.resetCollection)
+    this.$events.off('user-abilities-changed', this.resetCollection)
   }
 }
 </script>

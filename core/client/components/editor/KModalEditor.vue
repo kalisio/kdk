@@ -13,7 +13,7 @@
 <script>
 import { KModal, KScrollArea } from '../frame'
 import { KForm } from '../form'
-import mixins from '../../mixins'
+import { baseModal, service, objectProxy, schemaProxy, baseEditor, refsResolver } from '../../mixins'
 
 export default {
   name: 'k-modal-editor',
@@ -23,12 +23,12 @@ export default {
     KForm
   },
   mixins: [
-    mixins.baseEditor(['form']),
-    mixins.refsResolver(['form']),
-    mixins.baseModal,
-    mixins.service,
-    mixins.objectProxy,
-    mixins.schemaProxy
+    baseEditor(['form']),
+    refsResolver(['form']),
+    baseModal,
+    service,
+    objectProxy,
+    schemaProxy
   ],
   computed: {
     buttons () {

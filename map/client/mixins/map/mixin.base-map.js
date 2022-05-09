@@ -482,12 +482,12 @@ export default {
     // Register support for WMS-T
     this.registerLeafletConstructor(this.createLeafletTimedWmsLayer)
     this.$on('zoomend', this.onMapZoomChanged)
-    this.$events.$on('time-current-time-changed', this.onCurrentMapTimeChanged)
+    this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   beforeDestroy () {
     this.clearLayers()
     this.$off('zoomend', this.onMapZoomChanged)
-    this.$events.$off('time-current-time-changed', this.onCurrentMapTimeChanged)
+    this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   destroyed () {
     if (this.map) this.map.remove()

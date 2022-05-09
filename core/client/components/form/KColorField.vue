@@ -31,14 +31,14 @@
 
 <script>
 import { QDialog, QColor } from 'quasar'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-datetime-field',
   components: {
     QDialog, QColor
   },
-  mixins: [mixins.baseField],
+  mixins: [ baseField ],
   data () {
     return {
       picker: false

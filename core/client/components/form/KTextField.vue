@@ -23,11 +23,11 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-text-field',
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   computed: {
     text () {
       if (_.startsWith(this.model, 'http://') || _.startsWith(this.model, 'https://')) {

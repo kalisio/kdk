@@ -1,9 +1,8 @@
 <template>
   <div>
     <div v-if="readOnly" :id="properties.name + '-field'">
-      <template v-for="(chip, index) in model">
+      <template v-for="(chip, index) in model" :key="chipValue(chip) + '-' + index">
         <q-chip
-          :key="chipValue(chip) + '-' + index"
           :icon="chipIcon(chip)"
           :color="chipColor(chip)"
           outline
@@ -24,8 +23,8 @@
       <!-- Content -->
       <template v-slot:default>
         <div class="row items-end">
-          <template v-for="(chip, index) in chips">
-            <div :key="chipValue(chip) + '-' + index" class="q-pb-sm">
+          <template v-for="(chip, index) in chips" :key="chipValue(chip) + '-' + index">
+            <div class="q-pb-sm">
               <q-chip
                 :id="'chip-' + index"
                 class="chip"
@@ -58,7 +57,7 @@
 <script>
 import _ from 'lodash'
 import { KIconChooser } from '../input'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 import { getIconName } from '../../utils'
 
 export default {
@@ -66,7 +65,7 @@ export default {
   components: {
     KIconChooser
   },
-  mixins: [mixins.baseField],
+  mixins: [ baseField ],
   computed: {
     inputActions () {
       const actions = []

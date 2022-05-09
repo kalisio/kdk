@@ -39,24 +39,20 @@
 </template>
 
 <script>
-import { QCheckbox } from 'quasar'
-import mixins from '../../mixins'
+import { baseItem } from '../../mixins'
+import { KPanel, KAvatar } from '../frame'
 
 export default {
   name: 'k-item',
   components: {
-    QCheckbox
+    KPanel,
+    KAvatar
   },
-  mixins: [mixins.baseItem],
+  mixins: [ baseItem ],
   data () {
     return {
       toggled: false
     }
-  },
-  created () {
-    // Loads the required components
-    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

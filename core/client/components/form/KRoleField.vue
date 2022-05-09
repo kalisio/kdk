@@ -30,7 +30,7 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 import { RoleNames } from '../../../common/permissions'
 import { QOptionGroup } from 'quasar'
 
@@ -39,7 +39,7 @@ export default {
   components: {
     QOptionGroup
   },
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   methods: {
     roles () {
       return this.roleNames ? _.map(this.roleNames, role => { return { label: this.$t(_.upperCase(role)), value: role } }) : []

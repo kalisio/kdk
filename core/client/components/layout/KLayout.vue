@@ -3,7 +3,7 @@
     <!--
       Header
      -->
-    <q-header v-if="header.content" v-model="isHeaderVisible" v-bind="config.header" bordered>
+    <q-header v-if="header.contents" v-model="isHeaderVisible" v-bind="config.header" bordered>
       <k-panel
         id="header"
         :content="header.content"
@@ -31,9 +31,13 @@
 
 <script>
 import _ from 'lodash'
+import KPanel from '../frame/KPanel.vue'
 
 export default {
   name: 'k-layout',
+  components: {
+    KPanel
+  },
   computed: {
     isHeaderVisible: {
       get: function () {
@@ -60,8 +64,6 @@ export default {
     }
   },
   created () {
-    // Load the required component
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Load the options from the configuration
     this.config = this.$config('layout')
     // Configure the header

@@ -7,9 +7,13 @@
 
 <script>
 import _ from 'lodash'
+import KOptionsChooser from '../input/KOptionsChooser.vue'
 
 export default {
   name: 'k-sorter',
+  components: {
+    KOptionsChooser
+  },
   props: {
     options: {
       type: Array,
@@ -29,8 +33,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-options-chooser'] = this.$load('input/KOptionsChooser')
     // Initialize the sorter
     let defaultOption = _.find(this.options, { default: true })
     if (!defaultOption) defaultOption = _.head(this.options) || {}

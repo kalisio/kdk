@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { getIconName, processIcon } from './utils'
+import { getIconName, processIcon } from './utils.js'
 
 // Export singleton
 export const Search = {

@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import { colors } from 'quasar'
+import { getCssVar } from 'quasar'
 
 export default {
   name: 'k-spot',
   props: {
     color: {
       type: String,
-      default: colors.getBrand('primary')
+      default: getCssVar('primary')
     },
     width: {
       type: String,

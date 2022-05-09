@@ -1,6 +1,6 @@
-import { createQuerablePromise } from '../utils'
+import { createQuerablePromise } from '../utils.js'
 
-export default function refsResolverMixin (refs) {
+export function refsResolver (refs) {
   return {
     methods: {
       setRefs (refs) {

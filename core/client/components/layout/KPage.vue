@@ -99,9 +99,19 @@
 
 <script>
 import _ from 'lodash'
+import { KContent, KPanel, KOpener } from '../frame'
+import KWindow from './KWindow.vue'
+import KFab from './KFab.vue'
 
 export default {
   name: 'k-page',
+  components: {
+    KContent,
+    KPanel,
+    KOpener,
+    KWindow,
+    KFab
+  },
   props: {
     padding: {
       type: Boolean,
@@ -252,14 +262,6 @@ export default {
         }
       }
     }
-  },
-  beforeCreate () {
-    // load the required components
-    this.$options.components['k-content'] = this.$load('frame/KContent')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-opener'] = this.$load('frame/KOpener')
-    this.$options.components['k-window'] = this.$load('layout/KWindow')
-    this.$options.components['k-fab'] = this.$load('layout/KFab')
   },
   created () {
     // Read top pane configuration

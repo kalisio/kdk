@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import { Dialog, exportFile } from 'quasar'
-import { Layout } from '../layout'
+import { Layout } from '../layout.js'
 
-export default {
+export const baseItem = {
   props: {
     contextId: {
       type: String,
@@ -150,9 +150,9 @@ export default {
     // Register the actions
     this.configureActions()
     // Whenever the user abilities are updated, update actions as well
-    this.$events.$on('user-abilities-changed', this.configureActions)
+    this.$events.on('user-abilities-changed', this.configureActions)
   },
   beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.configureActions)
+    this.$events.off('user-abilities-changed', this.configureActions)
   }
 }

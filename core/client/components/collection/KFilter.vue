@@ -14,9 +14,8 @@
       <template v-slot:before>
         <div class="row">
           <q-icon class="q-pl-xs" dense name="search" />
-          <template v-for="item in items">
+          <template v-for="item in items" :key="item.name">
             <q-chip
-              :key="item.name"
               square
               dense
               removable
@@ -42,9 +41,8 @@
       v-model="hasOptions"
     >
       <q-list style="min-width: 100px">
-        <template v-for="option in options">
+        <template v-for="option in options" :key="option.name">
           <q-item
-            :key="option.name"
             clickable
             @click="onItemSelected(option)"
             v-close-popup>

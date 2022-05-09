@@ -337,18 +337,20 @@
     "TEST_VERSION": "VERSION DE TEST",
     "KDK_POWERED": "Réalisé avec KDK (Kalisio's Development Kit)"
   },
-  "KLogin": {
-    "TITLE": "Connectez vous avec",
-    "OR_LABEL": "Ou",
+  "KErrorScreen": {
+    "TITLE": "Oups... page non trouvée",
+    "GO_HOME_LABEL": "Retourner à la page d'accueil"
+  },
+  "KLoginScreen": {
     "EMAIL_FIELD_LABEL": "$t(KScreen.EMAIL_FIELD_LABEL)",
     "PASSWORD_FIELD_LABEL": "Saisissez votre mot de passe",
-    "APPLY_BUTTON": "Se connecter",
-    "FORGOT_YOUR_PASSWORD_LINK": "Mot de passe oublié ?",
-    "DONT_HAVE_AN_ACCOUNT_LINK": "Vous n'avez pas de compte ?",
+    "LOGIN_LABEL": "Se connecter",
+    "FORGOT_YOUR_PASSWORD_LABEL": "Mot de passe oublié ?",
+    "DONT_HAVE_AN_ACCOUNT_LABEL": "Vous n'avez pas de compte ?",
     "LOGIN_ERROR": "Mauvais identifiants ou service indisponible, veuillez réessayer",
     "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
-  "KRegister": {
+  "KRegisterScreen": {
     "TITLE": "Enregistrez vous",
     "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
     "EMAIL_FIELD_LABEL": "$t(KScreen.EMAIL_FIELD_LABEL)",
@@ -357,19 +359,18 @@
     "ACCEPT_TERMS_LABEL": "J'accepte les conditions générales",
     "ACCEPT_TERMS_HELPER": "<a href='{{domain}}/#/terms' target='_blank'>conditions générales</a>",
     "ACCEPT_TERMS_ERROR_LABEL": "Vous devez accepter nos conditions générales pour vous enregistrer",
-    "APPLY_BUTTON": "S'enregistrer",
-    "ALREADY_HAVE_AN_ACCOUNT_LINK": "Déjà un compte ?",
-    "EMAIL_ALREADY_TAKEN": "Mail déjà pris !",
+    "REGISTER_LABEL": "S'enregistrer",
+    "ALREADY_HAVE_AN_ACCOUNT_LABEL": "Déjà un compte ?",
+    "EMAIL_ALREADY_TAKEN": "Mail déjà utilisé !",
     "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer",
     "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
-  "KChangeEndpoint": {
+  "KEndpointScreen": {
     "TITLE": "Changer l'adresse du serveur ?",
     "BASE_URL_FIELD_LABEL": "Saisissez l'adresse du serveur à utiliser",
-    "APPLY_BUTTON": "Appliquer",
-    "RESET_BUTTON": "Réinitialiser",
-    "LOGIN_LINK": "Se connecter ?",
-    "DONT_HAVE_AN_ACCOUNT_LINK": "Vous n'avez pas de compte ?"
+    "APPLY_LABEL": "Appliquer",
+    "RESET_LABEL": "Réinitialiser",
+    "LOG_IN_LABEL": "Se connecter ?"
   },
   "KLogout": {
     "TITLE": "Vous avez été déconnecté",

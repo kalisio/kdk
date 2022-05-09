@@ -6,9 +6,13 @@
 
 <script>
 import _ from 'lodash'
+import KContent from './KContent.vue'
 
 export default {
   name: 'k-page-sticky',
+  components: {
+    KContent
+  },
   props: {
     position: {
       type: String,
@@ -35,10 +39,6 @@ export default {
     hasContent () {
       return !_.isEmpty(this.content)
     }
-  },
-  created () {
-    // load the required components
-    this.$options.components['k-content'] = this.$load('frame/KContent')
   }
 }
 </script>

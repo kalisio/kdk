@@ -1,4 +1,4 @@
-const baseContextMixin = {
+export const baseContext = {
   props: {
     contextId: {
       type: String,
@@ -53,4 +53,3 @@ const baseContextMixin = {
   }
 }
 
-export default baseContextMixin

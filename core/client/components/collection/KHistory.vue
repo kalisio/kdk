@@ -27,7 +27,7 @@ import _ from 'lodash'
 import { Store, Time, Sorter } from '../..'
 import KColumn from './KColumn.vue'
 import KStamp from '../frame/KStamp.vue'
-import mixins from '../../mixins'
+import { service } from '../../mixins'
 
 export default {
   name: 'k-history',
@@ -35,7 +35,7 @@ export default {
     KColumn,
     KStamp
   },
-  mixins: [mixins.service],
+  mixins: [ service ],
   props: {
     renderer: {
       type: Object,

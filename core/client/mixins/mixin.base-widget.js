@@ -1,4 +1,4 @@
-const baseWidgetMixin = {
+export const baseWidget = {
   computed: {
     widgetStyle () {
       const widgetSize = this.window.size
@@ -33,5 +33,3 @@ const baseWidgetMixin = {
     }
   }
 }
-
-export default baseWidgetMixin

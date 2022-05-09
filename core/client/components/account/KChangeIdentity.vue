@@ -27,13 +27,13 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { authentication, account } from '../../mixins'
 
 export default {
   name: 'k-change-identity',
   mixins: [
-    mixins.authentication,
-    mixins.account
+    authentication,
+    account
   ],
   data () {
     return {
@@ -65,10 +65,10 @@ export default {
     // with a function that has previously been statically analyzed by the bundler (eg webpack)
     this.$options.components['k-screen'] = this.$load('frame/KScreen')
     // Check if logged in
-    this.$events.$on('user-changed', this.refreshUser)
+    this.$events.on('user-changed', this.refreshUser)
   },
   beforeDestroy () {
-    this.$events.$off('user-changed', this.refreshUser)
+    this.$events.off('user-changed', this.refreshUser)
   },
   async mounted () {
     this.title = this.$t('KChangeIdentity.VERIFICATION_TITLE')

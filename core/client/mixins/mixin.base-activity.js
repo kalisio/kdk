@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import { Layout } from '../layout'
+import { Layout } from '../layout.js'
 
-export default function (name) {
+export function baseActivity (name) {
   return {
     methods: {
       getAppName () {
@@ -242,10 +242,10 @@ export default function (name) {
       // Configure the activity
       this.configureActivity()
       // Whenever the user abilities are updated, update activity as well
-      this.$events.$on('user-abilities-changed', this.configureActivity)
+      this.$events.on('user-abilities-changed', this.configureActivity)
     },
     beforeDestroy () {
-      this.$events.$off('user-abilities-changed', this.configureActivity)
+      this.$events.off('user-abilities-changed', this.configureActivity)
       // Clear the activity
       this.clearActivity()
     }

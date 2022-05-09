@@ -43,8 +43,8 @@
         :context="$props"
         :dense=dense>
         <div v-if="hasGroups" class="row justify-start items-center">
-          <template v-for="(group, index) in groups">
-            <q-btn :id="(group.name + '-button') | kebabCase" :key="groupKey(group)" flat small round color="primary">
+          <template v-for="(group, index) in groups" :key="groupKey(group)">
+            <q-btn :id="(group.name + '-button') | kebabCase" flat small round color="primary">
               <q-avatar color="primary" text-color="white" size="2rem">{{ groupInitials(group) }}</q-avatar>
               <q-menu ref="popover">
                 <q-toolbar inverted color="grey-7">
@@ -81,7 +81,7 @@
 <script>
 import _ from 'lodash'
 import { Dialog } from 'quasar'
-import mixins from '../../mixins'
+import { baseItem } from '../../mixins'
 import { getInitials, processIcon, isEmailValid } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
@@ -96,7 +96,7 @@ export default {
     KPanel,
     KChipsPane
   },
-  mixins: [mixins.baseItem],
+  mixins: [ baseItem ],
   computed: {
     header () {
       const components = _.filter(this.itemActions, { scope: 'header' })

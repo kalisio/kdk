@@ -337,18 +337,20 @@
     "TEST_VERSION": "TEST VERSION",
     "KDK_POWERED": "Powered by KDK (Kalisio's Development Kit)"
   },
-  "KLogin": {
-    "TITLE": "Log in with",
-    "OR_LABEL": "Or",
+  "KErrorScreen": {
+    "TITLE": "Oups... page not found",
+    "GO_HOME_LABEL": "Go home page"
+  },
+  "KLoginScreen": {
     "EMAIL_FIELD_LABEL": "$t(KScreen.EMAIL_FIELD_LABEL)",
     "PASSWORD_FIELD_LABEL": "Enter your password",
-    "APPLY_BUTTON": "Log in",
-    "FORGOT_YOUR_PASSWORD_LINK": "Forgot your password ?",
-    "DONT_HAVE_AN_ACCOUNT_LINK": "Don't have an account ?",
+    "LOGIN_LABEL": "Log in",
+    "FORGOT_YOUR_PASSWORD_LABEL": "Forgot your password ?",
+    "DONT_HAVE_AN_ACCOUNT_LABEL": "Don't have an account ?",
     "LOGIN_ERROR": "Wrong credentials or service unavailable, please try again",
     "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
-  "KRegister": {
+  "KRegisterScreen": {
     "TITLE": "Register",
     "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
     "EMAIL_FIELD_LABEL": "$t(KScreen.EMAIL_FIELD_LABEL)",
@@ -357,19 +359,18 @@
     "ACCEPT_TERMS_LABEL": "I accept the terms and policies",
     "ACCEPT_TERMS_HELPER": "<a href='{{domain}}/#/terms' target='_blank'>terms and policies</a>",
     "ACCEPT_TERMS_ERROR_LABEL": "You must accept our terms and policies to register",
-    "APPLY_BUTTON": "Register",
+    "REGISTER_LABEL": "Register",
     "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?",
     "EMAIL_ALREADY_TAKEN": "Email already taken !",
     "REGISTER_ERROR": "Wrong input or service unavailable, please try again",
     "CONTEXTUAL_HELP": "$t(NEED_HELP)"
   },
-  "KChangeEndpoint": {
+  "KEndpointScreen": {
     "TITLE": "Change endpoint",
     "BASE_URL_FIELD_LABEL": "Enter the address of the server to be used",
-    "APPLY_BUTTON": "Apply",
-    "RESET_BUTTON": "Reset",
-    "LOGIN_LINK": "Log in ?",
-    "DONT_HAVE_AN_ACCOUNT_LINK": "Don't have an account ?"
+    "APPLY_LABEL": "Apply",
+    "RESET_LABEL": "Reset",
+    "LOG_IN_LABEL": "Log in ?"
   },
   "KLogout": {
     "TITLE": "You are now logged out",

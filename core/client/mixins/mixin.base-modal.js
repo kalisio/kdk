@@ -1,4 +1,4 @@
-export default {
+export const baseModal = {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.openModal()

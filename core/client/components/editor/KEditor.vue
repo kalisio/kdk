@@ -22,7 +22,7 @@
 
 <script>
 import { KForm } from '../form'
-import mixins from '../../mixins'
+import { service, objectProxy, schemaProxy, baseEditor, refsResolver } from '../../mixins'
 
 export default {
   name: 'k-editor',
@@ -30,11 +30,11 @@ export default {
     KForm
   },
   mixins: [
-    mixins.service,
-    mixins.objectProxy,
-    mixins.schemaProxy,
-    mixins.baseEditor(['form']),
-    mixins.refsResolver(['form'])
+    service,
+    objectProxy,
+    schemaProxy,
+    baseEditor(['form']),
+    refsResolver(['form'])
   ],
   methods: {
     onFieldChanged (field, value) {

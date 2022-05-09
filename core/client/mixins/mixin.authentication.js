@@ -1,6 +1,6 @@
 // import { Platform } from 'quasar'
 
-const authenticationMixin = {
+export const authentication = {
   methods: {
     async restoreUser (accessToken) {
       const payload = await this.$api.passport.verifyJWT(accessToken)
@@ -44,4 +44,3 @@ const authenticationMixin = {
   }
 }
 
-export default authenticationMixin

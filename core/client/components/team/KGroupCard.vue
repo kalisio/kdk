@@ -24,7 +24,7 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseItem } from '../../mixins'
 import { findMembersOfGroup, getRoleForGroup, getRoleForOrganisation, Roles, RoleNames } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
 import { KTextArea } from '../frame'
@@ -36,7 +36,7 @@ export default {
     KCardSection,
     KTextArea
   },
-  mixins: [mixins.baseItem],
+  mixins: [ baseItem ],
   data () {
     return {
       membersCount: 0,

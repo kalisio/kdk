@@ -47,7 +47,7 @@
 
 <script>
 import { KIconChooser } from '../input'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 import { getIconName } from '../../utils'
 import _ from 'lodash'
 
@@ -56,7 +56,7 @@ export default {
   components: {
     KIconChooser
   },
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   computed: {
     hasIcon () {
       return !this.isEmpty()

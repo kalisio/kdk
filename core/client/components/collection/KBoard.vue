@@ -1,12 +1,8 @@
 <template>
   <div class="fit row justify-between q-gutter-x-sm no-wrap">
     <div class="col-*" />
-    <template v-for="column in columns">
-      <div
-        :id="column.value"
-        :key="column.value"
-        :style="{ minWidth: `${column.width}px` }"
-      >
+    <template v-for="column in columns" :key="column.value">
+      <div :id="column.value" :style="{ minWidth: `${column.width}px` }">
         <k-column
           :label="column.label"
           :key="column.value"

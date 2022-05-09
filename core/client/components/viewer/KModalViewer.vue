@@ -14,7 +14,7 @@
 <script>
 import { KModal, KScrollArea } from '../frame'
 import { KView } from '../form'
-import mixins from '../../mixins'
+import { baseViewer, baseModal, service, objectProxy, schemaProxy } from '../../mixins'
 
 export default {
   name: 'k-modal-viewer',
@@ -24,11 +24,11 @@ export default {
     KView
   },
   mixins: [
-    mixins.baseViewer,
-    mixins.baseModal,
-    mixins.service,
-    mixins.objectProxy,
-    mixins.schemaProxy
+    baseViewer,
+    baseModal,
+    service,
+    objectProxy,
+    schemaProxy
   ],
   methods: {
     getButtons () {

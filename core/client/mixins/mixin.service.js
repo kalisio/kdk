@@ -1,4 +1,4 @@
-const serviceMixin = {
+export const service = {
   props: {
     contextId: {
       type: String,
@@ -21,4 +21,3 @@ const serviceMixin = {
   }
 }
 
-export default serviceMixin

@@ -1,4 +1,4 @@
-const versionMixin = {
+export const version = {
   data () {
     return {
       clientVersionName: '',
@@ -26,11 +26,10 @@ const versionMixin = {
   },
   created () {
     this.refreshVersionNames()
-    this.$events.$on('capabilities-api-changed', this.refreshVersionNames)
+    this.$events.on('capabilities-api-changed', this.refreshVersionNames)
   },
   beforeDestroy () {
-    this.$events.$off('capabilities-api-changed', this.refreshVersionNames)
+    this.$events.off('capabilities-api-changed', this.refreshVersionNames)
   }
 }
 
-export default versionMixin

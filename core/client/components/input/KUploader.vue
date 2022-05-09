@@ -1,5 +1,6 @@
 <template>
-  <drop-zone v-if="dropZoneOptions"
+  <span>TODDO replace dropzone</span>
+  <!--drop-zone v-if="dropZoneOptions"
     ref="dropZone"
     id="dropZone"
     @vdropzone-file-added="onFileAdded"
@@ -9,21 +10,19 @@
     @vdropzone-thumbnail="onThumbnailGenerated"
     @vdropzone-error="onError"
     :options="dropZoneOptions"
-    :destroyDropzone="false" />
+    :destroyDropzone="false" /-->
 </template>
 
 <script>
 import _ from 'lodash'
-import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-import 'mime-types-browser'
-import DropZone from 'vue2-dropzone'
-import mixins from '../../mixins'
+// import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+import mime from 'mime'
+// import DropZone from 'vue2-dropzone'
+import { refsResolver } from '../../mixins'
 
 export default {
   name: 'k-uploader',
-  mixins: [
-    mixins.refsResolver(['dropZone'])
-  ],
+  mixins: [ refsResolver(['dropZone']) ],
   components: {
     DropZone
   },

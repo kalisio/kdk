@@ -24,9 +24,13 @@
 
 <script>
 import _ from 'lodash'
+import KModalEditor from './KModalEditor.vue'
 
 export default {
   name: 'k-settings-editor',
+  components: {
+    KModalEditor
+  },
   data () {
     let mapping = this.$api.getService('settings').getSettingsMapping()
     // Keep only properties declared in application mapping from the default editor schema
@@ -44,10 +48,6 @@ export default {
     onSettingsEdited () {
       this.$refs.editor.closeModal()
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-modal-editor'] = this.$load('editor/KModalEditor')
   }
 }
 </script>

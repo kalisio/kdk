@@ -6,10 +6,9 @@
           Login providers
         -->
         <div v-if="canLogWithExternalProviders" class="row justify-around">
-          <template v-for="provider in providers">
+          <template v-for="provider in providers" :key="getProviderName(provider)">
             <q-btn :icon="getProviderIcon(provider)"
               :id="getProviderName(provider)"
-              :key="getProviderName(provider)"
               @click="onLogWith(provider)"
               :label="getProviderLabel(provider)">
             </q-btn>
@@ -37,7 +36,7 @@
 import { QBtn, Platform } from 'quasar'
 import { KScreen } from '../frame'
 import { KForm } from '../form'
-import mixins from '../../mixins'
+import { authentication, version } from '../../mixins'
 
 export default {
   name: 'k-login',
@@ -46,7 +45,10 @@ export default {
     KForm,
     KScreen
   },
-  mixins: [mixins.authentication, mixins.version],
+  mixins: [ 
+    authentication, 
+    version
+  ],
   data () {
     return {
       schema: {

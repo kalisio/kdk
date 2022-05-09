@@ -16,11 +16,21 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseActivity } from '../../mixins'
+import KPage from '../layout/KPage.vue'
+import KEditor from '../editor/KEditor.vue'
+import KAccountSecurity from './KAccountSecurity.vue'
+import KAccountDZ from './KAccountDZ.vue'
 
 export default {
   name: 'account-activity',
-  mixins: [mixins.baseActivity()],
+  components: {
+    KPage,
+    KEditor,
+    KAccountSecurity,
+    KAccountDZ
+  },
+  mixins: [ baseActivity() ],
   props: {
     page: {
       type: String,
@@ -43,13 +53,6 @@ export default {
     page: function (value) {
       this.setTopPaneMode(value)
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-page'] = this.$load('layout/KPage')
-    this.$options.components['k-editor'] = this.$load('editor/KEditor')
-    this.$options.components['k-account-security'] = this.$load('account/KAccountSecurity')
-    this.$options.components['k-account-dz'] = this.$load('account/KAccountDZ')
   }
 }
 </script>

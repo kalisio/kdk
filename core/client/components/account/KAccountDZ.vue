@@ -10,13 +10,15 @@
 
 <script>
 import { Dialog } from 'quasar'
-import mixins from '../../mixins'
+import { service } from '../../mixins'
+import KBlock from '../frame/KBlock.vue'
 
 export default {
   name: 'k-account-dz',
-  mixins: [
-    mixins.service
-  ],
+  components: {
+    KBlock
+  },
+  mixins: [ service ],
   data () {
     return {
       user: this.$store.get('user')
@@ -56,10 +58,6 @@ export default {
         }
       })
     }
-  },
-  created () {
-    // Load the components
-    this.$options.components['k-block'] = this.$load('frame/KBlock')
   }
 }
 </script>

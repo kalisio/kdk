@@ -2,7 +2,7 @@ import _ from 'lodash'
 import i18next from 'i18next'
 import * as math from 'mathjs'
 import config from 'config'
-import { Store } from './store'
+import { Store } from './store.js'
 
 // Default units organised by physical quantity
 // Each key is the internal mathjs "identifier" of the unit

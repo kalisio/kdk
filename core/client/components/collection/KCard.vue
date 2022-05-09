@@ -88,7 +88,7 @@
 import _ from 'lodash'
 import { KPanel, KAvatar, KTextArea, KAction } from '../frame'
 import KCardSection from './KCardSection.vue'
-import mixins from '../../mixins'
+import { baseItem } from '../../mixins'
 
 export default {
   name: 'k-card',
@@ -99,7 +99,7 @@ export default {
     KAction,
     KCardSection
   },
-  mixins: [mixins.baseItem],
+  mixins: [ baseItem ],
   props: {
     header: {
       type: [Object, Array],

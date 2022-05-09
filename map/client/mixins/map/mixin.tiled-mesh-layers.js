@@ -113,7 +113,7 @@ export default {
     this.$on('layer-hidden', this.onHideTiledMeshLayer)
     this.$on('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
     this.$on('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
-    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
+    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
   },
 
   beforeDestroy () {
@@ -122,6 +122,6 @@ export default {
     this.$off('layer-hidden', this.onHideTiledMeshLayer)
     this.$off('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
     this.$off('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
-    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
+    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
   }
 }

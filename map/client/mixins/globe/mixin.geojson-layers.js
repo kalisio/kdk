@@ -268,9 +268,9 @@ export default {
       Object.assign(Cesium.GeoJsonDataSource,
         this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.featureStyle'), 'update-in-place'))
     }
-    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
   },
   beforeDestroy () {
-    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }

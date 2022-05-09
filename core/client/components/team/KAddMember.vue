@@ -87,15 +87,15 @@
 <script>
 import _ from 'lodash'
 import { Dialog, exportFile } from 'quasar'
-import mixins from '../../mixins'
+import { baseModal, refsResolver } from '../../mixins'
 import { getLocale } from '../../utils'
 import { RoleNames } from '../../../common/permissions'
 
 export default {
   name: 'k-add-member',
   mixins: [
-    mixins.baseModal,
-    mixins.refsResolver(['form'])
+    baseModal,
+    refsResolver(['form'])
   ],
   props: {
     contextId: {

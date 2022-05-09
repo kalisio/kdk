@@ -16,14 +16,14 @@
 <script>
 import _ from 'lodash'
 import { Roles, getRoleForOrganisation } from '../../../common/permissions'
-import mixins from '../../mixins'
+import { baseModal, objectProxy, refsResolver } from '../../mixins'
 
 export default {
   name: 'k-join-group',
   mixins: [
-    mixins.baseModal,
-    mixins.objectProxy,
-    mixins.refsResolver(['form'])
+    baseModal,
+    objectProxy,
+    refsResolver(['form'])
   ],
   props: {
     contextId: {

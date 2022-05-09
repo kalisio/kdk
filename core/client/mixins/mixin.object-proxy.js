@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import { createQuerablePromise } from '../utils'
+import { createQuerablePromise } from '../utils.js'
 
-const objectProxyMixin = {
+export const objectProxy = {
   props: {
     objectId: {
       type: String,
@@ -64,4 +64,3 @@ const objectProxyMixin = {
   }
 }
 
-export default objectProxyMixin

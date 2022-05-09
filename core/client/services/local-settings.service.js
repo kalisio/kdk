@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import config from 'config'
-import { Store } from '../store'
-import { Events } from '../events'
+import { Store } from '../store.js'
+import { Events } from '../events.js'
 
 export default function (name, api, options) {
   const mapping = options.propertyMapping

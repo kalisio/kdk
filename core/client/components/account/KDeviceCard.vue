@@ -19,13 +19,15 @@
 <script>
 import _ from 'lodash'
 import { Dialog } from 'quasar'
-import mixins from '../../mixins'
+import { baseItem } from '../../mixins'
+import KCard from '../collection/KCard'
 
 export default {
   name: 'k-device-card',
-  mixins: [
-    mixins.baseItem
-  ],
+  components: {
+    KCard
+  },
+  mixins: [ baseItem ],
   computed: {
     platformIcon () {
       const platform = this.item.platform.toLowerCase()
@@ -69,10 +71,6 @@ export default {
         devicesService.remove(context.item.registrationId)
       })
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-card'] = this.$load('collection/KCard')
   }
 }
 </script>

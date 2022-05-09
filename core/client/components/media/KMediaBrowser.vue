@@ -12,8 +12,8 @@
     <!--
       Slides
       -->
-    <template v-for="(media) in medias">
-      <q-carousel-slide :name="media.name" :key="media._id" class="row justify-center items-center">
+    <template v-for="(media) in medias" :key="media._id">
+      <q-carousel-slide :name="media.name" class="row justify-center items-center">
         <k-image-viewer :ref="media._id" class="fit k-media-browser-slide" :source="media.uri" :interactive="media.isImage" @image-transformed="onImageTrasnformed" />
       </q-carousel-slide>
     </template>
@@ -37,15 +37,13 @@
 <script>
 import _ from 'lodash'
 import { QCarousel, QCarouselSlide, QCarouselControl } from 'quasar'
-import 'mime-types-browser'
+import mime from 'mime'
 import { downloadAsBlob } from '../../utils'
-import mixins from '../../mixins'
+import { refsResolver } from '../../mixins'
 
 export default {
   name: 'k-media-browser',
-  mixins: [
-    mixins.refsResolver(['carousel'])
-  ],
+  mixins: [ refsResolver(['carousel']) ],
   components: {
     QCarousel,
     QCarouselSlide,

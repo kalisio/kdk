@@ -28,11 +28,11 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseActivity } from '../../mixins'
 
 export default {
   name: 'tags-activity',
-  mixins: [mixins.baseActivity()],
+  mixins: [ baseActivity() ],
   props: {
     contextId: {
       type: String,

@@ -37,12 +37,12 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 import { Units } from '../../units'
 
 export default {
   name: 'k-unit-field',
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   computed: {
     options () {
       const units = Units.getUnits(_.get(this.properties, 'field.quantity'))

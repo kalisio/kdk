@@ -37,11 +37,11 @@
 
 <script>
 import { openURL, Platform } from 'quasar'
-import mixins from '../../mixins'
+import { version } from '../../mixins'
 
 export default {
   name: 'k-screen-footer',
-  mixins: [mixins.version],
+  mixins: [ version ],
   methods: {
     canChangeEndpoint () {
       return this.$config('flavor') === 'dev' ? true : Platform.is.cordova

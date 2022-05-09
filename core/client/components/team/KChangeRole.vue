@@ -13,14 +13,14 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseModal, objectProxy, refsResolver } from '../../mixins'
 
 export default {
   name: 'k-change-role',
   mixins: [
-    mixins.baseModal,
-    mixins.objectProxy,
-    mixins.refsResolver(['form'])
+    baseModal,
+    objectProxy,
+    refsResolver(['form'])
   ],
   props: {
     contextId: {

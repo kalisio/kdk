@@ -61,8 +61,8 @@
         </div>
         <br/>
         <div v-show="showSystemDetails">
-          <template v-for="(value, key) in systemDetails">
-            <div :key="key" class="row justify-center">
+          <template v-for="(value, key) in systemDetails" :key="key">
+            <div class="row justify-center">
               <cite><strong>{{ key }}</strong>: {{ value }}</cite>
             </div>
           </template>
@@ -79,11 +79,15 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { version } from '../../mixins'
+import KModal from '../frame/KModal'
 
 export default {
   name: 'k-about',
-  mixins: [mixins.version],
+  components: {
+    KModal
+  },
+  mixins: [ version ],
   data () {
     return {
       systemDetails: {},
@@ -103,8 +107,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
     // Configure this screen
     this.banner = this.$load(this.$config('screens.banner', 'kalisio-banner.png'), 'asset')
     Object.assign(this.systemDetails, this.$q.platform.is)

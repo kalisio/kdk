@@ -17,11 +17,15 @@ import { Chart, registerables } from 'chart.js'
 import ChartDataLabelsPlugin from 'chartjs-plugin-datalabels'
 import ChartAnnotationPlugin from 'chartjs-plugin-annotation'
 import ChartZoomPlugin from 'chartjs-plugin-zoom'
+import KStamp from '../frame/KStamp.vue'
 
 Chart.register(...registerables, ChartDataLabelsPlugin, ChartAnnotationPlugin, ChartZoomPlugin)
 
 export default {
   name: 'k-chart',
+  components: {
+    KStamp
+  },
   data () {
     return {
       hasData: false
@@ -88,10 +92,6 @@ export default {
         if (this.hasLegend && this.chart) this.chart.options.plugins.legend.display = true
       }
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   beforeDestroy () {
     // Clear the chart if any

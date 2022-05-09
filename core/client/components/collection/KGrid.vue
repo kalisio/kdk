@@ -1,7 +1,7 @@
 <template>
   <div v-if="items.length > 0" class="q-pa-sm row">
-    <template v-for="item in items">
-      <div :class="getItemClass()" :key="item._id">
+    <template v-for="item in items" :key="item._id">
+      <div :class="getItemClass()">
         <component
           :id="item._id"
           :service="service"
@@ -27,7 +27,7 @@
 
 <script>
 import KStamp from '../frame/KStamp.vue'
-import mixins from '../../mixins'
+import { service, baseCollection } from '../../mixins'
 
 export default {
   name: 'k-grid',
@@ -35,8 +35,8 @@ export default {
     KStamp
   },
   mixins: [
-    mixins.service,
-    mixins.baseCollection
+    service,
+    baseCollection
   ],
   props: {
     renderer: {
@@ -84,10 +84,10 @@ export default {
     // Refresh collection
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well
-    this.$events.$on('user-abilities-changed', this.refreshCollection)
+    this.$events.on('user-abilities-changed', this.refreshCollection)
   },
   beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.refreshCollection)
+    this.$events.off('user-abilities-changed', this.refreshCollection)
   }
 }
 </script>

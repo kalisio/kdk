@@ -27,7 +27,7 @@
 <script>
 import _ from 'lodash'
 import { QFile } from 'quasar'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 import { Reader } from '../../reader'
 
 export default {
@@ -35,7 +35,7 @@ export default {
   components: {
     QFile
   },
-  mixins: [mixins.baseField],
+  mixins: [ baseField ],
   data () {
     return {
       file: null

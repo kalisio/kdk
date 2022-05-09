@@ -399,9 +399,9 @@ export default {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
-    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
   },
   beforeDestroy () {
-    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }

@@ -16,7 +16,7 @@
 <script>
 import { QIcon } from 'quasar'
 import { KScreen } from '../frame'
-import mixins from '../../mixins'
+import { authentication } from '../../mixins'
 
 export default {
   name: 'k-logout',
@@ -24,7 +24,7 @@ export default {
     KScreen,
     QIcon
   },
-  mixins: [mixins.authentication],
+  mixins: [ authentication ],
   data () {
     return {
       appName: '',

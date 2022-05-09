@@ -1,13 +1,14 @@
 import _ from 'lodash'
-import { Events } from './events'
+import { Events } from './events.js'
+import { reactive } from 'vue'
 
 // Export singleton
-const Store = {
+const Store = reactive({
   set (path, value) {
     const previousValue = this.get(path)
     _.set(this, path, value)
     const eventName = _.kebabCase(`${path}-changed`)
-    Events.$emit(eventName, value, previousValue)
+    Events.emit(eventName, value, previousValue)
   },
   get (path, defaultValue) {
     return _.get(this, path, defaultValue)
@@ -23,11 +24,11 @@ const Store = {
   unset (path) {
     _.unset(this, path)
     const eventName = _.kebabCase(`${path}-changed`)
-    Events.$emit(eventName, undefined)
+    Events.emit(eventName, undefined)
   },
   has (path) {
     return _.has(this, path)
   }
-}
+})
 
 export { Store }

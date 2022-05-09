@@ -51,12 +51,12 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import mixins from '../../mixins'
+import { baseItem } from '../../mixins'
 import { Time } from '../..'
 
 export default {
   name: 'k-history-entry',
-  mixins: [mixins.baseItem],
+  mixins: [ baseItem ],
   props: {
     renderer: {
       type: Object,

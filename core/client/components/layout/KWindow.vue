@@ -14,8 +14,8 @@
       -->
     <div class="col">
       <q-tab-panels v-model="widget" animated>
-        <template v-for="(widget, index) in widgets">
-          <q-tab-panel :key="index" :name="widget.id" class="no-padding" style="overflow: hidden">
+        <template v-for="(widget, index) in widgets" :key="index">
+          <q-tab-panel :name="widget.id" class="no-padding" style="overflow: hidden">
             <component :is="widget.componentKey" :mode="mode" v-bind="widget.props" style="z-index: 1;" />
           </q-tab-panel>
         </template>>
@@ -34,11 +34,15 @@
 
 <script>
 import _ from 'lodash'
-import path from 'path'
+import path from 'path-browserify'
 import { Layout } from '../../layout'
+import KPanel from '../frame/KPanel.vue'
 
 export default {
   name: 'k-window',
+  components: {
+    KPanel
+  },
   computed: {
     widget: {
       get: function () {
@@ -191,10 +195,6 @@ export default {
         }
       }
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   created () {
     const geometry = window.localStorage.getItem(this.getGeometryKey())

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const baseFieldMixin = {
+export const baseField = {
   props: {
     values: {
       type: Object,
@@ -23,12 +23,12 @@ const baseFieldMixin = {
     label () {
       // Check if we have a translation key or directly the label content
       const label = _.get(this.properties.field, 'label', '')
-      return (this.$i18n.i18next.exists(label) ? this.$t(label) : label)
+      return (this.$te(label) ? this.$t(label) : label)
     },
     helper () {
       // Check if we have a translation key or directly the helper content
       const helper = _.get(this.properties.field, 'helper', '')
-      return (this.$i18n.i18next.exists(helper) ? this.$t(helper) : helper)
+      return (this.$te(helper) ? this.$t(helper) : helper)
     },
     hasError () {
       return !_.isEmpty(this.error)
@@ -39,7 +39,7 @@ const baseFieldMixin = {
       // If not use default validator error messages
       if (!error) error = this.error
       // Else check if we have a translation key or directly the error content
-      return (this.$i18n.i18next.exists(error) ? this.$t(error) : error)
+      return (this.$te(error) ? this.$t(error) : error)
     },
     disabled () {
       return _.get(this.properties.field, 'disabled', false)
@@ -108,4 +108,3 @@ const baseFieldMixin = {
   }
 }
 
-export default baseFieldMixin

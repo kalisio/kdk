@@ -1,5 +1,5 @@
 import logger from 'loglevel'
-import { Store } from './store'
+import { Store } from './store.js'
 
 // Guards that can be added to customize route guards
 let guards = []

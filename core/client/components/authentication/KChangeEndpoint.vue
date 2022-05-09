@@ -18,7 +18,7 @@
 import { QBtn } from 'quasar'
 import { KScreen } from '../frame'
 import { KForm } from '../form'
-import mixins from '../../mixins'
+import { refsResolver } from '../../mixins'
 
 export default {
   name: 'k-change-endpoint',
@@ -27,9 +27,7 @@ export default {
     KScreen,
     KForm
   },
-  mixins: [
-    mixins.refsResolver(['form'])
-  ],
+  mixins: [ refsResolver(['form']) ],
   data () {
     return {
       links: [],

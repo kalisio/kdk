@@ -243,9 +243,9 @@ export default {
     computedLabel () {
       // Check also for translation key or already translated message
       if (this.isToggled && _.has(this.toggle, 'label')) {
-        return (this.$i18n.i18next.exists(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
+        return (this.$te(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
       }
-      return (this.$i18n.i18next.exists(this.label) ? this.$t(this.label) : this.label)
+      return (this.$te(this.label) ? this.$t(this.label) : this.label)
     },
     computedIcon () {
       if (this.isToggled && _.has(this.toggle, 'icon')) return this.toggle.icon
@@ -258,9 +258,9 @@ export default {
     computedTooltip () {
       // Check also for translation key or already translated message
       if (this.isToggled && _.has(this.toggle, 'tooltip')) {
-        return (this.$i18n.i18next.exists(this.toggle.tooltip) ? this.$t(this.toggle.tooltip) : this.toggle.tooltip)
+        return (this.$te(this.toggle.tooltip) ? this.$t(this.toggle.tooltip) : this.toggle.tooltip)
       } else {
-        return (this.$i18n.i18next.exists(this.tooltip) ? this.$t(this.tooltip) : this.tooltip)
+        return (this.$te(this.tooltip) ? this.$t(this.tooltip) : this.tooltip)
       }
     },
     computedBadgeLabel () {

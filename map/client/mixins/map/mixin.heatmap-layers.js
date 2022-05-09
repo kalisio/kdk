@@ -98,10 +98,10 @@ export default {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletHeatmapLayer)
-    this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   },
   beforeDestroy () {
-    this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }
 

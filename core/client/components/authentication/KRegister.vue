@@ -16,7 +16,7 @@
 <script>
 import { KScreen } from '../frame'
 import { KForm } from '../form'
-import mixins from '../../mixins'
+import { authentication } from '../../mixins'
 import { getLocale } from '../../utils'
 
 export default {
@@ -25,7 +25,7 @@ export default {
     KForm,
     KScreen
   },
-  mixins: [mixins.authentication],
+  mixins: [ authentication ],
   data () {
     return {
       links: [],

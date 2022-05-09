@@ -30,9 +30,8 @@
       <!-- Content -->
       <template v-slot:default>
         <div class="full-width row">
-          <template class="col-12" v-for="file in files">
+          <template class="col-12" v-for="file in files" :key="file.name">
             <q-chip
-              :key="file.name"
               square
               dense
               color="primary"
@@ -58,7 +57,6 @@
 
 <script>
 import _ from 'lodash'
-import 'mime-types-browser'
 import { KUploader } from '../input'
 import mixins from '../../mixins'
 
@@ -67,7 +65,7 @@ export default {
   components: {
     KUploader
   },
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   data () {
     return {
       isUploaderVisible: false,

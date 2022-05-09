@@ -36,13 +36,11 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { account } from '../../mixins'
 
 export default {
   name: 'k-reset-password',
-  mixins: [
-    mixins.account
-  ],
+  mixins: [ account ],
   data () {
     return {
       title: '',

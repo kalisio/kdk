@@ -1,4 +1,4 @@
-const baseViewerMixin = {
+export const baseViewer = {
   computed: {
     viewerTitle () {
       // Retuns the schema title
@@ -28,4 +28,3 @@ const baseViewerMixin = {
   }
 }
 
-export default baseViewerMixin

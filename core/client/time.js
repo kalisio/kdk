@@ -1,9 +1,9 @@
 import _ from 'lodash'
-import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
+import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range.js'
 import config from 'config'
-import { Events } from './events'
-import { Store } from './store'
-import { getLocale } from './utils'
+import { Events } from './events.js'
+import { Store } from './store.js'
+import { getLocale } from './utils.js'
 
 // Export singleton
 export const Time = {
@@ -42,7 +42,7 @@ export const Time = {
     }))
     this.updateTimeRangeQuery()
     // Make filter react to external changes to update the query
-    Events.$on('time-range-changed', () => this.updateTimeRangeQuery())
+    Events.on('time-range-changed', () => this.updateTimeRangeQuery())
   },
   convertToMoment (datetime) {
     if (moment.isMoment(datetime)) {

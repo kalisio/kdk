@@ -11,7 +11,6 @@
       'k-opener-bottom': position === 'bottom',
       'k-opener-bottom-hovered': (position === 'bottom') && isHovered && isDesktop
     }"
-
     v-on="isDesktop ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
     v-touch-swipe.mouse="onSwipe"
     @click="onClick">
@@ -20,12 +19,11 @@
 </template>
 
 <script>
-import { colors } from 'quasar'
 
 export default {
   name: 'k-opener',
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: false
     },
@@ -35,28 +33,19 @@ export default {
       validator: (value) => {
         return ['left', 'right', 'top', 'bottom'].includes(value)
       }
-    },
-    color: {
-      type: String,
-      default: 'primary'
-    }
-  },
-  computed: {
-    computedStyle () {
-      return 'background-color:' + colors.getBrand(this.color)
     }
   },
   data () {
     return {
-      isOpened: this.value,
+      isOpened: this.modelValue,
       isDesktop: this.$q.platform.is.desktop,
       isHovered: false,
       icon: null
     }
   },
   watch: {
-    value: function (isOpened) {
-      this.isOpened = isOpened
+    modelValue (newValue, oldValue) {
+      this.isOpened = newValue
     }
   },
   methods: {
@@ -104,18 +93,18 @@ export default {
       }
     },
     trigger () {
-      this.$emit('input', !this.isOpened)
+      this.$emit('update:modelValue', !this.isOpened)
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .k-opener-left, .k-opener-right, .k-opener-top, .k-opener-bottom {
     opacity: 0.85;
     transition: 0.1s;
-    background-color: var(--q-color-primary);
-    border: 2px solid var(--q-color-secondary);
+    background-color: $primary;
+    border: 2px solid $secondary;
   }
   .k-opener-left, .k-opener-right {
     height: 110px;

@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { Events } from './events'
-import { Store } from './store'
+import { Events } from './events.js'
+import { Store } from './store.js'
 
 // Export singleton
 export const Filter = {
@@ -9,7 +9,7 @@ export const Filter = {
     // The filter then builds the corresponding query
     Store.set('filter', { field: 'name', pattern: '', items: [], query: {} })
     // Make filter react to external changes to update the query
-    Events.$on('filter-changed', () => this.updateFilterQuery(api))
+    Events.on('filter-changed', () => this.updateFilterQuery(api))
   },
   get () {
     return Store.get('filter')

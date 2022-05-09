@@ -180,9 +180,9 @@ export default {
       this.setTime(moment.utc())
       this.timer = setInterval(() => {
         this.time = moment.utc()
-        this.$events.$off('time-current-time-changed', this.onTimeChanged)
+        this.$events.off('time-current-time-changed', this.onTimeChanged)
         Time.setCurrentTime(this.time)
-        this.$events.$on('time-current-time-changed', this.onTimeChanged)
+        this.$events.on('time-current-time-changed', this.onTimeChanged)
       }, 1000 * this.timeSettings.interval)
     },
     stopTimeLoop () {
@@ -200,9 +200,9 @@ export default {
       }
       if (this.timer) this.stopTimeLoop()
       this.time = time.clone()
-      this.$events.$off('time-current-time-changed', this.onTimeChanged)
+      this.$events.off('time-current-time-changed', this.onTimeChanged)
       if (propagate) Time.setCurrentTime(moment.utc(time))
-      this.$events.$on('time-current-time-changed', this.onTimeChanged)
+      this.$events.on('time-current-time-changed', this.onTimeChanged)
     },
     onPreviousStepClicked () {
       let minutesToSubtract = this.step
@@ -267,12 +267,12 @@ export default {
     }
   },
   mounted () {
-    this.$events.$on('time-current-time-changed', this.onTimeChanged)
+    this.$events.on('time-current-time-changed', this.onTimeChanged)
     // Set the time
     this.setTime(Time.getCurrentTime(), false)
   },
   beforeDestroy () {
-    this.$events.$off('time-current-time-changed', this.onTimeChanged)
+    this.$events.off('time-current-time-changed', this.onTimeChanged)
   }
 }
 </script>

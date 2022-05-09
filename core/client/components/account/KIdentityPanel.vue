@@ -22,8 +22,14 @@
 </template>
 
 <script>
+import { KAction, KAvatar } from '../frame'
+
 export default {
   name: 'k-identity-panel',
+  components: {
+    KAction,
+    KAvatar
+  },
   data () {
     return {
       user: this.$store.get('user'),
@@ -37,15 +43,12 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
     // Initialize the component
     this.refresh()
-    this.$events.$on('user-changed', this.refresh)
+    this.$events.on('user-changed', this.refresh)
   },
   beforeDestroy () {
-    this.$events.$off('user-changed', this.refresh)
+    this.$events.off('user-changed', this.refresh)
   }
 }
 </script>

@@ -31,11 +31,11 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-password-field',
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   data () {
     return {
       isPassword: true

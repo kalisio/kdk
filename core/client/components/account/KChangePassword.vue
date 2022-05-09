@@ -34,13 +34,17 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { account } from '../../mixins'
+import KScreen from '../screen/KScreen.vue'
+import KForm from '../form/KForm.vue'
 
 export default {
   name: 'k-change-password',
-  mixins: [
-    mixins.account
-  ],
+  components: {
+    KScreen,
+    KForm
+  },
+  mixins: [ account ],
   data () {
     return {
       message: '',
@@ -117,9 +121,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-screen'] = this.$load('frame/KScreen')
-    this.$options.components['k-form'] = this.$load('form/KForm')
     // Components initialization
     this.message = this.$t('KChangePassword.MESSAGE')
   }

@@ -1,8 +1,7 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    <template v-for="(chip, index) in model">
+    <template v-for="(chip, index) in model" :key="chip.value + '-' + index">
       <q-chip
-        :key="chip.value + '-' + index"
         :icon="chip.icon.name"
         :color="chip.icon.color"
         outline
@@ -70,11 +69,11 @@
 import _ from 'lodash'
 import { Store } from '../../store'
 import { Search } from '../../search'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-tag-field',
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   data () {
     return {
       services: [{

@@ -1,10 +1,9 @@
 <template>
   <div>
-    <template v-for="component in components">
+    <template v-for="component in components" :key="component.uid">
       <component
         v-if="component.isVisible"
-        :key="component.uid"
-        :is="component.componentKey"
+        :is="component.instance"
         :context="context"
         v-bind="component.bind ? component.props : component"
         :renderer="component.renderer ? component.renderer: actionRenderer"
@@ -15,6 +14,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import _ from 'lodash'
 import { Layout } from '../../layout'
 
@@ -48,13 +48,10 @@ export default {
   computed: {
     components () {
       const components = Layout.getComponents(this.filteredContent, this.mode, this.context)
-      _.forEach(components, (component) => {
-        const { componentKey, componentName } = component
-        // Load the component if needed: do not load any Quasar component and avoid loading twice
-        if (!_.startsWith(componentKey, 'q-') && !this.$options.components[componentKey]) {
-          this.$options.components[componentKey] = this.$load(componentName)
-        }
-      })
+      for (let i = 0; i < components.length; ++i) {
+        const component = components[i]
+        if (!_.startsWith(component.componentKey, 'q-')) component.instance = defineAsyncComponent(this.$load(component.componentName))
+      }
       return components
     },
     filteredContent () {

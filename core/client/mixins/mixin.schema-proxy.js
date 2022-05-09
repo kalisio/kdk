@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import { createQuerablePromise } from '../utils'
-import { Events } from '../events'
+import { createQuerablePromise } from '../utils.js'
+import { Events } from '../events.js'
 
-const schemaProxyMixin = {
+export const schemaProxy = {
   props: {
     schemaJson: {
       type: String,
@@ -82,4 +82,3 @@ const schemaProxyMixin = {
   }
 }
 
-export default schemaProxyMixin

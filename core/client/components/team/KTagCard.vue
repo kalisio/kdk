@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseItem } from '../../mixins'
 import { KCard, KCardSection } from '../collection'
 
 export default {
@@ -32,7 +32,7 @@ export default {
     KCard,
     KCardSection
   },
-  mixins: [mixins.baseItem],
+  mixins: [ baseItem ],
   computed: {
     dense () {
       return this.$q.screen.lt.sm

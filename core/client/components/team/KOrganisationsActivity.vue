@@ -27,11 +27,11 @@
 
 <script>
 import _ from 'lodash'
-import mixins from '../../mixins'
+import { baseActivity } from '../../mixins'
 
 export default {
   name: 'organisations-activity',
-  mixins: [mixins.baseActivity()],
+  mixins: [ baseActivity() ],
   data () {
     return {
       sorter: this.$store.get('sorter'),

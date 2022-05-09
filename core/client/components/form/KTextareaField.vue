@@ -29,12 +29,12 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 import { QEditor } from 'quasar'
 
 export default {
   name: 'k-textarea-field',
-  mixins: [mixins.baseField],
+  mixins:[ baseField ],
   components: {
     QEditor
   },

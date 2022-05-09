@@ -1,3 +1,3 @@
-export * from './hooks.logger'
-export * from './hooks.events'
-export * from './hooks.users'
+export * from './hooks.logger.js'
+export * from './hooks.events.js'
+export * from './hooks.users.js'

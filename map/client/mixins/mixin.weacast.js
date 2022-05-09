@@ -352,14 +352,14 @@ export default {
     }
   },
   created () {
-    this.$events.$on('time-current-time-changed', this.onCurrentForecastTimeChanged)
+    this.$events.on('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$on('layer-shown', this.onWeacastShowLayer)
     this.$on('layer-hidden', this.onWeacastHideLayer)
   },
   mounted () {
   },
   beforeDestroy () {
-    this.$events.$off('time-current-time-changed', this.onCurrentForecastTimeChanged)
+    this.$events.off('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$off('layer-shown', this.onWeacastShowLayer)
     this.$off('layer-hidden', this.onWeacastHideLayer)
   }

@@ -2,10 +2,9 @@
   <div v-if="items.length > 0" class="row">
     <div class="col-12">
       <q-list highlight separator>
-        <template v-for="item in items">
+        <template v-for="item in items" :key="item._id">
           <component
             :id="item._id"
-            :key="item._id"
             :service="service"
             :item="item"
             :contextId="contextId"
@@ -32,13 +31,13 @@
 </template>
 
 <script>
-import mixins from '../../mixins'
+import { service, baseCollection } from '../../mixins'
 
 export default {
   name: 'k-list',
   mixins: [
-    mixins.service,
-    mixins.baseCollection
+    service,
+    baseCollection
   ],
   props: {
     renderer: {
@@ -88,10 +87,10 @@ export default {
     // Force the collection to be refreshed
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well
-    this.$events.$on('user-abilities-changed', this.refreshCollection)
+    this.$events.on('user-abilities-changed', this.refreshCollection)
   },
   beforeDestroy () {
-    this.$events.$off('user-abilities-changed', this.refreshCollection)
+    this.$events.off('user-abilities-changed', this.refreshCollection)
   }
 }
 </script>

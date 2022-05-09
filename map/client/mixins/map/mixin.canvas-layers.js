@@ -509,7 +509,6 @@ with(this.proxy) { ${d.code} }
     // the base context we'll make available in draw code
     this.canvasLayerDrawContext = Object.assign({
       proxy: this.canvasLayerDrawProxy,
-      // log: console.log,
       // Math constants
       Math: Math,
       // a few handy helpers for draw code

@@ -1,8 +1,8 @@
 import logger from 'loglevel'
-import { Store } from '../store'
-import { defineAbilities } from '../../common/permissions'
+import { Store } from '../store.js'
+import { defineAbilities } from '../../common/permissions.js'
 
-const authorisationMixin = {
+export const authorisation = {
   methods: {
     async updateAbilities () {
       const user = Store.get('user')
@@ -25,11 +25,9 @@ const authorisationMixin = {
       await this.updateAbilities()
     }
     // Whenever the user is updated, update abilities as well
-    this.$events.$on('user-changed', this.updateAbilities)
+    this.$events.on('user-changed', this.updateAbilities)
   },
   beforeDestroy () {
-    this.$events.$off('user-changed', this.updateAbilities)
+    this.$events.off('user-changed', this.updateAbilities)
   }
 }
-
-export default authorisationMixin
