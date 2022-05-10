@@ -194,7 +194,7 @@ export function mapIconFunction (iconName) {
     // we strip the "kdk:" part
     const name = iconName.substring(4)
     // Return the inlined icon
-    return { icon: 'img:icons/' + name }
+    return { icon: 'img:icons/kdk/' + name }
   }
 }
 
