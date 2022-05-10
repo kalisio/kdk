@@ -365,17 +365,16 @@
     "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer",
     "CONTEXTUAL_HELP": "@:NEED_HELP"
   },
+  "KLogoutScreen": {
+    "TITLE": "Vous avez été déconnecté",
+    "LOG_IN_AGAIN_LABEL": "Se reconnecter ?"
+  },  
   "KEndpointScreen": {
     "TITLE": "Changer l'adresse du serveur ?",
     "BASE_URL_FIELD_LABEL": "Saisissez l'adresse du serveur à utiliser",
     "APPLY_LABEL": "Appliquer",
     "RESET_LABEL": "Réinitialiser",
     "LOG_IN_LABEL": "Se connecter ?"
-  },
-  "KLogout": {
-    "TITLE": "Vous avez été déconnecté",
-    "SIGN_OFF_LABEL": "Merci d'utiliser",
-    "LOG_IN_AGAIN_LINK": "Se reconnecter ?"
   },
   "KIdentityPanel": {
     "MANAGE": "Gérer mon compte"

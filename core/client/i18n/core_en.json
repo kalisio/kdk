@@ -335,7 +335,7 @@
     "CHANGE_ENDPOINT_LINK": "Change endpoint",
     "DEVELOPMENT_VERSION": "DEVELOPMENT VERSION",
     "TEST_VERSION": "TEST VERSION",
-    "KDK_POWERED": "Powered by KDK (Kalisio's Development Kit"
+    "KDK_POWERED": "Powered by KDK (Kalisio's Development Kit)"
   },
   "KErrorScreen": {
     "MESSAGE": "Oups... page not found",
@@ -365,17 +365,16 @@
     "REGISTER_ERROR": "Wrong input or service unavailable, please try again",
     "CONTEXTUAL_HELP": "@:NEED_HELP"
   },
+  "KLogoutScreen": {
+    "TITLE": "You are now logged out",
+    "LOG_IN_AGAIN_LABEL": "Log in again ?"
+  },
   "KEndpointScreen": {
     "TITLE": "Change endpoint",
     "BASE_URL_FIELD_LABEL": "Enter the address of the server to be used",
     "APPLY_LABEL": "Apply",
     "RESET_LABEL": "Reset",
     "LOG_IN_LABEL": "Log in ?"
-  },
-  "KLogout": {
-    "TITLE": "You are now logged out",
-    "SIGN_OFF_LABEL": "Thank you for using",
-    "LOG_IN_AGAIN_LINK": "Log in again ?"
   },
   "KIdentityPanel": {
     "MANAGE": "Manage my account"
