@@ -12,6 +12,15 @@ export default {
     KScreen
   },
   mixins: [authentication],
+  data () {
+    return {
+      actions: []
+    }
+  },
+  created () {
+    // configure this screen
+    this.actions = this.$config('screens.logout.actions', this.actions)
+  },
   mounted () {
     this.logout()
   }
