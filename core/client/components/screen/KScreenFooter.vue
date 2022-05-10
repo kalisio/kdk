@@ -1,5 +1,25 @@
 <template>
-  <div class="q-pa-sm column justify-center q-gutter-xs">
+  <div class="q-pa-sm column justify-center q-gutter-sm">
+    <!--
+      Version
+    -->
+    <div class="row justify-center q-gutter-x-sm">
+      <q-badge 
+        v-if="clientVersionName" 
+        :label="$t('KScreen.CLIENT_VERSION') + clientVersionName"
+        color="primary"
+        align="middle"
+        outline
+      />
+      <div>-</div>
+      <q-badge 
+        v-if="apiVersionName"
+        :label="$t('KScreen.API_VERSION') + apiVersionName"
+        color="primary"
+        align="middle"
+        outline
+      />
+    </div>
     <!--
       Endpoint
     -->
@@ -10,13 +30,7 @@
         </a>
       </small>
     </div>
-    <!--
-    Version
-    -->
-    <div class="row justify-center">
-      <small v-if="clientVersionName"><cite>{{ $t('KScreen.CLIENT_VERSION') }}{{ clientVersionName }}</cite></small>
-      <small v-if="apiVersionName"><cite>&nbsp;-&nbsp;{{ $t('KScreen.API_VERSION') }}{{ apiVersionName }}</cite></small>
-    </div>
+    
     <!--
       KDK
     -->
