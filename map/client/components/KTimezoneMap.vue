@@ -7,7 +7,7 @@
 <script>
 import _ from 'lodash'
 import L from 'leaflet'
-import { colors } from 'quasar'
+import { getCssVar } from 'quasar'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as kMapMixins from '../mixins'
@@ -82,10 +82,10 @@ export default {
         this.convertFromSimpleStyleSpec({
           'marker-type': 'circleMarker',
           radius: isSelected ? 8 : 5,
-          'stroke-color': colors.getBrand('primary'),
+          'stroke-color': getCssVar('primary'),
           'stroke-opacity': isSelected ? 1 : 0,
           'fill-opacity': 0.5,
-          'fill-color': isSelected ? colors.getBrand('secondary') : colors.getBrand('primary')
+          'fill-color': isSelected ? getCssVar('secondary') : getCssVar('primary')
         })
       )
     },

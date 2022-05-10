@@ -131,8 +131,8 @@ export default {
                   datasets: [{
                     data: heights,
                     fill: true,
-                    borderColor: colors.getBrand('primary'),
-                    backgroundColor: colors.getBrand('accent'),
+                    borderColor: getCssVar('primary'),
+                    backgroundColor: getCssVar('accent'),
                     pointRadius: 3
                   }]
                 },

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
-import { colors } from 'quasar'
+import { getCssVar } from 'quasar'
 import { kml } from '@tmcw/togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
@@ -287,7 +287,7 @@ export default {
       if (position) {
         this.center(position.longitude, position.latitude)
         const pinBuilder = new Cesium.PinBuilder()
-        const canvas = await pinBuilder.fromMakiIconId('marker', Cesium.Color.fromCssColorString(colors.getBrand('primary')), 48)
+        const canvas = await pinBuilder.fromMakiIconId('marker', Cesium.Color.fromCssColorString(getCssVar('primary')), 48)
         this.userLocationEntity = this.viewer.entities.add({
           name: 'user-location',
           position: Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude),

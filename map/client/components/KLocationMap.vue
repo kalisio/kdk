@@ -41,7 +41,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import centroid from '@turf/centroid'
-import { colors } from 'quasar'
+import { getCssVar } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import { Geolocation } from '../geolocation'
@@ -77,7 +77,7 @@ export default {
       default: () => {
         return {
           iconClasses: 'fas fa-circle 0.5rem',
-          markerColor: colors.getBrand('primary'),
+          markerColor: getCssVar('primary'),
           iconColor: '#FFFFFF',
           iconXOffset: 1,
           iconYOffset: 0

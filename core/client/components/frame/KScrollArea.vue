@@ -13,13 +13,10 @@
 </template>
 
 <script>
-import { QScrollArea, colors } from 'quasar'
+import { getCssVar } from 'quasar'
 
 export default {
   name: 'k-scroll-area',
-  components: {
-    QScrollArea
-  },
   props: {
     maxHeight: {
       type: Number,
@@ -37,13 +34,13 @@ export default {
       thumbStyle: {
         right: '4px',
         borderRadius: '5px',
-        backgroundColor: colors.getBrand('primary'),
+        backgroundColor: getCssVar('primary'),
         width: '6px'
       },
       barStyle: {
         right: '2px',
         borderRadius: '5px',
-        backgroundColor: colors.getBrand('accent'),
+        backgroundColor: getCssVar('accent'),
         width: '10px'
       }
     }

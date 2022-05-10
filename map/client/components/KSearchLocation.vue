@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { uid, colors } from 'quasar'
+import { uid, getCssVar } from 'quasar'
 
 const LocationLayerName = uid()
 
@@ -34,7 +34,7 @@ export default {
             interactive: false,
             popup: { template: '<%= properties.name %>' },
             'icon-classes': 'fas fa-circle',
-            'marker-color': colors.getBrand('primary'),
+            'marker-color': getCssVar('primary'),
             'icon-color': '#FFFFFF',
             'icon-x-offset': -2,
             'icon-y-offset': 0
@@ -45,7 +45,7 @@ export default {
             realtime: true,
             popup: { template: '<%= properties.name %>' },
             'marker-symbol': 'marker',
-            'marker-color': colors.getBrand('primary')
+            'marker-color': getCssVar('primary')
           }
         })
       }

@@ -2,7 +2,7 @@ import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import centroid from '@turf/centroid'
 import _ from 'lodash'
-import { colors } from 'quasar'
+import { getCssVar } from 'quasar'
 import { SelectionLayerName } from '../utils'
 
 export default {
@@ -84,9 +84,9 @@ export default {
           'marker-type': 'circleMarker',
           geodesic: !this.is2D(), // In 3D we use a circle on ground
           radius: this.is2D() ? 18 : 1000,
-          'stroke-color': colors.getBrand('secondary'),
+          'stroke-color': getCssVar('secondary'),
           'stroke-width': 3,
-          'fill-color': colors.getBrand('secondary'),
+          'fill-color': getCssVar('secondary'),
           'fill-opacity': 0.5
         }
       }, feature)
