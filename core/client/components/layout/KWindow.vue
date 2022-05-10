@@ -16,7 +16,7 @@
       <q-tab-panels v-model="widget" animated>
         <template v-for="(widget, index) in widgets" :key="index">
           <q-tab-panel :name="widget.id" class="no-padding" style="overflow: hidden">
-            <component :is="widget.componentKey" :mode="mode" v-bind="widget.props" style="z-index: 1;" />
+            <component :is="widget.component" :mode="mode" v-bind="widget.props" style="z-index: 1;" />
           </q-tab-panel>
         </template>>
       </q-tab-panels>
@@ -59,9 +59,7 @@ export default {
       _.forEach(widgets, (widget) => {
         if (!widget.key) {
           const componentName = _.get(widget, 'component')
-          const componentKey = _.kebabCase(path.basename(componentName))
-          widget.componentKey = componentKey
-          this.$options.components[componentKey] = this.$load(componentName)
+          widget.component = loadComponent(componentName)
         }
       })
       return widgets

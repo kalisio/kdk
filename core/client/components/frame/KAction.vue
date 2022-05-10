@@ -268,7 +268,7 @@ export default {
     computedBadgeLabel () {
       // Check also for translation key or already translated message
       if (this.badge && _.has(this.badge, 'label')) {
-        return (this.$i18n.i18next.exists(this.badge.label) ? this.$t(this.badge.label) : this.badge.label)
+        return (this.$te(this.badge.label) ? this.$t(this.badge.label) : this.badge.label)
       } else {
         // Take care that changing this to null or '' breaks the display in Quasar
         return undefined

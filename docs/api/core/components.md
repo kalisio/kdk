@@ -231,12 +231,6 @@ The following example shows how to edit the **profile** perspective of a user (s
 <k-editor service="users" :objectId="objectId" perspective="profile"/>
 ```
 
-where **k-editor** has been declared with the following code:
-
-```js
-this.$options.components['k-editor'] = this.$load('editor/KEditor')
-```
-
 The properties to declare a **k-editor** are the following:
 * **objectId**: the Id of the object to edit. If not defined, the editor is in the `create` mode
 * **perspective**: the perspective of the object to edit

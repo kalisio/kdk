@@ -5,10 +5,14 @@
 </template>
 
 <script>
+import KView from '../form/KView.vue'
 import { baseViewer, service, objectProxy, schemaProxy } from '../../mixins'
 
 export default {
   name: 'k-viewer',
+  components: {
+    KView
+  },
   mixins: [
     baseViewer,
     service,
@@ -16,8 +20,6 @@ export default {
     schemaProxy
   ],
   created () {
-    // Load the required components
-    this.$options.components['k-view'] = this.$load('form/KView')
     // Refresh the view
     this.refresh()
   }

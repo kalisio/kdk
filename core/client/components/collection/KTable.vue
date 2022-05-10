@@ -37,7 +37,7 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import { QTable, QTd } from 'quasar'
+import { KStamp, KPanel } from '../frame'
 import { service, schemaProxy, baseCollection } from '../../mixins'
 
 export default {
@@ -48,8 +48,8 @@ export default {
     baseCollection
   ],
   components: {
-    QTable,
-    QTd
+    KStamp,
+    KPanel
   },
   props: {
     itemActions: {
@@ -125,7 +125,7 @@ export default {
         this.columns.push({
           name: key,
           // Check if we have a translation key or directly the label content
-          label: (this.$i18n.i18next.exists(label) ? this.$t(label) : label),
+          label: (this.$te(label) ? this.$t(label) : label),
           // This will support GeoJson out-of-the-box
           field: row => _.get(row, key, _.get(row, `properties.${key}`)),
           align: 'center',
@@ -173,9 +173,6 @@ export default {
     }
   },
   async created () {
-    // Load the required components
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Whenever the user abilities are updated, update collection as well
     this.$events.on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')

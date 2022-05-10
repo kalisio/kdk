@@ -75,7 +75,7 @@ export default {
     return {
       showWelcome: false,
       slide: 'welcome',
-      banner: null,
+      banner: undefined,
       toggle: false
     }
   },
@@ -109,7 +109,7 @@ export default {
   },
   created () {
     // Load required assets
-    this.banner = this.$load(this.$config('screens.banner'), 'asset')
+    this.banner = this.$config('screens.banner')
   },
   mounted () {
     // Introduction is only for logged users, listen for user login/logout

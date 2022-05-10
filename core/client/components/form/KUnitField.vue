@@ -49,7 +49,7 @@ export default {
       return units.map(unit => {
         // Check if we have a translation key or directly the label content
         const label = _.get(unit, 'label', '')
-        return { value: unit.name, label: (this.$i18n.i18next.exists(label) ? this.$t(label) : label) }
+        return { value: unit.name, label: (this.$te(label) ? this.$t(label) : label) }
       })
     }
   }

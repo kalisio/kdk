@@ -29,14 +29,14 @@
 </template>
 
 <script>
+import KTextArea from '../frame/KTextArea.vue'
 import { baseField } from '../../mixins'
-import { QEditor } from 'quasar'
 
 export default {
   name: 'k-textarea-field',
   mixins: [baseField],
   components: {
-    QEditor
+    KTextArea
   },
   props: {
     editorToolbar: {
@@ -65,9 +65,6 @@ export default {
             ])
       }
     }
-  },
-  created () {
-    this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
   }
 }
 </script>

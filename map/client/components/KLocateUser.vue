@@ -10,8 +10,13 @@
 </template>
 
 <script>
+import KAction from '../../../core/client/components/frame/KAction.vue'
+
 export default {
   name: 'k-locate-user',
+  components: {
+    KAction
+  },
   inject: ['kActivity'],
   data () {
     return {
@@ -26,8 +31,6 @@ export default {
     }
   },
   async created () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
     // Update the geolocation
     if (await this.$geolocation.update()) this.isEnabled = true
   }

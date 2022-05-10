@@ -14,9 +14,13 @@ import _ from 'lodash'
 import { copyToClipboard } from 'quasar'
 import { Layout } from '../../../core/client/layout'
 import { formatUserCoordinates } from '../utils'
+import KAction from '../../../core/client/components/frame/KAction.vue'
 
 export default {
   name: 'k-position-indicator',
+  components: {
+    KAction
+  },
   inject: ['kActivity'],
   props: {
     color: {
@@ -50,10 +54,6 @@ export default {
         this.$toast({ type: 'error', message: this.$t('KPositionIndicator.CANNOT_COPY_POSITION') })
       }
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
   },
   async mounted () {
     // Update page content with target

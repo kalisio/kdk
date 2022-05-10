@@ -12,11 +12,17 @@
 </template>
 
 <script>
-import mixins from '../../../../core/client/mixins'
+import KModal from '../../../../core/client/components/frame/KModal.vue'
+import KForm from '../../../../core/client/components/form/KForm.vue'
+import { baseModal } from '../../../../core/client/mixins'
 
 export default {
   name: 'k-add-view',
-  mixins: [mixins.baseModal],
+  components: {
+    KModal,
+    KForm
+  },  
+  mixins: [baseModal],
   inject: ['kActivity'],
   data () {
     return {

@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     translatedText () {
-      return this.$i18n.i18next.exists(this.text) ? this.$t(this.text) : this.text
+      return this.$te(this.text) ? this.$t(this.text) : this.text
     },
     showIcon () {
       return !_.isEmpty(this.icon)

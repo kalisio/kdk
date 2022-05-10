@@ -36,8 +36,9 @@
 
 <script>
 import _ from 'lodash'
-import { QCarousel, QCarouselSlide, QCarouselControl } from 'quasar'
 import mime from 'mime'
+import KPanel from '../frame/KPanel.vue'
+import KImageViewer from '../media/KImageViewer.vue'
 import { downloadAsBlob } from '../../utils'
 import { refsResolver } from '../../mixins'
 
@@ -45,9 +46,8 @@ export default {
   name: 'k-media-browser',
   mixins: [refsResolver(['carousel'])],
   components: {
-    QCarousel,
-    QCarouselSlide,
-    QCarouselControl
+    KPanel,
+    KImageViewer
   },
   props: {
     options: {
@@ -134,7 +134,7 @@ export default {
       if (!media.uri) {
         // We only download images
         if (mimeType === 'application/pdf') {
-          Object.assign(media, { uri: this.$load('icons/pdf.png', 'asset') })
+          Object.assign(media, { uri: 'icons/kdk/pdf.png' })
         } else {
           const data = await this.storageService().get(media._id)
           Object.assign(media, { uri: data.uri })
@@ -164,11 +164,6 @@ export default {
     storageService () {
       return this.$api.getService(this.options.service || 'storage')
     }
-  },
-  beforeCreate () {
-    // laod the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-image-viewer'] = this.$load('media/KImageViewer')
   },
   async mounted () {
     this.$emit('browser-ready')

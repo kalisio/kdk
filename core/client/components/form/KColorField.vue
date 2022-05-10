@@ -30,13 +30,13 @@
 </template>
 
 <script>
-import { QDialog, QColor } from 'quasar'
+import KSpot from '../frame/KSpot.vue'
 import { baseField } from '../../mixins'
 
 export default {
   name: 'k-datetime-field',
   components: {
-    QDialog, QColor
+    KSpot
   },
   mixins: [baseField],
   data () {
@@ -48,9 +48,6 @@ export default {
     emptyModel () {
       return ''
     }
-  },
-  created () {
-    this.$options.components['k-spot'] = this.$load('frame/KSpot')
   }
 }
 </script>

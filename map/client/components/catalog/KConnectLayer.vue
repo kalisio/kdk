@@ -19,9 +19,16 @@
 import _ from 'lodash'
 import { buildUrl } from '../../../../core/common'
 import * as wmts from '../../../common/wmts-utils'
+import { KAction, KPanel } from '../../../../core/client/components/frame'
+import KForm from '../../../../core/client/components/form/KForm.vue'
 
 export default {
   name: 'k-connect-layer',
+  components: {
+    KAction,
+    KPanel,
+    KForm
+  },   
   inject: ['kActivity'],
   data () {
     return {
@@ -309,10 +316,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-form'] = this.$load('form/KForm')
     // Required data
     this.service = null
     this.layer = null

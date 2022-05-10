@@ -27,18 +27,18 @@
 
 <script>
 import _ from 'lodash'
-import { QSpinner } from 'quasar'
+import KScreen from '../screen/KScreen.vue'
 import { authentication, account } from '../../mixins'
 
 export default {
   name: 'k-verify-signup',
+  compontent: {
+    KScreen
+  },
   mixins: [
     authentication,
     account
   ],
-  components: {
-    QSpinner
-  },
   data () {
     return {
       title: '',
@@ -64,7 +64,6 @@ export default {
     }
   },
   created () {
-    this.$options.components['k-screen'] = this.$load('frame/KScreen')
     // Check if logged in
     this.$events.on('user-changed', this.refreshUser)
   },

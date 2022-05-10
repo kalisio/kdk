@@ -33,9 +33,13 @@
 <script>
 import _ from 'lodash'
 import { uid } from 'quasar'
+import KAction from '../frame/KAction.vue'
 
 export default {
   name: 'k-option-chooser',
+  components: {
+    KAction
+  },
   props: {
     label: {
       type: String,
@@ -105,8 +109,6 @@ export default {
     }
   },
   created () {
-    // load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
     // Set the default option if needed
     if (this.options.length > 0) {
       const defaultOption = _.head(_.filter(this.options, 'default'))

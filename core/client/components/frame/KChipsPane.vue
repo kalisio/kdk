@@ -22,10 +22,14 @@
 
 <script>
 import _ from 'lodash'
+import KPanel from '../frame/KPanel.vue'
 import { getIconName } from '../../utils'
 
 export default {
   name: 'k-chips-pane',
+  components: {
+    KPanel
+  },
   props: {
     chips: {
       type: Array,
@@ -63,9 +67,6 @@ export default {
     getIcon (chip) {
       return getIconName(chip)
     }
-  },
-  beforeCreate () {
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   mounted () {
     this.$nextTick(() => {

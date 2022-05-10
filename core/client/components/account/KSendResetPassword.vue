@@ -27,10 +27,16 @@
 
 <script>
 import _ from 'lodash'
+import KScreen from '../screen/KScreen.vue'
+import KFrom from '../form/KForm.vue'
 import { account } from '../../mixins'
 
 export default {
   name: 'k-send-reset-password',
+  components: {
+    KScreen,
+    KForm
+  },    
   mixins: [account],
   data () {
     return {
@@ -93,9 +99,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-screen'] = this.$load('frame/KScreen')
-    this.$options.components['k-form'] = this.$load('form/KForm')
     // Components initialization
     this.message = this.$t('KSendResetPassword.MESSAGE')
   }

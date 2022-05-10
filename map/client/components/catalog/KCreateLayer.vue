@@ -16,9 +16,16 @@
 
 <script>
 import _ from 'lodash'
+import { KAction, KPanel } from '../../../../core/client/components/frame'
+import KForm from '../../../../core/client/components/form/KForm.vue'
 
 export default {
   name: 'k-create-layer',
+  components: {
+    KAction,
+    KPanel,
+    KForm
+  },
   inject: ['kActivity'],
   data () {
     return {
@@ -160,12 +167,6 @@ export default {
       this.creating = false
       this.$emit('done')
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-form'] = this.$load('form/KForm')
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

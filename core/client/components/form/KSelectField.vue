@@ -70,7 +70,7 @@ export default {
       return options.map(option => {
         // Check if we have a translation key or directly the label content
         const label = _.get(option, 'label', '')
-        return Object.assign({}, option, { label: (this.$i18n.i18next.exists(label) ? this.$t(label) : label) })
+        return Object.assign({}, option, { label: (this.$te(label) ? this.$t(label) : label) })
       })
     }
   },

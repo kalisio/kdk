@@ -44,15 +44,17 @@
 </template>
 
 <script>
-import { QPagination } from 'quasar'
-import yaml from 'js-yaml'
 import _ from 'lodash'
+import yaml from 'js-yaml'
+import KModal from '../frame/KModal.vue'
+import KPalette from '../input/KPalette.vue'
 
 export default {
   name: 'k-icon-chooser',
   components: {
-    QPagination
-  },
+    KModal,
+    KPalette
+  }
   props: {
     iconSet: {
       type: String,
@@ -287,19 +289,13 @@ export default {
     }
   },
   async created () {
-    // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-palette'] = this.$load('input/KPalette')
-
     // Load the icons set
     let result
-
     if (this.iconSet === 'material-icons') {
       result = await this.loadMaterialIcons()
     } else {
       result = await this.loadFontAwesomeIcons()
     }
-
     this.allIcons = result.icons
     this.categories = result.categories
     this.categoryInfos = result.categoryInfos

@@ -22,7 +22,7 @@
           :id="item._id"
           :item="item"
           :contextId="contextId"
-          :is="renderer.component"
+          :is="rendererComponent"
           v-bind="renderer" />
       </div>
       <div class="col-xs-12 col-sm-3 col-md-2 q-pa-sm">
@@ -40,7 +40,7 @@
           :id="item._id"
           :item="item"
           :contextId="contextId"
-          :is="renderer.component"
+          :is="rendererComponent"
           v-bind="renderer" />
       </div>
       <div v-if="$q.screen.gt.sm" class="col-1" />
@@ -52,6 +52,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { baseItem } from '../../mixins'
+import { loadComponent } from '../../utils'
 import { Time } from '../..'
 
 export default {
@@ -65,11 +66,6 @@ export default {
     dateField: {
       type: String,
       default: 'createdAt'
-    }
-  },
-  data () {
-    return {
-      date: moment(_.get(this.item, this.dateField))
     }
   },
   computed: {
@@ -94,11 +90,15 @@ export default {
       if (this.monthSeparator) return true
       const previousDate = moment(_.get(this.item.previous, this.dateField))
       return this.date.date() !== previousDate.date()
+    },
+    rendererComponent () {
+      return loadComponent(this.renderer.component)
     }
   },
-  created () {
-    // Load the renderer component
-    this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
+  data () {
+    return {
+      date: moment(_.get(this.item, this.dateField))
+    }
   }
 }
 </script>

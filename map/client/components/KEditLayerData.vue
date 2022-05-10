@@ -3,8 +3,13 @@
 </template>
 
 <script>
+import KAction from '../../../core/client/components/frame/KAction.vue'
+
 export default {
   name: 'k-edit-layer-data',
+  components: {
+    KAction
+  },
   inject: ['kActivity'],
   props: {
     id: {
@@ -75,10 +80,6 @@ export default {
     isToggled () {
       return this.kActivity.isLayerEdited(this.context)
     }
-  },
-  async created () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
   }
 }
 </script>

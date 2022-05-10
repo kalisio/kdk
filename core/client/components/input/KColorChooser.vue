@@ -9,8 +9,15 @@
 </template>
 
 <script>
+import KModal from '../frame/KModal.vue'
+import Palette from '../input/KPalette.vue'
+
 export default {
   name: 'k-color-chooser',
+  components: {
+    KModal,
+    KPalette
+  },
   data () {
     return {
       selectedColor: 'dark'
@@ -50,11 +57,6 @@ export default {
     doClose (event) {
       this.$refs.modal.close()
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-palette'] = this.$load('input/KPalette')
   }
 }
 </script>

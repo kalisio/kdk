@@ -45,11 +45,15 @@
 
 <script>
 import _ from 'lodash'
+import KAction from '../../../core/client/components/frame/KAction.vue'
 import { Events, Time } from '../../../core/client'
 import { exportFile } from 'quasar'
 
 export default {
   name: 'k-capture-toolbar',
+  components: {
+    KAction
+  },
   inject: ['kActivity'],
   data () {
     return {
@@ -143,9 +147,6 @@ export default {
         Events.$emit('error', { message: this.$t('errors.NETWORK_ERROR') })
       }
     }
-  },
-  beforeCreate () {
-    this.$options.components['k-action'] = this.$load('frame/KAction')
   }
 }
 </script>

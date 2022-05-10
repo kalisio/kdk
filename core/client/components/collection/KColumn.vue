@@ -28,7 +28,7 @@
                 :service="service"
                 :item="item"
                 :contextId="contextId"
-                :is="renderer.component"
+                :is="rendererComponent"
                 v-bind="renderer"
                 @item-selected="onItemSelected" />
             </div>
@@ -64,6 +64,7 @@
 <script>
 import { KScrollArea, KAction, KStamp } from '../frame'
 import { baseCollection, service } from '../../mixins'
+import { loadComponent } from '../../utils'
 
 export default {
   name: 'k-column',
@@ -114,6 +115,11 @@ export default {
       default: false
     }
   },
+  computed: {
+    rendererComponent () {
+      return loadComponent(this.renderer.component)
+    }
+  },
   data () {
     return {
       scrollAction: false
@@ -161,8 +167,6 @@ export default {
     }
   },
   created () {
-    // Load the component
-    this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
     // Configuration
     this.scrollOffset = 350
     this.scrollDuration = 250

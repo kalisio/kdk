@@ -92,7 +92,7 @@ export default {
   },
   created () {
     // Configure this screen
-    this.banner = this.$load(this.$config('screens.banner', 'kalisio-banner.png'), 'asset')
+    this.banner = this.$config('screens.banner', 'kalisio-banner.png')
     this.extraLinks = this.$config('screens.extraLinks', [])
     // load the required components
     this.$options.components['k-screen-header'] = this.$load('frame/KScreenHeader')

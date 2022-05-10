@@ -8,7 +8,7 @@
             :service="service"
             :item="item"
             :contextId="contextId"
-            :is="renderer.component"
+            :is="rendererComponent"
             v-bind="renderer"
             @item-toggled="onItemToggled"
             @item-selected="onItemSelected" />
@@ -31,10 +31,15 @@
 </template>
 
 <script>
+import KStamp from '../frame/KStamp.vue'
 import { service, baseCollection } from '../../mixins'
+import { loadComponent } from '../../utils'
 
 export default {
   name: 'k-list',
+  components: {
+    KStamp
+  },
   mixins: [
     service,
     baseCollection
@@ -64,6 +69,11 @@ export default {
       type: String
     }
   },
+  computed: {
+    rendererComponent () {
+      return loadComponent(this.renderer.component)
+    }
+  },  
   watch: {
     baseQuery: function () {
       this.resetCollection()
@@ -81,9 +91,6 @@ export default {
     }
   },
   created () {
-    // Load the component
-    this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
     // Force the collection to be refreshed
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well

@@ -3,8 +3,10 @@
     <!--
       Non-grouped fields
      -->
-    <template v-for="field in fields">
-      <div v-if="!field.group" :key="field.name" class="row items-center"
+    <template v-for="field in fields" :key="field.name">
+      <div 
+        v-if="!field.group" 
+         class="row items-center"
         v-bind:class="{ 'k-view-row': separators }"
       >
         <!-- Field label -->
@@ -94,7 +96,7 @@ export default {
         // Adds the field to the list of fields to be rendered
         this.fields.push(field)
         if (field.group && !this.groups.includes(field.group)) this.groups.push(field.group)
-        // 3- load the component if not previously loaded
+        // 3- load the component 
         if (!this.$options.components[componentKey]) {
           this.$options.components[componentKey] = this.$load(field.field.component)
         }

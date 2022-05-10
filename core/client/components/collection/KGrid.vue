@@ -7,7 +7,7 @@
           :service="service"
           :item="item"
           :contextId="contextId"
-          :is="renderer.component"
+          :is="rendererComponent"
           v-bind="renderer"
           @item-selected="onItemSelected" />
       </div>
@@ -28,6 +28,7 @@
 <script>
 import KStamp from '../frame/KStamp.vue'
 import { service, baseCollection } from '../../mixins'
+import { loadComponent } from '../../utils'
 
 export default {
   name: 'k-grid',
@@ -59,6 +60,11 @@ export default {
       type: String
     }
   },
+  computed: {
+    rendererComponent () {
+      return loadComponent(this.renderer.component)
+    }
+  },
   watch: {
     baseQuery: function () {
       this.resetCollection()
@@ -79,8 +85,6 @@ export default {
     }
   },
   created () {
-    // Load the component
-    this.$options.components[this.renderer.component] = this.$load(this.renderer.component)
     // Refresh collection
     this.refreshCollection()
     // Whenever the user abilities are updated, update collection as well
