@@ -54,7 +54,7 @@ export default {
   components: {
     KModal,
     KPalette
-  }
+  },
   props: {
     iconSet: {
       type: String,
