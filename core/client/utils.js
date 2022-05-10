@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import moment from 'moment'
 import emailValidator from 'email-validator'
 import config from 'config'
@@ -218,8 +219,32 @@ export function getTimezoneLabel (timezone) {
   return `${timezone} (${offset})`
 }
 
+// Helper function to load a translation file
+// @i18n alias shoud be added in the quasar.config build section
+export async function loadTranslations (bundles, locale, fallbackLocale) {
+  const translations = {}
+  translations[locale] = {}
+  translations[fallbackLocale] = {}
+  try {
+    for (let i = 0; i < bundles.length; i++) {
+      const localeTranslations = await import(`@i18n/${bundles[i]}_${locale}.json`)
+      _.merge(translations[locale], localeTranslations.default)
+      const fallbackTranslation = await import(`@i18n/${bundles[i]}_${fallbackLocale}.json`)
+      _.merge(translations[fallbackLocale], fallbackTranslation.default)
+    }
+  } catch (error) {
+    logger.error(error)
+  }
+  return translations
+}
+
 // Helper function to load a dynamic component
 // https://vuejs.org/guide/components/async.html
+// @components alias shoud be added in the quasar.config build section
 export function loadComponent (component) {
-  return markRaw(defineAsyncComponent(() => import(`@components/${component}.vue`)))
+  try {
+    return markRaw(defineAsyncComponent(() => import(`@components/${component}.vue`)))
+  } catch (error) {
+    logger.error(error)
+  }
 }

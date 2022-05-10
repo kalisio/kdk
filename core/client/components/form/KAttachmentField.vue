@@ -58,7 +58,7 @@
 <script>
 import _ from 'lodash'
 import { KUploader } from '../input'
-import mixins from '../../mixins'
+import { baseField } from '../../mixins'
 
 export default {
   name: 'k-attachment-field',

@@ -1,10 +1,10 @@
 <template>
   <k-screen message="KRegisterScreen.MESSAGE" :actions="actions">
     <div class="column items-center q-gutter-y-md">
-      <k-form 
+      <k-form
         ref="form"
-        class="full-width" 
-        :schema="getFormSchema()" 
+        class="full-width"
+        :schema="getFormSchema()"
       />
       <k-action
         id="register-button"
@@ -31,7 +31,7 @@ export default {
     KForm,
     KAction
   },
-  mixins: [ authentication ],
+  mixins: [authentication],
   data () {
     return {
       actions: [],

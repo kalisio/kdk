@@ -18,14 +18,14 @@ import _ from 'lodash'
 // import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import mime from 'mime'
 // import DropZone from 'vue2-dropzone'
-import { refsResolver } from '../../mixins'
+// import { refsResolver } from '../../mixins'
 
 export default {
   name: 'k-uploader',
-  mixins: [refsResolver(['dropZone'])],
-  components: {
+  // mixins: [refsResolver(['dropZone'])],
+  /* components: {
     DropZone
-  },
+  }, */
   props: {
     resource: {
       type: String,

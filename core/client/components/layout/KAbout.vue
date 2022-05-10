@@ -114,11 +114,6 @@ export default {
     Object.assign(this.systemDetails, { touch: this.$q.platform.has.touch })
     Object.assign(this.systemDetails, { iframe: this.$q.platform.within.iframe })
     Object.assign(this.systemDetails, { agent: this.$q.platform.userAgent })
-    const context = {
-      appName: this.$config('appName'),
-      clientVersionName: this.clientVersionName,
-      apiVersionName: this.apiVersionName
-    }
     this.bugReport.address = 'support@kalisio.com'
     this.bugReport.subject = this.$t('KAbout.BUG_REPORT_SUBJECT', {
       appName: this.$config('appName'),

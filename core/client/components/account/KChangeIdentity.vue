@@ -27,11 +27,14 @@
 
 <script>
 import _ from 'lodash'
-import KScrenn from '../screen/KScreen.vue'
+import KScreen from '../screen/KScreen.vue'
 import { authentication, account } from '../../mixins'
 
 export default {
   name: 'k-change-identity',
+  components: {
+    KScreen
+  },
   mixins: [
     authentication,
     account
