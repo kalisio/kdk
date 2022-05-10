@@ -5,7 +5,7 @@
      -->
     <q-fab v-if="actions.length > 1"
       id="fab"
-      v-model="opened"
+      v-model="isOpened"
       :icon="icon"
       class="fixed k-fab"
       vertical-actions-align="right"
@@ -13,11 +13,11 @@
       color="primary"
       persistent>
       <!-- Render a grid menu if the number of actions is higher than the expandable limit -->
-      <q-menu v-if="actions.length > expandableLimit" v-model="opened" ref="menu" persistent fit anchor="top left" self="bottom right">
+      <q-menu v-if="actions.length > expandableLimit" v-model="isOpened" ref="menu" persistent fit anchor="top left" self="bottom right">
         <div class="q-pa-sm row" style="max-width: 50vw">
           <template v-for="action in actions" :key="action.uid">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
-              <k-action v-bind="action" renderer="item" @triggered="opened = false" />
+              <k-action v-bind="action" renderer="item" @triggered="isOpened = false" />
             </div>
           </template>
         </div>
@@ -59,7 +59,7 @@ export default {
   data () {
     return {
       fab: this.$store.get('fab'),
-      opened: false
+      isOpened: false
     }
   },
   computed: {

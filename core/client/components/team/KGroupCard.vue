@@ -27,14 +27,16 @@ import _ from 'lodash'
 import { baseItem } from '../../mixins'
 import { findMembersOfGroup, getRoleForGroup, getRoleForOrganisation, Roles, RoleNames } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
-import { KTextArea } from '../frame'
+import KTextArea from '../frame/KTextArea.vue'
+import Action from '../frame/KAction.vue'
 
 export default {
-  name: 'k-group-card',
+  name: 'k-group-card',  
   components: {
     KCard,
     KCardSection,
-    KTextArea
+    KTextArea,
+    KAction
   },
   mixins: [baseItem],
   data () {
@@ -95,10 +97,6 @@ export default {
       })
       this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
   },
   created () {
     // Compute the count of members belonging to group

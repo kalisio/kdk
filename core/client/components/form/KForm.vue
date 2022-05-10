@@ -6,7 +6,7 @@
       <slot :name="field.name">
         <component
           v-if="!field.group"
-          :ref="setupField"
+          :ref="onFieldReferenceCreated"
           :is="field.component"
           :required="field.required"
           :properties="field"
@@ -20,11 +20,11 @@
       <q-expansion-item icon="las la-file-alt" :group="group" :label="$t(group)">
         <q-card>
           <q-card-section>
-            <template v-for="field in fields">
+            <template v-for="field in fields" :key="field.name">
               <slot v-if="field.group === group" :name="'before-' + field.name"/>
               <slot v-if="field.group === group" :name="field.name">
                 <component
-                  :key="field.name"
+                  :ref="onFieldReferenceCreated"
                   :is="field.component"
                   :required="field.required"
                   :properties="field"
@@ -75,13 +75,21 @@ export default {
       isReady: false
     }
   },
+  watch: {
+    schema: {
+      immediate: true,
+      async handler (newValue) {
+        await this.refresh()
+      }
+    }
+  },
   methods: {
     getField (name) {
       const field = _.find(this.fields, { name })
       if (field) return field
       logger.error(`Cannot find field ${name}`)
     },
-    setupField (reference) {
+    onFieldReferenceCreated (reference) {
       if (reference) {
         const name = reference.properties.name
         const field = this.getField(name)
@@ -132,10 +140,7 @@ export default {
       return null
     },
     buildFields  () {
-      // Clear the fields states
-      this.fields = []
-      this.groups = []
-      this.ready = false
+      // Store build states
       this.nbExpectedFields = Object.keys(this.schema.properties).length
       this.nbSetupFields = 0
       // Build the fields
@@ -160,17 +165,14 @@ export default {
       })
     },
     async build () {
-      // Since schema is injected in form we need to make sure Vue.js has processed props
-      // This could be done externally but adding it here we ensure no one will forget it
-      await this.$nextTick()
       if (!this.schema) throw new Error('Cannot build the form without schema')
       logger.debug('Building form', this.schema.$id)
       // Test in cache first
-      this.validator = this.ajv.getSchema(this.schema.$id)
+      this.validator = ajv.getSchema(this.schema.$id)
       if (!this.validator) {
         // Otherwise add it
-        this.ajv.addSchema(this.schema, this.schema.$id)
-        this.validator = this.ajv.compile(this.schema)
+        ajv.addSchema(this.schema, this.schema.$id)
+        this.validator = ajv.compile(this.schema)
       }
       return this.buildFields()
     },
@@ -215,7 +217,6 @@ export default {
         _.forEach(this.fields, field => {
           const error = this.hasFieldError(field.name)
           if (error) {
-            console.log(this.field)
             field.reference.invalidate(error.message)
           } else {
             field.reference.validate()
@@ -231,27 +232,23 @@ export default {
       if (!this.isReady) throw new Error('Cannot apply the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
-        await this.getField(field.name).apply(object, field.name)
+        await field.reference.apply(object, field.name)
       }
     },
     async submitted (object) {
       if (!this.isReady) throw new Error('Cannot run submitted on the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
-        await this.getField(field.name).submitted(object, field.name)
+        await field.reference.submitted(object, field.name)
       }
-    }
-  },
-  async created () {
-    // Store the AJV instance
-    this.ajv = ajv
-    // If a schema is already registered automatially build the form
-    // otherwise the parent component would have to manually
-    // FIXME: cannot know when the form is built => should be done by the parent or need to emit an event
-    logger.debug('Creating form', this.schema ? this.schema.$id : 'without schema')
-    if (this.schema) {
-      logger.debug('Initializing form', this.schema.$id)
-      await this.build()
+    },
+    async refresh () {
+      // Clears the fomr states
+      this.groups = []
+      this.fields = []
+      this.isReady = false
+      // Build the new form if needed
+      if (this.schema) await this.build()
     }
   }
 }

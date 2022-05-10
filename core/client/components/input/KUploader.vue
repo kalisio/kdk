@@ -169,7 +169,7 @@ export default {
       const mimeType = mime.lookup(addedFile.name)
       if (mimeType === 'application/pdf') {
         // This is not an image, so Dropzone doesn't create a thumbnail.
-        this.dropZoneInstance().emit('thumbnail', addedFile, this.$load('icons/pdf.png', 'asset'))
+        // TODO : this.dropZoneInstance().emit('thumbnail', addedFile, 'icons/kdk/pdf.png')
       }
     },
     onFileUploaded (addedFile, response) {

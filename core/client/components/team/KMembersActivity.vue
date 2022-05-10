@@ -28,6 +28,9 @@
 
 <script>
 import _ from 'lodash'
+import KPage from '../layout/KPage.vue'
+import KGrid from '../collection/KGrid.vue'
+import KStamp from '../frame/KStamp.vue'
 import { baseActivity } from '../../mixins'
 import { getRoleForOrganisation } from '../../../common/permissions'
 
@@ -35,6 +38,11 @@ const activityMixin = baseActivity()
 
 export default {
   name: 'members-activity',
+  components: {
+    KPage,
+    KGrid,
+    KStamp
+  },  
   mixins: [activityMixin],
   provide () {
     return {
@@ -104,12 +112,6 @@ export default {
         if (role && !member) this.$refs.membersGrid.refreshCollection()
       }
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-page'] = this.$load('layout/KPage')
-    this.$options.components['k-grid'] = this.$load('collection/KGrid')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   beforeDestroy () {
     this.unsubscribeUsers()

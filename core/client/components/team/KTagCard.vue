@@ -25,12 +25,14 @@
 <script>
 import { baseItem } from '../../mixins'
 import { KCard, KCardSection } from '../collection'
+import KAction from '../frame/KAction.vue'
 
 export default {
   name: 'k-tag-card',
   components: {
     KCard,
-    KCardSection
+    KCardSection,
+    KAction
   },
   mixins: [baseItem],
   computed: {
@@ -49,10 +51,6 @@ export default {
       })
       this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
   }
 }
 </script>

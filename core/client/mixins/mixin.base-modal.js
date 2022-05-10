@@ -1,17 +1,9 @@
 export const baseModal = {
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.openModal()
-      // redirect to the parent route when closing
-      // see: https://github.com/vuejs/vue-router/issues/216
-      if (to.matched.length > 1) {
-        vm.$on(['closed'], () => vm.$router.push({
-          name: to.matched.slice(-2).shift().name,
-          params: to.params,
-          query: to.query
-        }))
-      }
-    })
+  props: {
+    routerMode: {
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {
@@ -27,6 +19,15 @@ export const baseModal = {
     },
     closeModal () {
       this.isModalOpened = false
+      if (this.routerMode) {
+        this.$router.push(this.previousRoute)
+      }
+    }
+  },
+  created () {
+    if (this.routerMode) {
+      this.previousRoute = this.$router.options.history.state.back
+      this.openModal()
     }
   }
 }

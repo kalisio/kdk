@@ -234,7 +234,7 @@ export default {
       try {
         const icons = []
 
-        const yamlCodes = yaml.safeLoad(text)
+        const yamlCodes = yaml.load(text)
         _.forOwn(yamlCodes, (value, key) => {
           this.addFontAwsomeIcons(icons, value, key)
         })
@@ -256,7 +256,7 @@ export default {
       const text = await response.text()
 
       try {
-        const yamlCodes = yaml.safeLoad(text)
+        const yamlCodes = yaml.load(text)
 
         return yamlCodes
       } catch (error) {

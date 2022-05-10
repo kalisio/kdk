@@ -4,8 +4,11 @@
       Form section
     -->
     <div>
-      <k-form :id="getSchemaId() + 'form'" :class="{ 'light-dimmed': applyInProgress }" ref="form" :schema="schema" @field-changed="onFieldChanged"/>
-      <q-spinner-cube color="primary" class="fixed-center" v-if="applyInProgress" size="4em"/>
+      <k-form 
+        :id="getSchemaId() + 'form'" 
+        ref="form"
+        :schema="schema" 
+        @field-changed="onFieldChanged"/>
     </div>
     <!--
       Buttons section
@@ -21,8 +24,8 @@
 </template>
 
 <script>
-import { KForm } from '../form'
-import { service, objectProxy, schemaProxy, baseEditor, refsResolver } from '../../mixins'
+import KForm from '../form/KForm.vue'
+import { service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
 
 export default {
   name: 'k-editor',
@@ -33,8 +36,7 @@ export default {
     service,
     objectProxy,
     schemaProxy,
-    baseEditor(['form']),
-    refsResolver(['form'])
+    baseEditor(['form'])
   ],
   methods: {
     onFieldChanged (field, value) {

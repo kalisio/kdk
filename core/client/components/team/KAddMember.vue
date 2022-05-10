@@ -90,9 +90,18 @@ import { Dialog, exportFile } from 'quasar'
 import { baseModal, refsResolver } from '../../mixins'
 import { getLocale } from '../../utils'
 import { RoleNames } from '../../../common/permissions'
+import KModal from '../frame/KModal.vue'
+import KForm from '../form/KForm.vue'
+import Action from '../frame/KAction.vue'
 
 export default {
   name: 'k-add-member',
+  emits: ['opened', 'closed'],
+  components: {
+    KModal,
+    KForm,
+    KAction
+  },
   mixins: [
     baseModal,
     refsResolver(['form'])
@@ -361,10 +370,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-form'] = this.$load('form/KForm')
-    this.$options.components['k-action'] = this.$load('frame/KAction')
     // Init the file contet
     this.fileContent = undefined
   }

@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { createQuerablePromise } from '../utils.js'
 import { Events } from '../events.js'
+import { loadSchema } from '../utils.js'
 
 export const schemaProxy = {
   props: {
@@ -23,7 +24,7 @@ export const schemaProxy = {
       return this.schema
     },
     getSchemaId () {
-      return this.schema ? this.schema.$id : ''
+      return _.get(this.schema, '$id', '')
     },
     filterSchema () {
       // We can filter properties in schema
@@ -43,16 +44,13 @@ export const schemaProxy = {
     },
     async loadSchemaFromResource (schemaName) {
       try {
-        this.schema = this.$load(schemaName, 'schema')
-        // FIXME: not yet sure why this is now required, might be related to
-        // https://forum.vuejs.org/t/solved-using-standalone-version-but-getting-failed-to-mount-component-template-or-render-function-not-defined/19569/2
-        if (this.schema.default) this.schema = this.schema.default
+        this.schema = await loadSchema(schemaName)
         this.schema = _.cloneDeep(this.schema)
         // Apply filtering
         this.filterSchema()
         return this.schema
       } catch (error) {
-        Events.$emit('error', error)
+        Events.emit('error', error)
         throw error
       }
     },
@@ -63,7 +61,7 @@ export const schemaProxy = {
         this.filterSchema()
         return this.schema
       } catch (error) {
-        Events.$emit('error', error)
+        Events.emit('error', error)
         throw error
       }
     },

@@ -139,7 +139,6 @@ For instance, if you set props like this `<my-editor service="users"/>` on your 
 
 Make it easier to build [editors](./components.md#editors) from **baseObject** and **baseQuery** props, as well as props defined on associated mixins:
 * **getMode()** returns `updated` or `create` depending if the **objectId** props is defined or not
-* **setFormDisabled(name, disabled)** used to disable/enable a given form by its refs name
 * **fillEditor()** fill all forms with current object values
 * **clear()** clear all forms back to default values
 * **validateForms()** validate all forms

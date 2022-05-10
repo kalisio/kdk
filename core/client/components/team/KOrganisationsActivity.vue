@@ -27,10 +27,18 @@
 
 <script>
 import _ from 'lodash'
+import KPage from '../layout/KPage.vue'
+import KGrid from '../collection/KGrid.vue'
+import KStamp from '../frame/KStamp.vue'
 import { baseActivity } from '../../mixins'
 
 export default {
   name: 'organisations-activity',
+  components: {
+    KPage,
+    KGrid,
+    KStamp
+  },  
   mixins: [baseActivity()],
   data () {
     return {
@@ -41,12 +49,6 @@ export default {
         component: 'collection/KCard'
       }, this.activityOptions.items)
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-page'] = this.$load('layout/KPage')
-    this.$options.components['k-grid'] = this.$load('collection/KGrid')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

@@ -64,6 +64,7 @@ import KPanel from './KPanel.vue'
 
 export default {
   name: 'k-modal',
+  emits: ['update:modelValue', 'opened', 'closed'],
   components: {
     KScrollArea,
     KPanel
@@ -85,7 +86,7 @@ export default {
       type: Boolean,
       default: false
     },
-    value: {
+    modelValue: {
       type: Boolean,
       default: false
     }
@@ -107,19 +108,13 @@ export default {
         this.scrollAreaMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-top'))
         this.scrollAreaMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-bottom'))
       }
-      // returns the style
+      // return the style
       if (this.maximized) return ''
       if (this.$q.screen.lt.sm) return `min-width: 100vw; max-height: ${modalMaxHeight}px`
       if (this.$q.screen.lt.md) return `min-width: 90vw; max-height: ${modalMaxHeight}px`
       if (this.$q.screen.lt.lg) return `min-width: 80vw; max-height: ${modalMaxHeight}px`
       if (this.$q.screen.lt.xl) return `min-width: 70vw; max-height: ${modalMaxHeight}px`
       return `min-width: 60vw; max-height: ${modalMaxHeight}px`
-    }
-  },
-  watch: {
-    value: function (opened) {
-      if (opened) this.$refs.modal.show()
-      else this.$refs.modal.hide()
     }
   },
   data () {
@@ -129,13 +124,22 @@ export default {
       footerHeight: 0
     }
   },
+  watch: {
+    modelValue: {
+      handler (value) {
+        if (value) this.$refs.modal.show()
+        else this.$refs.modal.hide()
+      }
+    }
+  },
   methods: {
     open () {
       this.$refs.modal.show()
+      this.$emit('update:modelValue', true)
     },
     close () {
       this.$refs.modal.hide()
-      this.$emit('input', false)
+      tthis.$emit('update:modelValue', false)
     },
     onHeaderResized (size) {
       this.headerHeight = size.height
@@ -145,7 +149,7 @@ export default {
     }
   },
   mounted () {
-    if (this.value) this.$refs.modal.show()
+    if (this.modelValue) this.$refs.modal.show()
   }
 }
 </script>

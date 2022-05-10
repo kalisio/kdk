@@ -27,11 +27,20 @@
 </template>
 
 <script>
+import KPage from '../layout/KPage.vue'
+import KGrid from '../collection/KGrid.vue'
+import KStamp from '../frame/KStamp.vue'
+
 import _ from 'lodash'
 import { baseActivity } from '../../mixins'
 
 export default {
   name: 'groups-activity',
+  components: {
+    KPage,
+    KGrid,
+    KStamp
+  },
   mixins: [baseActivity()],
   props: {
     contextId: {
@@ -48,12 +57,6 @@ export default {
         component: 'team/KGroupCard'
       }, this.activityOptions.items)
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-page'] = this.$load('layout/KPage')
-    this.$options.components['k-grid'] = this.$load('collection/KGrid')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

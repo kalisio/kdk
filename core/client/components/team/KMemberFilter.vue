@@ -19,11 +19,12 @@
 </template>
 
 <script>
-import { QOptionGroup } from 'quasar'
+import KAction from '../frame/KAction.vue'
+
 export default {
   name: 'k-member-filter',
   components: {
-    QOptionGroup
+    KAction
   },
   inject: ['kActivity'],
   data () {
@@ -38,8 +39,6 @@ export default {
     }
   },
   async created () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
     // Intiializes the options
     this.options = [
       { label: this.$t('KMemberFilter.OWNER'), value: 'owner' },

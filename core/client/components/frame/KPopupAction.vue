@@ -26,7 +26,8 @@
           :mode="mode"
           :context="context"
           :action-renderer="actionRenderer"
-          direction="vertical" />
+          direction="vertical"
+        />
       </q-popup-proxy>
     </template>
   </k-action>

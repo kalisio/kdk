@@ -1,263 +1,176 @@
 import logger from 'loglevel'
 import _ from 'lodash'
 
-export function baseEditor (formRefs) {
-  return {
-    props: {
-      baseObject: {
-        type: Object,
-        default: () => {}
-      },
-      baseQuery: {
-        type: Object,
-        default: () => {}
-      },
-      schemaName: {
-        type: String,
-        default: undefined
-      },
-      clearButton: {
-        type: String,
-        default: ''
-      },
-      resetButton: {
-        type: String,
-        default: ''
-      }
+export const baseEditor = {
+  props: {
+    baseObject: {
+      type: Object,
+      default: () => {}
     },
-    computed: {
-      editorTitle () {
-        // Retuns the schema title
-        if (this.getSchema()) {
-          const schemaTitle = this.getSchema().title
-          return this.$t(schemaTitle, { object: this.getObject(), interpolation: { escapeValue: false } })
-        }
-        return ''
-      }
+    baseQuery: {
+      type: Object,
+      default: () => {}
     },
-    data () {
-      return {
-        applyButton: '',
-        applyInProgress: false
-      }
+    schemaName: {
+      type: String,
+      default: undefined
     },
-    methods: {
-      getMode () {
-        if (this.objectId) return 'update'
-        return 'create'
-      },
-      // Disabled forms will not be applied
-      setFormDisabled (formName, disabled) {
-        // Iterate over forms
-        formRefs.forEach(name => {
-          const form = this.$refs[name]
-          if (name === formName) {
-            if (form.loadRefs().isFulfilled()) {
-              form.isDisabled = disabled
-            } else {
-              logger.warn(`Trying to disable in the editor a non-ready form named ${name}`)
-            }
-          }
-        })
-      },
-      fillEditor () {
-        // Iterate over forms
-        formRefs.forEach(name => {
-          const form = this.$refs[name]
-          if (form.loadRefs().isFulfilled()) {
-            if (this.getObject()) {
-              if (this.perspective !== '') {
-                form.fill(_.get(this.getObject(), this.perspective))
-              } else {
-                form.fill(this.getObject())
-              }
-            } else {
-              form.clear()
-            }
-          } else {
-            logger.warn(`Trying to fill the editor with a non-ready form named ${name}`)
-          }
-        })
-        // Update button accordingly
-        if (this.getMode() === 'update') {
-          this.applyButton = this.$t('UPDATE')
+    clearButton: {
+      type: String,
+      default: ''
+    },
+    resetButton: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    editorTitle () {
+      // Retuns the schema title
+      if (this.getSchema()) {
+        const schemaTitle = this.getSchema().title
+        return this.$t(schemaTitle, { object: this.getObject(), interpolation: { escapeValue: false } })
+      }
+      return ''
+    }
+  },
+  data () {
+    return {
+      applyButton: '',
+      applyInProgress: false
+    }
+  },
+  methods: {
+    getBaseObject () {
+      // Start from default object or input base object
+      // This is used to keep track of existing or additional "hidden" or "internal" properties
+      // in addition to the ones edited throught the form
+      const object = {}
+      const baseObject = this.getObject() || this.baseObject
+      if (this.perspective !== '') {
+        if (this.perspectiveAsObject) {
+          Object.assign(object, _.get(baseObject, this.perspective))
         } else {
-          this.applyButton = this.$t('CREATE')
+          _.set(object, this.perspective, _.get(baseObject, this.perspective))
         }
-      },
-      clear () {
-        // Iterate over forms
-        formRefs.forEach(name => {
-          const form = this.$refs[name]
-          if (form.loadRefs().isFulfilled()) {
-            form.clear()
-          } else {
-            logger.warn(`Trying to clear the editor with a non-ready form named ${name}`)
-          }
-        })
-      },
-      reset () {
+        // Keep track of ID as it is used to know if we update or create
+        if (baseObject._id) object._id = baseObject._id
+      } else {
+        Object.assign(object, baseObject)
+      }
+      return object
+    },
+    getBaseQuery () {
+      // Start from default query
+      const query = {}
+      Object.assign(query, this.baseQuery)
+      if ((this.getEditorMode() === 'update') && this.perspective && this.perspectiveAsObject) {
+        Object.assign(query, { $select: ['_id', this.perspective] })
+      }
+      return query
+    },
+    getSchemaName () {
+      if (this.schemaName) return this.schemaName
+      // Can be provided as route metadata
+      let schemaName = _.get(this.$route, 'meta.schemaName')
+      if (schemaName) return schemaName
+      // When used with a service by default use the same name for schema as for service
+      schemaName = this.service + (this.objectId ? '.update' : '.create')
+      if (this.perspective) {
+        schemaName += ('-' + this.perspective)
+      }
+      return schemaName
+    },
+    onFormReferenceCreated (reference) {
+      if (reference) {
+        this.form = reference
         this.fillEditor()
-      },
-      validateForms () {
-        // Iterate over forms for validation
-        let isValid = true
-        formRefs.forEach(name => {
-          const form = this.$refs[name]
-          if (form.loadRefs().isFulfilled()) {
-            if (!form.isDisabled) {
-              const result = form.validate()
-              if (!result.isValid) {
-                isValid = false
-              }
-            }
-          } else {
-            logger.warn(`Trying to apply the editor with a non-ready form named ${name}`)
-            isValid = false
-          }
-        })
-        return isValid
-      },
-      async applyForms (object) {
-        // Apply each form
-        let isApplied = true
-        for (let i = 0; i < formRefs.length; i++) {
-          const name = formRefs[i]
-          const form = this.$refs[name]
-          if (!form.isDisabled) {
-            try {
-              await form.apply(object)
-            } catch (error) {
-              isApplied = false
-              break
-            }
-          }
-        }
-        return isApplied
-      },
-      async submittedForms (object) {
-        // Apply each form
-        let isApplied = true
-        for (let i = 0; i < formRefs.length; i++) {
-          const name = formRefs[i]
-          const form = this.$refs[name]
-          if (!form.isDisabled) {
-            try {
-              await form.submitted(object)
-            } catch (error) {
-              isApplied = false
-              break
-            }
-          }
-        }
-        return isApplied
-      },
-      getBaseObject () {
-        // Start from default object or input base object
-        // This is used to keep track of existing or additional "hidden" or "internal" properties
-        // in addition to the ones edited throught the form
-        const object = {}
-        const baseObject = this.getObject() || this.baseObject
+      }
+    },
+    getEditorMode () {
+      return this.objectId ? 'update' : 'create'
+    },
+    fillEditor () {
+      if (!this.form) throw new Error('Cannot fill the editor with a non-ready form')
+      if (this.getObject()) {
         if (this.perspective !== '') {
-          if (this.perspectiveAsObject) {
-            Object.assign(object, _.get(baseObject, this.perspective))
-          } else {
-            _.set(object, this.perspective, _.get(baseObject, this.perspective))
-          }
-          // Keep track of ID as it is used to know if we update or create
-          if (baseObject._id) object._id = baseObject._id
+          this.form.fill(_.get(this.getObject(), this.perspective))
         } else {
-          Object.assign(object, baseObject)
+          this.form.fill(this.getObject())
         }
-        return object
-      },
-      getBaseQuery () {
-        // Start from default query
-        const query = {}
-        Object.assign(query, this.baseQuery)
-        if ((this.getMode() === 'update') && this.perspective && this.perspectiveAsObject) {
-          Object.assign(query, { $select: ['_id', this.perspective] })
-        }
-        return query
-      },
-      getSchemaName () {
-        if (this.schemaName) return this.schemaName
-        // Can be provided as route metadata
-        let schemaName = _.get(this.$route, 'meta.schemaName')
-        if (schemaName) return schemaName
-        // When used with a service by default use the same name for schema as for service
-        schemaName = this.service + (this.objectId ? '.update' : '.create')
-        if (this.perspective) {
-          schemaName += ('-' + this.perspective)
-        }
-        return schemaName
-      },
-      async apply () {
-        let isValid = this.validateForms()
-        // Now the form is validated apply it to the target object
-        const object = this.getBaseObject()
-
-        if (isValid) {
-          isValid = await this.applyForms(object)
-        } else {
-          // Stop here if invalid or not applied correctly
-          return
-        }
-
-        if (this.getService()) {
-          // Small helper to avoid repeating too much similar code
-          const onServiceResponse = async (response) => {
-            await this.submittedForms(response)
-            this.$emit('applied', response)
-          }
-
-          const query = this.getBaseQuery(object)
-          this.applyInProgress = true
-          // Update the item
-          try {
-            if (this.getMode() === 'update') {
-              // Editing mode => patch the item
-              if (this.perspective !== '') {
-                const data = {}
-                if (this.perspectiveAsObject) {
-                  _.set(data, this.perspective, _.omit(object, ['_id']))
-                } else {
-                  _.set(data, this.perspective, _.get(object, this.perspective))
-                }
-                const response = await this.getService().patch(this.objectId, data, { query })
-                // Keep track of ID as it is used to know if we update or create
-                if (object._id) response._id = object._id
-                onServiceResponse(response)
-              } else {
-                const response = await this.getService().patch(this.objectId, object, { query })
-                onServiceResponse(response)
-              }
-            } else if (this.getMode() === 'create') {
-              // Creation mode => create the item
-              const response = await this.getService().create(object, { query })
-              onServiceResponse(response)
-            } else {
-              logger.warn('Invalid editor mode')
-            }
-          } catch (error) {
-            // User error message on operation should be raised by error hook, otherwise this is more a coding error
-            logger.error(error)
-          }
-          this.applyInProgress = false
-        }
-      },
-      async refresh () {
-        // We can then load the schema/object and local refs in parallel
-        await Promise.all([
-          this.loadSchema(this.getSchemaName()),
-          this.loadObject(),
-          this.loadRefs()
-        ])
-        // We finally build the forms then fill it
-        await Promise.all(formRefs.map(name => this.$refs[name].build()))
-        this.fillEditor()
-        this.$emit('editor-ready', this)
+        this.applyButton = this.$t('UPDATE')
+      } else {
+        //this.form.clear()
+        this.applyButton = this.$t('CREATE')
       }
+    },
+    clearEditor () {
+      if (!this.form) throw new Error('Cannot clear the editor with a non-ready form')
+      this.form.clear()
+    },
+    resetEditor () {
+      if (!this.form) throw new Error('Cannot reset the editor with a non-ready form')
+      this.fillEditor()
+    },
+    async apply () {
+      if (!this.getService()) throw new Error('Cannot apply the editor with undefined service')
+      if (!this.form) throw new Error('Cannot apply the editor with a non-ready form')
+      // Validate the form
+      if (!this.form.validate().isValid) return 
+      // Now the form is validated apply it to the target object
+      const object = this.getBaseObject()
+      this.form.apply(object)
+      
+      // Small helper to avoid repeating too much similar code
+      const onServiceResponse = async (response) => {
+        await this.form.submitted(response)
+        this.$emit('applied', response)
+      }
+
+      const query = this.getBaseQuery(object)
+      this.applyInProgress = true
+      // Update the item
+      try {
+        if (this.getEditorMode() === 'update') {
+          // Editing mode => patch the item
+          if (this.perspective !== '') {
+            const data = {}
+            if (this.perspectiveAsObject) {
+              _.set(data, this.perspective, _.omit(object, ['_id']))
+            } else {
+              _.set(data, this.perspective, _.get(object, this.perspective))
+            }
+            const response = await this.getService().patch(this.objectId, data, { query })
+            // Keep track of ID as it is used to know if we update or create
+            if (object._id) response._id = object._id
+            onServiceResponse(response)
+          } else {
+            const response = await this.getService().patch(this.objectId, object, { query })
+            onServiceResponse(response)
+          }
+        } else if (this.getEditorMode() === 'create') {
+          // Creation mode => create the item
+          const response = await this.getService().create(object, { query })
+          onServiceResponse(response)
+        } else {
+          logger.warn('Invalid editor mode')
+        }
+      } catch (error) {
+        // User error message on operation should be raised by error hook, otherwise this is more a coding error
+        logger.error(error)
+        return false
+      }
+      this.applyInProgress = false
+      return true
+    },
+    async refresh () {
+      // Clear the form 
+      this.form = null
+      // We can then load the schema/object and local refs in parallel
+      await Promise.all([
+        this.loadSchema(this.getSchemaName()),
+        this.loadObject(),
+      ])
     }
   }
 }

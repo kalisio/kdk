@@ -10,7 +10,7 @@
 
 <script>
 import KModal from '../frame/KModal.vue'
-import Palette from '../input/KPalette.vue'
+import KPalette from '../input/KPalette.vue'
 
 export default {
   name: 'k-color-chooser',

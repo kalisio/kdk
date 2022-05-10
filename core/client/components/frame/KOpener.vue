@@ -22,6 +22,7 @@
 
 export default {
   name: 'k-opener',
+  emits: ['update:modelValue'],
   props: {
     modelValue: {
       type: Boolean,

@@ -232,29 +232,40 @@ export function getTimezoneLabel (timezone) {
 
 // Helper function to load a translation file
 // @i18n alias shoud be added in the quasar.config build section
-export async function loadTranslations (bundles, locale, fallbackLocale) {
-  const translations = {}
-  translations[locale] = {}
-  translations[fallbackLocale] = {}
+export async function loadTranslations (bundleNames, locale, fallbackLocale) {
   try {
-    for (let i = 0; i < bundles.length; i++) {
-      const localeTranslations = await import(`@i18n/${bundles[i]}_${locale}.json`)
-      _.merge(translations[locale], localeTranslations.default)
-      const fallbackTranslation = await import(`@i18n/${bundles[i]}_${fallbackLocale}.json`)
-      _.merge(translations[fallbackLocale], fallbackTranslation.default)
+    const translations = {}
+    translations[locale] = {}
+    translations[fallbackLocale] = {}
+    for (let i = 0; i < bundleNames.length; i++) {
+      const localeTranslationsModule = await import(`@i18n/${bundleNames[i]}_${locale}.json`)
+      _.merge(translations[locale], localeTranslationsModule.default)
+      const fallbackTranslationModule = await import(`@i18n/${bundleNames[i]}_${fallbackLocale}.json`)
+      _.merge(translations[fallbackLocale], fallbackTranslationModule.default)
     }
+    return translations
   } catch (error) {
     logger.error(error)
   }
-  return translations
 }
 
-// Helper function to load a dynamic component
+// Helper function to load a schema 
+// @schema alias shoud be added in the quasar.config build section
+export async function loadSchema (schemaName) {
+  try {
+    const schemaModule = await import(`@schemas/${schemaName}.json`)
+    return schemaModule.default
+  } catch (error) {
+    logger.error(error)
+  }
+}
+
+// Helper function to load a component
 // https://vuejs.org/guide/components/async.html
 // @components alias shoud be added in the quasar.config build section
-export function loadComponent (component) {
+export function loadComponent (componentName) {
   try {
-    return markRaw(defineAsyncComponent(() => import(`@components/${component}.vue`)))
+    return markRaw(defineAsyncComponent(() => import(`@components/${componentName}.vue`)))
   } catch (error) {
     logger.error(error)
   }

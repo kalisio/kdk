@@ -6,25 +6,28 @@
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
-      <k-form ref="form" :schema="schema" @field-changed="onFieldChanged" />
+      <k-form 
+        :ref="onFormReferenceCreated" 
+        :schema="schema" 
+      />
   </k-modal>
 </template>
 
 <script>
 import { KModal, KScrollArea } from '../frame'
 import { KForm } from '../form'
-import { baseModal, service, objectProxy, schemaProxy, baseEditor, refsResolver } from '../../mixins'
+import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
 
 export default {
   name: 'k-modal-editor',
+  emits: ['opened', 'closed'],
   components: {
     KModal,
     KScrollArea,
     KForm
   },
   mixins: [
-    baseEditor(['form']),
-    refsResolver(['form']),
+    baseEditor,
     baseModal,
     service,
     objectProxy,
@@ -32,7 +35,7 @@ export default {
   ],
   computed: {
     buttons () {
-      const buttons = [
+      let buttons = [
         { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
         { id: 'apply-button', label: this.applyButton, renderer: 'form-button', handler: () => this.apply() }
       ]
@@ -50,21 +53,13 @@ export default {
     }
   },
   methods: {
-    openModal () {
-      this.refresh()
-      this.isModalOpened = true
+    async apply () {
+      if (await baseEditor.methods.apply.bind(this)()) this.closeModal()
     },
-    onFieldChanged (field, value) {
-      this.$emit('field-changed', field, value)
+    openModal () {
+      baseModal.methods.openModal.bind(this)()
+      this.refresh()
     }
-  },
-  created () {
-    // Catch applied event
-    this.$on('applied', this.closeModal)
-  },
-  beforeDestroy () {
-    // Remove event connections
-    this.$off('applied', this.closeModal)
   }
 }
 </script>
