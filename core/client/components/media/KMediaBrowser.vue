@@ -43,7 +43,7 @@ import { refsResolver } from '../../mixins'
 
 export default {
   name: 'k-media-browser',
-  mixins: [ refsResolver(['carousel']) ],
+  mixins: [refsResolver(['carousel'])],
   components: {
     QCarousel,
     QCarouselSlide,

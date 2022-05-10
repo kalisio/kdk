@@ -27,6 +27,7 @@
 
 <script>
 import _ from 'lodash'
+import KScrenn from '../screen/KScreen.vue'
 import { authentication, account } from '../../mixins'
 
 export default {
@@ -60,10 +61,6 @@ export default {
     }
   },
   created () {
-    // Retrieve the loadComponent function and load the components
-    // We need this so that we can dynamically load the component
-    // with a function that has previously been statically analyzed by the bundler (eg webpack)
-    this.$options.components['k-screen'] = this.$load('frame/KScreen')
     // Check if logged in
     this.$events.on('user-changed', this.refreshUser)
   },

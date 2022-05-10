@@ -149,6 +149,7 @@ import { openURL } from 'quasar'
 
 export default {
   name: 'k-action',
+  emits: ['triggered'],
   props: {
     id: {
       type: String,
@@ -226,6 +227,7 @@ export default {
       }
     }
   },
+  inheritAttrs: false,
   data () {
     return {
       isToggled: this.toggled

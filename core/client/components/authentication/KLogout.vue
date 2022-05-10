@@ -24,7 +24,7 @@ export default {
     KScreen,
     QIcon
   },
-  mixins: [ authentication ],
+  mixins: [authentication],
   data () {
     return {
       appName: '',

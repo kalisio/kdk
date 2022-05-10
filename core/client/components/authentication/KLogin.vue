@@ -45,8 +45,8 @@ export default {
     KForm,
     KScreen
   },
-  mixins: [ 
-    authentication, 
+  mixins: [
+    authentication,
     version
   ],
   data () {

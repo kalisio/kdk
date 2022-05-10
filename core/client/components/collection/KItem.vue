@@ -48,7 +48,7 @@ export default {
     KPanel,
     KAvatar
   },
-  mixins: [ baseItem ],
+  mixins: [baseItem],
   data () {
     return {
       toggled: false

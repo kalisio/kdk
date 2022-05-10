@@ -32,4 +32,3 @@ export const version = {
     this.$events.off('capabilities-api-changed', this.refreshVersionNames)
   }
 }
-

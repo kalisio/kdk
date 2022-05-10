@@ -38,7 +38,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { QTable, QTd } from 'quasar'
-import { service, schemaProxy,baseCollection } from '../../mixins'
+import { service, schemaProxy, baseCollection } from '../../mixins'
 
 export default {
   name: 'k-table',

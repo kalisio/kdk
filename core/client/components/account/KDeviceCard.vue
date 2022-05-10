@@ -27,7 +27,7 @@ export default {
   components: {
     KCard
   },
-  mixins: [ baseItem ],
+  mixins: [baseItem],
   computed: {
     platformIcon () {
       const platform = this.item.platform.toLowerCase()

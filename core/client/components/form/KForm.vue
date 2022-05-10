@@ -44,8 +44,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import Ajv from 'ajv'
 import AjvLocalize from 'ajv-i18n'
-import { getLocale } from '../../utils'
-import { defineAsyncComponent } from 'vue'
+import { getLocale, loadComponent } from '../../utils'
 
 // Create the AJV instance
 const ajv = new Ajv({
@@ -58,6 +57,7 @@ ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
 
 export default {
   name: 'k-form',
+  emits: ['field-changed', 'form-ready'],
   props: {
     schema: {
       type: Object,
@@ -153,7 +153,7 @@ export default {
         this.fields.push(field)
         if (field.group && !this.groups.includes(field.group)) this.groups.push(field.group)
         // 3- load the component if not previously loaded
-        field.component = defineAsyncComponent(this.$load(field.field.component))
+        field.component = loadComponent(field.field.component)
         field.reference = null // will be set once te field is rendered through the setupField method
         // 4- Assign whether the field is required or not
         field.required = _.includes(this.schema.required, property)
@@ -199,7 +199,7 @@ export default {
       _.forEach(this.fields, field => field.reference.clear())
     },
     validate () {
-       if (!this.isReady)  throw new Error('Cannot validate the form while not ready')
+      if (!this.isReady) throw new Error('Cannot validate the form while not ready')
       logger.debug('Validating form', this.schema.$id)
       const result = {
         isValid: false,
@@ -215,9 +215,10 @@ export default {
         _.forEach(this.fields, field => {
           const error = this.hasFieldError(field.name)
           if (error) {
-            this.field.reference.invalidate(error.message)
+            console.log(this.field)
+            field.reference.invalidate(error.message)
           } else {
-            this.field.reference.validate()
+            field.reference.validate()
           }
         })
         return result
@@ -227,14 +228,14 @@ export default {
       return result
     },
     async apply (object) {
-       if (!this.isReady) throw new Error('Cannot apply the form while not ready')
+      if (!this.isReady) throw new Error('Cannot apply the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
         await this.getField(field.name).apply(object, field.name)
       }
     },
     async submitted (object) {
-       if (!this.isReady) throw new Error('Cannot run submitted on the form while not ready')
+      if (!this.isReady) throw new Error('Cannot run submitted on the form while not ready')
       for (let i = 0; i < this.fields.length; i++) {
         const field = this.fields[i]
         await this.getField(field.name).submitted(object, field.name)

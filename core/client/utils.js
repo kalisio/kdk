@@ -3,6 +3,7 @@ import moment from 'moment'
 import emailValidator from 'email-validator'
 import config from 'config'
 import { Platform, Notify, Dialog, Loading, exportFile } from 'quasar'
+import { defineAsyncComponent, markRaw } from 'vue'
 
 Notify.setDefaults({
   position: 'bottom-left',
@@ -215,4 +216,10 @@ export function isObjectID (id) {
 export function getTimezoneLabel (timezone) {
   const offset = moment().tz(timezone).format('Z')
   return `${timezone} (${offset})`
+}
+
+// Helper function to load a dynamic component
+// https://vuejs.org/guide/components/async.html
+export function loadComponent (component) {
+  return markRaw(defineAsyncComponent(() => import(`@components/${component}.vue`)))
 }

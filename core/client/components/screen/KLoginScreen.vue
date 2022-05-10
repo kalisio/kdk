@@ -1,10 +1,10 @@
 <template>
   <k-screen :actions="actions">
     <div class="column items-center q-gutter-y-md">
-      <k-form 
+      <k-form
         ref="form"
-        class="full-width" 
-        :schema="getFormSchema()" 
+        class="full-width"
+        :schema="getFormSchema()"
         @form-ready="onFormReady"
       />
       <k-action
@@ -32,7 +32,7 @@ export default {
     KForm,
     KAction
   },
-  mixins: [ authentication ],
+  mixins: [authentication],
   data () {
     return {
       actions: [],

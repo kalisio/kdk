@@ -65,7 +65,7 @@ export default {
   components: {
     KUploader
   },
-  mixins:[ baseField ],
+  mixins: [baseField],
   data () {
     return {
       isUploaderVisible: false,

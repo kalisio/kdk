@@ -87,9 +87,10 @@ export default {
   components: {
     KModal
   },
-  mixins: [ version ],
+  mixins: [version],
   data () {
     return {
+      banner: undefined,
       systemDetails: {},
       showSystemDetails: false,
       bugReport: {}
@@ -108,7 +109,7 @@ export default {
   },
   created () {
     // Configure this screen
-    this.banner = this.$load(this.$config('screens.banner', 'kalisio-banner.png'), 'asset')
+    this.banner = this.$config('screens.banner')
     Object.assign(this.systemDetails, this.$q.platform.is)
     Object.assign(this.systemDetails, { touch: this.$q.platform.has.touch })
     Object.assign(this.systemDetails, { iframe: this.$q.platform.within.iframe })
@@ -119,7 +120,11 @@ export default {
       apiVersionName: this.apiVersionName
     }
     this.bugReport.address = 'support@kalisio.com'
-    this.bugReport.subject = this.$t('KAbout.BUG_REPORT_SUBJECT', context)
+    this.bugReport.subject = this.$t('KAbout.BUG_REPORT_SUBJECT', {
+      appName: this.$config('appName'),
+      clientVersionName: this.clientVersionName,
+      apiVersionName: this.apiVersionName
+    })
     this.bugReport.body = this.$t('KAbout.BUG_REPORT_BODY')
     // Append detailed system info to email body
     _.forOwn(this.systemDetails, (value, key) => { this.bugReport.body += `${key}: ${value}%0D%0A` })

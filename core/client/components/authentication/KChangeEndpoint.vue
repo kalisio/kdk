@@ -27,7 +27,7 @@ export default {
     KScreen,
     KForm
   },
-  mixins: [ refsResolver(['form']) ],
+  mixins: [refsResolver(['form'])],
   data () {
     return {
       links: [],

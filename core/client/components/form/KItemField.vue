@@ -65,7 +65,7 @@ import { baseField } from '../../mixins'
 
 export default {
   name: 'k-item-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   data () {
     return {
       items: null,

@@ -48,7 +48,7 @@ import { baseField } from '../../mixins'
 
 export default {
   name: 'k-select-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   computed: {
     clearable () {
       return _.get(this.properties, 'field.clearable', true)

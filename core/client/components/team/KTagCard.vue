@@ -32,7 +32,7 @@ export default {
     KCard,
     KCardSection
   },
-  mixins: [ baseItem ],
+  mixins: [baseItem],
   computed: {
     dense () {
       return this.$q.screen.lt.sm

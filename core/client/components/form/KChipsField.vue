@@ -65,7 +65,7 @@ export default {
   components: {
     KIconChooser
   },
-  mixins: [ baseField ],
+  mixins: [baseField],
   computed: {
     inputActions () {
       const actions = []

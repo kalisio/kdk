@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-center">
+  <div class="q-pa-sm row justify-center">
     {{ $t(flavor) }}
   </div>
 </template>

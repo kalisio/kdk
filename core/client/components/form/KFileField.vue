@@ -35,7 +35,7 @@ export default {
   components: {
     QFile
   },
-  mixins: [ baseField ],
+  mixins: [baseField],
   data () {
     return {
       file: null

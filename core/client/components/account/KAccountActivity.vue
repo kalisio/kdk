@@ -30,7 +30,7 @@ export default {
     KAccountSecurity,
     KAccountDZ
   },
-  mixins: [ baseActivity() ],
+  mixins: [baseActivity()],
   props: {
     page: {
       type: String,

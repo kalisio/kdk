@@ -40,7 +40,7 @@ import { account } from '../../mixins'
 
 export default {
   name: 'k-reset-password',
-  mixins: [ account ],
+  mixins: [account],
   data () {
     return {
       title: '',

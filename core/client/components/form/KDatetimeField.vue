@@ -41,7 +41,7 @@ import _ from 'lodash'
 
 export default {
   name: 'k-datetime-field',
-  mixins: [ baseField ],
+  mixins: [baseField],
   data () {
     return {
       locale: _.get(this.properties.field, 'localeValue', this.$q.lang.getLocale())

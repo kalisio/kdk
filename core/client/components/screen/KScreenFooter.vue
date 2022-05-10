@@ -1,5 +1,5 @@
 <template>
-  <div class="column justify-center q-gutter-xs">
+  <div class="q-pa-sm column justify-center q-gutter-xs">
     <!--
       Endpoint
     -->
@@ -41,7 +41,7 @@ import { version } from '../../mixins'
 
 export default {
   name: 'k-screen-footer',
-  mixins: [ version ],
+  mixins: [version],
   methods: {
     canChangeEndpoint () {
       return this.$config('flavor') === 'dev' ? true : Platform.is.cordova

@@ -96,7 +96,7 @@ export default {
     KPanel,
     KChipsPane
   },
-  mixins: [ baseItem ],
+  mixins: [baseItem],
   computed: {
     header () {
       const components = _.filter(this.itemActions, { scope: 'header' })

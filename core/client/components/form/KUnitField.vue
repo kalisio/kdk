@@ -42,7 +42,7 @@ import { Units } from '../../units'
 
 export default {
   name: 'k-unit-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   computed: {
     options () {
       const units = Units.getUnits(_.get(this.properties, 'field.quantity'))

@@ -39,7 +39,7 @@ export default {
   components: {
     QOptionGroup
   },
-  mixins:[ baseField ],
+  mixins: [baseField],
   methods: {
     roles () {
       return this.roleNames ? _.map(this.roleNames, role => { return { label: this.$t(_.upperCase(role)), value: role } }) : []

@@ -99,7 +99,7 @@ export default {
     KAction,
     KCardSection
   },
-  mixins: [ baseItem ],
+  mixins: [baseItem],
   props: {
     header: {
       type: [Object, Array],

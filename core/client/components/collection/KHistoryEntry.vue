@@ -56,7 +56,7 @@ import { Time } from '../..'
 
 export default {
   name: 'k-history-entry',
-  mixins: [ baseItem ],
+  mixins: [baseItem],
   props: {
     renderer: {
       type: Object,

@@ -1,5 +1,5 @@
 <template>
-  <div class="k-screen q-pa-md fullscreen row justify-center items-center">
+  <div class="k-screen row justify-center items-center window-height window-width">
     <!--
       Header section
       -->
@@ -9,10 +9,10 @@
     -->
     <div class="k-screen-content">
       <div v-if="banner" class="row justify-center">
-        <img :src="banner">
+        <img :src="banner" />
       </div>
       <!-- Frame -->
-      <q-card class="k-screen-frame q-pa-sm">
+      <q-card class="k-screen-frame full-width q-pa-sm">
         <q-card-section v-if="title">
           <div class="text-h6 text-center">{{ $t(title) }}</div>
         </q-card-section>
@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
 import KPanel from '../frame/KPanel.vue'
+import { loadComponent } from '../../utils'
 
 export default {
   name: 'k-screen',
@@ -61,10 +61,10 @@ export default {
   },
   computed: {
     headerComponent () {
-      return defineAsyncComponent(this.$load('screen/KScreenHeader'))
+      return loadComponent(this.header)
     },
     footerComponent () {
-      return defineAsyncComponent(this.$load('screen/KScreenFooter'))
+      return loadComponent(this.footer)
     }
   },
   data () {
@@ -72,7 +72,7 @@ export default {
       header: 'screen/KScreenHeader',
       backgroundColor: '#EFEFEF',
       textColor: 'black',
-      banner: null,
+      banner: undefined,
       frameBackgroundColor: '#EFEFEE',
       frameTextColor: 'black',
       links: [],
@@ -84,7 +84,7 @@ export default {
     this.header = this.$config('screens.header', this.header)
     this.backgroundColor = this.$config('screens.backgroundColor', this.backgroundColor)
     this.textColor = this.$config('screens.textColor', this.textColor)
-    this.banner = this.$load(this.$config('screens.banner'), 'asset')
+    this.banner = this.$config('screens.banner', this.banner)
     this.frameBackgroundColor = this.$config('screens.frameBackgroundColor', this.frameBackgroundColor)
     this.frameTextColor = this.$config('screens.frameTextColor', this.frameTextColor)
     this.links = this.$config('screens.links', this.links)

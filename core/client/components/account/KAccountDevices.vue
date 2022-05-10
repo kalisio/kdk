@@ -31,7 +31,7 @@ export default {
   components: {
     KDeviceCard
   },
-  mixins: [ baseCollection ],
+  mixins: [baseCollection],
   props: {
     renderer: {
       type: Object,

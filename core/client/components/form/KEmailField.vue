@@ -28,6 +28,6 @@ import { baseField } from '../../mixins'
 
 export default {
   name: 'k-email-field',
-  mixins: [ baseField ]
+  mixins: [baseField]
 }
 </script>

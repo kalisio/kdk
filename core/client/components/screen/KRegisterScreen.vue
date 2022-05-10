@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { getLocale } from '../../utils.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
 import KAction from '../frame/KAction.vue'
@@ -51,7 +52,7 @@ export default {
             maxLength: 128,
             field: {
               component: 'form/KTextField',
-              label: 'KRegister.NAME_FIELD_LABEL'
+              label: 'KRegisterScreen.NAME_FIELD_LABEL'
             }
           },
           email: {

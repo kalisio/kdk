@@ -1,12 +1,9 @@
 <template>
-  <k-screen title="KErrorScreen.TITLE" :actions="action">
-   
-  </k-screen>
+  <k-screen title="message" :actions="action" />
 </template>
 
 <script>
 import KScreen from './KScreen.vue'
-import KPanel from '../frame/KPanel.vue'
 
 export default {
   name: 'k-error-screen',
@@ -15,6 +12,7 @@ export default {
   },
   data () {
     return {
+      message: 'KErrorScreen.MESSAGE',
       actions: [{
         id: 'go-home-action',
         icon: 'las la-home',

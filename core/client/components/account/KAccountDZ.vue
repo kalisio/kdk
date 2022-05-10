@@ -18,7 +18,7 @@ export default {
   components: {
     KBlock
   },
-  mixins: [ service ],
+  mixins: [service],
   data () {
     return {
       user: this.$store.get('user')

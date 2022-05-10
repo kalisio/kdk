@@ -22,7 +22,7 @@ import { refsResolver } from '../../mixins'
 
 export default {
   name: 'k-uploader',
-  mixins: [ refsResolver(['dropZone']) ],
+  mixins: [refsResolver(['dropZone'])],
   components: {
     DropZone
   },

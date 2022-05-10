@@ -35,7 +35,7 @@ import { baseField } from '../../mixins'
 
 export default {
   name: 'k-password-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   data () {
     return {
       isPassword: true

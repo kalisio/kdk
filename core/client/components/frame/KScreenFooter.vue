@@ -41,7 +41,7 @@ import { version } from '../../mixins'
 
 export default {
   name: 'k-screen-footer',
-  mixins: [ version ],
+  mixins: [version],
   methods: {
     canChangeEndpoint () {
       return this.$config('flavor') === 'dev' ? true : Platform.is.cordova

@@ -34,7 +34,7 @@ import { QEditor } from 'quasar'
 
 export default {
   name: 'k-textarea-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   components: {
     QEditor
   },

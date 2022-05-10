@@ -52,4 +52,3 @@ export const baseContext = {
     this.clearContext()
   }
 }
-

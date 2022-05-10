@@ -32,7 +32,7 @@ import { baseActivity } from '../../mixins'
 
 export default {
   name: 'tags-activity',
-  mixins: [ baseActivity() ],
+  mixins: [baseActivity()],
   props: {
     contextId: {
       type: String,

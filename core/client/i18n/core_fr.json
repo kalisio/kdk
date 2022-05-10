@@ -10,7 +10,7 @@
   "APPLY": "Appliquer",
   "RETRY": "Réessayer",
   "NO_ITEM": "Aucun élément",
-  "NIL": "Non défini(e)",
+  "NIL": "Non défini(e",
   "ANONYMOUS": "Anonyme",
   "MEMBERS": "Membres",
   "TAGS": "Etiquettes",
@@ -44,31 +44,31 @@
     "502": "Cette opération ne peut être réalisée: service introuvable",
     "503": "Cette opération ne peut être réalisée: service indisponible",
     "RETRY": "Veuillez réessayer plus tard ou modifier votre paramétrage",
-    "RATE_LIMITING": "Trop de requête vers l'API en un laps de temps donné (limitation de débit)",
-    "RATE_LIMITING_AUTHENTICATION": "Trop de requête d'authentification en un laps de temps donné (limitation de débit)",
-    "RATE_LIMITING_CONCURRENCY": "Trop de connexions simultanées (limitation de débit)",
-    "COUNT_LIMITING": "Trop de ressources utilisées (quota dépassé)",
+    "RATE_LIMITING": "Trop de requête vers l'API en un laps de temps donné (limitation de débit",
+    "RATE_LIMITING_AUTHENTICATION": "Trop de requête d'authentification en un laps de temps donné (limitation de débit",
+    "RATE_LIMITING_CONCURRENCY": "Trop de connexions simultanées (limitation de débit",
+    "COUNT_LIMITING": "Trop de ressources utilisées (quota dépassé",
     "WEAK_PASSWORD": "Le mot de passe ne respecte pas nos règles de sécurité",
-    "WEAK_PASSWORD_MIN": "Taille minimale de {{minLength}} caractères",
-    "WEAK_PASSWORD_MAX": "Taille maximale de {{maxLength}} caractères",
+    "WEAK_PASSWORD_MIN": "Taille minimale de {minLength} caractères",
+    "WEAK_PASSWORD_MAX": "Taille maximale de {maxLength} caractères",
     "WEAK_PASSWORD_LOWERCASE": "Au moins une lettre minuscule",
     "WEAK_PASSWORD_UPPERCASE": "Au moins une lettre majuscule",
     "WEAK_PASSWORD_DIGITS": "Au moins un nombre",
     "WEAK_PASSWORD_SYMBOLS": "Au moins un caractère spécial comme :;?!+-.,^@",
     "WEAK_PASSWORD_ONEOF": "Non reconnu comme l'un des mots de passe les plus courants",
-    "WEAK_PASSWORD_PREVIOUS": "Différents de vos {{history}} derniers mots de passe",
+    "WEAK_PASSWORD_PREVIOUS": "Différents de vos {history} derniers mots de passe",
     "CANNOT_PROCESS_DOWNLOAD_DATA": "Fichier invalide ou incomplet",
-    "CANNOT_REMOVE_USER": "Vous n'êtes pas autorisé à supprimer ce compte.<br>Merci de supprimer les organisations appartenant à <b>{{user}}</b> préalablement.",
+    "CANNOT_REMOVE_USER": "Vous n'êtes pas autorisé à supprimer ce compte.<br>Merci de supprimer les organisations appartenant à <b>{user}</b> préalablement.",
     "CANNOT_REMOVE_ORGANISATION": "Vous n'êtes pas autorisé à supprimer cette organisation.<br>Merci de supprimer tous les groupes préalablement.",
-    "CANNOT_REMOVE_LAST_OWNER": "Vous n'êtes pas autorisé à supprimer le dernier propriétaire de <b>{{resource}}</b>",
-    "OAUTH2_PROVIDER": "Vous ne pouvez modifier votre compte car il est géré par {{provider}}, pour utiliser un compte local réinitialisez tout d'abord votre mot de passe",
+    "CANNOT_REMOVE_LAST_OWNER": "Vous n'êtes pas autorisé à supprimer le dernier propriétaire de <b>{resource}</b>",
+    "OAUTH2_PROVIDER": "Vous ne pouvez modifier votre compte car il est géré par {provider}, pour utiliser un compte local réinitialisez tout d'abord votre mot de passe",
     "OBJECT_ID_ALREADY_TAKEN": "Un élément semble déjà enregistré avec cet identifiant. Merci de réessayer avec une autre valeur.",
     "EMAIL_ALREADY_TAKEN": "Un utilisateur semble déjà enregistré avec cette adresse mail",
-    "DUPLICATED_FILE": "Le fichier {{file}} a déjà été ajouté",
-    "UNSUPPORTED_FILE_FORMAT": "Le format du fichier {{file}} n'est pas supporté",
-    "CANNOT_READ_FILE": "Impossible de lire le fichier {{file}}",
-    "INVALID_JSON_FILE": "{{file}} n'est pas un fichier JSON valide",
-    "INVALID_CSV_FILE": "{{file}} n'est pas un fichier CSV valide",
+    "DUPLICATED_FILE": "Le fichier {file} a déjà été ajouté",
+    "UNSUPPORTED_FILE_FORMAT": "Le format du fichier {file} n'est pas supporté",
+    "CANNOT_READ_FILE": "Impossible de lire le fichier {file}",
+    "INVALID_JSON_FILE": "{file} n'est pas un fichier JSON valide",
+    "INVALID_CSV_FILE": "{file} n'est pas un fichier CSV valide",
     "NETWORK_ERROR": "Une erreur réseau s'est produite"
   },
   "units": {
@@ -105,14 +105,14 @@
   },
   "mixins": {
     "baseItem": {
-      "REMOVE_ITEM_TITLE": "Etes vous sûr de vouloir supprimer <b>{{name}}</b> ?",
+      "REMOVE_ITEM_TITLE": "Etes vous sûr de vouloir supprimer <b>{name}</b> ?",
       "REMOVE_ITEM_MESSAGE": "Merci de saisir le nom pour confirmer la suppression",
-      "ITEM_EXPORTED": "Export du contenu de {{name}} dans {{file}}",
-      "CANNOT_EXPORT_ITEM": "Impossible d'exporter {{name}}. Votre navigateur supporte t'il la fonctionnalité ?"
+      "ITEM_EXPORTED": "Export du contenu de {name} dans {file}",
+      "CANNOT_EXPORT_ITEM": "Impossible d'exporter {name}. Votre navigateur supporte t'il la fonctionnalité ?"
     }
   },
   "schemas": {
-    "OBJECT_NAME": "{{ object.name }}",
+    "OBJECT_NAME": "{ object.name }",
     "AVATAR_FIELD_LABEL": "Choisissez un avatar",
     "NAME_FIELD_LABEL": "Saisissez votre nom",
     "COLOR_FIELD_LABEL": "Choisissez une couleur",
@@ -120,7 +120,7 @@
     "ORGANISATIONS_NAME_FIELD_LABEL": "Saisissez le nom de l'organisation",
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'organisation",
     "MEMBERS_TAGS_FIELD_LABEL": "Ajouter des étiquettes pour qualifier le membre",
-    "TAG_NAME": "{{ object.value }}",
+    "TAG_NAME": "{ object.value }",
     "TAGS_NAME_FIELD_LABEL": "Saisissez le nom de l'étiquette",
     "TAGS_ICON_FIELD_LABEL": "Choisissez l'icône de l'étiquette",
     "TAGS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'étiquette",
@@ -176,9 +176,9 @@
       "NAME_LABEL": "Saisissez tout d'abord votre nom tel qu'il sera visible par les autres utilisateurs.",
       "EMAIL_LABEL": "Saisissez ensuite l'adresse mail que vous utiliserez pour vous connecter et sur laquelle vous recevrez les messages liés à la sécurité.",
       "PASSWORD_LABEL": "Choisissez ensuite votre mot de passe, s'il ne respecte pas nos dispositions de sécurité une alerte vous indiquera les règles à respecter.",
-      "PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "CONFIRM_PASSWORD_LABEL": "Confirmez votre mot de passe pour éviter les erreurs.",
-      "CONFIRM_PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "CONFIRM_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "TERMS_LABEL": "Lisez et acceptez nos <b><a href='/#/terms'>conditions d'utilisation</a></b> pour pouvoir utiliser le système.",
       "REGISTER_LABEL": "Enfin, terminez en créant votre compte.",
       "EMAIL_VERIFICATION_LABEL": "Nous vous enverrons un email contenant un lien permettant <b>de vérifier votre adresse</b>.",
@@ -208,7 +208,7 @@
       "PASSWORD_PROCEDURE_LABEL": "Si vous souhaitez modifier votre mot de passe vous pouvez <b>en définir un nouveau</b>.",
       "OLD_PASSWORD_LABEL": "Saisissez tout d'abord votre ancien mot de passe.",
       "NEW_PASSWORD_LABEL": "Choisissez ensuite votre nouveau mot de passe, s'il ne respecte pas nos dispositions de sécurité une alerte vous indiquera les règles à respecter.",
-      "NEW_PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "NEW_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "CONFIRM_NEW_PASSWORD_LABEL": "Confirmez votre nouveau mot de passe pour éviter les erreurs.",
       "CHANGE_LABEL": "Enfin, terminez en confirmant la modification.",
       "CHANGE_EMAIL_LABEL": "Un email de confirmation vous serez envoyé (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>)."
@@ -216,7 +216,7 @@
     "send-change-identity": {
       "CHANGE_IDENTITY_PROCEDURE_LABEL": "Si vous souhaitez modifier l'adresse mail que vous utilisez pour vous connecter vous pouvez <b>en choisir une nouvelle</b>.",
       "PASSWORD_LABEL": "Entrez tout d'abord votre mot de passe.",
-      "PASSWORD_VISIBILITY_LABEL": "$t(tours.login.PASSWORD_VISIBILITY_LABEL)",
+      "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "EMAIL_LABEL": "Entrez votre <b>nouvelle adresse mail</b>.",
       "CHANGE_LABEL": "Enfin, terminez en confirmant la demande de modification.",
       "CHANGE_EMAIL_LABEL": "Un email contenant un lien permettant de confirmer la modification vous serez envoyé sur votre nouvelle adresse (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>)."
@@ -224,7 +224,7 @@
     "groups": {
       "GROUPS_LABEL": "Cette activité vous permet de gérer les <b>groupes</b> au sein de votre organisation.",
       "GROUP_DEFINITION_LABEL": "Un groupe vous permet de déléguer la gestion d'un espace de travail restreint à ses membres.",
-      "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
+      "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
       "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos groupes au sein de la barre qui apparait pour effectuer une recherche.",
       "SORT_LABEL": "Ordonnez vos groupes par ordre alphabétique ascendant ou descendant via ce bouton.",
       "NEW_GROUP_LABEL": "Créez un <b>nouveau groupe</b> via ce bouton.",
@@ -234,9 +234,9 @@
       "LIST_GROUP_MEMBERS_LABEL": "Affichez les <b>membres</b> de votre groupe en la sélectionnant.",
       "UPDATE_GROUP_LABEL": "Modifiez le nom de votre groupe via cette action.",
       "UPDATE_GROUP_DESCRIPTION_LABEL": "Modifiez la description de votre groupe via cette action.",
-      "GROUP_OVERFLOW_MENU_LABEL": "$t(tours.CARD_OVERFLOW_MENU_LABEL)",
+      "GROUP_OVERFLOW_MENU_LABEL": "@:tours.CARD_OVERFLOW_MENU_LABEL",
       "REMOVE_GROUP_LABEL": "Supprimez votre groupe via cette action.",
-      "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
+      "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL"
     },
     "create-group": {
       "GROUP_NAME_LABEL": "Choisissez le nom de votre groupe.",
@@ -246,7 +246,7 @@
     "members": {
       "MEMBERS_LABEL": "Cette activité vous permet de gérer les <b>membres</b> au sein de votre organisation.",
       "MEMBER_DEFINITION_LABEL": "Un membre est un utilisateur ayant accès à l'espace de travail partagé offert par votre organisation.",
-      "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
+      "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
       "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos membres au sein de la barre qui apparait pour effectuer une recherche.",
       "SEARCH_MORE_LABEL": "Vous pouvez également taper un mot contenu dans le nom d'un groupe ou d'une étiquette portés par vos membres pour filtrer selon ce critère.",
       "FILTER_LABEL": "Filtrez vos membres selon leurs statut via ce bouton.",
@@ -269,7 +269,7 @@
       "CHANGE_ROLE_LABEL": "Modifiez le <b>rôle</b> de votre membre via cette action.",
       "CHANGE_ROLE_LINK_LABEL": "Voir comment gérer les rôles",
       "REMOVE_MEMBER_LABEL": "Supprimez un membre de votre organisation via cette action.",
-      "REMOVE_CONFIRMATION_LABEL": "$t(tours.REMOVE_CONFIRMATION_LABEL)"
+      "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL"
     },
     "add-member": {
       "UNIQUE_TAB_LABEL": "Ajoutez une personne à votre organisaion.",
@@ -296,7 +296,7 @@
     "tags": {
       "TAGS_LABEL": "Cette activité vous permet de gérer les <b>étiquettes</b> au sein de votre organisation.",
       "TAG_DEFINITION_LABEL": "Une étiquette vous permet de catégoriser un sous-ensemble des membres de votre organisation (e.g. une compétence ou un service).",
-      "OVERFLOW_MENU_LABEL": "$t(tours.APP_BAR_OVERFLOW_MENU_LABEL)",
+      "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
       "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos étiquettes au sein de la barre qui apparait pour effectuer une recherche.",
       "SORT_LABEL": "Ordonnez vos étiquettes par ordre alphabétique ascendant ou descendant via ce bouton.",
       "TAG_CARD_LABEL": "Chaque étiquette est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
@@ -309,7 +309,7 @@
     }
   },
   "reader": {
-    "READING_FILE": "Lecture de {{file}} en cours.<br>Veuillez patienter."
+    "READING_FILE": "Lecture de {file} en cours.<br>Veuillez patienter."
   },
   "KWelcome": {
     "WELCOME_TITLE": "Bienvenue !",
@@ -335,35 +335,35 @@
     "CHANGE_ENDPOINT_LINK": "Modifier l'adresse du serveur",
     "DEVELOPMENT_VERSION": "VERSION DE DEVELOPPEMENT",
     "TEST_VERSION": "VERSION DE TEST",
-    "KDK_POWERED": "Réalisé avec KDK (Kalisio's Development Kit)"
+    "KDK_POWERED": "Réalisé avec KDK (Kalisio's Development Kit"
   },
   "KErrorScreen": {
-    "TITLE": "Oups... page non trouvée",
+    "MESSAGE": "Oups... page non trouvée",
     "GO_HOME_LABEL": "Retourner à la page d'accueil"
   },
   "KLoginScreen": {
-    "EMAIL_FIELD_LABEL": "$t(KScreen.EMAIL_FIELD_LABEL)",
+    "EMAIL_FIELD_LABEL": "@:KScreen.EMAIL_FIELD_LABEL",
     "PASSWORD_FIELD_LABEL": "Saisissez votre mot de passe",
     "LOGIN_LABEL": "Se connecter",
     "FORGOT_YOUR_PASSWORD_LABEL": "Mot de passe oublié ?",
     "DONT_HAVE_AN_ACCOUNT_LABEL": "Vous n'avez pas de compte ?",
     "LOGIN_ERROR": "Mauvais identifiants ou service indisponible, veuillez réessayer",
-    "CONTEXTUAL_HELP": "$t(NEED_HELP)"
+    "CONTEXTUAL_HELP": "@:NEED_HELP"
   },
   "KRegisterScreen": {
     "TITLE": "Enregistrez vous",
-    "NAME_FIELD_LABEL": "$t(schemas.NAME_FIELD_LABEL)",
-    "EMAIL_FIELD_LABEL": "$t(KScreen.EMAIL_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:schemas.NAME_FIELD_LABEL",
+    "EMAIL_FIELD_LABEL": "@:KScreen.EMAIL_FIELD_LABEL",
     "PASSWORD_FIELD_LABEL": "Saisissez un mot de passe",
     "CONFIRM_PASSWORD_FIELD_LABEL": "Confirmez votre mot de passe",
     "ACCEPT_TERMS_LABEL": "J'accepte les conditions générales",
-    "ACCEPT_TERMS_HELPER": "<a href='{{domain}}/#/terms' target='_blank'>conditions générales</a>",
+    "ACCEPT_TERMS_HELPER": "<a href='{domain}/#/terms' target='_blank'>conditions générales</a>",
     "ACCEPT_TERMS_ERROR_LABEL": "Vous devez accepter nos conditions générales pour vous enregistrer",
     "REGISTER_LABEL": "S'enregistrer",
     "ALREADY_HAVE_AN_ACCOUNT_LABEL": "Déjà un compte ?",
     "EMAIL_ALREADY_TAKEN": "Mail déjà utilisé !",
     "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer",
-    "CONTEXTUAL_HELP": "$t(NEED_HELP)"
+    "CONTEXTUAL_HELP": "@:NEED_HELP"
   },
   "KEndpointScreen": {
     "TITLE": "Changer l'adresse du serveur ?",
@@ -397,24 +397,24 @@
     "PASSWORD_BLOCK_TEXT": "Votre mot de passe protège votre compte.<br>Changez le avec précaution.",
     "PASSWORD_BLOCK_ACTION": "Changer",
     "EMAIL_BLOCK_TITLE": "Changez votre adresse mail ?",
-    "EMAIL_BLOCK_TEXT": "Changer votre adresse mail sécurise les accès à votre compte, changez la avec précaution.<br>Adresse actuelle: <b>{{email}}</b>",
+    "EMAIL_BLOCK_TEXT": "Changer votre adresse mail sécurise les accès à votre compte, changez la avec précaution.<br>Adresse actuelle: <b>{email}</b>",
     "EMAIL_BLOCK_ACTION": "Changer"
   },
   "KGrid": {
-    "EMPTY_GRID": "$t(NO_ITEM)"
+    "EMPTY_GRID": "@:NO_ITEM"
   },
   "KList": {
-    "EMPTY_LIST": "$t(NO_ITEM)"
+    "EMPTY_LIST": "@:NO_ITEM"
   },
   "KTable": {
-    "EMPTY_TABLE": "$t(NO_ITEM)",
+    "EMPTY_TABLE": "@:NO_ITEM",
     "TABLE_COLUMNS": "Propriétés"
   },
   "KHistory": {
-    "EMPTY_HISTORY": "$t(NO_ITEM)"
+    "EMPTY_HISTORY": "@:NO_ITEM"
   },
   "KColumn": {
-    "EMPTY_COLUMN": "$t(NO_ITEM)"
+    "EMPTY_COLUMN": "@:NO_ITEM"
   },
   "KCard": {
     "DESCRIPTION_SECTION": "Description",
@@ -427,9 +427,9 @@
       "dictDefaultMessage": "Glissez-déposez vos fichiers ou cliquez ici",
       "dictFallbackMessage": "Votre navigateur ne supporte pas le glisser-déposer.",
       "dictFallbackText": "Utilisez le formulaire ci-dessous pour télécharger vos fichiers.",
-      "dictFileTooBig": "Votre fichier ({{filesize}}MO) excède la taille maximale autorisée ({{maxFilesize}}MO).",
+      "dictFileTooBig": "Votre fichier ({filesize}MO) excède la taille maximale autorisée ({maxFilesize}MO).",
       "dictInvalidFileType": "Vous ne pouvez ajouter des fichiers de ce type.",
-      "dictResponseError": "Une erreur est survenue lors du téléchargement (code {{statusCode}}), veuillez réessayer.",
+      "dictResponseError": "Une erreur est survenue lors du téléchargement (code {statusCode}), veuillez réessayer.",
       "dictCancelUpload": "Annuler",
       "dictUploadCanceled": "Téléchargement annulé.",
       "dictCancelUploadConfirmation": "Etes-vous sûr de vouloir annuler le téléchargement ?",
@@ -446,12 +446,12 @@
     }
   },
   "KColorChooser": {
-    "CANCEL_BUTTON": "$t(CANCEL)",
-    "DONE_BUTTON": "$t(DONE)"
+    "CANCEL_BUTTON": "@:CANCEL",
+    "DONE_BUTTON": "@:DONE"
   },
   "KIconChooser": {
-    "CLOSE_ACTION": "$t(CANCEL)",
-    "DONE_BUTTON": "$t(DONE)",
+    "CLOSE_ACTION": "@:CANCEL",
+    "DONE_BUTTON": "@:DONE",
     "SEARCH_FIELD_LABEL": "Tapez ici pour rechercher",
     "SEARCH_CATEGORY_LABEL": "Toutes les catégories",
     "categories": {
@@ -532,7 +532,7 @@
     }
   },
   "KTagField": {
-    "CREATE_TAG": "Créer <b>{{tag}}</b>"
+    "CREATE_TAG": "Créer <b>{tag}</b>"
   },
   "KFileField": {
     "ERROR_WHILE_LOADING_THE_FILE": "Erreur durant la lecture du fichier, avez-vous sélectionné un fichier valide ?",
@@ -541,19 +541,19 @@
     "INVALID_CSV_FILE": "Fichier CSV invalide"
   },
   "KMediaBrowser": {
-    "CLOSE_ACTION": "$t(CLOSE)",
+    "CLOSE_ACTION": "@:CLOSE",
     "DOWNLOAD_MEDIA_ACTION": "Télécharger le média",
     "RESTORE_IMAGE_ACTION": "Restaurer l'image",
     "NO_MEDIA": "Il n'y a aucun médias à voir, ajoutez des médias!"
   },
   "KFab": {
-    "CLOSE_ACTION": "$t(CLOSE)"
+    "CLOSE_ACTION": "@:CLOSE"
   },
   "KModal": {
-    "CLOSE_ACTION": "$t(CLOSE)"
+    "CLOSE_ACTION": "@:CLOSE"
   },
   "KWindow": {
-    "CLOSE_ACTION": "$t(CLOSE)",
+    "CLOSE_ACTION": "@:CLOSE",
     "PIN_ACTION": "Epingler",
     "RESTORE_ACTION": "Restaurer",
     "MAXIMIZE_ACTION": "Maximiser"
@@ -561,16 +561,16 @@
   "KAbout": {
     "SIDENAV": "A propos",
     "TITLE": "A propos",
-    "CLOSE_ACTION": "$t(CLOSE)",
-    "CLIENT_VERSION": "$t(KScreen.CLIENT_VERSION)",
-    "API_VERSION": "$t(KScreen.API_VERSION)",
+    "CLOSE_ACTION": "@:CLOSE",
+    "CLIENT_VERSION": "@:KScreen.CLIENT_VERSION",
+    "API_VERSION": "@:KScreen.API_VERSION",
     "DOMAIN": "Hébergé sur",
     "FLAVOR": "Saveur",
     "MORE": "En savoir plus sur",
     "MORE_PUBLISHER": "En savoir plus sur",
-    "KDK_POWERED": "$t(KScreen.KDK_POWERED)",
+    "KDK_POWERED": "@:KScreen.KDK_POWERED",
     "BUG_REPORT": "Nous signaler un bug",
-    "BUG_REPORT_SUBJECT": "[{{appName}}] Rapport de bug - Client v{{clientVersionName}} - API v{{apiVersionName}}",
+    "BUG_REPORT_SUBJECT": "[{appName}] Rapport de bug - Client v{clientVersionName} - API v{apiVersionName}",
     "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
     "SYSTEM_DETAILS": "Informations système"
   },
@@ -581,7 +581,7 @@
     "SORT_ORGANISATIONS": "Trier les organisations"
   },
   "KMembersActivity": {
-    "MEMBERS_LABEL": "$t(MEMBERS)",
+    "MEMBERS_LABEL": "@:MEMBERS",
     "SORT_MEMBERS": "Trier les membres",
     "SEARCH_MEMBERS": "Rechercher des membres",
     "ADD_USER_LABEL": "Ajouter un membre",
@@ -592,14 +592,14 @@
     "EMAIL_FIELD_LABEL": "Saissisez l'adresse mail de la personne à ajouter",
     "NAME_FIELD_LABEL": "Saisissez le nom de la personne",
     "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer à la personne",
-    "ADD_MESSAGE": "<b>{{email}}</b> possède déjà un compte. Voulez vous l'ajouter à votre organisation ?",
-    "INVITE_MESSAGE": "<b>{{email}}</b> ne possède pas de compte. Voulez vous l'inviter ?",
+    "ADD_MESSAGE": "<b>{email}</b> possède déjà un compte. Voulez vous l'ajouter à votre organisation ?",
+    "INVITE_MESSAGE": "<b>{email}</b> ne possède pas de compte. Voulez vous l'inviter ?",
     "FILE_FIELD_LABEL": "Sélectionnez le fichier CSV que vous désirez importer",
-    "OWNER_LABEL": "$t(OWNER)",
-    "MANAGER_LABEL": "$t(MANAGER)",
-    "MEMBER_LABEL": "$t(MEMBER)",
-    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
-    "CANCEL_BUTTON": "$t(CANCEL)",
+    "OWNER_LABEL": "@:OWNER",
+    "MANAGER_LABEL": "@:MANAGER",
+    "MEMBER_LABEL": "@:MEMBER",
+    "CLOSE_ACTION": "@:CLOSE_ACTION",
+    "CANCEL_BUTTON": "@:CANCEL",
     "CONTINUE_BUTTON": "Continuer",
     "BACK_BUTTON": "Revenir",
     "ADD_BUTTON": "Ajouter",
@@ -609,29 +609,29 @@
     "INVALID_FIELDS_NUMBER_ERROR": "Nombre de champs invalide",
     "CONTENT_FILE_ERROR": "Êtes vous sur que votre fichier est correctement formaté ?",
     "ALERT_FILE_IMPORT_MESSAGE": "Aucun enregistrement valide. Merci de Vérifier le format de votre fichier",
-    "CONFIRM_FILE_IMPORT_MESSAGE": "<b>{{errors}} erreur(s)</b> détectées sur {{records}} enregistrement(s). Voulez vous continuer ?",
+    "CONFIRM_FILE_IMPORT_MESSAGE": "<b>{errors} erreur(s)</b> détectées sur {records} enregistrement(s). Voulez vous continuer ?",
     "USER_ADDED_MESSAGE": "Cette personne a été ajoutée",
     "GUEST_ADDED_MESSAGE": "Cette personne a été invitée"
   },
   "KJoinGroup": {
-    "TITLE": "Ajouter {{member}} à un groupe existant ?",
+    "TITLE": "Ajouter {member} à un groupe existant ?",
     "GROUP_FIELD_LABEL": "Saisissez le nom du groupe",
     "ROLE_FIELD_LABEL": "Déléguer la gestion du groupe à ce membre ?",
-    "OWNER_LABEL": "$t(OWNER)",
-    "MANAGER_LABEL": "$t(MANAGER)",
-    "MEMBER_LABEL": "$t(MEMBER)",
-    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
+    "OWNER_LABEL": "@:OWNER",
+    "MANAGER_LABEL": "@:MANAGER",
+    "MEMBER_LABEL": "@:MEMBER",
+    "CLOSE_ACTION": "@:CLOSE_ACTION",
     "ADD_BUTTON": "Ajouter"
   },
   "KChangeRole": {
-    "TITLE": "Changer le rôle de {{member}} ?",
+    "TITLE": "Changer le rôle de {member} ?",
     "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer",
-    "CLOSE_ACTION": "$t(CLOSE_ACTION)",
+    "CLOSE_ACTION": "@:CLOSE_ACTION",
     "UPDATE_BUTTON": "Mettre à jour"
   },
   "KMemberCard": {
-    "EDIT_ACTION": "$t(EDIT)",    
-    "REMOVE_ACTION": "$t(REMOVE)",
+    "EDIT_ACTION": "@:EDIT",    
+    "REMOVE_ACTION": "@:REMOVE",
     "TAGS_SECTION": "Etiquettes",
     "TAG_ACTION": "Mofifier les étiquettes",
     "NO_TAGS_LABEL": "Aucune étiquette",
@@ -641,37 +641,37 @@
     "EXPIRE_AT_LABEL": "L'invitation expire au",
     "CHANGE_ROLE_ACTION": "Changer de rôle",
     "RESEND_INVITATION_ACTION": "Renvoyer une invitation",
-    "REMOVE_DIALOG_TITLE": "Supprimer {{member}} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer <b>{{member}}</b> de votre organisation ?",
-    "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {{group}} '?",
-    "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{{member}}</b> du groupe <b>{{group}}</b> ?",
-    "RESEND_INVITATION_DIALOG_TITLE": "Renvoyer une invitation à {{member}} ?",
-    "RESEND_INVITATION_DIALOG_MESSAGE": "L'adresse mail de <b>{{member}}</b> est-elle correcte ?"
+    "REMOVE_DIALOG_TITLE": "Supprimer {member} ?",
+    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer <b>{member}</b> de votre organisation ?",
+    "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {group} '?",
+    "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{member}</b> du groupe <b>{group}</b> ?",
+    "RESEND_INVITATION_DIALOG_TITLE": "Renvoyer une invitation à {member} ?",
+    "RESEND_INVITATION_DIALOG_MESSAGE": "L'adresse mail de <b>{member}</b> est-elle correcte ?"
   },
   "KTagsActivity": {
-    "TAGS_LABEL": "$t(TAGS)",
+    "TAGS_LABEL": "@:TAGS",
     "SORT_TAGS": "Trier les étiquettes",
     "SEARCH_TAGS": "Rechercher des étiquettes"
   },
   "KTagCard": {
-    "EDIT_ACTION": "$t(EDIT)",
+    "EDIT_ACTION": "@:EDIT",
     "MEMBERS_SECTION": "Membres",
-    "MEMBERS_LABEL": "{{count}} membre(s)",
+    "MEMBERS_LABEL": "{count} membre(s",
     "VIEW_MEMBERS_LABEL": "Voir les membres possédant l'étiquette"
   },
   "KGroupsActivity": {
-    "GROUPS_LABEL": "$t(GROUPS)",
+    "GROUPS_LABEL": "@:GROUPS",
     "SORT_GROUPS": "Trier les groupes",
     "SEARCH_GROUPS": "Rechercher des groupes",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
-    "EDIT_ACTION": "$t(EDIT)", 
-    "REMOVE_ACTION": "$t(REMOVE)",
+    "EDIT_ACTION": "@:EDIT", 
+    "REMOVE_ACTION": "@:REMOVE",
     "DESCRIPTION_SECTION": "Description",
     "NO_DESCRIPTION_LABEL": "Aucune description",
     "MEMBERS_SECTION": "Membres",
-    "MEMBERS_LABEL": "{{count}} membre(s)",
+    "MEMBERS_LABEL": "{count} membre(s",
     "VIEW_MEMBERS_LABEL": "Voir les membres"
   },
   "KChangeIdentity": {
@@ -680,7 +680,7 @@
     "VERIFICATION_TITLE": "Vérification du changement",
     "VERIFICATION_MESSAGE": "Merci de patienter",
     "SUCCESS_TITLE": "Changements appliqués",
-    "SUCCESS_MESSAGE": "Votre adresse mail {{email}} a bien été prise en compte",
+    "SUCCESS_MESSAGE": "Votre adresse mail {email} a bien été prise en compte",
     "ERROR_TITLE": "Erreur de la procédure",
     "ERROR_MESSAGE_ALREADY_APPLIED": "Vos changements ont déjà été appliqués",
     "ERROR_MESSAGE_BAD_PARAMS": "Vos changements ont déjà été réalisés ou votre compte a été supprimé",
@@ -755,7 +755,7 @@
     "RESEND_LINK": "Me renvoyer un mail de vérification",
     "BACK_LINK": "Retour",
     "SUCCESS_TITLE": "Adresse mail vérifiée",
-    "SUCCESS_MESSAGE": "Votre adresse mail {{email}} a bien été vérifiée",
+    "SUCCESS_MESSAGE": "Votre adresse mail {email} a bien été vérifiée",
     "ERROR_TITLE": "Erreur de vérification de votre adresse mail",
     "ERROR_MESSAGE_NOTHING_TO_VERIFY": "Votre adresse mail a déjà été vérifiée",
     "ERROR_MESSAGE_BAD_PARAMS": "Votre adresse mail a déjà été vérifiée ou votre compte a été supprimé",
@@ -766,8 +766,8 @@
     "LAST_ACTIVITY": "Dernière activité",
     "SERIAL_NUMBER": "Numéro de série",
     "UNLINK_LABEL": "Dissocier",
-    "UNLINK_DIALOG_TITLE": "Dissocier l'appareil {{description}} ?",
-    "UNLINK_DIALOG_MESSAGE": "Etes vous sûr de vouloir dissocier l'appareil {{description}} de votre compte ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via cet appareil."
+    "UNLINK_DIALOG_TITLE": "Dissocier l'appareil {description} ?",
+    "UNLINK_DIALOG_MESSAGE": "Etes vous sûr de vouloir dissocier l'appareil {description} de votre compte ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via cet appareil."
   },
   "KAccountDevices": {
     "DEVICES_USED": "Vérifier quand des appareils spécifiques ont eu accès à votre compte ci-dessous"

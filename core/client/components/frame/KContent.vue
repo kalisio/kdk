@@ -14,9 +14,10 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
 import _ from 'lodash'
+import logger from 'loglevel'
 import { Layout } from '../../layout'
+import { loadComponent } from '../../utils'
 
 export default {
   name: 'k-content',
@@ -50,7 +51,10 @@ export default {
       const components = Layout.getComponents(this.filteredContent, this.mode, this.context)
       for (let i = 0; i < components.length; ++i) {
         const component = components[i]
-        if (!_.startsWith(component.componentKey, 'q-')) component.instance = defineAsyncComponent(this.$load(component.componentName))
+        if (!_.startsWith(component.componentKey, 'q-')) {
+          logger.debug(`Loading component ${component.componentName}`)
+          component.instance = loadComponent(component.componentName)
+        }
       }
       return components
     },

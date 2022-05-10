@@ -31,7 +31,7 @@ import { baseActivity } from '../../mixins'
 
 export default {
   name: 'organisations-activity',
-  mixins: [ baseActivity() ],
+  mixins: [baseActivity()],
   data () {
     return {
       sorter: this.$store.get('sorter'),

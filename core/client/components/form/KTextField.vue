@@ -27,7 +27,7 @@ import { baseField } from '../../mixins'
 
 export default {
   name: 'k-text-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   computed: {
     text () {
       if (_.startsWith(this.model, 'http://') || _.startsWith(this.model, 'https://')) {

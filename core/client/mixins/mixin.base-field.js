@@ -107,4 +107,3 @@ export const baseField = {
     if (this.values) this.updateValue(_.get(this.values, this.properties.name))
   }
 }
-

@@ -44,7 +44,7 @@ export default {
     KScreen,
     KForm
   },
-  mixins: [ account ],
+  mixins: [account],
   data () {
     return {
       message: '',

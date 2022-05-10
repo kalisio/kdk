@@ -38,7 +38,7 @@ export default {
   components: {
     QDialog, QColor
   },
-  mixins: [ baseField ],
+  mixins: [baseField],
   data () {
     return {
       picker: false

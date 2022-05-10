@@ -1,9 +1,9 @@
 <template>
   <k-screen title="KEndpointScreen.TITLE" :actions="actions">
     <div class="column items-center q-gutter-y-md">
-      <k-form 
+      <k-form
         ref="form"
-        class="full-width" 
+        class="full-width"
         :schema="getFormSchema()"
         @form-ready="onFormReady"
       />

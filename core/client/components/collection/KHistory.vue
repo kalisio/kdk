@@ -35,7 +35,7 @@ export default {
     KColumn,
     KStamp
   },
-  mixins: [ service ],
+  mixins: [service],
   props: {
     renderer: {
       type: Object,

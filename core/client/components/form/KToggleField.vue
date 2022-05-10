@@ -31,7 +31,7 @@ import { baseField } from '../../mixins'
 
 export default {
   name: 'k-toggle-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   methods: {
     emptyModel () {
       return false

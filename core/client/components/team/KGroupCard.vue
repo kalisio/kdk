@@ -36,7 +36,7 @@ export default {
     KCardSection,
     KTextArea
   },
-  mixins: [ baseItem ],
+  mixins: [baseItem],
   data () {
     return {
       membersCount: 0,

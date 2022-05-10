@@ -55,4 +55,3 @@ export const account = {
     this.accountService = this.$api.getService('account')
   }
 }
-

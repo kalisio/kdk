@@ -73,7 +73,7 @@ import { baseField } from '../../mixins'
 
 export default {
   name: 'k-tag-field',
-  mixins:[ baseField ],
+  mixins: [baseField],
   data () {
     return {
       services: [{
