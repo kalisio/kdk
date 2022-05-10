@@ -187,6 +187,17 @@ export function processIcon (object, path = 'icon.name') {
   _.set(object, path, getIconName(object, path))
 }
 
+// Function to map kdk icons with QIcon from Quasar
+// https://quasar.dev/vue-components/icon#custom-mapping
+export function mapIconFunction (iconName) {
+  if (iconName.startsWith('kdk:') === true) {
+    // we strip the "kdk:" part
+    const name = iconName.substring(4)
+    // Return the inlined icon
+    return { icon: 'img:icons/' + name }
+  }
+}
+
 // Transform nested object to dot notation
 export function dotify (object) {
   const dotifiedObject = {}
