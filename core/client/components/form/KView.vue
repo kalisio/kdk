@@ -15,7 +15,7 @@
         </span>
         <!-- Field value -->
         <component class="col"
-          :is="field.componentKey"
+          :is="field.component"
           v-bind="$props"
           :properties="field"
           :readOnly="true" />
@@ -26,8 +26,10 @@
      -->
     <template v-for="group in groups" :key="group">
       <q-expansion-item icon="las la-file-alt" :group="group" :label="$t(group)">
-        <template v-for="field in fields">
-          <div v-if="field.group === group" :key="field.group + field.name" class="row items-center"
+        <template v-for="field in fields" :key="field.group + field.name">
+          <div 
+            v-if="field.group === group" 
+            class="row items-center"
             v-bind:class="{ 'k-view-row': separators }"
           >
             <!-- Field label -->
@@ -36,7 +38,7 @@
             </span>
             <!-- Field value -->
             <component class="col"
-              :is="field.componentKey"
+              :is="field.component"
               v-bind="$props"
               :properties="field"
               :readOnly="true" />
@@ -78,7 +80,7 @@ export default {
     }
   },
   methods: {
-    refresh  () {
+    async refresh  () {
       // Clear the fields states
       this.fields = []
       this.groups = []
@@ -90,16 +92,11 @@ export default {
         const field = this.schema.properties[property]
         // 1- assign a name corresponding to the key to enable a binding between properties and fields
         field.name = property
-        // 2- assign a component key corresponding to the component path
-        const componentKey = _.kebabCase(field.field.component)
-        field.componentKey = componentKey
-        // Adds the field to the list of fields to be rendered
+        // 2 - qdds the field to the list of fields to be rendered
         this.fields.push(field)
         if (field.group && !this.groups.includes(field.group)) this.groups.push(field.group)
         // 3- load the component 
-        if (!this.$options.components[componentKey]) {
-          this.$options.components[componentKey] = this.$load(field.field.component)
-        }
+        field.component = loadComponent(field.field.component)
       })
     }
   },
