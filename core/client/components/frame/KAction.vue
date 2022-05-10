@@ -55,7 +55,7 @@
     :id="id"
     clickable
     :dense="dense"
-    :disabled="disabled"
+    :disable="disabled"
     @click="onClicked(arguments[0])">
     <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
@@ -79,7 +79,7 @@
     :size="size"
     :round="true"
     :dense="dense"
-    :disabled="disabled"
+    :disable="disabled"
     @click="onClicked(arguments[0])">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
@@ -103,7 +103,7 @@
     external-label
     square
     label-position="left"
-    :disabled="disabled"
+    :disable="disabled"
     @click="onClicked(arguments[0])">
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge">
