@@ -6,15 +6,15 @@ import * as core from '../core'
  */
 export async function mapInteraction (page, direction, times, wait = 250) {
   let dir
-  if (direction === 'up') {const dir = 'ArrowUp'}
-  else if (direction === 'down') {const dir = 'ArrowDown'}
-  else if (direction === 'left') {const dir = 'ArrowLeft'}
-  else if (direction === 'right') {const dir = 'ArrowRight'}
-  else if (direction === 'in') {const dir = '+'}
-  else if (direction === 'out') {const dir = '-'}
+  if (direction === 'up') {dir = 'ArrowUp'}
+  else if (direction === 'down') {dir = 'ArrowDown'}
+  else if (direction === 'left') {dir = 'ArrowLeft'}
+  else if (direction === 'right') {dir = 'ArrowRight'}
+  else if (direction === 'in') {dir = '+'}
+  else if (direction === 'out') {dir = '-'}
   await page.focus('#map')
   await page.waitForTimeout(wait)
-  var i = 0;
+  let i = 0;
   for (i = 0; i < times; i++) {
     await page.keyboard.press(dir)
     await page.waitForTimeout(wait)
