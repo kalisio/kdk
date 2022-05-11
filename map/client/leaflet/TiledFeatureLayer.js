@@ -9,6 +9,7 @@ import { tile2key, key2tile, tileSetContainsParent, getParentTileInTileSet } fro
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
     this.enableDebug = _.get(options, 'enableDebug', false)
+    // this.enableDebug = true
     L.GridLayer.prototype.initialize.call(this, options)
 
     this.on('tileunload', (event) => { this.onTileUnload(event) })
@@ -50,18 +51,32 @@ const TiledFeatureLayer = L.GridLayer.extend({
   getEvents () {
     const events = L.GridLayer.prototype.getEvents.call(this)
 
-    // listen to 'dragstart' and 'dragend' to know when user is dragging the map
-
+    // dragstart sets userIsDragging flag
     const onDragStart = events.dragstart
     events.dragstart = (event) => {
       this.userIsDragging = true
       if (onDragStart) onDragStart.call(this, event)
     }
 
+    // dragstart clears userIsDragging flag
     const onDragEnd = events.dragend
     events.dragend = (event) => {
       this.userIsDragging = false
       if (onDragEnd) onDragEnd.call(this, event)
+    }
+
+    // zoomstart records zoomStartLevel
+    const onZoomStart = events.zoomstart
+    events.zoomstart = (event) => {
+      if (onZoomStart) onZoomStart.call(this, event)
+      this.zoomStartLevel = this._map.getZoom()
+    }
+
+    // zoomend records zoomEndLevel
+    const onZoomEnd = events.zoomend
+    events.zoomend = (event) => {
+      if (onZoomEnd) onZoomEnd.call(this, event)
+      this.zoomEndLevel = this._map.getZoom()
     }
 
     return events
@@ -241,6 +256,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
         // a child tile may wait on that request
         if (tile.featuresRequest === null && tile.measuresRequest === null) tilesToRemove.push(tile)
       } else {
+        // Is this a tile with measures ?
         const tileWithMeasures = this.layer.probeService && (tile.coords.z >= minFeatureZoom) && (tile.coords.z <= maxFeatureZoom)
 
         if (this.enableDebug) {
@@ -280,7 +296,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
           }
 
           // Special case for probes: the parent tile may be at the level where only probes are loaded
-          // and it's still missing the measures
+          // and it's still missing the measures, schedule measure load now
           if (tileWithMeasures) {
             if (parentTile.measuresRequest !== null) {
               parentTile.measuresChildren.push(tile)
@@ -345,7 +361,16 @@ const TiledFeatureLayer = L.GridLayer.extend({
           }
         })
         // Add to underlying geojson layer
-        if (addCollection.length) { this.activity.updateLayer(this.layer.name, featureCollection(addCollection)) }
+        if (addCollection.length) {
+          const collection = featureCollection(addCollection)
+          // When we have a minFeatureZoom value and a probe service, we force a removall of
+          // the stations first to force delete of measures in the geojson layer
+          const forceRemove = this.layer.probeService &&
+                ((this.zoomStartLevel === minFeatureZoom && r.tiles[0].coords.z < minFeatureZoom) ||
+                 (this.zoomStartLevel === maxFeatureZoom && r.tiles[0].coords.z > maxFeatureZoom))
+          if (forceRemove) this.activity.updateLayer(this.layer.name, collection, true)
+          this.activity.updateLayer(this.layer.name, collection)
+        }
 
         // Notify tiles their request is done
         tiles.forEach((tile) => {
