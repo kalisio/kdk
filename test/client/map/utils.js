@@ -24,7 +24,7 @@ export async function mapInteraction (page, direction, times, wait = 250) {
 /* Zooms the map to a specific level
  */
 export async function zoomToLevel (page, level, wait = 250) {
-  const zoom = await getFromStore(page, 'mapActivity.zoom')
+  const zoom = await core.getFromStore(page, 'mapActivity.zoom')
   const diff = level-zoom;
   const action = (level > zoom) ? 'in':'out';
   await mapInteraction(page, action, Math.abs(diff),500)
