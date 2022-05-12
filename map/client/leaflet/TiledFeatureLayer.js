@@ -87,8 +87,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       this.userIsZooming = false
 
       if (this.pendingGeoJSONUpdates.length) {
-        for(const update of this.pendingGeoJSONUpdates)
-          this.activity.updateLayer(this.layer.name, update.geojson, update.remove)
+        for (const update of this.pendingGeoJSONUpdates) { this.activity.updateLayer(this.layer.name, update.geojson, update.remove) }
         this.pendingGeoJSONUpdates.length = 0
       }
     }
