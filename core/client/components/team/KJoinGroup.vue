@@ -20,7 +20,7 @@ import { baseModal, objectProxy, refsResolver } from '../../mixins'
 
 export default {
   name: 'k-join-group',
-  emits: ['opened', 'closed'],  
+  emits: ['opened', 'closed'],
   mixins: [
     baseModal,
     objectProxy,

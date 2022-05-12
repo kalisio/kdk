@@ -1,13 +1,13 @@
-import * as commonMixins from './mixins'
-import * as globeMixins from './mixins/globe'
-import * as utils from './utils'
-import init from './init'
-
-export * from './geolocation'
-export { utils }
-export * from '../common'
+import * as commonMixins from './mixins/index.js'
+import * as globeMixins from './mixins/globe/index.js'
+import * as utils from './utils.js'
+import init from './init.js'
 
 const mixins = Object.assign({}, commonMixins, { globe: globeMixins })
+
+export * from './geolocation.js'
+export { utils }
 export { mixins }
+export * from '../common/index.js'
 
 export default init

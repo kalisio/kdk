@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export default {
+export const levels = {
   data () {
     return {
       selectedLevel: null,

@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import { Time, Units } from '../../../../core/client'
+import { Time, Units } from '../../../../core/client/index.js'
 
-export default {
+export const tooltip = {
   methods: {
     applyTooltips (entities, options) {
       for (let i = 0; i < entities.values.length; i++) {

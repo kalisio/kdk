@@ -1,11 +1,11 @@
+import _ from 'lodash'
 import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import centroid from '@turf/centroid'
-import _ from 'lodash'
 import { getCssVar } from 'quasar'
-import { SelectionLayerName } from '../utils'
+import { SelectionLayerName } from '../utils.js'
 
-export default {
+export const featureSelection = {
   data () {
     return {
       selection: this.$store.get('selection')

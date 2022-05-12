@@ -1,6 +1,6 @@
 import Cesium from 'cesium/Source/Cesium.js'
 
-export default {
+export const globeActivity = {
   methods: {
     async initializeGlobe (token) {
       if (this.viewer) return

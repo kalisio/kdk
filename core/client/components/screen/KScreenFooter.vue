@@ -4,14 +4,14 @@
       Version
     -->
     <div class="row justify-center items-center q-gutter-x-sm">
-      <q-badge 
-        v-if="clientVersionName" 
+      <q-badge
+        v-if="clientVersionName"
         :label="$t('KScreen.CLIENT_VERSION') + clientVersionName"
         color="primary"
         outline
       />
       <div>-</div>
-      <q-badge 
+      <q-badge
         v-if="apiVersionName"
         :label="$t('KScreen.API_VERSION') + apiVersionName"
         color="primary"
@@ -28,7 +28,7 @@
         </a>
       </small>
     </div>
-    
+
     <!--
       KDK
     -->

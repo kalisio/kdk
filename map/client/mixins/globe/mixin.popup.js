@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import { Time, Units } from '../../../../core/client'
-import { getTextTable } from '../../utils'
+import { Time, Units } from '../../../../core/client/index.js'
+import { getTextTable } from '../../utils.js'
 
-export default {
+export const popup = {
   methods: {
     getDefaultPopup (entity, options) {
       let popup

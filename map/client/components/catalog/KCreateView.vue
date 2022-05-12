@@ -21,7 +21,7 @@ export default {
   components: {
     KModal,
     KForm
-  },  
+  },
   mixins: [baseModal],
   inject: ['kActivity'],
   data () {

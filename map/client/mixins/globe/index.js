@@ -1,19 +1,8 @@
-import baseGlobe from './mixin.base-globe'
-import geojsonLayers from './mixin.geojson-layers'
-import fileLayers from './mixin.file-layers'
-import style from './mixin.style'
-import tooltip from './mixin.tooltip'
-import popup from './mixin.popup'
-import activity from './mixin.globe-activity'
-import opendapLayers from './mixin.opendap-layers'
-
-export default {
-  baseGlobe,
-  geojsonLayers,
-  fileLayers,
-  style,
-  tooltip,
-  popup,
-  activity,
-  opendapLayers
-}
+export * from './mixin.base-globe.js'
+export * from './mixin.geojson-layers.js'
+export * from './mixin.file-layers.js'
+export * from './mixin.style.js'
+export * from './mixin.tooltip.js'
+export * from './mixin.popup.js'
+export * from './mixin.globe-activity.js'
+export * from './mixin.opendap-layers.js'

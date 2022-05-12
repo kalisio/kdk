@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { CanvasDrawContext } from '../../canvas-draw-context'
-import { bindLeafletEvents } from '../../utils'
+import { CanvasDrawContext } from '../../canvas-draw-context.js'
+import { bindLeafletEvents } from '../../utils.js'
 import L from 'leaflet'
 
 // Helper function to forward events when click through is enabled
@@ -354,7 +354,7 @@ L.kanvasLayer = function (options) {
   return new L.KanvasLayer(options)
 }
 
-export default {
+export const canvasLayer = {
   methods: {
     createLeafletCanvasLayer (options) {
       const layerOptions = options.leaflet || options

@@ -3,7 +3,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import bbox from '@turf/bbox'
 import { featureCollection } from '@turf/helpers'
-import { tile2key, getParentTileInTileSet } from './utils'
+import { tile2key, getParentTileInTileSet } from './utils.js'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {

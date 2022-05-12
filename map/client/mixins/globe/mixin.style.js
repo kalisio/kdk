@@ -1,9 +1,9 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
 import chroma from 'chroma-js'
-import { CesiumStyleMappings, CesiumEntityTypes } from '../../utils'
+import { CesiumStyleMappings, CesiumEntityTypes } from '../../utils.js'
 
-export default {
+export const style = {
   methods: {
     applyStyle (entities, options) {
       for (let i = 0; i < entities.values.length; i++) {

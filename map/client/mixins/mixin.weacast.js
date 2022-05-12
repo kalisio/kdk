@@ -2,11 +2,11 @@ import _ from 'lodash'
 import L from 'leaflet'
 import logger from 'loglevel'
 import moment from 'moment'
-import { Time } from '../../../core/client/time'
-import { Units } from '../../../core/client/units'
-import { getNearestTime, SelectionLayerName } from '../utils'
+import { Time } from '../../../core/client/time.js'
+import { Units } from '../../../core/client/units.js'
+import { getNearestTime, SelectionLayerName } from '../utils.js'
 
-export default {
+export const weacast = {
   data () {
     return {
       forecastModel: null,

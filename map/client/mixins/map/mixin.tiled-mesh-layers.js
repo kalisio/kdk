@@ -1,9 +1,9 @@
 import _ from 'lodash'
-import { Time } from '../../../../core/client/time'
-import { makeGridSource, extractGridSourceConfig } from '../../../common/grid'
-import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer'
+import { Time } from '../../../../core/client/time.js'
+import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
+import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer.js'
 
-export default {
+export const tiledMeshLayers = {
   methods: {
     createLeafletTiledMeshLayer (options) {
       const layerOptions = options.leaflet || options

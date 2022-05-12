@@ -37,7 +37,7 @@
 <script>
 import _ from 'lodash'
 import KScreen from '../screen/KScreen.vue'
-import KFrom from '../form/KForm.vue'
+import KForm from '../form/KForm.vue'
 import { account } from '../../mixins'
 
 export default {
@@ -45,7 +45,7 @@ export default {
   components: {
     KScreen,
     KForm
-  },  
+  },
   mixins: [account],
   data () {
     return {

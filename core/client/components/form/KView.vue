@@ -4,8 +4,8 @@
       Non-grouped fields
      -->
     <template v-for="field in fields" :key="field.name">
-      <div 
-        v-if="!field.group" 
+      <div
+        v-if="!field.group"
          class="row items-center"
         v-bind:class="{ 'k-view-row': separators }"
       >
@@ -27,8 +27,8 @@
     <template v-for="group in groups" :key="group">
       <q-expansion-item icon="las la-file-alt" :group="group" :label="$t(group)">
         <template v-for="field in fields" :key="field.group + field.name">
-          <div 
-            v-if="field.group === group" 
+          <div
+            v-if="field.group === group"
             class="row items-center"
             v-bind:class="{ 'k-view-row': separators }"
           >
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import { loadComponent } from '../../utils.js'
 
 export default {
   name: 'k-view',
@@ -95,7 +95,7 @@ export default {
         // 2 - qdds the field to the list of fields to be rendered
         this.fields.push(field)
         if (field.group && !this.groups.includes(field.group)) this.groups.push(field.group)
-        // 3- load the component 
+        // 3- load the component
         field.component = loadComponent(field.field.component)
       })
     }

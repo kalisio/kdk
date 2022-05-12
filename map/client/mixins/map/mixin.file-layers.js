@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import path from 'path'
-import { Reader } from '../../../../core/client'
+import { Reader } from '../../../../core/client/reader.js'
 
-export default {
+export const fileLayers = {
   methods: {
     async importFiles (filelist) {
       const acceptedFiles = await Reader.filter(filelist)

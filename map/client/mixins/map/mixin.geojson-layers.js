@@ -3,12 +3,12 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import 'leaflet-realtime'
-import { Time } from '../../../../core/client/time'
-import { GradientPath } from '../../leaflet/GradientPath'
-import { MaskLayer } from '../../leaflet/MaskLayer'
-import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
-import * as wfs from '../../../common/wfs-utils'
+import { Time } from '../../../../core/client/time.js'
+import { GradientPath } from '../../leaflet/GradientPath.js'
+import { MaskLayer } from '../../leaflet/MaskLayer.js'
+import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
+import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
+import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default Leaflet GeoJson utility to manage some specific use cases
 const geometryToLayer = L.GeoJSON.geometryToLayer
@@ -38,7 +38,7 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
   return geometryToLayer(geojson, options)
 }
 
-export default {
+export const geojsonLayers = {
   methods: {
     processRealtimeGeoJsonLayerOptions (options) {
       const leafletOptions = options.leaflet || options

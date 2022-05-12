@@ -1,35 +1,16 @@
-import baseMap from './mixin.base-map'
-import geojsonLayers from './mixin.geojson-layers'
-import fileLayers from './mixin.file-layers'
-import forecastLayers from './mixin.forecast-layers'
-import georasterLayers from './mixin.georaster-layers'
-import editLayers from './mixin.edit-layers'
-import style from './mixin.style'
-import tooltip from './mixin.tooltip'
-import popup from './mixin.popup'
-import activity from './mixin.map-activity'
-import tiledMeshLayers from './mixin.tiled-mesh-layers'
-import tiledWindLayers from './mixin.tiled-wind-layers'
-import heatmapLayers from './mixin.heatmap-layers'
-import mapillaryLayers from './mixin.mapillary-layers'
-import gsmapLayers from './mixin.gsmap-layers'
-import canvasLayers from './mixin.canvas-layers'
-
-export default {
-  baseMap,
-  geojsonLayers,
-  fileLayers,
-  forecastLayers,
-  georasterLayers,
-  editLayers,
-  style,
-  tooltip,
-  popup,
-  activity,
-  tiledMeshLayers,
-  tiledWindLayers,
-  heatmapLayers,
-  mapillaryLayers,
-  gsmapLayers,
-  canvasLayers
-}
+export * from './mixin.base-map.js'
+export * from './mixin.geojson-layers.js'
+export * from './mixin.file-layers.js'
+export * from './mixin.forecast-layers.js'
+export * from './mixin.georaster-layers.js'
+export * from './mixin.edit-layers.js'
+export * from './mixin.style.js'
+export * from './mixin.tooltip.js'
+export * from './mixin.popup.js'
+export * from './mixin.map-activity.js'
+export * from './mixin.tiled-mesh-layers.js'
+export * from './mixin.tiled-wind-layers.js'
+export * from './mixin.heatmap-layers.js'
+export * from './mixin.mapillary-layers.js'
+export * from './mixin.gsmap-layers.js'
+export * from './mixin.canvas-layers.js'

@@ -92,7 +92,7 @@ import { getLocale } from '../../utils'
 import { RoleNames } from '../../../common/permissions'
 import KModal from '../frame/KModal.vue'
 import KForm from '../form/KForm.vue'
-import Action from '../frame/KAction.vue'
+import KAction from '../frame/KAction.vue'
 
 export default {
   name: 'k-add-member',

@@ -21,9 +21,9 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
-import { Time } from '../../../../core/client'
+import { Time } from '../../../../core/client/time.js'
 import { uid } from 'quasar'
-import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils'
+import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 // Fix to make Leaflet assets be correctly inserted by webpack
@@ -36,7 +36,7 @@ L.Icon.Default.mergeOptions({
 // Do not create geoman structs everywhere
 L.PM.setOptIn(true)
 
-export default {
+export const baseMap = {
   data () {
     return {
       layers: {}

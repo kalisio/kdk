@@ -34,8 +34,8 @@
 
 <script>
 import _ from 'lodash'
-import path from 'path'
-import { Layout } from '../../layout'
+import { Layout } from '../../layout.js'
+import { loadComponent } from '../../utils.js'
 import KPanel from '../frame/KPanel.vue'
 
 export default {

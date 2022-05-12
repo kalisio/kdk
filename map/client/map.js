@@ -1,13 +1,13 @@
-import * as commonMixins from './mixins'
-import * as mapMixins from './mixins/map'
-import * as utils from './utils'
-import init from './init'
-
-export * from './geolocation'
-export { utils }
-export * from '../common'
+import * as commonMixins from './mixins/index.js'
+import * as mapMixins from './mixins/map/index.js'
+import * as utils from './utils.js'
+import init from './init.js'
 
 const mixins = Object.assign({}, commonMixins, { map: mapMixins })
+
+export * from './geolocation.js'
+export { utils }
 export { mixins }
+export * from '../common/index.js'
 
 export default init

@@ -4,10 +4,10 @@
       Form section
     -->
     <div>
-      <k-form 
-        :id="getSchemaId() + 'form'" 
+      <k-form
+        :id="getSchemaId() + 'form'"
         ref="form"
-        :schema="schema" 
+        :schema="schema"
         @field-changed="onFieldChanged"/>
     </div>
     <!--

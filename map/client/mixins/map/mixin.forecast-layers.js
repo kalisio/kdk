@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import 'weacast-leaflet'
+import '@weacast/leaflet'
 
-export default {
+export const forecastLayers = {
   methods: {
     getVisualForecastModel (layerConfig) {
       // For visualization we might decimate the data resolution for performance reasons

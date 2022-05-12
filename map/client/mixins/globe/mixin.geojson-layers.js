@@ -1,10 +1,10 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
 import sift from 'sift'
-import { Time } from '../../../../core/client/time'
-import { fetchGeoJson } from '../../utils'
+import { Time } from '../../../../core/client/time.js'
+import { fetchGeoJson } from '../../utils.js'
 
-export default {
+export const geojsonLayers = {
   methods: {
     convertFromSimpleStyleSpecOrDefaults (properties) {
       let { stroke, strokeWidth, fill } = this.convertFromSimpleStyleSpec(properties)

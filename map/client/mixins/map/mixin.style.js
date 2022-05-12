@@ -1,9 +1,9 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import chroma from 'chroma-js'
-import { LeafletStyleMappings } from '../../utils'
+import { LeafletStyleMappings } from '../../utils.js'
 
-export default {
+export const style = {
   methods: {
     createMarkerFromStyle (latlng, markerStyle, feature) {
       if (markerStyle) {

@@ -43,7 +43,7 @@ export default {
       type: Array,
       default: () => []
     }
-      /*{
+    /* {
         return (this.$q.screen.lt.sm
           ? [
               ['bold', 'italic', 'underline', 'strike'],
@@ -65,7 +65,7 @@ export default {
               }],
               ['undo', 'redo', 'viewsource']
             ])
-      }*/
+      } */
   }
 }
 </script>

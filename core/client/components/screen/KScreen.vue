@@ -44,7 +44,7 @@
 
 <script>
 import KPanel from '../frame/KPanel.vue'
-import { loadComponent } from '../../utils'
+import { loadComponent } from '../../utils.js'
 
 export default {
   name: 'k-screen',

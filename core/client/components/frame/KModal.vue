@@ -139,7 +139,7 @@ export default {
     },
     close () {
       this.$refs.modal.hide()
-      tthis.$emit('update:modelValue', false)
+      this.$emit('update:modelValue', false)
     },
     onHeaderResized (size) {
       this.headerHeight = size.height

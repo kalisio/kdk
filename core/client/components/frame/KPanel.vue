@@ -5,7 +5,7 @@
       'row items-center justify-center no-wrap': direction === 'horizontal',
       'column': direction === 'vertical'
     }"
-    @triggered="$emit('triggered', arguments)" 
+    @triggered="$emit('triggered', arguments)"
   />
 </template>
 

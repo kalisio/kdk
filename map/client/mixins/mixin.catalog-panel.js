@@ -1,4 +1,4 @@
-export default {
+export const catalogPanel = {
   computed: {
     panelStyle () {
       const screenHeight = this.$q.screen.height

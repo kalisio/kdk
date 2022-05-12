@@ -4,11 +4,11 @@ import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
-import { Layout } from '../../../core/client/layout'
-import { setGatewayJwt } from '../utils'
-import { utils as kCoreUtils } from '../../../core/client'
+import { Layout } from '../../../core/client/layout.js'
+import { setGatewayJwt } from '../utils.js'
+import { utils as kCoreUtils } from '../../../core/client/index.js'
 
-export default {
+export const activity = {
   data () {
     return {
       forecastModelHandlers: {},

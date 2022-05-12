@@ -2,9 +2,9 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import memory from 'feathers-memory'
 import { Platform } from 'quasar'
-import { Store, Reader, utils as kCoreUtils } from '../../core/client'
-import { Geolocation } from './geolocation'
-import { GeoJSONReader, KMLReader, GPXReader, SHPReader } from './readers'
+import { Store, Reader, utils as kCoreUtils } from '../../core/client/index.js'
+import { Geolocation } from './geolocation.js'
+import { GeoJSONReader, KMLReader, GPXReader, SHPReader } from './readers/index.js'
 
 function siftMatcher (originalQuery) {
   // Filter out specific operators others than the reserved ones (starting by $),

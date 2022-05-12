@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { utils as kCoreUtils } from '../../../core/client'
+import { utils as kdkCoreUtils } from '../../../core/client/index.js'
 
 export const CesiumStyleMappings = {
   stroke: 'stroke',
@@ -49,7 +49,7 @@ export function convertCesiumHandlerEvent (type) {
 }
 
 export function getTextTable (properties) {
-  properties = kCoreUtils.dotify(properties)
+  properties = kdkCoreUtils.dotify(properties)
   properties = _.pickBy(properties, value => !_.isNil(value))
   const keys = _.keys(properties)
   let text

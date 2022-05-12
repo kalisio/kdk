@@ -1,8 +1,8 @@
-import L from 'leaflet'
-import { Time, Units } from '../../../../core/client'
 import _ from 'lodash'
+import L from 'leaflet'
+import { Time, Units } from '../../../../core/client/index.js'
 
-export default {
+export const tooltip = {
   methods: {
     getDefaultTooltip (feature, layer, options) {
       const properties = feature.properties

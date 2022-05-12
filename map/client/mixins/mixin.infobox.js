@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export default {
+export const infobox = {
   methods: {
     getDefaultInfoBox (feature, options) {
       let properties = feature.properties

@@ -3,10 +3,10 @@ import chroma from 'chroma-js'
 import config from 'config'
 import formatcoords from 'formatcoords'
 import { uid } from 'quasar'
-import { buildUrl } from '../../core/common'
-import { Store, utils as kCoreUtils } from '../../core/client'
-export * from './leaflet/utils'
-export * from './cesium/utils'
+import { buildUrl } from '../../core/common/index.js'
+import { Store, utils as kCoreUtils } from '../../core/client/index.js'
+export * from './leaflet/utils.js'
+export * from './cesium/utils.js'
 
 export const SelectionLayerName = uid()
 

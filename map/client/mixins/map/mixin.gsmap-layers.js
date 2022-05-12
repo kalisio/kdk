@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import { Time } from '../../../../core/client/time'
-import { GSMaPLayer } from '../../leaflet/GSMaPLayer'
+import { Time } from '../../../../core/client/time.js'
+import { GSMaPLayer } from '../../leaflet/GSMaPLayer.js'
 
-export default {
+export const gsmapLayers = {
   methods: {
     async createLeafletGSMaPLayer (options) {
       const leafletOptions = options.leaflet || options

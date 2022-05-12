@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Cesium from 'cesium/Source/Cesium.js'
 import logger from 'loglevel'
 
-export default {
+export const fileLayers = {
   mounted () {
     this.$on('globe-ready', () => {
       this.viewer.extend(Cesium.viewerDragDropMixin,

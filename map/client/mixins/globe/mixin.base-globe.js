@@ -5,13 +5,13 @@ import { getCssVar } from 'quasar'
 import { kml } from '@tmcw/togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
-import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl'
-import { convertCesiumHandlerEvent } from '../../utils'
+import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
+import { convertCesiumHandlerEvent } from '../../utils.js'
 // Cesium has its own dynamic module loader requiring to be configured
 // Cesium files need to be also added as static assets of the applciation
 BuildModuleUrl.setBaseUrl('./statics/Cesium/')
 
-export default {
+export const baseGlobe = {
   data () {
     return {
       layers: {}

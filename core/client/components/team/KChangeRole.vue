@@ -19,7 +19,7 @@ import KForm from '../form/KForm.vue'
 
 export default {
   name: 'k-change-role',
-  emits: ['opened', 'closed'],  
+  emits: ['opened', 'closed'],
   components: {
     KModal,
     KForm

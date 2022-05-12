@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export default {
+export const style = {
   methods: {
     registerStyle (type, generator) {
       // Initialize on first registration

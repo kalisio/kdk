@@ -1,7 +1,6 @@
 import _ from 'lodash'
-import { createQuerablePromise } from '../utils.js'
+import { createQuerablePromise, loadSchema } from '../utils.js'
 import { Events } from '../events.js'
-import { loadSchema } from '../utils.js'
 
 export const schemaProxy = {
   props: {

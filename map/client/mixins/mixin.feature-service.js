@@ -5,10 +5,10 @@ import clean from '@turf/clean-coords'
 import { getType } from '@turf/invariant'
 import logger from 'loglevel'
 import moment from 'moment'
-import { Time } from '../../../core/client/time'
-import { getNearestTime } from '../utils'
+import { Time } from '../../../core/client/time.js'
+import { getNearestTime } from '../utils.js'
 
-export default {
+export const featureService = {
   methods: {
     async getBaseQueryForFeatures (options) {
       // Any base query to process ?

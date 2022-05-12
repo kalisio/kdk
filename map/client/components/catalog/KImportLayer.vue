@@ -27,7 +27,7 @@ export default {
     KAction,
     KPanel,
     KForm
-  },  
+  },
   inject: ['kActivity'],
   data () {
     return {

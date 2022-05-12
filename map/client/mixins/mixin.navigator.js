@@ -1,6 +1,6 @@
 import logger from 'loglevel'
 
-export default {
+export const navigator = {
   methods: {
     canNavigate () {
       if (!this.$q.platform.is.cordova) return false

@@ -1,9 +1,9 @@
 import L from 'leaflet'
 import _ from 'lodash'
-import { Time, Units } from '../../../../core/client'
-import { getHtmlTable } from '../../utils'
+import { Time, Units } from '../../../../core/client/index.js'
+import { getHtmlTable } from '../../utils.js'
 
-export default {
+export const popupLayers = {
   methods: {
     getDefaultPopup (feature, layer, options) {
       let properties = feature.properties

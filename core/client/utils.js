@@ -249,7 +249,7 @@ export async function loadTranslations (bundleNames, locale, fallbackLocale) {
   }
 }
 
-// Helper function to load a schema 
+// Helper function to load a schema
 // @schema alias shoud be added in the quasar.config build section
 export async function loadSchema (schemaName) {
   try {

@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import moment from 'moment'
 import sift from 'sift'
-import { utils as kCoreUtils, Time, Store } from '../../../core/client'
+import { utils as kCoreUtils, Time, Store } from '../../../core/client/index.js'
 
-export default {
+export const context = {
   methods: {
     getContextKey (context) {
       // Generate a unique key to store context based on app name, map activity name and context type

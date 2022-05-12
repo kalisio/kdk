@@ -38,7 +38,7 @@ export default {
     KPage,
     KGrid,
     KStamp
-  },  
+  },
   mixins: [baseActivity()],
   data () {
     return {

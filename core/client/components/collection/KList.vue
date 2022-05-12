@@ -73,7 +73,7 @@ export default {
     rendererComponent () {
       return loadComponent(this.renderer.component)
     }
-  },  
+  },
   watch: {
     baseQuery: function () {
       this.resetCollection()

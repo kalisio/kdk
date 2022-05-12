@@ -6,9 +6,9 @@
     v-model="isModalOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
-      <k-form 
-        :ref="onFormReferenceCreated" 
-        :schema="schema" 
+      <k-form
+        :ref="onFormReferenceCreated"
+        :schema="schema"
       />
   </k-modal>
 </template>
@@ -35,7 +35,7 @@ export default {
   ],
   computed: {
     buttons () {
-      let buttons = [
+      const buttons = [
         { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
         { id: 'apply-button', label: this.applyButton, renderer: 'form-button', handler: () => this.apply() }
       ]

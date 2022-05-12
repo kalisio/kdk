@@ -2,7 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import chroma from 'chroma-js'
 
-import { tile2key, tileSetContainsParent } from './utils'
+import { tile2key, tileSetContainsParent } from './utils.js'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options, uSource, vSource) {

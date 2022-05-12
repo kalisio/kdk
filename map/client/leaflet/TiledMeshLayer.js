@@ -3,9 +3,9 @@ import L from 'leaflet'
 import chroma from 'chroma-js'
 import * as PIXI from 'pixi.js'
 import 'leaflet-pixi-overlay'
-import 'abort-controller/polyfill'
+import 'abort-controller/polyfill.js'
 
-import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils'
+import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils.js'
 
 const TiledMeshLayer = L.GridLayer.extend({
   initialize (options, gridSource) {

@@ -3,10 +3,10 @@ import L from 'leaflet'
 import sift from 'sift'
 import centroid from '@turf/centroid'
 import HeatmapOverlay from 'leaflet-heatmap'
-import { Time } from '../../../../core/client/time'
-import { fetchGeoJson } from '../../utils'
+import { Time } from '../../../../core/client/time.js'
+import { fetchGeoJson } from '../../utils.js'
 
-export default {
+export const heatmapLayers = {
   methods: {
     async createLeafletHeatmapLayer (options) {
       const leafletOptions = options.leaflet || options

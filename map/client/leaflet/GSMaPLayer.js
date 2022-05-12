@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import moment from 'moment'
-import { buildColorMap } from '../utils'
+import { buildColorMap } from '../utils.js'
 
 const GSMaPLayer = L.TileLayer.extend({
   initialize (options) {

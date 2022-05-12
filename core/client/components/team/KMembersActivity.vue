@@ -42,7 +42,7 @@ export default {
     KPage,
     KGrid,
     KStamp
-  },  
+  },
   mixins: [activityMixin],
   provide () {
     return {

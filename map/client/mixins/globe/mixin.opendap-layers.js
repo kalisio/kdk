@@ -1,7 +1,7 @@
 // import logger from 'loglevel'
 import Cesium from 'cesium/Source/Cesium.js'
 
-export default {
+export const opendapLayers = {
   methods: {
     createCesiumOpendapLayer (options) {
       const cesiumOptions = options.cesium

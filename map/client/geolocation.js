@@ -1,5 +1,5 @@
-import { Store, Events, utils } from '../../core/client'
-import { errors } from '../common'
+import { Store, Events, utils } from '../../core/client/index.js'
+import { errors } from '../common/index.js'
 import logger from 'loglevel'
 
 // Export singleton

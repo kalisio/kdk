@@ -1,4 +1,4 @@
-export default {
+export const mapAcitivy = {
   methods: {
     async initializeMap () {
       if (this.map) return

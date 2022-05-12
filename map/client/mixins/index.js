@@ -1,23 +1,10 @@
-import activity from './mixin.activity'
-import catalogPanel from './mixin.catalog-panel'
-import context from './mixin.context'
-import navigator from './mixin.navigator'
-import style from './mixin.style'
-import infobox from './mixin.infobox'
-import featureSelection from './mixin.feature-selection'
-import featureService from './mixin.feature-service'
-import weacast from './mixin.weacast'
-import levels from './mixin.levels'
-
-export default {
-  activity,
-  catalogPanel,
-  context,
-  navigator,
-  featureSelection,
-  featureService,
-  infobox,
-  style,
-  weacast,
-  levels
-}
+export * from './mixin.activity.js'
+export * from './mixin.catalog-panel.js'
+export * from './mixin.context.js'
+export * from './mixin.feature-selection.js'
+export * from './mixin.feature-service.js'
+export * from './mixin.infobox.js'
+export * from './mixin.levels.js'
+export * from './mixin.navigator.js'
+export * from './mixin.style.js'
+export * from './mixin.weacast.js'

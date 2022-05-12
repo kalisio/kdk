@@ -100,7 +100,7 @@ export const baseEditor = {
         }
         this.applyButton = this.$t('UPDATE')
       } else {
-        //this.form.clear()
+        // this.form.clear()
         this.applyButton = this.$t('CREATE')
       }
     },
@@ -116,11 +116,11 @@ export const baseEditor = {
       if (!this.getService()) throw new Error('Cannot apply the editor with undefined service')
       if (!this.form) throw new Error('Cannot apply the editor with a non-ready form')
       // Validate the form
-      if (!this.form.validate().isValid) return 
+      if (!this.form.validate().isValid) return
       // Now the form is validated apply it to the target object
       const object = this.getBaseObject()
       this.form.apply(object)
-      
+
       // Small helper to avoid repeating too much similar code
       const onServiceResponse = async (response) => {
         await this.form.submitted(response)
@@ -164,12 +164,12 @@ export const baseEditor = {
       return true
     },
     async refresh () {
-      // Clear the form 
+      // Clear the form
       this.form = null
       // We can then load the schema/object and local refs in parallel
       await Promise.all([
         this.loadSchema(this.getSchemaName()),
-        this.loadObject(),
+        this.loadObject()
       ])
     }
   }
