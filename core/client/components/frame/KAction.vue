@@ -65,7 +65,7 @@
       </q-badge>
     </q-item-section>
     <q-item-section no-wrap>
-      {{ $t(computedLabel) }}
+      {{ computedLabel }}
     </q-item-section>
   </q-item>
   <!--
