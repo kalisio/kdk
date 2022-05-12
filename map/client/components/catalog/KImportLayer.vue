@@ -18,7 +18,6 @@
 import _ from 'lodash'
 import path from 'path'
 import { generatePropertiesSchema } from '../../utils'
-import _ from 'lodash'
 import { KAction, KPanel } from '../../../../core/client/components/frame'
 import KForm from '../../../../core/client/components/form/KForm.vue'
 

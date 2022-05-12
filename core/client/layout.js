@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import path from 'path-browserify'
+import path from 'path'
 import logger from 'loglevel'
 import sift from 'sift'
 import { uid } from 'quasar'

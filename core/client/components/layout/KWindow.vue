@@ -34,7 +34,7 @@
 
 <script>
 import _ from 'lodash'
-import path from 'path-browserify'
+import path from 'path'
 import { Layout } from '../../layout'
 import KPanel from '../frame/KPanel.vue'
 
