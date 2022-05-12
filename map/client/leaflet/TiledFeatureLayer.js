@@ -353,24 +353,25 @@ const TiledFeatureLayer = L.GridLayer.extend({
         const addCollection = []
         features.forEach((feature) => {
           const featureId = this.getFeatureKey(feature)
-          let knownFeature = this.allFeatures.get(featureId)
-          if (knownFeature === undefined) {
+          let internalFeature = this.allFeatures.get(featureId)
+          const featureToAdd = internalFeature === undefined
+          if (featureToAdd) {
             const turfBbox = bbox(feature)
             const corner1 = L.latLng(turfBbox[1], turfBbox[0])
             const corner2 = L.latLng(turfBbox[3], turfBbox[2])
-            knownFeature = { geojson: feature, refCount: 0, bbox: L.latLngBounds(corner1, corner2) }
+            internalFeature = { geojson: feature, refCount: 0, bbox: L.latLngBounds(corner1, corner2) }
           }
           tiles.forEach((tile) => {
-            if (tile.bbox.intersects(knownFeature.bbox)) {
-              knownFeature.refCount += 1
+            if (tile.bbox.intersects(internalFeature.bbox)) {
+              internalFeature.refCount += 1
               tile.features.push(featureId)
             }
           })
           // Tiles may be outside request bbox when bbox is big because of
           // underlying service projection
-          if (knownFeature.refCount > 0) {
+          if (featureToAdd && internalFeature.refCount > 0) {
             addCollection.push(feature)
-            this.allFeatures.set(featureId, knownFeature)
+            this.allFeatures.set(featureId, internalFeature)
           }
         })
         // Add to underlying geojson layer
@@ -424,6 +425,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
     measureRequests.forEach((r) => {
       const promise = this.featureSource(r.query)
       r.tiles.forEach((tile) => {
+        tile.measuresRequest = promise
+
         if (this.enableDebug) tile.div.innerHTML += '</br>measures request issued'
       })
 
@@ -433,12 +436,25 @@ const TiledFeatureLayer = L.GridLayer.extend({
         r.tiles.forEach((tile) => { if (tile.measuresChildren.length) allTiles.push(tile.measuresChildren) })
         const tiles = allTiles.flat()
 
+        const stationPromises = []
         tiles.forEach((tile) => {
+          tile.measuresRequest = null
+          tile.measuresChildren = []
+          // We want to push measures _after_ we pushed the stations
+          if (tile.featuresRequest) stationPromises.push(tile.featuresRequest)
+
           if (this.enableDebug) tile.div.innerHTML += `</br>measures request success: ${data.features.length} total`
         })
 
-        // Here we know we already have the stations
-        if (data.features.length) this.updateGeoJSON(data)
+        Promise.all(stationPromises).then(() => {
+          // Make sure we know the stations those measures refer to
+          const okMeasures = []
+          featureEach(data, (feature) => {
+            const id = this.getFeatureKey(feature)
+            if (this.allFeatures.has(id)) okMeasures.push(feature)
+          })
+          if (okMeasures.length) this.updateGeoJSON(featureCollection(okMeasures))
+        })
       }).catch((err) => {
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.measuresChildren.length) allTiles.push(tile.measuresChildren) })
