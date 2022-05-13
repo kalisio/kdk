@@ -1,8 +1,8 @@
 <template>
   <div class="q-pl-xs q-pb-sm q-pr-sm">
     <div v-if="layers.length > 0" class="full-width row">
-      <template v-for="layer in layers">
-        <div class="col-6 q-pa-xs" :key="layer.name">
+      <template v-for="layer in layers" :key="layer.name">
+        <div class="col-6 q-pa-xs" >
           <q-card
             :id="getId(layer)"
             v-ripple

@@ -48,7 +48,7 @@ export const Geolocation = {
     this.positionPromise = utils.createQuerablePromise(new Promise((resolve, reject) => {
       if (!window.navigator.geolocation) {
         Events.$emit('error', {
-          message: errors.GEOLOCATION_NOT_SUPPORTED,
+          message: 'errors.GEOLOCATION_NOT_SUPPORTED',
           // By default we only show geolocation errors, nothing if unsupported
           ignore: true
         })

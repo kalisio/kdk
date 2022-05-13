@@ -2,8 +2,8 @@
   <div>
     <slot name="header" />
     <div v-if="layers.length > 0">
-      <template v-for="layer in layers">
-        <div :key="getId(layer)" :id="getId(layer)" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
+      <template v-for="layer in layers" :key="getId(layer)">
+        <div :id="getId(layer)" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
           <!-- Layer name -->
           <div class="ellipsis" v-bind:class="{
             'text-primary text-weight-bold': layer.isVisible,

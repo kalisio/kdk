@@ -260,7 +260,6 @@
           <q-item-section class="col-1">
             <q-toggle v-model="popup"/>
           </q-item-section>
-          </q-item-section>
           <q-item-section class="col-11">
             <q-select :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')"></q-select>
           </q-item-section>

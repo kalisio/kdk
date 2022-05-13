@@ -32,10 +32,9 @@
      -->
     <div v-if="$q.screen.gt.xs" class="q-pt-sm column">
       <div v-if="minutes.length > 0" class="row justify-center items-center">
-        <template v-for="(minute, index) in minutes">
+        <template v-for="(minute, index) in minutes" :key="index">
           <q-chip
             :id="'timeline-minutes-' + index"
-            :key="index"
             dense flat outline :size="$q.screen.gt.sm ? '12px' : '10px'"
             :color="minute.color"
             :text-color="minute.textColor"
@@ -47,9 +46,9 @@
         <q-btn id="timeline-previous-hour" dense flat round icon='las la-angle-left' color="primary" @click="onPreviousHourClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_HOUR')}}</q-tooltip>
         </q-btn>
-        <template v-for="(hour, index) in hours">
-          <div :id="'timeline-hours-' + index" :key="index" :class="hour.class"
-            style="height: 25px"  @click="onHourClicked(index, hours.length)">
+        <template v-for="(hour, index) in hours" :key="index">
+          <div :id="'timeline-hours-' + index" :class="hour.class"
+            style="height: 25px" @click="onHourClicked(index, hours.length)">
             {{hour.label}}
           </div>
         </template>
@@ -61,10 +60,9 @@
         <q-btn id="timeline-previous-day" dense flat round icon='las la-calendar-minus' color="primary" @click="onPreviousDayClicked">
           <q-tooltip>{{$t('KTimeline.PREVIOUS_DAY')}}</q-tooltip>
         </q-btn>
-        <template v-for="(day, index) in days">
+        <template v-for="(day, index) in days" :key="index">
           <q-chip
             :id="'timeline-days-' + index"
-            :key="index"
             dense flat square outline size="md"
             :color="day.color"
             :text-color="day.textColor"
