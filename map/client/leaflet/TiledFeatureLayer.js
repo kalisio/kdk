@@ -36,6 +36,12 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
+    this.userIsDragging = false
+    this.userIsZooming = false
+    this.pendingGeoJSONUpdates = []
+
+    this.zoomStartLevel = this.zoomEndLevel = this._map.getZoom()
+
     this.flyingTiles.clear()
     this.modifiedTiles.clear()
     this.allFeatures.clear()
