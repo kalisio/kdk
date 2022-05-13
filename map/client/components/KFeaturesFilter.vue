@@ -15,7 +15,7 @@
         </q-item-section>
         <q-item-section>
           <component
-            :is="filter.componentKey"
+            :is="filter.component"
             :ref="filter.key"
             :properties="filter.properties"
             :display="{ icon: false, label: false }"
@@ -50,10 +50,14 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { uid } from 'quasar'
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { KModal } from '../../../core/client/components'
 
 export default {
   name: 'k-features-filter',
+  components: {
+    KModal
+  },
   mixins: [
     kCoreMixins.baseModal,
     kCoreMixins.refsResolver()
@@ -104,13 +108,13 @@ export default {
     async createFilter (property, options = {}) {
       // Retrieve schema descriptor
       const properties = this.fields[property]
-      let component = properties.field.component
+      let componentName = properties.field.component
       // We previously directly used the component type from the schema
       // but now we prefer to switch to a select field in order to:
       // - be able to select multiple target values at once
       // - provide list of possible values for discrete types
-      if (component !== 'form/KNumberField') {
-        component = 'form/KSelectField'
+      if (componentName !== 'form/KNumberField') {
+        componentName = 'form/KSelectField'
         properties.field.multiple = true
         properties.field.chips = true
         // Get available values
@@ -123,16 +127,13 @@ export default {
       }
       // Remove label as we add it on top of the operator
       properties.field.helper = ''
-      const componentKey = _.kebabCase(component)
-      // Load the required component if not previously loaded
-      if (!this.$options.components[componentKey]) {
-        this.$options.components[componentKey] = this.$load(component)
-      }
+      // Load the required component
+      const component = kCoreUtils.loadComponent(componentName)
       const filter = {
         key: uid().toString(),
         component,
-        componentKey,
-        operator: (component !== 'form/KNumberField' ? '$in' : '$eq'),
+        componentName,
+        operator: (componentName !== 'form/KNumberField' ? '$in' : '$eq'),
         property,
         properties,
         onValueChanged: (field, value) => { filter.value = value }
@@ -174,7 +175,7 @@ export default {
     },
     getOperators (filter) {
       let operators = []
-      if (filter.component === 'form/KNumberField') {
+      if (filter.componentName === 'form/KNumberField') {
         operators = operators.concat([{
           label: this.$i18n.t('KFeaturesFilter.EQUAL'),
           value: '$eq'
@@ -222,7 +223,7 @@ export default {
       // Update filters
       this.filters.forEach(filter => {
         const field = this.fields[filter.property]
-        const isNumber = (field.component === 'form/KNumberField')
+        const isNumber = (field.componentName === 'form/KNumberField')
         const value = (isNumber && _.isNumber(filter.value) ? _.toNumber(filter.value) : filter.value)
         // Do not rely on _.get here as the key should use dot notation, e.g. 'properties.xxx'
         const queryFilter = this.layer.baseQuery[`properties.${filter.property}`] || {}
@@ -246,10 +247,6 @@ export default {
       this.openModal()
       await this.build()
     }
-  },
-  created () {
-    // laod the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
   }
 }
 </script>

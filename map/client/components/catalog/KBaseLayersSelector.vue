@@ -45,9 +45,13 @@
 
 <script>
 import _ from 'lodash'
+import { KStamp } from '../../../../core/client/components'
 
 export default {
   name: 'k-base-layers-selector',
+  components: {
+    KStamp
+  },
   props: {
     layers: {
       type: Array,
@@ -87,10 +91,6 @@ export default {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

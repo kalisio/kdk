@@ -20,10 +20,14 @@ import area from '@turf/area'
 import { polygon, lineString, featureCollection } from '@turf/helpers'
 import { getCoords, getType } from '@turf/invariant'
 import { Units } from '../../../core/client/units'
+import { KPanel } from '../../../core/client/components'
 
 export default {
   name: 'k-measure-tool',
   inject: ['kActivity'],
+  components: {
+    KPanel
+  },
   data () {
     return {
       measureMode: 'measure-distance',
@@ -271,9 +275,6 @@ export default {
     formatAngle (value, unit) {
       return Units.format(value, unit, this.angleUnit)
     }
-  },
-  created () {
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   mounted () {
     this.layers = []

@@ -14,12 +14,16 @@ import { downloadAsBlob } from '../../../../core/client/utils'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
 import { baseWidget, refsResolver } from '../../../../core/client/mixins'
+import { KChart } from '../../../../core/client/components'
 import 'chartjs-adapter-moment'
 import { getCssVar } from 'quasar'
 
 export default {
   name: 'k-time-series',
   inject: ['kActivity'],
+  components: {
+    KChart
+  },
   mixins: [
     baseWidget,
     refsResolver(['chart'])
@@ -452,10 +456,6 @@ export default {
       this.updateProbedLocationHighlight()
       this.refreshActions()
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-chart'] = this.$load('chart/KChart')
   },
   mounted () {
     // Setup listeners

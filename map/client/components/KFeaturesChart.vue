@@ -67,9 +67,14 @@ import logger from 'loglevel'
 import Papa from 'papaparse'
 import { Loading } from 'quasar'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { KModal, KStatsChart } from '../../../core/client/components'
 
 export default {
   name: 'k-features-chart',
+  components: {
+    KModal,
+    KStatsChart
+  },
   mixins: [
     kCoreMixins.refsResolver(['chartSettings']),
     kCoreMixins.baseModal
@@ -234,12 +239,7 @@ export default {
       const csv = Papa.unparse(json)
       kCoreUtils.downloadAsBlob(csv, this.$t('KFeaturesChart.CHART_EXPORT_FILE', { layer: this.layer.name }), 'text/csv;charset=utf-8;')
     }
-  },
-  beforeCreate () {
-    // laod the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-stats-chart'] = this.$load('chart/KStatsChart')
-  },
+  },,
   async mounted () {
     await this.loadRefs()
     this.$refs.chartSettings.open()

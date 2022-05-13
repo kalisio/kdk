@@ -34,9 +34,15 @@
 
 <script>
 import _ from 'lodash'
+import { KStamp } from '../../../../core/client/components'
+import KLayersSelector from './KLayersSelector.vue'
 
 export default {
   name: 'k-weather-layers-selector',
+  components: {
+    KStamp,
+    KLayersSelector
+  },
   props: {
     layers: {
       type: Array,
@@ -113,11 +119,6 @@ export default {
     onModelChanged (model) {
       this.callHandler('toggle', model)
     }
-  },
-  beforeCreate () {
-    // Loads the required components
-    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   created () {
     // Set the current forecast model

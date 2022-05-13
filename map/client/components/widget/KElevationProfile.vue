@@ -8,12 +8,19 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { baseWidget } from '../../../../core/client/mixins'
+import { KChart, KPanel, KStamp } from '../../../../core/client/components'
+import { colors, copyToClipboard, exportFile } from 'quasar'
 import { getCssVar, copyToClipboard, exportFile } from 'quasar'
 import length from '@turf/length'
 
 export default {
   name: 'k-elevation-profile',
   inject: ['kActivity'],
+  components: {
+    KChart,
+    KPanel,
+    KStamp
+  },
   mixins: [baseWidget],
   props: {
     feature: {
@@ -196,12 +203,6 @@ export default {
         else this.$toast({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
-  },
-  beforeCreate () {
-    // laod the required components
-    this.$options.components['k-chart'] = this.$load('chart/KChart')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

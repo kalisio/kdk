@@ -20,9 +20,13 @@
 
 <script>
 import { mixins as kCoreMixins } from '../../../../core/client'
+import KLocationInput from '../KLocationInput.vue'
 
 export default {
   name: 'k-location-field',
+  components: {
+    KLocationInput
+  },
   mixins: [kCoreMixins.baseField],
   methods: {
     emptyModel () {
@@ -31,10 +35,6 @@ export default {
     fill (value) {
       this.model = value
     }
-  },
-  created () {
-    // load the required components
-    this.$options.components['k-location-input'] = this.$load('KLocationInput')
   }
 }
 </script>

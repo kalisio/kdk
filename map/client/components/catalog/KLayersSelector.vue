@@ -48,11 +48,14 @@
 import _ from 'lodash'
 import { QToggle } from 'quasar'
 import { utils } from '../../../../core/client'
+import { KStamp, KPanel } from '../../../../core/client/components'
 
 export default {
   name: 'k-layers-selector',
   components: {
-    QToggle
+    QToggle,
+    KStamp,
+    KPanel
   },
   props: {
     layers: {
@@ -86,11 +89,6 @@ export default {
       }
       this.toggleLayer(layer)
     }
-  },
-  beforeCreate () {
-    // Loads the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

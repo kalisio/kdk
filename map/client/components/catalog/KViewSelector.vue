@@ -32,15 +32,16 @@
 </template>
 
 <script>
+import { KAvatar, KPanel, KAction } from '../../../../core/client/components'
 import { baseItem } from '../../../../core/client/mixins'
 
 export default {
   name: 'k-view-selector',
-  mixins: [baseItem],
-  beforeCreate () {
-    this.$options.components['k-avatar'] = this.$load('frame/KAvatar')
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-  }
+  components: {
+    KAvatar,
+    KPanel,
+    KAction
+  },
+  mixins: [baseItem]
 }
 </script>

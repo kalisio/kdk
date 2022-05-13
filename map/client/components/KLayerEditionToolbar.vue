@@ -6,9 +6,14 @@
 </template>
 
 <script>
+import { KPanel } from '../../../core/client/components'
+
 export default {
   name: 'k-layer-edition-toolbar',
   inject: ['kActivity'],
+  components: {
+    KPanel
+  },
   computed: {
     layerName () {
       return this.kActivity.editedLayer.name
@@ -43,9 +48,6 @@ export default {
     setMode (mode) {
       return this.kActivity.setEditMode(mode)
     }
-  },
-  beforeCreate () {
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   }
 }
 </script>

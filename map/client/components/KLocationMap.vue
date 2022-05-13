@@ -43,12 +43,16 @@ import L from 'leaflet'
 import centroid from '@turf/centroid'
 import { getCssVar } from 'quasar'
 import { mixins as kCoreMixins } from '../../../core/client'
+import { KTextArea } from '../../../../core/client/components'
 import * as mapMixins from '../mixins/map'
 import { Geolocation } from '../geolocation'
 import { setGatewayJwt, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../utils'
 
 export default {
   name: 'k-location-map',
+  components: {
+    KTextArea
+  },
   mixins: [
     kCoreMixins.refsResolver(['map']),
     mapMixins.baseMap
@@ -268,10 +272,6 @@ export default {
     async onMapResized (size) {
       this.refreshMap()
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-text-area'] = this.$load('frame/KTextArea')
   },
   async mounted () {
     // Initialize component

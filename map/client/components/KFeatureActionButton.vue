@@ -28,9 +28,14 @@
 
 <script>
 import _ from 'lodash'
+import { KRadialFab, KRadialFabItem } from '../../../core/client/components'
 
 export default {
   inject: ['kActivity'],
+  components: {
+    KRadialFab,
+    KRadialFabItem
+  },
   data () {
     return {
       featureActions: [],

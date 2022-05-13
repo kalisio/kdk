@@ -4,12 +4,16 @@
 
 <script>
 import { uid, getCssVar } from 'quasar'
+import KPlaceChooser from '../input/KPlaceChooser.vue'
 
 const LocationLayerName = uid()
 
 export default {
   name: 'k-search-location',
   inject: ['kActivity'],
+  components: {
+    KPlaceChooser
+  },
   computed: {
     computedStyle () {
       if (this.$q.screen.lt.md) return 'width: 80vw'
@@ -76,10 +80,6 @@ export default {
         this.removeLocationLayer()
       }
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-place-chooser'] = this.$load('input/KPlaceChooser')
   },
   beforeDestroy () {
     this.removeLocationLayer()

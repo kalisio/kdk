@@ -81,10 +81,14 @@
 import logger from 'loglevel'
 import moment from 'moment'
 import { Time } from '../../../core/client/time'
+import { KPanel } from '../../../core/client/components'
 
 export default {
   name: 'k-timeline',
   inject: ['kActivity'],
+  components: {
+    KPanel
+  },
   data () {
     return {
       timer: undefined,
@@ -248,8 +252,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
     // Define the colors assgigned to the months
     this.monthColors = ['red', 'purple', 'indigo', 'green', 'orange', 'green', 'pink', 'deep-purple', 'lime', 'teal', 'light-blue', 'amber']
     // Define the actions

@@ -66,6 +66,8 @@
 import _ from 'lodash'
 import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../../core/client'
+import { KAction, KModal } from '../../../../core/client/components'
+import KTimezoneMap from '../KTimezoneMap.vue'
 import meta from 'moment-timezone/data/meta/latest.json'
 
 const timezones = moment.tz.names()
@@ -75,6 +77,11 @@ const countries = _.values(meta.countries)
 
 export default {
   name: 'k-timezone-field',
+  components: {
+    KAction,
+    KModal,
+    KTimezoneMap
+  },
   mixins: [kCoreMixins.baseField],
   data () {
     return {
@@ -123,11 +130,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-timezone-map'] = this.$load('KTimezoneMap')
-
     // Load metadata
     this.meta = require('moment-timezone/data/meta/latest.json')
   }

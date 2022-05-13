@@ -18,10 +18,16 @@
 <script>
 import logger from 'loglevel'
 import { Filter, Sorter } from '../../../../core/client'
+import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 
 export default {
   name: 'k-views-panel',
+  components: {
+    KColumn,
+    KPanel,
+    KAction
+  },
   mixins: [catalogPanel],
   inject: ['kActivity'],
   computed: {
@@ -97,12 +103,6 @@ export default {
     removeView (view) {
       this.$api.getService('catalog').remove(view._id)
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-column'] = this.$load('collection/KColumn')
   }
 }
 </script>

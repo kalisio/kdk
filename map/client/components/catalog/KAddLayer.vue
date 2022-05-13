@@ -31,9 +31,19 @@
 
 <script>
 import { mixins as kCoreMixins } from '../../../../core/client'
+import { KModal } from '../../../../core/client/components'
+import KCreateLayer from './KCreateLayer.vue'
+import KImportLayer from './KImportLayer.vue'
+import KConnectLayer from './KConnectLayer.vue'
 
 export default {
   name: 'k-add-layer',
+  components: {
+    KModal,
+    KCreateLayer,
+    KImportLayer,
+    KConnectLayer
+  },
   mixins: [kCoreMixins.baseModal],
   props: {
     contextId: {
@@ -45,13 +55,6 @@ export default {
     return {
       mode: 'import'
     }
-  },
-  created () {
-    // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-create-layer'] = this.$load('catalog/KCreateLayer')
-    this.$options.components['k-import-layer'] = this.$load('catalog/KImportLayer')
-    this.$options.components['k-connect-layer'] = this.$load('catalog/KConnectLayer')
   }
 }
 </script>

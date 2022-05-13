@@ -27,9 +27,15 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../core/client'
+import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
   name: 'k-features-table',
+  components: {
+    KAction,
+    KModal,
+    KStamp
+  },
   mixins: [kCoreMixins.baseModal],
   props: {
     layer: {
@@ -70,12 +76,6 @@ export default {
     open () {
       this.openModal(true)
     }
-  },
-  beforeCreate () {
-    // laod the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-table'] = this.$load('collection/KTable')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   }
 }
 </script>

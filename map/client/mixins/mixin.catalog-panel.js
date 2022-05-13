@@ -21,9 +21,6 @@ export const catalogPanel = {
     return {
       scrollAreaMaxHeight: 0
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-scroll-area'] = this.$load('frame/KScrollArea')
   }
 }
+

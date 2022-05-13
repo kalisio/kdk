@@ -12,8 +12,7 @@
 </template>
 
 <script>
-import KModal from '../../../../core/client/components/frame/KModal.vue'
-import KForm from '../../../../core/client/components/form/KForm.vue'
+import { KModal, KForm } from '../../../../core/client/components'
 import { baseModal } from '../../../../core/client/mixins'
 
 export default {
@@ -88,10 +87,6 @@ export default {
         }
       }
     }
-  },
-  beforeCreate () {
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-form'] = this.$load('form/KForm')
   }
 }
 </script>

@@ -13,10 +13,14 @@ import 'mapillary-js/dist/mapillary.css'
 import distance from '@turf/distance'
 import { point } from '@turf/helpers'
 import { baseWidget } from '../../../../core/client/mixins'
+import { KPanel } from '../../../../core/client/components'
 
 export default {
   name: 'k-mapillary-viewer',
   inject: ['kActivity'],
+  components: {
+    KPanel
+  },
   mixins: [baseWidget],
   data () {
     return {
@@ -54,7 +58,7 @@ export default {
       return {
         type: 'Feature',
         properties: {
-          'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="${this.$load('icons/mapillary-marker.png', 'asset')}">`
+          'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="kdk:mapillary-marker.png">`
         },
         geometry: {
           type: 'Point',
@@ -142,10 +146,6 @@ export default {
       this.centerMap()
       this.kActivity.updateSelectionHighlight('mapillary', this.getMarkerFeature())
     }
-  },
-  beforeCreate () {
-    // laod the required components
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
   },
   mounted () {
     // Create the viewer

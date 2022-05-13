@@ -19,11 +19,18 @@
 import _ from 'lodash'
 import { copyToClipboard, exportFile } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
+import { KScrollArea, KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
 
 export default {
   name: 'k-information-box',
   inject: ['kActivity'],
+  components: {
+    KScrollArea,
+    KView,
+    KPanel,
+    KStamp
+  },
   mixins: [baseWidget],
   props: {
     feature: {
@@ -139,13 +146,6 @@ export default {
         else this.$toast({ type: 'error', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
       }
     }
-  },
-  beforeCreate () {
-    // laod the required components
-    this.$options.components['k-scroll-area'] = this.$load('frame/KScrollArea')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-view'] = this.$load('form/KView')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
   },
   beforeDestroy () {
     this.kActivity.removeSelectionHighlight('information-box')

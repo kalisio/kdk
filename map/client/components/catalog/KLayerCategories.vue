@@ -33,18 +33,21 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
-import { KForm } from '../../../../core/client/components/form'
+import { KModal, KAction, KPanel, KList } from '../../../../core/client/components'
 
 export default {
   name: 'k-layer-categories',
+  components: {
+    KModal,
+    KAction,
+    KPanel,
+    KList
+  },  
   mixins: [
     kCoreMixins.refsResolver(),
     kCoreMixins.baseModal
   ],
   inject: ['kActivity'],
-  components: {
-    KForm
-  },
   computed: {
     baseQuery () {
       // Built-in categories do not have _id
@@ -261,13 +264,6 @@ export default {
     removeCategory (category) {
       this.$api.getService('catalog').remove(category._id)
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-action'] = this.$load('frame/KAction')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-list'] = this.$load('collection/KList')
   }
 }
 </script>

@@ -47,6 +47,7 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
+import { KAction } from '../../../../core/client/components'
 import fetch from 'node-fetch'
 import xml2js from 'xml2js'
 import * as wms from '../../../common/wms-utils'
@@ -56,6 +57,9 @@ import * as tms from '../../../common/tms-utils'
 
 export default {
   name: 'k-ows-service-field',
+  components: {
+    KAction
+  },
   mixins: [kCoreMixins.baseField],
   data () {
     return {
@@ -228,10 +232,6 @@ export default {
   },
   async mounted () {
     this.refreshAvailableServices()
-  },
-  created () {
-    // Load required components
-    this.$options.components['k-action'] = this.$load('frame/KAction')
   }
 }
 </script>

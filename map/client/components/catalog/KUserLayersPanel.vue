@@ -6,9 +6,13 @@
 
 <script>
 import _ from 'lodash'
+import KLayersPanel from './KLayersPanel.vue'
 
 export default {
   name: 'k-users-layers-panel',
+  components: {
+    KLayersPanel
+  },
   props: {
     layers: {
       type: Object,
@@ -31,10 +35,6 @@ export default {
         return _.has(category, '_id')
       })
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-layers-panel'] = this.$load('catalog/KLayersPanel')
   }
 }
 </script>

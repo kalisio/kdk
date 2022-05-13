@@ -95,7 +95,7 @@
           </q-item-section>
           <q-item-section class="col-5">
             <component
-              :is="iconStyle.componentKey"
+              :is="iconStyle.component"
               :ref="iconStyle.key"
               :properties="iconStyle.properties"
               :display="{ icon: false, label: false }"
@@ -151,7 +151,7 @@
           </q-item-section>
           <q-item-section class="col-3">
             <component
-              :is="lineStyle.componentKey"
+              :is="lineStyle.component"
               :ref="lineStyle.key"
               :properties="lineStyle.properties"
               :display="{ icon: false, label: false }"
@@ -216,7 +216,7 @@
           </q-item-section>
           <q-item-section class="col-4">
             <component
-              :is="polygonStyle.componentKey"
+              :is="polygonStyle.component"
               :ref="polygonStyle.key"
               :properties="polygonStyle.properties"
               :display="{ icon: false, label: false }"
@@ -306,13 +306,15 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { QSlider, uid } from 'quasar'
+import { uid } from 'quasar'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { KIconChooser, KColorChooser } from '../../../core/client/components'
 
 export default {
   name: 'k-layer-style-form',
   components: {
-    QSlider
+    KIconChooser,
+    KColorChooser
   },
   mixins: [
     kCoreMixins.schemaProxy,
@@ -412,12 +414,12 @@ export default {
     async createStyle (property, options = {}) {
       // Retrieve schema descriptor
       const properties = this.fields[property]
-      let component = properties.field.component
+      let componentName = properties.field.component
       // We previously directly used the component type from the schema but now we prefer
       // to switch to a select field in order to provide list of possible values for discrete types
       // if possible (not for eg in-memory layers, WFS, etc.)
-      if ((component !== 'form/KNumberField') && _.has(this.layer, 'service')) {
-        component = 'form/KSelectField'
+      if ((componentName !== 'form/KNumberField') && _.has(this.layer, 'service')) {
+        componentName = 'form/KSelectField'
         // Get available values
         let values = await this.$api.getService(_.get(this.layer, 'service'), this.contextId)
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
@@ -429,14 +431,12 @@ export default {
       // Remove label as we add it on top of the operator
       properties.field.helper = ''
       const componentKey = _.kebabCase(component)
-      // Load the required component if not previously loaded
-      if (!this.$options.components[componentKey]) {
-        this.$options.components[componentKey] = this.$load(component)
-      }
+      // Load the required component
+      const component = kCoreUtils.loadComponent(componentName)
       const style = {
         key: uid().toString(),
         component,
-        componentKey,
+        componentName,
         operator: '===',
         property,
         properties,
@@ -452,7 +452,7 @@ export default {
         label: this.$i18n.t('KLayerStyleForm.NOT_EQUAL'),
         value: '!=='
       }]
-      if (style.component === 'form/KNumberField') {
+      if (style.componentName === 'form/KNumberField') {
         operators = operators.concat([{
           label: this.$i18n.t('KLayerStyleForm.GREATER_THAN'),
           value: '>'
@@ -829,9 +829,6 @@ export default {
     }
   },
   async created () {
-    // Load the required components
-    this.$options.components['k-icon-chooser'] = this.$load('input/KIconChooser')
-    this.$options.components['k-color-chooser'] = this.$load('input/KColorChooser')
     this.minViewerZoom = this.minZoom = _.get(this.options, 'viewer.minZoom', 1)
     this.maxViewerZoom = this.maxZoom = _.get(this.options, 'viewer.maxZoom', 18)
     await this.build()

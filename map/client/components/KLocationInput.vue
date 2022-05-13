@@ -48,14 +48,14 @@
 
 <script>
 import _ from 'lodash'
-import { QOptionGroup } from 'quasar'
 import { formatGeocodingResult, formatUserCoordinates } from '../utils'
 import { Geolocation } from '../geolocation'
+import KLocationMap from '../KLocationMap.vue'
 
 export default {
   name: 'k-location-input',
   components: {
-    QOptionGroup
+    KLocationMap
   },
   props: {
     value: {
@@ -202,8 +202,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-location-map'] = this.$load('KLocationMap')
     // Populate the component
     this.refresh()
     // We'd like to watch external changes but not internal ones, so that we use the API instead of watch

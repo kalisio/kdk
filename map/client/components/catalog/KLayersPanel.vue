@@ -16,7 +16,7 @@
           :default-opened="getDefaultOpened(category)"
           expand-separator>
           <component
-            :is="category.componentKey"
+            :is="category.component"
             :layers="layersByCategory[category.name]"
             :forecastModels="forecastModels"
             :forecastModelHandlers="forecastModelHandlers"
@@ -34,7 +34,9 @@
 import sift from 'sift'
 import _ from 'lodash'
 import path from 'path'
+import { loadComponent } from '../../../../core/client/utils'
 import { catalogPanel } from '../../mixins'
+import KLayersSelector from './KLayersSelector.vue'
 
 export default {
   name: 'k-layers-panel',
@@ -122,15 +124,9 @@ export default {
     categorize () {
       _.forEach(this.layerCategories, category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
-        const componentKey = _.kebabCase(path.basename(component))
-        category.componentKey = componentKey
-        if (!this.$options.components[componentKey]) this.$options.components[componentKey] = this.$load(component)
+        if (!category.component) category.component = loadComponent(component)
       })
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-layers-selector'] = this.$load('catalog/KLayersSelector')
   },
   created () {
     // Categorize layers

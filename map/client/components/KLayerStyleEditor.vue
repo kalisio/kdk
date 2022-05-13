@@ -19,9 +19,15 @@
 import logger from 'loglevel'
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../core/client'
+import { KModal } from '../../../core/client/components'
+import KLayerStyleForm from '../KLayerStyleForm.vue'
 
 export default {
   name: 'k-layer-style-editor',
+  components: {
+    KModal,
+    KLayerStyleForm
+  },
   mixins: [
     kCoreMixins.baseModal,
     kCoreMixins.refsResolver()
@@ -85,11 +91,6 @@ export default {
       this.inProgress = false
       this.$emit('applied')
     }
-  },
-  beforeCreate () {
-    // Load the required components
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-layer-style-form'] = this.$load('KLayerStyleForm')
   }
 }
 </script>
