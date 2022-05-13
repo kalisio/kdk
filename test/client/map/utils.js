@@ -4,7 +4,7 @@ import * as core from '../core'
 - in a choosen direction (left, right, up, down)
 - zoom in or out
  */
-export async function moveMap (page, direction, times, wait = 250) {
+export async function moveMap (page, direction, times, wait = 500) {
   let dir
   if (direction === 'up') {dir = 'ArrowUp'}
   else if (direction === 'down') {dir = 'ArrowDown'}
@@ -23,10 +23,10 @@ export async function moveMap (page, direction, times, wait = 250) {
 
 /* Zooms the map to a specific level
  */
-export async function zoomToLevel (page, level, wait = 250) {
+export async function zoomToLevel (page, level, wait = 500) {
   const zoom = await core.getFromStore(page, 'mapActivity.zoom')
   const diff = level-zoom;
   const action = (level > zoom) ? 'in':'out';
-  await moveMap(page, action, Math.abs(diff),500)
+  await moveMap(page, action, Math.abs(diff), wait)
   await page.waitForTimeout(wait)
 }

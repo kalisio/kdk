@@ -254,20 +254,20 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="popup" id="#style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="popup" id="style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
-            <q-toggle v-model="popup"/>
+            <q-toggle id="style-toggle-popup" v-model="popup"/>
           </q-item-section>
           </q-item-section>
           <q-item-section class="col-11">
-            <q-select :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')"></q-select>
+            <q-select id="style-popup-field" :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')"></q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="tooltip" id="#style-tooltip-group" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="tooltip" id="style-tooltip-group" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -279,7 +279,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="infobox" id="#style-infobox-group" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="infobox" id="style-infobox-group" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">

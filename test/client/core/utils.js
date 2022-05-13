@@ -91,6 +91,14 @@ export async function clickSelect (page, selector, entry, wait = 250) {
   }
 }
 
+/* Helper function to clear a field text on a given selector
+ */
+export async function clear (page, selector) {
+  await page.evaluate(selector => {
+    document.querySelector(selector).value = "";
+  }, selector);
+}
+
 /* Helper function to input a text on a given selector
  * set enter to true to run the press 'Enter' key
  */
