@@ -1,7 +1,9 @@
-import KRadialMenu from './KRadialMenu.vue'
-import KRadialMenuItem from './KRadialMenuItem.vue'
+import KMenu from './KMenu.vue'
+import KRadialFab from './KRadialFab.vue'
+import KRadialFabItem from './KRadialFabItem.vue'
 
 export {
-  KRadialMenu,
-  KRadialMenuItem
+  KMenu,
+  KRadialFab,
+  KRadialFabItem
 }

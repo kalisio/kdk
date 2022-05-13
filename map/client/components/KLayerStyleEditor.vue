@@ -20,7 +20,7 @@ import logger from 'loglevel'
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../core/client'
 import { KModal } from '../../../core/client/components'
-import KLayerStyleForm from '../KLayerStyleForm.vue'
+import KLayerStyleForm from './KLayerStyleForm.vue'
 
 export default {
   name: 'k-layer-style-editor',

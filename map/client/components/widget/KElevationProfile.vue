@@ -9,7 +9,6 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { baseWidget } from '../../../../core/client/mixins'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
-import { colors, copyToClipboard, exportFile } from 'quasar'
 import { getCssVar, copyToClipboard, exportFile } from 'quasar'
 import length from '@turf/length'
 

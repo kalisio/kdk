@@ -50,7 +50,7 @@
 import _ from 'lodash'
 import { formatGeocodingResult, formatUserCoordinates } from '../utils'
 import { Geolocation } from '../geolocation'
-import KLocationMap from '../KLocationMap.vue'
+import KLocationMap from './KLocationMap.vue'
 
 export default {
   name: 'k-location-input',

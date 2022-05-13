@@ -4,7 +4,7 @@
 
 <script>
 import { uid, getCssVar } from 'quasar'
-import KPlaceChooser from '../input/KPlaceChooser.vue'
+import KPlaceChooser from './input/KPlaceChooser.vue'
 
 const LocationLayerName = uid()
 

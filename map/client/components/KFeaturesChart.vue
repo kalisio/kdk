@@ -239,7 +239,7 @@ export default {
       const csv = Papa.unparse(json)
       kCoreUtils.downloadAsBlob(csv, this.$t('KFeaturesChart.CHART_EXPORT_FILE', { layer: this.layer.name }), 'text/csv;charset=utf-8;')
     }
-  },,
+  },
   async mounted () {
     await this.loadRefs()
     this.$refs.chartSettings.open()
