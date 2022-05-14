@@ -9,6 +9,7 @@
       <k-form
         :ref="onFormReferenceCreated"
         :schema="schema"
+        @form-ready="onFormReady"
       />
   </k-modal>
 </template>
@@ -54,11 +55,11 @@ export default {
   },
   methods: {
     async apply () {
-      if (await baseEditor.methods.apply.bind(this)()) this.closeModal()
+      if (await baseEditor.methods.apply.call(this)) this.closeModal()
     },
-    openModal () {
-      baseModal.methods.openModal.bind(this)()
-      this.refresh()
+    async openModal () {
+      await this.refresh()
+      baseModal.methods.openModal.call(this)
     }
   }
 }

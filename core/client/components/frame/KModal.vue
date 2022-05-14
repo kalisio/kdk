@@ -95,19 +95,21 @@ export default {
     innerStyle () {
       const screenHeight = this.$q.screen.height
       const modalMaxHeight = this.maximized ? screenHeight : 0.8 * screenHeight
-      // take into account the header and footer height
-      this.scrollAreaMaxHeight = modalMaxHeight - this.headerHeight - this.footerHeight
-      // take into account overall padding
+      // compute the scroll area max height
+            // take into account the header and footer height
+      let contentMaxHeight = modalMaxHeight - this.headerHeight 
       const cardElement = document.getElementById('modal-card')
       if (cardElement) {
-        this.scrollAreaMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-top'))
-        this.scrollAreaMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-bottom'))
+        contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-top'))
+        contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-bottom'))
       }
       const contentElement = document.getElementById('modal-content')
       if (contentElement) {
-        this.scrollAreaMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-top'))
-        this.scrollAreaMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-bottom'))
+        contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-top'))
+        contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-bottom'))
       }
+      contentMaxHeight -= this.footerHeight
+      this.scrollAreaMaxHeight = contentMaxHeight
       // return the style
       if (this.maximized) return ''
       if (this.$q.screen.lt.sm) return `min-width: 100vw; max-height: ${modalMaxHeight}px`
@@ -142,10 +144,10 @@ export default {
       this.$emit('update:modelValue', false)
     },
     onHeaderResized (size) {
-      this.headerHeight = size.height
+      if (this.headerHeight !== size.height) this.headerHeight = size.height
     },
     onFooterResized (size) {
-      this.footerHeight = size.height + 16
+      if (this.footerHeight !== size.height) this.footerHeight = size.height
     }
   },
   mounted () {

@@ -1,5 +1,5 @@
 <template>
-  <q-item class="cursor-pointer" active-class="selected">
+  <q-item class="cursor-pointer bg-white" active-class="selected">
     <!--
       Toggle section
     -->
@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import { baseItem } from '../../mixins'
 import { KPanel, KAvatar } from '../frame'
+import { baseItem } from '../../mixins'
 
 export default {
   name: 'k-item',

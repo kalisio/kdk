@@ -84,8 +84,10 @@ export const baseEditor = {
     onFormReferenceCreated (reference) {
       if (reference) {
         this.form = reference
-        this.fillEditor()
       }
+    },
+    onFormReady () {
+      this.fillEditor()
     },
     getEditorMode () {
       return this.objectId ? 'update' : 'create'

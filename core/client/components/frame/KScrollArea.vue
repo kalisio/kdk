@@ -25,12 +25,14 @@ export default {
   },
   computed: {
     innerStyle () {
+      /*if (this.$refs.scrollArea) this.height = Math.min(this.$refs.scrollArea.getScroll().verticalSize, this.maxHeight)
+      else this.height = this.maxHeight*/
       return `height: ${this.height}px;`
     }
   },
   data () {
     return {
-      height: undefined,
+      height: 0,
       thumbStyle: {
         right: '4px',
         borderRadius: '5px',
@@ -45,16 +47,26 @@ export default {
       }
     }
   },
+  watch: {
+    maxHeight: {
+      handler () {
+        this.height = Math.min(this.$refs.scrollArea.getScroll().verticalSize, this.maxHeight)
+      }
+    }
+  },
   methods: {
     onScrolled (info) {
       this.height = Math.min(info.verticalSize, this.maxHeight)
-      this.$emit('scroll', info)
+      this.$emit('scrolled', info)
     },
     setScrollPosition (axis, offset, duration) {
-      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(offset, duration)
+      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(axis, offset, duration)
     },
     getScrollPosition (axis) {
-      if (this.$refs.scrollArea) return this.$refs.scrollArea.getScrollPosition()
+      if (this.$refs.scrollArea) {
+        if (axis === 'vertical') return this.$refs.scrollArea.getScrollPosition().top 
+        return this.$refs.scrollArea.getScrollPosition().left
+      }
       return 0
     }
   }

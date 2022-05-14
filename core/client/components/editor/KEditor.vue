@@ -6,9 +6,9 @@
     <div>
       <k-form
         :id="getSchemaId() + 'form'"
-        ref="form"
+        ref="onFormReferenceCreated"
         :schema="schema"
-        @field-changed="onFieldChanged"/>
+        @form-ready="onFormReady" />
     </div>
     <!--
       Buttons section
@@ -33,16 +33,11 @@ export default {
     KForm
   },
   mixins: [
+    baseEditor,
     service,
     objectProxy,
-    schemaProxy,
-    baseEditor(['form'])
+    schemaProxy
   ],
-  methods: {
-    onFieldChanged (field, value) {
-      this.$emit('field-changed', field, value)
-    }
-  },
   created () {
     this.refresh()
   }

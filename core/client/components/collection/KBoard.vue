@@ -1,5 +1,5 @@
 <template>
-  <div class="fit row justify-between q-gutter-x-sm no-wrap">
+  <div class="row justify-between q-gutter-x-sm no-wrap">
     <div class="col-*" />
     <template v-for="column in columns" :key="column.value">
       <div :id="column.value" :style="{ minWidth: `${column.width}px` }">

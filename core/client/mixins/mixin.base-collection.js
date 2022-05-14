@@ -1,7 +1,13 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import { getLocale } from '../utils.js'
 
 export const baseCollection = {
+  emits: [
+    'collection-refreshed', 
+    'selection-changed', 
+    'item-toggled'
+  ],
   props: {
     // This value can be overriden in activities if they want to manage pagination by themselves
     // nbItemsPerPage = 0 means that the client does not handle pagination and server defaults will be used
@@ -64,9 +70,9 @@ export const baseCollection = {
             this.items = response.data
           }
           this.nbTotalItems = response.total
-          this.$emit('collection-refreshed', this.items)
+          this.onCollectionRefreshed()
         }, error => {
-          this.$events.$emit('error', error)
+          logger.error(error)
         })
     },
     unsubscribe () {
@@ -102,13 +108,16 @@ export const baseCollection = {
       this.refreshCollection()
     },
     onItemToggled (item, toggled) {
-      this.$emit('toggle-changed', item, toggled)
+      this.$emit('item-toggled', item, toggled)
     },
     onItemSelected (item, section) {
       this.$emit('selection-changed', item, section)
     },
     onItemsSelected (items) {
       this.$emit('selection-changed', items)
+    },
+    onCollectionRefreshed () {
+      this.$emit('collection-refreshed', this.items)
     },
     onItemsUpdated (items) {
       // When we append items some items of the previous pages might have been updated.

@@ -147,6 +147,7 @@ export default {
       this.visibleColumns = this.columns.map(column => column.name)
     },
     onCollectionRefreshed () {
+      baseCollection.methods.onCollectionRefreshed.call(this)
       // Update pagination for table
       this.pagination.rowsNumber = this.nbTotalItems
     },
@@ -179,12 +180,8 @@ export default {
     this.processSchema()
     this.refreshCollection()
   },
-  mounted () {
-    this.$on('collection-refreshed', this.onCollectionRefreshed)
-  },
   beforeDestroy () {
     this.$events.off('user-abilities-changed', this.refreshCollection)
-    this.$off('collection-refreshed', this.onCollectionRefreshed)
   }
 }
 </script>

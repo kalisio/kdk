@@ -16,7 +16,8 @@
       <k-scroll-area
         ref="scrollArea"
         :max-height="height"
-        @scroll="onScroll">
+        @scrolled="onScrolled"
+      >
         <div
           class="full-width row justify-center"
           v-bind:class="{ 'q-gutter-y-xs': dense, 'q-gutter-y-sm': !dense }"
@@ -64,7 +65,7 @@
 <script>
 import { KScrollArea, KAction, KStamp } from '../frame'
 import { baseCollection, service } from '../../mixins'
-import { loadComponent } from '../../utils'
+import { loadComponent } from '../../utils.js'
 
 export default {
   name: 'k-column',
@@ -140,7 +141,7 @@ export default {
     getCollectionFilterQuery () {
       return this.filterQuery
     },
-    onScroll (info) {
+    onScrolled (info) {
       if (this.items.length < this.nbTotalItems) {
         if (info.verticalPercentage === 1) {
           if (this.items.length === this.currentPage * this.nbItemsPerPage) this.currentPage++
