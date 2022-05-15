@@ -64,7 +64,6 @@ import KPanel from './KPanel.vue'
 
 export default {
   name: 'k-modal',
-  emits: ['update:modelValue', 'opened', 'closed'],
   components: {
     KScrollArea,
     KPanel
@@ -91,6 +90,7 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue', 'opened', 'closed'],
   computed: {
     innerStyle () {
       const screenHeight = this.$q.screen.height

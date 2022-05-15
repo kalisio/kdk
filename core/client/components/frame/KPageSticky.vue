@@ -1,5 +1,9 @@
 <template>
-  <q-page-sticky v-if="hasContent" :position="position" :offset="offset">
+  <q-page-sticky 
+    v-if="hasContent" 
+    :position="position" 
+    :offset="offset"
+  >
     <k-content v-bind="$props"></k-content>
   </q-page-sticky>
 </template>

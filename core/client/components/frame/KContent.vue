@@ -46,6 +46,7 @@ export default {
       }
     }
   },
+  emits: ['triggered'],
   computed: {
     components () {
       const components = Layout.getComponents(this.filteredContent, this.mode, this.context)

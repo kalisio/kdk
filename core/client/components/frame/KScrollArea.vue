@@ -23,10 +23,9 @@ export default {
       required: true
     }
   },
+  emits: ['scolled'],
   computed: {
     innerStyle () {
-      /*if (this.$refs.scrollArea) this.height = Math.min(this.$refs.scrollArea.getScroll().verticalSize, this.maxHeight)
-      else this.height = this.maxHeight*/
       return `height: ${this.height}px;`
     }
   },

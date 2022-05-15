@@ -48,6 +48,7 @@ export default {
         return ['button', 'form-button', 'item', 'tab'].includes(value)
       }
     }
-  }
+  },
+  emits: ['triggered']
 }
 </script>
