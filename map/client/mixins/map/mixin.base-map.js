@@ -78,7 +78,11 @@ export const baseMap = {
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
       if (_.get(viewerOptions, 'scale', true)) this.setupScaleControl()
       if (_.get(viewerOptions, 'geolocate', true)) this.setupGeolocateControl()
+      this.onMapReady()
+    },
+    onMapReady () {
       this.$emit('map-ready')
+      this.$engineEvents.emit('map-ready')
     },
     setupScaleControl () {
       // Add a scale control
@@ -261,7 +265,18 @@ export const baseMap = {
     updateLayerDisabled (layer) {
       const wasDisabled = layer.isDisabled
       layer.isDisabled = this.isLayerDisabled(layer)
-      if (layer.isDisabled !== wasDisabled) this.$emit(wasDisabled ? 'layer-enabled' : 'layer-disabled', layer)
+      if (layer.isDisabled !== wasDisabled) {
+        if (wasDisabled) this.onLayerEnabled(layer)
+        else this.onLayerDisabled(layer)
+      }
+    },
+    onLayerEnabled (layer) {
+      this.$emit('layer-enabled', layer)
+      this.$engineEvents.emit('layer-enabled', layer)
+    },
+    onLayerDisabled (layer) {
+      this.$emit('layer-disabled', layer)
+      this.$engineEvents.emit('layer-disabled', layer)
     },
     getLayerByName (name) {
       return this.layers[name]
@@ -305,6 +320,7 @@ export const baseMap = {
     },
     onLayerShown (layer, leafletLayer) {
       this.$emit('layer-shown', layer, leafletLayer)
+      this.$engineEvents.emit('layer-shown', layer, leafletLayer)
     },
     hideLayer (name) {
       // Retrieve the layer
@@ -322,6 +338,7 @@ export const baseMap = {
     },
     onLayerHidden (layer, leafletLayer) {
       this.$emit('layer-hidden', layer, leafletLayer)
+      this.$engineEvents.emit('layer-hidden', layer, leafletLayer)
     },
     async addLayer (layer) {
       if (layer && !this.hasLayer(layer.name)) {
@@ -337,6 +354,7 @@ export const baseMap = {
     },
     onLayerAdded (layer) {
       this.$emit('layer-added', layer)
+      this.$engineEvents.emit('layer-added', layer)
     },
     async addGeoJsonLayer (layerSpec, geoJson) {
       // Check wther the geoJson content is a valid geoJson
@@ -400,6 +418,7 @@ export const baseMap = {
     },
     onLayerRemoved (layer) {
       this.$emit('layer-removed', layer)
+      this.$engineEvents.emit('layer-removed', layer)
     },
     clearLayers () {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))

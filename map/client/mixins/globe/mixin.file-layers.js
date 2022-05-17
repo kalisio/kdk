@@ -4,7 +4,7 @@ import logger from 'loglevel'
 
 export const fileLayers = {
   mounted () {
-    this.$on('globe-ready', () => {
+    this.$engineEvents.on('globe-ready', () => {
       this.viewer.extend(Cesium.viewerDragDropMixin,
         // For activities
         _.get(this, 'activityOptions.engine.fileLayers', {

@@ -91,8 +91,8 @@ export default {
     }
   },
   mounted () {
-    this.kActivity.$on('layer-shown', this.onShowLayer)
-    this.kActivity.$on('layer-hidden', this.onHideLayer)
+    this.kActivity.$engineEvents.on('layer-shown', this.onShowLayer)
+    this.kActivity.$engineEvents.on('layer-hidden', this.onHideLayer)
 
     // initial scan of already added layers
     this.kActivity.getLayers().forEach((layer) => {
@@ -102,8 +102,8 @@ export default {
     })
   },
   beforeDestroy () {
-    this.kActivity.$off('layer-shown', this.onShowLayer)
-    this.kActivity.$off('layer-hidden', this.onHideLayer)
+    this.kActivity.$engineEvents.off('layer-shown', this.onShowLayer)
+    this.kActivity.$engineEvents.off('layer-hidden', this.onHideLayer)
   }
 }
 </script>

@@ -139,12 +139,12 @@ export default {
           const arrayBuffer = await response.arrayBuffer()
           exportFile('capture.png', new Uint8Array(arrayBuffer))
         } else {
-          Events.$emit('error', { message: this.$t('errors.' + response.status) })
+          Events.emit('error', { message: this.$t('errors.' + response.status) })
         }
       } catch (error) {
         // Network error
         dismiss()
-        Events.$emit('error', { message: this.$t('errors.NETWORK_ERROR') })
+        Events.emit('error', { message: this.$t('errors.NETWORK_ERROR') })
       }
     }
   }

@@ -377,6 +377,7 @@ export const geojsonLayers = {
     },
     onLayerUpdated (layer, leafletLayer, data) {
       this.$emit('layer-updated', Object.assign({ layer, leafletLayer }, data))
+      this.$engineEvents.emit('layer-updated', Object.assign({ layer, leafletLayer }, data))
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       const geoJsonlayers = _.values(this.layers).filter(sift({

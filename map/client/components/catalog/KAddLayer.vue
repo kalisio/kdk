@@ -3,8 +3,6 @@
     id="add-layer-modal"
     :title="$t('KAddLayer.TITLE')"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
   >
     <div>
       <q-tabs  align="justify" v-model="mode" inverted>

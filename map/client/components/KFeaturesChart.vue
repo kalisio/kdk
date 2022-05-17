@@ -7,8 +7,6 @@
       :toolbar="toolbar"
       :maximized="isModalMaximized"
       v-model="isModalOpened"
-      @opened="$emit('opened')"
-      @closed="$emit('closed')"
     >
       <div class="row justify-around items-center q-ma-none q-pa-none">
         <!-- Previsious chart -->

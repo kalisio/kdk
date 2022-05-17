@@ -64,7 +64,11 @@ export const baseGlobe = {
       this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
       this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
       this.viewBounds = new Cesium.Rectangle()
+      this.onGlobeReady()
+    },
+    onGlobeReady () {
       this.$emit('globe-ready')
+      this.$engineEvents.emit('globe-ready')
     },
     processCesiumLayerOptions (options) {
       // Because we update objects in place and don't want cesium internal objects to be reactive
@@ -185,6 +189,7 @@ export const baseGlobe = {
       }
       layer.isVisible = true
       this.onLayerShown('layer-shown', layer, cesiumLayer)
+      this.$engineEvents.emit('layer-shown', layer, cesiumLayer)
     },
     onLayerShown (layer, cesiumLayer) {
       this.$emit('layer-shown', layer, cesiumLayer)
@@ -211,6 +216,7 @@ export const baseGlobe = {
     },
     onLayerHidden (layer, cesiumLayer) {
       this.$emit('layer-hidden', layer, cesiumLayer)
+      this.$engineEvents.emit('layer-hidden', layer, cesiumLayer)
     },
     async addLayer (layer) {
       if (layer && !this.hasLayer(layer.name)) {
@@ -226,6 +232,7 @@ export const baseGlobe = {
     },
     onLayerAdded (layer) {
       this.$emit('layer-added', layer)
+      this.$engineEvents.emit('layer-added', layer)
     },
     renameLayer (previousName, newName) {
       const layer = this.getLayerByName(previousName)
@@ -256,6 +263,7 @@ export const baseGlobe = {
     },
     onLayerRemoved (layer) {
       this.$emit('layer-removed', layer)
+      this.$engineEvents.emit('layer-removed', layer)
     },
     clearLayers () {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))

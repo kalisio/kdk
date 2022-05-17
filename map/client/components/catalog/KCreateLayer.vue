@@ -26,6 +26,9 @@ export default {
     KPanel,
     KForm
   },
+  emits: [
+    'done'
+  ],
   inject: ['kActivity'],
   data () {
     return {

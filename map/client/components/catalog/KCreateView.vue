@@ -4,8 +4,6 @@
     :title="$t(getSchema().title)"
     :buttons="getButtons()"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
   >
     <k-form ref="form" :schema="getSchema()" />
   </k-modal>

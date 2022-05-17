@@ -307,18 +307,18 @@ export default {
   },
   mounted () {
     this.resetColorLegend()
-    this.kActivity.$on('layer-shown', this.onColorLegendShowLayer)
-    this.kActivity.$on('layer-hidden', this.onColorLegendHideLayer)
-    // this.kActivity.$on('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
+    this.kActivity.$engineEvents.on('layer-shown', this.onColorLegendShowLayer)
+    this.kActivity.$engineEvents.on('layer-hidden', this.onColorLegendHideLayer)
+    // this.kActivity.$engineEvents.on('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
   },
   beforeDestroy () {
     // Delete reference to the legend layer
     this.legendLayer = null
     this.legendEngineLayer = null
     this.resetColorLegend()
-    this.kActivity.$off('layer-shown', this.onColorLegendShowLayer)
-    this.kActivity.$off('layer-hidden', this.onColorLegendHideLayer)
-    // this.kActivity.$off('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
+    this.kActivity.$engineEvents.off('layer-shown', this.onColorLegendShowLayer)
+    this.kActivity.$engineEvents.off('layer-hidden', this.onColorLegendHideLayer)
+    // this.kActivity.$engineEvents.off('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
   }
 }
 </script>

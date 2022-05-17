@@ -57,6 +57,9 @@ export default {
   components: {
     KLocationMap
   },
+  emits: [
+    'input'
+  ],
   props: {
     value: {
       type: Object,

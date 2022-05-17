@@ -108,20 +108,20 @@ export const tiledMeshLayers = {
     this.tiledMeshLayers = new Map()
     this.registerLeafletConstructor(this.createLeafletTiledMeshLayer)
 
-    this.$on('layer-added', this.onAddTiledMeshLayer)
-    this.$on('layer-shown', this.onShowTiledMeshLayer)
-    this.$on('layer-hidden', this.onHideTiledMeshLayer)
-    this.$on('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
-    this.$on('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
+    this.$engineEvents.on('layer-added', this.onAddTiledMeshLayer)
+    this.$engineEvents.on('layer-shown', this.onShowTiledMeshLayer)
+    this.$engineEvents.on('layer-hidden', this.onHideTiledMeshLayer)
+    this.$engineEvents.on('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
+    this.$engineEvents.on('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
   },
 
   beforeDestroy () {
-    this.$off('layer-added', this.onAddTiledMeshLayer)
-    this.$off('layer-shown', this.onShowTiledMeshLayer)
-    this.$off('layer-hidden', this.onHideTiledMeshLayer)
-    this.$off('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
-    this.$off('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
+    this.$engineEvents.off('layer-added', this.onAddTiledMeshLayer)
+    this.$engineEvents.off('layer-shown', this.onShowTiledMeshLayer)
+    this.$engineEvents.off('layer-hidden', this.onHideTiledMeshLayer)
+    this.$engineEvents.off('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
+    this.$engineEvents.off('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
   }
 }

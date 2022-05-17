@@ -5,8 +5,6 @@
     :buttons="buttons"
     :maximized="isModalMaximized"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
   >
     <q-list dense class="row items-center justify-around">
       <q-item v-for="filter in filters" :key="filter.key" class="col-12">
@@ -58,6 +56,9 @@ export default {
   components: {
     KModal
   },
+  emits: [
+    'applied'
+  ],
   mixins: [
     kCoreMixins.baseModal,
     kCoreMixins.refsResolver()
