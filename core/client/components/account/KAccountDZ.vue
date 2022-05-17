@@ -1,5 +1,5 @@
 <template>
-  <KBlock 
+  <KBlock
     v-if="user"
     id="delete-block"
     color="#FFAAAA"

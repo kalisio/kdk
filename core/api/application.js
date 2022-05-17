@@ -17,7 +17,7 @@ import express from '@feathersjs/express'
 import socketio from '@feathersjs/socketio'
 import mongodb from 'mongodb'
 import { Database, idToString } from './db.js'
-import auth, { authSocket } from './authentication.js'
+import auth from './authentication.js'
 
 const debug = makeDebug('kdk:core:application')
 const debugLimiter = makeDebug('kdk:core:application:limiter')
@@ -419,8 +419,6 @@ function setupSockets (app) {
           next()
         })
       }
-
-      authSocket(app, socket)
     })
   }
 }
