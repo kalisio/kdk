@@ -1,5 +1,5 @@
 <template>
-  <k-page v-if="user" padding>
+  <KPage v-if="user" padding>
     <template v-slot:page-content>
       <div v-if="page === 'profile'">
         <KEditor service="users" :objectId="user._id" perspective="profile" />
@@ -11,7 +11,7 @@
         <KAccountDZ />
       </div>
     </template>
-  </k-page>
+  </KPage>
 </template>
 
 <script>

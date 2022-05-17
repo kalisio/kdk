@@ -1,10 +1,10 @@
 <template>
-  <k-page padding>
+  <KPage padding>
     <template v-slot:page-content>
       <!--
         Groups collection
       -->
-      <k-grid
+      <KGrid
         ref="groupsGrid"
         :contextId="contextId"
         service="groups"
@@ -14,16 +14,20 @@
         :list-strategy="'smart'">
         <template slot="empty-section">
           <div class="absolute-center">
-            <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_GRID')" />
+            <k-stamp 
+              icon="las la-exclamation-circle" 
+              icon-size="3rem" 
+              :text="$t('KGrid.EMPTY_GRID')" 
+            />
           </div>
         </template>
-      </k-grid>
+      </KGrid>
       <!--
         Router view to enable routing to modals
       -->
       <router-view service="groups"></router-view>
     </template>
-  </k-page>
+  </KPage>
 </template>
 
 <script>

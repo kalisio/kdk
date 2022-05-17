@@ -1,10 +1,10 @@
 <template>
-  <k-page padding>
+  <KPage padding>
     <template v-slot:page-content>
       <!--
         Organisations collection
       -->
-      <k-grid
+      <KGrid
         ref="organisationsGrid"
         service="organisations"
         :renderer="renderer"
@@ -16,13 +16,13 @@
             <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_GRID')" />
           </div>
         </template>
-      </k-grid>
+      </KGrid>
       <!--
         Router view to enable routing to modals
       -->
       <router-view service="organisations"></router-view>
     </template>
-  </k-page>
+  </KPage>
 </template>
 
 <script>
