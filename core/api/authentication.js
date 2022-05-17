@@ -1,84 +1,89 @@
 import makeDebug from 'debug'
 import _ from 'lodash'
 import 'winston-daily-rotate-file'
-import { RateLimiter as SocketLimiter } from 'limiter'
+// import { RateLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
-import errors from '@feathersjs/errors'
-import authentication from '@feathersjs/authentication'
-import jwt from '@feathersjs/authentication-jwt'
-import local from '@feathersjs/authentication-local'
-import oauth2 from '@feathersjs/authentication-oauth2'
-import GithubStrategy from 'passport-github'
-import GoogleStrategy from 'passport-google-oauth20'
-import CognitoStrategy from 'passport-oauth2-cognito'
-import OAuth2Verifier from './oauth2-verifier.js'
-import OAuth2Handler from './oauth2-handler.js'
+// import { TooManyRequests } from '@feathersjs/errors'
+import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
+import { LocalStrategy } from '@feathersjs/authentication-local'
+import { OAuthStrategy, expressOauth } from '@feathersjs/authentication-oauth'
 import PasswordValidator from 'password-validator'
 
 const debug = makeDebug('kdk:core:authentication')
-const debugLimiter = makeDebug('kdk:core:authentication:limiter')
-const { TooManyRequests } = errors
 
-function tooManyRequests (socket, message, key) {
-  debug(message)
-  const error = new TooManyRequests(message, { translation: { key } })
-  socket.emit('rate-limit', error)
-  // Add a timeout so that error message is correctly handled
-  setTimeout(() => socket.disconnect(true), 3000)
+export class OAuth2Verifier extends OAuthStrategy {
+  async getEntityData (profile, entity) {
+    return Object.assign({}, entity, profile)
+  }
+
+  async createEntity (profile) {
+    if (!profile.id) {
+      profile.id = profile.sub
+      delete profile.sub
+    }
+
+    return { profile }
+  }
+
+  async updateEntity (entity, profile) {
+    if (!profile.id) {
+      profile.id = profile.sub
+      delete profile.sub
+    }
+
+    return { profile }
+  }
+
+  async getEntityQuery (profile) {
+    const options = this.authentication.configuration
+    const query = {
+      $or: [
+        { [options.idField]: profile.id || profile.sub }
+      ],
+      $limit: 1
+    }
+    options.emailFieldInProfile.forEach(emailFieldInProfile => {
+      query.$or.push({ [options.emailField]: _.get(profile, emailFieldInProfile) })
+    })
+
+    debug('Finding user', query)
+
+    return query
+  }
 }
 
-function addOAuth2Client (app, name, clientConfig) {
-  const config = app.get('authentication')
-  // Feathers expect each client config to be a key in the globel app config
-  // However on our side we manage an array of config by provider
-  // so that we update config in place to reflect this setup in Feathers
-  if (!config[name]) config[name] = clientConfig
-  app.authenticationProviders.push(name)
-}
-
-function addGithubOAuth2Client (app, clientConfig) {
-  const name = clientConfig.name || 'github'
-  addOAuth2Client(app, name, clientConfig)
-  app.configure(oauth2({
-    name,
-    Strategy: GithubStrategy,
-    Verifier: OAuth2Verifier,
-    handler: OAuth2Handler(clientConfig)
-  }))
-}
-
-function addGoogleOAuth2Client (app, clientConfig) {
-  const name = clientConfig.name || 'google'
-  addOAuth2Client(app, name, clientConfig)
-  app.configure(oauth2({
-    name,
-    Strategy: GoogleStrategy,
-    Verifier: OAuth2Verifier,
-    handler: OAuth2Handler(clientConfig)
-  }))
-}
-
-function addCognitoOAuth2Client (app, clientConfig) {
-  const name = clientConfig.name || 'cognito'
-  addOAuth2Client(app, name, clientConfig)
-  app.configure(oauth2({
-    name,
-    Strategy: CognitoStrategy,
-    Verifier: OAuth2Verifier,
-    handler: OAuth2Handler(clientConfig)
-  }))
-}
-
-export default function auth () {
-  const app = this
+export default function auth (app) {
   const config = app.get('authentication')
   if (!config) return
+
+  const emailFieldInProfile = config.emailFieldInProfile
+    ? (Array.isArray(config.emailFieldInProfile) ? config.emailFieldInProfile : [config.emailFieldInProfile])
+    : ['email', 'emails[0].value']
+  const emailField = config.emailField || 'email'
   const limiter = config.limiter
+
+  app.set('authentication', Object.assign({}, config, {
+    emailField,
+    emailFieldInProfile
+  }))
+
+  const authentication = new AuthenticationService(app)
+
+  authentication.register('jwt', new JWTStrategy())
+  authentication.register('local', new LocalStrategy())
+  authentication.register('github', new OAuth2Verifier())
+  authentication.register('google', new OAuth2Verifier())
+  authentication.register('cognito', new OAuth2Verifier())
+
   if (limiter && limiter.http) {
     app.use(config.path, new HttpLimiter(limiter.http))
   }
+
   // Store availalbe OAuth2 providers
-  app.authenticationProviders = []
+  app.authenticationProviders = Object.keys(config.oauth)
+  app.use(config.path, authentication)
+  app.configure(expressOauth())
+
   // Get access to password validator if a policy is defined
   if (config.passwordPolicy) {
     let validator
@@ -96,61 +101,16 @@ export default function auth () {
       if (symbols) validator.has().symbols()
       if (noSpaces) validator.not().spaces()
       if (prohibited) validator.is().not().oneOf(prohibited)
-      // Add util functions/options to compare with previous passwords stored in history when required
-      const verifier = new local.Verifier(app, _.merge({ usernameField: 'email', passwordField: 'password' },
-        _.pick(config, ['service']), config.local))
-      validator.comparePassword = verifier._comparePassword
+
+      validator.comparePassword = function (entity, password) {
+        const [localStrategy] = app.service(config.path).getStrategies('local')
+
+        return localStrategy.comparePassword(entity, password)
+      }
+
       validator.options = config.passwordPolicy
 
       return validator
     }
-  }
-  // Set up authentication with the secret
-  app.configure(authentication(config))
-  app.configure(jwt())
-  app.configure(local())
-  if (config.github) {
-    const githubClients = (!Array.isArray(config.github) ? [config.github] : config.github)
-    githubClients.forEach(config => addGithubOAuth2Client(app, config))
-  }
-  if (config.google) {
-    const googleClients = (!Array.isArray(config.google) ? [config.google] : config.google)
-    googleClients.forEach(config => addGoogleOAuth2Client(app, config))
-  }
-  if (config.cognito) {
-    const cognitoClients = (!Array.isArray(config.cognito) ? [config.cognito] : config.cognito)
-    cognitoClients.forEach(config => addCognitoOAuth2Client(app, config))
-  }
-  // The `authentication` service is used to create a JWT.
-  // The before `create` hook registers strategies that can be used
-  // to create a new valid JWT (e.g. local or oauth2)
-  app.getService('authentication').hooks({
-    before: {
-      create: [
-        authentication.hooks.authenticate(config.strategies)
-      ],
-      remove: [
-        authentication.hooks.authenticate('jwt')
-      ]
-    }
-  })
-}
-
-export function authSocket (app, socket) {
-  const authConfig = app.get('authentication')
-  const authLimiter = (authConfig ? authConfig.limiter : null)
-
-  if (authLimiter && authLimiter.websocket) {
-    const { tokensPerInterval, interval } = authLimiter.websocket
-    socket.authSocketLimiter = new SocketLimiter(tokensPerInterval, interval)
-    socket.on('authenticate', (data) => {
-      // We only limit password guessing
-      if (data.strategy === 'local') {
-        debugLimiter(socket.authSocketLimiter.getTokensRemaining() + ' remaining authentication token for socket', socket.id, socket.conn.remoteAddress)
-        if (!socket.authSocketLimiter.tryRemoveTokens(1)) { // if exceeded
-          tooManyRequests(socket, 'Too many authentication requests in a given amount of time (rate limiting)', 'RATE_LIMITING_AUTHENTICATION')
-        }
-      }
-    })
   }
 }

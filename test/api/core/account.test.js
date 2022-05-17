@@ -54,7 +54,7 @@ describe('core:account', () => {
             // Keep track of clear password before hashing for testing purpose
             hooks.serialize([{ source: 'password', target: 'clearPassword' }]),
             hooks.sendInvitationEmail,
-            hooks.hashPassword()),
+            hooks.hashPassword('email')),
           hooks.addVerification
         ],
         remove: [hooks.unregisterDevices]
