@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal" :buttons="getButtons()">
+  <KModal ref="modal" :buttons="getButtons()">
     <div class="column q-gutter-sm">
       <div class="row justify-between">
         <q-select id="icon-categories"
@@ -40,7 +40,7 @@
         <k-palette id="palette" shape="round" v-model="selectedIcon.color" />
       </div>
     </div>
-  </k-modal>
+  </KModal>
 </template>
 
 <script>
@@ -68,6 +68,7 @@ export default {
       default: true
     }
   },
+  emits: ['icon-choosed'],
   data () {
     return {
       allIcons: [],

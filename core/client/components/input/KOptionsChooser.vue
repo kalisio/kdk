@@ -1,5 +1,5 @@
 <template>
-  <k-action
+  <KAction
     v-if="hasOptions"
     id="options-chooser"
     :label="label"
@@ -27,7 +27,7 @@
         </q-list>
       </q-popup-proxy>
     </template>
-  </k-action>
+  </KAction>
 </template>
 
 <script>
@@ -70,6 +70,7 @@ export default {
       default: false
     }
   },
+  emits: ['option-chosen'],
   computed: {
     computedOptions () {
       const options = []

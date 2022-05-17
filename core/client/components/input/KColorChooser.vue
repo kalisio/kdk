@@ -1,11 +1,11 @@
 <template>
-  <k-modal ref="modal" :buttons="getButtons()">
+  <KModalref="modal" :buttons="getButtons()">
     <div class="column q-gutter-sm">
       <div class="row justify-between items-center q-gutter-sm">
-        <k-palette shape="round" v-model="selectedColor" />
+        <KPalette shape="round" v-model="selectedColor" />
       </div>
     </div>
-  </k-modal>
+  </KModal>
 </template>
 
 <script>
@@ -18,6 +18,7 @@ export default {
     KModal,
     KPalette
   },
+  emits: ['color-choosed'],
   data () {
     return {
       selectedColor: 'dark'
