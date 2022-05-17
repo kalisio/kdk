@@ -9,7 +9,7 @@
       :title="$t('KAccountSecurity.PASSWORD_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.PASSWORD_BLOCK_TEXT')"
       :action="$t('KAccountSecurity.PASSWORD_BLOCK_ACTION')"
-      @action-triggered="onChangePassword" 
+      @action-triggered="onChangePassword"
     />
     <!--
       Change email
@@ -20,7 +20,7 @@
       :title="$t('KAccountSecurity.EMAIL_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.EMAIL_BLOCK_TEXT', { email })"
       :action="$t('KAccountSecurity.EMAIL_BLOCK_ACTION')"
-      @action-triggered="onChangeEmail" 
+      @action-triggered="onChangeEmail"
     />
     <!--
       Separator
@@ -29,9 +29,9 @@
     <!--
       Devices
     -->
-    <KAccountDevices 
-      id="devices-block" 
-      :renderer="deviceRenderer" 
+    <KAccountDevices
+      id="devices-block"
+      :renderer="deviceRenderer"
     />
   </div>
 </template>

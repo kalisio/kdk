@@ -95,8 +95,8 @@ export default {
       const screenHeight = this.$q.screen.height
       const modalMaxHeight = this.maximized ? screenHeight : 0.8 * screenHeight
       // compute the scroll area max height
-            // take into account the header and footer height
-      let contentMaxHeight = modalMaxHeight - this.headerHeight 
+      // take into account the header and footer height
+      let contentMaxHeight = modalMaxHeight - this.headerHeight
       const cardElement = document.getElementById('modal-card')
       if (cardElement) {
         contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-top'))

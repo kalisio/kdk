@@ -5,8 +5,8 @@
     -->
     <div class="row justify-center">
       <KAvatar
-        :key="avatarKey" 
-        :object="user" 
+        :key="avatarKey"
+        :object="user"
         size="8rem"
       />
     </div>

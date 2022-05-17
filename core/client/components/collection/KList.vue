@@ -24,10 +24,10 @@
   <div v-else>
     <slot name="empty-section">
       <div class="row col justify-center">
-        <k-stamp 
-          icon="las la-exclamation-circle" 
-          icon-size="1.6rem" 
-          :text="$t('KList.EMPTY_LIST')" 
+        <k-stamp
+          icon="las la-exclamation-circle"
+          icon-size="1.6rem"
+          :text="$t('KList.EMPTY_LIST')"
           direction="horizontal" />
       </div>
     </slot>

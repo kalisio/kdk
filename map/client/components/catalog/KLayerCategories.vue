@@ -42,7 +42,7 @@ export default {
     KAction,
     KPanel,
     KList
-  },  
+  },
   mixins: [
     kCoreMixins.refsResolver(),
     kCoreMixins.baseModal

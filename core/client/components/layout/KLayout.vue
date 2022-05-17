@@ -8,7 +8,7 @@
         id="header"
         :content="header.content"
         :mode="header.mode"
-        :filter="header.filter" 
+        :filter="header.filter"
       />
     </q-header>
     <!--
@@ -19,7 +19,7 @@
         id="footer"
         :content="footer.content"
         :mode="footer.mode"
-        :filter="footer.filter" 
+        :filter="footer.filter"
       />
     </q-footer>
     <!--

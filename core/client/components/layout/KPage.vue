@@ -30,7 +30,7 @@
             :content="bottomPane.content"
             :mode="bottomPane.mode"
             :filter="bottomPane.filter"
-            class="k-pane" 
+            class="k-pane"
           />
           <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
@@ -48,7 +48,7 @@
             :mode="rightPane.mode"
             :filter="rightPane.filter"
             direction="vertical"
-            class="k-pane" 
+            class="k-pane"
           />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
         </div>
@@ -91,7 +91,7 @@
             :filter="leftPane.filter"
             direction="vertical"
             class="k-left-pane"
-            @triggered="setLeftPaneVisible(false)" 
+            @triggered="setLeftPaneVisible(false)"
           />
           <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
         </div>

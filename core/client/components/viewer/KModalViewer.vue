@@ -6,8 +6,8 @@
     v-model="isModalOpened"
   >
     <!-- Modal content -->
-    <KView 
-      :values="object" 
+    <KView
+      :values="object"
       :schema="schema"
     />
   </KModal>

@@ -33,7 +33,7 @@ export default {
       }
     }
   },
-  emits: ['update:modelValue'],  
+  emits: ['update:modelValue'],
   data () {
     return {
       isOpened: this.modelValue,

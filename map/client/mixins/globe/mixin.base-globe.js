@@ -14,10 +14,10 @@ BuildModuleUrl.setBaseUrl('./statics/Cesium/')
 
 export const baseGlobe = {
   emits: [
-    'globe-ready', 
-    'layer-added', 
-    'layer-removed', 
-    'layer-shown', 
+    'globe-ready',
+    'layer-added',
+    'layer-removed',
+    'layer-shown',
     'layer-hidden'
   ],
   data () {

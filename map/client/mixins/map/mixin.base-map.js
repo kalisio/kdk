@@ -39,10 +39,10 @@ L.PM.setOptIn(true)
 
 export const baseMap = {
   emits: [
-    'map-ready', 
-    'layer-added', 
-    'layer-removed', 
-    'layer-shown', 
+    'map-ready',
+    'layer-added',
+    'layer-removed',
+    'layer-shown',
     'layer-hidden'
   ],
   data () {

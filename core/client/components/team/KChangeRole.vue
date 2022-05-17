@@ -7,9 +7,9 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')"
   >
-    <KForm 
-      v-if="member" 
-      ref="form" 
+    <KForm
+      v-if="member"
+      ref="form"
       :schema="getSchema()"
     />
   </KModal>

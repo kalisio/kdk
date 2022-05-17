@@ -62,7 +62,7 @@ export default {
     },
     getScrollPosition (axis) {
       if (this.$refs.scrollArea) {
-        if (axis === 'vertical') return this.$refs.scrollArea.getScrollPosition().top 
+        if (axis === 'vertical') return this.$refs.scrollArea.getScrollPosition().top
         return this.$refs.scrollArea.getScrollPosition().left
       }
       return 0

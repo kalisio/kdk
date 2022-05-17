@@ -18,7 +18,7 @@
       service="settings"
       objectId="settings"
       :schema-properties="schemaFilter"
-      @applied="onSettingsEdited" 
+      @applied="onSettingsEdited"
     />
   </div>
 </template>

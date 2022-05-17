@@ -4,8 +4,8 @@ import { getLocale } from '../utils.js'
 
 export const baseCollection = {
   emits: [
-    'collection-refreshed', 
-    'selection-changed', 
+    'collection-refreshed',
+    'selection-changed',
     'item-toggled'
   ],
   props: {

@@ -5,7 +5,7 @@
     :title="$t('KAccountDZ.BLOCK_TITLE')"
     :text="$t('KAccountDZ.BLOCK_TEXT')"
     :action="$t('KAccountDZ.BLOCK_ACTION')"
-    @action-triggered="onDeleteClicked" 
+    @action-triggered="onDeleteClicked"
   />
 </template>
 

@@ -16,7 +16,7 @@
           icon="las la-user-friends"
           :label="$t('KGroupCard.MEMBERS_LABEL', { count: membersCount })"
           :tooltip="$t('KGroupCard.VIEW_MEMBERS_LABEL')"
-          @triggered="onListMembers" 
+          @triggered="onListMembers"
         />
       </KCardSection>
     </div>

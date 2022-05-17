@@ -7,8 +7,8 @@
       v-model="isModalOpened"
     >
       <!-- Modal content -->
-      <KForm 
-        ref="form" 
+      <KForm
+        ref="form"
         :schema="schema"
       />
     </KModal>

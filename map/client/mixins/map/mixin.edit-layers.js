@@ -9,7 +9,7 @@ const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend
 
 export const editLayers = {
   emits: [
-    'edit-start', 
+    'edit-start',
     'edit-stop'
   ],
   data () {
