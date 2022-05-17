@@ -1,5 +1,5 @@
 <template>
-  <k-card v-bind="$props" :actions="itemActions" :bind-actions="false"
+  <KCard v-bind="$props" :actions="itemActions" :bind-actions="false"
     :options="{ nameField: 'model' }" :header="header" :dense="dense">
     <!--
       Card icon
@@ -13,7 +13,7 @@
       {{$t('KDeviceCard.SERIAL_NUMBER')}}: {{item.serial}}<br /><br />
       <cite v-if="lastActivity">{{$t('KDeviceCard.LAST_ACTIVITY')}} {{lastActivity.toLocaleString()}}</cite>
     </div>
-  </k-card>
+  </KCard>
 </template>
 
 <script>

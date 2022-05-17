@@ -72,7 +72,6 @@ import { Search } from '../../search'
 import { baseField } from '../../mixins'
 
 export default {
-  name: 'k-tag-field',
   mixins: [baseField],
   data () {
     return {

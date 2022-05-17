@@ -34,7 +34,6 @@ import KSpot from '../frame/KSpot.vue'
 import { baseField } from '../../mixins'
 
 export default {
-  name: 'k-datetime-field',
   components: {
     KSpot
   },

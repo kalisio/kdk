@@ -1,5 +1,5 @@
 <template>
-  <k-card
+  <KCard
     v-bind="$props"
     :header="header"
     :actions="itemActions"
@@ -10,16 +10,16 @@
      -->
     <div slot="card-content">
       <!-- Members -->
-      <k-card-section :title="$t('KGroupCard.MEMBERS_SECTION')" :dense="dense">
+      <KCardSection :title="$t('KGroupCard.MEMBERS_SECTION')" :dense="dense">
         <k-action
           id="list-members"
           icon="las la-user-friends"
           :label="$t('KGroupCard.MEMBERS_LABEL', { count: membersCount })"
           :tooltip="$t('KGroupCard.VIEW_MEMBERS_LABEL')"
           @triggered="onListMembers" />
-      </k-card-section>
+      </KCardSection>
     </div>
-  </k-card>
+  </KCard>
 </template>
 
 <script>

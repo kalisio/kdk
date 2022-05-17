@@ -7,7 +7,7 @@
       <div class="fit">
         <q-resize-observer @resize="onContentResized" />
         <slot id="page-content" name="page-content"></slot>
-        <k-content
+        <KContent
           id="page"
           v-show="page.content && page.mode"
           :content="page.content"
@@ -22,15 +22,16 @@
     <!-- bottom -->
     <q-page-sticky position="bottom">
       <div id="bottom-pane" v-show="hasBottomPaneContent" class="column items-center">
-        <k-opener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
+        <KOpener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
-          <k-panel
+          <KPanel
             id="bottom-panel"
             v-show="bottomPane.visible"
             :content="bottomPane.content"
             :mode="bottomPane.mode"
             :filter="bottomPane.filter"
-            class="k-pane" />
+            class="k-pane" 
+          />
           <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
         </div>
       </div>
@@ -38,16 +39,17 @@
     <!-- right -->
     <q-page-sticky position="right">
       <div id="right-pane" v-show="hasRightPaneContent" class="row items-center">
-        <k-opener id="right-opener" v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
+        <KOpener id="right-opener" v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
-          <k-panel
+          <KPanel
             id="right-panel"
             v-show="rightPane.visible"
             :content="rightPane.content"
             :mode="rightPane.mode"
             :filter="rightPane.filter"
             direction="vertical"
-            class="k-pane" />
+            class="k-pane" 
+          />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
         </div>
       </div>
@@ -56,31 +58,32 @@
     <q-page-sticky position="top">
       <div id="top-pane" v-show="hasTopPaneContent" class="column items-center">
         <div>
-          <k-panel
+          <KPanel
             id="top-panel"
             v-show="topPane.visible"
             :content="topPane.content"
             :mode="topPane.mode"
             :filter="topPane.filter"
-            class="k-pane" />
+            class="k-pane"
+          />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
         </div>
-        <k-opener id="top-opener" v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
+        <KOpener id="top-opener" v-if="hasTopPaneOpener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
     <!-- fab -->
     <q-page-sticky position="bottom-right" :offset="fabOffset">
-      <k-fab />
+      <KFab />
     </q-page-sticky>
     <!-- window -->
     <q-page-sticky position="top-left" :offset="window.position">
-      <k-window id="window" />
+      <KWindow id="window" />
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left">
       <div id="left-pane" v-show="hasLeftPaneContent" class="row items-center">
         <div>
-          <k-panel
+          <KPanel
             id="left-panel"
             v-show="leftPane.visible"
             :content="leftPane.content"
@@ -88,10 +91,11 @@
             :filter="leftPane.filter"
             direction="vertical"
             class="k-left-pane"
-            @triggered="setLeftPaneVisible(false)" />
+            @triggered="setLeftPaneVisible(false)" 
+          />
           <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
         </div>
-        <k-opener id="left-opener" v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
+        <KOpener id="left-opener" v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
       </div>
     </q-page-sticky>
   </q-page>
@@ -104,7 +108,6 @@ import KWindow from './KWindow.vue'
 import KFab from './KFab.vue'
 
 export default {
-  name: 'k-page',
   components: {
     KContent,
     KPanel,

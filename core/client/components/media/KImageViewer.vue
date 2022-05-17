@@ -13,7 +13,6 @@
 import 'pinch-zoom-element/dist/pinch-zoom.js'
 
 export default {
-  name: 'k-image-viewer',
   props: {
     source: {
       type: String,

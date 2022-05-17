@@ -19,7 +19,7 @@
     <!--
       About window
      -->
-    <k-modal
+    <KModal
       :title="$t('KAbout.TITLE')"
       id="about"
       ref="about"
@@ -73,7 +73,7 @@
           <a href="https://kalisio.github.io/kdk" target="_blank">{{ $t('KAbout.KDK_POWERED') }}</a>
         </div>
       </div>
-    </k-modal>
+    </KModal>
   </div>
 </template>
 
@@ -83,7 +83,6 @@ import { version } from '../../mixins'
 import KModal from '../frame/KModal'
 
 export default {
-  name: 'k-about',
   components: {
     KModal
   },

@@ -25,7 +25,6 @@
 import { baseField } from '../../mixins'
 
 export default {
-  name: 'k-number-field',
   mixins: [baseField]
 }
 </script>

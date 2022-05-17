@@ -46,7 +46,6 @@ import { Layout } from '../../layout'
 import KAction from '../frame/KAction.vue'
 
 export default {
-  name: 'k-fab',
   components: {
     KAction
   },

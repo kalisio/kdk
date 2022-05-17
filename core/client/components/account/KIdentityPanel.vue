@@ -11,7 +11,7 @@
     -->
     <div class="row justify-center items-center">
       <span class="text-subtitle1">{{ user.name }}</span>
-      <KAction
+      </KCardSection
         id="manage-account"
         icon="las la-user-cog"
         :tooltip="$t('KIdentityPanel.MANAGE')"

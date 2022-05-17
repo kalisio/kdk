@@ -95,7 +95,6 @@ import KForm from '../form/KForm.vue'
 import KAction from '../frame/KAction.vue'
 
 export default {
-  name: 'k-add-member',
   emits: ['opened', 'closed'],
   components: {
     KModal,

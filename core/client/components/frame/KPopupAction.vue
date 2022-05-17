@@ -1,5 +1,5 @@
 <template>
-  <KAction
+  </KCardSection
     v-if="hasContent"
     :id="id"
     :label="label"
@@ -20,7 +20,7 @@
         :auto-close="autoClose"
         transition-show="scale"
         transition-hide="scale">
-        <k-panel
+        <KPanel
           id="menu-entries"
           :content="content"
           :mode="mode"

@@ -4,21 +4,23 @@
       Header
      -->
     <q-header v-if="header.contents" v-model="isHeaderVisible" v-bind="config.header" bordered>
-      <k-panel
+      <KPanel
         id="header"
         :content="header.content"
         :mode="header.mode"
-        :filter="header.filter" />
+        :filter="header.filter" 
+      />
     </q-header>
     <!--
       Footer
      -->
     <q-footer v-if="footer.content" v-model="isFooterVisible" v-bind="config.footer" bordered>
-      <k-panel
+      <KPanel
         id="footer"
         :content="footer.content"
         :mode="footer.mode"
-        :filter="footer.filter" />
+        :filter="footer.filter" 
+      />
     </q-footer>
     <!--
       Page container
@@ -34,7 +36,6 @@ import _ from 'lodash'
 import KPanel from '../frame/KPanel.vue'
 
 export default {
-  name: 'k-layout',
   components: {
     KPanel
   },

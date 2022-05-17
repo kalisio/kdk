@@ -8,13 +8,7 @@
 </template>
 
 <script>
-import { QBtn } from 'quasar'
-
 export default {
-  name: 'k-radial-fab',
-  components: {
-    QBtn
-  },
   props: {
     startAngle: { type: Number, default: 0 },
     endAngle: { type: Number, default: 180 },

@@ -12,7 +12,6 @@
 
 <script>
 export default {
-  name: 'k-radial-fab-item',
   props: ['top', 'left', 'height', 'width', 'handler'],
   data () {
     const { top, left, height, width } = this

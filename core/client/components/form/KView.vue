@@ -53,7 +53,6 @@
 import { loadComponent } from '../../utils.js'
 
 export default {
-  name: 'k-view',
   props: {
     schema: {
       type: Object,

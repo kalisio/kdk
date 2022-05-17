@@ -1,5 +1,5 @@
 <template>
-  <k-card
+  <KCard
     v-bind="$props"
     :actions="itemActions"
     :bind-actions="false"
@@ -10,16 +10,16 @@
      -->
     <div slot="card-content">
       <!-- Members -->
-      <k-card-section :title="$t('KTagCard.MEMBERS_SECTION')" :dense="dense">
+      <KCardSection :title="$t('KTagCard.MEMBERS_SECTION')" :dense="dense">
         <k-action
           id="list-members"
           icon="las la-user-friends"
           :label="$t('KTagCard.MEMBERS_LABEL', { count: item.count })"
           :tooltip="$t('KTagCard.VIEW_MEMBERS_LABEL')"
           @triggered="onListMembers" />
-      </k-card-section>
+      </KCardSection>
     </div>
-  </k-card>
+  </KCard>
 </template>
 
 <script>

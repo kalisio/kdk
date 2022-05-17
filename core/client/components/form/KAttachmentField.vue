@@ -61,7 +61,6 @@ import { KUploader } from '../input'
 import { baseField } from '../../mixins'
 
 export default {
-  name: 'k-attachment-field',
   components: {
     KUploader
   },

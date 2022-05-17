@@ -16,25 +16,23 @@
     no-caps
     fab-mini
     @click="onClicked(arguments[0])">
-    <k-panel
+    <KPanel
       id="menu-entries"
       :content="content"
       :mode="mode"
       :context="context"
       :action-renderer="actionRenderer"
-      direction="vertical" />
+      direction="vertical"
+    />
   </q-btn-dropdown>
 </template>
 
 <script>
 import _ from 'lodash'
-import { QBtnDropdown } from 'quasar'
 import KPanel from '../frame/KPanel.vue'
 
 export default {
-  name: 'k-menu',
   components: {
-    QBtnDropdown,
     KPanel
   },
   props: {

@@ -7,7 +7,7 @@
       id="window-header"
       class="k-window-header q-pt-xs"
       v-touch-pan.prevent.mouse="onMoved">
-      <k-panel id="window-actions" :content="actions" />
+      <KPanel id="window-actions" :content="actions" />
     </div>
     <!--
       Window content
@@ -18,7 +18,7 @@
           <q-tab-panel :name="widget.id" class="no-padding" style="overflow: hidden">
             <component :is="widget.component" :mode="mode" v-bind="widget.props" style="z-index: 1;" />
           </q-tab-panel>
-        </template>>
+        </template>
       </q-tab-panels>
     </div>
     <!--
@@ -39,7 +39,6 @@ import { loadComponent } from '../../utils.js'
 import KPanel from '../frame/KPanel.vue'
 
 export default {
-  name: 'k-window',
   components: {
     KPanel
   },

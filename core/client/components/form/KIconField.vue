@@ -52,7 +52,6 @@ import { getIconName } from '../../utils'
 import _ from 'lodash'
 
 export default {
-  name: 'k-icon-field',
   components: {
     KIconChooser
   },

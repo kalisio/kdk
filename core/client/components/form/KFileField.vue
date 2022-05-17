@@ -26,15 +26,10 @@
 
 <script>
 import _ from 'lodash'
-import { QFile } from 'quasar'
 import { baseField } from '../../mixins'
-import { Reader } from '../../reader'
+import { Reader } from '../../reader.js'
 
 export default {
-  name: 'k-file-field',
-  components: {
-    QFile
-  },
   mixins: [baseField],
   data () {
     return {

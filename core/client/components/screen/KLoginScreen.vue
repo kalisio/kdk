@@ -7,7 +7,7 @@
         :schema="getFormSchema()"
         @form-ready="onFormReady"
       />
-      <KAction
+      </KCardSection
         id="login-button"
         label="KLoginScreen.LOGIN_LABEL"
         renderer="form-button"

@@ -41,7 +41,6 @@ import { baseField } from '../../mixins'
 import { Units } from '../../units'
 
 export default {
-  name: 'k-unit-field',
   mixins: [baseField],
   computed: {
     options () {

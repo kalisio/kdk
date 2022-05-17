@@ -38,7 +38,7 @@
       </slot>
       <slot name="card-description">
         <!-- Description -->
-        <k-card-section
+        <KCardSection
           :title="$t('KCard.DESCRIPTION_SECTION')"
           :actions="descriptionActions"
           :hideHeader="!isExpanded"
@@ -50,7 +50,7 @@
           <div v-else>
             {{ $t('KCard.NO_DESCRIPTION_LABEL')}}
           </div>
-        </k-card-section>
+        </KCardSection>
       </slot>
     </div>
     <!--

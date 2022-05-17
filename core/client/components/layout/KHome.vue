@@ -1,6 +1,6 @@
 <template>
   <div v-if="isAuthenticated">
-    <k-layout  />
+    <KLayout />
   </div>
 </template>
 
@@ -9,7 +9,6 @@ import _ from 'lodash'
 import KLayout from './KLayout.vue'
 
 export default {
-  name: 'k-home',
   components: {
     KLayout
   },

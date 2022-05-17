@@ -26,7 +26,6 @@
 import { baseField } from '../../mixins'
 
 export default {
-  name: 'k-url-field',
   mixins: [baseField]
 }
 </script>

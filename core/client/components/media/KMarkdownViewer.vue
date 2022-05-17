@@ -6,7 +6,6 @@
 import showdown from 'showdown'
 
 export default {
-  name: 'k-markdown-viewer',
   props: {
     url: {
       type: String,

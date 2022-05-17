@@ -1,5 +1,5 @@
 <template>
-  <k-card
+  <KCard
     v-bind="$props"
     :header="header"
     :actions="itemActions"
@@ -24,7 +24,7 @@
     -->
     <div slot="card-content">
       <!-- Tags section -->
-      <k-card-section v-if="!item.expireAt"
+      <KCardSection v-if="!item.expireAt"
         :title="$t('KMemberCard.TAGS_SECTION')"
         :actions="tagsActions"
         :context="$props"
@@ -35,9 +35,9 @@
         <div v-else>
           {{ $t('KMemberCard.NO_TAGS_LABEL')}}
         </div>
-      </k-card-section>
+      </KCardSection>
       <!-- Groups section -->
-      <k-card-section v-if="!item.expireAt"
+      <KCardSection v-if="!item.expireAt"
         :title="$t('KMemberCard.GROUPS_SECTION')"
         :actions="groupsActions"
         :context="$props"
@@ -64,18 +64,18 @@
         <div v-else>
           {{ $t('KMemberCard.NO_GROUPS_LABEL')}}
         </div>
-      </k-card-section>
+      </KCardSection>
       <!-- Expiration section -->
-      <k-card-section v-if="item.expireAt" :dense="dense">
+      <KCardSection v-if="item.expireAt" :dense="dense">
         <div class="row full-width justify-between items-center no-wrap">
           <span class="text-warning text-weight-bold" v-if="expireAt">
             {{$t('KMemberCard.EXPIRE_AT_LABEL')}} {{expireAt.toLocaleString()}}
           </span>
           <k-panel :content="expirationActions" />
         </div>
-      </k-card-section>
+      </KCardSection>
     </div>
-  </k-card>
+  </KCard>
 </template>
 
 <script>

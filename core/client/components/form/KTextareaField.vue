@@ -43,7 +43,8 @@ export default {
       type: Array,
       default: () => []
     }
-    /* {
+    /* TODO : this is no more working
+      {
         return (this.$q.screen.lt.sm
           ? [
               ['bold', 'italic', 'underline', 'strike'],

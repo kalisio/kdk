@@ -40,7 +40,6 @@ import moment from 'moment'
 import _ from 'lodash'
 
 export default {
-  name: 'k-datetime-field',
   mixins: [baseField],
   data () {
     return {

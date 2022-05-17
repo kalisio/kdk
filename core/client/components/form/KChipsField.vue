@@ -61,7 +61,6 @@ import { baseField } from '../../mixins'
 import { getIconName } from '../../utils'
 
 export default {
-  name: 'k-chips-with-icon-field',
   components: {
     KIconChooser
   },

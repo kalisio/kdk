@@ -57,7 +57,6 @@ import { openURL, QCheckbox, QCarousel, QCarouselSlide, QCarouselControl } from 
 import KAction from '../frame/KAction.vue'
 
 export default {
-  name: 'k-welcome',
   components: {
     QCheckbox,
     QCarousel,

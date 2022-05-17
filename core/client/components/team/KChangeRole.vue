@@ -1,5 +1,5 @@
 <template>
-  <k-modal
+  <KModal
     id="change-role-modal"
     :title="title"
     :buttons="getButtons()"
@@ -7,8 +7,12 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')"
   >
-    <k-form v-if="member" ref="form" :schema="getSchema()" />
-  </k-modal>
+    <KForm 
+      v-if="member" 
+      ref="form" 
+      :schema="getSchema()"
+    />
+  </KModal>
 </template>
 
 <script>
@@ -18,7 +22,6 @@ import KModal from '../frame/KModal.vue'
 import KForm from '../form/KForm.vue'
 
 export default {
-  name: 'k-change-role',
   emits: ['opened', 'closed'],
   components: {
     KModal,

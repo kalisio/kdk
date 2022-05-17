@@ -47,7 +47,6 @@ import _ from 'lodash'
 import { baseField } from '../../mixins'
 
 export default {
-  name: 'k-select-field',
   mixins: [baseField],
   computed: {
     clearable () {

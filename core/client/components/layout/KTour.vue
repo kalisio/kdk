@@ -55,7 +55,6 @@ import _ from 'lodash'
 import logger from 'loglevel'
 
 export default {
-  name: 'k-tour',
   data () {
     return {
       tourSteps: [],

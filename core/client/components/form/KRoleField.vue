@@ -35,7 +35,6 @@ import { RoleNames } from '../../../common/permissions'
 import { QOptionGroup } from 'quasar'
 
 export default {
-  name: 'k-role-field',
   components: {
     QOptionGroup
   },

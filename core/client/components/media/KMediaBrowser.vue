@@ -43,7 +43,6 @@ import { downloadAsBlob } from '../../utils'
 import { refsResolver } from '../../mixins'
 
 export default {
-  name: 'k-media-browser',
   mixins: [refsResolver(['carousel'])],
   components: {
     KPanel,
