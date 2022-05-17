@@ -1,5 +1,5 @@
 <template>
-  <k-screen message="KRegisterScreen.MESSAGE" :actions="actions">
+  <KScreen message="KRegisterScreen.MESSAGE" :actions="actions">
     <div class="column items-center q-gutter-y-md">
       <k-form
         ref="form"
@@ -14,7 +14,7 @@
         :handler="this.onRegister"
       />
     </div>
-  </k-screen>
+  </KScreen>
 </template>
 
 <script>
@@ -25,7 +25,6 @@ import KAction from '../frame/KAction.vue'
 import { authentication } from '../../mixins'
 
 export default {
-  name: 'k-register-screen',
   components: {
     KScreen,
     KForm,

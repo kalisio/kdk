@@ -1,5 +1,5 @@
 <template>
-  <k-screen :title="title">
+  <KScreen :title="title">
     <div slot="screen-content">
       <div class="column justify-center">
           <div :class="textClass">
@@ -22,7 +22,7 @@
           </div>
       </div>
     </div>
-  </k-screen>
+  </KScreen>
 </template>
 
 <script>

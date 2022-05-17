@@ -24,7 +24,6 @@
 
 <script>
 export default {
-  name: 'k-block',
   props: {
     color: {
       type: String,

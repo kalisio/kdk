@@ -1,5 +1,5 @@
 <template>
-  <k-screen :title="$t('KResendVerifySignup.TITLE')">
+  <KScreen :title="$t('KResendVerifySignup.TITLE')">
     <div slot="screen-content">
       <div class="column justify-center sm-gutter">
           <div :class="textClass">
@@ -22,7 +22,7 @@
           </div>
       </div>
     </div>
-  </k-screen>
+  </KScreen>
 </template>
 
 <script>

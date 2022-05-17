@@ -4,7 +4,7 @@
     :position="position" 
     :offset="offset"
   >
-    <k-content v-bind="$props"></k-content>
+    <KContent v-bind="$props" />
   </q-page-sticky>
 </template>
 
@@ -13,7 +13,6 @@ import _ from 'lodash'
 import KContent from './KContent.vue'
 
 export default {
-  name: 'k-page-sticky',
   components: {
     KContent
   },

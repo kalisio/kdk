@@ -3,23 +3,25 @@
     <!--
       Change password
     -->
-    <k-block
+    <KBlock
       id="password-block"
       color="grey"
       :title="$t('KAccountSecurity.PASSWORD_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.PASSWORD_BLOCK_TEXT')"
       :action="$t('KAccountSecurity.PASSWORD_BLOCK_ACTION')"
-      @action-triggered="onChangePassword" />
+      @action-triggered="onChangePassword" 
+    />
     <!--
       Change email
     -->
-    <k-block
+    <KBlock
       id="email-block"
       color="orange"
       :title="$t('KAccountSecurity.EMAIL_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.EMAIL_BLOCK_TEXT', { email })"
       :action="$t('KAccountSecurity.EMAIL_BLOCK_ACTION')"
-      @action-triggered="onChangeEmail" />
+      @action-triggered="onChangeEmail" 
+    />
     <!--
       Separator
     -->
@@ -27,7 +29,10 @@
     <!--
       Devices
     -->
-    <k-account-devices id="devices-block" :renderer="deviceRenderer"/>
+    <KAccountDevices 
+      id="devices-block" 
+      :renderer="deviceRenderer" 
+    />
   </div>
 </template>
 
@@ -36,7 +41,6 @@ import KBlock from '../frame/KBlock.vue'
 import KAccountDevices from './KAccountDevices.vue'
 
 export default {
-  name: 'k-account-security',
   components: {
     KBlock,
     KAccountDevices

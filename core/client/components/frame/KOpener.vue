@@ -19,10 +19,7 @@
 </template>
 
 <script>
-
 export default {
-  name: 'k-opener',
-  emits: ['update:modelValue'],
   props: {
     modelValue: {
       type: Boolean,
@@ -36,6 +33,7 @@ export default {
       }
     }
   },
+  emits: ['update:modelValue'],  
   data () {
     return {
       isOpened: this.modelValue,

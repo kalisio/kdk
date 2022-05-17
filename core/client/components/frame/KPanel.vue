@@ -1,5 +1,5 @@
 <template>
-  <k-content
+  <KContent
     v-bind="$props"
     v-bind:class="{
       'row items-center justify-center no-wrap': direction === 'horizontal',
@@ -13,7 +13,6 @@
 import KContent from './KContent.vue'
 
 export default {
-  name: 'k-panel',
   components: {
     KContent
   },

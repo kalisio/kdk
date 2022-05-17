@@ -20,7 +20,6 @@ import { Layout } from '../../layout'
 import { loadComponent } from '../../utils'
 
 export default {
-  name: 'k-content',
   props: {
     content: {
       type: [Object, Array],

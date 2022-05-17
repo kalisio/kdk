@@ -22,8 +22,8 @@
 
 <script>
 import _ from 'lodash'
+
 export default {
-  name: 'k-stamp',
   props: {
     icon: {
       type: String,

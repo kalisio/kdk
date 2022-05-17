@@ -16,7 +16,6 @@
 import { getCssVar } from 'quasar'
 
 export default {
-  name: 'k-scroll-area',
   props: {
     maxHeight: {
       type: Number,

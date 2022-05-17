@@ -1,13 +1,13 @@
 <template>
-  <k-screen :actions="actions">
+  <KScreen :actions="actions">
     <div class="column items-center q-gutter-y-md">
-      <k-form
+      <KForm
         ref="form"
         class="full-width"
         :schema="getFormSchema()"
         @form-ready="onFormReady"
       />
-      <k-action
+      <KAction
         id="login-button"
         label="KLoginScreen.LOGIN_LABEL"
         renderer="form-button"
@@ -15,7 +15,7 @@
         :handler="this.onLogin"
       />
     </div>
-  </k-screen>
+  </KScreen>
 </template>
 
 <script>
@@ -26,7 +26,6 @@ import KAction from '../frame/KAction.vue'
 import { authentication } from '../../mixins'
 
 export default {
-  name: 'k-login-screen',
   components: {
     KScreen,
     KForm,

@@ -1,5 +1,5 @@
 <template>
-  <k-screen :title="$t('KChangePassword.TITLE')">
+  <KScreen :title="$t('KChangePassword.TITLE')">
     <div slot="screen-content">
       <div class="column justify-center sm-gutter">
           <div :class="textClass">
@@ -29,7 +29,7 @@
           </div>
       </div>
     </div>
-  </k-screen>
+  </KScreen>
 </template>
 
 <script>

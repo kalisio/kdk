@@ -26,7 +26,6 @@ import KPanel from '../frame/KPanel.vue'
 import { getIconName } from '../../utils'
 
 export default {
-  name: 'k-chips-pane',
   components: {
     KPanel
   },

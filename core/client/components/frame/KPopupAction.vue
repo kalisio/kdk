@@ -1,5 +1,5 @@
 <template>
-  <k-action
+  <KAction
     v-if="hasContent"
     :id="id"
     :label="label"
@@ -30,7 +30,7 @@
         />
       </q-popup-proxy>
     </template>
-  </k-action>
+  </KAction>
 </template>
 
 <script>
@@ -43,7 +43,6 @@ export default {
     KAction,
     KPanel
   },
-  name: 'k-popup-action',
   props: {
     id: {
       type: String,

@@ -6,7 +6,7 @@
     <div>
       <k-form
         :id="getSchemaId() + 'form'"
-        ref="onFormReferenceCreated"
+        :ref="onFormReferenceCreated"
         :schema="schema"
         @form-ready="onFormReady" />
     </div>
@@ -38,8 +38,8 @@ export default {
     objectProxy,
     schemaProxy
   ],
-  created () {
-    this.refresh()
+  async created () {
+    await this.refresh()
   }
 }
 </script>

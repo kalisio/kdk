@@ -2,13 +2,13 @@
   <k-page v-if="user" padding>
     <template v-slot:page-content>
       <div v-if="page === 'profile'">
-        <k-editor service="users" :objectId="user._id" perspective="profile" />
+        <KEditor service="users" :objectId="user._id" perspective="profile" />
       </div>
       <div v-if="page === 'security'">
-        <k-account-security :device-renderer="deviceRenderer" />
+        <KAccountSecurity :device-renderer="deviceRenderer" />
       </div>
       <div v-else-if="page === 'danger-zone'">
-        <k-account-dz />
+        <KAccountDZ />
       </div>
     </template>
   </k-page>
@@ -16,11 +16,11 @@
 
 <script>
 import _ from 'lodash'
-import { baseActivity } from '../../mixins'
 import KPage from '../layout/KPage.vue'
 import KEditor from '../editor/KEditor.vue'
 import KAccountSecurity from './KAccountSecurity.vue'
 import KAccountDZ from './KAccountDZ.vue'
+import { baseActivity } from '../../mixins'
 
 export default {
   name: 'account-activity',

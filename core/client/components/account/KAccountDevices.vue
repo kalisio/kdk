@@ -9,7 +9,7 @@
     <div v-if="items.length > 0" class="row">
       <template v-for="item in items" :key="item.uuid">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
-          <k-device-card class="q-pa-sm" :id="item.uuid" :item="item" v-bind="renderer" />
+          <KDeviceCard class="q-pa-sm" :id="item.uuid" :item="item" v-bind="renderer" />
         </div>
       </template>
     </div>
@@ -23,11 +23,10 @@
 </template>
 
 <script>
-import { baseCollection } from '../../mixins'
 import KDeviceCard from './KDeviceCard.vue'
+import { baseCollection } from '../../mixins'
 
 export default {
-  name: 'k-account-devices',
   components: {
     KDeviceCard
   },
@@ -38,6 +37,7 @@ export default {
       default: () => ({ component: 'account/KDeviceCard' })
     }
   },
+  emits: ['collection-refreshed'],
   created () {
     // Refresh collection method is added dynamically due to throttle, not used here
     this.refreshCollection = () => {

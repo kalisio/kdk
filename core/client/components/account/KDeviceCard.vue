@@ -23,7 +23,6 @@ import { baseItem } from '../../mixins'
 import KCard from '../collection/KCard'
 
 export default {
-  name: 'k-device-card',
   components: {
     KCard
   },

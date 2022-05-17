@@ -10,7 +10,6 @@ import _ from 'lodash'
 import sanitizeHtml from 'sanitize-html'
 
 export default {
-  name: 'k-text-area',
   props: {
     text: {
       type: String,

@@ -1,12 +1,11 @@
 <template>
-  <k-screen title="message" :actions="action" />
+  <KScreen title="message" :actions="action" />
 </template>
 
 <script>
 import KScreen from './KScreen.vue'
 
 export default {
-  name: 'k-error-screen',
   components: {
     KScreen
   },

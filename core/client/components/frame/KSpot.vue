@@ -8,7 +8,6 @@
 import { getCssVar } from 'quasar'
 
 export default {
-  name: 'k-spot',
   props: {
     color: {
       type: String,

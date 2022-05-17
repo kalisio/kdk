@@ -23,14 +23,9 @@
 
 <script>
 import _ from 'lodash'
-import { QSkeleton } from 'quasar'
 import { getIconName, getInitials } from '../../utils.js'
 
 export default {
-  name: 'k-avatar',
-  components: {
-    QSkeleton
-  },
   props: {
     object: {
       type: Object,

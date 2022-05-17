@@ -63,7 +63,6 @@ import KScrollArea from './KScrollArea.vue'
 import KPanel from './KPanel.vue'
 
 export default {
-  name: 'k-modal',
   components: {
     KScrollArea,
     KPanel

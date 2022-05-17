@@ -1,20 +1,20 @@
 <template>
-  <k-screen title="KEndpointScreen.TITLE" :actions="actions">
+  <KScreen title="KEndpointScreen.TITLE" :actions="actions">
     <div class="column items-center q-gutter-y-md">
-      <k-form
+      <KForm
         ref="form"
         class="full-width"
         :schema="getFormSchema()"
         @form-ready="onFormReady"
       />
       <div class="row full-width justify-around q-gutter-x-md">
-        <k-action
+        <KAction
           id="cancel-button"
           label="KEndpointScreen.RESET_LABEL"
           renderer="form-button"
           :handler="this.onReset"
         />
-        <k-action
+        <KAction
           id="apply-button"
           label="KEndpointScreen.APPLY_LABEL"
           renderer="form-button"
@@ -22,7 +22,7 @@
         />
       </div>
     </div>
-  </k-screen>
+  </KScreen>
 </template>
 
 <script>
@@ -31,7 +31,6 @@ import KForm from '../form/KForm.vue'
 import KAction from '../frame/KAction.vue'
 
 export default {
-  name: 'k-endpoint-screen',
   components: {
     KScreen,
     KForm,

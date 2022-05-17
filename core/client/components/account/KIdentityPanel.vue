@@ -4,14 +4,14 @@
       User avatar
     -->
     <div class="row justify-center">
-      <k-avatar :key="avatarKey" :object="user" size="8rem" />
+      <KAvatar :key="avatarKey" :object="user" size="8rem" />
     </div>
     <!--
       User information
     -->
     <div class="row justify-center items-center">
       <span class="text-subtitle1">{{ user.name }}</span>
-      <k-action
+      <KAction
         id="manage-account"
         icon="las la-user-cog"
         :tooltip="$t('KIdentityPanel.MANAGE')"

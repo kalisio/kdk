@@ -1,5 +1,5 @@
 <template>
-  <k-screen :title="$t('KSendResetPassword.TITLE')">
+  <KScreen :title="$t('KSendResetPassword.TITLE')">
     <div slot="screen-content">
       <div class="column justify-center sm-gutter">
           <div :class="textClass">
@@ -22,7 +22,7 @@
           </div>
       </div>
     </div>
-  </k-screen>
+  </KScreen>
 </template>
 
 <script>
