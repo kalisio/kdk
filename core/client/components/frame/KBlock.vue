@@ -3,19 +3,19 @@
     <!--
       Title section
      -->
-    <q-card-section v-if="title !== ''" :class="titleColors">
-      {{title}}
+    <q-card-section v-if="title" class="k-block-title text-subtitle1">
+      {{ title }}
     </q-card-section>
     <!--
-      Frame section
+      Content section
       -->
     <q-card-section>
-      <div class="row justify-between k-block-content">
+      <div class="column k-block-content">
         <!-- Text -->
-        <div class="col-xs-12 col-sm-10 k-block-text" v-html="text" />
+        <div class="k-block-text" v-html="text" />
         <!-- Action -->
-        <div v-if="action !== ''" class="col-xs-12 col-sm-2 self-center" align="right">
-          <q-btn id='block-action' @click="$emit('action-triggered', action)" :color="color" :disabled="disabled">{{action}}</q-btn>
+        <div v-if="action" class="self-end">
+          <KAction v-bind="action" />
         </div>
       </div>
     </q-card-section>
@@ -23,38 +23,38 @@
 </template>
 
 <script>
+import KAction from './KAction.vue'
+
 export default {
   props: {
-    color: {
-      type: String,
-      default: 'grey'
-    },
     title: {
       type: String,
-      default: ''
+      default: undefined
     },
     text: {
       type: String,
       default: ''
     },
     action: {
+      type: Object,
+      default: () => null
+    },
+    color: {
       type: String,
-      default: ''
+      default: 'grey'
     },
     disabled: {
       type: Boolean,
       default: false
-    }
-  },
-  computed: {
-    titleColors () {
-      return ['text-' + this.color, 'bg-' + this.color + '-2']
     }
   }
 }
 </script>
 
 <style lang="scss">
+  .k-block-title {
+    background-color: v-bind(color)
+  }
   .k-block-content {
     margin: 8px;
   }

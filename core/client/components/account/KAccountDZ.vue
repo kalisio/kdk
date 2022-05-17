@@ -1,11 +1,11 @@
 <template>
-  <KBlock v-if="user"
+  <KBlock 
+    v-if="user"
     id="delete-block"
-    color="red"
+    color="#FFAAAA"
     :title="$t('KAccountDZ.BLOCK_TITLE')"
     :text="$t('KAccountDZ.BLOCK_TEXT')"
-    :action="$t('KAccountDZ.BLOCK_ACTION')"
-    @action-triggered="onDeleteClicked"
+    :action="getDeleteAction()"
   />
 </template>
 
@@ -23,6 +23,14 @@ export default {
     }
   },
   methods: {
+    getDeleteAction () {
+      return {
+        id: 'block-action',
+        label: 'KAccountDZ.BLOCK_ACTION',
+        renderer: 'form-button',
+        handler: this.onDeleteClicked
+      }
+    },
     onDeleteClicked () {
       Dialog.create({
         title: this.$t('KAccountDZ.DIALOG_TITLE'),

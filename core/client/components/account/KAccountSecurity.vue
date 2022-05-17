@@ -5,22 +5,20 @@
     -->
     <KBlock
       id="password-block"
-      color="grey"
+      color="#DDDDDD"
       :title="$t('KAccountSecurity.PASSWORD_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.PASSWORD_BLOCK_TEXT')"
-      :action="$t('KAccountSecurity.PASSWORD_BLOCK_ACTION')"
-      @action-triggered="onChangePassword"
+      :action="getChangePasswordAction()"
     />
     <!--
       Change email
     -->
     <KBlock
       id="email-block"
-      color="orange"
+      color="#FFE68B"
       :title="$t('KAccountSecurity.EMAIL_BLOCK_TITLE')"
       :text="$t('KAccountSecurity.EMAIL_BLOCK_TEXT', { email })"
-      :action="$t('KAccountSecurity.EMAIL_BLOCK_ACTION')"
-      @action-triggered="onChangeEmail"
+      :action="getChangeEmailAction()"
     />
     <!--
       Separator
@@ -62,6 +60,22 @@ export default {
     }
   },
   methods: {
+    getChangePasswordAction () {
+      return {
+        id: 'change-password',
+        label: 'KAccountSecurity.PASSWORD_BLOCK_ACTION',
+        renderer: 'form-button',
+        handler: this.onChangePassword
+      }
+    },
+    getChangeEmailAction () {
+      return {
+        id: 'change-email',
+        label: 'KAccountSecurity.EMAIL_BLOCK_ACTION',
+        renderer: 'form-button',
+        handler: this.onChangeEmail
+      }
+    },
     onChangePassword () {
       this.$router.push({ name: 'change-password' })
     },
