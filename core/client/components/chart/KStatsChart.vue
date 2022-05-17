@@ -1,5 +1,5 @@
 <template>
-  <k-chart ref="chart" />
+  <KChart ref="chart" />
 </template>
 
 <script>
@@ -7,7 +7,6 @@ import _ from 'lodash'
 import KChart from './KChart.vue'
 
 export default {
-  name: 'k-stats-chart',
   components: {
     KChart
   },
@@ -65,7 +64,7 @@ export default {
       }
       _.merge(options, defaultOptions)
     },
-    async update (config) {
+    update (config) {
       this.customizeDatasets(config.type, config.data.datasets)
       this.customizeOptions(config.type, config.options)
       // Update the chart

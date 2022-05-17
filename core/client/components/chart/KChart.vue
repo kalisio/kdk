@@ -1,7 +1,7 @@
 <template>
   <div class="fit">
     <canvas ref="chart"></canvas>
-    <k-stamp
+    <KStamp
       v-show="!hasData" class="absolute-center"
       icon="las la-exclamation-circle"
       icon-size="3rem"
@@ -22,7 +22,6 @@ import KStamp from '../frame/KStamp.vue'
 Chart.register(...registerables, ChartDataLabelsPlugin, ChartAnnotationPlugin, ChartZoomPlugin)
 
 export default {
-  name: 'k-chart',
   components: {
     KStamp
   },
