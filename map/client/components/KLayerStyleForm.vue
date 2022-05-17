@@ -316,6 +316,9 @@ export default {
     KIconChooser,
     KColorChooser
   },
+  emits: [
+    'form-ready'
+  ],
   mixins: [
     kCoreMixins.schemaProxy,
     kCoreMixins.refsResolver()

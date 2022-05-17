@@ -196,18 +196,18 @@ export const featureSelection = {
   created () {
     // Set of highligthed features
     this.selectionHighlight = {}
-    this.$on('click', this.onFeatureSelectionClicked)
-    this.$on('layer-shown', this.onFeatureSelectionLayerShown)
-    this.$on('layer-hidden', this.onFeatureSelectionLayerHidden)
-    this.$on('layer-disabled', this.onFeatureSelectionLayerDisabled)
-    this.$on('layer-enabled', this.onFeatureSelectionLayerEnabled)
+    this.$engineEvents.on('click', this.onFeatureSelectionClicked)
+    this.$engineEvents.on('layer-shown', this.onFeatureSelectionLayerShown)
+    this.$engineEvents.on('layer-hidden', this.onFeatureSelectionLayerHidden)
+    this.$engineEvents.on('layer-disabled', this.onFeatureSelectionLayerDisabled)
+    this.$engineEvents.on('layer-enabled', this.onFeatureSelectionLayerEnabled)
   },
   beforeDestroy () {
-    this.$off('click', this.onFeatureSelectionClicked)
-    this.$off('layer-shown', this.onFeatureSelectionLayerShown)
-    this.$off('layer-hidden', this.onFeatureSelectionLayerHidden)
-    this.$off('layer-disabled', this.onFeatureSelectionLayerDisabled)
-    this.$off('layer-enabled', this.onFeatureSelectionLayerEnabled)
+    this.$engineEvents.off('click', this.onFeatureSelectionClicked)
+    this.$engineEvents.off('layer-shown', this.onFeatureSelectionLayerShown)
+    this.$engineEvents.off('layer-hidden', this.onFeatureSelectionLayerHidden)
+    this.$engineEvents.off('layer-disabled', this.onFeatureSelectionLayerDisabled)
+    this.$engineEvents.off('layer-enabled', this.onFeatureSelectionLayerEnabled)
     this.removeSelectionLayer()
   }
 }

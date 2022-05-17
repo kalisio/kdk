@@ -69,11 +69,11 @@ export const forecastLayers = {
     this.registerLeafletConstructor(this.createLeafletForecastLayer)
   },
   mounted () {
-    this.$on('forecast-model-changed', this.updateVisualForecastModel)
-    this.$on('forecast-level-changed', this.updateForecastElements)
+    this.$engineEvents.on('forecast-model-changed', this.updateVisualForecastModel)
+    this.$engineEvents.on('forecast-level-changed', this.updateForecastElements)
   },
   beforeDestroy () {
-    this.$off('forecast-model-changed', this.updateVisualForecastModel)
-    this.$off('forecast-level-changed', this.updateForecastElements)
+    this.$engineEvents.off('forecast-model-changed', this.updateVisualForecastModel)
+    this.$engineEvents.off('forecast-level-changed', this.updateForecastElements)
   }
 }

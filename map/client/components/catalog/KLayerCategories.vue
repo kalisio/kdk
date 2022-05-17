@@ -6,8 +6,6 @@
     :toolbar="toolbar"
     :buttons="buttons"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
   >
     <div id="layer-categories-content">
       <q-card-section id="layer-categories-list" v-if="mode === 'list'">

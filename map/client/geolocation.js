@@ -35,7 +35,7 @@ export const Geolocation = {
       Store.patch('geolocation', { position: null, error: geolocationError })
       // It seems there is no message when a code is present, however we cannot alter the original error
       // with the new message because it is a read-only property so we refer to it
-      Events.$emit('error', Object.assign(geolocationError, {
+      Events.emit('error', Object.assign(geolocationError, {
         // By default we only show geolocation errors, nothing if disabled by user
         ignore: (code === error.PERMISSION_DENIED),
         retryHandler: () => this.refresh()
@@ -47,7 +47,7 @@ export const Geolocation = {
   async refresh () {
     this.positionPromise = utils.createQuerablePromise(new Promise((resolve, reject) => {
       if (!window.navigator.geolocation) {
-        Events.$emit('error', {
+        Events.emit('error', {
           message: 'errors.GEOLOCATION_NOT_SUPPORTED',
           // By default we only show geolocation errors, nothing if unsupported
           ignore: true

@@ -20,7 +20,7 @@ export const fileLayers = {
     }
   },
   mounted () {
-    this.$on('map-ready', () => {
+    this.$engineEvents.on('map-ready', () => {
       // Create a dummy dropFileInput element to enable puppeteer
       const container = this.$refs.map
       const dropFileInput = document.createElement('input')

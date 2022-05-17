@@ -560,14 +560,14 @@ export const activity = {
     }
   },
   mounted () {
-    this.$on('map-ready', this.onMapReady)
-    this.$on('globe-ready', this.onGlobeReady)
-    this.$on('layer-added', this.onLayerAdded)
+    this.$engineEvents.on('map-ready', this.onMapReady)
+    this.$engineEvents.on('globe-ready', this.onGlobeReady)
+    this.$engineEvents.on('layer-added', this.onLayerAdded)
   },
   beforeDestroy () {
-    this.$off('map-ready', this.onMapReady)
-    this.$off('globe-ready', this.onGlobeReady)
-    this.$off('layer-added', this.onLayerAdded)
+    this.$engineEvents.off('map-ready', this.onMapReady)
+    this.$engineEvents.off('globe-ready', this.onGlobeReady)
+    this.$engineEvents.off('layer-added', this.onLayerAdded)
     this.finalize()
   }
 }

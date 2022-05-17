@@ -44,6 +44,7 @@ export const levels = {
     },
     onSelectedLevelChanged (level) {
       this.$emit('selected-level-changed', level)
+      this.$engineEvents.emit('selected-level-changed', level)
     }
   }
 }

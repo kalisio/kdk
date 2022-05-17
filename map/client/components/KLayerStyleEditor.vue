@@ -4,9 +4,7 @@
     :title="$t('KLayerStyleEditor.EDIT_LAYER_STYLE_TITLE')"
     :buttons="buttons"
     :options="{}"
-    v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')">
+    v-model="isModalOpened">
     <div>
       <k-layer-style-form :class="{ 'light-dimmed': inProgress }" ref="form"
         :options="options" :layer="layer"/>
@@ -28,6 +26,9 @@ export default {
     KModal,
     KLayerStyleForm
   },
+  emits: [
+    'applied'
+  ],
   mixins: [
     kCoreMixins.baseModal,
     kCoreMixins.refsResolver()

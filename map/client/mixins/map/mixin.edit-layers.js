@@ -148,6 +148,7 @@ export const editLayers = {
     },
     onEditStart (layer) {
       this.$emit('edit-start', { layer })
+      this.$engineEvents.emit('edit-start', { layer })
     },
     async stopEditLayer (status = 'accept') {
       if (!this.editedLayer) return
@@ -193,6 +194,7 @@ export const editLayers = {
     },
     onEditStop (status, layer) {
       this.$emit('edit-stop', { status, layer })
+      this.$engineEvents.emit('edit-stop', { status, layer })
     },
     async onEditFeatureProperties (layer, event) {
       const leafletLayer = event && event.target

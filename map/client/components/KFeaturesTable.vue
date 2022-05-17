@@ -5,8 +5,6 @@
     :maximized="isModalMaximized"
     :buttons="buttons"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
   >
     <k-table
       service="features"

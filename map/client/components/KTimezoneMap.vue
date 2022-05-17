@@ -28,6 +28,9 @@ const timezones = _.values(meta.zones).map(timezone => ({
 
 export default {
   name: 'k-timezone-map',
+  emits: [
+    'timezone-selected'
+  ],
   mixins: [
     kCoreMixins.refsResolver(['map']),
     kMapMixins.style,
@@ -147,7 +150,7 @@ export default {
     })
     await this.refreshBaseLayer()
     this.setTimezone(this.value)
-    this.$events.$emit('map-ready')
+    this.$engineEvents.emit('map-ready')
   },
   beforeDestroy () {
     this.$engineEvents.off('click', this.onTimezoneSelected)

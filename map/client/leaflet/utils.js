@@ -40,8 +40,8 @@ export function bindLeafletEvents (object, events, component, options) {
   object[LISTENERS_KEY] = []
   events.forEach(eventName => {
     const listener = (...args) => {
-      if (options) component.$emit(eventName, options, ...args)
-      else component.$emit(eventName, ...args)
+      if (options) component.$engineEvents.emit(eventName, options, ...args)
+      else component.$engineEvents.emit(eventName, ...args)
     }
     object[LISTENERS_KEY].push(listener)
     object.on(eventName, listener)

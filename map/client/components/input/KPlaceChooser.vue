@@ -34,6 +34,9 @@ import { formatGeocodingResult } from '../../utils'
 
 export default {
   name: 'k-place-chooser',
+  emits: [
+    'place-chosen'
+  ],
   props: {
 
   },

@@ -3,6 +3,10 @@ import { Dialog, exportFile } from 'quasar'
 import { Layout } from '../layout.js'
 
 export const baseItem = {
+  emits: [
+    'item-selected',
+    'item-toggled'
+  ],
   props: {
     contextId: {
       type: String,

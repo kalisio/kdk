@@ -53,6 +53,10 @@ export default {
   components: {
     KTextArea
   },
+  emits: [
+    'input',
+    'close'
+  ],
   mixins: [
     kCoreMixins.refsResolver(['map']),
     mapMixins.baseMap
@@ -281,7 +285,7 @@ export default {
     this.setupMap(this.$refs.map, this.mapOptions)
     await this.refreshBaseLayer()
     this.refresh()
-    this.$events.$emit('map-ready')
+    this.$engineEvents.$emit('map-ready')
     this.$engineEvents.on('pm:create', this.stopDraw)
   },
   beforeDestroy () {

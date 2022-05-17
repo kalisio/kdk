@@ -46,11 +46,19 @@ export const weacast = {
     },
     setForecastModel (model) {
       this.forecastModel = model
-      this.$emit('forecast-model-changed', this.forecastModel)
+      this.onForecastModelChanged(model)
+    },
+    onForecastModelChanged (model) {
+      this.$emit('forecast-model-changed', model)
+      this.$engineEvents.emit('forecast-model-changed', model)
     },
     setForecastLevel (level) {
       this.forecastLevel = level
-      this.$emit('forecast-level-changed', this.forecastLevel)
+      this.onForecastLevelChanged(level)
+    },
+    onForecastLevelChanged (level) {
+      this.$emit('forecast-level-changed', level)
+      this.$engineEvents.emit('forecast-level-changed', level)
     },
     async getForecastForLocation (long, lat, startTime, endTime) {
       // Not yet ready
@@ -337,7 +345,7 @@ export const weacast = {
           return
         }
         if (typeof this.setSelectableLevels === 'function') {
-          this.$on('selected-level-changed', this.setForecastLevel)
+          this.$engineEvents.on('selected-level-changed', this.setForecastLevel)
           this.setSelectableLevels(layer, levels)
         }
       }
@@ -347,20 +355,20 @@ export const weacast = {
       if (!(engineLayer instanceof L.weacast.ForecastLayer)) return
       if (typeof this.clearSelectableLevels === 'function') {
         this.clearSelectableLevels(layer)
-        this.$off('selected-level-changed', this.setForecastLevel)
+        this.$engineEvents.off('selected-level-changed', this.setForecastLevel)
       }
     }
   },
   created () {
     this.$events.on('time-current-time-changed', this.onCurrentForecastTimeChanged)
-    this.$on('layer-shown', this.onWeacastShowLayer)
-    this.$on('layer-hidden', this.onWeacastHideLayer)
+    this.$engineEvents.on('layer-shown', this.onWeacastShowLayer)
+    this.$engineEvents.on('layer-hidden', this.onWeacastHideLayer)
   },
   mounted () {
   },
   beforeDestroy () {
     this.$events.off('time-current-time-changed', this.onCurrentForecastTimeChanged)
-    this.$off('layer-shown', this.onWeacastShowLayer)
-    this.$off('layer-hidden', this.onWeacastHideLayer)
+    this.$engineEvents.off('layer-shown', this.onWeacastShowLayer)
+    this.$engineEvents.off('layer-hidden', this.onWeacastHideLayer)
   }
 }

@@ -118,20 +118,20 @@ export const tiledWindLayers = {
     this.tiledWindLayers = new Map()
     this.registerLeafletConstructor(this.createLeafletTiledWindLayer)
 
-    this.$on('layer-added', this.onAddTiledWindLayer)
-    this.$on('layer-shown', this.onShowTiledWindLayer)
-    this.$on('layer-hidden', this.onHideTiledWindLayer)
-    this.$on('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
-    this.$on('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
+    this.$engineEvents.on('layer-added', this.onAddTiledWindLayer)
+    this.$engineEvents.on('layer-shown', this.onShowTiledWindLayer)
+    this.$engineEvents.on('layer-hidden', this.onHideTiledWindLayer)
+    this.$engineEvents.on('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
+    this.$engineEvents.on('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   },
 
   beforeDestroy () {
-    this.$off('layer-added', this.onAddTiledWindLayer)
-    this.$off('layer-shown', this.onShowTiledWindLayer)
-    this.$off('layer-hidden', this.onHideTiledWindLayer)
-    this.$off('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
-    this.$off('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
+    this.$engineEvents.off('layer-added', this.onAddTiledWindLayer)
+    this.$engineEvents.off('layer-shown', this.onShowTiledWindLayer)
+    this.$engineEvents.off('layer-hidden', this.onHideTiledWindLayer)
+    this.$engineEvents.off('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
+    this.$engineEvents.off('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   }
 }
