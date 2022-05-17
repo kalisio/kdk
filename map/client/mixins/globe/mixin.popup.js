@@ -71,9 +71,9 @@ export const popup = {
     }
   },
   mounted () {
-    this.$on('click', this.onPopup)
+    this.$engineEvents.on('click', this.onPopup)
   },
   beforeDestroy () {
-    this.$off('click', this.onPopup)
+    this.$engineEvents.off('click', this.onPopup)
   }
 }

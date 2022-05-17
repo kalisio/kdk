@@ -8,6 +8,10 @@ const mapEditEvents = ['pm:create']
 const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend']
 
 export const editLayers = {
+  emits: [
+    'edit-start', 
+    'edit-stop'
+  ],
   data () {
     return {
       editingLayer: false,
@@ -104,7 +108,7 @@ export const editLayers = {
 
       this.editedLayer = layer
       this.editingLayer = true
-      this.$emit('edit-start', { layer: this.editedLayer })
+      this.onEditStart(this.editedLayer)
 
       // Move source layers to edition layers, required as eg clusters are not supported
       const geoJson = leafletLayer.toGeoJSON()
@@ -132,15 +136,18 @@ export const editLayers = {
         this.editedLayerSchema = JSON.stringify(updatePropertiesSchema(schema))
       }
 
-      this.$on('click', this.onEditFeatureProperties)
-      this.$on('zoomend', this.onMapZoomWhileEditing)
-      this.$on('pm:create', this.onFeatureCreated)
-      this.$on('pm:update', this.onFeaturesEdited)
-      this.$on('pm:dragend', this.onFeaturesEdited)
-      this.$on('pm:rotateend', this.onFeaturesEdited)
-      this.$on('layerremove', this.onFeaturesDeleted)
+      this.$engineEvents.on('click', this.onEditFeatureProperties)
+      this.$engineEvents.on('zoomend', this.onMapZoomWhileEditing)
+      this.$engineEvents.on('pm:create', this.onFeatureCreated)
+      this.$engineEvents.on('pm:update', this.onFeaturesEdited)
+      this.$engineEvents.on('pm:dragend', this.onFeaturesEdited)
+      this.$engineEvents.on('pm:rotateend', this.onFeaturesEdited)
+      this.$engineEvents.on('layerremove', this.onFeaturesDeleted)
 
       if (editMode) this.setEditMode(editMode)
+    },
+    onEditStart (layer) {
+      this.$emit('edit-start', { layer })
     },
     async stopEditLayer (status = 'accept') {
       if (!this.editedLayer) return
@@ -171,18 +178,21 @@ export const editLayers = {
       // Set back edited layers to source layer
       this.map.removeLayer(this.editableLayer)
       leafletLayer.addLayer(this.editableLayer)
-      this.$emit('edit-stop', { status, layer: this.editedLayer })
+      this.onEditStop(status, this.editedLayer)
       this.editedLayer = null
       this.editingLayer = false
       this.editedLayerSchema = null
 
-      this.$off('click', this.onEditFeatureProperties)
-      this.$off('zoomend', this.onMapZoomWhileEditing)
-      this.$off('pm:create', this.onFeatureCreated)
-      this.$off('pm:update', this.onFeaturesEdited)
-      this.$off('pm:dragend', this.onFeaturesEdited)
-      this.$off('pm:rotateend', this.onFeaturesEdited)
-      this.$off('layerremove', this.onFeaturesDeleted)
+      this.$engineEvents.off('click', this.onEditFeatureProperties)
+      this.$engineEvents.off('zoomend', this.onMapZoomWhileEditing)
+      this.$engineEvents.off('pm:create', this.onFeatureCreated)
+      this.$engineEvents.off('pm:update', this.onFeaturesEdited)
+      this.$engineEvents.off('pm:dragend', this.onFeaturesEdited)
+      this.$engineEvents.off('pm:rotateend', this.onFeaturesEdited)
+      this.$engineEvents.off('layerremove', this.onFeaturesDeleted)
+    },
+    onEditStop (status, layer) {
+      this.$emit('edit-stop', { status, layer })
     },
     async onEditFeatureProperties (layer, event) {
       const leafletLayer = event && event.target

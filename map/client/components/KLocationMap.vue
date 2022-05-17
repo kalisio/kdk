@@ -282,10 +282,10 @@ export default {
     await this.refreshBaseLayer()
     this.refresh()
     this.$events.$emit('map-ready')
-    this.$on('pm:create', this.stopDraw)
+    this.$engineEvents.on('pm:create', this.stopDraw)
   },
   beforeDestroy () {
-    this.$off('pm:create', this.stopDraw)
+    this.$engineEvents.off('pm:create', this.stopDraw)
     this.clear()
   }
 }
