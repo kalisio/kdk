@@ -224,7 +224,7 @@ export const context = {
     this.$events.on('restore-view-changed', this.updateViewSettings)
     this.$events.on('restore-layers-changed', this.updateLayersSettings)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('restore-view-changed', this.updateViewSettings)
     this.$events.off('restore-layers-changed', this.updateLayersSettings)
   }

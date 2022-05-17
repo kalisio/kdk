@@ -156,7 +156,7 @@ export const baseItem = {
     // Whenever the user abilities are updated, update actions as well
     this.$events.on('user-abilities-changed', this.configureActions)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-abilities-changed', this.configureActions)
   }
 }

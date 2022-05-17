@@ -288,7 +288,7 @@ export default {
     this.$engineEvents.$emit('map-ready')
     this.$engineEvents.on('pm:create', this.stopDraw)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('pm:create', this.stopDraw)
     this.clear()
   }

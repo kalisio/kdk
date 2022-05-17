@@ -143,11 +143,11 @@ export default {
     // Initialize the filter, we keep track of any existing items previously set by another activity
     this.$store.patch('filter', { field: this.field, pattern: '' })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.items = []
     this.options = []
   },
-  destroyed () {
+  unmounted () {
     Filter.clear()
   }
 }

@@ -422,7 +422,7 @@ export default {
     this.unregisterRouteGuard = this.$router.beforeEach(this.beforeRoute)
     this.$events.on('tours-current-changed', this.setCurrentTour)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.unregisterRouteGuard()
     this.$events.off('tours-current-changed', this.setCurrentTour)
   }

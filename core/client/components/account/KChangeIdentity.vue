@@ -67,7 +67,7 @@ export default {
     // Check if logged in
     this.$events.on('user-changed', this.refreshUser)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-changed', this.refreshUser)
   },
   async mounted () {

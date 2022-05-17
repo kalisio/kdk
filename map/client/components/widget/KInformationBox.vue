@@ -147,7 +147,7 @@ export default {
       }
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.kActivity.removeSelectionHighlight('information-box')
   }
 }

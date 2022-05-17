@@ -53,15 +53,10 @@
 
 <script>
 import _ from 'lodash'
-import { openURL, QCheckbox, QCarousel, QCarouselSlide, QCarouselControl } from 'quasar'
 import KAction from '../frame/KAction.vue'
 
 export default {
   components: {
-    QCheckbox,
-    QCarousel,
-    QCarouselSlide,
-    QCarouselControl,
     KAction
   },
   props: {
@@ -115,7 +110,7 @@ export default {
     this.$api.on('authenticated', this.show)
     this.$api.on('logout', this.hide)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$api.off('authenticated', this.show)
     this.$api.off('logout', this.hide)
   }

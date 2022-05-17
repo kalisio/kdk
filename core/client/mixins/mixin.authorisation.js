@@ -27,7 +27,7 @@ export const authorisation = {
     // Whenever the user is updated, update abilities as well
     this.$events.on('user-changed', this.updateAbilities)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-changed', this.updateAbilities)
   }
 }

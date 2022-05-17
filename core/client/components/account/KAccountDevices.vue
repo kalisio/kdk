@@ -49,7 +49,7 @@ export default {
     // Whenever the user is updated, update collection as well
     this.$events.on('user-changed', this.refreshCollection)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-changed', this.refreshCollection)
   }
 }

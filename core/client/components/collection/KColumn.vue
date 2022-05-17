@@ -175,7 +175,7 @@ export default {
     this.$events.on('user-abilities-changed', this.resetCollection)
     this.refreshCollection()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-abilities-changed', this.resetCollection)
   }
 }

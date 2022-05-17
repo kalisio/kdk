@@ -202,7 +202,7 @@ export const featureSelection = {
     this.$engineEvents.on('layer-disabled', this.onFeatureSelectionLayerDisabled)
     this.$engineEvents.on('layer-enabled', this.onFeatureSelectionLayerEnabled)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('click', this.onFeatureSelectionClicked)
     this.$engineEvents.off('layer-shown', this.onFeatureSelectionLayerShown)
     this.$engineEvents.off('layer-hidden', this.onFeatureSelectionLayerHidden)

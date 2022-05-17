@@ -46,7 +46,7 @@ export const globeActivity = {
   },
   mounted () {
   },
-  beforeDestroy () {
+  beforeUnmount () {
     // No need to refresh the layout when leaving the component
     this.observe = false
     this.finalizeGlobe()

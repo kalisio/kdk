@@ -48,7 +48,7 @@ export const baseContext = {
     // Register the context
     this.refreshContext()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.clearContext()
   }
 }

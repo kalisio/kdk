@@ -471,7 +471,7 @@ export default {
     const end = moment(Time.getCurrentTime()).add(span, 'm')
     Time.patchRange({ start, end })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     // Release listeners
     this.$events.off('time-current-time-changed', this.refresh)
     this.$events.off('time-range-changed', this.refresh)

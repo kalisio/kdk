@@ -100,7 +100,7 @@ export const heatmapLayers = {
     this.registerLeafletConstructor(this.createLeafletHeatmapLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }

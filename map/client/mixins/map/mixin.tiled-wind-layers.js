@@ -126,7 +126,7 @@ export const tiledWindLayers = {
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('layer-added', this.onAddTiledWindLayer)
     this.$engineEvents.off('layer-shown', this.onShowTiledWindLayer)
     this.$engineEvents.off('layer-hidden', this.onHideTiledWindLayer)

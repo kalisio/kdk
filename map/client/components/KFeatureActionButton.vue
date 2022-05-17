@@ -114,7 +114,7 @@ export default {
     this.kActivity.$engineEvents.on('contextmenu', this.onFeatureActionButtons)
     this.kActivity.$engineEvents.on('move', this.updateRadialMenuPosition)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.kActivity.$engineEvents.off('contextmenu', this.onFeatureActionButtons)
     this.kActivity.$engineEvents.off('move', this.updateRadialMenuPosition)
   }

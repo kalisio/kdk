@@ -161,7 +161,7 @@ export default {
     this.key = undefined
     this.refresh()
   },
-  async beforeDestroy () {
+  async beforeUnmount () {
     // Remove event listeners
     this.mapillaryViewer.off('image', this.onImageEvent)
     // Remove the marker

@@ -29,6 +29,7 @@ export const authentication = {
       }
     },
     async login (email, password) {
+      console.log(email, password)
       const payload = {
         strategy: 'local',
         email: email,

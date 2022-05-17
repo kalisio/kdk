@@ -244,7 +244,7 @@ export function baseActivity (name) {
       // Whenever the user abilities are updated, update activity as well
       this.$events.on('user-abilities-changed', this.configureActivity)
     },
-    beforeDestroy () {
+    beforeUnmount () {
       this.$events.off('user-abilities-changed', this.configureActivity)
       // Clear the activity
       this.clearActivity()

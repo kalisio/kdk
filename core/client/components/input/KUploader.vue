@@ -1,5 +1,7 @@
 <template>
-  <span>TODDO replace dropzone</span>
+  <q-uploader
+    url="http://localhost:4444/upload"
+  />
   <!--drop-zone v-if="dropZoneOptions"
     ref="dropZone"
     id="dropZone"
@@ -15,17 +17,10 @@
 
 <script>
 import _ from 'lodash'
-// import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import mime from 'mime'
-// import DropZone from 'vue2-dropzone'
-// import { refsResolver } from '../../mixins'
 
 export default {
   name: 'k-uploader',
-  // mixins: [refsResolver(['dropZone'])],
-  /* components: {
-    DropZone
-  }, */
   props: {
     resource: {
       type: String,
@@ -303,10 +298,6 @@ export default {
     // Initialize private properties
     this.previews = []
     this.updateDropZoneOptions()
-  },
-  async mounted () {
-    await this.loadRefs()
-    this.$emit('uploader-ready')
   }
 }
 </script>

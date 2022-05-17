@@ -67,7 +67,7 @@ export default {
     this.$store.patch('page', { content })
     this.kActivity.$engineEvents.on('move', this.updatePosition)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     const content = this.$store.get('page.content') || []
     // Required to use splice when modifying an object inside an array to make it reactive
     if (content) {

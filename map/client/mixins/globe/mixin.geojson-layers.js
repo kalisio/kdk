@@ -270,7 +270,7 @@ export const geojsonLayers = {
     }
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }

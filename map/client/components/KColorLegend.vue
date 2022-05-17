@@ -311,7 +311,7 @@ export default {
     this.kActivity.$engineEvents.on('layer-hidden', this.onColorLegendHideLayer)
     // this.kActivity.$engineEvents.on('forecast-level-changed', this.onColorLegendUpdateForecastLevel)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     // Delete reference to the legend layer
     this.legendLayer = null
     this.legendEngineLayer = null

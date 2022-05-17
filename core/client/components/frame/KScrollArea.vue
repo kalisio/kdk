@@ -22,7 +22,7 @@ export default {
       required: true
     }
   },
-  emits: ['scolled'],
+  emits: ['scrolled'],
   computed: {
     innerStyle () {
       return `height: ${this.height}px;`

@@ -432,10 +432,10 @@ export const baseGlobe = {
     // Internal event bus
     this.$engineEvents = new Emitter()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.clearLayers()
   },
-  destroyed () {
+  unmounted () {
     this.viewer.destroy()
   }
 }

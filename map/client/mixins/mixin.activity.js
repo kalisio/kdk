@@ -564,7 +564,7 @@ export const activity = {
     this.$engineEvents.on('globe-ready', this.onGlobeReady)
     this.$engineEvents.on('layer-added', this.onLayerAdded)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('map-ready', this.onMapReady)
     this.$engineEvents.off('globe-ready', this.onGlobeReady)
     this.$engineEvents.off('layer-added', this.onLayerAdded)

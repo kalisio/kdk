@@ -90,7 +90,7 @@ export default {
     // Whenever the user abilities are updated, update collection as well
     this.$events.on('user-abilities-changed', this.refreshCollection)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-abilities-changed', this.refreshCollection)
   }
 }

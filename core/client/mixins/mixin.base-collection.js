@@ -150,7 +150,7 @@ export const baseCollection = {
       service.on('removed', this.onItemsUpdated)
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.unsubscribe()
     if (this.appendItems) {
       const service = this.getService()

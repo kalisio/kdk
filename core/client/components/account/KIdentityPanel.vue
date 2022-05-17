@@ -52,7 +52,7 @@ export default {
     this.refresh()
     this.$events.on('user-changed', this.refresh)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-changed', this.refresh)
   }
 }

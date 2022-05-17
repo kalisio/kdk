@@ -116,7 +116,7 @@ export const tiledMeshLayers = {
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('layer-added', this.onAddTiledMeshLayer)
     this.$engineEvents.off('layer-shown', this.onShowTiledMeshLayer)
     this.$engineEvents.off('layer-hidden', this.onHideTiledMeshLayer)

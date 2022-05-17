@@ -72,7 +72,7 @@ export const forecastLayers = {
     this.$engineEvents.on('forecast-model-changed', this.updateVisualForecastModel)
     this.$engineEvents.on('forecast-level-changed', this.updateForecastElements)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('forecast-model-changed', this.updateVisualForecastModel)
     this.$engineEvents.off('forecast-level-changed', this.updateForecastElements)
   }

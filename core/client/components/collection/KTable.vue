@@ -180,7 +180,7 @@ export default {
     this.processSchema()
     this.refreshCollection()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('user-abilities-changed', this.refreshCollection)
   }
 }

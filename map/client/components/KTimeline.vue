@@ -271,7 +271,7 @@ export default {
     // Set the time
     this.setTime(Time.getCurrentTime(), false)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onTimeChanged)
   }
 }

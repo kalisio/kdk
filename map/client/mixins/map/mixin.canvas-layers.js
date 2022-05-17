@@ -524,6 +524,6 @@ with(this.proxy) { ${d.code} }
     this.registerLeafletConstructor(this.createLeafletCanvasLayer)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
   }
 }

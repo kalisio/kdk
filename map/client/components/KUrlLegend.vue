@@ -101,7 +101,7 @@ export default {
       }
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.kActivity.$engineEvents.off('layer-shown', this.onShowLayer)
     this.kActivity.$engineEvents.off('layer-hidden', this.onHideLayer)
   }

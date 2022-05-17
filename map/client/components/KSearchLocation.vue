@@ -81,7 +81,7 @@ export default {
       }
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.removeLocationLayer()
   }
 }

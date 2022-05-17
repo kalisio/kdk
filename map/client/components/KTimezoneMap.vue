@@ -152,7 +152,7 @@ export default {
     this.setTimezone(this.value)
     this.$engineEvents.emit('map-ready')
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('click', this.onTimezoneSelected)
   }
 }

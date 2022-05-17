@@ -34,7 +34,7 @@ export const mapAcitivy = {
   },
   mounted () {
   },
-  beforeDestroy () {
+  beforeUnmount () {
     // No need to refresh the layout when leaving the component
     this.observe = false
     this.finalizeMap()

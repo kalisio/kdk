@@ -304,7 +304,7 @@ export default {
 
     this.setMode('measure-distance')
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.clearAllMeasurements()
 
     this.kActivity.map.off('pm:drawstart', this.onDrawStart)

@@ -92,7 +92,7 @@ export default {
       }
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     // Clear the chart if any
     if (this.chart) this.chart.destroy()
   }

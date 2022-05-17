@@ -366,7 +366,7 @@ export const weacast = {
   },
   mounted () {
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$engineEvents.off('layer-shown', this.onWeacastShowLayer)
     this.$engineEvents.off('layer-hidden', this.onWeacastHideLayer)

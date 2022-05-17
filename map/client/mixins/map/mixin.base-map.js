@@ -527,12 +527,12 @@ export const baseMap = {
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
     this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.clearLayers()
     this.$engineEvents.off('zoomend', this.onMapZoomChanged)
     this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
-  destroyed () {
+  unmounted () {
     if (this.map) this.map.remove()
   }
 }

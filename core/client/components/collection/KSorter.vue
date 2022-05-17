@@ -38,7 +38,7 @@ export default {
     if (!defaultOption) defaultOption = _.head(this.options) || {}
     this.$store.patch('sorter', defaultOption.value)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     // Reset the filter, we keep track of any existing items previously set by another activity
     this.$store.patch('sorter', {})
   }

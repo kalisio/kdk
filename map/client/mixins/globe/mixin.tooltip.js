@@ -92,7 +92,7 @@ export const tooltip = {
   mounted () {
     this.$engineEvents.on('mousemove', this.onTooltip)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('mousemove', this.onTooltip)
   }
 }

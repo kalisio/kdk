@@ -408,7 +408,7 @@ export const geojsonLayers = {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }

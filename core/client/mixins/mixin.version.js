@@ -28,7 +28,7 @@ export const version = {
     this.refreshVersionNames()
     this.$events.on('capabilities-api-changed', this.refreshVersionNames)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('capabilities-api-changed', this.refreshVersionNames)
   }
 }
