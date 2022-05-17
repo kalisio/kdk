@@ -33,7 +33,7 @@
 <script>
 import sift from 'sift'
 import _ from 'lodash'
-import path from 'path'
+import path from 'path-browserify'
 import { loadComponent } from '../../../../core/client/utils'
 import { catalogPanel } from '../../mixins'
 import KLayersSelector from './KLayersSelector.vue'

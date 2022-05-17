@@ -28,12 +28,14 @@ import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../.
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 // Fix to make Leaflet assets be correctly inserted by webpack
+/* FIXME: Not wure what to do for Webpack 5
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 })
+*/
 // Do not create geoman structs everywhere
 L.PM.setOptIn(true)
 

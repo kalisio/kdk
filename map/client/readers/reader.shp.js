@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import path from 'path'
+import path from 'path-browserify'
 import logger from 'loglevel'
 import i18next from 'i18next'
 import shp from 'shpjs'

@@ -16,7 +16,7 @@
 
 <script>
 import _ from 'lodash'
-import path from 'path'
+import path from 'path-browserify'
 import { generatePropertiesSchema } from '../../utils'
 import { KAction, KPanel } from '../../../../core/client/components/frame'
 import KForm from '../../../../core/client/components/form/KForm.vue'

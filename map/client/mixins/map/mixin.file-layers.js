@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import path from 'path'
+import path from 'path-browserify'
 import { Reader } from '../../../../core/client/reader.js'
 
 export const fileLayers = {
