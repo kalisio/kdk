@@ -5,7 +5,11 @@
     :buttons="getButtons()"
     v-model="isModalOpened"
   >
-    <k-view :values="object" :schema="schema" />
+    <!-- Modal content -->
+    <KView 
+      :values="object" 
+      :schema="schema"
+    />
   </KModal>
 </template>
 

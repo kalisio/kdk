@@ -6,23 +6,30 @@
       :buttons="getButtons()"
       v-model="isModalOpened"
     >
-      <k-form ref="form" :schema="schema" />
+      <!-- Modal content -->
+      <KForm 
+        ref="form" 
+        :schema="schema"
+      />
     </KModal>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import KModal from '../frame/KModal.vue'
+import KForm from '../form/KForm.vue'
 import { Roles, getRoleForOrganisation } from '../../../common/permissions'
-import { baseModal, objectProxy, refsResolver } from '../../mixins'
+import { baseModal, objectProxy } from '../../mixins'
 
 export default {
-  name: 'k-join-group',
-  emits: ['opened', 'closed'],
+  components: {
+    KModal,
+    KForm
+  },
   mixins: [
     baseModal,
-    objectProxy,
-    refsResolver(['form'])
+    objectProxy
   ],
   props: {
     contextId: {
@@ -34,6 +41,7 @@ export default {
       required: true
     }
   },
+  emits: ['opened', 'closed'],
   computed: {
     title () {
       if (this.member === null) return ''
@@ -114,10 +122,6 @@ export default {
         this.closeModal()
       }
     }
-  },
-  beforeCreate () {
-    this.$options.components['k-modal'] = this.$load('frame/KModal')
-    this.$options.components['k-form'] = this.$load('form/KForm')
   },
   async created () {
     // Load the member
