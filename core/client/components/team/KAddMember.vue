@@ -1,10 +1,9 @@
 <template>
-  <k-modal
+  <KModal
     id="add-member-modal"
     :title="$t('KAddMember.TITLE')"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')">
+  >
     <div>
       <q-tabs  align="justify" v-model="mode" inverted>
         <q-tab id="unique-tab" name="unique" icon="las la-user"  />
@@ -81,7 +80,7 @@
         </q-tab-panels>
       </div>
     </div>
-  </k-modal>
+  </KModal>
 </template>
 
 <script>

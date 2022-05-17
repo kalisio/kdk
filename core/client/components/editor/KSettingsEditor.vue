@@ -12,13 +12,14 @@
     <!--
       Create editor
      -->
-    <k-modal-editor
+    <KModalEditor
       id="editor"
       ref="editor"
       service="settings"
       objectId="settings"
       :schema-properties="schemaFilter"
-      @applied="onSettingsEdited" />
+      @applied="onSettingsEdited" 
+    />
   </div>
 </template>
 

@@ -1,15 +1,13 @@
 <template>
   <div v-if="member !== null">
-    <k-modal
+    <KModal
       id="join-group-modal"
       :title="title"
       :buttons="getButtons()"
       v-model="isModalOpened"
-      @opened="$emit('opened')"
-      @closed="$emit('closed')"
     >
       <k-form ref="form" :schema="schema" />
-    </k-modal>
+    </KModal>
   </div>
 </template>
 

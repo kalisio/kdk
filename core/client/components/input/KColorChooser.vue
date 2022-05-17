@@ -1,5 +1,5 @@
 <template>
-  <KModalref="modal" :buttons="getButtons()">
+  <KModal ref="modal" :buttons="getButtons()">
     <div class="column q-gutter-sm">
       <div class="row justify-between items-center q-gutter-sm">
         <KPalette shape="round" v-model="selectedColor" />

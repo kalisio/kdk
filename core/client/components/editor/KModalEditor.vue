@@ -1,17 +1,17 @@
 <template>
-  <k-modal
+  <KModal
     id="editor-modal"
     :title="editorTitle"
     :buttons="buttons"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')">
-      <k-form
-        :ref="onFormReferenceCreated"
-        :schema="schema"
-        @form-ready="onFormReady"
-      />
-  </k-modal>
+  >
+    <!-- Modal content -->
+    <k-form
+      :ref="onFormReferenceCreated"
+      :schema="schema"
+      @form-ready="onFormReady"
+    />
+  </KModal>
 </template>
 
 <script>
@@ -20,7 +20,6 @@ import { KForm } from '../form'
 import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
 
 export default {
-  name: 'k-modal-editor',
   emits: ['opened', 'closed'],
   components: {
     KModal,

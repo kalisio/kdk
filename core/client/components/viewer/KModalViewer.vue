@@ -1,14 +1,12 @@
 <template>
-  <k-modal
+  <KModal
     id="modal-viewer"
     :title="viewerTitle"
     :buttons="getButtons()"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
   >
     <k-view :values="object" :schema="schema" />
-  </k-modal>
+  </KModal>
 </template>
 
 <script>
@@ -17,7 +15,6 @@ import { KView } from '../form'
 import { baseViewer, baseModal, service, objectProxy, schemaProxy } from '../../mixins'
 
 export default {
-  name: 'k-modal-viewer',
   components: {
     KModal,
     KScrollArea,
