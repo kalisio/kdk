@@ -11,12 +11,13 @@
     <div slot="card-content">
       <!-- Members -->
       <KCardSection :title="$t('KGroupCard.MEMBERS_SECTION')" :dense="dense">
-        <k-action
+        <KAction
           id="list-members"
           icon="las la-user-friends"
           :label="$t('KGroupCard.MEMBERS_LABEL', { count: membersCount })"
           :tooltip="$t('KGroupCard.VIEW_MEMBERS_LABEL')"
-          @triggered="onListMembers" />
+          @triggered="onListMembers" 
+        />
       </KCardSection>
     </div>
   </KCard>

@@ -4,19 +4,24 @@
       User avatar
     -->
     <div class="row justify-center">
-      <KAvatar :key="avatarKey" :object="user" size="8rem" />
+      <KAvatar
+        :key="avatarKey" 
+        :object="user" 
+        size="8rem"
+      />
     </div>
     <!--
       User information
     -->
     <div class="row justify-center items-center">
       <span class="text-subtitle1">{{ user.name }}</span>
-      </KCardSection
+      <KAction
         id="manage-account"
         icon="las la-user-cog"
         :tooltip="$t('KIdentityPanel.MANAGE')"
         :route="{ name: 'account-activity', params: { page: 'profile' } }"
-        @triggered="$emit('triggered', arguments)" />
+        @triggered="$emit('triggered', arguments)"
+      />
     </div>
   </div>
 </template>

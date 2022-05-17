@@ -1,5 +1,5 @@
 <template>
-  </KCardSection
+  <KAction
     v-if="hasContent"
     :id="id"
     :label="label"

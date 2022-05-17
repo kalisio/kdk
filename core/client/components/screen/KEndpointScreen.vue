@@ -8,13 +8,13 @@
         @form-ready="onFormReady"
       />
       <div class="row full-width justify-around q-gutter-x-md">
-        </KCardSection
+        <KAction
           id="cancel-button"
           label="KEndpointScreen.RESET_LABEL"
           renderer="form-button"
           :handler="this.onReset"
         />
-        </KCardSection
+        <KAction
           id="apply-button"
           label="KEndpointScreen.APPLY_LABEL"
           renderer="form-button"
