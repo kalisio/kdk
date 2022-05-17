@@ -39,6 +39,9 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
 }
 
 export const geojsonLayers = {
+  emits: [
+    'layer-updated'
+  ],
   methods: {
     processRealtimeGeoJsonLayerOptions (options) {
       const leafletOptions = options.leaflet || options
@@ -283,7 +286,7 @@ export const geojsonLayers = {
             layer.on('remove', () => tiledLayer.removeFrom(this.map))
           }
           // Bind event
-          layer.on('update', (data) => this.$emit('layer-updated', Object.assign({ layer: options, leafletLayer: layer }, data)))
+          layer.on('update', (data) => this.onLayerUpdated(options, layer, data))
           if (leafletOptions.container) layer.once('add', () => leafletOptions.container.addTo(this.map))
           // Add FeatureGroup interface so that layer edition works as well
           layer.toGeoJSON = () => ({ type: 'FeatureCollection', features: _.values(layer._features) })
@@ -371,6 +374,9 @@ export const geojsonLayers = {
       } else if (typeof layer._onNewData === 'function') {
         layer._onNewData(layer.options.removeMissing, geoJson || this.toGeoJson(name))
       }
+    },
+    onLayerUpdated (layer, leafletLayer, data) {
+      this.$emit('layer-updated', Object.assign({ layer, leafletLayer }, data))
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       const geoJsonlayers = _.values(this.layers).filter(sift({

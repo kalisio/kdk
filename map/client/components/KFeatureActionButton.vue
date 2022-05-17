@@ -111,12 +111,12 @@ export default {
     this.selectionForAction = {}
   },
   mounted () {
-    this.kActivity.$on('contextmenu', this.onFeatureActionButtons)
-    this.kActivity.$on('move', this.updateRadialMenuPosition)
+    this.kActivity.$engineEvents.on('contextmenu', this.onFeatureActionButtons)
+    this.kActivity.$engineEvents.on('move', this.updateRadialMenuPosition)
   },
   beforeDestroy () {
-    this.kActivity.$off('contextmenu', this.onFeatureActionButtons)
-    this.kActivity.$off('move', this.updateRadialMenuPosition)
+    this.kActivity.$engineEvents.off('contextmenu', this.onFeatureActionButtons)
+    this.kActivity.$engineEvents.off('move', this.updateRadialMenuPosition)
   }
 }
 </script>

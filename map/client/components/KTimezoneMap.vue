@@ -130,7 +130,7 @@ export default {
   created () {
     this.registerStyle('markerStyle', this.getTimezoneMarker)
     this.registerStyle('tooltip', this.getTimezoneTooltip)
-    this.$on('click', this.onTimezoneSelected)
+    this.$engineEvents.on('click', this.onTimezoneSelected)
   },
   async mounted () {
     // Initialize component
@@ -150,7 +150,7 @@ export default {
     this.$events.$emit('map-ready')
   },
   beforeDestroy () {
-    this.$off('click', this.onTimezoneSelected)
+    this.$engineEvents.off('click', this.onTimezoneSelected)
   }
 }
 </script>

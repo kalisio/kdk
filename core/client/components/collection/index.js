@@ -6,6 +6,7 @@ import KList from './KList.vue'
 import KHistoryEntry from './KHistoryEntry.vue'
 import KHistory from './KHistory.vue'
 import KTable from './KTable.vue'
+import KColumn from './KColumn.vue'
 
 export {
   KCard,
@@ -15,5 +16,6 @@ export {
   KList,
   KHistoryEntry,
   KHistory,
-  KTable
+  KTable,
+  KColumn
 }

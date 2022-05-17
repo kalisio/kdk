@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
+import Emitter from 'tiny-emitter'
 import { getCssVar } from 'quasar'
 import { kml } from '@tmcw/togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
@@ -12,6 +13,13 @@ import { convertCesiumHandlerEvent } from '../../utils.js'
 BuildModuleUrl.setBaseUrl('./statics/Cesium/')
 
 export const baseGlobe = {
+  emits: [
+    'globe-ready', 
+    'layer-added', 
+    'layer-removed', 
+    'layer-shown', 
+    'layer-hidden'
+  ],
   data () {
     return {
       layers: {}
@@ -176,6 +184,9 @@ export const baseGlobe = {
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
+      this.onLayerShown('layer-shown', layer, cesiumLayer)
+    },
+    onLayerShown (layer, cesiumLayer) {
       this.$emit('layer-shown', layer, cesiumLayer)
     },
     hideLayer (name) {
@@ -196,6 +207,9 @@ export const baseGlobe = {
       } else {
         this.viewer.dataSources.remove(cesiumLayer, false)
       }
+      this.onLayerHidden(layer, cesiumLayer)
+    },
+    onLayerHidden (layer, cesiumLayer) {
       this.$emit('layer-hidden', layer, cesiumLayer)
     },
     async addLayer (layer) {
@@ -204,11 +218,14 @@ export const baseGlobe = {
         layer.isDisabled = this.isLayerDisabled(layer)
         // Store the layer and make it reactive
         this.$set(this.layers, layer.name, layer)
-        this.$emit('layer-added', layer)
+        this.onLayerAdded(layer)
         // Handle the visibility state
         if (_.get(layer, 'cesium.isVisible', false)) await this.showLayer(layer.name)
       }
       return layer
+    },
+    onLayerAdded (layer) {
+      this.$emit('layer-added', layer)
     },
     renameLayer (previousName, newName) {
       const layer = this.getLayerByName(previousName)
@@ -235,6 +252,9 @@ export const baseGlobe = {
       // Delete the layer and make it reactive
       this.$delete(this.layers, layer.name)
       delete this.cesiumLayers[name]
+      this.onLayerRemoved(layer)
+    },
+    onLayerRemoved (layer) {
       this.$emit('layer-removed', layer)
     },
     clearLayers () {
@@ -393,7 +413,7 @@ export const baseGlobe = {
         }
       }
       // Mimic Leaflet events
-      this.$emit(event.originalEvent.name, options, emittedEvent)
+      this.$engineEvents.emit(event.originalEvent.name, options, emittedEvent)
     }
   },
   created () {
@@ -401,6 +421,8 @@ export const baseGlobe = {
     this.cesiumFactory = []
     // TODO: no specific marker, just keep status
     this.userLocation = false
+    // Internal event bus
+    this.$engineEvents = new Emitter()
   },
   beforeDestroy () {
     this.clearLayers()

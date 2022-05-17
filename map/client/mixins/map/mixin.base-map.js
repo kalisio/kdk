@@ -3,6 +3,7 @@ import sift from 'sift'
 import logger from 'loglevel'
 import L from 'leaflet'
 import i18next from 'i18next'
+import Emitter from 'tiny-emitter'
 import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
 import 'leaflet-fa-markers/L.Icon.FontAwesome.css'
@@ -37,6 +38,13 @@ L.Icon.Default.mergeOptions({
 L.PM.setOptIn(true)
 
 export const baseMap = {
+  emits: [
+    'map-ready', 
+    'layer-added', 
+    'layer-removed', 
+    'layer-shown', 
+    'layer-hidden'
+  ],
   data () {
     return {
       layers: {}
@@ -293,6 +301,9 @@ export const baseMap = {
       if (layer.type === 'BaseLayer') leafletLayer.bringToBack()
       // Apply the current time if needed
       if (typeof leafletLayer.setCurrentTime === 'function') leafletLayer.setCurrentTime(Time.getCurrentTime())
+      this.onLayerShown(layer, leafletLayer)
+    },
+    onLayerShown (layer, leafletLayer) {
       this.$emit('layer-shown', layer, leafletLayer)
     },
     hideLayer (name) {
@@ -307,6 +318,9 @@ export const baseMap = {
       this.map.removeLayer(leafletLayer)
       const panes = _.get(layer, 'leaflet.panes')
       if (panes) panes.forEach(pane => this.removeLeafletPane(pane.name || pane.zIndex))
+      this.onLayerHidden(layer, leafletLayer)
+    },
+    onLayerHidden (layer, leafletLayer) {
       this.$emit('layer-hidden', layer, leafletLayer)
     },
     async addLayer (layer) {
@@ -315,11 +329,14 @@ export const baseMap = {
         layer.isDisabled = this.isLayerDisabled(layer)
         // Store the layer and make it reactive
         this.$set(this.layers, layer.name, layer)
-        this.$emit('layer-added', layer)
+        this.onLayerAdded(layer)
         // Handle the visibility state
         if (_.get(layer, 'leaflet.isVisible', false)) await this.showLayer(layer.name)
       }
       return layer
+    },
+    onLayerAdded (layer) {
+      this.$emit('layer-added', layer)
     },
     async addGeoJsonLayer (layerSpec, geoJson) {
       // Check wther the geoJson content is a valid geoJson
@@ -379,6 +396,9 @@ export const baseMap = {
       // Delete the layer and make it reactive
       this.$delete(this.layers, layer.name)
       delete this.leafletLayers[name]
+      this.onLayerRemoved(layer)
+    },
+    onLayerRemoved (layer) {
       this.$emit('layer-removed', layer)
     },
     clearLayers () {
@@ -481,12 +501,14 @@ export const baseMap = {
     this.leafletObjectOptions = ['crs', 'rendererFactory']
     // Register support for WMS-T
     this.registerLeafletConstructor(this.createLeafletTimedWmsLayer)
-    this.$on('zoomend', this.onMapZoomChanged)
+    // Internal event bus
+    this.$engineEvents = new Emitter()
+    this.$engineEvents.on('zoomend', this.onMapZoomChanged)
     this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   beforeDestroy () {
     this.clearLayers()
-    this.$off('zoomend', this.onMapZoomChanged)
+    this.$engineEvents.off('zoomend', this.onMapZoomChanged)
     this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   destroyed () {

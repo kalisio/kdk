@@ -1,6 +1,9 @@
 import _ from 'lodash'
 
 export const levels = {
+  emits: [
+    'selected-level-changed'
+  ],
   data () {
     return {
       selectedLevel: null,
@@ -37,6 +40,9 @@ export const levels = {
     },
     setSelectedLevel (level) {
       this.selectedLevel = level
+      this.onSelectedLevelChanged(level)
+    },
+    onSelectedLevelChanged (level) {
       this.$emit('selected-level-changed', level)
     }
   }
