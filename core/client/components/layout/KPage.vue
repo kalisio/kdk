@@ -6,13 +6,14 @@
     <div id="page-content-container" :style="contentStyleFunction">
       <div class="fit">
         <q-resize-observer @resize="onContentResized" />
-        <slot id="page-content" name="page-content"></slot>
+        <slot id="page-content" name="page-content" />
         <KContent
           id="page"
           v-show="page.content && page.mode"
           :content="page.content"
           :mode="page.mode"
-          :filter="page.filter" />
+          :filter="page.filter" 
+        />
       </div>
     </div>
     <!--
