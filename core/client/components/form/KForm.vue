@@ -150,10 +150,7 @@ export default {
         const field = this.schema.properties[property]
         // 1- assign a name corresponding to the key to enable a binding between properties and fields
         field.name = property
-        // 2- assign a component key corresponding to the component path
-        const componentKey = _.kebabCase(field.field.component)
-        field.componentKey = componentKey
-        // Adds the field to the list of fields to be rendered
+        // 2 - adds the field to the list of fields to be rendered
         this.fields.push(field)
         if (field.group && !this.groups.includes(field.group)) this.groups.push(field.group)
         // 3- load the component if not previously loaded

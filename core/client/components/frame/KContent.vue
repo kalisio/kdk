@@ -51,9 +51,12 @@ export default {
       const components = Layout.getComponents(this.filteredContent, this.mode, this.context)
       for (let i = 0; i < components.length; ++i) {
         const component = components[i]
-        if (!_.startsWith(component.componentKey, 'q-')) {
-          logger.debug(`Loading component ${component.componentName}`)
-          component.instance = loadComponent(component.componentName)
+        if (!_.startsWith(component.name, 'Q')) {
+          logger.debug(`Loading component ${component.name}`)
+          component.instance = loadComponent(component.name)
+        } else {
+          logger.debug(`Using component ${component.name}`)
+          component.instance = component.name
         }
       }
       return components
