@@ -53,6 +53,7 @@
 
 <script>
 import _ from 'lodash'
+import { openURL } from 'quasar'
 import KAction from '../frame/KAction.vue'
 
 export default {

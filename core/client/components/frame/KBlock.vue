@@ -26,6 +26,9 @@
 import KAction from './KAction.vue'
 
 export default {
+  components: {
+    KAction
+  },
   props: {
     title: {
       type: String,
