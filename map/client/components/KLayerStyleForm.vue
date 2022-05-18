@@ -433,7 +433,6 @@ export default {
       }
       // Remove label as we add it on top of the operator
       properties.field.helper = ''
-      const componentKey = _.kebabCase(component)
       // Load the required component
       const component = kCoreUtils.loadComponent(componentName)
       const style = {

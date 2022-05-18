@@ -30,7 +30,7 @@ import { KTable, KModal, KStamp } from '../../../core/client/components'
 export default {
   name: 'k-features-table',
   components: {
-    KAction,
+    KTable,
     KModal,
     KStamp
   },
