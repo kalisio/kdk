@@ -1,6 +1,6 @@
  <template>
   <v-tour name="tour" ref="tour" :steps="tourSteps" :options="tourOptions" :callbacks="tourCallbacks">
-    <template slot-scope="tour">
+    <template v-slot="tour">
       <q-card>
         <template v-for="(step, index) of tour.steps">
           <v-step

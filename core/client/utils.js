@@ -112,6 +112,10 @@ export function getAppLocale () {
   return localeConfig.default || localeBrowser
 }
 
+export function getAppFallbackLocale () {
+  return config.fallbackLocale || 'en'
+}
+
 export function getInitials (name) {
   const initials = name.toUpperCase().match(/\b\w/g) || []
   return initials.join('')

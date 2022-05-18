@@ -1,10 +1,8 @@
-export const mapAcitivy = {
+export const activity = {
   methods: {
-    async initializeMap () {
+    async initializeMap (container) {
       if (this.map) return
-      // Ensure DOM ref is here as well
-      await this.loadRefs()
-      this.setupMap(this.$refs.map)
+      this.setupMap(container)
       await this.initialize() // Generic activity initialization
       this.map.on('moveend', this.storeView)
     },

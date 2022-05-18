@@ -222,8 +222,8 @@ export const baseGlobe = {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
         layer.isDisabled = this.isLayerDisabled(layer)
-        // Store the layer and make it reactive
-        this.$set(this.layers, layer.name, layer)
+        // Store the layer
+        this.layers[layer.name] = layer
         this.onLayerAdded(layer)
         // Handle the visibility state
         if (_.get(layer, 'cesium.isVisible', false)) await this.showLayer(layer.name)
@@ -238,13 +238,13 @@ export const baseGlobe = {
       const layer = this.getLayerByName(previousName)
       const cesiumLayer = this.getCesiumLayerByName(previousName)
       if (!layer) return
-      // Update underlying layer map if layer has been already shown
+      // Update underlying layer if layer has been already shown
       if (cesiumLayer) {
         this.cesiumLayers[newName] = cesiumLayer
         delete this.cesiumLayers[previousName]
       }
-      // Update underlying layer map, this one is reactive
-      this.$set(this.layers, newName, layer)
+      // Update underlying layer
+      this.layers[newName] = layer
       this.$delete(this.layers, previousName)
     },
     removeLayer (name) {

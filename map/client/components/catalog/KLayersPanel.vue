@@ -34,12 +34,14 @@
 import sift from 'sift'
 import _ from 'lodash'
 import { loadComponent } from '../../../../core/client/utils'
+import { KScrollArea } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 import KLayersSelector from './KLayersSelector.vue'
 
 export default {
   name: 'k-layers-panel',
   components: {
+    KScrollArea,
     KLayersSelector
   },
   mixins: [catalogPanel],

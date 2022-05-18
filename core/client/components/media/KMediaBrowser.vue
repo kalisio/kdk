@@ -138,8 +138,7 @@ export default {
           const data = await this.storageService().get(media._id)
           Object.assign(media, { uri: data.uri })
         }
-        // Required to use $set when modifying an object inside an array to make it reactive
-        this.$set(this.medias, index, media)
+        this.medias[index] = media
       }
     },
     onClose () {

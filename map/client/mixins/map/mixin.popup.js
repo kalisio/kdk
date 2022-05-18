@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { Time, Units } from '../../../../core/client/index.js'
 import { getHtmlTable } from '../../utils.js'
 
-export const popupLayers = {
+export const popup = {
   methods: {
     getDefaultPopup (feature, layer, options) {
       let properties = feature.properties

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { LeafletEvents, bindLeafletEvents } from '../../utils.js'
 
-export const mappilaryLayers = {
+export const mapillaryLayers = {
   methods: {
     async createLeafletMapillaryLayer (options) {
       const leafletOptions = options.leaflet || options

@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import i18next from 'i18next'
 import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import explode from '@turf/explode'
@@ -65,11 +64,14 @@ export const activity = {
         // Process i18n
         if (layer.i18n) {
           const locale = kCoreUtils.getAppLocale()
-          const i18n = _.get(layer.i18n, locale)
-          if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
+          const fallbackLocale = kCoreUtils.getAppFallbackLocale()
+          let i18n = _.get(layer.i18n, locale)
+          if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
+          i18n = _.get(layer.i18n, fallbackLocale)
+          if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
         }
-        if (this.$t(layer.name)) layer.label = this.$t(layer.name)
-        if (this.$t(layer.description)) layer.description = this.$t(layer.description)
+        if (layer.name && this.$te(layer.name)) layer.label = this.$t(layer.name)
+        if (layer.description && this.$te(layer.description)) layer.description = this.$t(layer.description)
         // Check for Weacast API availability
         const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
         if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) return
@@ -105,11 +107,14 @@ export const activity = {
       // Process i18n
       if (category.i18n) {
         const locale = kCoreUtils.getAppLocale()
-        const i18n = _.get(category.i18n, locale)
-        if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
+        const fallbackLocale = kCoreUtils.getAppFallbackLocale()
+        let i18n = _.get(category.i18n, locale)
+        if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
+        i18n = _.get(category.i18n, fallbackLocale)
+        if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
       }
-      if (this.$t(category.name)) category.label = this.$t(category.name)
-      if (this.$t(category.description)) category.description = this.$t(category.description)
+      if (category.name && this.$te(category.name)) category.label = this.$t(category.name)
+      if (category.description && this.$te(category.description)) category.description = this.$t(category.description)
       this.layerCategories.push(category)
     },
     async refreshLayerCategories () {
@@ -188,8 +193,8 @@ export const activity = {
       actions = Layout.bindContent(_.cloneDeep(actions), this)
       // Add 'virtual' action used to trigger the layer
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
-      // Store the actions and make it reactive
-      this.$set(layer, 'actions', actions)
+      // Store the actions
+      layer.actions = actions
       return actions
     },
     onLayerAdded (layer) {

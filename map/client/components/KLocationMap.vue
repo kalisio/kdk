@@ -31,7 +31,7 @@
         </q-btn>
       </q-toolbar>
     </div>
-    <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
+    <div :ref="configure" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
       <q-resize-observer @resize="onMapResized" />
     </div>
   </div>
@@ -58,7 +58,6 @@ export default {
     'close'
   ],
   mixins: [
-    kCoreMixins.refsResolver(['map']),
     mapMixins.baseMap
   ],
   props: {
@@ -275,17 +274,18 @@ export default {
     },
     async onMapResized (size) {
       this.refreshMap()
+    },
+    configure (container) {
+      if (!container) return
+      this.setupMap(container, this.mapOptions)
+      this.refreshBaseLayer()
+      this.refresh()
     }
   },
   async mounted () {
     // Initialize component
     this.location = this.value
     if (!this.location) await this.geolocate()
-    await this.loadRefs()
-    this.setupMap(this.$refs.map, this.mapOptions)
-    await this.refreshBaseLayer()
-    this.refresh()
-    this.$engineEvents.$emit('map-ready')
     this.$engineEvents.on('pm:create', this.stopDraw)
   },
   beforeUnmount () {

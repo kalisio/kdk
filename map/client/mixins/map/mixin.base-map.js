@@ -346,8 +346,8 @@ export const baseMap = {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
         layer.isDisabled = this.isLayerDisabled(layer)
-        // Store the layer and make it reactive
-        this.$set(this.layers, layer.name, layer)
+        // Store the layer
+        this.layers[layer.name] = layer
         this.onLayerAdded(layer)
         // Handle the visibility state
         if (_.get(layer, 'leaflet.isVisible', false)) await this.showLayer(layer.name)
@@ -399,13 +399,13 @@ export const baseMap = {
       const layer = this.getLayerByName(previousName)
       const leafletLayer = this.getLeafletLayerByName(previousName)
       if (!layer) return
-      // Update underlying layer map if layer has been already shown
+      // Update underlying layer if layer has been already shown
       if (leafletLayer) {
         this.leafletLayers[newName] = leafletLayer
         delete this.leafletLayers[previousName]
       }
-      // Update underlying layer map, this one is reactive
-      this.$set(this.layers, newName, layer)
+      // Update underlying layer
+      this.layers[newName] = layer
       this.$delete(this.layers, previousName)
     },
     removeLayer (name) {

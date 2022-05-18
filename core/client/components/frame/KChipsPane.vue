@@ -72,7 +72,7 @@ export default {
       for (let i = 0; i < this.chips.length; i++) {
         const chip = this.chips[i]
         const chipElement = document.getElementById(this.getValue(chip))
-        if (chipElement && chipElement.offsetWidth < chipElement.scrollWidth) this.$set(this.tooltips, i, true)
+        if (chipElement && chipElement.offsetWidth < chipElement.scrollWidth) this.tooltips[i] = true
       }
     })
   }

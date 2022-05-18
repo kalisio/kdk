@@ -1,12 +1,10 @@
 import Cesium from 'cesium/Source/Cesium.js'
 
-export const globeActivity = {
+export const activity = {
   methods: {
-    async initializeGlobe (token) {
+    async initializeGlobe (container, token) {
       if (this.viewer) return
-      // Ensure DOM ref is here as well
-      await this.loadRefs()
-      this.setupGlobe(this.$refs.globe, token)
+      this.setupGlobe(container, token)
       await this.initialize() // Generic activity initialization
       this.viewer.camera.moveEnd.addEventListener(this.storeView)
     },
