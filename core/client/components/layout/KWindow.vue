@@ -166,7 +166,13 @@ export default {
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
         const currentPosition = this.$store.get('window.position')
-        const newPosition = [currentPosition[0] + event.delta.x, currentPosition[1] + event.delta.y]
+        const currentSize = this.$store.get('window.size')
+        const xMax = this.$q.screen.width - currentSize[0]
+        const yMax = this.$q.screen.height - currentSize[1]
+        const newPosition = [
+          Math.max(Math.min(currentPosition[0] + event.delta.x, xMax), 0), 
+          Math.min(Math.max(currentPosition[1] + event.delta.y, 0), yMax)
+        ]
         this.$store.patch('window', { position: newPosition })
         if (event.isFinal) {
           window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({
@@ -180,8 +186,14 @@ export default {
       if (!event) return
       if (this.mode !== 'maximized') {
         this.mode = 'floating'
+        const currentPosition = this.$store.get('window.position')
         const currentSize = this.$store.get('window.size')
-        const newSize = [currentSize[0] + event.delta.x, currentSize[1] + event.delta.y]
+        const wMax = this.$q.screen.width - currentPosition[0]
+        const hMax = this.$q.screen.height - currentPosition[1]
+        const newSize = [
+          Math.min(currentSize[0] + event.delta.x, wMax), 
+          Math.min(currentSize[1] + event.delta.y, hMax)
+        ]
         this.$store.patch('window', { size: newSize })
         if (event.isFinal) {
           window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({
