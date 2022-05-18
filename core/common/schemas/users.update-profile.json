@@ -13,6 +13,21 @@
         "component": "form/KTextField",
         "label": "schemas.NAME_FIELD_LABEL"
       }
+    },
+    "avatar": { 
+      "type": "object",
+      "field": {
+        "component": "form/KAttachmentField",
+        "label": "schemas.AVATAR_FIELD_LABEL",
+        "service": "storage",
+        "acceptedFiles": ".png,.jpg,.jpeg,.webp",
+        "maxFilesize": 0.5,
+        "autoProcessQueue": false,
+        "storagePath": "avatars/<%= id %>",
+        "params": {
+          "public": true
+        }
+      }
     }
   },
   "required": ["name"]
