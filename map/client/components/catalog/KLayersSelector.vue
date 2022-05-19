@@ -26,7 +26,7 @@
             <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
           </q-icon>
           <!-- Layer toggle -->
-          <q-toggle :value="layer.isVisible" :disable="layer.isDisabled" size="sm" @input="onLayerClicked(layer)" />
+          <q-toggle v-model="layer.isVisible" :disable="layer.isDisabled" size="sm" @input="onLayerClicked(layer)" />
           <!-- Layer actions -->
           <k-panel
             :id="`${layer.name}-actions`"
