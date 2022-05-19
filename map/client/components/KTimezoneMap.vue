@@ -8,9 +8,9 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import { getCssVar } from 'quasar'
-import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
-import * as kMapMixins from '../mixins'
+import * as mixins from '../mixins'
 import { setGatewayJwt } from '../utils'
 import meta from 'moment-timezone/data/meta/latest.json'
 
@@ -32,7 +32,7 @@ export default {
     'timezone-selected'
   ],
   mixins: [
-    kMapMixins.style,
+    mixins.style,
     mapMixins.baseMap,
     mapMixins.geojsonLayers,
     mapMixins.style,

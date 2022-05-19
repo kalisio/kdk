@@ -12,7 +12,7 @@
           v-show="page.content && page.mode"
           :content="page.content"
           :mode="page.mode"
-          :filter="page.filter" 
+          :filter="page.filter"
         />
       </div>
     </div>
@@ -284,7 +284,7 @@ export default {
     // Read bottom pane configuration
     this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
-      // Read sticky configuration
+    // Read sticky configuration
     // Set extra padding value
     this.gutter = 8
   }

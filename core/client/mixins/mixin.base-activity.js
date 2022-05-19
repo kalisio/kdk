@@ -140,9 +140,10 @@ export function baseActivity (name) {
       },
       configurePage () {
         const options = _.get(this.activityOptions, 'page')
-        if (options) this.setPage(options.content, options.mode, _.get(this.activityOptions, 'page.filter', {}),
-                                  _.get(this.activityOptions, 'page.sticky'))
-        else this.clearPage()
+        if (options) {
+          this.setPage(options.content, options.mode, _.get(this.activityOptions, 'page.filter', {}),
+            _.get(this.activityOptions, 'page.sticky'))
+        } else this.clearPage()
       },
       clearPage () {
         this.$store.patch('page', { content: null, mode: undefined, sticky: undefined })
