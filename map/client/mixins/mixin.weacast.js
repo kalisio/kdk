@@ -7,6 +7,10 @@ import { Units } from '../../../core/client/units.js'
 import { getNearestTime, SelectionLayerName } from '../utils.js'
 
 export const weacast = {
+  emits: [
+    'forecast-model-changed',
+    'forecast-level-changed'
+  ],
   data () {
     return {
       forecastModel: null,

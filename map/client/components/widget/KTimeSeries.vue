@@ -463,8 +463,8 @@ export default {
     this.$events.on('time-range-changed', this.refresh)
     this.$events.on('time-format-changed', this.refresh)
     this.$events.on('timeseries-span-changed', this.refresh)
-    this.kActivity.on('forecast-model-changed', this.refresh)
-    this.kActivity.on('forecast-level-changed', this.refresh)
+    this.kActivity.$engineEvents.on('forecast-model-changed', this.refresh)
+    this.kActivity.$engineEvents.on('forecast-level-changed', this.refresh)
     // Initialize the time range
     const span = this.$store.get('timeseries.span')
     const start = moment(Time.getCurrentTime()).subtract(span, 'm')
@@ -477,8 +477,8 @@ export default {
     this.$events.off('time-range-changed', this.refresh)
     this.$events.off('time-format-changed', this.refresh)
     this.$events.off('timeseries-span-changed', this.refresh)
-    this.kActivity.off('forecast-model-changed', this.refresh)
-    this.kActivity.off('forecast-level-changed', this.refresh)
+    this.kActivity.$engineEvents.off('forecast-model-changed', this.refresh)
+    this.kActivity.$engineEvents.off('forecast-level-changed', this.refresh)
     this.kActivity.removeSelectionHighlight('time-series')
   }
 }

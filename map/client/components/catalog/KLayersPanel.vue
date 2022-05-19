@@ -16,7 +16,7 @@
           :default-opened="getDefaultOpened(category)"
           expand-separator>
           <component
-            :is="category.component"
+            :is="category.componentInstance"
             :layers="layersByCategory[category.name]"
             :forecastModels="forecastModels"
             :forecastModelHandlers="forecastModelHandlers"
@@ -128,7 +128,7 @@ export default {
     categorize () {
       _.forEach(this.layerCategories, category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
-        if (!category.component) category.component = loadComponent(component)
+        if (!category.component) category.componentInstance = loadComponent(component)
       })
     }
   },

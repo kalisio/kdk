@@ -477,7 +477,7 @@ export const activity = {
     },
     onProbeLocation () {
       this.setCursor('probe-cursor')
-      this.$once('click', () => {
+      this.$engineEvents.once('click', () => {
         this.unsetCursor('probe-cursor')
       })
     },
