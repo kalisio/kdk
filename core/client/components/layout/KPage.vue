@@ -276,8 +276,6 @@ export default {
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
     // Set extra padding value
     this.gutter = 8
-
-    console.log(this.window)
   }
 }
 </script>
