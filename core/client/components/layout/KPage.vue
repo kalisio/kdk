@@ -21,7 +21,7 @@
       Be careful of the order
      -->
     <!-- bottom -->
-    <q-page-sticky position="bottom">
+    <q-page-sticky position="bottom" :style="{ 'z-index': stickyZIndex }">
       <div id="bottom-pane" v-show="hasBottomPaneContent" class="column items-center">
         <KOpener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
@@ -38,7 +38,7 @@
       </div>
     </q-page-sticky>
     <!-- right -->
-    <q-page-sticky position="right">
+    <q-page-sticky position="right" :style="{ 'z-index': stickyZIndex }">
       <div id="right-pane" v-show="hasRightPaneContent" class="row items-center">
         <KOpener id="right-opener" v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
@@ -56,7 +56,7 @@
       </div>
     </q-page-sticky>
     <!-- top -->
-    <q-page-sticky position="top">
+    <q-page-sticky position="top" :style="{ 'z-index': stickyZIndex }">
       <div id="top-pane" v-show="hasTopPaneContent" class="column items-center">
         <div>
           <KPanel
@@ -73,15 +73,15 @@
       </div>
     </q-page-sticky>
     <!-- fab -->
-    <q-page-sticky position="bottom-right" :offset="fabOffset">
+    <q-page-sticky position="bottom-right" :offset="fabOffset" :style="{ 'z-index': stickyZIndex }">
       <KFab />
     </q-page-sticky>
     <!-- window -->
-    <q-page-sticky position="top-left" :offset="window.position">
+    <q-page-sticky position="top-left" :offset="window.position" :style="{ 'z-index': stickyZIndex }">
       <KWindow id="window" />
     </q-page-sticky>
     <!-- left -->
-    <q-page-sticky position="left">
+    <q-page-sticky position="left" :style="{ 'z-index': stickyZIndex }">
       <div id="left-pane" v-show="hasLeftPaneContent" class="row items-center">
         <div>
           <KPanel
@@ -134,6 +134,10 @@ export default {
         widht: `calc(100vw - ${widthOffset}px)`,
         height: `calc(100vh - ${heightOffset}px)`
       }
+    },
+    stickyZIndex () {
+      if (this.page.sticky) return this.page.sticky.zIndex
+      return 'auto'
     },
     isTopPaneOpened: {
       get: function () {
@@ -280,6 +284,7 @@ export default {
     // Read bottom pane configuration
     this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
+      // Read sticky configuration
     // Set extra padding value
     this.gutter = 8
   }

@@ -406,15 +406,15 @@ export const baseMap = {
       }
       // Update underlying layer
       this.layers[newName] = layer
-      this.$delete(this.layers, previousName)
+      delete this.layers[previousName]
     },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return
       // If it was visible remove it from map
       if (layer.isVisible) this.hideLayer(name)
-      // Delete the layer and make it reactive
-      this.$delete(this.layers, layer.name)
+      // Delete the layer
+      delete this.layers[layer.name]
       delete this.leafletLayers[name]
       this.onLayerRemoved(layer)
     },

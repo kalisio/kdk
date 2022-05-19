@@ -245,7 +245,7 @@ export const baseGlobe = {
       }
       // Update underlying layer
       this.layers[newName] = layer
-      this.$delete(this.layers, previousName)
+      delete this.layers[previousName]
     },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
@@ -256,8 +256,8 @@ export const baseGlobe = {
       if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         this.viewer.scene.primitives.remove(cesiumLayer)
       }
-      // Delete the layer and make it reactive
-      this.$delete(this.layers, layer.name)
+      // Delete the layer
+      delete this.layers[layer.name]
       delete this.cesiumLayers[name]
       this.onLayerRemoved(layer)
     },
