@@ -60,7 +60,7 @@ export default function init () {
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('page', { content: null, mode: undefined, filter: {} })
-  Store.set('window', { widgets: [], filter: {}, position: null, size: null, current: '', widgetActions: [] })
+  Store.set('window', { widgets: [], filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] })
   Store.set('fab', { actions: [], filter: {} })
 
   // Listen to the 'patched' event on the users

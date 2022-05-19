@@ -74,7 +74,7 @@
     </q-page-sticky>
     <!-- window -->
     <q-page-sticky position="top-left" :offset="window.position">
-      <k-window id="window" />
+      <k-window id="window" :style="`max-width: ${window.size[0]}px; max-height: ${window.size[1]};px`" />
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left">
@@ -276,6 +276,8 @@ export default {
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
     // Set extra padding value
     this.gutter = 8
+
+    console.log(this.window)
   }
 }
 </script>
