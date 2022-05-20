@@ -93,7 +93,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       this.userIsZooming = false
 
       if (this.pendingGeoJSONUpdates.length) {
-        for(const update of this.pendingGeoJSONUpdates) {
+        for (const update of this.pendingGeoJSONUpdates) {
           this.applyGeoJSON(update.geojson, update.remove, update.measure)
         }
         this.pendingGeoJSONUpdates.length = 0
@@ -535,8 +535,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     } else {
       const minFeatureZoom = _.get(this.options, 'minFeatureZoom', this._map.getMinZoom())
       const maxFeatureZoom = _.get(this.options, 'maxFeatureZoom', this._map.getMaxZoom())
-      if (this.zoomEndLevel >= minFeatureZoom && this.zoomEndLevel <= maxFeatureZoom)
-        this.activity.updateLayer(this.layer.name, geojson, remove)
+      if (this.zoomEndLevel >= minFeatureZoom && this.zoomEndLevel <= maxFeatureZoom) { this.activity.updateLayer(this.layer.name, geojson, remove) }
     }
   },
 

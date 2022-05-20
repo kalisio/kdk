@@ -47,7 +47,7 @@ export const baseMap = {
     'layer-shown',
     'layer-hidden',
     'layer-enabled',
-    'layer-disabled',
+    'layer-disabled'
   ],
   data () {
     return {
