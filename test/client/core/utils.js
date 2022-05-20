@@ -196,8 +196,7 @@ export async function moveSlider (page, action, direction, times, wait = 250) {
   const selector = `#${action}`;
   const dir = (direction === 'left') ? 'ArrowLeft':'ArrowRight';
   await page.focus(selector)
-  const i = 0;
-  for (i = 0; i < times; i++) {
+  for (let i = 0; i < times; i++) {
     await page.keyboard.press(dir)
   }
   await page.waitForTimeout(wait)
