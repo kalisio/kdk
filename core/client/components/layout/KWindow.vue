@@ -116,7 +116,7 @@ export default {
           handler: this.onClosed
         }
       ]
-      return _.concat(widgetMenu, this.window.widgetActions, { component: 'frame/KSpace' }, windowControls)
+      return _.concat(widgetMenu, this.window.widgetActions, { component: 'QSpace' }, windowControls)
     }
   },
   data () {
