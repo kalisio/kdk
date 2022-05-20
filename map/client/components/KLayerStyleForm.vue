@@ -2,7 +2,7 @@
   <div>
     <k-icon-chooser ref="iconChooser" @icon-choosed="onIconChanged" />
     <k-color-chooser ref="colorChooser" @color-choosed="onColorChanged" />
-    <q-expansion-item ref="general" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.BASE')" group="group">
+    <q-expansion-item ref="general" id="style-general-group" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.BASE')" group="group">
       <q-list dense class="row">
         <q-item>
           <q-item-section>
@@ -14,26 +14,26 @@
         </q-item>
         <q-item class="col-12">
           <q-item-section class="col-1">
-            <q-toggle v-model="hasMinZoom"/>
+            <q-toggle id="style-toggle-minzoom" v-model="hasMinZoom"/>
           </q-item-section>
           <q-item-section class="col-6">
           {{$t('KLayerStyleForm.MIN_ZOOM')}}
           </q-item-section>
           <q-item-section class="col-4">
-            <q-slider v-model="minZoom" :disable="!hasMinZoom"
+            <q-slider id="style-set-minzoom" v-model="minZoom" :disable="!hasMinZoom"
               :min="minViewerZoom" :max="hasMaxZoom ? maxZoom : maxViewerZoom" :step="1"
               label label-always :label-value="minZoom"/>
           </q-item-section>
         </q-item>
         <q-item class="col-12">
           <q-item-section class="col-1">
-            <q-toggle v-model="hasMaxZoom"/>
+            <q-toggle id="style-toggle-maxzoom" v-model="hasMaxZoom"/>
           </q-item-section>
           <q-item-section class="col-6">
           {{$t('KLayerStyleForm.MAX_ZOOM')}}
           </q-item-section>
           <q-item-section class="col-4">
-            <q-slider v-model="maxZoom" :disable="!hasMaxZoom"
+            <q-slider id="style-set-maxzoom" v-model="maxZoom" :disable="!hasMaxZoom"
               :min="hasMinZoom ? minZoom : minViewerZoom" :max="maxViewerZoom" :step="1"
               label label-always :label-value="maxZoom"/>
           </q-item-section>
@@ -61,31 +61,31 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="points" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
+    <q-expansion-item ref="points" id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
-            <q-toggle v-model="clustering"/>
+            <q-toggle id="style-toggle-clustering" v-model="clustering"/>
           </q-item-section>
           <q-item-section class="col-6">
           {{$t('KLayerStyleForm.POINT_CLUSTERING')}}
           </q-item-section>
           <q-item-section class="col-4">
-            <q-slider v-model="disableClusteringAtZoom" :disable="!clustering"
+            <q-slider id="style-point-clustering" v-model="disableClusteringAtZoom" :disable="!clustering"
               :min="minViewerZoom" :max="maxViewerZoom" :step="1"
               label label-always :label-value="disableClusteringAtZoom"/>
           </q-item-section>
         </q-item>
         <q-item class="col-12">
           <q-item-section avatar>
-            <q-chip clickable v-ripple text-color="white"
+            <q-chip id="style-point-icons" clickable v-ripple text-color="white"
               :icon="defaultIcon['icon-classes']" :color="defaultIcon['marker-color']" @click="onIconClicked(defaultIcon)"/>
           </q-item-section>
           <q-item-section>
             {{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}
           </q-item-section>
         </q-item>
-        <q-item v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="col-12">
+        <q-item v-bind:id="'point-feature-schema-' + color" v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="col-12">
           <q-item-section avatar>
             <q-chip clickable v-ripple text-color="white"
               :icon="iconStyle['icon-classes']" :color="iconStyle['marker-color']" @click="onIconClicked(iconStyle)"/>
@@ -124,23 +124,23 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="lines" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
+    <q-expansion-item ref="lines" id="style-line-group" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-6">
             {{$t('KLayerStyleForm.DEFAULT_LINE_STYLE')}}
           </q-item-section>
           <q-item-section class="col-1">
-            <q-btn round small :color="defaultLine['stroke-color']" @click="onColorClicked(defaultLine, 'stroke-color')">
+            <q-btn id="style-line-color" round small :color="defaultLine['stroke-color']" @click="onColorClicked(defaultLine, 'stroke-color')">
             </q-btn>
           </q-item-section>
           <q-item-section class="col-2">
-            <q-slider v-model="defaultLine['stroke-width']"
+            <q-slider id="style-line-width" v-model="defaultLine['stroke-width']"
               :min="1" :max="20" :step="1"
               label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + defaultLine['stroke-width'] + 'px'"/>
           </q-item-section>
           <q-item-section class="col-2">
-            <q-slider v-model="defaultLine['stroke-opacity']"
+            <q-slider id="style-line-opacity" v-model="defaultLine['stroke-opacity']"
               :min="0" :max="1" :step="0.1"
               label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + defaultLine['stroke-opacity']"/>
           </q-item-section>
@@ -194,18 +194,18 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="polygons" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
+    <q-expansion-item ref="polygons" id="style-polygon-group" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-7">
             {{$t('KLayerStyleForm.DEFAULT_POLYGON_FILL_STYLE')}}
           </q-item-section>
           <q-item-section class="col-1">
-            <q-btn round small :color="defaultPolygon['fill-color']" @click="onColorClicked(defaultPolygon, 'fill-color')">
+            <q-btn id="style-polygon-color" round small :color="defaultPolygon['fill-color']" @click="onColorClicked(defaultPolygon, 'fill-color')">
             </q-btn>
           </q-item-section>
           <q-item-section class="col-2">
-            <q-slider v-model="defaultPolygon['fill-opacity']"
+            <q-slider id="style-fill-opacity" v-model="defaultPolygon['fill-opacity']"
               :min="0" :max="1" :step="0.1"
               label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + defaultPolygon['fill-opacity']"/>
           </q-item-section>
@@ -254,19 +254,19 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="popup" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="popup" id="style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
-            <q-toggle v-model="popup"/>
+            <q-toggle id="style-toggle-popup" v-model="popup"/>
           </q-item-section>
           <q-item-section class="col-11">
-            <q-select :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')"></q-select>
+            <q-select id="style-popup-field" :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')"></q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="tooltip" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="tooltip" id="style-tooltip-group" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -278,7 +278,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="infobox" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema" ref="infobox" id="style-infobox-group" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">

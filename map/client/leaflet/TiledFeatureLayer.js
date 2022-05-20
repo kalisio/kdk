@@ -2,18 +2,22 @@ import L from 'leaflet'
 import _ from 'lodash'
 import logger from 'loglevel'
 import bbox from '@turf/bbox'
+import { featureEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
-import { tile2key, getParentTileInTileSet } from './utils.js'
+import { tile2key, key2tile, tileSetContainsParent, getParentTileInTileSet } from './utils.js'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
     this.enableDebug = _.get(options, 'enableDebug', false)
-    this.enableDebug = false
+    // this.enableDebug = true
     L.GridLayer.prototype.initialize.call(this, options)
 
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.userIsDragging = false
+    this.userIsZooming = false
+    this.pendingGeoJSONUpdates = []
+
     this.getFeatureKey = (feature) => {
       const id = _.get(this.layer, 'featureId', '_id')
       return _.get(feature, 'properties.' + id, _.get(feature, id))
@@ -32,6 +36,12 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
+    this.userIsDragging = false
+    this.userIsZooming = false
+    this.pendingGeoJSONUpdates = []
+
+    this.zoomStartLevel = this.zoomEndLevel = this._map.getZoom()
+
     this.flyingTiles.clear()
     this.modifiedTiles.clear()
     this.allFeatures.clear()
@@ -50,18 +60,44 @@ const TiledFeatureLayer = L.GridLayer.extend({
   getEvents () {
     const events = L.GridLayer.prototype.getEvents.call(this)
 
-    // listen to 'dragstart' and 'dragend' to know when user is dragging the map
-
+    // dragstart sets userIsDragging flag
     const onDragStart = events.dragstart
     events.dragstart = (event) => {
       this.userIsDragging = true
       if (onDragStart) onDragStart.call(this, event)
     }
 
+    // dragstart clears userIsDragging flag
     const onDragEnd = events.dragend
     events.dragend = (event) => {
       this.userIsDragging = false
       if (onDragEnd) onDragEnd.call(this, event)
+    }
+
+    // zoomstart records zoomStartLevel
+    const onZoomStart = events.zoomstart
+    events.zoomstart = (event) => {
+      if (onZoomStart) onZoomStart.call(this, event)
+      this.zoomStartLevel = this._map.getZoom()
+      this.userIsZooming = true
+    }
+
+    // zoomend records zoomEndLevel
+    // and if geojson updates are pending, apply them now
+    // this is done to prevent updates to underlying geojson layer
+    // while there's a zoom animation (cf. updateGeoJSON)
+    const onZoomEnd = events.zoomend
+    events.zoomend = (event) => {
+      if (onZoomEnd) onZoomEnd.call(this, event)
+      this.zoomEndLevel = this._map.getZoom()
+      this.userIsZooming = false
+
+      if (this.pendingGeoJSONUpdates.length) {
+        for(const update of this.pendingGeoJSONUpdates) {
+          this.applyGeoJSON(update.geojson, update.remove, update.measure)
+        }
+        this.pendingGeoJSONUpdates.length = 0
+      }
     }
 
     return events
@@ -183,7 +219,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.enableDebug) {
         let numTilesR = 0
         requests.forEach((r) => { numTilesR += r.tiles.length })
-        if (numTilesR !== tiles.length) {
+        if (numTilesR != tiles.length) {
           logger.debug('TiledFeatureLayer: less requested tiles than expected !')
         }
       }
@@ -192,7 +228,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     /* One request per tile
     tiles.forEach((tile) => {
       const r = {
-        tiles: [tile],
+        tiles: [ tile ],
         query: {
           south: tile.bbox.getSouth(),
           north: tile.bbox.getNorth(),
@@ -241,6 +277,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
         // a child tile may wait on that request
         if (tile.featuresRequest === null && tile.measuresRequest === null) tilesToRemove.push(tile)
       } else {
+        // Is this a tile with measures ?
         const tileWithMeasures = this.layer.probeService && (tile.coords.z >= minFeatureZoom) && (tile.coords.z <= maxFeatureZoom)
 
         if (this.enableDebug) {
@@ -280,7 +317,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
           }
 
           // Special case for probes: the parent tile may be at the level where only probes are loaded
-          // and it's still missing the measures
+          // and it's still missing the measures, schedule measure load now
           if (tileWithMeasures) {
             if (parentTile.measuresRequest !== null) {
               parentTile.measuresChildren.push(tile)
@@ -320,28 +357,56 @@ const TiledFeatureLayer = L.GridLayer.extend({
         r.tiles.forEach((tile) => { if (tile.featuresChildren.length) allTiles.push(tile.featuresChildren) })
         const tiles = allTiles.flat()
 
-        const features = data.features
+        // When we have a minFeatureZoom value and a probe service, we may force a removal of
+        // the stations first to force delete of measures in the geojson layer
+        const clearMeasures = this.layer.probeService &&
+              ((this.zoomStartLevel === minFeatureZoom && r.tiles[0].coords.z < minFeatureZoom) ||
+               (this.zoomStartLevel === maxFeatureZoom && r.tiles[0].coords.z > maxFeatureZoom))
+
         const addCollection = []
-        features.forEach((feature) => {
+        const removeCollection = []
+        data.features.forEach((feature) => {
           const featureId = this.getFeatureKey(feature)
-          let knownFeature = this.allFeatures.get(featureId)
-          if (knownFeature === undefined) {
+          let internalFeature = this.allFeatures.get(featureId)
+          const unknownFeature = internalFeature === undefined
+          if (unknownFeature) {
+            // Feature we don't know, gather infos about it
             const turfBbox = bbox(feature)
             const corner1 = L.latLng(turfBbox[1], turfBbox[0])
             const corner2 = L.latLng(turfBbox[3], turfBbox[2])
-            knownFeature = { geojson: feature, refCount: 0, bbox: L.latLngBounds(corner1, corner2) }
-            this.allFeatures.set(featureId, knownFeature)
-            addCollection.push(feature)
+            internalFeature = { geojson: feature, refCount: 0, bbox: L.latLngBounds(corner1, corner2) }
           }
+          // Dispatch feature amongst associated tiles
           tiles.forEach((tile) => {
-            if (tile.bbox.intersects(knownFeature.bbox)) {
-              knownFeature.refCount += 1
+            if (tile.bbox.intersects(internalFeature.bbox)) {
+              internalFeature.refCount += 1
               tile.features.push(featureId)
             }
           })
+          // Tiles may be outside request bbox when bbox is big because of
+          // underlying service projection (refCount would stay 0)
+          if (internalFeature.refCount > 0) {
+            if (unknownFeature) {
+              addCollection.push(feature)
+              this.allFeatures.set(featureId, internalFeature)
+            } else if (clearMeasures) {
+              // This can only happen with layers with stations & measures, force a 'reset' of the feature
+              // (the station) to remove the measures
+              removeCollection.push(feature)
+              addCollection.push(feature)
+            }
+          }
         })
+        // Remove those we need to reset to stations only
+        if (removeCollection.length) {
+          const collection = featureCollection(removeCollection)
+          this.updateGeoJSON(collection, true)
+        }
         // Add to underlying geojson layer
-        if (addCollection.length) { this.activity.updateLayer(this.layer.name, featureCollection(addCollection)) }
+        if (addCollection.length) {
+          const collection = featureCollection(addCollection)
+          this.updateGeoJSON(collection)
+        }
 
         // Notify tiles their request is done
         tiles.forEach((tile) => {
@@ -382,6 +447,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
     measureRequests.forEach((r) => {
       const promise = this.featureSource(r.query)
       r.tiles.forEach((tile) => {
+        tile.measuresRequest = promise
+
         if (this.enableDebug) tile.div.innerHTML += '</br>measures request issued'
       })
 
@@ -391,14 +458,25 @@ const TiledFeatureLayer = L.GridLayer.extend({
         r.tiles.forEach((tile) => { if (tile.measuresChildren.length) allTiles.push(tile.measuresChildren) })
         const tiles = allTiles.flat()
 
+        const stationPromises = []
         tiles.forEach((tile) => {
+          tile.measuresRequest = null
+          tile.measuresChildren = []
+          // We want to push measures _after_ we pushed the stations
+          if (tile.featuresRequest) stationPromises.push(tile.featuresRequest)
+
           if (this.enableDebug) tile.div.innerHTML += `</br>measures request success: ${data.features.length} total`
         })
 
-        // Here we know we already have the stations
-        if (data.features.length) {
-          this.activity.updateLayer(this.layer.name, data)
-        }
+        Promise.all(stationPromises).then(() => {
+          // Make sure we know the stations those measures refer to
+          const okMeasures = []
+          featureEach(data, (feature) => {
+            const id = this.getFeatureKey(feature)
+            if (this.allFeatures.has(id)) okMeasures.push(feature)
+          })
+          if (okMeasures.length) this.updateGeoJSON(featureCollection(okMeasures), false, true)
+        })
       }).catch((err) => {
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.measuresChildren.length) allTiles.push(tile.measuresChildren) })
@@ -418,7 +496,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
     tilesToRemove.forEach((tile) => {
       tile.features.forEach((featureId) => {
         const feature = this.allFeatures.get(featureId)
-        if (feature === undefined) debugger // eslint-disable-line
         if (feature.refCount === 1) {
           removeCollection.push(feature.geojson)
           this.allFeatures.delete(featureId)
@@ -428,11 +505,38 @@ const TiledFeatureLayer = L.GridLayer.extend({
       })
       this.flyingTiles.delete(tile2key(tile.coords))
     })
-    if (removeCollection.length) { this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), true) }
+    if (removeCollection.length) this.updateGeoJSON(featureCollection(removeCollection), true)
 
     if (this.enableDebug) {
       logger.debug(`TiledFeatureLayer: flyingTiles is ${this.flyingTiles.size} long`)
       logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
+
+      if (this.flyingTiles.size === 0 && this.allFeatures.size !== 0) {
+        logger.debug(`TileFeatureLayer: no more flyingTiles but ${this.allFeatures.size} remaining features !`)
+        this.allFeatures.forEach((feature) => {
+          logger.debug(`TileFeatureLayer: ${this.getFeatureKey(feature.geojson)}: refCount ${feature.refCount}`)
+        })
+      }
+    }
+  },
+
+  updateGeoJSON (geojson, remove = false, measure = false) {
+    // When user is zooming, wait for the end of the zoom animation to update
+    // the underlying geojson layer. If we don't do that the features seem to
+    // 'slide' during the zoom animation between their screen space position
+    // at the different zoom levels
+    if (this.userIsZooming) this.pendingGeoJSONUpdates.push({ geojson, remove, measure })
+    else this.applyGeoJSON(geojson, remove, measure)
+  },
+
+  applyGeoJSON (geojson, remove, measure) {
+    if (!measure) {
+      this.activity.updateLayer(this.layer.name, geojson, remove)
+    } else {
+      const minFeatureZoom = _.get(this.options, 'minFeatureZoom', this._map.getMinZoom())
+      const maxFeatureZoom = _.get(this.options, 'maxFeatureZoom', this._map.getMaxZoom())
+      if (this.zoomEndLevel >= minFeatureZoom && this.zoomEndLevel <= maxFeatureZoom)
+        this.activity.updateLayer(this.layer.name, geojson, remove)
     }
   },
 

@@ -19,13 +19,13 @@
       </div>
       <div id="icons" class="row justify-start items-center q-gutter-sm">
         <template v-for="icon in iconsPage">
-          <q-icon v-if="icon.name === selectedIcon.name" :key="icon.name"
+          <q-icon :id="getIconId(icon.name)" v-if="icon.name === selectedIcon.name" :key="icon.name"
             style="border-bottom: 0.25rem solid" :color="selectedIcon.color" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
             <q-tooltip>
               {{icon.title}}
             </q-tooltip>
           </q-icon>
-          <q-icon v-if="icon.name !== selectedIcon.name" :key="icon.name"
+          <q-icon :id="getIconId(icon.name)" v-if="icon.name !== selectedIcon.name" :key="icon.name"
             color="grey-7" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
             <q-tooltip>
               {{icon.title}}
@@ -103,6 +103,9 @@ export default {
     }
   },
   methods: {
+    getIconId (name) {
+      return _.kebabCase(name)
+    },
     getIconsForCategory (category) {
       const categoryIcons = this.categoryInfos[this.selectedCategory.value].icons
       const icons = []

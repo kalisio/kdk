@@ -8,9 +8,11 @@ import KOpener from './KOpener.vue'
 import KPageSticky from './KPageSticky.vue'
 import KPanel from './KPanel.vue'
 import KPopupAction from './KPopupAction.vue'
+import KSeparator from './KSeparator.vue'
 import KScrollArea from './KScrollArea.vue'
 import KSpot from './KSpot.vue'
 import KStamp from './KStamp.vue'
+import KSpace from './KSpace.vue'
 import KTextArea from './KTextArea.vue'
 
 export {
@@ -24,8 +26,10 @@ export {
   KPageSticky,
   KPanel,
   KPopupAction,
+  KSeparator,
   KScrollArea,
   KSpot,
   KStamp,
+  KSpace,
   KTextArea
 }

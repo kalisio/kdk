@@ -49,6 +49,24 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
   await page.waitForTimeout(wait)
 }
 
+export async function saveLayer (page, tabId, layer, wait = 1000) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId)
+  const layerId = `${layer}-actions`
+  const categoryId = await getLayerCategoryId(page, layerId)
+  let isCategoryOpened
+  if (categoryId) {
+    isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
+    if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
+  }
+  await core.click(page, `#${layerId} .q-btn`)
+  await core.clickAction(page, 'save')
+  if (categoryId) {
+    if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
+  }
+  if (!isCatalogOpened) await core.clickRightOpener(page)
+  await page.waitForTimeout(wait)
+}
+
 export async function removeLayer (page, tabId, layer, wait = 1000) {
   const isCatalogOpened = await clickCatalogTab(page, tabId)
   const layerId = getLayerId(layer)
@@ -106,12 +124,12 @@ export async function connectLayer (page, service, layerId, wait = 2000) {
 
 export async function createLayer (page, layerName, schemaPath, featureId, wait = 2000) {
   await addLayer(page)
-  await core.clickAction(page, 'create-layer')
+  await core.clickAction(page, 'create-layer', 2000)
   await core.type(page, '#name-field', layerName)
   await core.type(page, '#description-field', `${layerName} description`)
   await core.uploadFile(page, '#schema-field', schemaPath)
-  await page.click(page, '#featureId-field', 500)
-  await core.click(page, `#${featureId}`)
+  await core.click(page, '#featureId-field', 500)
+  await core.click(page, `#${featureId}`, 500)
   await core.clickAction(page, 'create-layer-action', 1000)
   await page.waitForTimeout(wait)
 }

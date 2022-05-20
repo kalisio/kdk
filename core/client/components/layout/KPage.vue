@@ -78,7 +78,7 @@
     </q-page-sticky>
     <!-- window -->
     <q-page-sticky position="top-left" :offset="window.position" :style="{ 'z-index': stickyZIndex }">
-      <KWindow id="window" />
+      <k-window id="window" :style="`max-width: ${window.size[0]}px; max-height: ${window.size[1]};px`" />
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left" :style="{ 'z-index': stickyZIndex }">
