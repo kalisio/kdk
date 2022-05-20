@@ -23,6 +23,7 @@ export default {
       default: true
     }
   },
+  emits: ['image-transformed'],
   methods: {
     restore () {
       const controller = document.querySelector('.pinch-zoom-controller')
