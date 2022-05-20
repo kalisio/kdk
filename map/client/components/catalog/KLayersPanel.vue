@@ -128,7 +128,7 @@ export default {
     categorize () {
       _.forEach(this.layerCategories, category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
-        if (!category.component) category.componentInstance = loadComponent(component)
+        if (!category.componentInstance) category.componentInstance = loadComponent(component)
       })
     }
   },

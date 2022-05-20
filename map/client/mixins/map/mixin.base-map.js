@@ -2,7 +2,6 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import L from 'leaflet'
-import i18next from 'i18next'
 import Emitter from 'tiny-emitter'
 import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
@@ -23,6 +22,7 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { Time } from '../../../../core/client/time.js'
+import { getAppLocale } from '../../../../core/client/utils.js'
 import { uid } from 'quasar'
 import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
@@ -77,7 +77,7 @@ export const baseMap = {
       if (this.map.pm === undefined) {
         this.map.options.pmIgnore = false
         L.PM.reInitLayer(this.map)
-        this.map.pm.setLang(i18next.language)
+        this.map.pm.setLang(getAppLocale())
       }
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
       if (_.get(viewerOptions, 'scale', true)) this.setupScaleControl()

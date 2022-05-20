@@ -33,6 +33,7 @@ export * from './filter.js'
 export * from './reader.js'
 export * from './sorter.js'
 export * from './search.js'
+export * from './i18n.js'
 export * from './guards.js'
 export * from '../common/index.js'
 export { utils }

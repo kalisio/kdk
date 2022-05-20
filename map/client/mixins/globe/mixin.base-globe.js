@@ -10,7 +10,7 @@ import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
 import { convertCesiumHandlerEvent } from '../../utils.js'
 // Cesium has its own dynamic module loader requiring to be configured
 // Cesium files need to be also added as static assets of the applciation
-BuildModuleUrl.setBaseUrl('./statics/Cesium/')
+BuildModuleUrl.setBaseUrl('/Cesium/')
 
 export const baseGlobe = {
   emits: [

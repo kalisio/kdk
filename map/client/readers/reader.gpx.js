@@ -1,6 +1,6 @@
 import logger from 'loglevel'
-import i18next from 'i18next'
 import { gpx } from '@tmcw/togeojson'
+import { i18n } from '../../../core/client/i18n.js'
 
 export const GPXReader = {
   read (files, options) {
@@ -18,14 +18,14 @@ export const GPXReader = {
           content = gpx(new DOMParser().parseFromString(content, 'text/xml'))
         } catch (error) {
           logger.debug(error)
-          reject(new Error(i18next.t('errors.INVALID_GPX_FILE', { file: file.name }), { errors: error }))
+          reject(new Error(i18n.t('errors.INVALID_GPX_FILE', { file: file.name }), { errors: error }))
           return
         }
         resolve(content)
       }
       reader.onerror = (error) => {
         logger.debug(error)
-        reject(new Error(i18next.t('errors.CANNOT_READ_FILE', { file: file.name }), { errors: error }))
+        reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: file.name }), { errors: error }))
       }
       reader.readAsText(file)
     })

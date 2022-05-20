@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import i18next from 'i18next'
 import * as math from 'mathjs'
 import config from 'config'
+import { i18n } from './i18n.js'
 import { Store } from './store.js'
 
 // Default units organised by physical quantity
@@ -138,7 +138,7 @@ export const Units = {
   },
   getUnitSymbol (unit) {
     const definition = this.getUnit(unit)
-    return (definition ? i18next.t(definition.symbol) : unit)
+    return (definition ? i18n.t(definition.symbol) : unit)
   },
   getDefaultUnit (quantityOrUnit) {
     // Check for quantity first

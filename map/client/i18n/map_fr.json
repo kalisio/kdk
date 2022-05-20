@@ -4,9 +4,9 @@
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",
     "GEOLOCATION_ERROR": "Il nous est impossible de déterminer votre position, cela peut affecter certaines fonctionnalités de l'application.",
-    "GEOLOCATION_PERMISSION_DENIED": "$t(errors.GEOLOCATION_ERROR)</br>Il semble que vous n'ayez pas donné les permissions pour vous géolocaliser.",
-    "GEOLOCATION_POSITION_UNAVAILABLE": "$t(errors.GEOLOCATION_ERROR)</br>Il semble que le mobile a retourné une erreur interne.",
-    "GEOLOCATION_POSITION_TIMEOUT": "$t(errors.GEOLOCATION_ERROR)</br>Il semble que le temps alloué pour acquérir l'information a expiré.",
+    "GEOLOCATION_PERMISSION_DENIED": "@:errors.GEOLOCATION_ERROR</br>Il semble que vous n'ayez pas donné les permissions pour vous géolocaliser.",
+    "GEOLOCATION_POSITION_UNAVAILABLE": "@:errors.GEOLOCATION_ERROR</br>Il semble que le mobile a retourné une erreur interne.",
+    "GEOLOCATION_POSITION_TIMEOUT": "@:errors.GEOLOCATION_ERROR</br>Il semble que le temps alloué pour acquérir l'information a expiré.",
     "CANNOT_PROCESS_SCHEMA_DATA": "Schéma de données invalide ou incomplet",
     "ALERTS_LIMIT": "Trop d'alertes pour les afficher toutes",
     "FILE_IMPORT_ERROR": "L'import du fichier a échoué",
@@ -335,8 +335,8 @@
     "UNSUPPORTED_LAYER_FORMAT": "Le format de données utilisé par cette couche n'est pas supporté."
   },
   "KLocationField": {
-    "SEARCH": "$t(SEARCH)",
-    "NO_RESULTS": "$t(EMPTY)"
+    "SEARCH": "@:SEARCH",
+    "NO_RESULTS": "@:EMPTY"
   },
   "KLocationMap": {
     "DRAW_LINE": "Dessiner un linéaire",
@@ -377,7 +377,7 @@
   "KViewsPanel": {
     "VIEWS_LABEL": "Mes vues",
     "SORT_VIEWS": "Trier les vues",
-    "REMOVE_VIEW": "$t(REMOVE)",
+    "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Vue par défaut"
   },
   "KUserLayersPanel": {
@@ -513,8 +513,8 @@
     "ADD_BUTTON": "Ajouter",
     "EDIT_BUTTON": "Modifier",
     "CATEGORY_LIST": "Retour à la liste",
-    "EDIT_CATEGORY": "$t(EDIT)",
-    "REMOVE_CATEGORY": "$t(REMOVE)"
+    "EDIT_CATEGORY": "@:EDIT",
+    "REMOVE_CATEGORY": "@:REMOVE"
   },
   "KAddLayer": {
     "TITLE": "Ajouter une nouvelle couche",
@@ -525,28 +525,28 @@
   },
   "KImportLayer": {
     "FILE_FIELD_LABEL": "Sélectionnez le fichier à importer",
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "IMPORT_BUTTON": "Importer"
   },
   "KConnectLayer": {
     "SERVICE_FIELD_LABEL": "Saisissez la requête pour récupérer les capacités du service distant",
     "LAYER_FIELD_LABEL": "Sélectionnez la couche à laquelle se connecter",
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
     "STYLE_FIELD_LABEL": "Sélectionnez le style de la nouvelle couche",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CONNECT_BUTTON": "Connecter"
   },
   "KCreateLayer": {
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
-    "CATALOG_SCHEMA_FIELD_LABEL": "$t(schemas.CATALOG_SCHEMA_FIELD_LABEL)",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",       
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",    
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "CATALOG_SCHEMA_FIELD_LABEL": "@:schemas.CATALOG_SCHEMA_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",       
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",    
     "CREATE_BUTTON": "Créer"
   },
   "KLayerEditionToolbar": {
