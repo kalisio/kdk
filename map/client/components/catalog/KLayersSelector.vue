@@ -5,7 +5,7 @@
       <template v-for="layer in layers" :key="getId(layer)">
         <div :id="getId(layer)" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
           <!-- Layer name -->
-          <div class="ellipsis" v-bind:class="{
+          <div class="row ellipsis" v-bind:class="{
             'text-primary text-weight-bold': layer.isVisible,
             'text-grey-6': layer.isDisabled
           }">
@@ -33,7 +33,7 @@
             :content="layer.actions"
             :context="layer"
             :filter="{ id: { $nin: ['toggle'] } }"
-            action-renderer="item" />
+          />
         </div>
       </template>
     </div>
