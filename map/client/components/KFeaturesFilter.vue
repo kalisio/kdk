@@ -145,7 +145,8 @@ export default {
     onFilterCreated (ref) {
       // Fill the fields when ready
       if (ref) {
-        ref.fill(filter.value)
+        // How to find right filter object
+        // ref.fill(filter.value)
       }
     },
     async build () {
@@ -240,7 +241,7 @@ export default {
         delete this.layer.badge
       }
       // Reset layer with new setup
-      await this.kActivity.resetLayer(layer)
+      await this.kActivity.resetLayer(this.layer)
       this.closeModal()
     },
     async openModal () {

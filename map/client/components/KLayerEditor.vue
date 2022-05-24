@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { KModalEditor } from '../../../core/client/components'
 
 export default {

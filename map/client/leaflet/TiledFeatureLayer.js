@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import bbox from '@turf/bbox'
 import { featureEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
-import { tile2key, key2tile, tileSetContainsParent, getParentTileInTileSet } from './utils.js'
+import { tile2key, getParentTileInTileSet } from './utils.js'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
@@ -219,7 +219,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.enableDebug) {
         let numTilesR = 0
         requests.forEach((r) => { numTilesR += r.tiles.length })
-        if (numTilesR != tiles.length) {
+        if (numTilesR !== tiles.length) {
           logger.debug('TiledFeatureLayer: less requested tiles than expected !')
         }
       }
@@ -228,7 +228,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     /* One request per tile
     tiles.forEach((tile) => {
       const r = {
-        tiles: [ tile ],
+        tiles: [tile],
         query: {
           south: tile.bbox.getSouth(),
           north: tile.bbox.getNorth(),
@@ -417,7 +417,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
           if (this.enableDebug) {
             tile.div.style.outline = '1px solid green'
-            tile.div.innerHTML += `</br>features request success: ${features.length} total, ${tile.features.length} for tile`
+            tile.div.innerHTML += `</br>features request success: ${tile.features.length} total, ${tile.features.length} for tile`
           }
         })
 
