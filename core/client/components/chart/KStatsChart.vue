@@ -1,5 +1,5 @@
 <template>
-  <KChart ref="chart" />
+  <KChart ref="onChartCreated" />
 </template>
 
 <script>
@@ -11,6 +11,9 @@ export default {
     KChart
   },
   methods: {
+    onChartCreated (ref) {
+      if (ref) this.chart = ref
+    },
     customizeDatasets (type, datasets) {
       _.forEach(datasets, dataset => {
         // Compute the stats
@@ -68,7 +71,7 @@ export default {
       this.customizeDatasets(config.type, config.data.datasets)
       this.customizeOptions(config.type, config.options)
       // Update the chart
-      if (this.$refs.chart) this.$refs.chart.update(config)
+      if (this.chart) this.chart.update(config)
     }
   }
 }

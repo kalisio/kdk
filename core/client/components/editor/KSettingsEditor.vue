@@ -14,7 +14,7 @@
      -->
     <KModalEditor
       id="editor"
-      ref="onEditorCreated"
+      :ref="onEditorCreated"
       service="settings"
       objectId="settings"
       :router-mode="false"
@@ -44,14 +44,14 @@ export default {
   },
   methods: {
     onEditorCreated (ref) {
-      this.$refs.editor = ref
+      this.editor = ref
     },
     editSettings () {
-      this.$refs.editor.openModal()
+      this.editor.openModal()
       this.$emit('triggered')
     },
     onSettingsEdited () {
-      this.$refs.editor.closeModal()
+      this.editor.closeModal()
     }
   }
 }

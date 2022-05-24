@@ -398,11 +398,11 @@
     "LOWER_THAN": "value lower than"
   },
   "KFeaturesTable": {
-    "TITLE": "Data for layer {{layer}}"
+    "TITLE": "Data for layer"
   },
   "KFeaturesChart": {
     "SELECT_PROPERTY_LABEL": "Select a target property to start",
-    "TITLE": "Graph for layer {{layer}}",
+    "TITLE": "Graphs for layer",
     "PROPERTY_LABEL": "Target property",
     "CHART_LABEL": "Chart type",
     "PAGINATION_LABEL": "Number of values",

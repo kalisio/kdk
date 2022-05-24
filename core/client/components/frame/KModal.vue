@@ -1,6 +1,6 @@
 <template>
   <q-dialog
-    ref="modal"
+    :ref="onModalCreated"
     persistent
     :maximized="maximized"
     @show="$emit('opened')"
@@ -128,18 +128,23 @@ export default {
   watch: {
     modelValue: {
       handler (value) {
-        if (value) this.$refs.modal.show()
-        else this.$refs.modal.hide()
+        if (value) this.modal.show()
+        else this.modal.hide()
       }
     }
   },
   methods: {
+    onModalCreated (ref) {
+      if (ref) {
+        this.modal = ref
+      }
+    },
     open () {
-      this.$refs.modal.show()
+      this.modal.show()
       this.$emit('update:modelValue', true)
     },
     close () {
-      this.$refs.modal.hide()
+      this.modal.hide()
       this.$emit('update:modelValue', false)
     },
     onHeaderResized (size) {
@@ -150,7 +155,7 @@ export default {
     }
   },
   mounted () {
-    if (this.modelValue) this.$refs.modal.show()
+    if (this.modelValue) this.modal.show()
   }
 }
 </script>

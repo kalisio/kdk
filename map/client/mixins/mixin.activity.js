@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import centroid from '@turf/centroid'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
 import { Layout } from '../../../core/client/layout.js'
@@ -305,111 +304,6 @@ export const activity = {
         // Reset layer with new setup
         await this.resetLayer(createdLayer)
       }
-    },
-    async onFilterLayerData (layer) {
-      this.filterModal = await this.$createComponent('KFeaturesFilter', {
-        propsData: {
-          contextId: this.contextId,
-          layer
-        }
-      })
-      this.filterModal.$mount()
-      this.filterModal.open()
-      this.filterModal.$on('applied', async () => {
-        // Reset layer with new setup
-        await this.resetLayer(layer)
-        this.filterModal.closeModal()
-      })
-      this.filterModal.$on('closed', () => {
-        this.filterModal = null
-      })
-    },
-    async onViewLayerData (layer) {
-      this.viewModal = await this.$createComponent('KFeaturesTable', {
-        propsData: {
-          contextId: this.contextId,
-          layer,
-          featureActions: [{
-            name: 'zoom-to',
-            tooltip: this.$t('mixins.activity.ZOOM_TO_LABEL'),
-            icon: 'zoom_out_map',
-            handler: (context) => {
-              // Use altitude or zoom level depending on engine
-              this.center(..._.get(centroid(context.item), 'geometry.coordinates'), this.is2D() ? 18 : 750)
-              this.viewModal.closeModal()
-            }
-          }]
-        }
-      })
-      this.viewModal.$mount()
-      this.viewModal.open()
-      this.viewModal.$on('closed', () => {
-        this.viewModal = null
-      })
-    },
-    async onChartLayerData (layer) {
-      this.chartModal = await this.$createComponent('KFeaturesChart', {
-        propsData: {
-          contextId: this.contextId,
-          layer
-        }
-      })
-      this.chartModal.$mount()
-      this.chartModal.open()
-      this.chartModal.$on('closed', () => {
-        this.chartModal = null
-      })
-    },
-    async onEditLayer (layer) {
-      this.editModal = await this.$createComponent('editor/KModalEditor', {
-        propsData: {
-          service: 'catalog',
-          contextId: this.contextId,
-          objectId: layer._id
-        }
-      })
-      this.editModal.$mount()
-      this.editModal.openModal()
-      this.editModal.$on('applied', updatedLayer => {
-        // Actual layer update should be triggerred by real-time event
-        // but as we might not always use sockets perform it anyway
-        // If renamed need to update the layer map accordingly
-        if (layer.name !== updatedLayer.name) {
-          this.renameLayer(layer.name, updatedLayer.name)
-        }
-        Object.assign(layer, updatedLayer)
-        this.editModal.closeModal()
-      })
-      this.editModal.$on('closed', () => {
-        this.editModal = null
-      })
-    },
-    async onEditLayerStyle (layer) {
-      this.editStyleModal = await this.$createComponent('KLayerStyleEditor', {
-        propsData: {
-          contextId: this.contextId,
-          layer,
-          options: this.activityOptions.engine
-        }
-      })
-      this.editStyleModal.$mount()
-      this.editStyleModal.open()
-      this.editStyleModal.$on('applied', async () => {
-        // Actual layer update should be triggerred by real-time event
-        // but as we might not always use sockets perform it anyway
-        // Keep track of data as we will reset the layer
-        const geoJson = this.toGeoJson(layer.name)
-        // Reset layer with new setup
-        await this.resetLayer(layer)
-        // Update data only when in memory as reset has lost it
-        if (!layer._id) {
-          this.updateLayer(layer.name, geoJson)
-        }
-        this.editStyleModal.closeModal()
-      })
-      this.editStyleModal.$on('closed', () => {
-        this.editStyleModal = null
-      })
     },
     editLayerByName (name, editOptions = {}) {
       // this one is used through postRobot to trigger edition

@@ -10,7 +10,7 @@
       service="features"
       :contextId="contextId"
       :schema-json="schema"
-      :item-actions="featureActions"
+      :item-actions="actions"
       :base-query="layer.baseQuery"
       :style="`height: ${height}px; max-width: ${width}px;`">
       <template slot="empty-section">
@@ -24,11 +24,13 @@
 
 <script>
 import _ from 'lodash'
+import centroid from '@turf/centroid'
 import { mixins as kCoreMixins } from '../../../core/client'
 import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
   name: 'k-features-table',
+  inject: ['kActivity'],
   components: {
     KTable,
     KModal,
@@ -36,29 +38,35 @@ export default {
   },
   mixins: [kCoreMixins.baseModal],
   props: {
-    layer: {
-      type: Object,
+    layerId: {
+      type: String,
       required: true
     },
     contextId: {
       type: String,
       default: ''
-    },
-    featureActions: {
-      type: Array,
-      default: function () {
-        return []
-      }
     }
   },
   computed: {
     title () {
-      return this.$t('KFeaturesTable.TITLE', { layer: this.layer.name })
+      return this.$t('KFeaturesTable.TITLE') + ` ${this.layer.name}`
     },
     buttons () {
       return [
         { id: 'close-button', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() }
       ]
+    },
+    actions () {
+      return [{
+        name: 'zoom-to',
+        tooltip: this.$t('mixins.activity.ZOOM_TO_LABEL'),
+        icon: 'zoom_out_map',
+        handler: (context) => {
+          // Use altitude or zoom level depending on engine
+          this.kActivity.center(..._.get(centroid(context.item), 'geometry.coordinates'), this.kActivity.is2D() ? 18 : 750)
+          this.closeModal()
+        }
+      }]
     },
     width () {
       return this.$q.screen.width - 50
@@ -70,9 +78,15 @@ export default {
       return JSON.stringify(_.get(this.layer, 'schema.content'))
     }
   },
+  data () {
+    return {
+      layer: {}
+    }
+  },
   methods: {
-    open () {
-      this.openModal(true)
+    async openModal () {
+      this.layer = await this.$api.getService('catalog').get(this.layerId)
+      kCoreMixins.baseModal.methods.openModal.call(this, true)
     }
   }
 }

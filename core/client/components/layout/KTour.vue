@@ -62,10 +62,10 @@ export default {
         highlight: true,
         useKeyboardNavigation: true,
         labels: {
-          buttonSkip: this.$i18n.t('KTour.SKIP_LABEL'),
-          buttonPrevious: this.$i18n.t('KTour.PREVIOUS_LABEL'),
-          buttonNext: this.$i18n.t('KTour.NEXT_LABEL'),
-          buttonStop: this.$i18n.t('KTour.FINISH_LABEL')
+          buttonSkip: this.$t('KTour.SKIP_LABEL'),
+          buttonPrevious: this.$t('KTour.PREVIOUS_LABEL'),
+          buttonNext: this.$t('KTour.NEXT_LABEL'),
+          buttonStop: this.$t('KTour.FINISH_LABEL')
         },
         startTimeout: 1000,
         autoPlayDelay: 5000

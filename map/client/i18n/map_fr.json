@@ -399,11 +399,11 @@
     "LOWER_THAN": "valeur inférieure à"
   },
   "KFeaturesTable": {
-    "TITLE": "Données de la couche {{layer}}"
+    "TITLE": "Données de la couche"
   },
   "KFeaturesChart": {
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
-    "TITLE": "Graphiques de la couche {{layer}}",
+    "TITLE": "Graphiques de la couche",
     "PROPERTY_LABEL": "Propriété cible",
     "CHART_LABEL": "Type de graphique",
     "PAGINATION_LABEL": "Nombre de valeurs",

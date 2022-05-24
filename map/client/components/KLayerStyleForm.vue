@@ -448,18 +448,18 @@ export default {
     },
     getOperators (style) {
       let operators = [{
-        label: this.$i18n.t('KLayerStyleForm.EQUAL'),
+        label: this.$t('KLayerStyleForm.EQUAL'),
         value: '==='
       }, {
-        label: this.$i18n.t('KLayerStyleForm.NOT_EQUAL'),
+        label: this.$t('KLayerStyleForm.NOT_EQUAL'),
         value: '!=='
       }]
       if (style.componentName === 'form/KNumberField') {
         operators = operators.concat([{
-          label: this.$i18n.t('KLayerStyleForm.GREATER_THAN'),
+          label: this.$t('KLayerStyleForm.GREATER_THAN'),
           value: '>'
         }, {
-          label: this.$i18n.t('KLayerStyleForm.LOWER_THAN'),
+          label: this.$t('KLayerStyleForm.LOWER_THAN'),
           value: '<'
         }])
       }

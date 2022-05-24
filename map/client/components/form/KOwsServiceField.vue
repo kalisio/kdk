@@ -230,7 +230,7 @@ export default {
       this.availableServices = response.data
     }
   },
-  async mounted () {
+  mounted () {
     this.refreshAvailableServices()
   }
 }

@@ -1,12 +1,12 @@
 <template>
-  <k-modal ref="modal"
+  <k-modal
     id="layer-style-modal"
     :title="$t('KLayerStyleEditor.EDIT_LAYER_STYLE_TITLE')"
     :buttons="buttons"
     :options="{}"
     v-model="isModalOpened">
     <div>
-      <k-layer-style-form :class="{ 'light-dimmed': inProgress }" ref="form"
+      <k-layer-style-form :class="{ 'light-dimmed': inProgress }" :ref="onFormCreated"
         :options="options" :layer="layer"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="inProgress" size="4em"/>
     </div>
@@ -22,6 +22,7 @@ import KLayerStyleForm from './KLayerStyleForm.vue'
 
 export default {
   name: 'k-layer-style-editor',
+  inject: ['kActivity'],
   components: {
     KModal,
     KLayerStyleForm
@@ -30,12 +31,11 @@ export default {
     'applied'
   ],
   mixins: [
-    kCoreMixins.baseModal,
-    kCoreMixins.refsResolver()
+    kCoreMixins.baseModal
   ],
   props: {
-    layer: {
-      type: Object,
+    layerId: {
+      type: String,
       required: true
     },
     contextId: {
@@ -57,22 +57,17 @@ export default {
   },
   data () {
     return {
-      inProgress: false
+      inProgress: false,
+      layer: {}
     }
   },
   methods: {
-    async open () {
-      if (!this.$refs.modal) {
-        this.setRefs(['modal'])
-        await this.loadRefs()
+    onFormCreated (ref) {
+      if (ref && !this.form) {
+        this.form = ref
+        // Pick engine-based and generic styling options
+        this.form.fill(_.pick(this.layer, ['leaflet', 'isSelectable']))
       }
-      this.openModal()
-      if (!this.$refs.form) {
-        this.setRefs(['form'])
-        await this.loadRefs()
-      }
-      // Pick engine-based and generic styling options
-      this.$refs.form.fill(_.pick(this.layer, ['leaflet', 'isSelectable']))
     },
     async onApply () {
       const result = this.$refs.form.validate()
@@ -87,10 +82,14 @@ export default {
           logger.error(error)
         }
       }
-      // Update in memory
-      _.forOwn(result.values, (value, key) => _.set(this.layer, key, value))
+      // FIXME: Actual layer update should be triggerred by real-time event
+      // but as we might not always use sockets we should perform it explicitely in this case
       this.inProgress = false
-      this.$emit('applied')
+      this.closeModal()
+    },
+    async openModal () {
+      this.layer = await this.$api.getService('catalog').get(this.layerId)
+      kCoreMixins.baseModal.methods.openModal.call(this)
     }
   }
 }
