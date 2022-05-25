@@ -16,13 +16,14 @@
 <script>
 import logger from 'loglevel'
 import _ from 'lodash'
+import config from 'config'
 import { mixins as kCoreMixins } from '../../../core/client'
 import { KModal } from '../../../core/client/components'
 import KLayerStyleForm from './KLayerStyleForm.vue'
 
 export default {
   name: 'k-layer-style-editor',
-  inject: ['kActivity'],
+  inject: ['kActivity', 'layer'],
   components: {
     KModal,
     KLayerStyleForm
@@ -82,13 +83,24 @@ export default {
           logger.error(error)
         }
       }
-      // FIXME: Actual layer update should be triggerred by real-time event
-      // but as we might not always use sockets we should perform it explicitely in this case
+      if (config.transport !== 'websocket') {
+        // Actual layer update should be triggerred by real-time event
+        // but as we might not always use sockets we should perform it explicitely in this case
+        // Keep track of data as we will reset the layer
+        const geoJson = this.kActivity.toGeoJson(this.layer.name)
+        // Reset layer with new setup
+        await this.kActivity.resetLayer(this.layer)
+        // Update data only when in memory as reset has lost it
+        if (!this.layer._id) {
+          this.kActivity.updateLayer(this.layer.name, geoJson)
+        }
+      }
       this.inProgress = false
       this.closeModal()
     },
     async openModal () {
-      this.layer = await this.$api.getService('catalog').get(this.layerId)
+      // If not injected load it
+      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
       kCoreMixins.baseModal.methods.openModal.call(this)
     }
   }

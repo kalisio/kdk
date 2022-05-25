@@ -386,7 +386,7 @@
     "LAYERS_LABEL": "Catalog"
   },  
   "KFeaturesFilter": {
-    "TITLE": "Data filter for layer {{layer}}",
+    "TITLE": "Data filter for layer",
     "SELECT_PROPERTY_LABEL": "Select a target property to start",
     "ADD_FILTER": "Select a target property to add a filter on",
     "REMOVE_FILTER": "Remove filter for this value",

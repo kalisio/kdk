@@ -70,7 +70,7 @@ import { KModal, KStatsChart } from '../../../core/client/components'
 
 export default {
   name: 'k-features-chart',
-  inject: ['kActivity'],
+  inject: ['kActivity', 'layer'],
   components: {
     KModal,
     KStatsChart
@@ -136,7 +136,6 @@ export default {
       buttons: [
         { id: 'close-acation', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeModal() }
       ],
-      layer: {},
       selectedProperty: null,
       availableChartTypes,
       selectedChartType: _.find(availableChartTypes, { value: 'pie' }),
@@ -260,7 +259,8 @@ export default {
     },
     async openModal () {
       kCoreMixins.baseModal.methods.openModal.call(this, true)
-      this.layer = await this.$api.getService('catalog').get(this.layerId)
+      // If not injected load it
+      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
       this.openSettings()
     }
   }

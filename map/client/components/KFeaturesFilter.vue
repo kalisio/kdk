@@ -53,7 +53,7 @@ import { KModal } from '../../../core/client/components'
 
 export default {
   name: 'k-features-filter',
-  inject: ['kActivity'],
+  inject: ['kActivity', 'layer'],
   components: {
     KModal
   },
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     title () {
-      return this.$t('KFeaturesFilter.TITLE', { layer: this.layer.name })
+      return this.$t('KFeaturesFilter.TITLE') + ` ${this.layer.name}`
     },
     buttons () {
       return [
@@ -102,8 +102,7 @@ export default {
   data () {
     return {
       filters: [],
-      property: null,
-      layer: {}
+      property: null
     }
   },
   methods: {
@@ -245,7 +244,8 @@ export default {
       this.closeModal()
     },
     async openModal () {
-      this.layer = await this.$api.getService('catalog').get(this.layerId)
+      // If not injected load it
+      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
       await this.build()
       kCoreMixins.baseModal.methods.openModal.call(this)
     }

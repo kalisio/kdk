@@ -387,7 +387,7 @@
     "LAYERS_LABEL": "Catalogue"
   }, 
   "KFeaturesFilter": {
-    "TITLE": "Filtre des données de la couche {{layer}}",
+    "TITLE": "Filtre des données de la couche",
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
     "ADD_FILTER": "Sélectionnez une propriété à associer à un filtre",
     "REMOVE_FILTER": "Supprimer le filtre associée à cette valeur",

@@ -92,6 +92,7 @@ export default {
       if (reference) {
         const name = reference.properties.name
         const field = this.getField(name)
+        if (field.reference) return
         // Assign the reference
         field.reference = reference
         // clear this field

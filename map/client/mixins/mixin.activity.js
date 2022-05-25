@@ -15,7 +15,8 @@ export const activity = {
       engine: 'leaflet',
       engineReady: false,
       engineContainerWidth: null,
-      engineContainerHeight: null
+      engineContainerHeight: null,
+      selectedLayer: null
     }
   },
   computed: {
@@ -216,6 +217,9 @@ export const activity = {
     onZoomOut () {
       const center = this.getCenter()
       this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel - 1 : center.altitude * 2)
+    },
+    onSelectLayer (layer) {
+      this.selectedLayer = layer
     },
     onZoomToLayer (layer) {
       this.zoomToLayer(layer.name)

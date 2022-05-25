@@ -28,7 +28,7 @@
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
-    <slot name="content">
+    <slot>
     </slot>
   </q-btn>
   <!--
@@ -138,7 +138,7 @@
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
-    <slot name="content">
+    <slot>
     </slot>
   </q-btn>
 </template>
@@ -300,7 +300,7 @@ export default {
       })
       return params
     },
-    onClicked (event) {
+    async onClicked (event) {
       if (!this.propagate) event.stopPropagation()
       // Handle the toggle if needed
       if (this.toggle) {
@@ -308,16 +308,15 @@ export default {
       }
       // Handle the URL case
       if (this.url) openURL(this.url)
+      // Handle the callback case
+      if (this.handler) await this.handler(this.context, this.isToggled)
       // Handle the route case
-      else if (this.route) {
+      if (this.route) {
         // Process route params
         this.$router.push(Object.assign({
           query: this.bindRouteParams('query'),
           params: this.bindRouteParams('params')
         }, _.omit(this.route, ['query', 'params']))).catch(() => {})
-      } else if (this.handler) {
-        // Handle the callback case
-        this.handler(this.context, this.isToggled)
       }
       // Notify the listeners
       this.$emit('triggered', this.context, this.isToggled)

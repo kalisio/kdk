@@ -5,15 +5,17 @@
     service="catalog"
     :objectId="layerId"
     :contextId="contextId"
+    @applied="onLayerEdited"
   />
 </template>
 
 <script>
+import config from 'config'
 import { KModalEditor } from '../../../core/client/components'
 
 export default {
   name: 'k-settings-editor',
-  inject: ['kActivity'],
+  inject: ['kActivity', 'layer'],
   components: {
     KModalEditor
   },
@@ -26,8 +28,21 @@ export default {
       type: String,
       default: ''
     }
+  },
+  methods: {
+    onEditorCreated (ref) {
+      this.editor = ref
+    },
+    onLayerEdited (updatedLayer) {
+      if (config.transport !== 'websocket') {
+        // Actual layer update should be triggerred by real-time event
+        // but as we might not always use sockets we should perform it explicitely in this case
+        if (this.layer.name !== updatedLayer.name) {
+          this.kActivity.renameLayer(this.layer.name, updatedLayer.name)
+          Object.assign(this.layer, updatedLayer)
+        }
+      }
+    }
   }
-  // FIXME: Actual layer update should be triggerred by real-time event
-  // but as we might not always use sockets we should perform it explicitely in this case
 }
 </script>

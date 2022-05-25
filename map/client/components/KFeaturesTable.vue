@@ -30,7 +30,7 @@ import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
   name: 'k-features-table',
-  inject: ['kActivity'],
+  inject: ['kActivity', 'layer'],
   components: {
     KTable,
     KModal,
@@ -85,7 +85,8 @@ export default {
   },
   methods: {
     async openModal () {
-      this.layer = await this.$api.getService('catalog').get(this.layerId)
+      // If not injected load it
+      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
       kCoreMixins.baseModal.methods.openModal.call(this, true)
     }
   }

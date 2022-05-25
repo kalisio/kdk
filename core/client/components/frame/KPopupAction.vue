@@ -12,7 +12,6 @@
     :propagate="propagate"
     :badge="badge"
     :tooltip="tooltip">
-    <template v-slot:content>
       <q-popup-proxy
         fit
         :breakpoint="599"
@@ -29,7 +28,6 @@
           direction="vertical"
         />
       </q-popup-proxy>
-    </template>
   </KAction>
 </template>
 

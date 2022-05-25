@@ -15,7 +15,7 @@
     :error-message="errorLabel"
     bottom-slots
     @clear="onFileCleared"
-    @input="onFileChanged"
+    @update:model-value="onFileChanged"
     @rejected="onFileRejected">
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
