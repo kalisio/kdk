@@ -93,7 +93,7 @@ export default {
         },
         required: ['name']
       }
-    },
+    }
   },
   methods: {
     getButtons () {
