@@ -103,7 +103,7 @@
     "feathers-mailer": "^3.0.0",
     "feathers-mongodb": "^3.0.0",
     "feathers-mongodb-management": "^1.0.0",
-    "geotiff": "^1.0.0-beta.6",
+    "geotiff": "^2.0.4",
     "helmet": "^3.5.0",
     "jsdap": "^8.1.0",
     "limiter": "^1.1.3",
