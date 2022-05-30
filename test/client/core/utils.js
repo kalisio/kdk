@@ -48,6 +48,21 @@ export async function click (page, selector, wait = 250) {
     console.error(`click ${selector} failed.`)
   }
 }
+/* $x('//div[@class="q-item__label"]');
+q-item__label */
+/* Helper function to click on a given selector
+ */
+export async function clickMenuItem (page, wait = 250) {
+  try {
+    await page.waitForXPath('(//div[@class="q-item__label"])')
+    const elements = await page.$x(xpath)
+    let elHandle = await page.$x('(//div[@class="q-item__label"])[1]')
+    let feat = await page.evaluate(el => el.textContent, elHandle[0])
+    await page.waitForTimeout(wait)
+  } catch (error) {
+    console.error(`click ${xpath} failed.`)
+  }
+}
 
 /* Helper function to click on a given xpath
  */
@@ -102,6 +117,27 @@ export async function type (page, selector, text, enter = false, replace = false
       await page.keyboard.press('Backspace')
     } else {
       await page.click(selector)
+    }
+    await page.type(selector, text)
+    if (enter) await page.keyboard.press('Enter')
+    await page.waitForTimeout(wait)
+  } catch (error) {
+    console.error(`type ${text} in ${selector} failed.`)
+  }
+}
+
+/* Helper function to input a text on a given XPath
+ * set enter to true to run the press 'Enter' key
+   ! Not yet working !
+ */
+export async function typeXPath (page, selector, text, enter = false, replace = false, wait = 250) {
+  try {
+    await page.waitForXPath(selector, { timeout: 2000 })
+    if (replace) {
+      await page.clickXPath(selector, { clickCount: 3 })
+      await page.keyboard.press('Backspace')
+    } else {
+      await page.clickXPath(selector)
     }
     await page.type(selector, text)
     if (enter) await page.keyboard.press('Enter')

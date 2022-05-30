@@ -256,13 +256,22 @@
     </q-expansion-item>
     <q-expansion-item v-if="hasFeatureSchema" ref="popup" id="style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
+
         <q-item class="col-12">
           <q-item-section class="col-1">
             <q-toggle id="style-toggle-popup" v-model="popup"/>
           </q-item-section>
-          </q-item-section>
           <q-item-section class="col-11">
-            <q-select id="style-popup-field" :disable="!popup" use-chips v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')"></q-select>
+            <q-select
+              id="style-popup-field"
+              :disable="!popup"
+              use-chips
+              v-model="popupProperties"
+              multiple
+              :options="properties"
+              :label="$t('KLayerStyleForm.ADD_POPUP')"
+            >
+            </q-select>
           </q-item-section>
         </q-item>
       </q-list>
@@ -271,7 +280,7 @@
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
-            <q-toggle v-model="tooltip"/>
+            <q-toggle id="style-toggle-tooltip" v-model="tooltip"/>
           </q-item-section>
           <q-item-section class="col-11">
             <q-select :disable="!tooltip" v-model="tooltipProperty" :options="properties" :label="$t('KLayerStyleForm.ADD_TOOLTIP')"></q-select>
@@ -283,7 +292,7 @@
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
-            <q-toggle v-model="infobox"/>
+            <q-toggle id="style-toggle-infobox" v-model="infobox"/>
           </q-item-section>
           <q-item-section class="col-11">
             <q-select :disable="!infobox" use-chips v-model="infoboxProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_INFOBOX')"></q-select>
