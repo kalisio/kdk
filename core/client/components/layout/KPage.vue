@@ -74,7 +74,7 @@
     </q-page-sticky>
     <!-- window -->
     <q-page-sticky position="top-left" :offset="window.position">
-      <k-window id="window" />
+      <k-window id="window" :style="`max-width: ${window.size[0]}px; max-height: ${window.size[1]};px`" />
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left">

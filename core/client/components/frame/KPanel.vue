@@ -2,7 +2,7 @@
   <k-content
     v-bind="$props"
     v-bind:class="{
-      'row items-center justify-center no-wrap': direction === 'horizontal',
+      'row items-center justify-center': direction === 'horizontal',
       'column': direction === 'vertical'
     }"
     @triggered="$emit('triggered', arguments)" />
