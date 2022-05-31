@@ -1,6 +1,5 @@
 <template>
   <k-modal
-    ref="modal"
     id="layer-categories-modal"
     :title="title"
     :toolbar="toolbar"
@@ -93,7 +92,7 @@ export default {
         id: 'close-button',
         label: 'CLOSE',
         renderer: 'form-button',
-        handler: () => this.$refs.modal.close(),
+        handler: () => this.closeModal(),
         outline: (this.mode !== 'list')
       })
       if ((this.mode !== 'list') && (this.count > 0)) {
