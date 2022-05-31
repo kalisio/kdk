@@ -234,25 +234,6 @@ export function getTimezoneLabel (timezone) {
   return `${timezone} (${offset})`
 }
 
-// Helper function to load a translation file
-// @i18n alias shoud be added in the quasar.config build section
-export async function loadTranslations (bundleNames, locale, fallbackLocale) {
-  try {
-    const translations = {}
-    translations[locale] = {}
-    translations[fallbackLocale] = {}
-    for (let i = 0; i < bundleNames.length; i++) {
-      const localeTranslationsModule = await import(`@i18n/${bundleNames[i]}_${locale}.json`)
-      _.merge(translations[locale], localeTranslationsModule.default)
-      const fallbackTranslationModule = await import(`@i18n/${bundleNames[i]}_${fallbackLocale}.json`)
-      _.merge(translations[fallbackLocale], fallbackTranslationModule.default)
-    }
-    return translations
-  } catch (error) {
-    logger.error(error)
-  }
-}
-
 // Helper function to load a schema
 // @schema alias shoud be added in the quasar.config build section
 export async function loadSchema (schemaName) {
