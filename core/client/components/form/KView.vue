@@ -18,7 +18,8 @@
           :is="field.component"
           v-bind="$props"
           :properties="field"
-          :readOnly="true" />
+          :readOnly="true" 
+        />
       </div>
     </template>
     <!--

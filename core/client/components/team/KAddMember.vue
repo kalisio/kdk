@@ -86,7 +86,7 @@
 <script>
 import _ from 'lodash'
 import { Dialog, exportFile } from 'quasar'
-import { baseModal, refsResolver } from '../../mixins'
+import { baseModal } from '../../mixins'
 import { getLocale } from '../../utils'
 import { RoleNames } from '../../../common/permissions'
 import KModal from '../frame/KModal.vue'
@@ -101,8 +101,7 @@ export default {
     KAction
   },
   mixins: [
-    baseModal,
-    refsResolver(['form'])
+    baseModal
   ],
   props: {
     contextId: {

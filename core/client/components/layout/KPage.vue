@@ -21,7 +21,7 @@
       Be careful of the order
      -->
     <!-- bottom -->
-    <q-page-sticky position="bottom" :style="{ 'z-index': stickyZIndex }">
+    <q-page-sticky position="bottom" class="k-sticky">
       <div id="bottom-pane" v-show="hasBottomPaneContent" class="column items-center">
         <KOpener id="bottom-opener" v-if="hasBottomPaneOpener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
@@ -38,7 +38,7 @@
       </div>
     </q-page-sticky>
     <!-- right -->
-    <q-page-sticky position="right" :style="{ 'z-index': stickyZIndex }">
+    <q-page-sticky position="right" class="k-sticky">
       <div id="right-pane" v-show="hasRightPaneContent" class="row items-center">
         <KOpener id="right-opener" v-if="hasRightPaneOpener" v-model="isRightPaneOpened" position="right" />
         <div>
@@ -56,7 +56,7 @@
       </div>
     </q-page-sticky>
     <!-- top -->
-    <q-page-sticky position="top" :style="{ 'z-index': stickyZIndex }">
+    <q-page-sticky position="top" class="k-sticky">
       <div id="top-pane" v-show="hasTopPaneContent" class="column items-center">
         <div>
           <KPanel
@@ -73,15 +73,15 @@
       </div>
     </q-page-sticky>
     <!-- fab -->
-    <q-page-sticky position="bottom-right" :offset="fabOffset" :style="{ 'z-index': stickyZIndex }">
+    <q-page-sticky position="bottom-right" :offset="fabOffset" class="k-sticky">
       <KFab />
     </q-page-sticky>
     <!-- window -->
-    <q-page-sticky position="top-left" :offset="window.position" :style="{ 'z-index': stickyZIndex }">
-      <k-window id="window" :style="`max-width: ${window.size[0]}px; max-height: ${window.size[1]};px`" />
+    <q-page-sticky position="top-left" :offset="window.position" class="k-sticky">
+      <KWindow id="window" :style="`max-width: ${window.size[0]}px; max-height: ${window.size[1]};px`" />
     </q-page-sticky>
     <!-- left -->
-    <q-page-sticky position="left" :style="{ 'z-index': stickyZIndex }">
+    <q-page-sticky position="left" class="k-sticky">
       <div id="left-pane" v-show="hasLeftPaneContent" class="row items-center">
         <div>
           <KPanel
@@ -134,10 +134,6 @@ export default {
         widht: `calc(100vw - ${widthOffset}px)`,
         height: `calc(100vh - ${heightOffset}px)`
       }
-    },
-    stickyZIndex () {
-      if (this.page.sticky) return this.page.sticky.zIndex
-      return 'auto'
     },
     isTopPaneOpened: {
       get: function () {
@@ -284,9 +280,6 @@ export default {
     // Read bottom pane configuration
     this.hasBottomPaneOpener = this.$config('layout.bottomPane.opener', false)
     if (this.$config('layout.bottomPane.visible', false)) this.$store.patch('bottomPane', { visible: true })
-    // Read sticky configuration
-    // Set extra padding value
-    this.gutter = 8
   }
 }
 </script>
@@ -295,13 +288,16 @@ export default {
   body {
     background-color: #EFEFEF;
   }
+  .k-sticky {
+    z-index: $sticky-z-index;
+  }
   .k-pane, .k-left-pane {
     background-color: #FFFFFF;
     border: solid 1px lightgrey;
     border-radius: 3px;
   }
   .k-pane:hover, .k-left-pane:hover {
-    border: solid 1px var(--q-color-primary);
+    border: solid 1px $primary;
   }
   .k-left-pane {
     height: 100vh;
