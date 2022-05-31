@@ -58,8 +58,7 @@ export default {
   },
   data () {
     return {
-      inProgress: false,
-      layer: {}
+      inProgress: false
     }
   },
   methods: {

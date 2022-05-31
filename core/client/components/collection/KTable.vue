@@ -2,14 +2,14 @@
   <div v-if="items.length > 0">
     <q-table
       :title="title"
-      :data="items"
+      :rows="items"
       :columns="columns"
       :visible-columns="visibleColumns"
       :selection="selection"
-      :selected.sync="selectedItems"
+      v-model:selected="selectedItems"
       @selection="onSelectionChanged"
       row-key="_id"
-      :pagination.sync="pagination"
+      v-model:pagination="pagination"
       :rows-per-page-options="[]"
       @request="onRequest"
     >
@@ -102,6 +102,12 @@ export default {
     },
     filterQuery: function () {
       this.resetCollection()
+    },
+    schema: function (schema) {
+      if (this.schema) {
+        this.processSchema()
+        this.resetCollection()
+      }
     }
   },
   methods: {
@@ -177,8 +183,6 @@ export default {
     // Whenever the user abilities are updated, update collection as well
     this.$events.on('user-abilities-changed', this.refreshCollection)
     await this.loadSchema(this.service + '.get')
-    this.processSchema()
-    this.refreshCollection()
   },
   beforeUnmount () {
     this.$events.off('user-abilities-changed', this.refreshCollection)

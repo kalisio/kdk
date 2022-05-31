@@ -78,11 +78,6 @@ export default {
       return JSON.stringify(_.get(this.layer, 'schema.content'))
     }
   },
-  data () {
-    return {
-      layer: {}
-    }
-  },
   methods: {
     async openModal () {
       // If not injected load it
