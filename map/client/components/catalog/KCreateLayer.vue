@@ -1,15 +1,23 @@
 <template>
   <div>
     <!-- Forms section -->
-    <k-form ref="propertiesForm" :schema="getPropertiesFormSchema()" @field-changed="onPropertiesFormFieldChanged" />
-    <k-form ref="featureIdForm" :key="featureIdFormKey" :schema="getFeatureIdFormSchema()" />
+    <k-form 
+      ref="propertiesForm" 
+      :schema="propertiesFormSchema" 
+      @field-changed="onPropertiesFormFieldChanged" 
+    />
+    <k-form 
+      ref="featureIdForm" 
+      :schema="featureIdFormSchema" 
+    />
     <!-- Buttons section -->
     <q-card-actions align="right">
       <k-panel
         id="modal-buttons"
-        :content="getButtons()"
+        :content="buttons"
         renderer="form-button"
-        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }"
+      />
     </q-card-actions>
   </div>
 </template>
@@ -37,23 +45,8 @@ export default {
       creating: false
     }
   },
-  methods: {
-    getButtons () {
-      return [{
-        id: 'close-action',
-        outline: true,
-        label: 'CLOSE',
-        renderer: 'form-button',
-        handler: this.onClose
-      }, {
-        id: 'create-layer-action',
-        label: this.$t('KCreateLayer.CREATE_BUTTON'),
-        loading: this.creating,
-        renderer: 'form-button',
-        handler: this.onCreate
-      }]
-    },
-    getPropertiesFormSchema () {
+  computed: {
+    propertiesFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/create-layer-set-properties#',
@@ -87,7 +80,7 @@ export default {
         required: ['name']
       }
     },
-    getFeatureIdFormSchema () {
+    featureIdFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/create-layer-set-feature-id#',
@@ -106,6 +99,23 @@ export default {
         required: []
       }
     },
+    buttons () {
+      return [{
+        id: 'close-action',
+        outline: true,
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: this.onClose
+      }, {
+        id: 'create-layer-action',
+        label: this.$t('KCreateLayer.CREATE_BUTTON'),
+        loading: this.creating,
+        renderer: 'form-button',
+        handler: this.onCreate
+      }]
+    }
+  },
+  methods: {
     onPropertiesFormFieldChanged (field, value) {
       if (field === 'schema') {
         this.schema = value

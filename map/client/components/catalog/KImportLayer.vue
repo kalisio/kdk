@@ -1,15 +1,23 @@
 <template>
   <div>
     <!-- Forms section -->
-    <k-form ref="fileForm" :schema="fileFormSchema" @field-changed="onFileFormFieldChanged" />
-    <k-form ref="propertiesForm" :schema="propertiesFormSchema" />
+    <k-form 
+      ref="fileForm" 
+      :schema="fileFormSchema" 
+      @field-changed="onFileFormFieldChanged" 
+    />
+    <k-form 
+      ref="propertiesForm" 
+      :schema="propertiesFormSchema" 
+    />
     <!-- Buttons section -->
     <q-card-actions align="right">
       <k-panel
         id="modal-buttons"
-        :content="getButtons()"
+        :content="buttons"
         renderer="form-button"
-        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }"
+      />
     </q-card-actions>
   </div>
 </template>
@@ -93,10 +101,8 @@ export default {
         },
         required: ['name']
       }
-    }
-  },
-  methods: {
-    getButtons () {
+    },
+    buttons () {
       return [{
         id: 'close-action',
         outline: true,
@@ -110,7 +116,9 @@ export default {
         renderer: 'form-button',
         handler: this.onImport
       }]
-    },
+    }
+  },
+  methods: {
     onFileFormFieldChanged (field, value) {
       this.file = value
       this.filename = path.basename(this.file.name, path.extname(this.file.name))

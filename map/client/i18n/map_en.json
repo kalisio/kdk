@@ -12,10 +12,10 @@
     "FILE_IMPORT_ERROR": "File import has failed",
     "CANNOT_CHECK_ALERT_MISSING_SERVICE": "Last check failed due to unavailable service",
     "CANNOT_CHECK_ALERT_MISSING_DATA": "Last check failed due to unavailable data",
-    "INVALID_GEOJSON_FILE": "{{file}} is not a valid GeoJSON file",
-    "INVALID_GEOJSON_CRS": "{{file}} has an unsupported Coordinates Reference System (CRS)",
-    "INVALID_GPX_FILE": "{{file}} is not a valid GPX file",
-    "INVALID_KML_FILE": "{{file}} is not a valid KML file"
+    "INVALID_GEOJSON_FILE": "{file} is not a valid GeoJSON file",
+    "INVALID_GEOJSON_CRS": "{file} has an unsupported Coordinates Reference System (CRS)",
+    "INVALID_GPX_FILE": "{file} is not a valid GPX file",
+    "INVALID_KML_FILE": "{file} is not a valid KML file"
   },
   "mixins": {
     "navigator": {
@@ -30,12 +30,12 @@
     "activity": {
       "ADD_LAYER": "Add a new layer",
       "SAVE_LABEL": "Save layer",
-      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
+      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {{features.length}} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {features.length} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
       "DOWNLOAD_INVALID_FEATURES_LABEL": "By checking this option the invalid features will be exported to a file before saving",
       "INVALID_FEATURES_FILE": "InvalidFeatures.geojson",
-      "SAVE_DIALOG_TITLE": "Tiling layer {{layer}}",
+      "SAVE_DIALOG_TITLE": "Tiling layer {layer}",
       "SAVE_DIALOG_MESSAGE": "Your layer contains too much elements and has been optimized to be smoothly displayed.</br>As a consequence, it will only be visible at a local scale from a given zoom level.",
       "EDIT_LABEL": "Edit properties",
       "EDIT_LAYER_STYLE_LABEL": "Edit style",
@@ -47,8 +47,8 @@
       "EDITING_DATA_MESSAGE": "Editing",
       "REMOVE_LABEL": "Remove",
       "REMOVING_LABEL": "Please wait while removing layer data",
-      "REMOVE_DIALOG_TITLE": "Remove {{layer}} ?",
-      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{layer}}</b> from your workspace ?",
+      "REMOVE_DIALOG_TITLE": "Remove {layer} ?",
+      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{layer}</b> from your workspace ?",
       "ZOOM_TO_LABEL": "Zoom to",
       "ZOOM_IN": "Zoom in",
       "ZOOM_OUT": "Zoom out",
@@ -192,7 +192,7 @@
     "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
   },
   "schemas": {
-    "OBJECT_NAME": "{{ object.name }}",
+    "OBJECT_NAME": "{ object.name }",
     "CATALOG_CREATE_TITLE": "Create a new data layer",
     "CATALOG_NAME_FIELD_LABEL": "Enter the name of the new layer",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
@@ -416,7 +416,7 @@
     "CHART_COUNT_LABEL": "Count",
     "CHART_SETTINGS_LABEL": "Graph settings",
     "CHART_EXPORT_LABEL": "Export data",
-    "CHART_EXPORT_FILE": "Chart-{{layer}}.csv"
+    "CHART_EXPORT_FILE": "Chart-{layer}.csv"
   },
   "KLayerStyleForm": {
     "BASE": "Base properties",
@@ -488,7 +488,7 @@
     "PROPERTIES_COPIED": "Values copied to clipboard",
     "CANNOT_COPY_PROPERTIES": "Unable to copy the values to clipboard. Your browser does not support this functionality",
     "EXPORT_FEATURE": "Export the object",
-    "FEATURE_EXPORTED": "Object exported to file {{file}}",
+    "FEATURE_EXPORTED": "Object exported to file {file}",
     "CANNOT_EXPORT_FEATURE": "Unable to export the object. Your browser does not support this functionality"
   },
   "KMapillaryViewer": {
@@ -596,7 +596,7 @@
     "PROFILE_COPIED": "Profile copied to clipboard",
     "CANNOT_COPY_PROFILE": "Unable to copy the profile to clipboard. Your browser does not support this functionality",
     "EXPORT_PROFILE": "Export the profile",
-    "PROFILE_EXPORTED": "Profile exported to file {{file}}",
+    "PROFILE_EXPORTED": "Profile exported to file {file}",
     "CANNOT_EXPORT_PROFILE": "Unable to export the profile. Your browser does not support this functionality"
   }
 }

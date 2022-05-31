@@ -1,14 +1,14 @@
 <template>
   <div>
     <!-- Forms section -->
-    <k-form ref="serviceForm" :schema="getServiceFormSchema()" @field-changed="onServiceFormFieldChanged" />
-    <k-form ref="layerForm" :key="layerFormKey" :schema="layerFormSchema" @field-changed="onLayerFormFieldChanged" />
-    <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
+    <k-form ref="serviceForm" :schema="serviceFormSchema" @field-changed="onServiceFormFieldChanged" />
+    <k-form ref="layerForm" :schema="layerFormSchema" @field-changed="onLayerFormFieldChanged" />
+    <k-form ref="propertiesForm" :schema="propertiesFormSchema" />
     <!-- Buttons section -->
     <q-card-actions align="right">
       <k-panel
         id="modal-buttons"
-        :content="getButtons()"
+        :content="buttons"
         renderer="form-button"
         v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
     </q-card-actions>
@@ -33,6 +33,23 @@ export default {
   ],
   inject: ['kActivity'],
   computed: {
+    serviceFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-select-service',
+        type: 'object',
+        properties: {
+          service: {
+            type: 'object',
+            field: {
+              component: 'form/KOwsServiceField',
+              label: 'KConnectLayer.SERVICE_FIELD_LABEL'
+            }
+          }
+        },
+        required: ['service']
+      }
+    },
     layerFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
@@ -50,68 +67,8 @@ export default {
         },
         required: ['layer']
       }
-    }
-  },
-  data () {
-    return {
-      service: null,
-      layerFormKey: 1,
-      propertiesFormKey: 10000,
-      connecting: false
-    }
-  },
-  methods: {
-    getButtons () {
-      return [{
-        id: 'close-action',
-        outline: true,
-        label: 'CLOSE',
-        renderer: 'form-button',
-        handler: this.onClose
-      }, {
-        id: 'connect-layer-action',
-        label: this.$t('KConnectLayer.CONNECT_BUTTON'),
-        loading: this.connecting,
-        renderer: 'form-button',
-        handler: this.onConnect
-      }]
     },
-    getServiceFormSchema () {
-      return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/connect-layer-select-service',
-        type: 'object',
-        properties: {
-          service: {
-            type: 'object',
-            field: {
-              component: 'form/KOwsServiceField',
-              label: 'KConnectLayer.SERVICE_FIELD_LABEL'
-            }
-          }
-        },
-        required: ['service']
-      }
-    },
-    getLayerFormSchema () {
-      return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/connect-layer-select-layer#',
-        type: 'object',
-        properties: {
-          layer: {
-            type: 'object',
-            field: {
-              component: 'form/KOwsLayerField',
-              label: 'KConnectLayer.LAYER_FIELD_LABEL',
-              service: this.service
-            }
-          }
-        },
-        required: ['layer']
-      }
-    },
-    getPropertiesFormSchema () {
+    propertiesFormSchema () {
       const required = ['name']
       const schema = {
         $schema: 'http://json-schema.org/draft-06/schema#',
@@ -167,16 +124,36 @@ export default {
       _.set(schema, 'required', required)
       return schema
     },
+    buttons () {
+      return [{
+        id: 'close-action',
+        outline: true,
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: this.onClose
+      }, {
+        id: 'connect-layer-action',
+        label: this.$t('KConnectLayer.CONNECT_BUTTON'),
+        loading: this.connecting,
+        renderer: 'form-button',
+        handler: this.onConnect
+      }]
+    },
+  },
+  data () {
+    return {
+      service: null,
+      layer: null,
+      connecting: false
+    }
+  },
+  methods: {
     onServiceFormFieldChanged (field, value) {
       this.service = value
       this.layer = null
-      // Force the other forms to be re-rendered
-      //this.layerFormKey += 1
-      //this.propertiesFormKey += 1
     },
     onLayerFormFieldChanged (field, value) {
       this.layer = value
-      this.propertiesFormKey += 1
     },
     getLayerStyles () {
       if (this.layer) return _.map(this.layer.styles, style => { return { label: style.display, value: style.id } })
@@ -337,11 +314,6 @@ export default {
       this.connecting = false
       this.$emit('done')
     }
-  },
-  created () {
-    // Required data
-    // this.service = null
-    this.layer = null
   }
 }
 </script>

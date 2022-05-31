@@ -11,7 +11,6 @@
     <k-form 
       ref="form" 
       :schema="formSchema" 
-      @form-ready="onFormReady" 
     />
   </k-modal>
 </template>
@@ -29,7 +28,6 @@ export default {
   inject: ['kActivity'],
   data () {
     return {
-      enabled: false,
       creating: false
     }
   },
@@ -41,15 +39,13 @@ export default {
           label: 'CANCEL', 
           renderer: 'form-button', 
           outline: true, 
-          disabled: !this.enabled, 
           handler: () => this.closeModal() 
         },
         { 
           id: 'apply-button', 
           label: 'CREATE', 
           renderer: 'form-button', 
-          loading: this.creating, 
-          disabled: !this.enabled, 
+          loading: this.creating,
           handler: () => this.apply() 
         }
       ]
@@ -106,9 +102,6 @@ export default {
           throw error
         }
       }
-    },
-    onFormReady () {
-      this.enabled = true
     }
   }
 }

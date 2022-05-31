@@ -12,10 +12,10 @@
     "FILE_IMPORT_ERROR": "L'import du fichier a échoué",
     "CANNOT_CHECK_ALERT_MISSING_SERVICE": "La dernière vérification a échouée par indisponibilité du service",
     "CANNOT_CHECK_ALERT_MISSING_DATA": "La dernière vérification a échouée par indisponibilité des données",
-    "INVALID_GEOJSON_FILE": "{{file}} n'est pas un fichier GeoJSON valide",
-    "INVALID_GEOJSON_CRS": "{{file}} a un système de coordonnées (CRS) non supporté",
-    "INVALID_GPX_FILE": "{{file}} n'est pas un fichier GPX valide",
-    "INVALID_KML_FILE": "{{file}} n'est pas un fichier KML valide"
+    "INVALID_GEOJSON_FILE": "{file} n'est pas un fichier GeoJSON valide",
+    "INVALID_GEOJSON_CRS": "{file} a un système de coordonnées (CRS) non supporté",
+    "INVALID_GPX_FILE": "{file} n'est pas un fichier GPX valide",
+    "INVALID_KML_FILE": "{file} n'est pas un fichier KML valide"
   },
   "mixins": {
     "navigator": {
@@ -30,12 +30,12 @@
     "activity": {
       "ADD_LAYER": "Ajouter une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
-      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
+      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{processed} éléments traités sur {total}",
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {{features.length}} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {features.length} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
       "DOWNLOAD_INVALID_FEATURES_LABEL": "En sélectionnant cette option vos éléments invalides seront exportés dans un fichier avant l'enregistrement",
       "INVALID_FEATURES_FILE": "ElementsInvalides.geojson",
-      "SAVE_DIALOG_TITLE": "Tuilage de la couche {{layer}}",
+      "SAVE_DIALOG_TITLE": "Tuilage de la couche {layer}",
       "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",
       "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
@@ -47,8 +47,8 @@
       "EDITING_DATA_MESSAGE": "Edition en cours",
       "REMOVE_LABEL": "Supprimer",
       "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
-      "REMOVE_DIALOG_TITLE": "Supprimer {{layer}} ?",
-      "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {{layer}} de votre espace de travail ?",
+      "REMOVE_DIALOG_TITLE": "Supprimer {layer} ?",
+      "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {layer} de votre espace de travail ?",
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
@@ -192,7 +192,7 @@
     "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
   },
   "schemas": {
-    "OBJECT_NAME": "{{ object.name }}",
+    "OBJECT_NAME": "{ object.name }",
     "CATALOG_CREATE_TITLE": "Créer une nouvelles couche de données",
     "CATALOG_NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la nouvelle couche",
@@ -417,7 +417,7 @@
     "CHART_COUNT_LABEL": "Nombre",
     "CHART_SETTINGS_LABEL": "Paramétrage du graphique",
     "CHART_EXPORT_LABEL": "Exporter les données",
-    "CHART_EXPORT_FILE": "Graphique-{{layer}}.csv"
+    "CHART_EXPORT_FILE": "Graphique-{layer}.csv"
   },
   "KLayerStyleForm": {
     "BASE": "Propriétés de base",
@@ -489,7 +489,7 @@
     "PROPERTIES_COPIED": "Valeurs copiées en mémoire",
     "CANNOT_COPY_PROPERTIES": "Impossible de copier les valeurs en mémoire",
     "EXPORT_FEATURE": "Exporter l'object",
-    "FEATURE_EXPORTED": "Objet exporté dans le fichier {{file}}",
+    "FEATURE_EXPORTED": "Objet exporté dans le fichier {file}",
     "CANNOT_EXPORT_FEATURE": "Impossible d'exporter l'objet"
   },
   "KMapillaryViewer": {
@@ -597,7 +597,7 @@
     "PROFILE_COPIED": "Profil copiié en mémoire",
     "CANNOT_COPY_PROFILE": "Impossible de copier le profil en mémoire",
     "EXPORT_PROFILE": "Exporter le profil",
-    "PROFILE_EXPORTED": "Profil exporté dans le fichier {{file}}",
+    "PROFILE_EXPORTED": "Profil exporté dans le fichier {file}",
     "CANNOT_EXPORT_PROFILE": "Imopssible d'exporter le profil"
   }
 }
