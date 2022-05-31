@@ -70,7 +70,7 @@ export default {
       }
     },
     async onApply () {
-      const result = this.$refs.form.validate()
+      const result = this.form.validate()
       if (!result.isValid) return
       this.inProgress = true
       // If saved layer update it in DB

@@ -2,7 +2,7 @@
   <div>
     <k-icon-chooser ref="iconChooser" @icon-choosed="onIconChanged" />
     <k-color-chooser ref="colorChooser" @color-choosed="onColorChanged" />
-    <q-expansion-item ref="general" id="style-general-group" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.BASE')" group="group">
+    <q-expansion-item id="style-general-group" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.BASE')" group="group">
       <q-list dense class="row">
         <q-item>
           <q-item-section>
@@ -61,7 +61,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="points" id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
+    <q-expansion-item id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -96,7 +96,7 @@
           <q-item-section class="col-5">
             <component
               :is="iconStyle.component"
-              :ref="iconStyle.key"
+              :ref="iconStyle.onComponentCreated"
               :properties="iconStyle.properties"
               :display="{ icon: false, label: false }"
               @field-changed="iconStyle.onValueChanged"
@@ -124,7 +124,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="lines" id="style-line-group" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
+    <q-expansion-item id="style-line-group" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-6">
@@ -152,7 +152,7 @@
           <q-item-section class="col-3">
             <component
               :is="lineStyle.component"
-              :ref="lineStyle.key"
+              :ref="lineStyle.onComponentCreated"
               :properties="lineStyle.properties"
               :display="{ icon: false, label: false }"
               @field-changed="lineStyle.onValueChanged"
@@ -194,7 +194,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="polygons" id="style-polygon-group" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
+    <q-expansion-item id="style-polygon-group" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-7">
@@ -217,7 +217,7 @@
           <q-item-section class="col-4">
             <component
               :is="polygonStyle.component"
-              :ref="polygonStyle.key"
+              :ref="polygonStyle.onComponentCreated"
               :properties="polygonStyle.properties"
               :display="{ icon: false, label: false }"
               @field-changed="polygonStyle.onValueChanged"
@@ -320,8 +320,7 @@ export default {
     'form-ready'
   ],
   mixins: [
-    kCoreMixins.schemaProxy,
-    kCoreMixins.refsResolver()
+    kCoreMixins.schemaProxy
   ],
   props: {
     layer: { type: Object, required: true },
@@ -407,13 +406,6 @@ export default {
       this.hasError = false
       this.property = this.properties[0]
     },
-    async loadStyleComponents (styles) {
-      // Since we use dynamic component loading we need to make sure Vue.js has loaded them
-      // Set the refs to be resolved
-      this.setRefs(styles.map(style => style.key))
-      await this.loadRefs()
-      styles.forEach(style => this.$refs[style.key][0].fill(style.value))
-    },
     async createStyle (property, options = {}) {
       // Retrieve schema descriptor
       const properties = this.fields[property]
@@ -442,6 +434,7 @@ export default {
         operator: '===',
         property,
         properties,
+        onComponentCreated: (ref) => { if (ref) ref.fill(style.value) },
         onValueChanged: (field, value) => { style.value = value }
       }
       return Object.assign(style, options)
@@ -606,7 +599,6 @@ export default {
           _.get(this.options, 'pointStyle.icon.options.iconClasses', 'fas fa-circle'))
       } else {
         await this.processTemplates(values, ['marker-color', 'icon-classes'], this.defaultIcon, this.iconStyles)
-        await this.loadStyleComponents(this.iconStyles)
       }
     },
     async fillLineStyles (values) {
@@ -623,7 +615,6 @@ export default {
           _.get(this.options, 'featureStyle.opacity', 1))
       } else {
         await this.processTemplates(values, ['stroke-color', 'stroke-width', 'stroke-opacity'], this.defaultLine, this.lineStyles)
-        await this.loadStyleComponents(this.lineStyles)
       }
     },
     async fillPolygonStyles (values) {
@@ -638,7 +629,6 @@ export default {
           _.get(this.options, 'featureStyle.fillOpacity', 1))
       } else {
         await this.processTemplates(values, ['fill-color', 'fill-opacity'], this.defaultPolygon, this.polygonStyles)
-        await this.loadStyleComponents(this.polygonStyles)
       }
     },
     async fillPopupStyles (values) {

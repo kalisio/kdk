@@ -14,7 +14,7 @@
         <q-item-section>
           <component
             :is="filter.component"
-            :ref="onFilterCreated"
+            :ref="filter.onComponentCreated"
             :properties="filter.properties"
             :display="{ icon: false, label: false }"
             @field-changed="filter.onValueChanged"
@@ -137,16 +137,10 @@ export default {
         operator: (componentName !== 'form/KNumberField' ? '$in' : '$eq'),
         property,
         properties,
+        onComponentCreated: (ref) => { if (ref) ref.fill(filter.value) },
         onValueChanged: (field, value) => { filter.value = value }
       }
       return Object.assign(filter, options)
-    },
-    onFilterCreated (ref) {
-      // Fill the fields when ready
-      if (ref) {
-        // How to find right filter object
-        // ref.fill(filter.value)
-      }
     },
     async build () {
       logger.debug('Building layer filter')

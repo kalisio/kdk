@@ -27,7 +27,6 @@
     </k-modal>
     <k-modal
       id="chart-settings-modal"
-      style="z-index: 9999"
       :ref="onChartSettingsCreated"
       :title="$t('KFeaturesChart.CHART_SETTINGS_LABEL')"
       :buttons="[{ id: 'close-action', label: 'CLOSE', renderer: 'form-button', handler: () => this.closeSettings() }]">

@@ -1,6 +1,6 @@
 <template>
   <div id="time-series" class="column" :style="widgetStyle">
-    <k-chart ref="chart" class="col q-pl-sm q-pr-sm" />
+    <k-chart :ref="onChartCreated" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
 
@@ -25,8 +25,7 @@ export default {
     KChart
   },
   mixins: [
-    baseWidget,
-    refsResolver(['chart'])
+    baseWidget
   ],
   props: {
     selection: {
@@ -173,6 +172,11 @@ export default {
       }
       return false
     },
+    onChartCreated (ref) {
+      if (ref && !this.chart) {
+        this.chart = ref
+      }
+    },
     async setupGraph () {
       if (!this.probedLocation) return
       // As we have async operations during the whole chart creation process avoid reentrance
@@ -210,8 +214,7 @@ export default {
             }]
           }
         }
-        await this.loadRefs()
-        this.$refs.chart.update({
+        this.chart.update({
           type: 'line',
           data: {
             labels: this.times,

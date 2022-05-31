@@ -19,10 +19,10 @@
           @collection-refreshed="refreshCategories" />
       </q-card-section>
       <q-card-section id="layer-category-add" v-if="mode === 'add'">
-        <k-form ref="addForm" :schema="categorySchema" style="min-width: 300px" />
+        <k-form :ref="onAddFormCreated" :schema="categorySchema" style="min-width: 300px" />
       </q-card-section>
       <q-card-section id="layer-category-edit" v-if="mode === 'edit'">
-        <k-form ref="editForm" :schema="categorySchema" style="min-width: 300px" />
+        <k-form :ref="onEditFormCreated" :schema="categorySchema" style="min-width: 300px" />
       </q-card-section>
     </div>
   </k-modal>
@@ -42,7 +42,6 @@ export default {
     KList
   },
   mixins: [
-    kCoreMixins.refsResolver(),
     kCoreMixins.baseModal
   ],
   inject: ['kActivity'],
@@ -209,7 +208,7 @@ export default {
   },
   methods: {
     async onAdd () {
-      const result = this.$refs.addForm.validate()
+      const result = this.addForm.validate()
       if (result.isValid) {
         const category = result.values
         // Add required type for catalog
@@ -226,7 +225,7 @@ export default {
       }
     },
     async onEdit () {
-      const result = this.$refs.editForm.validate()
+      const result = this.editForm.validate()
       if (result.isValid) {
         this.savingCategory = true
         try {
@@ -251,13 +250,21 @@ export default {
         if (!this.filter.pattern) this.mode = 'add'
       }
     },
+    onAddFormCreated (ref) {
+      if (ref && !this.addForm) {
+        this.addForm = ref
+      }
+    },
+    onEditFormCreated (ref) {
+      if (ref && !this.editForm) {
+        this.editForm = ref
+      }
+    },
     async editCategory (category) {
       this.mode = 'edit'
       this.editedCategory = category
-      this.setRefs(['editForm'])
-      await this.loadRefs()
-      await this.$refs.editForm.build()
-      this.$refs.editForm.fill(category)
+      this.editForm.build()
+      this.editForm.fill(category)
     },
     removeCategory (category) {
       this.$api.getService('catalog').remove(category._id)
