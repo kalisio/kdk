@@ -22,7 +22,7 @@
         <k-form :ref="onAddFormCreated" :schema="categorySchema" style="min-width: 300px" />
       </q-card-section>
       <q-card-section id="layer-category-edit" v-if="mode === 'edit'">
-        <k-form :ref="onEditFormCreated" :schema="categorySchema" style="min-width: 300px" />
+        <k-form :ref="onEditFormCreated" @form-ready="onEditFormReady" :schema="categorySchema" style="min-width: 300px" />
       </q-card-section>
     </div>
   </k-modal>
@@ -260,11 +260,12 @@ export default {
         this.editForm = ref
       }
     },
+    onEditFormReady (form) {
+      this.editForm.fill(this.editedCategory)
+    },
     async editCategory (category) {
       this.mode = 'edit'
       this.editedCategory = category
-      this.editForm.build()
-      this.editForm.fill(category)
     },
     removeCategory (category) {
       this.$api.getService('catalog').remove(category._id)
