@@ -8,12 +8,14 @@
     v-model.number="model"
     :label="label"
     clearable
-    @blur="onChanged"
-    @input="onChanged"
     :disabled="disabled"
     :error="hasError"
     :error-message="errorLabel"
-    bottom-slot>
+    bottom-slot
+    @blur="onChanged"
+    @update:model-value="onChanged"
+      
+  >
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>

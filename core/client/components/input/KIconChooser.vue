@@ -8,7 +8,7 @@
           :options="categoryOptions"
           :value="selectedCategory ? selectedCategory.label : ''"
           @filter="filterCategoryAutocomplete"
-          @input="onSelectCategory"
+          @update:model-value="onSelectCategory"
           use-input
           fill-input
           hide-selected

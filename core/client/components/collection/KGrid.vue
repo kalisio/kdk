@@ -13,7 +13,13 @@
       </div>
     </template>
     <div v-if="nbPages > 1" class="col-12">
-      <q-pagination class="justify-center q-ma-md" v-model="currentPage" :max="nbPages" @input="onPageChanged" :input="true"/>
+      <q-pagination 
+        class="justify-center q-ma-md" 
+        v-model="currentPage" 
+        :max="nbPages" 
+        :input="true"
+        @update:model-value="onPageChanged"
+      />
     </div>
   </div>
   <div v-else>

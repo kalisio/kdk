@@ -5,7 +5,7 @@
         :options="options"
         type="radio"
         v-model="mode"
-        @input="onModeChanged"
+        @update:model-value="onModeChanged"
       />
       <!-- Search location -->
       <q-select v-show="mode === 'search'"
@@ -21,7 +21,7 @@
         option-label="name"
         option-value="name"
         @filter="onSearch"
-        @input="onUpdated">
+        @update:model-value="onUpdated">
         <template v-slot:prepend>
           <q-icon :dense="dense" name="search" />
         </template>
@@ -37,8 +37,15 @@
     <!-- Location map -->
     <div class="col-12 col-md-7">
       <div v-show="showMap" id="show-location-map" style="width: 100%; height: 250px">
-        <k-location-map v-model="location" :editable="mode === 'map'" :drawable="mode === 'draw'"
-          :closable="true" :toolbar="true" @input="onUpdated" @close="onClose"/>
+        <k-location-map 
+          v-model="location" 
+          :editable="mode === 'map'" 
+          :drawable="mode === 'draw'"
+          :closable="true" 
+          :toolbar="true" 
+          @update:model-value="onUpdated"
+          @close="onClose"
+        />
       </div>
       <div v-show="showError" id="show-location-error" v-html="locationErrorMessage">
       </div>

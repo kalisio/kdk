@@ -9,7 +9,7 @@
     :label="label"
     clearable
     @blur="onChanged"
-    @input="onChanged"
+    @update:model-value="onChanged"
     :disabled="disabled"
     :error="hasError"
     :error-message="errorLabel"

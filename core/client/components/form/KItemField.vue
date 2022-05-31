@@ -20,7 +20,7 @@
     bottom-slots
     :options="options"
     @filter="onSearch"
-    @input="onSelected">
+    @update:model-value="onSelected">
     <!-- Value display -->
     <template v-slot:selected-item="scope">
       <q-chip

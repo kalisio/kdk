@@ -7,15 +7,17 @@
     v-model="model"
     :label="label"
     :options="options"
-    @change="onChanged"
-    @blur="onChanged"
-    @input='onChanged'
     emit-value
     map-options
     :error="hasError"
     :error-message="errorLabel"
     :disabled="disabled"
-    bottom-slots>
+    bottom-slots
+    @change="onChanged"
+    @blur="onChanged"
+    @update:model-value='onChanged'
+      
+  >
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item

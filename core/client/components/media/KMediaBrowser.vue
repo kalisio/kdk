@@ -8,7 +8,8 @@
     :navigation="hasMedia"
     :arrows="hasMedia"
     animated infinite
-    @input="onCurrentMediaChanged">
+    @update:model-value="onCurrentMediaChanged"
+  >
     <!--
       Slides
       -->

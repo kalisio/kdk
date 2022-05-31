@@ -9,7 +9,6 @@ import KView from '../form/KView.vue'
 import { baseViewer, service, objectProxy, schemaProxy } from '../../mixins'
 
 export default {
-  name: 'k-viewer',
   components: {
     KView
   },

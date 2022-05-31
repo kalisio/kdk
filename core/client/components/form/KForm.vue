@@ -77,7 +77,7 @@ export default {
   watch: {
     schema: {
       immediate: true,
-      async handler (newValue) {
+      async handler () {
         await this.refresh()
       }
     }

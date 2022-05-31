@@ -198,10 +198,6 @@
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
     "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme",
-    "CREAT_VIEW_TITLE": "Create a new view ?",
-    "CREATE_VIEW_NAME_FIELD_LABEL": "Enter the name of this view",
-    "CREATE_VIEW_DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
-    "CREATE_VIEW_LAYERS_FIELD_LABEL": "Save the active layers",
     "LAYER_CATEGORY_CREATE_TITLE": "Create a new category?",
     "LAYER_CATEGORY_NAME_FIELD_LABEL": "Enter the name of this category",
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Select an icon for this category",
@@ -547,6 +543,12 @@
     "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CREATE_BUTTON": "Create"
+  },
+  "KCreateView": {
+    "MODAL_TITLE": "Create a new view ?",
+    "NAME_FIELD_LABEL": "Enter the name of this view",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
+    "LAYERS_FIELD_LABEL": "Save the active layers"
   },
   "KLayerEditionToolbar": {
     "ADD_POLYGON_FEATURES": "Add polygon features",

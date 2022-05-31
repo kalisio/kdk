@@ -6,12 +6,12 @@
     :for="properties.name + '-field'"
     :value="model"
     :label="label"
-    @input="onChanged"
     borderless
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"
     bottom-slots
+    @update:model-value="onChanged"    
   >
     <!-- Content -->
     <template v-slot:default>

@@ -2,7 +2,7 @@
   <div>
     <!-- Forms section -->
     <k-form ref="serviceForm" :schema="getServiceFormSchema()" @field-changed="onServiceFormFieldChanged" />
-    <k-form ref="layerForm" :key="layerFormKey" :schema="getLayerFormSchema()" @field-changed="onLayerFormFieldChanged" />
+    <k-form ref="layerForm" :key="layerFormKey" :schema="layerFormSchema" @field-changed="onLayerFormFieldChanged" />
     <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
     <!-- Buttons section -->
     <q-card-actions align="right">
@@ -23,7 +23,6 @@ import { KAction, KPanel } from '../../../../core/client/components/frame'
 import KForm from '../../../../core/client/components/form/KForm.vue'
 
 export default {
-  name: 'k-connect-layer',
   components: {
     KAction,
     KPanel,
@@ -33,8 +32,29 @@ export default {
     'done'
   ],
   inject: ['kActivity'],
+  computed: {
+    layerFormSchema () {
+      return {
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        $id: 'http://kalisio.xyz/schemas/connect-layer-select-layer#',
+        type: 'object',
+        properties: {
+          layer: {
+            type: 'object',
+            field: {
+              component: 'form/KOwsLayerField',
+              label: 'KConnectLayer.LAYER_FIELD_LABEL',
+              service: this.service
+            }
+          }
+        },
+        required: ['layer']
+      }
+    }
+  },
   data () {
     return {
+      service: null,
       layerFormKey: 1,
       propertiesFormKey: 10000,
       connecting: false
@@ -151,8 +171,8 @@ export default {
       this.service = value
       this.layer = null
       // Force the other forms to be re-rendered
-      this.layerFormKey += 1
-      this.propertiesFormKey += 1
+      //this.layerFormKey += 1
+      //this.propertiesFormKey += 1
     },
     onLayerFormFieldChanged (field, value) {
       this.layer = value
@@ -320,7 +340,7 @@ export default {
   },
   created () {
     // Required data
-    this.service = null
+    // this.service = null
     this.layer = null
   }
 }

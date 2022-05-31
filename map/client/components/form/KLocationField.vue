@@ -1,7 +1,7 @@
 <template>
   <q-field
     :for="properties.name + '-field'"
-    :value="model"
+    v-model="model"
     :label="label"
     :error-message="errorLabel"
     :error="hasError"

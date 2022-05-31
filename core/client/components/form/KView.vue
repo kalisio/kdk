@@ -11,7 +11,7 @@
       >
         <!-- Field label -->
         <span class="col-xs-5 col-sm-4 col-3 text-caption">
-          {{ $t(field.field.label) }}
+          {{ getLabel(field) }}
         </span>
         <!-- Field value -->
         <component class="col"
@@ -34,7 +34,7 @@
           >
             <!-- Field label -->
             <span class="col-xs-5 col-sm-4 col-3 text-caption">
-              {{ $t(field.field.label) }}
+              {{ getLabel(field) }}
             </span>
             <!-- Field value -->
             <component class="col"
@@ -79,6 +79,11 @@ export default {
     }
   },
   methods: {
+    getLabel (field) {
+      const label = _.get(field, 'field.label')
+      if (this.$te(label)) return this.$t(label)
+      return label
+    },
     async refresh  () {
       // Clear the fields states
       this.fields = []

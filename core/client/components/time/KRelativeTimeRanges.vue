@@ -4,7 +4,8 @@
     :content="content"
     action-renderer="item"
     :dense="dense"
-    direction="vertical" />
+    direction="vertical" 
+  />
 </template>
 
 <script>

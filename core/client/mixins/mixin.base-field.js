@@ -23,11 +23,13 @@ export const baseField = {
     label () {
       // Check if we have a translation key or directly the label content
       const label = _.get(this.properties.field, 'label', '')
+      if (_.isEmpty(label)) return label
       return (this.$te(label) ? this.$t(label) : label)
     },
     helper () {
       // Check if we have a translation key or directly the helper content
       const helper = _.get(this.properties.field, 'helper', '')
+      if (_.isEmpty(helper)) return helper
       return (this.$te(helper) ? this.$t(helper) : helper)
     },
     hasError () {

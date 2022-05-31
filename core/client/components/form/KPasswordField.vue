@@ -7,12 +7,12 @@
     v-model="model"
     :label="label"
     clearable
-    @blur="onChanged"
-    @input="onChanged"
     :disabled="disabled"
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
+    @blur="onChanged"
+    @update:model-value="onChanged"
   >
     <!-- Visibility icon -->
     <template v-slot:append>

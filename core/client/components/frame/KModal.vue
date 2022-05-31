@@ -21,7 +21,9 @@
         v-bind:class="{'q-pa-md': $q.screen.gt.xs, 'q-pa-sm': $q.screen.lt.sm }"
       >
         <q-resize-observer @resize="onHeaderResized" />
-        <span class="ellipsis text-h6" v-html="title" />
+        <div v-if="title" class="ellipsis text-h6">
+          {{ $te(title) ? $t(title) : title }}
+        </div>
         <k-panel
           id="modal-toolbar"
           :content="toolbar"
