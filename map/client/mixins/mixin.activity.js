@@ -365,13 +365,9 @@ export const activity = {
         Loading.hide()
       })
     },
-    onMapReady () {
+    onEngineReady (engine) {
+      this.engine = engine
       this.engineReady = true
-      this.engine = 'leaflet'
-    },
-    onGlobeReady () {
-      this.engineReady = true
-      this.engine = 'cesium'
     },
     onProbeLocation () {
       this.setCursor('probe-cursor')
@@ -463,13 +459,13 @@ export const activity = {
     }
   },
   mounted () {
-    this.$engineEvents.on('map-ready', this.onMapReady)
-    this.$engineEvents.on('globe-ready', this.onGlobeReady)
+    this.$engineEvents.on('map-ready', this.onEngineReady('leaflet'))
+    this.$engineEvents.on('globe-ready', this.onEngineReady('cesium'))
     this.$engineEvents.on('layer-added', this.onLayerAdded)
   },
   beforeUnmount () {
-    this.$engineEvents.off('map-ready', this.onMapReady)
-    this.$engineEvents.off('globe-ready', this.onGlobeReady)
+    this.$engineEvents.off('map-ready', this.onEngineReady)
+    this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.onLayerAdded)
     this.finalize()
   }
