@@ -85,8 +85,8 @@ export const baseMap = {
       this.onMapReady()
     },
     onMapReady () {
-      this.$emit('map-ready')
-      this.$engineEvents.emit('map-ready')
+      this.$emit('map-ready', 'leaflet')
+      this.$engineEvents.emit('map-ready', 'leaflet')
     },
     setupScaleControl () {
       // Add a scale control

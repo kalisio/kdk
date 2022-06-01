@@ -37,7 +37,7 @@ export default {
   props: {
     layerId: {
       type: String,
-      required: true
+      default: ''
     },
     contextId: {
       type: String,
@@ -82,9 +82,11 @@ export default {
           logger.error(error)
         }
       }
-      if (config.transport !== 'websocket') {
-        // Actual layer update should be triggerred by real-time event
-        // but as we might not always use sockets we should perform it explicitely in this case
+      // Update in memory
+      _.forOwn(result.values, (value, key) => _.set(this.layer, key, value))
+      // Actual layer update should be triggerred by real-time event
+      // but as we might have in-memory only layer or not always use sockets we should perform it explicitely in this case
+      if (!this.layer._id || (config.transport !== 'websocket')) {
         // Keep track of data as we will reset the layer
         const geoJson = this.kActivity.toGeoJson(this.layer.name)
         // Reset layer with new setup

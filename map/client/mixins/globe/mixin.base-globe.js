@@ -67,8 +67,8 @@ export const baseGlobe = {
       this.onGlobeReady()
     },
     onGlobeReady () {
-      this.$emit('globe-ready')
-      this.$engineEvents.emit('globe-ready')
+      this.$emit('globe-ready', 'cesium')
+      this.$engineEvents.emit('globe-ready', 'cesium')
     },
     processCesiumLayerOptions (options) {
       // Because we update objects in place and don't want cesium internal objects to be reactive

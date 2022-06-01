@@ -40,7 +40,7 @@ export default {
   props: {
     layerId: {
       type: String,
-      required: true
+      default: ''
     },
     contextId: {
       type: String,

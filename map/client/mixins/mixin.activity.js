@@ -459,8 +459,8 @@ export const activity = {
     }
   },
   mounted () {
-    this.$engineEvents.on('map-ready', this.onEngineReady('leaflet'))
-    this.$engineEvents.on('globe-ready', this.onEngineReady('cesium'))
+    this.$engineEvents.on('map-ready', this.onEngineReady)
+    this.$engineEvents.on('globe-ready', this.onEngineReady)
     this.$engineEvents.on('layer-added', this.onLayerAdded)
   },
   beforeUnmount () {
