@@ -4,11 +4,11 @@
       <span class="q-pl-md q-pr-md">
         {{ formattedPosition }}
       </span>
-      <k-action 
-        id="copy-position" 
-        icon="las la-copy" 
-        tooltip="KPositionIndicator.COPY" 
-        :handler="onCopy" 
+      <k-action
+        id="copy-position"
+        icon="las la-copy"
+        tooltip="KPositionIndicator.COPY"
+        :handler="onCopy"
       />
     </div>
   </div>

@@ -17,7 +17,7 @@
       <q-toggle
         :id="properties.name + '-field'"
         v-model="model"
-        @blur="onChanged" 
+        @blur="onChanged"
       />
     </template>
     <!-- Helper -->

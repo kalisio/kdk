@@ -138,7 +138,7 @@ export default {
         renderer: 'form-button',
         handler: this.onConnect
       }]
-    },
+    }
   },
   data () {
     return {

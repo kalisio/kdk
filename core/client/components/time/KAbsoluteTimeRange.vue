@@ -9,7 +9,7 @@
           v-model="startDate"
           mask="DD/MM/YYYY"
           :title="startDate"
-          :options="checkStartDate" 
+          :options="checkStartDate"
           @update:model-value="onTimeRangeChanged"
         />
       </q-popup-proxy>
@@ -39,7 +39,7 @@
           mask="DD/MM/YYYY"
           :title="endDate"
           :options="checkEndDate"
-          @update:model-value="onTimeRangeChanged"          
+          @update:model-value="onTimeRangeChanged"
         />
       </q-popup-proxy>
     </div>
@@ -52,8 +52,8 @@
           id="end-time-popup"
           v-model="endTime"
           mask="HH:mm"
-          :options="checkEndTime" 
-          @update:model-value="onTimeRangeChanged"          
+          :options="checkEndTime"
+          @update:model-value="onTimeRangeChanged"
         />
       </q-popup-proxy>
     </div>

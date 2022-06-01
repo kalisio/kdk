@@ -11,7 +11,7 @@
     :error="hasError"
     :disabled="disabled"
     bottom-slots
-    @update:model-value="onChanged"    
+    @update:model-value="onChanged"
   >
     <!-- Content -->
     <template v-slot:default>

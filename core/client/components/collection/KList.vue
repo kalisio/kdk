@@ -18,10 +18,10 @@
     <div v-if="nbPages > 1" class="col-12">
       <div class="row justify-center">
         <q-pagination
-          v-model="currentPage" 
-          :max="nbPages" 
+          v-model="currentPage"
+          :max="nbPages"
           :input="true"
-          @update:model-value="onPageChanged" 
+          @update:model-value="onPageChanged"
         />
       </div>
     </div>

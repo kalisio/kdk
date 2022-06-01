@@ -18,7 +18,7 @@
           :is="field.component"
           v-bind="$props"
           :properties="field"
-          :readOnly="true" 
+          :readOnly="true"
         />
       </div>
     </template>
@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { loadComponent } from '../../utils.js'
 
 export default {
@@ -111,9 +112,9 @@ export default {
 
 <style lang="scss">
   .k-view-row {
-    border-bottom: solid 1px var(--q-color-secondary);
+    border-bottom: solid 1px $secondary;
   }
   .k-view-row:hover {
-    background: var(--q-color-secondary);
+    background: $secondary;
   }
 </style>

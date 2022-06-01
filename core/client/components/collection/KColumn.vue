@@ -65,7 +65,7 @@
 <script>
 import { KScrollArea, KAction, KStamp } from '../frame'
 import { baseCollection, service } from '../../mixins'
-import { loadComponent, i18n } from '../../utils.js'
+import { loadComponent } from '../../utils.js'
 
 export default {
   components: {

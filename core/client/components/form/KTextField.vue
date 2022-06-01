@@ -13,7 +13,7 @@
     :error-message="errorLabel"
     bottom-slots
     @blur="onChanged"
-    @update:model-value='onChanged'   
+    @update:model-value='onChanged'
   >
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>

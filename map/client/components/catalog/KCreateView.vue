@@ -5,12 +5,12 @@
     :buttons="modalButtons"
     v-model="isModalOpened"
   >
-    <!-- 
+    <!--
       Modal content
     -->
-    <k-form 
-      ref="form" 
-      :schema="formSchema" 
+    <k-form
+      ref="form"
+      :schema="formSchema"
     />
   </k-modal>
 </template>
@@ -34,19 +34,19 @@ export default {
   computed: {
     modalButtons () {
       return [
-        { 
-          id: 'cancel-button', 
-          label: 'CANCEL', 
-          renderer: 'form-button', 
-          outline: true, 
-          handler: () => this.closeModal() 
+        {
+          id: 'cancel-button',
+          label: 'CANCEL',
+          renderer: 'form-button',
+          outline: true,
+          handler: () => this.closeModal()
         },
-        { 
-          id: 'apply-button', 
-          label: 'CREATE', 
-          renderer: 'form-button', 
+        {
+          id: 'apply-button',
+          label: 'CREATE',
+          renderer: 'form-button',
           loading: this.creating,
-          handler: () => this.apply() 
+          handler: () => this.apply()
         }
       ]
     },

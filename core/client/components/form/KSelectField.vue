@@ -19,7 +19,7 @@
     :error="hasError"
     :error-message="errorLabel"
     :disabled="disabled"
-    bottom-slots    
+    bottom-slots
     @change="onChanged"
     @blur="onChanged"
     @update:model-value='onChanged'

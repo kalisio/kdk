@@ -1,14 +1,14 @@
 <template>
   <div>
     <!-- Forms section -->
-    <k-form 
-      ref="fileForm" 
-      :schema="fileFormSchema" 
-      @field-changed="onFileFormFieldChanged" 
+    <k-form
+      ref="fileForm"
+      :schema="fileFormSchema"
+      @field-changed="onFileFormFieldChanged"
     />
-    <k-form 
-      ref="propertiesForm" 
-      :schema="propertiesFormSchema" 
+    <k-form
+      ref="propertiesForm"
+      :schema="propertiesFormSchema"
     />
     <!-- Buttons section -->
     <q-card-actions align="right">

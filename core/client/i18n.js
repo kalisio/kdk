@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import { createI18n } from 'vue-i18n'
 import { getAppLocale, getAppFallbackLocale } from './utils.js'
 

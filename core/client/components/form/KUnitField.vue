@@ -16,7 +16,7 @@
     @change="onChanged"
     @blur="onChanged"
     @update:model-value='onChanged'
-      
+
   >
     <!-- Options display -->
     <template v-slot:option="scope">

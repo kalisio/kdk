@@ -56,10 +56,10 @@
         :title="$t('KTimezoneField.TIMEZONE_MAP_TITLE')"
         :buttons="getTimezoneMapModalButtons()"
         :options="{}">
-        <k-timezone-map 
-          id="timezones-map" 
-          style="min-height: 250px;" 
-          :value="this.model" 
+        <k-timezone-map
+          id="timezones-map"
+          style="min-height: 250px;"
+          :value="this.model"
           @timezone-selected="onMapTimezoneSelected"
         />
       </k-modal>

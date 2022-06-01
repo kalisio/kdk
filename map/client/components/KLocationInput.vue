@@ -37,12 +37,12 @@
     <!-- Location map -->
     <div class="col-12 col-md-7">
       <div v-show="showMap" id="show-location-map" style="width: 100%; height: 250px">
-        <k-location-map 
-          v-model="location" 
-          :editable="mode === 'map'" 
+        <k-location-map
+          v-model="location"
+          :editable="mode === 'map'"
           :drawable="mode === 'draw'"
-          :closable="true" 
-          :toolbar="true" 
+          :closable="true"
+          :toolbar="true"
           @update:model-value="onUpdated"
           @close="onClose"
         />
