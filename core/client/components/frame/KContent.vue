@@ -52,10 +52,10 @@ export default {
       for (let i = 0; i < components.length; ++i) {
         const component = components[i]
         if (!_.startsWith(component.name, 'Q')) {
-          logger.debug(`Loading component ${component.name}`)
+          logger.trace(`Loading component ${component.name}`)
           component.instance = loadComponent(component.name)
         } else {
-          logger.debug(`Using component ${component.name}`)
+          logger.trace(`Using component ${component.name}`)
           component.instance = component.name
         }
       }
