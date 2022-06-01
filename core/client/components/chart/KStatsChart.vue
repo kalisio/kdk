@@ -1,5 +1,5 @@
 <template>
-  <KChart ref="onChartCreated" />
+  <KChart :ref="onChartCreated" />
 </template>
 
 <script>

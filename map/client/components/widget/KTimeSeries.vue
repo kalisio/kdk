@@ -1,6 +1,6 @@
 <template>
   <div id="time-series" class="column" :style="widgetStyle">
-    <k-chart :ref="onChartCreated" class="col q-pl-sm q-pr-sm" />
+    <k-chart id="timeseries-chart" :ref="onChartCreated" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
 

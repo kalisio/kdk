@@ -16,7 +16,7 @@
           icon="las la-chevron-left"
           @click="onPreviousChart"/>
         <!-- Current chart --->
-        <k-stats-chart :ref="onChartCreated" :style="chartStyle" />
+        <k-stats-chart id="features-chart" :ref="onChartCreated" :style="chartStyle" />
         <!-- Netx chart -->
         <q-btn
           v-show="currentChart < nbCharts"
@@ -89,7 +89,7 @@ export default {
   },
   computed: {
     title () {
-      return this.$t('KFeaturesChart.TITLE') + ` ${this.layer.name}`
+      return this.$t('KFeaturesChart.TITLE') + ` ${_.get(this.layer, 'name', '')}`
     },
     properties () {
       const properties = []
@@ -247,7 +247,8 @@ export default {
       kCoreUtils.downloadAsBlob(csv, this.$t('KFeaturesChart.CHART_EXPORT_FILE', { layer: this.layer.name }), 'text/csv;charset=utf-8;')
     },
     openSettings () {
-      if (this.chartSettings) this.chartSettings.open()
+      // As we have tow modals it appears that opening them simultaneously on create does not work in quasar
+      if (this.chartSettings) setTimeout(() => this.chartSettings.open(), 500)
     },
     closeSettings () {
       if (this.chartSettings) {
@@ -257,9 +258,9 @@ export default {
       }
     },
     async openModal () {
-      kCoreMixins.baseModal.methods.openModal.call(this, true)
       // If not injected load it
       if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      kCoreMixins.baseModal.methods.openModal.call(this, true)
       this.openSettings()
     }
   }
