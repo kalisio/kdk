@@ -244,9 +244,9 @@ export default {
     computedLabel () {
       // Check also for translation key or already translated message
       if (this.isToggled && _.has(this.toggle, 'label')) {
-        return (this.$te(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
+        return this.$tie(this.toggle.label)
       }
-      return (this.$te(this.label) ? this.$t(this.label) : this.label)
+      return this.$tie(this.label)
     },
     computedIcon () {
       if (this.isToggled && _.has(this.toggle, 'icon')) return this.toggle.icon
@@ -259,15 +259,15 @@ export default {
     computedTooltip () {
       // Check also for translation key or already translated message
       if (this.isToggled && _.has(this.toggle, 'tooltip')) {
-        return (this.$te(this.toggle.tooltip) ? this.$t(this.toggle.tooltip) : this.toggle.tooltip)
+        return this.$tie(this.toggle.tooltip)
       } else {
-        return (this.$te(this.tooltip) ? this.$t(this.tooltip) : this.tooltip)
+        return this.$tie(this.tooltip)
       }
     },
     computedBadgeLabel () {
       // Check also for translation key or already translated message
       if (this.badge && _.has(this.badge, 'label')) {
-        return (this.$te(this.badge.label) ? this.$t(this.badge.label) : this.badge.label)
+        return this.$tie(this.badge.label)
       } else {
         // Take care that changing this to null or '' breaks the display in Quasar
         return undefined

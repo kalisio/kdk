@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { createI18n } from 'vue-i18n'
 import { getAppLocale, getAppFallbackLocale } from './utils.js'
 

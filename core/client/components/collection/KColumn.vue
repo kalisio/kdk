@@ -7,7 +7,7 @@
       class="full-width row justify-center text-subtitle1"
       v-bind:class="{ 'q-pb-sm': dense, 'q-pb-md': !dense }"
     >
-      <q-chip :label="$te(label) ? $t(label) : label" square color="grey-9" text-color="white" />
+      <q-chip :label="$tie(label)" square color="grey-9" text-color="white" />
     </div>
     <!--
       Items
@@ -65,7 +65,7 @@
 <script>
 import { KScrollArea, KAction, KStamp } from '../frame'
 import { baseCollection, service } from '../../mixins'
-import { loadComponent } from '../../utils.js'
+import { loadComponent, i18n } from '../../utils.js'
 
 export default {
   components: {
@@ -118,8 +118,7 @@ export default {
   computed: {
     rendererComponent () {
       return loadComponent(this.renderer.component)
-    },
-    
+    }
   },
   data () {
     return {

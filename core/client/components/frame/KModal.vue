@@ -22,7 +22,7 @@
       >
         <q-resize-observer @resize="onHeaderResized" />
         <div v-if="title" class="ellipsis text-h6">
-          {{ $te(title) ? $t(title) : title }}
+          {{ $tie(title) }}
         </div>
         <k-panel
           id="modal-toolbar"

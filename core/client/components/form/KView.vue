@@ -81,9 +81,7 @@ export default {
   },
   methods: {
     getLabel (field) {
-      const label = _.get(field, 'field.label')
-      if (this.$te(label)) return this.$t(label)
-      return label
+      return this.$tie(_.get(field, 'field.label'))
     },
     async refresh  () {
       // Clear the fields states

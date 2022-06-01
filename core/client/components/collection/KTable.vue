@@ -131,7 +131,7 @@ export default {
         this.columns.push({
           name: key,
           // Check if we have a translation key or directly the label content
-          label: (this.$te(label) ? this.$t(label) : label),
+          label: this.$tie(label),
           // This will support GeoJson out-of-the-box
           field: row => _.get(row, key, _.get(row, `properties.${key}`)),
           align: 'center',
