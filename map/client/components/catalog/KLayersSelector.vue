@@ -5,7 +5,7 @@
       <template v-for="layer in layers" :key="getId(layer)">
         <div :id="getId(layer)" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
           <!-- Layer name -->
-          <div class="ellipsis" v-bind:class="{
+          <div class="row ellipsis" v-bind:class="{
             'text-primary text-weight-bold': layer.isVisible,
             'text-grey-6': layer.isDisabled
           }">
@@ -26,14 +26,14 @@
             <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
           </q-icon>
           <!-- Layer toggle -->
-          <q-toggle :value="layer.isVisible" :disable="layer.isDisabled" size="sm" @input="onLayerClicked(layer)" />
+          <q-toggle v-model="layer.isVisible" :disable="layer.isDisabled" size="sm" @update:modelValue="onLayerClicked(layer)" />
           <!-- Layer actions -->
           <k-panel
             :id="`${layer.name}-actions`"
             :content="layer.actions"
             :context="layer"
             :filter="{ id: { $nin: ['toggle'] } }"
-            action-renderer="item" />
+          />
         </div>
       </template>
     </div>

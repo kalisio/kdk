@@ -1,15 +1,23 @@
 <template>
   <div>
     <!-- Forms section -->
-    <k-form ref="fileForm" :schema="getFileFormSchema()" @field-changed="onFileFormFieldChanged" />
-    <k-form ref="propertiesForm" :key="propertiesFormKey" :schema="getPropertiesFormSchema()" />
+    <k-form
+      ref="fileForm"
+      :schema="fileFormSchema"
+      @field-changed="onFileFormFieldChanged"
+    />
+    <k-form
+      ref="propertiesForm"
+      :schema="propertiesFormSchema"
+    />
     <!-- Buttons section -->
     <q-card-actions align="right">
       <k-panel
         id="modal-buttons"
-        :content="getButtons()"
+        :content="buttons"
         renderer="form-button"
-        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }"
+      />
     </q-card-actions>
   </div>
 </template>
@@ -34,27 +42,12 @@ export default {
   inject: ['kActivity'],
   data () {
     return {
-      propertiesFormKey: 1,
-      importing: false
+      importing: false,
+      filename: ''
     }
   },
-  methods: {
-    getButtons () {
-      return [{
-        id: 'close-action',
-        outline: true,
-        label: 'CLOSE',
-        renderer: 'form-button',
-        handler: this.onClose
-      }, {
-        id: 'import-layer-action',
-        label: this.$t('KImportLayer.IMPORT_BUTTON'),
-        loading: this.importing,
-        renderer: 'form-button',
-        handler: this.onImport
-      }]
-    },
-    getFileFormSchema () {
+  computed: {
+    fileFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/import-layer-select-file#',
@@ -72,7 +65,7 @@ export default {
         required: ['file']
       }
     },
-    getPropertiesFormSchema () {
+    propertiesFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/import-layer-set-properties#',
@@ -82,7 +75,7 @@ export default {
             type: 'string',
             maxLength: 128,
             minLength: 2,
-            default: this.getFileName(),
+            default: this.filename,
             field: {
               component: 'form/KTextField',
               label: 'KImportLayer.NAME_FIELD_LABEL'
@@ -90,7 +83,7 @@ export default {
           },
           description: {
             type: 'string',
-            default: this.getFileName(),
+            default: this.filename,
             field: {
               component: 'form/KTextField',
               label: 'KImportLayer.DESCRIPTION_FIELD_LABEL'
@@ -109,15 +102,29 @@ export default {
         required: ['name']
       }
     },
+    buttons () {
+      return [{
+        id: 'close-action',
+        outline: true,
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: this.onClose
+      }, {
+        id: 'import-layer-action',
+        label: this.$t('KImportLayer.IMPORT_BUTTON'),
+        loading: this.importing,
+        renderer: 'form-button',
+        handler: this.onImport
+      }]
+    }
+  },
+  methods: {
     onFileFormFieldChanged (field, value) {
       this.file = value
+      this.filename = path.basename(this.file.name, path.extname(this.file.name))
       if (value) {
         this.file.schema = generatePropertiesSchema(value.content, value.name)
       }
-      this.propertiesFormKey += 1
-    },
-    getFileName () {
-      return this.file ? path.basename(this.file.name, path.extname(this.file.name)) : ''
     },
     getProperties () {
       if (this.file) {

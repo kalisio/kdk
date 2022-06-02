@@ -9,7 +9,6 @@
     :size="size"
     :badge="computedBadge"
     :disabled="disabled">
-    <template v-slot:content>
       <q-popup-proxy
         id="options-chooser-popup"
         :auto-close="true"
@@ -26,7 +25,6 @@
           </q-item>
         </q-list>
       </q-popup-proxy>
-    </template>
   </KAction>
 </template>
 

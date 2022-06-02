@@ -1,11 +1,17 @@
 <template>
   <k-modal
     id="add-view-modal"
-    :title="$t(getSchema().title)"
-    :buttons="getButtons()"
+    title="KCreateView.MODAL_TITLE"
+    :buttons="modalButtons"
     v-model="isModalOpened"
   >
-    <k-form ref="form" :schema="getSchema()" />
+    <!--
+      Modal content
+    -->
+    <k-form
+      ref="form"
+      :schema="formSchema"
+    />
   </k-modal>
 </template>
 
@@ -14,7 +20,6 @@ import { KModal, KForm } from '../../../../core/client/components'
 import { baseModal } from '../../../../core/client/mixins'
 
 export default {
-  name: 'k-add-view',
   components: {
     KModal,
     KForm
@@ -26,18 +31,29 @@ export default {
       creating: false
     }
   },
-  methods: {
-    getButtons () {
+  computed: {
+    modalButtons () {
       return [
-        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
-        { id: 'apply-button', label: 'CREATE', renderer: 'form-button', loading: this.creating, handler: () => this.apply() }
+        {
+          id: 'cancel-button',
+          label: 'CANCEL',
+          renderer: 'form-button',
+          outline: true,
+          handler: () => this.closeModal()
+        },
+        {
+          id: 'apply-button',
+          label: 'CREATE',
+          renderer: 'form-button',
+          loading: this.creating,
+          handler: () => this.apply()
+        }
       ]
     },
-    getSchema () {
+    formSchema () {
       return {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://www.kalisio.xyz/schemas/favorite-view.create.json#',
-        title: 'schemas.CREATE_VIEW_TITLE',
         description: 'Map view creation schema',
         type: 'object',
         properties: {
@@ -47,7 +63,7 @@ export default {
             minLength: 3,
             field: {
               component: 'form/KTextField',
-              label: 'schemas.CREATE_VIEW_NAME_FIELD_LABEL'
+              label: 'KCreateView.NAME_FIELD_LABEL'
             }
           },
           description: {
@@ -55,7 +71,7 @@ export default {
             maxLength: 256,
             field: {
               component: 'form/KTextField',
-              label: 'schemas.CREATE_VIEW_DESCRIPTION_FIELD_LABEL'
+              label: 'KCreateView.DESCRIPTION_FIELD_LABEL'
             }
           },
           layers: {
@@ -63,13 +79,15 @@ export default {
             default: false,
             field: {
               component: 'form/KToggleField',
-              label: 'schemas.CREATE_VIEW_LAYERS_FIELD_LABEL'
+              label: 'KCreateView.LAYERS_FIELD_LABEL'
             }
           }
         },
         required: ['name']
       }
-    },
+    }
+  },
+  methods: {
     async apply () {
       const result = this.$refs.form.validate()
       if (result.isValid) {

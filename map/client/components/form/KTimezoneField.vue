@@ -10,7 +10,7 @@
         :label="label"
         :options="options"
         use-input
-        @input='onChanged'
+        @update:model-value='onChanged'
         @filter="onAutocomplete"
         emit-value
         map-options
@@ -56,7 +56,12 @@
         :title="$t('KTimezoneField.TIMEZONE_MAP_TITLE')"
         :buttons="getTimezoneMapModalButtons()"
         :options="{}">
-        <k-timezone-map id="timezones-map" style="min-height: 250px;" :value="this.model" @timezone-selected="onMapTimezoneSelected"/>
+        <k-timezone-map
+          id="timezones-map"
+          style="min-height: 250px;"
+          :value="this.model"
+          @timezone-selected="onMapTimezoneSelected"
+        />
       </k-modal>
     </div>
   </div>

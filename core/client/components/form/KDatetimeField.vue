@@ -9,21 +9,31 @@
     :error-message="errorLabel"
     :error="hasError"
     :disabled="disabled"
-    @blur="onChanged"
-    @input="onChanged"
     bottom-slots
     :prefix="formattedDatetime"
+    @blur="onChanged"
+    @update:model-value="onChanged"
   >
     <!-- Prepend icons -->
     <template v-slot:before>
       <q-icon name="las la-calendar" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
-          <q-date :value="localDatetime" @input="onChangeLocalDatetime" mask="YYYY-MM-DDTHH:mm:ss.SSSZ" v-bind="properties.field" />
+          <q-date
+            :value="localDatetime"
+            mask="YYYY-MM-DDTHH:mm:ss.SSSZ"
+            v-bind="properties.field"
+            @update:model-value="onChangeLocalDatetime"
+          />
         </q-popup-proxy>
       </q-icon>
       <q-icon name="las la-clock" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
-          <q-time :value="localDatetime" @input="onChangeLocalDatetime" mask="YYYY-MM-DDTHH:mm:ss.SSSZ" v-bind="properties.field" />
+          <q-time
+            :value="localDatetime"
+            mask="YYYY-MM-DDTHH:mm:ss.SSSZ"
+            v-bind="properties.field"
+            @update:model-value="onChangeLocalDatetime"
+          />
         </q-popup-proxy>
       </q-icon>
     </template>

@@ -2,7 +2,6 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import L from 'leaflet'
-import i18next from 'i18next'
 import Emitter from 'tiny-emitter'
 import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
@@ -14,7 +13,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster'
 import 'leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js'
-import 'Leaflet.Geodesic'
+import 'leaflet.geodesic'
 import 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import iso8601 from 'iso8601-js-period' // Required by leaflet.timedimension
@@ -23,6 +22,7 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { Time } from '../../../../core/client/time.js'
+import { getAppLocale } from '../../../../core/client/utils.js'
 import { uid } from 'quasar'
 import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
@@ -45,7 +45,9 @@ export const baseMap = {
     'layer-added',
     'layer-removed',
     'layer-shown',
-    'layer-hidden'
+    'layer-hidden',
+    'layer-enabled',
+    'layer-disabled'
   ],
   data () {
     return {
@@ -75,7 +77,7 @@ export const baseMap = {
       if (this.map.pm === undefined) {
         this.map.options.pmIgnore = false
         L.PM.reInitLayer(this.map)
-        this.map.pm.setLang(i18next.language)
+        this.map.pm.setLang(getAppLocale())
       }
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
       if (_.get(viewerOptions, 'scale', true)) this.setupScaleControl()
@@ -83,8 +85,8 @@ export const baseMap = {
       this.onMapReady()
     },
     onMapReady () {
-      this.$emit('map-ready')
-      this.$engineEvents.emit('map-ready')
+      this.$emit('map-ready', 'leaflet')
+      this.$engineEvents.emit('map-ready', 'leaflet')
     },
     setupScaleControl () {
       // Add a scale control
@@ -346,8 +348,8 @@ export const baseMap = {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
         layer.isDisabled = this.isLayerDisabled(layer)
-        // Store the layer and make it reactive
-        this.$set(this.layers, layer.name, layer)
+        // Store the layer
+        this.layers[layer.name] = layer
         this.onLayerAdded(layer)
         // Handle the visibility state
         if (_.get(layer, 'leaflet.isVisible', false)) await this.showLayer(layer.name)
@@ -399,22 +401,22 @@ export const baseMap = {
       const layer = this.getLayerByName(previousName)
       const leafletLayer = this.getLeafletLayerByName(previousName)
       if (!layer) return
-      // Update underlying layer map if layer has been already shown
+      // Update underlying layer if layer has been already shown
       if (leafletLayer) {
         this.leafletLayers[newName] = leafletLayer
         delete this.leafletLayers[previousName]
       }
-      // Update underlying layer map, this one is reactive
-      this.$set(this.layers, newName, layer)
-      this.$delete(this.layers, previousName)
+      // Update underlying layer
+      this.layers[newName] = layer
+      delete this.layers[previousName]
     },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return
       // If it was visible remove it from map
       if (layer.isVisible) this.hideLayer(name)
-      // Delete the layer and make it reactive
-      this.$delete(this.layers, layer.name)
+      // Delete the layer
+      delete this.layers[layer.name]
       delete this.leafletLayers[name]
       this.onLayerRemoved(layer)
     },

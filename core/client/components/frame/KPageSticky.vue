@@ -1,6 +1,7 @@
 <template>
   <q-page-sticky
     v-if="hasContent"
+    class="k-sticky"
     :position="position"
     :offset="offset"
   >
@@ -45,3 +46,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .k-sticky {
+    z-index: $sticky-z-index;
+  }
+</style>

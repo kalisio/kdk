@@ -11,14 +11,15 @@
       >
         <!-- Field label -->
         <span class="col-xs-5 col-sm-4 col-3 text-caption">
-          {{ $t(field.field.label) }}
+          {{ getLabel(field) }}
         </span>
         <!-- Field value -->
         <component class="col"
           :is="field.component"
           v-bind="$props"
           :properties="field"
-          :readOnly="true" />
+          :readOnly="true"
+        />
       </div>
     </template>
     <!--
@@ -34,7 +35,7 @@
           >
             <!-- Field label -->
             <span class="col-xs-5 col-sm-4 col-3 text-caption">
-              {{ $t(field.field.label) }}
+              {{ getLabel(field) }}
             </span>
             <!-- Field value -->
             <component class="col"
@@ -50,6 +51,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { loadComponent } from '../../utils.js'
 
 export default {
@@ -79,6 +81,9 @@ export default {
     }
   },
   methods: {
+    getLabel (field) {
+      return this.$tie(_.get(field, 'field.label'))
+    },
     async refresh  () {
       // Clear the fields states
       this.fields = []
@@ -107,9 +112,9 @@ export default {
 
 <style lang="scss">
   .k-view-row {
-    border-bottom: solid 1px var(--q-color-secondary);
+    border-bottom: solid 1px $secondary;
   }
   .k-view-row:hover {
-    background: var(--q-color-secondary);
+    background: $secondary;
   }
 </style>

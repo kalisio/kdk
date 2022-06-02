@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import path from 'path-browserify'
 import logger from 'loglevel'
-import i18next from 'i18next'
 import shp from 'shpjs'
+import { i18n } from '../../../core/client/i18n.js'
 
 export const SHPReader = {
   async read (files, options) {
@@ -19,7 +19,7 @@ export const SHPReader = {
       }
       reader.onerror = (error) => {
         logger.debug(error)
-        reject(new Error(i18next.t('errors.CANNOT_READ_FILE', { file: shpFile.name }), { errors: error }))
+        reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: shpFile.name }), { errors: error }))
       }
       reader.readAsArrayBuffer(shpFile)
     }))
@@ -32,7 +32,7 @@ export const SHPReader = {
         }
         reader.onerror = (error) => {
           logger.debug(error)
-          reject(new Error(i18next.t('errors.CANNOT_READ_FILE', { file: prjFile.name }), { errors: error }))
+          reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: prjFile.name }), { errors: error }))
         }
         reader.readAsText(prjFile)
       }))
@@ -46,7 +46,7 @@ export const SHPReader = {
         }
         reader.onerror = (error) => {
           logger.debug(error)
-          reject(new Error(i18next.t('errors.CANNOT_READ_FILE', { file: dbfFile.name }), { errors: error }))
+          reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: dbfFile.name }), { errors: error }))
         }
         reader.readAsArrayBuffer(dbfFile)
       }))

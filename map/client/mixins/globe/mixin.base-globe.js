@@ -10,7 +10,7 @@ import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
 import { convertCesiumHandlerEvent } from '../../utils.js'
 // Cesium has its own dynamic module loader requiring to be configured
 // Cesium files need to be also added as static assets of the applciation
-BuildModuleUrl.setBaseUrl('./statics/Cesium/')
+BuildModuleUrl.setBaseUrl('/Cesium/')
 
 export const baseGlobe = {
   emits: [
@@ -67,8 +67,8 @@ export const baseGlobe = {
       this.onGlobeReady()
     },
     onGlobeReady () {
-      this.$emit('globe-ready')
-      this.$engineEvents.emit('globe-ready')
+      this.$emit('globe-ready', 'cesium')
+      this.$engineEvents.emit('globe-ready', 'cesium')
     },
     processCesiumLayerOptions (options) {
       // Because we update objects in place and don't want cesium internal objects to be reactive
@@ -222,8 +222,8 @@ export const baseGlobe = {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
         layer.isDisabled = this.isLayerDisabled(layer)
-        // Store the layer and make it reactive
-        this.$set(this.layers, layer.name, layer)
+        // Store the layer
+        this.layers[layer.name] = layer
         this.onLayerAdded(layer)
         // Handle the visibility state
         if (_.get(layer, 'cesium.isVisible', false)) await this.showLayer(layer.name)
@@ -238,14 +238,14 @@ export const baseGlobe = {
       const layer = this.getLayerByName(previousName)
       const cesiumLayer = this.getCesiumLayerByName(previousName)
       if (!layer) return
-      // Update underlying layer map if layer has been already shown
+      // Update underlying layer if layer has been already shown
       if (cesiumLayer) {
         this.cesiumLayers[newName] = cesiumLayer
         delete this.cesiumLayers[previousName]
       }
-      // Update underlying layer map, this one is reactive
-      this.$set(this.layers, newName, layer)
-      this.$delete(this.layers, previousName)
+      // Update underlying layer
+      this.layers[newName] = layer
+      delete this.layers[previousName]
     },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
@@ -256,8 +256,8 @@ export const baseGlobe = {
       if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         this.viewer.scene.primitives.remove(cesiumLayer)
       }
-      // Delete the layer and make it reactive
-      this.$delete(this.layers, layer.name)
+      // Delete the layer
+      delete this.layers[layer.name]
       delete this.cesiumLayers[name]
       this.onLayerRemoved(layer)
     },

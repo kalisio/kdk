@@ -17,7 +17,7 @@
 
 <script>
 import _ from 'lodash'
-import { baseModal, objectProxy, refsResolver } from '../../mixins'
+import { baseModal, objectProxy } from '../../mixins'
 import KModal from '../frame/KModal.vue'
 import KForm from '../form/KForm.vue'
 
@@ -29,8 +29,7 @@ export default {
   },
   mixins: [
     baseModal,
-    objectProxy,
-    refsResolver(['form'])
+    objectProxy
   ],
   props: {
     contextId: {

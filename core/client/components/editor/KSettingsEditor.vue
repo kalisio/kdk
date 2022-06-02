@@ -14,9 +14,10 @@
      -->
     <KModalEditor
       id="editor"
-      ref="editor"
+      :ref="onEditorCreated"
       service="settings"
       objectId="settings"
+      :router-mode="false"
       :schema-properties="schemaFilter"
       @applied="onSettingsEdited"
     />
@@ -42,12 +43,15 @@ export default {
     }
   },
   methods: {
+    onEditorCreated (ref) {
+      this.editor = ref
+    },
     editSettings () {
-      this.$refs.editor.openModal()
+      this.editor.openModal()
       this.$emit('triggered')
     },
     onSettingsEdited () {
-      this.$refs.editor.closeModal()
+      this.editor.closeModal()
     }
   }
 }

@@ -1,10 +1,10 @@
 <template>
   <KContent
-    v-bind="$props"
     v-bind:class="{
-      'row items-center justify-center no-wrap': direction === 'horizontal',
+      'row': direction === 'horizontal',
       'column': direction === 'vertical'
     }"
+    v-bind="$props"
     @triggered="$emit('triggered', arguments)"
   />
 </template>

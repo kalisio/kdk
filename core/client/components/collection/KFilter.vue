@@ -9,7 +9,7 @@
       borderless
       dense
       debounce="500"
-      @input="onSearch"
+      @update:model-value="onSearch"
     >
       <template v-slot:before>
         <div class="row">

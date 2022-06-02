@@ -1,7 +1,7 @@
 <template>
   <q-scroll-area
     id="scroll-area"
-    ref="scrollArea"
+    :ref="onScrollAreaCreated"
     :style="innerStyle"
     :thumb-style="thumbStyle"
     :bar-style="barStyle"
@@ -48,22 +48,25 @@ export default {
   watch: {
     maxHeight: {
       handler () {
-        this.height = Math.min(this.$refs.scrollArea.getScroll().verticalSize, this.maxHeight)
+        this.height = this.scrollArea ? Math.min(this.scrollArea.getScroll().verticalSize, this.maxHeight) : this.maxHeight
       }
     }
   },
   methods: {
+    onScrollAreaCreated (ref) {
+      this.scrollArea = ref
+    },
     onScrolled (info) {
       this.height = Math.min(info.verticalSize, this.maxHeight)
       this.$emit('scrolled', info)
     },
     setScrollPosition (axis, offset, duration) {
-      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition(axis, offset, duration)
+      if (this.scrollArea) this.scrollArea.setScrollPosition(axis, offset, duration)
     },
     getScrollPosition (axis) {
-      if (this.$refs.scrollArea) {
-        if (axis === 'vertical') return this.$refs.scrollArea.getScrollPosition().top
-        return this.$refs.scrollArea.getScrollPosition().left
+      if (this.scrollArea) {
+        if (axis === 'vertical') return this.scrollArea.getScrollPosition().top
+        return this.scrollArea.getScrollPosition().left
       }
       return 0
     }

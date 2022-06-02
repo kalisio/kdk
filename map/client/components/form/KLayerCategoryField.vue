@@ -12,7 +12,7 @@
     :options="availableCategories"
     option-label="name"
     option-value="name"
-    @input="onChanged">
+    @update:model-value="onChanged">
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper" />

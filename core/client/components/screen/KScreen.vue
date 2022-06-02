@@ -22,7 +22,7 @@
           <slot />
         </q-card-section>
         <q-card-section v-if="actions.length > 0">
-          <k-panel class="q-pa-none" id="frame-actions" :content="actions" />
+          <k-panel id="frame-actions" class="q-pa-none justify-center" :content="actions" />
         </q-card-section>
       </q-card>
       <!-- links -->
@@ -74,7 +74,7 @@ export default {
       backgroundColor: '#EFEFEF',
       textColor: 'black',
       banner: undefined,
-      frameBackgroundColor: '#EFEFEE',
+      frameBackgroundColor: '#FFFFFF',
       frameTextColor: 'black',
       links: [],
       footer: 'screen/KScreenFooter'

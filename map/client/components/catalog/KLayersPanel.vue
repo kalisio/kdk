@@ -16,7 +16,7 @@
           :default-opened="getDefaultOpened(category)"
           expand-separator>
           <component
-            :is="category.component"
+            :is="category.componentInstance"
             :layers="layersByCategory[category.name]"
             :forecastModels="forecastModels"
             :forecastModelHandlers="forecastModelHandlers"
@@ -33,13 +33,17 @@
 <script>
 import sift from 'sift'
 import _ from 'lodash'
-import path from 'path-browserify'
 import { loadComponent } from '../../../../core/client/utils'
+import { KScrollArea } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 import KLayersSelector from './KLayersSelector.vue'
 
 export default {
   name: 'k-layers-panel',
+  components: {
+    KScrollArea,
+    KLayersSelector
+  },
   mixins: [catalogPanel],
   props: {
     layers: {
@@ -124,7 +128,7 @@ export default {
     categorize () {
       _.forEach(this.layerCategories, category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
-        if (!category.component) category.component = loadComponent(component)
+        if (!category.componentInstance) category.componentInstance = loadComponent(component)
       })
     }
   },

@@ -33,6 +33,7 @@ export * from './filter.js'
 export * from './reader.js'
 export * from './sorter.js'
 export * from './search.js'
+export * from './i18n.js'
 export * from './guards.js'
 export * from '../common/index.js'
 export { utils }
@@ -59,8 +60,8 @@ export default function init () {
   Store.set('leftPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
-  Store.set('page', { content: null, mode: undefined, filter: {} })
-  Store.set('window', { widgets: [], filter: {}, position: null, size: null, current: '', widgetActions: [] })
+  Store.set('page', { content: null, mode: undefined, filter: {}, sticky: undefined })
+  Store.set('window', { widgets: [], filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] })
   Store.set('fab', { actions: [], filter: {} })
 
   // Listen to the 'patched' event on the users

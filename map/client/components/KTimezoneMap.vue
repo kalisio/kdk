@@ -1,5 +1,5 @@
 <template>
-  <div ref="map" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
+  <div :ref="configure" class="col" style="fontWeight: normal; zIndex: 0; position: relative">
     <q-resize-observer @resize="onMapResized" />
   </div>
 </template>
@@ -8,9 +8,9 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import { getCssVar } from 'quasar'
-import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
-import * as kMapMixins from '../mixins'
+import * as mixins from '../mixins'
 import { setGatewayJwt } from '../utils'
 import meta from 'moment-timezone/data/meta/latest.json'
 
@@ -32,8 +32,7 @@ export default {
     'timezone-selected'
   ],
   mixins: [
-    kCoreMixins.refsResolver(['map']),
-    kMapMixins.style,
+    mixins.style,
     mapMixins.baseMap,
     mapMixins.geojsonLayers,
     mapMixins.style,
@@ -128,6 +127,20 @@ export default {
         this.setTimezone(timezone)
         this.$emit('timezone-selected', timezone)
       }
+    },
+    configure (container) {
+      if (!container) return
+      this.setupMap(container, {
+        maxBounds: [[-90, -180], [90, 180]],
+        maxBoundsViscosity: 0.25,
+        minZoom: 3,
+        maxZoom: 6,
+        zoom: 3,
+        center: [0, 0],
+        scale: false,
+        geolocate: false
+      })
+      this.refreshBaseLayer()
     }
   },
   created () {
@@ -137,20 +150,7 @@ export default {
   },
   async mounted () {
     // Initialize component
-    await this.loadRefs()
-    this.setupMap(this.$refs.map, {
-      maxBounds: [[-90, -180], [90, 180]],
-      maxBoundsViscosity: 0.25,
-      minZoom: 3,
-      maxZoom: 6,
-      zoom: 3,
-      center: [0, 0],
-      scale: false,
-      geolocate: false
-    })
-    await this.refreshBaseLayer()
     this.setTimezone(this.value)
-    this.$engineEvents.emit('map-ready')
   },
   beforeUnmount () {
     this.$engineEvents.off('click', this.onTimezoneSelected)

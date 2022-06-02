@@ -45,7 +45,7 @@
         <k-action id="close-button" label="CLOSE" renderer="form-button" :handler="() => this.hide()" />
       </div>
       <div class="row justify-center">
-        <q-checkbox v-model="toggle" @input="onToggleIntroduction" :label="$t('KWelcome.HIDE_WELCOME')" color="primary" />
+        <q-checkbox v-model="toggle" @update:modelValue="onToggleIntroduction" :label="$t('KWelcome.HIDE_WELCOME')" color="primary" />
       </div>
     </q-card>
   </q-dialog>
@@ -53,6 +53,7 @@
 
 <script>
 import _ from 'lodash'
+import { openURL } from 'quasar'
 import KAction from '../frame/KAction.vue'
 
 export default {

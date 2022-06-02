@@ -189,3 +189,15 @@ export function compareImages (image1, image2, threshold, diffFilename) {
   if (diffFilename) fs.writeFileSync(diffFilename, png.PNG.sync.write(diff))
   return { diffRatio, diff }
 }
+
+/* Moves a slider in a choosen direction (right or left), for a specific times
+ */
+export async function moveSlider (page, action, direction, times, wait = 250) {
+  const selector = `#${action}`
+  const dir = (direction === 'left') ? 'ArrowLeft' : 'ArrowRight'
+  await page.focus(selector)
+  for (let i = 0; i < times; i++) {
+    await page.keyboard.press(dir)
+  }
+  await page.waitForTimeout(wait)
+}

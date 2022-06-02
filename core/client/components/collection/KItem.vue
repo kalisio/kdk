@@ -5,7 +5,7 @@
     -->
     <q-item-section v-if="options.toggle" side top>
       <slot name="item-toggle">
-        <q-checkbox v-model="toggled" @input="onItemToggled(toggled)"/>
+        <q-checkbox v-model="toggled" @update:modelValue="onItemToggled(toggled)"/>
       </slot>
     </q-item-section>
     <!--

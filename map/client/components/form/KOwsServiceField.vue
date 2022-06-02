@@ -19,7 +19,7 @@
     option-value="request"
     :loading="loading"
     @clear="onCleared"
-    @input="onUpdated">
+    @update:model-value="onUpdated">
     <template v-slot:append>
       <k-action v-if="canAddService" id="add-service" icon="add_circle" color="grey-7" :handler="onAddService" />
     </template>
@@ -230,7 +230,7 @@ export default {
       this.availableServices = response.data
     }
   },
-  async mounted () {
+  mounted () {
     this.refreshAvailableServices()
   }
 }

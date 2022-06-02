@@ -1,6 +1,6 @@
 <template>
   <div id="time-series" class="column" :style="widgetStyle">
-    <k-chart ref="chart" class="col q-pl-sm q-pr-sm" />
+    <k-chart id="timeseries-chart" :ref="onChartCreated" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
 
@@ -13,7 +13,7 @@ import Papa from 'papaparse'
 import { downloadAsBlob } from '../../../../core/client/utils'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
-import { baseWidget, refsResolver } from '../../../../core/client/mixins'
+import { baseWidget } from '../../../../core/client/mixins'
 import { KChart } from '../../../../core/client/components'
 import 'chartjs-adapter-moment'
 import { getCssVar } from 'quasar'
@@ -25,8 +25,7 @@ export default {
     KChart
   },
   mixins: [
-    baseWidget,
-    refsResolver(['chart'])
+    baseWidget
   ],
   props: {
     selection: {
@@ -173,6 +172,11 @@ export default {
       }
       return false
     },
+    onChartCreated (ref) {
+      if (ref && !this.chart) {
+        this.chart = ref
+      }
+    },
     async setupGraph () {
       if (!this.probedLocation) return
       // As we have async operations during the whole chart creation process avoid reentrance
@@ -210,8 +214,7 @@ export default {
             }]
           }
         }
-        await this.loadRefs()
-        this.$refs.chart.update({
+        this.chart.update({
           type: 'line',
           data: {
             labels: this.times,
@@ -463,8 +466,8 @@ export default {
     this.$events.on('time-range-changed', this.refresh)
     this.$events.on('time-format-changed', this.refresh)
     this.$events.on('timeseries-span-changed', this.refresh)
-    this.kActivity.on('forecast-model-changed', this.refresh)
-    this.kActivity.on('forecast-level-changed', this.refresh)
+    this.kActivity.$engineEvents.on('forecast-model-changed', this.refresh)
+    this.kActivity.$engineEvents.on('forecast-level-changed', this.refresh)
     // Initialize the time range
     const span = this.$store.get('timeseries.span')
     const start = moment(Time.getCurrentTime()).subtract(span, 'm')
@@ -477,8 +480,8 @@ export default {
     this.$events.off('time-range-changed', this.refresh)
     this.$events.off('time-format-changed', this.refresh)
     this.$events.off('timeseries-span-changed', this.refresh)
-    this.kActivity.off('forecast-model-changed', this.refresh)
-    this.kActivity.off('forecast-level-changed', this.refresh)
+    this.kActivity.$engineEvents.off('forecast-model-changed', this.refresh)
+    this.kActivity.$engineEvents.off('forecast-level-changed', this.refresh)
     this.kActivity.removeSelectionHighlight('time-series')
   }
 }

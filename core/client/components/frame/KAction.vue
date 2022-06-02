@@ -28,7 +28,7 @@
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
-    <slot name="content">
+    <slot>
     </slot>
   </q-btn>
   <!--
@@ -138,7 +138,7 @@
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
-    <slot name="content">
+    <slot>
     </slot>
   </q-btn>
 </template>
@@ -244,9 +244,9 @@ export default {
     computedLabel () {
       // Check also for translation key or already translated message
       if (this.isToggled && _.has(this.toggle, 'label')) {
-        return (this.$te(this.toggle.label) ? this.$t(this.toggle.label) : this.toggle.label)
+        return this.$tie(this.toggle.label)
       }
-      return (this.$te(this.label) ? this.$t(this.label) : this.label)
+      return this.$tie(this.label)
     },
     computedIcon () {
       if (this.isToggled && _.has(this.toggle, 'icon')) return this.toggle.icon
@@ -259,15 +259,15 @@ export default {
     computedTooltip () {
       // Check also for translation key or already translated message
       if (this.isToggled && _.has(this.toggle, 'tooltip')) {
-        return (this.$te(this.toggle.tooltip) ? this.$t(this.toggle.tooltip) : this.toggle.tooltip)
+        return this.$tie(this.toggle.tooltip)
       } else {
-        return (this.$te(this.tooltip) ? this.$t(this.tooltip) : this.tooltip)
+        return this.$tie(this.tooltip)
       }
     },
     computedBadgeLabel () {
       // Check also for translation key or already translated message
       if (this.badge && _.has(this.badge, 'label')) {
-        return (this.$te(this.badge.label) ? this.$t(this.badge.label) : this.badge.label)
+        return this.$tie(this.badge.label)
       } else {
         // Take care that changing this to null or '' breaks the display in Quasar
         return undefined
@@ -300,7 +300,7 @@ export default {
       })
       return params
     },
-    onClicked (event) {
+    async onClicked (event) {
       if (!this.propagate) event.stopPropagation()
       // Handle the toggle if needed
       if (this.toggle) {
@@ -308,16 +308,15 @@ export default {
       }
       // Handle the URL case
       if (this.url) openURL(this.url)
+      // Handle the callback case
+      if (this.handler) await this.handler(this.context, this.isToggled)
       // Handle the route case
-      else if (this.route) {
+      if (this.route) {
         // Process route params
         this.$router.push(Object.assign({
           query: this.bindRouteParams('query'),
           params: this.bindRouteParams('params')
         }, _.omit(this.route, ['query', 'params']))).catch(() => {})
-      } else if (this.handler) {
-        // Handle the callback case
-        this.handler(this.context, this.isToggled)
       }
       // Notify the listeners
       this.$emit('triggered', this.context, this.isToggled)

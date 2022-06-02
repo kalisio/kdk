@@ -40,11 +40,11 @@
               @remove="onFileRemoved(file)"
               removable />
           </template>
-          <k-uploader class="col-12" v-show="isUploaderVisible"
+          <!--k-uploader class="col-12" v-show="isUploaderVisible"
             ref="uploader"
             :resource="resource"
             @file-selection-changed="updateFiles"
-            :options="properties.field" />
+            :options="properties.field" /-->
         </div>
       </template>
       <!-- Helper -->
@@ -57,7 +57,7 @@
 
 <script>
 import _ from 'lodash'
-import { KUploader } from '../input'
+import KUploader from '../input/KUploader.vue'
 import { baseField } from '../../mixins'
 
 export default {
@@ -102,11 +102,13 @@ export default {
       } else {
         this.files = (!_.isEmpty(this.model) ? [this.model] : [])
       }
+      /* TODO
       if (!this.readOnly) {
         // We need to force a refresh so that the prop is correctly updated by Vuejs in child component
         await this.$nextTick()
         this.$refs.uploader.initialize(this.files)
       }
+      */
     },
     async apply (object, field) {
       // If not processing uploads on-the-fly upload when the form is being submitted on update

@@ -1,7 +1,7 @@
 import logger from 'loglevel'
 import _ from 'lodash'
-import i18next from 'i18next'
 import geojsonhint from '@mapbox/geojsonhint'
+import { i18n } from '../../../core/client/i18n.js'
 
 export const GeoJSONReader = {
   read (files, options) {
@@ -18,7 +18,7 @@ export const GeoJSONReader = {
         try {
           content = JSON.parse(content)
         } catch (error) {
-          reject(new Error(i18next.t('errors.INVALID_JSON_FILE', { file: file.name }), { errors: error }))
+          reject(new Error(i18n.t('errors.INVALID_JSON_FILE', { file: file.name }), { errors: error }))
           return
         }
         // check the crs
@@ -31,7 +31,7 @@ export const GeoJSONReader = {
             const allowedCrs = ['epsg:4326', 'urn:ogc:def:crs:OGC:1.3:CRS84', 'urn:ogc:def:crs:EPSG::4326']
             const isCrsValid = _.some(allowedCrs, (allowrdCrs) => { return allowrdCrs.toLowerCase() === crs })
             if (!isCrsValid) {
-              reject(new Error(i18next.t('errors.INVALID_GEOJSON_CRS', { file: file.name }), { errors: `Invalid CRS ${name}` }))
+              reject(new Error(i18n.t('errors.INVALID_GEOJSON_CRS', { file: file.name }), { errors: `Invalid CRS ${name}` }))
               return
             }
             delete content.crs
@@ -45,7 +45,7 @@ export const GeoJSONReader = {
         })
         if (errors.length > 0) {
           logger.debug(errors)
-          reject(new Error(i18next.t('errors.INVALID_GEOJSON_FILE', { file: file.name }), { errors }))
+          reject(new Error(i18n.t('errors.INVALID_GEOJSON_FILE', { file: file.name }), { errors }))
           return
         }
         // the geosjon file is correct
@@ -53,7 +53,7 @@ export const GeoJSONReader = {
       }
       reader.onerror = (error) => {
         logger.debug(error)
-        reject(new Error(i18next.t('errors.CANNOT_READ_FILE', { file: file.name }), { errors: error }))
+        reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: file.name }), { errors: error }))
       }
       reader.readAsText(file)
     })

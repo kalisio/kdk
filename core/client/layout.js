@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import path from 'path-browserify'
 import logger from 'loglevel'
 import sift from 'sift'
 import { uid } from 'quasar'
@@ -102,12 +101,8 @@ export const Layout = {
       // If not a functional call the target property can be a reactive one
       // so that we "bind" it to the component instead of "filter" the component here
       component.isVisible = isVisible
-      // Define the component key
-      const componentName = _.get(component, 'component', 'frame/KAction')
-      const componentKey = _.kebabCase(path.basename(componentName))
       // Clone the component and add the required props
-      component.componentName = componentName
-      component.componentKey = componentKey
+      component.name = _.get(component, 'component', 'frame/KAction')
       component.uid = uid()
       processedComponents.push(component)
     })

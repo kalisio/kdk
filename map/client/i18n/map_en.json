@@ -4,18 +4,18 @@
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
     "GEOLOCATION_ERROR": "We are not able to locate your position, this might affect some features of the application.",
-    "GEOLOCATION_PERMISSION_DENIED": "$t(errors.GEOLOCATION_ERROR)</br>It seems you did not give permission to locate you.",
-    "GEOLOCATION_POSITION_UNAVAILABLE": "$t(errors.GEOLOCATION_ERROR)</br>It seems the internal source of position returned an internal error.",
-    "GEOLOCATION_POSITION_TIMEOUT": "$t(errors.GEOLOCATION_ERROR)</br>It seems the time allowed to acquire it was reached before the information was obtained.",
+    "GEOLOCATION_PERMISSION_DENIED": "@:errors.GEOLOCATION_ERROR</br>It seems you did not give permission to locate you.",
+    "GEOLOCATION_POSITION_UNAVAILABLE": "@:errors.GEOLOCATION_ERROR</br>It seems the internal source of position returned an internal error.",
+    "GEOLOCATION_POSITION_TIMEOUT": "@:errors.GEOLOCATION_ERROR</br>It seems the time allowed to acquire it was reached before the information was obtained.",
     "CANNOT_PROCESS_SCHEMA_DATA": "Invalid or incomplete data scheme",
     "ALERTS_LIMIT": "Too much alerts to display all of them",
     "FILE_IMPORT_ERROR": "File import has failed",
     "CANNOT_CHECK_ALERT_MISSING_SERVICE": "Last check failed due to unavailable service",
     "CANNOT_CHECK_ALERT_MISSING_DATA": "Last check failed due to unavailable data",
-    "INVALID_GEOJSON_FILE": "{{file}} is not a valid GeoJSON file",
-    "INVALID_GEOJSON_CRS": "{{file}} has an unsupported Coordinates Reference System (CRS)",
-    "INVALID_GPX_FILE": "{{file}} is not a valid GPX file",
-    "INVALID_KML_FILE": "{{file}} is not a valid KML file"
+    "INVALID_GEOJSON_FILE": "{file} is not a valid GeoJSON file",
+    "INVALID_GEOJSON_CRS": "{file} has an unsupported Coordinates Reference System (CRS)",
+    "INVALID_GPX_FILE": "{file} is not a valid GPX file",
+    "INVALID_KML_FILE": "{file} is not a valid KML file"
   },
   "mixins": {
     "navigator": {
@@ -30,12 +30,12 @@
     "activity": {
       "ADD_LAYER": "Add a new layer",
       "SAVE_LABEL": "Save layer",
-      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {{processed}} over {{total}} features",
+      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {{features.length}} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {features.length} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
       "DOWNLOAD_INVALID_FEATURES_LABEL": "By checking this option the invalid features will be exported to a file before saving",
       "INVALID_FEATURES_FILE": "InvalidFeatures.geojson",
-      "SAVE_DIALOG_TITLE": "Tiling layer {{layer}}",
+      "SAVE_DIALOG_TITLE": "Tiling layer {layer}",
       "SAVE_DIALOG_MESSAGE": "Your layer contains too much elements and has been optimized to be smoothly displayed.</br>As a consequence, it will only be visible at a local scale from a given zoom level.",
       "EDIT_LABEL": "Edit properties",
       "EDIT_LAYER_STYLE_LABEL": "Edit style",
@@ -47,8 +47,8 @@
       "EDITING_DATA_MESSAGE": "Editing",
       "REMOVE_LABEL": "Remove",
       "REMOVING_LABEL": "Please wait while removing layer data",
-      "REMOVE_DIALOG_TITLE": "Remove {{layer}} ?",
-      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{{layer}}</b> from your workspace ?",
+      "REMOVE_DIALOG_TITLE": "Remove {layer} ?",
+      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{layer}</b> from your workspace ?",
       "ZOOM_TO_LABEL": "Zoom to",
       "ZOOM_IN": "Zoom in",
       "ZOOM_OUT": "Zoom out",
@@ -192,16 +192,12 @@
     "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
   },
   "schemas": {
-    "OBJECT_NAME": "{{ object.name }}",
+    "OBJECT_NAME": "{ object.name }",
     "CATALOG_CREATE_TITLE": "Create a new data layer",
     "CATALOG_NAME_FIELD_LABEL": "Enter the name of the new layer",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
     "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme",
-    "CREAT_VIEW_TITLE": "Create a new view ?",
-    "CREATE_VIEW_NAME_FIELD_LABEL": "Enter the name of this view",
-    "CREATE_VIEW_DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
-    "CREATE_VIEW_LAYERS_FIELD_LABEL": "Save the active layers",
     "LAYER_CATEGORY_CREATE_TITLE": "Create a new category?",
     "LAYER_CATEGORY_NAME_FIELD_LABEL": "Enter the name of this category",
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Select an icon for this category",
@@ -334,8 +330,8 @@
     "UNSUPPORTED_LAYER_FORMAT": "The data format used by this layer is not supported."
   },
   "KLocationField": {
-    "SEARCH": "$t(SEARCH)",
-    "NO_RESULTS": "$t(EMPTY)"
+    "SEARCH": "@:SEARCH",
+    "NO_RESULTS": "@:EMPTY"
   },
   "KLocationMap": {
     "DRAW_LINE": "Draw a line",
@@ -376,7 +372,7 @@
   "KViewsPanel": {
     "VIEWS_LABEL": "My views",
     "SORT_VIEWS": "Sort view",
-    "REMOVE_VIEW": "$t(REMOVE)",
+    "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Default view"
   },
   "KUserLayersPanel": {
@@ -386,7 +382,7 @@
     "LAYERS_LABEL": "Catalog"
   },  
   "KFeaturesFilter": {
-    "TITLE": "Data filter for layer {{layer}}",
+    "TITLE": "Data filter for layer",
     "SELECT_PROPERTY_LABEL": "Select a target property to start",
     "ADD_FILTER": "Select a target property to add a filter on",
     "REMOVE_FILTER": "Remove filter for this value",
@@ -398,11 +394,11 @@
     "LOWER_THAN": "value lower than"
   },
   "KFeaturesTable": {
-    "TITLE": "Data for layer {{layer}}"
+    "TITLE": "Data for layer"
   },
   "KFeaturesChart": {
     "SELECT_PROPERTY_LABEL": "Select a target property to start",
-    "TITLE": "Graph for layer {{layer}}",
+    "TITLE": "Graphs for layer",
     "PROPERTY_LABEL": "Target property",
     "CHART_LABEL": "Chart type",
     "PAGINATION_LABEL": "Number of values",
@@ -420,7 +416,7 @@
     "CHART_COUNT_LABEL": "Count",
     "CHART_SETTINGS_LABEL": "Graph settings",
     "CHART_EXPORT_LABEL": "Export data",
-    "CHART_EXPORT_FILE": "Chart-{{layer}}.csv"
+    "CHART_EXPORT_FILE": "Chart-{layer}.csv"
   },
   "KLayerStyleForm": {
     "BASE": "Base properties",
@@ -492,7 +488,7 @@
     "PROPERTIES_COPIED": "Values copied to clipboard",
     "CANNOT_COPY_PROPERTIES": "Unable to copy the values to clipboard. Your browser does not support this functionality",
     "EXPORT_FEATURE": "Export the object",
-    "FEATURE_EXPORTED": "Object exported to file {{file}}",
+    "FEATURE_EXPORTED": "Object exported to file {file}",
     "CANNOT_EXPORT_FEATURE": "Unable to export the object. Your browser does not support this functionality"
   },
   "KMapillaryViewer": {
@@ -512,8 +508,8 @@
     "ADD_BUTTON": "Add",
     "EDIT_BUTTON": "Update",
     "CATEGORY_LIST": "Back to list",
-    "EDIT_CATEGORY": "$t(EDIT)",
-    "REMOVE_CATEGORY": "$t(REMOVE)"
+    "EDIT_CATEGORY": "@:EDIT",
+    "REMOVE_CATEGORY": "@:REMOVE"
   },
   "KAddLayer": {
     "TITLE": "Add a new layer",
@@ -524,29 +520,35 @@
   },
   "KImportLayer": {
     "FILE_FIELD_LABEL": "Select the file to import",
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "IMPORT_BUTTON": "Import"
   },
   "KConnectLayer": {
     "SERVICE_FIELD_LABEL": "Select or enter a query to get the capabilities of the remote service",
     "LAYER_FIELD_LABEL": "Select the layer to access to",
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
     "STYLE_FIELD_LABEL": "Select the style of the new layer",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CONNECT_BUTTON": "Connect"
   },
   "KCreateLayer": {
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
-    "CATALOG_SCHEMA_FIELD_LABEL": "$t(schemas.CATALOG_SCHEMA_FIELD_LABEL)",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "CATALOG_SCHEMA_FIELD_LABEL": "@:schemas.CATALOG_SCHEMA_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CREATE_BUTTON": "Create"
+  },
+  "KCreateView": {
+    "MODAL_TITLE": "Create a new view ?",
+    "NAME_FIELD_LABEL": "Enter the name of this view",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
+    "LAYERS_FIELD_LABEL": "Save the active layers"
   },
   "KLayerEditionToolbar": {
     "ADD_POLYGON_FEATURES": "Add polygon features",
@@ -594,7 +596,7 @@
     "PROFILE_COPIED": "Profile copied to clipboard",
     "CANNOT_COPY_PROFILE": "Unable to copy the profile to clipboard. Your browser does not support this functionality",
     "EXPORT_PROFILE": "Export the profile",
-    "PROFILE_EXPORTED": "Profile exported to file {{file}}",
+    "PROFILE_EXPORTED": "Profile exported to file {file}",
     "CANNOT_EXPORT_PROFILE": "Unable to export the profile. Your browser does not support this functionality"
   }
 }

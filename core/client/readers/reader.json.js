@@ -1,5 +1,5 @@
 import logger from 'loglevel'
-import i18next from 'i18next'
+import { i18n } from '../i18n.js'
 
 export const JSONReader = {
   read (files, options) {
@@ -17,13 +17,13 @@ export const JSONReader = {
           content = JSON.parse(content)
         } catch (error) {
           logger.debug(error)
-          reject(new Error(i18next.t('errors.INVALID_JSON_FILE', { file }), { errors: error }))
+          reject(new Error(i18n.t('errors.INVALID_JSON_FILE', { file }), { errors: error }))
         }
         resolve(content)
       }
       reader.onerror = (error) => {
         logger.debug(error)
-        reject(new Error(i18next.t('errors.CANNOT_READ_FILE', { file }), { errors: error }))
+        reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file }), { errors: error }))
       }
       reader.readAsText(file)
     })

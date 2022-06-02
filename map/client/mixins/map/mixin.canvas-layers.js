@@ -354,7 +354,7 @@ L.kanvasLayer = function (options) {
   return new L.KanvasLayer(options)
 }
 
-export const canvasLayer = {
+export const canvasLayers = {
   methods: {
     createLeafletCanvasLayer (options) {
       const layerOptions = options.leaflet || options

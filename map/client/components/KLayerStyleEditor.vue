@@ -1,12 +1,12 @@
 <template>
-  <k-modal ref="modal"
+  <k-modal
     id="layer-style-modal"
     :title="$t('KLayerStyleEditor.EDIT_LAYER_STYLE_TITLE')"
     :buttons="buttons"
     :options="{}"
     v-model="isModalOpened">
     <div>
-      <k-layer-style-form :class="{ 'light-dimmed': inProgress }" ref="form"
+      <k-layer-style-form :class="{ 'light-dimmed': inProgress }" :ref="onFormCreated"
         :options="options" :layer="layer"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="inProgress" size="4em"/>
     </div>
@@ -16,12 +16,14 @@
 <script>
 import logger from 'loglevel'
 import _ from 'lodash'
+import config from 'config'
 import { mixins as kCoreMixins } from '../../../core/client'
 import { KModal } from '../../../core/client/components'
 import KLayerStyleForm from './KLayerStyleForm.vue'
 
 export default {
   name: 'k-layer-style-editor',
+  inject: ['kActivity', 'layer'],
   components: {
     KModal,
     KLayerStyleForm
@@ -30,13 +32,12 @@ export default {
     'applied'
   ],
   mixins: [
-    kCoreMixins.baseModal,
-    kCoreMixins.refsResolver()
+    kCoreMixins.baseModal
   ],
   props: {
-    layer: {
-      type: Object,
-      required: true
+    layerId: {
+      type: String,
+      default: ''
     },
     contextId: {
       type: String,
@@ -61,21 +62,15 @@ export default {
     }
   },
   methods: {
-    async open () {
-      if (!this.$refs.modal) {
-        this.setRefs(['modal'])
-        await this.loadRefs()
+    onFormCreated (ref) {
+      if (ref && !this.form) {
+        this.form = ref
+        // Pick engine-based and generic styling options
+        this.form.fill(_.pick(this.layer, ['leaflet', 'isSelectable']))
       }
-      this.openModal()
-      if (!this.$refs.form) {
-        this.setRefs(['form'])
-        await this.loadRefs()
-      }
-      // Pick engine-based and generic styling options
-      this.$refs.form.fill(_.pick(this.layer, ['leaflet', 'isSelectable']))
     },
     async onApply () {
-      const result = this.$refs.form.validate()
+      const result = this.form.validate()
       if (!result.isValid) return
       this.inProgress = true
       // If saved layer update it in DB
@@ -89,8 +84,25 @@ export default {
       }
       // Update in memory
       _.forOwn(result.values, (value, key) => _.set(this.layer, key, value))
+      // Actual layer update should be triggerred by real-time event
+      // but as we might have in-memory only layer or not always use sockets we should perform it explicitely in this case
+      if (!this.layer._id || (config.transport !== 'websocket')) {
+        // Keep track of data as we will reset the layer
+        const geoJson = this.kActivity.toGeoJson(this.layer.name)
+        // Reset layer with new setup
+        await this.kActivity.resetLayer(this.layer)
+        // Update data only when in memory as reset has lost it
+        if (!this.layer._id) {
+          this.kActivity.updateLayer(this.layer.name, geoJson)
+        }
+      }
       this.inProgress = false
-      this.$emit('applied')
+      this.closeModal()
+    },
+    async openModal () {
+      // If not injected load it
+      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      kCoreMixins.baseModal.methods.openModal.call(this)
     }
   }
 }

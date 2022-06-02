@@ -21,14 +21,10 @@ export const baseField = {
   },
   computed: {
     label () {
-      // Check if we have a translation key or directly the label content
-      const label = _.get(this.properties.field, 'label', '')
-      return (this.$te(label) ? this.$t(label) : label)
+      return this.$tie(_.get(this.properties.field, 'label', ''))
     },
     helper () {
-      // Check if we have a translation key or directly the helper content
-      const helper = _.get(this.properties.field, 'helper', '')
-      return (this.$te(helper) ? this.$t(helper) : helper)
+      return this.$tie(_.get(this.properties.field, 'helper', ''))
     },
     hasError () {
       return !_.isEmpty(this.error)
@@ -39,7 +35,7 @@ export const baseField = {
       // If not use default validator error messages
       if (!error) error = this.error
       // Else check if we have a translation key or directly the error content
-      return (this.$te(error) ? this.$t(error) : error)
+      return this.$tie(error)
     },
     disabled () {
       return _.get(this.properties.field, 'disabled', false)

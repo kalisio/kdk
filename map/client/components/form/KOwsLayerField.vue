@@ -16,7 +16,7 @@
     option-value="id"
     :loading="loading"
     @filter="onFilter"
-    @input="onUpdated">
+    @update:model-value="onUpdated">
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item

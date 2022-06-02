@@ -15,7 +15,8 @@
     option-label="name"
     option-value="name"
     @filter="onSearch"
-    @input="onUpdated">
+    @update:model-value="onUpdated"
+  >
     <template v-slot:prepend>
       <q-icon dense name="search" />
     </template>

@@ -8,7 +8,8 @@
     :navigation="hasMedia"
     :arrows="hasMedia"
     animated infinite
-    @input="onCurrentMediaChanged">
+    @update:model-value="onCurrentMediaChanged"
+  >
     <!--
       Slides
       -->
@@ -40,10 +41,8 @@ import mime from 'mime'
 import KPanel from '../frame/KPanel.vue'
 import KImageViewer from '../media/KImageViewer.vue'
 import { downloadAsBlob } from '../../utils'
-import { refsResolver } from '../../mixins'
 
 export default {
-  mixins: [refsResolver(['carousel'])],
   components: {
     KPanel,
     KImageViewer
@@ -138,8 +137,7 @@ export default {
           const data = await this.storageService().get(media._id)
           Object.assign(media, { uri: data.uri })
         }
-        // Required to use $set when modifying an object inside an array to make it reactive
-        this.$set(this.medias, index, media)
+        this.medias[index] = media
       }
     },
     onClose () {
@@ -150,7 +148,6 @@ export default {
       this.medias = medias
       this.currentMedia = null
       this.opened = true
-      await this.loadRefs()
       // Then open the modal
       this.$refs.carousel.setFullscreen()
       // Quasar does not send the silde event on first display

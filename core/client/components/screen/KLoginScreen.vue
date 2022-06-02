@@ -81,7 +81,7 @@ export default {
             window.localStorage.setItem('klogin.email', result.values.email)
           }
         } catch (error) {
-          this.$toast({ message: this.$t('KLogin.LOGIN_ERROR') })
+          this.$toast({ message: this.$t('KLoginScreen.LOGIN_ERROR') })
         }
         this.loading = false
       }

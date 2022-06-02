@@ -28,7 +28,7 @@
       bottom-slots
       :options="options"
       @filter="onSearch"
-      @input="onSelected"
+      @update:model-value="onSelected"
       @new-value="onAdded">
       <!-- Value display -->
       <template v-slot:selected-item="scope">

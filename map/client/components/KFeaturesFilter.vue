@@ -1,5 +1,5 @@
 <template>
-  <k-modal ref="modal"
+  <k-modal
     id="features-filter-modal"
     :title="title"
     :buttons="buttons"
@@ -14,7 +14,7 @@
         <q-item-section>
           <component
             :is="filter.component"
-            :ref="filter.key"
+            :ref="filter.onComponentCreated"
             :properties="filter.properties"
             :display="{ icon: false, label: false }"
             @field-changed="filter.onValueChanged"
@@ -53,6 +53,7 @@ import { KModal } from '../../../core/client/components'
 
 export default {
   name: 'k-features-filter',
+  inject: ['kActivity', 'layer'],
   components: {
     KModal
   },
@@ -60,13 +61,12 @@ export default {
     'applied'
   ],
   mixins: [
-    kCoreMixins.baseModal,
-    kCoreMixins.refsResolver()
+    kCoreMixins.baseModal
   ],
   props: {
-    layer: {
-      type: Object,
-      required: true
+    layerId: {
+      type: String,
+      default: ''
     },
     contextId: {
       type: String,
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     title () {
-      return this.$t('KFeaturesFilter.TITLE', { layer: this.layer.name })
+      return this.$t('KFeaturesFilter.TITLE') + ` ${this.layer.name}`
     },
     buttons () {
       return [
@@ -137,6 +137,7 @@ export default {
         operator: (componentName !== 'form/KNumberField' ? '$in' : '$eq'),
         property,
         properties,
+        onComponentCreated: (ref) => { if (ref) ref.fill(filter.value) },
         onValueChanged: (field, value) => { filter.value = value }
       }
       return Object.assign(filter, options)
@@ -165,37 +166,29 @@ export default {
           }
         }
       }
-      // Set the refs to be resolved
-      if (this.filters.length) {
-        this.setRefs(this.filters.map(filter => filter.key))
-        await this.loadRefs()
-      }
-      // Then fill the fields
-      this.filters.forEach(filter => this.$refs[filter.key][0].fill(filter.value))
-      logger.debug('Built layer filter', this.filters)
     },
     getOperators (filter) {
       let operators = []
       if (filter.componentName === 'form/KNumberField') {
         operators = operators.concat([{
-          label: this.$i18n.t('KFeaturesFilter.EQUAL'),
+          label: this.$t('KFeaturesFilter.EQUAL'),
           value: '$eq'
         }, {
-          label: this.$i18n.t('KFeaturesFilter.NOT_EQUAL'),
+          label: this.$t('KFeaturesFilter.NOT_EQUAL'),
           value: '$neq'
         }, {
-          label: this.$i18n.t('KFeaturesFilter.GREATER_THAN'),
+          label: this.$t('KFeaturesFilter.GREATER_THAN'),
           value: '$gt'
         }, {
-          label: this.$i18n.t('KFeaturesFilter.LOWER_THAN'),
+          label: this.$t('KFeaturesFilter.LOWER_THAN'),
           value: '$lt'
         }])
       } else {
         operators = operators.concat([{
-          label: this.$i18n.t('KFeaturesFilter.IN'),
+          label: this.$t('KFeaturesFilter.IN'),
           value: '$in'
         }, {
-          label: this.$i18n.t('KFeaturesFilter.NOT_IN'),
+          label: this.$t('KFeaturesFilter.NOT_IN'),
           value: '$nin'
         }])
       }
@@ -240,13 +233,15 @@ export default {
       } else {
         delete this.layer.badge
       }
-      this.$emit('applied')
+      // Reset layer with new setup
+      await this.kActivity.resetLayer(this.layer)
+      this.closeModal()
     },
-    async open () {
-      this.setRefs(['modal'])
-      await this.loadRefs()
-      this.openModal()
+    async openModal () {
+      // If not injected load it
+      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
       await this.build()
+      kCoreMixins.baseModal.methods.openModal.call(this)
     }
   }
 }

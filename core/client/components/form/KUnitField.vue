@@ -7,15 +7,17 @@
     v-model="model"
     :label="label"
     :options="options"
-    @change="onChanged"
-    @blur="onChanged"
-    @input='onChanged'
     emit-value
     map-options
     :error="hasError"
     :error-message="errorLabel"
     :disabled="disabled"
-    bottom-slots>
+    bottom-slots
+    @change="onChanged"
+    @blur="onChanged"
+    @update:model-value='onChanged'
+
+  >
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item
@@ -48,7 +50,7 @@ export default {
       return units.map(unit => {
         // Check if we have a translation key or directly the label content
         const label = _.get(unit, 'label', '')
-        return { value: unit.name, label: (this.$te(label) ? this.$t(label) : label) }
+        return { value: unit.name, label: this.$tie(label) }
       })
     }
   }

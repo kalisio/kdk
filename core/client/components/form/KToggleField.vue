@@ -4,20 +4,21 @@
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
-    :value="model"
+    v-model="model"
     :label="label"
     borderless
     :error-message="errorLabel"
     :error="hasError"
-    :disabled="disabled"
+    :disable="disabled"
     bottom-slots
   >
-    <!-- Content -->
-    <template v-slot:default>
+    <!-- Control -->
+    <template v-slot:control>
       <q-toggle
         :id="properties.name + '-field'"
         v-model="model"
-        @blur="onChanged" />
+        @blur="onChanged"
+      />
     </template>
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>

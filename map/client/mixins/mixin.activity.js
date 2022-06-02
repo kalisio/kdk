@@ -1,7 +1,5 @@
 import _ from 'lodash'
-import i18next from 'i18next'
 import logger from 'loglevel'
-import centroid from '@turf/centroid'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
 import { Layout } from '../../../core/client/layout.js'
@@ -17,7 +15,8 @@ export const activity = {
       engine: 'leaflet',
       engineReady: false,
       engineContainerWidth: null,
-      engineContainerHeight: null
+      engineContainerHeight: null,
+      selectedLayer: null
     }
   },
   computed: {
@@ -65,11 +64,14 @@ export const activity = {
         // Process i18n
         if (layer.i18n) {
           const locale = kCoreUtils.getAppLocale()
-          const i18n = _.get(layer.i18n, locale)
-          if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
+          const fallbackLocale = kCoreUtils.getAppFallbackLocale()
+          let i18n = _.get(layer.i18n, locale)
+          if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
+          i18n = _.get(layer.i18n, fallbackLocale)
+          if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
         }
-        if (this.$t(layer.name)) layer.label = this.$t(layer.name)
-        if (this.$t(layer.description)) layer.description = this.$t(layer.description)
+        if (layer.name && this.$te(layer.name)) layer.label = this.$t(layer.name)
+        if (layer.description && this.$te(layer.description)) layer.description = this.$t(layer.description)
         // Check for Weacast API availability
         const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
         if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) return
@@ -105,11 +107,14 @@ export const activity = {
       // Process i18n
       if (category.i18n) {
         const locale = kCoreUtils.getAppLocale()
-        const i18n = _.get(category.i18n, locale)
-        if (i18n) i18next.addResourceBundle(locale, 'kdk', i18n, true, true)
+        const fallbackLocale = kCoreUtils.getAppFallbackLocale()
+        let i18n = _.get(category.i18n, locale)
+        if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
+        i18n = _.get(category.i18n, fallbackLocale)
+        if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
       }
-      if (this.$t(category.name)) category.label = this.$t(category.name)
-      if (this.$t(category.description)) category.description = this.$t(category.description)
+      if (category.name && this.$te(category.name)) category.label = this.$t(category.name)
+      if (category.description && this.$te(category.description)) category.description = this.$t(category.description)
       this.layerCategories.push(category)
     },
     async refreshLayerCategories () {
@@ -188,8 +193,8 @@ export const activity = {
       actions = Layout.bindContent(_.cloneDeep(actions), this)
       // Add 'virtual' action used to trigger the layer
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
-      // Store the actions and make it reactive
-      this.$set(layer, 'actions', actions)
+      // Store the actions
+      layer.actions = actions
       return actions
     },
     onLayerAdded (layer) {
@@ -212,6 +217,9 @@ export const activity = {
     onZoomOut () {
       const center = this.getCenter()
       this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel - 1 : center.altitude * 2)
+    },
+    onSelectLayer (layer) {
+      this.selectedLayer = layer
     },
     onZoomToLayer (layer) {
       this.zoomToLayer(layer.name)
@@ -301,111 +309,6 @@ export const activity = {
         await this.resetLayer(createdLayer)
       }
     },
-    async onFilterLayerData (layer) {
-      this.filterModal = await this.$createComponent('KFeaturesFilter', {
-        propsData: {
-          contextId: this.contextId,
-          layer
-        }
-      })
-      this.filterModal.$mount()
-      this.filterModal.open()
-      this.filterModal.$on('applied', async () => {
-        // Reset layer with new setup
-        await this.resetLayer(layer)
-        this.filterModal.closeModal()
-      })
-      this.filterModal.$on('closed', () => {
-        this.filterModal = null
-      })
-    },
-    async onViewLayerData (layer) {
-      this.viewModal = await this.$createComponent('KFeaturesTable', {
-        propsData: {
-          contextId: this.contextId,
-          layer,
-          featureActions: [{
-            name: 'zoom-to',
-            tooltip: this.$t('mixins.activity.ZOOM_TO_LABEL'),
-            icon: 'zoom_out_map',
-            handler: (context) => {
-              // Use altitude or zoom level depending on engine
-              this.center(..._.get(centroid(context.item), 'geometry.coordinates'), this.is2D() ? 18 : 750)
-              this.viewModal.closeModal()
-            }
-          }]
-        }
-      })
-      this.viewModal.$mount()
-      this.viewModal.open()
-      this.viewModal.$on('closed', () => {
-        this.viewModal = null
-      })
-    },
-    async onChartLayerData (layer) {
-      this.chartModal = await this.$createComponent('KFeaturesChart', {
-        propsData: {
-          contextId: this.contextId,
-          layer
-        }
-      })
-      this.chartModal.$mount()
-      this.chartModal.open()
-      this.chartModal.$on('closed', () => {
-        this.chartModal = null
-      })
-    },
-    async onEditLayer (layer) {
-      this.editModal = await this.$createComponent('editor/KModalEditor', {
-        propsData: {
-          service: 'catalog',
-          contextId: this.contextId,
-          objectId: layer._id
-        }
-      })
-      this.editModal.$mount()
-      this.editModal.openModal()
-      this.editModal.$on('applied', updatedLayer => {
-        // Actual layer update should be triggerred by real-time event
-        // but as we might not always use sockets perform it anyway
-        // If renamed need to update the layer map accordingly
-        if (layer.name !== updatedLayer.name) {
-          this.renameLayer(layer.name, updatedLayer.name)
-        }
-        Object.assign(layer, updatedLayer)
-        this.editModal.closeModal()
-      })
-      this.editModal.$on('closed', () => {
-        this.editModal = null
-      })
-    },
-    async onEditLayerStyle (layer) {
-      this.editStyleModal = await this.$createComponent('KLayerStyleEditor', {
-        propsData: {
-          contextId: this.contextId,
-          layer,
-          options: this.activityOptions.engine
-        }
-      })
-      this.editStyleModal.$mount()
-      this.editStyleModal.open()
-      this.editStyleModal.$on('applied', async () => {
-        // Actual layer update should be triggerred by real-time event
-        // but as we might not always use sockets perform it anyway
-        // Keep track of data as we will reset the layer
-        const geoJson = this.toGeoJson(layer.name)
-        // Reset layer with new setup
-        await this.resetLayer(layer)
-        // Update data only when in memory as reset has lost it
-        if (!layer._id) {
-          this.updateLayer(layer.name, geoJson)
-        }
-        this.editStyleModal.closeModal()
-      })
-      this.editStyleModal.$on('closed', () => {
-        this.editStyleModal = null
-      })
-    },
     editLayerByName (name, editOptions = {}) {
       // this one is used through postRobot to trigger edition
       // on a layer
@@ -462,17 +365,13 @@ export const activity = {
         Loading.hide()
       })
     },
-    onMapReady () {
+    onEngineReady (engine) {
+      this.engine = engine
       this.engineReady = true
-      this.engine = 'leaflet'
-    },
-    onGlobeReady () {
-      this.engineReady = true
-      this.engine = 'cesium'
     },
     onProbeLocation () {
       this.setCursor('probe-cursor')
-      this.$once('click', () => {
+      this.$engineEvents.once('click', () => {
         this.unsetCursor('probe-cursor')
       })
     },
@@ -560,13 +459,13 @@ export const activity = {
     }
   },
   mounted () {
-    this.$engineEvents.on('map-ready', this.onMapReady)
-    this.$engineEvents.on('globe-ready', this.onGlobeReady)
+    this.$engineEvents.on('map-ready', this.onEngineReady)
+    this.$engineEvents.on('globe-ready', this.onEngineReady)
     this.$engineEvents.on('layer-added', this.onLayerAdded)
   },
   beforeUnmount () {
-    this.$engineEvents.off('map-ready', this.onMapReady)
-    this.$engineEvents.off('globe-ready', this.onGlobeReady)
+    this.$engineEvents.off('map-ready', this.onEngineReady)
+    this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.onLayerAdded)
     this.finalize()
   }

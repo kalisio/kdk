@@ -1,21 +1,15 @@
 <template>
   <div>
-    <q-list>
-      <q-separator />
-      <!--
-        About link
-      -->
-      <q-item id="about" clickable @click="onAbout">
-        <q-item-section avatar>
-          <q-icon name="las la-info" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>
-            {{ $t('KAbout.SIDENAV') }}
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
+    <q-item id="about" clickable @click="onAbout">
+      <q-item-section avatar>
+        <q-icon name="las la-info" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>
+          {{ $t('KAbout.SIDENAV') }}
+        </q-item-label>
+      </q-item-section>
+    </q-item>
     <!--
       About window
      -->

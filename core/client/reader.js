@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import path from 'path-browserify'
-import i18next from 'i18next'
 import { Loading } from 'quasar'
+import { i18n } from './i18n.js'
 import { Events } from './events.js'
 
 // Export singleton
@@ -26,7 +26,7 @@ export const Reader = {
         if (reader) {
           additionnalFiles.push({ reader: reader.mimeType, file })
         } else {
-          const error = { message: i18next.t('errors.UNSUPPORTED_FILE_FORMAT', { file: file.name }) }
+          const error = { message: i18n.t('errors.UNSUPPORTED_FILE_FORMAT', { file: file.name }) }
           Events.emit('error', error)
         }
       }
@@ -36,7 +36,7 @@ export const Reader = {
       const group = _.find(acceptedFiles, acceptedFile => acceptedFile.reader === additionnalFile.reader)
       if (group) group.files.push(additionnalFile.file)
       else {
-        const error = { message: i18next.t('errors.UNSUPPORTED_FILE_FORMAT', { file: additionnalFile.name }) }
+        const error = { message: i18n.t('errors.UNSUPPORTED_FILE_FORMAT', { file: additionnalFile.name }) }
         Events.emit('error', error)
       }
     })
@@ -44,7 +44,7 @@ export const Reader = {
   },
   async read (file, options) {
     const reader = this.readers[file.reader]
-    Loading.show({ message: i18next.t('reader.READING_FILE', { file: file.name }) })
+    Loading.show({ message: i18n.t('reader.READING_FILE', { file: file.name }) })
     try {
       const content = await reader.read(file.files, options)
       Loading.hide()

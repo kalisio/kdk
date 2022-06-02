@@ -129,8 +129,8 @@ export function baseActivity (name) {
       getPageMode () {
         return this.getPage().mode
       },
-      setPage (content, mode, filter) {
-        this.$store.patch('page', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
+      setPage (content, mode, filter, sticky) {
+        this.$store.patch('page', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter, sticky })
       },
       setPageMode (mode) {
         if (mode !== this.getPageMode()) {
@@ -140,11 +140,13 @@ export function baseActivity (name) {
       },
       configurePage () {
         const options = _.get(this.activityOptions, 'page')
-        if (options) this.setPage(options.content, options.mode, _.get(this.activityOptions, 'page.filter', {}))
-        else this.clearPage()
+        if (options) {
+          this.setPage(options.content, options.mode, _.get(this.activityOptions, 'page.filter', {}),
+            _.get(this.activityOptions, 'page.sticky'))
+        } else this.clearPage()
       },
       clearPage () {
-        this.$store.patch('page', { content: null, mode: undefined })
+        this.$store.patch('page', { content: null, mode: undefined, sticky: undefined })
       },
       getFab () {
         return this.$store.get('fab')

@@ -9,9 +9,10 @@
           v-model="startDate"
           mask="DD/MM/YYYY"
           :title="startDate"
-          @input="onTimeRangeChanged"
-          :options="checkStartDate" />
-        </q-popup-proxy>
+          :options="checkStartDate"
+          @update:model-value="onTimeRangeChanged"
+        />
+      </q-popup-proxy>
     </div>
     <div>&nbsp;</div>
     <div class="k-datetime text-body2">
@@ -22,9 +23,10 @@
           id="start-time-popup"
           v-model="startTime"
           mask="HH:mm"
-          @input="onTimeRangeChanged"
-          :options="checkStartTime" />
-        </q-popup-proxy>
+          :options="checkStartTime"
+          @update:model-value="onTimeRangeChanged"
+        />
+      </q-popup-proxy>
     </div>
     <div>&nbsp;-&nbsp;</div>
     <div class="k-datetime text-body2">
@@ -36,9 +38,10 @@
           v-model="endDate"
           mask="DD/MM/YYYY"
           :title="endDate"
-          @input="onTimeRangeChanged"
-          :options="checkEndDate" />
-        </q-popup-proxy>
+          :options="checkEndDate"
+          @update:model-value="onTimeRangeChanged"
+        />
+      </q-popup-proxy>
     </div>
     <div>&nbsp;</div>
     <div class="k-datetime text-body2">
@@ -49,9 +52,10 @@
           id="end-time-popup"
           v-model="endTime"
           mask="HH:mm"
-          @input="onTimeRangeChanged"
-          :options="checkEndTime" />
-        </q-popup-proxy>
+          :options="checkEndTime"
+          @update:model-value="onTimeRangeChanged"
+        />
+      </q-popup-proxy>
     </div>
   </div>
 </template>

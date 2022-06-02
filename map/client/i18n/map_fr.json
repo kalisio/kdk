@@ -4,18 +4,18 @@
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",
     "GEOLOCATION_ERROR": "Il nous est impossible de déterminer votre position, cela peut affecter certaines fonctionnalités de l'application.",
-    "GEOLOCATION_PERMISSION_DENIED": "$t(errors.GEOLOCATION_ERROR)</br>Il semble que vous n'ayez pas donné les permissions pour vous géolocaliser.",
-    "GEOLOCATION_POSITION_UNAVAILABLE": "$t(errors.GEOLOCATION_ERROR)</br>Il semble que le mobile a retourné une erreur interne.",
-    "GEOLOCATION_POSITION_TIMEOUT": "$t(errors.GEOLOCATION_ERROR)</br>Il semble que le temps alloué pour acquérir l'information a expiré.",
+    "GEOLOCATION_PERMISSION_DENIED": "@:errors.GEOLOCATION_ERROR</br>Il semble que vous n'ayez pas donné les permissions pour vous géolocaliser.",
+    "GEOLOCATION_POSITION_UNAVAILABLE": "@:errors.GEOLOCATION_ERROR</br>Il semble que le mobile a retourné une erreur interne.",
+    "GEOLOCATION_POSITION_TIMEOUT": "@:errors.GEOLOCATION_ERROR</br>Il semble que le temps alloué pour acquérir l'information a expiré.",
     "CANNOT_PROCESS_SCHEMA_DATA": "Schéma de données invalide ou incomplet",
     "ALERTS_LIMIT": "Trop d'alertes pour les afficher toutes",
     "FILE_IMPORT_ERROR": "L'import du fichier a échoué",
     "CANNOT_CHECK_ALERT_MISSING_SERVICE": "La dernière vérification a échouée par indisponibilité du service",
     "CANNOT_CHECK_ALERT_MISSING_DATA": "La dernière vérification a échouée par indisponibilité des données",
-    "INVALID_GEOJSON_FILE": "{{file}} n'est pas un fichier GeoJSON valide",
-    "INVALID_GEOJSON_CRS": "{{file}} a un système de coordonnées (CRS) non supporté",
-    "INVALID_GPX_FILE": "{{file}} n'est pas un fichier GPX valide",
-    "INVALID_KML_FILE": "{{file}} n'est pas un fichier KML valide"
+    "INVALID_GEOJSON_FILE": "{file} n'est pas un fichier GeoJSON valide",
+    "INVALID_GEOJSON_CRS": "{file} a un système de coordonnées (CRS) non supporté",
+    "INVALID_GPX_FILE": "{file} n'est pas un fichier GPX valide",
+    "INVALID_KML_FILE": "{file} n'est pas un fichier KML valide"
   },
   "mixins": {
     "navigator": {
@@ -30,12 +30,12 @@
     "activity": {
       "ADD_LAYER": "Ajouter une nouvelle couche",
       "SAVE_LABEL": "Sauvegarder la couche",
-      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{{processed}} éléments traités sur {{total}}",
+      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{processed} éléments traités sur {total}",
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {{features.length}} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {features.length} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
       "DOWNLOAD_INVALID_FEATURES_LABEL": "En sélectionnant cette option vos éléments invalides seront exportés dans un fichier avant l'enregistrement",
       "INVALID_FEATURES_FILE": "ElementsInvalides.geojson",
-      "SAVE_DIALOG_TITLE": "Tuilage de la couche {{layer}}",
+      "SAVE_DIALOG_TITLE": "Tuilage de la couche {layer}",
       "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",
       "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
@@ -47,8 +47,8 @@
       "EDITING_DATA_MESSAGE": "Edition en cours",
       "REMOVE_LABEL": "Supprimer",
       "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
-      "REMOVE_DIALOG_TITLE": "Supprimer {{layer}} ?",
-      "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {{layer}} de votre espace de travail ?",
+      "REMOVE_DIALOG_TITLE": "Supprimer {layer} ?",
+      "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {layer} de votre espace de travail ?",
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
@@ -192,16 +192,12 @@
     "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
   },
   "schemas": {
-    "OBJECT_NAME": "{{ object.name }}",
+    "OBJECT_NAME": "{ object.name }",
     "CATALOG_CREATE_TITLE": "Créer une nouvelles couche de données",
     "CATALOG_NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la nouvelle couche",
     "CATALOG_FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
     "CATALOG_SCHEMA_FIELD_LABEL": "Sélectionnez un schéma de données",
-    "CREATE_VIEW_TITLE": "Créer une nouvelle vue ?",
-    "CREATE_VIEW_NAME_FIELD_LABEL": "Saisissez le nom de la vue",
-    "CREATE_VIEW_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la vue",
-    "CREATE_VIEW_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",
     "LAYER_CATEGORY_CREATE_TITLE": "Créer une nouvelle catégorie ?",
     "LAYER_CATEGORY_NAME_FIELD_LABEL": "Saisissez le nom de la catégorie",
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Choisissez une icône pour la catégorie",
@@ -335,8 +331,8 @@
     "UNSUPPORTED_LAYER_FORMAT": "Le format de données utilisé par cette couche n'est pas supporté."
   },
   "KLocationField": {
-    "SEARCH": "$t(SEARCH)",
-    "NO_RESULTS": "$t(EMPTY)"
+    "SEARCH": "@:SEARCH",
+    "NO_RESULTS": "@:EMPTY"
   },
   "KLocationMap": {
     "DRAW_LINE": "Dessiner un linéaire",
@@ -377,7 +373,7 @@
   "KViewsPanel": {
     "VIEWS_LABEL": "Mes vues",
     "SORT_VIEWS": "Trier les vues",
-    "REMOVE_VIEW": "$t(REMOVE)",
+    "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Vue par défaut"
   },
   "KUserLayersPanel": {
@@ -387,7 +383,7 @@
     "LAYERS_LABEL": "Catalogue"
   }, 
   "KFeaturesFilter": {
-    "TITLE": "Filtre des données de la couche {{layer}}",
+    "TITLE": "Filtre des données de la couche",
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
     "ADD_FILTER": "Sélectionnez une propriété à associer à un filtre",
     "REMOVE_FILTER": "Supprimer le filtre associée à cette valeur",
@@ -399,11 +395,11 @@
     "LOWER_THAN": "valeur inférieure à"
   },
   "KFeaturesTable": {
-    "TITLE": "Données de la couche {{layer}}"
+    "TITLE": "Données de la couche"
   },
   "KFeaturesChart": {
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
-    "TITLE": "Graphiques de la couche {{layer}}",
+    "TITLE": "Graphiques de la couche",
     "PROPERTY_LABEL": "Propriété cible",
     "CHART_LABEL": "Type de graphique",
     "PAGINATION_LABEL": "Nombre de valeurs",
@@ -421,7 +417,7 @@
     "CHART_COUNT_LABEL": "Nombre",
     "CHART_SETTINGS_LABEL": "Paramétrage du graphique",
     "CHART_EXPORT_LABEL": "Exporter les données",
-    "CHART_EXPORT_FILE": "Graphique-{{layer}}.csv"
+    "CHART_EXPORT_FILE": "Graphique-{layer}.csv"
   },
   "KLayerStyleForm": {
     "BASE": "Propriétés de base",
@@ -493,7 +489,7 @@
     "PROPERTIES_COPIED": "Valeurs copiées en mémoire",
     "CANNOT_COPY_PROPERTIES": "Impossible de copier les valeurs en mémoire",
     "EXPORT_FEATURE": "Exporter l'object",
-    "FEATURE_EXPORTED": "Objet exporté dans le fichier {{file}}",
+    "FEATURE_EXPORTED": "Objet exporté dans le fichier {file}",
     "CANNOT_EXPORT_FEATURE": "Impossible d'exporter l'objet"
   },
   "KMapillaryViewer": {
@@ -513,8 +509,8 @@
     "ADD_BUTTON": "Ajouter",
     "EDIT_BUTTON": "Modifier",
     "CATEGORY_LIST": "Retour à la liste",
-    "EDIT_CATEGORY": "$t(EDIT)",
-    "REMOVE_CATEGORY": "$t(REMOVE)"
+    "EDIT_CATEGORY": "@:EDIT",
+    "REMOVE_CATEGORY": "@:REMOVE"
   },
   "KAddLayer": {
     "TITLE": "Ajouter une nouvelle couche",
@@ -525,29 +521,35 @@
   },
   "KImportLayer": {
     "FILE_FIELD_LABEL": "Sélectionnez le fichier à importer",
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "IMPORT_BUTTON": "Importer"
   },
   "KConnectLayer": {
     "SERVICE_FIELD_LABEL": "Saisissez la requête pour récupérer les capacités du service distant",
     "LAYER_FIELD_LABEL": "Sélectionnez la couche à laquelle se connecter",
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
     "STYLE_FIELD_LABEL": "Sélectionnez le style de la nouvelle couche",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CONNECT_BUTTON": "Connecter"
   },
   "KCreateLayer": {
-    "NAME_FIELD_LABEL": "$t(KAddLayer.NAME_FIELD_LABEL)",
-    "DESCRIPTION_FIELD_LABEL": "$t(KAddLayer.DESCRIPTION_FIELD_LABEL)",
-    "CATALOG_SCHEMA_FIELD_LABEL": "$t(schemas.CATALOG_SCHEMA_FIELD_LABEL)",
-    "FEATURE_ID_FIELD_LABEL": "$t(KAddLayer.FEATURE_ID_FIELD_LABEL)",       
-    "CATEGORY_FIELD_LABEL": "$t(KAddLayer.CATEGORY_FIELD_LABEL)",    
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "CATALOG_SCHEMA_FIELD_LABEL": "@:schemas.CATALOG_SCHEMA_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",       
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",    
     "CREATE_BUTTON": "Créer"
+  },
+  "KCreateView": {
+    "MODAL_TITLE": "Créer une nouvelle vue ?",
+    "NAME_FIELD_LABEL": "Saisissez le nom de la vue",
+    "DESCRIPTION_FIELD_LABEL": "Saisissez la description de la vue",
+    "LAYERS_FIELD_LABEL": "Sauvegarder les couches actives"
   },
   "KLayerEditionToolbar": {
     "ADD_POLYGON_FEATURES": "Ajouter des entités polygonales",
@@ -595,7 +597,7 @@
     "PROFILE_COPIED": "Profil copiié en mémoire",
     "CANNOT_COPY_PROFILE": "Impossible de copier le profil en mémoire",
     "EXPORT_PROFILE": "Exporter le profil",
-    "PROFILE_EXPORTED": "Profil exporté dans le fichier {{file}}",
+    "PROFILE_EXPORTED": "Profil exporté dans le fichier {file}",
     "CANNOT_EXPORT_PROFILE": "Imopssible d'exporter le profil"
   }
 }
