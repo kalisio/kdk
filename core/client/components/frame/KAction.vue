@@ -103,7 +103,7 @@
     square
     external-label
     label-position="left"
-    label-class="bg-primary text-white text-caption"
+    label-class="bg-primary text-white text-caption k-fab-action"
     :disable="disabled"
     @click="onClicked(arguments[0])">
     <!-- badge -->
@@ -328,7 +328,7 @@ export default {
 
 <style lang="scss" scoped>
   .k-fab, .k-fab-action {
-    border: 2px solid var(--q-color-secondary);
+    border: 2px solid $secondary;
   }
   .k-tab-active {
     border-bottom: solid 2px;
