@@ -100,9 +100,10 @@
     :icon="computedIcon"
     :color="computedColor"
     :label="computedLabel"
-    external-label
     square
+    external-label
     label-position="left"
+    label-class="bg-primary text-white text-caption"
     :disable="disabled"
     @click="onClicked(arguments[0])">
     <!-- badge -->
