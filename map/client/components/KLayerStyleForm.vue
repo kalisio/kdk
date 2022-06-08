@@ -40,7 +40,7 @@
         </q-item>
         <q-item>
           <q-item-section>
-            <q-toggle v-model="isSelectable"/>
+            <q-toggle id="style-is-selectable" v-model="isSelectable"/>
           </q-item-section>
           <q-item-section avatar>
             {{$t('KLayerStyleForm.SELECTABLE')}}
@@ -271,6 +271,18 @@
               :options="properties"
               :label="$t('KLayerStyleForm.ADD_POPUP')"
             >
+              <!-- Options display -->
+              <template v-slot:option="scope">
+                <q-item
+                  :id="getPopupId(scope.opt)"
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
             </q-select>
           </q-item-section>
         </q-item>
@@ -283,7 +295,26 @@
             <q-toggle id="style-toggle-tooltip" v-model="tooltip"/>
           </q-item-section>
           <q-item-section class="col-11">
-            <q-select :disable="!tooltip" v-model="tooltipProperty" :options="properties" :label="$t('KLayerStyleForm.ADD_TOOLTIP')"></q-select>
+            <q-select
+              id="style-tooltip-field"
+              :disable="!tooltip"
+              v-model="tooltipProperty"
+              :options="properties"
+              :label="$t('KLayerStyleForm.ADD_TOOLTIP')"
+            >
+              <!-- Options display -->
+              <template v-slot:option="scope">
+                <q-item
+                  :id="getPopupId(scope.opt)"
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-item-section>
         </q-item>
       </q-list>
@@ -295,7 +326,28 @@
             <q-toggle id="style-toggle-infobox" v-model="infobox"/>
           </q-item-section>
           <q-item-section class="col-11">
-            <q-select :disable="!infobox" use-chips v-model="infoboxProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_INFOBOX')"></q-select>
+            <q-select
+              id="style-infobox-field"
+              :disable="!infobox"
+              use-chips
+              v-model="infoboxProperties"
+              multiple
+              :options="properties"
+              :label="$t('KLayerStyleForm.ADD_INFOBOX')"
+            >
+              <!-- Options display -->
+              <template v-slot:option="scope">
+                <q-item
+                  :id="getPopupId(scope.opt)"
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-item-section>
         </q-item>
       </q-list>
@@ -404,6 +456,9 @@ export default {
     }
   },
   methods: {
+    getPopupId (option) {
+      return _.kebabCase(option.label)
+    },
     async build () {
       logger.debug('Building layer style form')
       // Since some properties are injected in form we need to make sure Vue.js has processed props
