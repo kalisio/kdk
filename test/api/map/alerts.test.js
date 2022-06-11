@@ -97,15 +97,14 @@ describe('map:alerts', () => {
     externalApp.use(express.json())
     externalPort = port + 1
     // Launch the external server
-    externalServer = externalApp.listen(externalPort)
-    externalServer.once('listening', _ => {
+    externalApp.listen(externalPort).then(externalServer => externalServer.once('listening', _ => {
       // Ensure webhook enpoint responds
       externalApp.post('/webhook', checkAlertWebhook)
       request.post('http://localhost:' + externalPort + '/webhook', { type: 'event' }, (error, res, body) => {
         resetAlertWebhook()
         done(error)
       })
-    })
+    }))
   })
   // Let enough time to process
     .timeout(5000)

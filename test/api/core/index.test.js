@@ -58,7 +58,7 @@ describe('core:services', () => {
       before: { create: hooks.preventEscalation, remove: hooks.preventEscalation }
     })
     // Now app is configured launch the server
-    server = app.listen(port)
+    server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process
