@@ -76,7 +76,7 @@ export default {
           },
           {
             id: 'export-feature',
-            icon: 'img:statics/json-icon.svg',
+            icon: 'kdk:json.svg',
             tooltip: this.$t('KInformationBox.EXPORT_FEATURE'),
             visible: this.feature,
             handler: this.onExportFeature
