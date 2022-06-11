@@ -16,18 +16,18 @@ const debug = makeDebug('kdk:core:authorisations:hooks')
 
 export function createJWT (options = {}) {
   return async function (hook) {
-    const defaults = hook.app.get('authentication') || hook.app.get('auth')
+    const { jwtOptions: defaults } = hook.app.get('authentication') || hook.app.get('auth')
     const user = _.get(hook, 'params.user')
     let items = getItems(hook)
     const isArray = Array.isArray(items)
     items = (isArray ? items : [items])
     // Generate access tokens for all items
-    const accessTokens = await Promise.all(items.map(item => hook.app.passport.createJWT(
+    const accessTokens = await Promise.all(items.map(item => hook.app.service('authentication').createAccessToken(
       // Provided function can be used to pick or omit properties in JWT payload
       (typeof options.payload === 'function' ? options.payload(user) : {}),
       // Provided function can be used for custom options cdepending on the user,
       // then we merge with default auth options for global properties like aud, iss, etc.
-      _.merge({}, defaults, (typeof options.jwt === 'function' ? { jwt: options.jwt(user) } : options)))
+      _.merge({}, defaults, (typeof options.jwt === 'function' ? options.jwt(user) : options)))
     ))
     // Store access token on items
     items.forEach((item, index) => _.set(item, options.name || 'accessToken', accessTokens[index]))

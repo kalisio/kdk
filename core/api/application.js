@@ -254,7 +254,7 @@ export function createWebhook (path, app, options = {}) {
           } else {
             accessToken = payload.accessToken
           }
-          const tokenPayload = await app.passport.verifyJWT(accessToken, config)
+          const tokenPayload = await app.service('authentication').verifyAccessToken(accessToken, config.jwtOptions)
           params.user = await app.getService('users').get(tokenPayload.userId)
           params.checkAuthorisation = true
         } catch (error) {

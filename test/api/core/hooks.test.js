@@ -1,5 +1,5 @@
 import feathers from '@feathersjs/feathers'
-import authentication from '@feathersjs/authentication'
+import { AuthenticationService } from '@feathersjs/authentication'
 import configuration from '@feathersjs/configuration'
 import express from '@feathersjs/express'
 import memory from 'feathers-memory'
@@ -147,11 +147,11 @@ describe('core:hooks', () => {
     const app = express(feathers())
     app.configure(configuration())
     const config = app.get('authentication')
-    app.configure(authentication(config))
+    app.use('authentication', new AuthenticationService(app))
     const hook = { type: 'before', app, data: {}, params: { user: { _id: 'toto' } } }
     await hooks.createJWT()(hook)
     expect(typeof hook.data.accessToken).to.equal('string')
-    const payload = await app.passport.verifyJWT(hook.data.accessToken, config)
+    const payload = await app.service('authentication').verifyAccessToken(hook.data.accessToken, config.jwtOptions)
     expect(payload.userId).beUndefined()
   })
 
@@ -159,7 +159,7 @@ describe('core:hooks', () => {
     const app = express(feathers())
     app.configure(configuration())
     const config = app.get('authentication')
-    app.configure(authentication(config))
+    app.use('authentication', new AuthenticationService(app))
     const hook = { type: 'before', app, data: {}, params: { user: { _id: 'toto' } } }
     await hooks.createJWT({
       name: 'accessToken',
@@ -167,12 +167,8 @@ describe('core:hooks', () => {
       payload: user => ({ userId: user._id })
     })(hook)
     expect(typeof hook.data.accessToken).to.equal('string')
-    const payload = await app.passport.verifyJWT(hook.data.accessToken, config)
+    const payload = await app.service('authentication').verifyAccessToken(hook.data.accessToken, config.jwtOptions)
     expect(payload.sub).to.equal('toto')
     expect(payload.userId).to.equal('toto')
-  })
-
-  // Cleanup
-  after(async () => {
   })
 })

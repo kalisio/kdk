@@ -30,12 +30,12 @@
       class="k-window-footer full-width row justify-end"
     >
       <!-- Window grip -->
-      <q-icon 
-        v-if="mode !== 'maximized'" 
-        class="k-window-grip" 
-        name="las la-slash" 
-        size="10px" 
-        v-touch-pan.prevent.mouse="onResized" 
+      <q-icon
+        v-if="mode !== 'maximized'"
+        class="k-window-grip"
+        name="las la-slash"
+        size="10px"
+        v-touch-pan.prevent.mouse="onResized"
       />
     </div>
   </div>
