@@ -74,7 +74,7 @@ describe('core:notifications', () => {
     pusherService = app.getService('pusher')
     expect(pusherService).toExist()
     // Now app is configured launch the server
-    server = app.listen(port)
+    server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process
