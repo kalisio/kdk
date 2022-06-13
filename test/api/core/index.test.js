@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const { util, expect } = chai
 
-describe.only('core:services', () => {
+describe('core:services', () => {
   let app, server, port, baseUrl, accessToken,
     userService, userObject, authorisationService, tagService, tagObject
 
