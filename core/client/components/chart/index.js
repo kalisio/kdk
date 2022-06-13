@@ -1,7 +1,7 @@
 import KChart from './KChart.vue'
-import KStatsChart from './KStatsChart.vue'
+import KStatisticsChart from './KStatisticsChart.vue'
 
 export {
   KChart,
-  KStatsChart
+  KStatisticsChart
 }

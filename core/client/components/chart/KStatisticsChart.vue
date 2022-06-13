@@ -6,9 +6,25 @@
 import _ from 'lodash'
 import KChart from './KChart.vue'
 
+function labelValueFormatter (value, context) {
+  return value
+}
+
+function labelPercentFormatter (value, context) {
+  const sum = context.chart.getDatasetMeta(context.datasetIndex).total
+  if (sum === 0) return 0
+  return (value * 100 / sum).toFixed(2) + "%"
+}
+
 export default {
   components: {
     KChart
+  },
+  props: {
+    format: {
+      type: String,
+      default: 'value'
+    }
   },
   methods: {
     onChartCreated (ref) {
@@ -16,21 +32,18 @@ export default {
     },
     customizeDatasets (type, datasets) {
       _.forEach(datasets, dataset => {
-        // Compute the stats
-        if (!dataset.min) dataset.min = _.min(dataset.data)
-        if (!dataset.max) dataset.max = _.max(dataset.data)
-        if (!dataset.sum) dataset.sum = _.sum(dataset.data)
         // Clear the colors
         dataset.backgroundColor = undefined
         dataset.borderColor = undefined
       })
-      // return this.datasets
     },
     customizeOptions (type, options) {
       const defaultOptions = {
         maintainAspectRatio: true,
         layout: {
           padding: {
+            left: 32,
+            right: 32,
             top: 32,
             bottom: 32
           }
@@ -42,7 +55,7 @@ export default {
           },
           legend: {
             display: !['radar', 'bar'].includes(type),
-            position: this.$q.screen.lt.sm ? 'bottom' : 'left'
+            position: 'top'
           },
           datalabels: {
             backgroundColor: function (context) {
@@ -53,19 +66,17 @@ export default {
             borderRadius: 3,
             borderWidth: 1,
             anchor: 'end',
-            align: 'end',
+            align: 'center',
             color: 'white',
             font: {
               weight: 'bold'
             },
-            /* formatter: function (value, context) {
-              return value + '/' + Math.round(100 * value / context.dataset.sum) + '%'
-            }, */
+            formatter: this.format === 'value' ? labelValueFormatter : labelPercentFormatter,
             padding: 6
           }
         }
       }
-      _.merge(options, defaultOptions)
+      _.defaultsDeep(options, defaultOptions)
     },
     update (config) {
       this.customizeDatasets(config.type, config.data.datasets)

@@ -8,21 +8,28 @@
       :maximized="isModalMaximized"
       v-model="isModalOpened"
     >
-      <div class="row justify-around items-center q-ma-none q-pa-none">
+      <div class="fit row items-center q-gutter-x-lg">
         <!-- Previsious chart -->
         <q-btn
-          v-show="currentChart > 1"
+          v-if="currentChart > 1"
           size="1rem" flat round color="primary"
           icon="las la-chevron-left"
-          @click="onPreviousChart"/>
-        <!-- Current chart --->
-        <k-stats-chart id="features-chart" :ref="onChartCreated" :style="chartStyle" />
+          @click="onPreviousChart"
+        />
+        <!-- Current chart -->
+        <KStatisticsChart 
+          id="features-chart"
+          class="col"
+          :ref="onChartCreated" 
+          :display-format="render"
+        />
         <!-- Netx chart -->
         <q-btn
-          v-show="currentChart < nbCharts"
+          v-if="currentChart < nbCharts"
           size="1rem" flat round color="primary"
           icon="las la-chevron-right"
-          @click="onNextChart" />
+          @click="onNextChart" 
+        />
       </div>
     </k-modal>
     <k-modal
@@ -35,25 +42,29 @@
           v-model="selectedProperty"
           :label="$t('KFeaturesChart.PROPERTY_LABEL')"
           :options="properties"
-          @update:modelValue="refreshChart"/>
+          @update:modelValue="refreshChart"
+        />
         <q-select
           :disable="selectedProperty ? false : true"
           v-model="selectedChartType"
           :label="$t('KFeaturesChart.CHART_LABEL')"
           :options="availableChartTypes"
-          @update:modelValue="refreshChart"/>
+          @update:modelValue="refreshChart"
+        />
         <q-select
           :disable="selectedProperty ? false : true"
           v-model="nbValuesPerChart"
           :label="$t('KFeaturesChart.PAGINATION_LABEL')"
           :options="paginationOptions"
-          @update:modelValue="refreshChartAndPagination"/>
-        <!-- TODO q-select
+          @update:modelValue="refreshChartAndPagination"
+        />
+        <!--q-select
           :disable="selectedProperty ? false: true"
           v-model="render"
           :label="$t('KFeaturesChart.RENDER_LABEL')"
           :options="renderOptions"
-          @input="refreshChart"/-->
+          @update:modelValue="refreshChart"
+        /-->
       </div>
     </k-modal>
   </div>
@@ -65,14 +76,14 @@ import logger from 'loglevel'
 import Papa from 'papaparse'
 import { Loading } from 'quasar'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
-import { KModal, KStatsChart } from '../../../core/client/components'
+import { KModal, KStatisticsChart } from '../../../core/client/components'
 
 export default {
   name: 'k-features-chart',
   inject: ['kActivity', 'layer'],
   components: {
     KModal,
-    KStatsChart
+    KStatisticsChart
   },
   mixins: [
     kCoreMixins.baseModal
@@ -100,10 +111,6 @@ export default {
       })
       // if (properties.length) this.property = properties[0]
       return properties
-    },
-    chartStyle () {
-      const min = Math.min(this.$q.screen.width, this.$q.screen.height)
-      return `maxWidth: ${min * 0.75}px;`
     },
     nbCharts () {
       if (!this.chartData.length || (this.nbValuesPerChart.value === 0)) return 1
