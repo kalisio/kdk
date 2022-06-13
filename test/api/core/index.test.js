@@ -1,19 +1,18 @@
 import path, { dirname } from 'path'
+import assert from 'assert'
 import logger from 'winston'
 import fs from 'fs-extra'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import local from '@feathersjs/authentication-local'
 import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const { hashPassword } = local.hooks
 const { util, expect } = chai
 
-describe('core:services', () => {
+describe.only('core:services', () => {
   let app, server, port, baseUrl, accessToken,
     userService, userObject, authorisationService, tagService, tagObject
 
@@ -96,33 +95,32 @@ describe('core:services', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('cannot create a user with a weak password', (done) => {
-    // Fake password hashing on a user to get a hashed password
-    hashPassword('email')({ type: 'before', data: { password: 'weak;' }, params: {}, app })
-      .then(hook => {
-        userService.create({
-          email: 'test@test.org',
-          password: 'weak;',
-          previousPasswords: [hook.data.password],
-          name: 'test-user'
-        })
-          .catch(error => {
-            expect(error).toExist()
-            expect(error.name).to.equal('BadRequest')
-            expect(error.data.translation.params.failedRules).to.deep.equal(['min', 'uppercase', 'digits', 'previous'])
-            userService.create({
-              email: 'test@test.org',
-              password: '12345678',
-              name: 'test-user'
-            })
-              .catch(error => {
-                expect(error).toExist()
-                expect(error.name).to.equal('BadRequest')
-                expect(error.data.translation.params.failedRules).to.deep.equal(['uppercase', 'lowercase', 'symbols', 'oneOf'])
-                done()
-              })
-          })
-      })
+  it('cannot create a user with a weak password', async () => {
+    const [localStrategy] = app.service('api/authentication').getStrategies('local')
+    const previousPassword = await localStrategy.hashPassword('weak;')
+
+    await assert.rejects(() => userService.create({
+      email: 'test@test.org',
+      password: 'weak;',
+      previousPasswords: [previousPassword],
+      name: 'test-user'
+    }), error => {
+      expect(error).toExist()
+      expect(error.name).to.equal('BadRequest')
+      expect(error.data.translation.params.failedRules).to.deep.equal(['min', 'uppercase', 'digits', 'previous'])
+      return true
+    })
+
+    await assert.rejects(() => userService.create({
+      email: 'test@test.org',
+      password: '12345678',
+      name: 'test-user'
+    }), error => {
+      expect(error).toExist()
+      expect(error.name).to.equal('BadRequest')
+      expect(error.data.translation.params.failedRules).to.deep.equal(['uppercase', 'lowercase', 'symbols', 'oneOf'])
+      return true
+    })
   })
   // Let enough time to process
     .timeout(20000)
