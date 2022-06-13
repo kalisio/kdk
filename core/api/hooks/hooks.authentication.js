@@ -11,7 +11,7 @@ export async function verifyGuest (hook) {
     throw new Error('The \'verifyGuest\' hook should only be used as a \'after\' hook.')
   }
   const app = hook.app
-  const user = hook.params.user
+  const user = hook.result.user
   debug('verifyGuest hook called on ', user._id)
 
   // Check whether the user has been inivted. If not, nothing to do
@@ -39,7 +39,7 @@ export async function consentGuest (hook) {
     throw new Error('The \'consentGuest\' hook should only be used as a \'after\' hook.')
   }
   const app = hook.app
-  const user = hook.params.user
+  const user = hook.result.user
   debug('consentGuest hook called on ', user._id)
 
   // Check whether the user has been invited. If not, nothing to do

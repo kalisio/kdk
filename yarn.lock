@@ -481,7 +481,7 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@kalisio/feathers-distributed@^1.0.4":
+"@kalisio/feathers-distributed@^1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-1.0.5.tgz#39d4c44bd30b71f5bd99b457f26d16e6f5b76081"
   integrity sha512-bEpIhHJZGbVC51PDxDKRPolHYxm4PCUaYzCtLvTBxiy8IUcf5PJVliXO0Uya9hTVM4g71bBKIzd44EyiLG5xbg==

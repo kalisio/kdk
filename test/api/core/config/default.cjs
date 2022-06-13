@@ -18,6 +18,7 @@ module.exports = {
     secret: 'b5KqXTye4fVxhGFpwMVZRO3R56wS5LNoJHifwgGOFkB5GfMWvIdrWyQxEJXswhAC',
     path: API_PREFIX + '/authentication',
     service: API_PREFIX + '/users',
+    entity: 'user',
     authStrategies: [
       'jwt',
       'local'

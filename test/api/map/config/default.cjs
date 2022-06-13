@@ -21,7 +21,8 @@ module.exports = {
       'local'
     ],
     path: API_PREFIX + '/authentication',
-    service: API_PREFIX + '/users'
+    service: API_PREFIX + '/users',
+    entity: 'user'
   },
   geocoder: {
     provider: 'opendatafrance'
