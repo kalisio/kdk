@@ -35,7 +35,7 @@ describe('core:account', () => {
     await app.db.instance.dropDatabase()
   })
 
-  it('is ES6 compatible', () => {
+  it('is ES module compatible', () => {
     expect(typeof core).to.equal('function')
   })
 
@@ -54,7 +54,7 @@ describe('core:account', () => {
             // Keep track of clear password before hashing for testing purpose
             hooks.serialize([{ source: 'password', target: 'clearPassword' }]),
             hooks.sendInvitationEmail,
-            hooks.hashPassword('email')),
+            hooks.hashPassword('password')),
           hooks.addVerification
         ],
         remove: [hooks.unregisterDevices]
@@ -201,7 +201,7 @@ describe('core:account', () => {
       value: { email: userObject.email }
     })
       .then(user => {
-      // Because the account service filters for client hidden security attributes we need to fetch the user manually
+        // Because the account service filters for client hidden security attributes we need to fetch the user manually
         return userService.find({ query: { email: gmailUser } })
       })
       .then(users => {

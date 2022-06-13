@@ -38,7 +38,7 @@ export default {
         // should it be fixed for safety ?
         { source: 'password', target: 'clearPassword' }
       ], { throwOnNotFound: false }),
-      hashPassword(),
+      hashPassword('password'),
       enforcePasswordPolicy({ userAsItem: true }),
       // Now we have enforced password policy remove the clear password
       // (we only store hashed password for safety)
