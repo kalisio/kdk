@@ -328,7 +328,7 @@ function setupLogger (app) {
       logger.add(new logger.transports[logType](options))
     } catch (error) {
       // Logger might be down, use console
-      console.error('Could not setup default log levels', error)
+      console.error(`Could not setup logger ${logType}`, error)
     }
   })
 }
