@@ -8,7 +8,6 @@ import 'winston-daily-rotate-file'
 import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
-import bodyParser from 'body-parser'
 import { RateLimiter as SocketLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
 import feathers from '@feathersjs/feathers'
@@ -18,7 +17,7 @@ import express from '@feathersjs/express'
 import socketio from '@feathersjs/socketio'
 import mongodb from 'mongodb'
 import { Database, idToString } from './db.js'
-import auth, { authSocket } from './authentication.js'
+import auth from './authentication.js'
 
 const debug = makeDebug('kdk:core:application')
 const debugLimiter = makeDebug('kdk:core:application:limiter')
@@ -255,7 +254,7 @@ export function createWebhook (path, app, options = {}) {
           } else {
             accessToken = payload.accessToken
           }
-          const tokenPayload = await app.passport.verifyJWT(accessToken, config)
+          const tokenPayload = await app.service('authentication').verifyAccessToken(accessToken, config.jwtOptions)
           params.user = await app.getService('users').get(tokenPayload.userId)
           params.checkAuthorisation = true
         } catch (error) {
@@ -420,8 +419,6 @@ function setupSockets (app) {
           next()
         })
       }
-
-      authSocket(app, socket)
     })
   }
 }
@@ -507,8 +504,8 @@ export function kalisio () {
   app.use(helmet(app.get('helmet')))
   app.use(compress(app.get('compression')))
   const bodyParserConfig = app.get('bodyParser')
-  app.use(bodyParser.json(_.get(bodyParserConfig, 'json')))
-  app.use(bodyParser.urlencoded(Object.assign({ extended: true }, _.get(bodyParserConfig, 'urlencoded'))))
+  app.use(express.json(_.get(bodyParserConfig, 'json')))
+  app.use(express.urlencoded(Object.assign({ extended: true }, _.get(bodyParserConfig, 'urlencoded'))))
 
   // Set up plugins and providers
   app.configure(rest())

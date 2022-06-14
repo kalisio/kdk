@@ -1,5 +1,7 @@
-import { when } from 'feathers-hooks-common'
+import common from 'feathers-hooks-common'
 import { populateAccountUser, enforcePasswordPolicy } from '../../hooks/index.js'
+
+const { when } = common
 
 export default {
   before: {
