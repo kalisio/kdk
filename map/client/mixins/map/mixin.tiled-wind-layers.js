@@ -5,7 +5,7 @@ import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
 
 export const tiledWindLayers = {
   methods: {
-    createLeafletTiledWindLayer (options) {
+    async createLeafletTiledWindLayer (options) {
       const layerOptions = options.leaflet || options
 
       // Check for valid type
@@ -23,7 +23,7 @@ export const tiledWindLayers = {
       vSource.setup(gridConf)
       if (uSource.updateCtx) {
         // define variables for source's dynamic properties
-        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
         if (gatewayToken) {
           uSource.updateCtx.jwtToken = gatewayToken
           vSource.updateCtx.jwtToken = gatewayToken

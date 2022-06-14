@@ -2,12 +2,11 @@
 
 export const authentication = {
   methods: {
-    async restoreUser (accessToken) {
-      const payload = await this.$api.passport.verifyJWT(accessToken)
+    async restoreUser (authenticationResponse) {
       // Anonymous user or service account ?
-      const user = (!payload.userId
+      const user = (!authenticationResponse.user
         ? { name: this.$t('ANONYMOUS'), anonymous: true }
-        : await this.$api.getService('users').get(payload.userId))
+        : authenticationResponse.user)
       this.$store.set('user', user)
       return user
     },
@@ -19,7 +18,7 @@ export const authentication = {
     async restoreSession () {
       const response = await this.$api.authenticate()
       try {
-        const user = await this.restoreUser(response.accessToken)
+        const user = await this.restoreUser(response)
         return user
       } catch (error) {
         // This ensure an old token is not kept when the user has been deleted
@@ -35,7 +34,7 @@ export const authentication = {
         password: password
       }
       const response = await this.$api.authenticate(payload)
-      await this.restoreUser(response.accessToken)
+      await this.restoreUser(response)
     },
     async logout () {
       await this.$api.logout()

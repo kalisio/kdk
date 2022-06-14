@@ -22,7 +22,7 @@ export function createJWT (options = {}) {
     const isArray = Array.isArray(items)
     items = (isArray ? items : [items])
     // Generate access tokens for all items
-    const accessTokens = await Promise.all(items.map(item => hook.app.service('authentication').createAccessToken(
+    const accessTokens = await Promise.all(items.map(item => hook.app.getService('authentication').createAccessToken(
       // Provided function can be used to pick or omit properties in JWT payload
       (typeof options.payload === 'function' ? options.payload(user) : {}),
       // Provided function can be used for custom options cdepending on the user,

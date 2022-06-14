@@ -5,7 +5,7 @@ import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer.js'
 
 export const tiledMeshLayers = {
   methods: {
-    createLeafletTiledMeshLayer (options) {
+    async createLeafletTiledMeshLayer (options) {
       const layerOptions = options.leaflet || options
 
       // Check for valid type
@@ -21,7 +21,7 @@ export const tiledMeshLayers = {
       gridSource.setup(gridConf)
       if (gridSource.updateCtx) {
         // define variables for source's dynamic properties
-        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
         if (gatewayToken) gridSource.updateCtx.jwtToken = gatewayToken
         gridSource.updateCtx.meteoElements = _.get(options, 'meteoElements')
       }

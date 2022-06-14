@@ -423,7 +423,7 @@ function setupSockets (app) {
   }
 }
 
-export function kalisio () {
+export function kdk () {
   const app = express(feathers())
   // By default EventEmitters will print a warning if more than 10 listeners are added for a particular event.
   // The value can be set to Infinity (or 0) to indicate an unlimited number of listeners.

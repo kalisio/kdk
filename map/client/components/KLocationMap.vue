@@ -266,7 +266,7 @@ export default {
       if (response.data.length > 0) {
         const baseLayer = response.data[0]
         // Do we need to inject a token ?
-        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
         if (gatewayToken) setGatewayJwt([baseLayer], gatewayToken)
         this.addLayer(baseLayer)
       }

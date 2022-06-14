@@ -55,7 +55,7 @@ export const activity = {
         const response = await catalogService.find()
         layers = layers.concat(response.data)
       }
-      const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+      const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       return (gatewayToken ? setGatewayJwt(layers, gatewayToken) : layers)
     },
     async addCatalogLayer (layer) {

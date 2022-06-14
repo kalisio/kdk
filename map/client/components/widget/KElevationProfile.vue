@@ -105,7 +105,7 @@ export default {
             }
           }
           // Add the Authorization header if jwt is defined
-          const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+          const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
           if (jwt) options.headers.Authorization = 'Bearer ' + jwt
           // Perform the request
           let dismiss = null
