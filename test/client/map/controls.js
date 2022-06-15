@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import * as core from '../core'
+import * as core from '../core/index.js'
 
 export async function zoomToExtent (page, bbox, wait = 2000) {
   const currentUrl = page.url()

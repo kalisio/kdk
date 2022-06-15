@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { click, type } from './utils'
+import { click, type } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:screens')
 

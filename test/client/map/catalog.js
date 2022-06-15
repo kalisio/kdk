@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import * as core from '../core'
+import * as core from '../core/index.js'
 
 export function getLayerId (layer) {
   return 'layers-' + _.kebabCase(layer)

@@ -1,4 +1,4 @@
-import * as core from '../core'
+import * as core from '../core/index.js'
 
 /* Moves the map for a specific times:
 - in a choosen direction (left, right, up, down)

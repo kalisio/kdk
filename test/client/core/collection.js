@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { countElements } from './utils'
+import { countElements } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:collection')
 

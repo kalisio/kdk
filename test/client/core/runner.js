@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import makeDebug from 'debug'
 import puppeteer from 'puppeteer'
-import { compareImages } from './utils'
+import { compareImages } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:runner')
 

@@ -1,5 +1,5 @@
-import { click, type, uploadFile } from './utils'
-import { clickAction, clickLeftPaneAction, clickTopPaneAction } from './layout'
+import { click, type, uploadFile } from './utils.js'
+import { clickAction, clickLeftPaneAction, clickTopPaneAction } from './layout.js'
 
 export async function manageAccount (page, tab = 'profile') {
   const url = page.url()
