@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api/index.js'
+import core, { kdk, hooks, permissions, createTagService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -22,7 +22,7 @@ describe('core:services', () => {
     // Register default rules for all users
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)
 
-    app = kalisio()
+    app = kdk()
     // Register perspective hook
     app.hooks({
       before: { all: hooks.authorise },

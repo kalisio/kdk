@@ -28,7 +28,7 @@ const legendMarginPlugin = {
   id: 'legendMargin',
   beforeInit (chart, args, options) {
     const fitValue = chart.legend.fit
-    chart.legend.fit = function fit() {
+    chart.legend.fit = function fit () {
       fitValue.bind(chart.legend)()
       if (options.width) this.width += options.width
       if (options.height) this.height += options.height
@@ -55,7 +55,7 @@ export default {
       return this.$q.screen.height === 0 ? 1 : this.$q.screen.width * marginCoeff / this.$q.screen.height
     },
     isLegendDisplayed () {
-      return this.$q.screen.lt.sm ? false : true
+      return !this.$q.screen.lt.sm
     },
     update (config) {
       this.hasData = !_.isEmpty(_.get(config, 'data.datasets'))
@@ -110,12 +110,12 @@ export default {
               display: this.isLegendDisplayed(),
               boxWidth: 15,
               generateLabels (chart) {
-                const data = chart.data;
+                const data = chart.data
                 if (data.labels.length && data.datasets.length) {
-                  const {labels: {pointStyle}} = chart.legend.options
+                  const { labels: { pointStyle } } = chart.legend.options
                   return data.labels.map((label, i) => {
-                    const meta = chart.getDatasetMeta(0);
-                    const style = meta.controller.getStyle(i);
+                    const meta = chart.getDatasetMeta(0)
+                    const style = meta.controller.getStyle(i)
                     return {
                       text: _.truncate(label, { length: maxLabelLength }),
                       fillStyle: style.backgroundColor,
@@ -125,10 +125,10 @@ export default {
                       hidden: !chart.getDataVisibility(i),
                       // Extra data used for toggling the correct item
                       index: i
-                    };
-                  });
+                    }
+                  })
                 }
-                return [];
+                return []
               }
             }
           },

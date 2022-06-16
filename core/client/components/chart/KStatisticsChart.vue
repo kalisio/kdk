@@ -13,7 +13,7 @@ function labelValueFormatter (value, context) {
 function labelPercentFormatter (value, context) {
   const sum = context.chart.getDatasetMeta(context.datasetIndex).total
   if (sum === 0) return 0
-  return (value * 100 / sum).toFixed(2) + "%"
+  return (value * 100 / sum).toFixed(2) + '%'
 }
 
 export default {
