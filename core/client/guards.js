@@ -10,6 +10,8 @@ let guards = []
 
 // Guard unauthenticated users
 export function authenticationGuard (user, to, from) {
+  // Specific case of OAuth provider routes
+  if (to.path.startsWith('/oauth/')) return true
   // Routes accessible whatever the authentication state, eg public
   if (to.meta.authenticated && to.meta.unauthenticated) {
     return true

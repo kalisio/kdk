@@ -238,7 +238,7 @@ export function addVerification (hook) {
 
   return verifyHooks.addVerification(accountService.getPath(true))(hook)
     .then(hook => {
-    // Check for OAuth2 providers
+      // Check for OAuth2 providers
       let isVerified = false
       for (const provider of hook.app.authenticationProviders) {
         if (hook.data[provider + 'Id']) isVerified = true

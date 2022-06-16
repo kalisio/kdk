@@ -11,42 +11,34 @@ import PasswordValidator from 'password-validator'
 
 const debug = makeDebug('kdk:core:authentication')
 
-export class OAuth2Verifier extends OAuthStrategy {
+export class AuthenticationProviderStrategy extends OAuthStrategy {
   async getEntityData (profile, entity) {
-    return Object.assign({}, entity, profile)
-  }
-
-  async createEntity (profile) {
-    if (!profile.id) {
-      profile.id = profile.sub
-      delete profile.sub
+    const createEntity = _.isNil(entity)
+    // Add provider Id
+    entity = { [`${this.name}Id`]: profile.id || profile.sub }
+    // When creating a new user extract required information from profile
+    if (createEntity) {
+      _.set(entity, 'email', _.get(profile, this.emailFieldInProfile || 'email'))
+      _.set(entity, 'name', _.get(profile, this.nameFieldInProfile || 'name'))
     }
-
-    return { profile }
-  }
-
-  async updateEntity (entity, profile) {
-    if (!profile.id) {
-      profile.id = profile.sub
-      delete profile.sub
-    }
-
-    return { profile }
+    // Store provider profile information
+    const profileFilter = (typeof this.profile === 'function' ? this.profile : (profile) => profile)
+    profile = profileFilter(profile)
+    if (profile) entity[`${this.name}`] = profile
+    return entity
   }
 
   async getEntityQuery (profile) {
     const options = this.authentication.configuration
     const query = {
       $or: [
-        { [options.idField]: profile.id || profile.sub }
+        { [`${this.name}Id`]: profile.id || profile.sub },
+        { email: _.get(profile, this.emailFieldInProfile || 'email' ) }
       ],
       $limit: 1
     }
-    options.emailFieldInProfile.forEach(emailFieldInProfile => {
-      query.$or.push({ [options.emailField]: _.get(profile, emailFieldInProfile) })
-    })
 
-    debug('Finding user', query)
+    debug('Finding OAuth user with query', query)
 
     return query
   }
@@ -55,34 +47,27 @@ export class OAuth2Verifier extends OAuthStrategy {
 export default function auth (app) {
   const config = app.get('authentication')
   if (!config) return
-
-  const emailFieldInProfile = config.emailFieldInProfile
-    ? (Array.isArray(config.emailFieldInProfile) ? config.emailFieldInProfile : [config.emailFieldInProfile])
-    : ['email', 'emails[0].value']
-  const emailField = config.emailField || 'email'
-  const limiter = config.limiter
-
-  app.set('authentication', Object.assign({}, config, {
-    emailField,
-    emailFieldInProfile
-  }))
+  // Having undefined providers causes an issue in feathers but we'd like to be able
+  // to set providers undefined in config file based on some conditions (eg env vars)
+  if (config.oauth) config.oauth = _.omitBy(config.oauth, _.isNil)
+  app.set('authentication', config)
 
   const authentication = new AuthenticationService(app)
-
   authentication.register('jwt', new JWTStrategy())
   authentication.register('local', new LocalStrategy())
-  authentication.register('github', new OAuth2Verifier())
-  authentication.register('google', new OAuth2Verifier())
-  authentication.register('cognito', new OAuth2Verifier())
 
+  // Store available OAuth providers
+  app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins']))
+  for (const provider of app.authenticationProviders) {
+    authentication.register(provider, new AuthenticationProviderStrategy())
+  }
+  app.use(config.path, authentication)
+  app.configure(expressOauth())
+
+  const limiter = config.limiter
   if (limiter && limiter.http) {
     app.use(config.path, new HttpLimiter(limiter.http))
   }
-
-  // Store availalbe OAuth2 providers
-  app.authenticationProviders = Object.keys(config.oauth)
-  app.use(config.path, authentication)
-  app.configure(expressOauth())
 
   // Get access to password validator if a policy is defined
   if (config.passwordPolicy) {

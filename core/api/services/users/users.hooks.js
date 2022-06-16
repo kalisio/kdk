@@ -13,20 +13,6 @@ export default {
     create: [
       commonHooks.when(hook => _.get(hook.app.get('authentication'), 'disallowRegistration'),
         commonHooks.disallow('external')),
-      hook => {
-        const config = hook.app.get('authentication')
-        if (!config) return hook
-        hook.app.authenticationProviders.forEach(provider => {
-          const clientConfig = config[provider]
-          if (_.has(hook, `data.${provider}`)) {
-            serialize([
-              { source: `${provider}.profile.` + (clientConfig.nameFieldInProfile || 'displayName'), target: 'name' },
-              { source: `${provider}.profile.` + (clientConfig.emailFieldInProfile || 'emails[0].value'), target: 'email' }
-            ], { throwOnNotFound: true })(hook)
-          }
-        })
-        return hook
-      },
       serialize([
         { source: 'name', target: 'profile.name', delete: true },
         { source: 'email', target: 'profile.description' }

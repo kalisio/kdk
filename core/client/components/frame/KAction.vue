@@ -313,11 +313,16 @@ export default {
       if (this.handler) await this.handler(this.context, this.isToggled)
       // Handle the route case
       if (this.route) {
-        // Process route params
-        this.$router.push(Object.assign({
-          query: this.bindRouteParams('query'),
-          params: this.bindRouteParams('params')
-        }, _.omit(this.route, ['query', 'params']))).catch(() => {})
+        // Allow to directly call a given URL, eg OAuth callback
+        if (this.route.url) {
+          location.href = this.route.url
+        } else {
+          // Process route params
+          this.$router.push(Object.assign({
+            query: this.bindRouteParams('query'),
+            params: this.bindRouteParams('params')
+          }, _.omit(this.route, ['query', 'params']))).catch(() => {})
+        }
       }
       // Notify the listeners
       this.$emit('triggered', this.context, this.isToggled)

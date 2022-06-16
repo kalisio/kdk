@@ -180,7 +180,7 @@ export default {
       // This is required if we don't want the file to be viewed
       this.dropZone().removeFile(file)
       // The error message is already translated using the DropZone dictionary
-      this.$events.$emit('error', { message: error })
+      this.$events.emit('error', { message: error })
     },
     storageService () {
       let service = _.get(this.options, 'service', 'storage')

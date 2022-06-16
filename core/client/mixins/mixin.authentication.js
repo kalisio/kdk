@@ -16,8 +16,8 @@ export const authentication = {
       await this.login(user.email, user.password)
     },
     async restoreSession () {
-      const response = await this.$api.authenticate()
       try {
+        const response = await this.$api.reAuthenticate()
         const user = await this.restoreUser(response)
         return user
       } catch (error) {
