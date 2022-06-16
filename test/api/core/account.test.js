@@ -41,7 +41,6 @@ describe('core:account', () => {
 
   it('registers the services', async () => {
     await app.configure(core)
-
     userService = app.getService('users')
     expect(userService).toExist()
     userService.hooks({
@@ -84,7 +83,7 @@ describe('core:account', () => {
     accountService = app.getService('account')
     expect(accountService).toExist()
     // Now app is configured launch the server
-    server = app.listen(port)
+    server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process

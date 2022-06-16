@@ -119,7 +119,7 @@ describe('core:team', () => {
         ]
       }
     })
-    server = app.listen(port)
+    server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process

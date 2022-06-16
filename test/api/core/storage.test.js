@@ -38,7 +38,7 @@ describe('core:storage', () => {
     storageService = app.getService('storage')
     expect(storageService).toExist()
     // Now app is configured launch the server
-    server = app.listen(port)
+    server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
 
