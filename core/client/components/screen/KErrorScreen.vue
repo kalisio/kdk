@@ -1,5 +1,5 @@
 <template>
-  <KScreen title="message" :actions="action" />
+  <KScreen :title="message" :actions="actions" />
 </template>
 
 <script>
