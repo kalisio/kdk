@@ -29,7 +29,6 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
   }
 
   async getEntityQuery (profile) {
-    const options = this.authentication.configuration
     const query = {
       $or: [
         { [`${this.name}Id`]: profile.id || profile.sub },
