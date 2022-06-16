@@ -36,20 +36,22 @@ function tooManyRequests (socket, message, key) {
 
 export function declareService (path, app, service, middlewares = {}) {
   const feathersPath = app.get('apiPath') + '/' + path
-  const feathersService = app.service(feathersPath)
-  // Some internal Feathers service might internally declare the service
-  if (feathersService) {
+
+  try {
+    const feathersService = app.service(feathersPath)
+    // Some internal Feathers service might internally declare the service
     return feathersService
+  } catch (error) {
+    // Initialize our service by providing any middleware as well
+    let args = [feathersPath]
+    if (middlewares.before) args = args.concat(middlewares.before)
+    args.push(service)
+    if (middlewares.after) args = args.concat(middlewares.after)
+    app.use.apply(app, args)
+    debug('Service declared on path ' + feathersPath)
+    // Return the Feathers service, ie base service + Feathers' internals
+    return app.service(feathersPath)
   }
-  // Initialize our service by providing any middleware as well
-  let args = [feathersPath]
-  if (middlewares.before) args = args.concat(middlewares.before)
-  args.push(service)
-  if (middlewares.after) args = args.concat(middlewares.after)
-  app.use.apply(app, args)
-  debug('Service declared on path ' + feathersPath)
-  // Return the Feathers service, ie base service + Feathers' internals
-  return app.service(feathersPath)
 }
 
 export async function configureService (name, service, servicesPath) {
@@ -437,6 +439,8 @@ export function kdk () {
   app.configure(configuration())
   // Then setup logger
   setupLogger(app)
+
+  // app.defaultService = () => undefined
 
   // This retrieve corresponding service options from app config if any
   app.getServiceOptions = function (name) {
