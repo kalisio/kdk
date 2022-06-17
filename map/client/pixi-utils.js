@@ -90,20 +90,20 @@ export const WEBGL_FUNCTIONS = {
 PIXI.TYPES.HALF_FLOAT_VERTEX = 0x140b
 
 export function buildShaderCode (features) {
-  let vtxCode = ''
-  let frgCode = ''
+  let vtxCode = '#version 300 es'
+  let frgCode = '#version 300 es\nprecision highp float;'
   // attributes, uniforms and varyings
-  vtxCode += '/// attributes, uniforms and varyings\n'
-  frgCode += '/// uniforms and varyings\n'
+  vtxCode += '\n\n/// attributes, uniforms and varyings\n'
+  frgCode += '\n\n/// uniforms and varyings\nout vec4 outColor;\n'
   for (const feat of features) {
     let addVtx = ''
     let addFrg = ''
-    for (const v of _.get(feat, 'vertex.attributes', [])) addVtx += `attribute ${v};\n`
+    for (const v of _.get(feat, 'vertex.attributes', [])) addVtx += `in ${v};\n`
     for (const v of _.get(feat, 'vertex.uniforms', [])) addVtx += `uniform ${v};\n`
     for (const v of _.get(feat, 'fragment.uniforms', [])) addFrg += `uniform ${v};\n`
     for (const v of _.get(feat, 'varyings', [])) {
-      addVtx += `varying ${v};\n`
-      addFrg += `varying ${v};\n`
+      addVtx += `out ${v};\n`
+      addFrg += `in ${v};\n`
     }
 
     if (addVtx) vtxCode += `// ${feat.name} ------\n${addVtx}`

@@ -402,8 +402,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       name: 'tail',
       fragment: {
         uniforms: ['float in_layerAlpha'],
-        code: `  gl_FragColor.rgb = color.rgb * in_layerAlpha;
-  gl_FragColor.a = in_layerAlpha;`
+        code: '  outColor = vec4(color.rgb * in_layerAlpha, in_layerAlpha);'
       }
     })
 
