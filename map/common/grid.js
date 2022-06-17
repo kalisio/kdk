@@ -8,6 +8,53 @@ export const SortOrder = {
 export const gridSourceFactories = { }
 export const unitConverters = { }
 
+const toHalf = (function () {
+  var floatView = new Float32Array(1)
+  var int32View = new Int32Array(floatView.buffer)
+
+  /* This method is faster than the OpenEXR implementation (very often
+    * used, eg. in Ogre), with the additional benefit of rounding, inspired
+    * by James Tursa?s half-precision code. */
+  return function toHalf (val) {
+    floatView[0] = val
+    var x = int32View[0]
+
+    var bits = (x >> 16) & 0x8000 /* Get the sign */
+    var m = (x >> 12) & 0x07ff /* Keep one extra bit for rounding */
+    var e = (x >> 23) & 0xff /* Using int is faster here */
+
+    /* If zero, or denormal, or exponent underflows too much for a denormal
+      * half, return signed zero. */
+    if (e < 103) {
+      return bits
+    }
+
+    /* If NaN, return NaN. If Inf or exponent overflow, return Inf. */
+    if (e > 142) {
+      bits |= 0x7c00
+      /* If exponent was 0xff and one mantissa bit was set, it means NaN,
+        * not Inf, so make sure we set one mantissa bit too. */
+      bits |= ((e === 255) ? 0 : 1) && (x & 0x007fffff)
+      return bits
+    }
+
+    /* If exponent underflows but not too much, return a denormal */
+    if (e < 113) {
+      m |= 0x0800
+      /* Extra rounding may overflow and set mantissa to 0 and exponent
+        * to 1, which is OK. */
+      bits |= (m >> (114 - e)) + ((m >> (113 - e)) & 1)
+      return bits
+    }
+
+    bits |= ((e - 112) << 10) | (m >> 1)
+    /* Extra rounding. An overflow will set mantissa to 0 and increment
+      * the exponent, which is OK. */
+    bits += m & 1
+    return bits
+  }
+}())
+
 // Base 2d grid class
 // TODO: add interpolate/bilinearInterpolate and other missing stuff from weacast grid
 export class BaseGrid {
@@ -130,6 +177,86 @@ export class BaseGrid {
     }
 
     return [iminlat, iminlon, imaxlat, imaxlon]
+  }
+
+  genCoordsBuffer () {
+    const numPoints = this.dimensions[0] * this.dimensions[1]
+    const coords = new Uint16Array(2 * numPoints)
+
+    const minLat = this.getLat(0)
+    const maxLat = this.getLat(this.dimensions[0] - 1)
+    const minLon = this.getLon(0)
+    const maxLon = this.getLon(this.dimensions[1] - 1)
+    const deltaLat = maxLat - minLat
+    const deltaLon = maxLon - minLon
+
+    let vidx = 0
+    for (let ilon = 0; ilon < this.dimensions[1]; ++ilon) {
+      const lon = this.getLon(ilon)
+      for (let ilat = 0; ilat < this.dimensions[0]; ++ilat) {
+        const lat = this.getLat(ilat)
+
+        coords[vidx * 2] = toHalf((lat - minLat) / deltaLat)
+        coords[vidx * 2 + 1] = toHalf((lon - minLon) / deltaLon)
+
+        ++vidx
+      }
+    }
+
+    return { coords, minLat, maxLat, minLon, maxLon, deltaLat, deltaLon }
+  }
+
+  genValuesBuffer () {
+    const numPoints = this.dimensions[0] * this.dimensions[1]
+    const values = new Float32Array(numPoints)
+
+    let vidx = 0
+    for (let ilon = 0; ilon < this.dimensions[1]; ++ilon) {
+      for (let ilat = 0; ilat < this.dimensions[0]; ++ilat) {
+        values[vidx] = this.getValue(ilat, ilon)
+
+        ++vidx
+      }
+    }
+
+    return values
+  }
+
+  genMeshIndexBuffer () {
+    let iidx = 0
+    const maxIndex = (this.dimensions[0] * this.dimensions[1]) - 1
+    const numIndex = (this.dimensions[1] - 1) * (this.dimensions[0] * 2 + 1) - 1
+    const restart = maxIndex > 65534 ? 4294967295 : 65535
+    const index = maxIndex > 65534 ? new Uint32Array(numIndex) : new Uint16Array(numIndex)
+    for (let i = 0; i < this.dimensions[1] - 1; ++i) {
+      for (let j = 0; j < this.dimensions[0]; ++j) {
+        index[iidx++] = j + i * this.dimensions[0]
+        index[iidx++] = j + (i + 1) * this.dimensions[0]
+      }
+      if (i !== this.dimensions[1] - 2) { index[iidx++] = restart }
+    }
+    return index
+  }
+
+  genWireframeIndexBuffer () {
+    const maxIndex = (this.dimensions[0] * this.dimensions[1]) - 1
+    const numIndex = (this.dimensions[1] * (this.dimensions[0] + 1)) + (this.dimensions[0] * (this.dimensions[1] + 1) - 1)
+    const restart = maxIndex > 65534 ? 4294967295 : 65535
+    const index = maxIndex > 65534 ? new Uint32Array(numIndex) : new Uint16Array(numIndex)
+    let iidx = 0
+    for (let i = 0; i < this.dimensions[1]; ++i) {
+      for (let j = 0; j < this.dimensions[0]; ++j) {
+        index[iidx++] = j + i * this.dimensions[0]
+      }
+      index[iidx++] = restart
+    }
+    for (let j = 0; j < this.dimensions[0]; ++j) {
+      for (let i = 0; i < this.dimensions[1]; ++i) {
+        index[iidx++] = j + i * this.dimensions[0]
+      }
+      if (j !== this.dimensions[0] - 1) { index[iidx++] = restart }
+    }
+    return index
   }
 }
 

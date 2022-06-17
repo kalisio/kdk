@@ -210,3 +210,4 @@ export function formatUserCoordinates (lat, lon, formatStr) {
 
   return formatcoords(lat, lon).format(formatStr)
 }
+
