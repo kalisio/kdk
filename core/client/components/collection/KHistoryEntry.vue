@@ -105,8 +105,7 @@ export default {
 
 <style lang="scss">
   .k-history-line {
-    background: linear-gradient($grey-6, $grey-5);
-    background-repeat: no-repeat;
+    background: $grey5;
     background-position: center;
     background-size: 5px 90%;
   }
