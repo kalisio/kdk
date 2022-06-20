@@ -187,7 +187,7 @@ async function createService (name, app, options = {}) {
       if (typeof serviceMixin === 'function') {
         serviceMixin = await serviceMixin.bind(dbService)(fileName, app, serviceOptions)
       }
-      service.mixin(serviceMixin)
+      Object.assign(service, serviceMixin)
     } catch (error) {
       debug('No ' + fileName + ' service mixin configured on path ' + serviceOptions.servicesPath)
       //if (error.code !== 'ERR_MODULE_NOT_FOUND') {

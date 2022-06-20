@@ -47,7 +47,7 @@ describe('core:notifications', () => {
     await app.db.instance.dropDatabase()
   })
 
-  it('is ES6 compatible', () => {
+  it('is ES module compatible', () => {
     expect(typeof core).to.equal('function')
   })
 

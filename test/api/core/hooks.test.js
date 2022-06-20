@@ -1,7 +1,7 @@
 import memory from 'feathers-memory'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import { kdk,hooks } from '../../../core/api/index.js'
+import { kdk, hooks } from '../../../core/api/index.js'
 import mongodb from 'mongodb'
 
 const { ObjectID } = mongodb
