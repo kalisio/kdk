@@ -14,7 +14,7 @@ import weacastCore, { weacast } from '@weacast/core'
 import weacastGfs from '@weacast/gfs'
 import weacastProbe from '@weacast/probe'
 import distribution, { finalize } from '@kalisio/feathers-distributed'
-import core, { kalisio, hooks } from '../../../core/api/index.js'
+import core, { kdk, hooks } from '../../../core/api/index.js'
 import map, { createFeaturesService, createAlertsService } from '../../../map/api/index.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -76,7 +76,7 @@ describe('map:alerts', () => {
     chailint(chai, util)
     chai.use(spies)
 
-    app = kalisio()
+    app = kdk()
     weacastApp = weacast()
     // Distribute services
     app.configure(distribution(app.get('distribution').app))
@@ -122,7 +122,7 @@ describe('map:alerts', () => {
     expect(probeService).toExist()
   })
   // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('registers the alert service', async () => {
     await app.configure(core)

@@ -4,7 +4,7 @@ import dauria from 'dauria'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks } from '../../../core/api/index.js'
+import core, { kdk, hooks } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -22,7 +22,7 @@ describe('core:storage', () => {
 
   before(async () => {
     chailint(chai, util)
-    app = kalisio()
+    app = kdk()
     // Register log hook
     app.hooks({ error: { all: hooks.log } })
     port = app.get('port')

@@ -1,7 +1,7 @@
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks } from '../../../core/api/index.js'
+import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 import { createGmailClient } from './utils.js'
 
@@ -35,7 +35,7 @@ describe('core:notifications', () => {
     // Then rules for notifications
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)
 
-    app = kalisio()
+    app = kdk()
     // Register authorisation/log hook
     app.hooks({
       before: { all: [hooks.authorise] },

@@ -1,11 +1,10 @@
 import path, { dirname } from 'path'
 import assert from 'assert'
-import logger from 'winston'
 import fs from 'fs-extra'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kalisio, hooks, permissions, createTagService } from '../../../core/api/index.js'
+import core, { kdk, hooks, permissions, createTagService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -22,7 +21,7 @@ describe('core:services', () => {
     // Register default rules for all users
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)
 
-    app = kalisio()
+    app = kdk()
     // Register perspective hook
     app.hooks({
       before: { all: hooks.authorise },
@@ -492,7 +491,7 @@ describe('core:services', () => {
     // Raised by Forbidden error in hooks
     const hookLog = 'You are not allowed to access service'
     const now = new Date()
-    logger.info(log)
+    app.logger.info(log)
     // FIXME: need to let some time to proceed with log file
     // Didn't find a better way since fs.watch() does not seem to work...
     setTimeout(() => {

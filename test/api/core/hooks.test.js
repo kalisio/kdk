@@ -1,11 +1,7 @@
-import feathers from '@feathersjs/feathers'
-import { AuthenticationService } from '@feathersjs/authentication'
-import configuration from '@feathersjs/configuration'
-import express from '@feathersjs/express'
 import memory from 'feathers-memory'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import { hooks } from '../../../core/api/index.js'
+import { kdk,hooks } from '../../../core/api/index.js'
 import mongodb from 'mongodb'
 
 const { ObjectID } = mongodb
@@ -144,22 +140,18 @@ describe('core:hooks', () => {
   })
 
   it('generate JWT', async () => {
-    const app = express(feathers())
-    app.configure(configuration())
+    const app = kdk()
     const config = app.get('authentication')
-    app.use('authentication', new AuthenticationService(app))
     const hook = { type: 'before', app, data: {}, params: { user: { _id: 'toto' } } }
     await hooks.createJWT()(hook)
     expect(typeof hook.data.accessToken).to.equal('string')
-    const payload = await app.service('authentication').verifyAccessToken(hook.data.accessToken, config.jwtOptions)
+    const payload = await app.getService('authentication').verifyAccessToken(hook.data.accessToken, config.jwtOptions)
     expect(payload.userId).beUndefined()
   })
 
   it('generate custom JWT', async () => {
-    const app = express(feathers())
-    app.configure(configuration())
+    const app = kdk()
     const config = app.get('authentication')
-    app.use('authentication', new AuthenticationService(app))
     const hook = { type: 'before', app, data: {}, params: { user: { _id: 'toto' } } }
     await hooks.createJWT({
       name: 'accessToken',
@@ -167,7 +159,7 @@ describe('core:hooks', () => {
       payload: user => ({ userId: user._id })
     })(hook)
     expect(typeof hook.data.accessToken).to.equal('string')
-    const payload = await app.service('authentication').verifyAccessToken(hook.data.accessToken, config.jwtOptions)
+    const payload = await app.getService('authentication').verifyAccessToken(hook.data.accessToken, config.jwtOptions)
     expect(payload.sub).to.equal('toto')
     expect(payload.userId).to.equal('toto')
   })

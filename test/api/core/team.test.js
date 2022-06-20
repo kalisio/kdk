@@ -3,7 +3,7 @@ import dauria from 'dauria'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import common from 'feathers-hooks-common'
-import core, { kalisio, hooks } from '../../../core/api/index.js'
+import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 
 const { iffElse, when } = common
@@ -43,7 +43,7 @@ describe('core:team', () => {
     // Then rules for groups
     permissions.defineAbilities.registerHook(permissions.defineGroupAbilities)
 
-    app = kalisio()
+    app = kdk()
     port = app.get('port')
     // baseUrl = `http://localhost:${port}${app.get('apiPath')}`
     // Register authorisation hook

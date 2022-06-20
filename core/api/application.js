@@ -1,7 +1,7 @@
 import path from 'path'
 import url from 'url'
 import makeDebug from 'debug'
-import logger from 'winston'
+import winston from 'winston'
 import _ from 'lodash'
 import siftModule from 'sift'
 import 'winston-daily-rotate-file'
@@ -254,7 +254,9 @@ export function createWebhook (path, app, options = {}) {
           } else {
             accessToken = payload.accessToken
           }
-          const tokenPayload = await app.service('authentication').verifyAccessToken(accessToken, config.jwtOptions)
+          const tokenPayload = await app.getService('authentication').verifyAccessToken(accessToken, config.jwtOptions)
+          // Backward compatibility for Feathers tokens prior to v4
+          if (!tokenPayload.userId) tokenPayload.userId = tokenPayload.sub
           params.user = await app.getService('users').get(tokenPayload.userId)
           params.checkAuthorisation = true
         } catch (error) {
@@ -304,32 +306,35 @@ export function createWebhook (path, app, options = {}) {
 
 function setupLogger (app) {
   debug('Setup application loggers')
-  const logsConfig = app.get('logs')
-  // Use winston default logger
-  app.logger = logger
+  const logsConfig = Object.assign({ // Default logger erased by provided one if any
+    Console: {
+      format: winston.format.combine(winston.format.colorize(), winston.format.simple())
+    }
+  }, _.omit(app.get('logs'), ['level', 'format']))
   // Remove winston defaults
   try {
-    logger.clear()
+    winston.clear()
   } catch (error) {
     // Logger might be down, use console
     console.error('Could not remove default logger transport(s)', error)
   }
   // We have one entry per log type
-  const logsTypes = logsConfig ? Object.getOwnPropertyNames(logsConfig) : []
+  const logsTypes = Object.getOwnPropertyNames(logsConfig)
   // Create corresponding winston transports with options
+  const transports = []
   logsTypes.forEach(logType => {
-    const options = logsConfig[logType]
-    // Setup default log level if not defined
-    if (!options.level) {
-      options.level = (process.env.NODE_ENV === 'development' ? 'debug' : 'info')
-    }
+    const logOptions = logsConfig[logType]
+    debug(`Setup ${logType} transport with options`, logOptions)
     try {
-      logger.add(new logger.transports[logType](options))
+      transports.push(new winston.transports[logType](logOptions))
     } catch (error) {
       // Logger might be down, use console
       console.error(`Could not setup logger ${logType}`, error)
     }
   })
+  app.logger = winston.createLogger(Object.assign({
+    level: (process.env.NODE_ENV === 'development' ? 'debug' : 'info'), transports
+  }, _.pick(logsConfig, ['level', 'format'])))
 }
 
 function setupSockets (app) {
