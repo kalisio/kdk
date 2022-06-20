@@ -5,7 +5,7 @@ import _ from 'lodash'
 import path from 'path'
 import fs from 'fs-extra'
 import { fileURLToPath } from 'url'
-import core, { kalisio, hooks, permissions } from '../../../core/api/index.js'
+import core, { kdk, hooks, permissions } from '../../../core/api/index.js'
 import map, {
   permissions as mapPermissions, createFeaturesService, createCatalogService
 } from '../../../map/api/index.js'
@@ -27,7 +27,7 @@ describe('map:services', () => {
     // Then rules for maps
     permissions.defineAbilities.registerHook(mapPermissions.defineUserAbilities)
 
-    app = kalisio()
+    app = kdk()
     // Register authorisation/log hook
     app.hooks({
       before: { all: [hooks.authorise] },

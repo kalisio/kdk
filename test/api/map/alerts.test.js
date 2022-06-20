@@ -14,7 +14,7 @@ import weacastCore, { weacast } from '@weacast/core'
 import weacastGfs from '@weacast/gfs'
 import weacastProbe from '@weacast/probe'
 import distribution, { finalize } from '@kalisio/feathers-distributed'
-import core, { kalisio, hooks } from '../../../core/api/index.js'
+import core, { kdk, hooks } from '../../../core/api/index.js'
 import map, { createFeaturesService, createAlertsService } from '../../../map/api/index.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -76,7 +76,7 @@ describe('map:alerts', () => {
     chailint(chai, util)
     chai.use(spies)
 
-    app = kalisio()
+    app = kdk()
     weacastApp = weacast()
     // Distribute services
     app.configure(distribution(app.get('distribution').app))
@@ -97,14 +97,15 @@ describe('map:alerts', () => {
     externalApp.use(express.json())
     externalPort = port + 1
     // Launch the external server
-    externalApp.listen(externalPort).then(externalServer => externalServer.once('listening', _ => {
+    externalServer = externalApp.listen(externalPort)
+    externalServer.once('listening', _ => {
       // Ensure webhook enpoint responds
       externalApp.post('/webhook', checkAlertWebhook)
       request.post('http://localhost:' + externalPort + '/webhook', { type: 'event' }, (error, res, body) => {
         resetAlertWebhook()
         done(error)
       })
-    }))
+    })
   })
   // Let enough time to process
     .timeout(5000)
@@ -133,7 +134,7 @@ describe('map:alerts', () => {
     spyUnregisterAlert = chai.spy.on(alertService, 'unregisterAlert')
     spyCheckAlert = chai.spy.on(alertService, 'checkAlert')
     // Now app is configured launch the server
-    server = app.listen(port)
+    server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
   // Let enough time to process

@@ -1,6 +1,5 @@
 import path, { dirname } from 'path'
 import assert from 'assert'
-import logger from 'winston'
 import fs from 'fs-extra'
 import request from 'superagent'
 import chai from 'chai'
@@ -492,7 +491,7 @@ describe('core:services', () => {
     // Raised by Forbidden error in hooks
     const hookLog = 'You are not allowed to access service'
     const now = new Date()
-    logger.info(log)
+    app.logger.info(log)
     // FIXME: need to let some time to proceed with log file
     // Didn't find a better way since fs.watch() does not seem to work...
     setTimeout(() => {

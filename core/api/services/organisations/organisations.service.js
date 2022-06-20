@@ -38,7 +38,7 @@ export default async function (name, app, options) {
     },
 
     async createOrganisationServices (organisation, db) {
-      this.app.createService('members', {
+      await this.app.createService('members', {
         servicesPath,
         context: organisation,
         proxy: {
@@ -47,7 +47,7 @@ export default async function (name, app, options) {
         }
       })
       debug('Members service created for organisation ' + organisation.name)
-      this.app.createService('groups', {
+      await this.app.createService('groups', {
         modelsPath,
         servicesPath,
         context: organisation,
