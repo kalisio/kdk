@@ -105,7 +105,8 @@ export default {
 
 <style lang="scss">
   .k-history-line {
-    background: $grey5;
+    background: $grey-6;
+    background-repeat: no-repeat;
     background-position: center;
     background-size: 5px 90%;
   }
