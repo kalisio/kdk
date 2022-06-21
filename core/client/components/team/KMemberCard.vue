@@ -44,7 +44,7 @@
         :dense=dense>
         <div v-if="hasGroups" class="row justify-start items-center">
           <template v-for="(group, index) in groups" :key="groupKey(group)">
-            <q-btn :id="(group.name + '-button') | kebabCase" flat small round color="primary">
+            <q-btn :id="groupButtonId(group)" flat small round color="primary">
               <q-avatar color="primary" text-color="white" size="2rem">{{ groupInitials(group) }}</q-avatar>
               <q-menu ref="popover">
                 <q-toolbar inverted color="grey-7">
@@ -205,6 +205,9 @@ export default {
     },
     groupKey (group) {
       return this.item._id + group._id
+    },
+    groupButtonIdy (group) {
+      return _.kebabCase(group.name + '-button')
     },
     groupInitials (group) {
       return getInitials(group.name)
