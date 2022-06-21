@@ -58,7 +58,7 @@ export default {
       return {
         type: 'Feature',
         properties: {
-          'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="kdk:mapillary-marker.png">`
+          'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="/icons/kdk/mapillary-marker.png">`
         },
         geometry: {
           type: 'Point',

@@ -16,7 +16,7 @@
       <template v-slot:top="props">
         <q-select v-model="visibleColumns" multiple borderless dense options-dense
           :display-value="$t('KTable.TABLE_COLUMNS')" emit-value map-options
-          :options="selectableColumns" option-value="field" style="min-width: 150px"/>
+          :options="selectableColumns" option-value="name" style="min-width: 150px"/>
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
