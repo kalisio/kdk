@@ -17,7 +17,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.conf.render = {
       cutOver: options.cutOver,
       cutUnder: options.cutUnder,
-      pixelColorMapping: options.pixelColorMapping
+      pixelColorMapping: options.pixelColorMapping,
+      showWireframe: options.showWireframe
     }
     // keep debug options
     this.conf.debug = {
@@ -129,9 +130,9 @@ const TiledMeshLayer = L.GridLayer.extend({
             const values = grid.genValuesBuffer()
             const indexes = grid.genMeshIndexBuffer()
             const geometry = new PIXI.Geometry()
-                                     .addAttribute('in_layerCoord', coords, 2, false, PIXI.TYPES.HALF_FLOAT_VERTEX)
-                                     .addAttribute('in_layerValue', values, 1, false, PIXI.TYPES.FLOAT)
-                                     .addIndex(indexes)
+              .addAttribute('in_layerCoord', coords, 2, false, PIXI.TYPES.HALF_FLOAT_VERTEX)
+              .addAttribute('in_layerValue', values, 1, false, PIXI.TYPES.FLOAT)
+              .addIndex(indexes)
 
             // compute tile specific uniforms
             const uniforms = {
@@ -146,6 +147,14 @@ const TiledMeshLayer = L.GridLayer.extend({
             const shader = new PIXI.Shader(this.program, uniforms)
             const mode = this.conf.debug.meshAsPoints ? PIXI.DRAW_MODES.POINTS : PIXI.DRAW_MODES.TRIANGLE_STRIP
             tile.mesh = new PIXI.Mesh(geometry, shader, this.pixiState, mode)
+
+            if (this.conf.render.showWireframe) {
+              const wireframeGeometry = new PIXI.Geometry()
+                .addAttribute('in_layerCoord', geometry.getBuffer('in_layerCoord'), 2, false, PIXI.TYPES.HALF_FLOAT_VERTEX)
+                .addIndex(grid.genWireframeIndexBuffer())
+              const wireframeShader = new PIXI.Shader(this.wireframeProgram, uniforms)
+              tile.wireframe = new PIXI.Mesh(wireframeGeometry, wireframeShader, this.pixiState, PIXI.DRAW_MODES.LINE_STRIP)
+            }
 
             if (this.conf.debug.showTileInfos) {
               const dims = grid.getDimensions()
@@ -184,6 +193,14 @@ const TiledMeshLayer = L.GridLayer.extend({
     mesh.zoomLevel = event.coords.z
     mesh.visible = (mesh.zoomLevel === this._map.getZoom())
     this.pixiRoot.addChild(mesh)
+
+    if (this.conf.render.showWireframe) {
+      const wireframe = event.tile.wireframe
+      wireframe.zoomLevel = mesh.zoomLevel
+      wireframe.visible = mesh.visible
+      this.pixiRoot.addChild(wireframe)
+    }
+
     if (mesh.visible) {
       this.pixiLayer.redraw()
     }
@@ -199,6 +216,13 @@ const TiledMeshLayer = L.GridLayer.extend({
     if (event.tile.mesh) {
       // remove and destroy tile mesh
       this.pixiRoot.removeChild(event.tile.mesh)
+
+      if (this.conf.render.showWireframe) {
+        this.pixiRoot.removeChild(event.tile.wireframe)
+        event.tile.wireframe.destroy()
+        event.tile.wireframe = null
+      }
+
       if (event.tile.mesh.visible) {
         this.pixiLayer.redraw()
       }
@@ -214,8 +238,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     // and zoom level 'n+1' are being loaded on top of them
     // when alpha blending is used, this is annoying
     const zoomLevel = this._map.getZoom()
-    for (const mesh of this.pixiRoot.children) {
-      if (mesh.zoomLevel === zoomLevel) mesh.visible = false
+    for (const child of this.pixiRoot.children) {
+      if (child.zoomLevel === zoomLevel) child.visible = false
     }
   },
 
@@ -226,8 +250,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     // this is important when quickly zoomin in and out
     // because some meshes may not have been evicted yet
     const zoomLevel = this._map.getZoom()
-    for (const mesh of this.pixiRoot.children) {
-      if (mesh.zoomLevel === zoomLevel) mesh.visible = true
+    for (const child of this.pixiRoot.children) {
+      if (child.zoomLevel === zoomLevel) child.visible = true
     }
     this.pixiLayer.redraw()
   },
@@ -404,6 +428,17 @@ const TiledMeshLayer = L.GridLayer.extend({
 
     const [vtxCode, frgCode] = buildShaderCode(features)
     this.program = new PIXI.Program(vtxCode, frgCode)
+
+    if (this.conf.render.showWireframe) {
+      const [vtxWireframe, frgWireframe] = buildShaderCode([features[0], {
+        name: 'tail',
+        fragment: {
+          uniforms: ['float in_layerAlpha'],
+          code: '  outColor = vec4(0.0, 0.0, 0.0, in_layerAlpha);'
+        }
+      }])
+      this.wireframeProgram = new PIXI.Program(vtxWireframe, frgWireframe)
+    }
 
     if (this.conf.debug.showShader) {
       console.log('Generated vertex shader:')
