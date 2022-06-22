@@ -7,7 +7,8 @@
     no-caps
     no-wrap
     :color="computedColor"
-    :icon="computedIcon"
+    :icon="!iconRight ? computedIcon : undefined"
+    :icon-right="iconRight ? computedIcon : undefined"
     :size="size"
     flat
     :round="label===''"
@@ -16,7 +17,7 @@
     :disable="disabled"
     @click="onClicked(arguments[0])">
     <!-- label -->
-    <div v-if="computedLabel" class="ellipsis q-pl-md">
+    <div v-if="computedLabel" v-bind:class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
       {{ computedLabel }}
     </div>
     <!-- tooltip -->
@@ -157,6 +158,10 @@ export default {
     icon: {
       type: String,
       default: undefined
+    },
+    iconRight: {
+      type: Boolean,
+      default: false
     },
     color: {
       type: String,
