@@ -21,9 +21,9 @@
           id="features-chart"
           class="col"
           :ref="onChartCreated" 
-          :display-format="render"
+          :format="render.value"
         />
-        <!-- Netx chart -->
+        <!-- Next chart -->
         <q-btn
           v-if="currentChart < nbCharts"
           size="1rem" flat round color="primary"
@@ -58,13 +58,13 @@
           :options="paginationOptions"
           @update:modelValue="refreshChartAndPagination"
         />
-        <!--q-select
+        <q-select
           :disable="selectedProperty ? false: true"
           v-model="render"
           :label="$t('KFeaturesChart.RENDER_LABEL')"
           :options="renderOptions"
           @update:modelValue="refreshChart"
-        /-->
+        />
       </div>
     </k-modal>
   </div>
@@ -265,9 +265,8 @@ export default {
       }
     },
     async openModal () {
-      // If not injected load it
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
       kCoreMixins.baseModal.methods.openModal.call(this, true)
+      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
       this.openSettings()
     }
   }

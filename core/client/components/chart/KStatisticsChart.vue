@@ -11,7 +11,12 @@ function labelValueFormatter (value, context) {
 }
 
 function labelPercentFormatter (value, context) {
-  const sum = context.chart.getDatasetMeta(context.datasetIndex).total
+  // This works for pie and polarArea charts
+  let sum = context.chart.getDatasetMeta(context.datasetIndex).total
+  if (_.isNil(sum)) {
+    // we need to compute the sum
+    sum = _.sum(context.dataset.data)
+  }
   if (sum === 0) return 0
   return (value * 100 / sum).toFixed(2) + "%"
 }
