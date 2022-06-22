@@ -20,7 +20,6 @@ import { KForm } from '../form'
 import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
 
 export default {
-  emits: ['opened', 'closed'],
   components: {
     KModal,
     KScrollArea,
@@ -41,12 +40,12 @@ export default {
       ]
       if (this.clearButton !== '') {
         buttons.push({
-          id: 'clear-button', label: this.clearButton, renderer: 'form-button', outline: 'true', handler: () => this.clear()
+          id: 'clear-button', label: this.clearButton, renderer: 'form-button', outline: 'true', handler: () => this.clearEditor()
         })
       }
       if (this.resetButton !== '') {
         buttons.push({
-          id: 'reset-button', label: this.resetButton, renderer: 'form-button', outline: 'true', handler: () => this.reset()
+          id: 'reset-button', label: this.resetButton, renderer: 'form-button', outline: 'true', handler: () => this.resetEditor()
         })
       }
       return buttons

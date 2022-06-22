@@ -30,7 +30,7 @@ import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
   name: 'k-features-table',
-  inject: ['kActivity', 'layer'],
+  inject: ['kActivity', 'selectedLayer'],
   components: {
     KTable,
     KModal,
@@ -45,6 +45,11 @@ export default {
     contextId: {
       type: String,
       default: ''
+    }
+  },
+  data () {
+    return {
+      layer: this.selectedLayer
     }
   },
   computed: {

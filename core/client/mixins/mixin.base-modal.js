@@ -1,4 +1,5 @@
 export const baseModal = {
+  emits: ['opened', 'closed'],
   props: {
     routerMode: {
       type: Boolean,
@@ -16,12 +17,14 @@ export const baseModal = {
       // Can be overloaded if needed
       this.isModalMaximized = maximized
       this.isModalOpened = true
+      this.$emit('opened')
     },
     closeModal () {
       this.isModalOpened = false
       if (this.routerMode) {
         this.$router.push(this.previousRoute)
       }
+      this.$emit('closed')
     }
   },
   created () {

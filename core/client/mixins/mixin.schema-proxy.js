@@ -8,6 +8,10 @@ export const schemaProxy = {
       type: String,
       default: ''
     },
+    schemaFunction: {
+      type: Function,
+      default: null
+    },
     schemaProperties: {
       type: [String, Array],
       default: () => []
@@ -64,6 +68,17 @@ export const schemaProxy = {
         throw error
       }
     },
+    async loadSchemaFromFunction (f) {
+      try {
+        this.schema = await f()
+        // Apply filtering
+        this.filterSchema()
+        return this.schema
+      } catch (error) {
+        Events.emit('error', error)
+        throw error
+      }
+    },
     loadSchema (schemaName) {
       // Create a new mixin promise if required
       // In the JSON schema file we use a $id like 'http:/www.kalisio.xyz/schemas/service.operation-perspective.json#'
@@ -72,7 +87,9 @@ export const schemaProxy = {
         // We need to load the schema now
         this.schemaPromise = createQuerablePromise(this.schemaJson
           ? this.loadSchemaFromJson(this.schemaJson)
-          : this.loadSchemaFromResource(schemaName))
+          : (this.schemaFunction
+            ? this.loadSchemaFromFunction(this.schemaFunction)
+            : this.loadSchemaFromResource(schemaName)))
       }
       return this.schemaPromise
     }

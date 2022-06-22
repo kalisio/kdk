@@ -19,6 +19,23 @@ export const editLayers = {
       layerEditMode: ''
     }
   },
+  watch: {
+    $route (to, from) {
+      if (!this.editedFeature) return
+      
+      // React to route changes when starting/finishing feature edition
+      if (_.get(to, 'params.featureId')) {
+        // Avoid default popup
+        this.editedPopup = this.editedFeature.getPopup()
+        if (this.editedPopup) this.editedFeature.unbindPopup(this.editedPopup)
+      } else if (_.get(from, 'params.featureId')) {
+        // Restore popup
+        if (this.editedPopup) this.editedFeature.bindPopup(this.editedPopup)
+        this.editedPopup = null
+        this.editedFeature = null
+      }
+    }
+  },
   methods: {
     isLayerEdited (layer) {
       return this.editedLayer && (this.editedLayer.name === layer.name)
@@ -107,6 +124,8 @@ export const editLayers = {
       ]
 
       this.editedLayer = layer
+      // Make it selected as well
+      this.selectedLayer = layer
       this.editingLayer = true
       this.onEditStart(this.editedLayer)
 
@@ -130,12 +149,7 @@ export const editLayers = {
       this.map.addLayer(this.editableLayer)
       bindLeafletEvents(this.map, mapEditEvents, this)
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
-      const schema = _.get(this.editedLayer, 'schema.content')
-      if (schema) {
-        // fill in the blanks
-        this.editedLayerSchema = JSON.stringify(updatePropertiesSchema(schema))
-      }
-
+      
       this.$engineEvents.on('click', this.onEditFeatureProperties)
       this.$engineEvents.on('zoomend', this.onMapZoomWhileEditing)
       this.$engineEvents.on('pm:create', this.onFeatureCreated)
@@ -182,7 +196,6 @@ export const editLayers = {
       this.onEditStop(status, this.editedLayer)
       this.editedLayer = null
       this.editingLayer = false
-      this.editedLayerSchema = null
 
       this.$engineEvents.off('click', this.onEditFeatureProperties)
       this.$engineEvents.off('zoomend', this.onMapZoomWhileEditing)
@@ -202,47 +215,20 @@ export const editLayers = {
 
       if (this.layerEditMode !== 'edit-properties' ||
           !this.isLayerEdited(layer) ||
-          !this.editedLayerSchema ||
+          !_.get(layer, 'schema.content') ||
           !leafletLayer ||
           !feature) return
 
-      // Avoid default popup
-      const popup = leafletLayer.getPopup()
-      if (popup) leafletLayer.unbindPopup(popup)
-
-      const service = this.editedLayer._id ? 'features' : 'features-edition'
-
-      this.editFeatureModal = await this.$createComponent('editor/KModalEditor', {
-        propsData: {
-          service,
-          contextId: this.contextId,
-          objectId: feature._id,
-          schemaJson: this.editedLayerSchema,
-          perspective: 'properties'
-        }
-      })
-      this.editFeatureModal.$mount()
-      this.editFeatureModal.openModal()
-      this.editFeatureModal.$on('applied', async updatedFeature => {
-        // Restore popup
-        if (popup) leafletLayer.bindPopup(popup)
-        // Save in DB and in memory
-        if (this.editedLayer._id) {
-          await this.editFeaturesProperties(updatedFeature)
-        } else {
-          await this.$api.getService('features-edition').patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
-        }
-        const geoJson = leafletLayer.toGeoJSON()
-        Object.assign(geoJson, _.pick(updatedFeature, ['properties']))
-        this.editableLayer.removeLayer(leafletLayer)
-        this.editableLayer.addData(geoJson)
-        this.editFeatureModal.closeModal()
-        this.editFeatureModal = null
-      })
-      this.editFeatureModal.$on('closed', () => {
-        // Restore popup
-        if (popup) leafletLayer.bindPopup(popup)
-        this.editFeatureModal = null
+      this.editedFeature = leafletLayer
+      this.$router.push({
+        name: 'edit-map-layer-feature',
+        query: this.$route.query,
+        params: Object.assign(this.$route.params, {
+          layerId: this.editedLayer._id,
+          layer: this.editedLayer,
+          featureId: feature._id,
+          contextId: this.contextId
+        })
       })
     },
     async onFeatureCreated (event) {

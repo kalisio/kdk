@@ -53,7 +53,7 @@ import { KModal } from '../../../core/client/components'
 
 export default {
   name: 'k-features-filter',
-  inject: ['kActivity', 'layer'],
+  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModal
   },
@@ -101,6 +101,7 @@ export default {
   },
   data () {
     return {
+      layer: this.selectedLayer,
       filters: [],
       property: null
     }

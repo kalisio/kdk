@@ -23,7 +23,7 @@ import KLayerStyleForm from './KLayerStyleForm.vue'
 
 export default {
   name: 'k-layer-style-editor',
-  inject: ['kActivity', 'layer'],
+  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModal,
     KLayerStyleForm
@@ -58,6 +58,7 @@ export default {
   },
   data () {
     return {
+      layer: this.selectedLayer,
       inProgress: false
     }
   },

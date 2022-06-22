@@ -14,7 +14,7 @@ import config from 'config'
 import { KModalEditor } from '../../../core/client/components'
 
 export default {
-  name: 'k-settings-editor',
+  name: 'k-layer-editor',
   inject: ['kActivity', 'layer'],
   components: {
     KModalEditor

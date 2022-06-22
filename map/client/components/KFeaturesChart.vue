@@ -80,7 +80,7 @@ import { KModal, KStatisticsChart } from '../../../core/client/components'
 
 export default {
   name: 'k-features-chart',
-  inject: ['kActivity', 'layer'],
+  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModal,
     KStatisticsChart
@@ -135,6 +135,7 @@ export default {
       value: 'percentage', label: this.$t('KFeaturesChart.PERCENTAGE_LABEL')
     }]
     return {
+      layer: this.selectedLayer,
       toolbar: [
         { id: 'settings', icon: 'las la-cog', tooltip: 'KFeaturesChart.CHART_SETTINGS_LABEL', handler: () => this.openSettings() },
         { id: 'download', icon: 'las la-file-download', tooltip: 'KFeaturesChart.CHART_EXPORT_LABEL', handler: () => this.downloadChartData() }
