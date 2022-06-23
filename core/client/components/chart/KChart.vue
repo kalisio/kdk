@@ -38,11 +38,15 @@ const legendMarginPlugin = {
 
 Chart.register(...registerables, ChartDataLabelsPlugin, ChartAnnotationPlugin, ChartZoomPlugin, legendMarginPlugin)
 
-const maxLabelLength = 20
-
 export default {
   components: {
     KStamp
+  },
+  props: {
+    maxLabelLength: {
+      type: Number,
+      default: 50
+    }
   },
   data () {
     return {
@@ -109,26 +113,20 @@ export default {
             labels: {
               display: this.isLegendDisplayed(),
               boxWidth: 15,
+              maxLength: this.maxLabelLength,
               generateLabels (chart) {
-                const data = chart.data;
-                if (data.labels.length && data.datasets.length) {
-                  const {labels: {pointStyle}} = chart.legend.options
-                  return data.labels.map((label, i) => {
-                    const meta = chart.getDatasetMeta(0);
-                    const style = meta.controller.getStyle(i);
-                    return {
-                      text: _.truncate(label, { length: maxLabelLength }),
-                      fillStyle: style.backgroundColor,
-                      strokeStyle: style.borderColor,
-                      lineWidth: style.borderWidth,
-                      pointStyle: pointStyle,
-                      hidden: !chart.getDataVisibility(i),
-                      // Extra data used for toggling the correct item
-                      index: i
-                    };
-                  });
-                }
-                return [];
+                // generate original labels according the type of the chart
+                const type = chart.config.type
+                let defaultGenerator = Chart.defaults.plugins.legend.labels.generateLabels
+                if (type === 'pie') defaultGenerator =  Chart.overrides.pie.plugins.legend.labels.generateLabels
+                else if (type === 'doughnut') defaultGenerator =  Chart.overrides.doughnut.plugins.legend.labels.generateLabels
+                else if (type === 'polarArea') defaultGenerator =  Chart.overrides.polarArea.plugins.legend.labels.generateLabels
+                const labels = defaultGenerator.call(this, chart)
+                // iterate through the labels and truncate the text
+                _.forEach(labels, label => {
+                  label.text = _.truncate(label.text, { length: chart.config.options.plugins.legend.labels.maxLength })
+                })
+                return labels
               }
             }
           },
@@ -144,7 +142,7 @@ export default {
               maxRotation: 90,
               callback: function (value, index, ticks) {
                 // https://www.chartjs.org/docs/latest/axes/labelling.html#creating-custom-tick-formats
-                return _.truncate(this.getLabelForValue(value), { length: maxLabelLength })
+                return _.truncate(this.getLabelForValue(value), { length: this.maxLabelLength })
               }
             }
           }
