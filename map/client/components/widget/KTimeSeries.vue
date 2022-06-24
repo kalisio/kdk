@@ -431,7 +431,8 @@ export default {
       if (!this.feature) {
         if (this.kActivity.probeLocation) { // Maybe there's a specific probeLocation function
           this.probedLocation = await this.kActivity.probeLocation(this.location.lng, this.location.lat, start, end)
-        } else { // Nope, default weacast probe
+        }
+        if (!this.probedLocation) {
           this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
           _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
                 ` (${this.location.lng.toFixed(2)}°, ${this.location.lat.toFixed(2)}°)`)
