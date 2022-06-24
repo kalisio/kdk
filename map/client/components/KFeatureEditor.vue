@@ -64,9 +64,6 @@ export default {
       }
     },
     async loadLayerSchema () {
-      // If not injected load it
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
-      this.service = _.get(this.layer, '_id') ? 'features' : 'features-edition'
       return updatePropertiesSchema(_.get(this.layer, 'schema.content'))
     },
     async openModal () {
@@ -76,6 +73,11 @@ export default {
     async closeModal () {
       kCoreMixins.baseModal.methods.closeModal.call(this)
     }
+  },
+  async created () {
+    // If not injected load it
+    if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+    this.service = _.get(this.layer, '_id') ? 'features' : 'features-edition'
   }
 }
 </script>

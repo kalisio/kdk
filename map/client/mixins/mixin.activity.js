@@ -382,14 +382,6 @@ export const activity = {
     async initialize () {
       // Check if the activity is using context restoration
       const hasContext = (typeof this.restoreContext === 'function')
-      // Geolocate by default if view has not been restored
-      const viewRestored = (hasContext ? await this.restoreContext('view') : false)
-      if (!viewRestored) {
-        // Provided by geolocation if enabled
-        if (!this.$geolocation.get().position) await this.$geolocation.update()
-        const position = this.$geolocation.get().position
-        if (position) this.center(position.longitude, position.latitude)
-      }
       // Retrieve the forecast models
       if (this.setupWeacast) {
         try {
@@ -411,6 +403,14 @@ export const activity = {
       }
       // Retrieve the time
       if (hasContext) this.restoreContext('time')
+      // Geolocate by default if view has not been restored
+      const viewRestored = (hasContext ? await this.restoreContext('view') : false)
+      if (!viewRestored) {
+        // Provided by geolocation if enabled
+        if (!this.$geolocation.get().position) await this.$geolocation.update()
+        const position = this.$geolocation.get().position
+        if (position) this.center(position.longitude, position.latitude)
+      }
       // Listen about changes in global/contextual catalog services
       const globalCatalogService = this.$api.getService('catalog', '')
       const catalogService = this.$api.getService('catalog')

@@ -42,10 +42,6 @@ export default {
     contextId: {
       type: String,
       default: ''
-    },
-    options: { // Contains default style options
-      type: Object,
-      required: true
     }
   },
   computed: {
@@ -54,6 +50,9 @@ export default {
         { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
         { id: 'apply-button', label: 'APPLY', renderer: 'form-button', handler: () => this.onApply() }
       ]
+    },
+    options () {
+      return this.kActivity.activityOptions.engine
     }
   },
   data () {

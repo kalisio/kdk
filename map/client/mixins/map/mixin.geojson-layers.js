@@ -20,8 +20,8 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
       return new L.Geodesic([L.GeoJSON.coordsToLatLngs(geometry.coordinates, 0)],
         Object.assign({ steps: 100 }, options.style(geojson)))
     } else if (geometry.type === 'Point') {
-      const layer = new L.Geodesic([], Object.assign({ fill: true, steps: 360 }, options.style(geojson)))
-      layer.createCircle(L.GeoJSON.coordsToLatLng(geometry.coordinates), properties.radius)
+      const layer = new L.GeodesicCircle(L.GeoJSON.coordsToLatLng(geometry.coordinates),
+        Object.assign({ fill: true, steps: 360, radius: properties.radius }, options.style(geojson)))
       return layer
     }
   }

@@ -20,7 +20,7 @@ export const editLayers = {
     }
   },
   watch: {
-    $route (to, from) {
+    async $route (to, from) {
       if (!this.editedFeature) return
       
       // React to route changes when starting/finishing feature edition
@@ -31,6 +31,11 @@ export const editLayers = {
       } else if (_.get(from, 'params.featureId')) {
         // Restore popup
         if (this.editedPopup) this.editedFeature.bindPopup(this.editedPopup)
+        // Update feature after edition from DB or memory
+        const service = (this.editedLayer._id ? 'features' : 'features-edition')
+        const feature = await this.$api.getService(service).get(this.editedFeature.feature._id)
+        this.editableLayer.removeLayer(this.editedFeature)
+        this.editableLayer.addData(feature)
         this.editedPopup = null
         this.editedFeature = null
       }

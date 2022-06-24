@@ -121,7 +121,7 @@ export const baseEditor = {
       if (!this.form.validate().isValid) return
       // Now the form is validated apply it to the target object
       const object = this.getBaseObject()
-      this.form.apply(object)
+      await this.form.apply(object)
 
       // Small helper to avoid repeating too much similar code
       const onServiceResponse = async (response) => {

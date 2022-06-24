@@ -30,7 +30,7 @@ export default function (name, api, options) {
       })
       rootPaths.forEach((rootPath, index) => {
         const eventName = _.kebabCase(`${rootPath}-changed`)
-        Events.$emit(eventName, Store.get(rootPath), previousRootValues[index])
+        Events.emit(eventName, Store.get(rootPath), previousRootValues[index])
       })
       this.saveSettings()
     },
