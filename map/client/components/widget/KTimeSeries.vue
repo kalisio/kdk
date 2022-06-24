@@ -429,9 +429,13 @@ export default {
       const { start, end } = Time.getRange()
       // No feature clicked => dynamic weacast probe at position
       if (!this.feature) {
-        this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
-        _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
-          ` (${this.location.lng.toFixed(2)}°, ${this.location.lat.toFixed(2)}°)`)
+        if (this.kActivity.probeLocation) { // Maybe there's a specific probeLocation function
+          this.probedLocation = await this.kActivity.probeLocation(this.location.lng, this.location.lat, start, end)
+        } else { // Nope, default weacast probe
+          this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
+          _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
+                ` (${this.location.lng.toFixed(2)}°, ${this.location.lat.toFixed(2)}°)`)
+        }
       } else if (this.layer.probe) { // Static weacast probe
         const probe = await this.kActivity.getForecastProbe(this.layer.probe)
         if (probe) {
