@@ -1,7 +1,8 @@
 <template>
   <div
+    v-html="html"
     @click="truncate=!truncate"
-    v-html="html">
+  >
   </div>
 </template>
 

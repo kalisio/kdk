@@ -5,7 +5,7 @@
     :label="label"
     :error-message="errorLabel"
     :error="hasError"
-    :disabled="disabled"
+    :disable="disabled"
     bottom-slots
   >
     <!-- Content -->
@@ -29,44 +29,61 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import KTextArea from '../frame/KTextArea.vue'
 import { baseField } from '../../mixins'
+import { useQuasar } from 'quasar'
 
 export default {
-  name: 'k-textarea-field',
   mixins: [baseField],
   components: {
     KTextArea
   },
   props: {
-    editorToolbar: {
-      type: Array,
-      default: () => []
+    toolbar: {
+      type: Object,
+      default: () => null
     }
-    /* TODO : this is no more working
-      {
-        return (this.$q.screen.lt.sm
-          ? [
-              ['bold', 'italic', 'underline', 'strike'],
-              [{
-                label: '',
-                icon: this.$q.iconSet.editor.align,
-                options: ['left', 'center', 'right', 'justify']
-              }],
-              ['undo', 'redo']
-            ]
-          : [
-              ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],
-              ['quote', 'link', 'hr'],
-              [{
-                label: this.$q.lang.editor.align,
-                icon: this.$q.iconSet.editor.align,
-                fixedLabel: true,
-                options: ['left', 'center', 'right', 'justify']
-              }],
-              ['undo', 'redo', 'viewsource']
-            ])
-      } */
+  },
+  data () {
+    return  {
+      defaultToolbar: {
+        xs: [
+          ['bold', 'italic', 'underline', 'strike', 'align'],
+          [{
+            label: '',
+            icon: this.$q.iconSet.editor.align,
+            list: 'only-icons',
+            options: ['left', 'center', 'right', 'justify']
+          }],
+          ['undo', 'redo']
+        ],
+        'gt.xs': [
+          ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],
+          ['quote', 'link', 'hr'],
+          [{
+            label: this.$q.lang.editor.align,
+            icon: this.$q.iconSet.editor.align,
+            fixedLabel: true,
+            list: 'only-icons',
+            options: ['left', 'center', 'right', 'justify']
+          }],
+          ['undo', 'redo']
+        ]
+      }
+    }
+  },
+  computed: {
+    editorToolbar () {
+      let configuration
+      _.forEach(this.toolbar || this.defaultToolbar, (value, key) => {
+        if (_.get(this.$q.screen, key)) {
+          configuration = value
+          return false
+        }
+      })
+      return configuration
+    }
   }
 }
 </script>
