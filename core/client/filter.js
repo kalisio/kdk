@@ -1,15 +1,16 @@
 import _ from 'lodash'
 import { Events } from './events.js'
 import { Store } from './store.js'
+import { api } from './api.js'
 
 // Export singleton
 export const Filter = {
-  initialize (api) {
+  initialize () {
     // This object is used to filter the activities based on a search pattern or on specific items
     // The filter then builds the corresponding query
     Store.set('filter', { field: 'name', pattern: '', items: [], query: {} })
     // Make filter react to external changes to update the query
-    Events.on('filter-changed', () => this.updateFilterQuery(api))
+    Events.on('filter-changed', () => this.updateFilterQuery())
   },
   get () {
     return Store.get('filter')
@@ -30,7 +31,7 @@ export const Filter = {
     Store.patch('filter', { field: 'name', pattern: '', items: [], query: {} })
   },
   // Build query from filter pattern and/or items
-  updateFilterQuery (api) {
+  updateFilterQuery () {
     const query = {}
     const pattern = this.getPattern()
     const field = this.getField()

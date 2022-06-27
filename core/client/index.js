@@ -7,7 +7,6 @@ import { Units } from './units.js'
 import { Reader } from './reader.js'
 import { Filter } from './filter.js'
 import { Sorter } from './sorter.js'
-import { Search } from './search.js'
 import services from './services/index.js'
 import * as utils from './utils.js'
 import * as mixins from './mixins/index.js'
@@ -53,9 +52,8 @@ export default function init () {
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
   Layout.initialize()
-  Filter.initialize(api)
+  Filter.initialize()
   Sorter.initialize()
-  Search.initialize(api)
   Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('leftPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })

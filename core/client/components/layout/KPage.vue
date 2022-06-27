@@ -301,6 +301,6 @@ export default {
   }
   .k-left-pane {
     height: 100vh;
-    width: 300px;
+    width: $left-pane-width;
   }
 </style>

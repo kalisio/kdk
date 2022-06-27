@@ -1,15 +1,13 @@
 import _ from 'lodash'
+import { api } from './api.js'
 import { getIconName, processIcon } from './utils.js'
 
 // Export singleton
 export const Search = {
-  initialize (api) {
-    this.api = api
-  },
   async query (services, pattern) {
     // Perform request for partial match to all registered services
     const requests = _.map(services, serviceDescriptor => {
-      const service = this.api.getService(serviceDescriptor.service)
+      const service = api.getService(serviceDescriptor.service)
       // build the query using given templet if any
       const query = Object.assign({}, serviceDescriptor.baseQuery)
       // Then add partial match
