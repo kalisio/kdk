@@ -17,10 +17,10 @@
           @click="onPreviousChart"
         />
         <!-- Current chart -->
-        <KStatisticsChart 
+        <KStatisticsChart
           id="features-chart"
           class="col"
-          :ref="onChartCreated" 
+          :ref="onChartCreated"
           :format="render.value"
         />
         <!-- Next chart -->
@@ -28,7 +28,7 @@
           v-if="currentChart < nbCharts"
           size="1rem" flat round color="primary"
           icon="las la-chevron-right"
-          @click="onNextChart" 
+          @click="onNextChart"
         />
       </div>
     </k-modal>

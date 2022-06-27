@@ -22,7 +22,7 @@ export const editLayers = {
   watch: {
     async $route (to, from) {
       if (!this.editedFeature) return
-      
+
       // React to route changes when starting/finishing feature edition
       if (_.get(to, 'params.featureId')) {
         // Avoid default popup
@@ -154,7 +154,7 @@ export const editLayers = {
       this.map.addLayer(this.editableLayer)
       bindLeafletEvents(this.map, mapEditEvents, this)
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
-      
+
       this.$engineEvents.on('click', this.onEditFeatureProperties)
       this.$engineEvents.on('zoomend', this.onMapZoomWhileEditing)
       this.$engineEvents.on('pm:create', this.onFeatureCreated)

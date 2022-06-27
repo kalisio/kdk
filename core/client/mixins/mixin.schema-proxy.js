@@ -88,8 +88,8 @@ export const schemaProxy = {
         this.schemaPromise = createQuerablePromise(this.schemaJson
           ? this.loadSchemaFromJson(this.schemaJson)
           : (this.schemaFunction
-            ? this.loadSchemaFromFunction(this.schemaFunction)
-            : this.loadSchemaFromResource(schemaName)))
+              ? this.loadSchemaFromFunction(this.schemaFunction)
+              : this.loadSchemaFromResource(schemaName)))
       }
       return this.schemaPromise
     }

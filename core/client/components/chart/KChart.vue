@@ -28,7 +28,7 @@ const legendMarginPlugin = {
   id: 'legendMargin',
   beforeInit (chart, args, options) {
     const fitValue = chart.legend.fit
-    chart.legend.fit = function fit() {
+    chart.legend.fit = function fit () {
       fitValue.bind(chart.legend)()
       if (options.width) this.width += options.width
       if (options.height) this.height += options.height
@@ -59,7 +59,7 @@ export default {
       return this.$q.screen.height === 0 ? 1 : this.$q.screen.width * marginCoeff / this.$q.screen.height
     },
     isLegendDisplayed () {
-      return this.$q.screen.lt.sm ? false : true
+      return !this.$q.screen.lt.sm
     },
     update (config) {
       this.hasData = !_.isEmpty(_.get(config, 'data.datasets'))
@@ -118,9 +118,9 @@ export default {
                 // generate original labels according the type of the chart
                 const type = chart.config.type
                 let defaultGenerator = Chart.defaults.plugins.legend.labels.generateLabels
-                if (type === 'pie') defaultGenerator =  Chart.overrides.pie.plugins.legend.labels.generateLabels
-                else if (type === 'doughnut') defaultGenerator =  Chart.overrides.doughnut.plugins.legend.labels.generateLabels
-                else if (type === 'polarArea') defaultGenerator =  Chart.overrides.polarArea.plugins.legend.labels.generateLabels
+                if (type === 'pie') defaultGenerator = Chart.overrides.pie.plugins.legend.labels.generateLabels
+                else if (type === 'doughnut') defaultGenerator = Chart.overrides.doughnut.plugins.legend.labels.generateLabels
+                else if (type === 'polarArea') defaultGenerator = Chart.overrides.polarArea.plugins.legend.labels.generateLabels
                 const labels = defaultGenerator.call(this, chart)
                 // iterate through the labels and truncate the text
                 _.forEach(labels, label => {

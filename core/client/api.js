@@ -35,7 +35,7 @@ function siftMatcher (originalQuery) {
   return sift(query)
 }
 
-export const api = feathers ()
+export const api = feathers()
 
 // Setup the api
 
@@ -209,5 +209,3 @@ api.configure(reactive({
 }))
 // Object used to store configuration options for services
 api.serviceOptions = {}
-
-

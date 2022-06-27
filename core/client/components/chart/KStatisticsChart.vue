@@ -18,7 +18,7 @@ function labelPercentFormatter (value, context) {
     sum = _.sum(context.dataset.data)
   }
   if (sum === 0) return 0
-  return (value * 100 / sum).toFixed(2) + "%"
+  return (value * 100 / sum).toFixed(2) + '%'
 }
 
 export default {

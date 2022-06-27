@@ -32,7 +32,7 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
     const query = {
       $or: [
         { [`${this.name}Id`]: profile.id || profile.sub },
-        { email: _.get(profile, this.emailFieldInProfile || 'email' ) }
+        { email: _.get(profile, this.emailFieldInProfile || 'email') }
       ],
       $limit: 1
     }
