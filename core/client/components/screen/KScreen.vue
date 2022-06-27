@@ -11,9 +11,11 @@
       <!-- Frame -->
       <q-card class="k-screen-frame full-width q-pa-sm">
         <q-card-section v-if="banner">
-          <div class="row justify-center">
-            <img :src="banner" />
-          </div>
+          <slot name="banner">
+            <div class="row justify-center">
+              <img :src="banner" />
+            </div>
+          </slot>
         </q-card-section>
         <q-card-section v-if="title">
           <div class="text-h6 text-center">{{ $t(title) }}</div>
