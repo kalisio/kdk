@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import { Quasar } from 'quasar'
 import { createI18n } from 'vue-i18n'
 import { getAppLocale, getAppFallbackLocale } from './utils.js'
 
@@ -27,6 +28,13 @@ export const i18n = {
     // Define the locale to be used
     const fallbackLocale = getAppFallbackLocale()
     const locale = getAppLocale()
+    // Install Quasar langage pack
+    try {
+      const langagePack = await import(`quasar/lang/${locale}.js`)
+      if (langagePack) Quasar.lang.set(langagePack.default)
+    } catch (error) {
+      logger.error(error)
+    }
     // Create i18n instance using the translation bundles
     this.i18n = createI18n({
       locale,
