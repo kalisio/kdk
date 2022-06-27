@@ -47,7 +47,7 @@ export const i18n = {
   get () {
     return this.i18n.global
   },
-  t (key) {
-    return this.i18n.global.t(key)
+  t (key, param) {
+    return this.i18n.global.t(key, param)
   }
 }
