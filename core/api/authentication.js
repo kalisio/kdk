@@ -22,9 +22,10 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
       _.set(entity, 'name', _.get(profile, this.nameFieldInProfile || 'name'))
     }
     // Store provider profile information
-    const profileFilter = (typeof this.profile === 'function' ? this.profile : (profile) => profile)
-    profile = profileFilter(profile)
     if (profile) entity[`${this.name}`] = profile
+
+    debug('Creating/Updating OAuth user', entity)
+
     return entity
   }
 

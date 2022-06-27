@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import siftModule from 'sift'
 import moment from 'moment'
 import errors from '@feathersjs/errors'
 import { objectifyIDs, toObjectIDs } from '../db.js'
@@ -8,6 +9,7 @@ import makeDebug from 'debug'
 
 const { Conflict } = errors
 const { discard, disallow, getItems, replaceItems } = common
+const sift = siftModule.default
 const debug = makeDebug('kdk:core:model:hooks')
 
 // Need to convert from server side types (moment dates) to basic JS types when "writing" to DB adapters
@@ -89,8 +91,9 @@ export function serialize (rules, options = {}) {
     // Apply the rules for each item
     items.forEach(item => {
       rules.forEach(rule => {
-        const source = _.get(item, rule.source)
+        let source = _.get(item, rule.source)
         if (!_.isNil(source)) {
+          if (rule.filter) source = source.filter(sift(rule.filter))
           _.set(item, rule.target, source)
           if (rule.delete) {
             _.unset(item, rule.source)

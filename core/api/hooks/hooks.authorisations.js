@@ -255,10 +255,12 @@ export function updateAbilities (options = {}) {
     const params = hook.params
     const authorisationService = app.getService('authorisations')
     let subject = (options.subjectAsItem ? getItems(hook) : params.user)
+    // Specific case of authentication result
+    if (subject && subject.user) subject = subject.user
     // We might not have all information required eg on patch to compute new abilities,
     // in this case we have to fetch the whole subject
     if (options.fetchSubject) {
-      subject = await hook.service.get(subject._id.toString())
+      subject = await app.getService('users').get(subject._id.toString())
     }
     const abilities = await authorisationService.updateAbilities(subject)
     debug('Abilities updated on subject', subject, abilities.rules)
