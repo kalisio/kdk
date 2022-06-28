@@ -1,14 +1,13 @@
 import errors from '@feathersjs/errors'
-import feathers from '@feathersjs/feathers'
 import { RateLimiter } from 'limiter'
 import makeDebug from 'debug'
 
-const { SKIP } = feathers
 const { TooManyRequests, Forbidden } = errors
 const debug = makeDebug('kdk:core:service:hooks')
 
 export function skipEvents (hook) {
-  return SKIP
+  hook.event = null
+  return hook
 }
 
 export function rateLimit (options) {
