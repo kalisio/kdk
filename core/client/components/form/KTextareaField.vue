@@ -46,7 +46,7 @@ export default {
     }
   },
   data () {
-    return  {
+    return {
       defaultToolbar: {
         xs: [
           ['bold', 'italic', 'underline', 'strike', 'align'],
