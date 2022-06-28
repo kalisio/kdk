@@ -450,15 +450,20 @@ export function kdk () {
   }
   // This avoid managing the API path before each service name
   app.getService = function (path, context) {
-    // Context is given as string ID
-    if (context && typeof context === 'string') {
-      return app.service(app.get('apiPath') + '/' + context + '/' + path)
-    } else if (context && typeof context === 'object') {
-      // Could be Object ID or raw object
-      if (ObjectID.isValid(context)) return app.service(app.get('apiPath') + '/' + context.toString() + '/' + path)
-      else return app.service(app.get('apiPath') + '/' + context._id.toString() + '/' + path)
-    } else {
-      return app.service(app.get('apiPath') + '/' + path)
+    try {
+      // Context is given as string ID
+      if (context && typeof context === 'string') {
+        return app.service(app.get('apiPath') + '/' + context + '/' + path)
+      } else if (context && typeof context === 'object') {
+        // Could be Object ID or raw object
+        if (ObjectID.isValid(context)) return app.service(app.get('apiPath') + '/' + context.toString() + '/' + path)
+        else return app.service(app.get('apiPath') + '/' + context._id.toString() + '/' + path)
+      } else {
+        return app.service(app.get('apiPath') + '/' + path)
+      }
+    } catch {
+      // We return a false-y value in case the service wasn't found
+      return null
     }
   }
   // This is used to add hooks/filters to services
