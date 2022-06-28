@@ -5,20 +5,27 @@
     </div>
     <q-field v-else
       :for="properties.name + '-field'"
+      :ref="onReferenceCreated"
       :label="label"
-      :value="model"
+      v-model="model"
       :error-message="errorLabel"
       :error="hasError"
-      :disabled="disabled"
+      :disable="disabled"
       clearable
       bottom-slots
-      @click.native="picker = true"
       @clear="model=''">
       <!-- control -->
       <template v-slot:control>
-        <k-spot :id="properties.name + '-field'" :color="model" width="50px" height="18px" border-radius="3px" />
+        <k-spot 
+          :id="properties.name + '-field'" 
+          class="full-width"
+          :color="model" 
+          width="100%" 
+          height="16px" 
+          border-radius="3px" 
+        />
         <q-dialog v-model="picker">
-          <q-color no-header format-model="hex" v-model="model" @changed="picker = false"/>
+          <q-color no-header format-model="hex" v-model="model" @change="picker = false"/>
         </q-dialog>
       </template>
       <!-- Helper -->
@@ -46,6 +53,10 @@ export default {
   methods: {
     emptyModel () {
       return ''
+    },
+    onReferenceCreated (ref) {
+      // https://github.com/quasarframework/quasar/issues/8956
+      if (ref) ref.$el.onclick = () => { this.picker = true }
     }
   }
 }
