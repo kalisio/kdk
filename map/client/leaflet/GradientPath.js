@@ -8,8 +8,11 @@ const GradientPath = L.PixiOverlay.extend({
 
   initialize (geoJson, options) {
     L.setOptions(this, Object.assign({ stroke: '#FFFFFF', weight: 8 }, options))
-    this.paths = []
-    this.currentZoom = -1
+    this.path = {
+      geometry: null,
+      bounds: null
+    }
+    this.rope = null
     this.container = new PIXI.Container()
     Object.assign(this.container, {
       interactive: true,
@@ -20,8 +23,9 @@ const GradientPath = L.PixiOverlay.extend({
       this.container, {
         autoPreventDefault: false,
         // see: https://github.com/kalisio/kdk/issues/424
-        projectionZoom: (map) => { return 12 }
+        projectionZoom: () => { return 12 }
       })
+    this.currentZoom = -1
     if (geoJson) this.setData(geoJson)
   },
 
@@ -34,12 +38,12 @@ const GradientPath = L.PixiOverlay.extend({
       return
     }
     // Updated the bounds
-    this.pathBounds = new L.LatLngBounds()
-    coords.forEach(coord => this.pathBounds.extend([coord[1], coord[0]]))
+    this.path.bounds = new L.LatLngBounds()
+    coords.forEach(coord => this.path.bounds.extend([coord[1], coord[0]]))
     // Then the path
     const gradient = _.get(geoJson, 'properties.gradient', _.get(geoJson, 'properties.stroke', _.get(this.options, 'stroke')))
     const weight = _.get(geoJson, 'properties.weight', _.get(this.options, 'weight'))
-    this.path = { coords, gradient, weight }
+    this.path.geometry = { coords, gradient, weight }
     // Force a refresh
     this.currentZoom = -1
     this.redraw()
@@ -56,16 +60,25 @@ const GradientPath = L.PixiOverlay.extend({
   onRemove (map) {
     map.off('click', this.clickEventHandler)
     map.off('mousemove', this.moveEventHandler)
+    if (this.rope) {
+      logger.debug('clear pixi rope')
+      this.container.removeChild(this.rope)
+      this.rope.texture.destroy(true)
+      this.rope.destroy(true)
+      this.rope = null
+    }
+    this.container.destroy(true)
     L.PixiOverlay.prototype.onRemove.call(this, map)
+    //this.container.destroy()
   },
 
   getBounds () {
-    return this.pathBounds
+    return this.path.bounds
   },
 
   getCenter () {
-    const mid = Math.floor(this.path.coords.length / 2)
-    const center = this.path.coords[mid]
+    const mid = Math.floor(this.path.geometry.coords.length / 2)
+    const center = this.path.geometry.coords[mid]
     return [center[1], center[0]]
   },
 
@@ -103,7 +116,7 @@ const GradientPath = L.PixiOverlay.extend({
   },
 
   createSolidTexture (color, weight) {
-    const canvas = document.createElement('canvas')
+    let canvas = document.createElement('canvas')
     canvas.width = 8
     canvas.height = weight
     // use canvas2d API to create the solid texture
@@ -114,8 +127,8 @@ const GradientPath = L.PixiOverlay.extend({
   },
 
   createGradientTexture (gradient, weight) {
-    const canvas = document.createElement('canvas')
-    canvas.width = 4096
+    let canvas = document.createElement('canvas')
+    canvas.width = gradient.length
     canvas.height = weight
     // use canvas2d API to create the gradient texture
     const ctx = canvas.getContext('2d')
@@ -130,21 +143,31 @@ const GradientPath = L.PixiOverlay.extend({
 
   render (utils) {
     const zoom = utils.getMap().getZoom()
+
     // Need to update rope weight according to zoom level so that we get a constant thickness on screen
     if (zoom !== this.currentZoom) {
-      this.renderer = utils.getRenderer()
-      this.container.removeChildren()
-      // Converts the geo coordinates into layer coordinates
-      const points = this.path.coords.map(coord => utils.latLngToLayerPoint([coord[1], coord[0]]))
-      let texture
+      this.renderer = utils.getRenderer() 
+      // Compute the texture
       // FIXME: how to ensure a pixel constant size when zooming ?
-      const weight = 2048 * this.path.weight / Math.pow(2, zoom)
-      if (Array.isArray(this.path.gradient)) {
-        texture = this.createGradientTexture(this.path.gradient, weight)
+      let texture = null
+      const weight = 2048 * this.path.geometry.weight / Math.pow(2, zoom)
+      if (Array.isArray(this.path.geometry.gradient)) {
+        texture = this.createGradientTexture(this.path.geometry.gradient, weight)
       } else {
-        texture = this.createSolidTexture(this.path.gradient, weight)
+        texture = this.createSolidTexture(this.path.geometry.gradient, weight)
       }
-      this.container.addChild(new PIXI.SimpleRope(texture, points))
+      // Compute the geometry
+      const points = this.path.geometry.coords.map(coord => utils.latLngToLayerPoint([coord[1], coord[0]]))
+      // Release the rope
+      if (this.rope) {
+        this.container.removeChild(this.rope)
+        this.rope.texture.destroy(true)
+        this.rope.destroy(true)
+      }
+      // Create the new rope
+      this.rope = new PIXI.SimpleRope(texture, points)
+      this.container.addChild(this.rope)
+      // Update the current zoom
       this.currentZoom = zoom
     }
     this.renderer.render(this.container)
