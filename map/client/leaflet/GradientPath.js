@@ -61,7 +61,6 @@ const GradientPath = L.PixiOverlay.extend({
     map.off('click', this.clickEventHandler)
     map.off('mousemove', this.moveEventHandler)
     if (this.rope) {
-      logger.debug('clear pixi rope')
       this.container.removeChild(this.rope)
       this.rope.texture.destroy(true)
       this.rope.destroy(true)
@@ -69,7 +68,6 @@ const GradientPath = L.PixiOverlay.extend({
     }
     this.container.destroy(true)
     L.PixiOverlay.prototype.onRemove.call(this, map)
-    //this.container.destroy()
   },
 
   getBounds () {
