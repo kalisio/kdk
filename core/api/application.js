@@ -34,7 +34,7 @@ function tooManyRequests (socket, message, key) {
   setTimeout(() => socket.disconnect(true), 3000)
 }
 
-export function declareService (path, app, service, middlewares = {}) {
+export function declareService (path, app, service, serviceOptions = {}) {
   const feathersPath = app.get('apiPath') + '/' + path
 
   try {
@@ -44,9 +44,11 @@ export function declareService (path, app, service, middlewares = {}) {
   } catch (error) {
     // Initialize our service by providing any middleware as well
     let args = [feathersPath]
-    if (middlewares.before) args = args.concat(middlewares.before)
+    if (_.has(serviceOptions, 'middlewares.before')) args = args.concat(_.get(serviceOptions, 'middlewares.before'))
     args.push(service)
-    if (middlewares.after) args = args.concat(middlewares.after)
+    const options = _.pick(serviceOptions, ['methods', 'events'])
+    if (!_.isEmpty(options)) args = args.concat(options)
+    if (_.has(serviceOptions, 'middlewares.after')) args = args.concat(_.get(serviceOptions, 'middlewares.after'))
     app.use.apply(app, args)
     debug('Service declared on path ' + feathersPath)
     // Return the Feathers service, ie base service + Feathers' internals
@@ -123,6 +125,7 @@ export function createProxyService (options) {
 }
 
 async function createService (name, app, options = {}) {
+  debug(`Creating service ${name}`)
   const createFeathersService = (await import('feathers-' + app.db.adapter)).default
 
   const paginate = app.get('paginate')
@@ -168,17 +171,6 @@ async function createService (name, app, options = {}) {
     // Need to set this manually for services not using class inheritance or default adapters
     if (serviceOptions.events) service.events = serviceOptions.events
   }
-
-  // Get our initialized service so that we can register hooks and filters
-  let servicePath = serviceOptions.path || name
-  let contextId
-  if (serviceOptions.context) {
-    contextId = idToString(serviceOptions.context)
-    servicePath = contextId + '/' + servicePath
-  }
-  service = declareService(servicePath, app, service, serviceOptions.middlewares)
-  // Register hooks and event filters
-  service = await configureService(fileName, service, serviceOptions.servicesPath)
   // Optionnally a specific service mixin can be provided, apply it
   if (dbService && serviceOptions.servicesPath) {
     try {
@@ -197,6 +189,18 @@ async function createService (name, app, options = {}) {
       // As this is optionnal this require has to fail silently
     }
   }
+
+  // Get our initialized service so that we can register hooks and filters
+  let servicePath = serviceOptions.path || name
+  let contextId
+  if (serviceOptions.context) {
+    contextId = idToString(serviceOptions.context)
+    servicePath = contextId + '/' + servicePath
+  }
+  service = declareService(servicePath, app, service, serviceOptions)
+  // Register hooks and event filters
+  service = await configureService(fileName, service, serviceOptions.servicesPath)
+  
   // Then configuration
   service.name = name
   service.app = app

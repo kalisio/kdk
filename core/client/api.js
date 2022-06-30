@@ -2,7 +2,7 @@ import logger from 'loglevel'
 import _ from 'lodash'
 import sift from 'sift'
 import feathers from '@feathersjs/client'
-import io from 'socket.io-client'
+import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
 import config from 'config'
 import { Platform } from 'quasar'
@@ -113,10 +113,17 @@ api.createService = function (name, options = {}) {
   api.declareService(name, options)
   let service = options.service
   // If we get a function try to call it assuming it will return the service object
-  if (typeof options.service === 'function') {
+  if (typeof service === 'function') {
     service = service(name, api, options)
   }
-  service = api.use(servicePath, service)
+  // Need to register services with custom methods
+  if (options.methods) {
+    service = api.use(servicePath, api.transporter.service(servicePath), {
+      methods: options.methods
+    })
+  } else {
+    service = api.use(servicePath, service)
+  }
   if (options.hooks) service.hooks(options.hooks)
   return api.service(servicePath)
 }
@@ -188,13 +195,15 @@ if (config.logs && config.logs.level) {
 }
 const origin = api.getBaseUrl()
 if (config.transport === 'http') {
-  api.configure(feathers.rest(origin).fetch(window.fetch.bind(window)))
+  api.transporter = feathers.rest(origin).fetch(window.fetch.bind(window))
+  api.configure(api.transporter)
 } else {
   api.socket = io(origin, {
     transports: ['websocket'],
     path: config.apiPath + 'ws'
   })
-  api.configure(feathers.socketio(api.socket, { timeout: config.apiTimeout || 10000 }))
+  api.transporter = feathers.socketio(api.socket, { timeout: config.apiTimeout || 10000 })
+  api.configure(api.transporter)
   // Retrieve our specific errors on rate-limiting
   api.socket.on('rate-limit', (error) => Events.emit('error', error))
 }
