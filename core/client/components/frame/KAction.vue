@@ -15,7 +15,7 @@
     :rounded="label!==''"
     :dense="dense"
     :disable="disabled"
-    @click="onClicked(arguments[0])">
+    @click="onClicked">
     <!-- label -->
     <div v-if="computedLabel" v-bind:class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
       {{ computedLabel }}
@@ -44,7 +44,7 @@
     :dense="dense"
     :disable="disabled"
     :loading="loading"
-    @click="onClicked(arguments[0])">
+    @click="onClicked">
     <div class="ellipsis">
       {{ computedLabel }}
     </div>
@@ -57,7 +57,7 @@
     clickable
     :dense="dense"
     :disable="disabled"
-    @click="onClicked(arguments[0])">
+    @click="onClicked">
     <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
       <!-- badge -->
@@ -81,7 +81,7 @@
     :round="true"
     :dense="dense"
     :disable="disabled"
-    @click="onClicked(arguments[0])">
+    @click="onClicked">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
       {{ computedTooltip }}
@@ -106,7 +106,7 @@
     label-position="left"
     label-class="bg-primary text-white text-caption k-fab-action"
     :disable="disabled"
-    @click="onClicked(arguments[0])">
+    @click="onClicked">
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
@@ -127,7 +127,7 @@
     square
     :dense="dense"
     :disable="disabled"
-    @click="onClicked(arguments[0])">
+    @click="onClicked">
     <div v-if="computedLabel" class="test-subtitle1">
       {{ computedLabel }}
     </div>
