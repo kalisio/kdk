@@ -18,7 +18,8 @@ const TiledMeshLayer = L.GridLayer.extend({
       cutOver: options.cutOver,
       cutUnder: options.cutUnder,
       pixelColorMapping: options.pixelColorMapping,
-      showWireframe: options.showWireframe
+      showWireframe: options.showWireframe,
+      enableCulling : _.get(options, 'enableCulling', true)
     }
     // keep debug options
     this.conf.debug = {
@@ -39,7 +40,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       { destroyInteractionManager: true, shouldRedrawOnMove: function () { return true } })
     this.layerUniforms = new PIXI.UniformGroup({ in_layerAlpha: options.opacity, in_zoomLevel: 1.0 })
     this.pixiState = new PIXI.State()
-    this.pixiState.culling = true
+    this.pixiState.culling = this.conf.render.enableCulling
     this.pixiState.blendMode = PIXI.BLEND_MODES.SCREEN
 
     // setup layer global uniforms (as opposed to tile specific uniforms)
@@ -157,8 +158,6 @@ const TiledMeshLayer = L.GridLayer.extend({
             }
 
             if (this.conf.debug.showTileInfos) {
-              const dims = grid.getDimensions()
-              const res = grid.getResolution()
               tile.innerHTML =
                 `leaflet tile is ${tileSize.y} x ${tileSize.x} pixels</br>
                  covering ${reqBBox[0].toPrecision(6)},${reqBBox[1].toPrecision(6)} to ${reqBBox[2].toPrecision(6)},${reqBBox[3].toPrecision(6)}</br>
