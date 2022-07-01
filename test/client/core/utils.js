@@ -48,16 +48,12 @@ export async function click (page, selector, wait = 250) {
     console.error(`click ${selector} failed.`)
   }
 }
-/* $x('//div[@class="q-item__label"]');
-q-item__label */
+
 /* Helper function to click on a given selector
  */
 export async function clickMenuItem (page, wait = 250) {
   try {
     await page.waitForXPath('(//div[@class="q-item__label"])')
-    const elements = await page.$x(xpath)
-    let elHandle = await page.$x('(//div[@class="q-item__label"])[1]')
-    let feat = await page.evaluate(el => el.textContent, elHandle[0])
     await page.waitForTimeout(wait)
   } catch (error) {
     console.error(`click ${xpath} failed.`)
@@ -226,14 +222,13 @@ export function compareImages (image1, image2, threshold, diffFilename) {
   return { diffRatio, diff }
 }
 
-/* Moves a slider in a choosen direction (right or left), for a specific times
+/* Moves a slider in a chosen direction (right or left), for a specific times
  */
 export async function moveSlider (page, action, direction, times, wait = 250) {
   const selector = `#${action}`;
   const dir = (direction === 'left') ? 'ArrowLeft':'ArrowRight';
   await page.focus(selector)
-  const i = 0;
-  for (i = 0; i < times; i++) {
+  for (let i = 0; i < times; i++) {
     await page.keyboard.press(dir)
   }
   await page.waitForTimeout(wait)
