@@ -15,14 +15,15 @@ export default {
       const colorMap = _.get(options, 'variables[0].chromajs', null)
       if (colorMap) Object.assign(layerOptions, { chromajs: colorMap })
 
+      const apiToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+
       // Build grid source
       const [gridKey, gridConf] = extractGridSourceConfig(options)
-      const gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      const gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi, apiToken })
       gridSource.setup(gridConf)
       if (gridSource.updateCtx) {
         // define variables for source's dynamic properties
-        const gatewayToken = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-        if (gatewayToken) gridSource.updateCtx.jwtToken = gatewayToken
+        if (apiToken) gridSource.updateCtx.jwtToken = apiToken
         gridSource.updateCtx.meteoElements = _.get(options, 'meteoElements')
       }
 

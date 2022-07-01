@@ -3,7 +3,8 @@
 // We tested the workaround given here https://github.com/babel/babel/issues/2877#issuecomment-270700000 with success so far
 import * as errors from './errors'
 import * as permissions from './permissions'
-import { gridSourceFactories, unitConverters } from './grid'
+import * as dap from './opendap-utils'
+import * as grid from './grid'
 import { OpenDapGridSource } from './opendap-grid-source'
 import { WcsGridSource } from './wcs-grid-source'
 import { GeoTiffGridSource } from './geotiff-grid-source'
@@ -13,6 +14,11 @@ import { TimeBasedGridSource } from './time-based-grid-source'
 
 export { errors }
 export { permissions }
+export { dap }
+export { grid }
+
+const gridSourceFactories = grid.gridSourceFactories
+const unitConverters = grid.unitConverters
 
 // register factories for known grid sources
 gridSourceFactories[OpenDapGridSource.getKey()] = function (options) { return new OpenDapGridSource(options) }
