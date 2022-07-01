@@ -92,8 +92,10 @@ export default {
           const currentHomeView = (response.data.length > 0 ? response.data[0] : null)
           // Unset it
           if (currentHomeView) await this.$api.getService('catalog').patch(currentHomeView._id, { isDefault: false })
-          // Then set new one
-          await this.$api.getService('catalog').patch(view._id, { isDefault: true })
+          // Then set new one if it's really a new one
+          if (view._id !== currentHomeView._id) {
+            await this.$api.getService('catalog').patch(view._id, { isDefault: true })
+          }
           break
         }
         default:
