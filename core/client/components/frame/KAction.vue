@@ -57,6 +57,7 @@
     clickable
     :dense="dense"
     :disable="disabled"
+    class="full-width"
     @click="onClicked">
     <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />

@@ -14,13 +14,13 @@
     :tooltip="tooltip">
       <q-popup-proxy
         fit
-        :breakpoint="599"
         :persistent="$q.screen.gt.xs ? persistent : false"
         :auto-close="autoClose"
         transition-show="scale"
         transition-hide="scale">
         <KPanel
           id="menu-entries"
+          class="bg-white"
           :content="content"
           :mode="mode"
           :context="context"
