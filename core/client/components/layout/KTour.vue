@@ -1,50 +1,47 @@
  <template>
   <v-tour name="tour" ref="tour" :steps="tourSteps" :options="tourOptions" :callbacks="tourCallbacks">
-    <template v-slot="tour">
+    <template v-slot:default="tour">
       <q-card>
-        <template v-for="(step, index) of tour.steps">
-          <v-step
-            v-if="isStepVisible && (tour.currentStep === index)"
-            :key="index"
-            :step="step"
-            :previous-step="tour.previousStep"
-            :next-step="tour.nextStep"
-            :stop="tour.stop"
-            :skip="tour.skip"
-            :finish="tour.finish"
-            :is-first="tour.isFirst"
-            :is-last="tour.isLast"
-            :labels="tour.labels"
-            :highlight="tour.highlight"
-            :debug="tour.debug"
-          >
-            <div slot="header" class="text-white">
-              <q-card-section class="q-pa-xs q-ma-xs" v-if="step.title">
-                <div v-html="step.title"></div>
-              </q-card-section>
-              <q-separator v-if="step.title && (step.content || step.link)" color="white"/>
-            </div>
-            <div slot="content" class="text-white">
-              <q-card-section class="q-pa-xs q-ma-xs" v-if="step.content">
-                <div v-html="step.content"></div>
-              </q-card-section>
-              <q-separator v-if="step.content && step.link" color="white"/>
-              <q-card-section class="q-pa-xs q-ma-xs" v-if="step.link">
-                <span v-html="step.link"></span>
-                <q-icon class="cursor-pointer" size="1.5rem" name="las la-external-link-square-alt" @click="onLink()"/>
-              </q-card-section>
-            </div>
-            <div slot="actions" class="row justify-center">
-              <q-card-actions align="right">
-                <q-btn v-if="hasPreviousButton(step)" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" dense outline @click.prevent="previousStep"></q-btn>
-                <q-btn v-if="hasSkipButton(step)" id="skip-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.skip"></q-btn>
-                <q-btn  v-if="hasFinishButton(step)" id="finish-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.finish"></q-btn>
-                <q-btn v-if="hasLinkButton(step)" icon="las la-link" dense outline text-color="white" @click="onLink()" />
-                <q-btn v-if="hasNextButton(step)" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" dense outline @click.prevent="nextStep"></q-btn>
-              </q-card-actions>
-            </div>
-          </v-step>
-        </template>
+        <v-step v-if="tour.currentStep >= 0"
+          :key="tour.currentStep"
+          :step="step"
+          :previous-step="tour.previousStep"
+          :next-step="tour.nextStep"
+          :stop="tour.stop"
+          :skip="tour.skip"
+          :finish="tour.finish"
+          :is-first="tour.isFirst"
+          :is-last="tour.isLast"
+          :labels="tour.labels"
+          :highlight="tour.highlight"
+          :debug="tour.debug"
+        >
+          <template v-slot:header class="text-white">
+            <q-card-section class="q-pa-xs q-ma-xs">
+              <div v-if="step.title" v-html="step.title"></div>
+            </q-card-section>
+            <q-separator v-if="step.title && (step.content || step.link)" color="white"/>
+          </template>
+          <template v-slot:content class="text-white">
+            <q-card-section class="q-pa-xs q-ma-xs">
+              <div v-if="step.content" v-html="step.content"></div>
+            </q-card-section>
+            <q-separator v-if="step.content && step.link" color="white"/>
+            <q-card-section class="q-pa-xs q-ma-xs" v-if="step.link">
+              <span v-html="step.link"></span>
+              <q-icon class="cursor-pointer" size="1.5rem" name="las la-external-link-square-alt" @click="onLink()"/>
+            </q-card-section>
+          </template>
+          <template v-slot:actions class="row justify-center">
+            <q-card-actions align="center">
+              <q-btn v-if="hasPreviousButton(step)" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" dense outline @click.prevent="previousStep"></q-btn>
+              <q-btn v-if="hasSkipButton(step)" id="skip-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.skip"></q-btn>
+              <q-btn  v-if="hasFinishButton(step)" id="finish-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.finish"></q-btn>
+              <q-btn v-if="hasLinkButton(step)" icon="las la-link" dense outline text-color="white" @click="onLink()" />
+              <q-btn v-if="hasNextButton(step)" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" dense outline @click.prevent="nextStep"></q-btn>
+            </q-card-actions>
+          </template>
+        </v-step>
       </q-card>
     </template>
   </v-tour>
@@ -82,6 +79,11 @@ export default {
       isStepVisible: true
     }
   },
+  computed: {
+    step () {
+      return this.getStep()
+    }
+  },
   watch: {
     $route (to, from) {
       // React to route changes by loading any tour
@@ -93,22 +95,22 @@ export default {
       return !this.autoPlay && _.has(step, 'params.route') && !_.has(step, 'link') // Only if no link label
     },
     hasPreviousButton (step) {
-      return !this.autoPlay && !this.getTour().isFirst && _.get(this.getStep(), 'params.previousButton', true)
+      return !this.autoPlay && !this.getTour().isFirst.value && _.get(this.getStep(), 'params.previousButton', true)
     },
     hasNextButton (step) {
-      return !this.autoPlay && !this.getTour().isLast && _.get(this.getStep(), 'params.nextButton', true)
+      return !this.autoPlay && !this.getTour().isLast.value && _.get(this.getStep(), 'params.nextButton', true)
     },
     hasSkipButton (step) {
-      return !this.getTour().isLast && _.get(this.getStep(), 'params.skipButton', true)
+      return !this.getTour().isLast.value && _.get(this.getStep(), 'params.skipButton', true)
     },
     hasFinishButton (step) {
-      return !this.autoPlay && this.getTour().isLast && _.get(this.getStep(), 'params.finishButton', true)
+      return !this.autoPlay && this.getTour().isLast.value && _.get(this.getStep(), 'params.finishButton', true)
     },
     getTour () {
-      return this.$refs.tour
+      return this.$tours.tour
     },
     getStep (step) {
-      step = (_.isNil(step) ? _.get(this.$refs, 'tour.currentStep') : step)
+      step = (_.isNil(step) ? this.getTour().currentStep.value : step)
       return (_.isNil(step) || (step < 0) ? null : this.tourSteps[step])
     },
     launchTour (step) {
@@ -122,7 +124,7 @@ export default {
     setCurrentTour () {
       const selected = this.$store.get('tours.current', {})
       if (_.isEmpty(selected) || !selected.name) return
-      this.tourSteps = this.$store.get(`tours.${selected.name}`, [])
+      this.tourSteps.splice(0, this.tourSteps.length - 1, ...this.$store.get(`tours.${selected.name}`, []))
       // Process translations
       this.tourSteps.forEach(step => {
         if (_.has(step, 'title')) _.set(step, 'title', this.$t(_.get(step, 'title')))
@@ -337,6 +339,7 @@ export default {
       }, _.toNumber(delay))
     },
     stop () {
+      if (!this.isRunning) return
       this.isRunning = false
       if (this.playTimer) {
         clearInterval(this.playTimer)
@@ -381,6 +384,7 @@ export default {
       }
     },
     onStartTour () {
+      if (this.isRunning) return
       this.isRunning = true
       if (this.autoPlay) this.autoPlayNextStep()
       this.clickTarget()
@@ -431,8 +435,7 @@ export default {
 
 <style lang="scss" scoped>
   .v-step {
-    background: var(--q-color-accent);
-    z-index: 10000;
+    background: $accent;
   }
   .v-tour__target--highlighted {
     box-shadow: 0 0 0 99999px rgba(0,0,0,.4);
