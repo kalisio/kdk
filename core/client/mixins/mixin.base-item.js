@@ -111,9 +111,9 @@ export const baseItem = {
     canRemoveItem () {
       return this.$can('remove', this.service, this.contextId, this.item)
     },
-    removeItem (prompt) {
+    removeItem (prompt, nameField = 'name') {
       if (prompt === 'confirm' || prompt === 'input') {
-        const name = this.name
+        const name = _.get(this, nameField)
         const input = {
           type: 'text',
           model: '',
