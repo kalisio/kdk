@@ -2,7 +2,7 @@
   <v-tour name="tour" ref="tour" :steps="tourSteps" :options="tourOptions" :callbacks="tourCallbacks">
     <template v-slot:default="tour">
       <q-card>
-        <v-step v-if="tour.currentStep >= 0"
+        <v-step v-if="isStepVisible && (tour.currentStep >= 0)"
           :key="tour.currentStep"
           :step="step"
           :previous-step="tour.previousStep"
@@ -34,11 +34,11 @@
           </template>
           <template v-slot:actions class="row justify-center">
             <q-card-actions align="center">
-              <q-btn v-if="hasPreviousButton(step)" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" dense outline @click.prevent="previousStep"></q-btn>
+              <q-btn v-if="hasPreviousButton(step)" id="previous-step-tour" icon="las la-chevron-left" color="primary" text-color="white" dense outline @click.prevent="tour.previousStep"></q-btn>
               <q-btn v-if="hasSkipButton(step)" id="skip-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.skip"></q-btn>
               <q-btn  v-if="hasFinishButton(step)" id="finish-tour" icon="las la-times" color="primary" text-color="white" dense outline @click.prevent="tour.finish"></q-btn>
               <q-btn v-if="hasLinkButton(step)" icon="las la-link" dense outline text-color="white" @click="onLink()" />
-              <q-btn v-if="hasNextButton(step)" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" dense outline @click.prevent="nextStep"></q-btn>
+              <q-btn v-if="hasNextButton(step)" id="next-step-tour" icon="las la-chevron-right" color="primary" text-color="white" dense outline @click.prevent="tour.nextStep"></q-btn>
             </q-card-actions>
           </template>
         </v-step>
@@ -124,16 +124,20 @@ export default {
     setCurrentTour () {
       const selected = this.$store.get('tours.current', {})
       if (_.isEmpty(selected) || !selected.name) return
-      this.tourSteps.splice(0, this.tourSteps.length - 1, ...this.$store.get(`tours.${selected.name}`, []))
-      // Process translations
+      // Inject before hooks in steps
+      const steps = this.$store.get(`tours.${selected.name}`, [])
+      // Replacing the array does not seem to work with reactivity
+      this.tourSteps.splice(0, this.tourSteps.length - 1, ...steps)
+       // Process translations and before hooks
       this.tourSteps.forEach(step => {
         if (_.has(step, 'title')) _.set(step, 'title', this.$t(_.get(step, 'title')))
         if (_.has(step, 'content')) _.set(step, 'content', this.$t(_.get(step, 'content')))
         if (_.has(step, 'link')) _.set(step, 'link', this.$t(_.get(step, 'link')))
+        _.set(step, 'before', this.beforeStep)
       })
       if (this.tourSteps.length > 0) {
         // Stop previous tour if any
-        if (this.getTour().isRunning) this.getTour().stop()
+        if (this.isRunning) this.getTour().stop()
         if (selected.play) this.playTour(selected.step || 0)
         else this.launchTour(selected.step || 0)
       }
@@ -171,7 +175,7 @@ export default {
     autoPlayNextStep () {
       const delay = _.get(this.getStep(), 'params.autoPlayDelay', this.tourOptions.autoPlayDelay)
       this.playTimer = setTimeout(() => {
-        if (!this.getTour().isLast) this.nextStep()
+        if (!this.getTour().isLast.value) this.getTour().nextStep()
         else this.getTour().stop()
       }, delay)
     },
@@ -294,51 +298,35 @@ export default {
       }
       return missing
     },
-    nextStep () {
-      if ((this.getTour().currentStep >= this.getTour().numberOfSteps - 1) ||
-          (this.getTour().currentStep === -1)) return
-      if (this.blockOnMiss()) return
-      this.hoverOn('hoverOnNext')
-      this.clickOn('clickOnNext')
-      this.hoverClickOn('hoverClickOnNext')
-      this.typeTextOn('typeTextOnNext', 'textOnNext')
+    beforeStep (type) {
+      let param
+      switch (type) {
+        case 'previous':
+          param = 'OnPrevious'
+          break
+        case 'next':
+          if (this.blockOnMiss()) return
+          param = 'OnNext'
+          break
+        case 'start':
+          this.isStepVisible = true
+        default:
+          return
+      }
+      // Process element according to next/previous step
+      this.hoverOn('hover' + param)
+      this.clickOn('click' + param)
+      this.hoverClickOn('hoverClick' + param)
+      this.typeTextOn('typeText' + param, 'text' + param)
       let step = this.getStep()
-      const delay = _.get(step, 'params.nextDelay', 0)
+      const delay = _.get(step, 'params.' + type + 'Delay', 0)
       this.isStepVisible = false
-      setTimeout(() => {
-        this.getTour().nextTourStep()
-        this.isStepVisible = true
-        // Check if target is found, otherwise skip and try go to next step
-        step = this.getStep()
-        const target = this.getTarget(_.get(step, 'target'))
-        if (!target) {
-          if (this.getTour().currentStep < this.getTour().numberOfSteps - 1) this.nextStep()
-          else this.getTour().stop()
-        }
-      }, _.toNumber(delay))
-    },
-    previousStep () {
-      if (this.getTour().currentStep <= 0) return
-      this.hoverOn('hoverOnPrevious')
-      this.clickOn('clickOnPrevious')
-      this.hoverClickOn('hoverClickOnPrevious')
-      this.typeTextOn('typeTextOnPrevious', 'textOnPrevious')
-      let step = this.getStep()
-      const delay = _.get(step, 'params.previousDelay', 0)
-      this.isStepVisible = false
-      setTimeout(() => {
-        this.getTour().previousTourStep()
-        this.isStepVisible = true
-        // Check if target is found, otherwise skip and try go to previous step
-        step = this.getStep()
-        const target = this.getTarget(_.get(step, 'target'))
-        if (!target) {
-          if (this.getTour().currentStep > 0) this.previousStep()
-          else this.getTour().stop()
-        }
-      }, _.toNumber(delay))
+      return new Promise((resolve, reject) => {
+        setTimeout(() => { resolve() }, _.toNumber(delay))
+      })
     },
     stop () {
+      this.isStepVisible = false
       if (!this.isRunning) return
       this.isRunning = false
       if (this.playTimer) {
@@ -391,10 +379,32 @@ export default {
     },
     onPreviousTourStep (currentStep) {
       this.clickTarget(currentStep - 1)
+      this.isStepVisible = true
+      // Check if target is found, otherwise skip and try go to previous step
+      const step = this.getStep(currentStep - 1)
+      const target = this.getTarget(_.get(step, 'target'))
+      if (!target) {
+        // Need to add a debounce as the step number has not yet changed, it will on function return
+        setTimeout(() => {
+          if (this.getTour().currentStep > 0) this.getTour().previousStep()
+          else this.getTour().stop()
+        }, 100)
+      }
     },
     onNextTourStep (currentStep) {
       if (this.autoPlay) this.autoPlayNextStep()
       this.clickTarget(currentStep + 1)
+      this.isStepVisible = true
+      // Check if target is found, otherwise skip and try go to next step
+      const step = this.getStep(currentStep + 1)
+      const target = this.getTarget(_.get(step, 'target'))
+      if (!target) {
+        // Need to add a debounce as the step number has not yet changed, it will on function return
+        setTimeout(() => {
+          if (this.getTour().currentStep < this.getTour().numberOfSteps - 1) this.getTour().nextStep()
+          else this.getTour().stop()
+        }, 100)
+      }
     },
     onSkipTour () {
       this.stop()
@@ -414,12 +424,6 @@ export default {
     }
   },
   mounted () {
-    // vue-tour does not allow to override tour methods
-    this.getTour().nextTourStep = this.getTour().nextStep
-    this.getTour().nextStep = this.nextStep
-    this.getTour().previousTourStep = this.getTour().previousStep
-    this.getTour().previousStep = this.previousStep
-
     this.refreshTour()
   },
   created () {
@@ -436,6 +440,7 @@ export default {
 <style lang="scss" scoped>
   .v-step {
     background: $accent;
+    z-index: 10000;
   }
   .v-tour__target--highlighted {
     box-shadow: 0 0 0 99999px rgba(0,0,0,.4);
