@@ -71,11 +71,23 @@ export function removeStorageService (options) {
   // TODO
 }
 
+export async function createDatabasesService (options = {}) {
+  const app = this
+
+  await app.createService('databases', Object.assign({
+    servicesPath, events: ['created', 'updated', 'removed', 'patched'] // Internal use only, no events
+  }, options))
+}
+
+export function removeDatabasesService (options) {
+  // TODO
+}
+
 export async function createOrganisationService (options = {}) {
   const app = this
 
   // Create services to manage MongoDB databases, organisations, etc.
-  await app.createService('databases', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+  await createDatabasesService.call(app)
   const orgsService = await app.createService('organisations', { modelsPath, servicesPath, perspectives: ['billing'] })
 
   // Replication management
