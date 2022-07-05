@@ -53,8 +53,9 @@ export default function auth (app) {
   app.set('authentication', config)
 
   const authentication = new AuthenticationService(app)
-  authentication.register('jwt', new JWTStrategy())
-  authentication.register('local', new LocalStrategy())
+  const strategies = config.authStrategies || []
+  if (strategies.includes('jwt')) authentication.register('jwt', new JWTStrategy())
+  if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers
   app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins']))
