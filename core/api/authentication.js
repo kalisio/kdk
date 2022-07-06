@@ -44,6 +44,23 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
   }
 }
 
+export async function createDefaultUsers() {
+  const app = this
+  const defaultUsers = app.get('authentication').defaultUsers
+  if (!defaultUsers) return
+  const usersService = app.getService('users')
+  // Create default users if not already done
+  const users = await usersService.find({ paginate: false })
+  for (let i = 0; i < defaultUsers.length; i++) {
+    const defaultUser = defaultUsers[i]
+    const createdUser = _.find(users, { email: defaultUser.email })
+    if (!createdUser) {
+      app.logger.info('Initializing default user (email = ' + defaultUser.email + ')')
+      await usersService.create(defaultUser)
+    }
+  }
+}
+
 export default function auth (app) {
   const config = app.get('authentication')
   if (!config) return

@@ -7,6 +7,7 @@ import * as hooks from './hooks/index.js'
 export * from './services/index.js'
 export { hooks }
 export * from './db.js'
+export * from './authentication.js'
 export * from './application.js'
 export * from './marshall.js'
 export * from '../common/index.js'
