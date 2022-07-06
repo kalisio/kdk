@@ -4,7 +4,7 @@ export const baseField = {
   props: {
     values: {
       type: Object,
-      default: () => { return null }
+      default: () => null
     },
     properties: {
       type: Object,

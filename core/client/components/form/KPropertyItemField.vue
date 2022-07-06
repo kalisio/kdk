@@ -7,11 +7,12 @@
   <q-select v-else
     ref="select"
     :for="properties.name + '-field'"
-    v-model="items"
+    v-model="model"
     :label="label"
-    :multiple="properties.multiselect"
+    :multiple="multiple"
     autocomplete="off"
     hide-dropdown-icon
+    emit-value
     use-input
     clearable
     :error-message="errorLabel"
@@ -31,23 +32,19 @@
         color="primary"
         text-color="white"
       >
-        <q-avatar color="primary" :icon="getIcon(scope.opt)" />
-        {{ getLabel(scope.opt) }}
+        {{ scope.opt }}
       </q-chip>
     </template>
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item
-        :id="getId(scope.opt)"
+        :id="scope.opt.id"
         v-bind="scope.itemProps"
         v-on="scope.itemEvents"
       >
-        <q-item-section avatar>
-          <q-icon :name="getIcon(scope.opt)" />
-        </q-item-section>
         <q-item-section>
-          <q-item-label>{{ getLabel(scope.opt) }}</q-item-label>
-          <q-item-label caption>{{ getDescription(scope.opt) }}</q-item-label>
+          <q-item-label>{{ scope.opt.value }}</q-item-label>
+          <q-item-label caption>{{ scope.opt.description }}</q-item-label>
         </q-item-section>
       </q-item>
     </template>
@@ -71,49 +68,48 @@ export default {
       options: []
     }
   },
+  computed: {
+    multiple () {
+      return _.get(this.properties, 'field.multiple', false)
+    }
+  },
   methods: {
-    getId (item) {
-      return _.kebabCase(this.getLabel(item))
-    },
-    getLabel (item) {
-      const service = _.find(this.properties.services, { service: item.service })
-      return _.get(item, service.field, 'name')
-    },
-    getDescription (item) {
-      const service = _.find(this.properties.services, { service: item.service })
-      return _.get(item, service.description, 'description')
-    },
-    getIcon (item) {
-      return _.get(item, 'icon.name', _.get(item, 'icon', ''))
-    },
     emptyModel () {
       if (this.properties.multiselect) return []
       return null
-    },
-    fill (value) {
-      this.model = value
-      this.items = _.clone(value)
     },
     async onSearch (pattern, update, abort) {
       if (pattern.length < 2) {
         abort()
         return
       }
-      const results = await Search.query(this.properties.services, pattern)
+      const search = {
+        service: this.properties.field.service,
+        field: this.properties.field.propertyField,
+        baseQuery: this.properties.field.baseQuery
+      }
+      const results = await Search.query(search, pattern)
       update(() => {
-        if (this.properties.multiselect) {
-          this.options = _.differenceWith(results, this.items, (item1, item2) => {
-            return _.get(item1, item1.field) === _.get(item2, item2.field) && item1.service === item2.service
+        // Format the search response
+        const valueField = this.properties.field.propertyField
+        const descriptionField = this.properties.field.descriptionField || 'description'
+        let options = _.map(results, option => { 
+          return { 
+            id: _.kebabCase(_.get(option, valueField)),
+            value: _.get(option, valueField),
+            description: _.get(option, descriptionField)
+          }
+        })
+        if (this.multiple) {
+          // Remove doublons in case of multiples properties
+          this.options = _.differenceWith(options, this.items, (item1, item2) => {
+            return item1.id === item2.id
           })
-        } else this.options = results
+        } else this.options = options
       })
     },
     onSelected (value) {
-      if (value) {
-        // FIXME: ???
-        if (this.properties.multiselect) this.model = this.items
-        else this.model = this.items
-      } else this.model = this.emptyModel()
+      if (!value) this.model = this.emptyModel()
       this.options = []
       this.$refs.select.updateInputValue('')
       this.onChanged()

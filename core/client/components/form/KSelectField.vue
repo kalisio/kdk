@@ -18,7 +18,7 @@
     :clearable="clearable"
     :error="hasError"
     :error-message="errorLabel"
-    :disabled="disabled"
+    :disable="disabled"
     bottom-slots
     @change="onChanged"
     @blur="onChanged"
@@ -90,9 +90,8 @@ export default {
       return _.kebabCase(id)
     },
     emptyModel () {
-      const multiple = _.get(this.properties, 'field.multiple', false)
-      if (multiple) return []
-      return (this.properties.type === 'object' ? {} : '')
+      if (this.multiple) return []
+      return null
     }
   }
 }
