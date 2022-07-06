@@ -183,11 +183,9 @@ export const activity = {
       if (isVisible) await this.showLayer(layer.name)
     },
     configureLayerActions (layer) {
-      let actions = _.get(this, 'activityOptions.layers.actions')
-      if (actions) {
-        // Apply filtering
-        actions = Layout.filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
-      }
+      let actions = _.get(this, 'activityOptions.layers.actions', [])
+      // Apply filtering
+      actions = Layout.filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
       // As context is different for each item we need to clone the global action configuration
       // otheriwse context will always reference the last processed item
       actions = Layout.bindContent(_.cloneDeep(actions), this)
