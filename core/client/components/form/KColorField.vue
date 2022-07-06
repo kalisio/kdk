@@ -25,7 +25,12 @@
           border-radius="3px" 
         />
         <q-dialog v-model="picker">
-          <q-color no-header format-model="hex" v-model="model" @change="picker = false"/>
+          <q-color 
+            no-header 
+            format-model="hex" 
+            v-model="model" 
+            default-view="palette"
+          />
         </q-dialog>
       </template>
       <!-- Helper -->
