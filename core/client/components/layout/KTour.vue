@@ -309,8 +309,8 @@ export default {
           param = 'OnNext'
           break
         case 'start':
-          this.isStepVisible = true
         default:
+          this.isStepVisible = true
           return
       }
       // Process element according to next/previous step

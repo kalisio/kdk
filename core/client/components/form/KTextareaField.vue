@@ -32,7 +32,6 @@
 import _ from 'lodash'
 import KTextArea from '../frame/KTextArea.vue'
 import { baseField } from '../../mixins'
-import { useQuasar } from 'quasar'
 
 export default {
   mixins: [baseField],
