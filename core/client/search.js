@@ -5,10 +5,14 @@ import { getIconName, processIcon } from './utils.js'
 // Export singleton
 export const Search = {
   async query (services, pattern) {
+    const results = []
+    // Ensure the services are of type of array
+    if (!Array.isArray(services)) services = [services]
     // Perform request for partial match to all registered services
     const requests = _.map(services, serviceDescriptor => {
+      // Retrieve the service using the service or name key
       const service = api.getService(serviceDescriptor.service)
-      // build the query using given templet if any
+      // Build the query using given template if any
       const query = Object.assign({}, serviceDescriptor.baseQuery)
       // Then add partial match
       // We don't use set by dot here because Mongo queries on nested fields
@@ -16,20 +20,24 @@ export const Search = {
       query[serviceDescriptor.field] = { $search: pattern }
       return service.find({ query })
     })
+    // Execute the search
     const responses = await Promise.all(requests)
-    const results = []
+    // Buld the result
     for (let i = 0; i < responses.length; i++) {
       const response = responses[i]
       const serviceDescriptor = services[i]
+      // Process the response
       if (response.total > 0) {
+        // Format the result
         response.data.forEach(data => {
           data.service = serviceDescriptor.service
           data.field = serviceDescriptor.field
           const icon = getIconName(data)
-          if (_.isEmpty(icon)) {
+          if (_.isEmpty(icon) && _.has(serviceDescriptor, 'icon')) {
             data.icon = serviceDescriptor.icon
             processIcon(data)
           }
+          // And store it
           results.push(data)
         })
       }
