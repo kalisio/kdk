@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import config from 'config'
+import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../core/client'
 import { updatePropertiesSchema } from '../utils.js'
 import { KModalEditor } from '../../../core/client/components'
