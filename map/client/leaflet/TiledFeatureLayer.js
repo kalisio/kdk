@@ -446,10 +446,28 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const measureRequests = this.mergeRequests(tilesWithMeasuresRequest)
     measureRequests.forEach((r) => {
       const promise = this.featureSource(r.query)
+      const stationPromises = []
       r.tiles.forEach((tile) => {
         tile.measuresRequest = promise
+        if (tile.featuresRequest) stationPromises.push(tile.featuresRequest)
 
         if (this.enableDebug) tile.div.innerHTML += '</br>measures request issued'
+      })
+
+      // When stations are fetched, we flag them with a 'measureRequestIssued' property that we
+      // may use in dynamic styling
+      Promise.all(stationPromises).then(() => {
+        const flaggedStations = []
+        r.tiles.forEach((tile) => {
+          tile.features.forEach((id) => {
+            const internalFeature = this.allFeatures.get(id)
+            if (internalFeature) {
+              internalFeature.geojson.properties.measureRequestIssued = true
+              flaggedStations.push(internalFeature.geojson)
+            }
+          })
+        })
+        if (flaggedStations.length) this.updateGeoJSON(featureCollection(flaggedStations), false, true)
       })
 
       promise.then((data) => {
