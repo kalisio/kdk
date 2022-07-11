@@ -29,7 +29,8 @@ export const baseEditor = {
       // Retuns the schema title
       if (this.getSchema()) {
         const schemaTitle = this.getSchema().title
-        return this.$t(schemaTitle, { object: this.getObject(), interpolation: { escapeValue: false } })
+        const objectName = _.get(this.getObject(), 'name')
+        return this.$tie(schemaTitle, { name: objectName, interpolation: { escapeValue: false } })
       }
       return ''
     }

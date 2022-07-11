@@ -112,7 +112,7 @@
     }
   },
   "schemas": {
-    "OBJECT_NAME": "{ object.name }",
+    "OBJECT_NAME": "{name}",
     "AVATAR_FIELD_LABEL": "Select an avatar",
     "NAME_FIELD_LABEL": "Enter your name",
     "COLOR_FIELD_LABEL": "Pick a color",
