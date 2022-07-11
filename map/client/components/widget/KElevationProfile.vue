@@ -10,6 +10,7 @@ import logger from 'loglevel'
 import { baseWidget } from '../../../../core/client/mixins'
 import { colors, copyToClipboard, exportFile } from 'quasar'
 import length from '@turf/length'
+import { segmentEach, coordEach } from '@turf/meta'
 
 export default {
   name: 'k-elevation-profile',
@@ -124,25 +125,80 @@ export default {
                 labels.push(distance)
                 distance += this.feature.resolution
               })
-              this.$refs.chart.update({
+
+              const chartUpdate = {
                 type: 'line',
                 data: {
-                  labels: labels,
+                  // elevation dataset
                   datasets: [{
-                    data: heights,
+                    label: 'Elevation',
+                    data: heights.map((h, i) => { return { x: labels[i], y: h }}),
                     fill: true,
-                    borderColor: colors.getBrand('primary'),
-                    backgroundColor: colors.getBrand('accent'),
+                    borderColor: '#635541',
+                    backgroundColor: '#c9b8a1',
                     pointRadius: 3
                   }]
                 },
+                plugins: [{
+                  // a simple plugin to display a vertical line at cursor position
+                  beforeEvent: (chart, args) => {
+                    if ((args.event.type === 'mousemove')
+                        && (args.event.x >= chart.chartArea.left)
+                        && (args.event.x <= chart.chartArea.right)
+                       ) {
+                      chart.config.options.vline.enabled = true
+                      chart.config.options.vline.x = args.event.x
+                    } else if (args.event.type === 'mouseout') {
+                      chart.config.options.vline.enabled = false
+                    } else {
+                      console.log('foo')
+                    }
+                  },
+                  afterDraw: (chart) => {
+                    const x = chart.config.options.vline.x
+                    const ctx = chart.ctx
+                    if (chart.config.options.vline.enabled && !isNaN(x)) {
+                      ctx.save()
+                      ctx.translate(0.5, 0.5)
+                      ctx.lineWidth = 1
+                      ctx.strokeStyle = chart.config.options.vline.color
+                      ctx.beginPath()
+                      ctx.moveTo(x, chart.chartArea.bottom)
+                      ctx.lineTo(x, chart.chartArea.top)
+                      ctx.stroke()
+                      ctx.restore()
+                    }
+                  }
+                }],
                 options: {
                   maintainAspectRatio: false,
+                  parsing: false,
+                  interaction: {
+                    mode: 'xSingle',
+                    intersect: false
+                  },
                   scales: {
+                    x: {
+                      type: 'linear',
+                      beginAtZero: true,
+                      title: {
+                        display: true,
+                        text: 'Curvilinear abscissa (meters)'
+                      }
+                    },
                     y: {
                       type: 'linear',
-                      beginAtZero: true
+                      beginAtZero: true,
+                      title: {
+                        display: true,
+                        text: 'Height (meters)'
+                      }
                     }
+                  },
+                  vline: {
+                    enabled: false,
+                    x: 0,
+                    color: 'black'
                   },
                   plugins: {
                     title: {
@@ -155,10 +211,77 @@ export default {
                     },
                     datalabels: {
                       display: false
-                    }
+                    },
+                    tooltip: {
+                      position: 'cursorPosition',
+                      /*
+                      callbacks: {
+                        label: (context) => {
+                          let label = context.dataset.label || ''
+                          if (label) label += ': '
+                          if (context.parsed.y !== null) {
+                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                        }
+                        return label;
+                        }
+                      }
+                      */
+                    },
+                    /*
+                    decimation: {
+                      enabled: true,
+                      algorithm: 'lttb'
+                    },
+                    */
+                    zoom: {
+                      zoom: {
+                        drag: {
+                          enabled: true,
+                          modifierKey: 'ctrl',
+                          backgroundColor: colors.getBrand('secondary')
+                        },
+                        wheel: {
+                          enabled: true
+                        },
+                        mode: 'x'
+                      },
+                      pan: {
+                        enabled: true
+                      },
+                      limits: {
+                        x: { min: 'original', max: 'original' },
+                        y: { min: 'original', max: 'original' }
+                      }
+                    },
                   }
                 }
-              })
+              }
+
+              const featureHeights = []
+              const featureLabels = []
+              coordEach(this.feature, (coord) => { if (coord.length > 2) featureHeights.push(coord[2]) })
+              if (featureHeights.length) {
+                // if original feature has elevation values
+                distance = 0
+                segmentEach(this.feature, (segment) => {
+                  if (featureLabels.length === 0) {
+                    featureLabels.push(distance)
+                  }
+
+                  distance += length(segment, { units: 'kilometers' }) * 1000
+                  featureLabels.push(distance)
+                })
+
+                chartUpdate.data.datasets.push({
+                  label: 'Altitude',
+                  data: featureHeights.map((h, i) => { return { x: featureLabels[i], y: h }}),
+                  fill: false,
+                  borderColor: '#51b0e8',
+                  backgroundColor: '#0986bc',
+                  pointRadius: 3
+                })
+              }
+              this.$refs.chart.update(chartUpdate)
             } else {
               this.$toast({ type: 'negative', message: this.$t('errors.' + response.status) })
             }
