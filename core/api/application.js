@@ -422,6 +422,13 @@ function setupSockets (app) {
   }
 }
 
+function setupHealthcheck (app) {
+  app.get('/healthcheck', (req, res) => {
+    res.set('Content-Type', 'application/json')
+    return res.status(200).json({ isRunning: true })
+  })
+}
+
 export function kalisio () {
   const app = express(feathers())
   // By default EventEmitters will print a warning if more than 10 listeners are added for a particular event.
@@ -429,8 +436,9 @@ export function kalisio () {
   app.setMaxListeners(0)
   // Load app configuration first
   app.configure(configuration())
-  // Then setup logger
+  // Then setup logger, healthcheck, etc.
   setupLogger(app)
+  setupHealthcheck(app)
 
   // This retrieve corresponding service options from app config if any
   app.getServiceOptions = function (name) {
