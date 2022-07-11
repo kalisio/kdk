@@ -94,7 +94,6 @@
             class="k-left-pane"
             @triggered="setLeftPaneVisible(false)"
           />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onLeftPaneResized" />
         </div>
         <KOpener id="left-opener" v-if="hasLeftPaneOpener" v-model="isLeftPaneOpened" position="left" />
       </div>
@@ -234,9 +233,6 @@ export default {
     },
     onTopPaneResized (size) {
       this.topPadding = size.height
-    },
-    onLeftPaneResized (size) {
-      this.leftPadding = size.width
     },
     onRightPaneResized (size) {
       this.rightPaddding = size.width
