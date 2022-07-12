@@ -48,23 +48,17 @@ import { Geolocation } from '../geolocation'
 import { setGatewayJwt, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../utils'
 
 export default {
-  name: 'k-location-map',
   components: {
     KTextArea
   },
-  emits: [
-    'input',
-    'close'
-  ],
+  emits: ['update:modelValue'],  
   mixins: [
     mapMixins.baseMap
   ],
   props: {
-    value: {
+    modelValue: {
       type: Object,
-      default: () => {
-        return null
-      }
+      default: () => null
     },
     mapOptions: {
       type: Object,
@@ -118,8 +112,8 @@ export default {
     }
   },
   watch: {
-    value: function () {
-      this.location = this.value
+    modelValue: function () {
+      this.location = this.modelValue
       this.refresh()
     },
     editable: function () {
@@ -227,7 +221,7 @@ export default {
         this.location.longitude = this.marker.getLatLng().lng
         this.location.latitude = this.marker.getLatLng().lat
       }
-      this.$emit('input', this.location)
+      this.$emit('update:modelValue', this.location)
     },
     startDraw (shape) {
       // Clear any previous edition
@@ -251,7 +245,7 @@ export default {
       this.location.name = formatUserCoordinates(
         _.get(location, 'geometry.coordinates[1]'), _.get(location, 'geometry.coordinates[0]'),
         this.$store.get('locationFormat', 'FFf'))
-      this.$emit('input', this.location)
+      this.$emit('update:modelValue', this.location)
     },
     onStartLine () {
       this.startDraw('Line')
@@ -276,14 +270,17 @@ export default {
     },
     configure (container) {
       if (!container) return
-      this.setupMap(container, this.mapOptions)
-      this.refreshBaseLayer()
-      this.refresh()
+      if (!this.mapReady) {
+        this.setupMap(container, this.mapOptions)
+        this.refreshBaseLayer()
+        this.refresh()
+        this.mapReady = true
+      }
     }
   },
   async mounted () {
     // Initialize component
-    this.location = this.value
+    this.location = this.modelValue
     if (!this.location) await this.geolocate()
     this.$engineEvents.on('pm:create', this.stopDraw)
   },

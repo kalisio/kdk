@@ -37,7 +37,7 @@
     <!-- Location map -->
     <div class="col-12 col-md-7">
       <div v-show="showMap" id="show-location-map" style="width: 100%; height: 250px">
-        <k-location-map
+        <KLocationMap
           v-model="location"
           :editable="mode === 'map'"
           :drawable="mode === 'draw'"
@@ -60,19 +60,14 @@ import { Geolocation } from '../geolocation'
 import KLocationMap from './KLocationMap.vue'
 
 export default {
-  name: 'k-location-input',
   components: {
     KLocationMap
   },
-  emits: [
-    'input'
-  ],
+  emits: ['update:modelValue'],
   props: {
-    value: {
+    modelValue: {
       type: Object,
-      default: () => {
-        return null
-      }
+      default: () => null
     },
     user: {
       type: Boolean,
@@ -135,7 +130,7 @@ export default {
     async emitValue () {
       // We'd like to watch external changes but not internal ones, so that we use the API to avoid reentrance
       this.unwatch()
-      this.$emit('input', this.location)
+      this.$emit('update:modelValue', this.location)
       await this.$nextTick()
       this.unwatch = this.$watch('value', this.refresh)
     },
@@ -155,8 +150,8 @@ export default {
       this.mode = null
     },
     refresh () {
-      if (this.value) {
-        this.location = this.value
+      if (this.modelValue) {
+        this.location = this.modelValue
         // GeoJson geometry or simple location ?
         if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
           this.mode = 'draw'
