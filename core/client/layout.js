@@ -165,16 +165,21 @@ export const Layout = {
     return _.get(component, path)
   },
   bindProperties (item, context) {
-    if (typeof item === 'string') {
-      if (item.startsWith(':')) return _.get(context, item.substring(1))
-    } else if (Array.isArray(item)) {
+    if (Array.isArray(item)) {
       for (let i = 0; i < item.length; i++) {
         item[i] = this.bindProperties(item[i], context)
       }
     } else if (typeof item === 'object') {
       _.forOwn(item, (value, key) => {
         // Skip 'reserved' property
-        if ((key !== 'content') && (key !== 'bind')) item[key] = this.bindProperties(value, context)
+        if ((key !== 'content') && (key !== 'bind')) {
+          // Only bind required properties
+          if ((typeof value === 'string') && value.startsWith(':')) {
+            item[key] = _.get(context, value.substring(1))
+          } else {
+            item[key] = this.bindProperties(value, context)
+          }
+        }
       })
     }
     return item
@@ -186,10 +191,9 @@ export const Layout = {
       // Process component handlers
       handlers.forEach(handler => this.bindHandler(component, handler, context))
       // Then process component props
-      // FIXME: don't know why but this generic binding function does not seem to work
-      // It should allow to wrote any property like { label: ':xxx' } and bind it
+      // It allows to write any property like { label: ':xxx' } and bind it
       // to a component property from the context like we do for handler
-      // this.bindProperties(component, context)
+      this.bindProperties(component, context)
       // The only way to make it work is to add props at the root level
       const binding = component.bind ? component.bind : null
       if (binding) component.props = _.get(context, binding)
