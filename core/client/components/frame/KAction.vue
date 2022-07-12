@@ -316,7 +316,15 @@ export default {
       // Handle the URL case
       if (this.url) openURL(this.url)
       // Handle the callback case
-      if (this.handler) await this.handler(this.context, this.isToggled)
+      if (this.handler) {
+        try {
+          await this.handler(this.context, this.isToggled)
+        } catch (error) {
+          // In case an error is raised we assume toggling has failed
+          if (this.toggle) this.isToggled = !this.isToggled
+          throw error
+        }
+      }
       // Handle the route case
       if (this.route) {
         // Allow to directly call a given URL, eg OAuth callback

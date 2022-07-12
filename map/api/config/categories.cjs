@@ -7,16 +7,16 @@ module.exports = function (categoryFiles, context) {
 
   // Process them
   let categories = []
-  categoryFiles.forEach(layerFile => {
+  categoryFiles.forEach(categoryFile => {
     let categoriesFromFile
     try {
-      categoriesFromFile = require(layerFile)
+      categoriesFromFile = require(categoryFile)
     } catch (error) {
       console.error(error)
     }
-    // Layers provided through a generation function ?
+    // Categories provided through a generation function ?
     if (typeof categoriesFromFile === 'function') categoriesFromFile = categoriesFromFile(context)
-    // Layers directly provided as array or object
+    // Categories directly provided as array or object
     else if (!Array.isArray(categoriesFromFile)) categoriesFromFile = [categoriesFromFile]
     categories = categories.concat(categoriesFromFile)
   })
@@ -31,7 +31,7 @@ module.exports = function (categoryFiles, context) {
     if (process.env.CATEGORIES_FILTER.includes(',')) filter = process.env.CATEGORIES_FILTER.split(',')
     else filter = process.env.CATEGORIES_FILTER.split(' ')
   }
-  // Now filter layers
+  // Now filter categories
   // Manage translation keys starting with 'Categories.'
   debug('Applying category filter', filter)
   return categories.filter(category => {
