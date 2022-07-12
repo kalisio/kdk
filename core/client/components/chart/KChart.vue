@@ -14,7 +14,6 @@
 import _ from 'lodash'
 import chroma from 'chroma-js'
 import { Chart, registerables, Interaction, Tooltip } from 'chart.js'
-import { getRelativePosition } from 'chart.js/helpers'
 import ChartDataLabelsPlugin from 'chartjs-plugin-datalabels'
 import ChartAnnotationPlugin from 'chartjs-plugin-annotation'
 import ChartZoomPlugin from 'chartjs-plugin-zoom'
