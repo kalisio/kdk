@@ -52,9 +52,7 @@ export default {
     KTextArea
   },
   emits: ['update:modelValue'],  
-  mixins: [
-    mapMixins.baseMap
-  ],
+  mixins: [mapMixins.baseMap],
   props: {
     modelValue: {
       type: Object,
@@ -175,7 +173,7 @@ export default {
       this.map.pm.setGlobalOptions({ layerGroup: null })
     },
     refresh () {
-      this.clear()
+      
       // No location ?
       const hasLongitude = _.has(this.location, 'longitude')
       const hasLatitude = _.has(this.location, 'latitude')
@@ -206,6 +204,8 @@ export default {
 
         // Center the map
         this.centerMap()
+      } else {
+        this.clear()
       }
     },
     async onGeolocate () {
@@ -282,6 +282,7 @@ export default {
     // Initialize component
     this.location = this.modelValue
     if (!this.location) await this.geolocate()
+    this.refresh()
     this.$engineEvents.on('pm:create', this.stopDraw)
   },
   beforeUnmount () {
