@@ -1,5 +1,6 @@
 import path from 'path'
 import url from 'url'
+import fs from 'fs-extra'
 import makeDebug from 'debug'
 import winston from 'winston'
 import _ from 'lodash'
@@ -58,31 +59,39 @@ export function declareService (path, app, service, serviceOptions = {}) {
 
 export async function configureService (name, service, servicesPath) {
   try {
-    const hooks = (await import(url.pathToFileURL(path.join(servicesPath, name, `${name}.hooks.js`)))).default
-    service.hooks(hooks)
-    debug(name + ' service hooks configured on path ' + servicesPath)
+    const filepath = path.join(servicesPath, name, `${name}.hooks.js`)
+    const fileExists = await fs.pathExists(filepath)
+    if (fileExists) {
+      const hooks = (await import(url.pathToFileURL(filepath))).default
+      service.hooks(hooks)
+      debug(name + ' service hooks configured on path ' + servicesPath)
+    }
   } catch (error) {
     debug('No ' + name + ' service hooks configured on path ' + servicesPath)
-    // if (error.code !== 'ERR_MODULE_NOT_FOUND') {
-    // Log error in this case as this might be linked to a syntax error in required file
-    debug(error)
-    // }
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+      // Log error in this case as this might be linked to a syntax error in required file
+      debug(error)
+    }
     // As this is optionnal this require has to fail silently
   }
 
   try {
-    const channels = (await import(url.pathToFileURL(path.join(servicesPath, name, `${name}.channels.js`)))).default
-    _.forOwn(channels, (publisher, event) => {
-      if (event === 'all') service.publish(publisher)
-      else service.publish(event, publisher)
-    })
-    debug(name + ' service channels configured on path ' + servicesPath)
+    const filepath = path.join(servicesPath, name, `${name}.channels.js`)
+    const fileExists = await fs.pathExists(filepath)
+    if (fileExists) {
+      const channels = (await import(url.pathToFileURL(filepath))).default
+      _.forOwn(channels, (publisher, event) => {
+        if (event === 'all') service.publish(publisher)
+        else service.publish(event, publisher)
+      })
+      debug(name + ' service channels configured on path ' + servicesPath)
+    }
   } catch (error) {
     debug('No ' + name + ' service channels configured on path ' + servicesPath)
-    // if (error.code !== 'ERR_MODULE_NOT_FOUND') {
-    // Log error in this case as this might be linked to a syntax error in required file
-    debug(error)
-    // }
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+      // Log error in this case as this might be linked to a syntax error in required file
+      debug(error)
+    }
     // As this is optionnal this require has to fail silently
   }
 
@@ -141,16 +150,20 @@ async function createService (name, app, options = {}) {
   let dbService = false
   try {
     if (serviceOptions.modelsPath) {
-      const configureModel = (await import(url.pathToFileURL(path.join(serviceOptions.modelsPath, `${fileName}.model.${app.db.adapter}.js`)))).default
-      configureModel(app, serviceOptions)
-      dbService = true
+      const filepath = path.join(serviceOptions.modelsPath, `${fileName}.model.${app.db.adapter}.js`)
+      const fileExists = await fs.pathExists(filepath)
+      if (fileExists) {
+        const configureModel = (await import(url.pathToFileURL(filepath))).default
+        configureModel(app, serviceOptions)
+        dbService = true
+      }
     }
   } catch (error) {
     debug('No ' + fileName + ' service model configured on path ' + serviceOptions.modelsPath)
-    // if (error.code !== 'ERR_MODULE_NOT_FOUND') {
-    // Log error in this case as this might be linked to a syntax error in required file
-    debug(error)
-    // }
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+      // Log error in this case as this might be linked to a syntax error in required file
+      debug(error)
+    }
     // As this is optionnal this require has to fail silently
   }
 
@@ -174,18 +187,22 @@ async function createService (name, app, options = {}) {
   // Optionnally a specific service mixin can be provided, apply it
   if (dbService && serviceOptions.servicesPath) {
     try {
-      let serviceMixin = (await import(url.pathToFileURL(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)))).default
-      // If we get a function try to call it assuming it will return the mixin object
-      if (typeof serviceMixin === 'function') {
-        serviceMixin = await serviceMixin.bind(dbService)(fileName, app, serviceOptions)
+      const filepath = path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)
+      const fileExists = await fs.pathExists(filepath)
+      if (fileExists) {
+        let serviceMixin = (await import(url.pathToFileURL(filepath))).default
+        // If we get a function try to call it assuming it will return the mixin object
+        if (typeof serviceMixin === 'function') {
+          serviceMixin = await serviceMixin.bind(dbService)(fileName, app, serviceOptions)
+        }
+        Object.assign(service, serviceMixin)
       }
-      Object.assign(service, serviceMixin)
     } catch (error) {
       debug('No ' + fileName + ' service mixin configured on path ' + serviceOptions.servicesPath)
-      // if (error.code !== 'ERR_MODULE_NOT_FOUND') {
-      // Log error in this case as this might be linked to a syntax error in required file
-      debug(error)
-      // }
+      if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+        // Log error in this case as this might be linked to a syntax error in required file
+        debug(error)
+      }
       // As this is optionnal this require has to fail silently
     }
   }
