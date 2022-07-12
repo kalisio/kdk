@@ -318,7 +318,7 @@ export default {
       try {
         responses = await Promise.all(fetchs)
         for (const res of responses) {
-          if (!res.ok) throw 'Fetch failed'
+          if (!res.ok) throw new Error('Fetch failed')
         }
       } catch (error) {
         // Network error
