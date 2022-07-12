@@ -6,8 +6,8 @@ import {
 import commonHooks from 'feathers-hooks-common'
 
 // Helper functions
-disallowRegistration = (hook) => _.get(hook.app.get('authentication'), 'disallowRegistration')
-allowLocalAuthentication = (hook) => _.get(hook.app.get('authentication'), 'authStrategies', []).includes('local')
+const disallowRegistration = (hook) => _.get(hook.app.get('authentication'), 'disallowRegistration')
+const allowLocalAuthentication = (hook) => _.get(hook.app.get('authentication'), 'authStrategies', []).includes('local')
 
 export default {
   before: {
