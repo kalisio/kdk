@@ -6,8 +6,8 @@
     <div v-if="hasHeader">
       <div v-bind:class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }">
         <slot name="card-header">
-          <div class="row justify-end">
-            <k-panel id="card-header-panel" :content="computedHeader" :context="$props" />
+          <div class="row full-width">
+            <k-panel id="card-header-panel" :content="computedHeader" :context="$props" class="full-width" />
           </div>
         </slot>
       </div>
