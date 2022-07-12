@@ -595,6 +595,10 @@
     "CANNOT_COPY_PROFILE": "Unable to copy the profile to clipboard. Your browser does not support this functionality",
     "EXPORT_PROFILE": "Export the profile",
     "PROFILE_EXPORTED": "Profile exported to file {{file}}",
-    "CANNOT_EXPORT_PROFILE": "Unable to export the profile. Your browser does not support this functionality"
+    "CANNOT_EXPORT_PROFILE": "Unable to export the profile. Your browser does not support this functionality",
+    "CURVILINEAR_AXIS_LEGEND": "Curvilinear abscissa (meters)",
+    "HEIGHT_AXIS_LEGEND": "Height (meters)",
+    "TERRAIN_CHART_LEGEND": "Terrain elevation",
+    "PROFILE_CHART_LEGEND": "Profile elevation"
   }
 }

@@ -596,6 +596,10 @@
     "CANNOT_COPY_PROFILE": "Impossible de copier le profil en mémoire",
     "EXPORT_PROFILE": "Exporter le profil",
     "PROFILE_EXPORTED": "Profil exporté dans le fichier {{file}}",
-    "CANNOT_EXPORT_PROFILE": "Imopssible d'exporter le profil"
+    "CANNOT_EXPORT_PROFILE": "Imopssible d'exporter le profil",
+    "CURVILINEAR_AXIS_LEGEND": "Abscisse curviligne (mètres)",
+    "HEIGHT_AXIS_LEGEND": "Hauteur (mètres)",
+    "TERRAIN_CHART_LEGEND": "Hauteur du terrain",
+    "PROFILE_CHART_LEGEND": "Hauteur du profil"
   }
 }
