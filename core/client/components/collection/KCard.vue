@@ -19,7 +19,7 @@
       v-bind:class="{ 'q-px-sm q-pt-xs q-gutter-y-xs': dense, 'q-px-md q-pt-sm q-gutter-y-sm': !dense }">
       <slot name="card-title">
         <div class="row full-width justify-start items-center no-wrap">
-          <div>
+          <div v-if="avatar" v-bind:class="{ 'q-pr-xs': dense, 'q-pr-sm': !dense }">
             <slot name="card-avatar">
               <k-avatar
                 :object="item"
@@ -30,7 +30,7 @@
           </div>
           <div
             class="text-subtitle1 text-weight-medium ellipsis-2-lines"
-            v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
+            v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
             style="overflow: hidden">
             {{ name }}
           </div>
@@ -116,6 +116,10 @@ export default {
     expandable: {
       type: Boolean,
       default: false
+    },
+    avatar: {
+      type: Boolean,
+      default: true
     },
     dense: {
       type: Boolean,
