@@ -36,6 +36,7 @@ export default function init () {
       restoreView: 'restore.view',
       restoreLayers: 'restore.layers',
       defaultLength: 'units.default.length',
+      defaultAltitude: 'units.default.altitude',
       defaultArea: 'units.default.area',
       defaultVelocity: 'units.default.velocity',
       defaultTemperature: 'units.default.temperature',
