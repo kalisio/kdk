@@ -272,24 +272,26 @@ export default {
       const windowSize  = this.$store.get('window.size')
 
       const queries = []
-      const resolutions = _.get(this.feature, 'properties.elevationProfileResolution')
-      const corridors = _.get(this.feature, 'properties.elevationProfileCorridorWidth')
+      const resolution = _.get(this.feature, 'properties.elevationProfile.resolution')
+      const resolutionUnit = _.get(this.feature, 'properties.elevationProfile.resolutionUnit', 'm')
+      const corridor = _.get(this.feature, 'properties.elevationProfile.corridorWidth')
+      const corridorUnit = _.get(this.feature, 'properties.elevationProfile.corridorWidthUnit', 'm')
       if (geometry === 'MultiLineString') {
         flatten(this.feature).features.forEach((feature, index) => {
           queries.push({
             profile: feature,
-            resolution: resolutions[index],
-            corridorWidth: corridors ? corridors[index] : null
+            resolution: Units.convert(resolution[index], resolutionUnit, 'm'),
+            corridorWidth: corridor ? Units.convert(corridor[index], corridorUnit, 'm') : null
           })
         })
       } else {
         const chartWidth = windowSize[0]
         const pixelStep = 5
-        const res = resolutions ? resolutions : Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
+        const res = resolution ? Units.convert(resolution, resolutionUnit, 'm') : Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
         queries.push({
           profile: this.feature,
           resolution: res,
-          corridorWidth: corridors ? corridors : null
+          corridorWidth: corridor ? Units.convert(corridor, corridorUnit, 'm') : null
         })
       }
 
