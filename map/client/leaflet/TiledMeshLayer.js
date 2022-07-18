@@ -19,7 +19,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       cutUnder: options.cutUnder,
       pixelColorMapping: options.pixelColorMapping,
       showWireframe: options.showWireframe,
-      enableCulling : _.get(options, 'enableCulling', true)
+      enableCulling: _.get(options, 'enableCulling', true)
     }
     // keep debug options
     this.conf.debug = {
@@ -127,7 +127,7 @@ const TiledMeshLayer = L.GridLayer.extend({
 
         if (grid) {
           if (grid.hasData()) {
-            const { coords, minLat, maxLat, minLon, maxLon, deltaLat, deltaLon } = grid.genCoordsBuffer()
+            const { coords, minLat, minLon, deltaLat, deltaLon } = grid.genCoordsBuffer()
             const values = grid.genValuesBuffer()
             const indexes = grid.genMeshIndexBuffer()
             const geometry = new PIXI.Geometry()

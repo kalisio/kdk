@@ -169,7 +169,7 @@ export default {
         const xMax = this.$q.screen.width - this.window.size[0]
         const yMax = this.$q.screen.height - this.window.size[1]
         const newPosition = [
-          Math.max(Math.min(Math.floor(this.window.position[0] + event.delta.x), xMax), 0), 
+          Math.max(Math.min(Math.floor(this.window.position[0] + event.delta.x), xMax), 0),
           Math.min(Math.max(Math.floor(this.window.position[1] + event.delta.y), 0), yMax)
         ]
         this.$store.patch('window', { position: newPosition })
@@ -184,7 +184,7 @@ export default {
         const wMax = this.$q.screen.width - this.window.position[0]
         const hMax = this.$q.screen.height - this.window.position[1]
         const newSize = [
-          Math.min(this.window.size[0] + event.delta.x, wMax), 
+          Math.min(this.window.size[0] + event.delta.x, wMax),
           Math.min(this.window.size[1] + event.delta.y, hMax)
         ]
         this.$store.patch('window', { size: newSize })
@@ -221,7 +221,7 @@ export default {
           }
           if (constrained) {
             this.$store.patch('window', { position: [x, y], size: [w, h] })
-            this.storeGeometry([x, y],  [w, h])
+            this.storeGeometry([x, y], [w, h])
           }
         }
       } else {

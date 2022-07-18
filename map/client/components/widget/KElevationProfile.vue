@@ -113,8 +113,8 @@ export default {
           // a simple plugin to display a vertical line at cursor position
           beforeEvent: (chart, args) => {
             if (args.event.type === 'mousemove') {
-              if ((args.event.x >= chart.chartArea.left)
-                  && (args.event.x <= chart.chartArea.right)) {
+              if ((args.event.x >= chart.chartArea.left) &&
+                  (args.event.x <= chart.chartArea.right)) {
                 chart.config.options.vline.enabled = true
                 chart.config.options.vline.x = args.event.x
               } else {
@@ -203,7 +203,7 @@ export default {
                   let label = context.dataset.label || ''
                   if (label) label += ': '
                   if (context.parsed.y !== null) label += Units.format(context.parsed.y, this.chartHeightUnit)
-                  return label;
+                  return label
                 }
               }
             },
@@ -250,7 +250,7 @@ export default {
       if (profileHeights.length) {
         update.data.datasets.push({
           label: this.$t('KElevationProfile.PROFILE_CHART_LEGEND'),
-          data: profileHeights.map((h, i) => { return { x: profileLabels[i], y: h }}),
+          data: profileHeights.map((h, i) => { return { x: profileLabels[i], y: h } }),
           fill: false,
           borderColor: '#51b0e8',
           backgroundColor: '#0986bc',
@@ -262,7 +262,7 @@ export default {
       // Add terrain elevation dataset
       update.data.datasets.push({
         label: this.$t('KElevationProfile.TERRAIN_CHART_LEGEND'),
-        data: terrainHeights.map((h, i) => { return { x: terrainLabels[i], y: h }}),
+        data: terrainHeights.map((h, i) => { return { x: terrainLabels[i], y: h } }),
         fill: true,
         borderColor: '#635541',
         backgroundColor: '#c9b8a1',
@@ -290,7 +290,7 @@ export default {
       this.chartHeightUnit = Units.getDefaultUnit('altitude')
 
       // TODO: this is the window size, not the widget size ...
-      const windowSize  = this.$store.get('window.size')
+      const windowSize = this.$store.get('window.size')
 
       const queries = []
       const resolution = _.get(this.feature, 'properties.elevationProfile.resolution')
@@ -344,7 +344,8 @@ export default {
           method: 'POST',
           mode: 'cors',
           body: JSON.stringify(query.profile),
-          headers }))
+          headers
+        }))
       }
 
       let responses

@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import bbox from '@turf/bbox'
 import { featureEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
-import { tile2key, key2tile, tileSetContainsParent, getParentTileInTileSet } from './utils'
+import { tile2key, getParentTileInTileSet } from './utils'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
@@ -107,7 +107,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
           this.activity.updateLayer(this.layer.name, collection)
         } else if (this.pendingStationUpdates.length) {
           // Otherwise apply pending station updates
-          for(const collection of this.pendingStationUpdates) {
+          for (const collection of this.pendingStationUpdates) {
             this.activity.updateLayer(this.layer.name, collection)
           }
         }
@@ -234,7 +234,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.enableDebug) {
         let numTilesR = 0
         requests.forEach((r) => { numTilesR += r.tiles.length })
-        if (numTilesR != tiles.length) {
+        if (numTilesR !== tiles.length) {
           logger.debug('TiledFeatureLayer: less requested tiles than expected !')
         }
       }
@@ -243,7 +243,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     /* One request per tile
     tiles.forEach((tile) => {
       const r = {
-        tiles: [ tile ],
+        tiles: [tile],
         query: {
           south: tile.bbox.getSouth(),
           north: tile.bbox.getNorth(),
@@ -545,8 +545,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     } else {
       const minFeatureZoom = _.get(this.options, 'minFeatureZoom', this._map.getMinZoom())
       const maxFeatureZoom = _.get(this.options, 'maxFeatureZoom', this._map.getMaxZoom())
-      if (this.zoomEndLevel >= minFeatureZoom && this.zoomEndLevel <= maxFeatureZoom)
-        this.activity.updateLayer(this.layer.name, geojson)
+      if (this.zoomEndLevel >= minFeatureZoom && this.zoomEndLevel <= maxFeatureZoom) { this.activity.updateLayer(this.layer.name, geojson) }
     }
   },
 
