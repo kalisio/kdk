@@ -143,7 +143,7 @@ api.setBaseUrl = function (baseUrl) {
   } else {
     let socket = io(baseUrl, {
       transports: ['websocket'],
-      path: config.apiPath + 'ws'
+      path: (config.apiPath || '/') + 'ws'
     })
     this.configure(feathers.socketio(socket))
   }
@@ -200,7 +200,7 @@ if (config.transport === 'http') {
 } else {
   api.socket = io(origin, {
     transports: ['websocket'],
-    path: config.apiPath + 'ws'
+    path: (config.apiPath || '/') + 'ws'
   })
   api.transporter = feathers.socketio(api.socket, { timeout: config.apiTimeout || 10000 })
   api.configure(api.transporter)

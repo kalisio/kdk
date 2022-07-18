@@ -539,7 +539,7 @@ export function kdk () {
         res.json(Object.assign({}, error.toJSON()))
       }
     }
-    app.use(app.get('apiPath'), new HttpLimiter(Object.assign({ handler }, apiLimiter.http)))
+    app.use(app.get('apiPath') || '/', new HttpLimiter(Object.assign({ handler }, apiLimiter.http)))
   }
 
   // Enable CORS, security, compression, and body parsing
@@ -553,7 +553,7 @@ export function kdk () {
   // Set up plugins and providers
   app.configure(rest())
   const socketioConfig = app.get('socketio') || {}
-  app.configure(socketio(Object.assign({ path: app.get('apiPath') + 'ws' }, socketioConfig), setupSockets(app)))
+  app.configure(socketio(Object.assign({ path: (app.get('apiPath') || '/') + 'ws' }, socketioConfig), setupSockets(app)))
   app.configure(auth)
 
   // Initialize DB
