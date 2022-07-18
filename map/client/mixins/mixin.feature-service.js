@@ -30,7 +30,7 @@ export default {
         ? _.get(options, 'every')
         // Backward compatibility with old configuration style
         : _.get(options, this.engine, options).interval)
-      return moment.duration(interval)
+      return (interval ? moment.duration(interval) : null)
     },
     getFeaturesQueryInterval (options) {
       const interval = this.getFeaturesUpdateInterval(options)
@@ -41,13 +41,14 @@ export default {
       // If query interval not given use 2 x refresh interval as default value
       // this ensures we cover last interval if server/client update processes are not in sync
       if (!queryInterval && interval) queryInterval = moment.duration(-2 * interval.asMilliseconds())
-      return moment.duration(queryInterval)
+      return (queryInterval ? moment.duration(queryInterval) : null)
     },
     shouldSkipFeaturesUpdate (lastUpdateTime, options, interval) {
       // If not given try to compute query interval from options
       if (!interval) {
         interval = this.getFeaturesUpdateInterval(options)
       }
+      // We assume this is not a time-varying layer
       if (!interval) return true
       const now = Time.getCurrentTime()
       const elapsed = moment.duration(now.diff(lastUpdateTime))
@@ -77,12 +78,19 @@ export default {
       }
       // Any base query to process ?
       let query = await this.getBaseQueryForFeatures(options)
-      // Check if we have variables to be aggregate in time or not
-      if (options.variables) {
-        query = Object.assign({
-          $groupBy: options.featureId,
-          $aggregate: options.variables.map(variable => variable.name)
-        }, query)
+      if (queryInterval) {
+        // Check if we have variables to be aggregate in time or not
+        if (options.variables) {
+          query = Object.assign({
+            $groupBy: options.featureId,
+            $aggregate: options.variables.map(variable => variable.name)
+          }, query)
+        } else {
+          query = Object.assign({
+            $groupBy: options.featureId,
+            $aggregate: ['geometry']
+          }, query)
+        }
         // Request feature with at least one data available during last query interval if none given
         const now = Time.getCurrentTime()
         if (moment.isDuration(queryInterval)) {
