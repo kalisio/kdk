@@ -112,12 +112,14 @@ export default {
         plugins: [{
           // a simple plugin to display a vertical line at cursor position
           beforeEvent: (chart, args) => {
-            if ((args.event.type === 'mousemove')
-                && (args.event.x >= chart.chartArea.left)
-                && (args.event.x <= chart.chartArea.right)
-               ) {
-              chart.config.options.vline.enabled = true
-              chart.config.options.vline.x = args.event.x
+            if (args.event.type === 'mousemove') {
+              if ((args.event.x >= chart.chartArea.left)
+                  && (args.event.x <= chart.chartArea.right)) {
+                chart.config.options.vline.enabled = true
+                chart.config.options.vline.x = args.event.x
+              } else {
+                chart.config.options.vline.enabled = false
+              }
             } else if (args.event.type === 'mouseout') {
               chart.config.options.vline.enabled = false
             }
@@ -141,6 +143,14 @@ export default {
         options: {
           maintainAspectRatio: false,
           parsing: false, // because we'll provide data in chart native format
+          onHover: (context, elements) => {
+            // restore tooltip and vline if they've been disabled during
+            // pan or zoom animation
+            if (context.chart.config.options.plugins.tooltip.enabled) return
+            context.chart.config.options.plugins.tooltip.enabled = true
+            context.chart.config.options.vline.enabled = true
+            context.chart.update()
+          },
           interaction: {
             mode: 'xSingle',
             intersect: false
@@ -200,7 +210,7 @@ export default {
             decimation: {
               enabled: true,
               algorithm: 'lttb'
-              },
+            },
             zoom: {
               zoom: {
                 drag: {
@@ -211,10 +221,21 @@ export default {
                 wheel: {
                   enabled: true
                 },
-                mode: 'x'
+                mode: 'x',
+                onZoomStart: (context) => {
+                  // hide tooltip & vline while zooming
+                  context.chart.config.options.plugins.tooltip.enabled = false
+                  context.chart.config.options.vline.enabled = false
+                }
               },
               pan: {
-                enabled: true
+                enabled: true,
+                // modifierKey: 'ctrl',
+                onPanStart: (context) => {
+                  // hide tooltip & vline while zooming
+                  context.chart.config.options.plugins.tooltip.enabled = false
+                  context.chart.config.options.vline.enabled = false
+                }
               },
               limits: {
                 x: { min: 'original', max: 'original' },
