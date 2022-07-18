@@ -8,6 +8,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { baseWidget } from '../../../../core/client/mixins'
+import { Units } from '../../../../core/client/units'
 import { colors, copyToClipboard, exportFile } from 'quasar'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
@@ -86,9 +87,10 @@ export default {
       let allCoordsHaveHeight = true
       let curvilinearOffset = 0
       for (let i = 0; i < profiles.length && allCoordsHaveHeight; ++i) {
+        const dataUnit = _.get(profiles[i], 'properties.altitudeUnit', 'm')
         // Gather elevation at each coord, make sure all coords have height along the way
         coordEach(profiles[i], (coord) => {
-          if (coord.length > 2) profileHeights.push(coord[2])
+          if (coord.length > 2) profileHeights.push(Units.convert(coord[2], dataUnit, this.chartHeightUnit))
           else allCoordsHaveHeight = false
         })
         // Compute curvilinear abscissa at each point
@@ -96,7 +98,7 @@ export default {
           segmentEach(profiles[i], (segment) => {
             if (profileLabels.length === 0) profileLabels.push(0)
             curvilinearOffset += length(segment, { units: 'kilometers' }) * 1000
-            profileLabels.push(curvilinearOffset)
+            profileLabels.push(Units.convert(curvilinearOffset, 'm', this.chartDistanceUnit))
           })
         }
       }
@@ -118,8 +120,6 @@ export default {
               chart.config.options.vline.x = args.event.x
             } else if (args.event.type === 'mouseout') {
               chart.config.options.vline.enabled = false
-            } else {
-              console.log('foo')
             }
           },
           afterDraw: (chart) => {
@@ -151,7 +151,7 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND')
+                text: this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND', { unit: this.chartDistanceUnit })
               }
             },
             y: {
@@ -159,7 +159,7 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND')
+                text: this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', { unit: this.chartHeightUnit })
               }
             }
           },
@@ -182,18 +182,20 @@ export default {
             },
             tooltip: {
               position: 'cursorPosition',
-              /*
-                callbacks: {
+              callbacks: {
+                /*
+                title: (context) => {
+                  let title = `${context[0].parsed.x.toFixed(2)} ${this.chartDistanceUnit}`
+                  return title
+                },
+                */
                 label: (context) => {
-                let label = context.dataset.label || ''
-                if (label) label += ': '
-                if (context.parsed.y !== null) {
-                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                  let label = context.dataset.label || ''
+                  if (label) label += ': '
+                  if (context.parsed.y !== null) label += Units.format(context.parsed.y, this.chartHeightUnit)
+                  return label;
                 }
-                return label;
-                }
-                }
-              */
+              }
             },
             decimation: {
               enabled: true,
@@ -250,7 +252,6 @@ export default {
     },
 
     async refresh () {
-      const nbOfPoints = 200
       const maxResolution = 30
       this.profile = null
       this.refreshActions()
@@ -264,6 +265,12 @@ export default {
         return
       }
 
+      this.chartDistanceUnit = 'm'
+      this.chartHeightUnit = Units.getDefaultUnit('altitude')
+
+      // TODO: this is the window size, not the widget size ...
+      const windowSize  = this.$store.get('window.size')
+
       const queries = []
       const resolutions = _.get(this.feature, 'properties.elevationProfileResolution')
       const corridors = _.get(this.feature, 'properties.elevationProfileCorridorWidth')
@@ -276,9 +283,12 @@ export default {
           })
         })
       } else {
+        const chartWidth = windowSize[0]
+        const pixelStep = 5
+        const res = resolutions ? resolutions : Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
         queries.push({
           profile: this.feature,
-          resolution: resolutions ? resolutions : Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / nbOfPoints, maxResolution),
+          resolution: res,
           corridorWidth: corridors ? corridors : null
         })
       }
@@ -348,10 +358,10 @@ export default {
           const clone = _.cloneDeep(point)
           // Since we may have multiple profile with different query parameters
           // offset t accordingly
-          clone.properties.t = curvilinearOffset + _.get(point, 'properties.t', 0)
+          clone.properties.t = Units.convert(curvilinearOffset + _.get(point, 'properties.t', 0), 'm', this.chartDistanceUnit)
           this.profile.push(clone)
 
-          terrainHeights.push(point.properties.z)
+          terrainHeights.push(Units.convert(point.properties.z, 'm', this.chartHeightUnit))
           terrainLabels.push(clone.properties.t)
         })
         // Update curvilinear offset for next profile, and skip next profile's first point
