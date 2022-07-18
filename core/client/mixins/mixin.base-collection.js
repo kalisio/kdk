@@ -42,7 +42,7 @@ export const baseCollection = {
     subscribe (query) {
       // Remove previous listener if any
       this.unsubscribe()
-      this.itemListener = this.getService().watch({ listStrategy: this.listStrategy || 'always' })
+      this.itemListener = this.getService().watch({ listStrategy: this.listStrategy || 'smart' })
         .find({ query })
         .subscribe(response => {
           // Manage GeoJson features collection as well

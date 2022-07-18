@@ -36,7 +36,8 @@ function tooManyRequests (socket, message, key) {
 }
 
 export function declareService (path, app, service, serviceOptions = {}) {
-  const feathersPath = app.get('apiPath') + '/' + path
+  let feathersPath = app.get('apiPath') + '/' + path
+  if (feathersPath.startsWith('/')) feathersPath = feathersPath.substr(1)
 
   try {
     const feathersService = app.service(feathersPath)

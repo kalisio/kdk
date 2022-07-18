@@ -110,6 +110,7 @@ api.createService = function (name, options = {}) {
     servicePath = contextId + '/' + servicePath
   }
   servicePath = config.apiPath + '/' + servicePath
+  if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
   api.declareService(name, options)
   let service = options.service
   // If we get a function try to call it assuming it will return the service object
