@@ -105,7 +105,7 @@ export default {
 
       return allCoordsHaveHeight ? [profileHeights, profileLabels] : [[], []]
     },
-    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels) {
+    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels, chartWidth) {
       const update = {
         type: 'line',
         data: { datasets: [] },
@@ -142,6 +142,7 @@ export default {
         }],
         options: {
           maintainAspectRatio: false,
+          // stepped: 'middle',
           parsing: false, // because we'll provide data in chart native format
           onHover: (context, elements) => {
             // restore tooltip and vline if they've been disabled during
@@ -209,7 +210,9 @@ export default {
             },
             decimation: {
               enabled: true,
-              algorithm: 'lttb'
+              algorithm: 'lttb',
+              // algorithm: 'min-max',
+              samples: Math.floor(chartWidth / 5)
             },
             zoom: {
               zoom: {
@@ -291,28 +294,32 @@ export default {
 
       // TODO: this is the window size, not the widget size ...
       const windowSize = this.$store.get('window.size')
+      const chartWidth = windowSize[0]
 
       const queries = []
       const resolution = _.get(this.feature, 'properties.elevationProfile.resolution')
       const resolutionUnit = _.get(this.feature, 'properties.elevationProfile.resolutionUnit', 'm')
       const corridor = _.get(this.feature, 'properties.elevationProfile.corridorWidth')
       const corridorUnit = _.get(this.feature, 'properties.elevationProfile.corridorWidthUnit', 'm')
+      const securityMargin = _.get(this.feature, 'properties.elevationProfile.securityMargin')
+      const securityMarginUnit = _.get(this.feature, 'properties.elevationProfile.securityMarginUnit', 'm')
       if (geometry === 'MultiLineString') {
         flatten(this.feature).features.forEach((feature, index) => {
           queries.push({
             profile: feature,
             resolution: Units.convert(resolution[index], resolutionUnit, 'm'),
-            corridorWidth: corridor ? Units.convert(corridor[index], corridorUnit, 'm') : null
+            corridorWidth: corridor ? Units.convert(corridor[index], corridorUnit, 'm') : null,
+            securityMargin: securityMargin ? Units.convert(securityMargin[index], securityMarginUnit, 'm') : null
           })
         })
       } else {
-        const chartWidth = windowSize[0]
         const pixelStep = 5
         const res = resolution ? Units.convert(resolution, resolutionUnit, 'm') : Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
         queries.push({
           profile: this.feature,
           resolution: res,
-          corridorWidth: corridor ? Units.convert(corridor, corridorUnit, 'm') : null
+          corridorWidth: corridor ? Units.convert(corridor, corridorUnit, 'm') : null,
+          securityMargin: securityMargin ? Units.convert(securityMargin, securityMarginUnit, 'm') : null
         })
       }
 
@@ -340,7 +347,10 @@ export default {
       // Build a fetch per profile
       const fetchs = []
       for (const query of queries) {
-        fetchs.push(fetch(endpoint + `?resolution=${query.resolution}` + (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : ''), {
+        fetchs.push(fetch(endpoint
+                          + `?resolution=${query.resolution}`
+                          + (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '')
+                          + (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
           method: 'POST',
           mode: 'cors',
           body: JSON.stringify(query.profile),
@@ -394,7 +404,7 @@ export default {
         skipFirstPoint = true
       }
 
-      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels)
+      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, chartWidth)
 
       this.profile = featureCollection(this.profile)
 
