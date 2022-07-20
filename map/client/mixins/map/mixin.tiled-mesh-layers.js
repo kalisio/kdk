@@ -61,10 +61,6 @@ export default {
 
       // store displayed layers
       this.tiledMeshLayers.set(layer._id, engineLayer)
-      const levels = _.get(layer, 'levels')
-      if ((typeof this.setSelectableLevels === 'function') && levels) {
-        this.setSelectableLevels(layer, levels)
-      }
       // setup layer
       engineLayer.setModel(this.forecastModel)
       engineLayer.setTime(Time.getCurrentTime())
@@ -75,10 +71,6 @@ export default {
       if (!isTiledMeshLayer) return
 
       this.tiledMeshLayers.delete(layer._id)
-      // layer being hidden, hide slider if any was required
-      if (typeof this.clearSelectableLevels === 'function') {
-        this.clearSelectableLevels(layer)
-      }
     },
 
     onSelectedLevelChangedTiledMeshLayer (value) {

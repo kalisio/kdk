@@ -396,13 +396,32 @@ export default {
           }
         }
       })
+    },
+    onCurrentLevelChangedGeoJsonLayers (level) {
+      // Retrieve the layer associated to current level sélection
+      let layer = this.selectableLevelsLayer
+      if (layer) {
+        const type = _.get(layer, `${this.engine}.type`)
+        // Check if of right type
+        if (type === 'geoJson') {
+          // Retrieve the engine layer and update
+          layer = this.getLeafletLayerByName(layer.name)
+          if (layer.tiledLayer) {
+            layer.tiledLayer.redraw()
+          } else {
+            layer.update()
+          }
+        }
+      }
     }
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
     this.$events.$on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
   },
   beforeDestroy () {
     this.$events.$off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
   }
 }

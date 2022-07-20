@@ -55,6 +55,9 @@ export default {
       // If query interval has elapsed since last update we need to update again
       return (Math.abs(elapsed.asMilliseconds()) < interval.asMilliseconds())
     },
+    getFeaturesLevel (options) {
+      return (this.selectableLevelsLayer && (this.selectableLevelsLayer.name === options.name) ? this.selectedLevel : null)
+    },
     async getProbeFeatures (options) {
       // Any base query to process ?
       const query = await this.getBaseQueryForFeatures(options)
@@ -71,27 +74,31 @@ export default {
       if (!layer) return
       return this.getProbeFeatures(layer)
     },
-    async getFeatures (options, queryInterval) {
+    async getFeatures (options, queryInterval, queryLevel) {
       // If not given try to compute query interval from options
       if (!queryInterval) {
         queryInterval = this.getFeaturesQueryInterval(options)
       }
+      // If not given try to compute query level from options
+      if (!queryLevel) {
+        queryLevel = this.getFeaturesLevel(options)
+      }
       // Any base query to process ?
       let query = await this.getBaseQueryForFeatures(options)
+      // Request features with at least one data available during last query interval
       if (queryInterval) {
-        // Check if we have variables to be aggregate in time or not
+        // Check if we have variables to be aggregated in time or not
         if (options.variables) {
           query = Object.assign({
             $groupBy: options.featureId,
             $aggregate: options.variables.map(variable => variable.name)
           }, query)
-        } else {
+        } else if (options.featureId) {
           query = Object.assign({
             $groupBy: options.featureId,
             $aggregate: ['geometry']
           }, query)
         }
-        // Request feature with at least one data available during last query interval if none given
         const now = Time.getCurrentTime()
         if (moment.isDuration(queryInterval)) {
           // Depending on the duration format we might have negative or positive values
@@ -99,23 +106,27 @@ export default {
             ? now.clone().subtract(queryInterval) : now.clone().add(queryInterval))
           const lte = now
           Object.assign(query, {
-            $limit: 1,
             $sort: { time: -1, runTime: -1 },
             time: {
               $gte: gte.format(),
               $lte: lte.format()
             }
           })
+          // If we can aggregate then keep track of last element of each aggregation
+          if (options.featureId) query.$limit = 1
         } else if (typeof queryInterval === 'object') {
           query.time = queryInterval
         } else {
-          // Last available data only for realtime visualization
           Object.assign(query, {
-            $limit: 1,
             $sort: { time: -1, runTime: -1 },
             time: { $lte: now.format() }
           })
+          // If we can aggregate then keep track of last element of each aggregation
+          if (options.featureId) query.$limit = 1
         }
+      }
+      if (!_.isNil(queryLevel)) {
+        query.level = queryLevel
       }
       const response = await this.$api.getService(options.service).find({ query })
       if (typeof options.processor === 'function') {
