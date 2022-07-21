@@ -57,8 +57,11 @@ export class MeteoModelGridSource extends DynamicGridSource {
       }
 
       // handle dynamic properties
-      for (const prop of _.keys(item.dynprops)) {
-        const value = item.dynprops[prop]
+      // dynprops may be 'scoped' per grid source, that's what we check here
+      // if not scoped, use the dynprops object
+      const dynprops = _.has(item.dynprops, candidate.key) ? item.dynprops[candidate.key] : item.dynprops
+      for (const prop of _.keys(dynprops)) {
+        const value = dynprops[prop]
         const generator = this.dynpropGenerator(value)
         if (generator) candidate.dynamicProps[prop] = generator
       }
