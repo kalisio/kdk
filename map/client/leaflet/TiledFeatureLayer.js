@@ -550,8 +550,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   redraw () {
-    // remove tiles manually first
-    if (this._map) this._removeAllTiles()
+    // clear underlying geojson layer
+    const allFeatures = Array.from(this.allFeatures.values(), (feat) => feat.geojson)
+    this.activity.updateLayer(this.layer.name, featureCollection(allFeatures), true)
 
     this.flyingTiles.clear()
     this.modifiedTiles.clear()
