@@ -771,8 +771,10 @@ export default {
         'cesium.isVisible': this.isVisible,
         isSelectable: this.isSelectable
       }
-      values['leaflet.minZoom'] = (this.hasMinZoom ? this.minZoom : false)
-      values['leaflet.maxZoom'] = (this.hasMaxZoom ? this.maxZoom : false)
+      // FIXME: Set default zoom level if not set.
+      // Indeed we should actually "remove" these properties but this is not
+      values['leaflet.minZoom'] = (this.hasMinZoom ? this.minZoom : this.minViewerZoom)
+      values['leaflet.maxZoom'] = (this.hasMaxZoom ? this.maxZoom : this.maxViewerZoom)
       if (this.hasOpacity) values['leaflet.opacity'] = this.opacity
       return values
     },
