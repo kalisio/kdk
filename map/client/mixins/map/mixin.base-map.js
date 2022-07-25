@@ -109,6 +109,10 @@ export default {
           _.set(leafletOptions, option, _.get(L, _.get(leafletOptions, option)))
         }
       })
+      // Check for valid number on min/max zoom level as we might set it to false/null to indicate
+      // there is none and we should use defaults, but LEaflet does not like it
+      if (_.has(leafletOptions, 'minZoom') && !_.isNumber(leafletOptions.minZoom)) _.unset(leafletOptions, 'minZoom')
+      if (_.has(leafletOptions, 'maxZoom') && !_.isNumber(leafletOptions.minZoom)) _.unset(leafletOptions, 'maxZoom')
       // Copy generic options
       leafletOptions.attribution = processedOptions.attribution
       return processedOptions

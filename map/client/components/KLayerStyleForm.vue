@@ -4,11 +4,11 @@
     <k-color-chooser ref="colorChooser" @color-choosed="onColorChanged" />
     <q-expansion-item ref="general" id="style-general-group" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.BASE')" group="group">
       <q-list dense class="row">
-        <q-item>
-          <q-item-section>
+        <q-item class="col-12">
+          <q-item-section class="col-1">
             <q-toggle v-model="isVisible"/>
           </q-item-section>
-          <q-item-section avatar>
+          <q-item-section class="col-11 text-left">
             {{$t('KLayerStyleForm.DEFAULT_VISIBILITY')}}
           </q-item-section>
         </q-item>
@@ -16,10 +16,10 @@
           <q-item-section class="col-1">
             <q-toggle id="style-toggle-minzoom" v-model="hasMinZoom"/>
           </q-item-section>
-          <q-item-section class="col-6">
+          <q-item-section class="col-6 text-left">
           {{$t('KLayerStyleForm.MIN_ZOOM')}}
           </q-item-section>
-          <q-item-section class="col-4">
+          <q-item-section class="col-4 text-left">
             <q-slider id="style-set-minzoom" v-model="minZoom" :disable="!hasMinZoom"
               :min="minViewerZoom" :max="hasMaxZoom ? maxZoom : maxViewerZoom" :step="1"
               label label-always :label-value="minZoom"/>
@@ -29,7 +29,7 @@
           <q-item-section class="col-1">
             <q-toggle id="style-toggle-maxzoom" v-model="hasMaxZoom"/>
           </q-item-section>
-          <q-item-section class="col-6">
+          <q-item-section class="col-6 text-left">
           {{$t('KLayerStyleForm.MAX_ZOOM')}}
           </q-item-section>
           <q-item-section class="col-4">
@@ -38,11 +38,11 @@
               label label-always :label-value="maxZoom"/>
           </q-item-section>
         </q-item>
-        <q-item>
-          <q-item-section>
+        <q-item class="col-12">
+          <q-item-section class="col-1">
             <q-toggle id="style-is-selectable" v-model="isSelectable"/>
           </q-item-section>
-          <q-item-section avatar>
+          <q-item-section class="col-4 text-left">
             {{$t('KLayerStyleForm.SELECTABLE')}}
           </q-item-section>
         </q-item>
@@ -50,7 +50,7 @@
           <q-item-section class="col-1">
             <q-toggle v-model="hasOpacity"/>
           </q-item-section>
-          <q-item-section class="col-6">
+          <q-item-section class="col-6 text-left">
           {{$t('KLayerStyleForm.LAYER_OPACITY')}}
           </q-item-section>
           <q-item-section class="col-4">
@@ -67,7 +67,7 @@
           <q-item-section class="col-1">
             <q-toggle id="style-toggle-clustering" v-model="clustering"/>
           </q-item-section>
-          <q-item-section class="col-6">
+          <q-item-section class="col-6 text-left">
           {{$t('KLayerStyleForm.POINT_CLUSTERING')}}
           </q-item-section>
           <q-item-section class="col-4">
@@ -111,7 +111,7 @@
           </q-item-section>
         </q-item>
         <q-item v-if="hasFeatureSchema" class="col-12">
-          <q-item-section avatar class="col-6">
+          <q-item-section avatar class="col-6 text-left">
             {{$t('KLayerStyleForm.ADD_POINT_STYLE')}}
           </q-item-section>
           <q-item-section class="col-6">
@@ -127,7 +127,7 @@
     <q-expansion-item ref="lines" id="style-line-group" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
-          <q-item-section class="col-6">
+          <q-item-section class="col-6 text-left">
             {{$t('KLayerStyleForm.DEFAULT_LINE_STYLE')}}
           </q-item-section>
           <q-item-section class="col-1">
@@ -181,7 +181,7 @@
           </q-item-section>
         </q-item>
         <q-item v-if="hasFeatureSchema" class="col-12">
-          <q-item-section avatar class="col-6">
+          <q-item-section avatar class="col-6 text-left">
             {{$t('KLayerStyleForm.ADD_LINE_STYLE')}}
           </q-item-section>
           <q-item-section class="col-6">
@@ -241,7 +241,7 @@
           </q-item-section>
         </q-item>
         <q-item v-if="hasFeatureSchema" class="col-12">
-          <q-item-section avatar class="col-6">
+          <q-item-section avatar class="col-6 text-left">
             {{$t('KLayerStyleForm.ADD_POLYGON_STYLE')}}
           </q-item-section>
           <q-item-section class="col-6">
@@ -706,14 +706,16 @@ export default {
     },
     async fillPopupStyles (values) {
       // Check for popup in layer and default style
-      this.popup = (!!_.get(values, 'leaflet.popup', _.get(this.options, 'popup.pick')))
+      this.popup = (!!_.get(values, 'leaflet.popup', _.get(this.options, 'popup')))
       this.popupProperties = _.get(values, 'leaflet.popup.pick',
         _.get(this.options, 'popup.pick', this.properties.map(property => property.value)))
       // Jump to select data model
-      if (this.popupProperties) {
+      if (!_.isEmpty(this.popupProperties)) {
         this.popupProperties = this.popupProperties.map(property =>
           _.find(this.properties, { value: property })
         )
+      } else { // Empty list of properties is similar to no popup
+        this.popup = false
       }
     },
     async fillTooltipStyles (values) {
@@ -722,7 +724,11 @@ export default {
       this.tooltipProperty = _.get(values, 'leaflet.tooltip.property',
         _.get(this.options, 'tooltip.property', null))
       // Jump to select data model
-      if (this.tooltipProperty) this.tooltipProperty = _.find(this.properties, { value: this.tooltipProperty })
+      if (this.tooltipProperty) {
+        this.tooltipProperty = _.find(this.properties, { value: this.tooltipProperty })
+      } else { // No property is similar to no popup
+        this.tooltip = false
+      }
     },
     async fillInfoBoxStyles (values) {
       // Check for infobox in layer and default style
@@ -730,10 +736,12 @@ export default {
       this.infoboxProperties = _.get(values, 'leaflet.infobox.pick',
         _.get(this.options, 'infobox.pick', this.properties.map(property => property.value)))
       // Jump to select data model
-      if (this.infoboxProperties) {
+      if (!_.isEmpty(this.infoboxProperties)) {
         this.infoboxProperties = this.infoboxProperties.map(property =>
           _.find(this.properties, { value: property })
         )
+      } else { // Empty list of properties is similar to no popup
+        this.infobox = false
       }
     },
     async fill (values) {
@@ -771,10 +779,8 @@ export default {
         'cesium.isVisible': this.isVisible,
         isSelectable: this.isSelectable
       }
-      // FIXME: Set default zoom level if not set.
-      // Indeed we should actually "remove" these properties but this is not
-      values['leaflet.minZoom'] = (this.hasMinZoom ? this.minZoom : this.minViewerZoom)
-      values['leaflet.maxZoom'] = (this.hasMaxZoom ? this.maxZoom : this.maxViewerZoom)
+      values['leaflet.minZoom'] = (this.hasMinZoom ? this.minZoom : false)
+      values['leaflet.maxZoom'] = (this.hasMaxZoom ? this.maxZoom : false)
       if (this.hasOpacity) values['leaflet.opacity'] = this.opacity
       return values
     },
