@@ -67,15 +67,9 @@ export const tiledWindLayers = {
       // store displayed layers
       this.tiledWindLayers.set(layer._id, engineLayer)
 
-      const levels = _.get(layer, 'levels')
-      if ((typeof this.setSelectableLevels === 'function') && levels) {
-        this.setSelectableLevels(layer, levels)
-      }
-
       // setup layer
       engineLayer.setModel(this.forecastModel)
       engineLayer.setTime(Time.getCurrentTime())
-      if (this.selectedLevel !== null) engineLayer.setLevel(this.selectedLevel)
     },
 
     onHideTiledWindLayer (layer, engineLayer) {
@@ -83,11 +77,6 @@ export const tiledWindLayers = {
       if (!isTiledWindLayer) return
 
       this.tiledWindLayers.delete(layer._id)
-
-      // layer being hidden, hide slider if any was required
-      if (typeof this.clearSelectableLevels === 'function') {
-        this.clearSelectableLevels(layer)
-      }
     },
 
     onForecastModelChangedTiledWindLayer (model) {

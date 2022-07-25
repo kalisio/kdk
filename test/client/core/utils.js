@@ -49,6 +49,18 @@ export async function click (page, selector, wait = 250) {
   }
 }
 
+/* Helper function to click on a given selector
+ */
+export async function clickMenuItem (page, wait = 250) {
+  const xpath = '(//div[@class="q-item__label"])'
+  try {
+    await page.waitForXPath(xpath)
+    await page.waitForTimeout(wait)
+  } catch (error) {
+    console.error(`click ${xpath} failed.`)
+  }
+}
+
 /* Helper function to click on a given xpath
  */
 export async function clickXPath (page, xpath, wait = 250) {
@@ -102,6 +114,27 @@ export async function type (page, selector, text, enter = false, replace = false
       await page.keyboard.press('Backspace')
     } else {
       await page.click(selector)
+    }
+    await page.type(selector, text)
+    if (enter) await page.keyboard.press('Enter')
+    await page.waitForTimeout(wait)
+  } catch (error) {
+    console.error(`type ${text} in ${selector} failed.`)
+  }
+}
+
+/* Helper function to input a text on a given XPath
+ * set enter to true to run the press 'Enter' key
+   ! Not yet working !
+ */
+export async function typeXPath (page, selector, text, enter = false, replace = false, wait = 250) {
+  try {
+    await page.waitForXPath(selector, { timeout: 2000 })
+    if (replace) {
+      await page.clickXPath(selector, { clickCount: 3 })
+      await page.keyboard.press('Backspace')
+    } else {
+      await page.clickXPath(selector)
     }
     await page.type(selector, text)
     if (enter) await page.keyboard.press('Enter')
@@ -190,7 +223,7 @@ export function compareImages (image1, image2, threshold, diffFilename) {
   return { diffRatio, diff }
 }
 
-/* Moves a slider in a choosen direction (right or left), for a specific times
+/* Moves a slider in a chosen direction (right or left), for a specific times
  */
 export async function moveSlider (page, action, direction, times, wait = 250) {
   const selector = `#${action}`

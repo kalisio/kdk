@@ -13,7 +13,7 @@
 <script>
 import _ from 'lodash'
 import chroma from 'chroma-js'
-import { Chart, registerables } from 'chart.js'
+import { Chart, registerables, Interaction, Tooltip } from 'chart.js'
 import ChartDataLabelsPlugin from 'chartjs-plugin-datalabels'
 import ChartAnnotationPlugin from 'chartjs-plugin-annotation'
 import ChartZoomPlugin from 'chartjs-plugin-zoom'
@@ -37,6 +37,20 @@ const legendMarginPlugin = {
 }
 
 Chart.register(...registerables, ChartDataLabelsPlugin, ChartAnnotationPlugin, ChartZoomPlugin, legendMarginPlugin)
+
+// Additional interaction mode: xSingle, same as x but only returns a single value
+Interaction.modes.xSingle = (chart, e, options, useFinalPosition) => {
+  const items = Interaction.modes.x(chart, e, options, useFinalPosition)
+  // only keep one item per dataset
+  const mapping = {}
+  items.forEach((item) => { if (!mapping[item.datasetIndex]) mapping[item.datasetIndex] = item })
+  return _.values(mapping)
+}
+
+// Additional tootltip positioner: at cursor position
+Tooltip.positioners.cursorPosition = (elements, eventPosition) => {
+  return eventPosition
+}
 
 export default {
   components: {

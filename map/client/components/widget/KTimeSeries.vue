@@ -42,7 +42,17 @@ export default {
       // Compute the layer name if any
       const layerName = this.selection.layer ? this.$t(this.selection.layer.name) : undefined
       // Compute the probe location name
-      const probeName = this.probedLocation ? _.get(this.probedLocation, 'properties.name', _.get(this.probedLocation, 'properties.NAME')) : undefined
+      let probeName
+      if (this.probedLocation) {
+        // Check if we have a property as tooltip or popup and use it
+        if (this.selection.layer) {
+          const probeNameProperty = _.get(this.selection.layer, `${this.kActivity.engine}.tooltip.property`,
+            _.get(this.selection.layer, `${this.kActivity.engine}.popup.pick[0]`))
+          if (probeNameProperty) probeName = _.get(this.probedLocation, `properties.${probeNameProperty}`)
+        }
+        // Otherwise test for conventional names otherwise
+        if (!probeName) probeName = _.get(this.probedLocation, 'properties.name', _.get(this.probedLocation, 'properties.NAME'))
+      }
       if (layerName && probeName) return `${layerName} - ${probeName}`
       if (probeName) return probeName
       return ''
@@ -90,7 +100,7 @@ export default {
       this.probedVariables.forEach(variable => {
         if (!variable.runTimes) return
         // Check if we are targetting a specific level
-        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
+        const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
 
         if (runTime && runTime[name]) this.runTimes.push(runTime[name])
       })
@@ -105,7 +115,7 @@ export default {
       let axisId = 0
       this.probedVariables.forEach((variable, index) => {
         // Check if we are targetting a specific level
-        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
+        const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
         // Falback to base unit
         const baseUnit = variable.units[0]
         // Get default unit for this quantity instead if available
@@ -139,7 +149,7 @@ export default {
       let axisId = 0
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
-        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
+        const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
         // Falback to base unit
         const baseUnit = variable.units[0]
         // Get default unit for this quantity instead if available
@@ -164,7 +174,7 @@ export default {
       for (let i = 0; i < this.probedVariables.length; i++) {
         let name = this.probedVariables[i].name
         // Check if we are targetting a specific level
-        if (this.kActivity.selectedLevel) name = `${name}-${this.kActivity.selectedLevel}`
+        if (this.kActivity.forecastLevel) name = `${name}-${this.kActivity.forecastLevel}`
         if (_.indexOf(keys, name) !== -1) {
           const values = this.probedLocation.properties[name]
           if (values && Array.isArray(values)) return true
@@ -308,8 +318,8 @@ export default {
     },
     updateProbedLocationHighlight () {
       if (!this.probedLocation) return
-      const windDirection = (this.kActivity.selectedLevel ? `windDirection-${this.kActivity.selectedLevel}` : 'windDirection')
-      const windSpeed = (this.kActivity.selectedLevel ? `windSpeed-${this.kActivity.selectedLevel}` : 'windSpeed')
+      const windDirection = (this.kActivity.forecastLevel ? `windDirection-${this.kActivity.forecastLevel}` : 'windDirection')
+      const windSpeed = (this.kActivity.forecastLevel ? `windSpeed-${this.kActivity.forecastLevel}` : 'windSpeed')
       // Use wind barbs on weather probed features
       const isWeatherProbe = (_.has(this.probedLocation, `properties.${windDirection}`) &&
                               _.has(this.probedLocation, `properties.${windSpeed}`))
@@ -344,7 +354,7 @@ export default {
       const time = this.probedLocation.time || this.probedLocation.forecastTime
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
-        const name = (this.kActivity.selectedLevel ? `${variable.name}-${this.kActivity.selectedLevel}` : variable.name)
+        const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
         if (time && time[name]) times.push(time[name])
       })
       // Make union of all available times for x-axis
@@ -436,9 +446,14 @@ export default {
       const { start, end } = Time.getRange()
       // No feature clicked => dynamic weacast probe at position
       if (!this.feature) {
-        this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
-        _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
-          ` (${this.location.lng.toFixed(2)}°, ${this.location.lat.toFixed(2)}°)`)
+        if (this.kActivity.probeLocation) { // Maybe there's a specific probeLocation function
+          this.probedLocation = await this.kActivity.probeLocation(this.location.lng, this.location.lat, start, end)
+        }
+        if (!this.probedLocation) {
+          this.probedLocation = await this.kActivity.getForecastForLocation(this.location.lng, this.location.lat, start, end)
+          _.set(this.probedLocation, 'properties.name', this.$t('mixins.timeseries.FORECAST_PROBE') +
+                ` (${this.location.lng.toFixed(2)}°, ${this.location.lat.toFixed(2)}°)`)
+        }
       } else if (this.layer.probe) { // Static weacast probe
         const probe = await this.kActivity.getForecastProbe(this.layer.probe)
         if (probe) {
@@ -467,7 +482,7 @@ export default {
     this.$events.on('time-format-changed', this.refresh)
     this.$events.on('timeseries-span-changed', this.refresh)
     this.kActivity.$engineEvents.on('forecast-model-changed', this.refresh)
-    this.kActivity.$engineEvents.on('forecast-level-changed', this.refresh)
+    this.kActivity.$engineEvents.on('selected-level-changed', this.refresh)
     // Initialize the time range
     const span = this.$store.get('timeseries.span')
     const start = moment(Time.getCurrentTime()).subtract(span, 'm')
@@ -481,7 +496,7 @@ export default {
     this.$events.off('time-format-changed', this.refresh)
     this.$events.off('timeseries-span-changed', this.refresh)
     this.kActivity.$engineEvents.off('forecast-model-changed', this.refresh)
-    this.kActivity.$engineEvents.off('forecast-level-changed', this.refresh)
+    this.kActivity.$engineEvents.off('selected-level-changed', this.refresh)
     this.kActivity.removeSelectionHighlight('time-series')
   }
 }

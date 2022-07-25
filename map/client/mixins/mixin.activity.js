@@ -27,7 +27,7 @@ export const activity = {
       return this.variables.map(variable => Object.assign({ name: `${variable.name}-${this.selectedLevel}` }, _.omit(variable, ['name'])))
     },
     currentVariables () {
-      return this.hasSelectableLevels ? this.variablesForCurrentLevel : this.variables
+      return this.forecastLevel ? this.variablesForCurrentLevel : this.variables
     }
   },
   methods: {

@@ -125,7 +125,7 @@ const GradientPath = L.PixiOverlay.extend({
   },
 
   createGradientTexture (gradient, weight) {
-    let canvas = document.createElement('canvas')
+    const canvas = document.createElement('canvas')
     canvas.width = gradient.length
     canvas.height = weight
     // use canvas2d API to create the gradient texture
@@ -144,7 +144,7 @@ const GradientPath = L.PixiOverlay.extend({
 
     // Need to update rope weight according to zoom level so that we get a constant thickness on screen
     if (zoom !== this.currentZoom) {
-      this.renderer = utils.getRenderer() 
+      this.renderer = utils.getRenderer()
       // Compute the texture
       // FIXME: how to ensure a pixel constant size when zooming ?
       let texture = null

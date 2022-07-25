@@ -15,14 +15,15 @@ export const tiledMeshLayers = {
       const colorMap = _.get(options, 'variables[0].chromajs', null)
       if (colorMap) Object.assign(layerOptions, { chromajs: colorMap })
 
+      const apiToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+
       // Build grid source
       const [gridKey, gridConf] = extractGridSourceConfig(options)
-      const gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      const gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi, apiToken })
       gridSource.setup(gridConf)
       if (gridSource.updateCtx) {
         // define variables for source's dynamic properties
-        const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-        if (gatewayToken) gridSource.updateCtx.jwtToken = gatewayToken
+        if (apiToken) gridSource.updateCtx.jwtToken = apiToken
         gridSource.updateCtx.meteoElements = _.get(options, 'meteoElements')
       }
 
@@ -60,10 +61,6 @@ export const tiledMeshLayers = {
 
       // store displayed layers
       this.tiledMeshLayers.set(layer._id, engineLayer)
-      const levels = _.get(layer, 'levels')
-      if ((typeof this.setSelectableLevels === 'function') && levels) {
-        this.setSelectableLevels(layer, levels)
-      }
       // setup layer
       engineLayer.setModel(this.forecastModel)
       engineLayer.setTime(Time.getCurrentTime())
@@ -74,10 +71,6 @@ export const tiledMeshLayers = {
       if (!isTiledMeshLayer) return
 
       this.tiledMeshLayers.delete(layer._id)
-      // layer being hidden, hide slider if any was required
-      if (typeof this.clearSelectableLevels === 'function') {
-        this.clearSelectableLevels(layer)
-      }
     },
 
     onSelectedLevelChangedTiledMeshLayer (value) {

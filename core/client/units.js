@@ -21,6 +21,16 @@ const length = {
     definition: '1852 m'
   }
 }
+const altitude = {
+  m: {
+    symbol: 'units.METER_SYMBOL',
+    label: 'units.METER_LABEL'
+  },
+  ft: {
+    symbol: 'units.FEET_SYMBOL',
+    label: 'units.FEET_LABEL'
+  }
+}
 const area = {
   'm^2': {
     symbol: 'units.SQUARED_METER_SYMBOL',
@@ -81,6 +91,7 @@ const angle = {
 
 const quantities = {
   length,
+  altitude,
   area,
   velocity,
   temperature,
@@ -96,6 +107,7 @@ export const Units = {
       quantities, {
         default: {
           length: 'm',
+          altitude: 'm',
           area: 'm^2',
           velocity: 'm/s',
           temperature: 'degC',

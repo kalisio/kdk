@@ -49,7 +49,9 @@ export const Time = {
       // Clone to avoid mutating and force UTC mode
       return moment.utc(datetime.valueOf())
     } else { // Convert from Date, string or milliseconds (ie EPOCH)
-      return moment.utc(datetime)
+      // Check for ambiguous input as ISO 8601 consider it as locale and not UTC
+      if ((typeof datetime === 'string') && !datetime.endsWith('Z')) return moment(datetime).utc()
+      else return moment.utc(datetime)
     }
   },
   get () {

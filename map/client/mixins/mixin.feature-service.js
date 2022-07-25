@@ -30,7 +30,7 @@ export const featureService = {
         ? _.get(options, 'every')
         // Backward compatibility with old configuration style
         : _.get(options, this.engine, options).interval)
-      return moment.duration(interval)
+      return (interval ? moment.duration(interval) : null)
     },
     getFeaturesQueryInterval (options) {
       const interval = this.getFeaturesUpdateInterval(options)
@@ -41,18 +41,22 @@ export const featureService = {
       // If query interval not given use 2 x refresh interval as default value
       // this ensures we cover last interval if server/client update processes are not in sync
       if (!queryInterval && interval) queryInterval = moment.duration(-2 * interval.asMilliseconds())
-      return moment.duration(queryInterval)
+      return (queryInterval ? moment.duration(queryInterval) : null)
     },
     shouldSkipFeaturesUpdate (lastUpdateTime, options, interval) {
       // If not given try to compute query interval from options
       if (!interval) {
         interval = this.getFeaturesUpdateInterval(options)
       }
+      // We assume this is not a time-varying layer
       if (!interval) return true
       const now = Time.getCurrentTime()
       const elapsed = moment.duration(now.diff(lastUpdateTime))
       // If query interval has elapsed since last update we need to update again
       return (Math.abs(elapsed.asMilliseconds()) < interval.asMilliseconds())
+    },
+    getFeaturesLevel (options) {
+      return (this.selectableLevelsLayer && (this.selectableLevelsLayer.name === options.name) ? this.selectedLevel : null)
     },
     async getProbeFeatures (options) {
       // Any base query to process ?
@@ -70,20 +74,31 @@ export const featureService = {
       if (!layer) return
       return this.getProbeFeatures(layer)
     },
-    async getFeatures (options, queryInterval) {
+    async getFeatures (options, queryInterval, queryLevel) {
       // If not given try to compute query interval from options
       if (!queryInterval) {
         queryInterval = this.getFeaturesQueryInterval(options)
       }
+      // If not given try to compute query level from options
+      if (!queryLevel) {
+        queryLevel = this.getFeaturesLevel(options)
+      }
       // Any base query to process ?
       let query = await this.getBaseQueryForFeatures(options)
-      // Check if we have variables to be aggregate in time or not
-      if (options.variables) {
-        query = Object.assign({
-          $groupBy: options.featureId,
-          $aggregate: options.variables.map(variable => variable.name)
-        }, query)
-        // Request feature with at least one data available during last query interval if none given
+      // Request features with at least one data available during last query interval
+      if (queryInterval) {
+        // Check if we have variables to be aggregated in time or not
+        if (options.variables) {
+          query = Object.assign({
+            $groupBy: options.featureId,
+            $aggregate: options.variables.map(variable => variable.name)
+          }, query)
+        } else if (options.featureId) {
+          query = Object.assign({
+            $groupBy: options.featureId,
+            $aggregate: ['geometry']
+          }, query)
+        }
         const now = Time.getCurrentTime()
         if (moment.isDuration(queryInterval)) {
           // Depending on the duration format we might have negative or positive values
@@ -92,23 +107,27 @@ export const featureService = {
             : now.clone().add(queryInterval))
           const lte = now
           Object.assign(query, {
-            $limit: 1,
             $sort: { time: -1, runTime: -1 },
             time: {
               $gte: gte.format(),
               $lte: lte.format()
             }
           })
+          // If we can aggregate then keep track of last element of each aggregation
+          if (options.featureId) query.$limit = 1
         } else if (typeof queryInterval === 'object') {
           query.time = queryInterval
         } else {
-          // Last available data only for realtime visualization
           Object.assign(query, {
-            $limit: 1,
             $sort: { time: -1, runTime: -1 },
             time: { $lte: now.format() }
           })
+          // If we can aggregate then keep track of last element of each aggregation
+          if (options.featureId) query.$limit = 1
         }
+      }
+      if (!_.isNil(queryLevel)) {
+        query.level = queryLevel
       }
       const response = await this.$api.getService(options.service).find({ query })
       if (typeof options.processor === 'function') {

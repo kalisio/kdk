@@ -90,20 +90,20 @@ export const WEBGL_FUNCTIONS = {
 PIXI.TYPES.HALF_FLOAT_VERTEX = 0x140b
 
 export function buildShaderCode (features) {
-  let vtxCode = ''
-  let frgCode = ''
+  let vtxCode = '#version 300 es'
+  let frgCode = '#version 300 es\nprecision highp float;'
   // attributes, uniforms and varyings
-  vtxCode += '/// attributes, uniforms and varyings\n'
-  frgCode += '/// uniforms and varyings\n'
+  vtxCode += '\n\n/// attributes, uniforms and varyings\n'
+  frgCode += '\n\n/// uniforms and varyings\nout vec4 outColor;\n'
   for (const feat of features) {
     let addVtx = ''
     let addFrg = ''
-    for (const v of _.get(feat, 'vertex.attributes', [])) addVtx += `attribute ${v};\n`
+    for (const v of _.get(feat, 'vertex.attributes', [])) addVtx += `in ${v};\n`
     for (const v of _.get(feat, 'vertex.uniforms', [])) addVtx += `uniform ${v};\n`
     for (const v of _.get(feat, 'fragment.uniforms', [])) addFrg += `uniform ${v};\n`
     for (const v of _.get(feat, 'varyings', [])) {
-      addVtx += `varying ${v};\n`
-      addFrg += `varying ${v};\n`
+      addVtx += `out ${v};\n`
+      addFrg += `in ${v};\n`
     }
 
     if (addVtx) vtxCode += `// ${feat.name} ------\n${addVtx}`
@@ -248,118 +248,4 @@ export function buildColorMapShaderCodeFromClasses (breaks, colors, invertScale)
   }
 
   return buildColorMapShaderCode(thresholds, mapping, false)
-}
-
-export class ColorMapHook {
-  constructor (colormap, attribute) {
-    this.colormap = colormap
-    this.attribute = attribute
-  }
-
-  initialize (grid) {
-    this.grid = grid
-    const dims = grid.getDimensions()
-    const latCount = dims[0]
-    const lonCount = dims[1]
-    this.color = new Uint8Array(4 * latCount * lonCount)
-  }
-
-  iterate (vidx, ilat, ilon) {
-    const val = this.grid.getValue(ilat, ilon)
-    const mapped = this.colormap(val)
-    const rgb = mapped.rgb()
-    this.color[vidx * 4] = rgb[0]
-    this.color[vidx * 4 + 1] = rgb[1]
-    this.color[vidx * 4 + 2] = rgb[2]
-    this.color[vidx * 4 + 3] = 255
-  }
-
-  finalize (geometry) {
-    geometry.addAttribute(this.attribute, this.color, 4, true, PIXI.TYPES.UNSIGNED_BYTE)
-  }
-}
-
-export class RawValueHook {
-  constructor (attribute) {
-    this.attribute = attribute
-  }
-
-  initialize (grid) {
-    this.grid = grid
-    const dims = grid.getDimensions()
-    const latCount = dims[0]
-    const lonCount = dims[1]
-    this.value = new Float32Array(latCount * lonCount)
-  }
-
-  iterate (vidx, ilat, ilon) {
-    const val = this.grid.getValue(ilat, ilon)
-    this.value[vidx] = val
-  }
-
-  finalize (geometry) {
-    geometry.addAttribute(this.attribute, this.value, 1, false, PIXI.TYPES.FLOAT)
-  }
-}
-
-export function buildPixiMeshFromGrid (grid, hooks, iminlat, iminlon, imaxlat, imaxlon) {
-  const latCount = 1 + imaxlat - iminlat
-  const lonCount = 1 + imaxlon - iminlon
-
-  // const position = new Float32Array(2 * latCount * lonCount)
-  const position = new Uint16Array(2 * latCount * lonCount)
-  for (const hook of hooks) { hook.initialize(grid) }
-
-  const minLat = grid.getLat(iminlat)
-  const minLon = grid.getLon(iminlon)
-  const maxLat = grid.getLat(imaxlat)
-  const maxLon = grid.getLon(imaxlon)
-
-  const deltaLat = maxLat - minLat
-  const deltaLon = maxLon - minLon
-
-  // fill attributes
-  let vidx = 0
-  for (let ilon = iminlon; ilon <= imaxlon; ++ilon) {
-    const lon = grid.getLon(ilon)
-    for (let ilat = iminlat; ilat <= imaxlat; ++ilat) {
-      const lat = grid.getLat(ilat)
-
-      position[vidx * 2] = toHalf((lat - minLat) / deltaLat)
-      position[vidx * 2 + 1] = toHalf((lon - minLon) / deltaLon)
-      /*
-      position[vidx * 2] = lat
-      position[vidx * 2 + 1] = lon
-      */
-
-      for (const hook of hooks) { hook.iterate(vidx, ilat, ilon) }
-
-      ++vidx
-    }
-  }
-
-  // fill index
-  let iidx = 0
-  // choose 16 or 32 bit index
-  const maxIndex = (lonCount - 1) * latCount + (latCount - 1)
-  const index = maxIndex > 65534
-    ? new Uint32Array((lonCount - 1) * (latCount * 2 + 1) - 1)
-    : new Uint16Array((lonCount - 1) * (latCount * 2 + 1) - 1)
-  const restart = maxIndex > 65534 ? 4294967295 : 65535
-  for (let i = 0; i < lonCount - 1; ++i) {
-    for (let j = 0; j < latCount; ++j) {
-      index[iidx++] = j + i * latCount
-      index[iidx++] = j + (i + 1) * latCount
-    }
-    if (i !== lonCount - 2) { index[iidx++] = restart }
-  }
-
-  const geometry = new PIXI.Geometry()
-    .addAttribute('in_layerPosition', position, 2, false, PIXI.TYPES.HALF_FLOAT_VERTEX)
-  // .addAttribute('position', position, 2)
-    .addIndex(index)
-
-  for (const hook of hooks) { hook.finalize(geometry) }
-
-  return geometry
 }

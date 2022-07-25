@@ -17,7 +17,9 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.conf.render = {
       cutOver: options.cutOver,
       cutUnder: options.cutUnder,
-      pixelColorMapping: options.pixelColorMapping
+      pixelColorMapping: options.pixelColorMapping,
+      showWireframe: options.showWireframe,
+      enableCulling: _.get(options, 'enableCulling', true)
     }
     // keep debug options
     this.conf.debug = {
@@ -38,7 +40,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       { destroyInteractionManager: true, shouldRedrawOnMove: function () { return true } })
     this.layerUniforms = new PIXI.UniformGroup({ in_layerAlpha: options.opacity, in_zoomLevel: 1.0 })
     this.pixiState = new PIXI.State()
-    this.pixiState.culling = true
+    this.pixiState.culling = this.conf.render.enableCulling
     this.pixiState.blendMode = PIXI.BLEND_MODES.SCREEN
 
     // setup layer global uniforms (as opposed to tile specific uniforms)
@@ -125,22 +127,18 @@ const TiledMeshLayer = L.GridLayer.extend({
 
         if (grid) {
           if (grid.hasData()) {
-            // grid may be much larger than request, try to squeeze it
-            const [iminlat, iminlon, imaxlat, imaxlon] = grid.getBestFit(reqBBox)
-
-            const minlat = grid.getLat(iminlat)
-            const minlon = grid.getLon(iminlon)
-            const maxlat = grid.getLat(imaxlat)
-            const maxlon = grid.getLon(imaxlon)
-
-            // build mesh
-            const raw = new RawValueHook('in_layerValue')
-            const geometry = buildPixiMeshFromGrid(grid, [raw], iminlat, iminlon, imaxlat, imaxlon)
+            const { coords, minLat, minLon, deltaLat, deltaLon } = grid.genCoordsBuffer()
+            const values = grid.genValuesBuffer()
+            const indexes = grid.genMeshIndexBuffer()
+            const geometry = new PIXI.Geometry()
+              .addAttribute('in_layerCoord', coords, 2, false, PIXI.TYPES.HALF_FLOAT_VERTEX)
+              .addAttribute('in_layerValue', values, 1, false, PIXI.TYPES.FLOAT)
+              .addIndex(indexes)
 
             // compute tile specific uniforms
             const uniforms = {
               in_layerBounds: Float32Array.from(reqBBox),
-              in_layerOffsetScale: Float32Array.of(minlat, minlon, maxlat - minlat, maxlon - minlon),
+              in_layerOffsetScale: Float32Array.of(minLat, minLon, deltaLat, deltaLon),
               layerUniforms: this.layerUniforms
             }
             if (grid.nodata !== undefined) {
@@ -151,20 +149,25 @@ const TiledMeshLayer = L.GridLayer.extend({
             const mode = this.conf.debug.meshAsPoints ? PIXI.DRAW_MODES.POINTS : PIXI.DRAW_MODES.TRIANGLE_STRIP
             tile.mesh = new PIXI.Mesh(geometry, shader, this.pixiState, mode)
 
+            if (this.conf.render.showWireframe) {
+              const wireframeGeometry = new PIXI.Geometry()
+                .addAttribute('in_layerCoord', geometry.getBuffer('in_layerCoord'), 2, false, PIXI.TYPES.HALF_FLOAT_VERTEX)
+                .addIndex(grid.genWireframeIndexBuffer())
+              const wireframeShader = new PIXI.Shader(this.wireframeProgram, uniforms)
+              tile.wireframe = new PIXI.Mesh(wireframeGeometry, wireframeShader, this.pixiState, PIXI.DRAW_MODES.LINE_STRIP)
+            }
+
             if (this.conf.debug.showTileInfos) {
-              const dims = grid.getDimensions()
-              const res = grid.getResolution()
               tile.innerHTML =
                 `leaflet tile is ${tileSize.y} x ${tileSize.x} pixels</br>
                  covering ${reqBBox[0].toPrecision(6)},${reqBBox[1].toPrecision(6)} to ${reqBBox[2].toPrecision(6)},${reqBBox[3].toPrecision(6)}</br>
                  req res: ${resolution[0].toPrecision(4)} ${resolution[1].toPrecision(4)}</br>
-                 got res: ${res[0].toPrecision(4)} ${res[1].toPrecision(4)}</br>
-                 fetched grid is ${dims[0]} x ${dims[1]}, slimmed down to ${1 + imaxlat - iminlat} x ${1 + imaxlon - iminlon} points`
+                 mesh is made of ${values.length} points`
               tile.style.outline = '1px solid green'
             }
           } else if (this.conf.debug.showTileInfos) {
             tile.style.outline = '1px solid red'
-            tile.innerHTML = 'no data here (grid was full of nodata)!'
+            tile.innerHTML = 'no data here (grid maybe full of nodata)!'
           }
         } else if (this.conf.debug.showTileInfos) {
           tile.style.outline = '1px solid red'
@@ -175,7 +178,6 @@ const TiledMeshLayer = L.GridLayer.extend({
       })
       .catch(err => {
         done(err, tile)
-        throw err
       })
 
     return tile
@@ -189,6 +191,14 @@ const TiledMeshLayer = L.GridLayer.extend({
     mesh.zoomLevel = event.coords.z
     mesh.visible = (mesh.zoomLevel === this._map.getZoom())
     this.pixiRoot.addChild(mesh)
+
+    if (this.conf.render.showWireframe) {
+      const wireframe = event.tile.wireframe
+      wireframe.zoomLevel = mesh.zoomLevel
+      wireframe.visible = mesh.visible
+      this.pixiRoot.addChild(wireframe)
+    }
+
     if (mesh.visible) {
       this.pixiLayer.redraw()
     }
@@ -204,6 +214,13 @@ const TiledMeshLayer = L.GridLayer.extend({
     if (event.tile.mesh) {
       // remove and destroy tile mesh
       this.pixiRoot.removeChild(event.tile.mesh)
+
+      if (this.conf.render.showWireframe) {
+        this.pixiRoot.removeChild(event.tile.wireframe)
+        event.tile.wireframe.destroy()
+        event.tile.wireframe = null
+      }
+
       if (event.tile.mesh.visible) {
         this.pixiLayer.redraw()
       }
@@ -219,8 +236,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     // and zoom level 'n+1' are being loaded on top of them
     // when alpha blending is used, this is annoying
     const zoomLevel = this._map.getZoom()
-    for (const mesh of this.pixiRoot.children) {
-      if (mesh.zoomLevel === zoomLevel) mesh.visible = false
+    for (const child of this.pixiRoot.children) {
+      if (child.zoomLevel === zoomLevel) child.visible = false
     }
   },
 
@@ -231,8 +248,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     // this is important when quickly zoomin in and out
     // because some meshes may not have been evicted yet
     const zoomLevel = this._map.getZoom()
-    for (const mesh of this.pixiRoot.children) {
-      if (mesh.zoomLevel === zoomLevel) mesh.visible = true
+    for (const child of this.pixiRoot.children) {
+      if (child.zoomLevel === zoomLevel) child.visible = true
     }
     this.pixiLayer.redraw()
   },
@@ -298,19 +315,20 @@ const TiledMeshLayer = L.GridLayer.extend({
     const features = [
       // feature projecting layer position
       {
-        name: 'layerPosition',
-        varyings: ['vec2 frg_layerPosition'],
+        name: 'layerCoord',
+        varyings: ['vec2 frg_layerCoord'],
         vertex: {
-          attributes: ['vec2 in_layerPosition'],
+          attributes: ['vec2 in_layerCoord'],
           uniforms: ['mat3 translationMatrix', 'mat3 projectionMatrix', 'float in_zoomLevel', 'vec4 in_layerOffsetScale'],
           functions: [WEBGL_FUNCTIONS.latLonToWebMercator, WEBGL_FUNCTIONS.unpack2],
-          code: `  frg_layerPosition = unpack2(in_layerPosition, in_layerOffsetScale);
-  vec2 projected = latLonToWebMercator(vec3(frg_layerPosition, in_zoomLevel));
-  gl_Position = vec4((projectionMatrix * translationMatrix * vec3(projected, 1.0)).xy, 0.0, 1.0);`
+          code: `  frg_layerCoord = unpack2(in_layerCoord, in_layerOffsetScale);
+  vec2 projected = latLonToWebMercator(vec3(frg_layerCoord, in_zoomLevel));
+  gl_Position = vec4((projectionMatrix * translationMatrix * vec3(projected, 1.0)).xy, 0.0, 1.0);
+  ${this.conf.debug.meshAsPoints ? 'gl_PointSize = 10.0;' : ''}`
         },
         fragment: {
           uniforms: ['vec4 in_layerBounds'],
-          code: `  bvec4 outside = bvec4(lessThan(frg_layerPosition, in_layerBounds.xy), greaterThan(frg_layerPosition, in_layerBounds.zw));
+          code: `  bvec4 outside = bvec4(lessThan(frg_layerCoord, in_layerBounds.xy), greaterThan(frg_layerCoord, in_layerBounds.zw));
   if (any(outside)) discard;`
         }
       },
@@ -402,13 +420,23 @@ const TiledMeshLayer = L.GridLayer.extend({
       name: 'tail',
       fragment: {
         uniforms: ['float in_layerAlpha'],
-        code: `  gl_FragColor.rgb = color.rgb * in_layerAlpha;
-  gl_FragColor.a = in_layerAlpha;`
+        code: '  outColor = vec4(color.rgb * in_layerAlpha, in_layerAlpha);'
       }
     })
 
     const [vtxCode, frgCode] = buildShaderCode(features)
     this.program = new PIXI.Program(vtxCode, frgCode)
+
+    if (this.conf.render.showWireframe) {
+      const [vtxWireframe, frgWireframe] = buildShaderCode([features[0], {
+        name: 'tail',
+        fragment: {
+          uniforms: ['float in_layerAlpha'],
+          code: '  outColor = vec4(0.0, 0.0, 0.0, in_layerAlpha);'
+        }
+      }])
+      this.wireframeProgram = new PIXI.Program(vtxWireframe, frgWireframe)
+    }
 
     if (this.conf.debug.showShader) {
       console.log('Generated vertex shader:')

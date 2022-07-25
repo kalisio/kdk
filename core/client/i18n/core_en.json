@@ -73,6 +73,7 @@
   },
   "units": {
     "METER_SYMBOL": "m",
+    "FEET_SYMBOL": "ft",
     "MILE_SYMBOL": "mi",
     "NAUTICAL_MILE_SYMBOL": "NM",
     "SQUARED_METER_SYMBOL": "m²",
@@ -88,6 +89,7 @@
     "DEGREE_SYMBOL": "°",
     "RADIAN_SYMBOL": "rad",
     "METER_LABEL": "Meters",
+    "FEET_LABEL": "Feet",
     "MILE_LABEL": "Miles",
     "NAUTICAL_MILE_LABEL": "Nautical miles",
     "SQUARED_METER_LABEL": "Squared meters",
@@ -144,6 +146,7 @@
     "TIME_FORMAT_TIMEZONE_FIELD_LABEL": "Target timezone to use",
     "UNITS_SETTINGS": "Units settings",
     "LENGTH_FIELD_LABEL": "Default length unit",
+    "ALTITUDE_FIELD_LABEL": "Default altitude unit",
     "AREA_FIELD_LABEL": "Default area unit",
     "VELOCITY_FIELD_LABEL": "Default velocity unit",
     "TEMPERATURE_FIELD_LABEL": "Default temperature unit",

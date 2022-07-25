@@ -246,7 +246,7 @@ export const geojsonLayers = {
         'cesium.realtime': true,
         $or: [ // Supported by template URL or time-based features
           { 'cesium.sourceTemplate': { $exists: true } },
-          { service: { $exists: true }, variables: { $exists: true } }
+          { service: { $exists: true } }
         ],
         isVisible: true
       }))

@@ -152,6 +152,15 @@
         "quantity": "length"
       }
     },
+    "defaultAltitude": {
+      "type": "string",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KUnitField",
+        "label": "schemas.ALTITUDE_FIELD_LABEL",
+        "quantity": "altitude"
+      }
+    },
     "defaultArea": {
       "type": "string",
       "group": "schemas.UNITS_SETTINGS",

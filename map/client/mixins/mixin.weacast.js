@@ -340,39 +340,31 @@ export const weacast = {
     onCurrentForecastTimeChanged (time) {
       if (this.weacastApi) this.weacastApi.setForecastTime(time)
     },
-    onWeacastShowLayer (layer, engineLayer) {
-      // Check for valid types
-      if (!(engineLayer instanceof L.weacast.ForecastLayer)) {
-        const levels = _.get(layer, 'levels')
-        if (!levels) {
-          this.setForecastLevel(null)
-          return
-        }
-        if (typeof this.setSelectableLevels === 'function') {
-          this.$engineEvents.on('selected-level-changed', this.setForecastLevel)
-          this.setSelectableLevels(layer, levels)
-        }
+    onWeacastSelectedLevelChanged (level) {
+      // Used when selectable levels are cleared
+      if (_.isNil(level)) {
+        this.setForecastLevel(null)
+        return
       }
-    },
-    onWeacastHideLayer (layer, engineLayer) {
-      // Check for valid types
-      if (!(engineLayer instanceof L.weacast.ForecastLayer)) return
-      if (typeof this.clearSelectableLevels === 'function') {
-        this.clearSelectableLevels(layer)
-        this.$engineEvents.off('selected-level-changed', this.setForecastLevel)
+      // Retrieve the layer associated to current level selection
+      let layer = this.selectableLevelsLayer
+      if (layer) {
+        const type = _.get(layer, `${this.engine}.type`)
+        // Check if of right type
+        if (type.startsWith('weacast')) {
+          this.setForecastLevel(level)
+        }
       }
     }
   },
   created () {
     this.$events.on('time-current-time-changed', this.onCurrentForecastTimeChanged)
-    this.$engineEvents.on('layer-shown', this.onWeacastShowLayer)
-    this.$engineEvents.on('layer-hidden', this.onWeacastHideLayer)
+    this.$engineEvents.on('selected-level-changed', this.onWeacastSelectedLevelChanged)
   },
   mounted () {
   },
-  beforeUnmount () {
+  beforeDestroy () {
     this.$events.off('time-current-time-changed', this.onCurrentForecastTimeChanged)
-    this.$engineEvents.off('layer-shown', this.onWeacastShowLayer)
-    this.$engineEvents.off('layer-hidden', this.onWeacastHideLayer)
+    this.$engineEvents.off('selected-level-changed', this.onWeacastSelectedLevelChanged)
   }
 }

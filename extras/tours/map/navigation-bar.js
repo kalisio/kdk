@@ -128,6 +128,13 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
+  target: '#measure-feature',
+  title: 'tours.navigation-bar.MEASURE_FEATURE_LABEL',
+  content: 'tours.navigation-bar.MEASURE_FEATURE_DETAILS_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
   target: '#clear-measurements',
   title: 'tours.navigation-bar.CLEAR_MEASURE_LABEL',
   params: {

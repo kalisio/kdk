@@ -385,7 +385,7 @@ export const geojsonLayers = {
         'leaflet.realtime': true,
         $or: [ // Supported by template URL or time-based features
           { 'leaflet.sourceTemplate': { $exists: true } },
-          { service: { $exists: true }, variables: { $exists: true } }
+          { service: { $exists: true } }
         ],
         isVisible: true
       }))
@@ -402,13 +402,32 @@ export const geojsonLayers = {
           }
         }
       })
+    },
+    onCurrentLevelChangedGeoJsonLayers (level) {
+      // Retrieve the layer associated to current level sélection
+      let layer = this.selectableLevelsLayer
+      if (layer) {
+        const type = _.get(layer, `${this.engine}.type`)
+        // Check if of right type
+        if (type === 'geoJson') {
+          // Retrieve the engine layer and update
+          layer = this.getLeafletLayerByName(layer.name)
+          if (layer.tiledLayer) {
+            layer.tiledLayer.redraw()
+          } else {
+            layer.update()
+          }
+        }
+      }
     }
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
   },
   beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
   }
 }

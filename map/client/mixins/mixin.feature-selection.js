@@ -18,15 +18,24 @@ export const featureSelection = {
   },
   methods: {
     getWidgetForLayer () {
-      // FIXME: should not be hard-coded
       let widget
       if (this.selection.layer) {
-        widget = _.get(this.selection.layer, 'widget', 'information-box')
-        if (_.has(this.selection.layer, 'probe') || // Static probe on pre-defined sites
-            _.has(this.selection.layer, 'variables')) { // Measurement history
-          widget = 'time-series'
-        } else if (_.get(this.selection.layer, 'leaflet.type') === 'mapillary') {
-          widget = 'mapillary-viewer'
+        widget = _.get(this.selection.layer, 'widget')
+        if (widget) {
+          if (typeof widget !== 'string') {
+            // expect an object with at least a 'type' property
+            widget = _.get(widget, 'type', 'information-box')
+          }
+        } else {
+          // fallback to old widget selection logic
+          if (_.has(this.selection.layer, 'probe') || // Static probe on pre-defined sites
+              _.has(this.selection.layer, 'variables')) { // Measurement history
+            widget = 'time-series'
+          } else if (_.get(this.selection.layer, 'leaflet.type') === 'mapillary') {
+            widget = 'mapillary-viewer'
+          } else {
+            widget = 'information-box'
+          }
         }
       } else {
         if (this.isCursor('probe-cursor')) {

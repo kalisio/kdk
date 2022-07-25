@@ -71,7 +71,7 @@ export const heatmapLayers = {
         'leaflet.type': 'heatmap',
         $or: [ // Supported by template URL or time-based features
           { 'leaflet.urlTemplate': { $exists: true } },
-          { service: { $exists: true }, variables: { $exists: true } }
+          { service: { $exists: true } }
         ],
         isVisible: true
       }))
@@ -82,6 +82,11 @@ export const heatmapLayers = {
           // Update only the first time or when required according to data update interval
           if (!layer.lastUpdateTime || !this.shouldSkipFeaturesUpdate(layer.lastUpdateTime, options)) {
             layer.lastUpdateTime = Time.getCurrentTime().clone()
+            /* FIXME: we could filter by bbox here to optimize but then if we zoom in/out we should also update the data
+            const [[south, west], [north, east]] = this.getBounds()
+            const geoJson = await this.getFeatures(_.merge({
+              baseQuery: { south, north, west, east }
+            }, options))*/
             const geoJson = await this.getFeatures(options)
             this.updateLeafletHeatmap(layer, geoJson)
           }
