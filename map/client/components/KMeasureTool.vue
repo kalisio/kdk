@@ -268,7 +268,7 @@ export default {
       // Retrieve the feature
       const feature = _.get(event, 'target.feature')
       // Check for valid types
-      if (!getType(feature).includes('Point')) {
+      if (feature && !getType(feature).includes('Point')) {
         // Distance is possible on lines/polygons
         const d2 = length(feature, { units: 'kilometers' })
         this.measureValue = this.formatDistance(d2, 'km')
