@@ -238,6 +238,8 @@
       "MEASURE_DISTANCE_DETAILS_LABEL": "Dessinez le(s) segment(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
       "MEASURE_AREA_LABEL": "Mesurez une aire via ce bouton.",
       "MEASURE_AREA_DETAILS_LABEL": "Dessinez le(s) polygône(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
+      "MEASURE_FEATURE_LABEL": "Mesurez une entité géographique via ce bouton.",
+      "MEASURE_FEATURE_DETAILS_LABEL": "Sélectionnez l'entité à mesurer sur la carte pour obtenir des informations détaillées.",
       "CLEAR_MEASURE_LABEL": "Effacez vos mesures via ce bouton.",
       "MEASURE_BACK_LABEL": "Arrêtez de mesurer en retournant aux actions.",
       "TOGGLE_VR_LABEL": "Basculez en mode <b>Réalité Virtuelle</b> (VR) avec ce bouton.",
@@ -582,6 +584,7 @@
     "CLEAR": "Effacer les mesures",
     "MEASURE_DISTANCE": "Mesurer une distance",
     "MEASURE_AREA": "Mesurer une aire",
+    "MEASURE_FEATURE": "Mesurer une entité",
     "DISPLAY_MEASURE_VALUE": "Afficher les valeurs des mesures",
     "CLICK_TO_CHANGE_UNIT": "Cliquer pour changer d'unité"
   },

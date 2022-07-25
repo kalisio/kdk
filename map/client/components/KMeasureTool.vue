@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center no-padding">
     <span class="q-pl-md q-pr-md" @click="changeUnit">
-      {{ measureValue }}
+      <span v-html="measureValue"/>
       <q-tooltip>
         {{ $t('KMeasureTool.CLICK_TO_CHANGE_UNIT') }}
       </q-tooltip>
@@ -35,6 +35,7 @@ export default {
       const allModes = [
         { id: 'measure-distance', icon: 'las la-project-diagram', toggled: this.measureMode === 'measure-distance', tooltip: 'KMeasureTool.MEASURE_DISTANCE', handler: () => { this.setMode('measure-distance') } },
         { id: 'measure-area', icon: 'las la-draw-polygon', toggled: this.measureMode === 'measure-area', tooltip: 'KMeasureTool.MEASURE_AREA', handler: () => { this.setMode('measure-area') } },
+        { id: 'measure-feature', icon: 'las la-drafting-compass', toggled: this.measureMode === 'measure-feature', tooltip: 'KMeasureTool.MEASURE_FEATURE', handler: () => { this.setMode('measure-feature') } },
         { component: 'QSeparator', vertical: true, color: 'lightgrey' },
         { id: 'clear-measurements', icon: 'las la-trash', tooltip: 'KMeasureTool.CLEAR', handler: () => { this.onClear() } }
       ]
@@ -262,6 +263,22 @@ export default {
       this.kActivity.map.addLayer(arrow)
     },
     */
+    onMeasureFeature (layer, event) {
+      if (this.measureMode !== 'measure-feature') return
+      // Retrieve the feature
+      const feature = _.get(event, 'target.feature')
+      // Check for valid types
+      if (!getType(feature).includes('Point')) {
+        // Distance is possible on lines/polygons
+        const d2 = length(feature, { units: 'kilometers' })
+        this.measureValue = this.formatDistance(d2, 'km')
+        // Area is only possible on polygons
+        if (getType(feature).includes('Polygon')) {
+          const a = area(feature)
+          this.measureValue += '<br/>' + this.formatArea(a, 'm^2')
+        }
+      }
+    },
     formatDistance (value, unit) {
       return Units.format(value, unit, this.distanceUnit)
     },
@@ -288,6 +305,7 @@ export default {
     this.kActivity.map.on('pm:drawstart', this.onDrawStart)
     this.kActivity.map.on('pm:drawend', this.onDrawEnd)
     this.kActivity.map.on('pm:create', this.onCreate)
+    this.kActivity.$on('click', this.onMeasureFeature)
 
     // add a method on the activity to serialize measure tool layers as GeoJSON
     this.kActivity.getMeasureToolLayers = () => { return featureCollection(this.geojsons) }
@@ -309,6 +327,7 @@ export default {
     this.kActivity.map.off('pm:drawstart', this.onDrawStart)
     this.kActivity.map.off('pm:drawend', this.onDrawEnd)
     this.kActivity.map.off('pm:create', this.onCreate)
+    this.kActivity.$off('click', this.onMeasureFeature)
 
     // remove method to fetch layers
     delete this.kActivity.getMeasureToolLayers

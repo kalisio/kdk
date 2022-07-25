@@ -238,6 +238,8 @@
       "MEASURE_DISTANCE_DETAILS_LABEL": "Draw the line segment(s) you'd like to measure on the map and hover any elements to get measure information.",
       "MEASURE_AREA_LABEL": "Measure an area using this button.",
       "MEASURE_AREA_DETAILS_LABEL": "Draw the polygons(s) you'd like to measure on the map and hover any elements to get measure information.",
+      "MEASURE_FEATURE_LABEL": "Measure a geographical feature using this button.",
+      "MEASURE_FEATURE_DETAILS_LABEL": "Select the feature you'd like to measure on the map to get measure information.",
       "CLEAR_MEASURE_LABEL": "Clear your current measurements using this button.",
       "MEASURE_BACK_LABEL": "Then stop measuring by going back to the actions.",
       "TOGGLE_VR_LABEL": "Switch to Virtual Reality (VR) mode with this button.",
@@ -581,6 +583,7 @@
     "CLEAR": "Clear all measurements",
     "MEASURE_DISTANCE": "Measure a distance",
     "MEASURE_AREA": "Measure an area",
+    "MEASURE_FEATURE": "Measure a feature",
     "DISPLAY_MEASURE_VALUE": "Display measure values",
     "CLICK_TO_CHANGE_UNIT": "Click to change unit"
   },
