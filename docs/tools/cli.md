@@ -78,14 +78,16 @@ Usage: index <workspacefile> [options]
 
 Options:
   -V, --version                      output the version number
-  -o, --organization [organization]  GitHub organization owing the project (default: "kalisio")
+  -o, --organization [organization]  GitHub organization or GitLab group owing the project (default: "kalisio")
+  -u, --url [url]                    Git server base URL (default: "https://github.com")
   -d, --debug                        Verbose output for debugging
-  -c, --clone [branch]               Clone git repositories (with optional target branch)
-  -p, --pull                         Pull git repositories
-  -i, --install                      Perform yarn install
-  -l, --link                         Perform yarn link
-  -ul, --unlink                      Perform yarn unlink
-  -b, --branch <branch>              Switch git branch
+  -c, --clone [branch]               Clone git repositories (with optional target branch) for all modules
+  -p, --pull                         Pull git repositories for all modules
+  -i, --install                      Perform yarn install for all modules
+  -l, --link                         Perform yarn link for all modules
+  -ul, --unlink                      Perform yarn unlink for all modules
+  -b, --branch <branch>              Switch to target git branch in all modules where it does exist
+  -s, --switch                       Switch all modules to the default git branch specified in workspace (if any)
   -m, --modules <modules>            Comma separated list of modules from the workspace to apply command on
   -h, --help                         output usage information
 ```
