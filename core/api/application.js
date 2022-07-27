@@ -142,7 +142,7 @@ async function createService (name, app, options = {}) {
   const serviceOptions = Object.assign({
     name: name,
     paginate,
-    whitelist: ['$exists', '$distinct', '$groupBy', '$search', '$aggregate']
+    whitelist: ['$exists', '$distinct', '$groupBy', '$search', '$aggregate', '$elemMatch']
   }, options)
   if (serviceOptions.disabled) return undefined
   // For DB services a model has to be provided
@@ -320,8 +320,9 @@ export function createWebhook (path, app, options = {}) {
         throw new BadRequest('Service operation could not be performed')
       }
     } catch (error) {
+      debug(`Webhook ${webhookPath} error:`, error)
       // Send back error
-      res.status(error.code).json(error.toJSON())
+      res.status(error.code || 500).json(error.toJSON())
     }
   })
 

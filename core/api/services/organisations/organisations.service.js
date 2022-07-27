@@ -61,18 +61,25 @@ export default async function (name, app, options) {
       await createStorageService.call(this.app, blobService, { context: organisation })
       debug('Storage service created for organisation ' + organisation.name)
       // Run registered hooks
-      _.forEach(this.organisationServicesHooks, hook => hook.createOrganisationServices.call(this.app, organisation, db))
+      for (let i = 0; i < this.organisationServicesHooks.length; i++) {
+        const hook = this.organisationServicesHooks[i]
+        await hook.createOrganisationServices.call(this.app, organisation, db)
+      }
     },
 
-    removeOrganisationServices (organisation) {
+    async removeOrganisationServices (organisation) {
       // Run registered hooks (reverse order with respect to creation)
-      _.forEachRight(this.organisationServicesHooks, hook => hook.removeOrganisationServices.call(this.app, organisation))
+      for (let i = this.organisationServicesHooks.length - 1; i >= 0; i--) {
+        const hook = this.organisationServicesHooks[i]
+        await hook.removeOrganisationServices.call(this.app, organisation)
+      }
     },
 
     async configureOrganisations () {
       // Reinstanciated services for all organisations
       const organisations = await this.find({ paginate: false })
       organisations.forEach(organisation => {
+        debug('Configuring organisation ' + organisation.name)
         // Get org DB
         const db = this.app.db.client.db(organisation._id.toString())
         this.createOrganisationServices(organisation, db)

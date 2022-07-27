@@ -61,11 +61,11 @@ export async function removeOrganisationServices (hook) {
   })
 
   debug('DB removed for organisation ' + hook.result.name)
-  organisationService.removeOrganisationServices(hook.result)
+  await organisationService.removeOrganisationServices(hook.result)
   return hook
 }
 
-export function createOrganisationAuthorisations (hook) {
+export async function createOrganisationAuthorisations (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'createOrganisationAuthorisations\' hook should only be used as a \'after\' hook.')
   }
@@ -74,7 +74,7 @@ export function createOrganisationAuthorisations (hook) {
   const authorisationService = app.getService('authorisations')
   const userService = app.getService('users')
   // Set membership for the owner
-  return authorisationService.create({
+  await authorisationService.create({
     scope: 'organisations',
     permissions: 'owner' // Owner by default
   }, {
@@ -85,13 +85,12 @@ export function createOrganisationAuthorisations (hook) {
     resource: hook.result,
     resourcesService: hook.service
   })
-    .then(authorisation => {
-      debug('Organisation ownership set for user ' + hook.result._id)
-      return hook
-    })
+  
+  debug('Organisation ownership set for user ' + hook.result._id)
+  return hook
 }
 
-export function removeOrganisationAuthorisations (hook) {
+export async function removeOrganisationAuthorisations (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'removeOrganisationAuthorisations\' hook should only be used as a \'after\' hook.')
   }
@@ -100,7 +99,7 @@ export function removeOrganisationAuthorisations (hook) {
   const authorisationService = app.getService('authorisations')
 
   // Unset membership for the all org users
-  return authorisationService.remove(hook.result._id.toString(), {
+  await authorisationService.remove(hook.result._id.toString(), {
     query: {
       subjectsService: hook.result._id.toString() + '/members',
       scope: 'organisations'
@@ -111,10 +110,8 @@ export function removeOrganisationAuthorisations (hook) {
     resource: hook.result,
     resourcesService: hook.service
   })
-    .then(authorisation => {
-      debug('Authorisations unset for organisation ' + hook.result._id)
-      return hook
-    })
+  debug('Authorisations unset for organisation ' + hook.result._id)
+  return hook
 }
 
 export function updateOrganisationResource (resourceScope) {
@@ -195,7 +192,7 @@ export async function removeOrganisationTags (hook) {
   return hook
 }
 
-export function createPrivateOrganisation (hook) {
+export async function createPrivateOrganisation (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'createPrivateOrganisation\' hook should only be used as a \'after\' hook.')
   }
@@ -203,18 +200,18 @@ export function createPrivateOrganisation (hook) {
   const app = hook.app
   const organisationService = app.getService('organisations')
   // Create a private organisation for the user
-  return organisationService.create({
+  await organisationService.create({
     _id: hook.result._id, // Same ID as user, fine because in another service
     name: hook.result.profile.name // Same name as user
   }, {
     user: hook.result
   })
-    .then(org => {
-      debug('Private organisation created for user ' + hook.result._id)
-    })
+  
+  debug('Private organisation created for user ' + hook.result._id)
+  return hook
 }
 
-export function removePrivateOrganisation (hook) {
+export async function removePrivateOrganisation (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'removePrivateOrganisation\' hook should only be used as a \'after\' hook.')
   }
@@ -222,12 +219,12 @@ export function removePrivateOrganisation (hook) {
   const app = hook.app
   const organisationService = app.getService('organisations')
   // Remove the private user's organisation
-  return organisationService.remove(hook.result._id.toString(), {
+  await organisationService.remove(hook.result._id.toString(), {
     user: hook.result
   })
-    .then(org => {
-      debug('Private organisation removed for user ' + hook.result._id)
-    })
+
+  debug('Private organisation removed for user ' + hook.result._id)
+  return hook
 }
 
 export async function preventRemoveOrganisation (hook) {

@@ -146,14 +146,14 @@ export function preventRemoveUser (hook) {
   return hook
 }
 
-export function joinOrganisation (hook) {
+export async function joinOrganisation (hook) {
   const app = hook.app
   const subject = getItems(hook)
   const authorisationService = app.getService('authorisations')
   const usersService = app.getService('users')
 
   // Set membership for the created user
-  return authorisationService.create({
+  await authorisationService.create({
     scope: 'organisations',
     permissions: subject.sponsor.roleGranted, // Member by default
     resource: subject.sponsor.organisationId,
@@ -162,10 +162,8 @@ export function joinOrganisation (hook) {
     subjectsService: usersService,
     subjects: [subject]
   })
-    .then(authorisation => {
-      debug('Organisation membership set for user ' + subject._id)
-      return hook
-    })
+  debug('Organisation membership set for user ' + subject._id)
+  return hook
 }
 
 export function leaveOrganisations (options = { skipPrivate: true }) {
@@ -203,7 +201,7 @@ export function leaveOrganisations (options = { skipPrivate: true }) {
   }
 }
 
-export function sendVerificationEmail (hook) {
+export async function sendVerificationEmail (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'sendVerificationEmail\' hook should only be used as a \'after\' hook.')
   }
@@ -214,23 +212,19 @@ export function sendVerificationEmail (hook) {
   }
 
   const accountService = hook.app.getService('account')
-  return accountService.options.notifier('resendVerifySignup', hook.result)
-    .then(result => {
-      return hook
-    })
+  await accountService.options.notifier('resendVerifySignup', hook.result)
+  return hook
 }
 
-export function sendInvitationEmail (hook) {
+export async function sendInvitationEmail (hook) {
   // Before because we need to send the clear password by email
   if (hook.type !== 'before') {
     throw new Error('The \'sendInvitationEmail\' hook should only be used as a \'before\' hook.')
   }
 
   const accountService = hook.app.getService('account')
-  return accountService.options.notifier('sendInvitation', hook.data)
-    .then(result => {
-      return hook
-    })
+  await accountService.options.notifier('sendInvitation', hook.data)
+  return hook
 }
 
 export function addVerification (hook) {

@@ -101,7 +101,7 @@
     "feathers-hooks-common": "^3.0.0",
     "feathers-mailer": "^3.0.0",
     "feathers-mongodb": "^3.0.0",
-    "feathers-mongodb-management": "^1.0.0",
+    "feathers-mongodb-management": "^2.0.0",
     "geotiff": "^2.0.4",
     "helmet": "^3.5.0",
     "jsdap": "^8.1.0",
