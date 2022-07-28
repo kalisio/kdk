@@ -35,8 +35,15 @@ function tooManyRequests (socket, message, key) {
   setTimeout(() => socket.disconnect(true), 3000)
 }
 
-export function declareService (path, app, service, serviceOptions = {}) {
-  let feathersPath = app.get('apiPath') + '/' + path
+export function declareService (name, app, service, serviceOptions = {}) {
+  let servicePath = serviceOptions.path || name
+  let contextId
+  if (serviceOptions.context) {
+    contextId = idToString(serviceOptions.context)
+    servicePath = contextId + '/' + servicePath
+  }
+
+  let feathersPath = app.get('apiPath') + '/' + servicePath
   if (feathersPath.startsWith('/')) feathersPath = feathersPath.substr(1)
 
   try {
@@ -52,9 +59,28 @@ export function declareService (path, app, service, serviceOptions = {}) {
     if (!_.isEmpty(options)) args = args.concat(options)
     if (_.has(serviceOptions, 'middlewares.after')) args = args.concat(_.get(serviceOptions, 'middlewares.after'))
     app.use.apply(app, args)
+    // Get the Feathers service, ie base service + Feathers' internals
+    service = app.service(feathersPath)
     debug('Service declared on path ' + feathersPath)
-    // Return the Feathers service, ie base service + Feathers' internals
-    return app.service(feathersPath)
+    // Then configuration
+    service.name = name
+    service.app = app
+    service.options = serviceOptions
+    service.path = servicePath
+    service.context = serviceOptions.context
+
+    // Add some utility functions
+    service.getPath = function (withApiPrefix) {
+      let path = service.path
+      if (withApiPrefix && !path.startsWith(app.get('apiPath'))) {
+        path = app.get('apiPath') + '/' + path
+      }
+      return path
+    }
+    service.getContextId = function () {
+      return contextId // As string
+    }
+    return service
   }
 }
 
@@ -140,7 +166,7 @@ async function createService (name, app, options = {}) {
 
   const paginate = app.get('paginate')
   const serviceOptions = Object.assign({
-    name: name,
+    name,
     paginate,
     whitelist: ['$exists', '$distinct', '$groupBy', '$search', '$aggregate', '$elemMatch']
   }, options)
@@ -208,35 +234,9 @@ async function createService (name, app, options = {}) {
     }
   }
 
-  // Get our initialized service so that we can register hooks and filters
-  let servicePath = serviceOptions.path || name
-  let contextId
-  if (serviceOptions.context) {
-    contextId = idToString(serviceOptions.context)
-    servicePath = contextId + '/' + servicePath
-  }
-  service = declareService(servicePath, app, service, serviceOptions)
+  service = declareService(name, app, service, serviceOptions)
   // Register hooks and event filters
   service = await configureService(fileName, service, serviceOptions.servicesPath)
-  
-  // Then configuration
-  service.name = name
-  service.app = app
-  service.options = serviceOptions
-  service.path = servicePath
-  service.context = serviceOptions.context
-
-  // Add some utility functions
-  service.getPath = function (withApiPrefix) {
-    let path = service.path
-    if (withApiPrefix) {
-      path = app.get('apiPath') + '/' + path
-    }
-    return path
-  }
-  service.getContextId = function () {
-    return contextId // As string
-  }
 
   debug(service.name + ' service registration completed')
   app.emit('service', service)
