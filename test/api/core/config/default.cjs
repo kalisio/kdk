@@ -29,7 +29,7 @@ module.exports = {
     },
     jwtOptions: {
       header: {
-        typ: 'access'
+        type: 'access'
       },
       audience: 'https://kalisio.com',
       issuer: 'feathers',
