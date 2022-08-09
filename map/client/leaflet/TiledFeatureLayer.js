@@ -108,7 +108,13 @@ const TiledFeatureLayer = L.GridLayer.extend({
         } else if (this.pendingStationUpdates.length) {
           // Otherwise apply pending station updates
           for (const collection of this.pendingStationUpdates) {
-            this.activity.updateLayer(this.layer.name, collection)
+            // But before, make sure we still know the stations
+            const known = []
+            featureEach(collection, (feature) => {
+              if (this.allFeatures.has(this.getFeatureKey(feature)))
+                known.push(feature)
+            })
+            this.activity.updateLayer(this.layer.name, featureCollection(known))
           }
         }
         this.pendingStationUpdates.length = 0
