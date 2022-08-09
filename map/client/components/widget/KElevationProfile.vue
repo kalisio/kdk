@@ -10,10 +10,11 @@ import logger from 'loglevel'
 import { baseWidget } from '../../../../core/client/mixins'
 import { Units } from '../../../../core/client/units'
 import { colors, copyToClipboard, exportFile } from 'quasar'
+import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { segmentEach, coordEach } from '@turf/meta'
-import { featureCollection } from '@turf/helpers'
+import { featureCollection, point } from '@turf/helpers'
 
 export default {
   name: 'k-elevation-profile',
@@ -145,6 +146,14 @@ export default {
           // stepped: 'middle',
           parsing: false, // because we'll provide data in chart native format
           onHover: (context, elements) => {
+            // update marker highlight along profile
+            if (elements.length) {
+              const abscissa = elements[0].element.$context.parsed.x
+              const t = Units.convert(abscissa, this.chartDistanceUnit, 'km')
+              const feature = along(this.feature, t)
+              this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+            }
+
             // restore tooltip and vline if they've been disabled during
             // pan or zoom animation
             if (context.chart.config.options.plugins.tooltip.enabled) return
@@ -288,6 +297,9 @@ export default {
         this.$toast({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
+
+      const featureStyle = { properties: { 'marker-type': 'marker' } }
+      this.kActivity.addSelectionHighlight('elevation-profile', featureStyle)
 
       this.chartDistanceUnit = 'm'
       this.chartHeightUnit = Units.getDefaultUnit('altitude')
@@ -438,6 +450,9 @@ export default {
     this.$options.components['k-chart'] = this.$load('chart/KChart')
     this.$options.components['k-panel'] = this.$load('frame/KPanel')
     this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+  },
+  beforeDestroy () {
+    this.kActivity.removeSelectionHighlight('elevation-profile')
   }
 }
 </script>
