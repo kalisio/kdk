@@ -95,8 +95,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.layer.probeService) {
         const minFeatureZoom = _.get(this.options, 'minFeatureZoom', this._map.getMinZoom())
         const maxFeatureZoom = _.get(this.options, 'maxFeatureZoom', this._map.getMaxZoom())
-        if ((this.zoomStartLevel === minFeatureZoom && this.zoomEndLevel < minFeatureZoom) ||
-            (this.zoomStartLevel === maxFeatureZoom && this.zoomEndLevel > maxFeatureZoom)) {
+        if ((this.zoomStartLevel >= minFeatureZoom && this.zoomEndLevel < minFeatureZoom) ||
+            (this.zoomStartLevel <= maxFeatureZoom && this.zoomEndLevel > maxFeatureZoom)) {
           // We crossed minFeatureZoom/maxFeatureZoom => reset to station state
           let collection = []
           for (const internalFeature of this.allFeatures.values()) {
