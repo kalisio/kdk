@@ -148,10 +148,29 @@ export default {
           onHover: (context, elements) => {
             // update marker highlight along profile
             if (elements.length) {
-              const abscissa = elements[0].element.$context.parsed.x
-              const t = Units.convert(abscissa, this.chartDistanceUnit, 'km')
-              const feature = along(this.feature, t)
-              this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+              const abscissa = _.get(elements[0].element, '$context.parsed.x')
+              if (abscissa !== undefined) {
+                let abscissaKm = Units.convert(abscissa, this.chartDistanceUnit, 'km')
+                let segment = this.feature
+                // handle multi line strings too, find segment in which abscissa is
+                if (_.get(this.feature, 'geometry.type') === 'MultiLineString') {
+                  const lines = flatten(this.feature).features
+                  for (let i = 0; i < lines.length && segment === this.feature; ++i) {
+                    const len = length(lines[i], { units: 'kilometers' })
+                    if (i != lines.length - 1) {
+                      if (abscissaKm > len) { abscissaKm -= len }
+                      else { segment = lines[i] }
+                    } else {
+                      // last multi line segment, must be on this one
+                      if (abscissaKm > len) { abscissaKm = len }
+                      segment = lines[i]
+                    }
+                  }
+                }
+
+                const feature = along(segment, abscissaKm, { units: 'kilometers' })
+                this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+              }
             }
 
             // restore tooltip and vline if they've been disabled during
@@ -221,10 +240,33 @@ export default {
               enabled: true,
               algorithm: 'lttb',
               // algorithm: 'min-max',
-              samples: Math.floor(chartWidth / 5)
+              samples: Math.floor(chartWidth / 6),
+              threshold: Math.floor(chartWidth / 2)
             },
             zoom: {
+              pan: {
+                // pan with mouse and no modifiers
+                enabled: true,
+                // modifierKey: 'ctrl',
+                onPanStart: (context) => {
+                  // robin: for some reason, pan starts even with some modifiers keys
+                  // make sure here there's no modifiers here
+                  const event = _.get(context, 'event.srcEvent')
+                  const hasModifiers = event ? (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) : false
+                  if (hasModifiers) return false
+
+                  // hide tooltip & vline while zooming
+                  context.chart.config.options.plugins.tooltip.enabled = false
+                  context.chart.config.options.vline.enabled = false
+                  return true
+                }
+              },
+              limits: {
+                x: { min: 'original', max: 'original' },
+                y: { min: 'original', max: 'original' }
+              },
               zoom: {
+                // zoom with mouse + ctrl, or wheel
                 drag: {
                   enabled: true,
                   modifierKey: 'ctrl',
@@ -238,20 +280,8 @@ export default {
                   // hide tooltip & vline while zooming
                   context.chart.config.options.plugins.tooltip.enabled = false
                   context.chart.config.options.vline.enabled = false
+                  return true
                 }
-              },
-              pan: {
-                enabled: true,
-                // modifierKey: 'ctrl',
-                onPanStart: (context) => {
-                  // hide tooltip & vline while zooming
-                  context.chart.config.options.plugins.tooltip.enabled = false
-                  context.chart.config.options.vline.enabled = false
-                }
-              },
-              limits: {
-                x: { min: 'original', max: 'original' },
-                y: { min: 'original', max: 'original' }
               }
             }
           }
