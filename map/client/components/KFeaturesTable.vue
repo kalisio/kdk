@@ -13,7 +13,7 @@
       :item-actions="actions"
       :base-query="layer.baseQuery"
       :style="`height: ${height}px; max-width: ${width}px;`">
-      <template slot="empty-section">
+      <template v-slot:empty-section>
         <div class="absolute-center">
           <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
         </div>

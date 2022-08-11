@@ -59,7 +59,7 @@ export const levels = {
     this.$engineEvents.on('layer-shown', this.onShowSelectableLevelsLayer)
     this.$engineEvents.on('layer-hidden', this.onHideSelectableLevelsLayer)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$engineEvents.off('layer-shown', this.onShowSelectableLevelsLayer)
     this.$engineEvents.off('layer-hidden', this.onHideSelectableLevelsLayer)
   }

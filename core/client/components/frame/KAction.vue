@@ -346,6 +346,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .q-btn-dropdown__arrow {
+    margin-left: 0px;
+  }
   .k-fab, .k-fab-action {
     border: 2px solid $secondary;
   }

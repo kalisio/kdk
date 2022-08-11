@@ -8,7 +8,7 @@
     :append-items="true"
     :height="height"
     @collection-refreshed="onCollectionRefreshed">
-    <template slot="empty-column">
+    <template v-slot:empty-column>
       <slot name="empty-history">
         <div class="row justify-center">
           <k-stamp

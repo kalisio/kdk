@@ -1,40 +1,5 @@
 # Mixins
 
-## Refs Resolver
-
-Used to ensure you can safely access [child references](https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements). Indeed, refs are created by Vuejs as a result of the render function, so you don't really know when you can safely access them.
-
-* **setRefs(refs)** sets the array of reference names to be resolved on your component
-* **async loadRefs()** returns a promise resolved when the all the refs have been created
-
-::: tip
-If you don't need to dynamically change the set of refs to be accessible you can directly set them when initializing the mixin in your component.
-:::
-
-Here is a code sample:
-```js
-<template>
-  <my-child-component ref="child"/>
-</template>
-
-<script>
-import { mixins } from '@kalisio/kdk/core.client'
-
-export default {
-  name: 'MyComponent',
-	mixins: [
-  	mixins.refsResolver(['child'])
-	],
-  methods: {
-  	async foo () {
-  		await this.loadRefs()
-  		// We can now safely acces the ref
-  		this.$refs.child.build()
-  	}
-  }
-}
-```
-
 ## Authentication
 
 Provide basic methods to **register(user)**, **login(email, password)**, **logout()**, and **restoreSession()**.

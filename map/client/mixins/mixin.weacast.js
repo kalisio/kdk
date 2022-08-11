@@ -361,9 +361,7 @@ export const weacast = {
     this.$events.on('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$engineEvents.on('selected-level-changed', this.onWeacastSelectedLevelChanged)
   },
-  mounted () {
-  },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$engineEvents.off('selected-level-changed', this.onWeacastSelectedLevelChanged)
   }

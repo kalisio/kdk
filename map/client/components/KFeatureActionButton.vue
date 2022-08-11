@@ -105,9 +105,6 @@ export default {
     }
   },
   created () {
-    // Load the required components
-    this.$options.components['k-radial-fab'] = this.$load('menu/KRadialFab')
-    this.$options.components['k-radial-fab-item'] = this.$load('menu/KRadialFabItem')
     this.selectionForAction = {}
   },
   mounted () {
