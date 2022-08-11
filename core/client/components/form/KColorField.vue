@@ -16,19 +16,19 @@
       @clear="model=''">
       <!-- control -->
       <template v-slot:control>
-        <k-spot 
-          :id="properties.name + '-field'" 
+        <k-spot
+          :id="properties.name + '-field'"
           class="full-width"
-          :color="model" 
-          width="100%" 
-          height="16px" 
-          border-radius="3px" 
+          :color="model"
+          width="100%"
+          height="16px"
+          border-radius="3px"
         />
         <q-dialog v-model="picker">
-          <q-color 
-            no-header 
-            format-model="hex" 
-            v-model="model" 
+          <q-color
+            no-header
+            format-model="hex"
+            v-model="model"
             default-view="palette"
           />
         </q-dialog>

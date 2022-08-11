@@ -51,7 +51,7 @@ export default {
   components: {
     KTextArea
   },
-  emits: ['update:modelValue'],  
+  emits: ['update:modelValue'],
   mixins: [mapMixins.baseMap],
   props: {
     modelValue: {
@@ -173,7 +173,6 @@ export default {
       this.map.pm.setGlobalOptions({ layerGroup: null })
     },
     refresh () {
-      
       // No location ?
       const hasLongitude = _.has(this.location, 'longitude')
       const hasLatitude = _.has(this.location, 'latitude')

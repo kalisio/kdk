@@ -114,7 +114,7 @@ const GradientPath = L.PixiOverlay.extend({
   },
 
   createSolidTexture (color, weight) {
-    let canvas = document.createElement('canvas')
+    const canvas = document.createElement('canvas')
     canvas.width = 8
     canvas.height = weight
     // use canvas2d API to create the solid texture

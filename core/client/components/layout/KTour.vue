@@ -128,7 +128,7 @@ export default {
       const steps = this.$store.get(`tours.${selected.name}`, [])
       // Replacing the array does not seem to work with reactivity
       this.tourSteps.splice(0, this.tourSteps.length - 1, ...steps)
-       // Process translations and before hooks
+      // Process translations and before hooks
       this.tourSteps.forEach(step => {
         if (_.has(step, 'title')) _.set(step, 'title', this.$t(_.get(step, 'title')))
         if (_.has(step, 'content')) _.set(step, 'content', this.$t(_.get(step, 'content')))
@@ -318,7 +318,7 @@ export default {
       this.clickOn('click' + param)
       this.hoverClickOn('hoverClick' + param)
       this.typeTextOn('typeText' + param, 'text' + param)
-      let step = this.getStep()
+      const step = this.getStep()
       const delay = _.get(step, 'params.' + type + 'Delay', 0)
       this.isStepVisible = false
       return new Promise((resolve, reject) => {

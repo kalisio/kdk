@@ -9,11 +9,11 @@
   >
     <!-- Content -->
     <template v-slot:default>
-      <KLocationInput 
-        id="location-input" 
-        v-model="model" 
-        v-bind="properties.field" 
-        class="full-width" 
+      <KLocationInput
+        id="location-input"
+        v-model="model"
+        v-bind="properties.field"
+        class="full-width"
       />
     </template>
     <!--Helper -->

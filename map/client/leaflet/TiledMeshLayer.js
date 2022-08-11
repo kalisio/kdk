@@ -5,7 +5,7 @@ import * as PIXI from 'pixi.js'
 import 'leaflet-pixi-overlay'
 import 'abort-controller/polyfill.js'
 
-import { RawValueHook, buildPixiMeshFromGrid, buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils.js'
+import { buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils.js'
 
 const TiledMeshLayer = L.GridLayer.extend({
   initialize (options, gridSource) {

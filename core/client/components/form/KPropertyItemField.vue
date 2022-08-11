@@ -93,8 +93,8 @@ export default {
         // Format the search response
         const valueField = this.properties.field.propertyField
         const descriptionField = this.properties.field.descriptionField || 'description'
-        let options = _.map(results, option => { 
-          return { 
+        const options = _.map(results, option => {
+          return {
             id: _.kebabCase(_.get(option, valueField)),
             value: _.get(option, valueField),
             description: _.get(option, descriptionField)

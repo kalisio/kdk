@@ -85,7 +85,7 @@ export async function createOrganisationAuthorisations (hook) {
     resource: hook.result,
     resourcesService: hook.service
   })
-  
+
   debug('Organisation ownership set for user ' + hook.result._id)
   return hook
 }
@@ -206,7 +206,7 @@ export async function createPrivateOrganisation (hook) {
   }, {
     user: hook.result
   })
-  
+
   debug('Private organisation created for user ' + hook.result._id)
   return hook
 }

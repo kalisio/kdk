@@ -16,7 +16,7 @@
       flat
       no-caps
       fab-mini
-      @click="onClicked(arguments[0])">   
+      @click="onClicked(arguments[0])">
       <KPanel
         id="menu-entries"
         :content="content"
@@ -28,7 +28,7 @@
     </q-btn-dropdown>
     <q-tooltip v-if="tooltip" :delay="1000">
       {{ tooltip }}
-    </q-tooltip>   
+    </q-tooltip>
   </div>
 </template>
 

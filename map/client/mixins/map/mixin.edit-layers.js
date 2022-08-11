@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import { Dialog, uid } from 'quasar'
-import { updatePropertiesSchema, bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
+import { bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
 
 // Events we listen while layer is in edition mode
 const mapEditEvents = ['pm:create']

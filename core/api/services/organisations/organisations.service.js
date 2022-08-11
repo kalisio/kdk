@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import path, { dirname } from 'path'
 import makeDebug from 'debug'
 import aws from 'aws-sdk'

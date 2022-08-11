@@ -44,7 +44,7 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
   }
 }
 
-export async function createDefaultUsers() {
+export async function createDefaultUsers () {
   const app = this
   const defaultUsers = app.get('authentication').defaultUsers
   if (!defaultUsers) return

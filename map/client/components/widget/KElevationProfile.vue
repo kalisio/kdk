@@ -225,7 +225,7 @@ export default {
                 drag: {
                   enabled: true,
                   modifierKey: 'ctrl',
-                  backgroundColor: colors.getBrand('secondary')
+                  backgroundColor: getCssVar('secondary')
                 },
                 wheel: {
                   enabled: true
@@ -353,10 +353,10 @@ export default {
       // Build a fetch per profile
       const fetchs = []
       for (const query of queries) {
-        fetchs.push(fetch(endpoint
-                          + `?resolution=${query.resolution}`
-                          + (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '')
-                          + (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
+        fetchs.push(fetch(endpoint +
+                          `?resolution=${query.resolution}` +
+                          (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '') +
+                          (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
           method: 'POST',
           mode: 'cors',
           body: JSON.stringify(query.profile),

@@ -74,7 +74,7 @@ export async function createFeaturesServiceForLayer (options) {
   return service
 }
 
-export async function createDefaultCatalogLayers() {
+export async function createDefaultCatalogLayers () {
   const app = this
   const catalogService = app.getService('catalog')
   const catalog = app.get('catalog')
