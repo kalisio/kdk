@@ -11,10 +11,11 @@ import { baseWidget } from '../../../../core/client/mixins'
 import { Units } from '../../../../core/client/units'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { getCssVar, copyToClipboard, exportFile } from 'quasar'
+import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { segmentEach, coordEach } from '@turf/meta'
-import { featureCollection } from '@turf/helpers'
+import { featureCollection, point } from '@turf/helpers'
 
 export default {
   name: 'k-elevation-profile',
@@ -151,6 +152,33 @@ export default {
           // stepped: 'middle',
           parsing: false, // because we'll provide data in chart native format
           onHover: (context, elements) => {
+            // update marker highlight along profile
+            if (elements.length) {
+              const abscissa = _.get(elements[0].element, '$context.parsed.x')
+              if (abscissa !== undefined) {
+                let abscissaKm = Units.convert(abscissa, this.chartDistanceUnit, 'km')
+                let segment = this.feature
+                // handle multi line strings too, find segment in which abscissa is
+                if (_.get(this.feature, 'geometry.type') === 'MultiLineString') {
+                  const lines = flatten(this.feature).features
+                  for (let i = 0; i < lines.length && segment === this.feature; ++i) {
+                    const len = length(lines[i], { units: 'kilometers' })
+                    if (i != lines.length - 1) {
+                      if (abscissaKm > len) { abscissaKm -= len }
+                      else { segment = lines[i] }
+                    } else {
+                      // last multi line segment, must be on this one
+                      if (abscissaKm > len) { abscissaKm = len }
+                      segment = lines[i]
+                    }
+                  }
+                }
+
+                const feature = along(segment, abscissaKm, { units: 'kilometers' })
+                this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+              }
+            }
+
             // restore tooltip and vline if they've been disabled during
             // pan or zoom animation
             if (context.chart.config.options.plugins.tooltip.enabled) return
@@ -218,10 +246,33 @@ export default {
               enabled: true,
               algorithm: 'lttb',
               // algorithm: 'min-max',
-              samples: Math.floor(chartWidth / 5)
+              samples: Math.floor(chartWidth / 6),
+              threshold: Math.floor(chartWidth / 2)
             },
             zoom: {
+              pan: {
+                // pan with mouse and no modifiers
+                enabled: true,
+                // modifierKey: 'ctrl',
+                onPanStart: (context) => {
+                  // robin: for some reason, pan starts even with some modifiers keys
+                  // make sure here there's no modifiers here
+                  const event = _.get(context, 'event.srcEvent')
+                  const hasModifiers = event ? (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) : false
+                  if (hasModifiers) return false
+
+                  // hide tooltip & vline while zooming
+                  context.chart.config.options.plugins.tooltip.enabled = false
+                  context.chart.config.options.vline.enabled = false
+                  return true
+                }
+              },
+              limits: {
+                x: { min: 'original', max: 'original' },
+                y: { min: 'original', max: 'original' }
+              },
               zoom: {
+                // zoom with mouse + ctrl, or wheel
                 drag: {
                   enabled: true,
                   modifierKey: 'ctrl',
@@ -235,20 +286,8 @@ export default {
                   // hide tooltip & vline while zooming
                   context.chart.config.options.plugins.tooltip.enabled = false
                   context.chart.config.options.vline.enabled = false
+                  return true
                 }
-              },
-              pan: {
-                enabled: true,
-                // modifierKey: 'ctrl',
-                onPanStart: (context) => {
-                  // hide tooltip & vline while zooming
-                  context.chart.config.options.plugins.tooltip.enabled = false
-                  context.chart.config.options.vline.enabled = false
-                }
-              },
-              limits: {
-                x: { min: 'original', max: 'original' },
-                y: { min: 'original', max: 'original' }
               }
             }
           }
@@ -294,6 +333,9 @@ export default {
         this.$toast({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
+
+      const featureStyle = { properties: { 'marker-type': 'marker' } }
+      this.kActivity.addSelectionHighlight('elevation-profile', featureStyle)
 
       this.chartDistanceUnit = 'm'
       this.chartHeightUnit = Units.getDefaultUnit('altitude')
@@ -438,6 +480,15 @@ export default {
         else this.$toast({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
+  },
+  beforeCreate () {
+    // laod the required components
+    this.$options.components['k-chart'] = this.$load('chart/KChart')
+    this.$options.components['k-panel'] = this.$load('frame/KPanel')
+    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
+  },
+  beforeDestroy () {
+    this.kActivity.removeSelectionHighlight('elevation-profile')
   }
 }
 </script>

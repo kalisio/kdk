@@ -7,10 +7,6 @@ export async function countItems (page, component) {
   return countElements(page, `//div[contains(@component, "${component}")]`)
 }
 
-export async function countLogbookItems (page, status) {
-  return countElements(page, `//div[contains(@aria-label, "${status}")]`)
-}
-
 export async function itemExists (page, component, name) {
   const xpath = `//div[contains(@component, "${component}") and contains(., "${name}")]`
   const elements = await page.$x(xpath)

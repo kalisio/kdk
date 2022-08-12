@@ -1,11 +1,11 @@
 <template>
   <div class="row justify-start items-center q-pl-sm q-pr-sm no-wrap">
-    <div class="k-datetime text-body2">
+    <div id="start-date" class="k-datetime text-body2">
       {{ formattedStartDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_DATE_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
         <q-date
-          id="start-time-popup"
+          id="start-date-popup"
           v-model="startDate"
           mask="DD/MM/YYYY"
           :title="startDate"
@@ -15,7 +15,7 @@
       </q-popup-proxy>
     </div>
     <div>&nbsp;</div>
-    <div class="k-datetime text-body2">
+    <div id="start-time" class="k-datetime text-body2">
       {{ formattedStartTime }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_TIME_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
@@ -29,12 +29,12 @@
       </q-popup-proxy>
     </div>
     <div>&nbsp;-&nbsp;</div>
-    <div class="k-datetime text-body2">
+    <div id="end-date" class="k-datetime text-body2">
       {{ formattedEndDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_END_DATE_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">
         <q-date
-          id="start-time-popup"
+          id="end-date-popup"
           v-model="endDate"
           mask="DD/MM/YYYY"
           :title="endDate"
@@ -44,7 +44,7 @@
       </q-popup-proxy>
     </div>
     <div>&nbsp;</div>
-    <div class="k-datetime text-body2">
+    <div id="end-time" class="k-datetime text-body2">
       {{ formattedEndTime }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_END_TIME_LABEL') }}</q-tooltip>
       <q-popup-proxy ref="popup" transition-show="scale" transition-hide="scale">

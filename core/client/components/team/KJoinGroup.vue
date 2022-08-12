@@ -81,7 +81,7 @@ export default {
       }
       if (Roles[this.role] === Roles.member) {
         _.set(schema, 'properties.role', {
-          type: 'string',
+          type: 'boolean',
           default: false,
           field: {
             component: 'form/KToggleField',
@@ -113,7 +113,7 @@ export default {
         const authorisationService = this.$api.getService('authorisations')
         await authorisationService.create({
           scope: 'groups',
-          permissions: _.get(result.values.role, false) ? 'manager' : 'member',
+          permissions: _.get(result, 'values.role', false) ? 'manager' : 'member',
           subjects: this.objectId,
           subjectsService: this.contextId + '/members',
           resource: result.values.group._id,
