@@ -46,7 +46,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     // setup layer global uniforms (as opposed to tile specific uniforms)
     this.cutValueUniform = null
     if (options.cutOver) {
-      this.layerUniforms.uniforms.cutOver = 0.0
+      this.layerUniforms.uniforms.in_cutOver = 0.0
       if (options.cutOver === 'levels') {
         this.cutValueUniform = 'in_cutOver'
       } else {
@@ -54,7 +54,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       }
     }
     if (options.cutUnder) {
-      this.layerUniforms.uniforms.cutUnder = 0.0
+      this.layerUniforms.uniforms.in_cutUnder = 0.0
       if (options.cutUnder === 'levels') {
         this.cutValueUniform = 'in_cutUnder'
       } else {
