@@ -378,7 +378,7 @@ export default {
       const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
       const headers = { 'Content-Type': 'application/json' }
       // Add the Authorization header if jwt is defined
-      const jwt = this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+      const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       if (jwt) headers.Authorization = 'Bearer ' + jwt
 
       // Perform the requests
