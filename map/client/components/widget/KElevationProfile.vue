@@ -481,12 +481,6 @@ export default {
       }
     }
   },
-  beforeCreate () {
-    // laod the required components
-    this.$options.components['k-chart'] = this.$load('chart/KChart')
-    this.$options.components['k-panel'] = this.$load('frame/KPanel')
-    this.$options.components['k-stamp'] = this.$load('frame/KStamp')
-  },
   beforeDestroy () {
     this.kActivity.removeSelectionHighlight('elevation-profile')
   }
