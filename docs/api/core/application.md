@@ -82,7 +82,7 @@ Create a new service attached to the application by name and given a set of opti
   * **id**: the id map function to be used when calling the proxied service, will be applied on the input id
   * **data**: the data map function to be used when calling the proxied service, will be applied on the input the object
   * **result**: the result map to be used when calling the proxied service, will be applied on the returning the object(s)
-* **memory**: instead of generating a DB adapter service will create a mock with a [feathers-memory](https://github.com/feathersjs-ecosystem/feathers-memory) service instead with provided options
+* **memory**: instead of generating a DB adapter service will create a mock with a [@feathersjs/memory](https://github.com/feathersjs/feathers/tree/dove/packages/memory) service instead with provided options
 
 Depending on the options you have to create a *models* and *services* directories containing the required files to declare your services, e.g. your folder/file hierarchy should look like this:
 * *index.js*: contains a default function instantiating all the services

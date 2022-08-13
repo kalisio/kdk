@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import memory from 'feathers-memory'
+import { memory } from '@feathersjs/memory'
 import { Platform } from 'quasar'
 import { Store, Reader, utils as kCoreUtils } from '../../core/client/index.js'
 import { Geolocation } from './geolocation.js'
