@@ -49,7 +49,15 @@ export async function click (page, selector, wait = 250) {
   }
 }
 
-/* Helper function to click on a given selector
+/* Helper function to click on an action selector
+ */
+export async function clickAction (page, action, wait = 250) {
+  const selector = `#${action}`
+  await click(page, selector, wait)
+  debug(`Clicked action ${selector}`)
+}
+
+/* Helper function to click on a menuUtem selector
  */
 export async function clickMenuItem (page, wait = 250) {
   const xpath = '(//div[@class="q-item__label"])'

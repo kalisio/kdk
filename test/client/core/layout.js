@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { click, isElementVisible } from './utils.js'
+import { click, clickAction, isElementVisible } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:layout')
 
@@ -80,12 +80,6 @@ export async function openLeftPane (page) {
 export async function closeLeftPane (page) {
   const isOpen = await isLeftPaneVisible(page)
   if (isOpen) await clickLeftOpener(page)
-}
-
-export async function clickAction (page, action, wait = 250) {
-  const selector = `#${action}`
-  await click(page, selector, wait)
-  debug(`Clicked action ${selector}`)
 }
 
 async function clickPaneAction (page, pane, action, wait) {
