@@ -95,7 +95,6 @@ import KCardSection from './KCardSection.vue'
 import { baseItem } from '../../mixins'
 
 export default {
-  name: 'k-card',
   components: {
     KPanel,
     KAvatar,
@@ -126,6 +125,10 @@ export default {
       default: false
     }
   },
+  emits: [
+    'expanded',
+    'collapsed'
+  ],   
   computed: {
     computedHeader () {
       if (this.header) return this.header

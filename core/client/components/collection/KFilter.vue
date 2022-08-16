@@ -66,7 +66,6 @@ import { Filter } from '../../filter'
 import { Search } from '../../search'
 
 export default {
-  name: 'k-filter',
   props: {
     field: {
       type: String,

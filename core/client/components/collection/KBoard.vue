@@ -20,7 +20,6 @@
 import KColumn from './KColumn.vue'
 
 export default {
-  name: 'k-board',
   components: {
     KColumn
   },

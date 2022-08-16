@@ -51,7 +51,7 @@
     <div v-else>
       <slot name="empty-column">
         <div class="row justify-center">
-          <k-stamp
+          <KStamp
             icon="las la-exclamation-circle"
             icon-size="1.6rem"
             :text="$t('KColumn.EMPTY_COLUMN')"

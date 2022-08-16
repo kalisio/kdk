@@ -43,7 +43,6 @@ import { KPanel, KAvatar } from '../frame'
 import { baseItem } from '../../mixins'
 
 export default {
-  name: 'k-item',
   components: {
     KPanel,
     KAvatar

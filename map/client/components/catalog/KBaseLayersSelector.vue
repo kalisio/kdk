@@ -15,7 +15,7 @@
                 class="absolute all-pointer-events"
                 style="width: 100%; background-color: #00000099; padding: 4px"
               >
-                <k-stamp
+                <KStamp
                   :class="selectedLayer === layer.name ? 'text-secondary' : 'text-white'"
                   :text="layer.name"
                   :icon="selectedLayer === layer.name ? 'las la-check-circle': 'las la-circle'"
@@ -38,7 +38,7 @@
       </template>
     </div>
     <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pb-sm">
-      <k-stamp icon="las la-exclamation-circle" icons-size="sm" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" direction="horizontal" />
+      <KStamp icon="las la-exclamation-circle" icons-size="sm" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" direction="horizontal" />
     </div>
   </div>
 </template>

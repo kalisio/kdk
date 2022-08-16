@@ -29,7 +29,7 @@
   <div v-else>
     <slot name="empty-section">
       <div class="row col justify-center">
-        <k-stamp
+        <KStamp
           icon="las la-exclamation-circle"
           icon-size="1.6rem"
           :text="$t('KList.EMPTY_LIST')"
@@ -45,7 +45,6 @@ import { service, baseCollection } from '../../mixins'
 import { loadComponent } from '../../utils'
 
 export default {
-  name: 'k-list',
   components: {
     KStamp
   },

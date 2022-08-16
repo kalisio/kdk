@@ -25,7 +25,7 @@
   <div v-else>
     <slot name="empty-section">
       <div class="row justify-center">
-        <k-stamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KGrid.EMPTY_GRID')" direction="horizontal" />
+        <KStamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KGrid.EMPTY_GRID')" direction="horizontal" />
       </div>
     </slot>
   </div>
@@ -37,7 +37,6 @@ import { service, baseCollection } from '../../mixins'
 import { loadComponent } from '../../utils'
 
 export default {
-  name: 'k-grid',
   components: {
     KStamp
   },

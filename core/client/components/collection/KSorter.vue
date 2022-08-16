@@ -10,7 +10,6 @@ import _ from 'lodash'
 import KOptionsChooser from '../input/KOptionsChooser.vue'
 
 export default {
-  name: 'k-sorter',
   components: {
     KOptionsChooser
   },

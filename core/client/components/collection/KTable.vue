@@ -28,7 +28,7 @@
   <div v-else>
     <div slot="empty-section">
       <div class="row justify-center">
-        <k-stamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KTable.EMPTY_TABLE')" direction="horizontal" />
+        <KStamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KTable.EMPTY_TABLE')" direction="horizontal" />
       </div>
     </div>
   </div>
@@ -41,7 +41,6 @@ import { KStamp, KPanel } from '../frame'
 import { service, schemaProxy, baseCollection } from '../../mixins'
 
 export default {
-  name: 'k-table',
   mixins: [
     service,
     schemaProxy,

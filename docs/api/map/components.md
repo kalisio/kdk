@@ -95,7 +95,7 @@ Kano provides a good starting point to build your own [Map Activity](https://git
 
 ### Location
 
-The **k-location-map** allows to display a location on a map using a marker.
+The **KLocationMap** allows to display a location on a map using a marker.
 
 The **k-location-field** provides you with an autocomplete address search input powered by the [geocoder service](./services.md#geocoder-service) to be embedded in a [**k-form**](../core/components.md#forms).
 

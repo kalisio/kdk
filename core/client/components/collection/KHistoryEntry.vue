@@ -56,7 +56,6 @@ import { loadComponent } from '../../utils'
 import { Time } from '../..'
 
 export default {
-  name: 'k-history-entry',
   mixins: [baseItem],
   props: {
     renderer: {

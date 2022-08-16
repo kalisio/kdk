@@ -15,7 +15,7 @@
       :style="`height: ${height}px; max-width: ${width}px;`">
       <template v-slot:empty-section>
         <div class="absolute-center">
-          <k-stamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
+          <KStamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
         </div>
       </template>
     </k-table>

@@ -23,7 +23,7 @@ The **k-layout** component based on [QLayout](https://quasar.dev/layout/layout) 
 * **footer**: page footer based on [q-footer](https://quasar.dev/layout/header-and-footer)
 * **page**: activity components are injected using [nested routes and lazy-loading](https://quasar.dev/layout/routing-with-layouts-and-pages)
 
-The embedded content of the page (i.e. the **Activity**) is a [router-view](https://router.vuejs.org/api/#router-view) pointing to a **k-page** component, which consists of a:
+The embedded content of the page (i.e. the **Activity**) is a [router-view](https://router.vuejs.org/api/#router-view) pointing to a **KPage** component, which consists of a:
 * **top pane**: a panel shown on top of the page - usually used as an application bar
 * **left pane** : a left side navigation panel - usually used as a main menu
 * **right pane** : a right side panel - usually used as an additional contextual panel
@@ -68,7 +68,7 @@ The following properties can be used to customize it:
 * **filterQuery**: the additional query parameters to be used to filter items according to current search criteria
 * **listStrategy**: the update strategy used under the hood by [feathers-reactive](https://github.com/feathersjs-ecosystem/feathers-reactive)
 
-The default **k-item** component is powered by the [base item mixin](./mixins.md#base-item) and provides you with the following properties:
+The default **KItem** component is powered by the [base item mixin](./mixins.md#base-item) and provides you with the following properties:
 * **item**: the object to be displayed
 * **itemActions**: the list of actions available on the object, each action been described as
   * **label**: action label in the action menu
@@ -81,7 +81,7 @@ The default **k-item** component is powered by the [base item mixin](./mixins.md
   * **nameField**: the name or path of the property used to retrieve the displayed name on the object, defaults to `name`
   * **descriptionField**: the name or path of the property used to retrieve the displayed description on the object, defaults to `description`
   
-The default **k-item** component also provides you with the following slots will you need more customisation:
+The default **KItem** component also provides you with the following slots will you need more customisation:
 * `item-icon` or `item-avatar` to override icon or avatar section
 * `item-content` to override content section
 * `item-label` and `item-sublabel` to override labels section
@@ -93,7 +93,7 @@ The **k-grid** component is powered by [Flex](https://quasar.dev/layout/grid/int
 
 The same properties as with the **k-list** component can be used to customize it, the component to be used to render items defaults to `collection/KCard`.
 
-The default **k-card** component is powered by the [base item mixin](./mixins.md#base-item) and provides you with the same properties as the **k-item** component but available slots are the following:
+The default **k-card** component is powered by the [base item mixin](./mixins.md#base-item) and provides you with the same properties as the **KItem** component but available slots are the following:
 * `card-title` to override title section
 * `card-icon` to override icon section
 * `card-tags` to override tags section
@@ -171,7 +171,7 @@ The **KDK** comes with a set of built-in fields:
 * **k-datetime-field**: a Quasar [Date input](https://quasar.dev/vue-components/date) and [Time input](https://quasar.dev/vue-components/time)
 * **k-email-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `email`
 * **k-icon-field**: an input that allows you to select an icon and to assign it a color among. The list of icons is provided by [FontAwesome](https://fontawesome.com/icons?d=gallery)
-* **k-item-field**: an input that allows you to select one or multiple items from one service or many services.
+* **KItem-field**: an input that allows you to select one or multiple items from one service or many services.
 * **k-number-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `number`
 * **k-options-field**: a Quasar [Options group input](https://quasar.dev/vue-components/option-group)
 * **k-phone-field**: a Quasar [Text input](https://quasar.dev/vue-components/input) of type of `phone`

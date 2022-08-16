@@ -14,7 +14,7 @@
         :list-strategy="'smart'">
         <template v-slot:empty-section>
           <div class="absolute-center">
-            <k-stamp
+            <KStamp
               icon="las la-exclamation-circle"
               icon-size="3rem"
               :text="$t('KGrid.EMPTY_GRID')"

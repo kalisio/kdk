@@ -28,7 +28,7 @@
     </k-layers-selector>
   </div>
   <div v-else class="row justify-center q-pa-sm">
-    <k-stamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" text-size="0.9rem" direction="horizontal" />
+    <KStamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" text-size="0.9rem" direction="horizontal" />
   </div>
 </template>
 

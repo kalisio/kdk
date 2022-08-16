@@ -11,7 +11,7 @@
     <template v-slot:empty-column>
       <slot name="empty-history">
         <div class="row justify-center">
-          <k-stamp
+          <KStamp
             icon="las la-exclamation-circle"
             icon-size="1.6rem"
             :text="$t('KColumn.EMPTY_COLUMN')"
@@ -30,7 +30,6 @@ import KStamp from '../frame/KStamp.vue'
 import { service } from '../../mixins'
 
 export default {
-  name: 'k-history',
   components: {
     KColumn,
     KStamp

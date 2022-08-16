@@ -22,7 +22,6 @@
 import { KPanel } from '../frame'
 
 export default {
-  name: 'k-card-section',
   components: {
     KPanel
   },
