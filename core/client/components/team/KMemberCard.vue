@@ -8,21 +8,21 @@
     <!--
       Card avater
     -->
-    <div slot="card-avatar">
-      <k-avatar :object="item" size="3.2rem" />
-    </div>
+    <template v-slot:card-avatar>
+      <KAvatar :object="item" size="3.2rem" />
+    </template>
     <!--
       Card descriptions
     -->
-    <div slot="card-description">
+    <template v-slot:card-description>
       <div class="row full-width justify-start" v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
         {{ description }}
       </div>
-    </div>
+    </template>
     <!--
       Card content
     -->
-    <div slot="card-content">
+    <template v-slot:card-content>
       <!-- Tags section -->
       <KCardSection v-if="!item.expireAt"
         :title="$t('KMemberCard.TAGS_SECTION')"
@@ -30,7 +30,7 @@
         :context="$props"
         :dense="dense">
         <div v-if="hasTags">
-          <k-chips-pane id="tags-pane" class="q-pa-sm" :chips="tags" />
+          <KChipsPane id="tags-pane" class="q-pa-sm" :chips="tags" />
         </div>
         <div v-else>
           {{ $t('KMemberCard.NO_TAGS_LABEL')}}
@@ -41,7 +41,8 @@
         :title="$t('KMemberCard.GROUPS_SECTION')"
         :actions="groupsActions"
         :context="$props"
-        :dense=dense>
+        :dense="dense"
+      >
         <div v-if="hasGroups" class="row justify-start items-center">
           <template v-for="(group, index) in groups" :key="groupKey(group)">
             <q-btn :id="groupButtonId(group)" flat small round color="primary">
@@ -74,7 +75,7 @@
           <k-panel :content="expirationActions" />
         </div>
       </KCardSection>
-    </div>
+    </template>
   </KCard>
 </template>
 
@@ -206,7 +207,7 @@ export default {
     groupKey (group) {
       return this.item._id + group._id
     },
-    groupButtonIdy (group) {
+    groupButtonId (group) {
       return _.kebabCase(group.name + '-button')
     },
     groupInitials (group) {

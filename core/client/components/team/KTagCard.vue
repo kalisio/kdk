@@ -8,7 +8,7 @@
     <!--
       Card content
      -->
-    <div slot="card-content">
+    <template v-slot:card-content>
       <!-- Members -->
       <KCardSection :title="$t('KTagCard.MEMBERS_SECTION')" :dense="dense">
         <KAction
@@ -19,7 +19,7 @@
           @triggered="onListMembers"
         />
       </KCardSection>
-    </div>
+    </template>
   </KCard>
 </template>
 

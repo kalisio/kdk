@@ -8,7 +8,7 @@
     no-error-icon
   >
     <!-- Content -->
-    <template v-slot:default>
+    <template v-slot:control>
       <KLocationInput
         id="location-input"
         v-model="model"
