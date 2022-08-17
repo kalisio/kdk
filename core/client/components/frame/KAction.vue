@@ -350,7 +350,7 @@ export default {
     margin-left: 0px;
   }
   .k-fab, .k-fab-action {
-    border: 2px solid $secondary;
+    border: 2px solid var(--q-secondary);
   }
   .k-tab-active {
     border-bottom: solid 2px;

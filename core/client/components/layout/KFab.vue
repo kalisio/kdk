@@ -17,7 +17,7 @@
         <div class="q-pa-sm row" style="max-width: 50vw">
           <template v-for="action in actions" :key="action.uid">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
-              <k-action v-bind="action" renderer="item" @triggered="isOpened = false" />
+              <KAction v-bind="action" renderer="item" @triggered="isOpened = false" />
             </div>
           </template>
         </div>
@@ -25,17 +25,18 @@
       <!-- Render an expandable list of actions -->
       <div v-else>
         <template v-for="action in actions" :key="action.uid">
-          <k-action v-bind="action" renderer="fab-action" />
+          <KAction v-bind="action" renderer="fab-action" />
         </template>
       </div>
     </q-fab>
     <!--
       Render a non expandable fab if a single action is provided
      -->
-    <k-action v-else-if="actions.length === 1"
+    <KAction v-else-if="actions.length === 1"
       v-bind="actions[0]"
       size="1.15rem"
-      renderer="fab" />
+      renderer="fab"
+    />
   </div>
 </template>
 
@@ -93,6 +94,6 @@ export default {
   .k-fab {
     right: 12px;
     bottom: 12px;
-    border: 2px solid $secondary;
+    border: 2px solid var(--q-secondary);
   }
 </style>
