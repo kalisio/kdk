@@ -164,8 +164,7 @@ export default {
                   for (let i = 0; i < lines.length && segment === this.feature; ++i) {
                     const len = length(lines[i], { units: 'kilometers' })
                     if (i !== lines.length - 1) {
-                      if (abscissaKm > len) { abscissaKm -= len }
-                      else { segment = lines[i] }
+                      if (abscissaKm > len) { abscissaKm -= len } else { segment = lines[i] }
                     } else {
                       // last multi line segment, must be on this one
                       if (abscissaKm > len) { abscissaKm = len }

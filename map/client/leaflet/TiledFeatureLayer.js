@@ -111,8 +111,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
             // But before, make sure we still know the stations
             const known = []
             featureEach(collection, (feature) => {
-              if (this.allFeatures.has(this.getFeatureKey(feature)))
-                known.push(feature)
+              if (this.allFeatures.has(this.getFeatureKey(feature))) { known.push(feature) }
             })
             this.activity.updateLayer(this.layer.name, featureCollection(known))
           }

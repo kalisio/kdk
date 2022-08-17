@@ -21,7 +21,7 @@
         <div class="row full-width justify-start items-center no-wrap">
           <div v-if="avatar" v-bind:class="{ 'q-pr-xs': dense, 'q-pr-sm': !dense }">
             <slot name="card-avatar">
-              <k-avatar
+              <KAvatar
                 :object="item"
                 :size="dense ? 'sm' : 'md'"
                 :contextId="contextId"
@@ -103,6 +103,10 @@ export default {
     KCardSection
   },
   mixins: [baseItem],
+  emits: [
+    'expanded',
+    'collapsed'
+  ],
   props: {
     header: {
       type: [Object, Array],
@@ -125,10 +129,6 @@ export default {
       default: false
     }
   },
-  emits: [
-    'expanded',
-    'collapsed'
-  ],   
   computed: {
     computedHeader () {
       if (this.header) return this.header
