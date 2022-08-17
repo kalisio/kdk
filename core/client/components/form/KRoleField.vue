@@ -4,22 +4,23 @@
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
-    :value="model"
+    :model-value="model"
     :label="label"
     borderless
     :error-message="errorLabel"
     :error="hasError"
-    :disabled="disabled"
+    :disable="disabled"
     bottom-slots
     @update:model-value="onChanged"
   >
     <!-- Content -->
-    <template v-slot:default>
+    <template v-slot:control>
       <q-option-group
         :id="properties.name + '-field'"
         v-model="model"
         :options="roles()"
-        inline />
+        inline 
+      />
     </template>
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>

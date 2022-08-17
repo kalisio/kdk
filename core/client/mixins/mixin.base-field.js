@@ -70,6 +70,7 @@ export const baseField = {
       return this.model
     },
     fill (value) {
+      console.log(value)
       this.model = value
       this.error = ''
     },
