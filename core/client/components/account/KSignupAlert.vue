@@ -12,21 +12,21 @@
         <q-btn id="close-signup-alert" icon="las la-times" flat dense round v-close-popup />
       </q-toolbar>
       <q-expansion-item icon="las la-question" :label="$t('KSignupAlert.HELP_LABEL')">
-        <q-card class="bg-warning">
-          <q-card-section>
-            <p v-html="$t('KSignupAlert.HELP_TEXT')" />
-          </q-card-section>
-        </q-card>
+        <div class="q-pa-md bg-warning">
+          <i18n-t class="text-body2" keypath="KSignupAlert.HELP_TEXT" tag="p" scope="global" />
+        </div>
       </q-expansion-item>
       <q-expansion-item icon="las la-question" :label="$t('KSignupAlert.EMAIL_LABEL')">
-        <q-card class="bg-warning">
-          <q-card-section>
-            <p v-html="$t('KSignupAlert.EMAIL_TEXT')" />
-          </q-card-section>
-        </q-card>
+        <div class="q-pa-md bg-warning">
+          <i18n-t class="text-body2" keypath="KSignupAlert.EMAIL_TEXT" tag="p" scope="global">
+            <template v-slot:email>
+              <span class="text-weight-bold">{{ notifierEmail }}</span>
+            </template>
+          </i18n-t>
+        </div>
       </q-expansion-item>
       <q-card-actions align="right">
-        <q-btn flat color="black" :label="$t('KSignupAlert.ACTION')" @click="resendVerifySignup(email)" />
+        <q-btn flat color="black" :label="$t('KSignupAlert.ACTION')" @click="resendVerifySignup(accountEmail)" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -36,14 +36,17 @@
 import { account } from '../../mixins'
 
 export default {
-  name: 'k-signup-alert',
   mixins: [account],
   props: {
     isVerified: {
       type: Boolean,
-      required: false
+      required: true
     },
-    email: {
+    accountEmail: {
+      type: String,
+      required: true
+    },
+    notifierEmail: {
       type: String,
       required: true
     }
