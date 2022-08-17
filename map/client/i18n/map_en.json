@@ -192,7 +192,6 @@
     "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
   },
   "schemas": {
-    "OBJECT_NAME": "{ object.name }",
     "CATALOG_CREATE_TITLE": "Create a new data layer",
     "CATALOG_NAME_FIELD_LABEL": "Enter the name of the new layer",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
