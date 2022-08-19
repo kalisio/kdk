@@ -56,6 +56,10 @@ const ajv = new Ajv({
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
 
 export default {
+  emits: [
+    'field-changed', 
+    'form-ready'
+  ],
   props: {
     schema: {
       type: Object,
@@ -66,7 +70,6 @@ export default {
       default: true
     }
   },
-  emits: ['field-changed', 'form-ready'],
   data () {
     return {
       fields: [],

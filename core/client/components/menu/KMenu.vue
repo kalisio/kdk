@@ -1,35 +1,30 @@
 <template>
-  <div>
-    <q-btn-dropdown
-      v-if="hasContent"
-      :id="id"
-      :label="$t(label)"
-      :icon="icon"
-      :color="color"
-      :size="size"
-      :disable="disabled"
-      :dense="dense"
-      :persistent="persistent"
-      :auto-close="autoClose"
-      menu-anchor="bottom left"
-      menu-self="top left"
-      flat
-      no-caps
-      fab-mini
-      @click="onClicked(arguments[0])">
-      <KPanel
-        id="menu-entries"
-        :content="content"
-        :mode="mode"
-        :context="context"
-        :action-renderer="actionRenderer"
-        direction="vertical"
-      />
-    </q-btn-dropdown>
-    <q-tooltip v-if="tooltip" :delay="1000">
-      {{ tooltip }}
-    </q-tooltip>
-  </div>
+  <q-btn-dropdown
+    v-if="hasContent"
+    :id="id"
+    :label="$t(label)"
+    :icon="icon"
+    :color="color"
+    :size="size"
+    :disable="disabled"
+    :dense="dense"
+    :persistent="persistent"
+    :auto-close="autoClose"
+    menu-anchor="bottom left"
+    menu-self="top left"
+    flat
+    no-caps
+    fab-mini
+    @click="onClicked(arguments[0])">
+    <KPanel
+      id="menu-entries"
+      :content="content"
+      :mode="mode"
+      :context="context"
+      :action-renderer="actionRenderer"
+      direction="vertical"
+    />
+  </q-btn-dropdown>
 </template>
 
 <script>
@@ -116,3 +111,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .q-btn-dropdown__arrow {
+    margin-left: 0px !important;
+  }
+</style>

@@ -28,7 +28,6 @@ import KForm from '../form/KForm.vue'
 import { service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
 
 export default {
-  name: 'k-editor',
   components: {
     KForm
   },

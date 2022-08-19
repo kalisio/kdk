@@ -103,6 +103,7 @@ export const baseEditor = {
         }
         this.applyButton = this.$t('UPDATE')
       } else {
+        // TODO: it was commented. Is it needed ?
         // this.form.clear()
         this.applyButton = this.$t('CREATE')
       }
