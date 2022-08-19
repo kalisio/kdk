@@ -5,12 +5,12 @@
   <div v-else>
     <q-field
       :for="properties.name + '-field'"
-      :value="model"
+      v-model="model"
       :label="label"
       clearable
       :error-message="errorLabel"
       :error="hasError"
-      :disabled="disabled"
+      :disable="disabled"
       bottom-slots
       @clear="onCleared">
       <!-- Icon chooser -->
