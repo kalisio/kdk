@@ -1,7 +1,7 @@
 <template>
   <KContent
     v-bind:class="{
-      'row': direction === 'horizontal',
+      'row items-center': direction === 'horizontal',
       'column': direction === 'vertical'
     }"
     v-bind="$props"
