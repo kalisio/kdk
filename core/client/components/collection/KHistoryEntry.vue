@@ -23,7 +23,8 @@
           :item="item"
           :contextId="contextId"
           :is="rendererComponent"
-          v-bind="renderer" />
+          v-bind="renderer" 
+        />
       </div>
       <div class="col-xs-12 col-sm-3 col-md-2 q-pa-sm">
         <div class="fit column content-center">
@@ -41,7 +42,8 @@
           :item="item"
           :contextId="contextId"
           :is="rendererComponent"
-          v-bind="renderer" />
+          v-bind="renderer"
+        />
       </div>
       <div v-if="$q.screen.gt.sm" class="col-1" />
     </div>
@@ -53,7 +55,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { baseItem } from '../../mixins'
 import { loadComponent } from '../../utils'
-import { Time } from '../..'
+import { Time } from '../../time.js'
 
 export default {
   mixins: [baseItem],
@@ -102,7 +104,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .k-history-line {
     background: $grey-6;
     background-repeat: no-repeat;

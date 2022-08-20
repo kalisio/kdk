@@ -19,7 +19,7 @@
         :id="properties.name + '-field'"
         v-model="model"
         :options="roles()"
-        inline 
+        inline
       />
     </template>
     <!-- Helper -->
