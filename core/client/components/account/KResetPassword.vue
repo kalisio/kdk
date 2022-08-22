@@ -11,7 +11,7 @@
             </p>
           </div>
           <div v-if="!success">
-            <k-form ref="form" :schema="getSchema()" />
+            <k-form ref="form" :schema="schema" />
           </div>
           <div v-if="!success">
             <div class="row justify-around">
@@ -53,22 +53,8 @@ export default {
       message: '',
       success: false,
       reset: false,
-      resetting: false
-    }
-  },
-  computed: {
-    textClass () {
-      const classObject = {}
-      if (this.reset) {
-        classObject['text-positive'] = this.success
-        classObject['text-negative'] = !this.success
-      }
-      return classObject
-    }
-  },
-  methods: {
-    getSchema () {
-      return {
+      resetting: false,
+      schema: {
         $schema: 'http://json-schema.org/draft-06/schema#',
         $id: 'http://kalisio.xyz/schemas/reset-password.json#',
         title: 'Reset Password form',
@@ -94,7 +80,19 @@ export default {
         },
         required: ['password']
       }
-    },
+    }
+  },
+  computed: {
+    textClass () {
+      const classObject = {}
+      if (this.reset) {
+        classObject['text-positive'] = this.success
+        classObject['text-negative'] = !this.success
+      }
+      return classObject
+    }
+  },
+  methods: {
     async onReset () {
       const result = this.$refs.form.validate()
       if (result.isValid) {

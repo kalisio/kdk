@@ -4,11 +4,12 @@
       Form section
     -->
     <div>
-      <k-form
+      <KForm
         :id="getSchemaId() + 'form'"
         :ref="onFormReferenceCreated"
         :schema="schema"
-        @form-ready="onFormReady" />
+        @form-ready="onFormReady" 
+      />
     </div>
     <!--
       Buttons section

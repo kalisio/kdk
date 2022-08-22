@@ -2,15 +2,13 @@
   <KModal
     id="change-role-modal"
     :title="title"
-    :buttons="getButtons()"
+    :buttons="buttons"
     v-model="isModalOpened"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
   >
     <KForm
       v-if="member"
       ref="form"
-      :schema="getSchema()"
+      :schema="schema"
     />
   </KModal>
 </template>
@@ -48,24 +46,8 @@ export default {
   computed: {
     title () {
       return this.$t('KChangeRole.TITLE', { member: this.member ? this.member.name : '' })
-    }
-  },
-  data () {
-    return {
-      member: null
-    }
-  },
-  methods: {
-    getScope () {
-      return _.get(this.resource, 'scope', 'organisations')
     },
-    getResourceId () {
-      return _.get(this.resource, 'id', this.contextId)
-    },
-    getResoureceService () {
-      return _.get(this.resource, 'service', 'organisations')
-    },
-    getSchema () {
+    schema () {
       const scope = this.getScope()
       const resourceId = this.getResourceId()
       const currentRole = _.get(_.find(this.member[scope], { _id: resourceId }), 'permissions')
@@ -88,12 +70,26 @@ export default {
         },
         required: ['role']
       }
-    },
-    getButtons () {
-      return [
+    }
+  },
+  data () {
+    return {
+      member: null,
+      buttons: [
         { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
         { id: 'update-button', label: 'KChangeRole.UPDATE_BUTTON', renderer: 'form-button', handler: () => this.doUpdate() }
       ]
+    }
+  },
+  methods: {
+    getScope () {
+      return _.get(this.resource, 'scope', 'organisations')
+    },
+    getResourceId () {
+      return _.get(this.resource, 'id', this.contextId)
+    },
+    getResoureceService () {
+      return _.get(this.resource, 'service', 'organisations')
     },
     getService () {
       return this.$api.getService('members')
