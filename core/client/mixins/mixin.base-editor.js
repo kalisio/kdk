@@ -2,6 +2,7 @@ import logger from 'loglevel'
 import _ from 'lodash'
 
 export const baseEditor = {
+  emits: ['applied'],
   props: {
     baseObject: {
       type: Object,
