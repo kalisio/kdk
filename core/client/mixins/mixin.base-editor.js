@@ -34,11 +34,16 @@ export const baseEditor = {
         return this.$tie(schemaTitle, { name: objectName, interpolation: { escapeValue: false } })
       }
       return ''
+    },
+    editorMode () {
+      return this.objectId ? 'update' : 'create'
+    },
+    applyButton () {
+      return this.editorMode === 'update' ?  this.$t('UPDATE') :  this.$t('CREATE')
     }
   },
   data () {
     return {
-      applyButton: '',
       applyInProgress: false
     }
   },
@@ -66,7 +71,7 @@ export const baseEditor = {
       // Start from default query
       const query = {}
       Object.assign(query, this.baseQuery)
-      if ((this.getEditorMode() === 'update') && this.perspective && this.perspectiveAsObject) {
+      if ((this.editorMode === 'update') && this.perspective && this.perspectiveAsObject) {
         Object.assign(query, { $select: ['_id', this.perspective] })
       }
       return query
@@ -91,9 +96,6 @@ export const baseEditor = {
     onFormReady () {
       this.fillEditor()
     },
-    getEditorMode () {
-      return this.objectId ? 'update' : 'create'
-    },
     fillEditor () {
       if (!this.form) throw new Error('Cannot fill the editor with a non-ready form')
       if (this.getObject()) {
@@ -102,11 +104,6 @@ export const baseEditor = {
         } else {
           this.form.fill(this.getObject())
         }
-        this.applyButton = this.$t('UPDATE')
-      } else {
-        // TODO: it was commented. Is it needed ?
-        // this.form.clear()
-        this.applyButton = this.$t('CREATE')
       }
     },
     clearEditor () {
@@ -136,7 +133,7 @@ export const baseEditor = {
       this.applyInProgress = true
       // Update the item
       try {
-        if (this.getEditorMode() === 'update') {
+        if (this.editorMode === 'update') {
           // Editing mode => patch the item
           if (this.perspective !== '') {
             const data = {}
@@ -153,7 +150,7 @@ export const baseEditor = {
             const response = await this.getService().patch(this.objectId, object, { query })
             onServiceResponse(response)
           }
-        } else if (this.getEditorMode() === 'create') {
+        } else if (this.editorMode === 'create') {
           // Creation mode => create the item
           const response = await this.getService().create(object, { query })
           onServiceResponse(response)
