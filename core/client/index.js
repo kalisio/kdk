@@ -16,8 +16,8 @@ import { CSVReader, JSONReader } from './readers/index.js'
 // FIXME: we don't build vue component anymore, they are processed by webpack in the application
 // export * from './components'
 
-export * from './events.js'
 export * from './api.js'
+export * from './events.js'
 export * from './services/index.js'
 export * from './store.js'
 export * from './layout.js'

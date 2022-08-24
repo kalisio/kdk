@@ -16,6 +16,7 @@ export default {
   components: {
     KContent
   },
+  emits: ['triggered'],
   props: {
     content: {
       type: [Object, Array],
@@ -47,7 +48,6 @@ export default {
         return ['button', 'form-button', 'item', 'tab'].includes(value)
       }
     }
-  },
-  emits: ['triggered']
+  }
 }
 </script>

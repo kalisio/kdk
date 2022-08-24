@@ -822,6 +822,9 @@
   },
   "KChart": {
     "NO_DATA_AVAILABLE": "Aucune donnée disponible"
+  },
+  "KFilter": {
+    "SEARCH_LABEL": "Rechercher"
   }
 }
 

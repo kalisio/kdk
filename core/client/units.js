@@ -100,7 +100,6 @@ const quantities = {
 
 // Export singleton
 export const Units = {
-
   initialize () {
     // Set the units object within the store
     Store.set('units', _.merge(config.units || {},

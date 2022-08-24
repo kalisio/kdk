@@ -3,7 +3,7 @@ import { Events } from './events.js'
 import { reactive } from 'vue'
 
 // Export singleton
-const Store = reactive({
+export const Store = reactive({
   set (path, value) {
     const previousValue = this.get(path)
     _.set(this, path, value)
@@ -30,5 +30,3 @@ const Store = reactive({
     return _.has(this, path)
   }
 })
-
-export { Store }

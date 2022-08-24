@@ -1,8 +1,9 @@
 <template>
-  <k-options-chooser
+  <KOptionsChooser
     :options="options"
     :tooltip="tooltip"
-    @option-chosen="onOptionChanged" />
+    @option-chosen="onOptionChanged" 
+  />
 </template>
 
 <script>

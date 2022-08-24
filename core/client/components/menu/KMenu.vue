@@ -6,6 +6,7 @@
     :icon="icon"
     :color="color"
     :size="size"
+    :dropdown-icon="dropdownIcon"
     :disable="disabled"
     :dense="dense"
     :persistent="persistent"
@@ -46,7 +47,7 @@ export default {
     },
     icon: {
       type: String,
-      default: 'las la-ellipsis-v'
+      default: undefined
     },
     color: {
       type: String,
@@ -58,7 +59,11 @@ export default {
     },
     tooltip: {
       type: String,
-      default: ''
+      default: undefined
+    },
+    dropdownIcon: {
+      type: String,
+      default: ''  
     },
     disabled: {
       type: Boolean,
@@ -72,6 +77,10 @@ export default {
       type: Boolean,
       default: false
     },
+    propagate: {
+      type: Boolean,
+      default: true
+    },
     content: {
       type: [Object, Array],
       default: () => null
@@ -80,9 +89,9 @@ export default {
       type: String,
       default: undefined
     },
-    propagate: {
-      type: Boolean,
-      default: true
+    filter: {
+      type: Object,
+      default: () => {}
     },
     context: {
       type: Object,
