@@ -7,7 +7,6 @@ import KModal from './KModal.vue'
 import KOpener from './KOpener.vue'
 import KPageSticky from './KPageSticky.vue'
 import KPanel from './KPanel.vue'
-import KPopupAction from './KPopupAction.vue'
 import KScrollArea from './KScrollArea.vue'
 import KSpot from './KSpot.vue'
 import KStamp from './KStamp.vue'
@@ -23,7 +22,6 @@ export {
   KOpener,
   KPageSticky,
   KPanel,
-  KPopupAction,
   KScrollArea,
   KSpot,
   KStamp,

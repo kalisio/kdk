@@ -65,10 +65,11 @@ export default {
         class: 'q-pt-xs q-pb-xs q-pr-xs',
         actions: [{
           id: 'view-overflowmenu',
-          component: 'frame/KPopupAction',
-          propagate: false,
+          component: 'menu/KMenu',
+          dropdownIcon: 'las la-ellipsis-v',
           actionRenderer: 'item',
           visible: { name: '$can', params: ['create', 'catalog'] },
+          propagate: false,
           content: [{
             id: 'remove-view',
             icon: 'las la-trash',
