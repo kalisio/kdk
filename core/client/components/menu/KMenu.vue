@@ -16,7 +16,7 @@
     flat
     no-caps
     fab-mini
-    @click="onClicked(arguments[0])">
+    @click="onClicked">
     <KPanel
       id="menu-entries"
       :content="content"
