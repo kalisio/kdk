@@ -18,7 +18,6 @@ import { segmentEach, coordEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
 
 export default {
-  name: 'k-elevation-profile',
   inject: ['kActivity'],
   components: {
     KChart,
@@ -329,7 +328,7 @@ export default {
       const geometry = _.get(this.feature, 'geometry.type')
       if (geometry !== 'LineString' && geometry !== 'MultiLineString') {
         logger.warn('the selected feature has an invald geometry')
-        this.$toast({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
+        this.$notify({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
 
@@ -414,7 +413,7 @@ export default {
       } catch (error) {
         // Network error
         dismiss()
-        this.$toast({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
+        this.$notify({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
         return
       }
 
@@ -465,9 +464,10 @@ export default {
       if (this.profile) {
         try {
           await copyToClipboard(JSON.stringify(this.profile))
-          this.$toast({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_COPIED') })
-        } catch (_) {
-          this.$toast({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
+          this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_COPIED') })
+        } catch (error) {
+          this.$notify({ message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
+          logger.error(error)
         }
       }
     },
@@ -475,8 +475,8 @@ export default {
       if (this.profile) {
         const file = this.title + '.geojson'
         const status = exportFile(file, JSON.stringify(this.profile))
-        if (status) this.$toast({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
-        else this.$toast({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
+        if (status) this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
+        else this.$notify({ message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
   },

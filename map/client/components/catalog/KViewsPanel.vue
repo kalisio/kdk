@@ -1,7 +1,7 @@
 <template>
   <div class="no-padding" :style="panelStyle">
-    <k-panel id="favorite-views-toolbar" :content="toolbar" class="no-wrap q-pl-sm q-pr-md" />
-    <k-column
+    <KPanel id="favorite-views-toolbar" :content="toolbar" class="no-wrap q-pl-sm q-pr-md" />
+    <KColumn
       class="q-pl-sm"
       service="catalog"
       :renderer="viewRenderer"
@@ -11,7 +11,8 @@
       :filter-query="filter.query"
       @selection-changed="onViewSelected"
       :height="scrollAreaMaxHeight - 100"
-      :dense="true" />
+      :dense="true" 
+    />
   </div>
 </template>
 

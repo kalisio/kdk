@@ -104,7 +104,7 @@ export default {
         try {
           await this.register(result.values)
         } catch (error) {
-          this.$toast({ message: this.$t('KRegisterScreen.REGISTER_ERROR') })
+          this.$notify({ message: this.$t('KRegisterScreen.REGISTER_ERROR') })
         }
         this.loading = false
       }

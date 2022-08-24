@@ -293,7 +293,7 @@ export default {
           if (!this.getTarget(target)) missing = true
         })
         if (missing) {
-          this.$toast({ message: this.$t('KTour.MISS_ERROR'), color: 'warning' })
+          this.$notify({ type: 'warning', message: this.$t('KTour.MISS_ERROR') })
         }
       }
       return missing

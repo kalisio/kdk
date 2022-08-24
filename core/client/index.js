@@ -1,5 +1,5 @@
 import logger from 'loglevel'
-import { Platform } from 'quasar'
+import { Platform, Notify } from 'quasar'
 import { Store } from './store.js'
 import { Layout } from './layout.js'
 import { Time } from './time.js'
@@ -137,10 +137,7 @@ export default function init () {
     })
     notifier.on('error', (error) => {
       logger.error(error)
-      utils.toast({
-        message: error.message,
-        timeout: 10000
-      })
+      Notify.create({ message: error.message, timeout: 10000 })
     })
     api.on('authenticated', async response => {
       const devicesService = api.getService('devices')

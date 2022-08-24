@@ -17,13 +17,13 @@
 
 <script>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { copyToClipboard, exportFile } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
 import { KScrollArea, KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
 
 export default {
-  name: 'k-information-box',
   inject: ['kActivity'],
   components: {
     KScrollArea,
@@ -126,9 +126,10 @@ export default {
       if (this.feature) {
         try {
           await copyToClipboard(JSON.stringify(this.feature.properties))
-          this.$toast({ type: 'positive', message: this.$t('KInformationBox.PROPERTIES_COPIED') })
-        } catch (_) {
-          this.$toast({ type: 'error', message: this.$t('KInformationBox.CANNOT_COPY_PROPERTIES') })
+          this.$notify({ type: 'positive', message: this.$t('KInformationBox.PROPERTIES_COPIED') })
+        } catch (error) {
+          this.$notify({ type: 'error', message: this.$t('KInformationBox.CANNOT_COPY_PROPERTIES') })
+          logger.error(error)
         }
       }
     },
@@ -142,8 +143,8 @@ export default {
                       _.get(this.layer, 'properties.name')
         const file = name + '.geojson'
         const status = exportFile(file, JSON.stringify(this.feature))
-        if (status) this.$toast({ type: 'error', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
-        else this.$toast({ type: 'error', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
+        if (status) this.$notify({ type: 'error', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
+        else this.$notify({ type: 'error', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
       }
     }
   },

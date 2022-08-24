@@ -155,17 +155,6 @@ export function downloadAsBlob (data, filename, mimeType) {
   }
 }
 
-export function toast (options) {
-  // We deduce the color from the type as it was not initially supported by Quasar.
-  // The built-in type property appeared with Quasar 1.9 so that we should not need this function anymore.
-  // However, we have prefered to keep this function for backward compatibility.
-  const type = options.type || 'negative'
-  // Notify.create returns a function that, when invoked, hides the notification
-  return Notify.create(Object.assign({
-    color: (type === 'negative' ? 'red' : (type === 'warning' ? 'orange' : 'green'))
-  }, _.omit(options, ['type'])))
-}
-
 // Simplify Quasar dialog plugin usage with async/await
 export async function dialog (options) {
   return new Promise((resolve, reject) => {

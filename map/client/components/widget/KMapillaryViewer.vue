@@ -16,7 +16,6 @@ import { baseWidget } from '../../../../core/client/mixins'
 import { KPanel } from '../../../../core/client/components'
 
 export default {
-  name: 'k-mapillary-viewer',
   inject: ['kActivity'],
   components: {
     KPanel
@@ -121,7 +120,7 @@ export default {
         })
         this.refreshView()
       } else {
-        this.$toast({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+        this.$notify({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
       }
     },
     centerMap () {

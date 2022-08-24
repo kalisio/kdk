@@ -292,7 +292,7 @@ export const activity = {
           // Reset layer with new setup
           await this.resetLayer(createdLayer)
           if (_.get(layer, 'leaflet.tiled')) {
-            this.$toast({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
+            this.$notify({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
           }
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
