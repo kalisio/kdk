@@ -4,6 +4,7 @@
       Input area
      -->
     <q-input
+      :label="pattern ? undefined: $tie(label)"
       v-model="pattern"
       clearable
       borderless
@@ -67,6 +68,10 @@ import { Search } from '../../search'
 
 export default {
   props: {
+    label: {
+      type: String,
+      default: 'KFilter.SEARCH_LABEL'
+    },
     field: {
       type: String,
       default: 'name'
