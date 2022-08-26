@@ -14,7 +14,7 @@ import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { segmentEach, coordEach } from '@turf/meta'
-import { featureCollection, point } from '@turf/helpers'
+import { featureCollection } from '@turf/helpers'
 
 export default {
   name: 'k-elevation-profile',
@@ -157,7 +157,7 @@ export default {
                   const lines = flatten(this.feature).features
                   for (let i = 0; i < lines.length && segment === this.feature; ++i) {
                     const len = length(lines[i], { units: 'kilometers' })
-                    if (i != lines.length - 1) {
+                    if (i !== lines.length - 1) {
                       if (abscissaKm > len) { abscissaKm -= len }
                       else { segment = lines[i] }
                     } else {
