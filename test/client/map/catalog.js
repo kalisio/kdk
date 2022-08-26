@@ -38,7 +38,11 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
     isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
-  let selector = `#${layerId}`
+  let selector = `#${layerId} .q-toggle`
+  // some layers have a toggle (regulaer layers), some don't (base layers)
+  if (!await core.elementExists(page, selector)) {
+    selector = `#${layerId}`
+  }
   await core.click(page, selector)
   if (categoryId) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
