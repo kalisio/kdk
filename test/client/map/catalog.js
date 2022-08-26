@@ -58,7 +58,7 @@ export async function saveLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
   await core.click(page, `#${layer}-actions`)
-  await core.clickAction(page, 'save')
+  await core.clickAction(page, 'save-layer')
   if (categoryId) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
   }
@@ -76,7 +76,7 @@ export async function removeLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
   await core.click(page, `#${layer}-actions`)
-  await core.clickAction(page, 'remove')
+  await core.clickAction(page, 'remove-layer')
   await core.click(page, '.q-dialog button:nth-child(2)', wait)
   if (categoryId) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
