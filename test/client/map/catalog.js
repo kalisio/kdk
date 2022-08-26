@@ -39,7 +39,6 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
   let selector = `#${layerId}`
-  if (categoryId !== 'k-catalog-panel-base-layers') selector += ' .q-toggle'
   await core.click(page, selector)
   if (categoryId) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
@@ -51,14 +50,14 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
 
 export async function saveLayer (page, tabId, layer, wait = 1000) {
   const isCatalogOpened = await clickCatalogTab(page, tabId)
-  const layerId = `${layer}-actions`
+  const layerId = getLayerId(layer)
   const categoryId = await getLayerCategoryId(page, layerId)
   let isCategoryOpened
   if (categoryId) {
     isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
-  await core.click(page, `#${layerId} .q-btn`)
+  await core.click(page, `#${layer}-actions`)
   await core.clickAction(page, 'save')
   if (categoryId) {
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 500)
@@ -76,7 +75,7 @@ export async function removeLayer (page, tabId, layer, wait = 1000) {
     isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
     if (!isCategoryOpened) await core.clickRightPaneAction(page, categoryId, 1000)
   }
-  await core.click(page, `#${layerId} .q-btn`)
+  await core.click(page, `#${layer}-actions`)
   await core.clickAction(page, 'remove')
   await core.click(page, '.q-dialog button:nth-child(2)', wait)
   if (categoryId) {
