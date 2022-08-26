@@ -448,10 +448,10 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@kalisio/feathers-distributed@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-1.0.4.tgz#53f9ab1377bd440e3d5f7c76f29d9792a427e967"
-  integrity sha512-5lPI3OtYnj1WOVfAESFPAcagseSamFfrHzGWU42Z6viMkJ+ycKxo8XkxweRjBkF0OQYwWzp0nXam7bLaAfLwzg==
+"@kalisio/feathers-distributed@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-1.0.5.tgz#39d4c44bd30b71f5bd99b457f26d16e6f5b76081"
+  integrity sha512-bEpIhHJZGbVC51PDxDKRPolHYxm4PCUaYzCtLvTBxiy8IUcf5PJVliXO0Uya9hTVM4g71bBKIzd44EyiLG5xbg==
   dependencies:
     "@feathersjs/commons" "^1.4.0"
     "@feathersjs/errors" "^3.3.0"
@@ -6068,9 +6068,9 @@ passport-oauth2@1.x.x, passport-oauth2@^1.4.0:
     uid2 "0.0.x"
     utils-merge "1.x.x"
 
-"passport-openidconnect@https://github.com/kalisio/passport-openidconnect":
+"passport-openidconnect@git+https://github.com/kalisio/passport-openidconnect.git":
   version "0.0.2"
-  resolved "https://github.com/kalisio/passport-openidconnect#82d9f0653334a0538b2c3dc2a8119eefc2eca237"
+  resolved "git+https://github.com/kalisio/passport-openidconnect.git#82d9f0653334a0538b2c3dc2a8119eefc2eca237"
   dependencies:
     oauth "0.9.x"
     passport-strategy "1.x.x"
@@ -7964,10 +7964,10 @@ vue-eslint-parser@^7.0.0:
     esquery "^1.0.1"
     lodash "^4.17.15"
 
-weacast-core@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/weacast-core/-/weacast-core-1.4.0.tgz#dc287debf3f74c59897d0ca7b1867e3094f6a29d"
-  integrity sha512-qHtfjhXMiyuQtLtTaz8YIDNH3+Nn+UG5ghE3f3yGSJQOUelwSCiLO+2QS6gvpuNwpW9KytJjOr41dX+7FMfzMw==
+weacast-core@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/weacast-core/-/weacast-core-1.5.0.tgz#a2717e02542b3c142617eb1bf81f3af99a7e51f4"
+  integrity sha512-UjMc1qkhyyhLfkYdavkwv2bTR/K61w5SfuLSonl9H0stOs6h89JMFtCMEHGDG2srNc3lY26z2TkgXxtFUERLoA==
   dependencies:
     "@feathersjs/authentication" "^2.1.16"
     "@feathersjs/authentication-jwt" "^2.0.10"
@@ -8002,15 +8002,15 @@ weacast-core@^1.4.0:
     winston "^2.3.1"
     winston-daily-rotate-file "^1.7.2"
 
-weacast-gfs@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/weacast-gfs/-/weacast-gfs-1.5.0.tgz#536f06437cf35ebd1bf5e47d7424345a0df00a52"
-  integrity sha512-qjjZOZ6BRoTHGoN5v16gd+MPVRqpE1Xiax2j33k7/BgkQlg8Q3VJPqrvOCObfFHx3mB1hiA3eRi0dNb71IqnRw==
+weacast-gfs@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/weacast-gfs/-/weacast-gfs-1.6.0.tgz#ed86e2d99c02d0a9df6bb66d904292977fa2fbd7"
+  integrity sha512-fHHc6Gkmhd/hmnb1/SMc3hoYh/7LamJC9silISmxMg6HCcyJ9RHK2d81Ewx7IejNseHC747m0HSNcELhcyW9Ag==
   dependencies:
     "@feathersjs/errors" "^3.3.6"
     debug "^3.1.0"
     fs-extra "^4.0.2"
-    weacast-core "^1.4.0"
+    weacast-core "^1.5.0"
     weacast-grib2json "^1.0.2"
     winston "^2.3.1"
 
@@ -8022,10 +8022,10 @@ weacast-grib2json@^1.0.2:
     commander "^2.9.0"
     fs-extra "^4.0.2"
 
-weacast-probe@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/weacast-probe/-/weacast-probe-1.4.0.tgz#b585ce7c43eca3bc6df67ce6dd225d29b836721d"
-  integrity sha512-vH5umYniupyvmeZMs79d0cdP8IIAGWB3Zmq15ukp9jXqTudqbw1EqKx8tRCTtgNj4vKh/+9W7OVwbb1urChBkA==
+weacast-probe@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/weacast-probe/-/weacast-probe-1.5.1.tgz#3359977a156afa7ec7ffe81af82913f451c19614"
+  integrity sha512-0q0Xn4jeYPN/n28/22rPjV0b/eNk2/l0N3J+ItKmVzSS7DUmphIkrmpc+bI12S5vqNPlkNKdfQKZGbvdQ/T9bw==
   dependencies:
     "@feathersjs/errors" "^3.3.6"
     debug "^3.1.0"
@@ -8036,7 +8036,7 @@ weacast-probe@^1.4.0:
     moment "^2.18.1"
     mongodb "^3.6.2"
     mubsub "^1.4.0"
-    weacast-core "^1.4.0"
+    weacast-core "^1.5.0"
     winston "^2.3.1"
 
 web-resource-inliner@^4.2.1:
