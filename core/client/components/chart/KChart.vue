@@ -34,11 +34,13 @@ import KStamp from '../frame/KStamp.vue'
 const legendMarginPlugin = {
   id: 'legendMargin',
   beforeInit (chart, args, options) {
-    const fitValue = chart.legend.fit
-    chart.legend.fit = function fit () {
-      fitValue.bind(chart.legend)()
-      if (options.width) this.width += options.width
-      if (options.height) this.height += options.height
+    if (chart.legend) {
+      const fitValue = chart.legend.fit
+      chart.legend.fit = function fit () {
+        fitValue.bind(chart.legend)()
+        if (options.width) this.width += options.width
+        if (options.height) this.height += options.height
+      }
     }
   }
 }
