@@ -1,12 +1,18 @@
 <template>
   <div class="fit">
-    <canvas ref="chart"></canvas>
-    <KStamp
-      v-show="!hasData" class="absolute-center"
-      icon="las la-exclamation-circle"
-      icon-size="3rem"
-      :text="$t('KChart.NO_DATA_AVAILABLE')"
-      text-size="1rem" />
+    <canvas :ref="onChartRefCreated" />
+    <div v-show="!hasData" class="absolute-center">
+      <slot name="empty-chart">
+        <KStamp
+          v-show="!hasData"
+          class="absolute-center"
+          icon="las la-exclamation-circle"
+          icon-size="3rem"
+          :text="$t('KChart.NO_DATA_AVAILABLE')"
+          text-size="1rem" 
+        />
+      </slot>
+    </div>
   </div>
 </template>
 
@@ -14,6 +20,7 @@
 import _ from 'lodash'
 import chroma from 'chroma-js'
 import { Chart, registerables, Interaction, Tooltip } from 'chart.js'
+import { MatrixController, MatrixElement } from 'chartjs-chart-matrix'
 import ChartDataLabelsPlugin from 'chartjs-plugin-datalabels'
 import ChartAnnotationPlugin from 'chartjs-plugin-annotation'
 import ChartZoomPlugin from 'chartjs-plugin-zoom'
@@ -36,7 +43,7 @@ const legendMarginPlugin = {
   }
 }
 
-Chart.register(...registerables, ChartDataLabelsPlugin, ChartAnnotationPlugin, ChartZoomPlugin, legendMarginPlugin)
+Chart.register(...registerables, MatrixController, MatrixElement, ChartDataLabelsPlugin, ChartAnnotationPlugin, ChartZoomPlugin, legendMarginPlugin)
 
 // Additional interaction mode: xSingle, same as x but only returns a single value
 Interaction.modes.xSingle = (chart, e, options, useFinalPosition) => {
@@ -68,6 +75,11 @@ export default {
     }
   },
   methods: {
+    onChartRefCreated (ref) {
+      if (ref) {
+        this.chartRef = ref
+      }
+    },
     getAspectRatio () {
       const marginCoeff = 1.15
       return this.$q.screen.height === 0 ? 1 : this.$q.screen.width * marginCoeff / this.$q.screen.height
@@ -76,6 +88,7 @@ export default {
       return !this.$q.screen.lt.sm
     },
     update (config) {
+      if (!this.chartRef) throw new Error('Cannot update the chart while not created')
       this.hasData = !_.isEmpty(_.get(config, 'data.datasets'))
       if (this.hasData) {
         // Store whether the chart has a legend
@@ -83,11 +96,11 @@ export default {
         // Csutomize the chart
         this.customize(config)
         if (!this.chart) {
-          this.chart = new Chart(this.$refs.chart.getContext('2d'), config)
+          this.chart = new Chart(this.chartRef.getContext('2d'), config)
         } else {
           if (this.chart.type !== config.type) {
             this.chart.destroy()
-            this.chart = new Chart(this.$refs.chart.getContext('2d'), config)
+            this.chart = new Chart(this.chartRef.getContext('2d'), config)
           } else {
             // Update the existing chart
             this.chart.data.labels = config.data.labels
