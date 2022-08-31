@@ -1,6 +1,8 @@
 {
   "OOPS": "Oops !",
   "OK": "Ok",
+  "YES": "Yes",
+  "NO": "No",
   "CANCEL": "Cancel",
   "UPDATE": "Update",
   "CREATE": "Create",

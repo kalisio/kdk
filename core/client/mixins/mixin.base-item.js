@@ -126,11 +126,11 @@ export const baseItem = {
           prompt: prompt === 'input' ? input : undefined,
           persistent: true,
           ok: {
-            label: this.$t('OK'),
+            label: this.$t('YES'),
             flat: true
           },
           cancel: {
-            label: this.$t('CANCEL'),
+            label: this.$t('NO'),
             flat: true
           }
         }).onOk(() => {

@@ -9,13 +9,13 @@
       <div>
         <q-icon v-if="showIcon" :size="iconSize" :name="icon" />
           <q-tooltip v-if="!showText">
-            {{ translatedText }}
+            {{ $tie(text) }}
           </q-tooltip>
       </div>
-      <div v-if="showText" class="ellipsis-2-lines" :style="`font-size: ${textSize};`"
+      <div v-if="showText" class="ellipsis" :style="`font-size: ${textSize};`"
         v-bind:class="{'text-center': direction === 'vertical' }"
       >
-         {{ translatedText }}
+         {{ $tie(text) }}
       </div>
   </div>
 </template>
@@ -50,9 +50,6 @@ export default {
     }
   },
   computed: {
-    translatedText () {
-      return this.$tie(this.text)
-    },
     showIcon () {
       return !_.isEmpty(this.icon)
     },

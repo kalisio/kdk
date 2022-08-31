@@ -77,9 +77,9 @@ export default {
     }
   },
   methods: {
-    onChartRefCreated (ref) {
-      if (ref) {
-        this.chartRef = ref
+    onChartRefCreated (reference) {
+      if (reference) {
+        this.chartRef = reference
       }
     },
     getAspectRatio () {

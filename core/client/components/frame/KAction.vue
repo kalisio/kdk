@@ -7,12 +7,12 @@
     no-caps
     no-wrap
     :color="computedColor"
-    :icon="!iconRight ? computedIcon : undefined"
-    :icon-right="iconRight ? computedIcon : undefined"
+    :icon="!iconRight ? computedIcon : null"
+    :icon-right="iconRight ? computedIcon : null"
     :size="size"
     flat
-    :round="label===''"
-    :rounded="label!==''"
+    :round="label === null"
+    :rounded="label !== null"
     :dense="dense"
     :disable="disabled"
     @click="onClicked">
@@ -156,9 +156,13 @@ export default {
       type: String,
       required: true
     },
+    label: {
+      type: String,
+      default: null
+    },    
     icon: {
       type: String,
-      default: undefined
+      default: null
     },
     iconRight: {
       type: Boolean,
@@ -180,25 +184,21 @@ export default {
       type: Object,
       default: () => null
     },
-    toggle: {
-      type: Object,
-      default: () => {}
-    },
-    label: {
-      type: String,
-      default: ''
-    },
     tooltip: {
       type: String,
       default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     toggled: {
       type: Boolean,
       default: false
     },
-    disabled: {
-      type: Boolean,
-      default: false
+    toggle: {
+      type: Object,
+      default: () => {}
     },
     loading: {
       type: Boolean,
@@ -236,12 +236,13 @@ export default {
   emits: ['triggered'],
   data () {
     return {
-      isToggled: this.toggled
+      isToggled: this.$store.get(`toggles.${this.id}`, this.isToggled) || this.toggled
     }
   },
   watch: {
     toggled: function (value) {
       this.isToggled = value
+      this.$store.set(`toggles.${this.id}`, this.isToggled)
     }
   },
   computed: {
@@ -250,9 +251,7 @@ export default {
     },
     computedLabel () {
       // Check also for translation key or already translated message
-      if (this.isToggled && _.has(this.toggle, 'label')) {
-        return this.$tie(this.toggle.label)
-      }
+      if (this.isToggled && _.has(this.toggle, 'label')) return this.$tie(this.toggle.label)
       return this.$tie(this.label)
     },
     computedIcon () {
@@ -265,20 +264,14 @@ export default {
     },
     computedTooltip () {
       // Check also for translation key or already translated message
-      if (this.isToggled && _.has(this.toggle, 'tooltip')) {
-        return this.$tie(this.toggle.tooltip)
-      } else {
-        return this.$tie(this.tooltip)
-      }
+      if (this.isToggled && _.has(this.toggle, 'tooltip')) return this.$tie(this.toggle.tooltip)
+      return this.$tie(this.tooltip)
     },
     computedBadgeLabel () {
       // Check also for translation key or already translated message
-      if (this.badge && _.has(this.badge, 'label')) {
-        return this.$tie(this.badge.label)
-      } else {
-        // Take care that changing this to null or '' breaks the display in Quasar
-        return undefined
-      }
+      if (this.badge && _.has(this.badge, 'label')) return this.$tie(this.badge.label)
+      // Take care that changing this to null or '' breaks the display in Quasar
+      return undefined
     }
   },
   methods: {
@@ -312,6 +305,7 @@ export default {
       // Handle the toggle if needed
       if (this.toggle) {
         this.isToggled = !this.isToggled
+        this.$store.set(`toggles.${this.id}`, this.isToggled)
       }
       // Handle the URL case
       if (this.url) openURL(this.url)
@@ -322,6 +316,7 @@ export default {
         } catch (error) {
           // In case an error is raised we assume toggling has failed
           if (this.toggle) this.isToggled = !this.isToggled
+          this.$store.set(`toggles.${this.id}`, this.isToggled)
           throw error
         }
       }
