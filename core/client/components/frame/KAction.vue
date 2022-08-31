@@ -236,13 +236,12 @@ export default {
   emits: ['triggered'],
   data () {
     return {
-      isToggled: this.$store.get(`toggles.${this.id}`, this.isToggled) || this.toggled
+      isToggled: this.toggled
     }
   },
   watch: {
     toggled: function (value) {
       this.isToggled = value
-      this.$store.set(`toggles.${this.id}`, this.isToggled)
     }
   },
   computed: {
@@ -305,7 +304,6 @@ export default {
       // Handle the toggle if needed
       if (this.toggle) {
         this.isToggled = !this.isToggled
-        this.$store.set(`toggles.${this.id}`, this.isToggled)
       }
       // Handle the URL case
       if (this.url) openURL(this.url)
@@ -316,7 +314,6 @@ export default {
         } catch (error) {
           // In case an error is raised we assume toggling has failed
           if (this.toggle) this.isToggled = !this.isToggled
-          this.$store.set(`toggles.${this.id}`, this.isToggled)
           throw error
         }
       }
