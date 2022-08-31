@@ -32,12 +32,20 @@
 
 <script>
 import { baseField } from '../../mixins'
+import generateRandomPassword from 'password-generator'
 
 export default {
   mixins: [baseField],
   data () {
     return {
       isPassword: true
+    }
+  },
+  created () {
+    if (_.get(this.properties, 'field.suggest')) {
+      const length = _.get(this.properties.field.suggest, 'length', 12)
+      const rules = _.get(this.properties.field.suggest, 'rules', /[\w\d?-]/)
+      _.set(this.properties, 'default', generateRandomPassword(length, false, rules))
     }
   }
 }
