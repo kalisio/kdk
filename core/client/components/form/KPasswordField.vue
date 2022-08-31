@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { baseField } from '../../mixins'
 import generateRandomPassword from 'password-generator'
 
