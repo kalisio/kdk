@@ -1,4 +1,4 @@
-import accountManager from 'feathers-authentication-management'
+import { AuthenticationManagementService } from 'feathers-authentication-management'
 import errors from '@feathersjs/errors'
 import emails from 'email-templates'
 import path from 'path'
@@ -96,6 +96,7 @@ export default function (name, app, options) {
 
   const servicePath = app.get('apiPath') + '/account'
   const userService = app.getService('users')
+  /*
   app.configure(accountManager({
     // By default it is impossible to reset password if email is not verified
     // The problem is that if you loose your password before validating your email you are blocked,
@@ -107,4 +108,14 @@ export default function (name, app, options) {
   }))
 
   return app.service(servicePath)
+  */
+  return new AuthenticationManagementService(app, {
+    // By default it is impossible to reset password if email is not verified
+    // The problem is that if you loose your password before validating your email you are blocked,
+    // as a consequence we release this constraint
+    skipIsVerifiedCheck: true,
+    service: userService.getPath(true),
+    path: servicePath,
+    notifier: options.notifier
+  })
 }
