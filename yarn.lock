@@ -82,7 +82,7 @@
   resolved "https://registry.yarnpkg.com/@feathers-plus/batch-loader/-/batch-loader-0.3.6.tgz#1e096e95fcdffb83fb1a65468e6ef80b416f7d98"
   integrity sha512-r+n31iZ/B5Rl1mLkC9/S20UI445MdkZvE3VBmjupep2t8OuyTYHPkFEgR25HY6khH+RothK1VL3B5eumk9N2QQ==
 
-"@feathersjs/adapter-commons@^5.0.0-pre.20", "@feathersjs/adapter-commons@^5.0.0-pre.22":
+"@feathersjs/adapter-commons@^5.0.0-pre.20", "@feathersjs/adapter-commons@^5.0.0-pre.28":
   version "5.0.0-pre.28"
   resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-5.0.0-pre.28.tgz#a75ecaac11e99ebe26365b4d8db80bb36c203905"
   integrity sha512-ocOSQIGxmQs8Lrb2BNSCthlMDy96BoqeCl7WsYKWPiD8QHYcwvkzUA7wlyKP232YnL8WWYGAMvld9Kwfg5ZMlg==
@@ -191,7 +191,7 @@
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-4.5.15.tgz#2f9c2599fd93607206ee40ab0e5639b79c7781b8"
   integrity sha512-eVEcLJL3GcPQBQcD77jI3fZ4MMx+iD02Px2Z1lDw+cn/iGCeQkWWAPQs4Tp+HGR1rTL5JO+unyhzN8V9X7OYmw==
 
-"@feathersjs/commons@^5.0.0-pre.20", "@feathersjs/commons@^5.0.0-pre.22", "@feathersjs/commons@^5.0.0-pre.28":
+"@feathersjs/commons@^5.0.0-pre.20", "@feathersjs/commons@^5.0.0-pre.28":
   version "5.0.0-pre.28"
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-5.0.0-pre.28.tgz#9feeab633ce9941c452051ea457eca90f252cb0a"
   integrity sha512-NDSBVK+N4HMrpYbaf51lrDl0MXktCQWioMUg7AG5sNrFM1BkPvTCGm2/W39ZYLA10ROIpHtV2kgcbffF5uKJ1w==
@@ -221,7 +221,7 @@
   dependencies:
     debug "^4.3.3"
 
-"@feathersjs/errors@^5.0.0-pre.20", "@feathersjs/errors@^5.0.0-pre.22", "@feathersjs/errors@^5.0.0-pre.23", "@feathersjs/errors@^5.0.0-pre.28":
+"@feathersjs/errors@^5.0.0-pre.20", "@feathersjs/errors@^5.0.0-pre.23", "@feathersjs/errors@^5.0.0-pre.28":
   version "5.0.0-pre.28"
   resolved "https://registry.yarnpkg.com/@feathersjs/errors/-/errors-5.0.0-pre.28.tgz#fb3e24638af8599dfe7408637df1650bc63ef1ce"
   integrity sha512-3zfKE2YyCb16JqbgWVd+8CNlEwPYN9G5WU/IABQGS9Ye7F6OdyBytuSnSavTiTE6/idmaRuxkIw2xSmUklEBUA==
@@ -250,7 +250,7 @@
     events "^3.3.0"
     uberproto "^2.0.6"
 
-"@feathersjs/feathers@^5.0.0-pre.22", "@feathersjs/feathers@^5.0.0-pre.23", "@feathersjs/feathers@^5.0.0-pre.28":
+"@feathersjs/feathers@^5.0.0-pre.23", "@feathersjs/feathers@^5.0.0-pre.28":
   version "5.0.0-pre.28"
   resolved "https://registry.yarnpkg.com/@feathersjs/feathers/-/feathers-5.0.0-pre.28.tgz#04ec710733aede1cf887647db7bbebf85eabb597"
   integrity sha512-Ldr/vucXR5FAKfqmIODtvVjl3HcRoLJAWuEUex6GttwnTRGzBO7sGLydu43GWEHleyv/bY4ZRHf6QuYVDLVu2w==
@@ -361,14 +361,14 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@kalisio/feathers-distributed@^2.0.0":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-2.0.1.tgz#0965edb02a6120a449e4ae5c5aab1dbfa8253c50"
-  integrity sha512-r3rJeNcHYVxdxqzgD4jQeLXAkz+2wIdHxunG8vzTNOu1qaRP27feK5K4LXOlAzEGSER7yHDkaC7fjdih4j7iVA==
+"@kalisio/feathers-distributed@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-2.0.2.tgz#bee51062d486871f42cf463c8adb95ca0fa3ae8e"
+  integrity sha512-hdZLuqS8jgJw2ITZdZn/VhStpGGCpnKpXvmp2Nf8ZbgCSRHRh7fk18pf5IlrzEw9B0oeybuuqCGlWRwVlgq2vQ==
   dependencies:
-    "@feathersjs/commons" "^5.0.0-pre.22"
-    "@feathersjs/errors" "^5.0.0-pre.22"
-    "@feathersjs/feathers" "^5.0.0-pre.22"
+    "@feathersjs/commons" "^5.0.0-pre.28"
+    "@feathersjs/errors" "^5.0.0-pre.28"
+    "@feathersjs/feathers" "^5.0.0-pre.28"
     cote "^1.0.3"
     debug "^4.3.4"
     uuid "^8.3.2"
@@ -2573,15 +2573,15 @@ feathers-mailer@^3.0.0:
     nodemailer "^6.6.3"
     uberproto "^2.0.6"
 
-feathers-mongodb-management@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/feathers-mongodb-management/-/feathers-mongodb-management-2.0.0.tgz#ae720edd85a889f87aa4315ebb38bc32e1efd6c0"
-  integrity sha512-k8piuEAvq3vwKx7Ohff91VyYmjJj6xqfRWrPJfjtWfYa75fxHL4e8jEn+NkgSKb79g9AAtV8SwhyqL99S3BqmQ==
+feathers-mongodb-management@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/feathers-mongodb-management/-/feathers-mongodb-management-2.0.1.tgz#172039bd58e9537e5a34e7c57ec8018b4fe2edd9"
+  integrity sha512-lOGRwqDP73aMk4wbQT7cEKLV+tf3NVG6QudH4JeQG6Iqe/Sfo9MnOmfholJU/0dWA6gbs/HB7UlnyXAIhNINTA==
   dependencies:
-    "@feathersjs/adapter-commons" "^5.0.0-pre.22"
-    "@feathersjs/commons" "^5.0.0-pre.22"
-    "@feathersjs/errors" "^5.0.0-pre.22"
-    "@feathersjs/feathers" "^5.0.0-pre.22"
+    "@feathersjs/adapter-commons" "^5.0.0-pre.28"
+    "@feathersjs/commons" "^5.0.0-pre.28"
+    "@feathersjs/errors" "^5.0.0-pre.28"
+    "@feathersjs/feathers" "^5.0.0-pre.28"
     debug "^4.3.3"
     mongodb "^4.2.1"
     sift "^15.1.0"
