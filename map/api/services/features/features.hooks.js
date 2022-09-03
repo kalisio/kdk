@@ -20,13 +20,13 @@ export default {
   },
 
   after: {
-    all: [coreHooks.unprocessTimes(['time'])],
-    find: [asGeoJson({ force: true })],
+    all: [],
+    find: [coreHooks.unprocessTimes(['time']), asGeoJson({ force: true })],
     get: [],
     // Avoid emitting events and full result on feature edition because we usually proceed with big batches
-    create: [simplifyResult, coreHooks.skipEvents],
-    update: [simplifyResult, coreHooks.skipEvents],
-    patch: [simplifyResult, coreHooks.skipEvents],
+    create: [coreHooks.unprocessTimes(['time']), simplifyResult, coreHooks.skipEvents],
+    update: [coreHooks.unprocessTimes(['time']), simplifyResult, coreHooks.skipEvents],
+    patch: [coreHooks.unprocessTimes(['time']), simplifyResult, coreHooks.skipEvents],
     remove: [simplifyResult, coreHooks.skipEvents]
   },
 

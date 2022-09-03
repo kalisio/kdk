@@ -65,7 +65,8 @@ export function declareService (name, app, service, serviceOptions = {}) {
     // Then configuration
     service.name = name
     service.app = app
-    service.options = serviceOptions
+    if (!service.options) service.options = serviceOptions
+    else Object.assign(service.options, serviceOptions)
     service.path = servicePath
     service.context = serviceOptions.context
 
@@ -168,7 +169,7 @@ async function createService (name, app, options = {}) {
   const serviceOptions = Object.assign({
     name,
     paginate,
-    whitelist: ['$exists', '$distinct', '$groupBy', '$search', '$aggregate', '$elemMatch']
+    whitelist: ['$exists', '$and', '$or', '$distinct', '$groupBy', '$search', '$aggregate', '$elemMatch']
   }, options)
   if (serviceOptions.disabled) return undefined
   // For DB services a model has to be provided
