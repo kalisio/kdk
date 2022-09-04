@@ -100,7 +100,7 @@
     "feathers-blob": "^1.4.0",
     "feathers-hooks-common": "^5.0.6",
     "feathers-mailer": "^3.0.0",
-    "feathers-mongodb": "^3.0.0",
+    "feathers-mongodb": "^6.0.0",
     "feathers-mongodb-management": "^2.0.1",
     "geotiff": "^2.0.4",
     "helmet": "^3.5.0",

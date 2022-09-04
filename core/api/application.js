@@ -169,7 +169,9 @@ async function createService (name, app, options = {}) {
   const serviceOptions = Object.assign({
     name,
     paginate,
-    whitelist: ['$exists', '$and', '$or', '$distinct', '$groupBy', '$search', '$aggregate', '$elemMatch']
+    multi: true,
+    whitelist: ['$exists', '$and', '$or', '$distinct', '$groupBy', '$search', '$aggregate', '$elemMatch',
+                '$near', '$geoIntersects', '$geometry', '$maxDistance']
   }, options)
   if (serviceOptions.disabled) return undefined
   // For DB services a model has to be provided

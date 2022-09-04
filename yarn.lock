@@ -82,6 +82,15 @@
   resolved "https://registry.yarnpkg.com/@feathers-plus/batch-loader/-/batch-loader-0.3.6.tgz#1e096e95fcdffb83fb1a65468e6ef80b416f7d98"
   integrity sha512-r+n31iZ/B5Rl1mLkC9/S20UI445MdkZvE3VBmjupep2t8OuyTYHPkFEgR25HY6khH+RothK1VL3B5eumk9N2QQ==
 
+"@feathersjs/adapter-commons@^4.5.11":
+  version "4.5.15"
+  resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-4.5.15.tgz#f7dd1a250b0a58fa735ed31b63e25e35b57418aa"
+  integrity sha512-kKqL4mYCe+dBn271lfJb6/79qEL0C7R7EfVrW+U75uCGrOuE3Ws8LbE2SQcjasUcrzZQShiJDJIpU/grcTPsHg==
+  dependencies:
+    "@feathersjs/commons" "^4.5.15"
+    "@feathersjs/errors" "^4.5.15"
+    "@feathersjs/feathers" "^4.5.15"
+
 "@feathersjs/adapter-commons@^5.0.0-pre.20", "@feathersjs/adapter-commons@^5.0.0-pre.28":
   version "5.0.0-pre.28"
   resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-5.0.0-pre.28.tgz#a75ecaac11e99ebe26365b4d8db80bb36c203905"
@@ -2624,6 +2633,15 @@ feathers-mongodb@^3.0.0:
     "@feathersjs/errors" "^3.3.0"
     lodash.omit "^4.5.0"
     uberproto "^2.0.4"
+
+feathers-mongodb@^6.0.0:
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/feathers-mongodb/-/feathers-mongodb-6.4.1.tgz#594dad260ac60883e741a0bc9792130ad1228a88"
+  integrity sha512-EZssrp/EIeMxQ3qzNOdlXbUoTXOKvwCMsuYZ5JuPsahRjQluxPEY2WIKmBAzFi4/Jgfl+JhQQLxceRTjZlsynw==
+  dependencies:
+    "@feathersjs/adapter-commons" "^4.5.11"
+    "@feathersjs/commons" "^4.5.11"
+    "@feathersjs/errors" "^4.5.11"
 
 feature-policy@0.3.0:
   version "0.3.0"
