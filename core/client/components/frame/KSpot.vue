@@ -4,27 +4,26 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { getCssVar } from 'quasar'
 
-export default {
-  props: {
-    color: {
-      type: String,
-      default: getCssVar('primary')
-    },
-    width: {
-      type: String,
-      default: '15px'
-    },
-    height: {
-      type: String,
-      default: '15px'
-    },
-    borderRadius: {
-      type: String,
-      default: '10px'
-    }
+// props
+const props = defineProps({
+  color: {
+    type: String,
+    default: getCssVar('primary')
+  },
+  width: {
+    type: String,
+    default: '15px'
+  },
+  height: {
+    type: String,
+    default: '15px'
+  },
+  borderRadius: {
+    type: String,
+    default: '10px'
   }
-}
+})
 </script>

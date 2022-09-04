@@ -9,42 +9,39 @@
   </q-page-sticky>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { computed } from 'vue'
 import KContent from './KContent.vue'
 
-export default {
-  components: {
-    KContent
+// props
+const props = defineProps({
+  position: {
+    type: String,
+    required: true
   },
-  props: {
-    position: {
-      type: String,
-      required: true
-    },
-    offset: {
-      type: Array,
-      default: () => [0, 0]
-    },
-    content: {
-      type: [Object, Array],
-      default: () => null
-    },
-    mode: {
-      type: String,
-      default: undefined
-    },
-    context: {
-      type: Object,
-      default: () => null
-    }
+  offset: {
+    type: Array,
+    default: () => [0, 0]
   },
-  computed: {
-    hasContent () {
-      return !_.isEmpty(this.content)
-    }
+  content: {
+    type: [Object, Array],
+    default: () => null
+  },
+  mode: {
+    type: String,
+    default: undefined
+  },
+  context: {
+    type: Object,
+    default: () => null
   }
-}
+})
+
+// computed
+const hasContent = computed(() => {
+  return !_.isEmpty(props.content.value)
+})
 </script>
 
 <style lang="scss">

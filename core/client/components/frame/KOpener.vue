@@ -13,95 +13,95 @@
     }"
     v-on="isDesktop ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
     v-touch-swipe.mouse="onSwipe"
-    @click="onClick">
+    @click="onClick"
+  >
     <q-icon v-if="icon" :name="icon" color="white" size="sm" />
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false
-    },
-    position: {
-      type: String,
-      default: 'left',
-      validator: (value) => {
-        return ['left', 'right', 'top', 'bottom'].includes(value)
-      }
-    }
+<script setup>
+import { ref, computed } from 'vue'
+import { useQuasar } from 'quasar'
+
+// emit
+const emit = defineEmits(['update:modelValue'])
+
+// props
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
   },
-  emits: ['update:modelValue'],
-  data () {
-    return {
-      isOpened: this.modelValue,
-      isDesktop: this.$q.platform.is.desktop,
-      isHovered: false,
-      icon: null
-    }
-  },
-  watch: {
-    modelValue (newValue, oldValue) {
-      this.isOpened = newValue
-    }
-  },
-  methods: {
-    onMouseOver () {
-      this.isHovered = true
-      switch (this.position) {
-        case 'left':
-          this.icon = this.isOpened ? 'las la-angle-left' : 'las la-angle-right'
-          break
-        case 'right':
-          this.icon = this.isOpened ? 'las la-angle-right' : 'las la-angle-left'
-          break
-        case 'top':
-          this.icon = this.isOpened ? 'las la-angle-up' : 'las la-angle-down'
-          break
-        default: // bottom
-          this.icon = this.isOpened ? 'las la-angle-down' : 'las la-angle-up'
-      }
-    },
-    onMouseLeave () {
-      this.isHovered = false
-      this.icon = null
-    },
-    onClick () {
-      this.trigger()
-    },
-    onSwipe ({ evt, ...info }) {
-      if (!info && !info.direction) return
-      switch (this.position) {
-        case 'left':
-          if (info.direction === 'left' && this.isOpened) this.trigger()
-          if (info.direction === 'right' && !this.isOpened) this.trigger()
-          break
-        case 'right':
-          if (info.direction === 'left' && !this.isOpened) this.trigger()
-          if (info.direction === 'right' && this.isOpened) this.trigger()
-          break
-        case 'top':
-          if (info.direction === 'up' && this.isOpened) this.trigger()
-          if (info.direction === 'down' && !this.isOpened) this.trigger()
-          break
-        default: // bottom
-          if (info.direction === 'up' && !this.isOpened) this.trigger()
-          if (info.direction === 'down' && this.isOpened) this.trigger()
-      }
-    },
-    trigger () {
-      this.$emit('update:modelValue', !this.isOpened)
+  position: {
+    type: String,
+    default: 'left',
+    validator: (value) => {
+      return ['left', 'right', 'top', 'bottom'].includes(value)
     }
   }
+})
+
+// data
+const $q = useQuasar()
+const isDesktop = $q.platform.is.desktop
+const isHovered = ref(false)
+const icon = ref(null)
+
+// computed
+const isOpened = computed(() => {
+  return props.modelValue
+})
+
+// functions
+function onMouseOver () {
+  isHovered.value = true
+  switch (props.position) {
+    case 'left':
+      icon.value = isOpened.value ? 'las la-angle-left' : 'las la-angle-right'
+      break
+    case 'right':
+      icon.value = isOpened.value ? 'las la-angle-right' : 'las la-angle-left'
+      break
+    case 'top':
+      icon.value = isOpened.value ? 'las la-angle-up' : 'las la-angle-down'
+      break
+    default: // bottom
+      icon.value = isOpened.value ? 'las la-angle-down' : 'las la-angle-up'
+  }
+}
+function onMouseLeave () {
+  isHovered.value = false
+  icon.value = null
+}
+function onSwipe ({ evt, ...info }) {
+  if (!info && !info.direction) return
+  switch (position.value) {
+    case 'left':
+      if (info.direction === 'left' && this.isOpened) onClick()
+      if (info.direction === 'right' && !this.isOpened) onClick()
+      break
+    case 'right':
+      if (info.direction === 'left' && !this.isOpened) onClick()
+      if (info.direction === 'right' && this.isOpened) onClick()
+      break
+    case 'top':
+      if (info.direction === 'up' && this.isOpened) onClick()
+      if (info.direction === 'down' && !this.isOpened) onClick()
+      break
+    default: // bottom
+      if (info.direction === 'up' && !this.isOpened) onClick()
+      if (info.direction === 'down' && this.isOpened) onClick()
+  }
+}
+function onClick () {
+  emit('update:modelValue', !isOpened.value)
 }
 </script>
 
 <style lang="scss" scoped>
   .k-opener-left, .k-opener-right, .k-opener-top, .k-opener-bottom {
     opacity: 0.85;
-    transition: 0.1s;
+    transition: 0.2s;
     background-color: var(--q-primary);
     border: 2px solid var(--q-secondary);
   }

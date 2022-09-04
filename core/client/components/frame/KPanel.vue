@@ -5,49 +5,52 @@
       'column': direction === 'vertical'
     }"
     v-bind="$props"
-    @triggered="$emit('triggered', arguments)"
+    @triggered="onTriggered"
   />
 </template>
 
-<script>
+<script setup>
 import KContent from './KContent.vue'
 
-export default {
-  components: {
-    KContent
+// emit
+const emit = defineEmits(['triggered'])
+
+// props
+const props = defineProps({
+  content: {
+    type: [Object, Array],
+    default: () => null
   },
-  emits: ['triggered'],
-  props: {
-    content: {
-      type: [Object, Array],
-      default: () => null
-    },
-    mode: {
-      type: String,
-      default: undefined
-    },
-    filter: {
-      type: Object,
-      default: () => {}
-    },
-    context: {
-      type: Object,
-      default: () => null
-    },
-    direction: {
-      type: String,
-      default: 'horizontal',
-      validator: (value) => {
-        return ['horizontal', 'vertical'].includes(value)
-      }
-    },
-    actionRenderer: {
-      type: String,
-      default: 'button',
-      validator: (value) => {
-        return ['button', 'form-button', 'item', 'tab'].includes(value)
-      }
+  mode: {
+    type: String,
+    default: undefined
+  },
+  filter: {
+    type: Object,
+    default: () => {}
+  },
+  context: {
+    type: Object,
+    default: () => null
+  },
+  direction: {
+    type: String,
+    default: 'horizontal',
+    validator: (value) => {
+      return ['horizontal', 'vertical'].includes(value)
+    }
+  },
+  actionRenderer: {
+    type: String,
+    default: 'button',
+    validator: (value) => {
+      return ['button', 'form-button', 'item', 'tab'].includes(value)
     }
   }
+})
+
+// functions
+function onTriggered (args) {
+  emit('triggered', args)
 }
 </script>

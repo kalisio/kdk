@@ -20,6 +20,7 @@ import { Layout } from '../../layout'
 import { loadComponent } from '../../utils'
 
 export default {
+  emits: ['triggered'],
   props: {
     content: {
       type: [Object, Array],
@@ -45,7 +46,6 @@ export default {
       }
     }
   },
-  emits: ['triggered'],
   computed: {
     components () {
       const components = Layout.getComponents(this.filteredContent, this.mode, this.context)
