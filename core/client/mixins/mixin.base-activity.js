@@ -166,56 +166,54 @@ export function baseActivity (name) {
       getWindows () {
         return this.$store.get('windows')
       },
-      setWindow (position, widgets, current, filter) {
-        _.map(widgets, widget => {
-          widget.window = position
-        })
-        this.$store.patch(`windows.${position}`, { widgets: Layout.bindContent(_.cloneDeep(widgets), this), current, filter })
-      },
       configureWindows () {
-        const options = _.get(this.activityOptions, 'windows', null)
-        _.forOwn(options, (window, key) => {
-          this.setWindow(key, window.widgets, window.current, window.filter || {})
+        const windows = _.get(this.activityOptions, 'windows', null)
+        _.forOwn(windows, (window, placement) => {
+          if (window.widgets) {
+            this.$store.patch(`windows.${placement}`, { 
+              widgets: Layout.bindContent(_.cloneDeep(window.widgets), this), 
+              current: window.current, 
+              filter: window.filter || {} 
+            })
+          }
         })
       },
       clearWindows () {
-        this.$store.patch('windows', { 
-          left: { widgets: null, current: undefined },
-          top: { widgets: null, current: undefined },
-          right: { widgets: null, current: undefined },
-          bottom: { widgets: null, current: undefined }
+        const windows = _.get(this.activityOptions, 'windows', null)
+        _.forOwn(windows, (window, placement) => {
+          this.$store.patch(`windows.${placement}`, { widgets: null, current: undefined } )
         })
       },
       findWindow (widget) {
         let window
-        let position
+        let placement
         _.forOwn(this.$store.get('windows'), (value, key) => {
           if (_.find(value.widgets, { id: widget })) {
-            position = key
+            placement = key
             window = value
             return false
           }
         })
-        return { position, window }
+        return { placement, window }
       },
       openWidget (widget) {
-        const { position, window } = this.findWindow(widget)
-        if (!position) {
+        const { placement, window } = this.findWindow(widget)
+        if (!placement) {
           logger.error(`Cannot find widget ${widget}`)
           return
         }
         if (window.current !== widget) {
-          this.$store.patch(`windows.${position}`, { current: widget })
+          this.$store.patch(`windows.${placement}`, { current: widget })
         }
       },
       closeWidget (widget) {
-        const { position, window } = this.findWindow(widget)
-        if (!position) {
+        const { placement, window } = this.findWindow(widget)
+        if (!placement) {
           logger.error(`Cannot find widget ${widget}`)
           return
         }
         if (window.current !== '') {
-          this.$store.patch(`windows.${position}`, { current: '' })
+          this.$store.patch(`windows.${placement}`, { current: '' })
         }
       },
       clearActivity () {

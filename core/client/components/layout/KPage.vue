@@ -77,31 +77,31 @@
       <KFab />
     </q-page-sticky>
     <!-- windows -->  
-    <q-page-sticky v-if="leftWindow.widgets" position="top-left" :offset="leftWindow.position" class="k-sticky">
+    <q-page-sticky v-if="hasLeftWindow" position="top-left" :offset="leftWindow.position" class="k-sticky">
       <KWindow 
         id="left-window" 
-        position="left" 
+        placement="left" 
         :style="`max-width: ${leftWindow.size[0]}px; max-height: ${leftWindow.size[1]};px;`" 
       />
     </q-page-sticky>
-    <q-page-sticky v-if="rightWindow.widgets" position="top-left" :offset="rightWindow.position" class="k-sticky">
+    <q-page-sticky v-if="hasRightWindow" position="top-left" :offset="rightWindow.position" class="k-sticky">
       <KWindow 
         id="right-window" 
-        position="right" 
+        placement="right" 
         :style="`max-width: ${rightWindow.size[0]}px; max-height: ${rightWindow.size[1]};px`" 
       />
     </q-page-sticky>
-    <q-page-sticky v-if="topWindow.widgets" position="top-left" :offset="topWindow.position" class="k-sticky">
+    <q-page-sticky v-if="hasTopWindow" position="top-left" :offset="topWindow.position" class="k-sticky">
       <KWindow 
         id="top-window"
-        position="top" 
+        placement="top" 
         :style="`max-width: ${topWindow.size[0]}px; max-height: ${topWindow.size[1]};px`" 
       />
     </q-page-sticky>
-    <q-page-sticky v-if="bottomWindow.widgets" position="top-left" :offset="bottomWindow.position" class="k-sticky">
+    <q-page-sticky v-if="hasBottomWindow" position="top-left" :offset="bottomWindow.position" class="k-sticky">
       <KWindow 
         id="bottom-window" 
-        position="bottom" 
+        placement="bottom" 
         :style="`max-width: ${bottomWindow.size[0]}px; max-height: ${bottomWindow.size[1]};px`" 
       />
     </q-page-sticky>
@@ -210,6 +210,18 @@ export default {
       if (_.isEmpty(this.bottomPane.content)) return false
       if (this.bottomPane.mode) return !_.isEmpty(_.get(this.bottomPane.content, this.bottomPane.mode))
       return true
+    },
+    hasLeftWindow () {
+      return this.leftWindow.widgets
+    },
+    hasRightWindow () {
+      return this.rightWindow.widgets
+    },
+    hasTopWindow () {
+      return this.topWindow.widgets
+    },
+    hasBottomWindow () {
+      return this.bottomWindow.widgets
     }
   },
   data () {
