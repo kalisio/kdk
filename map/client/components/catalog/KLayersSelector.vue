@@ -5,10 +5,13 @@
       <template v-for="layer in layers" :key="getId(layer)">
         <div :id="getId(layer)" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
           <!-- Layer name -->
-          <div class="row ellipsis" v-bind:class="{
-            'text-primary text-weight-bold': layer.isVisible,
-            'text-grey-6': layer.isDisabled
-          }">
+          <div 
+            class="row ellipsis-2-lines" 
+            :class="{
+              'text-primary text-weight-bold': layer.isVisible,
+              'text-grey-6': layer.isDisabled
+            }"
+          >
             {{ layer.label || layer.name }}
             <q-badge v-if="layer.badge" v-bind="layer.badge">
               <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />

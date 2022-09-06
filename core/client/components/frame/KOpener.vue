@@ -54,6 +54,7 @@ const isOpened = computed(() => {
 
 // functions
 function onMouseOver () {
+  if (!isDesktop) return
   isHovered.value = true
   switch (props.position) {
     case 'left':
@@ -70,27 +71,28 @@ function onMouseOver () {
   }
 }
 function onMouseLeave () {
+  if (!isDesktop) return
   isHovered.value = false
   icon.value = null
 }
 function onSwipe ({ evt, ...info }) {
   if (!info && !info.direction) return
-  switch (position.value) {
+  switch (props.position) {
     case 'left':
-      if (info.direction === 'left' && this.isOpened) onClick()
-      if (info.direction === 'right' && !this.isOpened) onClick()
+      if (info.direction === 'left' && isOpened.value) onClick()
+      if (info.direction === 'right' && !isOpened.value) onClick()
       break
     case 'right':
-      if (info.direction === 'left' && !this.isOpened) onClick()
-      if (info.direction === 'right' && this.isOpened) onClick()
+      if (info.direction === 'left' && !isOpened.value) onClick()
+      if (info.direction === 'right' && isOpened.value) onClick()
       break
     case 'top':
-      if (info.direction === 'up' && this.isOpened) onClick()
-      if (info.direction === 'down' && !this.isOpened) onClick()
+      if (info.direction === 'up' && isOpened.value) onClick()
+      if (info.direction === 'down' && !isOpened.value) onClick()
       break
     default: // bottom
-      if (info.direction === 'up' && !this.isOpened) onClick()
-      if (info.direction === 'down' && this.isOpened) onClick()
+      if (info.direction === 'up' && !isOpened.value) onClick()
+      if (info.direction === 'down' && isOpened.value) onClick()
   }
 }
 function onClick () {

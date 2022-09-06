@@ -38,7 +38,12 @@
       </template>
     </div>
     <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pb-sm">
-      <KStamp icon="las la-exclamation-circle" icons-size="sm" :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" direction="horizontal" />
+      <KStamp 
+        icon="las la-exclamation-circle" 
+        icons-size="sm" 
+        :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" 
+        direction="horizontal" 
+      />
     </div>
   </div>
 </template>

@@ -3,16 +3,16 @@ export const catalogPanel = {
     panelStyle () {
       const screenHeight = this.$q.screen.height
       this.scrollAreaMaxHeight = screenHeight * 0.75 // 75vh
-      let width = 420
+      let width = 390
       if (this.$q.screen.lt.sm) {
-        this.scrollAreaMaxHeight = screenHeight * 0.60
+        this.scrollAreaMaxHeight = screenHeight * 0.6
         width = 300
       } else if (this.$q.screen.lt.md) {
         this.scrollAreaMaxHeight = screenHeight * 0.65
-        width = 340
+        width = 330
       } else if (this.$q.screen.lt.lg) {
-        this.scrollAreaMaxHeight = screenHeight * 0.70
-        width = 380
+        this.scrollAreaMaxHeight = screenHeight * 0.7
+        width = 360
       }
       return `height: ${this.scrollAreaMaxHeight}px; width: ${width}px`
     }
