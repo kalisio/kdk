@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import { Layout } from '../layout.js'
 
 export function baseActivity (name) {
@@ -163,37 +164,58 @@ export function baseActivity (name) {
         this.$store.patch('fab', { actions: null })
       },
       getWindows () {
-        return this.$store.get('window')
+        return this.$store.get('windows')
       },
-      setWindow (widgets, current, filter) {
-        this.$store.patch('window', { widgets: Layout.bindContent(_.cloneDeep(widgets), this), current, filter })
+      setWindow (position, widgets, current, filter) {
+        _.map(widgets, widget => {
+          widget.window = position
+        })
+        this.$store.patch(`windows.${position}`, { widgets: Layout.bindContent(_.cloneDeep(widgets), this), current, filter })
       },
-      configureWindow () {
-        const options = _.get(this.activityOptions, 'window', null)
-        if (options) this.setWindow(options.widgets, options.current ? options.current : undefined, _.get(this.activityOptions, 'window.filter', {}))
+      configureWindows () {
+        const options = _.get(this.activityOptions, 'windows', null)
+        _.forOwn(options, (window, key) => {
+          this.setWindow(key, window.widgets, window.current, window.filter || {})
+        })
       },
-      clearWindow () {
-        this.$store.patch('window', { widgets: null, current: undefined })
+      clearWindows () {
+        this.$store.patch('windows', { 
+          left: { widgets: null, current: undefined },
+          top: { widgets: null, current: undefined },
+          right: { widgets: null, current: undefined },
+          bottom: { widgets: null, current: undefined }
+        })
       },
-      hasOpenWidget () {
-        return this.$store.get('window.current')
-      },
-      isWidgetOpen (widget) {
-        const current = this.$store.get('window.current')
-        return (current && (current === widget))
+      findWindow (widget) {
+        let window
+        let position
+        _.forOwn(this.$store.get('windows'), (value, key) => {
+          if (_.find(value.widgets, { id: widget })) {
+            position = key
+            window = value
+            return false
+          }
+        })
+        return { position, window }
       },
       openWidget (widget) {
-        const current = this.$store.get('window.current')
-        if (current !== widget) {
-          const widgets = this.$store.get('window.widgets')
-          this.$store.patch('window', { current: widget, widgets })
+        const { position, window } = this.findWindow(widget)
+        if (!position) {
+          logger.error(`Cannot find widget ${widget}`)
+          return
+        }
+        if (window.current !== widget) {
+          this.$store.patch(`windows.${position}`, { current: widget })
         }
       },
-      closeWidget () {
-        const current = this.$store.get('window.current')
-        if (current !== '') {
-          const widgets = this.$store.get('window.widgets')
-          this.$store.patch('window', { current: '', widgets })
+      closeWidget (widget) {
+        const { position, window } = this.findWindow(widget)
+        if (!position) {
+          logger.error(`Cannot find widget ${widget}`)
+          return
+        }
+        if (window.current !== '') {
+          this.$store.patch(`windows.${position}`, { current: '' })
         }
       },
       clearActivity () {
@@ -203,7 +225,7 @@ export function baseActivity (name) {
         this.clearRightPane()
         this.clearPage()
         this.clearFab()
-        this.clearWindow()
+        this.clearWindows()
       },
       configureActivity () {
         this.configureTopPane()
@@ -212,7 +234,7 @@ export function baseActivity (name) {
         this.configureRightPane()
         this.configurePage()
         this.configureFab()
-        this.configureWindow()
+        this.configureWindows()
       },
       goBack () {
         this.$router.back()

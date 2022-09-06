@@ -47,7 +47,8 @@ export const featureSelection = {
     clearSelection () {
       this.selection.feature = null
       this.selection.layer = null
-      this.closeWidget()
+      const widget = this.getWidgetForLayer()
+      if (widget) this.closeWidget(widget)
     },
     setSelection (location, feature, layer) {
       this.selection.location = location
@@ -61,7 +62,7 @@ export const featureSelection = {
         // Open associated default widget if none already open,
         // if the user has open another widget it will remain active
         const widget = this.getWidgetForLayer()
-        if (widget && !this.hasOpenWidget()) this.openWidget(widget)
+        if (widget) this.openWidget(widget)
       }
     },
     centerOnSelection () {

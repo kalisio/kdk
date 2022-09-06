@@ -64,6 +64,7 @@
       "EXIT_VR": "Quitter le mode RV",
       "PROBE": "Sonder",
       "DISPLAY_POSITION": "Afficher les coordonnées",
+      "DISPLAY_LEGEND": "Afficher la légende",
       "SEARCH_LOCATION": "Rechercher un lieu",
       "CREATE_VIEW": "Créer une vue",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
@@ -605,5 +606,8 @@
     "HEIGHT_AXIS_LEGEND": "Hauteur ({{unit}})",
     "TERRAIN_CHART_LEGEND": "Hauteur du terrain",
     "PROFILE_CHART_LEGEND": "Hauteur du profil"
+  },
+  "KLegendBox": {
+    "LABEL": "Légende"
   }
 }

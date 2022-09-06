@@ -1,4 +1,10 @@
 export const baseWidget = {
+  props: {
+    window: {
+      type: Object,
+      required: true
+    }
+  },
   computed: {
     widgetStyle () {
       const widgetSize = this.window.size
@@ -27,7 +33,6 @@ export const baseWidget = {
   },
   data () {
     return {
-      window: this.$store.get('window'),
       widgetWidth: 0,
       widgetHeight: 0
     }

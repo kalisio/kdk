@@ -64,6 +64,7 @@
       "EXIT_VR": "Exit VR mod",
       "PROBE": "Probe",
       "DISPLAY_POSITION": "Display the coordinates",
+      "DISPLAY_LEGEND": "Display legend",
       "SEARCH_LOCATION": "Search a location",
       "CREATE_VIEW": "Create view",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
@@ -604,5 +605,8 @@
     "HEIGHT_AXIS_LEGEND": "Height ({{unit}})",
     "TERRAIN_CHART_LEGEND": "Terrain elevation",
     "PROFILE_CHART_LEGEND": "Profile elevation"
+  },
+  "KLegendBox": {
+    "LABEL": "Legend"
   }
 }

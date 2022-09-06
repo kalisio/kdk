@@ -76,9 +76,34 @@
     <q-page-sticky position="bottom-right" :offset="fabOffset" class="k-sticky">
       <KFab />
     </q-page-sticky>
-    <!-- window -->
-    <q-page-sticky position="top-left" :offset="window.position" class="k-sticky">
-      <KWindow id="window" :style="`max-width: ${window.size[0]}px; max-height: ${window.size[1]};px`" />
+    <!-- windows -->  
+    <q-page-sticky v-if="leftWindow.widgets" position="top-left" :offset="leftWindow.position" class="k-sticky">
+      <KWindow 
+        id="left-window" 
+        position="left" 
+        :style="`max-width: ${leftWindow.size[0]}px; max-height: ${leftWindow.size[1]};px;`" 
+      />
+    </q-page-sticky>
+    <q-page-sticky v-if="rightWindow.widgets" position="top-left" :offset="rightWindow.position" class="k-sticky">
+      <KWindow 
+        id="right-window" 
+        position="right" 
+        :style="`max-width: ${rightWindow.size[0]}px; max-height: ${rightWindow.size[1]};px`" 
+      />
+    </q-page-sticky>
+    <q-page-sticky v-if="topWindow.widgets" position="top-left" :offset="topWindow.position" class="k-sticky">
+      <KWindow 
+        id="top-window"
+        position="top" 
+        :style="`max-width: ${topWindow.size[0]}px; max-height: ${topWindow.size[1]};px`" 
+      />
+    </q-page-sticky>
+    <q-page-sticky v-if="bottomWindow.widgets" position="top-left" :offset="bottomWindow.position" class="k-sticky">
+      <KWindow 
+        id="bottom-window" 
+        position="bottom" 
+        :style="`max-width: ${bottomWindow.size[0]}px; max-height: ${bottomWindow.size[1]};px`" 
+      />
     </q-page-sticky>
     <!-- left -->
     <q-page-sticky position="left" class="k-sticky">
@@ -194,7 +219,10 @@ export default {
       rightPane: this.$store.get('rightPane'),
       bottomPane: this.$store.get('bottomPane'),
       page: this.$store.get('page'),
-      window: this.$store.get('window'),
+      leftWindow: this.$store.get('windows.left'),
+      rightWindow: this.$store.get('windows.right'),
+      topWindow: this.$store.get('windows.top'),
+      bottomWindow: this.$store.get('windows.bottom'),
       hasLeftPaneOpener: false,
       hasTopPaneOpener: false,
       hasRightPaneOpener: false,

@@ -55,7 +55,12 @@ export default function init () {
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('page', { content: null, mode: undefined, filter: {}, sticky: undefined })
-  Store.set('window', { widgets: [], filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] })
+  Store.set('windows', { 
+    left: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] },
+    right: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] },
+    top: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] },
+    bottom: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] }
+  })
   Store.set('fab', { actions: [], filter: {} })
 
   // Listen to the 'patched' event on the users
