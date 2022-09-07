@@ -108,6 +108,8 @@ describe('map:services', () => {
     expect(category.layers).to.deep.equal([])
     await catalogService.remove(category._id.toString())
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('create and feed the zones service', async () => {
     // Create the service
@@ -127,6 +129,8 @@ describe('map:services', () => {
     const zones = fs.readJsonSync(path.join(__dirname, 'data/zones.json')).features
     await zonesService.create(zones)
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('performs spatial filtering on zones service', async () => {
     let result = await zonesService.find({
@@ -150,6 +154,8 @@ describe('map:services', () => {
     })
     expect(result.features.length).to.equal(0)
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('create and feed the vigicrues stations service', async () => {
     // Create the service
@@ -167,6 +173,8 @@ describe('map:services', () => {
     const stations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.stations.json')).features
     await vigicruesStationsService.create(stations)
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('create and feed the vigicrues observations service', async () => {
     // Create the service
@@ -184,6 +192,8 @@ describe('map:services', () => {
     const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.json'))
     await vigicruesObsService.create(observations)
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('create and feed the ADS-B observations service', async () => {
     // Create the service
@@ -201,6 +211,8 @@ describe('map:services', () => {
     const observations = fs.readJsonSync(path.join(__dirname, 'data/adsb.observations.json'))
     await adsbObsService.create(observations)
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('performs spatial filtering on vigicrues stations service', async () => {
     const result = await vigicruesStationsService.find({
@@ -219,6 +231,8 @@ describe('map:services', () => {
     })
     expect(result.features.length > 0).beTrue()
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('performs value filtering on vigicrues observations service', async () => {
     const result = await vigicruesObsService.find({
@@ -228,6 +242,8 @@ describe('map:services', () => {
     })
     expect(result.features.length > 0).beTrue()
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('performs temporal filtering on vigicrues observations service', async () => {
     const result = await vigicruesObsService.find({
@@ -240,6 +256,8 @@ describe('map:services', () => {
     })
     expect(result.features.length > 0).beTrue()
   })
+  // Let enough time to process
+    .timeout(5000)
 
   const aggregationQuery = {
     time: {
@@ -261,6 +279,8 @@ describe('map:services', () => {
     expect(feature.time.H[0].isBefore(feature.time.H[1])).beTrue()
     expect(feature.properties.H.length === 5).beTrue()
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('performs sorted element aggregation on vigicrues observations service', async () => {
     const result = await vigicruesObsService.find({ query: Object.assign({ $sort: { time: -1 } }, aggregationQuery) })
@@ -272,6 +292,8 @@ describe('map:services', () => {
     expect(feature.time.H[0].isAfter(feature.time.H[1])).beTrue()
     expect(feature.properties.H.length === 5).beTrue()
   })
+  // Let enough time to process
+    .timeout(5000)
 
   it('performs geometry aggregation on ADS-B observations service', async () => {
     const aggregationQuery = {
@@ -294,6 +316,45 @@ describe('map:services', () => {
     expect(feature.geometry.type).to.equal('GeometryCollection')
     expect(feature.geometry.geometries).toExist()
     expect(feature.geometry.geometries.length === 4).beTrue()
+  })
+  // Let enough time to process
+    .timeout(10000)
+
+  it('performs heatmap on ADS-B observations service', async () => {
+    let results = await adsbObsService.heatmap({
+      query: {
+        time: {
+          $gte: new Date('2019-01-04T13:00:00.000Z').toISOString(),
+          $lte: new Date('2019-01-04T14:00:00.000Z').toISOString()
+        }
+      },
+      count: 'hour'
+    })
+    expect(results.length === 1)
+    expect(results[0]).to.deep.equal({ hour: 13, total: 4 })
+    results = await adsbObsService.heatmap({
+      query: {
+        time: {
+          $gte: new Date('2019-01-03T00:00:00.000Z').toISOString(),
+          $lte: new Date('2019-01-05T00:00:00.000Z').toISOString()
+        }
+      },
+      count: 'dayOfYear'
+    })
+    expect(results.length === 1)
+    expect(results[0]).to.deep.equal({ dayOfYear: 4, total: 5 })
+    results = await adsbObsService.heatmap({
+      query: {
+        time: {
+          $gte: new Date('2019-01-03T00:00:00.000Z').toISOString(),
+          $lte: new Date('2019-01-05T00:00:00.000Z').toISOString()
+        }
+      },
+      count: ['hour', 'dayOfWeek']
+    })
+    expect(results.length === 2)
+    expect(results[1]).to.deep.equal({ hour: 13, dayOfWeek: 6, total: 4 })
+    expect(results[0]).to.deep.equal({ hour: 14, dayOfWeek: 6, total: 1 })
   })
   // Let enough time to process
     .timeout(10000)

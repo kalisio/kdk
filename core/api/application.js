@@ -185,6 +185,7 @@ async function createService (name, app, options = {}) {
       if (fileExists) {
         const configureModel = (await import(url.pathToFileURL(filepath))).default
         configureModel(app, serviceOptions)
+        debug(name + ' service model configured on path ' + serviceOptions.modelsPath)
         dbService = true
       }
     }
@@ -226,6 +227,7 @@ async function createService (name, app, options = {}) {
           serviceMixin = await serviceMixin.bind(dbService)(fileName, app, serviceOptions)
         }
         Object.assign(service, serviceMixin)
+        debug(name + ' service mixin configured on path ' + serviceOptions.servicesPath)
       }
     } catch (error) {
       debug('No ' + fileName + ' service mixin configured on path ' + serviceOptions.servicesPath)
