@@ -119,14 +119,15 @@ api.createService = function (name, options = {}) {
   }
   // Need to register services with custom methods
   if (options.methods) {
-    service = api.use(servicePath, api.transporter.service(servicePath), {
+    api.use(servicePath, api.transporter.service(servicePath), {
       methods: options.methods
     })
   } else {
-    service = api.use(servicePath, service)
+    api.use(servicePath, service)
   }
+  service = api.service(servicePath)
   if (options.hooks) service.hooks(options.hooks)
-  return api.service(servicePath)
+  return service
 }
 // Change the base URL/domain to be used (useful for mobile apps)
 api.setBaseUrl = function (baseUrl) {

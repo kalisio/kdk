@@ -23,7 +23,8 @@ export function createFeaturesService (options = {}) {
     paginate: { default: 5000, max: 5000 },
     // FIXME: no real-time events for now since we create big batches,
     // does not seem to be sufficient also require a hook (see https://github.com/feathersjs/feathers/issues/922)
-    events: ['features']
+    events: ['features'],
+    methods: ['find', 'get', 'create', 'update', 'patch', 'remove', 'heatmap']
   }, options))
 }
 
