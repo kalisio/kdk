@@ -24,6 +24,8 @@ import { MatrixController, MatrixElement } from 'chartjs-chart-matrix'
 import ChartDataLabelsPlugin from 'chartjs-plugin-datalabels'
 import ChartAnnotationPlugin from 'chartjs-plugin-annotation'
 import ChartZoomPlugin from 'chartjs-plugin-zoom'
+// Required to use date as input elements
+import 'chartjs-adapter-moment'
 import KStamp from '../frame/KStamp.vue'
 
 /*
