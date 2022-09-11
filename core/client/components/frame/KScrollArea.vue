@@ -64,6 +64,9 @@ function getScrollPosition (axis) {
   if (axis === 'vertical') return scrollArea.value.getScrollPosition().top
   return scrollArea.value.getScrollPosition().left
 }
+function getScroll () {
+  return scrollArea.value.getScroll()
+}
 
 // watch
 watch(() => props.maxHeight, (maxHeight) => { 
@@ -73,7 +76,8 @@ watch(() => props.maxHeight, (maxHeight) => {
 // expose
 defineExpose({ 
   getScrollPosition,
-  setScrollPosition
+  setScrollPosition,
+  getScroll,
 })
 </script>
 

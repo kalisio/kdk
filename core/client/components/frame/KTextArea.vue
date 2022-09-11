@@ -8,6 +8,7 @@
   >
     <KScrollArea 
       ref="scrollArea"
+      :key="scrollAreaKey"
       :maxHeight="maxHeight"
       :visible="isExpanded"
       :dense="dense"
@@ -35,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import sanitizeHtml from 'sanitize-html'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
@@ -66,15 +67,19 @@ const props = defineProps({
 
 // data
 const scrollArea = ref(null)
+const scrollAreaKey = ref(0)
 const isExpanded = ref(false)
 const isScrollAreaActive = ref(false)
 
 // computed
+const sanitizedText = computed(() => {
+  return sanitizeHtml(props.text)
+})
 const buttonIcon = computed (() => {
   return isExpanded.value ? 'las la-angle-up' : 'las la-angle-down'
 })
-const sanitizedText = computed(() => {
-  return sanitizeHtml(props.text)
+const cssCursor = computed(() => {
+  return isScrollAreaActive.value ? 'pointer' : 'default'
 })
 const cssExpandedFontSize = computed (() => {
   return props.zoom ? '1rem' : '0.875rem'
@@ -82,8 +87,10 @@ const cssExpandedFontSize = computed (() => {
 
 // functions
 function onClick () {
-  isExpanded.value = !isExpanded.value
-  if (!isExpanded.value) scrollArea.value.setScrollPosition('vertical', 0)
+  if (isScrollAreaActive.value) {
+    isExpanded.value = !isExpanded.value
+    if (!isExpanded.value) scrollArea.value.setScrollPosition('vertical', 0)
+  }
 }
 function onScrolled (info) {
   if (info.verticalSize > props.minHeight) {
@@ -93,6 +100,14 @@ function onScrolled (info) {
     isScrollAreaActive.value = false
   }
 }
+
+// watch
+watch(() => props.text, (text) => { 
+  // Reset the states and force rerender the scroll area to handle the new content
+  isScrollAreaActive.value = false
+  isExpanded.value = false
+  scrollAreaKey.value += 1 
+})
 </script>
 
 <style lang="scss" scoped>
@@ -107,7 +122,7 @@ function onScrolled (info) {
   position: relative;
 }
 .k-expandable:hover {
-  cursor: pointer;
+  cursor: v-bind('cssCursor');
 }
 .k-expandable-button {
   position: absolute;
