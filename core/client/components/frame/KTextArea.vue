@@ -53,7 +53,7 @@ const props = defineProps({
   },
   maxHeight: {
     type: Number,
-    default: 204
+    default: 304
   },
   zoom: {
     type: Boolean,
