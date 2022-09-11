@@ -80,7 +80,7 @@ const cssExpandedFontSize = computed (() => {
   return props.zoom ? '1rem' : '0.875rem'
 })
 
-// function
+// functions
 function onClick () {
   isExpanded.value = !isExpanded.value
   if (!isExpanded.value) scrollArea.value.setScrollPosition('vertical', 0)

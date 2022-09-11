@@ -70,7 +70,7 @@ watch(() => props.maxHeight, (maxHeight) => {
   height.value = Math.min(scrollArea.value.getScroll().verticalSize, maxHeight)
 })
 
-// expose methods
+// expose
 defineExpose({ 
   getScrollPosition,
   setScrollPosition
