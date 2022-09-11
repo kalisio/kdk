@@ -1,10 +1,10 @@
 <template>
   <q-scroll-area
     id="scroll-area"
-    :ref="onScrollAreaCreated"
-    :style="innerStyle"
-    :thumb-style="thumbStyle"
-    :bar-style="barStyle"
+    ref="scrollArea"
+    class="k-scroll-area"
+    :visible="visible"
+    :thumb-style="cssThumbStyle"
     @scroll="onScrolled"
   >
     <!-- content -->
@@ -12,64 +12,73 @@
   </q-scroll-area>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, defineExpose } from 'vue'
 import { getCssVar } from 'quasar'
 
-export default {
-  props: {
-    maxHeight: {
-      type: Number,
-      required: true
-    }
+// props
+const props = defineProps({
+  maxHeight: {
+    type: Number,
+    required: true
   },
-  emits: ['scrolled'],
-  computed: {
-    innerStyle () {
-      return `height: ${this.height}px;`
-    }
+  visible: {
+    type: Boolean,
+    default: true
   },
-  data () {
-    return {
-      height: 0,
-      thumbStyle: {
-        right: '4px',
-        borderRadius: '5px',
-        backgroundColor: getCssVar('primary'),
-        width: '6px'
-      },
-      barStyle: {
-        right: '2px',
-        borderRadius: '5px',
-        backgroundColor: getCssVar('accent'),
-        width: '10px'
-      }
-    }
-  },
-  watch: {
-    maxHeight: {
-      handler () {
-        this.height = this.scrollArea ? Math.min(this.scrollArea.getScroll().verticalSize, this.maxHeight) : this.maxHeight
-      }
-    }
-  },
-  methods: {
-    onScrollAreaCreated (ref) {
-      this.scrollArea = ref
-    },
-    onScrolled (info) {
-      this.height = Math.min(info.verticalSize, this.maxHeight)
-      this.$emit('scrolled', info)
-    },
-    setScrollPosition (axis, offset, duration) {
-      if (this.scrollArea) this.scrollArea.setScrollPosition(axis, offset, duration)
-    },
-    getScrollPosition (axis) {
-      if (this.scrollArea) {
-        if (axis === 'vertical') return this.scrollArea.getScrollPosition().top
-        return this.scrollArea.getScrollPosition().left
-      }
-      return 0
-    }
+  dense: {
+    type: Boolean,
+    default: false
   }
+})
+
+// emit
+const emit = defineEmits(['scrolled'])
+
+// data
+const scrollArea = ref()
+const height = ref(0)
+
+// computed
+const cssHeight = computed(() => {
+  return `${height.value}px`
+})
+const cssThumbStyle = computed(() => { 
+  return {
+    right: '4px',
+    borderRadius: '4px',
+    backgroundColor: getCssVar('primary'),
+    width: props.visible ? props.dense ? '4px' : '8px' : '0px'
+  }
+})
+
+// functions
+function onScrolled (info) {
+  height.value = Math.min(info.verticalSize, props.maxHeight)
+  emit('scrolled', info)
 }
+function setScrollPosition (axis, offset, duration) {
+  scrollArea.value.setScrollPosition(axis, offset, duration)
+}
+function getScrollPosition (axis) {
+  if (axis === 'vertical') return scrollArea.value.getScrollPosition().top
+  return scrollArea.value.getScrollPosition().left
+}
+
+// watch
+watch(() => props.maxHeight, (maxHeight) => { 
+  height.value = Math.min(scrollArea.value.getScroll().verticalSize, maxHeight)
+})
+
+// expose methods
+defineExpose({ 
+  getScrollPosition,
+  setScrollPosition
+})
 </script>
+
+<style lang="scss" scoped>
+.k-scroll-area {
+  height: v-bind(cssHeight);
+}
+</style>

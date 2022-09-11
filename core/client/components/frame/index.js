@@ -3,6 +3,7 @@ import KAvatar from './KAvatar.vue'
 import KBlock from './KBlock.vue'
 import KChipsPane from './KChipsPane.vue'
 import KContent from './KContent.vue'
+import KExpandable from './KExpandable.vue'
 import KModal from './KModal.vue'
 import KOpener from './KOpener.vue'
 import KPageSticky from './KPageSticky.vue'
@@ -18,6 +19,7 @@ export {
   KBlock,
   KChipsPane,
   KContent,
+  KExpandable,
   KModal,
   KOpener,
   KPageSticky,

@@ -43,12 +43,12 @@
           :actions="descriptionActions"
           :hideHeader="!isExpanded"
           :dense="dense"
-        >
-          <div v-if="hasDescription">
-            <k-text-area :text="item.description" />
-          </div>
-          <div v-else>
-            {{ $t('KCard.NO_DESCRIPTION_LABEL')}}
+        > 
+          <div class="q-pb-xs"> 
+            <KTextArea 
+              :text="item.description || $t('KCard.NO_DESCRIPTION_LABEL')" 
+              :dense="dense" 
+            />
           </div>
         </KCardSection>
       </slot>
