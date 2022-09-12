@@ -17,7 +17,7 @@
     :disable="disabled"
     @click="onClicked">
     <!-- label -->
-    <div v-if="computedLabel" v-bind:class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
+    <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
       {{ computedLabel }}
     </div>
     <!-- tooltip -->
@@ -66,7 +66,7 @@
         <q-icon v-if="badge.icon" v-bind="badge.icon" />
       </q-badge>
     </q-item-section>
-    <q-item-section no-wrap>
+    <q-item-section :class="'text-' + computedColor" no-wrap>
       {{ computedLabel }}
     </q-item-section>
   </q-item>
@@ -117,7 +117,7 @@
     Tab renderer
   -->
   <q-btn v-else-if="renderer === 'tab'"
-    v-bind:class="{'k-action-tab-active': isToggled }"
+    :class="{'k-action-tab-active': isToggled }"
     :id="id"
     no-caps
     no-wrap
