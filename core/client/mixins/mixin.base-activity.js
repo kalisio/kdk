@@ -184,6 +184,21 @@ export function baseActivity (name) {
           this.$store.patch(`windows.${placement}`, { widgets: null, current: undefined } )
         })
       },
+      openWindow (placement) {
+        const window = this.$store.get('windows.${placement}')
+        if (window.visible) return
+        if (window.widgets.length === 0) {
+          logger.error(`No widgets unregistered for ${placement} window`)
+          return
+        }
+        if (window.current === '') this.$store.patch(`windows.${placement}`, { current: window.widgets[0] })
+        this.$store.patch(`windows.${placement}`, { visible: true })
+      },
+      closeWindow (placement) {
+        const window = this.$store.get('windows.${placement}')
+        if (!window.visible) return
+        if (window.visible) this.$store.patch(`windows.${placement}`, { visible: false })
+      },
       findWindow (widget) {
         let window
         let placement
@@ -202,9 +217,8 @@ export function baseActivity (name) {
           logger.error(`Cannot find widget ${widget}`)
           return
         }
-        if (window.current !== widget) {
-          this.$store.patch(`windows.${placement}`, { current: widget })
-        }
+        if (window.current !== widget) this.$store.patch(`windows.${placement}`, { current: widget })
+        if (!window.visible) this.$store.patch(`windows.${placement}`, { visible: true })
       },
       closeWidget (widget) {
         const { placement, window } = this.findWindow(widget)
@@ -212,9 +226,7 @@ export function baseActivity (name) {
           logger.error(`Cannot find widget ${widget}`)
           return
         }
-        if (window.current !== '') {
-          this.$store.patch(`windows.${placement}`, { current: '' })
-        }
+        if (window.visible) this.$store.patch(`windows.${placement}`, { visible: false })
       },
       clearActivity () {
         this.clearTopPane()

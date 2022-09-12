@@ -1,5 +1,5 @@
 <template>
-  <div v-if="widget" class="k-window fit column">
+  <div v-if="visible" class="k-window fit column">
     <!--
       Window header
      -->
@@ -61,12 +61,20 @@ export default {
     }
   },
   computed: {
+    visible: {
+      get: function () {
+        return this.window.visible
+      },
+      set: function (value) {
+        this.$store.patch(`windows.${this.placement}`, { visible: false })
+      }
+    },
     widget: {
       get: function () {
         return this.window.current
       },
       set: function (value) {
-        this.$store.patch(this.window, { current: value })
+        this.$store.patch(`windows.${this.placement}`, { current: value })
       }
     },
     widgets () {
@@ -192,7 +200,7 @@ export default {
       this.mode = this.backupMode
     },
     onClosed () {
-      this.$store.patch(`windows.${this.placement}`, { current: '' })
+      this.$store.patch(`windows.${this.placement}`, { visible: false })
     },
     onMoved (event) {
       if (!event) return
@@ -275,6 +283,11 @@ export default {
     }
   },
   created () {
+    // Define a default widget if needed
+    if (!this.window.current && this.window.widgets.length > 0) {
+      this.$store.patch(`windows.${this.placement}`, { current: this.window.widgets[0].id })
+    }
+    // Retrieve the geometry
     const geometry = window.localStorage.getItem(this.getGeometryKey())
     if (geometry) {
       const geometryObject = JSON.parse(geometry)
