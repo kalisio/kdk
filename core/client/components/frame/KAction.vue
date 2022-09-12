@@ -75,7 +75,7 @@
    -->
   <q-btn v-else-if="renderer === 'fab'"
     :id="id"
-    class="k-fab"
+    class="k-action-fab"
     :icon="computedIcon"
     :color="computedColor"
     :size="size"
@@ -97,7 +97,7 @@
   -->
   <q-fab-action v-else-if="renderer === 'fab-action'"
     :id="id"
-    class="k-fab-action"
+    class="k-action-fab-action"
     no-caps
     :icon="computedIcon"
     :color="computedColor"
@@ -117,7 +117,7 @@
     Tab renderer
   -->
   <q-btn v-else-if="renderer === 'tab'"
-    v-bind:class="{'k-tab-active': isToggled }"
+    v-bind:class="{'k-action-tab-active': isToggled }"
     :id="id"
     no-caps
     no-wrap
@@ -148,7 +148,11 @@
 
 <script>
 import _ from 'lodash'
-import { openURL } from 'quasar'
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useQuasar, openURL } from 'quasar'
+import { useAction } from '../../composables'
+import { i18n } from '../../i18n.js'
 
 export default {
   props: {
@@ -234,52 +238,49 @@ export default {
   },
   inheritAttrs: false,
   emits: ['triggered'],
-  data () {
-    return {
-      isToggled: this.toggled
-    }
-  },
-  watch: {
-    toggled: function (value) {
-      this.isToggled = value
-    }
-  },
-  computed: {
-    dense () {
-      return this.$q.screen.lt.sm
-    },
-    computedLabel () {
+  setup (props, { emit }) {
+    // data
+    const route = useRoute()
+    const router = useRouter()
+    const $q = useQuasar()
+    const { isToggled, toggle } = useAction(props)
+
+    // computed
+    const computedLabel = computed(() => {
       // Check also for translation key or already translated message
-      if (this.isToggled && _.has(this.toggle, 'label')) return this.$tie(this.toggle.label)
-      return this.$tie(this.label)
-    },
-    computedIcon () {
-      if (this.isToggled && _.has(this.toggle, 'icon')) return this.toggle.icon
-      return this.icon
-    },
-    computedColor () {
-      if (this.isToggled) return _.get(this.toggle, 'color', 'accent')
-      return this.color
-    },
-    computedTooltip () {
+      if (isToggled.value && _.has(props.toggle, 'label')) return i18n.tie(props.toggle.label)
+      return i18n.tie(props.label)
+    })
+    const computedIcon =computed (() => {
+      if (isToggled.value && _.has(props.toggle, 'icon')) return props.toggle.icon
+      return props.icon
+    })
+    const computedColor = computed(() => {
+      if (isToggled.value) return _.get(props.toggle, 'color', 'accent')
+      return props.color
+    })
+    const computedTooltip = computed(() => {
       // Check also for translation key or already translated message
-      if (this.isToggled && _.has(this.toggle, 'tooltip')) return this.$tie(this.toggle.tooltip)
-      return this.$tie(this.tooltip)
-    },
-    computedBadgeLabel () {
+      if (isToggled.value && _.has(props.toggle, 'tooltip')) return i18n.tie(props.toggle.tooltip)
+      return i18n.tie(props.tooltip)
+    })
+    const computedBadgeLabel = computed (()  => {
       // Check also for translation key or already translated message
-      if (this.badge && _.has(this.badge, 'label')) return this.$tie(this.badge.label)
+      if (props.badge && _.has(props.badge, 'label')) return i18n.tie(props.badge.label)
       // Take care that changing this to null or '' breaks the display in Quasar
       return undefined
-    }
-  },
-  methods: {
-    bindRouteParams (path) {
+    })
+    const dense = computed(() => {
+      return $q.screen.lt.sm
+    })
+
+    // functions
+    function bindRouteParams (path) {
       // When action is created from code we can directly inject the params
       // However, when created from the config we need to manage dynamic values
       // Clone route context to avoid losing dynamic parameters in this case
-      const currentParams = _.get(this.$route, path, {})
-      const targetParams = _.get(this.route, path, {})
+      const currentParams = _.get(route, path, {})
+      const targetParams = _.get(props.route, path, {})
       // A parameter like ':xxx' in config means xxx is a dynamic property of the route or the context object, not a static value
       // We split the target params object into two sets: one with static keys and one with dynamic keys
       const staticParams = Object.entries(targetParams)
@@ -298,50 +299,65 @@ export default {
         else _.set(params, key, _.get(this.context, value))
       })
       return params
-    },
-    async onClicked (event) {
-      if (!this.propagate) event.stopPropagation()
+    }
+    async function onClicked (event) {
+      if (!props.propagate) event.stopPropagation()
       // Handle the toggle if needed
-      if (this.toggle) {
-        this.isToggled = !this.isToggled
-      }
+      if (props.toggle) toggle()
       // Handle the URL case
-      if (this.url) openURL(this.url)
+      if (props.url) openURL(props.url)
       // Handle the callback case
-      if (this.handler) {
+      if (props.handler) {
         try {
-          await this.handler(this.context, this.isToggled)
+          await props.handler(props.context, isToggled.value)
         } catch (error) {
           // In case an error is raised we assume toggling has failed
-          if (this.toggle) this.isToggled = !this.isToggled
+          if (props.toggle) toggle()
           throw error
         }
       }
       // Handle the route case
-      if (this.route) {
+      if (props.route) {
         // Allow to directly call a given URL, eg OAuth callback
-        if (this.route.url) {
-          location.href = this.route.url
+        if (props.route.url) {
+          location.href = props.route.url
         } else {
           // Process route params
-          this.$router.push(Object.assign({
-            query: this.bindRouteParams('query'),
-            params: this.bindRouteParams('params')
-          }, _.omit(this.route, ['query', 'params']))).catch(() => {})
+          router.push(Object.assign({
+            query: bindRouteParams('query'),
+            params: bindRouteParams('params')
+          }, _.omit(props.route, ['query', 'params']))).catch(() => {})
         }
       }
       // Notify the listeners
-      this.$emit('triggered', this.context, this.isToggled)
+      emit('triggered', props.context, isToggled.value)
+    }
+
+    // watch
+    watch(() => props.toggled, (value) => { 
+      toggle()
+    })
+
+    // expose 
+    return {
+      isToggled,
+      computedLabel,
+      computedIcon,
+      computedColor,
+      computedTooltip,
+      computedBadgeLabel,
+      dense,
+      onClicked
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .k-fab, .k-fab-action {
+  .k-action-fab, .k-action-fab-action {
     border: 2px solid var(--q-secondary);
   }
-  .k-tab-active {
+  .k-action-tab-active {
     border-bottom: solid 2px;
   }
 </style>

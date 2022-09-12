@@ -56,10 +56,10 @@ export default function init () {
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('page', { content: null, mode: undefined, filter: {}, sticky: undefined })
   Store.set('windows', { 
-    left: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] },
-    right: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] },
-    top: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] },
-    bottom: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [] }
+    left: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [], visible: false },
+    right: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [], visible: false },
+    top: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [], visible: false },
+    bottom: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [], visible: false }
   })
   Store.set('fab', { actions: [], filter: {} })
 

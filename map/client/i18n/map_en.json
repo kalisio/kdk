@@ -65,6 +65,7 @@
       "PROBE": "Probe",
       "DISPLAY_POSITION": "Display the coordinates",
       "DISPLAY_LEGEND": "Display legend",
+      "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
       "CREATE_VIEW": "Create view",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",

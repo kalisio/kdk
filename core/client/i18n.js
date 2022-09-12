@@ -49,5 +49,9 @@ export const i18n = {
   },
   t (key, param) {
     return this.i18n.global.t(key, param)
+  },
+  tie (key, param) {
+    if (_.isEmpty(key)) return key
+    return this.i18n.global.te(key) ? this.i18n.global.t(key, param) : key
   }
 }
