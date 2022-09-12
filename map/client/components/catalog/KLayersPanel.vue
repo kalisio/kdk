@@ -1,5 +1,5 @@
 <template>
-  <k-scroll-area :maxHeight="scrollAreaMaxHeight" :style="panelStyle">
+  <KScrollArea :maxHeight="scrollAreaMaxHeight" :style="panelStyle">
     <q-list dense bordered>
       <slot name="header" />
       <k-layers-selector
@@ -27,7 +27,7 @@
       </template>
       <slot name="footer" />
     </q-list>
-  </k-scroll-area>
+  </KScrollArea>
 </template>
 
 <script>
