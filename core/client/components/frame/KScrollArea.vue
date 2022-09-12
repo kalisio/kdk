@@ -36,7 +36,7 @@ const props = defineProps({
 const emit = defineEmits(['scrolled'])
 
 // data
-const scrollArea = ref()
+const scrollArea = ref(null)
 const height = ref(0)
 
 // computed
@@ -70,7 +70,7 @@ function getScroll () {
 
 // watch
 watch(() => props.maxHeight, (maxHeight) => { 
-  height.value = Math.min(scrollArea.value.getScroll().verticalSize, maxHeight)
+  if (scrollArea.value) height.value = Math.min(scrollArea.value.getScroll().verticalSize, maxHeight)
 })
 
 // expose
