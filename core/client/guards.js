@@ -38,7 +38,18 @@ export function permissionsGuard (user, to, from) {
   // Only when permissions are here
   if (_.has(to, 'meta.can')) {
     if (!user) return 'login'
-    return api.can(..._.get(to, 'meta.can'), user) || _.get(to, 'meta.redirect', 'home')
+    let args = _.get(to, 'meta.can')
+    // We allow arguments to refer to route params using the convention :param,
+    // it could be either a query or a path parameter e.g. :eventId ~ route.params.eventId
+    args = args.map(arg => {
+      if (arg.startsWith(':')) {
+        const param = arg.substring(1)
+        return _.get(to, `query.${param}`, _.get(to, `params.${param}`))
+      } else {
+        return arg
+      }
+    })
+    return api.can(...args, user) || _.get(to, 'meta.redirect', 'home')
   } else return true
 }
 

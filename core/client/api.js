@@ -173,33 +173,43 @@ api.can = function () {
   // (operation, service, resource) or (operation, service, context, resource)
   operation = arguments[0]
   service = arguments[1]
+  // (operation, service, context, resource)
   if (nbArguments === 4) {
     context = arguments[2]
     resource = arguments[3]
-  } else {
-    resource = arguments[2]
+  } else { // Either (operation, service, resource) or (operation, service, context)
+    if (typeof arguments[2] === 'string') context = arguments[2]
+    else resource = arguments[2]
   }
-  // Resource can be omitted, in this case it will be replaced by the user argument
+  // Service/Constext/Resource can be omitted, in this case it could be replaced by the user argument
+  if (_.has(service, 'abilities')) service = undefined
+  if (_.has(context, 'abilities')) context = undefined
   if (_.has(resource, 'abilities')) resource = undefined
   
-  const abilities = _.get(user, 'abilities', Store.get('user.abilities'))
+  const abilities = (hasUser ? _.get(user, 'abilities') : Store.get('user.abilities'))
   logger.debug('Check for abilities ', operation, service, context, resource, abilities)
   if (!abilities) {
     logger.debug('Access denied without abilities')
     return false
   }
-  // Check for access to service fisrt
-  const path = api.getServicePath(service, context, false)
-  let result = permissions.hasServiceAbilities(abilities, path)
-  if (!result) {
-    logger.debug('Access to service path ' + path + ' denied')
-    return false
-  } else if (operation === 'service') {
-    // When we only check for service-level access return
-    return true
+  let result
+  // If no service we have a single generic operation
+  if (service) {
+    // Check for access to service fisrt
+    const path = api.getServicePath(service, context, false)
+    result = permissions.hasServiceAbilities(abilities, path)
+    if (!result) {
+      logger.debug('Access to service path ' + path + ' denied')
+      return false
+    } else if (operation === 'service') {
+      // When we only check for service-level access return
+      return true
+    }
+    // Then for access to resource
+    result = permissions.hasResourceAbilities(abilities, operation, service, context, resource)
+  } else {
+    result = abilities.can(operation)
   }
-  // Then for access to resource
-  result = permissions.hasResourceAbilities(abilities, operation, service, context, resource)
   if (!result) {
     logger.debug('Access to resource denied')
   } else {
