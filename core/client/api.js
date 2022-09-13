@@ -168,17 +168,20 @@ api.can = function () {
   // Last argument can always be an additional user,
   // if not defined the user is retrieved from the store
   user = arguments[arguments.length - 1]
-  // operation, service, resource, [user]
+  const hasUser = _.has(user, 'abilities')
+  const nbArguments = (hasUser ? arguments.length - 1 : arguments.length)
+  // (operation, service, resource) or (operation, service, context, resource)
   operation = arguments[0]
   service = arguments[1]
-  resource = arguments[2]
-  // operation, service, context, resource, [user]
-  // check to differentiate from operation, service, resource, user
-  if ((arguments.length >= 4) && !_.has(user, 'abilities')) {
+  if (nbArguments === 4) {
     context = arguments[2]
     resource = arguments[3]
+  } else {
+    resource = arguments[2]
   }
-
+  // Resource can be omitted, in this case it will be replaced by the user argument
+  if (_.has(resource, 'abilities')) resource = undefined
+  
   const abilities = _.get(user, 'abilities', Store.get('user.abilities'))
   logger.debug('Check for abilities ', operation, service, context, resource, abilities)
   if (!abilities) {

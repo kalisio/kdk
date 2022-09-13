@@ -121,7 +121,9 @@ export function hasServiceAbilities (abilities, service) {
   // Take care that in client we have the service path while on server we have the actual object
   const path = typeof service === 'string' ? service : service.getPath()
   // */groups will allow to access any groups service in any context
-  return abilities.can('service', path) || abilities.can('service', _.replace(path, /^.*\//, '*/'))
+  return abilities.can('service', path) ||
+         abilities.can('service', `*/${path}`) ||
+         abilities.can('service', _.replace(path, /^.*\//, '*/'))
 }
 
 export function hasResourceAbilities (abilities, operation, resourceType, context, resource) {

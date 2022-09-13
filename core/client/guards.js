@@ -15,16 +15,16 @@ export function authenticationGuard (user, to, from) {
   // Specific case of OAuth provider routes
   if (to.path.startsWith('/oauth/')) return true
   // Routes accessible whatever the authentication state, eg public
-  if (to.meta.authenticated && to.meta.unauthenticated) {
+  if (_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated')) {
     return true
   }
   // Only when authenticated, eg private
-  if (to.meta.authenticated) {
+  if (_.get(to, 'meta.authenticated')) {
     // If the user is here then he is authenticated so let it go
     if (user) return true
     // Otherwise redirect to login
     else return 'login'
-  } else if (to.meta.unauthenticated) {
+  } else if (_.get(to, 'meta.unauthenticated')) {
     // Only when not authenticated, eg reset password
     // If the user is here then he is authenticated so redirect to home
     if (user) return 'home'
@@ -36,9 +36,9 @@ export function authenticationGuard (user, to, from) {
 // Guard pages based on user permissions
 export function permissionsGuard (user, to, from) {
   // Only when permissions are here
-  if (to.meta.can) {
+  if (_.has(to, 'meta.can')) {
     if (!user) return 'login'
-    return api.can(...to.meta.can, user) || 'home'
+    return api.can(..._.get(to, 'meta.can'), user) || _.get(to, 'meta.redirect', 'home')
   } else return true
 }
 
