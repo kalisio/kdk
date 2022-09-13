@@ -118,5 +118,9 @@ export const Time = {
   },
   getStep () {
     return this.get().step
+  },
+  // Round hours to expected interval, e.g. using 6 hourly interval 00 || 06 || 12 || 18
+  roundHours (hours, interval) {
+    return (Math.floor(hours / interval) * interval)
   }
 }

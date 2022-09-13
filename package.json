@@ -75,6 +75,8 @@
     "lib": "lib"
   },
   "dependencies": {
+    "@casl/ability": "^6.1.1",
+    "@casl/mongoose": "^7.1.0",
     "@feathersjs/authentication": "^5.0.0-pre.28",
     "@feathersjs/authentication-local": "^5.0.0-pre.28",
     "@feathersjs/authentication-oauth": "^5.0.0-pre.28",
@@ -86,7 +88,6 @@
     "@weacast/core": "^2.1.2",
     "abort-controller": "^3.0.0",
     "aws-sdk": "^2.200.0",
-    "casl": "^1.0.3",
     "compression": "^1.6.2",
     "cors": "^2.8.1",
     "cron": "^1.4.1",

@@ -1,13 +1,14 @@
 import _ from 'lodash'
-import casl from 'casl/dist/umd/index.js'
-
-const { Ability, AbilityBuilder, toMongoQuery } = casl
+import { AbilityBuilder, Ability, createAliasResolver } from '@casl/ability'
+import { toMongoQuery } from '@casl/mongoose'
 
 // Define some alias to simplify ability definitions
-Ability.addAlias('update', 'patch')
-Ability.addAlias('read', ['get', 'find'])
-Ability.addAlias('remove', 'delete')
-Ability.addAlias('all', ['read', 'create', 'update', 'remove'])
+const resolveAction = createAliasResolver({
+  update: ['patch'],
+  read: ['get', 'find'],
+  remove: ['delete'],
+  all: ['read', 'create', 'update', 'remove']
+})
 
 export const Roles = {
   member: 0,
@@ -83,7 +84,7 @@ export function defineUserAbilities (subject, can, cannot) {
 
 // Compute abilities for a given user
 export async function defineAbilities (subject, ...args) {
-  const { rules, can, cannot } = AbilityBuilder.extract()
+  const { build, can, cannot } = new AbilityBuilder(Ability)
 
   // Run registered hooks providing any additional arguments used to handle complex use cases
   await Promise.all(hooks.map(async hook => {
@@ -92,13 +93,14 @@ export async function defineAbilities (subject, ...args) {
 
   // CASL cannot infer the object type from the object itself so we need
   // to tell it how he can find the object type, i.e. service name.
-  return new Ability(rules, {
-    subjectName: resource => {
+  return build({
+    detectSubjectType: resource => {
       if (!resource || typeof resource === 'string') {
         return resource
       }
       return resource[RESOURCE_TYPE_KEY]
-    }
+    },
+    resolveAction
   })
 }
 
@@ -162,8 +164,7 @@ export function removeContext (query) {
 export function getQueryForAbilities (abilities, operation, resourceType) {
   if (!abilities) return null
 
-  const rules = abilities.rulesFor(operation, resourceType)
-  const query = toMongoQuery(rules)
+  const query = toMongoQuery(abilities, resourceType, operation)
   // Remove any context to avoid taking it into account because it is not really stored on objects
   // We clone the object here because of references to the abilities rules (see https://github.com/kalisio/kdk/issues/384)
   return (query ? removeContext(_.cloneDeep(query)) : null)
