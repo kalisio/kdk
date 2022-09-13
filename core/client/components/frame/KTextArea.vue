@@ -15,9 +15,10 @@
       @scrolled="onScrolled"
     >
       <!-- content -->
-      <div class="q-pr-lg" 
+      <div 
+        class="q-pr-lg" 
         :class="{ 'k-textarea-collapsed': !isExpanded, 'k-textarea-expanded': isExpanded }"
-        v-html="sanitizedText" 
+        v-html="sanitizedText"
       />
     </KScrollArea>
     <q-btn

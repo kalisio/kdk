@@ -29,7 +29,7 @@
             </slot>
           </div>
           <div
-            class="text-subtitle1 text-weight-medium ellipsis-2-lines"
+            class="text-subtitle1 text-weight-medium ellipsis"
             v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
             style="overflow: hidden">
             {{ name }}
