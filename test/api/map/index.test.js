@@ -331,7 +331,7 @@ describe('map:services', () => {
       count: 'hour'
     })
     expect(results.length === 1)
-    expect(results[0]).to.deep.equal({ hour: 13, total: 4 })
+    expect(results[0]).to.deep.equal({ hour: 13, count: 4 })
     results = await adsbObsService.heatmap({
       query: {
         time: {
@@ -342,7 +342,7 @@ describe('map:services', () => {
       count: 'dayOfYear'
     })
     expect(results.length === 1)
-    expect(results[0]).to.deep.equal({ dayOfYear: 4, total: 5 })
+    expect(results[0]).to.deep.equal({ dayOfYear: 4, count: 5 })
     results = await adsbObsService.heatmap({
       query: {
         time: {
@@ -353,8 +353,8 @@ describe('map:services', () => {
       count: ['hour', 'dayOfWeek']
     })
     expect(results.length === 2)
-    expect(results[1]).to.deep.equal({ hour: 13, dayOfWeek: 6, total: 4 })
-    expect(results[0]).to.deep.equal({ hour: 14, dayOfWeek: 6, total: 1 })
+    expect(results[1]).to.deep.equal({ hour: 13, dayOfWeek: 6, count: 4 })
+    expect(results[0]).to.deep.equal({ hour: 14, dayOfWeek: 6, count: 1 })
   })
   // Let enough time to process
     .timeout(10000)

@@ -31,7 +31,7 @@ export default {
     let groupStage = {
       $group: {
         _id: {}, 
-        total: {
+        count: {
           $sum: 1
         }
       }
@@ -43,9 +43,9 @@ export default {
     debug(`Executing heatmap pipeline`, pipeline)
     const results = await collection.aggregate(pipeline).toArray()
     debug(`Found ${results.length} results for heatmap`, data)
-    // Result is like [{ _id: { hour: 16, dayOfWeek: 1 }, total: 2 }, { _id: { hour: 18, dayOfWeek: 1 }, total: 4 }]
-    // but we make it easier to read like this [{ hour: 16, dayOfWeek: 1, total: 2 }, { hour: 18, dayOfWeek: 1, total: 4 }]
-    return results.map(result => Object.assign(result._id, { total: result.total }))
+    // Result is like [{ _id: { hour: 16, dayOfWeek: 1 }, count: 2 }, { _id: { hour: 18, dayOfWeek: 1 }, count: 4 }]
+    // but we make it easier to read like this [{ hour: 16, dayOfWeek: 1, count: 2 }, { hour: 18, dayOfWeek: 1, count: 4 }]
+    return results.map(result => Object.assign(result._id, { count: result.count }))
   }
 
 }
