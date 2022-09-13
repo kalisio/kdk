@@ -1,5 +1,7 @@
+import _ from 'lodash'
 import logger from 'loglevel'
 import { Store } from './store.js'
+import { api } from './api.js'
 
 // Guards that can be added to customize route guards
 let guards = []
@@ -29,6 +31,15 @@ export function authenticationGuard (user, to, from) {
     // Otherwise let it go handling the specific case of domain root
     else return (to.path === '/' ? 'login' : true)
   }
+}
+
+// Guard pages based on user permissions
+export function permissionsGuard (user, to, from) {
+  // Only when permissions are here
+  if (to.meta.can) {
+    if (!user) return 'login'
+    return api.can(...to.meta.can, user) || 'home'
+  } else return true
 }
 
 // Guard routes for a given user, can be used as router navigation guard

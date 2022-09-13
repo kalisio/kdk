@@ -162,8 +162,24 @@ api.getBaseUrl = function () {
   return origin
 }
 
-api.can = function (operation, service, context, resource) {
-  const abilities = Store.get('user.abilities')
+api.can = function () {
+  let operation, service, context, resource, user
+  // We can call this with different signatures
+  // Last argument can always be an additional user,
+  // if not defined the user is retrieved from the store
+  user = arguments[arguments.length - 1]
+  // operation, service, resource, [user]
+  operation = arguments[0]
+  service = arguments[1]
+  resource = arguments[2]
+  // operation, service, context, resource, [user]
+  // check to differentiate from operation, service, resource, user
+  if ((arguments.length >= 4) && !_.has(user, 'abilities')) {
+    context = arguments[2]
+    resource = arguments[3]
+  }
+
+  const abilities = _.get(user, 'abilities', Store.get('user.abilities'))
   logger.debug('Check for abilities ', operation, service, context, resource, abilities)
   if (!abilities) {
     logger.debug('Access denied without abilities')
