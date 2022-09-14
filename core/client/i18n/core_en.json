@@ -826,5 +826,8 @@
   },
   "KFilter": {
     "SEARCH_LABEL": "Search"
+  },
+  "KTextArea": {
+    "COLLAPSE": "Collapse"
   }
 }

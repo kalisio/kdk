@@ -39,7 +39,7 @@ export default {
     },
     textSize: {
       type: String,
-      default: '1rem'
+      default: '0.875rem'
     },
     direction: {
       type: String,

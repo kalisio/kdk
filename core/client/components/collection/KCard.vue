@@ -46,7 +46,7 @@
         > 
           <div class="q-pb-xs"> 
             <KTextArea 
-              :text="item.description || $t('KCard.NO_DESCRIPTION_LABEL')" 
+              :text="item.description || $tie('KCard.NO_DESCRIPTION_LABEL')" 
               :dense="dense" 
             />
           </div>

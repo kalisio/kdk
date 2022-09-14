@@ -21,18 +21,16 @@
         v-html="sanitizedText"
       />
     </KScrollArea>
-    <q-btn
-      id="expandable-button"
-      v-if="isScrollAreaActive"
-      :icon="buttonIcon"
-      class="k-expandable-button"
-      size="xs"
-      color="grey-6"
-      round
-      flat
-      dense
-      @click.stop="onClick"
-    />
+    <div class="k-expandable-action">
+      <KAction
+        v-if="isExpandable"
+        id="scroll-action"
+        :icon="isExpanded ? 'las la-angle-up' : 'las la-ellipsis-h'"
+        :tooltip="isExpanded ? 'KTextArea.COLLAPSE' : ''"
+        size="xs"
+        class="k-expandable-action"
+      />
+    </div>
   </KExpandable>
 </template>
 
@@ -69,18 +67,23 @@ const props = defineProps({
 // data
 const scrollArea = ref(null)
 const scrollAreaKey = ref(0)
+const isExpandable = ref(false)
 const isExpanded = ref(false)
-const isScrollAreaActive = ref(false)
+const isScrollable = ref (false)
 
 // computed
 const sanitizedText = computed(() => {
   return sanitizeHtml(props.text)
 })
-const buttonIcon = computed (() => {
-  return isExpanded.value ? 'las la-angle-up' : 'las la-angle-down'
+const hasEllipsis = computed(() => {
+  if (isExpanded.value) return isScrollable.value
+  return isExpandable.value
+})
+const cssMinHeight = computed (() => {
+  return `${props.minHeight}px`
 })
 const cssCursor = computed(() => {
-  return isScrollAreaActive.value ? 'pointer' : 'default'
+  return isExpandable.value ? 'pointer' : 'default'
 })
 const cssExpandedFontSize = computed (() => {
   return props.zoom ? '1rem' : '0.875rem'
@@ -88,25 +91,35 @@ const cssExpandedFontSize = computed (() => {
 
 // functions
 function onClick () {
-  if (isScrollAreaActive.value) {
-    isExpanded.value = !isExpanded.value
-    if (!isExpanded.value) scrollArea.value.setScrollPosition('vertical', 0)
+  if (!isExpandable.value) return
+  isExpanded.value = !isExpanded.value
+  if (isExpanded.value) {
+    isScrollable.value = true
+  } else {
+    scrollArea.value.setScrollPosition('vertical', 0)
   }
 }
 function onScrolled (info) {
   if (info.verticalSize > props.minHeight) {
-    isScrollAreaActive.value = true
-    if (info.verticalPercentage > 0) isExpanded.value = true
+    isExpandable.value = true
+    if (info.verticalSize > props.maxHeight) {
+      isScrollable.value = true
+    } else {
+      isScrollable.value = false
+    }
   } else {
-    isScrollAreaActive.value = false
+    isExpandable.value = false
+    isScrollable.value = false
   }
 }
 
 // watch
 watch(() => props.text, (text) => { 
-  // Reset the states and force rerender the scroll area to handle the new content
-  isScrollAreaActive.value = false
+  // Reset the states 
+  isExpandable.value = false
   isExpanded.value = false
+  isScrollable.value = false
+  // force the scroll area to be rendered
   scrollAreaKey.value += 1 
 })
 </script>
@@ -125,10 +138,11 @@ watch(() => props.text, (text) => {
 .k-expandable:hover {
   cursor: v-bind('cssCursor');
 }
-.k-expandable-button {
+.k-expandable-action {
   position: absolute;
-  bottom: 4px;
-  right: 8px;
+  bottom: 0px;
+  right: 4px;
+  padding: 1px;
   background-color: white;
 }
 </style>
