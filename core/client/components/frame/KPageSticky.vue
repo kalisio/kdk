@@ -40,7 +40,7 @@ const props = defineProps({
 
 // computed
 const hasContent = computed(() => {
-  return !_.isEmpty(props.content.value)
+  return !_.isEmpty(props.content)
 })
 </script>
 
