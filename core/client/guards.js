@@ -42,7 +42,7 @@ export function permissionsGuard (user, to, from) {
     // We allow arguments to refer to route params using the convention :param,
     // it could be either a query or a path parameter e.g. :eventId ~ route.params.eventId
     args = args.map(arg => {
-      if (arg.startsWith(':')) {
+      if (typeof arg === 'string' && arg.startsWith(':')) {
         const param = arg.substring(1)
         return _.get(to, `query.${param}`, _.get(to, `params.${param}`))
       } else {
