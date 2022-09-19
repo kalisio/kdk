@@ -106,7 +106,7 @@ export default {
 
       return allCoordsHaveHeight ? [profileHeights, profileLabels] : [[], []]
     },
-    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels, chartWidth) {
+    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth) {
       const update = {
         type: 'line',
         data: { datasets: [] },
@@ -294,7 +294,7 @@ export default {
           label: this.$t('KElevationProfile.PROFILE_CHART_LEGEND'),
           data: profileHeights.map((h, i) => { return { x: profileLabels[i], y: h } }),
           fill: false,
-          borderColor: '#51b0e8',
+          borderColor: profileColor,
           backgroundColor: '#0986bc',
           pointRadius: 3
         })
@@ -446,7 +446,12 @@ export default {
         skipFirstPoint = true
       }
 
-      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, chartWidth)
+      // try to extract line color from layer if available
+      const layer = this.layer
+      let profileColor = undefined
+      if (_.has(layer, 'leaflet.stroke-color')) profileColor = _.get(layer, 'leaflet.stroke-color')
+      if (profileColor === undefined) profileColor = _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8')
+      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth)
 
       this.profile = featureCollection(this.profile)
 
