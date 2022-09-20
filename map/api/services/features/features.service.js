@@ -8,7 +8,7 @@ export default {
 
   // Count number of elements per time periods (hours, days, etc.)
   async heatmap (data, params) {
-    let { query, field, count } = data
+    let { query, field, count, timezone } = data
     // We could agregate using a single or multiple operators, e.g. hour or hour/dayOfWeek
     if (!Array.isArray(count)) count = [count]
     // Default time field
@@ -37,7 +37,8 @@ export default {
       }
     }
     count.forEach(countItem => {
-      _.set(groupStage, `$group._id[${countItem}]`, { [`$${countItem}`]: `$${field}` })
+      if (timezone) _.set(groupStage, `$group._id[${countItem}]`, { [`$${countItem}`]: { date: `$${field}`, timezone } })
+      else _.set(groupStage, `$group._id[${countItem}]`, { [`$${countItem}`]: `$${field}` })
     })
     const pipeline = [matchStage, groupStage]
     debug(`Executing heatmap pipeline`, pipeline)

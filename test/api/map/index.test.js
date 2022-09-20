@@ -335,6 +335,18 @@ describe('map:services', () => {
     results = await adsbObsService.heatmap({
       query: {
         time: {
+          $gte: new Date('2019-01-04T13:00:00.000Z').toISOString(),
+          $lte: new Date('2019-01-04T14:00:00.000Z').toISOString()
+        }
+      },
+      count: 'hour',
+      timezone: '+02:00'
+    })
+    expect(results.length === 1)
+    expect(results[0]).to.deep.equal({ hour: 15, count: 4 })
+    results = await adsbObsService.heatmap({
+      query: {
+        time: {
           $gte: new Date('2019-01-03T00:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-05T00:00:00.000Z').toISOString()
         }
