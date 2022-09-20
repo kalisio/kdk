@@ -97,6 +97,11 @@ export default {
       }
       return hasVariable
     },
+    getBaseUnit(variable, properties) {
+      const unit = variable.units[0]
+      // Could be either directly the unit or the property of the measure storing the unit
+      return _.get(properties, unit, unit)
+    },
     getSelectedRunTime () {
       // Set default run as latest
       return this.runTime || _.last(this.runTimes)
@@ -124,7 +129,7 @@ export default {
         // Check if we are targetting a specific level
         const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
         // Falback to base unit
-        const baseUnit = variable.units[0]
+        const baseUnit = this.getBaseUnit(variable, properties)
         // Get default unit for this quantity instead if available
         const defaultUnit = Units.getDefaultUnit(baseUnit)
         const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
@@ -158,7 +163,7 @@ export default {
         // Check if we are targetting a specific level
         const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
         // Falback to base unit
-        const baseUnit = variable.units[0]
+        const baseUnit = this.getBaseUnit(variable, properties)
         // Get default unit for this quantity instead if available
         const defaultUnit = Units.getDefaultUnit(baseUnit)
         const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
