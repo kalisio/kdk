@@ -107,9 +107,12 @@ export default {
     },
     isVisible (category) {
       // User-defined categories are always visible, even if empty
+      if (category._id) return true
       // Built-in categories only if not empty as depending on the configuration
       // built-in layers might be unavailable
-      return (category._id ? true : this.layersByCategory[category.name].length > 0)
+      const isEmpty = (this.layersByCategory[category.name].length > 0)
+      
+      return (isEmpty ? _.get(category, 'hideIfEmpty', true) : true)
     },
     getColor (category) {
       return 'text-' + _.get(category, 'icon.color', 'primary')
