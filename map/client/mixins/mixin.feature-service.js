@@ -91,7 +91,9 @@ export const featureService = {
         if (options.variables) {
           query = Object.assign({
             $groupBy: options.featureId,
-            $aggregate: options.variables.map(variable => variable.name)
+            // Take care we might have multiple variables targetting the same value name
+            // but that differentiate using others properties (compound feature ID)
+            $aggregate: _.uniq(options.variables.map(variable => variable.name))
           }, query)
         } else if (options.featureId) {
           query = Object.assign({
@@ -172,8 +174,13 @@ export const featureService = {
       let probedLocation
       this.setCursor('processing-cursor')
       try {
+        // Support compound ID
+        const featureId = (Array.isArray(layer.featureId) ? layer.featureId : [layer.featureId])
+        const baseQuery = featureId.reduce((result, id) =>
+          Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
+        {})
         const result = await this.getFeatures(_.merge({
-          baseQuery: { ['properties.' + layer.featureId]: _.get(feature, 'properties.' + layer.featureId) }
+          baseQuery
         }, layer), {
           $gte: startTime.format(),
           $lte: endTime.format()

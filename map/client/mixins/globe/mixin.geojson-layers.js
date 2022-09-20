@@ -148,9 +148,11 @@ export const geojsonLayers = {
       // Check for valid type
       if (cesiumOptions.type !== 'geoJson') return
       // Cesium expect id to be in a 'id' property
-      const featureId = _.get(options, 'featureId')
+      let featureId = _.get(options, 'featureId')
+      // Support compound index
+      featureId = (Array.isArray(featureId) ? featureId : [featureId])
       options.processor = (feature) => {
-        feature.id = _.get(feature, 'properties.' + featureId, _.get(feature, featureId))
+        feature.id = featureId.map(id => _.get(feature, 'properties.' + id, _.get(feature, id))).join('-')
       }
       // For activities
       if (_.has(this, 'activityOptions.engine.cluster')) {

@@ -51,8 +51,14 @@ export const geojsonLayers = {
       // Alter type as required by the plugin
       leafletOptions.type = 'realtime'
       // We first need to create an underlying container or setup Id function
-      const id = _.get(options, 'featureId', _.get(leafletOptions, 'id', '_id'))
-      if (id) _.set(leafletOptions, 'getFeatureId', (feature) => _.get(feature, 'properties.' + id, _.get(feature, id)))
+      let featureId = _.get(options, 'featureId', _.get(leafletOptions, 'id', '_id'))
+      if (featureId) {
+        // Support compound index
+        featureId = (Array.isArray(featureId) ? featureId : [featureId])
+        _.set(leafletOptions, 'getFeatureId', (feature) => {
+          return featureId.map(id => _.get(feature, 'properties.' + id, _.get(feature, id))).join('-')
+        })
+      }
       const container = _.get(leafletOptions, 'container')
       // If container given and not already instanciated, do it
       if (typeof container === 'string') {

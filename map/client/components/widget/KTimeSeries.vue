@@ -87,8 +87,15 @@ export default {
     }
   },
   methods: {
-    hasVariable (name, properties) {
-      return (properties[name] && Array.isArray(properties[name]))
+    hasVariable (name, properties, match) {
+      // The feature target the variable if it has at least the target variable value name
+      let hasVariable = (properties[name] && Array.isArray(properties[name]))
+      // Test if the variable needs to match additional properties
+      // in case multiple variables target the same property value name
+      if (match) {
+        _.forOwn(match, (value, key) => { hasVariable = hasVariable && (properties[key] === value) })
+      }
+      return hasVariable
     },
     getSelectedRunTime () {
       // Set default run as latest
@@ -123,7 +130,7 @@ export default {
         const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
         const label = this.$t(variable.label) || variable.label
         // Aggregated variable available for feature ?
-        if (this.hasVariable(name, properties)) {
+        if (this.hasVariable(name, properties, variable.baseQuery)) {
           // Build data structure as expected by visualisation
           let values = properties[name].map((value, index) => ({ x: time[name][index], y: Units.convert(value, baseUnit, unit) }))
           // Keep only selected value if multiple are provided for the same time (eg different forecasts)
@@ -156,7 +163,7 @@ export default {
         const defaultUnit = Units.getDefaultUnit(baseUnit)
         const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
         // Variable available for feature ?
-        if (this.hasVariable(name, properties)) {
+        if (this.hasVariable(name, properties, variable.baseQuery)) {
           this.yAxes[`y${axisId}`] = _.merge({
             unit: unit,
             display: 'auto',

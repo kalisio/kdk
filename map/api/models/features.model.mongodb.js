@@ -4,7 +4,10 @@ export default function (app, options) {
   options.Model.createIndex({ geometry: '2dsphere' })
   options.Model.createIndex({ layer: 1 })
   if (options.featureId) {
-    options.Model.createIndex({ ['properties.' + options.featureId]: 1 })
+    // Support compound index
+    const featureId = (Array.isArray(options.featureId) ? options.featureId : [options.featureId])
+    const index = featureId.reduce((result, id) => Object.assign(result, { ['properties.' + id]: 1 }), {})
+    options.Model.createIndex(index)
   }
   try {
     options.Model.createIndex({ 'properties.$**': 1 })

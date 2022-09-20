@@ -196,8 +196,11 @@ export async function aggregateFeaturesQuery (hook) {
   // Perform aggregation
   if (query.$aggregate) {
     const collection = service.Model
-    const featureId = (service.options ? service.options.featureId : '')
-    const featureIdType = (service.options ? service.options.featureIdType : 'string')
+    let featureId = (service.options ? service.options.featureId : [])
+    // Support compound ID
+    featureId = (Array.isArray(featureId) ? featureId : [featureId])
+    let featureIdType = (service.options ? service.options.featureIdType : [])
+    featureIdType = (Array.isArray(featureIdType) ? featureIdType : [featureIdType])
     const ids = typeof query.$groupBy === 'string' // Group by matching ID(s), ie single ID or array of field to create a compound ID
       ? { [query.$groupBy]: '$properties.' + query.$groupBy }
     // Aggregated in an accumulator to avoid conflict with feature properties
@@ -230,13 +233,19 @@ export async function aggregateFeaturesQuery (hook) {
     }
     // The query contains the match stage except options relevent to the aggregation pipeline
     const match = _.omit(query, ['$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
-    const aggregateOptions = {}
+    const aggregateOptions = {
+      hint: {}
+    }
     // Check for any required type conversion (eg HTTP requests)
-    if (featureId && _.has(match, 'properties.' + featureId)) {
-      if (featureIdType === 'number') _.set(match, 'properties.' + featureId, _.toNumber(_.get(match, 'properties.' + featureId)))
-      // Check if we could provide a hint to the aggregation when targeting feature ID
-      // Indeed, in that case, we define the appropriate index
-      aggregateOptions.hint = { ['properties.' + featureId]: 1 }
+    for (let i = 0; i < featureId.length; i++) {
+      const id = featureId[i]
+      const idType = featureIdType[i]
+      if (_.has(match, 'properties.' + id)) {
+        if (idType === 'number') _.set(match, 'properties.' + id, _.toNumber(_.get(match, 'properties.' + id)))
+        // Check if we could provide a hint to the aggregation when targeting feature ID
+        // Indeed, in that case, we define the appropriate index
+        aggregateOptions.hint['properties.' + id] = 1
+      }
     }
     // Ensure we do not mix results with/without relevant element values
     // by separately querying each element then merging
@@ -265,7 +274,8 @@ export async function aggregateFeaturesQuery (hook) {
       pipeline.forEach(stage => {
         _.forOwn(stage, (value, key) => debug('Stage', key, value))
       })
-      const elementResults = await collection.aggregate(pipeline, aggregateOptions).toArray()
+      // FIXME: Removed aggregation hint option as if a request with properties not in index raises an error
+      const elementResults = await collection.aggregate(pipeline).toArray()
       debug(`Generated ${elementResults.length} feature(s) for ${element} element`, elementResults)
       // Rearrange data so that we get ordered arrays indexed by element
       elementResults.forEach(result => {
