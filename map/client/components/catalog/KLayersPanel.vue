@@ -10,7 +10,7 @@
           v-if="isVisible(category)"
           :key="getId(category)"
           :id="getId(category)"
-          :header-class="getColor(category)"
+          :header-class="getHeaderClass(category)"
           :icon="getIcon(category)"
           :label="$t(category.name)"
           :default-opened="getDefaultOpened(category)"
@@ -114,11 +114,12 @@ export default {
       
       return (isEmpty ? _.get(category, 'hideIfEmpty', true) : true)
     },
-    getColor (category) {
+    getHeaderClass (category) {
+      if (category.headerClass) return category.headerClass
       return 'text-' + _.get(category, 'icon.color', 'primary')
     },
     getIcon (category) {
-      return _.get(category, 'icon.name', _.get(category, 'icon', 'las la-layer-group'))
+      return _.get(category, 'icon.name', _.get(category, 'icon'))
     },
     getDefaultOpened (category) {
       // if category explicitely specify default opened state, use that
