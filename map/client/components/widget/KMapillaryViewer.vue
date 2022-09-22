@@ -66,17 +66,15 @@ export default {
       }
     },
     refreshActions () {
-      this.$store.patch('window', {
-        widgetActions: [
-          {
-            id: 'center',
-            icon: 'las la-eye',
-            tooltip: 'KMapillaryViewer.CENTER_ON',
-            visible: !_.isNil(this.imageId),
-            handler: this.centerMap
-          }
-        ]
-      })
+      this.window.widgetActions = [
+        {
+          id: 'center',
+          icon: 'las la-eye',
+          tooltip: 'KMapillaryViewer.CENTER_ON',
+          visible: !_.isNil(this.imageId),
+          handler: this.centerMap
+        }
+      ]
     },
     async refresh () {
       // Refresh the actions

@@ -60,31 +60,29 @@ export default {
   },
   methods: {
     refreshActions () {
-      this.$store.patch('window', {
-        widgetActions: [
-          {
-            id: 'center-view',
-            icon: 'las la-eye',
-            tooltip: this.$t('KElevationProfile.CENTER_ON'),
-            visible: this.feature,
-            handler: this.onCenterOn
-          },
-          {
-            id: 'copy-properties',
-            icon: 'las la-clipboard',
-            tooltip: this.$t('KElevationProfile.COPY_PROFILE'),
-            visible: this.profile,
-            handler: this.onCopyProfile
-          },
-          {
-            id: 'export-feature',
-            icon: 'img:statics/json-icon.svg',
-            tooltip: this.$t('KElevationProfile.EXPORT_PROFILE'),
-            visible: this.profile,
-            handler: this.onExportProfile
-          }
-        ]
-      })
+      this.window.widgetActions = [
+        {
+          id: 'center-view',
+          icon: 'las la-eye',
+          tooltip: this.$t('KElevationProfile.CENTER_ON'),
+          visible: this.feature,
+          handler: this.onCenterOn
+        },
+        {
+          id: 'copy-properties',
+          icon: 'las la-clipboard',
+          tooltip: this.$t('KElevationProfile.COPY_PROFILE'),
+          visible: this.profile,
+          handler: this.onCopyProfile
+        },
+        {
+          id: 'export-feature',
+          icon: 'img:statics/json-icon.svg',
+          tooltip: this.$t('KElevationProfile.EXPORT_PROFILE'),
+          visible: this.profile,
+          handler: this.onExportProfile
+        }
+      ]
     },
     extractProfileData (profiles) {
       // Extract profile heights if available on the segments used to compute elevation

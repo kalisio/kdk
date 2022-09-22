@@ -191,7 +191,8 @@ export function baseActivity (name) {
           logger.error(`No widgets unregistered for ${placement} window`)
           return
         }
-        if (window.current === '') this.$store.patch(`windows.${placement}`, { current: window.widgets[0] })
+        console.log(window.widgets)
+        if (window.current === '') this.$store.patch(`windows.${placement}`, { current: window.widgets[0].id })
         this.$store.patch(`windows.${placement}`, { visible: true })
       },
       closeWindow (placement) {

@@ -58,31 +58,29 @@ export default {
   },
   methods: {
     refreshActions () {
-      this.$store.patch('window', {
-        widgetActions: [
-          {
-            id: 'center-view',
-            icon: 'las la-eye',
-            tooltip: this.$t('KInformationBox.CENTER_ON'),
-            visible: this.feature,
-            handler: this.onCenterOn
-          },
-          {
-            id: 'copy-properties',
-            icon: 'las la-clipboard',
-            tooltip: this.$t('KInformationBox.COPY_PROPERTIES'),
-            visible: this.properties,
-            handler: this.onCopyProperties
-          },
-          {
-            id: 'export-feature',
-            icon: 'kdk:json.svg',
-            tooltip: this.$t('KInformationBox.EXPORT_FEATURE'),
-            visible: this.feature,
-            handler: this.onExportFeature
-          }
-        ]
-      })
+      this.window.widgetActions = [
+        {
+          id: 'center-view',
+          icon: 'las la-eye',
+          tooltip: this.$t('KInformationBox.CENTER_ON'),
+          visible: this.feature,
+          handler: this.onCenterOn
+        },
+        {
+          id: 'copy-properties',
+          icon: 'las la-clipboard',
+          tooltip: this.$t('KInformationBox.COPY_PROPERTIES'),
+          visible: this.properties,
+          handler: this.onCopyProperties
+        },
+        {
+          id: 'export-feature',
+          icon: 'kdk:json.svg',
+          tooltip: this.$t('KInformationBox.EXPORT_FEATURE'),
+          visible: this.feature,
+          handler: this.onExportFeature
+        }
+      ]
     },
     refresh () {
       this.properties = null

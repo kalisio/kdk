@@ -443,9 +443,7 @@ export default {
         visible: this.probedVariables,
         handler: this.onExportSeries
       }])
-      this.$store.patch('window', {
-        widgetActions: actions
-      })
+      this.window.widgetActions = actions
     },
     async refresh () {
       // Clear previous run timle setup if any
