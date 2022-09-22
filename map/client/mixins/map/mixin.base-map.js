@@ -188,6 +188,10 @@ export default {
         this.updateLeafletPanesVisibility(panes.map(paneOptions => paneOptions.name || paneOptions.zIndex.toString()))
       }
 
+      // Some Leaflet constructors can have additional arguments given as options
+      let args = _.get(leafletOptions, 'options', [])
+      // Can be an array or a single object for a single additonnal argument
+      if (typeof args === 'object') args = [args]
       let layer
       // We use the source option as the first parameter of leaflet layer constructors,
       // which is usually the base URL
@@ -196,9 +200,9 @@ export default {
         // Remove it from options to avoid sending it twice
         // and side effects like https://github.com/kalisio/kdk/issues/219
         delete leafletOptions.source
-        layer = _.get(L, leafletOptions.type)(source, leafletOptions)
+        layer = _.get(L, leafletOptions.type)(source, _.omit(leafletOptions, ['options']), ...args)
       } else {
-        layer = _.get(L, leafletOptions.type)(leafletOptions)
+        layer = _.get(L, leafletOptions.type)(_.omit(leafletOptions, ['options']), ...args)
       }
       return layer
     },
