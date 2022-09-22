@@ -83,6 +83,9 @@ export const baseItem = {
     onItemSelected (section) {
       this.$emit('item-selected', this.item, section)
     },
+    onItemExpanded (expanded) {
+      this.$emit('item-expanded', this.item, expanded)
+    },
     canViewItem () {
       return this.$can('read', this.service, this.contextId, this.item)
     },

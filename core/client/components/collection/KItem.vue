@@ -20,7 +20,7 @@
       Content section
     -->
     <slot name="item-content">
-      <q-item-section @click="onItemSelected('content')">
+      <q-item-section v-show="!expanded" @click="onItemSelected('content')">
         <q-item-label>{{ name }}</q-item-label>
         <q-item-label caption lines="2">
           <span v-html="description" />
@@ -28,29 +28,73 @@
       </q-item-section>
     </slot>
     <!--
+      Expanded content section
+    -->
+    <KExpandable v-show="expandable"
+      class="k-expandable"
+      v-model="expanded"
+      :minHeight="minHeight" 
+      :maxHeight="maxHeight"
+    >
+      <!--KScrollArea 
+        :maxHeight="maxHeight"
+        :visible="expanded"
+      -->
+        <slot name="item-expanded-content">
+        </slot>
+      <!--/KScrollArea-->
+    </KExpandable>
+    <!--
       Actions section
     -->
     <slot name="item-actions">
-      <q-item-section side>
-        <k-panel id="item-actions" :content="itemActions" :context="$props" />
-      </q-item-section>
+      <k-panel id="item-actions" :content="itemActions" :context="$props" />
+      <span>
+        <KAction v-show="expandable" class="absolute-right"
+          :icon="expanded ? 'las la-angle-up' : 'las la-angle-down'"
+          :handler="onExpand"
+        />
+      </span>
     </slot>
   </q-item>
 </template>
 
 <script>
-import { KPanel, KAvatar } from '../frame'
+import { KPanel, KAvatar, KExpandable, KScrollArea } from '../frame'
 import { baseItem } from '../../mixins'
 
 export default {
   components: {
     KPanel,
-    KAvatar
+    KAvatar,
+    KExpandable,
+    KScrollArea
   },
   mixins: [baseItem],
+  props: {
+    expandable: {
+      type: Boolean,
+      default: false
+    },
+    minHeight: {
+      type: Number,
+      default: 0
+    },
+    maxHeight: {
+      type: Number,
+      default: 300
+    }
+  },
   data () {
     return {
-      toggled: false
+      toggled: false,
+      expanded: false
+    }
+  },
+  methods: {
+    onExpand () {
+      this.expanded = !this.expanded
+      this.onItemExpanded(this.expanded)
     }
   }
 }
@@ -59,5 +103,8 @@ export default {
 <style lang="scss">
   .selected {
     font-weight: bold;
+  }
+  .k-expandable {
+    position: relative;
   }
 </style>
