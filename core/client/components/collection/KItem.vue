@@ -19,43 +19,45 @@
     <!--
       Content section
     -->
-    <slot name="item-content">
-      <q-item-section v-show="!expanded" @click="onItemSelected('content')">
+    <q-item-section v-show="!expanded" @click="onExpand()">
+      <slot name="item-content">
         <q-item-label>{{ name }}</q-item-label>
         <q-item-label caption lines="2">
           <span v-html="description" />
         </q-item-label>
-      </q-item-section>
-    </slot>
+      </slot>
+    </q-item-section>
     <!--
       Expanded content section
     -->
-    <KExpandable v-show="expandable"
-      class="k-expandable"
-      v-model="expanded"
-      :minHeight="minHeight" 
-      :maxHeight="maxHeight"
-    >
-      <!--KScrollArea 
+    <q-item-section v-show="expanded" @click="onExpand()">
+      <KExpandable
+        class="k-expandable full-width"
+        v-model="expanded"
+        :minHeight="minHeight" 
         :maxHeight="maxHeight"
-        :visible="expanded"
-      -->
-        <slot name="item-expanded-content">
-        </slot>
-      <!--/KScrollArea-->
-    </KExpandable>
+      >
+        <KScrollArea 
+          :maxHeight="maxHeight"
+          :visible="true"
+        >
+          <slot name="item-expanded-content">
+          </slot>
+        </KScrollArea>
+      </KExpandable>
+    </q-item-section>
     <!--
       Actions section
     -->
-    <slot name="item-actions">
-      <k-panel id="item-actions" :content="itemActions" :context="$props" />
-      <span>
+    <q-item-section side top>
+      <slot name="item-actions">
+        <k-panel id="item-actions" :content="itemActions" :context="$props" />
         <KAction v-show="expandable" class="absolute-right"
           :icon="expanded ? 'las la-angle-up' : 'las la-angle-down'"
           :handler="onExpand"
         />
-      </span>
-    </slot>
+      </slot>
+    </q-item-section>
   </q-item>
 </template>
 
@@ -93,8 +95,11 @@ export default {
   },
   methods: {
     onExpand () {
-      this.expanded = !this.expanded
-      this.onItemExpanded(this.expanded)
+      if (this.expandable) {
+        this.expanded = !this.expanded
+        this.onItemExpanded(this.expanded)
+      }
+      this.onItemSelected('content')
     }
   }
 }
