@@ -7,8 +7,8 @@
     no-caps
     no-wrap
     :color="computedColor"
-    :icon="!iconRight ? computedIcon : null"
-    :icon-right="iconRight ? computedIcon : null"
+    :icon="!iconRight ? computedIcon : undefined"
+    :icon-right="iconRight ? computedIcon : undefined"
     :size="size"
     flat
     :round="label === null"

@@ -6,9 +6,7 @@
     <div v-if="hasHeader">
       <div v-bind:class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }">
         <slot name="card-header">
-          <div class="row full-width">
-            <k-panel id="card-header-panel" :content="computedHeader" :context="$props" class="full-width" />
-          </div>
+          <k-panel id="card-header-panel" :content="computedHeader" :context="$props" class="full-width no-wrap" />
         </slot>
       </div>
     </div>
@@ -66,9 +64,7 @@
       <q-separator />
       <div v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }">
         <slot name="card-footer">
-          <div class="row justify-end">
-            <k-panel id="card-footer-panel" :content="computedFooter" :context="$props" />
-          </div>
+          <k-panel id="card-footer-panel" :content="computedFooter" :context="$props" class="full-width no-wrap" />
         </slot>
       </div>
     </div>
