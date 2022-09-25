@@ -1,17 +1,18 @@
 <template>
   <KSelect
     :options="options"
-    @changed="onOptionChanged" 
+    :tooltip="tooltip"
+    @option-chosen="onOptionChanged" 
   />
 </template>
 
 <script>
 import _ from 'lodash'
-import KSelect from '../menu/KSelect.vue'
+import KOptionsChooser from '../input/KOptionsChooser.vue'
 
 export default {
   components: {
-    KSelect
+    KOptionsChooser
   },
   props: {
     options: {
