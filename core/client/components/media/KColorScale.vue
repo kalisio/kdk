@@ -7,7 +7,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, onMounted } from 'vue'
+import { ref, watchEffect, onMounted } from 'vue'
 import { uid } from 'quasar'
 import chroma from 'chroma-js'
 
@@ -50,8 +50,8 @@ const props = defineProps({
 const canvasId = uid()
 const canvas = ref(null)
 const context = ref(null)
-const callRefresh = _.debounce((size) => { refresh(size) }, 50)
-const margin = 2
+const callRefresh = _.debounce(() => { refresh() }, 100)
+const margin = 4
 
 // functions
 function drawDiscreteHorizontalScale () {
@@ -143,9 +143,8 @@ function drawContinuousVerticalScale () {
   context.value.fillText(props.domain[0], x, canvas.value.height)
   context.value.fillText(props.domain[1], x, props.fontSize)
 }
-function refresh(size) {
-  canvas.value.width = size.width
-  canvas.value.height = size.height
+function refresh() {
+  context.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
   if (props.classes) {
     if (props.direction === 'horizontal') drawDiscreteHorizontalScale()
     else drawDiscreteVerticalScale()
@@ -155,8 +154,17 @@ function refresh(size) {
   }
 }
 function onResized (size) {
-  if (canvas.value) callRefresh(size)
+  if (canvas.value) {
+    canvas.value.width = size.width
+    canvas.value.height = size.height
+    callRefresh()
+  }
 }
+
+// watch
+watchEffect(() => {
+  if (canvas.value) refresh()
+})
 
 // hooks
 onMounted(() => {
