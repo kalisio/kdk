@@ -123,6 +123,7 @@ export default {
               }
             } else if (args.event.type === 'mouseout') {
               chart.config.options.vline.enabled = false
+              this.kActivity.removeSelectionHighlight('elevation-profile')
             }
           },
           afterDraw: (chart) => {
@@ -169,7 +170,12 @@ export default {
                 }
 
                 const feature = along(segment, abscissaKm, { units: 'kilometers' })
-                this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+                if (this.kActivity.hasSelectionHighlight('elevation-profile')) {
+                  this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+                } else {
+                  feature.properties = { 'marker-type': 'marker' }
+                  this.kActivity.addSelectionHighlight('elevation-profile', feature)
+                }
               }
             }
 
@@ -327,9 +333,6 @@ export default {
         this.$toast({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
-
-      const featureStyle = { properties: { 'marker-type': 'marker' } }
-      this.kActivity.addSelectionHighlight('elevation-profile', featureStyle)
 
       this.chartDistanceUnit = 'm'
       this.chartHeightUnit = Units.getDefaultUnit('altitude')
