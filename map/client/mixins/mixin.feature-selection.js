@@ -71,13 +71,20 @@ export default {
         this.center(this.selection.location.lng, this.selection.location.lat)
       }
     },
+    hasSelectionHighlight (id) {
+      return _.has(this.selectionHighlight, id)
+    },
     addSelectionHighlight (id, feature = {}) {
       // Remove previous selection if any
       this.removeSelectionHighlight(id)
       // Start from selected feature or location to build highlight
       const highlight = (this.selection.feature ? _.cloneDeep(this.selection.feature) : {
         type: 'Feature',
-        geometry: { type: 'Point', coordinates: [this.selection.location.lng, this.selection.location.lat] }
+        geometry: {
+          type: 'Point',
+          coordinates: [
+            _.get(this.selection, 'location.lng', 0),
+            _.get(this.selection, 'location.lat', 0)] }
       })
       // Use bbox for line/polygons
       if (highlight.geometry.type !== 'Point') {
