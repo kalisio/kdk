@@ -249,8 +249,8 @@ describe('map:services', () => {
     const result = await vigicruesObsService.find({
       query: {
         time: {
-          $gt: new Date('2018-11-08T18:00:00').toISOString(),
-          $lt: new Date('2018-11-08T22:00:00').toISOString()
+          $gte: new Date('2018-11-08T18:00:00').toISOString(),
+          $lte: new Date('2018-11-08T22:00:00').toISOString()
         }
       }
     })
@@ -270,7 +270,9 @@ describe('map:services', () => {
   }
 
   it('performs element aggregation on vigicrues observations service', async () => {
-    const result = await vigicruesObsService.find({ query: Object.assign({}, aggregationQuery) })
+    const result = await vigicruesObsService.find({
+      query: Object.assign({}, aggregationQuery)
+    })
     expect(result.features.length).to.equal(1)
     const feature = result.features[0]
     expect(feature.time).toExist()
@@ -283,7 +285,9 @@ describe('map:services', () => {
     .timeout(5000)
 
   it('performs sorted element aggregation on vigicrues observations service', async () => {
-    const result = await vigicruesObsService.find({ query: Object.assign({ $sort: { time: -1 } }, aggregationQuery) })
+    const result = await vigicruesObsService.find({
+      query: Object.assign({ $sort: { time: -1 } }, aggregationQuery)
+    })
     expect(result.features.length).to.equal(1)
     const feature = result.features[0]
     expect(feature.time).toExist()
@@ -291,6 +295,41 @@ describe('map:services', () => {
     expect(feature.time.H.length === 5).beTrue()
     expect(feature.time.H[0].isAfter(feature.time.H[1])).beTrue()
     expect(feature.properties.H.length === 5).beTrue()
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('performs sorted single element aggregation on vigicrues observations service', async () => {
+    const result = await vigicruesObsService.find({
+      query: Object.assign({ $sort: { time: -1 }, $limit: 1 }, aggregationQuery)
+    })
+    expect(result.features.length).to.equal(1)
+    const feature = result.features[0]
+    expect(feature.time).toExist()
+    expect(feature.time.H).toExist()
+    expect(feature.time.H.isValid()).beTrue()
+    expect(feature.properties.H).toExist()
+    expect(typeof feature.properties.H).to.equal('number')
+    expect(feature.properties.H).to.equal(0.38)
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('performs custom element aggregation on vigicrues observations service', async () => {
+    const result = await vigicruesObsService.find({
+      query: Object.assign({ $sort: { time: -1 }, $limit: 1, $group: { maxH: { $max: '$properties.H' } } }, aggregationQuery)
+    })
+    expect(result.features.length).to.equal(1)
+    const feature = result.features[0]
+    expect(feature.time).toExist()
+    expect(feature.time.H).toExist()
+    expect(feature.time.H.isValid()).beTrue()
+    expect(feature.properties.H).toExist()
+    expect(typeof feature.properties.H).to.equal('number')
+    expect(feature.properties.H).to.equal(0.38)
+    expect(feature.properties.maxH).toExist()
+    expect(typeof feature.properties.maxH).to.equal('number')
+    expect(feature.properties.maxH).to.equal(0.39)
   })
   // Let enough time to process
     .timeout(5000)
@@ -365,8 +404,10 @@ describe('map:services', () => {
       count: ['hour', 'dayOfWeek']
     })
     expect(results.length === 2)
-    expect(results[1]).to.deep.equal({ hour: 13, dayOfWeek: 6, count: 4 })
-    expect(results[0]).to.deep.equal({ hour: 14, dayOfWeek: 6, count: 1 })
+    results.forEach(result => {
+      if (result.hour === 13) expect(result).to.deep.equal({ hour: 13, dayOfWeek: 6, count: 4 })
+      else expect(result).to.deep.equal({ hour: 14, dayOfWeek: 6, count: 1 })
+    })
   })
   // Let enough time to process
     .timeout(10000)

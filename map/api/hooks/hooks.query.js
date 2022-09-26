@@ -231,8 +231,11 @@ export async function aggregateFeaturesQuery (hook) {
         })
       }
     }
+    // Merge with any additional group expression
+    const group = _.get(query, '$group', {})
+    Object.assign(groupBy, group)
     // The query contains the match stage except options relevent to the aggregation pipeline
-    const match = _.omit(query, ['$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
+    const match = _.omit(query, ['$group', '$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
     const aggregateOptions = {
       hint: {}
     }
@@ -266,6 +269,9 @@ export async function aggregateFeaturesQuery (hook) {
       // Keep track of all feature values
       if (singleTime) {
         pipeline.push({ $group: groupBy })
+        // As we replace the root document with the feature in this case keep track of any accumlated element before
+        // If the accumulated properties is name maxProperty then we copy it in the feature as feature.properties.maxProperty
+        pipeline.push({ $set: _.mapKeys(_.mapValues(group, (value, key) => `$${key}`), (value, key) => `feature.properties.${key}`) })
         pipeline.push({ $replaceRoot: { newRoot: '$feature' } })
       } else {
         pipeline.push({ $group: Object.assign({ [element]: { $push: '$' + prefix + element } }, groupBy) })
@@ -314,6 +320,7 @@ export async function aggregateFeaturesQuery (hook) {
       }
     }))
     delete query.$groupBy
+    delete query.$group
     delete query.$aggregate
     delete query.$geoNear
     // Set result to avoid service DB call
