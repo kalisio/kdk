@@ -4,7 +4,7 @@ import { i18n } from '../i18n.js'
 export const JSONReader = {
   read (files, options) {
     if (files.length !== 1) {
-      logger.debug('invlaid \'fields\' arguments')
+      logger.debug('invalid \'files\' arguments')
       return
     }
     const file = files[0]

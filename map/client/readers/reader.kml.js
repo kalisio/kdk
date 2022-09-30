@@ -5,7 +5,7 @@ import { i18n } from '../../../core/client/i18n.js'
 export const KMLReader = {
   read (files, options) {
     if (files.length !== 1) {
-      logger.debug('invlaid \'fields\' arguments')
+      logger.debug('invalid \'files\' arguments')
       return
     }
     const file = files[0]

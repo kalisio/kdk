@@ -11,7 +11,7 @@ import services from './services/index.js'
 import * as utils from './utils.js'
 import * as mixins from './mixins/index.js'
 import * as hooks from './hooks/index.js'
-import { CSVReader, JSONReader } from './readers/index.js'
+import * as readers from './readers/index.js'
 
 // FIXME: we don't build vue component anymore, they are processed by webpack in the application
 // export * from './components'
@@ -34,6 +34,7 @@ export * from '../common/index.js'
 export { utils }
 export { mixins }
 export { hooks }
+export { readers }
 
 export default function init () {
   const api = this
@@ -73,8 +74,8 @@ export default function init () {
   })
 
   // Register default readers
-  Reader.register('.json', JSONReader)
-  Reader.register('.csv', CSVReader)
+  Reader.register('.json', readers.JSONReader)
+  Reader.register('.csv', readers.CSVReader)
 
   // -----------------------------------------------------------------------
   // | After this we should only have specific cordova initialisation code |

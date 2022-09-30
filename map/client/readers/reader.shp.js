@@ -7,7 +7,7 @@ import { i18n } from '../../../core/client/i18n.js'
 export const SHPReader = {
   async read (files, options) {
     if (files.length < 1 || files.length > this.getAdditionalFiles().length + 1) {
-      logger.info('invlaid \'files\' arguments')
+      logger.info('invalid \'files\' arguments')
       return
     }
     const promises = []

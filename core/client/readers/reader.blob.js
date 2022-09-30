@@ -1,24 +1,20 @@
 import logger from 'loglevel'
-import Papa from 'papaparse'
 import { i18n } from '../i18n.js'
 
-export const CSVReader = {
+export const BLOBReader = {
   read (files, options) {
     if (files.length !== 1) {
       logger.debug('invalid \'files\' arguments')
       return
     }
     const file = files[0]
-    logger.debug(`reading CSV file ${file.name}`)
+    logger.debug(`reading Blob file ${file.name}`)
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onloadend = () => {
-        let content = reader.result
-        const papaParseOptions = Object.assign({ skipEmptyLines: true }, options)
-        content = Papa.parse(content, papaParseOptions)
-        if (content.errors.length > 0) {
-          logger.debug(content.errors)
-          reject(new Error(i18n.t('errors.INVALID_CSV_FILE', { file: file.name }), { errors: content.errors }))
+        const content = reader.result
+        if (!content) {
+          reject(new Error(i18n.t('errors.INVALID_BLOB_FILE', { file: file.name })))
           return
         }
         resolve(content)
@@ -27,7 +23,7 @@ export const CSVReader = {
         logger.debug(error)
         reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: file.name }), { errors: error }))
       }
-      reader.readAsText(file)
+      reader.readAsDataURL(file)
     })
   },
   getAdditionalFiles () {
