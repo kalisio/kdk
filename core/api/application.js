@@ -27,6 +27,9 @@ const { ObjectID } = mongodb
 const { rest } = express
 const sift = siftModule.default
 
+// Initialize debugger to be used in feathers
+feathers.setDebug(makeDebug)
+
 function tooManyRequests (socket, message, key) {
   debug(message)
   const error = new TooManyRequests(message, { translation: { key } })
@@ -465,7 +468,7 @@ function setupHealthcheck (app) {
   })
 }
 
-export function kdk () {
+export function kdk (config = {}) {
   const app = express(feathers())
   // By default EventEmitters will print a warning if more than 10 listeners are added for a particular event.
   // The value can be set to Infinity (or 0) to indicate an unlimited number of listeners.
@@ -476,7 +479,12 @@ export function kdk () {
   setupLogger(app)
   setupHealthcheck(app)
 
-  // app.defaultService = () => undefined
+  // Override config
+  Object.keys(config).forEach((name) => {
+    const value = config[name]
+    debug(`Setting ${name} configuration value to`, value)
+    app.set(name, value)
+  })
 
   // This retrieve corresponding service options from app config if any
   app.getServiceOptions = function (name) {
