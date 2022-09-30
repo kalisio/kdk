@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import path from 'path'
 import makeDebug from 'debug'
 import multer from 'multer'
@@ -133,13 +134,9 @@ export default async function () {
 
   const storeConfig = app.get('storage')
   if (storeConfig) {
-    const client = new aws.S3({
-      accessKeyId: storeConfig.accessKeyId,
-      secretAccessKey: storeConfig.secretAccessKey
-    })
-    const bucket = storeConfig.bucket
+    const s3Client = new aws.S3(_.omit(storeConfig, 'bucket'))
     debug('S3 core storage client created with config ', storeConfig)
-    const blobStore = store({ client, bucket })
+    const blobStore = store({ client: s3Client, bucket: storeConfig.bucket })
     const blobService = BlobService({ Model: blobStore, id: '_id' })
     await createStorageService.call(app, blobService)
   }
