@@ -170,10 +170,10 @@ export function baseActivity (name) {
         const windows = _.get(this.activityOptions, 'windows', null)
         _.forOwn(windows, (window, placement) => {
           if (window.widgets) {
-            this.$store.patch(`windows.${placement}`, { 
-              widgets: Layout.bindContent(_.cloneDeep(window.widgets), this), 
-              current: window.current, 
-              filter: window.filter || {} 
+            this.$store.patch(`windows.${placement}`, {
+              widgets: Layout.bindContent(_.cloneDeep(window.widgets), this),
+              current: window.current,
+              filter: window.filter || {}
             })
           }
         })
@@ -181,11 +181,11 @@ export function baseActivity (name) {
       clearWindows () {
         const windows = _.get(this.activityOptions, 'windows', null)
         _.forOwn(windows, (window, placement) => {
-          this.$store.patch(`windows.${placement}`, { widgets: null, current: undefined } )
+          this.$store.patch(`windows.${placement}`, { widgets: null, current: undefined })
         })
       },
       openWindow (placement) {
-        const window = this.$store.get('windows.${placement}')
+        const window = this.$store.get(`windows.${placement}`)
         if (window.visible) return
         if (window.widgets.length === 0) {
           logger.error(`No widgets unregistered for ${placement} window`)
@@ -196,7 +196,7 @@ export function baseActivity (name) {
         this.$store.patch(`windows.${placement}`, { visible: true })
       },
       closeWindow (placement) {
-        const window = this.$store.get('windows.${placement}')
+        const window = this.$store.get(`windows.${placement}`)
         if (!window.visible) return
         if (window.visible) this.$store.patch(`windows.${placement}`, { visible: false })
       },

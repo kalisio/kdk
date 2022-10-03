@@ -271,9 +271,11 @@ export async function aggregateFeaturesQuery (hook) {
         pipeline.push({ $group: groupBy })
         // As we replace the root document with the feature in this case keep track of any accumlated element before
         // If the accumulated properties is name maxProperty then we copy it in the feature as feature.properties.maxProperty
-        if (!_.isEmpty(group)) pipeline.push({
-          $set: _.mapKeys(_.mapValues(group, (value, key) => `$${key}`), (value, key) => `feature.properties.${key}`)
-        })
+        if (!_.isEmpty(group)) {
+          pipeline.push({
+            $set: _.mapKeys(_.mapValues(group, (value, key) => `$${key}`), (value, key) => `feature.properties.${key}`)
+          })
+        }
         pipeline.push({ $replaceRoot: { newRoot: '$feature' } })
       } else {
         pipeline.push({ $group: Object.assign({ [element]: { $push: '$' + prefix + element } }, groupBy) })

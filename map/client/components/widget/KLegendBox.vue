@@ -7,7 +7,6 @@
 <script>
 import { baseWidget } from '../../../../core/client/mixins'
 
-
 export default {
   mixins: [baseWidget]
 }

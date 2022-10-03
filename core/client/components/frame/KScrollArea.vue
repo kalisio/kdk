@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, defineProps, defineEmits, defineExpose, watch } from 'vue'
 import { getCssVar } from 'quasar'
 
 // props
@@ -43,7 +43,7 @@ const height = ref(0)
 const cssHeight = computed(() => {
   return `${height.value}px`
 })
-const cssThumbStyle = computed(() => { 
+const cssThumbStyle = computed(() => {
   return {
     right: '4px',
     borderRadius: '4px',
@@ -69,15 +69,15 @@ function getScroll () {
 }
 
 // watch
-watch(() => props.maxHeight, (maxHeight) => { 
+watch(() => props.maxHeight, (maxHeight) => {
   if (scrollArea.value) height.value = Math.min(scrollArea.value.getScroll().verticalSize, maxHeight)
 })
 
 // expose
-defineExpose({ 
+defineExpose({
   getScrollPosition,
   setScrollPosition,
-  getScroll,
+  getScroll
 })
 </script>
 

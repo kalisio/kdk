@@ -91,11 +91,11 @@ export default {
     },
     pinIcon () {
       switch (this.placement) {
-        case 'left': 
+        case 'left':
           return 'las la-angle-left'
-        case 'right': 
+        case 'right':
           return 'las la-angle-right'
-        case 'top': 
+        case 'top':
           return 'las la-angle-up'
       }
       return 'las la-angle-down'
@@ -110,7 +110,7 @@ export default {
           handler: () => { this.widget = widget.id }
         })
       })
-      let widgetMenu = []
+      const widgetMenu = []
       if (widgetMenuItems.length > 1) {
         widgetMenu.push({
           id: 'widgets-menu-items',
@@ -238,15 +238,15 @@ export default {
         if (this.placement === 'top' || this.placement === 'bottom') {
           w = this.$q.screen.width
           if (this.$q.screen.gt.sm) w = this.$q.screen.width * 0.9
-          if (this.$q.screen.gt.md) w = this.$q.screen.width * 0.8          
+          if (this.$q.screen.gt.md) w = this.$q.screen.width * 0.8
           if (this.$q.screen.gt.lg) w = w = this.$q.screen.width * 0.7
           h = this.$q.screen.height * 0.3
           x = this.$q.screen.width / 2 - w / 2
           y = this.placement === 'top' ? 0 : this.$q.screen.height - h
         } else {
-          w = this.$q.screen.width * 0.2 
+          w = this.$q.screen.width * 0.2
           if (this.$q.screen.lt.lg) w = this.$q.screen.width * 0.3
-          if (this.$q.screen.lt.md) w = this.$q.screen.width * 0.4    
+          if (this.$q.screen.lt.md) w = this.$q.screen.width * 0.4
           if (this.$q.screen.lt.sm) w = this.$q.screen.width
           h = this.$q.screen.height * 0.6
           x = this.placement === 'left' ? 0 : this.$q.screen.width - w

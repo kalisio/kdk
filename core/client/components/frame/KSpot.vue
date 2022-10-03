@@ -5,6 +5,7 @@
 </template>
 
 <script setup>
+import { defineProps } from 'vue'
 import { getCssVar } from 'quasar'
 
 // props

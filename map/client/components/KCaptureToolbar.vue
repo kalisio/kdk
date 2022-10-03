@@ -24,7 +24,7 @@
       borderless
       dense
       input-class="text-center"
-      style="max-width: 54px" 
+      style="max-width: 54px"
     />
     <span>x</span>
     <q-input
@@ -35,13 +35,13 @@
       borderless
       dense
       input-class="text-center"
-      style="max-width: 54px" 
+      style="max-width: 54px"
     />
     <k-action
       id="capture-button"
       icon="las la-camera"
       tooltip="KCaptureToolbar.CAPTURE_ACTION"
-      :handler="() => this.capture()" 
+      :handler="() => this.capture()"
     />
   </div>
 </template>

@@ -41,12 +41,12 @@
           :actions="descriptionActions"
           :hideHeader="!isExpanded"
           :dense="dense"
-        > 
-          <div class="q-pb-xs"> 
-            <KTextArea 
-              :text="item.description || $tie('KCard.NO_DESCRIPTION_LABEL')" 
+        >
+          <div class="q-pb-xs">
+            <KTextArea
+              :text="item.description || $tie('KCard.NO_DESCRIPTION_LABEL')"
               :minHeight="44"
-              :dense="dense" 
+              :dense="dense"
             />
           </div>
         </KCardSection>

@@ -56,7 +56,7 @@ export default function init () {
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('page', { content: null, mode: undefined, filter: {}, sticky: undefined })
-  Store.set('windows', { 
+  Store.set('windows', {
     left: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [], visible: false },
     right: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [], visible: false },
     top: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', widgetActions: [], visible: false },

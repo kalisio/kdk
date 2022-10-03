@@ -63,7 +63,7 @@ export default {
     },
     dropdownIcon: {
       type: String,
-      default: ''  
+      default: ''
     },
     disabled: {
       type: Boolean,

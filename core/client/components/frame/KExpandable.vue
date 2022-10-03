@@ -1,5 +1,5 @@
 <template>
-  <div  
+  <div
     :class="{'k-expandable-collapsed': !isExpanded, 'k-expandable-expanded': isExpanded }"
   >
     <!-- content -->
@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, defineProps, defineEmits } from 'vue'
 
 // props
 const props = defineProps({
@@ -30,13 +30,13 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // computed
-const isExpanded = computed (() => {
+const isExpanded = computed(() => {
   return props.modelValue
 })
-const cssMinHeight = computed (() => {
+const cssMinHeight = computed(() => {
   return `${props.minHeight}px`
 })
-const cssMaxHeight = computed (() => {
+const cssMaxHeight = computed(() => {
   return `${props.maxHeight}px`
 })
 </script>
@@ -45,7 +45,7 @@ const cssMaxHeight = computed (() => {
 .k-expandable-collapsed {
   overflow: hidden;
   transition: 0.3s;
-  min-height: v-bind('cssMinHeight'); 
+  min-height: v-bind('cssMinHeight');
   max-height: v-bind('cssMinHeight');
 }
 .k-expandable-expanded {

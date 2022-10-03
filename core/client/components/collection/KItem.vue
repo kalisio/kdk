@@ -34,10 +34,10 @@
       <KExpandable
         class="k-expandable full-width"
         v-model="expanded"
-        :minHeight="minHeight" 
+        :minHeight="minHeight"
         :maxHeight="maxHeight"
       >
-        <KScrollArea 
+        <KScrollArea
           :maxHeight="maxHeight"
           :visible="true"
         >

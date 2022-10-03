@@ -23,7 +23,7 @@
           :item="item"
           :contextId="contextId"
           :is="rendererComponent"
-          v-bind="renderer" 
+          v-bind="renderer"
         />
       </div>
       <div class="col-xs-12 col-sm-3 col-md-2 q-pa-sm">

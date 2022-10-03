@@ -27,10 +27,10 @@
             <span class="text-caption">
               {{ scope.opt.value.name }} ({{ scope.opt.value.unit}})
             </span>
-            <KColorScale  
-              :key="scope.opt.label" 
-              v-bind="scope.opt.value" 
-              style="max-height: 28px" 
+            <KColorScale
+              :key="scope.opt.label"
+              v-bind="scope.opt.value"
+              style="max-height: 28px"
             />
           </q-item-label>
         </q-item-section>
@@ -48,7 +48,7 @@
             <span class="text-caption">
               {{ scope.opt.value.name }} ({{ scope.opt.value.unit}})
             </span>
-            <KColorScale  v-bind="scope.opt.value" style="max-height: 28px" />
+            <KColorScale v-bind="scope.opt.value" style="max-height: 28px" />
           </q-item-label>
         </q-item-section>
       </q-item>

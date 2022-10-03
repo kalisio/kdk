@@ -9,7 +9,7 @@
           icon="las la-exclamation-circle"
           icon-size="3rem"
           :text="$t('KChart.NO_DATA_AVAILABLE')"
-          text-size="1rem" 
+          text-size="1rem"
         />
       </slot>
     </div>

@@ -148,7 +148,7 @@
 
 <script>
 import _ from 'lodash'
-import { ref, computed, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
 import { useAction } from '../../composables'
@@ -163,7 +163,7 @@ export default {
     label: {
       type: String,
       default: null
-    },    
+    },
     icon: {
       type: String,
       default: null
@@ -251,7 +251,7 @@ export default {
       if (isToggled.value && _.has(props.toggle, 'label')) return i18n.tie(props.toggle.label)
       return i18n.tie(props.label)
     })
-    const computedIcon =computed (() => {
+    const computedIcon = computed(() => {
       if (isToggled.value && _.has(props.toggle, 'icon')) return props.toggle.icon
       return props.icon
     })
@@ -264,7 +264,7 @@ export default {
       if (isToggled.value && _.has(props.toggle, 'tooltip')) return i18n.tie(props.toggle.tooltip)
       return i18n.tie(props.tooltip)
     })
-    const computedBadgeLabel = computed (()  => {
+    const computedBadgeLabel = computed(() => {
       // Check also for translation key or already translated message
       if (props.badge && _.has(props.badge, 'label')) return i18n.tie(props.badge.label)
       // Take care that changing this to null or '' breaks the display in Quasar
@@ -334,11 +334,11 @@ export default {
     }
 
     // watch
-    watch(() => props.toggled, (value) => { 
+    watch(() => props.toggled, (value) => {
       toggle()
     })
 
-    // expose 
+    // expose
     return {
       isToggled,
       computedLabel,

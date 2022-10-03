@@ -7,7 +7,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, watchEffect, onMounted } from 'vue'
+import { ref, watchEffect, defineProps, onMounted } from 'vue'
 import { uid } from 'quasar'
 import chroma from 'chroma-js'
 
@@ -19,7 +19,7 @@ const props = defineProps({
   },
   domain: {
     type: Array,
-    default: () => [0 , 1]
+    default: () => [0, 1]
   },
   classes: {
     type: Array,
@@ -61,20 +61,20 @@ function drawDiscreteHorizontalScale () {
   const boxWidth = canvas.value.width / length
   for (let i = 0; i < length; i++) {
     context.value.fillStyle = classToColor(props.classes[i])
-    context.value.fillRect(i * boxWidth, 0, boxWidth, props.size)  
+    context.value.fillRect(i * boxWidth, 0, boxWidth, props.size)
   }
   // draw ticks
   context.value.font = `${props.fontSize}px`
-  context.value.fillStyle = `${props.fontColor}` 
+  context.value.fillStyle = `${props.fontColor}`
   const y = props.size + margin + props.fontSize
   for (let i = 0; i < props.classes.length; ++i) {
-    let tick = undefined
+    let tick
     if (i === 0) {
       if (props.classes[i] !== Number.MIN_VALUE) {
         context.value.textAlign = 'left'
         tick = props.classes[i]
       }
-    } else if (i === props.classes.length -1) {
+    } else if (i === props.classes.length - 1) {
       if (props.classes[i] !== Number.MAX_VALUE) {
         context.value.textAlign = 'right'
         tick = props.classes[i]
@@ -91,9 +91,9 @@ function drawDiscreteVerticalScale () {
   const classToColor = chroma.scale(props.colors).classes(props.classes)
   const length = props.classes.length - 1
   const boxHeight = canvas.value.height / length
-   for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     context.value.fillStyle = classToColor(props.classes[i])
-    context.value.fillRect(0, (length - i - 1) * boxHeight, props.size, boxHeight)  
+    context.value.fillRect(0, (length - i - 1) * boxHeight, props.size, boxHeight)
   }
   // draw ticks
   context.value.font = `${props.fontSize}px`
@@ -101,10 +101,10 @@ function drawDiscreteVerticalScale () {
   context.value.textAlign = 'left'
   const x = props.size + margin
   for (let i = 0; i < props.classes.length; ++i) {
-    let tick = undefined
+    let tick
     if (i === 0) {
       if (props.classes[i] !== Number.MIN_VALUE) tick = props.classes[i]
-    } else if (i === props.classes.length -1) {
+    } else if (i === props.classes.length - 1) {
       if (props.classes[i] !== Number.MAX_VALUE) tick = props.classes[i]
     } else tick = props.classes[i]
     if (tick) context.value.fillText(tick, x, (length - i) * boxHeight + props.fontSize / 2)
@@ -143,7 +143,7 @@ function drawContinuousVerticalScale () {
   context.value.fillText(props.domain[0], x, canvas.value.height)
   context.value.fillText(props.domain[1], x, props.fontSize)
 }
-function refresh() {
+function refresh () {
   context.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
   if (props.classes) {
     if (props.direction === 'horizontal') drawDiscreteHorizontalScale()
@@ -169,6 +169,6 @@ watchEffect(() => {
 // hooks
 onMounted(() => {
   canvas.value = document.getElementById(canvasId)
-  context.value = canvas.value.getContext("2d")
+  context.value = canvas.value.getContext('2d')
 })
 </script>

@@ -3,16 +3,21 @@ import common from 'feathers-hooks-common'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
+import config from 'config'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
-import { createGmailClient } from './utils.js'
+// We now rely on mailer stub which is faster
+// Integration testing with real email account shouuld be restricted to apps
+//import { createGmailClient } from './utils.js'
+import { createMailerStub } from './utils.js'
 
 const { iff, when } = common
 const { util, expect } = chai
 
 describe('core:account', () => {
   let app, server, port, baseUrl, token,
-    userService, authenticationService, mailerService, accountService, gmailClient, gmailUser, userObject
+    userService, authenticationService, mailerService, accountService,
+    gmailUser, mailerStub, userObject
 
   before(async () => {
     chailint(chai, util)
@@ -23,7 +28,15 @@ describe('core:account', () => {
     // Then rules for notifications
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)
 
-    app = kdk()
+    // Override mailer to use a stub
+    mailerStub = createMailerStub({
+      // Add required config to make account service work
+      auth: { user: config.mailer.auth.user },
+      templateDir: config.mailer.templateDir
+    })
+    app = kdk({
+      mailer: mailerStub
+    })
     // Register authorisation/log hook
     app.hooks({
       before: { all: [hooks.authorise] },
@@ -88,15 +101,15 @@ describe('core:account', () => {
   })
   // Let enough time to process
     .timeout(5000)
-
+  
   it('setup access to gmail', async () => {
     const gmailApiConfig = app.get('gmailApi')
     gmailUser = gmailApiConfig.user
-    gmailClient = await createGmailClient(gmailApiConfig)
+    //gmailClient = await createGmailClient(gmailApiConfig)
   })
   // Let enough time to process
     .timeout(5000)
-
+  
   it('invites a user', () => {
     return userService.create({
       email: gmailUser,
@@ -118,10 +131,13 @@ describe('core:account', () => {
     .timeout(10000)
 
   it('check invitation email', (done) => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Welcome', done)
     // Add some delay to wait for email reception
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Welcome', done)
     }, 10000)
+    */
   })
   // Let enough time to process
     .timeout(15000)
@@ -164,10 +180,13 @@ describe('core:account', () => {
     .timeout(10000)
 
   it('check signup verification email', (done) => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Confirm your signup', done)
     // Add some delay to wait for email reception
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Confirm your signup', done)
     }, 10000)
+    */
   })
   // Let enough time to process
     .timeout(15000)
@@ -186,10 +205,13 @@ describe('core:account', () => {
     .timeout(5000)
 
   it('check signup verified email', (done) => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Thank you, your email has been verified', done)
     // Add some delay to wait for email reception
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Thank you, your email has been verified', done)
     }, 10000)
+    */
   })
   // Let enough time to process
     .timeout(15000)
@@ -213,23 +235,27 @@ describe('core:account', () => {
     .timeout(10000)
 
   it('check reset password request email', (done) => {
+    const checkToken = (err, message) => {
+      if (_.isNil(err)) {
+        // Extract token from email beign compatible either wit mailer stub or gmail api
+        message = message.html || Buffer.from(message.body.data, 'base64').toString()
+        const tokenEntry = 'reset-password/' // Then come the token in the link
+        const firstTokenIndex = message.indexOf(tokenEntry) + tokenEntry.length
+        const lastTokenIndex = message.indexOf('"', firstTokenIndex)
+        // Token is the last part of the URL in the <a href="xxx/reset-password/token"> tag
+        token = message.substring(firstTokenIndex, lastTokenIndex)
+        done()
+      } else {
+        done(err)
+      }
+    }
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Reset your password', checkToken)
     // Add some delay to wait for email reception
+    /*
     setTimeout(() => {
-      gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Reset your password', (err, message) => {
-        if (_.isNil(err)) {
-          // Extract token from email
-          message = Buffer.from(message.body.data, 'base64').toString()
-          const tokenEntry = 'reset-password/' // Then come the token in the link
-          const firstTokenIndex = message.indexOf(tokenEntry) + tokenEntry.length
-          const lastTokenIndex = message.indexOf('"', firstTokenIndex)
-          // Token is the last part of the URL in the <a href="xxx/reset-password/token"> tag
-          token = message.substring(firstTokenIndex, lastTokenIndex)
-          done()
-        } else {
-          done(err)
-        }
-      })
+      gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Reset your password', checkToken)
     }, 20000)
+    */
   })
   // Let enough time to process
     .timeout(25000)
@@ -274,10 +300,13 @@ describe('core:account', () => {
     .timeout(15000)
 
   it('check reset password email', (done) => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was reset', done)
     // Add some delay to wait for email reception
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Your password was reset', done)
     }, 10000)
+    */
   })
   // Let enough time to process
     .timeout(15000)
@@ -335,10 +364,13 @@ describe('core:account', () => {
     .timeout(15000)
 
   it('check changed password email', (done) => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was changed', done)
     // Add some delay to wait for email reception
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Your password was changed', done)
     }, 10000)
+    */
   })
   // Let enough time to process
     .timeout(15000)
@@ -379,10 +411,13 @@ describe('core:account', () => {
     .timeout(10000)
 
   it('check identity change email', (done) => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your account information was changed', done)
     // Add some delay to wait for email reception
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Your account information was changed', done)
     }, 15000)
+    */
   })
   // Let enough time to process
     .timeout(20000)

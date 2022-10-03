@@ -11,7 +11,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { computed } from 'vue'
+import { computed, defineProps } from 'vue'
 import KContent from './KContent.vue'
 
 // props

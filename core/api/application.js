@@ -174,7 +174,7 @@ async function createService (name, app, options = {}) {
     paginate,
     multi: true,
     whitelist: ['$exists', '$and', '$or', '$distinct', '$groupBy', '$group', '$search', '$regex', '$aggregate', '$elemMatch',
-                '$near', '$geoIntersects', '$geometry', '$maxDistance']
+      '$near', '$geoIntersects', '$geometry', '$maxDistance']
   }, options)
   if (serviceOptions.disabled) return undefined
   // For DB services a model has to be provided

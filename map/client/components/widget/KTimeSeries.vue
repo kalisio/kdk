@@ -97,7 +97,7 @@ export default {
       }
       return hasVariable
     },
-    getBaseUnit(variable, properties) {
+    getBaseUnit (variable, properties) {
       const unit = variable.units[0]
       // Could be either directly the unit or the property of the measure storing the unit
       return _.get(properties, unit, unit)

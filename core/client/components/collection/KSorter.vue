@@ -2,7 +2,7 @@
   <KSelect
     :options="options"
     :tooltip="tooltip"
-    @option-chosen="onOptionChanged" 
+    @option-chosen="onOptionChanged"
   />
 </template>
 

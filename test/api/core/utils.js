@@ -5,6 +5,25 @@ import chai from 'chai'
 const gmail = google.gmail('v1')
 const { expect } = chai
 
+export const createMailerStub = (stubConfig) => {
+  let emails = []
+  return Object.assign({
+    send: (mail, callback) => {
+      emails.push(mail.data)
+      callback(null, true)
+    },
+    // Helper function used to check if a given email has been sent
+    // Erase it after check
+    checkEmail: (user, fromValue, subjectValue, done) => {
+      expect(emails.length > 0).beTrue()
+      const message = emails[0]
+      expect(message.from).to.equal(fromValue)
+      expect(message.subject).to.equal(subjectValue)
+      done(null, emails.shift())
+    }
+  }, stubConfig)
+}
+
 export const createGmailClient = (gmailApiConfig) => {
   return new Promise((resolve, reject) => {
     const jwtClient = new google.auth.JWT(

@@ -6,7 +6,7 @@
     :toggle="{ tooltip: 'mixins.activity.HIDE_USER_LOCATION' }"
     :toggled="isToggled"
     :disabled="!isEnabled "
-    @triggered="onClicked" 
+    @triggered="onClicked"
   />
 </template>
 

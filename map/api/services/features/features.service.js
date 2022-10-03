@@ -28,9 +28,9 @@ export default {
     //  hour: { $hour: 'time '},
     //  dayOfWeek: { $dayOfWeek: 'time '}
     // }
-    let groupStage = {
+    const groupStage = {
       $group: {
-        _id: {}, 
+        _id: {},
         count: {
           $sum: 1
         }
@@ -41,7 +41,7 @@ export default {
       else _.set(groupStage, `$group._id[${countItem}]`, { [`$${countItem}`]: `$${field}` })
     })
     const pipeline = [matchStage, groupStage]
-    debug(`Executing heatmap pipeline`, pipeline)
+    debug('Executing heatmap pipeline', pipeline)
     const results = await collection.aggregate(pipeline).toArray()
     debug(`Found ${results.length} results for heatmap`, data)
     // Result is like [{ _id: { hour: 16, dayOfWeek: 1 }, count: 2 }, { _id: { hour: 18, dayOfWeek: 1 }, count: 4 }]

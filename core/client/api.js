@@ -163,15 +163,15 @@ api.getBaseUrl = function () {
 }
 
 api.can = function () {
-  let operation, service, context, resource, user
+  let service, context, resource
   // We can call this with different signatures
   // Last argument can always be an additional user,
   // if not defined the user is retrieved from the store
-  user = arguments[arguments.length - 1]
+  const user = arguments[arguments.length - 1]
   const hasUser = _.has(user, 'abilities')
   const nbArguments = (hasUser ? arguments.length - 1 : arguments.length)
   // (operation, service, resource) or (operation, service, context, resource)
-  operation = arguments[0]
+  const operation = arguments[0]
   service = arguments[1]
   // (operation, service, context, resource)
   if (nbArguments === 4) {
@@ -185,7 +185,7 @@ api.can = function () {
   if (_.has(service, 'abilities')) service = undefined
   if (_.has(context, 'abilities')) context = undefined
   if (_.has(resource, 'abilities')) resource = undefined
-  
+
   const abilities = (hasUser ? _.get(user, 'abilities') : Store.get('user.abilities'))
   logger.debug('Check for abilities ', operation, service, context, resource, abilities)
   if (!abilities) {

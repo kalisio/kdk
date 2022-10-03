@@ -24,8 +24,8 @@ export function useAction (props) {
       } else if (typeof cache === 'boolean') {
         // use local store
         toggleStates[props.id] = isToggled.value
-      } 
-    } 
+      }
+    }
   }
 
   // immmediate
@@ -37,13 +37,13 @@ export function useAction (props) {
     } else if (typeof cache === 'boolean') {
       // use local store
       if (cache) isToggled.value = _.get(toggleStates, props.id, false)
-    } 
+    }
   } else {
     isToggled.value = props.toggled
   }
-  
+
   // exposed
-  return { 
+  return {
     isToggled: readonly(isToggled),
     toggle
   }

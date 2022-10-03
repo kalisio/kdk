@@ -1,15 +1,19 @@
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
+import config from 'config'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
-import { createGmailClient } from './utils.js'
+// We now rely on mailer stub which is faster
+// Integration testing with real email account shouuld be restricted to apps
+//import { createGmailClient } from './utils.js'
+import { createMailerStub } from './utils.js'
 
 const { util, expect } = chai
 const phone = process.env.SNS_PHONE_NUMBER
 
 describe('core:notifications', () => {
-  let app, server, port, baseUrl, gmailClient, gmailUser,
+  let app, server, port, baseUrl, mailerStub, gmailUser,
     authenticationService, mailerService, userService, devicesService, pusherService,
     sns, snsForSms, publisherObject, subscriberObject
 
@@ -35,7 +39,15 @@ describe('core:notifications', () => {
     // Then rules for notifications
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)
 
-    app = kdk()
+    // Override mailer to use a stub
+    mailerStub = createMailerStub({
+      // Add required config to make account service work
+      auth: { user: config.mailer.auth.user },
+      templateDir: config.mailer.templateDir
+    })
+    app = kdk({
+      mailer: mailerStub
+    })
     // Register authorisation/log hook
     app.hooks({
       before: { all: [hooks.authorise] },
@@ -92,7 +104,7 @@ describe('core:notifications', () => {
   it('setup access to gmail', async () => {
     const gmailApiConfig = app.get('gmailApi')
     gmailUser = gmailApiConfig.user
-    gmailClient = await createGmailClient(gmailApiConfig)
+    //gmailClient = await createGmailClient(gmailApiConfig)
   })
   // Let enough time to process
     .timeout(5000)
@@ -179,12 +191,17 @@ describe('core:notifications', () => {
 
   it('check new device emails', (done) => {
     // Add some delay to wait for email reception
+    mailerStub.checkEmail(subscriberObject, mailerService.options.auth.user, 'Security alert - new device signin', () => {
+      mailerStub.checkEmail(subscriberObject, mailerService.options.auth.user, 'Security alert - new device signin', done)
+    })
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(subscriberObject, mailerService.options.auth.user, 'Security alert - new device signin', (err) => {
         if (err) done(err)
         else gmailClient.checkEmail(subscriberObject, mailerService.options.auth.user, 'Security alert - new device signin', done)
       })
     }, 10000)
+    */
   })
   // Let enough time to process
     .timeout(15000)
@@ -422,9 +439,12 @@ describe('core:notifications', () => {
 
   it('check recovered device email', (done) => {
     // Add some delay to wait for email reception
+    mailerStub.checkEmail(subscriberObject, mailerService.options.auth.user, 'Security alert - new device signin', done)
+    /*
     setTimeout(() => {
       gmailClient.checkEmail(subscriberObject, mailerService.options.auth.user, 'Security alert - new device signin', done)
     }, 10000)
+    */
   })
   // Let enough time to process
     .timeout(15000)

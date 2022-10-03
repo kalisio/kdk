@@ -1,12 +1,12 @@
 <template>
   <KExpandable
     class="k-expandable"
-    v-model="isExpanded" 
-    :minHeight="minHeight" 
+    v-model="isExpanded"
+    :minHeight="minHeight"
     :maxHeight="maxHeight"
     @click="onClick"
   >
-    <KScrollArea 
+    <KScrollArea
       ref="scrollArea"
       :key="scrollAreaKey"
       :maxHeight="maxHeight"
@@ -15,8 +15,8 @@
       @scrolled="onScrolled"
     >
       <!-- content -->
-      <div 
-        class="q-pr-lg" 
+      <div
+        class="q-pr-lg"
         :class="{ 'k-textarea-collapsed': !isExpanded, 'k-textarea-expanded': isExpanded }"
         v-html="sanitizedText"
       />
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, defineProps } from 'vue'
 import sanitizeHtml from 'sanitize-html'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
@@ -69,7 +69,7 @@ const scrollArea = ref(null)
 const scrollAreaKey = ref(0)
 const isExpandable = ref(false)
 const isExpanded = ref(false)
-const isScrollable = ref (false)
+const isScrollable = ref(false)
 
 // computed
 const sanitizedText = computed(() => {
@@ -79,13 +79,13 @@ const hasEllipsis = computed(() => {
   if (isExpanded.value) return isScrollable.value
   return isExpandable.value
 })
-const cssMinHeight = computed (() => {
+const cssMinHeight = computed(() => {
   return `${props.minHeight}px`
 })
 const cssCursor = computed(() => {
   return isExpandable.value ? 'pointer' : 'default'
 })
-const cssExpandedFontSize = computed (() => {
+const cssExpandedFontSize = computed(() => {
   return props.zoom ? '1rem' : '0.875rem'
 })
 
@@ -114,13 +114,13 @@ function onScrolled (info) {
 }
 
 // watch
-watch(() => props.text, (text) => { 
-  // Reset the states 
+watch(() => props.text, (text) => {
+  // Reset the states
   isExpandable.value = false
   isExpanded.value = false
   isScrollable.value = false
   // force the scroll area to be rendered
-  scrollAreaKey.value += 1 
+  scrollAreaKey.value += 1
 })
 </script>
 

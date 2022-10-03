@@ -39,7 +39,7 @@ export const baseEditor = {
       return this.objectId ? 'update' : 'create'
     },
     applyButton () {
-      return this.editorMode === 'update' ?  this.$t('UPDATE') :  this.$t('CREATE')
+      return this.editorMode === 'update' ? this.$t('UPDATE') : this.$t('CREATE')
     }
   },
   data () {

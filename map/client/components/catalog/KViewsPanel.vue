@@ -11,7 +11,7 @@
       :filter-query="filter.query"
       @selection-changed="onViewSelected"
       :height="scrollAreaMaxHeight - 100"
-      :dense="true" 
+      :dense="true"
     />
   </div>
 </template>

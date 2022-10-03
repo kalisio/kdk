@@ -76,33 +76,33 @@
     <q-page-sticky position="bottom-right" :offset="fabOffset" class="k-sticky">
       <KFab />
     </q-page-sticky>
-    <!-- windows -->  
+    <!-- windows -->
     <q-page-sticky v-if="hasLeftWindow" position="top-left" :offset="leftWindow.position" class="k-sticky">
-      <KWindow 
-        id="left-window" 
-        placement="left" 
-        :style="`max-width: ${leftWindow.size[0]}px; max-height: ${leftWindow.size[1]};px;`" 
+      <KWindow
+        id="left-window"
+        placement="left"
+        :style="`max-width: ${leftWindow.size[0]}px; max-height: ${leftWindow.size[1]};px;`"
       />
     </q-page-sticky>
     <q-page-sticky v-if="hasRightWindow" position="top-left" :offset="rightWindow.position" class="k-sticky">
-      <KWindow 
-        id="right-window" 
-        placement="right" 
-        :style="`max-width: ${rightWindow.size[0]}px; max-height: ${rightWindow.size[1]};px`" 
+      <KWindow
+        id="right-window"
+        placement="right"
+        :style="`max-width: ${rightWindow.size[0]}px; max-height: ${rightWindow.size[1]};px`"
       />
     </q-page-sticky>
     <q-page-sticky v-if="hasTopWindow" position="top-left" :offset="topWindow.position" class="k-sticky">
-      <KWindow 
+      <KWindow
         id="top-window"
-        placement="top" 
-        :style="`max-width: ${topWindow.size[0]}px; max-height: ${topWindow.size[1]};px`" 
+        placement="top"
+        :style="`max-width: ${topWindow.size[0]}px; max-height: ${topWindow.size[1]};px`"
       />
     </q-page-sticky>
     <q-page-sticky v-if="hasBottomWindow" position="top-left" :offset="bottomWindow.position" class="k-sticky">
-      <KWindow 
-        id="bottom-window" 
-        placement="bottom" 
-        :style="`max-width: ${bottomWindow.size[0]}px; max-height: ${bottomWindow.size[1]};px`" 
+      <KWindow
+        id="bottom-window"
+        placement="bottom"
+        :style="`max-width: ${bottomWindow.size[0]}px; max-height: ${bottomWindow.size[1]};px`"
       />
     </q-page-sticky>
     <!-- left -->
