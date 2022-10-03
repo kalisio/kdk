@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, defineProps } from 'vue'
+import { ref, computed, watch, defineProps } from 'vue'
 import sanitizeHtml from 'sanitize-html'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
