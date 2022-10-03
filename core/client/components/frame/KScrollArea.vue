@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineExpose } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { getCssVar } from 'quasar'
 
 // props
