@@ -66,6 +66,9 @@ import { KColorScale } from '../media'
 import { baseField } from '../../mixins'
 
 export default {
+  components: {
+    KColorScale
+  },
   mixins: [baseField],
   computed: {
     clearable () {

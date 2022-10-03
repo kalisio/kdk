@@ -11,6 +11,7 @@
     clearable
     counter
     :accept="getAcceptedTypes()"
+    use-chips
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
@@ -28,6 +29,7 @@
 import _ from 'lodash'
 import { baseField } from '../../mixins'
 import { Reader } from '../../reader.js'
+import { upload } from '../../storage.js'
 
 export default {
   mixins: [baseField],
@@ -44,12 +46,12 @@ export default {
       return _.get(this.properties.field, 'mimeTypes', '')
     },
     onFileCleared () {
-      this.error = ''
       this.model = this.emptyModel()
+      this.error = ''
     },
     async onFileChanged () {
       if (this.file) {
-        const acceptedFiles = await Reader.filter([this.file])
+        const acceptedFiles = Reader.filter([this.file])
         if (acceptedFiles.length === 1) {
           const file = acceptedFiles[0]
           try {
@@ -68,6 +70,27 @@ export default {
     },
     onFileRejected (file) {
       this.error = 'KFileField.INVALID_FILE_TYPE'
+    },
+    async submitted (object, field) {
+      if (this.properties.field.storage) {
+        const context = this.properties.field.storage.context
+        const path = this.properties.field.storage.path
+        const key = path ? path + '/' + this.model.name : this.model.name
+        const response = await upload(this.model.content, key, context)
+        if (response.status === 200) {
+          this.$notify({
+            type: 'positive',
+            message: this.$t('KFileField.UPLOAD_FILE_SUCCEEDED',
+              { file: this.model.name })
+          })
+        } else {
+          this.$notify({
+            type: 'negative',
+            message: this.$t('KFileField.UPLOAD_FILE_ERRORED',
+              { file: this.model.name })
+          })
+        }
+      }
     }
   }
 }

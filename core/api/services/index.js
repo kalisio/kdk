@@ -1,16 +1,10 @@
-import _ from 'lodash'
 import path from 'path'
 import makeDebug from 'debug'
-import multer from 'multer'
-import aws from 'aws-sdk'
-import store from 's3-blob-store'
-import BlobService from 'feathers-blob'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const modelsPath = path.join(__dirname, '..', 'models')
 const servicesPath = path.join(__dirname, '..', 'services')
-const multipart = multer().single('file')
 
 const debug = makeDebug('kdk:core:services')
 
@@ -27,44 +21,11 @@ export function removeTagService (options) {
   // TODO
 }
 
-function proxyStorageId (context) {
-  return (id) => {
-    if (!context) return id
-    const prefix = (typeof context === 'object' ? context._id.toString() : context.toString()) + '/'
-    // Check if context is already in ID, in this case we have to remove it on output
-    if (id.startsWith(prefix)) return id.replace(prefix, '')
-    // Otherwise we have to add it on input
-    else return (prefix + id)
-  }
-}
-
-export async function createStorageService (blobService, options = {}) {
+export async function createStorageService (options = {}) {
   const app = this
-  // Closure to keep track of context
-  const proxyId = proxyStorageId(options.context)
-
   await app.createService('storage', Object.assign({
     servicesPath,
-    modelsPath,
-    // Create a proxy on top of a Feathers blob service,
-    // adding context as prefix on all keys on input
-    // removing context as prefix on all keys as result
-    proxy: {
-      service: blobService,
-      id: proxyId,
-      data: (data) => (data.id ? Object.assign(data, { id: proxyId(data.id) }) : data),
-      result: (data) => (data._id ? Object.assign(data, { _id: proxyId(data._id) }) : data)
-    },
-    // Add required middlewares to handle multipart form data
-    middlewares: {
-      before: [
-        multipart,
-        (req, res, next) => {
-          req.feathers.file = req.file
-          next()
-        }
-      ]
-    }
+    modelsPath
   }, options))
 }
 
@@ -129,32 +90,36 @@ export default async function () {
       // Add required OAuth2 provider perspectives
       perspectives: ['profile'].concat(app.authenticationProviders)
     })
+    debug('\'users\' service created')
     await app.createService('authorisations', { servicesPath })
+    debug('\'authorisations\' service created')
   }
 
-  const storeConfig = app.get('storage')
-  if (storeConfig) {
-    const s3Client = new aws.S3(_.omit(storeConfig, 'bucket'))
-    debug('S3 core storage client created with config ', storeConfig)
-    const blobStore = store({ client: s3Client, bucket: storeConfig.bucket })
-    const blobService = BlobService({ Model: blobStore, id: '_id' })
-    await createStorageService.call(app, blobService)
+  const storageConfig = app.get('storage')
+  if (storageConfig) {
+    await createStorageService.call(app)
+    debug('\'storage\' service created')
   }
 
   const orgConfig = app.get('organisations')
   if (orgConfig) {
     await createOrganisationService.call(app)
+    debug('\'organisations\' service created')
   }
 
   const mailerConfig = app.get('mailer')
   if (mailerConfig) {
     await app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    debug('\'mailer\' service created')
     await app.createService('account', { servicesPath })
+    debug('\'account\' service created')
   }
 
   const pusherConfig = app.get('pusher')
   if (pusherConfig) {
     await app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    debug('\'pusher\' service created')
     await app.createService('devices', { servicesPath })
+    debug('\'devices\' service created')
   }
 }

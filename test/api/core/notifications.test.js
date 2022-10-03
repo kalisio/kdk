@@ -6,7 +6,7 @@ import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 // We now rely on mailer stub which is faster
 // Integration testing with real email account shouuld be restricted to apps
-//import { createGmailClient } from './utils.js'
+// import { createGmailClient } from './utils.js'
 import { createMailerStub } from './utils.js'
 
 const { util, expect } = chai
@@ -104,7 +104,7 @@ describe('core:notifications', () => {
   it('setup access to gmail', async () => {
     const gmailApiConfig = app.get('gmailApi')
     gmailUser = gmailApiConfig.user
-    //gmailClient = await createGmailClient(gmailApiConfig)
+    // gmailClient = await createGmailClient(gmailApiConfig)
   })
   // Let enough time to process
     .timeout(5000)

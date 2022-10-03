@@ -33,7 +33,7 @@
     <q-item-section v-show="expanded" @click="onExpand()">
       <KExpandable
         class="k-expandable full-width"
-        v-model="expanded"
+        :isExpanded="expanded"
         :minHeight="minHeight"
         :maxHeight="maxHeight"
       >
@@ -52,7 +52,10 @@
     <q-item-section side top>
       <slot name="item-actions">
         <k-panel id="item-actions" :content="itemActions" :context="$props" />
-        <KAction v-show="expandable" class="absolute-right"
+        <KAction
+          v-show="expandable"
+          class="absolute-right"
+          id="expand-action"
           :icon="expanded ? 'las la-angle-up' : 'las la-angle-down'"
           :handler="onExpand"
         />

@@ -246,7 +246,7 @@
   dependencies:
     debug "^4.0.0"
 
-"@feathersjs/errors@^4.3.0", "@feathersjs/errors@^4.5.11", "@feathersjs/errors@^4.5.15":
+"@feathersjs/errors@^4.5.11", "@feathersjs/errors@^4.5.15":
   version "4.5.15"
   resolved "https://registry.yarnpkg.com/@feathersjs/errors/-/errors-4.5.15.tgz#ec371ca9905685e33f41e331975182f36241d1bd"
   integrity sha512-EJAYWMsWZlUA/halbgZBc6eP2d3HPkHi5GzprYEK58GCh51KJ36VjX7VKVEnMjgBSED+PE00tpr3ZvUC4nUR+Q==
@@ -671,11 +671,6 @@
     moment "^2.29.3"
     mongodb "^2.2.26"
     mubsub "^1.4.0"
-
-SimpleQueue@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/SimpleQueue/-/SimpleQueue-0.0.1.tgz#74466490afa37c1878653767f23c59067a8e7d70"
-  integrity sha512-tKhoUTeM1UctloT+AkjwoY7LoMTg52Re1GdWdZJsLYUmXsW4RUYnRm5kT8whSnYIR9osC8LJCQJx3tZNA+RVjg==
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -1132,11 +1127,6 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
-buffer-queue@~1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/buffer-queue/-/buffer-queue-1.0.0.tgz#3d253fe2f0ab70e851d728712e8cd6f914a8c002"
-  integrity sha512-HNAysvwrmORbm5w5rB6yCz2Sab+ATCW6RSAOVWJmaRnPviPfuNO8+f3R0MyCJMUhL8sMx88LcawtIcfjHERhVA==
-
 buffer-shims@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/buffer-shims/-/buffer-shims-1.0.0.tgz#9978ce317388c649ad8793028c3477ef044a8b51"
@@ -1331,11 +1321,6 @@ cliui@^7.0.2:
     strip-ansi "^6.0.0"
     wrap-ansi "^7.0.0"
 
-clone@^2.1.1:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
-  integrity sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==
-
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -1459,16 +1444,6 @@ concat-stream@^1.5.2:
     buffer-from "^1.0.0"
     inherits "^2.0.3"
     readable-stream "^2.2.2"
-    typedarray "^0.0.6"
-
-concat-stream@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-2.0.0.tgz#414cf5af790a48c60ab9be4527d56d5e41133cb1"
-  integrity sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==
-  dependencies:
-    buffer-from "^1.0.0"
-    inherits "^2.0.3"
-    readable-stream "^3.0.2"
     typedarray "^0.0.6"
 
 config@^3.3.7:
@@ -2588,19 +2563,6 @@ feathers-authentication-management@^4.0.0:
     lodash "^4.17.21"
     type-fest "^2.17.0"
 
-feathers-blob@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/feathers-blob/-/feathers-blob-2.6.0.tgz#20db8e2e6dbe6bae3315f7f9478c44260ccba101"
-  integrity sha512-jdc5VkVrMKCjx0Rmw1KsO+3VxQ6xfDlJANaklSUe3Lw+3EMUyni+R3LMdsdmWUmelDv/FqGuHSatr6F9A3cZ2w==
-  dependencies:
-    "@feathersjs/errors" "^4.3.0"
-    concat-stream "^2.0.0"
-    dauria "^2.0.0"
-    debug "^4.0.0"
-    from2 "^2.1.1"
-    mime-types "^2.1.10"
-    uberproto "^2.0.0"
-
 feathers-commons@^0.8.6:
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/feathers-commons/-/feathers-commons-0.8.7.tgz#11c6f25b537745a983e8d61552d7db8932d53782"
@@ -2865,14 +2827,6 @@ fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==
-
-from2@^2.1.1:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/from2/-/from2-2.3.0.tgz#8bfb5502bde4a4d36cfdeea007fcca21d7e382af"
-  integrity sha512-OMcX/4IC/uqEPVgGeyfN22LJk6AZrMkRZHxcHBMBvHScDGgwTm2GT2Wkgtocyd3JfZffjj2kYUDXXII0Fk9W0g==
-  dependencies:
-    inherits "^2.0.1"
-    readable-stream "^2.0.0"
 
 fs-constants@^1.0.0:
   version "1.0.0"
@@ -4195,7 +4149,7 @@ mime-db@1.52.0, "mime-db@>= 1.43.0 < 2":
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.52.0.tgz#bbabcdc02859f4987301c856e3387ce5ec43bf70"
   integrity sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==
 
-mime-types@^2.0.0, mime-types@^2.1.10, mime-types@^2.1.12, mime-types@~2.1.19, mime-types@~2.1.24, mime-types@~2.1.34:
+mime-types@^2.1.12, mime-types@~2.1.19, mime-types@~2.1.24, mime-types@~2.1.34:
   version "2.1.35"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.35.tgz#381a871b62a734450660ae3deee44813f70d959a"
   integrity sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==
@@ -5114,7 +5068,7 @@ readable-stream@2.2.7:
     string_decoder "~1.0.0"
     util-deprecate "~1.0.1"
 
-readable-stream@^2.0.0, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.0, readable-stream@^2.3.5:
+readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.5:
   version "2.3.7"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.7.tgz#1eca1cf711aef814c04f62252a36a62f6cb23b57"
   integrity sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw==
@@ -5127,7 +5081,7 @@ readable-stream@^2.0.0, readable-stream@^2.1.5, readable-stream@^2.2.2, readable
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-readable-stream@^3.0.2, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
+readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.0.tgz#337bbda3adc0706bd3e024426a286d4b4b2c9198"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -5302,33 +5256,6 @@ rimraf@3.0.2, rimraf@^3.0.2:
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   dependencies:
     glob "^7.1.3"
-
-s3-blob-store@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/s3-blob-store/-/s3-blob-store-4.1.1.tgz#258f9e561c59a1494a74403381351e3e551acd37"
-  integrity sha512-58m0qwaFp4jE7aQX+LAGLWhrDZwQVfmYWZ47jhYikRQ2Bucji+KFrDJyOsWJAdjGNRDi/CYmXAm2z3Q12U0YjQ==
-  dependencies:
-    debug "^4.1.1"
-    mime-types "^2.0.0"
-    s3-download-stream "1.1.1"
-    s3-stream-upload "^2.0.1"
-
-s3-download-stream@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/s3-download-stream/-/s3-download-stream-1.1.1.tgz#6e5269d4ab9c8ef9f2c26f84c2a97c83e059c275"
-  integrity sha512-1Az1Fd2e6QIvunTUy5CktDIunajXZAVS8TnWzT3APL6FenOv3cgOj/2iYNUUiASmOGiJzCUNk/9dIjxSHM4+ZQ==
-  dependencies:
-    SimpleQueue "0.0.1"
-    clone "^2.1.1"
-    debug "^3.1.0"
-
-s3-stream-upload@^2.0.1:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/s3-stream-upload/-/s3-stream-upload-2.0.2.tgz#60342f12d4aa06ea8f389fb761a5393aedca017f"
-  integrity sha512-hSfGZ4InIUMH29niWCAkcDvmOGwADSy7j2Ktm6+nKI+ub6nPoLOboo1D+Q3mEIutTHu0J4+Sv92J0GOk5hAonQ==
-  dependencies:
-    buffer-queue "~1.0.0"
-    readable-stream "^2.3.0"
 
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
@@ -6111,7 +6038,7 @@ uberproto@^1.2.0:
   resolved "https://registry.yarnpkg.com/uberproto/-/uberproto-1.2.0.tgz#61d4eab024f909c4e6ea52be867c4894a4beeb76"
   integrity sha512-pGtPAQmLwh+R9w81WVHzui1FfedpQWQpiaIIfPCwhtsBez4q6DYbJFfyXPVHPUTNFnedAvNEnkoFiLuhXIR94w==
 
-uberproto@^2.0.0, uberproto@^2.0.4, uberproto@^2.0.6:
+uberproto@^2.0.4, uberproto@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/uberproto/-/uberproto-2.0.6.tgz#709274d183bce6fb734dfd3880d2086ed72b69e5"
   integrity sha512-68H97HffZoFaa3HFtpstahWorN9dSp5uTU6jo3GjIQ6JkJBR3hC2Nx/e/HFOoYHdUyT/Z1MRWfxN1EiQJZUyCQ==

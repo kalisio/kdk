@@ -8,11 +8,11 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits } from 'vue'
+import { computed } from 'vue'
 
 // props
 const props = defineProps({
-  modelValue: {
+  isExpanded: {
     type: Boolean,
     default: false
   },
@@ -26,13 +26,7 @@ const props = defineProps({
   }
 })
 
-// emit
-const emit = defineEmits(['update:modelValue'])
-
 // computed
-const isExpanded = computed(() => {
-  return props.modelValue
-})
 const cssMinHeight = computed(() => {
   return `${props.minHeight}px`
 })

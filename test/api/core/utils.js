@@ -6,7 +6,7 @@ const gmail = google.gmail('v1')
 const { expect } = chai
 
 export const createMailerStub = (stubConfig) => {
-  let emails = []
+  const emails = []
   return Object.assign({
     send: (mail, callback) => {
       emails.push(mail.data)

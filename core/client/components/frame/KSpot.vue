@@ -5,11 +5,10 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
 import { getCssVar } from 'quasar'
 
 // props
-const props = defineProps({
+defineProps({
   color: {
     type: String,
     default: getCssVar('primary')

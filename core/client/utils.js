@@ -9,8 +9,8 @@ import { defineAsyncComponent, markRaw } from 'vue'
 Notify.setDefaults({
   position: 'bottom-left',
   timeout: 5000,
-  textColor: 'white',
-  actions: [{ icon: 'las la-times', color: 'white' }]
+  textColor: 'white'//,
+  // actions: [{ icon: 'las la-times', color: 'white' }]
 })
 
 Loading.setDefaults({

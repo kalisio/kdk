@@ -10,14 +10,13 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 import KContent from './KContent.vue'
 
 // emit
 const emit = defineEmits(['triggered'])
 
 // props
-const props = defineProps({
+defineProps({
   content: {
     type: [Object, Array],
     default: () => null

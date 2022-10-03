@@ -1,5 +1,5 @@
 <template>
-  <KSelect
+  <KOptionsChooser
     :options="options"
     :tooltip="tooltip"
     @option-chosen="onOptionChanged"

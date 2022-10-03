@@ -1,7 +1,7 @@
 <template>
   <KExpandable
     class="k-expandable"
-    v-model="isExpanded"
+    :isExpanded="isExpanded"
     :minHeight="minHeight"
     :maxHeight="maxHeight"
     @click="onClick"
@@ -24,18 +24,20 @@
     <div class="k-expandable-action">
       <KAction
         v-if="isExpandable"
-        id="scroll-action"
+        id="collapse-action"
+        class="k-expandable-action"
         :icon="isExpanded ? 'las la-angle-up' : 'las la-ellipsis-h'"
         :tooltip="isExpanded ? 'KTextArea.COLLAPSE' : ''"
         size="xs"
-        class="k-expandable-action"
+        :handler="() => isExpanded = false"
+        :propagate="false"
       />
     </div>
   </KExpandable>
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps } from 'vue'
+import { ref, computed, watch } from 'vue'
 import sanitizeHtml from 'sanitize-html'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
@@ -74,13 +76,6 @@ const isScrollable = ref(false)
 // computed
 const sanitizedText = computed(() => {
   return sanitizeHtml(props.text)
-})
-const hasEllipsis = computed(() => {
-  if (isExpanded.value) return isScrollable.value
-  return isExpandable.value
-})
-const cssMinHeight = computed(() => {
-  return `${props.minHeight}px`
 })
 const cssCursor = computed(() => {
   return isExpandable.value ? 'pointer' : 'default'
