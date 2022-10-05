@@ -44,6 +44,21 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
   }
 }
 
+// Custom strategy to ensure we renew the JWT when reauthenticating
+// Based on https://deniapps.com/blog/jwt-token-auto-renew-auto-logout
+export class RenewJWTStrategy extends JWTStrategy {
+  async authenticate(authentication, params) {
+    // run all of the original authentication logic, e.g. checking
+    // if the token is there, is valid, is not expired, etc.
+    const result = await super.authenticate(authentication, params)
+    // and now the key trick - by deleting the accessToken here
+    // we will get Feathers AuthenticationStrategy.create()
+    // to generate us a new token.
+    delete result.accessToken
+    return result
+  }
+}
+
 export async function createDefaultUsers () {
   const app = this
   const defaultUsers = app.get('authentication').defaultUsers
@@ -71,7 +86,7 @@ export default function auth (app) {
 
   const authentication = new AuthenticationService(app)
   const strategies = config.authStrategies || []
-  if (strategies.includes('jwt')) authentication.register('jwt', new JWTStrategy())
+  if (strategies.includes('jwt')) authentication.register('jwt', new RenewJWTStrategy())
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers

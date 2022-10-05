@@ -1,6 +1,8 @@
 import logger from 'loglevel'
 import _ from 'lodash'
 import sift from 'sift'
+import moment from 'moment'
+import jwtdecode from 'jwt-decode'
 import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
@@ -247,5 +249,21 @@ api.configure(reactive({
   idField: '_id',
   matcher: siftMatcher // Our custom matcher to handle fuzzy search
 }))
+// By default we automatically renew JWT token before it expires
+api.renewJwtOnExpiration = function (authResult) {
+  const { accessToken } = authResult
+  const jwt = jwtdecode(accessToken)
+  const now = moment()
+  const expiration = moment.unix(jwt.exp)
+  // Setup a timeout to renew the token just before it expires if the user is still connected
+  // Add a small delay to handle reauthentication time
+  const delay = expiration.diff(now) - 2000
+  setTimeout(() => {
+    api.reAuthenticate(true)
+  }, delay)
+}
+if (_.get(config, 'renewJwt', true)) {
+  api.on('login', api.renewJwtOnExpiration)
+}
 // Object used to store configuration options for services
 api.serviceOptions = {}

@@ -108,11 +108,11 @@ export default {
   },
   mounted () {
     // Introduction is only for logged users, listen for user login/logout
-    this.$api.on('authenticated', this.show)
+    this.$api.on('login', this.show)
     this.$api.on('logout', this.hide)
   },
   beforeUnmount () {
-    this.$api.off('authenticated', this.show)
+    this.$api.off('login', this.show)
     this.$api.off('logout', this.hide)
   }
 }
