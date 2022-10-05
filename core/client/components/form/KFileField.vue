@@ -80,10 +80,10 @@ export default {
         const response = await Storage.upload({
           file: this.model.name,
           key,
-          buffer: this.model.content, key, 
+          buffer: this.model.content,
           context
         })
-        if (response.status === 200) {
+        if (response.ok) {
           this.$notify({
             type: 'positive',
             group: 'upload',

@@ -33,8 +33,8 @@ export const Storage = {
     })
     const fetchResponse = await window.fetch(uploadUrl, requestOptions)
     dismiss()
-    if (!fetchResponse.ok) {
-      Events.emit('error', { message: i18n.t('errors.' + fetchResponse.status) })
+    if (fetchResponse.ok) {
+      Events.emit('file-uploaded', { file, key })
     }
     return fetchResponse
   },
