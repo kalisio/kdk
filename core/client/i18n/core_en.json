@@ -314,7 +314,10 @@
     }
   },
   "reader": {
-    "READING_FILE": "Please wait while Reading {file}"
+    "READING_FILE": "Reading file {file}"
+  },
+  "storage": {
+    "UPLOADING_FILE": "Uploading file {file}"
   },
   "KWelcome": { 
     "WELCOME_TITLE": "Welcome !",

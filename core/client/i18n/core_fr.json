@@ -314,7 +314,10 @@
     }
   },
   "reader": {
-    "READING_FILE": "Lecture de {file} en cours.<br>Veuillez patienter."
+    "READING_FILE": "Lecture de {file} en cours"
+  },
+  "storage": {
+    "UPLOADING_FILE": "Transfert du fichier {file} en cours"
   },
   "KWelcome": {
     "WELCOME_TITLE": "Bienvenue !",

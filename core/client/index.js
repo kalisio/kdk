@@ -5,6 +5,7 @@ import { Layout } from './layout.js'
 import { Time } from './time.js'
 import { Units } from './units.js'
 import { Reader } from './reader.js'
+import { Storage } from './storage.js'
 import { Filter } from './filter.js'
 import { Sorter } from './sorter.js'
 import services from './services/index.js'
@@ -51,6 +52,7 @@ export default function init () {
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()
+  Storage.initialize()
   Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('leftPane', { content: null, mode: undefined, filter: {}, visible: false })
   Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })

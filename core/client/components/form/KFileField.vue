@@ -30,7 +30,7 @@ import _ from 'lodash'
 import { baseField } from '../../mixins'
 import { i18n } from '../../i18n.js'
 import { Reader } from '../../reader.js'
-import { upload } from '../../storage.js'
+import { Storage } from '../../storage.js'
 
 export default {
   mixins: [baseField],
@@ -77,16 +77,23 @@ export default {
         const context = this.properties.field.storage.context
         const path = this.properties.field.storage.path
         const key = path ? path + '/' + this.model.name : this.model.name
-        const response = await upload(this.model.content, key, context)
+        const response = await Storage.upload({
+          file: this.model.name,
+          key,
+          buffer: this.model.content, key, 
+          context
+        })
         if (response.status === 200) {
           this.$notify({
             type: 'positive',
+            group: 'upload',
             message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
               { file: this.model.name })
           })
         } else {
           this.$notify({
             type: 'negative',
+            group: 'upload',
             message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
               { file: this.model.name })
           })

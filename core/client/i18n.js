@@ -44,13 +44,18 @@ export const i18n = {
     })
     app.use(this.i18n)
   },
-  get () {
-    return this.i18n.global
-  },
   t (key, param) {
+    if (!this.i18n) {
+      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      return key
+    }
     return this.i18n.global.t(key, param)
   },
   tie (key, param) {
+    if (!this.i18n) {
+      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      return key
+    }
     if (_.isEmpty(key)) return key
     return this.i18n.global.te(key) ? this.i18n.global.t(key, param) : key
   }
