@@ -43,8 +43,7 @@ describe('core:storage', () => {
   })
 
   it('creates an object in storage', async () => {
-    const signedUrl = await storageService.create({ id })
-
+    // TODO const signedUrl = await storageService.create({ id })
     return storageService.create({ id, uri: contentUri }).then(object => {
       storageObject = object
       expect(storageObject._id).to.equal(`${id}`)

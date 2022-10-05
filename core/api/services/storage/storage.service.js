@@ -7,9 +7,9 @@ import makeDebug from 'debug'
 const debug = makeDebug('kdk:storage:service')
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/interfaces/_aws_sdk_types.requestpresigningarguments-1.html
-const signingOptions= [
-  'expiresIn', 
-  'signableHeaders', 
+const signingOptions = [
+  'expiresIn',
+  'signableHeaders',
   'signingDate',
   'signingRegion',
   'signingService',
@@ -50,7 +50,7 @@ export default function (name, app, options) {
       data.Bucket = bucket
       // Create the putCommand
       const putCommand = new PutObjectCommand({
-        Key: this.getKey(id),
+        Key: this.getKey(data.id),
         Bucket: bucket
       })
       // Run the command
@@ -93,7 +93,7 @@ export default function (name, app, options) {
       const s3Client = this.createS3Client(params)
       if (!s3Client) throw new BadRequest('get: invalid S3 credentials')
       // Create the deleteCommand
-      const deleteCommand = new DeleteObjectCommand({ 
+      const deleteCommand = new DeleteObjectCommand({
         Key: this.getKey(id),
         Bucket: bucket
       })

@@ -15,7 +15,7 @@ export async function upload (buffer, key, contextId) {
     body: JSON.stringify({ signedUrl: createResponse.signedUrl, buffer })
   }
   const uploadUrl = api.getBaseUrl() + config.apiPath + '/upload'
-  let dismiss = Notify.create({
+  const dismiss = Notify.create({
     group: 'upload',
     icon: 'las la-hourglass-half',
     message: i18n.t('storage.UPLOADING_FILE'),
@@ -62,5 +62,4 @@ export async function download (key, contextId) {
     dismiss()
     Events.emit('error', { message: this.$t('errors.NETWORK_ERROR') })
   }
-  return 
 }
