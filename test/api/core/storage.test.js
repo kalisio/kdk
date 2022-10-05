@@ -42,7 +42,9 @@ describe('core:storage', () => {
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
 
-  it('creates an object in storage', () => {
+  it('creates an object in storage', async () => {
+    const signedUrl = await storageService.create({ id })
+
     return storageService.create({ id, uri: contentUri }).then(object => {
       storageObject = object
       expect(storageObject._id).to.equal(`${id}`)

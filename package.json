@@ -75,6 +75,8 @@
     "lib": "lib"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.183.0",
+    "@aws-sdk/s3-request-presigner": "^3.183.0",
     "@casl/ability": "^6.1.1",
     "@casl/mongoose": "^7.1.0",
     "@feathersjs/authentication": "^5.0.0-pre.28",
