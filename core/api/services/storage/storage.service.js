@@ -19,16 +19,12 @@ const signingOptions = [
 
 export default function (name, app, options) {
   // Check options
+  const s3Client = new S3Client(app.get('storage').client)
   const bucket = options.bucket || app.get('storage').bucket
   if (!bucket) throw new Error('A bucket must be specified to crate a storage service')
   const prefix = options.prefix || app.get('storage').prefix
   const context = options.context
   return {
-    createS3Client (params) {
-      debug('create S3 client')
-      const s3ClientConfig = Object.assign({}, app.get('storage').client, params)
-      return new S3Client(s3ClientConfig)
-    },
     getKey (id) {
       let key = ''
       if (prefix) key += prefix + '/'
@@ -37,14 +33,11 @@ export default function (name, app, options) {
       return key
     },
     // Create a put signed url
-    create (data, params) {
+    async create (data, params) {
       // Check data object
       if (data.Key) throw new BadRequest('get: unexpected \'Key\' parameter')
       if (!data.id) throw new BadRequest('get: missing \'id\' parameter')
       debug(`storage service called for create ${data.id}`)
-      // Create s3 client
-      const s3Client = this.createS3Client(params)
-      if (!s3Client) throw new BadRequest('get: invalid S3 credentials')
       // Set the parameters
       data.Key = this.getKey(data.id)
       data.Bucket = bucket
@@ -55,7 +48,7 @@ export default function (name, app, options) {
       })
       // Run the command
       const options = _.pick(data, signingOptions)
-      const signedUrl = getSignedUrl(s3Client, putCommand, options)
+      const signedUrl = await getSignedUrl(s3Client, putCommand, options)
       debug(`created put signed url: ${signedUrl}`)
       return {
         id: data.id,
@@ -63,14 +56,11 @@ export default function (name, app, options) {
       }
     },
     // get a get signed url
-    get (id, data, params) {
+    async get (id, data, params) {
       if (!id) throw new BadRequest('get: expected missing \'id\' parameter')
       // Check data object
       if (data.Key) throw new BadRequest('get: unexpected \'Key\' parameter')
       debug(`storage service called for get ${id}`)
-      // Create s3 client
-      const s3Client = this.createS3Client(params)
-      if (!s3Client) throw new BadRequest('get: invalid S3 credentials')
       // Set the parameters
       data.Key = this.getKey(id)
       data.Bucket = bucket
@@ -81,7 +71,7 @@ export default function (name, app, options) {
       })
       // Run the command
       const options = _.pick(data, signingOptions)
-      const signedUrl = getSignedUrl(s3Client, getCommand, options)
+      const signedUrl = await getSignedUrl(s3Client, getCommand, options)
       debug(`created get signed url: ${signedUrl}`)
       return signedUrl
     },

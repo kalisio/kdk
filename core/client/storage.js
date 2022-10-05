@@ -7,7 +7,7 @@ import { Notify } from 'quasar'
 export async function upload (buffer, key, contextId) {
   // First create the signed url
   const storageService = api.getService('storage', contextId)
-  const createResponse = await storageService.create({ id: key, Expires: 60 })
+  const createResponse = await storageService.create({ id: key, expiresIn: 60 })
   // Upload the buffer using the signed url
   const requestOptions = {
     method: 'POST',
@@ -24,7 +24,6 @@ export async function upload (buffer, key, contextId) {
     spinner: true
   })
   const fetchResponse = await window.fetch(uploadUrl, requestOptions)
-  console.log(fetchResponse)
   dismiss()
   if (!fetchResponse.ok) {
     Events.emit('error', { message: i18n.t('errors.' + fetchResponse.status) })

@@ -28,6 +28,7 @@
 <script>
 import _ from 'lodash'
 import { baseField } from '../../mixins'
+import { i18n } from '../../i18n.js'
 import { Reader } from '../../reader.js'
 import { upload } from '../../storage.js'
 
@@ -80,13 +81,13 @@ export default {
         if (response.status === 200) {
           this.$notify({
             type: 'positive',
-            message: this.$t('KFileField.UPLOAD_FILE_SUCCEEDED',
+            message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
               { file: this.model.name })
           })
         } else {
           this.$notify({
             type: 'negative',
-            message: this.$t('KFileField.UPLOAD_FILE_ERRORED',
+            message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
               { file: this.model.name })
           })
         }
