@@ -543,6 +543,7 @@
   },
   "KFileField": {
     "INVALID_FILE_TYPE": "Invalid file type, please select the right file type",
+    "INVALID_FILE_SIZE": "Invalid file size, the file is too large",
     "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
   },

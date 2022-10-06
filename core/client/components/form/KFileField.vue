@@ -10,7 +10,7 @@
     :label="label"
     clearable
     counter
-    :accept="getAcceptedTypes()"
+    :accept="acceptedTypes"
     use-chips
     :error="hasError"
     :error-message="errorLabel"
@@ -27,6 +27,7 @@
 
 <script>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { baseField } from '../../mixins'
 import { i18n } from '../../i18n.js'
 import { Reader } from '../../reader.js'
@@ -39,12 +40,17 @@ export default {
       file: null
     }
   },
+  computed: {
+    acceptedTypes () {
+      return _.get(this.properties.field, 'mimeTypes', '')
+    },
+    maxFileSize () {
+      return _.get(this.properties.field, 'maxSize', 1024 * 1024)
+    }
+  },
   methods: {
     emptyModel () {
       return {}
-    },
-    getAcceptedTypes () {
-      return _.get(this.properties.field, 'mimeTypes', '')
     },
     onFileCleared () {
       this.model = this.emptyModel()
@@ -52,19 +58,26 @@ export default {
     },
     async onFileChanged () {
       if (this.file) {
-        const acceptedFiles = Reader.filter([this.file])
-        if (acceptedFiles.length === 1) {
-          const file = acceptedFiles[0]
-          try {
-            const content = await Reader.read(file)
-            this.model = { name: this.file.name, content }
-            this.onChanged()
-          } catch (error) {
-            this.error = error
+        // Check the size to display an explicit message
+        if (this.file.size < this.maxFileSize) {
+          // Check whether the file type is registered to be read by a reader
+          const acceptedFiles = Reader.filter([this.file])
+          if (acceptedFiles.length === 1) {
+            const file = acceptedFiles[0]
+            try {
+              const content = await Reader.read(file)
+              this.model = { name: this.file.name, content }
+              this.onChanged()
+            } catch (error) {
+              this.error = error
+              this.model = this.emptyModel()
+            }
+          } else {
+            this.error = 'KFileField.INVALID_FILE_TYPE'
             this.model = this.emptyModel()
           }
         } else {
-          this.error = 'KFileField.INVALID_FILE_TYPE'
+          this.error = 'KFileField.INVALID_FILE_SIZE'
           this.model = this.emptyModel()
         }
       }
@@ -78,6 +91,7 @@ export default {
         const context = this.properties.field.storage.context
         const path = this.properties.field.storage.path
         const key = path ? path + '/' + this.model.name : this.model.name
+        logger.debug(`upload fle ${this.model.name} with key ${key}`)
         const response = await Storage.upload({
           file: this.model.name,
           type,
@@ -88,14 +102,12 @@ export default {
         if (response.ok) {
           this.$notify({
             type: 'positive',
-            group: 'upload',
             message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
               { file: this.model.name })
           })
         } else {
           this.$notify({
             type: 'negative',
-            group: 'upload',
             message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
               { file: this.model.name })
           })

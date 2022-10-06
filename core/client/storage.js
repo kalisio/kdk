@@ -39,7 +39,6 @@ export const Storage = {
       }
     }
     const dismiss = Notify.create({
-      group: 'upload',
       icon: 'las la-hourglass-half',
       message: i18n.t('storage.UPLOADING_FILE', { file }),
       color: 'primary',
@@ -71,7 +70,6 @@ export const Storage = {
       downloadUrl = api.getBaseUrl() + config.apiPath + '/' + this.proxy + '?signedUrl=' + signedUrl
     }
     const dismiss = this.$q.notify({
-      group: 'upload',
       icon: 'las la-hourglass-half',
       message: this.$t('storage.UPLOADING_FILE', { file }),
       color: 'primary',

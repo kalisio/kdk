@@ -7,9 +7,12 @@ import { Events } from './events.js'
 // Export singleton
 export const Reader = {
   readers: {},
-  register (mimeType, reader) {
-    this.readers[mimeType] = reader
-    reader.mimeType = mimeType
+  register (mimeTypes, reader) {
+    if (!_.isArray(mimeTypes)) mimeTypes = [mimeTypes]
+    _.forEach(mimeTypes, mimeType => {
+      this.readers[mimeType] = reader
+      reader.mimeType = mimeType
+    })
   },
   filter (filelist) {
     const acceptedFiles = []
@@ -17,11 +20,13 @@ export const Reader = {
     // iterate though the files and sort the files
     for (let i = 0; i < filelist.length; ++i) {
       const file = filelist[i]
+      // Check whether a reader is assigned to the file type
       const fileExt = path.extname(file.name)
       let reader = this.readers[fileExt]
       if (reader) {
         acceptedFiles.push({ reader: fileExt, name: file.name, files: [file] })
       } else {
+        // Check for additional files to be supported y a reader
         reader = _.find(this.readers, reader => reader.getAdditionalFiles().includes(fileExt))
         if (reader) {
           additionnalFiles.push({ reader: reader.mimeType, file })
