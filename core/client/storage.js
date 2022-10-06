@@ -10,19 +10,34 @@ export const Storage = {
     this.proxy = _.get(config, 'storage.proxy')
   },
   async upload (params) {
-    const { file, key, buffer } = params
+    const { file, key, buffer, type } = params
     const contextId = params.context
     // First create the signed url
     const storageService = api.getService('storage', contextId)
     const createResponse = await storageService.create({ id: key, expiresIn: 60 })
     const signedUrl = createResponse.signedUrl
-    // Upload the buffer using the signed url
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: this.proxy ? JSON.stringify({ signedUrl, buffer }) : buffer
+    // Configure the upload request
+    let uploadUrl = signedUrl
+    let uploadOptions = {
+      method: 'PUT',
+      body: buffer,
+      headers: {
+        'Content-Type': type,
+        'Content-Length': buffer.length
+      }
     }
-    const uploadUrl = this.proxy ? api.getBaseUrl() + config.apiPath + '/' + this.proxy : signedUrl
+    if (this.proxy) {
+      uploadUrl = api.getBaseUrl() + config.apiPath + '/' + this.proxy
+      uploadOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentBuffer: Array.from(new Uint8Array(buffer)),
+          contentType: type,
+          signedUrl
+        })
+      }
+    }
     const dismiss = Notify.create({
       group: 'upload',
       icon: 'las la-hourglass-half',
@@ -31,44 +46,43 @@ export const Storage = {
       timeout: 0,
       spinner: true
     })
-    const fetchResponse = await window.fetch(uploadUrl, requestOptions)
+    const uploadResponse = await window.fetch(uploadUrl, uploadOptions)
     dismiss()
-    if (fetchResponse.ok) {
+    if (uploadResponse.ok) {
       Events.emit('file-uploaded', { file, key })
     }
-    return fetchResponse
+    return uploadResponse
   },
   async download (params) {
-    const { file, key } = params
+    const { file, key, type } = params
     const contextId = params.context
     const storageService = api.get('storage', contextId)
-    const response = await storageService.get({ id: key, Expires: 60 })
-    // Downlaod the file using the signed url
-    const requestOptions = {
+    const getResponse = await storageService.get({ id: key, expiresIn: 60 })
+    const signedUrl = getResponse.signedUrl
+    // Configure the download request
+    let downloadUrl = signedUrl
+    const downloadOptions = {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ signedUrl: response.signedUrl })
-    }
-    const downloadUrl = api.getBaseUrl() + config.apiPath + '/download'
-    let dismiss = null
-    try {
-      dismiss = this.$q.notify({
-        group: 'upload',
-        icon: 'las la-hourglass-half',
-        message: this.$t('storage.UPLOADING_FILE', { file }),
-        color: 'primary',
-        timeout: 0,
-        spinner: true
-      })
-      const response = window.fetch(downloadUrl, requestOptions)
-      dismiss()
-      if (!response.ok) {
-        Events.emit('error', { message: this.$t('errors.' + response.status) })
+      headers: {
+        'Content-Type': type
       }
-    } catch (error) {
-      // Network error
-      dismiss()
-      Events.emit('error', { message: this.$t('errors.NETWORK_ERROR') })
     }
+    if (this.proxy) {
+      downloadUrl = api.getBaseUrl() + config.apiPath + '/' + this.proxy + '?signedUrl=' + signedUrl
+    }
+    const dismiss = this.$q.notify({
+      group: 'upload',
+      icon: 'las la-hourglass-half',
+      message: this.$t('storage.UPLOADING_FILE', { file }),
+      color: 'primary',
+      timeout: 0,
+      spinner: true
+    })
+    const downloadResponse = window.fetch(downloadUrl, downloadOptions)
+    dismiss()
+    if (downloadResponse.ok) {
+      Events.emit('file-downloaded', { file, key })
+    }
+    return downloadResponse
   }
 }

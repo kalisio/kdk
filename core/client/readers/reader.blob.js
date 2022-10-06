@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import logger from 'loglevel'
 import { i18n } from '../i18n.js'
 
@@ -23,7 +24,13 @@ export const BLOBReader = {
         logger.debug(error)
         reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: file.name }), { errors: error }))
       }
-      reader.readAsDataURL(file)
+      const expectedType = _.get(options, 'type', 'arrayBuffer')
+      if (expectedType === 'dataUrl') {
+        reader.readAsDataURL(file)
+      } else {
+        if (expectedType !== 'arrayBuffer') logger.error(`Undefined expected type ${expectedType}. Read as Array buffer.`)
+        reader.readAsArrayBuffer(file)
+      }
     })
   },
   getAdditionalFiles () {

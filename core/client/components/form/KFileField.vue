@@ -74,11 +74,13 @@ export default {
     },
     async submitted (object, field) {
       if (this.properties.field.storage) {
+        const type = this.file.type
         const context = this.properties.field.storage.context
         const path = this.properties.field.storage.path
         const key = path ? path + '/' + this.model.name : this.model.name
         const response = await Storage.upload({
           file: this.model.name,
+          type,
           key,
           buffer: this.model.content,
           context

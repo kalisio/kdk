@@ -47,7 +47,7 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
 // Custom strategy to ensure we renew the JWT when reauthenticating
 // Based on https://deniapps.com/blog/jwt-token-auto-renew-auto-logout
 export class RenewJWTStrategy extends JWTStrategy {
-  async authenticate(authentication, params) {
+  async authenticate (authentication, params) {
     // run all of the original authentication logic, e.g. checking
     // if the token is there, is valid, is not expired, etc.
     const result = await super.authenticate(authentication, params)
