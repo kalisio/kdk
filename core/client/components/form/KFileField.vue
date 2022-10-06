@@ -11,7 +11,6 @@
     clearable
     counter
     :accept="acceptedTypes"
-    use-chips
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
@@ -50,7 +49,7 @@ export default {
   },
   methods: {
     emptyModel () {
-      return {}
+      return null
     },
     onFileCleared () {
       this.model = this.emptyModel()
@@ -66,7 +65,7 @@ export default {
             const file = acceptedFiles[0]
             try {
               const content = await Reader.read(file)
-              this.model = { name: this.file.name, content }
+              this.model = { name: this.file.name, type: this.file.type, content }
               this.onChanged()
             } catch (error) {
               this.error = error
@@ -86,15 +85,14 @@ export default {
       this.error = 'KFileField.INVALID_FILE_TYPE'
     },
     async submitted (object, field) {
-      if (this.properties.field.storage) {
-        const type = this.file.type
+      if (this.model && this.properties.field.storage) {
         const context = this.properties.field.storage.context
         const path = this.properties.field.storage.path
         const key = path ? path + '/' + this.model.name : this.model.name
         logger.debug(`upload fle ${this.model.name} with key ${key}`)
         const response = await Storage.upload({
           file: this.model.name,
-          type,
+          type: this.model.type,
           key,
           buffer: this.model.content,
           context
