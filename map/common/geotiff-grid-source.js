@@ -63,8 +63,10 @@ export class GeoTiffGridSource extends GridSource {
       const image = await this.geotiff.getImage()
       if (this.nodata === undefined) {
         // try to get it from image metadata
-        const nodata =image.getGDALNoData()
-        if (nodata) this.nodata = nodata
+        const meta = image.getFileDirectory()
+        const nodata = parseFloat(meta.GDAL_NODATA)
+        // const nodata =image.getGDALNoData()
+        if (nodata && nodata != NaN) this.nodata = nodata
       }
       if (this.rgb === undefined) {
         this.rgb = image.getSamplesPerPixel() > 1
