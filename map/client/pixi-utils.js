@@ -36,6 +36,11 @@ export const WEBGL_FUNCTIONS = {
 }`,
   unpack2: `vec2 unpack2(vec2 v, vec4 offsetScale) {
   return offsetScale.xy + v * offsetScale.zw;
+}`,
+  rgbFromFloat: `vec4 rgbFromFloat(float v) {
+  const uint mask = uint(0xFF);
+  uint asuint = floatBitsToUint(v);
+  return vec4(asuint & mask, (asuint >> 8) & mask, (asuint >> 16) & mask, (asuint >> 24) & mask) / vec4(255.0);
 }`
 }
 
