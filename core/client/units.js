@@ -116,10 +116,19 @@ export const Units = {
       }))
     // Create units not defined by default in mathjs
     this.getQuantities().forEach(quantity => {
-      const units = this.getUnits(quantity)
-      units.forEach(unit => {
-        if (unit.definition) math.createUnit(unit.name, _.omit(unit, ['label']))
-      })
+      this.createUnits(quantity)
+    })
+  },
+  createUnits (quantity) {
+    // Some units are defined according to existing base units
+    // So that we need to create the later ones first
+    const units = _.sortBy(this.getUnits(quantity), [(unit) => (unit.baseName ? 0 : 1)])
+    // Create units not defined by default in mathjs
+    units.forEach(unit => {
+      // Check if already exist first
+      if (math.Unit.isValuelessUnit(unit.name)) return
+      // If it has any option required by mathjs to create a new unit then proceed
+      if (unit.definition || unit.baseName) math.createUnit(unit.name, _.omit(unit, ['label']))
     })
   },
   get () {
@@ -130,6 +139,10 @@ export const Units = {
   },
   getQuantities () {
     return _.keys(_.omit(this.get(), ['default']))
+  },
+  setUnits (quantity, units) {
+    Store.set(`units.${quantity}`, units)
+    this.createUnits(quantity)
   },
   getUnits (quantity) {
     // Get units for a given quantity
