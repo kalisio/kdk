@@ -1,6 +1,22 @@
 import * as GeoTIFF from 'geotiff'
 import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
+function mergeRgb (bands) {
+  const scale = 8 * (bands.BYTES_PER_ELEMENT - 1)
+  const merged = new Float32Array(bands.length / 3)
+  const uint32View = new Uint32Array(merged.buffer)
+  for (let i = 0; i < merged.length; i++) {
+    const packed
+          = ((bands[i*3] >> scale))
+          | ((bands[i*3+1] >> scale) << 8)
+          | ((bands[i*3+2] >> scale) << 16)
+          | (0xFF << 24)
+    uint32View[i] = packed
+  }
+
+  return merged
+}
+
 export class GeoTiffGridSource extends GridSource {
   static getKey () {
     return 'geotiff'
@@ -30,6 +46,7 @@ export class GeoTiffGridSource extends GridSource {
 
     this.nodata = config.nodata
     this.converter = unitConverters[config.converter]
+    this.rgb = config.rgb
 
     try {
       this.geotiff = await GeoTIFF.fromUrl(config.url)
@@ -43,16 +60,19 @@ export class GeoTiffGridSource extends GridSource {
     if (this.geotiff) {
       // for now only consider first image
       this.imageCount = await this.geotiff.getImageCount()
-      const image = await this.geotiff.getImage()
+      this.refImage = await this.geotiff.getImage()
       if (this.nodata === undefined) {
         // try to get it from image metadata
-        // this.nodata = image.getGDALNoData()
-        // const meta = image.getGDALMetadata()
-        const meta = image.getFileDirectory()
-        this.nodata = parseFloat(meta.GDAL_NODATA)
+        const meta = this.refImage.getFileDirectory()
+        const nodata = parseFloat(meta.GDAL_NODATA)
+        // const nodata =image.getGDALNoData()
+        if (nodata && nodata != NaN) this.nodata = nodata
+      }
+      if (this.rgb === undefined) {
+        this.rgb = this.refImage.getSamplesPerPixel() > 1
       }
 
-      const tiffBbox = image.getBoundingBox()
+      const tiffBbox = this.refImage.getBoundingBox()
       this.minMaxLat = [tiffBbox[1], tiffBbox[3]]
       this.minMaxLon = [tiffBbox[0], tiffBbox[2]]
       this.usable = true
@@ -70,13 +90,13 @@ export class GeoTiffGridSource extends GridSource {
     let usedImage = await this.geotiff.getImage(0)
     for (let i = 1; i < this.imageCount; ++i) {
       const img = await this.geotiff.getImage(i)
-      const [rx, ry] = img.getResolution()
+      const [rx, ry] = img.getResolution(this.refImage)
       if (Math.abs(rx) > resolution[1] || Math.abs(ry) > resolution[0]) break
       usedImage = img
     }
 
-    const [rx, ry] = usedImage.getResolution()
-    const [ox, oy] = usedImage.getOrigin()
+    const [rx, ry] = usedImage.getResolution(this.refImage)
+    const [ox, oy] = this.refImage.getOrigin()
     const [sx, sy] = [usedImage.getWidth(), usedImage.getHeight()]
 
     let left = (bbox[1] - ox) / rx
@@ -94,10 +114,10 @@ export class GeoTiffGridSource extends GridSource {
 
     // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
     const window = [left, bottom, right + 1, top + 1]
-    const data = await usedImage.readRasters({
-      window: window,
-      fillValue: this.nodata
-    })
+    const bands = this.rgb
+          ? await usedImage.readRGB({ window: window })
+          : await usedImage.readRasters({ window: window, fillValue: this.nodata })
+    const data = this.rgb ? mergeRgb(bands) : bands[0]
 
     if (rx < 0) [left, right] = [right, left]
     if (ry < 0) [bottom, top] = [top, bottom]
@@ -111,8 +131,8 @@ export class GeoTiffGridSource extends GridSource {
 
     return new Grid1D(
       sourceKey,
-      dataBbox, [data.height, data.width],
-      data[0], true, SortOrder.DESCENDING, SortOrder.ASCENDING,
+      dataBbox, [bands.height, bands.width],
+      data, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
       this.nodata, this.converter)
   }
 }
