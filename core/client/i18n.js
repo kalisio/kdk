@@ -51,6 +51,13 @@ export const i18n = {
     }
     return this.i18n.global.t(key, param)
   },
+  tc (key, choice) {
+    if (!this.i18n) {
+      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      return key
+    }
+    return this.i18n.global.tc(key, choice)
+  },
   tie (key, param) {
     if (!this.i18n) {
       logger.error('the i18n instance is not existing. Did you initialize it ?')

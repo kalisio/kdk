@@ -25,7 +25,7 @@
         <q-item-section>
           <q-item-label>
             <span class="text-caption">
-              {{ scope.opt.value.name }} ({{ scope.opt.value.unit}})
+              {{ scope.opt.value.name }} ({{ scope.opt.value.unit }})
             </span>
             <KColorScale
               :key="scope.opt.label"
