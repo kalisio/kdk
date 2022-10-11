@@ -80,10 +80,10 @@ export const Time = {
     return this.getFormat().timezone
   },
   convertToLocal (datetime) {
-    const currentTime = this.convertToMoment(datetime)
+    let currentTime = this.convertToMoment(datetime)
     // Convert to local time
     if (this.getFormatTimezone()) {
-      moment.tz(currentTime.format(), this.getFormatTimezone())
+      currentTime = moment.tz(currentTime.format(), this.getFormatTimezone())
     }
     return currentTime
   },
