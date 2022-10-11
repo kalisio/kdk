@@ -109,7 +109,7 @@ export default {
 
       return allCoordsHaveHeight ? [profileHeights, profileLabels] : [[], []]
     },
-    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels, chartWidth) {
+    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth) {
       const update = {
         type: 'line',
         data: { datasets: [] },
@@ -126,6 +126,7 @@ export default {
               }
             } else if (args.event.type === 'mouseout') {
               chart.config.options.vline.enabled = false
+              this.kActivity.removeSelectionHighlight('elevation-profile')
             }
           },
           afterDraw: (chart) => {
@@ -171,7 +172,12 @@ export default {
                 }
 
                 const feature = along(segment, abscissaKm, { units: 'kilometers' })
-                this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+                if (this.kActivity.hasSelectionHighlight('elevation-profile')) {
+                  this.kActivity.updateSelectionHighlight('elevation-profile', feature)
+                } else {
+                  feature.properties = { 'marker-type': 'marker' }
+                  this.kActivity.addSelectionHighlight('elevation-profile', feature)
+                }
               }
             }
 
@@ -296,7 +302,7 @@ export default {
           label: this.$t('KElevationProfile.PROFILE_CHART_LEGEND'),
           data: profileHeights.map((h, i) => { return { x: profileLabels[i], y: h } }),
           fill: false,
-          borderColor: '#51b0e8',
+          borderColor: profileColor,
           backgroundColor: '#0986bc',
           pointRadius: 3
         })
@@ -329,9 +335,6 @@ export default {
         this.$notify({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
-
-      const featureStyle = { properties: { 'marker-type': 'marker' } }
-      this.kActivity.addSelectionHighlight('elevation-profile', featureStyle)
 
       this.chartDistanceUnit = 'm'
       this.chartHeightUnit = Units.getDefaultUnit('altitude')
@@ -448,7 +451,12 @@ export default {
         skipFirstPoint = true
       }
 
-      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, chartWidth)
+      // try to extract line color from layer if available
+      const layer = this.layer
+      let profileColor = undefined
+      if (_.has(layer, 'leaflet.stroke-color')) profileColor = _.get(layer, 'leaflet.stroke-color')
+      if (profileColor === undefined) profileColor = _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8')
+      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth)
 
       this.profile = featureCollection(this.profile)
 

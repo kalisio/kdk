@@ -177,6 +177,7 @@ const TiledMeshLayer = L.GridLayer.extend({
         done(null, tile)
       })
       .catch(err => {
+        console.log(err)
         done(err, tile)
       })
 
@@ -408,7 +409,8 @@ const TiledMeshLayer = L.GridLayer.extend({
         name: 'colormap',
         varyings: ['vec4 frg_color'],
         vertex: {
-          code: '  frg_color = vec4(1.0, 0.521, 0.105, 1.1);'
+          functions: [WEBGL_FUNCTIONS.rgbFromFloat],
+          code: '  frg_color = rgbFromFloat(frg_layerValue);'
         },
         fragment: {
           code: '  vec4 color = frg_color;'
