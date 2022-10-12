@@ -16,7 +16,7 @@
       <q-chip :label="formatTime(time, 'date.long') + ' ' + formatTime(time, 'time.long')" color="primary" text-color="white" :dense="$q.screen.lt.sm" />
       <q-btn id="timeline-now" dense flat round icon="las la-clock" size="md" color="primary" @click="onNowClicked">
         <q-tooltip>{{$t('KTimeline.SET_NOW')}}</q-tooltip>
-        <q-badge v-if="timer !== undefined" floating transparent color="green">
+        <q-badge v-if="Time.realtime" floating transparent color="green">
           <q-icon name="las la-play" size="10px" color="white'" />
         </q-badge>
       </q-btn>
@@ -91,24 +91,18 @@ export default {
   },
   data () {
     return {
-      timer: undefined,
       time: moment.utc(),
       calendarDateMask: 'YYYY-MM-DD',
-      // Make this reactive
-      timeSettings: Time.get()
+      Time: Time.get()
     }
   },
   computed: {
-    step () {
-      // For now we do not handle step > 60 minutes
-      return Math.min(this.timeSettings.step, 60)
-    },
     minutes () {
       const minutes = []
-      if (this.step < 60) {
+      if (this.Time.step < 60) {
         const start = moment.utc(this.time).minute(0)
         const end = moment.utc(this.time).minute(59)
-        for (let m = moment.utc(start); m.isBefore(end); m.add(this.step, 'm')) {
+        for (let m = moment.utc(start); m.isBefore(end); m.add(this.Time.step, 'm')) {
           minutes.push({
             label: m.minute().toString().padStart(2, 0),
             color: m.isSame(this.time, 'minute') ? 'primary' : 'grey-7',
@@ -178,19 +172,6 @@ export default {
     formatTime (time, format) {
       return Time.format(time, format)
     },
-    startTimeLoop () {
-      this.setTime(moment.utc())
-      this.timer = setInterval(() => {
-        this.time = moment.utc()
-        this.$events.off('time-current-time-changed', this.onTimeChanged)
-        Time.setCurrentTime(this.time)
-        this.$events.on('time-current-time-changed', this.onTimeChanged)
-      }, 1000 * this.timeSettings.interval)
-    },
-    stopTimeLoop () {
-      clearInterval(this.timer)
-      this.timer = undefined
-    },
     setTime (time, propagate = true) {
       if (!time.isValid()) {
         logger.error('the provided time is invalid')
@@ -200,30 +181,29 @@ export default {
         logger.error('the provided time should be in UTC')
         return
       }
-      if (this.timer) this.stopTimeLoop()
       this.time = time.clone()
       this.$events.off('time-current-time-changed', this.onTimeChanged)
       if (propagate) Time.setCurrentTime(moment.utc(time))
       this.$events.on('time-current-time-changed', this.onTimeChanged)
     },
     onPreviousStepClicked () {
-      let minutesToSubtract = this.step
-      const remainder = (this.time.minute() + this.time.hour() * 60) % this.step
+      let minutesToSubtract = this.Time.step
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.Time.step
       if (remainder > 0) {
         minutesToSubtract = remainder
       }
       this.setTime(this.time.subtract(minutesToSubtract, 'minute'))
     },
     onNextStepClicked () {
-      let minutesToAdd = this.step
-      const remainder = (this.time.minute() + this.time.hour() * 60) % this.step
+      let minutesToAdd = this.Time.step
+      const remainder = (this.time.minute() + this.time.hour() * 60) % this.Time.step
       if (remainder > 0) {
-        minutesToAdd = this.step - remainder
+        minutesToAdd = this.Time.step - remainder
       }
       this.setTime(this.time.add(minutesToAdd, 'minute'))
     },
     onMinutesClicked (index) {
-      this.setTime(this.time.minute(index * this.step))
+      this.setTime(this.time.minute(index * this.Time.step))
     },
     onHourClicked (index, length) {
       this.setTime(this.time.add((index - Math.trunc(length / 2)), 'hour'))
@@ -244,7 +224,7 @@ export default {
       this.setTime(this.time.add(1, 'day'))
     },
     onNowClicked () {
-      this.startTimeLoop()
+      Time.startRealtime()
     },
     onTimeChanged (time) {
       // When updating settings the root time object is sent instead of just the current time

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range.js'
 import config from 'config'
 import { Events } from './events.js'
@@ -8,6 +9,8 @@ import { getLocale } from './utils.js'
 // Export singleton
 export const Time = {
   initialize () {
+    // Timer for realtime mode
+    this.timer = null
     // Set locale globally
     moment.locale(getLocale())
     // Set the time object within the store
@@ -37,6 +40,7 @@ export const Time = {
         timezone
       },
       currentTime: now,
+      realtime: false,
       step: 60, // 1H
       interval: 60 // 1m
     }))
@@ -99,9 +103,36 @@ export const Time = {
     return this.get().currentTime
   },
   setCurrentTime (datetime) {
-    const now = this.convertToMoment(datetime)
-    if (this.getCurrentTime().isSame(now)) return
-    Store.patch('time.currentTime', now)
+    if (this.isRealtime()) this.stopRealtime()
+    const momentDatetime = this.convertToMoment(datetime)
+    if (this.getCurrentTime().isSame(momentDatetime)) return
+    Store.patch('time.currentTime', momentDatetime)
+  },
+  setNow () {
+    this.setCurrentTime(moment.utc())
+  },
+  isRealtime () {
+    return this.get().realtime
+  },
+  startRealtime () {
+    if (this.isRealtime()) {
+      logger.debug('Realtime mode is already active')
+      return
+    }
+    Store.patch('time', { realtime: true })
+    Store.patch('time.currentTime', moment.utc()) 
+    this.timer = setInterval(() => { 
+      Store.patch('time.currentTime', moment.utc()) 
+    }, 1000 * this.get().interval )
+  },
+  stopRealtime () {
+    if (!this.isRealtime()) {
+      logger.debug('Realtime mode is alrady inactive')
+      return
+    }
+    Store.patch('time', { realtime:  false })
+    clearInterval(this.timer)
+    this.timer = null
   },
   getCurrentFormattedTime () {
     const currentTime = this.getCurrentTime()
