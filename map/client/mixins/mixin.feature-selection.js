@@ -83,7 +83,7 @@ export const featureSelection = {
         ? _.cloneDeep(this.selection.feature)
         : {
             type: 'Feature',
-          geometry: { type: 'Point', coordinates: [_.get(this.selection, 'location.lng', 0), _.get(this.selection, 'location.lat', 0)] }
+            geometry: { type: 'Point', coordinates: [_.get(this.selection, 'location.lng', 0), _.get(this.selection, 'location.lat', 0)] }
           })
       // Use bbox for line/polygons
       if (highlight.geometry.type !== 'Point') {

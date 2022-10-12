@@ -453,7 +453,7 @@ export default {
 
       // try to extract line color from layer if available
       const layer = this.layer
-      let profileColor = undefined
+      let profileColor
       if (_.has(layer, 'leaflet.stroke-color')) profileColor = _.get(layer, 'leaflet.stroke-color')
       if (profileColor === undefined) profileColor = _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8')
       this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth)

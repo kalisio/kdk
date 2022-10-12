@@ -6,11 +6,11 @@ function mergeRgb (bands) {
   const merged = new Float32Array(bands.length / 3)
   const uint32View = new Uint32Array(merged.buffer)
   for (let i = 0; i < merged.length; i++) {
-    const packed
-          = ((bands[i*3] >> scale))
-          | ((bands[i*3+1] >> scale) << 8)
-          | ((bands[i*3+2] >> scale) << 16)
-          | (0xFF << 24)
+    const packed =
+          ((bands[i * 3] >> scale)) |
+          ((bands[i * 3 + 1] >> scale) << 8) |
+          ((bands[i * 3 + 2] >> scale) << 16) |
+          (0xFF << 24)
     uint32View[i] = packed
   }
 
@@ -66,7 +66,7 @@ export class GeoTiffGridSource extends GridSource {
         const meta = this.refImage.getFileDirectory()
         const nodata = parseFloat(meta.GDAL_NODATA)
         // const nodata =image.getGDALNoData()
-        if (nodata && nodata != NaN) this.nodata = nodata
+        if (nodata && !isNaN(nodata)) this.nodata = nodata
       }
       if (this.rgb === undefined) {
         this.rgb = this.refImage.getSamplesPerPixel() > 1
@@ -115,8 +115,8 @@ export class GeoTiffGridSource extends GridSource {
     // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
     const window = [left, bottom, right + 1, top + 1]
     const bands = this.rgb
-          ? await usedImage.readRGB({ window: window })
-          : await usedImage.readRasters({ window: window, fillValue: this.nodata })
+      ? await usedImage.readRGB({ window: window })
+      : await usedImage.readRasters({ window: window, fillValue: this.nodata })
     const data = this.rgb ? mergeRgb(bands) : bands[0]
 
     if (rx < 0) [left, right] = [right, left]

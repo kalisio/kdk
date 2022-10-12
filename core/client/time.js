@@ -120,17 +120,17 @@ export const Time = {
       return
     }
     Store.patch('time', { realtime: true })
-    Store.patch('time.currentTime', moment.utc()) 
-    this.timer = setInterval(() => { 
-      Store.patch('time.currentTime', moment.utc()) 
-    }, 1000 * this.get().interval )
+    Store.patch('time.currentTime', moment.utc())
+    this.timer = setInterval(() => {
+      Store.patch('time.currentTime', moment.utc())
+    }, 1000 * this.get().interval)
   },
   stopRealtime () {
     if (!this.isRealtime()) {
       logger.debug('Realtime mode is alrady inactive')
       return
     }
-    Store.patch('time', { realtime:  false })
+    Store.patch('time', { realtime: false })
     clearInterval(this.timer)
     this.timer = null
   },
