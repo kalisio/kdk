@@ -169,6 +169,11 @@ export async function authorise (hook) {
     debug('Access disabled on built-in services')
     checkAuthorisation = false
   }
+  // And if the authentication strategy is API key
+  if (_.get(hook, 'params.connection.authentication.strategy') === 'api') {
+    debug('Access disabled on API keys')
+    checkAuthorisation = false
+  }
   // If explicitely asked to perform/skip, override defaults
   if (_.has(hook.params, 'checkAuthorisation')) {
     checkAuthorisation = _.get(hook.params, 'checkAuthorisation')
@@ -184,7 +189,7 @@ export async function authorise (hook) {
     const abilities = await authorisationService.getAbilities(hook.params.user)
     hook.params.abilities = abilities
     debug('User abilities are', abilities.rules)
-
+    
     // Check for access to service fisrt
     if (!hasServiceAbilities(abilities, hook.service)) {
       debug('Service access not granted')

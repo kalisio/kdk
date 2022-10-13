@@ -59,6 +59,14 @@ export class RenewJWTStrategy extends JWTStrategy {
   }
 }
 
+// Custom strategy to ensure we can use JWT tokens not attached to a user for API access
+// Based on https://docs.feathersjs.com/cookbook/authentication/stateless.html
+export class StatelessJWTStrategy extends JWTStrategy {
+  get entityService () {
+    return null
+  }
+}
+
 export async function createDefaultUsers () {
   const app = this
   const defaultUsers = app.get('authentication').defaultUsers
@@ -76,6 +84,20 @@ export async function createDefaultUsers () {
   }
 }
 
+// Middleware to be used to support jwt as a query param
+export function extractJwtFromQuery (req, res, next) {
+  const { jwt } = req.query
+  if (jwt) {
+    console.log(jwt)
+    _.set(req, 'feathers.authentication', {
+      strategy: 'jwt',
+      accessToken: jwt
+    })
+  }
+  
+  next()
+}
+
 export default function auth (app) {
   const config = app.get('authentication')
   if (!config) return
@@ -87,6 +109,7 @@ export default function auth (app) {
   const authentication = new AuthenticationService(app)
   const strategies = config.authStrategies || []
   if (strategies.includes('jwt')) authentication.register('jwt', new RenewJWTStrategy())
+  if (strategies.includes('api')) authentication.register('api', new StatelessJWTStrategy())
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers

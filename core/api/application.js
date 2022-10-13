@@ -14,7 +14,7 @@ import HttpLimiter from 'express-rate-limit'
 import feathers from '@feathersjs/feathers'
 import configuration from '@feathersjs/configuration'
 import errors from '@feathersjs/errors'
-import express from '@feathersjs/express'
+import express, { authenticate } from '@feathersjs/express'
 import socketio from '@feathersjs/socketio'
 import mongodb from 'mongodb'
 import { Database, idToString } from './db.js'
@@ -264,7 +264,7 @@ export function createWebhook (path, app, options = {}) {
     return result.length > 0
   }
 
-  app.post(app.get('apiPath') + '/webhooks/' + webhookPath, async (req, res, next) => {
+  app.post(app.get('apiPath') + '/webhooks/' + webhookPath, authenticate('jwt'), async (req, res, next) => {
     const payload = req.body
     const config = app.get('authentication')
     res.set('content-type', 'application/json')
@@ -275,25 +275,8 @@ export function createWebhook (path, app, options = {}) {
       }
       // Authenticate when required
       if (config) {
-        try {
-          // Token is in header or payload
-          const header = req.headers.authorization
-          let accessToken
-          if (header) {
-            // Should be of the form: 'Bearer xxx'
-            const tokens = header.match(/(\S+)\s+(\S+)/)
-            if (tokens.length >= 2) accessToken = tokens[2]
-          } else {
-            accessToken = payload.accessToken
-          }
-          const tokenPayload = await app.getService('authentication').verifyAccessToken(accessToken, config.jwtOptions)
-          // Backward compatibility for Feathers tokens prior to v4
-          if (!tokenPayload.userId) tokenPayload.userId = tokenPayload.sub
-          params.user = await app.getService('users').get(tokenPayload.userId)
-          params.checkAuthorisation = true
-        } catch (error) {
-          throw new Forbidden('Could not verify webhook')
-        }
+        params.user = _.get(req, 'feathers.user')
+        params.checkAuthorisation = true
       }
       if (req.headers['content-type'] !== 'application/json') {
         throw new BadRequest('Webhooks expect application/json content type')
