@@ -45,7 +45,7 @@ import { getCssVar } from 'quasar'
 import { KTextArea } from '../../../core/client/components'
 import * as mapMixins from '../mixins/map'
 import { Geolocation } from '../geolocation'
-import { setGatewayJwt, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../utils'
+import { setEngineJwt, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../utils'
 
 export default {
   components: {
@@ -259,8 +259,7 @@ export default {
       if (response.data.length > 0) {
         const baseLayer = response.data[0]
         // Do we need to inject a token ?
-        const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-        if (gatewayToken) setGatewayJwt([baseLayer], gatewayToken)
+        await setEngineJwt([baseLayer])
         this.addLayer(baseLayer)
       }
     },

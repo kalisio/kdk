@@ -3,7 +3,7 @@ import logger from 'loglevel'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
 import { Layout } from '../../../core/client/layout.js'
-import { setGatewayJwt } from '../utils.js'
+import { setEngineJwt } from '../utils.js'
 import { utils as kCoreUtils } from '../../../core/client/index.js'
 
 export const activity = {
@@ -55,8 +55,9 @@ export const activity = {
         const response = await catalogService.find()
         layers = layers.concat(response.data)
       }
-      const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-      return (gatewayToken ? setGatewayJwt(layers, gatewayToken) : layers)
+      // Do we need to inject a token ?
+      await setEngineJwt(layers)
+      return layers
     },
     async addCatalogLayer (layer) {
       // Check if available for current engine

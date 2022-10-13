@@ -11,7 +11,7 @@ import { getCssVar } from 'quasar'
 import { utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as mixins from '../mixins'
-import { setGatewayJwt } from '../utils'
+import { setEngineJwt } from '../utils'
 import meta from 'moment-timezone/data/meta/latest.json'
 
 // Convert timezones to GeoJson
@@ -73,8 +73,7 @@ export default {
       if (response.data.length > 0) {
         const baseLayer = response.data[0]
         // Do we need to inject a token ?
-        const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-        if (gatewayToken) setGatewayJwt([baseLayer], gatewayToken)
+        await setEngineJwt([baseLayer])
         this.addLayer(baseLayer)
       }
     },
