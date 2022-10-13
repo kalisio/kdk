@@ -54,7 +54,7 @@ export class GeoTiffGridSource extends GridSource {
       // fetching may fail, in this case the source
       // will remain in unusable state
       this.geotiff = null
-      console.log(`Failed fetching geotiff from ${config.url}`)
+      console.error(`Failed fetching geotiff from ${config.url}`)
     }
 
     if (this.geotiff) {
