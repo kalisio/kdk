@@ -451,7 +451,11 @@ export const activity = {
           // Here we find layer by ID as renaming could have occured from another client
           const layers = this.getLayers({ _id: object._id })
           if (layers.length > 0) await this.removeCatalogLayer(layers[0])
-          if (event !== 'removed') await this.addCatalogLayer(object)
+          if (event !== 'removed') {
+            // Do we need to inject a token ?
+            await setEngineJwt([object])
+            await this.addCatalogLayer(object)
+          }
           break
         }
       }
