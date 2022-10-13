@@ -89,7 +89,7 @@ export default {
         const context = this.properties.field.storage.context
         const path = this.properties.field.storage.path
         const key = path ? path + '/' + this.model.name : this.model.name
-        logger.debug(`upload fle ${this.model.name} with key ${key}`)
+        logger.debug(`upload file ${this.model.name} with key ${key}`)
         const response = await Storage.upload({
           file: this.model.name,
           type: this.model.type,

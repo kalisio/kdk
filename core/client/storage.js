@@ -27,11 +27,17 @@ export const Storage = {
       }
     }
     if (this.proxy) {
+      const headers = { 'Content-Type': 'application/json' }
+      // Add the Authorization header if jwt is defined
+      const jwt = await api.get('storage').getItem(config.apiJwt)
+      if (jwt) headers.Authorization = 'Bearer ' + jwt
       uploadUrl = api.getBaseUrl() + config.apiPath + '/' + this.proxy
       uploadOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
+          name: file,
+          contextId,
           contentBuffer: Array.from(new Uint8Array(buffer)),
           contentType: type,
           signedUrl
@@ -68,6 +74,9 @@ export const Storage = {
     }
     if (this.proxy) {
       downloadUrl = api.getBaseUrl() + config.apiPath + '/' + this.proxy + '?signedUrl=' + signedUrl
+      // Add the Authorization header if jwt is defined
+      const jwt = await api.get('storage').getItem(config.apiJwt)
+      if (jwt) downloadOptions.headers.Authorization = 'Bearer ' + jwt
     }
     const dismiss = this.$q.notify({
       icon: 'las la-hourglass-half',

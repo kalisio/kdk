@@ -1,8 +1,10 @@
 import _ from 'lodash'
 import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { authenticate } from '@feathersjs/express'
 import { BadRequest } from '@feathersjs/errors'
 import makeDebug from 'debug'
+import { extractJwtFromQuery } from '../../authentication.js'
 
 const debug = makeDebug('kdk:storage:service')
 
@@ -24,14 +26,44 @@ export default function (name, app, options) {
   if (!bucket) throw new Error('A bucket must be specified to crate a storage service')
   const prefix = options.prefix || app.get('storage').prefix
   const context = options.context
+
+  function getKey (id) {
+    let key = ''
+    if (prefix) key += prefix + '/'
+    if (context) key += context + '/'
+    key += id
+    return key
+  }
+
+  // Get object route, which is actually a proxy to object storage
+  let getObjectPath = app.get('apiPath')
+  if (context) getObjectPath += `/${context}`
+  getObjectPath += '/storage'
+  debug('Installing storage object route at ' + getObjectPath)
+  
+  // We'd like this route to be authenticated and to works as well with jwt as a query param
+  // Ueeful for some clients when it is not easy to customize headers
+  app.get(getObjectPath + '/*', extractJwtFromQuery, authenticate('jwt'), async (req, res) => {
+    const bucketPath = getKey(req.params[0])
+    debug('Proxying storage object from ' + `${bucket}:${bucketPath}` + ',' + req.headers.range)
+    // Create the getCommand
+    const getCommand = new GetObjectCommand({
+      Bucket: bucket,
+      Key: bucketPath,
+      Range: req.headers.range // Forward range requests
+    })
+    // Run the command
+    const result = await s3Client.send(getCommand)
+    result.Body
+    .on('error', (err) => {
+      app.logger.error(err)
+      return res.status(404).send(err)
+    })
+    .pipe(res)
+  })
+
   return {
-    getKey (id) {
-      let key = ''
-      if (prefix) key += prefix + '/'
-      if (context) key += context + '/'
-      key += id
-      return key
-    },
+    getKey,
     // Create a put signed url
     async create (data, params) {
       // Check data object
