@@ -79,6 +79,7 @@ export default function (name, app, options) {
       else if (value instanceof Date) headers[key] = moment(value).utc().format('ddd, DD MMM YYYY HH:mm:ss [GMT]')
     })
     res.set(headers)
+    res.status(_.get(result, '$metadata.httpStatusCode', 200))
     result.Body
       .on('error', (err) => {
         app.logger.error(err)
