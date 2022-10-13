@@ -40,7 +40,7 @@ export default function (name, app, options) {
   if (context) getObjectPath += `/${context}`
   getObjectPath += '/storage'
   debug('Installing storage object route at ' + getObjectPath)
-  
+
   // We'd like this route to be authenticated and to works as well with jwt as a query param
   // Ueeful for some clients when it is not easy to customize headers
   app.get(getObjectPath + '/*', extractJwtFromQuery, authenticate('jwt'), async (req, res) => {
@@ -55,11 +55,11 @@ export default function (name, app, options) {
     // Run the command
     const result = await s3Client.send(getCommand)
     result.Body
-    .on('error', (err) => {
-      app.logger.error(err)
-      return res.status(404).send(err)
-    })
-    .pipe(res)
+      .on('error', (err) => {
+        app.logger.error(err)
+        return res.status(404).send(err)
+      })
+      .pipe(res)
   })
 
   return {

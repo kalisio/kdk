@@ -93,11 +93,11 @@ export const Time = {
   },
   format (datetime, format, options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) {
     // Convert to tz if defined
-    const currentTime = this.convertToLocal(datetime)
-    if (format === 'iso') return currentTime.format()
-    else if (format === 'locale') return currentTime.toDate().toLocaleString(getLocale(), options)
+    const localDatetime = this.convertToLocal(datetime)
+    if (format === 'iso') return localDatetime.format()
+    else if (format === 'locale') return localDatetime.toDate().toLocaleString(getLocale(), options)
     // Defaults to long mode if not given
-    else return currentTime.format(_.get(this.getFormat(), format))
+    else return localDatetime.format(_.get(this.getFormat(), format))
   },
   getCurrentTime () {
     return this.get().currentTime
@@ -116,7 +116,7 @@ export const Time = {
   },
   startRealtime () {
     if (this.isRealtime()) {
-      logger.debug('Realtime mode is already active')
+      logger.warn('Realtime mode is already active')
       return
     }
     Store.patch('time', { realtime: true })
@@ -127,7 +127,7 @@ export const Time = {
   },
   stopRealtime () {
     if (!this.isRealtime()) {
-      logger.debug('Realtime mode is alrady inactive')
+      logger.warn('Realtime mode is alrady inactive')
       return
     }
     Store.patch('time', { realtime: false })

@@ -94,7 +94,7 @@ export function extractJwtFromQuery (req, res, next) {
       accessToken: jwt
     })
   }
-  
+
   next()
 }
 

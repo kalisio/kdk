@@ -189,7 +189,7 @@ export async function authorise (hook) {
     const abilities = await authorisationService.getAbilities(hook.params.user)
     hook.params.abilities = abilities
     debug('User abilities are', abilities.rules)
-    
+
     // Check for access to service fisrt
     if (!hasServiceAbilities(abilities, hook.service)) {
       debug('Service access not granted')
