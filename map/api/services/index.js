@@ -76,9 +76,9 @@ export async function createFeaturesServiceForLayer (options) {
   return service
 }
 
-export async function createDefaultCatalogLayers () {
+export async function createDefaultCatalogLayers (context) {
   const app = this
-  const catalogService = app.getService('catalog')
+  const catalogService = app.getService('catalog', context)
   const catalog = app.get('catalog')
 
   const defaultLayers = catalog ? catalog.layers || [] : []

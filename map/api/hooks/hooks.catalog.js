@@ -11,8 +11,11 @@ const debug = makeDebug('kdk:map:catalog:hooks')
 export function getDefaultCategories (hook) {
   const query = _.get(hook, 'params.query', {})
   if (query.type === 'Category') {
-    const catalog = hook.app.get('catalog')
-    let defaultCategories = catalog ? catalog.categories || [] : []
+    const service = hook.service
+    // Read default category config
+    const catalogConfig = hook.app.get('catalog') || { categories: [] }
+    // Check for specific service override (e.g. contextual catalog different from global catalog)
+    let defaultCategories = _.get(service, 'options.categories', catalogConfig.categories)
     // Add implicit type
     defaultCategories = defaultCategories.map(category => Object.assign(category, { type: 'Category' }))
     // Then filter according to query
