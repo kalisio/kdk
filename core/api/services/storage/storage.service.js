@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { authenticate } from '@feathersjs/express'
@@ -54,6 +55,30 @@ export default function (name, app, options) {
     })
     // Run the command
     const result = await s3Client.send(getCommand)
+    // FIXME: not sure how to get an exhaustive list of headers
+    // Not directly provided in the GetObjectCommandOutput
+    const headers = {
+      'Accept-Ranges': result.AcceptRanges,
+      'Cache-Control': result.CacheControl,
+      'Expires': result.Expires,
+      'Content-Disposition': result.ContentDisposition,
+      'Content-Encoding': result.ContentEncoding,
+      'Content-Language': result.ContentLanguage,
+      'Content-Length': result.ContentLength,
+      'Content-Range': result.ContentRange,
+      'Content-Type': result.ContentType,
+      'ETag': result.ETag,
+      'Last-Modified': result.LastModified
+    }
+    // Remove any undefined value as otherwise express will send it anyway
+    // Convert also dates to RFC 2822
+    const keys = Object.keys(headers)
+    keys.forEach(key => {
+      const value = headers[key]
+      if (_.isNil(value)) delete headers[key]
+      else if (value instanceof Date) headers[key] = moment(value).utc().format('ddd, DD MMM YYYY HH:mm:ss [GMT]')
+    })
+    res.set(headers)
     result.Body
       .on('error', (err) => {
         app.logger.error(err)
