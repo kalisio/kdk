@@ -90,7 +90,10 @@ export default {
       for (let i = 0; i < profiles.length && allCoordsHaveHeight; ++i) {
         const dataUnit = _.get(profiles[i], 'properties.altitudeUnit', 'm')
         // Gather elevation at each coord, make sure all coords have height along the way
-        coordEach(profiles[i], (coord) => {
+        coordEach(profiles[i], (coord, coordIdx) => {
+          // Skip first point of all segments except the first one since we assume
+          // last point of segment N = first point of segment N+1
+          if (profileHeights.length && coordIdx === 0) return
           if (coord.length > 2) profileHeights.push(Units.convert(coord[2], dataUnit, this.chartHeightUnit))
           else allCoordsHaveHeight = false
         })
