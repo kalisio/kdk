@@ -1,15 +1,15 @@
 <template>
   <div v-for="(legend, name) in legends" key="name">
-    <q-expansion-item 
+    <q-expansion-item
       :label="$tie(name)"
       :header-class="legend.headerClass || defaults.headerClass"
       :default-opened="legend.opened || defaults.opened"
       dense
     >
       <div class="q-py-xs q-px-md row full-width">
-        <component 
-          :is="legend.component" 
-          :content="legend.content" 
+        <component
+          :is="legend.component"
+          :content="legend.content"
         />
       </div>
     </q-expansion-item>
@@ -35,7 +35,7 @@ const defaults = _.defaults(kActivity.activityOptions.legend, {
 
 // functions
 function getLegend (layer) {
-  let legend = layer.legend
+  const legend = layer.legend
   if (legend) {
     // make sure a component is assigned to the legend
     const component = Legend.get(legend.type)

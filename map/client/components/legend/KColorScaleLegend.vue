@@ -1,6 +1,6 @@
 <template>
   <div class="column full-width">
-    <KColorScale 
+    <KColorScale
       v-bind="content"
       style="height: 48px; width: 100%"
     />

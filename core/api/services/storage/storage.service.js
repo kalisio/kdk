@@ -60,14 +60,14 @@ export default function (name, app, options) {
     const headers = {
       'Accept-Ranges': result.AcceptRanges,
       'Cache-Control': result.CacheControl,
-      'Expires': result.Expires,
+      Expires: result.Expires,
       'Content-Disposition': result.ContentDisposition,
       'Content-Encoding': result.ContentEncoding,
       'Content-Language': result.ContentLanguage,
       'Content-Length': result.ContentLength,
       'Content-Range': result.ContentRange,
       'Content-Type': result.ContentType,
-      'ETag': result.ETag,
+      ETag: result.ETag,
       'Last-Modified': result.LastModified
     }
     // Remove any undefined value as otherwise express will send it anyway

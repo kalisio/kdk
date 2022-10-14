@@ -2,12 +2,12 @@ import * as GeoTIFF from 'geotiff'
 import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
 // pack r,g,b in an uint32
-function packRgb(r, g, b) {
+function packRgb (r, g, b) {
   return r | (g << 8) | (b << 16) | (0xFF << 24)
 }
 
 // return packed rgb as a float value
-function encodeRgb(packed)  {
+function encodeRgb (packed) {
   const asuint = new Uint32Array(1)
   const asfloat = new Float32Array(asuint.buffer)
   asuint[0] = packed
@@ -19,8 +19,7 @@ function mergeRgb (bands) {
   const scale = 8 * (bands.BYTES_PER_ELEMENT - 1)
   const merged = new Float32Array(bands.length / 3)
   const uint32View = new Uint32Array(merged.buffer)
-  for (let i = 0; i < merged.length; i++)
-    uint32View[i] = packRgb(bands[i * 3] >> scale, bands[i * 3 + 1] >> scale, bands[i * 3 + 2] >> scale)
+  for (let i = 0; i < merged.length; i++) { uint32View[i] = packRgb(bands[i * 3] >> scale, bands[i * 3 + 1] >> scale, bands[i * 3 + 2] >> scale) }
 
   return merged
 }
