@@ -130,6 +130,10 @@ export async function setEngineJwt (layers) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'geotiff.url', apiUrl, jwtField, jwt)
     })
+    // We also allow absolute URLs for app like /api/storage/xxx
+    layers.forEach(layer => {
+      setUrlJwt(layer, 'geotiff.url', '/', jwtField, jwt)
+    })
   }
   return layers
 }
