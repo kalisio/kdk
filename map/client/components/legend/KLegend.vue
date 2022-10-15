@@ -8,7 +8,7 @@
     >
       <div class="q-py-xs q-px-md row full-width">
         <component
-          :is="legend.component"
+          :is="legend.renderer"
           :content="legend.content"
         />
       </div>
@@ -17,34 +17,53 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import logger from 'loglevel'
 import { inject, ref, onMounted, onBeforeUnmount } from 'vue'
 import { loadComponent } from '../../../../core/client/utils.js'
-import { Legend } from '../../legend.js'
 
 // inject
 const kActivity = inject('kActivity')
 
+// props
+const props = defineProps({
+  headerClass: {
+    type: String,
+    default: 'bg-grey-3 text-weight-regular'
+  },
+  opened: {
+    type: Boolean,
+    default: true
+  },
+  renderers: {
+    type: Object,
+    default: () => {
+      return {
+        image: 'legend/KImageLegend',
+        'color-scale': 'legend/KColorScaleLegend',
+        symbols: 'legend/KSymbolsLegend'
+      }
+    }
+  }
+})
+
 // data
 const legends = ref({})
-const defaults = _.defaults(kActivity.activityOptions.legend, {
-  opened: true,
-  headerClass: 'bg-grey-3 text-weight-regular'
-})
 
 // functions
 function getLegend (layer) {
   const legend = layer.legend
   if (legend) {
-    // make sure a component is assigned to the legend
-    const component = Legend.get(legend.type)
-    if (!component) {
-      logger.warn(`The legend of type of ${legend.type} is not registered`)
+    // make sure a renderer is assigned to the legend
+    const renderer = props.renderers[legend.type]
+    if (!renderer) {
+      logger.warn(`Cannot find any renderer for the legend of type of ${legend.type}`)
       return
     }
-    legend.component = loadComponent(component)
-    legend.name = layer.name
+    legend.renderer = loadComponent(renderer)
+    // configure the legend with default values
+    if (!legend.label) legend.label = layer.name
+    if (!legend.headerClass) legend.headerClass = props.headerClass
+    if (!legend.opened) legend.opened = props.opened
   }
   return legend
 }
