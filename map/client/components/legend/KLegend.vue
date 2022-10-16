@@ -6,7 +6,7 @@
       :default-opened="legend.opened || defaults.opened"
       dense
     >
-      <div class="q-py-xs q-px-md row full-width">
+      <div class="q-py-xs q-px-md">
         <component
           :is="legend.renderer"
           :content="legend.content"

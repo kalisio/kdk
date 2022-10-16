@@ -1,10 +1,8 @@
 <template>
-  <div class="column full-width">
-    <KColorScale
-      v-bind="content"
-      style="height: 48px; width: 100%"
-    />
-  </div>
+  <KColorScale
+    v-bind="content"
+    style="height: 46px;"
+  />
 </template>
 
 <script setup>
