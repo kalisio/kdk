@@ -364,6 +364,10 @@ export const geojsonLayers = {
       // Retrieve the layer
       let layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
+      if (!_.get(layer, 'options.realtime')) {
+        logger.warn(`Impossible to update non-realtime layer ${name}`)
+        return // Cannot update non-realtime layer
+      }
       // Check if clustering on top of a realtime layer, in this case we have a top-level container
       let container
       if (typeof layer.getLayers === 'function') {
