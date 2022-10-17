@@ -122,7 +122,6 @@
     no-caps
     no-wrap
     :label="computedLabel"
-    :icon="computedIcon"
     :color="computedColor"
     :size="size"
     flat
