@@ -121,6 +121,7 @@
     :id="id"
     no-caps
     no-wrap
+    :label="computedLabel"
     :icon="computedIcon"
     :color="computedColor"
     :size="size"
@@ -129,9 +130,6 @@
     :dense="dense"
     :disable="disabled"
     @click="onClicked">
-    <div v-if="computedLabel" class="test-subtitle1">
-      {{ computedLabel }}
-    </div>
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
       {{ computedTooltip }}
