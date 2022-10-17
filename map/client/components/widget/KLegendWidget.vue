@@ -1,7 +1,7 @@
 <template>
   <div id="legend-widget" class="column" :style="widgetStyle">
     <KLegend
-      v-bind="options"
+      v-bind="props"
     />
   </div>
 </template>
@@ -19,6 +19,11 @@ export default {
     options: {
       type: Object,
       default: () => {}
+    }
+  },
+  computed: {
+    props () {
+      return Object.assign({}, this.options, { maxHeight: this.widgetHeight })
     }
   }
 }

@@ -1,24 +1,29 @@
 <template>
-  <div v-for="(legend, name) in legends" key="name">
-    <q-expansion-item
-      :label="$tie(name)"
-      :header-class="legend.headerClass || defaults.headerClass"
-      :default-opened="legend.opened || defaults.opened"
-      dense
-    >
-      <div class="q-py-xs q-px-md">
-        <component
-          :is="legend.renderer"
-          :content="legend.content"
-        />
-      </div>
-    </q-expansion-item>
+  <div class="column full-width">
+    <KScrollArea :maxHeight="maxHeight">
+      <template v-for="(legend, name) in legends" key="name" class="column full-width">
+        <q-expansion-item
+          :label="$tie(name)"
+          :header-class="legend.headerClass || defaults.headerClass"
+          :default-opened="legend.opened || defaults.opened"
+          dense
+        >
+          <div class="q-py-xs q-px-md">
+            <component
+              :is="legend.renderer"
+              :content="legend.content"
+            />
+          </div>
+        </q-expansion-item>
+      </template>
+    </KScrollArea>
   </div>
 </template>
 
 <script setup>
 import logger from 'loglevel'
 import { inject, ref, onMounted, onBeforeUnmount } from 'vue'
+import { KScrollArea } from '../../../../core/client/components'
 import { loadComponent } from '../../../../core/client/utils.js'
 
 // inject
@@ -26,6 +31,10 @@ const kActivity = inject('kActivity')
 
 // props
 const props = defineProps({
+  maxHeight: {
+    type: Number,
+    default: 500
+  },
   headerClass: {
     type: String,
     default: 'bg-grey-3 text-weight-regular'

@@ -111,7 +111,6 @@ export default {
       // Built-in categories only if not empty as depending on the configuration
       // built-in layers might be unavailable
       const isEmpty = (this.layersByCategory[category.name].length > 0)
-
       return (isEmpty ? _.get(category, 'hideIfEmpty', true) : true)
     },
     getHeaderClass (category) {
