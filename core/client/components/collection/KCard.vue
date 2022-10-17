@@ -44,7 +44,7 @@
         >
           <div class="q-pb-xs">
             <KTextArea
-              :text="item.description || $tie('KCard.NO_DESCRIPTION_LABEL')"
+              :text="description || $tie('KCard.NO_DESCRIPTION_LABEL')"
               :minHeight="44"
               :dense="dense"
             />
