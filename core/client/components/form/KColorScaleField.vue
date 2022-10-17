@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly">
-    <KColorScale v-bind="model" style="max-height: 42px" />
+    <KColorScale v-bind="model" style="max-height: 46px" />
   </div>
   <q-select v-else
     :id="properties.name + '-field'"
@@ -27,7 +27,7 @@
             <KColorScale
               :key="scope.opt.label"
               v-bind="scope.opt.value"
-              style="max-height: 44px;"
+              style="max-height: 46px;"
             />
           </q-item-label>
         </q-item-section>
@@ -42,10 +42,9 @@
       >
         <q-item-section>
           <q-item-label>
-            <KColorScale 
-              
-              v-bind="scope.opt.value" 
-              style="max-height: 42px;" 
+            <KColorScale
+              v-bind="scope.opt.value"
+              style="max-height: 46px;"
             />
           </q-item-label>
         </q-item-section>

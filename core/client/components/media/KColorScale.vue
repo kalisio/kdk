@@ -31,7 +31,7 @@ const props = defineProps({
   },
   layout: {
     type: Object,
-    default: () => { 
+    default: () => {
       return {
         gutter: 4,
         label: {
@@ -72,7 +72,7 @@ const labelSize = computed(() => {
   return _.get(props.layout, 'label.size', 12)
 })
 const labelFont = computed(() => {
-  return labelSize.value + 'px ' +  _.get(props.layout, 'label.font', 'Arial')
+  return labelSize.value + 'px ' + _.get(props.layout, 'label.font', 'Arial')
 })
 const labelColor = computed(() => {
   return _.get(props.layout, 'label.color', 'black')
@@ -80,11 +80,11 @@ const labelColor = computed(() => {
 const labelAlign = computed(() => {
   return _.get(props.layout, 'label.align', 'left')
 })
-const barHeight = computed (() => {
-  return _.get(props.layout, 'bar.height', props.direction === 'horizontal' ? 12 : undefined)
+const barHeight = computed(() => {
+  return _.get(props.layout, 'bar.height', props.direction === 'horizontal' ? 16 : undefined)
 })
-const barWidth = computed (() => {
-  return _.get(props.layout, 'bar.width', props.direction === 'vertical' ? 12 : undefined)
+const barWidth = computed(() => {
+  return _.get(props.layout, 'bar.width', props.direction === 'vertical' ? 16 : undefined)
 })
 const ticksSize = computed(() => {
   return _.get(props.layout, 'ticks.size', 8)
@@ -122,7 +122,7 @@ function drawDiscreteHorizontalScale () {
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
   const boxWidth = canvas.value.width / length
-  const classToColor = chroma.scale(props.colors).classes(props.classes)  
+  const classToColor = chroma.scale(props.colors).classes(props.classes)
   for (let i = 0; i < length; i++) {
     context.value.fillStyle = classToColor(props.classes[i])
     context.value.fillRect(i * boxWidth, yBar, boxWidth, barHeight.value)
@@ -155,7 +155,7 @@ function drawDiscreteVerticalScale () {
   // draw colorbar
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
-  const boxHeight = (canvas.value.height -yBar) / length
+  const boxHeight = (canvas.value.height - yBar) / length
   const classToColor = chroma.scale(props.colors).classes(props.classes)
   for (let i = 0; i < length; i++) {
     context.value.fillStyle = classToColor(props.classes[i])
@@ -245,7 +245,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-  .k-color-scale {  
+  .k-color-scale {
     width: 100%;
   }
 </style>
