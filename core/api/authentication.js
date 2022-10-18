@@ -88,7 +88,6 @@ export async function createDefaultUsers () {
 export function extractJwtFromQuery (req, res, next) {
   const { jwt } = req.query
   if (jwt) {
-    console.log(jwt)
     _.set(req, 'feathers.authentication', {
       strategy: 'jwt',
       accessToken: jwt
