@@ -244,9 +244,10 @@ export default {
           x = this.$q.screen.width / 2 - w / 2
           y = this.placement === 'top' ? 0 : this.$q.screen.height - h
         } else {
-          w = this.$q.screen.width * 0.2
-          if (this.$q.screen.lt.lg) w = this.$q.screen.width * 0.3
-          if (this.$q.screen.lt.md) w = this.$q.screen.width * 0.4
+          w = this.$q.screen.width * 0.15
+          if (this.$q.screen.lt.xl) w = this.$q.screen.width * 0.2
+          if (this.$q.screen.lt.lg) w = this.$q.screen.width * 0.25
+          if (this.$q.screen.lt.md) w = this.$q.screen.width * 0.35
           if (this.$q.screen.lt.sm) w = this.$q.screen.width
           h = this.$q.screen.height * 0.6
           x = this.placement === 'left' ? 0 : this.$q.screen.width - w

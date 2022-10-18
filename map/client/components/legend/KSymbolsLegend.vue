@@ -1,12 +1,12 @@
 <template>
-  <template v-for="(section, index) in props.content" :key="index" class="column full-width">
+  <template v-for="(section, index) in sections" :key="index" class="column full-width">
     <q-list dense>
-      <template v-for="element in section" :key="element.name" class="row full-width items-center">
+      <template v-for="element in getElements(section)" :key="element.name" class="row full-width items-center">
         <q-item dense>
           <q-item-section avatar>
             <component 
-              :is="getSymbolCommponent(element)" 
-              v-bind="getSymbolProps(element)" 
+              :is="element.component" 
+              v-bind="element.props" 
               :key="element.label" 
             />
           </q-item-section>
@@ -17,7 +17,7 @@
           </q-item-section>
         </q-item>
       </template>
-      <q-separator v-if="index < sectionCount - 1" />
+      <q-separator v-if="index < sections.length - 1" />
     </q-list>
   </template>
 </template>
@@ -37,41 +37,36 @@ const props = defineProps({
 })
 
 // computed
-const sectionCount = computed(() => {
-  return _.size(props.content)
+const sections = computed(() => {
+  return _.keys(props.content)
 })
 
 // function 
-function getSymbolCommponent (element) {
-  if (!element.symbol) {
-    logger.error(`symbol must be defined for element ${element.label || element}`)
-    return
-  }
-  const entries = _.entries(element.symbol)
-  if (entries.length !== 1) {
-    logger.error(`invalid entries for symbol in element ${element.label || element}`)
-    return
-  }
-  const component = entries[0][0]
-  if (_.startsWith(component, 'Q') || _.startsWith(component, 'q-')) return component
-  return loadComponent(entries[0][0])
-}
-function getSymbolProps (element) {
-  if (!element.symbol) {
-    logger.error(`symbol must be defined for element ${element.label || element}`)
-    return
-  }
-  const entries = _.entries(element.symbol)
-  if (entries.length !== 1) {
-    logger.error(`invalid entries for symbol in element ${element.label || element}`)
-    return
-  }
-  return entries[0][1]
+function getElements (section) {
+  return props.content[section].map(element => {
+    const symbol = element.symbol
+    const label = element.label
+    if (!symbol || !label) {
+      logger.error(`element ${element.label || element} is invalid in section ${section}`)
+      return
+    }
+    const entries = _.entries(element.symbol)
+    if (entries.length !== 1) {
+      logger.error(`invalid entries for symbol in element ${element.label || element}`)
+      return
+    }
+    let component = entries[0][0]
+    const props =  entries[0][1]
+    if (!_.startsWith(component, 'Q') && !_.startsWith(component, 'q-')) {
+      component = loadComponent(component)
+    }
+    return { label, component, props }
+  })
 }
 </script>
 
 <style lang="scss" scoped>
   .q-item__section--avatar {
-    min-width: 24px;
+    min-width: 16px;
   }
 </style>

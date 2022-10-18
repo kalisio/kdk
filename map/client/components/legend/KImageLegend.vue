@@ -1,6 +1,6 @@
 <template>
   <div class="row full-width justify-center">
-    <q-img  v-bind="content" />
+    <q-img v-bind="content" />
   </div>
 </template>
 
