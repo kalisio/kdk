@@ -4,10 +4,10 @@
       <template v-for="element in getElements(section)" :key="element.name" class="row full-width items-center">
         <q-item dense>
           <q-item-section avatar>
-            <component 
-              :is="element.component" 
-              v-bind="element.props" 
-              :key="element.label" 
+            <component
+              :is="element.component"
+              v-bind="element.props"
+              :key="element.label"
             />
           </q-item-section>
           <q-item-section>
@@ -41,7 +41,7 @@ const sections = computed(() => {
   return _.keys(props.content)
 })
 
-// function 
+// function
 function getElements (section) {
   return props.content[section].map(element => {
     const symbol = element.symbol
@@ -56,7 +56,7 @@ function getElements (section) {
       return
     }
     let component = entries[0][0]
-    const props =  entries[0][1]
+    const props = entries[0][1]
     if (!_.startsWith(component, 'Q') && !_.startsWith(component, 'q-')) {
       component = loadComponent(component)
     }
