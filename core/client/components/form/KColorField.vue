@@ -1,7 +1,11 @@
 <template>
   <div>
     <div v-if="readOnly" :id="properties.name + '-field'">
-      <k-spot :color="model" width="50px" height="18px" border-radius="3px" />
+      <KShape
+        :color="model"
+        :width="16"
+        :height="16"
+        :border-radius="5" />
     </div>
     <q-field v-else
       :for="properties.name + '-field'"
@@ -16,13 +20,14 @@
       @clear="model=''">
       <!-- control -->
       <template v-slot:control>
-        <k-spot
+        <q-resize-observer @resize="onResized" />
+        <KShape
           :id="properties.name + '-field'"
-          class="full-width"
+          type="rect"
           :color="model"
-          width="100%"
-          height="16px"
-          border-radius="3px"
+          :width="width"
+          :height="16"
+          :border-radius="5"
         />
         <q-dialog v-model="picker">
           <q-color
@@ -42,17 +47,18 @@
 </template>
 
 <script>
-import KSpot from '../frame/KSpot.vue'
+import KShape from '../media/KShape.vue'
 import { baseField } from '../../mixins'
 
 export default {
   components: {
-    KSpot
+    KShape
   },
   mixins: [baseField],
   data () {
     return {
-      picker: false
+      picker: false,
+      width: 16
     }
   },
   methods: {
@@ -61,7 +67,12 @@ export default {
     },
     onReferenceCreated (ref) {
       // https://github.com/quasarframework/quasar/issues/8956
-      if (ref) ref.$el.onclick = () => { this.picker = true }
+      if (ref) {
+        ref.$el.onclick = () => { this.picker = true }
+      }
+    },
+    onResized (size) {
+      this.width = size.width
     }
   }
 }
