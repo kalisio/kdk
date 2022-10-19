@@ -1,55 +1,55 @@
 <template>
   <svg :width="width" :height="height">
-    <circle 
+    <circle
       v-if="type === 'circle'"
-      :cx="width/2" 
-      :cy="height/2" 
+      :cx="width/2"
+      :cy="height/2"
       :r="(Math.min(height, width)/2)-borderWidth"
       class="k-shape"
     />
-    <ellipse 
+    <ellipse
       v-if="type === 'ellipse'"
-      :cx="width/2" 
-      :cy="height/2" 
-      :rx="width-borderWidth" 
+      :cx="width/2"
+      :cy="height/2"
+      :rx="width-borderWidth"
       :ry="height-borderWidth"
       class="k-shape"
     />
     <rect
       v-if="type === 'rect'"
-      :x="borderWidth" 
-      :y="borderWidth" 
-      :width="width-(2*borderWidth)" 
-      :height="height-(2*borderWidth)" 
-      :rx="borderRadius" 
+      :x="borderWidth"
+      :y="borderWidth"
+      :width="width-(2*borderWidth)"
+      :height="height-(2*borderWidth)"
+      :rx="borderRadius"
       :ry="borderRadius"
-      class="k-shape" 
+      class="k-shape"
     />
-    <polygon 
+    <polygon
       v-if="type === 'triangle-up'"
-      :points="`${width/2},${height-borderWidth} ${borderWidth},${borderWidth} ${width-borderWidth},${borderWidth}`" 
-      class="k-shape" 
+      :points="`${width/2},${height-borderWidth} ${borderWidth},${borderWidth} ${width-borderWidth},${borderWidth}`"
+      class="k-shape"
     />
-    <polygon 
+    <polygon
       v-if="type === 'triangle-down'"
-      :points="`${width/2},${borderWidth} ${borderWidth},${height-borderWidth} ${width-borderWidth},${height-borderWidth}`" 
-      class="k-shape" 
+      :points="`${width/2},${borderWidth} ${borderWidth},${height-borderWidth} ${width-borderWidth},${height-borderWidth}`"
+      class="k-shape"
     />
-    <polygon 
+    <polygon
       v-if="type === 'triangle-right'"
-      :points="`0,0 0,${height} ${width},${height/2}`" 
-      class="k-shape" 
+      :points="`0,0 0,${height} ${width},${height/2}`"
+      class="k-shape"
     />
-    <polygon 
+    <polygon
       v-if="type === 'triangle-left'"
-      :points="`0,${(height-borderWidth)/2} ${width-borderWidth},${height-borderWidth} ${width-borderWidth},${borderWidth}`" 
-      class="k-shape" 
+      :points="`0,${(height-borderWidth)/2} ${width-borderWidth},${height-borderWidth} ${width-borderWidth},${borderWidth}`"
+      class="k-shape"
     />
-    <polygon 
+    <polygon
       v-if="type === 'diamond'"
-      :points="`${width/2},${height-borderWidth} ${width-borderWidth},${height/2} ${width/2},${borderWidth} ${borderWidth},${height/2}`" 
-      class="k-shape" 
-    />            
+      :points="`${width/2},${height-borderWidth} ${width-borderWidth},${height/2} ${width/2},${borderWidth} ${borderWidth},${height/2}`"
+      class="k-shape"
+    />
   </svg>
 </template>
 
