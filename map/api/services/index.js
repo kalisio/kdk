@@ -117,7 +117,7 @@ export async function createDefaultCatalogLayers (context) {
         db: app.db.db(defaultLayer.dbName)
       })
     }
-    // And if we need to initialize some data as well 
+    // And if we need to initialize some data as well
     if (!createdLayer && featuresService && (defaultLayer.url || defaultLayer.fileName)) {
       // Cleanup
       try {

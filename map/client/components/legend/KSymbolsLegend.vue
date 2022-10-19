@@ -43,7 +43,7 @@ const sections = computed(() => {
 
 // function
 function getElements (section) {
-  return props.content[section].map(element => {
+  return _.map(props.content[section], element => {
     const symbol = element.symbol
     const label = element.label
     if (!symbol || !label) {

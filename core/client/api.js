@@ -19,7 +19,7 @@ if (_.get(configuration, 'logs.level')) {
   logger.setLevel('info')
 }
 
-export function createClient(config) {
+export function createClient (config) {
   // Initiate the client
   const api = feathers()
 

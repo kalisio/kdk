@@ -44,6 +44,18 @@ export const i18n = {
     })
     app.use(this.i18n)
   },
+  registerTranslation (translation) {
+    if (!this.i18n) {
+      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      return
+    }
+    const locale = this.i18n.global.locale
+    let messages = translation[locale]
+    if (messages) this.i18n.global.mergeLocaleMessage(locale, messages)
+    const fallbackLocale = this.i18n.global.fallbackLocale
+    messages = translation[fallbackLocale]
+    if (messages) this.i18n.global.mergeLocaleMessage(fallbackLocale, messages)
+  },
   t (key, param) {
     if (!this.i18n) {
       logger.error('the i18n instance is not existing. Did you initialize it ?')

@@ -7,7 +7,7 @@ const { getItems, replaceItems } = common
 const sift = siftModule.default
 const debug = makeDebug('kdk:map:catalog:hooks')
 
-// By default we only return layers and not other objects in catalog
+// By default we only return default categories
 export function getDefaultCategories (hook) {
   const query = _.get(hook, 'params.query', {})
   if (query.type === 'Category') {
@@ -22,6 +22,24 @@ export function getDefaultCategories (hook) {
     defaultCategories = defaultCategories.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
     const item = getItems(hook)
     replaceItems(hook, item.concat(defaultCategories.map(category => Object.assign(category, { type: 'Category' }))))
+  }
+}
+
+// By default we only return default legends
+export function getDefaultLegends (hook) {
+  const query = _.get(hook, 'params.query', {})
+  if (query.type === 'Legend') {
+    const service = hook.service
+    // Read default legends config
+    const catalogConfig = hook.app.get('catalog') || { legends: [] }
+    // Check for specific service override (e.g. contextual catalog different from global catalog)
+    let defaultLegends = _.get(service, 'options.legends', catalogConfig.legends)
+    // Add implicit type
+    defaultLegends = defaultLegends.map(legend => Object.assign(legend, { type: 'Legend' }))
+    // Then filter according to query
+    defaultLegends = defaultLegends.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
+    const item = getItems(hook)
+    replaceItems(hook, item.concat(defaultLegends.map(legend => Object.assign(legend, { type: 'Legend' }))))
   }
 }
 
