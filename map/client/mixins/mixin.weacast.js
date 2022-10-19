@@ -19,8 +19,8 @@ export const weacast = {
   },
   methods: {
     async setupWeacast () {
-      // As we proxy weacast service we use our API
-      this.weacastApi = this.$api
+      // As we usually proxy weacast service we use our API unless another client has been specified
+      if (!this.weacastApi) this.weacastApi = this.$api
       // We need to implement time management
       this.weacastApi.setForecastTime = (time) => {
         this.$api.forecastTime = time
