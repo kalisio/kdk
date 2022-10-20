@@ -404,7 +404,7 @@ export const activity = {
       if (hasContext) this.restoreContext('time')
       // Geolocate by default if view has not been restored
       const viewRestored = (hasContext ? await this.restoreContext('view') : false)
-      if (!viewRestored) {
+      if (!viewRestored && _.get(this, 'activityOptions.restore.geolocation', true)) {
         // Provided by geolocation if enabled
         if (!this.$geolocation.get().position) await this.$geolocation.update()
         const position = this.$geolocation.get().position
