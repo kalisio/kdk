@@ -1,6 +1,11 @@
 <template>
-  <div class="q-pa-xs row full-width justify-center">
-    <img :src="src" />
+  <div class="column full-width q-gutter-xs">
+    <div v-if="label" class="ellipsis text-caption" >
+      {{ label }}
+    </div>
+    <div class="k-image-legend">
+      <img :src="src"  />
+    </div>
   </div>
 </template>
 
@@ -12,6 +17,10 @@ import { api } from '../../../../core/client/index.js'
 
 // props
 const props = defineProps({
+  label: {
+    type: String,
+    default: undefined
+  },
   content: {
     type: Object,
     required: true
@@ -33,3 +42,9 @@ onMounted(async () => {
   jwt.value = await api.get('storage').getItem(config.apiJwt)
 })
 </script>
+
+<style lang="scss" scoped>
+.k-image-legend {
+  text-align: center;
+}
+</style>

@@ -1,25 +1,32 @@
 <template>
-  <template v-for="(section, index) in sections" :key="index" class="column full-width">
-    <q-list dense>
-      <template v-for="element in getElements(section)" :key="element.name" class="row full-width items-center">
-        <q-item dense>
-          <q-item-section avatar>
-            <component
-              :is="element.component"
-              v-bind="element.props"
-              :key="element.label"
-            />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ $tie(element.label )}}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
+  <div class="column full-width q-gutter-xs">
+    <div v-if="label" class="ellipsis text-caption" >
+      {{ label }}
+    </div> 
+    <div>
+      <template v-for="(section, index) in sections" :key="index" class="column full-width">
+        <q-list dense>
+          <template v-for="element in getElements(section)" :key="element.name" class="row full-width items-center">
+            <q-item dense>
+              <q-item-section avatar>
+                <component
+                  :is="element.component"
+                  v-bind="element.props"
+                  :key="element.label"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ $tie(element.label )}}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+          <q-separator v-if="index < sections.length - 1" />
+        </q-list>
       </template>
-      <q-separator v-if="index < sections.length - 1" />
-    </q-list>
-  </template>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -30,6 +37,10 @@ import { loadComponent } from '../../../../core/client/utils.js'
 
 // props
 const props = defineProps({
+  label: {
+    type: String,
+    default: undefined
+  },
   content: {
     type: Object,
     required: true

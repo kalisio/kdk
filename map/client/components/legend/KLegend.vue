@@ -13,6 +13,7 @@
             <div class="q-py-xs q-px-md">
               <component
                 :is="layer.legend.renderer"
+                :label="layer.legend.label"
                 :content="layer.legend.content"
               />
             </div>
@@ -97,7 +98,6 @@ function onShowLayer (layer, engineLayer) {
       return
     }
     legend.renderer = loadComponent(renderer)
-    if (!legend.label) legend.label = layer.name
     layers.value.push(layer)
   }
 }
