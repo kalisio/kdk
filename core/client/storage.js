@@ -54,7 +54,7 @@ export const Storage = {
     const uploadResponse = await window.fetch(uploadUrl, uploadOptions)
     dismiss()
     if (uploadResponse.ok) {
-      Events.emit('file-uploaded', { name: file, key })
+      Events.emit('file-uploaded', { name: file, key, type, context: contextId })
     }
     return uploadResponse
   },
@@ -88,7 +88,7 @@ export const Storage = {
     const downloadResponse = window.fetch(downloadUrl, downloadOptions)
     dismiss()
     if (downloadResponse.ok) {
-      Events.emit('file-downloaded', { name: file, key })
+      Events.emit('file-downloaded', { name: file, key, type, context: contextId })
     }
     return downloadResponse
   }
