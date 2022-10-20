@@ -45,7 +45,6 @@ export const Storage = {
       }
     }
     const dismiss = Notify.create({
-      icon: 'las la-hourglass-half',
       message: i18n.t('storage.UPLOADING_FILE', { file }),
       color: 'primary',
       timeout: 0,
@@ -79,7 +78,6 @@ export const Storage = {
       if (jwt) downloadOptions.headers.Authorization = 'Bearer ' + jwt
     }
     const dismiss = this.$q.notify({
-      icon: 'las la-hourglass-half',
       message: this.$t('storage.UPLOADING_FILE', { file }),
       color: 'primary',
       timeout: 0,
