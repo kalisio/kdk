@@ -67,9 +67,11 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.gridSource = gridSource
-    // keep ref on callback to be able to remove it
-    this.onDataChangedCallback = this.onDataChanged.bind(this)
-    this.gridSource.on('data-changed', this.onDataChangedCallback)
+    if (this.gridSource && this.gridSource.on) {
+      // keep ref on callback to be able to remove it
+      this.onDataChangedCallback = this.onDataChanged.bind(this)
+      this.gridSource.on('data-changed', this.onDataChangedCallback)
+    }
   },
 
   onAdd (map) {
@@ -107,6 +109,10 @@ const TiledMeshLayer = L.GridLayer.extend({
 
   createTile (coords, done) {
     const tile = document.createElement('div')
+    if (!this.gridSource) {
+      done(null, tile)
+      return tile
+    }
 
     // bbox we'll request to the grid source
     const bounds = this._tileCoordsToBounds(coords)
@@ -480,6 +486,23 @@ const TiledMeshLayer = L.GridLayer.extend({
   getBounds () {
     const bounds = this.options.bounds ? this.options.bounds : L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
     return this._map ? this._map.wrapLatLngBounds(bounds) : bounds
+  },
+
+  setSource (source) {
+    //  loading fired when starts loading tiles
+    // createTile :
+    //  - tileloadstart
+    // done:
+    //  - if err: tilerror
+    //  - else: tileload
+    //  - si plus de tuiles: load
+    // calling done () from createTile wont't work
+    // calling redraw will call tileunload on all created tiles
+    if (this.gridSource) {
+      // abort pending requests
+    }
+
+
   }
 })
 

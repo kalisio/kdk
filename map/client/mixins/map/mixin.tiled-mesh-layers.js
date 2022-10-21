@@ -1,7 +1,79 @@
+import moment from 'moment'
+import { makeTime, readAsTimeOrDuration, floorTo, ceilTo } from '../../../common/moment-utils.js'
+import { getMetadata as geotiffGetMetadata, fetch as geotiffFetch } from '../../../common/geotiff-utils.js'
+import * as wu from '../../../common/weacast-utils.js'
+
 import _ from 'lodash'
 import { Time } from '../../../../core/client/time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer.js'
+
+const GridSourceStore = {
+  geotiff: async (layer, source, context) => {
+    const url = _.template(source.config.urlTemplate)(context)
+    const meta = await geotiffGetMetadata(url)
+    return {
+      fetch: async (abort, bbox, res) => {
+        return await geotiffFetch (
+          meta,
+          { minLon: bbox[1], minLat: bbox[0], maxLon: bbox[3], maxLat: bbox[2] },
+          { resLon: res[1], resLat: res[0] },
+          abort)
+      },
+      getBBox: () => { return [meta.bounds.minLat, meta.bounds.minLon, meta.bounds.maxLat, meta.bounds.maxLon] },
+      getDataBounds: () => { return null }
+    }
+  },
+  weacast: async (layer, source, context) => {
+    const meta = await wu.fetcher(context.weacastApi, context.meteoModel, layer.variables[0].name, context.time)
+    return {
+      fetch: async (abort, bbox, res) => {
+        return await wu.fetchTile(
+          meta,
+          { minLon: bbox[1], minLat: bbox[0], maxLon: bbox[3], maxLat: bbox[2] },
+          { resLon: res[1], resLat: res[0] },
+          abort)
+      },
+      getBBox: () => {
+        return [
+          meta.spatialBounds.minLat,
+          meta.spatialBounds.minLon,
+          meta.spatialBounds.maxLat,
+          meta.spatialBounds.maxLon
+        ]
+      },
+      getDataBounds: () => {
+        return [
+          meta.dataBounds.minVal,
+          meta.dataBounds.maxVal
+        ]
+      }
+    }
+  }
+}
+
+function getSource (definition, { meteoModel, time }) {
+  const now = moment()
+  const matchs = []
+  for (const source of definition.sources) {
+    if (source.meteoModel && meteoModel && source.meteoModel !== meteoModel) continue
+    const from = source.from ? makeTime(readAsTimeOrDuration(source.from), now) : now
+    const to = source.to ? makeTime(readAsTimeOrDuration(source.to), now) : now
+    if (time.isBetween(from, to)) matchs.push(source)
+  }
+  return matchs
+}
+
+async function buildSource (mixin, layer) {
+  const context = {
+    weacastApi: mixin.weacastApi,
+    jwtToken: await mixin.$api.get('storage').getItem(mixin.$config('gatewayJwt')),
+    time: Time.getCurrentTime(),
+    meteoModel: mixin.forecastModel.name
+  }
+  const source = getSource(layer.dataSources, { meteoModel: mixin.forecastModel.name, time: Time.getCurrentTime() })
+  return source ? GridSourceStore[source.type](layer, source, context) : null
+}
 
 export const tiledMeshLayers = {
   methods: {
@@ -15,16 +87,21 @@ export const tiledMeshLayers = {
       const colorMap = _.get(options, 'variables[0].chromajs', null)
       if (colorMap) Object.assign(layerOptions, { chromajs: colorMap })
 
-      const apiToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+      let gridSource = null
+      if (options.dataSources) {
+        // gridSource = await buildSource(this, options)
+      } else {
+        const apiToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
 
-      // Build grid source
-      const [gridKey, gridConf] = extractGridSourceConfig(options)
-      const gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi, apiToken })
-      gridSource.setup(gridConf)
-      if (gridSource.updateCtx) {
-        // define variables for source's dynamic properties
-        if (apiToken) gridSource.updateCtx.jwtToken = apiToken
-        gridSource.updateCtx.meteoElements = _.get(options, 'meteoElements')
+        // Build grid source
+        const [gridKey, gridConf] = extractGridSourceConfig(options)
+        gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi, apiToken })
+        gridSource.setup(gridConf)
+        if (gridSource.updateCtx) {
+          // define variables for source's dynamic properties
+          if (apiToken) gridSource.updateCtx.jwtToken = apiToken
+          gridSource.updateCtx.meteoElements = _.get(options, 'meteoElements')
+        }
       }
 
       return new TiledMeshLayer(layerOptions, gridSource)
@@ -94,6 +171,15 @@ export const tiledMeshLayers = {
     onCurrentTimeChangedTiledMeshLayer (time) {
       // broadcast time to visible layers
       this.tiledMeshLayers.forEach((engineLayer) => { engineLayer.setTime(time) })
+
+      // for (const layer of this.layers) {
+      //   if (!layer.dataSources) continue
+      //   if (!this.isLayerVisible(layer.name)) continue
+      //   // const gridSource = await buildSource(this, options)
+      //   buildSource(this, options).then((gridSource) => { engineLayer.setSource(gridSource) })
+      // }
+
+      // gridSource = buildSource(this, options)
     }
   },
 
