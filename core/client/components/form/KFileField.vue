@@ -11,7 +11,7 @@
     clearable
     counter
     :accept="acceptedTypes"
-    :filter="filterFiles"
+    :filter="filterSelectedFiles"
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
@@ -53,7 +53,7 @@ export default {
     emptyModel () {
       return null
     },
-    filterFiles (files) {
+    filterSelectedFiles (files) {
       const filter = _.get(this.properties.field, 'filter')
       if (!filter) return files
       return _.filter(files, file => { return file.name.includes(filter) })
