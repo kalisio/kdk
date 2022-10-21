@@ -10,6 +10,7 @@ import { Filter } from './filter.js'
 import { Sorter } from './sorter.js'
 import services from './services/index.js'
 import * as utils from './utils.js'
+import * as composables from './composables/index.js'
 import * as mixins from './mixins/index.js'
 import * as hooks from './hooks/index.js'
 import * as readers from './readers/index.js'
@@ -33,6 +34,7 @@ export * from './i18n.js'
 export * from './guards.js'
 export * from '../common/index.js'
 export { utils }
+export { composables }
 export { mixins }
 export { hooks }
 export { readers }
