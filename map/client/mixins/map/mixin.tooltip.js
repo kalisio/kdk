@@ -4,7 +4,7 @@ import { Time, Units } from '../../../../core/client/index.js'
 
 export const tooltip = {
   methods: {
-    getDefaultTooltip (feature, layer, options) {
+    getDefaultTooltip (feature, layer, options, zoom) {
       const properties = feature.properties
       let tooltip
       if (properties) {
@@ -16,6 +16,10 @@ export const tooltip = {
         const tooltipStyle = Object.assign({},
           _.get(this, 'activityOptions.engine.tooltip'),
           leafletOptions.tooltip, properties.tooltip)
+        // Check if visible
+        const minZoom = _.get(leafletOptions, 'tooltip.minZoom')
+        const maxZoom = _.get(leafletOptions, 'tooltip.maxZoom')
+        if ((maxZoom && zoom > maxZoom) || (minZoom && zoom < minZoom)) return
         // Default content
         let html = tooltipStyle.html
         if (!html) {

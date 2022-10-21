@@ -340,7 +340,7 @@ export const geojsonLayers = {
           }
           // First remove previous tooltip if any
           if (layer.getTooltip()) layer.unbindTooltip()
-          const tooltip = this.generateStyle('tooltip', feature, layer, options)
+          const tooltip = this.generateStyle('tooltip', feature, layer, options, this.map.getZoom())
           if (tooltip) {
             // Because we build a new tooltip we need to restore previous state
             const wasOpen = (layer.getTooltip() && layer.isTooltipOpen())
@@ -432,15 +432,48 @@ export const geojsonLayers = {
           }
         }
       }
+    },
+    onMapZoomChangedGeoJsonLayers () {
+      // Need to update layers with tooltip defining a minZoom/maxZoom
+      // as we cannot do that in template because tooltip needs to be recreated/destroyed dynamically
+      const geoJsonlayers = _.values(this.layers).filter(sift({
+        'leaflet.type': 'geoJson',
+        'leaflet.realtime': true,
+        isVisible: true,
+        // Supported by permanent tooltips only
+        'leaflet.tooltip.options.permanent': true,
+        $or: [
+          { 'leaflet.tooltip.minZoom': { $exists: true } },
+          { 'leaflet.tooltip.maxZoom': { $exists: true } }
+        ]
+      }))
+      geoJsonlayers.forEach(async geoJsonlayer => {
+        // Retrieve the layer
+        const layer = this.getLeafletLayerByName(geoJsonlayer.name)
+        const minZoom = _.get(geoJsonlayer, 'leaflet.tooltip.minZoom')
+        const maxZoom = _.get(geoJsonlayer, 'leaflet.tooltip.maxZoom')
+        const zoom = this.map.getZoom()
+        let showTooltips = true
+        if (maxZoom && zoom > maxZoom) showTooltips = false
+        if (minZoom && zoom < minZoom) showTooltips = false
+        // Update only when required according to zoom level
+        if (layer.showTooltips !== showTooltips) {
+          // Tag layer to know it has been updated
+          layer.showTooltips = showTooltips
+          this.updateLayer(geoJsonlayer.name)
+        }
+      })
     }
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
+    this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
   },
   beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
+    this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
   }
 }
