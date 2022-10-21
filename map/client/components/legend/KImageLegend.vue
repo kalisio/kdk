@@ -1,12 +1,12 @@
 <template>
-  <div class="column full-width q-gutter-xs">
-    <div v-if="label" class="ellipsis text-caption" >
-      {{ $tie(label) }}
-    </div>
+  <KLegendSection
+    :label="label"
+  >
+    <!-- content -->
     <div class="k-image-legend">
       <img :src="src"  />
     </div>
-  </div>
+  </KLegendSection>
 </template>
 
 <script setup>
@@ -14,6 +14,7 @@ import _ from 'lodash'
 import config from 'config'
 import { ref, computed, onMounted } from 'vue'
 import { api } from '../../../../core/client/index.js'
+import KLegendSection from './KLegendSection.vue'
 
 // props
 const props = defineProps({

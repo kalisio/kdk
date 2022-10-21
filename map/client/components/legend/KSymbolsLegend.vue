@@ -1,8 +1,8 @@
 <template>
-  <div class="column full-width q-gutter-xs">
-    <div v-if="label" class="text-weight-light">
-      {{ $tie(label) }}
-    </div> 
+  <KLegendSection
+    :label="label"
+  >
+    <!-- content -->
     <div>
       <template v-for="(section, index) in sections" :key="index" class="column full-width">
         <q-list dense>
@@ -26,7 +26,7 @@
         </q-list>
       </template>
     </div>
-  </div>
+  </KLegendSection>
 </template>
 
 <script setup>
@@ -34,6 +34,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { computed } from 'vue'
 import { loadComponent } from '../../../../core/client/utils.js'
+import KLegendSection from './KLegendSection.vue'
 
 // props
 const props = defineProps({

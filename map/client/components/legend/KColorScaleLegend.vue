@@ -1,18 +1,19 @@
 <template>
-  <div class="column full-width q-gutter-xs">
-    <div v-if="label" class="ellipsis text-subtitle2" >
-      {{ $tie(label) }}
-    </div> 
+  <KLegendSection
+    :label="label"
+  >
+    <!-- content -->
     <div class="q-pa-sm">
       <KColorScale
         v-bind="content"
         style="height: 46px;"
       />
     </div>
-  </div>
+  </KLegendSection>
 </template>
 
 <script setup>
+import KLegendSection from './KLegendSection.vue'
 import { KColorScale } from '../../../../core/client/components'
 
 // props
