@@ -79,16 +79,21 @@ export const Time = {
   getFormatTimezone () {
     return this.getFormat().timezone
   },
-  format (datetime, format, options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) {
-    const currentTime = this.convertToMoment(datetime)
+  convertToLocal (datetime) {
+    let currentTime = this.convertToMoment(datetime)
     // Convert to local time
     if (this.getFormatTimezone()) {
-      currentTime.tz(this.getFormatTimezone())
+      currentTime = moment.tz(currentTime.format(), this.getFormatTimezone())
     }
-    if (format === 'iso') return currentTime.format()
-    else if (format === 'locale') return currentTime.toDate().toLocaleString(getLocale(), options)
+    return currentTime
+  },
+  format (datetime, format, options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) {
+    // Convert to tz if defined
+    const localDatetime = this.convertToLocal(datetime)
+    if (format === 'iso') return localDatetime.format()
+    else if (format === 'locale') return localDatetime.toDate().toLocaleString(getLocale(), options)
     // Defaults to long mode if not given
-    else return currentTime.format(_.get(this.getFormat(), format))
+    else return localDatetime.format(_.get(this.getFormat(), format))
   },
   getCurrentTime () {
     return this.get().currentTime
