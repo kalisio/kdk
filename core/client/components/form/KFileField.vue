@@ -11,9 +11,11 @@
     clearable
     counter
     :accept="acceptedTypes"
+    :filter="filterFiles"
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
+    :disable="disabled"
     @clear="onFileCleared"
     @update:model-value="onFileChanged"
     @rejected="onFileRejected">
@@ -51,9 +53,15 @@ export default {
     emptyModel () {
       return null
     },
+    filterFiles (files) {
+      const filter = _.get(this.properties.field, 'filter')
+      if (!filter) return files
+      return _.filter(files, file => { return file.name.includes(filter) })
+    },
     onFileCleared () {
       this.model = this.emptyModel()
       this.error = ''
+      this.onChanged()
     },
     async onFileChanged () {
       if (this.file) {

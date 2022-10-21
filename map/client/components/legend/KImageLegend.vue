@@ -1,7 +1,7 @@
 <template>
   <div class="column full-width q-gutter-xs">
     <div v-if="label" class="ellipsis text-caption" >
-      {{ label }}
+      {{ $tie(label) }}
     </div>
     <div class="k-image-legend">
       <img :src="src"  />

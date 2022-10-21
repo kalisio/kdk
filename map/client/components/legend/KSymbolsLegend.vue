@@ -1,7 +1,7 @@
 <template>
   <div class="column full-width q-gutter-xs">
-    <div v-if="label" class="ellipsis text-caption" >
-      {{ label }}
+    <div v-if="label" class="text-weight-light">
+      {{ $tie(label) }}
     </div> 
     <div>
       <template v-for="(section, index) in sections" :key="index" class="column full-width">

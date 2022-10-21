@@ -1,7 +1,7 @@
 <template>
   <div class="column full-width q-gutter-xs">
-    <div v-if="label" class="ellipsis text-caption" >
-      {{ label }}
+    <div v-if="label" class="ellipsis text-subtitle2" >
+      {{ $tie(label) }}
     </div> 
     <div class="q-pa-sm">
       <KColorScale
