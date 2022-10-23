@@ -17,7 +17,7 @@ export function getDefaultCategories (hook) {
     // Check for specific service override (e.g. contextual catalog different from global catalog)
     let defaultCategories = _.get(service, 'options.categories', catalogConfig.categories)
     // Add implicit type
-    defaultCategories = defaultCategories.map(category => Object.assign(category, { type: 'Category' }))
+    defaultCategories = _.map(defaultCategories, category => Object.assign(category, { type: 'Category' }))
     // Then filter according to query
     defaultCategories = defaultCategories.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
     const item = getItems(hook)
@@ -25,21 +25,21 @@ export function getDefaultCategories (hook) {
   }
 }
 
-// By default we only return default legends
-export function getDefaultLegends (hook) {
+// By default we only return default sublegends
+export function getDefaultSublegends (hook) {
   const query = _.get(hook, 'params.query', {})
-  if (query.type === 'Legend') {
+  if (query.type === 'Sublegend') {
     const service = hook.service
-    // Read default legends config
-    const catalogConfig = hook.app.get('catalog') || { legends: [] }
+    // Read default sublegends config
+    const catalogConfig = hook.app.get('catalog') || { sublegends: [] }
     // Check for specific service override (e.g. contextual catalog different from global catalog)
-    let defaultLegends = _.get(service, 'options.legends', catalogConfig.legends)
+    let defaultSublegends = _.get(service, 'options.sublegends', catalogConfig.sublegends)
     // Add implicit type
-    defaultLegends = defaultLegends.map(legend => Object.assign(legend, { type: 'Legend' }))
+    defaultSublegends = _.map(defaultSublegends, sublegend => Object.assign(sublegend, { type: 'Sublegend' }))
     // Then filter according to query
-    defaultLegends = defaultLegends.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
+    defaultSublegends = defaultSublegends.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
     const item = getItems(hook)
-    replaceItems(hook, item.concat(defaultLegends.map(legend => Object.assign(legend, { type: 'Legend' }))))
+    replaceItems(hook, item.concat(defaultSublegends.map(sublegend => Object.assign(sublegend, { type: 'Sublegend' }))))
   }
 }
 

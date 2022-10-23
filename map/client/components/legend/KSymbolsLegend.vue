@@ -1,12 +1,19 @@
 <template>
-  <KLegendSection
+  <KLegendRenderer
     :label="label"
   >
     <!-- content -->
     <div>
-      <template v-for="(section, index) in sections" :key="index" class="column full-width">
+      <template 
+        v-for="(section, index) in sections" 
+        :key="index" 
+        class="column full-width"
+      >
         <q-list dense>
-          <template v-for="element in getElements(section)" :key="element.name" class="row full-width items-center">
+          <template 
+            v-for="element in getElements(section)" 
+            :key="element.name" 
+          >
             <q-item dense>
               <q-item-section avatar>
                 <component
@@ -26,7 +33,7 @@
         </q-list>
       </template>
     </div>
-  </KLegendSection>
+  </KLegendRenderer>
 </template>
 
 <script setup>
@@ -34,7 +41,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { computed } from 'vue'
 import { loadComponent } from '../../../../core/client/utils.js'
-import KLegendSection from './KLegendSection.vue'
+import KLegendRenderer from './KLegendRenderer.vue'
 
 // props
 const props = defineProps({

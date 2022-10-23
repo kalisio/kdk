@@ -1,15 +1,19 @@
 <template>
   <div class="column full-width">
     <KScrollArea :maxHeight="maxHeight">
-      <template v-for="legend in legends" key="legend.name" class="column full-width">
+      <template 
+        v-for="sublegend in sublegends" 
+        :key="sublegend.name" 
+        class="column full-width"
+      >
         <q-expansion-item
-          v-if="!_.isEmpty(layersByLegend[legend.name])"
-          :label="$tie(legend.name)"
-          :header-class="legend.headerClass || headerClass"
-          :default-opened="legend.opened || opened"
+          v-if="!_.isEmpty(layersBySublegend[sublegend.name])"
+          :label="$tie(sublegend.name)"
+          :header-class="sublegend.headerClass || headerClass"
+          :default-opened="sublegend.opened || opened"
           dense
         >
-          <template v-for="layer in layersByLegend[legend.name]" key="layer.name" class="column full-width">
+          <template v-for="layer in layersBySublegend[sublegend.name]" key="layer.name" class="column full-width">
             <div class="q-py-xs q-px-md">
               <component
                 :is="layer.legend.renderer"
@@ -68,21 +72,21 @@ const props = defineProps({
 })
 
 // data
-const { listLegends } = useCatalog(props.contextId)
-const legends = ref({})
+const { listSublegends } = useCatalog(props.contextId)
+const sublegends = ref({})
 const layers = ref([])
 
 // cmoputed
-const layersByLegend = computed(() => {
+const layersBySublegend = computed(() => {
   const result = {}
-  _.forEach(legends.value, legend => {
+  _.forEach(sublegends.value, sublegend => {
     // Built-in legends use filtering while
     let filter = null
-    if (_.has(legend, 'options.filter')) {
-      filter = _.get(legend, 'options.filter')
+    if (_.has(sublegend, 'options.filter')) {
+      filter = _.get(sublegend, 'options.filter')
     }
     // If the list of layers in category is empty we can have a null filter
-    result[legend.name] = filter ? _.filter(layers.value, sift(filter)) : []
+    result[sublegend.name] = filter ? _.filter(layers.value, sift(filter)) : []
   })
   return result
 })
@@ -113,9 +117,9 @@ onMounted(async () => {
   kActivity.$engineEvents.on('layer-shown', onShowLayer)
   kActivity.$engineEvents.on('layer-hidden', onHideLayer)
   // retrieve the legends
-  legends.value = await listLegends()
+  sublegends.value = await listSublegends()
   // register legend translations
-  _.forEach(legends.value, legend => {
+  _.forEach(sublegends.value, legend => {
     if (legend.i18n) i18n.registerTranslation(legend.i18n)
   })
   // initial scan of already added layers

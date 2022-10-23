@@ -1,12 +1,12 @@
 <template>
-  <KLegendSection
+  <KLegendRenderer
     :label="label"
   >
     <!-- content -->
     <div class="k-image-legend">
       <img :src="src"  />
     </div>
-  </KLegendSection>
+  </KLegendRenderer>
 </template>
 
 <script setup>
@@ -14,7 +14,7 @@ import _ from 'lodash'
 import config from 'config'
 import { ref, computed, onMounted } from 'vue'
 import { api } from '../../../../core/client/index.js'
-import KLegendSection from './KLegendSection.vue'
+import KLegendRenderer from './KLegendRenderer.vue'
 
 // props
 const props = defineProps({

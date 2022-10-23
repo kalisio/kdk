@@ -5,13 +5,13 @@ export function useCatalog (contextOrId) {
   const service = api.getService('catalog', contextOrId)
 
   // methods
-  async function listLegends () {
-    const response = await service.find({ query: { type: 'Legend' }, $limit: 0 })
+  async function listSublegends () {
+    const response = await service.find({ query: { type: 'Sublegend' }, $limit: 0 })
     return response.data
   }
 
   // exposed
   return {
-    listLegends
+    listSublegends
   }
 }

@@ -4,7 +4,7 @@
       {{ $tie(label) }}
     </div> 
     <slot>
-
+      <!-- to be overloaded -->
     </slot>
   </div>
 </template>

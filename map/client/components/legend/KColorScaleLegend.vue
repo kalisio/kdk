@@ -1,5 +1,5 @@
 <template>
-  <KLegendSection
+  <KLegendRenderer
     :label="label"
   >
     <!-- content -->
@@ -9,11 +9,11 @@
         style="height: 46px;"
       />
     </div>
-  </KLegendSection>
+  </KLegendRenderer>
 </template>
 
 <script setup>
-import KLegendSection from './KLegendSection.vue'
+import KLegendRenderer from './KLegendRenderer.vue'
 import { KColorScale } from '../../../../core/client/components'
 
 // props
