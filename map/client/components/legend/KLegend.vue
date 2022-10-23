@@ -1,9 +1,9 @@
 <template>
   <div class="column full-width">
     <KScrollArea :maxHeight="maxHeight">
-      <template 
-        v-for="sublegend in sublegends" 
-        :key="sublegend.name" 
+      <template
+        v-for="sublegend in sublegends"
+        :key="sublegend.name"
         class="column full-width"
       >
         <q-expansion-item

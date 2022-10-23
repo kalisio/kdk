@@ -4,15 +4,15 @@
   >
     <!-- content -->
     <div>
-      <template 
-        v-for="(section, index) in sections" 
-        :key="index" 
+      <template
+        v-for="(section, index) in sections"
+        :key="index"
         class="column full-width"
       >
         <q-list dense>
-          <template 
-            v-for="element in getElements(section)" 
-            :key="element.name" 
+          <template
+            v-for="element in getElements(section)"
+            :key="element.name"
           >
             <q-item dense>
               <q-item-section avatar>

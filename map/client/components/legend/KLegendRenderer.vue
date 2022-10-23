@@ -2,7 +2,7 @@
   <div class="column full-width q-gutter-xs">
     <div v-if="label" class="text-weight-light">
       {{ $tie(label) }}
-    </div> 
+    </div>
     <slot>
       <!-- to be overloaded -->
     </slot>

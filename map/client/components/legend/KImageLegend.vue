@@ -32,9 +32,9 @@ const props = defineProps({
 const jwt = ref(null)
 
 // computed
-const src = computed (() => {
+const src = computed(() => {
   const src = props.content.src
-  if (!_.startsWith(src, '/api')) return src 
+  if (!_.startsWith(src, '/api')) return src
   return src + '?jwt=' + jwt.value
 })
 
