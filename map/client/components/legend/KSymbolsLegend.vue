@@ -85,7 +85,10 @@ function getElements (section) {
 </script>
 
 <style lang="scss" scoped>
-  .q-item__section--avatar {
-    min-width: 16px;
-  }
+.q-item {
+  padding: 2px 2px;
+}
+.q-item__section--avatar {
+  min-width: 16px;
+}
 </style>
