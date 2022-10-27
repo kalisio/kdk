@@ -22,7 +22,10 @@ export const authentication = {
         return user
       } catch (error) {
         // This ensure an old token is not kept when the user has been deleted
-        if (error.code === 404) await this.logout()
+        if (error.code === 404) {
+          await this.$api.authentication.removeAccessToken()
+          await this.logout()
+        }
         // Rethrow for caller to handle
         throw error
       }
