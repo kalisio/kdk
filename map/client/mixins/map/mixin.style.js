@@ -59,6 +59,7 @@ export const style = {
       // Manage panes to make z-index work for all types of layers,
       // pane name can actually be a z-index value
       if (_.has(convertedStyle, 'pane')) _.set(convertedStyle, 'pane', _.get(convertedStyle, 'pane').toString())
+      if (_.has(convertedStyle, 'shadowPane')) _.set(convertedStyle, 'shadowPane', _.get(convertedStyle, 'shadowPane').toString())
       return convertedStyle
     },
     getDefaultMarker (feature, latlng, options) {
@@ -79,6 +80,7 @@ export const style = {
       }
       // We manage panes for z-index, so we need to forward it to marker options
       if (leafletOptions.pane) style.pane = leafletOptions.pane
+      if (leafletOptions.shadowPane) style.shadowPane = leafletOptions.shadowPane
       return (latlng ? this.createMarkerFromStyle(latlng, style) : style)
     },
     getDefaultStyle (feature, options) {
@@ -99,6 +101,7 @@ export const style = {
       }
       // We manage panes for z-index, so we need to forward it to marker options
       if (leafletOptions.pane) style.pane = leafletOptions.pane
+      if (leafletOptions.shadowPane) style.shadowPane = leafletOptions.shadowPane
       return style
     }
   },

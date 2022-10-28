@@ -235,6 +235,7 @@ export const geojsonLayers = {
           if (hasMaxZoom) pane.maxZoom = _.get(leafletOptions, 'maxZoom')
           leafletOptions.panes = [pane]
           leafletOptions.pane = options.name
+          leafletOptions.shadowPane = options.name
         }
         // If not explicitely disable use defaults for clustering
         if (!_.has(leafletOptions, 'cluster') && _.get(this, 'activityOptions.engine.cluster')) {
