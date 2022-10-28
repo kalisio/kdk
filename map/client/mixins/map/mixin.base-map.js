@@ -36,6 +36,10 @@ L.Icon.Default.mergeOptions({
 // Do not create geoman structs everywhere
 L.PM.setOptIn(true)
 
+// FontAwesome markers do not register a createShadow() function
+// so that they are added two times to the map
+L.Icon.FontAwesome.prototype.createShadow = function() { return null }
+
 export default {
   data () {
     return {
