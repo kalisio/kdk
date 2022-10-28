@@ -1,6 +1,6 @@
-import { SortOrder, Grid1D } from './grid.js'
+import { SortOrder, Grid1D, TiledGrid, SubGrid } from './grid.js'
 
-export async function fetcher (weacastApi, meteoModel, element, time) {
+export async function fetcher (weacastApi, meteoModel, element, time, useCache) {
   const model = weacastApi.models.find(model => model.name === meteoModel)
 
   // Internal tile management requires longitude in [-180, 180]
@@ -184,8 +184,8 @@ async function fetchWithCache (fetcher, { minLon, minLat, maxLon, maxLat }, { re
   const allGrids = grids.concat(newGrids.flat())
   if (allGrids.length === 0) return null
 
-  const grid = allGrids.length > 1 ? new TiledGrid(sourceKey, allGrids) : allGrids[0]
-  return new SubGrid(sourceKey, grid, bbox)
+  const grid = allGrids.length > 1 ? new TiledGrid(0, allGrids) : allGrids[0]
+  return new SubGrid(0, grid, [ minLat, minLon, maxLat, maxLon ])
 }
 
 // computes how many equidistant points are required to generate
@@ -269,13 +269,13 @@ async function fetchWithoutCache (fetcher, { minLon, minLat, maxLon, maxLat }, {
     tiles.push(grid)
   }
 
-  return tiles.length > 1 ? new TiledGrid(sourceKey, tiles) : tiles[0]
+  return tiles.length > 1 ? new TiledGrid(0, tiles) : tiles[0]
 }
 
 export async function fetchTile (meta, { minLon, minLat, maxLon, maxLat }, { resLon, resLat }, abort) {
-  return this.useCache
-    ? this.fetchWithCache(abort, bbox, resolution)
-    : this.fetchWithoutCache(abort, bbox, resolution)
+  return meta.tileCache
+    ? fetchWithCache(meta, { minLon, minLat, maxLon, maxLat }, { resLat, resLon }, abort)
+    : fetchWithoutCache(meta, { minLon, minLat, maxLon, maxLat }, { resLat, resLon }, abort)
 }
 
 export async function probeTimeRange (weacastApi, meteoModel, elements, { lon, lat }, { t0, t1 }) {
@@ -299,5 +299,5 @@ export async function probeTimeRange (weacastApi, meteoModel, elements, { lon, l
           forecast: meteoModel,
           elements: elements
         }, { query })
-  return response.features.length > 0 ? response.features[0] : {}
+  return response.features.length > 0 ? response.features[0] : null
 }

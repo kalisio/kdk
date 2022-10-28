@@ -67,10 +67,14 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.on('tileunload', (event) => { this.onTileUnload(event) })
 
     this.gridSource = gridSource
-    if (this.gridSource && this.gridSource.on) {
+    if (this.gridSource) {
+        if (this.gridSource.on) {
       // keep ref on callback to be able to remove it
       this.onDataChangedCallback = this.onDataChanged.bind(this)
       this.gridSource.on('data-changed', this.onDataChangedCallback)
+    } else {
+      this.onDataChanged()
+    }
     }
   },
 
@@ -463,13 +467,14 @@ const TiledMeshLayer = L.GridLayer.extend({
     if (this.cutValueUniform) {
       this.layerUniforms.uniforms[this.cutValueUniform] = value
       this.pixiLayer.redraw()
-    } else if (typeof this.gridSource.setLevel === 'function') {
+    } else if (this.gridSource && typeof this.gridSource.setLevel === 'function') {
       this._resetView()
       this.gridSource.setLevel(value)
     }
   },
 
   setTime (time) {
+    if (!this.gridSource) return
     if (typeof this.gridSource.setTime === 'function') {
       this._resetView()
       this.gridSource.setTime(time)
@@ -477,6 +482,7 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   setModel (model) {
+    if (!this.gridSource) return
     if (typeof this.gridSource.setModel === 'function') {
       this._resetView()
       this.gridSource.setModel(model)
@@ -502,7 +508,12 @@ const TiledMeshLayer = L.GridLayer.extend({
       // abort pending requests
     }
 
+    if (source) {
+      this.gridSource = source
+    }
 
+    // this.redraw()
+    this.onDataChanged()
   }
 })
 

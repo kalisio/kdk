@@ -1,5 +1,6 @@
 import moment from 'moment'
 import * as GeoTIFF from 'geotiff'
+import { SortOrder, Grid1D } from './grid.js'
 
 export async function getMetadata (url) {
   const geotiff = await GeoTIFF.fromUrl(url)
@@ -9,7 +10,12 @@ export async function getMetadata (url) {
     geotiff,
     refImage,
     numImages,
-    bounds: { minLon: bbox[0], minLat: bbox[1], maxLon: bbox[2], maxLat: bbox[3] }
+    spatialBounds: {
+      minLon: bbox[0],
+      minLat: bbox[1],
+      maxLon: bbox[2],
+      maxLat: bbox[3]
+    }
   }
   return metadata
 }
@@ -28,10 +34,10 @@ export async function fetch (meta, { minLon, minLat, maxLon, maxLat }, { resLon,
   const [ox, oy] = meta.refImage.getOrigin()
   const [sx, sy] = [usedImage.getWidth(), usedImage.getHeight()]
 
-  let left = (minLat - ox) / rx
-  let right = (maxLat - ox) / rx
-  let bottom = (minLon - oy) / ry
-  let top = (maxLon - oy) / ry
+  let left = (minLon - ox) / rx
+  let right = (maxLon - ox) / rx
+  let bottom = (minLat - oy) / ry
+  let top = (maxLat - oy) / ry
 
   if (rx < 0) [left, right] = [right, left]
   if (ry < 0) [bottom, top] = [top, bottom]
@@ -43,7 +49,7 @@ export async function fetch (meta, { minLon, minLat, maxLon, maxLat }, { resLon,
 
   // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
   const window = [left, bottom, right + 1, top + 1]
-  const bands = await usedImage.readRasters({ window: window, fillValue: meta.nodata })
+  const bands = await usedImage.readRasters({ window: window, fillValue: meta.nodata, signal: abort })
   const data = bands[0]
 
   if (rx < 0) [left, right] = [right, left]
@@ -80,7 +86,7 @@ export async function probe (meta, { lon, lat }, abort) {
 
   // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
   const window = [left, bottom, right + 1, top + 1]
-  const bands = await image.readRasters({ window: window, fillValue: meta.nodata })
+  const bands = await image.readRasters({ window: window, fillValue: meta.nodata, signal: abort })
   const data = bands[0]
 
   const winLeft = ox + left * rx
