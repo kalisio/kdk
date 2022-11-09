@@ -162,8 +162,7 @@ export default {
                   for (let i = 0; i < lines.length && segment === this.feature; ++i) {
                     const len = length(lines[i], { units: 'kilometers' })
                     if (i !== lines.length - 1) {
-                      if (abscissaKm > len) { abscissaKm -= len }
-                      else { segment = lines[i] }
+                      if (abscissaKm > len) { abscissaKm -= len } else { segment = lines[i] }
                     } else {
                       // last multi line segment, must be on this one
                       if (abscissaKm > len) { abscissaKm = len }
@@ -395,10 +394,10 @@ export default {
       // Build a fetch per profile
       const fetchs = []
       for (const query of queries) {
-        fetchs.push(fetch(endpoint
-                          + `?resolution=${query.resolution}`
-                          + (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '')
-                          + (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
+        fetchs.push(fetch(endpoint +
+                          `?resolution=${query.resolution}` +
+                          (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '') +
+                          (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
           method: 'POST',
           mode: 'cors',
           body: JSON.stringify(query.profile),
@@ -454,7 +453,7 @@ export default {
 
       // try to extract line color from layer if available
       const layer = this.layer
-      let profileColor = undefined
+      let profileColor
       if (_.has(layer, 'leaflet.stroke-color')) profileColor = _.get(layer, 'leaflet.stroke-color')
       if (profileColor === undefined) profileColor = _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8')
       this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth)

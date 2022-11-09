@@ -335,7 +335,7 @@ export default {
         return
       }
       // Retrieve the layer associated to current level selection
-      let layer = this.selectableLevelsLayer
+      const layer = this.selectableLevelsLayer
       if (layer) {
         const type = _.get(layer, `${this.engine}.type`)
         // Check if of right type

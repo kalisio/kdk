@@ -84,7 +84,8 @@ export default {
           type: 'Point',
           coordinates: [
             _.get(this.selection, 'location.lng', 0),
-            _.get(this.selection, 'location.lat', 0)] }
+            _.get(this.selection, 'location.lat', 0)]
+        }
       })
       // Use bbox for line/polygons
       if (highlight.geometry.type !== 'Point') {

@@ -86,7 +86,7 @@ export default {
             const [[south, west], [north, east]] = this.getBounds()
             const geoJson = await this.getFeatures(_.merge({
               baseQuery: { south, north, west, east }
-            }, options))*/
+            }, options)) */
             const geoJson = await this.getFeatures(options)
             this.updateLeafletHeatmap(layer, geoJson)
           }
