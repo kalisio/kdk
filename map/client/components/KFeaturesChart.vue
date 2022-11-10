@@ -10,21 +10,23 @@
       @opened="$emit('opened')"
       @closed="$emit('closed')"
     >
-      <div class="row justify-around items-center q-ma-none q-pa-none">
-        <!-- Previsious chart -->
-        <q-btn
-          v-show="currentChart > 1"
-          size="1rem" flat round color="primary"
-          icon="las la-chevron-left"
-          @click="onPreviousChart"/>
-        <!-- Current chart --->
-        <k-stats-chart ref="chart" :style="chartStyle" />
-        <!-- Netx chart -->
-        <q-btn
-          v-show="currentChart < nbCharts"
-          size="1rem" flat round color="primary"
-          icon="las la-chevron-right"
-          @click="onNextChart" />
+      <div class="row justify-center">
+        <div class="row" :style="chartStyle">
+          <!-- Previsious chart -->
+          <q-btn
+            v-show="currentChart > 1" class="col-1"
+            size="1rem" flat round color="primary"
+            icon="las la-chevron-left"
+            @click="onPreviousChart"/>
+          <!-- Current chart --->
+          <k-stats-chart class="col" ref="chart" />
+          <!-- Netx chart -->
+          <q-btn
+            v-show="currentChart < nbCharts" class="col-1"
+            size="1rem" flat round color="primary"
+            icon="las la-chevron-right"
+            @click="onNextChart" />
+        </div>
       </div>
     </k-modal>
     <k-modal
@@ -99,8 +101,9 @@ export default {
       return properties
     },
     chartStyle () {
-      const min = Math.min(this.$q.screen.width, this.$q.screen.height)
-      return `maxWidth: ${min * 0.75}px;`
+      return (this.selectedChartType.value === 'bar' ?
+        `width: ${this.$q.screen.width * 0.8}px;` :
+        `width: ${this.$q.screen.height * 0.8}px;`)
     },
     nbCharts () {
       if (!this.chartData.length || (this.nbValuesPerChart.value === 0)) return 1
