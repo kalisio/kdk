@@ -38,7 +38,7 @@
               label label-always :label-value="maxZoom"/>
           </q-item-section>
         </q-item>
-        <q-item class="col-12">
+        <q-item class="col-12" v-if="isVectorLayer">
           <q-item-section class="col-1">
             <q-toggle id="style-is-selectable" v-model="isSelectable"/>
           </q-item-section>
@@ -61,7 +61,8 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="points" id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
+    <q-expansion-item v-if="isVectorLayer" ref="points" id="style-point-group"
+      icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-1">
@@ -124,7 +125,8 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="lines" id="style-line-group" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
+    <q-expansion-item v-if="isVectorLayer" ref="lines" id="style-line-group"
+      icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-6 text-left">
@@ -194,7 +196,8 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item ref="polygons" id="style-polygon-group" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
+    <q-expansion-item v-if="isVectorLayer" ref="polygons" id="style-polygon-group"
+      icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
       <q-list dense class="row items-center justify-around q-pa-md">
         <q-item class="col-12">
           <q-item-section class="col-7">
@@ -387,6 +390,9 @@ export default {
   computed: {
     hasFeatureSchema () {
       return _.has(this.layer, 'schema')
+    },
+    isVectorLayer () {
+      return this.hasFeatureSchema || (_.get(this.layer, 'leaflet.type') === 'geoJson')
     },
     fields () {
       // Avoid modifying the layer schema as we might update it internally
