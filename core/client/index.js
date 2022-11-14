@@ -115,38 +115,40 @@ export default function init () {
       return
     }
 
-    const notifier = window.PushNotification.init({
-      android: { vibrate: true, sound: true, forceShow: true },
-      ios: { alert: true, badge: true, sound: true },
-      windows: { }
-    })
-    notifier.on('registration', async (data) => {
-      logger.debug('Push registrationID changed: ' + data.registrationId)
-      // Store the registrationId
-      window.device.registrationId = data.registrationId
-      // update the user device
-      const user = Store.get('user')
-      if (user && window.device && window.device.registrationId) {
-        const devicesService = api.getService('devices')
-        const device = await devicesService.update(window.device.registrationId, window.device)
-        logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
-      }
-    })
-    notifier.on('notification', (data) => {
-      // data.message,
-      // data.title,
-      // data.count,
-      // data.sound,
-      // data.image,
-      // data.additionalData
-    })
-    notifier.on('error', (error) => {
-      logger.error(error)
-      utils.toast({
-        message: error.message,
-        timeout: 10000
+    if (window.PushNotification && (typeof window.PushNotification.init === 'function')) {
+      const notifier = window.PushNotification.init({
+        android: { vibrate: true, sound: true, forceShow: true },
+        ios: { alert: true, badge: true, sound: true },
+        windows: { }
       })
-    })
+      notifier.on('registration', async (data) => {
+        logger.debug('Push registrationID changed: ' + data.registrationId)
+        // Store the registrationId
+        window.device.registrationId = data.registrationId
+        // update the user device
+        const user = Store.get('user')
+        if (user && window.device && window.device.registrationId) {
+          const devicesService = api.getService('devices')
+          const device = await devicesService.update(window.device.registrationId, window.device)
+          logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
+        }
+      })
+      notifier.on('notification', (data) => {
+        // data.message,
+        // data.title,
+        // data.count,
+        // data.sound,
+        // data.image,
+        // data.additionalData
+      })
+      notifier.on('error', (error) => {
+        logger.error(error)
+        utils.toast({
+          message: error.message,
+          timeout: 10000
+        })
+      })
+    }
     api.on('authenticated', async response => {
       const devicesService = api.getService('devices')
       // Only possible if registration ID already retrieved
