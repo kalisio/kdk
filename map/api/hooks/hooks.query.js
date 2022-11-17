@@ -237,6 +237,7 @@ export async function aggregateFeaturesQuery (hook) {
     // The query contains the match stage except options relevent to the aggregation pipeline
     const match = _.omit(query, ['$group', '$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
     const aggregateOptions = {
+      allowDiskUse: true,
       hint: {}
     }
     // Check for any required type conversion (eg HTTP requests)
@@ -245,11 +246,14 @@ export async function aggregateFeaturesQuery (hook) {
       const idType = featureIdType[i]
       if (_.has(match, 'properties.' + id)) {
         if (idType === 'number') _.set(match, 'properties.' + id, _.toNumber(_.get(match, 'properties.' + id)))
-        // Check if we could provide a hint to the aggregation when targeting feature ID
-        // Indeed, in that case, we define the appropriate index
-        aggregateOptions.hint['properties.' + id] = 1
       }
     }
+    // Check if we could provide a hint to the aggregation when targeting
+    // feature ID and aggregation elements
+    // Indeed, in that case, we assume the appropriate index is defined
+    featureId.forEach(id => {
+      aggregateOptions.hint['properties.' + id] = 1
+    })
     // Ensure we do not mix results with/without relevant element values
     // by separately querying each element then merging
     let aggregatedResults
@@ -285,7 +289,13 @@ export async function aggregateFeaturesQuery (hook) {
         _.forOwn(stage, (value, key) => debug('Stage', key, value))
       })
       // FIXME: Removed aggregation hint option as if a request with properties not in index raises an error
-      const elementResults = await collection.aggregate(pipeline).toArray()
+      // Add aggregation element/time index used for sorting in hint
+      let aggregateElementOptions = Object.assign({}, aggregateOptions)
+      if (isGeometry) aggregateElementOptions.hint['geometry'] = 1
+      else aggregateElementOptions.hint['properties.' + element] = 1
+      aggregateElementOptions.hint['time'] = 1
+      debug('Hint', aggregateElementOptions)
+      const elementResults = await collection.aggregate(pipeline, aggregateElementOptions).toArray()
       debug(`Generated ${elementResults.length} feature(s) for ${element} element`, elementResults)
       // Rearrange data so that we get ordered arrays indexed by element
       elementResults.forEach(result => {
