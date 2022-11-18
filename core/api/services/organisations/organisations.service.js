@@ -1,8 +1,5 @@
 import path, { dirname } from 'path'
 import makeDebug from 'debug'
-import aws from 'aws-sdk'
-import store from 's3-blob-store'
-import BlobService from 'feathers-blob'
 import { createTagService, createStorageService } from '../index.js'
 import { fileURLToPath } from 'url'
 
@@ -15,11 +12,6 @@ const debug = makeDebug('kdk:core:organisations:service')
 
 export default async function (name, app, options) {
   const config = app.get('storage')
-  const client = new aws.S3({
-    accessKeyId: config.accessKeyId,
-    secretAccessKey: config.secretAccessKey
-  })
-  const bucket = config.bucket
   debug('S3 team storage client created with config ', config)
 
   return {
@@ -55,9 +47,7 @@ export default async function (name, app, options) {
       debug('Groups service created for organisation ' + organisation.name)
       await createTagService.call(this.app, { context: organisation, db })
       debug('Tags service created for organisation ' + organisation.name)
-      const blobStore = store({ client, bucket })
-      const blobService = BlobService({ Model: blobStore, id: '_id' })
-      await createStorageService.call(this.app, blobService, { context: organisation })
+      await createStorageService.call(this.app, { context: organisation })
       debug('Storage service created for organisation ' + organisation.name)
       // Run registered hooks
       for (let i = 0; i < this.organisationServicesHooks.length; i++) {

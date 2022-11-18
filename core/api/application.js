@@ -209,8 +209,14 @@ async function createService (name, app, options = {}) {
   } else if (serviceOptions.proxy) {
     service = createProxyService(serviceOptions.proxy)
   } else {
-    // Otherwise we expect the service to be provided as a Feathers service interface
-    service = (await import(url.pathToFileURL(path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)))).default
+    try {
+      const filepath = path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)
+      // Otherwise we expect the service to be provided as a Feathers service interface
+      service = (await import(url.pathToFileURL(filepath))).default
+    } catch (error) {
+      // Throw error in this case as this might be linked to a syntax error in required file
+      throw error
+    }
     // If we get a function try to call it assuming it will return the service object
     if (typeof service === 'function') {
       service = service(name, app, serviceOptions)
@@ -234,10 +240,10 @@ async function createService (name, app, options = {}) {
       }
     } catch (error) {
       debug('No ' + fileName + ' service mixin configured on path ' + serviceOptions.servicesPath)
-      if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+      //if (error.code !== 'ERR_MODULE_NOT_FOUND') {
         // Log error in this case as this might be linked to a syntax error in required file
         debug(error)
-      }
+      //}
       // As this is optionnal this require has to fail silently
     }
   }
