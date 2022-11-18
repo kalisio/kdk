@@ -110,9 +110,18 @@ export const geojsonLayers = {
               break
             case 'LineString':
             case 'MultiLineString':
-              // Support Gradient Path
-              if (typeof oldLayer.setData === 'function') oldLayer.setData(feature)
-              else oldLayer.setLatLngs(L.GeoJSON.coordsToLatLngs(coordinates, type === 'LineString' ? 0 : 1))
+              if (typeof oldLayer.setData === 'function') {
+                // Support Gradient Path
+                oldLayer.setData(feature)
+              } else if (properties.geodesic) {
+                // Support geodesic line & linestrings
+                const latlngs = type === 'LineString' ?
+                      [L.GeoJSON.coordsToLatLngs(coordinates, 0)] :
+                      coordinates.map((linestring) => L.GeoJSON.coordsToLatLngs(linestring, 0))
+                oldLayer.setLatLngs(latlngs)
+              } else {
+                oldLayer.setLatLngs(L.GeoJSON.coordsToLatLngs(coordinates, type === 'LineString' ? 0 : 1))
+              }
               break
             case 'Polygon':
             case 'MultiPolygon':
