@@ -58,26 +58,29 @@ export default {
     }
   },
   data () {
+    const viewActions = []
+    if (this.$can('create', 'catalog', this.kActivity.contextId)) {
+      viewActions.push({
+        id: 'view-overflowmenu',
+        component: 'menu/KMenu',
+        dropdownIcon: 'las la-ellipsis-v',
+        actionRenderer: 'item',
+        propagate: false,
+        content: [{
+          id: 'remove-view',
+          icon: 'las la-trash',
+          label: 'KViewsPanel.REMOVE_VIEW',
+          handler: (item) => this.removeView(item)
+        }]
+      })
+    }
     return {
       filter: Filter.get(),
       sorter: Sorter.get(),
       viewRenderer: {
         component: 'catalog/KViewSelector',
         class: 'q-pt-xs q-pb-xs q-pr-xs',
-        actions: [{
-          id: 'view-overflowmenu',
-          component: 'menu/KMenu',
-          dropdownIcon: 'las la-ellipsis-v',
-          actionRenderer: 'item',
-          visible: { name: '$can', params: ['create', 'catalog'] },
-          propagate: false,
-          content: [{
-            id: 'remove-view',
-            icon: 'las la-trash',
-            label: 'KViewsPanel.REMOVE_VIEW',
-            handler: (item) => this.removeView(item)
-          }]
-        }]
+        actions: viewActions
       }
     }
   },
@@ -89,19 +92,20 @@ export default {
           break
         }
         case 'set-home-view': {
+          if (!this.$can('update', 'catalog', this.kActivity.contextId)) return
           // Get current home view
           const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
           const currentHomeView = (response.data.length > 0 ? response.data[0] : null)
           // Unset it
           if (currentHomeView) await this.$api.getService('catalog').patch(currentHomeView._id, { isDefault: false })
           // Then set new one if it's really a new one
-          if (view._id !== currentHomeView._id) {
+          if (!currentHomeView || (view._id !== currentHomeView._id)) {
             await this.$api.getService('catalog').patch(view._id, { isDefault: true })
           }
           break
         }
         default:
-          logger.debug('invalud action ', action)
+          logger.debug('invalid action ', action)
       }
     },
     removeView (view) {
