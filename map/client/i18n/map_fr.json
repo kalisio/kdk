@@ -380,7 +380,7 @@
     "VIEWS_LABEL": "Mes vues",
     "SORT_VIEWS": "Trier les vues",
     "REMOVE_VIEW": "$t(REMOVE)",
-    "SET_HOME_VIEW": "Vue par défaut"
+    "SET_HOME_VIEW": "Définir comme vue par défaut"
   },
   "KUserLayersPanel": {
     "LAYERS_LABEL": "Mes données"

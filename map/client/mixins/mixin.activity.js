@@ -511,7 +511,7 @@ export default {
         logger.error(error)
       }
       // Retrieve the time
-      if (hasContext) this.restoreContext('time')
+      if (hasContext) await this.restoreContext('time')
       // Listen about changes in global/contextual catalog services
       const globalCatalogService = this.$api.getService('catalog', '')
       const catalogService = this.$api.getService('catalog')
