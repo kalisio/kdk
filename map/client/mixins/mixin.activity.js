@@ -401,7 +401,7 @@ export const activity = {
         logger.error(error)
       }
       // Retrieve the time
-      if (hasContext) this.restoreContext('time')
+      if (hasContext) await this.restoreContext('time')
       // Geolocate by default if view has not been restored
       const viewRestored = (hasContext ? await this.restoreContext('view') : false)
       if (!viewRestored && _.get(this, 'activityOptions.restore.geolocation', true)) {
