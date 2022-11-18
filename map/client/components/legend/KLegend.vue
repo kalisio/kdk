@@ -49,7 +49,7 @@ const props = defineProps({
   },
   maxHeight: {
     type: Number,
-    default: 500
+    default: 800
   },
   headerClass: {
     type: String,

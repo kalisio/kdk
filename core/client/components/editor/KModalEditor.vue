@@ -35,8 +35,8 @@ export default {
   computed: {
     buttons () {
       const buttons = [
-        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, handler: () => this.closeModal() },
-        { id: 'apply-button', label: this.applyButton, renderer: 'form-button', handler: () => this.apply() }
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, disabled: this.processing,  handler: () => this.closeModal() },
+        { id: 'apply-button', label: this.applyButton, renderer: 'form-button', loading: this.processing, handler: () => this.apply() }
       ]
       if (this.clearButton !== '') {
         buttons.push({
@@ -51,9 +51,19 @@ export default {
       return buttons
     }
   },
+  data () {
+    return {
+      processing: false
+    }
+  },
   methods: {
     async apply () {
-      if (await baseEditor.methods.apply.call(this)) this.closeModal()
+      this.processing = true
+      if (await baseEditor.methods.apply.call(this)) {
+        this.processing = false
+        this.closeModal()
+      }
+      this.processing = false
     },
     async openModal () {
       await this.refresh()

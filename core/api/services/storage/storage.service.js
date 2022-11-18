@@ -146,7 +146,7 @@ export default function (name, app, options) {
         Bucket: bucket
       })
       // Run the command
-      return await s3Client.send(deleteCommand)
+      return s3Client.send(deleteCommand)
     }
   }
 }
