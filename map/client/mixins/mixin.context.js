@@ -44,23 +44,12 @@ export default {
       switch (context) {
         case 'layers':
           return true
+        case 'time':
+          return true
         case 'view':
         default:
           return false
       }
-    },
-    updateRouteContext (context, parameters) {
-      const asQuery = this.contextAsQuery(context)
-      // Clone route context to avoid any side effect
-      const route = {
-        query: Object.assign({}, _.get(this.$route, 'query', {})),
-        params: Object.assign({}, _.get(this.$route, 'params', {}))
-      }
-      // Then update according to context
-      if (asQuery) Object.assign(route.query, parameters)
-      else Object.assign(route.params, parameters)
-      // We catch as replacing with similar params raises a duplicate navigation error
-      this.$router.replace(route).catch(_ => {})
     },
     getContextParameters (context) {
       let targetParameters
@@ -87,6 +76,33 @@ export default {
         }
       }
       return targetParameters
+    },
+    updateRouteContext (context, parameters) {
+      const asQuery = this.contextAsQuery(context)
+      // Clone route context to avoid any side effect
+      const route = {
+        query: Object.assign({}, _.get(this.$route, 'query', {})),
+        params: Object.assign({}, _.get(this.$route, 'params', {}))
+      }
+      // Then update according to context
+      switch (context) {
+        case 'layers': {
+          parameters = _.pick(parameters, ['layers'])
+          break
+        }
+        case 'time': {
+          parameters = _.pick(parameters, ['time'])
+          break
+        }
+        case 'view':
+        default: {
+          parameters = _.pick(parameters, ['south', 'west', 'north', 'east'])
+        }
+      }
+      if (asQuery) Object.assign(route.query, parameters)
+      else Object.assign(route.params, parameters)
+      // We catch as replacing with similar params raises a duplicate navigation error
+      this.$router.replace(route).catch(_ => {})
     },
     async setContextParameters (context, targetParameters) {
       switch (context) {
@@ -138,9 +154,9 @@ export default {
     async restoreContext (context) {
       let targetParameters = this.getRouteContext(context)
       // Restore from local storage/catalog if no route parameters
-      if (this.shouldRestoreContext(context) && _.isEmpty(targetParameters)) {
+      if (_.isEmpty(targetParameters)) {
         const savedParameters = window.localStorage.getItem(this.getContextKey(context))
-        if (savedParameters) {
+        if (this.shouldRestoreContext(context) && savedParameters) {
           targetParameters = JSON.parse(savedParameters)
           // Backward compatibility: we previously stored the bounds as an array
           if (Array.isArray(targetParameters)) {
@@ -160,7 +176,7 @@ export default {
       }
       // Restore context if possible
       if (!_.isEmpty(targetParameters)) {
-        if (!_.isEqual(this.getRouteContext(context), targetParameters)) {
+        if (this.shouldRestoreContext(context) && !_.isEqual(this.getRouteContext(context), targetParameters)) {
           this.updateRouteContext(context, targetParameters)
         }
         this.setContextParameters(context, targetParameters)
@@ -173,6 +189,9 @@ export default {
       switch (context) {
         case 'layers':
           parameters = { layers: undefined }
+          break
+        case 'time':
+          parameters = { time: undefined }
           break
         case 'view':
         default:
