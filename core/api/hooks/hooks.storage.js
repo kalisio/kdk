@@ -32,7 +32,6 @@ export async function attachToResource (hook) {
   const data = hook.data
   const params = hook.params
   const query = params.query
-  const file = hook.result
   const attachmentField = _.get(data, 'field') || _.get(query, 'field') || 'attachments'
   // By default attachments are stored in an array
   let isArray = _.get(data, 'isArray') || _.get(query, 'isArray') || true
@@ -45,7 +44,7 @@ export async function attachToResource (hook) {
   const resourcesService = params.resourcesService
   const resource = params.resource
   let attachments = _.get(resource, attachmentField)
-  const attachment = Object.assign({ _id: file._id }, _.omit(file, ['uri']))
+  const attachment = Object.assign({ _id: data.id, contentType: data.type })
   // Add context because attachments might come from different ones on the same target object
   if (context) {
     attachment.context = (typeof context === 'object' ? context._id.toString() : context.toString())

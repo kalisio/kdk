@@ -115,9 +115,9 @@ export const geojsonLayers = {
                 oldLayer.setData(feature)
               } else if (properties.geodesic) {
                 // Support geodesic line & linestrings
-                const latlngs = type === 'LineString' ?
-                      [L.GeoJSON.coordsToLatLngs(coordinates, 0)] :
-                      coordinates.map((linestring) => L.GeoJSON.coordsToLatLngs(linestring, 0))
+                const latlngs = type === 'LineString'
+                  ? [L.GeoJSON.coordsToLatLngs(coordinates, 0)]
+                  : coordinates.map((linestring) => L.GeoJSON.coordsToLatLngs(linestring, 0))
                 oldLayer.setLatLngs(latlngs)
               } else {
                 oldLayer.setLatLngs(L.GeoJSON.coordsToLatLngs(coordinates, type === 'LineString' ? 0 : 1))

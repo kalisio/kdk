@@ -9,7 +9,8 @@ const defaultTopicField = 'topics'
 const { GeneralError } = errors
 
 export default function (name, app, options) {
-  const config = app.get('pusher')
+  // Keep track of config
+  const config = Object.assign({}, app.get('pusher'), options)
   function generateTopicName (object, application) {
     if (config.topicName && (typeof config.topicName === 'function')) return config.topicName(object, application)
     else return object._id.toString()

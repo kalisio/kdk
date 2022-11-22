@@ -290,10 +290,10 @@ export async function aggregateFeaturesQuery (hook) {
       })
       // FIXME: Removed aggregation hint option as if a request with properties not in index raises an error
       // Add aggregation element/time index used for sorting in hint
-      let aggregateElementOptions = Object.assign({}, aggregateOptions)
-      if (isGeometry) aggregateElementOptions.hint['geometry'] = 1
+      const aggregateElementOptions = Object.assign({}, aggregateOptions)
+      if (isGeometry) aggregateElementOptions.hint.geometry = 1
       else aggregateElementOptions.hint['properties.' + element] = 1
-      aggregateElementOptions.hint['time'] = 1
+      aggregateElementOptions.hint.time = 1
       debug('Hint', aggregateElementOptions)
       const elementResults = await collection.aggregate(pipeline, aggregateElementOptions).toArray()
       debug(`Generated ${elementResults.length} feature(s) for ${element} element`, elementResults)

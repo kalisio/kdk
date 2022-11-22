@@ -25,7 +25,8 @@ export async function createStorageService (options = {}) {
   const app = this
   await app.createService('storage', Object.assign({
     servicesPath,
-    modelsPath
+    modelsPath,
+    id: '_id'
   }, options))
 }
 
