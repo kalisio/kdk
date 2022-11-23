@@ -1,5 +1,4 @@
 import config from 'config'
-import _ from 'lodash'
 import logger from 'loglevel'
 import { getClientService } from '@kalisio/feathers-s3/client.js'
 import { api } from './api.js'
@@ -16,7 +15,7 @@ export const Storage = {
     let service = api.getService('storage', context)
     // So we check if it has the right methods to initialize on first call
     if (!service.upload && !service.download) {
-      service = getClientService(api, { 
+      service = getClientService(api, {
         servicePath: api.getServicePath('storage', context).substr(1),
         transport: api.transporter,
         fetch: window.fetch.bind(window),
@@ -84,8 +83,7 @@ export const Storage = {
     }
   },
   async getObjectUrl (params) {
-    const { file, key, context } = params
-    const service = this.getService(context)
+    const { key, context } = params
     // Get proxy route to object storage
     let url = api.getBaseUrl() + config.apiPath
     if (context) url += `/${context}`

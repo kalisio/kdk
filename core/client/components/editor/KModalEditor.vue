@@ -35,7 +35,7 @@ export default {
   computed: {
     buttons () {
       const buttons = [
-        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, disabled: this.processing,  handler: () => this.closeModal() },
+        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, disabled: this.processing, handler: () => this.closeModal() },
         { id: 'apply-button', label: this.applyButton, renderer: 'form-button', loading: this.processing, handler: () => this.apply() }
       ]
       if (this.clearButton !== '') {
