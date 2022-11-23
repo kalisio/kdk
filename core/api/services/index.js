@@ -8,10 +8,10 @@ const servicesPath = path.join(__dirname, '..', 'services')
 
 const debug = makeDebug('kdk:core:services')
 
-export async function createTagService (options = {}) {
+export function createTagService (options = {}) {
   const app = this
 
-  await app.createService('tags', Object.assign({
+  return app.createService('tags', Object.assign({
     servicesPath,
     modelsPath
   }, options))
@@ -21,9 +21,9 @@ export function removeTagService (options) {
   // TODO
 }
 
-export async function createStorageService (options = {}) {
+export function createStorageService (options = {}) {
   const app = this
-  await app.createService('storage', Object.assign({
+  return app.createService('storage', Object.assign({
     servicesPath,
     modelsPath,
     methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'],
@@ -35,10 +35,10 @@ export function removeStorageService (options) {
   // TODO
 }
 
-export async function createDatabasesService (options = {}) {
+export function createDatabasesService (options = {}) {
   const app = this
 
-  await app.createService('databases', Object.assign({
+  return app.createService('databases', Object.assign({
     servicesPath, events: ['created', 'updated', 'removed', 'patched'] // Internal use only, no events
   }, options))
 }
@@ -79,6 +79,7 @@ export async function createOrganisationService (options = {}) {
     if (orgMembersService) return
     orgsService.removeOrganisationServices(organisation)
   })
+  return orgsService
 }
 
 export default async function () {
