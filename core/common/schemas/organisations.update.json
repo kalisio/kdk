@@ -25,15 +25,14 @@
     "avatar": { 
       "type": "object",
       "field": {
-        "component": "form/KAttachmentField",
+        "component": "form/KFileField",
         "label": "schemas.AVATAR_FIELD_LABEL",
-        "service": "<%= id %>/storage",
         "acceptedFiles": ".png,.jpg,.jpeg,.webp",
-        "maxFilesize": 0.5,
-        "autoProcessQueue": false,
-        "storagePath": "avatar",
-        "params": {
-          "public": true
+        "maxFilesize": 524288,
+        "readContent": false,
+        "storage": {
+          "context": "<%= _id %>",
+          "path": "avatar"
         }
       }
     },

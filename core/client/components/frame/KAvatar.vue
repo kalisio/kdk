@@ -23,6 +23,7 @@
 
 <script>
 import _ from 'lodash'
+import { Storage } from '../../storage.js'
 import { getIconName, getInitials } from '../../utils.js'
 
 export default {
@@ -67,11 +68,26 @@ export default {
             this.skeleton = false
             return
           }
-          const avatarId = _.get(avatar, '_id')
+          // Backward compatibility as avatar key was previously stored under _id
+          const avatarId = _.get(avatar, 'key', _.get(avatar, '_id'))
           if (avatarId) {
-            const data = await this.$api.getService('storage', this.contextId).get(avatarId + '.thumbnail')
+            /* FIXME: download does not seem to work due to a base64 decoding issue
+            const data = await Storage.download({
+              file: _.get(avatar, 'name'),
+              key: avatarId,
+              context: this.contextId,
+              asDataUrl: true
+            })
             avatar.uri = data.uri
             this.avatar = avatar.uri
+            */
+            const url = await Storage.getObjectUrl({
+              file: _.get(avatar, 'name'),
+              key: avatarId,
+              context: this.contextId
+            })
+            avatar.url = url
+            this.avatar = url
             this.skeleton = false
             return
           }

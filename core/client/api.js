@@ -106,7 +106,7 @@ export function createClient (config) {
   }
   // Used to register an existing backend service with its options
   api.declareService = function (name, options = {}) {
-    _.set(api.serviceOptions, name, options)
+    if (!_.has(api.serviceOptions, name)) _.set(api.serviceOptions, name, options)
   }
   api.getServiceOptions = function (name) {
     return _.get(api.serviceOptions, name)
@@ -129,7 +129,7 @@ export function createClient (config) {
     }
     // Need to register services with custom methods
     if (options.methods) {
-      api.use(servicePath, api.transporter.service(servicePath), {
+      api.use(servicePath, service || api.transporter.service(servicePath), {
         methods: options.methods
       })
     } else {

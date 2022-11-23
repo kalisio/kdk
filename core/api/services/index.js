@@ -26,6 +26,7 @@ export async function createStorageService (options = {}) {
   await app.createService('storage', Object.assign({
     servicesPath,
     modelsPath,
+    methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'],
     id: '_id'
   }, options))
 }

@@ -8,9 +8,12 @@ const debug = makeDebug('kdk:storage:service')
 export default function (name, app, options) {
   // Keep track of config
   const config = Object.assign({}, app.get('storage'), options)
+  // for context we don't need the actual object, just the ID
+  if (typeof config.context === 'object') config.context = config.context._id
   // Check for context as prefix
-  if (config.context) config.prefix += `/${config.context}`
+  if (config.context) config.prefix = config.prefix ? config.prefix + `/${config.context}` : `${config.context}`
 
+  debug('Creating storage service with config ', config)
   const service = new Service(config)
 
   // Get object route, which is actually a proxy to object storage
