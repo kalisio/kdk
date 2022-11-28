@@ -20,11 +20,8 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits } from 'vue'
+import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
-
-// emit
-const emit = defineEmits(['update:modelValue'])
 
 // props
 const props = defineProps({
@@ -40,6 +37,9 @@ const props = defineProps({
     }
   }
 })
+
+// emit
+const emit = defineEmits(['update:modelValue'])
 
 // data
 const $q = useQuasar()
