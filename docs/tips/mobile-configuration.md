@@ -35,3 +35,8 @@ Because the **KDK** relies on [SNS](https://aws.amazon.com/sns/?nc1=h_ls&whats-n
 ::: tip
 The following procedure must be performed for each flavor: `dev`, `test` and `prod`.
 :::
+
+### Provisioning profiles
+
+Command to extract plist file from a provisioning profile: `openssl smime -inform der -verify -noverify -in file.mobileprovision`
+
