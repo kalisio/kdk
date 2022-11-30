@@ -26,6 +26,7 @@
   "HELP": "Aide",
   "NEED_HELP": "Besoin d'aide ?",
   "CONTEXTUAL_HELP": "Aide contextuelle",
+  "ABOUT": "A propos",
   "BACK": "Retour",
   "SETTINGS": "Mes paramètres",
   "errors": {
@@ -319,6 +320,32 @@
   "storage": {
     "UPLOADING_FILE": "Transfert du fichier {file} en cours"
   },
+  "KVersion": {
+    "CLIENT_VERSION": "Client v{version}",
+    "API_VERSION": "API v{version}"
+  },
+  "KSponsor": {
+    "KDK_POWERED": "Réalisé avec le Kalisio's Development Kit (KDK)",
+    "MORE_ABOUT_KALISIO": "En savoir plus sur Kalisio"
+  },
+  "KPlatform": {
+    "PROPERTY": "Propriété",
+    "VALUE": "Valeur",
+    "COPY_INFO": "Copier les informations",
+    "INFO_COPIED": "Informations système copiées",
+    "CANNOT_COPY_INFO": "Impossible de copier les informations systèmes"
+  },
+  "KAbout": {
+    "DOMAIN": "Hébergé sur",
+    "FLAVOR": "Saveur",
+    "MORE_ABOUT_APP": "En savoir plus sur {app}",
+    "MORE_ABOUT_PUBLISHER": "En savoir plus sur  {publisher}",
+    "KDK_POWERED": "@:KScreen.KDK_POWERED",
+    "BUG_REPORT": "Nous signaler un bug",
+    "BUG_REPORT_SUBJECT": "[{appName}] Rapport de bug - Client v{clientVersion} - API v{apiVersion}",
+    "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
+    "PLATFORM_INFO": "Informations système"
+  },
   "KWelcome": {
     "WELCOME_TITLE": "Bienvenue !",
     "WELCOME_MESSAGE": "Cette prise en main rapide va vous permettre de balayer les principales fonctionnalités de l'application.",
@@ -342,8 +369,7 @@
     "EMAIL_FIELD_LABEL": "Saisissez votre adresse mail",
     "CHANGE_ENDPOINT_LINK": "Modifier l'adresse du serveur",
     "DEVELOPMENT_VERSION": "VERSION DE DEVELOPPEMENT",
-    "TEST_VERSION": "VERSION DE TEST",
-    "KDK_POWERED": "Réalisé avec KDK (Kalisio's Development Kit"
+    "TEST_VERSION": "VERSION DE TEST"
   },
   "KErrorScreen": {
     "MESSAGE": "Oups... page non trouvée",
@@ -564,22 +590,6 @@
     "PIN_ACTION": "Epingler",
     "RESTORE_ACTION": "Restaurer",
     "MAXIMIZE_ACTION": "Maximiser"
-  },
-  "KAbout": {
-    "SIDENAV": "A propos",
-    "TITLE": "A propos",
-    "CLOSE_ACTION": "@:CLOSE",
-    "CLIENT_VERSION": "@:KScreen.CLIENT_VERSION",
-    "API_VERSION": "@:KScreen.API_VERSION",
-    "DOMAIN": "Hébergé sur",
-    "FLAVOR": "Saveur",
-    "MORE": "En savoir plus sur",
-    "MORE_PUBLISHER": "En savoir plus sur",
-    "KDK_POWERED": "@:KScreen.KDK_POWERED",
-    "BUG_REPORT": "Nous signaler un bug",
-    "BUG_REPORT_SUBJECT": "[{appName}] Rapport de bug - Client v{clientVersionName} - API v{apiVersionName}",
-    "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
-    "SYSTEM_DETAILS": "Informations système"
   },
   "KOrganisationsActivity": {
     "ORGANISATIONS_LABEL": "Mes organisations",

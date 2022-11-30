@@ -11,7 +11,7 @@ export function useActivity (name) {
   }
   const state = _.get(activityStates, name)
 
-  // exposed
+  // expose
   return {
     state
   }

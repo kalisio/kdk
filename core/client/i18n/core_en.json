@@ -26,6 +26,7 @@
   "HELP": "Help",
   "NEED_HELP": "Help needed ?",
   "CONTEXTUAL_HELP": "Contextual help",
+  "ABOUT": "About",
   "BACK": "Return",
   "SETTINGS": "My settings",
   "errors": {
@@ -319,6 +320,32 @@
   "storage": {
     "UPLOADING_FILE": "Uploading file {file}"
   },
+  "KVersion": {
+    "CLIENT_VERSION": "Client v{version}",
+    "API_VERSION": "API v{version}"
+  },
+  "KSponsor": {
+    "KDK_POWERED": "Powered by Kalisio's Development Kit (KDK)",
+    "MORE_ABOUT_KALISIO": "More about Kalisio"
+  },
+  "KPlatform": {
+    "PROPERTY": "Property",
+    "VALUE": "Value",
+    "COPY_INFO": "Copy info",
+    "INFO_COPIED": "Platform info copied",
+    "CANNOT_COPY_INFO": "Cannot copy platform info"
+  },
+  "KAbout": {
+    "DOMAIN": "Hosted on",
+    "FLAVOR": "Flavor",
+    "MORE_ABOUT_APP": "More about {app}",
+    "MORE_ABOUT_PUBLISHER": "More about {publisher}",
+    "KDK_POWERED": "@:KScreen.KDK_POWERED",
+    "BUG_REPORT": "Report us a bug",
+    "BUG_REPORT_SUBJECT": "[{appName}] Bug report - Client v{clientVersion} - API v{apiVersion}",
+    "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
+    "PLATFORM_INFO": "Platform information"
+  },
   "KWelcome": { 
     "WELCOME_TITLE": "Welcome !",
     "WELCOME_MESSAGE": "This quick start guide covers the main application features.",
@@ -342,8 +369,7 @@
     "EMAIL_FIELD_LABEL": "Enter your email address",
     "CHANGE_ENDPOINT_LINK": "Change endpoint",
     "DEVELOPMENT_VERSION": "DEVELOPMENT VERSION",
-    "TEST_VERSION": "TEST VERSION",
-    "KDK_POWERED": "Powered by KDK (Kalisio's Development Kit)"
+    "TEST_VERSION": "TEST VERSION"
   },
   "KErrorScreen": {
     "MESSAGE": "Oups... page not found",
@@ -564,22 +590,6 @@
     "PIN_ACTION": "Pin",
     "RESTORE_ACTION": "Restore",
     "MAXIMIZE_ACTION": "Maximize"
-  },
-  "KAbout": {
-    "SIDENAV": "About",
-    "TITLE": "About",
-    "CLOSE_ACTION": "@:CLOSE",
-    "CLIENT_VERSION": "@:KScreen.CLIENT_VERSION",
-    "API_VERSION": "@:KScreen.API_VERSION",
-    "DOMAIN": "Hosted on",
-    "FLAVOR": "Flavor",
-    "MORE": "More about",
-    "MORE_PUBLISHER": "More about",
-    "KDK_POWERED": "@:KScreen.KDK_POWERED",
-    "BUG_REPORT": "Report us a bug",
-    "BUG_REPORT_SUBJECT": "[{appName}] Bug report - Client v{clientVersionName} - API v{apiVersionName}",
-    "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
-    "SYSTEM_DETAILS": "Platform information"
   },
   "KOrganisationsActivity": {
     "ORGANISATIONS_LABEL": "My organisations",
