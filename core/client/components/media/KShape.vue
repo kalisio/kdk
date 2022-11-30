@@ -11,8 +11,8 @@
       v-if="type === 'ellipse'"
       :cx="width/2"
       :cy="height/2"
-      :rx="width-borderWidth"
-      :ry="height-borderWidth"
+      :rx="(width/2)-borderWidth"
+      :ry="(height/2)-borderWidth"
       class="k-shape"
     />
     <rect
@@ -27,12 +27,12 @@
     />
     <polygon
       v-if="type === 'triangle-up'"
-      :points="`${width/2},${height-borderWidth} ${borderWidth},${borderWidth} ${width-borderWidth},${borderWidth}`"
+      :points="`${width/2},${borderWidth} ${borderWidth},${height-borderWidth} ${width-borderWidth},${height-borderWidth}`"
       class="k-shape"
     />
     <polygon
       v-if="type === 'triangle-down'"
-      :points="`${width/2},${borderWidth} ${borderWidth},${height-borderWidth} ${width-borderWidth},${height-borderWidth}`"
+      :points="`${width/2},${height-borderWidth} ${borderWidth},${borderWidth} ${width-borderWidth},${borderWidth}`"
       class="k-shape"
     />
     <polygon
