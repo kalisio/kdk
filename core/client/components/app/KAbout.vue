@@ -53,7 +53,7 @@ import KSponsor from './KSponsor.vue'
 // data
 const { clientVersionName, apiVersionName } = useVersion()
 const { Platform } = usePlatform()
-const banner = ref(_.get(config, 'screens.banner'))
+const banner = ref(_.get(config, 'appLogo'))
 const bugReport = ref({
   address: 'support@kalisio.com',
   subject: i18n.t('KAbout.BUG_REPORT_SUBJECT', {

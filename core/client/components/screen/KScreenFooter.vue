@@ -1,66 +1,31 @@
 <template>
   <div class="q-pa-sm column justify-center q-gutter-sm">
-    <!--
-      Version
-    -->
-    <div class="row justify-center items-center q-gutter-x-sm">
-      <q-badge
-        v-if="clientVersionName"
-        :label="$t('KScreen.CLIENT_VERSION') + clientVersionName"
-        color="primary"
-        outline
-      />
-      <div>-</div>
-      <q-badge
-        v-if="apiVersionName"
-        :label="$t('KScreen.API_VERSION') + apiVersionName"
-        color="primary"
-        outline
+    <!-- Version -->
+    <KVersion />
+    <!-- Endpoint -->
+    <div v-if="canChangeEndpoint" class="row justify-center">
+      <KAction
+        class="text-caption"
+        id="change-endpoint"
+        label="KScreen.CHANGE_ENDPOINT_LINK"
+        :route="{name: 'change-endpoint'}"
       />
     </div>
-    <!--
-      Endpoint
-    -->
-    <div v-if="canChangeEndpoint()" class="row justify-center">
-      <small>
-        <a id="change-endpoint-link" @click="$router.push({name: 'change-endpoint'})">
-          {{$t('KScreen.CHANGE_ENDPOINT_LINK')}}
-        </a>
-      </small>
-    </div>
-
-    <!--
-      KDK
-    -->
-    <div class="row justify-center items-center q-gutter-xs">
-      <div>
-        <q-icon name="kdk:kdk.png" style="font-size: 1.6rem;" />
-      </div>
-      <div>
-        <small>
-          <a @click="onKDKClicked()">
-            {{ $t('KScreen.KDK_POWERED') }}
-          </a>
-        </small>
-      </div>
-    </div>
+    <!-- Sponsor -->
+    <KSponsor />
   </div>
 </template>
 
-<script>
-import { openURL, Platform } from 'quasar'
-import { version } from '../../mixins'
+<script setup>
+import { ref } from 'vue'
+import { useQuasar } from 'quasar'
+import { useVersion } from '../../composables'
+import { KVersion, KSponsor } from '../app'
+import KAction from '../frame/KAction.vue'
 
-export default {
-  name: 'k-screen-footer',
-  mixins: [version],
-  methods: {
-    canChangeEndpoint () {
-      return this.$config('flavor') === 'dev' ? true : Platform.is.cordova
-    },
-    onKDKClicked () {
-      openURL('https://kalisio.github.io/kdk/')
-    }
-  }
-}
+// data
+const $q = useQuasar()
+const { Version } = useVersion()
+const canChangeEndpoint = ref(false)
+if (Version.value.flavor === 'dev' || $q.Platform.is.cordova) canChangeEndpoint.value = true
 </script>
