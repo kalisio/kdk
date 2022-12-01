@@ -54,7 +54,7 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { openURL } from 'quasar'
 import { Store, api } from '../..'
 import { loadComponent } from '../../utils'
@@ -111,12 +111,12 @@ function onDefaultTour () {
 }
 
 // hooks
-onMounted(() => {
-  api.on('login', show)
-  api.on('logout', hide)
-})
 onBeforeUnmount(() => {
   api.off('login', show)
   api.off('logout', hide)
 })
+
+// immediate
+api.on('login', show)
+api.on('logout', hide)
 </script>
