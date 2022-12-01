@@ -15,7 +15,7 @@ const Version = ref({
     number: undefined,
     buildNumber: undefined
   },
-  flavor: _.get(config, 'flavor'),
+  flavor: _.get(config, 'flavor')
 })
 
 export function useVersion () {

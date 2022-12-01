@@ -1,13 +1,11 @@
 <template>
   <div class="column">
     <!-- Banner -->
-    <div v-if="banner" class="q-pa-sm row justify-center">
-      <img class="screen-banner" :src="banner">
-    </div>
+    <component :is="computedLogoComponent" />
     <!-- Version -->
     <KVersion class="q-pa-sm" />
     <!-- Endpoint -->
-    <div id="hosting" class="row justify-center">
+    <div class="row justify-center">
       <cite>{{ $t('KAbout.DOMAIN') }} <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a></cite>
       <cite>&nbsp;({{ $config('flavor') }})</cite>
     </div>
@@ -15,7 +13,7 @@
     <div class="q-py-md">
       <q-separator />
     </div>
-    <!-- App website -->
+    <!-- Various links -->
     <div class="row justify-center">
       <KAction
         id="app-website"
@@ -44,16 +42,24 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { i18n } from '../../i18n'
+import { loadComponent } from '../../utils'
 import { useVersion, usePlatform } from '../../composables'
 import KVersion from './KVersion.vue'
 import KSponsor from './KSponsor.vue'
 
+// props
+const props = defineProps({
+  logoComponent: {
+    type: String,
+    default: 'app/KLogo'
+  }
+})
+
 // data
 const { clientVersionName, apiVersionName } = useVersion()
 const { Platform } = usePlatform()
-const banner = ref(_.get(config, 'appLogo'))
 const bugReport = ref({
   address: 'support@kalisio.com',
   subject: i18n.t('KAbout.BUG_REPORT_SUBJECT', {
@@ -66,4 +72,9 @@ const bugReport = ref({
 _.forOwn(Platform.value, (value, key) => { bugReport.value.body += `${key}: ${value}%0D%0A` })
 bugReport.value.body += `domain: ${_.get(config, 'domain')}%0D%0A`
 bugReport.value.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
+
+// computed
+const computedLogoComponent = computed(() => {
+  return loadComponent(props.logoComponent)
+})
 </script>

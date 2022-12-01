@@ -7,7 +7,7 @@
     />
     <!-- Kalisio logo -->
     <a href="https://kalisio.com" target="_blank">
-      <q-img src="kalisio.png" :width="logoWidth">
+      <q-img src="kalisio.png" :width="computedLogoWidth">
         <q-tooltip>
           {{ $t('KSponsor.MORE_ABOUT_KALISIO') }}
         </q-tooltip>
@@ -24,8 +24,8 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar()
 
 // computed
-const logoWidth = computed(() => {
-  if($q.screen.lt.sm) return '72px'
+const computedLogoWidth = computed(() => {
+  if ($q.screen.lt.sm) return '72px'
   return '96px'
 })
 </script>
