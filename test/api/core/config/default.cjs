@@ -58,7 +58,7 @@ module.exports = {
   storage: {
     s3Client: {
       credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID,
+        accessKeyId: process.env.S3_ACCESS_KEY || process.env.S3_ACCESS_KEY_ID,
         secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
       },
       endpoint: process.env.S3_ENDPOINT,
@@ -99,9 +99,7 @@ module.exports = {
   gmailApi: {
     user: process.env.GMAIL_API_USER,
     clientEmail: process.env.GMAIL_API_CLIENT_EMAIL,
-    // The private key file is set as an environment variable containing \n
-    // So we need to parse it such as if it came from a JSON file
-    privateKey: JSON.parse('{ "key": "' + process.env.GMAIL_API_PRIVATE_KEY + '" }').key
+    privateKey: process.env.GMAIL_API_PRIVATE_KEY
   },
   db: {
     adapter: 'mongodb',

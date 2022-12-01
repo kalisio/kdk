@@ -9,7 +9,7 @@ const { BadRequest } = errors
 const debug = makeDebug('kdk:core:account:service')
 
 export default function (name, app, options) {
-  // Keep track of notifier
+  // Keep track of notifier in service options
   options.notifier = async function (type, user, notifierOptions) {
     const userService = app.getService('users')
     // Using OAuth2 providers disallow some operations

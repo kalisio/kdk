@@ -226,24 +226,30 @@ describe('core:notifications', () => {
   // Let enough time to process
     .timeout(10000)
 
-  it('creates the topic on the publisher object', (done) => {
-    pusherService.create({
+  it('creates the topic on the publisher object', async () => {
+    const operation = pusherService.create({
       action: 'topic',
       pushObject: publisherObject._id.toString(),
       pushObjectService: 'users'
     })
-    sns.once('topicCreated', (topicArn, topicName) => {
-      // Check for user object update
-      userService.find({ query: { email: 'publisher@kalisio.xyz' } })
-        .then(users => {
-          expect(users.data.length > 0).beTrue()
-          publisherObject = users.data[0]
-          expect(publisherObject.topics).toExist()
-          expect(publisherObject.topics[device.platform]).to.equal(topicArn)
-          expect(publisherObject._id.toString()).to.equal(topicName)
-          done()
-        })
+    let createdTopicArn, createdTopicName
+    const event = new Promise((resolve, reject) => {
+      sns.once('topicCreated', async (topicArn, topicName) => {
+        expect(topicArn).toExist()
+        createdTopicArn = topicArn
+        expect(topicName).to.equal(publisherObject._id.toString())
+        createdTopicName = topicName
+        resolve()
+      })
     })
+    await Promise.all([operation, event])
+    // Check for user object update
+    const users = await userService.find({ query: { email: 'publisher@kalisio.xyz' } })
+    expect(users.data.length > 0).beTrue()
+    publisherObject = users.data[0]
+    expect(publisherObject.topics).toExist()
+    expect(publisherObject.topics[device.platform]).to.equal(createdTopicArn)
+    expect(publisherObject._id.toString()).to.equal(createdTopicName)
   })
   // Let enough time to process
     .timeout(10000)
@@ -350,24 +356,25 @@ describe('core:notifications', () => {
       .timeout(10000)
   }
 
-  it('removes the topic on the publisher object', (done) => {
-    pusherService.remove(publisherObject._id.toString(), {
+  it('removes the topic on the publisher object', async () => {
+    const operation = pusherService.remove(publisherObject._id.toString(), {
       query: {
         action: 'topic',
         pushObjectService: 'users'
       }
     })
-    sns.once('topicDeleted', (topicArn) => {
-      expect(publisherObject.topics[device.platform]).to.equal(topicArn)
-      // Check for user object update
-      userService.find({ query: { email: 'publisher@kalisio.xyz' } })
-        .then(users => {
-          expect(users.data.length > 0).beTrue()
-          publisherObject = users.data[0]
-          expect(publisherObject.topics).beNull()
-          done()
-        })
+    const event = new Promise((resolve, reject) => {
+      sns.once('topicDeleted', async (topicArn) => {
+        expect(publisherObject.topics[device.platform]).to.equal(topicArn)
+        resolve()
+      })
     })
+    await Promise.all([operation, event])
+    // Check for user object update
+    const users = await userService.find({ query: { email: 'publisher@kalisio.xyz' } })
+    expect(users.data.length > 0).beTrue()
+    publisherObject = users.data[0]
+    expect(publisherObject.topics).beNull()
   })
   // Let enough time to process
     .timeout(10000)
