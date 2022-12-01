@@ -84,7 +84,7 @@ const computedLogoComponent = computed(() => {
 
 // functions
 function getWelcomeKey () {
-    return _.get(config, 'appName').toLowerCase() + '-welcome'
+  return _.get(config, 'appName').toLowerCase() + '-welcome'
 }
 function show () {
   const canShow = window.localStorage.getItem(getWelcomeKey())

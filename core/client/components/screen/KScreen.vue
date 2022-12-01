@@ -21,10 +21,10 @@
         </q-card-section>
         <!-- actions -->
         <q-card-section v-if="actions.length > 0">
-          <KPanel 
-            id="frame-actions" 
-            class="q-pa-none justify-center" 
-            :content="actions" 
+          <KPanel
+            id="frame-actions"
+            class="q-pa-none justify-center"
+            :content="actions"
           />
         </q-card-section>
       </q-card>
@@ -53,7 +53,7 @@ import KPanel from '../frame/KPanel.vue'
 import { loadComponent } from '../../utils.js'
 
 // props
-defineProps({ 
+defineProps({
   title: {
     type: String,
     default: undefined
