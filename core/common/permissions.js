@@ -69,6 +69,8 @@ export function defineUserAbilities (subject, can, cannot) {
     // take care that the storage service uses 'id' as input but produces _id as output
     can('create', 'storage', { id: 'avatars/' + subject._id.toString() })
     can('create', 'storage', { id: 'avatars/' + subject._id.toString() + '.thumbnail' })
+    can(['createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'], 'storage', { id: 'avatars/' + subject._id.toString() })
+    can(['createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'], 'storage', { id: 'avatars/' + subject._id.toString() + '.thumbnail' })
     can('remove', 'storage', { _id: 'avatars/' + subject._id.toString() })
     can('remove', 'storage', { _id: 'avatars/' + subject._id.toString() + '.thumbnail' })
     // Avatar is part of user profiles so that they can be read by any
@@ -221,7 +223,7 @@ export function defineOrganisationAbilities (subject, can, cannot) {
             // Groups are private
             can('service', organisation._id.toString() + '/groups')
             can('service', organisation._id.toString() + '/storage')
-            can(['read', 'create', 'remove'], 'storage', { context: organisation._id })
+            can(['read', 'create', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'], 'storage', { context: organisation._id })
           }
           if (role >= Roles.manager) {
             can('update', 'members', { context: organisation._id })

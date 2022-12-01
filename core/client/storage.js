@@ -1,5 +1,6 @@
 import config from 'config'
-import _ from 'lodash'
+import logger from 'loglevel'
+import { getClientService } from '@kalisio/feathers-s3/client.js'
 import { api } from './api.js'
 import { i18n } from './i18n.js'
 import { Events } from './events.js'
@@ -7,89 +8,91 @@ import { Notify } from 'quasar'
 
 export const Storage = {
   initialize () {
-    this.proxy = _.get(config, 'storage.proxy')
+    // Nothing to do now
+  },
+  getService (context) {
+    // Even when service is not yet declared feathers returns a wraper
+    let service = api.getService('storage', context)
+    // So we check if it has the right methods to initialize on first call
+    if (!service.upload && !service.download) {
+      service = getClientService(api, {
+        servicePath: api.getServicePath('storage', context).substr(1),
+        transport: api.transporter,
+        fetch: window.fetch.bind(window),
+        useProxy: true
+      })
+      service = api.createService('storage', {
+        service,
+        context,
+        methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject']
+      })
+    }
+    return service
   },
   async upload (params) {
-    const { file, key, buffer, type } = params
-    const contextId = params.context
-    // First create the signed url
-    const storageService = api.getService('storage', contextId)
-    const createResponse = await storageService.create({ id: key, expiresIn: 60 })
-    const signedUrl = createResponse.signedUrl
-    // Configure the upload request
-    let uploadUrl = signedUrl
-    let uploadOptions = {
-      method: 'PUT',
-      body: buffer,
-      headers: {
-        'Content-Type': type,
-        'Content-Length': buffer.length
-      }
-    }
-    if (this.proxy) {
-      const headers = { 'Content-Type': 'application/json' }
-      // Add the Authorization header if jwt is defined
-      const jwt = await api.get('storage').getItem(config.apiJwt)
-      if (jwt) headers.Authorization = 'Bearer ' + jwt
-      uploadUrl = api.getBaseUrl() + config.apiPath + '/' + this.proxy
-      uploadOptions = {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          name: file,
-          contextId,
-          contentBuffer: Array.from(new Uint8Array(buffer)),
-          contentType: type,
-          signedUrl
-        })
-      }
-    }
+    const { file, key, blob, context } = params
+    const service = this.getService(context)
     const dismiss = Notify.create({
-      icon: 'las la-hourglass-half',
       message: i18n.t('storage.UPLOADING_FILE', { file }),
       color: 'primary',
       timeout: 0,
       spinner: true
     })
-    const uploadResponse = await window.fetch(uploadUrl, uploadOptions)
-    dismiss()
-    if (uploadResponse.ok) {
-      Events.emit('file-uploaded', { name: file, key })
+    try {
+      const response = await service.upload(key, blob, { expiresIn: 60 })
+      dismiss()
+      Events.emit('file-uploaded', { name: file, key, type: blob.type, context })
+      return response
+    } catch (error) {
+      dismiss()
+      logger.error(`Cannot upload ${key} on ${service.path}`, error)
+      throw error
     }
-    return uploadResponse
   },
   async download (params) {
-    const { file, key, type } = params
-    const contextId = params.context
-    const storageService = api.get('storage', contextId)
-    const getResponse = await storageService.get({ id: key, expiresIn: 60 })
-    const signedUrl = getResponse.signedUrl
-    // Configure the download request
-    let downloadUrl = signedUrl
-    const downloadOptions = {
-      method: 'GET',
-      headers: {
-        'Content-Type': type
-      }
-    }
-    if (this.proxy) {
-      downloadUrl = api.getBaseUrl() + config.apiPath + '/' + this.proxy + '?signedUrl=' + signedUrl
-      // Add the Authorization header if jwt is defined
-      const jwt = await api.get('storage').getItem(config.apiJwt)
-      if (jwt) downloadOptions.headers.Authorization = 'Bearer ' + jwt
-    }
-    const dismiss = this.$q.notify({
-      icon: 'las la-hourglass-half',
-      message: this.$t('storage.UPLOADING_FILE', { file }),
+    const { file, key, context, asDataUrl } = params
+    const service = this.getService(context)
+    const dismiss = Notify.create({
+      message: i18n.t('storage.DOWNLOADING_FILE', { file }),
       color: 'primary',
       timeout: 0,
       spinner: true
     })
-    const downloadResponse = window.fetch(downloadUrl, downloadOptions)
-    dismiss()
-    if (downloadResponse.ok) {
-      Events.emit('file-downloaded', { name: file, key })
+    try {
+      const response = await service.download(key, { expiresIn: 60 })
+      Events.emit('file-downloaded', { name: file, key, type: response.type, context })
+      dismiss()
+      // Transform buffer into data url if required
+      return new Promise((resolve, reject) => {
+        if (asDataUrl) {
+          const reader = new FileReader()
+          reader.onload = (event) => {
+            delete response.buffer
+            response.uri = event.target.result
+            resolve(response)
+          }
+          reader.readAsDataURL(new Blob([response.buffer], { type: response.type }))
+        } else {
+          resolve(response)
+        }
+      })
+    } catch (error) {
+      dismiss()
+      logger.error(`Cannot download ${key} on ${service.path}`, error)
+      throw error
     }
-    return downloadResponse
+  },
+  async getObjectUrl (params) {
+    const { key, context } = params
+    // Ensure service is created
+    const service = this.getService(context)
+    // Get proxy route to object storage
+    let url = api.getBaseUrl() + config.apiPath
+    if (service.context) url += `/${context}`
+    url += `/storage-objects/${key}`
+    // Add the Authorization header if jwt is defined
+    const jwt = await api.get('storage').getItem(config.apiJwt)
+    if (jwt) url += '?jwt=' + jwt
+    return url
   }
 }

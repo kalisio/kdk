@@ -112,3 +112,37 @@ The **k-navigation-bar** groups together the main actions available on a [mappin
 Here is a view of some of the components presented previously:
 
 ![Mapping layout](../../assets/kano-components.png)
+
+## Legend
+
+The **KLegend** component acts as a container of multiple **layer legends** which are grouped in **sublegends**. 
+
+Each of these sublegends is rendering using an [Expansion Item](https://quasar.dev/vue-components/expansion-item).
+
+Tipically, **sublegends** declaration is done within the application's API configuration and is accessible using the `catalog` service. 
+
+```js
+{
+  name: 'Sublegends.HYDROGRAPHY', // name as i18n translation key
+  i18n: {  // i18n translations
+    fr: { Sublegends: { HYDROGRAPHY: 'Hydrographie' } },
+    en: { Sublegends: { HYDROGRAPHY: 'Hydrography' } }
+  },
+  headerClass: 'bg-grey-3 text-weight-regular',  // class to be used to render the q-expansion-item header
+  options: { 
+    open: true,  // set the q-expansion-item default opened
+    filter: { type: 'OverlayLayer' , tags: { $in: ['hydrography'] } }  // layers filter
+  } 
+}
+```
+
+And **layer legends** information is part of the layer declaration in a dedicated `legend` property. It exists 3 different style of **layer legend**:
+* **KImageLegend**: a legend represented as an image
+* **KColorScaleLegend**: a legend represented as a **color scale**
+* **KSymbolsLegend**: a legend represented a multi map of pair of symbols and labels.
+
+::: tip
+It is also possible to add your own type of legend. You must implement the component responsible of the rendering and register it to the **KLegend** through the `renderers` prop. The component must overload the abstract **KLegendRenderer** component.
+:::
+
+

@@ -7,7 +7,7 @@ const { getItems, replaceItems } = common
 const sift = siftModule.default
 const debug = makeDebug('kdk:map:catalog:hooks')
 
-// By default we only return layers and not other objects in catalog
+// By default we only return default categories
 export function getDefaultCategories (hook) {
   const query = _.get(hook, 'params.query', {})
   if (query.type === 'Category') {
@@ -17,11 +17,29 @@ export function getDefaultCategories (hook) {
     // Check for specific service override (e.g. contextual catalog different from global catalog)
     let defaultCategories = _.get(service, 'options.categories', catalogConfig.categories)
     // Add implicit type
-    defaultCategories = defaultCategories.map(category => Object.assign(category, { type: 'Category' }))
+    defaultCategories = _.map(defaultCategories, category => Object.assign(category, { type: 'Category' }))
     // Then filter according to query
     defaultCategories = defaultCategories.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
     const item = getItems(hook)
     replaceItems(hook, item.concat(defaultCategories.map(category => Object.assign(category, { type: 'Category' }))))
+  }
+}
+
+// By default we only return default sublegends
+export function getDefaultSublegends (hook) {
+  const query = _.get(hook, 'params.query', {})
+  if (query.type === 'Sublegend') {
+    const service = hook.service
+    // Read default sublegends config
+    const catalogConfig = hook.app.get('catalog') || { sublegends: [] }
+    // Check for specific service override (e.g. contextual catalog different from global catalog)
+    let defaultSublegends = _.get(service, 'options.sublegends', catalogConfig.sublegends)
+    // Add implicit type
+    defaultSublegends = _.map(defaultSublegends, sublegend => Object.assign(sublegend, { type: 'Sublegend' }))
+    // Then filter according to query
+    defaultSublegends = defaultSublegends.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
+    const item = getItems(hook)
+    replaceItems(hook, item.concat(defaultSublegends.map(sublegend => Object.assign(sublegend, { type: 'Sublegend' }))))
   }
 }
 

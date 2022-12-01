@@ -56,9 +56,17 @@ module.exports = {
     }
   },
   storage: {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-    bucket: process.env.S3_BUCKET
+    s3Client: {
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
+      },
+      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.S3_REGION,
+      signatureVersion: 'v4'
+    },
+    bucket: process.env.S3_BUCKET,
+    getObjectPath: '/storage-objects'
   },
   organisations: {
     // nothing for now
@@ -73,7 +81,7 @@ module.exports = {
       serviceClient: process.env.GOOGLE_MAIL_CLIENT_ID,
       // New lines in env var causes some problems and raises the following error
       // Uncaught Error: error:0909006C:PEM routines:get_name:no start line
-      privateKey: JSON.parse(`"${process.env.GOOGLE_MAIL_PRIVATE_KEY}"`)
+      privateKey: process.env.GOOGLE_MAIL_PRIVATE_KEY
     },
     templateDir: path.join(__dirname, 'email-templates')
   },

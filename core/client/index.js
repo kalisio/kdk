@@ -10,6 +10,7 @@ import { Filter } from './filter.js'
 import { Sorter } from './sorter.js'
 import services from './services/index.js'
 import * as utils from './utils.js'
+import * as composables from './composables/index.js'
 import * as mixins from './mixins/index.js'
 import * as hooks from './hooks/index.js'
 import * as readers from './readers/index.js'
@@ -21,6 +22,7 @@ export * from './api.js'
 export * from './events.js'
 export * from './services/index.js'
 export * from './store.js'
+export * from './storage.js'
 export * from './layout.js'
 export * from './theme.js'
 export * from './time.js'
@@ -33,6 +35,7 @@ export * from './i18n.js'
 export * from './guards.js'
 export * from '../common/index.js'
 export { utils }
+export { composables }
 export { mixins }
 export { hooks }
 export { readers }
@@ -118,35 +121,39 @@ export default function init () {
       return
     }
 
-    const notifier = window.PushNotification.init({
-      android: { vibrate: true, sound: true, forceShow: true },
-      ios: { alert: true, badge: true, sound: true },
-      windows: { }
-    })
-    notifier.on('registration', async (data) => {
-      logger.debug('Push registrationID changed: ' + data.registrationId)
-      // Store the registrationId
-      window.device.registrationId = data.registrationId
-      // update the user device
-      const user = Store.get('user')
-      if (user && window.device && window.device.registrationId) {
-        const devicesService = api.getService('devices')
-        const device = await devicesService.update(window.device.registrationId, window.device)
-        logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
-      }
-    })
-    notifier.on('notification', (data) => {
-      // data.message,
-      // data.title,
-      // data.count,
-      // data.sound,
-      // data.image,
-      // data.additionalData
-    })
-    notifier.on('error', (error) => {
-      logger.error(error)
-      Notify.create({ message: error.message, timeout: 10000 })
-    })
+    if (window.PushNotification && (typeof window.PushNotification.init === 'function')) {
+      const notifier = window.PushNotification.init({
+        android: { vibrate: true, sound: true, forceShow: true },
+        ios: { alert: true, badge: true, sound: true },
+        windows: { }
+      })
+      notifier.on('registration', async (data) => {
+        logger.debug('Push registrationID changed: ' + data.registrationId)
+        // Store the registrationId
+        window.device.registrationId = data.registrationId
+        // update the user device
+        const user = Store.get('user')
+        if (user && window.device && window.device.registrationId) {
+          const devicesService = api.getService('devices')
+          const device = await devicesService.update(window.device.registrationId, window.device)
+          logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
+        }
+      })
+      notifier.on('notification', (data) => {
+        // data.message,
+        // data.title,
+        // data.count,
+        // data.sound,
+        // data.image,
+        // data.additionalData
+      })
+      notifier.on('error', (error) => {
+        logger.error(error)
+        Notify.create({ message: error.message, timeout: 10000 })
+      })
+    } else {
+      logger.debug('Unable to initialize push plugin')
+    }
     api.on('authenticated', async response => {
       const devicesService = api.getService('devices')
       // Only possible if registration ID already retrieved

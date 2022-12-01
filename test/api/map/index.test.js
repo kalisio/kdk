@@ -164,8 +164,7 @@ describe('map:services', () => {
     expect(vigicruesStationsLayer.service === 'vigicrues-stations').beTrue()
     await createFeaturesService.call(app, {
       collection: vigicruesStationsLayer.service,
-      featureId: vigicruesStationsLayer.featureId,
-      history: vigicruesStationsLayer.history
+      featureId: vigicruesStationsLayer.featureId
     })
     vigicruesStationsService = app.getService(vigicruesStationsLayer.service)
     expect(vigicruesStationsService).toExist()
@@ -184,6 +183,7 @@ describe('map:services', () => {
     await createFeaturesService.call(app, {
       collection: vigicruesObsLayer.service,
       featureId: vigicruesObsLayer.featureId,
+      variables: vigicruesObsLayer.variables,
       history: vigicruesObsLayer.history
     })
     vigicruesObsService = app.getService(vigicruesObsLayer.service)
@@ -203,6 +203,7 @@ describe('map:services', () => {
     await createFeaturesService.call(app, {
       collection: adsbObsLayer.service,
       featureId: adsbObsLayer.featureId,
+      variables: adsbObsLayer.variables,
       history: adsbObsLayer.history
     })
     adsbObsService = app.getService(adsbObsLayer.service)

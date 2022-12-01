@@ -1,33 +1,26 @@
 import common from 'feathers-hooks-common'
-import { populateAttachmentResource, attachToResource, detachFromResource } from '../../hooks/index.js'
 
-const { disallow, discard, iff } = common
+const { disallow, discard } = common
 
 export default {
   before: {
     all: [],
-    find: [disallow()],
+    find: [],
     get: [],
-    create: [
-      populateAttachmentResource
-    ],
+    create: [],
     update: [disallow()],
     patch: [disallow()],
-    remove: [populateAttachmentResource]
+    remove: []
   },
 
   after: {
     all: [],
     find: [],
     get: [],
-    // Let the attachment on the resource object occur only when resource has been found
-    create: [
-      iff(hook => hook.params.resource, attachToResource), discard('uri')
-    ],
+    create: [discard('buffer')],
     update: [],
     patch: [],
-    // Let the detachment on the resource object occur only when resource has been found
-    remove: [iff(hook => hook.params.resource, detachFromResource), discard('uri')]
+    remove: [discard('buffer')]
   },
 
   error: {

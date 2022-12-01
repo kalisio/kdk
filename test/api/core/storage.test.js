@@ -1,24 +1,26 @@
 import path, { dirname } from 'path'
 import fs from 'fs-extra'
 import { fileURLToPath } from 'url'
-import dauria from 'dauria'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
+import { Blob } from 'buffer'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const { getBase64DataURI } = dauria
 const { util, expect } = chai
 
 describe('core:storage', () => {
-  let app, server, port, baseUrl, userService, userObject, storageService, storageObject
+  let app, server, port, baseUrl, userService, userObject, storageService, storageObject, jwt
   const content = Buffer.from('some buffered data')
-  const contentType = 'text/plain'
-  const contentUri = getBase64DataURI(content, contentType)
+  const type = 'text/plain'
   const id = 'buffer.txt'
   const file = 'logo.png'
+  const fileType = 'image/png'
+  const filePath = path.join(__dirname, 'data', file)
+  const fileContent = fs.readFileSync(filePath)
+  const blob = new Blob([fileContent], { type: fileType })
 
   before(async () => {
     chailint(chai, util)
@@ -41,13 +43,24 @@ describe('core:storage', () => {
     server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
   })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('creates and authenticate a user', async () => {
+    userObject = await userService.create({ email: 'test@test.org', password: 'Pass;word1', name: 'test-user' })
+    const response = await request
+      .post(`${baseUrl}/authentication`)
+      .send({ email: 'test@test.org', password: 'Pass;word1', strategy: 'local' })
+    expect(response.body.accessToken).toExist()
+    jwt = response.body.accessToken
+  })
+  // Let enough time to process
+    .timeout(5000)
 
   it('creates an object in storage', async () => {
-    // TODO const signedUrl = await storageService.create({ id })
-    return storageService.create({ id, uri: contentUri }).then(object => {
+    return storageService.putObject({ id, buffer: content, type }).then(object => {
       storageObject = object
       expect(storageObject._id).to.equal(`${id}`)
-      expect(storageObject.size).to.equal(content.length)
     })
   })
   // Let enough time to process
@@ -57,9 +70,17 @@ describe('core:storage', () => {
     return storageService.get(id)
       .then(object => {
         storageObject = object
-        expect(storageObject.uri).to.equal(contentUri)
-        expect(storageObject.size).to.equal(content.length)
+        expect(storageService.atob(storageObject.buffer).toString()).to.equal(content.toString())
       })
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('gets an object from storage with middleware', async () => {
+    const response = await request
+      .get(`${baseUrl}/storage-objects/${id}`)
+      .query({ jwt })
+    expect(response.text).to.equal(content.toString())
   })
   // Let enough time to process
     .timeout(5000)
@@ -76,65 +97,55 @@ describe('core:storage', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('creates an object in storage using multipart form data', () => {
-    const filePath = path.join(__dirname, 'data', file)
-    return request
-      .post(`${baseUrl}/storage`)
-      .field('id', file)
-      .attach('file', filePath)
-      .then(response => {
-        storageObject = response.body
-        expect(storageObject._id).to.equal(`${file}`)
-        expect(storageObject.size).to.equal(fs.statSync(filePath).size)
-        return storageService.remove(file)
-      })
+  it('uploads a file in storage', async () => {
+    const { UploadId } = await storageService.createMultipartUpload({ id: file, type: fileType })
+    // A single part will be sufficient
+    const { ETag } = await storageService.uploadPart({
+      id: file,
+      buffer: await blob.slice(0, 1024 * 1024 * 5).arrayBuffer(),
+      type: blob.type,
+      PartNumber: 1,
+      UploadId
+    })
+    await storageService.completeMultipartUpload({ id: file, UploadId, parts: [{ PartNumber: 1, ETag }] })
   })
   // Let enough time to process
     .timeout(10000)
 
-  it('creates an attachment on a resource', () => {
-    return userService.create({ email: 'test@test.org', password: 'Pass;word1', name: 'test-user' })
-      .then(user => {
-        userObject = user
-        return storageService.create({ id, uri: contentUri, resource: userObject._id.toString(), resourcesService: 'users' })
-      })
+  it('gets a file from storage', () => {
+    return storageService.get(file)
       .then(object => {
         storageObject = object
-        expect(storageObject._id).to.equal(`${id}`)
-        expect(storageObject.size).to.equal(content.length)
-        return userService.find({ query: { 'profile.name': 'test-user' } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.attachments).toExist()
-        expect(userObject.attachments.length > 0).beTrue()
-        expect(userObject.attachments[0]._id).to.equal(storageObject._id)
+        expect(storageService.atob(storageObject.buffer).toString()).to.equal(fileContent.toString())
       })
   })
   // Let enough time to process
-    .timeout(10000)
+    .timeout(5000)
 
-  it('removes an attachment from a resource', () => {
-    return storageService.remove(id, { query: { resource: userObject._id.toString(), resourcesService: 'users' } })
-      .then(object => {
-        storageObject = object
-        expect(storageObject._id).to.equal(`${id}`)
-        return userService.find({ query: { 'profile.name': 'test-user' } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.attachments).toExist()
-        expect(userObject.attachments.length === 0).beTrue()
-        return userService.remove(userObject._id)
+  it('gets a file from storage with middleware', async () => {
+    const response = await request
+      .get(`${baseUrl}/storage-objects/${file}`)
+      .query({ jwt })
+    expect(response.body.toString()).to.equal(fileContent.toString())
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('removes a file from storage', (done) => {
+    storageService.remove(file).then(object => {
+      return storageService.get(file)
+    })
+      .catch(error => {
+        expect(error).toExist()
+        done()
       })
   })
   // Let enough time to process
-    .timeout(10000)
+    .timeout(5000)
 
   // Cleanup
   after(async () => {
+    await userService.remove(userObject._id)
     if (server) await server.close()
     await app.db.instance.dropDatabase()
     await app.db.disconnect()

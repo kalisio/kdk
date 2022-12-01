@@ -2,29 +2,30 @@
   <div class="k-screen row justify-center items-center window-height window-width">
     <!--
       Header section
-      -->
-    <component :is="headerComponent" class="col-12 self-start" />
+    -->
+    <component :is="computedHeaderComponent" class="col-12 self-start" />
     <!--
       Content section
     -->
     <div class="k-screen-content">
       <!-- Frame -->
       <q-card class="k-screen-frame full-width q-pa-sm">
-        <q-card-section v-if="banner">
-          <slot name="banner">
-            <div class="row justify-center">
-              <img :src="banner" />
-            </div>
-          </slot>
-        </q-card-section>
+        <!-- logo -->
+        <component :is="computedLogoComponent" />
+        <!-- title -->
         <q-card-section v-if="title">
           <div class="text-h6 text-center">{{ $t(title) }}</div>
         </q-card-section>
         <q-card-section>
           <slot />
         </q-card-section>
+        <!-- actions -->
         <q-card-section v-if="actions.length > 0">
-          <k-panel id="frame-actions" class="q-pa-none justify-center" :content="actions" />
+          <KPanel
+            id="frame-actions"
+            class="q-pa-none justify-center"
+            :content="actions"
+          />
         </q-card-section>
       </q-card>
       <!-- links -->
@@ -40,60 +41,49 @@
     <!--
       Footer section
       -->
-    <component :is="footerComponent" class="col-12 self-end" />
+    <component :is="computedFooterComponent" class="col-12 self-end" />
   </div>
 </template>
 
-<script>
+<script setup>
+import _ from 'lodash'
+import config from 'config'
+import { ref, computed } from 'vue'
 import KPanel from '../frame/KPanel.vue'
 import { loadComponent } from '../../utils.js'
 
-export default {
-  components: {
-    KPanel
+// props
+defineProps({
+  title: {
+    type: String,
+    default: undefined
   },
-  props: {
-    title: {
-      type: String,
-      default: undefined
-    },
-    actions: {
-      type: Array,
-      default: () => []
-    }
-  },
-  computed: {
-    headerComponent () {
-      return loadComponent(this.header)
-    },
-    footerComponent () {
-      return loadComponent(this.footer)
-    }
-  },
-  data () {
-    return {
-      header: 'screen/KScreenHeader',
-      backgroundColor: '#EFEFEF',
-      textColor: 'black',
-      banner: undefined,
-      frameBackgroundColor: '#FFFFFF',
-      frameTextColor: 'black',
-      links: [],
-      footer: 'screen/KScreenFooter'
-    }
-  },
-  created () {
-    // Configure this screen
-    this.header = this.$config('screens.header', this.header)
-    this.backgroundColor = this.$config('screens.backgroundColor', this.backgroundColor)
-    this.textColor = this.$config('screens.textColor', this.textColor)
-    this.banner = this.$config('screens.banner', this.banner)
-    this.frameBackgroundColor = this.$config('screens.frameBackgroundColor', this.frameBackgroundColor)
-    this.frameTextColor = this.$config('screens.frameTextColor', this.frameTextColor)
-    this.links = this.$config('screens.links', this.links)
-    this.footer = this.$config('screens.footer', this.footer)
+  actions: {
+    type: Array,
+    default: () => []
   }
-}
+})
+
+// data
+const headerComponent = ref(_.get(config, 'screens.headerComponent', 'screen/KScreenHeader'))
+const footerComponent = ref(_.get(config, 'screens.footerComponent', 'screen/KScreenFooter'))
+const logoComponent = ref(_.get(config, 'screens.logoComponent', 'app/KLogo'))
+const backgroundColor = ref(_.get(config, 'screens.backgroundColor', '#EFEFEF'))
+const textColor = ref(_.get(config, 'screens.textColor', 'black'))
+const frameBackgroundColor = ref(_.get(config, 'screens.frameBackgroundColor', '#FFFFFF'))
+const frameTextColor = ref(_.get(config, 'screens.frameTextColor', 'black'))
+const links = ref(_.get(config, 'links'), [])
+
+// computed
+const computedHeaderComponent = computed(() => {
+  return loadComponent(headerComponent.value)
+})
+const computedFooterComponent = computed(() => {
+  return loadComponent(footerComponent.value)
+})
+const computedLogoComponent = computed(() => {
+  return loadComponent(logoComponent.value)
+})
 </script>
 
 <style lang="scss" scoped>

@@ -42,7 +42,7 @@ export function useAction (props) {
     isToggled.value = props.toggled
   }
 
-  // exposed
+  // expose
   return {
     isToggled: readonly(isToggled),
     toggle

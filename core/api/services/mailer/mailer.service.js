@@ -5,7 +5,7 @@ const debug = makeDebug('kdk:core:mailer:service')
 
 export default function (name, app, options) {
   // Keep track of config
-  Object.assign(options, app.get('mailer'))
-  debug('Mailer created with config ', options)
-  return mailer(options)
+  const config = Object.assign({}, app.get('mailer'), options)
+  debug('Mailer created with config ', config)
+  return mailer(config)
 }

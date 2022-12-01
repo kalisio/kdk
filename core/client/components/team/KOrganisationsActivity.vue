@@ -33,13 +33,12 @@ import KStamp from '../frame/KStamp.vue'
 import { baseActivity } from '../../mixins'
 
 export default {
-  name: 'organisations-activity',
   components: {
     KPage,
     KGrid,
     KStamp
   },
-  mixins: [baseActivity()],
+  mixins: [baseActivity('organisationsActivity')],
   data () {
     return {
       sorter: this.$store.get('sorter'),

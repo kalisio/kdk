@@ -7,12 +7,12 @@
       'row items-center no-wrap q-gutter-x-sm': direction === 'horizontal'
     }">
       <div>
-        <q-icon v-if="showIcon" :size="iconSize" :name="icon" />
-          <q-tooltip v-if="!showText">
+        <q-icon v-if="canShowIcon" :size="iconSize" :name="icon" />
+          <q-tooltip v-if="!canShowText">
             {{ $tie(text) }}
           </q-tooltip>
       </div>
-      <div v-if="showText" class="ellipsis" :style="`font-size: ${textSize};`"
+      <div v-if="canShowText" class="ellipsis" :style="`font-size: ${textSize};`"
         v-bind:class="{'text-center': direction === 'vertical' }"
       >
          {{ $tie(text) }}
@@ -20,42 +20,46 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { computed } from 'vue'
+import { useQuasar } from 'quasar'
 
-export default {
-  props: {
-    icon: {
-      type: String,
-      default: undefined
-    },
-    iconSize: {
-      type: String,
-      default: '2rem'
-    },
-    text: {
-      type: String,
-      defatult: ''
-    },
-    textSize: {
-      type: String,
-      default: '0.875rem'
-    },
-    direction: {
-      type: String,
-      default: 'vertical',
-      validator: (value) => {
-        return ['horizontal', 'vertical'].includes(value)
-      }
-    }
+// props
+const props = defineProps({
+  icon: {
+    type: String,
+    default: undefined
   },
-  computed: {
-    showIcon () {
-      return !_.isEmpty(this.icon)
-    },
-    showText () {
-      return this.direction === 'vertical' || _.isEmpty(this.icon) || this.$q.screen.gt.xs
+  iconSize: {
+    type: String,
+    default: '2rem'
+  },
+  text: {
+    type: String,
+    defatult: ''
+  },
+  textSize: {
+    type: String,
+    default: '0.875rem'
+  },
+  direction: {
+    type: String,
+    default: 'vertical',
+    validator: (value) => {
+      return ['horizontal', 'vertical'].includes(value)
     }
   }
-}
+})
+
+// data
+const $q = useQuasar()
+
+// computed
+const canShowIcon = computed(() => {
+  return !_.isEmpty(props.icon)
+})
+const canShowText = computed(() => {
+  return props.direction === 'vertical' || _.isEmpty(props.icon) || $q.screen.gt.xs
+})
 </script>

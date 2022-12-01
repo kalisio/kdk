@@ -346,7 +346,7 @@ export const activity = {
         Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL') })
         try {
           // Stop any running edition
-          if (this.isLayerEdited(layer)) this.onEditLayerData(layer)
+          if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) this.onEditLayerData(layer)
           if (layer._id) {
             // If persistent feature layer remove features as well
             if (this.isFeatureLayer(layer)) {
@@ -401,10 +401,10 @@ export const activity = {
         logger.error(error)
       }
       // Retrieve the time
-      if (hasContext) this.restoreContext('time')
+      if (hasContext) await this.restoreContext('time')
       // Geolocate by default if view has not been restored
       const viewRestored = (hasContext ? await this.restoreContext('view') : false)
-      if (!viewRestored) {
+      if (!viewRestored && _.get(this, 'activityOptions.restore.geolocation', true)) {
         // Provided by geolocation if enabled
         if (!this.$geolocation.get().position) await this.$geolocation.update()
         const position = this.$geolocation.get().position

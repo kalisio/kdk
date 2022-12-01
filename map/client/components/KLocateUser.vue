@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from 'vue'
+import { ref, inject } from 'vue'
 import KAction from '../../../core/client/components/frame/KAction.vue'
 import { Geolocation } from '../geolocation.js'
 
@@ -19,17 +19,18 @@ import { Geolocation } from '../geolocation.js'
 const kActivity = inject('kActivity')
 
 // data
-const isEnabled = ref(false)
+const isEnabled = ref(true)
 const isToggled = ref(kActivity.isUserLocationVisible())
 
 // function
-function onClicked (context, toggled) {
-  if (toggled) kActivity.showUserLocation()
-  else kActivity.hideUserLocation()
+async function onClicked (context, toggled) {
+  if (toggled) {
+    await Geolocation.update()
+    if (Geolocation.get().error) isEnabled.value = false
+    else kActivity.showUserLocation()
+  } else {
+    kActivity.hideUserLocation()
+  }
 }
 
-// hook
-onMounted(async () => {
-  if (await Geolocation.update()) isEnabled.value = true
-})
 </script>

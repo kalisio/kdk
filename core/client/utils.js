@@ -9,8 +9,7 @@ import { defineAsyncComponent, markRaw } from 'vue'
 Notify.setDefaults({
   position: 'bottom-left',
   timeout: 5000,
-  textColor: 'white'//,
-  // actions: [{ icon: 'las la-times', color: 'white' }]
+  textColor: 'white'
 })
 
 Loading.setDefaults({
@@ -137,6 +136,24 @@ export function createThumbnail (imageDataUri, width, height, quality, callback)
     callback(canvas.toDataURL('image/jpeg', quality))
   }
   image.src = imageDataUri
+}
+
+export function dataUriToBlob(dataUri) {
+  // convert base64 to raw binary data held in a string
+  // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+  const byteString = atob(dataUri.split(',')[1])
+  // separate out the mime component
+  const mimeType = dataUri.split(',')[0].split(':')[1].split(';')[0]
+  // write the bytes of the string to an ArrayBuffer
+  const ab = new ArrayBuffer(byteString.length)
+  // create a view into the buffer
+  const ia = new Uint8Array(ab)
+  // set the bytes of the buffer to the correct values
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i)
+  }
+  // write the ArrayBuffer to a blob, and you're done
+  return new Blob([ab], { type: mimeType })
 }
 
 export function downloadAsBlob (data, filename, mimeType) {

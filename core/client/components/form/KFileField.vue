@@ -11,9 +11,11 @@
     clearable
     counter
     :accept="acceptedTypes"
+    :filter="filterSelectedFiles"
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
+    :disable="disabled"
     @clear="onFileCleared"
     @update:model-value="onFileChanged"
     @rejected="onFileRejected">
@@ -41,24 +43,35 @@ export default {
   },
   computed: {
     acceptedTypes () {
-      return _.get(this.properties.field, 'mimeTypes', '')
+      return _.get(this.properties, 'field.mimeTypes', '')
     },
     maxFileSize () {
-      return _.get(this.properties.field, 'maxSize', 1024 * 1024)
+      return _.get(this.properties, 'field.maxSize', 1024 * 1024)
     }
   },
   methods: {
     emptyModel () {
       return null
     },
+    filterSelectedFiles (files) {
+      const filter = _.get(this.properties, 'field.filter')
+      if (!filter) return files
+      return _.filter(files, file => { return file.name.includes(filter) })
+    },
     onFileCleared () {
       this.model = this.emptyModel()
       this.error = ''
+      this.onChanged()
     },
     async onFileChanged () {
       if (this.file) {
         // Check the size to display an explicit message
         if (this.file.size < this.maxFileSize) {
+          // Check whether the file will be uploaded without being read
+          if (!_.get(this.properties, 'field.readContent', true)) {
+            this.model = { name: this.file.name, type: this.file.type }
+            return
+          }
           // Check whether the file type is registered to be read by a reader
           const acceptedFiles = Reader.filter([this.file])
           if (acceptedFiles.length === 1) {
@@ -84,31 +97,44 @@ export default {
     onFileRejected (file) {
       this.error = 'KFileField.INVALID_FILE_TYPE'
     },
+    async apply (object, field) {
+      // A template generates the final path for the file in storage based on object context so that we can only do it here
+      // Check wether we need to upload file content
+      if (this.model && _.get(this.properties, 'field.storage')) {
+        let path = _.get(this.properties, 'field.storage.path')
+        // The template generates the final path for the file in storage
+        if (path) path = _.template(path)(Object.assign({}, { fileName: this.model.name }, object))
+        this.model.key = path || this.model.name
+      }
+      baseField.methods.apply.call(this, object, field)
+    },
     async submitted (object, field) {
-      if (this.model && this.properties.field.storage) {
-        const context = this.properties.field.storage.context
-        const path = this.properties.field.storage.path
-        const key = path ? path + '/' + this.model.name : this.model.name
-        logger.debug(`upload file ${this.model.name} with key ${key}`)
-        const response = await Storage.upload({
-          file: this.model.name,
-          type: this.model.type,
-          key,
-          buffer: this.model.content,
-          context
-        })
-        if (response.ok) {
+      // Check wether we need to upload file content
+      if (_.get(this.model, 'key')) {
+        // The template generates the final context for storage service
+        let context = _.get(this.properties, 'field.storage.context')
+        if (context) context = _.template(context)(Object.assign({}, { fileName: this.model.name }, object))
+        logger.debug(`Uploading file ${this.model.name} with key ${this.model.key}`)
+        try {
+          await Storage.upload({
+            file: this.model.name,
+            type: this.model.type,
+            key: this.model.key,
+            blob: this.file,
+            context
+          })
           this.$notify({
             type: 'positive',
             message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
               { file: this.model.name })
           })
-        } else {
+        } catch (error) {
           this.$notify({
             type: 'negative',
             message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
               { file: this.model.name })
           })
+          logger.error(error)
         }
       }
     }

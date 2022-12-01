@@ -12,9 +12,6 @@
 <script setup>
 import KContent from './KContent.vue'
 
-// emit
-const emit = defineEmits(['triggered'])
-
 // props
 defineProps({
   content: {
@@ -48,6 +45,9 @@ defineProps({
     }
   }
 })
+
+// emit
+const emit = defineEmits(['triggered'])
 
 // functions
 function onTriggered (args) {

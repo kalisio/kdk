@@ -247,20 +247,11 @@ export default {
             animation: false,
             parsing: false,
             spanGaps: timeSpanGaps,
-            tooltips: {
-              mode: 'x',
-              callbacks: {
-                label: (tooltipItem, data) => {
-                  return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.yLabel.toFixed(2)
-                }
-              }
-            },
             scales: {
               x: {
                 type: 'time',
                 time: {
-                  unit: 'hour',
-                  tooltipFormat: `${Time.getFormat().date.long} - ${Time.getFormat().time.long}`
+                  unit: 'hour'
                 },
                 ticks: {
                   autoskip: true,
@@ -295,6 +286,19 @@ export default {
               },
               datalabels: {
                 display: false
+              },
+              tooltip: {
+                mode: 'x',
+                callbacks: {
+                  title: (context) => {
+                    // As we are selecting tooltip items based on x coordinate all should have the same one, which is actually the time
+                    const x = _.get(context, '[0].parsed.x')
+                    return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.short')}` : '')
+                  },
+                  label: (context) => {
+                    return context.dataset.label + ': ' + context.parsed.y.toFixed(2)
+                  }
+                }
               },
               annotation,
               zoom: {

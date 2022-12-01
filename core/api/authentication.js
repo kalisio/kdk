@@ -88,7 +88,6 @@ export async function createDefaultUsers () {
 export function extractJwtFromQuery (req, res, next) {
   const { jwt } = req.query
   if (jwt) {
-    console.log(jwt)
     _.set(req, 'feathers.authentication', {
       strategy: 'jwt',
       accessToken: jwt
@@ -108,8 +107,8 @@ export default function auth (app) {
 
   const authentication = new AuthenticationService(app)
   const strategies = config.authStrategies || []
-  if (strategies.includes('jwt')) authentication.register('jwt', new RenewJWTStrategy())
   if (strategies.includes('api')) authentication.register('api', new StatelessJWTStrategy())
+  if (strategies.includes('jwt')) authentication.register('jwt', new RenewJWTStrategy())
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers

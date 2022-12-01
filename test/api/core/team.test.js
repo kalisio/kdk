@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import dauria from 'dauria'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import common from 'feathers-hooks-common'
@@ -7,7 +6,6 @@ import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 
 const { iffElse, when } = common
-const { getBase64DataURI } = dauria
 const { util, expect, assert } = chai
 
 /* Scenario story board
@@ -279,8 +277,8 @@ describe('core:team', () => {
     .timeout(5000)
 
   it('members can access organisation storage', async () => {
-    await orgStorageService.create({
-      id: 'file.txt', uri: getBase64DataURI(Buffer.from('some buffered data'), 'text/plain')
+    await orgStorageService.putObject({
+      id: 'file.txt', buffer: Buffer.from('some buffered data'), type: 'text/plain'
     }, {
       user: user3Object, checkAuthorisation: true
     })

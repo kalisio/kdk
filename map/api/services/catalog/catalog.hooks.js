@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import common from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
-import { filterLayers, updateLayerReferences, getDefaultCategories } from '../../hooks/index.js'
+import { filterLayers, updateLayerReferences, getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
 
 const { setNow, discard } = common
 
@@ -45,7 +45,8 @@ export default {
     ],
     find: [
       // Merge built-in categories with user-defined ones
-      getDefaultCategories
+      getDefaultCategories,
+      getDefaultSublegends
     ],
     get: [],
     create: [],

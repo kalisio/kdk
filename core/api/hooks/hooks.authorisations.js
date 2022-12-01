@@ -199,7 +199,9 @@ export async function authorise (hook) {
     if (!hook.id) {
       // In this specific case there is no query to be run,
       // simply check against the object we'd like to create
-      if (operation === 'create') {
+      // Support custom methods as create operation as they have similar signature
+      const DEFAULT_METHODS = ['find', 'get', 'create', 'update', 'patch', 'remove']
+      if ((operation === 'create') || !DEFAULT_METHODS.includes(operation)) {
         const resource = hook.data
         debug('Target resource is ', resource)
         if (!hasResourceAbilities(abilities, operation, resourceType, context, resource)) {

@@ -1,13 +1,13 @@
 <template>
   <q-dialog v-model="showWelcome" persistent>
     <q-card class="q-pa-sm column q-gutter-y-md" style="min-width: 50vw">
-      <div class="row justify-center">
-        <img :src="banner">
-      </div>
+      <!-- Logo -->
+      <component :is="computedLogoComponent" />
+      <!-- Carousel -->
       <div class="row justify-center">
         <q-carousel
           class="q-pa-none"
-          v-model="slide"
+          v-model="currentSlide"
           swipeable
           animated
           padding
@@ -51,69 +51,72 @@
   </q-dialog>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import config from 'config'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { openURL } from 'quasar'
+import { Store, api } from '../..'
+import { loadComponent } from '../../utils'
 import KAction from '../frame/KAction.vue'
 
-export default {
-  components: {
-    KAction
+// props
+const props = defineProps({
+  logoComponent: {
+    type: String,
+    default: 'app/KLogo'
   },
-  props: {
-    defaultTour: {
-      type: String,
-      default: 'home'
-    }
-  },
-  data () {
-    return {
-      showWelcome: false,
-      slide: 'welcome',
-      banner: undefined,
-      toggle: false
-    }
-  },
-  methods: {
-    getWelcomeKey () {
-      return this.$config('appName').toLowerCase() + '-welcome'
-    },
-    show () {
-      const show = window.localStorage.getItem(this.getWelcomeKey())
-      // Introduction is only for logged users
-      this.showWelcome = (_.isNil(show) ? this.$config('layout.welcome', true) : JSON.parse(show))
-    },
-    hide () {
-      this.showWelcome = false
-    },
-    onToggleIntroduction (toggle) {
-      window.localStorage.setItem(this.getWelcomeKey(), JSON.stringify(!toggle))
-    },
-    onOnlineHelp () {
-      const onlineHelp = this.$config('appOnlineHelp')
-      if (onlineHelp) {
-        openURL(onlineHelp)
-      } else { // Fallback to default route
-        this.$router.push({ name: 'help' })
-      }
-    },
-    onDefaultTour () {
-      this.hide()
-      this.$store.patch('tours.current', { name: this.defaultTour })
-    }
-  },
-  created () {
-    // Load required assets
-    this.banner = this.$config('screens.banner')
-  },
-  mounted () {
-    // Introduction is only for logged users, listen for user login/logout
-    this.$api.on('login', this.show)
-    this.$api.on('logout', this.hide)
-  },
-  beforeUnmount () {
-    this.$api.off('login', this.show)
-    this.$api.off('logout', this.hide)
+  defaultTour: {
+    type: String,
+    default: 'home'
+  }
+})
+
+// data
+const showWelcome = ref(false)
+const currentSlide = ref('welcome')
+const toggle = ref(false)
+
+// computed
+const computedLogoComponent = computed(() => {
+  return loadComponent(props.logoComponent)
+})
+
+// functions
+function getWelcomeKey () {
+  return _.get(config, 'appName').toLowerCase() + '-welcome'
+}
+function show () {
+  const canShow = window.localStorage.getItem(getWelcomeKey())
+  // Introduction is only for logged users
+  showWelcome.value = (_.isNil(canShow) ? _.get(config, 'layout.welcome', true) : JSON.parse(canShow))
+}
+function hide () {
+  showWelcome.value = false
+}
+function onToggleIntroduction (toggle) {
+  window.localStorage.setItem(getWelcomeKey(), JSON.stringify(!toggle))
+}
+function onOnlineHelp () {
+  const onlineHelp = _.get(config, 'appOnlineHelp')
+  if (onlineHelp) {
+    openURL(onlineHelp)
+  } else { // Fallback to default route
+    this.$router.push({ name: 'help' })
   }
 }
+function onDefaultTour () {
+  hide()
+  Store.patch('tours.current', { name: props.defaultTour })
+}
+
+// hooks
+onBeforeUnmount(() => {
+  api.off('login', show)
+  api.off('logout', hide)
+})
+
+// immediate
+api.on('login', show)
+api.on('logout', hide)
 </script>

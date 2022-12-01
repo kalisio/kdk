@@ -13,6 +13,7 @@
     flat
     :round="label === null"
     :rounded="label !== null"
+    :stack="stack"
     :dense="dense"
     :disable="disabled"
     @click="onClicked">
@@ -121,7 +122,7 @@
     :id="id"
     no-caps
     no-wrap
-    :icon="computedIcon"
+    :label="computedLabel"
     :color="computedColor"
     :size="size"
     flat
@@ -129,9 +130,6 @@
     :dense="dense"
     :disable="disabled"
     @click="onClicked">
-    <div v-if="computedLabel" class="test-subtitle1">
-      {{ computedLabel }}
-    </div>
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
       {{ computedTooltip }}
@@ -166,7 +164,7 @@ export default {
     },
     icon: {
       type: String,
-      default: null
+      default: undefined
     },
     iconRight: {
       type: Boolean,
@@ -204,6 +202,10 @@ export default {
       type: Object,
       default: () => {}
     },
+    stack: {
+      type: Boolean,
+      default: false
+    },
     loading: {
       type: Boolean,
       default: false
@@ -217,11 +219,15 @@ export default {
       default: () => null
     },
     handler: {
-      type: [Function],
+      type: Function,
+      default: null
+    },
+    dialog: {
+      type: Object,
       default: null
     },
     route: {
-      type: [Object],
+      type: Object,
       default: () => null
     },
     url: {
@@ -328,6 +334,18 @@ export default {
             params: bindRouteParams('params')
           }, _.omit(props.route, ['query', 'params']))).catch(() => {})
         }
+      }
+      // Handle the dialog case
+      if (props.dialog) {
+        let dialog = props.dialog
+        const component = _.get(props.dialog, 'component')
+        if (component) {
+          dialog = {
+            component: 'KDialog',
+            componentProps: _.clone(dialog)
+          }
+        }
+        $q.dialog(dialog)
       }
       // Notify the listeners
       emit('triggered', props.context, isToggled.value)

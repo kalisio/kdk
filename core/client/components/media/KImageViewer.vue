@@ -1,4 +1,4 @@
- <template>
+<template>
   <div v-if="interactive === true" class="fit" >
     <pinch-zoom class="pinch-zoom-controller fit row justify-center items-center" @change="$emit('image-transformed')">
       <img :src="source" style="max-width:100%; max-height:100%" />

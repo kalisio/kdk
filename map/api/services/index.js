@@ -126,6 +126,7 @@ export async function createDefaultCatalogLayers (context) {
         console.error(error)
       }
       // Data requested from external service ?
+
       if (defaultLayer.url) {
         try {
           const response = await request.get(defaultLayer.url)
