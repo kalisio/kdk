@@ -19,19 +19,22 @@
         id="app-website"
         icon="las la-info"
         :label="$t('KAbout.MORE_ABOUT_APP', { app: $config('appName') })"
+        :stack="true"
         :url="$config('appWebsite')"
       />
       <KAction
         id="report-bug"
         icon="las la-bug"
         label="KAbout.BUG_REPORT"
+        :stack="true"
         :url="`mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`"
       />
       <KAction
         id="platform-info"
         icon="las la-desktop"
         label="KAbout.PLATFORM_INFO"
-        :dialog="{ title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform' }"
+        :stack="true"
+        :dialog="{ title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform', okAction: 'CLOSE' }"
       />
     </div>
     <!-- Sponsor -->

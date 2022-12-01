@@ -13,6 +13,7 @@
     flat
     :round="label === null"
     :rounded="label !== null"
+    :stack="stack"
     :dense="dense"
     :disable="disabled"
     @click="onClicked">
@@ -200,6 +201,10 @@ export default {
     toggle: {
       type: Object,
       default: () => {}
+    },
+    stack: {
+      type: Boolean,
+      default: false
     },
     loading: {
       type: Boolean,
