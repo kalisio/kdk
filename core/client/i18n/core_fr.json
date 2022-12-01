@@ -455,29 +455,6 @@
     "MORE_ACTION": "Plus de détails",
     "LESS_ACTION": "Moins de détails"    
   },
-  "KUploader": {
-    "dropZone": {
-      "dictDefaultMessage": "Glissez-déposez vos fichiers ou cliquez ici",
-      "dictFallbackMessage": "Votre navigateur ne supporte pas le glisser-déposer.",
-      "dictFallbackText": "Utilisez le formulaire ci-dessous pour télécharger vos fichiers.",
-      "dictFileTooBig": "Votre fichier ({filesize}MO) excède la taille maximale autorisée ({maxFilesize}MO).",
-      "dictInvalidFileType": "Vous ne pouvez ajouter des fichiers de ce type.",
-      "dictResponseError": "Une erreur est survenue lors du téléchargement (code {statusCode}), veuillez réessayer.",
-      "dictCancelUpload": "Annuler",
-      "dictUploadCanceled": "Téléchargement annulé.",
-      "dictCancelUploadConfirmation": "Etes-vous sûr de vouloir annuler le téléchargement ?",
-      "dictRemoveFile": "Effacer",
-      "dictRemoveFileConfirmation": "Etes-vous sûr de vouloir effacer ce fichier ?",
-      "dictMaxFilesExceeded": "Vous ne pouvez plus ajouter de fichiers.",
-      "dictFileSizeUnits": {
-        "tb": "TO",
-        "gb": "GO",
-        "mb": "MO",
-        "kb": "KO",
-        "b": "o"
-      }
-    }
-  },
   "KColorChooser": {
     "CANCEL_BUTTON": "@:CANCEL",
     "DONE_BUTTON": "@:DONE"
@@ -577,7 +554,15 @@
     "CLOSE_ACTION": "@:CLOSE",
     "DOWNLOAD_MEDIA_ACTION": "Télécharger le média",
     "RESTORE_IMAGE_ACTION": "Restaurer l'image",
-    "NO_MEDIA": "Il n'y a aucun médias à voir, ajoutez des médias !"
+    "REMOVE_MEDIA_ACTION": "Supprimer le média",    
+    "REMOVE_DIALOG_TITLE": "Supprimer le média {media} ?",
+    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer le média <b>{media}</b> ?",
+    "ADD_MEDIA_LABEL": "Ajouter un média",
+    "ADD_PHOTO_LABEL": "Ajouter une photo",
+    "UPLOAD_TITLE": "Ajouter un média",
+    "UPLOAD_FILE_FIELD_LABEL": "Sélectionnez un fichier",
+    "UPLOAD": "Ajouter",
+    "NO_MEDIA": "Il n'y a aucun média à voir, ajoutez un média à l'aide d'une des actions disponibles."
   },
   "KFab": {
     "CLOSE_ACTION": "@:CLOSE"

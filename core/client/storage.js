@@ -84,9 +84,11 @@ export const Storage = {
   },
   async getObjectUrl (params) {
     const { key, context } = params
+    // Ensure service is created
+    const service = this.getService(context)
     // Get proxy route to object storage
     let url = api.getBaseUrl() + config.apiPath
-    if (context) url += `/${context}`
+    if (service.context) url += `/${context}`
     url += `/storage-objects/${key}`
     // Add the Authorization header if jwt is defined
     const jwt = await api.get('storage').getItem(config.apiJwt)

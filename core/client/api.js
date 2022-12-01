@@ -137,6 +137,7 @@ export function createClient (config) {
     }
     service = api.service(servicePath)
     if (options.hooks) service.hooks(options.hooks)
+    if (options.context) service.context = options.context
     return service
   }
   // Change the base URL/domain to be used (useful for mobile apps)

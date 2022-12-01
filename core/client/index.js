@@ -22,6 +22,7 @@ export * from './api.js'
 export * from './events.js'
 export * from './services/index.js'
 export * from './store.js'
+export * from './storage.js'
 export * from './layout.js'
 export * from './theme.js'
 export * from './time.js'
@@ -150,6 +151,8 @@ export default function init () {
         logger.error(error)
         Notify.create({ message: error.message, timeout: 10000 })
       })
+    } else {
+      logger.debug('Unable to initialize push plugin')
     }
     api.on('authenticated', async response => {
       const devicesService = api.getService('devices')

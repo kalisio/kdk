@@ -27,6 +27,7 @@ export function createStorageService (options = {}) {
     servicesPath,
     modelsPath,
     methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'],
+    events: ['multipart-upload-created', 'multipart-upload-completed', 'part-uploaded', 'object-put'],
     id: '_id'
   }, options))
 }

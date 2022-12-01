@@ -173,7 +173,7 @@ async function createService (name, app, options = {}) {
     name,
     paginate,
     multi: true,
-    whitelist: ['$exists', '$and', '$or', '$distinct', '$groupBy', '$group', '$search', '$regex', '$aggregate', '$elemMatch',
+    whitelist: ['$exists', '$and', '$or', '$eq', '$distinct', '$groupBy', '$group', '$search', '$regex', '$aggregate', '$elemMatch',
       '$near', '$geoIntersects', '$geometry', '$maxDistance']
   }, options)
   if (serviceOptions.disabled) return undefined
