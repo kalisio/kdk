@@ -163,7 +163,7 @@ export default {
     },
     icon: {
       type: String,
-      default: null
+      default: undefined
     },
     iconRight: {
       type: Boolean,
@@ -214,11 +214,15 @@ export default {
       default: () => null
     },
     handler: {
-      type: [Function],
+      type: Function,
+      default: null
+    },
+    dialog: {
+      type: Object,
       default: null
     },
     route: {
-      type: [Object],
+      type: Object,
       default: () => null
     },
     url: {
@@ -325,6 +329,18 @@ export default {
             params: bindRouteParams('params')
           }, _.omit(props.route, ['query', 'params']))).catch(() => {})
         }
+      }
+      // Handle the dialog case
+      if (props.dialog) {
+        let dialog = props.dialog
+        const component = _.get(props.dialog, 'component')
+        if (component) {
+          dialog = {
+            component: 'KDialog',
+            componentProps: _.clone(dialog)
+          }
+        }
+        $q.dialog(dialog)
       }
       // Notify the listeners
       emit('triggered', props.context, isToggled.value)
