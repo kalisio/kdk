@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { populateObject, unpopulateObject } from './hooks.query.js'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:core:storage:hooks')
@@ -26,7 +25,7 @@ export function removeAttachments (attachmentField) {
         await Promise.all(removePromises)
       } else {
         // Backward compatibility as attachment key was previously stored under _id
-        const id = _.get(attachments, 'key', _.get(attachment, '_id'))
+        const id = _.get(attachments, 'key', _.get(attachments, '_id'))
         await storageService.remove(id)
         // Thumbnail as well
         await storageService.remove(id + '.thumbnail')

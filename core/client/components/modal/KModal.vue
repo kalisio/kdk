@@ -26,7 +26,7 @@
         <KPanel
           id="modal-toolbar"
           :content="toolbar"
-          v-bind:class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-xs': $q.screen.lt.sm }" 
+          v-bind:class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-xs': $q.screen.lt.sm }"
         />
       </div>
       <!--
@@ -54,7 +54,7 @@
           id="modal-buttons"
           :content="buttons"
           :action-renderer="'form-button'"
-          v-bind:class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" 
+          v-bind:class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }"
         />
       </div>
     </q-card>

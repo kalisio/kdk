@@ -41,25 +41,27 @@ const props = defineProps({
 })
 
 // emits
-const emit = defineEmits([...useDialogPluginComponent.emits])
+defineEmits([...useDialogPluginComponent.emits])
 
 // data
 const { dialogRef, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
 // computed
-const computedButtons = computed (() => {
-  let buttons = [{
+const computedButtons = computed(() => {
+  const buttons = [{
     id: 'ok-action',
     label: props.okAction,
     renderer: 'form-button',
     handler: onDialogOK
   }]
-  if (! _.isEmpty(props.cancelAction)) buttons.push({
-    id: 'ok-action',
-    label: props.okAction,
-    renderer: 'form-button',
-    handler: onDialogCancel
-  })
+  if (!_.isEmpty(props.cancelAction)) {
+    buttons.push({
+      id: 'ok-action',
+      label: props.okAction,
+      renderer: 'form-button',
+      handler: onDialogCancel
+    })
+  }
   return buttons
 })
 const computedComponent = computed(() => {
