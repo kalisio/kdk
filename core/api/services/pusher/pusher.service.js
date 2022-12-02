@@ -225,10 +225,9 @@ export default function (name, app, options) {
       const results = await Promise.all(topicPromises)
       const topics = results.reduce((topics, topic) => Object.assign(topics, topic), {})
       if (patch) {
-        return service.patch(object._id, { [topicField]: topics })
-      } else {
-        return topics
+        await service.patch(object._id, { [topicField]: topics })
       }
+      return topics
     },
     publishToPlatformTopics (object, message, topicField) {
       // Check if the same topic is shared accross platforms to avoid publishing multiple times
@@ -306,10 +305,9 @@ export default function (name, app, options) {
       await Promise.all(unsubscriptionPromises)
       const topicArns = await Promise.all(topicPromises)
       if (patch) {
-        return service.patch(object._id, { [topicField]: null })
-      } else {
-        return topicArns
+        await service.patch(object._id, { [topicField]: null })
       }
+      return topicArns
     },
     createPlatformSubscriptions (object, users, topicField) {
       // Process with each registered platform
