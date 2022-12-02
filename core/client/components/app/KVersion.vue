@@ -4,7 +4,6 @@
       :label="$t('KVersion.CLIENT_VERSION', { version: clientVersionName })"
       color="primary"
     />
-    <div>-</div>
     <q-badge
       :label="$t('KVersion.API_VERSION', { version: apiVersionName })"
       color="primary"

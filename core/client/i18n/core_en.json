@@ -325,7 +325,7 @@
     "API_VERSION": "API v{version}"
   },
   "KSponsor": {
-    "KDK_POWERED": "Powered by Kalisio's Development Kit (KDK)",
+    "KDK_POWERED": "Powered by Kalisio's Development Kit",
     "MORE_ABOUT_KALISIO": "More about Kalisio"
   },
   "KPlatform": {

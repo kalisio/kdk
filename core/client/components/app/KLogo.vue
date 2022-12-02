@@ -1,13 +1,11 @@
 <template>
-  <div class="row justify-center">
-    <div v-if="logo">
-      <q-img
-        :src="logo"
-        :width="width"
-        :height="height"
-        fit="scale-down"
-      />
-    </div>
+  <div v-if="logo">
+    <q-img
+      :src="logo"
+      :width="width"
+      :height="height"
+      fit="scale-down"
+    />
   </div>
 </template>
 

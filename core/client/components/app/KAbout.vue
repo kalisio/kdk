@@ -1,7 +1,9 @@
 <template>
   <div class="column">
     <!-- Banner -->
-    <component :is="computedLogoComponent" />
+    <div class="row justify-center">
+      <component :is="computedLogoComponent" />
+    </div>
     <!-- Version -->
     <KVersion class="q-pa-sm" />
     <!-- Endpoint -->
@@ -13,32 +15,14 @@
     <div class="q-py-md">
       <q-separator />
     </div>
-    <!-- Various links -->
-    <div class="row justify-center">
-      <KAction
-        id="app-website"
-        icon="las la-info"
-        :label="$t('KAbout.MORE_ABOUT_APP', { app: $config('appName') })"
-        :stack="true"
-        :url="$config('appWebsite')"
-      />
-      <KAction
-        id="report-bug"
-        icon="las la-bug"
-        label="KAbout.BUG_REPORT"
-        :stack="true"
-        :url="`mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`"
-      />
-      <KAction
-        id="platform-info"
-        icon="las la-desktop"
-        label="KAbout.PLATFORM_INFO"
-        :stack="true"
-        :dialog="{ title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform', okAction: 'CLOSE' }"
-      />
-    </div>
+    <!-- Actions -->
+    <KPanel 
+      id="actions"
+      :content="actions"
+      class="justify-center"
+    />
     <!-- Sponsor -->
-    <KSponsor class="q-pt-md" />
+    <KSponsor class="q-pt-lg" />
   </div>
 </template>
 
@@ -51,33 +35,47 @@ import { loadComponent } from '../../utils'
 import { useVersion, usePlatform } from '../../composables'
 import KVersion from './KVersion.vue'
 import KSponsor from './KSponsor.vue'
-
-// props
-const props = defineProps({
-  logoComponent: {
-    type: String,
-    default: 'app/KLogo'
-  }
-})
+import KPanel from '../frame/KPanel.vue'
 
 // data
 const { clientVersionName, apiVersionName } = useVersion()
 const { Platform } = usePlatform()
-const bugReport = ref({
-  address: 'support@kalisio.com',
+// bug report
+const bugReport = {
+  address: _.get(config, 'publisherContact'),
   subject: i18n.t('KAbout.BUG_REPORT_SUBJECT', {
     appName: _.get(config, 'appName'),
     clientVersion: clientVersionName.value,
     appVersion: apiVersionName.value
   }),
   body: i18n.t('KAbout.BUG_REPORT_BODY')
-})
-_.forOwn(Platform.value, (value, key) => { bugReport.value.body += `${key}: ${value}%0D%0A` })
-bugReport.value.body += `domain: ${_.get(config, 'domain')}%0D%0A`
-bugReport.value.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
+}
+_.forOwn(Platform.value, (value, key) => { bugReport.body += `${key}: ${value}%0D%0A` })
+bugReport.body += `domain: ${_.get(config, 'domain')}%0D%0A`
+bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
+// logo component
+const logoComponent = ref(_.get(config, 'logoComponent', 'app/KLogo'))
+// actions
+const defaultActions = [
+  { 
+    id: 'report-bug', 
+    icon: 'las la-bug', 
+    label: 'KAbout.BUG_REPORT', 
+    stack: true, 
+    url: `mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}` 
+  }, { 
+    id: 'platform-info', 
+    icon: 'las la-desktop', 
+    label: 'KAbout.PLATFORM_INFO', 
+    stack: true, 
+    dialog: { title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform', okAction: 'CLOSE' } 
+  }
+]
+console.log(defaultActions)
+const actions = ref(_.get(config, 'about.actions', defaultActions))
 
 // computed
 const computedLogoComponent = computed(() => {
-  return loadComponent(props.logoComponent)
+  return loadComponent(logoComponent.value)
 })
 </script>

@@ -11,7 +11,9 @@
       <!-- Frame -->
       <q-card class="k-screen-frame full-width q-pa-sm">
         <!-- logo -->
-        <component :is="computedLogoComponent" />
+        <div class="q-pa-sm row justify-center">
+          <component :is="computedLogoComponent" />
+        </div>
         <!-- title -->
         <q-card-section v-if="title">
           <div class="text-h6 text-center">{{ $t(title) }}</div>
@@ -65,9 +67,9 @@ defineProps({
 })
 
 // data
+const logoComponent = ref(_.get(config, 'logoComponent', 'app/KLogo'))
 const headerComponent = ref(_.get(config, 'screens.headerComponent', 'screen/KScreenHeader'))
 const footerComponent = ref(_.get(config, 'screens.footerComponent', 'screen/KScreenFooter'))
-const logoComponent = ref(_.get(config, 'screens.logoComponent', 'app/KLogo'))
 const backgroundColor = ref(_.get(config, 'screens.backgroundColor', '#EFEFEF'))
 const textColor = ref(_.get(config, 'screens.textColor', 'black'))
 const frameBackgroundColor = ref(_.get(config, 'screens.frameBackgroundColor', '#FFFFFF'))
