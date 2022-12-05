@@ -1,12 +1,24 @@
+import logger from 'debug'
 import { ref, readonly } from 'vue'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
 import { Store } from '../store.js'
+import { defineAbilities } from '../../common/permissions.js'
 
 const User = ref(null)
 
 export function useUser () {
   // functions
+  async function updateAbilities () {
+    if (!User.value) return
+    if (User.value.abilities) return
+    const abilities = await defineAbilities(User.value, api)
+    User.abilities = abilities
+      Store.set('user.abilities', abilities)
+    if (abilities) {
+      logger.debug('New user abilities: ', abilities.rules)
+    }
+  }
   async function restoreSession () {
     try {
       const response = await api.reAuthenticate()
@@ -49,6 +61,7 @@ export function useUser () {
   // expose
   return {
     User: readonly(User),
+    updateAbilities,
     restoreSession,
     register,
     login,
