@@ -10,7 +10,6 @@ let isInitialized = false
 const Capabilities = ref(null)
 
 export function useCapabilities () {
-  
   // Function
   onMounted(async () => {
     if (!isInitialized) {
