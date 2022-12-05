@@ -293,7 +293,8 @@ export async function aggregateFeaturesQuery (hook) {
       const aggregateElementOptions = Object.assign({}, aggregateOptions)
       if (isGeometry) aggregateElementOptions.hint.geometry = 1
       else aggregateElementOptions.hint['properties.' + element] = 1
-      aggregateElementOptions.hint.time = 1
+      // Use provided sort time option if any
+      aggregateElementOptions.hint.time = _.get(query, '$sort.time', 1)
       debug('Hint', aggregateElementOptions)
       const elementResults = await collection.aggregate(pipeline, aggregateElementOptions).toArray()
       debug(`Generated ${elementResults.length} feature(s) for ${element} element`, elementResults)
