@@ -1,6 +1,6 @@
 <template>
   <q-markup-table>
-    <thead class="bg-accent text-white">
+    <thead class="bg-grey-3">
       <tr>
         <th class="text-left">{{ $t('KPlatform.PROPERTY') }}</th>
         <th>
