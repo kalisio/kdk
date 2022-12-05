@@ -70,9 +70,7 @@ export const probe = {
   created () {
     this.registerProbeMethod('geotiff', async (activity, layer, source, lat, lon, t0, t1) => {
       const context = {
-        jwtToken: await activity.$api.get('storage').getItem(activity.$config('gatewayJwt')),
-        // TODO: remove
-        testToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOiI2MjIyM2E4NGYyMzMwOTAwMzJhMTk3YjIiLCJpYXQiOjE2NjY4NjUyMDUsImV4cCI6MTY2Njk1MTYwNSwiYXVkIjoidGVzdC5rYWxpc2lvLnh5eiIsImlzcyI6ImthbGlzaW8iLCJzdWIiOiIzZDk4MWMxYi1iMGFmLTQxMzktYTJjYS1lMzA0YTRmMDE4YTYiLCJqdGkiOiIzZjYzNDYzNS1lZDVlLTRiNjEtOTdmOC0yOGJlYmNjYzI1NzEifQ.ZxfOoqac-aL3izfzm-UziAMgOBlfZ_prnn80kx66Jj4'
+        jwtToken: await activity.$api.get('storage').getItem(activity.$config('gatewayJwt'))
       }
       context.level = activity.selectedLevel !== null ? activity.selectedLevel : undefined
 
