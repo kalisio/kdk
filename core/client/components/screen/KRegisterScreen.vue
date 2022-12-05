@@ -1,118 +1,112 @@
 <template>
   <KScreen message="KRegisterScreen.MESSAGE" :actions="actions">
     <div class="column items-center q-gutter-y-md">
-      <k-form
-        ref="form"
+      <KForm
+        ref="refForm"
         class="full-width"
         :schema="getFormSchema()"
       />
-      <k-action
+      <KAction
         id="register-button"
         label="KRegisterScreen.REGISTER_LABEL"
         renderer="form-button"
         :loading="loading"
-        :handler="this.onRegister"
+        :handler="onRegister"
       />
     </div>
   </KScreen>
 </template>
 
-<script>
+<script setup>
 import { getLocale } from '../../utils.js'
+import _ from 'lodash'
+import config from 'config'
+import { ref } from 'vue'
+import { useQuasar } from 'quasar'
+import { i18n } from '../../i18n.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
 import KAction from '../frame/KAction.vue'
-import { authentication } from '../../mixins'
+import { useUser } from '../../composables'
 
-export default {
-  components: {
-    KScreen,
-    KForm,
-    KAction
-  },
-  mixins: [authentication],
-  data () {
-    return {
-      actions: [],
-      loading: false
-    }
-  },
-  methods: {
-    getFormSchema () {
-      return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/register.json#',
-        title: 'Registration Form',
-        type: 'object',
-        properties: {
-          name: {
-            type: 'string',
-            minLength: 3,
-            maxLength: 128,
-            field: {
-              component: 'form/KTextField',
-              label: 'KRegisterScreen.NAME_FIELD_LABEL'
-            }
-          },
-          email: {
-            type: 'string',
-            format: 'email',
-            field: {
-              component: 'form/KEmailField',
-              label: 'KRegisterScreen.EMAIL_FIELD_LABEL'
-            }
-          },
-          password: {
-            type: 'string',
-            field: {
-              component: 'form/KPasswordField',
-              label: 'KRegisterScreen.PASSWORD_FIELD_LABEL'
-            }
-          },
-          confirmPassword: {
-            const: {
-              $data: '1/password'
-            },
-            field: {
-              component: 'form/KPasswordField',
-              label: 'KRegisterScreen.CONFIRM_PASSWORD_FIELD_LABEL'
-            }
-          },
-          consentTerms: {
-            type: 'boolean',
-            default: false,
-            enum: [true],
-            field: {
-              component: 'form/KToggleField',
-              label: this.$t('KRegisterScreen.ACCEPT_TERMS_LABEL'),
-              helper: this.$t('KRegisterScreen.ACCEPT_TERMS_HELPER', { domain: this.$config('domain') }),
-              errorLabel: this.$t('KRegisterScreen.ACCEPT_TERMS_ERROR_LABEL', { domain: this.$config('domain') }),
-              'checked-icon': 'check',
-              'unchecked-icon': 'clear'
-            }
-          }
+// Data
+const $q = useQuasar()
+const { register } = useUser()
+const refForm = ref()
+const actions = ref(_.get(config, 'screens.register.actions', []))
+const loading = ref(false)
+const domain = _.get(config, 'domain')
+
+// Function
+function getFormSchema () {
+  return {
+    $schema: 'http://json-schema.org/draft-06/schema#',
+    $id: 'http://kalisio.xyz/schemas/register.json#',
+    title: 'Registration Form',
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        minLength: 3,
+        maxLength: 128,
+        field: {
+          component: 'form/KTextField',
+          label: 'KRegisterScreen.NAME_FIELD_LABEL'
+        }
+      },
+      email: {
+        type: 'string',
+        format: 'email',
+        field: {
+          component: 'form/KEmailField',
+          label: 'KRegisterScreen.EMAIL_FIELD_LABEL'
+        }
+      },
+      password: {
+        type: 'string',
+        field: {
+          component: 'form/KPasswordField',
+          label: 'KRegisterScreen.PASSWORD_FIELD_LABEL'
+        }
+      },
+      confirmPassword: {
+        const: {
+          $data: '1/password'
         },
-        required: ['name', 'email', 'password', 'confirmPassword', 'consentTerms']
+        field: {
+          component: 'form/KPasswordField',
+          label: 'KRegisterScreen.CONFIRM_PASSWORD_FIELD_LABEL'
+        }
+      },
+      consentTerms: {
+        type: 'boolean',
+        default: false,
+        enum: [true],
+        field: {
+          component: 'form/KToggleField',
+          label: i18n.t('KRegisterScreen.ACCEPT_TERMS_LABEL'),
+          helper: i18n.t('KRegisterScreen.ACCEPT_TERMS_HELPER', { domain }),
+          errorLabel: i18n.t('KRegisterScreen.ACCEPT_TERMS_ERROR_LABEL', { domain }),
+          'checked-icon': 'check',
+          'unchecked-icon': 'clear'
+        }
       }
     },
-    async onRegister (event) {
-      const result = this.$refs.form.validate()
-      if (result.isValid) {
-        this.loading = true
-        // Add the locale information
-        result.values.locale = getLocale()
-        try {
-          await this.register(result.values)
-        } catch (error) {
-          this.$notify({ message: this.$t('KRegisterScreen.REGISTER_ERROR') })
-        }
-        this.loading = false
-      }
+    required: ['name', 'email', 'password', 'confirmPassword', 'consentTerms']
+  }
+}
+async function onRegister (event) {
+  const result = refForm.value.validate()
+  if (result.isValid) {
+    loading.value = true
+    // Add the locale information
+    result.values.locale = getLocale()
+    try {
+      await register(result.values)
+    } catch (error) {
+      $q.notify({ type: 'negative', message: i18n.t('KRegisterScreen.REGISTER_ERROR') })
     }
-  },
-  created () {
-    // Configure this screen
-    this.actions = this.$config('screens.register.actions', [])
+    loading.value = false
   }
 }
 </script>

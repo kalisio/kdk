@@ -20,10 +20,10 @@
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useVersion } from '../../composables'
-import { KVersion, KSponsor } from '../app'
+import { KVersion, KSponsor } from '../foundation'
 import KAction from '../frame/KAction.vue'
 
-// data
+// Data
 const $q = useQuasar()
 const { Version } = useVersion()
 const canChangeEndpoint = ref(false)

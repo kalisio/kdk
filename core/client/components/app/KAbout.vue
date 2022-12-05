@@ -33,11 +33,11 @@ import { ref, computed } from 'vue'
 import { i18n } from '../../i18n'
 import { loadComponent } from '../../utils'
 import { useVersion, usePlatform } from '../../composables'
-import KVersion from './KVersion.vue'
-import KSponsor from './KSponsor.vue'
+import KVersion from '../foundation/KVersion.vue'
+import KSponsor from '../foundation/KSponsor.vue'
 import KPanel from '../frame/KPanel.vue'
 
-// data
+// Data
 const { clientVersionName, apiVersionName } = useVersion()
 const { Platform } = usePlatform()
 // bug report
@@ -54,7 +54,7 @@ _.forOwn(Platform.value, (value, key) => { bugReport.body += `${key}: ${value}%0
 bugReport.body += `domain: ${_.get(config, 'domain')}%0D%0A`
 bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
 // logo component
-const logoComponent = ref(_.get(config, 'logoComponent', 'app/KLogo'))
+const logoComponent = ref(_.get(config, 'logoComponent', 'foundation/KLogo'))
 // actions
 const defaultActions = [
   { 
@@ -71,10 +71,9 @@ const defaultActions = [
     dialog: { title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform', okAction: 'CLOSE' } 
   }
 ]
-console.log(defaultActions)
 const actions = ref(_.get(config, 'about.actions', defaultActions))
 
-// computed
+// Computed
 const computedLogoComponent = computed(() => {
   return loadComponent(logoComponent.value)
 })

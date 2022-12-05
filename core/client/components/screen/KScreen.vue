@@ -54,7 +54,7 @@ import { ref, computed } from 'vue'
 import KPanel from '../frame/KPanel.vue'
 import { loadComponent } from '../../utils.js'
 
-// props
+// Props
 defineProps({
   title: {
     type: String,
@@ -66,8 +66,8 @@ defineProps({
   }
 })
 
-// data
-const logoComponent = ref(_.get(config, 'logoComponent', 'app/KLogo'))
+// Data
+const logoComponent = ref(_.get(config, 'logoComponent', 'foundation/KLogo'))
 const headerComponent = ref(_.get(config, 'screens.headerComponent', 'screen/KScreenHeader'))
 const footerComponent = ref(_.get(config, 'screens.footerComponent', 'screen/KScreenFooter'))
 const backgroundColor = ref(_.get(config, 'screens.backgroundColor', '#EFEFEF'))
@@ -76,7 +76,7 @@ const frameBackgroundColor = ref(_.get(config, 'screens.frameBackgroundColor', '
 const frameTextColor = ref(_.get(config, 'screens.frameTextColor', 'black'))
 const links = ref(_.get(config, 'links'), [])
 
-// computed
+// Computed
 const computedHeaderComponent = computed(() => {
   return loadComponent(headerComponent.value)
 })

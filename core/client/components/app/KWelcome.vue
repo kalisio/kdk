@@ -64,7 +64,7 @@ import KAction from '../frame/KAction.vue'
 const props = defineProps({
   logoComponent: {
     type: String,
-    default: 'app/KLogo'
+    default: 'foundation/KLogo'
   },
   defaultTour: {
     type: String,

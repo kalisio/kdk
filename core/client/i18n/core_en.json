@@ -13,7 +13,6 @@
   "RETRY": "Retry",
   "NO_ITEM": "No elements found",
   "NIL": "Undefined",
-  "ANONYMOUS": "Anonymous",
   "MEMBERS": "Members",
   "TAGS": "Tags",
   "GROUPS": "Groups",
@@ -115,6 +114,9 @@
       "ITEM_EXPORTED": "Exporting the content of {name} within {file}",
       "CANNOT_EXPORT_ITEM": "Cannot export {name}. Is your browser support such a feature ?"
     }
+  },
+  "composables": {
+
   },
   "schemas": {
     "OBJECT_NAME": "{name}",
