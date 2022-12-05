@@ -116,7 +116,8 @@
     }
   },
   "composables": {
-
+    "ANONYMOUS": "Anonymous",
+    "VERSION_MISMATCH": "Application version mismatch, please install the latest available version or check your end point"
   },
   "schemas": {
     "OBJECT_NAME": "{name}",

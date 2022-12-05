@@ -12,8 +12,7 @@
   "APPLY": "Appliquer",
   "RETRY": "Réessayer",
   "NO_ITEM": "Aucun élément",
-  "NIL": "Non défini(e",
-  "ANONYMOUS": "Anonyme",
+  "NIL": "Non défini(e)",
   "MEMBERS": "Membres",
   "TAGS": "Etiquettes",
   "GROUPS": "Groupes",
@@ -115,6 +114,10 @@
       "ITEM_EXPORTED": "Export du contenu de {name} dans {file}",
       "CANNOT_EXPORT_ITEM": "Impossible d'exporter {name}. Votre navigateur supporte t'il la fonctionnalité ?"
     }
+  },
+  "composables": {
+    "ANONYMOUS": "Anonyme",
+    "VERSION_MISMATCH": "Discordance de version, merci d'installer la dernière version disponible ou de vérifier votre point d'accès"
   },
   "schemas": {
     "OBJECT_NAME": "{name}",
