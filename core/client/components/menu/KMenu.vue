@@ -2,7 +2,7 @@
   <q-btn-dropdown
     v-if="hasContent"
     :id="id"
-    :label="$t(label)"
+    :label="$tie(label)"
     :icon="icon"
     :color="color"
     :size="size"

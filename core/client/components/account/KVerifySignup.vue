@@ -28,7 +28,7 @@
 <script>
 import _ from 'lodash'
 import KScreen from '../screen/KScreen.vue'
-import { authentication, account } from '../../mixins'
+import { account } from '../../mixins'
 
 export default {
   name: 'k-verify-signup',
@@ -36,7 +36,6 @@ export default {
     KScreen
   },
   mixins: [
-    authentication,
     account
   ],
   data () {

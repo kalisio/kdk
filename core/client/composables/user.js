@@ -12,19 +12,19 @@ export function useUser () {
   async function updateAbilities () {
     if (!User.value) return
     if (User.value.abilities) return
-    const abilities = await defineAbilities(User.value, api)
-    User.abilities = abilities
-      Store.set('user.abilities', abilities)
-    if (abilities) {
-      logger.debug('New user abilities: ', abilities.rules)
+    User.value.abilities = await defineAbilities(User.value, api)
+    // TODO : ensure backward compatibility
+    Store.set('user.abilities', User.value.abilities)
+    if (User.value.abilities) {
+      logger.debug('New user abilities: ', User.value.abilities.rules)
     }
   }
   async function restoreSession () {
     try {
       const response = await api.reAuthenticate()
-      const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
-      Store.set('user', user)
-      User.value = user
+      User.value = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
+      // TODO : ensure backward compatibility
+      Store.set('user', User.value)
     } catch (error) {
       // This ensure an old token is not kept when the user has been deleted
       if (error.code === 404) {
@@ -48,14 +48,15 @@ export function useUser () {
     }
     const response = await api.authenticate(payload)
     // Anonymous user or service account ?
-    const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
-    Store.set('user', user)
-    User.value = user
+    User.value = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
+    // TODO : ensure backward compatibility
+    Store.set('user', User.value)
   }
   async function logout () {
     await api.logout()
-    Store.set('user', null)
     User.value = null
+    // TODO : ensure backward compatibility
+    Store.set('user', null)
   }
 
   // expose
