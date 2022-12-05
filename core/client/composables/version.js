@@ -1,12 +1,10 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { ref, computed, readonly, onMounted } from 'vue'
-import { useQuasar } from 'quasar'
-import { api } from '../api.js'
-import { i18n } from '../i18n.js'
 import config from 'config'
-
-let isInitialized = false
+import { ref, computed, readonly, watch } from 'vue'
+import { useQuasar } from 'quasar'
+import { i18n } from '../i18n.js'
+import { useCapabilities } from './capabilities.js'
 
 const Version = ref({
   client: {
@@ -23,6 +21,7 @@ const Version = ref({
 export function useVersion () {
   // Data
   const $q = useQuasar()
+  const { Capabilities } = useCapabilities()
 
   // Computed
   const clientVersionName = computed(() => {
@@ -38,22 +37,24 @@ export function useVersion () {
     return version
   })
 
-  // Hooks
-  onMounted(async () => {
-    if (!isInitialized) {
-      isInitialized = true
-      // fetch the api capabilities to get the version
-      logger.debug('Fetching api version')
-      const response = await window.fetch(api.getBaseUrl() + _.get(config, 'apiPath') + '/capabilities')
-      const apiCapabilities = await response.json()
-      Version.value.api.number = apiCapabilities.version
-      Version.value.api.buildNumber = apiCapabilities.buildNumber
-      // check for mismatch
-      if (!_.isEqual(Version.value.client, Version.value.api)) {
-        $q.notify({ type: 'negative', message: i18n.t('composables.VERSION_MISMATCH') })
-      }
+  // Function
+  function setApiVersion () {
+    logger.debug('Setting API version from capabilities')
+    Version.value.api.number = Capabilities.value.version
+    Version.value.api.buildNumber = Capabilities.value.buildNumber
+    // check for mismatch
+    if (!_.isEqual(Version.value.client, Version.value.api)) {
+      $q.notify({ type: 'negative', message: i18n.t('composables.VERSION_MISMATCH') })
     }
-  })
+  }
+
+  // Watch
+  watch(Capabilities, () => { setApiVersion() })
+
+  // Immediate
+  if (Capabilities.value) {
+    setApiVersion()
+  }
 
   // Expose
   return {
