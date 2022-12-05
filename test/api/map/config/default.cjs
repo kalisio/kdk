@@ -43,9 +43,17 @@ module.exports = {
     url: (containerized ? 'mongodb://mongodb:27017/kdk-test' : 'mongodb://127.0.0.1:27017/kdk-test')
   },
   storage: {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-    bucket: process.env.S3_BUCKET
+    s3Client: {
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY || process.env.S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
+      },
+      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.S3_REGION,
+      signatureVersion: 'v4'
+    },
+    bucket: process.env.S3_BUCKET,
+    getObjectPath: '/storage-objects'
   },
   forecastPath: path.join(__dirname, '../forecast-data'),
   forecasts: [

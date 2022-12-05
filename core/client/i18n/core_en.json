@@ -13,7 +13,6 @@
   "RETRY": "Retry",
   "NO_ITEM": "No elements found",
   "NIL": "Undefined",
-  "ANONYMOUS": "Anonymous",
   "MEMBERS": "Members",
   "TAGS": "Tags",
   "GROUPS": "Groups",
@@ -115,6 +114,10 @@
       "ITEM_EXPORTED": "Exporting the content of {name} within {file}",
       "CANNOT_EXPORT_ITEM": "Cannot export {name}. Is your browser support such a feature ?"
     }
+  },
+  "composables": {
+    "ANONYMOUS": "Anonymous",
+    "VERSION_MISMATCH": "Application version mismatch, please install the latest available version or check your end point"
   },
   "schemas": {
     "OBJECT_NAME": "{name}",
@@ -325,7 +328,7 @@
     "API_VERSION": "API v{version}"
   },
   "KSponsor": {
-    "KDK_POWERED": "Powered by Kalisio's Development Kit (KDK)",
+    "KDK_POWERED": "Powered by Kalisio's Development Kit",
     "MORE_ABOUT_KALISIO": "More about Kalisio"
   },
   "KPlatform": {

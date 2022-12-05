@@ -9,7 +9,7 @@ import { ref } from 'vue'
 import { i18n } from '../../i18n.js'
 import { useVersion } from '../../composables'
 
-// data
+// Data
 const { Version } = useVersion()
 const flavor = ref('')
 if (Version.value.flavor === 'dev') flavor.value = i18n.t('KScreen.DEVELOPMENT_VERSION')

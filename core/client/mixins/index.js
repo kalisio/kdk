@@ -1,7 +1,6 @@
 export * from './mixin.account.js'
 export * from './mixin.authentication.js'
 export * from './mixin.authorisation.js'
-export * from './mixin.version.js'
 export * from './mixin.base-context.js'
 export * from './mixin.base-activity.js'
 export * from './mixin.base-collection.js'

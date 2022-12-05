@@ -1,27 +1,21 @@
 <template>
-  <KScreen title="KLogoutScreen.TITLE" :actions="actions" />
+  <KScreen
+    title="KLogoutScreen.TITLE"
+    :actions="actions"
+  />
 </template>
 
-<script>
+<script setup>
+import _ from 'lodash'
+import config from 'config'
+import { ref } from 'vue'
 import KScreen from './KScreen.vue'
-import { authentication } from '../../mixins'
+import { useUser } from '../../composables'
 
-export default {
-  components: {
-    KScreen
-  },
-  mixins: [authentication],
-  data () {
-    return {
-      actions: []
-    }
-  },
-  created () {
-    // configure this screen
-    this.actions = this.$config('screens.logout.actions', this.actions)
-  },
-  mounted () {
-    this.logout()
-  }
-}
+// Data
+const { logout } = useUser()
+const actions = ref(_.get(config, 'screens.logout.actions', []))
+
+// Immediate
+logout()
 </script>

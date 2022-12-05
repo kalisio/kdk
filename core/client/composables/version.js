@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed, readonly, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
 import { api } from '../api.js'
+import { i18n } from '../i18n.js'
 import config from 'config'
 
-let initialized = false
+let isInitialized = false
 
 const Version = ref({
   client: {
@@ -19,7 +21,10 @@ const Version = ref({
 })
 
 export function useVersion () {
-  // computed
+  // Data
+  const $q = useQuasar()
+
+  // Computed
   const clientVersionName = computed(() => {
     const clientVersion = Version.value.client
     let version = clientVersion.number
@@ -33,20 +38,24 @@ export function useVersion () {
     return version
   })
 
-  // hooks
+  // Hooks
   onMounted(async () => {
-    if (!initialized) {
-      initialized = true
+    if (!isInitialized) {
+      isInitialized = true
       // fetch the api capabilities to get the version
       logger.debug('Fetching api version')
       const response = await window.fetch(api.getBaseUrl() + _.get(config, 'apiPath') + '/capabilities')
       const apiCapabilities = await response.json()
       Version.value.api.number = apiCapabilities.version
       Version.value.api.buildNumber = apiCapabilities.buildNumber
+      // check for mismatch
+      if (!_.isEqual(Version.value.client, Version.value.api)) {
+        $q.notify({ type: 'negative', message: i18n.t('composables.VERSION_MISMATCH') })
+      }
     }
   })
 
-  // expose
+  // Expose
   return {
     Version: readonly(Version),
     clientVersionName,

@@ -25,7 +25,7 @@ const $q = useQuasar()
 
 // computed
 const computedLogoWidth = computed(() => {
-  if ($q.screen.lt.sm) return '72px'
-  return '96px'
+  if ($q.screen.lt.sm) return '64px'
+  return '72px'
 })
 </script>

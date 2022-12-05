@@ -2,7 +2,7 @@
   <KScreen title="KEndpointScreen.TITLE" :actions="actions">
     <div class="column items-center q-gutter-y-md">
       <KForm
-        ref="form"
+        ref="refForm"
         class="full-width"
         :schema="getFormSchema()"
         @form-ready="onFormReady"
@@ -12,81 +12,70 @@
           id="cancel-button"
           label="KEndpointScreen.RESET_LABEL"
           renderer="form-button"
-          :handler="this.onReset"
+          :handler="onReset"
         />
         <KAction
           id="apply-button"
           label="KEndpointScreen.APPLY_LABEL"
           renderer="form-button"
-          :handler="this.onApplied"
+          :handler="onApplied"
         />
       </div>
     </div>
   </KScreen>
 </template>
 
-<script>
+<script setup>
+import _ from 'lodash'
+import config from 'config'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { api } from '../../api.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
 import KAction from '../frame/KAction.vue'
 
-export default {
-  components: {
-    KScreen,
-    KForm,
-    KAction
-  },
-  data () {
-    return {
-      actions: []
-    }
-  },
-  methods: {
-    getFormSchema () {
-      return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
-        $id: 'http://kalisio.xyz/schemas/change-endpoint.json#',
-        title: 'Change Endpoint form',
-        description: 'Change remote service URL form',
-        type: 'object',
-        properties: {
-          baseUrl: {
-            type: 'string',
-            format: 'uri',
-            field: {
-              component: 'form/KTextField',
-              label: 'KEndpointScreen.BASE_URL_FIELD_LABEL'
-            }
-          }
-        },
-        required: ['baseUrl']
+// Data
+const router = useRouter()
+const refForm = ref()
+const actions = ref(_.get(config, 'screens.endpoint.actions', []))
+
+// Functions
+function getFormSchema () {
+  return {
+    $schema: 'http://json-schema.org/draft-06/schema#',
+    $id: 'http://kalisio.xyz/schemas/change-endpoint.json#',
+    title: 'Change Endpoint form',
+    description: 'Change remote service URL form',
+    type: 'object',
+    properties: {
+      baseUrl: {
+        type: 'string',
+        format: 'uri',
+        field: {
+          component: 'form/KTextField',
+          label: 'KEndpointScreen.BASE_URL_FIELD_LABEL'
+        }
       }
     },
-    onReset () {
-      this.$api.setBaseUrl('')
-      this.$router.push({ name: 'login' })
-      window.location.reload()
-    },
-    onApplied (data) {
-      const result = this.$refs.form.validate()
-      if (result.isValid) {
-        this.$api.setBaseUrl(result.values.baseUrl)
-        this.$router.push({ name: 'login' })
-        window.location.reload()
-      }
-    },
-    onCanceled () {
-      this.$router.push({ name: 'login' })
-    },
-    onFormReady (form) {
-      this.$refs.form.fill({
-        baseUrl: this.$api.getBaseUrl()
-      })
-    }
-  },
-  async created () {
-    // Configure this screen
-    this.actions = this.$config('screens.endpoint.actions', this.action)
+    required: ['baseUrl']
   }
+}
+function onReset () {
+  api.setBaseUrl('')
+  router.push({ name: 'login' })
+  window.location.reload()
+}
+function onApplied (data) {
+  const result = refForm.value.validate()
+  if (result.isValid) {
+    api.setBaseUrl(result.values.baseUrl)
+    window.location.reload()
+  }
+}
+function onFormReady (form) {
+  refForm.value.fill({
+    baseUrl: api.getBaseUrl()
+  })
 }
 </script>

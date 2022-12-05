@@ -108,6 +108,7 @@ export async function createDefaultCatalogLayers (context) {
         ttl: defaultLayer.ttl,
         featureId: defaultLayer.featureId,
         featureIdType: defaultLayer.featureIdType,
+        variables: defaultLayer.variables,
         db: app.db.db(defaultLayer.dbName)
       })
     }

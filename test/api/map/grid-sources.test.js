@@ -20,6 +20,8 @@ const sift = siftModule.default
 
 // returns the required byte range of the given file
 // range is the raw value of the 'range' http header
+// the returned object contains the data, and the value
+// for the 'content-range' response header
 function readRange (file, range) {
   const [unit, value] = range.split('=')
   if (unit !== 'bytes') { return null }
@@ -31,7 +33,7 @@ function readRange (file, range) {
   const fd = fs.openSync(file, 'r')
   fs.readSync(fd, data, 0, size, offset)
   fs.closeSync(fd)
-  return data
+  return { data, range: `bytes ${offset}-${offset + size}/${size}` }
 }
 
 // checks that bboxa constains bboxb
@@ -169,8 +171,8 @@ describe('map:grid-source', () => {
       nock('http://kMap.test')
         .get('/data.tif')
         .reply(function (uri, requestBody) {
-          const data = readRange(path.join(__dirname, '/data/GetCoverage.tif'), this.req.headers.range)
-          if (data) return [200, data]
+          const res = readRange(path.join(__dirname, '/data/GetCoverage.tif'), this.req.headers.range)
+          if (res.data) return [206, res.data, { 'content-range': res.range }]
           return [404]
         })
 
@@ -186,8 +188,8 @@ describe('map:grid-source', () => {
       nock('http://kMap.test')
         .get('/data.tif')
         .reply(function (uri, requestBody) {
-          const data = readRange(path.join(__dirname, '/data/GetCoverage.tif', this.req.headers.range))
-          if (data) return [200, data]
+          const res = readRange(path.join(__dirname, '/data/GetCoverage.tif', this.req.headers.range))
+          if (res.data) return [206, res.data, { 'content-range': res.range }]
           return [404]
         })
 

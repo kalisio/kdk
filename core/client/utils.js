@@ -138,7 +138,7 @@ export function createThumbnail (imageDataUri, width, height, quality, callback)
   image.src = imageDataUri
 }
 
-export function dataUriToBlob(dataUri) {
+export function dataUriToBlob (dataUri) {
   // convert base64 to raw binary data held in a string
   // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
   const byteString = atob(dataUri.split(',')[1])

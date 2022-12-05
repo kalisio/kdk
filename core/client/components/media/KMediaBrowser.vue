@@ -93,13 +93,21 @@ export default {
           id: 'remove-media', icon: 'las la-trash', tooltip: this.$t('KMediaBrowser.REMOVE_MEDIA_ACTION'), handler: this.onRemoveMedia
         })
       }
-      if (this.canCapturePhoto()) actions.push({
-        id: 'capture-photo', icon: 'las la-camera', tooltip: this.$t('KMediaBrowser.ADD_PHOTO_LABEL'),
-        color: (this.hasMedia ? 'grey-9' : 'secondary'), handler: this.onCapturePhoto
-      })
+      if (this.canCapturePhoto()) {
+        actions.push({
+          id: 'capture-photo',
+          icon: 'las la-camera',
+          tooltip: this.$t('KMediaBrowser.ADD_PHOTO_LABEL'),
+          color: (this.hasMedia ? 'grey-9' : 'secondary'),
+          handler: this.onCapturePhoto
+        })
+      }
       actions.push({
-        id: 'add-media', icon: 'las la-paperclip', tooltip: this.$t('KMediaBrowser.ADD_MEDIA_LABEL'),
-        color: (this.hasMedia ? 'grey-9' : 'secondary'), handler: () => this.$refs.uploadModal.open()
+        id: 'add-media',
+        icon: 'las la-paperclip',
+        tooltip: this.$t('KMediaBrowser.ADD_MEDIA_LABEL'),
+        color: (this.hasMedia ? 'grey-9' : 'secondary'),
+        handler: () => this.$refs.uploadModal.open()
       })
       actions.push({
         id: 'close-browser', icon: 'las la-times', tooltip: this.$t('KMediaBrowser.CLOSE_ACTION'), handler: this.onClose

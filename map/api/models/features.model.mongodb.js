@@ -14,6 +14,8 @@ export default function (app, options) {
       geometry: 1, time: 1
     })
     options.Model.createIndex(index)
+    // Ascending/Descending sort seems to require a different index in aggregation hint
+    options.Model.createIndex(Object.assign(index, { time: -1 }))
   }
   // Create index notably used for timeseries aggregation if variables are defined
   if (options.variables) {
@@ -22,6 +24,8 @@ export default function (app, options) {
         ['properties.' + (variable.name ? variable.name : variable)]: 1, time: 1
       })
       options.Model.createIndex(index)
+      // Ascending/Descending sort seems to require a different index in aggregation hint
+      options.Model.createIndex(Object.assign(index, { time: -1 }))
     })
   }
   try {
