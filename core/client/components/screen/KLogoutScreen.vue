@@ -1,7 +1,7 @@
 <template>
-  <KScreen 
-    title="KLogoutScreen.TITLE" 
-    :actions="actions" 
+  <KScreen
+    title="KLogoutScreen.TITLE"
+    :actions="actions"
   />
 </template>
 

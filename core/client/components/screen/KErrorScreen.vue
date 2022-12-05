@@ -1,7 +1,7 @@
 <template>
-  <KScreen 
-    :title="message" 
-    :actions="actions" 
+  <KScreen
+    :title="message"
+    :actions="actions"
   />
 </template>
 
@@ -12,7 +12,7 @@ import { ref } from 'vue'
 import KScreen from './KScreen.vue'
 
 // Data
-const message = ref(_.get(config, 'screens.error.message', 'KErrorScreen.MESSAGE' ))
+const message = ref(_.get(config, 'screens.error.message', 'KErrorScreen.MESSAGE'))
 const defaultActions = [{
   id: 'go-home-action',
   icon: 'las la-home',
@@ -20,5 +20,5 @@ const defaultActions = [{
   renderer: 'form-button',
   route: { name: 'index' }
 }]
-const actions = ref(_.get(config, 'screens.error.actions', defaultActions ))
+const actions = ref(_.get(config, 'screens.error.actions', defaultActions))
 </script>

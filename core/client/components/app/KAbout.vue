@@ -16,7 +16,7 @@
       <q-separator />
     </div>
     <!-- Actions -->
-    <KPanel 
+    <KPanel
       id="actions"
       :content="actions"
       class="justify-center"
@@ -57,18 +57,18 @@ bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
 const logoComponent = ref(_.get(config, 'logoComponent', 'foundation/KLogo'))
 // actions
 const defaultActions = [
-  { 
-    id: 'report-bug', 
-    icon: 'las la-bug', 
-    label: 'KAbout.BUG_REPORT', 
-    stack: true, 
-    url: `mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}` 
-  }, { 
-    id: 'platform-info', 
-    icon: 'las la-desktop', 
-    label: 'KAbout.PLATFORM_INFO', 
-    stack: true, 
-    dialog: { title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform', okAction: 'CLOSE' } 
+  {
+    id: 'report-bug',
+    icon: 'las la-bug',
+    label: 'KAbout.BUG_REPORT',
+    stack: true,
+    url: `mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`
+  }, {
+    id: 'platform-info',
+    icon: 'las la-desktop',
+    label: 'KAbout.PLATFORM_INFO',
+    stack: true,
+    dialog: { title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform', okAction: 'CLOSE' }
   }
 ]
 const actions = ref(_.get(config, 'about.actions', defaultActions))

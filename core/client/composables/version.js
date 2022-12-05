@@ -50,7 +50,7 @@ export function useVersion () {
       Version.value.api.buildNumber = apiCapabilities.buildNumber
       // check for mismatch
       if (!_.isEqual(Version.value.client, Version.value.api)) {
-        $q.notify({ type: 'negative', i18n: 'composables.VERSION_MISMATCH'})
+        $q.notify({ type: 'negative', message: i18n.t('composables.VERSION_MISMATCH') })
       }
     }
   })

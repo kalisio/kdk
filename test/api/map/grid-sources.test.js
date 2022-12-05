@@ -33,7 +33,7 @@ function readRange (file, range) {
   const fd = fs.openSync(file, 'r')
   fs.readSync(fd, data, 0, size, offset)
   fs.closeSync(fd)
-  return { data, range: `bytes ${offset}-${offset+size}/${size}` }
+  return { data, range: `bytes ${offset}-${offset + size}/${size}` }
 }
 
 // checks that bboxa constains bboxb
@@ -172,7 +172,7 @@ describe('map:grid-source', () => {
         .get('/data.tif')
         .reply(function (uri, requestBody) {
           const res = readRange(path.join(__dirname, '/data/GetCoverage.tif'), this.req.headers.range)
-          if (res.data) return [206, res.data, {'content-range': res.range}]
+          if (res.data) return [206, res.data, { 'content-range': res.range }]
           return [404]
         })
 
@@ -189,7 +189,7 @@ describe('map:grid-source', () => {
         .get('/data.tif')
         .reply(function (uri, requestBody) {
           const res = readRange(path.join(__dirname, '/data/GetCoverage.tif', this.req.headers.range))
-          if (res.data) return [206, res.data, {'content-range': res.range}]
+          if (res.data) return [206, res.data, { 'content-range': res.range }]
           return [404]
         })
 

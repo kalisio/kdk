@@ -1,5 +1,5 @@
 <template>
-  <KScreen 
+  <KScreen
     :actions="actions"
   >
     <div class="column items-center q-gutter-y-md">

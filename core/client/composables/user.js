@@ -6,12 +6,11 @@ import { Store } from '../store.js'
 const User = ref(null)
 
 export function useUser () {
-
   // functions
   async function restoreSession () {
     try {
       const response = await api.reAuthenticate()
-      const user = response.user ? response.user : { name: i18b.t('composables.ANONYMOUS'), anonymous: true }
+      const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
       Store.set('user', user)
       User.value = user
     } catch (error) {

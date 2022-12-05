@@ -41,7 +41,7 @@ const refForm = ref()
 const actions = ref(_.get(config, 'screens.endpoint.actions', []))
 
 // Functions
-function  getFormSchema () {
+function getFormSchema () {
   return {
     $schema: 'http://json-schema.org/draft-06/schema#',
     $id: 'http://kalisio.xyz/schemas/change-endpoint.json#',
