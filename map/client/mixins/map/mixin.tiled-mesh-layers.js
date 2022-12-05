@@ -148,9 +148,7 @@ export const tiledMeshLayers = {
       // Build url generator context
       const context = {
         jwtToken: await activity.$api.get('storage').getItem(activity.$config('gatewayJwt')),
-        time: Time.getCurrentTime(),
-        // TODO: remove
-        testToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOiI2MjIyM2E4NGYyMzMwOTAwMzJhMTk3YjIiLCJpYXQiOjE2NjY4NjUyMDUsImV4cCI6MTY2Njk1MTYwNSwiYXVkIjoidGVzdC5rYWxpc2lvLnh5eiIsImlzcyI6ImthbGlzaW8iLCJzdWIiOiIzZDk4MWMxYi1iMGFmLTQxMzktYTJjYS1lMzA0YTRmMDE4YTYiLCJqdGkiOiIzZjYzNDYzNS1lZDVlLTRiNjEtOTdmOC0yOGJlYmNjYzI1NzEifQ.ZxfOoqac-aL3izfzm-UziAMgOBlfZ_prnn80kx66Jj4'
+        time: Time.getCurrentTime()
       }
       const meteoModel = source.meteoModel ? activity.forecastModel : null
       Object.assign(context, dsu.defaultContext(context, layer, source, meteoModel))
