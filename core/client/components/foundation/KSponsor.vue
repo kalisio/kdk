@@ -20,10 +20,10 @@
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
 
-// data
+// Data
 const $q = useQuasar()
 
-// computed
+// Computed
 const computedLogoWidth = computed(() => {
   if ($q.screen.lt.sm) return '64px'
   return '72px'

@@ -14,10 +14,10 @@ import _ from 'lodash'
 import config from 'config'
 import { ref } from 'vue'
 
-// data
+// Data
 const logo = ref(_.get(config, 'appLogo'))
 
-// props
+// Props
 defineProps({
   width: {
     type: String,

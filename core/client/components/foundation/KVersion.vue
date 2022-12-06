@@ -14,6 +14,6 @@
 <script setup>
 import { useVersion } from '../../composables'
 
-// data
+// Data
 const { clientVersionName, apiVersionName } = useVersion()
 </script>

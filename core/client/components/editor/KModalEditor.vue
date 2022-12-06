@@ -6,7 +6,7 @@
     v-model="isModalOpened"
   >
     <!-- Modal content -->
-    <k-form
+    <KForm
       :ref="onFormReferenceCreated"
       :schema="schema"
       @form-ready="onFormReady"
@@ -35,17 +35,38 @@ export default {
   computed: {
     buttons () {
       const buttons = [
-        { id: 'cancel-button', label: 'CANCEL', renderer: 'form-button', outline: true, disabled: this.processing, handler: () => this.closeModal() },
-        { id: 'apply-button', label: this.applyButton, renderer: 'form-button', loading: this.processing, handler: () => this.apply() }
+        {
+          id: 'cancel-button',
+          label: 'CANCEL',
+          renderer: 'form-button',
+          outline: true,
+          disabled: this.processing,
+          handler: () => this.closeModal()
+        },
+        {
+          id: 'apply-button',
+          label: this.applyButton,
+          renderer: 'form-button',
+          loading: this.processing,
+          handler: () => this.apply()
+        }
       ]
       if (this.clearButton !== '') {
         buttons.push({
-          id: 'clear-button', label: this.clearButton, renderer: 'form-button', outline: 'true', handler: () => this.clearEditor()
+          id: 'clear-button',
+          label: this.clearButton,
+          renderer: 'form-button',
+          outline: 'true',
+          handler: () => this.clearEditor()
         })
       }
       if (this.resetButton !== '') {
         buttons.push({
-          id: 'reset-button', label: this.resetButton, renderer: 'form-button', outline: 'true', handler: () => this.resetEditor()
+          id: 'reset-button',
+          label: this.resetButton,
+          renderer: 'form-button',
+          outline: 'true',
+          handler: () => this.resetEditor()
         })
       }
       return buttons
