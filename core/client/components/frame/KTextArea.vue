@@ -29,7 +29,7 @@
         :icon="isExpanded ? 'las la-angle-up' : 'las la-ellipsis-h'"
         :tooltip="isExpanded ? 'KTextArea.COLLAPSE' : ''"
         size="xs"
-        :handler="() => isExpanded = false"
+        :handler="() => isExpanded = !isExpanded"
         :propagate="false"
       />
     </div>
