@@ -48,7 +48,7 @@ const bugReport = {
   subject: i18n.t('KAbout.BUG_REPORT_SUBJECT', {
     appName: _.get(config, 'appName'),
     clientVersion: clientVersionName.value,
-    appVersion: apiVersionName.value
+    apiVersion: apiVersionName.value
   }),
   body: i18n.t('KAbout.BUG_REPORT_BODY')
 }
