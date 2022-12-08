@@ -4,6 +4,7 @@ import { Store } from './store.js'
 import { Layout } from './layout.js'
 import { Time } from './time.js'
 import { Units } from './units.js'
+import { Capabilities } from './capabilities.js'
 import { Reader } from './reader.js'
 import { Storage } from './storage.js'
 import { Filter } from './filter.js'
@@ -52,6 +53,7 @@ export default function init () {
   // Last, create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
+  Capabilities.initialize()
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()

@@ -2,7 +2,7 @@
   <div class="column">
     <!-- Banner -->
     <div class="row justify-center">
-      <component :is="computedLogoComponent" />
+      <component :is="logoComponent" />
     </div>
     <!-- Version -->
     <KVersion class="q-pa-sm" />
@@ -29,7 +29,7 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { i18n } from '../../i18n'
 import { loadComponent } from '../../utils'
 import { useVersion, usePlatform } from '../../composables'
@@ -40,6 +40,8 @@ import KPanel from '../frame/KPanel.vue'
 // Data
 const { clientVersionName, apiVersionName } = useVersion()
 const { Platform } = usePlatform()
+// logo component
+const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'foundation/KLogo')))
 // bug report
 const bugReport = {
   address: _.get(config, 'publisherContact'),
@@ -53,8 +55,6 @@ const bugReport = {
 _.forOwn(Platform.value, (value, key) => { bugReport.body += `${key}: ${value}%0D%0A` })
 bugReport.body += `domain: ${_.get(config, 'domain')}%0D%0A`
 bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
-// logo component
-const logoComponent = ref(_.get(config, 'logoComponent', 'foundation/KLogo'))
 // actions
 const defaultActions = [
   {
@@ -72,9 +72,4 @@ const defaultActions = [
   }
 ]
 const actions = ref(_.get(config, 'about.actions', defaultActions))
-
-// Computed
-const computedLogoComponent = computed(() => {
-  return loadComponent(logoComponent.value)
-})
 </script>

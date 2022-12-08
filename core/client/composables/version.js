@@ -3,8 +3,7 @@ import logger from 'loglevel'
 import config from 'config'
 import { ref, computed, readonly, watch } from 'vue'
 import { useQuasar } from 'quasar'
-import { i18n } from '../i18n.js'
-import { useCapabilities } from './capabilities.js'
+import { Capabilities } from '../capabilities.js'
 
 const Version = ref({
   client: {
@@ -18,10 +17,11 @@ const Version = ref({
   flavor: _.get(config, 'flavor')
 })
 
+let isInitialized = false
+
 export function useVersion () {
   // Data
   const $q = useQuasar()
-  const { Capabilities } = useCapabilities()
 
   // Computed
   const clientVersionName = computed(() => {
@@ -37,23 +37,13 @@ export function useVersion () {
     return version
   })
 
-  // Function
-  function setApiVersion () {
-    logger.debug('Setting API version from capabilities')
-    Version.value.api.number = Capabilities.value.version
-    Version.value.api.buildNumber = Capabilities.value.buildNumber
-    // check for mismatch
-    if (!_.isEqual(Version.value.client, Version.value.api)) {
-      $q.notify({ type: 'negative', message: i18n.t('composables.VERSION_MISMATCH') })
-    }
-  }
-
-  // Watch
-  watch(Capabilities, () => { setApiVersion() })
-
   // Immediate
-  if (Capabilities.value) {
-    setApiVersion()
+  if (!isInitialized) {
+    isInitialized = true
+    logger.debug('Setting API version from capabilities')
+    Version.value.api.number = Capabilities.get('version')
+    Version.value.api.buildNumber = Capabilities.get('buildNumber')
+    console.log(Version.value)
   }
 
   // Expose

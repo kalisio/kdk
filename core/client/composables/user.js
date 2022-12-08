@@ -8,12 +8,12 @@ import { defineAbilities } from '../../common/permissions.js'
 const User = ref(null)
 
 export function useUser () {
-  // functions
+  // Functions
   async function updateAbilities () {
     if (!User.value) return
     if (User.value.abilities) return
     User.value.abilities = await defineAbilities(User.value, api)
-    // TODO : ensure backward compatibility
+    // TODO: ensure backward compatibility
     Store.set('user.abilities', User.value.abilities)
     if (User.value.abilities) {
       logger.debug('New user abilities: ', User.value.abilities.rules)
@@ -23,7 +23,7 @@ export function useUser () {
     try {
       const response = await api.reAuthenticate()
       User.value = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
-      // TODO : ensure backward compatibility
+      // TODO: ensure backward compatibility
       Store.set('user', User.value)
     } catch (error) {
       // This ensure an old token is not kept when the user has been deleted
@@ -49,17 +49,17 @@ export function useUser () {
     const response = await api.authenticate(payload)
     // Anonymous user or service account ?
     User.value = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
-    // TODO : ensure backward compatibility
+    // TODO: ensure backward compatibility
     Store.set('user', User.value)
   }
   async function logout () {
     await api.logout()
     User.value = null
-    // TODO : ensure backward compatibility
+    // TODO: ensure backward compatibility
     Store.set('user', null)
   }
 
-  // expose
+  // Expose
   return {
     User: readonly(User),
     updateAbilities,

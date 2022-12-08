@@ -2,7 +2,7 @@
   <q-dialog v-model="showWelcome" persistent>
     <q-card class="q-pa-sm column q-gutter-y-md" style="min-width: 50vw">
       <!-- Logo -->
-      <component :is="computedLogoComponent" />
+      <component :is="logoComponent" />
       <!-- Carousel -->
       <div class="row justify-center">
         <q-carousel
@@ -54,33 +54,18 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref, computed, onBeforeUnmount } from 'vue'
+import { ref, onBeforeUnmount } from 'vue'
 import { openURL } from 'quasar'
 import { Store, api } from '../..'
 import { loadComponent } from '../../utils'
 import KAction from '../frame/KAction.vue'
 
-// props
-const props = defineProps({
-  logoComponent: {
-    type: String,
-    default: 'foundation/KLogo'
-  },
-  defaultTour: {
-    type: String,
-    default: 'home'
-  }
-})
-
-// data
+// Data
+const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'foundation/KLogo')))
+const defaultTour = _.get(config, 'welcome.tour', 'home' )
 const showWelcome = ref(false)
 const currentSlide = ref('welcome')
 const toggle = ref(false)
-
-// computed
-const computedLogoComponent = computed(() => {
-  return loadComponent(props.logoComponent)
-})
 
 // functions
 function getWelcomeKey () {
@@ -107,7 +92,7 @@ function onOnlineHelp () {
 }
 function onDefaultTour () {
   hide()
-  Store.patch('tours.current', { name: props.defaultTour })
+  Store.patch('tours.current', { name: defaultTour })
 }
 
 // hooks
