@@ -14,8 +14,8 @@ export const Capabilities = {
           .then(content => {
             this.content = content
             // TODO: ensure backward compatibility
-            Store.set('capabilities.api', capabilities)
-            Store.set('capabilities.client', capabilities)
+            Store.set('capabilities.api', content)
+            Store.set('capabilities.client', content)
           })
       })
   },
