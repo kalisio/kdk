@@ -111,7 +111,8 @@ export const Units = {
           velocity: 'm/s',
           temperature: 'degC',
           angle: 'deg',
-          precision: 1
+          notation: 'auto',
+          precision: 2
         }
       }))
     // Create units not defined by default in mathjs
@@ -134,8 +135,11 @@ export const Units = {
   get () {
     return Store.get('units')
   },
+  getDefaultNotation () {
+    return Store.get('units.default.notation', 'auto')
+  },
   getDefaultPrecision () {
-    return Store.get('units.default.precision', 1)
+    return Store.get('units.default.precision', 2)
   },
   getQuantities () {
     return _.keys(_.omit(this.get(), ['default']))
@@ -183,11 +187,19 @@ export const Units = {
     n = (targetUnit === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
     return n
   },
-  format (value, sourceUnit, targetUnit, options = { symbol: true }) {
+  format (value, sourceUnit, targetUnit, options) {
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
     const n = (targetUnit ? this.convert(value, sourceUnit, targetUnit) : value)
-    let output = n.toFixed(options.precision || this.getDefaultPrecision())
+    // Let options overrides defaults
+    options = Object.assign({
+      symbol: true,
+      notation: this.getDefaultNotation(),
+      precision: this.getDefaultPrecision(),
+      lowerExp: -this.getDefaultPrecision(),
+      upperExp: this.getDefaultPrecision()
+    }, options)
+    let output = math.format(value, options)
     if (options.symbol) {
       output += ` ${targetUnit ? this.getUnitSymbol(targetUnit) : this.getUnitSymbol(sourceUnit)}`
     }

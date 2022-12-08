@@ -197,14 +197,27 @@
         "quantity": "angle"
       }
     },
+    "defaultNotation": {
+      "type": "string",
+      "group": "schemas.NOTATION_SETTINGS",
+      "field": {
+        "component": "form/KSelectField",
+        "label": "schemas.NOTATION_FIELD_LABEL",
+        "options": [
+          { "label": "schemas.AUTO_NOTATION_FIELD_LABEL", "value": "auto", "selected": true },
+          { "label": "schemas.FIXED_NOTATION_FIELD_LABEL", "value": "fixed" },
+          { "label": "schemas.EXPONENTIAL_NOTATION_FIELD_LABEL", "value": "exponential" }
+        ]
+      }
+    },
     "defaultPrecision": {
       "type": "number",
-      "group": "schemas.UNITS_SETTINGS",
+      "group": "schemas.NOTATION_SETTINGS",
+      "minimum": 0,
+      "maximum": 6,
       "field": {
         "component": "form/KNumberField",
-        "label": "schemas.PRECISION_FIELD_LABEL",
-        "min": 0,
-        "max": 5
+        "label": "schemas.PRECISION_FIELD_LABEL"
       }
     }
   },

@@ -157,7 +157,12 @@
     "VELOCITY_FIELD_LABEL": "Default velocity unit",
     "TEMPERATURE_FIELD_LABEL": "Default temperature unit",
     "ANGLE_FIELD_LABEL": "Default angle unit",
-    "PRECISION_FIELD_LABEL": "Default number of decimal digits"
+    "NOTATION_SETTINGS": "Number notation settings",
+    "NOTATION_FIELD_LABEL": "Default number notation",
+    "AUTO_NOTATION_FIELD_LABEL": "Select the best-suited number notation",
+    "FIXED_NOTATION_FIELD_LABEL": "Fixed precision number notation",
+    "EXPONENTIAL_NOTATION_FIELD_LABEL": "Exponential number notation",
+    "PRECISION_FIELD_LABEL": "Default number of decimal or significant digits"
   },
   "tours": {
     "APP_BAR_OVERFLOW_MENU_LABEL": "When not visible, you can find it using the popup menu.",

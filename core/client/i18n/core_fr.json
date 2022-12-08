@@ -157,7 +157,12 @@
     "VELOCITY_FIELD_LABEL": "Unité de vitesse par défaut",
     "TEMPERATURE_FIELD_LABEL": "Unité de température par défaut",
     "ANGLE_FIELD_LABEL": "Unité d'angle par défaut",
-    "PRECISION_FIELD_LABEL": "Nombre de chiffre décimaux par défaut"
+    "NOTATION_SETTINGS": "Paramétrage de la notation numérique",
+    "NOTATION_FIELD_LABEL": "Notation numérique par défaut",
+    "AUTO_NOTATION_FIELD_LABEL": "Sélectionne la notation numérique la plus adaptée",
+    "FIXED_NOTATION_FIELD_LABEL": "Notation numérique à précision fixe",
+    "EXPONENTIAL_NOTATION_FIELD_LABEL": "Notation numérique scientifique",
+    "PRECISION_FIELD_LABEL": "Nombre de chiffres décimaux ou significatifs par défaut"
   },
   "tours": {
     "APP_BAR_OVERFLOW_MENU_LABEL": "Lorsqu'il n'est pas visible, vous pourrez le retrouver dans ce menu déroulant.",

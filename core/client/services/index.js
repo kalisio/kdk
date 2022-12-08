@@ -41,6 +41,7 @@ export default function init () {
       defaultVelocity: 'units.default.velocity',
       defaultTemperature: 'units.default.temperature',
       defaultAngle: 'units.default.angle',
+      defaultNotation: 'units.default.notation',
       defaultPrecision: 'units.default.precision'
     }
   })) // Default options can be overriden from app config
