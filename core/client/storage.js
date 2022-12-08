@@ -8,7 +8,7 @@ import { Notify } from 'quasar'
 
 export const Storage = {
   initialize () {
-    // Nothing to do now
+    this.useProxy = _.get(config, 'useProxy', false)
   },
   getService (context) {
     // Even when service is not yet declared feathers returns a wraper
@@ -19,7 +19,7 @@ export const Storage = {
         servicePath: api.getServicePath('storage', context).substr(1),
         transport: api.transporter,
         fetch: window.fetch.bind(window),
-        useProxy: true
+        useProxy: this.useProxy
       })
       service = api.createService('storage', {
         service,
