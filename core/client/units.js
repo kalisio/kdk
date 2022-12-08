@@ -199,7 +199,7 @@ export const Units = {
       lowerExp: -this.getDefaultPrecision(),
       upperExp: this.getDefaultPrecision()
     }, options)
-    let output = math.format(value, options)
+    let output = math.format(n, options)
     if (options.symbol) {
       output += ` ${targetUnit ? this.getUnitSymbol(targetUnit) : this.getUnitSymbol(sourceUnit)}`
     }

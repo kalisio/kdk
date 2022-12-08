@@ -27,11 +27,11 @@ const props = defineProps({
     default: null
   },
   okAction: {
-    type: String,
+    type: [String, Object],
     default: 'OK'
   },
   cancelAction: {
-    type: String,
+    type: [String, Object],
     default: undefined
   },
   maximized: {
@@ -48,19 +48,41 @@ const { dialogRef, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
 // computed
 const computedButtons = computed(() => {
-  const buttons = [{
-    id: 'ok-action',
-    label: props.okAction,
-    renderer: 'form-button',
-    handler: onDialogOK
-  }]
-  if (!_.isEmpty(props.cancelAction)) {
+  const buttons = []
+  if (typeof props.okAction === 'string') {
     buttons.push({
       id: 'ok-action',
       label: props.okAction,
       renderer: 'form-button',
-      handler: onDialogCancel
+      handler: onDialogOK
     })
+  } else {
+    const okButton = _.clone(props.okAction)
+    if (okButton.handler) {
+      okButton.handler = () => {
+        okButton.handler()
+        onDialogOK()
+      }
+    }
+    buttons.push(okButton)
+  }
+  if (!_.isEmpty(props.cancelAction)) {
+    if (typeof props.cancelAction === 'string') {
+      buttons.push({
+        id: 'ok-action',
+        label: props.okAction,
+        renderer: 'form-button',
+        handler: onDialogCancel
+      })
+    } else {
+      const cancelButton = _.clone(props.cancelAction)
+      if (cancelButton.handler) {
+        cancelButton.handler = () => {
+          cancelButton.handler()
+          onDialogCancel()
+        }
+      }
+    }
   }
   return buttons
 })

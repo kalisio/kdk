@@ -8,20 +8,19 @@ import { Store } from './store.js'
 export const Capabilities = {
   initialize () {
     window.fetch(api.getBaseUrl() + _.get(config, 'apiPath') + '/capabilities')
-    .then(capabilities => {
-      logger.debug('Fetching api capabilities')
-      capabilities.json()
-      .then(content => {
-        this.content = content
-        // TODO: ensure backward compatibility
-        Store.set('capabilities.api', capabilities)
-        Store.set('capabilities.client', capabilities)
+      .then(capabilities => {
+        logger.debug('Fetching api capabilities')
+        capabilities.json()
+          .then(content => {
+            this.content = content
+            // TODO: ensure backward compatibility
+            Store.set('capabilities.api', capabilities)
+            Store.set('capabilities.client', capabilities)
+          })
       })
-    })
   },
   get (key) {
     if (this.content) return _.get(this.content, key)
     logger.debug('Capabilities not initialized')
-    return
   }
 }

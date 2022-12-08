@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import config from 'config'
 import logger from 'loglevel'
 import { getClientService } from '@kalisio/feathers-s3/client.js'

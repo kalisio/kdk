@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import { ref, computed, readonly, watch } from 'vue'
-import { useQuasar } from 'quasar'
+import { ref, computed, readonly } from 'vue'
 import { Capabilities } from '../capabilities.js'
 
 const Version = ref({
@@ -20,9 +19,6 @@ const Version = ref({
 let isInitialized = false
 
 export function useVersion () {
-  // Data
-  const $q = useQuasar()
-
   // Computed
   const clientVersionName = computed(() => {
     const clientVersion = Version.value.client
