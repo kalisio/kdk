@@ -20,6 +20,7 @@ import * as readers from './readers/index.js'
 // export * from './components'
 
 export * from './api.js'
+export * from './capabilities.js'
 export * from './events.js'
 export * from './services/index.js'
 export * from './store.js'
