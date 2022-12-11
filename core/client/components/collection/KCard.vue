@@ -1,5 +1,9 @@
 <template>
-  <q-card bordered @click="onItemSelected" class="no-shadow">
+  <q-card 
+    bordered 
+    :class="computedClass"
+    @click="onItemSelected" 
+  >
     <!--
       Header section
     -->
@@ -121,12 +125,22 @@ export default {
       type: Boolean,
       default: true
     },
+    shadow: {
+      type: Number,
+      default: 0,
+      validator: (value) => {
+        return value >= 0 && value <= 24
+      }
+    },
     dense: {
       type: Boolean,
       default: false
     }
   },
   computed: {
+    computedClass () {
+      return this.shadow > 0 ? `shadow-${this.shadow}` : 'no-shadow'
+    },
     computedHeader () {
       if (this.header) return this.header
       const actions = _.filter(this.itemActions, { scope: 'header' })
