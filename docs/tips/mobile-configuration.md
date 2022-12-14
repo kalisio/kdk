@@ -38,7 +38,7 @@ The following procedure must be performed for each flavor: `dev`, `test` and `pr
 
 ### Debug provisioning profile
 
-In order to debug a cordova application you will need to use a develoment provisiong profile due to some [restrictions](https://webkit.org/web-inspector/enabling-web-inspector/). You can do this directly through your Apple Developer account but you will need a Certificate Signing Request first. To generate it you can use `openssl`:
+In order to debug a cordova application you will need to use a develoment provisiong profile due to some [restrictions](https://webkit.org/web-inspector/enabling-web-inspector/). You can do this directly through your Apple Developer account without a Mac/XCode but you will need a Certificate Signing Request first. To generate it you can use `openssl`:
 ```
 openssl genrsa -out ios-dev.key 2048
 openssl req -new -key ios-dev.key -out ios-dev.csr
@@ -51,9 +51,27 @@ Use the following properties to generate the signing request:
 * CN = Account Holder of your Apple Developer account e.g John Doe
 * Email Address = Email Address of your Apple Developer account
 
-Then create an iOS development certificate with your Apple Developer account and use the generated CSR.
+Then, create an iOS development certificate with your Apple Developer account and the generated CSR.
+
+Before creating the provisioning profile you will need to register the devices associated with it. Connect your device(s) and use iTunes to display the(ir) UDID in order to register it on your Apple Developer account.
+
+Last, update your `build.json` to change the `packageType` and provisioning profile ID:
+```json
+{ 
+  "ios": {
+    "release": {
+      "codeSignIdentity": "iPhone Developer",
+      "provisioningProfile": "xxx",
+      "developmentTeam": "yyy",
+      "packageType": "development"
+    }
+  }
+}
+```
 
 If you'd like to check the content of a provisioning profile here is the command to extract the plist file from it: `openssl smime -inform der -verify -noverify -in file.mobileprovision`
+
+> Note that you cannot push applications with a development profile on the store so that you will need to install the IPA manually on your device using iTunes.
 
 ### Certificates tips
 
