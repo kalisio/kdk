@@ -15,12 +15,12 @@ import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
 import { baseWidget } from '../../../../core/client/mixins'
 import { KChart } from '../../../../core/client/components'
+import { useCurrentActivity, useHighlight } from '../../composables'
 import 'chartjs-adapter-moment'
 import { getCssVar } from 'quasar'
 
 export default {
   name: 'k-time-series',
-  inject: ['kActivity'],
   components: {
     KChart
   },
@@ -28,10 +28,6 @@ export default {
     baseWidget
   ],
   props: {
-    selection: {
-      type: Object,
-      default: () => {}
-    },
     variables: {
       type: Array,
       default: () => []
@@ -40,14 +36,14 @@ export default {
   computed: {
     title () {
       // Compute the layer name if any
-      const layerName = this.selection.layer ? this.$t(this.selection.layer.name) : undefined
+      const layerName = this.hasSelectedFeature() && this.getSelectedLayer() ? this.$t(this.getSelectedLayer().name) : undefined
       // Compute the probe location name
       let probeName
       if (this.probedLocation) {
         // Check if we have a property as tooltip or popup and use it
-        if (this.selection.layer) {
-          const probeNameProperty = _.get(this.selection.layer, `${this.kActivity.engine}.tooltip.property`,
-            _.get(this.selection.layer, `${this.kActivity.engine}.popup.pick[0]`))
+        if (this.getSelectedLayer()) {
+          const probeNameProperty = _.get(this.getSelectedLayer(), `${this.kActivity.engine}.tooltip.property`,
+            _.get(this.getSelectedLayer(), `${this.kActivity.engine}.popup.pick[0]`))
           if (probeNameProperty) probeName = _.get(this.probedLocation, `properties.${probeNameProperty}`)
         }
         // Otherwise test for conventional names otherwise
@@ -58,13 +54,15 @@ export default {
       return ''
     },
     location () {
-      return this.selection.location
+      if (this.hasSelectedLocation()) return this.getSelectedLocation()
+      else if (this.hasProbedLocation()) return this.getProbedLocation()
     },
     feature () {
-      return this.selection.feature
+      return this.hasSelectedFeature() && this.getSelectedFeature()
     },
     layer () {
-      return this.selection.layer
+      if (this.hasSelectedLayer()) return this.getSelectedLayer()
+      else if (this.hasProbedLayer()) return this.getProbedLayer()
     },
     probedVariables () {
       // If the feature is linked to a layer with variables use it
@@ -76,6 +74,7 @@ export default {
     variables: function () {
       this.refresh()
     },
+    // This also cover the case where the feature changes
     location: function () {
       this.refresh()
     }
@@ -147,6 +146,8 @@ export default {
           values = values.map((value) => Object.assign(value, { x: new Date(value.x).getTime() }))
           this.datasets.push(_.merge({
             label: `${label} (${Units.getUnitSymbol(unit)})`,
+            baseUnit,
+            unit,
             data: values,
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
@@ -170,11 +171,17 @@ export default {
         // Variable available for feature ?
         if (this.hasVariable(name, properties, variable.baseQuery)) {
           this.yAxes[`y${axisId}`] = _.merge({
-            unit: unit,
+            baseUnit,
+            unit,
             display: 'auto',
             position: (axisId + 1) % 2 ? 'left' : 'right',
             ticks: {
-              color: this.datasets[axisId].backgroundColor
+              color: this.datasets[axisId].backgroundColor,
+              callback: function (value, index, values) {
+                if (values[index] !== undefined) {
+                  return Units.format(values[index].value, baseUnit, unit, { symbol: false })
+                }
+              }
             }
           }, _.get(variable.chartjs, 'yAxis', {}))
           axisId++
@@ -296,7 +303,10 @@ export default {
                     return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.short')}` : '')
                   },
                   label: (context) => {
-                    return context.dataset.label + ': ' + context.parsed.y.toFixed(2)
+                    const { baseUnit, unit, label } = context.dataset
+                    const y = _.get(context, 'parsed.y')
+                    // We have unit in label name for legend but we want it after the value for tooltip
+                    return label.replace(`(${Units.getUnitSymbol(unit)})`, '') + ': ' + Units.format(y, baseUnit, unit)
                   }
                 }
               },
@@ -333,17 +343,20 @@ export default {
       this.setupGraph()
     },
     updateProbedLocationHighlight () {
+      // FIXME: update code with new highlight composable
+      // this.clearHighlights()
       if (!this.probedLocation) return
       const windDirection = (this.kActivity.forecastLevel ? `windDirection-${this.kActivity.forecastLevel}` : 'windDirection')
       const windSpeed = (this.kActivity.forecastLevel ? `windSpeed-${this.kActivity.forecastLevel}` : 'windSpeed')
       // Use wind barbs on weather probed features
       const isWeatherProbe = (_.has(this.probedLocation, `properties.${windDirection}`) &&
                               _.has(this.probedLocation, `properties.${windSpeed}`))
-      const feature = (isWeatherProbe
-        ? this.kActivity.getProbedLocationForecastAtCurrentTime(this.probedLocation)
-        : this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
-
-      this.kActivity.updateSelectionHighlight('time-series', feature)
+      // const feature = (isWeatherProbe
+      //  ? this.kActivity.getProbedLocationForecastAtCurrentTime(this.probedLocation)
+      //  : this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
+      // this.highlight(feature)
+      if (isWeatherProbe) this.kActivity.getProbedLocationForecastAtCurrentTime(this.probedLocation)
+      else this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation)
     },
     onZoomRestored () {
       if (!_.isEmpty(this.zoomHistory)) {
@@ -450,12 +463,15 @@ export default {
       this.window.widgetActions = actions
     },
     async refresh () {
-      // Clear previous run timle setup if any
+      // Clear previous run time setup if any
       this.runTime = null
       this.probedLocation = null
+      this.clearHighlights()
+      if (!this.location) return
       // Then manage selection
-      this.kActivity.addSelectionHighlight('time-series')
-      this.kActivity.centerOnSelection()
+      this.highlight(this.location)
+      if (this.hasProbedLocation()) this.centerOnProbe()
+      else this.centerOnSelection()
       // Update timeseries data if required
       const { start, end } = Time.getRange()
       // No feature clicked => dynamic weacast probe at position
@@ -504,6 +520,7 @@ export default {
     Time.patchRange({ start, end })
   },
   beforeUnmount () {
+    this.clearHighlights()
     // Release listeners
     this.$events.off('time-current-time-changed', this.refresh)
     this.$events.off('time-range-changed', this.refresh)
@@ -511,7 +528,12 @@ export default {
     this.$events.off('timeseries-span-changed', this.refresh)
     this.kActivity.$engineEvents.off('forecast-model-changed', this.refresh)
     this.kActivity.$engineEvents.off('selected-level-changed', this.refresh)
-    this.kActivity.removeSelectionHighlight('time-series')
+  },
+  setup () {
+    return {
+      ...useCurrentActivity(),
+      ...useHighlight('time-series', { 'stroke-color': getCssVar('primary'), 'fill-opacity': 0, zOrder: 1 })
+    }
   }
 }
 </script>

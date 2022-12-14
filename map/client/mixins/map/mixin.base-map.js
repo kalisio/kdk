@@ -24,6 +24,7 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { Time } from '../../../../core/client/time.js'
 import { getAppLocale } from '../../../../core/client/utils.js'
 import { uid } from 'quasar'
+import '../../leaflet/BoxSelection.js'
 import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 

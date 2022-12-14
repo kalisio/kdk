@@ -5,6 +5,7 @@ import bbox from '@turf/bbox'
 import { featureEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
 import { tile2key, getParentTileInTileSet } from './utils.js'
+import { getFeatureId } from '../utils.js'
 
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
@@ -19,8 +20,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.pendingStationUpdates = []
 
     this.getFeatureKey = (feature) => {
-      const id = _.get(this.layer, 'featureId', '_id')
-      return _.get(feature, 'properties.' + id, _.get(feature, id))
+      return getFeatureId(feature, this.layer)
     }
 
     this.featureSource = options.featureSource

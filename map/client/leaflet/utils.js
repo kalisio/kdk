@@ -60,14 +60,18 @@ export function unbindLeafletEvents (object, events) {
 
 export const LeafletEvents = {
   Map: ['baselayerchange', 'overlayadd', 'overlayremove', 'layeradd', 'layerremove', 'zoomlevelschange',
-    'resize', 'unload', 'viewreset', 'load', 'zoomstart', 'movestart', 'zoom', 'move', 'zoomend', 'moveend',
+    'resize', 'unload', 'viewreset', 'load',
+    'zoomstart', 'boxzoomstart', 'boxselectionstart', 'movestart',
+    'zoom', 'move',
+    'zoomend', 'boxzoomend', 'boxselectionend', 'moveend',
     'click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'contextmenu',
     'keypress', 'preclick', 'moveend', 'zoomanim', 'fullscreenchange'],
   Popup: ['add', 'remove'],
   Tooltip: ['add', 'remove'],
   Layer: ['add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'],
   Feature: ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'contextmenu',
-    'dragstart', 'dragend', 'drag', 'movestart', 'moveend', 'move']
+    'dragstart', 'dragend', 'drag', 'movestart', 'moveend', 'move'],
+  Cluster: ['spiderfied', 'unspiderfied']
 }
 
 export function getHtmlTable (properties) {

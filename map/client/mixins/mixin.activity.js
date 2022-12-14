@@ -156,6 +156,9 @@ export const activity = {
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return false
       return _.get(layer, 'isSelectable', true)
     },
+    isLayerProbable (layer) {
+      return _.get(layer, 'isProbable', false)
+    },
     isLayerStorable (layer) {
       // Only possible when not saved by default
       if (layer._id) return false
@@ -195,9 +198,6 @@ export const activity = {
       // Store the actions
       layer.actions = actions
       return actions
-    },
-    onLayerAdded (layer) {
-      this.configureLayerActions(layer)
     },
     async onTriggerLayer (layer) {
       if (!this.isLayerVisible(layer.name)) {
@@ -368,12 +368,6 @@ export const activity = {
       this.engine = engine
       this.engineReady = true
     },
-    onProbeLocation () {
-      this.setCursor('probe-cursor')
-      this.$engineEvents.once('click', () => {
-        this.unsetCursor('probe-cursor')
-      })
-    },
     onToggleFullscreen () {
       if (!this.$q.fullscreen.isActive) this.$q.fullscreen.request()
       else this.$q.fullscreen.exit()
@@ -464,12 +458,12 @@ export const activity = {
   mounted () {
     this.$engineEvents.on('map-ready', this.onEngineReady)
     this.$engineEvents.on('globe-ready', this.onEngineReady)
-    this.$engineEvents.on('layer-added', this.onLayerAdded)
+    this.$engineEvents.on('layer-added', this.configureLayerActions)
   },
   beforeUnmount () {
     this.$engineEvents.off('map-ready', this.onEngineReady)
     this.$engineEvents.off('globe-ready', this.onEngineReady)
-    this.$engineEvents.off('layer-added', this.onLayerAdded)
+    this.$engineEvents.off('layer-added', this.configureLayerActions)
     this.finalize()
   }
 }

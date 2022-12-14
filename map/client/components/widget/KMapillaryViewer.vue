@@ -14,21 +14,23 @@ import distance from '@turf/distance'
 import { point } from '@turf/helpers'
 import { baseWidget } from '../../../../core/client/mixins'
 import { KPanel } from '../../../../core/client/components'
+import { useCurrentActivity, useHighlight } from '../../composables'
 
 export default {
-  inject: ['kActivity'],
   components: {
     KPanel
   },
   mixins: [baseWidget],
-  data () {
-    return {
-      selection: this.$store.get('selection')
+  computed: {
+    location () {
+      return this.hasSelectedLocation() && this.getSelectedLocation()
     }
   },
   watch: {
-    'selection.location': function () {
-      this.refresh()
+    location: {
+      handler () {
+        this.refresh()
+      }
     },
     widgetHeight: {
       handler () {
@@ -38,14 +40,14 @@ export default {
   },
   methods: {
     saveStates () {
-      this.$store.set('selection.states.mapillary', {
+      this.selection.mapillary = {
         location: this.location,
         bearing: this.bearing,
         imageId: this.imageId
-      })
+      }
     },
     restoreStates () {
-      const states = this.$store.get('selection.states.mapillary')
+      const states = this.selection.mapillary
       this.location = states.location
       this.bearing = states.bearing
       this.imageId = states.imageId
@@ -79,12 +81,12 @@ export default {
     async refresh () {
       // Refresh the actions
       this.refreshActions()
-      if (_.has(this.selection, 'states.mapillary')) {
+      if (_.has(this.selection, 'mapillary')) {
         this.restoreStates()
         if (this.imageId) await this.refreshView()
         else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
-      } else {
-        const location = this.selection.location
+      } else if (this.hasSelectedItem()) {
+        const location = this.getSelectedLocation()
         if (location) await this.moveCloseTo(location.lat, location.lng)
       }
       // Refresh the actions
@@ -125,7 +127,7 @@ export default {
       if (this.location) this.kActivity.center(this.location.lng, this.location.lat)
     },
     async refreshView () {
-      this.kActivity.addSelectionHighlight('mapillary', this.getMarkerFeature())
+      this.highlight(this.getMarkerFeature())
       try {
         await this.mapillaryViewer.moveTo(this.imageId)
       } catch (error) {
@@ -141,7 +143,7 @@ export default {
       this.location = image.lngLat
       this.bearing = await this.mapillaryViewer.getBearing()
       this.centerMap()
-      this.kActivity.updateSelectionHighlight('mapillary', this.getMarkerFeature())
+      this.highlight(this.getMarkerFeature())
     }
   },
   mounted () {
@@ -159,12 +161,17 @@ export default {
     this.refresh()
   },
   async beforeUnmount () {
+    this.clearHighlights()
     // Remove event listeners
     this.mapillaryViewer.off('image', this.onImageEvent)
-    // Remove the marker
-    this.kActivity.removeSelectionHighlight('mapillary')
     // Save the states
     this.saveStates()
+  },
+  setup () {
+    return {
+      ...useCurrentActivity(),
+      ...useHighlight('mapillary', { zOrder: 1 })
+    }
   }
 }
 </script>

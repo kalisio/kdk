@@ -1,18 +1,42 @@
-import _ from 'lodash'
-import { reactive } from 'vue'
+import { ref, shallowRef, readonly } from 'vue'
+import { useStore } from './store.js'
+import { useSelection } from './selection.js'
 
-// states store
-const activityStates = {}
+const kActivity = shallowRef(null)
+const kActivityName = ref(null)
 
 export function useActivity (name) {
   // data
-  if (!_.has(activityStates, name)) { // Initialize on first call
-    _.set(activityStates, name, reactive({}))
+  // state store
+  const { store } = useStore(`activities.${name}`)
+
+  // functions
+  function setCurrentActivity (activity) {
+    kActivityName.value = name
+    kActivity.value = activity
   }
-  const state = _.get(activityStates, name)
 
   // expose
   return {
-    state
+    state: store,
+    setCurrentActivity,
+    ...useSelection(name)
   }
+}
+
+export function useCurrentActivity () {
+  // expose
+  const expose = {
+    kActivity: readonly(kActivity),
+    kActivityName: readonly(kActivityName)
+  }
+  if (kActivityName.value) {
+    const { store } = useStore(`activities.${kActivityName.value}`)
+
+    Object.assign(expose, {
+      state: readonly(store),
+      ...useSelection(kActivityName.value)
+    })
+  }
+  return expose
 }

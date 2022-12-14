@@ -18,13 +18,13 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { copyToClipboard, exportFile } from 'quasar'
+import { copyToClipboard, exportFile, getCssVar } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
 import { KScrollArea, KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
+import { useCurrentActivity, useHighlight } from '../../composables'
 
 export default {
-  inject: ['kActivity'],
   components: {
     KScrollArea,
     KView,
@@ -32,20 +32,18 @@ export default {
     KStamp
   },
   mixins: [baseWidget],
-  props: {
-    feature: {
-      type: Object,
-      default: null
-    },
-    layer: {
-      type: Object,
-      default: null
-    }
-  },
   data () {
     return {
       schema: null,
       properties: null
+    }
+  },
+  computed: {
+    feature () {
+      return this.hasSelectedFeature() && this.getSelectedFeature()
+    },
+    layer () {
+      return this.hasSelectedLayer() && this.getSelectedLayer()
     }
   },
   watch: {
@@ -86,9 +84,10 @@ export default {
       this.properties = null
       this.schema = null
       this.refreshActions()
+      this.clearHighlights()
       if (this.feature && this.layer) {
-        this.kActivity.centerOnSelection()
-        this.kActivity.addSelectionHighlight('information-box')
+        this.highlight(this.feature)
+        this.centerOnSelection()
         let schema
         // Is there any schema ?
         if (_.has(this.layer, 'schema.content')) {
@@ -118,7 +117,7 @@ export default {
       }
     },
     onCenterOn () {
-      this.kActivity.centerOnSelection()
+      this.centerOnSelection()
     },
     async onCopyProperties () {
       if (this.feature) {
@@ -147,7 +146,13 @@ export default {
     }
   },
   beforeUnmount () {
-    this.kActivity.removeSelectionHighlight('information-box')
+    this.clearHighlights()
+  },
+  setup () {
+    return {
+      ...useCurrentActivity(),
+      ...useHighlight('information-box', { 'stroke-color': getCssVar('primary'), 'fill-opacity': 0, zOrder: 1 })
+    }
   }
 }
 </script>

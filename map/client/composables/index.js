@@ -1,1 +1,5 @@
 export * from './catalog.js'
+export * from './selection.js'
+export * from './highlight.js'
+export * from './probe.js'
+export * from './activity.js'

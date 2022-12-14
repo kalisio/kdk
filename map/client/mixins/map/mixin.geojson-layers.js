@@ -7,7 +7,7 @@ import { Time } from '../../../../core/client/time.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
+import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId } from '../../utils.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default Leaflet GeoJson utility to manage some specific use cases
@@ -50,15 +50,10 @@ export const geojsonLayers = {
       const leafletOptions = options.leaflet || options
       // Alter type as required by the plugin
       leafletOptions.type = 'realtime'
-      // We first need to create an underlying container or setup Id function
-      let featureId = _.get(options, 'featureId', _.get(leafletOptions, 'id', '_id'))
-      if (featureId) {
-        // Support compound index
-        featureId = (Array.isArray(featureId) ? featureId : [featureId])
-        _.set(leafletOptions, 'getFeatureId', (feature) => {
-          return featureId.map(id => _.get(feature, 'properties.' + id, _.get(feature, id))).join('-')
-        })
-      }
+      // We first need to create an underlying container and setup Id function
+      _.set(leafletOptions, 'getFeatureId', (feature) => {
+        return getFeatureId(feature, options)
+      })
       const container = _.get(leafletOptions, 'container')
       // If container given and not already instanciated, do it
       if (typeof container === 'string') {
@@ -227,6 +222,7 @@ export const geojsonLayers = {
       // Transfer pane if any
       if (leafletOptions.pane) clusterOptions.clusterPane = leafletOptions.pane
       leafletOptions.container = this.createLeafletLayer(clusterOptions)
+      bindLeafletEvents(leafletOptions.container, LeafletEvents.Cluster, this, options)
     },
     async createLeafletGeoJsonLayer (options) {
       const leafletOptions = options.leaflet || options

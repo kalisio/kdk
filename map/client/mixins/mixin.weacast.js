@@ -4,7 +4,8 @@ import logger from 'loglevel'
 import moment from 'moment'
 import { Time } from '../../../core/client/time.js'
 import { Units } from '../../../core/client/units.js'
-import { getNearestTime, SelectionLayerName } from '../utils.js'
+import { HighlightsLayerName } from '../composables/highlight.js'
+import { getNearestTime } from '../utils.js'
 
 export const weacast = {
   emits: [
@@ -291,7 +292,7 @@ export const weacast = {
       return html
     },
     getProbedLocationForecastTooltip (feature, layer, options) {
-      if (options.name !== SelectionLayerName) return
+      if (options.name !== HighlightsLayerName) return
 
       // Only wind/temperature can be available at different levels now
       const html = this.getForecastAsHtml(feature, {
@@ -329,7 +330,7 @@ export const weacast = {
       })
     },
     getProbedLocationForecastMarker (feature, latlng, options) {
-      if (options.name !== SelectionLayerName) return
+      if (options.name !== HighlightsLayerName) return
       // Use wind barbs on probed features
       const icon = this.createWindBarbMarker(feature, {
         windDirection: (this.forecastLevel ? `properties.windDirection-${this.forecastLevel}` : 'properties.windDirection'),

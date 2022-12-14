@@ -1,8 +1,8 @@
 <template>
-  <q-card 
-    bordered 
+  <q-card
+    bordered
     :class="computedClass"
-    @click="onItemSelected" 
+    @click="onItemSelected"
   >
     <!--
       Header section

@@ -2,7 +2,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
 import sift from 'sift'
 import { Time } from '../../../../core/client/time.js'
-import { fetchGeoJson } from '../../utils.js'
+import { fetchGeoJson, getFeatureId } from '../../utils.js'
 
 export const geojsonLayers = {
   methods: {
@@ -148,11 +148,8 @@ export const geojsonLayers = {
       // Check for valid type
       if (cesiumOptions.type !== 'geoJson') return
       // Cesium expect id to be in a 'id' property
-      let featureId = _.get(options, 'featureId')
-      // Support compound index
-      featureId = (Array.isArray(featureId) ? featureId : [featureId])
       options.processor = (feature) => {
-        feature.id = featureId.map(id => _.get(feature, 'properties.' + id, _.get(feature, id))).join('-')
+        feature.id = getFeatureId(feature, options)
       }
       // For activities
       if (_.has(this, 'activityOptions.engine.cluster')) {

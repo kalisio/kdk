@@ -2,13 +2,10 @@ import _ from 'lodash'
 import chroma from 'chroma-js'
 import config from 'config'
 import formatcoords from 'formatcoords'
-import { uid } from 'quasar'
 import { buildUrl } from '../../core/common/index.js'
 import { api, Store, utils as kCoreUtils } from '../../core/client/index.js'
 export * from './leaflet/utils.js'
 export * from './cesium/utils.js'
-
-export const SelectionLayerName = uid()
 
 // Build a color map from a JS object specification
 export function buildColorMap (options) {
@@ -136,6 +133,13 @@ export async function setEngineJwt (layers) {
     })
   }
   return layers
+}
+
+export function getFeatureId (feature, layer) {
+  let featureId = layer ? _.get(layer, 'featureId', '_id') : '_id'
+  // Support compound index
+  featureId = (Array.isArray(featureId) ? featureId : [featureId])
+  return featureId.map(id => _.get(feature, 'properties.' + id, _.get(feature, id))).join('-')
 }
 
 // Get JSON schema from GeoJson feature' properties

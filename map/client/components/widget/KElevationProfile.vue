@@ -7,35 +7,31 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { baseWidget } from '../../../../core/client/mixins'
-import { Units } from '../../../../core/client/units'
-import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { getCssVar, copyToClipboard, exportFile } from 'quasar'
 import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { segmentEach, coordEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
+import { baseWidget } from '../../../../core/client/mixins'
+import { Units } from '../../../../core/client/units'
+import { KChart, KPanel, KStamp } from '../../../../core/client/components'
+import { useCurrentActivity, useHighlight } from '../../composables'
 
 export default {
-  inject: ['kActivity'],
   components: {
     KChart,
     KPanel,
     KStamp
   },
   mixins: [baseWidget],
-  props: {
-    feature: {
-      type: Object,
-      default: null
-    },
-    layer: {
-      type: Object,
-      default: null
-    }
-  },
   computed: {
+    feature () {
+      return this.hasSelectedFeature() && this.getSelectedFeature()
+    },
+    layer () {
+      return this.hasSelectedLayer() && this.getSelectedLayer()
+    },
     title () {
       return _.get(this.feature, 'name') ||
              _.get(this.feature, 'label') ||
@@ -52,10 +48,10 @@ export default {
   },
   watch: {
     feature: {
-      immediate: true,
       handler () {
         this.refresh()
-      }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -129,7 +125,7 @@ export default {
               }
             } else if (args.event.type === 'mouseout') {
               chart.config.options.vline.enabled = false
-              this.kActivity.removeSelectionHighlight('elevation-profile')
+              this.unhighlight(this.highlightFeature)
             }
           },
           afterDraw: (chart) => {
@@ -174,13 +170,9 @@ export default {
                   }
                 }
 
-                const feature = along(segment, abscissaKm, { units: 'kilometers' })
-                if (this.kActivity.hasSelectionHighlight('elevation-profile')) {
-                  this.kActivity.updateSelectionHighlight('elevation-profile', feature)
-                } else {
-                  feature.properties = { 'marker-type': 'marker' }
-                  this.kActivity.addSelectionHighlight('elevation-profile', feature)
-                }
+                this.highlightFeature = along(segment, abscissaKm, { units: 'kilometers' })
+                this.highlightFeature.properties = { 'marker-type': 'marker' }
+                this.highlight(this.highlightFeature)
               }
             }
 
@@ -328,6 +320,7 @@ export default {
     async refresh () {
       const maxResolution = 30
       this.profile = null
+      this.clearHighlights()
       this.refreshActions()
       if (!this.layer || !this.feature) return
 
@@ -338,13 +331,13 @@ export default {
         this.$notify({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
-
+      this.highlight(this.feature)
       this.chartDistanceUnit = 'm'
       this.chartHeightUnit = Units.getDefaultUnit('altitude')
 
       // TODO: this is the window size, not the widget size ...
-      const windowSize = this.$store.get('window.size')
-      const chartWidth = windowSize[0]
+      const { window } = this.kActivity.findWindow('elevation-profile')
+      const chartWidth = window.size[0]
 
       const queries = []
       const resolution = _.get(this.feature, 'properties.elevationProfile.resolution')
@@ -467,7 +460,7 @@ export default {
       this.refreshActions()
     },
     onCenterOn () {
-      this.kActivity.centerOnSelection()
+      this.centerOnSelection()
     },
     async onCopyProfile () {
       if (this.profile) {
@@ -490,7 +483,13 @@ export default {
     }
   },
   beforeUnmount () {
-    this.kActivity.removeSelectionHighlight('elevation-profile')
+    this.clearHighlights()
+  },
+  setup () {
+    return {
+      ...useCurrentActivity(),
+      ...useHighlight('elevation-profile', { 'stroke-color': getCssVar('primary'), 'fill-opacity': 0, zOrder: 1 })
+    }
   }
 }
 </script>
