@@ -9,7 +9,7 @@ import { Notify } from 'quasar'
 
 export const Storage = {
   initialize () {
-    this.useProxy = _.get(config, 'useProxy', false)
+    this.useProxy = _.get(config, 'storage.useProxy', false)
   },
   getService (context) {
     // Even when service is not yet declared feathers returns a wraper
