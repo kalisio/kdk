@@ -17,7 +17,13 @@
       <q-tab-panels v-model="widget" animated>
         <template v-for="(widget, index) in widgets" :placement="index">
           <q-tab-panel :name="widget.id" class="no-padding no-scroll">
-            <component :is="widget.component" :window="window" :mode="mode" v-bind="widget.props" style="z-index: 1;" />
+            <component 
+              :is="widget.component" 
+              :window="window" 
+              :mode="mode" 
+              v-bind="widget" 
+              style="z-index: 1;" 
+            />
           </q-tab-panel>
         </template>
       </q-tab-panels>

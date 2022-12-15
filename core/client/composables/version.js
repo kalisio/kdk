@@ -15,7 +15,6 @@ const Version = ref({
   },
   flavor: _.get(config, 'flavor')
 })
-
 let isInitialized = false
 
 export function useVersion () {
@@ -39,7 +38,6 @@ export function useVersion () {
     logger.debug('Setting API version from capabilities')
     Version.value.api.number = Capabilities.get('version')
     Version.value.api.buildNumber = Capabilities.get('buildNumber')
-    console.log(Version.value)
   }
 
   // Expose
