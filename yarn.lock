@@ -1383,10 +1383,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@kalisio/feathers-distributed@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-2.0.2.tgz#bee51062d486871f42cf463c8adb95ca0fa3ae8e"
-  integrity sha512-hdZLuqS8jgJw2ITZdZn/VhStpGGCpnKpXvmp2Nf8ZbgCSRHRh7fk18pf5IlrzEw9B0oeybuuqCGlWRwVlgq2vQ==
+"@kalisio/feathers-distributed@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-2.1.0.tgz#551be83de2daf5b6c634481a28170b174e89c9cf"
+  integrity sha512-kSZeZb36uHgHKtTW7RVU5MyoBDQkg6NLShUlqbMxvvF7MT1B1Uw90LWdopFV4c1Ma9OgB0af7n1+VbsLl1CaVQ==
   dependencies:
     "@feathersjs/commons" "^5.0.0-pre.28"
     "@feathersjs/errors" "^5.0.0-pre.28"
@@ -1395,9 +1395,10 @@
     debug "^4.3.4"
     uuid "^8.3.2"
 
-"@kalisio/feathers-s3@https://github.com/kalisio/feathers-s3":
-  version "0.1.0"
-  resolved "https://github.com/kalisio/feathers-s3#3262a065e1af56f58dddf5b4c39593ae06825f36"
+"@kalisio/feathers-s3@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@kalisio/feathers-s3/-/feathers-s3-1.0.0.tgz#ffafeaf8f201eaa06f7b5f95933acef55d498a9d"
+  integrity sha512-Avtw1P/UUC9FgGWBvpPO8tOPfnM7aajqfd8iSFukPFvsixt4O99219COMTtAEEXLW0D8OuEngdpcjoRfWC1HuQ==
   dependencies:
     "@aws-sdk/client-s3" "^3.209.0"
     "@aws-sdk/s3-request-presigner" "^3.209.0"
