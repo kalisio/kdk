@@ -151,9 +151,6 @@ export default {
       }
     }
   },
-  beforeUnmount () {
-    this.clearHighlights()
-  },
   setup (props) {
     return {
       ...useCurrentActivity(),

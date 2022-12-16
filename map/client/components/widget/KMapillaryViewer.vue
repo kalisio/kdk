@@ -167,7 +167,6 @@ export default {
     this.refresh()
   },
   async beforeUnmount () {
-    this.clearHighlights()
     // Remove event listeners
     this.mapillaryViewer.off('image', this.onImageEvent)
     // Save the states

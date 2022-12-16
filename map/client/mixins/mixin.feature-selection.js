@@ -25,8 +25,5 @@ export const featureSelection = {
       })
       if (this.hasProbedLocation()) this.highlight(this.probe)
     }
-  },
-  beforeUnmount () {
-    this.clearHighlights()
   }
 }

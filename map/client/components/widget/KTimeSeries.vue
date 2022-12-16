@@ -519,7 +519,6 @@ export default {
     Time.patchRange({ start, end })
   },
   beforeUnmount () {
-    this.clearHighlights()
     // Release listeners
     this.$events.off('time-current-time-changed', this.refresh)
     this.$events.off('time-range-changed', this.refresh)

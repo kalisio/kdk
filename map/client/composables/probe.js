@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { unref } from 'vue'
+import { unref, watch } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 
 export function useProbe (name, options = {}) {
@@ -7,6 +7,17 @@ export function useProbe (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
+  // Watch change
+  watch(kActivity, (newActivity) => {
+    // Remove listeners on previous actvity and set it on new one
+    if (activity && activity.$engineEvents) {
+      activity.$engineEvents.off('click', onClicked)
+    }
+    if (newActivity && newActivity.$engineEvents) {
+      activity = unref(newActivity)
+      activity.$engineEvents.on('click', onClicked)
+    }
+  })
 
   // data
   // probes store
@@ -99,17 +110,6 @@ export function useProbe (name, options = {}) {
     })
   }
 
-  function setCurrentActivity (newActivity) {
-    // Remove listeners on previous actvity and set it on new one
-    if (activity && activity.$engineEvents) {
-      activity.$engineEvents.off('click', onClicked)
-    }
-    if (newActivity && newActivity.$engineEvents) {
-      activity = unref(newActivity)
-      activity.$engineEvents.on('click', onClicked)
-    }
-  }
-
   // Initialize on first call
   if (!has('item')) {
     clearProbe()
@@ -126,7 +126,6 @@ export function useProbe (name, options = {}) {
     getProbedLocation,
     probeAtLocation,
     getWidgetForProbe,
-    centerOnProbe,
-    setCurrentActivity
+    centerOnProbe
   }
 }

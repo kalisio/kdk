@@ -2,7 +2,7 @@ import _ from 'lodash'
 import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid, getCssVar } from 'quasar'
-import { unref } from 'vue'
+import { unref, watch, onUnmounted } from 'vue'
 import { getFeatureId } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 
@@ -15,6 +15,24 @@ export function useHighlight (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
+  // Watch change
+  watch(kActivity, (newActivity) => {
+    // Remove highlights on previous actvity and set it on new one
+    if (activity) {
+      removeHighlightsLayer()
+      activity.$engineEvents.off('layer-added', createHighlightsLayer)
+      activity.$engineEvents.off('layer-disabled', onHighlightedLayerDisabled)
+      activity.$engineEvents.off('layer-enabled', onHighlightedLayerEnabled)
+    }
+    if (newActivity) {
+      activity = unref(newActivity)
+      // When at least one layer is added we know the catalog has been loaded
+      // so that we can add our highlight layer, before that it would be cleared by catalog loading
+      activity.$engineEvents.on('layer-added', createHighlightsLayer)
+      activity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
+      activity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
+    }
+  })
 
   // data
   // hightligh store
@@ -175,32 +193,10 @@ export function useHighlight (name, options = {}) {
     updateHighlightsLayer()
   }
 
-  function setCurrentActivity (newActivity) {
-    // Remove highlights on previous actvity and set it on new one
-    if (activity) {
-      removeHighlightsLayer()
-      activity.$engineEvents.off('layer-added', createHighlightsLayer)
-      activity.$engineEvents.off('layer-disabled', onHighlightedLayerDisabled)
-      activity.$engineEvents.off('layer-enabled', onHighlightedLayerEnabled)
-    }
-    if (newActivity) {
-      activity = unref(newActivity)
-      // When at least one layer is added we know the catalog has been loaded
-      // so that we can add our highlight layer, before that it would be cleared by catalog loading
-      activity.$engineEvents.on('layer-added', createHighlightsLayer)
-      activity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
-      activity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
-    }
-  }
-
   // Cleanup on destroy
-  // FIXME: If the composable is used in multiple components it seems to be called
-  // for all components and not only the one which is unmounted
-  /*
   onUnmounted(() => {
     clearHighlights()
   })
-  */
 
   // expose
   return {
@@ -209,7 +205,6 @@ export function useHighlight (name, options = {}) {
     getHighlight,
     highlight,
     unhighlight,
-    clearHighlights,
-    setCurrentActivity
+    clearHighlights
   }
 }

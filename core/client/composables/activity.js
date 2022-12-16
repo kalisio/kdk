@@ -6,7 +6,7 @@ import { useSelection } from './selection.js'
 const kActivity = shallowRef(null)
 const kActivityName = ref(null)
 
-export function useActivity (name) {
+export function useActivity (name, exposed = { selection: true }) {
   // data
   // state store
   const state = useStore(`activities.${name}.state`)
@@ -20,15 +20,18 @@ export function useActivity (name) {
   }
 
   // expose
-  return {
+  const expose = {
     state: state.store,
     options: options.store,
-    setCurrentActivity,
-    ...useSelection(name)
+    setCurrentActivity
   }
+  if (exposed.selection) Object.assign(expose, {
+    ...useSelection(kActivityName.value)
+  })
+  return expose
 }
 
-export function useCurrentActivity () {
+export function useCurrentActivity (exposed = { selection: true }) {
   // expose
   const expose = {
     kActivity: readonly(kActivity),
@@ -40,7 +43,9 @@ export function useCurrentActivity () {
 
     Object.assign(expose, {
       state: readonly(state.store),
-      options: readonly(options.store),
+      options: readonly(options.store)
+    })
+    if (exposed.selection) Object.assign(expose, {
       ...useSelection(kActivityName.value)
     })
   }

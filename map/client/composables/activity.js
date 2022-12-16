@@ -4,30 +4,27 @@ import { useSelection } from './selection.js'
 import { useProbe } from './probe.js'
 import { useHighlight } from './highlight.js'
 
-export function useActivity (name) {
-  const activity = composables.useActivity(name)
-  const selection = useSelection(name, _.get(activity, 'options.selection'))
-  const probe = useProbe(name, _.get(activity, 'options.probe'))
-  const highlight = useHighlight(name, _.get(activity, 'options.highlight'))
-
-  // Override default fucntion to watch activity changes
-  function setCurrentActivity (newActivity) {
-    selection.setCurrentActivity(newActivity)
-    probe.setCurrentActivity(newActivity)
-    highlight.setCurrentActivity(newActivity)
-    activity.setCurrentActivity(newActivity)
-  }
+// When creating an activity we are interested by all aspects
+export function useActivity (name, exposed = { selection: true, probe: true, highlight: true }) {
+  const activity = composables.useActivity(name, exposed)
   // expose
-  return {
-    ...activity,
-    ...selection,
-    ...probe,
-    ...highlight,
-    setCurrentActivity
+  const expose = {
+    ...activity
   }
+  if (exposed.selection) Object.assign(expose, {
+    ...useSelection(name, _.get(activity, 'options.selection'))
+  })
+  if (exposed.probe) Object.assign(expose, {
+    ...useProbe(name, _.get(activity, 'options.probe'))
+  })
+  if (exposed.highlight) Object.assign(expose, {
+    ...useHighlight(name, _.get(activity, 'options.highlight'))
+  })
+  return expose
 }
 
-export function useCurrentActivity () {
+// When using current activity we are mainly interested by selection/probe
+export function useCurrentActivity (exposed = { selection: true, probe: true }) {
   const { kActivity, kActivityName, state, options } = composables.useCurrentActivity()
   // expose
   const expose = {
@@ -37,9 +34,15 @@ export function useCurrentActivity () {
   if (kActivityName.value) {
     Object.assign(expose, {
       state,
-      options,
-      ...useSelection(kActivityName.value, _.get(options, 'selection')),
-      ...useProbe(kActivityName.value, _.get(options, 'probe')),
+      options
+    })
+    if (exposed.selection) Object.assign(expose, {
+      ...useSelection(kActivityName.value, _.get(options, 'selection'))
+    })
+    if (exposed.probe) Object.assign(expose, {
+      ...useProbe(kActivityName.value, _.get(options, 'probe'))
+    })
+    if (exposed.highlight) Object.assign(expose, {
       ...useHighlight(kActivityName.value, _.get(options, 'highlight'))
     })
   }

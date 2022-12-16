@@ -6,7 +6,7 @@ import circle from '@turf/circle'
 import bboxPolygon from '@turf/bbox-polygon'
 import intersects from '@turf/boolean-intersects'
 import { featureEach } from '@turf/meta'
-import { unref } from 'vue'
+import { unref, watch } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 import { getFeatureId } from '../utils.js'
 
@@ -51,6 +51,23 @@ export function useSelection (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
+  // Watch change
+  watch(kActivity, (newActivity) => {
+    // Remove listeners on previous actvity and set it on new one
+    if (activity && activity.$engineEvents) {
+      activity.$engineEvents.off('click', onClicked)
+      if (options.boxSelection) activity.$engineEvents.off('boxselectionend', onBoxSelection)
+      if (options.clusterSelection) activity.$engineEvents.off('spiderfied', onClusterSelection)
+      activity.$engineEvents.off('layer-hidden', onSelectedLayerHidden)
+    }
+    if (newActivity && newActivity.$engineEvents) {
+      activity = unref(newActivity)
+      activity.$engineEvents.on('click', onClicked)
+      if (options.boxSelection) activity.$engineEvents.on('boxselectionend', onBoxSelection)
+      if (options.clusterSelection) activity.$engineEvents.on('spiderfied', onClusterSelection)
+      activity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
+    }
+  })
 
   // data
 
@@ -262,23 +279,6 @@ export function useSelection (name, options = {}) {
     hiddenFeatures.forEach((item) => selection.unselectItem(item))
   }
 
-  function setCurrentActivity (newActivity) {
-    // Remove listeners on previous actvity and set it on new one
-    if (activity && activity.$engineEvents) {
-      activity.$engineEvents.off('click', onClicked)
-      if (options.boxSelection) activity.$engineEvents.off('boxselectionend', onBoxSelection)
-      if (options.clusterSelection) activity.$engineEvents.off('spiderfied', onClusterSelection)
-      activity.$engineEvents.off('layer-hidden', onSelectedLayerHidden)
-    }
-    if (newActivity && newActivity.$engineEvents) {
-      activity = unref(newActivity)
-      activity.$engineEvents.on('click', onClicked)
-      if (options.boxSelection) activity.$engineEvents.on('boxselectionend', onBoxSelection)
-      if (options.clusterSelection) activity.$engineEvents.on('spiderfied', onClusterSelection)
-      activity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
-    }
-  }
-
   // expose
   return {
     ...selection,
@@ -290,7 +290,6 @@ export function useSelection (name, options = {}) {
     hasSelectedLocation,
     getSelectedLocation,
     getWidgetForSelection,
-    centerOnSelection,
-    setCurrentActivity
+    centerOnSelection
   }
 }
