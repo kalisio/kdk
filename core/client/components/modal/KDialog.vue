@@ -5,18 +5,22 @@
     :maximized="maximized"
     :buttons="computedButtons"
   >
-    <component :is="computedComponent" />
+    <component 
+      ref="componentRef"
+      :is="computedComponent" 
+      v-bind="attrs"
+    />
   </KModal>
 </template>
 
 <script setup>
 import _ from 'lodash'
-import { computed } from 'vue'
+import { ref, computed, useAttrs } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
 import { loadComponent } from '../../utils'
 import KModal from '../modal/KModal.vue'
 
-// props
+// Props
 const props = defineProps({
   title: {
     type: String,
@@ -40,37 +44,23 @@ const props = defineProps({
   }
 })
 
-// emits
+// Emits
 defineEmits([...useDialogPluginComponent.emits])
 
-// data
+// Data
 const { dialogRef, onDialogOK, onDialogCancel } = useDialogPluginComponent()
+const componentRef = ref()
+const attrs = useAttrs()
 
-// computed
+// Computed
 const computedButtons = computed(() => {
   const buttons = []
-  if (typeof props.okAction === 'string') {
-    buttons.push({
-      id: 'ok-action',
-      label: props.okAction,
-      renderer: 'form-button',
-      handler: onDialogOK
-    })
-  } else {
-    const okButton = _.clone(props.okAction)
-    if (okButton.handler) {
-      okButton.handler = () => {
-        okButton.handler()
-        onDialogOK()
-      }
-    }
-    buttons.push(okButton)
-  }
   if (!_.isEmpty(props.cancelAction)) {
     if (typeof props.cancelAction === 'string') {
       buttons.push({
-        id: 'ok-action',
-        label: props.okAction,
+        id: 'cancel-action',
+        label: props.cancelAction,
+        outline: true,
         renderer: 'form-button',
         handler: onDialogCancel
       })
@@ -83,6 +73,24 @@ const computedButtons = computed(() => {
         }
       }
     }
+  }
+  if (typeof props.okAction === 'string') {
+    buttons.push({
+      id: 'ok-action',
+      label: props.okAction,
+      renderer: 'form-button',
+      handler: onDialogOK
+    })
+  } else {
+    const okButton = _.clone(props.okAction)
+    if (okButton.handler) {
+      // overload the handler to call Quasar onDialogOK
+      okButton.handler = () => {
+        // ! call the origonal handler to avoid recurcive call 
+        if (props.okAction.handler(componentRef)) onDialogOK()
+      }
+    }
+    buttons.push(okButton)
   }
   return buttons
 })
