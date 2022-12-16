@@ -57,6 +57,7 @@ const computedButtons = computed(() => {
   const buttons = []
   if (!_.isEmpty(props.cancelAction)) {
     if (typeof props.cancelAction === 'string') {
+      // create a basic action that close the dialog
       buttons.push({
         id: 'cancel-action',
         label: props.cancelAction,
@@ -65,10 +66,13 @@ const computedButtons = computed(() => {
         handler: onDialogCancel
       })
     } else {
+      // clone the action to overload the handler
       const cancelButton = _.clone(props.cancelAction)
       if (cancelButton.handler) {
-        cancelButton.handler = () => {
-          cancelButton.handler()
+        cancelButton.handler = async () => {
+          // ! call the origonal handler to avoid recurcive call
+          await props.cancelAction.handler(componentRef.value)
+          // close dialog whatever the result of the handler
           onDialogCancel()
         }
       }
@@ -76,18 +80,22 @@ const computedButtons = computed(() => {
   }
   if (typeof props.okAction === 'string') {
     buttons.push({
+      // create a basic action that close the dialog
       id: 'ok-action',
       label: props.okAction,
       renderer: 'form-button',
       handler: onDialogOK
     })
   } else {
+    // clone the action to overload the handler
     const okButton = _.clone(props.okAction)
     if (okButton.handler) {
       // overload the handler to call Quasar onDialogOK
-      okButton.handler = () => {
+      okButton.handler = async () => {
         // ! call the origonal handler to avoid recurcive call
-        if (props.okAction.handler(componentRef)) onDialogOK()
+        const result = await props.okAction.handler(componentRef.value)
+        // close dialog if and only if the handler returns true
+        if (result) onDialogOK()
       }
     }
     buttons.push(okButton)

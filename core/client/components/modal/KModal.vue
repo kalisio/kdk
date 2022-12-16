@@ -67,7 +67,7 @@ import { useQuasar } from 'quasar'
 import KScrollArea from '../frame/KScrollArea.vue'
 import KPanel from '../frame/KPanel.vue'
 
-// props
+// Props
 const props = defineProps({
   title: {
     type: String,
@@ -91,17 +91,17 @@ const props = defineProps({
   }
 })
 
-// emits
+// Emits
 const emit = defineEmits(['update:modelValue'])
 
-// data
+// Data
 const $q = useQuasar()
 const modalRef = ref(null)
 const headerHeight = ref(0)
 const footerHeight = ref(0)
 const scrollAreaMaxHeight = ref(0)
 
-// computed
+// Computed
 const computedStyle = computed(() => {
   if (props.maximized) return ''
   // compute the modal max height
@@ -130,12 +130,13 @@ const computedStyle = computed(() => {
   return `min-width: 60vw; max-height: ${modalMaxHeight}px`
 })
 
-// watch
+// Watch
 watch(() => props.modelValue, (value) => {
   if (value) modalRef.value.show()
   else modalRef.value.hide()
 })
-// functions
+
+// Functions
 function show () {
   modalRef.value.show()
   emit('update:modelValue', true)
@@ -151,11 +152,9 @@ function onFooterResized (size) {
   if (footerHeight.value !== size.height) footerHeight.value = size.height
 }
 
-// expose
+// Expose
 defineExpose({
   show,
   hide
 })
-
-// immedaite
 </script>
