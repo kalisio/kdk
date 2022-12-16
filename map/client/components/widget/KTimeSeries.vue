@@ -529,7 +529,6 @@ export default {
     this.kActivity.$engineEvents.off('selected-level-changed', this.refresh)
   },
   setup (props) {
-    const { kActivity } = useCurrentActivity()
     return {
       ...useCurrentActivity(),
       ...useWeather(),

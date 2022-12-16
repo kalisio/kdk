@@ -2,7 +2,7 @@ import _ from 'lodash'
 import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid, getCssVar } from 'quasar'
-import { unref, onUnmounted } from 'vue'
+import { unref } from 'vue'
 import { getFeatureId } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 

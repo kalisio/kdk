@@ -5,7 +5,7 @@ import { getNearestTime } from '../utils.js'
 
 export function useMeasure () {
   // data
-  
+
   // functions
   function getMeasureValueAtCurrentTime (times, values) {
     // Check for the right value at time

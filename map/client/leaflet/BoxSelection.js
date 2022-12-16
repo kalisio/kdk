@@ -9,7 +9,7 @@ L.Map.mergeOptions({
   // Deactivate by default
   boxSelection: false,
   // If active deactivate default box zoom as it will conflict
-  //boxZoom: false,
+  // boxZoom: false,
   boxSelectionKey: 'shiftKey'
 })
 

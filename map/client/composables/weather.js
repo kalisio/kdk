@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import moment from 'moment'
-import { ref, unref, watch } from 'vue'
+import { unref, watch } from 'vue'
 import { Time } from '../../../core/client/time.js'
 import { Units } from '../../../core/client/units.js'
 import * as composables from '../../../core/client/composables/index.js'
@@ -19,7 +19,7 @@ export function useWeather (options = {}) {
     }
   })
   // data
-  
+
   // functions
   function getProbedLocationForecastFields () {
     return {
@@ -31,7 +31,7 @@ export function useWeather (options = {}) {
       precipitations: 'properties.precipitations',
       humidity: 'properties.humidity',
       time: 'forecastTime',
-      name: 'properties.name',
+      name: 'properties.name'
     }
   }
   function isWeatherProbe (feature) {
@@ -42,14 +42,14 @@ export function useWeather (options = {}) {
   function getForecastAsHtml (feature, fields = {}) {
     const defaults = getProbedLocationForecastFields()
     // Retrieve target fields on feature
-    const windDirectionField = _.get(fields, 'windDirection', defaults['windDirection'])
-    const windSpeedField = _.get(fields, 'windSpeed', defaults['windSpeed'])
-    const gustField = _.get(fields, 'gust', defaults['gust'])
-    const temperatureField = _.get(fields, 'temperature', defaults['temperature'])
-    const precipitationsField = _.get(fields, 'precipitations', defaults['precipitations'])
-    const humidityField = _.get(fields, 'humidity', defaults['humidity'])
-    const timeField = _.get(fields, 'time', defaults['time'])
-    const nameField = _.get(fields, 'name', defaults['name'])
+    const windDirectionField = _.get(fields, 'windDirection', defaults.windDirection)
+    const windSpeedField = _.get(fields, 'windSpeed', defaults.windSpeed)
+    const gustField = _.get(fields, 'gust', defaults.gust)
+    const temperatureField = _.get(fields, 'temperature', defaults.temperature)
+    const precipitationsField = _.get(fields, 'precipitations', defaults.precipitations)
+    const humidityField = _.get(fields, 'humidity', defaults.humidity)
+    const timeField = _.get(fields, 'time', defaults.time)
+    const nameField = _.get(fields, 'name', defaults.name)
     // Then get values for fields
     const windDirection = _.get(feature, `${windDirectionField}`)
     const windSpeed = _.get(feature, `${windSpeedField}`)
@@ -157,8 +157,8 @@ export function useWeather (options = {}) {
   function getWindBarbOptions (feature, fields = {}) {
     const defaults = getProbedLocationForecastFields()
     // Retrieve target fields on feature
-    let windDirection = _.get(fields, 'windDirection', defaults['windDirection'])
-    let windSpeed = _.get(fields, 'windSpeed', defaults['windSpeed'])
+    let windDirection = _.get(fields, 'windDirection', defaults.windDirection)
+    let windSpeed = _.get(fields, 'windSpeed', defaults.windSpeed)
     // TODO: colorize according to temperature scale if ?
     // let temperature = _.get(fields, 'temperature', 'properties.temperature')
     // Then get values for fields

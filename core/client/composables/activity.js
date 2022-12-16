@@ -12,7 +12,7 @@ export function useActivity (name) {
   const state = useStore(`activities.${name}.state`)
   // options store
   const options = useStore(`activities.${name}.options`, config[name])
-  
+
   // functions
   function setCurrentActivity (activity) {
     kActivityName.value = name

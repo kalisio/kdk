@@ -5,9 +5,9 @@
     :maximized="maximized"
     :buttons="computedButtons"
   >
-    <component 
+    <component
       ref="componentRef"
-      :is="computedComponent" 
+      :is="computedComponent"
       v-bind="attrs"
     />
   </KModal>
@@ -86,7 +86,7 @@ const computedButtons = computed(() => {
     if (okButton.handler) {
       // overload the handler to call Quasar onDialogOK
       okButton.handler = () => {
-        // ! call the origonal handler to avoid recurcive call 
+        // ! call the origonal handler to avoid recurcive call
         if (props.okAction.handler(componentRef)) onDialogOK()
       }
     }

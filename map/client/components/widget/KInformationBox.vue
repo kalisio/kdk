@@ -18,7 +18,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { copyToClipboard, exportFile, getCssVar } from 'quasar'
+import { copyToClipboard, exportFile } from 'quasar'
 import { baseWidget } from '../../../../core/client/mixins'
 import { KScrollArea, KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
