@@ -38,7 +38,6 @@
       <q-item
         :id="getId(scope.opt)"
         v-bind="scope.itemProps"
-        v-on="scope.itemEvents"
       >
         <q-item-section>
           <q-item-label>
