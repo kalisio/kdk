@@ -4,10 +4,10 @@ import { useQuasar } from 'quasar'
 const Platform = ref(null)
 
 export function usePlatform () {
-  // data
+  // Data
   const $q = useQuasar()
 
-  // immediate
+  // Immediate
   if (!Platform.value) {
     Platform.value = Object.assign($q.platform.is, {
       touch: $q.platform.has.touch,
@@ -17,7 +17,7 @@ export function usePlatform () {
     })
   }
 
-  // expose
+  // Expose
   return {
     Platform: readonly(Platform)
   }

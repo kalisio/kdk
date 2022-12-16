@@ -11,15 +11,21 @@ export function useActivity (name, exposed = { selection: true, probe: true, hig
   const expose = {
     ...activity
   }
-  if (exposed.selection) Object.assign(expose, {
-    ...useSelection(name, _.get(activity, 'options.selection'))
-  })
-  if (exposed.probe) Object.assign(expose, {
-    ...useProbe(name, _.get(activity, 'options.probe'))
-  })
-  if (exposed.highlight) Object.assign(expose, {
-    ...useHighlight(name, _.get(activity, 'options.highlight'))
-  })
+  if (exposed.selection) {
+    Object.assign(expose, {
+      ...useSelection(name, _.get(activity, 'options.selection'))
+    })
+  }
+  if (exposed.probe) {
+    Object.assign(expose, {
+      ...useProbe(name, _.get(activity, 'options.probe'))
+    })
+  }
+  if (exposed.highlight) {
+    Object.assign(expose, {
+      ...useHighlight(name, _.get(activity, 'options.highlight'))
+    })
+  }
   return expose
 }
 
@@ -36,15 +42,21 @@ export function useCurrentActivity (exposed = { selection: true, probe: true }) 
       state,
       options
     })
-    if (exposed.selection) Object.assign(expose, {
-      ...useSelection(kActivityName.value, _.get(options, 'selection'))
-    })
-    if (exposed.probe) Object.assign(expose, {
-      ...useProbe(kActivityName.value, _.get(options, 'probe'))
-    })
-    if (exposed.highlight) Object.assign(expose, {
-      ...useHighlight(kActivityName.value, _.get(options, 'highlight'))
-    })
+    if (exposed.selection) {
+      Object.assign(expose, {
+        ...useSelection(kActivityName.value, _.get(options, 'selection'))
+      })
+    }
+    if (exposed.probe) {
+      Object.assign(expose, {
+        ...useProbe(kActivityName.value, _.get(options, 'probe'))
+      })
+    }
+    if (exposed.highlight) {
+      Object.assign(expose, {
+        ...useHighlight(kActivityName.value, _.get(options, 'highlight'))
+      })
+    }
   }
   return expose
 }

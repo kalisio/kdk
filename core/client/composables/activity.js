@@ -25,9 +25,11 @@ export function useActivity (name, exposed = { selection: true }) {
     options: options.store,
     setCurrentActivity
   }
-  if (exposed.selection) Object.assign(expose, {
-    ...useSelection(kActivityName.value)
-  })
+  if (exposed.selection) {
+    Object.assign(expose, {
+      ...useSelection(kActivityName.value)
+    })
+  }
   return expose
 }
 
@@ -45,9 +47,11 @@ export function useCurrentActivity (exposed = { selection: true }) {
       state: readonly(state.store),
       options: readonly(options.store)
     })
-    if (exposed.selection) Object.assign(expose, {
-      ...useSelection(kActivityName.value)
-    })
+    if (exposed.selection) {
+      Object.assign(expose, {
+        ...useSelection(kActivityName.value)
+      })
+    }
   }
   return expose
 }
