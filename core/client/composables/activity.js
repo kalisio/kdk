@@ -1,3 +1,4 @@
+import config from 'config'
 import { ref, shallowRef, readonly } from 'vue'
 import { useStore } from './store.js'
 import { useSelection } from './selection.js'
@@ -8,8 +9,10 @@ const kActivityName = ref(null)
 export function useActivity (name) {
   // data
   // state store
-  const { store } = useStore(`activities.${name}`)
-
+  const state = useStore(`activities.${name}.state`)
+  // options store
+  const options = useStore(`activities.${name}.options`, config[name])
+  
   // functions
   function setCurrentActivity (activity) {
     kActivityName.value = name
@@ -18,7 +21,8 @@ export function useActivity (name) {
 
   // expose
   return {
-    state: store,
+    state: state.store,
+    options: options.store,
     setCurrentActivity,
     ...useSelection(name)
   }
@@ -31,10 +35,12 @@ export function useCurrentActivity () {
     kActivityName: readonly(kActivityName)
   }
   if (kActivityName.value) {
-    const { store } = useStore(`activities.${kActivityName.value}`)
+    const state = useStore(`activities.${kActivityName.value}.state`)
+    const options = useStore(`activities.${kActivityName.value}.options`)
 
     Object.assign(expose, {
-      state: readonly(store),
+      state: readonly(state.store),
+      options: readonly(options.store),
       ...useSelection(kActivityName.value)
     })
   }

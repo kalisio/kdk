@@ -25,6 +25,12 @@ export default {
     KStamp
   },
   mixins: [baseWidget],
+  props: {
+    highlight: {
+      type: Object,
+      default: () => ({ 'stroke-color': 'primary', 'fill-opacity': 0, zOrder: 1 })
+    }
+  },
   computed: {
     feature () {
       return this.hasSelectedFeature() && this.getSelectedFeature()
@@ -485,10 +491,10 @@ export default {
   beforeUnmount () {
     this.clearHighlights()
   },
-  setup () {
+  setup (props) {
     return {
       ...useCurrentActivity(),
-      ...useHighlight('elevation-profile', { 'stroke-color': getCssVar('primary'), 'fill-opacity': 0, zOrder: 1 })
+      ...useHighlight('elevation-profile', props.highlight)
     }
   }
 }

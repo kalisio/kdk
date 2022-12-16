@@ -21,6 +21,12 @@ export default {
     KPanel
   },
   mixins: [baseWidget],
+  props: {
+    highlight: {
+      type: Object,
+      default: () => ({ zOrder: 1 })
+    }
+  },
   computed: {
     location () {
       return this.hasSelectedLocation() && this.getSelectedLocation()
@@ -167,10 +173,10 @@ export default {
     // Save the states
     this.saveStates()
   },
-  setup () {
+  setup (props) {
     return {
       ...useCurrentActivity(),
-      ...useHighlight('mapillary', { zOrder: 1 })
+      ...useHighlight('mapillary', props.highlight)
     }
   }
 }

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid, getCssVar } from 'quasar'
-import { unref } from 'vue'
+import { unref, onUnmounted } from 'vue'
 import { getFeatureId } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 
@@ -38,6 +38,15 @@ export function useHighlight (name, options = {}) {
   function getHighlight (feature, layer) {
     return get(getHighlightId(feature, layer))
   }
+  function convertColors (highlight) {
+    // Convert from quasar color palette to actual color
+    _.forOwn(highlight.properties, (value, key) => {
+      if (key.endsWith('-color')) {
+        const color = getCssVar(value)
+        if (color) _.set(highlight, `properties.${key}`, color)
+      }
+    })
+  }
   function highlight (feature, layer) {
     const highlightId = getHighlightId(feature, layer)
     // Default highlight feature with styling
@@ -68,6 +77,7 @@ export function useHighlight (name, options = {}) {
     }
     // Add additional information provided by feature, if any, for custom styling
     _.merge(highlight, _.omit(feature, ['geometry']))
+    convertColors(highlight)
     set(highlightId, highlight)
     updateHighlightsLayer()
     return highlight
@@ -182,6 +192,15 @@ export function useHighlight (name, options = {}) {
       activity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
     }
   }
+
+  // Cleanup on destroy
+  // FIXME: If the composable is used in multiple components it seems to be called
+  // for all components and not only the one which is unmounted
+  /*
+  onUnmounted(() => {
+    clearHighlights()
+  })
+  */
 
   // expose
   return {

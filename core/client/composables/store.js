@@ -4,10 +4,10 @@ import { reactive } from 'vue'
 // states store
 const Store = {}
 
-export function useStore (name) {
+export function useStore (name, initialStore) {
   // data
   if (!_.has(Store, name)) { // Initialize on first call
-    _.set(Store, name, reactive({}))
+    _.set(Store, name, reactive(initialStore || {}))
   }
   const store = _.get(Store, name)
 

@@ -116,7 +116,7 @@ export function useSelection (name, options = {}) {
   function centerOnSelection () {
     if (hasSelectedFeature()) {
       activity.center(..._.get(centroid(getSelectedFeature()), 'geometry.coordinates'))
-    } else if (getSelectedLocation()) {
+    } else if (hasSelectedLocation()) {
       activity.center(getSelectedLocation().lng, getSelectedLocation().lat)
     }
   }

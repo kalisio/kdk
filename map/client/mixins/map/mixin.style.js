@@ -29,7 +29,9 @@ export const style = {
       const isHtml = _.has(style, 'icon-html')
       const hasClass = _.has(style, 'icon-class')
       const isFontAwesome = _.has(style, 'icon-classes')
-      let isIconSpec = false
+      let isIconSpec = _.has(style, 'icon')
+      // First copy any icon spec as not supported by simple style spec
+      if (isIconSpec) _.set(convertedStyle, 'icon', _.get(style, 'icon'))
       _.forOwn(style, (value, key) => {
         if (_.has(LeafletStyleMappings, key)) {
           const mapping = _.get(LeafletStyleMappings, key)
@@ -45,13 +47,13 @@ export const style = {
               _.set(convertedStyle, mapping, value)
           }
           if (inPlace) _.unset(style, key)
-          // In this case we have a marker spec
+          // In this case we have a marker with icon spec
           if (mapping.startsWith('icon')) isIconSpec = true
         }
       })
-      // Select the right icon type based on options
       if (isIconSpec) {
-        _.set(convertedStyle, 'icon.type', (isFontAwesome ? 'icon.fontAwesome' : isHtml ? 'divIcon' : 'icon'))
+        // Select the right icon type based on options if not already set
+        if (!_.has(style, 'icon.type')) _.set(convertedStyle, 'icon.type', (isFontAwesome ? 'icon.fontAwesome' : isHtml ? 'divIcon' : 'icon'))
         // Leaflet adds a default background style but we prefer to remove it
         if (isHtml && !hasClass) _.set(convertedStyle, 'icon.options.className', '')
         _.set(convertedStyle, 'type', 'marker')

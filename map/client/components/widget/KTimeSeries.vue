@@ -15,7 +15,7 @@ import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
 import { baseWidget } from '../../../../core/client/mixins'
 import { KChart } from '../../../../core/client/components'
-import { useCurrentActivity, useHighlight } from '../../composables'
+import { useCurrentActivity, useWeather, useMeasure, useHighlight } from '../../composables'
 import 'chartjs-adapter-moment'
 import { getCssVar } from 'quasar'
 
@@ -28,9 +28,9 @@ export default {
     baseWidget
   ],
   props: {
-    variables: {
-      type: Array,
-      default: () => []
+    highlight: {
+      type: Object,
+      default: () => ({ 'stroke-color': 'primary', 'fill-opacity': 0, zOrder: 1 })
     }
   },
   computed: {
@@ -41,7 +41,7 @@ export default {
       let probeName
       if (this.probedLocation) {
         // Check if we have a property as tooltip or popup and use it
-        if (this.getSelectedLayer()) {
+        if (this.hasSelectedLayer()) {
           const probeNameProperty = _.get(this.getSelectedLayer(), `${this.kActivity.engine}.tooltip.property`,
             _.get(this.getSelectedLayer(), `${this.kActivity.engine}.popup.pick[0]`))
           if (probeNameProperty) probeName = _.get(this.probedLocation, `properties.${probeNameProperty}`)
@@ -67,7 +67,7 @@ export default {
     probedVariables () {
       // If the feature is linked to a layer with variables use it
       // Otherwise use all available variables to search for those applicable to it
-      return (this.layer && this.layer.variables ? this.layer.variables : this.variables)
+      return (this.layer && this.layer.variables ? this.layer.variables : this.kActivity.variables)
     }
   },
   watch: {
@@ -343,20 +343,19 @@ export default {
       this.setupGraph()
     },
     updateProbedLocationHighlight () {
-      // FIXME: update code with new highlight composable
-      // this.clearHighlights()
+      this.clearHighlights()
       if (!this.probedLocation) return
-      const windDirection = (this.kActivity.forecastLevel ? `windDirection-${this.kActivity.forecastLevel}` : 'windDirection')
-      const windSpeed = (this.kActivity.forecastLevel ? `windSpeed-${this.kActivity.forecastLevel}` : 'windSpeed')
-      // Use wind barbs on weather probed features
-      const isWeatherProbe = (_.has(this.probedLocation, `properties.${windDirection}`) &&
-                              _.has(this.probedLocation, `properties.${windSpeed}`))
-      // const feature = (isWeatherProbe
-      //  ? this.kActivity.getProbedLocationForecastAtCurrentTime(this.probedLocation)
-      //  : this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
-      // this.highlight(feature)
-      if (isWeatherProbe) this.kActivity.getProbedLocationForecastAtCurrentTime(this.probedLocation)
-      else this.kActivity.getProbedLocationMeasureAtCurrentTime(this.probedLocation)
+      const isWeatherProbe = this.isWeatherProbe(this.probedLocation)
+      const feature = (isWeatherProbe
+        ? this.getProbedLocationForecastAtCurrentTime(this.probedLocation)
+        : this.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
+      if (isWeatherProbe) {
+        const tooltip = this.getForecastAsHtml(feature)
+        if (tooltip) _.set(feature, 'properties.tooltip', { html: `<b>${tooltip}</b>` })
+        const options = this.getWindBarbOptions(feature)
+        if (options) _.set(feature, 'properties.icon', { type: 'WindBarb.icon', options })
+      }
+      this.highlight(feature)
     },
     onZoomRestored () {
       if (!_.isEmpty(this.zoomHistory)) {
@@ -529,10 +528,13 @@ export default {
     this.kActivity.$engineEvents.off('forecast-model-changed', this.refresh)
     this.kActivity.$engineEvents.off('selected-level-changed', this.refresh)
   },
-  setup () {
+  setup (props) {
+    const { kActivity } = useCurrentActivity()
     return {
       ...useCurrentActivity(),
-      ...useHighlight('time-series', { 'stroke-color': getCssVar('primary'), 'fill-opacity': 0, zOrder: 1 })
+      ...useWeather(),
+      ...useMeasure(),
+      ...useHighlight('time-series', props.highlight)
     }
   }
 }
