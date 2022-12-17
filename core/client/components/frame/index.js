@@ -5,8 +5,6 @@ import KChipsPane from './KChipsPane.vue'
 import KContent from './KContent.vue'
 import KExpandable from './KExpandable.vue'
 import KModal from './KModal.vue'
-import KOpener from './KOpener.vue'
-import KPageSticky from './KPageSticky.vue'
 import KPanel from './KPanel.vue'
 import KScrollArea from './KScrollArea.vue'
 import KStamp from './KStamp.vue'
@@ -20,8 +18,6 @@ export {
   KContent,
   KExpandable,
   KModal,
-  KOpener,
-  KPageSticky,
   KPanel,
   KScrollArea,
   KStamp,

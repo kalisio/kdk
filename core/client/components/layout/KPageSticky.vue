@@ -5,14 +5,16 @@
     :position="position"
     :offset="offset"
   >
-    <KContent v-bind="$props" />
+    <KContent 
+      v-bind="$props" 
+    />
   </q-page-sticky>
 </template>
 
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
-import KContent from './KContent.vue'
+import KContent from '../frame/KContent.vue'
 
 // props
 const props = defineProps({
