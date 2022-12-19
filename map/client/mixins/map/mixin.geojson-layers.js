@@ -17,7 +17,7 @@ const Realtime = L.Realtime.extend({
     if (typeof geojson === 'undefined') {
       return L.Layer.prototype.remove.call(this)
     } else {
-      return L.Realtime.remove.call(this, geojson)
+      return L.Realtime.prototype.remove.call(this, geojson)
     }
   }
 })
