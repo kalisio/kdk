@@ -10,6 +10,21 @@ import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
 import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId } from '../../utils.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
+// Override default remove handler for leaflet-realtime due to
+// https://github.com/perliedman/leaflet-realtime/issues/177
+const Realtime = L.Realtime.extend({
+  remove: function (geojson) {
+    if (typeof geojson === 'undefined') {
+      return L.Layer.prototype.remove.call(this)
+    } else {
+      return L.Realtime.remove.call(this, geojson)
+    }
+  }
+})
+L.realtime = function(src, options) {
+  return new Realtime(src, options)
+}
+
 // Override default Leaflet GeoJson utility to manage some specific use cases
 const geometryToLayer = L.GeoJSON.geometryToLayer
 L.GeoJSON.geometryToLayer = function (geojson, options) {
