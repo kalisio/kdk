@@ -111,7 +111,9 @@ export const context = {
           // According to current state find which layers need to be (de)activated
           const activeLayers = _.values(this.layers).filter(sift({ isVisible: true, scope: { $nin: ['system'] }, _id: { $exists: true } })).map(layer => layer.name)
           // When retrieved from query parameters if a single layer is provided we don't have an array
-          const targetLayers = _.isArray(targetParameters.layers) ? targetParameters.layers : [targetParameters.layers]
+          let targetLayers = _.isArray(targetParameters.layers) ? targetParameters.layers : [targetParameters.layers]
+          targetLayers = targetLayers.filter((name) => this.hasLayer(name))
+          if (_.isEmpty(targetLayers)) return
           // List of layers to be (de)activated
           const activedLayers = _.difference(targetLayers, activeLayers)
           const inactivatedLayers = _.difference(activeLayers, targetLayers)

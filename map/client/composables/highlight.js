@@ -10,7 +10,7 @@ export const HighlightsLayerName = uid()
 
 export function useHighlight (name, options = {}) {
   // Set default options
-  options = Object.assign({ updateDelay: 250 }, options)
+  options = Object.assign({ updateDelay: 100 }, options)
   // retrieve activity
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere

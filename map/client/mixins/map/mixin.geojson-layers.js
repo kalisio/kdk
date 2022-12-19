@@ -400,6 +400,7 @@ export const geojsonLayers = {
          but we'd like to perform similarly to automated updates
       */
       if (remove && (typeof layer.remove === 'function')) {
+        geoJson = geoJson || this.toGeoJson(name)
         let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         // Filter features to ensure some have not been already removed
         // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140

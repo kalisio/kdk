@@ -136,7 +136,9 @@ export async function setEngineJwt (layers) {
 }
 
 export function getFeatureId (feature, layer) {
-  let featureId = layer ? _.get(layer, 'featureId', '_id') : '_id'
+  let featureId = _.get(layer, 'featureId')
+  // We need at least an internal ID to uniquely identify features for updates
+  if (!featureId) featureId = '_id'
   // Support compound index
   featureId = (Array.isArray(featureId) ? featureId : [featureId])
   return featureId.map(id => _.get(feature, 'properties.' + id, _.get(feature, id))).join('-')

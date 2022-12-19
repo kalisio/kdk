@@ -6,13 +6,14 @@ export function useSelection (name, options = {}) {
   const comparator = options.matches || _.matches
   // data
   // selection store
-  const { store, set, get } = useStore(`selections.${name}`)
+  const { store, set, get, has } = useStore(`selections.${name}`)
 
   // functions
   // Single selection will rely on the lastly selected item only
   // Multiple selection mode will rely on all items
   function clearSelection () {
-    set('items', [])
+    // Do not force an update if not required
+    if (hasSelectedItem()) set('items', [])
   }
   function getSelectionMode () {
     return get('mode')
@@ -37,7 +38,7 @@ export function useSelection (name, options = {}) {
     if (index >= 0) items.splice(index, 1)
   }
   function hasSelectedItem () {
-    return get('items').length > 0
+    return has('items') && get('items').length > 0
   }
   function hasSelectedItems () {
     return hasSelectedItem()
@@ -51,7 +52,7 @@ export function useSelection (name, options = {}) {
 
   // Initialize on first call
   if (!_.has(store, 'items')) {
-    clearSelection()
+    set('items', [])
     set('mode', 'single')
   }
 
