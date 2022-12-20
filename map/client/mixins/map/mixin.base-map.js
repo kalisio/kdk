@@ -13,7 +13,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster'
 import 'leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js'
-import 'Leaflet.Geodesic'
+import 'leaflet.geodesic'
 import 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import iso8601 from 'iso8601-js-period' // Required by leaflet.timedimension
