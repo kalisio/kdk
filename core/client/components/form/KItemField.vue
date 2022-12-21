@@ -31,7 +31,7 @@
         color="primary"
         text-color="white"
       >
-        <q-avatar color="primary" :icon="getIcon(scope.opt)" />
+        <q-avatar v-if="getIcon(scope.opt)" :icon="getIcon(scope.opt)" color="primary" />
         {{ getLabel(scope.opt) }}
       </q-chip>
     </template>
@@ -41,7 +41,7 @@
         :id="getId(scope.opt)"
         v-bind="scope.itemProps"
       >
-        <q-item-section avatar>
+        <q-item-section v-if="getIcon(scope.opt)" avatar>
           <q-icon :name="getIcon(scope.opt)" />
         </q-item-section>
         <q-item-section>

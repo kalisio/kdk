@@ -4,11 +4,11 @@
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
-    :value="model"
+    v-model="model"
     :label="label"
     :error-message="errorLabel"
     :error="hasError"
-    :disabled="disabled"
+    :disable="disabled"
     bottom-slots
     :prefix="formattedDatetime"
     @blur="onChanged"
@@ -19,7 +19,7 @@
       <q-icon name="las la-calendar" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-date
-            :value="localDatetime"
+            v-model="localDatetime"
             mask="YYYY-MM-DDTHH:mm:ss.SSSZ"
             v-bind="properties.field"
             @update:model-value="onChangeLocalDatetime"
@@ -29,7 +29,7 @@
       <q-icon name="las la-clock" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-time
-            :value="localDatetime"
+            v-model="localDatetime"
             mask="YYYY-MM-DDTHH:mm:ss.SSSZ"
             v-bind="properties.field"
             @update:model-value="onChangeLocalDatetime"
