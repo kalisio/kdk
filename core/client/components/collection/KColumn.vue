@@ -1,51 +1,52 @@
 <template>
   <div class="column full-width">
     <!--
-      Label
+      Header
      -->
-    <div v-if="label"
-      class="full-width row justify-center text-subtitle1"
-      v-bind:class="{ 'q-pb-sm': dense, 'q-pb-md': !dense }"
-    >
-      <q-chip :label="$tie(label)" square color="grey-9" text-color="white" />
+     <div class="full-width">
+      <q-resize-observer @resize="onHeaderResized" />
+      <KPanel
+        id="header"
+        :content="header"
+      />
     </div>
     <!--
       Items
      -->
     <div v-if="items.length > 0">
-      <k-scroll-area
+      <KScrollArea
         ref="scrollArea"
-        :max-height="height"
+        :max-height="scrollHeight"
         @scrolled="onScrolled"
       >
         <div
-          class="full-width row justify-center"
+          class="full-width row"
           v-bind:class="{ 'q-gutter-y-xs': dense, 'q-gutter-y-sm': !dense }"
         >
           <template v-for="item in items" :key="item._id">
-            <div class="col-12" v-bind:class="{ 'q-pr-md': dense, 'q-pr-lg': !dense }">
-              <component
-                :id="item._id"
-                :service="service"
-                :item="item"
-                :contextId="contextId"
-                :is="rendererComponent"
-                v-bind="renderer"
-                @item-selected="onItemSelected" />
-            </div>
+            <component
+              :id="item._id"
+              :service="service"
+              :item="item"
+              :contextId="contextId"
+              :is="rendererComponent"
+              v-bind="renderer"
+              @item-selected="onItemSelected" 
+            />
           </template>
         </div>
-      </k-scroll-area>
+      </KScrollArea>
       <div v-if="scrollAction"
         class="row justify-center"
         v-bind:class="{ 'q-pr-sm': dense, 'q-pr-md': !dense }"
       >
-        <k-action
+        <KAction
           id="scroll-action"
           icon="las la-angle-double-down"
           color="accent"
           size="1rem"
-          :handler="this.scrollDown" />
+          :handler="this.scrollDown" 
+        />
       </div>
     </div>
     <div v-else>
@@ -55,7 +56,8 @@
             icon="las la-exclamation-circle"
             icon-size="1.6rem"
             :text="$t('KColumn.EMPTY_COLUMN')"
-            direction="horizontal" />
+            direction="horizontal" 
+          />
         </div>
       </slot>
     </div>
@@ -78,9 +80,9 @@ export default {
     baseCollection
   ],
   props: {
-    label: {
-      type: String,
-      default: undefined
+    header: {
+      type: Array,
+      default: () => null
     },
     renderer: {
       type: Object,
@@ -116,13 +118,17 @@ export default {
     }
   },
   computed: {
+    scrollHeight () {
+      return this.height - this.headerHeight
+    },
     rendererComponent () {
       return loadComponent(this.renderer.component)
     }
   },
   data () {
     return {
-      scrollAction: false
+      scrollAction: false,
+      headerHeight: 0
     }
   },
   watch: {
@@ -140,6 +146,9 @@ export default {
     getCollectionFilterQuery () {
       return this.filterQuery
     },
+    onHeaderResized (size) {
+      this.headerHeight = size.height
+    },
     onScrolled (info) {
       if (this.items.length < this.nbTotalItems) {
         if (info.verticalPercentage === 1) {
@@ -147,13 +156,13 @@ export default {
           this.refreshCollection()
           this.scrollAction = true
         } else {
-          this.scrollAction = info.verticalSize > this.height
+          this.scrollAction = info.verticalSize > this.scrollHeight
         }
       } else {
         if (info.verticalPercentage === 1) {
           this.scrollAction = false
         } else {
-          this.scrollAction = info.verticalSize > this.height
+          this.scrollAction = info.verticalSize > this.scrollHeight
         }
       }
     },
