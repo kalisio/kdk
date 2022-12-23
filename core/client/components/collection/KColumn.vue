@@ -8,6 +8,7 @@
       <KPanel
         id="header"
         :content="header"
+        class="no-wrap"
       />
     </div>
     <!--
