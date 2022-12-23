@@ -52,9 +52,9 @@
         <q-resize-observer @resize="onFooterResized" />
         <KPanel
           id="modal-buttons"
+          class="q-gutter-x-sm"
           :content="buttons"
           :action-renderer="'form-button'"
-          v-bind:class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-xs': $q.screen.lt.sm }"
         />
       </div>
     </q-card>
