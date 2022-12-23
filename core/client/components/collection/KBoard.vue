@@ -3,13 +3,26 @@
     <div class="col-*" />
     <template v-for="column in columns" :key="column.value">
       <div :id="column.value" :style="{ minWidth: `${column.width}px` }">
-        <k-column
-          :label="column.label"
+        <KColumn
           :key="column.value"
+          :header="[{
+            component: 'QSpace'
+          }, {
+            component: 'QChip',
+            label: $tie(column.label),
+            color: 'grey-10',
+            'text-color': 'white',
+            square: true,
+            class: 'justify-center'
+          }, {
+            component: 'QSpace'
+          }]"
           :ref="column.value"
           v-bind="column.props"
           :append-items="true"
-          :height="height" />
+          :height="height"
+        >
+        </KColumn>
       </div>
     </template>
     <div class="col-*" />
