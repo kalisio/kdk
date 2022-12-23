@@ -58,11 +58,11 @@ export default {
   props: {
     schema: {
       type: Object,
-      default: null
+      default: () => null
     },
     values: {
       type: Object,
-      default: null
+      default: () => null
     },
     separators: {
       type: Boolean,

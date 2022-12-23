@@ -32,7 +32,7 @@
               :contextId="contextId"
               :is="rendererComponent"
               v-bind="renderer"
-              @item-selected="onItemSelected" 
+              @item-selected="onItemSelected"
             />
           </template>
         </div>
@@ -46,7 +46,7 @@
           icon="las la-angle-double-down"
           color="accent"
           size="1rem"
-          :handler="this.scrollDown" 
+          :handler="this.scrollDown"
         />
       </div>
     </div>
@@ -57,7 +57,7 @@
             icon="las la-exclamation-circle"
             icon-size="1.6rem"
             :text="$t('KColumn.EMPTY_COLUMN')"
-            direction="horizontal" 
+            direction="horizontal"
           />
         </div>
       </slot>

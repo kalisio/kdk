@@ -21,7 +21,7 @@ const Realtime = L.Realtime.extend({
     }
   }
 })
-L.realtime = function(src, options) {
+L.realtime = function (src, options) {
   return new Realtime(src, options)
 }
 

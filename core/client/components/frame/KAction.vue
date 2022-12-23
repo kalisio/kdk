@@ -266,7 +266,7 @@ export default {
       return props.color
     })
     const computedTooltip = computed(() => {
-      if (props.disabled) return 
+      if (props.disabled) return
       // Check also for translation key or already translated message
       if (isToggled.value && _.has(props.toggle, 'tooltip')) return i18n.tie(props.toggle.tooltip)
       return i18n.tie(props.tooltip)

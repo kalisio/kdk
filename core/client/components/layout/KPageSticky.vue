@@ -5,8 +5,8 @@
     :position="position"
     :offset="offset"
   >
-    <KContent 
-      v-bind="$props" 
+    <KContent
+      v-bind="$props"
     />
   </q-page-sticky>
 </template>
