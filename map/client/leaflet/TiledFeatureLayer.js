@@ -465,7 +465,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
             const internalFeature = this.allFeatures.get(id)
             if (internalFeature) {
               const feature = _.cloneDeep(internalFeature.geojson)
-              feature.properties.measureRequestIssued = true
+              feature.measureRequestIssued = true
               flaggedStations.push(feature)
             }
           })
