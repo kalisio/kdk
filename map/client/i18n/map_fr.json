@@ -603,8 +603,8 @@
     "EXPORT_PROFILE": "Exporter le profil",
     "PROFILE_EXPORTED": "Profil exporté dans le fichier {file}",
     "CANNOT_EXPORT_PROFILE": "Imopssible d'exporter le profil",
-    "CURVILINEAR_AXIS_LEGEND": "Abscisse curviligne ({{unit}})",
-    "HEIGHT_AXIS_LEGEND": "Hauteur ({{unit}})",
+    "CURVILINEAR_AXIS_LEGEND": "Abscisse curviligne ({unit})",
+    "HEIGHT_AXIS_LEGEND": "Hauteur ({unit})",
     "TERRAIN_CHART_LEGEND": "Hauteur du terrain",
     "PROFILE_CHART_LEGEND": "Hauteur du profil"
   },

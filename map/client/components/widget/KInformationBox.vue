@@ -1,16 +1,23 @@
 <template>
-  <div id="information-box" class="column" :style="widgetStyle">
-    <div v-if="schema && properties" class="fit row">
-      <k-scroll-area class="col" :maxHeight="widgetHeight">
-        <k-view class="q-pa-md" :schema="schema" :values="properties" :separators="true" />
-      </k-scroll-area>
+  <div id="information-box" class="fit column">
+    <q-resize-observer @resize="onResized" />
+    <div v-if="schema && properties" class="row">
+      <KScrollArea class="col" :maxHeight="height">
+        <KView 
+          class="q-pa-md" 
+          :values="properties"
+          :schema="schema"  
+          :separators="true" 
+        />
+      </KScrollArea>
     </div>
     <div v-else class="absolute-center">
       <KStamp
         icon="las la-exclamation-circle"
         icon-size="3rem"
         :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')"
-        text-size="1rem" />
+        text-size="1rem" 
+      />
     </div>
   </div>
 </template>
@@ -18,8 +25,8 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
+import { ref } from 'vue'
 import { copyToClipboard, exportFile } from 'quasar'
-import { baseWidget } from '../../../../core/client/mixins'
 import { KScrollArea, KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
 import { useCurrentActivity, useHighlight } from '../../composables'
@@ -31,7 +38,6 @@ export default {
     KPanel,
     KStamp
   },
-  mixins: [baseWidget],
   data () {
     return {
       schema: null,
@@ -61,35 +67,9 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.window.widgetActions = [
-        {
-          id: 'center-view',
-          icon: 'las la-eye',
-          tooltip: this.$t('KInformationBox.CENTER_ON'),
-          visible: this.feature,
-          handler: this.onCenterOn
-        },
-        {
-          id: 'copy-properties',
-          icon: 'las la-clipboard',
-          tooltip: this.$t('KInformationBox.COPY_PROPERTIES'),
-          visible: this.properties,
-          handler: this.onCopyProperties
-        },
-        {
-          id: 'export-feature',
-          icon: 'kdk:json.svg',
-          tooltip: this.$t('KInformationBox.EXPORT_FEATURE'),
-          visible: this.feature,
-          handler: this.onExportFeature
-        }
-      ]
-    },
     refresh () {
       this.properties = null
       this.schema = null
-      this.refreshActions()
       this.clearHighlights()
       if (this.feature && this.layer) {
         this.highlight(this.feature)
@@ -118,9 +98,13 @@ export default {
         })
         this.schema = schema
         this.properties = properties
-        // Refresh the actions
-        this.refreshActions()
       }
+    },
+    hasFeature () {
+      return this.feature
+    },
+    hasProperties () {
+      return this.properties
     },
     onCenterOn () {
       this.centerOnSelection()
@@ -149,10 +133,17 @@ export default {
         if (status) this.$notify({ type: 'error', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
         else this.$notify({ type: 'error', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
       }
+    },
+    onResized (size) {
+      this.height = size.height
     }
   },
   setup (props) {
+    // Data
+    const height = ref(0)
+    // Expose
     return {
+      height,
       ...useCurrentActivity(),
       ...useHighlight('information-box', props.highlight)
     }

@@ -1,6 +1,10 @@
 <template>
-  <div id="mapillary-widget" class="column" :style="widgetStyle">
-    <div class="col" id="mapillary-container" />
+  <div id="mapillary-widget" class="column">
+    <q-resize-observer @resize="onResized" />
+    <div 
+      class="col" 
+      id="mapillary-container" 
+    />
   </div>
 </template>
 
@@ -8,11 +12,11 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import logger from 'loglevel'
+import { ref } from 'vue'
 import { Viewer } from 'mapillary-js'
 import 'mapillary-js/dist/mapillary.css'
 import distance from '@turf/distance'
 import { point } from '@turf/helpers'
-import { baseWidget } from '../../../../core/client/mixins'
 import { KPanel } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
 
@@ -20,7 +24,6 @@ export default {
   components: {
     KPanel
   },
-  mixins: [baseWidget],
   props: {
     highlight: {
       type: Object,
@@ -36,11 +39,6 @@ export default {
     location: {
       handler () {
         this.refresh()
-      }
-    },
-    widgetHeight: {
-      handler () {
-        if (this.mapillaryViewer) this.mapillaryViewer.resize()
       }
     }
   },
@@ -73,30 +71,19 @@ export default {
         }
       }
     },
-    refreshActions () {
-      this.window.widgetActions = [
-        {
-          id: 'center',
-          icon: 'las la-eye',
-          tooltip: 'KMapillaryViewer.CENTER_ON',
-          visible: !_.isNil(this.imageId),
-          handler: this.centerMap
-        }
-      ]
-    },
     async refresh () {
-      // Refresh the actions
-      this.refreshActions()
+      this.hasImage = false
       if (_.has(this.selection, 'mapillary')) {
         this.restoreStates()
-        if (this.imageId) await this.refreshView()
+        if (this.imageId) { 
+          this.hasImage = true
+          await this.refreshView()
+        }
         else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
       } else if (this.hasSelectedItem()) {
         const location = this.getSelectedLocation()
         if (location) await this.moveCloseTo(location.lat, location.lng)
       }
-      // Refresh the actions
-      this.refreshActions()
     },
     async moveCloseTo (lat, lon) {
       // Query the images according a bbox that contains the given position
@@ -109,6 +96,7 @@ export default {
       const query = `https://graph.mapillary.com/images?fields=id,computed_geometry&bbox=${left},${bottom},${right},${top}&access_token=${token}&limit=50`
       const response = await fetch(query)
       if (response.status !== 200) {
+        this.hasImage = false
         throw new Error(`Impossible to fetch ${query}: ` + response.status)
       }
       const data = await response.json()
@@ -124,6 +112,7 @@ export default {
             this.imageId = image.id
           }
         })
+        this.hasImage = true
         this.refreshView()
       } else {
         this.$notify({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
@@ -146,10 +135,14 @@ export default {
     async onImageEvent (viewerImageEvent) {
       const image = viewerImageEvent.image
       this.imageId = image.id
+      this.hasImage = true
       this.location = image.lngLat
       this.bearing = await this.mapillaryViewer.getBearing()
       this.centerMap()
       this.highlight(this.getMarkerFeature())
+    },
+    onResized (size) {
+      if (this.mapillaryViewer) this.mapillaryViewer.resize()
     }
   },
   mounted () {
@@ -173,9 +166,13 @@ export default {
     this.saveStates()
   },
   setup (props) {
+    // Data
+    const hasImage = ref(false)
+    // Expose
     return {
       ...useCurrentActivity(),
-      ...useHighlight('mapillary', props.highlight)
+      ...useHighlight('mapillary', props.highlight),
+      hasImage
     }
   }
 }

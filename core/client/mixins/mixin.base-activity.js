@@ -169,13 +169,19 @@ export function baseActivity (name) {
       configureWindows () {
         const windows = _.get(this.activityOptions, 'windows', null)
         _.forOwn(windows, (window, placement) => {
-          if (window.widgets) {
+          this.$store.patch(`windows.${placement}`, {
+            //widgets: Layout.bindContent(_.cloneDeep(window), this),
+            widgets: _.cloneDeep(window),
+            current: window.current,
+            filter: window.filter || {}
+          })
+         /* if (window.widgets) {
             this.$store.patch(`windows.${placement}`, {
               widgets: Layout.bindContent(_.cloneDeep(window.widgets), this),
               current: window.current,
               filter: window.filter || {}
             })
-          }
+          }*/
         })
       },
       clearWindows () {

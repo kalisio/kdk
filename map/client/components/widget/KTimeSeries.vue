@@ -1,5 +1,5 @@
 <template>
-  <div id="time-series" class="column" :style="widgetStyle">
+  <div id="time-series" class="column">
     <k-chart id="timeseries-chart" :ref="onChartCreated" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
@@ -13,7 +13,6 @@ import Papa from 'papaparse'
 import { downloadAsBlob } from '../../../../core/client/utils'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
-import { baseWidget } from '../../../../core/client/mixins'
 import { KChart } from '../../../../core/client/components'
 import { useCurrentActivity, useWeather, useMeasure, useHighlight } from '../../composables'
 import 'chartjs-adapter-moment'
@@ -24,9 +23,6 @@ export default {
   components: {
     KChart
   },
-  mixins: [
-    baseWidget
-  ],
   props: {
     highlight: {
       type: Object,
@@ -95,6 +91,9 @@ export default {
         _.forOwn(match, (value, key) => { hasVariable = hasVariable && (properties[key] === value) })
       }
       return hasVariable
+    },
+    hasZoomHistory () {
+      return this.zoomHistory.length > 0
     },
     getBaseUnit (variable, properties) {
       const unit = variable.units[0]
@@ -501,7 +500,6 @@ export default {
       }
       await this.setupGraph()
       this.updateProbedLocationHighlight()
-      this.refreshActions()
     }
   },
   mounted () {

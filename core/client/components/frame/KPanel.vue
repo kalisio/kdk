@@ -1,5 +1,6 @@
 <template>
   <KContent
+    v-if="hasContent"
     v-bind:class="{
       'row items-center': direction === 'horizontal',
       'column': direction === 'vertical'
@@ -10,10 +11,11 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import KContent from './KContent.vue'
 
-// props
-defineProps({
+// Props
+const props = defineProps({
   content: {
     type: [Object, Array],
     default: () => null
@@ -46,10 +48,15 @@ defineProps({
   }
 })
 
-// emit
+// Emit
 const emit = defineEmits(['triggered'])
 
-// functions
+// Computed
+const hasContent = computed(() => {
+  return !_.isEmpty(props.content)
+})
+
+// Functions
 function onTriggered (args) {
   emit('triggered', args)
 }

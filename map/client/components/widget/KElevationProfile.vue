@@ -1,5 +1,5 @@
 <template>
-  <div id="elevation-profile" class="column" :style="widgetStyle">
+  <div id="elevation-profile" class="column">
     <k-chart ref="chart" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
@@ -13,7 +13,6 @@ import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { segmentEach, coordEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
-import { baseWidget } from '../../../../core/client/mixins'
 import { Units } from '../../../../core/client/units'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
@@ -24,7 +23,6 @@ export default {
     KPanel,
     KStamp
   },
-  mixins: [baseWidget],
   props: {
     highlight: {
       type: Object,
@@ -61,30 +59,11 @@ export default {
     }
   },
   methods: {
-    refreshActions () {
-      this.window.widgetActions = [
-        {
-          id: 'center-view',
-          icon: 'las la-eye',
-          tooltip: this.$t('KElevationProfile.CENTER_ON'),
-          visible: this.feature,
-          handler: this.onCenterOn
-        },
-        {
-          id: 'copy-properties',
-          icon: 'las la-clipboard',
-          tooltip: this.$t('KElevationProfile.COPY_PROFILE'),
-          visible: this.profile,
-          handler: this.onCopyProfile
-        },
-        {
-          id: 'export-feature',
-          icon: 'img:statics/json-icon.svg',
-          tooltip: this.$t('KElevationProfile.EXPORT_PROFILE'),
-          visible: this.profile,
-          handler: this.onExportProfile
-        }
-      ]
+    hasFeature () {
+      return !_.isNil(this.feature)
+    },
+    hasProfile () {
+      return !_.isNil(this.profile)
     },
     extractProfileData (profiles) {
       // Extract profile heights if available on the segments used to compute elevation
@@ -327,7 +306,6 @@ export default {
       const maxResolution = 30
       this.profile = null
       this.clearHighlights()
-      this.refreshActions()
       if (!this.layer || !this.feature) return
 
       // Check supported geometry
@@ -461,9 +439,6 @@ export default {
       this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth)
 
       this.profile = featureCollection(this.profile)
-
-      // Refresh the actions
-      this.refreshActions()
     },
     onCenterOn () {
       this.centerOnSelection()

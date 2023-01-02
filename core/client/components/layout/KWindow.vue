@@ -1,28 +1,32 @@
 <template>
-  <div v-if="visible" class="k-window fit column">
+  <div v-if="isVisible" class="k-window fit column">
     <!--
       Window header
      -->
     <div
-      id="window-header"
-      class="k-window-header full-width row"
+      class="k-window-header full-width row items-center"
       v-touch-pan.prevent.mouse="onMoved"
     >
-      <KPanel id="window-actions" class="full-width" :content="actions" />
+      <!-- window menu -->
+      <KPanel id="window-menu" :content="menu" />
+      <!-- widget header -->
+      <KPanel id="widget-header" :content="widgetHeader" />
+      <q-space />
+      <!-- window controls -->
+      <KPanel id="window-controls" :content="controls" />
     </div>
     <!--
       Window content
       -->
     <div class="fit">
-      <q-tab-panels v-model="widget" animated>
+      <q-tab-panels v-model="currentWidget" animated>
         <template v-for="(widget, index) in widgets" :placement="index">
           <q-tab-panel :name="widget.id" class="no-padding no-scroll">
             <component
+              :ref="onWidgetRefCreated"
               :is="widget.component"
-              :window="window"
-              :mode="mode"
-              v-bind="widget"
-              style="z-index: 1;"
+              v-bind="widget.content"
+              :style="widgetStyle"
             />
           </q-tab-panel>
         </template>
@@ -31,13 +35,10 @@
     <!--
       Window footer
      -->
-    <div
-      id="window-footer"
-      class="k-window-footer full-width row justify-end"
-    >
-      <!-- Window grip -->
+    <div id="window-footer" class="k-window-footer full-width row justify-end">
+      <!-- window grip -->
       <q-icon
-        v-if="mode !== 'maximized'"
+        v-if="currentMode !== 'maximized'"
         class="k-window-grip"
         name="las la-slash"
         size="10px"
@@ -47,267 +48,284 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
-import { Layout } from '../../layout.js'
-import { loadComponent } from '../../utils.js'
+import config from 'config'
+import { ref, computed, watch } from 'vue'
+import { useQuasar } from 'quasar'
+import { Store, Layout, utils } from '../..'
 import KPanel from '../frame/KPanel.vue'
 
-export default {
-  components: {
-    KPanel
-  },
-  props: {
-    placement: {
-      type: String,
-      required: true,
-      validator: (value) => {
-        return ['left', 'right', 'top', 'bottom'].includes(value)
-      }
-    }
-  },
-  computed: {
-    visible: {
-      get: function () {
-        return this.window.visible
-      },
-      set: function (value) {
-        this.$store.patch(`windows.${this.placement}`, { visible: false })
-      }
-    },
-    widget: {
-      get: function () {
-        return this.window.current
-      },
-      set: function (value) {
-        this.$store.patch(`windows.${this.placement}`, { current: value })
-      }
-    },
-    widgets () {
-      let widgets = this.window.widgets
-      // Apply filtering
-      widgets = Layout.filterContent(widgets, this.window.filter || {})
-      _.forEach(widgets, (widget) => {
-        if (!widget.placement) {
-          const componentName = _.get(widget, 'component')
-          widget.component = loadComponent(componentName)
-        }
-      })
-      return widgets
-    },
-    pinIcon () {
-      switch (this.placement) {
-        case 'left':
-          return 'las la-angle-left'
-        case 'right':
-          return 'las la-angle-right'
-        case 'top':
-          return 'las la-angle-up'
-      }
-      return 'las la-angle-down'
-    },
-    actions () {
-      const widgetMenuItems = []
-      _.forEach(this.widgets, widget => {
-        widgetMenuItems.push({
-          id: widget.id,
-          label: widget.label,
-          icon: widget.icon,
-          handler: () => { this.widget = widget.id }
-        })
-      })
-      const widgetMenu = []
-      if (widgetMenuItems.length > 1) {
-        widgetMenu.push({
-          id: 'widgets-menu-items',
-          component: 'menu/KMenu',
-          icon: 'las la-cube',
-          tooltip: 'Widgets',
-          size: 'sm',
-          actionRenderer: 'item',
-          content: widgetMenuItems
-        })
-      }
-      const windowControls = [
-        {
-          id: 'pin-action',
-          icon: this.pinIcon,
-          tooltip: 'KWindow.PIN_ACTION',
-          size: 'sm',
-          visible: this.mode === 'floating',
-          handler: this.onPinned
-        },
-        {
-          id: 'maximize-action',
-          icon: 'las la-expand',
-          tooltip: 'KWindow.MAXIMIZE_ACTION',
-          size: 'sm',
-          visible: this.mode !== 'maximized',
-          handler: this.onMaximized
-        },
-        {
-          id: 'restore-action',
-          icon: 'las la-compress',
-          tooltip: 'KWindow.RESTORE_ACTION',
-          size: 'sm',
-          visible: this.mode === 'maximized',
-          handler: this.onRestored
-        },
-        {
-          id: 'close-action',
-          icon: 'las la-times',
-          tooltip: this.$t('KWindow.CLOSE_ACTION'),
-          size: 'sm',
-          handler: this.onClosed
-        }
-      ]
-      return _.concat(widgetMenu, this.window.widgetActions, { component: 'QSpace' }, windowControls)
-    }
-  },
-  data () {
-    return {
-      window: this.$store.get(`windows.${this.placement}`),
-      mode: 'pinned'
-    }
-  },
-  watch: {
-    '$q.screen.width': {
-      handler () {
-        this.onScreenResized()
-      }
-    },
-    '$q.screen.height': {
-      handler () {
-        this.onScreenResized()
-      }
-    }
-  },
-  methods: {
-    getGeometryKey () {
-      return this.$config('appName').toLowerCase() + '-' + this.placement + '-window-geometry'
-    },
-    storeGeometry (position, size) {
-      window.localStorage.setItem(this.getGeometryKey(), JSON.stringify({ position, size }))
-    },
-    onPinned () {
-      window.localStorage.removeItem(this.getGeometryKey())
-      this.mode = 'pinned'
-      this.onScreenResized()
-    },
-    onMaximized () {
-      this.backupPosition = this.window.position
-      this.backupSize = this.window.size
-      this.backupMode = this.mode
-      this.mode = 'maximized'
-      this.onScreenResized()
-    },
-    onRestored () {
-      this.$store.patch(`windows.${this.placement}`, { position: this.backupPosition, size: this.backupSize })
-      this.mode = this.backupMode
-    },
-    onClosed () {
-      this.$store.patch(`windows.${this.placement}`, { visible: false })
-    },
-    onMoved (event) {
-      if (!event) return
-      if (this.mode !== 'maximized') {
-        this.mode = 'floating'
-        const xMax = this.$q.screen.width - this.window.size[0]
-        const yMax = this.$q.screen.height - this.window.size[1]
-        const newPosition = [
-          Math.max(Math.min(Math.floor(this.window.position[0] + event.delta.x), xMax), 0),
-          Math.min(Math.max(Math.floor(this.window.position[1] + event.delta.y), 0), yMax)
-        ]
-        this.$store.patch(`windows.${this.placement}`, { position: newPosition })
-        if (event.isFinal) this.storeGeometry(newPosition, this.window.size)
-      }
-    },
-    onResized (event) {
-      if (!event) return
-      // Handle the pinned and floating mode
-      if (this.mode !== 'maximized') {
-        this.mode = 'floating'
-        const wMax = this.$q.screen.width - this.window.position[0]
-        const hMax = this.$q.screen.height - this.window.position[1]
-        const newSize = [
-          Math.min(this.window.size[0] + event.delta.x, wMax),
-          Math.min(this.window.size[1] + event.delta.y, hMax)
-        ]
-        this.$store.patch(`windows.${this.placement}`, { size: newSize })
-        if (event.isFinal) this.storeGeometry(this.window.position, newSize)
-      }
-    },
-    onScreenResized () {
-      if (this.mode === 'pinned') {
-        // Pinned mode
-        let w, h, x, y
-        if (this.placement === 'top' || this.placement === 'bottom') {
-          w = this.$q.screen.width
-          if (this.$q.screen.gt.sm) w = this.$q.screen.width * 0.9
-          if (this.$q.screen.gt.md) w = this.$q.screen.width * 0.8
-          if (this.$q.screen.gt.lg) w = w = this.$q.screen.width * 0.7
-          h = this.$q.screen.height * 0.3
-          x = this.$q.screen.width / 2 - w / 2
-          y = this.placement === 'top' ? 0 : this.$q.screen.height - h
-        } else {
-          w = this.$q.screen.width * 0.15
-          if (this.$q.screen.lt.xl) w = this.$q.screen.width * 0.2
-          if (this.$q.screen.lt.lg) w = this.$q.screen.width * 0.25
-          if (this.$q.screen.lt.md) w = this.$q.screen.width * 0.35
-          if (this.$q.screen.lt.sm) w = this.$q.screen.width
-          h = this.$q.screen.height * 0.6
-          x = this.placement === 'left' ? 0 : this.$q.screen.width - w
-          y = this.$q.screen.height / 2 - h / 2
-        }
-        this.$store.patch(`windows.${this.placement}`, { position: [x, y], size: [w, h] })
-      } else if (this.mode === 'floating') {
-        // Floating mode
-        if (this.window.position && this.window.size) {
-          let x = this.window.position[0]
-          let y = this.window.position[1]
-          let w = this.window.size[0]
-          let h = this.window.size[1]
-          let constrained = false
-          if ((x + w) > this.$q.screen.width) {
-            x = Math.max(this.$q.screen.width - w, 0)
-            if (x === 0) w = this.$q.screen.width
-            constrained = true
-          }
-          if ((y + h) > this.$q.screen.height) {
-            y = Math.max(this.$q.screen.height - h, 0)
-            if (y === 0) h = this.$q.screen.height
-            constrained = true
-          }
-          if (constrained) {
-            this.$store.patch(`windows.${this.placement}`, { position: [x, y], size: [w, h] })
-            this.storeGeometry([x, y], [w, h])
-          }
-        }
-      } else {
-        // Maximized mode
-        this.$store.patch(`windows.${this.placement}`, { position: [0, 0], size: [this.$q.screen.width, this.$q.screen.height] })
-      }
-    }
-  },
-  created () {
-    // Define a default widget if needed
-    if (!this.window.current && this.window.widgets.length > 0) {
-      this.$store.patch(`windows.${this.placement}`, { current: this.window.widgets[0].id })
-    }
-    // Retrieve the geometry
-    const geometry = window.localStorage.getItem(this.getGeometryKey())
-    if (geometry) {
-      const geometryObject = JSON.parse(geometry)
-      this.$store.patch(`windows.${this.placement}`, { position: geometryObject.position, size: geometryObject.size })
-      this.mode = 'floating'
-    } else {
-      this.onPinned()
+// Props
+const props = defineProps({
+  placement: {
+    type: String,
+    required: true,
+    validator: (value) => {
+      return ['left', 'right', 'top', 'bottom'].includes(value)
     }
   }
+})
+
+// Data
+const $q = useQuasar()
+const currentWindow = Store.get(`windows.${props.placement}`)
+const currentMode = ref('pinned')
+const widgetHeader = ref(null)
+const pinIcons = {
+  left: 'las la-angle-left',
+  right: 'las la-angle-right',
+  top: 'las la-angle-up',
+  bottom: 'las la-angle-down'
+}
+let backupPosition
+let backupSize
+let backupMode
+
+// Computed
+const isVisible = computed({
+  get: function () {
+    return currentWindow.visible
+  },
+  set: function (value) {
+    Store.patch(`windows.${props.placement}`, { visible: false })
+  }
+})
+const menu = computed(() => {
+  const widgetMenuItems = []
+  _.forEach(widgets.value, widget => {
+    widgetMenuItems.push({
+      id: widget.id,
+      label: widget.label,
+      icon: widget.icon,
+      handler: () => { currentWidget.value = widget.id }
+    })
+  })
+  const menu = []
+  if (widgetMenuItems.length > 1) {
+    menu.push({
+      id: 'widgets-menu-items',
+      component: 'menu/KMenu',
+      icon: 'las la-cube',
+      tooltip: 'Widgets',
+      size: 'sm',
+      actionRenderer: 'item',
+      content: widgetMenuItems
+    })
+  }
+  return menu
+})
+const controls = computed (() => {
+  return [{
+    id: 'pin-action',
+    icon: pinIcons[props.placement],
+    tooltip: 'KWindow.PIN_ACTION',
+    size: 'xs',
+    visible: currentMode.value === 'floating',
+    handler: onPinned
+  }, {
+    id: 'maximize-action',
+    icon: 'las la-expand',
+    tooltip: 'KWindow.MAXIMIZE_ACTION',
+    size: 'sm',
+    visible: currentMode.value !== 'maximized',
+    handler: onMaximized
+  }, {
+    id: 'restore-action',
+    icon: 'las la-compress',
+    tooltip: 'KWindow.RESTORE_ACTION',
+    size: 'xs',
+    visible: currentMode.value === 'maximized',
+    handler: onRestored
+  }, {
+    id: 'close-action',
+    icon: 'las la-times',
+    tooltip: 'KWindow.CLOSE_ACTION',
+    size: 'xs',
+    handler: onClosed
+  }]
+})
+const widgets = computed(() => {
+  let widgets = currentWindow.widgets
+  // Apply filtering
+  //widgets = Layout.filterContent(widgets, window.filter || {})
+  _.forEach(widgets, (widget) => {
+    if (!widget.placement) {
+      const componentName = _.get(widget, 'content.component')
+      widget.component = utils.loadComponent(componentName)
+    }
+  })
+  return widgets
+})
+const currentWidget = computed({
+  get: function () {
+    return currentWindow.current
+  },
+  set: function (value) {
+    Store.patch(`windows.${props.placement}`, { current: value })
+  }
+})
+const widgetStyle = computed(() => {
+  if (currentWindow.size) {
+    // compute the widget height
+    let widgetHeight = currentWindow.size[1]
+    const windowHeaderElement = document.getElementById('window-header')
+    if (windowHeaderElement) {
+      widgetHeight -= parseInt(window.getComputedStyle(windowHeaderElement).getPropertyValue('height'))
+    }
+    const windowFooterElement = document.getElementById('window-footer')
+    if (windowFooterElement) {
+      widgetHeight -= parseInt(window.getComputedStyle(windowFooterElement).getPropertyValue('height'))
+    }
+    // return the style
+    return `minWidth: ${currentWindow.size[0]}px;
+            maxWidth: ${currentWindow.size[0]}px;
+            minHeight: ${widgetHeight}px; 
+            maxHeight: ${widgetHeight}px;
+            z-index: 1;`
+  }
+})
+    
+// Watch
+watch(() => [$q.screen.width, $q.screen.height], (value) => {
+  onScreenResized()
+})
+
+// Functions
+function onWidgetRefCreated (reference) {
+  if (reference) {
+    // setup the corresponding header
+    const widget = _.find(widgets.value, { id: currentWidget.value })
+    if (widget.header) widgetHeader.value = Layout.bindContent(_.cloneDeep(widget.header), reference)
+    else widgetHeader.value = [{ component: 'frame/KStamp', text: widget.label }]
+  } else {
+    // empty the header
+    widgetHeader.value = null
+  }
+}
+function getGeometryKey () {
+  return _.get(config, 'appName').toLowerCase() + '-' + props.placement + '-window-geometry'
+}
+function storeGeometry (position, size) {
+  window.localStorage.setItem(getGeometryKey(), JSON.stringify({ position, size }))
+}
+function onPinned () {
+  window.localStorage.removeItem(getGeometryKey())
+  currentMode.value = 'pinned'
+  onScreenResized()
+}
+function onMaximized () {
+  backupPosition = currentWindow.position
+  backupSize = currentWindow.size
+  backupMode = currentMode.value
+  currentMode.value = 'maximized'
+  onScreenResized()
+}
+function onRestored () {
+  Store.patch(`windows.${props.placement}`, { position: backupPosition, size: backupSize })
+  currentMode.value = backupMode
+}
+function onClosed () {
+  Store.patch(`windows.${props.placement}`, { visible: false })
+}
+function onMoved (event) {
+  if (!event) return
+  if (currentMode.value !== 'maximized') {
+    currentMode.value = 'floating'
+    const xMax = $q.screen.width - currentWindow.size[0]
+    const yMax = $q.screen.height - currentWindow.size[1]
+    const newPosition = [
+      Math.max(Math.min(Math.floor(currentWindow.position[0] + event.delta.x), xMax), 0),
+      Math.min(Math.max(Math.floor(currentWindow.position[1] + event.delta.y), 0), yMax)
+    ]
+    Store.patch(`windows.${props.placement}`, { position: newPosition })
+    if (event.isFinal) storeGeometry(newPosition, currentWindow.size)
+  }
+}
+function onResized (event) {
+  if (!event) return
+  // Handle the pinned and floating currentMode
+  if (currentMode.value !== 'maximized') {
+    currentMode.value = 'floating'
+    const wMax = $q.screen.width - currentWindow.position[0]
+    const hMax = $q.screen.height - currentWindow.position[1]
+    const newSize = [
+      Math.min(currentWindow.size[0] + event.delta.x, wMax),
+      Math.min(currentWindow.size[1] + event.delta.y, hMax)
+    ]
+    Store.patch(`windows.${props.placement}`, { size: newSize })
+    if (event.isFinal) storeGeometry(currentWindow.position, newSize)
+  }
+}
+function onScreenResized () {
+  if (currentMode.value === 'pinned') {
+    // Pinned mode
+    let w, h, x, y
+    if (props.placement === 'top' || props.placement === 'bottom') {
+      w = $q.screen.width
+      if ($q.screen.gt.sm) w = $q.screen.width * 0.9
+      if ($q.screen.gt.md) w = $q.screen.width * 0.8
+      if ($q.screen.gt.lg) w = w = $q.screen.width * 0.7
+      h = $q.screen.height * 0.3
+      x = $q.screen.width / 2 - w / 2
+      y = props.placement === 'top' ? 0 : $q.screen.height - h
+    } else {
+      w = $q.screen.width * 0.15
+      if ($q.screen.lt.xl) w = $q.screen.width * 0.2
+      if ($q.screen.lt.lg) w = $q.screen.width * 0.25
+      if ($q.screen.lt.md) w = $q.screen.width * 0.35
+      if ($q.screen.lt.sm) w = $q.screen.width
+      h = $q.screen.height * 0.6
+      x = props.placement === 'left' ? 0 : $q.screen.width - w
+      y = $q.screen.height / 2 - h / 2
+    }
+    Store.patch(`windows.${props.placement}`, { position: [x, y], size: [w, h] })
+  } else if (currentMode.value === 'floating') {
+    // Floating mode
+    if (currentWindow.position && currentWindow.size) {
+      let x = currentWindow.position[0]
+      let y = currentWindow.position[1]
+      let w = currentWindow.size[0]
+      let h = currentWindow.size[1]
+      let constrained = false
+      if ((x + w) > $q.screen.width) {
+        x = Math.max($q.screen.width - w, 0)
+        if (x === 0) w = $q.screen.width
+        constrained = true
+      }
+      if ((y + h) > $q.screen.height) {
+        y = Math.max($q.screen.height - h, 0)
+        if (y === 0) h = $q.screen.height
+        constrained = true
+      }
+      if (constrained) {
+        Store.patch(`windows.${props.placement}`, { position: [x, y], size: [w, h] })
+        storeGeometry([x, y], [w, h])
+      }
+    }
+  } else {
+    // Maximized mode
+    Store.patch(`windows.${props.placement}`, { position: [0, 0], size: [$q.screen.width, $q.screen.height] })
+  }
+}
+
+// Immediate
+// pick a default widget if needed
+if (!currentWindow.current && currentWindow.widgets.length > 0) {
+  Store.patch(`windows.${props.placement}`, { current: currentWindow.widgets[0].id })
+}
+// restore the geometry if needed
+const geometry = window.localStorage.getItem(getGeometryKey())
+if (geometry) {
+  const geometryObject = JSON.parse(geometry)
+  Store.patch(`windows.${props.placement}`, { position: geometryObject.position, size: geometryObject.size })
+  currentMode.value = 'floating'
+} else {
+  onPinned()
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .k-window {
     border: solid 1px lightgrey;
     border-radius: 5px;

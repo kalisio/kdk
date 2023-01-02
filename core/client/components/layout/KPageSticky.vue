@@ -16,7 +16,7 @@ import _ from 'lodash'
 import { computed } from 'vue'
 import KContent from '../frame/KContent.vue'
 
-// props
+// Props
 const props = defineProps({
   position: {
     type: String,
@@ -40,13 +40,13 @@ const props = defineProps({
   }
 })
 
-// computed
+// Computed
 const hasContent = computed(() => {
   return !_.isEmpty(props.content)
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .k-sticky {
     z-index: $sticky-z-index;
   }

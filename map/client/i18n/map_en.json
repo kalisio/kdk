@@ -602,8 +602,8 @@
     "EXPORT_PROFILE": "Export the profile",
     "PROFILE_EXPORTED": "Profile exported to file {file}",
     "CANNOT_EXPORT_PROFILE": "Unable to export the profile. Your browser does not support this functionality",
-    "CURVILINEAR_AXIS_LEGEND": "Curvilinear abscissa ({{unit}})",
-    "HEIGHT_AXIS_LEGEND": "Height ({{unit}})",
+    "CURVILINEAR_AXIS_LEGEND": "Curvilinear abscissa ({unit})",
+    "HEIGHT_AXIS_LEGEND": "Height ({unit})",
     "TERRAIN_CHART_LEGEND": "Terrain elevation",
     "PROFILE_CHART_LEGEND": "Profile elevation"
   },
