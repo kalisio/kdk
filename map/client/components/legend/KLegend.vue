@@ -1,12 +1,13 @@
 <template>
   <div class="column full-width">
     <KScrollArea :maxHeight="maxHeight">
+      <!-- Sublegends -->
       <template
         v-for="sublegend in sublegends"
         :key="sublegend.name"
         class="column full-width"
       >
-        <!-- Sub legends -->
+        <!-- sublegend -->
         <q-expansion-item
           v-if="!_.isEmpty(layersBySublegend[sublegend.name])"
           :label="$tie(sublegend.name)"
@@ -14,6 +15,7 @@
           :default-opened="sublegend.opened || opened"
           dense
         >
+          <!-- legend components by layers -->
           <template v-for="layer in layersBySublegend[sublegend.name]" key="layer.name" class="column full-width">
             <div class="q-py-xs q-px-md">
               <component
