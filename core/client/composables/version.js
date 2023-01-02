@@ -22,13 +22,13 @@ export function useVersion () {
   const clientVersionName = computed(() => {
     const clientVersion = Version.value.client
     let version = clientVersion.number
-    if (clientVersion.buildNumber) version += `(${clientVersion.buildNumber})`
+    if (clientVersion.buildNumber) version += ` (${clientVersion.buildNumber})`
     return version
   })
   const apiVersionName = computed(() => {
     const apiVersion = Version.value.api
     let version = apiVersion.number
-    if (apiVersion.buildNumber) version += `(${apiVersion.buildNumber})`
+    if (apiVersion.buildNumber) version += ` (${apiVersion.buildNumber})`
     return version
   })
 
