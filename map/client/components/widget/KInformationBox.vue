@@ -3,11 +3,11 @@
     <q-resize-observer @resize="onResized" />
     <div v-if="schema && properties" class="row">
       <KScrollArea class="col" :maxHeight="height">
-        <KView 
-          class="q-pa-md" 
+        <KView
+          class="q-pa-md"
           :values="properties"
-          :schema="schema"  
-          :separators="true" 
+          :schema="schema"
+          :separators="true"
         />
       </KScrollArea>
     </div>
@@ -16,7 +16,7 @@
         icon="las la-exclamation-circle"
         icon-size="3rem"
         :text="$t('KInformationBox.NO_FEATURE_PROPERTIES')"
-        text-size="1rem" 
+        text-size="1rem"
       />
     </div>
   </div>

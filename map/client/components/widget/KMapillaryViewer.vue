@@ -1,9 +1,9 @@
 <template>
   <div id="mapillary-widget" class="column">
     <q-resize-observer @resize="onResized" />
-    <div 
-      class="col" 
-      id="mapillary-container" 
+    <div
+      class="col"
+      id="mapillary-container"
     />
   </div>
 </template>
@@ -75,11 +75,10 @@ export default {
       this.hasImage = false
       if (_.has(this.selection, 'mapillary')) {
         this.restoreStates()
-        if (this.imageId) { 
+        if (this.imageId) {
           this.hasImage = true
           await this.refreshView()
-        }
-        else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
+        } else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
       } else if (this.hasSelectedItem()) {
         const location = this.getSelectedLocation()
         if (location) await this.moveCloseTo(location.lat, location.lng)

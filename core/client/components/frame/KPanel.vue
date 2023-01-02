@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
 import KContent from './KContent.vue'
 

@@ -115,7 +115,7 @@ const menu = computed(() => {
   }
   return menu
 })
-const controls = computed (() => {
+const controls = computed(() => {
   return [{
     id: 'pin-action',
     icon: pinIcons[props.placement],
@@ -146,9 +146,9 @@ const controls = computed (() => {
   }]
 })
 const widgets = computed(() => {
-  let widgets = currentWindow.widgets
+  const widgets = currentWindow.widgets
   // Apply filtering
-  //widgets = Layout.filterContent(widgets, window.filter || {})
+  // widgets = Layout.filterContent(widgets, window.filter || {})
   _.forEach(widgets, (widget) => {
     if (!widget.placement) {
       const componentName = _.get(widget, 'content.component')
@@ -185,7 +185,7 @@ const widgetStyle = computed(() => {
             z-index: 1;`
   }
 })
-    
+
 // Watch
 watch(() => [$q.screen.width, $q.screen.height], (value) => {
   onScreenResized()
