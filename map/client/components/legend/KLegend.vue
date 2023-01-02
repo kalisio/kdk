@@ -6,6 +6,7 @@
         :key="sublegend.name"
         class="column full-width"
       >
+        <!-- Sub legends -->
         <q-expansion-item
           v-if="!_.isEmpty(layersBySublegend[sublegend.name])"
           :label="$tie(sublegend.name)"
@@ -32,16 +33,12 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
-import { inject, ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { i18n, utils as coreUtils } from '../../../../core/client/index.js'
+import { useCatalog, useCurrentActivity } from '../../composables'
 import { KScrollArea } from '../../../../core/client/components'
-import { i18n } from '../../../../core/client/index.js'
-import { loadComponent } from '../../../../core/client/utils.js'
-import { useCatalog } from '../../composables'
 
-// inject
-const kActivity = inject('kActivity')
-
-// props
+// Props
 const props = defineProps({
   contextId: {
     type: String,
@@ -71,12 +68,13 @@ const props = defineProps({
   }
 })
 
-// data
+// Data
+const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const { listSublegends } = useCatalog(props.contextId)
 const sublegends = ref({})
 const layers = ref([])
 
-// cmoputed
+// Computed
 const layersBySublegend = computed(() => {
   const result = {}
   _.forEach(sublegends.value, sublegend => {
@@ -91,7 +89,7 @@ const layersBySublegend = computed(() => {
   return result
 })
 
-// functions
+// Functions
 function onShowLayer (layer, engineLayer) {
   const legend = layer.legend
   if (legend) {
@@ -101,7 +99,7 @@ function onShowLayer (layer, engineLayer) {
       logger.warn(`Cannot find any renderer for the layer's legend of type of ${legend.type}`)
       return
     }
-    legend.renderer = loadComponent(renderer)
+    legend.renderer = coreUtils.loadComponent(renderer)
     layers.value.push(layer)
   }
 }
@@ -112,10 +110,10 @@ function onHideLayer (layer) {
   }
 }
 
-// hooks
+// Hooks
 onMounted(async () => {
-  kActivity.$engineEvents.on('layer-shown', onShowLayer)
-  kActivity.$engineEvents.on('layer-hidden', onHideLayer)
+  CurrentActivity.value.$engineEvents.on('layer-shown', onShowLayer)
+  CurrentActivity.value.$engineEvents.on('layer-hidden', onHideLayer)
   // retrieve the legends
   sublegends.value = await listSublegends()
   // register legend translations
@@ -123,14 +121,14 @@ onMounted(async () => {
     if (legend.i18n) i18n.registerTranslation(legend.i18n)
   })
   // initial scan of already added layers
-  kActivity.getLayers().forEach((layer) => {
-    if (kActivity.isLayerVisible(layer.name)) {
+  CurrentActivity.value.getLayers().forEach((layer) => {
+    if (CurrentActivity.value.isLayerVisible(layer.name)) {
       onShowLayer(layer)
     }
   })
 })
 onBeforeUnmount(() => {
-  kActivity.$engineEvents.off('layer-shown', onShowLayer)
-  kActivity.$engineEvents.off('layer-hidden', onHideLayer)
+  CurrentActivity.value.$engineEvents.off('layer-shown', onShowLayer)
+  CurrentActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
 })
 </script>

@@ -607,7 +607,7 @@
     "TERRAIN_CHART_LEGEND": "Terrain elevation",
     "PROFILE_CHART_LEGEND": "Profile elevation"
   },
-  "KLegendBox": {
+  "KLegend": {
     "LABEL": "Legend"
   }
 }

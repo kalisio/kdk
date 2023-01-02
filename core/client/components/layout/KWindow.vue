@@ -20,7 +20,7 @@
       -->
     <div class="fit">
       <q-tab-panels v-model="currentWidget" animated>
-        <template v-for="(widget, index) in widgets" :placement="index">
+        <template v-for="(widget, index) in availableWidgets" :placement="index">
           <q-tab-panel :name="widget.id" class="no-padding no-scroll">
             <component
               :ref="onWidgetRefCreated"
@@ -93,7 +93,7 @@ const isVisible = computed({
 })
 const menu = computed(() => {
   const widgetMenuItems = []
-  _.forEach(widgets.value, widget => {
+  _.forEach(availableWidgets.value, widget => {
     widgetMenuItems.push({
       id: widget.id,
       label: widget.label,
@@ -145,10 +145,10 @@ const controls = computed(() => {
     handler: onClosed
   }]
 })
-const widgets = computed(() => {
+const availableWidgets = computed(() => {
   const widgets = currentWindow.widgets
   // Apply filtering
-  // widgets = Layout.filterContent(widgets, window.filter || {})
+  // TODO const widgets = Layout.filterContent(_.cloneDeep(currentWindow.widgets), currentWindow.filter || {})
   _.forEach(widgets, (widget) => {
     if (!widget.placement) {
       const componentName = _.get(widget, 'content.component')
@@ -195,9 +195,9 @@ watch(() => [$q.screen.width, $q.screen.height], (value) => {
 function onWidgetRefCreated (reference) {
   if (reference) {
     // setup the corresponding header
-    const widget = _.find(widgets.value, { id: currentWidget.value })
+    const widget = _.find(availableWidgets.value, { id: currentWidget.value })
     if (widget.header) widgetHeader.value = Layout.bindContent(_.cloneDeep(widget.header), reference)
-    else widgetHeader.value = [{ component: 'frame/KStamp', text: widget.label }]
+    else widgetHeader.value = [{ component: 'frame/KStamp', text: widget.label, direction: 'horizontal' }]
   } else {
     // empty the header
     widgetHeader.value = null

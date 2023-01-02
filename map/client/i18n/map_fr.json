@@ -608,7 +608,7 @@
     "TERRAIN_CHART_LEGEND": "Hauteur du terrain",
     "PROFILE_CHART_LEGEND": "Hauteur du profil"
   },
-  "KLegendBox": {
+  "KLegend": {
     "LABEL": "Légende"
   }
 }

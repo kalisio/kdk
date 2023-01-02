@@ -35,7 +35,9 @@ export function useCurrentActivity (exposed = { selection: true, probe: true }) 
   // expose
   const expose = {
     kActivity,
-    kActivityName
+    CurrentActivity: kActivity,
+    kActivityName,
+    CurrentActivityName: kActivityName
   }
   if (kActivityName.value) {
     Object.assign(expose, {
