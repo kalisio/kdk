@@ -51,6 +51,8 @@ export const Layout = {
     return modes[0]
   },
   filterContent (content, filter) {
+    // Handle non object content
+    if (typeof content !== 'object') return content
     // Handle array and object case
     const isArray = Array.isArray(content)
     const modes = _.keys(content)

@@ -3,7 +3,12 @@
     <!--
       Header
      -->
-    <q-header v-if="header.contents" v-model="isHeaderVisible" v-bind="config.header" bordered>
+    <q-header 
+      v-if="header.contents" 
+      v-model="isHeaderVisible" 
+      v-bind="config.header" 
+      bordered
+    >
       <KPanel
         id="header"
         :content="header.content"
@@ -14,7 +19,12 @@
     <!--
       Footer
      -->
-    <q-footer v-if="footer.content" v-model="isFooterVisible" v-bind="config.footer" bordered>
+    <q-footer 
+      v-if="footer.content" 
+      v-model="isFooterVisible" 
+      v-bind="config.footer" 
+      bordered
+    >
       <KPanel
         id="footer"
         :content="footer.content"
@@ -31,54 +41,50 @@
   </q-layout>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import config from 'config'
+import { computed } from 'vue'
+import { Layout } from '../../layout.js'
 import KPanel from '../frame/KPanel.vue'
 
-export default {
-  components: {
-    KPanel
+// Data
+const header = Layout.getHeader()
+const footer = Layout.getFooter()
+
+// Compputed
+const isHeaderVisible = computed({
+  get: function () {
+    return header.visible
   },
-  computed: {
-    isHeaderVisible: {
-      get: function () {
-        return this.header.visible
-      },
-      set: function (value) {
-        this.$layout.setHeaderVisible(value)
-      }
-    },
-    isFooterVisible: {
-      get: function () {
-        return this.footer.visible
-      },
-      set: function (value) {
-        this.$layout.setFooterVisible(value)
-      }
-    }
-  },
-  data () {
-    return {
-      header: this.$layout.getHeader(),
-      footer: this.$layout.getFooter(),
-      config: {}
-    }
-  },
-  created () {
-    // Load the options from the configuration
-    this.config = this.$config('layout')
-    // Configure the header
-    if (this.config.header) {
-      const header = this.config.header
-      this.$layout.setHeader(_.get(header, 'content', null), _.get(header, 'mode', undefined),
-        _.get(header, 'filter', {}), _.get(header, 'visible', false))
-    }
-    // Configure the footer
-    if (this.config.footer) {
-      const footer = this.config.footer
-      this.$layout.setFooter(_.get(footer, 'content', null), _.get(footer, 'mode', undefined),
-        _.get(footer, 'filter', {}), _.get(footer, 'visible', false))
-    }
+  set: function (value) {
+    Layout.setHeaderVisible(value)
   }
+})
+const isFooterVisible = computed({
+  get: function () {
+    return footer.visible
+  },
+  set: function (value) {
+    Layout.setFooterVisible(value)
+  }
+})
+
+// Immediate
+const headerConfig = _.get(config, 'layout.header')
+if (headerConfig) {
+  Layout.setHeader(
+    _.get(headerConfig, 'content', null), 
+    _.get(headerConfig, 'mode', undefined),
+    _.get(headerConfig, 'filter', {}), 
+    _.get(headerConfig, 'visible', false))
+}
+const footerConfig = _.get(config, 'layout.footer')
+if (footerConfig) {
+  Layout.setFooter(
+    _.get(footerConfig, 'content', null), 
+    _.get(footerConfig, 'mode', undefined),
+    _.get(footerConfig, 'filter', {}), 
+    _.get(footerConfig, 'visible', false))
 }
 </script>

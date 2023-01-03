@@ -146,9 +146,9 @@ const controls = computed(() => {
   }]
 })
 const availableWidgets = computed(() => {
-  const widgets = currentWindow.widgets
-  // Apply filtering
-  // TODO const widgets = Layout.filterContent(_.cloneDeep(currentWindow.widgets), currentWindow.filter || {})
+  // retrieve the widgets applying an optional filter
+  const widgets = Layout.filterContent(currentWindow.widgets, currentWindow.filter || {})
+  // add the component to be loaded
   _.forEach(widgets, (widget) => {
     if (!widget.placement) {
       const componentName = _.get(widget, 'content.component')
@@ -271,9 +271,9 @@ function onScreenResized () {
       y = props.placement === 'top' ? 0 : $q.screen.height - h
     } else {
       w = $q.screen.width * 0.15
-      if ($q.screen.lt.xl) w = $q.screen.width * 0.2
-      if ($q.screen.lt.lg) w = $q.screen.width * 0.25
-      if ($q.screen.lt.md) w = $q.screen.width * 0.35
+      if ($q.screen.lt.xl) w = $q.screen.width * 0.25
+      if ($q.screen.lt.lg) w = $q.screen.width * 0.30
+      if ($q.screen.lt.md) w = $q.screen.width * 0.40
       if ($q.screen.lt.sm) w = $q.screen.width
       h = $q.screen.height * 0.6
       x = props.placement === 'left' ? 0 : $q.screen.width - w
