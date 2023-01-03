@@ -373,10 +373,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .k-action-fab, .k-action-fab-action {
-    border: 2px solid var(--q-secondary);
-  }
-  .k-action-tab-active {
-    border-bottom: solid 2px;
-  }
+.k-action-fab, .k-action-fab-action {
+  border: 2px solid var(--q-secondary);
+}
+.k-action-tab-active {
+  border-bottom: solid 2px;
+}
 </style>

@@ -1,3 +1,15 @@
+import KChip from './KChip.vue'
+import KLogo from './KLogo.vue'
+import KVersion from './KVersion.vue'
+import KSponsor from './KSponsor.vue'
+
+export {
+  KChip,
+  KLogo,
+  KVersion,
+  KSponsor
+}
+
 export * from './layout/index.js'
 export * from './form/index.js'
 export * from './frame/index.js'

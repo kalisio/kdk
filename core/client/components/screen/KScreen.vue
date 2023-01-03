@@ -30,14 +30,13 @@
           />
         </q-card-section>
       </q-card>
-      <!-- links -->
+      <!-- screen global actions -->
       <div class="q-pa-sm row justify-center q-gutter-md">
-        <template v-for="link in links" :key="link.id">
-          <a v-if="link.label || link.icon" :id="link.id" @click="$router.push(link.route)">
-            <q-icon v-if="link.icon" :name="link.icon"/>
-            <span v-if="link.label" >{{ $t(link.label) }}</span>
-          </a>
-        </template>
+        <KPanel
+          id="screen-actions"
+          class="q-pa-none justify-center"
+          :content="screenActions"
+        />
       </div>
     </div>
     <!--
@@ -67,14 +66,14 @@ defineProps({
 })
 
 // Data
-const logoComponent = ref(_.get(config, 'logoComponent', 'foundation/KLogo'))
+const logoComponent = ref(_.get(config, 'logoComponent', 'KLogo'))
 const headerComponent = ref(_.get(config, 'screens.headerComponent', 'screen/KScreenHeader'))
 const footerComponent = ref(_.get(config, 'screens.footerComponent', 'screen/KScreenFooter'))
 const backgroundColor = ref(_.get(config, 'screens.backgroundColor', '#EFEFEF'))
 const textColor = ref(_.get(config, 'screens.textColor', 'black'))
 const frameBackgroundColor = ref(_.get(config, 'screens.frameBackgroundColor', '#FFFFFF'))
 const frameTextColor = ref(_.get(config, 'screens.frameTextColor', 'black'))
-const links = ref(_.get(config, 'links'), [])
+const screenActions = ref(_.get(config, 'screens.actions', []))
 
 // Computed
 const computedHeaderComponent = computed(() => {

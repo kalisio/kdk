@@ -33,15 +33,15 @@ import { ref } from 'vue'
 import { i18n } from '../../i18n'
 import { loadComponent } from '../../utils'
 import { useVersion, usePlatform } from '../../composables'
-import KVersion from '../foundation/KVersion.vue'
-import KSponsor from '../foundation/KSponsor.vue'
+import KVersion from '../KVersion.vue'
+import KSponsor from '../KSponsor.vue'
 import KPanel from '../frame/KPanel.vue'
 
 // Data
 const { clientVersionName, apiVersionName } = useVersion()
 const { Platform } = usePlatform()
 // logo component
-const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'foundation/KLogo')))
+const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
 // bug report
 const bugReport = {
   address: _.get(config, 'publisherContact'),

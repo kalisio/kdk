@@ -334,6 +334,7 @@
   },
   "KSponsor": {
     "KDK_POWERED": "Réalisé avec le Kalisio's Development Kit",
+    "MORE_ABOUT_KDK": "En savoir plus sur le KDK",
     "MORE_ABOUT_KALISIO": "En savoir plus sur Kalisio"
   },
   "KPlatform": {
@@ -346,9 +347,6 @@
   "KAbout": {
     "DOMAIN": "Hébergé sur",
     "FLAVOR": "Saveur",
-    "MORE_ABOUT_APP": "En savoir plus sur {app}",
-    "MORE_ABOUT_PUBLISHER": "En savoir plus sur  {publisher}",
-    "KDK_POWERED": "@:KScreen.KDK_POWERED",
     "BUG_REPORT": "Nous signaler un bug",
     "BUG_REPORT_SUBJECT": "[{appName}] Rapport de bug - Client v{clientVersion} - API v{apiVersion}",
     "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",

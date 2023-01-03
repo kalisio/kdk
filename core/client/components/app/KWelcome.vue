@@ -61,7 +61,7 @@ import { loadComponent } from '../../utils'
 import KAction from '../frame/KAction.vue'
 
 // Data
-const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'foundation/KLogo')))
+const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
 const defaultTour = _.get(config, 'welcome.tour', 'home')
 const showWelcome = ref(false)
 const currentSlide = ref('welcome')
