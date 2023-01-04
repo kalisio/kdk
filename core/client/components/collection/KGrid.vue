@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import KStamp from '../frame/KStamp.vue'
+import KStamp from '../KStamp.vue'
 import { service, baseCollection } from '../../mixins'
 import { loadComponent } from '../../utils'
 

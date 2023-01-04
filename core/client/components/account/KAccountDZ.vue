@@ -11,7 +11,7 @@
 
 <script>
 import { Dialog } from 'quasar'
-import KBlock from '../frame/KBlock.vue'
+import KBlock from '../KBlock.vue'
 
 export default {
   components: {

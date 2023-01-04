@@ -16,7 +16,7 @@
 <script>
 import _ from 'lodash'
 import { baseModal, objectProxy } from '../../mixins'
-import KModal from '../frame/KModal.vue'
+import KModal from '../KModal.vue'
 import KForm from '../form/KForm.vue'
 
 export default {

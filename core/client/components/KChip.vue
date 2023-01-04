@@ -24,7 +24,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watchEffect, nextTick } from 'vue'
-import { i18n } from '../i18n.js'
+import { i18n } from '../i18n'
 import { getIconName } from '../utils'
 
 // Props

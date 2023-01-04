@@ -26,7 +26,7 @@
 import _ from 'lodash'
 import { Store, Time, Sorter } from '../..'
 import KColumn from './KColumn.vue'
-import KStamp from '../frame/KStamp.vue'
+import KStamp from '../KStamp.vue'
 import { service } from '../../mixins'
 
 export default {

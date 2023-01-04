@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import KBlock from '../frame/KBlock.vue'
+import KBlock from '../KBlock.vue'
 import KAccountDevices from './KAccountDevices.vue'
 
 export default {

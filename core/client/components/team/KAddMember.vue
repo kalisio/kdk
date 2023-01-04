@@ -89,7 +89,7 @@ import { Dialog, exportFile } from 'quasar'
 import { baseModal } from '../../mixins'
 import { getLocale } from '../../utils'
 import { RoleNames } from '../../../common/permissions'
-import KModal from '../frame/KModal.vue'
+import KModal from '../KModal.vue'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
 

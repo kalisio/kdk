@@ -24,7 +24,7 @@ import { MatrixController, MatrixElement } from 'chartjs-chart-matrix'
 import ChartDataLabelsPlugin from 'chartjs-plugin-datalabels'
 import ChartAnnotationPlugin from 'chartjs-plugin-annotation'
 import ChartZoomPlugin from 'chartjs-plugin-zoom'
-import KStamp from '../frame/KStamp.vue'
+import KStamp from '../KStamp.vue'
 
 /*
  legendMarginPlugin

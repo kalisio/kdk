@@ -37,8 +37,7 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import { KPanel } from '../.'
-import { KStamp } from '../frame'
+import { KPanel, KStamp } from '../.'
 import { service, schemaProxy, baseCollection } from '../../mixins'
 
 export default {

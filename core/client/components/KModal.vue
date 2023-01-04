@@ -62,7 +62,7 @@
 
 <script>
 import KScrollArea from './KScrollArea.vue'
-import KPanel from '../KPanel.vue'
+import KPanel from './KPanel.vue'
 
 export default {
   components: {

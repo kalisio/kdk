@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { KModal, KScrollArea } from '../frame'
+import { KModal, KScrollArea } from '../.'
 import { KForm } from '../form'
 import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
 

@@ -28,7 +28,7 @@ import _ from 'lodash'
 import { baseItem } from '../../mixins'
 import { findMembersOfGroup, getRoleForGroup, getRoleForOrganisation, Roles, RoleNames } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
-import KTextArea from '../frame/KTextArea.vue'
+import KTextArea from '../KTextArea.vue'
 import KAction from '../KAction.vue'
 
 export default {

@@ -23,8 +23,8 @@
 
 <script>
 import _ from 'lodash'
-import { Storage } from '../../storage.js'
-import { getIconName, getInitials } from '../../utils.js'
+import { Storage } from '../storage.js'
+import { getIconName, getInitials } from '../utils.js'
 
 export default {
   props: {

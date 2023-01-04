@@ -30,7 +30,7 @@
 import _ from 'lodash'
 import KPage from '../layout/KPage.vue'
 import KGrid from '../collection/KGrid.vue'
-import KStamp from '../frame/KStamp.vue'
+import KStamp from '../KStamp.vue'
 import { baseActivity } from '../../mixins'
 import { getRoleForOrganisation } from '../../../common/permissions'
 

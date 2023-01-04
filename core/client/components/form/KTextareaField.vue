@@ -30,7 +30,7 @@
 
 <script>
 import _ from 'lodash'
-import KTextArea from '../frame/KTextArea.vue'
+import KTextArea from '../KTextArea.vue'
 import { baseField } from '../../mixins'
 
 export default {

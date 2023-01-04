@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import KModal from '../frame/KModal.vue'
+import KModal from '../KModal.vue'
 import KPalette from '../input/KPalette.vue'
 
 export default {

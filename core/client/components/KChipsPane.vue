@@ -22,8 +22,8 @@
 
 <script>
 import _ from 'lodash'
-import KPanel from '../KPanel.vue'
-import { getIconName } from '../../utils'
+import KPanel from './KPanel.vue'
+import { getIconName } from '../utils'
 
 export default {
   components: {

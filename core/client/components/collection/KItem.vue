@@ -65,13 +65,11 @@
 </template>
 
 <script>
-import { KPanel } from '../.'
-import { KAvatar, KExpandable, KScrollArea } from '../frame'
+import { KAvatar, KExpandable, KScrollArea } from '../.'
 import { baseItem } from '../../mixins'
 
 export default {
   components: {
-    KPanel,
     KAvatar,
     KExpandable,
     KScrollArea
