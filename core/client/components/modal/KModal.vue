@@ -36,11 +36,9 @@
         class="col"
         v-bind:class="{'q-pa-sm': $q.screen.gt.xs, 'q-pa-xs': $q.screen.lt.sm }"
       >
-        <slot name="modal-content">
-          <KScrollArea class="q-pl-xs q-pr-lg" :maxHeight="scrollAreaMaxHeight">
-            <slot />
-          </KScrollArea>
-        </slot>
+        <KScrollArea class="q-pl-xs q-pr-lg" :maxHeight="scrollAreaMaxHeight">
+          <slot />
+        </KScrollArea>
       </div>
       <!--
         Footer section
@@ -110,12 +108,12 @@ const computedStyle = computed(() => {
   // compute the scroll area max height
   // take into account the header and footer height
   let contentMaxHeight = modalMaxHeight - headerHeight.value
-  const cardElement = document.getElementById('dialog-card')
+  const cardElement = document.getElementById('modal-card')
   if (cardElement) {
     contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-top'))
     contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-bottom'))
   }
-  const contentElement = document.getElementById('dialog-content')
+  const contentElement = document.getElementById('modal-content')
   if (contentElement) {
     contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-top'))
     contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-bottom'))
