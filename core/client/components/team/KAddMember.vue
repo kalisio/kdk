@@ -91,7 +91,7 @@ import { getLocale } from '../../utils'
 import { RoleNames } from '../../../common/permissions'
 import KModal from '../frame/KModal.vue'
 import KForm from '../form/KForm.vue'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 export default {
   emits: ['opened', 'closed'],

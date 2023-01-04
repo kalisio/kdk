@@ -12,7 +12,7 @@
 
 <script setup>
 import { ref, inject } from 'vue'
-import KAction from '../../../core/client/components/frame/KAction.vue'
+import KAction from '../../../core/client/components/KAction.vue'
 import { Geolocation } from '../geolocation.js'
 
 // inject

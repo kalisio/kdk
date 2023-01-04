@@ -104,7 +104,7 @@ export const Layout = {
       // so that we "bind" it to the component instead of "filter" the component here
       component.isVisible = isVisible
       // Clone the component and add the required props
-      component.name = _.get(component, 'component', 'frame/KAction')
+      component.name = _.get(component, 'component', 'KAction')
       component.uid = uid()
       processedComponents.push(component)
     })

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 export default {
   name: 'k-member-filter',

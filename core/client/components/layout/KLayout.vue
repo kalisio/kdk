@@ -46,7 +46,7 @@ import _ from 'lodash'
 import config from 'config'
 import { computed } from 'vue'
 import { Layout } from '../../layout.js'
-import KPanel from '../frame/KPanel.vue'
+import KPanel from '../KPanel.vue'
 
 // Data
 const header = Layout.getHeader()

@@ -1,18 +1,18 @@
 <template>
   <div>
     <!-- Forms section -->
-    <k-form
+    <KForm
       ref="propertiesForm"
       :schema="propertiesFormSchema"
       @field-changed="onPropertiesFormFieldChanged"
     />
-    <k-form
+    <KForm
       ref="featureIdForm"
       :schema="featureIdFormSchema"
     />
     <!-- Buttons section -->
     <q-card-actions align="right">
-      <k-panel
+      <KPanel
         id="modal-buttons"
         :content="buttons"
         renderer="form-button"
@@ -24,13 +24,12 @@
 
 <script>
 import _ from 'lodash'
-import { KAction, KPanel } from '../../../../core/client/components/frame'
+import { KPanel } from '../../../../core/client/components'
 import KForm from '../../../../core/client/components/form/KForm.vue'
 
 export default {
   name: 'k-create-layer',
   components: {
-    KAction,
     KPanel,
     KForm
   },

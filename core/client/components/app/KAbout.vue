@@ -35,7 +35,7 @@ import { loadComponent } from '../../utils'
 import { useVersion, usePlatform } from '../../composables'
 import KVersion from '../KVersion.vue'
 import KSponsor from '../KSponsor.vue'
-import KPanel from '../frame/KPanel.vue'
+import KPanel from '../KPanel.vue'
 
 // Data
 const { clientVersionName, apiVersionName } = useVersion()

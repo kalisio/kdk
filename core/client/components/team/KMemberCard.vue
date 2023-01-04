@@ -86,7 +86,8 @@ import { baseItem } from '../../mixins'
 import { getInitials, processIcon, isEmailValid } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
-import { KAvatar, KPanel, KChipsPane } from '../frame'
+import { KPanel } from '../.'
+import { KAvatar, KChipsPane } from '../frame'
 
 export default {
   name: 'k-member-card',

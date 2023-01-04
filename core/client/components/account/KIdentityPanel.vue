@@ -26,7 +26,8 @@
 </template>
 
 <script setup>
-import { KAction, KAvatar } from '../frame'
+import KAction from '../KAction.vue'
+import KAvatar from '../frame/KAvatar.vue'
 import { useUser } from '../../composables'
 
 // Data

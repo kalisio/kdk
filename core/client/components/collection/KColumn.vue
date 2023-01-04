@@ -66,7 +66,8 @@
 </template>
 
 <script>
-import { KScrollArea, KAction, KStamp } from '../frame'
+import { KAction } from '../.'
+import { KScrollArea, KStamp } from '../frame'
 import { baseCollection, service } from '../../mixins'
 import { loadComponent } from '../../utils.js'
 

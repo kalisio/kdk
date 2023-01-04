@@ -6,13 +6,13 @@
       :schema="fileFormSchema"
       @field-changed="onFileFormFieldChanged"
     />
-    <k-form
+    <KForm
       ref="propertiesForm"
       :schema="propertiesFormSchema"
     />
     <!-- Buttons section -->
     <q-card-actions align="right">
-      <k-panel
+      <KPanel
         id="modal-buttons"
         :content="buttons"
         renderer="form-button"
@@ -26,13 +26,12 @@
 import _ from 'lodash'
 import path from 'path-browserify'
 import { generatePropertiesSchema } from '../../utils'
-import { KAction, KPanel } from '../../../../core/client/components/frame'
+import { KPanel } from '../../../../core/client/components'
 import KForm from '../../../../core/client/components/form/KForm.vue'
 
 export default {
   name: 'k-import-layer',
   components: {
-    KAction,
     KPanel,
     KForm
   },

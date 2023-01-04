@@ -12,7 +12,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { Time } from '../../time'
-import KPanel from '../frame/KPanel.vue'
+import KPanel from '../KPanel.vue'
 
 export default {
   name: 'k-relative-time-ranges',

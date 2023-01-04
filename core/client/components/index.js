@@ -1,11 +1,17 @@
+import KAction from './KAction.vue'
 import KChip from './KChip.vue'
+import KContent from './KContent.vue'
 import KLogo from './KLogo.vue'
+import KPanel from './KPanel.vue'
 import KVersion from './KVersion.vue'
 import KSponsor from './KSponsor.vue'
 
 export {
+  KAction,
   KChip,
+  KContent,
   KLogo,
+  KPanel,
   KVersion,
   KSponsor
 }

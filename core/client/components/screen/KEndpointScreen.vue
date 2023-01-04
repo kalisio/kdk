@@ -33,7 +33,7 @@ import { useRouter } from 'vue-router'
 import { api } from '../../api.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 // Data
 const router = useRouter()

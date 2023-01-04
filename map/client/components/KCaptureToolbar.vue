@@ -48,7 +48,7 @@
 
 <script>
 import _ from 'lodash'
-import KAction from '../../../core/client/components/frame/KAction.vue'
+import KAction from '../../../core/client/components/KAction.vue'
 import { Events, Time } from '../../../core/client'
 import { exportFile } from 'quasar'
 

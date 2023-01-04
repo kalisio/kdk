@@ -19,7 +19,7 @@
 import _ from 'lodash'
 import { buildUrl } from '../../../../core/common'
 import * as wmts from '../../../common/wmts-utils'
-import { KAction, KPanel } from '../../../../core/client/components/frame'
+import { KAction, KPanel } from '../../../../core/client/components'
 import KForm from '../../../../core/client/components/form/KForm.vue'
 
 export default {

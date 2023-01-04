@@ -29,7 +29,7 @@ import { baseItem } from '../../mixins'
 import { findMembersOfGroup, getRoleForGroup, getRoleForOrganisation, Roles, RoleNames } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
 import KTextArea from '../frame/KTextArea.vue'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 export default {
   name: 'k-group-card',

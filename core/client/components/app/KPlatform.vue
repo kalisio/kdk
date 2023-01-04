@@ -30,7 +30,7 @@
 import { useQuasar, copyToClipboard } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { usePlatform } from '../../composables'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 // data
 const $q = useQuasar()

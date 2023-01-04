@@ -21,7 +21,7 @@ import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useVersion } from '../../composables'
 import { KVersion, KSponsor } from '../.'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 // Data
 const $q = useQuasar()

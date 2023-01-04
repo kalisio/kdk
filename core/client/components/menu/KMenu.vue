@@ -30,7 +30,7 @@
 
 <script>
 import _ from 'lodash'
-import KPanel from '../frame/KPanel.vue'
+import KPanel from '../KPanel.vue'
 
 export default {
   components: {

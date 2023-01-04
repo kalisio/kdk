@@ -26,7 +26,7 @@
 <script>
 import { baseItem } from '../../mixins'
 import { KCard, KCardSection } from '../collection'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 export default {
   name: 'k-tag-card',

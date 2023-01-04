@@ -149,8 +149,8 @@ import _ from 'lodash'
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
-import { useAction } from '../../composables'
-import { i18n } from '../../i18n.js'
+import { useAction } from '../composables'
+import { i18n } from '../i18n.js'
 
 export default {
   props: {

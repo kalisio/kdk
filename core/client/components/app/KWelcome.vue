@@ -58,7 +58,7 @@ import { ref, onBeforeUnmount } from 'vue'
 import { openURL } from 'quasar'
 import { Store, api } from '../..'
 import { loadComponent } from '../../utils'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 // Data
 const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))

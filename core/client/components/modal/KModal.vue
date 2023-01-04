@@ -63,7 +63,7 @@
 import { ref, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import KScrollArea from '../frame/KScrollArea.vue'
-import KPanel from '../frame/KPanel.vue'
+import KPanel from '../KPanel.vue'
 
 // Props
 const props = defineProps({

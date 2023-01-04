@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { KPanel } from '../frame'
+import { KPanel } from '../.'
 
 export default {
   components: {

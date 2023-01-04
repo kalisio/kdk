@@ -44,7 +44,7 @@
 import _ from 'lodash'
 import { uid } from 'quasar'
 import { Layout } from '../../layout'
-import KAction from '../frame/KAction.vue'
+import KAction from '../KAction.vue'
 
 export default {
   components: {

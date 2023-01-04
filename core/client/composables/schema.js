@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, readonly } from 'vue'
 import Ajv from 'ajv'
@@ -19,15 +20,31 @@ export function useSchema () {
   const schema = ref(null)
 
   // Function
-  async function assign (schemaNameOrObject) {
+  async function compile (schemaNameOrObject, propertiesFilter) {
     if (typeof schemaNameOrObject === 'string') {
+      // load the schema file
       logger.debug('loading schema ', schemaNameOrObject)
       const schemaModule = await import(`@schemas/${schemaNameOrObject}.json`)
       schema.value = schemaModule.default
     } else {
+      // clone the schema object
       logger.debug('setting schema ', schemaNameOrObject.$id)
-      schema.value = schemaNameOrObject
+      schema.value = _.cloneDeep(schemaNameOrObject)
     }
+    // filter ther schema
+    if (propertiesFilter) {
+      let properties = propertiesFilter
+      if (typeof propertiesFilter === 'string') properties = _.split(propertiesFilter, ',')
+      logger.debug('filtering schema with ', properties)
+      _.forOwn(schema.value.properties, (value, key) => {
+        if (!properties.includes(key)) delete schema.value.properties[key]
+      })
+      // updated the schema id
+      schema.value.$id += properties.join()
+      // filter the required properties
+      schema.value.required = _.intersection(schema.value.required, properties)
+    }
+    // compile the schema
     logger.debug('compiling schema ', schema.value.$id)
     validator.value = ajv.getSchema(schema.value.$id) || ajv.compile(schema.value)
   }
@@ -48,7 +65,7 @@ export function useSchema () {
   // Expose
   return {
     schema: readonly(schema),
-    assign,
+    compile,
     validate
   }
 }
