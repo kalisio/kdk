@@ -322,22 +322,22 @@ export default {
 </script>
 
 <style lang="scss">
-  body {
-    background-color: #EFEFEF;
-  }
-  .k-sticky {
-    z-index: $sticky-z-index;
-  }
-  .k-pane, .k-left-pane {
-    background-color: #FFFFFF;
-    border: solid 1px lightgrey;
-    border-radius: 3px;
-  }
-  .k-pane:hover, .k-left-pane:hover {
-    border: solid 1px $primary;
-  }
-  .k-left-pane {
-    height: 100vh;
-    width: $left-pane-width;
-  }
+body {
+  background-color: #EFEFEF;
+}
+.k-sticky {
+  z-index: $sticky-z-index;
+}
+.k-pane, .k-left-pane {
+  background-color: #FFFFFF;
+  border: solid 1px lightgrey;
+  border-radius: 3px;
+}
+.k-pane:hover, .k-left-pane:hover {
+  border: solid 1px $primary;
+}
+.k-left-pane {
+  height: 100vh;
+  width: $left-pane-width;
+}
 </style>

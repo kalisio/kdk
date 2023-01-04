@@ -1,59 +1,52 @@
 <template>
-  <div v-html="markdownAsHtml" />
+  <div v-html="html" />
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted } from 'vue'
 import showdown from 'showdown'
 
-export default {
-  props: {
-    url: {
-      type: String,
-      default: ''
-    },
-    markdown: {
-      type: String,
-      default: ''
-    },
-    options: {
-      type: Object,
-      default: () => {}
-    }
+// Props
+const props = defineProps({
+  url: {
+    type: String,
+    default: ''
   },
-  watch: {
-    url: function () {
-      this.markdownAsHtml = ''
-      this.processMarkdown()
-    },
-    markdown: function () {
-      this.processMarkdown()
-    },
-    options: function () {
-      this.processMarkdown()
-    }
+  markdown: {
+    type: String,
+    default: ''
   },
-  data () {
-    return {
-      markdownAsHtml: ''
-    }
-  },
-  methods: {
-    async processMarkdown () {
-      let markdown = this.markdown
-      const converter = new showdown.Converter(this.options)
-      converter.setFlavor('github')
-      if (!markdown && this.url) {
-        const response = await fetch(this.url)
-        if (response.status !== 200) {
-          throw new Error('Impossible to retrieve markdown: ' + response.status)
-        }
-        markdown = await response.text()
-      }
-      this.markdownAsHtml = converter.makeHtml(markdown)
-    }
-  },
-  mounted () {
-    this.processMarkdown()
+  options: {
+    type: Object,
+    default: () => {}
   }
+})
+
+// Data
+const html = ref('')
+
+// Watch
+watch(() => [props.url, props.markdown, props.options], () => {
+  processMarkdown()
+})
+
+// Functions
+async function processMarkdown () {
+  let markdown = props.markdown
+  const converter = new showdown.Converter(props.options)
+  converter.setFlavor('github')
+  if (!markdown && props.url) {
+    const response = await fetch(props.url)
+    if (response.status !== 200) {
+      throw new Error('Impossible to retrieve markdown: ' + response.status)
+    }
+    markdown = await response.text()
+  }
+  html.value = converter.makeHtml(markdown)
 }
+
+// Hooks
+onMounted(async () => {
+  await processMarkdown()
+})
 </script>
