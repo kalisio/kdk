@@ -196,6 +196,7 @@ export async function aggregateFeaturesQuery (hook) {
   // Perform aggregation
   if (query.$aggregate) {
     const collection = service.Model
+    const indexes = await collection.indexes()
     let featureId = (service.options ? service.options.featureId : [])
     // Support compound ID
     featureId = (Array.isArray(featureId) ? featureId : [featureId])
@@ -224,6 +225,10 @@ export async function aggregateFeaturesQuery (hook) {
         type: { $last: '$type' }, // type is assumed similar for all results, keep last
         properties: { $last: '$properties' } // non-aggregated properties are assumed similar for all results, keep last
       })
+      // Keep track of all levels as well if not targetting a specific one
+      if (!_.has(query, 'level')) Object.assign(groupBy, {
+        level: { $push: '$level' }
+      })
       // Check if we aggregate geometry or simply properties
       if (!query.$aggregate.includes('geometry')) {
         Object.assign(groupBy, {
@@ -236,10 +241,6 @@ export async function aggregateFeaturesQuery (hook) {
     Object.assign(groupBy, group)
     // The query contains the match stage except options relevent to the aggregation pipeline
     const match = _.omit(query, ['$group', '$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
-    const aggregateOptions = {
-      allowDiskUse: true,
-      hint: {}
-    }
     // Check for any required type conversion (eg HTTP requests)
     for (let i = 0; i < featureId.length; i++) {
       const id = featureId[i]
@@ -248,15 +249,12 @@ export async function aggregateFeaturesQuery (hook) {
         if (idType === 'number') _.set(match, 'properties.' + id, _.toNumber(_.get(match, 'properties.' + id)))
       }
     }
-    // Check if we could provide a hint to the aggregation when targeting
-    // feature ID and aggregation elements
-    // Indeed, in that case, we assume the appropriate index is defined
-    featureId.forEach(id => {
-      aggregateOptions.hint['properties.' + id] = 1
-    })
     // Ensure we do not mix results with/without relevant element values
     // by separately querying each element then merging
     let aggregatedResults
+    const aggregateOptions = {
+      allowDiskUse: true
+    }
     await Promise.all(query.$aggregate.map(async element => {
       const isGeometry = (element === 'geometry')
       // Geometry is a root property while others are feature properties
@@ -268,8 +266,9 @@ export async function aggregateFeaturesQuery (hook) {
       }
       // Find matching features only
       pipeline.push({ $match: Object.assign({ [prefix + element]: { $exists: true } }, match) })
-      // Ensure they are ordered by increasing time by default and most recent forecast first
-      pipeline.push({ $sort: Object.assign({ time: 1, runTime: -1 }, query.$sort) })
+      // Ensure they are ordered by increasing time by default,
+      // most recent forecast and lower level first
+      pipeline.push({ $sort: Object.assign({ time: 1, runTime: -1, level: 1 }, query.$sort) })
       // Keep track of all feature values
       if (singleTime) {
         pipeline.push({ $group: groupBy })
@@ -288,14 +287,27 @@ export async function aggregateFeaturesQuery (hook) {
       pipeline.forEach(stage => {
         _.forOwn(stage, (value, key) => debug('Stage', key, value))
       })
-      // FIXME: Removed aggregation hint option as if a request with properties not in index raises an error
-      // Add aggregation element/time index used for sorting in hint
-      const aggregateElementOptions = Object.assign({}, aggregateOptions)
-      if (isGeometry) aggregateElementOptions.hint.geometry = 1
-      else aggregateElementOptions.hint['properties.' + element] = 1
+      // Provide a hint to the aggregation targeting feature ID and aggregation elements.
+      // The problem with the aggregation hint option is that it should correspond
+      // exactly to an existing index otherwise it raises an error.
+      // We use a convention to get the order right: feature ID => aggregated element => time.
+      // We check anyway if the index does exist to avoid any error
+      // FIXME: Instead of assuming the appropriate index is defined in the right order,
+      // we might select the "best" available index (ie having the most similarities with the required one).
+      const hint = {}
+      featureId.forEach(id => {
+        hint['properties.' + id] = 1
+      })
+      if (isGeometry) Object.assign(hint, { geometry: 1 })
+      else Object.assign(hint, { ['properties.' + element]: 1 })
       // Use provided sort time option if any
-      aggregateElementOptions.hint.time = _.get(query, '$sort.time', 1)
-      debug('Hint', aggregateElementOptions)
+      hint.time = _.get(query, '$sort.time', 1)
+      const hintIndexName = _.reduce(hint, (name, value, key) => name ? `${name}_${key}_${value}` : `${key}_${value}`, '')
+      debug('Best aggregation hint index found', hintIndexName)
+      const hintIndex = _.find(indexes, { name: hintIndexName })
+      const aggregateElementOptions = Object.assign({}, aggregateOptions)
+      if (hintIndex) aggregateElementOptions.hint = hintIndexName
+      debug('Aggregation options', aggregateElementOptions)
       const elementResults = await collection.aggregate(pipeline, aggregateElementOptions).toArray()
       debug(`Generated ${elementResults.length} feature(s) for ${element} element`, elementResults)
       // Rearrange data so that we get ordered arrays indexed by element
