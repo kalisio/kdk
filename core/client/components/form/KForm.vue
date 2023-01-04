@@ -155,7 +155,7 @@ async function build () {
     cloneField.required = _.includes(schema.value.required, property) // add extra required info
     // add the field to the list of fields to be rendered
     fields.value.push(cloneField)
-    if (cloneField.group && !groups.includes(cloneField.group)) groups.value.push(cloneField.group)
+    if (cloneField.group && !groups.value.includes(cloneField.group)) groups.value.push(cloneField.group)
   })
 }
 function values () {
