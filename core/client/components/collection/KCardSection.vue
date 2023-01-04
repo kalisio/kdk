@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { KPanel } from '../.'
+import KPanel from '../KPanel.vue'
 
 export default {
   components: {

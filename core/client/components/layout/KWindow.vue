@@ -197,7 +197,7 @@ function onWidgetRefCreated (reference) {
     // setup the corresponding header
     const widget = _.find(availableWidgets.value, { id: currentWidget.value })
     if (widget.header) widgetHeader.value = Layout.bindContent(_.cloneDeep(widget.header), reference)
-    else widgetHeader.value = [{ component: 'frame/KStamp', text: widget.label, direction: 'horizontal' }]
+    else widgetHeader.value = [{ component: 'KStamp', text: widget.label, direction: 'horizontal' }]
   } else {
     // empty the header
     widgetHeader.value = null

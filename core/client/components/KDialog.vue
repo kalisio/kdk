@@ -1,5 +1,5 @@
 <template>
-  <KModal
+  <KModal2
     ref="dialogRef"
     :title="title"
     :maximized="maximized"
@@ -10,15 +10,15 @@
       :is="computedComponent"
       v-bind="attrs"
     />
-  </KModal>
+  </KModal2>
 </template>
 
 <script setup>
 import _ from 'lodash'
 import { ref, computed, useAttrs } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
-import { loadComponent } from '../../utils'
-import KModal from '../modal/KModal.vue'
+import { loadComponent } from '../utils'
+import KModal2 from './KModal2.vue'
 
 // Props
 const props = defineProps({

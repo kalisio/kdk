@@ -62,8 +62,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
-import KScrollArea from '../KScrollArea.vue'
-import KPanel from '../KPanel.vue'
+import KScrollArea from './KScrollArea.vue'
+import KPanel from './KPanel.vue'
 
 // Props
 const props = defineProps({
@@ -153,6 +153,6 @@ function onFooterResized (size) {
 // Expose
 defineExpose({
   show,
-  hide
+  hide,
 })
 </script>

@@ -66,7 +66,9 @@
 </template>
 
 <script>
-import { KAction, KScrollArea, KStamp } from '../.'
+import KAction from '../KAction.vue'
+import KScrollArea from '../KScrollArea.vue'
+import KStamp from '../KStamp.vue'
 import { baseCollection, service } from '../../mixins'
 import { loadComponent } from '../../utils.js'
 

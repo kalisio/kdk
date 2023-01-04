@@ -37,7 +37,8 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import { KPanel, KStamp } from '../.'
+import KPanel from '../KPanel.vue'
+import KStamp from '../KStamp.vue'
 import { service, schemaProxy, baseCollection } from '../../mixins'
 
 export default {

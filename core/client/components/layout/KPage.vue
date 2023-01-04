@@ -128,7 +128,8 @@
 
 <script>
 import _ from 'lodash'
-import { KContent, KPanel } from '../.'
+import KContent from '../KContent.vue'
+import KPanel from '../KPanel.vue'
 import KOpener from './KOpener.vue'
 import KWindow from './KWindow.vue'
 import KFab from './KFab.vue'

@@ -4,6 +4,7 @@ import KBlock from './KBlock.vue'
 import KChip from './KChip.vue'
 import KChipsPane from './KChipsPane.vue'
 import KContent from './KContent.vue'
+import KDialog from './KDialog.vue'
 import KExpandable from './KExpandable.vue'
 import KLogo from './KLogo.vue'
 import KModal from './KModal.vue'
@@ -21,6 +22,7 @@ export {
   KChip,
   KChipsPane,
   KContent,
+  KDialog,
   KExpandable,
   KLogo,
   KModal,
@@ -28,8 +30,8 @@ export {
   KSponsor,
   KScrollArea,
   KStamp,
-  KVersion,
-  KTextArea
+  KTextArea,
+  KVersion
 }
 
 export * from './layout/index.js'

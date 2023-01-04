@@ -14,8 +14,9 @@
 </template>
 
 <script>
-import { KModal, KScrollArea } from '../.'
-import { KView } from '../form'
+import KModal from '../KModal.vue'
+import KScrollArea from '../KScrollArea.vue'
+import KView from '../form/KView.vue'
 import { baseViewer, baseModal, service, objectProxy, schemaProxy } from '../../mixins'
 
 export default {

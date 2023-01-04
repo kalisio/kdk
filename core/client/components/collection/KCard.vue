@@ -91,7 +91,10 @@
 
 <script>
 import _ from 'lodash'
-import { KAction, KPanel, KTextArea, KAvatar } from '../.'
+import KAction from '../KAction.vue'
+import KPanel from '../KPanel.vue'
+import KTextArea from '../KTextArea.vue'
+import KAvatar from '../KAvatar.vue'
 import KCardSection from './KCardSection.vue'
 import { baseItem } from '../../mixins'
 

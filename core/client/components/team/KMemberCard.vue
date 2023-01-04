@@ -86,7 +86,9 @@ import { baseItem } from '../../mixins'
 import { getInitials, processIcon, isEmailValid } from '../../utils'
 import { Roles, getRoleForOrganisation, getRoleForGroup, findGroupsWithRole } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
-import { KPanel, KAvatar, KChipsPane } from '../.'
+import KPanel from '../KPanel.vue'
+import KAvatar from '../KAvatar.vue'
+import KChipsPane from '../KChipsPane.vue'
 
 export default {
   components: {

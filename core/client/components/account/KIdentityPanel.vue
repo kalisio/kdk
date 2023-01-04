@@ -26,9 +26,9 @@
 </template>
 
 <script setup>
+import { useUser } from '../../composables'
 import KAction from '../KAction.vue'
 import KAvatar from '../KAvatar.vue'
-import { useUser } from '../../composables'
 
 // Data
 const { User } = useUser()

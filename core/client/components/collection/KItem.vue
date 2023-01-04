@@ -65,7 +65,9 @@
 </template>
 
 <script>
-import { KAvatar, KExpandable, KScrollArea } from '../.'
+import KAvatar from '../KAvatar.vue'
+import KExpandable from '../KExpandable.vue'
+import KScrollArea from '../KScrollArea.vue'
 import { baseItem } from '../../mixins'
 
 export default {

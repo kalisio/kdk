@@ -17,8 +17,8 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { computed } from 'vue'
-import { Layout } from '../layout'
-import { loadComponent } from '../utils'
+import { Layout } from '../layout.js'
+import { loadComponent } from '../utils.js'
 
 // Props
 const props = defineProps({
