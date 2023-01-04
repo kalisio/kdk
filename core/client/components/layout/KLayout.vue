@@ -3,10 +3,10 @@
     <!--
       Header
      -->
-    <q-header 
-      v-if="header.contents" 
-      v-model="isHeaderVisible" 
-      v-bind="config.header" 
+    <q-header
+      v-if="header.contents"
+      v-model="isHeaderVisible"
+      v-bind="config.header"
       bordered
     >
       <KPanel
@@ -19,10 +19,10 @@
     <!--
       Footer
      -->
-    <q-footer 
-      v-if="footer.content" 
-      v-model="isFooterVisible" 
-      v-bind="config.footer" 
+    <q-footer
+      v-if="footer.content"
+      v-model="isFooterVisible"
+      v-bind="config.footer"
       bordered
     >
       <KPanel
@@ -74,17 +74,17 @@ const isFooterVisible = computed({
 const headerConfig = _.get(config, 'layout.header')
 if (headerConfig) {
   Layout.setHeader(
-    _.get(headerConfig, 'content', null), 
+    _.get(headerConfig, 'content', null),
     _.get(headerConfig, 'mode', undefined),
-    _.get(headerConfig, 'filter', {}), 
+    _.get(headerConfig, 'filter', {}),
     _.get(headerConfig, 'visible', false))
 }
 const footerConfig = _.get(config, 'layout.footer')
 if (footerConfig) {
   Layout.setFooter(
-    _.get(footerConfig, 'content', null), 
+    _.get(footerConfig, 'content', null),
     _.get(footerConfig, 'mode', undefined),
-    _.get(footerConfig, 'filter', {}), 
+    _.get(footerConfig, 'filter', {}),
     _.get(footerConfig, 'visible', false))
 }
 </script>

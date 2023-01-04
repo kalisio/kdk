@@ -1,5 +1,8 @@
 <template>
-  <div v-html="html" />
+  <div
+    v-if="html"
+    v-html="html"
+  />
 </template>
 
 <script setup>
@@ -23,7 +26,7 @@ const props = defineProps({
 })
 
 // Data
-const html = ref('')
+const html = ref(null)
 
 // Watch
 watch(() => [props.url, props.markdown, props.options], () => {

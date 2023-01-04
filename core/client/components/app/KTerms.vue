@@ -19,7 +19,7 @@ const url = ref(`${terms}_${locale}.md`)
 </script>
 
 <style lang="scss">
-// override headers size 
+// override headers size
 h1 {
   font-size: 2.5rem;
 }
