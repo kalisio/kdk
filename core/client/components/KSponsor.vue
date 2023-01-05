@@ -1,5 +1,6 @@
 <template>
   <div class="column items-center">
+    <!-- KDK attribution -->
     <div class="row justify-center items-center">
       <div>
         {{ $t('KSponsor.KDK_POWERED') }}
@@ -8,7 +9,7 @@
         id="kdk-sponsor"
         icon="las la-external-link-alt"
         tooltip="KSponsor.MORE_ABOUT_KDK"
-        size="xs"
+        size="sm"
         url="https://kalisio.github.io/kdk"
       />
     </div>
@@ -26,6 +27,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
+import KAction from './KAction.vue'
 
 // Data
 const $q = useQuasar()
