@@ -226,9 +226,11 @@ export async function aggregateFeaturesQuery (hook) {
         properties: { $last: '$properties' } // non-aggregated properties are assumed similar for all results, keep last
       })
       // Keep track of all levels as well if not targetting a specific one
-      if (!_.has(query, 'level')) Object.assign(groupBy, {
-        level: { $push: '$level' }
-      })
+      if (!_.has(query, 'level')) {
+        Object.assign(groupBy, {
+          level: { $push: '$level' }
+        })
+      }
       // Check if we aggregate geometry or simply properties
       if (!query.$aggregate.includes('geometry')) {
         Object.assign(groupBy, {

@@ -20,10 +20,10 @@
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <KPanel 
-            id="item-actions" 
-            :content="itemActions" 
-            :context="{ item: props.row }" 
+          <KPanel
+            id="item-actions"
+            :content="itemActions"
+            :context="{ item: props.row }"
           />
         </q-td>
       </template>

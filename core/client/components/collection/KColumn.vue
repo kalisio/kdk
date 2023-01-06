@@ -34,7 +34,7 @@
           </template>
         </div>
       </KScrollArea>
-      <div 
+      <div
         v-if="scrollAction"
         class="row justify-center"
       >

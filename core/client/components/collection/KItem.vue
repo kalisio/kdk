@@ -51,10 +51,10 @@
     -->
     <q-item-section side top>
       <slot name="item-actions">
-        <KPanel 
-          id="item-actions" 
-          :content="itemActions" 
-          :context="$props" 
+        <KPanel
+          id="item-actions"
+          :content="itemActions"
+          :context="$props"
         />
         <KAction
           v-show="expandable"

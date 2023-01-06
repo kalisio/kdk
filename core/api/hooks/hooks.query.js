@@ -248,9 +248,7 @@ export function diacriticSearch (options = {}) {
         const pattern = value.$regex.source
         let result = ''
         // Loop over all pattern characters
-        for (let character of pattern) {
-          const isLowerCase = (character === character.toLowerCase())
-          const isUpperCase = (character === character.toUpperCase())
+        for (const character of pattern) {
           // Iterate over all diacritics to find matching one if any
           const family = diacritics.find(family => {
             // The reverse option is used to allow for any diacristic or
