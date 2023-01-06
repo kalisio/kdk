@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import KScrollArea from './KScrollArea.vue'
 import KPanel from './KPanel.vue'
@@ -150,9 +150,16 @@ function onFooterResized (size) {
   if (footerHeight.value !== size.height) footerHeight.value = size.height
 }
 
+// Hooks
+onMounted(() => {
+  if (props.modelValue) modalRef.value.show()
+})
+
 // Expose
 defineExpose({
   show,
+  open: show,
   hide,
+  close: hide
 })
 </script>
