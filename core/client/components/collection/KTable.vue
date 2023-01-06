@@ -20,7 +20,11 @@
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <k-panel id="item-actions" :content="itemActions" :context="{ item: props.row }" />
+          <KPanel 
+            id="item-actions" 
+            :content="itemActions" 
+            :context="{ item: props.row }" 
+          />
         </q-td>
       </template>
     </q-table>
@@ -54,15 +58,15 @@ export default {
   props: {
     itemActions: {
       type: [Object, Array],
-      default: () => { return null }
+      default: () => null
     },
     baseQuery: {
       type: Object,
-      default: () => { return {} }
+      default: () => {}
     },
     filterQuery: {
       type: Object,
-      default: () => { return {} }
+      default: () => {}
     },
     title: {
       type: String

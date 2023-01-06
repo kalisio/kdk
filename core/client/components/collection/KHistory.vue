@@ -1,5 +1,5 @@
 <template>
-  <k-column
+  <KColumn
     :service="service"
     :renderer="computedRenderer"
     :contextId="contextId"
@@ -19,7 +19,7 @@
         </div>
       </slot>
     </template>
-  </k-column>
+  </KColumn>
 </template>
 
 <script>

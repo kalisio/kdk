@@ -20,10 +20,7 @@
         :max-height="scrollHeight"
         @scrolled="onScrolled"
       >
-        <div
-          class="full-width row"
-          v-bind:class="{ 'q-gutter-y-xs': dense, 'q-gutter-y-sm': !dense }"
-        >
+        <div class="full-width row">
           <template v-for="item in items" :key="item._id">
             <component
               :id="item._id"
@@ -37,9 +34,9 @@
           </template>
         </div>
       </KScrollArea>
-      <div v-if="scrollAction"
+      <div 
+        v-if="scrollAction"
         class="row justify-center"
-        v-bind:class="{ 'q-pr-sm': dense, 'q-pr-md': !dense }"
       >
         <KAction
           id="scroll-action"

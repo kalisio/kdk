@@ -51,12 +51,17 @@
     -->
     <q-item-section side top>
       <slot name="item-actions">
-        <k-panel id="item-actions" :content="itemActions" :context="$props" />
+        <KPanel 
+          id="item-actions" 
+          :content="itemActions" 
+          :context="$props" 
+        />
         <KAction
           v-show="expandable"
           class="absolute-right"
           id="expand-action"
           :icon="expanded ? 'las la-angle-up' : 'las la-angle-down'"
+          size="sm"
           :handler="onExpand"
         />
       </slot>
