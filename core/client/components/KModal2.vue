@@ -153,6 +153,6 @@ function onFooterResized (size) {
 // Expose
 defineExpose({
   show,
-  hide,
+  hide
 })
 </script>
