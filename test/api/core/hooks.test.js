@@ -1,6 +1,7 @@
 import { memory } from '@feathersjs/memory'
 import chai from 'chai'
 import chailint from 'chai-lint'
+import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { kdk, hooks } from '../../../core/api/index.js'
 import mongodb from 'mongodb'
 
@@ -97,6 +98,21 @@ describe('core:hooks', () => {
     expect(hook.params.query.$locale).beUndefined()
     expect(typeof hook.params.collation).to.equal('object')
     expect(hook.params.collation.locale).to.equal('fr')
+  })
+
+  it('diacristic search', () => {
+    const hook = { type: 'before', params: { query: { name: { $search: 'are' } } } }
+    fuzzySearch({ fields: ['name'] })(hook)
+    expect(hook.params.query.name.$regex).toExist()
+    expect(hook.params.query.name.$regex.source).to.equal('are')
+    hooks.diacriticSearch()(hook)
+    // Non-diacritic items are changed
+    expect(hook.params.query.name.$regex.source).to.equal('[a,á,à,ä,â,ã]r[e,é,ë,è,ê]')
+    // But not the other way araound by default
+    hook.params.query.name = { $search: 'árë' }
+    fuzzySearch({ fields: ['name'] })(hook)
+    hooks.diacriticSearch()(hook)
+    expect(hook.params.query.name.$regex.source).to.equal('árë')
   })
 
   it('rate limiting', (done) => {

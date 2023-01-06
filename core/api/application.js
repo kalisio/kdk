@@ -173,8 +173,11 @@ async function createService (name, app, options = {}) {
     name,
     paginate,
     multi: true,
-    whitelist: ['$exists', '$and', '$or', '$eq', '$distinct', '$groupBy', '$group', '$search', '$regex', '$aggregate', '$elemMatch',
-      '$near', '$geoIntersects', '$geometry', '$maxDistance']
+    whitelist: [
+      '$exists', '$and', '$or', '$eq', '$elemMatch', '$distinct', '$groupBy', '$group', '$regex',
+      '$text', '$search', '$caseSensitive', '$language', '$diacriticSensitive',
+      '$aggregate', '$near', '$geoIntersects', '$geometry', '$maxDistance'
+    ]
   }, options)
   if (serviceOptions.disabled) return undefined
   // For DB services a model has to be provided
