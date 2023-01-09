@@ -31,11 +31,12 @@ jobs:
     - echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
     - sudo apt-get update
     - sudo apt-get install -y mongodb-org=4.2.19 mongodb-org-server=4.2.19 mongodb-org-shell=4.2.19 mongodb-org-mongos=4.2.19 mongodb-org-tools=4.2.19
-    - sudo service mongod start
+    - mongod --version
+    - sudo systemctl start mongod
     script:
     - bash .travis.test.sh
     after_script:
-    - sudo service mongod stop
+    - sudo systemctl stop mongod
     - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
 
   - stage: DOC
