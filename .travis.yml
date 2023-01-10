@@ -34,8 +34,10 @@ jobs:
     - mongod --version
     - sudo systemctl start mongod
     - sudo service mongod status
+    # Required to let mongo service be ready
     - sleep 15
-    - mongo --eval "db.adminCommand({ getParameter:1, featureCompatibilityVersion:1 })"
+    # Required as by default it seems a 4.0 is still installed and configured
+    - mongo --eval "db.adminCommand({ setFeatureCompatibilityVersion:'4.2' })"
     script:
     - bash .travis.test.sh
     after_script:
