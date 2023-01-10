@@ -34,7 +34,7 @@ jobs:
     - mongod --version
     - sudo systemctl start mongod
     - sudo service mongod status
-    - mongo --eval "db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })"
+    - mongo --eval "db.adminCommand({ getParameter:1, featureCompatibilityVersion:1 })"
     script:
     - bash .travis.test.sh
     after_script:
