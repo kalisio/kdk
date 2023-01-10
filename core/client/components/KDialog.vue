@@ -1,16 +1,17 @@
 <template>
-  <KModal2
+  <KModal
     ref="dialogRef"
     :title="title"
     :maximized="maximized"
     :buttons="computedButtons"
+    :width-policy="widthPolicy"
   >
     <component
       ref="componentRef"
       :is="computedComponent"
       v-bind="attrs"
     />
-  </KModal2>
+  </KModal>
 </template>
 
 <script setup>
@@ -18,7 +19,7 @@ import _ from 'lodash'
 import { ref, computed, useAttrs } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
 import { loadComponent } from '../utils'
-import KModal2 from './KModal2.vue'
+import KModal from './KModal.vue'
 
 // Props
 const props = defineProps({
@@ -29,6 +30,13 @@ const props = defineProps({
   component: {
     type: String,
     default: null
+  },
+  widthPolicy: {
+    type: String,
+    default: 'normal',
+    validator: (value) => {
+      return ['wide', 'medium', 'narrow'].includes(value)
+    }
   },
   okAction: {
     type: [String, Object],
