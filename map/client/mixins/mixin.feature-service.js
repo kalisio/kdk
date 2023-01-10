@@ -24,6 +24,19 @@ export const featureService = {
       }
       return baseQuery
     },
+    async getSortQueryForFeatures (options) {
+      // Any sort query to process ?
+      const sortQuery = {}
+      if (options.sortQuery) {
+        if (typeof options.sortQuery === 'function') {
+          const result = await options.sortQuery()
+          Object.assign(sortQuery, result)
+        } else {
+          Object.assign(sortQuery, options.sortQuery)
+        }
+      }
+      return { $sort: sortQuery }
+    },
     getFeaturesUpdateInterval (options) {
       const interval = (_.has(options, 'every')
         ? _.get(options, 'every')
@@ -58,8 +71,10 @@ export const featureService = {
       return (this.selectableLevelsLayer && (this.selectableLevelsLayer.name === options.name) ? this.selectedLevel : null)
     },
     async getProbeFeatures (options) {
-      // Any base query to process ?
+      // Any base/sort query to process ?
       const query = await this.getBaseQueryForFeatures(options)
+      const sortQuery = await this.getSortQueryForFeatures(options)
+      Object.assign(query, sortQuery)
       const response = await this.$api.getService(options.probeService).find({ query })
       if (typeof options.processor === 'function') {
         const features = (response.type === 'FeatureCollection' ? response.features : [response])
@@ -130,6 +145,10 @@ export const featureService = {
       if (!_.isNil(queryLevel)) {
         query.level = queryLevel
       }
+      // Any sort query to process ?
+      const sortQuery = await this.getSortQueryForFeatures(options)
+      // Take care to not erase possible existing sort options
+      _.merge(query, sortQuery)
       const response = await this.$api.getService(options.service).find({ query })
       if (typeof options.processor === 'function') {
         const features = (response.type === 'FeatureCollection' ? response.features : [response])
