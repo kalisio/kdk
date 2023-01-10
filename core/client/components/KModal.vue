@@ -1,10 +1,9 @@
 <template>
   <q-dialog
-    :ref="onModalCreated"
+    ref="modalRef"
     persistent
     :maximized="maximized"
-    @show="$emit('opened')"
-    @hide="$emit('closed')">
+  >
     <q-card
       id="modal-card"
       v-bind:class="{
@@ -12,22 +11,23 @@
         'q-pa-sm': $q.screen.gt.xs,
         'q-pa-xs': $q.screen.lt.sm
       }"
-      :style="innerStyle">
+      :style="computedStyle">
       <!--
          Header section
        -->
       <div id ="modal-header"
         class="row full-width justify-between items-center"
-        v-bind:class="{'q-pa-md': $q.screen.gt.xs, 'q-pa-sm': $q.screen.lt.sm }"
+        v-bind:class="{'q-pa-sm': $q.screen.gt.xs, 'q-pa-xs': $q.screen.lt.sm }"
       >
         <q-resize-observer @resize="onHeaderResized" />
         <div v-if="title" class="ellipsis text-h6">
           {{ $tie(title) }}
         </div>
-        <k-panel
+        <KPanel
           id="modal-toolbar"
           :content="toolbar"
-          v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+          v-bind:class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-xs': $q.screen.lt.sm }"
+        />
       </div>
       <!--
         Content section
@@ -36,128 +36,142 @@
         class="col"
         v-bind:class="{'q-pa-sm': $q.screen.gt.xs, 'q-pa-xs': $q.screen.lt.sm }"
       >
-        <slot name="modal-content">
-          <k-scroll-area class="q-pl-xs q-pr-lg" :maxHeight="scrollAreaMaxHeight">
-            <slot />
-          </k-scroll-area>
-        </slot>
+        <KScrollArea class="q-pl-xs q-pr-lg" :maxHeight="scrollAreaMaxHeight">
+          <slot />
+        </KScrollArea>
       </div>
       <!--
         Footer section
        -->
       <div id="modal-footer" v-if="buttons"
-        class="q-pa-md row full-width justify-end"
-        v-bind:class="{'q-pa-md': $q.screen.gt.xs, 'q-pa-sm': $q.screen.lt.sm }"
+        class="q-pa-sm row full-width justify-end"
+        v-bind:class="{'q-pa-sm': $q.screen.gt.xs, 'q-pa-xs': $q.screen.lt.sm }"
       >
         <q-resize-observer @resize="onFooterResized" />
-        <k-panel
+        <KPanel
           id="modal-buttons"
+          class="q-gutter-x-sm"
           :content="buttons"
           :action-renderer="'form-button'"
-          v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }" />
+        />
       </div>
     </q-card>
   </q-dialog>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
 import KScrollArea from './KScrollArea.vue'
 import KPanel from './KPanel.vue'
 
-export default {
-  components: {
-    KScrollArea,
-    KPanel
+// Props
+const props = defineProps({
+  title: {
+    type: String,
+    default: ''
   },
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    toolbar: {
-      type: Array,
-      default: () => null
-    },
-    buttons: {
-      type: Array,
-      default: () => null
-    },
-    maximized: {
-      type: Boolean,
-      default: false
-    },
-    modelValue: {
-      type: Boolean,
-      default: false
+  toolbar: {
+    type: Array,
+    default: () => null
+  },
+  buttons: {
+    type: Array,
+    default: () => null
+  },
+  widthPolicy: {
+    type: String,
+    default: 'normal',
+    validator: (value) => {
+      return ['wide', 'medium', 'narrow'].includes(value)
     }
   },
-  emits: ['update:modelValue', 'opened', 'closed'],
-  computed: {
-    innerStyle () {
-      const screenHeight = this.$q.screen.height
-      const modalMaxHeight = this.maximized ? screenHeight : 0.8 * screenHeight
-      // compute the scroll area max height
-      // take into account the header and footer height
-      let contentMaxHeight = modalMaxHeight - this.headerHeight
-      const cardElement = document.getElementById('modal-card')
-      if (cardElement) {
-        contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-top'))
-        contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-bottom'))
-      }
-      const contentElement = document.getElementById('modal-content')
-      if (contentElement) {
-        contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-top'))
-        contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-bottom'))
-      }
-      contentMaxHeight -= this.footerHeight
-      this.scrollAreaMaxHeight = contentMaxHeight
-      // return the style
-      if (this.maximized) return ''
-      if (this.$q.screen.lt.sm) return `min-width: 100vw; max-height: ${modalMaxHeight}px`
-      if (this.$q.screen.lt.md) return `min-width: 90vw; max-height: ${modalMaxHeight}px`
-      if (this.$q.screen.lt.lg) return `min-width: 80vw; max-height: ${modalMaxHeight}px`
-      if (this.$q.screen.lt.xl) return `min-width: 70vw; max-height: ${modalMaxHeight}px`
-      return `min-width: 60vw; max-height: ${modalMaxHeight}px`
-    }
+  maximized: {
+    type: Boolean,
+    default: false
   },
-  data () {
-    return {
-      scrollAreaMaxHeight: 0,
-      headerHeight: 0,
-      footerHeight: 0
-    }
-  },
-  watch: {
-    modelValue: {
-      handler (value) {
-        if (value) this.modal.show()
-        else this.modal.hide()
-      }
-    }
-  },
-  methods: {
-    onModalCreated (ref) {
-      if (ref) {
-        this.modal = ref
-      }
-    },
-    open () {
-      this.modal.show()
-      this.$emit('update:modelValue', true)
-    },
-    close () {
-      this.modal.hide()
-      this.$emit('update:modelValue', false)
-    },
-    onHeaderResized (size) {
-      if (this.headerHeight !== size.height) this.headerHeight = size.height
-    },
-    onFooterResized (size) {
-      if (this.footerHeight !== size.height) this.footerHeight = size.height
-    }
-  },
-  mounted () {
-    if (this.modelValue) this.modal.show()
+  modelValue: {
+    type: Boolean,
+    default: false
   }
+})
+
+// Emits
+const emit = defineEmits(['update:modelValue'])
+
+// Data
+const $q = useQuasar()
+const modalRef = ref(null)
+const headerHeight = ref(0)
+const footerHeight = ref(0)
+const scrollAreaMaxHeight = ref(0)
+const xsMinWidths = { wide: 100, medium: 100, narrow: 85 }
+const smMinWidths = { wide: 96, medium: 90, narrow: 65 }
+const mdMinWidths = { wide: 94, medium: 78, narrow: 45 }
+const lgMinWidths = { wide: 92, medium: 65, narrow: 35 }
+const xlMinWidths = { wide: 90, medium: 55, narrow: 25 }
+
+// Computed
+const computedStyle = computed(() => {
+  if (props.maximized) return ''
+  // compute the modal max height
+  const screenHeight = $q.screen.height
+  const modalMaxHeight = props.maximized ? screenHeight : 0.8 * screenHeight
+  // compute the scroll area max height
+  // take into account the header and footer height
+  let contentMaxHeight = modalMaxHeight - headerHeight.value
+  const cardElement = document.getElementById('modal-card')
+  if (cardElement) {
+    contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-top'))
+    contentMaxHeight -= parseInt(window.getComputedStyle(cardElement).getPropertyValue('padding-bottom'))
+  }
+  const contentElement = document.getElementById('modal-content')
+  if (contentElement) {
+    contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-top'))
+    contentMaxHeight -= parseInt(window.getComputedStyle(contentElement).getPropertyValue('padding-bottom'))
+  }
+  contentMaxHeight -= footerHeight.value
+  scrollAreaMaxHeight.value = contentMaxHeight
+  // return the style
+  if ($q.screen.lt.sm) return `min-width: ${xsMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
+  if ($q.screen.lt.md) return `min-width: ${smMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
+  if ($q.screen.lt.lg) return `min-width: ${mdMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
+  if ($q.screen.lt.xl) return `min-width: ${lgMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
+  return `min-width: ${xlMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
+})
+
+// Watch
+watch(() => props.modelValue, (value) => {
+  if (value) modalRef.value.show()
+  else modalRef.value.hide()
+})
+
+// Functions
+function show () {
+  modalRef.value.show()
+  emit('update:modelValue', true)
 }
+function hide () {
+  modalRef.value.hide()
+  emit('update:modelValue', false)
+}
+function onHeaderResized (size) {
+  if (headerHeight.value !== size.height) headerHeight.value = size.height
+}
+function onFooterResized (size) {
+  if (footerHeight.value !== size.height) footerHeight.value = size.height
+}
+
+// Hooks
+onMounted(() => {
+  if (props.modelValue) modalRef.value.show()
+})
+
+// Expose
+defineExpose({
+  show,
+  open: show,
+  hide,
+  close: hide
+})
 </script>
