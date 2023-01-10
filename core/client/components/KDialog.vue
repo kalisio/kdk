@@ -33,7 +33,7 @@ const props = defineProps({
   },
   widthPolicy: {
     type: String,
-    default: 'normal',
+    default: 'medium',
     validator: (value) => {
       return ['wide', 'medium', 'narrow'].includes(value)
     }
