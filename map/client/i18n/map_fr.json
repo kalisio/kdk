@@ -610,5 +610,12 @@
   },
   "KLegend": {
     "LABEL": "Légende"
+  },
+  "KStackableTimeSeries": {
+    "LABEL": "Séries chronologiques",
+    "EXPORT_ACTION_TOOLTIP": "Exporter le graphe",
+    "MOVE_UP_ACTION_TOOLTIP": "Déplacer vers le haut",
+    "MOVE_DOWN_ACTION_TOOLTIP": "Déplacer vers le bas",
+    "GROUP_ACTION_TOOLTIP": "Grouper le graphe"
   }
 }

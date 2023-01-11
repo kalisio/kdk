@@ -609,5 +609,12 @@
   },
   "KLegend": {
     "LABEL": "Legend"
+  },
+  "KStackableTimeSeries": {
+    "LABEL": "Time series",
+    "EXPORT_ACTION_TOOLTIP": "Export data",
+    "MOVE_UP_ACTION_TOOLTIP": "Move up",
+    "MOVE_DOWN_ACTION_TOOLTIP": "Move down",
+    "GROUP_ACTION_TOOLTIP": "Stack"
   }
 }
