@@ -1,4 +1,9 @@
 import _ from 'lodash'
+import bearing from '@turf/bearing'
+import distance from '@turf/distance'
+import rotate from '@turf/transform-rotate'
+import scale from '@turf/transform-scale'
+import translate from '@turf/transform-translate'
 import chroma from 'chroma-js'
 import config from 'config'
 import formatcoords from 'formatcoords'
@@ -24,15 +29,45 @@ export function buildColorMap (options) {
   return colorMap
 }
 
-export async function fetchGeoJson (dataSource, processor) {
+export function transformFeatures(features, transform) {
+  features.forEach(feature => {
+    const scaling = _.get(transform, 'scale')
+    const rotation = _.get(transform, 'rotate')
+    const translation = _.get(transform, 'translate')
+    if (scaling) {
+      scale(feature, scaling.factor,
+        Object.assign(_.omit(scaling, ['factor']), { mutate: true }))
+    }
+    if (rotation) {
+      rotate(feature, rotation.angle,
+        Object.assign(_.omit(rotation, ['angle']), { mutate: true }))
+    }
+    if (translation) {
+      // Could be expressed as direction/distance or target point
+      if (translation.point) {
+        translation.distance = distance(translation.pivot || [0, 0], translation.point)
+        translation.direction = bearing(translation.pivot || [0, 0], translation.point)
+        delete translation.pivot
+        delete translation.point
+      }
+      translate(feature, translation.distance, translation.direction,
+        Object.assign(_.omit(translation, ['direction', 'distance']), { mutate: true }))
+    }
+  })
+}
+
+export async function fetchGeoJson (dataSource, options = {}) {
   const response = await fetch(dataSource)
   if (response.status !== 200) {
     throw new Error(`Impossible to fetch ${dataSource}: ` + response.status)
   }
   const data = await response.json()
-  if (typeof processor === 'function') {
-    const features = (data.type === 'FeatureCollection' ? data.features : [data])
-    features.forEach(feature => processor(feature))
+  const features = (data.type === 'FeatureCollection' ? data.features : [data])
+  if (typeof options.processor === 'function') {
+    features.forEach(feature => options.processor(feature))
+  }
+  if (options.transform) {
+    transformFeatures(features, options.transform)
   }
   return data
 }

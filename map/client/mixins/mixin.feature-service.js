@@ -6,6 +6,7 @@ import { getType } from '@turf/invariant'
 import logger from 'loglevel'
 import moment from 'moment'
 import { Time } from '../../../core/client/time.js'
+import { transformFeatures } from '../utils.js'
 
 export const featureService = {
   methods: {
@@ -76,9 +77,12 @@ export const featureService = {
       const sortQuery = await this.getSortQueryForFeatures(options)
       Object.assign(query, sortQuery)
       const response = await this.$api.getService(options.probeService).find({ query })
+      const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
-        const features = (response.type === 'FeatureCollection' ? response.features : [response])
         features.forEach(feature => options.processor(feature))
+      }
+      if (options.transform) {
+        transformFeatures(features, options.transform)
       }
       return response
     },
@@ -150,9 +154,12 @@ export const featureService = {
       // Take care to not erase possible existing sort options
       _.merge(query, sortQuery)
       const response = await this.$api.getService(options.service).find({ query })
+      const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
-        const features = (response.type === 'FeatureCollection' ? response.features : [response])
         features.forEach(feature => options.processor(feature))
+      }
+      if (options.transform) {
+        transformFeatures(features, options.transform)
       }
       return response
     },

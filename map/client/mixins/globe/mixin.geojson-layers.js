@@ -123,11 +123,11 @@ export const geojsonLayers = {
         const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() })
         if (!dataSource.lastFetchedSource || (dataSource.lastFetchedSource !== sourceToFetch)) {
           dataSource.lastFetchedSource = sourceToFetch
-          await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch), cesiumOptions)
+          await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch, options), cesiumOptions)
         }
       } else if (!_.isNil(source)) {
         // Assume source is an URL returning GeoJson
-        await this.loadGeoJson(dataSource, fetchGeoJson(source), cesiumOptions)
+        await this.loadGeoJson(dataSource, fetchGeoJson(source, options), cesiumOptions)
       }
       this.applyStyle(dataSource.entities, options)
       if (typeof this.applyTooltips === 'function') this.applyTooltips(dataSource.entities, options)

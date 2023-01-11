@@ -26,13 +26,13 @@ export const heatmapLayers = {
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(source)) {
         // Assume source is an URL returning GeoJson
-        const geoJson = await fetchGeoJson(source)
+        const geoJson = await fetchGeoJson(source, options)
         this.updateLeafletHeatmap(layer, geoJson)
       } else if (!_.isNil(sourceTemplate)) {
         // Source is an URL returning GeoJson possibly templated by time
         const sourceToFetch = layer.sourceCompiler({ time: Time.getCurrentTime() })
         layer.lastFetchedSource = sourceToFetch
-        const geoJson = await fetchGeoJson(sourceToFetch)
+        const geoJson = await fetchGeoJson(sourceToFetch, options)
         this.updateLeafletHeatmap(layer, geoJson)
       }
 
@@ -94,7 +94,7 @@ export const heatmapLayers = {
           const sourceToFetch = layer.sourceCompiler({ time: Time.getCurrentTime() })
           if (!layer.lastFetchedSource || (layer.lastFetchedSource !== sourceToFetch)) {
             layer.lastFetchedSource = sourceToFetch
-            const geoJson = await fetchGeoJson(sourceToFetch)
+            const geoJson = await fetchGeoJson(sourceToFetch, options)
             this.updateLeafletHeatmap(layer, geoJson)
           }
         }

@@ -200,7 +200,7 @@ export const geojsonLayers = {
             const sourceToFetch = sourceCompiler({ time: Time.getCurrentTime() })
             if (!lastFetchedSource || (lastFetchedSource !== sourceToFetch)) {
               lastFetchedSource = sourceToFetch
-              successCallback(await fetchGeoJson(sourceToFetch))
+              successCallback(await fetchGeoJson(sourceToFetch, options))
             }
           } catch (error) {
             errorCallback(error)
@@ -226,7 +226,7 @@ export const geojsonLayers = {
         if (options.service) {
           data = await this.getFeatures(options)
         } else { // Otherwise standard HTTP
-          data = await fetchGeoJson(dataSource)
+          data = await fetchGeoJson(dataSource, options)
         }
         _.set(leafletOptions, 'source', data)
       }
