@@ -223,6 +223,7 @@ onMounted(async () => {
 
 // Expose
 defineExpose({
+  getField,
   fill,
   clear,
   values,

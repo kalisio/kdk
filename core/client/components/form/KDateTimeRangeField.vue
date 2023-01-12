@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    {{ formattedDateTime }}
+    {{ formattedDateTimeRange }}
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
@@ -14,7 +14,7 @@
   >
     <!-- Prepend icons -->
     <template v-slot:control>
-      <KDateTime
+      <KDateTimeRange
         v-model="model"
         :options="options"
         dense
@@ -31,15 +31,15 @@
 <script>
 import _ from 'lodash'
 import { baseField } from '../../mixins'
-import KDateTime from '../time/KDateTime.vue'
+import KDateTimeRange from '../time/KDateTimeRange.vue'
 
 export default {
   mixins: [baseField],
   components: {
-    KDateTime
+    KDateTimeRange
   },
   computed: {
-    formattedDateTime () {
+    formattedDateTimeRange () {
       // TODO
       return this.model
     },
@@ -49,12 +49,7 @@ export default {
   },
   methods: {
     emptyModel () {
-      let now = Date.now()
-      // ADD given offset in seconds if any
-      if (this.properties.field.defaultOffset) {
-        now += this.properties.field.defaultOffset * 1000
-      }
-      return new Date(now).toISOString()
+      return null
     }
   }
 }
