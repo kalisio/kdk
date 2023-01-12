@@ -15,7 +15,7 @@
             :key="element.name"
           >
             <q-item dense>
-              <q-item-section avatar>
+              <q-item-section avatar v-if="element.component">
                 <component
                   :is="element.component"
                   v-bind="element.props"
@@ -65,21 +65,26 @@ function getElements (section) {
   return _.map(props.content[section], element => {
     const symbol = element.symbol
     const label = element.label
-    if (!symbol || !label) {
+    if (!symbol && !label) {
       logger.error(`element ${element.label || element} is invalid in section ${section}`)
       return
     }
-    const entries = _.entries(element.symbol)
-    if (entries.length !== 1) {
-      logger.error(`invalid entries for symbol in element ${element.label || element}`)
-      return
+    // Label only ?
+    if (symbol) {
+      const entries = _.entries(element.symbol)
+      if (entries.length !== 1) {
+        logger.error(`invalid entries for symbol in element ${element.label || element}`)
+        return
+      }
+      let component = entries[0][0]
+      const props = entries[0][1]
+      if (!_.startsWith(component, 'Q') && !_.startsWith(component, 'q-')) {
+        component = loadComponent(component)
+      }
+      return { label, component, props }
+    } else {
+      return { label }
     }
-    let component = entries[0][0]
-    const props = entries[0][1]
-    if (!_.startsWith(component, 'Q') && !_.startsWith(component, 'q-')) {
-      component = loadComponent(component)
-    }
-    return { label, component, props }
   })
 }
 </script>
