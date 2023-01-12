@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 // import moment from 'moment'
 // import chroma from 'chroma-js'
 import { Chart /*, registerables, Interaction, Tooltip */ } from 'chart.js'
@@ -42,7 +41,7 @@ defineExpose({ update })
 // function
 async function onCanvasRef (ref) {
   if (ref) {
-    if (!chart) { chart = await buildChart(ref.getContext('2d'))  }
+    if (!chart) { chart = await buildChart(ref.getContext('2d')) }
   } else {
     if (chart) {
       chart.destroy()
@@ -68,7 +67,7 @@ function makeChartConfig () {
           time: {
             unit: 'hour'
           }
-        },
+        }
       },
       plugins: {
         // we disable all plugins that were registered by the KChart
@@ -137,7 +136,7 @@ async function makeDatasets () {
       data: await timeSerie.fetch(),
       yAxisID: unit2axis.get(unit),
       cubicInterpolationMode: 'monotone',
-      tension: 0.4,
+      tension: 0.4
     }, timeSerie.variable.chartjs)
     datasets.push(dataset)
   }
