@@ -82,6 +82,10 @@ defineProps({
     type: String,
     default: getCssVar('primary')
   },
+  opacity: {
+    type: Number,
+    default: 1
+  },
   borderColor: {
     type: String,
     default: 'black'
@@ -94,6 +98,10 @@ defineProps({
     type: Number,
     default: 0
   },
+  dashArray: {
+    type: String,
+    default: ''
+  },
   tooltip: {
     type: String,
     default: null
@@ -104,7 +112,9 @@ defineProps({
 <style lang="scss" scoped>
 .k-shape {
   fill: v-bind(color);
+  fill-opacity: v-bind(opacity);
   stroke: v-bind(borderColor);
   stroke-width: v-bind(borderWidth);
+  stroke-dasharray: v-bind(dashArray);
 }
 </style>
