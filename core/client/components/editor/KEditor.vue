@@ -16,8 +16,8 @@
     -->
     <div>
       <div class="q-pt-md row justify-end">
-        <q-btn v-if="clearButton !== ''" id="clear-button" color="primary" :label="clearButton" @click="clear"/>
-        <q-btn v-if="resetButton !== ''" id="reset-button" color="primary" :label="resetButton" @click="reset"/>
+        <q-btn v-if="clearButton !== ''" id="clear-button" color="primary" :label="clearButton" @click="clearEditor"/>
+        <q-btn v-if="resetButton !== ''" id="reset-button" color="primary" :label="resetButton" @click="resetEditor"/>
         <q-btn v-if="applyButton !== ''" id="apply-button" color="primary" :label="applyButton" @click="apply"/>
       </div>
     </div>
