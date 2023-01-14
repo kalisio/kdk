@@ -8,18 +8,30 @@
       v-touch-pan.prevent.mouse="onMoved"
     >
       <!-- window menu -->
-      <KPanel id="window-menu" :content="menu" />
+      <KPanel
+        id="window-menu"
+        :content="menu"
+      />
       <!-- widget header -->
-      <KPanel id="widget-header" :content="widgetHeader" />
+      <KPanel
+        id="widget-header"
+        :content="widgetHeader"
+      />
       <q-space />
       <!-- window controls -->
-      <KPanel id="window-controls" :content="controls" />
+      <KPanel
+        id="window-controls"
+        :content="controls"
+      />
     </div>
     <!--
       Window content
       -->
     <div class="fit">
-      <q-tab-panels v-model="currentWidget" animated>
+      <q-tab-panels
+        v-model="currentWidget"
+        animated
+      >
         <template v-for="(widget, index) in availableWidgets" :placement="index">
           <q-tab-panel :name="widget.id" class="no-padding no-scroll">
             <component
@@ -127,7 +139,7 @@ const controls = computed(() => {
     id: 'maximize-action',
     icon: 'las la-expand',
     tooltip: 'KWindow.MAXIMIZE_ACTION',
-    size: 'sm',
+    size: 'xs',
     visible: currentMode.value !== 'maximized',
     handler: onMaximized
   }, {

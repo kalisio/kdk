@@ -15,11 +15,13 @@
     :options="options"
     emit-value
     map-options
+    use-input
     :clearable="clearable"
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
     bottom-slots
+    @filter="onFilter"
     @change="onChanged"
     @blur="onChanged"
     @update:model-value='onChanged'
@@ -65,12 +67,21 @@ export default {
       return _.get(this.properties, 'field.chips', false)
     },
     options () {
-      const options = _.get(this.properties, 'field.options', [])
-      return options.map(option => {
-        // Check if we have a translation key or directly the label content
-        const label = _.get(option, 'label', '')
-        return Object.assign({}, option, { label: this.$tie(label) })
+      let options = _.map(_.get(this.properties, 'field.options', []), option => {
+        const label = this.$tie(_.get(option, 'label', ''))
+        return Object.assign({}, option, { label: label })
       })
+      if (this.filter) {
+        options = _.filter(options, option => {
+          return option.label.toLowerCase().indexOf(this.filter) > -1
+        })
+      }
+      return options
+    }
+  },
+  data () {
+    return {
+      filter: null
     }
   },
   methods: {
@@ -91,6 +102,17 @@ export default {
     emptyModel () {
       if (this.multiple) return []
       return null
+    },
+    onFilter (pattern, update) {
+      if (pattern === '') {
+        update(() => {
+          this.filter = null  
+        })
+        return
+      }
+      update(() => {
+        this.filter = pattern.toLowerCase()
+      })
     }
   }
 }
