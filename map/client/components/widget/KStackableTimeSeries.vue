@@ -61,15 +61,15 @@ const state = reactive(
 const numGroupedSeries = computed(() => { return state.groupedSeries.length })
 const numSingleSeries = computed(() => { return state.singleHeaders.length })
 
-
 // functions
 
 </script>
 -->
 
 <script>
+import _ from 'lodash'
 import moment from 'moment'
-import { KPanel, KTimeSeriesChart } from '../../../../core/client/components'
+import { KTimeSeriesChart } from '../../../../core/client/components'
 import { useCurrentActivity, useSelection, useProbe } from '../../composables'
 import { Time } from '../../../../core/client/time'
 
@@ -101,15 +101,13 @@ export default {
         { id: 'group', icon: 'las la-layer-group', tooltip: 'KStackableTimeSeries.GROUP_ACTION_TOOLTIP', size: 'sm', visible: true, handler: () => { this.onGroup(uiIndex) } }
       ]
       const numSingles = this.singles.length
-      if (uiIndex > 0)
-        actions.push({ id: 'move-up', icon: 'las la-sort-up', tooltip: 'KStackableTimeSeries.MOVE_UP_ACTION_TOOLTIP', size: 'sm', visible: true, handler: () => { this.onMoveUp(uiIndex) } })
-      if (uiIndex < (numSingles - 1))
-        actions.push({ id: 'move-down', icon: 'las la-sort-down', tooltip: 'KStackableTimeSeries.MOVE_DOWN_ACTION_TOOLTIP', size: 'sm', visible: true, handler: () => { this.onMoveDown(uiIndex) } })
+      if (uiIndex > 0) { actions.push({ id: 'move-up', icon: 'las la-sort-up', tooltip: 'KStackableTimeSeries.MOVE_UP_ACTION_TOOLTIP', size: 'sm', visible: true, handler: () => { this.onMoveUp(uiIndex) } }) }
+      if (uiIndex < (numSingles - 1)) { actions.push({ id: 'move-down', icon: 'las la-sort-down', tooltip: 'KStackableTimeSeries.MOVE_DOWN_ACTION_TOOLTIP', size: 'sm', visible: true, handler: () => { this.onMoveDown(uiIndex) } }) }
       actions.push({ id: 'export', icon: 'las la-file-export', tooltip: 'KStackableTimeSeries.EXPORT_ACTION_TOOLTIP', size: 'sm', visible: true, handler: () => { this.onExport(uiIndex) } })
       return actions
     },
     genTimeSerie () {
-      const numPoints = 10 + Math.floor(Math.random()*20)
+      const numPoints = 10 + Math.floor(Math.random() * 20)
       const data = []
       for (let i = 0; i < numPoints; ++i) {
         data.push({ x: moment().add(i, 'm').valueOf(), y: Math.random() })
@@ -125,7 +123,7 @@ export default {
       this.singles[uiIndex1].index = serieIndex0
       this.singles[uiIndex1].series[0] = this.timeSeries[serieIndex0]
 
-      let tmp = this.singleHeaders[uiIndex0]
+      const tmp = this.singleHeaders[uiIndex0]
       this.singleHeaders[uiIndex0] = this.singleHeaders[uiIndex1]
       this.singleHeaders[uiIndex1] = tmp
 
@@ -140,7 +138,7 @@ export default {
     },
     addSingleChart (serieIndex) {
       const serie = this.timeSeries[serieIndex]
-      const single = { index: serieIndex, series: [ serie ], chart: null }
+      const single = { index: serieIndex, series: [serie], chart: null }
       this.singles.push(single)
       this.singleHeaders.push([{ component: 'KStamp', text: serie.variable.label, direction: 'horizontal' }])
       this.singleVisible.push(true)
@@ -154,8 +152,7 @@ export default {
       this.group.series.push(serie)
       this.numGroupedSeries = this.group.index.length
 
-      if (this.group.chart)
-        this.group.chart.update()
+      if (this.group.chart) { this.group.chart.update() }
 
       this.removeSingleChart(uiIndex)
     },
@@ -166,8 +163,7 @@ export default {
       this.group.series.splice(groupIndex, 1)
       this.numGroupedSeries = this.group.index.length
 
-      if (this.numGroupedSeries)
-        this.group.chart.update()
+      if (this.numGroupedSeries) { this.group.chart.update() }
 
       this.addSingleChart(serieIndex)
     },
@@ -175,7 +171,7 @@ export default {
       this.group.chart = ref
       if (ref) ref.update()
     },
-    onSingleChartRef(uiIndex, ref) {
+    onSingleChartRef (uiIndex, ref) {
       const numSingles = this.singles.length
       if (uiIndex >= numSingles) return
 
@@ -190,13 +186,13 @@ export default {
       }
     },
     onMoveUp (uiIndex) {
-      this.swapSingleCharts(uiIndex, uiIndex-1)
+      this.swapSingleCharts(uiIndex, uiIndex - 1)
     },
     onMoveDown (uiIndex) {
-      this.swapSingleCharts(uiIndex, uiIndex+1)
+      this.swapSingleCharts(uiIndex, uiIndex + 1)
     },
     onGroup (uiIndex) {
-       this.groupChart(uiIndex)
+      this.groupChart(uiIndex)
     },
     onGroupLegendClick (index) {
       this.ungroupChart(index)
@@ -216,13 +212,14 @@ export default {
       for (const layer of this.kActivity.getLayers()) {
         const vars = _.get(layer, 'variables')
         if (!vars) continue
-        for (const v of vars)
-          variables.set(v.name, v)
+        for (const v of vars) { variables.set(v.name, v) }
       }
       for (const prop in probe.properties) {
         const variable = variables.get(prop)
         if (!variable) continue
-        this.timeSeries.push({ variable, fetch: () => {
+        this.timeSeries.push({
+          variable,
+          fetch: () => {
             const data = []
             for (let i = 0; i < probe.properties[prop].length; ++i) {
               const t = moment(probe.forecastTime[prop][i]).valueOf()
@@ -265,9 +262,9 @@ export default {
   },
   setup (props) {
     return {
-       ...useCurrentActivity(),
-       ...useSelection(),
-       ...useProbe()
+      ...useCurrentActivity(),
+      ...useSelection(),
+      ...useProbe()
     }
   }
 }
