@@ -228,9 +228,15 @@ export async function aggregateFeaturesQuery (hook) {
         })
       }
     }
+    // Keep track of all levels as well if not targetting a specific one
+    if (!_.has(query, 'level')) Object.assign(groupBy, {
+      level: { $push: '$level' }
+    })
     // The query contains the match stage except options relevent to the aggregation pipeline
     const match = _.omit(query, ['$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
-    const aggregateOptions = {}
+    const aggregateOptions = {
+      allowDiskUse: true
+    }
     // Check for any required type conversion (eg HTTP requests)
     if (featureId && _.has(match, 'properties.' + featureId)) {
       if (featureIdType === 'number') _.set(match, 'properties.' + featureId, _.toNumber(_.get(match, 'properties.' + featureId)))
@@ -252,8 +258,9 @@ export async function aggregateFeaturesQuery (hook) {
       }
       // Find matching features only
       pipeline.push({ $match: Object.assign({ [prefix + element]: { $exists: true } }, match) })
-      // Ensure they are ordered by increasing time by default and most recent forecast first
-      pipeline.push({ $sort: Object.assign({ time: 1, runTime: -1 }, query.$sort) })
+      // Ensure they are ordered by increasing time by default
+      // most recent forecast and lower level first
+      pipeline.push({ $sort: Object.assign({ time: 1, runTime: -1, level: 1 }, query.$sort) })
       // Keep track of all feature values
       if (singleTime) {
         pipeline.push({ $group: groupBy })
