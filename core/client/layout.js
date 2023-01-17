@@ -177,7 +177,12 @@ export const Layout = {
         if ((key !== 'content') && (key !== 'bind')) {
           // Only bind required properties
           if ((typeof value === 'string') && value.startsWith(':')) {
-            item[key] = _.get(context, value.substring(1))
+            // From store or context ?
+            if (value.startsWith(':store.')) {
+              item[key] = Store.getRef(value.replace(':store.', ''))
+            } else {
+              item[key] = _.get(context, value.substring(1))
+            }
           } else {
             item[key] = this.bindProperties(value, context)
           }

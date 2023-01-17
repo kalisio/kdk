@@ -29,6 +29,11 @@ export function useStore (name, initialStore) {
   function has (path) {
     return _.has(store, path)
   }
+  function forOwn (f) {
+    _.forOwn(store, function (value, key) {
+      f(value, key)
+    })
+  }
 
   // expose
   return {
@@ -38,6 +43,7 @@ export function useStore (name, initialStore) {
     set,
     get,
     unset,
-    has
+    has,
+    forOwn
   }
 }

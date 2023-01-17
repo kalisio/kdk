@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { toRef } from 'vue'
 import { useStore } from './composables/store.js'
 import { Events } from './events.js'
 
@@ -27,5 +28,10 @@ export const Store = Object.assign(store, {
     unset(path)
     const eventName = _.kebabCase(`${path}-changed`)
     Events.emit(eventName, undefined)
+  },
+  getRef(path) {
+    const key = path.substring(path.lastIndexOf('.') + 1)
+    const object = get(path.replace(`.${key}`, ''))
+    return toRef(object, key)
   }
 })

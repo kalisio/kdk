@@ -72,7 +72,7 @@ export default {
       this.schema = null
       this.clearHighlights()
       if (this.feature && this.layer) {
-        this.highlight(this.feature)
+        this.highlight(this.feature, this.layer)
         this.centerOnSelection()
         let schema
         // Is there any schema ?

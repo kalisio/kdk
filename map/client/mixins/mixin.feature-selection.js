@@ -4,7 +4,8 @@ export const featureSelection = {
       handler () {
         this.updateHighlights()
         const widget = this.getWidgetForSelection()
-        if (widget) this.openWidget(widget)
+        // If window already open on another widget keep it
+        if (widget && !this.isWidgetWindowVisible(widget)) this.openWidget(widget)
       },
       deep: true
     },
@@ -23,7 +24,7 @@ export const featureSelection = {
       this.getSelectedItems().forEach(item => {
         this.highlight(item.feature || item.location, item.layer)
       })
-      if (this.hasProbedLocation()) this.highlight(this.probe)
+      if (this.hasProbedLocation()) this.highlight(this.getProbedLocation(), this.getProbedLayer())
     }
   }
 }

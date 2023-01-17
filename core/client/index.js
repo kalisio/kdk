@@ -1,4 +1,5 @@
 import logger from 'loglevel'
+import { reactive } from 'vue'
 import { Platform, Notify } from 'quasar'
 import { Store } from './store.js'
 import { Layout } from './layout.js'
@@ -59,18 +60,18 @@ export default function init () {
   Filter.initialize()
   Sorter.initialize()
   Storage.initialize()
-  Store.set('topPane', { content: null, mode: undefined, filter: {}, visible: false })
-  Store.set('leftPane', { content: null, mode: undefined, filter: {}, visible: false })
-  Store.set('rightPane', { content: null, mode: undefined, filter: {}, visible: false })
-  Store.set('bottomPane', { content: null, mode: undefined, filter: {}, visible: false })
-  Store.set('page', { content: null, mode: undefined, filter: {}, sticky: undefined })
-  Store.set('windows', {
-    left: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false },
-    right: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false },
-    top: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false },
-    bottom: { widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false }
-  })
-  Store.set('fab', { actions: [], filter: {} })
+  Store.set('topPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
+  Store.set('leftPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
+  Store.set('rightPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
+  Store.set('bottomPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
+  Store.set('page', reactive({ content: null, mode: undefined, filter: {}, sticky: undefined }))
+  Store.set('windows', reactive({
+    left: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false }),
+    right: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false }),
+    top: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false }),
+    bottom: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false })
+  }))
+  Store.set('fab', reactive({ actions: [], filter: {} }))
 
   // Listen to the 'patched' event on the users
   const users = api.getService('users')

@@ -29,7 +29,7 @@ export function buildColorMap (options) {
   return colorMap
 }
 
-export function transformFeatures(features, transform) {
+export function transformFeatures (features, transform) {
   features.forEach(feature => {
     const scaling = _.get(transform, 'scale')
     const rotation = _.get(transform, 'rotate')

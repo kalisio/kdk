@@ -209,6 +209,10 @@ export function baseActivity (name) {
         })
         return { placement, window }
       },
+      isWidgetWindowVisible (widget) {
+        const { window } = this.findWindow(widget)
+        return (window && window.visible)
+      },
       openWidget (widget) {
         const { placement, window } = this.findWindow(widget)
         if (!placement) {
