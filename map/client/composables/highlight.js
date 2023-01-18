@@ -35,8 +35,10 @@ export function useHighlight (name, options = {}) {
   })
 
   // data
-  // hightligh store
-  const { Store, store, clear, set, get, unset, has } = composables.useStore(`hightlighs.${name}`)
+  // hightligh store for context
+  const { store, clear, set, get, unset, has } = composables.useStore(`hightlighs.${name}`)
+  // global highlight store
+  const { forOwn } = composables.useStore('hightlighs')
 
   // functions
   function getHighlightId (feature, layer) {
@@ -113,7 +115,7 @@ export function useHighlight (name, options = {}) {
     // Iterate over all highlights
     let features = []
     // For each highlight store
-    _.forOwn(_.get(Store, 'hightlighs'), (store, key) => {
+    forOwn((store, key) => {
       // Retrieve features in highlight store
       features = features.concat(_.flatten(_.values(store)))
     })

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { reactive } from 'vue'
 import logger from 'loglevel'
 import { memory } from '@feathersjs/memory'
 import { Platform } from 'quasar'
@@ -42,41 +43,35 @@ export default function init () {
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-
-  // Initialize the selection
-  Store.set('selection', {
-    location: null,
-    feature: null,
-    layer: null
-  })
+  
   // Default time formatting settings
-  Store.set('timeFormat', {
-    time: {
+  Store.set('timeFormat', reactive({
+    time: reactive({
       short: 'H[h]',
       long: 'HH:mm'
-    },
-    date: {
+    }),
+    date: reactive({
       short: 'DD/MM',
       long: 'dddd D'
-    },
-    year: {
+    }),
+    year: reactive({
       short: 'YY',
       long: 'YYYY'
-    },
+    }),
     utc: false,
     locale: kCoreUtils.getLocale()
-  })
+  }))
   // Default location formatting settings
   Store.set('locationFormat', 'f')
   // Default view settings
-  Store.set('restore', {
+  Store.set('restore', reactive({
     view: true,
     layers: false
-  })
+  }))
   // Default timeseries parameters
-  Store.set('timeseries', {
+  Store.set('timeseries', reactive({
     span: 1440 // 24H
-  })
+  }))
 
   if (!Platform.is.cordova) return
 

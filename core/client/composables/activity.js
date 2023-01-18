@@ -9,9 +9,9 @@ const kActivityName = ref(null)
 export function useActivity (name, exposed = { selection: true }) {
   // data
   // state store
-  const state = useStore(`activities.${name}.state`)
+  const state = useStore(`store.${name}.state`)
   // options store
-  const options = useStore(`activities.${name}.options`, config[name])
+  const options = useStore(`store.${name}.options`, config[name])
 
   // functions
   function setCurrentActivity (activity) {
@@ -40,8 +40,8 @@ export function useCurrentActivity (exposed = { selection: true }) {
     kActivityName: readonly(kActivityName)
   }
   if (kActivityName.value) {
-    const state = useStore(`activities.${kActivityName.value}.state`)
-    const options = useStore(`activities.${kActivityName.value}.options`)
+    const state = useStore(`store.${kActivityName.value}.state`)
+    const options = useStore(`store.${kActivityName.value}.options`)
 
     Object.assign(expose, {
       state: readonly(state.store),

@@ -175,6 +175,7 @@ export function useSelection (name, options = {}) {
       isVisible: true
     }))
     layers.forEach(layer => {
+      if (!activity.isLayerSelectable(layer)) return
       // Retrieve the features of the layer
       const geoJson = activity.toGeoJson(layer.name)
       // Then intersect with bounds

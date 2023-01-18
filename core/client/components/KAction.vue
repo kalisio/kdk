@@ -146,10 +146,9 @@
 
 <script>
 import _ from 'lodash'
-import { computed, watch } from 'vue'
+import { ref, toRef, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
-import { useAction } from '../composables'
 import { i18n } from '../i18n.js'
 
 export default {
@@ -249,7 +248,7 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const $q = useQuasar()
-    const { isToggled, toggle } = useAction(props)
+    const isToggled = _.has(props, 'toggle.value') ? toRef(props.toggle, 'value') : ref(props.toggled)
 
     // computed
     const computedLabel = computed(() => {
@@ -282,6 +281,9 @@ export default {
     })
 
     // functions
+    function toggle () {
+      isToggled.value = !isToggled.value
+    }
     function bindRouteParams (path) {
       // When action is created from code we can directly inject the params
       // However, when created from the config we need to manage dynamic values

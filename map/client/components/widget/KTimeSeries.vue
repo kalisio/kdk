@@ -354,7 +354,7 @@ export default {
         const options = this.getWindBarbOptions(feature)
         if (options) _.set(feature, 'properties.icon', { type: 'WindBarb.icon', options })
       }
-      this.highlight(feature)
+      this.highlight(feature, this.layer)
     },
     onZoomRestored () {
       if (!_.isEmpty(this.zoomHistory)) {
@@ -467,7 +467,7 @@ export default {
       this.clearHighlights()
       if (!this.location) return
       // Then manage selection
-      this.highlight(this.location)
+      this.highlight(this.location, this.layer)
       if (this.hasProbedLocation()) this.centerOnProbe()
       else this.centerOnSelection()
       // Update timeseries data if required
