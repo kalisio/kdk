@@ -106,7 +106,7 @@ export default {
     onFilter (pattern, update) {
       if (pattern === '') {
         update(() => {
-          this.filter = null  
+          this.filter = null
         })
         return
       }

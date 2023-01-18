@@ -43,7 +43,7 @@ export default function init () {
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  
+
   // Default time formatting settings
   Store.set('timeFormat', reactive({
     time: reactive({

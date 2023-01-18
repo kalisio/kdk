@@ -31,13 +31,6 @@ const props = defineProps({
     type: String,
     default: null
   },
-  widthPolicy: {
-    type: String,
-    default: 'medium',
-    validator: (value) => {
-      return ['wide', 'medium', 'narrow'].includes(value)
-    }
-  },
   okAction: {
     type: [String, Object],
     default: 'OK'
@@ -45,6 +38,13 @@ const props = defineProps({
   cancelAction: {
     type: [String, Object],
     default: undefined
+  },
+  widthPolicy: {
+    type: String,
+    default: 'medium',
+    validator: (value) => {
+      return ['wide', 'medium', 'narrow'].includes(value)
+    }
   },
   maximized: {
     type: Boolean,

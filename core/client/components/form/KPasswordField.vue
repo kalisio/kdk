@@ -3,7 +3,7 @@
   </div>
   <q-input v-else
     :for="properties.name + '-field'"
-    :type="isPassword ? 'password' : 'text'"
+    :type="showPassword ? 'password' : 'text'"
     v-model="model"
     :label="label"
     clearable
@@ -18,9 +18,9 @@
     <template v-slot:append>
       <q-icon
         :id="properties.name + '-field-visibility'"
-        :name="isPassword ? 'visibility_off' : 'visibility'"
-        class="cursor-pointer"
-        @click="isPassword = !isPassword"
+        :name="showPassword ? 'visibility_off' : 'visibility'"
+        class="q-pl-md cursor-pointer"
+        @click="showPassword = !showPassword"
       />
     </template>
     <!-- Helper -->
@@ -39,7 +39,7 @@ export default {
   mixins: [baseField],
   data () {
     return {
-      isPassword: true
+      showPassword: true
     }
   },
   created () {

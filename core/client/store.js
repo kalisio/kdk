@@ -29,7 +29,7 @@ export const Store = Object.assign(store, {
     const eventName = _.kebabCase(`${path}-changed`)
     Events.emit(eventName, undefined)
   },
-  getRef(path) {
+  getRef (path) {
     const key = path.substring(path.lastIndexOf('.') + 1)
     const object = get(path.replace(`.${key}`, ''))
     return toRef(object, key)

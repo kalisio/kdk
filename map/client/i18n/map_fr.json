@@ -193,6 +193,10 @@
     "POPUP": "Vous êtes à moins de {distance} {unit} de ce point",
     "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
   },
+  "geocoders": {
+    "BAN": "BAN",
+    "NOMINATIN": "Nominatin"
+  },
   "schemas": {
     "CATALOG_CREATE_TITLE": "Créer une nouvelles couche de données",
     "CATALOG_NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
@@ -335,7 +339,10 @@
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
-    "NO_RESULTS": "@:EMPTY"
+    "NO_RESULTS": "@:EMPTY",
+    "FILTER": "Filtrer les services de recherche",
+    "GEOLOCATE": "Me localiser",
+    "DRAW": "Dessiner sur une carte"
   },
   "KLocationMap": {
     "DRAW_LINE": "Dessiner un linéaire",
