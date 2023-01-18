@@ -251,8 +251,8 @@ export function updatePropertiesSchema (schema) {
   return schema
 }
 
-export function formatUserCoordinates (lat, lon, formatStr) {
-  if (formatStr === 'aeronautical') {
+export function formatUserCoordinates (lat, lon, format, options) {
+  if (format === 'aeronautical') {
     const coords = formatcoords(lat, lon)
     // longitude group: DDMMML where DD is degree (2 digits mandatory)
     // MMM unit is in 0.1 minutes (trailing 0 optional)
@@ -269,5 +269,18 @@ export function formatUserCoordinates (lat, lon, formatStr) {
     return `${latDeg}${latMin}${latDir} ${lonDeg}${lonMin}${lonDir}`
   }
 
-  return formatcoords(lat, lon).format(formatStr)
+  return formatcoords(lat, lon).format(format, options)
+}
+
+export function parseCoordinates (str) {
+  const coords = _.split(_.trim(str), ',')
+  if (coords.length !== 2) return
+  const latitude = Number(coords[0])
+  if (_.isNaN(latitude)) return
+  const longitude = Number(coords[1])
+  if (_.isNaN(longitude)) return
+  return {
+    latitude,
+    longitude
+  }
 }
