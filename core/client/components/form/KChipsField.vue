@@ -40,13 +40,13 @@
                 square />
             </div>
           </template>
-          <q-input 
-            class="q-pl-sm col-grow" 
-            :for="properties.name + '-field'" 
+          <q-input
+            class="q-pl-sm col-grow"
+            :for="properties.name + '-field'"
             v-model="input"
-            autofocus type="text" 
-            :after="inputActions" 
-            @keyup.enter="onChipAdded()" 
+            autofocus type="text"
+            :after="inputActions"
+            @keyup.enter="onChipAdded()"
           />
         </div>
       </template>
