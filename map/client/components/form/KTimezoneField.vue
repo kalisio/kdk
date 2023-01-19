@@ -16,7 +16,7 @@
         map-options
         :error="hasError"
         :error-message="errorLabel"
-        :disabled="disabled"
+        :disable="disabled"
         bottom-slots>
         <!-- Map display -->
         <template v-slot:prepend>

@@ -24,7 +24,7 @@
       new-value-mode="add-unique"
       :error-message="errorLabel"
       :error="hasError"
-      :disabled="disabled"
+      :disable="disabled"
       bottom-slots
       :options="options"
       @filter="onSearch"

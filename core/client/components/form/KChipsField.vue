@@ -17,7 +17,7 @@
       :label="label"
       :error-message="errorLabel"
       :error="hasError"
-      :disabled="disabled"
+      :disable="disabled"
       bottom-slots
     >
       <!-- Content -->
@@ -40,7 +40,14 @@
                 square />
             </div>
           </template>
-          <q-input class="q-pl-sm col-grow" :for="properties.name + '-field'" autofocus type="text" v-model="input" :after="inputActions" @keyup.enter="onChipAdded()" />
+          <q-input 
+            class="q-pl-sm col-grow" 
+            :for="properties.name + '-field'" 
+            v-model="input"
+            autofocus type="text" 
+            :after="inputActions" 
+            @keyup.enter="onChipAdded()" 
+          />
         </div>
       </template>
       <!-- Helper -->

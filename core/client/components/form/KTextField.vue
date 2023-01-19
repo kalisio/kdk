@@ -8,7 +8,7 @@
     v-model="model"
     :label="label"
     clearable
-    :disabled="disabled"
+    :disable="disabled"
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots

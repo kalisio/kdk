@@ -10,7 +10,7 @@
     clearable
     @blur="onChanged"
     @update:model-value="onChanged"
-    :disabled="disabled"
+    :disable="disabled"
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
