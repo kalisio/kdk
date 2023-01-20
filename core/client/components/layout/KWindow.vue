@@ -37,7 +37,7 @@
             <component
               :ref="onWidgetRefCreated"
               :is="widget.component"
-              v-bind="widget.content"
+              v-bind="widgetContent"
               :style="widgetStyle"
             />
           </q-tab-panel>
@@ -84,6 +84,7 @@ const $q = useQuasar()
 const currentWindow = Store.get(`windows.${props.placement}`)
 const currentMode = ref('pinned')
 const widgetHeader = ref(null)
+const widgetContent = ref(null)
 const pinIcons = {
   left: 'las la-angle-left',
   right: 'las la-angle-right',
@@ -208,8 +209,10 @@ function onWidgetRefCreated (reference) {
   if (reference) {
     // setup the corresponding header
     const widget = _.find(availableWidgets.value, { id: currentWidget.value })
-    if (widget.header) widgetHeader.value = Layout.bindContent(_.cloneDeep(widget.header), reference)
+    const boundWidget = Layout.bindContent(_.cloneDeep(widget), reference)
+    if (widget.header) widgetHeader.value = boundWidget.header
     else widgetHeader.value = [{ component: 'KStamp', text: widget.label, direction: 'horizontal' }]
+    if (widget.content) widgetContent.value = boundWidget.content
   } else {
     // empty the header
     widgetHeader.value = null

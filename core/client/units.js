@@ -112,7 +112,7 @@ export const Units = {
           temperature: 'degC',
           angle: 'deg',
           notation: 'auto',
-          precision: 2
+          precision: 3
         }
       }))
     // Create units not defined by default in mathjs
@@ -139,7 +139,7 @@ export const Units = {
     return Store.get('units.default.notation', 'auto')
   },
   getDefaultPrecision () {
-    return Store.get('units.default.precision', 2)
+    return Store.get('units.default.precision', 3)
   },
   getQuantities () {
     return _.keys(_.omit(this.get(), ['default']))

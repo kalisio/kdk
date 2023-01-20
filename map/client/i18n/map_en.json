@@ -379,6 +379,15 @@
     "EXPORT_SERIES": "Export data",
     "SERIES_EXPORT_FILE": "Series.csv"
   },
+  "KStackableTimeSeries": {
+    "LABEL": "Time series",
+    "PIN_SERIE_TOOLTIP": "Pin graph",
+    "UNPIN_SERIE_TOOLTIP": "Unpin graph",
+    "EXPORT_SERIE_TOOLTIP": "Export graph",
+    "TIME_LABEL": "Time",
+    "EXPORT_SERIES": "Export data",
+    "SERIES_EXPORT_FILE": "Series.csv"
+  },
   "KViewsPanel": {
     "VIEWS_LABEL": "My views",
     "SORT_VIEWS": "Sort view",
@@ -616,12 +625,5 @@
   },
   "KLegend": {
     "LABEL": "Legend"
-  },
-  "KStackableTimeSeries": {
-    "LABEL": "Time series",
-    "EXPORT_ACTION_TOOLTIP": "Export data",
-    "MOVE_UP_ACTION_TOOLTIP": "Move up",
-    "MOVE_DOWN_ACTION_TOOLTIP": "Move down",
-    "GROUP_ACTION_TOOLTIP": "Stack"
   }
 }
