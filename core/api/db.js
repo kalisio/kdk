@@ -96,6 +96,11 @@ export class Database {
     // Default implementation
   }
 
+  async healthcheck () {
+    // Default implementation
+    return false
+  }
+
   static create (app) {
     switch (this.adapter) {
       case 'mongodb':
@@ -174,6 +179,23 @@ export class MongoDatabase extends Database {
     } catch (error) {
       this.app.logger.error('Could not disconnect from ' + this.adapter + ' database(s)', error)
       throw error
+    }
+  }
+
+  async healthcheck () {
+    try {
+      await this.instance.admin().listDatabases()
+      if (this._secondaries) {
+        const dbNames = _.keys(this._secondaries)
+        for (let i = 0; i < dbNames.length; i++) {
+          const dbName = dbNames[i]
+          await this._dbs[dbName].admin().listDatabases()
+        }
+      }
+      return true
+    } catch (error) {
+      this.app.logger.error('Healthcheck from ' + this.adapter + ' database(s) failed', error)
+      return false
     }
   }
 

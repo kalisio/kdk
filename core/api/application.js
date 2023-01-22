@@ -449,9 +449,11 @@ function setupSockets (app) {
 }
 
 function setupHealthcheck (app) {
-  app.get('/healthcheck', (req, res) => {
+  app.get('/healthcheck', async (req, res) => {
     res.set('Content-Type', 'application/json')
-    return res.status(200).json({ isRunning: true })
+    const result = await app.db.healthcheck()
+    const status = (result ? 200 : 500)
+    return res.status(status).json({ isRunning: true, isDatabaseRunning: result })
   })
 }
 

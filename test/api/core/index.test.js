@@ -64,6 +64,13 @@ describe('core:services', () => {
   // Let enough time to process
     .timeout(10000)
 
+  it('application healthcheck', async () => {
+    const response = await request.get(`http://localhost:${port}/healthcheck`)
+    expect(response.body).to.deep.equal({ isRunning: true, isDatabaseRunning: true })
+  })
+  // Let enough time to process
+    .timeout(5000)
+
   it('register webhooks', () => {
     app.createWebhook('webhook', { filter: { service: { $in: ['users'] }, operation: 'get' } })
   })
