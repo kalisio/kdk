@@ -4,6 +4,7 @@
     :title="title"
     :maximized="maximized"
     :buttons="computedButtons"
+    :toolbar="toolbar"
     :width-policy="widthPolicy"
   >
     <component
@@ -26,6 +27,10 @@ const props = defineProps({
   title: {
     type: String,
     default: undefined
+  },
+  toolbar: {
+    type: Array,
+    default: () => null
   },
   component: {
     type: String,
