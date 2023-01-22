@@ -50,9 +50,7 @@ export function useLocation () {
   }
   function toGeoJSON (location) {
     if (!location) return
-    return {
-      coordinates: [location.longitude, location.latitude]
-    }
+    return [location.longitude, location.latitude]
   }
   // Expose
   return {

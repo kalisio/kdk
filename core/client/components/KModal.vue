@@ -32,11 +32,8 @@
       <!--
         Content section
        -->
-      <div id="modal-content"
-        class="col"
-        v-bind:class="{'q-pa-sm': $q.screen.gt.xs, 'q-pa-xs': $q.screen.lt.sm }"
-      >
-        <KScrollArea class="q-pl-xs q-pr-lg" :maxHeight="scrollAreaMaxHeight">
+      <div id="modal-content" class="col">
+        <KScrollArea class="q-pl-xs q-pr-md" :maxHeight="scrollAreaMaxHeight">
           <slot />
         </KScrollArea>
       </div>

@@ -11,7 +11,7 @@
       <div class="row justify-center">
         <KPanel
           id="header"
-          :content="header"
+          :content="headerComponents"
           class="k-location-map-toolbar"
         />
       </div>
@@ -68,6 +68,10 @@ export default {
       type: Array,
       default: () => []
     },
+    geocoders: {
+      type: Array,
+      default: () => []
+    },
     draggable: {
       type: Boolean,
       default: false
@@ -79,7 +83,7 @@ export default {
     }
   },
   computed: {
-    header () {
+    headerComponents () {
       const components = []
       _.forEach(this.header, component => {
         if (component === 'separator') {
@@ -129,7 +133,6 @@ export default {
   watch: {
     modelValue: function () {
       this.location = this.modelValue
-      console.log(this.location)
       this.refresh()
     },
     draggable: function () {
@@ -163,7 +166,6 @@ export default {
       await Geolocation.update()
       const position = this.$store.get('geolocation.position')
       if (position) {
-        console.log(position)
         this.$emit('update:modelValue', Object.assign({}, position, { name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')) }))
       }
     },
@@ -184,11 +186,9 @@ export default {
     refresh () {
       if (!this.mapReady) return
       // No location ?
-      console.log(this.location)
       const hasLongitude = _.has(this.location, 'longitude')
       const hasLatitude = _.has(this.location, 'latitude')
       const hasGeometry = _.has(this.location, 'coordinates')
-      console.log(hasGeometry, hasLatitude, hasLongitude)
       if (hasGeometry || (hasLongitude && hasLatitude)) {
         // No default marker in draw mode
         // if (this.drawable && !hasGeometry) return

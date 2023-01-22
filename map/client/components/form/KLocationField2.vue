@@ -56,6 +56,7 @@
         />
         <!-- map drawing -->
         <KAction
+          v-if="map"
           id="draw"
           tooltip="KLocationField.DRAW"
           icon="las la-edit"
@@ -66,7 +67,7 @@
             component: 'location/KLocationMap',
             modelValue: model,
             draggable: true,
-            header: ['location', 'separator', 'geolocate', 'draw-point', 'draw-polyline', 'draw-polygon'],
+            header: map,
             cancelAction: 'CANCEL',
             okAction: {
               id: 'ok-button',
@@ -129,6 +130,11 @@ export default {
     KLocationMap
   },
   mixins: [kdkCoreMixins.baseField],
+  computed: {
+    map () {
+      return _.get(this.properties, 'field.map')
+    }
+  },
   methods: {
     emptyModel () {
       return null
@@ -143,7 +149,10 @@ export default {
     },
     async onGeolocated () {
       const location = await this.geolocate()
-      if (location) this.model = location
+      if (location) {
+        this.fill(location)
+        this.onChanged()
+      }
     },
     onLocationChanged (map) {
       return true
@@ -165,7 +174,7 @@ export default {
     }
   },
   mounted () {
-    this.availableGeocoders = _.filter(_.get(this.properties, 'field.options.geocoders'), geocoder => {
+    this.availableGeocoders = _.filter(_.get(this.properties, 'field.geocoders'), geocoder => {
       return _.get(geocoder, 'selectable', true)
     })
     this.selectedGeocorders = _.map(this.availableGeocoders, geocoder => {
