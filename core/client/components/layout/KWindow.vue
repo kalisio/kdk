@@ -32,7 +32,7 @@
         v-model="currentWidget"
         animated
       >
-        <template v-for="(widget, index) in availableWidgets" :placement="index">
+        <template v-for="widget in availableWidgets" :key="widget.id">
           <q-tab-panel :name="widget.id" class="no-padding no-scroll">
             <component
               :ref="onWidgetRefCreated"
@@ -62,6 +62,7 @@
 
 <script setup>
 import _ from 'lodash'
+import logger from 'loglevel'
 import config from 'config'
 import { ref, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
@@ -163,10 +164,9 @@ const availableWidgets = computed(() => {
   const widgets = Layout.filterContent(currentWindow.widgets, currentWindow.filter || {})
   // add the component to be loaded
   _.forEach(widgets, (widget) => {
-    if (!widget.placement) {
-      const componentName = _.get(widget, 'content.component')
-      widget.component = utils.loadComponent(componentName)
-    }
+    const componentName = _.get(widget, 'content.component')
+    if (componentName) widget.component = utils.loadComponent(componentName)
+    else logger.error(`widget ${widget.id} component is undefined`)
   })
   return widgets
 })
@@ -209,10 +209,18 @@ function onWidgetRefCreated (reference) {
   if (reference) {
     // setup the corresponding header
     const widget = _.find(availableWidgets.value, { id: currentWidget.value })
-    const boundWidget = Layout.bindContent(_.cloneDeep(widget), reference)
-    if (widget.header) widgetHeader.value = boundWidget.header
-    else widgetHeader.value = [{ component: 'KStamp', text: widget.label, direction: 'horizontal' }]
-    if (widget.content) widgetContent.value = boundWidget.content
+    if (!widget.reference) {
+      logger.debug(`setting up widget ${widget.id}`)
+      widget.reference = reference
+      // bind the content and stores it 
+      const content = [widget.content]
+      widget.content = Layout.bindContent(content, reference)[0]
+      // bind the header if any and stores it
+      if (widget.header) widget.header = Layout.bindContent(widget.header, reference)
+      else widget.header = [{ component: 'KStamp', text: widget.label, direction: 'horizontal' }]
+    } 
+    widgetContent.value = widget.content
+    widgetHeader.value = widget.header
   } else {
     // empty the header
     widgetHeader.value = null
