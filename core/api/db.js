@@ -184,12 +184,12 @@ export class MongoDatabase extends Database {
 
   async healthcheck () {
     try {
-      await this.instance.admin().listDatabases()
+      await this.instance.admin().ping()
       if (this._secondaries) {
         const dbNames = _.keys(this._secondaries)
         for (let i = 0; i < dbNames.length; i++) {
           const dbName = dbNames[i]
-          await this._dbs[dbName].admin().listDatabases()
+          await this._dbs[dbName].admin().ping()
         }
       }
       return true
