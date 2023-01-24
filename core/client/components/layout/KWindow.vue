@@ -212,13 +212,13 @@ function onWidgetRefCreated (reference) {
     if (!widget.reference) {
       logger.debug(`setting up widget ${widget.id}`)
       widget.reference = reference
-      // bind the content and stores it 
+      // bind the content and stores it
       const content = [widget.content]
       widget.content = Layout.bindContent(content, reference)[0]
       // bind the header if any and stores it
       if (widget.header) widget.header = Layout.bindContent(widget.header, reference)
       else widget.header = [{ component: 'KStamp', text: widget.label, direction: 'horizontal' }]
-    } 
+    }
     widgetContent.value = widget.content
     widgetHeader.value = widget.header
   } else {
