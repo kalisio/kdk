@@ -16,7 +16,7 @@
           dense
         >
           <!-- legend components by layers -->
-          <template v-for="layer in layersBySublegend[sublegend.name]" key="layer.name" class="column full-width">
+          <template v-for="layer in layersBySublegend[sublegend.name]" :key="layer.name" class="column full-width">
             <div class="q-py-xs q-px-md">
               <component
                 :is="layer.legend.renderer"
