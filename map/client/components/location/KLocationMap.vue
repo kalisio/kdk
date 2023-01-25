@@ -77,11 +77,6 @@ export default {
       default: false
     }
   },
-  data () {
-    return {
-      location: this.defaultLocation()
-    }
-  },
   computed: {
     headerComponents () {
       const components = []
@@ -97,7 +92,7 @@ export default {
           components.push({
             id: 'location',
             icon: 'img:icons/kdk/center-on-feature.svg',
-            label: this.location ? this.location.name : '',
+            label: this.modelValue ? this.modelValue.name : '',
             handler: this.recenter
           })
         }
@@ -131,8 +126,8 @@ export default {
     }
   },
   watch: {
-    modelValue: function () {
-      this.location = this.modelValue
+    modelValue: function (value) {
+      console.log(value)
       this.refresh()
     },
     draggable: function () {
@@ -153,12 +148,12 @@ export default {
       if (this.drawLayer) {
         this.map.fitBounds(this.drawLayer.getBounds())
       } else {
-        const longitude = (_.has(this.location, 'longitude')
-          ? _.get(this.location, 'longitude')
-          : _.get(this.location, 'coordinates[0]'))
-        const latitude = (_.has(this.location, 'latitude')
-          ? _.get(this.location, 'latitude')
-          : _.get(this.location, 'coordinates[1]'))
+        const longitude = (_.has(this.modelValue, 'longitude')
+          ? _.get(this.modelValue, 'longitude')
+          : _.get(this.modelValue, 'coordinates[0]'))
+        const latitude = (_.has(this.modelValue, 'latitude')
+          ? _.get(this.modelValue, 'latitude')
+          : _.get(this.modelValue, 'coordinates[1]'))
         this.center(longitude, latitude, this.mapOptions.zoom)
       }
     },
@@ -166,12 +161,13 @@ export default {
       await Geolocation.update()
       const position = this.$store.get('geolocation.position')
       if (position) {
-        this.$emit('update:modelValue', Object.assign({}, position, { name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')) }))
+        this.update(position.latitude, position.longitude)
+        //this.refresh()
       }
     },
     clear () {
       if (this.marker) {
-        this.marker.off('drag', this.onLocationDragged)
+        this.marker.off('dragend', this.onLocationDragged)
         this.marker.removeFrom(this.map)
         this.marker = null
       }
@@ -186,59 +182,43 @@ export default {
     refresh () {
       if (!this.mapReady) return
       // No location ?
-      const hasLongitude = _.has(this.location, 'longitude')
-      const hasLatitude = _.has(this.location, 'latitude')
-      const hasGeometry = _.has(this.location, 'coordinates')
+      const hasLongitude = _.has(this.modelValue, 'longitude')
+      const hasLatitude = _.has(this.modelValue, 'latitude')
+      const hasGeometry = _.has(this.modelValue, 'coordinates')
       if (hasGeometry || (hasLongitude && hasLatitude)) {
         // No default marker in draw mode
         // if (this.drawable && !hasGeometry) return
 
         // GeoJson geometry or simple location ?
-        if (_.has(this.location, 'type') && (_.get(this.location, 'type') !== 'Point')) {
-          this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.location })
+        if (_.has(this.modelValue, 'type') && (_.get(this.modelValue, 'type') !== 'Point')) {
+          this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.modelValue })
           this.map.addLayer(this.drawLayer)
         } else {
           const longitude = (hasLongitude
-            ? _.get(this.location, 'longitude')
-            : _.get(this.location, 'coordinates[0]'))
+            ? _.get(this.modelValue, 'longitude')
+            : _.get(this.modelValue, 'coordinates[0]'))
           const latitude = (hasLatitude
-            ? _.get(this.location, 'latitude')
-            : _.get(this.location, 'coordinates[1]'))
+            ? _.get(this.modelValue, 'latitude')
+            : _.get(this.modelValue, 'coordinates[1]'))
 
+          if (this.marker) this.marker.removeFrom(this.map)
           this.marker = L.marker([latitude, longitude], {
             icon: L.icon.fontAwesome(this.markerStyle),
             draggable: this.draggable,
             pmIgnore: true
           })
           this.marker.addTo(this.map)
-          if (this.draggable) this.marker.on('drag', this.onLocationDragged)
+          if (this.draggable) this.marker.on('dragend', this.onLocationDragged)
         }
-
         // Center the map
         this.recenter()
       } else {
         this.clear()
       }
     },
-    async onGeolocate () {
-      await this.geolocate()
-      this.refresh()
-    },
     onLocationDragged () {
-      /* this.location.name = formatUserCoordinates(this.marker.getLatLng().lat, this.marker.getLatLng().lng, this.$store.get('locationFormat', 'FFf'))
-      if (_.has(this.location, 'type') && (_.get(this.location, 'type') === 'Point')) {
-        _.set(this.location, 'coordinates[0]', this.marker.getLatLng().lng)
-        _.set(this.location, 'coordinates[1]', this.marker.getLatLng().lat)
-      } else {
-        this.location.longitude = this.marker.getLatLng().lng
-        this.location.latitude = this.marker.getLatLng().lat
-      } */
-      const location = {
-        name: formatUserCoordinates(this.marker.getLatLng().lat, this.marker.getLatLng().lng, this.$store.get('locationFormat', 'FFf')),
-        latitude: this.marker.getLatLng().lat,
-        longitude: this.marker.getLatLng().lng
-      }
-      this.$emit('update:modelValue', location)
+      this.marker.removeFrom(this.map)
+      this.update(this.marker.getLatLng().lat, this.marker.getLatLng().lng)
     },
     startDraw (shape) {
       // Clear any previous edition
@@ -259,10 +239,7 @@ export default {
       this.location = feature.geometry
       // Compatibility with GPS-based localization
       const location = centroid(feature)
-      this.location.name = formatUserCoordinates(
-        _.get(location, 'geometry.coordinates[1]'), _.get(location, 'geometry.coordinates[0]'),
-        this.$store.get('locationFormat', 'FFf'))
-      this.$emit('update:modelValue', this.location)
+      this.update(location.geometry.coordinates[1], location.geometry.coordinates[0])
     },
     onStartLine () {
       this.startDraw('Line')
@@ -293,12 +270,21 @@ export default {
           this.refresh()
         }
       }
+    },
+    update (latitude, longitude) {
+      const location = {
+        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf')),
+        latitude,
+        longitude
+      }
+      this.$emit('update:modelValue', location)
     }
   },
   async mounted () {
     // Initialize component
-    this.location = this.modelValue
-    if (!this.location) await this.geolocate()
+    //this.location = this.modelValue
+    
+    //if (!this.location) await this.geolocate()
     this.refresh()
     this.$engineEvents.on('pm:create', this.stopDraw)
   },

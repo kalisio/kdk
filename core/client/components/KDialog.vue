@@ -7,10 +7,20 @@
     :toolbar="toolbar"
     :width-policy="widthPolicy"
   >
+    <!-- component with v-model -->
     <component
+      v-if="attrs['v-model']"
       ref="componentRef"
       :is="computedComponent"
-      v-bind="attrs"
+      v-model="computedModel"
+      v-bind="computedProps"
+    /> 
+    <!-- component without v-model -->
+    <component
+      v-else
+      ref="componentRef"
+      :is="computedComponent"
+      v-bind="computedProps"
     />
   </KModal>
 </template>
@@ -64,6 +74,7 @@ defineEmits([...useDialogPluginComponent.emits])
 const { dialogRef, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 const componentRef = ref()
 const attrs = useAttrs()
+const model = ref(attrs['v-model'])
 
 // Computed
 const computedButtons = computed(() => {
@@ -117,5 +128,16 @@ const computedButtons = computed(() => {
 })
 const computedComponent = computed(() => {
   return loadComponent(props.component)
+})
+const computedModel = computed({
+  get: function () {
+    return model.value
+  },
+  set: function (value) {
+    model.value = value
+  } 
+})
+const computedProps = computed(() => {
+  return _.omit(attrs, ['v-model'])
 })
 </script>

@@ -3,7 +3,7 @@
     v-if="readOnly"
     :id="properties.name + '-field'"
   >
-    TODO
+    {{ model.name }}
   </div>
   <q-select
     v-else
@@ -65,7 +65,7 @@
           dense
           :dialog="{
             component: 'location/KLocationMap',
-            modelValue: model,
+            'v-model': model,
             draggable: true,
             header: map,
             cancelAction: 'CANCEL',
@@ -155,6 +155,7 @@ export default {
       }
     },
     onLocationChanged (map) {
+      this.model = map.modelValue
       return true
     }
   },
