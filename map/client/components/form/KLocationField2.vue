@@ -30,6 +30,7 @@
       <div class="q-pl-xs row items-center">
         <!-- geocoders filtering -->
         <KAction
+          v-if="allowConfiguration"
           id="configure"
           tooltip="KLocationField.FILTER"
           icon="las la-sliders-h"
@@ -46,6 +47,7 @@
         </KAction>
         <!-- geolocation -->
         <KAction
+          v-if="allowGeolocation"
           id="geolocate"
           tooltip="KLocationField.GEOLOCATE"
           icon="las la-crosshairs"
@@ -56,7 +58,7 @@
         />
         <!-- map drawing -->
         <KAction
-          v-if="map"
+          v-if="allowMap"
           id="draw"
           tooltip="KLocationField.DRAW"
           icon="las la-edit"
@@ -131,8 +133,14 @@ export default {
   },
   mixins: [kdkCoreMixins.baseField],
   computed: {
-    map () {
-      return _.get(this.properties, 'field.map')
+    allowConfiguration () {
+      return _.has(this.properties, 'field.geocoders')
+    },
+    allowGeolocation () {
+      return _.get(this.properties, 'field.geolocate', true)
+    },
+    allowMap () {
+      return _.has(this.properties, 'field.map')
     }
   },
   methods: {
