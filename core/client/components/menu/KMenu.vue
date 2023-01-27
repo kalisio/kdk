@@ -2,7 +2,6 @@
   <q-btn-dropdown
     v-if="hasContent"
     :id="id"
-    :label="$tie(label)"
     :icon="icon"
     :color="color"
     :size="size"
@@ -17,14 +16,20 @@
     no-caps
     fab-mini
     @click="onClicked">
-    <KPanel
-      id="menu-entries"
-      :content="content"
-      :mode="mode"
-      :context="context"
-      :action-renderer="actionRenderer"
-      direction="vertical"
-    />
+      <template v-slot:label>
+        <div class="row items-center no-wrap">
+          <q-badge v-if="badge" v-bind="badge"></q-badge>
+          <div class="text-center">{{ $tie(label) }}</div>
+        </div>
+      </template>
+      <KPanel
+        id="menu-entries"
+        :content="content"
+        :mode="mode"
+        :context="context"
+        :action-renderer="actionRenderer"
+        direction="vertical"
+      />
   </q-btn-dropdown>
 </template>
 
@@ -64,6 +69,10 @@ export default {
     dropdownIcon: {
       type: String,
       default: ''
+    },
+    badge: {
+      type: Object,
+      default: () => null
     },
     disabled: {
       type: Boolean,
