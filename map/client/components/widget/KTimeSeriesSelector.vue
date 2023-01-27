@@ -1,5 +1,12 @@
 <template>
-  <k-panel
+  <k-menu v-if="menu && count > 0"
+    icon="las la-bars" id="time-series-selector"
+    :content="timeSeries"
+    action-renderer="item"
+    :dense="dense"
+    :badge="{ color: 'accent', label: count }"
+  />
+  <k-panel v-if="!menu && count > 0"
     id="time-series-selector"
     :content="timeSeries"
     action-renderer="item"
@@ -8,23 +15,18 @@
   />
 </template>
 
-<script>
-import { KPanel } from '../../../../core/client/components'
+<script setup>
+import { computed } from 'vue'
+import { KPanel, KMenu } from '../../../../core/client/components'
 
-export default {
-  name: 'k-time-series-selector',
-  components: {
-    KPanel
-  },
-  props: {
-    timeSeries: {
-      type: Array,
-      default: () => []
-    },
-    dense: {
-      type: Boolean,
-      default: false
-    }
-  }
-}
+const props = defineProps({
+  timeSeries: { type: Array, default: () => [] },
+  dense: { type: Boolean, default: false },
+  menu: { type: Boolean, default: true }
+})
+
+const count = computed(() => {
+  return _.filter(props.timeSeries, { visible: true }).length
+})
 </script>
+:

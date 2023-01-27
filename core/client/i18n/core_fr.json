@@ -450,6 +450,13 @@
     "EMPTY_TABLE": "@:NO_ITEM",
     "TABLE_COLUMNS": "Propriétés"
   },
+  "KDataTable": {
+    "EMPTY_TABLE": "@:NO_ITEM",
+    "TABLE_COLUMNS": "Propriétés",
+    "NO_DATA_AVAILABLE": "Aucune donnée disponible",
+    "EXPORT_DATA": "Exporter les données",
+    "DATA_EXPORT_FILE": "Données.csv"
+  },
   "KHistory": {
     "EMPTY_HISTORY": "@:NO_ITEM"
   },
@@ -829,6 +836,11 @@
   },
   "KChart": {
     "NO_DATA_AVAILABLE": "Aucune donnée disponible"
+  },
+  "KTimeSeriesChart": {
+    "TIME_LABEL": "Temps",
+    "EXPORT_SERIES": "Exporter les données",
+    "SERIES_EXPORT_FILE": "Series.csv"
   },
   "KFilter": {
     "SEARCH_LABEL": "Rechercher"

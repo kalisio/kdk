@@ -16,6 +16,7 @@
       <KPanel
         id="widget-header"
         :content="widgetHeader"
+        :context="widgetReference"
       />
       <q-space />
       <!-- window controls -->
@@ -86,6 +87,7 @@ const currentWindow = Store.get(`windows.${props.placement}`)
 const currentMode = ref('pinned')
 const widgetHeader = ref(null)
 const widgetContent = ref(null)
+const widgetReference = ref(null)
 const pinIcons = {
   left: 'las la-angle-left',
   right: 'las la-angle-right',
@@ -221,6 +223,7 @@ function onWidgetRefCreated (reference) {
     }
     widgetContent.value = widget.content
     widgetHeader.value = widget.header
+    widgetReference.value = widget.reference
   } else {
     // empty the header
     widgetHeader.value = null

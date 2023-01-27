@@ -1,37 +1,54 @@
 <template>
-  <div id="time-series" class="column no-wrap" v-if="charts.length > 0">
+  <div id="time-series" class="column justify-start no-wrap" v-if="components.length > 0">
     <!-- Pinned charts first -->
-    <div v-for="(timeSerie, index) in timeSeries" class="col order-first column no-wrap">
-      <div v-if="timeSerie.pinned" class="row bg-grey-3 col-auto">
-        <KPanel :id="`${timeSerie.id}-header`" :content="charts[index].header" class="col justify-start"/>
-        <KPanel :id="`${timeSerie.id}-actions`" :content="charts[index].actions" :context="timeSerie" class="col justify-end"/>
+    <div v-for="(timeSerie, index) in timeSeries" class="col column no-wrap">
+      <div v-if="timeSerie.pinned" class="row bg-grey-3 col col-auto">
+        <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
+        <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
       </div>
-      <k-time-series-chart v-if="timeSerie.pinned" :id="`${timeSerie.id}-timeseries-chart`"
-        :ref="charts[index].onChartRef" :time-series="timeSerie.series" class="col q-pl-sm q-pr-sm" />
+      <k-time-series-chart v-if="timeSerie.pinned && !timeSerie.table" :id="`${timeSerie.id}-timeseries-chart`"
+        class="col q-pl-sm q-pr-sm" :ref="components[index].onChartRef" :options="chartOptions" :time-series="timeSerie.series"
+        :x-axis-key="xAxisKey" :y-axis-key="yAxisKey" :logarithmic="timeSerie.logarithmic"
+        :start-time="startTime" :end-time="endTime" @zoom-start="onZoomStart" @zoom-end="onZoomEnd"/>
+      <k-data-table v-if="timeSerie.pinned && timeSerie.table"
+        :id="`${timeSerie.id}-timeseries-chart`" class="col q-pl-sm q-pr-sm" :ref="components[index].onTableRef"
+        :schema="schema" :tables="timeSerie.series" />
     </div>
     <!-- Then visible charts -->
-    <div v-for="(timeSerie, index) in timeSeries" class="col order-first column no-wrap">
-      <div v-if="timeSerie.visible && !timeSerie.pinned" class="row bg-grey-3 col-auto">
-        <KPanel :id="`${timeSerie.id}-header`" :content="charts[index].header" class="col justify-start"/>
-        <KPanel :id="`${timeSerie.id}-actions`" :content="charts[index].actions" :context="timeSerie" class="col justify-end"/>
+    <div v-for="(timeSerie, index) in timeSeries" class="col column no-wrap">
+      <div v-if="timeSerie.visible && !timeSerie.pinned" class="row bg-grey-3 col col-auto">
+        <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
+        <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
       </div>
-      <k-time-series-chart v-if="timeSerie.visible && !timeSerie.pinned" :id="`${timeSerie.id}-timeseries-chart`"
-        :ref="charts[index].onChartRef" :time-series="timeSerie.series" class="col q-pl-sm q-pr-sm" />
+      <k-time-series-chart v-if="timeSerie.visible && !timeSerie.pinned && !timeSerie.table"
+        :id="`${timeSerie.id}-timeseries-chart`" class="col q-pl-sm q-pr-sm"
+        :ref="components[index].onChartRef" :options="chartOptions" :time-series="timeSerie.series"
+        :x-axis-key="xAxisKey" :y-axis-key="yAxisKey" :logarithmic="timeSerie.logarithmic"
+        :start-time="startTime" :end-time="endTime" @zoom-start="onZoomStart" @zoom-end="onZoomEnd"/>
+      <k-data-table v-if="timeSerie.visible && !timeSerie.pinned && timeSerie.table"
+        :id="`${timeSerie.id}-timeseries-table`" class="col q-pl-sm q-pr-sm" :ref="components[index].onTableRef"
+        :schema="schema" :tables="timeSerie.series" />
     </div>
+  </div>
+  <div v-else class="fit">
+    <slot name="empty-time-series">
+      <KStamp class="absolute-center" icon="las la-exclamation-circle" icon-size="3rem"
+        :text="$t('KStackableTimeSeries.NO_DATA_AVAILABLE')" text-size="1rem"/>
+    </slot>
   </div>
 </template>
 
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import Papa from 'papaparse'
 import { ref, watch } from 'vue'
 import { i18n } from '../../../../core/client/i18n.js'
 import { Time } from '../../../../core/client/time.js'
 import { Layout } from '../../../../core/client/layout.js'
-import { downloadAsBlob } from '../../../../core/client/utils.js'
 import KPanel from '../../../../core/client/components/KPanel.vue'
+import KScrollArea from '../../../../core/client/components/KScrollArea.vue'
 import KTimeSeriesChart from '../../../../core/client/components/chart/KTimeSeriesChart.vue'
+import KDataTable from '../../../../core/client/components/chart/KDataTable.vue'
 
 // const timeseries = [
 //   { label: 'group1', series: [] }
@@ -39,51 +56,65 @@ import KTimeSeriesChart from '../../../../core/client/components/chart/KTimeSeri
 // ]
 const props = defineProps({
   timeSeries: { type: Array, default: () => [] },
-  actions: { type: Array, default: () => [] }
+  xAxisKey: { type: String, default: 'x' },
+  yAxisKey: { type: String, default: 'y' },
+  schema: { type: [String, Object], default: null },
+  actions: { type: Array, default: () => [] },
+  chartOptions: { type: Object, default: () => ({}) },
+  exportOptions: { type: Object, default: () => ({}) }
 })
+
+// data
+const components = ref([])
+let startTime = ref(null)
+let endTime = ref(null)
+let isZoomed = ref(false)
+let zoomHistory = ref([])
 
 // expose
 const exposed = {
   hasSeries,
   hasSingleSerie,
+  isTable,
+  onSerieTable,
   isPinned,
   hasPinnedSerie,
   onPinSerie,
+  onLogarithmicSerie,
+  isZoomed,
+  onRestoreZoom,
+  onExportData,
   onExportSeries
 }
-
-// data
-const charts = ref([])
 
 // watch
 watch(() => props.timeSeries, refresh)
 
 // functions
 function refresh () {
-  // Keep track of previosu charts
-  const previousCharts = charts.value
-  charts.value = []
+  zoomHistory.value = []
+  // Keep track of previous components
+  const previousComponents = components.value
+  components.value = []
   props.timeSeries.forEach((timeSerie, index) => {
-    // Avoid building chart header/actions when the underlying time series has change, eg hidden/shown
-    let chart = _.find(previousCharts, { timeSerie })
-    if (chart) {
-      if (chart.ref) ref.update()
+    // Avoid building component header/actions when the underlying time series has changed, eg hidden/shown
+    let component = _.find(previousComponents, { timeSerie })
+    if (component) {
+      if (component.chart) chart.update()
+      if (component.table) chart.table()
     } else {
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
       const actions = Layout.bindContent(_.cloneDeep(props.actions), exposed)
-      chart = {
+      component = {
         header: [{ component: 'KStamp', text: timeSerie.label, direction: 'horizontal' }],
         actions,
-        onChartRef: (ref) => {
-          if (ref && !chart.ref) {
-            chart.ref = ref
-          }
-        },
+        onChartRef: (ref) => { if (ref && !component.chart) component.chart = ref },
+        onTableRef: (ref) => { if (ref && !component.table) component.table = ref },
         timeSerie
       }
     }
-    charts.value.push(chart)
+    components.value.push(component)
   })
 }
 function hasSeries () {
@@ -95,6 +126,14 @@ function hasSingleSerie () {
 function isPinned (timeSerie) {
   return timeSerie.pinned
 }
+function isTable (timeSerie) {
+  return timeSerie.table
+}
+function onSerieTable (timeSerie) {
+  timeSerie.table = !timeSerie.table
+  // Call any attached handler
+  if (timeSerie.onSerieTable) timeSerie.onSerieTable(timeSerie.table)
+}
 function hasPinnedSerie () {
   return _.find(props.timeSeries, timeSerie => timeSerie.pinned)
 }
@@ -103,39 +142,35 @@ function onPinSerie (timeSerie) {
   // Call any attached handler
   if (timeSerie.onPinSerie) timeSerie.onPinSerie(timeSerie.pinned)
 }
-function onExportSeries (timeSerie) {
+function onLogarithmicSerie (timeSerie) {
+  timeSerie.logarithmic = !timeSerie.logarithmic
   // Call any attached handler
-  if (timeSerie.onExportSeries) {
-    timeSerie.onExportSeries()
-    return
+  if (timeSerie.onLogarithmicSerie) timeSerie.onLogarithmicSerie(timeSerie.logarithmic)
+}
+function onRestoreZoom () {
+  if (!_.isEmpty(zoomHistory.value)) {
+    const { start, end } = _.last(zoomHistory.value)
+    startTime.value = start.valueOf()
+    endTime.value = end.valueOf()
+    zoomHistory.value = _.slice(zoomHistory.value, 0, zoomHistory.length - 1)
+    if (zoomHistory.value.length === 0) isZoomed.value = false
   }
-  const timeSeries = timeSerie ? [timeSerie] : props.timeSeries
-  let times = []
-  timeSeries.forEach(timeSerie => {
-    timeSerie.series.forEach(serie => {
-      times = times.concat(_.map(serie.data, 'x'))
-    })
-  })
-  // Make union of all available times for x-axis
-  times = _.uniq(times).map(time => moment.utc(time)).sort((a, b) => a - b)
-  // Convert to json
-  const json = times.map(time => {
-    const row = {
-      [i18n.t('KTimeSeries.TIME_LABEL')]: time.toISOString()
-    }
-    timeSeries.forEach(timeSerie => {
-      timeSerie.series.forEach(serie => {
-        const value = _.find(serie.data, item => moment.utc(item.x).valueOf() === time.valueOf())
-        const name = _.get(serie, 'variable.name')
-        row[`${timeSerie.id}-${name}`] = value ? value.y : null
-      })
-    })
-    return row
-  })
-  // Convert to csv
-  const csv = Papa.unparse(json)
-  downloadAsBlob(csv, timeSerie ? _.snakeCase(timeSerie.label) + '.csv' : i18n.t('KTimeSeries.SERIES_EXPORT_FILE'),
-    'text/csv;charset=utf-8;')
+}
+function onZoomStart ({ start, end }) {
+  zoomHistory.value.push({ start, end })
+}
+function onZoomEnd ({ start, end }) {
+  startTime.value = moment.utc(start)
+  endTime.value = moment.utc(end)
+  isZoomed.value = true
+}
+function onExportData (timeSerie) {
+  const component = _.find(components.value, { timeSerie })
+  if (component && component.table) component.table.exportData(_.get(props, 'exportOptions.data', {}))
+}
+function onExportSeries (timeSerie) {
+  const component = _.find(components.value, { timeSerie })
+  if (component && component.chart) component.chart.exportSeries(_.get(props, 'exportOptions.series', {}))
 }
 
 // immediate

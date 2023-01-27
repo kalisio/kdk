@@ -7,9 +7,12 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
+import Papa from 'papaparse'
 import { Chart } from 'chart.js'
 import 'chartjs-adapter-moment'
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
+import { getCssVar } from 'quasar'
+import { downloadAsBlob } from '../../../../core/client/utils.js'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
 
@@ -25,19 +28,37 @@ let canvas = null
 let chart = null
 const unit2axis = new Map()
 
-const emit = defineEmits(['legend-click'])
+const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-click'])
 const props = defineProps({
   timeSeries: { type: Array, default: () => [] },
-  currentTime: { type: Boolean, default: true }
+  xAxisKey: { type: String, default: 'x' },
+  yAxisKey: { type: String, default: 'y' },
+  startTime: { type: Object, default: () => null },
+  endTime: { type: Object, default: () => null },
+  logarithmic: { type: Boolean, default: false },
+  zoomable: { type: Boolean, default: true },
+  currentTime: { type: Boolean, default: true },
+  options: { type: Object, default: () => ({}) },
 })
 
-defineExpose({ update })
+defineExpose({
+  update,
+  exportSeries
+})
 
 // data
-let startTime, endTime
+let startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
+let endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
 
 // watch
 watch(() => props.timeSeries, update)
+watch(() => props.xAxisKey, update)
+watch(() => props.yAxisKey, update)
+watch(() => props.startTime, update)
+watch(() => props.endTime, update)
+watch(() => props.zoomable, update)
+watch(() => props.logarithmic, update)
+watch(() => props.options, update)
 
 // function
 async function onCanvasRef (ref) {
@@ -63,25 +84,37 @@ function getUnits (timeSerie) {
   const unit = (timeSerie.variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
   return { unit, baseUnit }
 }
+function onZoomStart () {
+  const start = moment.utc(_.get(chart, 'scales.x.min'))
+  const end = moment.utc(_.get(chart, 'scales.x.max'))
+  emit('zoom-start', { chart, start, end })
+}
+function onZoomEnd () {
+  const start = moment.utc(_.get(chart, 'scales.x.min'))
+  const end = moment.utc(_.get(chart, 'scales.x.max'))
+  emit('zoom-end', { chart, start, end })
+}
 
 async function makeChartConfig () {
   // Order matters as we compute internals like data time range
-  const scales = makeScales()
   const datasets = await makeDatasets()
+  const scales = makeScales()
   const annotation = makeAnnotation()
   return {
     type: 'line',
     data: { datasets },
     plugins: [],
-    options: {
+    options: _.merge({
       // responsive: true,
       animation: false,
       maintainAspectRatio: false,
       // resizeDelay: 100,
-      parsing: false, // we'll provide data in native format
+      parsing: {
+        xAxisKey: props.xAxisKey,
+        yAxisKey: props.yAxisKey
+      },
       scales,
       plugins: {
-        // we disable all plugins that were registered by the KChart
         datalabels: { display: false },
         tooltip: {
           mode: 'x',
@@ -99,6 +132,17 @@ async function makeChartConfig () {
           }
         },
         annotation,
+        zoom: (props.zoomable ? {
+          zoom: {
+            drag: {
+              enabled: true,
+              backgroundColor: getCssVar('secondary')
+            },
+            mode: 'x',
+            onZoomStart: onZoomStart,
+            onZoom: onZoomEnd
+          }
+        } : undefined),
         decimation: {
           enabled: true,
           algorithm: 'lttb'
@@ -118,7 +162,7 @@ async function makeChartConfig () {
           }
         }
       }
-    }
+    }, props.options)
   }
 }
 
@@ -127,6 +171,8 @@ function makeScales () {
     x: {
       type: 'time',
       time: { unit: 'hour' },
+      min: startTime.value.valueOf(),
+      max: endTime.value.valueOf(),
       ticks: {
         autoskip: true,
         maxRotation: 20,
@@ -164,7 +210,7 @@ function makeScales () {
       scales[axis] = _.merge({
         baseUnit,
         unit,
-        type: 'linear',
+        type: props.logarithmic ? 'logarithmic' : 'linear',
         position: (axisId + 1) % 2 ? 'left' : 'right',
         title: {
           display: true,
@@ -195,16 +241,18 @@ async function makeDatasets () {
       data,
       baseUnit,
       unit,
-      yAxisID: unit2axis.get(unit),
-      cubicInterpolationMode: 'monotone',
-      tension: 0.4
+      yAxisID: unit2axis.get(unit)
     }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
     datasets.push(dataset)
     // Update time range
     data.forEach(item => {
-      const time = moment.utc(item.x)
-      if (!startTime || time.isBefore(startTime)) startTime = time
-      if (!endTime || time.isAfter(endTime)) endTime = time
+      const time = moment.utc(_.get(item, props.xAxisKey))
+      if (!props.startTime) {
+        if (!startTime.value || time.isBefore(startTime.value)) startTime.value = time
+      }
+      if (!props.endTime) {
+        if (!endTime.value || time.isAfter(endTime.value)) endTime.value = time
+      }
     })
   }
 
@@ -216,7 +264,7 @@ function makeAnnotation () {
   // Is current time visible in chart ?
   if (props.currentTime) {
     const currentTime = Time.getCurrentTime()
-    if (currentTime.isBetween(startTime, endTime)) {
+    if (currentTime.isBetween(startTime.value, endTime.value)) {
       annotation = {
         annotations: [{
           type: 'line',
@@ -239,11 +287,52 @@ function makeAnnotation () {
   return annotation
 }
 
+async function exportSeries (options = {}) {
+  let times = []
+  for (let i = 0; i < props.timeSeries.length; i++) {
+    const timeSerie = props.timeSeries[i]
+    for (let j = 0; j < timeSerie.series.length; j++) {
+      const serie = timeSerie.series[j]
+      const data = await serie.data
+      times = times.concat(_.map(data, props.xAxisKey))
+    }
+  }
+  // Make union of all available times for x-axis
+  times = _.uniq(times).map(time => moment.utc(time)).sort((a, b) => a - b)
+  // Convert to json
+  const json = []
+  for (let t = 0; t < times.length; t++) {
+    const time = times[t]
+    const row = {
+      [i18n.t('KTimeSeriesChart.TIME_LABEL')]: time.toISOString()
+    }
+    for (let i = 0; i < timeSeries.length; i++) {
+      const timeSerie = timeSeries[i]
+      for (let j = 0; j < timeSerie.series.length; j++) {
+        const visible = _.get(chart, `data.datasets[${j}]`)
+        // Skip invisible variables in export
+        if (options.visibleOnly && !visible) return
+        const serie = timeSerie.series[j]
+        const data = await serie.data
+        const value = _.find(data, item => moment.utc(_.get(item, props.xAxisKey)).valueOf() === time.valueOf())
+        const name = _.get(serie, 'variable.name')
+        const label = _.get(serie, 'variable.label')
+        row[options.labelAsHeader ? `${label}` : `${name}`] = value ? _.get(value, props.yAxisKey) : null
+      }
+    }
+    json.push(row)
+  }
+  // Convert to csv
+  const csv = Papa.unparse(json)
+  downloadAsBlob(csv, _.template(options.filename || i18n.t('KTimeSeriesChart.SERIES_EXPORT_FILE'))(),
+    'text/csv;charset=utf-8;')
+}
+
 async function update () {
   if (!canvas) return
   // Reset time range
-  startTime = null
-  endTime = null
+  startTime.value = (props.startTime ? moment.utc(props.startTime) : null)
+  endTime.value = (props.endTime ? moment.utc(props.endTime) : null)
 
   const config = await makeChartConfig()
   if (!chart) {
