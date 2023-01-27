@@ -57,6 +57,9 @@ const avaiableComponents = computed(() => {
   components = Layout.getComponents(components, props.mode, props.context)
   for (let i = 0; i < components.length; ++i) {
     const component = components[i]
+    if ((typeof component.isVisible === 'string') && component.isVisible.startsWith(':')) {
+      component.isVisible = _.get(props.context, component.isVisible.substring(1))
+    }
     if (!_.startsWith(component.name, 'Q')) {
       logger.trace(`Loading component ${component.name}`)
       component.instance = loadComponent(component.name)

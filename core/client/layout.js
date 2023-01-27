@@ -155,12 +155,17 @@ export const Layout = {
       _.set(component, path, (...args) => handlers.reduce((result, h) => result && h(...args), true))
     } else if (handler && typeof handler === 'object') {
       // Could be a structure with name and possibly params specified
+      // :xxx is reserved for binding to internal property not function call
       if (handler.name) {
-        _.set(component, path, this.generateHandler(context, handler.name, handler.params))
+        if (!handler.name.startsWith(':')) {
+          _.set(component, path, this.generateHandler(context, handler.name, handler.params))
+        }
       } else {
         logger.debug(`Invalid handler binding for ${handler}: you must provide the name to the function to be called`)
       }
-    } else if (typeof handler === 'string') { // Or only name if no params are specified
+    } else if ((typeof handler === 'string') && !handler.startsWith(':')) {
+      // Or only name if no params are specified
+      // :xxx is reserved for binding to internal property not function call
       _.set(component, path, this.generateHandler(context, handler))
     }
     // Get back processed handler function
@@ -180,7 +185,7 @@ export const Layout = {
             // From store or context ?
             if (value.startsWith(':store.')) {
               item[key] = Store.getRef(value.replace(':store.', ''))
-            } else {
+            } else if (key !== 'visible') {
               item[key] = _.get(context, value.substring(1))
             }
           } else {
