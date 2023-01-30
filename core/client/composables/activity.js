@@ -44,7 +44,7 @@ export function useCurrentActivity (exposed = { selection: true }) {
     const options = useStore(`store.${kActivityName.value}.options`)
 
     Object.assign(expose, {
-      state: readonly(state.store),
+      state: state.store,
       options: readonly(options.store)
     })
     if (exposed.selection) {
