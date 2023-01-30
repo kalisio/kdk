@@ -11,6 +11,7 @@
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
+    :autocomplete="autocomplete"
     @blur="onChanged"
     @update:model-value="onChanged"
   >
@@ -39,15 +40,18 @@ export default {
   mixins: [baseField],
   data () {
     return {
-      showPassword: true
+      showPassword: true,
+      autocomplete: _.get(this.properties, 'field.autocomplete', 'on')
     }
   },
   created () {
+    // generate a default password if required
     if (_.get(this.properties, 'field.suggest')) {
       const length = _.get(this.properties.field.suggest, 'length', 12)
       const rules = _.get(this.properties.field.suggest, 'rules', /[\w\d?-]/)
       _.set(this.properties, 'default', generateRandomPassword(length, false, rules))
     }
+
   }
 }
 </script>
