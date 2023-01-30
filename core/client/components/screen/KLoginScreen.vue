@@ -41,7 +41,7 @@ const loading = ref(false)
 // Functions
 function getFormSchema () {
   return {
-    $schema: 'http://json-schema.org/draft-06/schema#',
+    $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'http:/kalisio.xyz/schemas/login.json#',
     title: 'Login form',
     type: 'object',
@@ -56,9 +56,18 @@ function getFormSchema () {
       },
       password: {
         type: 'string',
+        format: 'password',
         field: {
           component: 'form/KPasswordField',
           label: 'KLoginScreen.PASSWORD_FIELD_LABEL'
+        }
+      },
+      description: {
+        type: 'string',
+        maxLength: 2048,
+        field: {
+          component: 'form/KTextField',
+          label: 'schemas.ORGANISATIONS_DESCRIPTION_FIELD_LABEL'
         }
       }
     },

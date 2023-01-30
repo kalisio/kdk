@@ -14,7 +14,7 @@
       :is="computedComponent"
       v-model="computedModel"
       v-bind="computedProps"
-    /> 
+    />
     <!-- component without v-model -->
     <component
       v-else
@@ -135,7 +135,7 @@ const computedModel = computed({
   },
   set: function (value) {
     model.value = value
-  } 
+  }
 })
 const computedProps = computed(() => {
   return _.omit(attrs, ['v-model'])

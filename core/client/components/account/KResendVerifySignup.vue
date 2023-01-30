@@ -46,7 +46,7 @@ export default {
       sent: false,
       sending: false,
       schema: {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/resend-verification-email#',
         title: 'Resend verification email form',
         type: 'object',

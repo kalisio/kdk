@@ -52,13 +52,14 @@ export default {
       changed: false,
       changing: false,
       schema: {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/change-password.json#',
         title: 'Change Password form',
         type: 'object',
         properties: {
           oldPassword: {
             type: 'string',
+            format: 'password',
             field: {
               component: 'form/KPasswordField',
               label: 'KChangePassword.OLD_PASSWORD_FIELD_LABEL'
@@ -66,12 +67,15 @@ export default {
           },
           password: {
             type: 'string',
+            format: 'password',
             field: {
               component: 'form/KPasswordField',
               label: 'KChangePassword.PASSWORD_FIELD_LABEL'
             }
           },
           confirmPassword: {
+            type: 'string',
+            format: 'password',
             const: {
               $data: '1/password'
             },
@@ -81,7 +85,7 @@ export default {
             }
           }
         },
-        required: ['oldPassword', 'password']
+        required: ['oldPassword', 'password', 'confirmPassword']
       }
     }
   },

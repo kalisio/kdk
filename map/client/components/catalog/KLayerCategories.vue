@@ -134,7 +134,7 @@ export default {
     },
     categorySchema () {
       return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://www.kalisio.xyz/schemas/layer-category.create.json#',
         title: 'schemas.LAYER_CATEGORY_CREATE_TITLE',
         description: 'Layer category creation schema',

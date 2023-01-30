@@ -1,5 +1,5 @@
 <template>
-  <div v-if="schema" class="column">
+  <form v-if="schema" class="column">
     <!--
       Non-grouped fields
     -->
@@ -42,7 +42,7 @@
         </q-card>
       </q-expansion-item>
     </template>
-  </div>
+  </form>
 </template>
 
 <script setup>
@@ -134,9 +134,9 @@ function hasFieldError (field, errors) {
     if (error.keyword === 'required') {
       if (error.params.missingProperty === field) return error
     } else {
-      // Check whether is the field in invalid
-      const fieldDataPath = '.' + field
-      if (error.dataPath === fieldDataPath) return error
+      // Check whether the field in invalid
+      const fieldDataPath = '/' + field
+      if (error.instancePath === fieldDataPath) return error
     }
   }
   return null
@@ -187,6 +187,7 @@ function validate () {
   logger.debug('Validating form', schema.value.$id)
   const val = values()
   const { isValid, errors } = validateSchema(val)
+  console.log(errors)
   if (!isValid) {
     _.forEach(fields.value, field => {
       const error = hasFieldError(field.name, errors)

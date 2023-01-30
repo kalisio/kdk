@@ -45,13 +45,14 @@ export default {
       sent: false,
       sending: false,
       schema: {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/send-change-identity#',
         title: 'Send change identity form',
         type: 'object',
         properties: {
           password: {
             type: 'string',
+            format: 'password',
             field: {
               component: 'form/KPasswordField',
               label: 'KSendChangeIdentity.PASSWORD_FIELD_LABEL'

@@ -35,7 +35,7 @@ export default {
   computed: {
     serviceFormSchema () {
       return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/connect-layer-select-service',
         type: 'object',
         properties: {
@@ -52,7 +52,7 @@ export default {
     },
     layerFormSchema () {
       return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/connect-layer-select-layer#',
         type: 'object',
         properties: {
@@ -71,7 +71,7 @@ export default {
     propertiesFormSchema () {
       const required = ['name']
       const schema = {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/connect-layer-set-properties#',
         type: 'object',
         properties: {

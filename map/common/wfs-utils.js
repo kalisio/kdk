@@ -141,7 +141,7 @@ export function generatePropertiesSchema (json, name) {
   const schema = {
     $id: `http://www.kalisio.xyz/schemas/${_.kebabCase(name)}#`,
     title: name,
-    $schema: 'http://json-schema.org/draft-06/schema#',
+    $schema: 'http://json-schema.org/draft-07/schema#',
     type: 'object',
     properties: {}
   }

@@ -48,7 +48,7 @@ export default {
   computed: {
     fileFormSchema () {
       return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/import-layer-select-file#',
         type: 'object',
         properties: {
@@ -66,7 +66,7 @@ export default {
     },
     propertiesFormSchema () {
       return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/import-layer-set-properties#',
         type: 'object',
         properties: {

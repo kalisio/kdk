@@ -607,7 +607,7 @@ Because settings are available through a service interface you can edit it using
 For instance the following schema can be used to edit the previous sample:
 ```json
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://www.kalisio.xyz/schemas/settings.update.json#",
   "title": "schemas.UPDATE_SETTINGS_TITLE",
   "type": "object",

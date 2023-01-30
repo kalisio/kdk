@@ -52,7 +52,7 @@ export default {
     },
     formSchema () {
       return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://www.kalisio.xyz/schemas/favorite-view.create.json#',
         description: 'Map view creation schema',
         type: 'object',

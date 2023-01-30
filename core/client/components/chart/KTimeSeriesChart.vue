@@ -38,7 +38,7 @@ const props = defineProps({
   logarithmic: { type: Boolean, default: false },
   zoomable: { type: Boolean, default: true },
   currentTime: { type: Boolean, default: true },
-  options: { type: Object, default: () => ({}) },
+  options: { type: Object, default: () => ({}) }
 })
 
 defineExpose({
@@ -47,8 +47,8 @@ defineExpose({
 })
 
 // data
-let startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
-let endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
+const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
+const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
 
 // watch
 watch(() => props.timeSeries, update)
@@ -132,17 +132,19 @@ async function makeChartConfig () {
           }
         },
         annotation,
-        zoom: (props.zoomable ? {
-          zoom: {
-            drag: {
-              enabled: true,
-              backgroundColor: getCssVar('secondary')
-            },
-            mode: 'x',
-            onZoomStart: onZoomStart,
-            onZoom: onZoomEnd
-          }
-        } : undefined),
+        zoom: (props.zoomable
+          ? {
+              zoom: {
+                drag: {
+                  enabled: true,
+                  backgroundColor: getCssVar('secondary')
+                },
+                mode: 'x',
+                onZoomStart: onZoomStart,
+                onZoom: onZoomEnd
+              }
+            }
+          : undefined),
         decimation: {
           enabled: true,
           algorithm: 'lttb'

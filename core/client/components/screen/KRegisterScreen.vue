@@ -40,7 +40,7 @@ const domain = _.get(config, 'domain')
 // Function
 function getFormSchema () {
   return {
-    $schema: 'http://json-schema.org/draft-06/schema#',
+    $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'http://kalisio.xyz/schemas/register.json#',
     title: 'Registration Form',
     type: 'object',
@@ -64,12 +64,15 @@ function getFormSchema () {
       },
       password: {
         type: 'string',
+        format: 'password',
         field: {
           component: 'form/KPasswordField',
           label: 'KRegisterScreen.PASSWORD_FIELD_LABEL'
         }
       },
       confirmPassword: {
+        type: 'string',
+        format: 'password',
         const: {
           $data: '1/password'
         },

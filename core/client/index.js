@@ -77,7 +77,6 @@ export default function init () {
   }))
   Store.set('fab', reactive({ actions: [], filter: {} }))
 
-
   // Listen to the 'patched' event on the users
   const users = api.getService('users')
   users.on('patched', user => {

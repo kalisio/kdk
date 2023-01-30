@@ -54,7 +54,7 @@ export default {
       const roles = ['member', 'manager']
       if (this.getScope() === 'organisations') roles.push('owner')
       return {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/change-role#',
         type: 'object',
         properties: {

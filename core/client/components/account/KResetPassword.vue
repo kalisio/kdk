@@ -55,7 +55,7 @@ export default {
       reset: false,
       resetting: false,
       schema: {
-        $schema: 'http://json-schema.org/draft-06/schema#',
+        $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/reset-password.json#',
         title: 'Reset Password form',
         description: 'Reset password form',
@@ -63,12 +63,15 @@ export default {
         properties: {
           password: {
             type: 'string',
+            format: 'password',
             field: {
               component: 'form/KPasswordField',
               label: 'KResetPassword.PASSWORD_FIELD_LABEL'
             }
           },
           confirmPassword: {
+            type: 'string',
+            format: 'password',
             const: {
               $data: '1/password'
             },
@@ -78,7 +81,7 @@ export default {
             }
           }
         },
-        required: ['password']
+        required: ['password', 'confirmPassword']
       }
     }
   },

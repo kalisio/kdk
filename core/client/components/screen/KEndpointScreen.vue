@@ -43,7 +43,7 @@ const actions = ref(_.get(config, 'screens.endpoint.actions', []))
 // Functions
 function getFormSchema () {
   return {
-    $schema: 'http://json-schema.org/draft-06/schema#',
+    $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'http://kalisio.xyz/schemas/change-endpoint.json#',
     title: 'Change Endpoint form',
     description: 'Change remote service URL form',
@@ -57,8 +57,7 @@ function getFormSchema () {
           label: 'KEndpointScreen.BASE_URL_FIELD_LABEL'
         }
       }
-    },
-    required: ['baseUrl']
+    }
   }
 }
 function onReset () {

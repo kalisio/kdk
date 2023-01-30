@@ -57,7 +57,7 @@ defineExpose({
 // data
 const { schema, compile } = useSchema()
 const pagination = ref({
-  //sortBy: '_id',
+  // sortBy: '_id',
   descending: false,
   page: 1,
   rowsPerPage: props.nbRowsPerPage

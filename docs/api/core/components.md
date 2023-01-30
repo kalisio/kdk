@@ -138,7 +138,7 @@ As an example, here is a schema defining a basic form asking for an `email` and 
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "A unique identifier",
   "title": "The title of the schema", 
   "description": "A description of the schema", 
@@ -154,6 +154,7 @@ As an example, here is a schema defining a basic form asking for an `email` and 
     }
     "password": {
       "type": "string", 
+      "format": "password"
       "field": {
         "component": "form/KTextPassword",
         "label": "schemas.PASSWORD_FIELD_LABEL"
