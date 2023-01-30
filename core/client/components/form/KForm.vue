@@ -187,7 +187,6 @@ function validate () {
   logger.debug('Validating form', schema.value.$id)
   const val = values()
   const { isValid, errors } = validateSchema(val)
-  console.log(errors)
   if (!isValid) {
     _.forEach(fields.value, field => {
       const error = hasFieldError(field.name, errors)
