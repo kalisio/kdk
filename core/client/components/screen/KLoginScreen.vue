@@ -61,14 +61,6 @@ function getFormSchema () {
           component: 'form/KPasswordField',
           label: 'KLoginScreen.PASSWORD_FIELD_LABEL'
         }
-      },
-      description: {
-        type: 'string',
-        maxLength: 2048,
-        field: {
-          component: 'form/KTextField',
-          label: 'schemas.ORGANISATIONS_DESCRIPTION_FIELD_LABEL'
-        }
       }
     },
     required: ['email', 'password']
