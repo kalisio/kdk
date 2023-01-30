@@ -1,5 +1,5 @@
 <template>
-  <div id="time-series" class="column justify-start no-wrap" v-if="components.length > 0">
+  <div id="stacked-time-series" class="column justify-start no-wrap" v-if="components.length > 0">
     <!-- Pinned charts first -->
     <div v-for="(timeSerie, index) in timeSeries" class="col column no-wrap">
       <div v-if="timeSerie.pinned" class="row bg-grey-3 col col-auto">
@@ -50,6 +50,7 @@ import KScrollArea from '../../../../core/client/components/KScrollArea.vue'
 import KTimeSeriesChart from '../../../../core/client/components/chart/KTimeSeriesChart.vue'
 import KDataTable from '../../../../core/client/components/chart/KDataTable.vue'
 
+const emit = defineEmits(['zoom-start', 'zoom-end'])
 // const timeseries = [
 //   { label: 'group1', series: [] }
 //   { label: 'group2', series: [] }
@@ -68,23 +69,14 @@ const props = defineProps({
 const components = ref([])
 let startTime = ref(null)
 let endTime = ref(null)
-let isZoomed = ref(false)
 let zoomHistory = ref([])
 
 // expose
 const exposed = {
-  hasSeries,
-  hasSingleSerie,
-  isTable,
-  onSerieTable,
-  isPinned,
-  hasPinnedSerie,
-  onPinSerie,
-  onLogarithmicSerie,
-  isZoomed,
-  onRestoreZoom,
-  onExportData,
-  onExportSeries
+  zoomHistory,
+  restorePreviousZoom,
+  exportData,
+  exportSeries
 }
 
 // watch
@@ -117,58 +109,30 @@ function refresh () {
     components.value.push(component)
   })
 }
-function hasSeries () {
-  return props.timeSeries.length > 0
-}
-function hasSingleSerie () {
-  return props.timeSeries.length === 1
-}
-function isPinned (timeSerie) {
-  return timeSerie.pinned
-}
-function isTable (timeSerie) {
-  return timeSerie.table
-}
-function onSerieTable (timeSerie) {
-  timeSerie.table = !timeSerie.table
-  // Call any attached handler
-  if (timeSerie.onSerieTable) timeSerie.onSerieTable(timeSerie.table)
-}
-function hasPinnedSerie () {
-  return _.find(props.timeSeries, timeSerie => timeSerie.pinned)
-}
-function onPinSerie (timeSerie) {
-  timeSerie.pinned = !timeSerie.pinned
-  // Call any attached handler
-  if (timeSerie.onPinSerie) timeSerie.onPinSerie(timeSerie.pinned)
-}
-function onLogarithmicSerie (timeSerie) {
-  timeSerie.logarithmic = !timeSerie.logarithmic
-  // Call any attached handler
-  if (timeSerie.onLogarithmicSerie) timeSerie.onLogarithmicSerie(timeSerie.logarithmic)
-}
-function onRestoreZoom () {
+function restorePreviousZoom () {
   if (!_.isEmpty(zoomHistory.value)) {
     const { start, end } = _.last(zoomHistory.value)
-    startTime.value = start.valueOf()
-    endTime.value = end.valueOf()
+    startTime.value = start
+    endTime.value = end
     zoomHistory.value = _.slice(zoomHistory.value, 0, zoomHistory.length - 1)
-    if (zoomHistory.value.length === 0) isZoomed.value = false
   }
+  // Can we still zoom out ?
+  return !_.isEmpty(zoomHistory.value)
 }
-function onZoomStart ({ start, end }) {
+function onZoomStart ({ chart, start, end }) {
   zoomHistory.value.push({ start, end })
+  emit('zoom-start', { chart, start, end, zoomHistory })
 }
-function onZoomEnd ({ start, end }) {
+function onZoomEnd ({ chart, start, end }) {
   startTime.value = moment.utc(start)
   endTime.value = moment.utc(end)
-  isZoomed.value = true
+  emit('zoom-end', { chart, start, end, zoomHistory })
 }
-function onExportData (timeSerie) {
+function exportData (timeSerie) {
   const component = _.find(components.value, { timeSerie })
   if (component && component.table) component.table.exportData(_.get(props, 'exportOptions.data', {}))
 }
-function onExportSeries (timeSerie) {
+function exportSeries (timeSerie) {
   const component = _.find(components.value, { timeSerie })
   if (component && component.chart) component.chart.exportSeries(_.get(props, 'exportOptions.series', {}))
 }

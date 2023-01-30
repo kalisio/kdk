@@ -96,9 +96,9 @@ async function update () {
       format: (value) => {
         switch (type) {
           case 'number':
-            return (value ? value.toFixed(2) : '')
+            return (value ? _.toNumber(value).toFixed(2) : '')
           case 'integer':
-            return (value ? value.toFixed(0) : '')
+            return (value ? _.toNumber(value).toFixed(0) : '')
           case 'string':
             if (!value) return ''
             if (format === 'date-time') return `${Time.format(value, 'date.short')} - ${Time.format(value, 'time.short')}`
