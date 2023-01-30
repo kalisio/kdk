@@ -1,17 +1,10 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, readonly } from 'vue'
-import Ajv from 'ajv'
+import { Schema } from '../index.js'
 import AjvLocalize from 'ajv-i18n'
 import { getLocale } from '../utils.js'
-import draft6MetaSchema from 'ajv/lib/refs/json-schema-draft-06.json'
 
-const ajv = new Ajv({
-  allErrors: true,
-  coerceTypes: true,
-  $data: true
-})
-ajv.addMetaSchema(draft6MetaSchema)
 const locale = getLocale()
 
 export function useSchema () {
@@ -46,7 +39,7 @@ export function useSchema () {
     }
     // compile the schema
     logger.debug('compiling schema ', schema.value.$id)
-    validator.value = ajv.getSchema(schema.value.$id) || ajv.compile(schema.value)
+    validator.value = Schema.register(schema.value)
   }
   function validate (values) {
     if (!validator.value) {

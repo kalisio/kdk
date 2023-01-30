@@ -7,6 +7,7 @@ import * as permissions from './permissions.js'
 
 export { errors }
 export { permissions }
+export * from './schema.js'
 
 // Append a parameter value to a given URL
 export function addQueryParameter (baseUrl, parameter, value) {

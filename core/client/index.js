@@ -1,4 +1,6 @@
+import _ from 'lodash'
 import logger from 'loglevel'
+import config from 'config'
 import { reactive } from 'vue'
 import { Platform, Notify } from 'quasar'
 import { Store } from './store.js'
@@ -16,6 +18,7 @@ import * as composables from './composables/index.js'
 import * as mixins from './mixins/index.js'
 import * as hooks from './hooks/index.js'
 import * as readers from './readers/index.js'
+import { Schema } from '../common/index.js'
 
 // FIXME: we don't build vue component anymore, they are processed by webpack in the application
 // export * from './components'
@@ -50,16 +53,17 @@ export default function init () {
   // Initialize singletons that might be used globally first
   Time.initialize()
   Units.initialize()
+  Capabilities.initialize()
   // Then services
   api.configure(services)
   // Last, create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  Capabilities.initialize()
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()
   Storage.initialize()
+  Schema.initialize(_.get(config, 'schema'))
   Store.set('topPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
   Store.set('leftPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
   Store.set('rightPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
@@ -72,6 +76,7 @@ export default function init () {
     bottom: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false })
   }))
   Store.set('fab', reactive({ actions: [], filter: {} }))
+
 
   // Listen to the 'patched' event on the users
   const users = api.getService('users')
