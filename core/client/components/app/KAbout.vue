@@ -8,8 +8,12 @@
     <KVersion class="q-pa-sm" />
     <!-- Endpoint -->
     <div class="row justify-center">
-      <cite>{{ $t('KAbout.DOMAIN') }} <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a></cite>
-      <cite>&nbsp;({{ $config('flavor') }})</cite>
+      <cite>{{ $t('KAbout.DOMAIN') }} 
+        <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a>
+      </cite>
+      <cite>
+        &nbsp;({{ $config('flavor') }})
+      </cite>
     </div>
     <!-- separator -->
     <div class="q-py-md">
@@ -68,7 +72,12 @@ const defaultActions = [
     icon: 'las la-desktop',
     label: 'KAbout.PLATFORM_INFO',
     stack: true,
-    dialog: { title: 'KAbout.PLATFORM_INFO', component: 'app/KPlatform', okAction: 'CLOSE' }
+    dialog: { 
+      title: 'KAbout.PLATFORM_INFO', 
+      component: 'app/KPlatform', 
+      okAction: 'CLOSE',
+      widthPolicy: 'narrow'
+    }
   }
 ]
 const actions = ref(_.get(config, 'about.actions', defaultActions))
