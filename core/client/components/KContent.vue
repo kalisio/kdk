@@ -57,9 +57,17 @@ const avaiableComponents = computed(() => {
   components = Layout.getComponents(components, props.mode, props.context)
   for (let i = 0; i < components.length; ++i) {
     const component = components[i]
-    if ((typeof component.isVisible === 'string') && component.isVisible.startsWith(':')) {
-      component.isVisible = _.get(props.context, component.isVisible.substring(1))
+    let isVisible = _.get(component, 'visible', true)
+    // Can be a functional call
+    if (typeof isVisible === 'function') {
+      isVisible = isVisible(props.context)
     }
+    if ((typeof isVisible === 'string') && isVisible.startsWith(':')) {
+      isVisible = _.get(props.context, isVisible.substring(1))
+    }
+    // If not a functional call the target property can be a reactive one
+    // so that we "bind" it to the component instead of "filter" the component here
+    component.isVisible = isVisible
     if (!_.startsWith(component.name, 'Q')) {
       logger.trace(`Loading component ${component.name}`)
       component.instance = loadComponent(component.name)
