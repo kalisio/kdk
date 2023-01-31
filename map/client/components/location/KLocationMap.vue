@@ -127,7 +127,6 @@ export default {
   },
   watch: {
     modelValue: function (value) {
-      console.log(value)
       this.refresh()
     },
     draggable: function () {
@@ -139,7 +138,7 @@ export default {
       const latitude = this.$store.get('geolocation.position.latitude', 0)
       const longitude = this.$store.get('geolocation.position.longitude', 0)
       return {
-        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf')),
+        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf'), { decimalPlaces: 3 }),
         latitude,
         longitude
       }
@@ -154,7 +153,7 @@ export default {
         const latitude = (_.has(this.modelValue, 'latitude')
           ? _.get(this.modelValue, 'latitude')
           : _.get(this.modelValue, 'coordinates[1]'))
-        this.center(longitude, latitude, this.mapOptions.zoom)
+        this.center(longitude, latitude)
       }
     },
     async geolocate () {
@@ -162,7 +161,6 @@ export default {
       const position = this.$store.get('geolocation.position')
       if (position) {
         this.update(position.latitude, position.longitude)
-        //this.refresh()
       }
     },
     clear () {

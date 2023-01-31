@@ -140,7 +140,7 @@ export default {
       return _.get(this.properties, 'field.geolocate', true)
     },
     allowMap () {
-      return map.value
+      return this.map !== null
     },
     map () {
       return _.get(this.properties, 'field.map')
