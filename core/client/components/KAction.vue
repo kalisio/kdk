@@ -68,7 +68,7 @@
       </q-badge>
     </q-item-section>
     <q-item-section :class="'text-' + computedColor" no-wrap>
-      {{ computedLabel }}
+      <q-item-label><div class="ellipsis">{{ computedLabel }}</div></q-item-label>
     </q-item-section>
   </q-item>
   <!--
