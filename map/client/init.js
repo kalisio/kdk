@@ -17,7 +17,7 @@ function siftMatcher (originalQuery) {
 export default function init () {
   const api = this
 
-  logger.debug('Initializing map')
+  logger.debug('[KDK] initializing map module')
 
   // Declare the built-in services, others are optional
   api.declareService('geocoder')
@@ -83,6 +83,6 @@ export default function init () {
       apps.forEach((app) => {
         if (app[1]) window.navigationApps.push(app[0])
       })
-    }, (error) => logger.warn('Cannot retrieve installed navigation apps: ' + error))
+    }, (error) => logger.warn('[KDK] Cannot retrieve installed navigation apps: ' + error))
   })
 }

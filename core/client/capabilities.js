@@ -9,9 +9,9 @@ export const Capabilities = {
   initialize () {
     window.fetch(api.getBaseUrl() + _.get(config, 'apiPath') + '/capabilities')
       .then(capabilities => {
-        logger.debug('Fetching api capabilities')
         capabilities.json()
           .then(content => {
+            logger.debug('[KDK] fetched capabilities:', JSON.stringify(content, null, 4))
             this.content = content
             // TODO: ensure backward compatibility
             Store.set('capabilities.api', content)

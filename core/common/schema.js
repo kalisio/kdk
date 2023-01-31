@@ -12,7 +12,7 @@ const defaultOptions = {
 
 export const Schema = {
   initialize (options) {
-    logger.debug(`initializing Ajv with ${JSON.stringify(options || defaultOptions, null, 4)}`)
+    logger.debug(`[KDK] initializing Ajv with: ${JSON.stringify(options || defaultOptions, null, 4)}`)
     this.ajv = new Ajv(options || defaultOptions)
     ajvKeywords(this.ajv)
     addFormats(this.ajv)

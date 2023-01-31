@@ -49,7 +49,7 @@ export { readers }
 export default function init () {
   const api = this
 
-  logger.debug('Initializing core')
+  logger.debug('[KDK] initializing core module')
   // Initialize singletons that might be used globally first
   Time.initialize()
   Units.initialize()
@@ -125,7 +125,7 @@ export default function init () {
     // NOT SURE IF THIS IS REQUIRED
     // permissionsPlugin.hasPermission(notificationPermissions, permissionsCheckSuccess, null)
     if (!window.device) {
-      logger.error('Unable to reach device information')
+      logger.error('[KDK] unable to reach device information')
       return
     }
 
@@ -136,7 +136,7 @@ export default function init () {
         windows: { }
       })
       notifier.on('registration', async (data) => {
-        logger.debug('Push registrationID changed: ' + data.registrationId)
+        logger.debug('[KDK] push registrationID changed: ' + data.registrationId)
         // Store the registrationId
         window.device.registrationId = data.registrationId
         // update the user device
@@ -144,7 +144,7 @@ export default function init () {
         if (user && window.device && window.device.registrationId) {
           const devicesService = api.getService('devices')
           const device = await devicesService.update(window.device.registrationId, window.device)
-          logger.debug(`device ${device.uuid} updated with the id ${device.registrationId}`)
+          logger.debug(`[KDK] device ${device.uuid} updated with the id ${device.registrationId}`)
         }
       })
       notifier.on('notification', (data) => {
@@ -160,14 +160,14 @@ export default function init () {
         Notify.create({ message: error.message, timeout: 10000 })
       })
     } else {
-      logger.debug('Unable to initialize push plugin')
+      logger.debug('[KDK] unable to initialize push plugin')
     }
     api.on('authenticated', async response => {
       const devicesService = api.getService('devices')
       // Only possible if registration ID already retrieved
       if (window.device && window.device.registrationId) {
         const device = await devicesService.update(window.device.registrationId, window.device)
-        logger.debug(`device ${device.uuid} registered with the id ${device.registrationId}`)
+        logger.debug(`[KDK] device ${device.uuid} registered with the id ${device.registrationId}`)
       }
     })
   }, false)
