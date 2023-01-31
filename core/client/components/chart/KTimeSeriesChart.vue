@@ -15,6 +15,7 @@ import { getCssVar } from 'quasar'
 import { downloadAsBlob } from '../../../../core/client/utils.js'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
+import { i18n } from '../../../../core/client/i18n'
 
 // const timeserie = {
 //   variable: { } variable definition
@@ -122,7 +123,7 @@ async function makeChartConfig () {
             title: (context) => {
               // As we are selecting tooltip items based on x coordinate all should have the same one, which is actually the time
               const x = _.get(context, '[0].parsed.x')
-              return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.short')}` : '')
+              return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.long')}` : '')
             },
             label: (context) => {
               const { baseUnit, unit, label } = context.dataset
@@ -308,8 +309,8 @@ async function exportSeries (options = {}) {
     const row = {
       [i18n.t('KTimeSeriesChart.TIME_LABEL')]: time.toISOString()
     }
-    for (let i = 0; i < timeSeries.length; i++) {
-      const timeSerie = timeSeries[i]
+    for (let i = 0; i < props.timeSeries.length; i++) {
+      const timeSerie = props.timeSeries[i]
       for (let j = 0; j < timeSerie.series.length; j++) {
         const visible = _.get(chart, `data.datasets[${j}]`)
         // Skip invisible variables in export

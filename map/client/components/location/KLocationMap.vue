@@ -162,7 +162,7 @@ export default {
       const position = this.$store.get('geolocation.position')
       if (position) {
         this.update(position.latitude, position.longitude)
-        //this.refresh()
+        // this.refresh()
       }
     },
     clear () {
@@ -282,9 +282,9 @@ export default {
   },
   async mounted () {
     // Initialize component
-    //this.location = this.modelValue
-    
-    //if (!this.location) await this.geolocate()
+    // this.location = this.modelValue
+
+    // if (!this.location) await this.geolocate()
     this.refresh()
     this.$engineEvents.on('pm:create', this.stopDraw)
   },

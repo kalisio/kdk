@@ -237,12 +237,12 @@ function getGeometryKey () {
 function storeGeometry (position, size) {
   window.localStorage.setItem(getGeometryKey(), JSON.stringify({ position, size }))
 }
-function updateWindow(position, size) {
+function updateWindow (position, size) {
   // Code taken from quasar screen plugin code
   const w = size[0]
   const s = $q.screen.sizes
   // Compute breakpoint
-  let window = {
+  const window = {
     position,
     size,
     gt: {
@@ -265,11 +265,11 @@ function updateWindow(position, size) {
     lg: window.gt.md === true && window.lt.xl === true,
     xl: window.gt.lg
   })
-  window.breakpoint = (window.xs === true && 'xs')
-    || (window.sm === true && 'sm')
-    || (window.md === true && 'md')
-    || (window.lg === true && 'lg')
-    || 'xl'
+  window.breakpoint = (window.xs === true && 'xs') ||
+    (window.sm === true && 'sm') ||
+    (window.md === true && 'md') ||
+    (window.lg === true && 'lg') ||
+    'xl'
   Store.patch(`windows.${props.placement}`, window)
 }
 function onPinned () {

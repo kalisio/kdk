@@ -27,7 +27,6 @@
 
 <script setup>
 import _ from 'lodash'
-import moment from 'moment'
 import Papa from 'papaparse'
 import { ref, watch } from 'vue'
 import { downloadAsBlob } from '../../utils'

@@ -42,11 +42,8 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { ref, watch } from 'vue'
-import { i18n } from '../../../../core/client/i18n.js'
-import { Time } from '../../../../core/client/time.js'
 import { Layout } from '../../../../core/client/layout.js'
 import KPanel from '../../../../core/client/components/KPanel.vue'
-import KScrollArea from '../../../../core/client/components/KScrollArea.vue'
 import KTimeSeriesChart from '../../../../core/client/components/chart/KTimeSeriesChart.vue'
 import KDataTable from '../../../../core/client/components/chart/KDataTable.vue'
 
@@ -67,9 +64,9 @@ const props = defineProps({
 
 // data
 const components = ref([])
-let startTime = ref(null)
-let endTime = ref(null)
-let zoomHistory = ref([])
+const startTime = ref(null)
+const endTime = ref(null)
+const zoomHistory = ref([])
 
 // expose
 const exposed = {
@@ -92,8 +89,8 @@ function refresh () {
     // Avoid building component header/actions when the underlying time series has changed, eg hidden/shown
     let component = _.find(previousComponents, { timeSerie })
     if (component) {
-      if (component.chart) chart.update()
-      if (component.table) chart.table()
+      if (component.chart) component.chart.update()
+      if (component.table) component.table.update()
     } else {
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
