@@ -1,7 +1,10 @@
 <template>
   <div>
     <q-resize-observer @resize="onResized" />
-    <canvas class="k-color-scale" :id="canvasId" />
+    <canvas 
+      class="k-color-scale" 
+      :id="canvasId" 
+      />
   </div>
 </template>
 
@@ -65,6 +68,7 @@ const props = defineProps({
 const canvasId = uid()
 const canvas = ref(null)
 const context = ref(null)
+const expectedSize = ref({ width: 250, height: 46 })
 const callRefresh = _.debounce(() => { refresh() }, 200)
 
 // computed
@@ -214,6 +218,9 @@ function drawContinuousVerticalScale () {
   context.value.fillText(props.domain[1], x, yBar + ticksSize.value)
 }
 function refresh () {
+  if (!canvas.value) return
+  if (canvas.value.width !== expectedSize.value.width) canvas.value.width = expectedSize.value.width
+  if (canvas.value.height !== expectedSize.value.height) canvas.value.height = expectedSize.value.height
   context.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
   context.value.fillText(props.label, canvas.value.width / 2, labelFont.value)
   if (props.classes) {
@@ -225,11 +232,8 @@ function refresh () {
   }
 }
 function onResized (size) {
-  if (canvas.value) {
-    canvas.value.width = size.width
-    canvas.value.height = size.height
-    callRefresh()
-  }
+  expectedSize.value = size
+  if (canvas.value) callRefresh()
 }
 
 // watch
@@ -241,6 +245,7 @@ watchEffect(() => {
 onMounted(() => {
   canvas.value = document.getElementById(canvasId)
   context.value = canvas.value.getContext('2d')
+  refresh()
 })
 </script>
 
