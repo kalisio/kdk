@@ -10,7 +10,7 @@
         v-bind:class="{ 'k-view-row': separators }"
       >
         <!-- Field label -->
-        <span class="col-xs-5 col-sm-4 col-3 text-caption">
+        <span class="col-xs-5 col-sm-4 col-3 text-caption ellipsis">
           {{ getLabel(field) }}
         </span>
         <!-- Field value -->
@@ -34,7 +34,7 @@
             v-bind:class="{ 'k-view-row': separators }"
           >
             <!-- Field label -->
-            <span class="col-xs-5 col-sm-4 col-3 text-caption">
+            <span class="col-xs-5 col-sm-4 col-3 text-caption ellipsis">
               {{ getLabel(field) }}
             </span>
             <!-- Field value -->
@@ -50,62 +50,60 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { ref, watch } from 'vue'
 import { loadComponent } from '../../utils.js'
+import { i18n } from '../../i18n.js'
 
-export default {
-  props: {
-    schema: {
-      type: Object,
-      default: () => null
-    },
-    values: {
-      type: Object,
-      default: () => null
-    },
-    separators: {
-      type: Boolean,
-      default: false
-    }
+// Props
+const props = defineProps({
+  schema: {
+    type: Object,
+    default: () => null
   },
-  data () {
-    return {
-      fields: [],
-      groups: []
-    }
+  values: {
+    type: Object,
+    default: () => null
   },
-  watch: {
-    schema: function () {
-      this.refresh()
-    }
-  },
-  methods: {
-    getLabel (field) {
-      return this.$tie(_.get(field, 'field.label'))
-    },
-    async refresh  () {
-      // Clear the fields states
-      this.fields = []
-      this.groups = []
-      // Build the fields
+  separators: {
+    type: Boolean,
+    default: false
+  }
+})
+
+// Data
+const fields = ref([])
+const groups = ref([])
+
+// Watch
+watch(() => props.schema, () => {
+  refresh()
+}, { immediate: true })
+
+// Functions
+function getLabel (field) {
+  return i18n.tie(_.get(field, 'field.label'))
+}
+async function refresh  () {
+  // clear the states
+  fields.value = []
+  groups.value = []
+  // build the fields
+  // 1- assign a name corresponding to the key to enable a binding between properties and fields
+  // 2- assign a component key corresponding to the component path
+  // 3- load the component if not previously loaded
+  if (props.schema) {
+    Object.keys(props.schema.properties).forEach(property => {
+      const field = props.schema.properties[property]
       // 1- assign a name corresponding to the key to enable a binding between properties and fields
-      // 2- assign a component key corresponding to the component path
-      // 3- load the component if not previously loaded
-      Object.keys(this.schema.properties).forEach(property => {
-        const field = this.schema.properties[property]
-        // 1- assign a name corresponding to the key to enable a binding between properties and fields
-        field.name = property
-        // 2 - qdds the field to the list of fields to be rendered
-        this.fields.push(field)
-        if (field.group && !this.groups.includes(field.group)) this.groups.push(field.group)
-        // 3- load the component
-        field.component = loadComponent(field.field.component)
-      })
-    }
-  },
-  created () {
-    if (this.schema) this.refresh()
+      field.name = property
+      // 2 - qdds the field to the list of fields to be rendered
+      fields.value.push(field)
+      if (field.group && !this.groups.includes(field.group)) groups.value.push(field.group)
+      // 3- load the component
+      field.component = loadComponent(field.field.component)
+    })
   }
 }
 </script>
