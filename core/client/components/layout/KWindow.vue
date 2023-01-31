@@ -65,7 +65,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, provide } from 'vue'
 import { useQuasar } from 'quasar'
 import { Store, Layout, utils } from '../..'
 import KPanel from '../KPanel.vue'
@@ -97,6 +97,8 @@ const pinIcons = {
 let backupPosition
 let backupSize
 let backupMode
+
+provide('widget', widgetReference)
 
 // Computed
 const isVisible = computed({
@@ -235,6 +237,41 @@ function getGeometryKey () {
 function storeGeometry (position, size) {
   window.localStorage.setItem(getGeometryKey(), JSON.stringify({ position, size }))
 }
+function updateWindow (position, size) {
+  // Code taken from quasar screen plugin code
+  const w = size[0]
+  const s = $q.screen.sizes
+  // Compute breakpoint
+  const window = {
+    position,
+    size,
+    gt: {
+      xs: w >= s.sm,
+      sm: w >= s.md,
+      md: w >= s.lg,
+      lg: w >= s.xl
+    },
+    lt: {
+      sm: w < s.sm,
+      md: w < s.md,
+      lg: w < s.lg,
+      xl: w < s.xl
+    }
+  }
+  Object.assign(window, {
+    xs: window.lt.sm,
+    sm: window.gt.xs === true && window.lt.md === true,
+    md: window.gt.sm === true && window.lt.lg === true,
+    lg: window.gt.md === true && window.lt.xl === true,
+    xl: window.gt.lg
+  })
+  window.breakpoint = (window.xs === true && 'xs') ||
+    (window.sm === true && 'sm') ||
+    (window.md === true && 'md') ||
+    (window.lg === true && 'lg') ||
+    'xl'
+  Store.patch(`windows.${props.placement}`, window)
+}
 function onPinned () {
   window.localStorage.removeItem(getGeometryKey())
   currentMode.value = 'pinned'
@@ -248,7 +285,7 @@ function onMaximized () {
   onScreenResized()
 }
 function onRestored () {
-  Store.patch(`windows.${props.placement}`, { position: backupPosition, size: backupSize })
+  updateWindow(backupPosition, backupSize)
   currentMode.value = backupMode
 }
 function onClosed () {
@@ -279,7 +316,7 @@ function onResized (event) {
       Math.min(currentWindow.size[0] + event.delta.x, wMax),
       Math.min(currentWindow.size[1] + event.delta.y, hMax)
     ]
-    Store.patch(`windows.${props.placement}`, { size: newSize })
+    updateWindow(currentWindow.position, newSize)
     if (event.isFinal) storeGeometry(currentWindow.position, newSize)
   }
 }
@@ -305,7 +342,7 @@ function onScreenResized () {
       x = props.placement === 'left' ? 0 : $q.screen.width - w
       y = $q.screen.height / 2 - h / 2
     }
-    Store.patch(`windows.${props.placement}`, { position: [x, y], size: [w, h] })
+    updateWindow([x, y], [w, h])
   } else if (currentMode.value === 'floating') {
     // Floating mode
     if (currentWindow.position && currentWindow.size) {
@@ -325,13 +362,13 @@ function onScreenResized () {
         constrained = true
       }
       if (constrained) {
-        Store.patch(`windows.${props.placement}`, { position: [x, y], size: [w, h] })
+        updateWindow([x, y], [w, h])
         storeGeometry([x, y], [w, h])
       }
     }
   } else {
     // Maximized mode
-    Store.patch(`windows.${props.placement}`, { position: [0, 0], size: [$q.screen.width, $q.screen.height] })
+    updateWindow([0, 0], [$q.screen.width, $q.screen.height])
   }
 }
 
@@ -344,7 +381,7 @@ if (!currentWindow.current && currentWindow.widgets.length > 0) {
 const geometry = window.localStorage.getItem(getGeometryKey())
 if (geometry) {
   const geometryObject = JSON.parse(geometry)
-  Store.patch(`windows.${props.placement}`, { position: geometryObject.position, size: geometryObject.size })
+  updateWindow(geometryObject.position, geometryObject.size)
   currentMode.value = 'floating'
 } else {
   onPinned()

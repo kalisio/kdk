@@ -94,16 +94,8 @@ export const Layout = {
     // components = this.filterContent(components, filter)
     const processedComponents = []
     // Then create component objects
-    _.forEach(components, (component) => {
-      let isVisible = _.get(component, 'visible', true)
-      // Can be a functional call
-      if (typeof isVisible === 'function') {
-        isVisible = isVisible(context)
-      }
-      // If not a functional call the target property can be a reactive one
-      // so that we "bind" it to the component instead of "filter" the component here
-      component.isVisible = isVisible
-      // Clone the component and add the required props
+    _.forEach(components, component => {
+      // Get the component and add the required props
       component.name = _.get(component, 'component', 'KAction')
       component.uid = uid()
       processedComponents.push(component)

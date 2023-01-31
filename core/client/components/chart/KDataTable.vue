@@ -27,7 +27,6 @@
 
 <script setup>
 import _ from 'lodash'
-import moment from 'moment'
 import Papa from 'papaparse'
 import { ref, watch } from 'vue'
 import { downloadAsBlob } from '../../utils'
@@ -96,9 +95,9 @@ async function update () {
       format: (value) => {
         switch (type) {
           case 'number':
-            return (value ? value.toFixed(2) : '')
+            return (value ? _.toNumber(value).toFixed(2) : '')
           case 'integer':
-            return (value ? value.toFixed(0) : '')
+            return (value ? _.toNumber(value).toFixed(0) : '')
           case 'string':
             if (!value) return ''
             if (format === 'date-time') return `${Time.format(value, 'date.short')} - ${Time.format(value, 'time.short')}`
