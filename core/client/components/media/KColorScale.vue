@@ -1,16 +1,16 @@
 <template>
   <div>
     <q-resize-observer @resize="onResized" />
-    <canvas 
-      class="k-color-scale" 
-      :id="canvasId" 
+    <canvas
+      class="k-color-scale"
+      :id="canvasId"
       />
   </div>
 </template>
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watchEffect, onMounted } from 'vue'
+import { computed, watchEffect, onMounted } from 'vue'
 import { uid } from 'quasar'
 import chroma from 'chroma-js'
 
@@ -66,9 +66,9 @@ const props = defineProps({
 
 // data
 const canvasId = uid()
-const canvas = ref(null)
-const context = ref(null)
-const expectedSize = ref({ width: 250, height: 46 })
+let canvas = null
+let canvasContext = null
+let expectedSize = null
 const callRefresh = _.debounce(() => { refresh() }, 200)
 
 // computed
@@ -105,53 +105,53 @@ const gutter = computed(() => {
 // functions
 function drawLabel () {
   if (_.isNil(props.label)) return
-  context.value.font = labelFont.value
-  context.value.fillStyle = labelColor.value
-  context.value.textAlign = labelAlign.value
-  let xLabel = canvas.value.width
+  canvasContext.font = labelFont.value
+  canvasContext.fillStyle = labelColor.value
+  canvasContext.textAlign = labelAlign.value
+  let xLabel = canvas.width
   switch (labelAlign.value) {
     case 'left':
       xLabel = 0
       break
     case 'center':
-      xLabel = canvas.value.width / 2
+      xLabel = canvas.width / 2
       break
     default:
   }
-  context.value.fillText(props.label, xLabel, labelSize.value)
+  canvasContext.fillText(props.label, xLabel, labelSize.value)
 }
 function drawDiscreteHorizontalScale () {
   drawLabel()
   // draw colorbar
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
-  const boxWidth = canvas.value.width / length
+  const boxWidth = canvas.width / length
   const classToColor = chroma.scale(props.colors).classes(props.classes)
   for (let i = 0; i < length; i++) {
-    context.value.fillStyle = classToColor(props.classes[i])
-    context.value.fillRect(i * boxWidth, yBar, boxWidth, barHeight.value)
+    canvasContext.fillStyle = classToColor(props.classes[i])
+    canvasContext.fillRect(i * boxWidth, yBar, boxWidth, barHeight.value)
   }
   // draw ticks
   const yTicks = yBar + barHeight.value + gutter.value + ticksSize.value
-  context.value.font = ticksFont.value
-  context.value.fillStyle = ticksColor.value
+  canvasContext.font = ticksFont.value
+  canvasContext.fillStyle = ticksColor.value
   for (let i = 0; i < props.classes.length; ++i) {
     let tick
     if (i === 0) {
       if (props.classes[i] !== Number.MIN_VALUE) {
-        context.value.textAlign = 'left'
+        canvasContext.textAlign = 'left'
         tick = props.classes[i]
       }
     } else if (i === props.classes.length - 1) {
       if (props.classes[i] !== Number.MAX_VALUE) {
-        context.value.textAlign = 'right'
+        canvasContext.textAlign = 'right'
         tick = props.classes[i]
       }
     } else {
-      context.value.textAlign = 'center'
+      canvasContext.textAlign = 'center'
       tick = props.classes[i]
     }
-    if (tick) context.value.fillText(tick, i * boxWidth, yTicks)
+    if (tick) canvasContext.fillText(tick, i * boxWidth, yTicks)
   }
 }
 function drawDiscreteVerticalScale () {
@@ -159,16 +159,16 @@ function drawDiscreteVerticalScale () {
   // draw colorbar
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
-  const boxHeight = (canvas.value.height - yBar) / length
+  const boxHeight = (canvas.height - yBar) / length
   const classToColor = chroma.scale(props.colors).classes(props.classes)
   for (let i = 0; i < length; i++) {
-    context.value.fillStyle = classToColor(props.classes[i])
-    context.value.fillRect(0, yBar + (length - i - 1) * boxHeight, barWidth.value, boxHeight)
+    canvasContext.fillStyle = classToColor(props.classes[i])
+    canvasContext.fillRect(0, yBar + (length - i - 1) * boxHeight, barWidth.value, boxHeight)
   }
   // draw ticks
-  context.value.font = ticksFont.value
-  context.value.fillStyle = ticksColor.value
-  context.value.textAlign = 'left'
+  canvasContext.font = ticksFont.value
+  canvasContext.fillStyle = ticksColor.value
+  canvasContext.textAlign = 'left'
   const x = barWidth.value + gutter.value
   for (let i = 0; i < props.classes.length; ++i) {
     let tick
@@ -177,52 +177,52 @@ function drawDiscreteVerticalScale () {
     } else if (i === props.classes.length - 1) {
       if (props.classes[i] !== Number.MAX_VALUE) tick = props.classes[i]
     } else tick = props.classes[i]
-    if (tick) context.value.fillText(tick, x, yBar + (length - i) * boxHeight + ticksSize.value / 2)
+    if (tick) canvasContext.fillText(tick, x, yBar + (length - i) * boxHeight + ticksSize.value / 2)
   }
 }
 function drawContinuousHorizontalScale () {
   drawLabel()
   // draw colorbar
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
-  const length = canvas.value.width
+  const length = canvas.width
   const colors = chroma.scale(props.colors).colors(length)
   for (let i = 0; i < length; i++) {
-    context.value.fillStyle = colors[i]
-    context.value.fillRect(i, yBar, 1, barHeight.value)
+    canvasContext.fillStyle = colors[i]
+    canvasContext.fillRect(i, yBar, 1, barHeight.value)
   }
   // draw ticks
   const yTicks = yBar + barHeight.value + gutter.value + ticksSize.value
-  context.value.font = ticksFont.value
-  context.value.fillStyle = ticksColor.value
-  context.value.textAlign = 'left'
-  context.value.fillText(props.domain[0], 0, yTicks)
-  context.value.textAlign = 'right'
-  context.value.fillText(props.domain[1], canvas.value.width, yTicks)
+  canvasContext.font = ticksFont.value
+  canvasContext.fillStyle = ticksColor.value
+  canvasContext.textAlign = 'left'
+  canvasContext.fillText(props.domain[0], 0, yTicks)
+  canvasContext.textAlign = 'right'
+  canvasContext.fillText(props.domain[1], canvas.width, yTicks)
 }
 function drawContinuousVerticalScale () {
   drawLabel()
   // draw colorbar
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
-  const length = canvas.value.height - yBar
+  const length = canvas.height - yBar
   const colors = chroma.scale(props.colors).colors(length)
   for (let i = 0; i < length; i++) {
-    context.value.fillStyle = colors[i]
-    context.value.fillRect(0, yBar + length - i, barWidth.value, 1)
+    canvasContext.fillStyle = colors[i]
+    canvasContext.fillRect(0, yBar + length - i, barWidth.value, 1)
   }
   // draw ticks
-  context.value.font = ticksFont.value
-  context.value.fillStyle = ticksColor.value
+  canvasContext.font = ticksFont.value
+  canvasContext.fillStyle = ticksColor.value
   const x = barWidth.value + gutter.value
-  context.value.textAlign = 'left'
-  context.value.fillText(props.domain[0], x, canvas.value.height)
-  context.value.fillText(props.domain[1], x, yBar + ticksSize.value)
+  canvasContext.textAlign = 'left'
+  canvasContext.fillText(props.domain[0], x, canvas.height)
+  canvasContext.fillText(props.domain[1], x, yBar + ticksSize.value)
 }
 function refresh () {
-  if (!canvas.value) return
-  if (canvas.value.width !== expectedSize.value.width) canvas.value.width = expectedSize.value.width
-  if (canvas.value.height !== expectedSize.value.height) canvas.value.height = expectedSize.value.height
-  context.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
-  context.value.fillText(props.label, canvas.value.width / 2, labelFont.value)
+  if (!canvas || !expectedSize) return
+  if (canvas.width !== expectedSize.width) canvas.width = expectedSize.width
+  if (canvas.height !== expectedSize.height) canvas.height = expectedSize.height
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height)
+  canvasContext.fillText(props.label, canvas.width / 2, labelFont.value)
   if (props.classes) {
     if (props.direction === 'horizontal') drawDiscreteHorizontalScale()
     else drawDiscreteVerticalScale()
@@ -232,19 +232,19 @@ function refresh () {
   }
 }
 function onResized (size) {
-  expectedSize.value = size
-  if (canvas.value) callRefresh()
+  expectedSize = size
+  if (canvas) callRefresh()
 }
 
 // watch
 watchEffect(() => {
-  if (canvas.value) refresh()
+  if (canvas) refresh()
 })
 
 // hooks
 onMounted(() => {
-  canvas.value = document.getElementById(canvasId)
-  context.value = canvas.value.getContext('2d')
+  canvas = document.getElementById(canvasId)
+  canvasContext = canvas.getContext('2d')
   refresh()
 })
 </script>

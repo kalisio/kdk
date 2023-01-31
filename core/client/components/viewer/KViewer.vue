@@ -1,6 +1,10 @@
 <template>
   <div class="column justify-center full-width">
-    <k-view ref="view" :values="object" :schema="schema" />
+    <KView
+      ref="view"
+      :values="object"
+      :schema="schema"
+    />
   </div>
 </template>
 

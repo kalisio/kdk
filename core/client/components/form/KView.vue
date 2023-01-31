@@ -85,7 +85,7 @@ watch(() => props.schema, () => {
 function getLabel (field) {
   return i18n.tie(_.get(field, 'field.label'))
 }
-async function refresh  () {
+async function refresh () {
   // clear the states
   fields.value = []
   groups.value = []

@@ -8,7 +8,7 @@
     <KVersion class="q-pa-sm" />
     <!-- Endpoint -->
     <div class="row justify-center">
-      <cite>{{ $t('KAbout.DOMAIN') }} 
+      <cite>{{ $t('KAbout.DOMAIN') }}
         <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a>
       </cite>
       <cite>
@@ -72,9 +72,9 @@ const defaultActions = [
     icon: 'las la-desktop',
     label: 'KAbout.PLATFORM_INFO',
     stack: true,
-    dialog: { 
-      title: 'KAbout.PLATFORM_INFO', 
-      component: 'app/KPlatform', 
+    dialog: {
+      title: 'KAbout.PLATFORM_INFO',
+      component: 'app/KPlatform',
       okAction: 'CLOSE',
       widthPolicy: 'narrow'
     }

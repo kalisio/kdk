@@ -51,7 +51,6 @@ export default {
       const rules = _.get(this.properties.field.suggest, 'rules', /[\w\d?-]/)
       _.set(this.properties, 'default', generateRandomPassword(length, false, rules))
     }
-
   }
 }
 </script>
