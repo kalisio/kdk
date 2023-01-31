@@ -1,7 +1,6 @@
-import logger from 'loglevel'
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
-import ajvKeywords from 'ajv-keywords'
+import addKeywords from 'ajv-keywords'
 
 const defaultOptions = {
   allErrors: true,
@@ -12,15 +11,13 @@ const defaultOptions = {
 
 export const Schema = {
   initialize (options) {
-    logger.debug(`[KDK] initializing Ajv with: ${JSON.stringify(options || defaultOptions, null, 4)}`)
     this.ajv = new Ajv(options || defaultOptions)
-    ajvKeywords(this.ajv)
+    addKeywords(this.ajv)
     addFormats(this.ajv)
   },
   register (schema) {
     if (!this.ajv) throw new Error('Schema must be initialized first')
     if (!schema.$id) throw new Error('the schema must have an `$id` property')
-    logger.debug(`registering schema ${schema.$id}`)
     return this.ajv.getSchema(schema.$id) || this.ajv.compile(schema)
   },
   addKeyword (keyword) {

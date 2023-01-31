@@ -1,0 +1,60 @@
+[
+  {
+    "type": "Feature",
+    "properties": {
+      "id": "PUI-PPI-B9-1",
+      "value": 150
+    },
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        139.72669982910156,
+        35.64739990234375,
+        0
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "id": "PUI-PPI-B9-2",
+      "value": 150
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": []
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "id": "PUI-PPI-B9-3",
+      "value": 150
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        139.72669982910156,
+        35.64739990234375,
+        0
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "manual",
+      "id": "PUI-PPI-B9-4",
+      "date": "2022-01-07",
+      "time": "16:20:20"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        139.72669982910156,
+        35.64739990234375,
+        0
+      ]
+    }
+  }
+]

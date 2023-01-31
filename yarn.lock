@@ -1307,7 +1307,7 @@
     "@types/superagent" "^4.1.15"
     qs "^6.11.0"
 
-"@feathersjs/schema@^5.0.0-pre.28":
+"@feathersjs/schema@5.0.0-pre.28", "@feathersjs/schema@^5.0.0-pre.28":
   version "5.0.0-pre.28"
   resolved "https://registry.yarnpkg.com/@feathersjs/schema/-/schema-5.0.0-pre.28.tgz#8c8e9024060abfeb1449b985bca3cb8c0de32cf0"
   integrity sha512-ZV9ZbVpbzeI5eU9m6nOVogSdjwjZwp/jb4qO6iklKq1w6CwKYRagcR0dWVeFWwmf/1Up3c4Cjr/DU5fHq2vpEQ==

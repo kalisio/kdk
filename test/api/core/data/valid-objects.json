@@ -1,0 +1,38 @@
+[
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "manual",
+      "id": "PUI-PPI-B9-1",
+      "date": "2022-01-07",
+      "time": "16:20:02",
+      "value": 61
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        1.95,
+        43.31,
+        0
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "type": "automatic",
+      "id": "PUI-PPI-B9-2",
+      "date": "2022-01-07",
+      "time": "16:20:20",
+      "value": 150
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        1.95,
+        43.31,
+        0
+      ]
+    }
+  }
+]
