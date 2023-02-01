@@ -80,6 +80,9 @@ export const featureService = {
       const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
         features.forEach(feature => options.processor(feature))
+      } else if (typeof options.processor === 'string') {
+        const compiler = _.template(options.processor)
+        features.forEach(feature => compiler({ feature, properties: feature.properties }))
       }
       if (options.transform) {
         transformFeatures(features, options.transform)
@@ -157,6 +160,9 @@ export const featureService = {
       const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
         features.forEach(feature => options.processor(feature))
+      } else if (typeof options.processor === 'string') {
+        const compiler = _.template(options.processor)
+        features.forEach(feature => compiler({ feature, properties: feature.properties }))
       }
       if (options.transform) {
         transformFeatures(features, options.transform)

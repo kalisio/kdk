@@ -65,6 +65,9 @@ export async function fetchGeoJson (dataSource, options = {}) {
   const features = (data.type === 'FeatureCollection' ? data.features : [data])
   if (typeof options.processor === 'function') {
     features.forEach(feature => options.processor(feature))
+  } else if (typeof options.processor === 'string') {
+    const compiler = _.template(options.processor)
+    features.forEach(feature => compiler({ feature, properties: feature.properties }))
   }
   if (options.transform) {
     transformFeatures(features, options.transform)
