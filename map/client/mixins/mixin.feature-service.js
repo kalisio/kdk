@@ -65,6 +65,9 @@ export default {
       if (typeof options.processor === 'function') {
         const features = (response.type === 'FeatureCollection' ? response.features : [response])
         features.forEach(feature => options.processor(feature))
+      } else if (typeof options.processor === 'string') {
+        const compiler = _.template(options.processor)
+        features.forEach(feature => compiler({ feature, properties: feature.properties }))
       }
       return response
     },
@@ -132,6 +135,9 @@ export default {
       if (typeof options.processor === 'function') {
         const features = (response.type === 'FeatureCollection' ? response.features : [response])
         features.forEach(feature => options.processor(feature))
+      } else if (typeof options.processor === 'string') {
+        const compiler = _.template(options.processor)
+        features.forEach(feature => compiler({ feature, properties: feature.properties }))
       }
       return response
     },
