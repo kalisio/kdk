@@ -51,11 +51,11 @@ import { baseField } from '../../mixins'
 export default {
   mixins: [baseField],
   computed: {
+    multiple () {
+      return _.get(this.properties, 'multiselect', false)
+    },
     clearable () {
       return _.get(this.properties, 'field.clearable', true)
-    },
-    multiple () {
-      return _.get(this.properties, 'field.multiple', false)
     },
     toggle () {
       return _.get(this.properties, 'field.toggle', false)
