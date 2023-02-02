@@ -27,7 +27,16 @@ export function useSelection (name, options = {}) {
   function isMultipleSelectionMode () {
     return get('mode') !== 'single'
   }
+  function getSelectionFilter () {
+    return get('filter')
+  }
+  function setSelectionFilter (filter) {
+    return set('filter', filter)
+  }
   function selectItem (item) {
+    console.log(item)
+    const filter = getSelectionFilter()
+    if (filter && !filter(item)) return
     const items = get('items')
     const selected = _.find(items, comparator(item))
     if (!selected) items.push(item)
@@ -64,6 +73,8 @@ export function useSelection (name, options = {}) {
     setSelectionMode,
     isSingleSelectionMode,
     isMultipleSelectionMode,
+    getSelectionFilter,
+    setSelectionFilter,
     selectItem,
     unselectItem,
     hasSelectedItem,
