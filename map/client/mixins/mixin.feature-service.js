@@ -62,8 +62,8 @@ export default {
       // Any base query to process ?
       const query = await this.getBaseQueryForFeatures(options)
       const response = await this.$api.getService(options.probeService).find({ query })
+      const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
-        const features = (response.type === 'FeatureCollection' ? response.features : [response])
         features.forEach(feature => options.processor(feature))
       } else if (typeof options.processor === 'string') {
         const compiler = _.template(options.processor)
@@ -132,8 +132,8 @@ export default {
         query.level = queryLevel
       }
       const response = await this.$api.getService(options.service).find({ query })
+      const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
-        const features = (response.type === 'FeatureCollection' ? response.features : [response])
         features.forEach(feature => options.processor(feature))
       } else if (typeof options.processor === 'string') {
         const compiler = _.template(options.processor)
