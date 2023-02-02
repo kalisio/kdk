@@ -98,6 +98,7 @@ let backupPosition
 let backupSize
 let backupMode
 
+// Provide
 provide('widget', widgetReference)
 
 // Computed

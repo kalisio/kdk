@@ -34,7 +34,6 @@ export function useSelection (name, options = {}) {
     return set('filter', filter)
   }
   function selectItem (item) {
-    console.log(item)
     const filter = getSelectionFilter()
     if (filter && !filter(item)) return
     const items = get('items')
