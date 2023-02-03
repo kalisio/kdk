@@ -30,7 +30,7 @@
         :schema="schema" :tables="timeSerie.series" />
     </div>
   </div>
-  <div v-else class="fit">
+  <div v-else>
     <slot name="empty-time-series">
       <KStamp class="absolute-center" icon="las la-exclamation-circle" icon-size="3rem"
         :text="$t('KStackableTimeSeries.NO_DATA_AVAILABLE')" text-size="1rem"/>
