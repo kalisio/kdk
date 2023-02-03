@@ -380,16 +380,7 @@
     "SERIES_EXPORT_FILE": "Series.csv"
   },
   "KStackableTimeSeries": {
-    "NO_DATA_AVAILABLE": "No data available",
-    "LABEL": "Time series",
-    "CHART_SERIE_TOOLTIP": "View graph",
-    "TABLE_SERIE_TOOLTIP": "View table",
-    "LOGARITHMIC_SERIE_TOOLTIP": "Logarithmic scale",
-    "LINEAR_SERIE_TOOLTIP": "Linear scale",
-    "PIN_SERIE_TOOLTIP": "Pin graph",
-    "UNPIN_SERIE_TOOLTIP": "Unpin graph",
-    "RESTORE_ZOOM": "Restore previous view",
-    "EXPORT_SERIE_TOOLTIP": "Export graph"
+    "NO_DATA_AVAILABLE": "No data available"
   },
   "KViewsPanel": {
     "VIEWS_LABEL": "My views",

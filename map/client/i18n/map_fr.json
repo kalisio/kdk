@@ -381,16 +381,7 @@
     "SERIES_EXPORT_FILE": "Series.csv"
   },
   "KStackableTimeSeries": {
-    "NO_DATA_AVAILABLE": "Aucune donnée disponible",
-    "LABEL": "Séries chronologiques",
-    "CHART_SERIE_TOOLTIP": "Voir le graphe",
-    "TABLE_SERIE_TOOLTIP": "Voir la table",
-    "LOGARITHMIC_SERIE_TOOLTIP": "Echelle logarithmique",
-    "LINEAR_SERIE_TOOLTIP": "Echelle linéaire",
-    "PIN_SERIE_TOOLTIP": "Epingler le graphe",
-    "UNPIN_SERIE_TOOLTIP": "Désépingler le graphe",
-    "RESTORE_ZOOM": "Restaurer la vue précédente",
-    "EXPORT_SERIE_TOOLTIP": "Exporter le graphe"
+    "NO_DATA_AVAILABLE": "Aucune donnée disponible"
   },
   "KViewsPanel": {
     "VIEWS_LABEL": "Mes vues",

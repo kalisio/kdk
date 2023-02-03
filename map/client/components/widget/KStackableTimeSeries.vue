@@ -1,7 +1,7 @@
 <template>
   <div id="stacked-time-series" class="column justify-start no-wrap" v-if="components.length > 0">
     <!-- Pinned charts first -->
-    <div v-for="(timeSerie, index) in timeSeries" class="col column no-wrap">
+    <div v-for="(timeSerie, index) in timeSeries" class="col column justify-start no-wrap">
       <div v-if="timeSerie.pinned" class="row bg-grey-3 col col-auto">
         <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
         <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
@@ -15,7 +15,7 @@
         :schema="schema" :tables="timeSerie.series" />
     </div>
     <!-- Then visible charts -->
-    <div v-for="(timeSerie, index) in timeSeries" class="col column no-wrap">
+    <div v-for="(timeSerie, index) in timeSeries" class="col column justify-start no-wrap">
       <div v-if="timeSerie.visible && !timeSerie.pinned" class="row bg-grey-3 col col-auto">
         <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
         <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
@@ -111,7 +111,7 @@ function restorePreviousZoom () {
     const { start, end } = _.last(zoomHistory.value)
     startTime.value = start
     endTime.value = end
-    zoomHistory.value = _.slice(zoomHistory.value, 0, zoomHistory.length - 1)
+    zoomHistory.value.pop()
   }
   // Can we still zoom out ?
   return !_.isEmpty(zoomHistory.value)

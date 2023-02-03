@@ -262,6 +262,8 @@ export function useSelection (name, options = {}) {
     else handleSelection(items, true)
   }
   function onClusterSelection (layer, event) {
+    // Not relevent in this case
+    if (selection.isSingleSelectionMode()) return
     const items = _.get(event, 'markers', []).map(marker => {
       const feature = marker.feature
       const location = centroid(feature)
