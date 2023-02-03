@@ -239,14 +239,6 @@ async function makeDatasets () {
     const label = _.get(timeSerie, 'variable.label')
     const { unit, baseUnit } = getUnits(timeSerie)
     const data = await timeSerie.data
-    const dataset = Object.assign({
-      label,
-      data,
-      baseUnit,
-      unit,
-      yAxisID: unit2axis.get(unit)
-    }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
-    datasets.push(dataset)
     // Update time range
     data.forEach(item => {
       const time = moment.utc(_.get(item, props.xAxisKey))
@@ -257,6 +249,26 @@ async function makeDatasets () {
         if (!endTime.value || time.isAfter(endTime.value)) endTime.value = time
       }
     })
+    const dataset = Object.assign({
+      label,
+      data,
+      baseUnit,
+      unit,
+      yAxisID: unit2axis.get(unit)
+    }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
+    // Check for individual chartjs properties if any
+    if (!_.isEmpty(dataset.perItemProperties)) {
+      // In that case dataset requires an array of values, one for each data point
+      dataset.perItemProperties.forEach(property => {
+        const values = []
+        data.forEach(item => {
+          // Get property value for item and fallback to default value in dataset
+          values.push(_.get(item, property, _.get(dataset, property)))
+        })
+        Object.assign(dataset, { [property]: values })
+      })
+    }
+    datasets.push(dataset)
   }
 
   return datasets
