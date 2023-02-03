@@ -61,7 +61,6 @@ export function createQuerablePromise (promiseOrExecutor) {
   return result
 }
 
-
 export function getInitials (name) {
   const initials = name.toUpperCase().match(/\b\w/g) || []
   return initials.join('')
