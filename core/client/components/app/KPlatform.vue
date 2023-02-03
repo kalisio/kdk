@@ -18,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(value, prop) in Platform" :key="prop">
+      <tr v-for="(value, prop) in platform" :key="prop">
         <td>{{ prop }}</td>
         <td>{{ value === true ? $t('YES') : value === false ? $t('NO') : value }}</td>
       </tr>
@@ -29,12 +29,12 @@
 <script setup>
 import { useQuasar, copyToClipboard } from 'quasar'
 import { i18n } from '../../i18n.js'
-import { usePlatform } from '../../composables'
+import { getPlatform } from '../../utils/plaform'
 import KAction from '../KAction.vue'
 
 // data
 const $q = useQuasar()
-const { Platform } = usePlatform()
+const platform = getPlatform()
 
 // function
 async function copy () {

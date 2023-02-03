@@ -1,5 +1,4 @@
 export * from './activity.js'
-export * from './platform.js'
 export * from './user.js'
 export * from './schema.js'
 export * from './selection.js'
