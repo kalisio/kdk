@@ -1,2 +1,2 @@
-export * from './uitls.platform.js'
+export * from './utils.platform.js'
 

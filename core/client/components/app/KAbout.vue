@@ -36,14 +36,15 @@ import config from 'config'
 import { ref } from 'vue'
 import { i18n } from '../../i18n'
 import { loadComponent } from '../../utils'
-import { useVersion, usePlatform } from '../../composables'
+import { getPlatform } from '../../utils/utils.platform'
+import { useVersion } from '../../composables'
 import KVersion from '../KVersion.vue'
 import KSponsor from '../KSponsor.vue'
 import KPanel from '../KPanel.vue'
 
 // Data
 const { clientVersionName, apiVersionName } = useVersion()
-const { Platform } = usePlatform()
+const platform = getPlatform()
 // logo component
 const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
 // bug report
@@ -56,7 +57,7 @@ const bugReport = {
   }),
   body: i18n.t('KAbout.BUG_REPORT_BODY')
 }
-_.forOwn(Platform.value, (value, key) => { bugReport.body += `${key}: ${value}%0D%0A` })
+_.forOwn(platform, (value, key) => { bugReport.body += `${key}: ${value}%0D%0A` })
 bugReport.body += `domain: ${_.get(config, 'domain')}%0D%0A`
 bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
 // actions

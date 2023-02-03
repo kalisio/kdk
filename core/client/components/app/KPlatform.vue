@@ -29,7 +29,7 @@
 <script setup>
 import { useQuasar, copyToClipboard } from 'quasar'
 import { i18n } from '../../i18n.js'
-import { getPlatform } from '../../utils/plaform'
+import { getPlatform } from '../../utils/utils.platform'
 import KAction from '../KAction.vue'
 
 // data
