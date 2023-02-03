@@ -373,7 +373,7 @@
     "RUN": "Forecast run",
     "TIME_LABEL": "Time",
     "EXPORT_SERIES": "Export data",
-    "SERIES_EXPORT_FILE": "Series.csv"
+    "SERIES_EXPORT_FILE": "Series"
   },
   "KViewsPanel": {
     "VIEWS_LABEL": "My views",
