@@ -371,8 +371,7 @@ export default {
       const csv = Papa.unparse(json)
       let filename = (this.title ? this.title.replace(/\s/g, '') : this.$t('KTimeSeries.SERIES_EXPORT_FILE'))
       filename += '_' + new Date().toLocaleString()
-      if (!filename.endsWith('.csv')) filename += '.csv'
-      downloadAsBlob(csv, _.snakeCase(filename), 'text/csv;charset=utf-8;')
+      downloadAsBlob(csv, _.snakeCase(filename) + '.csv', 'text/csv;charset=utf-8;')
     },
     refreshActions () {
       let actions = [{
