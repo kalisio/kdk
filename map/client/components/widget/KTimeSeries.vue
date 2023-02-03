@@ -362,14 +362,17 @@ export default {
           [this.$t('KTimeSeries.TIME_LABEL')]: time.toISOString()
         }
         this.datasets.forEach(dataset => {
-          const value = _.find(dataset.data, item => moment(item.x).toISOString() === time.toISOString())
+          const value = _.find(dataset.data, item => moment.utc(item.x).toISOString() === time.toISOString())
           row[dataset.label] = value ? value.y : null
         })
         return row
       })
       // Convert to csv
       const csv = Papa.unparse(json)
-      downloadAsBlob(csv, this.$t('KTimeSeries.SERIES_EXPORT_FILE'), 'text/csv;charset=utf-8;')
+      let filename = (this.title ? this.title.replace(/\s/g, '') : this.$t('KTimeSeries.SERIES_EXPORT_FILE'))
+      filename += '_' + new Date().toLocaleString()
+      if (!filename.endsWith('.csv')) filename += '.csv'
+      downloadAsBlob(csv, _.snakeCase(filename), 'text/csv;charset=utf-8;')
     },
     refreshActions () {
       let actions = [{
