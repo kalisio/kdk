@@ -378,7 +378,7 @@
     "RUN": "Réseau de prévision",
     "TIME_LABEL": "Temps",
     "EXPORT_SERIES": "Exporter les données",
-    "SERIES_EXPORT_FILE": "Series.csv"
+    "SERIES_EXPORT_FILE": "Series"
   },
   "KStackableTimeSeries": {
     "NO_DATA_AVAILABLE": "Aucune donnée disponible"

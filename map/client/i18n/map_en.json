@@ -377,7 +377,7 @@
     "RUN": "Forecast run",
     "TIME_LABEL": "Time",
     "EXPORT_SERIES": "Export data",
-    "SERIES_EXPORT_FILE": "Series.csv"
+    "SERIES_EXPORT_FILE": "Series"
   },
   "KStackableTimeSeries": {
     "NO_DATA_AVAILABLE": "No data available"
