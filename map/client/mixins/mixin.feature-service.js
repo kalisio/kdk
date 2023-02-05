@@ -174,7 +174,7 @@ export const featureService = {
       return response
     },
     async getFeatures (options, queryInterval, queryLevel) {
-      const query = await this.getFeaturesQuery (options, queryInterval, queryLevel)
+      const query = await this.getFeaturesQuery(options, queryInterval, queryLevel)
       const response = await this.getFeaturesFromQuery(options, query)
       return response
     },
@@ -198,7 +198,7 @@ export const featureService = {
       })
       return query
     },
-    async getMeasureForFeatureFromQuery (layer, query) {
+    async getMeasureForFeatureFromQuery (layer, feature, query) {
       const result = await this.getFeaturesFromQuery(layer, query)
       if (result.features.length > 0) {
         return result.features[0]
@@ -210,8 +210,8 @@ export const featureService = {
       let probedLocation
       this.setCursor('processing-cursor')
       try {
-        const query = await this.getMeasureForFeatureQuery (layer, feature, startTime, endTime)
-        probedLocation = await this.getMeasureForFeatureFromQuery(layer, query)
+        const query = await this.getMeasureForFeatureQuery(layer, feature, startTime, endTime)
+        probedLocation = await this.getMeasureForFeatureFromQuery(layer, feature, query)
       } catch (error) {
         logger.error(error)
       }

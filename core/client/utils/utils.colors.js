@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const Colors = {
   dark: '#333',
   red: '#f44336',
