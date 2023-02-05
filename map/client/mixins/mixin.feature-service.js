@@ -95,7 +95,7 @@ export const featureService = {
       if (!layer) return
       return this.getProbeFeatures(layer)
     },
-    async getFeatures (options, queryInterval, queryLevel) {
+    async getFeaturesQuery (options, queryInterval, queryLevel) {
       // If not given try to compute query interval from options
       if (!queryInterval) {
         queryInterval = this.getFeaturesQueryInterval(options)
@@ -156,6 +156,10 @@ export const featureService = {
       const sortQuery = await this.getSortQueryForFeatures(options)
       // Take care to not erase possible existing sort options
       _.merge(query, sortQuery)
+
+      return query
+    },
+    async getFeaturesFromQuery (options, query) {
       const response = await this.$api.getService(options.service).find({ query })
       const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
@@ -169,32 +173,45 @@ export const featureService = {
       }
       return response
     },
+    async getFeatures (options, queryInterval, queryLevel) {
+      const query = await this.getFeaturesQuery (options, queryInterval, queryLevel)
+      const response = await this.getFeaturesFromQuery(options, query)
+      return response
+    },
     async getFeaturesFromLayer (name, queryInterval) {
       // Retrieve the layer
       const layer = this.getLayerByName(name)
       if (!layer) return
       return this.getFeatures(layer, queryInterval)
     },
+    async getMeasureForFeatureQuery (layer, feature, startTime, endTime) {
+      // Support compound ID
+      const featureId = (Array.isArray(layer.featureId) ? layer.featureId : [layer.featureId])
+      const baseQuery = featureId.reduce((result, id) =>
+        Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
+      {})
+      const query = await this.getFeaturesQuery(_.merge({
+        baseQuery
+      }, layer), {
+        $gte: startTime.format(),
+        $lte: endTime.format()
+      })
+      return query
+    },
+    async getMeasureForFeatureFromQuery (layer, query) {
+      const result = await this.getFeaturesFromQuery(layer, query)
+      if (result.features.length > 0) {
+        return result.features[0]
+      } else {
+        return _.cloneDeep(feature)
+      }
+    },
     async getMeasureForFeature (layer, feature, startTime, endTime) {
       let probedLocation
       this.setCursor('processing-cursor')
       try {
-        // Support compound ID
-        const featureId = (Array.isArray(layer.featureId) ? layer.featureId : [layer.featureId])
-        const baseQuery = featureId.reduce((result, id) =>
-          Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
-        {})
-        const result = await this.getFeatures(_.merge({
-          baseQuery
-        }, layer), {
-          $gte: startTime.format(),
-          $lte: endTime.format()
-        })
-        if (result.features.length > 0) {
-          probedLocation = result.features[0]
-        } else {
-          probedLocation = _.cloneDeep(feature)
-        }
+        const query = await this.getMeasureForFeatureQuery (layer, feature, startTime, endTime)
+        probedLocation = await this.getMeasureForFeatureFromQuery(layer, query)
       } catch (error) {
         logger.error(error)
       }
