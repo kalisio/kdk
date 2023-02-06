@@ -1,16 +1,13 @@
 <template>
   <div>
     <div v-if="readOnly" :id="properties.name + '-field'">
-      <KShape
-        :color="model"
-        :width="16"
-        :height="16"
-        :border-radius="5" />
+      <div class="full-width k-color-field" />
     </div>
     <q-field v-else
       :for="properties.name + '-field'"
       :ref="onReferenceCreated"
       :label="label"
+      stack-label
       v-model="model"
       :error-message="errorLabel"
       :error="hasError"
@@ -20,15 +17,7 @@
       @clear="model=''">
       <!-- control -->
       <template v-slot:control>
-        <q-resize-observer @resize="onResized" />
-        <KShape
-          :id="properties.name + '-field'"
-          type="rect"
-          :color="model"
-          :width="width"
-          :height="16"
-          :border-radius="5"
-        />
+        <div class="full-width k-color-field" />
         <q-dialog v-model="picker">
           <q-color
             no-header
@@ -47,18 +36,14 @@
 </template>
 
 <script>
-import KShape from '../media/KShape.vue'
+import _ from 'lodash'
 import { baseField } from '../../mixins'
 
 export default {
-  components: {
-    KShape
-  },
   mixins: [baseField],
   data () {
     return {
-      picker: false,
-      width: 16
+      picker: false
     }
   },
   methods: {
@@ -70,10 +55,15 @@ export default {
       if (ref) {
         ref.$el.onclick = () => { this.picker = true }
       }
-    },
-    onResized (size) {
-      this.width = size.width
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.k-color-field {
+  background-color: v-bind(model);
+  height: 16px;
+  border-radius: 5px;
+}
+</style>
