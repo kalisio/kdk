@@ -46,3 +46,10 @@ async function copy () {
   }
 }
 </script>
+
+<style lang="scss">
+// overwrite the default style allow word wrapping
+.q-table--no-wrap td {
+  white-space: normal;
+}
+</style>
