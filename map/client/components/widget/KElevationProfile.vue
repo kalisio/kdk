@@ -16,6 +16,7 @@ import { featureCollection } from '@turf/helpers'
 import { Units } from '../../../../core/client/units'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
+import { fetchProfileDataset, fetchElevationDataset } from '../../elevation-utils.js'
 
 export default {
   components: {
@@ -65,35 +66,7 @@ export default {
     hasProfile () {
       return !_.isNil(this.profile)
     },
-    extractProfileData (profiles) {
-      // Extract profile heights if available on the segments used to compute elevation
-      const profileHeights = []
-      const profileLabels = []
-      let allCoordsHaveHeight = true
-      let curvilinearOffset = 0
-      for (let i = 0; i < profiles.length && allCoordsHaveHeight; ++i) {
-        const dataUnit = _.get(profiles[i], 'properties.altitudeUnit', 'm')
-        // Gather elevation at each coord, make sure all coords have height along the way
-        coordEach(profiles[i], (coord, coordIdx) => {
-          // Skip first point of all segments except the first one since we assume
-          // last point of segment N = first point of segment N+1
-          if (profileHeights.length && coordIdx === 0) return
-          if (coord.length > 2) profileHeights.push(Units.convert(coord[2], dataUnit, this.chartHeightUnit))
-          else allCoordsHaveHeight = false
-        })
-        // Compute curvilinear abscissa at each point
-        if (allCoordsHaveHeight) {
-          segmentEach(profiles[i], (segment) => {
-            if (profileLabels.length === 0) profileLabels.push(0)
-            curvilinearOffset += length(segment, { units: 'kilometers' }) * 1000
-            profileLabels.push(Units.convert(curvilinearOffset, 'm', this.chartDistanceUnit))
-          })
-        }
-      }
-
-      return allCoordsHaveHeight ? [profileHeights, profileLabels] : [[], []]
-    },
-    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth) {
+    updateChart (terrainDataset, profileDataset, profileColor, chartWidth) {
       const update = {
         type: 'line',
         data: { datasets: [] },
@@ -277,10 +250,10 @@ export default {
       }
 
       // Add profile elevation if provided
-      if (profileHeights.length) {
+      if (profileDataset.length) {
         update.data.datasets.push({
           label: this.$t('KElevationProfile.PROFILE_CHART_LEGEND'),
-          data: profileHeights.map((h, i) => { return { x: profileLabels[i], y: h } }),
+          data: profileDataset,
           fill: false,
           borderColor: profileColor,
           backgroundColor: '#0986bc',
@@ -292,7 +265,7 @@ export default {
       // Add terrain elevation dataset
       update.data.datasets.push({
         label: this.$t('KElevationProfile.TERRAIN_CHART_LEGEND'),
-        data: terrainHeights.map((h, i) => { return { x: terrainLabels[i], y: h } }),
+        data: terrainDataset,
         fill: true,
         borderColor: '#635541',
         backgroundColor: '#c9b8a1',
@@ -323,36 +296,6 @@ export default {
       const { window } = this.kActivity.findWindow('elevation-profile')
       const chartWidth = window.size[0]
 
-      const queries = []
-      const resolution = _.get(this.feature, 'properties.elevationProfile.resolution')
-      const resolutionUnit = _.get(this.feature, 'properties.elevationProfile.resolutionUnit', 'm')
-      const corridor = _.get(this.feature, 'properties.elevationProfile.corridorWidth')
-      const corridorUnit = _.get(this.feature, 'properties.elevationProfile.corridorWidthUnit', 'm')
-      const securityMargin = _.get(this.feature, 'properties.elevationProfile.securityMargin')
-      const securityMarginUnit = _.get(this.feature, 'properties.elevationProfile.securityMarginUnit', 'm')
-      if (geometry === 'MultiLineString') {
-        flatten(this.feature).features.forEach((feature, index) => {
-          queries.push({
-            profile: feature,
-            resolution: Units.convert(resolution[index], resolutionUnit, 'm'),
-            corridorWidth: corridor ? Units.convert(corridor[index], corridorUnit, 'm') : null,
-            securityMargin: securityMargin ? Units.convert(securityMargin[index], securityMarginUnit, 'm') : null
-          })
-        })
-      } else {
-        const pixelStep = 5
-        const res = resolution ? Units.convert(resolution, resolutionUnit, 'm') : Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
-        queries.push({
-          profile: this.feature,
-          resolution: res,
-          corridorWidth: corridor ? Units.convert(corridor, corridorUnit, 'm') : null,
-          securityMargin: securityMargin ? Units.convert(securityMargin, securityMarginUnit, 'm') : null
-        })
-      }
-
-      // Extract heights from profile if available
-      const [profileHeights, profileLabels] = this.extractProfileData(queries.map((q) => q.profile))
-
       // Setup the request url options
       const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
       const headers = { 'Content-Type': 'application/json' }
@@ -360,83 +303,19 @@ export default {
       const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       if (jwt) headers.Authorization = 'Bearer ' + jwt
 
-      // Perform the requests
-      let dismiss = null
-      dismiss = this.$q.notify({
-        group: 'profile',
-        icon: 'las la-hourglass-half',
-        message: this.$t('KElevationProfile.COMPUTING_PROFILE'),
-        color: 'primary',
-        timeout: 0,
-        spinner: true
-      })
+      const elevationDataset = await elevation.fetchElevationDataset(endpoint, headers, this.feature, this.chartDistanceUnit, this.chartHeightUnit)
+      const profileDataset = elevation.fetchProfileDataset(this.feature, this.chartDistanceUnit, this.chartHeightUnit)
 
-      // Build a fetch per profile
-      const fetchs = []
-      for (const query of queries) {
-        fetchs.push(fetch(endpoint +
-                          `?resolution=${query.resolution}` +
-                          (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '') +
-                          (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
-          method: 'POST',
-          mode: 'cors',
-          body: JSON.stringify(query.profile),
-          headers
-        }))
-      }
-
-      let responses
-      try {
-        responses = await Promise.all(fetchs)
-        for (const res of responses) {
-          if (!res.ok) throw new Error('Fetch failed')
-        }
-      } catch (error) {
-        // Network error
-        dismiss()
-        this.$notify({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
-        return
-      }
-
-      dismiss()
-
-      // Each profile will have a point on start and end points
-      // When we have multi line string, we skip the first point for all segment
-      // after the first one
-      let skipFirstPoint = false
-      const terrainHeights = []
-      const terrainLabels = []
-      let curvilinearOffset = 0
-      this.profile = []
-      for (let i = 0; i < queries.length; ++i) {
-        const points = await responses[i].json()
-        // Each point on the elevation profile will contains two properties;
-        // - z: the elevation in meters
-        // - t: the curvilinear abscissa relative to the queried profile in meters
-        points.features.forEach((point, index) => {
-          if (skipFirstPoint && index === 0) return
-
-          const clone = _.cloneDeep(point)
-          // Since we may have multiple profile with different query parameters
-          // offset t accordingly
-          clone.properties.t = Units.convert(curvilinearOffset + _.get(point, 'properties.t', 0), 'm', this.chartDistanceUnit)
-          this.profile.push(clone)
-
-          terrainHeights.push(Units.convert(point.properties.z, 'm', this.chartHeightUnit))
-          terrainLabels.push(clone.properties.t)
-        })
-        // Update curvilinear offset for next profile, and skip next profile's first point
-        // since it'll match with the current profile last point
-        curvilinearOffset += length(queries[i].profile, { units: 'kilometers' }) * 1000
-        skipFirstPoint = true
-      }
+      // TODO: default elevation resolution
+      // Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
+      // TODO: restore securityMargin
 
       // try to extract line color from layer if available
       const layer = this.layer
       let profileColor
       if (_.has(layer, 'leaflet.stroke-color')) profileColor = _.get(layer, 'leaflet.stroke-color')
       if (profileColor === undefined) profileColor = _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8')
-      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth)
+      this.updateChart(terrainDataset, profileDataset, profileColor, chartWidth)
 
       this.profile = featureCollection(this.profile)
     },
