@@ -18,6 +18,11 @@ import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
 import { fetchProfileDataset, fetchElevationDataset } from '../../elevation-utils.js'
 
+// TODO: user settings are not loaded (units)
+// TODO: update pan/zoom with ability over scale
+// TODO: abscissa axis labels seem broken
+// TODO: restore security margin ?
+
 export default {
   components: {
     KChart,
@@ -303,12 +308,27 @@ export default {
       const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       if (jwt) headers.Authorization = 'Bearer ' + jwt
 
-      const elevationDataset = await elevation.fetchElevationDataset(endpoint, headers, this.feature, this.chartDistanceUnit, this.chartHeightUnit)
-      const profileDataset = elevation.fetchProfileDataset(this.feature, this.chartDistanceUnit, this.chartHeightUnit)
+      const dismiss = this.$q.notify({
+        group: 'profile',
+        icon: 'las la-hourglass-half',
+        message: this.$t('KElevationProfile.COMPUTING_PROFILE'),
+        color: 'primary',
+        timeout: 0,
+        spinner: true
+      })
 
-      // TODO: default elevation resolution
-      // Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
-      // TODO: restore securityMargin
+      let terrainDataset, profileDataset
+      try {
+        // Default evelation resolution is max(1 point every 5 pixels, 30m)
+        const defaultRes = Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / 5), 30)
+        terrainDataset = await fetchElevationDataset(endpoint, headers, this.feature, this.chartDistanceUnit, this.chartHeightUnit, defaultRes, 'm')
+        profileDataset = fetchProfileDataset(this.feature, this.chartDistanceUnit, this.chartHeightUnit)
+        // TODO: restore securityMargin
+      } catch (error) {
+        activity.$notify({ type: 'negative', message: i18n.t('errors.NETWORK_ERROR') })
+      }
+
+      dismiss()
 
       // try to extract line color from layer if available
       const layer = this.layer

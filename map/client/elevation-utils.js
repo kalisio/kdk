@@ -5,7 +5,6 @@ import flatten from '@turf/flatten'
 import { Units } from '../../core/client/units.js'
 
 // TODO: maybe return datasets as [[segment1], [segment2], ...] when multilinestring ?
-// TODO: add defaultResolution & defaultResolutionUnit
 
 // Take a feature (linestring or multilinestring) and extract altitudes + curvilinear abscissa
 // In case of multilinestring, it is assumed that linestring N last point == linestring N+1 first point
