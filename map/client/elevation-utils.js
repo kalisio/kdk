@@ -1,10 +1,9 @@
 import _ from 'lodash'
 import { segmentEach, coordEach } from '@turf/meta'
+import { featureCollection, point } from '@turf/helpers'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { Units } from '../../core/client/units.js'
-
-// TODO: maybe return datasets as [[segment1], [segment2], ...] when multilinestring ?
 
 // Take a feature (linestring or multilinestring) and extract altitudes + curvilinear abscissa
 // In case of multilinestring, it is assumed that linestring N last point == linestring N+1 first point
@@ -54,32 +53,22 @@ function fetchProfileDataset (feature, distanceUnit, altitudeUnit) {
     }
   }
 
-  // return allCoordsHaveAltitude ? [profileAltitudes, profileLabels] : [[], []]
   return allCoordsHaveAltitude ? dataset : []
 }
 
-/*
-function extractProfileDataset (feature, distanceUnit, altitudeUnit) {
-  // Check supported geometry
-  const geometry = _.get(feature, 'geometry.type')
-  if (geometry !== 'LineString' && geometry !== 'MultiLineString') {
-    // logger.warn('the selected feature has an invald geometry')
-    return []
-  }
-
-  const dataset = []
-  let allCoordsHaveAltitude = true
-  let curvilinearOffset = 0
-  let curvilinearIndex = 0
-  segmentEach(feature, (segment, featureIdx, multiFeatureIdx, geometryIdx, segmentIdx) => {
-  })
-}
-*/
+function asArray(val) { return (Array.isArray(val) || val === undefined) ? val : [ val ] }
 
 // Take a feature (linestring or multilinestring) and query elevation service
-// In case of multilinestring, it is assumed that linestring N last point == linestring N+1 first point
-// On success, returns a sorted array of { x: curvilinear abscissa, y: elevation, elevation: { resolution, corridorWidth } (sorted by x)
-async function fetchElevationDataset (endpoint, additionalHeaders, feature, distanceUnit, altitudeUnit, defaultResolution, defaultResolutionUnit) {
+// It'll make a query per multi linestring element, or only one in case of linestring
+// Results are converted to distance unit and altitude unit accordingly
+// On success, returns an array of queries perfomed where each query is an object with the following elements :
+//  - profile: the queried profile
+//  - resolution: the resolution used in the query (converted to distanceUnit)
+//  - corridorWidth: the corridor with (in distanceUnit) used to perform the query, or undefined if 'noCorridor' was set
+//  - elevation: the qery result, a feature collection of points with properties 'z' (in altitudeUnit) and 't' (in distanceUnit)
+//               where z is the elevation at the point, and t is the curvilinear abscissa along the queried profile
+//  - length: the length (in distanceUnit) of the queried profile
+async function queryElevation (endpoint, feature, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor } = {}) {
   // Check supported geometry
   const geometry = _.get(feature, 'geometry.type')
   if (geometry !== 'LineString' && geometry !== 'MultiLineString') {
@@ -87,26 +76,25 @@ async function fetchElevationDataset (endpoint, additionalHeaders, feature, dist
     return []
   }
 
+  // When feature is a multi line string, make as many queries as line string segments
   const queries = []
-  const resolution = _.get(feature, 'properties.elevationProfile.resolution', defaultResolution)
+  const resolution = asArray(_.get(feature, 'properties.elevationProfile.resolution', defaultResolution))
   const resolutionUnit = _.get(feature, 'properties.elevationProfile.resolutionUnit', defaultResolutionUnit)
-  const corridor = _.get(feature, 'properties.elevationProfile.corridorWidth')
-  const corridorUnit = _.get(feature, 'properties.elevationProfile.corridorWidthUnit', 'm')
+  const corridor = noCorridor ? undefined : asArray(_.get(feature, 'properties.elevationProfile.corridorWidth'))
+  const corridorUnit = noCorridor ? undefined : _.get(feature, 'properties.elevationProfile.corridorWidthUnit', 'm')
   if (geometry === 'MultiLineString') {
     flatten(feature).features.forEach((feat, index) => {
       queries.push({
         profile: feat,
         resolution: Units.convert(resolution[index], resolutionUnit, 'm'),
-        corridorWidth: corridor ? Units.convert(corridor[index], corridorUnit, 'm') : 0,
-        // securityMargin: securityMargin ? Units.convert(securityMargin[index], securityMarginUnit, 'm') : null
+        corridorWidth: corridor ? Units.convert(corridor[index], corridorUnit, 'm') : undefined
       })
     })
   } else {
     queries.push({
       profile: feature,
-      resolution: Units.convert(resolution, resolutionUnit, 'm'),
-      corridorWidth: corridor ? Units.convert(corridor, corridorUnit, 'm') : 0,
-      // securityMargin: securityMargin ? Units.convert(securityMargin, securityMarginUnit, 'm') : null
+      resolution: Units.convert(resolution[0], resolutionUnit, 'm'),
+      corridorWidth: corridor ? Units.convert(corridor[0], corridorUnit, 'm') : undefined
     })
   }
 
@@ -115,9 +103,7 @@ async function fetchElevationDataset (endpoint, additionalHeaders, feature, dist
   for (const query of queries) {
     fetchs.push(fetch(endpoint +
                       `?resolution=${query.resolution}` +
-                      (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : ''), {
-                      // (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '') +
-                      // (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
+                      (query.corridorWidth !== undefined ? `&corridorWidth=${query.corridorWidth}` : ''), {
                         method: 'POST',
                         mode: 'cors',
                         body: JSON.stringify(query.profile),
@@ -135,35 +121,126 @@ async function fetchElevationDataset (endpoint, additionalHeaders, feature, dist
     return []
   }
 
-  // Each profile will have a point on start and end points
-  // When we have multi line string, we skip the first point for all segment
-  // after the first one
-  const dataset = []
-  let skipFirstPoint = false
-  let curvilinearOffset = 0
+  // Each query has its own result
   for (let i = 0; i < queries.length; ++i) {
-    const r = Units.convert(queries[i].resolution, resolutionUnit, distanceUnit)
-    const w = Units.convert(queries[i].corridorWidth, corridorUnit, distanceUnit)
+    const q = queries[i]
 
-    const points = await responses[i].json()
     // Each point on the elevation profile will contains two properties;
     // - z: the elevation in meters
     // - t: the curvilinear abscissa relative to the queried profile in meters
-    points.features.forEach((point, index) => {
-      if (skipFirstPoint && index === 0) return
+    q.elevation = await responses[i].json()
+    q.length = length(q.profile, { units: 'kilometers' }) * 1000
 
-      const t = Units.convert(curvilinearOffset + _.get(point, 'properties.t', 0), 'm', distanceUnit)
-      const e = Units.convert(point.properties.z, 'm', altitudeUnit)
-      dataset.push({ x: t, y: e, elevation: { resolution: r, corridorWidth: w }})
+    // Transform to user units
+    q.resolution = Units.convert(resolution[i], resolutionUnit, distanceUnit)
+    q.corridorWidth = corridor ? Units.convert(corridor[i], corridorUnit, distanceUnit) : undefined
+    q.length = Units.convert(q.length, 'm', distanceUnit)
+
+    for (const point of q.elevation.features) {
+      point.properties.z = Units.convert(point.properties.z, 'm', altitudeUnit)
+      point.properties.t = Units.convert(point.properties.t, 'm', distanceUnit)
+    }
+  }
+
+  return queries
+}
+
+// Compatibility function used to handle 'securityMargin' property defined on the queried feature.
+// If this property is set, it'll make it available on the individual queries in the 'securityMargin' member
+function addSecurityMargin (feature, queries, altitudeUnit) {
+  if (queries.length === 0) return
+
+  const securityMargin = _.get(feature, 'properties.elevationProfile.securityMargin')
+  if (securityMargin === undefined) return
+
+  const securityMarginUnit = _.get(feature, 'properties.elevationProfile.securityMarginUnit', 'm')
+
+  const geometry = _.get(feature, 'geometry.type')
+  if (geometry === 'MultiLineString') {
+    flatten(feature).features.forEach((feat, index) => {
+      queries[index].securityMargin = Units.convert(securityMargin[index], securityMarginUnit, altitudeUnit)
+    })
+  } else {
+    queries[0].securityMargin = Units.convert(securityMargin, securityMarginUnit, altitudeUnit)
+  }
+}
+
+// Take a feature (linestring or multilinestring) and query elevation service
+// On success returns the array of performed queries (one per multilinestring element, or only one if linestring)
+// Queries are defined the same way as in queryElevation function
+// If noSecurityMargin is set, it'll skip the security margin step
+async function fetchElevation (endpoint, feature, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor, noSecurityMargin } = {}) {
+  const queries = await queryElevation(endpoint, feature, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor })
+
+  // Compatibility with initial airbus elevation profile where
+  // securityMargin was an offset to add per segment
+  if (!noSecurityMargin)
+    addSecurityMargin(feature, queries, altitudeUnit)
+
+  return queries
+}
+
+// Use the elevation queries to build a chartjs dataset and/or a geojson with the result
+// In case of multilinestring (multiple queries), it is assumed that linestring N last point == linestring N+1 first point
+// On success, if requested, the chartjs dataset is a sorted array of { x: curvilinear abscissa, y: elevation } (sorted by x)
+// If queryParametersInDataset is set, each dataset element will also contain an elevation: { resolution, corridorWidth, securityMargin } object
+// If requested the returned geojson will be a merge of each query result, where the 't' property will be adjusted for each multilinestring element
+// If securityMargin is present in the queries, it'll be added to the 'z' property of each point
+function extractElevation (queries, { noDataset, noGeojson, queryParametersInDataset, queryParametersInGeojson } = {}) {
+  const dataset = []
+  const allPoints = []
+
+  // Each profile will have a point on start and end points
+  // When we have multi line string, we skip the first point for all segment
+  // after the first one
+  let curvilinearOffset = 0
+  for (let i = 0; i < queries.length; ++i) {
+    // Add security margin if was in the query
+    const zOffset = queries[i].securityMargin ? queries[i].securityMargin : 0
+
+    // Parameters used for the query
+    const r = queries[i].resolution
+    const w = queries[i].corridorWidth
+    const s = queries[i].securityMargin
+
+    // Each point on the elevation profile will contains two properties;
+    // - z: the elevation
+    // - t: the curvilinear abscissa relative to the queried profile
+    queries[i].elevation.features.forEach((p, index) => {
+      // Skip first point of each new line segment, except for the first segment
+      if (i !== 0 && index === 0) return
+
+      const t = curvilinearOffset + p.properties.t
+      // take security margin into account if provided
+      const e = zOffset + p.properties.z
+
+      if (!noDataset) {
+        const datasetPoint = { x: t, y: e }
+        if (queryParametersInDataset) {
+          datasetPoint.elevation = { resolution: r }
+          if (w !== undefined) datasetPoint.elevation.corridorWidth = w
+          if (s !== undefined) datasetPoint.elevation.securityMargin = s
+        }
+        dataset.push(datasetPoint)
+      }
+      if (!noGeojson) {
+        const props = { z: e, t: t }
+        if (queryParametersInDataset) {
+          props.resolution = r
+          if (w !== undefined) props.corridorWidth = w
+          if (s !== undefined) props.securityMargin = s
+        }
+        allPoints.push(point(p.geometry.coordinates, props))
+      }
     })
 
     // Update curvilinear offset for next profile, and skip next profile's first point
     // since it'll match with the current profile last point
-    curvilinearOffset += length(queries[i].profile, { units: 'kilometers' }) * 1000
-    skipFirstPoint = true
+    curvilinearOffset += queries[i].length
   }
 
-  return dataset
+  const geojson = noGeojson ? {} : featureCollection(allPoints)
+  return { dataset, geojson }
 }
 
-export { fetchProfileDataset, fetchElevationDataset }
+export { fetchProfileDataset, fetchElevation, extractElevation }
