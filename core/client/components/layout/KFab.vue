@@ -48,7 +48,7 @@ import { Layout } from '../../layout'
 import KAction from '../KAction.vue'
 
 // Props
-const props = defineProps({
+defineProps({
   expandableLimit: {
     type: Number,
     default: 8
@@ -64,8 +64,8 @@ const icon = computed(() => {
   return fab.icon || 'las la-ellipsis-v'
 })
 const actions = computed(() => {
-  //let fabActions = fab.mode ? fab.content[fab.mode] : fab.content
-  //if (!fabActions) return null
+  // let fabActions = fab.mode ? fab.content[fab.mode] : fab.content
+  // if (!fabActions) return null
   const actions = []
   // Apply filtering
   _.forEach(fab.components, (action) => {

@@ -83,7 +83,7 @@ const avaiableComponents = computed(() => {
 function getComponents (content, mode) {
   let components = []
   // Get component config for given mode if any
-  if (Array.isArray(content))  components = content
+  if (Array.isArray(content)) components = content
   else components = _.get(content, mode)
   const processedComponents = []
   // Then create component objects

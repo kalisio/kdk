@@ -144,7 +144,7 @@ export function baseActivity (name) {
         })
       },
       openWindow (placement) {
-        /*const window = Layout.getWindow(placement)
+        /* const window = Layout.getWindow(placement)
         if (window.visible) return
         if (window.widgets.length === 0) {
           logger.error(`No widgets unregistered for ${placement} window`)
@@ -174,12 +174,12 @@ export function baseActivity (name) {
         Layout.setWindowVisible(placement, true)
       },
       closeWidget (widget) {
-        const { placement, window } = this.findWindow(widget)
-        if (!placement) {
+        const result = this.findWindow(widget)
+        if (!result.placement) {
           logger.error(`Cannot find widget ${widget}`)
           return
         }
-        Layout.setWindowVisible(placement, false)
+        Layout.setWindowVisible(result.placement, false)
       },
       clearActivity () {
         this.clearTopPane()

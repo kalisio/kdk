@@ -1,5 +1,7 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import sift from 'sift'
+import { Store } from '../store.js'
 
 const handlers = ['handler', 'visible', 'on.listener']
 
@@ -125,7 +127,6 @@ export function generateHandler (context, name, params) {
     return (isNot ? !result : result)
   }
 }
-
 
 export function bindParams (params, context) {
   // A parameter like :xxx means xxx is a property of the component, not a static value

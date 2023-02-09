@@ -106,23 +106,23 @@ export const Layout = {
     let components
     if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
     else components = _.get(props.content, mode, []).filter(sift(props.filter))
-    // pacth the element 
+    // pacth the element
     Store.patch(this.getElementPath(element), { mode, components })
   },
   setElementFilter (element, filter) {
     const props = this.getElement(element)
     if (_.isEqual(props.filter, filter)) return
-     // update components
-     let components
-     if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
-     else components = _.get(props.content, mode, []).filter(sift(props.filter))
-     // pacth the element 
+    // update components
+    let components
+    if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
+    else components = _.get(props.content, props.mode, []).filter(sift(props.filter))
+    // pacth the element
     Store.patch(this.getElementPath(element), { filter, components })
   },
   setElementVisible (element, visible) {
     const props = this.getElement(element)
     if (props.visible === visible) return
-     Store.patch(this.getElementPath(element), { visible })
+    Store.patch(this.getElementPath(element), { visible })
   },
   getHeader () {
     return this.getElement('header')
@@ -166,7 +166,7 @@ export const Layout = {
   setPageFilter (filter) {
     this.setElementFilter('page', filter)
   },
-  setPageVisible (mode) {
+  setPageVisible (visible) {
     this.setElementVisible('page', visible)
   },
   getFab () {
@@ -243,11 +243,13 @@ export const Layout = {
     Store.patch(this.getElementPath(`windows.${placement}`), { current })
   },
   findWindow (widget) {
-    let result = { placement: undefined, window: undefined  }
+    let result = { placement: undefined, window: undefined }
     placements.forEach(placement => {
       const window = this.getWindow(placement)
-      if (_.find(window.components, { id: widget })) return result = { placement, window }
+      if (_.find(window.components, { id: widget })) {
+        result = { placement, window }
+      }
     })
     return result
   }
- }
+}

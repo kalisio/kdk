@@ -35,7 +35,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { computed } from 'vue'
 import { Layout } from '../../layout'
 import KPanel from '../KPanel.vue'

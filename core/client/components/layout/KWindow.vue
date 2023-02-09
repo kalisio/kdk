@@ -60,7 +60,7 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref, computed, watch, provide, onMounted } from 'vue'
+import { ref, computed, watch, provide } from 'vue'
 import { useQuasar } from 'quasar'
 import { Store, Layout, utils } from '../..'
 import KPanel from '../KPanel.vue'
