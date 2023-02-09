@@ -65,6 +65,8 @@ export const Time = {
     return this.get().range
   },
   patchRange (range) {
+    if (this.getRange().start.isSame(range.start) &&
+        this.getRange().end.isSame(range.end)) return
     Store.patch('time.range', range)
   },
   getRangeQuery () {

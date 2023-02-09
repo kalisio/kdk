@@ -164,12 +164,10 @@ const widgetId = computed({
     return currentWindow.current
   },
   set: function (value) {
-    console.log(value)
     Layout.setWindowCurrent(props.placement, value)
   }
 })
 const widget = computed(() => {
-  console.log(widgets.value, widgetId.value)
   return _.find(widgets.value, { id: widgetId.value })
 })
 const widgetLabel = computed(() => {
@@ -222,32 +220,31 @@ function updateGeomtry (position, size) {
   // Compute breakpoint
   const window = {
     position,
-    size,
-    gt: {
-      xs: w >= s.sm,
-      sm: w >= s.md,
-      md: w >= s.lg,
-      lg: w >= s.xl
-    },
-    lt: {
-      sm: w < s.sm,
-      md: w < s.md,
-      lg: w < s.lg,
-      xl: w < s.xl
-    }
+    size
   }
-  Object.assign(window, {
-    xs: window.lt.sm,
-    sm: window.gt.xs === true && window.lt.md === true,
-    md: window.gt.sm === true && window.lt.lg === true,
-    lg: window.gt.md === true && window.lt.xl === true,
-    xl: window.gt.lg
-  })
-  window.breakpoint = (window.xs === true && 'xs') ||
-    (window.sm === true && 'sm') ||
-    (window.md === true && 'md') ||
-    (window.lg === true && 'lg') ||
+  const gt = {
+    xs: w >= s.sm,
+    sm: w >= s.md,
+    md: w >= s.lg,
+    lg: w >= s.xl
+  }
+  const lt = {
+    sm: w < s.sm,
+    md: w < s.md,
+    lg: w < s.lg,
+    xl: w < s.xl
+  }
+  const xs = lt.sm
+  const sm = gt.xs === true && lt.md === true
+  const md = gt.sm === true && lt.lg === true
+  const lg = gt.md === true && lt.xl === true
+  const xl = gt.lg
+  const breakpoint = (xs === true && 'xs') ||
+    (sm === true && 'sm') ||
+    (md === true && 'md') ||
+    (lg === true && 'lg') ||
     'xl'
+  Object.assign(window, { xs, sm, md, lg, xl, gt, lt, breakpoint })
   Store.patch(Layout.getElementPath(`windows.${props.placement}`), window)
 }
 function onPinned () {

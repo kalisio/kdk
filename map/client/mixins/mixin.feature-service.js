@@ -184,14 +184,16 @@ export const featureService = {
       if (!layer) return
       return this.getFeatures(layer, queryInterval)
     },
-    async getMeasureForFeatureQuery (layer, feature, startTime, endTime) {
+    getMeasureForFeatureBaseQuery (layer, feature) {
       // Support compound ID
       const featureId = (Array.isArray(layer.featureId) ? layer.featureId : [layer.featureId])
-      const baseQuery = featureId.reduce((result, id) =>
+      return featureId.reduce((result, id) =>
         Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
       {})
+    },
+    async getMeasureForFeatureQuery (layer, feature, startTime, endTime) {
       const query = await this.getFeaturesQuery(_.merge({
-        baseQuery
+        baseQuery: this.getMeasureForFeatureBaseQuery(layer, feature)
       }, layer), {
         $gte: startTime.format(),
         $lte: endTime.format()

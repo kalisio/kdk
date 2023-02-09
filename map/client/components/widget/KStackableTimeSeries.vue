@@ -70,8 +70,11 @@ const zoomHistory = ref([])
 
 // expose
 const exposed = {
+  startTime,
+  endTime,
   zoomHistory,
   restorePreviousZoom,
+  update,
   exportData,
   exportSeries
 }
@@ -124,6 +127,12 @@ function onZoomEnd ({ chart, start, end }) {
   startTime.value = moment.utc(start)
   endTime.value = moment.utc(end)
   emit('zoom-end', { chart, start, end, zoomHistory })
+}
+function update () {
+  _.forEach(components.value, component => {
+    if (component.chart) component.chart.update()
+    if (component.table) component.table.update()
+  })
 }
 function exportData (timeSerie) {
   const component = _.find(components.value, { timeSerie })
