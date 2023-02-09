@@ -7,21 +7,23 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { getCssVar, copyToClipboard, exportFile } from 'quasar'
+import { getCssVar, copyToClipboard, exportFile, colors } from 'quasar'
 import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { segmentEach, coordEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
 import { Units } from '../../../../core/client/units'
+import { Store } from '../../../../core/client/store'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
-import { fetchProfileDataset, fetchElevationDataset } from '../../elevation-utils.js'
+import { fetchProfileDataset, fetchElevation, extractElevation } from '../../elevation-utils.js'
 
-// TODO: user settings are not loaded (units)
 // TODO: update pan/zoom with ability over scale
-// TODO: abscissa axis labels seem broken
-// TODO: restore security margin ?
+// TODO: customize legends, ghost icon
+// TODO: curv abscissa use metho on chart instead
+// TODO: no tooltip when not over chart area
+// TODO: profile & terrain colors as props ?
 
 export default {
   components: {
@@ -33,7 +35,14 @@ export default {
     highlight: {
       type: Object,
       default: () => ({ 'stroke-color': 'primary', 'fill-opacity': 0, zOrder: 1 })
-    }
+    },
+    xAxisLabel: '',
+    yAxisLabel: '',
+    mapGhostIcon: {
+      type: Object,
+      default: () => ({})
+    },
+    terrainLegend: ''
   },
   computed: {
     feature () {
@@ -70,6 +79,36 @@ export default {
     },
     hasProfile () {
       return !_.isNil(this.profile)
+    },
+    getXAxisLabel () {
+      const lbl = this.xAxisLabel
+      return lbl ? lbl : this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND', { unit: this.chartDistanceUnit })
+    },
+    getYAxisLabel () {
+      const lbl = this.yAxisLabel
+      return lbl ? lbl : this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', { unit: this.chartHeightUnit })
+    },
+    getMapGhostIcon () {
+      const def = {
+        'marker-type': 'marker',
+        'marker-color': 'primary',
+        // 'marker-color': 'secondary',
+        // 'icon-classes': 'las la-map-marker',
+        'icon-classes': 'las la-mountain',
+        'icon-color': 'secondary'
+        // 'icon-color': 'primary'
+      }
+      const icon = this.mapGhostIcon
+      return _.isEmpty(icon) ? def : icon
+    },
+    getProfileLegend () {
+      // const lbl = this.profileLegend
+      // return lbl ? lbl : this.$t('KElevationProfile.PROFILE_CHART_LEGEND')
+      return this.title
+    },
+    getTerrainLegend () {
+      const lbl = this.terrainLegend
+      return lbl ? lbl : this.$t('KElevationProfile.TERRAIN_CHART_LEGEND')
     },
     updateChart (terrainDataset, profileDataset, profileColor, chartWidth) {
       const update = {
@@ -134,7 +173,7 @@ export default {
                 }
 
                 this.highlightFeature = along(segment, abscissaKm, { units: 'kilometers' })
-                this.highlightFeature.properties = { 'marker-type': 'marker' }
+                this.highlightFeature.properties = this.getMapGhostIcon()
                 this.highlight(this.highlightFeature)
               }
             }
@@ -156,7 +195,14 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND', { unit: this.chartDistanceUnit })
+                text: this.getXAxisLabel()
+              },
+              ticks: {
+                callback: (value, index, ticks) => {
+                  return Units.format(value, this.chartDistanceUnit, this.chartDistanceUnit, {
+                    notation: 'auto', precision: 8, lowerExp: -8, upperExp: 8, symbol: false
+                  })
+                }
               }
             },
             y: {
@@ -164,7 +210,7 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', { unit: this.chartHeightUnit })
+                text: this.getYAxisLabel()
               }
             }
           },
@@ -188,16 +234,23 @@ export default {
             tooltip: {
               position: 'cursorPosition',
               callbacks: {
-                /*
                 title: (context) => {
-                  let title = `${context[0].parsed.x.toFixed(2)} ${this.chartDistanceUnit}`
+                  let title = ''
+                  if (context.length) {
+                    title = Units.format(context[0].parsed.x, this.chartDistanceUnit, this.chartDistanceUnit, {
+                      notation: 'fixed', precision: 2
+                    })
+                  }
                   return title
                 },
-                */
                 label: (context) => {
                   let label = context.dataset.label || ''
                   if (label) label += ': '
-                  if (context.parsed.y !== null) label += Units.format(context.parsed.y, this.chartHeightUnit)
+                  if (context.parsed.y !== null) {
+                    label += Units.format(context.parsed.y, this.chartHeightUnit, this.chartHeightUnit, {
+                      notation: 'fixed', precision: 2
+                    })
+                  }
                   return label
                 }
               }
@@ -257,25 +310,33 @@ export default {
       // Add profile elevation if provided
       if (profileDataset.length) {
         update.data.datasets.push({
-          label: this.$t('KElevationProfile.PROFILE_CHART_LEGEND'),
+          label: this.getProfileLegend(),
           data: profileDataset,
           fill: false,
           borderColor: profileColor,
-          backgroundColor: '#0986bc',
-          pointRadius: 3
+          backgroundColor: profileColor,
+          // backgroundColor: '#0986bc',
+          // pointRadius: 3,
+          normalized: true
         })
         update.options.plugins.legend.display = true
       }
 
       // Add terrain elevation dataset
-      update.data.datasets.push({
-        label: this.$t('KElevationProfile.TERRAIN_CHART_LEGEND'),
-        data: terrainDataset,
-        fill: true,
-        borderColor: '#635541',
-        backgroundColor: '#c9b8a1',
-        pointRadius: 2
-      })
+      if (terrainDataset.length) {
+        update.data.datasets.push({
+          label: this.getTerrainLegend(),
+          data: terrainDataset,
+          fill: true,
+          // borderColor: colors.lighten(profileColor, 30),
+          borderColor: '#635541',
+          borderWidth: 1,
+          // backgroundColor: colors.lighten(profileColor, -30),
+          backgroundColor: '#c9b8a1',
+          pointRadius: 0,
+          normalized: true
+        })
+      }
 
       this.$refs.chart.update(update)
     },
@@ -294,8 +355,8 @@ export default {
         return
       }
       this.highlight(this.feature)
-      this.chartDistanceUnit = 'm'
-      this.chartHeightUnit = Units.getDefaultUnit('altitude')
+      this.chartDistanceUnit = Store.get('units.default.length')
+      this.chartHeightUnit = Store.get('units.default.altitude')
 
       // TODO: this is the window size, not the widget size ...
       const { window } = this.kActivity.findWindow('elevation-profile')
@@ -317,27 +378,30 @@ export default {
         spinner: true
       })
 
+      // try to extract line color from layer if available
+      const profileColor = _.get(this.layer, 'leaflet.stroke-color', _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8'))
       let terrainDataset, profileDataset
       try {
         // Default evelation resolution is max(1 point every 5 pixels, 30m)
         const defaultRes = Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / 5), 30)
-        terrainDataset = await fetchElevationDataset(endpoint, headers, this.feature, this.chartDistanceUnit, this.chartHeightUnit, defaultRes, 'm')
         profileDataset = fetchProfileDataset(this.feature, this.chartDistanceUnit, this.chartHeightUnit)
-        // TODO: restore securityMargin
+        this.updateChart([], profileDataset, profileColor, chartWidth)
+        const queries = await fetchElevation(
+          endpoint, this.feature, this.chartDistanceUnit, this.chartHeightUnit, {
+            additionalHeaders: headers,
+            defaultResolution: defaultRes,
+            defaultResolutionUnit: 'm'
+          })
+        const { dataset, geojson } = extractElevation(queries)
+        terrainDataset = dataset
+        this.profile = geojson
       } catch (error) {
-        activity.$notify({ type: 'negative', message: i18n.t('errors.NETWORK_ERROR') })
+        this.$notify({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
       }
 
       dismiss()
 
-      // try to extract line color from layer if available
-      const layer = this.layer
-      let profileColor
-      if (_.has(layer, 'leaflet.stroke-color')) profileColor = _.get(layer, 'leaflet.stroke-color')
-      if (profileColor === undefined) profileColor = _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8')
       this.updateChart(terrainDataset, profileDataset, profileColor, chartWidth)
-
-      this.profile = featureCollection(this.profile)
     },
     onCenterOn () {
       this.centerOnSelection()
@@ -361,6 +425,18 @@ export default {
         else this.$notify({ message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
+  },
+  mounted () {
+    this.debouncedRefresh = _.debounce(this.refresh, 100)
+
+    // Setup listeners
+    this.$events.on('units-default-length-changed', this.debouncedRefresh)
+    this.$events.on('units-default-altitude-changed', this.debouncedRefresh)
+  },
+  beforeUnmount () {
+    // Release listeners
+    this.$events.off('units-default-length-changed', this.debouncedRefresh)
+    this.$events.off('units-default-altitude-changed', this.debouncedRefresh)
   },
   setup (props) {
     return {
