@@ -2,7 +2,6 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
-import { Layout } from '../../../core/client/layout.js'
 import { setEngineJwt } from '../utils.js'
 import { utils as kCoreUtils } from '../../../core/client/index.js'
 
@@ -189,10 +188,10 @@ export const activity = {
     configureLayerActions (layer) {
       let actions = _.get(this, 'activityOptions.layers.actions', [])
       // Apply filtering
-      actions = Layout.filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
+      actions = kCoreUtils.filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
-      actions = Layout.bindContent(_.cloneDeep(actions), this)
+      actions = kCoreUtils.bindContent(_.cloneDeep(actions), this)
       // Add 'virtual' action used to trigger the layer
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
       // Store the actions

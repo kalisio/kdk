@@ -9,94 +9,79 @@ export function baseActivity (name) {
         return this.$config('appName')
       },
       getTopPane () {
-        return this.$store.get('topPane')
+        return Layout.getPane('top')
       },
       getTopPaneMode () {
-        return this.getTopPane().mode
+        return Layout.getPane('top').mode
       },
       isTopPaneVisible () {
-        return this.getTopPane().visible
+        return Layout.getPane('top').visible
       },
       setTopPane (content, mode, filter) {
-        this.$store.patch('topPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
+        Layout.setPane('top', { content, mode, filter }, this)
       },
       setTopPaneMode (mode) {
-        if (mode !== this.getTopPaneMode()) {
-          const content = this.$store.get('topPane.content')
-          this.$store.patch('topPane', { mode: Layout.validateMode(content, mode) })
-        }
+        Layout.setPaneMode('top', mode)
       },
       setTopPaneVisible (visible) {
-        if (this.isTopPaneVisible() !== visible) this.$store.patch('topPane', { visible })
+        Layout.setPaneVisible('top', visible)
       },
       configureTopPane () {
-        const options = _.get(this.activityOptions, 'topPane')
-        if (options) this.setTopPane(options.content, options.mode, _.get(this.activityOptions, 'topPane.filter', {}))
-        else this.clearTopPane()
+        Layout.setPane('top', _.get(this.activityOptions, 'topPane'), this)
       },
       clearTopPane () {
-        this.$store.patch('topPane', { content: null, mode: undefined })
+        Layout.setPane('top', null)
       },
       getLeftPane () {
-        return this.$store.get('leftPane')
+        return Layout.getPane('left')
       },
       getLeftPaneMode () {
-        return this.getLeftPane().mode
+        return Layout.getPane('left').mode
       },
       isLeftPaneVisible () {
-        return this.getLeftPane().visible
+        return Layout.getPane('left').visible
       },
       setLeftPane (content, mode, filter) {
-        this.$store.patch('leftPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
+        Layout.setPane('left', { content, mode, filter }, this)
       },
       setLeftPaneMode (mode) {
-        if (mode !== this.getLeftPaneMode()) {
-          const content = this.$store.get('leftPane.content')
-          this.$store.patch('leftPane', { mode: Layout.validateMode(content, mode) })
-        }
+        Layout.setPaneMode('left', mode)
       },
       setLeftPaneVisible (visible) {
-        if (this.isLeftPaneVisible() !== visible) this.$store.patch('leftPane', { visible })
+        Layout.setPaneVisible('left', visible)
       },
       configureLeftPane () {
-        const options = _.get(this.activityOptions, 'leftPane')
-        if (options) this.setLeftPane(options.content, options.mode, _.get(this.activityOptions, 'leftPane.filter', {}))
-        else this.clearLeftPane()
+        Layout.setPane('left', _.get(this.activityOptions, 'leftPane'), this)
       },
       clearLeftPane () {
-        this.$store.patch('leftPane', { content: null, mode: undefined })
+        Layout.setPane('left', null)
       },
       getBottomPane () {
-        return this.$store.get('bottomPane')
+        return Layout.getPane('bottom')
       },
       getBottomPaneMode () {
-        return this.getBottomPane().mode
+        return Layout.getPane('bottom').mode
       },
       isBottomPaneVisible () {
-        return this.getBottomPane().visible
+        return Layout.getPane('bottom').visible
       },
       setBottomPane (content, mode, filter) {
-        this.$store.patch('bottomPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
+        Layout.setPane('bottom', { content, mode, filter }, this)
       },
       setBottomPaneMode (mode) {
-        if (mode !== this.getBottomPaneMode()) {
-          const content = this.$store.get('bottomPane.content')
-          this.$store.patch('bottomPane', { mode: Layout.validateMode(content, mode) })
-        }
+        Layout.setPaneMode('bottom', mode)
       },
       setBottomPaneVisible (visible) {
-        if (this.isBottomPaneVisible() !== visible) this.$store.patch('bottomPane', { visible })
+        Layout.setPaneMode('bottom', visible)
       },
       configureBottomPane () {
-        const options = _.get(this.activityOptions, 'bottomPane')
-        if (options) this.setBottomPane(options.content, options.mode, _.get(this.activityOptions, 'bottomPane.filter', {}))
-        else this.clearBottomPane()
+        Layout.setPane('bottom', _.get(this.activityOptions, 'bottomPane'), this)
       },
       clearBottomPane () {
-        this.$store.patch('bottomPane', { content: null, mode: undefined })
+        Layout.setPane('bottom', null)
       },
       getRightPane () {
-        return this.$store.get('bottomPane')
+        return Layout.getPane('right')
       },
       getRightPaneMode () {
         return this.getRightPane().mode
@@ -105,109 +90,75 @@ export function baseActivity (name) {
         return this.getRightPane().visible
       },
       setRightPane (content, mode, filter) {
-        this.$store.patch('rightPane', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter })
+        Layout.setPane('right', { content, mode, filter }, this)
       },
       setRightPaneMode (mode) {
-        if (mode !== this.getRightPaneMode()) {
-          const content = this.$store.get('rightPane.content')
-          this.$store.patch('rightPane', { mode: Layout.validateMode(content, mode) })
-        }
+        Layout.setPaneMode('right', mode)
       },
       setRightPaneVisible (visible) {
-        if (this.isRightPaneVisible() !== visible) this.$store.patch('rightPane', { visible })
+        Layout.setPaneMode('right', visible)
       },
       configureRightPane () {
-        const options = _.get(this.activityOptions, 'rightPane')
-        if (options) this.setRightPane(options.content, options.mode, _.get(this.activityOptions, 'rightPane.filter', {}))
-        else this.clearRightPane()
+        Layout.setPane('right', _.get(this.activityOptions, 'rightPane'), this)
       },
       clearRightPane () {
-        this.$store.patch('rightPane', { content: null, mode: undefined })
+        Layout.setPane('right', null)
       },
       getPage () {
-        return this.$store.get('page')
-      },
-      getPageMode () {
-        return this.getPage().mode
+        return Layout.getPage()
       },
       setPage (content, mode, filter, sticky) {
-        this.$store.patch('page', { content: Layout.bindContent(_.cloneDeep(content), this), mode: Layout.validateMode(content, mode), filter, sticky })
+        Layout.setPage({ content, mode, filter, sticky }, this)
       },
       setPageMode (mode) {
-        if (mode !== this.getPageMode()) {
-          const content = this.$store.get('page.content')
-          this.$store.patch('page', { mode: Layout.validateMode(content, mode) })
-        }
+        Layout.setPageMode(mode)
       },
       configurePage () {
-        const options = _.get(this.activityOptions, 'page')
-        if (options) {
-          this.setPage(options.content, options.mode, _.get(this.activityOptions, 'page.filter', {}),
-            _.get(this.activityOptions, 'page.sticky'))
-        } else this.clearPage()
+        Layout.setPage(_.get(this.activityOptions, 'page'), this)
       },
       clearPage () {
-        this.$store.patch('page', { content: null, mode: undefined, sticky: undefined })
+        Layout.setPage(null)
       },
       getFab () {
-        return this.$store.get('fab')
+        return Layout.getFab()
       },
       setFab (actions, filter) {
-        this.$store.patch('fab', { actions: Layout.bindContent(_.cloneDeep(actions), this), filter })
+        Layout.setFab({ actions, filter })
       },
       configureFab () {
-        const options = _.get(this.activityOptions, 'fab')
-        if (options) this.setFab(options.actions, _.get(this.activityOptions, 'fab.filter', {}))
-        else this.clearFab()
+        Layout.setFab(_.get(this.activityOptions, 'fab'), this)
       },
       clearFab () {
-        this.$store.patch('fab', { actions: null })
-      },
-      getWindows () {
-        return this.$store.get('windows')
+        Layout.setFab(null)
       },
       configureWindows () {
         const windows = _.get(this.activityOptions, 'windows', null)
         _.forOwn(windows, (window, placement) => {
-          this.$store.patch(`windows.${placement}`, {
-            widgets: window.widgets,
-            current: window.default,
-            filter: window.filter || {}
-          })
+          Layout.setWindow(placement, window, this)
         })
       },
       clearWindows () {
         const windows = _.get(this.activityOptions, 'windows', null)
         _.forOwn(windows, (window, placement) => {
-          this.$store.patch(`windows.${placement}`, { widgets: null, current: undefined })
+          Layout.setWindow(placement, null)
         })
       },
       openWindow (placement) {
-        const window = this.$store.get(`windows.${placement}`)
+        /*const window = Layout.getWindow(placement)
         if (window.visible) return
         if (window.widgets.length === 0) {
           logger.error(`No widgets unregistered for ${placement} window`)
           return
         }
-        if (window.current === '') this.$store.patch(`windows.${placement}`, { current: window.widgets[0].id })
-        this.$store.patch(`windows.${placement}`, { visible: true })
+        if (window.current === '') this.$store.patch(`${Layout.windowsPath}.${placement}`, { current: window.widgets[0].id })
+        */
+        Layout.setWindowVisible(placement, true)
       },
       closeWindow (placement) {
-        const window = this.$store.get(`windows.${placement}`)
-        if (!window.visible) return
-        if (window.visible) this.$store.patch(`windows.${placement}`, { visible: false })
+        Layout.setWindowVisible(placement, false)
       },
       findWindow (widget) {
-        let window
-        let placement
-        _.forOwn(this.$store.get('windows'), (value, key) => {
-          if (_.find(value.widgets, { id: widget })) {
-            placement = key
-            window = value
-            return false
-          }
-        })
-        return { placement, window }
+        return Layout.findWindow(widget)
       },
       isWidgetWindowVisible (widget) {
         const { window } = this.findWindow(widget)
@@ -216,11 +167,11 @@ export function baseActivity (name) {
       openWidget (widget) {
         const { placement, window } = this.findWindow(widget)
         if (!placement) {
-          logger.error(`Cannot find widget ${widget}`)
+          logger.error(`[KDK] Cannot find widget ${widget}`)
           return
         }
-        if (window.current !== widget) this.$store.patch(`windows.${placement}`, { current: widget })
-        if (!window.visible) this.$store.patch(`windows.${placement}`, { visible: true })
+        if (window.current !== widget) Layout.setWindowCurrent(placement, widget)
+        Layout.setWindowVisible(placement, true)
       },
       closeWidget (widget) {
         const { placement, window } = this.findWindow(widget)
@@ -228,7 +179,7 @@ export function baseActivity (name) {
           logger.error(`Cannot find widget ${widget}`)
           return
         }
-        if (window.visible) this.$store.patch(`windows.${placement}`, { visible: false })
+        Layout.setWindowVisible(placement, false)
       },
       clearActivity () {
         this.clearTopPane()

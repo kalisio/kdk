@@ -1,209 +1,253 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import config from 'config'
 import sift from 'sift'
-import { uid } from 'quasar'
 import { Store } from './store.js'
+import { bindContent } from './utils/utils.content.js'
 
-const components = ['header', 'footer']
-const handlers = ['handler', 'visible', 'on.listener']
+const placements = ['top', 'right', 'bottom', 'left']
+const layoutPath = 'layout'
+const contentDefaults = { content: null, filter: {}, mode: null, visible: false }
+const defaults = {
+  options: { view: 'lHh LpR lFf' },
+  header: { ...contentDefaults },
+  footer: { ...contentDefaults },
+  page: { ...contentDefaults },
+  fab: { ...contentDefaults, icon: 'las la-ellipsis-v' },
+  panes: { ...contentDefaults, opener: false },
+  windows: { ...contentDefaults, position: [0, 0], size: [300, 150], current: null }
+}
 
 // Export singleton
 export const Layout = {
+  paths: {
+    layout: layoutPath,
+    header: layoutPath + '.header',
+    footer: layoutPath + '.footer',
+    page: layoutPath + '.page',
+    fab: layoutPath + '.fab',
+    panes: {
+      left: layoutPath + '.panes.left',
+      right: layoutPath + '.panes.right',
+      top: layoutPath + '.panes.top',
+      bottom: layoutPath + '.panes.bottom'
+    },
+    windows: {
+      left: layoutPath + '.windows.left',
+      right: layoutPath + '.windows.right',
+      top: layoutPath + '.windows.top',
+      bottom: layoutPath + '.windows.bottom'
+    }
+  },
   initialize () {
-    components.forEach(component => {
-      Store.set(component, { content: null, mode: undefined, filter: {}, visible: false })
+    // create the store structure for each element with their configuration
+    Store.set(this.paths.layout, this.getOptionsDefaults())
+    Store.set(this.paths.header, this.getElementDefaults('header'))
+    Store.set(this.paths.footer, this.getElementDefaults('footer'))
+    Store.set(this.paths.page, this.getElementDefaults('page'))
+    Store.set(this.paths.fab, this.getElementDefaults('fab'))
+    placements.forEach(placement => {
+      Store.set(_.get(this.paths.panes, placement), this.getElementDefaults('panes', placement))
+      Store.set(_.get(this.paths.windows, placement), this.getElementDefaults('windows', placement))
     })
+    // debug message
+    logger.debug(`[KDK] layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
+  },
+  get () {
+    return Store.get(this.paths.layout)
+  },
+  getOptions () {
+    return _.pick(this.get(), _.keys(defaults.options))
+  },
+  getOptionsDefaults () {
+    return Object.assign({}, defaults.options, _.pick(_.get(config, this.paths.layout), _.keys(defaults.options)))
+  },
+  setOptions (options) {
+    Store.patch(this.paths.layout, _.pick(options, _.keys(defaults.options)))
+  },
+  setMode (mode) {
+    logger.debug(`[KDK] switching layout mode to ${mode}`)
+    this.setHeaderMode(mode)
+    this.setFooterMode(mode)
+    this.setPageMode(mode)
+    this.setFabMode(mode)
+    placements.forEach(placement => {
+      this.setPaneMode(placement, mode)
+      this.setWindowMode(placement, mode)
+    })
+  },
+  getElement (element) {
+    return Store.get(this.getElementPath(element))
+  },
+  getElementPath (element) {
+    return _.get(this.paths, element)
+  },
+  getElementDefaults (element) {
+    const elementPath = this.getElementPath(element)
+    const elementDefaults = defaults[element.split('.')[0]]
+    const elementConfig = _.get(config, elementPath)
+    return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
+  },
+  setElement (element, options, context) {
+    const props = _.defaultsDeep(_.cloneDeep(options), this.getElementDefaults(element))
+    const { content, mode } = props
+    // process the content
+    if (!_.isEmpty(content) && context) props.content = bindContent(content, context)
+    // compute components
+    if (Array.isArray(content)) props.components = content.filter(sift(props.filter))
+    else props.components = _.get(content, mode, []).filter(sift(props.filter))
+    // pacth the element
+    Store.patch(this.getElementPath(element), props)
+  },
+  setElementMode (element, mode) {
+    const props = this.getElement(element)
+    if (props.mode === mode) return
+    // update components
+    let components
+    if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
+    else components = _.get(props.content, mode, []).filter(sift(props.filter))
+    // pacth the element 
+    Store.patch(this.getElementPath(element), { mode, components })
+  },
+  setElementFilter (element, filter) {
+    const props = this.getElement(element)
+    if (_.isEqual(props.filter, filter)) return
+     // update components
+     let components
+     if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
+     else components = _.get(props.content, mode, []).filter(sift(props.filter))
+     // pacth the element 
+    Store.patch(this.getElementPath(element), { filter, components })
+  },
+  setElementVisible (element, visible) {
+    const props = this.getElement(element)
+    if (props.visible === visible) return
+     Store.patch(this.getElementPath(element), { visible })
   },
   getHeader () {
-    return Store.get(components[0])
+    return this.getElement('header')
   },
-  setHeader (content, mode, filter, visible) {
-    Store.patch(components[0], { content, mode, filter, visible })
+  setHeader (options, context) {
+    this.setElement('header', options, context)
   },
   setHeaderMode (mode) {
-    Store.patch(components[0], { mode })
+    this.setElementMode('header', mode)
+  },
+  setHeaderFilter (filter) {
+    this.setElementFilter('header', filter)
   },
   setHeaderVisible (visible) {
-    Store.patch(components[0], { visible })
-  },
-  clearHeader () {
-    Store.patch(components[0], { content: null, mode: undefined, visible: false })
+    this.setElementVisible('header', visible)
   },
   getFooter () {
-    return Store.get(components[1])
+    return this.getElement('footer')
   },
-  setFooter (content, mode, filter, visible) {
-    Store.patch(components[1], { content, mode, filter, visible })
+  setFooter (options, context) {
+    this.setElement('footer', options, context)
   },
   setFooterMode (mode) {
-    Store.patch(components[1], { mode })
+    this.setElementMode('footer', mode)
+  },
+  setFooterFilter (filter) {
+    this.setElementFilter('footer', filter)
   },
   setFooterVisible (visible) {
-    Store.patch(components[1], { visible })
+    this.setElementVisible('footer', visible)
   },
-  clearFooter () {
-    Store.patch(components[1], { content: null, mode: undefined, visible: false })
+  getPage () {
+    return this.getElement('page')
   },
-  validateMode (content, mode) {
-    const modes = _.keys(content)
-    if (_.isEmpty(modes)) return undefined
-    if (modes.includes(mode)) return mode
-    return modes[0]
+  setPage (options, context) {
+    this.setElement('page', options, context)
   },
-  filterContent (content, filter) {
-    // Handle non object content
-    if (typeof content !== 'object') return content
-    // Handle array and object case
-    const isArray = Array.isArray(content)
-    const modes = _.keys(content)
-    let filteredContent = content
-    if (!isArray) {
-      // Recurse ?
-      if (filteredContent.content) {
-        filteredContent.content = this.filterContent(filteredContent.content, filter)
-      } else {
-        modes.forEach(mode => {
-          const contentForMode = filteredContent[mode]
-          filteredContent[mode] = this.filterContent(contentForMode, filter)
-        })
-      }
-      filteredContent = [filteredContent]
-    } else {
-      filteredContent.forEach(item => {
-        // Recurse ?
-        if (item.content) {
-          item.content = this.filterContent(item.content, filter)
-        }
-      })
-    }
-    // Apply filtering
-    filteredContent = filteredContent.filter(sift(filter))
-    return (isArray ? filteredContent : filteredContent[0])
+  setPageMode (mode) {
+    this.setElementMode('page', mode)
   },
-  getComponents (content, mode, context) {
-    let components = []
-
-    // Get component config for given mode if any
-    if (Array.isArray(content)) {
-      components = content
-    } else {
-      mode = this.validateMode(content, mode)
-      components = _.get(content, mode)
-    }
-    // Apply filtering
-    // components = this.filterContent(components, filter)
-    const processedComponents = []
-    // Then create component objects
-    _.forEach(components, component => {
-      // Get the component and add the required props
-      component.name = _.get(component, 'component', 'KAction')
-      component.uid = uid()
-      processedComponents.push(component)
+  setPageFilter (filter) {
+    this.setElementFilter('page', filter)
+  },
+  setPageVisible (mode) {
+    this.setElementVisible('page', visible)
+  },
+  getFab () {
+    return this.getElement('fab')
+  },
+  setFab (options, context) {
+    this.setElement('fab', options, context)
+  },
+  setFabMode (mode) {
+    this.setElementMode('fab', mode)
+  },
+  setFabFilter (filter) {
+    this.setElementFilter('fab', filter)
+  },
+  setFabVisible (visible) {
+    this.setElementVisible('fab', visible)
+  },
+  setFabIcon (icon) {
+    const props = this.getElement('fab')
+    if (props.icon === icon) return
+    Store.patch(this.getElementPath('fab'), { icon })
+  },
+  getPane (placement) {
+    return this.getElement(`panes.${placement}`)
+  },
+  setPane (placement, options, context) {
+    this.setElement(`panes.${placement}`, options, context)
+  },
+  setPaneMode (placement, mode) {
+    this.setElementMode(`panes.${placement}`, mode)
+  },
+  setPaneFilter (placement, filter) {
+    this.setElementFilter(`panes.${placement}`, filter)
+  },
+  setPaneVisible (placement, visible) {
+    this.setElementVisible(`panes.${placement}`, visible)
+  },
+  setPaneOpener (placement, opener) {
+    const props = this.getElement(`panes.${placement}`)
+    if (props.opener === opener) return
+    Store.patch(this.getElementPath(`panes.${placement}`), { opener })
+  },
+  getWindow (placement) {
+    return this.getElement(`windows.${placement}`)
+  },
+  setWindow (placement, options, context) {
+    this.setElement(`windows.${placement}`, options, context)
+  },
+  setWindowMode (placement, mode) {
+    this.setElementMode(`windows.${placement}`, mode)
+  },
+  setWindowFilter (placement, filter) {
+    this.setElementFilter(`windows.${placement}`, filter)
+  },
+  setWindowVisible (placement, visible) {
+    this.setElementVisible(`windows.${placement}`, visible)
+  },
+  setWindowPosition (placement, position) {
+    const props = this.getElement(`windows.${placement}`)
+    if (_.isEqual(props.position, position)) return
+    Store.patch(this.getElementPath(`windows.${placement}`), { position })
+  },
+  setWindowSize (placement, size) {
+    const props = this.getElement(`windows.${placement}`)
+    if (_.isEqual(props.size, size)) return
+    Store.patch(this.getElementPath(`windows.${placement}`), { size })
+  },
+  setWindowCurrent (placement, current) {
+    const props = this.getElement(`windows.${placement}`)
+    if (props.current === current) return
+    // conform current
+    const widget = _.find(props.components, { id: current })
+    if (!widget) current = _.get(props.components, '[0].id')
+    Store.patch(this.getElementPath(`windows.${placement}`), { current })
+  },
+  findWindow (widget) {
+    let result = { placement: undefined, window: undefined  }
+    placements.forEach(placement => {
+      const window = this.getWindow(placement)
+      if (_.find(window.components, { id: widget })) return result = { placement, window }
     })
-    return processedComponents
-  },
-  bindParam (param, context) {
-    return (typeof param === 'string') ? (param.startsWith(':') ? _.get(context, param.substring(1)) : param) : param
-  },
-  bindParams (params, context) {
-    // A parameter like :xxx means xxx is a property of the component, not a static value
-    // In that case remove trailing : and get property value dynamically
-    if (_.isNil(params)) {
-      return params
-    } else if (Array.isArray(params)) {
-      return params.map(param => this.bindParams(param, context))
-    } else if (typeof params === 'object') {
-      return _.mapValues(params, (value, key) => this.bindParams(value, context))
-    } else {
-      return this.bindParam(params, context)
-    }
-  },
-  generateHandler (context, name, params) {
-    // When the handler can be a simple getter, eg is visible use case,
-    // we allow a property value instead of a function and a logical NOT
-    const isNot = name.startsWith('!')
-    if (isNot) name = name.substring(1)
-    return (...args) => {
-      let result
-      const handler = _.get(context, name)
-      // Function call or property value read ?
-      if (typeof handler === 'function') {
-        // Provided parameters or simply forward arguments ?
-        result = (params ? handler(...this.bindParams(params, context)) : handler(...args))
-      } else {
-        result = handler
-      }
-      // Logical NOT to be performed ?
-      return (isNot ? !result : result)
-    }
-  },
-  bindHandler (component, path, context) {
-    const handler = _.get(component, path)
-    // Could be an array if multiple handlers to be called
-    if (Array.isArray(handler)) {
-      // Process all array elements, manage the case where the handler is simply a function/property name
-      const handlers = handler.map(h => this.generateHandler(context, h.name || h, h.params))
-      // In that specific case the result is a boolean AND operation
-      _.set(component, path, (...args) => handlers.reduce((result, h) => result && h(...args), true))
-    } else if (handler && typeof handler === 'object') {
-      // Could be a structure with name and possibly params specified
-      // :xxx is reserved for binding to internal property not function call
-      if (handler.name) {
-        if (!handler.name.startsWith(':')) {
-          _.set(component, path, this.generateHandler(context, handler.name, handler.params))
-        }
-      } else {
-        logger.debug(`Invalid handler binding for ${handler}: you must provide the name to the function to be called`)
-      }
-    } else if ((typeof handler === 'string') && !handler.startsWith(':')) {
-      // Or only name if no params are specified
-      // :xxx is reserved for binding to internal property not function call
-      _.set(component, path, this.generateHandler(context, handler))
-    }
-    // Get back processed handler function
-    return _.get(component, path)
-  },
-  bindProperties (item, context) {
-    if (Array.isArray(item)) {
-      for (let i = 0; i < item.length; i++) {
-        item[i] = this.bindProperties(item[i], context)
-      }
-    } else if (typeof item === 'object') {
-      _.forOwn(item, (value, key) => {
-        // Skip 'reserved' property
-        if ((key !== 'content') && (key !== 'bind')) {
-          // Only bind required properties
-          if ((typeof value === 'string') && value.startsWith(':')) {
-            // From store or context ?
-            if (value.startsWith(':store.')) {
-              item[key] = Store.getRef(value.replace(':store.', ''))
-            } else if (key !== 'visible') {
-              item[key] = _.get(context, value.substring(1))
-            }
-          } else {
-            item[key] = this.bindProperties(value, context)
-          }
-        }
-      })
-    }
-    return item
-  },
-  // Perform binding between a configuration object and a given context object
-  bindContent (content, context) {
-    const components = _.flatMapDeep(content)
-    _.forEach(components, (component) => {
-      // Process component handlers
-      handlers.forEach(handler => this.bindHandler(component, handler, context))
-      // Then process component props
-      // It allows to write any property like { label: ':xxx' } and bind it
-      // to a component property from the context like we do for handler
-      this.bindProperties(component, context)
-      // The only way to make it work is to add props at the root level
-      const binding = component.bind ? component.bind : null
-      if (binding) component.props = _.get(context, binding)
-      // Recursively bind the props/handlers on the sub content object
-      if (component.content) this.bindContent(component.content, context)
-    })
-    return content
+    return result
   }
-}
+ }

@@ -17,8 +17,7 @@
 <script>
 import _ from 'lodash'
 import { copyToClipboard } from 'quasar'
-import { Layout } from '../../../core/client/layout'
-import { formatUserCoordinates } from '../utils'
+import { formatUserCoordinates, bindContent } from '../utils'
 import KAction from '../../../core/client/components/KAction.vue'
 
 export default {
@@ -60,7 +59,7 @@ export default {
     const target = {
       component: 'QImg', src: 'icons/kdk/target.svg', height: this.size, width: this.size, class: 'fixed-center k-position-indicator'
     }
-    Layout.bindContent(target, this.kActivity)
+    bindContent(target, this.kActivity)
     const content = this.$store.get('page.content') || []
     // Required to use splice when modifying an object inside an array to make it reactive
     content.splice(content.length, 0, target)

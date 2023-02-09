@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Dialog, exportFile } from 'quasar'
-import { Layout } from '../layout.js'
+import { bindContent, filterContent } from '../utils/index.js'
 
 export const baseItem = {
   emits: [
@@ -62,13 +62,13 @@ export const baseItem = {
     setActions (actions) {
       // As context is different for each item we need to clone the global action configuration
       // otheriwse context will always reference the last processed item
-      this.itemActions = (this.bindActions ? Layout.bindContent(_.cloneDeep(actions), this) : actions)
+      this.itemActions = (this.bindActions ? bindContent(_.cloneDeep(actions), this) : actions)
     },
     clearActions () {
       this.itemActions = null
     },
     filteredActions () {
-      return (this.actions ? Layout.filterContent(this.actions, this.filter || {}) : [])
+      return (this.actions ? filterContent(this.actions, this.filter || {}) : [])
     },
     // This method should be overriden in items
     configureActions () {

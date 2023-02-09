@@ -6,6 +6,7 @@ import { Platform, Notify, Dialog, Loading, exportFile } from 'quasar'
 import { defineAsyncComponent, markRaw } from 'vue'
 
 export * from './utils.colors.js'
+export * from './utils.content.js'
 export * from './utils.locale.js'
 export * from './utils.platform.js'
 

@@ -42,7 +42,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { ref, watch } from 'vue'
-import { Layout } from '../../../../core/client/layout.js'
+import { utils } from '../../../../core/client/index.js'
 import KPanel from '../../../../core/client/components/KPanel.vue'
 import KTimeSeriesChart from '../../../../core/client/components/chart/KTimeSeriesChart.vue'
 import KDataTable from '../../../../core/client/components/chart/KDataTable.vue'
@@ -94,7 +94,7 @@ function refresh () {
     } else {
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
-      const actions = Layout.bindContent(_.cloneDeep(props.actions), exposed)
+      const actions = utils.bindContent(_.cloneDeep(props.actions), exposed)
       component = {
         header: [{ component: 'KStamp', text: timeSerie.label, direction: 'horizontal' }],
         actions,

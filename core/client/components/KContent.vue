@@ -17,8 +17,8 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { computed } from 'vue'
-import { Layout } from '../layout.js'
-import { loadComponent } from '../utils.js'
+import { uid } from 'quasar'
+import { filterContent, loadComponent } from '../utils/index.js'
 
 // Props
 const props = defineProps({
@@ -53,8 +53,8 @@ const emit = defineEmits(['triggered'])
 // Computed
 const avaiableComponents = computed(() => {
   if (_.isEmpty(props.content)) return []
-  let components = Layout.filterContent(props.content, props.filter || {})
-  components = Layout.getComponents(components, props.mode, props.context)
+  let components = filterContent(props.content, props.filter || {})
+  components = getComponents(components, props.mode, props.context)
   for (let i = 0; i < components.length; ++i) {
     const component = components[i]
     let isVisible = _.get(component, 'visible', true)
@@ -80,6 +80,21 @@ const avaiableComponents = computed(() => {
 })
 
 // Functions
+function getComponents (content, mode) {
+  let components = []
+  // Get component config for given mode if any
+  if (Array.isArray(content))  components = content
+  else components = _.get(content, mode)
+  const processedComponents = []
+  // Then create component objects
+  _.forEach(components, component => {
+    // Get the component and add the required props
+    component.name = _.get(component, 'component', 'KAction')
+    component.uid = uid()
+    processedComponents.push(component)
+  })
+  return processedComponents
+}
 function onTriggered (args) {
   emit('triggered', args)
 }

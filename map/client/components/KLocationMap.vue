@@ -126,7 +126,7 @@ export default {
       const latitude = this.$store.get('geolocation.position.latitude', 0)
       const longitude = this.$store.get('geolocation.position.longitude', 0)
       return {
-        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf')),
+        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf'), { decimalPlaces: 3 }),
         latitude,
         longitude
       }
@@ -152,7 +152,7 @@ export default {
       const position = this.$store.get('geolocation.position')
       if (position) {
         this.location = {
-          name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf')),
+          name: formatUserCoordinates(position.latitude, position.longitude, this.$store.get('locationFormat', 'FFf'), { decimalPlace: 3 }),
           latitude: position.latitude,
           longitude: position.longitude
         }

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import { reactive } from 'vue'
 import { Platform, Notify } from 'quasar'
 import { Store } from './store.js'
 import { Layout } from './layout.js'
@@ -64,19 +63,6 @@ export default function init () {
   Sorter.initialize()
   Storage.initialize()
   Schema.initialize(_.get(config, 'schema'))
-  Store.set('topPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
-  Store.set('leftPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
-  Store.set('rightPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
-  Store.set('bottomPane', reactive({ content: null, mode: undefined, filter: {}, visible: false }))
-  Store.set('page', reactive({ content: null, mode: undefined, filter: {}, sticky: undefined }))
-  Store.set('windows', reactive({
-    left: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false }),
-    right: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false }),
-    top: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false }),
-    bottom: reactive({ widgets: null, filter: {}, position: [0, 0], size: [0, 0], current: '', visible: false })
-  }))
-  Store.set('fab', reactive({ actions: [], filter: {} }))
-
   // Listen to the 'patched' event on the users
   const users = api.getService('users')
   users.on('patched', user => {

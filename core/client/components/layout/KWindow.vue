@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isVisible" class="k-window fit column">
+  <div class="k-window fit column">
     <!--
       Window header
      -->
@@ -14,10 +14,14 @@
       />
       <!-- widget header -->
       <KPanel
+        v-if="widgetHeader"
         id="widget-header"
         :content="widgetHeader"
-        :context="widgetReference"
+
       />
+      <div v-else class="q-px-sm text-subtitle1 ellipsis">
+        {{ $tie(widgetLabel) }}
+      </div>
       <q-space />
       <!-- window controls -->
       <KPanel
@@ -29,21 +33,13 @@
       Window content
       -->
     <div class="fit">
-      <q-tab-panels
-        v-model="currentWidget"
-        animated
-      >
-        <template v-for="widget in availableWidgets" :key="widget.id">
-          <q-tab-panel :name="widget.id" class="no-padding no-scroll">
-            <component
-              :ref="onWidgetRefCreated"
-              :is="widget.component"
-              v-bind="widgetContent"
-              :style="widgetStyle"
-            />
-          </q-tab-panel>
-        </template>
-      </q-tab-panels>
+      <component
+        v-if="widget"
+        ref="widgetRef"
+        :is="widget.instance"
+        v-bind="widget.content"
+        :style="widgetStyle"
+      />
     </div>
     <!--
       Window footer
@@ -63,9 +59,8 @@
 
 <script setup>
 import _ from 'lodash'
-import logger from 'loglevel'
 import config from 'config'
-import { ref, computed, watch, provide } from 'vue'
+import { ref, computed, watch, provide, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { Store, Layout, utils } from '../..'
 import KPanel from '../KPanel.vue'
@@ -83,11 +78,9 @@ const props = defineProps({
 
 // Data
 const $q = useQuasar()
-const currentWindow = Store.get(`windows.${props.placement}`)
+const currentWindow = Layout.getWindow(props.placement)
 const currentMode = ref('pinned')
-const widgetHeader = ref(null)
-const widgetContent = ref(null)
-const widgetReference = ref(null)
+const widgetRef = ref(null)
 const pinIcons = {
   left: 'las la-angle-left',
   right: 'las la-angle-right',
@@ -99,25 +92,27 @@ let backupSize
 let backupMode
 
 // Provide
-provide('widget', widgetReference)
+provide('widget', widgetRef)
 
 // Computed
-const isVisible = computed({
-  get: function () {
-    return currentWindow.visible
-  },
-  set: function (value) {
-    Store.patch(`windows.${props.placement}`, { visible: false })
-  }
+const widgets = computed(() => {
+  let isCurrentValid = false
+  _.forEach(currentWindow.components, (widget) => {
+    const componentName = _.get(widget, 'content.component')
+    widget.instance = utils.loadComponent(componentName)
+    if (currentWindow.current === widget.id) isCurrentValid = true
+  })
+  if (!isCurrentValid) Layout.setWindowCurrent(props.placement, _.get(widgets, '[0].id'))
+  return currentWindow.components
 })
 const menu = computed(() => {
   const widgetMenuItems = []
-  _.forEach(availableWidgets.value, widget => {
+  _.forEach(widgets.value, widget => {
     widgetMenuItems.push({
       id: widget.id,
       label: widget.label,
       icon: widget.icon,
-      handler: () => { currentWidget.value = widget.id }
+      handler: () => { widgetId.value = widget.id }
     })
   })
   const menu = []
@@ -164,24 +159,28 @@ const controls = computed(() => {
     handler: onClosed
   }]
 })
-const availableWidgets = computed(() => {
-  // retrieve the widgets applying an optional filter
-  const widgets = Layout.filterContent(currentWindow.widgets, currentWindow.filter || {})
-  // add the component to be loaded
-  _.forEach(widgets, (widget) => {
-    const componentName = _.get(widget, 'content.component')
-    if (componentName) widget.component = utils.loadComponent(componentName)
-    else logger.error(`widget ${widget.id} component is undefined`)
-  })
-  return widgets
-})
-const currentWidget = computed({
+const widgetId = computed({
   get: function () {
     return currentWindow.current
   },
   set: function (value) {
-    Store.patch(`windows.${props.placement}`, { current: value })
+    console.log(value)
+    Layout.setWindowCurrent(props.placement, value)
   }
+})
+const widget = computed(() => {
+  console.log(widgets.value, widgetId.value)
+  return _.find(widgets.value, { id: widgetId.value })
+})
+const widgetLabel = computed(() => {
+  if (!widget.value) return ''
+  return widget.value.label
+})
+const widgetHeader = computed(() => {
+  if (!widget.value) return null
+  let header = _.cloneDeep(widget.value.header)
+  header = utils.bindContent(header, widgetRef.value)
+  return header
 })
 const widgetStyle = computed(() => {
   if (currentWindow.size) {
@@ -210,35 +209,13 @@ watch(() => [$q.screen.width, $q.screen.height], (value) => {
 })
 
 // Functions
-function onWidgetRefCreated (reference) {
-  if (reference) {
-    // setup the corresponding header
-    const widget = _.find(availableWidgets.value, { id: currentWidget.value })
-    if (!widget.reference) {
-      logger.debug(`setting up widget ${widget.id}`)
-      widget.reference = reference
-      // bind the content and stores it
-      const content = [widget.content]
-      widget.content = Layout.bindContent(content, reference)[0]
-      // bind the header if any and stores it
-      if (widget.header) widget.header = Layout.bindContent(widget.header, reference)
-      else widget.header = [{ component: 'KStamp', text: widget.label, direction: 'horizontal' }]
-    }
-    widgetContent.value = widget.content
-    widgetHeader.value = widget.header
-    widgetReference.value = widget.reference
-  } else {
-    // empty the header
-    widgetHeader.value = null
-  }
-}
 function getGeometryKey () {
   return _.get(config, 'appName').toLowerCase() + '-' + props.placement + '-window-geometry'
 }
 function storeGeometry (position, size) {
   window.localStorage.setItem(getGeometryKey(), JSON.stringify({ position, size }))
 }
-function updateWindow (position, size) {
+function updateGeomtry (position, size) {
   // Code taken from quasar screen plugin code
   const w = size[0]
   const s = $q.screen.sizes
@@ -271,7 +248,7 @@ function updateWindow (position, size) {
     (window.md === true && 'md') ||
     (window.lg === true && 'lg') ||
     'xl'
-  Store.patch(`windows.${props.placement}`, window)
+  Store.patch(Layout.getElementPath(`windows.${props.placement}`), window)
 }
 function onPinned () {
   window.localStorage.removeItem(getGeometryKey())
@@ -286,11 +263,11 @@ function onMaximized () {
   onScreenResized()
 }
 function onRestored () {
-  updateWindow(backupPosition, backupSize)
+  updateGeomtry(backupPosition, backupSize)
   currentMode.value = backupMode
 }
 function onClosed () {
-  Store.patch(`windows.${props.placement}`, { visible: false })
+  Layout.setWindowVisible(props.placement, false)
 }
 function onMoved (event) {
   if (!event) return
@@ -302,7 +279,7 @@ function onMoved (event) {
       Math.max(Math.min(Math.floor(currentWindow.position[0] + event.delta.x), xMax), 0),
       Math.min(Math.max(Math.floor(currentWindow.position[1] + event.delta.y), 0), yMax)
     ]
-    Store.patch(`windows.${props.placement}`, { position: newPosition })
+    Layout.setWindowPosition(props.placement, newPosition)
     if (event.isFinal) storeGeometry(newPosition, currentWindow.size)
   }
 }
@@ -310,14 +287,14 @@ function onResized (event) {
   if (!event) return
   // Handle the pinned and floating currentMode
   if (currentMode.value !== 'maximized') {
-    currentMode.value = 'floating'
+    if (currentMode.value !== 'floating') currentMode.value = 'floating'
     const wMax = $q.screen.width - currentWindow.position[0]
     const hMax = $q.screen.height - currentWindow.position[1]
     const newSize = [
       Math.min(currentWindow.size[0] + event.delta.x, wMax),
       Math.min(currentWindow.size[1] + event.delta.y, hMax)
     ]
-    updateWindow(currentWindow.position, newSize)
+    updateGeomtry(currentWindow.position, newSize)
     if (event.isFinal) storeGeometry(currentWindow.position, newSize)
   }
 }
@@ -343,7 +320,7 @@ function onScreenResized () {
       x = props.placement === 'left' ? 0 : $q.screen.width - w
       y = $q.screen.height / 2 - h / 2
     }
-    updateWindow([x, y], [w, h])
+    updateGeomtry([x, y], [w, h])
   } else if (currentMode.value === 'floating') {
     // Floating mode
     if (currentWindow.position && currentWindow.size) {
@@ -363,26 +340,21 @@ function onScreenResized () {
         constrained = true
       }
       if (constrained) {
-        updateWindow([x, y], [w, h])
+        updateGeomtry([x, y], [w, h])
         storeGeometry([x, y], [w, h])
       }
     }
   } else {
     // Maximized mode
-    updateWindow([0, 0], [$q.screen.width, $q.screen.height])
+    updateGeomtry([0, 0], [$q.screen.width, $q.screen.height])
   }
 }
 
-// Immediate
-// pick a default widget if needed
-if (!currentWindow.current && currentWindow.widgets.length > 0) {
-  Store.patch(`windows.${props.placement}`, { current: currentWindow.widgets[0].id })
-}
 // restore the geometry if needed
 const geometry = window.localStorage.getItem(getGeometryKey())
 if (geometry) {
   const geometryObject = JSON.parse(geometry)
-  updateWindow(geometryObject.position, geometryObject.size)
+  updateGeomtry(geometryObject.position, geometryObject.size)
   currentMode.value = 'floating'
 } else {
   onPinned()

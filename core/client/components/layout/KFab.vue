@@ -40,54 +40,48 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { Layout } from '../../layout'
 import KAction from '../KAction.vue'
 
-export default {
-  components: {
-    KAction
-  },
-  props: {
-    expandableLimit: {
-      type: Number,
-      default: 8
-    }
-  },
-  data () {
-    return {
-      fab: this.$store.get('fab'),
-      isOpened: false
-    }
-  },
-  computed: {
-    icon () {
-      return this.fab.icon || 'las la-ellipsis-v'
-    },
-    actions () {
-      let fabActions = this.fab.actions
-      if (!fabActions) return null
-      const actions = []
-      // Apply filtering
-      fabActions = Layout.filterContent(fabActions, this.fab.filter || {})
-      _.forEach(fabActions, (action) => {
-        let isVisible = _.get(action, 'visible', true)
-        // Can be a functional call
-        if (typeof isVisible === 'function') {
-          isVisible = isVisible()
-        }
-        if (isVisible) {
-          action.uid = uid()
-          if (!action.color) action.color = 'primary'
-          actions.push(action)
-        }
-      })
-      return actions
-    }
+// Props
+const props = defineProps({
+  expandableLimit: {
+    type: Number,
+    default: 8
   }
-}
+})
+
+// Data
+const fab = Layout.getFab()
+const isOpened = ref(false)
+
+// Computed
+const icon = computed(() => {
+  return fab.icon || 'las la-ellipsis-v'
+})
+const actions = computed(() => {
+  //let fabActions = fab.mode ? fab.content[fab.mode] : fab.content
+  //if (!fabActions) return null
+  const actions = []
+  // Apply filtering
+  _.forEach(fab.components, (action) => {
+    let isVisible = _.get(action, 'visible', true)
+    // Can be a functional call
+    if (typeof isVisible === 'function') {
+      isVisible = isVisible()
+    }
+    if (isVisible) {
+      action.uid = uid()
+      if (!action.color) action.color = 'primary'
+      actions.push(action)
+    }
+  })
+  return actions
+})
 </script>
 
 <style lang="scss">
