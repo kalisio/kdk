@@ -17,7 +17,8 @@
 <script>
 import _ from 'lodash'
 import { copyToClipboard } from 'quasar'
-import { formatUserCoordinates, bindContent } from '../utils'
+import { Layout, utils as kdkCoreUtils } from '../../../core.client'
+import { formatUserCoordinates } from '../utils'
 import KAction from '../../../core/client/components/KAction.vue'
 
 export default {
@@ -57,22 +58,24 @@ export default {
   async mounted () {
     // Update page content with target
     const target = {
-      component: 'QImg', src: 'icons/kdk/target.svg', height: this.size, width: this.size, class: 'fixed-center k-position-indicator'
+      id: 'position-target', 
+      component: 'QImg', 
+      src: 'icons/kdk/target.svg', 
+      height: this.size, 
+      width: this.size, 
+      class: 'fixed-center k-position-indicator'
     }
-    bindContent(target, this.kActivity)
-    const content = this.$store.get('page.content') || []
+    kdkCoreUtils.bindContent(target, this.kActivity)
+    const components = Layout.getPage().components
     // Required to use splice when modifying an object inside an array to make it reactive
-    content.splice(content.length, 0, target)
-    this.$store.patch('page', { content })
+    components.splice(components.length, 0, target)
     this.kActivity.$engineEvents.on('move', this.updatePosition)
   },
   beforeUnmount () {
     const content = this.$store.get('page.content') || []
+    const components = Layout.getPage().components
     // Required to use splice when modifying an object inside an array to make it reactive
-    if (content) {
-      content.splice(_.findIndex(content, component => component.id === 'position-target'), 1)
-      this.$store.patch('page', { content })
-    }
+    components.splice(_.findIndex(components, component => component.id === 'position-target'), 1)
     this.kActivity.$engineEvents.off('move', this.updatePosition)
   }
 }
