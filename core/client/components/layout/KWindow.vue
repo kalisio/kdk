@@ -35,7 +35,7 @@
     <div class="fit">
       <component
         v-if="widget"
-        ref="widgetRef"
+        :ref="onWidgetRef"
         :is="widget.instance"
         v-bind="widget.content"
         :style="widgetStyle"
@@ -207,6 +207,9 @@ watch(() => [$q.screen.width, $q.screen.height], (value) => {
 })
 
 // Functions
+function onWidgetRef (referece) {
+  if (referece) widgetRef.value = referece
+}
 function getGeometryKey () {
   return _.get(config, 'appName').toLowerCase() + '-' + props.placement + '-window-geometry'
 }

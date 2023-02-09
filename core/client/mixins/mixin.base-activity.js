@@ -144,14 +144,6 @@ export function baseActivity (name) {
         })
       },
       openWindow (placement) {
-        /* const window = Layout.getWindow(placement)
-        if (window.visible) return
-        if (window.widgets.length === 0) {
-          logger.error(`No widgets unregistered for ${placement} window`)
-          return
-        }
-        if (window.current === '') this.$store.patch(`${Layout.windowsPath}.${placement}`, { current: window.widgets[0].id })
-        */
         Layout.setWindowVisible(placement, true)
       },
       closeWindow (placement) {
@@ -167,7 +159,7 @@ export function baseActivity (name) {
       openWidget (widget) {
         const { placement, window } = this.findWindow(widget)
         if (!placement) {
-          logger.error(`[KDK] Cannot find widget ${widget}`)
+          logger.warn(`[KDK] Cannot find widget ${widget}`)
           return
         }
         if (window.current !== widget) Layout.setWindowCurrent(placement, widget)
@@ -176,7 +168,7 @@ export function baseActivity (name) {
       closeWidget (widget) {
         const result = this.findWindow(widget)
         if (!result.placement) {
-          logger.error(`Cannot find widget ${widget}`)
+          logger.warn(`Cannot find widget ${widget}`)
           return
         }
         Layout.setWindowVisible(result.placement, false)
