@@ -58,11 +58,11 @@ export default {
   async mounted () {
     // Update page content with target
     const target = {
-      id: 'position-target', 
-      component: 'QImg', 
-      src: 'icons/kdk/target.svg', 
-      height: this.size, 
-      width: this.size, 
+      id: 'position-target',
+      component: 'QImg',
+      src: 'icons/kdk/target.svg',
+      height: this.size,
+      width: this.size,
       class: 'fixed-center k-position-indicator'
     }
     kdkCoreUtils.bindContent(target, this.kActivity)
@@ -72,7 +72,6 @@ export default {
     this.kActivity.$engineEvents.on('move', this.updatePosition)
   },
   beforeUnmount () {
-    const content = this.$store.get('page.content') || []
     const components = Layout.getPage().components
     // Required to use splice when modifying an object inside an array to make it reactive
     components.splice(_.findIndex(components, component => component.id === 'position-target'), 1)
