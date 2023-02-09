@@ -10,12 +10,13 @@ import moment from 'moment'
 import Papa from 'papaparse'
 import { Chart } from 'chart.js'
 import 'chartjs-adapter-moment'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { getCssVar } from 'quasar'
-import { downloadAsBlob } from '../../../../core/client/utils.js'
-import { Units } from '../../../../core/client/units'
-import { Time } from '../../../../core/client/time'
-import { i18n } from '../../../../core/client/i18n'
+import { Events } from '../../events'
+import { downloadAsBlob } from '../../utils'
+import { Units } from '../../units'
+import { Time } from '../../time'
+import { i18n } from '../../i18n'
 
 // const timeserie = {
 //   variable: { } variable definition
@@ -38,6 +39,7 @@ const props = defineProps({
   endTime: { type: Object, default: () => null },
   logarithmic: { type: Boolean, default: false },
   zoomable: { type: Boolean, default: true },
+  panable: { type: Boolean, default: false },
   currentTime: { type: Boolean, default: true },
   options: { type: Object, default: () => ({}) }
 })
@@ -59,6 +61,7 @@ watch(() => props.startTime, update)
 watch(() => props.endTime, update)
 watch(() => props.zoomable, update)
 watch(() => props.logarithmic, update)
+watch(() => props.currentTime, update)
 watch(() => props.options, update)
 
 // function
@@ -133,12 +136,20 @@ async function makeChartConfig () {
           }
         },
         annotation,
-        zoom: (props.zoomable
+        zoom: (props.zoomable || props.panable
           ? {
+              pan: {
+                enabled: props.panable,
+                mode: 'x',
+                scaleMode: 'x',
+                modifierKey: 'ctrl',
+                onPanStart: onZoomStart,
+                onPanComplete: onZoomEnd
+              },
               zoom: {
                 drag: {
-                  enabled: true,
-                  backgroundColor: getCssVar('secondary')
+                  enabled: props.zoomable,
+                  backgroundColor: getCssVar('secondary') + '88'
                 },
                 mode: 'x',
                 onZoomStart: onZoomStart,
@@ -357,4 +368,17 @@ async function update () {
     chart.update()
   }
 }
+
+async function updateCurrentTime () {
+  if (!props.currentTime) return
+  update()
+}
+
+// Hooks
+onMounted(() => {
+  Events.on('time-current-time-changed', updateCurrentTime)
+})
+onBeforeUnmount(() => {
+  Events.off('time-current-time-changed', updateCurrentTime)
+})
 </script>

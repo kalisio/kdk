@@ -9,6 +9,7 @@
       <k-time-series-chart v-if="timeSerie.pinned && !timeSerie.table" :id="`${timeSerie.id}-timeseries-chart`"
         class="col q-pl-sm q-pr-sm" :ref="components[index].onChartRef" :options="chartOptions" :time-series="timeSerie.series"
         :x-axis-key="xAxisKey" :y-axis-key="yAxisKey" :logarithmic="timeSerie.logarithmic"
+        :zoomable="zoomable" :panable="panable"
         :start-time="startTime" :end-time="endTime" @zoom-start="onZoomStart" @zoom-end="onZoomEnd"/>
       <k-data-table v-if="timeSerie.pinned && timeSerie.table"
         :id="`${timeSerie.id}-timeseries-chart`" class="col q-pl-sm q-pr-sm" :ref="components[index].onTableRef"
@@ -24,6 +25,7 @@
         :id="`${timeSerie.id}-timeseries-chart`" class="col q-pl-sm q-pr-sm"
         :ref="components[index].onChartRef" :options="chartOptions" :time-series="timeSerie.series"
         :x-axis-key="xAxisKey" :y-axis-key="yAxisKey" :logarithmic="timeSerie.logarithmic"
+        :zoomable="zoomable" :panable="panable"
         :start-time="startTime" :end-time="endTime" @zoom-start="onZoomStart" @zoom-end="onZoomEnd"/>
       <k-data-table v-if="timeSerie.visible && !timeSerie.pinned && timeSerie.table"
         :id="`${timeSerie.id}-timeseries-table`" class="col q-pl-sm q-pr-sm" :ref="components[index].onTableRef"
@@ -56,6 +58,8 @@ const props = defineProps({
   timeSeries: { type: Array, default: () => [] },
   xAxisKey: { type: String, default: 'x' },
   yAxisKey: { type: String, default: 'y' },
+  zoomable: { type: Boolean, default: true },
+  panable: { type: Boolean, default: false },
   schema: { type: [String, Object], default: null },
   actions: { type: Array, default: () => [] },
   chartOptions: { type: Object, default: () => ({}) },
