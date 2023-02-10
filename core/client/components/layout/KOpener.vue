@@ -23,7 +23,7 @@
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 
-// props
+// Props
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -38,21 +38,21 @@ const props = defineProps({
   }
 })
 
-// emit
+// Emit
 const emit = defineEmits(['update:modelValue'])
 
-// data
+// Data
 const $q = useQuasar()
 const isDesktop = $q.platform.is.desktop
 const isHovered = ref(false)
 const icon = ref(null)
 
-// computed
+// Computed
 const isOpened = computed(() => {
   return props.modelValue
 })
 
-// functions
+// Functions
 function onMouseOver () {
   if (!isDesktop) return
   isHovered.value = true

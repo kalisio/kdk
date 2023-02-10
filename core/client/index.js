@@ -3,6 +3,7 @@ import logger from 'loglevel'
 import config from 'config'
 import { Platform, Notify } from 'quasar'
 import { Store } from './store.js'
+import { LocalStorage } from './local-storage.js'
 import { Layout } from './layout.js'
 import { Time } from './time.js'
 import { Units } from './units.js'
@@ -37,6 +38,7 @@ export * from './reader.js'
 export * from './sorter.js'
 export * from './search.js'
 export * from './i18n.js'
+export * from './local-storage.js'
 export * from './guards.js'
 export * from '../common/index.js'
 export { utils }
@@ -58,10 +60,11 @@ export default function init () {
   // Last, create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
+  LocalStorage.initialize()
+  Storage.initialize()
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()
-  Storage.initialize()
   Schema.initialize(_.get(config, 'schema'))
   // Listen to the 'patched' event on the users
   const users = api.getService('users')

@@ -127,8 +127,9 @@
   </q-page>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { ref, computed, watch } from 'vue'
 import { Layout } from '../../layout.js'
 import KContent from '../KContent.vue'
 import KPanel from '../KPanel.vue'
@@ -136,153 +137,142 @@ import KOpener from './KOpener.vue'
 import KWindow from './KWindow.vue'
 import KFab from './KFab.vue'
 
-export default {
-  components: {
-    KContent,
-    KPanel,
-    KOpener,
-    KWindow,
-    KFab
+// Props
+const props = defineProps({
+  padding: {
+    type: Boolean,
+    default: true
+  }
+})
+
+// Emit
+const emit = defineEmits(['content-resized'])
+
+// Data
+const page = Layout.getPage()
+const fab = Layout.getFab()
+const leftPane = Layout.getPane('left')
+const topPane = Layout.getPane('top')
+const rightPane = Layout.getPane('right')
+const bottomPane = Layout.getPane('bottom')
+const leftWindow = Layout.getWindow('left')
+const topWindow = Layout.getWindow('top')
+const rightWindow = Layout.getWindow('right')
+const bottomWindow = Layout.getWindow('bottom')
+const layoutOffset = ref(0)
+const topPadding = ref(0)
+const bottomPadding = ref(0)
+const rightPadding = ref(0)
+const fabOffset = ref([16, 16])
+
+// Computed
+const  contentStyleFunction = computed(() => {
+  const layoutPadding = props.padding ? 24 * 2 : 0
+  const widthOffset = layoutPadding
+  const heightOffset = layoutOffset.value + layoutPadding
+  return {
+    paddingTop: `${topPadding}px`,
+    paddingBottom: `${bottomPadding}px`,
+    paddingRight: `${rightPadding}px`,
+    widht: `calc(100vw - ${widthOffset}px)`,
+    height: `calc(100vh - ${heightOffset}px)`
+  }
+})
+const isTopPaneOpened = computed({
+  get: function () {
+    return topPane.visible
   },
-  props: {
-    padding: {
-      type: Boolean,
-      default: true
-    }
+  set: function (value) {
+    setTopPaneVisible(value)
+  }
+})
+const isLeftPaneOpened = computed({
+  get: function () {
+    return leftPane.visible
   },
-  computed: {
-    contentStyleFunction () {
-      const layoutPadding = this.padding ? 24 * 2 : 0
-      const widthOffset = layoutPadding
-      const heightOffset = this.layoutOffset + layoutPadding
-      return {
-        paddingTop: `${this.topPadding}px`,
-        paddingBottom: `${this.bottomPadding}px`,
-        paddingRight: `${this.rightPadding}px`,
-        widht: `calc(100vw - ${widthOffset}px)`,
-        height: `calc(100vh - ${heightOffset}px)`
-      }
-    },
-    isTopPaneOpened: {
-      get: function () {
-        return this.topPane.visible
-      },
-      set: function (value) {
-        this.setTopPaneVisible(value)
-      }
-    },
-    isLeftPaneOpened: {
-      get: function () {
-        return this.leftPane.visible
-      },
-      set: function (value) {
-        this.setLeftPaneVisible(value)
-      }
-    },
-    isRightPaneOpened: {
-      get: function () {
-        return this.rightPane.visible
-      },
-      set: function (value) {
-        this.setRightPaneVisible(value)
-      }
-    },
-    isBottomPaneOpened: {
-      get: function () {
-        return this.bottomPane.visible
-      },
-      set: function (value) {
-        this.setBottomPaneVisible(value)
-      }
-    },
-    hasLeftPaneComponents () {
-      return !_.isEmpty(this.leftPane.components)
-    },
-    hasTopPaneComponents () {
-      return !_.isEmpty(this.topPane.components)
-    },
-    hasRightPaneComponents () {
-      return !_.isEmpty(this.rightPane.components)
-    },
-    hasBottomPaneComponents () {
-      return !_.isEmpty(this.bottomPane.components)
-    }
+  set: function (value) {
+    setLeftPaneVisible(value)
+  }
+})
+const isRightPaneOpened = computed({
+  get: function () {
+    return rightPane.visible
   },
-  data () {
-    return {
-      page: Layout.getPage(),
-      leftPane: Layout.getPane('left'),
-      topPane: Layout.getPane('top'),
-      rightPane: Layout.getPane('right'),
-      bottomPane: Layout.getPane('bottom'),
-      leftWindow: Layout.getWindow('left'),
-      topWindow: Layout.getWindow('top'),
-      rightWindow: Layout.getWindow('right'),
-      bottomWindow: Layout.getWindow('bottom'),
-      fab: Layout.getFab(),
-      layoutOffset: 0,
-      topPadding: 0,
-      leftPadding: 0,
-      bottomPadding: 0,
-      rightPadding: 0,
-      fabOffset: [16, 16]
-    }
+  set: function (value) {
+    setRightPaneVisible(value)
+  }
+})
+const isBottomPaneOpened = computed({
+  get: function () {
+    return bottomPane.visible
   },
-  watch: {
-    'leftPane.visible': {
-      immediate: true,
-      handler (visible) {
-        if (visible) {
-          setTimeout(() => {
-            document.addEventListener('click', this.clickOutsideLeftPanelListener, true)
-          }, 500)
-        } else {
-          document.removeEventListener('click', this.clickOutsideLeftPanelListener, true)
-        }
-      }
-    }
-  },
-  methods: {
-    layoutOffsetListener (offset) {
-      // Catch layout offset and returns default Quasar function
-      // see https://quasar.dev/layout/page#style-fn
-      this.layoutOffset = offset
-      return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
-    },
-    onContentResized (size) {
-      this.$emit('content-resized', size)
-    },
-    onTopPaneResized (size) {
-      this.topPadding = size.height
-    },
-    onRightPaneResized (size) {
-      this.rightPaddding = size.width
-    },
-    onBottomPaneResized (size) {
-      this.bottomPadding = size.height
-    },
-    setTopPaneVisible (visible) {
-      Layout.setPaneVisible('top', visible)
-    },
-    setLeftPaneVisible (visible) {
-      Layout.setPaneVisible('left', visible)
-    },
-    setRightPaneVisible (visible) {
-      Layout.setPaneVisible('right', visible)
-    },
-    setBottomPaneVisible (visible) {
-      Layout.setPaneVisible('bottom', visible)
-    },
-    clickOutsideLeftPanelListener (event) {
-      const leftPanelElement = document.getElementById('left-panel')
-      if (leftPanelElement) {
-        if (!leftPanelElement.contains(event.target)) {
-          const leftOpenerElement = document.getElementById('left-opener')
-          if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
-          event.stopPropagation()
-          this.setLeftPaneVisible(false)
-        }
-      }
+  set: function (value) {
+    setBottomPaneVisible(value)
+  }
+})
+const hasLeftPaneComponents = computed(() => {
+  return !_.isEmpty(leftPane.components)
+})
+const hasTopPaneComponents = computed(() => {
+  return !_.isEmpty(topPane.components)
+})
+const hasRightPaneComponents = computed(() => {
+  return !_.isEmpty(rightPane.components)
+})
+const hasBottomPaneComponents = computed(() => {
+  return !_.isEmpty(bottomPane.components)
+})
+  
+// Watch
+watch(leftPane, (pane) => {
+  if (pane.visible) {
+    setTimeout(() => {
+      document.addEventListener('click', clickOutsideLeftPanelListener, true)
+    }, 500)
+  } else {
+    document.removeEventListener('click', clickOutsideLeftPanelListener, true)
+  }
+}, { immediate: true })
+  
+// Functions
+function layoutOffsetListener (offset) {
+  // Catch layout offset and returns default Quasar function
+  // see https://quasar.dev/layout/page#style-fn
+  layoutOffset.value = offset
+  return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
+}
+function onContentResized (size) {
+  emit('content-resized', size)
+}
+function onTopPaneResized (size) {
+  topPadding.value = size.height
+}
+function onRightPaneResized (size) {
+  rightPadding.value = size.width
+}
+function onBottomPaneResized (size) {
+  bottomPadding.value = size.height
+}
+function setTopPaneVisible (visible) {
+  Layout.setPaneVisible('top', visible)
+}
+function setLeftPaneVisible (visible) {
+  Layout.setPaneVisible('left', visible)
+}
+function setRightPaneVisible (visible) {
+  Layout.setPaneVisible('right', visible)
+}
+function setBottomPaneVisible (visible) {
+  Layout.setPaneVisible('bottom', visible)
+}
+function clickOutsideLeftPanelListener (event) {
+  const leftPanelElement = document.getElementById('left-panel')
+  if (leftPanelElement) {
+    if (!leftPanelElement.contains(event.target)) {
+      const leftOpenerElement = document.getElementById('left-opener')
+      if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
+      event.stopPropagation()
+      setLeftPaneVisible(false)
     }
   }
 }

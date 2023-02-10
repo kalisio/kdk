@@ -59,10 +59,9 @@
 
 <script setup>
 import _ from 'lodash'
-import config from 'config'
 import { ref, computed, watch, provide } from 'vue'
 import { useQuasar } from 'quasar'
-import { Store, Layout, utils } from '../..'
+import { Store, LocalStorage, Layout, utils } from '../..'
 import KPanel from '../KPanel.vue'
 
 // Props
@@ -208,10 +207,10 @@ watch(() => [$q.screen.width, $q.screen.height], (value) => {
 
 // Functions
 function getGeometryKey () {
-  return _.get(config, 'appName').toLowerCase() + '-' + props.placement + '-window-geometry'
+  return `windows-${props.placement}-geometry`
 }
 function storeGeometry (position, size) {
-  window.localStorage.setItem(getGeometryKey(), JSON.stringify({ position, size }))
+  LocalStorage.set(getGeometryKey(), { position, size })
 }
 function updateGeomtry (position, size) {
   // Code taken from quasar screen plugin code
@@ -248,7 +247,7 @@ function updateGeomtry (position, size) {
   Store.patch(Layout.getElementPath(`windows.${props.placement}`), window)
 }
 function onPinned () {
-  window.localStorage.removeItem(getGeometryKey())
+  LocalStorage.clear(getGeometryKey())
   currentMode.value = 'pinned'
   onScreenResized()
 }
@@ -348,10 +347,9 @@ function onScreenResized () {
 }
 
 // restore the geometry if needed
-const geometry = window.localStorage.getItem(getGeometryKey())
+const geometry = LocalStorage.get(getGeometryKey())
 if (geometry) {
-  const geometryObject = JSON.parse(geometry)
-  updateGeomtry(geometryObject.position, geometryObject.size)
+  updateGeomtry(geometry.position, geometry.size)
   currentMode.value = 'floating'
 } else {
   onPinned()

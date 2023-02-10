@@ -9,7 +9,7 @@ const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
 const contentDefaults = { content: null, filter: {}, mode: null, visible: false }
 const defaults = {
-  options: { view: 'lHh LpR lFf' },
+  layout: { view: 'lHh LpR lFf', mode: null },
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults },
@@ -41,7 +41,7 @@ export const Layout = {
   },
   initialize () {
     // create the store structure for each element with their configuration
-    Store.set(this.paths.layout, this.getOptionsDefaults())
+    Store.set(this.paths.layout, this.getLayoutDefaults())
     Store.set(this.paths.header, this.getElementDefaults('header'))
     Store.set(this.paths.footer, this.getElementDefaults('footer'))
     Store.set(this.paths.page, this.getElementDefaults('page'))
@@ -56,17 +56,13 @@ export const Layout = {
   get () {
     return Store.get(this.paths.layout)
   },
-  getOptions () {
-    return _.pick(this.get(), _.keys(defaults.options))
+  getLayoutDefaults () {
+    return Object.assign({}, defaults.options, _.pick(_.get(config, this.paths.layout), _.keys(defaults.layout)))
   },
-  getOptionsDefaults () {
-    return Object.assign({}, defaults.options, _.pick(_.get(config, this.paths.layout), _.keys(defaults.options)))
-  },
-  setOptions (options) {
-    Store.patch(this.paths.layout, _.pick(options, _.keys(defaults.options)))
+  setView (view) {
+    Store.patch(this.paths.layout, { view })
   },
   setMode (mode) {
-    logger.debug(`[KDK] switching layout mode to ${mode}`)
     this.setHeaderMode(mode)
     this.setFooterMode(mode)
     this.setPageMode(mode)
@@ -75,6 +71,10 @@ export const Layout = {
       this.setPaneMode(placement, mode)
       this.setWindowMode(placement, mode)
     })
+    Store.patch(this.paths.layout, { mode })
+  },
+  getMode () {
+    return this.get().mode
   },
   getElement (element) {
     return Store.get(this.getElementPath(element))
