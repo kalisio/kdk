@@ -129,7 +129,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { Layout } from '../../layout.js'
 import KContent from '../KContent.vue'
 import KPanel from '../KPanel.vue'
@@ -164,6 +164,7 @@ const topPadding = ref(0)
 const bottomPadding = ref(0)
 const rightPadding = ref(0)
 const fabOffset = ref([16, 16])
+let hasLeftPaneListener = false
 
 // Computed
 const  contentStyleFunction = computed(() => {
@@ -228,8 +229,10 @@ watch(leftPane, (pane) => {
   if (pane.visible) {
     setTimeout(() => {
       document.addEventListener('click', clickOutsideLeftPanelListener, true)
+      hasLeftPaneListener = true
     }, 500)
   } else {
+    hasLeftPaneListener = false
     document.removeEventListener('click', clickOutsideLeftPanelListener, true)
   }
 }, { immediate: true })
@@ -276,6 +279,11 @@ function clickOutsideLeftPanelListener (event) {
     }
   }
 }
+
+// Hooks
+onBeforeUnmount(() => {
+  if (hasLeftPaneListener) document.removeEventListener('click', clickOutsideLeftPanelListener, true)
+})
 </script>
 
 <style lang="scss">

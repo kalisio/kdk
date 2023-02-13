@@ -116,7 +116,7 @@ const computedButtons = computed(() => {
     if (okButton.handler) {
       // overload the handler to call Quasar onDialogOK
       okButton.handler = async () => {
-        // ! call the origonal handler to avoid recurcive call
+        // ! call the origonal handler to avoid recursive call
         const result = await props.okAction.handler(componentRef.value)
         // close dialog if and only if the handler returns true
         if (result) onDialogOK()
