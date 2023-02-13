@@ -20,10 +20,8 @@ import { useCurrentActivity, useHighlight } from '../../composables'
 import { fetchProfileDataset, fetchElevation, extractElevation } from '../../elevation-utils.js'
 
 // TODO: update pan/zoom with ability over scale
-// TODO: customize legends, ghost icon
+// TODO: reset zoom
 // TODO: curv abscissa use metho on chart instead
-// TODO: no tooltip when not over chart area
-// TODO: profile & terrain colors as props ?
 
 export default {
   components: {
@@ -32,23 +30,41 @@ export default {
     KStamp
   },
   props: {
+    layerStorePath: {
+      type: String,
+      default: ''
+    },
+    featureStorePath: {
+      type: String,
+      default: ''
+    },
     highlight: {
       type: Object,
       default: () => ({ 'stroke-color': 'primary', 'fill-opacity': 0, zOrder: 1 })
     },
-    xAxisLabel: '',
-    yAxisLabel: '',
+    xAxisLabel: { type: String, default: '' },
+    yAxisLabel: { type: String, default: '' },
     mapGhostIcon: {
       type: Object,
-      default: () => ({})
+      default (rawProps) {
+        return { 'marker-type': 'marker', 'marker-color': 'primary', 'icon-classes': 'las la-mountain', 'icon-color': 'secondary' }
+      }
     },
-    terrainLegend: ''
+    terrainLegend: { type: String, default: '' }
   },
   computed: {
     feature () {
+      if (this.featureStorePath) {
+        const f = Store.get(this.featureStorePath)
+        return f
+      }
       return this.hasSelectedFeature() && this.getSelectedFeature()
     },
     layer () {
+      if (this.layerStorePath) {
+        const l = Store.get(this.layerStorePath)
+        return l
+      }
       return this.hasSelectedLayer() && this.getSelectedLayer()
     },
     title () {
@@ -88,24 +104,6 @@ export default {
       const lbl = this.yAxisLabel
       return lbl ? lbl : this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', { unit: this.chartHeightUnit })
     },
-    getMapGhostIcon () {
-      const def = {
-        'marker-type': 'marker',
-        'marker-color': 'primary',
-        // 'marker-color': 'secondary',
-        // 'icon-classes': 'las la-map-marker',
-        'icon-classes': 'las la-mountain',
-        'icon-color': 'secondary'
-        // 'icon-color': 'primary'
-      }
-      const icon = this.mapGhostIcon
-      return _.isEmpty(icon) ? def : icon
-    },
-    getProfileLegend () {
-      // const lbl = this.profileLegend
-      // return lbl ? lbl : this.$t('KElevationProfile.PROFILE_CHART_LEGEND')
-      return this.title
-    },
     getTerrainLegend () {
       const lbl = this.terrainLegend
       return lbl ? lbl : this.$t('KElevationProfile.TERRAIN_CHART_LEGEND')
@@ -116,24 +114,33 @@ export default {
         data: { datasets: [] },
         plugins: [{
           // a simple plugin to display a vertical line at cursor position
+          // and hide tooltip on specific conditions
           beforeEvent: (chart, args) => {
             if (args.event.type === 'mousemove') {
-              if ((args.event.x >= chart.chartArea.left) &&
-                  (args.event.x <= chart.chartArea.right)) {
-                chart.config.options.vline.enabled = true
+              const inChartY = (args.event.y >= chart.chartArea.top) && (args.event.y <= chart.chartArea.bottom)
+              const inChartX = (args.event.x >= chart.chartArea.left) && (args.event.x <= chart.chartArea.right)
+
+              this.mouseOverChart = inChartX && inChartY
+              if (this.mouseOverChart) {
                 chart.config.options.vline.x = args.event.x
-              } else {
-                chart.config.options.vline.enabled = false
+              } else if (this.highlightFeature) {
+                this.unhighlight(this.highlightFeature)
+                this.highlightFeature = undefined
               }
             } else if (args.event.type === 'mouseout') {
-              chart.config.options.vline.enabled = false
-              this.unhighlight(this.highlightFeature)
+              this.mouseOverChart = false
             }
           },
+          beforeTooltipDraw: (ctx, args) => {
+            if (!this.mouseOverChart || this.panningOrZooming)
+              args.tooltip.opacity = 0
+          },
           afterDraw: (chart) => {
+            if (!this.mouseOverChart || this.panningOrZooming) return
+
             const x = chart.config.options.vline.x
             const ctx = chart.ctx
-            if (chart.config.options.vline.enabled && !isNaN(x)) {
+            if (!isNaN(x)) {
               ctx.save()
               ctx.translate(0.5, 0.5)
               ctx.lineWidth = 1
@@ -173,17 +180,10 @@ export default {
                 }
 
                 this.highlightFeature = along(segment, abscissaKm, { units: 'kilometers' })
-                this.highlightFeature.properties = this.getMapGhostIcon()
+                this.highlightFeature.properties = _.cloneDeep(this.mapGhostIcon)
                 this.highlight(this.highlightFeature)
               }
             }
-
-            // restore tooltip and vline if they've been disabled during
-            // pan or zoom animation
-            if (context.chart.config.options.plugins.tooltip.enabled) return
-            context.chart.config.options.plugins.tooltip.enabled = true
-            context.chart.config.options.vline.enabled = true
-            context.chart.update()
           },
           interaction: {
             mode: 'xSingle',
@@ -215,7 +215,6 @@ export default {
             }
           },
           vline: { // option values related to vertical line plugin defined inline
-            enabled: false,
             x: 0,
             color: 'black'
           },
@@ -274,11 +273,10 @@ export default {
                   const hasModifiers = event ? (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) : false
                   if (hasModifiers) return false
 
-                  // hide tooltip & vline while zooming
-                  context.chart.config.options.plugins.tooltip.enabled = false
-                  context.chart.config.options.vline.enabled = false
+                  this.panningOrZooming = true
                   return true
-                }
+                },
+                onPanComplete: (context) => { this.panningOrZooming = false }
               },
               limits: {
                 x: { min: 'original', max: 'original' },
@@ -296,11 +294,10 @@ export default {
                 },
                 mode: 'x',
                 onZoomStart: (context) => {
-                  // hide tooltip & vline while zooming
-                  context.chart.config.options.plugins.tooltip.enabled = false
-                  context.chart.config.options.vline.enabled = false
+                  this.panningOrZooming = true
                   return true
-                }
+                },
+                onZoomComplete: (context) => { this.panningOrZooming = false }
               }
             }
           }
@@ -310,7 +307,7 @@ export default {
       // Add profile elevation if provided
       if (profileDataset.length) {
         update.data.datasets.push({
-          label: this.getProfileLegend(),
+          label: this.title,
           data: profileDataset,
           fill: false,
           borderColor: profileColor,
@@ -390,7 +387,11 @@ export default {
           endpoint, this.feature, this.chartDistanceUnit, this.chartHeightUnit, {
             additionalHeaders: headers,
             defaultResolution: defaultRes,
-            defaultResolutionUnit: 'm'
+            defaultResolutionUnit: 'm',
+            // The lowest point on dry land is the shore of the Dead Sea, shared by Israel, Palestine,
+            // and Jordan, 432.65 m (1,419 ft) below sea level
+            // cf. https://en.wikipedia.org/wiki/Extremes_on_Earth
+            minElevationValue: Units.convert(-500, 'm', this.chartHeightUnit)
           })
         const { dataset, geojson } = extractElevation(queries)
         terrainDataset = dataset
@@ -427,16 +428,27 @@ export default {
     }
   },
   mounted () {
+    this.panningOrZooming = false
+    this.mouseOverChart = false
+
     this.debouncedRefresh = _.debounce(this.refresh, 100)
 
     // Setup listeners
     this.$events.on('units-default-length-changed', this.debouncedRefresh)
     this.$events.on('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath)
+      this.$events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh)
+    if (this.featureStorePath)
+      this.$events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh)
   },
   beforeUnmount () {
     // Release listeners
     this.$events.off('units-default-length-changed', this.debouncedRefresh)
     this.$events.off('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath)
+      this.$events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh)
+    if (this.featureStorePath)
+      this.$events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh)
   },
   setup (props) {
     return {
