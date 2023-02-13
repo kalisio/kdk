@@ -169,13 +169,24 @@ function addSecurityMargin (feature, queries, altitudeUnit) {
 // On success returns the array of performed queries (one per multilinestring element, or only one if linestring)
 // Queries are defined the same way as in queryElevation function
 // If noSecurityMargin is set, it'll skip the security margin step
-async function fetchElevation (endpoint, feature, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor, noSecurityMargin } = {}) {
+// If minElevationValue is set, any elevation lower than this will be set to 0 (expected in altitudeUnit)
+async function fetchElevation (endpoint, feature, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor, noSecurityMargin, minElevationValue } = {}) {
   const queries = await queryElevation(endpoint, feature, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor })
 
   // Compatibility with initial airbus elevation profile where
   // securityMargin was an offset to add per segment
   if (!noSecurityMargin)
     addSecurityMargin(feature, queries, altitudeUnit)
+
+  if (minElevationValue !== undefined) {
+    for (let i = 0; i < queries.length; ++i) {
+      const q = queries[i]
+      for (const point of q.elevation.features) {
+        if (point.properties.z < minElevationValue)
+          point.properties.z = 0
+      }
+    }
+  }
 
   return queries
 }
