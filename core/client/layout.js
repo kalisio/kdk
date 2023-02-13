@@ -47,8 +47,8 @@ export const Layout = {
     Store.set(this.paths.page, this.getElementDefaults('page'))
     Store.set(this.paths.fab, this.getElementDefaults('fab'))
     placements.forEach(placement => {
-      Store.set(_.get(this.paths.panes, placement), this.getElementDefaults('panes', placement))
-      Store.set(_.get(this.paths.windows, placement), this.getElementDefaults('windows', placement))
+      Store.set(_.get(this.paths.panes, placement), this.getElementDefaults(`panes.${placement}`))
+      Store.set(_.get(this.paths.windows, placement), this.getElementDefaults(`windows.${placement}`))
     })
     // debug message
     logger.debug(`[KDK] layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
@@ -86,6 +86,7 @@ export const Layout = {
     const elementPath = this.getElementPath(element)
     const elementDefaults = defaults[element.split('.')[0]]
     const elementConfig = _.get(config, elementPath)
+    console.log(element, elementPath, elementDefaults, elementConfig, _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults))
     return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
   },
   setElement (element, options, context) {
