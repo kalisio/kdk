@@ -338,9 +338,6 @@ export default {
           }, _.omit(props.route, ['query', 'params']))).catch(() => {})
         }
       }       
-      // Notify the listeners
-      console.log('[KDK] *** KAction triggered')
-      emit('triggered', props.context, isToggled.value)
       // Handle the dialog case
       if (props.dialog) {
         let dialog = props.dialog
@@ -353,6 +350,8 @@ export default {
         }
         $q.dialog(dialog)
       }
+      // Notify the listeners
+      emit('triggered', props.context, isToggled.value)
     }
 
     // watch

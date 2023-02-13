@@ -270,14 +270,10 @@ function setBottomPaneVisible (visible) {
 }
 function clickOutsideLeftPanelListener (event) {
   const leftPanelElement = document.getElementById('left-panel')
-  if (leftPanelElement) {
-    if (!leftPanelElement.contains(event.target)) {
-      const leftOpenerElement = document.getElementById('left-opener')
-      if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
-      event.stopPropagation()
-      setLeftPaneVisible(false)
-    }
-  }
+  if (leftPanelElement && leftPanelElement.contains(event.target)) return 
+  const leftOpenerElement = document.getElementById('left-opener')
+  if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
+  setLeftPaneVisible(false)
 }
 
 // Hooks
