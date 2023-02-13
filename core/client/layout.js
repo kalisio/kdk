@@ -86,7 +86,6 @@ export const Layout = {
     const elementPath = this.getElementPath(element)
     const elementDefaults = defaults[element.split('.')[0]]
     const elementConfig = _.get(config, elementPath)
-    console.log(element, elementPath, elementDefaults, elementConfig, _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults))
     return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
   },
   setElement (element, options, context) {
