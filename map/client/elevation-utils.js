@@ -24,12 +24,15 @@ function fetchProfileDataset (feature, distanceUnit, altitudeUnit) {
 
   // Extract profile altitude at each point if available on the segments
   const dataset = []
+  const segments = []
   let allCoordsHaveAltitude = true
   let curvilinearOffset = 0
   let curvilinearIndex = 0
   for (let i = 0; i < linestrings.length && allCoordsHaveAltitude; ++i) {
     const currentLine = linestrings[i]
     const dataUnit = _.get(currentLine, 'properties.altitudeUnit', 'm')
+    segments.push({ numPoints: currentLine.geometry.coordinates.length })
+
     // Gather profile altitude at each coord, make sure all coords have height along the way
     coordEach(currentLine, (coord, coordIdx) => {
       // Skip first point of all segments except the first one since we assume
@@ -53,7 +56,7 @@ function fetchProfileDataset (feature, distanceUnit, altitudeUnit) {
     }
   }
 
-  return allCoordsHaveAltitude ? dataset : []
+  return { dataset: allCoordsHaveAltitude ? dataset : [], segments: segments }
 }
 
 function asArray(val) { return (Array.isArray(val) || val === undefined) ? val : [ val ] }

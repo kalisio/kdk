@@ -381,7 +381,8 @@ export default {
       try {
         // Default evelation resolution is max(1 point every 5 pixels, 30m)
         const defaultRes = Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / 5), 30)
-        profileDataset = fetchProfileDataset(this.feature, this.chartDistanceUnit, this.chartHeightUnit)
+        const result = fetchProfileDataset(this.feature, this.chartDistanceUnit, this.chartHeightUnit)
+        profileDataset = result.dataset
         this.updateChart([], profileDataset, profileColor, chartWidth)
         const queries = await fetchElevation(
           endpoint, this.feature, this.chartDistanceUnit, this.chartHeightUnit, {
