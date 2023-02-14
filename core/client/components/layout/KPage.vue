@@ -224,7 +224,7 @@ const hasBottomPaneComponents = computed(() => {
 })
   
 // Watch
-watch('leftPane.visible', (visible) => {
+watch(() => leftPane.visible, (visible) => {
   if (visible) {
     setTimeout(() => {
       document.addEventListener('click', clickOutsideLeftPanelListener, true)
