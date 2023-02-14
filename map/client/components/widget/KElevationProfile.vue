@@ -97,12 +97,12 @@ export default {
       return !_.isNil(this.profile)
     },
     getXAxisLabel () {
-      const lbl = this.xAxisLabel
-      return lbl ? lbl : this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND', { unit: this.chartDistanceUnit })
+      const ctx = { unit: this.chartDistanceUnit }
+      return this.xAxisLabel ? _.template(this.xAxisLabel)(ctx) : this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND', ctx)
     },
     getYAxisLabel () {
-      const lbl = this.yAxisLabel
-      return lbl ? lbl : this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', { unit: this.chartHeightUnit })
+      const ctx = { unit: this.chartHeightUnit }
+      return this.yAxisLabel ? _.template(this.yAxisLabel)(ctx) : this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', ctx)
     },
     getTerrainLegend () {
       const lbl = this.terrainLegend
