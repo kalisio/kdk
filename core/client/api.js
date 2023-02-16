@@ -274,5 +274,12 @@ export function createClient (config) {
   return api
 }
 
-// Create a defult client based on app configuration
-export const api = createClient(configuration)
+// We don't create a default client based on app configuration here
+// as we don't know when the file will be imported first,
+// eg it might be imported before another one updating the config.
+// It is up to the application to instanciate the client when required.
+export let api
+export function initializeApi() {
+  api = createClient(configuration)
+  return api
+}
