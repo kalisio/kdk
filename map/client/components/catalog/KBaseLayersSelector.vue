@@ -105,6 +105,6 @@ export default {
   cursor: pointer;
 }
 .k-layer-card-active {
-  border: 1px solid var(--q-color-primary);
+  border: 1px solid var(--q-primary);
 }
 </style>

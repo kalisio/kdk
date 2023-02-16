@@ -69,22 +69,22 @@ export default {
 
 <style lang="scss">
   .vue-slider-rail {
-    background-color: var(--q-color-primary);
+    background-color: var(--q-primary);
   }
   .vue-slider-disabled .vue-slider-rail {
-    background-color: var(--q-color-primary);
+    background-color: var(--q-primary);
   }
   .vue-slider-process {
-    background-color: var(--q-color-primary);
+    background-color: var(--q-primary);
   }
   .vue-slider-dot-handle {
-    background-color: var(--q-color-primary);
+    background-color: var(--q-primary);
   }
   .vue-slider-dot-handle::after {
-    background-color: var(--q-color-dark);
+    background-color: var(--q-dark);
   }
   .vue-slider-dot-tooltip-inner {
-    background-color: var(--q-color-dark);
+    background-color: var(--q-dark);
   }
   .vue-slider-dot-tooltip-text {
     width: 60px;
@@ -92,9 +92,9 @@ export default {
     font-size: 1em;
   }
   .vue-slider-mark-step {
-    background-color: var(--q-color-accent);
+    background-color: var(--q-accent);
   }
   .vue-slider-mark-step-active {
-    background-color: var(--q-color-accent);
+    background-color: var(--q-accent);
   }
 </style>

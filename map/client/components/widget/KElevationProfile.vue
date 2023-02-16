@@ -7,15 +7,21 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { getCssVar, copyToClipboard, exportFile } from 'quasar'
+import { getCssVar, copyToClipboard, exportFile, colors } from 'quasar'
 import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { segmentEach, coordEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
 import { Units } from '../../../../core/client/units'
+import { Store } from '../../../../core/client/store'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
+import { fetchProfileDataset, fetchElevation, extractElevation } from '../../elevation-utils.js'
+
+// TODO: update pan/zoom with ability over scale
+// TODO: reset zoom
+// TODO: curv abscissa use metho on chart instead
 
 export default {
   components: {
@@ -24,16 +30,41 @@ export default {
     KStamp
   },
   props: {
+    layerStorePath: {
+      type: String,
+      default: ''
+    },
+    featureStorePath: {
+      type: String,
+      default: ''
+    },
     highlight: {
       type: Object,
       default: () => ({ 'stroke-color': 'primary', 'fill-opacity': 0, zOrder: 1 })
-    }
+    },
+    xAxisLabel: { type: String, default: '' },
+    yAxisLabel: { type: String, default: '' },
+    mapGhostIcon: {
+      type: Object,
+      default (rawProps) {
+        return { 'marker-type': 'marker', 'marker-color': 'primary', 'icon-classes': 'las la-mountain', 'icon-color': 'secondary' }
+      }
+    },
+    terrainLegend: { type: String, default: '' }
   },
   computed: {
     feature () {
+      if (this.featureStorePath) {
+        const f = Store.get(this.featureStorePath)
+        return f
+      }
       return this.hasSelectedFeature() && this.getSelectedFeature()
     },
     layer () {
+      if (this.layerStorePath) {
+        const l = Store.get(this.layerStorePath)
+        return l
+      }
       return this.hasSelectedLayer() && this.getSelectedLayer()
     },
     title () {
@@ -65,58 +96,51 @@ export default {
     hasProfile () {
       return !_.isNil(this.profile)
     },
-    extractProfileData (profiles) {
-      // Extract profile heights if available on the segments used to compute elevation
-      const profileHeights = []
-      const profileLabels = []
-      let allCoordsHaveHeight = true
-      let curvilinearOffset = 0
-      for (let i = 0; i < profiles.length && allCoordsHaveHeight; ++i) {
-        const dataUnit = _.get(profiles[i], 'properties.altitudeUnit', 'm')
-        // Gather elevation at each coord, make sure all coords have height along the way
-        coordEach(profiles[i], (coord, coordIdx) => {
-          // Skip first point of all segments except the first one since we assume
-          // last point of segment N = first point of segment N+1
-          if (profileHeights.length && coordIdx === 0) return
-          if (coord.length > 2) profileHeights.push(Units.convert(coord[2], dataUnit, this.chartHeightUnit))
-          else allCoordsHaveHeight = false
-        })
-        // Compute curvilinear abscissa at each point
-        if (allCoordsHaveHeight) {
-          segmentEach(profiles[i], (segment) => {
-            if (profileLabels.length === 0) profileLabels.push(0)
-            curvilinearOffset += length(segment, { units: 'kilometers' }) * 1000
-            profileLabels.push(Units.convert(curvilinearOffset, 'm', this.chartDistanceUnit))
-          })
-        }
-      }
-
-      return allCoordsHaveHeight ? [profileHeights, profileLabels] : [[], []]
+    getXAxisLabel () {
+      const ctx = { unit: this.chartDistanceUnit }
+      return this.xAxisLabel ? _.template(this.xAxisLabel)(ctx) : this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND', ctx)
     },
-    updateChart (terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth) {
+    getYAxisLabel () {
+      const ctx = { unit: this.chartHeightUnit }
+      return this.yAxisLabel ? _.template(this.yAxisLabel)(ctx) : this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', ctx)
+    },
+    getTerrainLegend () {
+      const lbl = this.terrainLegend
+      return lbl ? lbl : this.$t('KElevationProfile.TERRAIN_CHART_LEGEND')
+    },
+    updateChart (terrainDataset, profileDataset, profileColor, chartWidth) {
       const update = {
         type: 'line',
         data: { datasets: [] },
         plugins: [{
           // a simple plugin to display a vertical line at cursor position
+          // and hide tooltip on specific conditions
           beforeEvent: (chart, args) => {
             if (args.event.type === 'mousemove') {
-              if ((args.event.x >= chart.chartArea.left) &&
-                  (args.event.x <= chart.chartArea.right)) {
-                chart.config.options.vline.enabled = true
+              const inChartY = (args.event.y >= chart.chartArea.top) && (args.event.y <= chart.chartArea.bottom)
+              const inChartX = (args.event.x >= chart.chartArea.left) && (args.event.x <= chart.chartArea.right)
+
+              this.mouseOverChart = inChartX && inChartY
+              if (this.mouseOverChart) {
                 chart.config.options.vline.x = args.event.x
-              } else {
-                chart.config.options.vline.enabled = false
+              } else if (this.highlightFeature) {
+                this.unhighlight(this.highlightFeature)
+                this.highlightFeature = undefined
               }
             } else if (args.event.type === 'mouseout') {
-              chart.config.options.vline.enabled = false
-              this.unhighlight(this.highlightFeature)
+              this.mouseOverChart = false
             }
           },
+          beforeTooltipDraw: (ctx, args) => {
+            if (!this.mouseOverChart || this.panningOrZooming)
+              args.tooltip.opacity = 0
+          },
           afterDraw: (chart) => {
+            if (!this.mouseOverChart || this.panningOrZooming) return
+
             const x = chart.config.options.vline.x
             const ctx = chart.ctx
-            if (chart.config.options.vline.enabled && !isNaN(x)) {
+            if (!isNaN(x)) {
               ctx.save()
               ctx.translate(0.5, 0.5)
               ctx.lineWidth = 1
@@ -156,17 +180,10 @@ export default {
                 }
 
                 this.highlightFeature = along(segment, abscissaKm, { units: 'kilometers' })
-                this.highlightFeature.properties = { 'marker-type': 'marker' }
+                this.highlightFeature.properties = _.cloneDeep(this.mapGhostIcon)
                 this.highlight(this.highlightFeature)
               }
             }
-
-            // restore tooltip and vline if they've been disabled during
-            // pan or zoom animation
-            if (context.chart.config.options.plugins.tooltip.enabled) return
-            context.chart.config.options.plugins.tooltip.enabled = true
-            context.chart.config.options.vline.enabled = true
-            context.chart.update()
           },
           interaction: {
             mode: 'xSingle',
@@ -178,7 +195,14 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: this.$t('KElevationProfile.CURVILINEAR_AXIS_LEGEND', { unit: this.chartDistanceUnit })
+                text: this.getXAxisLabel()
+              },
+              ticks: {
+                callback: (value, index, ticks) => {
+                  return Units.format(value, this.chartDistanceUnit, this.chartDistanceUnit, {
+                    notation: 'auto', precision: 8, lowerExp: -8, upperExp: 8, symbol: false
+                  })
+                }
               }
             },
             y: {
@@ -186,12 +210,11 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: this.$t('KElevationProfile.HEIGHT_AXIS_LEGEND', { unit: this.chartHeightUnit })
+                text: this.getYAxisLabel()
               }
             }
           },
           vline: { // option values related to vertical line plugin defined inline
-            enabled: false,
             x: 0,
             color: 'black'
           },
@@ -210,16 +233,23 @@ export default {
             tooltip: {
               position: 'cursorPosition',
               callbacks: {
-                /*
                 title: (context) => {
-                  let title = `${context[0].parsed.x.toFixed(2)} ${this.chartDistanceUnit}`
+                  let title = ''
+                  if (context.length) {
+                    title = Units.format(context[0].parsed.x, this.chartDistanceUnit, this.chartDistanceUnit, {
+                      notation: 'fixed', precision: 2
+                    })
+                  }
                   return title
                 },
-                */
                 label: (context) => {
                   let label = context.dataset.label || ''
                   if (label) label += ': '
-                  if (context.parsed.y !== null) label += Units.format(context.parsed.y, this.chartHeightUnit)
+                  if (context.parsed.y !== null) {
+                    label += Units.format(context.parsed.y, this.chartHeightUnit, this.chartHeightUnit, {
+                      notation: 'fixed', precision: 2
+                    })
+                  }
                   return label
                 }
               }
@@ -243,11 +273,10 @@ export default {
                   const hasModifiers = event ? (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) : false
                   if (hasModifiers) return false
 
-                  // hide tooltip & vline while zooming
-                  context.chart.config.options.plugins.tooltip.enabled = false
-                  context.chart.config.options.vline.enabled = false
+                  this.panningOrZooming = true
                   return true
-                }
+                },
+                onPanComplete: (context) => { this.panningOrZooming = false }
               },
               limits: {
                 x: { min: 'original', max: 'original' },
@@ -265,11 +294,10 @@ export default {
                 },
                 mode: 'x',
                 onZoomStart: (context) => {
-                  // hide tooltip & vline while zooming
-                  context.chart.config.options.plugins.tooltip.enabled = false
-                  context.chart.config.options.vline.enabled = false
+                  this.panningOrZooming = true
                   return true
-                }
+                },
+                onZoomComplete: (context) => { this.panningOrZooming = false }
               }
             }
           }
@@ -277,27 +305,35 @@ export default {
       }
 
       // Add profile elevation if provided
-      if (profileHeights.length) {
+      if (profileDataset.length) {
         update.data.datasets.push({
-          label: this.$t('KElevationProfile.PROFILE_CHART_LEGEND'),
-          data: profileHeights.map((h, i) => { return { x: profileLabels[i], y: h } }),
+          label: this.title,
+          data: profileDataset,
           fill: false,
           borderColor: profileColor,
-          backgroundColor: '#0986bc',
-          pointRadius: 3
+          backgroundColor: profileColor,
+          // backgroundColor: '#0986bc',
+          // pointRadius: 3,
+          normalized: true
         })
         update.options.plugins.legend.display = true
       }
 
       // Add terrain elevation dataset
-      update.data.datasets.push({
-        label: this.$t('KElevationProfile.TERRAIN_CHART_LEGEND'),
-        data: terrainHeights.map((h, i) => { return { x: terrainLabels[i], y: h } }),
-        fill: true,
-        borderColor: '#635541',
-        backgroundColor: '#c9b8a1',
-        pointRadius: 2
-      })
+      if (terrainDataset.length) {
+        update.data.datasets.push({
+          label: this.getTerrainLegend(),
+          data: terrainDataset,
+          fill: true,
+          // borderColor: colors.lighten(profileColor, 30),
+          borderColor: '#635541',
+          borderWidth: 1,
+          // backgroundColor: colors.lighten(profileColor, -30),
+          backgroundColor: '#c9b8a1',
+          pointRadius: 0,
+          normalized: true
+        })
+      }
 
       this.$refs.chart.update(update)
     },
@@ -316,42 +352,12 @@ export default {
         return
       }
       this.highlight(this.feature)
-      this.chartDistanceUnit = 'm'
-      this.chartHeightUnit = Units.getDefaultUnit('altitude')
+      this.chartDistanceUnit = Store.get('units.default.length')
+      this.chartHeightUnit = Store.get('units.default.altitude')
 
       // TODO: this is the window size, not the widget size ...
       const { window } = this.kActivity.findWindow('elevation-profile')
       const chartWidth = window.size[0]
-
-      const queries = []
-      const resolution = _.get(this.feature, 'properties.elevationProfile.resolution')
-      const resolutionUnit = _.get(this.feature, 'properties.elevationProfile.resolutionUnit', 'm')
-      const corridor = _.get(this.feature, 'properties.elevationProfile.corridorWidth')
-      const corridorUnit = _.get(this.feature, 'properties.elevationProfile.corridorWidthUnit', 'm')
-      const securityMargin = _.get(this.feature, 'properties.elevationProfile.securityMargin')
-      const securityMarginUnit = _.get(this.feature, 'properties.elevationProfile.securityMarginUnit', 'm')
-      if (geometry === 'MultiLineString') {
-        flatten(this.feature).features.forEach((feature, index) => {
-          queries.push({
-            profile: feature,
-            resolution: Units.convert(resolution[index], resolutionUnit, 'm'),
-            corridorWidth: corridor ? Units.convert(corridor[index], corridorUnit, 'm') : null,
-            securityMargin: securityMargin ? Units.convert(securityMargin[index], securityMarginUnit, 'm') : null
-          })
-        })
-      } else {
-        const pixelStep = 5
-        const res = resolution ? Units.convert(resolution, resolutionUnit, 'm') : Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / pixelStep), maxResolution)
-        queries.push({
-          profile: this.feature,
-          resolution: res,
-          corridorWidth: corridor ? Units.convert(corridor, corridorUnit, 'm') : null,
-          securityMargin: securityMargin ? Units.convert(securityMargin, securityMarginUnit, 'm') : null
-        })
-      }
-
-      // Extract heights from profile if available
-      const [profileHeights, profileLabels] = this.extractProfileData(queries.map((q) => q.profile))
 
       // Setup the request url options
       const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
@@ -360,9 +366,7 @@ export default {
       const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
       if (jwt) headers.Authorization = 'Bearer ' + jwt
 
-      // Perform the requests
-      let dismiss = null
-      dismiss = this.$q.notify({
+      const dismiss = this.$q.notify({
         group: 'profile',
         icon: 'las la-hourglass-half',
         message: this.$t('KElevationProfile.COMPUTING_PROFILE'),
@@ -371,74 +375,35 @@ export default {
         spinner: true
       })
 
-      // Build a fetch per profile
-      const fetchs = []
-      for (const query of queries) {
-        fetchs.push(fetch(endpoint +
-                          `?resolution=${query.resolution}` +
-                          (query.corridorWidth ? `&corridorWidth=${query.corridorWidth}` : '') +
-                          (query.securityMargin ? `&elevationOffset=${query.securityMargin}` : ''), {
-          method: 'POST',
-          mode: 'cors',
-          body: JSON.stringify(query.profile),
-          headers
-        }))
-      }
-
-      let responses
+      // try to extract line color from layer if available
+      const profileColor = _.get(this.layer, 'leaflet.stroke-color', _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8'))
+      let terrainDataset, profileDataset
       try {
-        responses = await Promise.all(fetchs)
-        for (const res of responses) {
-          if (!res.ok) throw new Error('Fetch failed')
-        }
+        // Default evelation resolution is max(1 point every 5 pixels, 30m)
+        const defaultRes = Math.max(length(this.feature, { units: 'kilometers' }) * 1000 / (chartWidth / 5), 30)
+        const result = fetchProfileDataset(this.feature, this.chartDistanceUnit, this.chartHeightUnit)
+        profileDataset = result.dataset
+        this.updateChart([], profileDataset, profileColor, chartWidth)
+        const queries = await fetchElevation(
+          endpoint, this.feature, this.chartDistanceUnit, this.chartHeightUnit, {
+            additionalHeaders: headers,
+            defaultResolution: defaultRes,
+            defaultResolutionUnit: 'm',
+            // The lowest point on dry land is the shore of the Dead Sea, shared by Israel, Palestine,
+            // and Jordan, 432.65 m (1,419 ft) below sea level
+            // cf. https://en.wikipedia.org/wiki/Extremes_on_Earth
+            minElevationValue: Units.convert(-500, 'm', this.chartHeightUnit)
+          })
+        const { dataset, geojson } = extractElevation(queries)
+        terrainDataset = dataset
+        this.profile = geojson
       } catch (error) {
-        // Network error
-        dismiss()
         this.$notify({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
-        return
       }
 
       dismiss()
 
-      // Each profile will have a point on start and end points
-      // When we have multi line string, we skip the first point for all segment
-      // after the first one
-      let skipFirstPoint = false
-      const terrainHeights = []
-      const terrainLabels = []
-      let curvilinearOffset = 0
-      this.profile = []
-      for (let i = 0; i < queries.length; ++i) {
-        const points = await responses[i].json()
-        // Each point on the elevation profile will contains two properties;
-        // - z: the elevation in meters
-        // - t: the curvilinear abscissa relative to the queried profile in meters
-        points.features.forEach((point, index) => {
-          if (skipFirstPoint && index === 0) return
-
-          const clone = _.cloneDeep(point)
-          // Since we may have multiple profile with different query parameters
-          // offset t accordingly
-          clone.properties.t = Units.convert(curvilinearOffset + _.get(point, 'properties.t', 0), 'm', this.chartDistanceUnit)
-          this.profile.push(clone)
-
-          terrainHeights.push(Units.convert(point.properties.z, 'm', this.chartHeightUnit))
-          terrainLabels.push(clone.properties.t)
-        })
-        // Update curvilinear offset for next profile, and skip next profile's first point
-        // since it'll match with the current profile last point
-        curvilinearOffset += length(queries[i].profile, { units: 'kilometers' }) * 1000
-        skipFirstPoint = true
-      }
-
-      // try to extract line color from layer if available
-      const layer = this.layer
-      let profileColor
-      if (_.has(layer, 'leaflet.stroke-color')) profileColor = _.get(layer, 'leaflet.stroke-color')
-      if (profileColor === undefined) profileColor = _.get(this.kActivity, 'activityOptions.engine.featureStyle.stroke-color', '#51b0e8')
-      this.updateChart(terrainHeights, terrainLabels, profileHeights, profileLabels, profileColor, chartWidth)
-
-      this.profile = featureCollection(this.profile)
+      this.updateChart(terrainDataset, profileDataset, profileColor, chartWidth)
     },
     onCenterOn () {
       this.centerOnSelection()
@@ -462,6 +427,29 @@ export default {
         else this.$notify({ message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
+  },
+  mounted () {
+    this.panningOrZooming = false
+    this.mouseOverChart = false
+
+    this.debouncedRefresh = _.debounce(this.refresh, 100)
+
+    // Setup listeners
+    this.$events.on('units-default-length-changed', this.debouncedRefresh)
+    this.$events.on('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath)
+      this.$events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh)
+    if (this.featureStorePath)
+      this.$events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh)
+  },
+  beforeUnmount () {
+    // Release listeners
+    this.$events.off('units-default-length-changed', this.debouncedRefresh)
+    this.$events.off('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath)
+      this.$events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh)
+    if (this.featureStorePath)
+      this.$events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh)
   },
   setup (props) {
     return {

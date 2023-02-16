@@ -408,24 +408,28 @@ export const activity = {
       const catalogService = this.$api.getService('catalog')
       // Keep track of binded listeners as we use the same function with different contexts
       this.catalogListeners = {}
-      globalCatalogService.events.forEach(event => {
-        this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
-        globalCatalogService.on(event, this.catalogListeners[event])
-        if (catalogService && (catalogService !== globalCatalogService)) {
-          catalogService.on(event, this.catalogListeners[event])
-        }
-      })
+      if (globalCatalogService.events !== undefined) {
+        globalCatalogService.events.forEach(event => {
+          this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
+          globalCatalogService.on(event, this.catalogListeners[event])
+          if (catalogService && (catalogService !== globalCatalogService)) {
+            catalogService.on(event, this.catalogListeners[event])
+          }
+        })
+      }
     },
     finalize () {
       // Stop listening about changes in global/contextual catalog services
       const globalCatalogService = this.$api.getService('catalog', '')
       const catalogService = this.$api.getService('catalog')
-      globalCatalogService.events.forEach(event => {
-        globalCatalogService.removeListener(event, this.catalogListeners[event])
-        if (catalogService && (catalogService !== globalCatalogService)) {
-          catalogService.removeListener(event, this.catalogListeners[event])
-        }
-      })
+      if (globalCatalogService.events !== undefined) {
+        globalCatalogService.events.forEach(event => {
+          globalCatalogService.removeListener(event, this.catalogListeners[event])
+          if (catalogService && (catalogService !== globalCatalogService)) {
+            catalogService.removeListener(event, this.catalogListeners[event])
+          }
+        })
+      }
       this.catalogListeners = {}
     },
     async onCatalogUpdated (event, object) {
