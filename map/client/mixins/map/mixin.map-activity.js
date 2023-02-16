@@ -17,9 +17,9 @@ export const activity = {
       // Avoid to refresh the layout when leaving the component
       if (this.observe) {
         this.refreshMap()
-        if (this.$refs.map) {
-          this.engineContainerWidth = this.$refs.map.getBoundingClientRect().width
-          this.engineContainerHeight = this.$refs.map.getBoundingClientRect().height
+        if (this.mapContainer) {
+          this.engineContainerWidth = this.mapContainer.getBoundingClientRect().width
+          this.engineContainerHeight = this.mapContainer.getBoundingClientRect().height
         }
       }
     }
