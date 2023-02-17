@@ -24,17 +24,22 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { Time } from '../../../../core/client/time.js'
-import { getAppLocale } from '../../../../core/client/utils.js'
+import { getAppLocale, loadIcon } from '../../../../core/client/utils/index.js'
 import { uid } from 'quasar'
 import '../../leaflet/BoxSelection.js'
 import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js'
 window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
+import shadowIcon from 'leaflet/dist/images/marker-shadow.png'
+
 // Fix to make Leaflet assets be correctly inserted by webpack
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/icons/kdk/marker-icon-2x.png',
-  iconUrl: '/icons/kdk/marker-icon.png',
-  shadowUrl: '/icons/kdk/marker-shadow.png'
+  iconUrl: markerIcon,
+  iconRetinaUrl: retinaIcon,
+  shadowUrl: shadowIcon
 })
 
 // Do not create geoman structs everywhere
@@ -529,7 +534,7 @@ export const baseMap = {
       zoomLayers.forEach(async layer => { this.updateLayerDisabled(layer) })
     }
   },
-  created () {
+  async created () {
     this.leafletLayers = {}
     this.leafletPanes = {}
     this.leafletFactory = []
@@ -541,6 +546,16 @@ export const baseMap = {
     this.$engineEvents = new Emitter()
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
     this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
+
+/*
+    console.log('***** KDK ****')
+    console.log(L.Icon.Default.prototype._getIconUrl())
+
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: await loadIcon('marker-icon-2x.png'),
+      iconUrl: await loadIcon('marker-icon.png'),
+      shadowUrl: await loadIcon('marker-shadow.png')
+    })*/
   },
   beforeUnmount () {
     this.clearLayers()
