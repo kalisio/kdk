@@ -256,6 +256,8 @@ export function createClient (config) {
   api.renewJwtOnExpiration = function (authResult) {
     const { accessToken } = authResult
     const jwt = jwtdecode(accessToken)
+    // Not expiring token (eg API)
+    if (!jwt.exp) return
     const now = moment()
     const expiration = moment.unix(jwt.exp)
     // Setup a timeout to renew the token just before it expires if the user is still connected
