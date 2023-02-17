@@ -4,7 +4,7 @@ import config from 'config'
 
 export const LocalStorage = {
   initialize () {
-    this.prefix = _.get(config, 'appName', 'kdk')
+    this.prefix = _.toLower(_.get(config, 'appName', 'kdk'))
     logger.debug(`[KDK] initializing local storage with prefix: ${this.prefix}`)
   },
   localKey (key) {
