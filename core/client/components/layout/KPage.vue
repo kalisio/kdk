@@ -166,7 +166,7 @@ const rightPadding = ref(0)
 const fabOffset = ref([16, 16])
 
 // Computed
-const  contentStyleFunction = computed(() => {
+const contentStyleFunction = computed(() => {
   const layoutPadding = props.padding ? 24 * 2 : 0
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
@@ -222,7 +222,7 @@ const hasRightPaneComponents = computed(() => {
 const hasBottomPaneComponents = computed(() => {
   return !_.isEmpty(bottomPane.components)
 })
-  
+
 // Watch
 watch(() => leftPane.visible, (visible) => {
   if (visible) {
@@ -233,7 +233,7 @@ watch(() => leftPane.visible, (visible) => {
     document.removeEventListener('click', clickOutsideLeftPanelListener, true)
   }
 }, { immediate: true })
-  
+
 // Functions
 function layoutOffsetListener (offset) {
   // Catch layout offset and returns default Quasar function
@@ -267,7 +267,7 @@ function setBottomPaneVisible (visible) {
 }
 function clickOutsideLeftPanelListener (event) {
   const leftPanelElement = document.getElementById('left-panel')
-  if (leftPanelElement && leftPanelElement.contains(event.target)) return 
+  if (leftPanelElement && leftPanelElement.contains(event.target)) return
   const leftOpenerElement = document.getElementById('left-opener')
   if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
   setLeftPaneVisible(false)

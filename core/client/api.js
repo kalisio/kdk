@@ -279,7 +279,7 @@ export function createClient (config) {
 // eg it might be imported before another one updating the config.
 // It is up to the application to instanciate the client when required.
 export let api
-export function initializeApi() {
+export function initializeApi () {
   api = createClient(configuration)
   return api
 }

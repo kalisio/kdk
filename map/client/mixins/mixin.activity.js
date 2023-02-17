@@ -446,8 +446,8 @@ export const activity = {
           // Updating a layer requires to remove/add it again to cover all use cases
           // (eg style edition, etc.)
           // Here we find layer by ID as renaming could have occured from another client
-          const layers = this.getLayers({ _id: object._id })
-          if (layers.length > 0) await this.removeCatalogLayer(layers[0])
+          const layer = this.getLayerById(object._id)
+          if (layer) await this.removeCatalogLayer(layer)
           if (event !== 'removed') {
             // Do we need to inject a token ?
             await setEngineJwt([object])

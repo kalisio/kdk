@@ -20,7 +20,7 @@ function fetchProfileDataset (feature, distanceUnit, altitudeUnit) {
   }
 
   // Split multi linestrings in individual linestrings
-  const linestrings = geometry === 'MultiLineString' ? flatten(feature).features : [ feature ]
+  const linestrings = geometry === 'MultiLineString' ? flatten(feature).features : [feature]
 
   // Extract profile altitude at each point if available on the segments
   const dataset = []
@@ -59,7 +59,7 @@ function fetchProfileDataset (feature, distanceUnit, altitudeUnit) {
   return { dataset: allCoordsHaveAltitude ? dataset : [], segments: segments }
 }
 
-function asArray(val) { return (Array.isArray(val) || val === undefined) ? val : [ val ] }
+function asArray (val) { return (Array.isArray(val) || val === undefined) ? val : [val] }
 
 // Take a feature (linestring or multilinestring) and query elevation service
 // It'll make a query per multi linestring element, or only one in case of linestring
@@ -107,11 +107,11 @@ async function queryElevation (endpoint, feature, distanceUnit, altitudeUnit, { 
     fetchs.push(fetch(endpoint +
                       `?resolution=${query.resolution}` +
                       (query.corridorWidth !== undefined ? `&corridorWidth=${query.corridorWidth}` : ''), {
-                        method: 'POST',
-                        mode: 'cors',
-                        body: JSON.stringify(query.profile),
-                        headers: Object.assign({ 'Content-Type': 'application/json' }, additionalHeaders)
-                      }))
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(query.profile),
+      headers: Object.assign({ 'Content-Type': 'application/json' }, additionalHeaders)
+    }))
   }
 
   let responses
@@ -178,15 +178,13 @@ async function fetchElevation (endpoint, feature, distanceUnit, altitudeUnit, { 
 
   // Compatibility with initial airbus elevation profile where
   // securityMargin was an offset to add per segment
-  if (!noSecurityMargin)
-    addSecurityMargin(feature, queries, altitudeUnit)
+  if (!noSecurityMargin) { addSecurityMargin(feature, queries, altitudeUnit) }
 
   if (minElevationValue !== undefined) {
     for (let i = 0; i < queries.length; ++i) {
       const q = queries[i]
       for (const point of q.elevation.features) {
-        if (point.properties.z < minElevationValue)
-          point.properties.z = 0
+        if (point.properties.z < minElevationValue) { point.properties.z = 0 }
       }
     }
   }

@@ -103,20 +103,16 @@ export async function createDefaultCatalogLayers (context) {
       featuresService = app.getService(defaultLayer.service)
       // Avoid create it twice as we can share services between different layers
       if (featuresService) continue
-      featuresService = await createFeaturesServiceForLayer.call(app, {
+      featuresService = await createFeaturesServiceForLayer.call(app, Object.assign({
         collection: defaultLayer.service,
-        ttl: defaultLayer.ttl,
-        featureId: defaultLayer.featureId,
-        featureIdType: defaultLayer.featureIdType,
-        variables: defaultLayer.variables,
         db: app.db.db(defaultLayer.dbName)
-      })
+      }, _.pick(defaultLayer, ['ttl', 'featureId', 'featureIdType', 'variables', 'simplifyResult', 'skipEvents', 'simplifyEvents'])))
     }
     if (defaultLayer.probeService) {
-      await createFeaturesServiceForLayer.call(app, {
+      await createFeaturesServiceForLayer.call(app, Object.assign({
         collection: defaultLayer.probeService,
         db: app.db.db(defaultLayer.dbName)
-      })
+      }, _.pick(defaultLayer, ['simplifyResult', 'skipEvents', 'simplifyEvents'])))
     }
     // And if we need to initialize some data as well
     if (!createdLayer && featuresService && (defaultLayer.url || defaultLayer.fileName)) {

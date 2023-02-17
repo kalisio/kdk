@@ -7,12 +7,10 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { getCssVar, copyToClipboard, exportFile, colors } from 'quasar'
+import { getCssVar, copyToClipboard, exportFile } from 'quasar'
 import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
-import { segmentEach, coordEach } from '@turf/meta'
-import { featureCollection } from '@turf/helpers'
 import { Units } from '../../../../core/client/units'
 import { Store } from '../../../../core/client/store'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
@@ -106,7 +104,7 @@ export default {
     },
     getTerrainLegend () {
       const lbl = this.terrainLegend
-      return lbl ? lbl : this.$t('KElevationProfile.TERRAIN_CHART_LEGEND')
+      return lbl || this.$t('KElevationProfile.TERRAIN_CHART_LEGEND')
     },
     updateChart (terrainDataset, profileDataset, profileColor, chartWidth) {
       const update = {
@@ -132,8 +130,7 @@ export default {
             }
           },
           beforeTooltipDraw: (ctx, args) => {
-            if (!this.mouseOverChart || this.panningOrZooming)
-              args.tooltip.opacity = 0
+            if (!this.mouseOverChart || this.panningOrZooming) { args.tooltip.opacity = 0 }
           },
           afterDraw: (chart) => {
             if (!this.mouseOverChart || this.panningOrZooming) return
@@ -339,7 +336,7 @@ export default {
     },
 
     async refresh () {
-      const maxResolution = 30
+      // const maxResolution = 30
       this.profile = null
       this.clearHighlights()
       if (!this.layer || !this.feature) return
@@ -437,19 +434,15 @@ export default {
     // Setup listeners
     this.$events.on('units-default-length-changed', this.debouncedRefresh)
     this.$events.on('units-default-altitude-changed', this.debouncedRefresh)
-    if (this.layerStorePath)
-      this.$events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh)
-    if (this.featureStorePath)
-      this.$events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh)
+    if (this.layerStorePath) { this.$events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
+    if (this.featureStorePath) { this.$events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
   },
   beforeUnmount () {
     // Release listeners
     this.$events.off('units-default-length-changed', this.debouncedRefresh)
     this.$events.off('units-default-altitude-changed', this.debouncedRefresh)
-    if (this.layerStorePath)
-      this.$events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh)
-    if (this.featureStorePath)
-      this.$events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh)
+    if (this.layerStorePath) { this.$events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
+    if (this.featureStorePath) { this.$events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
   },
   setup (props) {
     return {

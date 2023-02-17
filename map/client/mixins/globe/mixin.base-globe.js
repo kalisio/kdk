@@ -153,6 +153,10 @@ export const baseGlobe = {
     getCesiumLayerByName (name) {
       return this.cesiumLayers[name]
     },
+    getLayerById (id) {
+      const layers = this.getLayers({ _id: id })
+      return _.get(layers, '[0]')
+    },
     getLayers (filter = {}) {
       return _.values(this.layers).filter(sift(filter))
     },

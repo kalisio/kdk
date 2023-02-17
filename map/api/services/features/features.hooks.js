@@ -1,11 +1,8 @@
 import { hooks as coreHooks } from '../../../../core/api/index.js'
-import { marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson } from '../../hooks/index.js'
-
-function simplifyResult (hook) {
-  // Only keep track of object IDs so that caller can at least get them if required
-  if (Array.isArray(hook.result)) hook.result = hook.result.map(item => ({ _id: item._id }))
-  return hook
-}
+import {
+  marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson,
+  simplifyResult, simplifyEvents, skipEvents
+} from '../../hooks/index.js'
 
 export default {
   before: {
@@ -23,11 +20,12 @@ export default {
     all: [],
     find: [coreHooks.unprocessTimes(['time']), asGeoJson({ force: true })],
     get: [],
-    // Avoid emitting events and full result on feature edition because we usually proceed with big batches
-    create: [coreHooks.unprocessTimes(['time']), simplifyResult, coreHooks.skipEvents],
-    update: [coreHooks.unprocessTimes(['time']), simplifyResult, coreHooks.skipEvents],
-    patch: [coreHooks.unprocessTimes(['time']), simplifyResult, coreHooks.skipEvents],
-    remove: [simplifyResult, coreHooks.skipEvents]
+    // By default avoid emitting events and full result on feature edition because we usually proceed with big batches
+    // On a per-case basis each application can activate all events/results if required or define a more evolved strategy
+    create: [coreHooks.unprocessTimes(['time']), simplifyEvents, simplifyResult, skipEvents],
+    update: [coreHooks.unprocessTimes(['time']), simplifyEvents, simplifyResult, skipEvents],
+    patch: [coreHooks.unprocessTimes(['time']), simplifyEvents, simplifyResult, skipEvents],
+    remove: [simplifyEvents, simplifyResult, skipEvents]
   },
 
   error: {

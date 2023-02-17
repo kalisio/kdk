@@ -337,7 +337,7 @@ export default {
             params: bindRouteParams('params')
           }, _.omit(props.route, ['query', 'params']))).catch(() => {})
         }
-      }       
+      }
       // Handle the dialog case
       if (props.dialog) {
         let dialog = props.dialog

@@ -27,6 +27,7 @@
 
 <script setup>
 import _ from 'lodash'
+import moment from 'moment'
 import Papa from 'papaparse'
 import { ref, watch } from 'vue'
 import { downloadAsBlob } from '../../utils'
@@ -84,12 +85,13 @@ async function update () {
     const visible = _.get(value, 'field.visible', true)
     if (!visible) invisibleColumns.push(key)
     const format = _.get(value, 'format')
+    const path = _.get(value, 'field.path', key)
     columns.value.push({
       name: key,
       // Check if we have a translation key or directly the label content
       label: i18n.tie(label),
       // This will support GeoJson out-of-the-box
-      field: row => _.get(row, key, _.get(row, `properties.${key}`)),
+      field: row => _.get(row, path, _.get(row, `properties.${path}`)),
       align: 'center',
       sortable: true,
       format: (value) => {
@@ -136,8 +138,17 @@ async function exportData (options = {}) {
         const visible = visibleColumns.value.includes(key)
         // Skip invisible columns in export
         if (options.visibleOnly && !visible) return
+        const format = _.get(value, 'format')
+        const path = _.get(value, 'field.path', key)
+        // This will support GeoJson out-of-the-box
+        let data = _.get(item, path, _.get(item, `properties.${path}`))
+        if (type === 'string') {
+          if (format === 'date-time') data = moment.utc(data).format()
+          if (format === 'date') data = moment.utc(data).format()
+          if (format === 'time') data = moment.utc(data).format()
+        }
         // Check if we have a translation key or directly the label content
-        row[options.labelAsHeader ? `${i18n.tie(label)}` : key] = value ? _.get(item, key) : null
+        row[options.labelAsHeader ? `${i18n.tie(label)}` : key] = data
       })
       json.push(row)
     }

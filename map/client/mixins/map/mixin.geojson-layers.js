@@ -381,7 +381,7 @@ export const geojsonLayers = {
 
       return geojsonOptions
     },
-    updateLayer (name, geoJson, remove) {
+    updateLayer (name, geoJson, options = {}) {
       // Retrieve the layer
       let layer = this.getLeafletLayerByName(name)
       if (!layer) return // Cannot update invisible layer
@@ -389,6 +389,9 @@ export const geojsonLayers = {
         logger.warn(`Impossible to update non-realtime layer ${name}`)
         return // Cannot update non-realtime layer
       }
+      // Backward compatibility when third parameter was the remove flag
+      const remove = (typeof options === 'boolean' ? options : options.remove)
+      const removeMissing = (_.has(options, 'removeMissing') ? _.get(options, 'removeMissing') : layer.options.removeMissing)
       // Check if clustering on top of a realtime layer, in this case we have a top-level container
       let container
       if (typeof layer.getLayers === 'function') {
@@ -407,7 +410,7 @@ export const geojsonLayers = {
         features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
         layer.remove(features)
       } else if (typeof layer._onNewData === 'function') {
-        layer._onNewData(layer.options.removeMissing, geoJson || this.toGeoJson(name))
+        layer._onNewData(removeMissing, geoJson || this.toGeoJson(name))
       }
     },
     onLayerUpdated (layer, leafletLayer, data) {

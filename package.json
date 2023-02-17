@@ -87,6 +87,7 @@
     "@feathersjs/schema": "5.0.0-pre.28",
     "@feathersjs/socketio": "^5.0.0-pre.28",
     "@kalisio/feathers-s3": "^1.0.0",
+    "@turf/bbox": "^6.0.1",
     "@weacast/core": "^2.1.2",
     "abort-controller": "^3.0.0",
     "ajv": "^8.12.0",

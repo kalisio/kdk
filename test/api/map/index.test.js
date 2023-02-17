@@ -2,6 +2,7 @@ import utility from 'util'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'
+import moment from 'moment'
 import path from 'path'
 import fs from 'fs-extra'
 import { fileURLToPath } from 'url'
@@ -16,7 +17,40 @@ const { util, expect } = chai
 describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, geocoderService, catalogService, defaultLayers,
-    zonesService, vigicruesStationsService, vigicruesObsService, adsbObsService, position
+    zonesService, vigicruesStationsService, vigicruesObsService, adsbObsService,
+    position, items, eventListeners, eventCount, eventData
+
+  function eventsOn (service) {
+    eventListeners = {}
+    eventCount = {
+      created: 0,
+      updated: 0,
+      patched: 0,
+      removed: 0
+    }
+    eventData = {}
+    _.forOwn(eventCount, (value, key) => {
+      eventListeners[key] = countEvents(key)
+      service.on(key, eventListeners[key])
+    })
+  }
+  function eventsOff (service) {
+    _.forOwn(eventCount, (value, key) => {
+      service.off(key, eventListeners[key])
+    })
+  }
+  function countEvents (event) {
+    return function (data) {
+      eventCount[event]++
+      eventData[event] = data
+    }
+  }
+  function getEventCount (event) {
+    return eventCount[event]
+  }
+  function getEventData (event) {
+    return eventData[event]
+  }
 
   before(() => {
     chailint(chai, util)
@@ -125,12 +159,25 @@ describe('map:services', () => {
     // Ensure the spatial index
     const indexes = await zonesService.Model.indexes()
     expect(indexes.find(index => index.key.geometry)).toExist()
+    // Check for events
+    eventsOn(zonesService)
     // Feed the collection
     const zones = fs.readJsonSync(path.join(__dirname, 'data/zones.json')).features
-    await zonesService.create(zones)
+    items = await zonesService.create(zones)
   })
   // Let enough time to process
     .timeout(5000)
+
+  it('the zones service should skip events and siplify result', async () => {
+    // By default multi events are skipped and result simplified
+    eventsOff(zonesService)
+    expect(getEventCount('created')).to.equal(0)
+    items.forEach(item => {
+      expect(item._id).toExist()
+      expect(item.geometry).beUndefined()
+      expect(item.properties).beUndefined()
+    })
+  })
 
   it('performs spatial filtering on zones service', async () => {
     let result = await zonesService.find({
@@ -184,16 +231,69 @@ describe('map:services', () => {
       collection: vigicruesObsLayer.service,
       featureId: vigicruesObsLayer.featureId,
       variables: vigicruesObsLayer.variables,
-      history: vigicruesObsLayer.history
+      // Raise simplified events
+      skipEvents: ['updated'],
+      simplifyEvents: ['created', 'patched', 'removed']
     })
     vigicruesObsService = app.getService(vigicruesObsLayer.service)
     expect(vigicruesObsService).toExist()
+    // Check for events
+    eventsOn(vigicruesObsService)
     // Feed the collection
     const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.json'))
     await vigicruesObsService.create(observations)
   })
   // Let enough time to process
     .timeout(5000)
+
+  it('the vigicrues observations should send simplified events', async () => {
+    const min = moment.utc('2018-10-22T22:00:00.000Z')
+    const max = moment.utc('2018-11-23T08:06:00.000Z')
+    const start = min
+    const end = moment.utc('2018-10-23T00:00:00.000Z')
+    await vigicruesObsService.patch(null, { 'properties.ProjCoord': 27 }, { query: { time: { $gte: start, $lte: end } } })
+    await vigicruesObsService.remove(null, { query: { 'properties.ProjCoord': 27 } })
+    // Check for simplified events
+    eventsOff(vigicruesObsService)
+    expect(getEventCount('created')).to.equal(1)
+    let payload = getEventData('created')
+    expect(payload.data).beUndefined()
+    expect(payload.total).to.equal(1344)
+    expect(payload.query).to.deep.equal({})
+    expect(payload.startTime).toExist()
+    expect(payload.endTime).toExist()
+    expect(payload.startTime.format()).to.equal(start.format())
+    expect(payload.endTime.format()).to.equal(max.format())
+    expect(payload.bbox).to.deep.equal([7.426402, 48.633727, 7.426402, 48.633727])
+    expect(payload.layers).to.deep.equal([])
+    expect(getEventCount('patched')).to.equal(1)
+    payload = getEventData('patched')
+    expect(payload.data).to.deep.equal({ 'properties.ProjCoord': 27 })
+    expect(payload.total).to.equal(3)
+    const gte = _.get(payload, 'query.time.$gte')
+    expect(gte).toExist()
+    expect(gte.format()).to.equal(start.format())
+    const lte = _.get(payload, 'query.time.$lte')
+    expect(lte).toExist()
+    expect(lte.format()).to.equal(end.format())
+    expect(payload.startTime).toExist()
+    expect(payload.endTime).toExist()
+    expect(payload.startTime.format()).to.equal(start.format())
+    expect(payload.endTime.format()).to.equal(end.format())
+    expect(payload.bbox).to.deep.equal([7.426402, 48.633727, 7.426402, 48.633727])
+    expect(payload.layers).to.deep.equal([])
+    expect(getEventCount('removed')).to.equal(1)
+    payload = getEventData('removed')
+    expect(payload.data).beUndefined()
+    expect(payload.total).to.equal(3)
+    expect(payload.query).to.deep.equal({ 'properties.ProjCoord': 27 })
+    expect(payload.startTime).toExist()
+    expect(payload.endTime).toExist()
+    expect(payload.startTime.format()).to.equal(start.format())
+    expect(payload.endTime.format()).to.equal(end.format())
+    expect(payload.bbox).to.deep.equal([7.426402, 48.633727, 7.426402, 48.633727])
+    expect(payload.layers).to.deep.equal([])
+  })
 
   it('create and feed the ADS-B observations service', async () => {
     // Create the service
@@ -203,8 +303,7 @@ describe('map:services', () => {
     await createFeaturesService.call(app, {
       collection: adsbObsLayer.service,
       featureId: adsbObsLayer.featureId,
-      variables: adsbObsLayer.variables,
-      history: adsbObsLayer.history
+      variables: adsbObsLayer.variables
     })
     adsbObsService = app.getService(adsbObsLayer.service)
     expect(adsbObsService).toExist()
