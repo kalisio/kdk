@@ -70,15 +70,16 @@
             'v-model': model,
             draggable: true,
             header: map,
+            widthPolicy: 'wide',
             cancelAction: 'CANCEL',
             okAction: {
               id: 'ok-button',
               label: 'APPLY',
-              handler: onLocationChanged
+              handler: 'getLocation'
             },
-            widthPolicy: 'wide',
             style: 'min-height: 70vh;'
           }"
+          @dialog-confirmed="onLocationChanged"
         />
       </div>
     </template>
@@ -165,8 +166,8 @@ export default {
         this.onChanged()
       }
     },
-    onLocationChanged (map) {
-      this.model = map.modelValue
+    onLocationChanged (context, location) {
+      this.model = location
       return true
     }
   },

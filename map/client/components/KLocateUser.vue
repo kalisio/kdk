@@ -6,7 +6,7 @@
     :toggle="{ tooltip: 'mixins.activity.HIDE_USER_LOCATION' }"
     :toggled="isToggled"
     :disabled="!isEnabled "
-    @triggered="onClicked"
+    @toggled="onToggled"
   />
 </template>
 
@@ -23,7 +23,7 @@ const isEnabled = ref(true)
 const isToggled = ref(kActivity.isUserLocationVisible())
 
 // function
-async function onClicked (context, toggled) {
+async function onToggled (context, toggled) {
   if (toggled) {
     await Geolocation.update()
     if (Geolocation.get().error) isEnabled.value = false
