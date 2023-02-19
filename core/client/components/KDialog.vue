@@ -27,6 +27,7 @@
 
 <script setup>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { ref, computed, useAttrs } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
 import { loadComponent } from '../utils'
@@ -68,7 +69,7 @@ const props = defineProps({
 })
 
 // Emits
-defineEmits([...useDialogPluginComponent.emits])
+const emit = defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'])
 
 // Data
 const { dialogRef, onDialogOK, onDialogCancel } = useDialogPluginComponent()
@@ -95,9 +96,9 @@ const computedButtons = computed(() => {
       if (cancelButton.handler) {
         cancelButton.handler = async () => {
           // ! call the origonal handler to avoid recurcive call
-          await props.cancelAction.handler(componentRef.value)
+          const result = await callHandler(props.cancelAction.handler)
           // close dialog whatever the result of the handler
-          onDialogCancel()
+          onDialogCancel(result)
         }
       }
     }
@@ -117,9 +118,9 @@ const computedButtons = computed(() => {
       // overload the handler to call Quasar onDialogOK
       okButton.handler = async () => {
         // ! call the origonal handler to avoid recursive call
-        const result = await props.okAction.handler(componentRef.value)
+        const result = await callHandler(props.okAction.handler)
         // close dialog if and only if the handler returns true
-        if (result) onDialogOK()
+        if (result) onDialogOK(result)
       }
     }
     buttons.push(okButton)
@@ -135,9 +136,25 @@ const computedModel = computed({
   },
   set: function (value) {
     model.value = value
+    emit('update:modelValue', value)
   }
 })
 const computedProps = computed(() => {
   return _.omit(attrs, ['v-model'])
 })
+
+// Functions
+async function callHandler (handler) {
+  let method = handler
+  let params
+  if (typeof (handler) === 'object') {
+    method = handler.name
+    if (!method) {
+      logger.debug('[KDK] invalid dialog handler')
+      return
+    }
+    params = handler.params
+  }
+  return await componentRef.value[method](params)
+}
 </script>

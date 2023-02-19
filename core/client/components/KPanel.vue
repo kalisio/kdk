@@ -58,7 +58,7 @@ const hasContent = computed(() => {
 })
 
 // Functions
-function onTriggered (args) {
-  emit('triggered', args)
+function onTriggered (params) {
+  emit('triggered', params)
 }
 </script>

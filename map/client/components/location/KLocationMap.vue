@@ -276,6 +276,9 @@ export default {
         longitude
       }
       this.$emit('update:modelValue', location)
+    },
+    getLocation () {
+      return this.modelValue
     }
   },
   async mounted () {

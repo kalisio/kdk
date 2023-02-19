@@ -242,7 +242,7 @@ export default {
     }
   },
   inheritAttrs: false,
-  emits: ['triggered'],
+  emits: ['triggered', 'toggled', 'dialog-confirmed', 'dialog-canceled'],
   setup (props, { emit }) {
     // data
     const route = useRoute()
@@ -283,6 +283,7 @@ export default {
     // functions
     function toggle () {
       isToggled.value = !isToggled.value
+      emit('toggled', props.context, isToggled.value)
     }
     function bindRouteParams (path) {
       // When action is created from code we can directly inject the params
@@ -311,34 +312,36 @@ export default {
     }
     async function onClicked (event) {
       if (!props.propagate) event.stopPropagation()
-      // Handle the toggle if needed
+      // handle the toggle if needed
       if (props.toggle) toggle()
-      // Handle the URL case
+      // handle the URL case
       if (props.url) openURL(props.url)
-      // Handle the callback case
+      // handle the callback case
       if (props.handler) {
         try {
           await props.handler(props.context, isToggled.value)
         } catch (error) {
-          // In case an error is raised we assume toggling has failed
+          // in case an error is raised we assume toggling has failed
           if (props.toggle) toggle()
           throw error
         }
+        return
       }
-      // Handle the route case
+      // handle the route case
       if (props.route) {
-        // Allow to directly call a given URL, eg OAuth callback
+        // allow to directly call a given URL, eg OAuth callback
         if (props.route.url) {
           location.href = props.route.url
         } else {
-          // Process route params
+          // process route params
           router.push(Object.assign({
             query: bindRouteParams('query'),
             params: bindRouteParams('params')
           }, _.omit(props.route, ['query', 'params']))).catch(() => {})
         }
+        return
       }
-      // Handle the dialog case
+      // handle the dialog case
       if (props.dialog) {
         let dialog = props.dialog
         const component = _.get(props.dialog, 'component')
@@ -349,8 +352,14 @@ export default {
           }
         }
         $q.dialog(dialog)
+          .onOk((result) => {
+            emit('dialog-confirmed', props.context, result)
+          })
+          .onCancel((result) => {
+            emit('dialog-canceled', props.context, result)
+          })
       }
-      // Notify the listeners
+      // notify listeners
       emit('triggered', props.context, isToggled.value)
     }
 

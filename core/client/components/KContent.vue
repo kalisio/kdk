@@ -95,7 +95,7 @@ function getComponents (content, mode) {
   })
   return processedComponents
 }
-function onTriggered (args) {
-  emit('triggered', args)
+function onTriggered (params) {
+  emit('triggered', params)
 }
 </script>
