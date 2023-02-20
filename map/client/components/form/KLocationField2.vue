@@ -135,7 +135,7 @@ export default {
   mixins: [kdkCoreMixins.baseField],
   computed: {
     allowConfiguration () {
-      return _.has(this.properties, 'field.geocoders')
+      return !_.isEmpty(_.get(this.properties, 'field.geocoders'))
     },
     allowGeolocation () {
       return _.get(this.properties, 'field.geolocate', true)
