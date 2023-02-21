@@ -5,12 +5,13 @@ import { bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
 
 // Events we listen while layer is in edition mode
 const mapEditEvents = ['pm:create']
-const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend']
+const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend', 'pm:markerdragend']
 
 export const editLayers = {
   emits: [
     'edit-start',
-    'edit-stop'
+    'edit-stop',
+    'edit-point-moved'
   ],
   data () {
     return {
@@ -162,6 +163,7 @@ export const editLayers = {
       this.$engineEvents.on('pm:dragend', this.onFeaturesEdited)
       this.$engineEvents.on('pm:rotateend', this.onFeaturesEdited)
       this.$engineEvents.on('layerremove', this.onFeaturesDeleted)
+      this.$engineEvents.on('pm:markerdragend', this.onPointMoveEnd)
 
       if (editMode) this.setEditMode(editMode)
     },
@@ -209,6 +211,7 @@ export const editLayers = {
       this.$engineEvents.off('pm:dragend', this.onFeaturesEdited)
       this.$engineEvents.off('pm:rotateend', this.onFeaturesEdited)
       this.$engineEvents.off('layerremove', this.onFeaturesDeleted)
+      this.$engineEvents.off('pm:markerdragend', this.onPointMoveEnd)
     },
     onEditStop (status, layer) {
       this.$emit('edit-stop', { status, layer })
@@ -276,7 +279,11 @@ export const editLayers = {
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         for (const feature of features) {
-          await this.$api.getService('features-edition').patch(feature._id, _.pick(feature, ['geometry']))
+          const fid = feature._id
+          const geometry = feature.geometry
+          const service = this.$api.getService('features-edition')
+          await service.patch(fid, { geometry })
+          // await this.$api.getService('features-edition').patch(fid, { geometry })
         }
       }
     },
@@ -325,6 +332,50 @@ export const editLayers = {
         await this.removeFeatures(feature)
         parentLeafletLayer.removeLayer(leafletLayer)
       })
+    },
+    onPointMoveEnd (event) {
+      const pointPath = event.indexPath
+      let coords = event.layer.getLatLngs()
+      for (let deep = 0; deep < pointPath.length; ++deep)
+        coords = coords[pointPath[deep]]
+
+      this.onEditPointMoved(pointPath, coords, 'user')
+    },
+    moveEditPoint (pointPath, newLat, newLon, origin) {
+      if (!this.editingLayer) return
+
+      const leafletCoords = L.latLng(newLat, newLon)
+
+      // Update polyline coords
+      const polyline = this.editableLayer.pm._layers[0]
+      const coords = polyline.getLatLngs()
+      const parentPath = pointPath.slice(0, pointPath.length - 1)
+      const index = pointPath[pointPath.length - 1]
+      let parentArr = coords
+      for (const i of parentPath)
+        parentArr = parentArr[i]
+      parentArr[index] = leafletCoords
+      polyline.setLatLngs(coords)
+
+      // Also update associated marker
+      let marker = polyline.pm._markers
+      for (const i of pointPath)
+        marker = marker[i]
+      marker.setLatLng(leafletCoords)
+
+      this.onEditPointMoved(pointPath, leafletCoords, origin ? origin : 'app')
+    },
+    onEditPointMoved (pointPath, coords, origin) {
+      const args = {
+        layer: this.editedLayer,
+        pointPath: pointPath,
+        latitude: coords.lat,
+        longitude: coords.lng,
+        origin
+      }
+
+      this.$emit('edit-point-moved', args)
+      this.$engineEvents.emit('edit-point-moved', args)
     }
   },
   created () {
