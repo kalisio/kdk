@@ -279,11 +279,7 @@ export const editLayers = {
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         for (const feature of features) {
-          const fid = feature._id
-          const geometry = feature.geometry
-          const service = this.$api.getService('features-edition')
-          await service.patch(fid, { geometry })
-          // await this.$api.getService('features-edition').patch(fid, { geometry })
+          await this.$api.getService('features-edition').patch(feature._id, { geometry: feature.geometry })
         }
       }
     },
@@ -334,10 +330,17 @@ export const editLayers = {
       })
     },
     onPointMoveEnd (event) {
-      const pointPath = event.indexPath
+      // Lookup edited point coordinates
       let coords = event.layer.getLatLngs()
-      for (let deep = 0; deep < pointPath.length; ++deep)
-        coords = coords[pointPath[deep]]
+      for (let deep = 0; deep < event.indexPath.length; ++deep)
+        coords = coords[event.indexPath[deep]]
+
+      // Find the polyline layer index that fired the event
+      const polylineIndex = this.editableLayer.pm._layers.findIndex((layer) => layer._leaflet_id === event.layer._leaflet_id)
+      // Prepend that index to the index path
+      // The full point path is [polyline_index, marker_path]
+      const pointPath = event.indexPath.slice(0, event.indexPath.length)
+      pointPath.splice(0, 0, polylineIndex)
 
       this.onEditPointMoved(pointPath, coords, 'user')
     },
@@ -346,11 +349,15 @@ export const editLayers = {
 
       const leafletCoords = L.latLng(newLat, newLon)
 
+      // Break point path in [polyline_index, marker_path]
+      const polylineIndex = pointPath[0]
+      const markerPath = pointPath.slice(1, pointPath.length)
+
       // Update polyline coords
-      const polyline = this.editableLayer.pm._layers[0]
+      const polyline = this.editableLayer.pm._layers[polylineIndex]
       const coords = polyline.getLatLngs()
-      const parentPath = pointPath.slice(0, pointPath.length - 1)
-      const index = pointPath[pointPath.length - 1]
+      const parentPath = markerPath.slice(0, markerPath.length - 1)
+      const index = markerPath[markerPath.length - 1]
       let parentArr = coords
       for (const i of parentPath)
         parentArr = parentArr[i]
@@ -359,7 +366,7 @@ export const editLayers = {
 
       // Also update associated marker
       let marker = polyline.pm._markers
-      for (const i of pointPath)
+      for (const i of markerPath)
         marker = marker[i]
       marker.setLatLng(leafletCoords)
 
