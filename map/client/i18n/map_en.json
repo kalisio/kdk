@@ -597,6 +597,7 @@
     "MEASURE_DISTANCE": "Measure a distance",
     "MEASURE_AREA": "Measure an area",
     "MEASURE_FEATURE": "Measure a feature",
+    "MEASURE_CIRCLE": "Measure an isodistance",
     "DISPLAY_MEASURE_VALUE": "Display measure values",
     "CLICK_TO_CHANGE_UNIT": "Click to change unit"
   },
