@@ -598,6 +598,7 @@
     "MEASURE_DISTANCE": "Mesurer une distance",
     "MEASURE_AREA": "Mesurer une aire",
     "MEASURE_FEATURE": "Mesurer une entité",
+    "MEASURE_CIRCLE": "Mesurer une isodistance",
     "DISPLAY_MEASURE_VALUE": "Afficher les valeurs des mesures",
     "CLICK_TO_CHANGE_UNIT": "Cliquer pour changer d'unité"
   },
