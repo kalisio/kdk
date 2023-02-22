@@ -102,6 +102,14 @@ export default {
         const geojson = state.workingLayer ? state.workingLayer.toGeoJSON() : this.geojsons[this.geojsons.length - 1]
         const a = area(geojson)
         this.measureValue = this.formatArea(a, 'm^2')
+      } else if (this.measureMode === 'measure-circle') {
+        const state = this.measureCircle
+
+        const units = Units.getUnits('length')
+        // Get current unit and jump to next one
+        const index = _.findIndex(units, { name: this.distanceUnit })
+        this.distanceUnit = units[(index + 1) % units.length].name
+        this.measureValue = this.formatDistance(state.distToCenter, 'm')
       }
 
       // we only need to recompute tooltips on Polygon / LineString.
@@ -116,7 +124,7 @@ export default {
           const a = area(geojson)
           layer.bindTooltip(this.formatArea(a, 'm^2'), { sticky: true })
         } else if (layer.measureMode === 'measure-circle') {
-          layer.bindTooltip(this.formatDistance(layer.distToCenter, layer.distToCenterUnit), { sticky: true })
+          layer.bindTooltip(this.formatDistance(layer.distToCenter, 'm'), { sticky: true })
         }
       }
     },
@@ -426,7 +434,6 @@ export default {
 
         // bind tooltip
         state.circleLayer.distToCenter = state.distToCenter
-        state.circleLayer.distToCenterUnit = 'm'
         state.circleLayer.bindTooltip(this.formatDistance(state.distToCenter, 'm'), { sticky: true })
         state.circleLayer.measureMode = this.measureMode
 
@@ -470,7 +477,7 @@ export default {
     },
     measureCircleTooltip (circleLayer) {
       let tooltip = ''
-      tooltip += this.formatDistance(circleLayer.distToCenter, circleLayer.distToCenterUnit)
+      tooltip += this.formatDistance(circleLayer.distToCenter, 'm')
       return tooltip
     },
     endMeasureCircle () {
