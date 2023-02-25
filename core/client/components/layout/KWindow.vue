@@ -192,10 +192,11 @@ const widgetStyle = computed(() => {
       widgetHeight -= parseInt(window.getComputedStyle(windowFooterElement).getPropertyValue('height'))
     }
     // return the style
-    return `minWidth: ${currentWindow.size[0]}px;
-            maxWidth: ${currentWindow.size[0]}px;
-            minHeight: ${widgetHeight}px; 
-            maxHeight: ${widgetHeight}px;
+    const border = 2
+    return `minWidth: ${currentWindow.size[0] - border}px;
+            maxWidth: ${currentWindow.size[0] - border}px;
+            minHeight: ${widgetHeight - border}px; 
+            maxHeight: ${widgetHeight - border}px;
             z-index: 1;`
   }
 })
