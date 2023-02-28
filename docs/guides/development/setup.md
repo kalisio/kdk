@@ -12,7 +12,7 @@ It has the largest ecosystem of open source libraries in the world.
 - [Specific versions.](https://nodejs.org/en/download/)
 
 ::: warning
-At the time of writing the KDK modules are expected to work with Node.js 12.x
+At the time of writing the KDK modules v2.x (`master` branch) are expected to work with Node.js 16.x and KDK modules v1.x are expected to work with Node.js 12.x
 :::
 
 ::: tip
@@ -41,7 +41,7 @@ Under Windows we recommand using [Tortoise Git](https://tortoisegit.org/) and to
 - [Windows.](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
 
 ::: warning
-Kalisio modules are expected to work with MongoDB 3.x and MongoDB 4.x
+At the time of writing the KDK modules v2.x (`master` branch) are expected to work with MongoDB 4.x and KDK modules v1.x are expected to work with MongoDB 3.x
 :::
 
 ::: tip

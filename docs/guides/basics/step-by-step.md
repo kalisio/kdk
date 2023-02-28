@@ -21,7 +21,7 @@ Our main module is simply called [kdk](https://github.com/kalisio/kdk), availabl
 Although bundled together you can only use the core part without the map part, for instance our application template does not use it. Indeed, on the bakend side related services will not be allocated if the map part is not explicitely used, and on the frontend side Webpack will not bundle unused components.
 :::
 
-However, this module also relies on [Weacast](https://weacast.github.io/weacast-docs/) to manage weather data and [feathers-distributed](https://github.com/kalisio/feathers-distributed) is often used to build [microservices architecture](../../architecture/global-architecture.md), we recommend reading this articles on Medium to get a deeper overview:
+However, this module also relies on [Weacast](https://weacast.github.io/weacast/) to manage weather data and [feathers-distributed](https://github.com/kalisio/feathers-distributed) is often used to build [microservices architecture](../../architecture/global-architecture.md), we recommend reading this articles on Medium to get a deeper overview:
 * [Introducing Weacast](https://towardsdatascience.com/introducing-weacast-e6e98487b2a8)
 * [A use case of microservices with FeathersJS: building a geospatial platform](https://blog.feathersjs.com/a-use-case-of-microservices-with-feathersjs-building-a-geospatial-platform-56373604db71)
 
