@@ -25,6 +25,19 @@ export const featureService = {
       }
       return baseQuery
     },
+    async getFilterQueryForFeatures (options) {
+      // Any filter query to process ?
+      const filterQuery = {}
+      if (options.filterQuery) {
+        if (typeof options.filterQuery === 'function') {
+          const result = await options.filterQuery()
+          Object.assign(filterQuery, result)
+        } else {
+          Object.assign(filterQuery, options.filterQuery)
+        }
+      }
+      return filterQuery
+    },
     async getSortQueryForFeatures (options) {
       // Any sort query to process ?
       const sortQuery = {}
@@ -72,10 +85,11 @@ export const featureService = {
       return (this.selectableLevelsLayer && (this.selectableLevelsLayer.name === options.name) ? this.selectedLevel : null)
     },
     async getProbeFeatures (options) {
-      // Any base/sort query to process ?
+      // Any base/filter/sort query to process ?
       const query = await this.getBaseQueryForFeatures(options)
+      const filterQuery = await this.getFilterQueryForFeatures(options)
       const sortQuery = await this.getSortQueryForFeatures(options)
-      Object.assign(query, sortQuery)
+      Object.assign(query, filterQuery, sortQuery)
       const response = await this.$api.getService(options.probeService).find({ query })
       const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
@@ -152,10 +166,11 @@ export const featureService = {
       if (!_.isNil(queryLevel)) {
         query.level = queryLevel
       }
-      // Any sort query to process ?
+      // Any filter/sort query to process ?
+      const filterQuery = await this.getFilterQueryForFeatures(options)
       const sortQuery = await this.getSortQueryForFeatures(options)
       // Take care to not erase possible existing sort options
-      _.merge(query, sortQuery)
+      _.merge(query, filterQuery, sortQuery)
 
       return query
     },
