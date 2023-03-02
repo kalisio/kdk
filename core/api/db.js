@@ -27,7 +27,8 @@ export function idToString (id) {
 export function createObjectID (id) {
   // This ensure it works even if id is already an ObjectID
   if (isObjectID(id)) return id
-  else if (!ObjectID.isValid(id)) return null
+  // Take care that numbers could be a valid object ID
+  else if ((typeof id === 'number') || !ObjectID.isValid(id)) return null
   else return new ObjectID(id)
 }
 
@@ -54,8 +55,8 @@ export function objectifyIDs (object) {
       if (ids.length > 0) object[key] = ids
     } else if (key === '$or') {
       value.forEach(entry => objectifyIDs(entry))
-      // Avoid jumping inside an already transformed ObjectID
-    } else if ((typeof value === 'object') && !isObjectID(value)) {
+      // Avoid jumping inside an already transformed Date, ObjectID or arrays
+    } else if ((typeof value === 'object') && !(value instanceof Date) && !isObjectID(value) && !Array.isArray(value)) {
       objectifyIDs(value)
     }
   })
