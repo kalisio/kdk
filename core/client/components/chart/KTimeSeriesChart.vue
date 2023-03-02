@@ -52,6 +52,8 @@ defineExpose({
 // data
 const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
 const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
+let min = null
+let max = null
 
 // watch
 watch(() => props.timeSeries, update)
@@ -98,13 +100,21 @@ function onZoomEnd () {
   const end = moment.utc(_.get(chart, 'scales.x.max'))
   emit('zoom-end', { chart, start, end })
 }
+// We allow min/max options to be computed from data min/max using a function
+function computeScaleBound (scale, property, min, max) {
+  const scaleBound = _.get(scale, property)
+  if (typeof scaleBound === 'function') {
+    _.set(scale, property, scaleBound(min, max))
+  }
+}
 
 async function makeChartConfig () {
   // Order matters as we compute internals like data time range
   const datasets = await makeDatasets()
   const scales = makeScales()
   const annotation = makeAnnotation()
-  return {
+
+  const config = {
     type: 'line',
     data: { datasets },
     plugins: [],
@@ -178,40 +188,45 @@ async function makeChartConfig () {
       }
     }, props.options)
   }
+  computeScaleBound(scales.x, 'min', startTime.value, endTime.value)
+  computeScaleBound(scales.x, 'max', startTime.value, endTime.value)
+  computeScaleBound(scales.x, 'suggestedMin', startTime.value, endTime.value)
+  computeScaleBound(scales.x, 'suggestedMax', startTime.value, endTime.value)
+  return config
 }
 
 function makeScales () {
-  const scales = {
-    x: {
-      type: 'time',
-      time: { unit: 'hour' },
-      min: startTime.value.valueOf(),
-      max: endTime.value.valueOf(),
-      ticks: {
-        autoskip: true,
-        maxRotation: 20,
-        major: {
-          enabled: true
-        },
-        callback: function (value, index, values) {
-          if (values[index] !== undefined) {
-            if (values[index].major === true) {
-              return Time.format(moment(values[index].value), 'date.short')
-            } else {
-              return Time.format(moment(values[index].value), 'time.short')
-            }
+  const x = {
+    type: 'time',
+    time: { unit: 'hour' },
+    min: startTime.value.valueOf(),
+    max: endTime.value.valueOf(),
+    ticks: {
+      autoskip: true,
+      maxRotation: 20,
+      major: {
+        enabled: true
+      },
+      callback: function (value, index, values) {
+        if (values[index] !== undefined) {
+          if (values[index].major === true) {
+            return Time.format(moment(values[index].value), 'date.short')
+          } else {
+            return Time.format(moment(values[index].value), 'time.short')
           }
-        },
-        font: function (context) {
-          if (context.tick && context.tick.major) {
-            return {
-              weight: 'bold'
-            }
+        }
+      },
+      font: function (context) {
+        if (context.tick && context.tick.major) {
+          return {
+            weight: 'bold'
           }
         }
       }
     }
   }
+  
+  const scales = { x }
 
   // Build a scale per unit
   unit2axis.clear()
@@ -238,6 +253,10 @@ function makeScales () {
           }
         }
       }, _.get(timeSerie.variable.chartjs, 'yAxis', {}))
+      computeScaleBound(scales[axis], 'min', min, max)
+      computeScaleBound(scales[axis], 'max', min, max)
+      computeScaleBound(scales[axis], 'suggestedMin', min, max)
+      computeScaleBound(scales[axis], 'suggestedMax', min, max)
       ++axisId
     }
   }
@@ -250,9 +269,12 @@ async function makeDatasets () {
     const label = _.get(timeSerie, 'variable.label')
     const { unit, baseUnit } = getUnits(timeSerie)
     const data = await timeSerie.data
-    // Update time range
+    // Update time/value range
     data.forEach(item => {
       const time = moment.utc(_.get(item, props.xAxisKey))
+      const value = _.get(item, props.yAxisKey)
+      if (_.isNil(min) || (value < min)) min = value
+      if (_.isNil(max) || (value > max)) max = value
       if (!props.startTime) {
         if (!startTime.value || time.isBefore(startTime.value)) startTime.value = time
       }
@@ -356,9 +378,11 @@ async function exportSeries (options = {}) {
 
 async function update () {
   if (!canvas) return
-  // Reset time range
+  // Reset time/value range
   startTime.value = (props.startTime ? moment.utc(props.startTime) : null)
   endTime.value = (props.endTime ? moment.utc(props.endTime) : null)
+  min = null
+  max = null
 
   const config = await makeChartConfig()
   if (!chart) {
