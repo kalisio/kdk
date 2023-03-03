@@ -331,10 +331,12 @@ export default {
       const geoCoords0 = coords[coords.length - 1]
       const geoCoords1 = [event.latlng.lng, event.latlng.lat]
       const d = distance(geoCoords0, geoCoords1, { unit: 'kilometers' })
+
       let content = this.formatDistance(d, 'km')
       const b = bearing(geoCoords0, geoCoords1)
       content += ' '
       content += this.formatAngle(b, 'deg')
+      this.showCursorTooltip(event.latlng, content)
 
       // area of the closed polygon
       if (coords.length >= 2) {
@@ -343,8 +345,6 @@ export default {
         const a = area(polygon([coords]))
         this.measureValue = this.formatArea(a, 'm^2')
       }
-
-      this.hideCursorTooltip()
     },
     measureAreaTooltip (marker) {
       return this.geometryVertexTooltip(marker)
@@ -462,8 +462,8 @@ export default {
       state.distToCenter = distance(center, cursor, { units: 'kilometers' }) * 1000 // GeodesicCircle requires radius in m
       this.measureValue = this.formatDistance(state.distToCenter, 'm')
       if (!state.circleLayer) {
-        state.circleLayer = new L.GeodesicCircle(this.measureCircle.center, { fill: true, steps: 360, radius: state.distToCenter })
-        state.lineLayer = new L.polyline([state.center, event.latlng], { dashArray: [5, 5] })
+        state.circleLayer = L.geodesiccircle(this.measureCircle.center, { fill: true, steps: 360, radius: state.distToCenter })
+        state.lineLayer = L.polyline([state.center, event.latlng], { dashArray: [5, 5] })
         this.kActivity.map.addLayer(state.circleLayer)
         this.kActivity.map.addLayer(state.lineLayer)
         state.circleLayer._path.style.cursor = 'crosshair'
