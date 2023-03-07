@@ -146,8 +146,8 @@ export const featureService = {
           Object.assign(query, {
             $sort: { time: -1, runTime: -1 },
             time: {
-              $gte: gte.format(),
-              $lte: lte.format()
+              $gte: gte.toISOString(),
+              $lte: lte.toISOString()
             }
           })
           // If we can aggregate then keep track of last element of each aggregation
@@ -157,7 +157,7 @@ export const featureService = {
         } else {
           Object.assign(query, {
             $sort: { time: -1, runTime: -1 },
-            time: { $lte: now.format() }
+            time: { $lte: now.toISOString() }
           })
           // If we can aggregate then keep track of last element of each aggregation
           if (options.featureId) query.$limit = 1
@@ -210,8 +210,8 @@ export const featureService = {
       const query = await this.getFeaturesQuery(_.merge({
         baseQuery: this.getMeasureForFeatureBaseQuery(layer, feature)
       }, layer), {
-        $gte: startTime.format(),
-        $lte: endTime.format()
+        $gte: startTime.toISOString(),
+        $lte: endTime.toISOString()
       })
       return query
     },

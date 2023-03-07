@@ -143,9 +143,9 @@ async function exportData (options = {}) {
         // This will support GeoJson out-of-the-box
         let data = _.get(item, path, _.get(item, `properties.${path}`))
         if (type === 'string') {
-          if (format === 'date-time') data = moment.utc(data).format()
-          if (format === 'date') data = moment.utc(data).format()
-          if (format === 'time') data = moment.utc(data).format()
+          if (format === 'date-time') data = moment.utc(data).toISOString()
+          if (format === 'date') data = moment.utc(data).toISOString()
+          if (format === 'time') data = moment.utc(data).toISOString()
         }
         // Check if we have a translation key or directly the label content
         row[options.labelAsHeader ? `${i18n.tie(label)}` : key] = data

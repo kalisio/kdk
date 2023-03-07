@@ -147,7 +147,7 @@ export default {
               case 'integer':
                 return (value ? value.toFixed(0) : '')
               case 'string':
-                return (value ? (format === 'date-time' ? moment.utc(value).format() : value) : '')
+                return (value ? (format === 'date-time' ? moment.utc(value).toISOString() : value) : '')
               default:
                 return (value ? value.toString() : '')
             }

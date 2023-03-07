@@ -46,12 +46,12 @@ export function marshallTime (item, property) {
   if (!time) return
   if (Array.isArray(time)) {
     _.set(item, property, time.map(t => {
-      if (moment.isMoment(t)) return new Date(t.format())
+      if (moment.isMoment(t)) return t.toDate()
       else if (typeof t === 'string') return new Date(t)
       else return t
     }))
   } else if (moment.isMoment(time)) {
-    _.set(item, property, new Date(time.format()))
+    _.set(item, property, time.toDate())
   } else if (typeof time === 'string') {
     _.set(item, property, new Date(time))
   } else if (typeof time === 'object') { // Check if complex object such as comparison operator
@@ -73,12 +73,12 @@ export function unmarshallTime (item, property) {
   if (Array.isArray(time)) {
     _.set(item, property, time.map(t => {
       if (typeof t === 'string') return moment.utc(t)
-      else if (typeof t.toISOString === 'function') return moment.utc(t.toISOString())
+      else if (typeof t.toISOString === 'function') return moment.utc(t)
       else return t
     }))
   } else if (!moment.isMoment(time)) {
     if (typeof time === 'string') _.set(item, property, moment.utc(time))
-    else if (typeof time.toISOString === 'function') _.set(item, property, moment.utc(time.toISOString()))
+    else if (typeof time.toISOString === 'function') _.set(item, property, moment.utc(time))
     // Recurse on complex object such as comparison operator
     else if (typeof time === 'object') _.keys(time).forEach(key => unmarshallTime(time, key))
   }

@@ -75,7 +75,7 @@ export const Time = {
   // Build sort query
   updateTimeRangeQuery () {
     const query = {}
-    query[this.getRange().field] = { $gte: this.getRange().start.format(), $lte: this.getRange().end.format() }
+    query[this.getRange().field] = { $gte: this.getRange().start.toISOString(), $lte: this.getRange().end.toISOString() }
     // Avoid reentrance as we listen to other filter property changes
     if (!_.isEqual(query, this.getRangeQuery())) Store.patch('time.range', { query })
   },
@@ -89,14 +89,14 @@ export const Time = {
     let currentTime = this.convertToMoment(datetime)
     // Convert to local time
     if (this.getFormatTimezone()) {
-      currentTime = moment.tz(currentTime.format(), this.getFormatTimezone())
+      currentTime = moment.tz(currentTime.toISOString(), this.getFormatTimezone())
     }
     return currentTime
   },
   format (datetime, format, options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) {
     // Convert to tz if defined
     const localDatetime = this.convertToLocal(datetime)
-    if (format === 'iso') return localDatetime.format()
+    if (format === 'iso') return localDatetime.toISOString()
     else if (format === 'locale') return localDatetime.toDate().toLocaleString(getLocale(), options)
     // Defaults to long mode if not given
     else return localDatetime.format(_.get(this.getFormat(), format))
