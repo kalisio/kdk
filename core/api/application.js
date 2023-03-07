@@ -308,6 +308,7 @@ export function createWebhook (path, app, options = {}) {
         await options.postprocessor(service, args, payload)
       }
       try {
+        debug(`Performing ${payload.service} service ${payload.operation} operation through webhook ${webhookPath} with args:`, args)
         const result = await service[payload.operation].apply(service, args)
         // Send back result
         res.json(result)
