@@ -44,26 +44,49 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
   }
 }
 
-// Custom strategy to ensure we renew the JWT when reauthenticating
-// Based on https://deniapps.com/blog/jwt-token-auto-renew-auto-logout
-export class RenewJWTStrategy extends JWTStrategy {
+// This strategy is inspired by the following:
+// 1) Custom strategy to ensure we renew the JWT when reauthenticating
+// https://deniapps.com/blog/jwt-token-auto-renew-auto-logout
+// 2) Custom strategy to ensure we can use JWT tokens not attached to a user for API access
+// https://docs.feathersjs.com/cookbook/authentication/stateless.html
+// However, it has been rewritten to work simultaneously with:
+// - a stateless or user attached JWT
+// - a socket or a rest transport
+export class JWTAuthenticationStrategy extends JWTStrategy {
   async authenticate (authentication, params) {
-    // run all of the original authentication logic, e.g. checking
-    // if the token is there, is valid, is not expired, etc.
-    const result = await super.authenticate(authentication, params)
-    // and now the key trick - by deleting the accessToken here
-    // we will get Feathers AuthenticationStrategy.create()
-    // to generate us a new token.
-    delete result.accessToken
-    return result
-  }
-}
+    const { accessToken } = authentication
+    const { entity } = this.configuration
 
-// Custom strategy to ensure we can use JWT tokens not attached to a user for API access
-// Based on https://docs.feathersjs.com/cookbook/authentication/stateless.html
-export class StatelessJWTStrategy extends JWTStrategy {
-  get entityService () {
-    return null
+    if (!accessToken) {
+      throw new NotAuthenticated('No access token')
+    }
+
+    const payload = await this.authentication.verifyAccessToken(accessToken, params.jwt)
+    const result = {
+      // First key trick - by deleting the token here
+      // we will get Feathers generate a new one
+      //accessToken,
+      authentication: {
+        strategy: 'jwt',
+        accessToken,
+        payload
+      }
+    }
+
+    // Second key trick
+    // Return user attached to the token if any
+    // Return basic information for a stateless token otherwise
+    if (payload.sub) {
+      const entityId = await this.getEntityId(result, params)
+      const value = await this.getEntity(entityId, params)
+
+      return {
+        ...result,
+        [entity]: value
+      }
+    }
+
+    return result
   }
 }
 
@@ -107,8 +130,7 @@ export default function auth (app) {
 
   const authentication = new AuthenticationService(app)
   const strategies = config.authStrategies || []
-  if (strategies.includes('api')) authentication.register('api', new StatelessJWTStrategy())
-  if (strategies.includes('jwt')) authentication.register('jwt', new RenewJWTStrategy())
+  if (strategies.includes('jwt')) authentication.register('jwt', new JWTAuthenticationStrategy())
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers

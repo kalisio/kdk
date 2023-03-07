@@ -16,13 +16,17 @@ module.exports = {
   },
   authentication: {
     secret: 'b5KqXTye4fVxhGFpwMVZRO3R56wS5LNoJHifwgGOFkB5GfMWvIdrWyQxEJXswhAC',
-    strategies: [
+    path: API_PREFIX + '/authentication',
+    service: API_PREFIX + '/users',
+    entity: 'user',
+    authStrategies: [
       'jwt',
       'local'
     ],
-    path: API_PREFIX + '/authentication',
-    service: API_PREFIX + '/users',
-    entity: 'user'
+    local: {
+      usernameField: 'email',
+      passwordField: 'password'
+    }
   },
   geocoder: {
     provider: 'opendatafrance'

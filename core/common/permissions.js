@@ -75,12 +75,6 @@ export function defineUserAbilities (subject, can, cannot) {
     can('remove', 'storage', { _id: 'avatars/' + subject._id.toString() + '.thumbnail' })
     // Avatar is part of user profiles so that they can be read by any
     can('read', 'storage', { _id: { $regex: '^avatars/*' } })
-    // Verification email, reset password, etc.
-    can('service', 'account')
-    can('create', 'account')
-    can('service', 'devices')
-    can('update', 'devices')
-    can('remove', 'devices')
   }
 }
 
