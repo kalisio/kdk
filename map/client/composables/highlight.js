@@ -2,7 +2,7 @@ import _ from 'lodash'
 import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid, getCssVar } from 'quasar'
-import { unref, watch, onUnmounted } from 'vue'
+import { unref, onUnmounted } from 'vue'
 import { getFeatureId } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 
@@ -15,7 +15,7 @@ export function useHighlight (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
-  
+
   // data
   // hightligh store for context
   const { store, clear, set, get, unset, has } = composables.useStore(`hightlighs.${name}`)

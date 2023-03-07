@@ -24,18 +24,18 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { Time } from '../../../../core/client/time.js'
-import { getAppLocale, loadIcon } from '../../../../core/client/utils/index.js'
+import { getAppLocale } from '../../../../core/client/utils/index.js'
 import { uid } from 'quasar'
 import '../../leaflet/BoxSelection.js'
-import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js'
-window.nezasa = { iso8601 } // https://github.com/socib/Leaflet.TimeDimension/issues/124
+import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
 import shadowIcon from 'leaflet/dist/images/marker-shadow.png'
+window.nezasa = { iso8601 }
 
 // Fix to make Leaflet assets be correctly inserted by webpack
-delete L.Icon.Default.prototype._getIconUrl;
+delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   iconRetinaUrl: retinaIcon,
@@ -551,7 +551,7 @@ export const baseMap = {
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
     this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
 
-/*
+    /*
     console.log('***** KDK ****')
     console.log(L.Icon.Default.prototype._getIconUrl())
 
@@ -559,7 +559,7 @@ export const baseMap = {
       iconRetinaUrl: await loadIcon('marker-icon-2x.png'),
       iconUrl: await loadIcon('marker-icon.png'),
       shadowUrl: await loadIcon('marker-shadow.png')
-    })*/
+    }) */
   },
   beforeUnmount () {
     this.clearLayers()

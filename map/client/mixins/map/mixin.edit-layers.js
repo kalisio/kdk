@@ -332,8 +332,7 @@ export const editLayers = {
     onPointMoveEnd (event) {
       // Lookup edited point coordinates
       let coords = event.layer.getLatLngs()
-      for (let deep = 0; deep < event.indexPath.length; ++deep)
-        coords = coords[event.indexPath[deep]]
+      for (let deep = 0; deep < event.indexPath.length; ++deep) { coords = coords[event.indexPath[deep]] }
 
       // Find the polyline layer index that fired the event
       const polylineIndex = this.editableLayer.pm._layers.findIndex((layer) => layer._leaflet_id === event.layer._leaflet_id)
@@ -359,18 +358,16 @@ export const editLayers = {
       const parentPath = markerPath.slice(0, markerPath.length - 1)
       const index = markerPath[markerPath.length - 1]
       let parentArr = coords
-      for (const i of parentPath)
-        parentArr = parentArr[i]
+      for (const i of parentPath) { parentArr = parentArr[i] }
       parentArr[index] = leafletCoords
       polyline.setLatLngs(coords)
 
       // Also update associated marker
       let marker = polyline.pm._markers
-      for (const i of markerPath)
-        marker = marker[i]
+      for (const i of markerPath) { marker = marker[i] }
       marker.setLatLng(leafletCoords)
 
-      this.onEditPointMoved(pointPath, leafletCoords, origin ? origin : 'app')
+      this.onEditPointMoved(pointPath, leafletCoords, origin || 'app')
     },
     onEditPointMoved (pointPath, coords, origin) {
       const args = {

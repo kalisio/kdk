@@ -6,7 +6,7 @@ import circle from '@turf/circle'
 import bboxPolygon from '@turf/bbox-polygon'
 import intersects from '@turf/boolean-intersects'
 import { featureEach } from '@turf/meta'
-import { unref, watch } from 'vue'
+import { unref } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 import { getFeatureId } from '../utils.js'
 

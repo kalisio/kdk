@@ -3,13 +3,14 @@ import _ from 'lodash'
 import 'winston-daily-rotate-file'
 // import { RateLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
-// import { TooManyRequests } from '@feathersjs/errors'
+import errors from '@feathersjs/errors'
 import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import { LocalStrategy } from '@feathersjs/authentication-local'
 import { OAuthStrategy, expressOauth } from '@feathersjs/authentication-oauth'
 import PasswordValidator from 'password-validator'
 
 const debug = makeDebug('kdk:core:authentication')
+const { NotAuthenticated } = errors
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
   async getEntityData (profile, entity) {
@@ -65,7 +66,7 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     const result = {
       // First key trick - by deleting the token here
       // we will get Feathers generate a new one
-      //accessToken,
+      // accessToken,
       authentication: {
         strategy: 'jwt',
         accessToken,

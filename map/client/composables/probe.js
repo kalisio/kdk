@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { unref, watch } from 'vue'
+import { unref } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 
 export function useProbe (name, options = {}) {

@@ -225,7 +225,7 @@ function makeScales () {
       }
     }
   }
-  
+
   const scales = { x }
 
   // Build a scale per unit

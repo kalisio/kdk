@@ -54,7 +54,7 @@ export default {
       this.endMode(this.measureMode)
       this.measureMode = mode
 
-      if (this.measureMode === 'measure-distance') this.beginMeasureDistance ()
+      if (this.measureMode === 'measure-distance') this.beginMeasureDistance()
       else if (this.measureMode === 'measure-area') this.beginMeasureArea()
       else if (this.measureMode === 'measure-circle') this.beginMeasureCircle()
       else if (this.measureMode === 'measure-feature') this.beginMeasureFeature()
@@ -272,8 +272,7 @@ export default {
 
       if (state.workingLayer) state.workingLayer.off('pm:vertexadded', this.onMeasureDistanceVertexAdded)
       if (state.markers) {
-        for (const marker of state.markers)
-          this.kActivity.map.removeLayer(marker)
+        for (const marker of state.markers) { this.kActivity.map.removeLayer(marker) }
       }
       this.kActivity.map.off('mousemove', this.onMeasureDistanceMouseMove)
       this.kActivity.map.off('pm:drawstart', this.onMeasureDistanceDrawStart)
@@ -377,8 +376,7 @@ export default {
 
       if (state.workingLayer) state.workingLayer.off('pm:vertexadded', this.onMeasureAreaVertexAdded)
       if (state.markers) {
-        for (const marker of state.markers)
-          this.kActivity.map.removeLayer(marker)
+        for (const marker of state.markers) { this.kActivity.map.removeLayer(marker) }
       }
       this.kActivity.map.off('mousemove', this.onMeasureAreaMouseMove)
       this.kActivity.map.off('pm:drawstart', this.onMeasureAreaDrawStart)
@@ -424,7 +422,7 @@ export default {
         state.center = event.latlng
         // put a marker there
         state.centerMarker = L.marker(event.latlng, { icon: this.vertexIcon })
-                              .bindTooltip(this.formatCoordinates(event.latlng.lat, event.latlng.lng))
+          .bindTooltip(this.formatCoordinates(event.latlng.lat, event.latlng.lng))
         this.kActivity.map.addLayer(state.centerMarker)
       } else {
         // end of circle
@@ -457,8 +455,8 @@ export default {
         return
       }
 
-      const center = [ state.center.lng, state.center.lat ]
-      const cursor = [ event.latlng.lng, event.latlng.lat ]
+      const center = [state.center.lng, state.center.lat]
+      const cursor = [event.latlng.lng, event.latlng.lat]
       state.distToCenter = distance(center, cursor, { units: 'kilometers' }) * 1000 // GeodesicCircle requires radius in m
       this.measureValue = this.formatDistance(state.distToCenter, 'm')
       if (!state.circleLayer) {
@@ -511,7 +509,7 @@ export default {
     formatAngle (value, unit) {
       return Units.format(value, unit, this.angleUnit)
     },
-    formatCoordinates(lat, lng) {
+    formatCoordinates (lat, lng) {
       return formatUserCoordinates(lat, lng, this.$store.get('locationFormat', 'FFf'))
     }
   },

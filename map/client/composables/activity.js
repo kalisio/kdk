@@ -12,7 +12,7 @@ export function useActivity (name, exposed = { selection: true, probe: true, hig
 
   // expose
   const expose = {
-    ...coreActivity,
+    ...coreActivity
   }
   if (exposed.selection) {
     selection = useSelection(name, _.get(coreActivity, 'options.selection'))
