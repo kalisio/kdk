@@ -51,27 +51,28 @@ export function useSelection (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
-  // Watch change
-  watch(kActivity, (newActivity) => {
-    // Remove listeners on previous actvity and set it on new one
+
+  // data
+
+  // functions
+  function setCurrentActivity (newActivity) {
+    // Avoid multiple updates
+    if (activity === newActivity) return
+    // Remove listeners on previous activity and set it on new one
     if (activity && activity.$engineEvents) {
       activity.$engineEvents.off('click', onClicked)
       if (options.boxSelection) activity.$engineEvents.off('boxselectionend', onBoxSelection)
       if (options.clusterSelection) activity.$engineEvents.off('spiderfied', onClusterSelection)
       activity.$engineEvents.off('layer-hidden', onSelectedLayerHidden)
     }
+    activity = newActivity
     if (newActivity && newActivity.$engineEvents) {
-      activity = unref(newActivity)
-      activity.$engineEvents.on('click', onClicked)
-      if (options.boxSelection) activity.$engineEvents.on('boxselectionend', onBoxSelection)
-      if (options.clusterSelection) activity.$engineEvents.on('spiderfied', onClusterSelection)
-      activity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
+      newActivity.$engineEvents.on('click', onClicked)
+      if (options.boxSelection) newActivity.$engineEvents.on('boxselectionend', onBoxSelection)
+      if (options.clusterSelection) newActivity.$engineEvents.on('spiderfied', onClusterSelection)
+      newActivity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
     }
-  })
-
-  // data
-
-  // functions
+  }
   // Single selection will rely on the lastly selected item only
   function hasSelectedFeature () {
     return selection.hasSelectedItem() && selection.getSelectedItem().feature
@@ -285,6 +286,7 @@ export function useSelection (name, options = {}) {
   // expose
   return {
     ...selection,
+    setCurrentActivity,
     hasSelectedFeature,
     getSelectedFeature,
     getSelectedFeatureCollection,

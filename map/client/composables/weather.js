@@ -14,8 +14,11 @@ export function useWeather (options = {}) {
   let activity = unref(kActivity)
   // Watch change
   watch(kActivity, (newActivity) => {
+    newActivity = unref(newActivity)
+    // Avoid multiple updates
+    if (activity === newActivity) return
     if (newActivity) {
-      activity = unref(newActivity)
+      activity = newActivity
     }
   })
   // data

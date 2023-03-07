@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { onUnmounted } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 import { useSelection } from './selection.js'
 import { useProbe } from './probe.js'
@@ -6,27 +7,46 @@ import { useHighlight } from './highlight.js'
 
 // When creating an activity we are interested by all aspects
 export function useActivity (name, exposed = { selection: true, probe: true, highlight: true }) {
-  const activity = composables.useActivity(name, exposed)
+  const coreActivity = composables.useActivity(name, exposed)
+  let selection, probe, highlight
+
   // expose
   const expose = {
-    ...activity
+    ...coreActivity,
   }
   if (exposed.selection) {
+    selection = useSelection(name, _.get(coreActivity, 'options.selection'))
     Object.assign(expose, {
-      ...useSelection(name, _.get(activity, 'options.selection'))
+      ...selection
     })
   }
   if (exposed.probe) {
+    probe = useProbe(name, _.get(coreActivity, 'options.probe'))
     Object.assign(expose, {
-      ...useProbe(name, _.get(activity, 'options.probe'))
+      ...probe
     })
   }
   if (exposed.highlight) {
+    highlight = useHighlight(name, _.get(coreActivity, 'options.highlight'))
     Object.assign(expose, {
-      ...useHighlight(name, _.get(activity, 'options.highlight'))
+      ...highlight
     })
   }
-  return expose
+
+  // functions
+  function setCurrentActivity (activity) {
+    coreActivity.setCurrentActivity(activity)
+    if (selection) selection.setCurrentActivity(activity)
+    if (probe) probe.setCurrentActivity(activity)
+    if (highlight) highlight.setCurrentActivity(activity)
+  }
+
+  // Cleanup on destroy
+  onUnmounted(() => setCurrentActivity(null))
+
+  return Object.assign(expose, {
+    setCurrentActivity
+  })
 }
 
 // When using current activity we are mainly interested by selection/probe

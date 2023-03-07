@@ -7,23 +7,24 @@ export function useProbe (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
-  // Watch change
-  watch(kActivity, (newActivity) => {
-    // Remove listeners on previous actvity and set it on new one
-    if (activity && activity.$engineEvents) {
-      activity.$engineEvents.off('click', onClicked)
-    }
-    if (newActivity && newActivity.$engineEvents) {
-      activity = unref(newActivity)
-      activity.$engineEvents.on('click', onClicked)
-    }
-  })
 
   // data
   // probes store
   const { store, set, get, has } = composables.useStore(`probes.${name}`)
 
   // functions
+  function setCurrentActivity (newActivity) {
+    // Avoid multiple updates
+    if (activity === newActivity) return
+    // Remove listeners on previous activity and set it on new one
+    if (activity && activity.$engineEvents) {
+      activity.$engineEvents.off('click', onClicked)
+    }
+    activity = newActivity
+    if (newActivity && newActivity.$engineEvents) {
+      newActivity.$engineEvents.on('click', onClicked)
+    }
+  }
   function clearProbe () {
     set('item', null)
   }
@@ -117,6 +118,7 @@ export function useProbe (name, options = {}) {
 
   // expose
   return {
+    setCurrentActivity,
     probe: store,
     clearProbe,
     setProbe,

@@ -15,25 +15,7 @@ export function useHighlight (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
-  // Watch change
-  watch(kActivity, (newActivity) => {
-    // Remove highlights on previous actvity and set it on new one
-    if (activity) {
-      removeHighlightsLayer()
-      activity.$engineEvents.off('layer-added', createHighlightsLayer)
-      activity.$engineEvents.off('layer-disabled', onHighlightedLayerDisabled)
-      activity.$engineEvents.off('layer-enabled', onHighlightedLayerEnabled)
-    }
-    if (newActivity) {
-      activity = unref(newActivity)
-      // When at least one layer is added we know the catalog has been loaded
-      // so that we can add our highlight layer, before that it would be cleared by catalog loading
-      activity.$engineEvents.on('layer-added', createHighlightsLayer)
-      activity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
-      activity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
-    }
-  })
-
+  
   // data
   // hightligh store for context
   const { store, clear, set, get, unset, has } = composables.useStore(`hightlighs.${name}`)
@@ -41,6 +23,25 @@ export function useHighlight (name, options = {}) {
   const { forOwn } = composables.useStore('hightlighs')
 
   // functions
+  function setCurrentActivity (newActivity) {
+    // Avoid multiple updates
+    if (activity === newActivity) return
+    // Remove highlights on previous activity and set it on new one
+    if (activity) {
+      removeHighlightsLayer()
+      activity.$engineEvents.off('layer-added', createHighlightsLayer)
+      activity.$engineEvents.off('layer-disabled', onHighlightedLayerDisabled)
+      activity.$engineEvents.off('layer-enabled', onHighlightedLayerEnabled)
+    }
+    activity = newActivity
+    if (newActivity) {
+      // When at least one layer is added we know the catalog has been loaded
+      // so that we can add our highlight layer, before that it would be cleared by catalog loading
+      newActivity.$engineEvents.on('layer-added', createHighlightsLayer)
+      newActivity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
+      newActivity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
+    }
+  }
   function getHighlightId (feature, layer) {
     // We might have the same feature highlighted different times with a different
     // highlight style so that we need to generate a unique but stable ID
@@ -202,6 +203,7 @@ export function useHighlight (name, options = {}) {
 
   // expose
   return {
+    setCurrentActivity,
     highlights: store,
     hasHighlight,
     getHighlight,

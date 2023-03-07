@@ -1,5 +1,5 @@
 import config from 'config'
-import { ref, shallowRef, readonly } from 'vue'
+import { ref, shallowRef, readonly, onUnmounted } from 'vue'
 import { useStore } from './store.js'
 import { useSelection } from './selection.js'
 
@@ -15,7 +15,8 @@ export function useActivity (name, exposed = { selection: true }) {
 
   // functions
   function setCurrentActivity (activity) {
-    kActivityName.value = name
+    if (kActivity.value === activity) return
+    kActivityName.value = activity ? name : null
     kActivity.value = activity
   }
 
@@ -30,6 +31,10 @@ export function useActivity (name, exposed = { selection: true }) {
       ...useSelection(kActivityName.value)
     })
   }
+
+  // Cleanup on destroy
+  onUnmounted(() => setCurrentActivity(null))
+
   return expose
 }
 
