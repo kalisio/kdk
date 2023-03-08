@@ -74,10 +74,10 @@ export default {
     },
     startDate: {
       get: function () {
-        return this.range.start.format('DD/MM/YYYY')
+        return Time.convertToLocal(this.range.start).format('DD/MM/YYYY')
       },
       set: function (value) {
-        const date = moment(value, 'DD/MM/YYYY')
+        const date = moment(value, 'DD/MM/YYYY').utc()
         this.range = {
           start: this.range.start.set({ year: date.year(), month: date.month(), date: date.date() }),
           end: this.range.end
@@ -89,10 +89,10 @@ export default {
     },
     startTime: {
       get: function () {
-        return this.range.start.format('HH:mm')
+        return Time.convertToLocal(this.range.start).format('HH:mm')
       },
       set: function (value) {
-        const time = moment(value, 'HH:mm')
+        const time = moment(value, 'HH:mm').utc()
         this.range = {
           start: this.range.start.set({ hour: time.hour(), minute: time.minute() }),
           end: this.range.end
@@ -104,10 +104,10 @@ export default {
     },
     endDate: {
       get: function () {
-        return this.range.end.format('DD/MM/YYYY')
+        return Time.convertToLocal(this.range.end).format('DD/MM/YYYY')
       },
       set: function (value) {
-        const date = moment(value, 'DD/MM')
+        const date = moment(value, 'DD/MM').utc()
         this.range = {
           start: this.range.start,
           end: this.range.end.set({ month: date.month(), date: date.date() })
@@ -119,10 +119,10 @@ export default {
     },
     endTime: {
       get: function () {
-        return this.range.end.format('HH:mm')
+        return Time.convertToLocal(this.range.end).format('HH:mm')
       },
       set: function (value) {
-        const time = moment(value, 'HH:mm')
+        const time = moment(value, 'HH:mm').utc()
         this.range = {
           start: this.range.start,
           end: this.range.end.set({ hour: time.hour(), minute: time.minute() })
