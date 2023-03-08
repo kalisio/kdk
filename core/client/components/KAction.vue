@@ -365,7 +365,7 @@ export default {
 
     // watch
     watch(() => props.toggled, (value) => {
-      toggle()
+      if (isToggled.value !== value) isToggled.value = value
     })
 
     // expose
