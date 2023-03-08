@@ -17,6 +17,8 @@
       <KDateTimeRange
         v-model="model"
         :options="options"
+        :min="min"
+        :max="max"
         dense
         @update:modelValue="onChanged"
       />
@@ -45,6 +47,13 @@ export default {
     },
     options () {
       return _.get(this.properties.field, 'options', {})
+    },
+    min () {
+      console.log(_.get(this.properties.field, 'min'))
+      return _.get(this.properties.field, 'min')
+    },
+    max () {
+      return _.get(this.properties.field, 'max')
     }
   },
   methods: {
