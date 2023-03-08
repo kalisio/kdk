@@ -8,7 +8,7 @@
             v-ripple
             class="k-layer-card"
             v-bind:class="{ 'k-layer-card-active': selectedLayer === layer.name }"
-            @click="selectedLayer = layer"
+            @click="onLayerSelected(layer)"
           >
             <q-img :src="layer.iconUrl" :ratio="16/9">
               <div
@@ -95,12 +95,16 @@ export default {
     toggleLayer (layer) {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
+    },
+    onLayerSelected (layer) {
+      if (this.options.disableUnselect && this.selectedLayer && this.selectedLayer === layer.name) return
+      this.selectedLayer = layer
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .k-layer-card:hover {
   cursor: pointer;
 }
