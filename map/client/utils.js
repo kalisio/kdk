@@ -33,11 +33,11 @@ export async function fetchGeoJson (dataSource, processor) {
     throw new Error(`Impossible to fetch ${dataSource}: ` + response.status)
   }
   const data = await response.json()
+  const features = (data.type === 'FeatureCollection' ? data.features : [data])
   if (typeof processor === 'function') {
-    const features = (data.type === 'FeatureCollection' ? data.features : [data])
     features.forEach(feature => processor(feature))
-  } else if (typeof options.processor === 'string') {
-    const compiler = _.template(options.processor)
+  } else if (typeof processor === 'string') {
+    const compiler = _.template(processor)
     features.forEach(feature => compiler({ feature, properties: feature.properties }))
   }
   return data
