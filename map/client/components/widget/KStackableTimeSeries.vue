@@ -1,36 +1,69 @@
 <template>
   <div id="stacked-time-series" class="column justify-start no-wrap" v-if="components.length > 0">
     <!-- Pinned charts first -->
-    <div v-for="(timeSerie, index) in timeSeries" class="col column justify-start no-wrap">
-      <div v-if="timeSerie.pinned" class="row bg-grey-3 col col-auto">
-        <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
-        <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
+    <template v-for="(timeSerie, index) in timeSeries">
+      <div v-if="timeSerie.pinned" class="col column justify-start no-wrap">
+        <div class="row bg-grey-3">
+          <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
+          <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
+        </div>
+        <KTimeSeriesChart v-if="!timeSerie.table" 
+          :ref="components[index].onChartRef"
+          :id="`${timeSerie.id}-timeseries-chart`"
+          class="col q-pl-sm q-pr-sm"  
+          :options="chartOptions" 
+          :time-series="timeSerie.series"
+          :x-axis-key="xAxisKey" 
+          :y-axis-key="yAxisKey" 
+          :logarithmic="timeSerie.logarithmic"
+          :zoomable="zoomable" 
+          :panable="panable"
+          :start-time="startTime" 
+          :end-time="endTime" 
+          @zoom-start="onZoomStart" 
+          @zoom-end="onZoomEnd"
+        />
+        <KDataTable v-else
+          :ref="components[index].onTableRef"
+          :id="`${timeSerie.id}-timeseries-chart`" 
+          class="col q-pl-sm q-pr-sm" 
+          :schema="schema" 
+          :tables="timeSerie.series" 
+        />
       </div>
-      <k-time-series-chart v-if="timeSerie.pinned && !timeSerie.table" :id="`${timeSerie.id}-timeseries-chart`"
-        class="col q-pl-sm q-pr-sm" :ref="components[index].onChartRef" :options="chartOptions" :time-series="timeSerie.series"
-        :x-axis-key="xAxisKey" :y-axis-key="yAxisKey" :logarithmic="timeSerie.logarithmic"
-        :zoomable="zoomable" :panable="panable"
-        :start-time="startTime" :end-time="endTime" @zoom-start="onZoomStart" @zoom-end="onZoomEnd"/>
-      <k-data-table v-if="timeSerie.pinned && timeSerie.table"
-        :id="`${timeSerie.id}-timeseries-chart`" class="col q-pl-sm q-pr-sm" :ref="components[index].onTableRef"
-        :schema="schema" :tables="timeSerie.series" />
-    </div>
+    </template>
     <!-- Then visible charts -->
-    <div v-for="(timeSerie, index) in timeSeries" class="col column justify-start no-wrap">
-      <div v-if="timeSerie.visible && !timeSerie.pinned" class="row bg-grey-3 col col-auto">
-        <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
-        <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
+    <template v-for="(timeSerie, index) in timeSeries" class="col">
+      <div v-if="timeSerie.visible && !timeSerie.pinned" class="col column justify-start no-wrap">
+        <div class="row bg-grey-3">
+          <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
+          <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
+        </div>
+        <KTimeSeriesChart v-if="!timeSerie.table"
+          :ref="components[index].onChartRef"  
+          :id="`${timeSerie.id}-timeseries-chart`" 
+          class="col q-pl-sm q-pr-sm"
+          :options="chartOptions" 
+          :time-series="timeSerie.series"
+          :x-axis-key="xAxisKey" 
+          :y-axis-key="yAxisKey" 
+          :logarithmic="timeSerie.logarithmic"
+          :zoomable="zoomable" 
+          :panable="panable"
+          :start-time="startTime" 
+          :end-time="endTime" 
+          @zoom-start="onZoomStart" 
+          @zoom-end="onZoomEnd"
+        />
+        <KDataTable v-else
+          :ref="components[index].onTableRef"
+          :id="`${timeSerie.id}-timeseries-table`" 
+          class="col q-pl-sm q-pr-sm" 
+          :schema="schema" 
+          :tables="timeSerie.series" 
+        />
       </div>
-      <k-time-series-chart v-if="timeSerie.visible && !timeSerie.pinned && !timeSerie.table"
-        :id="`${timeSerie.id}-timeseries-chart`" class="col q-pl-sm q-pr-sm"
-        :ref="components[index].onChartRef" :options="chartOptions" :time-series="timeSerie.series"
-        :x-axis-key="xAxisKey" :y-axis-key="yAxisKey" :logarithmic="timeSerie.logarithmic"
-        :zoomable="zoomable" :panable="panable"
-        :start-time="startTime" :end-time="endTime" @zoom-start="onZoomStart" @zoom-end="onZoomEnd"/>
-      <k-data-table v-if="timeSerie.visible && !timeSerie.pinned && timeSerie.table"
-        :id="`${timeSerie.id}-timeseries-table`" class="col q-pl-sm q-pr-sm" :ref="components[index].onTableRef"
-        :schema="schema" :tables="timeSerie.series" />
-    </div>
+    </template>
   </div>
   <div v-else>
     <slot name="empty-time-series">
