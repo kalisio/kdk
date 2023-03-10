@@ -122,21 +122,21 @@ export default {
           blob: this.file,
           context
         })
-        .then(() => {
-          this.$notify({
-            type: 'positive',
-            message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
-              { file: this.model.name })
+          .then(() => {
+            this.$notify({
+              type: 'positive',
+              message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
+                { file: this.model.name })
+            })
           })
-        })
-        .catch(error => {
-          this.$notify({
-            type: 'negative',
-            message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
-              { file: this.model.name })
+          .catch(error => {
+            this.$notify({
+              type: 'negative',
+              message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
+                { file: this.model.name })
+            })
+            logger.error(error)
           })
-          logger.error(error)
-        })
       }
     }
   }
