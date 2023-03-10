@@ -46,6 +46,7 @@
 
 <script>
 import _ from 'lodash'
+import { makeDiacriticPattern } from '../../../common'
 import { baseField } from '../../mixins'
 
 export default {
@@ -73,7 +74,8 @@ export default {
       })
       if (this.filter) {
         options = _.filter(options, option => {
-          return option.label.toLowerCase().indexOf(this.filter) > -1
+          const regExp = new RegExp(makeDiacriticPattern(this.filter))
+          return regExp.test(option.label.toLowerCase())
         })
       }
       return options
