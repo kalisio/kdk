@@ -115,27 +115,28 @@ export default {
         let context = _.get(this.properties, 'field.storage.context')
         if (context) context = _.template(context)(Object.assign({}, { fileName: this.model.name }, object))
         logger.debug(`Uploading file ${this.model.name} with key ${this.model.key}`)
-        try {
-          await Storage.upload({
-            file: this.model.name,
-            type: this.model.type,
-            key: this.model.key,
-            blob: this.file,
-            context
-          })
+        Storage.upload({
+          file: this.model.name,
+          type: this.model.type,
+          key: this.model.key,
+          blob: this.file,
+          context
+        })
+        .then(() => {
           this.$notify({
             type: 'positive',
             message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
               { file: this.model.name })
           })
-        } catch (error) {
+        })
+        .catch(error => {
           this.$notify({
             type: 'negative',
             message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
               { file: this.model.name })
           })
           logger.error(error)
-        }
+        })
       }
     }
   }
