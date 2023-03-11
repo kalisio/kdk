@@ -55,7 +55,7 @@ import KPanel from '../KPanel.vue'
 import KImageViewer from '../media/KImageViewer.vue'
 import { Storage } from '../../storage.js'
 import { Events } from '../../events.js'
-import { createThumbnail, downloadAsBlob, dataUriToBlob } from '../../utils.js'
+import { createThumbnail, downloadAsBlob, dataUriToBlob } from '../../utils/index.js'
 
 export default {
   components: {

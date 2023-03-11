@@ -36,7 +36,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { i18n, utils as coreUtils } from '../../../../core/client/index.js'
+import { i18n, utils as coreUtils } from '../../../../core/client'
 import { useCatalog, useCurrentActivity } from '../../composables'
 import { KScrollArea } from '../../../../core/client/components'
 

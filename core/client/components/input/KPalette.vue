@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { Colors } from '../../utils.js'
+import { Colors } from '../../utils/utils.colors.js'
 
 export default {
   name: 'k-palette',

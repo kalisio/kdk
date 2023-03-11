@@ -40,7 +40,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { computed } from 'vue'
-import { loadComponent } from '../../../../core/client/utils.js'
+import { loadComponent } from '../../../../core/client/utils'
 import KLegendRenderer from './KLegendRenderer.vue'
 
 // props

@@ -51,7 +51,7 @@ import _ from 'lodash'
 import config from 'config'
 import { ref, computed } from 'vue'
 import KPanel from '../KPanel.vue'
-import { loadComponent } from '../../utils.js'
+import { loadComponent } from '../../utils/index.js'
 
 // Props
 defineProps({

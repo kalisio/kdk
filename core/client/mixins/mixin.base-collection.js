@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { getLocale } from '../utils.js'
+import { getLocale } from '../utils/utils.locale.js'
 
 export const baseCollection = {
   emits: [

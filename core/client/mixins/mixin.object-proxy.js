@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { createQuerablePromise } from '../utils.js'
+import { createQuerablePromise } from '../utils/index.js'
 
 export const objectProxy = {
   props: {

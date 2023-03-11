@@ -2,7 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { Quasar } from 'quasar'
 import { createI18n } from 'vue-i18n'
-import { getAppLocale, getAppFallbackLocale } from './utils.js'
+import { getAppLocale, getAppFallbackLocale } from './utils/utils.locale.js'
 
 // Helper function to load a translation file
 // @i18n alias shoud be added in the quasar.config build section

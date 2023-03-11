@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { getLocale } from '../../utils.js'
+import { getLocale } from '../../utils/utils.locale.js'
 import _ from 'lodash'
 import config from 'config'
 import { ref } from 'vue'

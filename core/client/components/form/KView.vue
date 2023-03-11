@@ -53,7 +53,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, watch } from 'vue'
-import { loadComponent } from '../../utils.js'
+import { loadComponent } from '../../utils/index.js'
 import { i18n } from '../../i18n.js'
 
 // Props

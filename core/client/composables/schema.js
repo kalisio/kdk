@@ -3,7 +3,7 @@ import logger from 'loglevel'
 import { ref, readonly } from 'vue'
 import { Schema } from '../index.js'
 import AjvLocalize from 'ajv-i18n'
-import { getLocale } from '../utils.js'
+import { getLocale } from '../utils/utils.locale.js'
 
 const locale = getLocale()
 

@@ -67,7 +67,7 @@ import KAction from '../KAction.vue'
 import KScrollArea from '../KScrollArea.vue'
 import KStamp from '../KStamp.vue'
 import { baseCollection, service } from '../../mixins'
-import { loadComponent } from '../../utils.js'
+import { loadComponent } from '../../utils/index.js'
 
 export default {
   components: {

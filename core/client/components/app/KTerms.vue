@@ -8,7 +8,7 @@
 import _ from 'lodash'
 import config from 'config'
 import { ref } from 'vue'
-import { getAppLocale } from '../../utils.js'
+import { getAppLocale } from '../../utils/utils.locale.js'
 import KMarkdownViewer from '../media/KMarkdownViewer.vue'
 
 // Data

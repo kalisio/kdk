@@ -49,7 +49,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, watch, onMounted } from 'vue'
-import { loadComponent } from '../../utils.js'
+import { loadComponent } from '../../utils/index.js'
 import { useSchema } from '../../composables'
 
 // Props

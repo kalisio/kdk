@@ -4,7 +4,7 @@ import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-ran
 import config from 'config'
 import { Events } from './events.js'
 import { Store } from './store.js'
-import { getLocale } from './utils.js'
+import { getLocale } from './utils/utils.locale.js'
 
 // Export singleton
 export const Time = {
