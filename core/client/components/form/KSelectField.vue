@@ -6,6 +6,7 @@
   </div>
   <q-select v-else
     :id="properties.name + '-field'"
+    ref="select"
     v-model="model"
     :label="label"
     :multiple="multiple"
@@ -24,7 +25,7 @@
     @filter="onFilter"
     @change="onChanged"
     @blur="onChanged"
-    @update:model-value='onChanged'
+    @update:model-value="onChanged"
   >
     <!-- Options display -->
     <template v-slot:option="scope">
@@ -68,22 +69,34 @@ export default {
       return _.get(this.properties, 'field.chips', false)
     },
     options () {
-      let options = _.map(_.get(this.properties, 'field.options', []), option => {
+      let opts = _.map(_.get(this.properties, 'field.options', []), option => {
         const label = this.$tie(_.get(option, 'label', ''))
         return Object.assign({}, option, { label: label })
       })
       if (this.filter) {
-        options = _.filter(options, option => {
+        opts = _.filter(options, option => {
           const regExp = new RegExp(makeDiacriticPattern(this.filter))
           return regExp.test(option.label.toLowerCase())
         })
       }
-      return options
+      return opts
     }
   },
   data () {
     return {
       filter: null
+    }
+  },
+  watch: {
+    options: {
+      immediate: true,
+      handler (opts) {
+        if (opts.length === 1 && this.required) {
+          this.$nextTick(() => {
+            this.model = opts[0].value
+          })
+        }
+      }
     }
   },
   methods: {
