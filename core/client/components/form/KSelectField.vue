@@ -74,7 +74,7 @@ export default {
         return Object.assign({}, option, { label: label })
       })
       if (this.filter) {
-        opts = _.filter(options, option => {
+        opts = _.filter(opts, option => {
           const regExp = new RegExp(makeDiacriticPattern(this.filter))
           return regExp.test(option.label.toLowerCase())
         })
