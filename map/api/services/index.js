@@ -75,9 +75,25 @@ export async function createFeaturesServiceForLayer (options) {
   })
   return service
 }
-
-export async function createDefaultCatalogLayers (context) {
+// Helper to create features from source for a layer
+export async function createFeaturesForLayer (features, layer, options) {
   const app = this
+  const featuresService = app.getService(layer.service)
+  if (options.filter) features = await options.filter(features, layer, app)
+  if (!features.length) return
+  // The unordered option ensure a faster processing when inserting multiple items
+  // and that after an error remaining write operations in the queue will continue anyway
+  await featuresService.create(features, { mongodb: { ordered: false } })
+}
+
+export async function createDefaultCatalogLayers (options) {
+  const app = this
+  // Backward compatibility when the sole possible option was a context
+  let context
+  if (typeof options === 'object') {
+    if (options.context) context = options.context
+    else if (options._id) context = options
+  } else if (typeof options === 'string') context = options
   const catalogService = app.getService('catalog', context)
   const catalog = app.get('catalog')
 
@@ -87,12 +103,13 @@ export async function createDefaultCatalogLayers (context) {
     const defaultLayer = defaultLayers[i]
     const createdLayer = _.find(layers, { name: defaultLayer.name })
     try {
+      // Create or update the layer removing any option only used to manage layer setup
       if (!createdLayer) {
         app.logger.info('Adding default layer (name = ' + defaultLayer.name + ')')
-        await catalogService.create(defaultLayer)
+        await catalogService.create(_.omit(defaultLayer, ['filter']))
       } else {
         app.logger.info('Updating default layer (name = ' + defaultLayer.name + ')')
-        await catalogService.update(createdLayer._id, defaultLayer)
+        await catalogService.update(createdLayer._id, _.omit(defaultLayer, ['filter']))
       }
     } catch (error) {
       console.error(error)
@@ -123,11 +140,10 @@ export async function createDefaultCatalogLayers (context) {
         console.error(error)
       }
       // Data requested from external service ?
-
       if (defaultLayer.url) {
         try {
           const response = await request.get(defaultLayer.url)
-          await featuresService.create(response.body.features)
+          await createFeaturesForLayer.call(app, response.body.features, defaultLayer, options)
         } catch (error) {
           console.error(error)
         }
@@ -139,7 +155,7 @@ export async function createDefaultCatalogLayers (context) {
           .on('close', async () => {
             const geojson = fs.readJsonSync(extractedFileName)
             try {
-              await featuresService.create(geojson.features)
+              await createFeaturesForLayer.call(app, geojson.features, defaultLayer, options)
             } catch (error) {
               console.error(error)
             }
@@ -148,7 +164,7 @@ export async function createDefaultCatalogLayers (context) {
       } else {
         const geojson = fs.readJsonSync(defaultLayer.fileName)
         try {
-          await featuresService.create(geojson.features)
+          await createFeaturesForLayer.call(app, geojson.features, defaultLayer, options)
         } catch (error) {
           console.error(error)
         }
