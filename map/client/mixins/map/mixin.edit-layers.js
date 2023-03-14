@@ -188,13 +188,22 @@ export const editLayers = {
       unbindLeafletEvents(this.map, mapEditEvents)
       unbindLeafletEvents(this.editableLayer, layerEditEvents)
 
+      // Make sure we don't have any pending editions.
+      // Disabling geoman may trigger 'pm:update' event which in turn calls onFeaturesEdited
+      // and this is going to patch in memory features with current editions. Since patching
+      // is an async operation that happens in the 'pm:update' event callback, we use
+      // this.pendingOperations to store operations that we need to wait upon here.
+      if (this.pendingOperations.length > 0) {
+        const allOps = this.pendingOperations.flat()
+        await Promise.all(allOps)
+      }
+
       // for in memory edition, clear service
       if (this.editedLayer._id === undefined) {
         const geoJson = this.editableLayer.toGeoJSON()
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        for (const feature of features) {
-          await this.$api.getService('features-edition').remove(feature._id)
-        }
+        const service = this.$api.getService('features-edition')
+        await Promise.all(features.map((f) => service.remove(f._id)))
       }
 
       // Set back edited layers to source layer
@@ -278,9 +287,15 @@ export const editLayers = {
         await this.editFeaturesGeometry(geoJson)
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        for (const feature of features) {
-          await this.$api.getService('features-edition').patch(feature._id, { geometry: feature.geometry })
-        }
+        const service = this.$api.getService('features-edition')
+        // Remember those operations because we need to make sure we wait for completion
+        // before clearing the in memory edition service in stopEditLayer
+        const operations = Promise.all(features.map((f) => service.patch(f._id, { geometry: f.geometry })))
+        this.pendingOperations.push(operations)
+        await operations
+        // Clear from pending operations
+        const index = this.pendingOperations.indexOf(operations)
+        this.pendingOperations.splice(index, 1)
       }
     },
     async onFeaturesDeleted (event) {
@@ -298,9 +313,8 @@ export const editLayers = {
         await this.removeFeatures(geoJson)
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        for (const feature of features) {
-          await this.$api.getService('features-edition').remove(feature._id)
-        }
+        const service = this.$api.getService('features-edition')
+        await Promise.all(features.map((f) => service.remove(f._id)))
       }
     },
     onMapZoomWhileEditing (event) {
@@ -386,6 +400,7 @@ export const editLayers = {
     }
   },
   created () {
+    this.pendingOperations = []
     // Perform required conversion for default feature styling
     if (_.has(this, 'activityOptions.engine.editFeatureStyle')) {
       this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editFeatureStyle'), 'update-in-place')
