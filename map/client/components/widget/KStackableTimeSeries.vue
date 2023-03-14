@@ -7,28 +7,28 @@
           <KPanel :id="`${timeSerie.id}-header`" :content="components[index].header" class="col justify-start"/>
           <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
         </div>
-        <KTimeSeriesChart v-if="!timeSerie.table" 
+        <KTimeSeriesChart v-if="!timeSerie.table"
           :ref="components[index].onChartRef"
           :id="`${timeSerie.id}-timeseries-chart`"
-          class="col q-pl-sm q-pr-sm"  
-          :options="chartOptions" 
+          class="col q-pl-sm q-pr-sm"
+          :options="chartOptions"
           :time-series="timeSerie.series"
-          :x-axis-key="xAxisKey" 
-          :y-axis-key="yAxisKey" 
+          :x-axis-key="xAxisKey"
+          :y-axis-key="yAxisKey"
           :logarithmic="timeSerie.logarithmic"
-          :zoomable="zoomable" 
+          :zoomable="zoomable"
           :panable="panable"
-          :start-time="startTime" 
-          :end-time="endTime" 
-          @zoom-start="onZoomStart" 
+          :start-time="startTime"
+          :end-time="endTime"
+          @zoom-start="onZoomStart"
           @zoom-end="onZoomEnd"
         />
         <KDataTable v-else
           :ref="components[index].onTableRef"
-          :id="`${timeSerie.id}-timeseries-chart`" 
-          class="col q-pl-sm q-pr-sm" 
-          :schema="schema" 
-          :tables="timeSerie.series" 
+          :id="`${timeSerie.id}-timeseries-chart`"
+          class="col q-pl-sm q-pr-sm"
+          :schema="schema"
+          :tables="timeSerie.series"
         />
       </div>
     </template>
@@ -40,27 +40,27 @@
           <KPanel :id="`${timeSerie.id}-actions`" :content="components[index].actions" :context="timeSerie" class="col justify-end"/>
         </div>
         <KTimeSeriesChart v-if="!timeSerie.table"
-          :ref="components[index].onChartRef"  
-          :id="`${timeSerie.id}-timeseries-chart`" 
+          :ref="components[index].onChartRef"
+          :id="`${timeSerie.id}-timeseries-chart`"
           class="col q-pl-sm q-pr-sm"
-          :options="chartOptions" 
+          :options="chartOptions"
           :time-series="timeSerie.series"
-          :x-axis-key="xAxisKey" 
-          :y-axis-key="yAxisKey" 
+          :x-axis-key="xAxisKey"
+          :y-axis-key="yAxisKey"
           :logarithmic="timeSerie.logarithmic"
-          :zoomable="zoomable" 
+          :zoomable="zoomable"
           :panable="panable"
-          :start-time="startTime" 
-          :end-time="endTime" 
-          @zoom-start="onZoomStart" 
+          :start-time="startTime"
+          :end-time="endTime"
+          @zoom-start="onZoomStart"
           @zoom-end="onZoomEnd"
         />
         <KDataTable v-else
           :ref="components[index].onTableRef"
-          :id="`${timeSerie.id}-timeseries-table`" 
-          class="col q-pl-sm q-pr-sm" 
-          :schema="schema" 
-          :tables="timeSerie.series" 
+          :id="`${timeSerie.id}-timeseries-table`"
+          class="col q-pl-sm q-pr-sm"
+          :schema="schema"
+          :tables="timeSerie.series"
         />
       </div>
     </template>
