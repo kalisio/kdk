@@ -42,7 +42,7 @@
         </q-carousel>
       </div>
       <div class="row justify-center">
-        <k-action id="close-button" label="CLOSE" renderer="form-button" :handler="() => this.hide()" />
+        <k-action id="close-button" label="CLOSE" renderer="form-button" :handler="() => hide()" />
       </div>
       <div class="row justify-center">
         <q-checkbox v-model="toggle" @update:modelValue="onToggleIntroduction" :label="$t('KWelcome.HIDE_WELCOME')" color="primary" />
