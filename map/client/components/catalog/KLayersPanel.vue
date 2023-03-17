@@ -106,12 +106,11 @@ export default {
       return _.kebabCase(category.name)
     },
     isVisible (category) {
-      // User-defined categories are always visible, even if empty
-      if (category._id) return true
       // Built-in categories only if not empty as depending on the configuration
       // built-in layers might be unavailable
+      // User-defined categories are always visible by default, even if empty
       const isEmpty = (this.layersByCategory[category.name].length === 0)
-      return (isEmpty ? !_.get(category, 'hideIfEmpty', true) : true)
+      return (isEmpty ? !_.get(category, 'hideIfEmpty', !category._id) : true)
     },
     getHeaderClass (category) {
       if (category.headerClass) return category.headerClass
