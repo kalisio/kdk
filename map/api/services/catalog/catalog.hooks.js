@@ -16,7 +16,9 @@ export default {
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'data.type') } }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
       coreHooks.convertToString(['schema.content']),
-      setNow('createdAt', 'updatedAt')
+      setNow('createdAt', 'updatedAt'),
+      // This allow to use keys for base queries like 'properties.xxx': 'yyy'
+      (hook) => { _.set(hook, 'params.mongodb.checkKeys', false) }
     ],
     update: [
       coreHooks.populatePreviousObject,
