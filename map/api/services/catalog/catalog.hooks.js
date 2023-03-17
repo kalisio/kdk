@@ -9,7 +9,7 @@ export default {
   before: {
     all: [],
     find: [
-      filterLayers
+      filterLayers, coreHooks.distinct
     ],
     get: [],
     create: [
