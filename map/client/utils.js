@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import bearing from '@turf/bearing'
-import distance from '@turf/distance'
+import rhumbBearing from '@turf/rhumb-bearing'
+import rhumbDistance from '@turf/rhumb-distance'
 import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
@@ -44,9 +44,10 @@ export function transformFeatures (features, transform) {
     }
     if (translation) {
       // Could be expressed as direction/distance or target point
+      // Take care that turfjs uses a rhumb line
       if (translation.point) {
-        translation.distance = distance(translation.pivot || [0, 0], translation.point)
-        translation.direction = bearing(translation.pivot || [0, 0], translation.point)
+        translation.distance = rhumbDistance(translation.pivot || [0, 0], translation.point)
+        translation.direction = rhumbBearing(translation.pivot || [0, 0], translation.point)
         delete translation.pivot
         delete translation.point
       }
