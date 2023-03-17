@@ -11,7 +11,6 @@
     :error="hasError"
     :disable="disabled"
     bottom-slots
-    @update:model-value="onChanged"
   >
     <!-- Content -->
     <template v-slot:control>
@@ -19,6 +18,7 @@
         :id="properties.name + '-field'"
         v-model="model"
         :options="options()"
+        @update:model-value="onChanged"
         inline
       />
     </template>
