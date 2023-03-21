@@ -135,7 +135,7 @@ export default function auth (app) {
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers
-  app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins']))
+  app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins', 'defaults']))
   for (const provider of app.authenticationProviders) {
     authentication.register(provider, new AuthenticationProviderStrategy())
   }
