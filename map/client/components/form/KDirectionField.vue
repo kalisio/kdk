@@ -16,7 +16,7 @@
     @update:model-value="onChanged"
   >
     <!-- compass -->
-    <template v-slot:append>
+    <template v-slot:prepend>
       <KAction
         id="compass"
         tooltip="KDirectionField.COMPASS"
