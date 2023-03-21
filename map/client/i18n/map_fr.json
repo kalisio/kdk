@@ -621,5 +621,11 @@
   },
   "KLegend": {
     "LABEL": "Légende"
+  },
+  "KCompass": {
+    "NORTH": "N",
+    "EAST": "E",
+    "SOUTH": "S",
+    "WEST": "O"
   }
 }
