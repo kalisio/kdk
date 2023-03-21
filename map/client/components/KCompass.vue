@@ -3,7 +3,7 @@
     ref="compassRef" 
     @mousedown="onStartDrag" 
     @touchstart="onStartDrag"
-    @click="onClick"
+    @click="onClicked"
   >
     <svg width="100%" heigh="100%" viewBox="0 0 100 100">
       <circle 
@@ -36,6 +36,11 @@
       <text x="3" y="50" text-anchor="start" alignment-baseline="middle" font-size="8px" fill="white">
         {{ $t('KCompass.WEST') }}
       </text>
+      <line v-for="i in 24" :key="i"
+        x1="50" y1="10" x2="50" y2="14" 
+        :stroke="getCssVar('accent')" 
+        :transform="`rotate(${i * 15}, 50, 50)`"
+      />
     </svg>
   </div>
 </template>
@@ -81,7 +86,7 @@ function computeDirection (x, y) {
   direction.value = (Math.round(Math.atan2(dy, dx) * 180 / Math.PI) + 450) % 360
   emit('update:modelValue', direction.value)
 }
-function onClick (event) {
+function onClicked (event) {
   const { x, y } = event
   computeDirection(x, y)
 }
