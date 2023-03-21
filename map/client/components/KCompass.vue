@@ -36,10 +36,10 @@
       <text x="3" y="50" text-anchor="start" alignment-baseline="middle" font-size="8px" fill="white">
         {{ $t('KCompass.WEST') }}
       </text>
-      <line v-for="i in 24" :key="i"
+      <line v-for="i in ticks" :key="i"
         x1="50" y1="10" x2="50" y2="14"
         :stroke="getCssVar('accent')"
-        :transform="`rotate(${i * 15}, 50, 50)`"
+        :transform="`rotate(${i * (360/ticks)}, 50, 50)`"
       />
     </svg>
   </div>
@@ -53,7 +53,11 @@ import { getCssVar } from 'quasar'
 const props = defineProps({
   modelValue: {
     type: Number,
-    value: 0
+    default: 0
+  },
+  ticks: {
+    type: Number,
+    default: 16
   }
 })
 

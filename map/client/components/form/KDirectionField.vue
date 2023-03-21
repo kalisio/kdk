@@ -51,7 +51,12 @@ export default {
   components: {
     KCompass
   },
-  mixins: [kdkCoreMixins.baseField]
+  mixins: [kdkCoreMixins.baseField],
+  methods: {
+    emptyModel () {
+      return null
+    }
+  }
 }
 </script>
 
