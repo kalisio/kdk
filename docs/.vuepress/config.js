@@ -43,7 +43,7 @@ function getGuidesSidebar () {
     '',
     { 
       title: 'The Basics',
-      children: [ 'basics/step-by-step' ]
+      children: [ 'basics/introduction' ]
     },
     {
       title: 'Development',
