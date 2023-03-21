@@ -330,8 +330,8 @@ export const activity = {
     },
     async onRemoveLayer (layer) {
       Dialog.create({
-        title: this.$t('mixins.activity.REMOVE_DIALOG_TITLE', { layer: layer.name }),
-        message: this.$t('mixins.activity.REMOVE_DIALOG_MESSAGE', { layer: layer.name }),
+        title: this.$t('mixins.activity.REMOVE_DIALOG_TITLE', { layer: layer.label || layer.name }),
+        message: this.$t('mixins.activity.REMOVE_DIALOG_MESSAGE', { layer: layer.label || layer.name }),
         html: true,
         ok: {
           label: this.$t('OK'),
