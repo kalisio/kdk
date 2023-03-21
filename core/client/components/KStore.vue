@@ -8,21 +8,21 @@ import moment from 'moment'
 import { useStore } from '../composables/store'
 import { computed } from 'vue'
 import KTree from './KTree'
- 
+
 const { Store } = useStore('store')
 const store = computed(() => convertStore(Store.store))
 
-function convertStore(obj) {
+function convertStore (obj) {
   let id = 0
   const traverse = (node) => {
     return _.keys(node).map(key => {
       const child = node[key]
       id++
-  
+
       if (moment.isMoment(child)) {
-        return { 
-          label: child.toISOString(), 
-          children: [] 
+        return {
+          label: child.toISOString(),
+          children: []
         }
       }
       if (_.isArray(child)) {
@@ -45,7 +45,7 @@ function convertStore(obj) {
       return {
         id: id,
         label: key,
-        children: [{ label: child, children: []}]
+        children: [{ label: child, children: [] }]
       }
     })
   }

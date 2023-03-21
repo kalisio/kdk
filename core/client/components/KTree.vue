@@ -3,7 +3,7 @@
     <q-tree
       :nodes="props.nodes"
       :label-key="props.labelKey"
-      :node-key="props.nodeKey"           
+      :node-key="props.nodeKey"
     ></q-tree>
   </div>
 </template>
@@ -22,7 +22,7 @@ const props = defineProps({
   nodeKey: {
     type: String,
     default: 'id'
-  },
+  }
 })
 
 </script>

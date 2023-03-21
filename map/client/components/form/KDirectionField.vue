@@ -25,7 +25,7 @@
         dense
       >
         <q-popup-proxy
-          anchor="top middle" 
+          anchor="top middle"
           self="bottom middle"
         >
           <div class="k-compass">

@@ -1,26 +1,26 @@
 <template>
-  <div 
-    ref="compassRef" 
-    @mousedown="onStartDrag" 
+  <div
+    ref="compassRef"
+    @mousedown="onStartDrag"
     @touchstart="onStartDrag"
     @click="onClicked"
   >
     <svg width="100%" heigh="100%" viewBox="0 0 100 100">
-      <circle 
-        cx="50" cy="50" r="44" 
-        :stroke="getCssVar('accent')" 
-        stroke-width="10" 
-        fill="none" 
+      <circle
+        cx="50" cy="50" r="44"
+        :stroke="getCssVar('accent')"
+        stroke-width="10"
+        fill="none"
       />
       <polygon
         points="50,20 58,50 42,50"
-        :fill="getCssVar('primary')" 
-        :stroke="getCssVar('primary')" 
+        :fill="getCssVar('primary')"
+        :stroke="getCssVar('primary')"
         :transform="`rotate(${direction}, 50, 50)`"
       />
       <polygon
         points="58,50 50,80 42,50"
-        :stroke="getCssVar('primary')" 
+        :stroke="getCssVar('primary')"
         fill="none"
         :transform="`rotate(${direction}, 50, 50)`"
       />
@@ -37,8 +37,8 @@
         {{ $t('KCompass.WEST') }}
       </text>
       <line v-for="i in 24" :key="i"
-        x1="50" y1="10" x2="50" y2="14" 
-        :stroke="getCssVar('accent')" 
+        x1="50" y1="10" x2="50" y2="14"
+        :stroke="getCssVar('accent')"
         :transform="`rotate(${i * 15}, 50, 50)`"
       />
     </svg>
@@ -92,7 +92,7 @@ function onClicked (event) {
 }
 function onHandleDrag (event) {
   const { x, y } = event.type.startsWith('touch') ? event.changedTouches[0] : event
-  computeDirection(x,y)
+  computeDirection(x, y)
 }
 function onStartDrag (event) {
   window.addEventListener('mousemove', onHandleDrag)
