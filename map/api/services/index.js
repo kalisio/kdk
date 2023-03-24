@@ -79,7 +79,7 @@ export async function createFeaturesServiceForLayer (options) {
 export async function createFeaturesForLayer (features, layer, options) {
   const app = this
   const featuresService = app.getService(layer.service)
-  if (options.filter) features = await options.filter(features, layer, app)
+  if (options && options.filter) features = await options.filter(features, layer, app)
   if (!features.length) return
   // The unordered option ensure a faster processing when inserting multiple items
   // and that after an error remaining write operations in the queue will continue anyway
