@@ -12,7 +12,7 @@
     :error="hasError"
     :error-message="errorLabel"
     bottom-slot
-    @blue="onChanged"
+    @blur="onChanged"
     @update:model-value="onChanged"
   >
     <!-- compass -->
@@ -31,6 +31,7 @@
           <div class="k-compass">
             <KCompass
               v-model="model"
+              @update:model-value="onChanged"
             />
           </div>
         </q-popup-proxy>
