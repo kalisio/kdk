@@ -48,7 +48,7 @@ export default {
   props: {
     layers: {
       type: Array,
-      default: () => {}
+      default: () => []
     },
     layerCategories: {
       type: Array,
@@ -92,13 +92,19 @@ export default {
         }
         // If the list of layers in category is empty we can have a null filter
         layersByCategory[category.name] = filter ? _.remove(this.layers, sift(filter)) : []
+        // Order by
+        layersByCategory[category.name] = _.orderBy(layersByCategory[category.name],
+          [(layer) => _.get(layer, _.get(category, 'options.orderBy', '_id'))],
+          [_.get(category, 'options.order', 'asc')])
       })
       return layersByCategory
     },
     orphanLayers () {
       // Filters system layers
       const categories = _.flatten(_.values(this.layersByCategory))
-      return _.difference(this.layers, categories)
+      const layers = _.difference(this.layers, categories)
+      // Order by
+      return _.orderBy(layers, [(layer) => _.get(layer, '_id')], ['asc'])
     }
   },
   methods: {
