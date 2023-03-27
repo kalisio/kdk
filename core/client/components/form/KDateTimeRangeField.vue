@@ -49,7 +49,6 @@ export default {
       return _.get(this.properties.field, 'options', {})
     },
     min () {
-      console.log(_.get(this.properties.field, 'min'))
       return _.get(this.properties.field, 'min')
     },
     max () {
