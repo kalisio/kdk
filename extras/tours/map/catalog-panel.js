@@ -28,16 +28,17 @@ module.exports = [{
   params: {
     placement: 'top',
     hoverClickOnLink: 'div.q-fab__icon-holder',
+    clickOnPrevious: '#user-layers-tab',
     tour: 'fab'
   }
 }, {
-  target: '#user-views-filter',
+  target: '#views-filter',
   title: 'tours.catalog-panel.USER_VIEWS_FILTER_LABEL',
   params: {
     placement: 'top'
   }
 },  {
-  target: '#user-views-sorter',
+  target: '#views-sorter',
   title: 'tours.catalog-panel.USER_VIEWS_SORTER_LABEL',
   params: {
     placement: 'top',
@@ -51,7 +52,7 @@ module.exports = [{
   }
 }, {
   target: 'div [component="catalog/KViewSelector"] #set-home-view',
-  title: 'tours.catalog-panel.USER_VIEWS_SET_HOME_VIEW_LABEL',
+  title: 'tours.catalog-panel.USER_VIEWS_SET_HOME_LABEL',
   params: {
     placement: 'bottom',
     clickOnNext: 'div [component="catalog/KViewSelector"] #view-overflowmenu',
@@ -59,20 +60,20 @@ module.exports = [{
   }
 }, {
   target: '#remove-view',
-  title: 'tours.catalog-panel.USER_VIEWS_REMOVE_VIEW_LABEL',
+  title: 'tours.catalog-panel.USER_VIEWS_REMOVE_LABEL',
   params: {
     placement: 'bottom',
     clickOnNext: '#catalog-layers-tab',
     nextDelay: 500
   }
 }, {
-  target: '#k-catalog-panel-base-layers',
+  target: '#categories-base-layers',
   title: 'tours.catalog-panel.CATEGORY_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#k-catalog-panel-base-layers * i',
-    clickDelay: 1000,
-    clickOnPrevious: '#k-catalog-panel-base-layers * i',
+    clickOn: '#categories-base-layers div [role="button"]',
+    clickDelay: 500,
+    clickOnPrevious: '#user-views-tab',
     previousDelay: 500
   }
 }, {
@@ -80,10 +81,8 @@ module.exports = [{
   title: 'tours.catalog-panel.SHOW_LAYER_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#layers-osm-dark * i',
-    clickDelay: 1000,
-    clickOnPrevious: '#k-catalog-panel-base-layers * i',
-    previousDelay: 500
+    clickOn: '#layers-osm-dark ',
+    clickDelay: 500
   }
 }, {
   target: '#layers-osm-bright',
@@ -91,9 +90,9 @@ module.exports = [{
   content: 'tours.catalog-panel.MIN_LEVEL_LABEL',
   params: {
     placement: 'top',
-    clickOn: '#layers-osm-bright * i',
+    clickOn: '#layers-osm-bright',
     clickDelay: 1000,
-    clickOnNext: ['#k-catalog-panel-base-layers * i', '#k-catalog-panel-meteo-layers * i'],
+    clickOnNext: ['#categories-base-layers div [role="button"]', '#categories-meteo-forecast-layers div [role="button"]'],
     nextDelay: 500
   }
 }, {
@@ -101,7 +100,7 @@ module.exports = [{
   title: 'tours.catalog-panel.METEO_MODEL_LABEL',
   params: {
     placement: 'top',
-    clickOnPrevious: ['#k-catalog-panel-meteo-layers * i', '#k-catalog-panel-base-layers * i'],
+    clickOnPrevious: ['#categories-meteo-forecast-layers div [role="button"]', '#categories-base-layers div [role="button"]'],
     previousDelay: 500
   }
 }, {

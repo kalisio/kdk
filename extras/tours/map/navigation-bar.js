@@ -2,7 +2,7 @@ module.exports = [{
   target: '#top-pane',
   title: 'tours.navigation-bar.NAVIGATION_BAR_LABEL',
   params: {
-    placement: 'bottom'
+    placement: 'bottom',
   }
 }, {
   target: '#toggle-map',
@@ -28,7 +28,7 @@ module.exports = [{
   params: {
     placement: 'bottom',
     clickOn: '#locate-user',
-    clickDelay: 1000,
+    clickDelay: 500,
     clickOnNext: '#locate-user'
   }
 }, {
@@ -40,7 +40,7 @@ module.exports = [{
     nextDelay: 500
   }
 }, {
-  target: '#place-chooser',
+  target: 'div [component="KSearchLocation"]',
   title: 'tours.navigation-bar.LOCATION_SEARCHING_LABEL',
   params: {
     placement: 'bottom',
@@ -61,6 +61,7 @@ module.exports = [{
   params: {
     placement: 'bottom',
     clickOn: '#tools',
+    clickOnNext: '#tools',
     clickDelay: 500,
     nextDelay: 500
   }
@@ -69,7 +70,8 @@ module.exports = [{
   title: 'tours.navigation-bar.TRACK_LOCATION_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: '#display-position',
+    clickOn: '#tools',
+    clickOnNext: ['#tools', '#display-position'],
     nextDelay: 500
   }
 }, {
@@ -91,16 +93,7 @@ module.exports = [{
   title: 'tours.navigation-bar.TRACK_BACK_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: '#back',
-    nextDelay: 500
-  }
-}, {
-  target: '#tools',
-  title: 'tours.navigation-bar.TOOLS_LABEL',
-  params: {
-    placement: 'bottom',
-    clickOn: '#tools',
-    clickDelay: 500,
+    clickOnNext: ['#back', '#tools'],
     nextDelay: 500
   }
 }, {
@@ -108,7 +101,7 @@ module.exports = [{
   title: 'tours.navigation-bar.MEASURE_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: '#measure-tool',
+    clickOnNext: ['#tools', '#measure-tool'],
     nextDelay: 500
   }
 }, {
@@ -135,6 +128,13 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
+  target: '#measure-circle',
+  title: 'tours.navigation-bar.MEASURE_CIRCLE_LABEL',
+  content: 'tours.navigation-bar.MEASURE_CIRCLE_DETAILS_LABEL',
+  params: {
+    placement: 'bottom'
+  }
+}, {
   target: '#clear-measurements',
   title: 'tours.navigation-bar.CLEAR_MEASURE_LABEL',
   params: {
@@ -145,10 +145,32 @@ module.exports = [{
   title: 'tours.navigation-bar.MEASURE_BACK_LABEL',
   params: {
     placement: 'bottom',
+    clickOnNext: ['#back', '#tools'],
+    nextDelay: 500
+  }
+}, {
+  target: '#capture-map',
+  title: 'tours.navigation-bar.CAPTURE_MAP_LABEL',
+  params: {
+    placement: 'bottom',
+    clickOnNext: ['#tools', '#capture-map'],
+    nextDelay: 500
+  }
+}, {
+  target: '#capture-button',
+  title: 'tours.navigation-bar.CAPTURE_BUTTON_LABEL',
+  params: {
+    placement: 'bottom',
+  }
+}, {
+  target: '#back',
+  title: 'tours.navigation-bar.CAPTURE_BACK_LABEL',
+  params: {
+    placement: 'bottom',
     clickOnNext: '#back',
     nextDelay: 500
   }
-}, , {
+}, {
   target: '#toggle-vr',
   title: 'tours.navigation-bar.TOGGLE_VR_LABEL',
   params: {
