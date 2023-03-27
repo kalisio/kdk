@@ -1,4 +1,4 @@
- <template>
+<template>
   <v-tour name="tour" ref="tour" :steps="tourSteps" :options="tourOptions" :callbacks="tourCallbacks">
     <template v-slot:default="tour">
       <q-card>
@@ -64,8 +64,7 @@ export default {
           buttonNext: this.$t('KTour.NEXT_LABEL'),
           buttonStop: this.$t('KTour.FINISH_LABEL')
         },
-        startTimeout: 1000,
-        autoPlayDelay: 5000
+        startTimeout: 1000
       },
       tourCallbacks: {
         onStart: this.onStartTour,
@@ -75,7 +74,6 @@ export default {
         onFinish: this.onFinishTour,
         onStop: this.onStopTour
       },
-      autoPlay: false,
       isStepVisible: true
     }
   },
@@ -92,19 +90,19 @@ export default {
   },
   methods: {
     hasLinkButton (step) {
-      return !this.autoPlay && _.has(step, 'params.route') && !_.has(step, 'link') // Only if no link label
+      return _.has(step, 'params.route') && !_.has(step, 'link') // Only if no link label
     },
     hasPreviousButton (step) {
-      return !this.autoPlay && !this.getTour().isFirst.value && _.get(this.getStep(), 'params.previousButton', true)
+      return !this.getTour().isFirst.value && _.get(this.getStep(), 'params.previousButton', true)
     },
     hasNextButton (step) {
-      return !this.autoPlay && !this.getTour().isLast.value && _.get(this.getStep(), 'params.nextButton', true)
+      return !this.getTour().isLast.value && _.get(this.getStep(), 'params.nextButton', true)
     },
     hasSkipButton (step) {
       return !this.getTour().isLast.value && _.get(this.getStep(), 'params.skipButton', true)
     },
     hasFinishButton (step) {
-      return !this.autoPlay && this.getTour().isLast.value && _.get(this.getStep(), 'params.finishButton', true)
+      return this.getTour().isLast.value && _.get(this.getStep(), 'params.finishButton', true)
     },
     getTour () {
       return this.$tours.tour
@@ -115,11 +113,9 @@ export default {
     },
     launchTour (step) {
       this.getTour().start(step)
-      this.autoPlay = false
     },
     playTour (step) {
       this.getTour().start(step)
-      this.autoPlay = true
     },
     setCurrentTour () {
       const selected = this.$store.get('tours.current', {})
@@ -171,13 +167,6 @@ export default {
           this.$store.patch('tours.current', { name, step, play })
         }, _.toNumber(_.get(this.$route, 'query.tourDelay', 0)))
       }
-    },
-    autoPlayNextStep () {
-      const delay = _.get(this.getStep(), 'params.autoPlayDelay', this.tourOptions.autoPlayDelay)
-      this.playTimer = setTimeout(() => {
-        if (!this.getTour().isLast.value) this.getTour().nextStep()
-        else this.getTour().stop()
-      }, delay)
     },
     getTarget (target) {
       let element = null
@@ -234,7 +223,9 @@ export default {
     processElement (param, callback) {
       const targets = this.getTargetsOn(param)
       let processed = false
-      targets.forEach(target => {
+      targets.forEach(async target => {
+        // Need to add a debounce because the previous element is not yet present in the DOM
+        if (targets.length > 1) await new Promise(resolve => { setTimeout(resolve, 100) })
         target = this.getTarget(target)
         if (target) {
           try {
@@ -313,6 +304,8 @@ export default {
           this.isStepVisible = true
           return
       }
+      // Check if step is visible, otherwise d'ont process element according to next/previous step
+      if (this.isStepVisible === false) return
       // Process element according to next/previous step
       this.hoverOn('hover' + param)
       this.clickOn('click' + param)
@@ -332,7 +325,6 @@ export default {
       if (this.playTimer) {
         clearInterval(this.playTimer)
         this.playTimer = null
-        this.autoPlay = false
       }
       // Remove any query param related to tour
       this.$router.replace({
@@ -340,11 +332,15 @@ export default {
         params: _.get(this.$route, 'params', {})
       }).catch(_ => {})
     },
-    onLink () {
+    async onLink () {
       const step = this.getStep()
       this.hoverOn('hoverOnLink')
       this.clickOn('clickOnLink')
       this.hoverClickOn('hoverClickOnLink')
+      // Need to add a debounce because the previous element is not yet present in the DOM
+      await new Promise((resolve, reject) => {
+        setTimeout(() => { resolve() }, 100)
+      })
       if (_.has(step, 'params.route')) {
         // Stop current tour before starting next one
         this.getTour().stop()
@@ -374,7 +370,6 @@ export default {
     onStartTour () {
       if (this.isRunning) return
       this.isRunning = true
-      if (this.autoPlay) this.autoPlayNextStep()
       this.clickTarget()
     },
     onPreviousTourStep (currentStep) {
@@ -384,24 +379,25 @@ export default {
       const step = this.getStep(currentStep - 1)
       const target = this.getTarget(_.get(step, 'target'))
       if (!target) {
+        this.isStepVisible = false
         // Need to add a debounce as the step number has not yet changed, it will on function return
         setTimeout(() => {
-          if (this.getTour().currentStep > 0) this.getTour().previousStep()
+          if (this.getTour().currentStep._value > 0) this.getTour().previousStep()
           else this.getTour().stop()
         }, 100)
       }
     },
     onNextTourStep (currentStep) {
-      if (this.autoPlay) this.autoPlayNextStep()
       this.clickTarget(currentStep + 1)
       this.isStepVisible = true
       // Check if target is found, otherwise skip and try go to next step
       const step = this.getStep(currentStep + 1)
       const target = this.getTarget(_.get(step, 'target'))
       if (!target) {
+        this.isStepVisible = false
         // Need to add a debounce as the step number has not yet changed, it will on function return
         setTimeout(() => {
-          if (this.getTour().currentStep < this.getTour().numberOfSteps - 1) this.getTour().nextStep()
+          if (this.getTour().currentStep._value < this.getTour().numberOfSteps._value - 1) this.getTour().nextStep()
           else this.getTour().stop()
         }, 100)
       }
