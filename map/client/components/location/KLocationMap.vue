@@ -107,7 +107,7 @@ export default {
             handler: () => this.startDraw('Line')
           })
         }
-        if (component === 'draw-rect') {
+        if (component === 'draw-rectangle') {
           components.push({
             id: 'draw-polygon',
             icon: 'las la-vector-square',
