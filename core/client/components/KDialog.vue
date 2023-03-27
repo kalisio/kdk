@@ -132,11 +132,9 @@ const computedComponent = computed(() => {
 })
 const computedModel = computed({
   get: function () {
-    console.log('KDialog', model.value)
     return model.value
   },
   set: function (value) {
-    console.log('KDialog', value)
     model.value = value
     emit('update:modelValue', value)
   }
