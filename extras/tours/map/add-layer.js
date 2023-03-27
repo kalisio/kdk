@@ -5,7 +5,7 @@ module.exports = [{
   params: {
     placement: 'bottom',
     clickOnLink: '#import-layer',
-    tour: 'add-layer/import-layer'
+    tour: 'import-layer'
   }
 }, {
   target: '#connect-layer',
@@ -14,7 +14,7 @@ module.exports = [{
   params: {
     placement: 'bottom',
     clickOnLink: '#connect-layer',
-    tour: 'add-layer/connect-layer'
+    tour: 'connect-layer'
   }
 }, {
   target: '#create-layer',
@@ -23,6 +23,6 @@ module.exports = [{
   params: {
     placement: 'bottom',
     clickOnLink: '#create-layer',
-    tour: 'add-layer/create-layer'
+    tour: 'create-layer'
   }
 }]
