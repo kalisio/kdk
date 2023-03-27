@@ -16,13 +16,21 @@ export function useLocation () {
     if (error) return
     return current()
   }
-  async function search (pattern, geocoders) {
+  async function search (pattern, options) {
     const locations = []
     // Try to parse lat/long coordinates
     const coordinates = parseCoordinates(pattern)
     if (coordinates) {
-      const label = formatUserCoordinates(coordinates.latitude, coordinates.longitude, Store.get('locationFormat', 'FFf'))
-      locations.push(Object.assign(coordinates, { name: label }))
+      locations.push({
+        type: 'Feature',
+        geometry: { 
+          type: 'Point', 
+          coordinates: [coordinates.longitude, coordinates.latitude]
+        },
+        properties: {
+          name: formatUserCoordinates(coordinates.latitude, coordinates.longitude, Store.get('locationFormat', 'FFf')),
+        }
+      })
     }
     // Build the list of responses if no coordinates were found
     if (_.isEmpty(locations)) {
@@ -30,34 +38,24 @@ export function useLocation () {
       if (!geocoderService) throw new Error('Cannot find geocoder service')
       const response = await geocoderService.create({ address: pattern })
       response.forEach(element => {
-        const location = {
-          name: formatGeocodingResult(element),
-          latitude: element.latitude,
-          longitude: element.longitude
-        }
-        locations.push(location)
+        locations.push({
+          type: 'Feature',
+          geometry: { 
+            type: 'Point', 
+            coordinates: [element.longitude, element.latitude]
+          },
+          properties: {
+            name: formatGeocodingResult(element)
+          }
+        })
       })
     }
     return locations
-  }
-  function fromGeoJSON (coordinates) {
-    if (!coordinates) return
-    return {
-      latitude: coordinates[1],
-      longitude: coordinates[0],
-      name: formatUserCoordinates(coordinates[1], coordinates[0], Store.get('locationFormat', 'FFf'))
-    }
-  }
-  function toGeoJSON (location) {
-    if (!location) return
-    return [location.longitude, location.latitude]
   }
   // Expose
   return {
     current,
     geolocate,
-    search,
-    fromGeoJSON,
-    toGeoJSON
+    search
   }
 }

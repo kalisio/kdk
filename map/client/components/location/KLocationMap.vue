@@ -4,7 +4,6 @@
     <div
       :ref="mapRefCreated"
       class="col"
-      style="fontWeight: normal; zIndex: 0; position: relative"
     >
       <q-resize-observer @resize="refreshMap" />
       <!-- Map header -->
@@ -22,12 +21,13 @@
 <script>
 import _ from 'lodash'
 import L from 'leaflet'
+import config from 'config'
 import centroid from '@turf/centroid'
 import { getCssVar } from 'quasar'
 import { KPanel } from '../../../../core/client/components'
 import * as mapMixins from '../../mixins/map'
 import { Geolocation } from '../../geolocation'
-import { setEngineJwt, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
+import { setEngineJwt, coordinatesToGeoJSON, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
 
 export default {
   components: {
@@ -43,32 +43,16 @@ export default {
     mapOptions: {
       type: Object,
       default: () => {
-        return {
-          maxBounds: [[-90, -180], [90, 180]],
-          maxBoundsViscosity: 0.25,
-          minZoom: 2,
-          maxZoom: 18,
-          zoom: 10
-        }
+        return _.get(config, 'mapEngine.viewer')
       }
     },
     markerStyle: {
       type: Object,
       default: () => {
-        return {
-          iconClasses: 'fas fa-circle 0.5rem',
-          markerColor: getCssVar('primary'),
-          iconColor: '#FFFFFF',
-          iconXOffset: -1,
-          iconYOffset: 0
-        }
+        return _.get(config, 'mapEngine.pointStyle')
       }
     },
     header: {
-      type: Array,
-      default: () => []
-    },
-    geocoders: {
       type: Array,
       default: () => []
     },
@@ -92,7 +76,8 @@ export default {
           components.push({
             id: 'location',
             icon: 'img:icons/kdk/center-on-feature.svg',
-            label: this.modelValue ? this.modelValue.name : '',
+            tooltip: 'KLocationMap.RECENTER_MAP',
+            label: this.modelValue ? this.modelValue.properties.name : '',
             handler: this.recenter
           })
         }
@@ -100,33 +85,55 @@ export default {
           components.push({
             id: 'geolocate',
             icon: 'las la-crosshairs',
+            tooltip: 'KLocationMap.LOCATE_ME',
             handler: this.geolocate
           })
         }
         if (component === 'draw-point') {
           components.push({
             id: 'draw-marker',
-            icon: 'las la-map-marker'
+            icon: 'las la-map-marker',
+            tooltip: 'KLocationMap.DRAW_POINT',
+            propagate: false,
+            handler: () => this.startDraw('Marker')
           })
         }
         if (component === 'draw-polyline') {
           components.push({
             id: 'draw-polyline',
-            icon: 'las la-project-diagram'
+            icon: 'las la-project-diagram',
+            tooltip: 'KLocationMap.DRAW_LINE',
+            propagate: false,
+            handler: () => this.startDraw('Line')
+          })
+        }
+        if (component === 'draw-rect') {
+          components.push({
+            id: 'draw-polygon',
+            icon: 'las la-vector-square',
+            tooltip: 'KLocationMap.DRAW_RECANGLE',
+            propagate: false,
+            handler: () => this.startDraw('Rectangle')
           })
         }
         if (component === 'draw-polygon') {
           components.push({
             id: 'draw-polygon',
-            icon: 'las la-draw-polygon'
+            icon: 'las la-draw-polygon',
+            tooltip: 'KLocationMap.DRAW_POLYGON',
+            propagate: false,
+            handler: () => this.startDraw('Polygon')
           })
         }
       })
       return components
+    },
+    allowGeolocation () {
+      return !_.isNil(header['geolocate'])
     }
   },
   watch: {
-    modelValue: function (value) {
+    modelValue: function () {
       this.refresh()
     },
     draggable: function () {
@@ -134,28 +141,6 @@ export default {
     }
   },
   methods: {
-    defaultLocation () {
-      const latitude = this.$store.get('geolocation.position.latitude', 0)
-      const longitude = this.$store.get('geolocation.position.longitude', 0)
-      return {
-        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf'), { decimalPlaces: 3 }),
-        latitude,
-        longitude
-      }
-    },
-    recenter () {
-      if (this.drawLayer) {
-        this.map.fitBounds(this.drawLayer.getBounds())
-      } else {
-        const longitude = (_.has(this.modelValue, 'longitude')
-          ? _.get(this.modelValue, 'longitude')
-          : _.get(this.modelValue, 'coordinates[0]'))
-        const latitude = (_.has(this.modelValue, 'latitude')
-          ? _.get(this.modelValue, 'latitude')
-          : _.get(this.modelValue, 'coordinates[1]'))
-        this.center(longitude, latitude)
-      }
-    },
     async geolocate () {
       await Geolocation.update()
       const position = this.$store.get('geolocation.position')
@@ -163,66 +148,56 @@ export default {
         this.update(position.latitude, position.longitude)
       }
     },
-    clear () {
-      if (this.marker) {
-        this.marker.off('dragend', this.onLocationDragged)
-        this.marker.removeFrom(this.map)
-        this.marker = null
+    recenter () {
+      if (!this.locationLayer) return
+      if (this.locationLayer instanceof L.Marker) {
+        this.map.panTo(this.locationLayer.getLatLng())
+      } else {
+        this.map.fitBounds(this.locationLayer.getBounds(), { maxZoom: 12 })
       }
-      if (this.drawLayer) {
-        this.map.removeLayer(this.drawLayer)
-        this.drawLayer = null
-      }
-      this.map.pm.disableDraw()
-      unbindLeafletEvents(this.map, ['pm:create'])
-      this.map.pm.setGlobalOptions({ layerGroup: null })
     },
     refresh () {
       if (!this.mapReady) return
-      // No location ?
-      const hasLongitude = _.has(this.modelValue, 'longitude')
-      const hasLatitude = _.has(this.modelValue, 'latitude')
-      const hasGeometry = _.has(this.modelValue, 'coordinates')
-      if (hasGeometry || (hasLongitude && hasLatitude)) {
-        // No default marker in draw mode
-        // if (this.drawable && !hasGeometry) return
-
-        // GeoJson geometry or simple location ?
-        if (_.has(this.modelValue, 'type') && (_.get(this.modelValue, 'type') !== 'Point')) {
-          this.drawLayer = L.geoJson({ type: 'Feature', geometry: this.modelValue })
-          this.map.addLayer(this.drawLayer)
-        } else {
-          const longitude = (hasLongitude
-            ? _.get(this.modelValue, 'longitude')
-            : _.get(this.modelValue, 'coordinates[0]'))
-          const latitude = (hasLatitude
-            ? _.get(this.modelValue, 'latitude')
-            : _.get(this.modelValue, 'coordinates[1]'))
-
-          if (this.marker) this.marker.removeFrom(this.map)
-          this.marker = L.marker([latitude, longitude], {
-            icon: L.icon.fontAwesome(this.markerStyle),
-            draggable: this.draggable,
-            pmIgnore: true
-          })
-          this.marker.addTo(this.map)
-          if (this.draggable) this.marker.on('dragend', this.onLocationDragged)
-        }
-        // Center the map
-        this.recenter()
-      } else {
-        this.clear()
+      // clear the existing layer if any
+      if (this.locationLayer) {
+        this.map.removeLayer(this.locationLayer)
+        this.locationLayer = null
       }
+      // update the location
+      this.location = this.modelValue
+      if (!this.location) return
+      // create a new layer 
+      const type = _.get(this.location, 'geometry.type')
+      if (type === 'Point') {
+        const coordinates = _.get(this.location, 'geometry.coordinates')
+        this.locationLayer = L.marker([coordinates[1], coordinates[0]], {
+          icon: L.icon.fontAwesome(this.markerStyle),
+          draggable: this.draggable,
+          pmIgnore: true
+        })
+        if (this.draggable) this.locationLayer.on('dragend', this.onLocationDragged)
+      } else {
+        this.locationLayer = L.geoJson(this.location)
+      }
+      this.locationLayer.addTo(this.map)
+      // wait for the next tick to recenter the view
+      this.$nextTick(() => this.recenter())
     },
     onLocationDragged () {
-      this.marker.removeFrom(this.map)
-      this.update(this.marker.getLatLng().lat, this.marker.getLatLng().lng)
+      const latLng = this.locationLayer.getLatLng()
+      const newLocation = coordinatesToGeoJSON(latLng.lat, latLng.lng, this.$store.get('locationFormat', 'FFf'))
+      this.$emit('update:modelValue', newLocation)
     },
     startDraw (shape) {
-      // Clear any previous edition
-      this.clear()
+      // clear location layer
+      if (this.locationLayer) {
+        this.map.removeLayer(this.locationLayer)
+        this.locationLayer = null
+      }
+      // create draw layer
       this.drawLayer = L.geoJson()
       this.map.addLayer(this.drawLayer)
+      // set draw mode
       this.map.pm.setGlobalOptions({ layerGroup: this.drawLayer })
       this.map.pm.enableDraw(shape, {
         snappable: true,
@@ -231,19 +206,26 @@ export default {
       bindLeafletEvents(this.map, ['pm:create'], this)
     },
     stopDraw () {
+      this.map.pm.disableDraw()
+      // retrieve the feature
       const geoJson = this.drawLayer.toGeoJSON()
-      // The location is the feature geometry
-      const feature = _.get(geoJson, 'features[0]', {})
-      this.location = feature.geometry
-      // Compatibility with GPS-based localization
-      const location = centroid(feature)
-      this.update(location.geometry.coordinates[1], location.geometry.coordinates[0])
-    },
-    onStartLine () {
-      this.startDraw('Line')
-    },
-    onStartPolygon () {
-      this.startDraw('Polygon')
+      const feature = _.get(geoJson, 'features[0]')
+      const geometry = feature.geometry.type
+      if (geometry === 'Point') {
+        const coords = feature.geometry.coordinates
+        feature.properties.name = formatUserCoordinates(coords[1], coords[0], this.$store.get('locationFormat', 'FFf'))
+      } else {
+        const prefix = this.$t(geometry === 'Polygon' ? 'KLocationMap.ZONE' : 'KLocationMap.PATH')
+        const coords = _.get(centroid(feature), 'geometry.coordinates')
+        feature.properties.name = `${prefix} (${formatUserCoordinates(coords[1], coords[0], this.$store.get('locationFormat', 'FFf'))})`
+      }
+      this.$emit('update:modelValue', feature)
+      // clear draw layer
+      this.map.removeLayer(this.drawLayer)
+      this.drawLayer = null
+      // unset draw mode
+      unbindLeafletEvents(this.map, ['pm:create'])
+      this.map.pm.setGlobalOptions({ layerGroup: null })
     },
     async refreshBaseLayer () {
       const catalogService = this.$api.getService('catalog', '')
@@ -256,9 +238,6 @@ export default {
         this.addLayer(baseLayer)
       }
     },
-    async onMapResized (size) {
-      this.refreshMap()
-    },
     mapRefCreated (container) {
       if (container) {
         if (!this.mapReady) {
@@ -269,29 +248,15 @@ export default {
         }
       }
     },
-    update (latitude, longitude) {
-      const location = {
-        name: formatUserCoordinates(latitude, longitude, this.$store.get('locationFormat', 'FFf')),
-        latitude,
-        longitude
-      }
-      this.$emit('update:modelValue', location)
-    },
     getLocation () {
       return this.modelValue
     }
   },
   async mounted () {
-    // Initialize component
-    // this.location = this.modelValue
-
-    // if (!this.location) await this.geolocate()
-    this.refresh()
     this.$engineEvents.on('pm:create', this.stopDraw)
   },
   beforeUnmount () {
     this.$engineEvents.off('pm:create', this.stopDraw)
-    this.clear()
   }
 }
 </script>

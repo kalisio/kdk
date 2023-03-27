@@ -10,14 +10,11 @@
     :for="properties.name + '-field'"
     v-model="model"
     :label="label"
-    fill-input
-    hide-selected
     clearable
     use-input
     hide-dropdown-icon
     :options="locations"
-    option-label="name"
-    option-value="name"
+    :display-value="model ? model.properties.name : ''"
     :error-message="errorLabel"
     :error="hasError"
     :disable="disabled"
@@ -35,7 +32,7 @@
           tooltip="KLocationField.FILTER"
           icon="las la-sliders-h"
           color="grey-7"
-          size="0.75rem"
+          size="0.8rem"
           dense
         >
           <q-popup-proxy>
@@ -52,7 +49,7 @@
           tooltip="KLocationField.GEOLOCATE"
           icon="las la-crosshairs"
           color="grey-7"
-          size="0.75rem"
+          size="0.8rem"
           dense
           :handler="onGeolocated"
         />
@@ -63,7 +60,7 @@
           tooltip="KLocationField.DRAW"
           icon="las la-edit"
           color="grey-7"
-          size="0.75rem"
+          size="0.8rem"
           dense
           :dialog="{
             component: 'location/KLocationMap',
@@ -83,11 +80,15 @@
         />
       </div>
     </template>
+    <!-- Selected item -->
+    <template v-slot:selected-item="scope">
+        {{ scope.opt ? scope.opt.properties.name : '' }}
+    </template>
     <!-- Options -->
     <template v-slot:option="scope">
       <q-item v-bind="scope.itemProps" class="option">
         <q-item-section>
-          <q-item-label>{{ scope.opt.name }}</q-item-label>
+          <q-item-label>{{ scope.opt.properties.name }}</q-item-label>
         </q-item-section>
         <q-tooltip
           class="q-pa-none"
@@ -96,7 +97,7 @@
           style="border-radius: 25px;"
         >
           <KLocationMap
-            :modelValue="{ latitude: scope.opt.latitude, longitude: scope.opt.longitude }"
+            :modelValue="scope.opt"
             style="min-width: 250px; min-height: 250px; border-radius: 50px;"
           />
         </q-tooltip>
@@ -157,7 +158,9 @@ export default {
         return
       }
       const locations = await this.search(pattern)
-      update(() => { this.locations = locations })
+      update(() => { 
+        this.locations = locations
+      })
     },
     async onGeolocated () {
       const location = await this.geolocate()

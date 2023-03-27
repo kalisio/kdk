@@ -272,8 +272,20 @@ export function formatUserCoordinates (lat, lon, format, options) {
     const lonDir = coords.east ? 'E' : 'W'
     return `${latDeg}${latMin}${latDir} ${lonDeg}${lonMin}${lonDir}`
   }
-
   return formatcoords(lat, lon).format(format, options)
+}
+
+export function coordinatesToGeoJSON (lat, lon, format, options) {
+  return {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [lon, lat]
+    },
+    properties: {
+      name: formatcoords(lat, lon).format(format, options)
+    }
+  }
 }
 
 export function parseCoordinates (str) {
@@ -288,3 +300,4 @@ export function parseCoordinates (str) {
     longitude
   }
 }
+

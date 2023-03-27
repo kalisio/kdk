@@ -344,11 +344,14 @@
     "DRAW": "Draw on a map"
   },
   "KLocationMap": {
-    "DRAW_LINE": "Draw a line",
+    "RECENTER_MAP": "Recenter map",
+    "LOCATE_ME": "Locate me",
+    "DRAW_POINT": "Designate a point",
+    "DRAW_LINE": "Draw a path",
+    "DRAW_RECTANGLE": "Draw a rectangle",
     "DRAW_POLYGON": "Draw a polygon",
-    "LOCATE_BUTTON": "Locate me",
-    "RECENTER_BUTTON": "Recenter map",
-    "CLOSE_BUTTON": "Close map"
+    "ZONE": "Zone",
+    "PATH": "Path"
   },
   "KLocationInput": {
     "SEARCH_LOCATION": "Seek for an address",

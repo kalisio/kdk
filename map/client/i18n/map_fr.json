@@ -345,11 +345,14 @@
     "DRAW": "Dessiner sur une carte"
   },
   "KLocationMap": {
+    "RECENTER_MAP": "Recentrer la carte",
+    "LOCATE_ME": "Me localiser",
+    "DRAW_POINT": "Désigner un point",
     "DRAW_LINE": "Dessiner un linéaire",
-    "DRAW_POLYGON": "Dessiner une zone",
-    "LOCATE_BUTTON": "Me localiser",
-    "RECENTER_BUTTON": "Recentrer la carte",
-    "CLOSE_BUTTON": "Fermer la carte"
+    "DRAW_RECTANGLE": "Dessiner un rectangle",
+    "DRAW_POLYGON": "Dessiner un polygone",
+    "ZONE": "Zone",
+    "PATH": "Linéaire"
   },
   "KLocationInput": {
     "SEARCH_LOCATION": "Rechercher une adresse",
