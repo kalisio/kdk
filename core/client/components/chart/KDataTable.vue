@@ -32,6 +32,7 @@ import Papa from 'papaparse'
 import { ref, watch } from 'vue'
 import { downloadAsBlob } from '../../utils'
 import { useSchema } from '../../composables'
+import { Units } from '../../units'
 import { Time } from '../../time'
 import { i18n } from '../../i18n'
 
@@ -66,6 +67,9 @@ const rows = ref([])
 const columns = ref([])
 const visibleColumns = ref([])
 const height = ref(0)
+// Used to store template compilers per field
+const compilers = {}
+const exportCompilers = {}
 
 // computed
 
@@ -86,6 +90,14 @@ async function update () {
     if (!visible) invisibleColumns.push(key)
     const format = _.get(value, 'format')
     const path = _.get(value, 'field.path', key)
+    if (_.has(value, 'field.template')) {
+      compilers[key] = _.template(_.get(value, 'field.template'))
+      // By default export as visualized
+      exportCompilers[key] = compilers[key]
+    } // Custom export template if any
+    if (_.has(value, 'field.exportTemplate')) {
+      exportCompilers[key] = _.template(_.get(value, 'field.exportTemplate'))
+    }
     columns.value.push({
       name: key,
       // Check if we have a translation key or directly the label content
@@ -94,20 +106,21 @@ async function update () {
       field: row => _.get(row, path, _.get(row, `properties.${path}`)),
       align: 'center',
       sortable: true,
-      format: (value) => {
+      format: (value, row) => {
+        if (_.isNil(value)) return ''
+        if (compilers[key]) return compilers[key]({ value, row, i18n, Units, Time, moment })
         switch (type) {
           case 'number':
-            return (value ? _.toNumber(value).toFixed(2) : '')
+            return Units.format(_.toNumber(value))
           case 'integer':
-            return (value ? _.toNumber(value).toFixed(0) : '')
+            return _.toNumber(value).toFixed(0)
           case 'string':
-            if (!value) return ''
-            if (format === 'date-time') return `${Time.format(value, 'date.short')} - ${Time.format(value, 'time.short')}`
-            if (format === 'date') return `${Time.format(value, 'date.short')}`
-            if (format === 'time') return `${Time.format(value, 'time.short')}`
+            if (format === 'date-time') return `${Time.format(value, 'date.short')}/${Time.format(value, 'year.short')} - ${Time.format(value, 'time.long')}`
+            if (format === 'date') return `${Time.format(value, 'date.short')}/${Time.format(value, 'year.short')}`
+            if (format === 'time') return `${Time.format(value, 'time.long')}`
             return value
           default:
-            return (value ? value.toString() : '')
+            return value.toString()
         }
       }
     })
@@ -142,7 +155,9 @@ async function exportData (options = {}) {
         const path = _.get(value, 'field.path', key)
         // This will support GeoJson out-of-the-box
         let data = _.get(item, path, _.get(item, `properties.${path}`))
-        if (type === 'string') {
+        if (_.isNil(data)) data = ''
+        else if (exportCompilers[key]) data = exportCompilers[key]({ value: data, row: item, i18n, Units, Time, moment })
+        else if (type === 'string') {
           if (format === 'date-time') data = moment.utc(data).toISOString()
           if (format === 'date') data = moment.utc(data).toISOString()
           if (format === 'time') data = moment.utc(data).toISOString()
