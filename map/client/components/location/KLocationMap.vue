@@ -23,7 +23,6 @@ import _ from 'lodash'
 import L from 'leaflet'
 import config from 'config'
 import centroid from '@turf/centroid'
-import { getCssVar } from 'quasar'
 import { KPanel } from '../../../../core/client/components'
 import * as mapMixins from '../../mixins/map'
 import { Geolocation } from '../../geolocation'
@@ -129,7 +128,7 @@ export default {
       return components
     },
     allowGeolocation () {
-      return !_.isNil(header['geolocate'])
+      return !_.isNil(this.header['geolocate'])
     }
   },
   watch: {
