@@ -564,6 +564,9 @@
     "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succés",
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
   },
+  "KCronField": {
+    "INVALID_CRON": "Expression CRON invalide"
+  },
   "KMediaBrowser": {
     "CLOSE_ACTION": "@:CLOSE",
     "DOWNLOAD_MEDIA_ACTION": "Télécharger le média",

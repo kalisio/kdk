@@ -564,6 +564,9 @@
     "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
   },
+  "KCronField": {
+    "INVALID_CRON": "Invalid CRON expression"
+  },
   "KMediaBrowser": {
     "CLOSE_ACTION": "@:CLOSE",
     "DOWNLOAD_MEDIA_ACTION": "Donwload media",
