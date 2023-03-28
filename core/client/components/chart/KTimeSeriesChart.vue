@@ -269,10 +269,20 @@ async function makeDatasets () {
     const label = _.get(timeSerie, 'variable.label')
     const { unit, baseUnit } = getUnits(timeSerie)
     const data = await timeSerie.data
+    const dataset = Object.assign({
+      label,
+      data,
+      baseUnit,
+      unit,
+      yAxisID: unit2axis.get(unit)
+    }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
+    const xAxisKey = _.get(dataset, 'parsing.xAxisKey', props.xAxisKey)
+    const yAxisKey = _.get(dataset, 'parsing.yAxisKey', props.yAxisKey)
     // Update time/value range
     data.forEach(item => {
-      const time = moment.utc(_.get(item, props.xAxisKey))
-      const value = _.get(item, props.yAxisKey)
+      const time = moment.utc(_.get(item, xAxisKey))
+      
+      const value = _.get(item, yAxisKey)
       if (_.isNil(min) || (value < min)) min = value
       if (_.isNil(max) || (value > max)) max = value
       if (!props.startTime) {
@@ -282,13 +292,6 @@ async function makeDatasets () {
         if (!endTime.value || time.isAfter(endTime.value)) endTime.value = time
       }
     })
-    const dataset = Object.assign({
-      label,
-      data,
-      baseUnit,
-      unit,
-      yAxisID: unit2axis.get(unit)
-    }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
     // Check for individual chartjs properties if any
     if (!_.isEmpty(dataset.perItemProperties)) {
       // In that case dataset requires an array of values, one for each data point
@@ -339,11 +342,9 @@ async function exportSeries (options = {}) {
   let times = []
   for (let i = 0; i < props.timeSeries.length; i++) {
     const timeSerie = props.timeSeries[i]
-    for (let j = 0; j < timeSerie.series.length; j++) {
-      const serie = timeSerie.series[j]
-      const data = await serie.data
-      times = times.concat(_.map(data, props.xAxisKey))
-    }
+    const xAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.xAxisKey', props.xAxisKey)
+    const data = await timeSerie.data
+    times = times.concat(_.map(data, xAxisKey))
   }
   // Make union of all available times for x-axis
   times = _.uniq(times).map(time => moment.utc(time)).sort((a, b) => a - b)
@@ -356,17 +357,16 @@ async function exportSeries (options = {}) {
     }
     for (let i = 0; i < props.timeSeries.length; i++) {
       const timeSerie = props.timeSeries[i]
-      for (let j = 0; j < timeSerie.series.length; j++) {
-        const visible = _.get(chart, `data.datasets[${j}]`)
-        // Skip invisible variables in export
-        if (options.visibleOnly && !visible) return
-        const serie = timeSerie.series[j]
-        const data = await serie.data
-        const value = _.find(data, item => moment.utc(_.get(item, props.xAxisKey)).valueOf() === time.valueOf())
-        const name = _.get(serie, 'variable.name')
-        const label = _.get(serie, 'variable.label')
-        row[options.labelAsHeader ? `${label}` : `${name}`] = value ? _.get(value, props.yAxisKey) : null
-      }
+      const visible = chart.isDatasetVisible(i)
+      // Skip invisible variables in export
+      if (options.visibleOnly && !visible) return
+      const xAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.xAxisKey', props.xAxisKey)
+      const yAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.yAxisKey', props.yAxisKey)
+      const data = await timeSerie.data
+      const value = _.find(data, item => moment.utc(_.get(item, xAxisKey)).valueOf() === time.valueOf())
+      const name = _.get(timeSerie, 'variable.name')
+      const label = _.get(timeSerie, 'variable.label')
+      row[options.labelAsHeader ? `${label}` : `${name}`] = value ? _.get(value, yAxisKey) : null
     }
     json.push(row)
   }
