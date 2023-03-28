@@ -24,16 +24,16 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { baseField } from '../../mixins'
 
 export default {
   mixins: [baseField],
   computed: {
     validationRules () {
+      // regexp from https://regexr.com/4jp54
       const cronRegExp = /(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/g
       return [
-        (value) => cronRegExp.test(value) || 'Invalid CRON expression' 
+        (value) => cronRegExp.test(value) || 'Invalid CRON expression'
       ]
     }
   }
