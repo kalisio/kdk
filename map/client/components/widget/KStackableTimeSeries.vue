@@ -28,7 +28,7 @@
           :id="`${timeSerie.id}-timeseries-chart`"
           class="col q-pl-sm q-pr-sm"
           :schema="schema"
-          :tables="timeSerie.series"
+          :tables="getTables(timeSerie)"
         />
       </div>
     </template>
@@ -60,7 +60,7 @@
           :id="`${timeSerie.id}-timeseries-table`"
           class="col q-pl-sm q-pr-sm"
           :schema="schema"
-          :tables="timeSerie.series"
+          :tables="getTables(timeSerie)"
         />
       </div>
     </template>
@@ -120,6 +120,10 @@ const exposed = {
 watch(() => props.timeSeries, refresh)
 
 // functions
+function getTables (timeSerie) {
+  // By default all series will be available as tables
+  return timeSerie.series.filter(serie => _.get(serie, 'table', true))
+}
 function refresh () {
   zoomHistory.value = []
   // Keep track of previous components
