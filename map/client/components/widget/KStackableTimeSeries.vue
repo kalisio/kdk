@@ -110,6 +110,8 @@ const exposed = {
   startTime,
   endTime,
   zoomHistory,
+  resetZoom,
+  zoomToData,
   restorePreviousZoom,
   update,
   exportData,
@@ -149,6 +151,26 @@ function refresh () {
     }
     components.value.push(component)
   })
+}
+function resetZoom () {
+  startTime.value = null
+  endTime.value = null
+  zoomHistory.value = []
+}
+function zoomToData () {
+  // Find data range
+  let start, end
+  _.forEach(components.value, component => {
+    if (component.chart) {
+      const { start: chartStart, end: chartEnd } = component.chart.getZoom()
+      if (!start || chartStart.isBefore(start)) start = chartStart
+      if (!end || chartEnd.isAfter(end)) end = chartEnd
+    }
+  })
+  if (start && end) {
+    startTime.value = start
+    endTime.value = end
+  }
 }
 function restorePreviousZoom () {
   if (!_.isEmpty(zoomHistory.value)) {

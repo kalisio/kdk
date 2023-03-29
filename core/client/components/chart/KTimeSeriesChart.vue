@@ -46,6 +46,7 @@ const props = defineProps({
 
 defineExpose({
   update,
+  getZoom,
   exportSeries
 })
 
@@ -89,6 +90,11 @@ function getUnits (timeSerie) {
   const defaultUnit = Units.getDefaultUnit(baseUnit)
   const unit = (timeSerie.variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
   return { unit, baseUnit }
+}
+function getZoom () {
+  const start = moment.utc(_.get(chart, 'scales.x.min'))
+  const end = moment.utc(_.get(chart, 'scales.x.max'))
+  return { start, end }
 }
 function onZoomStart () {
   const start = moment.utc(_.get(chart, 'scales.x.min'))
