@@ -30,8 +30,6 @@ export const activity = {
     // Enable the observers in order to refresh the layout
     this.observe = true
   },
-  mounted () {
-  },
   beforeUnmount () {
     // No need to refresh the layout when leaving the component
     this.observe = false

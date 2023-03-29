@@ -39,16 +39,10 @@ export default {
       type: Object,
       default: () => null
     },
-    mapOptions: {
+    engineOptions: {
       type: Object,
       default: () => {
-        return _.get(config, 'mapEngine.viewer')
-      }
-    },
-    markerStyle: {
-      type: Object,
-      default: () => {
-        return _.get(config, 'mapEngine.pointStyle')
+        return _.get(config, 'engines.leaflet')
       }
     },
     header: {
@@ -170,7 +164,7 @@ export default {
       if (type === 'Point') {
         const coordinates = _.get(this.location, 'geometry.coordinates')
         this.locationLayer = L.marker([coordinates[1], coordinates[0]], {
-          icon: L.icon.fontAwesome(this.markerStyle),
+          icon: L.icon.fontAwesome(this.engineOptions.pointStyle),
           draggable: this.draggable,
           pmIgnore: true
         })
@@ -240,7 +234,7 @@ export default {
     mapRefCreated (container) {
       if (container) {
         if (!this.mapReady) {
-          this.setupMap(container, this.mapOptions)
+          this.setupMap(container, this.engineOptions.viewer)
           this.mapReady = true
           this.refreshBaseLayer()
           this.refresh()

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import config from 'config'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
 import { setEngineJwt } from '../utils.js'
@@ -296,7 +297,7 @@ export const activity = {
           }
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
-          logger.error(error)
+          logger.error(`[KDK] ${error}`)
         }
         Loading.hide()
       } else {
@@ -358,7 +359,7 @@ export const activity = {
           this.removeLayer(layer.name)
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
-          logger.error(error)
+          logger.error(`[KDK] ${error}`)
         }
         Loading.hide()
       })
@@ -379,7 +380,7 @@ export const activity = {
         try {
           await this.setupWeacast()
         } catch (error) {
-          logger.error(error)
+          logger.error(`[KDK] ${error}`)
         }
         this.forecastModelHandlers = { toggle: (model) => this.setForecastModel(model) }
       } else {
@@ -391,7 +392,7 @@ export const activity = {
         await this.refreshLayers()
         if (hasContext) await this.restoreContext('layers')
       } catch (error) {
-        logger.error(error)
+        logger.error(`[KDK] ${error}`)
       }
       // Retrieve the time
       if (hasContext) await this.restoreContext('time')
@@ -456,6 +457,14 @@ export const activity = {
           break
         }
       }
+    }
+  },
+  beforeMount () {
+    // Merge the engine options using defaults
+    const defaultOptions = _.get(config, `engines.${this.engine}`)
+    if (defaultOptions) {
+      logger.debug(`[KDK] ${this.engine} engine use defaults: ${JSON.stringify(defaultOptions, null, 2)}`)
+      this.activityOptions.engine = _.defaultsDeep(this.activityOptions.engine, defaultOptions)
     }
   },
   mounted () {
