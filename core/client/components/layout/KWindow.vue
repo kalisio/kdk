@@ -60,7 +60,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch, provide } from 'vue'
-import { useQuasar } from 'quasar'
+import { getCssVar, useQuasar } from 'quasar'
 import { Store, LocalStorage, Layout, utils } from '../..'
 import KPanel from '../KPanel.vue'
 
@@ -86,6 +86,7 @@ const pinIcons = {
   top: 'las la-angle-up',
   bottom: 'las la-angle-down'
 }
+const controlsSize = '.6rem'
 let backupPosition
 let backupSize
 let backupMode
@@ -133,28 +134,28 @@ const controls = computed(() => {
     id: 'pin-action',
     icon: pinIcons[props.placement],
     tooltip: 'KWindow.PIN_ACTION',
-    size: 'xs',
+    size: controlsSize,
     visible: currentMode.value === 'floating',
     handler: onPinned
   }, {
     id: 'maximize-action',
     icon: 'las la-expand',
     tooltip: 'KWindow.MAXIMIZE_ACTION',
-    size: 'xs',
+    size: controlsSize,
     visible: currentMode.value !== 'maximized',
     handler: onMaximized
   }, {
     id: 'restore-action',
     icon: 'las la-compress',
     tooltip: 'KWindow.RESTORE_ACTION',
-    size: 'xs',
+    size: controlsSize,
     visible: currentMode.value === 'maximized',
     handler: onRestored
   }, {
     id: 'close-action',
     icon: 'las la-times',
     tooltip: 'KWindow.CLOSE_ACTION',
-    size: 'xs',
+    size: controlsSize,
     handler: onClosed
   }]
 })
