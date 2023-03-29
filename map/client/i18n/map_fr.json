@@ -635,5 +635,8 @@
     "EAST": "E",
     "SOUTH": "S",
     "WEST": "O"
+  },
+  "KDirectionField": {
+    "COMPASS": "Boussole"
   }
 }

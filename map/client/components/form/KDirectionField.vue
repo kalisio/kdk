@@ -16,7 +16,7 @@
     @update:model-value="onChanged"
   >
     <!-- compass -->
-    <template v-slot:prepend>
+    <template v-slot:append>
       <KAction
         id="compass"
         tooltip="KDirectionField.COMPASS"
@@ -27,6 +27,7 @@
         <q-popup-proxy
           anchor="top middle"
           self="bottom middle"
+          style="border-radius: 50%;"
         >
           <div class="k-compass">
             <KCompass
@@ -64,8 +65,6 @@ export default {
 <style lang="scss">
 .k-compass {
   padding: 8px;
-  border-radius: 10px;
-  background-color: lightgray;
   width: 220px;
   height: 220px;
 }
