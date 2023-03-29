@@ -1,0 +1,9 @@
+// Sass/SCSS variables customization
+// https://quasar.dev/style/sass-scss-variables#variables-list
+
+// Layout
+$sticky-z-index: 1000;
+$left-pane-width: 300px;
+
+// Table: quasar has eg $table-hover-background but nothing for background
+$table-background: #fff;

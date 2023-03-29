@@ -2,7 +2,7 @@
   <div v-if="rows.length > 0">
     <q-resize-observer @resize="onResized" />
     <KScrollArea :maxHeight="height">
-      <q-table
+      <q-table class="data-table-background"
         :rows="rows"
         :columns="columns"
         :visible-columns="visibleColumns"
@@ -176,3 +176,8 @@ async function exportData (options = {}) {
 // immediate
 update()
 </script>
+<style lang="scss" scoped>
+.data-table-background {
+  background-color: $table-background
+}
+</style>
