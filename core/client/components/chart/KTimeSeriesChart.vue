@@ -198,6 +198,10 @@ async function makeChartConfig () {
   computeScaleBound(scales.x, 'max', startTime.value, endTime.value)
   computeScaleBound(scales.x, 'suggestedMin', startTime.value, endTime.value)
   computeScaleBound(scales.x, 'suggestedMax', startTime.value, endTime.value)
+  // Update time ticks if required as by default we use hours
+  const min = moment.utc(_.get(scales, 'x.min'))
+  const max = moment.utc(_.get(scales, 'x.max'))
+  _.set(scales, 'x.time.unit', max.diff(min, 'minutes') < 120 ? 'minute' : 'hour')
   return config
 }
 
@@ -209,16 +213,24 @@ function makeScales () {
     max: endTime.value.valueOf(),
     ticks: {
       autoskip: true,
-      maxRotation: 20,
+      minRotation: 10,
+      maxRotation: 45,
       major: {
         enabled: true
       },
       callback: function (value, index, values) {
-        if (values[index] !== undefined) {
-          if (values[index].major === true) {
-            return Time.format(moment(values[index].value), 'date.short')
+        const unit = _.get(chart, 'scales.x.options.time.unit')
+        const time = moment(values[index].value)
+        if (!_.isNil(values[index])) {
+          const isMajor = values[index].major
+          const date = Time.format(time, 'date.short')
+          const shortTime = Time.format(time, 'time.short')
+          const longTime = Time.format(time, 'time.long')
+          // Check for tick granularity
+          if (unit === 'minute') {
+            return (isMajor ? `${date} ${shortTime}` : `${date} ${longTime}`)
           } else {
-            return Time.format(moment(values[index].value), 'time.short')
+            return (isMajor ? `${date} ${shortTime}` : `${date} ${shortTime}`)
           }
         }
       },
