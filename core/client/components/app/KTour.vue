@@ -351,7 +351,7 @@ async function onLink () {
     }, _.toNumber(delay))
   } else if (_.has(step, 'params.nextDelay')) {
     const delay = _.get(step, 'params.nextDelay')
-    setTimeout(() => nextStep(), _.toNumber(delay))
+    setTimeout(() => getTour().nextStep(), _.toNumber(delay))
   }
 }
 function onStartTour () {
