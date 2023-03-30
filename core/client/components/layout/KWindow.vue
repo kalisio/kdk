@@ -60,7 +60,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch, provide } from 'vue'
-import { getCssVar, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import { Store, LocalStorage, Layout, utils } from '../..'
 import KPanel from '../KPanel.vue'
 
@@ -86,7 +86,6 @@ const pinIcons = {
   top: 'las la-angle-up',
   bottom: 'las la-angle-down'
 }
-const controlsSize = '.6rem'
 let backupPosition
 let backupSize
 let backupMode
@@ -121,8 +120,8 @@ const menu = computed(() => {
       id: 'widgets-menu-items',
       component: 'menu/KMenu',
       icon: 'las la-cube',
-      tooltip: 'Widgets',
       size: 'sm',
+      tooltip: 'Widgets',
       actionRenderer: 'item',
       content: widgetMenuItems
     })
@@ -133,29 +132,30 @@ const controls = computed(() => {
   return [{
     id: 'pin-action',
     icon: pinIcons[props.placement],
+    size: 'sm',
     tooltip: 'KWindow.PIN_ACTION',
-    size: controlsSize,
+    class: 'k-window-control',
     visible: currentMode.value === 'floating',
     handler: onPinned
   }, {
     id: 'maximize-action',
     icon: 'las la-expand',
+    size: 'sm',
     tooltip: 'KWindow.MAXIMIZE_ACTION',
-    size: controlsSize,
     visible: currentMode.value !== 'maximized',
     handler: onMaximized
   }, {
     id: 'restore-action',
     icon: 'las la-compress',
+    size: 'sm',
     tooltip: 'KWindow.RESTORE_ACTION',
-    size: controlsSize,
     visible: currentMode.value === 'maximized',
     handler: onRestored
   }, {
     id: 'close-action',
     icon: 'las la-times',
+    size: 'sm',
     tooltip: 'KWindow.CLOSE_ACTION',
-    size: controlsSize,
     handler: onClosed
   }]
 })
@@ -194,10 +194,10 @@ const widgetStyle = computed(() => {
     }
     // return the style
     const border = 2
-    return `minWidth: ${currentWindow.size[0] - border}px;
-            maxWidth: ${currentWindow.size[0] - border}px;
-            minHeight: ${widgetHeight - border}px; 
-            maxHeight: ${widgetHeight - border}px;
+    return `min-width: ${currentWindow.size[0] - border}px;
+            max-width: ${currentWindow.size[0] - border}px;
+            min-height: ${widgetHeight - border}px;
+            max-height: ${widgetHeight - border}px;
             z-index: 1;`
   }
 })
@@ -358,26 +358,38 @@ if (geometry) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .k-window {
-    border: solid 1px lightgrey;
-    border-radius: 5px;
-    background: #ffffff;
+    border-style: $window-border-style;
+    border-width: $window-border-width;
+    border-color:  $window-border-color;
+    border-radius: $window-border-radius;
+    background-color: $window-background;
   }
   .k-window:hover {
-    border: solid 1px $primary;
+    border-color:  $window-hover-border-color;
   }
   .k-window-header {
-    border-radius: 5px;
+    border-radius: $window-border-radius $window-border-radius 0 0;
+    background-color: $window-header-background;
     cursor: move
   }
   .k-window-header:hover {
-    background: #eeeeee
+    background-color: $window-header-hover-background;
   }
   .k-window-footer {
-    border-radius: 5px;
+    border-radius: 0 0 $window-border-radius $window-border-radius;
   }
   .k-window-grip:hover {
-    cursor: nwse-resize
+    cursor: nwse-resize;
+  }
+  .q-icon.las.la-expand, 
+  .q-icon.las-la-compress, 
+  .q-icon.las.la-times, 
+  .q-icon.las.la-angle-up,
+  .q-icon.las.la-angle-down,
+  .q-icon.las.la-angle-left,
+  .q-icon.las.la-angle-right {
+    font-size: $window-controls-size
   }
 </style>

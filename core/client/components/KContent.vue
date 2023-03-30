@@ -5,8 +5,8 @@
         v-if="component.isVisible"
         :is="component.instance"
         :context="context"
-        v-bind="component.bind ? component.props : component"
         :renderer="component.renderer ? component.renderer: actionRenderer"
+        v-bind="component.bind ? component.props : component"
         v-on="component.on ? { [component.on.event]: component.on.listener } : {}"
         @triggered="onTriggered" />
     </template>
