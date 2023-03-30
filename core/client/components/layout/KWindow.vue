@@ -358,7 +358,7 @@ if (geometry) {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .k-window {
     border-style: $window-border-style;
     border-width: $window-border-width;
