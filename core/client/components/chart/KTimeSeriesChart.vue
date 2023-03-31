@@ -198,17 +198,19 @@ async function makeChartConfig () {
   computeScaleBound(scales.x, 'max', startTime.value, endTime.value)
   computeScaleBound(scales.x, 'suggestedMin', startTime.value, endTime.value)
   computeScaleBound(scales.x, 'suggestedMax', startTime.value, endTime.value)
-  // Update time ticks if required as by default we use hours
-  const min = moment.utc(_.get(scales, 'x.min'))
-  const max = moment.utc(_.get(scales, 'x.max'))
-  _.set(scales, 'x.time.unit', max.diff(min, 'minutes') < 120 ? 'minute' : 'hour')
   return config
 }
 
 function makeScales () {
+  // Setup time ticks unit
+  const minutes = endTime.value.diff(startTime.value, 'minutes')
+  const hours = endTime.value.diff(startTime.value, 'hours')
+  const days = endTime.value.diff(startTime.value, 'days')
+  const months = endTime.value.diff(startTime.value, 'months')
+  const timeUnit = (months > 12 ? 'month' : (days > 2 ? 'day' : (hours > 2 ? 'hour' : 'minute')))
   const x = {
     type: 'time',
-    time: { unit: 'hour' },
+    time: { unit: timeUnit },
     min: startTime.value.valueOf(),
     max: endTime.value.valueOf(),
     ticks: {
@@ -219,18 +221,22 @@ function makeScales () {
         enabled: true
       },
       callback: function (value, index, values) {
-        const unit = _.get(chart, 'scales.x.options.time.unit')
         const time = moment(values[index].value)
         if (!_.isNil(values[index])) {
           const isMajor = values[index].major
+          const year = Time.format(time, 'year.short')
           const date = Time.format(time, 'date.short')
           const shortTime = Time.format(time, 'time.short')
           const longTime = Time.format(time, 'time.long')
           // Check for tick granularity
-          if (unit === 'minute') {
+          if (timeUnit === 'minute') {
             return (isMajor ? `${date} ${shortTime}` : `${date} ${longTime}`)
-          } else {
+          } else if (timeUnit === 'hour') {
             return (isMajor ? `${date} ${shortTime}` : `${date} ${shortTime}`)
+          } else if (timeUnit === 'day') {
+            return (isMajor ? `${date} ${year}` : `${date}`)
+          } else { // month
+            return (isMajor ? `${year}` : `${date}`)
           }
         }
       },
