@@ -207,7 +207,7 @@ function makeScales () {
   const hours = endTime.value.diff(startTime.value, 'hours')
   const days = endTime.value.diff(startTime.value, 'days')
   const months = endTime.value.diff(startTime.value, 'months')
-  const timeUnit = (months > 12 ? 'month' : (days > 2 ? 'day' : (hours > 2 ? 'hour' : 'minute')))
+  const timeUnit = (months > 12 ? 'month' : (days > 7 ? 'day' : (hours > 2 ? 'hour' : 'minute')))
   const x = {
     type: 'time',
     time: { unit: timeUnit },
