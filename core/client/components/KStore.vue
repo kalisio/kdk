@@ -5,20 +5,23 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { useStore } from '../composables/store'
+import { Store } from '..'
 import { computed } from 'vue'
 import KTree from './KTree'
 
-const { Store } = useStore('store')
-const store = computed(() => convertStore(Store.store))
+const store = computed(() => convertStore(Store))
 
 function convertStore (obj) {
   let id = 0
+
   const traverse = (node) => {
     return _.keys(node).map(key => {
       const child = node[key]
       id++
 
+      if (_.isFunction(child)) {
+        return {}
+      }
       if (moment.isMoment(child)) {
         return {
           label: child.toISOString(),
@@ -31,9 +34,6 @@ function convertStore (obj) {
           label: key,
           children: traverse(Object.assign({}, child))
         }
-      }
-      if (_.isFunction(child)) {
-        return false
       }
       if (_.isObject(child)) {
         return {
