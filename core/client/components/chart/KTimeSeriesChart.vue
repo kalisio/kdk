@@ -203,7 +203,6 @@ async function makeChartConfig () {
 
 function makeScales () {
   // Setup time ticks unit
-  const minutes = endTime.value.diff(startTime.value, 'minutes')
   const hours = endTime.value.diff(startTime.value, 'hours')
   const days = endTime.value.diff(startTime.value, 'days')
   const months = endTime.value.diff(startTime.value, 'months')
