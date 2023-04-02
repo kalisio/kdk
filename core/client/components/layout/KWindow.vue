@@ -11,13 +11,16 @@
       <KPanel
         id="window-menu"
         :content="menu"
+        @touchstart.stop 
+        @mousedown.stop
       />
       <!-- widget header -->
       <KPanel
         v-if="widgetHeader"
         id="widget-header"
         :content="widgetHeader"
-
+        @touchstart.stop 
+        @mousedown.stop
       />
       <div v-else class="q-px-sm text-subtitle1 ellipsis">
         {{ $tie(widgetLabel) }}
@@ -27,6 +30,8 @@
       <KPanel
         id="window-controls"
         :content="controls"
+        @touchstart.stop 
+        @mousedown.stop       
       />
     </div>
     <!--
