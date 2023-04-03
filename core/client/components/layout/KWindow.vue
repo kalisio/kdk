@@ -11,7 +11,7 @@
       <KPanel
         id="window-menu"
         :content="menu"
-        @touchstart.stop 
+        @touchstart.stop
         @mousedown.stop
       />
       <!-- widget header -->
@@ -19,7 +19,7 @@
         v-if="widgetHeader"
         id="widget-header"
         :content="widgetHeader"
-        @touchstart.stop 
+        @touchstart.stop
         @mousedown.stop
       />
       <div v-else class="q-px-sm text-subtitle1 ellipsis">
@@ -30,8 +30,8 @@
       <KPanel
         id="window-controls"
         :content="controls"
-        @touchstart.stop 
-        @mousedown.stop       
+        @touchstart.stop
+        @mousedown.stop
       />
     </div>
     <!--
@@ -388,9 +388,9 @@ if (geometry) {
   .k-window-grip:hover {
     cursor: nwse-resize;
   }
-  .q-icon.las.la-expand, 
-  .q-icon.las-la-compress, 
-  .q-icon.las.la-times, 
+  .q-icon.las.la-expand,
+  .q-icon.las-la-compress,
+  .q-icon.las.la-times,
   .q-icon.las.la-angle-up,
   .q-icon.las.la-angle-down,
   .q-icon.las.la-angle-left,

@@ -23,12 +23,12 @@ export function useLocation () {
     if (coordinates) {
       locations.push({
         type: 'Feature',
-        geometry: { 
-          type: 'Point', 
+        geometry: {
+          type: 'Point',
           coordinates: [coordinates.longitude, coordinates.latitude]
         },
         properties: {
-          name: formatUserCoordinates(coordinates.latitude, coordinates.longitude, Store.get('locationFormat', 'FFf')),
+          name: formatUserCoordinates(coordinates.latitude, coordinates.longitude, Store.get('locationFormat', 'FFf'))
         }
       })
     }
@@ -40,8 +40,8 @@ export function useLocation () {
       response.forEach(element => {
         locations.push({
           type: 'Feature',
-          geometry: { 
-            type: 'Point', 
+          geometry: {
+            type: 'Point',
             coordinates: [element.longitude, element.latitude]
           },
           properties: {

@@ -158,7 +158,7 @@ export default {
         return
       }
       const locations = await this.search(pattern)
-      update(() => { 
+      update(() => {
         this.locations = locations
       })
     },

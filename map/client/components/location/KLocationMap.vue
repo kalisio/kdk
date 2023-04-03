@@ -122,7 +122,7 @@ export default {
       return components
     },
     allowGeolocation () {
-      return !_.isNil(this.header['geolocate'])
+      return !_.isNil(this.header.geolocate)
     }
   },
   watch: {
@@ -159,7 +159,7 @@ export default {
       // update the location
       this.location = this.modelValue
       if (!this.location) return
-      // create a new layer 
+      // create a new layer
       const type = _.get(this.location, 'geometry.type')
       if (type === 'Point') {
         const coordinates = _.get(this.location, 'geometry.coordinates')

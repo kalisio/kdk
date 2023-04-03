@@ -422,7 +422,6 @@ const step = computed(() => getStep())
 // watch
 watch(route, (to, from) => refreshTour())
 
-
 // immediate
 Events.on('tours-current-changed', setCurrentTour)
 

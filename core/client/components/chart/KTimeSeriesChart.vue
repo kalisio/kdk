@@ -304,7 +304,7 @@ async function makeDatasets () {
     // Update time/value range
     data.forEach(item => {
       const time = moment.utc(_.get(item, xAxisKey))
-      
+
       const value = _.get(item, yAxisKey)
       if (_.isNil(min) || (value < min)) min = value
       if (_.isNil(max) || (value > max)) max = value
