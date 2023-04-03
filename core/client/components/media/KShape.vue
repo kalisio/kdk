@@ -1,5 +1,5 @@
 <template>
-  <svg :width="width" :height="height">
+  <svg :width="width" :height="height" style="display:block">
     <circle
       v-if="type === 'circle'"
       :cx="width/2"
