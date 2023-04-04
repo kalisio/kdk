@@ -29,11 +29,10 @@ import { i18n } from '../../i18n.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
-import { useUser } from '../../composables'
+import { login } from '../../utils/utils.session.js'
 
 // Data
 const $q = useQuasar()
-const { login } = useUser()
 const refForm = ref()
 const actions = ref(_.get(config, 'screens.login.actions', []))
 const loading = ref(false)

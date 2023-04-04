@@ -19,6 +19,7 @@
 
 <script setup>
 import { getLocale } from '../../utils/utils.locale.js'
+import { register } from '../../utils/utils.session.js'
 import _ from 'lodash'
 import config from 'config'
 import { ref } from 'vue'
@@ -27,11 +28,9 @@ import { i18n } from '../../i18n.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
-import { useUser } from '../../composables'
 
 // Data
 const $q = useQuasar()
-const { register } = useUser()
 const refForm = ref()
 const actions = ref(_.get(config, 'screens.register.actions', []))
 const loading = ref(false)

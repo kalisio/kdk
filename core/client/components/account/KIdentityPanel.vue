@@ -26,10 +26,10 @@
 </template>
 
 <script setup>
-import { useUser } from '../../composables'
+import { computed } from 'vue'
+import { Store } from '../../store.js'
 import KAction from '../KAction.vue'
 import KAvatar from '../KAvatar.vue'
 
-// Data
-const { User } = useUser()
+const User = Store.getRef('user')
 </script>

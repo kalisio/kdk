@@ -9,6 +9,7 @@ export * from './utils.colors.js'
 export * from './utils.content.js'
 export * from './utils.locale.js'
 export * from './utils.platform.js'
+export * from './utils.session.js'
 
 Notify.setDefaults({
   position: 'bottom-left',

@@ -10,10 +10,9 @@ import _ from 'lodash'
 import config from 'config'
 import { ref } from 'vue'
 import KScreen from './KScreen.vue'
-import { useUser } from '../../composables'
+import { logout } from '../../utils/utils.session.js'
 
 // Data
-const { logout } = useUser()
 const actions = ref(_.get(config, 'screens.logout.actions', []))
 
 // Immediate

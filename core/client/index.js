@@ -67,13 +67,7 @@ export default function init () {
   Sorter.initialize()
   Schema.initialize(_.get(config, 'schema'))
   // Listen to the 'patched' event on the users
-  const users = api.getService('users')
-  users.on('patched', user => {
-    // Check whether we need to update the current user
-    if (user._id === Store.get('user._id')) {
-      Store.patch('user', user)
-    }
-  })
+  utils.subscribeToUserChanges()
 
   // Register default readers
   Reader.register('.json', readers.JSONReader)

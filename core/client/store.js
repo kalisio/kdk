@@ -30,8 +30,9 @@ export const Store = Object.assign(store, {
     Events.emit(eventName, undefined)
   },
   getRef (path) {
-    const key = path.substring(path.lastIndexOf('.') + 1)
-    const object = get(path.replace(`.${key}`, ''))
+    const index = path.lastIndexOf('.')
+    const key = path.substring(index + 1)
+    const object = (index < 0 ? store : get(path.replace(`.${key}`, '')))
     return toRef(object, key)
   }
 })

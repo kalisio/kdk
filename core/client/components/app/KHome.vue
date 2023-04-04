@@ -5,9 +5,9 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import KLayout from '../layout/KLayout.vue'
-import { useUser } from '../../composables'
+import { Store } from '../../store.js'
 
-// data
-const { User } = useUser()
+const User = Store.getRef('user')
 </script>
