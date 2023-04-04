@@ -81,6 +81,7 @@ const tourCallbacks = ref({
   onStop: onStopTour
 })
 const isStepVisible = ref(true)
+let isRunning = false
 
 // functions
 function hasLinkButton (step) {
@@ -312,8 +313,7 @@ function beforeStep (type) {
 }
 function stop () {
   isStepVisible.value = false
-  if (!getTour().isRunning) return
-  getTour().isRunning = false
+  isRunning = false
   // Remove any query param related to tour
   router.replace({
     query: _.omit(_.get(route, 'query', {}), ['tour', 'playTour', 'tourStep']),
@@ -334,7 +334,7 @@ async function onLink () {
     getTour().stop()
     // Keep it as running however so that
     // route guard adding tour query params will still be active
-    getTour().isRunning = true
+    isRunning = true
     router.replace(_.get(step, 'params.route')).catch(_ => {})
   } else if (_.has(step, 'params.tour')) {
     // Stop current tour before starting next one
@@ -355,8 +355,7 @@ async function onLink () {
   }
 }
 function onStartTour () {
-  if (getTour().isRunning) return
-  getTour().isRunning = true
+  isRunning = true
   clickTarget()
 }
 function onPreviousTourStep (currentStep) {
@@ -400,7 +399,7 @@ function onStopTour () {
 }
 function beforeRoute (to, from, next) {
   // When running a tour, each called route will also be pushed as a tour
-  if (getTour().isRunning) {
+  if (isRunning) {
     _.merge(to, { query: { tour: true } })
   }
   next()
