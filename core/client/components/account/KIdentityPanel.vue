@@ -26,7 +26,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { Store } from '../../store.js'
 import KAction from '../KAction.vue'
 import KAvatar from '../KAvatar.vue'
