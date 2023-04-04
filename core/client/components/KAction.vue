@@ -15,7 +15,7 @@
     :rounded="label !== null"
     :stack="stack"
     :dense="dense"
-    :disable="disabled"
+    :disable="computedDisabled"
     @click="onClicked">
     <!-- label -->
     <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
@@ -43,7 +43,7 @@
     :outline="outline"
     :size="size"
     :dense="dense"
-    :disable="disabled"
+    :disable="computedDisabled"
     :loading="loading"
     @click="onClicked">
     <div class="ellipsis">
@@ -57,7 +57,7 @@
     :id="id"
     clickable
     :dense="dense"
-    :disable="disabled"
+    :disable="computedDisabled"
     class="full-width"
     @click="onClicked">
     <q-item-section v-if="computedIcon || badge" avatar>
@@ -82,7 +82,7 @@
     :size="size"
     :round="true"
     :dense="dense"
-    :disable="disabled"
+    :disable="computedDisabled"
     @click="onClicked">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
@@ -107,7 +107,7 @@
     external-label
     label-position="left"
     label-class="bg-primary text-white text-caption k-fab-action"
-    :disable="disabled"
+    :disable="computedDisabled"
     @click="onClicked">
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge">
@@ -128,7 +128,7 @@
     flat
     square
     :dense="dense"
-    :disable="disabled"
+    :disable="computedDisabled"
     @click="onClicked">
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
@@ -190,7 +190,7 @@ export default {
       default: ''
     },
     disabled: {
-      type: Boolean,
+      type: [Boolean, Function],
       default: false
     },
     toggled: {
@@ -264,8 +264,13 @@ export default {
       if (isToggled.value) return _.get(props.toggle, 'color', 'accent')
       return props.color
     })
+    const computedDisabled = computed(() => {
+      if (!props.disabled) return false
+      if (typeof props.disabled === 'function') return props.disabled()
+      return props.disabled
+    })
     const computedTooltip = computed(() => {
-      if (props.disabled) return
+      if (computedDisabled.value) return
       // Check also for translation key or already translated message
       if (isToggled.value && _.has(props.toggle, 'tooltip')) return i18n.tie(props.toggle.tooltip)
       return i18n.tie(props.tooltip)
@@ -374,6 +379,7 @@ export default {
       computedLabel,
       computedIcon,
       computedColor,
+      computedDisabled,
       computedTooltip,
       computedBadgeLabel,
       dense,

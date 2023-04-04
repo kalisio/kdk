@@ -3,7 +3,7 @@ import logger from 'loglevel'
 import sift from 'sift'
 import { Store } from '../store.js'
 
-const handlers = ['handler', 'visible', 'on.listener']
+const handlers = ['handler', 'visible', 'disabled', 'on.listener']
 
 export function filterContent (content, filter) {
   // Handle non object content
