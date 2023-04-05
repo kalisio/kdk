@@ -92,30 +92,32 @@ const layersBySublegend = computed(() => {
 })
 
 // Functions
-function onShowLayer (layer, engineLayer) {
+function onShowLayer (layer, engine) {
   const legend = layer.legend
   if (legend) {
-    logger.debug(`register ${layer.name} legend`)
-    const renderer = props.renderers[legend.type]
-    if (!renderer) {
-      logger.warn(`Cannot find any renderer for the layer's legend of type of ${legend.type}`)
-      return
+    if (!_.find(layers.value, { name: layer.name })) {
+      logger.debug(`[KDK] Register ${layer.name} legend`)
+      const renderer = props.renderers[legend.type]
+      if (!renderer) {
+        logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
+        return
+      }
+      legend.renderer = coreUtils.loadComponent(renderer)
+      layers.value.push(layer)
+    } else {
+      logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
     }
-    legend.renderer = coreUtils.loadComponent(renderer)
-    layers.value.push(layer)
   }
 }
 function onHideLayer (layer) {
   if (layer.legend) {
-    logger.debug(`unregister ${layer.name} legend'`)
+    logger.debug(`[KDK] Unregister ${layer.name} legend'`)
     _.remove(layers.value, { name: layer.name })
   }
 }
 
 // Hooks
 onMounted(async () => {
-  CurrentActivity.value.$engineEvents.on('layer-shown', onShowLayer)
-  CurrentActivity.value.$engineEvents.on('layer-hidden', onHideLayer)
   // retrieve the legends
   sublegends.value = await listSublegends()
   // register legend translations
@@ -128,6 +130,9 @@ onMounted(async () => {
       onShowLayer(layer)
     }
   })
+  // listen to the layer shown/hiddend signals
+  CurrentActivity.value.$engineEvents.on('layer-shown', onShowLayer)
+  CurrentActivity.value.$engineEvents.on('layer-hidden', onHideLayer)
 })
 onBeforeUnmount(() => {
   CurrentActivity.value.$engineEvents.off('layer-shown', onShowLayer)
