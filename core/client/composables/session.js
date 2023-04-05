@@ -37,7 +37,8 @@ export function useSession (options = {}) {
       // Redirect to a given route based on authentication state
       // If not yet logged in, store target route to restore it after a successful login
       if (result === 'login') {
-        LocalStorage.set(getRedirectKey(), _.pick(route, ['name', 'query', 'params']))
+        // When hitting the root domain we should let standard redirection occur
+        if (route.path !== '/') LocalStorage.set(getRedirectKey(), _.pick(route, ['name', 'query', 'params']))
         router.push({ name: 'login' })
       } else {
         const targetRoute = LocalStorage.get(getRedirectKey())
