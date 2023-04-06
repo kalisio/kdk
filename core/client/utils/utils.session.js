@@ -1,6 +1,7 @@
 import logger from 'debug'
 import { Store } from '../store.js'
 import { api } from '../api.js'
+import { i18n } from '../i18n.js'
 import { defineAbilities } from '../../common/permissions.js'
 
 export async function login (email, password) {

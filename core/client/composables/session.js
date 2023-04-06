@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import logger from 'loglevel'
 import { computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -9,7 +10,6 @@ import { beforeGuard } from '../guards.js'
 import { LocalStorage } from '../local-storage.js'
 import { useVersion } from '../composables/version.js'
 import { updateAbilities, restoreSession } from '../utils/utils.session.js'
-import { defineAbilities } from '../../common/permissions.js'
 
 export function useSession (options = {}) {
   // Data
