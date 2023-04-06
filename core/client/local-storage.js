@@ -17,7 +17,7 @@ export const LocalStorage = {
   get (key) {
     const value = window.localStorage.getItem(this.localKey(key))
     if (!value) {
-      logger.warn(`[KDK] cannot find local storage value with key ${key}`)
+      logger.debug(`[KDK] Cannot find local storage value with key ${key}`)
     }
     return JSON.parse(value)
   },

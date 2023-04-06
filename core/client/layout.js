@@ -13,9 +13,19 @@ const defaults = {
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults },
-  fab: { ...contentDefaults, icon: 'las la-ellipsis-v' },
-  panes: { ...contentDefaults, opener: false },
-  windows: { ...contentDefaults, position: [0, 0], size: [300, 150], current: null }
+  fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16] },
+  panes: {
+    left: { ...contentDefaults, opener: false },
+    top: { ...contentDefaults, opener: false },
+    right: { ...contentDefaults, opener: false },
+    bottom: { ...contentDefaults, opener: false }
+  },
+  windows: {
+    left: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: null },
+    top: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: null },
+    right: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: null },
+    bottom: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: null }
+  }
 }
 
 // Export singleton
@@ -28,14 +38,14 @@ export const Layout = {
     fab: layoutPath + '.fab',
     panes: {
       left: layoutPath + '.panes.left',
-      right: layoutPath + '.panes.right',
       top: layoutPath + '.panes.top',
+      right: layoutPath + '.panes.right',
       bottom: layoutPath + '.panes.bottom'
     },
     windows: {
       left: layoutPath + '.windows.left',
-      right: layoutPath + '.windows.right',
       top: layoutPath + '.windows.top',
+      right: layoutPath + '.windows.right',
       bottom: layoutPath + '.windows.bottom'
     }
   },
@@ -51,7 +61,7 @@ export const Layout = {
       Store.set(_.get(this.paths.windows, placement), this.getElementDefaults(`windows.${placement}`))
     })
     // debug message
-    logger.debug(`[KDK] layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
+    logger.debug(`[KDK] Layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
   },
   get () {
     return Store.get(this.paths.layout)
@@ -84,7 +94,7 @@ export const Layout = {
   },
   getElementDefaults (element) {
     const elementPath = this.getElementPath(element)
-    const elementDefaults = defaults[element.split('.')[0]]
+    const elementDefaults = _.get(defaults, element)
     const elementConfig = _.get(config, elementPath)
     return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
   },
@@ -189,6 +199,24 @@ export const Layout = {
     if (props.icon === icon) return
     Store.patch(this.getElementPath('fab'), { icon })
   },
+  setFabPosition (position) {
+    if (!['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes('position)')) {
+      logger.warn(`[KDK] Invalid position ${position}`)
+      return
+    }
+    const props = this.getElement('fab')
+    if (props.position === position) return
+    Store.patch(this.getElementPath('fab'), { position })
+  },
+  setFabOffset (offset) {
+    if (!Array.isArray(offset) && offset.length !== 2) {
+      logger.warn(`[KDK] Invalid offset ${offset}`)
+      return
+    }
+    const props = this.getElement('fab')
+    if (props.offset === offset) return
+    Store.patch(this.getElementPath('fab'), { offset })
+  },
   getPane (placement) {
     return this.getElement(`panes.${placement}`)
   },
@@ -225,14 +253,31 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowPosition (placement, position) {
+    if (!Array.isArray(position) && position.length !== 2) {
+      logger.warn(`[KDK] Invalid position ${position}`)
+      return
+    }
     const props = this.getElement(`windows.${placement}`)
     if (_.isEqual(props.position, position)) return
     Store.patch(this.getElementPath(`windows.${placement}`), { position })
   },
   setWindowSize (placement, size) {
+    if (!Array.isArray(size) && size.length !== 2) {
+      logger.warn(`[KDK] Invalid size ${size}`)
+      return
+    }
     const props = this.getElement(`windows.${placement}`)
     if (_.isEqual(props.size, size)) return
     Store.patch(this.getElementPath(`windows.${placement}`), { size })
+  },
+  setWindowMinSize (placement, size) {
+    if (!Array.isArray(size) && size.length !== 2) {
+      logger.warn(`[KDK] Invalid size ${size}`)
+      return
+    }
+    const props = this.getElement(`windows.${placement}`)
+    if (_.isEqual(props.minSize, size)) return
+    Store.patch(this.getElementPath(`windows.${placement}`), { minSize: size })
   },
   setWindowCurrent (placement, current) {
     const props = this.getElement(`windows.${placement}`)

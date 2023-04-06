@@ -20,7 +20,7 @@ export function useSession (options = {}) {
 
   let isInitialized = false
   let pendingReconnection = null
-  
+
   // Computed
   const User = computed(() => Store.get('user'))
 
@@ -51,7 +51,7 @@ export function useSession (options = {}) {
         }
       }
     } else {
-      // Clear any previous redirection as we don't have 
+      // Clear any previous redirection as we don't have
       LocalStorage.clear(getRedirectKey())
       if (typeof result === 'object') {
         router.push(result)
@@ -108,9 +108,9 @@ export function useSession (options = {}) {
   }
 
   // Watch
-  watch(User, async () => { 
+  watch(User, async () => {
     await updateAbilities()
-    await redirect() 
+    await redirect()
   })
 
   // Hooks
@@ -126,7 +126,7 @@ export function useSession (options = {}) {
       api.socket.on('rate-limit', onRateLimit)
     }
 
-    try { 
+    try {
       await restoreSession()
     } catch (error) {
       await redirect()

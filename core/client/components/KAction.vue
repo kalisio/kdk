@@ -104,7 +104,7 @@
     :label="computedLabel"
     square
     external-label
-    label-position="left"
+    :label-position="iconRight ? 'left' : 'right'"
     label-class="bg-primary text-white text-caption k-fab-action"
     :disable="computedDisabled"
     @click="onClicked">

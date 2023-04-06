@@ -68,10 +68,12 @@
       </div>
     </q-page-sticky>
     <!-- fab -->
-    <q-page-sticky position="bottom-right" :offset="fabOffset" class="k-sticky">
+    <q-page-sticky :position="fab.position" :offset="fab.offset" class="k-sticky">
       <KFab
         id="fab"
         v-if="fab.visible"
+        :direction="fabBehaviour.direction"
+        :actions-align="fabBehaviour.actionsAlign"
       />
     </q-page-sticky>
     <!-- windows -->
@@ -80,15 +82,7 @@
         id="left-window"
         v-if="leftWindow.visible"
         placement="left"
-        :style="`max-width: ${leftWindow.size[0]}px; max-height: ${leftWindow.size[1]};px;`"
-      />
-    </q-page-sticky>
-    <q-page-sticky position="top-left" :offset="rightWindow.position" class="k-sticky">
-      <KWindow
-        id="right-window"
-        v-if="rightWindow.visible"
-        placement="right"
-        :style="`max-width: ${rightWindow.size[0]}px; max-height: ${rightWindow.size[1]};px`"
+        :style="`max-width: ${leftWindowSize[0]}px; max-height: ${leftWindowSize[1]};px;`"
       />
     </q-page-sticky>
     <q-page-sticky position="top-left" :offset="topWindow.position" class="k-sticky">
@@ -96,7 +90,15 @@
         id="top-window"
         v-if="topWindow.visible"
         placement="top"
-        :style="`max-width: ${topWindow.size[0]}px; max-height: ${topWindow.size[1]};px`"
+        :style="`max-width: ${topWindowSize[0]}px; max-height: ${topWindowSize[1]};px`"
+      />
+    </q-page-sticky>
+    <q-page-sticky position="top-left" :offset="rightWindow.position" class="k-sticky">
+      <KWindow
+        id="right-window"
+        v-if="rightWindow.visible"
+        placement="right"
+        :style="`max-width: ${rightWindowSize[0]}px; max-height: ${rightWindowSize[1]};px`"
       />
     </q-page-sticky>
     <q-page-sticky position="top-left" :offset="bottomWindow.position" class="k-sticky">
@@ -104,7 +106,7 @@
         id="bottom-window"
         v-if="bottomWindow.visible"
         placement="bottom"
-        :style="`max-width: ${bottomWindow.size[0]}px; max-height: ${bottomWindow.size[1]};px`"
+        :style="`max-width: ${bottomWindowSize[0]}px; max-height: ${bottomWindowSize[1]};px`"
       />
     </q-page-sticky>
     <!-- left -->
@@ -163,7 +165,6 @@ const layoutOffset = ref(0)
 const topPadding = ref(0)
 const bottomPadding = ref(0)
 const rightPadding = ref(0)
-const fabOffset = ref([16, 16])
 
 // Computed
 const contentStyleFunction = computed(() => {
@@ -222,7 +223,26 @@ const hasRightPaneComponents = computed(() => {
 const hasBottomPaneComponents = computed(() => {
   return !_.isEmpty(bottomPane.components)
 })
-
+const leftWindowSize = computed(() => {
+  return leftWindow.size ? leftWindow.size : leftWindow.minSize
+})
+const topWindowSize = computed(() => {
+  return topWindow.size ? topWindow.size : topWindow.minSize
+})
+const rightWindowSize = computed(() => {
+  return rightWindow.size ? rightWindow.size : rightWindow.minSize
+})
+const bottomWindowSize = computed(() => {
+  return bottomWindow.size ? bottomWindow.size : bottomWindow.minSize
+})
+const fabBehaviour = computed(() => {
+  switch (fab.position) {
+    case 'bottom-right': return { direction: 'up', actionsAlign: 'left' }
+    case 'bottom-left': return { direction: 'up', actionsAlign: 'right' }
+    case 'top-right': return { direction: 'down', actionsAlign: 'left' }
+    case 'top-left': return { direction: 'down', actionsAlign: 'right' }
+  }
+})
 // Watch
 watch(() => leftPane.visible, (visible) => {
   if (visible) {
