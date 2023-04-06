@@ -58,7 +58,6 @@
     clickable
     :dense="dense"
     :disable="computedDisabled"
-    class="full-width"
     @click="onClicked">
     <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
@@ -68,7 +67,7 @@
       </q-badge>
     </q-item-section>
     <q-item-section :class="'text-' + computedColor" no-wrap>
-      <q-item-label><div class="ellipsis">{{ computedLabel }}</div></q-item-label>
+      <q-item-label :lines="1">{{ computedLabel }}</q-item-label>
     </q-item-section>
   </q-item>
   <!--
