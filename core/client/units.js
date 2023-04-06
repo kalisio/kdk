@@ -61,7 +61,8 @@ const velocity = {
   kt: {
     symbol: 'units.KNOT_SYMBOL',
     label: 'units.KNOT_LABEL',
-    definition: '0.514444 m/s'
+    definition: '0.514444 m/s',
+    override: true // because kt can be kilo ton :(
   }
 }
 const temperature = {
@@ -127,9 +128,14 @@ export const Units = {
     // Create units not defined by default in mathjs
     units.forEach(unit => {
       // Check if already exist first
-      if (math.Unit.isValuelessUnit(unit.name)) return
+      if (math.Unit.isValuelessUnit(unit.name)) {
+        // Maybe we'd like to override it
+        if (!unit.override) return
+      }
       // If it has any option required by mathjs to create a new unit then proceed
-      if (unit.definition || unit.baseName) math.createUnit(unit.name, _.omit(unit, ['label']))
+      if (unit.definition || unit.baseName) {
+        math.createUnit(unit.name, _.omit(unit, ['label', 'override']), { override: _.get(unit, 'override', false) })
+      }
     })
   },
   get () {
