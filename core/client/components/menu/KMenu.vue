@@ -33,104 +33,105 @@
   </q-btn-dropdown>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { computed } from 'vue'
+import { useQuasar } from 'quasar'
 import KPanel from '../KPanel.vue'
 
-export default {
-  components: {
-    KPanel
+// Props
+const props = defineProps({
+  id: {
+    type: String,
+    required: true
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    icon: {
-      type: String,
-      default: undefined
-    },
-    color: {
-      type: String,
-      default: 'grey-9'
-    },
-    size: {
-      type: String,
-      default: 'md'
-    },
-    tooltip: {
-      type: String,
-      default: undefined
-    },
-    dropdownIcon: {
-      type: String,
-      default: ''
-    },
-    badge: {
-      type: Object,
-      default: () => null
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    autoClose: {
-      type: Boolean,
-      default: true
-    },
-    persistent: {
-      type: Boolean,
-      default: false
-    },
-    propagate: {
-      type: Boolean,
-      default: true
-    },
-    content: {
-      type: [Object, Array],
-      default: () => null
-    },
-    mode: {
-      type: String,
-      default: undefined
-    },
-    filter: {
-      type: Object,
-      default: () => {}
-    },
-    context: {
-      type: Object,
-      default: () => null
-    },
-    actionRenderer: {
-      type: String,
-      default: 'button',
-      validator: (value) => {
-        return ['button', 'item'].includes(value)
-      }
-    }
+  label: {
+    type: String,
+    default: ''
   },
-  computed: {
-    dense () {
-      return this.$q.screen.lt.sm
-    },
-    hasContent () {
-      return !_.isEmpty(this.content)
-    }
+  icon: {
+    type: String,
+    default: undefined
   },
-  methods: {
-    onClicked (event) {
-      if (!this.propagate) event.stopPropagation()
+  color: {
+    type: String,
+    default: 'grey-9'
+  },
+  size: {
+    type: String,
+    default: 'md'
+  },
+  tooltip: {
+    type: String,
+    default: undefined
+  },
+  dropdownIcon: {
+    type: String,
+    default: ''
+  },
+  badge: {
+    type: Object,
+    default: () => null
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  autoClose: {
+    type: Boolean,
+    default: true
+  },
+  persistent: {
+    type: Boolean,
+    default: false
+  },
+  propagate: {
+    type: Boolean,
+    default: true
+  },
+  content: {
+    type: [Object, Array],
+    default: () => null
+  },
+  mode: {
+    type: String,
+    default: undefined
+  },
+  filter: {
+    type: Object,
+    default: () => {}
+  },
+  context: {
+    type: Object,
+    default: () => null
+  },
+  actionRenderer: {
+    type: String,
+    default: 'button',
+    validator: (value) => {
+      return ['button', 'item'].includes(value)
     }
   }
+})
+
+// Data
+const $q = useQuasar()
+
+// Computed
+const hasContent = computed(() => {
+  return !_.isEmpty(props.content)
+})
+const dense = computed(() => {
+  return $q.screen.lt.sm
+})
+   
+// Functions
+function onClicked (event) {
+  if (!props.propagate) event.stopPropagation()
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .q-btn-dropdown__arrow {
     margin-left: 0px !important;
   }
