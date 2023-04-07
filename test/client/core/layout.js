@@ -3,108 +3,74 @@ import { click, clickAction, isElementVisible } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:layout')
 
-async function clickOpener (page, opener) {
-  const selector = `#${opener}-opener`
+export async function isHeaderVisible (page) {
+  return isElementVisible(page, '#header-panel')
+}
+
+export async function isFooterVisible (page) {
+  return isElementVisible(page, '#footer-panel')
+}
+
+async function clickOpener (page, placement) {
+  const selector = `#${placement}-opener`
   await page.evaluate((selector) => document.querySelector(selector).click(), selector)
   await page.waitForTimeout(500)
-  debug(`Clicked opener ${selector}`)
 }
 
-export async function clickTopOpener (page) {
-  await clickOpener(page, 'top')
+export async function isPaneVisible (page, placement) {
+  return isElementVisible(page, `#${placement}-panel`)
 }
 
-export async function isTopPaneVisible (page) {
-  return isElementVisible(page, '#top-panel')
+export async function openPane (page, placemeent) {
+  const isOpen = await isPaneVisible(page, placemeent)
+  if (!isOpen) await clickOpener(page, placemeent)
 }
 
-export async function openTopPane (page) {
-  const isOpen = await isTopPaneVisible(page)
-  if (!isOpen) await clickTopOpener(page)
+export async function closePane (page, placement) {
+  const isOpen = await isPaneVisible(page, placement)
+  if (isOpen) await clickOpener(page, placement)
 }
 
-export async function closeTopPane (page) {
-  const isOpen = await isTopPaneVisible(page)
-  if (isOpen) await clickTopOpener(page)
-}
-
-export async function clickRightOpener (page) {
-  await clickOpener(page, 'right')
-}
-
-export async function isRightPaneVisible (page) {
-  return isElementVisible(page, '#right-panel')
-}
-
-export async function openRightPane (page) {
-  const isOpen = await isRightPaneVisible(page)
-  if (!isOpen) await clickRightOpener(page)
-}
-
-export async function closeRightPane (page) {
-  const isOpen = await isRightPaneVisible(page)
-  if (isOpen) await clickRightOpener(page)
-}
-
-export async function clickBottomOpener (page) {
-  await clickOpener(page, 'bottom')
-}
-
-export async function isBottomPaneVisible (page) {
-  return isElementVisible(page, '#bottom-panel')
-}
-
-export async function openBottomPane (page) {
-  const isOpen = await isBottomPaneVisible(page)
-  if (!isOpen) await clickBottomOpener(page)
-}
-
-export async function closeBottomPane (page) {
-  const isOpen = await isBottomPaneVisible(page)
-  if (isOpen) await clickBottomOpener(page)
-}
-
-export async function clickLeftOpener (page) {
-  await clickOpener(page, 'left')
-}
-
-export async function isLeftPaneVisible (page) {
-  return isElementVisible(page, '#left-panel')
-}
-
-export async function openLeftPane (page) {
-  const isOpen = await isLeftPaneVisible(page)
-  if (!isOpen) await clickLeftOpener(page)
-}
-
-export async function closeLeftPane (page) {
-  const isOpen = await isLeftPaneVisible(page)
-  if (isOpen) await clickLeftOpener(page)
-}
-
-async function clickPaneAction (page, pane, action, wait) {
-  const isPaneVisible = await isElementVisible(page, `#${pane}-panel`)
-  if (!isPaneVisible) await clickOpener(page, pane)
+export async function clickPaneAction (page, placement, action, wait) {
+  const isPaneVisible = await isElementVisible(page, `#${placement}-panel`)
+  if (!isPaneVisible) await clickOpener(page, placement)
   await clickAction(page, action, wait)
-  if (!isPaneVisible) await clickOpener(page, pane)
+  if (!isPaneVisible && placement !== 'left') await clickOpener(page, placement)
 }
 
-export async function clickTopPaneAction (page, action, wait = 250) {
-  await clickPaneAction(page, 'top', action, wait)
+export async function isWindowVisible (page, placement) {
+  return isElementVisible(page, `#${placement}-window`)
 }
 
-export async function clickRightPaneAction (page, action, wait = 250) {
-  await clickPaneAction(page, 'right', action, wait)
+export async function isWindowPinned (page, placement) {
+  const canPin = await isElementVisible(page, `#pin-${placement}-window`)
+  return !canPin
 }
 
-export async function clickBottomPaneAction (page, action, wait = 250) {
-  await clickPaneAction(page, 'bottom', action, wait)
+export async function isWindowFloating (page, placement) {
+  const canMaximize = await isElementVisible(page, `#maximize-${placement}-window`)
+  const canPin = await isElementVisible(page, `#pin-${placement}-window`)
+  return canMaximize && canPin
 }
 
-export async function clickLeftPaneAction (page, action, wait = 250) {
-  const isPaneVisible = await isLeftPaneVisible(page)
-  if (!isPaneVisible) await clickLeftOpener(page)
-  await clickAction(page, action, wait)
+export async function isWindowMaximized (page, placement) {
+  return isElementVisible(page, `#restore-${placement}-window`)
+}
+
+export async function closeWindow (page, placement) {
+  await clickAction(page, `close-${placement}-window`)
+}
+
+export async function maximizeWindow (page, placement) {
+  await clickAction(page, `maximize-${placement}-window`)
+}
+
+export async function restoreWindow (page, placement) {
+  await clickAction(page, `restore-${placement}-window`)
+}
+
+export async function pinWindow (page, placement) {
+  await clickAction(page, `pin-${placement}-window`)
 }
 
 export async function clickFab (page) {
@@ -120,5 +86,5 @@ export async function isToastVisible (page) {
 }
 
 export async function logout (page) {
-  await clickLeftPaneAction(page, 'logout', 1000)
+  await clickPaneAction(page, 'left', 'logout', 1000)
 }

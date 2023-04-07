@@ -1,15 +1,15 @@
 import { click, clickAction, type, uploadFile } from './utils.js'
-import { clickLeftPaneAction, clickTopPaneAction } from './layout.js'
+import { clickPaneAction } from './layout.js'
 
 export async function manageAccount (page, tab = 'profile') {
   const url = page.url()
-  if (!url.includes('account')) await clickLeftPaneAction(page, 'manage-account')
+  if (!url.includes('account')) await clictPaneAction(page, 'left', 'manage-account')
   if (tab === 'profile') {
-    if (!url.includes('profile')) await clickTopPaneAction(page, 'profile')
+    if (!url.includes('profile')) await clickPaneAction(page, 'top', 'profile')
   } else if (tab === 'security') {
-    if (!url.includes('security')) await clickTopPaneAction(page, 'security')
+    if (!url.includes('security')) await clickPaneAction(page, 'top', 'security')
   } else {
-    if (!url.includes('danger-zone')) await clickTopPaneAction(page, 'danger-zone')
+    if (!url.includes('danger-zone')) await clickPaneAction(page, 'top', 'danger-zone')
   }
 }
 

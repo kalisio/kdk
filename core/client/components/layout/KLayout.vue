@@ -9,7 +9,7 @@
       v-model="isHeaderVisible"
     >
       <KPanel
-        id="header"
+        id="header-panel"
         :content="header.components"
         :mode="header.mode"
         :filter="header.filter"
@@ -21,7 +21,7 @@
       v-model="isFooterVisible"
     >
       <KPanel
-        id="footer"
+        id="footer-panel"
         :content="footer.components"
         :mode="footer.mode"
         :filter="footer.filter"

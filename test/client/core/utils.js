@@ -38,7 +38,7 @@ export async function countElements (page, xpath) {
 
 /* Helper function to click on a given selector
  */
-export async function click (page, selector, wait = 250) {
+export async function click (page, selector, wait = 500) {
   try {
     await page.waitForSelector(selector, { timeout: 2000 })
     await page.click(selector)
@@ -51,7 +51,7 @@ export async function click (page, selector, wait = 250) {
 
 /* Helper function to click on an action selector
  */
-export async function clickAction (page, action, wait = 250) {
+export async function clickAction (page, action, wait = 500) {
   const selector = `#${action}`
   await click(page, selector, wait)
   debug(`Clicked action ${selector}`)
@@ -59,7 +59,7 @@ export async function clickAction (page, action, wait = 250) {
 
 /* Helper function to click on a menuUtem selector
  */
-export async function clickMenuItem (page, wait = 250) {
+export async function clickMenuItem (page, wait = 500) {
   const xpath = '(//div[@class="q-item__label"])'
   try {
     await page.waitForXPath(xpath)
@@ -71,7 +71,7 @@ export async function clickMenuItem (page, wait = 250) {
 
 /* Helper function to click on a given xpath
  */
-export async function clickXPath (page, xpath, wait = 250) {
+export async function clickXPath (page, xpath, wait = 500) {
   try {
     await page.waitForXPath(xpath, { timeout: 2000 })
     const elements = await page.$x(xpath)
@@ -87,7 +87,7 @@ export async function clickXPath (page, xpath, wait = 250) {
 
 /* Helper function to click on a given selector then select given entry
  */
-export async function clickSelect (page, selector, entry, wait = 250) {
+export async function clickSelect (page, selector, entry, wait = 500) {
   try {
     await page.waitForSelector(selector, { timeout: 2000 })
     await page.click(selector)
@@ -114,7 +114,7 @@ export async function clickSelect (page, selector, entry, wait = 250) {
 /* Helper function to input a text on a given selector
  * set enter to true to run the press 'Enter' key
  */
-export async function type (page, selector, text, enter = false, replace = false, wait = 250) {
+export async function type (page, selector, text, enter = false, replace = false, wait = 500) {
   try {
     await page.waitForSelector(selector, { timeout: 2000 })
     if (replace) {
@@ -135,7 +135,7 @@ export async function type (page, selector, text, enter = false, replace = false
  * set enter to true to run the press 'Enter' key
    ! Not yet working !
  */
-export async function typeXPath (page, selector, text, enter = false, replace = false, wait = 250) {
+export async function typeXPath (page, selector, text, enter = false, replace = false, wait = 500) {
   try {
     await page.waitForXPath(selector, { timeout: 2000 })
     if (replace) {
@@ -171,13 +171,13 @@ export async function chooseIcon (page, name, color, wait = 1000) {
   const icons = await page.$x(iconXpath)
   if (icons.length > 0) {
     icons[0].click()
-    await page.waitForTimeout(250)
+    await page.waitForTimeout(500)
   }
   const colorXpath = `//div[contains(@class, "q-dialog")]//button[contains(@class, "${color}")]`
   const colors = await page.$x(colorXpath)
   if (colors.length > 0) {
     colors[0].click()
-    await page.waitForTimeout(250)
+    await page.waitForTimeout(500)
   }
   await click(page, '.q-dialog #choose-button', wait)
 }
@@ -233,7 +233,7 @@ export function compareImages (image1, image2, threshold, diffFilename) {
 
 /* Moves a slider in a chosen direction (right or left), for a specific times
  */
-export async function moveSlider (page, action, direction, times, wait = 250) {
+export async function moveSlider (page, action, direction, times, wait = 500) {
   const selector = `#${action}`
   const dir = (direction === 'left') ? 'ArrowLeft' : 'ArrowRight'
   await page.focus(selector)

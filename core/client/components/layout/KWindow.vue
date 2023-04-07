@@ -123,7 +123,7 @@ const menu = computed(() => {
   const menu = []
   if (widgetMenuItems.length > 1) {
     menu.push({
-      id: 'widgets-menu-items',
+      id: `${props.placement}-window-menu`,
       component: 'menu/KMenu',
       icon: 'las la-cube',
       size: 'sm',
@@ -136,7 +136,7 @@ const menu = computed(() => {
 })
 const controls = computed(() => {
   return [{
-    id: 'pin-action',
+    id: `pin-${props.placement}-window`,
     icon: pinIcons[props.placement],
     size: 'sm',
     tooltip: 'KWindow.PIN_ACTION',
@@ -144,21 +144,21 @@ const controls = computed(() => {
     visible: currentMode.value === 'floating',
     handler: onPinned
   }, {
-    id: 'maximize-action',
+    id: `maximize-${props.placement}-window`,
     icon: 'las la-expand',
     size: 'sm',
     tooltip: 'KWindow.MAXIMIZE_ACTION',
     visible: currentMode.value !== 'maximized',
     handler: onMaximized
   }, {
-    id: 'restore-action',
+    id: `restore-${props.placement}-window`,
     icon: 'las la-compress',
     size: 'sm',
     tooltip: 'KWindow.RESTORE_ACTION',
     visible: currentMode.value === 'maximized',
     handler: onRestored
   }, {
-    id: 'close-action',
+    id: `close-${props.placement}-window`,
     icon: 'las la-times',
     size: 'sm',
     tooltip: 'KWindow.CLOSE_ACTION',
