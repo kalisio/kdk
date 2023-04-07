@@ -88,7 +88,7 @@ export function useSession (options = {}) {
       pendingReconnection.hide()
     }
     // Causes problems with hot reload in dev
-    if (Version.flavor !== 'dev') {
+    if (Version.value.flavor !== 'dev') {
       Loading.show({ message: i18n.t('composables.session.RECONNECT') })
       setTimeout(() => { window.location.reload() }, 3000)
     } else {
