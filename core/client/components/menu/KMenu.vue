@@ -124,7 +124,7 @@ const hasContent = computed(() => {
 const dense = computed(() => {
   return $q.screen.lt.sm
 })
-   
+
 // Functions
 function onClicked (event) {
   if (!props.propagate) event.stopPropagation()

@@ -1,7 +1,4 @@
-import makeDebug from 'debug'
 import { click, clickAction, isElementVisible } from './utils.js'
-
-const debug = makeDebug('kdk:core:test:layout')
 
 export async function isHeaderVisible (page) {
   return isElementVisible(page, '#header-panel')

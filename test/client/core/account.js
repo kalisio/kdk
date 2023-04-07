@@ -3,7 +3,7 @@ import { clickPaneAction } from './layout.js'
 
 export async function manageAccount (page, tab = 'profile') {
   const url = page.url()
-  if (!url.includes('account')) await clictPaneAction(page, 'left', 'manage-account')
+  if (!url.includes('account')) await clickPaneAction(page, 'left', 'manage-account')
   if (tab === 'profile') {
     if (!url.includes('profile')) await clickPaneAction(page, 'top', 'profile')
   } else if (tab === 'security') {
