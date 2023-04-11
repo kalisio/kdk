@@ -3,6 +3,7 @@ import _ from 'lodash'
 import 'winston-daily-rotate-file'
 // import { RateLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
+import mongodb from 'mongodb'
 import errors from '@feathersjs/errors'
 import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import { LocalStrategy } from '@feathersjs/authentication-local'
@@ -10,6 +11,7 @@ import { OAuthStrategy, expressOauth } from '@feathersjs/authentication-oauth'
 import PasswordValidator from 'password-validator'
 
 const debug = makeDebug('kdk:core:authentication')
+const { ObjectID } = mongodb
 const { NotAuthenticated } = errors
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
@@ -53,6 +55,7 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
 // However, it has been rewritten to work simultaneously with:
 // - a stateless or user attached JWT
 // - a socket or a rest transport
+// It also supports token given as query parameter
 export class JWTAuthenticationStrategy extends JWTStrategy {
   async authenticate (authentication, params) {
     const { accessToken } = authentication
@@ -77,7 +80,8 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     // Second key trick
     // Return user attached to the token if any
     // Return basic information for a stateless token otherwise
-    if (payload.sub) {
+    // As we only target MongoDB now, check for a valid ID otherwise assume a stateless token as well
+    if (payload.sub && ObjectID.isValid(payload.sub)) {
       const entityId = await this.getEntityId(result, params)
       const value = await this.getEntity(entityId, params)
 
@@ -88,6 +92,21 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     }
 
     return result
+  }
+
+  async parse(req) {
+    const { jwt } = req.query
+    if (jwt) {
+      debug('Found parsed query value')
+      delete req.query.jwt
+      return {
+        strategy: 'jwt',
+        accessToken: jwt
+      }
+    } else {
+      const result = await super.parse(req)
+      return result
+    }
   }
 }
 
