@@ -69,22 +69,22 @@ const hourFormat = 'HH:mm'
 const checkDateFormat = 'YYYY/MM/DD'
 
 // Convert from moment date/time to quasar format in local time zone
-function toQuasarDate(date) {
+function toQuasarDate (date) {
   return Time.convertToLocal(date).format(dateFormat)
 }
-function toQuasarTime(date) {
+function toQuasarTime (date) {
   return Time.convertToLocal(date).format(hourFormat)
 }
 // Convert from quasar format in local time zone to moment date/time
-function fromQuasarDate(date, format) {
-  return (Time.getFormatTimezone() ?
-    moment.tz(date, format, Time.getFormatTimezone()) :
-    moment(date, format))
+function fromQuasarDate (date, format) {
+  return (Time.getFormatTimezone()
+    ? moment.tz(date, format, Time.getFormatTimezone())
+    : moment(date, format))
 }
-function fromQuasarTime(time, format) {
-  return (Time.getFormatTimezone() ?
-    moment.tz(time, format, Time.getFormatTimezone()) :
-    moment(time, format))
+function fromQuasarTime (time, format) {
+  return (Time.getFormatTimezone()
+    ? moment.tz(time, format, Time.getFormatTimezone())
+    : moment(time, format))
 }
 
 export default {

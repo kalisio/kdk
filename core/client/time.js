@@ -2,7 +2,6 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range.js'
 import config from 'config'
-import { Events } from './events.js'
 import { Store } from './store.js'
 import { getLocale } from './utils/utils.locale.js'
 
@@ -79,11 +78,9 @@ export const Time = {
   },
   // Build sort query
   updateTimeRangeQuery () {
-    // If not given as input use current range
-    range = range || this.getRange()
     const query = {}
-    query[this.getRange().field] = { $gte: range.start.toISOString(), $lte: range.end.toISOString() }
-    range.query = query
+    query[this.getRange().field] = { $gte: this.getRange().start.toISOString(), $lte: this.getRange().end.toISOString() }
+    this.getRange().query = query
   },
   getFormat () {
     return this.get().format
