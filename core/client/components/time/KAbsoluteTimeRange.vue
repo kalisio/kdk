@@ -7,7 +7,7 @@
         <q-date
           id="start-date-popup"
           v-model="startDate"
-          mask="DD/MM/YYYY"
+          :mask="dateFormat"
           :title="startDate"
           :options="checkStartDate"
           @update:model-value="onTimeRangeChanged"
@@ -22,7 +22,7 @@
         <q-time
           id="start-time-popup"
           v-model="startTime"
-          mask="HH:mm"
+          :mask="hourFormat"
           :options="checkStartTime"
           @update:model-value="onTimeRangeChanged"
         />
@@ -36,7 +36,7 @@
         <q-date
           id="end-date-popup"
           v-model="endDate"
-          mask="DD/MM/YYYY"
+          :mask="dateFormat"
           :title="endDate"
           :options="checkEndDate"
           @update:model-value="onTimeRangeChanged"
@@ -51,7 +51,7 @@
         <q-time
           id="end-time-popup"
           v-model="endTime"
-          mask="HH:mm"
+          :mask="hourFormat"
           :options="checkEndTime"
           @update:model-value="onTimeRangeChanged"
         />
@@ -64,6 +64,29 @@
 import moment from 'moment'
 import { Time } from '../../time'
 
+const dateFormat = 'DD/MM/YYYY'
+const hourFormat = 'HH:mm'
+const checkDateFormat = 'YYYY/MM/DD'
+
+// Convert from moment date/time to quasar format in local time zone
+function toQuasarDate(date) {
+  return Time.convertToLocal(date).format(dateFormat)
+}
+function toQuasarTime(date) {
+  return Time.convertToLocal(date).format(hourFormat)
+}
+// Convert from quasar format in local time zone to moment date/time
+function fromQuasarDate(date, format) {
+  return (Time.getFormatTimezone() ?
+    moment.tz(date, format, Time.getFormatTimezone()) :
+    moment(date, format))
+}
+function fromQuasarTime(time, format) {
+  return (Time.getFormatTimezone() ?
+    moment.tz(time, format, Time.getFormatTimezone()) :
+    moment(time, format))
+}
+
 export default {
   name: 'k-absolute-time-range',
   props: {
@@ -72,117 +95,83 @@ export default {
       default: false
     }
   },
-  computed: {
-    formattedStartDate () {
-      return Time.format(this.range.start, 'date.short')
-    },
-    startDate: {
-      get: function () {
-        return Time.convertToLocal(this.range.start).format('DD/MM/YYYY')
-      },
-      set: function (value) {
-        const date = moment(value, 'DD/MM/YYYY').utc()
-        this.range = {
-          start: this.range.start.set({ year: date.year(), month: date.month(), date: date.date() }),
-          end: this.range.end
-        }
-      }
-    },
-    formattedStartTime () {
-      return Time.format(this.range.start, 'time.long')
-    },
-    startTime: {
-      get: function () {
-        return Time.convertToLocal(this.range.start).format('HH:mm')
-      },
-      set: function (value) {
-        const time = moment(value, 'HH:mm').utc()
-        this.range = {
-          start: this.range.start.set({ hour: time.hour(), minute: time.minute() }),
-          end: this.range.end
-        }
-      }
-    },
-    formattedEndDate () {
-      return Time.format(this.range.end, 'date.short')
-    },
-    endDate: {
-      get: function () {
-        return Time.convertToLocal(this.range.end).format('DD/MM/YYYY')
-      },
-      set: function (value) {
-        const date = moment(value, 'DD/MM').utc()
-        this.range = {
-          start: this.range.start,
-          end: this.range.end.set({ month: date.month(), date: date.date() })
-        }
-      }
-    },
-    formattedEndTime () {
-      return Time.format(this.range.end, 'time.long')
-    },
-    endTime: {
-      get: function () {
-        return Time.convertToLocal(this.range.end).format('HH:mm')
-      },
-      set: function (value) {
-        const time = moment(value, 'HH:mm').utc()
-        this.range = {
-          start: this.range.start,
-          end: this.range.end.set({ hour: time.hour(), minute: time.minute() })
-        }
-      }
+  data () {
+    const { start, end } = Time.getRange()
+    return {
+      dateFormat,
+      hourFormat,
+      checkDateFormat,
+      startDate: toQuasarDate(start),
+      startTime: toQuasarTime(start),
+      endDate: toQuasarDate(end),
+      endTime: toQuasarTime(end)
     }
   },
-  data () {
-    return {
-      range: Time.getRange()
+  computed: {
+    start () {
+      const date = fromQuasarDate(this.startDate, this.dateFormat)
+      const time = fromQuasarTime(this.startTime, this.hourFormat)
+      date.set({ hour: time.hour(), minute: time.minute() })
+      return date.utc()
+    },
+    formattedStartDate () {
+      return Time.format(this.start, 'date.short')
+    },
+    formattedStartTime () {
+      return Time.format(this.start, 'time.long')
+    },
+    end () {
+      const date = fromQuasarDate(this.endDate, this.dateFormat)
+      const time = fromQuasarTime(this.endTime, this.hourFormat)
+      date.set({ hour: time.hour(), minute: time.minute() })
+      return date.utc()
+    },
+    formattedEndDate () {
+      return Time.format(this.end, 'date.short')
+    },
+    formattedEndTime () {
+      return Time.format(this.end, 'time.long')
     }
   },
   methods: {
     checkStartDate (date) {
-      const dateToCheck = moment({
-        year: date.substring(0, 4),
-        month: date.substring(5, 7) - 1,
-        date: date.substring(8, 10),
-        hour: this.range.start.hour(),
-        minute: this.range.start.minute()
-      }).utc()
-      return dateToCheck.isBefore(this.range.end)
+      date = fromQuasarDate(date, this.checkDateFormat)
+      const time = fromQuasarTime(this.startTime, this.hourFormat)
+      date.set({ hour: time.hour(), minute: time.minute() })
+      return date.utc().isBefore(this.end)
     },
     checkStartTime (hour, minute) {
-      const timeToCheck = moment({
-        year: this.range.start.year(),
-        month: this.range.start.month(),
-        date: this.range.start.date(),
-        hour: hour,
-        minute: minute
-      }).utc()
-      return timeToCheck.isBefore(this.range.end)
+      const date = fromQuasarDate(this.startDate, this.dateFormat)
+      date.set({ hour, minute })
+      return date.utc().isBefore(this.end)
     },
     checkEndDate (date) {
-      const dateToCheck = moment({
-        year: date.substring(0, 4),
-        month: date.substring(5, 7) - 1,
-        date: date.substring(8, 10),
-        hour: this.range.end.hour(),
-        minute: this.range.end.minute()
-      }).utc()
-      return dateToCheck.isAfter(this.range.start)
+      date = fromQuasarDate(date, this.checkDateFormat)
+      const time = fromQuasarTime(this.endTime, this.hourFormat)
+      date.set({ hour: time.hour(), minute: time.minute() })
+      return date.utc().isAfter(this.start)
     },
     checkEndTime (hour, minute) {
-      const timeToCheck = moment({
-        year: this.range.end.year(),
-        month: this.range.end.month(),
-        date: this.range.end.date(),
-        hour: hour,
-        minute: minute
-      }).utc()
-      return timeToCheck.isAfter(this.range.start)
+      const date = fromQuasarDate(this.endDate, this.dateFormat)
+      date.set({ hour, minute })
+      return date.utc().isAfter(this.start)
     },
     onTimeRangeChanged () {
-      Time.patchRange({ start: this.range.start, end: this.range.end })
+      Time.patchRange({ start: this.start, end: this.end })
+    },
+    onTimeRangeUpdated () {
+      const { start, end } = Time.getRange()
+      this.startDate = toQuasarDate(start)
+      this.startTime = toQuasarTime(start)
+      this.endDate = toQuasarDate(end)
+      this.endTime = toQuasarTime(end)
     }
+  },
+  created () {
+    this.$events.on('time-range-changed', () => this.onTimeRangeUpdated())
+  },
+  beforeUnmount () {
+    this.$events.off('time-range-changed', () => this.onTimeRangeUpdated())
   }
 }
 </script>
