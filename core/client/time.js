@@ -15,14 +15,16 @@ export const Time = {
     moment.locale(getLocale())
     // Set the time object within the store
     const now = moment.utc()
+    const start = now.clone().subtract(1, 'months').startOf('day')
+    const end = now.clone().endOf('day')
     // Try to guess user timezone
     const timezone = moment.tz.guess() || ''
     Store.set('time', _.merge(config.time || {}, {
       range: {
-        start: now.clone().subtract(1, 'months').startOf('day'),
-        end: now.clone().endOf('day'),
+        start,
+        end,
         field: 'createdAt',
-        query: {}
+        query: { createdAt: { $gte: start.toISOString(), $lte: end.toISOString() } }
       },
       format: {
         time: {
@@ -44,9 +46,6 @@ export const Time = {
       step: 60, // 1H
       interval: 60 // 1m
     }))
-    this.updateTimeRangeQuery()
-    // Make filter react to external changes to update the query
-    Events.on('time-range-changed', () => this.updateTimeRangeQuery())
   },
   convertToMoment (datetime) {
     if (moment.isMoment(datetime)) {
@@ -67,17 +66,24 @@ export const Time = {
   patchRange (range) {
     if (this.getRange().start.isSame(range.start) &&
         this.getRange().end.isSame(range.end)) return
-    Store.patch('time.range', range)
+    const query = { [this.getRange().field]: { $gte: range.start.toISOString(), $lte: range.end.toISOString() } }
+    Store.patch('time.range', Object.assign({ query }, range))
+  },
+  patchField (field) {
+    if (this.getRange().field === field) return
+    const query = { [field]: { $gte: this.getRange().start.toISOString(), $lte: this.getRange().end.toISOString() } }
+    Store.patch('time.range', { field, query })
   },
   getRangeQuery () {
     return Store.get('time.range.query')
   },
   // Build sort query
   updateTimeRangeQuery () {
+    // If not given as input use current range
+    range = range || this.getRange()
     const query = {}
-    query[this.getRange().field] = { $gte: this.getRange().start.toISOString(), $lte: this.getRange().end.toISOString() }
-    // Avoid reentrance as we listen to other filter property changes
-    if (!_.isEqual(query, this.getRangeQuery())) Store.patch('time.range', { query })
+    query[this.getRange().field] = { $gte: range.start.toISOString(), $lte: range.end.toISOString() }
+    range.query = query
   },
   getFormat () {
     return this.get().format

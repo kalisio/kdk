@@ -90,7 +90,7 @@ export default {
     }
   },
   created () {
-    Store.patch('time.range', { field: this.dateField })
+    Time.patchField(this.dateField)
   }
 }
 </script>
