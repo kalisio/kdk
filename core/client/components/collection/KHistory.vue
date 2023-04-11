@@ -24,7 +24,7 @@
 
 <script>
 import _ from 'lodash'
-import { Store, Time, Sorter } from '../..'
+import { Time, Sorter } from '../..'
 import KColumn from './KColumn.vue'
 import KStamp from '../KStamp.vue'
 import { service } from '../../mixins'
@@ -90,7 +90,7 @@ export default {
     }
   },
   created () {
-    Store.patch('time.range', { field: this.dateField })
+    Time.patchField(this.dateField)
   }
 }
 </script>

@@ -504,19 +504,21 @@ export default {
       this.updateProbedLocationHighlight()
     }
   },
-  mounted () {
-    // Setup listeners
+  async mounted () {
+    // Initialize the time range
+    const span = this.$store.get('timeseries.span')
+    const start = moment(Time.getCurrentTime()).subtract(span, 'm')
+    const end = moment(Time.getCurrentTime()).add(span, 'm')
+    Time.patchRange({ start, end })
+    // Force a first refresh
+    await this.refresh()
+    // Then setup listeners
     this.$events.on('time-current-time-changed', this.refresh)
     this.$events.on('time-range-changed', this.refresh)
     this.$events.on('time-format-changed', this.refresh)
     this.$events.on('timeseries-span-changed', this.refresh)
     this.kActivity.$engineEvents.on('forecast-model-changed', this.refresh)
     this.kActivity.$engineEvents.on('selected-level-changed', this.refresh)
-    // Initialize the time range
-    const span = this.$store.get('timeseries.span')
-    const start = moment(Time.getCurrentTime()).subtract(span, 'm')
-    const end = moment(Time.getCurrentTime()).add(span, 'm')
-    Time.patchRange({ start, end })
   },
   beforeUnmount () {
     // Release listeners
