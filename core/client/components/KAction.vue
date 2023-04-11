@@ -55,6 +55,7 @@
    -->
   <q-item v-else-if="renderer === 'item'"
     :id="id"
+    class="full-width"
     clickable
     :dense="dense"
     :disable="computedDisabled"
