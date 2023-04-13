@@ -4,10 +4,16 @@
     <!--
       Header section
      -->
-    <div v-if="!hideHeader" class="row full-width items-center">
-      <span class="text-grey-7 text-caption">{{ title }}</span>
+    <div v-if="!hideHeader" class="row full-width items-center" style="min-height: 30px">
+      <span class="text-grey-7 text-body-2">
+        {{ title }}
+      </span>
       <q-space />
-      <k-panel v-if="actions" :content="actions" :context="context" />
+      <KPanel 
+        v-if="actions" 
+        :content="actions" 
+        :context="context" 
+      />
     </div>
     <!--
       Content section
@@ -18,34 +24,29 @@
   </div>
 </template>
 
-<script>
-import KPanel from '../KPanel.vue'
+<script setup>
 
-export default {
-  components: {
-    KPanel
+// Props
+defineProps({
+  title: {
+    type: String,
+    default: ''
   },
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    actions: {
-      type: Array,
-      default: () => null
-    },
-    hideHeader: {
-      type: Boolean,
-      default: false
-    },
-    dense: {
-      type: Boolean,
-      default: false
-    },
-    context: {
-      type: Object,
-      default: () => null
-    }
+  actions: {
+    type: Array,
+    default: () => null
+  },
+  hideHeader: {
+    type: Boolean,
+    default: false
+  },
+  dense: {
+    type: Boolean,
+    default: false
+  },
+  context: {
+    type: Object,
+    default: () => null
   }
-}
+})
 </script>
