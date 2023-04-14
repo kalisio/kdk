@@ -2,7 +2,7 @@
   <div>
     <template v-for="component in avaiableComponents" :key="component.uid">
       <component
-        v-if="component.isVisible"
+        v-if="component.hasVisibleHandler ? component.isVisible : !component.isHidden"
         :is="component.instance"
         :context="context"
         :renderer="component.renderer ? component.renderer: actionRenderer"
@@ -57,17 +57,16 @@ const avaiableComponents = computed(() => {
   components = getComponents(components, props.mode, props.context)
   for (let i = 0; i < components.length; ++i) {
     const component = components[i]
-    let isVisible = _.get(component, 'visible', true)
-    // Can be a functional call
-    if (typeof isVisible === 'function') {
-      isVisible = isVisible(props.context)
-    }
-    if ((typeof isVisible === 'string') && isVisible.startsWith(':')) {
-      isVisible = _.get(props.context, isVisible.substring(1))
-    }
+    // Check for hidden/visible handler or property
     // If not a functional call the target property can be a reactive one
     // so that we "bind" it to the component instead of "filter" the component here
-    component.isVisible = isVisible
+    if (_.has(component, 'hidden')) {
+      component.hasVisibleHandler = false
+      component.isHidden = getVisibility(component, 'hidden', false)
+    } else {
+      component.hasVisibleHandler = true
+      component.isVisible = getVisibility(component, 'visible', true)
+    }
     if (!_.startsWith(component.name, 'Q')) {
       logger.trace(`Loading component ${component.name}`)
       component.instance = loadComponent(component.name)
@@ -80,6 +79,17 @@ const avaiableComponents = computed(() => {
 })
 
 // Functions
+function getVisibility (component, property, defaultValue) {
+  let isVisible = _.get(component, property, defaultValue)
+  // Can be a functional call
+  if (typeof isVisible === 'function') {
+    isVisible = isVisible(props.context)
+  }
+  if ((typeof isVisible === 'string') && isVisible.startsWith(':')) {
+    isVisible = _.get(props.context, isVisible.substring(1))
+  }
+  return isVisible
+}
 function getComponents (content, mode) {
   let components = []
   // Get component config for given mode if any

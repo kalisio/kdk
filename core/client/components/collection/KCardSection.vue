@@ -9,10 +9,10 @@
         {{ title }}
       </span>
       <q-space />
-      <KPanel 
-        v-if="actions" 
-        :content="actions" 
-        :context="context" 
+      <KPanel
+        v-if="actions"
+        :content="actions"
+        :context="context"
       />
     </div>
     <!--

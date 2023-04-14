@@ -94,7 +94,7 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     return result
   }
 
-  async parse(req) {
+  async parse (req) {
     const { jwt } = req.query
     if (jwt) {
       debug('Found parsed query value')

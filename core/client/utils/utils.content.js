@@ -69,7 +69,7 @@ export function bindProperties (item, context) {
           // From store or context ?
           if (value.startsWith(':store.')) {
             item[key] = Store.getRef(value.replace(':store.', ''))
-          } else if (key !== 'visible') {
+          } else if ((key !== 'visible') && (key !== 'hidden')) {
             item[key] = _.get(context, value.substring(1))
           }
         } else {
