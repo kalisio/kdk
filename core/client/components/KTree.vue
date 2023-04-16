@@ -4,6 +4,7 @@
       :nodes="props.nodes"
       :label-key="props.labelKey"
       :node-key="props.nodeKey"
+      @lazy-load="onLazyLoad"
     ></q-tree>
   </div>
 </template>
@@ -22,6 +23,10 @@ const props = defineProps({
   nodeKey: {
     type: String,
     default: 'id'
+  },
+  onLazyLoad: {
+    type: Function,
+    default: 'onLazyLoad'
   }
 })
 
