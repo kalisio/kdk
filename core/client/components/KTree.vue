@@ -1,12 +1,10 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
-    <q-tree
-      :nodes="props.nodes"
-      :label-key="props.labelKey"
-      :node-key="props.nodeKey"
-      @lazy-load="onLazyLoad"
-    ></q-tree>
-  </div>
+  <q-tree
+    :nodes="props.nodes"
+    :label-key="props.labelKey"
+    :node-key="props.nodeKey"
+    @lazy-load="onLazyLoad"
+  ></q-tree>
 </template>
 
 <script setup>
