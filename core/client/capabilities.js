@@ -20,7 +20,7 @@ export const Capabilities = {
       })
   },
   get (key) {
-    if (!this.content) throw new Error('Capabilities must be initialized first')
-    return _.get(this.content, key)
+    if (!this.content) logger.error(new Error('Capabilities must be initialized first'))
+    else return _.get(this.content, key)
   }
 }
