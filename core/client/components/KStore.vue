@@ -1,18 +1,16 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
-    <KTree :nodes="lazy" node-key="path" @lazy-load="onLazyLoad"/>
-  </div>
+  <KTree :nodes="lazy" node-key="path" @lazy-load="onLazyLoad"/>
 </template>
 
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { Store } from '..'
+import { Store, i18n } from '..'
 import { ref } from 'vue'
 import KTree from './KTree'
 
 // Data
-const lazy = ref(addPath(convertStore(Store, 1)))
+const lazy = ref(_.remove(addPath(convertStore(Store, 1)), (value) => value.label))
 
 // functions
 function onLazyLoad ({ node, key, done, fail }) {
@@ -21,7 +19,6 @@ function onLazyLoad ({ node, key, done, fail }) {
     lazy.value = addPath(lazy.value)
   }, 1000)
 }
-
 function convertStore (node, maxDepth = -1, depth = 0) {
   if (maxDepth >= 0 && maxDepth === depth) return
 
@@ -53,11 +50,10 @@ function convertStore (node, maxDepth = -1, depth = 0) {
     }
     return {
       label: key,
-      children: [{ label: child, children: [] }]
+      children: [{ label: i18n.tie(child) ? i18n.tie(child) : child, children: [] }]
     }
   })
 }
-
 function addPath (items, path = []) {
   return items.map (({label, children, ...rest}, _, __, newPath = [...path, label]) => ({
     ... rest, 
@@ -66,5 +62,4 @@ function addPath (items, path = []) {
     ... (children ? {children: addPath(children, newPath)} : {})
   }))
 }
-
 </script>
