@@ -6,27 +6,29 @@ import { useProbe } from './probe.js'
 import { useHighlight } from './highlight.js'
 
 // When creating an activity we are interested by all aspects
-export function useActivity (name, exposed = { selection: true, probe: true, highlight: true }) {
-  const coreActivity = composables.useActivity(name, exposed)
+export function useActivity (name, options = {}) {
+  _.defaults(options, { selection: true, probe: true, highlight: true })
+  
+  const coreActivity = composables.useActivity(name, options)
   let selection, probe, highlight
 
   // expose
   const expose = {
     ...coreActivity
   }
-  if (exposed.selection) {
+  if (options.selection) {
     selection = useSelection(name, _.get(coreActivity, 'options.selection'))
     Object.assign(expose, {
       ...selection
     })
   }
-  if (exposed.probe) {
+  if (options.probe) {
     probe = useProbe(name, _.get(coreActivity, 'options.probe'))
     Object.assign(expose, {
       ...probe
     })
   }
-  if (exposed.highlight) {
+  if (options.highlight) {
     highlight = useHighlight(name, _.get(coreActivity, 'options.highlight'))
     Object.assign(expose, {
       ...highlight
@@ -50,8 +52,10 @@ export function useActivity (name, exposed = { selection: true, probe: true, hig
 }
 
 // When using current activity we are mainly interested by selection/probe
-export function useCurrentActivity (exposed = { selection: true, probe: true }) {
-  const { kActivity, kActivityName, state, options } = composables.useCurrentActivity()
+export function useCurrentActivity (options = {}) {
+  _.defaults(options, { selection: true, probe: true })
+
+  const { kActivity, kActivityName, state: activityState, options: activityOptions } = composables.useCurrentActivity()
   // expose
   const expose = {
     kActivity,
@@ -61,20 +65,20 @@ export function useCurrentActivity (exposed = { selection: true, probe: true }) 
   }
   if (kActivityName.value) {
     Object.assign(expose, {
-      state,
-      options
+      state: activityState,
+      options: activityOptions
     })
-    if (exposed.selection) {
+    if (options.selection) {
       Object.assign(expose, {
         ...useSelection(kActivityName.value, _.get(options, 'selection'))
       })
     }
-    if (exposed.probe) {
+    if (options.probe) {
       Object.assign(expose, {
         ...useProbe(kActivityName.value, _.get(options, 'probe'))
       })
     }
-    if (exposed.highlight) {
+    if (options.highlight) {
       Object.assign(expose, {
         ...useHighlight(kActivityName.value, _.get(options, 'highlight'))
       })

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import config from 'config'
 import { ref, shallowRef, readonly, onUnmounted } from 'vue'
 import { useStore } from './store.js'
@@ -6,12 +7,14 @@ import { useSelection } from './selection.js'
 const kActivity = shallowRef(null)
 const kActivityName = ref(null)
 
-export function useActivity (name, exposed = { selection: true }) {
+export function useActivity (name, options = {}) {
+  _.defaults(options, { selection: true })
+
   // data
   // state store
-  const state = useStore(`store.${name}.state`)
+  const activityState = useStore(`store.${name}.state`, options.state)
   // options store
-  const options = useStore(`store.${name}.options`, config[name])
+  const activityOptions = useStore(`store.${name}.options`, config[name])
 
   // functions
   function setCurrentActivity (activity) {
@@ -22,11 +25,11 @@ export function useActivity (name, exposed = { selection: true }) {
 
   // expose
   const expose = {
-    state: state.store,
-    options: options.store,
+    state: activityState.store,
+    options: activityOptions.store,
     setCurrentActivity
   }
-  if (exposed.selection) {
+  if (options.selection) {
     Object.assign(expose, {
       ...useSelection(kActivityName.value)
     })
@@ -38,21 +41,23 @@ export function useActivity (name, exposed = { selection: true }) {
   return expose
 }
 
-export function useCurrentActivity (exposed = { selection: true }) {
+export function useCurrentActivity (options = {}) {
+  _.defaults(options, { selection: true })
+  
   // expose
   const expose = {
     kActivity: readonly(kActivity),
     kActivityName: readonly(kActivityName)
   }
   if (kActivityName.value) {
-    const state = useStore(`store.${kActivityName.value}.state`)
-    const options = useStore(`store.${kActivityName.value}.options`)
+    const activityState = useStore(`store.${kActivityName.value}.state`)
+    const activityOptions = useStore(`store.${kActivityName.value}.options`)
 
     Object.assign(expose, {
-      state: state.store,
-      options: readonly(options.store)
+      state: activityState.store,
+      options: readonly(activityOptions.store)
     })
-    if (exposed.selection) {
+    if (options.selection) {
       Object.assign(expose, {
         ...useSelection(kActivityName.value)
       })
