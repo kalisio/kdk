@@ -59,11 +59,11 @@ function convertStore (node, maxDepth = -1, depth = 0) {
   })
 }
 function updateLazy (path, value) {
-  _.keys(value).map(key => {
+  _.keys(value).forEach(key => {
     const child = value[key]
     if (!_.isArray(child)) {
       const found = findNode(lazy, 'path', path + '.' + key)
-      if (found && found.hasOwnProperty('children') && found.children[0].label != child) {
+      if (found && _.has(found, 'children') && found.children[0].label !== child) {
         lazy.value = addPath(updateValue(lazy.value, found.children[0].path, child))
       }
     }
@@ -80,7 +80,7 @@ function addPath (items, path = []) {
 function updateValue(arr, value, newValue) {
   return arr.map (({label, children, path, ...rest}) => ({
     ... rest, 
-    label: path == value ? newValue : label,
+    label: path === value ? newValue : label,
     path,
     ... (children ? {children: updateValue(children, value, newValue)} : {})
   }))
