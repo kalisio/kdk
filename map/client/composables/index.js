@@ -1,5 +1,4 @@
 export * from './activity.js'
-export * from './catalog.js'
 export * from './highlight.js'
 export * from './location.js'
 export * from './measure.js'

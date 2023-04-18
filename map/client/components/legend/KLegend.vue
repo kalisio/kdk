@@ -35,9 +35,9 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { i18n, utils as coreUtils } from '../../../../core/client'
-import { useCatalog, useCurrentActivity } from '../../composables'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { i18n, api, utils as coreUtils } from '../../../../core/client'
+import { useCurrentActivity } from '../../composables'
 import { KScrollArea } from '../../../../core/client/components'
 
 // Props
@@ -58,6 +58,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  sublegends: {
+    type: Array,
+    default: () => []
+  },
   renderers: {
     type: Object,
     default: () => {
@@ -72,8 +76,7 @@ const props = defineProps({
 
 // Data
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
-const { listSublegends } = useCatalog(props.contextId)
-const sublegends = ref({})
+const sublegends = ref([])
 const layers = ref([])
 
 // Computed
@@ -116,14 +119,24 @@ function onHideLayer (layer) {
   }
 }
 
-// Hooks
-onMounted(async () => {
-  // retrieve the legends
-  sublegends.value = await listSublegends()
+// Watch
+watch(() => props.sublegends, async (legends) => {
+  // Retrieve the legends from catalog if not provided
+  if (_.isEmpty(legends)) {
+    const catalogService = api.getService('catalog', props.contextOrId)
+    const response = await catalogService.find({ query: { type: 'Sublegend' } })
+    sublegends.value = response.data
+  } else {
+    sublegends.value = legends
+  }
   // register legend translations
   _.forEach(sublegends.value, legend => {
     if (legend.i18n) i18n.registerTranslation(legend.i18n)
   })
+}, { immediate: true })
+
+// Hooks
+onMounted(async () => {
   // initial scan of already added layers
   CurrentActivity.value.getLayers().forEach((layer) => {
     if (CurrentActivity.value.isLayerVisible(layer.name)) {

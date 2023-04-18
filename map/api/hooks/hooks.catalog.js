@@ -10,7 +10,7 @@ const debug = makeDebug('kdk:map:catalog:hooks')
 // By default we only return default categories
 export function getDefaultCategories (hook) {
   const query = _.get(hook, 'params.query', {})
-  if (query.type === 'Category') {
+  if ((query.type === 'Category') && (query.$limit !== 0)) {
     const service = hook.service
     // Read default category config
     const catalogConfig = hook.app.get('catalog') || { categories: [] }
@@ -28,7 +28,7 @@ export function getDefaultCategories (hook) {
 // By default we only return default sublegends
 export function getDefaultSublegends (hook) {
   const query = _.get(hook, 'params.query', {})
-  if (query.type === 'Sublegend') {
+  if ((query.type === 'Sublegend') && (query.$limit !== 0)) {
     const service = hook.service
     // Read default sublegends config
     const catalogConfig = hook.app.get('catalog') || { sublegends: [] }
