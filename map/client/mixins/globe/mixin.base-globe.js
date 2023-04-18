@@ -207,6 +207,7 @@ export const baseGlobe = {
       layer.isVisible = false
       // Remove the cesium layer from globe
       const cesiumLayer = this.cesiumLayers[name]
+      delete this.cesiumLayers[name]
       if (this.isTerrainLayer(layer.cesium)) {
         this.viewer.terrainProvider = null
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {

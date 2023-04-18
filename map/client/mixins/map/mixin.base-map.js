@@ -357,6 +357,7 @@ export const baseMap = {
       layer.isVisible = false
       // Remove the leaflet layer from map
       const leafletLayer = this.leafletLayers[name]
+      delete this.leafletLayers[name]
       this.map.removeLayer(leafletLayer)
       const panes = _.get(layer, 'leaflet.panes')
       if (panes) panes.forEach(pane => this.removeLeafletPane(pane.name || pane.zIndex))
@@ -439,7 +440,6 @@ export const baseMap = {
       if (layer.isVisible) this.hideLayer(name)
       // Delete the layer
       delete this.layers[layer.name]
-      delete this.leafletLayers[name]
       this.onLayerRemoved(layer)
     },
     onLayerRemoved (layer) {
