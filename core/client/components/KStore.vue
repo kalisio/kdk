@@ -8,9 +8,13 @@ import moment from 'moment'
 import { Store, i18n } from '..'
 import { ref } from 'vue'
 import KTree from './KTree'
+import { Events } from '../events.js'
 
 // Data
 const lazy = ref(_.remove(addPath(convertStore(Store, 1)), (value) => value.label))
+
+// Make store react to external changes to update the tree
+Events.on('store-changed', (path, value) => updateLazy(path, value))
 
 // functions
 function onLazyLoad ({ node, key, done, fail }) {
@@ -54,6 +58,17 @@ function convertStore (node, maxDepth = -1, depth = 0) {
     }
   })
 }
+function updateLazy (path, value) {
+  _.keys(value).map(key => {
+    const child = value[key]
+    if (!_.isArray(child)) {
+      const found = findNode(lazy, 'path', path + '.' + key)
+      if (found && found.hasOwnProperty('children') && found.children[0].label != child) {
+        lazy.value = addPath(updateValue(lazy.value, found.children[0].path, child))
+      }
+    }
+  })
+}
 function addPath (items, path = []) {
   return items.map (({label, children, ...rest}, _, __, newPath = [...path, label]) => ({
     ... rest, 
@@ -61,5 +76,27 @@ function addPath (items, path = []) {
     path: newPath.join ('.'),
     ... (children ? {children: addPath(children, newPath)} : {})
   }))
+}
+function updateValue(arr, value, newValue) {
+  return arr.map (({label, children, path, ...rest}) => ({
+    ... rest, 
+    label: path == value ? newValue : label,
+    path,
+    ... (children ? {children: updateValue(children, value, newValue)} : {})
+  }))
+}
+function findNode(obj, key, value) {
+  if (obj[key] === value) {
+    return obj
+  } 
+  for (let i = 0, len = _.keys(obj).length; i < len; i++) {
+    const child = obj[_.keys(obj)[i]]
+    if (child && _.isObject(child)) {
+      let found = findNode(child, key, value)
+      if (found) {
+        return found
+      }
+    }
+  }
 }
 </script>
