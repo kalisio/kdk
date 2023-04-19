@@ -311,7 +311,7 @@ export default {
       dynamicParams.forEach(([key, value]) => {
         // If dynamic param is not available in route use this context
         if (_.has(currentParams, value)) _.set(params, key, _.get(currentParams, value))
-        else _.set(params, key, _.get(this.context, value))
+        else _.set(params, key, _.get(props.context, value))
       })
       return params
     }

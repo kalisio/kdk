@@ -68,9 +68,11 @@ export function bindProperties (item, context) {
         if ((typeof value === 'string') && value.startsWith(':')) {
           // From store or context ?
           if (value.startsWith(':store.')) {
-            item[key] = Store.getRef(value.replace(':store.', ''))
+            const path = value.replace(':store.', '')
+            if (Store.has(path)) item[key] = Store.getRef(path)
           } else if ((key !== 'visible') && (key !== 'hidden')) {
-            item[key] = _.get(context, value.substring(1))
+            const path = value.substring(1)
+            if (_.has(context, path)) item[key] = _.get(context, path)
           }
         } else {
           item[key] = bindProperties(value, context)
