@@ -130,8 +130,6 @@ export const editLayers = {
       ]
 
       this.editedLayer = layer
-      // Make it selected as well
-      this.selectedLayer = layer
       this.editingLayer = true
       this.onEditStart(this.editedLayer)
 
@@ -242,7 +240,7 @@ export const editLayers = {
         query: this.$route.query,
         params: Object.assign(this.$route.params, {
           layerId: this.editedLayer._id,
-          layer: this.editedLayer,
+          layerName: this.editedLayer.name,
           featureId: feature._id,
           contextId: this.contextId
         })

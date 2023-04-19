@@ -17,13 +17,12 @@
 import logger from 'loglevel'
 import _ from 'lodash'
 import config from 'config'
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
 import { KModal } from '../../../core/client/components'
 import KLayerStyleForm from './KLayerStyleForm.vue'
 
 export default {
   name: 'k-layer-style-editor',
-  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModal,
     KLayerStyleForm
@@ -36,6 +35,10 @@ export default {
   ],
   props: {
     layerId: {
+      type: String,
+      default: ''
+    },
+    layerName: {
       type: String,
       default: ''
     },
@@ -57,7 +60,7 @@ export default {
   },
   data () {
     return {
-      layer: this.selectedLayer,
+      layer: {},
       inProgress: false
     }
   },
@@ -101,8 +104,14 @@ export default {
     },
     async openModal () {
       // If not injected load it
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+      else this.layer = await this.$api.getService('catalog').get(this.layerId)
       kCoreMixins.baseModal.methods.openModal.call(this)
+    }
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
     }
   }
 }

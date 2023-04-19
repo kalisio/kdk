@@ -48,12 +48,11 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { uid } from 'quasar'
-import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { mixins as kCoreMixins, utils as kCoreUtils, composables as kCoreComposables } from '../../../core/client'
 import { KModal } from '../../../core/client/components'
 
 export default {
   name: 'k-features-filter',
-  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModal
   },
@@ -65,6 +64,10 @@ export default {
   ],
   props: {
     layerId: {
+      type: String,
+      default: ''
+    },
+    layerName: {
       type: String,
       default: ''
     },
@@ -101,7 +104,7 @@ export default {
   },
   data () {
     return {
-      layer: this.selectedLayer,
+      layer: {},
       filters: [],
       property: null
     }
@@ -240,9 +243,15 @@ export default {
     },
     async openModal () {
       // If not injected load it
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+      else this.layer = await this.$api.getService('catalog').get(this.layerId)
       await this.build()
       kCoreMixins.baseModal.methods.openModal.call(this)
+    }
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
     }
   }
 }

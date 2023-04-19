@@ -7,7 +7,7 @@
     v-model="isModalOpened"
   >
     <k-table
-      service="features"
+      :service="service"
       :contextId="contextId"
       :schema-json="schema"
       :item-actions="actions"
@@ -25,7 +25,7 @@
 <script>
 import _ from 'lodash'
 import centroid from '@turf/centroid'
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
 import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
@@ -42,6 +42,10 @@ export default {
       type: String,
       default: ''
     },
+    layerName: {
+      type: String,
+      default: ''
+    },
     contextId: {
       type: String,
       default: ''
@@ -49,7 +53,8 @@ export default {
   },
   data () {
     return {
-      layer: this.selectedLayer
+      service: 'features',
+      layer: {}
     }
   },
   computed: {
@@ -63,7 +68,7 @@ export default {
     },
     actions () {
       return [{
-        name: 'zoom-to',
+        id: 'zoom-to',
         tooltip: this.$t('mixins.activity.ZOOM_TO_LABEL'),
         icon: 'zoom_out_map',
         handler: (context) => {
@@ -86,8 +91,15 @@ export default {
   methods: {
     async openModal () {
       // If not injected load it
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+      else this.layer = await this.$api.getService('catalog').get(this.layerId)
+      this.service = _.get(this.layer, '_id') ? 'features' : 'features-edition'
       kCoreMixins.baseModal.methods.openModal.call(this, true)
+    }
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
     }
   }
 }
