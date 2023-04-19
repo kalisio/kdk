@@ -77,7 +77,7 @@ function addPath (items, path = []) {
     ... (children ? {children: addPath(children, newPath)} : {})
   }))
 }
-function updateValue(arr, value, newValue) {
+function updateValue (arr, value, newValue) {
   return arr.map (({label, children, path, ...rest}) => ({
     ... rest, 
     label: path === value ? newValue : label,
@@ -85,12 +85,12 @@ function updateValue(arr, value, newValue) {
     ... (children ? {children: updateValue(children, value, newValue)} : {})
   }))
 }
-function findNode(obj, key, value) {
-  if (obj[key] === value) {
-    return obj
+function findNode (node, key, value) {
+  if (node[key] === value) {
+    return node
   } 
-  for (let i = 0, len = _.keys(obj).length; i < len; i++) {
-    const child = obj[_.keys(obj)[i]]
+  for (let i = 0, len = _.keys(node).length; i < len; i++) {
+    const child = node[_.keys(node)[i]]
     if (child && _.isObject(child)) {
       let found = findNode(child, key, value)
       if (found) {
