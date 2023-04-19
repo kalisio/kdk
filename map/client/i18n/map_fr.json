@@ -392,16 +392,9 @@
     "NO_DATA_AVAILABLE": "Aucune donnée disponible"
   },
   "KViewsPanel": {
-    "VIEWS_LABEL": "Mes vues",
     "SORT_VIEWS": "Trier les vues",
     "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Définir comme vue par défaut"
-  },
-  "KUserLayersPanel": {
-    "LAYERS_LABEL": "Mes données"
-  },
-  "KCatalogLayersPanel": {
-    "LAYERS_LABEL": "Catalogue"
   }, 
   "KFeaturesFilter": {
     "TITLE": "Filtre des données de la couche",

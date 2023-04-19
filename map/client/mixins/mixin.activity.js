@@ -119,7 +119,7 @@ export const activity = {
       this.layerCategories.push(category)
     },
     async refreshLayerCategories () {
-      this.layerCategories = []
+      this.layerCategories.splice(0, this.layerCategories.length)
       const layerCategories = await this.getCatalogCategories()
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])

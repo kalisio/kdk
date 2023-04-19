@@ -5,7 +5,7 @@
       <k-layers-selector
         :layers="orphanLayers"
         :options="{ hideIfEmpty: true }" />
-      <template v-for="category in layerCategories">
+      <template v-for="category in filteredCategories">
         <q-expansion-item
           v-if="isVisible(category)"
           :key="getId(category)"
@@ -47,12 +47,20 @@ export default {
   mixins: [catalogPanel],
   props: {
     layers: {
-      type: Array,
+      type: [Object, Array],
       default: () => []
+    },
+    layersFilter: {
+      type: [Object, Function],
+      default: () => {}
     },
     layerCategories: {
       type: Array,
       default: () => []
+    },
+    layerCategoriesFilter: {
+      type: [Object, Function],
+      default: () => {}
     },
     forecastModels: {
       type: Array,
@@ -67,22 +75,23 @@ export default {
       default: () => {}
     }
   },
-  watch: {
-    layers: {
-      handler () {
-        this.categorize()
-      }
-    },
-    layerCategories: {
-      handler () {
-        this.categorize()
-      }
-    }
-  },
   computed: {
+    filteredLayers () {
+      const filter = (typeof this.layersFilter === 'object' ? sift(this.layersFilter) : this.layersFilter)
+      return _.filter(this.layers, filter)
+    },
+    filteredCategories () {
+      const filter = (typeof this.layerCategoriesFilter === 'object' ? sift(this.layerCategoriesFilter) : this.layerCategoriesFilter)
+      const filteredCategories = _.filter(this.layerCategories, filter)
+      _.forEach(filteredCategories, category => {
+        const component = _.get(category, 'component', 'catalog/KLayersSelector')
+        if (!category.componentInstance) category.componentInstance = loadComponent(component)
+      })
+      return filteredCategories
+    },
     layersByCategory () {
       const layersByCategory = {}
-      _.forEach(this.layerCategories, category => {
+      _.forEach(this.filteredCategories, category => {
         // Built-in categories use filtering while user-defined ones use layers list
         let filter = null
         if (_.has(category, 'options.filter')) {
@@ -91,7 +100,7 @@ export default {
           filter = { name: { $in: _.get(category, 'layers') } }
         }
         // If the list of layers in category is empty we can have a null filter
-        layersByCategory[category.name] = filter ? _.remove(this.layers, sift(filter)) : []
+        layersByCategory[category.name] = filter ? _.remove(this.filteredLayers, sift(filter)) : []
         // Order by
         layersByCategory[category.name] = _.orderBy(layersByCategory[category.name],
           [(layer) => _.get(layer, _.get(category, 'options.orderBy', '_id'))],
@@ -102,7 +111,7 @@ export default {
     orphanLayers () {
       // Filters system layers
       const categories = _.flatten(_.values(this.layersByCategory))
-      const layers = _.difference(this.layers, categories)
+      const layers = _.difference(this.filteredLayers, categories)
       // Order by
       return _.orderBy(layers, [(layer) => _.get(layer, '_id')], ['asc'])
     }
@@ -129,20 +138,10 @@ export default {
       // if category explicitely specify default opened state, use that
       if (_.has(category, 'options.open')) return category.options.open
       // otherwise, defaut open when there's only one category
-      // return this.layerCategories.length === 1
+      // return this.filteredCategories.length === 1
       // robin: to not break existing apps, just return false when options.open is not defined
       return false
-    },
-    categorize () {
-      _.forEach(this.layerCategories, category => {
-        const component = _.get(category, 'component', 'catalog/KLayersSelector')
-        if (!category.componentInstance) category.componentInstance = loadComponent(component)
-      })
     }
-  },
-  created () {
-    // Categorize layers
-    this.categorize()
   }
 }
 </script>

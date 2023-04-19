@@ -391,16 +391,9 @@
     "NO_DATA_AVAILABLE": "No data available"
   },
   "KViewsPanel": {
-    "VIEWS_LABEL": "My views",
     "SORT_VIEWS": "Sort view",
     "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Set as default view"
-  },
-  "KUserLayersPanel": {
-    "LAYERS_LABEL": "My data"
-  },
-  "KCatalogLayersPanel": {
-    "LAYERS_LABEL": "Catalog"
   },  
   "KFeaturesFilter": {
     "TITLE": "Data filter for layer",
