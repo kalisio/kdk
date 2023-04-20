@@ -60,6 +60,7 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
   async authenticate (authentication, params) {
     const { accessToken } = authentication
     const { entity } = this.configuration
+    const renewJwt = _.get(this.configuration, 'renewJwt', true)
 
     if (!accessToken) {
       throw new NotAuthenticated('No access token')
@@ -76,6 +77,7 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
         payload
       }
     }
+    if (!renewJwt) result.accessToken = accessToken
 
     // Second key trick
     // Return user attached to the token if any
