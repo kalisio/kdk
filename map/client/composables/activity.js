@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { onUnmounted } from 'vue'
+import { onBeforeUnmount } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 import { useSelection } from './selection.js'
 import { useProbe } from './probe.js'
@@ -44,7 +44,7 @@ export function useActivity (name, options = {}) {
   }
 
   // Cleanup on destroy
-  onUnmounted(() => setCurrentActivity(null))
+  onBeforeUnmount(() => setCurrentActivity(null))
 
   return Object.assign(expose, {
     setCurrentActivity

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import config from 'config'
-import { ref, shallowRef, readonly, onUnmounted } from 'vue'
+import { ref, shallowRef, readonly, onBeforeUnmount } from 'vue'
 import { useStore } from './store.js'
 import { useSelection } from './selection.js'
 
@@ -36,7 +36,7 @@ export function useActivity (name, options = {}) {
   }
 
   // Cleanup on destroy
-  onUnmounted(() => setCurrentActivity(null))
+  onBeforeUnmount(() => setCurrentActivity(null))
 
   return expose
 }
