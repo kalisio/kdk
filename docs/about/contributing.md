@@ -47,7 +47,7 @@ Use the optional `[ breaking ]` keyword to declare a **BREAKING CHANGE**.
 
 * Commit message with description and breaking change in body
 ```
-feat: allow provided config object to extend other configs [ breaking ]
+feat: allow provided config object to extend other configs [ breaking ] (closes #12)
 ```
 
 * Commit message with no body
@@ -57,7 +57,7 @@ docs: correct spelling in the contributing.md file
 
 * Commit message for a fix using an issue number.
 ```
-fix: fix minor issue in code (#12)
+fix: fix minor issue in code (closes #12)
 ```
 
 ## Versioning guidelines
