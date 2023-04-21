@@ -18,7 +18,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { computed } from 'vue'
 import { uid } from 'quasar'
-import { filterContent, loadComponent } from '../utils/index.js'
+import { filterContent, getBoundValue, loadComponent } from '../utils/index.js'
 
 // Props
 const props = defineProps({
@@ -79,9 +79,8 @@ function getVisibility (component, property, defaultValue) {
   // Can be a functional call
   if (typeof isVisible === 'function') {
     isVisible = isVisible(props.context)
-  }
-  if ((typeof isVisible === 'string') && isVisible.startsWith(':')) {
-    isVisible = _.get(props.context, isVisible.substring(1))
+  } else {
+    isVisible = getBoundValue(isVisible, props.context)
   }
   return isVisible
 }

@@ -43,7 +43,7 @@ export function useActivity (name, options = {}) {
 
 export function useCurrentActivity (options = {}) {
   _.defaults(options, { selection: true })
-  
+
   // expose
   const expose = {
     kActivity: readonly(kActivity),

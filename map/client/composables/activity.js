@@ -8,7 +8,7 @@ import { useHighlight } from './highlight.js'
 // When creating an activity we are interested by all aspects
 export function useActivity (name, options = {}) {
   _.defaults(options, { selection: true, probe: true, highlight: true })
-  
+
   const coreActivity = composables.useActivity(name, options)
   let selection, probe, highlight
 

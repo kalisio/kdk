@@ -42,7 +42,7 @@ function convertStore (node, maxDepth = -1, depth = 0) {
       return {
         label: key,
         lazy: true,
-        children: convertStore(Object.assign({}, child), maxDepth , depth )
+        children: convertStore(Object.assign({}, child), maxDepth, depth)
       }
     }
     if (_.isObject(child)) {
@@ -70,29 +70,29 @@ function updateLazy (path, value) {
   })
 }
 function addPath (items, path = []) {
-  return items.map (({label, children, ...rest}, _, __, newPath = [...path, label]) => ({
-    ... rest, 
+  return items.map(({ label, children, ...rest }, _, __, newPath = [...path, label]) => ({
+    ...rest,
     label,
-    path: newPath.join ('.'),
-    ... (children ? {children: addPath(children, newPath)} : {})
+    path: newPath.join('.'),
+    ...(children ? { children: addPath(children, newPath) } : {})
   }))
 }
 function updateValue (arr, value, newValue) {
-  return arr.map (({label, children, path, ...rest}) => ({
-    ... rest, 
+  return arr.map(({ label, children, path, ...rest }) => ({
+    ...rest,
     label: path === value ? newValue : label,
     path,
-    ... (children ? {children: updateValue(children, value, newValue)} : {})
+    ...(children ? { children: updateValue(children, value, newValue) } : {})
   }))
 }
 function findNode (node, key, value) {
   if (node[key] === value) {
     return node
-  } 
+  }
   for (let i = 0, len = _.keys(node).length; i < len; i++) {
     const child = node[_.keys(node)[i]]
     if (child && _.isObject(child)) {
-      let found = findNode(child, key, value)
+      const found = findNode(child, key, value)
       if (found) {
         return found
       }

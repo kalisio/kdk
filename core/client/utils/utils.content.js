@@ -3,7 +3,10 @@ import logger from 'loglevel'
 import sift from 'sift'
 import { Store } from '../store.js'
 
-const handlers = ['handler', 'visible', 'hidden', 'disabled', 'on.listener']
+const Handlers = ['handler', 'visible', 'hidden', 'disabled', 'on.listener']
+// Some bindings are not managed when reading content from config but externally on-demand, e.g. by KContent or KAction
+// The content 'reserved' property is also used to recurse at caller level
+const ReservedBindings = ['content', 'visible', 'hidden', 'route']
 
 export function filterContent (content, filter) {
   // Handle non object content
@@ -41,7 +44,7 @@ export function bindContent (content, context) {
   const components = _.flatMapDeep(content)
   _.forEach(components, (component) => {
     // Process component handlers
-    handlers.forEach(handler => bindHandler(component, handler, context))
+    Handlers.forEach(handler => bindHandler(component, handler, context))
     // Then process component props
     // It allows to write any property like { label: ':xxx' } and bind it
     // to a component property from the context like we do for handler
@@ -59,10 +62,9 @@ export function bindProperties (item, context) {
     }
   } else if (typeof item === 'object') {
     _.forOwn(item, (value, key) => {
-      // Skip 'reserved' property used to recurse at caller level
-      if (key !== 'content') {
-        // Only bind required properties
-        if ((typeof value === 'string') && (key !== 'visible') && (key !== 'hidden')) {
+      // Bind required properties only
+      if (!ReservedBindings.includes(key)) {
+        if (typeof value === 'string') {
           item[key] = getBoundValue(value, context)
         } else {
           item[key] = bindProperties(value, context)
