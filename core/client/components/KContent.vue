@@ -2,11 +2,11 @@
   <div>
     <template v-for="component in avaiableComponents" :key="component.uid">
       <component
-        v-if="component.hasVisibleHandler ? component.isVisible : !component.isHidden"
+        v-if="component.isVisible && !component.isHidden"
         :is="component.instance"
         :context="context"
         :renderer="component.renderer ? component.renderer: actionRenderer"
-        v-bind="component.bind ? component.props : component"
+        v-bind="component"
         v-on="component.on ? { [component.on.event]: component.on.listener } : {}"
         @triggered="onTriggered" />
     </template>
@@ -60,13 +60,8 @@ const avaiableComponents = computed(() => {
     // Check for hidden/visible handler or property
     // If not a functional call the target property can be a reactive one
     // so that we "bind" it to the component instead of "filter" the component here
-    if (_.has(component, 'hidden')) {
-      component.hasVisibleHandler = false
-      component.isHidden = getVisibility(component, 'hidden', false)
-    } else {
-      component.hasVisibleHandler = true
-      component.isVisible = getVisibility(component, 'visible', true)
-    }
+    component.isHidden = getVisibility(component, 'hidden', false)
+    component.isVisible = getVisibility(component, 'visible', true)
     if (!_.startsWith(component.name, 'Q')) {
       logger.trace(`Loading component ${component.name}`)
       component.instance = loadComponent(component.name)
