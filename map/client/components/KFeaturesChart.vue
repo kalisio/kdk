@@ -200,7 +200,7 @@ export default {
       // As we have async operations during the whole chart creation process avoid reentrance
       // otherwise we might have interleaved calls leading to multiple charts being created
       if (!this.chart || !this.selectedProperty || this.buildingChart) return
-      Loading.show({ message: this.$t('KFeaturesChart.CHARTING_LABEL') })
+      Loading.show({ message: this.$t('KFeaturesChart.CHARTING_LABEL'), html: true })
       // Try/Catch required to ensure we reset the build flag
       try {
         this.buildingChart = true

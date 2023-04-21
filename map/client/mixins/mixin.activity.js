@@ -270,7 +270,7 @@ export const activity = {
           _.set(layer, 'leaflet.tiled', true)
           _.set(layer, 'leaflet.minZoom', 15)
         }
-        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }) })
+        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }), html: true })
         try {
           let createdLayer = await this.$api.getService('catalog')
             .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
@@ -281,7 +281,8 @@ export const activity = {
             // Update saving message according to new chunk data
             nbFeatures += chunk.length
             Loading.show({
-              message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length })
+              message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length }),
+              html: true
             })
           })
           // Because we save all features in a single service use filtering to separate layers
@@ -339,7 +340,7 @@ export const activity = {
           flat: true
         }
       }).onOk(async () => {
-        Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL') })
+        Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL'), html: true })
         try {
           // Stop any running edition
           if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) this.onEditLayerData(layer)

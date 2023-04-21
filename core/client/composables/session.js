@@ -89,7 +89,7 @@ export function useSession (options = {}) {
     }
     // Causes problems with hot reload in dev
     if (Version.value.flavor !== 'dev') {
-      Loading.show({ message: i18n.t('composables.session.RECONNECT') })
+      Loading.show({ message: i18n.t('composables.session.RECONNECT'), html: true })
       setTimeout(() => { window.location.reload() }, 3000)
     } else {
       logger.error(new Error('Socket disconnected, not trying to reconnect automatically in development mode please refresh page manually'))

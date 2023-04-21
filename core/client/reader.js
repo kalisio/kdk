@@ -49,7 +49,7 @@ export const Reader = {
   },
   async read (file, options) {
     const reader = this.readers[file.reader]
-    Loading.show({ message: i18n.t('reader.READING_FILE', { file: file.name }) })
+    Loading.show({ message: i18n.t('reader.READING_FILE', { file: file.name }), html: true })
     try {
       const content = await reader.read(file.files, options)
       Loading.hide()
