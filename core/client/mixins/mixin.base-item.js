@@ -5,7 +5,8 @@ import { bindContent, filterContent } from '../utils/index.js'
 export const baseItem = {
   emits: [
     'item-selected',
-    'item-toggled'
+    'item-toggled',
+    'item-expanded'
   ],
   props: {
     contextId: {
