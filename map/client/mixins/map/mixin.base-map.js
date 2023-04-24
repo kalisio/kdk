@@ -349,11 +349,11 @@ export const baseMap = {
       this.$engineEvents.emit('layer-shown', layer, leafletLayer)
     },
     hideLayer (name) {
+      // Check the visibility state
+      if (!this.isLayerVisible(name)) return
       // Retrieve the layer
       const layer = this.getLayerByName(name)
       if (!layer) return
-      // Check the visibility state
-      if (!this.isLayerVisible(name)) return
       layer.isVisible = false
       // Remove the leaflet layer from map
       const leafletLayer = this.leafletLayers[name]
@@ -436,8 +436,8 @@ export const baseMap = {
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return
-      // If it was visible remove it from map
-      if (layer.isVisible) this.hideLayer(name)
+      // If it was visible hide it first (ie remove from map)
+      this.hideLayer(name)
       // Delete the layer
       delete this.layers[layer.name]
       this.onLayerRemoved(layer)

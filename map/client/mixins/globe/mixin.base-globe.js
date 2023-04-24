@@ -255,8 +255,8 @@ export const baseGlobe = {
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return
-      // If it was visible remove it from map
-      if (layer.isVisible) this.hideLayer(name)
+      // If it was visible hide it first (ie remove from globe)
+      this.hideLayer(name)
       const cesiumLayer = this.cesiumLayers[name]
       if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         this.viewer.scene.primitives.remove(cesiumLayer)
