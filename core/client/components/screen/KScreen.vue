@@ -11,12 +11,16 @@
       <!-- Frame -->
       <q-card class="k-screen-frame full-width q-pa-sm">
         <!-- logo -->
-        <div class="q-pa-sm row justify-center">
-          <component :is="computedLogoComponent" />
-        </div>
+        <slot name="banner">
+          <div class="q-pa-sm row justify-center">
+            <component :is="computedLogoComponent" />
+          </div>
+        </slot>
         <!-- title -->
         <q-card-section v-if="title">
-          <div class="text-h6 text-center">{{ $t(title) }}</div>
+          <slot name="title">
+            <div class="text-h6 text-center">{{ $t(title) }}</div>
+          </slot>
         </q-card-section>
         <q-card-section>
           <slot />
