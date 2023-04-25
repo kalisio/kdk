@@ -144,10 +144,16 @@ export function getBoundValue (value, context) {
       if (Store.has(path)) return Store.get(path)
     } else if (value.startsWith(':storeRef.')) {
       const path = value.replace(':storeRef.', '')
-      if (Store.has(path)) return Store.getRef(path)
+      // FIXME: we should test if the path exists but this causes
+      // a bug in production build with Vue proxy objects
+      //if (Store.has(path)) return Store.getRef(path)
+      return Store.getRef(path)
     } else {
       const path = value.substring(1)
-      if (_.has(context, path)) return _.get(context, path)
+      // FIXME: we should test if the path exists but this causes
+      // a bug in production build with Vue proxy objects
+      //if (_.has(context, path)) return _.get(context, path)
+      return _.get(context, path)
     }
   }
   return value
