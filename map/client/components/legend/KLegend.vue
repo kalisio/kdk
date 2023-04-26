@@ -62,6 +62,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  sublegendsFromCatalog: {
+    type: Boolean,
+    default: true
+  },
   renderers: {
     type: Object,
     default: () => {
@@ -120,15 +124,16 @@ function onHideLayer (layer) {
 }
 
 // Watch
-watch(() => props.sublegends, async (legends) => {
-  // Retrieve the legends from catalog if not provided
-  if (_.isEmpty(legends)) {
+watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
+  // Retrieve the legends from catalog if required
+  if (props.sublegendsFromCatalog) {
     const catalogService = api.getService('catalog', props.contextOrId)
     const response = await catalogService.find({ query: { type: 'Sublegend' } })
     sublegends.value = response.data
   } else {
-    sublegends.value = legends
+    sublegends.value = []
   }
+  sublegends.value = sublegends.value.concat(props.sublegends)
   // register legend translations
   _.forEach(sublegends.value, legend => {
     if (legend.i18n) i18n.registerTranslation(legend.i18n)
