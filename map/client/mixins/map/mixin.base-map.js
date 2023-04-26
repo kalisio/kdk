@@ -468,9 +468,19 @@ export const baseMap = {
         }
       }
       const leafletLayer = this.getLeafletLayerByName(name)
-      if (leafletLayer && (typeof leafletLayer.getBounds === 'function')) {
-        const bounds = leafletLayer.getBounds()
-        if (bounds.isValid()) this.map.fitBounds(bounds, options)
+      if (leafletLayer) {
+        if (typeof leafletLayer.getBounds === 'function') {
+          const bounds = leafletLayer.getBounds()
+          if (bounds.isValid()) this.map.fitBounds(bounds, options)
+        } else {
+          const bbox = _.get(layer, 'bbox')
+          if (bbox) {
+            this.zoomToBBox(bbox)
+          } else {
+            const bounds = _.get(layer, 'leaflet.bounds', this.map.options.maxBounds)
+            this.zoomToBounds(bounds)
+          }
+        }
       }
     },
     zoomToBounds (bounds) {

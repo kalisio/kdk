@@ -276,14 +276,29 @@ export const baseGlobe = {
     zoomToBounds (bounds) {
       this.viewer.camera.flyTo({
         duration: 0,
-        destination: Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0])
+        destination: Array.isArray(bounds) ? // Assume Cesium rectangle object if not array
+          Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]) :
+          bounds
       })
+    },
+    zoomToBBox (bbox) {
+      this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     zoomToLayer (name) {
       const layer = this.getCesiumLayerByName(name)
-      if (!layer || !layer.entities) return
+      if (!layer) return
 
-      this.viewer.flyTo(layer.entities, { duration: 0 })
+      if (layer.entities) {
+        this.viewer.flyTo(layer.entities, { duration: 0 })
+      } else {
+        const bbox = _.get(layer, 'bbox')
+        if (bbox) {
+          this.zoomToBBox(bbox)
+        } else {
+          const bounds = _.get(layer, 'cesium.rectangle', [[-90, -180], [90, 180]])
+          this.zoomToBounds(bounds)
+        }
+      }
     },
     center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0) {
       const center = this.viewer.camera.positionCartographic

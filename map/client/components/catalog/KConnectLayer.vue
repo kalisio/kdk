@@ -192,6 +192,10 @@ export default {
         icon: 'las la-plug',
         scope: 'user'
       }
+      if (this.layer.extent) {
+        const { west, east, south, north } = this.layer.extent
+        newLayer.bbox = [west, south, east, north]
+      }
       if (this.service.protocol === 'WMS') {
         const style = propertiesResult.values.style
         const timeDimension = this.layer.timeDimension
