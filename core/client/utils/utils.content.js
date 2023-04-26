@@ -147,13 +147,15 @@ export function getBoundValue (value, context) {
       // FIXME: we should test if the path exists but this causes
       // a bug in production build with Vue proxy objects
       //if (Store.has(path)) return Store.getRef(path)
-      return Store.getRef(path)
+      const result = Store.getRef(path)
+      if (!_.isNil(result)) return result
     } else {
       const path = value.substring(1)
       // FIXME: we should test if the path exists but this causes
       // a bug in production build with Vue proxy objects
       //if (_.has(context, path)) return _.get(context, path)
-      return _.get(context, path)
+      const result = _.get(context, path)
+      if (!_.isNil(result)) return result
     }
   }
   return value

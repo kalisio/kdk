@@ -292,14 +292,15 @@ export default {
       emit('toggled', props.context, isToggled.value)
     }
     function bindRouteParams (path) {
-      // When action is created from code we can directly inject the params
-      // However, when created from the config we need to manage dynamic values
+      // When action is created from code we can directly inject the params.
+      // However, when created from the config we need to manage dynamic values.
       // A parameter like ':xxx' in config means xxx is a dynamic property of
-      // the current route or the context object, not a static value
-      // We bind the target params object to both possible context
+      // the current route or the context object, not a static value.
+      // We bind the target params object to both possible context.
       const currentParams = _.get(route, path, {})
       const targetParams = _.get(props.route, path, {})
-      return bindParams(bindParams(targetParams, currentParams), props.context)
+      const params = bindParams(targetParams, currentParams)
+      return bindParams(params, props.context)
     }
     async function onClicked (event) {
       if (!props.propagate) event.stopPropagation()
