@@ -53,7 +53,8 @@ export async function discover (url, searchParams = {}, caps = null) {
   for (const layer of _.get(caps, 'WFS_Capabilities.FeatureTypeList[0].FeatureType', [])) {
     const id = layer.Name[0]
     const display = _.get(layer, 'Title[0]', id)
-    out.availableLayers[id] = { id, display }
+    const description = _.get(layer, 'Abstract[0]', '')
+    out.availableLayers[id] = { id, display, description }
 
     // extent
     if (layer.WGS84BoundingBox && layer.WGS84BoundingBox[0] !== '') {

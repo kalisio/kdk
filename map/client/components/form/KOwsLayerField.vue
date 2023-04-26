@@ -22,10 +22,9 @@
       <q-item
         :id="getId(scope.opt)"
         v-bind="scope.itemProps"
-        v-on="scope.itemEvents"
       >
         <q-item-section>
-          <q-item-label>{{ scope.opt.display }} [{{scope.opt.id }}]</q-item-label>
+          <q-item-label>{{ scope.opt.display }} [{{ scope.opt.id }}]</q-item-label>
         </q-item-section>
       </q-item>
     </template>
@@ -46,7 +45,7 @@ export default {
   mixins: [kCoreMixins.baseField],
   data () {
     return {
-      layer: '',
+      layer: null,
       loading: false,
       filter: ''
     }
@@ -83,13 +82,14 @@ export default {
     async onUpdated (layer) {
       this.error = ''
       this.loading = true
+      const newModel = Object.assign({}, layer)
       if (layer) {
         if (this.service.protocol === 'WFS') {
           try {
             const desc = await wfs.DescribeFeatureType(this.service.baseUrl, this.service.version, layer.id, this.service.searchParams)
-            layer.schema = wfs.generatePropertiesSchema(desc, layer.display)
+            newModel.schema = wfs.generatePropertiesSchema(desc, layer.display)
             const decodedDesc = wfs.decodeFeatureType(desc)
-            layer.properties = decodedDesc.properties.map(prop => prop.name)
+            newModel.properties = decodedDesc.properties.map(prop => prop.name)
           } catch (error) {
             this.error = 'KOwsLayerField.UNABLE_TO_DESCRIBE_FEATURE_TYPE'
           }
@@ -114,7 +114,7 @@ export default {
       }
       this.loading = false
       if (!this.error) {
-        this.model = layer
+        this.model = newModel
         this.onChanged()
       } else {
         layer = null

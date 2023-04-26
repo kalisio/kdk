@@ -65,7 +65,8 @@ export async function discover (url, searchParams = {}, caps = null) {
       const id = _.get(layer, 'Name[0]')
       const display = _.get(layer, 'Title[0]', id)
       if (id && display) {
-        const obj = { id, display, styles: {} }
+        const description = _.get(layer, 'Abstract[0]', '')
+        const obj = { id, display, description, styles: {} }
         if (layer.CRS) obj.crs = layer.CRS
         // lookup styles
         for (const st of _.get(layer, 'Style', [])) {
