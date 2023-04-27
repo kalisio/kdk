@@ -140,7 +140,7 @@ function refresh () {
     } else {
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
-      const actions = utils.bindContent(_.cloneDeep(props.actions), exposed)
+      const actions = utils.bindContent(_.cloneDeep(props.actions), Object.assign({ timeSerie }, exposed))
       component = {
         header: [{ component: 'KStamp', text: timeSerie.label, direction: 'horizontal' }],
         actions,
