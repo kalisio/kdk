@@ -21,7 +21,7 @@ export const Reader = {
     for (let i = 0; i < filelist.length; ++i) {
       const file = filelist[i]
       // Check whether a reader is assigned to the file type
-      const fileExt = path.extname(file.name)
+      const fileExt = path.extname(file.name).toLowerCase()
       let reader = this.readers[fileExt]
       if (reader) {
         acceptedFiles.push({ reader: fileExt, name: file.name, files: [file] })
