@@ -330,6 +330,15 @@
       "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la vue",
       "LAYERS_FIELD_LABEL": "Définissez si les couches actuellement actives seront restaurées par votre vue.",
       "APPLY_BUTTON_LABEL": "Confirmez la création de la vue"
+    },
+    "side-nav": {
+      "HELP_LABEL": "Accédez à notre aide en ligne à tout moment",
+      "CONTEXT_HELP_LABEL": "Pour obtenir de l'aide contextuelle lorsque vous êtes perdu cliquez à tout moment cette l'icône",
+      "ABOUT_LABEL": "Affichez les informations détaillées du système et signalez-nous un boggue.",
+      "BUG_LABEL": "Signalez-nous un boggue via un email contenant automatiquement les informations nécessaires.",
+      "SETTINGS_LABEL": "Modifiez les paramètres généraux du système sur votre appareil.",
+      "LOGOUT_LABEL": "Déconnectez vous si vous souhaitez clôturer votre session de travail.",
+      "SESSION_LABEL": "Sinon la session reste active sur votre appareil pendant <b>24H</b> et vous n'aurez pas besoin de vous reconnecter durant ce laps de temps."
     }
   },
   "KOwsServiceField": {
