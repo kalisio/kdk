@@ -2,7 +2,8 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
 import { ref, computed, readonly } from 'vue'
-import { Capabilities } from '../capabilities.js'
+import { Capabilities, Store, i18n } from '../index.js'
+import { Notify } from 'quasar'
 
 const Version = ref({
   client: {
@@ -47,3 +48,26 @@ export function useVersion () {
     apiVersionName
   }
 }
+
+export async function checkVersion () {
+  const api = Store.capabilities.api
+  // FIXME: we should elaborate a more complex check between compatible versions
+  if (api.version === config.version) {
+    if (config.flavor === 'prod') return
+    // Local dev has not the concept of build number
+    else if (!api.buildNumber) return
+    // On staging check it because we do not increase version number on each change
+    // and would like to know if the mobile client is up-to-date
+    else if (api.buildNumber === config.buildNumber) return
+  }
+  Notify.create({ 
+    type: 'warning',
+    timeout: 0,
+    message: i18n.t('pwa.VERSION_MISMATCH'),
+    actions: [
+      { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
+      { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
+    ]
+  })
+}
+
