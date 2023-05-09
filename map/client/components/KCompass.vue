@@ -13,17 +13,11 @@
         fill="none"
       />
       <polygon
-        points="50,20 58,50 42,50"
+        points="50,25 40,70 50,60 60,70"
         :fill="getCssVar('primary')"
         :stroke="getCssVar('primary')"
         :transform="`rotate(${direction}, 50, 50)`"
-      />
-      <polygon
-        points="58,50 50,80 42,50"
-        :stroke="getCssVar('primary')"
-        fill="none"
-        :transform="`rotate(${direction}, 50, 50)`"
-      />
+      />    
       <text x="50" y="7" text-anchor="middle" alignment-baseline="middle" font-size="8px" fill="white">
         {{ $t('KCompass.NORTH') }}
       </text>
