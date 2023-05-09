@@ -1,5 +1,6 @@
 <template>
   <KLegendRenderer
+    v-if="content"
     :label="label"
   >
     <!-- content -->
@@ -24,7 +25,7 @@ const props = defineProps({
   },
   content: {
     type: Object,
-    required: true
+    default: () => null
   }
 })
 

@@ -21,7 +21,7 @@
               <component
                 :is="layer.legend.renderer"
                 :label="layer.legend.label"
-                :content="layer.legend.content"
+                :content="getContent(layer.legend)"
               />
             </div>
           </template>
@@ -82,6 +82,7 @@ const props = defineProps({
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const sublegends = ref([])
 const layers = ref([])
+const zoom = ref(null)
 
 // Computed
 const layersBySublegend = computed(() => {
@@ -103,7 +104,7 @@ function onShowLayer (layer, engine) {
   const legend = layer.legend
   if (legend) {
     if (!_.find(layers.value, { name: layer.name })) {
-      logger.debug(`[KDK] Register ${layer.name} legend`)
+      logger.debug(`[KDK] Register '${layer.name}' legend`)
       const renderer = props.renderers[legend.type]
       if (!renderer) {
         logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
@@ -118,9 +119,26 @@ function onShowLayer (layer, engine) {
 }
 function onHideLayer (layer) {
   if (layer.legend) {
-    logger.debug(`[KDK] Unregister ${layer.name} legend'`)
+    logger.debug(`[KDK] Unregister '${layer.name}' legend`)
     _.remove(layers.value, { name: layer.name })
   }
+}
+function onZoomChanged () {
+  zoom.value = CurrentActivity.value.getCenter().zoomLevel
+}
+function getContent (legend) {
+  let content = legend.content
+  let result
+  if (!Array.isArray(content)) content = [content]
+  _.forEach(content, item => {
+    const minZoom = _.get(item, 'minZoom', 0)
+    const maxZoom = _.get(item, 'maxZoom', 99)
+    if (zoom.value >= minZoom && zoom.value <= maxZoom) {
+      result = item
+      return false
+    }
+  })
+  return result
 }
 
 // Watch
@@ -142,6 +160,8 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
 
 // Hooks
 onMounted(async () => {
+  // retrieve current zoom
+  zoom.value = CurrentActivity.value.getCenter().zoomLevel
   // initial scan of already added layers
   CurrentActivity.value.getLayers().forEach((layer) => {
     if (CurrentActivity.value.isLayerVisible(layer.name)) {
@@ -151,8 +171,10 @@ onMounted(async () => {
   // listen to the layer shown/hiddend signals
   CurrentActivity.value.$engineEvents.on('layer-shown', onShowLayer)
   CurrentActivity.value.$engineEvents.on('layer-hidden', onHideLayer)
+  CurrentActivity.value.$engineEvents.on('zoomend', onZoomChanged)
 })
 onBeforeUnmount(() => {
+  CurrentActivity.value.$engineEvents.on('zoomend', onZoomChanged)
   CurrentActivity.value.$engineEvents.off('layer-shown', onShowLayer)
   CurrentActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
 })

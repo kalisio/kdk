@@ -1,5 +1,6 @@
 <template>
   <KLegendRenderer
+    v-if="content"
     :label="label"
   >
     <!-- content -->
@@ -51,13 +52,13 @@ const props = defineProps({
   },
   content: {
     type: Object,
-    required: true
+    default: () => null
   }
 })
 
 // computed
 const sections = computed(() => {
-  return _.keys(props.content)
+  return _.difference(_.keys(props.content), ['minZoom', 'maxZoom'])
 })
 
 // function
