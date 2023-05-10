@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { ref } from 'vue'
 import logger from 'loglevel'
 
