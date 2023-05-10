@@ -13,9 +13,9 @@ export const Capabilities = {
           .then(content => {
             logger.debug('[KDK] fetched capabilities:', JSON.stringify(content, null, 4))
             this.content = content
-            // TODO: ensure backward compatibility
+            // Used to ensure backward compatibility
             Store.set('capabilities.api', content)
-            Store.set('capabilities.client', content)
+            Store.set('capabilities.client', _.pick(config, ['version', 'buildNumber']))
           })
       })
   },
