@@ -3,7 +3,8 @@ import logger from 'loglevel'
 import config from 'config'
 import { ref, computed, readonly } from 'vue'
 import { Capabilities, Store, i18n } from '../index.js'
-import { Notify } from 'quasar'
+import { Notify, Platform } from 'quasar'
+import { Events } from '../events.js'
 
 const Version = ref({
   client: {
@@ -71,3 +72,4 @@ export async function checkVersion () {
   })
 }
 
+if (Platform.is.cordova || 'serviceWorker' in navigator) Events.on('capabilities-api-changed', () => checkVersion())
