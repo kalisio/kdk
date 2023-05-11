@@ -21,7 +21,7 @@
               <component
                 :is="layer.legend.renderer"
                 :label="layer.legend.label"
-                :content="filterContent(layer.legend.content)"
+                :content="filterContent(layer)"
               />
             </div>
           </template>
@@ -82,6 +82,7 @@ const props = defineProps({
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const sublegends = ref([])
 const layers = ref([])
+const engine = ref()
 const zoom = ref()
 
 // Computed
@@ -102,45 +103,49 @@ const layersBySublegend = computed(() => {
 // Functions
 function onShowLayer (layer, engine) {
   const legend = layer.legend
-  if (legend) {
-    if (!_.find(layers.value, { name: layer.name })) {
-      logger.debug(`[KDK] Register '${layer.name}' legend`)
-      const renderer = props.renderers[legend.type]
-      if (!renderer) {
-        logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
-        return
-      }
-      legend.renderer = coreUtils.loadComponent(renderer)
-      layers.value.push(layer)
-    } else {
-      logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
-    }
+  if (!legend) return
+  if (!legend.content) {
+    logger.warn(`[KDK] Legend for ${layer.name} has no content`)
+    return
   }
+  if (_.find(layers.value, { name: layer.name })) {
+    logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
+    return
+  }
+  logger.debug(`[KDK] Register '${layer.name}' legend`)
+  const renderer = props.renderers[legend.type]
+  if (!renderer) {
+    logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
+    return
+  }
+  legend.renderer = coreUtils.loadComponent(renderer)
+  layers.value.push(layer)
 }
 function onHideLayer (layer) {
-  if (layer.legend) {
-    logger.debug(`[KDK] Unregister '${layer.name}' legend`)
-    _.remove(layers.value, { name: layer.name })
-  }
+  if (!layer.legend) return
+  logger.debug(`[KDK] Unregister '${layer.name}' legend`)
+  _.remove(layers.value, { name: layer.name })
 }
 function onZoomChanged () {
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
 }
-function filterContent (content) {
+function filterContent (layer) {
+  const content = layer.legend.content
+  console.log(layer, CurrentActivity.value)
   if (!zoom.value) return content
   let result
   if (Array.isArray(content)) {
     _.forEach(content, item => {
-      const minZoom = _.get(item, 'minZoom', 0)
-      const maxZoom = _.get(item, 'maxZoom', 99)
+      const minZoom = _.get(layer, `${engine.value}.minZoom`, _.get(item, 'minZoom', 0))
+      const maxZoom = _.get(layer, `${engine.value}.maxZoom`, _.get(item, 'maxZoom', 99))
       if (zoom.value >= minZoom && zoom.value <= maxZoom) {
         result = item
         return false
       }
   })
   } else {
-    const minZoom = _.get(content, 'minZoom', 0)
-    const maxZoom = _.get(content, 'maxZoom', 99)
+    const minZoom = _.get(layer, `${engine.value}.minZoom`, _.get(content, 'minZoom', 0))
+    const maxZoom = _.get(layer, `${engine.value}.maxZoom`, _.get(content, 'maxZoom', 99))
     if (zoom.value >= minZoom && zoom.value <= maxZoom) {
       result = content
     }
@@ -173,10 +178,12 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     // clear legend
     sublegends.value = []
     layers.value = []
-    zoom.value = undefined
+    engine.value = null
+    zoom.value = null
   }
   if (newActivity) {
     // setup legend
+    engine.value = newActivity.engine
     zoom.value = newActivity.getCenter().zoomLevel
     newActivity.getLayers().forEach((layer) => {
       if (newActivity.isLayerVisible(layer.name)) {
