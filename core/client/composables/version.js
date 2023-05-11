@@ -3,8 +3,8 @@ import logger from 'loglevel'
 import config from 'config'
 import { ref, computed, readonly } from 'vue'
 import { Capabilities, Store, i18n } from '../index.js'
-import { Notify, Platform } from 'quasar'
-import { Events } from '../events.js'
+import { Notify } from 'quasar'
+import { getPlatform } from '../utils/utils.platform.js'
 
 const Version = ref({
   client: {
@@ -18,6 +18,7 @@ const Version = ref({
   flavor: _.get(config, 'flavor')
 })
 let isInitialized = false
+const Platform = getPlatform()
 
 export function useVersion () {
   // Computed
@@ -40,6 +41,8 @@ export function useVersion () {
     logger.debug('Setting API version from capabilities')
     Version.value.api.number = Capabilities.get('version')
     Version.value.api.buildNumber = Capabilities.get('buildNumber')
+    console.log(Platform.pwa)
+    if (Platform.cordova || Platform.pwa) checkVersion()
   }
 
   // Expose
@@ -61,15 +64,37 @@ export async function checkVersion () {
     // and would like to know if the mobile client is up-to-date
     else if (api.buildNumber === config.buildNumber) return
   }
-  Notify.create({ 
-    type: 'warning',
-    timeout: 0,
-    message: i18n.t('pwa.VERSION_MISMATCH'),
-    actions: [
-      { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
-      { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
-    ]
-  })
+  // Update the service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+      .register('/service-worker.js', { scope: './' })
+      .then((registration) => {
+        // Registration worked
+        logger.debug(`Registration succeeded.`)
+        registration.update()
+        Notify.create({ 
+          type: 'warning',
+          timeout: 0,
+          message: i18n.t('pwa.VERSION_MISMATCH'),
+          actions: [
+            { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
+            { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
+          ]
+        })
+      })
+      .catch((error) => {
+        // Registration failed
+        logger.debug(`Registration failed with ${error}`)
+      })
+  } else {
+    Notify.create({ 
+      type: 'warning',
+      timeout: 0,
+      message: i18n.t('pwa.VERSION_MISMATCH'),
+      actions: [
+        { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
+        { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
+      ]
+    })
+  }
 }
-
-if (Platform.is.cordova || 'serviceWorker' in navigator) Events.on('capabilities-api-changed', () => checkVersion())
