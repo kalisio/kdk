@@ -41,7 +41,6 @@ export function useVersion () {
     logger.debug('Setting API version from capabilities')
     Version.value.api.number = Capabilities.get('version')
     Version.value.api.buildNumber = Capabilities.get('buildNumber')
-    console.log(Platform.pwa)
     if (Platform.cordova || Platform.pwa) checkVersion()
   }
 
