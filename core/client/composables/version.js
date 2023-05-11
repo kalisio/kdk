@@ -63,37 +63,13 @@ export async function checkVersion () {
     // and would like to know if the mobile client is up-to-date
     else if (api.buildNumber === config.buildNumber) return
   }
-  // Update the service worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-      .register('/service-worker.js', { scope: './' })
-      .then((registration) => {
-        // Registration worked
-        logger.debug(`Registration succeeded.`)
-        registration.update()
-        Notify.create({ 
-          type: 'warning',
-          timeout: 0,
-          message: i18n.t('pwa.VERSION_MISMATCH'),
-          actions: [
-            { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
-            { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
-          ]
-        })
-      })
-      .catch((error) => {
-        // Registration failed
-        logger.debug(`Registration failed with ${error}`)
-      })
-  } else {
-    Notify.create({ 
-      type: 'warning',
-      timeout: 0,
-      message: i18n.t('pwa.VERSION_MISMATCH'),
-      actions: [
-        { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
-        { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
-      ]
-    })
-  }
+  Notify.create({ 
+    type: 'warning',
+    timeout: 0,
+    message: i18n.t('pwa.VERSION_MISMATCH'),
+    actions: [
+      { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
+      { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
+    ]
+  })
 }
