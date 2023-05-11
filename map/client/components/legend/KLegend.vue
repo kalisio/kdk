@@ -21,7 +21,7 @@
               <component
                 :is="layer.legend.renderer"
                 :label="layer.legend.label"
-                :content="getContent(layer.legend)"
+                :content="filterContent(layer.legend.content)"
               />
             </div>
           </template>
@@ -35,7 +35,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { i18n, api, utils as coreUtils } from '../../../../core/client'
 import { useCurrentActivity } from '../../composables'
 import { KScrollArea } from '../../../../core/client/components'
@@ -82,7 +82,7 @@ const props = defineProps({
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const sublegends = ref([])
 const layers = ref([])
-const zoom = ref(null)
+const zoom = ref()
 
 // Computed
 const layersBySublegend = computed(() => {
@@ -126,18 +126,25 @@ function onHideLayer (layer) {
 function onZoomChanged () {
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
 }
-function getContent (legend) {
-  let content = legend.content
+function filterContent (content) {
+  if (!zoom.value) return content
   let result
-  if (!Array.isArray(content)) content = [content]
-  _.forEach(content, item => {
-    const minZoom = _.get(item, 'minZoom', 0)
-    const maxZoom = _.get(item, 'maxZoom', 99)
-    if (zoom.value >= minZoom && zoom.value <= maxZoom) {
-      result = item
-      return false
-    }
+  if (Array.isArray(content)) {
+    _.forEach(content, item => {
+      const minZoom = _.get(item, 'minZoom', 0)
+      const maxZoom = _.get(item, 'maxZoom', 99)
+      if (zoom.value >= minZoom && zoom.value <= maxZoom) {
+        result = item
+        return false
+      }
   })
+  } else {
+    const minZoom = _.get(content, 'minZoom', 0)
+    const maxZoom = _.get(content, 'maxZoom', 99)
+    if (zoom.value >= minZoom && zoom.value <= maxZoom) {
+      result = content
+    }
+  }
   return result
 }
 
@@ -157,25 +164,29 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
     if (legend.i18n) i18n.registerTranslation(legend.i18n)
   })
 }, { immediate: true })
-
-// Hooks
-onMounted(async () => {
-  // retrieve current zoom
-  zoom.value = CurrentActivity.value.getCenter().zoomLevel
-  // initial scan of already added layers
-  CurrentActivity.value.getLayers().forEach((layer) => {
-    if (CurrentActivity.value.isLayerVisible(layer.name)) {
-      onShowLayer(layer)
-    }
-  })
-  // listen to the layer shown/hiddend signals
-  CurrentActivity.value.$engineEvents.on('layer-shown', onShowLayer)
-  CurrentActivity.value.$engineEvents.on('layer-hidden', onHideLayer)
-  CurrentActivity.value.$engineEvents.on('zoomend', onZoomChanged)
-})
-onBeforeUnmount(() => {
-  CurrentActivity.value.$engineEvents.on('zoomend', onZoomChanged)
-  CurrentActivity.value.$engineEvents.off('layer-shown', onShowLayer)
-  CurrentActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
-})
+watch(CurrentActivity, (newActivity, oldActivity) => {
+  if (oldActivity) {
+    // remove listeners
+    oldActivity.value.$engineEvents.off('zoomend', onZoomChanged)
+    oldActivity.value.$engineEvents.off('layer-shown', onShowLayer)
+    oldActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
+    // clear legend
+    sublegends.value = []
+    layers.value = []
+    zoom.value = undefined
+  }
+  if (newActivity) {
+    // setup legend
+    zoom.value = newActivity.getCenter().zoomLevel
+    newActivity.getLayers().forEach((layer) => {
+      if (newActivity.isLayerVisible(layer.name)) {
+        onShowLayer(layer)
+      }
+    })
+    // install listeners
+    newActivity.$engineEvents.on('layer-shown', onShowLayer)
+    newActivity.$engineEvents.on('layer-hidden', onHideLayer)
+    newActivity.$engineEvents.on('zoomend', onZoomChanged)
+  }
+}, { immediate: true })
 </script>
