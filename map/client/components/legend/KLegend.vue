@@ -131,7 +131,6 @@ function onZoomChanged () {
 }
 function filterContent (layer) {
   const content = layer.legend.content
-  console.log(layer, CurrentActivity.value)
   if (!zoom.value) return content
   let result
   if (Array.isArray(content)) {
