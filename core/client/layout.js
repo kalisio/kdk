@@ -200,7 +200,7 @@ export const Layout = {
     Store.patch(this.getElementPath('fab'), { icon })
   },
   setFabPosition (position) {
-    if (!['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes('position)')) {
+    if (!['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes(position)) {
       logger.warn(`[KDK] Invalid position ${position}`)
       return
     }
