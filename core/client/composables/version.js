@@ -41,7 +41,7 @@ export function useVersion () {
     logger.debug('Setting API version from capabilities')
     Version.value.api.number = Capabilities.get('version')
     Version.value.api.buildNumber = Capabilities.get('buildNumber')
-    if (Platform.cordova || Platform.pwa) checkVersion()
+    if (Platform.cordova) checkVersion()
   }
 
   // Expose
@@ -63,13 +63,6 @@ export async function checkVersion () {
     // and would like to know if the mobile client is up-to-date
     else if (api.buildNumber === config.buildNumber) return
   }
-  Notify.create({ 
-    type: 'warning',
-    timeout: 0,
-    message: i18n.t('pwa.VERSION_MISMATCH'),
-    actions: [
-      { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => location.reload(true) },
-      { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white', handler: () => Notify.setDefaults() }
-    ]
-  })
+  // Notify when a new version is available
+  Notify.create({ type: 'warning', message: i18n.t('composables.VERSION_MISMATCH') })
 }
