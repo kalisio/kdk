@@ -2,42 +2,9 @@
   <div>
     <slot name="header" />
     <div v-if="layers.length > 0">
-      <template v-for="layer in layers" :key="getId(layer)">
-        <div :id="getId(layer)" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
-          <!-- Layer name -->
-          <div
-            class="row ellipsis-2-lines"
-            :class="{
-              'text-primary text-weight-bold': layer.isVisible,
-              'text-grey-6': layer.isDisabled
-            }"
-          >
-            {{ layer.label || layer.name }}
-            <q-badge v-if="layer.badge" v-bind="layer.badge">
-              <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
-            </q-badge>
-            <q-tooltip
-              v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
-              anchor="center left"
-              self="center right"
-              :offset="[20, 0]">
-              {{ layer.tooltip || layer.description }}
-            </q-tooltip>
-          </div>
-          <q-space />
-          <q-icon name="las la-exclamation-circle" size="sm" color="warning" v-if="layer.isDisabled">
-            <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
-          </q-icon>
-          <!-- Layer toggle -->
-          <q-toggle v-model="layer.isVisible" :disable="layer.isDisabled" size="sm" @update:modelValue="onLayerClicked(layer)" />
-          <!-- Layer actions -->
-          <k-panel
-            :id="`${layer.name}-actions`"
-            :content="layer.actions"
-            :context="layer"
-            :filter="{ id: { $nin: ['toggle'] } }"
-          />
-        </div>
+      <template v-for="layer in layers">
+        <component :is="layerRenderer.component" v-bind="layerRenderer.options" :layer="layer"
+          @toggled="onLayerToggled" @filter-toggled="onLayerFilterToggled"/>
       </template>
     </div>
     <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pa-sm">
@@ -49,16 +16,13 @@
 
 <script>
 import _ from 'lodash'
-import { QToggle } from 'quasar'
 import { utils } from '../../../../core/client'
-import { KStamp, KPanel } from '../../../../core/client/components'
+import { KStamp } from '../../../../core/client/components'
 
 export default {
   name: 'k-layers-selector',
   components: {
-    QToggle,
-    KStamp,
-    KPanel
+    KStamp
   },
   props: {
     layers: {
@@ -70,20 +34,20 @@ export default {
       default: () => {}
     }
   },
+  computed: {
+    layerRenderer () {
+      return {
+        component: utils.loadComponent(_.get(this.options, 'renderer', 'catalog/KFilteredLayerItem')),
+        options: _.get(this.options, 'renderer.options', {})
+      }
+    },
+  },
   methods: {
-    getId (layer) {
-      const name = _.kebabCase(layer.name)
-      if (_.startsWith(name, 'layers-')) return name
-      return 'layers-' + name
-    },
-    layerIcon (layer) {
-      return utils.getIconName(layer, 'icon')
-    },
     toggleLayer (layer) {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
     },
-    onLayerClicked (layer) {
+    onLayerToggled (layer) {
       if (layer.isDisabled) return
       if (this.options.exclusive) {
         const selectedLayer = _.find(this.layers, { isVisible: true })
@@ -91,6 +55,14 @@ export default {
         if (layer === selectedLayer) return
       }
       this.toggleLayer(layer)
+    },
+    toggleLayerFilter (layer, filter) {
+      const toggleFilterAction = _.find(layer.actions, { id: 'toggle-filter' })
+      if (toggleFilterAction) toggleFilterAction.handler(filter)
+    },
+    onLayerFilterToggled (layer, filter) {
+      if (layer.isDisabled) return
+      this.toggleLayerFilter(layer)
     }
   }
 }

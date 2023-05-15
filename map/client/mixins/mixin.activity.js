@@ -192,8 +192,9 @@ export const activity = {
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
       actions = kCoreUtils.bindContent(_.cloneDeep(actions), this)
-      // Add 'virtual' action used to trigger the layer
+      // Add 'virtual' actions used to trigger the layer/filters
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
+      actions.push({ id: 'toggle-filter', handler: (filter) => this.onTriggerLayerFilter(layer, filter) })
       // Store the actions
       layer.actions = actions
       return actions
@@ -207,6 +208,10 @@ export const activity = {
       // Check if the activity is using context restoration
       const hasContext = (typeof this.storeContext === 'function')
       if (hasContext) this.storeContext('layers')
+    },
+    async onTriggerLayerFilter (layer, filter) {
+      // Can only apply to realtime layers as we need to force a data refresh
+      if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name)
     },
     onZoomIn () {
       const center = this.getCenter()

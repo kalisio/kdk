@@ -15,7 +15,7 @@ export default {
     create: [
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'data.type') } }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
-      coreHooks.convertToString(['schema.content']),
+      coreHooks.convertToString(['schema.content', 'filters']),
       setNow('createdAt', 'updatedAt'),
       // This allow to use keys for base queries like 'properties.xxx': 'yyy'
       (hook) => { _.set(hook, 'params.mongodb.checkKeys', false) }
@@ -24,7 +24,7 @@ export default {
       coreHooks.populatePreviousObject,
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
-      coreHooks.convertToString(['schema.content']),
+      coreHooks.convertToString(['schema.content', 'filters']),
       discard('createdAt', 'updatedAt'),
       setNow('updatedAt')
     ],
@@ -32,7 +32,7 @@ export default {
       coreHooks.populatePreviousObject,
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
       coreHooks.convertObjectIDs(['baseQuery.layer']),
-      coreHooks.convertToString(['schema.content']),
+      coreHooks.convertToString(['schema.content', 'filters']),
       discard('createdAt', 'updatedAt'),
       setNow('updatedAt')
     ],
@@ -43,7 +43,7 @@ export default {
 
   after: {
     all: [
-      coreHooks.convertToJson(['schema.content'])
+      coreHooks.convertToJson(['schema.content', 'filters'])
     ],
     find: [
       // Merge built-in categories with user-defined ones
