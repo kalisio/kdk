@@ -139,7 +139,7 @@ export const baseGlobe = {
         return this.viewer.scene.imageryLayers.contains(cesiumLayer)
       } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         return this.viewer.scene.primitives.contains(cesiumLayer) && cesiumLayer.show
-      } else {
+      } else { // Entity data source otherwise
         return this.viewer.dataSources.contains(cesiumLayer)
       }
     },
@@ -188,7 +188,7 @@ export const baseGlobe = {
       } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         cesiumLayer.show = true
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
-      } else {
+      } else { // Entity data source otherwise
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
@@ -214,8 +214,8 @@ export const baseGlobe = {
         this.viewer.scene.imageryLayers.remove(cesiumLayer, false)
       } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         cesiumLayer.show = false
-      } else {
-        this.viewer.dataSources.remove(cesiumLayer, false)
+      } else { // Entity data source otherwise
+        this.viewer.dataSources.remove(cesiumLayer, true)
       }
       this.onLayerHidden(layer, cesiumLayer)
     },

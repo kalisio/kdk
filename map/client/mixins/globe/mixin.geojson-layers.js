@@ -14,6 +14,9 @@ export const geojsonLayers = {
       return { stroke, strokeWidth, fill }
     },
     async loadGeoJson (dataSource, geoJson, cesiumOptions) {
+      // Clean any previous data as otherwise it seems
+      // data is not correctly updated in viewer
+      dataSource.entities.removeAll()
       await dataSource.load(geoJson, cesiumOptions)
       // Process specific entities
       const entities = dataSource.entities.values
