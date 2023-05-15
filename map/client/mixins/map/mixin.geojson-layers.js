@@ -156,6 +156,9 @@ export const geojsonLayers = {
           leafletOptions.removeMissing = !options.probeService
           let initialized = !options.probeService // If no probe reference, nothing to be initialized
           _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
+            // FIXME: need to retrieve original layer options as here we get processed options by the underlying engine
+            // and eg filtering depends on changing the state of the layer definition object at run time
+            options = this.getLayerByName(options.name)
             // If the probe location is given by another service use it on initialization
             if (!initialized) {
               try {
@@ -402,15 +405,18 @@ export const geojsonLayers = {
         (see https://github.com/perliedman/leaflet-realtime/issues/136)
          but we'd like to perform similarly to automated updates
       */
-      if (remove && (typeof layer.remove === 'function')) {
-        geoJson = geoJson || this.toGeoJson(name)
+      if (remove) {
+        if (typeof layer.remove !== 'function') return
         let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         // Filter features to ensure some have not been already removed
         // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
         features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
         layer.remove(features)
-      } else if (typeof layer._onNewData === 'function') {
-        layer._onNewData(removeMissing, geoJson || this.toGeoJson(name))
+      } else if (geoJson) {
+        if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, geoJson)
+      } else { // Fetch new data or update in place
+        if (typeof layer.update === 'function') layer.update()
+        else if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, this.toGeoJson(name))
       }
     },
     onLayerUpdated (layer, leafletLayer, data) {
@@ -485,7 +491,7 @@ export const geojsonLayers = {
         if (layer.showTooltips !== showTooltips) {
           // Tag layer to know it has been updated
           layer.showTooltips = showTooltips
-          this.updateLayer(geoJsonlayer.name)
+          this.updateLayer(geoJsonlayer.name, this.toGeoJson(geoJsonlayer.name))
         }
       })
     }
