@@ -38,7 +38,7 @@
       Window content
       -->
     <div class="fit" v-if="widget">
-      <KScrollArea v-if="isWidgetScrollable"
+      <KScrollArea v-if="widget.scrollable"
         :maxHeight="widgetHeight"
         :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px;`"
       >
@@ -46,14 +46,14 @@
           ref="widgetRef"
           :is="widget.instance"
           v-bind="widget.content"
-          :style="widgetStyle"
+          :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px; min-height: ${widgetHeight}px`"
         />
       </KScrollArea>
       <component v-else
         ref="widgetRef"
         :is="widget.instance"
         v-bind="widget.content"
-        :style="widgetStyle"
+        :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px; min-height: ${widgetHeight}px; max-height: ${widgetHeight}px`"
       />
     </div>
     <!--
@@ -213,17 +213,6 @@ const widgetHeight = computed(() => {
 })
 const widgetWidth = computed(() => {
   return currentWindow.size[0] - border
-})
-const widgetStyle = computed(() => {
-  const style = `min-width: ${widgetWidth.value}px;
-               max-width: ${widgetWidth.value}px;
-               min-height: ${widgetHeight.value}px;
-               z-index: 1;`
-  if (widget.value.scrollable) return style
-  return style + `max-height: ${widgetHeight.value}px;`
-})
-const isWidgetScrollable = computed(() => {
-  return widget.value ? widget.value.scrollable : false
 })
 
 // Watch
