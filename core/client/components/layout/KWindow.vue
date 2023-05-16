@@ -38,10 +38,10 @@
       Window content
       -->
     <div class="fit" v-if="widget">
-      <KScrollArea v-if="isWidgetScrollable" 
-        :maxHeight="widgetHeight" 
+      <KScrollArea v-if="isWidgetScrollable"
+        :maxHeight="widgetHeight"
         :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px;`"
-      > 
+      >
         <component
           ref="widgetRef"
           :is="widget.instance"
@@ -214,7 +214,7 @@ const widgetWidth = computed(() => {
   return currentWindow.size[0] - border
 })
 const widgetStyle = computed(() => {
-  let style = `min-width: ${widgetWidth.value}px;
+  const style = `min-width: ${widgetWidth.value}px;
                max-width: ${widgetWidth.value}px;
                min-height: ${widgetHeight.value}px;
                z-index: 1;`
