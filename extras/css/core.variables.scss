@@ -2,33 +2,33 @@
 // https://quasar.dev/style/sass-scss-variables#variables-list
 
 // Theme
-$primary: #bf360c;
-$secondary: lighten($primary, 75%);
-$accent: lighten($primary, 25%);
-$dark: darken($primary, 25%);
-$info: $accent;
-$positive: #7bb946;
-$negative: #c74a4a;
-$warning: #d09931;
+$primary: #bf360c !default;
+$secondary: lighten($primary, 75%) !default;
+$accent: lighten($primary, 25%) !default;
+$dark: darken($primary, 25%) !default;
+$info: $accent !default;
+$positive: #7bb946 !default;
+$negative: #c74a4a !default;
+$warning: #d09931 !default;
 
 // Pane
-$left-pane-width: 300px;
+$left-pane-width: 300px !default;
 
 // Window
-$window-min-width: 300px;
-$window-min-height: 300px;
-$window-background: #ffffff;
-$window-border-style: solid;
-$window-border-width: 1px;
-$window-border-color: lightgray;
-$window-border-radius: 4px;
-$window-hover-border-color: $primary;
-$window-header-background: #eeeeee;
-$window-header-hover-background: #dddddd;
-$window-controls-size: 1rem;
+$window-min-width: 300px !default;
+$window-min-height: 300px !default;
+$window-background: #ffffff !default;
+$window-border-style: solid !default;
+$window-border-width: 1px !default;
+$window-border-color: lightgray !default;
+$window-border-radius: 4px !default;
+$window-hover-border-color: $primary !default;
+$window-header-background: #eeeeee !default;
+$window-header-hover-background: #dddddd !default;
+$window-controls-size: 1rem !default;
 
 // Sticky
-$sticky-z-index: 1000;
+$sticky-z-index: 1000 !default;
 
 // Table: quasar has eg $table-hover-background but nothing for background
-$table-background: #fff;
+$table-background: #fff !default;
