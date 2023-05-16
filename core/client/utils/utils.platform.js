@@ -13,7 +13,6 @@ export function getPlatform () {
 export function updatePwa (registration) {
   // Refresh the page once the update has been applied
   registration.waiting.addEventListener('statechange', (event) => {
-    console.log('toto', event)
     if (event.target.state === 'activated') {
       window.location.reload()
     }
