@@ -37,9 +37,19 @@
     <!--
       Window content
       -->
-    <div class="fit">
-      <component
-        v-if="widget"
+    <div class="fit" v-if="widget">
+      <KScrollArea v-if="isWidgetScrollable" 
+        :maxHeight="widgetHeight" 
+        :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px;`"
+      > 
+        <component
+          ref="widgetRef"
+          :is="widget.instance"
+          v-bind="widget.content"
+          :style="widgetStyle"
+        />
+      </KScrollArea>
+      <component v-else
         ref="widgetRef"
         :is="widget.instance"
         v-bind="widget.content"
@@ -92,6 +102,7 @@ const pinIcons = {
   top: 'las la-angle-up',
   bottom: 'las la-angle-down'
 }
+const border = 2
 let backupPosition
 let backupSize
 let backupMode
@@ -186,7 +197,7 @@ const widgetHeader = computed(() => {
   header = utils.bindContent(header, widgetRef.value)
   return header
 })
-const widgetStyle = computed(() => {
+const widgetHeight = computed(() => {
   // compute the widget height
   let widgetHeight = Math.max(currentWindow.size[1], currentWindow.minSize[1])
   const windowHeaderElement = document.getElementById('window-header')
@@ -197,13 +208,21 @@ const widgetStyle = computed(() => {
   if (windowFooterElement) {
     widgetHeight -= parseInt(window.getComputedStyle(windowFooterElement).getPropertyValue('height'))
   }
-  // return the style
-  const border = 2
-  return `min-width: ${currentWindow.size[0] - border}px;
-          max-width: ${currentWindow.size[0] - border}px;
-          min-height: ${widgetHeight - border}px;
-          max-height: ${widgetHeight - border}px;
-          z-index: 1;`
+  return widgetHeight - border
+})
+const widgetWidth = computed(() => {
+  return currentWindow.size[0] - border
+})
+const widgetStyle = computed(() => {
+  let style = `min-width: ${widgetWidth.value}px;
+               max-width: ${widgetWidth.value}px;
+               min-height: ${widgetHeight.value}px;
+               z-index: 1;`
+  if (widget.value.scrollable) return style
+  return style + `max-height: ${widgetHeight.value}px;`
+})
+const isWidgetScrollable = computed(() => {
+  return widget.value ? widget.value.scrollable : false
 })
 
 // Watch

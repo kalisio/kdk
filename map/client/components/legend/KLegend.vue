@@ -1,33 +1,31 @@
 <template>
-  <div class="column full-width">
-    <KScrollArea :maxHeight="maxHeight">
-      <!-- Sublegends -->
-      <template
-        v-for="sublegend in sublegends"
-        :key="sublegend.name"
-        class="column full-width"
+  <div class="column no-wrap">
+    <!-- Sublegends -->
+    <template
+      v-for="sublegend in sublegends"
+      :key="sublegend.name"
+      class="column full-width"
+    >
+      <!-- sublegend -->
+      <q-expansion-item
+        v-if="!_.isEmpty(layersBySublegend[sublegend.name])"
+        :label="$tie(sublegend.name)"
+        :header-class="sublegend.headerClass || headerClass"
+        :default-opened="sublegend.opened || opened"
+        dense
       >
-        <!-- sublegend -->
-        <q-expansion-item
-          v-if="!_.isEmpty(layersBySublegend[sublegend.name])"
-          :label="$tie(sublegend.name)"
-          :header-class="sublegend.headerClass || headerClass"
-          :default-opened="sublegend.opened || opened"
-          dense
-        >
-          <!-- legend components by layers -->
-          <template v-for="layer in layersBySublegend[sublegend.name]" :key="layer.name" class="column full-width">
-            <div class="q-py-xs q-px-md">
-              <component
-                :is="layer.legend.renderer"
-                :label="layer.legend.label"
-                :content="filterContent(layer)"
-              />
-            </div>
-          </template>
-        </q-expansion-item>
-      </template>
-    </KScrollArea>
+        <!-- legend components by layers -->
+        <template v-for="layer in layersBySublegend[sublegend.name]" :key="layer.name" class="column full-width">
+          <div class="q-py-xs q-px-md">
+            <component
+              :is="layer.legend.renderer"
+              :label="layer.legend.label"
+              :content="filterContent(layer)"
+            />
+          </div>
+        </template>
+      </q-expansion-item>
+    </template>
   </div>
 </template>
 
@@ -38,17 +36,12 @@ import sift from 'sift'
 import { ref, computed, watch } from 'vue'
 import { i18n, api, utils as coreUtils } from '../../../../core/client'
 import { useCurrentActivity } from '../../composables'
-import { KScrollArea } from '../../../../core/client/components'
 
 // Props
 const props = defineProps({
   contextId: {
     type: String,
     default: undefined
-  },
-  maxHeight: {
-    type: Number,
-    default: 800
   },
   headerClass: {
     type: String,

@@ -1,15 +1,12 @@
 <template>
-  <div id="information-box" class="fit column">
-    <q-resize-observer @resize="onResized" />
-    <div v-if="schema && properties" class="row">
-      <KScrollArea class="col" :maxHeight="height">
-        <KView
-          class="q-pa-md"
-          :values="properties"
-          :schema="schema"
-          :separators="true"
-        />
-      </KScrollArea>
+  <div id="information-box" class="column">
+    <div v-if="schema && properties" class="row full-width">
+      <KView
+        class="q-pa-md full-width"
+        :values="properties"
+        :schema="schema"
+        :separators="true"
+      />
     </div>
     <div v-else class="absolute-center">
       <KStamp
@@ -27,13 +24,12 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { ref } from 'vue'
 import { copyToClipboard, exportFile } from 'quasar'
-import { KScrollArea, KView, KPanel, KStamp } from '../../../../core/client/components'
+import { KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
 import { useCurrentActivity, useHighlight } from '../../composables'
 
 export default {
   components: {
-    KScrollArea,
     KView,
     KPanel,
     KStamp
@@ -133,9 +129,6 @@ export default {
         if (status) this.$notify({ type: 'error', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
         else this.$notify({ type: 'error', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
       }
-    },
-    onResized (size) {
-      this.height = size.height
     }
   },
   setup (props) {
