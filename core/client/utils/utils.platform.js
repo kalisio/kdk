@@ -14,12 +14,12 @@ export function updatePwa (registration) {
   // Refresh the page once the update has been applied
   registration.waiting.addEventListener('statechange', (event) => {
     console.log('toto', event)
-    if (event.target.state === "activated") {
+    if (event.target.state === 'activated') {
       window.location.reload()
     }
   })
   // Notify when a new version is available
-  Notify.create({ 
+  Notify.create({
     type: 'warning',
     timeout: 0,
     message: i18n.t('pwa.VERSION_MISMATCH'),

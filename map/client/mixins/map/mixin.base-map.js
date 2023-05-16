@@ -467,7 +467,7 @@ export const baseMap = {
           return
         }
       }
-      const bbox = _.get(layer, 'bbox') 
+      const bbox = _.get(layer, 'bbox')
       if (bbox) {
         this.zoomToBBox(bbox)
       } else {

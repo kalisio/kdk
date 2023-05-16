@@ -36,6 +36,24 @@ export const featureService = {
           Object.assign(filterQuery, options.filterQuery)
         }
       }
+      // Any filters to process ?
+      const filters = _.get(options, 'filters', [])
+      if (!_.isEmpty(filters)) {
+        // To be flexible enough filters can provide a query for their active and inactive state
+        // Similarly, filters can be combined with a different operator for each state
+        const filterOperators = _.get(options, 'filterOperators', { active: '$or', inactive: '$and' })
+        // Aggregate filter queries according to filter states
+        const activeFilters = filters
+          .filter(filter => filter.isActive)
+          .map(filter => filter.active)
+          .filter(query => !_.isEmpty(query))
+        if (!_.isEmpty(activeFilters)) filterQuery[filterOperators.active] = activeFilters
+        const inactiveFilters = filters
+          .filter(filter => !filter.isActive)
+          .map(filter => filter.inactive)
+          .filter(query => !_.isEmpty(query))
+        if (!_.isEmpty(inactiveFilters)) filterQuery[filterOperators.inactive] = inactiveFilters
+      }
       return filterQuery
     },
     async getSortQueryForFeatures (options) {

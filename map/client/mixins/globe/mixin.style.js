@@ -57,11 +57,13 @@ export const style = {
         const constructor = args[0]
         args.shift()
         const Class = _.get(Cesium, constructor)
-        // Can be constant, constructable or callable
+        // Can be callable, constructable or constant
+        let object
         if (typeof Class === 'function') {
-          try { return Class(...args) } catch (error) { /* Simply avoid raising any error */ }
-          try { return new Class(...args) } catch (error) { /* Simply avoid raising any error */ }
-        } else return Class
+          try { object = Class(...args) } catch (error) { /* Simply avoid raising any error */ }
+          try { object = new Class(...args) } catch (error) { /* Simply avoid raising any error */ }
+        } else object = Class
+        return object
       }
       const mapValue = (value) => {
         if (typeof value === 'object') {
