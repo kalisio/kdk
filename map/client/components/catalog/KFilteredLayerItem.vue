@@ -1,5 +1,6 @@
 <template>
-  <q-tree :nodes="[layer]"
+  <k-layer-item v-if="!layer.filters" v-bind="$props" :layer="layer"/>
+  <q-tree v-else :nodes="[layer]"
     dense node-key="label" label-key="label" children-key="filters">
     <template v-slot:default-header="prop">
       <!-- Layer rendering -->
