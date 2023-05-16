@@ -71,7 +71,7 @@
       </template>
     </q-field>
   </div>
-  
+
 </template>
 
 <script>

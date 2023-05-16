@@ -38,21 +38,21 @@
     </svg>
     <div v-if="indicator"
       style="position: absolute; top: 35%; left: 110%;">
-      <q-chip 
-        color="primary" 
-        text-color="white" 
+      <q-chip
+        color="primary"
+        text-color="white"
         outline
-        :label="`${modelValue}°`" 
+        :label="`${modelValue}°`"
       />
       <q-popup-edit
         v-model="direction"
         v-slot="scope"
         auto-save
       >
-        <q-input 
+        <q-input
           v-model.number="scope.value"
           suffix="°"
-          autofocus 
+          autofocus
           dense
           @keyup.enter="scope.set"
         />
@@ -117,10 +117,6 @@ function computeDirection (x, y) {
   const dx = x - center.x
   const dy = y - center.y
   direction.value = (Math.round(Math.atan2(dy, dx) * 180 / Math.PI) + 450) % 360
-}
-function onClicked (event) {
-  const { x, y } = event
-  computeDirection(x, y)
 }
 function onHandleDrag (event) {
   const { x, y } = event.type.startsWith('touch') ? event.changedTouches[0] : event
