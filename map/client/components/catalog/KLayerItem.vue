@@ -57,7 +57,7 @@ export default {
       const name = _.kebabCase(this.layer.name)
       if (_.startsWith(name, 'layers-')) return name
       return 'layers-' + name
-    }, 
+    },
     icon () {
       return utils.getIconName(this.layer, 'icon')
     }

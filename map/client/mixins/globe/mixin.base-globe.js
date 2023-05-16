@@ -276,9 +276,9 @@ export const baseGlobe = {
     zoomToBounds (bounds) {
       this.viewer.camera.flyTo({
         duration: 0,
-        destination: Array.isArray(bounds) ? // Assume Cesium rectangle object if not array
-          Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]) :
-          bounds
+        destination: Array.isArray(bounds) // Assume Cesium rectangle object if not array
+          ? Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0])
+          : bounds
       })
     },
     zoomToBBox (bbox) {

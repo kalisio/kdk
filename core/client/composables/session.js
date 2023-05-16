@@ -18,7 +18,7 @@ export function useSession (options = {}) {
   const $q = useQuasar()
   const { Version } = useVersion()
 
-  let isInitialized = ref(false)
+  const isInitialized = ref(false)
   let pendingReconnection = null
 
   // Computed

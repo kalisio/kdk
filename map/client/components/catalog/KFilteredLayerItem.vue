@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import KLayerItem from './KLayerItem.vue'
 
 export default {

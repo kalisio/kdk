@@ -141,7 +141,7 @@ function filterContent (layer) {
         result = item
         return false
       }
-  })
+    })
   } else {
     const minZoom = _.get(layer, `${engine.value}.minZoom`, _.get(content, 'minZoom', 0))
     const maxZoom = _.get(layer, `${engine.value}.maxZoom`, _.get(content, 'maxZoom', 99))

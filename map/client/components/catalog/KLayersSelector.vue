@@ -40,7 +40,7 @@ export default {
         component: utils.loadComponent(_.get(this.options, 'renderer', 'catalog/KFilteredLayerItem')),
         options: _.get(this.options, 'renderer.options', {})
       }
-    },
+    }
   },
   methods: {
     toggleLayer (layer) {

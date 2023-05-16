@@ -209,12 +209,6 @@ export default {
       // Required to update the array to make it reactive
       this.filters = this.filters.filter(item => item.key !== filter.key)
     },
-    getCurrentLayerFilters () {
-      const filters = _.get(this.layer, 'filters', [])
-      return filters.filter(filter =>
-        _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
-      )
-    },
     async onApply () {
       logger.debug('Applying layer filter', this.filters)
       // Reset filters

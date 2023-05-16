@@ -17,7 +17,7 @@
         :fill="getCssVar('primary')"
         :stroke="getCssVar('primary')"
         :transform="`rotate(${direction}, 50, 50)`"
-      />    
+      />
       <text x="50" y="7" text-anchor="middle" alignment-baseline="middle" font-size="8px" fill="white">
         {{ $t('KCompass.NORTH') }}
       </text>
