@@ -1,25 +1,25 @@
 <template>
-  <k-modal
+  <KModal
     id="features-table-modal"
     :title="title"
-    :maximized="isModalMaximized"
+    widthPolicy="wide"
     :buttons="buttons"
     v-model="isModalOpened"
   >
-    <k-table
+    <KTable
       :service="service"
       :contextId="contextId"
       :schema-json="schema"
       :item-actions="actions"
       :base-query="layer.baseQuery"
-      :style="`height: ${height}px; max-width: ${width}px;`">
+    >
       <template v-slot:empty-section>
         <div class="absolute-center">
           <KStamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
         </div>
       </template>
-    </k-table>
-  </k-modal>
+    </KTable>
+  </KModal>
 </template>
 
 <script>
@@ -29,7 +29,6 @@ import { mixins as kCoreMixins, composables as kCoreComposables } from '../../..
 import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
-  name: 'k-features-table',
   inject: ['kActivity', 'selectedLayer'],
   components: {
     KTable,
@@ -77,12 +76,6 @@ export default {
           this.closeModal()
         }
       }]
-    },
-    width () {
-      return this.$q.screen.width - 50
-    },
-    height () {
-      return this.$q.screen.height - 80
     },
     schema () {
       return JSON.stringify(_.get(this.layer, 'schema.content'))
