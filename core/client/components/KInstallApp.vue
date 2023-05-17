@@ -17,22 +17,22 @@ import logger from 'loglevel'
 
 // Data
 const showInstallApp = ref(false)
-const deferredPrompt = ref(null)
+let deferredPrompt = null
 
 // functions
 async function installApp () {
   showInstallApp.value = false
   // Show the install prompt
-  deferredPrompt.value.prompt()
+  deferredPrompt.prompt()
   // Wait for the user to respond to the prompt
-  const { outcome } = await deferredPrompt.value.userChoice
+  const { outcome } = await deferredPrompt.userChoice
   logger.debug(`User response to the install prompt: ${outcome}`)
 }
 function installAppAvailable () {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault()
     // Stash the event so it can be triggered later
-    deferredPrompt.value = e
+    deferredPrompt = e
     // Show the button install app
     showInstallApp.value = true
   })
