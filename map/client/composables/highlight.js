@@ -163,7 +163,7 @@ export function useHighlight (name, options = {}) {
       features = features.filter(feature => !feature.isDisabled)
       // Order from back to front
       features = _.sortBy(features, feature => _.get(feature, 'properties.zOrder'))
-      activity.updateLayer(HighlightsLayerName, {
+      if (activity) activity.updateLayer(HighlightsLayerName, {
         type: 'FeatureCollection',
         features
       })
@@ -173,7 +173,7 @@ export function useHighlight (name, options = {}) {
   function removeHighlightsLayer () {
     // Clear any running update
     if (updateRequested) clearTimeout(updateRequested)
-    activity.removeLayer(HighlightsLayerName)
+    if (activity) activity.removeLayer(HighlightsLayerName)
   }
   function onHighlightedLayerDisabled (layer) {
     // Get all highlights

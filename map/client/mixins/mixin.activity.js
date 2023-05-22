@@ -9,7 +9,6 @@ import { utils as kCoreUtils } from '../../../core/client/index.js'
 export const activity = {
   data () {
     return {
-      forecastModelHandlers: {},
       layerCategories: [],
       variables: [],
       engine: 'leaflet',
@@ -384,9 +383,6 @@ export const activity = {
         } catch (error) {
           logger.error(`[KDK] ${error}`)
         }
-        this.forecastModelHandlers = { toggle: (model) => this.setForecastModel(model) }
-      } else {
-        this.forecastModelHandlers = {}
       }
       // Retrieve the layers
       try {

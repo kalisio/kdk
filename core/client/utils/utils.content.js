@@ -8,6 +8,21 @@ const Handlers = ['handler', 'visible', 'hidden', 'disabled', 'on.listener']
 // The content 'reserved' property is also used to recurse at caller level
 const ReservedBindings = ['content', 'visible', 'hidden', 'route']
 
+// Check if an object has a property according to its path.
+// Similar to lodash has function which causes a bug in production build with Vue proxy objects
+// It appears that with proxy objects it is safer to use the in operator or Reflect.has()
+function hasProperty(object, path) {
+  const keys = path.split('.')
+  let currentObject = object
+  for (let key of keys) {
+    if (!currentObject || !(key in currentObject)) {
+      return false
+    }
+    currentObject = currentObject[key]
+  }
+  return true
+}
+
 export function filterContent (content, filter) {
   // Handle non object content
   if (typeof content !== 'object') return content
@@ -147,15 +162,21 @@ export function getBoundValue (value, context) {
       // FIXME: we should test if the path exists but this causes
       // a bug in production build with Vue proxy objects
       // if (Store.has(path)) return Store.getRef(path)
-      const result = Store.getRef(path)
-      if (!_.isNil(result)) return result
+      if (hasProperty(Store, path)) return Store.getRef(path)
+      // Workaround if not possible to correctly check the path first
+      // but it causes problems with values initialized to null
+      //const result = Store.getRef(path)
+      //if (!_.isNil(result)) return result
     } else {
       const path = value.substring(1)
       // FIXME: we should test if the path exists but this causes
       // a bug in production build with Vue proxy objects
       // if (_.has(context, path)) return _.get(context, path)
-      const result = _.get(context, path)
-      if (!_.isNil(result)) return result
+      if (hasProperty(context, path)) return _.get(context, path)
+      // Workaround if not possible to correctly check the path first
+      // but it causes problems with values initialized to null
+      //const result = _.get(context, path)
+      //if (!_.isNil(result)) return result
     }
   }
   return value

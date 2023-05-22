@@ -33,15 +33,22 @@ export const weacast = {
     async setupForecastModels () {
       if (!this.weacastApi) return
       const response = await this.weacastApi.getService('forecasts').find()
-      this.forecastModels = response.data
+      // Required to use splice when modifying objects inside an array to make it reactive
+      this.forecastModels.splice(0, this.forecastModels.length, ...response.data)
       // store forecast models on the weacast api object too (useful in the weacast grid source)
       this.weacastApi.models = this.forecastModels
+      // Add 'virtual' actions used to trigger the layer/filters
+      this.forecastModels.forEach(forecastModel => {
+        forecastModel.actions = [{ id: 'toggle', handler: () => this.setForecastModel(forecastModel) }]
+      })
       // Select default if any or first one
+      /* Should be now done by selector when initializing using the toggle action
       let forecastModel = this.forecastModels.find(forecast => forecast.isDefault)
       if (!forecastModel) {
         forecastModel = (this.forecastModels.length > 0 ? this.forecastModels[0] : null)
       }
       this.setForecastModel(forecastModel)
+      */
     },
     setForecastModel (model) {
       this.forecastModel = model

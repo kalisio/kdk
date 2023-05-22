@@ -7,11 +7,12 @@ import mongodb from 'mongodb'
 import errors from '@feathersjs/errors'
 import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import { LocalStrategy } from '@feathersjs/authentication-local'
-import { OAuthStrategy, expressOauth } from '@feathersjs/authentication-oauth'
+import OAuth from '@feathersjs/authentication-oauth'
 import PasswordValidator from 'password-validator'
 
 const debug = makeDebug('kdk:core:authentication')
 const { ObjectID } = mongodb
+const { oauth, OAuthStrategy } = OAuth
 const { NotAuthenticated } = errors
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
@@ -156,12 +157,14 @@ export default function auth (app) {
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers
-  app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins', 'defaults']))
-  for (const provider of app.authenticationProviders) {
-    authentication.register(provider, new AuthenticationProviderStrategy())
+  if (config.oauth) {
+    app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins', 'defaults']))
+    for (const provider of app.authenticationProviders) {
+      authentication.register(provider, new AuthenticationProviderStrategy())
+    }
   }
   app.use(config.path, authentication)
-  app.configure(expressOauth())
+  app.configure(oauth())
 
   const limiter = config.limiter
   if (limiter && limiter.http) {

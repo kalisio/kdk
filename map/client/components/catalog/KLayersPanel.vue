@@ -19,8 +19,6 @@
             :is="category.componentInstance"
             :layers="layersByCategory[category.name]"
             :forecastModels="forecastModels"
-            :forecastModelHandlers="forecastModelHandlers"
-            :forecastModel="forecastModel"
             :options="category.options || category">
           </component>
         </q-expansion-item>
@@ -65,14 +63,6 @@ export default {
     forecastModels: {
       type: Array,
       default: () => []
-    },
-    forecastModelHandlers: {
-      type: Object,
-      default: () => {}
-    },
-    forecastModel: {
-      type: Object,
-      default: () => {}
     }
   },
   computed: {
