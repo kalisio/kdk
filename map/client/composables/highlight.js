@@ -163,10 +163,12 @@ export function useHighlight (name, options = {}) {
       features = features.filter(feature => !feature.isDisabled)
       // Order from back to front
       features = _.sortBy(features, feature => _.get(feature, 'properties.zOrder'))
-      if (activity) activity.updateLayer(HighlightsLayerName, {
-        type: 'FeatureCollection',
-        features
-      })
+      if (activity) {
+        activity.updateLayer(HighlightsLayerName, {
+          type: 'FeatureCollection',
+          features
+        })
+      }
       updateRequested = false
     }, options.updateDelay)
   }

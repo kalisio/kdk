@@ -12,7 +12,7 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [populateTagResource, iff(hook => _.has(hook, 'data.value') && _.has(hook, 'data.scope'), addTagIfNew)],
+    create: [populateTagResource, iff(hook => _.has(hook.data, 'value') && _.has(hook.data, 'scope'), addTagIfNew)],
     update: [],
     patch: [],
     // Let the removal of the actual tag object by ID pass without running these hooks
@@ -27,8 +27,8 @@ export default {
     // Let the tagging of the resource object occur only when resource has been found
     create: [iff(hook => hook.params.resource, tagResource)],
     // Tags are patched internally for reference counting, update only if value is changed
-    update: [iff(hook => _.has(hook, 'data.value'), updateOrganisationResource('tags'))],
-    patch: [iff(hook => _.has(hook, 'data.value'), updateOrganisationResource('tags'))],
+    update: [iff(hook => _.has(hook.data, 'value'), updateOrganisationResource('tags'))],
+    patch: [iff(hook => _.has(hook.data, 'value'), updateOrganisationResource('tags'))],
     // Let the untagging of the resource object occur only when resource has been found
     remove: [iff(hook => hook.params.resource, untagResource)]
   },
