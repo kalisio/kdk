@@ -256,6 +256,17 @@ async function createService (name, app, options = {}) {
   return service
 }
 
+async function removeService (service, app) {
+  let feathersPath = app.get('apiPath') + '/' + service.path
+  if (feathersPath.startsWith('/')) feathersPath = feathersPath.substr(1)
+
+  app.unuse(feathersPath)
+  debug(service.name + ' service unregistration completed')
+  app.emit('service-removed', service)
+
+  return service
+}
+
 export function createWebhook (path, app, options = {}) {
   let webhookPath = path
   if (options.context) {
@@ -508,6 +519,11 @@ export function kdk (config = {}) {
   // This is used to create standard services
   app.createService = async function (name, options) {
     const service = await createService(name, app, options)
+    return service
+  }
+  // This is used to remove standard services
+  app.removeService = async function (service) {
+    service = await removeService(service, app)
     return service
   }
   // This is used to create webhooks

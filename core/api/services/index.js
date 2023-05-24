@@ -10,15 +10,15 @@ const debug = makeDebug('kdk:core:services')
 
 export function createTagService (options = {}) {
   const app = this
-
   return app.createService('tags', Object.assign({
     servicesPath,
     modelsPath
   }, options))
 }
 
-export function removeTagService (options) {
-  // TODO
+export function removeTagService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('tags', options.context))
 }
 
 export function createStorageService (options = {}) {
@@ -32,8 +32,9 @@ export function createStorageService (options = {}) {
   }, options))
 }
 
-export function removeStorageService (options) {
-  // TODO
+export function removeStorageService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('storage', options.context))
 }
 
 export function createDatabasesService (options = {}) {
@@ -44,8 +45,9 @@ export function createDatabasesService (options = {}) {
   }, options))
 }
 
-export function removeDatabasesService (options) {
-  // TODO
+export function removeDatabasesService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('databases', options.context))
 }
 
 export async function createOrganisationService (options = {}) {
@@ -77,7 +79,7 @@ export async function createOrganisationService (options = {}) {
   orgsService.on('removed', organisation => {
     // Check if already done (initiator)
     const orgMembersService = app.getService('members', organisation)
-    if (orgMembersService) return
+    if (!orgMembersService) return
     orgsService.removeOrganisationServices(organisation)
   })
   return orgsService

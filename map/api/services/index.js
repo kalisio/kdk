@@ -29,8 +29,9 @@ export function createFeaturesService (options = {}) {
   }, options))
 }
 
-export function removeFeaturesService (options) {
-  // TODO
+export function removeFeaturesService (options = {}) {
+  const app = this
+  return app.removeService(app.getService(options.collection, options.context))
 }
 
 export function createCatalogService (options = {}) {
@@ -44,8 +45,9 @@ export function createCatalogService (options = {}) {
   }, options))
 }
 
-export function removeCatalogService (options) {
-  // TODO
+export function removeCatalogService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('catalog', options.context))
 }
 
 export function createAlertsService (options = {}) {
@@ -60,8 +62,9 @@ export function createAlertsService (options = {}) {
   }, options))
 }
 
-export function removeAlertsService (options) {
-  // TODO
+export function removeAlertsService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('alerts', options.context))
 }
 
 // Helper to register service and permissions for a layer

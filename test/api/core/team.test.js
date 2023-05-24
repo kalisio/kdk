@@ -593,6 +593,15 @@ describe('core:team', () => {
     expect(_.find(user1Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
     // No more permission set for org
     expect(_.find(user1Object.organisations, org => org._id.toString() === orgObject._id.toString())).beUndefined()
+    // Should remove associated services
+    orgGroupService = app.getService('groups', orgObject)
+    expect(orgGroupService).beNull()
+    // This should create a service for organisation users
+    orgUserService = app.getService('members', orgObject)
+    expect(orgUserService).beNull()
+    // This should create a service for organisation storage
+    orgStorageService = app.getService('storage', orgObject)
+    expect(orgStorageService).beNull()
     // Should remove associated DB
     const dbs = await adminDb.listDatabases()
     expect(dbs.databases.find(db => db.name === orgObject._id.toString())).beUndefined()
