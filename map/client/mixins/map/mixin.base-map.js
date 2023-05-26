@@ -34,10 +34,6 @@ import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
 import shadowIcon from 'leaflet/dist/images/marker-shadow.png'
 window.nezasa = { iso8601 }
 
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
-import shadowIcon from 'leaflet/dist/images/marker-shadow.png'
-
 // Fix to make Leaflet assets be correctly inserted by webpack
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
