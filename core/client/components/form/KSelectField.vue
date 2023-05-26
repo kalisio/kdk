@@ -5,7 +5,7 @@
     </q-chip>
   </div>
   <q-select v-else
-    :id="properties.name + '-field'"
+    :for="properties.name + '-field'"
     ref="select"
     v-model="model"
     :label="label"

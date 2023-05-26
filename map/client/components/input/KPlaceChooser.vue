@@ -1,6 +1,6 @@
 <template>
   <q-select
-    id="place-chooser"
+    for="place-chooser"
     class="q-pl-sm q-pr-sm"
     autofocus
     fill-input

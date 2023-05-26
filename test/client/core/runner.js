@@ -42,7 +42,7 @@ export class Runner {
       runDir: defaultRunDir,
       screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
       screenshotsDir: path.join(defaultRunDir, '/screenshots'),
-      mode: 'run',
+      mode: process.env.TEST_MODE || 'run',
       writeDiffs: false,
       matchTreshold: 0.1
     }, options, merger)

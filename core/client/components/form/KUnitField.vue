@@ -3,7 +3,7 @@
     {{ model }}
   </div>
   <q-select v-else
-    :id="properties.name + '-field'"
+    :for="properties.name + '-field'"
     v-model="model"
     :label="label"
     :options="options"

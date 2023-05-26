@@ -8,7 +8,7 @@ export async function isFooterVisible (page) {
   return isElementVisible(page, '#footer-panel')
 }
 
-async function clickOpener (page, placement) {
+export async function clickOpener (page, placement) {
   const selector = `#${placement}-opener`
   await page.evaluate((selector) => document.querySelector(selector).click(), selector)
   await page.waitForTimeout(500)

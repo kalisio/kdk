@@ -263,7 +263,7 @@
           </q-item-section>
           <q-item-section class="col-11">
             <q-select
-              id="style-popup-field"
+              for="style-popup-field"
               :disable="!popup"
               use-chips
               v-model="popupProperties"
@@ -296,7 +296,7 @@
           </q-item-section>
           <q-item-section class="col-11">
             <q-select
-              id="style-tooltip-field"
+              for="style-tooltip-field"
               :disable="!tooltip"
               v-model="tooltipProperty"
               :options="properties"
@@ -327,7 +327,7 @@
           </q-item-section>
           <q-item-section class="col-11">
             <q-select
-              id="style-infobox-field"
+              for="style-infobox-field"
               :disable="!infobox"
               use-chips
               v-model="infoboxProperties"

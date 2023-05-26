@@ -19,8 +19,8 @@ export async function zoomToExtent (page, bbox, wait = 2000) {
 export async function goToPosition (page, latitude, longitude) {
   const currentLocation = await core.getFromStore(page, 'geolocation.position')
   page.setGeolocation({ latitude, longitude })
-  await core.clickTopPaneAction(page, 'locate-user')
+  await core.clickPaneAction(page, 'top', 'locate-user')
   await core.waitForImagesLoaded(page)
   page.setGeolocation(currentLocation)
-  await core.clickTopPaneAction(page, 'locate-user')
+  await core.clickPaneAction(page, 'top', 'locate-user')
 }
