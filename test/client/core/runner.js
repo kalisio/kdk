@@ -42,7 +42,7 @@ export class Runner {
       runDir: defaultRunDir,
       screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
       screenshotsDir: path.join(defaultRunDir, '/screenshots'),
-      mode: 'run',
+      mode: process.env.TEST_MODE || 'run',
       writeDiffs: false,
       matchTreshold: 0.1
     }, options, merger)
@@ -101,6 +101,9 @@ export class Runner {
   }
 
   async capture (key, boundingBox) {
+    // In run mode capture in new dir so that we can compare with ref
+    // In record mode erase current ref, otherwise skip capture in preview mode
+    if ((this.options.mode !== 'run') && (this.options.mode !== 'record')) return
     // If run mode store in screenshots dir, otherwise in screenrefs dir
     const dir = (this.options.mode === 'run' ? this.options.screenshotsDir : this.options.screenrefsDir)
     const options = Object.assign(

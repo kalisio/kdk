@@ -257,6 +257,9 @@ async function createService (name, app, options = {}) {
 }
 
 async function removeService (service, app) {
+  // Often called like removeService(getService('xxx'))
+  // so that we don't want to crash if the service does not exist or has already been unregistered
+  if (!service) return
   let feathersPath = app.get('apiPath') + '/' + service.path
   if (feathersPath.startsWith('/')) feathersPath = feathersPath.substr(1)
 

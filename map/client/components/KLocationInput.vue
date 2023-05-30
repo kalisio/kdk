@@ -9,7 +9,7 @@
       />
       <!-- Search location -->
       <q-select v-show="mode === 'search'"
-        id="search-location"
+        for="search-location"
         class="col-grow"
         borderless
         :dense="dense"

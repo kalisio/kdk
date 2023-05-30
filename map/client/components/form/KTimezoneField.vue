@@ -5,7 +5,7 @@
     </div>
     <div v-else>
       <q-select
-        :id="properties.name + '-field'"
+        :for="properties.name + '-field'"
         v-model="model"
         :label="label"
         :options="options"

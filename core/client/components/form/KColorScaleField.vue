@@ -3,7 +3,7 @@
     <KColorScale v-bind="model" style="max-height: 46px" />
   </div>
   <q-select v-else
-    :id="properties.name + '-field'"
+    :for="properties.name + '-field'"
     v-model="model"
     :label="label"
     :options="options"
