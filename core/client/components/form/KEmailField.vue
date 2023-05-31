@@ -4,6 +4,7 @@
   </div>
   <q-input v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     type="email"
     v-model="model"
     :label="label"

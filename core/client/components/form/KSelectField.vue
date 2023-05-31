@@ -6,6 +6,7 @@
   </div>
   <q-select v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     ref="select"
     v-model="model"
     :label="label"
@@ -30,8 +31,8 @@
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item
-        :id="getId(scope.opt)"
         v-bind="scope.itemProps"
+        :id="getId(scope.opt)"
       >
         <q-item-section>
           <q-item-label>{{ scope.opt.label }}</q-item-label>

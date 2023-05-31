@@ -13,6 +13,7 @@
     </div>
     <q-field v-else
       :for="properties.name + '-field'"
+      :id="properties.name + '-field'"
       :value="chips"
       :label="label"
       :error-message="errorLabel"
@@ -43,6 +44,7 @@
           <q-input
             class="q-pl-sm col-grow"
             :for="properties.name + '-field'"
+            :id="properties.name + '-field'"
             v-model="input"
             autofocus type="text"
             :after="inputActions"

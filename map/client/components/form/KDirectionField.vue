@@ -5,6 +5,7 @@
   <div v-else>
     <q-input v-if="mode === 'input'"
       :for="properties.name + '-field'"
+      :id="properties.name + '-field'"
       type="number"
       v-model.number="model"
       :label="label"
@@ -46,6 +47,7 @@
     </q-input>
     <q-field v-else
       :for="properties.name + '-field'"
+      :id="properties.name + '-field'"
       :ref="onReferenceCreated"
       :label="label"
       stack-label

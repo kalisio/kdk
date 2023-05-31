@@ -10,6 +10,7 @@
       <!-- Search location -->
       <q-select v-show="mode === 'search'"
         for="search-location"
+        id="search-location"
         class="col-grow"
         borderless
         :dense="dense"

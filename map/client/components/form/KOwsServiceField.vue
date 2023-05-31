@@ -1,6 +1,7 @@
 <template>
   <q-select
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     ref="select"
     v-model="request"
     :label="label"

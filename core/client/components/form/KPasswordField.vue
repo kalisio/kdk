@@ -3,6 +3,7 @@
   </div>
   <q-input v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     :type="showPassword ? 'password' : 'text'"
     v-model="model"
     :label="label"

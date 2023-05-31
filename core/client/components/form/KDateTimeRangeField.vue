@@ -4,6 +4,7 @@
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     v-model="model"
     :label="label"
     :error-message="errorLabel"

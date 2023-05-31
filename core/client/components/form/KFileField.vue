@@ -6,6 +6,7 @@
   </div>
   <q-file v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     v-model="file"
     :label="label"
     clearable

@@ -2,7 +2,7 @@
   <KModal ref="modal" :buttons="getButtons()">
     <div class="column q-gutter-sm">
       <div class="row justify-between">
-        <q-select for="icon-categories"
+        <q-select for="icon-categories" id="icon-categories"
           v-if="categories"
           :label="$t('KIconChooser.SEARCH_CATEGORY_LABEL')"
           :options="categoryOptions"
