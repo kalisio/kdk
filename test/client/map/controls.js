@@ -12,15 +12,16 @@ export async function zoomToExtent (page, bbox, wait = 2000) {
   // about:blank or navigation to the same URL with a different hash, which would succeed and return null.
   await page.goto(newUrl)
   await page.goto(newUrl)
-  await core.waitForImagesLoaded(page)
+  await page.waitForNetworkIdle()
   await page.waitForTimeout(wait)
 }
 
-export async function goToPosition (page, latitude, longitude) {
+// Accuracy is required to get some desired behaviours
+export async function goToPosition (page, latitude, longitude, accuracy = core.GeolocationAccuracy) {
   const currentLocation = await core.getFromStore(page, 'geolocation.position')
-  page.setGeolocation({ latitude, longitude })
+  await page.setGeolocation({ latitude, longitude, accuracy })
   await core.clickPaneAction(page, 'top', 'locate-user')
-  await core.waitForImagesLoaded(page)
-  page.setGeolocation(currentLocation)
+  await page.waitForNetworkIdle()
+  if (currentLocation) await page.setGeolocation(currentLocation)
   await core.clickPaneAction(page, 'top', 'locate-user')
 }

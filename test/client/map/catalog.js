@@ -48,7 +48,7 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickPaneAction(page, 'right', categoryId, 500)
   }
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
-  await core.waitForImagesLoaded(page)
+  await page.waitForNetworkIdle()
   await page.waitForTimeout(wait)
 }
 
@@ -116,7 +116,7 @@ export async function importLayer (page, filePath, featureId = undefined, wait =
     await core.click(page, `#${featureId}`, 500)
   }
   await core.clickAction(page, 'import-layer-action')
-  await core.waitForImagesLoaded(page)
+  await page.waitForNetworkIdle()
   await page.waitForTimeout(wait)
 }
 
@@ -127,7 +127,7 @@ export async function connectLayer (page, service, layerId, wait = 2000) {
   await core.click(page, '#layer-field', 500)
   await core.click(page, `#${layerId}`, 500)
   await core.clickAction(page, 'connect-layer-action', 2000)
-  await core.waitForImagesLoaded(page)
+  await page.waitForNetworkIdle()
   await page.waitForTimeout(wait)
 }
 

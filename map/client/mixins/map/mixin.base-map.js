@@ -513,8 +513,14 @@ export const baseMap = {
       const position = this.$geolocation.get().position
       if (this.locateControl) {
         this.locateControl.start()
-      } else if (position) {
-        this.center(position.longitude, position.latitude)
+      }
+      if (position) {
+        // If we have accuracy we can compute a fitting boix
+        if (position.accuracy) {
+          this.zoomToBounds(new L.LatLng(position.latitude, position.longitude).toBounds(position.accuracy * 2))
+        } else {
+          this.center(position.longitude, position.latitude)
+        }
       }
     },
     hideUserLocation () {

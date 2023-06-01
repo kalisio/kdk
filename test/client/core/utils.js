@@ -5,6 +5,9 @@ import pixelmatch from 'pixelmatch'
 
 const debug = makeDebug('kdk:core:test:utils')
 
+// Default accuracy
+export const GeolocationAccuracy = 500
+
 /* Helper function to check wether an element exists
  * see: https://github.com/puppeteer/puppeteer/issues/545
  */
@@ -185,7 +188,7 @@ export async function chooseIcon (page, name, color, wait = 1000) {
 /* Helper function that wait until all images are loaded
  */
 export async function waitForImagesLoaded (page) {
-  await page.evaluate(() => {
+  await page.evaluate(async () => {
     const imageSelectors = Array.from(document.querySelectorAll('img'))
     const imgPromises = []
     imageSelectors.forEach((img) => {
@@ -195,14 +198,18 @@ export async function waitForImagesLoaded (page) {
         img.addEventListener('error', reject)
       }))
     })
-    return Promise.all(imgPromises)
+    await Promise.all(imgPromises)
   })
 }
 
 /* Return the Store value corresponding to the given path
  */
 export async function getFromStore (page, path) {
-  return page.evaluate((path) => window.$store.get(path), path)
+  const result = await page.evaluate((path) => {
+    const value = window.$store.get(path)
+    return value
+  }, path)
+  return result
 }
 
 /* Given a reference screenshot  key and a run screenshot key, this

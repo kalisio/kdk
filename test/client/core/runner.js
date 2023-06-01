@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import makeDebug from 'debug'
 import puppeteer from 'puppeteer'
-import { compareImages } from './utils.js'
+import { compareImages, GeolocationAccuracy } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:runner')
 
@@ -32,6 +32,7 @@ export class Runner {
       browser: {
         product: defaultBrowser,
         headless: process.env.HEADLESS ? !!process.env.HEADLESS : false,
+        devtools: (process.env.NODE_ENV === 'development'),
         defaultViewport: {
           width: +process.env.VIEWPORT_WIDTH || 1024,
           height: +process.env.VIEWPORT_HEIGHT || 768
@@ -42,9 +43,17 @@ export class Runner {
       runDir: defaultRunDir,
       screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
       screenshotsDir: path.join(defaultRunDir, '/screenshots'),
+      // Could be:
+      // - 'preview' to only run tests without comparing to reference screenshots
+      // - 'run' to run tests by comparing to reference screenshots
+      // - 'record' to run tests and update reference screenshots
       mode: process.env.TEST_MODE || 'run',
       writeDiffs: false,
-      matchTreshold: 0.1
+      matchTreshold: 0.1,
+      // Accuracy is required to get some desired behaviours
+      geolocation: {
+        accuracy: GeolocationAccuracy
+      }
     }, options, merger)
     // Display the runner options
     console.log('Runner created with the following options:')
@@ -68,10 +77,10 @@ export class Runner {
     this.browser = await puppeteer.launch(this.options.browser)
     this.page = await this.browser.newPage()
     // Handle geolocation if needed
-    if (this.options.geolocation) {
+    if (_.has(this.options, 'geolocation.latitude') && _.has(this.options, 'geolocation.longitude')) {
       const context = this.browser.defaultBrowserContext()
       await context.overridePermissions(this.getUrl(path), ['geolocation'])
-      this.page.setGeolocation(this.options.geolocation)
+      await this.page.setGeolocation(this.options.geolocation)
     }
     // Handle the local storage if needed
     if (this.options.localStorage) {

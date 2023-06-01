@@ -54,11 +54,8 @@ export const Geolocation = {
         })
         return
       }
-      window.navigator.geolocation.getCurrentPosition((position) => {
-        const latitude = position.coords.latitude
-        const longitude = position.coords.longitude
-        resolve({ latitude, longitude })
-      }, (error) => reject(error), { timeout: 30000, enableHighAccuracy: true })
+      window.navigator.geolocation.getCurrentPosition((position) => resolve(position.coords),
+        (error) => reject(error), { timeout: 30000, enableHighAccuracy: true })
     }))
     return this.positionPromise
   }
