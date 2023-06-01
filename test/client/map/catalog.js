@@ -102,6 +102,12 @@ export async function addLayer (page) {
   await page.waitForTimeout(1000)
 }
 
+export async function addView (page) {
+  await core.clickFab(page)
+  await core.clickAction(page, 'create-view')
+  await page.waitForTimeout(1000)
+}
+
 export async function importLayer (page, filePath, featureId = undefined, wait = 2000) {
   await addLayer(page)
   await core.uploadFile(page, '#file-field', filePath)
@@ -138,13 +144,12 @@ export async function createLayer (page, layerName, schemaPath, featureId, wait 
 }
 
 export async function createView (page, name, saveLayers, wait = 2000) {
-  await core.clickFab(page)
-  await core.clickAction(page, 'create-view')
-  await page.waitForTimeout(1000)
+  await addView(page)
   await core.type(page, '#name-field', name)
   await core.type(page, '#description-field', `${name} description`)
-  if (saveLayers) await core.click(page, '#layers-field')
+  if (saveLayers) await core.click(page, '#layers-field .q-toggle')
   await core.clickAction(page, 'apply-button', 1000)
+  await page.waitForTimeout(wait)
 }
 
 export async function viewExists (page, tabId, name) {
@@ -154,15 +159,15 @@ export async function viewExists (page, tabId, name) {
   return exists
 }
 
-export async function clickView (page, tabId, name, wait = 1000) {
+export async function clickView (page, tabId, name) {
   const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
   await core.clickItem(page, 'catalog/KViewSelector', name)
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
 }
 
-export async function removeView (page, tabId, name, wait = 1000) {
+export async function removeView (page, tabId, name) {
   const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
   await core.clickItemAction(page, 'catalog/KViewSelector', name, 'view-overflowmenu', 1000)
-  await core.clickAction(page, 'remove-view', wait)
+  await core.clickAction(page, 'remove-view', 1000)
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
 }

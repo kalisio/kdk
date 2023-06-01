@@ -15,7 +15,7 @@ export const Geolocation = {
     // Get the position
     try {
       position = await this.refresh()
-      Store.patch('geolocation', { position: position, error: undefined })
+      Store.patch('geolocation', { position, error: undefined })
       logger.debug('geolocation updated: ', position)
     } catch (error) {
       const code = error.code
