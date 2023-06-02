@@ -178,7 +178,7 @@ export default {
               color: this.datasets[axisId].backgroundColor,
               callback: function (value, index, values) {
                 if (values[index] !== undefined) {
-                  return Units.format(values[index].value, baseUnit, unit, { symbol: false })
+                  return Units.format(values[index].value, unit, unit, { symbol: false })
                 }
               }
             }
@@ -305,7 +305,7 @@ export default {
                     const { baseUnit, unit, label } = context.dataset
                     const y = _.get(context, 'parsed.y')
                     // We have unit in label name for legend but we want it after the value for tooltip
-                    return label.replace(`(${Units.getUnitSymbol(unit)})`, '') + ': ' + Units.format(y, baseUnit, unit)
+                    return label.replace(`(${Units.getUnitSymbol(unit)})`, '') + ': ' + Units.format(y, unit, unit)
                   }
                 }
               },
