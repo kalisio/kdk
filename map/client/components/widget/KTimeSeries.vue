@@ -302,7 +302,7 @@ export default {
                     return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.short')}` : '')
                   },
                   label: (context) => {
-                    const { baseUnit, unit, label } = context.dataset
+                    const { unit, label } = context.dataset
                     const y = _.get(context, 'parsed.y')
                     // We have unit in label name for legend but we want it after the value for tooltip
                     return label.replace(`(${Units.getUnitSymbol(unit)})`, '') + ': ' + Units.format(y, unit, unit)
