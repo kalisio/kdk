@@ -58,6 +58,10 @@ const velocity = {
     symbol: 'units.KILOMETER_PER_HOUR_SYMBOL',
     label: 'units.KILOMETER_PER_HOUR_LABEL'
   },
+  'mi/h': {
+    symbol: 'units.MILES_PER_HOUR_SYMBOL',
+    label: 'units.MILES_PER_HOUR_LABEL'
+  },
   kt: {
     symbol: 'units.KNOT_SYMBOL',
     label: 'units.KNOT_LABEL',
