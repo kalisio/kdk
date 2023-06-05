@@ -7,20 +7,24 @@ import { getAppLocale, getAppFallbackLocale } from './utils/utils.locale.js'
 // Helper function to load a translation file
 // @i18n alias shoud be added in the quasar.config build section
 async function loadTranslationBundles (bundles, locale, fallbackLocale) {
-  try {
-    const translations = {}
-    translations[locale] = {}
-    translations[fallbackLocale] = {}
-    for (let i = 0; i < bundles.length; i++) {
+  const translations = {}
+  translations[locale] = {}
+  translations[fallbackLocale] = {}
+  for (let i = 0; i < bundles.length; i++) {
+    try {
       const localeTranslationsModule = await import(`@i18n/${bundles[i]}_${locale}.json`)
       _.merge(translations[locale], localeTranslationsModule.default)
+    } catch (error) {
+      logger.warn(`[KDK] unable to load translation file ${bundles[i]}_${locale}.json`)
+    }
+    try {
       const fallbackTranslationModule = await import(`@i18n/${bundles[i]}_${fallbackLocale}.json`)
       _.merge(translations[fallbackLocale], fallbackTranslationModule.default)
+    } catch (error) {
+      logger.error(`[KDK] unable to load translation file ${bundles[i]}_${fallbackLocale}.json`)
     }
-    return translations
-  } catch (error) {
-    logger.error(error)
   }
+  return translations
 }
 
 export const i18n = {
@@ -40,13 +44,13 @@ export const i18n = {
       locale,
       fallbackLocale,
       messages: await loadTranslationBundles(bundles, locale, fallbackLocale),
-      silentFallbackWarn: true
+      silentFallbackWarn: false
     })
     app.use(this.i18n)
   },
   registerTranslation (translation) {
     if (!this.i18n) {
-      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return
     }
     const locale = this.i18n.global.locale
@@ -56,26 +60,28 @@ export const i18n = {
     messages = translation[fallbackLocale]
     if (messages) this.i18n.global.mergeLocaleMessage(fallbackLocale, messages)
   },
-  t (key, param) {
+  t (key) {
     if (!this.i18n) {
-      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return key
     }
-    return this.i18n.global.t(key, param)
+    return this.i18n.global.t(key)
   },
   tc (key, choice) {
     if (!this.i18n) {
-      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return key
     }
     return this.i18n.global.tc(key, choice)
   },
-  tie (key, param) {
+  tie (key) {
     if (!this.i18n) {
-      logger.error('the i18n instance is not existing. Did you initialize it ?')
+      logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return key
     }
     if (_.isEmpty(key)) return key
-    return this.i18n.global.te(key) ? this.i18n.global.t(key, param) : key
+    if (this.i18n.global.te(key)) return this.i18n.global.t(key)
+    if (this.i18n.global.te(key, this.i18n.global.fallbackLocale)) return this.i18n.global.t(key, this.i18n.global.fallbackLocale)
+    return key
   }
 }
