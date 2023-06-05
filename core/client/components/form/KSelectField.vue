@@ -28,7 +28,7 @@
     @blur="onChanged"
     @update:model-value="onChanged"
   >
-    <!-- Options display -->
+    <!-- pptions display -->
     <template v-slot:option="scope">
       <q-item
         v-bind="scope.itemProps"
@@ -39,7 +39,13 @@
         </q-item-section>
       </q-item>
     </template>
-    <!-- Helper -->
+    <!-- selected item display -->
+    <template v-slot:selected-item="scope">
+      <span :class="selectedClass()">
+        {{ scope.opt.label }}
+      </span>
+    </template>
+    <!-- helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>
     </template>
@@ -129,6 +135,9 @@ export default {
       update(() => {
         this.filter = pattern.toLowerCase()
       })
+    },
+    selectedClass () {
+      return _.get(this.properties, 'field.selectedClass', 'text-weight-regular')
     }
   }
 }
