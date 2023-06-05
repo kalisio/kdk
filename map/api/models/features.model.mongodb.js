@@ -10,9 +10,7 @@ export default function (app, options) {
     baseIndex = featureId.reduce((result, id) => Object.assign(result, { ['properties.' + id]: 1 }), {})
     options.Model.createIndex(baseIndex)
     // Create index notably used for time-based geometry aggregation if variables are defined
-    const index = Object.assign({}, baseIndex, {
-      geometry: 1, time: 1
-    })
+    const index = Object.assign({ geometry: '2dsphere' }, baseIndex, { time: 1 })
     options.Model.createIndex(index)
     // Ascending/Descending sort seems to require a different index in aggregation hint
     options.Model.createIndex(Object.assign(index, { time: -1 }))
