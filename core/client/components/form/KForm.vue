@@ -13,6 +13,7 @@
           v-bind="$props"
           :required="field.required"
           :properties="field"
+          :dense="dense"
           @field-changed="onFieldChanged"
         />
       </slot>
@@ -34,6 +35,7 @@
                   :required="field.required"
                   v-bind="$props"
                   :properties="field"
+                  :dense="dense"
                   @field-changed="onFieldChanged" />
               </slot>
               <slot v-if="field.group === group" :name="'after-' + field.name"/>
@@ -65,6 +67,10 @@ const props = defineProps({
   filter: {
     type: [String, Array],
     default: () => null
+  },
+  dense: {
+    type: Boolean,
+    default: false
   }
 })
 
