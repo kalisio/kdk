@@ -8,6 +8,7 @@
     :model-value="model"
     :label="label"
     borderless
+    hide-bottom-space
     :error-message="errorLabel"
     :error="hasError"
     :disable="disabled"

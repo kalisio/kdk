@@ -35,7 +35,7 @@ export const Storage = {
     const service = this.getService(context)
     const dismiss = Notify.create({
       message: i18n.t('storage.UPLOADING_FILE', { file }),
-      color: 'primary',
+      color: 'info',
       timeout: 0,
       spinner: true
     })
@@ -55,7 +55,7 @@ export const Storage = {
     const service = this.getService(context)
     const dismiss = Notify.create({
       message: i18n.t('storage.DOWNLOADING_FILE', { file }),
-      color: 'primary',
+      color: 'info',
       timeout: 0,
       spinner: true
     })
