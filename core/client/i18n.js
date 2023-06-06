@@ -44,7 +44,7 @@ export const i18n = {
       locale,
       fallbackLocale,
       messages: await loadTranslationBundles(bundles, locale, fallbackLocale),
-      silentFallbackWarn: false
+      silentFallbackWarn: true
     })
     app.use(this.i18n)
   },
