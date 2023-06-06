@@ -19,7 +19,6 @@ async function loadTranslationBundles (bundles, locale, fallbackLocale) {
     }
     try {
       const fallbackTranslationModule = await import(`@i18n/${bundles[i]}_${fallbackLocale}.json`)
-      console.log(fallbackTranslationModule)
       _.merge(translations[fallbackLocale], fallbackTranslationModule.default)
     } catch (error) {
       logger.error(`[KDK] unable to load translation file ${bundles[i]}_${fallbackLocale}.json`)
