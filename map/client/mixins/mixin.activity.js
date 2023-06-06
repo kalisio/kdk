@@ -4,7 +4,7 @@ import config from 'config'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
 import { setEngineJwt } from '../utils.js'
-import { utils as kCoreUtils } from '../../../core/client/index.js'
+import { i18n, utils as kCoreUtils } from '../../../core/client/index.js'
 
 export const activity = {
   data () {
@@ -61,16 +61,9 @@ export const activity = {
       // Check if available for current engine
       if (layer[this.engine]) {
         // Process i18n
-        if (layer.i18n) {
-          const locale = kCoreUtils.getAppLocale()
-          const fallbackLocale = kCoreUtils.getAppFallbackLocale()
-          let i18n = _.get(layer.i18n, locale)
-          if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
-          i18n = _.get(layer.i18n, fallbackLocale)
-          if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
-        }
-        if (layer.name && this.$te(layer.name)) layer.label = this.$t(layer.name)
-        if (layer.description && this.$te(layer.description)) layer.description = this.$t(layer.description)
+        if (layer.i18n) i18n.registerTranslation(layer.i18n)
+        layer.label = this.$tie(layer.name)
+        layer.description = this.$tie(layer.description)
         // Check for Weacast API availability
         const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
         if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) return
@@ -104,16 +97,9 @@ export const activity = {
     },
     async addCatalogCategory (category) {
       // Process i18n
-      if (category.i18n) {
-        const locale = kCoreUtils.getAppLocale()
-        const fallbackLocale = kCoreUtils.getAppFallbackLocale()
-        let i18n = _.get(category.i18n, locale)
-        if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
-        i18n = _.get(category.i18n, fallbackLocale)
-        if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
-      }
-      if (category.name && this.$te(category.name)) category.label = this.$t(category.name)
-      if (category.description && this.$te(category.description)) category.description = this.$t(category.description)
+      if (category.i18n) i18n.registerTranslation(category.i18n)
+      category.label = this.$tie(category.name)
+      category.description = this.$tie(category.description)
       this.layerCategories.push(category)
     },
     async refreshLayerCategories () {
