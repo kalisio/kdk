@@ -60,28 +60,29 @@ export const i18n = {
     messages = translation[fallbackLocale]
     if (messages) this.i18n.global.mergeLocaleMessage(fallbackLocale, messages)
   },
-  t (key) {
+  t (key, params) {
     if (!this.i18n) {
       logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return key
     }
-    return this.i18n.global.t(key)
+    return this.i18n.global.t(key, params)
   },
   tc (key, choice) {
     if (!this.i18n) {
       logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return key
     }
-    return this.i18n.global.tc(key, choice)
+    if (this.i18n.global.te(key)) return this.i18n.global.tc(key, choice)
+    if (this.i18n.global.te(key, this.i18n.global.fallbackLocale)) return this.i18n.global.tc(key, choice, this.i18n.global.fallbackLocale)
   },
-  tie (key) {
+  tie (key, params) {
     if (!this.i18n) {
       logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return key
     }
     if (_.isEmpty(key)) return key
-    if (this.i18n.global.te(key)) return this.i18n.global.t(key)
-    if (this.i18n.global.te(key, this.i18n.global.fallbackLocale)) return this.i18n.global.t(key, this.i18n.global.fallbackLocale)
+    if (this.i18n.global.te(key)) return this.i18n.global.t(key, params)
+    if (this.i18n.global.te(key, this.i18n.global.fallbackLocale)) return this.i18n.global.t(key, this.i18n.global.fallbackLocale, params)
     return key
   }
 }
