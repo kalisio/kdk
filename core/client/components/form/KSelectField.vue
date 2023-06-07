@@ -24,7 +24,6 @@
     :disable="disabled"
     bottom-slots
     @filter="onFilter"
-    @change="onChanged"
     @blur="onChanged"
     @update:model-value="onChanged"
   >

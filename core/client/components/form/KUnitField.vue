@@ -14,7 +14,6 @@
     :error-message="errorLabel"
     :disable="disabled"
     bottom-slots
-    @change="onChanged"
     @blur="onChanged"
     @update:model-value='onChanged'
 
