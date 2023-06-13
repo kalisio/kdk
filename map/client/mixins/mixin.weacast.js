@@ -190,9 +190,11 @@ export const weacast = {
       // Retrieve the layer associated to current level selection
       const layer = this.selectableLevelsLayer
       if (layer) {
+        // Check if of right type, ie weacast layer or tiled layer using a weacast source
         const type = _.get(layer, `${this.engine}.type`)
-        // Check if of right type
-        if (type.startsWith('weacast')) {
+        const sources = _.get(layer, 'meteo_model.sources', [])
+        const weacastSource = sources.find(source => _.has(source, 'weacast'))
+        if (type.startsWith('weacast') || weacastSource) {
           this.setForecastLevel(level)
         }
       }
