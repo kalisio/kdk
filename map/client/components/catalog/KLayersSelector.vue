@@ -47,14 +47,18 @@ export default {
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
     },
-    onLayerToggled (layer) {
+    async onLayerToggled (layer) {
       if (layer.isDisabled) return
       if (this.options.exclusive) {
-        const selectedLayer = _.find(this.layers, { isVisible: true })
-        if (selectedLayer) this.toggleLayer(selectedLayer)
-        if (layer === selectedLayer) return
+        // Due to v-model the visible flag has already been changed on the layer
+        // Simply reset others layers before activating the new one to avoid any problem
+        const visibleLayers = _.filter(this.layers, { isVisible: true })
+        for (let i = 0; i < visibleLayers.length; i++) {
+          const visibleLayer = visibleLayers[i]
+          if (visibleLayer !== layer) await this.toggleLayer(visibleLayers[i])
+        }
       }
-      this.toggleLayer(layer)
+      await this.toggleLayer(layer)
     },
     toggleLayerFilter (layer, filter) {
       const toggleFilterAction = _.find(layer.actions, { id: 'toggle-filter' })
