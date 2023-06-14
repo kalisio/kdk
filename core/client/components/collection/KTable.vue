@@ -131,6 +131,7 @@ export default {
         // FIXME: allow for custom representation of complex objects
         if (type === 'object') return
         const label = _.get(value, 'field.label', _.get(value, 'field.helper', key))
+        const options = _.get(value, 'field.options', [])
         const format = _.get(value, 'format')
         this.columns.push({
           name: key,
@@ -141,6 +142,9 @@ export default {
           align: 'center',
           sortable: true,
           format: (value) => {
+            // Check if the corresponding value is mapped according to an option list
+            const option = _.find(options, { value })
+            if (option && option.label) value = option.label
             switch (type) {
               case 'number':
                 return (value ? value.toFixed(2) : '')
