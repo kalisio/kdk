@@ -6,16 +6,14 @@ export const featureSelection = {
         const widget = this.getWidgetForSelection()
         // If window already open on another widget keep it
         if (widget && !this.isWidgetWindowVisible(widget)) this.openWidget(widget)
-      },
-      deep: true
+      }
     },
     'probe.item': {
       handler () {
         this.updateHighlights()
         const widget = this.getWidgetForProbe()
         if (widget) this.openWidget(widget)
-      },
-      deep: true
+      }
     }
   },
   methods: {
