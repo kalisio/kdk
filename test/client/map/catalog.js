@@ -120,11 +120,12 @@ export async function importLayer (page, filePath, featureId = undefined, wait =
   await page.waitForTimeout(wait)
 }
 
-export async function connectLayer (page, service, layerId, wait = 2000) {
+export async function connectLayer (page, service, layerId, layerName, wait = 2000) {
   await addLayer(page)
   await core.clickAction(page, 'connect-layer')
   await core.type(page, '#service-field', service, true, false, 5000)
   await core.click(page, '#layer-field', 500)
+  if (layerName) await core.type(page, '#layer-field', layerName)
   await core.click(page, `#${layerId}`, 500)
   await core.clickAction(page, 'connect-layer-action', 2000)
   await page.waitForNetworkIdle()

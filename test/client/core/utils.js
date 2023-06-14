@@ -241,11 +241,12 @@ export function compareImages (image1, image2, threshold, diffFilename) {
 /* Moves a slider in a chosen direction (right or left), for a specific times
  */
 export async function moveSlider (page, action, direction, times, wait = 500) {
-  const selector = `#${action}`
-  const dir = (direction === 'left') ? 'ArrowLeft' : 'ArrowRight'
-  await page.focus(selector)
+  const selector = `#${action} .q-slider__focus-ring`
+  const key = (direction === 'left') ? 'ArrowLeft' : 'ArrowRight'
+  await click(page, selector)
   for (let i = 0; i < times; i++) {
-    await page.keyboard.press(dir)
+    await page.keyboard.press(key)
   }
+  debug(`Pressed ${key} ${times} times to move slider ${action}`)
   await page.waitForTimeout(wait)
 }
