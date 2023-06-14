@@ -42,13 +42,14 @@ export const weacast = {
         forecastModel.actions = [{ id: 'toggle', handler: () => this.setForecastModel(forecastModel) }]
       })
       // Select default if any or first one
-      /* Should be now done by selector when initializing using the toggle action
+      // FIXME: now done by selector when initializing using the toggle action
+      // but the component might not be yet constructed at that point while the activity need it
+      // so that we do it here by default as well
       let forecastModel = this.forecastModels.find(forecast => forecast.isDefault)
       if (!forecastModel) {
         forecastModel = (this.forecastModels.length > 0 ? this.forecastModels[0] : null)
       }
       this.setForecastModel(forecastModel)
-      */
     },
     setForecastModel (model) {
       this.forecastModel = model
