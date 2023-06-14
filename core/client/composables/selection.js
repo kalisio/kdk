@@ -13,6 +13,7 @@ export function useSelection (name, options = {}) {
   // Multiple selection mode will rely on all items
   function clearSelection () {
     // Do not force an update if not required
+    // We set a new array so that deeply watch is not required
     if (hasSelectedItem()) set('items', [])
   }
   function getSelectionMode () {
@@ -38,12 +39,14 @@ export function useSelection (name, options = {}) {
     if (filter && !filter(item)) return
     const items = get('items')
     const selected = _.find(items, comparator(item))
-    if (!selected) items.push(item)
+    // We set a new array so that deeply watch is not required
+    if (!selected) set('items', items.concat([item]))
   }
   function unselectItem (item) {
     const items = get('items')
-    const index = _.findIndex(items, comparator(item))
-    if (index >= 0) items.splice(index, 1)
+    // We set a new array so that deeply watch is not required
+    _.remove(items, comparator(item))
+    set('items', _.clone(items))
   }
   function hasSelectedItem () {
     return has('items') && get('items').length > 0
@@ -60,6 +63,7 @@ export function useSelection (name, options = {}) {
 
   // Initialize on first call
   if (!_.has(store, 'items')) {
+    // We set a new array so that deeply watch is not required
     set('items', [])
     set('mode', 'single')
   }
