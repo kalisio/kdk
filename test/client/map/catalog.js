@@ -163,6 +163,7 @@ export async function clickView (page, tabId, name) {
   const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
   await core.clickItem(page, 'catalog/KViewSelector', name)
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
+  await page.waitForNetworkIdle()
 }
 
 export async function removeView (page, tabId, name) {
