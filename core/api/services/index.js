@@ -128,4 +128,10 @@ export default async function () {
     await app.createService('devices', { servicesPath })
     debug('\'devices\' service created')
   }
+
+  const pushConfig = app.get('push')
+  if (pushConfig) {
+    await app.createService('push', { servicesPath })
+    debug('\'push\' service created')
+  }
 }
