@@ -103,8 +103,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
             collection.push(_.cloneDeep(internalFeature.geojson))
           }
           collection = featureCollection(collection)
-          this.activity.updateLayer(this.layer.name, collection, { remove: true })
-          this.activity.updateLayer(this.layer.name, collection)
+          this.activity.updateLayer(this.layer.name, collection, { replace: true })
         } else if (this.pendingStationUpdates.length) {
           // Otherwise apply pending station updates
           for (const collection of this.pendingStationUpdates) {
