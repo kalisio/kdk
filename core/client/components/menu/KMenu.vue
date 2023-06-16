@@ -13,13 +13,16 @@
     menu-anchor="bottom left"
     menu-self="top left"
     flat
+    rounded
     no-caps
-    fab-mini
+ 
     @click="onClicked">
       <template v-slot:label>
         <div class="row items-center no-wrap">
-          <q-badge v-if="badge" v-bind="badge"></q-badge>
-          <div class="text-center">{{ $tie(label) }}</div>
+          <q-badge v-if="badge" v-bind="badge" />
+          <div class="text-center">
+            {{ $tie(label) }}
+          </div>
         </div>
       </template>
       <KPanel
@@ -77,6 +80,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  dense: {
+    type: Boolean,
+    default: false
+  },
   autoClose: {
     type: Boolean,
     default: true
@@ -120,9 +127,6 @@ const $q = useQuasar()
 // Computed
 const hasContent = computed(() => {
   return !_.isEmpty(props.content)
-})
-const dense = computed(() => {
-  return $q.screen.lt.sm
 })
 
 // Functions
