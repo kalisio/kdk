@@ -94,19 +94,7 @@ export const geojsonLayers = {
           }
           // We want to restore values that were there till now but are missing
           // from the input feature.
-          const fieldsToRestore = [ 'properties', 'time', 'runTime' ]
-          for (const field of fieldsToRestore) {
-            const oldValues = _.get(oldLayer, `feature.${field}`)
-            if (!oldValues) // Feature had no values for this field, skip
-              continue
-            if (!_.has(feature, field)) // Make sure new feature has at least an empty object as field
-              feature[field] = {}
-            const newValues = feature[field]
-            // Restore old values
-            _.forOwn(oldValues, (value, key) => {
-              if (!_.has(newValues, key)) _.set(newValues, key, value)
-            })
-          }
+          _.defaultsDeep(feature, _.pick(oldLayer.feature, [ 'properties', 'time', 'runTime' ]))
           if (oldLayer.setIcon) {
             // FIXME: updating icon in place requires to recreate it anyway, so for now we recreate the whole marker
             // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
