@@ -64,6 +64,19 @@ export default {
       // If the feature is linked to a layer with variables use it
       // Otherwise use all available variables to search for those applicable to it
       return (this.layer && this.layer.variables ? this.layer.variables : this.kActivity.variables)
+    },
+    runOptions () {
+      // Build options from runtimes for UI
+      let runOptions = []
+      if (this.hasRunTimes()) {
+        runOptions = this.runTimes.map(runTime => ({
+          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
+          value: runTime
+        }))
+        // Select latest runTime as default option
+        _.last(runOptions).default = true
+      }
+      return runOptions
     }
   },
   watch: {
@@ -78,7 +91,9 @@ export default {
   data () {
     return {
       probedLocation: null,
-      zoomHistory: []
+      zoomHistory: [],
+      runTime: null,
+      runTimes: []
     }
   },
   methods: {
@@ -119,16 +134,6 @@ export default {
       })
       // Make union of all available run times
       this.runTimes = _.union(...this.runTimes).map(time => moment.utc(time)).sort((a, b) => a - b)
-      // Build options from runtimes for UI
-      this.runOptions = []
-      if (this.hasRunTimes()) {
-        this.runOptions = this.runTimes.map(runTime => ({
-          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
-          value: runTime
-        }))
-        // Select latest runTime as default option
-        _.last(this.runOptions).default = true
-      }
     },
     setupAvailableDatasets () {
       this.datasets = []
@@ -348,10 +353,6 @@ export default {
     },
     onUpdateRun (runTime) {
       this.runTime = runTime
-      // Update tooltip action
-      const action = _.find(this.$store.get('window.widgetActions'), { id: 'run-options' })
-      action.tooltip = this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
-        ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')'
       this.setupGraph()
     },
     updateProbedLocationHighlight () {

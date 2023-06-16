@@ -71,6 +71,7 @@ export const activity = {
       }
       // Filter layers with variables, not just visible ones because we might want to
       // probe weather even if there is no visual representation (e.g. in globe)
+      // FIXME: https://github.com/kalisio/kdk/issues/375
       if (layer.variables) this.variables = _.uniqBy(this.variables.concat(layer.variables), (variable) => variable.name)
     },
     async removeCatalogLayer (layer) {
