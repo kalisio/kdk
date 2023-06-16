@@ -392,31 +392,39 @@ export const geojsonLayers = {
         logger.warn(`Impossible to update non-realtime layer ${name}`)
         return // Cannot update non-realtime layer
       }
-      // Backward compatibility when third parameter was the remove flag
-      const remove = (typeof options === 'boolean' ? options : options.remove)
-      const removeMissing = (_.has(options, 'removeMissing') ? _.get(options, 'removeMissing') : layer.options.removeMissing)
-      // Check if clustering on top of a realtime layer, in this case we have a top-level container
-      let container
-      if (typeof layer.getLayers === 'function') {
-        container = layer
-        layer = container.getLayers().find(layer => layer._container === container)
-      }
-      /* By default leaflet-realtime only performs add with manual update
-        (see https://github.com/perliedman/leaflet-realtime/issues/136)
-         but we'd like to perform similarly to automated updates
-      */
-      if (remove) {
-        if (typeof layer.remove !== 'function') return
-        let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-        // Filter features to ensure some have not been already removed
-        // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
-        features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
-        layer.remove(features)
-      } else if (geoJson) {
-        if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, geoJson)
-      } else { // Fetch new data or update in place
-        if (typeof layer.update === 'function') layer.update()
-        else if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, this.toGeoJson(name))
+
+      const replace = _.get(options, 'replace', false)
+      if (replace) {
+        // Replace given features, we first remove them to add them back afterwards
+        this.updateLayer(name, geoJson, { remove: true })
+        this.updateLayer(name, geoJson)
+      } else {
+        // Backward compatibility when third parameter was the remove flag
+        const remove = (typeof options === 'boolean' ? options : options.remove)
+        const removeMissing = _.get(options, 'removeMissing', layer.options.removeMissing)
+        // Check if clustering on top of a realtime layer, in this case we have a top-level container
+        let container
+        if (typeof layer.getLayers === 'function') {
+          container = layer
+          layer = container.getLayers().find(layer => layer._container === container)
+        }
+        /* By default leaflet-realtime only performs add with manual update
+          (see https://github.com/perliedman/leaflet-realtime/issues/136)
+          but we'd like to perform similarly to automated updates
+        */
+        if (remove) {
+          if (typeof layer.remove !== 'function') return
+          let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+          // Filter features to ensure some have not been already removed
+          // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
+          features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
+          layer.remove(features)
+        } else if (geoJson) {
+          if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, geoJson)
+        } else { // Fetch new data or update in place
+          if (typeof layer.update === 'function') layer.update()
+          else if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, this.toGeoJson(name))
+        }
       }
     },
     onLayerUpdated (layer, leafletLayer, data) {
