@@ -39,7 +39,6 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
-import { useQuasar } from 'quasar'
 import KPanel from '../KPanel.vue'
 
 // Props
@@ -120,9 +119,6 @@ const props = defineProps({
     }
   }
 })
-
-// Data
-const $q = useQuasar()
 
 // Computed
 const hasContent = computed(() => {
