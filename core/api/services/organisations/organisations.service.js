@@ -34,7 +34,7 @@ export default async function (name, app, options) {
         context: organisation,
         proxy: {
           service: this.app.getService('users'),
-          params: { query: { 'organisations._id': organisation._id.toString() } }
+          params: { query: { 'organisations._id': organisation._id } }
         }
       })
       debug('Members service created for organisation ' + organisation.name)
