@@ -34,9 +34,9 @@ response.data.forEach(user => {
 
 ## Hooks
 
-KDK modules provide a collection of [hooks](https://docs.feathersjs.com/api/hooks.html) to be used by plugins or [client applications](https://docs.feathersjs.com/api/client.html). They often rely on [Feathers common hooks](https://docs.feathersjs.com/api/hooks-common.html).
+KDK modules provide a collection of [hooks](https://docs.feathersjs.com/api/hooks.html) to be used by modules or [client applications](https://docs.feathersjs.com/api/client.html). They often rely on [Feathers common hooks](https://docs.feathersjs.com/api/hooks-common.html).
 
-> [Hooks](https://docs.feathersjs.com/api/hooks.html) are the main way to introduce business logic into applications and plugins so we recommend to understand them well first before reading this.
+> [Hooks](https://docs.feathersjs.com/api/hooks.html) are the main way to introduce business logic into applications and modules so we recommend to understand them well first before reading this.
 
 Each service can include a set of *internal* [hooks](https://docs.feathersjs.com/api/hooks.html), i.e. hooks required to make the service work. They are built-in with the service and cannot usually be removed.
 
@@ -58,7 +58,7 @@ Each service can declare a set of *perspectives*, which are not retrieved by def
 
 ## Client
 
-KDK modules provide a collection of reusable *mixins* and *components* to be used by plugins or applications.
+KDK modules provide a collection of reusable *mixins* and *components* to be used by modules or applications.
 
 [Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be "mixed" into the component's own options.
 
