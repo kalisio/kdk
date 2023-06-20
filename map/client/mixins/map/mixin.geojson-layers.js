@@ -118,7 +118,7 @@ export const geojsonLayers = {
               if (typeof oldLayer.setData === 'function') {
                 // Support Gradient Path
                 oldLayer.setData(feature)
-              } else if (properties.geodesic) {
+              } else if (feature.properties.geodesic) {
                 // Support geodesic line & linestrings
                 const latlngs = type === 'LineString'
                   ? [L.GeoJSON.coordsToLatLngs(coordinates, 0)]
