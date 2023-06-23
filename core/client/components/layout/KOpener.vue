@@ -3,15 +3,15 @@
     class="row justify-center items-center"
     v-bind:class="{
       'k-opener-left': position === 'left',
-      'k-opener-left-hovered': (position === 'left') && isHovered && isDesktop,
+      'k-opener-left-hovered': (position === 'left') && isHovered && !hasTouch,
       'k-opener-right': position === 'right',
-      'k-opener-right-hovered': (position === 'right') && isHovered && isDesktop,
+      'k-opener-right-hovered': (position === 'right') && isHovered && !hasTouch,
       'k-opener-top': position === 'top',
-      'k-opener-top-hovered': (position === 'top') && isHovered && isDesktop,
+      'k-opener-top-hovered': (position === 'top') && isHovered && !hasTouch,
       'k-opener-bottom': position === 'bottom',
-      'k-opener-bottom-hovered': (position === 'bottom') && isHovered && isDesktop
+      'k-opener-bottom-hovered': (position === 'bottom') && isHovered && !hasTouch
     }"
-    v-on="isDesktop ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
+    v-on="!hasTouch ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
     v-touch-swipe.mouse="onSwipe"
     @click="onClick"
   >
@@ -43,7 +43,7 @@ const emit = defineEmits(['update:modelValue'])
 
 // Data
 const $q = useQuasar()
-const isDesktop = $q.platform.is.desktop
+const hasTouch = $q.platform.has.touch
 const isHovered = ref(false)
 const icon = ref(null)
 
@@ -54,7 +54,7 @@ const isOpened = computed(() => {
 
 // Functions
 function onMouseOver () {
-  if (!isDesktop) return
+  if (hasTouch) return
   isHovered.value = true
   switch (props.position) {
     case 'left':
@@ -71,7 +71,7 @@ function onMouseOver () {
   }
 }
 function onMouseLeave () {
-  if (!isDesktop) return
+  if (hasTouch) return
   isHovered.value = false
   icon.value = null
 }
