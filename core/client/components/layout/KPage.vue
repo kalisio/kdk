@@ -82,6 +82,7 @@
         id="left-window"
         v-if="leftWindow.visible"
         placement="left"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${leftWindowSize[0]}px; max-height: ${leftWindowSize[1]};px;`"
       />
     </q-page-sticky>
@@ -90,6 +91,7 @@
         id="top-window"
         v-if="topWindow.visible"
         placement="top"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${topWindowSize[0]}px; max-height: ${topWindowSize[1]};px`"
       />
     </q-page-sticky>
@@ -98,6 +100,7 @@
         id="right-window"
         v-if="rightWindow.visible"
         placement="right"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${rightWindowSize[0]}px; max-height: ${rightWindowSize[1]};px`"
       />
     </q-page-sticky>
@@ -106,6 +109,7 @@
         id="bottom-window"
         v-if="bottomWindow.visible"
         placement="bottom"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${bottomWindowSize[0]}px; max-height: ${bottomWindowSize[1]};px`"
       />
     </q-page-sticky>

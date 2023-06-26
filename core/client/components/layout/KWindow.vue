@@ -7,6 +7,7 @@
       class="k-window-header full-width row items-center"
       v-touch-pan.prevent.mouse="onMoved"
     >
+      <q-resize-observer @resize="onHeaderResized" />
       <!-- window menu -->
       <KPanel
         id="window-menu"
@@ -22,7 +23,10 @@
         @touchstart.stop
         @mousedown.stop
       />
-      <div v-else class="q-px-sm text-subtitle1 ellipsis">
+      <div 
+        v-else-if="widgetLabel"
+        class="q-px-sm text-subtitle1 ellipsis"
+      >
         {{ $tie(widgetLabel) }}
       </div>
       <q-space />
@@ -60,6 +64,7 @@
       Window footer
      -->
     <div id="window-footer" class="k-window-footer full-width row justify-end">
+      <q-resize-observer @resize="onFooterResized" />
       <!-- window grip -->
       <q-icon
         v-if="currentMode !== 'maximized'"
@@ -89,6 +94,10 @@ const props = defineProps({
     validator: (value) => {
       return ['left', 'right', 'top', 'bottom'].includes(value)
     }
+  },
+  layoutOffset: {
+    type: Number,
+    defaut: 0
   }
 })
 
@@ -97,6 +106,8 @@ const $q = useQuasar()
 const currentWindow = Layout.getWindow(props.placement)
 const currentMode = ref('floating')
 const widgetRef = ref(null)
+const headerHeight = ref(0)
+const footerHeight = ref(0)
 const pinIcons = {
   left: 'las la-angle-left',
   right: 'las la-angle-right',
@@ -189,7 +200,7 @@ const widgetId = computed({
   }
 })
 const widgetLabel = computed(() => {
-  if (!widget.value) return ''
+  if (!widget.value) return undefined
   return widget.value.label
 })
 const widgetHeader = computed(() => {
@@ -199,43 +210,63 @@ const widgetHeader = computed(() => {
   return header
 })
 const widgetHeight = computed(() => {
-  // compute the widget height
-  let widgetHeight = Math.max(currentWindow.size[1], currentWindow.minSize[1])
-  const windowHeaderElement = document.getElementById('window-header')
-  if (windowHeaderElement) {
-    widgetHeight -= parseInt(window.getComputedStyle(windowHeaderElement).getPropertyValue('height'))
-  }
-  const windowFooterElement = document.getElementById('window-footer')
-  if (windowFooterElement) {
-    widgetHeight -= parseInt(window.getComputedStyle(windowFooterElement).getPropertyValue('height'))
-  }
-  return widgetHeight - border
+  return currentWindow.size[1] - headerHeight.value - footerHeight.value - border
 })
 const widgetWidth = computed(() => {
   return currentWindow.size[0] - border
 })
 
 // Watch
-watch(() => [$q.screen.width, $q.screen.height], (value) => {
-  onScreenResized()
-})
+watch(() => [$q.screen.width, $q.screen.height], (value) => onScreenResized() )
 
 // Functions
 function getGeometryKey () {
   return `windows-${props.placement}-geometry`
 }
-function storeGeometry (position, size) {
-  LocalStorage.set(getGeometryKey(), { position, size })
+function storeGeometry () {
+  LocalStorage.set(getGeometryKey(), { position: currentWindow.position, size: currentWindow.size })
 }
-function updateGeometry (position, size) {
+function setPinnedGeometry () {
+  let w, h, x, y
+  if (props.placement === 'top' || props.placement === 'bottom') {
+    w = $q.screen.width
+    if ($q.screen.gt.sm) w = $q.screen.width * 0.9
+    if ($q.screen.gt.md) w = $q.screen.width * 0.8
+    if ($q.screen.gt.lg) w = w = $q.screen.width * 0.7
+    h = $q.screen.height * 0.3
+    x = $q.screen.width / 2 - w / 2
+    y = props.placement === 'top' ? 0 : $q.screen.height - h
+  } else {
+    w = $q.screen.width * 0.15
+    if ($q.screen.lt.xl) w = $q.screen.width * 0.25
+    if ($q.screen.lt.lg) w = $q.screen.width * 0.30
+    if ($q.screen.lt.md) w = $q.screen.width * 0.40
+    if ($q.screen.lt.sm) w = $q.screen.width
+    h = $q.screen.height * 0.6
+    x = props.placement === 'left' ? 0 : $q.screen.width - w
+    y = $q.screen.height / 2 - h / 2
+  }
+  updateGeometry([x, y], [w, h])
+}
+function setMaximizedGeometry () {
+  updateGeometry([0, 0], [$q.screen.width, $q.screen.height])
+}
+function updateGeometry (position, size, check = false) {
+  // check geometry 
+  if (check) {
+    const pageHeight = $q.screen.height - props.layoutOffset
+    const pageWidth  = $q.screen.width
+    const w = Math.min(Math.max(size[0], currentWindow.minSize[0]), pageWidth)
+    const h = Math.min(Math.max(size[1], currentWindow.minSize[1]), pageHeight)
+    const x = Math.max(Math.min(position[0], pageWidth - w), 0)
+    const y = Math.max(Math.min(position[1], pageHeight - h), 0)
+    position = [x, y]
+    size = [w, h]
+  }
+  // compute breakpoings
   // Code taken from quasar screen plugin code
   const w = size[0]
   const s = $q.screen.sizes
-  // Compute breakpoint
-  const window = {
-    position,
-    size: [Math.max(size[0], currentWindow.minSize[0]), Math.max(size[1], currentWindow.minSize[1])]
-  }
   const gt = {
     xs: w >= s.sm,
     sm: w >= s.md,
@@ -258,23 +289,29 @@ function updateGeometry (position, size) {
     (md === true && 'md') ||
     (lg === true && 'lg') ||
     'xl'
-  Object.assign(window, { xs, sm, md, lg, xl, gt, lt, breakpoint })
+  const window = { position, size, xs, sm, md, lg, xl, gt, lt, breakpoint }
   Store.patch(Layout.getElementPath(`windows.${props.placement}`), window)
 }
 function onPinned () {
-  LocalStorage.clear(getGeometryKey())
+  // set the mode
   currentMode.value = 'pinned'
-  onScreenResized()
+  // clear the storage
+  LocalStorage.clear(getGeometryKey())
+  // compute and update the new geometry
+  setPinnedGeometry()
 }
 function onMaximized () {
+  // backup the geometry
   backupPosition = currentWindow.position
   backupSize = currentWindow.size
   backupMode = currentMode.value
+  // set the mode
   currentMode.value = 'maximized'
-  onScreenResized()
+  // compute and update the new geometry
+  setMaximizedGeometry()
 }
 function onRestored () {
-  updateGeometry(backupPosition, backupSize)
+  updateGeometry(backupPosition, backupSize, true)
   currentMode.value = backupMode
 }
 function onClosed () {
@@ -285,13 +322,13 @@ function onMoved (event) {
   if (currentMode.value !== 'maximized') {
     currentMode.value = 'floating'
     const xMax = $q.screen.width - currentWindow.size[0]
-    const yMax = $q.screen.height - currentWindow.size[1]
+    const yMax = $q.screen.height - props.layoutOffset - currentWindow.size[1]
     const newPosition = [
       Math.max(Math.min(Math.floor(currentWindow.position[0] + event.delta.x), xMax), 0),
       Math.min(Math.max(Math.floor(currentWindow.position[1] + event.delta.y), 0), yMax)
     ]
-    Layout.setWindowPosition(props.placement, newPosition)
-    if (event.isFinal) storeGeometry(newPosition, currentWindow.size)
+    updateGeometry(newPosition, currentWindow.size)
+    if (event.isFinal) storeGeometry()
   }
 }
 function onResized (event) {
@@ -299,75 +336,35 @@ function onResized (event) {
   // Handle the pinned and floating currentMode
   if (currentMode.value !== 'maximized') {
     if (currentMode.value !== 'floating') currentMode.value = 'floating'
-    const wMax = Math.max($q.screen.width - currentWindow.position[0], currentWindow.minSize[0])
-    const hMax = Math.max($q.screen.height - currentWindow.position[1], currentWindow.minSize[1])
+    const wMax = $q.screen.width - currentWindow.position[0]
+    const hMax = $q.screen.height - props.layoutOffset - currentWindow.position[1]
     const newSize = [
-      Math.min(currentWindow.size[0] + event.delta.x, wMax),
-      Math.min(currentWindow.size[1] + event.delta.y, hMax)
+      Math.min(Math.max(currentWindow.size[0] + event.delta.x, currentWindow.minSize[0]), wMax),
+      Math.min(Math.max(currentWindow.size[1] + event.delta.y, currentWindow.minSize[1]), hMax)
     ]
     updateGeometry(currentWindow.position, newSize)
-    if (event.isFinal) storeGeometry(currentWindow.position, newSize)
+    if (event.isFinal) storeGeometry()
   }
 }
 function onScreenResized () {
-  if (currentMode.value === 'pinned') {
-    // Pinned mode
-    let w, h, x, y
-    if (props.placement === 'top' || props.placement === 'bottom') {
-      w = $q.screen.width
-      if ($q.screen.gt.sm) w = $q.screen.width * 0.9
-      if ($q.screen.gt.md) w = $q.screen.width * 0.8
-      if ($q.screen.gt.lg) w = w = $q.screen.width * 0.7
-      h = $q.screen.height * 0.3
-      x = $q.screen.width / 2 - w / 2
-      y = props.placement === 'top' ? 0 : $q.screen.height - h
-    } else {
-      w = $q.screen.width * 0.15
-      if ($q.screen.lt.xl) w = $q.screen.width * 0.25
-      if ($q.screen.lt.lg) w = $q.screen.width * 0.30
-      if ($q.screen.lt.md) w = $q.screen.width * 0.40
-      if ($q.screen.lt.sm) w = $q.screen.width
-      h = $q.screen.height * 0.6
-      x = props.placement === 'left' ? 0 : $q.screen.width - w
-      y = $q.screen.height / 2 - h / 2
-    }
-    updateGeometry([x, y], [w, h])
-  } else if (currentMode.value === 'floating') {
-    // Floating mode
-    if (currentWindow.position && currentWindow.size) {
-      let x = currentWindow.position[0]
-      let y = currentWindow.position[1]
-      let w = currentWindow.size[0]
-      let h = currentWindow.size[1]
-      let constrained = false
-      if ((x + w) > $q.screen.width) {
-        x = Math.max($q.screen.width - w, 0)
-        if (x === 0) w = $q.screen.width
-        constrained = true
-      }
-      if ((y + h) > $q.screen.height) {
-        y = Math.max($q.screen.height - h, 0)
-        if (y === 0) h = $q.screen.height
-        constrained = true
-      }
-      if (constrained) {
-        updateGeometry([x, y], [w, h])
-        storeGeometry([x, y], [w, h])
-      }
-    }
-  } else {
-    // Maximized mode
-    updateGeometry([0, 0], [$q.screen.width, $q.screen.height])
-  }
+  if (currentMode.value === 'pinned') setPinnedGeometry()
+  else if (currentMode.value === 'maximized') setMaximizedGeometry()
+  else updateGeometry(currentWindow.position, currentWindow.size, true)
+}
+function onHeaderResized (size) {
+  headerHeight.value = size.height
+}
+function onFooterResized (size) {
+  footerHeight.value = size.height
 }
 
 // restore the geometry if needed
 const geometry = LocalStorage.get(getGeometryKey())
 if (geometry) {
-  updateGeometry(geometry.position, geometry.size)
+  updateGeometry(geometry.position, geometry.size, true)
 } else {
   if (currentWindow.position && currentWindow.size) {
-    updateGeometry(currentWindow.position, currentWindow.size)
+    updateGeometry(currentWindow.position, currentWindow.size, true)
   } else {
     logger.debug(`[KDK] No geometry found for ${props.placement} window. Set pinned mode.`)
     onPinned()
@@ -395,6 +392,7 @@ if (geometry) {
     background-color: $window-header-hover-background;
   }
   .k-window-footer {
+    height: v-bind(footerHeight)px;
     border-radius: 0 0 $window-border-radius $window-border-radius;
   }
   .k-window-grip:hover {

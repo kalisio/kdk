@@ -7,9 +7,9 @@ import { bindContent } from './utils/utils.content.js'
 
 const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
-const contentDefaults = { content: null, filter: {}, mode: null, visible: false }
+const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const defaults = {
-  layout: { view: 'lHh LpR lFf', mode: null },
+  layout: { view: 'lHh LpR lFf', mode: undefined },
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults },
@@ -21,10 +21,10 @@ const defaults = {
     bottom: { ...contentDefaults, opener: false }
   },
   windows: {
-    left: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: null },
-    top: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: null },
-    right: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: null },
-    bottom: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: null }
+    left: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: undefined },
+    top: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: undefined },
+    right: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: undefined },
+    bottom: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: undefined }
   }
 }
 
