@@ -342,6 +342,12 @@ export const baseMap = {
       if (layer.type === 'BaseLayer') leafletLayer.bringToBack()
       // Apply the current time if needed
       if (typeof leafletLayer.setCurrentTime === 'function') leafletLayer.setCurrentTime(Time.getCurrentTime())
+      // Restore geojson data for in-memory layers that were hidden
+      const cachedGeojson = this.geojsonCache[name]
+      if (cachedGeojson) {
+        this.updateLayer(name, cachedGeojson)
+        delete this.geojsonCache[name]
+      }
       this.onLayerShown(layer, leafletLayer)
     },
     onLayerShown (layer, leafletLayer) {
@@ -357,6 +363,13 @@ export const baseMap = {
       layer.isVisible = false
       // Remove the leaflet layer from map
       const leafletLayer = this.leafletLayers[name]
+      // Check if we should remember associated geojson
+      const cacheGeoJson = layer.leaflet.type === 'geoJson' && !_.has(layer, '_id')
+      if (cacheGeoJson) {
+        // in this case we keep the layer's geojson in a cache for when the user will show it again
+        const geojson = leafletLayer.toGeoJSON(false)
+        this.geojsonCache[name] = geojson
+      }
       delete this.leafletLayers[name]
       this.map.removeLayer(leafletLayer)
       const panes = _.get(layer, 'leaflet.panes')
@@ -443,6 +456,10 @@ export const baseMap = {
       this.onLayerRemoved(layer)
     },
     onLayerRemoved (layer) {
+      // Remove cached geojson data if any
+      if (_.has(this.geojsonCache, layer.name)) {
+        delete this.geojsonCache[layer.name]
+      }
       this.$emit('layer-removed', layer)
       this.$engineEvents.emit('layer-removed', layer)
     },
@@ -566,6 +583,9 @@ export const baseMap = {
     this.$engineEvents = new Emitter()
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
     this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
+
+    // Cache where we'll store geojson data for in memory layers we'll hide
+    this.geojsonCache = {}
 
     /*
     console.log('***** KDK ****')
