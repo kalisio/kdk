@@ -1,3 +1,5 @@
+import { deleteExpiredSubscriptions } from '@kalisio/feathers-webpush'
+
 export default {
   before: {
     all: [],
@@ -13,7 +15,7 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [deleteExpiredSubscriptions],
     update: [],
     patch: [],
     remove: []
