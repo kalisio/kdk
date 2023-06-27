@@ -862,7 +862,7 @@
   "pwa": {
     "VERSION_MISMATCH": "Application version mismatch, please refresh the page to get the latest version available",
     "BUTTON_REFRESH": "Refresh",
-    "BUTTON_DISMISS": "Dismiss",
+    "BUTTON_DISMISS": "Close",
     "BUTTON_INSTALL": "Install app",
     "MESSAGE_INSTALL": "Application ready to install"
   }

@@ -863,7 +863,7 @@
   "pwa": {
     "VERSION_MISMATCH": "Discordance de version, merci de rafraîchir la page pour profiter de la dernière version disponible",
     "BUTTON_REFRESH": "Rafraîchir",
-    "BUTTON_DISMISS": "Rejeter",
+    "BUTTON_DISMISS": "Fermer",
     "BUTTON_INSTALL": "Installer l'application",
     "MESSAGE_INSTALL": "L'application est prête à être installé"
   }
