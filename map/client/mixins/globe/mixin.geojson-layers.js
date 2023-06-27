@@ -241,6 +241,11 @@ export const geojsonLayers = {
       const layer = this.getCesiumLayerByName(name)
       if (!layer) return // Cannot update invisible layer
       if (typeof layer.updateGeoJson === 'function') layer.updateGeoJson(geoJson)
+      if (!layer._id) {
+        // Since this is an in memory layer and engine layer gets removed on hide
+        // we keep a copy of the geojson data for when the user will show the layer
+        this.geojsonCache[name] = geoJson
+      }
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       const geoJsonlayers = _.values(this.layers).filter(sift({

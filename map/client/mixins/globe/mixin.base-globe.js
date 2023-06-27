@@ -190,13 +190,25 @@ export const baseGlobe = {
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
       } else { // Entity data source otherwise
         this.viewer.dataSources.add(cesiumLayer)
+        // Check if we have cached geojson data for this layer
+        // NOTE: data is cached in geojson mixin, updateLayer()
+        const cachedGeojson = this.geojsonCache[name]
+        if (cachedGeojson) {
+          if (!layer._id) {
+            // Restore geojson data for in-memory layers that were hidden
+            this.updateLayer(name, cachedGeojson)
+          } else {
+            // Delete data from cache when layer is not in memory anymore
+            delete this.geojsonCache[name]
+          }
+        }
       }
       layer.isVisible = true
       this.onLayerShown('layer-shown', layer, cesiumLayer)
-      this.$engineEvents.emit('layer-shown', layer, cesiumLayer)
     },
     onLayerShown (layer, cesiumLayer) {
       this.$emit('layer-shown', layer, cesiumLayer)
+      this.$engineEvents.emit('layer-shown', layer, cesiumLayer)
     },
     hideLayer (name) {
       // retrieve the layer
@@ -248,6 +260,12 @@ export const baseGlobe = {
         this.cesiumLayers[newName] = cesiumLayer
         delete this.cesiumLayers[previousName]
       }
+      // Update potential geojson cache entry
+      const cachedGeojson = this.geojsonCache[previousName]
+      if (cachedGeojson) {
+        this.geojsonCache[newName] = cachedGeojson
+        delete this.geojsonCache[previousName]
+      }
       // Update underlying layer
       this.layers[newName] = layer
       delete this.layers[previousName]
@@ -267,6 +285,10 @@ export const baseGlobe = {
       this.onLayerRemoved(layer)
     },
     onLayerRemoved (layer) {
+      // Remove cached geojson data if any
+      if (_.has(this.geojsonCache, layer.name)) {
+        delete this.geojsonCache[layer.name]
+      }
       this.$emit('layer-removed', layer)
       this.$engineEvents.emit('layer-removed', layer)
     },
@@ -451,6 +473,9 @@ export const baseGlobe = {
     this.userLocation = false
     // Internal event bus
     this.$engineEvents = new Emitter()
+
+    // Cache where we'll store geojson data for in memory layers we'll hide
+    this.geojsonCache = {}
   },
   beforeUnmount () {
     this.clearLayers()
