@@ -71,7 +71,11 @@
     ]
   },
   "directories": {
-    "lib": "lib"
+    "core": "./core",
+    "map": "./map",
+    "test": "./test",
+    "extras": "./extras",
+    "docs": "./docs"
   },
   "dependencies": {
     "@casl/ability": "^6.1.1",
