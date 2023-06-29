@@ -212,6 +212,14 @@ export async function getFromStore (page, path) {
   return result
 }
 
+/* Update the Store value corresponding to the given path
+ */
+export async function setToStore (page, path, value) {
+  await page.evaluate((path, value) => {
+    window.$store.patch(path, value)
+  }, path, value)
+}
+
 /* Given a reference screenshot  key and a run screenshot key, this
  * will perform screenshot comparison and return the diffRatio as
  * a percentage of the number of mismatched pixels.
