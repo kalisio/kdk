@@ -43,7 +43,7 @@
     "422": "Cette opération ne peut être réalisée: impossible à traiter",
     "429": "Cette opération ne peut être réalisée: trop de requêtes",
     "498": "Ce navigateur ne prend pas en charge les notifications push web",
-    "499": "Vous devez modifier les paramètres du site et accepter les notifications",
+    "499": "Veuillez modifier les paramètres de votre navigateur pour autoriser les notifications",
     "500": "Cette opération ne peut être réalisée: une erreur a été rencontrée",
     "501": "Cette opération ne peut être réalisée: non gérée",
     "502": "Cette opération ne peut être réalisée: service introuvable",

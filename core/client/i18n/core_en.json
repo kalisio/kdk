@@ -43,7 +43,7 @@
     "422": "Operation cannot be performed: unprocessable",
     "429": "Operation cannot be performed: too many requests",
     "498": "This browser does not support web push notifications",
-    "499": "You must modify the site settings and accept notifications",
+    "499": "Please change your browser settings to allow notifications",
     "500": "Operation cannot be performed: an error occured",
     "501": "Operation cannot be performed: not implemented",
     "502": "Operation cannot be performed: service unavailable",
