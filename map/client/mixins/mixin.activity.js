@@ -127,6 +127,9 @@ export const activity = {
         if (baseLayer) await this.showLayer(baseLayer.name)
       }
     },
+    isInMemoryLayer (layer) {
+      return layer._id === undefined
+    },
     isUserLayer (layer) {
       return (_.get(layer, 'scope') === 'user')
     },

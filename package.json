@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/kdk",
   "description": "Kalisio Development Kit",
-  "version": "1.7.0",
+  "version": "2.0.1",
   "homepage": "https://github.com/kalisio/kdk",
   "type": "module",
   "keywords": [
@@ -71,7 +71,11 @@
     ]
   },
   "directories": {
-    "lib": "lib"
+    "core": "./core",
+    "map": "./map",
+    "test": "./test",
+    "extras": "./extras",
+    "docs": "./docs"
   },
   "dependencies": {
     "@casl/ability": "^6.1.1",

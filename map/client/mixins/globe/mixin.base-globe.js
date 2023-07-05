@@ -193,10 +193,10 @@ export const baseGlobe = {
       }
       layer.isVisible = true
       this.onLayerShown('layer-shown', layer, cesiumLayer)
-      this.$engineEvents.emit('layer-shown', layer, cesiumLayer)
     },
     onLayerShown (layer, cesiumLayer) {
       this.$emit('layer-shown', layer, cesiumLayer)
+      this.$engineEvents.emit('layer-shown', layer, cesiumLayer)
     },
     hideLayer (name) {
       // retrieve the layer

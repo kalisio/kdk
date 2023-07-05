@@ -122,8 +122,8 @@ export function baseActivity (name) {
       getFab () {
         return Layout.getFab()
       },
-      setFab (actions, filter) {
-        Layout.setFab({ actions, filter })
+      setFab (content, mode, filter) {
+        Layout.setFab({ content, mode, filter }, this)
       },
       configureFab () {
         Layout.setFab(_.get(this.activityOptions, 'fab'), this)

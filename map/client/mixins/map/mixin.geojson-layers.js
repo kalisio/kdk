@@ -420,6 +420,15 @@ export const geojsonLayers = {
           if (typeof layer.update === 'function') layer.update()
           else if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, this.toGeoJson(name))
         }
+
+        // We keep geojson data for in memory layer in a cache since
+        // these layers will be destroyed when hidden. We need to be able to restore
+        // them when they get shown again
+        const baseLayer = this.getLayerByName(name)
+        if (this.isInMemoryLayer(baseLayer)) {
+          const geojson = layer.toGeoJSON(false)
+          this.geojsonCache[name] = geojson
+        }
       }
     },
     onLayerUpdated (layer, leafletLayer, data) {
@@ -497,6 +506,25 @@ export const geojsonLayers = {
           this.updateLayer(geoJsonlayer.name, this.toGeoJson(geoJsonlayer.name))
         }
       })
+    },
+    onLayerShownGeoJsonLayers (layer, engineLayer) {
+      // Check if we have cached geojson data for this layer
+      const cachedGeojson = this.geojsonCache[layer.name]
+      if (cachedGeojson) {
+        if (this.isInMemoryLayer(layer)) {
+          // Restore geojson data for in-memory layers that was hidden
+          this.updateLayer(layer.name, cachedGeojson)
+        } else {
+          // Clear cache since layer is not in memory anymore
+          delete this.geojsonCache[layer.name]
+        }
+      }
+    },
+    onLayerRemovedGeoJsonLayers (layer) {
+      // Remove cached geojson data if any
+      if (_.has(this.geojsonCache, layer.name)) {
+        delete this.geojsonCache[layer.name]
+      }
     }
   },
   created () {
@@ -504,10 +532,19 @@ export const geojsonLayers = {
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
     this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
+    this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
+
+    // Cache where we'll store geojson data for in memory layers we'll hide
+    this.geojsonCache = {}
   },
   beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
+    this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
+
+    this.geojsonCache = {}
   }
 }
