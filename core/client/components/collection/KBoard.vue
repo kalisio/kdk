@@ -19,7 +19,6 @@
           }]"
           :ref="column.value"
           v-bind="column.props"
-          :append-items="true"
           :height="height"
         >
         </KColumn>
