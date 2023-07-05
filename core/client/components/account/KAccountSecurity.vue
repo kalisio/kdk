@@ -27,26 +27,26 @@
     <!--
       Devices
     -->
-    <KAccountDevices
-      id="devices-block"
-      :renderer="deviceRenderer"
+    <KAccountSubscriptions
+      id="subscriptions-block"
+      :renderer="subscriptionRenderer"
     />
   </div>
 </template>
 
 <script>
 import KBlock from '../KBlock.vue'
-import KAccountDevices from './KAccountDevices.vue'
+import KAccountSubscriptions from './KAccountSubscriptions.vue'
 
 export default {
   components: {
     KBlock,
-    KAccountDevices
+    KAccountSubscriptions
   },
   props: {
-    deviceRenderer: {
+    subscriptionRenderer: {
       type: Object,
-      default: () => ({ component: 'account/KDeviceCard' })
+      default: () => ({ component: 'account/KSubscriptionCard' })
     }
   },
   data () {

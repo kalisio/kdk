@@ -225,8 +225,8 @@
       "SECURITY_LABEL": "Cette activité vous permet de modifier <b>vos identifiants</b> et vos appareils",
       "PASSWORD_LINK_LABEL": "Initiez la <b>procédure de changement de mot de passe</b>",
       "EMAIL_LINK_LABEL": "Initiez la <b>procédure de changement d'adresse mail</b>",
-      "DEVICES_LABEL": "Cette section liste les différents appareils mobiles que vous avez utilisé.",
-      "UNLINK_LABEL": "Vérifiez ici toute activité suspecte et dissociez les appareils obsolètes de votre compte.",
+      "SUBSCRIPTIONS_LABEL": "Cette section liste les différents abonnements dont vous disposez.",
+      "UNSUBSCRIBE_LABEL": "Vérifiez ici toute activité suspecte et supprimez les abonnements obsolètes de votre compte.",
       "DANGER_ZONE_LABEL": "Cette activité vous permet de supprimer votre compte du système",
       "DELETE_LABEL": "Un confirmation manuelle vous sera demandé avant la suppression définitive de votre compte."
     },
@@ -792,15 +792,14 @@
     "ERROR_MESSAGE_VERIFY_EXPIRED": "Le délai pour vérifier votre adresse mail a expiré, merci de cliquer sur le lien ci-dessous pour vous renvoyer un mail de vérifcation",
     "ERROR_MESSAGE_DEFAULT": "Impossible de vérifier votre adresse mail"
   },
-  "KDeviceCard": {
+  "KSubscriptionCard": {
     "LAST_ACTIVITY": "Dernière activité",
-    "SERIAL_NUMBER": "Numéro de série",
-    "UNLINK_LABEL": "Dissocier",
-    "UNLINK_DIALOG_TITLE": "Dissocier l'appareil {description} ?",
-    "UNLINK_DIALOG_MESSAGE": "Etes vous sûr de vouloir dissocier l'appareil {description} de votre compte ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via cet appareil."
+    "UNSUBSCRIBE_LABEL": "Se désabonner",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
-  "KAccountDevices": {
-    "DEVICES_USED": "Vérifier quand des appareils spécifiques ont eu accès à votre compte ci-dessous"
+  "KAccountSubscriptions": {
+    "SUBSCRIPTIONS": "Vérifier les abonnements de votre compte ci-dessous"
   },
   "KMemberFilter": {
     "NONE": "Aucun",
