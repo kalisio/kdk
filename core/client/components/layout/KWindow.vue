@@ -12,7 +12,7 @@
       <KPanel
         id="window-menu"
         :content="menu"
-        @touchstart.passive.stop 
+        @touchstart.passive.stop
         @mousedown.passive.stop
       />
       <!-- widget header -->
@@ -21,7 +21,7 @@
         id="widget-header"
         :content="widgetHeader"
       />
-      <div 
+      <div
         v-else-if="widgetLabel"
         class="q-px-sm text-subtitle1 ellipsis"
       >
@@ -29,7 +29,7 @@
       </div>
       <q-space />
       <!-- window controls -->
-      <KMenu 
+      <KMenu
         v-if="currentWindow.xs"
         id="window-controls"
         dropdown-icon="las la-ellipsis-h"
@@ -205,7 +205,7 @@ const controls = computed(() => {
     icon: 'las la-times',
     size: 'sm',
     tooltip: 'KWindow.CLOSE_ACTION',
-    handler: () => Layout.setWindowVisible(props.placement, false) 
+    handler: () => Layout.setWindowVisible(props.placement, false)
   }]
 })
 const hasGeometry = computed(() => {
@@ -240,7 +240,7 @@ const widgetHeight = computed(() => {
 })
 
 // Watch
-watch(() => [$q.screen.width, $q.screen.height], (value) => onScreenResized() )
+watch(() => [$q.screen.width, $q.screen.height], (value) => onScreenResized())
 watch(() => currentWindow.state, (newState, oldState) => refresh(newState, oldState))
 
 // Functions
@@ -261,26 +261,29 @@ function restoreGeometry () {
 }
 function refresh (newState, oldState) {
   switch (newState) {
-    case 'pinned':
+    case 'pinned': {
       storeState()
       setPinnedGeometry()
       break
-    case 'maximized':
+    }
+    case 'maximized': {
       storeState()
       backupState = oldState
       setMaximizedGeometry()
       break
-    case 'floating':
+    }
+    case 'floating': {
       storeState()
       const geometry = restoreGeometry()
       if (geometry) {
-          updateGeometry(geometry.position, geometry.size, true)
+        updateGeometry(geometry.position, geometry.size, true)
       } else {
         const position = currentWindow.sizePolicy.floating.position
         const size = currentWindow.sizePolicy.floating.size
         updateGeometry(position, size, true)
       }
       break
+    }
     default:
       logger.warn(`[KDK] invalid window state ${currentWindow.state}`)
   }
@@ -304,10 +307,10 @@ function setMaximizedGeometry () {
   updateGeometry([0, 0], [$q.screen.width, $q.screen.height])
 }
 function updateGeometry (position, size, check = false) {
-  // check geometry 
+  // check geometry
   if (check) {
     const pageHeight = $q.screen.height - props.layoutOffset
-    const pageWidth  = $q.screen.width
+    const pageWidth = $q.screen.width
     const w = Math.min(Math.max(size[0], currentWindow.sizePolicy.minSize[0]), pageWidth)
     const h = Math.min(Math.max(size[1], currentWindow.sizePolicy.minSize[1]), pageHeight)
     const x = Math.max(Math.min(position[0], pageWidth - w), 0)
@@ -396,8 +399,7 @@ const fallbackState = restoreState() || 'pinned'
 if (currentWindow.state) {
   logger.debug(`[KDK] restoring ${props.placement} window in ${currentWindow.state} state`)
   refresh(currentWindow.state, fallbackState)
-}
-else {
+} else {
   logger.debug(`[KDK] restoring ${props.placement} window in ${fallbackState} state`)
   Layout.setWindowState(props.placement, fallbackState)
 }
