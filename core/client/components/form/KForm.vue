@@ -86,7 +86,7 @@ const nbReadyFields = ref(0)
 
 // Watch
 watch(async () => props.schema, (value) => {
-  logger.debug('schema changed', value)
+  logger.debug('[KDK] Schema changed', value)
   fields.value = []
   groups.value = []
   nbReadyFields.value = 0
@@ -98,7 +98,7 @@ watch(async () => props.schema, (value) => {
 function getField (name) {
   const field = _.find(fields.value, { name })
   if (field) return field
-  logger.error(`Cannot find field ${name}`)
+  logger.error(`[KDK] Cannot find field ${name}`)
 }
 function onFieldRefCreated (reference) {
   if (reference) {
@@ -173,7 +173,7 @@ function values () {
 }
 function fill (values) {
   if (!isReady.value) throw new Error('Cannot fill the form while not ready')
-  logger.debug('Filling form', schema.value.$id, values)
+  logger.debug('[KDK] Filling form', schema.value.$id, values)
   _.forEach(fields.value, field => {
     if (_.has(values, field.name)) {
       getField(field.name).reference.fill(_.get(values, field.name), values)
@@ -185,12 +185,12 @@ function fill (values) {
 }
 function clear () {
   if (!isReady.value) throw new Error('Cannot clear the form while not ready')
-  logger.debug('Clearing form', schema.value.$id)
+  logger.debug('[KDK] Clearing form', schema.value.$id)
   _.forEach(fields.value, field => field.reference.clear())
 }
 function validate () {
   if (!isReady.value) throw new Error('Cannot validate the form while not ready')
-  logger.debug('Validating form', schema.value.$id)
+  logger.debug('[KDK] Validating form', schema.value.$id)
   const val = values()
   const { isValid, errors } = validateSchema(val)
   if (!isValid) {
@@ -208,14 +208,14 @@ function validate () {
   return { isValid, values: val }
 }
 async function apply (object) {
-  if (!isReady.value) throw new Error('Cannot apply the form while not ready')
+  if (!isReady.value) throw new Error('[KDK] Cannot apply the form while not ready')
   for (let i = 0; i < fields.value.length; i++) {
     const field = fields.value[i]
     await field.reference.apply(object, field.name)
   }
 }
 async function submitted (object) {
-  if (!isReady.value) throw new Error('Cannot run submitted on the form while not ready')
+  if (!isReady.value) throw new Error('[KDK] Cannot run submitted on the form while not ready')
   for (let i = 0; i < fields.value.length; i++) {
     const field = fields.value[i]
     await field.reference.submitted(object, field.name)
