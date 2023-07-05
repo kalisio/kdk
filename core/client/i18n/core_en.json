@@ -225,8 +225,8 @@
       "SECURITY_LABEL": "This activity allows to update your <b>personal identifiers</b> and your devices",
       "PASSWORD_LINK_LABEL": "Launch the <b>password change procedure</b>",
       "EMAIL_LINK_LABEL": "Launch the <b>email change procedure</b>",
-      "DEVICES_LABEL": "This section list all the mobile devices you have used.",
-      "UNLINK_LABEL": "Check for any suspect activity and unlink outdated mobile devices.",
+      "SUBSCRIPTIONS_LABEL": "This section list all the subscriptions you have.",
+      "UNSUBSCRIBE_LABEL": "Check for any suspect activity and remove outdated subscriptions.",
       "DANGER_ZONE_LABEL": "This activity allows to remove your account",
       "DELETE_LABEL": "A manual confirmation will be required before final removal."
     },
@@ -791,15 +791,14 @@
     "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to verify your email address has expired, please resend the verification email with the link below",
     "ERROR_MESSAGE_DEFAULT": "Your email address has not been verified"
   },
-  "KDeviceCard": {
+  "KSubscriptionCard": {
     "LAST_ACTIVITY": "Last activity",
-    "SERIAL_NUMBER": "Serial number",
-    "UNLINK_LABEL": "Unlink",
-    "UNLINK_DIALOG_TITLE": "Unlink device {description} ?",
-    "UNLINK_DIALOG_MESSAGE": "Are you sure you want to unlink device <b>{description}</b> from your account ?<br><br>You will not be able to receive notifications until you reconnect using the device."
+    "UNSUBSCRIBE_LABEL": "Unsubscribe",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
   },
-  "KAccountDevices": {
-    "DEVICES_USED": "Check when specific devices has been used to access your account below"
+  "KAccountSubscriptions": {
+    "SUBSCRIPTIONS": "Check subscriptions that have been added to your account below"
   },
   "KMemberFilter": {
     "NONE": "None",

@@ -43,7 +43,7 @@
           icon="las la-angle-double-down"
           color="accent"
           size="1rem"
-          :handler="this.scrollDown"
+          :handler="scrollDown"
         />
       </div>
     </div>
@@ -62,129 +62,135 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import _ from 'lodash'
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
+import { Events } from '../../events.js'
 import KAction from '../KAction.vue'
 import KScrollArea from '../KScrollArea.vue'
 import KStamp from '../KStamp.vue'
-import { baseCollection, service } from '../../mixins'
+import { useCollection } from '../../composables'
 import { loadComponent } from '../../utils/index.js'
 
-export default {
-  components: {
-    KScrollArea,
-    KAction,
-    KStamp
+const emit = defineEmits(['selection-changed', 'collection-refreshed'])
+
+// Props
+const props = defineProps({
+  header: {
+    type: Array,
+    default: () => null
   },
-  mixins: [
-    service,
-    baseCollection
-  ],
-  props: {
-    header: {
-      type: Array,
-      default: () => null
-    },
-    renderer: {
-      type: Object,
-      default: () => {
-        return {
-          component: 'collection/KCard'
-        }
+  renderer: {
+    type: Object,
+    default: () => {
+      return {
+        component: 'collection/KCard'
       }
-    },
-    baseQuery: {
-      type: Object,
-      default: function () {
-        return {}
-      }
-    },
-    filterQuery: {
-      type: Object,
-      default: function () {
-        return {}
-      }
-    },
-    listStrategy: {
-      type: String,
-      default: undefined
-    },
-    height: {
-      type: Number,
-      default: 300
-    },
-    dense: {
-      type: Boolean,
-      default: false
     }
   },
-  computed: {
-    scrollHeight () {
-      return this.height - this.headerHeight
-    },
-    rendererComponent () {
-      return loadComponent(this.renderer.component)
+  height: {
+    type: Number,
+    default: 300
+  },
+  dense: {
+    type: Boolean,
+    default: false
+  },
+  contextId: {
+    type: String,
+    default: undefined
+  },
+  service: {
+    type: String,
+    required: true
+  },
+  baseQuery: {
+    type: Object,
+    default: () => {}
+  },
+  filterQuery: {
+    type: Object,
+    default: () => {}
+  },
+  listStrategy: {
+    type: String,
+    default: 'smart'
+  }
+})
+
+// Data
+const scrollArea = ref(null)
+const scrollAction = ref(false)
+const headerHeight = ref(0)
+// Configuration
+const scrollOffset = 350
+const scrollDuration = 250
+
+// Computed
+const rendererComponent = computed(() => loadComponent(props.renderer.component))
+const scrollHeight = computed(() => props.height - headerHeight.value)
+
+// Always use append mode for columns
+const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } =
+  useCollection(Object.assign({ appendItems: true }, props))
+
+// Functions
+function onHeaderResized (size) {
+  headerHeight.value = size.height
+}
+function onScrolled (info) {
+  if (items.value.length < nbTotalItems.value) {
+    if (info.verticalPercentage === 1) {
+      if (items.value.length === currentPage.value * props.nbItemsPerPage) currentPage.value++
+      refreshCollection()
+      scrollAction.value = true
+    } else {
+      scrollAction.value = info.verticalSize > scrollHeight.value
     }
-  },
-  data () {
-    return {
-      scrollAction: false,
-      headerHeight: 0
+  } else {
+    if (info.verticalPercentage === 1) {
+      scrollAction.value = false
+    } else {
+      scrollAction.value = info.verticalSize > scrollHeight.value
     }
-  },
-  watch: {
-    baseQuery () {
-      this.resetCollection()
-    },
-    filterQuery () {
-      this.resetCollection()
-    }
-  },
-  methods: {
-    getCollectionBaseQuery () {
-      return this.baseQuery
-    },
-    getCollectionFilterQuery () {
-      return this.filterQuery
-    },
-    onHeaderResized (size) {
-      this.headerHeight = size.height
-    },
-    onScrolled (info) {
-      if (this.items.length < this.nbTotalItems) {
-        if (info.verticalPercentage === 1) {
-          if (this.items.length === this.currentPage * this.nbItemsPerPage) this.currentPage++
-          this.refreshCollection()
-          this.scrollAction = true
-        } else {
-          this.scrollAction = info.verticalSize > this.scrollHeight
-        }
-      } else {
-        if (info.verticalPercentage === 1) {
-          this.scrollAction = false
-        } else {
-          this.scrollAction = info.verticalSize > this.scrollHeight
-        }
-      }
-    },
-    scrollDown () {
-      const position = this.$refs.scrollArea.getScrollPosition('vertical')
-      this.$refs.scrollArea.setScrollPosition('vertical', position + this.scrollOffset, this.scrollDuration)
-    },
-    resetCollection () {
-      if (this.$refs.scrollArea) this.$refs.scrollArea.setScrollPosition('vertical', 0)
-      baseCollection.methods.resetCollection.call(this)
-    }
-  },
-  created () {
-    // Configuration
-    this.scrollOffset = 350
-    this.scrollDuration = 250
-    // Whenever the user abilities are updated, update collection as well
-    this.$events.on('user-abilities-changed', this.resetCollection)
-    this.refreshCollection()
-  },
-  beforeUnmount () {
-    this.$events.off('user-abilities-changed', this.resetCollection)
   }
 }
+function scrollDown () {
+  const position = scrollArea.value.getScrollPosition('vertical')
+  scrollArea.value.setScrollPosition('vertical', position + scrollOffset, scrollDuration)
+}
+function onItemSelected (item, section) {
+  emit('selection-changed', item, section)
+}
+function onCollectionRefreshed () {
+  emit('collection-refreshed', items.value)
+}
+
+// Lifecycle hooks
+watch(items, () => {
+  // On reset, reset as well scroll area
+  if (_.isEmpty(items.value) && scrollArea.value) scrollArea.value.setScrollPosition('vertical', 0)
+  // Emit events so that embbeding components can be aware of it
+  onCollectionRefreshed()
+})
+
+onBeforeMount(() => {
+  refreshCollection()
+  // Whenever the user abilities are updated, update collection as well
+  Events.on('user-abilities-changed', resetCollection)
+})
+
+onBeforeUnmount(() => {
+  Events.off('user-abilities-changed', resetCollection)
+})
+
+// Expose
+defineExpose({
+  items,
+  nbTotalItems,
+  nbPages,
+  currentPage,
+  refreshCollection,
+  resetCollection
+})
 </script>

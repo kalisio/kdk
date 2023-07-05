@@ -1,7 +1,7 @@
 <template>
   <div v-if="items.length > 0" class="q-pa-sm row">
     <template v-for="item in items" :key="item._id">
-      <div :class="getItemClass()">
+      <div :class="itemClass">
         <component
           :id="item._id"
           :service="service"
@@ -18,7 +18,7 @@
         v-model="currentPage"
         :max="nbPages"
         :input="true"
-        @update:model-value="onPageChanged"
+        @update:model-value="refreshCollection"
       />
     </div>
   </div>
@@ -31,72 +31,87 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import KStamp from '../KStamp.vue'
-import { service, baseCollection } from '../../mixins'
+import { Events } from '../../events.js'
+import { useCollection } from '../../composables'
 import { loadComponent } from '../../utils'
 
-export default {
-  components: {
-    KStamp
-  },
-  mixins: [
-    service,
-    baseCollection
-  ],
-  props: {
-    renderer: {
-      type: Object,
-      default: () => {
-        return {
-          component: 'collection/KCard'
-        }
+const emit = defineEmits(['selection-changed', 'collection-refreshed'])
+
+// Props
+const props = defineProps({
+  renderer: {
+    type: Object,
+    default: () => {
+      return {
+        component: 'collection/KCard'
       }
-    },
-    baseQuery: {
-      type: Object,
-      default: () => {}
-    },
-    filterQuery: {
-      type: Object,
-      default: () => {}
-    },
-    listStrategy: {
-      type: String
     }
   },
-  computed: {
-    rendererComponent () {
-      return loadComponent(this.renderer.component)
-    }
+  contextId: {
+    type: String,
+    default: undefined
   },
-  watch: {
-    baseQuery: function () {
-      this.resetCollection()
-    },
-    filterQuery: function () {
-      this.resetCollection()
-    }
+  service: {
+    type: String,
+    required: true
   },
-  methods: {
-    getItemClass () {
-      return this.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2'
-    },
-    getCollectionBaseQuery () {
-      return this.baseQuery
-    },
-    getCollectionFilterQuery () {
-      return this.filterQuery
-    }
+  baseQuery: {
+    type: Object,
+    default: () => {}
   },
-  created () {
-    // Refresh collection
-    this.refreshCollection()
-    // Whenever the user abilities are updated, update collection as well
-    this.$events.on('user-abilities-changed', this.refreshCollection)
+  filterQuery: {
+    type: Object,
+    default: () => {}
   },
-  beforeUnmount () {
-    this.$events.off('user-abilities-changed', this.refreshCollection)
+  listStrategy: {
+    type: String,
+    default: 'smart'
+  },
+  nbItemsPerPage: {
+    type: Number,
+    default: 12
   }
+})
+
+// Computed
+const rendererComponent = computed(() => loadComponent(props.renderer.component))
+const itemClass = computed(() => props.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2')
+
+// Functions
+function onItemSelected (item, section) {
+  emit('selection-changed', item, section)
 }
+function onCollectionRefreshed () {
+  emit('collection-refreshed', items.value)
+}
+
+const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(props)
+
+// Lifecycle hooks
+
+// Emit events so that embbeding components can be aware of it
+watch(items, onCollectionRefreshed)
+
+onBeforeMount(() => {
+  refreshCollection()
+  // Whenever the user abilities are updated, update collection as well
+  Events.on('user-abilities-changed', refreshCollection)
+})
+
+onBeforeUnmount(() => {
+  Events.off('user-abilities-changed', refreshCollection)
+})
+
+// Expose
+defineExpose({
+  items,
+  nbTotalItems,
+  nbPages,
+  currentPage,
+  refreshCollection,
+  resetCollection
+})
 </script>

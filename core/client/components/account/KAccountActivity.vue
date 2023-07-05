@@ -5,7 +5,7 @@
         <KEditor service="users" :objectId="user._id" perspective="profile" />
       </div>
       <div v-if="page === 'security'">
-        <KAccountSecurity :device-renderer="deviceRenderer" />
+        <KAccountSecurity :subscription-renderer="subscriptionRenderer" />
       </div>
       <div v-else-if="page === 'danger-zone'">
         <KAccountDZ />
@@ -44,9 +44,9 @@ export default {
     return {
       user: this.$store.get('user'),
       // Make this configurable from app
-      deviceRenderer: _.merge({
-        component: 'account/KDeviceCard'
-      }, this.activityOptions.devices)
+      subscriptionRenderer: _.merge({
+        component: 'account/KSubscriptionCard'
+      }, this.activityOptions.subscriptions)
     }
   },
   watch: {
