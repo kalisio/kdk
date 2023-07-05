@@ -94,7 +94,7 @@ export const geojsonLayers = {
           }
           // We want to restore values that were there till now but are missing
           // from the input feature.
-          _.defaultsDeep(feature, _.pick(oldLayer.feature, [ 'properties', 'time', 'runTime' ]))
+          _.defaultsDeep(feature, _.pick(oldLayer.feature, ['properties', 'time', 'runTime']))
           if (oldLayer.setIcon) {
             // FIXME: updating icon in place requires to recreate it anyway, so for now we recreate the whole marker
             // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
