@@ -228,16 +228,16 @@ const hasBottomPaneComponents = computed(() => {
   return !_.isEmpty(bottomPane.components)
 })
 const leftWindowSize = computed(() => {
-  return leftWindow.size ? leftWindow.size : leftWindow.minSize
+  return leftWindow.size || leftWindow.sizePolicy.minSize
 })
 const topWindowSize = computed(() => {
-  return topWindow.size ? topWindow.size : topWindow.minSize
+  return topWindow.size || topWindow.sizePolicy.minSize
 })
 const rightWindowSize = computed(() => {
-  return rightWindow.size ? rightWindow.size : rightWindow.minSize
+  return rightWindow.size || rightWindow.sizePolicy.minSize
 })
 const bottomWindowSize = computed(() => {
-  return bottomWindow.size ? bottomWindow.size : bottomWindow.minSize
+  return bottomWindow.size || bottomWindow.sizePolicy.minSize
 })
 const fabBehaviour = computed(() => {
   switch (fab.position) {
