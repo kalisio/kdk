@@ -9,15 +9,15 @@ const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined }
-const hWindowSizePolicy = { 
+const hWindowSizePolicy = {
   minSize: [300, 200],
-  floating: { position: [0, 0], size: [300,200] }, 
-  pinned: { xs: [100, 30], sm: [90, 30], md: [80, 30], lg: [70, 30], xl: [60, 30]}
+  floating: { position: [0, 0], size: [300, 200] },
+  pinned: { xs: [100, 30], sm: [90, 30], md: [80, 30], lg: [70, 30], xl: [60, 30] }
 }
-const vWindowSizePolicy = { 
+const vWindowSizePolicy = {
   minSize: [200, 300],
   floating: { position: [0, 0], size: [200, 300] },
-  pinned: { xs: [50, 90], sm: [40, 80], md: [30, 75], lg: [25, 75], xl: [20, 75]}
+  pinned: { xs: [50, 90], sm: [40, 80], md: [30, 75], lg: [25, 75], xl: [20, 75] }
 }
 const defaults = {
   layout: { view: 'lHh LpR lFf', mode: undefined },

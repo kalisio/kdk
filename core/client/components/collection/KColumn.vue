@@ -43,7 +43,7 @@
           icon="las la-angle-double-down"
           color="accent"
           size="1rem"
-          :handler="this.scrollDown"
+          :handler="scrollDown"
         />
       </div>
     </div>
@@ -63,6 +63,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { Events } from '../../events.js'
 import KAction from '../KAction.vue'
@@ -128,7 +129,7 @@ const scrollDuration = 250
 // Computed
 const rendererComponent = computed(() => loadComponent(props.renderer.component))
 const scrollHeight = computed(() => props.height - headerHeight.value)
-  
+
 // Always use append mode for columns
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } =
   useCollection(Object.assign({ appendItems: true }, props))

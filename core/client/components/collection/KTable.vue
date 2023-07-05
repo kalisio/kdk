@@ -47,7 +47,6 @@ import KStamp from '../KStamp.vue'
 import { Events } from '../../events.js'
 import { i18n } from '../../i18n.js'
 import { useCollection, useSchema } from '../../composables'
-import { schemaProxy } from '../../mixins'
 
 const emit = defineEmits(['selection-changed', 'collection-refreshed'])
 
