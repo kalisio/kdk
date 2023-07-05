@@ -10,12 +10,11 @@
     :dense="dense"
     :persistent="persistent"
     :auto-close="autoClose"
-    menu-anchor="bottom left"
+    :menu-anchor="direction === 'vertical' ? 'bottom left' : 'bottom middle' "
     menu-self="top left"
     flat
     rounded
     no-caps
- 
     @click="onClicked">
       <template v-slot:label>
         <div class="row items-center no-wrap">
@@ -31,7 +30,8 @@
         :mode="mode"
         :context="context"
         :action-renderer="actionRenderer"
-        direction="vertical"
+        :direction="direction"
+        class="no-wrap"
       />
   </q-btn-dropdown>
 </template>
@@ -69,7 +69,7 @@ const props = defineProps({
   },
   dropdownIcon: {
     type: String,
-    default: ''
+    default: undefined
   },
   badge: {
     type: Object,
@@ -110,6 +110,10 @@ const props = defineProps({
   context: {
     type: Object,
     default: () => null
+  },
+  direction: {
+    type: String,
+    default: () => 'vertical'
   },
   actionRenderer: {
     type: String,
