@@ -2,15 +2,15 @@
   <q-card class="q-py-sm no-shadow">
     <!-- Sections -->
     <template v-for="section in sections" :key="section.title">
-      <q-expansion-item 
-        :label="$tie(section.title)" 
+      <q-expansion-item
+        :label="$tie(section.title)"
         class="bg-grey-2"
       >
         <component :is="section.instance" />
       </q-expansion-item>
     </template>
     <!-- Deletion -->
-    <q-expansion-item 
+    <q-expansion-item
       v-if="deletable"
       :label="$t('KAccount.DELETE_ACCOUNT')"
       class="bg-grey-2"
@@ -52,7 +52,7 @@ onMounted(async () => {
   const confSections = _.cloneDeep(_.get(config, 'account.sections', []))
   for (let i = 0; i < confSections.length; ++i) {
     const section = confSections[i]
-    section['instance'] = utils.loadComponent(section.component)
+    section.instance = utils.loadComponent(section.component)
   }
   sections.value = confSections
 })

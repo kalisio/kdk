@@ -1,11 +1,13 @@
 <template>
   <q-card class="q-pa-md">
+    <!-- Form -->
     <q-card-section>
-      <KForm 
-        ref="formRef" 
-        :schema="schema" 
+      <KForm
+        ref="formRef"
+        :schema="schema"
       />
     </q-card-section>
+    <!-- Actions -->
     <q-card-actions align="right">
       <KAction
         id="change-password"
@@ -24,7 +26,7 @@ import { ref } from 'vue'
 import { Notify } from 'quasar'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
-import { Store, utils } from '../..'
+import { Store, i18n, utils } from '../..'
 
 // Data
 const formRef = ref(null)
@@ -73,22 +75,22 @@ async function apply () {
   if (!isValid) return false
   try {
     processing.value = true
-    await utils.changePassword(Store.get('user.email'), values.oldPassword, values.password)
+    await utils.changePassword(User.email, values.oldPassword, values.password)
     processing.value = false
     Notify.create({
       type: 'positive',
-      message: i18n.t('KPasswordManager.PASSWORD_CHANGED'),
+      message: i18n.t('KPasswordManager.PASSWORD_CHANGED')
     })
   } catch (error) {
     processing.value = false
-    /*const type = _.get(error, 'errors.$className')
+    /* const type = _.get(error, 'errors.$className')
     switch (type) {
       case 'badParams':
         this.message = this.$t('KChangePassword.ERROR_MESSAGE_BAD_PARAMS')
         break
       default:
         this.message = this.$t('KChangePassword.ERROR_MESSAGE_DEFAULT')
-    }*/
+    } */
     return false
   }
   return true

@@ -30,7 +30,7 @@
           <KPanel
             id="frame-actions"
             :content="actions"
-            class="q-pa-none justify-center"            
+            class="q-pa-none justify-center"
           />
         </q-card-section>
       </q-card>
@@ -39,7 +39,7 @@
         <KPanel
           id="screen-actions"
           :content="screenActions"
-          class="q-pa-none justify-center"          
+          class="q-pa-none justify-center"
         />
       </div>
     </div>

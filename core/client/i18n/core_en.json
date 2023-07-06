@@ -439,7 +439,8 @@
     "DELETE_ACCOUNT_CONFIRMATION": "Enter your account name to confirm the deletion"
   },
   "KPasswordManager": {
-    "TITLE": "Manage my password"
+    "TITLE": "Manage my password",
+    "PASSWORD_CHANGED": "Your password has been successfully changed"
   },
   "KIdentityManager": {
     "TITLE": "Manage my identity"

@@ -1,11 +1,11 @@
 <template>
   <div v-if="User" class="q-pb-md column content-center q-gutter-md bg-grey-4">
     <!-- Header -->
-    <KPanel 
-      id="profile-header" 
-      :content="header" 
-      :context="User" 
-      class="full-width justify-end no-wrap" 
+    <KPanel
+      id="profile-header"
+      :content="header"
+      :context="User"
+      class="full-width justify-end no-wrap"
       @triggered="onTriggered"
     />
     <!-- Aavatar -->
@@ -33,8 +33,6 @@ import { Store } from '../../store.js'
 import KAvatar from '../KAvatar.vue'
 import KPanel from '../KPanel.vue'
 
-
-
 // Props
 const props = defineProps({
   editable: {
@@ -55,7 +53,7 @@ const User = Store.getRef('user')
 
 // Computed
 const header = computed(() => {
-  let actions = []
+  const actions = []
   if (props.editable) {
     actions.push({
       id: 'edit-profile',

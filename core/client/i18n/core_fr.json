@@ -439,7 +439,8 @@
     "DELETE_ACCOUNT_CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la suprression"
   },
   "KPasswordManager": {
-    "TITLE": "Gérer mon mot de passe"
+    "TITLE": "Gérer mon mot de passe",
+    "PASSWORD_CHNAGED": "Votre mot de passe a été modifié avec succés"
   },
   "KIdentityManager": {
     "TITLE": "Gérer mon identité"

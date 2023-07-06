@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import { api } from '../api.js'
 import { getLocale } from '../utils/utils.locale.js'
 
-export function useCollection(options) {
+export function useCollection (options) {
   _.defaults(options, {
     // This value can be overriden in activities if they want to manage pagination by themselves
     // nbItemsPerPage = 0 means that the client does not handle pagination and server defaults will be used
@@ -16,7 +16,7 @@ export function useCollection(options) {
     // Refresh strategy to be used
     listStrategy: 'smart'
   })
-  
+
   // Data
   const items = ref([])
   const nbTotalItems = ref(0)
@@ -48,10 +48,12 @@ export function useCollection(options) {
   }
   function getCollectionPaginationQuery () {
     // This method should be overriden in collections
-    return (options.nbItemsPerPage > 0 ? {
-      $limit: options.nbItemsPerPage,
-      $skip: (currentPage.value - 1) * options.nbItemsPerPage
-    } : {})
+    return (options.nbItemsPerPage > 0
+      ? {
+          $limit: options.nbItemsPerPage,
+          $skip: (currentPage.value - 1) * options.nbItemsPerPage
+        }
+      : {})
   }
   function subscribe (query) {
     // Remove previous listener if any

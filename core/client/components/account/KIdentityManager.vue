@@ -1,9 +1,9 @@
 <template>
   <q-card class="q-pa-md">
     <q-card-section>
-      <KForm 
-        ref="form" 
-        :schema="schema" 
+      <KForm
+        ref="form"
+        :schema="schema"
       />
     </q-card-section>
     <q-card-actions align="right">
