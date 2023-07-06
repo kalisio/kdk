@@ -11,8 +11,12 @@ $positive: #7bb946 !default;
 $negative: #c74a4a !default;
 $warning: #d09931 !default;
 
+// Tooltip
+$tooltip-fontsize: 12px !default;
+$tooltip-background: $accent !default;
+
 // Pane
-$left-pane-width: 300px !default;
+$left-pane-width: 320px !default;
 
 // Window
 $window-min-width: 300px !default;
