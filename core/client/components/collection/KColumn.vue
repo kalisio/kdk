@@ -64,7 +64,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, reactive, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { Events } from '../../events.js'
 import KAction from '../KAction.vue'
 import KScrollArea from '../KScrollArea.vue'
@@ -132,7 +132,7 @@ const scrollHeight = computed(() => props.height - headerHeight.value)
 
 // Always use append mode for columns
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } =
-  useCollection(Object.assign({ appendItems: true }, props))
+  useCollection(Object.assign(reactive({ appendItems: true }), props))
 
 // Functions
 function onHeaderResized (size) {

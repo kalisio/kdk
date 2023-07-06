@@ -41,7 +41,7 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, reactive, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import KPanel from '../KPanel.vue'
 import KStamp from '../KStamp.vue'
 import { Events } from '../../events.js'
@@ -121,7 +121,7 @@ const selectableColumns = computed(() => columns.value.filter(column => column.n
 
 const { schema, compile } = useSchema()
 // Add sort query into collection options
-const options = Object.assign({ filterQuery: Object.assign({}, props.filterQuery, tableQuery.value) }, _.omit(props, ['filterQuery']))
+const options = Object.assign(reactive({ filterQuery: Object.assign({}, props.filterQuery, tableQuery.value) }), _.omit(props, ['filterQuery']))
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(options)
 
 // Functions

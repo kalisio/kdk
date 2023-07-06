@@ -123,10 +123,8 @@ export function useCollection(options) {
   }
 
   // Lifecycle hooks
-  // FIXME: Does not seem to work: it generates a recursive update
-  //watch(options, resetCollection)
-  watch(options.baseQuery, resetCollection)
-  watch(options.filterQuery, resetCollection)
+  watch(() => options, resetCollection)
+  watch(() => options.filterQuery, resetCollection)
 
   onBeforeMount(() => {
     if (options.appendItems) {
