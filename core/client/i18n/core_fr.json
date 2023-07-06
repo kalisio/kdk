@@ -6,6 +6,7 @@
   "CANCEL": "Annuler",
   "UPDATE": "Mettre à jour",
   "CREATE": "Créer",
+  "DELETE": "Supprimer",
   "RESET": "Réinitialiser",
   "CLOSE": "Fermer",
   "SEARCH": "Rechercher",
@@ -427,6 +428,24 @@
     "APPLY_LABEL": "Appliquer",
     "RESET_LABEL": "Réinitialiser",
     "LOG_IN_LABEL": "Se connecter ?"
+  },
+  "KProfile": {
+    "EDIT_PROFILE": "Editer mon profil",
+    "MANAGE_ACCOUNT": "Gérer mon compte"
+  },
+  "KAccount": {
+    "DELETE_ACCOUNT": "Supprimer mon compte",
+    "DELETE_ACCOUNT_QUESTION": "Etes vous sûr de vourloir supprimer votre compte ?",
+    "DELETE_ACCOUNT_CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la suprression"
+  },
+  "KPasswordManager": {
+    "TITLE": "Gérer mon mot de passe"
+  },
+  "KIdentityManager": {
+    "TITLE": "Gérer mon identité"
+  },
+  "KSubscriptionsManager": {
+    "TITLE": "Gérer mes souscriptions"
   },
   "KIdentityPanel": {
     "MANAGE": "Gérer mon compte"

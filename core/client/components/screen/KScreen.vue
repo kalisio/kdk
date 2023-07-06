@@ -29,8 +29,8 @@
         <q-card-section v-if="actions.length > 0">
           <KPanel
             id="frame-actions"
-            class="q-pa-none justify-center"
             :content="actions"
+            class="q-pa-none justify-center"            
           />
         </q-card-section>
       </q-card>
@@ -38,8 +38,8 @@
       <div class="q-pa-sm row justify-center q-gutter-md">
         <KPanel
           id="screen-actions"
-          class="q-pa-none justify-center"
           :content="screenActions"
+          class="q-pa-none justify-center"          
         />
       </div>
     </div>
@@ -97,7 +97,7 @@ const computedLogoComponent = computed(() => {
   color: v-bind(textColor);
 }
 .k-screen-content {
-  min-width: 50%
+  min-width: 50%;
 }
 .k-screen-frame {
   background-color: v-bind(frameBackgroundColor);

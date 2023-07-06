@@ -14,7 +14,7 @@
     <!--
       Buttons section
     -->
-    <div>
+    <div v-if="!hideButtons">
       <div class="q-pt-md row justify-end">
         <q-btn v-if="clearButton !== ''" id="clear-button" color="primary" :label="clearButton" @click="clearEditor"/>
         <q-btn v-if="resetButton !== ''" id="reset-button" color="primary" :label="resetButton" @click="resetEditor"/>
@@ -38,7 +38,14 @@ export default {
     objectProxy,
     schemaProxy
   ],
+  props: {
+    hideButtons: {
+      type: Boolean,
+      default: false
+    }
+  },
   async created () {
+    console.log(this)
     await this.refresh()
   }
 }

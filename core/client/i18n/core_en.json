@@ -6,6 +6,7 @@
   "CANCEL": "Cancel",
   "UPDATE": "Update",
   "CREATE": "Create",
+  "DELETE": "Delete",
   "RESET": "Reset",
   "CLOSE": "Close",
   "SEARCH": "Search",
@@ -427,6 +428,24 @@
     "APPLY_LABEL": "Apply",
     "RESET_LABEL": "Reset",
     "LOG_IN_LABEL": "Log in ?"
+  },
+  "KProfile": {
+    "EDIT_PROFILE": "Edit my profile",
+    "MANAGE_ACCOUNT": "Manage my account"
+  },
+  "KAccount": {
+    "DELETE_ACCOUNT": "Delete my account",
+    "DELETE_ACCOUNT_QUESTION": "Are you sure you want to delete your account ?",
+    "DELETE_ACCOUNT_CONFIRMATION": "Enter your account name to confirm the deletion"
+  },
+  "KPasswordManager": {
+    "TITLE": "Manage my password"
+  },
+  "KIdentityManager": {
+    "TITLE": "Manage my identity"
+  },
+  "KSubscriptionsManager": {
+    "TITLE": "Manage my subscriptions"
   },
   "KIdentityPanel": {
     "MANAGE": "Manage my account"
