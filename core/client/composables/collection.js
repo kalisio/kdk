@@ -123,7 +123,7 @@ export function useCollection(options) {
   }
 
   // Lifecycle hooks
-  watch(() => options, resetCollection)
+  watch(() => options.baseQuery, resetCollection)
   watch(() => options.filterQuery, resetCollection)
 
   onBeforeMount(() => {
