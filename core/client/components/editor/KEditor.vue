@@ -45,7 +45,6 @@ export default {
     }
   },
   async created () {
-    console.log(this)
     await this.refresh()
   }
 }
