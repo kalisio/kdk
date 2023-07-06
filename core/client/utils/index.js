@@ -5,6 +5,7 @@ import emailValidator from 'email-validator'
 import { Platform, Notify, Dialog, Loading, exportFile } from 'quasar'
 import { defineAsyncComponent, markRaw } from 'vue'
 
+export * from './utils.account.js'
 export * from './utils.colors.js'
 export * from './utils.content.js'
 export * from './utils.locale.js'

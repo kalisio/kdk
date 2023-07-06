@@ -2,7 +2,7 @@
   <q-card class="q-pa-md">
     <q-card-section>
       <KForm 
-        ref="form" 
+        ref="formRef" 
         :schema="schema" 
       />
     </q-card-section>
@@ -12,6 +12,7 @@
         label="APPLY"
         renderer="form-button"
         outline
+        :loading="processing"
         :handler="apply"
       />
     </q-card-actions>
@@ -20,10 +21,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Notify } from 'quasar'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
+import { Store, utils } from '../..'
 
 // Data
+const formRef = ref(null)
+const User = Store.get('user')
 const schema = ref({
   $schema: 'http://json-schema.org/draft-07/schema#',
   $id: 'http://kalisio.xyz/schemas/password-manager.json#',
@@ -60,9 +65,32 @@ const schema = ref({
   },
   required: ['oldPassword', 'password', 'confirmPassword']
 })
+const processing = ref(false)
 
 // Functions
-function apply () {
-
+async function apply () {
+  const { isValid, values } = formRef.value.validate()
+  if (!isValid) return false
+  try {
+    processing.value = true
+    await utils.changePassword(Store.get('user.email'), values.oldPassword, values.password)
+    processing.value = false
+    Notify.create({
+      type: 'positive',
+      message: i18n.t('KPasswordManager.PASSWORD_CHANGED'),
+    })
+  } catch (error) {
+    processing.value = false
+    /*const type = _.get(error, 'errors.$className')
+    switch (type) {
+      case 'badParams':
+        this.message = this.$t('KChangePassword.ERROR_MESSAGE_BAD_PARAMS')
+        break
+      default:
+        this.message = this.$t('KChangePassword.ERROR_MESSAGE_DEFAULT')
+    }*/
+    return false
+  }
+  return true
 }
 </script>
