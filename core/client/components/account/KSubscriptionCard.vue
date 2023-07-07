@@ -11,7 +11,12 @@
       Card description
      -->
     <template v-slot:card-description>
-      TODO: additional information<br/>
+      <q-separator inset />
+      <div class="row items-center">
+        <q-avatar :icon="browserIcon" size="30px"/>
+        {{ browserName }}
+        {{ browserVersion }}
+      </div>
       <cite v-if="lastActivity">{{$t('KSubscriptionCard.LAST_ACTIVITY')}} {{lastActivity.toLocaleString()}}</cite>
     </template>
   </KCard>
@@ -30,19 +35,39 @@ export default {
   mixins: [baseItem],
   computed: {
     platformIcon () {
-      const platform = this.platform.toLowerCase()
-      return (platform.includes('windows')
-        ? 'fas fa-windows'
-        : (platform.includes('android')
-            ? 'fas fa-android'
-            : (platform.includes('ios') ? 'fas fa-apple' : 'fas fa-mobile-alt')))
+      const platform = this.platformName.toLowerCase()
+      console.log(platform)
+      if (platform.includes('win')) return 'fa-brands fa-windows'
+      if (platform.includes('mac') || platform.includes('ios')) return 'fa-brands fa-apple'
+      if (platform.includes('linux')) return 'fa-brands fa-linux'
+      if (platform.includes('android')) return 'fa-brands fa-android'
+      if (this.desktop) return 'fas fa-desktop'
+      return 'fas fa-mobile-alt'
     },
-    platform () {
-      return (this.item.platform ? _.capitalize(this.item.platform.toLowerCase()) : '')
+    browserIcon () {
+      const browser = this.browserName.toLowerCase()
+  
+      if (browser.includes('chrome')) return 'fa-brands fa-chrome'
+      if (browser.includes('opera')) return 'fa-brands fa-opera'
+      if (browser.includes('safari')) return 'fa-brands fa-safari'
+      if (browser.includes('edge')) return 'fa-brands fa-edge'
+      return 'fa-brands fa-internet-explorer'
+    },
+    platformName () {
+      return (this.item.platform.name ? _.capitalize(this.item.platform.name.toLowerCase()) : '')
+    },
+    platformDesktop () {
+      return this.item.platform.desktop ? true : false
+    },
+    browserName () {
+      return (this.item.browser.name ? _.capitalize(this.item.browser.name.toLowerCase()) : '')
+    },
+    browserVersion () {
+      return (this.item.browser.version ? _.capitalize(this.item.browser.version.toLowerCase()) : '')
     },
     lastActivity () {
       return this.item.lastActivity ? new Date(this.item.lastActivity) : null
-    }
+    },
   },
   data () {
     return {
