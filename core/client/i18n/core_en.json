@@ -436,6 +436,7 @@
   "KAccount": {
     "DELETE_ACCOUNT": "Delete my account",
     "DELETE_ACCOUNT_QUESTION": "Are you sure you want to delete your account ?",
+    "DELETE_ACCOUNT_TITLE": "Warning: the deletion of your account is irrevocable and all data attached to it will be lost",
     "DELETE_ACCOUNT_CONFIRMATION": "Enter your account name to confirm the deletion"
   },
   "KPasswordManager": {
@@ -443,7 +444,8 @@
     "PASSWORD_CHANGED": "Your password has been successfully changed"
   },
   "KIdentityManager": {
-    "TITLE": "Manage my identity"
+    "TITLE": "Manage my identity",
+    "IDENTITY_CHANGED": "You new address has been taken into account. An email has been sent to you to confirm the change."
   },
   "KSubscriptionsManager": {
     "TITLE": "Manage my subscriptions"
@@ -458,7 +460,7 @@
   },
   "KAccountDZ": {
     "BLOCK_TITLE": "Delete your account ?",
-    "BLOCK_TEXT": "Please note that deleting your account will delete any data attached to this account.<br><br>The deletion cannot be undone and you will be logged out of the application.",
+    "BLOCK_TEXT": "Warning: deleting your account will delete any data attached to this account",
     "BLOCK_ACTION": "Delete account",
     "DIALOG_TITLE": "Are you sure you want to delete your account ?",
     "DIALOG_LABEL": "Enter your account name to confirm the deletion"

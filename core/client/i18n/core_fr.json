@@ -436,14 +436,16 @@
   "KAccount": {
     "DELETE_ACCOUNT": "Supprimer mon compte",
     "DELETE_ACCOUNT_QUESTION": "Etes vous sûr de vourloir supprimer votre compte ?",
+    "DELETE_ACCOUNT_TITLE": "Attention: la suppression de votre compte est irrévocable et toutes les données qui y sont attachées seront perdues",
     "DELETE_ACCOUNT_CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la suprression"
   },
   "KPasswordManager": {
     "TITLE": "Gérer mon mot de passe",
-    "PASSWORD_CHNAGED": "Votre mot de passe a été modifié avec succés"
+    "PASSWORD_CHANGED": "Votre mot de passe a été modifié avec succés"
   },
   "KIdentityManager": {
-    "TITLE": "Gérer mon identité"
+    "TITLE": "Gérer mon identité",
+    "IDENTITY_CHANGED": "Votre nouvelle adresse a été prise en compte. Un mail vous a été envoyé pour confirmer le changement."
   },
   "KSubscriptionsManager": {
     "TITLE": "Gérer mes souscriptions"

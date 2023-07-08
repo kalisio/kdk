@@ -4,6 +4,7 @@
     <template v-for="section in sections" :key="section.title">
       <q-expansion-item
         :label="$tie(section.title)"
+        group="account"        
         class="bg-grey-2"
       >
         <component :is="section.instance" />
@@ -13,6 +14,7 @@
     <q-expansion-item
       v-if="deletable"
       :label="$t('KAccount.DELETE_ACCOUNT')"
+      group="account"
       class="bg-grey-2"
     >
       <div class="q-pa-md row justify-between items-center no-wrap bg-white">
@@ -23,6 +25,7 @@
           color="negative"
           renderer= 'form-button'
           outline
+          :closePopup="true"
           :handler="onDelete"
         />
       </div>
@@ -32,6 +35,7 @@
 
 <script setup>
 import _ from 'lodash'
+import logger from 'loglevel'
 import config from 'config'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -47,7 +51,6 @@ const User = Store.get('user')
 
 // Hooks
 onMounted(async () => {
-  console.log(User)
   deletable.value = _.get(config, 'account.deletable', true)
   const confSections = _.cloneDeep(_.get(config, 'account.sections', []))
   for (let i = 0; i < confSections.length; ++i) {
@@ -60,11 +63,13 @@ onMounted(async () => {
 // Function
 function onDelete () {
   Dialog.create({
+    title: i18n.t('KAccount.DELETE_ACCOUNT_TITLE'),
     message: i18n.t('KAccount.DELETE_ACCOUNT_CONFIRMATION'),
     html: true,
     prompt: {
+      model: '',
       type: 'text',
-      model: ''
+      isValid: val => val === User.name
     },
     persistent: true,
     ok: {
@@ -76,14 +81,11 @@ function onDelete () {
       flat: true
     }
   }).onOk(async (data) => {
-    if (data === User.name) {
-      try {
-        await api.getService('users').remove(User._id)
-      } catch (error) {
-        // do not logout
-        return
-      }
+    try {
+      await api.getService('users').remove(User._id)
       router.push({ name: 'logout' })
+    } catch (error) {
+      logger.error(`[KDK] Cannot delete ${User.name} account: ${error}`)
     }
   })
 }

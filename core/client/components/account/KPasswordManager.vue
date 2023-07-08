@@ -24,9 +24,9 @@
 <script setup>
 import { ref } from 'vue'
 import { Notify } from 'quasar'
+import { Store, i18n, utils } from '../..'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
-import { Store, i18n, utils } from '../..'
 
 // Data
 const formRef = ref(null)
@@ -83,14 +83,6 @@ async function apply () {
     })
   } catch (error) {
     processing.value = false
-    /* const type = _.get(error, 'errors.$className')
-    switch (type) {
-      case 'badParams':
-        this.message = this.$t('KChangePassword.ERROR_MESSAGE_BAD_PARAMS')
-        break
-      default:
-        this.message = this.$t('KChangePassword.ERROR_MESSAGE_DEFAULT')
-    } */
     return false
   }
   return true

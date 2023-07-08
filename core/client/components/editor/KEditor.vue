@@ -9,13 +9,14 @@
         :ref="onFormReferenceCreated"
         :schema="schema"
         @form-ready="onFormReady"
+        class="q-pa-sm"
       />
     </div>
     <!--
       Buttons section
     -->
     <div v-if="!hideButtons">
-      <div class="q-pt-md row justify-end">
+      <div class="row justify-end">
         <q-btn v-if="clearButton !== ''" id="clear-button" color="primary" :label="clearButton" @click="clearEditor"/>
         <q-btn v-if="resetButton !== ''" id="reset-button" color="primary" :label="resetButton" @click="resetEditor"/>
         <q-btn v-if="applyButton !== ''" id="apply-button" color="primary" :label="applyButton" @click="apply"/>

@@ -2,7 +2,7 @@
   <q-card class="q-pa-md">
     <q-card-section>
       <KForm
-        ref="form"
+        ref="formRef"
         :schema="schema"
       />
     </q-card-section>
@@ -12,6 +12,7 @@
         label="APPLY"
         renderer="form-button"
         outline
+        :loading="processing"
         :handler="apply"
       />
     </q-card-actions>
@@ -20,10 +21,13 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Store, i18n, utils } from '../..'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
 
 // Data
+const formRef = ref(null)
+const User = Store.get('user')
 const schema = ref({
   $schema: 'http://json-schema.org/draft-07/schema#',
   $id: 'http://kalisio.xyz/schemas/identity-manager#',
@@ -49,9 +53,24 @@ const schema = ref({
   },
   required: ['email', 'password']
 })
+const processing = ref(false)
 
 // Functions
-function apply () {
-
+async function apply () {
+  const { isValid, values } = formRef.value.validate()
+  if (!isValid) return false
+  try {
+    processing.value = true
+    await utils.sendChangeIdentity(User.email, values.email, values.password)
+    processing.value = false
+    Notify.create({
+      type: 'positive',
+      message: i18n.t('KIdentityManager.IDENTITY_CHANGED')
+    })
+  } catch (error) {
+    processing.value = false
+    return false
+  }
+  return true
 }
 </script>
