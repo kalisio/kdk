@@ -140,7 +140,11 @@ export default function init () {
       })
       notifier.on('error', (error) => {
         logger.error(error)
-        Notify.create({ message: error.message, timeout: 10000 })
+        Notify.create({ 
+          type: 'negative',
+          message: error.message, 
+          timeout: 10000 
+        })
       })
     } else {
       logger.debug('[KDK] unable to initialize push plugin')

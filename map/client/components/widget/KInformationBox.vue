@@ -111,7 +111,7 @@ export default {
           await copyToClipboard(JSON.stringify(this.feature.properties))
           this.$notify({ type: 'positive', message: this.$t('KInformationBox.PROPERTIES_COPIED') })
         } catch (error) {
-          this.$notify({ type: 'error', message: this.$t('KInformationBox.CANNOT_COPY_PROPERTIES') })
+          this.$notify({ type: 'negative', message: this.$t('KInformationBox.CANNOT_COPY_PROPERTIES') })
           logger.error(error)
         }
       }
@@ -126,8 +126,8 @@ export default {
                       _.get(this.layer, 'properties.name')
         const file = name + '.geojson'
         const status = exportFile(file, JSON.stringify(this.feature))
-        if (status) this.$notify({ type: 'error', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
-        else this.$notify({ type: 'error', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
+        if (status) this.$notify({ type: 'negative', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
+        else this.$notify({ type: 'negative', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
       }
     }
   },

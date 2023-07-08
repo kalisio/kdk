@@ -148,9 +148,9 @@ export const baseItem = {
       const name = this.name
       const file = name + '.json'
       if (exportFile(file, JSON.stringify(this.item))) {
-        this.$notify({ message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
+        this.$notify({ type: 'positive', message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
       } else {
-        this.$notify({ message: this.$t('mixins.baseItme.CANNOT_EXPORT_ITEM') })
+        this.$notify({ type: 'negative', message: this.$t('mixins.baseItme.CANNOT_EXPORT_ITEM') })
       }
     }
   },
