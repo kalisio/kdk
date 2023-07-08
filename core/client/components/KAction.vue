@@ -16,6 +16,7 @@
     :stack="stack"
     :dense="dense"
     :disable="computedDisabled"
+    v-close-popup="closePopup"
     @click="onClicked">
     <!-- label -->
     <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
@@ -42,9 +43,9 @@
     color="primary"
     :outline="outline"
     :size="size"
-    :dense="dense"
     :disable="computedDisabled"
     :loading="loading"
+    v-close-popup="closePopup"
     @click="onClicked">
     <div class="ellipsis">
       {{ computedLabel }}
@@ -59,6 +60,7 @@
     clickable
     :dense="dense"
     :disable="computedDisabled"
+    v-close-popup="closePopup"
     @click="onClicked">
     <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
@@ -221,6 +223,10 @@ export default {
     handler: {
       type: Function,
       default: null
+    },
+    closePopup: {
+      type: [Boolean, Number, String],
+      default: false
     },
     dialog: {
       type: Object,
