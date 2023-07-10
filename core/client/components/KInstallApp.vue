@@ -7,7 +7,7 @@
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat color="white" :label="$t('pwa.BUTTON_INSTALL')" @click="installApp" />
-        <q-btn flat color="white" :label="$t('pwa.BUTTON_DISMISS')" v-close-popup  />
+        <q-btn flat color="white" :label="$t('CLOSE')" v-close-popup  />
       </q-card-actions>
     </q-card>
   </q-dialog>
