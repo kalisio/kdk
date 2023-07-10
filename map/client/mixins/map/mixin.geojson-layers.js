@@ -97,7 +97,11 @@ export const geojsonLayers = {
           // Deep for time and runtime
           _.defaultsDeep(feature, _.pick(oldLayer.feature, [ 'time', 'runTime' ]))
           // _NOT_ deep for properties, otherwise it'll merge array and object properties between the two
-          _.defaults(feature, _.pick(oldLayer.feature, [ 'properties' ]))
+          const oldProps = _.get(oldLayer.feature, 'properties')
+          if (oldProps) {
+            if (!feature.properties) feature.properties = {}
+            _.defaults(feature.properties, oldProps)
+          }
           if (oldLayer.setIcon) {
             // FIXME: updating icon in place requires to recreate it anyway, so for now we recreate the whole marker
             // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
