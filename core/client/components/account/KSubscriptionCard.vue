@@ -36,7 +36,7 @@ export default {
   computed: {
     platformIcon () {
       const platform = this.platformName.toLowerCase()
-      console.log(platform)
+
       if (platform.includes('win')) return 'fa-brands fa-windows'
       if (platform.includes('mac') || platform.includes('ios')) return 'fa-brands fa-apple'
       if (platform.includes('linux')) return 'fa-brands fa-linux'
