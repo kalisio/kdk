@@ -23,8 +23,11 @@
 </template>
 
 <script>
+import { unsubscribePushNotifications, removeSubscription } from '@kalisio/feathers-webpush/client.js'
 import _ from 'lodash'
 import { Dialog } from 'quasar'
+import { api } from '../../api'
+import { Store } from '../../store'
 import { baseItem } from '../../mixins'
 import KCard from '../collection/KCard'
 
@@ -57,7 +60,7 @@ export default {
       return (this.item.platform.name ? _.capitalize(this.item.platform.name.toLowerCase()) : '')
     },
     platformDesktop () {
-      return this.item.platform.desktop ? true : false
+      return this.item.platform.desktop
     },
     browserName () {
       return (this.item.browser.name ? _.capitalize(this.item.browser.name.toLowerCase()) : '')
@@ -77,8 +80,8 @@ export default {
     unsubscribe (context) {
       const description = context.item.endpoint
       Dialog.create({
-        title: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_TITLE', { description }),
-        message: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_MESSAGE', { description }),
+        title: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_TITLE', { endpoint }),
+        message: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_MESSAGE', { endpoint }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -88,8 +91,13 @@ export default {
           label: this.$t('CANCEL'),
           flat: true
         }
-      }).onOk(() => {
-        // TODO: unsubscribe
+      }).onOk(async() => {
+        // Unsubscribe from web webpush notifications
+        const subscription = await unsubscribePushNotifications()
+        // Patch user subscriptions
+        const user = Store.get('user')
+        removeSubscription(user, subscription, 'subscriptions')
+        api.service('api/users').patch(Store.user._id, { subscriptions: user.subscriptions })
       })
     }
   }
