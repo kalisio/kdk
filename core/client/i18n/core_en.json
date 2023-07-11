@@ -886,7 +886,9 @@
     "VERSION_MISMATCH": "Application version mismatch, please refresh the page to get the latest version available",
     "BUTTON_REFRESH": "Refresh",
     "BUTTON_INSTALL": "Install app",
-    "MESSAGE_INSTALL": "Application ready to install"
+    "MESSAGE_INSTALL": "Application ready to install.",
+    "MESSAGE_INSTALL_IOS_SHARE_ICON": "Tap",
+    "MESSAGE_INSTALL_IOS_HOME_SCREEN": ", and then tap on “Add to home screen”"
   }
 }
 
