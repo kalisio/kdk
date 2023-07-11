@@ -4,7 +4,7 @@
     <template v-for="section in sections" :key="section.title">
       <q-expansion-item
         :label="$tie(section.title)"
-        group="account"        
+        group="account"
         class="bg-grey-2"
       >
         <component :is="section.instance" v-bind="section" />

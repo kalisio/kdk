@@ -64,7 +64,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, reactive, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { Events } from '../../events.js'
 import KAction from '../KAction.vue'
 import KScrollArea from '../KScrollArea.vue'

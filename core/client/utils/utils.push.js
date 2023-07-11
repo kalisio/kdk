@@ -1,4 +1,4 @@
-import { 
+import {
   checkPrerequisites,
   getPushSubscription,
   subscribePushNotifications,
@@ -13,7 +13,6 @@ import { i18n } from '../i18n.js'
 import { Store } from '../store.js'
 import { api } from '../api.js'
 import { getPlatform } from './utils.platform.js'
-
 
 export async function subscribeToPushNotifications () {
   // Check prerequisites & notification permission
@@ -42,7 +41,7 @@ export async function subscribeToPushNotifications () {
     return
   }
   // Subscribe to web webpush notifications
-  let subscription = await subscribePushNotifications(Store.get('capabilities.api.vapidPublicKey'))
+  const subscription = await subscribePushNotifications(Store.get('capabilities.api.vapidPublicKey'))
   // Set platform informations
   subscription.browser = { name: platform.name, version: platform.version }
   subscription.platform = { name: platform.platform, desktop: platform.desktop }

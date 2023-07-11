@@ -41,7 +41,7 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { ref, reactive, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import KPanel from '../KPanel.vue'
 import KStamp from '../KStamp.vue'
 import { Events } from '../../events.js'

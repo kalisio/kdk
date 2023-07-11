@@ -61,7 +61,7 @@ function unsubscribe () {
       label: i18n.t('CANCEL'),
       flat: true
     }
-  }).onOk(async() => {
+  }).onOk(async () => {
     // Unsubscribe from web webpush notifications
     const subscription = await unsubscribePushNotifications()
     // Patch user subscriptions

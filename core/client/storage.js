@@ -36,7 +36,7 @@ export const Storage = {
     const dismiss = Notify.create({
       type: 'ongoing',
       message: i18n.t('storage.UPLOADING_FILE', { file }),
-      timeout: 0,
+      timeout: 0
     })
     try {
       const response = await service.upload(key, blob, { expiresIn: 60 })

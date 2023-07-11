@@ -140,10 +140,10 @@ export default function init () {
       })
       notifier.on('error', (error) => {
         logger.error(error)
-        Notify.create({ 
+        Notify.create({
           type: 'negative',
-          message: error.message, 
-          timeout: 10000 
+          message: error.message,
+          timeout: 10000
         })
       })
     } else {

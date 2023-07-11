@@ -3,10 +3,10 @@
     <div v-if="subscriptions.length > 0">
       <q-list>
         <template v-for="subscription in subscriptions" :key="subscription.endpoint">
-          <KSubscription 
+          <KSubscription
             :subscription="subscription"
             :actions="actions"
-          /> 
+          />
         </template>
       </q-list>
     </div>
@@ -15,14 +15,13 @@
         icon="las la-exclamation-circle"
         icon-size="1.6rem"
         :text="$t('KList.EMPTY_LIST')"
-        direction="horizontal" 
+        direction="horizontal"
       />
     </div>
   </div>
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { computed } from 'vue'
 import { Store } from '../../store.js'
 import KSubscription from './KSubscription.vue'

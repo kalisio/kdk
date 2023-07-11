@@ -49,7 +49,7 @@ export default {
     },
     browserIcon () {
       const browser = this.browserName.toLowerCase()
-  
+
       if (browser.includes('chrome')) return 'fa-brands fa-chrome'
       if (browser.includes('opera')) return 'fa-brands fa-opera'
       if (browser.includes('safari')) return 'fa-brands fa-safari'
@@ -70,7 +70,7 @@ export default {
     },
     lastActivity () {
       return this.item.lastActivity ? new Date(this.item.lastActivity) : null
-    },
+    }
   },
   data () {
     return {
@@ -91,7 +91,7 @@ export default {
           label: this.$t('CANCEL'),
           flat: true
         }
-      }).onOk(async() => {
+      }).onOk(async () => {
         // Unsubscribe from web webpush notifications
         const subscription = await unsubscribePushNotifications()
         // Patch user subscriptions
