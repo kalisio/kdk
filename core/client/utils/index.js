@@ -11,6 +11,7 @@ export * from './utils.content.js'
 export * from './utils.locale.js'
 export * from './utils.platform.js'
 export * from './utils.session.js'
+export * from './utils.push.js'
 
 Notify.setDefaults({
   position: 'bottom-left',
