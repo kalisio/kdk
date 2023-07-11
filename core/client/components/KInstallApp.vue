@@ -3,18 +3,32 @@
     <q-card class="bg-info q-pa-sm" style="width: 350px; color: white">
       <q-card-section class="row justify-between">
         <q-icon name="info" size="sm"/>
-        <span class="text-body1" text-color="white">
+        <span class="text-body1 text-center" text-color="white">
           {{ $t('pwa.MESSAGE_INSTALL') }}
-          <div v-if="showInstallApp.isIos">
-            {{ $t('pwa.MESSAGE_INSTALL_IOS_SHARE_ICON') }}
-            <q-icon name="ios_share" size="18px"/>
-            {{ $t('pwa.MESSAGE_INSTALL_IOS_HOME_SCREEN') }}
-          </div>
         </span>
       </q-card-section>
-      <q-card-actions align="right">
-        <q-btn v-if="!showInstallApp.isIos" flat color="white" :label="$t('pwa.BUTTON_INSTALL')" @click="installApp" />
-        <q-btn flat color="white" :label="$t('CLOSE')" v-close-popup  />
+      <q-card-section v-if="showInstallApp.isIos" class="text-body1 text-center">
+        {{ $t('pwa.MESSAGE_INSTALL_IOS_SHARE_ICON') }}
+        <q-icon name="ios_share" size="18px"/>
+        {{ $t('pwa.MESSAGE_INSTALL_IOS_HOME_SCREEN') }}
+      </q-card-section>
+      <q-card-actions align="center">
+        <KAction
+          id="close-btn"
+          renderer="form-button"
+          :outline="showInstallApp.isIos ? false : true"
+          size="sm"
+          label="pwa.SKIP_BUTTON"
+          :handler="closeDialog"
+        />
+        <KAction
+          v-if="!showInstallApp.isIos"
+          id="install-btn"
+          renderer="form-button"
+          size="sm"
+          label="pwa.INSTALL_BUTTON"
+          :handler="installApp"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -33,8 +47,11 @@ const showInstallApp = ref({
 let deferredPrompt = null
 
 // Functions
+function closeDialog () {
+  showInstallApp.value.show = false
+}
 async function installApp () {
-  showInstallApp.value = false
+  showInstallApp.value.show = false
   // Show the install prompt
   deferredPrompt.prompt()
   // Wait for the user to respond to the prompt

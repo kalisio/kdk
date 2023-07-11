@@ -41,7 +41,7 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { ref, reactive, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, reactive, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import KPanel from '../KPanel.vue'
 import KStamp from '../KStamp.vue'
 import { Events } from '../../events.js'
@@ -118,10 +118,11 @@ const pagination = ref({
 // Computed
 // Remove special column used for actions
 const selectableColumns = computed(() => columns.value.filter(column => column.name !== 'actions'))
+const filterQuery = computed(() => Object.assign({}, props.filterQuery, tableQuery.value))
 
 const { schema, compile } = useSchema()
 // Add sort query into collection options
-const options = Object.assign(reactive({ filterQuery: Object.assign({}, props.filterQuery, tableQuery.value) }), _.omit(props, ['filterQuery']))
+const options = Object.assign({ filterQuery }, _.omit(toRefs(props), ['filterQuery']))
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(options)
 
 // Functions

@@ -22,6 +22,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Store, i18n, utils } from '../..'
+import { Notify } from 'quasar'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
 

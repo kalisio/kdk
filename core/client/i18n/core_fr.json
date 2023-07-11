@@ -860,7 +860,8 @@
   "pwa": {
     "VERSION_MISMATCH": "Discordance de version, merci de rafraîchir la page pour profiter de la dernière version disponible",
     "BUTTON_REFRESH": "Rafraîchir",
-    "BUTTON_INSTALL": "Installer l'application",
+    "INSTALL_BUTTON": "Installer l'application",
+    "SKIP_BUTTON": "Ignorer",
     "MESSAGE_INSTALL": "L'application est prête à être installé.",
     "MESSAGE_INSTALL_IOS_SHARE_ICON": "Appuyez sur",
     "MESSAGE_INSTALL_IOS_HOME_SCREEN": ", puis sur “Ajouter à l'écran d'accueil”"

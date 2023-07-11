@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
+import { computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import KStamp from '../KStamp.vue'
 import { Events } from '../../events.js'
 import { useCollection } from '../../composables'
@@ -102,7 +102,7 @@ function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
 }
 
-const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(props)
+const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
 
 // Lifecycle hooks
 
