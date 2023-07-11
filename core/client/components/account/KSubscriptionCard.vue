@@ -80,8 +80,8 @@ export default {
     unsubscribe (context) {
       const description = context.item.endpoint
       Dialog.create({
-        title: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_TITLE', { endpoint }),
-        message: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_MESSAGE', { endpoint }),
+        title: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_TITLE', { description }),
+        message: this.$t('KSubscriptionCard.UNSUBSCRIBE_DIALOG_MESSAGE', { description }),
         html: true,
         ok: {
           label: this.$t('OK'),
