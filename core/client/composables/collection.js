@@ -8,13 +8,13 @@ export function useCollection (options) {
   _.defaults(options, {
     // This value can be overriden in activities if they want to manage pagination by themselves
     // nbItemsPerPage = 0 means that the client does not handle pagination and server defaults will be used
-    nbItemsPerPage: 12,
+    nbItemsPerPage: ref(12),
     // This value indicate if items of each page replace or are appended to previous ones
-    appendItems: false,
+    appendItems: ref(false),
     // Only invoke refresh at most once per every refreshThrottle milliseconds
-    refreshThrottle: 500,
+    refreshThrottle: ref(500),
     // Refresh strategy to be used
-    listStrategy: 'smart'
+    listStrategy: ref('smart')
   })
 
   // Data
@@ -25,46 +25,46 @@ export function useCollection (options) {
 
   // Computed
   const nbPages = computed(() => {
-    return options.nbItemsPerPage > 0
-      ? Math.ceil(nbTotalItems.value / options.nbItemsPerPage)
+    return options.nbItemsPerPage.value > 0
+      ? Math.ceil(nbTotalItems.value / options.nbItemsPerPage.value)
       : 1
   })
 
   // Functions
   function getService () {
-    const service = api.getService(options.service, options.contextId)
+    const service = api.getService(options.service.value, options.contextId.value)
     if (!service) {
-      throw new Error('Cannot retrieve target service ' + options.service)
+      throw new Error('Cannot retrieve target service ' + options.service.value)
     }
     return service
   }
   function getCollectionBaseQuery () {
     // This method should be overriden in collections
-    return options.baseQuery || {}
+    return options.baseQuery.value || {}
   }
   function getCollectionFilterQuery () {
     // This method should be overriden in collections
-    return options.filterQuery || {}
+    return options.filterQuery.value || {}
   }
   function getCollectionPaginationQuery () {
     // This method should be overriden in collections
-    return (options.nbItemsPerPage > 0
+    return (options.nbItemsPerPage.value > 0
       ? {
-          $limit: options.nbItemsPerPage,
-          $skip: (currentPage.value - 1) * options.nbItemsPerPage
+          $limit: options.nbItemsPerPage.value,
+          $skip: (currentPage.value - 1) * options.nbItemsPerPage.value
         }
       : {})
   }
   function subscribe (query) {
     // Remove previous listener if any
     unsubscribe()
-    itemListener = getService().watch({ listStrategy: options.listStrategy })
+    itemListener = getService().watch({ listStrategy: options.listStrategy.value })
       .find({ query })
       .subscribe(response => {
         // Manage GeoJson features collection as well
         if (response.type === 'FeatureCollection') {
           items.value = response.features
-        } else if (options.appendItems) {
+        } else if (options.appendItems.value) {
           // Append the response ensuring there is no duplicates
           items.value = _.unionBy(response.data, items.value, '_id')
           // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
@@ -106,7 +106,7 @@ export function useCollection (options) {
       ...getCollectionPaginationQuery()
     }
     subscribe(fullQuery)
-  }, options.refreshThrottle, { leading: false })
+  }, options.refreshThrottle.value, { leading: false })
 
   function resetCollection () {
     // Reset pagination and start again refreshing the collection
@@ -125,11 +125,16 @@ export function useCollection (options) {
   }
 
   // Lifecycle hooks
-  watch(() => options.baseQuery, resetCollection)
-  watch(() => options.filterQuery, resetCollection)
+  watch(options.service, resetCollection)
+  watch(options.contextId, resetCollection)
+  watch(options.listStrategy, resetCollection)
+  watch(options.nbItemsPerPage, resetCollection)
+  watch(options.appendItems, resetCollection)
+  watch(options.baseQuery, resetCollection)
+  watch(options.filterQuery, resetCollection)
 
   onBeforeMount(() => {
-    if (options.appendItems) {
+    if (options.appendItems.value) {
       const service = getService()
       service.on('patched', onItemsUpdated)
       service.on('updated', onItemsUpdated)
@@ -140,7 +145,7 @@ export function useCollection (options) {
   // Cleanup for appendItems
   onBeforeUnmount(() => {
     unsubscribe()
-    if (options.appendItems) {
+    if (options.appendItems.value) {
       const service = getService()
       service.off('patched', onItemsUpdated)
       service.off('updated', onItemsUpdated)
