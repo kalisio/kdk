@@ -45,6 +45,7 @@ const showInstallApp = ref({
   show: false
 })
 let deferredPrompt = null
+const iOSIsInstalled = window.navigator.standalone === true
 
 // Functions
 function closeDialog () {
@@ -61,7 +62,7 @@ async function installApp () {
   if (outcome === 'accepted') location.reload()
 }
 function installAppAvailable () {
-  if (Platform.is.ios) {
+  if (Platform.is.ios && !iOSIsInstalled) {
     showInstallApp.value = {
       isIos: true,
       show: true
