@@ -32,7 +32,7 @@ export function useCollection (options) {
 
   // Functions
   function getService () {
-    const service = api.getService(options.service.value, options.contextId.value)
+    const service = api.getService(options.service.value, options.contextId ? options.contextId.value : null)
     if (!service) {
       throw new Error('Cannot retrieve target service ' + options.service.value)
     }
@@ -40,11 +40,11 @@ export function useCollection (options) {
   }
   function getCollectionBaseQuery () {
     // This method should be overriden in collections
-    return options.baseQuery.value || {}
+    return options.baseQuery ? options.baseQuery.value : {}
   }
   function getCollectionFilterQuery () {
     // This method should be overriden in collections
-    return options.filterQuery.value || {}
+    return options.filterQuery ? options.filterQuery.value : {}
   }
   function getCollectionPaginationQuery () {
     // This method should be overriden in collections
