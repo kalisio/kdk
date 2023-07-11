@@ -1,5 +1,7 @@
-import KAccountActivity from './KAccountActivity.vue'
+import KAccount from './KAccount.vue'
+import KProfile from './KProfile.vue'
 
 export {
-  KAccountActivity
+  KAccount,
+  KProfile
 }

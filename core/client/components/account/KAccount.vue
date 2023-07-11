@@ -7,7 +7,7 @@
         group="account"        
         class="bg-grey-2"
       >
-        <component :is="section.instance" />
+        <component :is="section.instance" v-bind="section" />
       </q-expansion-item>
     </template>
     <!-- Deletion -->

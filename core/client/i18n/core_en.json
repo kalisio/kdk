@@ -450,28 +450,11 @@
   "KSubscriptionsManager": {
     "TITLE": "Manage my subscriptions"
   },
-  "KIdentityPanel": {
-    "MANAGE": "Manage my account"
-  },
-  "KAccountActivity": {
-    "PROFILE": "My profile",
-    "SECURITY": "Security",
-    "DANGER_ZONE": "Danger zone"
-  },
-  "KAccountDZ": {
-    "BLOCK_TITLE": "Delete your account ?",
-    "BLOCK_TEXT": "Warning: deleting your account will delete any data attached to this account",
-    "BLOCK_ACTION": "Delete account",
-    "DIALOG_TITLE": "Are you sure you want to delete your account ?",
-    "DIALOG_LABEL": "Enter your account name to confirm the deletion"
-  },
-  "KAccountSecurity": {
-    "PASSWORD_BLOCK_TITLE": "Change your password ?",
-    "PASSWORD_BLOCK_TEXT": "Your password protect your account.<br>Change it carefully.",
-    "PASSWORD_BLOCK_ACTION": "Change",
-    "EMAIL_BLOCK_TITLE": "Change your email ?",
-    "EMAIL_BLOCK_TEXT": "Your email secures changes to your account credentials, change it carefully.<br>Current email address: <b>{email}</b>",
-    "EMAIL_BLOCK_ACTION": "Change"
+  "KSubscription": {
+    "LAST_ACTIVITY": "Last activity",
+    "UNSUBSCRIBE_LABEL": "Unsubscribe",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
   },
   "KGrid": {
     "EMPTY_GRID": "@:NO_ITEM"
@@ -812,15 +795,6 @@
     "ERROR_MESSAGE_BAD_PARAMS": "Your email address has already been verified or your account has been removed",
     "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to verify your email address has expired, please resend the verification email with the link below",
     "ERROR_MESSAGE_DEFAULT": "Your email address has not been verified"
-  },
-  "KSubscriptionCard": {
-    "LAST_ACTIVITY": "Last activity",
-    "UNSUBSCRIBE_LABEL": "Unsubscribe",
-    "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
-    "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
-  },
-  "KAccountSubscriptions": {
-    "SUBSCRIPTIONS": "Check subscriptions that have been added to your account below"
   },
   "KMemberFilter": {
     "NONE": "None",

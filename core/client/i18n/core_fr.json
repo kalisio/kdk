@@ -450,28 +450,11 @@
   "KSubscriptionsManager": {
     "TITLE": "Gérer mes souscriptions"
   },
-  "KIdentityPanel": {
-    "MANAGE": "Gérer mon compte"
-  },
-  "KAccountActivity": {
-    "PROFILE": "Mon profil",
-    "SECURITY": "Securité",
-    "DANGER_ZONE": "Zone de danger"
-  },
-  "KAccountDZ": {
-    "BLOCK_TITLE": "Supprimer votre compte ?",
-    "BLOCK_TEXT": "Veuillez prendre en compte que la suppression de votre compte entrainera la suppression de toutes les données qui y sont attachées.<br>La suppression ne peut pas être annulée et vous serez déconnecté de l'application.",
-    "BLOCK_ACTION": "Supprimer",
-    "DIALOG_TITLE": "Etes vous sûr de vouloir supprimer votre compte ?",
-    "DIALOG_LABEL": "Saisissez le nom de votre compte pour confirmer la suprression"
-  },
-  "KAccountSecurity": {
-    "PASSWORD_BLOCK_TITLE": "Changer votre mot de passe ?",
-    "PASSWORD_BLOCK_TEXT": "Votre mot de passe protège votre compte.<br>Changez le avec précaution.",
-    "PASSWORD_BLOCK_ACTION": "Changer",
-    "EMAIL_BLOCK_TITLE": "Changez votre adresse mail ?",
-    "EMAIL_BLOCK_TEXT": "Changer votre adresse mail sécurise les accès à votre compte, changez la avec précaution.<br>Adresse actuelle: <b>{email}</b>",
-    "EMAIL_BLOCK_ACTION": "Changer"
+  "KSubscription": {
+    "LAST_ACTIVITY": "Dernière activité",
+    "UNSUBSCRIBE_LABEL": "Se désabonner",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
   "KGrid": {
     "EMPTY_GRID": "@:NO_ITEM"
@@ -813,15 +796,6 @@
     "ERROR_MESSAGE_BAD_PARAMS": "Votre adresse mail a déjà été vérifiée ou votre compte a été supprimé",
     "ERROR_MESSAGE_VERIFY_EXPIRED": "Le délai pour vérifier votre adresse mail a expiré, merci de cliquer sur le lien ci-dessous pour vous renvoyer un mail de vérifcation",
     "ERROR_MESSAGE_DEFAULT": "Impossible de vérifier votre adresse mail"
-  },
-  "KSubscriptionCard": {
-    "LAST_ACTIVITY": "Dernière activité",
-    "UNSUBSCRIBE_LABEL": "Se désabonner",
-    "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
-    "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
-  },
-  "KAccountSubscriptions": {
-    "SUBSCRIPTIONS": "Vérifier les abonnements de votre compte ci-dessous"
   },
   "KMemberFilter": {
     "NONE": "Aucun",
