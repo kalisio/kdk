@@ -23,12 +23,7 @@ export async function register (user) {
 }
 
 export async function logout () {
-  try {
-    await api.logout()
-  } catch (error) {
-    logger.warn(`[KDK] logout session failed: ${error}`)
-    await api.authentication.removeAccessToken()
-  }
+  await api.logout()
   Store.set('user', null)
 }
 
@@ -39,7 +34,7 @@ export async function restoreSession () {
     Store.set('user', user)
   } catch (error) {
     // This ensure an old token is not kept when the user has been deleted
-    if (error.code === 404) await logout()
+    await logout()
     // Rethrow for caller to handle
     throw error
   }
