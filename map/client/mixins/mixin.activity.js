@@ -447,12 +447,14 @@ export const activity = {
       }
     }
   },
-  beforeMount () {
+  // Need to be in the first lifecycle hook as others mixins might use activity options
+  created () {
     // Merge the engine options using defaults
     const defaultOptions = _.get(config, `engines.${this.engine}`)
     if (defaultOptions) {
       logger.debug(`[KDK] ${this.engine} engine use defaults: ${JSON.stringify(defaultOptions, null, 2)}`)
-      this.activityOptions.engine = _.defaultsDeep(this.activityOptions.engine, defaultOptions)
+      // Take care that if we only use the default options the specific options will be undefined
+      this.activityOptions.engine = _.defaultsDeep(_.get(this.activityOptions, 'engine', {}), defaultOptions)
     }
   },
   mounted () {

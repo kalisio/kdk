@@ -396,6 +396,9 @@ export const editLayers = {
   },
   created () {
     this.pendingOperations = []
+  },
+  // Need to be done after created as the activity mixin initializes options in it
+  beforeMount () {
     // Perform required conversion for default feature styling
     if (_.has(this, 'activityOptions.engine.editFeatureStyle')) {
       this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editFeatureStyle'), 'update-in-place')

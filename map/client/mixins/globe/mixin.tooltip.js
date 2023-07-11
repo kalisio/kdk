@@ -84,6 +84,9 @@ export const tooltip = {
   },
   created () {
     this.registerStyle('tooltip', this.getDefaultTooltip)
+  },
+  // Need to be done after created as the activity mixin initializes options in it
+  beforeMount () {
     // Perform required conversion from JSON to Cesium objects
     if (_.has(this, 'activityOptions.engine.tooltip')) {
       _.set(this, 'activityOptions.engine.tooltip', this.convertToCesiumObjects(_.get(this, 'activityOptions.engine.tooltip')))

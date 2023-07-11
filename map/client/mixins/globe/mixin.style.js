@@ -154,6 +154,9 @@ export const style = {
   created () {
     this.registerStyle('entityStyle', this.getDefaultEntityStyle)
     this.registerStyle('clusterStyle', this.getDefaultClusterStyle)
+  },
+  // Need to be done after created as the activity mixin initializes options in it
+  beforeMount () {
     // Perform required conversion from JSON to Cesium objects
     if (_.has(this, 'activityOptions.engine.entityStyle')) {
       _.set(this, 'activityOptions.engine.entityStyle', this.convertToCesiumObjects(_.get(this, 'activityOptions.engine.entityStyle')))

@@ -65,6 +65,9 @@ export const popup = {
   },
   created () {
     this.registerStyle('popup', this.getDefaultPopup)
+  },
+  // Need to be done after created as the activity mixin initializes options in it
+  beforeMount () {
     // Perform required conversion from JSON to Cesium objects
     if (_.has(this, 'activityOptions.engine.popup')) {
       _.set(this, 'activityOptions.engine.popup', this.convertToCesiumObjects(_.get(this, 'activityOptions.engine.popup')))
