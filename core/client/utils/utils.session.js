@@ -23,7 +23,12 @@ export async function register (user) {
 }
 
 export async function logout () {
-  await api.logout()
+  try {
+    await api.logout()
+  } catch (error) {
+    logger.warn(`[KDK] logout session failed: ${error}`)
+    await api.authentication.removeAccessToken()
+  }
   Store.set('user', null)
 }
 
@@ -34,10 +39,7 @@ export async function restoreSession () {
     Store.set('user', user)
   } catch (error) {
     // This ensure an old token is not kept when the user has been deleted
-    if (error.code === 404) {
-      await api.authentication.removeAccessToken()
-      await logout()
-    }
+    if (error.code === 404) await logout()
     // Rethrow for caller to handle
     throw error
   }
@@ -50,7 +52,7 @@ export async function updateAbilities () {
   const abilities = await defineAbilities(user, api)
   Store.set('user.abilities', abilities)
   if (abilities) {
-    logger.debug('New user abilities: ', abilities.rules)
+    logger.debug('[KDK] New user abilities: ', abilities.rules)
   }
 }
 
