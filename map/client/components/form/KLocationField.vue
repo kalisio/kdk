@@ -15,7 +15,7 @@
     use-input
     hide-dropdown-icon
     :options="locations"
-    :display-value="model ? model.properties.name : ''"
+    :display-value="name"
     :error-message="errorLabel"
     :error="hasError"
     :disable="disabled"
@@ -136,6 +136,9 @@ export default {
   },
   mixins: [kdkCoreMixins.baseField],
   computed: {
+    name () {
+      return _.get(this.model, 'properties.name', '')
+    },
     allowConfiguration () {
       return !_.isEmpty(_.get(this.properties, 'field.geocoders'))
     },

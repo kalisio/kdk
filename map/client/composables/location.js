@@ -7,8 +7,16 @@ export function useLocation () {
   // Functions
   function current () {
     const position = Store.get('geolocation.position') || { longitude: 0, latitude: 0 }
-    const name = formatUserCoordinates(position.latitude, position.longitude, Store.get('locationFormat', 'FFf'))
-    return Object.assign(position, { name })
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [position.longitude, position.latitude]
+      },
+      properties: {
+        name: formatUserCoordinates(position.latitude, position.longitude, Store.get('locationFormat', 'FFf'))
+      }
+    }
   }
   async function geolocate () {
     await Geolocation.update()

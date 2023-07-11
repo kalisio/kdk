@@ -125,7 +125,8 @@ export function asGeoJson (options = {}) {
                // When performing feature aggregation on geometries the result can be an array
                Array.isArray(_.get(item, geometryProperty)) ||
                // Check for a geometry property (previously provided or already transformed item)
-               (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates'))
+               (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) ||
+               (_.has(item, geometryProperty + '.geometry.type') && _.has(item, geometryProperty + '.geometry.coordinates'))
       })
       .map(item => {
         let coordinates
@@ -143,10 +144,11 @@ export function asGeoJson (options = {}) {
           item = _.omit(item, options.omit)
         }
         // Item locations are already in GeoJson format
-        if (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) {
+        if ((_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) ||
+            (_.has(item, geometryProperty + '.geometry.type') && _.has(item, geometryProperty + '.geometry.coordinates'))) {
           return Object.assign({
             type: 'Feature',
-            geometry: _.get(item, geometryProperty),
+            geometry: _.get(item, geometryProperty + '.geometry', _.get(item, geometryProperty)),
             properties: {}
           }, _.omit(item, [geometryProperty]))
         } else if (Array.isArray(_.get(item, geometryProperty))) {
