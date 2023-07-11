@@ -448,7 +448,8 @@
     "IDENTITY_CHANGED": "Votre nouvelle adresse a été prise en compte. Un mail vous a été envoyé pour confirmer le changement."
   },
   "KSubscriptionsManager": {
-    "TITLE": "Gérer mes souscriptions"
+    "TITLE": "Gérer mes souscriptions",
+    "EMPTY": "Aucunes subscriptions"
   },
   "KSubscription": {
     "LAST_ACTIVITY": "Dernière activité",

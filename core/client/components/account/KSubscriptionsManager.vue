@@ -1,5 +1,5 @@
 <template>
-  <div class="column">
+  <div class="q-pa-md column">
     <div v-if="subscriptions.length > 0">
       <q-list>
         <template v-for="subscription in subscriptions" :key="subscription.endpoint">
@@ -14,7 +14,7 @@
       <KStamp
         icon="las la-exclamation-circle"
         icon-size="1.6rem"
-        :text="$t('KList.EMPTY_LIST')"
+        :text="$t('KSubscriptionsManager.EMPTY')"
         direction="horizontal"
       />
     </div>
@@ -40,6 +40,6 @@ const User = Store.get('user')
 
 // Computed
 const subscriptions = computed(() => {
-  return User.subscriptions
+  return _.get(User, 'subscriptions', [])
 })
 </script>
