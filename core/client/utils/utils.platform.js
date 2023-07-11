@@ -24,7 +24,7 @@ export function updatePwa (registration) {
     message: i18n.t('pwa.VERSION_MISMATCH'),
     actions: [
       { label: i18n.t('pwa.BUTTON_REFRESH'), color: 'white', handler: () => registration.waiting.postMessage({ type: 'SKIP_WAITING' }) },
-      { label: i18n.t('pwa.BUTTON_DISMISS'), color: 'white' }
+      { label: i18n.t('CLOSE'), color: 'white' }
     ]
   })
 }
