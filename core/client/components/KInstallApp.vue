@@ -45,7 +45,6 @@ const showInstallApp = ref({
   show: false
 })
 let deferredPrompt = null
-const iOSIsInstalled = window.navigator.standalone === true
 
 // Functions
 function closeDialog () {
@@ -61,21 +60,17 @@ async function installApp () {
   // Refresh page
   if (outcome === 'accepted') location.reload()
 }
-function installAppAvailable () {
-  if (Platform.is.ios && !iOSIsInstalled) {
-    showInstallApp.value = {
-      isIos: true,
-      show: true
-    }
-  } else {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault()
-      // Stash the event so it can be triggered later
-      deferredPrompt = e
-      // Show the button install app
-      showInstallApp.value.show = true
-    })
-  }
+async function installAppAvailable () {
+  const appIsInstalled = window.matchMedia('(display-mode: standalone)').matches
+  if (appIsInstalled) return
+  if (Platform.is.ios) showInstallApp.value = { isIos: true, show: true }
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    // Stash the event so it can be triggered later
+    deferredPrompt = e
+    // Show the button install app
+    showInstallApp.value.show = true
+  })
 }
 
 // Immediate
