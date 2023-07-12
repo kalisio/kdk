@@ -22,6 +22,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
 import { Store } from '../../store.js'
 import KSubscription from './KSubscription.vue'
