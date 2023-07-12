@@ -44,7 +44,7 @@ export async function subscribeToPushNotifications () {
   const subscription = await subscribePushNotifications(Store.get('capabilities.api.vapidPublicKey'))
   // Set platform informations
   subscription.browser = { name: platform.name, version: platform.version }
-  subscription.platform = { name: platform.platform, desktop: platform.desktop }
+  subscription.platform = platform.platform
   subscription.lastActivity = date
   // Patch user subscriptions
   await addSubscription(user, subscription, 'subscriptions')

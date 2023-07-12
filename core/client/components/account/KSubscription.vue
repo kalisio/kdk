@@ -40,7 +40,7 @@ const icon = computed(() => {
   return 'lab la-' + _.get(props.subscription, 'browser.name')
 })
 const label = computed(() => {
-  return _.get(props.subscription, 'browser.name') + ' (' + _.get(props.subscription, 'browser.version') + ')'
+  return _.capitalize(_.get(props.subscription, 'browser.name')) + ' (' + _.get(props.subscription, 'browser.version') + ') - ' + _.capitalize(_.get(props.subscription, 'platform'))
 })
 const bindedActions = computed(() => {
   return utils.bindContent(_.cloneDeep(props.actions), { unsubscribe })
