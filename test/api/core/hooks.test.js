@@ -62,7 +62,7 @@ describe('core:hooks', () => {
 
   it('process object IDs', () => {
     const id = new ObjectID()
-    const another_id = new ObjectID()
+    const anotherId = new ObjectID()
     const hook = {
       type: 'before',
       data: {
@@ -70,14 +70,14 @@ describe('core:hooks', () => {
         objects: [{
           _id: id.toString(), date: new Date()
         }, {
-          _id: another_id, date: new Date()
+          _id: anotherId, date: new Date()
         }],
         date: new Date()
       },
       params: {
         query: {
           _id: { $in: [id.toString()] },
-          id: another_id,
+          id: anotherId,
           array: [new Date(), new Date()]
         }
       }
@@ -98,7 +98,7 @@ describe('core:hooks', () => {
     object = hook.data.objects[1]
     expect(Object.keys(object)).to.deep.equal(['_id', 'date'])
     expect(ObjectID.isValid(object._id)).beTrue()
-    expect(object._id.toString()).to.equal(another_id.toString())
+    expect(object._id.toString()).to.equal(anotherId.toString())
     expect(object.date instanceof Date).beTrue()
     expect(Object.keys(hook.params.query)).to.deep.equal(['_id', 'id', 'array'])
     expect(Array.isArray(hook.params.query.array)).beTrue()
@@ -109,7 +109,7 @@ describe('core:hooks', () => {
     expect(ObjectID.isValid(hook.params.query._id.$in[0])).beTrue()
     expect(hook.params.query._id.$in[0].toString()).to.equal(id.toString())
     expect(ObjectID.isValid(hook.params.query.id)).beTrue()
-    expect(hook.params.query.id.toString()).to.equal(another_id.toString())
+    expect(hook.params.query.id.toString()).to.equal(anotherId.toString())
   })
 
   it('check uniqueness', async () => {
