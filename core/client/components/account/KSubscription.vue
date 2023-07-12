@@ -17,7 +17,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { unsubscribePushNotifications, removeSubscription } from '@kalisio/feathers-webpush/client.js'
+import { removeSubscription } from '@kalisio/feathers-webpush/client.js'
 import { computed } from 'vue'
 import { Dialog } from 'quasar'
 import { Store, i18n, api, utils } from '../..'
@@ -62,11 +62,9 @@ function unsubscribe () {
       flat: true
     }
   }).onOk(async () => {
-    // Unsubscribe from web webpush notifications
-    const subscription = await unsubscribePushNotifications()
     // Patch user subscriptions
     const user = Store.get('user')
-    removeSubscription(user, subscription, 'subscriptions')
+    removeSubscription(user, props.subscription, 'subscriptions')
     api.service('api/users').patch(Store.user._id, { subscriptions: user.subscriptions })
   })
 }
