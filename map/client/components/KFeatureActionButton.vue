@@ -1,40 +1,40 @@
 <template>
   <k-radial-fab ref="radialFab"
-      :style="radialFabStyle"
-      :start-angle="0"
-      :end-angle="-180"
-      :radius="50"
-      @close="onCloseMenu">
-      <!--q-btn slot="closed-menu-container"
-        round color="accent" icon="las la-chevron-up" /-->
-      <q-btn slot="open-menu-container"
-        round color="accent" icon="las la-times" />
-      <k-radial-fab-item
-        v-for="(action, index) in featureActions"
-        :key="index">
-        <q-btn round color="accent" :icon="action.icon" @click="onFeatureActionClicked(action)">
-          <!-- tooltip -->
-          <q-tooltip v-if="action.label">
-            {{action.label}}
-          </q-tooltip>
-          <!-- badge -->
-          <q-badge v-if="action.badge" v-bind="action.badge">
-            <q-icon v-if="action.badge.icon" v-bind="action.badge.icon" />
-          </q-badge>
-        </q-btn>
-      </k-radial-fab-item>
-    </k-radial-fab>
+    :style="radialFabStyle"
+    :start-angle="0"
+    :end-angle="-180"
+    :radius="50"
+    :actions="featureActions"
+    @close="onCloseMenu">
+    <!--template v-slot:closed-menu-container>
+      <q-btn round color="accent" icon="las la-chevron-up" />
+    </template-->
+    <template v-slot:open-menu-container>
+      <q-btn round color="accent" icon="las la-times" />
+    </template>
+    <template v-slot:menu-item="action">
+      <q-btn round color="accent" :icon="action.icon" @click="onFeatureActionClicked(action)">
+        <!-- tooltip -->
+        <q-tooltip v-if="action.label">
+          {{action.label}}
+        </q-tooltip>
+        <!-- badge -->
+        <q-badge v-if="action.badge" v-bind="action.badge">
+          <q-icon v-if="action.badge.icon" v-bind="action.badge.icon" />
+        </q-badge>
+      </q-btn>
+    </template>
+  </k-radial-fab>
 </template>
 
 <script>
 import _ from 'lodash'
-import { KRadialFab, KRadialFabItem } from '../../../core/client/components'
+import { KRadialFab } from '../../../core/client/components'
 
 export default {
   inject: ['kActivity'],
   components: {
-    KRadialFab,
-    KRadialFabItem
+    KRadialFab
   },
   data () {
     return {

@@ -10,26 +10,47 @@
   </Transition>
 </template>
 
-<script>
-export default {
-  props: ['top', 'left', 'height', 'width', 'handler'],
-  data () {
-    const { top, left, height, width } = this
-    return {
-      style: {
-        top: top + 'px',
-        left: left + 'px',
-        width: width + 'px',
-        height: height + 'px'
-      }
-    }
+<script setup>
+import { computed } from 'vue'
+
+const emit = defineEmits(['click'])
+
+// Props
+const props = defineProps({
+  top: {
+    type: Number,
+    required: true
   },
-  methods: {
-    handleClick (event) {
-      this.$emit('click', event)
-      if (this.handler) this.handler(event)
-    }
+  left: {
+    type: Number,
+    required: true
+  },
+  height: {
+    type: Number,
+    required: true
+  },
+  width: {
+    type: Number,
+    required: true
+  },
+  handler: {
+    type: Function,
+    default: null
   }
+})
+
+// Computed
+const style = computed(() => ({
+  top: Math.round(props.top) + 'px',
+  left: Math.round(props.left) + 'px',
+  width: Math.round(props.width) + 'px',
+  height: Math.round(props.height) + 'px'
+}))
+
+// Functions
+function handleClick (event) {
+  emit('click', event)
+  if (props.handler) props.handler(event)
 }
 </script>
 
@@ -37,7 +58,6 @@ export default {
   .vue-radial-menu-item {
     position: absolute;
     display: flex;
-    justify-content: center;
     align-items: center;
     transition: all 0.2s ease;
     transform: none;
