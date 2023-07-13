@@ -41,7 +41,7 @@ export function createDatabasesService (options = {}) {
   const app = this
 
   return app.createService('databases', Object.assign({
-    servicesPath, events: ['created', 'updated', 'removed', 'patched'] // Internal use only, no events
+    servicesPath
   }, options))
 }
 
@@ -115,7 +115,7 @@ export default async function () {
 
   const mailerConfig = app.get('mailer')
   if (mailerConfig) {
-    await app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    await app.createService('mailer', { servicesPath })
     debug('\'mailer\' service created')
     await app.createService('account', { servicesPath })
     debug('\'account\' service created')
@@ -123,7 +123,7 @@ export default async function () {
 
   const pusherConfig = app.get('pusher')
   if (pusherConfig) {
-    await app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    await app.createService('pusher', { servicesPath })
     debug('\'pusher\' service created')
     await app.createService('devices', { servicesPath })
     debug('\'devices\' service created')
