@@ -97,7 +97,7 @@ export default {
     options: {
       immediate: true,
       handler (opts) {
-        if (opts.length === 1 && this.required) {
+        if (_.isEmpty(this.filter) && opts.length === 1 && this.required) {
           this.$nextTick(() => {
             this.model = opts[0].value
           })
