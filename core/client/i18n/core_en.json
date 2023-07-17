@@ -857,14 +857,16 @@
   "KTextArea": {
     "COLLAPSE": "Collapse"
   },
-  "pwa": {
-    "VERSION_MISMATCH": "Application version mismatch, please refresh the page to get the latest version available",
-    "BUTTON_REFRESH": "Refresh",
+  "KInstallApp": {
+    "INSTALL_LABEL": "Application ready to install.",
+    "IOS_SHARE_ICON_LABEL": "If you don't install it, some functionalities may be limited. From Safari, Tap",
+    "IOS_HOME_SCREEN_LABEL": ", and then tap on “Add to home screen”",
     "INSTALL_BUTTON": "Install app",
-    "SKIP_BUTTON": "Skip",
-    "MESSAGE_INSTALL": "Application ready to install.",
-    "MESSAGE_INSTALL_IOS_SHARE_ICON": "Tap",
-    "MESSAGE_INSTALL_IOS_HOME_SCREEN": ", and then tap on “Add to home screen”"
+    "SKIP_BUTTON": "Skip"
+  },
+  "utils": {
+    "PWA_VERSION_MISMATCH": "Application version mismatch, please refresh the page to get the latest version available",
+    "PWA_BUTTON_REFRESH": "Refresh"
   }
 }
 

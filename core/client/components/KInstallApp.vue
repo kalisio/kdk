@@ -4,13 +4,13 @@
       <q-card-section class="row justify-between">
         <q-icon name="info" size="sm"/>
         <span class="text-body1 text-center" text-color="white">
-          {{ $t('pwa.MESSAGE_INSTALL') }}
+          {{ $t('KInstallApp.INSTALL_LABEL') }}
         </span>
       </q-card-section>
       <q-card-section v-if="showInstallApp.isIos" class="text-body1 text-center">
-        {{ $t('pwa.MESSAGE_INSTALL_IOS_SHARE_ICON') }}
+        {{ $t('KInstallApp.IOS_SHARE_ICON_LABEL') }}
         <q-icon name="ios_share" size="18px"/>
-        {{ $t('pwa.MESSAGE_INSTALL_IOS_HOME_SCREEN') }}
+        {{ $t('KInstallApp.IOS_HOME_SCREEN_LABEL') }}
       </q-card-section>
       <q-card-actions align="center">
         <KAction
@@ -18,7 +18,7 @@
           renderer="form-button"
           :outline="showInstallApp.isIos ? false : true"
           size="sm"
-          label="pwa.SKIP_BUTTON"
+          label="KInstallApp.SKIP_BUTTON"
           :handler="closeDialog"
         />
         <KAction
@@ -26,7 +26,7 @@
           id="install-btn"
           renderer="form-button"
           size="sm"
-          label="pwa.INSTALL_BUTTON"
+          label="KInstallApp.INSTALL_BUTTON"
           :handler="installApp"
         />
       </q-card-actions>

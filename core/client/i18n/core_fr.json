@@ -858,13 +858,15 @@
   "KTextArea": {
     "COLLAPSE": "Réduire"
   },
-  "pwa": {
-    "VERSION_MISMATCH": "Discordance de version, merci de rafraîchir la page pour profiter de la dernière version disponible",
-    "BUTTON_REFRESH": "Rafraîchir",
+  "KInstallApp": {
+    "INSTALL_LABEL": "L'application est prête à être installé.",
+    "IOS_SHARE_ICON_LABEL": "Si vous ne l'installez pas, certaines fonctionnalités peuvent être limitées. Depuis Safari, appuyez sur",
+    "IOS_HOME_SCREEN_LABEL": ", puis sur “Ajouter à l'écran d'accueil”",
     "INSTALL_BUTTON": "Installer l'application",
-    "SKIP_BUTTON": "Ignorer",
-    "MESSAGE_INSTALL": "L'application est prête à être installé.",
-    "MESSAGE_INSTALL_IOS_SHARE_ICON": "Appuyez sur",
-    "MESSAGE_INSTALL_IOS_HOME_SCREEN": ", puis sur “Ajouter à l'écran d'accueil”"
+    "SKIP_BUTTON": "Ignorer"
+  },
+  "utils": {
+    "PWA_VERSION_MISMATCH_LABEL": "Discordance de version, merci de rafraîchir la page pour profiter de la dernière version disponible",
+    "PWA_BUTTON_REFRESH": "Rafraîchir"
   }
 }
