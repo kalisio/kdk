@@ -41,7 +41,6 @@ export function useVersion () {
     logger.debug('Setting API version from capabilities')
     Version.value.api.number = Capabilities.get('version')
     Version.value.api.buildNumber = Capabilities.get('buildNumber')
-    if (Platform.cordova) checkVersion()
   }
 
   // Expose
@@ -50,19 +49,4 @@ export function useVersion () {
     clientVersionName,
     apiVersionName
   }
-}
-
-export async function checkVersion () {
-  const api = Store.capabilities.api
-  // FIXME: we should elaborate a more complex check between compatible versions
-  if (api.version === config.version) {
-    if (config.flavor === 'prod') return
-    // Local dev has not the concept of build number
-    else if (!api.buildNumber) return
-    // On staging check it because we do not increase version number on each change
-    // and would like to know if the mobile client is up-to-date
-    else if (api.buildNumber === config.buildNumber) return
-  }
-  // Notify when a new version is available
-  Notify.create({ type: 'warning', message: i18n.t('composables.VERSION_MISMATCH') })
 }

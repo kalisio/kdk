@@ -108,18 +108,7 @@ export function dataUriToBlob (dataUri) {
 
 export function downloadAsBlob (data, filename, mimeType) {
   const blob = new Blob([data], { type: mimeType })
-  if (Platform.is.cordova) {
-    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fs) => {
-      fs.root.getFile(filename, { create: true, exclusive: false }, (fileEntry) => {
-        fileEntry.createWriter((fileWriter) => {
-          fileWriter.write(blob)
-          cordova.plugins.fileOpener2.open(fileEntry.nativeURL, mimeType)
-        })
-      })
-    })
-  } else {
-    exportFile(filename, blob)
-  }
+  exportFile(filename, blob)
 }
 
 // Simplify Quasar dialog plugin usage with async/await

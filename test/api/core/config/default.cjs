@@ -85,17 +85,6 @@ module.exports = {
     },
     templateDir: path.join(__dirname, 'email-templates')
   },
-  pusher: {
-    accessKeyId: process.env.SNS_ACCESS_KEY,
-    secretAccessKey: process.env.SNS_SECRET_ACCESS_KEY,
-    region: 'eu-west-1',
-    apiVersion: '2010-03-31',
-    platforms: {
-      ANDROID: process.env.SNS_ANDROID_ARN,
-      SMS: (!!process.env.SNS_PHONE_NUMBER)
-    },
-    topicName: (object) => object._id.toString()
-  },
   gmailApi: {
     user: process.env.GMAIL_API_USER,
     clientEmail: process.env.GMAIL_API_CLIENT_EMAIL,

@@ -52,9 +52,6 @@ export function defineUserAbilities (subject, can, cannot) {
   // Verification email, reset password, etc.
   can('service', 'account')
   can('create', 'account')
-  can('service', 'devices')
-  can('update', 'devices')
-  can('remove', 'devices')
   // Allow push registration
   can('service', 'push')
   can('create', 'push')

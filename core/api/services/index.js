@@ -121,14 +121,6 @@ export default async function () {
     debug('\'account\' service created')
   }
 
-  const pusherConfig = app.get('pusher')
-  if (pusherConfig) {
-    await app.createService('pusher', { servicesPath })
-    debug('\'pusher\' service created')
-    await app.createService('devices', { servicesPath })
-    debug('\'devices\' service created')
-  }
-
   const pushConfig = app.get('push')
   if (pushConfig) {
     await app.createService('push', { servicesPath })

@@ -16,7 +16,6 @@ export default function init () {
   api.declareService('groups', { context: true })
   api.declareService('storage', { context: true })
   api.declareService('account')
-  api.declareService('devices')
 
   // Setup service for settings edition
   api.createService('settings', _.merge(config.settings || {}, {
