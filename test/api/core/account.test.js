@@ -214,7 +214,7 @@ describe('core:account', () => {
     .timeout(15000)
 
   it('ask password reset for a user', async () => {
-    const user = await accountService.create({
+    await accountService.create({
       action: 'sendResetPwd',
       value: { email: userObject.email }
     })
@@ -263,7 +263,7 @@ describe('core:account', () => {
         }
       })
       assert.fail()
-    } catch(error) {
+    } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('BadRequest')
       expect(error.data.translation.params.failedRules.length > 0).beTrue()
@@ -273,7 +273,7 @@ describe('core:account', () => {
     .timeout(5000)
 
   it('reset user password', async () => {
-    const user = await accountService.create({
+    await accountService.create({
       action: 'resetPwdLong',
       value: {
         token,
@@ -323,7 +323,7 @@ describe('core:account', () => {
         }
       })
       assert.fail()
-    } catch(error) {
+    } catch (error) {
       expect(error).toExist()
       expect(error.name).to.equal('BadRequest')
       expect(error.data.translation.params.failedRules.length > 0).beTrue()
@@ -333,7 +333,7 @@ describe('core:account', () => {
     .timeout(5000)
 
   it('change user password', async () => {
-    const user = await accountService.create({
+    await accountService.create({
       action: 'passwordChange',
       value: {
         user: { email: userObject.email },
@@ -374,7 +374,7 @@ describe('core:account', () => {
     .timeout(5000)
 
   it('ask user identity change', async () => {
-    const user = await accountService.create({
+    await accountService.create({
       action: 'identityChange',
       value: {
         user: { email: userObject.email },
@@ -406,7 +406,7 @@ describe('core:account', () => {
     .timeout(20000)
 
   it('verify user changes', async () => {
-    const user = await accountService.create({
+    await accountService.create({
       action: 'verifySignupLong',
       value: userObject.verifyToken
     })
