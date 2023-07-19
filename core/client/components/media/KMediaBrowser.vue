@@ -83,14 +83,17 @@ export default {
       if (this.currentMedia) {
         if (this.currentMedia.isImage && this.currentMediaTransformed) {
           actions.push({
-            id: 'restore-image', icon: 'las la-compress-arrows-alt', tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'), handler: this.onImageRestored
+            id: 'restore-image', icon: 'las la-compress-arrows-alt', tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'),
+            color: 'grey-5 ', handler: this.onImageRestored
           })
         }
         actions.push({
-          id: 'download-media', icon: 'las la-cloud-download-alt', tooltip: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'), handler: this.onDownloadMedia
+          id: 'download-media', icon: 'las la-cloud-download-alt', tooltip: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'),
+          color: 'grey-5 ', handler: this.onDownloadMedia
         })
         actions.push({
-          id: 'remove-media', icon: 'las la-trash', tooltip: this.$t('KMediaBrowser.REMOVE_MEDIA_ACTION'), handler: this.onRemoveMedia
+          id: 'remove-media', icon: 'las la-trash', tooltip: this.$t('KMediaBrowser.REMOVE_MEDIA_ACTION'),
+          color: 'grey-5 ', handler: this.onRemoveMedia
         })
       }
       if (this.canCapturePhoto()) {
@@ -98,7 +101,7 @@ export default {
           id: 'capture-photo',
           icon: 'las la-camera',
           tooltip: this.$t('KMediaBrowser.ADD_PHOTO_LABEL'),
-          color: (this.hasMedia ? 'grey-9' : 'secondary'),
+          color: (this.hasMedia ? 'grey-5 ' : 'secondary'),
           handler: this.onCapturePhoto
         })
       }
@@ -106,13 +109,13 @@ export default {
         id: 'add-media',
         icon: 'las la-paperclip',
         tooltip: this.$t('KMediaBrowser.ADD_MEDIA_LABEL'),
-        color: (this.hasMedia ? 'grey-9' : 'secondary'),
+        color: (this.hasMedia ? 'grey-5 ' : 'secondary'),
         handler: () => this.$refs.uploadModal.open()
       })
       actions.push({
-        id: 'close-browser', icon: 'las la-times', tooltip: this.$t('KMediaBrowser.CLOSE_ACTION'), handler: this.onClose
+        id: 'close-browser', icon: 'las la-times', color: 'grey-5 ', tooltip: this.$t('KMediaBrowser.CLOSE_ACTION'), handler: this.onClose
       })
-      return { default: actions }
+      return actions
     },
     uploadTitle () {
       return this.$t('KMediaBrowser.UPLOAD_TITLE')
