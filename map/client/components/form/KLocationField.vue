@@ -3,7 +3,7 @@
     v-if="readOnly"
     :id="properties.name + '-field'"
   >
-    {{ model ? model.properties.name : '' }}
+    {{ name }}
   </div>
   <q-select
     v-else
@@ -83,13 +83,13 @@
     </template>
     <!-- Selected item -->
     <template v-slot:selected-item="scope">
-        {{ scope.opt ? scope.opt.properties.name : '' }}
+        {{ scope.opt.properties ? scope.opt.properties.name : scope.opt.name }}
     </template>
     <!-- Options -->
     <template v-slot:option="scope">
       <q-item v-bind="scope.itemProps" class="option">
         <q-item-section>
-          <q-item-label>{{ scope.opt.properties.name }}</q-item-label>
+          <q-item-label>{{ scope.opt.properties ? scope.opt.properties.name : scope.opt.name }}</q-item-label>
         </q-item-section>
         <q-tooltip
           class="q-pa-none"

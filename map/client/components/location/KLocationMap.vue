@@ -70,7 +70,7 @@ export default {
             id: 'location',
             icon: 'img:icons/kdk/center-on-feature.svg',
             tooltip: 'KLocationMap.RECENTER_MAP',
-            label: this.modelValue ? this.modelValue.properties.name : '',
+            label: _.get(this.modelValue, 'properties.name', _.get(this.modelValue, 'name', '')),
             handler: this.recenter
           })
         }
@@ -102,9 +102,9 @@ export default {
         }
         if (component === 'draw-rectangle') {
           components.push({
-            id: 'draw-polygon',
+            id: 'draw-rectangle',
             icon: 'las la-vector-square',
-            tooltip: 'KLocationMap.DRAW_RECANGLE',
+            tooltip: 'KLocationMap.DRAW_RECTANGLE',
             propagate: false,
             handler: () => this.startDraw('Rectangle')
           })
@@ -159,6 +159,12 @@ export default {
       // update the location
       this.location = this.modelValue
       if (!this.location) return
+      // backward compatibility with old format with only lat/lon or a geometry, not a feature
+      if (this.location.type !== 'Feature') {
+        const feature = { type: 'Feature', geometry: this.location, properties: { name: this.location.name } }
+        if (!_.has(feature, 'geometry.type')) feature.geometry = { type: 'Point', coordinates: [this.location.longitude, this.location.latitude] }
+        this.location = feature
+      }
       // create a new layer
       const type = _.get(this.location, 'geometry.type')
       if (type === 'Point') {
