@@ -1,6 +1,6 @@
 import path, { dirname } from 'path'
 import makeDebug from 'debug'
-import { createTagService, createStorageService } from '../index.js'
+import { createTagService, createStorageService, removeTagService, removeStorageService } from '../index.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -34,7 +34,7 @@ export default async function (name, app, options) {
         context: organisation,
         proxy: {
           service: this.app.getService('users'),
-          params: { query: { 'organisations._id': organisation._id.toString() } }
+          params: { query: { 'organisations._id': organisation._id } }
         }
       })
       debug('Members service created for organisation ' + organisation.name)
@@ -62,6 +62,14 @@ export default async function (name, app, options) {
         const hook = this.organisationServicesHooks[i]
         await hook.removeOrganisationServices.call(this.app, organisation)
       }
+      await removeStorageService.call(this.app, { context: organisation })
+      debug('Storage service removed for organisation ' + organisation.name)
+      await removeTagService.call(this.app, { context: organisation })
+      debug('Tags service removed for organisation ' + organisation.name)
+      await this.app.removeService(app.getService('groups', organisation))
+      debug('Groups service removed for organisation ' + organisation.name)
+      await this.app.removeService(app.getService('members', organisation))
+      debug('Members service removed for organisation ' + organisation.name)
     },
 
     async configureOrganisations () {

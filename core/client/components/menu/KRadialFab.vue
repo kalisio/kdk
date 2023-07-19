@@ -3,71 +3,98 @@
   <div>
     <span @click="toggle"><slot name="closed-menu-container" v-if="!isOpen"/></span>
     <span @click="toggle"><slot name="open-menu-container" v-if="isOpen"/></span>
-    <slot v-if="isOpen"></slot>
+    <KRadialFabItem v-if="isOpen"
+      v-for="(action, index) in actions"
+      :key="index" :width="itemSize" :height="itemSize"
+      :left="items[index].left" :top="items[index].top" :handler="items[index].handler">
+      <slot name="menu-item" v-bind="action"></slot>
+    </KRadialFabItem>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    startAngle: { type: Number, default: 0 },
-    endAngle: { type: Number, default: 180 },
-    itemSize: { type: Number, default: 36 },
-    offset: { type: Number, default: 0 },
-    radius: { type: Number, default: 100 },
-    closeOnClick: { type: Boolean, default: true }
-  },
-  data () {
-    return {
-      isOpen: false
-    }
-  },
-  beforeUpdate () {
-    this.setChildProps()
-  },
-  methods: {
-    open () {
-      if (!this.isOpen) {
-        this.isOpen = true
-        this.$emit('open')
-      }
-    },
-    close () {
-      if (this.isOpen) {
-        this.isOpen = false
-        this.$emit('close')
-      }
-    },
-    toggle () {
-      if (this.isOpen) this.close()
-      else this.open()
-    },
-    setChildProps () {
-      // Not yet ready ?
-      if (!this.$slots.default) return
-      // Manually add prop data to the items
-      const items = []
-      this.$slots.default.forEach(vnode => {
-        if (vnode.componentOptions && vnode.tag) items.push(vnode.componentOptions.propsData)
-      })
-      const { startAngle, endAngle, offset, radius } = this
-      const angle = endAngle - startAngle
-      const angleStep = angle / Math.max((items.length - 1), 1)
-      const angles = (items.length === 1
-        ? [0.5 * angle * Math.PI / 180]
-        : items.map(
-          (item, index) => startAngle + (offset + angleStep * index) * Math.PI / 180
-        ))
+<script setup>
+import { ref, computed } from 'vue'
+import KRadialFabItem from './KRadialFabItem.vue'
 
-      items.forEach((propData, index) => {
-        propData.left =
-          -1 * (Math.cos(angles[index]) * radius) // -1 to have the items in the right order
-        propData.top = -Math.sin(angles[index]) * radius
-        if (this.closeOnClick) propData.handler = this.close // To prevent double emiting click event
-      })
-    }
+const emit = defineEmits(['open', 'close'])
+
+// Props
+const props = defineProps({
+  actions: {
+    type: Array,
+    required: true
+  },
+  startAngle: {
+    type: Number,
+    default: 0
+  },
+  endAngle: {
+    type: Number,
+    default: 180
+  },
+  itemSize: {
+    type: Number,
+    default: 36
+  },
+  offset: {
+    type: Number,
+    default: 0
+  },
+  radius: {
+    type: Number,
+    default: 100
+  },
+  closeOnClick: {
+    type: Boolean,
+    default: true
+  }
+})
+
+// Data
+const isOpen = ref(false)
+
+// Computed
+const items = computed(() => {
+  const angle = props.endAngle - props.startAngle
+  const angleStep = angle / Math.max((props.actions.length - 1), 1)
+  const angles = (props.actions.length === 1
+    ? [0.5 * angle * Math.PI / 180]
+    : props.actions.map(
+      (action, index) => props.startAngle + (props.offset + angleStep * index) * Math.PI / 180
+    ))
+
+  return props.actions.map((action, index) => ({
+    left: -1 * (Math.cos(angles[index]) * props.radius), // -1 to have the items in the right order
+    top: -Math.sin(angles[index]) * props.radius,
+    handler: (props.closeOnClick ? close : null) // To prevent double emiting click event
+  }))
+})
+
+// Functions
+function open () {
+  if (!isOpen.value) {
+    isOpen.value = true
+    emit('open')
   }
 }
+function close () {
+  if (isOpen.value) {
+    isOpen.value = false
+    emit('close')
+  }
+}
+function toggle () {
+  if (isOpen.value) close()
+  else open()
+}
+
+// Expose
+defineExpose({
+  isOpen,
+  open,
+  close,
+  toggle
+})
 </script>
 
 <style lang="scss">

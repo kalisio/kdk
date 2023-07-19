@@ -11,6 +11,8 @@
         :route="{name: 'change-endpoint'}"
       />
     </div>
+    <!-- Install App -->
+    <KInstallApp />
     <!-- Sponsor -->
     <KSponsor />
   </div>
@@ -23,10 +25,11 @@ import { useVersion } from '../../composables'
 import KVersion from '../KVersion.vue'
 import KAction from '../KAction.vue'
 import KSponsor from '../KSponsor.vue'
+import KInstallApp from '../KInstallApp.vue'
 
 // Data
 const $q = useQuasar()
 const { Version } = useVersion()
 const canChangeEndpoint = ref(false)
-if (Version.value.flavor === 'dev' || $q.Platform.is.cordova) canChangeEndpoint.value = true
+if (Version.value.flavor === 'dev' || $q.platform.is.cordova) canChangeEndpoint.value = true
 </script>

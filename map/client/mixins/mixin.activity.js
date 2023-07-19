@@ -4,19 +4,17 @@ import config from 'config'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
 import { setEngineJwt } from '../utils.js'
-import { utils as kCoreUtils } from '../../../core/client/index.js'
+import { i18n, utils as kCoreUtils } from '../../../core/client/index.js'
 
 export const activity = {
   data () {
     return {
-      forecastModelHandlers: {},
       layerCategories: [],
       variables: [],
       engine: 'leaflet',
       engineReady: false,
       engineContainerWidth: null,
-      engineContainerHeight: null,
-      selectedLayer: null
+      engineContainerHeight: null
     }
   },
   computed: {
@@ -63,16 +61,9 @@ export const activity = {
       // Check if available for current engine
       if (layer[this.engine]) {
         // Process i18n
-        if (layer.i18n) {
-          const locale = kCoreUtils.getAppLocale()
-          const fallbackLocale = kCoreUtils.getAppFallbackLocale()
-          let i18n = _.get(layer.i18n, locale)
-          if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
-          i18n = _.get(layer.i18n, fallbackLocale)
-          if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
-        }
-        if (layer.name && this.$te(layer.name)) layer.label = this.$t(layer.name)
-        if (layer.description && this.$te(layer.description)) layer.description = this.$t(layer.description)
+        if (layer.i18n) i18n.registerTranslation(layer.i18n)
+        layer.label = this.$tie(layer.name)
+        layer.description = this.$tie(layer.description)
         // Check for Weacast API availability
         const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
         if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) return
@@ -80,6 +71,7 @@ export const activity = {
       }
       // Filter layers with variables, not just visible ones because we might want to
       // probe weather even if there is no visual representation (e.g. in globe)
+      // FIXME: https://github.com/kalisio/kdk/issues/375
       if (layer.variables) this.variables = _.uniqBy(this.variables.concat(layer.variables), (variable) => variable.name)
     },
     async removeCatalogLayer (layer) {
@@ -106,20 +98,13 @@ export const activity = {
     },
     async addCatalogCategory (category) {
       // Process i18n
-      if (category.i18n) {
-        const locale = kCoreUtils.getAppLocale()
-        const fallbackLocale = kCoreUtils.getAppFallbackLocale()
-        let i18n = _.get(category.i18n, locale)
-        if (i18n) this.$i18n.mergeLocaleMessage(locale, i18n)
-        i18n = _.get(category.i18n, fallbackLocale)
-        if (i18n) this.$i18n.mergeLocaleMessage(fallbackLocale, i18n)
-      }
-      if (category.name && this.$te(category.name)) category.label = this.$t(category.name)
-      if (category.description && this.$te(category.description)) category.description = this.$t(category.description)
+      if (category.i18n) i18n.registerTranslation(category.i18n)
+      category.label = this.$tie(category.name)
+      category.description = this.$tie(category.description)
       this.layerCategories.push(category)
     },
     async refreshLayerCategories () {
-      this.layerCategories = []
+      this.layerCategories.splice(0, this.layerCategories.length)
       const layerCategories = await this.getCatalogCategories()
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
@@ -141,6 +126,9 @@ export const activity = {
         const baseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer'))
         if (baseLayer) await this.showLayer(baseLayer.name)
       }
+    },
+    isInMemoryLayer (layer) {
+      return layer._id === undefined
     },
     isUserLayer (layer) {
       return (_.get(layer, 'scope') === 'user')
@@ -193,8 +181,9 @@ export const activity = {
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
       actions = kCoreUtils.bindContent(_.cloneDeep(actions), this)
-      // Add 'virtual' action used to trigger the layer
+      // Add 'virtual' actions used to trigger the layer/filters
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
+      actions.push({ id: 'toggle-filter', handler: (filter) => this.onTriggerLayerFilter(layer, filter) })
       // Store the actions
       layer.actions = actions
       return actions
@@ -209,6 +198,10 @@ export const activity = {
       const hasContext = (typeof this.storeContext === 'function')
       if (hasContext) this.storeContext('layers')
     },
+    async onTriggerLayerFilter (layer, filter) {
+      // Can only apply to realtime layers as we need to force a data refresh
+      if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name)
+    },
     onZoomIn () {
       const center = this.getCenter()
       this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel + 1 : center.altitude * 0.5)
@@ -216,9 +209,6 @@ export const activity = {
     onZoomOut () {
       const center = this.getCenter()
       this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel - 1 : center.altitude * 2)
-    },
-    onSelectLayer (layer) {
-      this.selectedLayer = layer
     },
     onZoomToLayer (layer) {
       this.zoomToLayer(layer.name)
@@ -274,7 +264,7 @@ export const activity = {
           _.set(layer, 'leaflet.tiled', true)
           _.set(layer, 'leaflet.minZoom', 15)
         }
-        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }) })
+        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }), html: true })
         try {
           let createdLayer = await this.$api.getService('catalog')
             .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
@@ -285,7 +275,8 @@ export const activity = {
             // Update saving message according to new chunk data
             nbFeatures += chunk.length
             Loading.show({
-              message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length })
+              message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length }),
+              html: true
             })
           })
           // Because we save all features in a single service use filtering to separate layers
@@ -343,7 +334,7 @@ export const activity = {
           flat: true
         }
       }).onOk(async () => {
-        Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL') })
+        Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL'), html: true })
         try {
           // Stop any running edition
           if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) this.onEditLayerData(layer)
@@ -382,9 +373,6 @@ export const activity = {
         } catch (error) {
           logger.error(`[KDK] ${error}`)
         }
-        this.forecastModelHandlers = { toggle: (model) => this.setForecastModel(model) }
-      } else {
-        this.forecastModelHandlers = {}
       }
       // Retrieve the layers
       try {
@@ -459,12 +447,14 @@ export const activity = {
       }
     }
   },
-  beforeMount () {
+  // Need to be in the first lifecycle hook as others mixins might use activity options
+  created () {
     // Merge the engine options using defaults
     const defaultOptions = _.get(config, `engines.${this.engine}`)
     if (defaultOptions) {
       logger.debug(`[KDK] ${this.engine} engine use defaults: ${JSON.stringify(defaultOptions, null, 2)}`)
-      this.activityOptions.engine = _.defaultsDeep(this.activityOptions.engine, defaultOptions)
+      // Take care that if we only use the default options the specific options will be undefined
+      this.activityOptions.engine = _.defaultsDeep(_.get(this.activityOptions, 'engine', {}), defaultOptions)
     }
   },
   mounted () {

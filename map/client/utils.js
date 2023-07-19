@@ -215,6 +215,7 @@ export function generatePropertiesSchema (geoJson, name) {
     if ((type === 'object') || (type === 'undefined')) type = 'string'
     schema.properties[`${key}`] = {
       type,
+      nullable: true,
       field: {
         component: (type === 'number'
           ? 'form/KNumberField'

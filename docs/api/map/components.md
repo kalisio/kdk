@@ -136,10 +136,91 @@ Tipically, **sublegends** declaration is done within the application's API confi
 }
 ```
 
-And **layer legends** information is part of the layer declaration in a dedicated `legend` property. It exists 3 different style of **layer legend**:
+And **layer legends** information is part of the layer declaration in a dedicated `legend` object. It consists in :
+* a _type_ defining the type of the legend to be rendered. It is mandatory.
+* a _label_ defining the caption of this legend
+* a _content_ describing the content of the legend which must conform the _type_ formalism.
+
+It exists 3 different _types_ of legend:
+
 * **KImageLegend**: a legend represented as an image
+
+```js
+legend: {
+  type: 'image',
+  label: 'An image'
+  content: {
+    minZoom: 9 
+      src: 'https://wxs.ign.fr/static/legends/INSEE.FILOSOFI.POPULATION-tot-legend-2017.png',
+      width: '234px',
+      height: '58px'
+    }
+  }
+}
+```
+
 * **KColorScaleLegend**: a legend represented as a **color scale**
+
+```js
+legend: {
+  type: 'color-scale',
+  label: 'A color scale'
+  content: {
+    classes: [
+       0, 1, 5, 10, 100, 1000
+    ],
+    colors: 'Reds',
+    label: 'Reds color scale',
+    unit: 'ml'
+  }
+}
+```
+
 * **KSymbolsLegend**: a legend represented a multi map of pair of symbols and labels.
+
+```js
+legend: {
+  type: 'symbols',
+  label: 'Multiple sections legend',
+  content: [{
+    section1: [
+      { symbol: { 'media/KShape': { type: 'rect', color: 'blue' } }, label: 'Blue' },
+      { symbol: { 'media/KShape': { type: 'rect', color: 'red' } }, label: 'Red' },
+      { symbol: { 'media/KShape': { type: 'rect', color: '#green' } }, label: 'Green' }
+    ],
+    section2: [
+      { symbol: { 'media/KShape': { type: 'circle', color: 'purple' } }, label: 'Purple' },
+      { symbol: { 'media/KShape': { type: 'circle', color: 'yellow' } }, label: 'Yellow' },
+      { symbol: { 'media/KShape': { type: 'circle', color: 'orange' } }, label: 'Orange' }
+    ]
+  }]
+}
+```
+
+The content of a legend can be adapted according to the zoom level. The `content` object can support the `minZoom` and `maxZoom` properties or can be declared in the form of an array in order to be able to specify different contents according to zoom intervals.
+
+```js
+legend: {
+  type: 'symbols',
+  label: 'Adaptative zoom legend',
+  content: [{
+    minZoom: 6,
+    maxZoom: 13,
+    symbols: [
+      { symbol: { 'media/KShape': { type: 'rect', color: 'blue' } }, label: 'Blue' },
+      { symbol: { 'media/KShape': { type: 'rect', color: 'red' } }, label: 'Red' },
+      { symbol: { 'media/KShape': { type: 'rect', color: '#green' } }, label: 'Green' }
+    ]
+  }, {
+    minZoom: 14,
+    symbols: [
+      { symbol: { 'media/KShape': { type: 'circle', color: 'purple' } }, label: 'Purple' },
+      { symbol: { 'media/KShape': { type: 'circle', color: 'yellow' } }, label: 'Yellow' },
+      { symbol: { 'media/KShape': { type: 'circle', color: 'orange' } }, label: 'Orange' }
+    ]
+  }]
+}
+```
 
 ::: tip
 It is also possible to add your own type of legend. You must implement the component responsible of the rendering and register it to the **KLegend** through the `renderers` prop. The component must overload the abstract **KLegendRenderer** component.

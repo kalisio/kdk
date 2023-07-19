@@ -92,13 +92,15 @@ export const geojsonLayers = {
               oldLayer.setStyle(leafletOptions.style(feature))
             }
           }
-          const oldProperties = _.get(oldLayer, 'feature.properties')
-          const properties = _.get(feature, 'properties')
-          // Keep track of old properties
-          if (oldProperties && properties) {
-            _.forOwn(oldProperties, (value, key) => {
-              if (!_.has(properties, key)) _.set(properties, key, value)
-            })
+          // We want to restore values that were there till now but are missing
+          // from the input feature.
+          // Deep for time and runtime
+          _.defaultsDeep(feature, _.pick(oldLayer.feature, [ 'time', 'runTime' ]))
+          // _NOT_ deep for properties, otherwise it'll merge array and object properties between the two
+          const oldProps = _.get(oldLayer.feature, 'properties')
+          if (oldProps) {
+            if (!feature.properties) feature.properties = {}
+            _.defaults(feature.properties, oldProps)
           }
           if (oldLayer.setIcon) {
             // FIXME: updating icon in place requires to recreate it anyway, so for now we recreate the whole marker
@@ -123,7 +125,7 @@ export const geojsonLayers = {
               if (typeof oldLayer.setData === 'function') {
                 // Support Gradient Path
                 oldLayer.setData(feature)
-              } else if (properties.geodesic) {
+              } else if (feature.properties.geodesic) {
                 // Support geodesic line & linestrings
                 const latlngs = type === 'LineString'
                   ? [L.GeoJSON.coordsToLatLngs(coordinates, 0)]
@@ -156,6 +158,9 @@ export const geojsonLayers = {
           leafletOptions.removeMissing = !options.probeService
           let initialized = !options.probeService // If no probe reference, nothing to be initialized
           _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
+            // FIXME: need to retrieve original layer options as here we get processed options by the underlying engine
+            // and eg filtering depends on changing the state of the layer definition object at run time
+            options = this.getLayerByName(options.name)
             // If the probe location is given by another service use it on initialization
             if (!initialized) {
               try {
@@ -389,28 +394,48 @@ export const geojsonLayers = {
         logger.warn(`Impossible to update non-realtime layer ${name}`)
         return // Cannot update non-realtime layer
       }
-      // Backward compatibility when third parameter was the remove flag
-      const remove = (typeof options === 'boolean' ? options : options.remove)
-      const removeMissing = (_.has(options, 'removeMissing') ? _.get(options, 'removeMissing') : layer.options.removeMissing)
-      // Check if clustering on top of a realtime layer, in this case we have a top-level container
-      let container
-      if (typeof layer.getLayers === 'function') {
-        container = layer
-        layer = container.getLayers().find(layer => layer._container === container)
-      }
-      /* By default leaflet-realtime only performs add with manual update
-        (see https://github.com/perliedman/leaflet-realtime/issues/136)
-         but we'd like to perform similarly to automated updates
-      */
-      if (remove && (typeof layer.remove === 'function')) {
-        geoJson = geoJson || this.toGeoJson(name)
-        let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-        // Filter features to ensure some have not been already removed
-        // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
-        features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
-        layer.remove(features)
-      } else if (typeof layer._onNewData === 'function') {
-        layer._onNewData(removeMissing, geoJson || this.toGeoJson(name))
+
+      const replace = _.get(options, 'replace', false)
+      if (replace) {
+        // Replace given features, we first remove them to add them back afterwards
+        this.updateLayer(name, geoJson, { remove: true })
+        this.updateLayer(name, geoJson)
+      } else {
+        // Backward compatibility when third parameter was the remove flag
+        const remove = (typeof options === 'boolean' ? options : options.remove)
+        const removeMissing = _.get(options, 'removeMissing', layer.options.removeMissing)
+        // Check if clustering on top of a realtime layer, in this case we have a top-level container
+        let container
+        if (typeof layer.getLayers === 'function') {
+          container = layer
+          layer = container.getLayers().find(layer => layer._container === container)
+        }
+        /* By default leaflet-realtime only performs add with manual update
+          (see https://github.com/perliedman/leaflet-realtime/issues/136)
+          but we'd like to perform similarly to automated updates
+        */
+        if (remove) {
+          if (typeof layer.remove !== 'function') return
+          let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+          // Filter features to ensure some have not been already removed
+          // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
+          features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
+          layer.remove(features)
+        } else if (geoJson) {
+          if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, geoJson)
+        } else { // Fetch new data or update in place
+          if (typeof layer.update === 'function') layer.update()
+          else if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, this.toGeoJson(name))
+        }
+
+        // We keep geojson data for in memory layer in a cache since
+        // these layers will be destroyed when hidden. We need to be able to restore
+        // them when they get shown again
+        const baseLayer = this.getLayerByName(name)
+        if (this.isInMemoryLayer(baseLayer)) {
+          const geojson = layer.toGeoJSON(false)
+          this.geojsonCache[name] = geojson
+        }
       }
     },
     onLayerUpdated (layer, leafletLayer, data) {
@@ -485,9 +510,28 @@ export const geojsonLayers = {
         if (layer.showTooltips !== showTooltips) {
           // Tag layer to know it has been updated
           layer.showTooltips = showTooltips
-          this.updateLayer(geoJsonlayer.name)
+          this.updateLayer(geoJsonlayer.name, this.toGeoJson(geoJsonlayer.name))
         }
       })
+    },
+    onLayerShownGeoJsonLayers (layer, engineLayer) {
+      // Check if we have cached geojson data for this layer
+      const cachedGeojson = this.geojsonCache[layer.name]
+      if (cachedGeojson) {
+        if (this.isInMemoryLayer(layer)) {
+          // Restore geojson data for in-memory layers that was hidden
+          this.updateLayer(layer.name, cachedGeojson)
+        } else {
+          // Clear cache since layer is not in memory anymore
+          delete this.geojsonCache[layer.name]
+        }
+      }
+    },
+    onLayerRemovedGeoJsonLayers (layer) {
+      // Remove cached geojson data if any
+      if (_.has(this.geojsonCache, layer.name)) {
+        delete this.geojsonCache[layer.name]
+      }
     }
   },
   created () {
@@ -495,10 +539,19 @@ export const geojsonLayers = {
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
     this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
+    this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
+
+    // Cache where we'll store geojson data for in memory layers we'll hide
+    this.geojsonCache = {}
   },
   beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
+    this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
+
+    this.geojsonCache = {}
   }
 }

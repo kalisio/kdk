@@ -46,14 +46,14 @@
 
 <script>
 import _ from 'lodash'
+import config from 'config'
 import logger from 'loglevel'
 import { uid } from 'quasar'
-import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { mixins as kCoreMixins, utils as kCoreUtils, composables as kCoreComposables } from '../../../core/client'
 import { KModal } from '../../../core/client/components'
 
 export default {
   name: 'k-features-filter',
-  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModal
   },
@@ -65,6 +65,10 @@ export default {
   ],
   props: {
     layerId: {
+      type: String,
+      default: ''
+    },
+    layerName: {
       type: String,
       default: ''
     },
@@ -101,7 +105,7 @@ export default {
   },
   data () {
     return {
-      layer: this.selectedLayer,
+      layer: {},
       filters: [],
       property: null
     }
@@ -117,11 +121,11 @@ export default {
       // - provide list of possible values for discrete types
       if (componentName !== 'form/KNumberField') {
         componentName = 'form/KSelectField'
-        properties.field.multiple = true
+        properties.multiselect = true
         properties.field.chips = true
         // Get available values
         let values = await this.$api.getService(this.layer.service, this.contextId)
-          .find({ query: Object.assign({ $distinct: `properties.${property}` }, _.omit(this.layer.baseQuery, this.getCurrentLayerFilters())) })
+          .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
         // Sort them to ease searching
         values = values.sort()
         // We don't have label in that case
@@ -149,11 +153,13 @@ export default {
       // This could be done externally but adding it here we ensure no one will forget it
       await this.$nextTick()
       this.property = this.properties[0]
-      const queryKeys = Object.keys(this.layer.baseQuery)
-      for (let i = 0; i < queryKeys.length; i++) {
-        const queryKey = queryKeys[i]
+      const filters = _.get(this.layer, 'filters', [])
+      for (let i = 0; i < filters.length; i++) {
+        const filter = filters[i]
+        // At the present time we get a single property per filter
+        const queryKey = _.keys(filter.active)[0]
         // Do not rely on _.get here as the key should use dot notation, e.g. 'properties.xxx'
-        const queryValue = this.layer.baseQuery[queryKey]
+        const queryValue = filter.active[queryKey]
         const property = _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
         if (property) {
           // Create a filter for each operator as complex filtering can use multiple keys, e.g.
@@ -172,24 +178,24 @@ export default {
       let operators = []
       if (filter.componentName === 'form/KNumberField') {
         operators = operators.concat([{
-          label: this.$t('KFeaturesFilter.EQUAL'),
+          label: this.$t('KFeaturesFilter.$eq'),
           value: '$eq'
         }, {
-          label: this.$t('KFeaturesFilter.NOT_EQUAL'),
+          label: this.$t('KFeaturesFilter.$neq'),
           value: '$neq'
         }, {
-          label: this.$t('KFeaturesFilter.GREATER_THAN'),
+          label: this.$t('KFeaturesFilter.$gt'),
           value: '$gt'
         }, {
-          label: this.$t('KFeaturesFilter.LOWER_THAN'),
+          label: this.$t('KFeaturesFilter.$lt'),
           value: '$lt'
         }])
       } else {
         operators = operators.concat([{
-          label: this.$t('KFeaturesFilter.IN'),
+          label: this.$t('KFeaturesFilter.$in'),
           value: '$in'
         }, {
-          label: this.$t('KFeaturesFilter.NOT_IN'),
+          label: this.$t('KFeaturesFilter.$nin'),
           value: '$nin'
         }])
       }
@@ -203,46 +209,50 @@ export default {
       // Required to update the array to make it reactive
       this.filters = this.filters.filter(item => item.key !== filter.key)
     },
-    getCurrentLayerFilters () {
-      return _.keys(this.layer.baseQuery).filter(queryKey =>
-        _.findKey(this.fields, (value, key) => { return queryKey === `properties.${key}` })
-      )
-    },
     async onApply () {
       logger.debug('Applying layer filter', this.filters)
       // Reset filters
-      this.getCurrentLayerFilters().forEach(queryKey => {
-        // Do not rely on _.unset here as the key should use dot notation, e.g. 'properties.xxx'
-        delete this.layer.baseQuery[queryKey]
-      })
+      this.layer.filters = []
       // Update filters
       this.filters.forEach(filter => {
         const field = this.fields[filter.property]
         const isNumber = (field.componentName === 'form/KNumberField')
         const value = (isNumber && _.isNumber(filter.value) ? _.toNumber(filter.value) : filter.value)
-        // Do not rely on _.get here as the key should use dot notation, e.g. 'properties.xxx'
-        const queryFilter = this.layer.baseQuery[`properties.${filter.property}`] || {}
-        this.layer.baseQuery[`properties.${filter.property}`] = _.merge(queryFilter, { [filter.operator]: value })
+        this.layer.filters.push({
+          label: filter.property,
+          description: this.$t(`KFeaturesFilter.${filter.operator}`) + `: ${value}`,
+          isActive: true,
+          active: { [`properties.${filter.property}`]: { [filter.operator]: value } },
+          inactive: {}
+        })
       })
-      // Update icon to reflect there is a filter on
-      if (this.filters.length) {
-        this.layer.badge = {
-          color: 'primary',
-          transparent: true,
-          icon: { name: 'las la-filter', size: '12px' }
+      // If saved layer update it in DB
+      if (this.layer._id) {
+        try {
+          await this.$api.getService('catalog', this.contextId).patch(this.layer._id, { filters: this.layer.filters })
+        } catch (error) {
+          // User error message on operation should be raised by error hook, otherwise this is more a coding error
+          logger.error(error)
         }
-      } else {
-        delete this.layer.badge
       }
-      // Reset layer with new setup
-      await this.kActivity.resetLayer(this.layer)
+      // Actual layer update should be triggerred by real-time event
+      // but as we might not always use sockets we should perform it explicitely in this case
+      if (config.transport !== 'websocket') {
+        await this.kActivity.updateLayer(this.layer.name)
+      }
       this.closeModal()
     },
     async openModal () {
       // If not injected load it
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+      else this.layer = await this.$api.getService('catalog').get(this.layerId)
       await this.build()
       kCoreMixins.baseModal.methods.openModal.call(this)
+    }
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
     }
   }
 }

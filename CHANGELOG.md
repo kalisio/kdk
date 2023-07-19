@@ -1,3 +1,5 @@
+Please refer to GitHub issues for changelog starting from v2.0: https://github.com/kalisio/kdk/issues.
+
 # Changelog
 
 ## [v1.7.0](https://github.com/kalisio/kdk/tree/v1.7.0) (2022-08-30)

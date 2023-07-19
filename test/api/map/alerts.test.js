@@ -85,7 +85,7 @@ describe('map:alerts', () => {
     app.hooks({
       error: { all: hooks.log }
     })
-    port = app.get('port')
+    port = parseInt(app.get('port'))
     await Promise.all([
       app.db.connect(),
       weacastApp.db.connect()

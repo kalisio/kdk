@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import {
   serialize, updateAbilities, populatePreviousObject, hashPassword,
-  enforcePasswordPolicy, storePreviousPassword
+  enforcePasswordPolicy, storePreviousPassword, sendNewSubscriptionEmail
 } from '../../hooks/index.js'
 import commonHooks from 'feathers-hooks-common'
 
@@ -60,7 +60,7 @@ export default {
     get: [],
     create: [updateAbilities()],
     update: [],
-    patch: [],
+    patch: [sendNewSubscriptionEmail],
     remove: []
   },
 

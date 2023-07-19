@@ -34,10 +34,9 @@ export const Storage = {
     const { file, key, blob, context } = params
     const service = this.getService(context)
     const dismiss = Notify.create({
+      type: 'ongoing',
       message: i18n.t('storage.UPLOADING_FILE', { file }),
-      color: 'primary',
-      timeout: 0,
-      spinner: true
+      timeout: 0
     })
     try {
       const response = await service.upload(key, blob, { expiresIn: 60 })
@@ -54,10 +53,10 @@ export const Storage = {
     const { file, key, context, asDataUrl } = params
     const service = this.getService(context)
     const dismiss = Notify.create({
+      type: 'ongoing',
       message: i18n.t('storage.DOWNLOADING_FILE', { file }),
-      color: 'primary',
-      timeout: 0,
-      spinner: true
+      color: 'info',
+      timeout: 0
     })
     try {
       const response = await service.download(key, { expiresIn: 60 })

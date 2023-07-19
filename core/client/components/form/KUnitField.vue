@@ -3,6 +3,7 @@
     {{ model }}
   </div>
   <q-select v-else
+    :for="properties.name + '-field'"
     :id="properties.name + '-field'"
     v-model="model"
     :label="label"
@@ -13,7 +14,6 @@
     :error-message="errorLabel"
     :disable="disabled"
     bottom-slots
-    @change="onChanged"
     @blur="onChanged"
     @update:model-value='onChanged'
 
@@ -21,9 +21,8 @@
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item
-        :id="scope.opt.value"
         v-bind="scope.itemProps"
-        v-on="scope.itemEvents"
+        :id="scope.opt.value"
       >
         <q-item-section>
           <q-item-label>{{ scope.opt.label }}</q-item-label>

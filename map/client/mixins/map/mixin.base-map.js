@@ -136,9 +136,9 @@ export const baseMap = {
         }
       })
       // Check for valid number on min/max zoom level as we might set it to false/null to indicate
-      // there is none and we should use defaults, but LEaflet does not like it
+      // there is none and we should use defaults, but Leaflet does not like it
       if (_.has(leafletOptions, 'minZoom') && !_.isNumber(leafletOptions.minZoom)) _.unset(leafletOptions, 'minZoom')
-      if (_.has(leafletOptions, 'maxZoom') && !_.isNumber(leafletOptions.minZoom)) _.unset(leafletOptions, 'maxZoom')
+      if (_.has(leafletOptions, 'maxZoom') && !_.isNumber(leafletOptions.maxZoom)) _.unset(leafletOptions, 'maxZoom')
       // Copy generic options
       leafletOptions.attribution = processedOptions.attribution
       return processedOptions
@@ -349,14 +349,15 @@ export const baseMap = {
       this.$engineEvents.emit('layer-shown', layer, leafletLayer)
     },
     hideLayer (name) {
+      // Check the visibility state
+      if (!this.isLayerVisible(name)) return
       // Retrieve the layer
       const layer = this.getLayerByName(name)
       if (!layer) return
-      // Check the visibility state
-      if (!this.isLayerVisible(name)) return
       layer.isVisible = false
       // Remove the leaflet layer from map
       const leafletLayer = this.leafletLayers[name]
+      delete this.leafletLayers[name]
       this.map.removeLayer(leafletLayer)
       const panes = _.get(layer, 'leaflet.panes')
       if (panes) panes.forEach(pane => this.removeLeafletPane(pane.name || pane.zIndex))
@@ -435,11 +436,10 @@ export const baseMap = {
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return
-      // If it was visible remove it from map
-      if (layer.isVisible) this.hideLayer(name)
+      // If it was visible hide it first (ie remove from map)
+      this.hideLayer(name)
       // Delete the layer
       delete this.layers[layer.name]
-      delete this.leafletLayers[name]
       this.onLayerRemoved(layer)
     },
     onLayerRemoved (layer) {
@@ -467,10 +467,20 @@ export const baseMap = {
           return
         }
       }
-      const leafletLayer = this.getLeafletLayerByName(name)
-      if (leafletLayer && (typeof leafletLayer.getBounds === 'function')) {
-        const bounds = leafletLayer.getBounds()
-        if (bounds.isValid()) this.map.fitBounds(bounds, options)
+      const bbox = _.get(layer, 'bbox')
+      if (bbox) {
+        this.zoomToBBox(bbox)
+      } else {
+        const leafletLayer = this.getLeafletLayerByName(name)
+        if (leafletLayer) {
+          if (typeof leafletLayer.getBounds === 'function') {
+            const bounds = leafletLayer.getBounds()
+            if (bounds.isValid()) this.map.fitBounds(bounds, options)
+          } else {
+            const bounds = _.get(layer, 'leaflet.bounds', this.map.options.maxBounds)
+            this.zoomToBounds(bounds)
+          }
+        }
       }
     },
     zoomToBounds (bounds) {
@@ -503,8 +513,14 @@ export const baseMap = {
       const position = this.$geolocation.get().position
       if (this.locateControl) {
         this.locateControl.start()
-      } else if (position) {
-        this.center(position.longitude, position.latitude)
+      }
+      if (position) {
+        // If we have accuracy we can compute a fitting boix
+        if (position.accuracy) {
+          this.zoomToBounds(new L.LatLng(position.latitude, position.longitude).toBounds(position.accuracy * 2))
+        } else {
+          this.center(position.longitude, position.latitude)
+        }
       }
     },
     hideUserLocation () {

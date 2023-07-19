@@ -139,7 +139,7 @@ export const baseGlobe = {
         return this.viewer.scene.imageryLayers.contains(cesiumLayer)
       } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         return this.viewer.scene.primitives.contains(cesiumLayer) && cesiumLayer.show
-      } else {
+      } else { // Entity data source otherwise
         return this.viewer.dataSources.contains(cesiumLayer)
       }
     },
@@ -188,15 +188,15 @@ export const baseGlobe = {
       } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         cesiumLayer.show = true
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
-      } else {
+      } else { // Entity data source otherwise
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
       this.onLayerShown('layer-shown', layer, cesiumLayer)
-      this.$engineEvents.emit('layer-shown', layer, cesiumLayer)
     },
     onLayerShown (layer, cesiumLayer) {
       this.$emit('layer-shown', layer, cesiumLayer)
+      this.$engineEvents.emit('layer-shown', layer, cesiumLayer)
     },
     hideLayer (name) {
       // retrieve the layer
@@ -207,14 +207,15 @@ export const baseGlobe = {
       layer.isVisible = false
       // Remove the cesium layer from globe
       const cesiumLayer = this.cesiumLayers[name]
+      delete this.cesiumLayers[name]
       if (this.isTerrainLayer(layer.cesium)) {
         this.viewer.terrainProvider = null
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
         this.viewer.scene.imageryLayers.remove(cesiumLayer, false)
       } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         cesiumLayer.show = false
-      } else {
-        this.viewer.dataSources.remove(cesiumLayer, false)
+      } else { // Entity data source otherwise
+        this.viewer.dataSources.remove(cesiumLayer, true)
       }
       this.onLayerHidden(layer, cesiumLayer)
     },
@@ -254,8 +255,8 @@ export const baseGlobe = {
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return
-      // If it was visible remove it from map
-      if (layer.isVisible) this.hideLayer(name)
+      // If it was visible hide it first (ie remove from globe)
+      this.hideLayer(name)
       const cesiumLayer = this.cesiumLayers[name]
       if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
         this.viewer.scene.primitives.remove(cesiumLayer)
@@ -275,14 +276,29 @@ export const baseGlobe = {
     zoomToBounds (bounds) {
       this.viewer.camera.flyTo({
         duration: 0,
-        destination: Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0])
+        destination: Array.isArray(bounds) // Assume Cesium rectangle object if not array
+          ? Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0])
+          : bounds
       })
+    },
+    zoomToBBox (bbox) {
+      this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     zoomToLayer (name) {
       const layer = this.getCesiumLayerByName(name)
-      if (!layer || !layer.entities) return
+      if (!layer) return
 
-      this.viewer.flyTo(layer.entities, { duration: 0 })
+      if (layer.entities) {
+        this.viewer.flyTo(layer.entities, { duration: 0 })
+      } else {
+        const bbox = _.get(layer, 'bbox')
+        if (bbox) {
+          this.zoomToBBox(bbox)
+        } else {
+          const bounds = _.get(layer, 'cesium.rectangle', [[-90, -180], [90, 180]])
+          this.zoomToBounds(bounds)
+        }
+      }
     },
     center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0) {
       const center = this.viewer.camera.positionCartographic

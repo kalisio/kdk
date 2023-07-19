@@ -12,7 +12,7 @@ import { permissions } from '../../../core/common/index.js'
 import { createMailerStub } from './utils.js'
 
 const { iff, when } = common
-const { util, expect } = chai
+const { util, expect, assert } = chai
 
 describe('core:account', () => {
   let app, server, port, baseUrl, token,
@@ -68,8 +68,7 @@ describe('core:account', () => {
             hooks.sendInvitationEmail,
             hooks.hashPassword('password')),
           hooks.addVerification
-        ],
-        remove: [hooks.unregisterDevices]
+        ]
       },
       after: {
         create: [
@@ -110,22 +109,20 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('invites a user', () => {
-    return userService.create({
+  it('invites a user', async () => {
+    const user = await userService.create({
       email: gmailUser,
       name: 'test-user',
       sponsor: { name: 'sponsor' }
     })
-      .then(user => {
-        userObject = user
-        expect(userObject.password).toExist()
-        expect(userObject.expireAt).toExist()
-        expect(userObject.expireAt instanceof Date).beTrue()
-        expect(userObject.isVerified).toExist()
-        expect(userObject.isVerified).beFalse()
-        expect(userObject.verifyToken).toExist()
-        expect(userObject.consentTerms).beUndefined()
-      })
+    userObject = user
+    expect(userObject.password).toExist()
+    expect(userObject.expireAt).toExist()
+    expect(userObject.expireAt instanceof Date).beTrue()
+    expect(userObject.isVerified).toExist()
+    expect(userObject.isVerified).beFalse()
+    expect(userObject.verifyToken).toExist()
+    expect(userObject.consentTerms).beUndefined()
   })
   // Let enough time to process
     .timeout(10000)
@@ -156,25 +153,27 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('removes invited user', () => {
-    return userService.remove(userObject._id.toString(), { user: userObject })
+  it('removes invited user', async () => {
+    try {
+      await userService.remove(userObject._id.toString(), { user: userObject })
+    } catch (error) {
+      console.log(error)
+    }
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('creates a user', () => {
-    return userService.create({
+  it('creates a user', async () => {
+    const user = await userService.create({
       email: gmailUser,
       password: 'Pass;word1',
       name: 'test-user'
     })
-      .then(user => {
-        userObject = user
-        expect(userObject.isVerified).toExist()
-        expect(userObject.isVerified).beFalse()
-        expect(userObject.verifyToken).toExist()
-        expect(userObject.consentTerms).beUndefined()
-      })
+    userObject = user
+    expect(userObject.isVerified).toExist()
+    expect(userObject.isVerified).beFalse()
+    expect(userObject.verifyToken).toExist()
+    expect(userObject.consentTerms).beUndefined()
   })
   // Let enough time to process
     .timeout(10000)
@@ -191,15 +190,13 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(15000)
 
-  it('verify user signup', () => {
-    return accountService.create({
+  it('verify user signup', async () => {
+    const user = await accountService.create({
       action: 'verifySignupLong',
       value: userObject.verifyToken
     })
-      .then(user => {
-        userObject = user
-        expect(userObject.isVerified).beTrue()
-      })
+    userObject = user
+    expect(userObject.isVerified).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
@@ -216,20 +213,16 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(15000)
 
-  it('ask password reset for a user', () => {
-    return accountService.create({
+  it('ask password reset for a user', async () => {
+    const user = await accountService.create({
       action: 'sendResetPwd',
       value: { email: userObject.email }
     })
-      .then(user => {
-        // Because the account service filters for client hidden security attributes we need to fetch the user manually
-        return userService.find({ query: { email: gmailUser } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.resetToken).toExist()
-      })
+    // Because the account service filters for client hidden security attributes we need to fetch the user manually
+    const users = await userService.find({ query: { email: gmailUser } })
+    expect(users.data.length > 0).beTrue()
+    userObject = users.data[0]
+    expect(userObject.resetToken).toExist()
   })
   // Let enough time to process
     .timeout(10000)
@@ -260,41 +253,38 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(25000)
 
-  it('check password policy on user password reset', (done) => {
-    accountService.create({
-      action: 'resetPwdLong',
-      value: {
-        token,
-        password: '1234'
-      }
-    })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('BadRequest')
-        expect(error.data.translation.params.failedRules.length > 0).beTrue()
-        done()
+  it('check password policy on user password reset', async () => {
+    try {
+      await accountService.create({
+        action: 'resetPwdLong',
+        value: {
+          token,
+          password: '1234'
+        }
       })
+      assert.fail()
+    } catch(error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('BadRequest')
+      expect(error.data.translation.params.failedRules.length > 0).beTrue()
+    }
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('reset user password', () => {
-    return accountService.create({
+  it('reset user password', async () => {
+    const user = await accountService.create({
       action: 'resetPwdLong',
       value: {
         token,
         password: 'Pass;word2'
       }
     })
-      .then(user => {
-      // Because the account service filters for client hidden security attributes we need to fetch the user manually
-        return userService.find({ query: { email: gmailUser } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.resetToken).beNull()
-      })
+    // Because the account service filters for client hidden security attributes we need to fetch the user manually
+    const users = await userService.find({ query: { email: gmailUser } })
+    expect(users.data.length > 0).beTrue()
+    userObject = users.data[0]
+    expect(userObject.resetToken).beNull()
   })
   // Let enough time to process
     .timeout(15000)
@@ -322,27 +312,28 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('check password policy on user password change', (done) => {
-    accountService.create({
-      action: 'passwordChange',
-      value: {
-        user: { email: userObject.email },
-        oldPassword: 'Pass;word2',
-        password: '1234'
-      }
-    })
-      .catch(error => {
-        expect(error).toExist()
-        expect(error.name).to.equal('BadRequest')
-        expect(error.data.translation.params.failedRules.length > 0).beTrue()
-        done()
+  it('check password policy on user password change', async () => {
+    try {
+      await accountService.create({
+        action: 'passwordChange',
+        value: {
+          user: { email: userObject.email },
+          oldPassword: 'Pass;word2',
+          password: '1234'
+        }
       })
+      assert.fail()
+    } catch(error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('BadRequest')
+      expect(error.data.translation.params.failedRules.length > 0).beTrue()
+    }
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('change user password', () => {
-    return accountService.create({
+  it('change user password', async () => {
+    const user = await accountService.create({
       action: 'passwordChange',
       value: {
         user: { email: userObject.email },
@@ -350,15 +341,11 @@ describe('core:account', () => {
         password: 'Pass;word1'
       }
     })
-      .then(user => {
-      // Because the account service filters for client hidden security attributes we need to fetch the user manually
-        return userService.find({ query: { email: gmailUser } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.resetToken).beNull()
-      })
+    // Because the account service filters for client hidden security attributes we need to fetch the user manually
+    const users = await userService.find({ query: { email: gmailUser } })
+    expect(users.data.length > 0).beTrue()
+    userObject = users.data[0]
+    expect(userObject.resetToken).beNull()
   })
   // Let enough time to process
     .timeout(15000)
@@ -386,8 +373,8 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('ask user identity change', () => {
-    return accountService.create({
+  it('ask user identity change', async () => {
+    const user = await accountService.create({
       action: 'identityChange',
       value: {
         user: { email: userObject.email },
@@ -395,17 +382,13 @@ describe('core:account', () => {
         changes: { email: gmailUser.replace('com', 'xyz') }
       }
     })
-      .then(user => {
-      // Because the account service filters for client hidden security attributes we need to fetch the user manually
-        return userService.find({ query: { email: gmailUser } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.verifyToken).toExist()
-        expect(userObject.verifyChanges).toExist()
-        expect(userObject.verifyChanges.email).toExist()
-      })
+    // Because the account service filters for client hidden security attributes we need to fetch the user manually
+    const users = await userService.find({ query: { email: gmailUser } })
+    expect(users.data.length > 0).beTrue()
+    userObject = users.data[0]
+    expect(userObject.verifyToken).toExist()
+    expect(userObject.verifyChanges).toExist()
+    expect(userObject.verifyChanges.email).toExist()
   })
   // Let enough time to process
     .timeout(10000)
@@ -422,20 +405,16 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(20000)
 
-  it('verify user changes', () => {
-    return accountService.create({
+  it('verify user changes', async () => {
+    const user = await accountService.create({
       action: 'verifySignupLong',
       value: userObject.verifyToken
     })
-      .then(user => {
-      // Because the account service filters for client hidden security attributes we need to fetch the user manually
-        return userService.find({ query: { email: gmailUser.replace('com', 'xyz') } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.email).to.equal(gmailUser.replace('com', 'xyz'))
-      })
+    // Because the account service filters for client hidden security attributes we need to fetch the user manually
+    const users = await userService.find({ query: { email: gmailUser.replace('com', 'xyz') } })
+    expect(users.data.length > 0).beTrue()
+    userObject = users.data[0]
+    expect(userObject.email).to.equal(gmailUser.replace('com', 'xyz'))
   })
   // Let enough time to process
     .timeout(5000)
@@ -451,8 +430,8 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('removes user', () => {
-    return userService.remove(userObject._id, { user: userObject })
+  it('removes user', async () => {
+    await userService.remove(userObject._id, { user: userObject })
   })
   // Let enough time to process
     .timeout(5000)

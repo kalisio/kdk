@@ -2,6 +2,7 @@
   <div class="row justify-start q-gutter-sm full-width">
     <template v-for="(color, index) in colors" :key="index">
       <q-btn
+        :id="'style-color-' + color"
         :round="shape === 'round'"
         :icon="modelValue === color ? 'las la-check' : ''"
         :color="color"

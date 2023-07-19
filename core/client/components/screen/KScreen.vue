@@ -11,12 +11,16 @@
       <!-- Frame -->
       <q-card class="k-screen-frame full-width q-pa-sm">
         <!-- logo -->
-        <div class="q-pa-sm row justify-center">
-          <component :is="computedLogoComponent" />
-        </div>
+        <slot name="banner">
+          <div class="q-pa-sm row justify-center">
+            <component :is="computedLogoComponent" />
+          </div>
+        </slot>
         <!-- title -->
         <q-card-section v-if="title">
-          <div class="text-h6 text-center">{{ $t(title) }}</div>
+          <slot name="title">
+            <div class="text-h6 text-center">{{ $t(title) }}</div>
+          </slot>
         </q-card-section>
         <q-card-section>
           <slot />
@@ -25,8 +29,8 @@
         <q-card-section v-if="actions.length > 0">
           <KPanel
             id="frame-actions"
-            class="q-pa-none justify-center"
             :content="actions"
+            class="q-pa-none justify-center"
           />
         </q-card-section>
       </q-card>
@@ -34,8 +38,8 @@
       <div class="q-pa-sm row justify-center q-gutter-md">
         <KPanel
           id="screen-actions"
-          class="q-pa-none justify-center"
           :content="screenActions"
+          class="q-pa-none justify-center"
         />
       </div>
     </div>
@@ -93,7 +97,7 @@ const computedLogoComponent = computed(() => {
   color: v-bind(textColor);
 }
 .k-screen-content {
-  min-width: 50%
+  min-width: 50%;
 }
 .k-screen-frame {
   background-color: v-bind(frameBackgroundColor);

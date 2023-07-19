@@ -34,10 +34,7 @@ export async function restoreSession () {
     Store.set('user', user)
   } catch (error) {
     // This ensure an old token is not kept when the user has been deleted
-    if (error.code === 404) {
-      await api.authentication.removeAccessToken()
-      await logout()
-    }
+    await logout()
     // Rethrow for caller to handle
     throw error
   }
@@ -50,7 +47,7 @@ export async function updateAbilities () {
   const abilities = await defineAbilities(user, api)
   Store.set('user.abilities', abilities)
   if (abilities) {
-    logger.debug('New user abilities: ', abilities.rules)
+    logger.debug('[KDK] New user abilities: ', abilities.rules)
   }
 }
 

@@ -82,6 +82,7 @@
         id="left-window"
         v-if="leftWindow.visible"
         placement="left"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${leftWindowSize[0]}px; max-height: ${leftWindowSize[1]};px;`"
       />
     </q-page-sticky>
@@ -90,6 +91,7 @@
         id="top-window"
         v-if="topWindow.visible"
         placement="top"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${topWindowSize[0]}px; max-height: ${topWindowSize[1]};px`"
       />
     </q-page-sticky>
@@ -98,6 +100,7 @@
         id="right-window"
         v-if="rightWindow.visible"
         placement="right"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${rightWindowSize[0]}px; max-height: ${rightWindowSize[1]};px`"
       />
     </q-page-sticky>
@@ -106,6 +109,7 @@
         id="bottom-window"
         v-if="bottomWindow.visible"
         placement="bottom"
+        :layout-offset="layoutOffset"
         :style="`max-width: ${bottomWindowSize[0]}px; max-height: ${bottomWindowSize[1]};px`"
       />
     </q-page-sticky>
@@ -224,16 +228,16 @@ const hasBottomPaneComponents = computed(() => {
   return !_.isEmpty(bottomPane.components)
 })
 const leftWindowSize = computed(() => {
-  return leftWindow.size ? leftWindow.size : leftWindow.minSize
+  return leftWindow.size || leftWindow.sizePolicy.minSize
 })
 const topWindowSize = computed(() => {
-  return topWindow.size ? topWindow.size : topWindow.minSize
+  return topWindow.size || topWindow.sizePolicy.minSize
 })
 const rightWindowSize = computed(() => {
-  return rightWindow.size ? rightWindow.size : rightWindow.minSize
+  return rightWindow.size || rightWindow.sizePolicy.minSize
 })
 const bottomWindowSize = computed(() => {
-  return bottomWindow.size ? bottomWindow.size : bottomWindow.minSize
+  return bottomWindow.size || bottomWindow.sizePolicy.minSize
 })
 const fabBehaviour = computed(() => {
   switch (fab.position) {

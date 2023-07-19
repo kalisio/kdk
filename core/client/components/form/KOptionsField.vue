@@ -4,9 +4,11 @@
   </div>
   <q-field v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     :model-value="model"
     :label="label"
     borderless
+    hide-bottom-space
     :error-message="errorLabel"
     :error="hasError"
     :disable="disabled"
@@ -19,8 +21,13 @@
         v-model="model"
         :options="options()"
         @update:model-value="onChanged"
-        inline
-      />
+        inline>
+        <template v-slot:label="opt">
+          <span :class="model === opt.value ? selectedClass() : 'text-weight-regular'">
+            {{ opt.label }}
+          </span>
+        </template>
+      </q-option-group>
     </template>
     <!-- Helper -->
     <template v-if="helper" v-slot:hint>
@@ -47,6 +54,9 @@ export default {
         const label = _.get(option, 'label', '')
         return Object.assign({}, option, { label: this.$tie(label) })
       })
+    },
+    selectedClass () {
+      return _.get(this.properties, 'field.selectedClass', 'text-weight-regular')
     }
   }
 }

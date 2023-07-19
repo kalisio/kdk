@@ -13,14 +13,14 @@ export const Capabilities = {
           .then(content => {
             logger.debug('[KDK] fetched capabilities:', JSON.stringify(content, null, 4))
             this.content = content
-            // TODO: ensure backward compatibility
+            // Used to ensure backward compatibility
             Store.set('capabilities.api', content)
-            Store.set('capabilities.client', content)
+            Store.set('capabilities.client', _.pick(config, ['version', 'buildNumber']))
           })
       })
   },
   get (key) {
-    if (!this.content) throw new Error('Capabilities must be initialized first')
-    return _.get(this.content, key)
+    if (!this.content) logger.error(new Error('Capabilities must be initialized first'))
+    else return _.get(this.content, key)
   }
 }

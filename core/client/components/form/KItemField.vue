@@ -7,6 +7,7 @@
   <q-select v-else
     ref="select"
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     v-model="items"
     :label="label"
     :multiple="properties.multiselect"
@@ -38,8 +39,8 @@
     <!-- Options display -->
     <template v-slot:option="scope">
       <q-item
-        :id="getId(scope.opt)"
         v-bind="scope.itemProps"
+        :id="getId(scope.opt)"
       >
         <q-item-section v-if="getIcon(scope.opt)" avatar>
           <q-icon :name="getIcon(scope.opt)" />

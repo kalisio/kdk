@@ -5,6 +5,7 @@
     </q-chip>
   </div>
   <q-select v-else
+    :for="properties.name + '-field'"
     :id="properties.name + '-field'"
     ref="select"
     v-model="model"
@@ -23,22 +24,27 @@
     :disable="disabled"
     bottom-slots
     @filter="onFilter"
-    @change="onChanged"
     @blur="onChanged"
     @update:model-value="onChanged"
   >
-    <!-- Options display -->
+    <!-- pptions display -->
     <template v-slot:option="scope">
       <q-item
-        :id="getId(scope.opt)"
         v-bind="scope.itemProps"
+        :id="getId(scope.opt)"
       >
         <q-item-section>
           <q-item-label>{{ scope.opt.label }}</q-item-label>
         </q-item-section>
       </q-item>
     </template>
-    <!-- Helper -->
+    <!-- selected item display -->
+    <template v-slot:selected-item="scope">
+      <span :class="selectedClass()">
+        {{ scope.opt.label }}
+      </span>
+    </template>
+    <!-- helper -->
     <template v-if="helper" v-slot:hint>
       <span v-html="helper"></span>
     </template>
@@ -91,7 +97,7 @@ export default {
     options: {
       immediate: true,
       handler (opts) {
-        if (opts.length === 1 && this.required) {
+        if (_.isEmpty(this.filter) && opts.length === 1 && this.required) {
           this.$nextTick(() => {
             this.model = opts[0].value
           })
@@ -128,6 +134,9 @@ export default {
       update(() => {
         this.filter = pattern.toLowerCase()
       })
+    },
+    selectedClass () {
+      return _.get(this.properties, 'field.selectedClass', 'text-weight-regular')
     }
   }
 }

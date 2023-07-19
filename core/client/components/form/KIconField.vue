@@ -5,6 +5,7 @@
   <div v-else>
     <q-field
       :for="properties.name + '-field'"
+      :id="properties.name + '-field'"
       v-model="model"
       :label="label"
       clearable

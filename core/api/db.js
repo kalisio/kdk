@@ -33,43 +33,47 @@ export function createObjectID (id) {
 }
 
 // Utility function used to convert from string to MongoDB IDs as required eg by queries
+// It only processes _id properties or operators (eg $ne, $in) to be converted
+// If you have others properties to be converted use toObjectIDs
 export function objectifyIDs (object) {
-  _.forOwn(object, (value, key) => {
-    // Process current attributes or recurse
-    // Take care to nested fields like 'field._id'
-    if (key === '_id' || key.endsWith('._id') || key === '$ne') {
-      if (typeof value === 'string') {
-        debug('Objectify ID ' + key)
-        const id = createObjectID(value)
-        if (id) {
-          object[key] = id
-        }
-      } else if (Array.isArray(value)) {
+  // Avoid destructuring already transformed Date, ObjectID or arrays
+  if (_.isPlainObject(object)) {
+    _.forOwn(object, (value, key) => {
+      // Process current attributes or recurse
+      // Take care to nested fields like 'field._id'
+      if (key === '_id' || key.endsWith('._id') || key === '$ne') {
+        if (typeof value === 'string') {
+          const id = createObjectID(value)
+          if (id) {
+            object[key] = id
+          }
+          debug('Objectify ID ' + key, id)
+        } else if (Array.isArray(value)) {
+          debug('Objectify ID array ' + key)
+          object[key] = value.map(id => createObjectID(id)).filter(id => id)
+        } else objectifyIDs(value)
+      } else if (['$in', '$nin'].includes(key)) {
         debug('Objectify ID array ' + key)
-        object[key] = value.map(id => createObjectID(id)).filter(id => id)
-      } else if ((typeof value === 'object') && !isObjectID(value)) objectifyIDs(value) // Avoid jumping inside an already transformed ObjectID
-    } else if (['$in', '$nin'].includes(key)) {
-      debug('Objectify ID array ' + key)
-      const ids = value.map(id => createObjectID(id)).filter(id => id)
-      // Take care that $in/$nin can be used for others types than Object IDs so conversion might fail
-      if (ids.length > 0) object[key] = ids
-    } else if (key === '$or') {
-      value.forEach(entry => objectifyIDs(entry))
-      // Avoid jumping inside an already transformed Date, ObjectID or arrays
-    } else if ((typeof value === 'object') && !(value instanceof Date) && !isObjectID(value) && !Array.isArray(value)) {
-      objectifyIDs(value)
-    }
-  })
+        const ids = value.map(id => createObjectID(id)).filter(id => id)
+        // Take care that $in/$nin can be used for others types than Object IDs so conversion might fail
+        if (ids.length > 0) object[key] = ids
+      } else if ((key === '$or') || (key === '$and')) {
+        value.forEach(entry => objectifyIDs(entry))
+      } else {
+        if (!Array.isArray(value)) objectifyIDs(value)
+        else value.forEach(entry => objectifyIDs(entry))
+      }
+    })
+  }
   return object
 }
 
-// Utility function used to convert from string to MongoDB IDs a fixed set of properties on a given object
+// Utility function used to convert a fixed set of properties on a given object from string to MongoDB IDs
 export function toObjectIDs (object, properties) {
   properties.forEach(property => {
-    const id = createObjectID(_.get(object, property))
-    if (id) {
-      _.set(object, property, id)
-    }
+    const value = _.get(object, property)
+    const id = createObjectID(value)
+    if (id) _.set(object, property, id)
   })
 }
 

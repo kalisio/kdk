@@ -3,13 +3,16 @@ import _ from 'lodash'
 import 'winston-daily-rotate-file'
 // import { RateLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
+import mongodb from 'mongodb'
 import errors from '@feathersjs/errors'
 import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import { LocalStrategy } from '@feathersjs/authentication-local'
-import { OAuthStrategy, expressOauth } from '@feathersjs/authentication-oauth'
+import OAuth from '@feathersjs/authentication-oauth'
 import PasswordValidator from 'password-validator'
 
 const debug = makeDebug('kdk:core:authentication')
+const { ObjectID } = mongodb
+const { oauth, OAuthStrategy } = OAuth
 const { NotAuthenticated } = errors
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
@@ -53,10 +56,12 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
 // However, it has been rewritten to work simultaneously with:
 // - a stateless or user attached JWT
 // - a socket or a rest transport
+// It also supports token given as query parameter
 export class JWTAuthenticationStrategy extends JWTStrategy {
   async authenticate (authentication, params) {
     const { accessToken } = authentication
     const { entity } = this.configuration
+    const renewJwt = _.get(this.configuration, 'renewJwt', true)
 
     if (!accessToken) {
       throw new NotAuthenticated('No access token')
@@ -73,11 +78,13 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
         payload
       }
     }
+    if (!renewJwt) result.accessToken = accessToken
 
     // Second key trick
     // Return user attached to the token if any
     // Return basic information for a stateless token otherwise
-    if (payload.sub) {
+    // As we only target MongoDB now, check for a valid ID otherwise assume a stateless token as well
+    if (payload.sub && ObjectID.isValid(payload.sub)) {
       const entityId = await this.getEntityId(result, params)
       const value = await this.getEntity(entityId, params)
 
@@ -88,6 +95,21 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     }
 
     return result
+  }
+
+  async parse (req) {
+    const { jwt } = req.query
+    if (jwt) {
+      debug('Found parsed query value')
+      delete req.query.jwt
+      return {
+        strategy: 'jwt',
+        accessToken: jwt
+      }
+    } else {
+      const result = await super.parse(req)
+      return result
+    }
   }
 }
 
@@ -135,12 +157,14 @@ export default function auth (app) {
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
 
   // Store available OAuth providers
-  app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins', 'defaults']))
-  for (const provider of app.authenticationProviders) {
-    authentication.register(provider, new AuthenticationProviderStrategy())
+  if (config.oauth) {
+    app.authenticationProviders = _.keys(_.omit(config.oauth, ['redirect', 'origins', 'defaults']))
+    for (const provider of app.authenticationProviders) {
+      authentication.register(provider, new AuthenticationProviderStrategy())
+    }
   }
   app.use(config.path, authentication)
-  app.configure(expressOauth())
+  app.configure(oauth())
 
   const limiter = config.limiter
   if (limiter && limiter.http) {

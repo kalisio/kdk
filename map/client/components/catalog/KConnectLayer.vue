@@ -87,7 +87,7 @@ export default {
           },
           description: {
             type: 'string',
-            default: this.layer ? this.layer.display : '',
+            default: this.layer ? this.layer.description || this.layer.display : '',
             field: {
               component: 'form/KTextField',
               label: 'KConnectLayer.DESCRIPTION_FIELD_LABEL'
@@ -191,6 +191,10 @@ export default {
         type: 'OverlayLayer',
         icon: 'las la-plug',
         scope: 'user'
+      }
+      if (this.layer.extent) {
+        const { west, east, south, north } = this.layer.extent
+        newLayer.bbox = [west, south, east, north]
       }
       if (this.service.protocol === 'WMS') {
         const style = propertiesResult.values.style

@@ -5,6 +5,9 @@ import pixelmatch from 'pixelmatch'
 
 const debug = makeDebug('kdk:core:test:utils')
 
+// Default accuracy
+export const GeolocationAccuracy = 500
+
 /* Helper function to check wether an element exists
  * see: https://github.com/puppeteer/puppeteer/issues/545
  */
@@ -185,7 +188,7 @@ export async function chooseIcon (page, name, color, wait = 1000) {
 /* Helper function that wait until all images are loaded
  */
 export async function waitForImagesLoaded (page) {
-  await page.evaluate(() => {
+  await page.evaluate(async () => {
     const imageSelectors = Array.from(document.querySelectorAll('img'))
     const imgPromises = []
     imageSelectors.forEach((img) => {
@@ -195,14 +198,26 @@ export async function waitForImagesLoaded (page) {
         img.addEventListener('error', reject)
       }))
     })
-    return Promise.all(imgPromises)
+    await Promise.all(imgPromises)
   })
 }
 
 /* Return the Store value corresponding to the given path
  */
 export async function getFromStore (page, path) {
-  return page.evaluate((path) => window.$store.get(path), path)
+  const result = await page.evaluate((path) => {
+    const value = window.$store.get(path)
+    return value
+  }, path)
+  return result
+}
+
+/* Update the Store value corresponding to the given path
+ */
+export async function setToStore (page, path, value) {
+  await page.evaluate((path, value) => {
+    window.$store.patch(path, value)
+  }, path, value)
 }
 
 /* Given a reference screenshot  key and a run screenshot key, this
@@ -234,11 +249,12 @@ export function compareImages (image1, image2, threshold, diffFilename) {
 /* Moves a slider in a chosen direction (right or left), for a specific times
  */
 export async function moveSlider (page, action, direction, times, wait = 500) {
-  const selector = `#${action}`
-  const dir = (direction === 'left') ? 'ArrowLeft' : 'ArrowRight'
-  await page.focus(selector)
+  const selector = `#${action} .q-slider__focus-ring`
+  const key = (direction === 'left') ? 'ArrowLeft' : 'ArrowRight'
+  await click(page, selector)
   for (let i = 0; i < times; i++) {
-    await page.keyboard.press(dir)
+    await page.keyboard.press(key)
   }
+  debug(`Pressed ${key} ${times} times to move slider ${action}`)
   await page.waitForTimeout(wait)
 }

@@ -75,12 +75,11 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import Papa from 'papaparse'
 import { Loading } from 'quasar'
-import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
+import { mixins as kCoreMixins, utils as kCoreUtils, composables as kCoreComposables } from '../../../core/client'
 import { KModal, KStatisticsChart } from '../../../core/client/components'
 
 export default {
   name: 'k-features-chart',
-  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModal,
     KStatisticsChart
@@ -90,6 +89,10 @@ export default {
   ],
   props: {
     layerId: {
+      type: String,
+      default: ''
+    },
+    layerName: {
       type: String,
       default: ''
     },
@@ -135,7 +138,7 @@ export default {
       value: 'percentage', label: this.$t('KFeaturesChart.PERCENTAGE_LABEL')
     }]
     return {
-      layer: this.selectedLayer,
+      layer: {},
       toolbar: [
         { id: 'settings', icon: 'las la-cog', tooltip: 'KFeaturesChart.CHART_SETTINGS_LABEL', handler: () => this.openSettings() },
         { id: 'download', icon: 'las la-file-download', tooltip: 'KFeaturesChart.CHART_EXPORT_LABEL', handler: () => this.downloadChartData() }
@@ -197,7 +200,7 @@ export default {
       // As we have async operations during the whole chart creation process avoid reentrance
       // otherwise we might have interleaved calls leading to multiple charts being created
       if (!this.chart || !this.selectedProperty || this.buildingChart) return
-      Loading.show({ message: this.$t('KFeaturesChart.CHARTING_LABEL') })
+      Loading.show({ message: this.$t('KFeaturesChart.CHARTING_LABEL'), html: true })
       // Try/Catch required to ensure we reset the build flag
       try {
         this.buildingChart = true
@@ -267,8 +270,15 @@ export default {
     },
     async openModal () {
       kCoreMixins.baseModal.methods.openModal.call(this, true)
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      // If not injected load it
+      if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+      else this.layer = await this.$api.getService('catalog').get(this.layerId)
       this.openSettings()
+    }
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
     }
   }
 }

@@ -7,7 +7,6 @@
         ref="refForm"
         class="full-width"
         :schema="getFormSchema()"
-        @form-ready="onFormReady"
       />
       <KAction
         id="login-button"
@@ -65,32 +64,16 @@ function getFormSchema () {
     required: ['email', 'password']
   }
 }
-function canStoreCredentials () {
-  return $q.platform.is.cordova
-}
-function hasCredentials () {
-  return window.localStorage.getItem('klogin.email')
-}
 async function onLogin () {
   const result = refForm.value.validate()
   if (result.isValid) {
     loading.value = true
     try {
       await login(result.values.email, result.values.password)
-      if (canStoreCredentials()) {
-        window.localStorage.setItem('klogin.email', result.values.email)
-      }
     } catch (error) {
       $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.LOGIN_ERROR') })
     }
     loading.value = false
-  }
-}
-function onFormReady (form) {
-  if (canStoreCredentials() && hasCredentials()) {
-    form.fill({
-      email: window.localStorage.getItem('klogin.email')
-    })
   }
 }
 </script>

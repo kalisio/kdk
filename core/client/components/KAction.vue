@@ -16,6 +16,7 @@
     :stack="stack"
     :dense="dense"
     :disable="computedDisabled"
+    v-close-popup="closePopup"
     @click="onClicked">
     <!-- label -->
     <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
@@ -42,9 +43,9 @@
     color="primary"
     :outline="outline"
     :size="size"
-    :dense="dense"
     :disable="computedDisabled"
     :loading="loading"
+    v-close-popup="closePopup"
     @click="onClicked">
     <div class="ellipsis">
       {{ computedLabel }}
@@ -55,9 +56,11 @@
    -->
   <q-item v-else-if="renderer === 'item'"
     :id="id"
+    class="full-width"
     clickable
     :dense="dense"
     :disable="computedDisabled"
+    v-close-popup="closePopup"
     @click="onClicked">
     <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
@@ -149,6 +152,7 @@ import { ref, toRef, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
 import { i18n } from '../i18n.js'
+import { bindParams } from '../utils/utils.content.js'
 
 export default {
   props: {
@@ -220,6 +224,10 @@ export default {
       type: Function,
       default: null
     },
+    closePopup: {
+      type: [Boolean, Number, String],
+      default: false
+    },
     dialog: {
       type: Object,
       default: null
@@ -290,29 +298,15 @@ export default {
       emit('toggled', props.context, isToggled.value)
     }
     function bindRouteParams (path) {
-      // When action is created from code we can directly inject the params
-      // However, when created from the config we need to manage dynamic values
-      // Clone route context to avoid losing dynamic parameters in this case
+      // When action is created from code we can directly inject the params.
+      // However, when created from the config we need to manage dynamic values.
+      // A parameter like ':xxx' in config means xxx is a dynamic property of
+      // the current route or the context object, not a static value.
+      // We bind the target params object to both possible context.
       const currentParams = _.get(route, path, {})
       const targetParams = _.get(props.route, path, {})
-      // A parameter like ':xxx' in config means xxx is a dynamic property of the route or the context object, not a static value
-      // We split the target params object into two sets: one with static keys and one with dynamic keys
-      const staticParams = Object.entries(targetParams)
-        .filter(([key, value]) => (typeof value !== 'string') || !value.startsWith(':'))
-        .map(([key, value]) => key)
-      // Take care that for dynamic parameters we might have a mapping,
-      // eg context: ':item._id', so we need to keep both key and value
-      const dynamicParams = Object.entries(targetParams)
-        .filter(([key, value]) => (typeof value === 'string') && value.startsWith(':'))
-        .map(([key, value]) => [key, value.substring(1)])
-      // Merge static/dynamic params to build full list
-      const params = _.pick(targetParams, staticParams)
-      dynamicParams.forEach(([key, value]) => {
-        // If dynamic param is not available in route use this context
-        if (_.has(currentParams, value)) _.set(params, key, _.get(currentParams, value))
-        else _.set(params, key, _.get(this.context, value))
-      })
-      return params
+      const params = bindParams(targetParams, currentParams)
+      return bindParams(params, props.context)
     }
     async function onClicked (event) {
       if (!props.propagate) event.stopPropagation()

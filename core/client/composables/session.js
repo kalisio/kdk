@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar, Loading } from 'quasar'
 import { api } from '../api.js'
@@ -18,7 +18,7 @@ export function useSession (options = {}) {
   const $q = useQuasar()
   const { Version } = useVersion()
 
-  let isInitialized = false
+  const isInitialized = ref(false)
   let pendingReconnection = null
 
   // Computed
@@ -39,32 +39,32 @@ export function useSession (options = {}) {
       if (result === 'login') {
         // When hitting the root domain we should let standard redirection occur
         if (route.path !== '/') LocalStorage.set(getRedirectKey(), _.pick(route, ['name', 'query', 'params']))
-        router.push({ name: 'login' })
+        await router.push({ name: 'login' })
       } else {
         const targetRoute = LocalStorage.get(getRedirectKey())
         // Once logged in clear target route if any
         if (targetRoute) {
           LocalStorage.clear(getRedirectKey())
-          router.push(targetRoute)
+          await router.push(targetRoute)
         } else {
-          router.push({ name: result })
+          await router.push({ name: result })
         }
       }
     } else {
       // Clear any previous redirection as we don't have
       LocalStorage.clear(getRedirectKey())
       if (typeof result === 'object') {
-        router.push(result)
+        await router.push(result)
       } else if (!result) {
         // This route was previously allowed but due to changes in authorisations it is not anymore
-        router.push({ name: (User.value ? 'home' : 'login') })
+        await router.push({ name: (User.value ? 'home' : 'login') })
       }
     }
     // The first time initialize guards after the app has been correctly setup,
-    // ie either with or without a restored user
-    if (!isInitialized) {
+    // ie either with or without a restored user and a redirection
+    if (!isInitialized.value) {
       router.beforeEach(beforeGuard)
-      isInitialized = true
+      isInitialized.value = true
     }
   }
   function onReconnectError () {
@@ -89,7 +89,7 @@ export function useSession (options = {}) {
     }
     // Causes problems with hot reload in dev
     if (Version.value.flavor !== 'dev') {
-      Loading.show({ message: i18n.t('composables.session.RECONNECT') })
+      Loading.show({ message: i18n.t('composables.session.RECONNECT'), html: true })
       setTimeout(() => { window.location.reload() }, 3000)
     } else {
       logger.error(new Error('Socket disconnected, not trying to reconnect automatically in development mode please refresh page manually'))
@@ -145,6 +145,7 @@ export function useSession (options = {}) {
   return {
     User,
     redirect,
+    isInitialized,
     onReconnectError,
     onReconnect,
     onRateLimit

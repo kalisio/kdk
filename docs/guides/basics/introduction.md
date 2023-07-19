@@ -13,7 +13,15 @@ If you are not familiar with those technologies and want to develop with the **K
 * [FeathersJS in production: password policy and rate limiting](https://blog.feathersjs.com/feathersjs-in-production-password-policy-and-rate-limiting-32c9874dc563)
 * [Mocking custom service queries with FeathersJS](https://blog.feathersjs.com/mocking-custom-service-queries-with-feathersjs-3aae74003259)
 
-Our main module is simply called [kdk](https://github.com/kalisio/kdk), available now as a single package [@kalisio/kdk](https://www.npmjs.com/package/@kalisio/kdk), but actually composed of two logical parts:
+## Application template
+
+A KDK-based application (a.k.a. kApp) usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [kApp](https://kalisio.github.io/kApp) as a starting point. In this guide we will use the template as a reference when dealing with KDK-based application.
+
+You can start your journey by [running the kApp](https://kalisio.github.io/kApp/guides/installing-kapp.html).
+
+## KDK internals
+
+Our main module is simply called [kdk](https://github.com/kalisio/kdk), available now as a single package [@kalisio/kdk](https://www.npmjs.com/package/@kalisio/kdk). It is actually composed of two logical parts:
 * **[core](../../api/core)** containing basic application services and components
 * **[map](../../api/map)** containing required services and components to build geospatial applications
 
@@ -21,14 +29,16 @@ Our main module is simply called [kdk](https://github.com/kalisio/kdk), availabl
 Although bundled together you can only use the core part without the map part, for instance our application template does not use it. Indeed, on the bakend side related services will not be allocated if the map part is not explicitely used, and on the frontend side Webpack will not bundle unused components.
 :::
 
-However, this module also relies on [Weacast](https://weacast.github.io/weacast/) to manage weather data and [feathers-distributed](https://github.com/kalisio/feathers-distributed) is often used to build [microservices architecture](../../architecture/global-architecture.md), we recommend reading this articles on Medium to get a deeper overview:
-* [Introducing Weacast](https://towardsdatascience.com/introducing-weacast-e6e98487b2a8)
-* [A use case of microservices with FeathersJS: building a geospatial platform](https://blog.feathersjs.com/a-use-case-of-microservices-with-feathersjs-building-a-geospatial-platform-56373604db71)
-
 ::: warning
 The KDK was previously available as separated modules like [kCore](https://github.com/kalisio/kCore)/[@kalisio/kdk-core](https://www.npmjs.com/package/@kalisio/kdk-core), [kMap](https://github.com/kalisio/kMap)/[@kalisio/kdk-map](https://www.npmjs.com/package/@kalisio/kdk-map), etc. We strongly recommend to upgrade to the latest single package as the features remain similar and development is made easier.
 :::
 
-## Application template
+The KDK relies on third-party modules which not directly integrated (they can be used as standalone modules), but it might be useful to know more about them. For instance:
+* [feathers-s3](https://github.com/kalisio/feathers-s3) to manage file upload/download to/from Object Storages like Amazon S3,
+* [Weacast](https://weacast.github.io/weacast/) to manage weather data,
+* [feathers-distributed](https://github.com/kalisio/feathers-distributed) to build [microservices architectures](../../architecture/global-architecture.md).
 
-A KDK-based application (a.k.a. kApp) usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [kApp](https://kalisio.github.io/kApp) as a starting point. In this guide we will use the template as a reference but most commands will be valid for any KDK-based application.
+As a consequence, we recommend reading this articles on Medium to get a deeper overview:
+* [Introducing Weacast](https://towardsdatascience.com/introducing-weacast-e6e98487b2a8)
+* [A use case of microservices with FeathersJS: building a geospatial platform](https://blog.feathersjs.com/a-use-case-of-microservices-with-feathersjs-building-a-geospatial-platform-56373604db71)
+

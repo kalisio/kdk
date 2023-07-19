@@ -1,34 +1,41 @@
 import emails from 'email-templates'
 import path from 'path'
 import makeDebug from 'debug'
+import _ from 'lodash'
 
-const debug = makeDebug('kdk:core:devices:hooks')
+const debug = makeDebug('kdk:core:push:hooks')
 
-export async function sendNewDeviceEmail (hook) {
+export async function sendNewSubscriptionEmail (hook) {
   if (hook.type !== 'after') {
-    throw new Error('The \'sendNewDeviceEmail\' hook should only be used as a \'after\' hook.')
+    throw new Error('The \'sendNewSubscriptionEmail\' hook should only be used as a \'after\' hook.')
   }
 
+  // Check for a new subscription
+  const updatedUser = hook.result
+  const previousUser = hook.params.user
+  const newSubscription = _.differenceBy(_.get(updatedUser, 'subscriptions', []), _.get(previousUser, 'subscriptions', []), 'endpoint')
+  if (_.size(newSubscription) !== 1) return
+
+  // Data
   const app = hook.app
-  const user = hook.params.user
   const mailerService = app.getService('mailer')
   const domainPath = app.get('domain') + '/#/'
   const email = {
-    subject: 'Security alert - new device signin',
+    subject: 'Security alert - new browser detected',
     from: mailerService.options.auth.user,
     // When changing email send to the new one so that it can be verified
-    to: user.email,
-    link: domainPath + 'home/account/security',
+    to: updatedUser.email,
+    link: domainPath,
     domainPath
   }
-  const device = hook.result
+
   // Build the subject & link to the app to perform the different actions
-  const templateDir = path.join(mailerService.options.templateDir, 'newDevice')
+  const templateDir = path.join(mailerService.options.templateDir, 'newSubscription')
   const template = new emails.EmailTemplate(templateDir)
   // Errors does not seem to be correctly catched by the caller
   // so we catch them here to avoid any problem
   try {
-    const emailContent = await template.render({ email, device, user }, user.locale || 'en-us')
+    const emailContent = await template.render({ email, user: updatedUser, subscription: _.first(newSubscription) }, updatedUser.locale || 'en-us')
     // Update compiled content
     email.html = emailContent.html
     debug('Sending email ', email)

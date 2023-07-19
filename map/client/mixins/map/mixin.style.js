@@ -110,6 +110,9 @@ export const style = {
   created () {
     this.registerStyle('markerStyle', this.getDefaultMarker)
     this.registerStyle('featureStyle', this.getDefaultStyle)
+  },
+  // Need to be done after created as the activity mixin initializes options in it
+  beforeMount () {
     // Perform required conversion for default feature styling
     if (_.has(this, 'activityOptions.engine.featureStyle')) {
       this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.featureStyle'), 'update-in-place')

@@ -110,7 +110,6 @@ const xlMinWidths = { wide: 90, medium: 55, narrow: 25 }
 
 // Computed
 const computedStyle = computed(() => {
-  if (props.maximized) return ''
   // compute the modal max height
   const screenHeight = $q.screen.height
   const modalMaxHeight = props.maximized ? screenHeight : 0.8 * screenHeight

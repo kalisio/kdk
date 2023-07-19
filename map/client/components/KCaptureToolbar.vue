@@ -6,7 +6,7 @@
       dense
       borderless>
       <template v-slot:option="scope">
-        <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+        <q-item v-bind="scope.itemProps">
           <q-item-section>
             <q-item-label v-html="scope.opt.label" />
           </q-item-section>

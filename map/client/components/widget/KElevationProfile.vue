@@ -411,7 +411,7 @@ export default {
           await copyToClipboard(JSON.stringify(this.profile))
           this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_COPIED') })
         } catch (error) {
-          this.$notify({ message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
+          this.$notify({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
           logger.error(error)
         }
       }
@@ -421,7 +421,7 @@ export default {
         const file = this.title + '.geojson'
         const status = exportFile(file, JSON.stringify(this.profile))
         if (status) this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
-        else this.$notify({ message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
+        else this.$notify({ rtpe: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
   },

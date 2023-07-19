@@ -33,10 +33,18 @@ export const weacast = {
     async setupForecastModels () {
       if (!this.weacastApi) return
       const response = await this.weacastApi.getService('forecasts').find()
-      this.forecastModels = response.data
+      // Required to use splice when modifying objects inside an array to make it reactive
+      this.forecastModels.splice(0, this.forecastModels.length, ...response.data)
       // store forecast models on the weacast api object too (useful in the weacast grid source)
       this.weacastApi.models = this.forecastModels
+      // Add 'virtual' actions used to trigger the layer/filters
+      this.forecastModels.forEach(forecastModel => {
+        forecastModel.actions = [{ id: 'toggle', handler: () => this.setForecastModel(forecastModel) }]
+      })
       // Select default if any or first one
+      // FIXME: now done by selector when initializing using the toggle action
+      // but the component might not be yet constructed at that point while the activity need it
+      // so that we do it here by default as well
       let forecastModel = this.forecastModels.find(forecast => forecast.isDefault)
       if (!forecastModel) {
         forecastModel = (this.forecastModels.length > 0 ? this.forecastModels[0] : null)
@@ -183,9 +191,11 @@ export const weacast = {
       // Retrieve the layer associated to current level selection
       const layer = this.selectableLevelsLayer
       if (layer) {
+        // Check if of right type, ie weacast layer or tiled layer using a weacast source
         const type = _.get(layer, `${this.engine}.type`)
-        // Check if of right type
-        if (type.startsWith('weacast')) {
+        const sources = _.get(layer, 'meteo_model.sources', [])
+        const weacastSource = sources.find(source => _.has(source, 'weacast'))
+        if (type.startsWith('weacast') || weacastSource) {
           this.setForecastLevel(level)
         }
       }

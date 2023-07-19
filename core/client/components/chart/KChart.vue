@@ -89,10 +89,18 @@ export default {
     isLegendDisplayed () {
       return !this.$q.screen.lt.sm
     },
+    clear () {
+      this.hasData = false
+      // clear the chart if needed
+      if (this.chart) {
+        this.chart.destroy()
+        this.chart = null
+      }
+    },
     update (config) {
       if (!this.chartRef) throw new Error('Cannot update the chart while not created')
-      this.hasData = !_.isEmpty(_.get(config, 'data.datasets'))
-      if (this.hasData) {
+      if (!_.isEmpty(_.get(config, 'data.datasets'))) {
+        this.hasData = true
         // Store whether the chart has a legend
         this.hasLegend = _.get(config.options, 'plugins.legend.display')
         // Csutomize the chart
@@ -114,11 +122,7 @@ export default {
         // Force the chart to be reiszed
         this.chart.resize()
       } else {
-        // clear the chart if needed
-        if (this.chart) {
-          this.chart.destroy()
-          this.chart = null
-        }
+        this.clear()
       }
     },
     customize (config) {

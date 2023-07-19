@@ -6,6 +6,7 @@
   "CANCEL": "Cancel",
   "UPDATE": "Update",
   "CREATE": "Create",
+  "DELETE": "Delete",
   "RESET": "Reset",
   "CLOSE": "Close",
   "SEARCH": "Search",
@@ -42,6 +43,8 @@
     "411": "Operation cannot be performed: length required",
     "422": "Operation cannot be performed: unprocessable",
     "429": "Operation cannot be performed: too many requests",
+    "498": "This system or browser does not support web push notifications",
+    "499": "Please change your application or browser settings to allow notifications",
     "500": "Operation cannot be performed: an error occured",
     "501": "Operation cannot be performed: not implemented",
     "502": "Operation cannot be performed: service unavailable",
@@ -85,6 +88,7 @@
     "HECTARE_SYMBOL": "ha",
     "METER_PER_SECOND_SYMBOL": "m/s",
     "KILOMETER_PER_HOUR_SYMBOL": "km/h",
+    "MILES_PER_HOUR_SYMBOL": "mph",
     "KNOT_SYMBOL": "kt",
     "CELSIUS_SYMBOL": "°C",
     "FAHRENHEIT_SYMBOL": "°F",
@@ -101,6 +105,7 @@
     "HECTARE_LABEL": "Hectares",
     "METER_PER_SECOND_LABEL": "Meters per second",
     "KILOMETER_PER_HOUR_LABEL": "Kilometers per hour",
+    "MILES_PER_HOUR_LABEL": "Miles per hour",
     "KNOT_LABEL": "Knots",
     "CELSIUS_LABEL": "Celcius degrees",
     "FAHRENHEIT_LABEL": "Fahrenhiet degrees",
@@ -221,8 +226,8 @@
       "SECURITY_LABEL": "This activity allows to update your <b>personal identifiers</b> and your devices",
       "PASSWORD_LINK_LABEL": "Launch the <b>password change procedure</b>",
       "EMAIL_LINK_LABEL": "Launch the <b>email change procedure</b>",
-      "DEVICES_LABEL": "This section list all the mobile devices you have used.",
-      "UNLINK_LABEL": "Check for any suspect activity and unlink outdated mobile devices.",
+      "SUBSCRIPTIONS_LABEL": "This section list all the subscriptions you have.",
+      "UNSUBSCRIBE_LABEL": "Check for any suspect activity and remove outdated subscriptions.",
       "DANGER_ZONE_LABEL": "This activity allows to remove your account",
       "DELETE_LABEL": "A manual confirmation will be required before final removal."
     },
@@ -424,28 +429,33 @@
     "RESET_LABEL": "Reset",
     "LOG_IN_LABEL": "Log in ?"
   },
-  "KIdentityPanel": {
-    "MANAGE": "Manage my account"
+  "KProfile": {
+    "EDIT_PROFILE": "Edit my profile",
+    "MANAGE_ACCOUNT": "Manage my account"
   },
-  "KAccountActivity": {
-    "PROFILE": "My profile",
-    "SECURITY": "Security",
-    "DANGER_ZONE": "Danger zone"
+  "KAccount": {
+    "DELETE_ACCOUNT": "Delete my account",
+    "DELETE_ACCOUNT_QUESTION": "Are you sure you want to delete your account ?",
+    "DELETE_ACCOUNT_TITLE": "Warning: the deletion of your account is irrevocable and all data attached to it will be lost",
+    "DELETE_ACCOUNT_CONFIRMATION": "Enter your account name to confirm the deletion"
   },
-  "KAccountDZ": {
-    "BLOCK_TITLE": "Delete your account ?",
-    "BLOCK_TEXT": "Please note that deleting your account will delete any data attached to this account.<br><br>The deletion cannot be undone and you will be logged out of the application.",
-    "BLOCK_ACTION": "Delete account",
-    "DIALOG_TITLE": "Are you sure you want to delete your account ?",
-    "DIALOG_LABEL": "Enter your account name to confirm the deletion"
+  "KPasswordManager": {
+    "TITLE": "Manage my password",
+    "PASSWORD_CHANGED": "Your password has been successfully changed"
   },
-  "KAccountSecurity": {
-    "PASSWORD_BLOCK_TITLE": "Change your password ?",
-    "PASSWORD_BLOCK_TEXT": "Your password protect your account.<br>Change it carefully.",
-    "PASSWORD_BLOCK_ACTION": "Change",
-    "EMAIL_BLOCK_TITLE": "Change your email ?",
-    "EMAIL_BLOCK_TEXT": "Your email secures changes to your account credentials, change it carefully.<br>Current email address: <b>{email}</b>",
-    "EMAIL_BLOCK_ACTION": "Change"
+  "KIdentityManager": {
+    "TITLE": "Manage my identity",
+    "IDENTITY_CHANGED": "You new address has been taken into account. An email has been sent to you to confirm the change."
+  },
+  "KSubscriptionsManager": {
+    "TITLE": "Manage my subscriptions",
+    "EMPTY": "No subscriptions"
+  },
+  "KSubscription": {
+    "UNSUBSCRIBE": "Unsubscribe",
+    "LAST_ACTIVITY": "Last activity",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
   },
   "KGrid": {
     "EMPTY_GRID": "@:NO_ITEM"
@@ -787,16 +797,6 @@
     "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to verify your email address has expired, please resend the verification email with the link below",
     "ERROR_MESSAGE_DEFAULT": "Your email address has not been verified"
   },
-  "KDeviceCard": {
-    "LAST_ACTIVITY": "Last activity",
-    "SERIAL_NUMBER": "Serial number",
-    "UNLINK_LABEL": "Unlink",
-    "UNLINK_DIALOG_TITLE": "Unlink device {description} ?",
-    "UNLINK_DIALOG_MESSAGE": "Are you sure you want to unlink device <b>{description}</b> from your account ?<br><br>You will not be able to receive notifications until you reconnect using the device."
-  },
-  "KAccountDevices": {
-    "DEVICES_USED": "Check when specific devices has been used to access your account below"
-  },
   "KMemberFilter": {
     "NONE": "None",
     "OWNER": "Owner",
@@ -814,11 +814,11 @@
     "PICK_END_TIME_LABEL": "Update end time"
   },
   "KRelativeTimeRanges": {
-    "LAST_HOUR": "Last hour",
-    "LAST_2_HOURS": "Last 2 hours",
-    "LAST_3_HOURS": "Last 3 hours",
-    "LAST_6_HOURS": "Last 6 hours",
-    "LAST_12_HOURS": "Last 12 hours",
+    "LAST_HOUR_LABEL": "Last hour",
+    "LAST_2_HOURS_LABEL": "Last 2 hours",
+    "LAST_3_HOURS_LABEL": "Last 3 hours",
+    "LAST_6_HOURS_LABEL": "Last 6 hours",
+    "LAST_12_HOURS_LABEL": "Last 12 hours",
     "LAST_DAY_LABEL": "Last day",
     "LAST_2_DAYS_LABEL": "Last 2 days",
     "LAST_3_DAYS_LABEL": "Last 3 days",
@@ -828,11 +828,11 @@
     "LAST_3_MONTHS_LABEL": "Last 3 months",
     "LAST_6_MONTHS_LABEL": "Last 6 months",
     "LAST_YEAR_LABEL": "Last year",
-    "NEXT_HOUR": "Next hour",
-    "NEXT_2_HOURS": "Next 2 hours",
-    "NEXT_3_HOURS": "Next 3 hours",
-    "NEXT_6_HOURS": "Next 6 hours",
-    "NEXT_12_HOURS": "Next 12 hours",
+    "NEXT_HOUR_LABEL": "Next hour",
+    "NEXT_2_HOURS_LABEL": "Next 2 hours",
+    "NEXT_3_HOURS_LABEL": "Next 3 hours",
+    "NEXT_6_HOURS_LABEL": "Next 6 hours",
+    "NEXT_12_HOURS_LABEL": "Next 12 hours",
     "NEXT_DAY_LABEL": "Next day",
     "NEXT_2_DAYS_LABEL": "Next 2 days",
     "NEXT_3_DAYS_LABEL": "Next 3 days",
@@ -856,5 +856,17 @@
   },
   "KTextArea": {
     "COLLAPSE": "Collapse"
+  },
+  "KInstallApp": {
+    "INSTALL_LABEL": "Application ready to install.",
+    "IOS_SHARE_ICON_LABEL": "If you don't install it, some functionalities may be limited. From Safari, Tap",
+    "IOS_HOME_SCREEN_LABEL": ", and then tap on “Add to home screen”",
+    "INSTALL_BUTTON": "Install app",
+    "SKIP_BUTTON": "Skip"
+  },
+  "utils": {
+    "PWA_VERSION_MISMATCH": "Application version mismatch, please refresh the page to get the latest version available",
+    "PWA_BUTTON_REFRESH": "Refresh"
   }
 }
+

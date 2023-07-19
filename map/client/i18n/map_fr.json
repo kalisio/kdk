@@ -330,6 +330,15 @@
       "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la vue",
       "LAYERS_FIELD_LABEL": "Définissez si les couches actuellement actives seront restaurées par votre vue.",
       "APPLY_BUTTON_LABEL": "Confirmez la création de la vue"
+    },
+    "side-nav": {
+      "HELP_LABEL": "Accédez à notre aide en ligne à tout moment",
+      "CONTEXT_HELP_LABEL": "Pour obtenir de l'aide contextuelle lorsque vous êtes perdu cliquez à tout moment cette l'icône",
+      "ABOUT_LABEL": "Affichez les informations détaillées du système et signalez-nous un boggue.",
+      "BUG_LABEL": "Signalez-nous un boggue via un email contenant automatiquement les informations nécessaires.",
+      "SETTINGS_LABEL": "Modifiez les paramètres généraux du système sur votre appareil.",
+      "LOGOUT_LABEL": "Déconnectez vous si vous souhaitez clôturer votre session de travail.",
+      "SESSION_LABEL": "Sinon la session reste active sur votre appareil pendant <b>24H</b> et vous n'aurez pas besoin de vous reconnecter durant ce laps de temps."
     }
   },
   "KOwsServiceField": {
@@ -392,28 +401,21 @@
     "NO_DATA_AVAILABLE": "Aucune donnée disponible"
   },
   "KViewsPanel": {
-    "VIEWS_LABEL": "Mes vues",
     "SORT_VIEWS": "Trier les vues",
     "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Définir comme vue par défaut"
-  },
-  "KUserLayersPanel": {
-    "LAYERS_LABEL": "Mes données"
-  },
-  "KCatalogLayersPanel": {
-    "LAYERS_LABEL": "Catalogue"
   }, 
   "KFeaturesFilter": {
     "TITLE": "Filtre des données de la couche",
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
     "ADD_FILTER": "Sélectionnez une propriété à associer à un filtre",
     "REMOVE_FILTER": "Supprimer le filtre associée à cette valeur",
-    "IN": "valeur parmis",
-    "NOT_IN": "valeur différente de",
-    "EQUAL": "valeur égale à",
-    "NOT_EQUAL": "valeur différente de",
-    "GREATER_THAN": "valeur supérieure à",
-    "LOWER_THAN": "valeur inférieure à"
+    "$in": "valeur parmis",
+    "$nin": "valeur différente de",
+    "$eq": "valeur égale à",
+    "$neq": "valeur différente de",
+    "$gt": "valeur supérieure à",
+    "$lt": "valeur inférieure à"
   },
   "KFeaturesTable": {
     "TITLE": "Données de la couche"

@@ -14,6 +14,9 @@ export const geojsonLayers = {
       return { stroke, strokeWidth, fill }
     },
     async loadGeoJson (dataSource, geoJson, cesiumOptions) {
+      // Clean any previous data as otherwise it seems
+      // data is not correctly updated in viewer
+      dataSource.entities.removeAll()
       await dataSource.load(geoJson, cesiumOptions)
       // Process specific entities
       const entities = dataSource.entities.values
@@ -238,6 +241,14 @@ export const geojsonLayers = {
       const layer = this.getCesiumLayerByName(name)
       if (!layer) return // Cannot update invisible layer
       if (typeof layer.updateGeoJson === 'function') layer.updateGeoJson(geoJson)
+
+      // We keep geojson data for in memory layer in a cache since
+      // these layers will be destroyed when hidden. We need to be able to restore
+      // them when they get shown again
+      const baseLayer = this.getLayerByName(name)
+      if (this.isInMemoryLayer(baseLayer)) {
+        this.geojsonCache[name] = geoJson
+      }
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       const geoJsonlayers = _.values(this.layers).filter(sift({
@@ -258,6 +269,25 @@ export const geojsonLayers = {
           dataSource.updateGeoJson()
         }
       })
+    },
+    onLayerShownGeoJsonLayers (layer, engineLayer) {
+      // Check if we have cached geojson data for this layer
+      const cachedGeojson = this.geojsonCache[layer.name]
+      if (cachedGeojson) {
+        if (this.isInMemoryLayer(layer)) {
+          // Restore geojson data for in-memory layers that was hidden
+          this.updateLayer(layer.name, cachedGeojson)
+        } else {
+          // Clear cache since layer is not in memory anymore
+          delete this.geojsonCache[layer.name]
+        }
+      }
+    },
+    onLayerRemovedGeoJsonLayers (layer) {
+      // Remove cached geojson data if any
+      if (_.has(this.geojsonCache, layer.name)) {
+        delete this.geojsonCache[layer.name]
+      }
     }
   },
   created () {
@@ -268,8 +298,17 @@ export const geojsonLayers = {
         this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.featureStyle'), 'update-in-place'))
     }
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
+
+    // Cache where we'll store geojson data for in memory layers we'll hide
+    this.geojsonCache = {}
   },
   beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
+
+    this.geojsonCache = {}
   }
 }

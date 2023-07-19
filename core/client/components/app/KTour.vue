@@ -354,8 +354,19 @@ async function onLink () {
     setTimeout(() => getTour().nextStep(), _.toNumber(delay))
   }
 }
-function onStartTour () {
+function onStartTour (currentStep) {
   isRunning = true
+  // Check if target is found, otherwise skip and try go to next step
+  const step = getStep(0)
+  const target = getTarget(_.get(step, 'target'))
+  if (!target) {
+    isStepVisible.value = false
+    // Need to add a debounce as the step number has not yet changed, it will on function return
+    setTimeout(() => {
+      if (getTour().currentStep.value < getTour().numberOfSteps.value - 1) getTour().nextStep()
+      else getTour().stop()
+    }, 100)
+  }
   clickTarget()
 }
 function onPreviousTourStep (currentStep) {

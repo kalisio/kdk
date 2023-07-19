@@ -233,7 +233,11 @@ export async function authorise (hook) {
     // this has to be implemented by the service itself
     } else if (typeof hook.service.get === 'function') {
       // In this case (single get/update/patch/remove) we need to fetch the item first
-      const resource = await hook.service.get(hook.id, Object.assign({ checkAuthorisation: false }, hook.params))
+      // Take care we might have additional query parameters to be "catched" by before hooks,
+      // however at this stage these query parameters might cause get to fail
+      const params = Object.assign({ checkAuthorisation: false }, hook.params)
+      _.unset(params, 'query')
+      const resource = await hook.service.get(hook.id, params)
       debug('Target resource is', resource)
       // Then check against the object we'd like to manage
       if (!hasResourceAbilities(abilities, operation, resourceType, context, resource)) {
@@ -362,7 +366,7 @@ export async function removeOrganisationTagsAuthorisations (hook) {
     const notFromOrg = _.differenceWith(tags, orgTags, isTagEqual)
     // Update subject if required
     if (fromOrg.length > 0) {
-      promises.push(subjectService.patch(subject._id.toString(), { tags: notFromOrg, devices: subject.devices }))
+      promises.push(subjectService.patch(subject._id.toString(), { tags: notFromOrg }))
     }
   })
   // Perform subject updates in parallel

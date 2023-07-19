@@ -6,6 +6,7 @@
   "CANCEL": "Annuler",
   "UPDATE": "Mettre à jour",
   "CREATE": "Créer",
+  "DELETE": "Supprimer",
   "RESET": "Réinitialiser",
   "CLOSE": "Fermer",
   "SEARCH": "Rechercher",
@@ -42,6 +43,8 @@
     "411": "Cette opération ne peut être réalisée: taille requise",
     "422": "Cette opération ne peut être réalisée: impossible à traiter",
     "429": "Cette opération ne peut être réalisée: trop de requêtes",
+    "498": "Ce système ou navigateur ne prend pas en charge les notifications push web",
+    "499": "Veuillez modifier les paramètres de votre application ou du navigateur pour autoriser les notifications",
     "500": "Cette opération ne peut être réalisée: une erreur a été rencontrée",
     "501": "Cette opération ne peut être réalisée: non gérée",
     "502": "Cette opération ne peut être réalisée: service introuvable",
@@ -85,6 +88,7 @@
     "HECTARE_SYMBOL": "ha",
     "METER_PER_SECOND_SYMBOL": "m/s",
     "KILOMETER_PER_HOUR_SYMBOL": "km/h",
+    "MILES_PER_HOUR_SYMBOL": "mph",
     "KNOT_SYMBOL": "kt",
     "CELSIUS_SYMBOL": "°C",
     "FAHRENHEIT_SYMBOL": "°F",
@@ -101,6 +105,7 @@
     "HECTARE_LABEL": "Hectares",
     "METER_PER_SECOND_LABEL": "Mètres par seconde",
     "KILOMETER_PER_HOUR_LABEL": "Kilomètres par heure",
+    "MILES_PER_HOUR_LABEL": "Milles par heure",
     "KNOT_LABEL": "Noeuds",
     "CELSIUS_LABEL": "Degrés celcius",
     "FAHRENHEIT_LABEL": "Degrés Fahrenheit",
@@ -221,8 +226,8 @@
       "SECURITY_LABEL": "Cette activité vous permet de modifier <b>vos identifiants</b> et vos appareils",
       "PASSWORD_LINK_LABEL": "Initiez la <b>procédure de changement de mot de passe</b>",
       "EMAIL_LINK_LABEL": "Initiez la <b>procédure de changement d'adresse mail</b>",
-      "DEVICES_LABEL": "Cette section liste les différents appareils mobiles que vous avez utilisé.",
-      "UNLINK_LABEL": "Vérifiez ici toute activité suspecte et dissociez les appareils obsolètes de votre compte.",
+      "SUBSCRIPTIONS_LABEL": "Cette section liste les différents abonnements dont vous disposez.",
+      "UNSUBSCRIBE_LABEL": "Vérifiez ici toute activité suspecte et supprimez les abonnements obsolètes de votre compte.",
       "DANGER_ZONE_LABEL": "Cette activité vous permet de supprimer votre compte du système",
       "DELETE_LABEL": "Un confirmation manuelle vous sera demandé avant la suppression définitive de votre compte."
     },
@@ -424,28 +429,33 @@
     "RESET_LABEL": "Réinitialiser",
     "LOG_IN_LABEL": "Se connecter ?"
   },
-  "KIdentityPanel": {
-    "MANAGE": "Gérer mon compte"
+  "KProfile": {
+    "EDIT_PROFILE": "Editer mon profil",
+    "MANAGE_ACCOUNT": "Gérer mon compte"
   },
-  "KAccountActivity": {
-    "PROFILE": "Mon profil",
-    "SECURITY": "Securité",
-    "DANGER_ZONE": "Zone de danger"
+  "KAccount": {
+    "DELETE_ACCOUNT": "Supprimer mon compte",
+    "DELETE_ACCOUNT_QUESTION": "Etes vous sûr de vourloir supprimer votre compte ?",
+    "DELETE_ACCOUNT_TITLE": "Attention: la suppression de votre compte est irrévocable et toutes les données qui y sont attachées seront perdues",
+    "DELETE_ACCOUNT_CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la suprression"
   },
-  "KAccountDZ": {
-    "BLOCK_TITLE": "Supprimer votre compte ?",
-    "BLOCK_TEXT": "Veuillez prendre en compte que la suppression de votre compte entrainera la suppression de toutes les données qui y sont attachées.<br>La suppression ne peut pas être annulée et vous serez déconnecté de l'application.",
-    "BLOCK_ACTION": "Supprimer",
-    "DIALOG_TITLE": "Etes vous sûr de vouloir supprimer votre compte ?",
-    "DIALOG_LABEL": "Saisissez le nom de votre compte pour confirmer la suprression"
+  "KPasswordManager": {
+    "TITLE": "Gérer mon mot de passe",
+    "PASSWORD_CHANGED": "Votre mot de passe a été modifié avec succés"
   },
-  "KAccountSecurity": {
-    "PASSWORD_BLOCK_TITLE": "Changer votre mot de passe ?",
-    "PASSWORD_BLOCK_TEXT": "Votre mot de passe protège votre compte.<br>Changez le avec précaution.",
-    "PASSWORD_BLOCK_ACTION": "Changer",
-    "EMAIL_BLOCK_TITLE": "Changez votre adresse mail ?",
-    "EMAIL_BLOCK_TEXT": "Changer votre adresse mail sécurise les accès à votre compte, changez la avec précaution.<br>Adresse actuelle: <b>{email}</b>",
-    "EMAIL_BLOCK_ACTION": "Changer"
+  "KIdentityManager": {
+    "TITLE": "Gérer mon identité",
+    "IDENTITY_CHANGED": "Votre nouvelle adresse a été prise en compte. Un mail vous a été envoyé pour confirmer le changement."
+  },
+  "KSubscriptionsManager": {
+    "TITLE": "Gérer mes souscriptions",
+    "EMPTY": "Aucunes subscriptions"
+  },
+  "KSubscription": {
+    "UNSUBSCRIBE": "Se désabonner",
+    "LAST_ACTIVITY": "Dernière activité",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
   "KGrid": {
     "EMPTY_GRID": "@:NO_ITEM"
@@ -567,7 +577,7 @@
   },
   "KFileField": {
     "INVALID_FILE_TYPE": "Type de fichier invalide, veuillez sélectionner un fichier du bon type",
-    "INVALID_FILE_SIZE": "Taille du fichier ivalide, le fichier est trop volumineux",
+    "INVALID_FILE_SIZE": "Taille du fichier invalide, le fichier est trop volumineux",
     "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succés",
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
   },
@@ -788,16 +798,6 @@
     "ERROR_MESSAGE_VERIFY_EXPIRED": "Le délai pour vérifier votre adresse mail a expiré, merci de cliquer sur le lien ci-dessous pour vous renvoyer un mail de vérifcation",
     "ERROR_MESSAGE_DEFAULT": "Impossible de vérifier votre adresse mail"
   },
-  "KDeviceCard": {
-    "LAST_ACTIVITY": "Dernière activité",
-    "SERIAL_NUMBER": "Numéro de série",
-    "UNLINK_LABEL": "Dissocier",
-    "UNLINK_DIALOG_TITLE": "Dissocier l'appareil {description} ?",
-    "UNLINK_DIALOG_MESSAGE": "Etes vous sûr de vouloir dissocier l'appareil {description} de votre compte ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via cet appareil."
-  },
-  "KAccountDevices": {
-    "DEVICES_USED": "Vérifier quand des appareils spécifiques ont eu accès à votre compte ci-dessous"
-  },
   "KMemberFilter": {
     "NONE": "Aucun",
     "OWNER": "Propriétaire",
@@ -857,6 +857,16 @@
   },
   "KTextArea": {
     "COLLAPSE": "Réduire"
+  },
+  "KInstallApp": {
+    "INSTALL_LABEL": "L'application est prête à être installé.",
+    "IOS_SHARE_ICON_LABEL": "Si vous ne l'installez pas, certaines fonctionnalités peuvent être limitées. Depuis Safari, appuyez sur",
+    "IOS_HOME_SCREEN_LABEL": ", puis sur “Ajouter à l'écran d'accueil”",
+    "INSTALL_BUTTON": "Installer l'application",
+    "SKIP_BUTTON": "Ignorer"
+  },
+  "utils": {
+    "PWA_VERSION_MISMATCH_LABEL": "Discordance de version, merci de rafraîchir la page pour profiter de la dernière version disponible",
+    "PWA_BUTTON_REFRESH": "Rafraîchir"
   }
 }
-

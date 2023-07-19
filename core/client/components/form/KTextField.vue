@@ -4,9 +4,11 @@
   </div>
   <q-input v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     type="text"
     v-model="model"
     :label="label"
+    :input-class="inputClass()"
     clearable
     :disable="disabled"
     :error="hasError"
@@ -35,6 +37,11 @@ export default {
       } else {
         return this.model
       }
+    }
+  },
+  methods: {
+    inputClass () {
+      return _.get(this.properties, 'field.inputClass', 'text-weight-regular')
     }
   }
 }

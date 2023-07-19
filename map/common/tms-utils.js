@@ -51,6 +51,8 @@ export async function discover (tmsUrl, searchParams = {}, caps = null) {
         obj.extent = { west, east, south, north }
       }
       probe.availableLayers[obj.id] = obj
+    }).catch(error => {
+      console.error(`Failed to fetch ${layer.$.href}`, error)
     })
     allPromises.push(p)
   }

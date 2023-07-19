@@ -5,6 +5,7 @@
     </div>
     <q-field v-else
       :for="properties.name + '-field'"
+      :id="properties.name + '-field'"
       :ref="onReferenceCreated"
       :label="label"
       stack-label

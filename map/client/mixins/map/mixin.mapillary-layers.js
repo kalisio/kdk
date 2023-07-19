@@ -33,9 +33,7 @@ export const mapillaryLayers = {
     }
   },
   created () {
-    // Initialize the component
-    this.mapillaryToken = undefined
-    // Check whether the token is initailized
+    // Check whether the token is initialized
     this.mapillaryToken = this.$store.get('capabilities.api.mapillary.token')
     if (!this.mapillaryToken) {
       logger.warn('You must provide a client token to use Mapillary')

@@ -1,4 +1,5 @@
-import { Platform } from 'quasar'
+import { Platform, Notify } from 'quasar'
+import { i18n } from '../i18n.js'
 
 export function getPlatform () {
   return Object.assign(Platform.is, {
@@ -6,5 +7,24 @@ export function getPlatform () {
     storage: Platform.has.webStorage,
     iframe: Platform.within.frame,
     agent: Platform.userAgent
+  })
+}
+
+export function updatePwa (registration) {
+  // Refresh the page once the update has been applied
+  registration.waiting.addEventListener('statechange', (event) => {
+    if (event.target.state === 'activated') {
+      window.location.reload()
+    }
+  })
+  // Notify when a new version is available
+  Notify.create({
+    type: 'warning',
+    timeout: 0,
+    message: i18n.t('utils.PWA_VERSION_MISMATCH_LABEL'),
+    actions: [
+      { label: i18n.t('utils.PWA_BUTTON_REFRESH'), color: 'white', handler: () => registration.waiting.postMessage({ type: 'SKIP_WAITING' }) },
+      { label: i18n.t('CLOSE'), color: 'white' }
+    ]
   })
 }

@@ -6,19 +6,19 @@
   >
     <div>
       <q-tabs  align="justify" v-model="mode" inverted>
-        <q-tab id="import-layer" name="import" icon="las la-desktop" />
-        <q-tab id="connect-layer" name="connect" icon="las la-plug" />
-        <q-tab id="create-layer" name="create" icon="las la-edit" />
+        <q-tab id="import-layer" name="import" icon="las la-desktop" v-if="modes.includes('import')" />
+        <q-tab id="connect-layer" name="connect" icon="las la-plug" v-if="modes.includes('connect')" />
+        <q-tab id="create-layer" name="create" icon="las la-edit" v-if="modes.includes('create')" />
       </q-tabs>
       <div>
         <q-tab-panels v-model="mode" animated>
-          <q-tab-panel name="import">
+          <q-tab-panel name="import" v-if="modes.includes('import')">
            <k-import-layer @done="closeModal" />
           </q-tab-panel>
-          <q-tab-panel name="connect">
+          <q-tab-panel name="connect" v-if="modes.includes('connect')">
             <k-connect-layer @done="closeModal" />
           </q-tab-panel>
-          <q-tab-panel name="create">
+          <q-tab-panel name="create" v-if="modes.includes('create')">
            <k-create-layer @done="closeModal" />
           </q-tab-panel>
         </q-tab-panels>
@@ -47,11 +47,19 @@ export default {
     contextId: {
       type: String,
       default: ''
+    },
+    defaultMode: {
+      type: String,
+      default: 'import'
+    },
+    modes: {
+      type: Array,
+      default: ['import', 'connect', 'create']
     }
   },
   data () {
     return {
-      mode: 'import'
+      mode: this.defaultMode
     }
   }
 }

@@ -10,16 +10,18 @@
     :dense="dense"
     :persistent="persistent"
     :auto-close="autoClose"
-    menu-anchor="bottom left"
+    :menu-anchor="direction === 'vertical' ? 'bottom left' : 'bottom middle' "
     menu-self="top left"
     flat
+    rounded
     no-caps
-    fab-mini
     @click="onClicked">
       <template v-slot:label>
         <div class="row items-center no-wrap">
-          <q-badge v-if="badge" v-bind="badge"></q-badge>
-          <div class="text-center">{{ $tie(label) }}</div>
+          <q-badge v-if="badge" v-bind="badge" />
+          <div class="text-center">
+            {{ $tie(label) }}
+          </div>
         </div>
       </template>
       <KPanel
@@ -28,7 +30,8 @@
         :mode="mode"
         :context="context"
         :action-renderer="actionRenderer"
-        direction="vertical"
+        :direction="direction"
+        class="no-wrap"
       />
   </q-btn-dropdown>
 </template>
@@ -36,7 +39,6 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
-import { useQuasar } from 'quasar'
 import KPanel from '../KPanel.vue'
 
 // Props
@@ -67,13 +69,17 @@ const props = defineProps({
   },
   dropdownIcon: {
     type: String,
-    default: ''
+    default: undefined
   },
   badge: {
     type: Object,
     default: () => null
   },
   disabled: {
+    type: Boolean,
+    default: false
+  },
+  dense: {
     type: Boolean,
     default: false
   },
@@ -105,6 +111,10 @@ const props = defineProps({
     type: Object,
     default: () => null
   },
+  direction: {
+    type: String,
+    default: () => 'vertical'
+  },
   actionRenderer: {
     type: String,
     default: 'button',
@@ -114,15 +124,9 @@ const props = defineProps({
   }
 })
 
-// Data
-const $q = useQuasar()
-
 // Computed
 const hasContent = computed(() => {
   return !_.isEmpty(props.content)
-})
-const dense = computed(() => {
-  return $q.screen.lt.sm
 })
 
 // Functions

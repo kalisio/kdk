@@ -10,15 +10,15 @@ const debug = makeDebug('kdk:core:services')
 
 export function createTagService (options = {}) {
   const app = this
-
   return app.createService('tags', Object.assign({
     servicesPath,
     modelsPath
   }, options))
 }
 
-export function removeTagService (options) {
-  // TODO
+export function removeTagService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('tags', options.context))
 }
 
 export function createStorageService (options = {}) {
@@ -32,20 +32,22 @@ export function createStorageService (options = {}) {
   }, options))
 }
 
-export function removeStorageService (options) {
-  // TODO
+export function removeStorageService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('storage', options.context))
 }
 
 export function createDatabasesService (options = {}) {
   const app = this
 
   return app.createService('databases', Object.assign({
-    servicesPath, events: ['created', 'updated', 'removed', 'patched'] // Internal use only, no events
+    servicesPath
   }, options))
 }
 
-export function removeDatabasesService (options) {
-  // TODO
+export function removeDatabasesService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('databases', options.context))
 }
 
 export async function createOrganisationService (options = {}) {
@@ -77,7 +79,7 @@ export async function createOrganisationService (options = {}) {
   orgsService.on('removed', organisation => {
     // Check if already done (initiator)
     const orgMembersService = app.getService('members', organisation)
-    if (orgMembersService) return
+    if (!orgMembersService) return
     orgsService.removeOrganisationServices(organisation)
   })
   return orgsService
@@ -113,17 +115,15 @@ export default async function () {
 
   const mailerConfig = app.get('mailer')
   if (mailerConfig) {
-    await app.createService('mailer', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
+    await app.createService('mailer', { servicesPath })
     debug('\'mailer\' service created')
     await app.createService('account', { servicesPath })
     debug('\'account\' service created')
   }
 
-  const pusherConfig = app.get('pusher')
-  if (pusherConfig) {
-    await app.createService('pusher', { servicesPath, events: ['created', 'updated', 'removed', 'patched'] }) // Internal use only, no events
-    debug('\'pusher\' service created')
-    await app.createService('devices', { servicesPath })
-    debug('\'devices\' service created')
+  const pushConfig = app.get('push')
+  if (pushConfig) {
+    await app.createService('push', { servicesPath })
+    debug('\'push\' service created')
   }
 }

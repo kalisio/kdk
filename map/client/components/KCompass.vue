@@ -3,9 +3,9 @@
     ref="compassRef"
     @mousedown="onStartDrag"
     @touchstart="onStartDrag"
-    @click="onClicked"
+    style="position: relative"
   >
-    <svg width="100%" heigh="100%" viewBox="0 0 100 100">
+    <svg width="100%" heigh="100%" viewBox="0 0 100 100" onclick="computeDirection">
       <circle
         cx="50" cy="50" r="44"
         :stroke="getCssVar('accent')"
@@ -13,15 +13,9 @@
         fill="none"
       />
       <polygon
-        points="50,20 58,50 42,50"
+        points="50,25 40,70 50,60 60,70"
         :fill="getCssVar('primary')"
         :stroke="getCssVar('primary')"
-        :transform="`rotate(${direction}, 50, 50)`"
-      />
-      <polygon
-        points="58,50 50,80 42,50"
-        :stroke="getCssVar('primary')"
-        fill="none"
         :transform="`rotate(${direction}, 50, 50)`"
       />
       <text x="50" y="7" text-anchor="middle" alignment-baseline="middle" font-size="8px" fill="white">
@@ -42,11 +36,33 @@
         :transform="`rotate(${i * (360/ticks)}, 50, 50)`"
       />
     </svg>
+    <div v-if="indicator"
+      style="position: absolute; top: 35%; left: 110%;">
+      <q-chip
+        color="primary"
+        text-color="white"
+        outline
+        :label="`${modelValue}°`"
+      />
+      <q-popup-edit
+        v-model="direction"
+        v-slot="scope"
+        auto-save
+      >
+        <q-input
+          v-model.number="scope.value"
+          suffix="°"
+          autofocus
+          dense
+          @keyup.enter="scope.set"
+        />
+      </q-popup-edit>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { getCssVar } from 'quasar'
 
 // Props
@@ -54,6 +70,10 @@ const props = defineProps({
   modelValue: {
     type: Number,
     default: 0
+  },
+  indicator: {
+    type: Boolean,
+    default: true
   },
   ticks: {
     type: Number,
@@ -66,7 +86,16 @@ const emit = defineEmits(['update:modelValue'])
 
 // Data
 const compassRef = ref(null)
-const direction = ref(props.modelValue)
+
+// Computed
+const direction = computed({
+  get: function () {
+    return props.modelValue ? props.modelValue : 0
+  },
+  set: function (value) {
+    emit('update:modelValue', value % 360)
+  }
+})
 
 // Functions
 function getRect () {
@@ -88,11 +117,6 @@ function computeDirection (x, y) {
   const dx = x - center.x
   const dy = y - center.y
   direction.value = (Math.round(Math.atan2(dy, dx) * 180 / Math.PI) + 450) % 360
-  emit('update:modelValue', direction.value)
-}
-function onClicked (event) {
-  const { x, y } = event
-  computeDirection(x, y)
 }
 function onHandleDrag (event) {
   const { x, y } = event.type.startsWith('touch') ? event.changedTouches[0] : event

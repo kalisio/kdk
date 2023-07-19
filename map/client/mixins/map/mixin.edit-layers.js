@@ -130,8 +130,6 @@ export const editLayers = {
       ]
 
       this.editedLayer = layer
-      // Make it selected as well
-      this.selectedLayer = layer
       this.editingLayer = true
       this.onEditStart(this.editedLayer)
 
@@ -242,7 +240,7 @@ export const editLayers = {
         query: this.$route.query,
         params: Object.assign(this.$route.params, {
           layerId: this.editedLayer._id,
-          layer: this.editedLayer,
+          layerName: this.editedLayer.name,
           featureId: feature._id,
           contextId: this.contextId
         })
@@ -398,6 +396,9 @@ export const editLayers = {
   },
   created () {
     this.pendingOperations = []
+  },
+  // Need to be done after created as the activity mixin initializes options in it
+  beforeMount () {
     // Perform required conversion for default feature styling
     if (_.has(this, 'activityOptions.engine.editFeatureStyle')) {
       this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editFeatureStyle'), 'update-in-place')

@@ -263,6 +263,7 @@
           </q-item-section>
           <q-item-section class="col-11">
             <q-select
+              for="style-popup-field"
               id="style-popup-field"
               :disable="!popup"
               use-chips
@@ -274,9 +275,8 @@
               <!-- Options display -->
               <template v-slot:option="scope">
                 <q-item
-                  :id="getPopupId(scope.opt)"
                   v-bind="scope.itemProps"
-                  v-on="scope.itemEvents"
+                  :id="getPopupId(scope.opt)"
                 >
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -296,6 +296,7 @@
           </q-item-section>
           <q-item-section class="col-11">
             <q-select
+              for="style-tooltip-field"
               id="style-tooltip-field"
               :disable="!tooltip"
               v-model="tooltipProperty"
@@ -305,9 +306,8 @@
               <!-- Options display -->
               <template v-slot:option="scope">
                 <q-item
-                  :id="getPopupId(scope.opt)"
                   v-bind="scope.itemProps"
-                  v-on="scope.itemEvents"
+                  :id="getPopupId(scope.opt)"
                 >
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -327,6 +327,7 @@
           </q-item-section>
           <q-item-section class="col-11">
             <q-select
+              for="style-infobox-field"
               id="style-infobox-field"
               :disable="!infobox"
               use-chips
@@ -338,9 +339,8 @@
               <!-- Options display -->
               <template v-slot:option="scope">
                 <q-item
-                  :id="getPopupId(scope.opt)"
                   v-bind="scope.itemProps"
-                  v-on="scope.itemEvents"
+                  :id="getPopupId(scope.opt)"
                 >
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>

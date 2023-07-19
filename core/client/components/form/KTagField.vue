@@ -14,6 +14,7 @@
     <q-select
       ref="select"
       :for="properties.name + '-field'"
+      :id="properties.name + '-field'"
       v-model="tags"
       :label="label"
       :multiple="true"
@@ -46,9 +47,8 @@
       <!-- Options display -->
       <template v-slot:option="scope">
         <q-item
-          :id="scope.opt.value"
           v-bind="scope.itemProps"
-          v-on="scope.itemEvents">
+          :id="scope.opt.value">
           <q-item-section v-if="hasIcon(scope.opt)" avatar>
             <q-icon :name="getIcon(scope.opt)" />
           </q-item-section>

@@ -5,11 +5,13 @@ import emailValidator from 'email-validator'
 import { Platform, Notify, Dialog, Loading, exportFile } from 'quasar'
 import { defineAsyncComponent, markRaw } from 'vue'
 
+export * from './utils.account.js'
 export * from './utils.colors.js'
 export * from './utils.content.js'
 export * from './utils.locale.js'
 export * from './utils.platform.js'
 export * from './utils.session.js'
+export * from './utils.push.js'
 
 Notify.setDefaults({
   position: 'bottom-left',
@@ -106,18 +108,7 @@ export function dataUriToBlob (dataUri) {
 
 export function downloadAsBlob (data, filename, mimeType) {
   const blob = new Blob([data], { type: mimeType })
-  if (Platform.is.cordova) {
-    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fs) => {
-      fs.root.getFile(filename, { create: true, exclusive: false }, (fileEntry) => {
-        fileEntry.createWriter((fileWriter) => {
-          fileWriter.write(blob)
-          cordova.plugins.fileOpener2.open(fileEntry.nativeURL, mimeType)
-        })
-      })
-    })
-  } else {
-    exportFile(filename, blob)
-  }
+  exportFile(filename, blob)
 }
 
 // Simplify Quasar dialog plugin usage with async/await

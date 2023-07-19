@@ -15,7 +15,7 @@ import { KModalEditor } from '../../../core/client/components'
 
 export default {
   name: 'k-layer-editor',
-  inject: ['kActivity', 'layer'],
+  inject: ['kActivity'],
   components: {
     KModalEditor
   },

@@ -245,24 +245,3 @@ export function addVerification (hook) {
 export function removeVerification (hook) {
   return verifyHooks.removeVerification()(hook)
 }
-
-export function unregisterDevices (hook) {
-  debug('Unregistering devices for user ', hook.params.user)
-  const pusherService = hook.app.getService('pusher')
-  const user = hook.params.user
-  // Process with each registered device
-  const unregisterPromises = []
-  if (user.devices) {
-    user.devices.forEach(device => {
-      unregisterPromises.push(
-        pusherService.remove(device.registrationId,
-          {
-            query: { action: 'device' },
-            user: hook.params.user
-          })
-      )
-    })
-  }
-  return Promise.all(unregisterPromises)
-    .then(results => hook)
-}

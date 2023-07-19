@@ -59,6 +59,10 @@ export default {
       type: String,
       default: 'md'
     },
+    hideSelected: {
+      type: Boolean,
+      default: true
+    },
     options: {
       type: [Array],
       required: true
@@ -73,7 +77,7 @@ export default {
     computedOptions () {
       const options = []
       _.forEach(this.options, option => {
-        if (!_.isEqual(option.value, this.option.value)) {
+        if (!this.hideSelected || !_.isEqual(option.value, this.option.value)) {
           option.key = uid()
           options.push(option)
         }

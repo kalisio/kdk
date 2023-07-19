@@ -10,7 +10,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { computed, watchEffect, onMounted } from 'vue'
+import { computed, watch, onMounted } from 'vue'
 import { uid } from 'quasar'
 import chroma from 'chroma-js'
 
@@ -237,9 +237,7 @@ function onResized (size) {
 }
 
 // watch
-watchEffect(() => {
-  if (canvas) refresh()
-})
+watch(props, () => { if (canvas) refresh() })
 
 // hooks
 onMounted(() => {

@@ -1,4 +1,7 @@
+import makeDebug from 'debug'
 import { click, clickAction, isElementVisible } from './utils.js'
+
+const debug = makeDebug('kdk:core:test:layout')
 
 export async function isHeaderVisible (page) {
   return isElementVisible(page, '#header-panel')
@@ -8,7 +11,7 @@ export async function isFooterVisible (page) {
   return isElementVisible(page, '#footer-panel')
 }
 
-async function clickOpener (page, placement) {
+export async function clickOpener (page, placement) {
   const selector = `#${placement}-opener`
   await page.evaluate((selector) => document.querySelector(selector).click(), selector)
   await page.waitForTimeout(500)
@@ -18,21 +21,43 @@ export async function isPaneVisible (page, placement) {
   return isElementVisible(page, `#${placement}-panel`)
 }
 
-export async function openPane (page, placemeent) {
-  const isOpen = await isPaneVisible(page, placemeent)
-  if (!isOpen) await clickOpener(page, placemeent)
+export async function openPane (page, placement) {
+  const isOpen = await isPaneVisible(page, placement)
+  if (!isOpen) {
+    debug(`Opening ${placement} pane`)
+    await clickOpener(page, placement)
+  }
 }
 
 export async function closePane (page, placement) {
   const isOpen = await isPaneVisible(page, placement)
-  if (isOpen) await clickOpener(page, placement)
+  if (isOpen) {
+    debug(`Closing ${placement} pane`)
+    await clickOpener(page, placement)
+  }
 }
 
-export async function clickPaneAction (page, placement, action, wait) {
+// Click a serie of actions in a pane and close it if it was previously closed
+// once all actions have been clicked (useful for overflow menus for instance).
+export async function clickPaneActions (page, placement, actions, wait) {
   const isPaneVisible = await isElementVisible(page, `#${placement}-panel`)
-  if (!isPaneVisible) await clickOpener(page, placement)
-  await clickAction(page, action, wait)
-  if (!isPaneVisible && placement !== 'left') await clickOpener(page, placement)
+  if (!isPaneVisible) {
+    debug(`Opening ${placement} pane`)
+    await clickOpener(page, placement)
+  }
+  for (let i = 0; i < actions.length; i++) {
+    await clickAction(page, actions[i], wait)
+  }
+  // Left pane closes automatically on action click
+  if (!isPaneVisible && placement !== 'left') {
+    debug(`Closing ${placement} pane`)
+    await clickOpener(page, placement)
+  }
+}
+
+// Click a single action in a pane and close it if it was previously closed.
+export async function clickPaneAction (page, placement, action, wait) {
+  await clickPaneActions(page, placement, [action], wait)
 }
 
 export async function isWindowVisible (page, placement) {

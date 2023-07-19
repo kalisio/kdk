@@ -21,7 +21,7 @@ export const Reader = {
     for (let i = 0; i < filelist.length; ++i) {
       const file = filelist[i]
       // Check whether a reader is assigned to the file type
-      const fileExt = path.extname(file.name)
+      const fileExt = path.extname(file.name).toLowerCase()
       let reader = this.readers[fileExt]
       if (reader) {
         acceptedFiles.push({ reader: fileExt, name: file.name, files: [file] })
@@ -49,7 +49,7 @@ export const Reader = {
   },
   async read (file, options) {
     const reader = this.readers[file.reader]
-    Loading.show({ message: i18n.t('reader.READING_FILE', { file: file.name }) })
+    Loading.show({ message: i18n.t('reader.READING_FILE', { file: file.name }), html: true })
     try {
       const content = await reader.read(file.files, options)
       Loading.hide()

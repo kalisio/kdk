@@ -1,6 +1,7 @@
 <template>
   <q-select
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     ref="select"
     v-model="request"
     :label="label"
@@ -25,7 +26,7 @@
     </template>
     <!-- Options -->
     <template v-slot:option="scope">
-      <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+      <q-item v-bind="scope.itemProps">
         <q-item-section avatar>
           <q-badge dense>{{ scope.opt.protocol }}</q-badge>
         </q-item-section>

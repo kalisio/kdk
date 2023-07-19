@@ -186,7 +186,8 @@ export function useWeather (options = {}) {
     }
   }
   function createWindBarbMarker (feature) {
-    return new L.WindBarb.Icon(getWindBarbOptions(feature))
+    const options = getWindBarbOptions(feature)
+    return (options ? new L.WindBarb.Icon(getWindBarbOptions(feature)) : null)
   }
   function getProbedLocationForecastTooltip (feature, layer, options) {
     const html = getForecastAsHtml(feature)

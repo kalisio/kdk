@@ -3,7 +3,25 @@ import logger from 'loglevel'
 import sift from 'sift'
 import { Store } from '../store.js'
 
-const handlers = ['handler', 'visible', 'disabled', 'on.listener']
+const Handlers = ['handler', 'visible', 'hidden', 'disabled', 'on.listener']
+// Some bindings are not managed when reading content from config but externally on-demand, e.g. by KContent or KAction
+// The content 'reserved' property is also used to recurse at caller level
+const ReservedBindings = ['content', 'visible', 'hidden', 'route']
+
+// Check if an object has a property according to its path.
+// Similar to lodash has function which causes a bug in production build with Vue proxy objects
+// It appears that with proxy objects it is safer to use the in operator or Reflect.has()
+function hasProperty (object, path) {
+  const keys = path.split('.')
+  let currentObject = object
+  for (const key of keys) {
+    if (!currentObject || !(key in currentObject)) {
+      return false
+    }
+    currentObject = currentObject[key]
+  }
+  return true
+}
 
 export function filterContent (content, filter) {
   // Handle non object content
@@ -41,14 +59,11 @@ export function bindContent (content, context) {
   const components = _.flatMapDeep(content)
   _.forEach(components, (component) => {
     // Process component handlers
-    handlers.forEach(handler => bindHandler(component, handler, context))
+    Handlers.forEach(handler => bindHandler(component, handler, context))
     // Then process component props
     // It allows to write any property like { label: ':xxx' } and bind it
     // to a component property from the context like we do for handler
     bindProperties(component, context)
-    // The only way to make it work is to add props at the root level
-    const binding = component.bind ? component.bind : null
-    if (binding) component.props = _.get(context, binding)
     // Recursively bind the props/handlers on the sub content object
     if (component.content) bindContent(component.content, context)
   })
@@ -62,16 +77,10 @@ export function bindProperties (item, context) {
     }
   } else if (typeof item === 'object') {
     _.forOwn(item, (value, key) => {
-      // Skip 'reserved' property
-      if ((key !== 'content') && (key !== 'bind')) {
-        // Only bind required properties
-        if ((typeof value === 'string') && value.startsWith(':')) {
-          // From store or context ?
-          if (value.startsWith(':store.')) {
-            item[key] = Store.getRef(value.replace(':store.', ''))
-          } else if (key !== 'visible') {
-            item[key] = _.get(context, value.substring(1))
-          }
+      // Bind required properties only
+      if (!ReservedBindings.includes(key)) {
+        if (typeof value === 'string') {
+          item[key] = getBoundValue(value, context)
         } else {
           item[key] = bindProperties(value, context)
         }
@@ -138,10 +147,37 @@ export function bindParams (params, context) {
   } else if (typeof params === 'object') {
     return _.mapValues(params, (value, key) => bindParams(value, context))
   } else {
-    return bindParam(params, context)
+    return getBoundValue(params, context)
   }
 }
 
-export function bindParam (param, context) {
-  return (typeof param === 'string') ? (param.startsWith(':') ? _.get(context, param.substring(1)) : param) : param
+export function getBoundValue (value, context) {
+  if ((typeof value === 'string') && value.startsWith(':')) {
+    // From store or context ?
+    if (value.startsWith(':store.')) {
+      const path = value.replace(':store.', '')
+      if (Store.has(path)) return Store.get(path)
+    } else if (value.startsWith(':storeRef.')) {
+      const path = value.replace(':storeRef.', '')
+      // FIXME: we should test if the path exists but this causes
+      // a bug in production build with Vue proxy objects
+      // if (Store.has(path)) return Store.getRef(path)
+      if (hasProperty(Store, path)) return Store.getRef(path)
+      // Workaround if not possible to correctly check the path first
+      // but it causes problems with values initialized to null
+      // const result = Store.getRef(path)
+      // if (!_.isNil(result)) return result
+    } else {
+      const path = value.substring(1)
+      // FIXME: we should test if the path exists but this causes
+      // a bug in production build with Vue proxy objects
+      // if (_.has(context, path)) return _.get(context, path)
+      if (hasProperty(context, path)) return _.get(context, path)
+      // Workaround if not possible to correctly check the path first
+      // but it causes problems with values initialized to null
+      // const result = _.get(context, path)
+      // if (!_.isNil(result)) return result
+    }
+  }
+  return value
 }

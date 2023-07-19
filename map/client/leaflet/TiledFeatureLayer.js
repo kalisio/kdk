@@ -103,8 +103,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
             collection.push(_.cloneDeep(internalFeature.geojson))
           }
           collection = featureCollection(collection)
-          this.activity.updateLayer(this.layer.name, collection, true)
-          this.activity.updateLayer(this.layer.name, collection)
+          this.activity.updateLayer(this.layer.name, collection, { replace: true })
         } else if (this.pendingStationUpdates.length) {
           // Otherwise apply pending station updates
           for (const collection of this.pendingStationUpdates) {
@@ -526,7 +525,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       })
       this.flyingTiles.delete(tile2key(tile.coords))
     })
-    if (removeCollection.length) this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), true)
+    if (removeCollection.length) this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), { remove: true })
 
     if (this.enableDebug) {
       logger.debug(`TiledFeatureLayer: flyingTiles is ${this.flyingTiles.size} long`)
@@ -557,7 +556,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
   redraw () {
     // clear underlying geojson layer
     const allFeatures = Array.from(this.allFeatures.values(), (feat) => feat.geojson)
-    this.activity.updateLayer(this.layer.name, featureCollection(allFeatures), true)
+    this.activity.updateLayer(this.layer.name, featureCollection(allFeatures), { remove: true })
 
     this.flyingTiles.clear()
     this.modifiedTiles.clear()

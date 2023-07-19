@@ -9,13 +9,14 @@
         :ref="onFormReferenceCreated"
         :schema="schema"
         @form-ready="onFormReady"
+        class="q-pa-sm"
       />
     </div>
     <!--
       Buttons section
     -->
-    <div>
-      <div class="q-pt-md row justify-end">
+    <div v-if="!hideButtons">
+      <div class="row justify-end">
         <q-btn v-if="clearButton !== ''" id="clear-button" color="primary" :label="clearButton" @click="clearEditor"/>
         <q-btn v-if="resetButton !== ''" id="reset-button" color="primary" :label="resetButton" @click="resetEditor"/>
         <q-btn v-if="applyButton !== ''" id="apply-button" color="primary" :label="applyButton" @click="apply"/>
@@ -38,6 +39,12 @@ export default {
     objectProxy,
     schemaProxy
   ],
+  props: {
+    hideButtons: {
+      type: Boolean,
+      default: false
+    }
+  },
   async created () {
     await this.refresh()
   }

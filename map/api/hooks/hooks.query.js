@@ -125,7 +125,8 @@ export function asGeoJson (options = {}) {
                // When performing feature aggregation on geometries the result can be an array
                Array.isArray(_.get(item, geometryProperty)) ||
                // Check for a geometry property (previously provided or already transformed item)
-               (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates'))
+               (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) ||
+               (_.has(item, geometryProperty + '.geometry.type') && _.has(item, geometryProperty + '.geometry.coordinates'))
       })
       .map(item => {
         let coordinates
@@ -143,10 +144,11 @@ export function asGeoJson (options = {}) {
           item = _.omit(item, options.omit)
         }
         // Item locations are already in GeoJson format
-        if (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) {
+        if ((_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) ||
+            (_.has(item, geometryProperty + '.geometry.type') && _.has(item, geometryProperty + '.geometry.coordinates'))) {
           return Object.assign({
             type: 'Feature',
-            geometry: _.get(item, geometryProperty),
+            geometry: _.get(item, geometryProperty + '.geometry', _.get(item, geometryProperty)),
             properties: {}
           }, _.omit(item, [geometryProperty]))
         } else if (Array.isArray(_.get(item, geometryProperty))) {
@@ -292,16 +294,16 @@ export async function aggregateFeaturesQuery (hook) {
       // Provide a hint to the aggregation targeting feature ID and aggregation elements.
       // The problem with the aggregation hint option is that it should correspond
       // exactly to an existing index otherwise it raises an error.
-      // We use a convention to get the order right: feature ID => aggregated element => time.
+      // We use a convention to get the order right: geometry => feature ID => aggregated element => time.
       // We check anyway if the index does exist to avoid any error
       // FIXME: Instead of assuming the appropriate index is defined in the right order,
       // we might select the "best" available index (ie having the most similarities with the required one).
       const hint = {}
+      if (isGeometry || query.$geoNear || match.geometry) Object.assign(hint, { geometry: '2dsphere' })
       featureId.forEach(id => {
         hint['properties.' + id] = 1
       })
-      if (isGeometry) Object.assign(hint, { geometry: 1 })
-      else Object.assign(hint, { ['properties.' + element]: 1 })
+      Object.assign(hint, { ['properties.' + element]: 1 })
       // Use provided sort time option if any
       hint.time = _.get(query, '$sort.time', 1)
       const hintIndexName = _.reduce(hint, (name, value, key) => name ? `${name}_${key}_${value}` : `${key}_${value}`, '')

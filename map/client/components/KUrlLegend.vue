@@ -70,7 +70,7 @@ export default {
         if (this.kActivity.isLayerVisible(layer.name)) {
           this.legends.push({
             src: legendUrl,
-            layer: layer.name,
+            layer: layer.label || layer.name,
             visible: true
           })
         }

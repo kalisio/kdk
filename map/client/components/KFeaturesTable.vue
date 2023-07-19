@@ -1,35 +1,34 @@
 <template>
-  <k-modal
+  <KModal
     id="features-table-modal"
     :title="title"
-    :maximized="isModalMaximized"
+    widthPolicy="wide"
     :buttons="buttons"
     v-model="isModalOpened"
   >
-    <k-table
-      service="features"
+    <KTable
+      :service="service"
       :contextId="contextId"
       :schema-json="schema"
       :item-actions="actions"
       :base-query="layer.baseQuery"
-      :style="`height: ${height}px; max-width: ${width}px;`">
+    >
       <template v-slot:empty-section>
         <div class="absolute-center">
           <KStamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KTable.EMPTY_TABLE')" />
         </div>
       </template>
-    </k-table>
-  </k-modal>
+    </KTable>
+  </KModal>
 </template>
 
 <script>
 import _ from 'lodash'
 import centroid from '@turf/centroid'
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
 import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
-  name: 'k-features-table',
   inject: ['kActivity', 'selectedLayer'],
   components: {
     KTable,
@@ -42,6 +41,10 @@ export default {
       type: String,
       default: ''
     },
+    layerName: {
+      type: String,
+      default: ''
+    },
     contextId: {
       type: String,
       default: ''
@@ -49,7 +52,8 @@ export default {
   },
   data () {
     return {
-      layer: this.selectedLayer
+      service: 'features',
+      layer: {}
     }
   },
   computed: {
@@ -63,7 +67,7 @@ export default {
     },
     actions () {
       return [{
-        name: 'zoom-to',
+        id: 'zoom-to',
         tooltip: this.$t('mixins.activity.ZOOM_TO_LABEL'),
         icon: 'zoom_out_map',
         handler: (context) => {
@@ -73,12 +77,6 @@ export default {
         }
       }]
     },
-    width () {
-      return this.$q.screen.width - 50
-    },
-    height () {
-      return this.$q.screen.height - 80
-    },
     schema () {
       return JSON.stringify(_.get(this.layer, 'schema.content'))
     }
@@ -86,8 +84,15 @@ export default {
   methods: {
     async openModal () {
       // If not injected load it
-      if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+      if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+      else this.layer = await this.$api.getService('catalog').get(this.layerId)
+      this.service = _.get(this.layer, '_id') ? 'features' : 'features-edition'
       kCoreMixins.baseModal.methods.openModal.call(this, true)
+    }
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
     }
   }
 }

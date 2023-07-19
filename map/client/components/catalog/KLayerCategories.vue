@@ -161,10 +161,10 @@ export default {
           },
           layers: {
             type: 'array',
+            multiselect: true,
             field: {
               component: 'form/KSelectField',
               label: 'schemas.LAYER_CATEGORY_LAYERS_FIELD_LABEL',
-              multiple: true,
               chips: true,
               options: this.layers
             }

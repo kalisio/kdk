@@ -6,6 +6,7 @@
   </div>
   <q-file v-else
     :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
     v-model="file"
     :label="label"
     clearable
@@ -29,6 +30,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
+import { markRaw } from 'vue'
 import { baseField } from '../../mixins'
 import { i18n } from '../../i18n.js'
 import { Reader } from '../../reader.js'
@@ -78,7 +80,8 @@ export default {
             const file = acceptedFiles[0]
             try {
               const content = await Reader.read(file)
-              this.model = { name: this.file.name, type: this.file.type, content }
+              // Avoid making file content reactive as it might be large and it is not used in UI
+              this.model = { name: this.file.name, type: this.file.type, content: markRaw(content) }
               this.onChanged()
             } catch (error) {
               this.error = error

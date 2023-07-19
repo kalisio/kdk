@@ -3,12 +3,12 @@
     <k-layers-selector :layers="filteredLayers" :options="options">
       <template v-slot:header>
         <div class="q-ma-sm">
-          <q-select id="forecast-model" v-model="model" :options="forecastModels" filled @update:model-value="onModelChanged">
+          <q-select for="forecast-model" id="forecast-model" v-model="model" :options="models" filled map-options emit-value @update:model-value="onModelChanged">
             <template v-slot:prepend>
               <q-icon name="las la-globe" />
             </template>
             <template v-slot:option="scope">
-              <q-item v-bind="scope.itemProps" v-on="scope.itemEvents" :id="scope.opt.name">
+              <q-item v-bind="scope.itemProps" :id="scope.opt.name">
                 <q-item-section avatar>
                   <q-icon v-if="!scope.opt.iconUrl" :name="scope.opt.icon || 'las la-globe'" />
                 </q-item-section>
@@ -52,20 +52,17 @@ export default {
       type: Array,
       default: () => []
     },
-    forecastModelHandlers: {
-      type: Object,
-      default: () => {}
-    },
-    forecastModel: {
-      type: Object,
-      default: () => {}
-    },
     options: {
       type: Object,
       default: () => {}
     }
   },
   computed: {
+    models () {
+      return this.forecastModels.map(forecastModel => Object.assign({
+        value: forecastModel.name
+      }, _.pick(forecastModel, ['label', 'description', 'icon', 'iconUrl'])))
+    },
     filteredLayers () {
       if (this.mode === 'forecast') return this.filterForecastLayers()
       return this.filterArchiveLayers()
@@ -73,13 +70,8 @@ export default {
   },
   data () {
     return {
-      model: {},
+      model: '',
       mode: 'forecast'
-    }
-  },
-  watch: {
-    forecastModel: function (model) {
-      this.model = model
     }
   },
   methods: {
@@ -104,7 +96,8 @@ export default {
           if (_.has(layer, 'meteo_model')) {
             // check layer supports the current model
             // either with default model, or with a specific source
-            if (_.get(layer.meteo_model, 'default.model') === this.model.name || _.find(layer.meteo_model.sources, { model: this.model.name })) archiveLayers.push(layer)
+            if (_.get(layer.meteo_model, 'default.model') === this.model ||
+                _.find(layer.meteo_model.sources, { model: this.model })) archiveLayers.push(layer)
             else this.hideLayer(layer)
           } else {
             this.hideLayer(layer)
@@ -113,16 +106,24 @@ export default {
       })
       return archiveLayers
     },
-    callHandler (action, layer) {
-      if (this.forecastModelHandlers[action]) this.forecastModelHandlers[action](layer)
-    },
     onModelChanged (model) {
-      this.callHandler('toggle', model)
+      const forecastModel = this.forecastModels.find(forecast => forecast.name === model)
+      if (forecastModel) {
+        const toggleAction = _.find(forecastModel.actions, { id: 'toggle' })
+        if (toggleAction) toggleAction.handler()
+      }
     }
   },
   created () {
-    // Set the current forecast model
-    this.model = this.forecastModel
+    // Select default if any or first one
+    let forecastModel = this.forecastModels.find(forecast => forecast.isDefault)
+    if (!forecastModel) {
+      forecastModel = (this.forecastModels.length > 0 ? this.forecastModels[0] : '')
+    }
+    if (forecastModel) {
+      this.model = forecastModel.name
+      this.onModelChanged(forecastModel.name)
+    }
   }
 }
 </script>

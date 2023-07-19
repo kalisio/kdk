@@ -64,6 +64,19 @@ export default {
       // If the feature is linked to a layer with variables use it
       // Otherwise use all available variables to search for those applicable to it
       return (this.layer && this.layer.variables ? this.layer.variables : this.kActivity.variables)
+    },
+    runOptions () {
+      // Build options from runtimes for UI
+      let runOptions = []
+      if (this.hasRunTimes()) {
+        runOptions = this.runTimes.map(runTime => ({
+          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
+          value: runTime
+        }))
+        // Select latest runTime as default option
+        _.last(runOptions).default = true
+      }
+      return runOptions
     }
   },
   watch: {
@@ -78,7 +91,9 @@ export default {
   data () {
     return {
       probedLocation: null,
-      zoomHistory: []
+      zoomHistory: [],
+      runTime: null,
+      runTimes: []
     }
   },
   methods: {
@@ -99,6 +114,9 @@ export default {
       const unit = variable.units[0]
       // Could be either directly the unit or the property of the measure storing the unit
       return _.get(properties, unit, unit)
+    },
+    hasRunTimes () {
+      return this.runTimes && (this.runTimes.length > 1)
     },
     getSelectedRunTime () {
       // Set default run as latest
@@ -178,7 +196,7 @@ export default {
               color: this.datasets[axisId].backgroundColor,
               callback: function (value, index, values) {
                 if (values[index] !== undefined) {
-                  return Units.format(values[index].value, baseUnit, unit, { symbol: false })
+                  return Units.format(values[index].value, unit, unit, { symbol: false })
                 }
               }
             }
@@ -302,10 +320,10 @@ export default {
                     return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.short')}` : '')
                   },
                   label: (context) => {
-                    const { baseUnit, unit, label } = context.dataset
+                    const { unit, label } = context.dataset
                     const y = _.get(context, 'parsed.y')
                     // We have unit in label name for legend but we want it after the value for tooltip
-                    return label.replace(`(${Units.getUnitSymbol(unit)})`, '') + ': ' + Units.format(y, baseUnit, unit)
+                    return label.replace(`(${Units.getUnitSymbol(unit)})`, '') + ': ' + Units.format(y, unit, unit)
                   }
                 }
               },
@@ -335,10 +353,6 @@ export default {
     },
     onUpdateRun (runTime) {
       this.runTime = runTime
-      // Update tooltip action
-      const action = _.find(this.$store.get('window.widgetActions'), { id: 'run-options' })
-      action.tooltip = this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
-        ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')'
       this.setupGraph()
     },
     updateProbedLocationHighlight () {
@@ -403,71 +417,16 @@ export default {
       filename += '_' + new Date().toLocaleString()
       downloadAsBlob(csv, _.snakeCase(filename) + '.csv', 'text/csv;charset=utf-8;')
     },
-    refreshActions () {
-      let actions = [{
-        id: 'absolute-time-range',
-        component: 'time/KAbsoluteTimeRange'
-      },
-      {
-        id: 'restore-time-range',
-        icon: 'las la-undo',
-        tooltip: 'KTimeSeries.RESTORE_TIME_RANGE',
-        visible: !_.isEmpty(this.zoomHistory),
-        handler: this.onZoomRestored
-      },
-      {
-        id: 'relative-time-ranges',
-        component: 'menu/KMenu',
-        icon: 'las la-history',
-        content: [{
-          component: 'time/KRelativeTimeRanges',
-          ranges: ['last-hour', 'last-2-hours', 'last-3-hours', 'last-6-hours',
-            'last-12-hours', 'last-day', 'last-2-days', 'last-3-days', 'last-week',
-            'next-12-hours', 'next-day', 'next-2-days', 'next-3-days']
-        }]
-      }]
-
-      // When forecast data are available allow to select wich run to use
-      if (this.runTimes && (this.runTimes.length > 1)) {
-        // Select latest runTime as default option
-        const runOptions = this.runTimes.map(runTime => ({
-          label: Time.format(runTime, 'date.short') + ' - ' + Time.format(runTime, 'time.short'),
-          value: runTime
-        }))
-        _.last(runOptions).default = true
-        // Registers the action
-        actions.push({
-          id: 'run-options',
-          component: 'input/KOptionsChooser',
-          icon: 'las la-clock',
-          tooltip: this.$t('KTimeSeries.RUN') + ' (' + Time.format(this.getSelectedRunTime(), 'date.short') +
-            ' - ' + Time.format(this.getSelectedRunTime(), 'time.short') + ')',
-          options: runOptions,
-          on: { event: 'option-chosen', listener: this.onUpdateRun }
-        })
-      }
-      actions = actions.concat([{
-        id: 'center-view',
-        icon: 'las la-eye',
-        tooltip: 'KTimeSeries.CENTER_ON',
-        visible: this.probedVariables,
-        handler: this.onCenterOn
-      },
-      {
-        id: 'export-feature',
-        icon: 'las la-file-download',
-        tooltip: 'KTimeSeries.EXPORT_SERIES',
-        visible: this.probedVariables,
-        handler: this.onExportSeries
-      }])
-      this.window.widgetActions = actions
-    },
     async refresh () {
       // Clear previous run time setup if any
       this.runTime = null
       this.probedLocation = null
       this.clearHighlights()
-      if (!this.location) return
+      if (!this.location) {
+        // Clear current graph if any
+        this.chart.clear()
+        return
+      }
       // Then manage selection
       this.highlight(this.location, this.layer)
       if (this.hasProbedLocation()) this.centerOnProbe()
@@ -504,19 +463,21 @@ export default {
       this.updateProbedLocationHighlight()
     }
   },
-  mounted () {
-    // Setup listeners
+  async mounted () {
+    // Initialize the time range
+    const span = this.$store.get('timeseries.span')
+    const start = moment(Time.getCurrentTime()).subtract(span, 'm')
+    const end = moment(Time.getCurrentTime()).add(span, 'm')
+    Time.patchRange({ start, end })
+    // Force a first refresh
+    await this.refresh()
+    // Then setup listeners
     this.$events.on('time-current-time-changed', this.refresh)
     this.$events.on('time-range-changed', this.refresh)
     this.$events.on('time-format-changed', this.refresh)
     this.$events.on('timeseries-span-changed', this.refresh)
     this.kActivity.$engineEvents.on('forecast-model-changed', this.refresh)
     this.kActivity.$engineEvents.on('selected-level-changed', this.refresh)
-    // Initialize the time range
-    const span = this.$store.get('timeseries.span')
-    const start = moment(Time.getCurrentTime()).subtract(span, 'm')
-    const end = moment(Time.getCurrentTime()).add(span, 'm')
-    Time.patchRange({ start, end })
   },
   beforeUnmount () {
     // Release listeners

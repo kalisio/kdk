@@ -21,7 +21,7 @@
           v-model="currentPage"
           :max="nbPages"
           :input="true"
-          @update:model-value="onPageChanged"
+          @update:model-value="refreshCollection"
         />
       </div>
     </div>
@@ -39,73 +39,93 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import KStamp from '../KStamp.vue'
-import { service, baseCollection } from '../../mixins'
+import { Events } from '../../events.js'
+import { useCollection } from '../../composables'
 import { loadComponent } from '../../utils'
 
-export default {
-  components: {
-    KStamp
-  },
-  mixins: [
-    service,
-    baseCollection
-  ],
-  props: {
-    renderer: {
-      type: Object,
-      default: () => {
-        return {
-          component: 'collection/KItem'
-        }
+const emit = defineEmits(['selection-changed', 'collection-refreshed'])
+
+// Props
+const props = defineProps({
+  renderer: {
+    type: Object,
+    default: () => {
+      return {
+        component: 'collection/KItem'
       }
-    },
-    baseQuery: {
-      type: Object,
-      default: function () {
-        return {}
-      }
-    },
-    filterQuery: {
-      type: Object,
-      default: function () {
-        return {}
-      }
-    },
-    listStrategy: {
-      type: String
     }
   },
-  computed: {
-    rendererComponent () {
-      return loadComponent(this.renderer.component)
+  contextId: {
+    type: String,
+    default: undefined
+  },
+  service: {
+    type: String,
+    required: true
+  },
+  baseQuery: {
+    type: Object,
+    default: function () {
+      return {}
     }
   },
-  watch: {
-    baseQuery: function () {
-      this.resetCollection()
-    },
-    filterQuery: function () {
-      this.resetCollection()
+  filterQuery: {
+    type: Object,
+    default: function () {
+      return {}
     }
   },
-  methods: {
-    getCollectionBaseQuery () {
-      return this.baseQuery
-    },
-    getCollectionFilterQuery () {
-      return this.filterQuery
-    }
+  listStrategy: {
+    type: String,
+    default: 'smart'
   },
-  created () {
-    // Force the collection to be refreshed
-    this.refreshCollection()
-    // Whenever the user abilities are updated, update collection as well
-    this.$events.on('user-abilities-changed', this.refreshCollection)
-  },
-  beforeUnmount () {
-    this.$events.off('user-abilities-changed', this.refreshCollection)
+  nbItemsPerPage: {
+    type: Number,
+    default: 12
   }
+})
+
+// Computed
+const rendererComponent = computed(() => loadComponent(props.renderer.component))
+
+// Functions
+function onItemToggled (item, toggled) {
+  emit('item-toggled', item, toggled)
 }
+function onItemSelected (item, section) {
+  emit('selection-changed', item, section)
+}
+function onCollectionRefreshed () {
+  emit('collection-refreshed', items.value)
+}
+
+const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
+
+// Lifecycle hooks
+
+// Emit events so that embbeding components can be aware of it
+watch(items, onCollectionRefreshed)
+
+onBeforeMount(() => {
+  refreshCollection()
+  // Whenever the user abilities are updated, update collection as well
+  Events.on('user-abilities-changed', refreshCollection)
+})
+
+onBeforeUnmount(() => {
+  Events.off('user-abilities-changed', refreshCollection)
+})
+
+// Expose
+defineExpose({
+  items,
+  nbTotalItems,
+  nbPages,
+  currentPage,
+  refreshCollection,
+  resetCollection
+})
 </script>

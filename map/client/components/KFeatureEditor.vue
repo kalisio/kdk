@@ -15,13 +15,12 @@
 
 <script>
 import _ from 'lodash'
-import { mixins as kCoreMixins } from '../../../core/client'
+import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
 import { updatePropertiesSchema } from '../utils.js'
 import { KModalEditor } from '../../../core/client/components'
 
 export default {
   name: 'k-feature-editor',
-  inject: ['kActivity', 'selectedLayer'],
   components: {
     KModalEditor
   },
@@ -32,6 +31,10 @@ export default {
     layerId: {
       type: String,
       required: true
+    },
+    layerName: {
+      type: String,
+      default: ''
     },
     featureId: {
       type: String,
@@ -45,7 +48,7 @@ export default {
   data () {
     return {
       service: 'features',
-      layer: this.selectedLayer
+      layer: {}
     }
   },
   methods: {
@@ -60,7 +63,7 @@ export default {
       if (this.layer._id) {
         await this.kActivity.editFeaturesProperties(updatedFeature)
       } else {
-        await this.$api.getService('features-edition').patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
+        await this.$api.getService(this.service).patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
       }
     },
     async loadLayerSchema () {
@@ -76,8 +79,14 @@ export default {
   },
   async created () {
     // If not injected load it
-    if (!this.layer) this.layer = await this.$api.getService('catalog').get(this.layerId)
+    if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+    else this.layer = await this.$api.getService('catalog').get(this.layerId)
     this.service = _.get(this.layer, '_id') ? 'features' : 'features-edition'
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
+    }
   }
 }
 </script>

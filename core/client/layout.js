@@ -7,9 +7,20 @@ import { bindContent } from './utils/utils.content.js'
 
 const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
-const contentDefaults = { content: null, filter: {}, mode: null, visible: false }
+const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined }
+const hWindowSizePolicy = {
+  minSize: [300, 200],
+  floating: { position: [0, 0], size: [300, 200] },
+  pinned: { xs: [100, 30], sm: [90, 30], md: [80, 30], lg: [70, 30], xl: [60, 30] }
+}
+const vWindowSizePolicy = {
+  minSize: [200, 300],
+  floating: { position: [0, 0], size: [200, 300] },
+  pinned: { xs: [50, 90], sm: [40, 80], md: [30, 75], lg: [25, 75], xl: [20, 75] }
+}
 const defaults = {
-  layout: { view: 'lHh LpR lFf', mode: null },
+  layout: { view: 'lHh LpR lFf', mode: undefined },
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults },
@@ -21,10 +32,10 @@ const defaults = {
     bottom: { ...contentDefaults, opener: false }
   },
   windows: {
-    left: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: null },
-    top: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: null },
-    right: { ...contentDefaults, position: undefined, size: undefined, minSize: [200, 300], current: null },
-    bottom: { ...contentDefaults, position: undefined, size: undefined, minSize: [300, 200], current: null }
+    left: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowSizePolicy },
+    top: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowSizePolicy },
+    right: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowSizePolicy },
+    bottom: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowSizePolicy }
   }
 }
 
@@ -200,7 +211,7 @@ export const Layout = {
     Store.patch(this.getElementPath('fab'), { icon })
   },
   setFabPosition (position) {
-    if (!['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes('position)')) {
+    if (!['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes(position)) {
       logger.warn(`[KDK] Invalid position ${position}`)
       return
     }
@@ -252,6 +263,15 @@ export const Layout = {
   setWindowVisible (placement, visible) {
     this.setElementVisible(`windows.${placement}`, visible)
   },
+  setWindowState (placement, state) {
+    if (!['pinned', 'floating', 'maximized'].includes(state)) {
+      logger.warn(`[KDK] Invalid window state ${state}`)
+      return
+    }
+    const props = this.getElement(`windows.${placement}`)
+    if (props.state === state) return
+    Store.patch(this.getElementPath(`windows.${placement}`), { state })
+  },
   setWindowPosition (placement, position) {
     if (!Array.isArray(position) && position.length !== 2) {
       logger.warn(`[KDK] Invalid position ${position}`)
@@ -270,14 +290,14 @@ export const Layout = {
     if (_.isEqual(props.size, size)) return
     Store.patch(this.getElementPath(`windows.${placement}`), { size })
   },
-  setWindowMinSize (placement, size) {
-    if (!Array.isArray(size) && size.length !== 2) {
-      logger.warn(`[KDK] Invalid size ${size}`)
+  setWindowSizePolicy (placement, policy) {
+    if (!policy.minSize || !policy.floating || !policy.pinned) {
+      logger.warn(`[KDK] Invalid sizePolicy ${policy}`)
       return
     }
     const props = this.getElement(`windows.${placement}`)
-    if (_.isEqual(props.minSize, size)) return
-    Store.patch(this.getElementPath(`windows.${placement}`), { minSize: size })
+    if (_.isEqual(props.sizePolicy, policy)) return
+    Store.patch(this.getElementPath(`windows.${placement}`), { sizePolicy: policy })
   },
   setWindowCurrent (placement, current) {
     const props = this.getElement(`windows.${placement}`)
@@ -293,6 +313,8 @@ export const Layout = {
       const window = this.getWindow(placement)
       if (_.find(window.components, { id: widget })) {
         result = { placement, window }
+      } else {
+        logger.warn(`[KDK] Unable to find the widget ${widget}`)
       }
     })
     return result

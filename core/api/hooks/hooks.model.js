@@ -108,8 +108,10 @@ export function serialize (rules, options = {}) {
   }
 }
 
-// The hook allows to transform the values bound to '_id' like keys as strings into Mongo ObjectIds
+// This hook allows to transform the values bound to '_id' like keys or
+// operators (eg $ne, $in) provided as strings into Mongo ObjectIds
 // It inspects hook data as well as query data
+// If you have others properties to be converted use convertObjectIDs
 export function processObjectIDs (hook) {
   let items = getItems(hook)
   const isArray = Array.isArray(items)

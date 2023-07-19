@@ -7,7 +7,7 @@
       id="fab"
       v-model="isOpened"
       :icon="icon"
-      class="fixed k-fab"
+      class="k-fab"
       :vertical-actions-align="actionsAlign"
       :direction="direction"
       color="primary"
@@ -106,10 +106,8 @@ const actions = computed(() => {
 })
 </script>
 
-<style lang="scss">
-  .k-fab {
-    right: 12px;
-    bottom: 12px;
-    border: 2px solid var(--q-secondary);
-  }
+<style lang="scss" scoped>
+.k-fab {
+  border: 2px solid var(--q-secondary);
+}
 </style>
