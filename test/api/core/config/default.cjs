@@ -104,5 +104,12 @@ module.exports = {
       filename: path.join(__dirname, '..', 'test-log-%DATE%.log'),
       datePattern: 'YYYY-MM-DD'
     }
+  },
+  push: {
+    vapidDetails: {
+      subject: process.env.VAPID_SUBJECT,
+      publicKey: process.env.VAPID_PUBLIC_KEY,
+      privateKey: process.env.VAPID_PRIVATE_KEY
+    }
   }
 }
