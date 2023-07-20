@@ -136,7 +136,7 @@ describe('core:push', () => {
 
   it('publishes a notification on the user\'s browser', async () => {
     const operation = await pushService.create({
-      dataNotification: { title: 'title' },
+      notification: { title: 'title' },
       subscriptionService: 'api/users',
       subscriptionProperty: 'subscriptions',
       subscriptionFilter: { _id: user._id }
@@ -155,7 +155,7 @@ describe('core:push', () => {
     expect(user.subscriptions.length === 2).beTrue()
     // Send push notification
     const operation = await pushService.create({
-      dataNotification: { title: 'title' },
+      notification: { title: 'title' },
       subscriptionService: 'api/users',
       subscriptionProperty: 'subscriptions',
       subscriptionFilter: { _id: user._id }
