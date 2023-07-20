@@ -89,8 +89,8 @@ export function declareService (name, app, service, serviceOptions = {}) {
 }
 
 export async function configureService (name, service, servicesPath) {
+  let filepath = path.join(servicesPath, name, `${name}.hooks.js`)
   try {
-    const filepath = path.join(servicesPath, name, `${name}.hooks.js`)
     const fileExists = await fs.pathExists(filepath)
     if (fileExists) {
       const hooks = (await import(url.pathToFileURL(filepath))).default
@@ -101,13 +101,13 @@ export async function configureService (name, service, servicesPath) {
     debug('No ' + name + ' service hooks configured on path ' + servicesPath)
     if (error.code !== 'ERR_MODULE_NOT_FOUND') {
       // Log error in this case as this might be linked to a syntax error in required file
-      debug(error)
+      debug(filepath, error)
     }
     // As this is optionnal this require has to fail silently
   }
 
+  filepath = path.join(servicesPath, name, `${name}.channels.js`)
   try {
-    const filepath = path.join(servicesPath, name, `${name}.channels.js`)
     const fileExists = await fs.pathExists(filepath)
     if (fileExists) {
       const channels = (await import(url.pathToFileURL(filepath))).default
@@ -121,7 +121,7 @@ export async function configureService (name, service, servicesPath) {
     debug('No ' + name + ' service channels configured on path ' + servicesPath)
     if (error.code !== 'ERR_MODULE_NOT_FOUND') {
       // Log error in this case as this might be linked to a syntax error in required file
-      debug(error)
+      debug(filepath, error)
     }
     // As this is optionnal this require has to fail silently
   }
@@ -199,7 +199,7 @@ async function createService (name, app, options = {}) {
     debug('No ' + fileName + ' service model configured on path ' + serviceOptions.modelsPath)
     if (error.code !== 'ERR_MODULE_NOT_FOUND') {
       // Log error in this case as this might be linked to a syntax error in required file
-      debug(error)
+      debug(fileName, error)
     }
     // As this is optionnal this require has to fail silently
   }
@@ -224,8 +224,8 @@ async function createService (name, app, options = {}) {
   }
   // Optionnally a specific service mixin can be provided, apply it
   if (dbService && serviceOptions.servicesPath) {
+    const filepath = path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)
     try {
-      const filepath = path.join(serviceOptions.servicesPath, fileName, `${fileName}.service.js`)
       const fileExists = await fs.pathExists(filepath)
       if (fileExists) {
         let serviceMixin = (await import(url.pathToFileURL(filepath))).default
@@ -240,7 +240,7 @@ async function createService (name, app, options = {}) {
       debug('No ' + fileName + ' service mixin configured on path ' + serviceOptions.servicesPath)
       // if (error.code !== 'ERR_MODULE_NOT_FOUND') {
       // Log error in this case as this might be linked to a syntax error in required file
-      debug(error)
+      debug(filepath, error)
       // }
       // As this is optionnal this require has to fail silently
     }
