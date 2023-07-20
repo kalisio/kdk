@@ -117,6 +117,7 @@ export default {
         // The template generates the final context for storage service
         let context = _.get(this.properties, 'field.storage.context')
         if (context) context = _.template(context)(Object.assign({}, { fileName: this.model.name }, object))
+        const query = _.get(this.properties, 'field.storage.uploadQuery')
         logger.debug(`Uploading file ${this.model.name} with key ${this.model.key}`)
         Storage.upload({
           file: this.model.name,
@@ -124,7 +125,7 @@ export default {
           key: this.model.key,
           blob: this.file,
           context
-        })
+        }, { query })
           .then(() => {
             this.$notify({
               type: 'positive',

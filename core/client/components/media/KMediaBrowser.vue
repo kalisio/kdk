@@ -134,7 +134,8 @@ export default {
               maxSize: 20485760,
               storage: {
                 context: this.context,
-                path: `${this.prefix}/<%= fileName %>`
+                path: `${this.prefix}/<%= fileName %>`,
+                uploadQuery: this.uploadQuery
               },
               readContent: false
             }
@@ -187,7 +188,7 @@ export default {
         file: this.currentMedia.name,
         key: this.currentMedia.key,
         context: this.context
-      })
+      }, { query: this.downloadQuery })
       downloadAsBlob(data.buffer, this.currentMedia.name, data.type)
     },
     async onUploadMedia () {
@@ -246,13 +247,13 @@ export default {
           key,
           blob: dataUriToBlob(photoDataUri),
           context: this.context
-        })
+        }, { query: this.uploadQuery })
         await Storage.upload({
           file: name,
           key: key + '.thumbnail',
           blob: dataUriToBlob(thumbnailDataUri),
           context: this.context
-        })
+        }, { query: this.uploadQuery })
       })
     },
     onRemoveMedia () {
@@ -269,7 +270,7 @@ export default {
           flat: true
         }
       }).onOk(async () => {
-        await this.storageService.remove(this.currentMedia.key)
+        await this.storageService.remove(this.currentMedia.key, { query: this.removeQuery })
         const index = _.findIndex(this.medias, media => media.name === this.currentMediaName)
         this.medias.splice(index, 1)
         // Switch current media to next one by looping if required
@@ -304,6 +305,9 @@ export default {
   created () {
     this.context = _.get(this.options, 'storage.context')
     this.prefix = _.get(this.options, 'storage.prefix')
+    this.uploadQuery = _.get(this.options, 'storage.uploadQuery')
+    this.downloadQuery = _.get(this.options, 'storage.downloadQuery')
+    this.removeQuery = _.get(this.options, 'storage.removeQuery')
     this.storageService = Storage.getService(this.context)
     Events.on('file-uploaded', this.onMediaUploaded)
   },

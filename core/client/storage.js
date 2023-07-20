@@ -30,8 +30,8 @@ export const Storage = {
     }
     return service
   },
-  async upload (params) {
-    const { file, key, blob, context } = params
+  async upload (options, params) {
+    const { file, key, blob, context } = options
     const service = this.getService(context)
     const dismiss = Notify.create({
       type: 'ongoing',
@@ -39,7 +39,7 @@ export const Storage = {
       timeout: 0
     })
     try {
-      const response = await service.upload(key, blob, { expiresIn: 60 })
+      const response = await service.upload(key, blob, { expiresIn: 60 }, params)
       dismiss()
       Events.emit('file-uploaded', { name: file, key, type: blob.type, context })
       return response
@@ -49,8 +49,8 @@ export const Storage = {
       throw error
     }
   },
-  async download (params) {
-    const { file, key, context, asDataUrl } = params
+  async download (options, params) {
+    const { file, key, context, asDataUrl } = options
     const service = this.getService(context)
     const dismiss = Notify.create({
       type: 'ongoing',
@@ -59,7 +59,7 @@ export const Storage = {
       timeout: 0
     })
     try {
-      const response = await service.download(key, { expiresIn: 60 })
+      const response = await service.download(key, { expiresIn: 60 }, params)
       Events.emit('file-downloaded', { name: file, key, type: response.type, context })
       dismiss()
       // Transform buffer into data url if required
@@ -82,8 +82,8 @@ export const Storage = {
       throw error
     }
   },
-  async getObjectUrl (params) {
-    const { key, context } = params
+  async getObjectUrl (options) {
+    const { key, context } = options
     // Ensure service is created
     const service = this.getService(context)
     // Get proxy route to object storage
