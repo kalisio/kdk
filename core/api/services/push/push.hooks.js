@@ -1,8 +1,11 @@
 import { deleteExpiredSubscriptions } from '@kalisio/feathers-webpush'
+import common from 'feathers-hooks-common'
+
+const { disallow } = common
 
 export default {
   before: {
-    all: [],
+    all: [disallow('external')],
     find: [],
     get: [],
     create: [],
