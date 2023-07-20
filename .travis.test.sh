@@ -20,6 +20,9 @@ git clone https://github.com/kalisio/kdk-workspaces workspace
 git clone https://github.com/kalisio/feathers-distributed && cd feathers-distributed && yarn install && yarn link && cd ..
 yarn link @kalisio/feathers-distributed
 
+git clone https://github.com/kalisio/feathers-webpush && cd feathers-webpush && yarn install && yarn link && cd ..
+yarn link @kalisio/feathers-webpush
+
 git clone https://github.com/weacast/weacast && cd weacast && yarn install && cd packages
 cd core && yarn link && cd .. && cd gfs && yarn link && cd .. && cd probe && yarn link && cd ..
 cd ../..
