@@ -173,6 +173,8 @@ export const baseEditor = {
         this.loadSchema(this.getSchemaName()),
         this.loadObject()
       ])
+      // Check if form has been created meanwhile
+      if (this.form) this.fillEditor()
     }
   }
 }
