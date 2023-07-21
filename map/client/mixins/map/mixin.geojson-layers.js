@@ -95,7 +95,7 @@ export const geojsonLayers = {
           // We want to restore values that were there till now but are missing
           // from the input feature.
           // Deep for time and runtime
-          _.defaultsDeep(feature, _.pick(oldLayer.feature, [ 'time', 'runTime' ]))
+          _.defaultsDeep(feature, _.pick(oldLayer.feature, ['time', 'runTime']))
           // _NOT_ deep for properties, otherwise it'll merge array and object properties between the two
           const oldProps = _.get(oldLayer.feature, 'properties')
           if (oldProps) {

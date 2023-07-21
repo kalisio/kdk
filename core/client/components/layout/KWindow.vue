@@ -23,7 +23,7 @@
         @touchstart.stop
         @mousedown.stop
       />
-      <div 
+      <div
         v-else-if="widgetLabel"
         class="q-px-sm text-subtitle1 ellipsis"
       >
@@ -217,7 +217,7 @@ const widgetWidth = computed(() => {
 })
 
 // Watch
-watch(() => [$q.screen.width, $q.screen.height], (value) => onScreenResized() )
+watch(() => [$q.screen.width, $q.screen.height], (value) => onScreenResized())
 
 // Functions
 function getGeometryKey () {
@@ -252,10 +252,10 @@ function setMaximizedGeometry () {
   updateGeometry([0, 0], [$q.screen.width, $q.screen.height])
 }
 function updateGeometry (position, size, check = false) {
-  // check geometry 
+  // check geometry
   if (check) {
     const pageHeight = $q.screen.height - props.layoutOffset
-    const pageWidth  = $q.screen.width
+    const pageWidth = $q.screen.width
     const w = Math.min(Math.max(size[0], currentWindow.minSize[0]), pageWidth)
     const h = Math.min(Math.max(size[1], currentWindow.minSize[1]), pageHeight)
     const x = Math.max(Math.min(position[0], pageWidth - w), 0)
