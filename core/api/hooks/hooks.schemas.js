@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import makeDebug from 'debug'
 import errors from '@feathersjs/errors'
 import commonHooks from 'feathers-hooks-common'
@@ -24,9 +25,27 @@ export function validateData (schema) {
     items = await Promise.allSettled(items.map((item) => schema.validate(item)))
     // Keep track of validation errors, even if invalid data will be filtered this ensure
     // original data with validation error will be "tagged"
-    items.forEach(item => {
+
+    items.forEach((item, index) => {
       if (item.status === 'rejected') {
-        item.validationError = (item.reason.ajv ? new BadRequest(item.reason.message, item.reason.errors) : item.reason)
+        console.log(item.reason)
+        item.validationError = {
+          message: item.reason.message,
+          data: item.reason.data.map(error => {
+            // retrieve the data corresponding to the item
+            const data = isArray ? hook.data[index] : hook.data
+            // compute the property path
+            let propertyPath = error.instancePath
+            if (_.startsWith(propertyPath, '/')) propertyPath = propertyPath.substring(1)
+            propertyPath = propertyPath.replace('/', '.')
+            // return the error
+            return {
+              message: error.message,
+              propertyPath: error.instancePath,
+              propertyValue: _.get(data, propertyPath)
+            }
+          })
+        }
       }
     })
     // Filter errors/valid data
@@ -39,8 +58,9 @@ export function validateData (schema) {
     const hasError = (errors.length > 0)
     if (hasError) {
       const firstError = errors[0]
+      console.log(firstError)
       // Single item case => raise the error
-      if (!isArray) throw firstError
+      if (!isArray) throw new BadRequest(firstError.message, firstError.data)
       // Multiple items case => raise if no valid data found
       else if (!hasValidData) {
         // Keep track of all errors
