@@ -176,7 +176,8 @@ async function createService (name, app, options = {}) {
     whitelist: [
       '$exists', '$and', '$or', '$eq', '$elemMatch', '$distinct', '$groupBy', '$group', '$regex',
       '$text', '$search', '$caseSensitive', '$language', '$diacriticSensitive',
-      '$aggregate', '$near', '$geoIntersects', '$geometry', '$maxDistance'
+      '$aggregate', '$near', '$nearSphere', '$geoIntersects', '$geoWithin',
+      '$maxDistance', '$minDistance', '$geometry', '$box', '$polygon', '$center', '$centerSphere'
     ]
   }, options)
   if (serviceOptions.disabled) return undefined
