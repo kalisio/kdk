@@ -1,6 +1,6 @@
-import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import _ from 'lodash'
 import logger from 'loglevel'
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { api } from '../api.js'
 import { getLocale } from '../utils/utils.locale.js'
 

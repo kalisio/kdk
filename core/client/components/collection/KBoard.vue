@@ -48,6 +48,9 @@ export default {
   methods: {
     getColumn (value) {
       return this.$refs[value][0]
+    },
+    getColumns (values) {
+      return values.map(value => this.getColumn(value))
     }
   }
 }
