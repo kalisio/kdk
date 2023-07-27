@@ -178,6 +178,8 @@ export function getBoundValue (value, context) {
       // const result = _.get(context, path)
       // if (!_.isNil(result)) return result
     }
+    // Bound value not found
+    return undefined
   }
   return value
 }
