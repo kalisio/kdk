@@ -305,8 +305,9 @@ export default {
       // We bind the target params object to both possible context.
       const currentParams = _.get(route, path, {})
       const targetParams = _.get(props.route, path, {})
-      const params = bindParams(targetParams, currentParams)
-      return bindParams(params, props.context)
+      const routeParams = bindParams(targetParams, currentParams)
+      const contextParams = bindParams(targetParams, props.context)
+      return _.merge(routeParams, contextParams)
     }
     async function onClicked (event) {
       if (!props.propagate) event.stopPropagation()
