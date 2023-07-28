@@ -1,19 +1,21 @@
 <template>
-  <div class="no-padding" :style="panelStyle">
-    <KPanel id="favorite-views-toolbar" :content="toolbar" class="no-wrap q-pl-sm q-pr-md" />
-    <KColumn
-      class="q-pl-sm"
-      service="catalog"
-      :renderer="viewRenderer"
-      :nbItemsPerPage="20"
-      :append-items="true"
-      :base-query="baseQuery"
-      :filter-query="filter.query"
-      @selection-changed="onViewSelected"
-      :height="scrollAreaMaxHeight - 100"
-      :dense="true"
-    />
-  </div>
+  <q-list dense bordered>
+    <div class="no-padding" :style="panelStyle">
+      <KPanel id="favorite-views-toolbar" :content="toolbar" class="no-wrap q-pl-sm q-pr-md" />
+      <KColumn
+        class="q-pl-sm"
+        service="catalog"
+        :renderer="viewRenderer"
+        :nbItemsPerPage="20"
+        :append-items="true"
+        :base-query="baseQuery"
+        :filter-query="filter.query"
+        @selection-changed="onViewSelected"
+        :height="scrollAreaMaxHeight - 100"
+        :dense="true"
+      />
+    </div>
+  </q-list>
 </template>
 
 <script>
