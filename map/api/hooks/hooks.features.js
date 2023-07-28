@@ -4,6 +4,7 @@ import bbox from '@turf/bbox'
 import makeDebug from 'debug'
 import feathers from '@feathersjs/feathers'
 import common from 'feathers-hooks-common'
+import mongodbFuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks, unmarshallTime } from '../../../core/api/index.js'
 
 const { defaultEventMap } = feathers
@@ -81,4 +82,11 @@ export function simplifyEvents (hook) {
     service.emit(event, payload)
   }
   return hook
+}
+
+export function fuzzySearch (hook) {
+  const service = hook.service
+  const featureLabel = _.castArray(_.get(service, 'options.featureLabel', []))
+  const fields = featureLabel.map((prop) => 'properties.' + prop)
+  return featureLabel.length ? mongodbFuzzySearch({ fields: fields })(hook) : hook
 }

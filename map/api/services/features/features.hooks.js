@@ -1,14 +1,14 @@
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import {
   marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson,
-  simplifyResult, simplifyEvents, skipEvents
+  simplifyResult, simplifyEvents, skipEvents, fuzzySearch
 } from '../../hooks/index.js'
 
 export default {
   before: {
     all: [coreHooks.marshallTimeQuery, coreHooks.convertObjectIDs(['layer'])],
     find: [coreHooks.marshallComparisonQuery, coreHooks.marshallSortQuery, marshallSpatialQuery,
-      coreHooks.distinct, aggregateFeaturesQuery, coreHooks.aggregationQuery],
+           coreHooks.distinct, aggregateFeaturesQuery, coreHooks.aggregationQuery, fuzzySearch, coreHooks.diacriticSearch],
     get: [],
     create: [coreHooks.processTimes(['time'])],
     update: [coreHooks.processTimes(['time'])],
