@@ -1,0 +1,166 @@
+<template>
+  <q-select
+    id="location-search"
+    v-model="location"
+    :label="computedLabel"
+    clearable
+    use-input
+    hide-dropdown-icon
+    borderless
+    hide-bottom-space
+    dense
+    :options="locations"
+    :display-value="locationName"
+    :disable="disabled"
+    @filter="onSearch"
+    @update:model-value="onLocationChanged"
+    class="q-pl-sm"
+  >
+    <!-- Extra actions -->
+    <template v-slot:append>
+      <div class="q-pl-xs row items-center">
+        <!-- geocoders filtering -->
+        <KAction
+          v-if="hasGeocoders"
+          id="configure"
+          tooltip="KLocationSearch.FILTER"
+          icon="las la-sliders-h"
+          color="grey-7"
+          size="0.8rem"
+          dense
+        >
+          <q-popup-proxy>
+            <KGeocodersFilter
+              v-model="selectedGeocoders"
+              :geocoders="availableGeocoders"
+            />
+          </q-popup-proxy>
+        </KAction>
+      </div>
+    </template>
+    <!-- Selected item -->
+    <template v-slot:selected-item="scope">
+      {{ scope.opt.properties ? scope.opt.properties.name : scope.opt.name }}
+    </template>
+    <!-- Options -->
+    <template v-slot:option="scope">
+      <q-item v-bind="scope.itemProps" class="option" dense>
+        <q-item-section>
+          <q-item-label>{{ scope.opt.properties ? scope.opt.properties.name : scope.opt.name }}</q-item-label>
+        </q-item-section>
+        <KLocationTip :location="scope.opt" />
+      </q-item>
+    </template>
+    <!-- No options -->
+    <template v-slot:no-option>
+      <q-item>
+        <q-item-section class="text-grey">
+          {{ $t('KLocationSearch.NO_RESULTS') }}
+        </q-item-section>
+      </q-item>
+    </template>
+  </q-select>
+
+</template>
+
+<script setup>
+import _ from 'lodash'
+import { ref, computed, watch } from 'vue'
+import { i18n } from '../../../../core.client'
+import { KAction } from '../../../../core/client/components'
+import KGeocodersFilter from './KGeocodersFilter.vue'
+import KLocationTip from './KLocationTip.vue'
+import { searchLocation, listGeocoders } from '../../utils/utils.location.js'
+
+// Props
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    default: () => null
+  },
+  label: {
+    type: String,
+    default: 'KLocationSearch.SEARCH'
+  },
+  icon: {
+    type: String,
+    default: null
+  },
+  geocoders: {
+    type: Array,
+    default: () => {}
+  },
+  geolocation: {
+    type: Boolean,
+    default: false
+  },
+  editor: {
+    type: Object,
+    default: () => null
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
+
+// Emits
+const emit = defineEmits(['update:modelValue'])
+
+// Data
+const location = ref(props.modelValue)
+const locations = ref([])
+const availableGeocoders = ref([])
+const selectedGeocoders = ref([])
+
+// Computed
+const computedLabel = computed (() => {
+  return location.value ? undefined : i18n.tie(props.label)
+})
+const locationName = computed(() => {
+  return _.get(location.value, 'properties.name')
+})
+const hasGeocoders = computed(() => {
+  return !_.isNull(props.geocoders)
+})
+
+// Functions
+async function onSearch (pattern, update, abort) {
+  if (pattern.length < 4) {
+    abort()
+    return
+  }
+  const result = await searchLocation(pattern)
+  update(() => {
+    locations.value = result
+  })
+}
+function onLocationChanged () {
+  emit('update:modelValue', location.value)
+}
+
+// Hooks
+watch(() => props.geocoders, async (geocoders) => {
+  if (_.isNull(geocoders)) {
+    // clear the geocoders
+    availableGeocoders.value = []
+    selectedGeocoders.value = []
+  } else if (_.isEmpty(geocoders)) {
+    // check the capabilities to list the geocoders
+    const geocoders = await listGeocoders()
+    availableGeocoders.value = _.map(geocoders, geocoder => {
+      return { value: geocoder, label: i18n.tie(geocoder) }
+    })
+    selectedGeocoders.value = geocoders
+  } else {
+    availableGeocoders.value = _.map(geocoders, geocoder => { 
+      return { value: geocoder.source, label: i18n.tie(geocoder.source) }
+    })
+    selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
+      return geocoder.selected 
+    }), geocoder => {
+      return geocoder.source
+    })
+  }
+}, { immediate: true })
+</script>

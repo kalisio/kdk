@@ -91,17 +91,7 @@
         <q-item-section>
           <q-item-label>{{ scope.opt.properties ? scope.opt.properties.name : scope.opt.name }}</q-item-label>
         </q-item-section>
-        <q-tooltip
-          class="q-pa-none"
-          anchor="center end"
-          self="center middle"
-          style="border-radius: 25px;"
-        >
-          <KLocationMap
-            :modelValue="scope.opt"
-            style="min-width: 250px; min-height: 250px; border-radius: 50px;"
-          />
-        </q-tooltip>
+        <KLocationTip :location="scope.opt" />
       </q-item>
     </template>
     <!-- No options -->
@@ -126,13 +116,13 @@ import { mixins as kdkCoreMixins } from '../../../../core/client'
 import { useLocation } from '../../composables'
 import { KAction } from '../../../../core/client/components'
 import KGeocodersFilter from '../location/KGeocodersFilter.vue'
-import KLocationMap from '../location/KLocationMap.vue'
+import KLocationTip from '../location/KLocationTip.vue'
 
 export default {
   components: {
     KAction,
     KGeocodersFilter,
-    KLocationMap
+    KLocationTip
   },
   mixins: [kdkCoreMixins.baseField],
   computed: {

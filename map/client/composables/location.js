@@ -4,6 +4,7 @@ import { Geolocation } from '../geolocation.js'
 import { formatGeocodingResult, parseCoordinates, formatUserCoordinates } from '../utils.js'
 
 export function useLocation () {
+  
   // Functions
   function current () {
     const position = Store.get('geolocation.position') || { longitude: 0, latitude: 0 }

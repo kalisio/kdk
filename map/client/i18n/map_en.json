@@ -350,6 +350,13 @@
     "UNSUPPORTED_LAYER_CRS": "The projection used by this layer is not supported.",
     "UNSUPPORTED_LAYER_FORMAT": "The data format used by this layer is not supported."
   },
+  "KLocationSearch": {
+    "SEARCH": "@:SEARCH",
+    "NO_RESULTS": "@:EMPTY",
+    "FILTER": "Filter search services",
+    "GEOLOCATE": "Locate me",
+    "EDIT": "Edit on a map"
+  },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
     "NO_RESULTS": "@:EMPTY",
@@ -367,12 +374,9 @@
     "ZONE": "Zone",
     "PATH": "Path"
   },
-  "KLocationInput": {
-    "SEARCH_LOCATION": "Seek for an address",
-    "GEOLOCATE": "Locate me",
-    "MY_LOCATION": "My location",
-    "LOCATION_MAP": "Pick on a map",
-    "DRAW_MAP": "Draw on a map"
+  "KLocationCardSection": {
+    "TITLE": "Location",
+    "NO_LOCATION": "Undefined location"
   },
   "KTimezoneField": {
     "TIMEZONE_MAP_TOOLTIP": "Select timezone on a map",

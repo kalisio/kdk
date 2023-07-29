@@ -40,7 +40,7 @@ module.exports = [{
     nextDelay: 500
   }
 }, {
-  target: 'div [component="KSearchLocation"]',
+  target: 'div [component="tools/KSearchTool"]',
   title: 'tours.navigation-bar.LOCATION_SEARCHING_LABEL',
   params: {
     placement: 'bottom',
