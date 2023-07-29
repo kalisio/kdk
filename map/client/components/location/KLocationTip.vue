@@ -1,5 +1,5 @@
 <template>
-  <q-tooltip          
+  <q-tooltip
     anchor="center end"
     self="center middle"
     class="q-pa-none"

@@ -83,17 +83,26 @@ export default {
       if (this.currentMedia) {
         if (this.currentMedia.isImage && this.currentMediaTransformed) {
           actions.push({
-            id: 'restore-image', icon: 'las la-compress-arrows-alt', tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'),
-            color: 'grey-5 ', handler: this.onImageRestored
+            id: 'restore-image',
+            icon: 'las la-compress-arrows-alt',
+            tooltip: this.$t('KMediaBrowser.RESTORE_IMAGE_ACTION'),
+            color: 'grey-5 ',
+            handler: this.onImageRestored
           })
         }
         actions.push({
-          id: 'download-media', icon: 'las la-cloud-download-alt', tooltip: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'),
-          color: 'grey-5 ', handler: this.onDownloadMedia
+          id: 'download-media',
+          icon: 'las la-cloud-download-alt',
+          tooltip: this.$t('KMediaBrowser.DOWNLOAD_MEDIA_ACTION'),
+          color: 'grey-5 ',
+          handler: this.onDownloadMedia
         })
         actions.push({
-          id: 'remove-media', icon: 'las la-trash', tooltip: this.$t('KMediaBrowser.REMOVE_MEDIA_ACTION'),
-          color: 'grey-5 ', handler: this.onRemoveMedia
+          id: 'remove-media',
+          icon: 'las la-trash',
+          tooltip: this.$t('KMediaBrowser.REMOVE_MEDIA_ACTION'),
+          color: 'grey-5 ',
+          handler: this.onRemoveMedia
         })
       }
       if (this.canCapturePhoto()) {

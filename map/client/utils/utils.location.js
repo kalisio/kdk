@@ -16,9 +16,7 @@ export async function searchLocation (pattern, options) {
         name: formatUserCoordinates(coordinates.latitude, coordinates.longitude, Store.get('locationFormat', 'FFf'))
       }
     })
-  }
-  // Build the list of responses if no coordinates were found
-  if (_.isEmpty(locations)) {
+  } else {
     const geocoderService = api.getService('geocoder')
     if (!geocoderService) throw new Error('Cannot find geocoder service')
     const response = await geocoderService.create({ address: pattern })

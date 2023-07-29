@@ -114,7 +114,7 @@ const availableGeocoders = ref([])
 const selectedGeocoders = ref([])
 
 // Computed
-const computedLabel = computed (() => {
+const computedLabel = computed(() => {
   return location.value ? undefined : i18n.tie(props.label)
 })
 const locationName = computed(() => {
@@ -153,11 +153,11 @@ watch(() => props.geocoders, async (geocoders) => {
     })
     selectedGeocoders.value = geocoders
   } else {
-    availableGeocoders.value = _.map(geocoders, geocoder => { 
+    availableGeocoders.value = _.map(geocoders, geocoder => {
       return { value: geocoder.source, label: i18n.tie(geocoder.source) }
     })
     selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
-      return geocoder.selected 
+      return geocoder.selected
     }), geocoder => {
       return geocoder.source
     })

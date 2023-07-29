@@ -2,7 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
 import emailValidator from 'email-validator'
-import { Platform, Notify, Dialog, Loading, exportFile } from 'quasar'
+import { Notify, Dialog, Loading, exportFile } from 'quasar'
 import { defineAsyncComponent, markRaw } from 'vue'
 
 export * from './utils.account.js'

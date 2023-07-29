@@ -2,9 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
 import { ref, computed, readonly } from 'vue'
-import { Capabilities, Store, i18n } from '../index.js'
-import { Notify } from 'quasar'
-import { getPlatform } from '../utils/utils.platform.js'
+import { Capabilities } from '../index.js'
 
 const Version = ref({
   client: {
@@ -18,7 +16,6 @@ const Version = ref({
   flavor: _.get(config, 'flavor')
 })
 let isInitialized = false
-const Platform = getPlatform()
 
 export function useVersion () {
   // Computed

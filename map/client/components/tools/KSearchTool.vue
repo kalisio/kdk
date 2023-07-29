@@ -1,5 +1,5 @@
 <template>
-  <KLocationSearch 
+  <KLocationSearch
     v-model="location"
     :style="computedStyle"
   />
@@ -56,7 +56,7 @@ async function createLocationLayer () {
   // updated the layer with the location
   CurrentActivity.value.updateLayer(LocationLayerName, {
     type: 'FeatureCollection',
-    features: [ Object.assign({ _id: LocationLayerName + '-marker'}, location.value) ]
+    features: [Object.assign({ _id: LocationLayerName + '-marker' }, location.value)]
   })
   // show the layer
   if (!CurrentActivity.value.isLayerVisible(LocationLayerName)) await CurrentActivity.value.showLayer(LocationLayerName)
