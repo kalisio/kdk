@@ -17,6 +17,9 @@ export async function searchLocation (pattern, options) {
       }
     })
   } else {
+    // TODO
+    // Use the geocoders list in the options object to perform the query to the service
+    // The new result should be an array of GeoJSON so the following formatting should be removed
     const geocoderService = api.getService('geocoder')
     if (!geocoderService) throw new Error('Cannot find geocoder service')
     const response = await geocoderService.create({ address: pattern })

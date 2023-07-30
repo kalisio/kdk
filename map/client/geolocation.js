@@ -1,22 +1,23 @@
 import { Store, Events, utils } from '../../core/client/index.js'
 import { errors } from '../common/index.js'
+import { formatUserCoordinates } from './utils.js'
 import logger from 'loglevel'
 
 // Export singleton
 export const Geolocation = {
   initialize () {
-    Store.set('geolocation', { position: null, error: undefined })
+    Store.set('geolocation', { location: null, error: undefined })
   },
   get () {
     return Store.get('geolocation')
   },
   async update () {
-    let position = null
+    let location = null
     // Get the position
     try {
-      position = await this.refresh()
-      Store.patch('geolocation', { position, error: undefined })
-      logger.debug('geolocation updated: ', position)
+      location = await this.refresh()
+      Store.patch('geolocation', { location, error: undefined })
+      logger.debug('[KDK] geolocation updated: ', JSON.stringify(location, null, 4))
     } catch (error) {
       const code = error.code
       const geolocationError = new errors.KGeolocationError()
@@ -32,7 +33,7 @@ export const Geolocation = {
         geolocationError.code = 'GEOLOCATION_ERROR'
       }
       // Store last error so that component not yet initialized can also check for any
-      Store.patch('geolocation', { position: null, error: geolocationError })
+      Store.patch('geolocation', { location: null, error: geolocationError })
       // It seems there is no message when a code is present, however we cannot alter the original error
       // with the new message because it is a read-only property so we refer to it
       Events.emit('error', Object.assign(geolocationError, {
@@ -42,7 +43,7 @@ export const Geolocation = {
       }))
       logger.debug('geolocation failed: ', error)
     }
-    return position
+    return location
   },
   async refresh () {
     this.positionPromise = utils.createQuerablePromise(new Promise((resolve, reject) => {
@@ -54,7 +55,25 @@ export const Geolocation = {
         })
         return
       }
-      window.navigator.geolocation.getCurrentPosition((position) => resolve(position.coords),
+      window.navigator.geolocation.getCurrentPosition(
+        (position) => { 
+          console.log(position)
+          const longitude = position.coords.longitude
+          const latitude = position.coords.latitude
+          const altitude = position.coords.altitude
+          resolve({
+            type: 'Feature', 
+            geometry: {
+              type: 'Point',
+              coordinates: altitude ? [longitude, latitude, altitude] : [longitude, latitude]
+            },
+            properties: {
+              name: formatUserCoordinates(latitude, longitude, Store.get('locationFormat', 'FFf')),
+              accuracy: position.coords.accuracy,
+              altitudeAccuracy: position.coords.altitudeAccuracy
+            }
+          }) 
+        },
         (error) => reject(error), { timeout: 30000, enableHighAccuracy: true })
     }))
     return this.positionPromise

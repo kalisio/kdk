@@ -330,15 +330,16 @@ export const baseGlobe = {
       return [[south, west], [north, east]]
     },
     async showUserLocation () {
-      const position = this.$geolocation.get().position
-      // TODO: no specific marker yet, simply center
-      if (position) {
-        this.center(position.longitude, position.latitude)
+      const location = this.$geolocation.get().location
+      if (location) {
+        const longitude = location.geometry.coordinates[0]
+        const latitude = location.geometry.coordinates[1]
+        this.center(longitude, latitude)
         const pinBuilder = new Cesium.PinBuilder()
         const canvas = await pinBuilder.fromMakiIconId('marker', Cesium.Color.fromCssColorString(getCssVar('primary')), 48)
         this.userLocationEntity = this.viewer.entities.add({
           name: 'user-location',
-          position: Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude),
+          position: Cesium.Cartesian3.fromDegrees(longitude, latitude),
           billboard: {
             image: canvas.toDataURL(),
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM

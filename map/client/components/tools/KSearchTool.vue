@@ -68,7 +68,7 @@ async function createLocationLayer () {
 }
 
 async function removeLocationLayer () {
-  await CurrentActivity.value.removeLayer(LocationLayerName)
+  if (CurrentActivity.value) await CurrentActivity.value.removeLayer(LocationLayerName)
 }
 
 // Watchers
@@ -79,9 +79,6 @@ watch(location, async (newLocation, previousLocation) => {
 
 // Hooks
 onBeforeUnmount(async () => {
-  if (location.value) {
-    console.log('Remove search layer')
-    await removeLocationLayer()
-  }
+  if (location.value) await removeLocationLayer()
 })
 </script>

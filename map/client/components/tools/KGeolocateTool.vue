@@ -38,9 +38,6 @@ async function onToggled (context, toggled) {
 
 // Hooks
 onMounted(() => {
-  isToggled.value = CurrentActivity.value.isUserLocationVisible()
-})
-onBeforeUnmount(() => {
-  if (isToggled.value) CurrentActivity.value.hideUserLocation()
+  if (CurrentActivity.value) isToggled.value = CurrentActivity.value.isUserLocationVisible()
 })
 </script>

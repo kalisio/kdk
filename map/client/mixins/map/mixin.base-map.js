@@ -510,16 +510,20 @@ export const baseMap = {
       return [[south, west], [north, east]]
     },
     showUserLocation () {
-      const position = this.$geolocation.get().position
       if (this.locateControl) {
         this.locateControl.start()
-      }
-      if (position) {
-        // If we have accuracy we can compute a fitting boix
-        if (position.accuracy) {
-          this.zoomToBounds(new L.LatLng(position.latitude, position.longitude).toBounds(position.accuracy * 2))
-        } else {
-          this.center(position.longitude, position.latitude)
+      } else {
+        // TODO do we have to keep this code ?
+        const location = this.$geolocation.get().location
+        if (location) {
+          const lng = location.geometry.coordinates[0]
+          const lat = location.geometry.coordinates[1]
+          const accuracy = location.properties.accuracy
+          if (accuracy) {
+            this.zoomToBounds(new L.LatLng(lat, lng).toBounds(accuracy * 2))
+          } else {
+            this.center(lng, lat)
+          }
         }
       }
     },
