@@ -70,7 +70,7 @@ import { i18n } from '../../../../core.client'
 import { KAction } from '../../../../core/client/components'
 import KGeocodersFilter from './KGeocodersFilter.vue'
 import KLocationTip from './KLocationTip.vue'
-import { searchLocation, listGeocoders } from '../../utils/utils.location.js'
+import { useLocation } from '../../composables'
 
 // Props
 const props = defineProps({
@@ -110,8 +110,7 @@ const emit = defineEmits(['update:modelValue'])
 // Data
 const location = ref(props.modelValue)
 const locations = ref([])
-const availableGeocoders = ref([])
-const selectedGeocoders = ref([])
+const { availableGeocoders, selectedGeocoders, setGeocoders, search: searchLocation } = useLocation()
 
 // Computed
 const computedLabel = computed(() => {
@@ -140,27 +139,5 @@ function onLocationChanged () {
 }
 
 // Hooks
-watch(() => props.geocoders, async (geocoders) => {
-  if (_.isNull(geocoders)) {
-    // clear the geocoders
-    availableGeocoders.value = []
-    selectedGeocoders.value = []
-  } else if (_.isEmpty(geocoders)) {
-    // check the capabilities to list the geocoders
-    const geocoders = await listGeocoders()
-    availableGeocoders.value = _.map(geocoders, geocoder => {
-      return { value: geocoder, label: i18n.tie(geocoder) }
-    })
-    selectedGeocoders.value = geocoders
-  } else {
-    availableGeocoders.value = _.map(geocoders, geocoder => {
-      return { value: geocoder.source, label: i18n.tie(geocoder.source) }
-    })
-    selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
-      return geocoder.selected
-    }), geocoder => {
-      return geocoder.source
-    })
-  }
-}, { immediate: true })
+watch(() => props.geocoders, async (geocoders) => setGeocoders(geocoders), { immediate: true })
 </script>

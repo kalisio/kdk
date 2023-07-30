@@ -38,7 +38,7 @@
         >
           <q-popup-proxy>
             <KGeocodersFilter
-              v-model="selectedGeocorders"
+              v-model="selectedGeocoders"
               :geocoders="availableGeocoders"
             />
           </q-popup-proxy>
@@ -130,7 +130,7 @@ export default {
       return _.get(this.model, 'properties.name', '')
     },
     allowConfiguration () {
-      return !_.isEmpty(_.get(this.properties, 'field.geocoders'))
+      return !_.isNull(_.get(this.properties, 'field.geocoders'))
     },
     allowGeolocation () {
       return _.get(this.properties, 'field.geolocate', true)
@@ -170,26 +170,20 @@ export default {
   },
   setup () {
     // Data
-    const { search, geolocate } = useLocation()
+    const { availableGeocoders, selectedGeocoders, setGeocoders, search, geolocate } = useLocation()
     const locations = ref([])
-    const availableGeocoders = ref([])
-    const selectedGeocorders = ref([])
     // Expose
     return {
       locations,
       availableGeocoders,
-      selectedGeocorders,
+      selectedGeocoders,
+      setGeocoders,
       geolocate,
       search
     }
   },
   mounted () {
-    this.availableGeocoders = _.filter(_.get(this.properties, 'field.geocoders'), geocoder => {
-      return _.get(geocoder, 'selectable', true)
-    })
-    this.selectedGeocorders = _.map(this.availableGeocoders, geocoder => {
-      return geocoder.value
-    })
+    this.setGeocoders(_.get(this.properties, 'field.geocoders'))
   }
 }
 </script>

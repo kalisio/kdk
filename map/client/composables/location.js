@@ -1,7 +1,8 @@
+import _ from 'lodash'
 import { ref } from 'vue'
-import { Store } from '../../../core.client.js'
+import { Store, i18n } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
-import { searchLocation } from '../utils/utils.location.js'
+import { searchLocation, listGeocoders } from '../utils/utils.location.js'
 
 export function useLocation () {
   // Data
@@ -9,6 +10,29 @@ export function useLocation () {
   const selectedGeocoders = ref([])
 
   // Functions
+  async function setGeocoders (geocoders) {
+    if (_.isNull(geocoders)) {
+      // clear the geocoders
+      availableGeocoders.value = []
+      selectedGeocoders.value = []
+    } else if (_.isEmpty(geocoders)) {
+      // check the capabilities to list the geocoders
+      const geocoders = await listGeocoders()
+      availableGeocoders.value = _.map(geocoders, geocoder => {
+        return { value: geocoder, label: i18n.tie(geocoder) }
+      })
+      selectedGeocoders.value = geocoders
+    } else {
+      availableGeocoders.value = _.map(geocoders, geocoder => {
+        return { value: geocoder.source, label: i18n.tie(geocoder.source) }
+      })
+      selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
+        return geocoder.selected
+      }), geocoder => {
+        return geocoder.source
+      })
+    }
+  }
   async function geolocate () {
     await Geolocation.update()
     const error = Store.get('geolocation.error')
@@ -22,6 +46,7 @@ export function useLocation () {
   return {
     availableGeocoders,
     selectedGeocoders,
+    setGeocoders,
     geolocate,
     search
   }
