@@ -56,13 +56,13 @@ export const Geolocation = {
         return
       }
       window.navigator.geolocation.getCurrentPosition(
-        (position) => { 
+        (position) => {
           console.log(position)
           const longitude = position.coords.longitude
           const latitude = position.coords.latitude
           const altitude = position.coords.altitude
           resolve({
-            type: 'Feature', 
+            type: 'Feature',
             geometry: {
               type: 'Point',
               coordinates: altitude ? [longitude, latitude, altitude] : [longitude, latitude]
@@ -72,7 +72,7 @@ export const Geolocation = {
               accuracy: position.coords.accuracy,
               altitudeAccuracy: position.coords.altitudeAccuracy
             }
-          }) 
+          })
         },
         (error) => reject(error), { timeout: 30000, enableHighAccuracy: true })
     }))

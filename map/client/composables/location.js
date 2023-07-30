@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { ref } from 'vue'
 import { Store } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
