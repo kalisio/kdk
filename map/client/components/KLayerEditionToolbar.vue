@@ -30,6 +30,7 @@ export default {
         { id: 'edit-geometry', icon: 'las la-edit', toggled: this.editMode === 'edit-geometry', tooltip: 'KLayerEditionToolbar.EDIT_GEOMETRY', handler: () => { this.setMode('edit-geometry') } },
         { id: 'edit-properties', icon: 'las la-address-card', toggled: this.editMode === 'edit-properties', tooltip: 'KLayerEditionToolbar.EDIT_PROPERTIES', handler: () => { this.setMode('edit-properties') } },
         { id: 'drag', icon: 'las la-arrows-alt', toggled: this.editMode === 'drag', tooltip: 'KLayerEditionToolbar.DRAG_FEATURES', handler: () => { this.setMode('drag') } },
+        { id: 'rotate', icon: 'las la-sync', toggled: this.editMode === 'rotate', tooltip: 'KLayerEditionToolbar.ROTATE_FEATURES', handler: () => { this.setMode('rotate') } },
         { id: 'remove', icon: 'las la-trash', toggled: this.editMode === 'remove', tooltip: 'KLayerEditionToolbar.REMOVE_FEATURES', handler: () => { this.setMode('remove') } }
       ]
       const buttons = []

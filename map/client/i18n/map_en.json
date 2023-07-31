@@ -585,6 +585,7 @@
     "EDIT_GEOMETRY": "Edit feature geometry",
     "EDIT_PROPERTIES": "Edit feature properties",
     "DRAG_FEATURES": "Move features",
+    "ROTATE_FEATURES": "Rotate features",
     "REMOVE_FEATURES": "Remove features"
   },
   "KCaptureToolbar": {
