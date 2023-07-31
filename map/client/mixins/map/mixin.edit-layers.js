@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import { getType, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
 import { bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
 
@@ -147,6 +148,12 @@ export const editLayers = {
           // Service will use the provided _id as object key
           await this.$api.getService('features-edition').create(feature)
         }
+      } else {
+        // Listen to layer changes
+        const featuresService = this.$api.getService('features')
+        featuresService.on('created', this.onEditedFeaturesCreated)
+        featuresService.on('patched', this.onEditedFeaturesUpdated)
+        featuresService.on('removed', this.onEditedFeaturesRemoved)
       }
 
       this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
@@ -202,6 +209,12 @@ export const editLayers = {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         const service = this.$api.getService('features-edition')
         await Promise.all(features.map((f) => service.remove(f._id)))
+      } else {
+        // Clear listeners to layer changes
+        const featuresService = this.$api.getService('features')
+        featuresService.off('created', this.onEditedFeaturesCreated)
+        featuresService.off('patched', this.onEditedFeaturesUpdated)
+        featuresService.off('removed', this.onEditedFeaturesRemoved)
       }
 
       // Set back edited layers to source layer
@@ -342,6 +355,9 @@ export const editLayers = {
       })
     },
     onPointMoveEnd (event) {
+      // Called as well when moving individual point while editing geometries
+      // but in this case we don't want to emit/manage the event
+      if (typeof event.layer.getLatLngs !== 'function') return
       // Lookup edited point coordinates
       let coords = event.layer.getLatLngs()
       for (let deep = 0; deep < event.indexPath.length; ++deep) { coords = coords[event.indexPath[deep]] }
@@ -392,6 +408,39 @@ export const editLayers = {
 
       this.$emit('edit-point-moved', args)
       this.$engineEvents.emit('edit-point-moved', args)
+    },
+    onEditedFeaturesCreated (feature) {
+      // We only support single feature edition
+      if (!getType(feature) || !getGeom(feature)) return
+      // Find related layer
+      const layer = this.getLayerById(feature.layer)
+      if (!layer || !this.isLayerEdited(layer)) return
+      this.editableLayer.addData(feature)
+    },
+    onEditedFeaturesUpdated (feature) {
+      // We only support single feature edition
+      if (!getType(feature) || !getGeom(feature)) return
+      // Find related layer
+      const layer = this.getLayerById(feature.layer)
+      if (!layer || !this.isLayerEdited(layer)) return
+      this.editableLayer.eachLayer(layer => {
+        if (_.get(layer, 'feature._id') === feature._id) {
+          this.editableLayer.removeLayer(layer)
+          this.editableLayer.addData(feature)
+        }
+      })
+    },
+    onEditedFeaturesRemoved (feature) {
+      // We only support single feature edition
+      if (!getType(feature) || !getGeom(feature)) return
+      // Find related layer
+      const layer = this.getLayerById(feature.layer)
+      if (!layer || !this.isLayerEdited(layer)) return
+      this.editableLayer.eachLayer(layer => {
+        if (_.get(layer, 'feature._id') === feature._id) {
+          this.editableLayer.removeLayer(layer)
+        }
+      })
     }
   },
   created () {
