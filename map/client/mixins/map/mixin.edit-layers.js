@@ -163,11 +163,11 @@ export const editLayers = {
 
       this.$engineEvents.on('click', this.onEditFeatureProperties)
       this.$engineEvents.on('zoomend', this.onMapZoomWhileEditing)
-      this.$engineEvents.on('pm:create', this.onFeatureCreated)
-      this.$engineEvents.on('pm:update', this.onFeaturesEdited)
-      this.$engineEvents.on('pm:dragend', this.onFeaturesEdited)
-      this.$engineEvents.on('pm:rotateend', this.onFeaturesEdited)
-      this.$engineEvents.on('layerremove', this.onFeaturesDeleted)
+      this.$engineEvents.on('pm:create', this.onCreateFeatures)
+      this.$engineEvents.on('pm:update', this.onEditFeatures)
+      this.$engineEvents.on('pm:dragend', this.onEditFeatures)
+      this.$engineEvents.on('pm:rotateend', this.onEditFeatures)
+      this.$engineEvents.on('layerremove', this.onRemoveFeatures)
       this.$engineEvents.on('pm:markerdragend', this.onPointMoveEnd)
 
       if (editMode) this.setEditMode(editMode)
@@ -194,7 +194,7 @@ export const editLayers = {
       unbindLeafletEvents(this.editableLayer, layerEditEvents)
 
       // Make sure we don't have any pending editions.
-      // Disabling geoman may trigger 'pm:update' event which in turn calls onFeaturesEdited
+      // Disabling geoman may trigger 'pm:update' event which in turn calls onEditFeatures
       // and this is going to patch in memory features with current editions. Since patching
       // is an async operation that happens in the 'pm:update' event callback, we use
       // this.pendingOperations to store operations that we need to wait upon here.
@@ -226,11 +226,11 @@ export const editLayers = {
 
       this.$engineEvents.off('click', this.onEditFeatureProperties)
       this.$engineEvents.off('zoomend', this.onMapZoomWhileEditing)
-      this.$engineEvents.off('pm:create', this.onFeatureCreated)
-      this.$engineEvents.off('pm:update', this.onFeaturesEdited)
-      this.$engineEvents.off('pm:dragend', this.onFeaturesEdited)
-      this.$engineEvents.off('pm:rotateend', this.onFeaturesEdited)
-      this.$engineEvents.off('layerremove', this.onFeaturesDeleted)
+      this.$engineEvents.off('pm:create', this.onCreateFeatures)
+      this.$engineEvents.off('pm:update', this.onEditFeatures)
+      this.$engineEvents.off('pm:dragend', this.onEditFeatures)
+      this.$engineEvents.off('pm:rotateend', this.onEditFeatures)
+      this.$engineEvents.off('layerremove', this.onRemoveFeatures)
       this.$engineEvents.off('pm:markerdragend', this.onPointMoveEnd)
     },
     onEditStop (status, layer) {
@@ -259,7 +259,7 @@ export const editLayers = {
         })
       })
     },
-    async onFeatureCreated (event) {
+    async onCreateFeatures (event) {
       const leafletLayer = event && event.layer
       if ((this.layerEditMode !== 'add-polygons' &&
            this.layerEditMode !== 'add-rectangles' &&
@@ -268,6 +268,8 @@ export const editLayers = {
           !leafletLayer) return
 
       let geoJson = leafletLayer.toGeoJSON()
+      // Avoid reentrance from realtime events as also raised when we are the initiator
+      if (this.createdFeature && this.createdFeature._id === geoJson._id) return
       // Generate temporary ID for feature
       const idValue = uid().toString()
       let idProp = _.get(this.editedLayer, 'featureId')
@@ -285,7 +287,7 @@ export const editLayers = {
       this.editableLayer.removeLayer(leafletLayer)
       this.editableLayer.addData(geoJson)
     },
-    async onFeaturesEdited (event) {
+    async onEditFeatures (event) {
       const leafletLayer = event && event.layer
       if ((this.layerEditMode !== 'edit-geometry' &&
            this.layerEditMode !== 'drag' &&
@@ -294,6 +296,8 @@ export const editLayers = {
 
       // Save changes to DB
       const geoJson = leafletLayer.toGeoJSON()
+      // Avoid reentrance from realtime events as also raised when we are the initiator
+      if (this.updatedFeature && this.updatedFeature._id === geoJson._id) return
       if (this.editedLayer._id) {
         await this.editFeaturesGeometry(geoJson)
       } else {
@@ -309,17 +313,19 @@ export const editLayers = {
         this.pendingOperations.splice(index, 1)
       }
     },
-    async onFeaturesDeleted (event) {
+    async onRemoveFeatures (event) {
       const leafletLayer = event && event.layer
       if (this.layerEditMode !== 'remove' ||
          !leafletLayer) return
-
       // This is connected to the 'layerremove' event of the editable layer
       // but we may also receive 'layerremove' event from the map
       if (!event.target || event.target !== this.editableLayer) return
 
       // Save changes to DB
       const geoJson = leafletLayer.toGeoJSON()
+      // Avoid reentrance from realtime events as also raised when we are the initiator
+      if (this.removedFeature && this.removedFeature._id === geoJson._id) return
+
       if (this.editedLayer._id) {
         await this.removeFeatures(geoJson)
       } else {
@@ -415,7 +421,10 @@ export const editLayers = {
       // Find related layer
       const layer = this.getLayerById(feature.layer)
       if (!layer || !this.isLayerEdited(layer)) return
+      // Used to prevent some re-entrance as event is also raised when we are the initiator
+      this.createdFeature = feature
       this.editableLayer.addData(feature)
+      this.createdFeature = null
     },
     onEditedFeaturesUpdated (feature) {
       // We only support single feature edition
@@ -423,12 +432,15 @@ export const editLayers = {
       // Find related layer
       const layer = this.getLayerById(feature.layer)
       if (!layer || !this.isLayerEdited(layer)) return
+      // Used to prevent some re-entrance as event is also raised when we are the initiator
+      this.updatedFeature = feature
       this.editableLayer.eachLayer(layer => {
         if (_.get(layer, 'feature._id') === feature._id) {
           this.editableLayer.removeLayer(layer)
           this.editableLayer.addData(feature)
         }
       })
+      this.updatedFeature = null
     },
     onEditedFeaturesRemoved (feature) {
       // We only support single feature edition
@@ -436,11 +448,14 @@ export const editLayers = {
       // Find related layer
       const layer = this.getLayerById(feature.layer)
       if (!layer || !this.isLayerEdited(layer)) return
+      // Used to prevent some re-entrance as event is also raised when we are the initiator
+      this.removedFeature = feature
       this.editableLayer.eachLayer(layer => {
         if (_.get(layer, 'feature._id') === feature._id) {
           this.editableLayer.removeLayer(layer)
         }
       })
+      this.removedFeature = null
     }
   },
   created () {
