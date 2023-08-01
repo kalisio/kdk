@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { account } from '../../mixins'
 
 export default {
