@@ -19,7 +19,6 @@
 import _ from 'lodash'
 import KModal from '../KModal.vue'
 import KForm from '../form/KForm.vue'
-import { Roles, getRoleForOrganisation } from '../../../common/permissions'
 import { baseModal, objectProxy } from '../../mixins'
 
 export default {

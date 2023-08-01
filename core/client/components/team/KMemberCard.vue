@@ -220,7 +220,7 @@ export default {
         }
       }).onOk(() => {
         const membersService = this.$api.getService('members', this.contextId)
-        let tags = _.get(this.item, this.options.tagsField || 'tags', [])
+        const tags = _.get(this.item, this.options.tagsField || 'tags', [])
         _.remove(tags, tag => tag._id === removedTag._id)
         membersService.patch(this.item._id, { tags })
       })
