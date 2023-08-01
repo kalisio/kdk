@@ -2,10 +2,9 @@
   <KScreen :title="$t('KSendResetPassword.TITLE')">
     <div slot="screen-content">
       <div class="column justify-center sm-gutter">
-          <div :class="textClass">
+          <div :class="textClass" v-if="message">
             <p>
-              <q-icon name="las la-check" v-show="sent && success"/>
-              <q-icon name="las la-exclamation-circle" v-show="sent && !success"/>
+              <q-icon name="las la-exclamation-circle" v-show="send"/>
               &nbsp;&nbsp;
               {{ message }}.
             </p>
@@ -41,9 +40,8 @@ export default {
   data () {
     return {
       message: '',
-      success: false,
-      sent: false,
       sending: false,
+      send: false,
       schema: {
         $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/send-reset-password#',
@@ -66,23 +64,24 @@ export default {
   computed: {
     textClass () {
       const classObject = {}
-      if (this.sent) {
-        classObject['text-positive'] = this.success
-        classObject['text-negative'] = !this.success
+      classObject['self-center'] = true
+      if (this.send) {
+        classObject['text-negative'] = true
       }
       return classObject
     }
   },
   methods: {
     async onSend () {
-      const result = this.$refs.form.validate()
-      if (result.isValid) {
+      const {isValid, values} = this.$refs.form.validate()
+      if (isValid) {
         try {
           this.sending = true
-          await this.sendResetPassword(result.values.email)
-          this.message = this.$t('KSendResetPassword.SUCCESS_MESSAGE')
-          this.success = true
+          console.log(values.email)
+          await this.sendResetPassword(values.email)
+          this.$router.push({ path: `reset-password/${values.email}` })
         } catch (error) {
+          console.log(error)
           const type = _.get(error, 'errors.$className')
           switch (type) {
             case 'isVerified':
@@ -91,9 +90,8 @@ export default {
             default:
               this.message = this.$t('KSendResetPassword.ERROR_MESSAGE_DEFAULT')
           }
-          this.success = false
         }
-        this.sent = true
+        this.send = true
         this.sending = false
       }
     }

@@ -8,27 +8,32 @@
     </q-card-section>
     <q-card-actions align="right">
       <KAction
-        id="change-password"
+        id="change-identity"
         label="APPLY"
         renderer="form-button"
         outline
         :loading="processing"
-        :handler="apply"
+        :handler="applyChanges"
       />
     </q-card-actions>
   </q-card>
+  <q-dialog v-model="dialog">
+    <KVerifyEmail @close-popup="closePopup"/>
+  </q-dialog>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { Store, i18n, utils } from '../..'
-import { Notify } from 'quasar'
+import { Store, utils } from '../..'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
+import KVerifyEmail from './KVerifyEmail.vue'
 
 // Data
-const formRef = ref(null)
 const User = Store.get('user')
+const formRef = ref(null)
+const dialog = ref(false)
+const processing = ref(false)
 const schema = ref({
   $schema: 'http://json-schema.org/draft-07/schema#',
   $id: 'http://kalisio.xyz/schemas/identity-manager#',
@@ -54,24 +59,23 @@ const schema = ref({
   },
   required: ['email', 'password']
 })
-const processing = ref(false)
 
 // Functions
-async function apply () {
+async function applyChanges () {
   const { isValid, values } = formRef.value.validate()
   if (!isValid) return false
   try {
     processing.value = true
     await utils.sendChangeIdentity(User.email, values.email, values.password)
+    dialog.value = true
     processing.value = false
-    Notify.create({
-      type: 'positive',
-      message: i18n.t('KIdentityManager.IDENTITY_CHANGED')
-    })
   } catch (error) {
     processing.value = false
     return false
   }
   return true
+}
+function closePopup () {
+  dialog.value = false
 }
 </script>

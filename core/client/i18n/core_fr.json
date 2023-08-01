@@ -441,11 +441,11 @@
     "DELETE_ACCOUNT_CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la suprression"
   },
   "KPasswordManager": {
-    "TITLE": "Gérer mon mot de passe",
+    "TITLE": "Modifier mon mot de passe",
     "PASSWORD_CHANGED": "Votre mot de passe a été modifié avec succés"
   },
   "KIdentityManager": {
-    "TITLE": "Gérer mon identité",
+    "TITLE": "Modifier mon adresse mail",
     "IDENTITY_CHANGED": "Votre nouvelle adresse a été prise en compte. Un mail vous a été envoyé pour confirmer le changement."
   },
   "KSubscriptionsManager": {
@@ -759,10 +759,11 @@
     "TITLE": "Réinitialiser votre mot de passe ?",
     "MESSAGE": "Saisissez votre nouveau mot de passe",
     "ACTION": "Appliquer",
-    "RESEND_LINK": "Renvoyer un mail de réinitialisation",
-    "LOG_IN_LINK": "Se connecter ?",
+    "RESEND_LINK": "Renvoyer un code de réinitialisation",
+    "EMAIL_FIELD_LABEL": "Saisissez votre adresse mail",
     "PASSWORD_FIELD_LABEL": "Saisissez votre nouveau mot de passe",
     "CONFIRM_PASSWORD_FIELD_LABEL": "Confirmez votre nouveau mot de passe",
+    "TOKEN_FIELD_LABEL": "Saisissez le code reçu par e-mail",
     "SUCCESS_MESSAGE": "Mot de passe réinitialisé, vous allez recevoir un mail de confirmation",
     "ERROR_MESSAGE_BAD_PARAMS": "Votre mot de passe a déjà été réinitialisé ou votre compte a été supprimé",
     "ERROR_MESSAGE_VERIFY_EXPIRED": "Le délai pour réinitialiser votre mot de passe a expiré. Pour refaire la procédure, merci de cliquer sur le lien ci-dessous",
@@ -781,20 +782,17 @@
   }, 
   "KSendResetPassword": {
     "TITLE": "Réinitialisation mon mot de passe ?",
-    "MESSAGE": "Nous allons vous envoyer un mail contenant les instructions pour réinitialiser votre mot de passe",
+    "MESSAGE": "Saisissez votre adresse e-mail et nous vous enverrons un code pour réinitialiser votre mot de passe",
     "ACTION": "Envoyer",
     "EMAIL_FIELD_LABEL": "Saisissez votre adresse mail",
-    "SUCCESS_MESSAGE": "Mail envoyé, consultez votre messagerie",
     "ERROR_MESSAGE_IS_VERIFIED": "Veuillez consulter votre messagerie et vérifier tout d'abord votre adresse mail",
     "ERROR_MESSAGE_DEFAULT": "Impossible d'envoyer le mail, merci de vérifier votre adresse et essayez à nouveau"
   },
   "KSignupAlert": {
-    "TITLE": "Votre adresse mail n'a pas été vérifiée, merci de consulter votre messagerie",
     "HELP_LABEL": "Pourquoi dois-je vérifier mon adresse mail ?",
     "HELP_TEXT": "Vérifier votre adresse mail améliore la sécurité de votre compte. Une fois que votre adresse mail est validée, vous serez en mesure d'apporter des changements à votre compte tels que votre mot de passe. Cela permet de nous aider pour protéger votre compte contre d'éventuels actes de piraterie.",
     "EMAIL_LABEL": "Je n'ai jamais reçu de mail de vérification. Que dois-je faire ?",
-    "EMAIL_TEXT": "Si vous n'avez pas reçu de mail de vérification, assurez-vous que le mail n'a pas été filtré et déplacé dans les spams de votre messagerie. Merci d'ajouter dans vos contacts l'adresse {email} dans votre client de messagerie. Vous pouvez également cliquer sur le bouton ci-dessous pour recevoir un nouveau mail de vérification.",
-    "ACTION": "Me renvoyer un mail de vérification"
+    "EMAIL_TEXT": "Si vous n'avez pas reçu de mail de vérification, assurez-vous que le mail n'a pas été filtré et déplacé dans les spams de votre messagerie. Merci d'ajouter dans vos contacts l'adresse {email} dans votre client de messagerie. Vous pouvez également cliquer sur le bouton ci-dessous pour recevoir un nouveau mail de vérification."
   },
   "KVerifySignup": {
     "TITLE": "Verification de votre adresse mail",
@@ -808,6 +806,13 @@
     "ERROR_MESSAGE_BAD_PARAMS": "Votre adresse mail a déjà été vérifiée ou votre compte a été supprimé",
     "ERROR_MESSAGE_VERIFY_EXPIRED": "Le délai pour vérifier votre adresse mail a expiré, merci de cliquer sur le lien ci-dessous pour vous renvoyer un mail de vérifcation",
     "ERROR_MESSAGE_DEFAULT": "Impossible de vérifier votre adresse mail"
+  },
+  "KVerifyEmail": {
+    "TITLE": "Vérifier mon adresse mail",
+    "TOKEN_LABEL": "Saisissez le code reçu par e-mail pour valider votre adresse mail",
+    "EMAIL_VERIFIED": "Votre adresse a été vérifié. Un mail vous a été envoyé pour confirmer le changement.",
+    "ACTION": "Me renvoyer un code de vérification",
+    "ERROR_MESSAGE": "Code invalide, demandez-en un nouveau"
   },
   "KMemberFilter": {
     "NONE": "Aucun",

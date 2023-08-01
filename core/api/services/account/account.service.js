@@ -43,14 +43,13 @@ export default function (name, app, options) {
     switch (type) {
       case 'resendVerifySignup': // send another email with link for verifying user's email addr
         email.subject = 'Confirm your signup'
-        email.link = domainPath + 'verify-signup/' + user.verifyToken
         break
       case 'verifySignup': // inform that user's email is now confirmed
         email.subject = 'Thank you, your email has been verified'
         break
       case 'sendResetPwd': // send email with link to reset password
         email.subject = 'Reset your password'
-        email.link = domainPath + 'reset-password/' + user.resetToken
+        email.link = domainPath + 'reset-password/' + user.email
         break
       case 'resetPwd': // inform that user's password is now reset
         email.subject = 'Your password was reset'
@@ -60,7 +59,6 @@ export default function (name, app, options) {
         break
       case 'identityChange': // inform that user's email has now changed
         email.subject = 'Your account information was changed'
-        email.link = domainPath + 'change-identity/' + user.verifyToken
         break
       case 'sendInvitation':
         if (_.has(user, 'sponsor.name')) {
@@ -116,6 +114,7 @@ export default function (name, app, options) {
     skipIsVerifiedCheck: true,
     service: userService.getPath(true),
     path: servicePath,
-    notifier: options.notifier
+    notifier: options.notifier,
+    reuseResetToken: true
   })
 }

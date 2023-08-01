@@ -1,0 +1,74 @@
+<template>
+  <div v-if="readOnly" :id="properties.name + '-field'">
+    <div v-html="text" />
+  </div>
+  <div  v-else class="q-pa-md">
+    <p :class="labelClass">{{ label }}</p>
+    <div class="row q-gutter-x-sm justify-center">
+      <q-input 
+        v-for="i in tokenLength"
+        :for="properties.name + '-field' + i"
+        :id="properties.name + '-field'  + i"
+        type="text"
+        mask="#"
+        v-model="fieldValues[i - 1]"
+        style="width: 4ch"
+        :disable="disabled"
+        outlined
+        :ref="el => updateFieldRef(el, i - 1)"
+        @update:model-value='updateModel(i)'
+        @blur="onChanged"
+        @keyup="onKeyUp($event, i - 1)"
+      >
+        <!-- Helper -->
+        <template v-if="helper" v-slot:hint>
+          <span v-html="helper"></span>
+        </template>
+      </q-input>
+    </div>
+  </div>
+</template>
+
+<script>
+import _ from 'lodash'
+import { baseField } from '../../mixins'
+
+export default {
+  mixins: [baseField],
+  data () {
+    return {
+      fieldValues: [],
+      fields: []
+    }
+  },
+  computed: {
+    tokenLength () {
+      return _.get(this.properties, 'tokenLength')
+    },
+    labelClass () {
+      const classObject = {}
+      classObject['row justify-center'] = true
+      if (this.errorLabel) classObject['text-red'] = true
+      return classObject
+    }
+  },
+  methods: {
+    updateModel (index) {
+      this.model = _.join(this.fieldValues, '')
+      this.onChanged()
+      this.focusNextInput(index)
+    },
+    focusNextInput (index) {
+      if (_.inRange(index, 0, this.tokenLength)) this.fields[index].select()
+    },
+    updateFieldRef (element, index) {
+      if (element) this.fields[index] = element
+    },
+    onKeyUp (event, index) {
+      const key = event.key
+      if (key === 'ArrowLeft' || key === 'Backspace') this.focusNextInput(index - 1)
+      if (key === 'ArrowRight') this.focusNextInput(index + 1)
+    }
+  }
+}
+</script>

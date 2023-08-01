@@ -6,10 +6,13 @@ export const account = {
         value: { email }
       })
     },
-    verifySignup (token) {
+    verifySignup (token, email) {
       return this.accountService.create({
-        action: 'verifySignupLong',
-        value: token
+        action: 'verifySignupShort',
+        value: {
+          user: { email },
+          token
+        }
       })
     },
     sendResetPassword (email) {
@@ -18,10 +21,11 @@ export const account = {
         value: { email }
       })
     },
-    resetPassword (token, password) {
+    resetPassword (email, token, password) {
       return this.accountService.create({
-        action: 'resetPwdLong',
+        action: 'resetPwdShort',
         value: {
+          user: { email },
           token,
           password
         }

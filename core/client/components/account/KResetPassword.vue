@@ -1,34 +1,24 @@
 <template>
-  <KScreen :title="$t('KResetPassword.TITLE')">
+  <KScreen :title="$t('KResetPassword.TITLE')" :actions="actions">
     <div slot="screen-content">
       <div class="column justify-center sm-gutter">
-          <div :class="textClass" v-if="message" >
-            <p>
-              <q-icon name="las la-check" v-show="reset && success"/>
-              <q-icon name="las la-exclamation-circle" v-show="reset && !success"/>
-              &nbsp;&nbsp;
-              {{ message }}.
-            </p>
-          </div>
-          <div v-if="!success">
-            <k-form ref="form" :schema="schema" />
-          </div>
-          <div v-if="!success">
-            <div class="row justify-around">
-              <q-btn color="primary" :loading="resetting" @click="onReset">
-                {{$t('KResetPassword.ACTION')}}
-              </q-btn>
-            </div>
-          </div>
-          <div class="self-center">
-            <a v-if="reset && !success" @click="$router.push({name: 'send-reset-password'})">
-              {{$t('KResetPassword.RESEND_LINK')}}
-            </a>
+        <div :class="textClass" v-if="message">
+          <p>
+            <q-icon name="las la-exclamation-circle" v-show="send"/>
             &nbsp;&nbsp;
-            <a v-if="reset && success" @click="$router.push({name: 'login'})">
-              {{$t('KResetPassword.LOG_IN_LINK')}}
-            </a>
+            {{ message }}
+          </p>
+        </div>
+        <div>
+          <k-form ref="form" :schema="schema" />
+        </div>
+        <div>
+          <div class="row justify-around">
+            <q-btn color="primary" :loading="resetting" @click="onReset">
+              {{$t('KResetPassword.ACTION')}}
+            </q-btn>
           </div>
+        </div>
       </div>
     </div>
   </KScreen>
@@ -39,6 +29,7 @@ import _ from 'lodash'
 import KScreen from '../screen/KScreen.vue'
 import KForm from '../form/KForm.vue'
 import { account } from '../../mixins'
+import { login } from '../../utils/utils.session.js'
 
 export default {
   name: 'k-reset-password',
@@ -51,9 +42,8 @@ export default {
     return {
       title: '',
       message: '',
-      success: false,
-      reset: false,
       resetting: false,
+      send: false,
       schema: {
         $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/reset-password.json#',
@@ -79,20 +69,31 @@ export default {
               component: 'form/KPasswordField',
               label: 'KResetPassword.CONFIRM_PASSWORD_FIELD_LABEL'
             }
+          },
+          token: {
+            type: 'string',
+            minLength: 6,
+            maxLength: 6,
+            tokenLength: 6,
+            field: {
+              component: 'form/KTokenField',
+              label: 'KResetPassword.TOKEN_FIELD_LABEL',
+            }
           }
         },
-        required: ['password', 'confirmPassword']
+        required: ['password', 'confirmPassword', 'token']
       }
     }
   },
   computed: {
     textClass () {
       const classObject = {}
-      if (this.reset) {
-        classObject['text-positive'] = this.success
-        classObject['text-negative'] = !this.success
-      }
+      classObject['self-center'] = true
+      if (this.send) classObject['text-negative'] = true
       return classObject
+    },
+    actions () {
+      return [{ id: 'reset-password-link', label: 'KResetPassword.RESEND_LINK', route: { name: 'send-reset-password' } }]
     }
   },
   methods: {
@@ -101,24 +102,23 @@ export default {
       if (result.isValid) {
         try {
           this.resetting = true
-          await this.resetPassword(this.$route.params.token, result.values.password)
-          this.message = this.$t('KResetPassword.SUCCESS_MESSAGE')
-          this.success = true
+          await this.resetPassword(this.$route.params.email, result.values.token, result.values.password)
+          await login(this.$route.params.email, result.values.password)
+          this.$notify({ type: 'positive', message: this.$t('KResetPassword.SUCCESS_MESSAGE') })
         } catch (error) {
           const type = _.get(error, 'errors.$className')
           switch (type) {
             case 'badParams':
               this.message = this.$t('KResetPassword.ERROR_MESSAGE_BAD_PARAMS')
               break
-            case 'verifyExpired':
+            case 'resetExpired':
               this.message = this.$t('KResetPassword.ERROR_MESSAGE_VERIFY_EXPIRED')
               break
             default:
               this.message = this.$t('KResetPassword.ERROR_MESSAGE_DEFAULT')
           }
-          this.success = false
         }
-        this.reset = true
+        this.send = true
         this.resetting = false
       }
     }

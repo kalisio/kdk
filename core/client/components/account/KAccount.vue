@@ -1,5 +1,17 @@
 <template>
   <q-card class="q-py-sm no-shadow">
+    <!-- Verification -->
+    <q-expansion-item
+      v-if="!$store.get('user.isVerified')"
+      :label="$t('KVerifyEmail.TITLE')"
+      group="account"
+      class="bg-grey-2"
+      header-class= 'text-red'
+      default-opened
+    >
+      <KSignupAlert notifierEmail="email-notifications@kalisio.com" />
+      <KVerifyEmail />
+    </q-expansion-item>
     <!-- Sections -->
     <template v-for="section in sections" :key="section.title">
       <q-expansion-item
@@ -42,6 +54,8 @@ import { useRouter } from 'vue-router'
 import { Dialog } from 'quasar'
 import { Store, i18n, api, utils } from '../..'
 import KAction from '../KAction.vue'
+import KVerifyEmail from './KVerifyEmail.vue'
+import KSignupAlert from './KSignupAlert.vue'
 
 // Data
 const router = useRouter()

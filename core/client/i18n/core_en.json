@@ -441,11 +441,11 @@
     "DELETE_ACCOUNT_CONFIRMATION": "Enter your account name to confirm the deletion"
   },
   "KPasswordManager": {
-    "TITLE": "Manage my password",
+    "TITLE": "Change my password",
     "PASSWORD_CHANGED": "Your password has been successfully changed"
   },
   "KIdentityManager": {
-    "TITLE": "Manage my identity",
+    "TITLE": "Change my email address",
     "IDENTITY_CHANGED": "You new address has been taken into account. An email has been sent to you to confirm the change."
   },
   "KSubscriptionsManager": {
@@ -758,10 +758,11 @@
     "TITLE": "Reset your password ?",
     "MESSAGE": "Please enter your new password to proceed",
     "ACTION": "Reset",
-    "RESEND_LINK": "Resend reset password email",
-    "LOG_IN_LINK": "Log in ?",
+    "RESEND_LINK": "Resend reset password code",
+    "EMAIL_FIELD_LABEL": "Enter your email address",
     "PASSWORD_FIELD_LABEL": "Enter your new password",
     "CONFIRM_PASSWORD_FIELD_LABEL": "Confirm your new password",
+    "TOKEN_FIELD_LABEL": "Enter the code received by email",
     "SUCCESS_MESSAGE": "Password reset, you will receive a confirmation email",
     "ERROR_MESSAGE_BAD_PARAMS": "Your password has already been reset or your account has been removed",
     "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to reset has expired, please resend the reset password email with the link below",
@@ -780,20 +781,17 @@
   },
   "KSendResetPassword": {
     "TITLE": "Reset my password ?",
-    "MESSAGE": "We shall email you instructions on how to reset your password",
+    "MESSAGE": "Enter your e-mail address and we will send you a code to reset your password",
     "ACTION": "Send",
     "EMAIL_FIELD_LABEL": "Enter your email address",
-    "SUCCESS_MESSAGE": "Email sent, please check your inbox",
     "ERROR_MESSAGE_IS_VERIFIED": "Check your inbox and verify your email address first",
     "ERROR_MESSAGE_DEFAULT": "Error while sending email, please check the address and send it again or try again later"
   },
   "KSignupAlert": {
-    "TITLE": "Your email address has not been verified, please check your mailbox",
     "HELP_LABEL": "Why should I verify my email address ?",
     "HELP_TEXT": "Verifying your email address improves the security of your account. Once you have verified your email address, both your password and access to your email account are required in order to make any changes to your account credentials, such as your password and contact email address. This helps further protect your account from being stolen by a potential phisher.",
     "EMAIL_LABEL": "I never received the verification email, what should I do ?",
-    "EMAIL_TEXT": "If you do not receive your signup verification email and you are running a Spam filter, check and make sure the message has not been filtered as spam. Please try adding {email} to your contacts or trusted senders list within your email client and attempt to re-verify your email address. You can also click the button below and we'll send you the email again.",
-    "ACTION": "Resend verification email"
+    "EMAIL_TEXT": "If you do not receive your signup verification email and you are running a Spam filter, check and make sure the message has not been filtered as spam. Please try adding {email} to your contacts or trusted senders list within your email client and attempt to re-verify your email address. You can also click the button below and we'll send you the email again."
   },
   "KVerifySignup": {
     "TITLE": "Email adress verification",
@@ -807,6 +805,13 @@
     "ERROR_MESSAGE_BAD_PARAMS": "Your email address has already been verified or your account has been removed",
     "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to verify your email address has expired, please resend the verification email with the link below",
     "ERROR_MESSAGE_DEFAULT": "Your email address has not been verified"
+  },
+  "KVerifyEmail": {
+    "TITLE": "Check my email address",
+    "TOKEN_LABEL": "Enter the code received by email to validate your email address",
+    "EMAIL_VERIFIED": "Your address has been verified. An email has been sent to you to confirm the change.",
+    "ACTION": "Resend verification code",
+    "ERROR_MESSAGE": "Invalid code, request a new one"
   },
   "KMemberFilter": {
     "NONE": "None",

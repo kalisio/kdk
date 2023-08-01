@@ -8,7 +8,7 @@
       class="full-width justify-end no-wrap"
       @triggered="onTriggered"
     />
-    <!-- Aavatar -->
+    <!-- Avatar -->
     <div class="row justify-center">
       <KAvatar
         :object="User"
@@ -75,15 +75,25 @@ const header = computed(() => {
     })
   }
   if (props.manageable) {
-    actions.push({
-      id: 'manage-accoun',
+    const manageAccountAction = {
+      id: 'manage-account',
       icon: 'las la-cog',
       tooltip: 'KProfile.MANAGE_ACCOUNT',
       dialog: {
         component: 'account/KAccount',
         okAction: 'CLOSE'
       }
-    })
+    }
+    if (!User.value.isVerified) {
+      manageAccountAction.badge = {
+        rounded: true,
+        floating: true,
+        class: 'q-ma-sm',
+        color: 'red',
+        icon: { name: 'fas fa-exclamation', size: '8px' }
+      }
+    }
+    actions.push(manageAccountAction)
   }
   return actions
 })

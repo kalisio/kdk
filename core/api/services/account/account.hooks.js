@@ -8,7 +8,7 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [when(hook => hook.data.action === 'resetPwdLong' || hook.data.action === 'passwordChange',
+    create: [when(hook => hook.data.action === 'resetPwdShort' || hook.data.action === 'passwordChange',
       populateAccountUser, enforcePasswordPolicy({ userAsItem: false, passwordField: 'value.password' }))],
     update: [],
     patch: [],
