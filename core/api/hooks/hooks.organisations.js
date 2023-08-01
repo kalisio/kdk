@@ -169,41 +169,6 @@ export function removeOrganisationResources (resourceScope) {
   }
 }
 
-export async function createPrivateOrganisation (hook) {
-  if (hook.type !== 'after') {
-    throw new Error('The \'createPrivateOrganisation\' hook should only be used as a \'after\' hook.')
-  }
-
-  const app = hook.app
-  const organisationService = app.getService('organisations')
-  // Create a private organisation for the user
-  await organisationService.create({
-    _id: hook.result._id, // Same ID as user, fine because in another service
-    name: hook.result.profile.name // Same name as user
-  }, {
-    user: hook.result
-  })
-
-  debug('Private organisation created for user ' + hook.result._id)
-  return hook
-}
-
-export async function removePrivateOrganisation (hook) {
-  if (hook.type !== 'after') {
-    throw new Error('The \'removePrivateOrganisation\' hook should only be used as a \'after\' hook.')
-  }
-
-  const app = hook.app
-  const organisationService = app.getService('organisations')
-  // Remove the private user's organisation
-  await organisationService.remove(hook.result._id.toString(), {
-    user: hook.result
-  })
-
-  debug('Private organisation removed for user ' + hook.result._id)
-  return hook
-}
-
 export async function preventRemoveOrganisation (hook) {
   if (hook.type !== 'before') {
     throw new Error('The \'preventRemoveOrganisations\' hook should only be used as a \'before\' hook.')

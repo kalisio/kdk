@@ -5,7 +5,7 @@ import common from 'feathers-hooks-common'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 
-const { iffElse, when } = common
+const { iff, when } = common
 const { util, expect, assert } = chai
 
 /* Scenario story board
@@ -28,7 +28,7 @@ const { util, expect, assert } = chai
 describe('core:team', () => {
   let app, adminDb, server, port, // baseUrl,
     userService, orgService, authorisationService, orgGroupService, orgUserService, orgStorageService,
-    joinedOrgUserService, user1Object, user2Object, user3Object, orgObject, groupObject
+    joinedOrgUserService, user1Object, user2Object, user3Object, orgObject, privateOrgObject, groupObject
 
   before(async () => {
     chailint(chai, util)
@@ -79,7 +79,7 @@ describe('core:team', () => {
       },
       after: {
         create: [
-          iffElse(hook => hook.result.sponsor, hooks.joinOrganisation, hooks.createPrivateOrganisation)
+          iff(hook => hook.result.sponsor, hooks.joinOrganisation)
         ],
         remove: [hooks.setAsDeleted, hooks.leaveOrganisations()]
       }
@@ -152,11 +152,18 @@ describe('core:team', () => {
 
   it('creates a private organisation on user registration', async () => {
     user2Object = await userService.create({ email: 'test-2@test.org', name: 'test-user-2' }, { checkAuthorisation: true })
+    expect(user2Object.organisations).beUndefined()
+    await orgService.create({ name: 'test-user-2' }, { user: user2Object, checkAuthorisation: true })
+    const orgs = await orgService.find({ query: { name: 'test-user-2' }, user: user2Object, checkAuthorisation: true })
+    expect(orgs.data.length > 0).beTrue()
+    privateOrgObject = orgs.data[0]
+    const users = await userService.find({ query: { 'profile.name': 'test-user-2' }, checkAuthorisation: true, user: user2Object })
+    expect(users.data.length > 0).beTrue()
+    user2Object = users.data[0]
     expect(user2Object.organisations).toExist()
     // By default the user manage its own organisation
     expect(user2Object.organisations[0].permissions).to.deep.equal('owner')
-    const orgs = await orgService.find({ query: { name: 'test-user-2' }, user: user2Object, checkAuthorisation: true })
-    expect(orgs.data.length > 0).beTrue()
+    
   })
   // Let enough time to process
     .timeout(5000)
@@ -165,7 +172,7 @@ describe('core:team', () => {
     const sponsor = { id: user2Object._id, organisationId: user2Object.organisations[0]._id, roleGranted: 'member' }
     user3Object = await userService.create({ email: 'test-3@test.org', name: 'test-user-3', sponsor }, { checkAuthorisation: true })
     expect(user3Object.organisations).toExist()
-    // By default the user manage its own organisation
+    // By default the user is registered to the organisation
     expect(user3Object.organisations[0].permissions).to.deep.equal('member')
   })
   // Let enough time to process
@@ -574,7 +581,7 @@ describe('core:team', () => {
     // No more permission set for org
     expect(_.find(user2Object.organisations, org => org._id.toString() === orgObject._id.toString())).beUndefined()
     // Only private org remains
-    expect(_.find(user2Object.organisations, org => org._id.toString() === user2Object._id.toString())).toExist()
+    expect(_.find(user2Object.organisations, org => org._id.toString() === privateOrgObject._id.toString())).toExist()
   })
   // Let enough time to process
     .timeout(5000)
@@ -636,10 +643,10 @@ describe('core:team', () => {
     .timeout(5000)
 
   it('remove private users private organisations before deletion', async () => {
-    await orgService.remove(user1Object._id, { user: user1Object, checkAuthorisation: true })
-    user1Object = await userService.get(user1Object._id)
-    await orgService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
+    await orgService.remove(privateOrgObject._id, { user: user2Object, checkAuthorisation: true })
     user2Object = await userService.get(user2Object._id)
+    // No org remains
+    expect(user2Object.organisations.length).to.equal(0)
   })
   // Let enough time to process
     .timeout(5000)
