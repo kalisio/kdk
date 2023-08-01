@@ -214,6 +214,8 @@ export const activity = {
       this.zoomToLayer(layer.name)
     },
     async onSaveLayer (layer) {
+      // Stop any running edition
+      if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('accept')
       // Take care that WFS layers rely on the same type as our own feature layers
       if (!_.has(layer, 'wfs') && _.get(layer, `${this.engine}.type`) === 'geoJson') {
         const geoJson = this.toGeoJson(layer.name)
@@ -306,19 +308,19 @@ export const activity = {
       if (!layer) return
       this.startEditLayer(layer, editOptions)
     },
-    onEditLayerData (layer) {
+    async onEditLayerData (layer) {
       // this one is triggered by a layer action (toggle)
       if (this.isLayerEdited(layer)) {
         // always accept editions in the action
-        this.stopEditLayer('accept')
+        await this.stopEditLayer('accept')
       } else {
         // start editing properties by default
-        this.startEditLayer(layer, { editMode: 'edit-properties' })
+        await this.startEditLayer(layer, { editMode: 'edit-properties' })
       }
     },
-    onEndLayerEdition (status = 'accept') {
+    async onEndLayerEdition (status = 'accept') {
       // this one can be triggered from a toolbar to accept or reject changes
-      this.stopEditLayer(status)
+      await this.stopEditLayer(status)
     },
     async onRemoveLayer (layer) {
       Dialog.create({
@@ -337,7 +339,7 @@ export const activity = {
         Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL'), html: true })
         try {
           // Stop any running edition
-          if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) this.onEditLayerData(layer)
+          if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
           if (layer._id) {
             // If persistent feature layer remove features as well
             if (this.isFeatureLayer(layer)) {
@@ -436,7 +438,11 @@ export const activity = {
           // (eg style edition, etc.)
           // Here we find layer by ID as renaming could have occured from another client
           const layer = this.getLayerById(object._id)
-          if (layer) await this.removeCatalogLayer(layer)
+          if (layer) {
+            // Stop any running edition
+            if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
+            await this.removeCatalogLayer(layer)
+          }
           if (event !== 'removed') {
             // Do we need to inject a token ?
             await setEngineJwt([object])

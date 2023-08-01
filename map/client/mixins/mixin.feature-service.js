@@ -2,7 +2,7 @@ import _ from 'lodash'
 import explode from '@turf/explode'
 import kinks from '@turf/kinks'
 import clean from '@turf/clean-coords'
-import { getType } from '@turf/invariant'
+import { getType, getGeom } from '@turf/invariant'
 import logger from 'loglevel'
 import moment from 'moment'
 import { Time } from '../../../core/client/time.js'
@@ -361,10 +361,43 @@ export const featureService = {
           if (feature._id) await this.$api.getService('features').remove(feature._id)
         }
       }
+    },
+    onFeaturesUpdated (feature) {
+      // We only support single feature edition
+      if (!getType(feature) || !getGeom(feature)) return
+      // Find related layer
+      const layer = this.getLayerById(feature.layer)
+      if (!layer || !this.isLayerVisible(layer.name) || this.isLayerEdited(layer)) return
+      // As by default we update the whole layer in fetch and replace mode force add/update only mode
+      // Can only apply to realtime layers as we need to force a data refresh
+      if (typeof this.updateLayer === 'function') this.updateLayer(layer.name, feature, { removeMissing: false })
+    },
+    onFeaturesRemoved (feature) {
+      // We only support single feature edition
+      if (!getType(feature) || !getGeom(feature)) return
+      // Find related layer
+      const layer = this.getLayerById(feature.layer)
+      if (!layer || !this.isLayerVisible(layer.name) || this.isLayerEdited(layer)) return
+      // Can only apply to realtime layers as we need to force a data refresh
+      if (typeof this.updateLayer === 'function') this.updateLayer(layer.name, feature, { remove: true })
     }
   },
   created () {
     // Extend timeout for large write operations
     this.$api.getService('features').timeout = 60 * 60 * 1000 // 1h should be sufficient since we also have size limits
+  },
+  mounted () {
+    // Listen to user layer changes
+    const featuresService = this.$api.getService('features')
+    featuresService.on('created', this.onFeaturesUpdated)
+    featuresService.on('patched', this.onFeaturesUpdated)
+    featuresService.on('removed', this.onFeaturesRemoved)
+  },
+  beforeUnmount () {
+    // Remove event connections
+    const featuresService = this.$api.getService('features')
+    featuresService.off('created', this.onFeaturesUpdated)
+    featuresService.off('patched', this.onFeaturesUpdated)
+    featuresService.off('removed', this.onFeaturesRemoved)
   }
 }
