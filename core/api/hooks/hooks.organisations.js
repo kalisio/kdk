@@ -119,10 +119,14 @@ export function updateOrganisationResource (resourceScope) {
     if (hook.type !== 'after') {
       throw new Error('The \'updateOrganisationResource\' hook should only be used as a \'after\' hook.')
     }
+    // Only applicable to update/remove operations
+    if ((hook.method === 'get' || hook.method === 'find' || hook.method === 'create')) return hook
 
     const app = hook.app
     // Retrieve the list of members
-    const orgMembersService = app.getService('members', hook.service.getContextId())
+    const context = hook.service.getContextId()
+    // Use members service if any or global users service
+    const orgMembersService = (context ? app.getService('members', context) : app.getService('users'))
     const members = await orgMembersService.find({
       query: { [resourceScope]: { $elemMatch: { _id: hook.result._id } } },
       paginate: false
@@ -130,13 +134,15 @@ export function updateOrganisationResource (resourceScope) {
     // Update each members
     await Promise.all(members.map(member => {
       const resources = _.get(member, resourceScope, [])
-      const resource = _.find(resources, { _id: hook.result._id })
-      if (resource) {
-        Object.assign(resource, hook.result)
-        return orgMembersService.patch(member._id, { [resourceScope]: resources })
+      const resource = _.find(resources, item => item._id.toString() === hook.result._id.toString())
+      if (!resource) return Promise.resolve()
+      // Check for removal or update
+      if (hook.method === 'remove') {
+        _.remove(resources, item => resource._id.toString() === item._id.toString())
       } else {
-        return Promise.resolve()
+        Object.assign(resource, hook.result)
       }
+      return orgMembersService.patch(member._id, { [resourceScope]: resources })
     }))
 
     debug(`Updated resource ${hook.result._id} on scope ${resourceScope} for members of organisation ` + hook.result._id)
@@ -144,52 +150,23 @@ export function updateOrganisationResource (resourceScope) {
   }
 }
 
-export function removeOrganisationGroups (hook) {
-  if (hook.type !== 'after') {
-    throw new Error('The \'removeOrganisationGroups\' hook should only be used as a \'after\' hook.')
-  }
-
-  const app = hook.app
-  const orgGroupService = app.getService('groups', hook.result)
-  return orgGroupService.find({ paginate: false })
-    .then(groups => {
-      return Promise.all(groups.map(group => {
-        return orgGroupService.remove(group._id.toString(), {
-          user: hook.params.user
-        })
-      }))
-    })
-    .then(groups => {
-      debug('Removed groups for organisation ' + hook.result._id)
-      return hook
-    })
-}
-
-export async function removeOrganisationTags (hook) {
-  if (hook.type !== 'after') {
-    throw new Error('The \'removeOrganisationTags\' hook should only be used as a \'after\' hook.')
-  }
-
-  const app = hook.app
-  // Retrieve the list of tags
-  const orgTagsService = app.getService('tags', hook.result)
-  const tags = await orgTagsService.find({ paginate: false })
-  // Retrieve the list of members
-  const orgMembersService = app.getService('members', hook.result)
-  const members = await orgMembersService.find({ paginate: false })
-  // Update each members
-  for (const i in members) {
-    const member = members[i]
-    if (member.tags) {
-      const filteredTagsMember = _.filter(member.tags, (tag) => {
-        return _.findIndex(tags, { _id: tag._id }) === -1
-      })
-      await orgMembersService.patch(member._id, { tags: filteredTagsMember })
+export function removeOrganisationResources (resourceScope) {
+  return async function (hook) {
+    if (hook.type !== 'after') {
+      throw new Error('The \'removeOrganisationResources\' hook should only be used as a \'after\' hook.')
     }
-  }
 
-  debug('Removed tags from organisation ' + hook.result._id)
-  return hook
+    const app = hook.app
+    const orgResourceService = app.getService(resourceScope, hook.result)
+    const resources = await orgResourceService.find({ paginate: false })
+    await Promise.all(resources.map(resource => {
+      return orgResourceService.remove(resource._id.toString(), {
+        user: hook.params.user
+      })
+    }))
+    debug(`Removed ${resourceScope} for organisation ` + hook.result._id)
+    return hook
+  }
 }
 
 export async function createPrivateOrganisation (hook) {

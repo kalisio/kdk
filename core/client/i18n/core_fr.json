@@ -142,6 +142,7 @@
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'organisation",
     "MEMBERS_TAGS_FIELD_LABEL": "Ajouter des étiquettes pour qualifier le membre",
     "TAG_NAME": "{ object.value }",
+    "TAGS_CREATE_TITLE": "Créer une nouvelle étiquette ?",
     "TAGS_NAME_FIELD_LABEL": "Saisissez le nom de l'étiquette",
     "TAGS_ICON_FIELD_LABEL": "Choisissez l'icône de l'étiquette",
     "TAGS_DESCRIPTION_FIELD_LABEL": "Saisissez une description de l'étiquette",
@@ -649,6 +650,12 @@
     "USER_ADDED_MESSAGE": "Cette personne a été ajoutée",
     "GUEST_ADDED_MESSAGE": "Cette personne a été invitée"
   },
+  "KAddTag": {
+    "TITLE": "Etiquetter {member} avec une étiquette existante ?",
+    "TAG_FIELD_LABEL": "Saisissez le nom de l'étiquette",
+    "CLOSE_ACTION": "@:CLOSE_ACTION",
+    "ADD_BUTTON": "Etiquetter"
+  },
   "KJoinGroup": {
     "TITLE": "Ajouter {member} à un groupe existant ?",
     "GROUP_FIELD_LABEL": "Saisissez le nom du groupe",
@@ -669,8 +676,10 @@
     "EDIT_ACTION": "@:EDIT",    
     "REMOVE_ACTION": "@:REMOVE",
     "TAGS_SECTION": "Etiquettes",
-    "TAG_ACTION": "Mofifier les étiquettes",
     "NO_TAGS_LABEL": "Aucune étiquette",
+    "TAG_ACTION": "Ajouter une étiquette",
+    "REMOVE_TAG_DIALOG_TITLE": "Supprimer l'étiquette {tag} ?",
+    "REMOVE_TAG_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'étiquette <b>{tag}</b> pour <b>{member}</b> ?",
     "GROUPS_SECTION": "Groupes",
     "NO_GROUPS_LABEL": "Aucun groupe",
     "JOIN_GROUP_ACTION": "Rejoindre un groupe",
@@ -687,12 +696,14 @@
   "KTagsActivity": {
     "TAGS_LABEL": "@:TAGS",
     "SORT_TAGS": "Trier les étiquettes",
-    "SEARCH_TAGS": "Rechercher des étiquettes"
+    "SEARCH_TAGS": "Rechercher des étiquettes",
+    "CREATE_TAG_LABEL": "Créer une étiquette"
   },
   "KTagCard": {
     "EDIT_ACTION": "@:EDIT",
+    "REMOVE_ACTION": "@:REMOVE",
     "MEMBERS_SECTION": "Membres",
-    "MEMBERS_LABEL": "{count} membre(s",
+    "MEMBERS_LABEL": "{count} membre(s)",
     "VIEW_MEMBERS_LABEL": "Voir les membres possédant l'étiquette"
   },
   "KGroupsActivity": {
@@ -707,7 +718,7 @@
     "DESCRIPTION_SECTION": "Description",
     "NO_DESCRIPTION_LABEL": "Aucune description",
     "MEMBERS_SECTION": "Membres",
-    "MEMBERS_LABEL": "{count} membre(s",
+    "MEMBERS_LABEL": "{count} membre(s)",
     "VIEW_MEMBERS_LABEL": "Voir les membres"
   },
   "KChangeIdentity": {

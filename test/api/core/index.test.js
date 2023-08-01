@@ -43,14 +43,14 @@ describe('core:services', () => {
 
     userService = app.getService('users')
     expect(userService).toExist()
-    // Register tag hooks
-    userService.hooks({
-      after: { create: hooks.updateTags, remove: hooks.updateTags }
-    })
     // Create a global tag service for tests
     await createTagService.call(app)
     tagService = app.getService('tags')
     expect(tagService).toExist()
+    // Register hooks
+    tagService.hooks({
+      after: { remove: hooks.updateOrganisationResource('tags') }
+    })
     authorisationService = app.getService('authorisations')
     expect(authorisationService).toExist()
     // Register escalation hooks
@@ -141,10 +141,6 @@ describe('core:services', () => {
       email: 'test@test.org',
       password: hook.data.password,
       name: 'test-user',
-      tags: [{
-        scope: 'skills',
-        value: 'developer'
-      }],
       profile: { phone: '0623256968' }
     }, { checkAuthorisation: true })
       .then(user => {
@@ -161,12 +157,6 @@ describe('core:services', () => {
         expect(users.data[0].email).toExist()
         expect(users.data[0].clearPassword).beUndefined()
         expect(users.data[0].profile).beUndefined()
-        return tagService.find({ query: { value: 'developer' } })
-      })
-      .then(tags => {
-        expect(tags.data.length > 0).beTrue()
-        expect(tags.data[0].value).to.equal('developer')
-        expect(tags.data[0].scope).to.equal('skills')
       })
   })
   // Let enough time to process
@@ -258,35 +248,24 @@ describe('core:services', () => {
       })
   })
 
-  it('creates a user tag', () => {
-    return tagService.create({
+  it('creates a user tag', async () => {
+    const tag = await tagService.create({
       name: 'Manager',
       scope: 'skills',
       value: 'manager'
-    }, {
-      query: {
-        resource: userObject._id.toString(),
-        resourcesService: 'users'
-      }
     })
-      .then(tag => {
-        tagObject = tag
-        expect(tag).toExist()
-        expect(tag.count).to.equal(1)
-        return tagService.find({ query: { value: 'manager' } })
-      })
-      .then(tags => {
-        expect(tags.data.length > 0).beTrue()
-        expect(tags.data[0].scope).to.equal('skills')
-        return userService.find({ query: { 'profile.name': 'test-user' } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        userObject = users.data[0]
-        expect(userObject.tags).toExist()
-        expect(userObject.tags.length === 2).beTrue()
-        expect(userObject.tags[1]._id).toExist()
-      })
+    tagObject = tag
+    expect(tagObject).toExist()
+    const tags = await tagService.find({ query: { value: 'manager' } })
+    expect(tags.data.length > 0).beTrue()
+    expect(tags.data[0].scope).to.equal('skills')
+    await userService.patch(userObject._id.toString(), { tags: [tagObject] })
+    const users = await userService.find({ query: { 'profile.name': 'test-user' } })
+    expect(users.data.length > 0).beTrue()
+    userObject = users.data[0]
+    expect(userObject.tags).toExist()
+    expect(userObject.tags.length === 1).beTrue()
+    expect(userObject.tags[0]._id.toString() === tagObject._id.toString()).toExist()
   })
   // Let enough time to process
     .timeout(5000)
@@ -428,30 +407,14 @@ describe('core:services', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('removes a user tag', () => {
-    return tagService.remove(userObject._id, {
-      query: {
-        scope: 'skills',
-        value: 'manager',
-        resourcesService: 'users'
-      }
-    })
-      .then(tag => {
-        expect(tag).toExist()
-        return tagService.find({ query: { value: 'manager' } })
-      })
-      .then(tags => {
-        expect(tags.data.length === 0).beTrue()
-        return tagService.find({ query: { value: 'developer' } })
-      })
-      .then(tags => {
-        expect(tags.data.length === 1).beTrue()
-        return userService.find({ query: { 'profile.name': 'test-user' } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        expect(users.data[0].tags.length === 1).beTrue()
-      })
+  it('removes a user tag', async () => {
+    const tag = await tagService.remove(tagObject._id.toString())
+    expect(tag).toExist()
+    const tags = await tagService.find({})
+    expect(tags.data.length === 0).beTrue()
+    const users = await userService.find({ query: { 'profile.name': 'test-user' } })
+    expect(users.data.length > 0).beTrue()
+    expect(users.data[0].tags.length === 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)

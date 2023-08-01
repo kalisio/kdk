@@ -117,7 +117,7 @@ export const baseItem = {
     },
     removeItem (prompt, nameField = 'name') {
       if (prompt === 'confirm' || prompt === 'input') {
-        const name = _.get(this, nameField)
+        const name = _.get(this.item, nameField)
         const input = {
           type: 'text',
           model: '',

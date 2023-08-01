@@ -77,11 +77,11 @@ export default {
     },
     getLabel (item) {
       const service = _.find(this.properties.services, { service: item.service })
-      return _.get(item, service.field, 'name')
+      return _.get(item, service.field || 'name', '')
     },
     getDescription (item) {
       const service = _.find(this.properties.services, { service: item.service })
-      return _.get(item, service.description, 'description')
+      return _.get(item, service.description || 'description', '')
     },
     getIcon (item) {
       return _.get(item, 'icon.name', _.get(item, 'icon', ''))

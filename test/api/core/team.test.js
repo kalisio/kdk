@@ -93,7 +93,7 @@ describe('core:team', () => {
       },
       after: {
         create: [hooks.createOrganisationServices, hooks.createOrganisationAuthorisations],
-        remove: [hooks.setAsDeleted, hooks.removeOrganisationGroups, hooks.removeOrganisationAuthorisations, hooks.removeOrganisationServices]
+        remove: [hooks.setAsDeleted, hooks.removeOrganisationResources('groups'), hooks.removeOrganisationAuthorisations, hooks.removeOrganisationServices]
       }
     })
     authorisationService = app.getService('authorisations')

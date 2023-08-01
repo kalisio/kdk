@@ -14,7 +14,7 @@
         <KAction
           id="list-members"
           icon="las la-user-friends"
-          :label="$t('KTagCard.MEMBERS_LABEL', { count: item.count })"
+          :label="$t('KTagCard.MEMBERS_LABEL', { count: membersCount })"
           :tooltip="$t('KTagCard.VIEW_MEMBERS_LABEL')"
           @triggered="onListMembers"
         />
@@ -25,6 +25,7 @@
 
 <script>
 import { baseItem } from '../../mixins'
+import { countMembersWithTag } from '../../../common/permissions'
 import { KCard, KCardSection } from '../collection'
 import KAction from '../KAction.vue'
 
@@ -36,12 +37,22 @@ export default {
     KAction
   },
   mixins: [baseItem],
+  data () {
+    return {
+      membersCount: 0
+    }
+  },
   computed: {
     dense () {
       return this.$q.screen.lt.sm
     }
   },
   methods: {
+    async refreshStats () {
+      const membersService = this.$api.getService('members', this.contextId)
+      const members = await countMembersWithTag(membersService, this.item._id)
+      this.membersCount = members.data.length
+    },
     onListMembers () {
       // Setup filter accordingly
       this.$store.patch('filter', {
@@ -52,6 +63,10 @@ export default {
       })
       this.$router.push({ name: 'members-activity', params: { contextId: this.contextId, mode: 'filter' } })
     }
+  },
+  created () {
+    // Compute the count of members having the tag
+    this.refreshStats()
   }
 }
 </script>

@@ -30,7 +30,7 @@
         :context="$props"
         :dense="dense">
         <div v-if="hasTags">
-          <KChipsPane id="tags-pane" class="q-pa-sm" :chips="tags" />
+          <KChipsPane id="tags-pane" class="q-pa-sm" :remove="true" @chip-removed="onRemoveTag" :chips="tags" />
         </div>
         <div v-else>
           {{ $t('KMemberCard.NO_TAGS_LABEL')}}
@@ -118,7 +118,7 @@ export default {
     },
     tags () {
       // Check for custom tags field
-      let tags = this.options.tagsField ? _.get(this.item, this.options.tagsField, '') : this.item.tags
+      let tags = _.get(this.item, this.options.tagsField || 'tags', [])
       // Filter tags from current context
       tags = _.filter(tags, { context: this.$store.get('context._id') })
       // Then process icons
@@ -203,6 +203,26 @@ export default {
             resourcesService: 'organisations'
           }
         })
+      })
+    },
+    onRemoveTag (removedTag) {
+      Dialog.create({
+        title: this.$t('KMemberCard.REMOVE_TAG_DIALOG_TITLE', { tag: removedTag.value }),
+        message: this.$t('KMemberCard.REMOVE_TAG_DIALOG_MESSAGE', { tag: removedTag.value, member: this.item.name }),
+        html: true,
+        ok: {
+          label: this.$t('OK'),
+          flat: true
+        },
+        cancel: {
+          label: this.$t('CANCEL'),
+          flat: true
+        }
+      }).onOk(() => {
+        const membersService = this.$api.getService('members', this.contextId)
+        let tags = _.get(this.item, this.options.tagsField || 'tags', [])
+        _.remove(tags, tag => tag._id === removedTag._id)
+        membersService.patch(this.item._id, { tags })
       })
     },
     groupKey (group) {

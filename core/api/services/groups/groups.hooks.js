@@ -1,5 +1,3 @@
-import { updateOrganisationResource } from '../../hooks/index.js'
-
 export default {
   before: {
     all: [],
@@ -16,8 +14,8 @@ export default {
     find: [],
     get: [],
     create: [],
-    update: [updateOrganisationResource('groups')],
-    patch: [updateOrganisationResource('groups')],
+    update: [],
+    patch: [],
     remove: []
   },
 

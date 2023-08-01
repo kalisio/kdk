@@ -272,6 +272,15 @@ export function countMembersOfGroup (membersService, groupId, role) {
   return countSubjectsForResource(membersService, 'groups', groupId, role)
 }
 
+// Helper functions to find the members with a given tag
+export function findMembersWithTag (membersService, tagId) {
+  return findSubjectsForResource(membersService, 'tags', tagId)
+}
+
+export function countMembersWithTag (membersService, tagId) {
+  return countSubjectsForResource(membersService, 'tags', tagId)
+}
+
 export function getRoleForOrganisation (user, organisationId) {
   const result = _.find(user.organisations, { _id: organisationId })
   if (!_.isUndefined(result)) return result.permissions

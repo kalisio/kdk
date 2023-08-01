@@ -8,7 +8,7 @@ import {
   hasServiceAbilities, hasResourceAbilities, getQueryForAbilities,
   Roles, RoleNames, countSubjectsForResource
 } from '../../common/permissions.js'
-import { isTagEqual } from './hooks.tags.js'
+import { isTagEqual } from '../utils.js'
 
 const { getItems, replaceItems } = common
 const { Forbidden } = errors

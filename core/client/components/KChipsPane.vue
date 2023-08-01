@@ -6,6 +6,8 @@
         :key="getValue(chip)"
         :color="getColor(chip)"
         text-color="white"
+        :removable="removable"
+        @remove="onRemove(chip)"
         dense
         outline
         square>
@@ -37,6 +39,10 @@ export default {
     valuePath: {
       type: [String, Array],
       default: 'value'
+    },
+    removable: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -65,6 +71,9 @@ export default {
     },
     getIcon (chip) {
       return getIconName(chip)
+    },
+    onRemove (chip) {
+      this.$emit('chip-removed', chip)
     }
   },
   mounted () {

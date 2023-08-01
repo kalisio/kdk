@@ -142,6 +142,7 @@
     "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Enter a description name of this organisation",
     "MEMBERS_TAGS_FIELD_LABEL": "Add somes tags to qualify this member",
     "TAG_NAME": "{ object.value }",
+    "TAGS_CREATE_TITLE": "Create a new tag ?",
     "TAGS_NAME_FIELD_LABEL": "Enter the name of this tag",
     "TAGS_ICON_FIELD_LABEL": "Set the icon of this tag",
     "TAGS_DESCRIPTION_FIELD_LABEL": "Enter a description of this tag",
@@ -648,6 +649,12 @@
     "USER_ADDED_MESSAGE": "This person as been added",
     "GUEST_ADDED_MESSAGE": "This person as been invited"
   },
+  "KAddTag": {
+    "TITLE": "Tag {member} with an existing tag ?",
+    "TAG_FIELD_LABEL": "Enter the name of the tag",
+    "CLOSE_ACTION": "@:CLOSE",
+    "ADD_BUTTON": "Tag"
+  },
   "KJoinGroup": {
     "TITLE": "Add {member} to an existing group ?",
     "GROUP_FIELD_LABEL": "Enter the name of the group",
@@ -669,7 +676,9 @@
     "REMOVE_ACTION": "@:REMOVE",
     "TAGS_SECTION": "Tags",
     "NO_TAGS_LABEL": "Update tags",
-    "TAG_ACTION": "Edit tags",
+    "TAG_ACTION": "Add a tag",
+    "REMOVE_TAG_DIALOG_TITLE": "Remove tag {tag} ?",
+    "REMOVE_TAG_DIALOG_MESSAGE": "Are you sure you want to remove tag <b>{tag}</b> for <b>{member}</b>?",
     "GROUPS_SECTION": "Groups",
     "NO_GROUPS_LABEL": "No groups",
     "JOIN_GROUP_ACTION": "Join a group",
@@ -686,12 +695,14 @@
   "KTagsActivity": {
     "TAGS_LABEL": "@:TAGS",
     "SORT_TAGS": "Sort tags",
-    "SEARCH_TAGS": "Search tags"
+    "SEARCH_TAGS": "Search tags",
+    "CREATE_TAG_LABEL": "Create a tag"
   },
   "KTagCard": {
     "EDIT_ACTION": "@:EDIT",
+    "REMOVE_ACTION": "@:REMOVE",
     "MEMBERS_SECTION": "Members",
-    "MEMBERS_LABEL": "{count} member(s",
+    "MEMBERS_LABEL": "{count} member(s)",
     "VIEW_MEMBERS_LABEL": "View members with tag"
   },
   "KGroupsActivity": {
@@ -706,7 +717,7 @@
     "DESCRIPTION_SECTION": "Description",
     "NO_DESCRIPTION_LABEL": "No description",
     "MEMBERS_SECTION": "Members",
-    "MEMBERS_LABEL": "{count} member(s",
+    "MEMBERS_LABEL": "{count} member(s)",
     "VIEW_MEMBERS_LABEL": "View members"
   },
   "KChangeIdentity": {
