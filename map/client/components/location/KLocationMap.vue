@@ -26,7 +26,8 @@ import centroid from '@turf/centroid'
 import { KPanel } from '../../../../core/client/components'
 import * as mapMixins from '../../mixins/map'
 import { Geolocation } from '../../geolocation'
-import { setEngineJwt, coordinatesToGeoJSON, formatUserCoordinates, bindLeafletEvents, unbindLeafletEvents } from '../../utils'
+import { setEngineJwt, coordinatesToGeoJSON, formatUserCoordinates,
+         bindLeafletEvents, unbindLeafletEvents, createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec } from '../../utils'
 
 export default {
   components: {
@@ -167,16 +168,19 @@ export default {
       }
       // create a new layer
       const type = _.get(this.location, 'geometry.type')
+      // style is expressed as simple style spec in config
+      const pointStyle = convertToLeafletFromSimpleStyleSpec(this.engineOptions.pointStyle)
+      const featureStyle = convertToLeafletFromSimpleStyleSpec(this.engineOptions.featureStyle)
       if (type === 'Point') {
         const coordinates = _.get(this.location, 'geometry.coordinates')
-        this.locationLayer = L.marker([coordinates[1], coordinates[0]], {
-          icon: L.icon.fontAwesome(this.engineOptions.pointStyle),
-          draggable: this.draggable,
-          pmIgnore: true
-        })
+        this.locationLayer = createLeafletMarkerFromStyle([coordinates[1], coordinates[0]],
+          Object.assign({ draggable: this.draggable, pmIgnore: true }, pointStyle))
         if (this.draggable) this.locationLayer.on('dragend', this.onLocationDragged)
       } else {
-        this.locationLayer = L.geoJson(this.location)
+        this.locationLayer = L.geoJson(this.location, {
+          pointToLayer: (feature, latlng) => createLeafletMarkerFromStyle(latlng, pointStyle),
+          style: (feature) => featureStyle
+        })
       }
       this.locationLayer.addTo(this.map)
       // wait for the next tick to recenter the view

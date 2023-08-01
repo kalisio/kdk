@@ -1,68 +1,17 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import chroma from 'chroma-js'
-import { LeafletStyleMappings } from '../../utils.js'
+import { createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec, LeafletStyleMappings } from '../../utils.js'
 
 export const style = {
   methods: {
+    // Alias to ease development
     createMarkerFromStyle (latlng, markerStyle, feature) {
-      if (markerStyle) {
-        let icon = markerStyle.icon
-        // Parse icon options to get icon object if any
-        if (icon) {
-          const iconOptions = icon.options || icon
-          const options = markerStyle.options || markerStyle
-          icon = _.get(L, icon.type)(iconOptions)
-          return _.get(L, markerStyle.type || 'marker')(latlng, Object.assign(_.omit(options, ['icon']), { icon }))
-        } else {
-          const options = markerStyle.options || markerStyle
-          return _.get(L, markerStyle.type || 'marker')(latlng, options)
-        }
-      } else {
-        return L.marker(latlng)
-      }
+      return createLeafletMarkerFromStyle(latlng, markerStyle, feature)
     },
+    // Alias to ease development
     convertFromSimpleStyleSpec (style, inPlace) {
-      if (!style) return {}
-      const convertedStyle = (inPlace ? style : {})
-      // Compute flags first because if updating in place options in style spec will be replaced
-      const isHtml = _.has(style, 'icon-html')
-      const hasClass = _.has(style, 'icon-class')
-      const isFontAwesome = _.has(style, 'icon-classes')
-      let isIconSpec = _.has(style, 'icon')
-      // First copy any icon spec as not supported by simple style spec
-      if (isIconSpec) _.set(convertedStyle, 'icon', _.get(style, 'icon'))
-      _.forOwn(style, (value, key) => {
-        if (_.has(LeafletStyleMappings, key)) {
-          const mapping = _.get(LeafletStyleMappings, key)
-          // Specific options
-          switch (key) {
-            case 'icon-size':
-            case 'icon-anchor':
-            case 'marker-size':
-              if (!Array.isArray(value)) value = [value, value]
-              _.set(convertedStyle, mapping, value)
-              break
-            default:
-              _.set(convertedStyle, mapping, value)
-          }
-          if (inPlace) _.unset(style, key)
-          // In this case we have a marker with icon spec
-          if (mapping.startsWith('icon')) isIconSpec = true
-        }
-      })
-      if (isIconSpec) {
-        // Select the right icon type based on options if not already set
-        if (!_.has(style, 'icon.type')) _.set(convertedStyle, 'icon.type', (isFontAwesome ? 'icon.fontAwesome' : isHtml ? 'divIcon' : 'icon'))
-        // Leaflet adds a default background style but we prefer to remove it
-        if (isHtml && !hasClass) _.set(convertedStyle, 'icon.options.className', '')
-        _.set(convertedStyle, 'type', 'marker')
-      }
-      // Manage panes to make z-index work for all types of layers,
-      // pane name can actually be a z-index value
-      if (_.has(convertedStyle, 'pane')) _.set(convertedStyle, 'pane', _.get(convertedStyle, 'pane').toString())
-      if (_.has(convertedStyle, 'shadowPane')) _.set(convertedStyle, 'shadowPane', _.get(convertedStyle, 'shadowPane').toString())
-      return convertedStyle
+      return convertToLeafletFromSimpleStyleSpec(style, inPlace)
     },
     getDefaultMarker (feature, latlng, options) {
       const properties = feature.properties

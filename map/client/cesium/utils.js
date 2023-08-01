@@ -17,6 +17,74 @@ export const CesiumStyleOptions = _.values(CesiumStyleMappings)
 export const CesiumEntityTypes = ['billboard', 'box', 'corridor', 'cylinder', 'ellipse', 'ellipsoid',
   'label', 'model', 'path', 'plane', 'point', 'polygon', 'polyline', 'rectangle', 'wall']
 
+export function convertToCesiumFromSimpleStyleSpec (style, inPlace) {
+  if (!style) return {}
+  const convertedStyle = (inPlace ? style : {})
+  _.forOwn(style, (value, key) => {
+    if (_.has(CesiumStyleMappings, key)) {
+      const mapping = _.get(CesiumStyleMappings, key)
+      _.set(convertedStyle, mapping, value)
+      if (inPlace) _.unset(style, key)
+      // Convert from string to color object as required by cesium
+      if ((typeof value === 'string') && ['markerColor', 'fill', 'stroke'].includes(mapping)) {
+        _.set(convertedStyle, mapping, Cesium.Color.fromCssColorString(value))
+      }
+    }
+  })
+  return convertedStyle
+}
+
+export function convertToCesiumObjects (style) {
+  // Helper to convert from string to objects
+  function createCesiumObject () {
+    const args = Array.from(arguments)
+    const constructor = args[0]
+    args.shift()
+    const Class = _.get(Cesium, constructor)
+    // Can be callable, constructable or constant
+    let object
+    if (typeof Class === 'function') {
+      try { object = Class(...args) } catch (error) { /* Simply avoid raising any error */ }
+      try { object = new Class(...args) } catch (error) { /* Simply avoid raising any error */ }
+    } else object = Class
+    return object
+  }
+  const mapValue = (value) => {
+    if (typeof value === 'object') {
+      const type = value.type
+      const options = value.options
+      if (type && options) {
+        const constructor = type.replace('Cesium.', '')
+        // Take care to nested objects as constructor arguments
+        let args
+        if (options.type) {
+          // Create argument object
+          args = convertToCesiumObjects({ object: options })
+          args = args.object
+        } else {
+          args = convertToCesiumObjects(options)
+        }
+        if (Array.isArray(options)) return createCesiumObject(constructor, ...args)
+        else return createCesiumObject(constructor, args)
+      } else return convertToCesiumObjects(value)
+    } else if (typeof value === 'string') {
+      if (value.startsWith('Cesium.')) {
+        const constructor = value.replace('Cesium.', '')
+        return createCesiumObject(constructor)
+      }
+      const n = _.toNumber(value)
+      if (_.isFinite(n)) value = n
+    }
+    return value
+  }
+  if (typeof style === 'object') {
+    if (Array.isArray(style)) return style.map(mapValue)
+    else return _.mapValues(style, mapValue)
+  } else {
+    return _.mapValues({ value: style }, mapValue).value
+  }
+}
+
 export function convertCesiumHandlerEvent (type) {
   const buttonMapping = {
     left: 0,
