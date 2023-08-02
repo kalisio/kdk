@@ -1,4 +1,4 @@
-<h1><%= email.subject %></h1>
+<h1>[Akt'n'Map] <%= email.subject %></h1>
 
 <p>Hi <%= user.name %>, your user information was just changed. Please verify that you made these changes.</p>
 <ul>
@@ -7,6 +7,8 @@
 <% } %>
 </ul>
 
-<p>Follow <a href='<%= email.link %>'>this link</a> to approve the changes.</p>
+<p>Use the verification code below to approve the changes.</p> 
+  
+<p><strong><%= user.verifyShortToken %></strong></p>
 
-<p>If you didn't request this change please let us know by following <a href='mailto:<%= email.from %>?subject=I did not change my information&body=Someone unauthorized changed my information.'>this link</a>.</p>
+<p>If you didn't request this change please let us know by following <a href='mailto:support@kalisio.com?subject=I did not change my information&body=Someone unauthorized changed my information.'>this link</a>.</p>

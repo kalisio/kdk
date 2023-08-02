@@ -121,7 +121,7 @@ describe('core:account', () => {
     expect(userObject.expireAt instanceof Date).beTrue()
     expect(userObject.isVerified).toExist()
     expect(userObject.isVerified).beFalse()
-    expect(userObject.verifyToken).toExist()
+    expect(userObject.verifyShortToken).toExist()
     expect(userObject.consentTerms).beUndefined()
   })
   // Let enough time to process
@@ -172,7 +172,7 @@ describe('core:account', () => {
     userObject = user
     expect(userObject.isVerified).toExist()
     expect(userObject.isVerified).beFalse()
-    expect(userObject.verifyToken).toExist()
+    expect(userObject.verifyShortToken).toExist()
     expect(userObject.consentTerms).beUndefined()
   })
   // Let enough time to process
@@ -192,8 +192,11 @@ describe('core:account', () => {
 
   it('verify user signup', async () => {
     const user = await accountService.create({
-      action: 'verifySignupLong',
-      value: userObject.verifyToken
+      action: 'verifySignupShort',
+      value: {
+        user: { email: gmailUser },
+        token: userObject.verifyShortToken
+      }
     })
     userObject = user
     expect(userObject.isVerified).beTrue()
@@ -222,7 +225,7 @@ describe('core:account', () => {
     const users = await userService.find({ query: { email: gmailUser } })
     expect(users.data.length > 0).beTrue()
     userObject = users.data[0]
-    expect(userObject.resetToken).toExist()
+    expect(userObject.resetShortToken).toExist()
   })
   // Let enough time to process
     .timeout(10000)
@@ -232,10 +235,9 @@ describe('core:account', () => {
       if (_.isNil(err)) {
         // Extract token from email beign compatible either wit mailer stub or gmail api
         message = message.html || Buffer.from(message.body.data, 'base64').toString()
-        const tokenEntry = 'reset-password/' // Then come the token in the link
+        const tokenEntry = '<strong>'
         const firstTokenIndex = message.indexOf(tokenEntry) + tokenEntry.length
-        const lastTokenIndex = message.indexOf('"', firstTokenIndex)
-        // Token is the last part of the URL in the <a href="xxx/reset-password/token"> tag
+        const lastTokenIndex = message.indexOf('</strong>')
         token = message.substring(firstTokenIndex, lastTokenIndex)
         done()
       } else {
@@ -256,8 +258,9 @@ describe('core:account', () => {
   it('check password policy on user password reset', async () => {
     try {
       await accountService.create({
-        action: 'resetPwdLong',
+        action: 'resetPwdShort',
         value: {
+          user: { email: gmailUser },
           token,
           password: '1234'
         }
@@ -274,8 +277,9 @@ describe('core:account', () => {
 
   it('reset user password', async () => {
     await accountService.create({
-      action: 'resetPwdLong',
+      action: 'resetPwdShort',
       value: {
+        user: { email: gmailUser },
         token,
         password: 'Pass;word2'
       }
@@ -284,7 +288,7 @@ describe('core:account', () => {
     const users = await userService.find({ query: { email: gmailUser } })
     expect(users.data.length > 0).beTrue()
     userObject = users.data[0]
-    expect(userObject.resetToken).beNull()
+    expect(userObject.resetShortToken).beNull()
   })
   // Let enough time to process
     .timeout(15000)
@@ -345,7 +349,7 @@ describe('core:account', () => {
     const users = await userService.find({ query: { email: gmailUser } })
     expect(users.data.length > 0).beTrue()
     userObject = users.data[0]
-    expect(userObject.resetToken).beNull()
+    expect(userObject.resetShortToken).beNull()
   })
   // Let enough time to process
     .timeout(15000)
@@ -386,7 +390,7 @@ describe('core:account', () => {
     const users = await userService.find({ query: { email: gmailUser } })
     expect(users.data.length > 0).beTrue()
     userObject = users.data[0]
-    expect(userObject.verifyToken).toExist()
+    expect(userObject.verifyShortToken).toExist()
     expect(userObject.verifyChanges).toExist()
     expect(userObject.verifyChanges.email).toExist()
   })
@@ -407,8 +411,11 @@ describe('core:account', () => {
 
   it('verify user changes', async () => {
     await accountService.create({
-      action: 'verifySignupLong',
-      value: userObject.verifyToken
+      action: 'verifySignupShort',
+      value: {
+        user: { email: gmailUser },
+        token: userObject.verifyShortToken
+      }
     })
     // Because the account service filters for client hidden security attributes we need to fetch the user manually
     const users = await userService.find({ query: { email: gmailUser.replace('com', 'xyz') } })
