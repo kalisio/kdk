@@ -94,7 +94,7 @@ export default async function () {
       modelsPath,
       servicesPath,
       // Add required OAuth2 provider perspectives
-      perspectives: ['profile'].concat(app.authenticationProviders)
+      perspectives: app.authenticationProviders
     })
     debug('\'users\' service created')
     await app.createService('authorisations', { servicesPath })
