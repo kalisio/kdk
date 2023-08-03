@@ -26,7 +26,7 @@ export class Runner {
     const defaultBrowser = process.env.BROWSER || 'chrome'
     const defaultDataDir = path.join('.', 'test', 'data', suite)
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
-    // Set the runner options using default and overrrident options
+    // Set the runner options using default and overriden options
     this.options = _.mergeWith({
       baseUrl: domain,
       browser: {
