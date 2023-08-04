@@ -48,7 +48,7 @@ import { Notify } from 'quasar'
 import { Store, i18n, utils } from '../..'
 
 // Props
-const props = defineProps({
+defineProps({
   notifierEmail: {
     type: String,
     default: true
