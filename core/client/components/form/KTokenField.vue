@@ -12,7 +12,7 @@
         type="text"
         mask="#"
         v-model="fieldValues[i - 1]"
-        style="width: 4ch"
+        style="width: 5ch"
         :disable="disabled"
         outlined
         :ref="el => updateFieldRef(el, i - 1)"
@@ -58,15 +58,21 @@ export default {
       this.onChanged()
       this.focusNextInput(index)
     },
-    focusNextInput (index) {
-      if (_.inRange(index, 0, this.tokenLength)) this.fields[index].select()
-    },
     updateFieldRef (element, index) {
       if (element) this.fields[index] = element
     },
+    focusNextInput (index) {
+      if (_.inRange(index, 0, this.tokenLength)) this.fields[index].select()
+    },
+    clearInput (index) {
+      this.fieldValues[index] = ''
+    },
     onKeyUp (event, index) {
       const key = event.key
-      if (key === 'ArrowLeft' || key === 'Backspace') this.focusNextInput(index - 1)
+      if (key === 'ArrowLeft' || key === 'Backspace') {
+        this.focusNextInput(index - 1)
+        this.clearInput(index - 1)
+      }
       if (key === 'ArrowRight') this.focusNextInput(index + 1)
     }
   }

@@ -42,7 +42,7 @@ const schema = ref({
       format: 'password',
       field: {
         component: 'form/KPasswordField',
-        label: 'KChangePassword.OLD_PASSWORD_FIELD_LABEL'
+        label: 'KPasswordManager.OLD_PASSWORD_FIELD_LABEL'
       }
     },
     password: {
@@ -50,7 +50,7 @@ const schema = ref({
       format: 'password',
       field: {
         component: 'form/KPasswordField',
-        label: 'KChangePassword.PASSWORD_FIELD_LABEL'
+        label: 'KPasswordManager.PASSWORD_FIELD_LABEL'
       }
     },
     confirmPassword: {
@@ -61,7 +61,7 @@ const schema = ref({
       },
       field: {
         component: 'form/KPasswordField',
-        label: 'KChangePassword.CONFIRM_PASSWORD_FIELD_LABEL'
+        label: 'KPasswordManager.CONFIRM_PASSWORD_FIELD_LABEL'
       }
     }
   },

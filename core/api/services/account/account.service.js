@@ -41,13 +41,13 @@ export default function (name, app, options) {
     // Build the subject & link to the app to perform the different actions
     let emailTemplateDir = type
     switch (type) {
-      case 'resendVerifySignup': // send another email with link for verifying user's email addr
+      case 'resendVerifySignup': // send another email with token for verifying user's email addr
         email.subject = 'Confirm your signup'
         break
       case 'verifySignup': // inform that user's email is now confirmed
         email.subject = 'Thank you, your email has been verified'
         break
-      case 'sendResetPwd': // send email with link to reset password
+      case 'sendResetPwd': // send email with token to reset password
         email.subject = 'Reset your password'
         email.link = domainPath + 'reset-password/' + user.email
         break

@@ -1,14 +1,14 @@
 <template>
   <q-item>
-    <!-- icon -->
+    <!-- Icon -->
     <q-item-section avatar>
       <q-icon :name="icon" />
     </q-item-section>
-    <!-- label -->
+    <!-- Label -->
     <q-item-section>
       {{ label }}
     </q-item-section>
-    <!-- actions -->
+    <!-- Actions -->
     <KPanel
       :content="bindedActions"
     />

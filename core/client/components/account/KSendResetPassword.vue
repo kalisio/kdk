@@ -2,103 +2,89 @@
   <KScreen :title="$t('KSendResetPassword.TITLE')">
     <div slot="screen-content">
       <div class="column justify-center sm-gutter">
-          <div :class="textClass" v-if="message">
-            <p>
-              <q-icon name="las la-exclamation-circle" v-show="send"/>
-              &nbsp;&nbsp;
-              {{ message }}.
-            </p>
-          </div>
-          <div>
-            <k-form ref="form" :schema="schema" />
-          </div>
-          <div>
-            <div class="row justify-around">
-              <q-btn id="reset-password" color="primary" :loading="sending" @click="onSend">
-                {{$t('KSendResetPassword.ACTION')}}
-              </q-btn>
-            </div>
-          </div>
+        <div :class="textClass" v-if="message">
+          <p>
+            <q-icon name="las la-exclamation-circle" v-show="send"/>
+            &nbsp;&nbsp;
+            {{ message }}.
+          </p>
+        </div>
+        <!-- Form -->
+        <KForm ref="formRef" :schema="schema" />
+        <!-- Actions -->
+        <div class="row justify-around">
+          <KAction
+            id="send-reset-password"
+            label="APPLY"
+            renderer="form-button"
+            :loading="processing"
+            :handler="apply"
+          />
+        </div>
       </div>
     </div>
   </KScreen>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { i18n, utils } from '../..'
 import KScreen from '../screen/KScreen.vue'
-import KForm from '../form/KForm.vue'
-import { account } from '../../mixins'
 
-export default {
-  name: 'k-send-reset-password',
-  components: {
-    KScreen,
-    KForm
-  },
-  mixins: [account],
-  data () {
-    return {
-      message: '',
-      sending: false,
-      send: false,
-      schema: {
-        $schema: 'http://json-schema.org/draft-07/schema#',
-        $id: 'http://kalisio.xyz/schemas/send-reset-password#',
-        title: 'Send reset password form',
-        type: 'object',
-        properties: {
-          email: {
-            type: 'string',
-            format: 'email',
-            field: {
-              component: 'form/KEmailField',
-              label: 'KSendResetPassword.EMAIL_FIELD_LABEL'
-            }
-          }
-        },
-        required: ['email']
+// Data
+const router = useRouter()
+const formRef = ref(null)
+const message = ref(i18n.t('KSendResetPassword.MESSAGE'))
+const processing = ref(false)
+const send = ref(false)
+const schema = ref({
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'http://kalisio.xyz/schemas/send-reset-password#',
+  title: 'Send reset password form',
+  type: 'object',
+  properties: {
+    email: {
+      type: 'string',
+      format: 'email',
+      field: {
+        component: 'form/KEmailField',
+        label: 'KSendResetPassword.EMAIL_FIELD_LABEL'
       }
     }
   },
-  computed: {
-    textClass () {
-      const classObject = {}
-      classObject['self-center'] = true
-      if (this.send) {
-        classObject['text-negative'] = true
-      }
-      return classObject
+  required: ['email']
+})
+
+// Computed
+const textClass = computed(() => {
+  const classObject = {}
+  classObject['self-center'] = true
+  if (send.value) classObject['text-negative'] = true
+  return classObject
+})
+
+// Functions
+async function apply () {
+  const { isValid, values } = formRef.value.validate()
+  if (!isValid) return false
+  try {
+    processing.value = true
+    await utils.sendResetPassword(values.email)
+    processing.value = false
+    router.push({ path: `reset-password/${values.email}` })
+  } catch (error) {
+    processing.value = false
+    const type = _.get(error, 'errors.$className')
+    switch (type) {
+      case 'isVerified':
+        message.value = i18n.t('KSendResetPassword.ERROR_MESSAGE_IS_VERIFIED')
+        break
+      default:
+        message.value = i18n.t('KSendResetPassword.ERROR_MESSAGE_DEFAULT')
     }
-  },
-  methods: {
-    async onSend () {
-      const {isValid, values} = this.$refs.form.validate()
-      if (isValid) {
-        try {
-          this.sending = true
-          console.log(values.email)
-          await this.sendResetPassword(values.email)
-          this.$router.push({ path: `reset-password/${values.email}` })
-        } catch (error) {
-          console.log(error)
-          const type = _.get(error, 'errors.$className')
-          switch (type) {
-            case 'isVerified':
-              this.message = this.$t('KSendResetPassword.ERROR_MESSAGE_IS_VERIFIED')
-              break
-            default:
-              this.message = this.$t('KSendResetPassword.ERROR_MESSAGE_DEFAULT')
-          }
-        }
-        this.send = true
-        this.sending = false
-      }
-    }
-  },
-  created () {
-    // Components initialization
-    this.message = this.$t('KSendResetPassword.MESSAGE')
   }
+  send.value = true
 }
 </script>

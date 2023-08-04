@@ -32,6 +32,7 @@ import { computed } from 'vue'
 import { Store } from '../../store.js'
 import KAvatar from '../KAvatar.vue'
 import KPanel from '../KPanel.vue'
+import _ from 'lodash'
 
 // Props
 const props = defineProps({
@@ -84,7 +85,7 @@ const header = computed(() => {
         okAction: 'CLOSE'
       }
     }
-    if (!User.value.isVerified) {
+    if (_.has(User.value, 'isVerified') && !User.value.isVerified) {
       manageAccountAction.badge = {
         rounded: true,
         floating: true,

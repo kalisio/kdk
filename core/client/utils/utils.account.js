@@ -7,10 +7,10 @@ export function resendVerifySignup (email) {
   })
 }
 
-export function verifySignup (token) {
+export function verifySignup (token, email) {
   return api.getService('account').create({
-    action: 'verifySignupLong',
-    value: token
+    action: 'verifySignupShort',
+    value: { user: { email }, token }
   })
 }
 
@@ -21,10 +21,10 @@ export function sendResetPassword (email) {
   })
 }
 
-export function resetPassword (token, password) {
+export function resetPassword (email, token, password) {
   return api.getService('account').create({
-    action: 'resetPwdLong',
-    value: { token, password }
+    action: 'resetPwdShort',
+    value: { user: { email }, token, password }
   })
 }
 
