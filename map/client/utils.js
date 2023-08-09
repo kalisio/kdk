@@ -109,6 +109,7 @@ export function getTimeInterval (times, mode = 'minimum') {
 }
 
 // Format (reverse) geocoding output
+/*
 export function formatGeocodingResult (element) {
   let label = element.formattedAddress || ''
   if (!label) {
@@ -119,6 +120,23 @@ export function formatGeocodingResult (element) {
   }
   return label
 }
+*/
+
+export function formatGeocodingResult (element) {
+  const props = element.properties
+  let label = props.formattedAddress || ''
+  if (!label) {
+    if (props.streetNumber) label += (props.streetNumber + ', ')
+    if (props.streetName) label += (props.streetName + ' ')
+    if (props.city) label += (props.city + ' ')
+    if (props.zipcode) label += (' (' + props.zipcode + ')')
+  }
+  if (!label) {
+    label += _.get(element, element.geokoder.matchProp, '')
+  }
+  return label
+}
+
 
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
