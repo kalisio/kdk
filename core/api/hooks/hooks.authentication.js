@@ -1,7 +1,9 @@
 import makeDebug from 'debug'
+import common from 'feathers-hooks-common'
 import local from '@feathersjs/authentication-local'
 
 const debug = makeDebug('kdk:core:authentication:hooks')
+const { discard } = common
 
 // Make it more easy to acces
 export const hashPassword = local.hooks.hashPassword

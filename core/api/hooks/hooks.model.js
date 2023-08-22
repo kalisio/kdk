@@ -286,5 +286,5 @@ export function preventChanges(ifThrow, fieldNames) {
     hook.data = data
 
     return hook
-  };
+  }
 }
