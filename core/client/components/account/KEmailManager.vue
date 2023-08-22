@@ -91,7 +91,7 @@ const validateEmailSchema = ref({
       tokenLength: 6,
       field: {
         component: 'form/KTokenField',
-        label: 'KEmailManager.TOKEN_LABEL',
+        label: 'KEmailManager.TOKEN_LABEL'
       }
     }
   },

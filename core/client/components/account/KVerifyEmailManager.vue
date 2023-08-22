@@ -72,7 +72,7 @@ const schema = ref({
       tokenLength: 6,
       field: {
         component: 'form/KTokenField',
-        label: 'KVerifyEmailManager.TOKEN_LABEL',
+        label: 'KVerifyEmailManager.TOKEN_LABEL'
       }
     }
   },

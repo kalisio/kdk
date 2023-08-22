@@ -26,8 +26,10 @@ import centroid from '@turf/centroid'
 import { KPanel } from '../../../../core/client/components'
 import * as mapMixins from '../../mixins/map'
 import { Geolocation } from '../../geolocation'
-import { setEngineJwt, coordinatesToGeoJSON, formatUserCoordinates,
-         bindLeafletEvents, unbindLeafletEvents, createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec } from '../../utils'
+import {
+  setEngineJwt, coordinatesToGeoJSON, formatUserCoordinates,
+  bindLeafletEvents, unbindLeafletEvents, createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec
+} from '../../utils'
 
 export default {
   components: {

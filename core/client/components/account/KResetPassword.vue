@@ -73,7 +73,7 @@ const schema = ref({
       tokenLength: 6,
       field: {
         component: 'form/KTokenField',
-        label: 'KResetPassword.TOKEN_FIELD_LABEL',
+        label: 'KResetPassword.TOKEN_FIELD_LABEL'
       }
     }
   },

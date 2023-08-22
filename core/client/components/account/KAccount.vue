@@ -48,7 +48,7 @@ const User = Store.get('user')
 
 // Make store react to external changes to update verify email section
 Events.on('user-changed', (path, value) => {
-  if(_.has(value, 'isVerified')) isVerified.value = !value.isVerified
+  if (_.has(value, 'isVerified')) isVerified.value = !value.isVerified
 })
 
 // Hooks

@@ -5,7 +5,7 @@
   <div  v-else class="q-pa-md">
     <p :class="labelClass">{{ label }}</p>
     <div class="row q-gutter-x-sm justify-center">
-      <q-input 
+      <q-input
         v-for="i in tokenLength"
         :for="properties.name + '-field' + i"
         :id="properties.name + '-field'  + i"
