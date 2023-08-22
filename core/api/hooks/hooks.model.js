@@ -7,7 +7,7 @@ import { marshallTimes, unmarshallTimes } from '../marshall.js'
 import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
 
-const { Conflict } = errors
+const { Conflict, BadRequest } = errors
 const { discard, disallow, getItems, replaceItems } = common
 const sift = siftModule.default
 const debug = makeDebug('kdk:core:model:hooks')
@@ -300,4 +300,32 @@ export function checkUnique (options = {}) {
     }
     return hook
   }
+}
+
+// Prevent patch service calls from changing certain fields.
+// Based on https://hooks-common.feathersjs.com/hooks.html#preventchanges
+// but updated to handle dot notation
+export function preventChanges(ifThrow, fieldNames) {
+  return (hook) => {
+    if ((hook.type !== 'before') || (hook.method !== 'patch')) {
+      throw new Error('The \'preventChanges\' hook should only be used as a \'before\' patch hook.')
+    }
+
+    let data = { ...hook.data }
+    // Check all data fields
+    _.forOwn(hook.data, (value, key) => {
+      fieldNames.forEach(name => {
+        // If a prevented field is found or dot notation with a prevented field is used
+        if ((key === name) || key.startsWith(`${name}.`)) {
+          if (ifThrow) {
+            throw new BadRequest(`Field ${name} may not be patched. (preventChanges)`);
+          }
+          delete data[key]
+        }
+      })
+    })
+    hook.data = data
+
+    return hook
+  };
 }

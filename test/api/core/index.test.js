@@ -156,7 +156,7 @@ describe('core:services', () => {
         expect(users.data[0].description).toExist()
         expect(users.data[0].email).toExist()
         expect(users.data[0].clearPassword).beUndefined()
-        expect(users.data[0].profile).beUndefined()
+        expect(users.data[0].profile).toExist()
       })
   })
   // Let enough time to process

@@ -146,6 +146,45 @@ describe('core:hooks', () => {
     expect(error).toExist()
   })
 
+  it('prevent changes', async () => {
+    const hook = {
+      type: 'before',
+      method: 'patch',
+      data: {
+        name: 'zzz',
+        secret: 'xxx',
+        anotherSecret: 'yyy'
+      }
+    }
+    try {
+      await hooks.preventChanges(true, ['secret'])(hook)
+      assert.fail('preventChanges should raise on error')
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('BadRequest')
+    }
+
+    try {
+      await hooks.preventChanges(false, ['secret', 'anotherSecret'])(hook)
+      expect(hook.data.name).to.equal('zzz')
+      expect(hook.data.secret).beUndefined()
+      expect(hook.data.anotherSecret).beUndefined()
+    } catch (error) {
+      assert.fail('preventChanges should not raise on error')
+    }
+
+    // Check with dot notation
+    hook.data['secret.value'] = 'xxx'
+    try {
+      await hooks.preventChanges(false, ['secret'])(hook)
+      expect(hook.data.name).to.equal('zzz')
+      expect(hook.data['secret']).beUndefined()
+      expect(hook.data['secret.value']).beUndefined()
+    } catch (error) {
+      assert.fail('preventChanges should not raise on error')
+    }
+  })
+
   it('marshalls comparison queries', () => {
     const now = new Date()
     const hook = {
