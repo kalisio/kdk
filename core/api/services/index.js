@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import path from 'path'
 import makeDebug from 'debug'
 import { fileURLToPath } from 'url'
@@ -64,7 +65,8 @@ export async function createOrganisationService (options = {}) {
   usersService.on('patched', user => {
     // Patching profile should not trigger abilities update since
     // it is a perspective and permissions are not available in this case
-    if (user.organisations || user.groups) authorisationsService.updateAbilities(user)
+    // Updating abilities in this case will result in loosing permissions for orgs/groups as none are available
+    if (_.has(user, 'organisations') || _.has(user, 'groups')) authorisationsService.updateAbilities(user)
   })
   // Ensure org services are correctly distributed when replicated
   orgsService.on('created', organisation => {
@@ -90,12 +92,7 @@ export default async function () {
 
   const authConfig = app.get('authentication')
   if (authConfig) {
-    await app.createService('users', {
-      modelsPath,
-      servicesPath,
-      // Add required OAuth2 provider perspectives to avoid leaking data 
-      perspectives: app.authenticationProviders
-    })
+    await app.createService('users', { modelsPath, servicesPath })
     debug('\'users\' service created')
     await app.createService('authorisations', { servicesPath })
     debug('\'authorisations\' service created')

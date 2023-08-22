@@ -4,12 +4,14 @@
     :header="header"
     :actions="itemActions"
     :bind-actions="false"
-    :dense="dense">
+    :dense="dense"
+    :options="{ nameField: 'profile.name', descriptionField: 'profile.description' }">
     <!--
-      Card avater
+      Card avatar
     -->
     <template v-slot:card-avatar>
-      <KAvatar :object="item" size="3.2rem" />
+      <KAvatar :object="item" size="3.2rem"
+        :options="{ nameField: 'profile.name', avatarField: 'profile.avatar' }"/>
     </template>
     <!--
       Card descriptions
@@ -104,6 +106,9 @@ export default {
       const components = _.filter(this.itemActions, { scope: 'header' })
       components.splice(0, 0, { id: 'role-badge', component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' }, { component: 'QSpace' })
       return components
+    },
+    avatar () {
+
     },
     role () {
       const role = getRoleForOrganisation(this.item, this.contextId)

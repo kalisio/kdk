@@ -16,6 +16,18 @@ export const baseEditor = {
       type: String,
       default: undefined
     },
+    perspective: {
+      type: String,
+      default: ''
+    },
+    // Indicates if the stored object in-memory is only the perspective part (default)
+    // or the full structure, ie { perspective: { xxx } }
+    // Note: the full structure is always retrieved/sent from/to the service anyway but sometimes
+    // it is easier to manipulate a full-object and edit a nested property seen as a perspective on the front side
+    perspectiveAsObject: {
+      type: Boolean,
+      default: true
+    },
     clearButton: {
       type: String,
       default: ''

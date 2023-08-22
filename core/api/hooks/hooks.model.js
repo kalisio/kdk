@@ -36,47 +36,6 @@ export function unprocessTimes (properties) {
   }
 }
 
-export function processPerspectives (hook) {
-  const params = hook.params
-  const query = params.query
-  const service = hook.service
-
-  // Test if some perspectives are defined on the model
-  if (!service.options || !service.options.perspectives) return
-
-  // Iterate through known perspectives of the model
-  service.options.perspectives.forEach(perspective => {
-    // Only discard if not explicitely asked by $select
-    let filterPerspective = true
-    if (!_.isNil(query) && !_.isNil(query.$select)) {
-      // Transform to array to unify processing
-      const selectedFields = (typeof query.$select === 'string' ? [query.$select] : query.$select)
-      if (Array.isArray(selectedFields)) {
-        selectedFields.forEach(field => {
-          // Take care that we might only ask for a subset of perspective fields like ['perspective.fieldName']
-          if ((field === perspective) || field.startsWith(perspective + '.')) {
-            filterPerspective = false
-          }
-        })
-      }
-    }
-    if (filterPerspective) {
-      discard(perspective)(hook)
-    }
-  })
-}
-
-// When perspectives are present we disallow update in order to avoid erase them.
-// Indeed when requesting an object they are not retrieved by default
-export function preventUpdatePerspectives (hook) {
-  const service = hook.service
-
-  // Test if some perspectives are defined on the model
-  if (!service.options || !service.options.perspectives) return
-
-  disallow()(hook)
-}
-
 // The hook serialize allows to copy/move some properties within the objects holded by the hook
 // It applies an array of rules defined by:
 // - source: the path to the property to be copied

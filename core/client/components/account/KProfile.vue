@@ -11,17 +11,17 @@
     <!-- Avatar -->
     <div class="row justify-center">
       <KAvatar
-        :object="User"
+        :object="avatar"
         size="7rem"
       />
     </div>
     <!-- Information -->
     <div class="column">
       <div class="row justify-center text-subtitle1 text-weight-bold">
-        {{ User.name }}
+        {{ name }}
       </div>
       <div class="row justify-center">
-        {{ User.description }}
+        {{ description }}
       </div>
     </div>
   </div>
@@ -98,6 +98,9 @@ const header = computed(() => {
   }
   return actions
 })
+const name = computed(() => _.get(User.value, 'profile.name', ''))
+const description = computed(() => _.get(User.value, 'profile.description', ''))
+const avatar = computed(() => _.get(User.value, 'profile', {}))
 
 // Functions
 function onTriggered (args) {

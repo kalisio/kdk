@@ -1,4 +1,18 @@
 export const baseViewer = {
+  props: {
+    perspective: {
+      type: String,
+      default: ''
+    },
+    clearButton: {
+      type: String,
+      default: ''
+    },
+    resetButton: {
+      type: String,
+      default: ''
+    }
+  },
   computed: {
     viewerTitle () {
       // Retuns the schema title

@@ -22,10 +22,9 @@ describe('core:services', () => {
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)
 
     app = kdk()
-    // Register perspective hook
+    // Register hooks
     app.hooks({
       before: { all: hooks.authorise },
-      after: { all: hooks.processPerspectives },
       error: { all: hooks.log }
     })
     port = app.get('port')
@@ -151,7 +150,6 @@ describe('core:services', () => {
       })
       .then(users => {
         expect(users.data.length > 0).beTrue()
-        // By default no perspective
         expect(users.data[0].name).toExist()
         expect(users.data[0].description).toExist()
         expect(users.data[0].email).toExist()
@@ -239,9 +237,10 @@ describe('core:services', () => {
       })
   })
 
-  it('get a user perspective', () => {
+  it('get user profile', () => {
     return userService.find({ query: { $select: ['profile'] } })
       .then(users => {
+        expect(users.data[0].name).beUndefined()
         expect(users.data[0].profile.name).toExist()
         expect(users.data[0].profile.description).toExist()
         expect(users.data[0].profile.phone).toExist()

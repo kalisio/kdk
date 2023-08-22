@@ -1,13 +1,9 @@
 import _ from 'lodash'
 import {
-  serialize, updateAbilities, populatePreviousObject, hashPassword,
-  enforcePasswordPolicy, storePreviousPassword, sendNewSubscriptionEmail
+  serialize, updateAbilities, populatePreviousObject, hashPassword, disallowRegistration, allowLocalAuthentication,
+  discardAuthenticationProviders, enforcePasswordPolicy, storePreviousPassword, sendNewSubscriptionEmail
 } from '../../hooks/index.js'
 import commonHooks from 'feathers-hooks-common'
-
-// Helper functions
-const disallowRegistration = (hook) => _.get(hook.app.get('authentication'), 'disallowRegistration')
-const allowLocalAuthentication = (hook) => _.get(hook.app.get('authentication'), 'authStrategies', []).includes('local')
 
 export default {
   before: {
@@ -16,6 +12,7 @@ export default {
     get: [],
     create: [
       commonHooks.when(disallowRegistration, commonHooks.disallow('external')),
+      // Initialize a profile from base user information
       serialize([
         { source: 'name', target: 'profile.name', delete: true },
         { source: 'email', target: 'profile.description' }
@@ -49,12 +46,14 @@ export default {
 
   after: {
     all: [
-      commonHooks.when(hook => hook.params.provider, commonHooks.discard('password'), commonHooks.discard('previousPasswords')),
-      serialize([
-        { source: 'profile.name', target: 'name' },
-        { source: 'profile.avatar', target: 'avatar' },
-        { source: 'profile.description', target: 'description' }
-      ])
+      commonHooks.when(hook => hook.params.provider,
+        commonHooks.discard('password'),
+        commonHooks.discard('previousPasswords'),
+        discardAuthenticationProviders),
+      // Hide profile for external user as it may contain personal information
+      // However, this causes an issue: https://github.com/feathersjs-ecosystem/feathers-reactive/issues/214
+      // So let the application decide what to do
+      //commonHooks.when(isNotMe, commonHooks.discard('profile'))
     ],
     find: [],
     get: [],

@@ -61,3 +61,12 @@ export async function consentGuest (hook) {
 
   return hook
 }
+
+export function discardAuthenticationProviders (hook) {
+  const providers = hook.app.authenticationProviders || []
+  
+  // Iterate through known providers
+  for (const provider of providers) {
+    discard(provider)(hook)
+  }
+}

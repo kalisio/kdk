@@ -12,6 +12,20 @@ const verifyHooks = authManagement.hooks
 
 const debug = makeDebug('kdk:core:users:hooks')
 
+// Helper functions to be used in iff hooks
+export function disallowRegistration (hook) {
+  return _.get(hook.app.get('authentication'), 'disallowRegistration')
+}
+export function allowLocalAuthentication (hook) {
+  return _.get(hook.app.get('authentication'), 'authStrategies', []).includes('local')
+}
+export function isNotMe (hook) {
+  const userId = _.get(hook.params, 'user._id', '')
+  const item = getItems(hook)
+  const targetId = _.get(item, '_id', '')
+  return userId.toString() !== targetId.toString()
+}
+
 export function enforcePasswordPolicy (options = {}) {
   return async function (hook) {
     if (hook.type !== 'before') {
