@@ -5,21 +5,6 @@ const debug = makeDebug('kdk:core:organisations:hooks')
 
 const { Forbidden } = errors
 
-export function addOrganisationPlan (hook) {
-  if (hook.type !== 'before') {
-    throw new Error('The \'addOrganisationPlan\' hook should only be used as a \'before\' hook.')
-  }
-
-  const plans = _.keys(hook.app.get('plans') || {})
-  const plan = _.get(hook.data, 'billing.plan')
-  if (!plan && (plans.length > 0)) {
-    // Add defaul plan
-    _.set(hook.data, 'billing.plan', plans[0])
-    debug('Added default plan to organisation: ', hook.data)
-  }
-  return hook
-}
-
 export async function createOrganisationServices (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'createOrganisationServices\' hook should only be used as a \'after\' hook.')
@@ -169,20 +154,3 @@ export function removeOrganisationResources (resourceScope) {
   }
 }
 
-export async function preventRemoveOrganisation (hook) {
-  if (hook.type !== 'before') {
-    throw new Error('The \'preventRemoveOrganisations\' hook should only be used as a \'before\' hook.')
-  }
-
-  // By pass check ?
-  if (hook.params.force) return hook
-  const app = hook.app
-  const orgGroupService = app.getService('groups', hook.id)
-  const result = await orgGroupService.find({ $limit: 0 })
-  if (result.total > 0) {
-    throw new Forbidden('You are not allowed to delete the organisation', {
-      translation: { key: 'CANNOT_REMOVE_ORGANISATION' }
-    })
-  }
-  return hook
-}

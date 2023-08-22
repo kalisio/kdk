@@ -89,7 +89,7 @@ describe('core:team', () => {
     expect(orgService).toExist()
     orgService.hooks({
       before: {
-        remove: [hooks.preventRemoveOrganisation]
+        remove: []
       },
       after: {
         create: [hooks.createOrganisationServices, hooks.createOrganisationAuthorisations],
@@ -163,7 +163,6 @@ describe('core:team', () => {
     expect(user2Object.organisations).toExist()
     // By default the user manage its own organisation
     expect(user2Object.organisations[0].permissions).to.deep.equal('owner')
-    
   })
   // Let enough time to process
     .timeout(5000)

@@ -55,7 +55,7 @@ export async function createOrganisationService (options = {}) {
 
   // Create services to manage MongoDB databases, organisations, etc.
   await createDatabasesService.call(app)
-  const orgsService = await app.createService('organisations', { modelsPath, servicesPath, perspectives: ['billing'] })
+  const orgsService = await app.createService('organisations', { modelsPath, servicesPath })
 
   // Replication management
   const usersService = app.getService('users')
@@ -93,7 +93,7 @@ export default async function () {
     await app.createService('users', {
       modelsPath,
       servicesPath,
-      // Add required OAuth2 provider perspectives
+      // Add required OAuth2 provider perspectives to avoid leaking data 
       perspectives: app.authenticationProviders
     })
     debug('\'users\' service created')
