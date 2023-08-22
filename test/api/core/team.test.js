@@ -205,10 +205,10 @@ describe('core:team', () => {
   })
 
   it('non-members cannot access organisation users', async () => {
-    let users = await userService.find({ query: { 'profile.name': user2Object.name }, user: user1Object, checkAuthorisation: true })
+    let users = await userService.find({ query: { 'profile.name': user2Object.profile.name }, user: user1Object, checkAuthorisation: true })
     // User is found on the global service
     expect(users.data.length > 0).beTrue()
-    users = await orgUserService.find({ query: { name: user2Object.name }, user: user1Object, checkAuthorisation: true })
+    users = await orgUserService.find({ query: { 'profile.name': user2Object.profile.name }, user: user1Object, checkAuthorisation: true })
     // User is not found on the org service while no membership
     expect(users.data.length === 0).beTrue()
   })
@@ -256,7 +256,7 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user3Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user3Object.profile.name }, checkAuthorisation: true, user: user1Object })
     expect(users.data.length > 0).beTrue()
     user3Object = users.data[0]
     expect(user3Object.organisations[1].permissions).to.deep.equal('member')
@@ -265,7 +265,7 @@ describe('core:team', () => {
     .timeout(5000)
 
   it('members can access organisation users', async () => {
-    const users = await orgUserService.find({ query: { 'profile.name': user1Object.name }, user: user3Object, checkAuthorisation: true })
+    const users = await orgUserService.find({ query: { 'profile.name': user1Object.profile.name }, user: user3Object, checkAuthorisation: true })
     // Found now on the org with membership
     expect(users.data.length > 0).beTrue()
   })
@@ -306,7 +306,7 @@ describe('core:team', () => {
       user: user1Object, checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user2Object.profile.name }, checkAuthorisation: true, user: user1Object })
     expect(users.data.length > 0).beTrue()
     user2Object = users.data[0]
     expect(user2Object.organisations[1].permissions).to.deep.equal('manager')
@@ -345,7 +345,7 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user2Object })
+    const users = await userService.find({ query: { 'profile.name': user2Object.profile.name }, checkAuthorisation: true, user: user2Object })
     expect(users.data.length > 0).beTrue()
     user2Object = users.data[0]
     expect(user2Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
@@ -367,7 +367,7 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user3Object.name }, checkAuthorisation: true, user: user2Object })
+    const users = await userService.find({ query: { 'profile.name': user3Object.profile.name }, checkAuthorisation: true, user: user2Object })
     expect(users.data.length > 0).beTrue()
     user3Object = users.data[0]
     expect(user3Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
@@ -414,12 +414,12 @@ describe('core:team', () => {
     expect(groups.data.length > 0).beTrue()
     groupObject = groups.data[0]
     expect(groupObject.description).to.equal('test-description')
-    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user2Object.profile.name }, checkAuthorisation: true, user: user1Object })
     // Should also update group in members authorisations
     expect(users.data.length > 0).beTrue()
     user2Object = users.data[0]
     expect(user2Object.groups[0].description).to.equal('test-description')
-    await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user1Object })
+    await userService.find({ query: { 'profile.name': user1Object.profile.name }, checkAuthorisation: true, user: user1Object })
     user1Object = users.data[0]
     expect(user1Object.groups[0].description).to.equal('test-description') */
   })
@@ -463,7 +463,7 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user3Object.name }, checkAuthorisation: true, user: user2Object })
+    const users = await userService.find({ query: { 'profile.name': user3Object.profile.name }, checkAuthorisation: true, user: user2Object })
     expect(users.data.length > 0).beTrue()
     user3Object = users.data[0]
     expect(user3Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
@@ -484,7 +484,7 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user2Object.profile.name }, checkAuthorisation: true, user: user1Object })
     expect(users.data.length === 1).beTrue()
     user2Object = users.data[0]
     // No more permission set for org groups
@@ -518,7 +518,7 @@ describe('core:team', () => {
   it('manager can remove an organisation group', async () => {
     // Ensure we only patch relevent users when updating authorisations
     const updatedUsersCheck = (user) => {
-      expect(user.name).equal(user3Object.name)
+      expect(user.profile.name).equal(user3Object.profile.name)
     }
     userService.on('patched', updatedUsersCheck)
     await orgGroupService.remove(groupObject._id, { user: user2Object, checkAuthorisation: true })
@@ -526,7 +526,7 @@ describe('core:team', () => {
     const groups = await orgGroupService.find({ query: { name: groupObject.name }, user: user2Object, checkAuthorisation: true })
     expect(groups.data.length === 0).beTrue()
     /* Now managers are not default owners of group anymore as they can manage all groups by default
-    const users = await userService.find({ query: { 'profile.name': user1Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user1Object.profile.name }, checkAuthorisation: true, user: user1Object })
     expect(users.data.length > 0).beTrue()
     user1Object = users.data[0]
     // No more permission set for org groups
@@ -553,7 +553,7 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user2Object.profile.name }, checkAuthorisation: true, user: user1Object })
     user2Object = users.data[0]
     expect(user2Object.groups[0]._id.toString()).to.equal(groupObject._id.toString())
     expect(user2Object.groups[0].permissions).to.equal('member')
@@ -573,7 +573,7 @@ describe('core:team', () => {
       checkAuthorisation: true
     })
     expect(authorisation).toExist()
-    const users = await userService.find({ query: { 'profile.name': user2Object.name }, checkAuthorisation: true, user: user1Object })
+    const users = await userService.find({ query: { 'profile.name': user2Object.profile.name }, checkAuthorisation: true, user: user1Object })
     user2Object = users.data[0]
     // No more permission set for org groups
     expect(_.find(user2Object.groups, group => group._id.toString() === groupObject._id.toString())).beUndefined()
@@ -616,13 +616,13 @@ describe('core:team', () => {
     .timeout(5000)
 
   it('removes joined user', async () => {
-    const orgs = await orgService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
+    const orgs = await orgService.find({ query: { name: user2Object.profile.name }, user: user2Object, checkAuthorisation: true })
     expect(orgs.data.length > 0).beTrue()
     joinedOrgUserService = app.getService('members', orgs.data[0])
     await userService.remove(user3Object._id, { user: user3Object, checkAuthorisation: true })
-    let users = await userService.find({ query: { name: user3Object.name }, user: user3Object, checkAuthorisation: true })
+    let users = await userService.find({ query: { 'profile.name': user3Object.profile.name }, user: user3Object, checkAuthorisation: true })
     expect(users.data.length === 0).beTrue()
-    users = await joinedOrgUserService.find({ query: { name: user3Object.name }, user: user2Object, checkAuthorisation: true })
+    users = await joinedOrgUserService.find({ query: { 'profile.name': user3Object.profile.name }, user: user2Object, checkAuthorisation: true })
     // User is not found on the joined org service
     expect(users.data.length === 0).beTrue()
   })
@@ -652,10 +652,10 @@ describe('core:team', () => {
 
   it('remove users', async () => {
     await userService.remove(user1Object._id, { user: user1Object, checkAuthorisation: true })
-    let users = await userService.find({ query: { name: user1Object.name }, user: user1Object, checkAuthorisation: true })
+    let users = await userService.find({ query: { 'profile.name': user1Object.name }, user: user1Object, checkAuthorisation: true })
     expect(users.data.length === 0).beTrue()
     await userService.remove(user2Object._id, { user: user2Object, checkAuthorisation: true })
-    users = await userService.find({ query: { name: user2Object.name }, user: user2Object, checkAuthorisation: true })
+    users = await userService.find({ query: { 'profile.name': user2Object.name }, user: user2Object, checkAuthorisation: true })
     expect(users.data.length === 0).beTrue()
   })
   // Let enough time to process
