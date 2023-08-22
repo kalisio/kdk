@@ -1,4 +1,5 @@
 import { memory } from '@feathersjs/memory'
+import assert from 'assert'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import fuzzySearch from 'feathers-mongodb-fuzzy-search'
@@ -178,7 +179,7 @@ describe('core:hooks', () => {
     try {
       await hooks.preventChanges(false, ['secret'])(hook)
       expect(hook.data.name).to.equal('zzz')
-      expect(hook.data['secret']).beUndefined()
+      expect(hook.data.secret).beUndefined()
       expect(hook.data['secret.value']).beUndefined()
     } catch (error) {
       assert.fail('preventChanges should not raise on error')
