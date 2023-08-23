@@ -4,20 +4,29 @@
       {{ model.name }}
     </q-chip>
   </div>
-  <q-file v-else
+  <!-- -->
+  <q-field v-else-if="model"
     :for="properties.name + '-field'"
-    :id="properties.name + '-field'"
-    v-model="file"
+    v-model="model"
     :label="label"
     clearable
-    counter
+    @clear="onFileCleared"
+    :disable="disabled"
+  >
+    <template v-slot:control>
+      {{ model.name }}
+    </template>
+  </q-field>
+  <q-file v-else
+    :for="properties.name + '-field'"
+    v-model="file"
+    :label="label"
     :accept="acceptedTypes"
     :filter="filterSelectedFiles"
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
     :disable="disabled"
-    @clear="onFileCleared"
     @update:model-value="onFileChanged"
     @rejected="onFileRejected">
     <!-- Helper -->
@@ -56,16 +65,13 @@ export default {
     emptyModel () {
       return null
     },
-    fill (value) {
-      if (value) this.file = new File([''], value.name,  { type: value.type })
-    },
     filterSelectedFiles (files) {
       const filter = _.get(this.properties, 'field.filter')
       if (!filter) return files
       return _.filter(files, file => { return file.name.includes(filter) })
     },
-    onFileCleared () {
-      this.model = this.emptyModel()
+    onModelCleared () {
+      this.file = null
       this.error = ''
       this.onChanged()
     },
