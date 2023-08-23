@@ -40,7 +40,8 @@ export default {
   mixins: [baseField],
   data () {
     return {
-      file: null
+      file: null,
+      changed: false
     }
   },
   computed: {
@@ -54,6 +55,9 @@ export default {
   methods: {
     emptyModel () {
       return null
+    },
+    fill (value) {
+      if (value) this.file = new File([''], value.name,  { type: value.type })
     },
     filterSelectedFiles (files) {
       const filter = _.get(this.properties, 'field.filter')
@@ -72,6 +76,8 @@ export default {
           // Check whether the file will be uploaded without being read
           if (!_.get(this.properties, 'field.readContent', true)) {
             this.model = { name: this.file.name, type: this.file.type }
+            this.onChanged()
+            this.changed = true
             return
           }
           // Check whether the file type is registered to be read by a reader
@@ -83,6 +89,7 @@ export default {
               // Avoid making file content reactive as it might be large and it is not used in UI
               this.model = { name: this.file.name, type: this.file.type, content: markRaw(content) }
               this.onChanged()
+              this.changed = true
             } catch (error) {
               this.error = error
               this.model = this.emptyModel()
@@ -113,7 +120,7 @@ export default {
     },
     async submitted (object, field) {
       // Check wether we need to upload file content
-      if (_.get(this.model, 'key')) {
+      if (this.changed && _.get(this.model, 'key')) {
         // The template generates the final context for storage service
         let context = _.get(this.properties, 'field.storage.context')
         if (context) context = _.template(context)(Object.assign({}, { fileName: this.model.name }, object))

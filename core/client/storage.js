@@ -90,9 +90,13 @@ export const Storage = {
     let url = api.getBaseUrl() + config.apiPath
     if (service.context) url += `/${context}`
     url += `/storage-objects/${key}`
-    // Add the Authorization header if jwt is defined
+    // Handle extra query params
+    let query = _.get(options, 'query', {})
+    // Add the jwt to the query 
     const jwt = await api.get('storage').getItem(config.apiJwt)
-    if (jwt) url += '?jwt=' + jwt
+    query['jwt'] = jwt
+    // Transform the query params
+    url += `?${new URLSearchParams(query)}`
     return url
   }
 }
