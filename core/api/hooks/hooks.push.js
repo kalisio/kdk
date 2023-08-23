@@ -5,6 +5,11 @@ import _ from 'lodash'
 
 const debug = makeDebug('kdk:core:push:hooks')
 
+// Helper functions to be used in iff hooks
+export function disallowExternalPush (hook) {
+  return _.get(hook.app.get('push'), 'disallowExternalPush', true)
+}
+
 export async function sendNewSubscriptionEmail (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'sendNewSubscriptionEmail\' hook should only be used as a \'after\' hook.')

@@ -1,14 +1,13 @@
 import { deleteExpiredSubscriptions } from '@kalisio/feathers-webpush'
-import common from 'feathers-hooks-common'
-
-const { disallow } = common
+import commonHooks from 'feathers-hooks-common'
+import { disallowExternalPush } from '../../hooks/index.js'
 
 export default {
   before: {
-    all: [disallow('external')],
+    all: [],
     find: [],
     get: [],
-    create: [],
+    create: [commonHooks.when(disallowExternalPush, commonHooks.disallow('external'))],
     update: [],
     patch: [],
     remove: []
