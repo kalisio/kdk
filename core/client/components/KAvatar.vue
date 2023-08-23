@@ -1,8 +1,7 @@
 <template>
   <div>
-    <q-skeleton v-if="skeleton" type="QAvatar" :size="size" />
     <q-avatar v-if="avatar" :size="size">
-      <img :src="avatar">
+      <q-img :src="avatar" />
       <q-tooltip v-if="name">
         {{ name }}
       </q-tooltip>
@@ -47,7 +46,6 @@ export default {
   },
   data () {
     return {
-      skeleton: true,
       name: null,
       avatar: null,
       icon: null,
@@ -65,7 +63,6 @@ export default {
         if (avatar) {
           if (avatar.uri) {
             this.avatar = avatar.uri
-            this.skeleton = false
             return
           }
           // Backward compatibility as avatar key was previously stored under _id
@@ -81,14 +78,14 @@ export default {
             avatar.uri = data.uri
             this.avatar = avatar.uri
             */
-            const url = await Storage.getObjectUrl({
+            this.avatar = await Storage.getObjectUrl({
               file: _.get(avatar, 'name'),
               key: avatarId,
-              context: this.contextId
+              context: this.contextId,
+              query: {
+                timestamp: Date.now()
+              }
             })
-            avatar.url = url
-            this.avatar = url
-            this.skeleton = false
             return
           }
           this.avatar = null
@@ -99,7 +96,6 @@ export default {
         if (icon) {
           this.icon = getIconName(icon, 'name')
           this.color = _.get(icon, 'color', 'primary')
-          this.skeleton = false
           return
         }
         this.icon = null
@@ -107,11 +103,9 @@ export default {
         const name = this.getName()
         if (name) {
           this.initials = getInitials(name)
-          this.skeleton = false
           return
         }
         this.initials = null
-        this.skeleton = false
       }
     }
   },
