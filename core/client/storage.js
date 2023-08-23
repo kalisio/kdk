@@ -91,10 +91,10 @@ export const Storage = {
     if (service.context) url += `/${context}`
     url += `/storage-objects/${key}`
     // Handle extra query params
-    let query = _.get(options, 'query', {})
-    // Add the jwt to the query 
+    const query = _.get(options, 'query', {})
+    // Add the jwt to the query
     const jwt = await api.get('storage').getItem(config.apiJwt)
-    query['jwt'] = jwt
+    query.jwt = jwt
     // Transform the query params
     url += `?${new URLSearchParams(query)}`
     return url

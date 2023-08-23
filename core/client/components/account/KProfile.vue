@@ -11,7 +11,7 @@
     <!-- Avatar -->
     <div class="row justify-center">
       <KAvatar
-        :object="avatar"
+        :subject="avatar"
         size="7rem"
       />
     </div>
