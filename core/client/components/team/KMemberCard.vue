@@ -10,7 +10,7 @@
       Card avatar
     -->
     <template v-slot:card-avatar>
-      <KAvatar :object="item" size="3.2rem"
+      <KAvatar :subject="item" size="3.2rem"
         :options="{ nameField: 'profile.name', avatarField: 'profile.avatar' }"/>
     </template>
     <!--

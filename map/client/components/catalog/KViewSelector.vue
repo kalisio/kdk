@@ -32,13 +32,12 @@
 </template>
 
 <script>
-import { KAvatar, KPanel, KAction } from '../../../../core/client/components'
+import { KPanel, KAction } from '../../../../core/client/components'
 import { baseItem } from '../../../../core/client/mixins'
 
 export default {
   name: 'k-view-selector',
   components: {
-    KAvatar,
     KPanel,
     KAction
   },

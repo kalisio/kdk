@@ -1,23 +1,21 @@
 <template>
-  <div>
-    <q-avatar v-if="avatar" :size="size">
-      <q-img :src="avatar" />
-      <q-tooltip v-if="name">
-        {{ name }}
-      </q-tooltip>
-    </q-avatar>
-    <q-avatar v-else-if="icon" :size="size" :color="color" text-color="white" :icon="icon">
-      <q-tooltip v-if="name">
-        {{ name }}
-      </q-tooltip>
-    </q-avatar>
-    <q-avatar v-else-if="initials" :size="size" color="primary" text-color="white">
-      {{ initials }}
-      <q-tooltip v-if="name">
-        {{ name }}
-      </q-tooltip>
-    </q-avatar>
-  </div>
+  <q-avatar v-if="avatar" :size="size">
+    <q-img :src="avatar" />
+    <q-tooltip v-if="tooltip">
+      {{ name }}
+    </q-tooltip>
+  </q-avatar>
+  <q-avatar v-else-if="icon" :size="size" :color="color" text-color="white" :icon="icon">
+    <q-tooltip v-if="tooltip">
+      {{ name }}
+    </q-tooltip>
+  </q-avatar>
+  <q-avatar v-else-if="initials" :size="size" color="primary" text-color="white">
+    {{ initials }}
+    <q-tooltip v-if="tooltip">
+      {{ name }}
+    </q-tooltip>
+  </q-avatar>
 </template>
 
 <script>
@@ -27,7 +25,7 @@ import { getIconName, getInitials } from '../utils/index.js'
 
 export default {
   props: {
-    object: {
+    subject: {
       type: Object,
       required: true
     },
@@ -38,6 +36,10 @@ export default {
     size: {
       type: String,
       default: 'md'
+    },
+    tooltip: {
+      type: Boolean,
+      default: false
     },
     options: {
       type: Object,
@@ -54,7 +56,7 @@ export default {
     }
   },
   watch: {
-    object: {
+    subject: {
       immediate: true,
       async handler () {
         this.name = this.getName()
@@ -112,15 +114,15 @@ export default {
   methods: {
     getAvatar () {
       const avatarField = _.get(this.options, 'avatarField', 'avatar')
-      return _.get(this.object, avatarField)
+      return _.get(this.subject, avatarField)
     },
     getIcon () {
       const iconField = _.get(this.options, 'iconField', 'icon')
-      return _.get(this.object, iconField)
+      return _.get(this.subject, iconField)
     },
     getName () {
       const nameField = _.get(this.options, 'nameField', 'name')
-      return _.get(this.object, nameField)
+      return _.get(this.subject, nameField)
     }
   }
 }

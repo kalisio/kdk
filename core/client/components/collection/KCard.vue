@@ -24,7 +24,7 @@
           <div v-if="avatar" v-bind:class="{ 'q-pr-xs': dense, 'q-pr-sm': !dense }">
             <slot name="card-avatar">
               <KAvatar
-                :object="item"
+                :subject="item"
                 :size="dense ? 'sm' : 'md'"
                 :contextId="contextId"
                 :options="options" />
