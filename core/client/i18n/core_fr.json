@@ -462,7 +462,7 @@
     "HELP_EMAIL_LABEL": "Je n'ai jamais reçu de mail de vérification. Que dois-je faire ?",
     "HELP_EMAIL_TEXT": "Si vous n'avez pas reçu de mail de vérification, assurez-vous que le mail n'a pas été filtré et déplacé dans les spams de votre messagerie. Merci d'ajouter dans vos contacts l'adresse {email} dans votre client de messagerie. Vous pouvez également cliquer sur le bouton ci-dessous pour recevoir un nouveau mail de vérification.",
     "TOKEN_LABEL": "Saisissez le code reçu par email pour valider votre adresse mail",
-    "EMAIL_VERIFIED": "Votre adresse a été vérifié. Un mail vous a été envoyé pour confirmer le changement.",
+    "EMAIL_VERIFIED": "Votre adresse a été vérifiée. Un mail vous a été envoyé pour confirmer le changement.",
     "ACTION": "Me renvoyer un code de vérification",
     "ERROR_MESSAGE": "Code invalide, demandez-en un nouveau"
   },
