@@ -377,7 +377,7 @@
   },
   "KLocationCardSection": {
     "TITLE": "Localisation",
-    "NO_LOCATION": "Localiation indéfinie"
+    "NO_LOCATION": "Localisation indéfinie"
   },
   "KTimezoneField": {
     "TIMEZONE_MAP_TOOLTIP": "Choisir le fuseau sur une carte",
