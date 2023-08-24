@@ -152,7 +152,7 @@ export function preventRemoveUser (hook) {
       throw new Forbidden('You are not allowed to delete the user ' + user.name, {
         translation: {
           key: 'CANNOT_REMOVE_USER',
-          params: { user: user.name }
+          params: { user: _.get(user, 'profile.name') }
         }
       })
     }

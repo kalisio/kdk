@@ -471,7 +471,7 @@
     "EMPTY": "No subscriptions"
   },
   "KSubscription": {
-    "UNSUBSCRIBE": "Unsubscribe",
+    "UNSUBSCRIBE_LABEL": "Unsubscribe",
     "LAST_ACTIVITY": "Last activity",
     "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."

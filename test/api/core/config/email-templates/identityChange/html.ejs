@@ -1,6 +1,6 @@
 <h1>[Akt'n'Map] <%= email.subject %></h1>
 
-<p>Hi <%= user.name %>, your user information was just changed. Please verify that you made these changes.</p>
+<p>Hi <%= user.profile.name %>, your user information was just changed. Please verify that you made these changes.</p>
 <ul>
 <% for (var key in user.verifyChanges) {%>
    <li><%= key %>: <%= user.verifyChanges[key] %></li>

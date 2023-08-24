@@ -471,7 +471,7 @@
     "EMPTY": "Aucunes subscriptions"
   },
   "KSubscription": {
-    "UNSUBSCRIBE": "Se désabonner",
+    "UNSUBSCRIBE_LABEL": "Se désabonner",
     "LAST_ACTIVITY": "Dernière activité",
     "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
@@ -822,7 +822,7 @@
     "COLLAPSE": "Réduire"
   },
   "KInstallApp": {
-    "INSTALL_LABEL": "L'application est prête à être installé.",
+    "INSTALL_LABEL": "L'application est prête à être installée.",
     "IOS_SHARE_ICON_LABEL": "Si vous ne l'installez pas, certaines fonctionnalités peuvent être limitées. Depuis Safari, appuyez sur",
     "IOS_HOME_SCREEN_LABEL": ", puis sur “Ajouter à l'écran d'accueil”",
     "INSTALL_BUTTON": "Installer l'application",
