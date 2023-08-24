@@ -115,6 +115,10 @@ const props = defineProps({
   listStrategy: {
     type: String,
     default: 'smart'
+  },
+  processor: {
+    type: Function,
+    default: undefined
   }
 })
 

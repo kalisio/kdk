@@ -73,6 +73,10 @@ const props = defineProps({
   nbItemsPerPage: {
     type: Number,
     default: 12
+  },
+  processor: {
+    type: Function,
+    default: undefined
   }
 })
 
