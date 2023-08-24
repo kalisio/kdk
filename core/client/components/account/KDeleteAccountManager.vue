@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import logger from 'loglevel'
 import { useRouter } from 'vue-router'
 import { Dialog } from 'quasar'
