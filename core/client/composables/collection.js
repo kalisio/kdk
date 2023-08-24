@@ -55,6 +55,13 @@ export function useCollection (options) {
         }
       : {})
   }
+  function setCollectionItems(newItems) {
+    // Item processor defined ?
+    if (typeof options.processor === 'function') {
+      newItems = processor(newItems)
+    }
+    items.value = newItems
+  }
   function subscribe (query) {
     // Remove previous listener if any
     unsubscribe()
@@ -63,15 +70,15 @@ export function useCollection (options) {
       .subscribe(response => {
         // Manage GeoJson features collection as well
         if (response.type === 'FeatureCollection') {
-          items.value = response.features
+          setCollectionItems(response.features)
         } else if (options.appendItems.value) {
           // Append the response ensuring there is no duplicates
-          items.value = _.unionBy(response.data, items.value, '_id')
+          setCollectionItems(_.unionBy(response.data, items.value, '_id'))
           // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
           const sortQuery = _.get(getCollectionBaseQuery(), '$sort')
           if (sortQuery) {
             // By default orderBy is case sensitive while using collation we want to perform case insensitive sort
-            items.value = _.orderBy(items.value,
+            setCollectionItems(_.orderBy(items.value,
               // Sort function for each sort property
               _.map(_.keys(sortQuery), property => {
                 return item => {
@@ -80,10 +87,10 @@ export function useCollection (options) {
                 }
               }),
               // Sort order for each sort property
-              _.map(_.values(sortQuery), value => { return value > 0 ? 'asc' : 'desc' }))
+              _.map(_.values(sortQuery), value => { return value > 0 ? 'asc' : 'desc' })))
           }
         } else {
-          items.value = response.data
+          setCollectionItems(response.data)
         }
         nbTotalItems.value = response.total
       }, error => {
@@ -110,7 +117,7 @@ export function useCollection (options) {
 
   function resetCollection () {
     // Reset pagination and start again refreshing the collection
-    items.value = []
+    setCollectionItems([])
     currentPage.value = 1
     refreshCollection()
   }
@@ -158,6 +165,7 @@ export function useCollection (options) {
     nbTotalItems,
     currentPage,
     nbPages,
+    setCollectionItems,
     subscribe,
     unsubscribe,
     getCollectionBaseQuery,
