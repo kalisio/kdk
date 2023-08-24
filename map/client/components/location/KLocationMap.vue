@@ -139,9 +139,8 @@ export default {
   methods: {
     async geolocate () {
       await Geolocation.update()
-      const position = this.$store.get('geolocation.position')
-      if (position) {
-        this.update(position.latitude, position.longitude)
+      if (Geolocation.hasLocation()) {
+        this.update(Geolocation.getLatitude(), Geolocation.getLongitude())
       }
     },
     recenter () {

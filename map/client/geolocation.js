@@ -8,8 +8,47 @@ export const Geolocation = {
   initialize () {
     Store.set('geolocation', { location: null, error: undefined })
   },
+  hasLocation () {
+    return Store.get('geolocation.location')
+  },
   get () {
     return Store.get('geolocation')
+  },
+  getLongitude () {
+    return Store.get('geolocation.location.geometry.coordinates[0]', 0)
+  },
+  get longitude () {
+    return this.getLongitude()
+  },
+  getLatitude () {
+    return Store.get('geolocation.location.geometry.coordinates[1]', 0)
+  },
+  get latitude () {
+    return this.getLatitude()
+  },
+  getAltitude () {
+    return Store.get('geolocation.location.geometry.coordinates[2]', 0)
+  },
+  get altitude () {
+    return this.getAltitude()
+  },
+  getGeometry () {
+    return Store.get('geolocation.location.geometry')
+  },
+  get geometry () {
+    return this.getGeometry()
+  },
+  getAccuracy () {
+    return Store.get('geolocation.location.properties.accuracy')
+  },
+  get accuracy () {
+    return this.getAccuracy()
+  },
+  getAltitudeAccuracy () {
+    return Store.get('geolocation.location.properties.altitudeAccuracy')
+  },
+  get altitudeAccuracy () {
+    return this.getAltitudeAccuracy()
   },
   async update () {
     let location = null
@@ -57,7 +96,6 @@ export const Geolocation = {
       }
       window.navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log(position)
           const longitude = position.coords.longitude
           const latitude = position.coords.latitude
           const altitude = position.coords.altitude
