@@ -57,8 +57,8 @@ export function useCollection (options) {
   }
   function setCollectionItems(newItems) {
     // Item processor defined ?
-    if (typeof options.processor === 'function') {
-      newItems = processor(newItems)
+    if (typeof options.processor.value === 'function') {
+      newItems = options.processor.value(newItems)
     }
     items.value = newItems
   }
