@@ -148,6 +148,7 @@ const GradientPath = L.PixiOverlay.extend({
       // Compute the texture
       // FIXME: how to ensure a pixel constant size when zooming ?
       let texture = null
+      // weight must be greater than 1 (https://github.com/kalisio/kdk/issues/747)
       const weight = Math.max(1, 2048 * this.path.geometry.weight / Math.pow(2, zoom))
       if (Array.isArray(this.path.geometry.gradient)) {
         texture = this.createGradientTexture(this.path.geometry.gradient, weight)
