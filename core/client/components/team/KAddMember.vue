@@ -149,7 +149,7 @@ export default {
         type: 'string',
         minLength: 3,
         maxLength: 128,
-        default: this.user ? this.user.name : '',
+        default: this.user ? _.get(this.user, 'profile.name') : '',
         field: {
           component: 'form/KTextField',
           label: this.user ? '' : 'KAddMember.NAME_FIELD_LABEL',

@@ -26,6 +26,7 @@ const User = Store.get('user')
 
 // Function
 async function onDelete () {
+  const name = _.get(User, 'profile.name')
   Dialog.create({
     title: i18n.t('KDeleteAccountManager.CONFIRMATION_TITLE'),
     message: i18n.t('KDeleteAccountManager.CONFIRMATION'),
@@ -33,7 +34,7 @@ async function onDelete () {
     prompt: {
       model: '',
       type: 'text',
-      isValid: val => val === User.name
+      isValid: val => val === name
     },
     persistent: true,
     ok: {
@@ -49,7 +50,7 @@ async function onDelete () {
       await api.getService('users').remove(User._id)
       router.push({ name: 'logout' })
     } catch (error) {
-      logger.error(`[KDK] Cannot delete ${User.name} account: ${error}`)
+      logger.error(`[KDK] Cannot delete ${name} account: ${error}`)
     }
   })
 }
