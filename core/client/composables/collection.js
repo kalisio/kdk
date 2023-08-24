@@ -14,7 +14,9 @@ export function useCollection (options) {
     // Only invoke refresh at most once per every refreshThrottle milliseconds
     refreshThrottle: ref(500),
     // Refresh strategy to be used
-    listStrategy: ref('smart')
+    listStrategy: ref('smart'),
+    // Item processor to be used
+    processor: ref()
   })
 
   // Data

@@ -7,6 +7,7 @@ import { kml } from '@tmcw/togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
 import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
+import { Geolocation } from '../../geolocation.js'
 import { convertCesiumHandlerEvent } from '../../utils.js'
 // Cesium has its own dynamic module loader requiring to be configured
 // Cesium files need to be also added as static assets of the applciation
@@ -330,10 +331,9 @@ export const baseGlobe = {
       return [[south, west], [north, east]]
     },
     async showUserLocation () {
-      const location = this.$geolocation.get().location
-      if (location) {
-        const longitude = location.geometry.coordinates[0]
-        const latitude = location.geometry.coordinates[1]
+      if (Geolocation.hasLocation()) {
+        const longitude = Geolocation.getLongitude()
+        const latitude = Geolocation.getLatitude()
         this.center(longitude, latitude)
         const pinBuilder = new Cesium.PinBuilder()
         const canvas = await pinBuilder.fromMakiIconId('marker', Cesium.Color.fromCssColorString(getCssVar('primary')), 48)

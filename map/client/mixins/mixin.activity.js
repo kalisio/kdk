@@ -3,6 +3,7 @@ import logger from 'loglevel'
 import config from 'config'
 import explode from '@turf/explode'
 import { Loading, Dialog } from 'quasar'
+import { Geolocation } from '../geolocation.js'
 import { setEngineJwt } from '../utils.js'
 import { i18n, utils as kCoreUtils } from '../../../core/client/index.js'
 
@@ -390,9 +391,8 @@ export const activity = {
       const viewRestored = (hasContext ? await this.restoreContext('view') : false)
       if (!viewRestored && _.get(this, 'activityOptions.restore.geolocation', true)) {
         // Provided by geolocation if enabled
-        if (!this.$geolocation.get().position) await this.$geolocation.update()
-        const position = this.$geolocation.get().position
-        if (position) this.center(position.longitude, position.latitude)
+        await Geolocation.update()
+        if (Geolocation.hasLocation()) this.center(Geolocation.getLongitude(), Geolocation.getLatitude())
       }
       // Listen about changes in global/contextual catalog services
       const globalCatalogService = this.$api.getService('catalog', '')

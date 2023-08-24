@@ -27,6 +27,7 @@ import { Time } from '../../../../core/client/time.js'
 import { getAppLocale } from '../../../../core/client/utils/index.js'
 import { uid } from 'quasar'
 import '../../leaflet/BoxSelection.js'
+import { Geolocation } from '../../geolocation.js'
 import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -513,12 +514,11 @@ export const baseMap = {
       if (this.locateControl) {
         this.locateControl.start()
       } else {
-        // TODO do we have to keep this code ?
-        const location = this.$geolocation.get().location
-        if (location) {
-          const lng = location.geometry.coordinates[0]
-          const lat = location.geometry.coordinates[1]
-          const accuracy = location.properties.accuracy
+        // FIXME: do we have to keep this code ?
+        if (Geolocation.hasLocation()) {
+          const lng = Geolocation.getLongitude()
+          const lat = Geolocation.getLatitude()
+          const accuracy = Geolocation.getAccuracy()
           if (accuracy) {
             this.zoomToBounds(new L.LatLng(lat, lng).toBounds(accuracy * 2))
           } else {
