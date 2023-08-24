@@ -148,7 +148,7 @@ const GradientPath = L.PixiOverlay.extend({
       // Compute the texture
       // FIXME: how to ensure a pixel constant size when zooming ?
       let texture = null
-      const weight = 2048 * this.path.geometry.weight / Math.pow(2, zoom)
+      const weight = Math.max(1, 2048 * this.path.geometry.weight / Math.pow(2, zoom))
       if (Array.isArray(this.path.geometry.gradient)) {
         texture = this.createGradientTexture(this.path.geometry.gradient, weight)
       } else {
