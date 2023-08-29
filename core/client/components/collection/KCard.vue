@@ -10,7 +10,12 @@
     <div v-if="hasHeader">
       <div v-bind:class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }">
         <slot name="card-header">
-          <k-panel id="card-header-panel" :content="computedHeader" :context="$props" class="full-width no-wrap" />
+          <KPanel 
+            id="card-header-panel" 
+            :content="computedHeader" 
+            :context="$props" 
+            class="full-width no-wrap" 
+          />
         </slot>
       </div>
     </div>
@@ -20,20 +25,24 @@
     <div class="column full-width"
       v-bind:class="{ 'q-px-sm q-pt-xs q-gutter-y-xs': dense, 'q-px-md q-pt-sm q-gutter-y-sm': !dense }">
       <slot name="card-title">
-        <div class="row full-width justify-start items-center no-wrap">
-          <div v-if="avatar" v-bind:class="{ 'q-pr-xs': dense, 'q-pr-sm': !dense }">
+        <div class="row full-width items-center no-wrap">
+          <div 
+            v-if="avatar" 
+            :class="{ 'q-pr-xs': dense, 'q-pr-sm': !dense }"
+          >
             <slot name="card-avatar">
               <KAvatar
                 :subject="item"
                 :size="dense ? 'sm' : 'md'"
                 :contextId="contextId"
-                :options="options" />
+                :options="options" 
+              />
             </slot>
           </div>
           <div
             class="text-subtitle1 text-weight-medium ellipsis"
             v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
-            style="overflow: hidden">
+          >
             {{ name }}
           </div>
         </div>

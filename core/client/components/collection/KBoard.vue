@@ -2,56 +2,65 @@
   <div class="row justify-between q-gutter-x-sm no-wrap">
     <div class="col-*" />
     <template v-for="column in columns" :key="column.value">
-      <div :id="column.value" :style="{ minWidth: `${column.width}px` }">
-        <KColumn
-          :key="column.value"
-          :header="[{
-            component: 'QSpace'
-          }, {
-            component: 'QChip',
-            label: $tie(column.label),
-            color: 'grey-10',
-            'text-color': 'white',
-            square: true,
-            class: 'justify-center'
-          }, {
-            component: 'QSpace'
-          }]"
-          :ref="column.value"
-          v-bind="column.props"
-          :height="height"
-        >
-        </KColumn>
-      </div>
+      <KColumn
+        :id="column.value"
+        ref="columnRefs"
+        :name="column.value"
+        :header="[{
+          component: 'QSpace'
+        }, {
+          component: 'QChip',
+          label: $tie(column.label),
+          color: 'grey-10',
+          'text-color': 'white',
+          square: true,
+          class: 'justify-center'
+        }, {
+          component: 'QSpace'
+        }]"
+        v-bind="column.props"
+        :height="height"
+        :width="column.width"
+        :style="{ minWidth: `${column.width}px`, maxWidth: `${column.width}px` }"
+      >
+      </KColumn>
     </template>
     <div class="col-*" />
   </div>
 </template>
 
-<script>
+<script setup>
+import _ from 'lodash'
+import { ref } from 'vue'
 import KColumn from './KColumn.vue'
 
-export default {
-  components: {
-    KColumn
+// Props
+const props = defineProps({
+  columns: {
+    type: Array,
+    default: () => null
   },
-  props: {
-    columns: {
-      type: Array,
-      default: () => null
-    },
-    height: {
-      type: Number,
-      required: true
-    }
-  },
-  methods: {
-    getColumn (value) {
-      return this.$refs[value][0]
-    },
-    getColumns (values) {
-      return values.map(value => this.getColumn(value))
-    }
+  height: {
+    type: Number,
+    required: true
   }
+})
+
+// Data
+const columnRefs = ref([])
+    
+
+// Functions
+function getColumn (value) {
+  return _.find(columnRefs.value, { name: value })
 }
+function getColumns (values) {
+  return values.map(value => getColumn(value))
+}
+
+// Expose
+defineExpose({
+  getColumn,
+  getColumns
+})
 </script>
