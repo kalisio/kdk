@@ -35,7 +35,7 @@ import { ref } from 'vue'
 import KColumn from './KColumn.vue'
 
 // Props
-const props = defineProps({
+defineProps({
   columns: {
     type: Array,
     default: () => null
@@ -48,7 +48,6 @@ const props = defineProps({
 
 // Data
 const columnRefs = ref([])
-    
 
 // Functions
 function getColumn (value) {

@@ -20,11 +20,11 @@
         :max-height="scrollHeight"
         @scrolled="onScrolled"
       >
-        <div 
+        <div
           class="full-width column"
-          :class="{ 
+          :class="{
             'q-gutter-y-xs': gutter && dense,
-            'q-gutter-y-sm': gutter && !dense 
+            'q-gutter-y-sm': gutter && !dense
           }"
           :style="{ maxWidth: `${width}px` }"
         >
@@ -37,9 +37,9 @@
               :is="rendererComponent"
               v-bind="renderer"
               @item-selected="onItemSelected"
-              :class="{ 
+              :class="{
                 'q-pr-xs': dense,
-                'q-pr-sm': !dense 
+                'q-pr-sm': !dense
               }"
             />
           </template>
@@ -101,7 +101,7 @@ const props = defineProps({
       return {
         component: 'collection/KCard'
       }
-    },
+    }
   },
   width: {
     type: Number,
