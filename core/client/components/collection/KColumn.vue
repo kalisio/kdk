@@ -20,7 +20,14 @@
         :max-height="scrollHeight"
         @scrolled="onScrolled"
       >
-        <div class="full-width row">
+        <div 
+          class="full-width column"
+          :class="{ 
+            'q-gutter-y-xs': gutter && dense,
+            'q-gutter-y-sm': gutter && !dense 
+          }"
+          :style="{ maxWidth: `${width}px` }"
+        >
           <template v-for="item in items" :key="item._id">
             <component
               :id="item._id"
@@ -30,6 +37,10 @@
               :is="rendererComponent"
               v-bind="renderer"
               @item-selected="onItemSelected"
+              :class="{ 
+                'q-pr-xs': dense,
+                'q-pr-sm': !dense 
+              }"
             />
           </template>
         </div>
@@ -76,6 +87,10 @@ const emit = defineEmits(['selection-changed', 'collection-refreshed'])
 
 // Props
 const props = defineProps({
+  name: {
+    type: String,
+    required: true
+  },
   header: {
     type: Array,
     default: () => null
@@ -86,11 +101,19 @@ const props = defineProps({
       return {
         component: 'collection/KCard'
       }
-    }
+    },
+  },
+  width: {
+    type: Number,
+    default: 200
   },
   height: {
     type: Number,
     default: 300
+  },
+  gutter: {
+    type: Boolean,
+    default: true
   },
   dense: {
     type: Boolean,
@@ -190,6 +213,7 @@ onBeforeUnmount(() => {
 
 // Expose
 defineExpose({
+  name: props.name,
   items,
   nbTotalItems,
   nbPages,
