@@ -63,7 +63,7 @@ export class Api {
       const response = await client.getService('organisations').find({ query: { _id: orgOwner._id } })
       // If not create it
       if (response.total === 0) {
-        org = await client.getService('organisations').create(_.pick(organisation, ['name', 'description']))
+        org = await client.getService('organisations').create({ name: orgOwner.name, billing: { subscription: { plan: 'diamond' }} })
         debug(`Created organisation ${org.name} - ID ${org._id}`)
       } else {
         org = response.data[0]
@@ -203,45 +203,6 @@ export class Api {
       await client.logout()
     }
 
-    client.removeOrganisation = async (organisation) => {
-      const orgOwner = _.get(organisation, 'owner')
-      await client.removeUser(orgOwner)
-      // TODO: remove org if not private user org
-    }
-
-    client.removeUser = async (user) => {
-      // Ensure we are logged as user first
-      try {
-        await client.login(user)
-      } catch (error) {
-        debug(`Impossible to connect as user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
-      }
-      try {
-        // Try by email if no ID provided
-        if (!user._id) {
-          const response = await client.getService('users').find({ query: { email: user.email } })
-          if (response.total === 1) {
-            user._id = response.data[0]._id
-          }
-        }
-      } catch (error) {
-        debug(`Impossible to find ${user.name} user with email ${user.email}:`, error.name || error.code || error.message)
-      }
-      try {
-        await client.getService('organisations').remove(user._id)
-        debug(`Removed ${user.name} user organisation with ID ${user._id}`)
-      } catch (error) {
-        debug(`Impossible to remove ${user.name} user organisation with ID ${user._id}:`, error.name || error.code || error.message)
-      }
-      try {
-        await client.getService('users').remove(user._id)
-        debug(`Removed user ${user.name} - ID ${user._id}`)
-      } catch (error) {
-        debug(`Impossible to remove user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
-      }
-      await client.logout()
-    }
-
     client.removeMembers = async (organisation) => {
       const orgOwner = _.get(organisation, 'owner')
       // Ensure we are logged as org owner first
@@ -275,6 +236,50 @@ export class Api {
       for (let i = 0; i < members.length; i++) {
         await client.removeUser(members[i])
       }
+    }
+
+    client.removeOrganisation = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      // Remove organisations
+      let organisations = []
+      await client.login(orgOwner)
+      const response = await client.getService('users').find({ query: { email: orgOwner.email } })
+      if (response.total === 1) orgOwner._id = response.data[0]._id
+      if (response.total === 1 && response.data[0].organisations) organisations = response.data[0].organisations
+      for (let i = 0; i < organisations.length; i++) {
+        try {
+          await client.getService('organisations').remove(organisations[i]._id)
+          debug(`Removed organisation ${organisations[i].name} - ID ${organisations[i]._id}`)
+        } catch (error) {
+          debug(`Error deleting organisation ${organisations[i].name} - ID ${organisations[i]._id}:`, error.name || error.code || error.message)
+        }
+      }
+      // Remove organisation owner
+      await client.removeUser(orgOwner)
+    }
+
+    client.removeUser = async (user) => {
+      // Ensure we are logged as user first
+      try {
+        await client.login(user)
+      } catch (error) {
+        debug(`Impossible to connect as user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
+      }
+      try {
+        // Try by email if no ID provided
+        if (!user._id) {
+          const response = await client.getService('users').find({ query: { email: user.email } })
+          if (response.total === 1) user._id = response.data[0]._id
+        }
+      } catch (error) {
+        debug(`Impossible to find ${user.name} user with email ${user.email}:`, error.name || error.code || error.message)
+      }
+      try {
+        await client.getService('users').remove(user._id)
+        debug(`Removed user ${user.name} - ID ${user._id}`)
+      } catch (error) {
+        debug(`Error deleting user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
+      }     
     }
 
     client.removeGroups = async (organisation) => {

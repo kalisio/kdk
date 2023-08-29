@@ -99,6 +99,9 @@ export class Runner {
         // debug('Console warning:', message)
       }
     })
+    this.page.on('pageerror', message => {
+      this.errors.push(message)
+    })
     // Navigate the to given url
     await this.page.goto(this.getUrl(path))
     return this.page
