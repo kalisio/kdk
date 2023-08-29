@@ -66,6 +66,7 @@
             icon-size="1.6rem"
             :text="$t('KColumn.EMPTY_COLUMN')"
             direction="horizontal"
+            class="q-pt-lg"
           />
         </div>
       </slot>
