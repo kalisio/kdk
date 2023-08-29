@@ -1,53 +1,37 @@
 import { click, clickAction, type, uploadFile } from './utils.js'
 import { clickPaneAction } from './layout.js'
 
-export async function manageAccount (page, tab = 'profile') {
-  const url = page.url()
-  if (!url.includes('account')) await clickPaneAction(page, 'left', 'manage-account')
-  if (tab === 'profile') {
-    if (!url.includes('profile')) await clickPaneAction(page, 'top', 'profile')
-  } else if (tab === 'security') {
-    if (!url.includes('security')) await clickPaneAction(page, 'top', 'security')
-  } else {
-    if (!url.includes('danger-zone')) await clickPaneAction(page, 'top', 'danger-zone')
-  }
-}
 
 export async function updateAccountProfile (page, name, avatarPath, wait = 3000) {
-  await manageAccount(page, 'profile')
+  await clickPaneAction(page, 'left', 'edit-profile')
+  await page.waitForTimeout(wait)
   await type(page, '#name-field', name, false, true)
-  if (avatarPath) await uploadFile(page, '.dz-hidden-input', avatarPath)
-  await clickAction(page, 'apply-button', wait)
+  if (avatarPath) await uploadFile(page, '#avatar-field', avatarPath)
+  await clickAction(page, 'ok-button', wait)
 }
 
 export async function updateAccountPassword (page, oldPassword, newPassword, wait = 1000) {
-  await manageAccount(page, 'security')
-  await click(page, '#password-block button', 1000)
+  await clickPaneAction(page, 'left', 'manage-account')
+  await click(page, '#password-manager', 1000)
   await type(page, '#oldPassword-field', oldPassword)
   await type(page, '#password-field', newPassword)
   await type(page, '#confirmPassword-field', newPassword)
-  await click(page, 'button', 20000)
-  await click(page, '.la-arrow-left', wait)
+  await click(page, '#change-password', wait)
 }
 
 export async function updateAccountEmail (page, password, email, wait = 5000) {
-  await manageAccount(page, 'security')
-  await click(page, '#email-block button', 1000)
+  await clickPaneAction(page, 'left', 'manage-account')
+  await click(page, '#email-manager', 1000)
   await type(page, '#password-field', password)
   await type(page, '#email-field', email)
-  await click(page, 'button', wait)
+  await click(page, '#modify-email', wait)
 }
 
 export async function deleteAccount (page, name, wait = 10000) {
-  await manageAccount(page, 'danger-zone')
-  await click(page, '#block-action')
-  await type(page, '.q-dialog input', name)
-  await click(page, '.q-dialog button:nth-child(2)')
+  await clickPaneAction(page, 'left', 'manage-account')
+  await click(page, '#delete-account-manager', 1000)
+  await click(page, '#delete-account', 1000)
+  await type(page, '.q-dialog-plugin input', name)
+  await click(page, '.q-dialog-plugin button:nth-child(2)')
   await page.waitForTimeout(wait)
-}
-
-export async function closeSignupAlert (page) {
-  await page.waitForTimeout(1000)
-  await click(page, '#close-signup-alert')
-  await page.waitForTimeout(500)
 }
