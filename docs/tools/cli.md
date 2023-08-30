@@ -82,7 +82,7 @@ By default all Git operations target the `kalisio` organization, you can change 
 All operations are performed relative to the CWD by default, you can change this for specific modules only using the `path` option in the workspace file providing a module path relative to the CWD. Like this you can for instance have modules coming from a separate organization isolated into their own directory.
 :::
 
-Sample workspaces for our [application template](https://github.com/kalisio/kApp), [Kano](https://github.com/kalisio/kano) and [Akt'n'map](https://github.com/kalisio/aktnmap) are provided in the [kli repository](https://github.com/kalisio/kli).
+Sample workspaces for our [application template](https://github.com/kalisio/kApp), [Kano](https://github.com/kalisio/kano) and [Kalisio Crisis](https://github.com/kalisio/crisis) are provided in the [kli repository](https://github.com/kalisio/kli).
 
 Full CLI usage is the following:
 ```bash

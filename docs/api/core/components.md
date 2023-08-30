@@ -16,7 +16,7 @@ Here is the layout in a different configuration to show additional components li
 
 ![Kano layout - 2](../../assets/kano-layout-2.png)
 
-The layout is flexible enough to only use part of it like e.g. the [Akt'n'Map](https://github.com/kalisio/aktnmap) application is not a map-centered UI and the bottom/right panes are not always used for instance. Althought it can be built programmatically it aims at being constructed from the [application configuration](../../guides/basics/step-by-step.md#frontend-side) as well.
+The layout is flexible enough to only use part of it like e.g. the [Kalisio Crisis](https://github.com/kalisio/crisis) application is not a map-centered UI and the bottom/right panes are not always used for instance. Althought it can be built programmatically it aims at being constructed from the [application configuration](../../guides/basics/step-by-step.md#frontend-side) as well.
 
 The **k-layout** component based on [QLayout](https://quasar.dev/layout/layout) contains the elements that wrap application's content:
 * **header**: page header based on [q-header](https://quasar.dev/layout/header-and-footer)
@@ -41,7 +41,7 @@ Some layout components are fixed for the entire application lifecycle, as such t
 Others components are more dynamic and support to be updated depending on the current activity of the user: panes, window, FAB. In this case the configuration is read from the [global store](./application.md#store) and any change watched to keep the components in sync. The [initial state](./README.md#store-objects) of the store can be fed from the [application configuration](../../guides/basics/step-by-step.md#frontend-side) as well. In this case, a [binding](./README.md#layout) will occur at runtime between the configured content and the target Vue component (i.e. activity or item objects). The default behaviour is to read the configured content of the activity named `my-activity` from the `myActivity` (camel case) property in the application configuration.
 
 ::: tip
-The best thing to do to learn how to configure your application is to have a look to the config files of our production applications like [Akt'n'Map](https://github.com/kalisio/aktnmap/blob/master/config/default.js) and [Kano](https://github.com/kalisio/kano/blob/master/config/default.js)
+The best thing to do to learn how to configure your application is to have a look to the config files of our production applications like [Kalisio Crisis](https://github.com/kalisio/crisis/blob/master/config/default.js) and [Kano](https://github.com/kalisio/kano/blob/master/config/default.js)
 :::
 
 In order to provide a consistent look & feel as much as possible, components or user actions (i.e. buttons) in the window, FAB and the different panes are created through the following base components:
