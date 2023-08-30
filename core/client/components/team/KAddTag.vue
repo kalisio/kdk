@@ -106,7 +106,8 @@ export default {
         const membersService = this.getService()
         // Ensure no doublon
         if (!_.find(this.member.tags, { _id: result.values.tag._id })) {
-          await membersService.patch(this.member._id, { tags: this.member.tags.concat([tag]) })
+          const tags = _.get(this.member, 'tags', [])
+          await membersService.patch(this.member._id, { tags: _.concat(tags, [tag]) })
         }
         this.closeModal()
       }
