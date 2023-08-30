@@ -15,7 +15,6 @@
 
 <script setup>
 import _ from 'lodash'
-import logger from 'loglevel'
 import { useRouter } from 'vue-router'
 import { Dialog } from 'quasar'
 import { Store, i18n, api } from '../..'
@@ -51,7 +50,7 @@ async function onDelete () {
       await api.getService('users').remove(User._id)
       router.push({ name: 'logout' })
     } catch (error) {
-      logger.error(`[KDK] Cannot delete ${name} account: ${error}`)
+      throw new Error(`[KDK] Cannot delete ${name} account: ${error}`)
     }
   })
 }

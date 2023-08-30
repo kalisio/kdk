@@ -7,6 +7,7 @@
       group="account"
       class="bg-grey-2"
       header-class= 'text-red'
+      id="verify-email-manager"
       default-opened
     >
       <KVerifyEmailManager notifierEmail="email-notifications@kalisio.com" />
@@ -16,6 +17,7 @@
         :label="$tie(section.title)"
         group="account"
         class="bg-grey-2"
+        :id="section.id"
       >
         <component :is="section.instance" v-bind="section" />
       </q-expansion-item>
@@ -26,6 +28,7 @@
       :label="$t('KDeleteAccountManager.TITLE')"
       group="account"
       class="bg-grey-2"
+      id="delete-account-manager"
     >
       <KDeleteAccountManager />
     </q-expansion-item>
