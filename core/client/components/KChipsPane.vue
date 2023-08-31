@@ -8,6 +8,7 @@
         text-color="white"
         :removable="removable"
         @remove="onRemove(chip)"
+        :id="getID(chip)"
         dense
         outline
         square>
@@ -71,6 +72,9 @@ export default {
     },
     getIcon (chip) {
       return getIconName(chip)
+    },
+    getID (chip) {
+      return `${_.kebabCase(chip.value)}-pane`
     },
     onRemove (chip) {
       this.$emit('chip-removed', chip)

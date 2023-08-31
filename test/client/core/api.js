@@ -306,6 +306,30 @@ export class Api {
       await client.logout()
     }
 
+    client.removeTags = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
+      const tags = _.get(organisation, 'tags', [])
+      for (let i = 0; i < tags.length; i++) {
+        const orgTag = tags[i]
+        try {
+          // Try by name if no ID provided
+          if (!orgTag._id) {
+            const response = await client.getService('tags', organisation).find({ query: { name: orgTag.name } })
+            if (response.total === 1) {
+              orgTag._id = response.data[0]._id
+            }
+          }
+          await client.getService('tags', organisation).remove(orgTag._id)
+          debug(`Removed tag ${orgTag.name} from organisation with ID ${organisation._id}`)
+        } catch (error) {
+          debug(`Impossible to remove tag ${orgTag.name} from organisation with ID ${organisation._id}:`, error.name || error.code || error.message)
+        }
+      }
+      await client.logout()
+    }
+
     return client
   }
 }
