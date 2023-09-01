@@ -175,7 +175,7 @@ export class Api {
           tag = await client.getService('tags', organisation).create(_.pick(orgTag, ['value', 'description']))
           debug(`Created organisation tag ${tag.value} - ID ${tag._id}`)
         } else {
-          group = response.data[0]
+          tag = response.data[0]
           debug(`Retrieved organisation tag ${tag.value} - ID ${tag._id}`)
         }
         // Keep track of IDs
