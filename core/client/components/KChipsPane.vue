@@ -6,7 +6,7 @@
         :key="getValue(chip)"
         :color="getColor(chip)"
         text-color="white"
-        :removable="canRemoveRole()"
+        :removable="canRemoveTag()"
         @remove="onRemove(chip)"
         :id="getID(chip)"
         dense
@@ -77,7 +77,7 @@ export default {
     getID (chip) {
       return `${_.kebabCase(chip.value)}-pane`
     },
-    canRemoveRole () {
+    canRemoveTag () {
       if (!this.removable) return false
       const user = this.$store.get('user')
       const contextId = this.$store.get('context')
