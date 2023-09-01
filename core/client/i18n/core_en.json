@@ -374,7 +374,7 @@
     "TOUR_MESSAGE": "Launch now a quick overview tutorial detailing the main menu by clicking on the following icon",
     "TOUR_LINK_MESSAGE": "Each time a tutorial step exhibits this icon it allows to launch a new one detailing the target feature.",
     "GOODBYE_MESSAGE": "Thanks for reading this tutorial, you are now ready to use the application !",
-    "HIDE_WELCOME": "Don't display this Welcome message again"
+    "HIDE_WELCOME": "Don't display this message again"
   },
   "KTour": {
     "SKIP_LABEL": "Skip",
