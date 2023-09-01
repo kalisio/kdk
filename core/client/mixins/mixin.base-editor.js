@@ -56,6 +56,7 @@ export const baseEditor = {
   },
   data () {
     return {
+      isFormReady: false,
       applyInProgress: false
     }
   },
@@ -106,10 +107,11 @@ export const baseEditor = {
       }
     },
     onFormReady () {
+      this.isFormReady = true
       this.fillEditor()
     },
     fillEditor () {
-      if (!this.form) throw new Error('Cannot fill the editor with a non-ready form')
+      if (!this.isFormReady) throw new Error('Cannot fill the editor with a non-ready form')
       if (this.getObject()) {
         if (this.perspective !== '') {
           this.form.fill(_.get(this.getObject(), this.perspective))
@@ -119,11 +121,11 @@ export const baseEditor = {
       }
     },
     clearEditor () {
-      if (!this.form) throw new Error('Cannot clear the editor with a non-ready form')
+      if (!this.isFormReady) throw new Error('Cannot clear the editor with a non-ready form')
       this.form.clear()
     },
     resetEditor () {
-      if (!this.form) throw new Error('Cannot reset the editor with a non-ready form')
+      if (!this.isFormReady) throw new Error('Cannot reset the editor with a non-ready form')
       this.fillEditor()
     },
     async apply () {
@@ -186,7 +188,7 @@ export const baseEditor = {
         this.loadObject()
       ])
       // Check if form has been created meanwhile
-      if (this.form) this.fillEditor()
+      if (this.isFormReady) this.fillEditor()
     }
   }
 }
