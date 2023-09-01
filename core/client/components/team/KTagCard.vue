@@ -51,7 +51,7 @@ export default {
     async refreshStats () {
       const membersService = this.$api.getService('members', this.contextId)
       const members = await countMembersWithTag(membersService, this.item._id)
-      this.membersCount = members.data.length
+      this.membersCount = members.total
     },
     onListMembers () {
       // Setup filter accordingly
