@@ -6,7 +6,7 @@
         :key="getValue(chip)"
         :color="getColor(chip)"
         text-color="white"
-        :removable="removable"
+        :removable="canRemoveRole()"
         @remove="onRemove(chip)"
         :id="getID(chip)"
         dense
@@ -27,6 +27,7 @@
 import _ from 'lodash'
 import KPanel from './KPanel.vue'
 import { getIconName } from '../utils/index.js'
+import { Roles, getRoleForOrganisation, findGroupsWithRole } from '../../common/permissions'
 
 export default {
   components: {
@@ -75,6 +76,15 @@ export default {
     },
     getID (chip) {
       return `${_.kebabCase(chip.value)}-pane`
+    },
+    canRemoveRole () {
+      if (!this.removable) return false
+      const user = this.$store.get('user')
+      const contextId = this.$store.get('context')
+      const role = getRoleForOrganisation(user, contextId._id)
+      if (Roles[role] >= Roles.manager) return true
+      const groups = findGroupsWithRole(user, contextId._id, Roles.manager)
+      return groups.length > 0
     },
     onRemove (chip) {
       this.$emit('chip-removed', chip)
