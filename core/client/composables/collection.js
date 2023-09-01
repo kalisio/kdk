@@ -74,7 +74,6 @@ export function useCollection (options) {
         if (response.type === 'FeatureCollection') {
           setCollectionItems(response.features)
         } else if (options.appendItems.value) {
-          console.log(response.data, items.value)
           // Append the response ensuring there is no duplicates
           setCollectionItems(_.unionBy(response.data, items.value, '_id'))
           // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
