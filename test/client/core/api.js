@@ -160,18 +160,44 @@ export class Api {
       await client.logout()
     }
 
-    // To be called after members creation
+    client.createTags = async (organisation) => {
+      const orgOwner = _.get(organisation, 'owner')
+      // Ensure we are logged as org owner first
+      await client.login(orgOwner)
+      const tags = _.get(organisation, 'tags', [])
+      for (let i = 0; i < tags.length; i++) {
+        const orgTag = tags[i]
+        let tag
+        // Check if member already exists
+        const response = await client.getService('tags', organisation).find({ query: { value: orgTag.value } })
+        // If not existing create it
+        if (response.total === 0) {
+          tag = await client.getService('tags', organisation).create(_.pick(orgTag, ['value', 'description']))
+          debug(`Created organisation tag ${tag.value} - ID ${tag._id}`)
+        } else {
+          group = response.data[0]
+          debug(`Retrieved organisation tag ${tag.value} - ID ${tag._id}`)
+        }
+        // Keep track of IDs
+        orgTag._id = tag._id
+      }
+      await client.logout()
+    }
+
+    // To be called after members/tags creation
     client.tagMembers = async (organisation) => {
       const orgOwner = _.get(organisation, 'owner')
+      const orgTags = _.get(organisation, 'tags', [])
       // Ensure we are logged as org owner first
       await client.login(orgOwner)
       const members = _.get(organisation, 'members', [])
       for (let i = 0; i < members.length; i++) {
         const orgMember = members[i]
-        const tags = _.get(orgMember, 'tags', [])
+        const tags = _.filter(orgTags, orgTag => {
+          return _.find(_.get(orgMember, 'tags', []), memberTag => _.isEqual(memberTag.value, orgTag.value)) !== undefined
+        })
         await client.getService('members', organisation).patch(orgMember._id, {
-          // Scope can be omitted for convenience
-          tags: tags.map(tag => Object.assign({ scope: 'members' }, tag))
+          tags: tags.map(tag => Object.assign({ scope: 'members', context: organisation._id, service: organisation._id + '/tags' }, tag))
         })
       }
       await client.logout()
@@ -316,15 +342,15 @@ export class Api {
         try {
           // Try by name if no ID provided
           if (!orgTag._id) {
-            const response = await client.getService('tags', organisation).find({ query: { name: orgTag.name } })
+            const response = await client.getService('tags', organisation).find({ query: { name: orgTag.value } })
             if (response.total === 1) {
               orgTag._id = response.data[0]._id
             }
           }
           await client.getService('tags', organisation).remove(orgTag._id)
-          debug(`Removed tag ${orgTag.name} from organisation with ID ${organisation._id}`)
+          debug(`Removed tag ${orgTag.value} from organisation with ID ${organisation._id}`)
         } catch (error) {
-          debug(`Impossible to remove tag ${orgTag.name} from organisation with ID ${organisation._id}:`, error.name || error.code || error.message)
+          debug(`Impossible to remove tag ${orgTag.value} from organisation with ID ${organisation._id}:`, error.name || error.code || error.message)
         }
       }
       await client.logout()
