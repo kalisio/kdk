@@ -45,7 +45,7 @@ export default {
       default: false
     }
   },
-  async created () {
+  async mounted () {
     await this.refresh()
   }
 }
