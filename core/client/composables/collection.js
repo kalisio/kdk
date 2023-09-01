@@ -57,7 +57,7 @@ export function useCollection (options) {
         }
       : {})
   }
-  function setCollectionItems(newItems) {
+  function setCollectionItems (newItems) {
     // Item processor defined ?
     if (typeof options.processor.value === 'function') {
       newItems = options.processor.value(newItems)
@@ -74,6 +74,7 @@ export function useCollection (options) {
         if (response.type === 'FeatureCollection') {
           setCollectionItems(response.features)
         } else if (options.appendItems.value) {
+          console.log(response.data, items.value)
           // Append the response ensuring there is no duplicates
           setCollectionItems(_.unionBy(response.data, items.value, '_id'))
           // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
@@ -124,10 +125,10 @@ export function useCollection (options) {
     refreshCollection()
   }
 
-  function onItemsUpdated (items) {
+  function onItemsUpdated (updatedItems) {
     // When we append items some items of the previous pages might have been updated.
     // In this case we need to reset the full collection as Rx only tracks changes on the current page
-    let updatedItems = (Array.isArray(items) ? items : [items])
+    updatedItems = (Array.isArray(updatedItems) ? updatedItems : [updatedItems])
     // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
     updatedItems = _.intersectionWith(items.value, updatedItems, (item1, item2) => (item1._id.toString() === item2._id.toString()))
     if (updatedItems.length > 0) resetCollection()
