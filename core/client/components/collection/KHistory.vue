@@ -7,6 +7,7 @@
     :filterQuery="computedFilterQuery"
     :listStrategy="listStrategy"
     :processor="processor"
+    :width="width"
     :height="height"
     @collection-refreshed="onCollectionRefreshed">
     <template v-slot:empty-column>
@@ -66,6 +67,10 @@ export default {
     processor: {
       type: Function,
       default: undefined
+    },
+    width: {
+      type: Number,
+      required: true
     },
     height: {
       type: Number,
