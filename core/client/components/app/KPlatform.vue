@@ -42,7 +42,7 @@ async function copy () {
     await copyToClipboard(JSON.stringify(platform, null, 2))
     $q.notify({ type: 'positive', message: i18n.t('KPlatform.INFO_COPIED') })
   } catch (error) {
-    $q.notify({ message: i18n.t('KPositionIndicator.CANNOT_COPY_INFO') })
+    $q.notify({ type: 'negative', message: i18n.t('KPositionIndicator.CANNOT_COPY_INFO') })
   }
 }
 </script>
