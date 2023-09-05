@@ -33,8 +33,11 @@ export async function restoreSession () {
     const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
     Store.set('user', user)
   } catch (error) {
-    // This ensure an old token is not kept when the user has been deleted
-    await logout()
+    // This ensure an old token is not kept e.g. when the user has been deleted
+    // await logout()
+    // It actually causes a call to the remove method on the authentication service, which fails due to missing access token
+    // See https://github.com/kalisio/kdk/issues/757, as a consequence we prefer to clean the token manually instead
+    await api.removeAccessToken()
     // Rethrow for caller to handle
     throw error
   }
