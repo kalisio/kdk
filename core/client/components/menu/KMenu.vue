@@ -6,6 +6,7 @@
     :color="color"
     :size="size"
     :dropdown-icon="dropdownIcon"
+    :no-icon-animation="!dropdownAnimation"
     :disable="disabled"
     :dense="dense"
     :persistent="persistent"
@@ -70,6 +71,10 @@ const props = defineProps({
   dropdownIcon: {
     type: String,
     default: undefined
+  },
+  dropdownAnimation: {
+    type: Boolean,
+    default: true
   },
   badge: {
     type: Object,
