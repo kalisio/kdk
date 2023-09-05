@@ -435,7 +435,10 @@ function setupSockets (app) {
             // e.g. like [service_method, service_path, id or data, params]
             // Bypass rate limiting on whitelist
             if ((packet.length > 1) && (typeof packet[1] === 'string')) {
-              const service = app.service(packet[1])
+              // Service path includes API prefix (but without trailing /)
+              // Get name from service path without api prefix
+              const serviceName = packet[1].replace(app.get('apiPath').substring(1) + '/', '')
+              const service = app.getService(serviceName)
               if (service && services(service)) {
                 debugLimiter('By-pass rate limiting on whitelisted service operation', socket.id, socket.conn.remoteAddress, packet[0], packet[1])
                 next()
