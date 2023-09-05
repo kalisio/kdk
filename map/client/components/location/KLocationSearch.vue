@@ -1,5 +1,6 @@
 <template>
   <q-select
+    for="location-search"
     id="location-search"
     v-model="location"
     :label="computedLabel"
