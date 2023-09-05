@@ -1,5 +1,9 @@
 import _ from 'lodash'
+import makeDebug from 'debug'
+
 import * as core from '../core/index.js'
+
+const debug = makeDebug('kdk:map:test:controls')
 
 export async function zoomToExtent (page, bbox, wait = 2000) {
   const currentUrl = page.url()
@@ -18,10 +22,20 @@ export async function zoomToExtent (page, bbox, wait = 2000) {
 
 // Accuracy is required to get some desired behaviours
 export async function goToPosition (page, latitude, longitude, accuracy = core.GeolocationAccuracy) {
-  const currentLocation = await core.getFromStore(page, 'geolocation.position')
-  await page.setGeolocation({ latitude, longitude, accuracy })
+  const previousLocation = await core.getFromStore(page, 'geolocation.location')
+  let location = { latitude, longitude, accuracy }
+  debug(`Setting current geolocation to (${location.longitude}, ${location.latitude}) with accuracy ${location.accuracy}`)
+  await page.setGeolocation(location)
   await core.clickPaneAction(page, 'top', 'locate-user')
   await page.waitForNetworkIdle()
-  if (currentLocation) await page.setGeolocation(currentLocation)
+  if (previousLocation) {
+    location = {
+      latitude: _.get(previousLocation, 'geometry.coordinates[1]'),
+      longitude: _.get(previousLocation, 'geometry.coordinates[0]'),
+      accuracy: _.get(previousLocation, 'properties.accuracy')
+    }
+    debug(`Restoring current geolocation to (${location.longitude}, ${location.latitude}) with accuracy ${location.accuracy}`)
+    await page.setGeolocation(location)
+  }
   await core.clickPaneAction(page, 'top', 'locate-user')
 }
