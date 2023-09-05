@@ -4,9 +4,9 @@
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
     "GEOLOCATION_ERROR": "We are not able to locate your position, this might affect some features of the application.",
-    "GEOLOCATION_PERMISSION_DENIED": "@:errors.GEOLOCATION_ERROR</br>It seems you did not give permission to locate you.",
-    "GEOLOCATION_POSITION_UNAVAILABLE": "@:errors.GEOLOCATION_ERROR</br>It seems the internal source of position returned an internal error.",
-    "GEOLOCATION_POSITION_TIMEOUT": "@:errors.GEOLOCATION_ERROR</br>It seems the time allowed to acquire it was reached before the information was obtained.",
+    "GEOLOCATION_PERMISSION_DENIED": "@:errors.GEOLOCATION_ERROR It seems you did not give permission to locate you.",
+    "GEOLOCATION_POSITION_UNAVAILABLE": "@:errors.GEOLOCATION_ERROR It seems the internal source of position returned an internal error.",
+    "GEOLOCATION_POSITION_TIMEOUT": "@:errors.GEOLOCATION_ERROR It seems the time allowed to acquire it was reached before the information was obtained.",
     "CANNOT_PROCESS_SCHEMA_DATA": "Invalid or incomplete data scheme",
     "ALERTS_LIMIT": "Too much alerts to display all of them",
     "FILE_IMPORT_ERROR": "File import has failed",
