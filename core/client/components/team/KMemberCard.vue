@@ -104,7 +104,11 @@ export default {
   computed: {
     header () {
       const components = _.filter(this.itemActions, { scope: 'header' })
-      components.splice(0, 0, { id: 'role-badge', component: 'QBadge', label: this.$t(this.roleLabel(this.role)), color: 'grey-7' }, { component: 'QSpace' })
+      const roleLabel = this.roleLabel(this.role)
+      // It appears that due to reactivity role might not be available anymore when removing a member
+      components.splice(0, 0, {
+        id: 'role-badge', component: 'QBadge', label: (roleLabel ? this.$t(roleLabel) : ''), color: 'grey-7'
+      }, { component: 'QSpace' })
       return components
     },
     avatar () {
@@ -152,8 +156,8 @@ export default {
   methods: {
     resendInvitation () {
       Dialog.create({
-        title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: this.item.name }),
-        message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: this.item.name }),
+        title: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_TITLE', { member: _.get(this.item, 'profile.name') }),
+        message: this.$t('KMemberCard.RESEND_INVITATION_DIALOG_MESSAGE', { member: _.get(this.item, 'profile.name') }),
         html: true,
         prompt: {
           model: this.item.email,
@@ -187,8 +191,8 @@ export default {
     },
     removeMember () {
       Dialog.create({
-        title: this.$t('KMemberCard.REMOVE_DIALOG_TITLE', { member: this.item.name }),
-        message: this.$t('KMemberCard.REMOVE_DIALOG_MESSAGE', { member: this.item.name }),
+        title: this.$t('KMemberCard.REMOVE_DIALOG_TITLE', { member: _.get(this.item, 'profile.name') }),
+        message: this.$t('KMemberCard.REMOVE_DIALOG_MESSAGE', { member: _.get(this.item, 'profile.name') }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -213,7 +217,7 @@ export default {
     onRemoveTag (removedTag) {
       Dialog.create({
         title: this.$t('KMemberCard.REMOVE_TAG_DIALOG_TITLE', { tag: removedTag.value }),
-        message: this.$t('KMemberCard.REMOVE_TAG_DIALOG_MESSAGE', { tag: removedTag.value, member: this.item.name }),
+        message: this.$t('KMemberCard.REMOVE_TAG_DIALOG_MESSAGE', { tag: removedTag.value, member: _.get(this.item, 'profile.name') }),
         html: true,
         ok: {
           label: this.$t('OK'),
@@ -292,7 +296,7 @@ export default {
     onLeaveGroup (group) {
       Dialog.create({
         title: this.$t('KMemberCard.LEAVE_GROUP_DIALOG_TITLE', { group: group.name }),
-        message: this.$t('KMemberCard.LEAVE_GROUP_DIALOG_MESSAGE', { group: group.name, member: this.item.name }),
+        message: this.$t('KMemberCard.LEAVE_GROUP_DIALOG_MESSAGE', { group: group.name, member: _.get(this.item, 'profile.name') }),
         html: true,
         ok: {
           label: this.$t('OK'),
