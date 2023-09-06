@@ -14,6 +14,7 @@ export async function login (email, password) {
   // Anonymous user or service account ?
   const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
   Store.set('user', user)
+  await updateAbilities()
 }
 
 export async function register (user) {
@@ -32,6 +33,7 @@ export async function restoreSession () {
     const response = await api.reAuthenticate()
     const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
     Store.set('user', user)
+    await updateAbilities()
   } catch (error) {
     // This ensure an old token is not kept e.g. when the user has been deleted
     // await logout()
@@ -46,18 +48,22 @@ export async function restoreSession () {
 export async function updateAbilities () {
   const user = Store.get('user')
   if (!user) return
-  if (user.abilities) return
   const abilities = await defineAbilities(user, api)
-  Store.set('user.abilities', abilities)
-  if (abilities) {
+  const previousAbilities = Store.get('user.abilities')
+  const rules = _.get(abilities, 'rules', [])
+  const previousRules = _.get(previousAbilities, 'rules', [])
+  // Update only whenever required, eg updating user profile should not change abilities
+  if (!_.isEqual(rules, previousRules)) {
+    Store.set('user.abilities', abilities)
     logger.debug('[KDK] New user abilities: ', abilities.rules)
   }
 }
 
-function updateUser (user) {
+export async function updateUser (user) {
   // Check whether we need to update the current user
   if (user._id === Store.get('user._id')) {
     Store.patch('user', user)
+    await updateAbilities()
   }
 }
 
