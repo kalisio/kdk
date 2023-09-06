@@ -96,13 +96,16 @@ export default {
       // Remove previous listener if any
       this.unsubscribeUsers()
       const usersService = this.$api.getService('users')
-      usersService.on('patched', this.refreshOnAddMember)
+      // Members service is only a filter on users but it will not trigger
+      // any remove operation when adding/removing permissions,
+      // thus it will not update the member list automatically
+      usersService.on('patched', this.refresh)
     },
     unsubscribeUsers () {
       const usersService = this.$api.getService('users')
-      usersService.off('patched', this.refreshOnAddMember)
+      usersService.off('patched', this.refresh)
     },
-    refreshOnAddMember (user) {
+    refresh (user) {
       const grid = this.$refs.membersGrid
       if (grid) {
         const member = _.find(grid.items, { _id: user._id })
@@ -110,6 +113,9 @@ export default {
         // If the user has a role in this organisation and
         // was not in our list he might have been added so refresh
         if (role && !member) this.$refs.membersGrid.refreshCollection()
+        // If the user has not a role in this organisation and
+        // was in our list he might have been removed so refresh
+        else if (!role && member) this.$refs.membersGrid.refreshCollection()
       }
     }
   },
