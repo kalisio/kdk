@@ -101,6 +101,7 @@ export class Runner {
     })
     this.page.on('pageerror', message => {
       this.errors.push(message)
+      debug('Page error:', message)
     })
     // Navigate the to given url
     await this.page.goto(this.getUrl(path))
