@@ -130,6 +130,16 @@
       "REFUSED": "Your connection have been refused by the server, you have been disconnected...",
       "RETRY": "Retry",
       "ALERT": "Alert"
+    },
+    "pwa": {
+      "INSTALL_TITLE": "Install the application ?",
+      "INSTALL_MESSAGE": "We recommend that you install the application to take full advantage of all the features",
+      "IOS_INSTALL_MESSAGEL": "We recommend that you install the application to take full advantage of all the features.<br>From Safari, click or tap <i class=\"material-icons\">ios_share</i> and then on <b>Add to home screen</b>",
+      "INSTALL": "Install",
+      "IGNORE": "Ignore",
+      "UPDATE_TITLE": "Updates available",
+      "UPDATE_MESSAGE": "Do you want to update the application ?",
+      "UPDATE": "Update"
     }
   },
   "schemas": {
@@ -819,17 +829,6 @@
   },
   "KTextArea": {
     "COLLAPSE": "Collapse"
-  },
-  "KInstallApp": {
-    "INSTALL_LABEL": "Application ready to install.",
-    "IOS_SHARE_ICON_LABEL": "If you don't install it, some functionalities may be limited. From Safari, Tap",
-    "IOS_HOME_SCREEN_LABEL": ", and then tap on “Add to home screen”",
-    "INSTALL_BUTTON": "Install app",
-    "SKIP_BUTTON": "Skip"
-  },
-  "utils": {
-    "PWA_VERSION_MISMATCH": "Application version mismatch, please refresh the page to get the latest version available",
-    "PWA_BUTTON_REFRESH": "Refresh"
   }
 }
 

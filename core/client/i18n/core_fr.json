@@ -130,6 +130,16 @@
       "REFUSED": "Votre connexion a été refusée par le serveur, vous avez été déconnecté...",
       "RETRY": "Rééssayer",
       "ALERT": "Alerte"
+    },
+    "pwa": {
+      "INSTALL_TITLE": "Installer l'application ?",
+      "INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites",
+      "IOS_INSTALL_MESSAGEL": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites.<br>Depuis <b>Safari</b> cliquez sur <i class=\"material-icons\">ios_share</i> puis sur <b>Ajouter à l'écran d'accueil</b>",
+      "INSTALL": "Installer",
+      "IGNORE": "Ignorer",
+      "UPDATE_TITLE": "Mises à jour disponibles",
+      "UPDATE_MESSAGE": "Voulez vous mettre à jour l'application ?",
+      "UPDATE": "Mettre à jour"
     }
   },
   "schemas": {
@@ -820,16 +830,5 @@
   },
   "KTextArea": {
     "COLLAPSE": "Réduire"
-  },
-  "KInstallApp": {
-    "INSTALL_LABEL": "L'application est prête à être installée.",
-    "IOS_SHARE_ICON_LABEL": "Si vous ne l'installez pas, certaines fonctionnalités peuvent être limitées. Depuis Safari, appuyez sur",
-    "IOS_HOME_SCREEN_LABEL": ", puis sur “Ajouter à l'écran d'accueil”",
-    "INSTALL_BUTTON": "Installer l'application",
-    "SKIP_BUTTON": "Ignorer"
-  },
-  "utils": {
-    "PWA_VERSION_MISMATCH_LABEL": "Discordance de version, merci de rafraîchir la page pour profiter de la dernière version disponible",
-    "PWA_BUTTON_REFRESH": "Rafraîchir"
   }
 }
