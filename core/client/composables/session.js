@@ -9,7 +9,7 @@ import { Store } from '../store.js'
 import { beforeGuard } from '../guards.js'
 import { LocalStorage } from '../local-storage.js'
 import { useVersion } from '../composables/version.js'
-import { updateAbilities, restoreSession } from '../utils/utils.session.js'
+import { restoreSession } from '../utils/utils.session.js'
 
 export function useSession (options = {}) {
   // Data
@@ -21,8 +21,7 @@ export function useSession (options = {}) {
   const isInitialized = ref(false)
   let pendingReconnection = null
 
-  // Computed
-  const User = computed(() => Store.get('user'))
+  const User = Store.getRef('user')
 
   // Functions
   function getRedirectKey () {
@@ -109,7 +108,6 @@ export function useSession (options = {}) {
 
   // Watch
   watch(User, async () => {
-    await updateAbilities()
     await redirect()
   })
 
