@@ -5,6 +5,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useQuasar, Loading } from 'quasar'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
+import { Events } from '../events.js'
 import { Store } from '../store.js'
 import { beforeGuard } from '../guards.js'
 import { LocalStorage } from '../local-storage.js'
@@ -106,11 +107,6 @@ export function useSession (options = {}) {
     }).onOk(() => window.location.reload())
   }
 
-  // Watch
-  watch(User, async () => {
-    await redirect()
-  })
-
   // Hooks
   onMounted(async () => {
     // Handle socket connexion
@@ -123,6 +119,9 @@ export function useSession (options = {}) {
       // Display error message if we have been banned from the server
       api.socket.on('rate-limit', onRateLimit)
     }
+    // Then redirection
+    Events.on('user-changed', redirect)
+    Events.on('user-abilities-changed', redirect)
 
     try {
       await restoreSession()
@@ -137,6 +136,8 @@ export function useSession (options = {}) {
       api.socket.off('reconnect', onReconnect)
       api.socket.off('rate-limit', onRateLimit)
     }
+    Events.off('user-changed', redirect)
+    Events.off('user-abilities-changed', redirect)
   })
 
   // Expose
