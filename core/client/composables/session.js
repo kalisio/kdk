@@ -120,7 +120,6 @@ export function useSession (options = {}) {
       api.socket.on('rate-limit', onRateLimit)
     }
     // Then redirection
-    Events.on('user-changed', redirect)
     Events.on('user-abilities-changed', redirect)
 
     try {
@@ -136,7 +135,6 @@ export function useSession (options = {}) {
       api.socket.off('reconnect', onReconnect)
       api.socket.off('rate-limit', onRateLimit)
     }
-    Events.off('user-changed', redirect)
     Events.off('user-abilities-changed', redirect)
   })
 
