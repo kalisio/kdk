@@ -15,6 +15,7 @@ function merger (objValue, srcValue) {
 
 export class Runner {
   constructor (suite, options = {}) {
+    this.infos = []
     this.warnings = []
     this.errors = []
     // Compute helper default options
@@ -76,12 +77,22 @@ export class Runner {
   async start (path) {
     this.browser = await puppeteer.launch(this.options.browser)
     this.page = await this.browser.newPage()
-    // Handle geolocation if needed
-    if (_.has(this.options, 'geolocation.latitude') && _.has(this.options, 'geolocation.longitude')) {
+    // Depending on options we need to activate override permissions
+    const permissions = []
+    const useGeolocation = _.has(this.options, 'geolocation.latitude') && _.has(this.options, 'geolocation.longitude')
+    const useNotifications = _.get(this.options, 'notifications')
+    // Handle required permissions
+    if (useGeolocation) permissions.push('geolocation')
+    if (useNotifications) permissions.push('notifications')
+    if (!_.isEmpty(permissions)) {
       const context = this.browser.defaultBrowserContext()
-      await context.overridePermissions(this.getUrl(path), ['geolocation'])
+      await context.overridePermissions(this.getUrl(path), permissions)
+    }
+    // Handle geolocation if needed
+    if (useGeolocation) {
       await this.page.setGeolocation(this.options.geolocation)
     }
+    
     // Handle the local storage if needed
     if (this.options.localStorage) {
       await this.page.evaluateOnNewDocument(items => {
@@ -90,13 +101,15 @@ export class Runner {
     }
     // Catch errors
     this.page.on('console', message => {
-      if (message._type === 'error') {
+      if (message.type() === 'error') {
         this.errors.push(message)
-        debug('Console error:', message)
-      }
-      if (message._type === 'warning') {
+        debug('Console error:', message.text())
+      } else if (message.type() === 'warning') {
         this.warnings.push(message)
-        // debug('Console warning:', message)
+        debug('Console warning:', message.text())
+      } else if (message.type() === 'info') {
+        this.infos.push(message)
+        debug('Console info:', message.text())
       }
     })
     this.page.on('pageerror', message => {
@@ -150,8 +163,25 @@ export class Runner {
     return result.diffRatio
   }
 
-  hasError () {
-    return this.errors.length > 0
+  hasMessage (pattern, messages) {
+    let nbMatches = 0
+    // In this case we just want to know if there is any error
+    if (!pattern) {
+      nbMatches = (messages.length > 0)
+    } else if (pattern.test === 'function') { // RegExp, count matches
+      messages.forEach(message => {
+        if (pattern.test(message.text())) nbMatches++
+      })
+    } else {
+      messages.forEach(message => { // String, count matches
+        if (message.text() === pattern) nbMatches++
+      })
+    }
+    return nbMatches
+  }
+
+  hasError (pattern) {
+    return this.hasMessage(pattern, this.errors)
   }
 
   getErrors () {
@@ -162,8 +192,8 @@ export class Runner {
     this.errors = []
   }
 
-  hasWarning () {
-    return this.warnings.length > 0
+  hasWarning (pattern) {
+    return this.hasMessage(pattern, this.warnings)
   }
 
   getWarnings () {
@@ -172,5 +202,17 @@ export class Runner {
 
   clearWarnings () {
     this.warnings = []
+  }
+
+  hasInfo (pattern) {
+    return this.hasMessage(pattern, this.infos)
+  }
+
+  getInfos () {
+    return this.infos
+  }
+
+  clearInfos () {
+    this.infos = []
   }
 }
