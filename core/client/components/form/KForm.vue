@@ -83,11 +83,12 @@ const fields = ref([])
 const groups = ref([])
 const isReady = ref(false)
 const nbReadyFields = ref(0)
+let buildInProgress = false
 
 // Watch
-watch(async () => props.schema, (value) => {
+watch(() => props.schema, async (value) => {
   logger.debug('[KDK] Schema changed', value)
-  if (value) build()
+  if (value) await build()
 })
 
 // Functions
@@ -149,6 +150,9 @@ async function build () {
   nbReadyFields.value = 0
   isReady.value = false
   if (!props.schema) throw new Error('Cannot build the form without schema')
+  // As we have some async operations here and build() can be trigerred async
+  // from different places (watch, mount, ...) we flag it to avoid reentrance
+  buildInProgress = true
   // Compile the schema
   await compileSchema(props.schema, props.filter)
   // Build the fields
@@ -163,6 +167,7 @@ async function build () {
     fields.value.push(cloneField)
     if (cloneField.group && !groups.value.includes(cloneField.group)) groups.value.push(cloneField.group)
   })
+  buildInProgress = false
 }
 function values () {
   const val = {}
@@ -224,7 +229,7 @@ async function submitted (object) {
 
 // Hooks
 onMounted(async () => {
-  if (props.schema) {
+  if (props.schema && !buildInProgress) {
     await build()
   }
 })
