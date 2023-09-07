@@ -83,7 +83,7 @@ export function usePwa () {
   }
 
   // Hooks
-  onMounted (async () => {
+  onMounted (() => {
     Events.on('pwa-updated', update)
   })
   onBeforeUnmount (() => {
