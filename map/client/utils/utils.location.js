@@ -18,45 +18,31 @@ export async function searchLocation (pattern, options) {
       }
     })
   } else {
-    // TODO
-    // Use the geocoders list in the options object to perform the query to the service
-    // The new result should be an array of GeoJSON so the following formatting should be removed
-    /*
-    const geocoderService = api.getService('geocoder')
-    if (!geocoderService) throw new Error('Cannot find geocoder service')
-    const response = await geocoderService.create({ address: pattern })
-    response.forEach(element => {
-      locations.push({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [element.longitude, element.latitude]
-        },
-        properties: {
-          name: formatGeocodingResult(element)
-        }
-      })
-    })
-    */
     let filter = ''
     if (options.geocoders) {
+      // only request geocoder results from specified sources
       filter = '&sources=*(' + options.geocoders.join('|') + ')'
     }
-    const results = await fetch(`http://localhost:8091/forward?q=${pattern}${filter}`).then((response) => response.json())
-    // locations.splice(0, -1, ...results)
-    for (const result of results) {
-      locations.push(Object.assign({}, _.pick(result, [ 'type', 'geometry', ]), { properties: { name: formatGeocodingResult(result), source: result.geokoder.source } }))
-    }
+    const endpoint = this.$store.get('capabilities.api.gateway') + '/geocoder'
+    const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+    const query = `${endpoint}/forward?q=${pattern}${filter}`
+    const results = await fetch(query, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
+    results.forEach(result => {
+      locations.push(
+        Object.assign(
+          _.pick(result, [ 'type', 'geometry', ]),
+          { properties: { name: formatGeocodingResult(result), source: result.geokoder.source } }))
+    })
   }
   return locations
 }
 
 export async function listGeocoders () {
-  // TODO
-  // return ['nominatin', 'ban']
   let list = []
   try {
-    list = await fetch('http://localhost:8091/capabilities').then((response) => response.json())
+    const endpoint = this.$store.get('capabilities.api.gateway') + '/geocoder'
+    const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+    list = await fetch('${endpoint}/capabilities', { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
   } catch (error) {
     // TODO: warn somehow
   }
