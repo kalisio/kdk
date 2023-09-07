@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import config from 'config'
 import { Store, api } from '../../../core.client.js'
 import { formatGeocodingResult, parseCoordinates, formatUserCoordinates } from '../utils.js'
 
@@ -23,8 +24,8 @@ export async function searchLocation (pattern, options) {
       // only request geocoder results from specified sources
       filter = '&sources=*(' + options.geocoders.join('|') + ')'
     }
-    const endpoint = this.$store.get('capabilities.api.gateway') + '/geocoder'
-    const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+    const endpoint = Store.get('capabilities.api.gateway') + '/geocoder'
+    const jwt = await api.get('storage').getItem(config.gatewayJwt)
     const query = `${endpoint}/forward?q=${pattern}${filter}`
     const results = await fetch(query, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
     results.forEach(result => {
@@ -40,9 +41,9 @@ export async function searchLocation (pattern, options) {
 export async function listGeocoders () {
   let list = []
   try {
-    const endpoint = this.$store.get('capabilities.api.gateway') + '/geocoder'
-    const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-    list = await fetch('${endpoint}/capabilities', { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
+    const endpoint = Store.get('capabilities.api.gateway') + '/geocoder'
+    const jwt = await api.get('storage').getItem(config.gatewayJwt)
+    list = await fetch(`${endpoint}/capabilities`, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
   } catch (error) {
     // TODO: warn somehow
   }
