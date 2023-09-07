@@ -1,4 +1,6 @@
 import logger from 'loglevel'
+import _ from 'lodash'
+import config from 'config'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar } from 'quasar'
 import { Events } from '../events.js'
@@ -10,8 +12,15 @@ export function usePwa () {
   let deferredPrompt = null
 
   // Functions
+  function getInstallKey () {
+    return _.get(config, 'appName').toLowerCase() + '-install'
+  }
   function install () {
     if (window.matchMedia('(display-mode: standalone)').matches) return
+    // Install prompt can be avoided, eg in tests
+    let canShow = window.localStorage.getItem(getInstallKey())
+    canShow = (_.isNil(canShow) ? true : JSON.parse(canShow))
+    if (!canShow) return
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
       // Stash the event so it can be triggered later
@@ -33,11 +42,13 @@ export function usePwa () {
           title: i18n.t('composables.pwa.INSTALL_TITLE'),
           message: i18n.t('composables.pwa.INSTALL_MESSAGE'),
           cancel: {
+            id: 'ignore-button',
             label: i18n.t('composables.pwa.IGNORE'),
             color: 'primary',
             outline: true
           },
           ok: {
+            id: 'install-button',
             label: i18n.t('composables.pwa.INSTALL'),
             color: 'primary'
           },
@@ -67,11 +78,13 @@ export function usePwa () {
       title: i18n.t('composables.pwa.UPDATE_TITLE'),
       message: i18n.t('composables.pwa.UPDATE_MESSAGE'),
       cancel: {
+        id: 'ignore-button',
         label: i18n.t('composables.pwa.IGNORE'),
         color: 'primary',
         outline: true
       },
       ok: {
+        id: 'update-button',
         label: i18n.t('composables.pwa.UPDATE'),
         color: 'primary'
       },
