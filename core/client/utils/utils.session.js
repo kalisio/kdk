@@ -24,8 +24,17 @@ export async function register (user) {
 }
 
 export async function logout () {
-  await api.logout()
-  Store.set('user', null)
+  try {
+    await api.logout()
+    Store.set('user', null)
+  } catch (error) {
+    // This ensure user is unset and an old token is not kept e.g. when the user has been deleted
+    Store.set('user', null)
+    await api.removeAccessToken()
+    // Rethrow for caller to handle
+    throw error
+  }
+  
 }
 
 export async function restoreSession () {
