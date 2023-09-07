@@ -70,7 +70,7 @@ export default {
       if (!filter) return files
       return _.filter(files, file => { return file.name.includes(filter) })
     },
-    onModelCleared () {
+    onFileCleared () {
       this.file = null
       this.error = ''
       this.onChanged()
