@@ -87,10 +87,6 @@ const nbReadyFields = ref(0)
 // Watch
 watch(async () => props.schema, (value) => {
   logger.debug('[KDK] Schema changed', value)
-  fields.value = []
-  groups.value = []
-  nbReadyFields.value = 0
-  isReady.value = false
   if (value) build()
 })
 
@@ -148,6 +144,10 @@ function hasFieldError (field, errors) {
   return null
 }
 async function build () {
+  fields.value = []
+  groups.value = []
+  nbReadyFields.value = 0
+  isReady.value = false
   if (!props.schema) throw new Error('Cannot build the form without schema')
   // Compile the schema
   await compileSchema(props.schema, props.filter)
@@ -224,7 +224,9 @@ async function submitted (object) {
 
 // Hooks
 onMounted(async () => {
-  if (props.schema) await build()
+  if (props.schema) {
+    await build()
+  }
 })
 
 // Expose
