@@ -14,10 +14,11 @@ export const LocalStorage = {
     const jsonValue = JSON.stringify(value)
     window.localStorage.setItem(this.localKey(key), jsonValue)
   },
-  get (key) {
+  get (key, defautlValue) {
     const value = window.localStorage.getItem(this.localKey(key))
-    if (!value) {
-      logger.debug(`[KDK] Cannot find local storage value with key ${key}`)
+    if (_.isNil(value)) {
+      logger.debug(`[KDK] Cannot find local storage value with key ${key}. Returning default value ${defautlValue}`)
+      return defautlValue
     }
     return JSON.parse(value)
   },
