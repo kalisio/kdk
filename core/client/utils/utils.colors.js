@@ -24,9 +24,13 @@ export const Colors = {
 }
 
 export function getPaletteFromColor (color) {
-  return _.findKey(Colors, item => item === color)
+  // Check if already a color of the palette
+  if (Colors[color]) return color
+  else return _.findKey(Colors, item => item === color) || 'white'
 }
 
 export function getColorFromPalette (color) {
-  return Colors[color]
+  // Check if already a RGB color
+  if (color.startsWith('#')) return color
+  else return Colors[color] || '#ffffff'
 }
