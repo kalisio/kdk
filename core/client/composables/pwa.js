@@ -1,26 +1,24 @@
-import logger from 'loglevel'
 import _ from 'lodash'
+import logger from 'loglevel'
 import config from 'config'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar } from 'quasar'
 import { Events } from '../events.js'
 import { i18n } from '../i18n.js'
+import { LocalStorage } from '../local-storage.js'
 
 export function usePwa () {
   // Data
   const $q = useQuasar()
+  const installKey = 'install'
+  const changelogKey = 'appChangelog'
   let deferredPrompt = null
 
   // Functions
-  function getInstallKey () {
-    return _.get(config, 'appName').toLowerCase() + '-install'
-  }
   function install () {
     if (window.matchMedia('(display-mode: standalone)').matches) return
     // Install prompt can be avoided, eg in tests
-    let canShow = window.localStorage.getItem(getInstallKey())
-    canShow = (_.isNil(canShow) ? true : JSON.parse(canShow))
-    if (!canShow) return
+    if (!LocalStorage.get(installKey, true)) return
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
       // Stash the event so it can be triggered later
@@ -55,8 +53,7 @@ export function usePwa () {
           persistent: true,
           position: 'bottom',
           html: true
-        })
-        .onOk(async () => {
+        }).onOk(async () => {
           deferredPrompt.prompt()
           // Wait for the user to respond to the prompt
           const { outcome } = await deferredPrompt.userChoice
@@ -74,9 +71,11 @@ export function usePwa () {
         window.location.reload()
       }
     })
+    const changelog = _.get(config, changelogKey)
     $q.dialog({
       title: i18n.t('composables.pwa.UPDATE_TITLE'),
-      message: i18n.t('composables.pwa.UPDATE_MESSAGE'),
+      message: changelog ? i18n.t('composables.pwa.UPDATE_MESSAGE', { changelog }) : undefined,
+      html: true,
       cancel: {
         id: 'ignore-button',
         label: i18n.t('composables.pwa.IGNORE'),
@@ -91,15 +90,15 @@ export function usePwa () {
       persistent: true,
       position: 'bottom'
     }).onOk(() => {
-      registration.waiting.postMessage({ type: 'SKIP_WAITING' }) 
+      registration.waiting.postMessage({ type: 'SKIP_WAITING' })
     })
   }
 
   // Hooks
-  onMounted (async () => {
+  onMounted(() => {
     Events.on('pwa-updated', update)
   })
-  onBeforeUnmount (() => {
+  onBeforeUnmount(() => {
     Events.off('pwa-updated', update)
   })
 

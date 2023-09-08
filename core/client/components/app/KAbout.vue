@@ -47,6 +47,8 @@ const { clientVersionName, apiVersionName } = useVersion()
 const platform = getPlatform()
 // logo component
 const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
+// changelog url
+const changelog = _.get(config, 'appChangelog')
 // bug report
 const bugReport = {
   address: _.get(config, 'publisherContact'),
@@ -61,14 +63,7 @@ _.forOwn(platform, (value, key) => { bugReport.body += `${key}: ${value}%0D%0A` 
 bugReport.body += `domain: ${_.get(config, 'domain')}%0D%0A`
 bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
 // actions
-const defaultActions = [
-  {
-    id: 'report-bug',
-    icon: 'las la-bug',
-    label: 'KAbout.BUG_REPORT',
-    stack: true,
-    url: `mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`
-  }, {
+const defaultActions = [{
     id: 'platform-info',
     icon: 'las la-desktop',
     label: 'KAbout.PLATFORM_INFO',
@@ -81,5 +76,23 @@ const defaultActions = [
     }
   }
 ]
+if (_.isNil(bugReport.address)) {
+  defaultActions.unshift({
+    id: 'report-bug',
+    icon: 'las la-bug',
+    label: 'KAbout.BUG_REPORT',
+    stack: true,
+    url: `mailto:${bugReport.address}?subject=${bugReport.subject}&body=${bugReport.body}`
+  })
+}
+if (!_.isNil(changelog)) {
+  defaultActions.unshift({  
+    id: 'view-changelog',
+    icon: 'las la-history',
+    label: 'KAbout.VIEW_CHANGELOG',
+    stack: true,
+    url: changelog
+  })
+}
 const actions = ref(_.get(config, 'about.actions', defaultActions))
 </script>
