@@ -511,20 +511,20 @@ export const baseMap = {
       return [[south, west], [north, east]]
     },
     showUserLocation () {
+      // If we already have a location jump to it first
+      if (Geolocation.hasLocation()) {
+        const lng = Geolocation.getLongitude()
+        const lat = Geolocation.getLatitude()
+        const accuracy = Geolocation.getAccuracy()
+        if (accuracy) {
+          this.zoomToBounds(new L.LatLng(lat, lng).toBounds(accuracy * 2))
+        } else {
+          this.center(lng, lat)
+        }
+      }
+      // Then let control run if any
       if (this.locateControl) {
         this.locateControl.start()
-      } else {
-        // FIXME: do we have to keep this code ?
-        if (Geolocation.hasLocation()) {
-          const lng = Geolocation.getLongitude()
-          const lat = Geolocation.getLatitude()
-          const accuracy = Geolocation.getAccuracy()
-          if (accuracy) {
-            this.zoomToBounds(new L.LatLng(lat, lng).toBounds(accuracy * 2))
-          } else {
-            this.center(lng, lat)
-          }
-        }
       }
     },
     hideUserLocation () {
