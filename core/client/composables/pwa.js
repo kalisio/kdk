@@ -71,9 +71,10 @@ export function usePwa () {
         window.location.reload()
       }
     })
+    const changelog = _.get(config, changelogKey)
     $q.dialog({
       title: i18n.t('composables.pwa.UPDATE_TITLE'),
-      message: i18n.t('composables.pwa.UPDATE_MESSAGE', { changelog: _.get(config, changelogKey)}),
+      message: changelog ? i18n.t('composables.pwa.UPDATE_MESSAGE', { changelog }) : undefined,
       html: true,
       cancel: {
         id: 'ignore-button',
