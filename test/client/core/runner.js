@@ -90,7 +90,13 @@ export class Runner {
     }
     // Handle geolocation if needed
     if (useGeolocation) {
-      await this.page.setGeolocation(this.options.geolocation)
+      const location = {
+        latitude: _.get(this.options, 'geolocation.latitude'),
+        longitude: _.get(this.options, 'geolocation.longitude'),
+        accuracy: _.get(this.options, 'geolocation.accuracy')
+      }
+      debug(`Setting current geolocation to (${location.longitude}, ${location.latitude}) with accuracy ${location.accuracy}`)
+      await this.page.setGeolocation(location)
     }
     
     // Handle the local storage if needed
