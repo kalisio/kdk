@@ -42,7 +42,7 @@
           v-model="selectedProperty"
           :label="$t('KFeaturesChart.PROPERTY_LABEL')"
           :options="properties"
-          @update:modelValue="refreshChart"
+          @update:modelValue="refreshChartAndPagination"
         />
         <q-select
           :disable="selectedProperty ? false : true"
