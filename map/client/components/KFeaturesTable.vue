@@ -9,7 +9,7 @@
     <KTable
       :service="service"
       :contextId="contextId"
-      :schema-json="schema"
+      :schema="schema"
       :item-actions="actions"
       :base-query="layer.baseQuery"
     >
@@ -78,7 +78,7 @@ export default {
       }]
     },
     schema () {
-      return JSON.stringify(_.get(this.layer, 'schema.content'))
+      return _.get(this.layer, 'schema.content')
     }
   },
   methods: {

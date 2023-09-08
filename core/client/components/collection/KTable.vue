@@ -98,6 +98,10 @@ const props = defineProps({
     type: Number,
     default: 12
   },
+  schema: {
+    type: [String, Object],
+    default: null
+  },
   processor: {
     type: Function,
     default: undefined
@@ -179,8 +183,8 @@ function onRequest (props) {
   pagination.value.rowsPerPage = rowsPerPage
   pagination.value.sortBy = sortBy
   pagination.value.descending = descending
-  // This will trigger a collection refresh
-  options.filterQuery = Object.assign({}, props.filterQuery, tableQuery.value)
+  // This will trigger a collection refresh, take care composable options are refs
+  options.filterQuery.value = Object.assign({}, props.filterQuery, tableQuery.value)
 }
 function onSelectionChanged (data) {
   if (props.selection === 'single') {
@@ -203,6 +207,9 @@ watch(schema, () => {
   processSchema()
   resetCollection()
 })
+watch(() => props.schema, async (value) => {
+  await compile(props.schema || `${props.service}.get`)
+})
 watch(nbTotalItems, () => {
   // Update pagination for table
   pagination.value.rowsNumber = nbTotalItems.value
@@ -210,7 +217,7 @@ watch(nbTotalItems, () => {
 
 onBeforeMount(async () => {
   // This will launch collection refresh
-  await compile(props.service + '.get')
+  await compile(props.schema || `${props.service}.get`)
   // Whenever the user abilities are updated, update collection as well
   Events.on('user-abilities-changed', refreshCollection)
 })
