@@ -47,6 +47,8 @@ const { clientVersionName, apiVersionName } = useVersion()
 const platform = getPlatform()
 // logo component
 const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
+// changelog url
+const changelog = _.get(config, 'appChangelog')
 // bug report
 const bugReport = {
   address: _.get(config, 'publisherContact'),
@@ -62,6 +64,13 @@ bugReport.body += `domain: ${_.get(config, 'domain')}%0D%0A`
 bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
 // actions
 const defaultActions = [
+{
+    id: 'view-changelog',
+    icon: 'las la-history',
+    label: 'KAbout.VIEW_CHANGELOG',
+    stack: true,
+    url: changelog
+  },
   {
     id: 'report-bug',
     icon: 'las la-bug',
