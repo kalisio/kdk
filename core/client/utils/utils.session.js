@@ -59,8 +59,8 @@ export async function updateAbilities () {
   if (!user) return
   const abilities = await defineAbilities(user, api)
   const previousAbilities = Store.get('user.abilities')
-  const rules = _.get(abilities, 'rules', [])
-  const previousRules = _.get(previousAbilities, 'rules', [])
+  const rules = _.get(abilities, 'rules')
+  const previousRules = _.get(previousAbilities, 'rules')
   // Update only whenever required, eg updating user profile should not change abilities
   if (!_.isEqual(rules, previousRules)) {
     Store.set('user.abilities', abilities)
