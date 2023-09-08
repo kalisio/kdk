@@ -1,9 +1,6 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
-import errors from '@feathersjs/errors'
 const debug = makeDebug('kdk:core:organisations:hooks')
-
-const { Forbidden } = errors
 
 export async function createOrganisationServices (hook) {
   if (hook.type !== 'after') {
@@ -153,4 +150,3 @@ export function removeOrganisationResources (resourceScope) {
     return hook
   }
 }
-

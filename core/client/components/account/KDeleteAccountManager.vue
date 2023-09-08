@@ -50,7 +50,7 @@ async function onDelete () {
       await api.getService('users').remove(User._id)
       // Redirecting to logut will logut the user but logout an inexsiting user will raise an error
       // We prefer to clean the token manually instead
-      //router.push({ name: 'logout' })
+      // router.push({ name: 'logout' })
       Store.set('user', null)
       await api.removeAccessToken()
       router.push({ name: 'login' })

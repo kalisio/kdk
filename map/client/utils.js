@@ -137,7 +137,6 @@ export function formatGeocodingResult (element) {
   return label
 }
 
-
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
   const url = _.get(item, path)

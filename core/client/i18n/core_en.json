@@ -138,7 +138,7 @@
       "INSTALL": "Install",
       "IGNORE": "Ignore",
       "UPDATE_TITLE": "Updates available",
-      "UPDATE_MESSAGE": "Do you want to update the application ?",
+      "UPDATE_MESSAGE": "To find out more consult the <a href=\"{changelog}\">release note</a>",
       "UPDATE": "Update"
     }
   },

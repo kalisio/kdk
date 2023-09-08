@@ -137,8 +137,8 @@
       "IOS_INSTALL_MESSAGEL": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites.<br>Depuis <b>Safari</b> cliquez sur <i class=\"material-icons\">ios_share</i> puis sur <b>Ajouter à l'écran d'accueil</b>",
       "INSTALL": "Installer",
       "IGNORE": "Ignorer",
-      "UPDATE_TITLE": "Mises à jour disponibles",
-      "UPDATE_MESSAGE": "Voulez vous mettre à jour l'application ?",
+      "UPDATE_TITLE": "Mise à jour disponible",
+      "UPDATE_MESSAGE": "Pour en savoir plus consultez la <a href=\"{changelog}\">note de version</a>",
       "UPDATE": "Mettre à jour"
     }
   },

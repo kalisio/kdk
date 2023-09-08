@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import {
   serialize, updateAbilities, populatePreviousObject, hashPassword, disallowRegistration, allowLocalAuthentication,
   discardAuthenticationProviders, enforcePasswordPolicy, storePreviousPassword, sendNewSubscriptionEmail
@@ -49,11 +48,11 @@ export default {
       commonHooks.when(hook => hook.params.provider,
         commonHooks.discard('password'),
         commonHooks.discard('previousPasswords'),
-        discardAuthenticationProviders),
+        discardAuthenticationProviders)
       // Hide profile for external user as it may contain personal information
       // However, this causes an issue: https://github.com/feathersjs-ecosystem/feathers-reactive/issues/214
       // So let the application decide what to do
-      //commonHooks.when(isNotMe, commonHooks.discard('profile'))
+      // commonHooks.when(isNotMe, commonHooks.discard('profile'))
     ],
     find: [],
     get: [],

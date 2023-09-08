@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar, Loading } from 'quasar'
 import { api } from '../api.js'

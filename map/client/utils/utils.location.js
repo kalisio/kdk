@@ -31,7 +31,7 @@ export async function searchLocation (pattern, options) {
     results.forEach(result => {
       locations.push(
         Object.assign(
-          _.pick(result, [ 'type', 'geometry', ]),
+          _.pick(result, ['type', 'geometry']),
           { properties: { name: formatGeocodingResult(result), source: result.geokoder.source } }))
     })
   }

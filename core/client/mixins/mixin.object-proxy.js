@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { createQuerablePromise } from '../utils/index.js'
 
 export const objectProxy = {

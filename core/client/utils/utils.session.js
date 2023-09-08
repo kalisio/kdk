@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import logger from 'debug'
 import { Store } from '../store.js'
 import { api } from '../api.js'
@@ -34,7 +35,6 @@ export async function logout () {
     // Rethrow for caller to handle
     throw error
   }
-  
 }
 
 export async function restoreSession () {
