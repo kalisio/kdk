@@ -138,7 +138,7 @@
       "INSTALL": "Install",
       "IGNORE": "Ignore",
       "UPDATE_TITLE": "Updates available",
-      "UPDATE_MESSAGE": "Do you want to update the application ?",
+      "UPDATE_MESSAGE": "To find out more consult the <a href=\"{changelog}\" target=\"_\">release note</a>",
       "UPDATE": "Update"
     }
   },
@@ -371,6 +371,7 @@
   "KAbout": {
     "DOMAIN": "Hosted on",
     "FLAVOR": "Flavor",
+    "VIEW_CHANGELOG": "Changlog",
     "BUG_REPORT": "Report us a bug",
     "BUG_REPORT_SUBJECT": "[{appName}] Bug report - Client v{clientVersion} - API v{apiVersion}",
     "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
