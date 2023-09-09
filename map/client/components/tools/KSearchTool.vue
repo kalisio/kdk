@@ -1,6 +1,7 @@
 <template>
   <KLocationSearch
     v-model="location"
+    :geocoders="geocoders"
     :style="computedStyle"
   />
 </template>
@@ -16,6 +17,14 @@ const $q = useQuasar()
 const { CurrentActivity } = useCurrentActivity()
 const location = ref(null)
 const LocationLayerName = uid()
+
+// Props
+const props = defineProps({
+  geocoders: {
+    type: Array,
+    default: () => []
+  }
+})
 
 // Computed
 const computedStyle = computed(() => {

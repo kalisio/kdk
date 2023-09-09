@@ -50,7 +50,9 @@
           <q-item-label>{{ scope.opt.properties ? scope.opt.properties.name : scope.opt.name }}</q-item-label>
         </q-item-section>
         <q-item-section avatar v-if="scope.opt.properties.source">
-          <q-chip dense size="sm" color="accent" icon="las la-search-location">{{ scope.opt.properties.source }}</q-chip>
+          <q-chip dense size="0.7rem" color="secondary" text-color="black">
+            {{ scope.opt.properties.source }}
+          </q-chip>
         </q-item-section>
         <KLocationTip :location="scope.opt" />
       </q-item>
@@ -92,7 +94,7 @@ const props = defineProps({
   },
   geocoders: {
     type: Array,
-    default: () => {}
+    default: () => []
   },
   geolocation: {
     type: Boolean,
