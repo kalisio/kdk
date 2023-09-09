@@ -64,17 +64,17 @@ bugReport.body += `domain: ${_.get(config, 'domain')}%0D%0A`
 bugReport.body += `flavor: ${_.get(config, 'flavor')}%0D%0A`
 // actions
 const defaultActions = [{
-    id: 'platform-info',
-    icon: 'las la-desktop',
-    label: 'KAbout.PLATFORM_INFO',
-    stack: true,
-    dialog: {
-      title: 'KAbout.PLATFORM_INFO',
-      component: 'app/KPlatform',
-      okAction: 'CLOSE',
-      widthPolicy: 'narrow'
-    }
+  id: 'platform-info',
+  icon: 'las la-desktop',
+  label: 'KAbout.PLATFORM_INFO',
+  stack: true,
+  dialog: {
+    title: 'KAbout.PLATFORM_INFO',
+    component: 'app/KPlatform',
+    okAction: 'CLOSE',
+    widthPolicy: 'narrow'
   }
+}
 ]
 if (_.isNil(bugReport.address)) {
   defaultActions.unshift({
@@ -86,7 +86,7 @@ if (_.isNil(bugReport.address)) {
   })
 }
 if (!_.isNil(changelog)) {
-  defaultActions.unshift({  
+  defaultActions.unshift({
     id: 'view-changelog',
     icon: 'las la-history',
     label: 'KAbout.VIEW_CHANGELOG',

@@ -19,7 +19,7 @@ const location = ref(null)
 const LocationLayerName = uid()
 
 // Props
-const props = defineProps({
+defineProps({
   geocoders: {
     type: Array,
     default: () => []

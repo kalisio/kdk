@@ -98,7 +98,7 @@ export class Runner {
       debug(`Setting current geolocation to (${location.longitude}, ${location.latitude}) with accuracy ${location.accuracy}`)
       await this.page.setGeolocation(location)
     }
-    
+
     // Handle the local storage if needed
     if (this.options.localStorage) {
       await this.page.evaluateOnNewDocument(items => {
