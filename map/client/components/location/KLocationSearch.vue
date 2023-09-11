@@ -89,7 +89,7 @@ const props = defineProps({
   },
   geocoders: {
     type: Array,
-    default: () => {}
+    default: () => []
   },
   geolocation: {
     type: Boolean,
