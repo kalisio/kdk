@@ -134,7 +134,7 @@
     "pwa": {
       "INSTALL_TITLE": "Install the application ?",
       "INSTALL_MESSAGE": "We recommend that you install the application to take full advantage of all the features",
-      "IOS_INSTALL_MESSAGEL": "We recommend that you install the application to take full advantage of all the features.<br>From Safari, click or tap <i class=\"material-icons\">ios_share</i> and then on <b>Add to home screen</b>",
+      "IOS_INSTALL_MESSAGE": "We recommend that you install the application to take full advantage of all the features.<br>From Safari, click or tap <i class=\"material-icons\">ios_share</i> and then on <b>Add to home screen</b>",
       "INSTALL": "Install",
       "IGNORE": "Ignore",
       "UPDATE_TITLE": "Updates available",
