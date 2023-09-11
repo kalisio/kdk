@@ -19,49 +19,51 @@ export function usePwa () {
     if (window.matchMedia('(display-mode: standalone)').matches) return
     // Install prompt can be avoided, eg in tests
     if (!LocalStorage.get(installKey, true)) return
+    // Take cae of iOS
+    if ($q.platform.is.ios) {
+      $q.dialog({
+        title: i18n.t('composables.pwa.INSTALL_TITLE'),
+        message: i18n.t('composables.pwa.IOS_INSTALL_MESSAGE'),
+        ok: {
+          color: 'primary'
+        },
+        persistent: true,
+        position: 'bottom',
+        html: true
+      })
+    }
+    console.log('FUCCCCCCK 1')
+    // Other platforms should cacth the event beforeinstallprompt
     window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('FUCCKKKKK 2')
       e.preventDefault()
       // Stash the event so it can be triggered later
-      deferredPrompt = e
-      // Show the button install app
-      if ($q.platform.is.ios) {
-        $q.dialog({
-          title: i18n.t('composables.pwa.INSTALL_TITLE'),
-          message: i18n.t('composables.pwa.IOS_INSTALL_MESSAGE'),
-          ok: {
-            color: 'primary'
-          },
-          persistent: true,
-          position: 'bottom',
-          html: true
-        })
-      } else {
-        $q.dialog({
-          title: i18n.t('composables.pwa.INSTALL_TITLE'),
-          message: i18n.t('composables.pwa.INSTALL_MESSAGE'),
-          cancel: {
-            id: 'ignore-button',
-            label: i18n.t('composables.pwa.IGNORE'),
-            color: 'primary',
-            outline: true
-          },
-          ok: {
-            id: 'install-button',
-            label: i18n.t('composables.pwa.INSTALL'),
-            color: 'primary'
-          },
-          persistent: true,
-          position: 'bottom',
-          html: true
-        }).onOk(async () => {
-          deferredPrompt.prompt()
-          // Wait for the user to respond to the prompt
-          const { outcome } = await deferredPrompt.userChoice
-          logger.debug(`User response to the install prompt: ${outcome}`)
-          // Refresh page
-          if (outcome === 'accepted') location.reload()
-        })
-      }
+      deferredPrompt = e  
+      $q.dialog({
+        title: i18n.t('composables.pwa.INSTALL_TITLE'),
+        message: i18n.t('composables.pwa.INSTALL_MESSAGE'),
+        cancel: {
+          id: 'ignore-button',
+          label: i18n.t('composables.pwa.IGNORE'),
+          color: 'primary',
+          outline: true
+        },
+        ok: {
+          id: 'install-button',
+          label: i18n.t('composables.pwa.INSTALL'),
+          color: 'primary'
+        },
+        persistent: true,
+        position: 'bottom',
+        html: true
+      }).onOk(async () => {
+        deferredPrompt.prompt()
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice
+        logger.debug(`User response to the install prompt: ${outcome}`)
+        // Refresh page
+        if (outcome === 'accepted') location.reload()
+      })
     })
   }
   function update (registration) {
