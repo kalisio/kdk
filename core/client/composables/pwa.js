@@ -32,10 +32,8 @@ export function usePwa () {
         html: true
       })
     }
-    console.log('FUCCCCCCK 1')
     // Other platforms should cacth the event beforeinstallprompt
     window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('FUCCKKKKK 2')
       e.preventDefault()
       // Stash the event so it can be triggered later
       deferredPrompt = e  
