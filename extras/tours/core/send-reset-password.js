@@ -6,7 +6,7 @@ module.exports = [{
     placement: 'left'
   }
 }, {
-  target: '#reset-password',
+  target: '#send-reset-password',
   content: 'tours.reset-password.RESET_LABEL',
   params: {
     placement: 'bottom'
