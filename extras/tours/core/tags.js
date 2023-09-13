@@ -8,11 +8,8 @@ module.exports = [{
 }, {
   target: '#search-tag',
   content: 'tours.tags.SEARCH_LABEL',
-  link: 'tours.tags.CREATE_TAG_LINK_LABEL',
   params: {
-    placement: 'left',
-    blockOnMiss: 'div.q-card.q-card--bordered',
-    route: { name: 'members-activity' }
+    placement: 'left'
   }
 }, {
   target: '#tag-sorter',
@@ -23,6 +20,15 @@ module.exports = [{
     clickDelay: 500,
     clickOnNext: '#tag-sorter',
     clickOnPrevious: '#tag-sorter'
+  }
+}, {
+  target: '#create-tag',
+  content: 'tours.tags.NEW_TAG_LABEL',
+  link: 'tours.tags.CREATE_TAG_LINK_LABEL',
+  params: {
+    placement: 'left',
+    blockOnMiss: 'div.q-card.q-card--bordered',
+    route: { name: 'create-tag' }
   }
 }, {
   target: 'div.q-card.q-card--bordered',
@@ -48,5 +54,12 @@ module.exports = [{
   content: 'tours.tags.UPDATE_TAG_DESCRIPTION_LABEL',
   params: {
     placement: 'bottom'
+  }
+}, {
+  target: '#remove-item-header',
+  title: 'tours.tags.REMOVE_TAG_LABEL',
+  content: 'tours.tags.REMOVE_CONFIRMATION_LABEL',
+  params: {
+    placement: 'left'
   }
 }]

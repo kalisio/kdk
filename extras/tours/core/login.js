@@ -38,11 +38,4 @@ module.exports = [{
     placement: 'bottom',
     route: { name: 'register' }
   }
-}, {
-  target: '#google',
-  title: 'tours.login.SOCIAL_LABEL',
-  content: 'tours.login.GOOGLE_LABEL',
-  params: {
-    placement: 'bottom'
-  }
 }]

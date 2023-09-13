@@ -62,18 +62,25 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#tags-pane',
+  target: '#tags-section',
   content: 'tours.members.TAGS_LABEL',
   params: {
     placement: 'right'
   }
 }, {
-  target: '#edit-item-tags',
-  content: 'tours.members.TAG_MEMBER_LABEL',
-  link: 'tours.members.TAGS_LINK_LABEL',
+  target: '#add-tag',
+  content: 'tours.members.ADD_TAG_LABEL',
+  link: 'tours.members.ADD_TAG_LINK_LABEL',
   params: {
-    placement: 'bottom',
-    clickOnLink: '#edit-item-tags'
+    placement: 'right',
+    clickOnLink: '#add-tag'
+  }
+}, {
+  target: '#groups-section',
+  title: 'tours.members.GROUPS_LABEL',
+  content: 'tours.members.GROUPS_CONTENT_LABEL',
+  params: {
+    placement: 'right'
   }
 }, {
   target: '#join-group',
@@ -82,26 +89,6 @@ module.exports = [{
   params: {
     placement: 'right',
     clickOnLink: '#join-group'
-  }
-}, {
-  target: '#group-button',
-  content: 'tours.members.GROUP_LABEL',
-  params: {
-    placement: 'right',
-    clickOn: '#group-button',
-    clickDelay: 500
-  }
-}, {
-  target: '#change-role-group',
-  content: 'tours.members.CHANGE_GROUP_ROLE_LABEL',
-  params: {
-    placement: 'bottom'
-  }
-}, {
-  target: '#leave-group',
-  content: 'tours.members.LEAVE_GROUP_LABEL',
-  params: {
-    placement: 'bottom'
   }
 }, {
   target: '#edit-member-role',

@@ -2,13 +2,13 @@ module.exports = [{
   target: '#unique-tab',
   content: 'tours.add-member.UNIQUE_TAB_LABEL',
   params: {
-    placement: 'right'
+    placement: 'top'
   }
 }, {
   target: '#email-field',
   content: 'tours.add-member.UNIQUE_EMAIL_LABEL',
   params: {
-    placement: 'left',
+    placement: 'top',
     clickDelay: 500,
     typeTextOnNext: '#email-field',
     textOnNext: 'guest@organisation.com',
@@ -28,7 +28,7 @@ module.exports = [{
   target: '#name-field',
   content: 'tours.add-member.UNIQUE_NAME_LABEL',
   params: {
-    placement: 'left',
+    placement: 'top',
     clickOnPrevious: '#back-button',
     typeTextOnPrevious: '#email-field',
     textOnPrevious: 'guest@organisation.com',
@@ -38,7 +38,7 @@ module.exports = [{
   target: '#role-field',
   content: 'tours.add-member.UNIQUE_ROLE_LABEL',
   params: {
-    placement: 'left',
+    placement: 'top',
     clickDelay: 500,
     clickOnNext: '#role-field',
     nextDelay: 500,
@@ -57,13 +57,14 @@ module.exports = [{
   target: '#multiple-tab',
   content: 'tours.add-member.MULTIPLE_TAB_LABEL',
   params: {
-    placement: 'left'
+    placement: 'top',
+    clickOnPrevious: '#unique-tab',
   }
 }, {
   target: '#file-field',
   content: 'tours.add-member.MULTIPLE_FILE_LABEL',
   params: {
-    placement: 'left'
+    placement: 'top'
   }
 }, {
   target: '#add-button',

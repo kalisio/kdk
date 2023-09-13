@@ -194,8 +194,6 @@
     "CARD_OVERFLOW_MENU_LABEL": "Open the popup menu to see more actions.",
     "REMOVE_CONFIRMATION_LABEL": "A confirmation will be required before final removal.",
     "login": {
-      "SOCIAL_LABEL": "You can also login using <b>external identifiers</b>.",
-      "GOOGLE_LABEL": "For instance using your Google account.",
       "LOCAL_LABEL": "You can login using your <b>personal identifiers</b>.",
       "EMAIL_LABEL": "Enter your email address first.",
       "PASSWORD_LABEL": "Then enter your password.",
@@ -205,7 +203,7 @@
       "REGISTER_LINK_LABEL": "If you don't yet have an account launch the <b>registration procedure</b>"
     },
     "reset-password": {
-      "RESET_PROCEDURE_LABEL": "If you have lost your password we will send you an email back containing a link to <b>define a new one</b>.",
+      "RESET_PROCEDURE_LABEL": "If you have lost your password we will send you an email back containing a code to <b>define a new one</b>.",
       "EMAIL_LABEL": "First, enter the email address you have used to register or to get invited.",
       "RESET_LABEL": "Now finish by sending the email containing the link (<b>please check the email is not in your spam folder</b>)."
     },
@@ -217,7 +215,7 @@
       "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "CONFIRM_PASSWORD_LABEL": "Confirm your password to avoid any error.",
       "CONFIRM_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
-      "TERMS_LABEL": "Read and accept our <b><a href='/#/terms'>terms of service</a></b> in order to use the system.",
+      "TERMS_LABEL": "Read and accept our <b><a style='color:white' href='/#/terms'>terms of service</a></b> in order to use the system.",
       "REGISTER_LABEL": "Last, create your account.",
       "EMAIL_VERIFICATION_LABEL": "We will send you an email back containing a link to <b>verify your address</b>.",
       "LOGIN_LINK_LABEL": "You can now login whenever you want using your <b>personal identifiers</b>"
@@ -229,35 +227,30 @@
       "CREATE_ORGANISATION_LABEL": "Confirm the creation of your new organisation."
     },
     "account": {
-      "HOME_LABEL": "Go back to your home page using this button",
       "PROFILE_LABEL": "This activity allows to update your profile information",
       "AVATAR_LABEL": "Your avatar visible in the side menu when an image file has been selected.",
       "NAME_LABEL": "Your name as viewed by others users.",
       "UPDATE_LABEL": "Confirm the update in order to apply the modifications to your profile information.",
-      "SECURITY_LABEL": "This activity allows to update your <b>personal identifiers</b> and your devices",
-      "PASSWORD_LINK_LABEL": "Launch the <b>password change procedure</b>",
-      "EMAIL_LINK_LABEL": "Launch the <b>email change procedure</b>",
-      "SUBSCRIPTIONS_LABEL": "This section list all the subscriptions you have.",
-      "UNSUBSCRIBE_LABEL": "Check for any suspect activity and remove outdated subscriptions.",
-      "DANGER_ZONE_LABEL": "This activity allows to remove your account",
-      "DELETE_LABEL": "A manual confirmation will be required before final removal."
-    },
-    "change-password": {
-      "PASSWORD_PROCEDURE_LABEL": "If you want to modify your password you can <b>define a new one</b>.",
+      "ACCOUNT_LABEL": "Manage <b>your identifiers</b> and their security",
+      "VERIFY_EMAIL_LABEL": "This section allows you to check your email.",
+      "TOKEN_FIELD_LABEL": "Enter the code received by email.",
+      "RESEND_VERIFY_SIGNUP_LABEL": "If you haven't received it or have lost it, you can have a new one sent to you.",
+      "CONFIRM_VERIFY_EMAIL_LABEL": "Finally, confirm that.",
+      "PASSWORD_PROCEDURE_LABEL": "This section allows you to initiate the password change procedure.",
       "OLD_PASSWORD_LABEL": "First, enter your previous password.",
       "NEW_PASSWORD_LABEL": "Choose a new password, if it does not comply our security policy an alert will inform you about the rules to follow.",
       "NEW_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "CONFIRM_NEW_PASSWORD_LABEL": "Confirm your password to avoid any error.",
-      "CHANGE_LABEL": "Last, confirm the modification request.",
-      "CHANGE_EMAIL_LABEL": "A confirmation email will be sent to you (<b>please check the email is not in your spam folder</b>)."
-    },
-    "send-change-identity": {
-      "CHANGE_IDENTITY_PROCEDURE_LABEL": "If you want to modify the email address you use to connect you can <b>select a new one</b>.",
+      "CHANGE_PASSWORD_LABEL": "Last, confirm the modification request.",
+      "CHANGE_IDENTITY_PROCEDURE_LABEL": "This section allows you to initiate the e-mail address change procedure.",
       "PASSWORD_LABEL": "First, enter your password.",
       "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "EMAIL_LABEL": "Enter your <b>new email address</b>.",
-      "CHANGE_LABEL": "Last, confirm the modification request.",
-      "CHANGE_EMAIL_LABEL": "An email containing a link to confirm the modification will be sent to your new address (<b>please check the email is not in your spam folder</b>)."
+      "CHANGE_EMAIL_LABEL": "An email containing a code to confirm the modification will be sent to your new address (<b>please check the email is not in your spam folder</b>).",
+      "SUBSCRIPTIONS_LABEL": "This section list all the subscriptions you have.",
+      "UNSUBSCRIBE_LABEL": "Check for any suspect activity and remove outdated subscriptions.",
+      "DANGER_ZONE_LABEL": "This activity allows to remove your account",
+      "DELETE_LABEL": "A manual confirmation will be required before final removal."
     },
     "groups": {
       "GROUPS_LABEL": "This activity allows to manage the <b>groups</b> in your organisation.",
@@ -278,7 +271,7 @@
     },
     "create-group": {
       "GROUP_NAME_LABEL": "Choose a name for your group.",
-      "TEMPLATE_ICON_LABEL": "Choose an icon to easily recognize your group.",
+      "GROUP_DESCRIPTION_LABEL": "Choose a detailed description for your group.",
       "CREATE_GROUP_LABEL": "Confirm the creation of your new group."
     },
     "members": {
@@ -296,12 +289,12 @@
       "INVITE_MEMBER_LINK_LABEL": "How to invite a member",
       "MEMBER_CARD_LABEL": "Each member is viewed as a card providing available actions.",
       "ROLE_LABEL": "Visualise the role of your member at a glance.",
-      "TAGS_LABEL": "Visualise his tags at a glance as well.",
-      "GROUP_LABEL": "Select one of the member groups to show available actions.",
-      "CHANGE_GROUP_ROLE_LABEL": "Modifiez le rôle du membre dans le groupe via cette action.",
-      "LEAVE_GROUP_LABEL": "Supprimez le membre du groupe via cette action.",
-      "TAG_MEMBER_LABEL": "Update tags of your member through this action.",
-      "TAGS_LINK_LABEL": "How to manage tags",
+      "TAGS_LABEL": "Visualise tags of your member at a glance as well.",
+      "TAGS_CONTENT_LABEL": "Use the cross to delete a tag.",
+      "GROUPS_LABEL": "Visualise groups of your member at a glance as well.",
+      "GROUPS_CONTENT_LABEL": "Select one of the member groups to show available actions.",
+      "ADD_TAG_LABEL": "Add tag of your member through this action.",
+      "ADD_TAG_LINK_LABEL": "How to manage tags",
       "JOIN_GROUP_LABEL": "Add your member to a <b>group</b> through this action.",
       "JOIN_GROUP_LINK_LABEL": "How to manage groups",
       "CHANGE_ROLE_LABEL": "Update the role of your member through this action.",
@@ -314,11 +307,15 @@
       "UNIQUE_EMAIL_LABEL": "Enter the email of the desired person",
       "UNIQUE_CONTINUE_BUTTON_LABEL": "Click this button to procced with the invitation or to add the person if they already have an account.",
       "UNIQUE_NAME_LABEL": "Enter the name of the person.",
-      "UNIQUE_ROLE_LABEL": "Select its role within your organisation. A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control (removal, payment, etc.).",
+      "UNIQUE_ROLE_LABEL": "Select its role within your organisation. A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
       "UNIQUE_ADD_BUTTON_LABEL": "Click this button to send the invitation.",
       "MULTIPLE_TAB_LABEL": "Add multiple persons to your organisation using a CSV file.",
       "MULTIPLE_FILE_LABEL": "Upload the CSV file listing the persons to be invited. Each person is represented by a row containing the fields <b>name</b>, <b>email</b> and <b>role</b> separated using a <b>,</b> separator.",
       "MULTIPLE_ADD_BUTTON_LABEL": "Click this button to proceed with the invitations."
+    },
+    "role-member": {
+      "ROLE_LABEL": "Select its role within your organisation. A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
+      "UPDATE_ROLE_LABEL": "Update the role of your member"
     },
     "join-group": {
       "GROUP_NAME_LABEL": "Typing <b>the first characters</b> of a group name to make it selectable.",
@@ -326,10 +323,9 @@
       "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif au groupe alors qu'un <b>gestionnaire</b> a le pouvoir de gérer les membres du groupe (ajout/suppression).",
       "ADD_MEMBER_LABEL": "Confirm adding the member to the group."
     },
-    "tag-member": {
-      "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists or add it otherwise using the Return key.",
-      "TAG_REMOVE_LABEL": "Once added remove it using the cross.",
-      "UPDATE_TAG_LABEL": "Confirm modifying the tags on your members."
+    "add-tag": {
+      "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists using the Return key.",
+      "ADD_TAG_LABEL": "Confirm addition the tags on your members."
     },
     "tags": {
       "TAGS_LABEL": "This activity allows to manage the <b>tags</b> in your organisation.",
@@ -338,12 +334,20 @@
       "SEARCH_LABEL": "Type part of a word contained in the name of your tags in the arising bar to perform a search.",
       "SORT_LABEL": "Sort your tags by ascending or descending alphabetical order this button.",
       "TAG_CARD_LABEL": "Each tag is viewed as a card providing available actions.",
-      "CREATE_TAG_LINK_LABEL": "How to create or remove tags on members",
+      "NEW_TAG_LABEL": "Create a <b>new tag</b> using this button.",
+      "CREATE_TAG_LINK_LABEL": "How to create a tag",
       "TAG_COUNT_LABEL": "This section shows you the number of <b>members</b> having your tag.",
       "LIST_MEMBERS_LABEL": "Shows the <b>members</b> with this tag by selecting it.",
-      "REMOVE_TAG_LABEL": "Whenever it is zero the tag is automatically removed.",
+      "REMOVE_TAG_LABEL": "Remove your tag through this action.",
+      "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL",
       "UPDATE_TAG_LABEL": "Update properties of your tag through this action, this will update all members having this tag.",
       "UPDATE_TAG_DESCRIPTION_LABEL": "Update the description of your tag through this action."
+    },
+    "create-tag": {
+      "TAG_NAME_LABEL": "Choose a name for your tag.",
+      "TAG_ICON_LABEL": "Choose an icon to easily recognize your tag.",
+      "TAG_DESCRIPTION_LABEL": "Choose a detailed description for your tag.",
+      "CREATE_TAG_LABEL": "Confirm the creation of your new tag."
     }
   },
   "reader": {

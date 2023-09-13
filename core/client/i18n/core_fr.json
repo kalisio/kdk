@@ -194,8 +194,6 @@
     "CARD_OVERFLOW_MENU_LABEL": "Ouvrez le menu déroulant pour découvrir plus d'actions.",
     "REMOVE_CONFIRMATION_LABEL": "Une confirmation vous sera demandé avant la suppression définitive.",
     "login": {
-      "SOCIAL_LABEL": "Vous pouvez aussi vous connecter avec <b>d'autres identifiants</b>.",
-      "GOOGLE_LABEL": "Par exemple avec votre compte Google.",
       "LOCAL_LABEL": "Vous pouvez vous connecter au système avec <b>vos identifiants</b>.",
       "EMAIL_LABEL": "Saisissez tout d'abord votre adresse mail.",
       "PASSWORD_LABEL": "Saisissez ensuite votre mot de passe.",
@@ -205,7 +203,7 @@
       "REGISTER_LINK_LABEL": "Si vous n'avez pas encore de compte initiez la <b>procédure d'enregistrement</b>"
     },
     "reset-password": {
-      "RESET_PROCEDURE_LABEL": "Si vous avez oublié votre mot de passe nous vous enverrons un email contenant un lien permettant <b>d'en définir un nouveau</b>.",
+      "RESET_PROCEDURE_LABEL": "Si vous avez oublié votre mot de passe nous vous enverrons un email contenant un code permettant <b>d'en définir un nouveau</b>.",
       "EMAIL_LABEL": "Saisissez tout d'abord l'adresse que vous avez utilisé pour vous enregistrer ou par laquelle vous avez été invité.",
       "RESET_LABEL": "Enfin, terminez en envoyant l'email contenant le lien (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>)."
     },
@@ -217,7 +215,7 @@
       "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "CONFIRM_PASSWORD_LABEL": "Confirmez votre mot de passe pour éviter les erreurs.",
       "CONFIRM_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
-      "TERMS_LABEL": "Lisez et acceptez nos <b><a href='/#/terms'>conditions d'utilisation</a></b> pour pouvoir utiliser le système.",
+      "TERMS_LABEL": "Lisez et acceptez nos <b><a style='color:white' href='/#/terms'>conditions d'utilisation</a></b> pour pouvoir utiliser le système.",
       "REGISTER_LABEL": "Enfin, terminez en créant votre compte.",
       "EMAIL_VERIFICATION_LABEL": "Nous vous enverrons un email contenant un lien permettant <b>de vérifier votre adresse</b>.",
       "LOGIN_LINK_LABEL": "Vous pouvez maintenant vous reconnecter au système grâce à <b>vos identifiants</b>."      
@@ -229,35 +227,30 @@
       "CREATE_ORGANISATION_LABEL": "Confirmez la création de la nouvelle organisation."
     },
     "account": {
-      "HOME_LABEL": "Revenez à tout moment à votre page d'accueil via ce bouton",
       "PROFILE_LABEL": "Cette activité vous permet de modifier les informations liées à votre profil utilisateur",
       "AVATAR_LABEL": "Votre avatar personnalisé qui sera visible dans le menu latéral une fois un fichier image sélectionné.",
       "NAME_LABEL": "Votre nom tel qu'il sera visible par les autres utilisateurs.",
       "UPDATE_LABEL": "Confirmez la mise à jour pour appliquer les modifications apportées à votre profil.",
-      "SECURITY_LABEL": "Cette activité vous permet de modifier <b>vos identifiants</b> et vos appareils",
-      "PASSWORD_LINK_LABEL": "Initiez la <b>procédure de changement de mot de passe</b>",
-      "EMAIL_LINK_LABEL": "Initiez la <b>procédure de changement d'adresse mail</b>",
-      "SUBSCRIPTIONS_LABEL": "Cette section liste les différents abonnements dont vous disposez.",
-      "UNSUBSCRIBE_LABEL": "Vérifiez ici toute activité suspecte et supprimez les abonnements obsolètes de votre compte.",
-      "DANGER_ZONE_LABEL": "Cette activité vous permet de supprimer votre compte du système",
-      "DELETE_LABEL": "Un confirmation manuelle vous sera demandé avant la suppression définitive de votre compte."
-    },
-    "change-password": {
-      "PASSWORD_PROCEDURE_LABEL": "Si vous souhaitez modifier votre mot de passe vous pouvez <b>en définir un nouveau</b>.",
+      "ACCOUNT_LABEL": "Gérez ici <b>vos identifiants</b> et leur sécurité",
+      "VERIFY_EMAIL_LABEL": "Cette section vous permet de vérifier votre email.",
+      "TOKEN_FIELD_LABEL": "Saisissez le code reçu par email.",
+      "RESEND_VERIFY_SIGNUP_LABEL": "Si vous ne l'aviez pas reçu ou perdu, vous avez la possibilité d'en recevoir un nouveau.",
+      "CONFIRM_VERIFY_EMAIL_LABEL": "Enfin, terminez en confirmant.",
+      "PASSWORD_PROCEDURE_LABEL": "Cette section vous permet d'initier la procédure de changement de mot de passe.",
       "OLD_PASSWORD_LABEL": "Saisissez tout d'abord votre ancien mot de passe.",
       "NEW_PASSWORD_LABEL": "Choisissez ensuite votre nouveau mot de passe, s'il ne respecte pas nos dispositions de sécurité une alerte vous indiquera les règles à respecter.",
       "NEW_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "CONFIRM_NEW_PASSWORD_LABEL": "Confirmez votre nouveau mot de passe pour éviter les erreurs.",
-      "CHANGE_LABEL": "Enfin, terminez en confirmant la modification.",
-      "CHANGE_EMAIL_LABEL": "Un email de confirmation vous serez envoyé (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>)."
-    },
-    "send-change-identity": {
-      "CHANGE_IDENTITY_PROCEDURE_LABEL": "Si vous souhaitez modifier l'adresse mail que vous utilisez pour vous connecter vous pouvez <b>en choisir une nouvelle</b>.",
+      "CHANGE_PASSWORD_LABEL": "Enfin, terminez en confirmant la modification.",
+      "CHANGE_IDENTITY_PROCEDURE_LABEL": "Cette section vous permet d'initier la procédure de changement d'adresse mail.",
       "PASSWORD_LABEL": "Entrez tout d'abord votre mot de passe.",
       "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
       "EMAIL_LABEL": "Entrez votre <b>nouvelle adresse mail</b>.",
-      "CHANGE_LABEL": "Enfin, terminez en confirmant la demande de modification.",
-      "CHANGE_EMAIL_LABEL": "Un email contenant un lien permettant de confirmer la modification vous serez envoyé sur votre nouvelle adresse (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>)."
+      "CHANGE_EMAIL_LABEL": "En confirmant la demande de modification, un email contenant un code permettant de confirmer la modification vous serez envoyé sur votre nouvelle adresse (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>).",
+      "SUBSCRIPTIONS_LABEL": "Cette section liste les différents abonnements dont vous disposez.",
+      "UNSUBSCRIBE_LABEL": "Vérifiez ici toute activité suspecte et supprimez les abonnements obsolètes de votre compte.",
+      "DANGER_ZONE_LABEL": "Cette section vous permet de supprimer votre compte du système",
+      "DELETE_LABEL": "Une confirmation manuelle vous sera demandé avant la suppression définitive de votre compte."
     },
     "groups": {
       "GROUPS_LABEL": "Cette activité vous permet de gérer les <b>groupes</b> au sein de votre organisation.",
@@ -296,12 +289,12 @@
       "INVITE_MEMBER_LINK_LABEL": "Voir comment inviter un membre",
       "MEMBER_CARD_LABEL": "Chaque membre est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
       "ROLE_LABEL": "Visualisez le rôle affecté à votre membre en un clin d'oeil.",
-      "TAGS_LABEL": "Visualisez aussi ses étiquettes en un clin d'oeil.",
-      "GROUP_LABEL": "Sélectionnez un groupe auquel appartient votre membre pour afficher les actions disponibles.",
-      "CHANGE_GROUP_ROLE_LABEL": "Modifiez le rôle du membre dans le groupe via cette action.",
-      "LEAVE_GROUP_LABEL": "Supprimez le membre du groupe via cette action.",
-      "TAG_MEMBER_LABEL": "Modifiez les <b>étiquettes</b> de votre membre via cette action.",
-      "TAGS_LINK_LABEL": "Voir comment gérer les étiquettes",
+      "TAGS_LABEL": "Visualisez les étiquettes de votre membre en un clin d'oeil.",
+      "TAGS_CONTENT_LABEL": "Utilisez la croix pour supprimer une étiquette.",
+      "GROUPS_LABEL": "Visualisez les groupes de votre membre en un clin d'oeil.",
+      "GROUPS_CONTENT_LABEL": "Cliquez sur un groupe auquel appartient votre membre pour afficher les actions disponibles.",
+      "ADD_TAG_LABEL": "Ajoutez une <b>étiquettes</b> à votre membre via cette action.",
+      "ADD_TAG_LINK_LABEL": "Voir comment gérer les étiquettes",
       "JOIN_GROUP_LABEL": "Ajoutez votre membre à un <b>groupe</b> via cette action.",
       "JOIN_GROUP_LINK_LABEL": "Voir comment gérer les groupes",
       "CHANGE_ROLE_LABEL": "Modifiez le <b>rôle</b> de votre membre via cette action.",
@@ -314,22 +307,23 @@
       "UNIQUE_EMAIL_LABEL": "Saisissez l'adresse mail de la personne à inviter.",
       "UNIQUE_CONTINUE_BUTTON_LABEL": "Cliquez ce bouton pour procéder à l'invitation ou à l'ajout de la personne si celle-ci possède déjà un compte.",
       "UNIQUE_NAME_LABEL": "Saisissez le nom de la personne.",
-      "UNIQUE_ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accés en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total (suppression, paiemnent, etc.).",
+      "UNIQUE_ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accés en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total.",
       "UNIQUE_ADD_BUTTON_LABEL": "Clmiquez ce bouton pour lancer l'invitation.",
       "MULTIPLE_TAB_LABEL": "Ajoutez plusieurs personnes à l'aide d'un fichier CSV.",
       "MULTIPLE_FILE_LABEL": "Téléchargez le fichier contenant la liste des personnes à inviter. Chaque personne est réprésentée par une ligne contenant les champs <b>nom</b>, <b>adresse email</b> et <b>rôle</b> séparés par un <b>,</b>.",
       "MULTIPLE_ADD_BUTTON_LABEL": "Cliquez ce bouton pour procéder aux invitations."
     },
+    "role-member": {
+      "ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accés en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total.",
+      "UPDATE_ROLE_LABEL": "Confirmez la modification du <b>rôle</b> de votre membre"
+    },
     "join-group": {
       "GROUP_NAME_LABEL": "Tapez <b>les premières lettres</b> du nom d'un groupe pour le sélectionner.",
-      "MEMBER_ROLE_LABEL": "Choisissez le rôle de la personne au sein du groupe.",
-      "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif au groupe alors qu'un <b>gestionnaire</b> a le pouvoir de gérer les membres du groupe (ajout/suppression).",
       "ADD_MEMBER_LABEL": "Confirmez l'ajout du membre au groupe."
     },
-    "tag-member": {
-      "TAG_NAME_LABEL": "Tapez <b>les premières lettres</b> d'une étiquette pour la sélectionner si elle existe ou la créer sinon via la touche Entrée.",
-      "TAG_REMOVE_LABEL": "Une fois ajoutée utilisez la croix pour la supprimer.",
-      "UPDATE_TAG_LABEL": "Confirmez la modification des étiquettes sur votre membre."
+    "add-tag": {
+      "TAG_NAME_LABEL": "Tapez <b>les premières lettres</b> d'une étiquette pour la sélectionner si elle existe via la touche Entrée.",
+      "ADD_TAG_LABEL": "Confirmez l'ajout des étiquettes sur votre membre."
     },
     "tags": {
       "TAGS_LABEL": "Cette activité vous permet de gérer les <b>étiquettes</b> au sein de votre organisation.",
@@ -337,13 +331,21 @@
       "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
       "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos étiquettes au sein de la barre qui apparait pour effectuer une recherche.",
       "SORT_LABEL": "Ordonnez vos étiquettes par ordre alphabétique ascendant ou descendant via ce bouton.",
+      "NEW_TAG_LABEL": "Créez une <b>nouvelle étiquette</b> via ce bouton.",
       "TAG_CARD_LABEL": "Chaque étiquette est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
-      "CREATE_TAG_LINK_LABEL": "Voir comment ajouter ou supprimer des étiquettes sur les membres",
+      "CREATE_TAG_LINK_LABEL": "Voir comment créer une étiquette",
       "TAG_MEMBERS_LABEL": "Cette section vous indique le nombre de <b>membres</b> possédant cette étiquette.",
       "LIST_MEMBERS_LABEL": "Affichez les <b>membres</b> ayant cette étiquette en la sélectionnant.",
-      "REMOVE_TAG_LABEL": "Lorsqu'il atteint zéro l'étiquette est automatiquement supprimée.",
+      "REMOVE_TAG_LABEL": "Supprimez votre étiquette via cette action.",
+      "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL",
       "UPDATE_TAG_LABEL": "Modifiez les propriétés de votre étiquette via cette action, ceci mettra à jour tous les membres possédant cette étiquette.",
       "UPDATE_TAG_DESCRIPTION_LABEL": "Modifiez la description de votre étiquette via cette action."
+    },
+    "create-tag": {
+      "TAG_NAME_LABEL": "Choisissez le nom de votre étiquette.",
+      "TAG_ICON_LABEL": "Choisissez une iconographie vous permettant d'identifier facilement l'étiquette.",
+      "TAG_DESCRIPTION_LABEL": "Choisissez une description détaillée pour votre étiquette.",
+      "CREATE_TAG_LABEL": "Confirmez la création de votre nouvelle étiquette."
     }
   },
   "reader": {
