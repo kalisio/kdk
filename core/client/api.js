@@ -272,6 +272,12 @@ export function createClient (config) {
   }
   // Object used to store configuration options for services
   api.serviceOptions = {}
+  // Override Feathers configure that do not manage async operations,
+  // here we also simply call the function given as parameter but await for it
+  api.configure = async function (fn) {
+    await fn.call(this, this)
+    return this
+  }
 
   return api
 }

@@ -45,14 +45,14 @@ export { mixins }
 export { hooks }
 export { readers }
 
-export default function init () {
+export default async function init () {
   const api = this
 
   logger.debug('[KDK] initializing core module')
   // Initialize singletons that might be used globally first
   Time.initialize()
   Units.initialize()
-  Capabilities.initialize()
+  await Capabilities.initialize()
   // Then services
   api.configure(services)
   // Last, create the models listened by the main layout/pages components
