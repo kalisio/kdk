@@ -25,18 +25,18 @@
     <!-- Actions -->
     <q-card-actions align="center">
       <KAction
-        id="verify-email"
-        label="APPLY"
-        renderer="form-button"
-        :loading="processing"
-        :handler="apply"
-      />
-      <KAction
         id="resend-verify-signup"
         label="KVerifyEmailManager.ACTION"
         renderer="form-button"
         outline
         :handler="resendVerifySignup"
+      />
+      <KAction
+        id="verify-email"
+        label="APPLY"
+        renderer="form-button"
+        :loading="processing"
+        :handler="apply"
       />
     </q-card-actions>
   </q-card>
