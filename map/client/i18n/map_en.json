@@ -18,9 +18,6 @@
     "INVALID_KML_FILE": "{file} is not a valid KML file"
   },
   "mixins": {
-    "navigator": {
-      "ACTION_SHEET_TITLE": "Select an application"
-    },
     "fileLayers": {
       "IMPORTED_DATA_NAME": "My data"
     },
