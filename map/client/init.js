@@ -14,7 +14,7 @@ function siftMatcher (originalQuery) {
   return _.omit(originalQuery, ...keysToOmit)
 }
 
-export default function init () {
+export default async function init () {
   const api = this
 
   logger.debug('[KDK] initializing map module')
