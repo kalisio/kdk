@@ -31,7 +31,7 @@
         :actions="tagsActions"
         :context="$props"
         :dense="dense">
-        <div v-if="hasTags">
+        <div v-if="hasTags" id="tags-section">
           <KChipsPane id="tags-pane" class="q-pa-sm" :remove="true" @chip-removed="onRemoveTag" :chips="tags" />
         </div>
         <div v-else>
@@ -45,7 +45,7 @@
         :context="$props"
         :dense="dense"
       >
-        <div v-if="hasGroups" class="row justify-start items-center">
+        <div v-if="hasGroups" id="groups-section" class="row justify-start items-center">
           <template v-for="(group, index) in groups" :key="groupKey(group)">
             <q-btn :id="groupButtonId(group)" flat small round color="primary">
               <q-avatar color="primary" text-color="white" size="2rem">{{ groupInitials(group) }}</q-avatar>

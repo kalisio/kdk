@@ -4,7 +4,7 @@
   </div>
   <div  v-else class="q-pa-md">
     <p :class="labelClass">{{ label }}</p>
-    <div class="row q-gutter-x-sm justify-center">
+    <div class="row q-gutter-x-sm justify-center" id="token-field">
       <q-input
         v-for="i in tokenLength"
         :for="properties.name + '-field' + i"
