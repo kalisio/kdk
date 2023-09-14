@@ -1,4 +1,4 @@
-import { Platform, Notify } from 'quasar'
+import { Platform } from 'quasar'
 
 export function getPlatform () {
   return Object.assign(Platform.is, {
