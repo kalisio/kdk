@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
 import config from 'config'
 import { ref, computed, readonly } from 'vue'
 import { Capabilities } from '../index.js'
@@ -35,7 +34,6 @@ export function useVersion () {
   // Immediate
   if (!isInitialized) {
     isInitialized = true
-    logger.debug('Setting API version from capabilities')
     Version.value.api.number = Capabilities.get('version')
     Version.value.api.buildNumber = Capabilities.get('buildNumber')
   }
