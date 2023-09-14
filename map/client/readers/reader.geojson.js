@@ -3,7 +3,7 @@ import _ from 'lodash'
 import geojsonhint from '@mapbox/geojsonhint'
 import { i18n } from '../../../core/client/i18n.js'
 
-export const GeoJSONReader = {
+export const GEOJSONReader = {
   read (files, options) {
     if (files.length !== 1) {
       logger.debug('invalid \'files\' arguments')

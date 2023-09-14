@@ -18,7 +18,6 @@ export const Theme = {
     if (this.default) return
     this.default = {}
     themeColors.forEach(color => { this.default[color] = getCssVar(color) || defaultCssColors[color]})
-    console.log(this.default)
   },
   apply (theme) {
     if (typeof theme === 'string') {
@@ -40,6 +39,3 @@ export const Theme = {
   }
 }
 
-// Ensure it is initialized here as we can use it before initializing core module
-// so that components will be created with the right theme upfront
-Theme.initialize()

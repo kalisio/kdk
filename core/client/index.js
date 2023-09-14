@@ -1,15 +1,17 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
+import { Store } from './store.js'
+import { Theme } from './theme.js'
+import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
-import { Layout } from './layout.js'
+import { Storage } from './storage.js'
 import { Time } from './time.js'
 import { Units } from './units.js'
-import { Capabilities } from './capabilities.js'
-import { Reader } from './reader.js'
-import { Storage } from './storage.js'
+import { Layout } from './layout.js'
 import { Filter } from './filter.js'
 import { Sorter } from './sorter.js'
+import { Reader } from './reader.js'
 import services from './services/index.js'
 import * as utils from './utils/index.js'
 import * as composables from './composables/index.js'
@@ -20,36 +22,40 @@ import { Schema } from '../common/index.js'
 
 // FIXME: we don't build vue component anymore, they are processed by webpack in the application
 // export * from './components'
-
-export * from './api.js'
-export * from './capabilities.js'
-export * from './events.js'
-export * from './services/index.js'
-export * from './store.js'
-export * from './storage.js'
-export * from './layout.js'
-export * from './theme.js'
-export * from './time.js'
-export * from './units.js'
-export * from './filter.js'
-export * from './reader.js'
-export * from './sorter.js'
-export * from './search.js'
-export * from './i18n.js'
-export * from './local-storage.js'
-export * from './guards.js'
-export * from '../common/index.js'
+export { Store }
+export { Theme }
+export { Capabilities }
+export { LocalStorage }
+export { Storage }
+export { Time }
+export { Units }
+export { Layout }
+export { Filter }
+export { Sorter }
+export { services }
 export { utils }
 export { composables }
 export { mixins }
 export { hooks }
-export { readers }
+export * from './api.js'
+export * from './events.js'
+export * from './i18n.js'
+export * from './filter.js'
+export * from './reader.js'
+export * from './search.js'
+export * from './guards.js'
+export * from '../common/index.js'
 
-export default async function init () {
+export default async function initialize () {
   const api = this
 
   logger.debug('[KDK] initializing core module')
+
+  // Delcare the module intiaization states 
+  Store.set('kdk', { core: { initialized : false }, map: { initialized: false }})
+  
   // Initialize singletons that might be used globally first
+  Theme.initialize()
   Time.initialize()
   Units.initialize()
   await Capabilities.initialize()
@@ -64,10 +70,16 @@ export default async function init () {
   Filter.initialize()
   Sorter.initialize()
   Schema.initialize(_.get(config, 'schema'))
+  
   // Listen to the 'patched' event on the users
   utils.subscribeToUserChanges()
 
-  // Register default readers
-  Reader.register('.json', readers.JSONReader)
-  Reader.register('.csv', readers.CSVReader)
+  // Register the readers
+  _.forEach(_.get(config, 'readers.core', []), reader => {
+    logger.debug(`[KDK] registering reader ${reader}`)
+    Reader.register(`.${reader}`, readers[`${_.upperCase(reader)}Reader`])
+  })
+
+  // Store the intiaization state
+  Store.set('kdk.core.initialized', true)
 }
