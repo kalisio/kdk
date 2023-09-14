@@ -17,7 +17,7 @@ export const Theme = {
   initialize () {
     if (this.default) return
     this.default = {}
-    themeColors.forEach(color => { this.default[color] = getCssVar(color) || defaultCssColors[color]})
+    themeColors.forEach(color => { this.default[color] = getCssVar(color) || defaultCssColors[color] })
   },
   apply (theme) {
     if (typeof theme === 'string') {
@@ -38,4 +38,3 @@ export const Theme = {
     themeColors.forEach(color => { setCssVar(color, this.default[color]) })
   }
 }
-
