@@ -4,7 +4,7 @@ import { colors, getCssVar, setCssVar } from 'quasar'
 const themeColors = ['primary', 'secondary', 'accent', 'dark', 'info', 'positive', 'negative', 'warning']
 const defaultCssColors = {
   primary: '#bf360c',
-  secondary:'#bf360',
+  secondary: '#bf360',
   accent: '#bf360c',
   dark: '#bf360c',
   info: '#bf360c',
@@ -17,7 +17,7 @@ export const Theme = {
   initialize () {
     if (this.default) return
     this.default = {}
-    themeColors.forEach(color => { this.default[color] = getCssVar(color) || defaultCssColors[color]})
+    themeColors.forEach(color => { this.default[color] = getCssVar(color) || defaultCssColors[color] })
   },
   apply (theme) {
     if (typeof theme === 'string') {
@@ -38,4 +38,3 @@ export const Theme = {
     themeColors.forEach(color => { setCssVar(color, this.default[color]) })
   }
 }
-

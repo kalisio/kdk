@@ -22,7 +22,7 @@ import { Schema } from '../common/index.js'
 
 // FIXME: we don't build vue component anymore, they are processed by webpack in the application
 // export * from './components'
-export { Store }
+export { Store }
 export { Theme }
 export { Capabilities }
 export { LocalStorage }
@@ -32,6 +32,7 @@ export { Units }
 export { Layout }
 export { Filter }
 export { Sorter }
+export { Reader }
 export { services }
 export { utils }
 export { composables }
@@ -40,8 +41,6 @@ export { hooks }
 export * from './api.js'
 export * from './events.js'
 export * from './i18n.js'
-export * from './filter.js'
-export * from './reader.js'
 export * from './search.js'
 export * from './guards.js'
 export * from '../common/index.js'
@@ -51,9 +50,9 @@ export default async function initialize () {
 
   logger.debug('[KDK] initializing core module')
 
-  // Delcare the module intiaization states 
-  Store.set('kdk', { core: { initialized : false }, map: { initialized: false }})
-  
+  // Delcare the module intiaization states
+  Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
+
   // Initialize singletons that might be used globally first
   Theme.initialize()
   Time.initialize()
@@ -70,7 +69,7 @@ export default async function initialize () {
   Filter.initialize()
   Sorter.initialize()
   Schema.initialize(_.get(config, 'schema'))
-  
+
   // Listen to the 'patched' event on the users
   utils.subscribeToUserChanges()
 
