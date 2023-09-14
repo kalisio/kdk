@@ -6,37 +6,21 @@ import { useQuasar } from 'quasar'
 import { Events } from '../events.js'
 import { i18n } from '../i18n.js'
 import { LocalStorage } from '../local-storage.js'
+import { InstallPwaPrompt } from '../utils/utils.pwa.js'
 
 export function usePwa () {
   // Data
   const $q = useQuasar()
   const installKey = 'install'
   const changelogKey = 'appChangelog'
-  let deferredPrompt = null
 
   // Functions
   function install () {
     if (window.matchMedia('(display-mode: standalone)').matches) return
     // Install prompt can be avoided, eg in tests
     if (!LocalStorage.get(installKey, true)) return
-    // Take cae of iOS
-    if ($q.platform.is.ios) {
-      $q.dialog({
-        title: i18n.t('composables.pwa.INSTALL_TITLE'),
-        message: i18n.t('composables.pwa.IOS_INSTALL_MESSAGE'),
-        ok: {
-          color: 'primary'
-        },
-        persistent: true,
-        position: 'bottom',
-        html: true
-      })
-    }
-    // Other platforms should cacth the event beforeinstallprompt
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault()
-      // Stash the event so it can be triggered later
-      deferredPrompt = e  
+    // Take care of install prompt
+    if (InstallPwaPrompt) {
       $q.dialog({
         title: i18n.t('composables.pwa.INSTALL_TITLE'),
         message: i18n.t('composables.pwa.INSTALL_MESSAGE'),
@@ -55,14 +39,26 @@ export function usePwa () {
         position: 'bottom',
         html: true
       }).onOk(async () => {
-        deferredPrompt.prompt()
+        InstallPwaPrompt.prompt()
         // Wait for the user to respond to the prompt
-        const { outcome } = await deferredPrompt.userChoice
-        logger.debug(`User response to the install prompt: ${outcome}`)
+        const { outcome } = await InstallPwaPrompt.userChoice
         // Refresh page
         if (outcome === 'accepted') location.reload()
       })
-    })
+    }
+    // Take cae of iOS
+    if ($q.platform.is.ios) {
+      $q.dialog({
+        title: i18n.t('composables.pwa.INSTALL_TITLE'),
+        message: i18n.t('composables.pwa.IOS_INSTALL_MESSAGE'),
+        ok: {
+          color: 'primary'
+        },
+        persistent: true,
+        position: 'bottom',
+        html: true
+      })
+    }
   }
   function update (registration) {
     // Refresh the page once the update has been applied
