@@ -1,10 +1,11 @@
 import _ from 'lodash'
+import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
 import { memory } from '@feathersjs/memory'
 import { Store, Reader, utils as kCoreUtils } from '../../core/client/index.js'
 import { Geolocation } from './geolocation.js'
-import { GeoJSONReader, KMLReader, GPXReader, SHPReader } from './readers/index.js'
+import * as readers from './readers/index.js'
 
 function siftMatcher (originalQuery) {
   // Filter out specific operators others than the reserved ones (starting by $),
@@ -34,10 +35,6 @@ export default async function init () {
 
   // Initialize singletons that might be used globally first
   Geolocation.initialize()
-  Reader.register('.geojson', GeoJSONReader)
-  Reader.register('.kml', KMLReader)
-  Reader.register('.gpx', GPXReader)
-  Reader.register('.shp', SHPReader)
 
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models
@@ -71,4 +68,13 @@ export default async function init () {
   Store.set('timeseries', reactive({
     span: 1440 // 24H
   }))
+
+  // Register the readers
+  _.forEach(_.get(config, 'readers.map', []), reader => {
+    logger.debug(`[KDK] registering reader ${reader}`)
+    Reader.register(`.${reader}`, readers[`${_.upperCase(reader)}Reader`])
+  })
+
+  // Store the intiaization state
+  Store.set('kdk.map.initialized', true)
 }

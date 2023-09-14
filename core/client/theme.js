@@ -39,6 +39,3 @@ export const Theme = {
   }
 }
 
-// Ensure it is initialized here as we can use it before initializing core module
-// so that components will be created with the right theme upfront
-Theme.initialize()
