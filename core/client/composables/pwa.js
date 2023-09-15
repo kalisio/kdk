@@ -6,7 +6,7 @@ import { useQuasar } from 'quasar'
 import { Events } from '../events.js'
 import { i18n } from '../i18n.js'
 import { LocalStorage } from '../local-storage.js'
-import { InstallPwaPrompt } from '../utils/utils.pwa.js'
+import { InstallPwaPrompt, installFFDesktopPrompt, installSafariPrompt, installDefaultPrompt } from '../utils/utils.pwa.js'
 
 export function usePwa () {
   // Data
@@ -20,45 +20,11 @@ export function usePwa () {
     // Install prompt can be avoided, eg in tests
     if (!LocalStorage.get(installKey, true)) return
     // Take care of install prompt
-    if (InstallPwaPrompt) {
-      $q.dialog({
-        title: i18n.t('composables.pwa.INSTALL_TITLE'),
-        message: i18n.t('composables.pwa.INSTALL_MESSAGE'),
-        cancel: {
-          id: 'ignore-button',
-          label: i18n.t('composables.pwa.IGNORE'),
-          color: 'primary',
-          outline: true
-        },
-        ok: {
-          id: 'install-button',
-          label: i18n.t('composables.pwa.INSTALL'),
-          color: 'primary'
-        },
-        persistent: true,
-        position: 'bottom',
-        html: true
-      }).onOk(async () => {
-        InstallPwaPrompt.prompt()
-        // Wait for the user to respond to the prompt
-        const { outcome } = await InstallPwaPrompt.userChoice
-        // Refresh page
-        if (outcome === 'accepted') location.reload()
-      })
-    }
-    // Take cae of iOS
-    if ($q.platform.is.ios) {
-      $q.dialog({
-        title: i18n.t('composables.pwa.INSTALL_TITLE'),
-        message: i18n.t('composables.pwa.IOS_INSTALL_MESSAGE'),
-        ok: {
-          color: 'primary'
-        },
-        persistent: true,
-        position: 'bottom',
-        html: true
-      })
-    }
+    if (InstallPwaPrompt) installDefaultPrompt()
+    // Take care of iOS
+    if ($q.platform.is.ios) installSafariPrompt()
+    // Take care of Firefox desktop
+    if ($q.platform.is.firefox && $q.platform.is.desktop) installFFDesktopPrompt()
   }
   function update (registration) {
     // Refresh the page once the update has been applied
