@@ -16,7 +16,7 @@
      -->
     <div v-if="items.length > 0">
       <KScrollArea
-        ref="scrollArea"
+        ref="scrollAreaRef"
         :max-height="scrollHeight"
         @scrolled="onScrolled"
       >
@@ -38,22 +38,22 @@
               v-bind="renderer"
               @item-selected="onItemSelected"
               :class="{
-                'q-pr-xs': dense,
-                'q-pr-sm': !dense
+                'q-pr-xs': hasScrollArea && dense,
+                'q-pr-sm': hasScrollArea && !dense
               }"
             />
           </template>
         </div>
       </KScrollArea>
       <div
-        v-if="scrollAction"
+        v-if="hasScrollAction"
         class="row justify-center"
       >
         <KAction
           id="scroll-action"
           icon="las la-angle-double-down"
           color="accent"
-          size="1rem"
+          size="0.8rem"
           :handler="scrollDown"
         />
       </div>
@@ -90,7 +90,7 @@ const emit = defineEmits(['selection-changed', 'collection-refreshed'])
 const props = defineProps({
   name: {
     type: String,
-    required: true
+    default: undefined
   },
   header: {
     type: Array,
@@ -147,8 +147,9 @@ const props = defineProps({
 })
 
 // Data
-const scrollArea = ref(null)
-const scrollAction = ref(false)
+const scrollAreaRef = ref(null)
+const hasScrollArea = ref(false)
+const hasScrollAction = ref(false)
 const headerHeight = ref(0)
 // Configuration
 const scrollOffset = 350
@@ -156,7 +157,7 @@ const scrollDuration = 250
 
 // Computed
 const rendererComponent = computed(() => loadComponent(props.renderer.component))
-const scrollHeight = computed(() => props.height - headerHeight.value)
+const scrollHeight = computed(() => props.height - headerHeight.value - (hasScrollAction.value ? 24 : 0))
 
 // Always use append mode for columns
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } =
@@ -167,25 +168,26 @@ function onHeaderResized (size) {
   headerHeight.value = size.height
 }
 function onScrolled (info) {
+  hasScrollArea.value = info.verticalSize > scrollHeight.value
   if (items.value.length < nbTotalItems.value) {
     if (info.verticalPercentage === 1) {
       if (items.value.length === currentPage.value * props.nbItemsPerPage) currentPage.value++
       refreshCollection()
-      scrollAction.value = true
+      hasScrollAction.value = true
     } else {
-      scrollAction.value = info.verticalSize > scrollHeight.value
+      hasScrollAction.value = hasScrollArea.value
     }
   } else {
     if (info.verticalPercentage === 1) {
-      scrollAction.value = false
+      hasScrollAction.value = false
     } else {
-      scrollAction.value = info.verticalSize > scrollHeight.value
+      hasScrollAction.value = hasScrollArea.value
     }
   }
 }
 function scrollDown () {
-  const position = scrollArea.value.getScrollPosition('vertical')
-  scrollArea.value.setScrollPosition('vertical', position + scrollOffset, scrollDuration)
+  const position = scrollAreaRef.value.getScrollPosition('vertical')
+  scrollAreaRef.value.setScrollPosition('vertical', position + scrollOffset, scrollDuration)
 }
 function onItemSelected (item, section) {
   emit('selection-changed', item, section)
@@ -194,14 +196,15 @@ function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
 }
 
-// Lifecycle hooks
+// Watch
 watch(items, () => {
   // On reset, reset as well scroll area
-  if (_.isEmpty(items.value) && scrollArea.value) scrollArea.value.setScrollPosition('vertical', 0)
+  if (_.isEmpty(items.value) && scrollAreaRef.value) scrollAreaRef.value.setScrollPosition('vertical', 0)
   // Emit events so that embbeding components can be aware of it
   onCollectionRefreshed()
 })
 
+// Hooks
 onBeforeMount(() => {
   refreshCollection()
   // Whenever the user abilities are updated, update collection as well
