@@ -74,9 +74,9 @@ export default async function initialize () {
   utils.subscribeToUserChanges()
 
   // Register the readers
-  _.forEach(_.get(config, 'readers.core', []), reader => {
-    logger.debug(`[KDK] registering reader ${reader}`)
-    Reader.register(`.${reader}`, readers[`${_.upperCase(reader)}Reader`])
+  _.forEach(_.get(config, 'readers.core', []), entry => {
+    logger.debug(`[KDK] registering mime types [${entry.mimeTypes}] to reader ${entry.reader}`)
+    Reader.register(entry.mimeTypes, readers[entry.reader])
   })
 
   // Store the intiaization state
