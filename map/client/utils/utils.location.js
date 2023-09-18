@@ -43,7 +43,7 @@ export async function listGeocoders () {
   try {
     const endpoint = Store.get('capabilities.api.gateway') + '/geocoder'
     const jwt = await api.get('storage').getItem(config.gatewayJwt)
-    list = await fetch(`${endpoint}/capabilities`, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
+    list = await fetch(`${endpoint}/capabilities/forward`, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
   } catch (error) {
     // TODO: warn somehow
   }
