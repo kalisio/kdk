@@ -135,12 +135,14 @@ export function useCollection (options) {
 
   // Lifecycle hooks
   watch(options.service, resetCollection)
-  watch(options.contextId, resetCollection)
   watch(options.listStrategy, resetCollection)
   watch(options.nbItemsPerPage, resetCollection)
   watch(options.appendItems, resetCollection)
-  watch(options.baseQuery, resetCollection)
-  watch(options.filterQuery, resetCollection)
+  // Some are not mandatory or initialized by default
+  if (options.contextId) watch(options.contextId, resetCollection)
+  if (options.baseQuery) watch(options.baseQuery, resetCollection)
+  if (options.filterQuery) watch(options.filterQuery, resetCollection)
+
 
   onBeforeMount(() => {
     if (options.appendItems.value) {
