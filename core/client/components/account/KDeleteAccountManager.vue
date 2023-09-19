@@ -52,7 +52,7 @@ async function onDelete () {
       // We prefer to clean the token manually instead
       //router.push({ name: 'logout' })
       Store.set('user', null)
-      await api.removeAccessToken()
+      await api.authentication.removeAccessToken()
       router.push({ name: 'login' })
     } catch (error) {
       throw new Error(`[KDK] Cannot delete ${name} account: ${error}`)
