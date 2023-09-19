@@ -315,7 +315,7 @@ export const Layout = {
       if (_.find(window.components, { id: widget })) {
         result = { placement, window }
       } else {
-        logger.warn(`[KDK] Unable to find the widget ${widget}`)
+        logger.debug(`[KDK] Unable to find the widget ${widget}`)
       }
     })
     return result
