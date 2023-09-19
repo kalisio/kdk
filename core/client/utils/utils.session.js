@@ -31,7 +31,7 @@ export async function logout () {
   } catch (error) {
     // This ensure user is unset and an old token is not kept e.g. when the user has been deleted
     Store.set('user', null)
-    await api.removeAccessToken()
+    await api.authentication.removeAccessToken()
     // Rethrow for caller to handle
     throw error
   }
@@ -48,7 +48,7 @@ export async function restoreSession () {
     // await logout()
     // It actually causes a call to the remove method on the authentication service, which fails due to missing access token
     // See https://github.com/kalisio/kdk/issues/757, as a consequence we prefer to clean the token manually instead
-    await api.removeAccessToken()
+    await api.authentication.removeAccessToken()
     // Rethrow for caller to handle
     throw error
   }
