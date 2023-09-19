@@ -55,7 +55,7 @@ export function filterContent (content, filter) {
 }
 
 // Perform binding between a configuration object and a given context object
-export function bindContent (content, context) {
+export function bindContent (content, context, omit = []) {
   const components = _.flatMapDeep(content)
   _.forEach(components, (component) => {
     // Process component handlers
@@ -63,14 +63,14 @@ export function bindContent (content, context) {
     // Then process component props
     // It allows to write any property like { label: ':xxx' } and bind it
     // to a component property from the context like we do for handler
-    bindProperties(component, context)
+    bindProperties(component, context, omit)
     // Recursively bind the props/handlers on the sub content object
-    if (component.content) bindContent(component.content, context)
+    if (component.content) bindContent(component.content, context, omit)
   })
   return content
 }
 
-export function bindProperties (item, context) {
+export function bindProperties (item, context, omit = []) {
   if (Array.isArray(item)) {
     for (let i = 0; i < item.length; i++) {
       item[i] = bindProperties(item[i], context)
@@ -78,7 +78,7 @@ export function bindProperties (item, context) {
   } else if (typeof item === 'object') {
     _.forOwn(item, (value, key) => {
       // Bind required properties only
-      if (!ReservedBindings.includes(key)) {
+      if (!ReservedBindings.includes(key) && !omit.includes(key)) {
         if (typeof value === 'string') {
           item[key] = getBoundValue(value, context)
         } else {
