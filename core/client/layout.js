@@ -109,11 +109,11 @@ export const Layout = {
     const elementConfig = _.get(config, elementPath)
     return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
   },
-  setElement (element, options, context) {
+  setElement (element, options, context, omit = []) {
     const props = _.defaultsDeep(_.cloneDeep(options), this.getElementDefaults(element))
     const { content, mode } = props
     // process the content
-    if (!_.isEmpty(content) && context) props.content = bindContent(content, context)
+    if (!_.isEmpty(content) && context) props.content = bindContent(content, context, omit)
     // compute components
     if (Array.isArray(content)) props.components = content.filter(sift(props.filter))
     else props.components = _.get(content, mode, []).filter(sift(props.filter))
@@ -252,7 +252,8 @@ export const Layout = {
     return this.getElement(`windows.${placement}`)
   },
   setWindow (placement, options, context) {
-    this.setElement(`windows.${placement}`, options, context)
+    // Take care to not bind widget headers here as they will be when creating widgets
+    this.setElement(`windows.${placement}`, options, context, ['header'])
   },
   setWindowMode (placement, mode) {
     this.setElementMode(`windows.${placement}`, mode)
