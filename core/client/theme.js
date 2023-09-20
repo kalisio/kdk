@@ -4,7 +4,7 @@ import { colors, getCssVar, setCssVar } from 'quasar'
 const themeColors = ['primary', 'secondary', 'accent', 'dark', 'info', 'positive', 'negative', 'warning']
 const defaultCssColors = {
   primary: '#bf360c',
-  secondary:'#f68e6f',
+  secondary: '#f68e6f',
   accent: '#f15626',
   dark: '#8f2809',
   info: '#bf360c',

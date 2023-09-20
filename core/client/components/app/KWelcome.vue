@@ -2,8 +2,8 @@
   <q-dialog v-model="showWelcome" persistent>
     <q-card class="q-pa-xs column items-center q-gutter-y-xs no-wrap">
       <!-- Logo -->
-      <component 
-        :is="logoComponent" 
+      <component
+        :is="logoComponent"
         :height="dense ? '70px' : '100px'"
       />
       <!-- Carousel -->
@@ -18,8 +18,8 @@
         control-color="primary"
         height="320px"
       >
-        <q-carousel-slide 
-          name="welcome" 
+        <q-carousel-slide
+          name="welcome"
           class="column no-wrap justify-center text-center q-gutter-sm"
         >
           <div :class="dense ? 'text-weight-medium' : 'text-h6'">{{ $t('KWelcome.WELCOME_TITLE') }}</div>
@@ -28,8 +28,8 @@
             <q-icon size="1.5em" class="text-primary cursor-pointer" name="las la-external-link-square-alt" @click="onOnlineHelp()"/>
           </div>
         </q-carousel-slide>
-        <q-carousel-slide 
-          name="tour" 
+        <q-carousel-slide
+          name="tour"
           class="column no-wrap justify-center text-center q-gutter-sm"
         >
           <div>{{ $t('KWelcome.TOUR_MESSAGE') }}
@@ -37,8 +37,8 @@
           </div>
           <div>{{ $t('KWelcome.TOUR_LINK_MESSAGE') }}</div>
         </q-carousel-slide>
-        <q-carousel-slide 
-          name="goodbye" 
+        <q-carousel-slide
+          name="goodbye"
           class="column no-wrap justify-center text-center q-gutter-sm"
         >
           <div>
@@ -51,16 +51,16 @@
         </q-carousel-slide>
       </q-carousel>
       <div :class="dense ? 'q-py-xs' : 'q-py-md'">
-        <KAction  
-          id="close-button" 
-          label="CLOSE" 
-          renderer="form-button" 
-          :handler="() => hide()" 
+        <KAction
+          id="close-button"
+          label="CLOSE"
+          renderer="form-button"
+          :handler="() => hide()"
         />
       </div>
-      <q-checkbox 
-        v-model="toggle" 
-        :label="$t('KWelcome.HIDE_WELCOME')" 
+      <q-checkbox
+        v-model="toggle"
+        :label="$t('KWelcome.HIDE_WELCOME')"
         color="primary"
         size="xs"
         :dense="dense"

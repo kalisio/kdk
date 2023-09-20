@@ -1,7 +1,6 @@
 import { click, clickAction, type, uploadFile } from './utils.js'
 import { clickPaneAction } from './layout.js'
 
-
 export async function updateAccountProfile (page, name, avatarPath, wait = 3000) {
   await clickPaneAction(page, 'left', 'edit-profile')
   await page.waitForTimeout(wait)

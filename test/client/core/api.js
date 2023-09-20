@@ -63,7 +63,7 @@ export class Api {
       const response = await client.getService('organisations').find({ query: { _id: orgOwner._id } })
       // If not create it
       if (response.total === 0) {
-        org = await client.getService('organisations').create({ name: orgOwner.name, billing: { subscription: { plan: 'diamond' }} })
+        org = await client.getService('organisations').create({ name: orgOwner.name, billing: { subscription: { plan: 'diamond' } } })
         debug(`Created organisation ${org.name} - ID ${org._id}`)
       } else {
         org = response.data[0]
@@ -305,7 +305,7 @@ export class Api {
         debug(`Removed user ${user.name} - ID ${user._id}`)
       } catch (error) {
         debug(`Error deleting user ${user.name} - ID ${user._id}:`, error.name || error.code || error.message)
-      }     
+      }
     }
 
     client.removeGroups = async (organisation) => {
