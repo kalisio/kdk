@@ -164,8 +164,8 @@ export function createClient (config) {
   }
 
   api.getBaseUrl = function () {
-    // In case we are not in a mobile platform we can override the default app origin anyway
-    let origin = (Platform.is.cordova ? config.domain : config.origin || window.location.origin)
+    // We can override the default app origin anyway
+    let origin = config.origin || window.location.origin
     // Check for registered custom base Url if any
     if (window.localStorage.getItem(getBaseUrlStorageKey())) {
       origin = window.localStorage.getItem(getBaseUrlStorageKey())

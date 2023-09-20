@@ -105,15 +105,6 @@ export default {
           handler: this.onRemoveMedia
         })
       }
-      if (this.canCapturePhoto()) {
-        actions.push({
-          id: 'capture-photo',
-          icon: 'las la-camera',
-          tooltip: this.$t('KMediaBrowser.ADD_PHOTO_LABEL'),
-          color: (this.hasMedia ? 'grey-5 ' : 'secondary'),
-          handler: this.onCapturePhoto
-        })
-      }
       actions.push({
         id: 'add-media',
         icon: 'las la-paperclip',
@@ -180,10 +171,6 @@ export default {
     }
   },
   methods: {
-    canCapturePhoto () {
-      if (!this.$q.platform.is.cordova) return false
-      return true
-    },
     onImageTrasnformed () {
       this.currentMediaTransformed = true
     },

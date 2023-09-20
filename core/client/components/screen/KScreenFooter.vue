@@ -28,5 +28,5 @@ import KSponsor from '../KSponsor.vue'
 const $q = useQuasar()
 const { Version } = useVersion()
 const canChangeEndpoint = ref(false)
-if (Version.value.flavor === 'dev' || $q.platform.is.cordova) canChangeEndpoint.value = true
+if (Version.value.flavor === 'dev') canChangeEndpoint.value = true
 </script>
