@@ -25,7 +25,6 @@ import KAction from '../KAction.vue'
 import KSponsor from '../KSponsor.vue'
 
 // Data
-const $q = useQuasar()
 const { Version } = useVersion()
 const canChangeEndpoint = ref(false)
 if (Version.value.flavor === 'dev') canChangeEndpoint.value = true
