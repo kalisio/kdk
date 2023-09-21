@@ -14,12 +14,16 @@ export const createMailerStub = (stubConfig) => {
     },
     // Helper function used to check if a given email has been sent
     // Erase it after check
-    checkEmail: (user, fromValue, subjectValue, done) => {
+    checkEmail: (user, fromValue, subjectValue) => {
       expect(emails.length > 0).beTrue()
       const message = emails[0]
       expect(message.from).to.equal(fromValue)
       expect(message.subject).to.equal(subjectValue)
-      done(null, emails.shift())
+      return emails.shift()
+    },
+    // Helper function used to check the number of sent emails
+    checkNbEmails: (count) => {
+      expect(emails.length).to.equal(count)
     }
   }, stubConfig)
 }

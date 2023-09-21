@@ -4,6 +4,7 @@ import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import config from 'config'
+import { addSubscription } from '@kalisio/feathers-webpush/client.js'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 // We now rely on mailer stub which is faster
@@ -19,6 +20,17 @@ describe('core:account', () => {
     userService, authenticationService, mailerService, accountService,
     gmailUser, mailerStub, userObject
 
+  const subscription = {
+    endpoint: process.env.SUBSCRIPTION_ENDPOINT,
+    keys: {
+      p256dh: process.env.SUBSCRIPTION_KEY_P256DH,
+      auth: process.env.SUBSCRIPTION_KEY_AUTH
+    },
+    browser: {
+      name: 'chrome'
+    }
+  }
+  
   before(async () => {
     chailint(chai, util)
 
@@ -127,8 +139,9 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(10000)
 
-  it('check invitation email', (done) => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Welcome', done)
+  it('check invitation email', () => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Welcome')
+    mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
     setTimeout(() => {
@@ -164,11 +177,13 @@ describe('core:account', () => {
     .timeout(5000)
 
   it('creates a user', async () => {
-    const user = await userService.create({
+    let user = {
       email: gmailUser,
       password: 'Pass;word1',
       name: 'test-user'
-    })
+    }
+    await addSubscription(user, subscription, 'subscriptions')
+    user = await userService.create(user)
     userObject = user
     expect(userObject.isVerified).toExist()
     expect(userObject.isVerified).beFalse()
@@ -178,8 +193,9 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(10000)
 
-  it('check signup verification email', (done) => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Confirm your signup', done)
+  it('check signup verification email', () => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Confirm your signup')
+    mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
     setTimeout(() => {
@@ -197,15 +213,16 @@ describe('core:account', () => {
         user: { email: gmailUser },
         token: userObject.verifyShortToken
       }
-    })
+    }, { user: userObject })
     userObject = user
     expect(userObject.isVerified).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
 
-  it('check signup verified email', (done) => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Thank you, your email has been verified', done)
+  it('check signup verified email', () => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Thank you, your email has been verified')
+    mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
     setTimeout(() => {
@@ -230,21 +247,18 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(10000)
 
-  it('check reset password request email', (done) => {
-    const checkToken = (err, message) => {
-      if (_.isNil(err)) {
-        // Extract token from email beign compatible either wit mailer stub or gmail api
-        message = message.html || Buffer.from(message.body.data, 'base64').toString()
-        const tokenEntry = '<strong>'
-        const firstTokenIndex = message.indexOf(tokenEntry) + tokenEntry.length
-        const lastTokenIndex = message.indexOf('</strong>')
-        token = message.substring(firstTokenIndex, lastTokenIndex)
-        done()
-      } else {
-        done(err)
-      }
+  it('check reset password request email', () => {
+    const checkToken = (message) => {
+      // Extract token from email beign compatible either wit mailer stub or gmail api
+      message = message.html || Buffer.from(message.body.data, 'base64').toString()
+      const tokenEntry = '<strong>'
+      const firstTokenIndex = message.indexOf(tokenEntry) + tokenEntry.length
+      const lastTokenIndex = message.indexOf('</strong>')
+      token = message.substring(firstTokenIndex, lastTokenIndex)
     }
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Reset your password', checkToken)
+    const message = mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Reset your password')
+    checkToken(message)
+    mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
     setTimeout(() => {
@@ -293,8 +307,9 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(15000)
 
-  it('check reset password email', (done) => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was reset', done)
+  it('check reset password email', () => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was reset')
+    mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
     setTimeout(() => {
@@ -354,8 +369,9 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(15000)
 
-  it('check changed password email', (done) => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was changed', done)
+  it('check changed password email', () => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was changed')
+    mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
     setTimeout(() => {
@@ -397,8 +413,9 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(10000)
 
-  it('check identity change email', (done) => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your account information was changed', done)
+  it('check identity change email', () => {
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your account information was changed')
+    mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
     setTimeout(() => {
