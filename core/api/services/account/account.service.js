@@ -66,7 +66,7 @@ export default function (name, app, options) {
         } else if (_.has(user, 'sponsor.id')) {
           try {
             const sponsor = await userService.get(user.sponsor.id)
-            email.sponsor = sponsor.name
+            email.sponsor = _.get(sponsor, 'profile.name')
           } catch (error) {
             // We will not send the sponsor name in this case
           }
