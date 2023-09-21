@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import common from 'feathers-hooks-common'
 import request from 'superagent'
 import chai from 'chai'
@@ -30,7 +29,7 @@ describe('core:account', () => {
       name: 'chrome'
     }
   }
-  
+
   before(async () => {
     chailint(chai, util)
 
