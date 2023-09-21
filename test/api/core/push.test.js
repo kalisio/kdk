@@ -1,7 +1,8 @@
-import { addSubscription, removeSubscription } from '@kalisio/feathers-webpush/client.js'
+import _ from 'lodash'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import config from 'config'
+import { addSubscription, removeSubscription } from '@kalisio/feathers-webpush/client.js'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 // We now rely on mailer stub which is faster
@@ -113,8 +114,10 @@ describe('core:push', () => {
     .timeout(5000)
 
   it('a user should be able to register its subscriptions', async () => {
+    const previousUser = _.cloneDeep(user)
     await addSubscription(user, subscription, 'subscriptions')
-    await userService.patch(user._id, { subscriptions: user.subscriptions })
+    // Subscriptions change detection requires the previous user to be set
+    await userService.patch(user._id, { subscriptions: user.subscriptions }, { user: previousUser })
     expect(user.subscriptions).toExist()
     expect(user.subscriptions.length === 1).beTrue()
     expect(user.subscriptions[0].endpoint).to.equal(subscription.endpoint)
@@ -125,11 +128,12 @@ describe('core:push', () => {
   // Let enough time to process
     .timeout(10000)
 
-  it('check new subscription emails', (done) => {
+  it('check new subscription emails', () => {
     // Add some delay to wait for email reception
-    mailerStub.checkEmail(user.subscriptions[0], mailerService.options.auth.user, 'Security alert - new browser detected', () => {
-      mailerStub.checkEmail(user.subscriptions[0], mailerService.options.auth.user, 'Security alert - new browser detected', done)
-    })
+    mailerStub.checkEmail(user.subscriptions[0], mailerService.options.auth.user, 'Security alert - new browser detected')
+    mailerStub.checkNbEmails(1)
+    mailerStub.checkEmail(user.subscriptions[0], mailerService.options.auth.user, 'Security alert - new browser detected')
+    mailerStub.checkNbEmails(0)
   })
   // Let enough time to process
     .timeout(15000)

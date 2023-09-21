@@ -15,9 +15,11 @@ export async function sendNewSubscriptionEmail (hook) {
     throw new Error('The \'sendNewSubscriptionEmail\' hook should only be used as a \'after\' hook.')
   }
 
-  // Check for a new subscription
+  // Check for a new subscription if any
   const updatedUser = hook.result
   const previousUser = hook.params.user
+  // If we can't compare abort, eg f-a-m might patch user to update tokens
+  if (!updatedUser || !previousUser) return hook
   const newSubscription = _.differenceBy(_.get(updatedUser, 'subscriptions', []), _.get(previousUser, 'subscriptions', []), 'endpoint')
   if (_.size(newSubscription) !== 1) return
 
