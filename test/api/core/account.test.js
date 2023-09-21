@@ -140,7 +140,8 @@ describe('core:account', () => {
     .timeout(10000)
 
   it('check invitation email', () => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Welcome')
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user,
+      'Welcome', [new RegExp(userObject.profile.name, 'g'), new RegExp(userObject.email, 'g')])
     mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
@@ -194,7 +195,8 @@ describe('core:account', () => {
     .timeout(10000)
 
   it('check signup verification email', () => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Confirm your signup')
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user,
+      'Confirm your signup', [new RegExp(userObject.profile.name, 'g'), new RegExp(userObject.email, 'g'), new RegExp(userObject.verifyShortToken, 'g'), new RegExp(userObject.verifyShortToken, 'g')])
     mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
@@ -221,7 +223,8 @@ describe('core:account', () => {
     .timeout(5000)
 
   it('check signup verified email', () => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Thank you, your email has been verified')
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user,
+      'Thank you, your email has been verified', [new RegExp(userObject.email, 'g')])
     mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
@@ -256,7 +259,8 @@ describe('core:account', () => {
       const lastTokenIndex = message.indexOf('</strong>')
       token = message.substring(firstTokenIndex, lastTokenIndex)
     }
-    const message = mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Reset your password')
+    const message = mailerStub.checkEmail(userObject, mailerService.options.auth.user,
+      'Reset your password', [new RegExp(userObject.profile.name, 'g'), new RegExp(userObject.email, 'g')])
     checkToken(message)
     mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
@@ -308,7 +312,8 @@ describe('core:account', () => {
     .timeout(15000)
 
   it('check reset password email', () => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was reset')
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user,
+      'Your password was reset', [new RegExp(userObject.profile.name, 'g'), new RegExp(userObject.email, 'g')])
     mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
@@ -370,7 +375,8 @@ describe('core:account', () => {
     .timeout(15000)
 
   it('check changed password email', () => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your password was changed')
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user,
+      'Your password was changed', [new RegExp(userObject.profile.name, 'g'), new RegExp(userObject.email, 'g')])
     mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
@@ -414,7 +420,8 @@ describe('core:account', () => {
     .timeout(10000)
 
   it('check identity change email', () => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user, 'Your account information was changed')
+    mailerStub.checkEmail(userObject, mailerService.options.auth.user,
+      'Your account information was changed', [new RegExp(userObject.profile.name, 'g'), new RegExp(gmailUser.replace('com', 'xyz'), 'g'), new RegExp(userObject.verifyShortToken, 'g')])
     mailerStub.checkNbEmails(0)
     // Add some delay to wait for email reception
     /*
