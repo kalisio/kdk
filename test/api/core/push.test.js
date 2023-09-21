@@ -131,10 +131,10 @@ describe('core:push', () => {
   it('check new subscription emails', () => {
     // Add some delay to wait for email reception
     mailerStub.checkEmail(user.subscriptions[0], mailerService.options.auth.user,
-      'Security alert - new browser detected', [new RegExp(user.profile.name, 'g'), new RegExp('chrome', 'g')])
+      'Security alert - new browser detected', [new RegExp(user.profile.name, 'g'), new RegExp(subscription.browser.name, 'g')])
     mailerStub.checkNbEmails(1)
     mailerStub.checkEmail(user.subscriptions[0], mailerService.options.auth.user,
-      'Security alert - new browser detected', [new RegExp(user.profile.name, 'g'), new RegExp('chrome', 'g')])
+      'Security alert - new browser detected', [new RegExp(user.profile.name, 'g'), new RegExp(subscription.browser.name, 'g')])
     mailerStub.checkNbEmails(0)
   })
   // Let enough time to process
