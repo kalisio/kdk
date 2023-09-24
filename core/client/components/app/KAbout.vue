@@ -76,7 +76,7 @@ const defaultActions = [{
   }
 }
 ]
-if (_.isNil(bugReport.address)) {
+if (!_.isNil(bugReport.address)) {
   defaultActions.unshift({
     id: 'report-bug',
     icon: 'las la-bug',
