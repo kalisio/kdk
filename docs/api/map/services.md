@@ -85,7 +85,7 @@ this.loadContext(response.data[0])
 
 The data model of a layer descriptor as used by the API is detailed below.
 
-![Catalog data model](../../assets/catalog-data-model.png)
+![Catalog data model](../../.vitepress/public/images/catalog-data-model.png)
 
 The catalog is typically populated at application startup with a default set of layers, as a consequence the best is to have a look at some of our application configuration files like the one of [Kano](https://github.com/kalisio/kano/blob/master/api/config/layers).
 
@@ -178,7 +178,7 @@ The common model is a [GeoJSON feature](https://tools.ietf.org/html/rfc7946#sect
 
 The raw data model of a feature (i.e. when no aggregation is performed) as used by the API is detailed below.
 
-![Feature data model](../../assets/feature-data-model.png)
+![Feature data model](../../.vitepress/public/images/feature-data-model.png)
 
 ::: tip 
 The default features service response is a [GeoJson Feature Collection](https://datatracker.ietf.org/doc/html/rfc7946#section-3.3) so that it can be directly put on a map. You can avoid this by setting the `asFeatureCollection` query paramter to `false` on your request.
@@ -266,7 +266,7 @@ When performing aggregation, **time** will become an object containing a key per
 
 The data model of a feature as returned by the API when some elements of the feature are aggregated over time is detailed below.
 
-![Aggregated feature data model](../../assets/aggregated-feature-data-model.png)
+![Aggregated feature data model](../../.vitepress/public/images/aggregated-feature-data-model.png)
 
 ::: details Example of aggregated features request result
 ```json
@@ -385,7 +385,7 @@ const collection = await api.getService('features').find({
 
 The following [hooks](./hooks.md) are executed on the `features` service:
 
-<mermaid>
+```mermaid
 graph TB
   beforeAll{marshallTimeQuery}
   afterAll{after all}
@@ -417,7 +417,7 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 These are mainly hooks to convert from/to JS/MongoDB data types.
 
@@ -442,7 +442,7 @@ The common model is a [GeoJSON feature](https://tools.ietf.org/html/rfc7946#sect
 
 The data model of an alert as used by the API is detailed below.
 
-![Alert data model](../../assets/alert-data-model.png)
+![Alert data model](../../.vitepress/public/images/alert-data-model.png)
 
 The details of some of the properties are the following:
 * **cron**: a [CRON pattern](https://github.com/kelektiv/node-cron) to schedule the alert check at regular intervals, e.g. `* 0 * * * *` will run it every minute
@@ -463,7 +463,7 @@ The details of some of the properties are the following:
 
 The following [hooks](./hooks.md) are executed on the `alerts` service:
 
-<mermaid>
+```mermaid
 graph TB
   beforeAll{before all}
   afterAll{after all}
@@ -494,6 +494,6 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 These are mainly hooks to convert from/to JS/MongoDB data types.

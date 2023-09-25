@@ -14,7 +14,7 @@ The data model of a user as used by the API is [detailed here](../../architectur
 
 The following [hooks](./hooks.md) are executed on the `users` service:
 
-<mermaid>
+```mermaid
 graph TB
   beforeAll{none before all}
   afterAll{after all}
@@ -48,7 +48,7 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 ## Devices service
 
@@ -76,7 +76,7 @@ Devices are store in the `devices` property of the user they belong to.
 
 The following [hooks](./hooks.md) are executed on the `devices` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{none before all}
   after{none after all}
@@ -98,7 +98,7 @@ graph TB
   class hook1,hook2,hook3,hook4 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE,CREATE_DEVICE,REMOVE_DEVICE,UPDATE_DEVICE,PATCH_USER operationClass
-</mermaid>
+```
 
 ## Mailer service
 
@@ -122,7 +122,7 @@ On 15 february 2021 Gmail API requires OAuth2 authentication to send emails. The
 
 The following [hooks](./hooks.md) are executed on the `databases` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{"disallow('external')"}
   after{none after all}
@@ -133,7 +133,7 @@ graph TB
   class hook1,hook2,hook3,hook4 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,CREATE,REMOVE operationClass
-</mermaid>
+```
 
 ## Pusher service
 
@@ -193,7 +193,7 @@ As a consequence, the `create`/`remove` operations have to be called with an `ac
 
 The following [hooks](./hooks.md) are executed on the `pusher` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{"disallow('external')"}
   after{none after all}
@@ -227,7 +227,7 @@ graph TB
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
   classDef snsOperationClass fill:#63c5da,stroke:#333,stroke-width:2px
   class CREATE_ENDPOINT,CREATE_TOPIC,SUBSCRIBE,PUBLISH,REMOVE_ENDPOINT,REMOVE_TOPIC,UNSUBSCRIBE,UPDATE_ENDPOINT snsOperationClass
-</mermaid>
+```
 
 ## Account service
 
@@ -245,7 +245,7 @@ This service consists in associating verification tokens to users so that they c
 
 The following [hooks](./hooks.md) are executed on the `account` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{none before all}
   after{none after all}
@@ -258,7 +258,7 @@ graph TB
   class hook1,hook2,hook3,hook4 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 ### Testing
 
@@ -322,7 +322,7 @@ groups: [
 
 The following [hooks](./hooks.md) are executed on the `authorisations` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{none before all}
   after{none after all}
@@ -341,7 +341,7 @@ graph TB
   class hook1,hook2,hook3,hook4 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 ## Tags service
 
@@ -365,7 +365,7 @@ The data model of a tag as used by the API is [detailed here](../../architecture
 
 The following [hooks](./hooks.md) are executed on the `tags` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{none before all}
   after{none after all}
@@ -394,7 +394,7 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 ## Storage service
 
@@ -418,7 +418,7 @@ No data model, data are directly stored on target storage backend (i.e. AWS S3).
 
 The following [hooks](./hooks.md) are executed on the `storage` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{none before all}
   after{none after all}
@@ -448,7 +448,7 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 ## Databases service
 
@@ -466,7 +466,7 @@ Service methods are only allowed from the server side
 
 The following [hooks](./hooks.md) are executed on the `databases` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{"disallow('external')"}
   after{none after all}
@@ -481,7 +481,7 @@ graph TB
   class hook1,hook2,hook3,hook4 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,CREATE,REMOVE operationClass
-</mermaid>
+```
 
 ## Organisations service
 
@@ -545,7 +545,7 @@ The data model of a group as used by the API is [detailed here](../../architectu
 
 The following [hooks](./hooks.md) are executed on the `groups` service:
 
-<mermaid>
+```mermaid
 graph TB
   before{none before all}
   after{none after all}
@@ -568,7 +568,7 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-</mermaid>
+```
 
 ## Local settings service
 

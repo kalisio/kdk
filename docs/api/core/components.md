@@ -10,11 +10,11 @@ There is no generic activity component within the core module because activities
 
 The basic application layout relies on [Material Design](https://material.io/) and is composed of a *page* with different *panes* that can de open/closed on-demand, as illustred in our [Kano](https://github.com/kalisio/kano) application:
 
-![Kano layout - 1](../../assets/kano-layout-1.png)
+![Kano layout - 1](../../.vitepress/public/images/kano-layout-1.png)
 
 Here is the layout in a different configuration to show additional components like the *window* composed of different *widgets* to be selected using a *tab* and the *FAB* (floating actions button):
 
-![Kano layout - 2](../../assets/kano-layout-2.png)
+![Kano layout - 2](../../.vitepress/public/images/kano-layout-2.png)
 
 The layout is flexible enough to only use part of it like e.g. the [Kalisio Crisis](https://github.com/kalisio/crisis) application is not a map-centered UI and the bottom/right panes are not always used for instance. Althought it can be built programmatically it aims at being constructed from the [application configuration](../../guides/basics/step-by-step.md#frontend-side) as well.
 
@@ -53,7 +53,7 @@ In order to provide a consistent look & feel as much as possible, components or 
 
 Most activities are used to list, search, edit (i.e. update) and remove data model items. To avoid a lot of boilerplate code the KDK provides you with built-in components to manage item collections either as list or grid as shown below:
 
-![Item collections](../../assets/item-collections.png)
+![Item collections](../../.vitepress/public/images/item-collections.png)
 
 ### List
 
@@ -222,7 +222,7 @@ The **KDK** comes with 2 types of editor:
 
 Both components depend on different [mixins](./mixins.md) according to the following lifecycle:
 
-![Editor lifecycle](../../assets/editor-lifecycle.png)
+![Editor lifecycle](../../.vitepress/public/images/editor-lifecycle.png)
 
 ### k-editor
 

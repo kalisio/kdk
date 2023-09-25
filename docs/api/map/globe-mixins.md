@@ -141,7 +141,7 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 }
 ```
 
-![3D marker cluster](../../assets/marker-cluster-3D.png)
+![3D marker cluster](../../.vitepress/public/images/marker-cluster-3D.png)
 
 ### Additional feature types
 

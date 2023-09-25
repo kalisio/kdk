@@ -4,7 +4,7 @@
 
 The typical global architecture and the underlying technologies of **KDK** are summarized in the following diagram.
 
-![Global architecture](./../assets/global-architecture.svg)
+![Global architecture](./../.vitepress/public/images/global-architecture.svg)
 
 ## Architecture at scale
 

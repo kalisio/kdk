@@ -11,7 +11,7 @@ The **k-catalog** is used to list all available layers in [catalog](./services.m
   * **open**: `true` if layer category should initially be open in the catalog component (defaults to `false`),
   * **filter**: a filter supported by [sift](https://github.com/crcn/sift.js) to select layers from the catalog belonging to the category
 
-![Catalog](../../assets/layers-panel.png)
+![Catalog](../../.vitepress/public/images/layers-panel.png)
 
 This component relies on some others internal components:
 * **k-layers-selector** used to list a set of layers and manage the selection
@@ -56,7 +56,7 @@ The **k-time-series-widget** is used to display weather probes or measurements a
 
 Here is a view of the widget:
 
-![Timeseries](../../assets/timeseries.png)
+![Timeseries](../../.vitepress/public/images/timeseries.png)
 
 The main methods are the following:
 * **refresh()** updates the marker layer used to locate where the probe measurements come from and updates the probe timeseries graph
@@ -111,7 +111,7 @@ The **k-navigation-bar** groups together the main actions available on a [mappin
 
 Here is a view of some of the components presented previously:
 
-![Mapping layout](../../assets/kano-components.png)
+![Mapping layout](../../.vitepress/public/images/kano-components.png)
 
 ## Legend
 

@@ -174,7 +174,7 @@ Marker [clustering options](https://github.com/Leaflet/Leaflet.markercluster#opt
 }
 ```
 
-![2D marker cluster](../../assets/marker-cluster-2D.png)
+![2D marker cluster](../../.vitepress/public/images/marker-cluster-2D.png)
 
 ::: tip
 If you want to disable a default clustering configuration like `cluster: { disableClusteringAtZoom: 18 }` on a per-layer basis you have to explicitely unset it on your layer options using `cluster: null` or `cluster: false`.

@@ -36,6 +36,7 @@ lib/
 # gitbook build
 _book/
 
-# VuePress
-docs/.vuepress/dist
+# vitepress
+docs/.vitepress/cache
+docs/.vitepress/dist
 docs/node_modules/

@@ -112,4 +112,4 @@ To be able to include the diagrams within the documentation, we adopted the foll
 4. reference it in the documentation using a link like this `![My legend](https://raw.githubusercontent.com/kalisio/kdk/master/images/my-diagram.png)`
 
 The template looks like this:
-![Hooks Diagram Template](../assets/hooks-diagram-template.png)
+![Hooks Diagram Template](../.vitepress/public/images/hooks-diagram-template.png)

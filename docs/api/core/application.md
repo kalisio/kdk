@@ -100,7 +100,7 @@ Depending on the options you have to create a *models* and *services* directorie
 
 The following [hooks](./HOOKS.MD) are usually globally executed on the application:
 
-![Application hooks](../../assets/application-hooks.svg)
+![Application hooks](../../.vitepress/public/images/application-hooks.svg)
 
 ## Permissions
 
@@ -232,7 +232,7 @@ Events.on('myGlobal-property-changed', myCallback) // When updating a specific p
 
 The **KDK** offers a simple way of theming your application. The application theme is strongly linked with the [Quasar's brand color](https://quasar.dev/style/color-palette#brand-colors) approach. It strongly relies on using a predefined color schema composed of 8 colors:
 
-![Theme colors](../../assets/theme-colors.svg)
+![Theme colors](../../.vitepress/public/images/theme-colors.svg)
 
 You can customize these color schema **statically** and **dynamically**.
 

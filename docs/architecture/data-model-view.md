@@ -10,7 +10,7 @@ Data models are dynamic by nature, allowing any plugin to add custom fields when
 
 The most common properties of a user are described by the following data model:
 
-![User data model](./../assets/users-data-model.svg)
+![User data model](./../.vitepress/public/images/users-data-model.svg)
 
 The details of each property are the following:
 * **email** : user e-mail used as an internal unique ID
@@ -61,7 +61,7 @@ The details of each property are the following:
 
 The most common properties of an organization are described by the following data model:
 
-![Organization data model](./../assets/organizations-data-model.svg)
+![Organization data model](./../.vitepress/public/images/organizations-data-model.svg)
 
 This data model is manipulated through the [organizations service](./../api/core/services.md#organisations-service).
 
@@ -75,7 +75,7 @@ The details of each property are the following:
 
 The most common properties of a group object are described by the following data model:
 
-![Group data model](./../assets/groups-data-model.svg)
+![Group data model](./../.vitepress/public/images/groups-data-model.svg)
 
 This data model is manipulated through the [groups service](./../api/core/services.md#groups-service).
 
