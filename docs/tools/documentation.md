@@ -2,26 +2,23 @@
 
 ## Generating the doc
 
-The approach we have adopted rely on: 
-* [VuePress](https://vuepress.vuejs.org/) to generate the static web site
-* the **VuePress** plugin [pwa](https://vuepress.vuejs.org/plugin/official/plugin-pwa.html) to enable the site to be refreshed when the content changed 
-* our own [theme](https://github.com/kalisio/vuepress-theme-kalisio). This theme overides the **VuePress** default theme in adding the Kalisio logo instead of the Adds.
+The approach we have adopted rely on [VitePress](https://vitepress.dev/) to generate the static web site
 
-### Install VuePress
+### Install VitePress
 
-You first need to add the dependencies in the project:
+You first need to install vitepress:
 
 ```bash
-$yarn add -D vuepress
-$yarn add -D http://github.com/kalisio/vuepress-theme-kalisio#1.3.0
+$yarn add -D vitepress
 ```
 
 And then add the documentation generation scripts to the `package.json` file:
 
 ```json
 "scripts": {
-  "docs:dev": "vuepress dev docs",
-  "docs:build": "vuepress build docs"
+  "dev": "vitepress dev",
+  "build": "vitepress build",
+  "preview": "vitepress preview"
 }
 ```
 
@@ -29,39 +26,35 @@ Create the following directory structure to store the **VuePress** stuff:
 
 ```
 docs/
-|_ .vuepress/
-|    |_ public/
-|    |    |_ manifest.json
-|    |_ config.js
-|_ assets/
+|_ .vitepress/
+|    |_ config.mjs
 |_ package.json
-|_ README.md
+|_ index.md
 |....
 ```
 
-* `.vuepress` stores the **VuePress** configuration.
-* `assets` stores the resources (images, diagrams...) you want to use in your documentation. 
-* `README.md` is the entry point of your documentation. 
+* `.vitepress` stores the **VitePress** configuration.
+* `index.md` is the entry point of your documentation. 
 * `package.json` is the Node.js entry point to build the documentation. The file must have the following content:
 
 <<< @/package.json
 
 ::: tip
-The structure follows the **VuePress** directory structure and more information can be found [here](https://vuepress.vuejs.org/guide/directory-structure.html)
+The structure follows the **VitePress** directory structure and more information can be found [here](https://vitepress.dev/guide/getting-started#file-structure)
 :::
 
-### Configure VuePress
+### Configure VitePress
 
-Edit the `config.js` to configure **VuePress**. We usually have this kind of configuration:
+Edit the `config.mjs` to configure **VitePress**. We usually have this kind of configuration:
 
-<<< @/.vuepress/config.js
+<<< @/.vitepress/config.mjs
 
 ### Write the documentation
 
 Here are few tips to know when writing the documentation:
 * Pages structure: the pages should match the navigation structure you have defined in the `config.js` file.
-* Handling assets: you can simply refer to the asset using relative URLs. Please refer to the [Asset Handling](https://vuepress.vuejs.org/guide/assets.html#relative-urls) page to know more.
-* Take advantage of [Markdown extensions](https://vuepress.vuejs.org/guide/markdown.html#header-anchors)
+* Handling assets: you can simply refer to the asset using relative URLs. Please refer to the [Asset Handling](https://vitepress.dev/guide/asset-handling) page to know more.
+* Take advantage of [Markdown extensions](https://vitepress.dev/guide/markdown)
 
 ### Deploy the documentation to the gh-pages
 
@@ -77,7 +70,7 @@ Add the following lines to your `.travis.yml` file:
     - cd docs && yarn install && yarn build
     deploy:
       provider: pages
-      local-dir: docs/.vuepress/dist
+      local-dir: docs/.vitepress/dist
       skip-cleanup: true
       github-token: $GITHUB_TOKEN  
       keep-history: true
