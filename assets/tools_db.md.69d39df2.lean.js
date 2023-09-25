@@ -1,0 +1,1 @@
+import{_ as e,o,c as a,Q as t}from"./chunks/framework.70a39c86.js";const _=JSON.parse('{"title":"Database tools","description":"","frontmatter":{},"headers":[],"relativePath":"tools/db.md","filePath":"tools/db.md"}'),r={name:"tools/db.md"},s=t("",8),n=[s];function l(i,c,d,p,u,m){return o(),a("div",null,n)}const f=e(r,[["render",l]]);export{_ as __pageData,f as default};
