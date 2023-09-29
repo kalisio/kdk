@@ -9,6 +9,7 @@
 <script setup>
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { uid, getCssVar, useQuasar } from 'quasar'
+import bbox from '@turf/bbox'
 import KLocationSearch from '../location/KLocationSearch.vue'
 import { useCurrentActivity } from '../../composables'
 
@@ -70,10 +71,15 @@ async function createLocationLayer () {
   // show the layer
   if (!CurrentActivity.value.isLayerVisible(LocationLayerName)) await CurrentActivity.value.showLayer(LocationLayerName)
   // zoom to the location
-  const zoomOrDist = CurrentActivity.value.is2D() ? 18 : 75
-  const lng = location.value.geometry.coordinates[0]
-  const lat = location.value.geometry.coordinates[1]
-  CurrentActivity.value.center(lng, lat, zoomOrDist)
+  const geometry = location.value.geometry
+  if (geometry.type === 'Point') {
+    const zoomOrDist = CurrentActivity.value.is2D() ? 18 : 75
+    const lng = location.value.geometry.coordinates[0]
+    const lat = location.value.geometry.coordinates[1]
+    CurrentActivity.value.center(lng, lat, zoomOrDist)
+  } else {
+    CurrentActivity.value.zoomToBBox(bbox(location.value))
+  }
 }
 
 async function removeLocationLayer () {
