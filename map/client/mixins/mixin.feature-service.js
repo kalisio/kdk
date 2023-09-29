@@ -108,7 +108,9 @@ export const featureService = {
       const filterQuery = await this.getFilterQueryForFeatures(options)
       const sortQuery = await this.getSortQueryForFeatures(options)
       Object.assign(query, filterQuery, sortQuery)
-      const response = await this.$api.getService(options.probeService).find({ query })
+      // Check API to be used in case the layer is coming from a remote "planet"
+      const api = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.$api)
+      const response = await api.getService(options.probeService).find({ query })
       const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
         features.forEach(feature => options.processor(feature))
@@ -193,7 +195,9 @@ export const featureService = {
       return query
     },
     async getFeaturesFromQuery (options, query) {
-      const response = await this.$api.getService(options.service).find({ query })
+      // Check API to be used in case the layer is coming from a remote "planet"
+      const api = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.$api)
+      const response = await api.getService(options.service).find({ query })
       const features = (response.type === 'FeatureCollection' ? response.features : [response])
       if (typeof options.processor === 'function') {
         features.forEach(feature => options.processor(feature))

@@ -155,13 +155,16 @@ export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
 }
 
 // Helper to set required JWT as query param in a given set of layers for underlying engine
-export async function setEngineJwt (layers) {
+export async function setEngineJwt (layers, planetApi) {
+  // Backward compatibility when we previously used a single API
+  if (!planetApi) planetApi = api
+  const planetConfig = planetApi.getConfig()
   // If we need to use API gateway forward token as query parameter
   // (Leaflet does not support anything else by default as it mainly uses raw <img> tags)
-  let jwt = (config.gatewayJwt ? await api.get('storage').getItem(config.gatewayJwt) : null)
-  let jwtField = config.gatewayJwtField
+  let jwt = (planetConfig.gatewayJwt ? await planetApi.get('storage').getItem(planetConfig.gatewayJwt) : null)
+  let jwtField = planetConfig.gatewayJwtField
   // Check both the default built-in config or the server provided one if any (eg mobile apps)
-  const gatewayUrl = Store.get('capabilities.api.gateway', config.gateway)
+  const gatewayUrl = planetConfig.gateway || Store.get('capabilities.api.gateway')
   if (jwt) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'iconUrl', gatewayUrl, jwtField, jwt)
@@ -176,9 +179,9 @@ export async function setEngineJwt (layers) {
   }
   // We might also proxy some data directly from the app when using object storage
   // This is only for raw raster data not OGC protocols
-  jwt = (config.apiJwt ? await api.get('storage').getItem(config.apiJwt) : null)
+  jwt = (planetConfig.apiJwt ? await planetApi.get('storage').getItem(planetConfig.apiJwt) : null)
   jwtField = 'jwt'
-  const apiUrl = api.getBaseUrl()
+  const apiUrl = planetApi.getBaseUrl()
   if (jwt) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'geotiff.url', apiUrl, jwtField, jwt)

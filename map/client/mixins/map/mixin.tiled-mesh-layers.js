@@ -19,7 +19,8 @@ export const tiledMeshLayers = {
 
       // Build grid source
       const [gridKey, gridConf] = extractGridSourceConfig(options)
-      const gridSource = makeGridSource(gridKey, { weacastApi: this.weacastApi, apiToken })
+      const weacastApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
+      const gridSource = makeGridSource(gridKey, { weacastApi, apiToken })
       gridSource.setup(gridConf)
       if (gridSource.updateCtx) {
         // define variables for source's dynamic properties

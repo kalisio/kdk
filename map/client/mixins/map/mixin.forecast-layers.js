@@ -45,8 +45,10 @@ export const forecastLayers = {
       const leafletOptions = options.leaflet || options
       // Check for valid types
       if (!leafletOptions.type.startsWith('weacast')) return
+      // Check API to be used in case the layer is coming from a remote "planet"
+      const weacastApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
       // We need to add Weacast API object as argument before creating the layer
-      leafletOptions.source = this.weacastApi
+      leafletOptions.source = weacastApi
       // Copy as well color map options
       const colorMap = _.get(options, 'variables[0].chromajs')
       if (colorMap) Object.assign(leafletOptions, colorMap)

@@ -67,7 +67,7 @@ export const activity = {
         layer.description = this.$tie(layer.description)
         // Check for Weacast API availability
         const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
-        if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) return
+        if (isWeacastLayer && (!this.getWeacastApi() || !this.forecastModel)) return
         await this.addLayer(layer)
       }
       // Filter layers with variables, not just visible ones because we might want to
