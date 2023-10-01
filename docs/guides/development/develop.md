@@ -27,4 +27,4 @@ $yarn lint:map    # lint the map part
 
 ## Web app
 
-Please follow our [application template development guide](https://kalisio.github.io/kApp/guides/development/develop.html).
+Please follow our [application template development guide](https://kalisio.github.io/skeleton/guides/development/develop.html).

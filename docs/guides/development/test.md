@@ -25,4 +25,4 @@ $yarn mocha:core -g "core:team" # run the team tests
 
 ## Web app
 
-Please follow our [application template testing guide](https://kalisio.github.io/kApp/guides/development/test.html).
+Please follow our [application template testing guide](https://kalisio.github.io/skeleton/guides/development/test.html).

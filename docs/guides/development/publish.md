@@ -26,4 +26,4 @@ Before you publish a module take care of updating the version of your dependent 
 
 Almost the same process applies as for the modules except the app is not published on the NPM registry but in the Docker Hub. However, the process is less automated to ensure more flexibility so that the build artefacts of the different flavors can be managed independently. 
 
-Please follow our [application template publishing guide](https://kalisio.github.io/kApp/guides/development/publish.html).
+Please follow our [application template publishing guide](https://kalisio.github.io/skeleton/guides/development/publish.html).
