@@ -56,4 +56,4 @@ Due to some [changes](http://codetunnel.io/npm-5-changes-to-npm-link/) in the wa
 
 ## Web app
 
-Please follow our [application template installation from source code guide](https://kalisio.github.io/skeleton/guides/installing-kapp.html#from-source-code).
+Please follow our [application template installation from source code guide](https://kalisio.github.io/skeleton/guides/installing.html).
