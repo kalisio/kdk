@@ -89,7 +89,7 @@
     "@feathersjs/feathers": "^5.0.8",
     "@feathersjs/schema": "^5.0.8",
     "@feathersjs/socketio": "^5.0.8",
-    "@kalisio/feathers-s3": "^1.1.0",
+    "@kalisio/feathers-s3": "^1.2.0",
     "@kalisio/feathers-webpush": "^1.0.1",
     "@turf/bbox": "^6.0.1",
     "@weacast/core": "^2.1.5",
