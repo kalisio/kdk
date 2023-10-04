@@ -4,6 +4,7 @@
     v-model="selectedGeocoders"
     :options="availableGeocoders"
     type="toggle"
+    size="xs"
   />
 </template>
 

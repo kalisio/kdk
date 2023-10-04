@@ -17,8 +17,8 @@ const { util, expect } = chai
 describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, catalogService, defaultLayers,
-    zonesService, vigicruesStationsService, vigicruesObsService, adsbObsService,
-    position, items, eventListeners, eventCount, eventData
+    zonesService, vigicruesStationsService, vigicruesObsService, 
+    adsbObsService, items, eventListeners, eventCount, eventData
 
   function eventsOn (service) {
     eventListeners = {}
