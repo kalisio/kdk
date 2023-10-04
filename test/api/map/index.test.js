@@ -16,7 +16,7 @@ const { util, expect } = chai
 
 describe('map:services', () => {
   let app, server, port, // baseUrl,
-    userService, userObject, geocoderService, catalogService, defaultLayers,
+    userService, userObject, catalogService, defaultLayers,
     zonesService, vigicruesStationsService, vigicruesObsService, adsbObsService,
     position, items, eventListeners, eventCount, eventData
 
@@ -81,8 +81,6 @@ describe('map:services', () => {
     userService = app.getService('users')
     expect(userService).toExist()
     await app.configure(map)
-    geocoderService = app.getService('geocoder')
-    expect(geocoderService).toExist()
     // Create a global catalog service
     await createCatalogService.call(app)
     catalogService = app.getService('catalog')
@@ -508,26 +506,6 @@ describe('map:services', () => {
       if (result.hour === 13) expect(result).to.deep.equal({ hour: 13, dayOfWeek: 6, count: 4 })
       else expect(result).to.deep.equal({ hour: 14, dayOfWeek: 6, count: 1 })
     })
-  })
-  // Let enough time to process
-    .timeout(10000)
-
-  it('geocode an address', async () => {
-    const address = '80 chemin des tournesols, 11400 Castelnaudary'
-    const response = await geocoderService.create({ address: address }, { user: userObject, checkAuthorisation: true })
-    expect(response.length === 1).beTrue()
-    position = response[0]
-    expect(position.latitude).toExist()
-    expect(position.longitude).toExist()
-  })
-  // Let enough time to process
-    .timeout(10000)
-
-  it('reverse geocode a position', async () => {
-    const response = await geocoderService.create(position, { user: userObject, checkAuthorisation: true })
-    expect(response.length > 0).beTrue()
-    expect(response[0].country).toExist()
-    expect(response[0].streetName).toExist()
   })
   // Let enough time to process
     .timeout(10000)
