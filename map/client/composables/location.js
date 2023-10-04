@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import { ref } from 'vue'
 import { Store, i18n } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
@@ -28,7 +29,7 @@ export function useLocation () {
           if (_.indexOf(allGeocoders, geocoder.source)) {
             return { value: geocoder.source, label: i18n.tie(geocoder.source) }
           } else {
-            Logger.warn(`[KDK] invalid geocoder ${geocoder.source}`)
+            logger.warn(`[KDK] invalid geocoder ${geocoder.source}`)
           }
         })
         selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
