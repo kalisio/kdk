@@ -15,22 +15,28 @@ export function useLocation () {
       // clear the geocoders
       availableGeocoders.value = []
       selectedGeocoders.value = []
-    } else if (_.isEmpty(geocoders)) {
-      // check the capabilities to list the geocoders
-      const geocoders = await listGeocoders()
-      availableGeocoders.value = _.map(geocoders, geocoder => {
-        return { value: geocoder, label: i18n.tie(geocoder) }
-      })
-      selectedGeocoders.value = geocoders
     } else {
-      availableGeocoders.value = _.map(geocoders, geocoder => {
-        return { value: geocoder.source, label: i18n.tie(geocoder.source) }
-      })
-      selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
-        return geocoder.selected
-      }), geocoder => {
-        return geocoder.source
-      })
+      // check the capabilities to list the geocoders
+      const allGeocoders = await listGeocoders()
+      if (_.isEmpty(geocoders)) {
+        availableGeocoders.value = _.map(allGeocoders, geocoder => {
+          return { value: geocoder, label: i18n.tie(geocoder) }
+        })
+        selectedGeocoders.value = allGeocoders
+      } else {
+        availableGeocoders.value = _.map(geocoders, geocoder => {
+          if (_.indexOf(allGeocoders, geocoder.source)) {
+            return { value: geocoder.source, label: i18n.tie(geocoder.source) }
+          } else {
+            Logger.warn(`[KDK] invalid geocoder ${geocoder.source}`)
+          }
+        })
+        selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
+          return geocoder.selected
+        }), geocoder => {
+          return geocoder.source
+        })
+      }
     }
   }
   async function geolocate () {

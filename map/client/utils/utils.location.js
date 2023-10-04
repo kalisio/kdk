@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import config from 'config'
-import { Store, api } from '../../../core.client.js'
+import { Store, api, i18n, Events } from '../../../core.client.js'
 import { formatGeocodingResult, parseCoordinates, formatUserCoordinates } from '../utils.js'
 
 export async function searchLocation (pattern, options) {
@@ -39,13 +39,14 @@ export async function searchLocation (pattern, options) {
 }
 
 export async function listGeocoders () {
-  let list = []
+  let response
   try {
     const endpoint = Store.get('capabilities.api.gateway') + '/geocoder'
     const jwt = await api.get('storage').getItem(config.gatewayJwt)
-    list = await fetch(`${endpoint}/capabilities/forward`, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
+    response = await fetch(`${endpoint}/capabilities/forward`, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
+    if (response.i18n) i18n.registerTranslation(response.i18n)
   } catch (error) {
-    // TODO: warn somehow
+    Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
   }
-  return list
+  return response ? response.geocoders : []
 }
