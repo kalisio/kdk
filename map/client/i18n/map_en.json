@@ -345,14 +345,14 @@
   },
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
-    "NO_RESULTS": "@:EMPTY",
+    "NO_RESULT": "No result found",
     "FILTER": "Filter search services",
     "GEOLOCATE": "Locate me",
     "EDIT": "Edit on a map"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
-    "NO_RESULTS": "@:EMPTY",
+    "NO_RESULT": "No result found",
     "FILTER": "Filter search services",
     "GEOLOCATE": "Locate me",
     "DRAW": "Draw on a map"

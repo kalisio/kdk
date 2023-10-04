@@ -60,8 +60,11 @@
     <!-- No options -->
     <template v-slot:no-option>
       <q-item>
-        <q-item-section class="text-grey">
-          {{ $t('KLocationSearch.NO_RESULTS') }}
+        <q-item-section avatar>
+          <q-icon name="las la-frown" color="grey" />
+        </q-item-section>
+        <q-item-section class="text-grey">          
+          {{ $t('KLocationSearch.NO_RESULT') }}
         </q-item-section>
       </q-item>
     </template>

@@ -346,14 +346,14 @@
   },
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
-    "NO_RESULTS": "@:EMPTY",
+    "NO_RESULT": "Aucun résultat trouvé",
     "FILTER": "Filtrer les services de recherche",
     "GEOLOCATE": "Me localiser",
     "EDIT": "Editer sur une carte"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
-    "NO_RESULTS": "@:EMPTY",
+    "NO_RESULT": "Aucun résultat trouvé",
     "FILTER": "Filtrer les services de recherche",
     "GEOLOCATE": "Me localiser",
     "DRAW": "Dessiner sur une carte"
