@@ -183,10 +183,6 @@ export default async function () {
   if (catalogConfig) {
     await createCatalogService.call(app)
   }
-  const geocoderConfig = app.get('geocoder')
-  if (geocoderConfig) {
-    await app.createService('geocoder', { servicesPath })
-  }
   // Add app-specific hooks to required services
   app.on('service', async service => {
     if (service.name === 'alerts') {
