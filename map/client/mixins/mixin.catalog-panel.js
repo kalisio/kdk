@@ -3,23 +3,24 @@ export const catalogPanel = {
     panelStyle () {
       const screenHeight = this.$q.screen.height
       this.scrollAreaMaxHeight = screenHeight * 0.75 // 75vh
-      let width = 390
+      this.scrollAreaMaxWidth = 390
       if (this.$q.screen.lt.sm) {
         this.scrollAreaMaxHeight = screenHeight * 0.6
-        width = 300
+        this.scrollAreaMaxWidth = 300
       } else if (this.$q.screen.lt.md) {
         this.scrollAreaMaxHeight = screenHeight * 0.65
-        width = 330
+        this.scrollAreaMaxWidth = 330
       } else if (this.$q.screen.lt.lg) {
         this.scrollAreaMaxHeight = screenHeight * 0.7
-        width = 360
+        this.scrollAreaMaxWidth = 360
       }
-      return `height: ${this.scrollAreaMaxHeight}px; width: ${width}px`
+      return `height: ${this.scrollAreaMaxHeight}px; width: ${this.scrollAreaMaxWidth}px`
     }
   },
   data () {
     return {
-      scrollAreaMaxHeight: 0
+      scrollAreaMaxHeight: 0,
+      scrollAreaMaxWidth: 390
     }
   }
 }
