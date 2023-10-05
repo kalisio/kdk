@@ -1,7 +1,11 @@
 <template>
   <q-list dense bordered>
     <div class="no-padding" :style="panelStyle">
-      <KPanel id="favorite-views-toolbar" :content="toolbar" class="no-wrap q-pl-sm q-pr-md" />
+      <KPanel 
+        id="favorite-views-toolbar" 
+        :content="toolbar" 
+        class="no-wrap q-pl-sm q-pr-md" 
+      />
       <KColumn
         class="q-pl-sm"
         service="catalog"
@@ -12,6 +16,7 @@
         :filter-query="filter.query"
         @selection-changed="onViewSelected"
         :height="scrollAreaMaxHeight - 100"
+        :width="scrollAreaMaxWidth"
         :dense="true"
       />
     </div>
