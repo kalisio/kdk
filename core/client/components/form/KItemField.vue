@@ -71,16 +71,27 @@ export default {
       options: []
     }
   },
+  computed: {
+    hasSingleService () {
+      const services = _.uniqBy(this.properties.services, 'service')
+      return services.length === 1
+    }
+  },
   methods: {
+    getServiceForItem (item) {
+      return (this.hasSingleService ?
+        this.properties.services[0] :
+        _.find(this.properties.services, { service: item.service }))
+    },
     getId (item) {
       return _.kebabCase(this.getLabel(item))
     },
     getLabel (item) {
-      const service = _.find(this.properties.services, { service: item.service })
+      const service = this.getServiceForItem(item)
       return _.get(item, service.field || 'name', '')
     },
     getDescription (item) {
-      const service = _.find(this.properties.services, { service: item.service })
+      const service = this.getServiceForItem(item)
       return _.get(item, service.description || 'description', '')
     },
     getIcon (item) {

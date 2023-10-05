@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import common from 'feathers-hooks-common'
+import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import { filterLayers, updateLayerReferences, getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
 
@@ -9,7 +10,7 @@ export default {
   before: {
     all: [],
     find: [
-      filterLayers, coreHooks.distinct
+      fuzzySearch({ fields: ['name'] }), coreHooks.diacriticSearch(), filterLayers, coreHooks.distinct
     ],
     get: [],
     create: [

@@ -41,17 +41,24 @@ export const activity = {
       return []
     },
     async getCatalogLayers () {
+      // Do we get layers coming from project ?
+      if (_.has(this.$route, 'query.project')) {
+        this.project = await this.$api.getService('projects').get(_.get(this.$route, 'query.project'))
+      }
+
       let layers = []
       // We get layers coming from global catalog first if any
       const globalCatalogService = this.$api.getService('catalog', '')
       if (globalCatalogService) {
-        const response = await globalCatalogService.find()
+        const query = (this.project ? { _id: { $in: _.map(_.filter(this.project.layers, layer => !layer.context), '_id') } } : {})
+        const response = await globalCatalogService.find({ query })
         layers = layers.concat(response.data)
       }
       // Then we get layers coming from contextual catalog if any
       const catalogService = this.$api.getService('catalog')
       if (catalogService && (catalogService !== globalCatalogService)) {
-        const response = await catalogService.find()
+        const query = (this.project ? { _id: { $in: _.map(_.filter(this.project.layers, layer => !_.has(layer, 'context')), '_id') } } : {})
+        const response = await catalogService.find({ query })
         layers = layers.concat(response.data)
       }
       // Do we need to inject a token ?

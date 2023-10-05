@@ -35,7 +35,12 @@ export default {
   inject: ['kActivity'],
   computed: {
     baseQuery () {
-      return Object.assign({ type: 'Context' }, this.sorter.query)
+      const query = { type: 'Context' }
+      // Do we get views coming from project ?
+      if (this.kActivity.project) {
+        query._id = { $in: _.map(this.kActivity.project.views, '_id') }
+      }
+      return Object.assign(query, this.sorter.query)
     },
     toolbar () {
       return [

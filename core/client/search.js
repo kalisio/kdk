@@ -11,7 +11,7 @@ export const Search = {
     // Perform request for partial match to all registered services
     const requests = _.map(services, serviceDescriptor => {
       // Retrieve the service using the service or name key
-      const service = api.getService(serviceDescriptor.service)
+      const service = api.getService(serviceDescriptor.service, serviceDescriptor.context)
       // Build the query using given template if any
       const query = Object.assign({}, serviceDescriptor.baseQuery)
       // Then add partial match
@@ -31,6 +31,7 @@ export const Search = {
         // Format the result
         response.data.forEach(data => {
           data.service = serviceDescriptor.service
+          data.context = serviceDescriptor.context
           data.field = serviceDescriptor.field
           const icon = getIconName(data)
           if (_.isEmpty(icon) && _.has(serviceDescriptor, 'icon')) {

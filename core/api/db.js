@@ -72,8 +72,13 @@ export function objectifyIDs (object) {
 export function toObjectIDs (object, properties) {
   properties.forEach(property => {
     const value = _.get(object, property)
-    const id = createObjectID(value)
-    if (id) _.set(object, property, id)
+    if (Array.isArray(value)) {
+      const ids = value.map(id => createObjectID(id)).filter(id => id)
+      if (ids.length > 0) _.set(object, property, ids)
+    } else {
+      const id = createObjectID(value)
+      if (id) _.set(object, property, id)
+    }
   })
 }
 
