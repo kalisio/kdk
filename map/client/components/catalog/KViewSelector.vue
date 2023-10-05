@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative-position q-pl-md full-width row items-center no-wrap cursor-pointer"
+    class="relative-position q-pl-md row full-width items-center no-wrap cursor-pointer"
     v-ripple:primary
   >
     <!-- View name -->
@@ -16,7 +16,7 @@
       <q-space />
     </div>
     <!-- View favorite action -->
-    <k-action
+    <KAction
       id="set-home-view"
       icon="las la-star"
       :color="item.isDefault ? 'primary' : 'grey-5'"
@@ -24,7 +24,7 @@
       :propagate="false"
       @triggered="$emit('item-selected', item, 'set-home-view')" />
     <!-- View actions -->
-    <k-panel
+    <KPanel
       :id="`${item.name}-actions`"
       :content="itemActions"
       :context="item" />
