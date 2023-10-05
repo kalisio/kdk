@@ -73,6 +73,7 @@ export default {
         dropdownIcon: 'las la-ellipsis-v',
         actionRenderer: 'item',
         propagate: false,
+        dense: true,
         content: [{
           id: 'remove-view',
           icon: 'las la-trash',
