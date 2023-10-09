@@ -8,6 +8,15 @@ import _ from 'lodash'
 const { BadRequest } = errors
 const debug = makeDebug('kdk:core:account:service')
 
+class AccountService extends AuthenticationManagementService {
+  // add a method to verify whether en email exist or not
+  async verifyEmail (params) {
+    const usersService = this.app.getService('users')
+    const response = await usersService.find({ query: { email: params.email } })
+    return { status: response.total === 1 ? 200 : 404 }
+  }
+}
+
 export default function (name, app, options) {
   // Keep track of notifier in service options
   options.notifier = async function (type, user, notifierOptions) {
@@ -94,20 +103,8 @@ export default function (name, app, options) {
 
   const servicePath = app.get('apiPath') + '/account'
   const userService = app.getService('users')
-  /*
-  app.configure(accountManager({
-    // By default it is impossible to reset password if email is not verified
-    // The problem is that if you loose your password before validating your email you are blocked,
-    // as a consequence we release this constraint
-    skipIsVerifiedCheck: true,
-    service: userService.getPath(true),
-    path: servicePath,
-    notifier: options.notifier
-  }))
-
-  return app.service(servicePath)
-  */
-  return new AuthenticationManagementService(app, {
+  
+  return new AccountService(app, {
     // By default it is impossible to reset password if email is not verified
     // The problem is that if you loose your password before validating your email you are blocked,
     // as a consequence we release this constraint

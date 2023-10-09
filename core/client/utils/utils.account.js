@@ -1,5 +1,10 @@
 import { api } from '../api.js'
 
+export async function verifyEmail (email) {
+  const response = await api.getService('account').verifyEmail({ email })
+  return response.status === 200 ? true : false
+}
+
 export function resendVerifySignup (email) {
   return api.getService('account').create({
     action: 'resendVerifySignup',

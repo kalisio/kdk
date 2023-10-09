@@ -418,6 +418,7 @@
     "LOGIN_LABEL": "Se connecter",
     "FORGOT_YOUR_PASSWORD_LABEL": "Mot de passe oublié ?",
     "DONT_HAVE_AN_ACCOUNT_LABEL": "Vous n'avez pas de compte ?",
+    "INVALID_EMAIL": "Impossible de trouver le compte associé à l'email saisie",
     "LOGIN_ERROR": "Mauvais identifiants ou service indisponible, veuillez réessayer",
     "CONTEXTUAL_HELP": "@:NEED_HELP"
   },
@@ -761,7 +762,7 @@
     "MESSAGE": "Saisissez votre nouveau mot de passe",
     "ACTION": "Appliquer",
     "RESEND_LINK": "Renvoyer un code de réinitialisation",
-    "EMAIL_FIELD_LABEL": "Saisissez votre adresse mail",
+    "EMAIL_FIELD_LABEL": "Saisissez votre adresse email",
     "PASSWORD_FIELD_LABEL": "Saisissez votre nouveau mot de passe",
     "CONFIRM_PASSWORD_FIELD_LABEL": "Confirmez votre nouveau mot de passe",
     "TOKEN_FIELD_LABEL": "Saisissez le code reçu par email",
@@ -774,9 +775,10 @@
     "TITLE": "Réinitialiser mon mot de passe ?",
     "MESSAGE": "Saisissez votre adresse email et nous vous enverrons un code pour réinitialiser votre mot de passe",
     "ACTION": "Envoyer",
-    "EMAIL_FIELD_LABEL": "Saisissez votre adresse mail",
-    "ERROR_MESSAGE_IS_VERIFIED": "Veuillez consulter votre messagerie et vérifier tout d'abord votre adresse mail",
-    "ERROR_MESSAGE_DEFAULT": "Impossible d'envoyer le mail, merci de vérifier votre adresse et essayez à nouveau"
+    "EMAIL_FIELD_LABEL": "Saisissez votre adresse email",
+    "ERROR_INVALID_EMAIL": "Impossible de trouver le compte associé à l'email saisie",
+    "ERROR_MESSAGE_IS_VERIFIED": "Veuillez consulter votre messagerie et vérifier tout d'abord votre adresse email",
+    "ERROR_MESSAGE_DEFAULT": "Impossible d'envoyer l'email, merci de vérifier votre adresse et essayez à nouveau"
   },
   "KMemberFilter": {
     "NONE": "Aucun",

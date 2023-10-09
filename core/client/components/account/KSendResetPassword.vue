@@ -30,11 +30,14 @@
 import _ from 'lodash'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { i18n, utils } from '../..'
+import { verifyEmail } from '../../utils/utils.account.js'
 import KScreen from '../screen/KScreen.vue'
 
 // Data
 const router = useRouter()
+const $q = useQuasar()
 const formRef = ref(null)
 const message = ref(i18n.t('KSendResetPassword.MESSAGE'))
 const processing = ref(false)
@@ -69,22 +72,26 @@ const textClass = computed(() => {
 async function apply () {
   const { isValid, values } = formRef.value.validate()
   if (!isValid) return false
-  try {
-    processing.value = true
-    await utils.sendResetPassword(values.email)
-    processing.value = false
-    router.push({ path: `reset-password/${values.email}` })
-  } catch (error) {
-    processing.value = false
-    const type = _.get(error, 'errors.$className')
-    switch (type) {
-      case 'isVerified':
-        message.value = i18n.t('KSendResetPassword.ERROR_MESSAGE_IS_VERIFIED')
-        break
-      default:
-        message.value = i18n.t('KSendResetPassword.ERROR_MESSAGE_DEFAULT')
+  processing.value = true
+  if (await verifyEmail(values.email)) {
+    try {
+      await utils.sendResetPassword(values.email)
+      processing.value = false
+      router.push({ path: `reset-password/${values.email}` })
+    } catch (error) {
+      const type = _.get(error, 'errors.$className')
+      switch (type) {
+        case 'isVerified':
+          message.value = i18n.t('KSendResetPassword.ERROR_MESSAGE_IS_VERIFIED')
+          break
+        default:
+          message.value = i18n.t('KSendResetPassword.ERROR_MESSAGE_DEFAULT')
+      }
     }
+  } else {
+    $q.notify({ type: 'negative', message: i18n.t('KSendResetPassword.ERROR_INVALID_EMAIL') })  
   }
   send.value = true
+  processing.value = false
 }
 </script>

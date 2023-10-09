@@ -55,6 +55,9 @@ module.exports = {
       maxUsers: 1000
     }
   },
+  exporter: {
+    // nothing for now
+  },
   storage: {
     s3Client: {
       credentials: {
