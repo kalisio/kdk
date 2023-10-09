@@ -114,7 +114,10 @@ export default async function () {
   if (mailerConfig) {
     await app.createService('mailer', { servicesPath })
     debug('\'mailer\' service created')
-    await app.createService('account', { servicesPath })
+    await app.createService('account', { 
+      servicesPath, 
+      methods: ['create', 'verifyEmail'] 
+    })
     debug('\'account\' service created')
   }
 
