@@ -417,6 +417,7 @@
     "LOGIN_LABEL": "Log in",
     "FORGOT_YOUR_PASSWORD_LABEL": "Forgot your password ?",
     "DONT_HAVE_AN_ACCOUNT_LABEL": "Don't have an account ?",
+    "INVALID_EMAIL": "Unable to find the account associated with the email entered",
     "LOGIN_ERROR": "Wrong credentials or service unavailable, please try again",
     "CONTEXTUAL_HELP": "@:NEED_HELP"
   },
@@ -773,6 +774,7 @@
     "MESSAGE": "Enter your email address and we will send you a code to reset your password",
     "ACTION": "Send",
     "EMAIL_FIELD_LABEL": "Enter your email address",
+    "ERROR_INVALID_EMAIL": "Unable to find the account associated to the email entered",
     "ERROR_MESSAGE_IS_VERIFIED": "Check your inbox and verify your email address first",
     "ERROR_MESSAGE_DEFAULT": "Error while sending email, please check the address and send it again or try again later"
   },
