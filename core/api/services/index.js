@@ -94,6 +94,8 @@ export default async function () {
   if (authConfig) {
     await app.createService('users', { modelsPath, servicesPath })
     debug('\'users\' service created')
+    await app.createService('account', { servicesPath, methods: ['create', 'verifyEmail'] })
+    debug('\'account\' service created')
     await app.createService('authorisations', { servicesPath })
     debug('\'authorisations\' service created')
   }
@@ -114,11 +116,6 @@ export default async function () {
   if (mailerConfig) {
     await app.createService('mailer', { servicesPath })
     debug('\'mailer\' service created')
-    await app.createService('account', { 
-      servicesPath, 
-      methods: ['create', 'verifyEmail'] 
-    })
-    debug('\'account\' service created')
   }
 
   const pushConfig = app.get('push')
