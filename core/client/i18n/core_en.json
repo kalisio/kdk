@@ -126,10 +126,13 @@
     "VERSION_MISMATCH": "Application version mismatch, please install the latest available version or check your end point",
     "session": {
       "DISCONNECT": "The server connection has been lost, please wait until reconnection...",
-      "RECONNECT": "We are trying to reconnect...",
+      "RECONNECT": "The server connection has been restaured, you can refresh the application in case data has been updated during the disconnection.",
+      "RELOAD": "Refresh",
       "REFUSED": "Your connection have been refused by the server, you have been disconnected...",
+      "IGNORE": "Ignore",
       "RETRY": "Retry",
-      "ALERT": "Alert"
+      "ALERT": "Alert",
+      "INFORMATION": "Information"
     },
     "pwa": {
       "INSTALL_TITLE": "Install the application ?",

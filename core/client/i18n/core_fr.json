@@ -126,10 +126,13 @@
     "VERSION_MISMATCH": "Discordance de version, merci d'installer la dernière version disponible ou de vérifier votre point d'accès",
     "session": {
       "DISCONNECT": "La connexion au serveur a été interrompue, merci de patienter jusqu'à la reconnexion...",
-      "RECONNECT": "Tentative de reconnexion en cours...",
+      "RECONNECT": "La connexion au serveur a été rétablie, vous pouvez refraîchir l'application si des données ont été mises à jour.",
+      "RELOAD": "Rafraîchir",
       "REFUSED": "Votre connexion a été refusée par le serveur, vous avez été déconnecté...",
+      "IGNORE": "Ignorer",
       "RETRY": "Rééssayer",
-      "ALERT": "Alerte"
+      "ALERT": "Alerte",
+      "INFORMATION": "Information"
     },
     "pwa": {
       "INSTALL_TITLE": "Installer l'application ?",
