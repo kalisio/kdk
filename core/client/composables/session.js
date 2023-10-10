@@ -21,6 +21,7 @@ export function useSession (options = {}) {
 
   const isInitialized = ref(false)
   let pendingReconnection = null
+  let pendingReload = null
 
   const User = Store.getRef('user')
 
@@ -68,6 +69,10 @@ export function useSession (options = {}) {
     }
   }
   function onReconnectError () {
+    // Dismiss pending reload message if any
+    if (pendingReload) {
+      pendingReload.hide()
+    }
     // Display it only the first time the error appears because multiple attempts will be tried
     if (!pendingReconnection) {
       logger.error(new Error('Socket has been disconnected'))
@@ -78,21 +83,37 @@ export function useSession (options = {}) {
         title: i18n.t('composables.session.ALERT'),
         message: i18n.t('composables.session.DISCONNECT'),
         html: true,
-        persistent: true
+        persistent: true,
+        position: 'bottom'
       }).onDismiss(() => { pendingReconnection = null })
     }
   }
   function onReconnect () {
-    // Dismiss pending reconnection error message
+    // Dismiss pending reconnection error message if any
     if (pendingReconnection) {
       pendingReconnection.hide()
     }
-    // Causes problems with hot reload in dev
-    if (Version.value.flavor !== 'dev') {
-      Loading.show({ message: i18n.t('composables.session.RECONNECT'), html: true })
-      setTimeout(() => { window.location.reload() }, 3000)
-    } else {
-      logger.error(new Error('Socket disconnected, not trying to reconnect automatically in development mode please refresh page manually'))
+    // Display it only the first time the reconnection occurs because multiple attempts will be tried
+    if (!pendingReload) {
+      pendingReload = $q.dialog({
+        title: i18n.t('composables.session.INFORMATION'),
+        message: i18n.t('composables.session.RECONNECT'),
+        html: true,
+        cancel: {
+          id: 'ignore-button',
+          label: i18n.t('composables.session.IGNORE'),
+          color: 'primary',
+          outline: true
+        },
+        ok: {
+          id: 'update-button',
+          label: i18n.t('composables.session.RELOAD'),
+          color: 'primary'
+        },
+        position: 'bottom'
+      })
+      .onOk(() => { window.location.reload() })
+      .onCancel(() => { pendingReload = null })
     }
   }
   function onRateLimit () {
@@ -103,7 +124,8 @@ export function useSession (options = {}) {
       ok: {
         label: i18n.t('composables.session.RETRY'),
         flat: true
-      }
+      },
+      position: 'bottom'
     }).onOk(() => window.location.reload())
   }
 
