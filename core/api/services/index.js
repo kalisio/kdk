@@ -51,6 +51,20 @@ export function removeDatabasesService (options = {}) {
   return app.removeService(app.getService('databases', options.context))
 }
 
+/*export function createExporterService (options = {}) {
+  const app = this
+
+  return app.createService('exporter', Object.assign({
+    servicesPath
+  }, options))
+}
+
+export function removeExporterService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('exporter', options.context))
+}
+*/
+
 export async function createOrganisationService (options = {}) {
   const app = this
 
@@ -122,5 +136,11 @@ export default async function () {
   if (pushConfig) {
     await app.createService('push', { servicesPath })
     debug('\'push\' service created')
+  }
+
+  const exporterConfig = app.get('exporter')
+  if (exporterConfig) {
+    await app.createService('exporter', { servicesPath }, app)
+    debug('\'exporter\' service created')
   }
 }

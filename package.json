@@ -120,6 +120,7 @@
     "moment": "^2.24.0",
     "mongodb": "^3.6.2",
     "node-fetch": "^2.6.0",
+    "papaparse": "^5.4.1",
     "password-generator": "^2.3.2",
     "password-validator": "^4.0.0",
     "sanitize-html": "^2.3.2",
