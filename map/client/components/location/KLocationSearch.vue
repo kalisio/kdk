@@ -63,7 +63,7 @@
         <q-item-section avatar>
           <q-icon name="las la-frown" color="grey" />
         </q-item-section>
-        <q-item-section class="text-grey">          
+        <q-item-section class="text-grey">
           {{ $t('KLocationSearch.NO_RESULT') }}
         </q-item-section>
       </q-item>

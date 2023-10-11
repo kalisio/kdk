@@ -89,7 +89,7 @@ async function apply () {
       }
     }
   } else {
-    $q.notify({ type: 'negative', message: i18n.t('KSendResetPassword.ERROR_INVALID_EMAIL') })  
+    $q.notify({ type: 'negative', message: i18n.t('KSendResetPassword.ERROR_INVALID_EMAIL') })
   }
   send.value = true
   processing.value = false

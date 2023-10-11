@@ -1,7 +1,5 @@
-import _ from 'lodash'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import config from 'config'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 // We now rely on mailer stub which is faster
 // Integration testing with real email account shouuld be restricted to apps
@@ -9,13 +7,13 @@ import core, { kdk, hooks } from '../../../core/api/index.js'
 const { util, expect } = chai
 
 describe('core:exporter', () => {
-  let app, server, port, user, userService, exporterService
+  let app, server, port, userService, exporterService
 
   before(async () => {
     chailint(chai, util)
     app = kdk()
     // Register log hook
-    app.hooks({ error: { all: hooks.log }})
+    app.hooks({ error: { all: hooks.log } })
     port = app.get('port')
     await app.db.connect()
     await app.db.instance.dropDatabase()
@@ -39,7 +37,7 @@ describe('core:exporter', () => {
   it('create a user collection', () => {
     const users = []
     for (let i = 0; i < 5000; i++) {
-      users.push({ 
+      users.push({
         email: `kalisio${i}@kalisio.xyz`,
         password: 'Pass;word1',
         name: `user${i}`

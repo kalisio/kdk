@@ -75,9 +75,8 @@ async function onLogin () {
       } catch (error) {
         $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.LOGIN_ERROR') })
       }
-    }
-    else {
-      $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.INVALID_EMAIL') })    
+    } else {
+      $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.INVALID_EMAIL') })
     }
     loading.value = false
   }
