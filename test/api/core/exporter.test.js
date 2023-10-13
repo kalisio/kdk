@@ -36,7 +36,7 @@ describe('core:exporter', () => {
 
   it('create a user collection', () => {
     const users = []
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 11; i++) {
       users.push({
         email: `kalisio${i}@kalisio.xyz`,
         password: 'Pass;word1',
@@ -51,14 +51,14 @@ describe('core:exporter', () => {
   it('export users collection in json', async () => {
     await exporterService.create({
       serviceName: 'users',
-      batchSize: 100
+      batchSize: 2
     })
   })
 
   it('export users collection in csv', async () => {
     await exporterService.create({
       serviceName: 'users',
-      batchSize: 100,
+      batchSize: 2,
       outputFormat: 'csv'
     })
   })
@@ -66,7 +66,7 @@ describe('core:exporter', () => {
   it('export users collection in zipped json', async () => {
     await exporterService.create({
       serviceName: 'users',
-      batchSize: 100,
+      batchSize: 2,
       zipOutput: true
     })
   })
@@ -74,7 +74,7 @@ describe('core:exporter', () => {
   it('export users collection in zipped csv', async () => {
     await exporterService.create({
       serviceName: 'users',
-      batchSize: 100,
+      batchSize: 2,
       outputFormat: 'csv',
       zipOutput: true
     })
