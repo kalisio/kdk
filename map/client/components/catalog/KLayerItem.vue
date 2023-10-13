@@ -1,7 +1,7 @@
 <template>
   <div :id="id" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
     <!-- Layer toggle -->
-    <q-toggle v-model="layer.isVisible" :disable="layer.isDisabled" size="sm" @update:modelValue="onToggled" />
+    <q-toggle v-model="layer.isVisible" :disable="layer.isDisabled" size="xs" @update:modelValue="onToggled" />
     <!-- Layer name -->
     <div
       class="row ellipsis-2-lines"
@@ -27,7 +27,7 @@
       <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
     </q-icon>
     <!-- Layer actions -->
-    <k-panel
+    <KPanel
       :id="`${layer.name}-actions`"
       :content="layer.actions"
       :context="layer"
@@ -42,7 +42,6 @@ import { utils } from '../../../../core/client'
 import { KPanel } from '../../../../core/client/components'
 
 export default {
-  name: 'k-layer-item',
   components: {
     KPanel
   },
