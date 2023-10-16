@@ -2,37 +2,34 @@ notifications:
   email: false
   slack:
     rooms:
-    - secure: MIS2NjYwk/52N/KirJT/4mUKabVNJxRFj5KcFkDV3G1R+Q+RZ/9PnOYgIROIKq62kfEP2MldkiIXXAK6zEx1NfGFEM62/ee42C2xXrmYG1+RtXBg7WGccgbxOxlY70twDYmoHEYsU17uDZSJwAYtzF7MtHQHNc+5c78mVl02xaC+AJWlKr4fsZ3IuFYqgrt6osAZZWsN13ISt5R8dOwvS7MiHTtR7cyxAifvVr6urt8tvkHS8v3ubB570Z24sDQc11IaQQQmotkT9n1LtBl4Xqas1xaUcp1qigq6/lN3D+bJ0MXogtyj11Dfa2IzYF4CnbztVMojFOfAbeYTV8HjavPCTFKL0Qb3UaSLShclVwLcdNhOVw/yvYP7651FX/A/egBY7VJFLsTtTwLHXTzhrUA7SJureSF+ZCvfG4IMMTIo7y8ZgFCvg9xBi7hb+ILt8nAWE52ZDXSSxEJX2JhhWk9acEKC3eH1Fsaj8/uTIy/yUt2zWAPOZv51C6UxzqTnX6FZ5bj2z/cfA8y1JPurHWQpfJqhlydhfDYdM1cQYaKBosHkW5KimNGFRsj9TJ+6UFJnnmLUhlUaCbpS9xyDHTP/Num2glcMqdlLPzA//iMhONLfbKnQ9Xfgs0wSCPaSZsIU67en044vUO9Ik7On0LtFQlGxjdQGVfvITLCGxcs=
+      secure: u/atzAwEqJCX5i3aaIxEQ+E+4x+l9TUZYS+eN+Hkbi4lws+Jt4/UcuyM3L/UVigbfKOHp3OVTj+KQiznI2PGtwbEnpIsEgsAaciPiM5MpwKx2RZxQPgniO0+03N0gZhNlhInXWWNT5/ZTJoylFa4U8XrezCFxskuQojIImha8ZKOd8vYXvqAHExGCaztlBaFhoTH/Cu988GuyexIw06JkT2Djam47jET5QDPehGpXVgW3c8aHfChwURGTgk1oUeVAwfEI2YpouzgycAoldhEltJyz0V2N+XNme7T3O7prdm2mRmVXZUs6six65dvl91lcxLWHzTKFcJVqryCkRl2KMtgZpdtp4Am3T2bqCF2XoEzDipY0mIOhuiMsu+RUlMWgds0L9IeGjkt6GPiTc+9ZazunU//ukFrqMsEDdWkqIROXU7vysb3w1yqFFwMTwas0Kjb3E+wXKXCGTxyiO1i0yx4DQ1prMxL4ZIIeYHLMzIQ7gy4hFmBuN7qkkPC2g/gLY4qTrfqsBSYeELVggwqOjlwodC3bKLnr5urie1G9NGmBeBhLV22x2vblr8/PJ5MpVpqn1ZPXqZ5R/989VWbUYmhZ29mySjxNRNVOB2gqd3mewsTsMczQS4f6/ojib8+fe+Q1RNJ28SKZEGhFepkowcbCyNkZzhVMqbv637aDtU=
     on_success: always
     on_failure: always
-
 stages:
 - name: TEST
-  if: commit_message !~ /(skip[ _-]test)/    
+  if: commit_message !~ /(skip[ _-]test)/
 - name: DOC
   if: commit_message =~ /\[build doc\]/
-
 jobs:
   include:
-
   - stage: TEST
     language: node_js
     node_js:
-    - '16'  
+    - '16'
     services:
     - docker
     - mongodb
     env:
     - CC_TEST_REPORTER_ID=42cc93bb51067210ce09b5b3b98a6d5cc4d9c432f51d5844d4e61c36fff160fc
     install:
-    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+      > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - "./cc-test-reporter before-build"
     script:
     - bash .travis.test.sh
     after_script:
     - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
-
   - stage: DOC
     language: node_js
     node_js:
@@ -43,7 +40,7 @@ jobs:
       provider: pages
       local-dir: docs/.vitepress/dist
       skip-cleanup: true
-      github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+      github-token: "$GITHUB_TOKEN"
       keep-history: true
       on:
         branch: master
