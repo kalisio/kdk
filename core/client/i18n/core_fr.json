@@ -142,7 +142,7 @@
       "INSTALL": "Installer",
       "IGNORE": "Ignorer",
       "UPDATE_TITLE": "Mise à jour disponible",
-      "UPDATE_MESSAGE": "Voulez vous mettre à jour l'application ?",
+      "UPDATE_MESSAGE": "Pour en savoir plus consultez la <a href=\"{changelog}\">note de version</a>",
       "UPDATE": "Mettre à jour"
     }
   },
