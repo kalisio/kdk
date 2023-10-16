@@ -141,7 +141,7 @@
       "FIREFOX_DESKTOP_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites. Pour l'installer utiliser l'extension <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a>.",
       "INSTALL": "Installer",
       "IGNORE": "Ignorer",
-      "UPDATE_TITLE": "Mises à jour disponibles",
+      "UPDATE_TITLE": "Mise à jour disponible",
       "UPDATE_MESSAGE": "Voulez vous mettre à jour l'application ?",
       "UPDATE": "Mettre à jour"
     }
