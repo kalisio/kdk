@@ -112,6 +112,16 @@ export const context = {
           const activeLayers = _.values(this.layers).filter(sift({ isVisible: true, scope: { $nin: ['system'] }, _id: { $exists: true } })).map(layer => layer.name)
           // When retrieved from query parameters if a single layer is provided we don't have an array
           let targetLayers = _.isArray(targetParameters.layers) ? targetParameters.layers : [targetParameters.layers]
+          // Manage backward compatibility: translation key prefix can be omitted and/or name given in kebab case on built-in layers
+          targetLayers = targetLayers.map(name => {
+            if (this.hasLayer(name)) return name
+            // If name is not found try with prefixed and uppercase version
+            if (!_.startsWith(name, 'Layers.')) {
+              if (!_.startsWith(name, 'layers-')) name = 'layers-' + name
+              name = _.replace(_.replace(_.upperCase(name), / /g, '_'), 'LAYERS_', 'Layers.')
+            }
+            return name
+          })
           targetLayers = targetLayers.filter((name) => this.hasLayer(name))
           if (_.isEmpty(targetLayers)) return
           // List of layers to be (de)activated
