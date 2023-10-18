@@ -1,7 +1,7 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import chroma from 'chroma-js'
-import { createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec, LeafletStyleMappings } from '../../utils.js'
+import { createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec, LeafletStyleMappings } from '../../utils.map.js'
 
 export const style = {
   methods: {

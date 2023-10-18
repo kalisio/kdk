@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { LeafletEvents, bindLeafletEvents } from '../../utils.js'
+import { LeafletEvents, bindLeafletEvents } from '../../utils.map.js'
 
 export const mapillaryLayers = {
   methods: {

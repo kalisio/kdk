@@ -1,5 +1,5 @@
 import { Store, api } from '../../../core.client.js'
-import { formatGeocodingResult, parseCoordinates, formatUserCoordinates } from '../utils.js'
+import { formatGeocodingResult, parseCoordinates, formatUserCoordinates } from './utils.js'
 
 export async function searchLocation (pattern, options) {
   const locations = []

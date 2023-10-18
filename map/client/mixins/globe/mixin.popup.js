@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Time, Units } from '../../../../core/client/index.js'
-import { getTextTable } from '../../utils.js'
+import { getTextTable } from '../../utils.globe.js'
 
 export const popup = {
   methods: {

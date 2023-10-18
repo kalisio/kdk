@@ -7,7 +7,7 @@ import { Time } from '../../../../core/client/time.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId } from '../../utils.js'
+import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId } from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default remove handler for leaflet-realtime due to
