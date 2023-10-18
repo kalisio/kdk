@@ -28,7 +28,7 @@ import { getAppLocale } from '../../../../core/client/utils/index.js'
 import { uid } from 'quasar'
 import '../../leaflet/BoxSelection.js'
 import { Geolocation } from '../../geolocation.js'
-import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
+import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'

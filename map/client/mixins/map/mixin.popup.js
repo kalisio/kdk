@@ -1,7 +1,7 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import { Time, Units } from '../../../../core/client/index.js'
-import { getHtmlTable } from '../../utils.js'
+import { getHtmlTable } from '../../utils.map.js'
 
 export const popup = {
   methods: {

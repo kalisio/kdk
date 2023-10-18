@@ -3,11 +3,11 @@
     <slot name="header" />
     <div v-if="layers.length > 0">
       <template v-for="layer in layers">
-        <component 
-          :is="layerRenderer.component" 
-          v-bind="layerRenderer.options" 
+        <component
+          :is="layerRenderer.component"
+          v-bind="layerRenderer.options"
           :layer="layer"
-          @toggled="onLayerToggled" 
+          @toggled="onLayerToggled"
           @filter-toggled="onLayerFilterToggled"
         />
       </template>
