@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import Cesium from 'cesium/Source/Cesium.js'
 import { utils as kdkCoreUtils } from '../../../core/client/index.js'
 
 export const CesiumStyleMappings = {
