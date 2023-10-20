@@ -104,12 +104,20 @@ export async function createOrganisationService (options = {}) {
 export default async function () {
   const app = this
 
-  const authConfig = app.get('authentication')
-  if (authConfig) {
+  const userConfig = app.get('user')
+  if (userConfig) {
     await app.createService('users', { modelsPath, servicesPath })
     debug('\'users\' service created')
+  }
+
+  const authConfig = app.get('authentication')
+  if (authConfig) {
     await app.createService('account', { servicesPath, methods: ['create', 'verifyEmail'] })
     debug('\'account\' service created')
+  }
+
+  const authorisationConfig = app.get('authorisation')
+  if (authorisationConfig) {
     await app.createService('authorisations', { servicesPath })
     debug('\'authorisations\' service created')
   }

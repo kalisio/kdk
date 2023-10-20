@@ -69,15 +69,15 @@ async function onLogin () {
   const result = refForm.value.validate()
   if (result.isValid) {
     loading.value = true
-    if (await verifyEmail(result.values.email)) {
+    // if (await verifyEmail(result.values.email)) {
       try {
         await login(result.values.email, result.values.password)
       } catch (error) {
         $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.LOGIN_ERROR') })
       }
-    } else {
-      $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.INVALID_EMAIL') })
-    }
+    // } else {
+    //   $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.INVALID_EMAIL') })
+    // }
     loading.value = false
   }
 }
