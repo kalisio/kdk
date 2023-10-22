@@ -3,12 +3,12 @@ import commonHooks from 'feathers-hooks-common'
 export default {
   before: {
     all: [],
-    find: [],
-    get: [],
-    create: [commonHooks.when(commonHooks.disallow('external'))],
-    update: [],
-    patch: [],
-    remove: []
+    find: [commonHooks.disallow()],
+    get: [commonHooks.disallow()],
+    create: [commonHooks.disallow('external')],
+    update: [commonHooks.disallow()],
+    patch: [commonHooks.disallow()],
+    remove: [commonHooks.disallow()]
   },
 
   after: {

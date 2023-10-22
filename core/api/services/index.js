@@ -38,6 +38,22 @@ export function removeStorageService (options = {}) {
   return app.removeService(app.getService('storage', options.context))
 }
 
+export function createImportExportService (options = {}) {
+  const app = this
+  return app.createService('import-export', Object.assign({
+    servicesPath,
+    modelsPath,
+    methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'],
+    events: ['multipart-upload-created', 'multipart-upload-completed', 'part-uploaded', 'object-put'],
+    id: '_id'
+  }, options))
+}
+
+export function removeStorageService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('storage', options.context))
+}
+
 export function createDatabasesService (options = {}) {
   const app = this
 
