@@ -38,22 +38,6 @@ export function removeStorageService (options = {}) {
   return app.removeService(app.getService('storage', options.context))
 }
 
-export function createImportExportService (options = {}) {
-  const app = this
-  return app.createService('import-export', Object.assign({
-    servicesPath,
-    modelsPath,
-    methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'],
-    events: ['multipart-upload-created', 'multipart-upload-completed', 'part-uploaded', 'object-put'],
-    id: '_id'
-  }, options))
-}
-
-export function removeStorageService (options = {}) {
-  const app = this
-  return app.removeService(app.getService('storage', options.context))
-}
-
 export function createDatabasesService (options = {}) {
   const app = this
 
@@ -66,20 +50,6 @@ export function removeDatabasesService (options = {}) {
   const app = this
   return app.removeService(app.getService('databases', options.context))
 }
-
-/*export function createExporterService (options = {}) {
-  const app = this
-
-  return app.createService('exporter', Object.assign({
-    servicesPath
-  }, options))
-}
-
-export function removeExporterService (options = {}) {
-  const app = this
-  return app.removeService(app.getService('exporter', options.context))
-}
-*/
 
 export async function createOrganisationService (options = {}) {
   const app = this
@@ -136,6 +106,12 @@ export default async function () {
     debug('\'storage\' service created')
   }
 
+  const importExportConfig = app.get('import-export')
+  if (importExportConfig) {
+    await app.createService('import-export', { servicesPath }, app)
+    debug('\'import-export\' service created')
+  }
+
   const orgConfig = app.get('organisations')
   if (orgConfig) {
     await createOrganisationService.call(app)
@@ -152,11 +128,5 @@ export default async function () {
   if (pushConfig) {
     await app.createService('push', { servicesPath })
     debug('\'push\' service created')
-  }
-
-  const exporterConfig = app.get('exporter')
-  if (exporterConfig) {
-    await app.createService('exporter', { servicesPath }, app)
-    debug('\'exporter\' service created')
   }
 }

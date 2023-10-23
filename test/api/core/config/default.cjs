@@ -55,9 +55,6 @@ module.exports = {
       maxUsers: 1000
     }
   },
-  exporter: {
-    // nothing for now
-  },
   storage: {
     s3Client: {
       credentials: {
@@ -70,6 +67,10 @@ module.exports = {
     },
     bucket: process.env.S3_BUCKET,
     getObjectPath: '/storage-objects'
+  },
+  'import-export': {
+    s3Service: 'storage',
+    workingDir: 'test/api/core/tmp'
   },
   organisations: {
     // nothing for now
