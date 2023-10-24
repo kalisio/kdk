@@ -20,7 +20,7 @@ yarn link @kalisio/feathers-distributed
 git clone https://github.com/kalisio/feathers-s3 && cd feathers-s3 && yarn install && yarn link && cd ..
 yarn link @kalisio/feathers-s3
 
-git clone https://github.com/kalisio/feathers-import-export && cd feathers-import-export && yarn install && yarn link && cd ..
+git clone https://github.com/kalisio/feathers-import-export && cd feathers-import-export && yarn install && yarn link && yarn link @kalisio/feathers-s3 && cd ..
 yarn link @kalisio/feathers-import-export
 
 git clone https://github.com/kalisio/feathers-webpush && cd feathers-webpush && yarn install && yarn link && cd ..
@@ -35,7 +35,7 @@ yarn link @weacast/probe
 
 # Clone the development project and configure the env
 git clone https://oauth2:$GITHUB_TOKEN@github.com/kalisio/development.git "development"
-source development/workspaces/libs/libs.sh feathers-s3
+source development/workspaces/libs/libs.sh kdk
 
 # Run the test
 yarn test
