@@ -5,7 +5,7 @@ export default {
     all: [],
     find: [commonHooks.disallow()],
     get: [commonHooks.disallow()],
-    create: [commonHooks.disallow('external')],
+    create: [],
     update: [commonHooks.disallow()],
     patch: [commonHooks.disallow()],
     remove: [commonHooks.disallow()]

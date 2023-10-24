@@ -840,6 +840,11 @@
   },
   "KTextArea": {
     "COLLAPSE": "Collapse"
+  },
+  "KExportTool": {
+    "TITLE": "Export data",
+    "MESSAGE": "Select the file format to export",
+    "EXPORT": "Export"
   }
 }
 
