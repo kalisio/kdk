@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { useQuasar, openURL } from 'quasar'
+import { useQuasar } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { api } from '../../api.js'
 import KAction from '../KAction.vue'
