@@ -150,7 +150,8 @@
     "export": {
       "TITLE": "Export data",
       "MESSAGE": "Select the file format to export",
-      "EXPORT": "Export"
+      "EXPORT": "Export",
+      "EXPORTING": "Export in progress"
     }
   },
   "schemas": {
