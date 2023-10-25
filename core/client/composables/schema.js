@@ -12,7 +12,7 @@ export function useSchema () {
   const validator = ref(null)
   const schema = ref(null)
 
-  // Function
+  // Functions
   async function compile (schemaNameOrObject, propertiesFilter) {
     if (typeof schemaNameOrObject === 'string') {
       // load the schema file

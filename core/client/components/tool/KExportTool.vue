@@ -8,16 +8,14 @@
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar'
-import { i18n } from '../../i18n.js'
-import { api } from '../../api.js'
+import { runExport } from '../../utils/utils.export.js'
 import KAction from '../KAction.vue'
 
 // props
 const props = defineProps({
   title: {
     type: String,
-    default: 'KExportTool.TITLE'
+    default: undefined
   },
   service: {
     type: String,
@@ -32,10 +30,10 @@ const props = defineProps({
     default: {}
   },
   formats: {
-    type: Array,
+    type: [String, Array],
     default: [
       { label: 'CSV', value: 'csv' },
-      { label: 'JSon', value: 'json' }
+      { label: 'JSON', value: 'json' }
     ]
   },
   gzip: {
@@ -44,52 +42,8 @@ const props = defineProps({
   }
 })
 
-// Data
-const $q = useQuasar()
-
 // Functions
-async function process (format) {
-  const exportService = api.getService('import-export')
-  let response = await exportService.create({ 
-    method: 'export',
-    servicePath: api.getServicePath(props.service, props.context).substr(1),
-    query: props.query,
-    format,
-    gzip: props.gzip
-  })
-  const target = format === 'json' ? '_blank' : '_self'
-  window.open(response.SignedUrl, target)
-}
 async function onTriggered () {
-  if (props.formats.length > 1) {
-    const dialog = {
-      title: i18n.t('KExportTool.TITLE'),
-      message: i18n.t('KExportTool.MESSAGE'),
-      html: true,
-      options: {
-        type: 'radio',
-        model: props.formats[0].value,
-        items: props.formats
-      },
-      cancel: {
-        id: 'cancel-button',
-        label: i18n.t('CANCEL'),
-        color: 'primary',
-        outline: true
-      },
-      ok: {
-        id: 'export-button',
-        label: i18n.t('KExportTool.EXPORT'),
-        color: 'primary'
-      },
-      persistent: true
-    }
-    $q.dialog(dialog)
-    .onOk(async (format) => {
-      await process(format)
-    })
-  } else {
-    await process(props.format[0])
-  }
+  await runExport(props)
 }
 </script>

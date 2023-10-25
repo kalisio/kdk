@@ -146,6 +146,24 @@
       "UPDATE": "Update"
     }
   },
+  "utils": {
+    "pwa": {
+      "INSTALL_TITLE": "Install the application ?",
+      "INSTALL_MESSAGE": "We recommend that you install the application to take full advantage of all the features",
+      "IOS_INSTALL_MESSAGE": "We recommend that you install the application to take full advantage of all the features.<br>From Safari, click or tap <i class=\"material-icons\">ios_share</i> and then on <b>Add to home screen</b>",
+      "FIREFOX_DESKTOP_INSTALL_MESSAGE": "We recommend that you install the application to take full advantage of all the features. To install it, use <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a> extension.",
+      "INSTALL": "Install",
+      "IGNORE": "Ignore",
+      "UPDATE_TITLE": "Update available",
+      "UPDATE_MESSAGE": "To find out more consult the <a href=\"{changelog}\" target=\"_\">release note</a>",
+      "UPDATE": "Update"
+    },
+    "export": {
+      "TITLE": "Export data",
+      "MESSAGE": "Select the file format to export",
+      "EXPORT": "Export"
+    }
+  },
   "schemas": {
     "OBJECT_NAME": "{name}",
     "AVATAR_FIELD_LABEL": "Select an avatar",
@@ -840,11 +858,6 @@
   },
   "KTextArea": {
     "COLLAPSE": "Collapse"
-  },
-  "KExportTool": {
-    "TITLE": "Export data",
-    "MESSAGE": "Select the file format to export",
-    "EXPORT": "Export"
   }
 }
 

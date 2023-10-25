@@ -146,6 +146,24 @@
       "UPDATE": "Mettre à jour"
     }
   },
+  "utils": {
+    "pwa": {
+      "INSTALL_TITLE": "Installer l'application ?",
+      "INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites",
+      "IOS_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites.<br>Depuis <b>Safari</b> cliquez sur <i class=\"material-icons\">ios_share</i> puis sur <b>Ajouter à l'écran d'accueil</b>",
+      "FIREFOX_DESKTOP_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites. Pour l'installer utiliser l'extension <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a>.",
+      "INSTALL": "Installer",
+      "IGNORE": "Ignorer",
+      "UPDATE_TITLE": "Mise à jour disponible",
+      "UPDATE_MESSAGE": "Pour en savoir plus consultez la <a href=\"{changelog}\">note de version</a>",
+      "UPDATE": "Mettre à jour"
+    },
+    "export": {
+      "TITLE": "Exporter les données",
+      "MESSAGE": "Séléctionner le format de fichier à exporter",
+      "EXPORT": "Exporter"
+    }
+  },
   "schemas": {
     "OBJECT_NAME": "{name}",
     "AVATAR_FIELD_LABEL": "Choisissez un avatar",
@@ -839,10 +857,5 @@
   },
   "KTextArea": {
     "COLLAPSE": "Réduire"
-  },
-  "KExportTool": {
-    "TITLE": "Exporter les données",
-    "MESSAGE": "Séléctionner le format de fichier à exporter",
-    "EXPORT": "Exporter"
   }
 }

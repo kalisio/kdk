@@ -1,3 +1,4 @@
+import fs from 'fs'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import core, { kdk, hooks } from '../../../core/api/index.js'
@@ -37,7 +38,7 @@ describe('core:import-export', () => {
 
   it('create a user collection', () => {
     const users = []
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 5000; i++) {
       users.push({
         email: `kalisio${i}@kalisio.xyz`,
         password: 'Pass;word1',
@@ -50,38 +51,31 @@ describe('core:import-export', () => {
   // Let enough time to process
     .timeout(50000)
 
-  /*  it('export users collection in json', async () => {
-    await exporterService.create({
-      serviceName: 'users',
-      batchSize: 2
+  it('export users collection in json', async () => {
+    const response = await importExportService.create({
+      method: 'export',
+      servicePath: 'api/users',
+      transform: {
+        omit: [ '_id' ]
+      }
     })
+    expect(response.SignedUrl).toExist()
+    expect(fs.statSync(importExportService.working + '/'))
+    await storageService.remove(response._id)
+
   })
 
   it('export users collection in csv', async () => {
-    await exporterService.create({
-      serviceName: 'users',
-      batchSize: 2,
-      outputFormat: 'csv'
+    const response = await importExportService.create({
+      method: 'export',
+      servicePath: 'api/users',
+      transform: {
+        omit: [ '_id' ]
+      },
+      format: 'csv'
     })
+    expect(response.SignedUrl).toExist()
   })
-
-  it('export users collection in zipped json', async () => {
-    await exporterService.create({
-      serviceName: 'users',
-      batchSize: 2,
-      zipOutput: true
-    })
-  })
-
-  it('export users collection in zipped csv', async () => {
-    await exporterService.create({
-      serviceName: 'users',
-      batchSize: 2,
-      outputFormat: 'csv',
-      zipOutput: true
-    })
-  })
-  */
 
   // Cleanup
   after(async () => {
