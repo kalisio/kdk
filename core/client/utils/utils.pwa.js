@@ -1,4 +1,4 @@
-import { useQuasar } from 'quasar'
+import { Dialog } from 'quasar'
 import { i18n } from '../i18n.js'
 
 export let InstallPwaPrompt = null
@@ -10,18 +10,18 @@ window.addEventListener('beforeinstallprompt', (e) => {
 })
 
 export function installDefaultPrompt () {
-  useQuasar().dialog({
-    title: i18n.t('composables.pwa.INSTALL_TITLE'),
-    message: i18n.t('composables.pwa.INSTALL_MESSAGE'),
+  Dialog.create({
+    title: i18n.t('utils.pwa.INSTALL_TITLE'),
+    message: i18n.t('utils.pwa.INSTALL_MESSAGE'),
     cancel: {
       id: 'ignore-button',
-      label: i18n.t('composables.pwa.IGNORE'),
+      label: i18n.t('utils.pwa.IGNORE'),
       color: 'primary',
       outline: true
     },
     ok: {
       id: 'install-button',
-      label: i18n.t('composables.pwa.INSTALL'),
+      label: i18n.t('utils.pwa.INSTALL'),
       color: 'primary'
     },
     persistent: true,
@@ -37,9 +37,9 @@ export function installDefaultPrompt () {
 }
 
 export function installSafariPrompt () {
-  useQuasar().dialog({
-    title: i18n.t('composables.pwa.INSTALL_TITLE'),
-    message: i18n.t('composables.pwa.IOS_INSTALL_MESSAGE'),
+  Dialog.create({
+    title: i18n.t('utils.pwa.INSTALL_TITLE'),
+    message: i18n.t('utils.pwa.IOS_INSTALL_MESSAGE'),
     ok: {
       color: 'primary'
     },
@@ -50,9 +50,9 @@ export function installSafariPrompt () {
 }
 
 export function installFFDesktopPrompt () {
-  useQuasar().dialog({
-    title: i18n.t('composables.pwa.INSTALL_TITLE'),
-    message: i18n.t('composables.pwa.FIREFOX_DESKTOP_INSTALL_MESSAGE'),
+  Dialog.create({
+    title: i18n.t('utils.pwa.INSTALL_TITLE'),
+    message: i18n.t('utils.pwa.FIREFOX_DESKTOP_INSTALL_MESSAGE'),
     ok: {
       color: 'primary'
     },
