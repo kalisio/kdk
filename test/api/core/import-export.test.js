@@ -60,9 +60,7 @@ describe('core:import-export', () => {
       }
     })
     expect(response.SignedUrl).toExist()
-    expect(fs.statSync(importExportService.working + '/'))
     await storageService.remove(response._id)
-
   })
 
   it('export users collection in csv', async () => {
@@ -75,6 +73,7 @@ describe('core:import-export', () => {
       format: 'csv'
     })
     expect(response.SignedUrl).toExist()
+    await storageService.remove(response._id)
   })
 
   // Cleanup
