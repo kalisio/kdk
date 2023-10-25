@@ -1,4 +1,3 @@
-import fs from 'fs'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import core, { kdk, hooks } from '../../../core/api/index.js'
