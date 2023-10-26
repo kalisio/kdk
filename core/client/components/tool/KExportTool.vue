@@ -29,6 +29,14 @@ const props = defineProps({
     type: Object,
     default: {}
   },
+  chunkSize: {
+    type: Number,
+    default: 50
+  },
+  transform: {
+    type: Object,
+    default: undefined
+  },
   formats: {
     type: [String, Array],
     default: [
@@ -36,7 +44,7 @@ const props = defineProps({
       { label: 'JSON', value: 'json' }
     ]
   },
-  gzip: {
+  zip: {
     type: Boolean,
     default: false
   }
