@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { Dialog, Notify } from 'quasar'
+import { Events } from '../events.js'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
 
@@ -15,7 +16,6 @@ async function callService (options) {
       timeout: 0,
       spinner: true
     })
-    console.log(dismiss)
     const response = await api.getService('import-export').create({ 
       method: 'export',
       servicePath: api.getServicePath(options.service, options.context).substr(1),
