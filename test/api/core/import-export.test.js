@@ -61,6 +61,7 @@ describe('core:import-export', () => {
     expect(response.SignedUrl).toExist()
     await storageService.remove(response._id)
   })
+    .timeout(30000)  
 
   it('export users collection in csv', async () => {
     const response = await importExportService.create({
@@ -74,6 +75,7 @@ describe('core:import-export', () => {
     expect(response.SignedUrl).toExist()
     await storageService.remove(response._id)
   })
+    .timeout(30000)  
 
   // Cleanup
   after(async () => {

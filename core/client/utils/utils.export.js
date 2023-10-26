@@ -18,7 +18,7 @@ async function callService (options) {
     })
     const response = await api.getService('import-export').create({ 
       method: 'export',
-      servicePath: api.getServicePath(options.service, options.context).substr(1),
+      servicePath: api.getServicePath(options.service, options.context),
       query: options.query,
       format: options.format,
       gzip: options.gzip
@@ -28,11 +28,11 @@ async function callService (options) {
       // open the returned signed url
       window.open(response.SignedUrl, options.format === 'json' ? '_blank' : '_self')
     } else {
-      Events.emit('error', { message: this.$t('errors.' + response.status) })
+      Events.emit('error', { message: i18n.t('errors.' + response.status) })
     }
   } catch (error) {
     dismiss()
-    Events.emit('error', { message: this.$t('errors.NETWORK_ERROR') })
+    Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
   }
 }
   
