@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { runExport } from '../../utils/utils.export.js'
+import { createExport } from '../../utils/utils.export.js'
 import KAction from '../KAction.vue'
 
 // props
@@ -44,7 +44,7 @@ const props = defineProps({
       { label: 'JSON', value: 'json' }
     ]
   },
-  zip: {
+  gzip: {
     type: Boolean,
     default: false
   }
@@ -52,6 +52,6 @@ const props = defineProps({
 
 // Functions
 async function onTriggered () {
-  await runExport(props)
+  await createExport(props)
 }
 </script>
