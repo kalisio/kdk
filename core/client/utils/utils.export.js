@@ -16,13 +16,8 @@ async function callService (options) {
     spinner: true
   })
   try {
-    const response = await api.getService('import-export').create({ 
-      method: 'export',
-      servicePath: api.getServicePath(options.service, options.context).substring(1),
-      query: options.query,
-      format: options.format,
-      gzip: options.gzip
-    })
+    const servicePath = api.getServicePath(options.service, options.context).substring(1)
+    const response = await api.getService('import-export').create( Object.assign(options, { method: 'export', servicePath }))
     dismiss()
     if (response.SignedUrl) openURL(response.SignedUrl)
     else Events.emit('error', { message: i18n.t('errors.' + response.status) })
@@ -37,6 +32,7 @@ export async function createExport (options) {
     logger.error(`[KDK] invalid options: missing 'service' property`)
     return
   }
+  const params = _.cloneDeep(options)
   if (options.formats.length > 1) {
     const dialog = {
       title: i18n.t(options.title ? options.title : 'utils.export.TITLE'),
@@ -61,9 +57,9 @@ export async function createExport (options) {
     }
     Dialog.create(dialog)
     .onOk(async (format) => {
-      await callService(Object.assign({ format }, options))
+      await callService(Object.assign(params, { format }))
     })
   } else {
-    await callService(Object.assign({ format: options.formats[0] }, options))
+    await callService(Object.assign(params, { format: options.formats[0] }))
   }
 }
