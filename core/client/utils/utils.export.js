@@ -21,7 +21,19 @@ function callService (options) {
     const exportService = api.getService('import-export')
     exportService.on('exported', response => {
       dismiss()
-      if (response.SignedUrl) window.open(response.SignedUrl, '_blank') 
+      if (response.SignedUrl) {
+        // Use an iframe to download the file
+        // see https://github.com/socketio/socket.io/issues/4436
+        // solutions based on window.open cause socket.io to close the connection. 
+        let iframe = document.getElementById('export-hidden-frame')
+        if (!iframe) {
+          iframe = document.createElement('iframe')
+          iframe.id = 'export-hidden-frame'
+          iframe.style.display = "none"
+          document.body.appendChild(iframe)          
+        }
+        iframe.src = response.SignedUrl
+      }
       else Events.emit('error', { message: i18n.t('errors.' + response.status) })
     })
     exportService.create( Object.assign(options, { method: 'export', servicePath, transform }))
