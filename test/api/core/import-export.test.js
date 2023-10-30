@@ -59,7 +59,7 @@ describe('core:import-export', () => {
       }
     })
     expect(response.SignedUrl).toExist()
-    await storageService.remove(response._id)
+    await storageService.remove('import-export/' + response.id)
   })
     .timeout(30000)  
 
@@ -73,7 +73,7 @@ describe('core:import-export', () => {
       format: 'csv'
     })
     expect(response.SignedUrl).toExist()
-    await storageService.remove(response._id)
+    await storageService.remove('import-export/' + response.id)
   })
     .timeout(30000)  
 
