@@ -108,7 +108,7 @@ export default async function () {
 
   const importExportConfig = app.get('import-export')
   if (importExportConfig) {
-    await app.createService('import-export', { servicesPath }, app)
+    await app.createService('import-export', { servicesPath, events: ['imported', 'exported'] }, app)
     debug('\'import-export\' service created')
   }
 
