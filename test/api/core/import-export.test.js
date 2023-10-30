@@ -55,27 +55,27 @@ describe('core:import-export', () => {
       method: 'export',
       servicePath: 'api/users',
       transform: {
-        omit: [ '_id' ]
+        omit: ['_id']
       }
     })
     expect(response.SignedUrl).toExist()
     await storageService.remove('import-export/' + response.id)
   })
-    .timeout(30000)  
+    .timeout(30000)
 
   it('export users collection in csv', async () => {
     const response = await importExportService.create({
       method: 'export',
       servicePath: 'api/users',
       transform: {
-        omit: [ '_id' ]
+        omit: ['_id']
       },
       format: 'csv'
     })
     expect(response.SignedUrl).toExist()
     await storageService.remove('import-export/' + response.id)
   })
-    .timeout(30000)  
+    .timeout(30000)
 
   // Cleanup
   after(async () => {
