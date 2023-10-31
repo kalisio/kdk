@@ -16,10 +16,9 @@ function callService (options) {
     spinner: true
   })
   try {
-    const servicePath = api.getServicePath(options.service, options.context).substring(1)
-    const transform = _.get(options, 'transform.' + options.format)
     const exportService = api.getService('import-export')
     exportService.on('exported', response => {
+      
       dismiss()
       if (response.SignedUrl) {
         // Use an iframe to download the file
@@ -30,12 +29,13 @@ function callService (options) {
           iframe = document.createElement('iframe')
           iframe.id = 'export-hidden-frame'
           iframe.style.display = "none"
-          document.body.appendChild(iframe)          
         }
         iframe.src = response.SignedUrl
       }
       else Events.emit('error', { message: i18n.t('errors.' + response.status) })
     })
+    const servicePath = api.getServicePath(options.service, options.context).substring(1)
+    const transform = _.get(options, 'transform.' + options.format)
     exportService.create( Object.assign(options, { method: 'export', servicePath, transform }))
   } catch (error) {
     dismiss()

@@ -151,7 +151,7 @@
       "TITLE": "Exporter les données",
       "MESSAGE": "Séléctionner le format de fichier à exporter",
       "EXPORT": "Exporter",
-      "EXPORTING": "Veuillez patienter pendant l'exportation des données"
+      "EXPORTING": "Merci de patienter pendant l'exportation des données"
     }
   },
   "schemas": {
