@@ -29,6 +29,7 @@ function callService (options) {
           iframe = document.createElement('iframe')
           iframe.id = 'export-hidden-frame'
           iframe.style.display = "none"
+          document.body.appendChild(iframe)
         }
         iframe.src = response.SignedUrl
       }
