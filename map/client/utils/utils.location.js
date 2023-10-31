@@ -1,7 +1,49 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import config from 'config'
 import { Store, api, i18n, Events } from '../../../core.client.js'
-import { formatGeocodingResult, parseCoordinates, formatUserCoordinates } from './utils.js'
+import { formatUserCoordinates } from './utils.js'
+
+
+// Format (reverse) geocoding output
+function formatGeocodingResult (result) {
+  const properties = result.properties
+  if (!properties) {
+    logger.warn(`[KDK] invalid geocoding result: missing 'properties' property`)
+    return
+  }
+  // check whether the result as a valid formatted address
+  let label = properties.formattedAddress || ''
+  // try to build a formatted address 
+  if (!label) {
+    if (properties.streetNumber) label += (properties.streetNumber + ', ')
+    if (properties.streetName) label += (properties.streetName + ' ')
+    if (properties.city) label += (properties.city + ' ')
+    if (properties.zipcode) label += (' (' + properties.zipcode + ')')
+  }
+  // otherwise retireve the match prop
+  if (!label) {
+    if (!_.has(result, 'geokoder.matchProp')) {
+      logger.warn(`[KDK] invalid geocoding result: missing 'geokoder.matchProp' property`)
+      return
+    }
+    label = _.get(result, result.geokoder.matchProp, '')
+  }
+  return label
+}
+
+export function parseCoordinates (str) {
+  const coords = _.split(_.trim(str), ',')
+  if (coords.length !== 2) return
+  const latitude = Number(coords[0])
+  if (_.isNaN(latitude)) return
+  const longitude = Number(coords[1])
+  if (_.isNaN(longitude)) return
+  return {
+    latitude,
+    longitude
+  }
+}
 
 export async function searchLocation (pattern, options) {
   const locations = []

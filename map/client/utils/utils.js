@@ -106,18 +106,6 @@ export function getTimeInterval (times, mode = 'minimum') {
   return interval
 }
 
-// Format (reverse) geocoding output
-export function formatGeocodingResult (element) {
-  let label = element.formattedAddress || ''
-  if (!label) {
-    if (element.streetNumber) label += (element.streetNumber + ', ')
-    if (element.streetName) label += (element.streetName + ' ')
-    if (element.city) label += (element.city + ' ')
-    if (element.zipcode) label += (' (' + element.zipcode + ')')
-  }
-  return label
-}
-
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
   const url = _.get(item, path)
@@ -214,15 +202,4 @@ export function coordinatesToGeoJSON (lat, lon, format, options) {
   }
 }
 
-export function parseCoordinates (str) {
-  const coords = _.split(_.trim(str), ',')
-  if (coords.length !== 2) return
-  const latitude = Number(coords[0])
-  if (_.isNaN(latitude)) return
-  const longitude = Number(coords[1])
-  if (_.isNaN(longitude)) return
-  return {
-    latitude,
-    longitude
-  }
-}
+
