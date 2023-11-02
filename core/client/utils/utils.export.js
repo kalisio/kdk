@@ -36,8 +36,10 @@ function callService (options) {
       else Events.emit('error', { message: i18n.t('errors.' + response.status) })
     })
     const servicePath = api.getServicePath(options.service, options.context).substring(1)
+    let filename = `${_.get(options, 'basename', options.service)}.${options.format}`
+    if (_.get(options, 'gzip', true)) filename += '.gzip'
     const transform = _.get(options, 'transform.' + options.format)
-    exportService.create( Object.assign(options, { method: 'export', servicePath, transform }))
+    exportService.create( Object.assign(options, { method: 'export', servicePath, filename, transform }))
   } catch (error) {
     dismiss()
     Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
