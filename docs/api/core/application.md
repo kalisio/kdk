@@ -228,6 +228,10 @@ Events.on('myGlobal-changed', myCallback) // When updating a root object
 Events.on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
 
+### Storage
+
+The **Storage** singletin provides you with high level functions to upload and download files using the [Storage service](./services.md#storage-service)
+
 ### Theme
 
 The **KDK** offers a simple way of theming your application. The application theme is strongly linked with the [Quasar's brand color](https://quasar.dev/style/color-palette#brand-colors) approach. It strongly relies on using a predefined color schema composed of 8 colors:

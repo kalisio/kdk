@@ -35,6 +35,7 @@ The KDK was previously available as separated modules like [kCore](https://githu
 
 The KDK relies on third-party modules which not directly integrated (they can be used as standalone modules), but it might be useful to know more about them. For instance:
 * [feathers-s3](https://github.com/kalisio/feathers-s3) to manage file upload/download to/from Object Storages like Amazon S3,
+* [feathers-import-export](https://github.com/kalisio/feathers-import-export) to import/export data using services API,
 * [Weacast](https://weacast.github.io/weacast/) to manage weather data,
 * [feathers-distributed](https://github.com/kalisio/feathers-distributed) to build [microservices architectures](../../architecture/global-architecture.md).
 
