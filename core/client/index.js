@@ -33,7 +33,7 @@ export { Units }
 export { Layout }
 export { Filter }
 export { Sorter }
-export { Exporter }
+export { Exporter }
 export { Reader }
 export { services }
 export { utils }

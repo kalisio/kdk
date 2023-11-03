@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Dialog, Notify, uid } from 'quasar'
+import { Dialog, Notify } from 'quasar'
 import { Events } from './events.js'
 import { api } from './api.js'
 import { i18n } from './i18n.js'
@@ -22,12 +22,12 @@ const ExporterQueue = {
   triggerRequest () {
     if (this.runningRequests.length >= this.maxConcurrentRequests) return false
     if (this.pendingRequests.length === 0) return true
-    const request = this.pendingRequests.shift()  
+    const request = this.pendingRequests.shift()
     try {
       // compute a filename
       let filename = `${_.get(request, 'basename', request.service)}.${request.format}`
       if (_.get(request, 'gzip', true)) filename += '.gzip'
-      // retrienve the target service path  
+      // retrienve the target service path
       const servicePath = api.getServicePath(request.service).substring(1)
       // retrieve the transform assigned to the format
       const transform = _.get(request, 'transform.' + request.format)
@@ -58,7 +58,7 @@ const ExporterQueue = {
   onRequestCompleted (params) {
     logger.debug(`[KDK] export request ${params.uuid} completed`)
     // retrieve the request
-    let request = _.head(_.remove(this.runningRequests, { uuid: params.uuid }))
+    const request = _.head(_.remove(this.runningRequests, { uuid: params.uuid }))
     if (!request) {
       logger.warn(`[KDK] export request ${params.uuid} not found`)
       return
@@ -69,18 +69,17 @@ const ExporterQueue = {
     if (params.SignedUrl) {
       // Use an iframe to download the file
       // see https://github.com/socketio/socket.io/issues/4436
-      // solutions based on window.open cause socket.io to close the connection. 
+      // solutions based on window.open cause socket.io to close the connection.
       let iframe = document.getElementById('export-hidden-frame')
       if (!iframe) {
         iframe = document.createElement('iframe')
         iframe.id = 'export-hidden-frame'
-        iframe.style.display = "none"
+        iframe.style.display = 'none'
         document.body.appendChild(iframe)
       }
       iframe.src = params.SignedUrl
-    }
-    else Events.emit('error', { message: i18n.t('errors.' + response.status) })
-    // trigger a new request 
+    } else Events.emit('error', { message: i18n.t('errors.' + params.status) })
+    // trigger a new request
     this.triggerRequest()
   }
 }
@@ -91,7 +90,7 @@ export const Exporter = {
   },
   export (options) {
     if (!options.service) {
-      logger.error(`[KDK] invalid options: missing 'service' property`)
+      logger.error('[KDK] invalid options: missing \'service\' property')
       return
     }
     const params = _.cloneDeep(options)
@@ -118,14 +117,14 @@ export const Exporter = {
         persistent: true
       }
       Dialog.create(dialog)
-      .onOk((format) => {
-        if (!ExporterQueue.push(Object.assign(params, { format }))) {
-          Notify.create({
-            type: 'negative',
-            message: i18n.t('exporter.EXPORTS_LIMIT_REACHED')
-          })
-        }
-      })
+        .onOk((format) => {
+          if (!ExporterQueue.push(Object.assign(params, { format }))) {
+            Notify.create({
+              type: 'negative',
+              message: i18n.t('exporter.EXPORTS_LIMIT_REACHED')
+            })
+          }
+        })
     } else {
       if (!ExporterQueue.push(Object.assign(params, { format: options.formats[0] }))) {
         Notify.create({
