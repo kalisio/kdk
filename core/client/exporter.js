@@ -45,7 +45,6 @@ const ExporterQueue = {
     const request = {
       uuid: params.uuid,
       notification: Notify.create({
-        group: 'export',
         icon: 'las la-hourglass-half',
         message: i18n.t('exporter.EXPORTING'),
         color: 'primary',
