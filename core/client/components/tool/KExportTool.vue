@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { createExport } from '../../utils/utils.export.js'
+import { Exporter } from '../../exporter.js'
 import KAction from '../KAction.vue'
 
 // props
@@ -52,6 +52,6 @@ const props = defineProps({
 
 // Functions
 async function onTriggered () {
-  await createExport(props)
+  await Exporter.export(props)
 }
 </script>

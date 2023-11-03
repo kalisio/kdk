@@ -146,12 +146,6 @@
       "UPDATE_TITLE": "Mise à jour disponible",
       "UPDATE_MESSAGE": "Pour en savoir plus consultez la <a href=\"{changelog}\">note de version</a>",
       "UPDATE": "Mettre à jour"
-    },
-    "export": {
-      "TITLE": "Exporter les données",
-      "MESSAGE": "Séléctionner le format de fichier à exporter",
-      "EXPORT": "Exporter",
-      "EXPORTING": "Merci de patienter pendant l'exportation des données"
     }
   },
   "schemas": {
@@ -359,6 +353,13 @@
       "TAG_DESCRIPTION_LABEL": "Choisissez une description détaillée pour votre étiquette.",
       "CREATE_TAG_LABEL": "Confirmez la création de votre nouvelle étiquette."
     }
+  },
+  "exporter": {
+    "TITLE": "Exporter les données",
+    "MESSAGE": "Séléctionner le format de fichier à exporter",
+    "EXPORT": "Exporter",
+    "EXPORTING": "Merci de patienter pendant l'export des données",
+    "EXPORTS_LIMIT_REACHED": "Vous avez atteint le nombre maximum d'exports autorisés"
   },
   "reader": {
     "READING_FILE": "Lecture de {file} en cours"

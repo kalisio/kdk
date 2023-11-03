@@ -146,12 +146,6 @@
       "UPDATE_TITLE": "Update available",
       "UPDATE_MESSAGE": "To find out more consult the <a href=\"{changelog}\" target=\"_\">release note</a>",
       "UPDATE": "Update"
-    },
-    "export": {
-      "TITLE": "Export data",
-      "MESSAGE": "Select the file format to export",
-      "EXPORT": "Export",
-      "EXPORTING": "Please wait while exporting data"
     }
   },
   "schemas": {
@@ -361,6 +355,13 @@
       "TAG_DESCRIPTION_LABEL": "Choose a detailed description for your tag.",
       "CREATE_TAG_LABEL": "Confirm the creation of your new tag."
     }
+  },
+  "exporter": {
+    "TITLE": "Export data",
+    "MESSAGE": "Select the file format to export",
+    "EXPORT": "Export",
+    "EXPORTING": "Please wait while exporting data",
+    "EXPORTS_LIMIT_REACHED": "You have reached the maximum number of exports allowed"
   },
   "reader": {
     "READING_FILE": "Reading file {file}"
