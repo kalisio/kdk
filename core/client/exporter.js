@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import logger from 'loglevel'
 import { Dialog, Notify } from 'quasar'
 import { Events } from './events.js'
@@ -25,14 +26,18 @@ const ExporterQueue = {
     const request = this.pendingRequests.shift()
     try {
       // compute a filename
-      let filename = `${_.get(request, 'basename', request.service)}.${request.format}`
-      if (_.get(request, 'gzip', true)) filename += '.gzip'
+      const timestamp = moment().toISOString().replace(/\:/g, '-')
+      let filename = `${_.get(request, 'basename', request.service)}_${timestamp}.${request.format}`
+      if (_.get(request, 'gzip', true)) filename += '.gz'
       // retrienve the target service path
       const servicePath = api.getServicePath(request.service).substring(1)
       // retrieve the transform assigned to the format
       const transform = _.get(request, 'transform.' + request.format)
       // create the export request
-      const options = Object.assign(_.omit(request, ['service', 'context', 'formats']), { method: 'export', filename, servicePath, transform })
+      const options = Object.assign(
+        _.omit(request, ['title', 'service', 'context', 'formats']), 
+        { method: 'export', filename, servicePath, transform }
+      )
       logger.debug(`[KDK] request export with options ${JSON.stringify(options, null, 2)}`)
       this.exportService.create(options)
     } catch (error) {
