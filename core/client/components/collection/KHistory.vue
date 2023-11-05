@@ -1,11 +1,13 @@
 <template>
   <KColumn
+    name="history-column"
     :service="service"
     :renderer="computedRenderer"
     :contextId="contextId"
     :baseQuery="baseQuery"
     :filterQuery="computedFilterQuery"
     :listStrategy="listStrategy"
+    :nbItemsPerPage="nbItemsPerPage"
     :processor="processor"
     :width="width"
     :height="height"
@@ -63,6 +65,10 @@ export default {
     listStrategy: {
       type: String,
       default: 'smart'
+    },
+    nbItemsPerPage: {
+      type: Number,
+      default: 12
     },
     processor: {
       type: Function,

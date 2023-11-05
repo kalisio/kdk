@@ -140,6 +140,10 @@ const props = defineProps({
     type: String,
     default: 'smart'
   },
+  nbItemsPerPage: {
+    type: Number,
+    default: 12
+  },
   processor: {
     type: Function,
     default: undefined
