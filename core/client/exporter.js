@@ -26,7 +26,7 @@ const ExporterQueue = {
     const request = this.pendingRequests.shift()
     try {
       // compute a filename
-      const timestamp = moment().toISOString().replace(/\:/g, '-')
+      const timestamp = moment().toISOString().replace(/:/g, '-')
       let filename = `${_.get(request, 'basename', request.service)}_${timestamp}.${request.format}`
       if (_.get(request, 'gzip', true)) filename += '.gz'
       // retrienve the target service path
