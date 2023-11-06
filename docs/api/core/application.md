@@ -240,7 +240,7 @@ This singleton exposes a `create` method which allows you to create an export. T
 
 To uniquely identify the generated files, the **Exporter** automatically timestamps the generated files. The genereated filename is computed using a `basename` property, or the `service` name if `basename` is not define. To this basename, it adds the time and the format as the file extension.
 
-The following configuration allows you to export data from the `documents` service in 2 formats: `csv` and `json`. The transformation associated with the chosen format will then be used to call the service. The resulting file will be named: `my-documents_<timestamp>.<format>`
+The following configuration allows you to export data from the `documents` service in 2 formats: `csv` and `json`. The transformation associated with the chosen format will then be used to call the service. The resulting file will be named: `my-documents_<YYYY-MM-DDTHH-MM-SS:ssSZ>.<format>`
 
 ```js
 service: 'documents',
