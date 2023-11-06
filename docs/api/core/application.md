@@ -236,11 +236,11 @@ The **Storage** singleton provides you with high level functions to upload and d
 
 Like the **Storage** singleton, the **Exporter** singleton provides ready-to-use functions to exploit the [import-export service](./services.md#import-export-service)
 
-This singleton exposes a `create` method which allows you to create an export. The interface is roughly similar to that exposed by the create method of the library [feathers-import-export](https://github.com/kalisio/feathers-import-export#export-data-params). The difference is that this interface allows you to offer different formats and provide a transformation according the format.
+This singleton exposes an `export` method which allows you to create an export. The interface is roughly similar to that exposed by the [create](https://github.com/kalisio/feathers-import-export#export-data-params) method of the library [feathers-import-export](https://github.com/kalisio/feathers-import-export). The difference is that this interface allows you to offer different formats and provide a transformation according the format.
 
-To uniquely identify the generated files, the **Exporter** automatically timestamps the generated files. The genereated filename is computed using a `basename` property, or the `service` name if `basename` is not define. To this basename, it adds the time and the format as the file extension.
+Moreover; it allows to uniquely identify the generated files. Indeed, the **Exporter** automatically timestamps the generated files. The generated filename is computed using a `basename` property, or the `service` name if `basename` is not define. To this basename, it adds the time and the format as the file extension such as the following specification: `<basename|vervice>_<YYYY-MM-DDTHH-MM-SS:ssSZ>.<format>`
 
-The following configuration allows you to export data from the `documents` service in 2 formats: `csv` and `json`. The transformation associated with the chosen format will then be used to call the service. The resulting file will be named: `my-documents_<YYYY-MM-DDTHH-MM-SS:ssSZ>.<format>`
+The following configuration allows you to export data from the `documents` service in 2 formats: `csv` and `json`. The transformation associated with the chosen format will then be used to call the service.
 
 ```js
 service: 'documents',
@@ -263,6 +263,8 @@ service: 'documents',
   },
   gzip: false
 ```
+
+ Assuming, the use has selected the `csv` format, the generated file will be named `my-documents_YYYY-MM-DDTHH-MM-SS:ssSZ.csv`.
 
 ### Context
 
