@@ -1,4 +1,4 @@
-[![KDK](https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-logo-black-512x168.png)](https://kalisio.github.io/kdk/)
+[![KDK](https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-logo-color-512x192.png)](https://kalisio.github.io/kdk/)
 
 [![Latest Release](https://img.shields.io/github/v/tag/kalisio/kdk?sort=semver&label=latest)](https://github.com/kalisio/kdk/releases)
 [![Build Status](https://app.travis-ci.com/kalisio/kdk.svg?branch=master)](https://app.travis-ci.com/kalisio/kdk)
