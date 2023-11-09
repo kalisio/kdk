@@ -8,12 +8,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useVersion } from '../../composables'
 import KVersion from '../KVersion.vue'
-import KAction from '../KAction.vue'
 import KSponsor from '../KSponsor.vue'
 
-// Data
-const { Version } = useVersion()
 </script>
