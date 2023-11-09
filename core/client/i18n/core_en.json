@@ -452,13 +452,6 @@
     "TITLE": "You are now logged out",
     "LOG_IN_AGAIN_LABEL": "Log in again ?"
   },
-  "KEndpointScreen": {
-    "TITLE": "Change endpoint",
-    "BASE_URL_FIELD_LABEL": "Enter the address of the server to be used",
-    "APPLY_LABEL": "Apply",
-    "RESET_LABEL": "Reset",
-    "LOG_IN_LABEL": "Log in ?"
-  },
   "KProfile": {
     "EDIT_PROFILE": "Edit my profile",
     "MANAGE_ACCOUNT": "Manage my account"

@@ -450,13 +450,6 @@
     "TITLE": "Vous avez été déconnecté",
     "LOG_IN_AGAIN_LABEL": "Se reconnecter ?"
   },  
-  "KEndpointScreen": {
-    "TITLE": "Changer l'adresse du serveur ?",
-    "BASE_URL_FIELD_LABEL": "Saisissez l'adresse du serveur à utiliser",
-    "APPLY_LABEL": "Appliquer",
-    "RESET_LABEL": "Réinitialiser",
-    "LOG_IN_LABEL": "Se connecter ?"
-  },
   "KProfile": {
     "EDIT_PROFILE": "Editer mon profil",
     "MANAGE_ACCOUNT": "Gérer mon compte"
