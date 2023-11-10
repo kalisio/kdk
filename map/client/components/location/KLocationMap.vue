@@ -29,7 +29,7 @@ import { Geolocation } from '../../geolocation'
 import {
   setEngineJwt, coordinatesToGeoJSON, formatUserCoordinates,
   bindLeafletEvents, unbindLeafletEvents, createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec
-} from '../../utils'
+} from '../../utils.map.js'
 
 export default {
   components: {

@@ -25,10 +25,11 @@ import config from 'config'
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { i18n } from '../../i18n.js'
+import { login } from '../../utils/utils.session.js'
+import { verifyEmail } from '../../utils/utils.account.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
 import KAction from '../KAction.vue'
-import { login } from '../../utils/utils.session.js'
 
 // Data
 const $q = useQuasar()
@@ -68,10 +69,14 @@ async function onLogin () {
   const result = refForm.value.validate()
   if (result.isValid) {
     loading.value = true
-    try {
-      await login(result.values.email, result.values.password)
-    } catch (error) {
-      $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.LOGIN_ERROR') })
+    if (await verifyEmail(result.values.email)) {
+      try {
+        await login(result.values.email, result.values.password)
+      } catch (error) {
+        $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.LOGIN_ERROR') })
+      }
+    } else {
+      $q.notify({ type: 'negative', message: i18n.t('KLoginScreen.INVALID_EMAIL') })
     }
     loading.value = false
   }

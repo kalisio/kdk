@@ -15,9 +15,9 @@ If you are not familiar with those technologies and want to develop with the **K
 
 ## Application template
 
-A KDK-based application (a.k.a. kApp) usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [kApp](https://kalisio.github.io/kApp) as a starting point. In this guide we will use the template as a reference when dealing with KDK-based application.
+A KDK-based application (a.k.a. skeleton) usually includes a front-end side client as well as back-end services or an API gateway proxying requests to back-end services. In order to ease the development of new applications we provide you with a KDK application template called the [skeleton](https://kalisio.github.io/skeleton) as a starting point. In this guide we will use the template as a reference when dealing with KDK-based application.
 
-You can start your journey by [running the kApp](https://kalisio.github.io/kApp/guides/installing-kapp.html).
+You can start your journey by [running the skeleton](https://kalisio.github.io/skeleton/guides/installing.html).
 
 ## KDK internals
 
@@ -35,6 +35,7 @@ The KDK was previously available as separated modules like [kCore](https://githu
 
 The KDK relies on third-party modules which not directly integrated (they can be used as standalone modules), but it might be useful to know more about them. For instance:
 * [feathers-s3](https://github.com/kalisio/feathers-s3) to manage file upload/download to/from Object Storages like Amazon S3,
+* [feathers-import-export](https://github.com/kalisio/feathers-import-export) to import/export data using services API,
 * [Weacast](https://weacast.github.io/weacast/) to manage weather data,
 * [feathers-distributed](https://github.com/kalisio/feathers-distributed) to build [microservices architectures](../../architecture/global-architecture.md).
 

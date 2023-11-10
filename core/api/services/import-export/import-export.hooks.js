@@ -1,12 +1,14 @@
+import commonHooks from 'feathers-hooks-common'
+
 export default {
   before: {
     all: [],
-    find: [],
-    get: [],
+    find: [commonHooks.disallow()],
+    get: [commonHooks.disallow()],
     create: [],
-    update: [],
-    patch: [],
-    remove: []
+    update: [commonHooks.disallow()],
+    patch: [commonHooks.disallow()],
+    remove: [commonHooks.disallow()]
   },
 
   after: {

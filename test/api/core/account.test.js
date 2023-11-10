@@ -152,6 +152,11 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(15000)
 
+  it('check invitation email exist', async () => {
+    const response = await accountService.verifyEmail({ email: gmailUser })
+    expect(response.status).to.equal(200)
+  })
+
   it('authenticates an invited user', async () => {
     const response = await request
       .post(`${baseUrl}/authentication`)
@@ -465,6 +470,11 @@ describe('core:account', () => {
   })
   // Let enough time to process
     .timeout(5000)
+
+  it('check invitation email does not exist', async () => {
+    const response = await accountService.verifyEmail({ email: gmailUser })
+    expect(response.status).to.equal(404)
+  })
 
   // Cleanup
   after(async () => {

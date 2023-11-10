@@ -1,7 +1,7 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
 import chroma from 'chroma-js'
-import { convertToCesiumFromSimpleStyleSpec, convertToCesiumObjects, CesiumEntityTypes } from '../../utils.js'
+import { convertToCesiumFromSimpleStyleSpec, convertToCesiumObjects, CesiumEntityTypes } from '../../utils.globe.js'
 
 export const style = {
   methods: {

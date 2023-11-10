@@ -68,6 +68,22 @@ module.exports = {
     bucket: process.env.S3_BUCKET,
     getObjectPath: '/storage-objects'
   },
+  'import-export': {
+    s3Options: {
+      s3Client: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY || process.env.S3_ACCESS_KEY_ID,
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
+        },
+        endpoint: process.env.S3_ENDPOINT,
+        region: process.env.S3_REGION,
+        signatureVersion: 'v4'
+      },
+      bucket: process.env.S3_BUCKET,
+      prefix: 'import-export'
+    },
+    workingDir: 'test/api/core/tmp'
+  },
   organisations: {
     // nothing for now
   },

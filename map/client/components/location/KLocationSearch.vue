@@ -50,8 +50,8 @@
           <q-item-label>{{ scope.opt.properties ? scope.opt.properties.name : scope.opt.name }}</q-item-label>
         </q-item-section>
         <q-item-section avatar v-if="scope.opt.properties.source">
-          <q-chip dense size="0.7rem" color="secondary" text-color="black">
-            {{ scope.opt.properties.source }}
+          <q-chip dense size="0.7rem" color="primary" text-color="white">
+            {{ $tie(`Geocoders.${scope.opt.properties.source}`) }}
           </q-chip>
         </q-item-section>
         <KLocationTip :location="scope.opt" />
@@ -60,8 +60,11 @@
     <!-- No options -->
     <template v-slot:no-option>
       <q-item>
+        <q-item-section avatar>
+          <q-icon name="las la-frown" color="grey" />
+        </q-item-section>
         <q-item-section class="text-grey">
-          {{ $t('KLocationSearch.NO_RESULTS') }}
+          {{ $t('KLocationSearch.NO_RESULT') }}
         </q-item-section>
       </q-item>
     </template>
@@ -131,7 +134,7 @@ const hasGeocoders = computed(() => {
 
 // Functions
 async function onSearch (pattern, update, abort) {
-  if (pattern.length < 4) {
+  if (pattern.length < 3) {
     abort()
     return
   }

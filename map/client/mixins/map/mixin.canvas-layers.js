@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { CanvasDrawContext } from '../../canvas-draw-context.js'
-import { bindLeafletEvents } from '../../utils.js'
+import { bindLeafletEvents } from '../../utils.map.js'
 import L from 'leaflet'
 
 // Helper function to forward events when click through is enabled

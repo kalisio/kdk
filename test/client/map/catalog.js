@@ -52,6 +52,24 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
   await page.waitForTimeout(wait)
 }
 
+export async function zoomToLayer (page, tabId, layer, wait = 1000) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId)
+  const layerId = getLayerId(layer)
+  const categoryId = await getLayerCategoryId(page, layerId)
+  let isCategoryOpened
+  if (categoryId) {
+    isCategoryOpened = await isLayerCategoryOpened(page, categoryId)
+    if (!isCategoryOpened) await core.clickPaneAction(page, 'right', categoryId, 1000)
+  }
+  await core.click(page, `#${layer}-actions`)
+  await core.clickAction(page, 'zoom-to-layer')
+  if (categoryId) {
+    if (!isCategoryOpened) await core.clickPaneAction(page, 'right', categoryId, 500)
+  }
+  if (!isCatalogOpened) await core.clickOpener(page, 'right')
+  await page.waitForTimeout(wait)
+}
+
 export async function saveLayer (page, tabId, layer, wait = 1000) {
   const isCatalogOpened = await clickCatalogTab(page, tabId)
   const layerId = getLayerId(layer)

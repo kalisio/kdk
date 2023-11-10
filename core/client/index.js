@@ -11,6 +11,7 @@ import { Units } from './units.js'
 import { Layout } from './layout.js'
 import { Filter } from './filter.js'
 import { Sorter } from './sorter.js'
+import { Exporter } from './exporter.js'
 import { Reader } from './reader.js'
 import services from './services/index.js'
 import * as utils from './utils/index.js'
@@ -32,6 +33,7 @@ export { Units }
 export { Layout }
 export { Filter }
 export { Sorter }
+export { Exporter }
 export { Reader }
 export { services }
 export { utils }
@@ -68,6 +70,7 @@ export default async function initialize () {
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()
+  Exporter.initialize(_.get(config, 'exporter'))
   Schema.initialize(_.get(config, 'schema'))
 
   // Listen to the 'patched' event on the users

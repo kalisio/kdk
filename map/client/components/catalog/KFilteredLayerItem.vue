@@ -8,12 +8,12 @@
       <!-- Filter rendering -->
       <div v-else class="row items-center q-pl-md q-pr-sm no-wrap">
         <!-- Filter toggle -->
-        <q-toggle v-model="prop.node.isActive" :disable="layer.isDisabled" size="sm" @update:modelValue="onFilterToggled(prop.node)" />
+        <q-toggle v-model="prop.node.isActive" :disable="layer.isDisabled" size="xs" @update:modelValue="onFilterToggled(prop.node)" />
         <div :class="{
             'text-primary': layer.isVisible,
             'text-grey-6': layer.isDisabled
           }">
-          {{ prop.node.label }}
+          {{ $tie(prop.node.label) }}
           <q-tooltip
             v-if="(prop.node.tooltip || prop.node.description) && $q.platform.is.desktop" :delay="1000"
             anchor="center left"

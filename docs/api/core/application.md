@@ -212,7 +212,7 @@ Events.off('myEvent', myCallback)
 
 ### Store
 
-A component-based system like the one offered by KDK has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton object: allow to get or update the global state and make any interested component aware of it in real-time through events. The available API is illustrated by this code sample:
+A component-based system like the one offered by **KDK** has its local and global states. Each component has its local data, but the application has a global application state that can be accessed by any component of the application. This is the purpose of the **Store** singleton object: allow to get or update the global state and make any interested component aware of it in real-time through events. The available API is illustrated by this code sample:
 
 ```js
 import { Store } from '@kalisio/kdk/core.client'
@@ -227,6 +227,48 @@ Store.get('myGlobal.property', defaultValue) // defaultValue is returned if path
 Events.on('myGlobal-changed', myCallback) // When updating a root object
 Events.on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
+
+### Storage
+
+The **Storage** singleton provides you with high level functions to upload and download files using the [Storage service](./services.md#storage-service).
+
+### Exporter
+
+Like the **Storage** singleton, the **Exporter** singleton provides ready-to-use functions to exploit the [import-export service](./services.md#import-export-service)
+
+This singleton exposes an `export` method which allows you to create an export. The interface is roughly similar to that exposed by the [create](https://github.com/kalisio/feathers-import-export#export-data-params) method of the library [feathers-import-export](https://github.com/kalisio/feathers-import-export). The difference is that this interface allows you to offer different formats and provide a transformation according the format.
+
+Moreover; it allows to uniquely identify the generated files. Indeed, the **Exporter** automatically timestamps the generated files. The generated filename is computed using a `basename` property, or the `service` name if `basename` is not define. To this basename, it adds the time and the format as the file extension such as the following specification: `<basename|vervice>_<YYYY-MM-DDTHH-MM-SS:ssSZ>.<format>`
+
+The following configuration allows you to export data from the `documents` service in 2 formats: `csv` and `json`. The transformation associated with the chosen format will then be used to call the service.
+
+```js
+service: 'documents',
+  basename: 'my-documents',
+  formats: [
+    { label: 'CSV', value: 'csv' },
+    { label: 'JSON', value: 'json' }
+  ],
+  transform: {
+    csv: {
+      mapping: {
+        'icon.name' : 'iconName',
+        'icon.color' : 'iconColor'
+      },
+      omit: [ '_id', 'icon' ]
+    },
+    json: {
+      omit: [ '_id' ]
+    }
+  },
+  gzip: false
+```
+
+ Assuming, the use has selected the `csv` format, the generated file will be named `my-documents_YYYY-MM-DDTHH-MM-SS:ssSZ.csv`.
+
+### Context
+
+**TODO**
 
 ### Theme
 
@@ -283,10 +325,6 @@ It provides a convenient way to change the theme of the application using just o
 ::: tip
 Applications might also make possible to setup the theme object from the frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp)
 :::
-
-### Context
-
-**TODO**
 
 ## i18n
 

@@ -403,16 +403,16 @@ Available as a global and a contextual service
 :::
 
 ::: warning
-`get`, `create` and `remove` methods are the only one allowed from the client/server side
+From the client side and even if most of the methods are available, we higly recomment to use the helper functions provide by the storage singleton.
 :::
 
 Blobs can be created directly using this service or through "attachment" to a target resource (e.g. a user).
 
-This service heavily relies on [feathers-blob](https://github.com/feathersjs-ecosystem/feathers-blob) and [multer](https://github.com/expressjs/multer) for handling [multipart/form-data](https://docs.feathersjs.com/guides/advanced/file-uploading.html#feathers-blob-with-multipart-support).
+This service relies on [feathers-s3](https://github.com/kalisio/feathers-s3)
 
 ### Data model
 
-No data model, data are directly stored on target storage backend (i.e. AWS S3).
+No data model, data are directly stored on target storage backend.
 
 ### Hooks
 
@@ -422,33 +422,80 @@ The following [hooks](./hooks.md) are executed on the `storage` service:
 graph TB
   before{none before all}
   after{none after all}
-  before --> hook1(disallow)
-  hook1 --> FIND[FIND]
+  before --> FIND[FIND]
   FIND --> after
   before --> GET[GET]
-  GET --> after
-  before -- Optional resource as data/params --> hook2(populateAttachmentResource)
-  hook2 -- Attachment resource as params --> CREATE[CREATE]
-  CREATE -- Blob created --> hook3(attachToResource)
-  hook3 -- Updated resource --> hook4("discard('uri')")
-  hook4 --> after
+  GET --> after  
+  before --> CREATE[CREATE]
+  CREATE --> after
   before --> hook5(disallow)
   hook5 --> UPDATE[UPDATE]
   UPDATE --> after
   before --> hook6(disallow)
   hook6 --> PATCH[PATCH]
   PATCH --> after
-  before -- Optional resource as query/params --> hook7(populateAttachmentResource)
-  hook7 -- Attachment resource as params --> REMOVE[REMOVE]
-  REMOVE -- Blob removed --> hook8(detachFromResource)
-  hook8 -- Updated resource --> hook9("discard('uri')")
-  hook9 --> after
+  before --> REMOVE[REMOVE]
+  REMOVE --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
 ```
+
+## Import-Export service
+
+::: tip
+Available as a global service
+:::
+
+::: warning
+`create` methods are the only one allowed from the client side
+:::
+
+This service relies on [feathers-import-export](https://github.com/kalisio/feathers-import-export) library.
+
+::: info
+The `import-export` service instanciantes its own **S3** service to avoid mixing temporary objects with the objects you want to manage with the [Storage service](#storage-service)
+:::
+
+### Data model
+
+No data model, data are directly stored on a storage backend (i.e. AWS S3).
+
+### Hooks
+
+```mermaid
+graph TB
+  before{none before all}
+  after{none after all}
+  before --> hook1(disallow)
+  hook1 ---> FIND[FIND]
+  FIND --> after
+  before --> hook2(disallow)
+  hook2 ---> GET[GET]
+  GET --> after  
+  before --> CREATE[CREATE]
+  CREATE --> after
+  before --> hook3(disallow)
+  hook3 --> UPDATE[UPDATE]
+  UPDATE --> after
+  before --> hook4(disallow)
+  hook4 --> PATCH[PATCH]
+  PATCH --> after
+  before --> hook5(disallow)
+  hook5 ---> REMOVE[REMOVE]
+  REMOVE --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+```
+
+::: tip
+For performance issues, we do not recommend to install after/before hooks to trasnform the data before importing/exporting. You can install your own [transaformation functions](https://github.com/kalisio/feathers-import-export#transform-function).
+:::
 
 ## Databases service
 

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import { getType, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
-import { bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
+import { bindLeafletEvents, unbindLeafletEvents } from '../../utils.map.js'
 
 // Events we listen while layer is in edition mode
 const mapEditEvents = ['pm:create']

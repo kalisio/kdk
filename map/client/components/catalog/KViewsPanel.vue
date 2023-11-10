@@ -1,10 +1,10 @@
 <template>
   <q-list dense bordered>
     <div class="no-padding" :style="panelStyle">
-      <KPanel 
-        id="favorite-views-toolbar" 
-        :content="toolbar" 
-        class="no-wrap q-pl-sm q-pr-md" 
+      <KPanel
+        id="favorite-views-toolbar"
+        :content="toolbar"
+        class="no-wrap q-pl-sm q-pr-md"
       />
       <KColumn
         class="q-pl-sm"
@@ -40,12 +40,7 @@ export default {
   inject: ['kActivity'],
   computed: {
     baseQuery () {
-      const query = { type: 'Context' }
-      // Do we get views coming from project ?
-      if (this.kActivity.project) {
-        query._id = { $in: _.map(this.kActivity.project.views, '_id') }
-      }
-      return Object.assign(query, this.sorter.query)
+      return Object.assign({ type: 'Context' }, this.sorter.query)
     },
     toolbar () {
       return [
@@ -78,6 +73,7 @@ export default {
         dropdownIcon: 'las la-ellipsis-v',
         actionRenderer: 'item',
         propagate: false,
+        dense: true,
         content: [{
           id: 'remove-view',
           icon: 'las la-trash',

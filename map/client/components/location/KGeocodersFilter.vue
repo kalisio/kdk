@@ -4,6 +4,7 @@
     v-model="selectedGeocoders"
     :options="availableGeocoders"
     type="toggle"
+    size="xs"
   />
 </template>
 
@@ -37,8 +38,8 @@ const selectedGeocoders = computed({
   }
 })
 const availableGeocoders = computed(() => {
-  return _.map(props.geocoders, geocoder => {
-    return Object.assign({}, geocoder, { label: i18n.tie(geocoder.label) })
-  })
+  return _.sortBy(_.map(props.geocoders, geocoder => {
+    return Object.assign({}, geocoder, { label: i18n.tie(`Geocoders.${geocoder.label}`) })
+  }), ['label'])
 })
 </script>
