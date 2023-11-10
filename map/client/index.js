@@ -15,5 +15,6 @@ export { elevationUtils }
 export { composables }
 export { mixins }
 export * from '../common/index.js'
+export * from './init.js'
 
 export default init

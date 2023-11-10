@@ -65,6 +65,7 @@
       "HIDE_LEGEND": "Masquer la légende",
       "SEARCH_LOCATION": "Rechercher un lieu",
       "CREATE_VIEW": "Créer une vue",
+      "CREATE_PROJECT": "Créer un projet",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
       "TOOLS": "Outils",
       "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",
@@ -201,6 +202,11 @@
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Choisissez une icône pour la catégorie",
     "LAYER_CATEGORY_LAYERS_FIELD_LABEL": "Sélectionnez les couches dans cette catégorie",
     "LAYER_CATEGORY_EXCLUSIVE_FIELD_LABEL": "Rendre la sélection exclusive au sein de la catégorie",
+    "PROJECT_CREATE_TITLE": "Créer un nouveau projet ?",
+    "PROJECT_NAME_FIELD_LABEL": "Saisissez le nom du projet",
+    "PROJECT_DESCRIPTION_FIELD_LABEL": "Saisissez la description du projet",
+    "PROJECT_LAYERS_FIELD_LABEL": "Sélectionnez les couches dans ce projet",
+    "PROJECT_VIEWS_FIELD_LABEL": "Sélectionnez les vues dans ce projet",
     "MAP_SETTINGS": "Paramètres cartographiques",
     "RESTORE_VIEW_FIELD_LABEL": "Sauvegarder l'emprise courante",
     "RESTORE_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",
@@ -401,6 +407,11 @@
     "SORT_VIEWS": "Trier les vues",
     "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Définir comme vue par défaut"
+  },
+  "KProjectsPanel": {
+    "SORT_PROJECTS": "Trier les projets",
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
   }, 
   "KFeaturesFilter": {
     "TITLE": "Filtre des données de la couche",
@@ -570,6 +581,11 @@
     "NAME_FIELD_LABEL": "Saisissez le nom de la vue",
     "DESCRIPTION_FIELD_LABEL": "Saisissez la description de la vue",
     "LAYERS_FIELD_LABEL": "Sauvegarder les couches actives"
+  },
+  "KCreateProject": {
+    "MODAL_TITLE": "Créer un nouveau projet ?",
+    "NAME_FIELD_LABEL": "Saisissez le nom du projet",
+    "DESCRIPTION_FIELD_LABEL": "Saisissez la description du projet"
   },
   "KLayerEditionToolbar": {
     "ADD_POLYGON_FEATURES": "Ajouter des entités polygonales",

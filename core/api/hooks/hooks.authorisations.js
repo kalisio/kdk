@@ -190,7 +190,7 @@ export async function authorise (hook) {
     let subject = hook.params.user
     if (!subject) {
       const payload = _.get(hook.params, 'authentication.payload')
-      if (payload.sub) {
+      if (payload && payload.sub) {
         subject = Object.assign({ _id: payload.sub }, payload)
       }
     }

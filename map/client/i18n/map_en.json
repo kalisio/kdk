@@ -65,6 +65,7 @@
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
       "CREATE_VIEW": "Create view",      
+      "CREATE_PROJECT": "Create project",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
       "TOOLS": "Tools",
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
@@ -201,6 +202,11 @@
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Select an icon for this category",
     "LAYER_CATEGORY_LAYERS_FIELD_LABEL": "Select the layers in this category",
     "LAYER_CATEGORY_EXCLUSIVE_FIELD_LABEL": "Make selection exclusive within this category",
+    "PROJECT_CREATE_TITLE": "Create a new project?",
+    "PROJECT_NAME_FIELD_LABEL": "Enter the name of this project",
+    "PROJECT_DESCRIPTION_FIELD_LABEL": "Enter the description of this project",
+    "PROJECT_LAYERS_FIELD_LABEL": "Select the layers in this project",
+    "PROJECT_VIEWS_FIELD_LABEL": "Select the views in this project",
     "MAP_SETTINGS": "Map parameters",
     "RESTORE_VIEW_FIELD_LABEL": "Save current extent",
     "RESTORE_LAYERS_FIELD_LABEL": "Save active layers",
@@ -397,9 +403,14 @@
     "NO_DATA_AVAILABLE": "No data available"
   },
   "KViewsPanel": {
-    "SORT_VIEWS": "Sort view",
+    "SORT_VIEWS": "Sort views",
     "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Set as default view"
+  },
+  "KProjectsPanel": {
+    "SORT_PROJECTS": "Sort projects",
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
   },  
   "KFeaturesFilter": {
     "TITLE": "Data filter for layer",
@@ -569,6 +580,11 @@
     "NAME_FIELD_LABEL": "Enter the name of this view",
     "DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
     "LAYERS_FIELD_LABEL": "Save the active layers"
+  },
+  "KCreateProject": {
+    "MODAL_TITLE": "Create a new project ?",
+    "NAME_FIELD_LABEL": "Enter the name of this project",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of this project"
   },
   "KLayerEditionToolbar": {
     "ADD_POLYGON_FEATURES": "Add polygon features",

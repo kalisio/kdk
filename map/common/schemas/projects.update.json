@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.kalisio.xyz/schemas/projects.update.json#",
+  "title": "schemas.OBJECT_NAME",
+  "description": "Project edition schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 3,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.PROJECT_NAME_FIELD_LABEL"
+      }
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2048,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.PROJECT_DESCRIPTION_FIELD_LABEL"
+      }
+    },
+    "layers": {
+      "type": "array",
+      "multiselect": true,
+      "uniqueItems": true,
+      "services": [
+        {
+          "service": "catalog",
+          "field": "name",
+          "description": "description",
+          "baseQuery": {},
+          "icon": {
+            "name": "las la-layer-group"
+          }
+        },
+        {
+          "service": "catalog",
+          "context": null,
+          "field": "name",
+          "description": "description",
+          "baseQuery": {},
+          "icon": {
+            "name": "las la-layer-group"
+          }
+        }
+      ],
+      "field": {
+        "component": "form/KItemField",
+        "label": "schemas.PROJECT_LAYERS_FIELD_LABEL"
+      }
+    },
+    "views": {
+      "type": "array",
+      "multiselect": true,
+      "uniqueItems": true,
+      "services": [
+        {
+          "service": "catalog",
+          "field": "name",
+          "description": "description",
+          "baseQuery": {
+            "type": "Context"
+          },
+          "icon": {
+            "name": "las la-star"
+          }
+        }
+      ],
+      "field": {
+        "component": "form/KItemField",
+        "label": "schemas.PROJECT_VIEWS_FIELD_LABEL"
+      }
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

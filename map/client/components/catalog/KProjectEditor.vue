@@ -1,6 +1,6 @@
 <template>
   <KModal
-    id="editor-modal"
+    id="project-editor-modal"
     :title="editorTitle"
     :buttons="buttons"
     v-model="isModalOpened"
@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import KModal from '../KModal.vue'
-import KForm from '../form/KForm.vue'
-import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
+import { KModal } from '../../../../core/client/components'
+import { KForm } from '../../../../core/client/components/form'
+import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../../../core/client/mixins'
 
 export default {
   components: {
@@ -31,6 +31,12 @@ export default {
     objectProxy,
     schemaProxy
   ],
+  props: {
+    service: {
+      type: String,
+      default: 'projects'
+    }
+  },
   computed: {
     buttons () {
       const buttons = [
@@ -50,24 +56,6 @@ export default {
           handler: () => this.apply()
         }
       ]
-      if (this.clearButton !== '') {
-        buttons.push({
-          id: 'clear-button',
-          label: this.clearButton,
-          renderer: 'form-button',
-          outline: 'true',
-          handler: () => this.clearEditor()
-        })
-      }
-      if (this.resetButton !== '') {
-        buttons.push({
-          id: 'reset-button',
-          label: this.resetButton,
-          renderer: 'form-button',
-          outline: 'true',
-          handler: () => this.resetEditor()
-        })
-      }
       return buttons
     }
   },
@@ -77,6 +65,13 @@ export default {
     }
   },
   methods: {
+    getBaseObject () {
+      const object = baseEditor.methods.getBaseObject.call(this)
+      // Keep only track of IDs, take care that layers come from global/local catalog
+      object.layers = _.map(object.layers, (layer) => _.pick(layer, ['_id', 'context']))
+      object.views = _.map(object.views, (view) => _.pick(view, ['_id']))
+      return object
+    },
     async apply () {
       this.processing = true
       if (await baseEditor.methods.apply.call(this)) {

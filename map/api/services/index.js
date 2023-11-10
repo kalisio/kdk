@@ -50,6 +50,22 @@ export function removeCatalogService (options = {}) {
   return app.removeService(app.getService('catalog', options.context))
 }
 
+export async function createProjectsService (options = {}) {
+  const app = this
+
+  debug('Creating projects service with options', options)
+  await app.createService('projects', Object.assign({
+    servicesPath,
+    modelsPath,
+    paginate: { default: 20, max: 5000 }
+  }, options))
+}
+
+export function removeProjectsService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('projects', options.context))
+}
+
 export function createAlertsService (options = {}) {
   const app = this
 
@@ -182,6 +198,10 @@ export default async function () {
   const catalogConfig = app.get('catalog')
   if (catalogConfig) {
     await createCatalogService.call(app)
+  }
+  const projectsConfig = app.get('projects')
+  if (projectsConfig) {
+    await createProjectsService.call(app)
   }
   // Add app-specific hooks to required services
   app.on('service', async service => {
