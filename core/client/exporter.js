@@ -92,6 +92,9 @@ export const Exporter = {
   initialize (options) {
     ExporterQueue.initialize(_.get(options, 'maxConcurrentRequests', 3))
   },
+  getFileName (basename) {
+
+  },
   export (options) {
     if (!options.service) {
       logger.error('[KDK] invalid options: missing \'service\' property')
@@ -130,7 +133,7 @@ export const Exporter = {
           }
         })
     } else {
-      if (!ExporterQueue.push(Object.assign(params, { format: options.formats[0] }))) {
+      if (!ExporterQueue.push(Object.assign(params, { format: options.formats[0].value }))) {
         Notify.create({
           type: 'negative',
           message: i18n.t('exporter.EXPORTS_LIMIT_REACHED')
