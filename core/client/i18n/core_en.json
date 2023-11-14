@@ -662,6 +662,7 @@
     "MEMBERS_LABEL": "@:MEMBERS",
     "SORT_MEMBERS": "Sort members",
     "SEARCH_MEMBERS": "Search members",
+    "EXPORT_MEMBERS": "Export members",
     "ADD_USER_LABEL": "Add a member",
     "INVITE_GUEST_LABEL": "Invite guests"
   },
@@ -737,6 +738,7 @@
     "TAGS_LABEL": "@:TAGS",
     "SORT_TAGS": "Sort tags",
     "SEARCH_TAGS": "Search tags",
+    "EXPORT_TAGS": "Export tags",
     "CREATE_TAG_LABEL": "Create a tag"
   },
   "KTagCard": {
@@ -750,6 +752,7 @@
     "GROUPS_LABEL": "@:GROUPS",
     "SORT_GROUPS": "Sort groups",
     "SEARCH_GROUPS": "Search groups",
+    "EXPORT_GROUPS": "Export groups",
     "CREATE_GROUP_LABEL": "Create a group"
   },
   "KGroupCard": {

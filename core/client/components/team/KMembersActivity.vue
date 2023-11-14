@@ -33,6 +33,7 @@ import KGrid from '../collection/KGrid.vue'
 import KStamp from '../KStamp.vue'
 import { baseActivity } from '../../mixins'
 import { getRoleForOrganisation } from '../../../common/permissions'
+import { Exporter } from '../../exporter.js'
 
 const activityMixin = baseActivity()
 
@@ -104,6 +105,17 @@ export default {
     unsubscribeUsers () {
       const usersService = this.$api.getService('users')
       usersService.off('patched', this.refresh)
+    },
+    exportMembers () {
+      Exporter.export({
+        service: 'members',
+        context: this.contextId,
+        formats: [
+          { label: 'CSV', value: 'csv' },
+          { label: 'JSON', value: 'json' }
+        ],
+        gzip: false
+      })
     },
     refresh (user) {
       const grid = this.$refs.membersGrid

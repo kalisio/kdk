@@ -32,6 +32,7 @@ import KPage from '../layout/KPage.vue'
 import KGrid from '../collection/KGrid.vue'
 import KStamp from '../KStamp.vue'
 import { baseActivity } from '../../mixins'
+import { Exporter } from '../../exporter.js'
 
 export default {
   name: 'tags-activity',
@@ -55,6 +56,19 @@ export default {
       renderer: _.merge({
         component: 'team/KTagCard'
       }, this.activityOptions.items)
+    }
+  },
+  methods: {
+    exportTags () {
+      Exporter.export({
+        service: 'tags',
+        context: this.contextId,
+        formats: [
+          { label: 'CSV', value: 'csv' },
+          { label: 'JSON', value: 'json' }
+        ],
+        gzip: false
+      })
     }
   }
 }
