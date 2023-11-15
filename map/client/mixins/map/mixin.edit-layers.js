@@ -57,6 +57,8 @@ export const editLayers = {
       // Retrieve base options first
       const { onEachFeature } = this.getGeoJsonOptions(filteredOptions)
       return {
+        // Ensure it is on top of all others layers while editing
+        pane: 'popupPane',
         // Allow geoman edition
         pmIgnore: false,
         onEachFeature,
@@ -80,7 +82,15 @@ export const editLayers = {
       if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
       if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
       if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
-      this.map.pm.setGlobalOptions({ layerGroup: this.map })
+      this.map.pm.setGlobalOptions({
+        layerGroup: this.map,
+        // Ensure it is on top of all others layers while editing
+        panes: {
+          layerPane: 'popupPane',
+          vertexPane: 'popupPane',
+          markerPane: 'popupPane'
+        }
+      })
 
       if (this.allowedLayerEditModes.indexOf(mode) === -1) return
 
