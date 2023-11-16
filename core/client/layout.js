@@ -80,6 +80,16 @@ export const Layout = {
   getLayoutDefaults () {
     return Object.assign({}, defaults.options, _.pick(_.get(config, this.paths.layout), _.keys(defaults.layout)))
   },
+  set (layout) {
+    if (layout.header) this.setHeader(layout.header)
+    if (layout.footer) this.setFooter(layout.footer)
+    if (layout.page) this.setPage(layout.page)
+    if (layout.fab) this.setFab(layout.fab)
+    placements.forEach(placement => {
+      if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
+      if (_.has(layout, `windows.${placement}`)) this.setWindow(placement, _.get(layout, `windows.${placement}`))
+    })
+  },
   setView (view) {
     Store.patch(this.paths.layout, { view })
   },
