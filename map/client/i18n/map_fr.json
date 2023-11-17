@@ -210,7 +210,20 @@
     "TIMELINE_STEP": "Pas du sélécteur temporel, en minutes",
     "TIMELINE_INTERVAL": "Fréquence de rafraichissement des données en temps-réel",
     "TIMESERIES_SETTINGS": "Paramètrage des séries temporelles",
-    "TIMESERIES_SPAN": "Intervalle des séries temporelles, en heures"
+    "TIMESERIES_SPAN": "Intervalle des séries temporelles, en heures",
+    "CAPTURE_RESOLUTION_FIELD_LABEL": "Paramétrez la résolution",
+    "CAPTURE_HEADER_FIELD_LABEL": "Paramétrez le titre",
+    "CAPTURE_FOOTER_FIELD_LABEL": "Paramétrez le pied de page",
+    "CAPTURE_LEGEND_FIELD_LABEL": "Paramétrez la légende",
+    "CAPTURE_LEGEND_POSITION_FIELD_LABEL": "Choisissez la position de la légende",
+    "CAPTURE_COMPASS_FIELD_LABEL": "Paramétrez l'orientation",
+    "CAPTURE_COMPASS_POSITION_FIELD_LABEL": "Choisissez la position de la boussole",
+    "CAPTURE_LEFT_POSITION_FIELD_LABEL": " Gauche",
+    "CAPTURE_RIGHT_POSITION_FIELD_LABEL": " Droite",
+    "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "En haut à gauche",
+    "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "En haut à droite",
+    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "En bas à gauche",
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "En bas à droite"
   },
   "tours": {
     "navigation-bar": {
@@ -582,57 +595,11 @@
     "ROTATE_FEATURES": "Tourner des entités",
     "REMOVE_FEATURES": "Effacer des entités"
   },
-  "KCaptureToolbar": {
-    "SD_LABEL": "Définition Standard",
-    "SD_DESCRIPTION": "4:3, 640 x 480",
-    "HD_LABEL": "Haute Définition",
-    "HD_DESCRIPTION": "16:9, 1280 x 720",
-    "FHD_LABEL": "Full HD",
-    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
-    "QHD_LABEL": "Quad HD",
-    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
-    "2K_LABEL": "2K",
-    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
-    "4K_LABEL": "4K ou Ultra HD",
-    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
-    "8K_LABEL": "8K ou Full Ultra HD",
-    "8K_DESCRIPTION": "16∶9, 7680 x 4320",
-    "CAPTURE_ACTION": "Capturer la vue",
-    "CAPTURING_VIEW": "En attente de capture de la vue"
-  },
-  "KDialogToolbar": {
-    "SD_LABEL": "Définition Standard",
-    "SD_DESCRIPTION": "4:3, 640 x 480",
-    "HD_LABEL": "Haute Définition",
-    "HD_DESCRIPTION": "16:9, 1280 x 720",
-    "FHD_LABEL": "Full HD",
-    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
-    "QHD_LABEL": "Quad HD",
-    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
-    "2K_LABEL": "2K",
-    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
-    "4K_LABEL": "4K ou Ultra HD",
-    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
-    "8K_LABEL": "8K ou Full Ultra HD",
-    "8K_DESCRIPTION": "16∶9, 7680 x 4320",
-    "RESOLUTION_SETTINGS": "Paramétrez la résolution",
-    "TITLE_SETTINGS": "Paramétrez le titre",
-    "TITLE_ACTIVE_FIELD_LABEL": "Activer le titre",
-    "TITLE_FIELD_LABEL": "Saisissez votre titre",
-    "FOOTER_SETTINGS": "Paramétrez le pied de page",
-    "FOOTER_ACTIVE_FIELD_LABEL": "Activer le pied de page",
-    "FOOTER_FIELD_LABEL": "Saisissez vos informations",
-    "LEGEND_SETTINGS": "Paramétrez la légende",
-    "LEGEND_ACTIVE_FIELD_LABEL": "Activer la légende",
-    "LEGEND_POSITION_FIELD_LABEL": "Choisissez la position de la légende",
-    "COMPASS_SETTINGS": "Paramétrez l'orientation",
-    "COMPASS_ACTIVE_FIELD_LABEL": "Activer la boussole",
-    "COMPASS_POSITION_FIELD_LABEL": "Choisissez la position de la boussole",
+  "KCapture": {
     "CAPTURE_ACTION": "Capturer la vue",
     "CAPTURING_VIEW": "En attente de capture de la vue",
-    "ERROR_MESSAGE": "Une capture est actuellement en cours. Veuillez patienter quelques instants avant d'initier une nouvelle capture."
+    "ERROR_MESSAGE": "Une capture est déjà en cours"
   },
-
   "KMeasureTool": {
     "TOOL_BUTTON_LABEL": "Afficher l'outil de mesures",
     "CLEAR": "Effacer les mesures",
@@ -671,5 +638,21 @@
   },
   "KDirectionField": {
     "COMPASS": "Boussole"
+  },
+  "KResolutionField": {
+    "SD_LABEL": "Définition Standard",
+    "SD_DESCRIPTION": "4:3, 640 x 480",
+    "HD_LABEL": "Haute Définition",
+    "HD_DESCRIPTION": "16:9, 1280 x 720",
+    "FHD_LABEL": "Full HD",
+    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
+    "QHD_LABEL": "Quad HD",
+    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
+    "2K_LABEL": "2K",
+    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
+    "4K_LABEL": "4K ou Ultra HD",
+    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
+    "8K_LABEL": "8K ou Full Ultra HD",
+    "8K_DESCRIPTION": "16∶9, 7680 x 4320"
   }
 }
