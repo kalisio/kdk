@@ -65,13 +65,6 @@ export default {
     }
   },
   methods: {
-    getBaseObject () {
-      const object = baseEditor.methods.getBaseObject.call(this)
-      // Keep only track of IDs, take care that layers come from global/local catalog
-      object.layers = _.map(object.layers, (layer) => _.pick(layer, ['_id', 'context']))
-      object.views = _.map(object.views, (view) => _.pick(view, ['_id']))
-      return object
-    },
     async apply () {
       this.processing = true
       if (await baseEditor.methods.apply.call(this)) {

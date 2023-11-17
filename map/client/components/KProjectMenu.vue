@@ -62,8 +62,8 @@ export default {
     closeProject () {
       this.$router.push({
         name: this.$route.name,
-        query: this.$route.query,
-        params: _.omit(this.$route.params, ['project'])
+        query: _.omit(this.$route.query, ['project']),
+        params: this.$route.params
       })
     }
   },

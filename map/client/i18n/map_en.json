@@ -1,6 +1,12 @@
 {
   "CLOSE": "Close",
   "SEARCH": "Search",
+  "LAYERS_LABEL": "My data",
+  "VIEWS_LABEL": "My views",
+  "PROJECTS_LABEL": "My projects",
+  "CATALOG_LABEL": "Catalog",
+  "PROJECT_LAYERS_LABEL": "Data",
+  "PROJECT_VIEWS_LABEL": "Views",
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
     "GEOLOCATION_ERROR": "We are not able to locate your position, this might affect some features of the application.",
@@ -25,7 +31,8 @@
       "CONVERT_UNITS": "Click to change unit"
     },
     "activity": {
-      "ADD_LAYER": "Add a new layer",
+      "ADD_LAYER": "Add a layer",
+      "CREATE_LAYER": "Create a layer",
       "SAVE_LABEL": "Save layer",
       "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
@@ -64,6 +71,7 @@
       "DISPLAY_LEGEND": "Display legend",
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
+      "ADD_VIEW": "Add view",      
       "CREATE_VIEW": "Create view",      
       "CREATE_PROJECT": "Create project",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
@@ -549,6 +557,9 @@
     "CATEGORY_FIELD_LABEL": "Select or enter a category",
     "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID"
   },
+  "KSelectLayer": {
+    "SELECT_BUTTON": "Select"
+  },
   "KImportLayer": {
     "FILE_FIELD_LABEL": "Select the file to import",
     "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
@@ -574,6 +585,12 @@
     "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CREATE_BUTTON": "Create"
+  },
+  "KAddView": {
+    "TITLE": "Add a new view"
+  },
+  "KSelectViews": {
+    "SELECT_BUTTON": "Select"
   },
   "KCreateView": {
     "MODAL_TITLE": "Create a new view ?",

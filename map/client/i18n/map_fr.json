@@ -1,6 +1,12 @@
 {
   "CLOSE": "Fermer",
   "SEARCH": "Rechercher",
+  "LAYERS_LABEL": "Mes données",
+  "VIEWS_LABEL": "Mes vues",
+  "PROJECTS_LABEL": "Mes projets",
+  "CATALOG_LABEL": "Catalogue",
+  "PROJECT_LAYERS_LABEL": "Données",
+  "PROJECT_VIEWS_LABEL": "Vues",
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",
     "GEOLOCATION_ERROR": "Il nous est impossible de déterminer votre position, cela peut affecter certaines fonctionnalités de l'application.",
@@ -25,7 +31,8 @@
       "CONVERT_UNITS": "Cliquer pour changer d'unité"
     },
     "activity": {
-      "ADD_LAYER": "Ajouter une nouvelle couche",
+      "ADD_LAYER": "Ajouter une couche",
+      "CREATE_LAYER": "Créer une couche",
       "SAVE_LABEL": "Sauvegarder la couche",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{processed} éléments traités sur {total}",
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
@@ -64,6 +71,7 @@
       "DISPLAY_LEGEND": "Afficher la légende",
       "HIDE_LEGEND": "Masquer la légende",
       "SEARCH_LOCATION": "Rechercher un lieu",
+      "ADD_VIEW": "Ajouter une vue",
       "CREATE_VIEW": "Créer une vue",
       "CREATE_PROJECT": "Créer un projet",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
@@ -550,6 +558,9 @@
     "CATEGORY_FIELD_LABEL": "Sélectionnez ou saisissez une catégorie",
     "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique"
   },
+  "KSelectLayers": {
+    "SELECT_BUTTON": "Sélectionner"
+  },
   "KImportLayer": {
     "FILE_FIELD_LABEL": "Sélectionnez le fichier à importer",
     "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
@@ -575,6 +586,12 @@
     "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",       
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",    
     "CREATE_BUTTON": "Créer"
+  },
+  "KAddView": {
+    "TITLE": "Ajouter une vue"
+  },
+  "KSelectViews": {
+    "SELECT_BUTTON": "Sélectionner"
   },
   "KCreateView": {
     "MODAL_TITLE": "Créer une nouvelle vue ?",

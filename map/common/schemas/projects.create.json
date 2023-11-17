@@ -24,58 +24,20 @@
     },
     "layers": {
       "type": "array",
-      "multiselect": true,
-      "uniqueItems": true,
-      "services": [
-        {
-          "service": "catalog",
-          "field": "name",
-          "description": "description",
-          "baseQuery": {},
-          "icon": {
-            "name": "las la-layer-group"
-          }
-        },
-        {
-          "service": "catalog",
-          "context": null,
-          "field": "name",
-          "description": "description",
-          "baseQuery": {},
-          "icon": {
-            "name": "las la-layer-group"
-          }
-        }
-      ],
       "field": {
-        "component": "form/KItemField",
+        "component": "form/KSelectLayersField",
         "label": "schemas.PROJECT_LAYERS_FIELD_LABEL"
       }
     },
     "views": {
       "type": "array",
-      "multiselect": true,
-      "uniqueItems": true,
-      "services": [
-        {
-          "service": "catalog",
-          "field": "name",
-          "description": "description",
-          "baseQuery": {
-            "type": "Context"
-          },
-          "icon": {
-            "name": "las la-star"
-          }
-        }
-      ],
       "field": {
-        "component": "form/KItemField",
+        "component": "form/KSelectViewsField",
         "label": "schemas.PROJECT_VIEWS_FIELD_LABEL"
       }
     }
   },
   "required": [
-    "name"
+    "name", "layers"
   ]
 }
