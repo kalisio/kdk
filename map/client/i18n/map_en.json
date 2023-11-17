@@ -357,6 +357,9 @@
     "UNSUPPORTED_LAYER_CRS": "The projection used by this layer is not supported.",
     "UNSUPPORTED_LAYER_FORMAT": "The data format used by this layer is not supported."
   },
+  "KSelectViewsField": {
+    "EMPTY": "None available"
+  },
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "No result found",
@@ -419,6 +422,9 @@
     "SORT_PROJECTS": "Sort projects",
     "EDIT_PROJECT": "@:EDIT",
     "REMOVE_PROJECT": "@:REMOVE"
+  },
+  "KProjectEditor": {
+    "BACKGROUND_LAYER_REQUIRED": "A project at least requires a background layer."
   },  
   "KFeaturesFilter": {
     "TITLE": "Data filter for layer",
@@ -552,12 +558,14 @@
   },
   "KAddLayer": {
     "TITLE": "Add a new layer",
+    "PROJECT_TITLE": "Manager layers",
     "NAME_FIELD_LABEL": "Enter the name of the new layer",
     "DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATEGORY_FIELD_LABEL": "Select or enter a category",
     "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID"
   },
   "KSelectLayer": {
+    "LAYERS_FIELD_LABEL": "Select projet layers",
     "SELECT_BUTTON": "Select"
   },
   "KImportLayer": {
@@ -587,9 +595,11 @@
     "CREATE_BUTTON": "Create"
   },
   "KAddView": {
-    "TITLE": "Add a new view"
+    "TITLE": "Add a new view",
+    "PROJECT_TITLE": "Manage views"
   },
   "KSelectViews": {
+    "VIEWS_FIELD_LABEL": "Select projet views",
     "SELECT_BUTTON": "Select"
   },
   "KCreateView": {

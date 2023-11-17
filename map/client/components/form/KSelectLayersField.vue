@@ -18,14 +18,14 @@
       </template>
   </q-field>
   <!-- Layer tree -->
-  <q-tree :nodes="layerTree" node-key="_id" label-key="label" children-key="layers"
+  <q-tree :ref="tree" :nodes="layerTree" node-key="_id" label-key="label" children-key="layers"
     tick-strategy="leaf" v-model:ticked="selectedLayers" @update:ticked="onSelect">
   </q-tree>
 </template>
 
 <script>
 import _ from 'lodash'
-import { api, mixins as kCoreMixins } from '../../../../core/client'
+import { api, Store, mixins as kCoreMixins } from '../../../../core/client'
 import { useCatalog } from '../../composables'
 
 export default {
@@ -41,30 +41,49 @@ export default {
       return _.get(this.properties.field, 'clearable', false)
     },
     layerTree () {
-      const tree = { _id: 'root', label: this.$t('LAYERS_LABEL'), layers: [] }
+      const tree = []
+      const userLayers = {
+        _id: 'userLayers', label: this.$t('LAYERS_LABEL'), layers: []
+      }
+      const catalogLayers = {
+        _id: 'catalogLayers', label: this.$t('CATALOG_LABEL'), layers: []
+      }
       this.categories.concat(this.contextCategories).forEach(category => {
         const layers = this.contextLayersByCategory[category.name] || this.layersByCategory[category.name]
-        tree.layers.push({ _id: category._id || category.name, label: category.label, layers: this.layersByCategory[category.name] })
+        // Built-in categories can't contain user-defined layers
+        const rootNode = (category._id ? userLayers : catalogLayers)
+        rootNode.layers.push({ _id: category._id || category.name, label: category.label, layers: this.layersByCategory[category.name] })
       })
-      return [tree]
+      if (userLayers.layers.length > 0) tree.push(userLayers)
+      if (catalogLayers.layers.length > 0) tree.push(catalogLayers)
+      return tree
     }
   },
   methods: {
     emptyModel () {
       return []
     },
+    fill (value) {
+      kCoreMixins.baseField.methods.fill.call(this, value)
+      this.selectedLayers = _.map(this.model, '_id')
+    },
     onSelect () {
       // Keep only track of IDs, take care that layers come from global/local catalog
       this.model = this.selectedLayers.map(layerId => {
         const layer = { _id: layerId }
-        if (_.find(this.contextLayers, layer)) layer.context = props.contextId
+        if (_.find(this.contextLayers, layer)) layer.context = Store.get('context')
         return layer
       })
+      this.onChanged()
     }
   },
   mounted () {
     this.getLayers()
     this.getCategories()
+    if (Store.get('context')) {
+      this.getContextLayers()
+      this.getContextCategories()
+    }
   },
   setup (props) {
     // Use global catalog
@@ -72,7 +91,7 @@ export default {
       useCatalog(api, { context: '' })
     // Use local catalog if any
     const { layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories, layersByCategory: contextLayersByCategory } =
-      useCatalog(api, { context: props.contextId })
+      useCatalog(api, { context: Store.get('context') })
 
     // Expose
     return {

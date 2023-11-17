@@ -4,6 +4,7 @@
     <k-form
       ref="viewsForm"
       :schema="viewsFormSchema"
+      :values="selectedViews"
       @field-changed="onViewsFormFieldChanged"
     />
     <!-- Buttons section -->
@@ -49,7 +50,7 @@ export default {
             type: 'array',
             field: {
               component: 'form/KSelectViewsField',
-              label: 'KSelectLayers.LAYERS_FIELD_LABEL'
+              label: 'KSelectViews.VIEWS_FIELD_LABEL'
             }
           }
         },
@@ -84,6 +85,9 @@ export default {
       // TODO
       this.$emit('done')
     }
+  },
+  mounted () {
+    this.selectedViews = _.get(this.kActivity, 'project.views', [])
   },
   setup (props) {
     // Expose

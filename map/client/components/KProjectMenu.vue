@@ -16,17 +16,24 @@
     menu-anchor="bottom middle"
     menu-self="top middle">
     <template v-slot:default>
-      <q-card v-if="project" class="bg-white" :style="computedStyle">
-      </q-card>
+      <KList
+        service="projects"
+        @selection-changed="onProjectSelected"
+        :dense="true"
+      />
     </template>
   </q-btn-dropdown>
 </template>
 
 <script>
 import _ from 'lodash'
+import { KList } from '../../../core/client/components'
 import { useProject } from '../composables'
 
 export default {
+  components: {
+    KList
+  },
   inject: ['kActivity'],
   computed: {
     computedStyle () {
@@ -64,6 +71,13 @@ export default {
         name: this.$route.name,
         query: _.omit(this.$route.query, ['project']),
         params: this.$route.params
+      })
+    },
+    onProjectSelected (project) {
+      this.$router.push({
+        name: this.$route.name,
+        query: Object.assign({ project: project._id }, this.$route.query),
+        params: Object.assign({}, this.$route.params)
       })
     }
   },

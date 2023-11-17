@@ -1,7 +1,7 @@
 <template>
   <k-modal
     id="add-view-modal"
-    :title="$t('KAddView.TITLE')"
+    :title="title"
     v-model="isModalOpened"
   >
     <div>
@@ -59,6 +59,15 @@ export default {
   data () {
     return {
       mode: this.defaultMode
+    }
+  },
+  computed: {
+    title () {
+      if (this.hasProject()) {
+        return (this.mode === 'select' ? this.$t('KAddView.PROJECT_TITLE') : this.$t('KAddView.TITLE'))
+      } else {
+        return this.$t('KAddView.TITLE')
+      }
     }
   },
   mounted () {

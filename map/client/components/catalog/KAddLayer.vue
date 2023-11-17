@@ -1,7 +1,7 @@
 <template>
   <k-modal
     id="add-layer-modal"
-    :title="$t('KAddLayer.TITLE')"
+    :title="title"
     v-model="isModalOpened"
   >
     <div>
@@ -71,6 +71,15 @@ export default {
   data () {
     return {
       mode: this.defaultMode
+    }
+  },
+  computed: {
+    title () {
+      if (this.hasProject()) {
+        return (this.mode === 'select' ? this.$t('KAddLayer.PROJECT_TITLE') : this.$t('KAddLayer.TITLE'))
+      } else {
+        return this.$t('KAddLayer.TITLE')
+      }
     }
   },
   mounted () {

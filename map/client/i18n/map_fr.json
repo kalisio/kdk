@@ -358,6 +358,9 @@
     "UNSUPPORTED_LAYER_CRS": "La projection utilisée par cette couche n'est pas supportée.",
     "UNSUPPORTED_LAYER_FORMAT": "Le format de données utilisé par cette couche n'est pas supporté."
   },
+  "KSelectViewsField": {
+    "EMPTY": "Aucune disponible"
+  },
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "Aucun résultat trouvé",
@@ -420,6 +423,9 @@
     "SORT_PROJECTS": "Trier les projets",
     "EDIT_PROJECT": "@:EDIT",
     "REMOVE_PROJECT": "@:REMOVE"
+  },
+  "KProjectEditor": {
+    "BACKGROUND_LAYER_REQUIRED": "Un projet doit au moins contenir un fond cartographique."
   }, 
   "KFeaturesFilter": {
     "TITLE": "Filtre des données de la couche",
@@ -553,12 +559,14 @@
   },
   "KAddLayer": {
     "TITLE": "Ajouter une nouvelle couche",
+    "PROJECT_TITLE": "Gérer les couches",
     "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle couche",
     "CATEGORY_FIELD_LABEL": "Sélectionnez ou saisissez une catégorie",
     "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique"
   },
   "KSelectLayers": {
+    "LAYERS_FIELD_LABEL": "Choisissez les couches du projets",
     "SELECT_BUTTON": "Sélectionner"
   },
   "KImportLayer": {
@@ -588,9 +596,11 @@
     "CREATE_BUTTON": "Créer"
   },
   "KAddView": {
-    "TITLE": "Ajouter une vue"
+    "TITLE": "Ajouter une vue",
+    "PROJECT_TITLE": "Gérer les vues"
   },
   "KSelectViews": {
+    "VIEWS_FIELD_LABEL": "Choisissez les vues du projets",
     "SELECT_BUTTON": "Sélectionner"
   },
   "KCreateView": {

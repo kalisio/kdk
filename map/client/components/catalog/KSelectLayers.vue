@@ -4,6 +4,7 @@
     <k-form
       ref="layersForm"
       :schema="layersFormSchema"
+      :values="selectedLayers"
       @field-changed="onLayersFormFieldChanged"
     />
     <!-- Buttons section -->
@@ -84,6 +85,9 @@ export default {
       // TODO
       this.$emit('done')
     }
+  },
+  mounted () {
+    this.selectedLayers = _.get(this.kActivity, 'project.layers', [])
   },
   setup (props) {
     // Expose
