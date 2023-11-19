@@ -19,7 +19,6 @@
 
 <script>
 import { KPanel, KForm } from '../../../../core/client/components'
-import { baseModal } from '../../../../core/client/mixins'
 
 export default {
   components: {

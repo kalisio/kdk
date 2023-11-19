@@ -35,7 +35,7 @@ const ExporterQueue = {
       const transform = _.get(request, 'transform.' + request.format)
       // create the export request
       const options = Object.assign(
-        _.omit(request, ['title', 'service', 'context', 'formats']), 
+        _.omit(request, ['title', 'service', 'context', 'formats']),
         { method: 'export', filename, servicePath, transform }
       )
       logger.debug(`[KDK] request export with options ${JSON.stringify(options, null, 2)}`)

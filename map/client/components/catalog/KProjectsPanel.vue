@@ -67,7 +67,7 @@ export default {
   data () {
     const projectActions = []
     if (this.$can('update', 'projects', this.kActivity.contextId)) {
-      let content = [{
+      const content = [{
         id: 'edit-project',
         icon: 'las la-file-alt',
         label: 'KProjectsPanel.EDIT_PROJECT',

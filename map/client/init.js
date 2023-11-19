@@ -16,7 +16,7 @@ function siftMatcher (originalQuery) {
 }
 
 // Decorate core API with some of the required features for map
-export function setupApi(configuration) {
+export function setupApi (configuration) {
   const api = this
   // We need to implement time management as our api is sometimes used
   // by layers expecting a Weacast interface

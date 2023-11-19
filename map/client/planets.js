@@ -5,12 +5,12 @@ import { createClient } from '../../core/client/api.js'
 import { setupApi } from './init.js'
 
 export const Planets = {
-  
+
   initialize () {
     this.planets = {}
   },
 
-  async connect(name, options = {}) {
+  async connect (name, options = {}) {
     _.defaults(options, {
       origin: window.location.origin,
       apiPath: config.apiPath,
@@ -33,7 +33,7 @@ export const Planets = {
       client.get('storage').removeItem(options.gatewayJwt)
     })
     const accessToken = await client.get('storage').getItem(options.apiJwt)
-    const response = await client.authenticate({
+    await client.authenticate({
       strategy: 'jwt',
       accessToken
     })
@@ -41,7 +41,7 @@ export const Planets = {
     return client
   },
 
-  async disconnect(name) {
+  async disconnect (name) {
     await this.planets[name].logout()
     delete this.planets[name]
   },

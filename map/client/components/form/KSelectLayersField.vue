@@ -52,7 +52,7 @@ export default {
         const layers = this.contextLayersByCategory[category.name] || this.layersByCategory[category.name]
         // Built-in categories can't contain user-defined layers
         const rootNode = (category._id ? userLayers : catalogLayers)
-        rootNode.layers.push({ _id: category._id || category.name, label: category.label, layers: this.layersByCategory[category.name] })
+        rootNode.layers.push({ _id: category._id || category.name, label: category.label, layers })
       })
       if (userLayers.layers.length > 0) tree.push(userLayers)
       if (catalogLayers.layers.length > 0) tree.push(catalogLayers)
@@ -87,7 +87,7 @@ export default {
   },
   setup (props) {
     // Use global catalog
-    const { layers: layers, getLayers: getLayers, categories: categories, getCategories: getCategories, layersByCategory: layersByCategory } =
+    const { layers, getLayers, categories, getCategories, layersByCategory } =
       useCatalog(api, { context: '' })
     // Use local catalog if any
     const { layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories, layersByCategory: contextLayersByCategory } =

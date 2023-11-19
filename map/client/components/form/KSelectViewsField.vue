@@ -66,7 +66,7 @@ export default {
     },
     onSelect () {
       // Keep only track of IDs
-      this.model = this.selectedViews.map(viewId => { _id: viewId })
+      this.model = this.selectedViews.map(viewId => ({ _id: viewId }))
       this.onChanged()
     }
   },
@@ -78,7 +78,7 @@ export default {
   },
   setup (props) {
     // Use global catalog
-    const { views: views, getViews: getViews } = useCatalog(api, { context: '' })
+    const { views, getViews } = useCatalog(api, { context: '' })
     // Use local catalog if any
     const { views: contextViews, getViews: getContextViews } = useCatalog(api, { context: Store.get('context') })
 

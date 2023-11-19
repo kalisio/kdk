@@ -79,9 +79,9 @@ export default {
   },
   methods: {
     getServiceForItem (item) {
-      return (this.hasSingleService ?
-        this.properties.services[0] :
-        _.find(this.properties.services, { service: item.service }))
+      return (this.hasSingleService
+        ? this.properties.services[0]
+        : _.find(this.properties.services, { service: item.service }))
     },
     getId (item) {
       return _.kebabCase(this.getLabel(item))
