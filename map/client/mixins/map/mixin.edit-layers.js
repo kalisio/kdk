@@ -7,6 +7,9 @@ import { bindLeafletEvents, unbindLeafletEvents } from '../../utils.js'
 const mapEditEvents = ['pm:create']
 const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend', 'pm:markerdragend']
 
+// The name of the edition helper pane where we put the various edit layers
+const editHelpersPaneName = 'editHelpersPane'
+
 export const editLayers = {
   emits: [
     'edit-start',
@@ -86,9 +89,9 @@ export const editLayers = {
         layerGroup: this.map,
         // Ensure it is on top of all others layers while editing
         panes: {
-          layerPane: 'popupPane',
-          vertexPane: 'popupPane',
-          markerPane: 'popupPane'
+          layerPane: editHelpersPaneName,
+          vertexPane: editHelpersPaneName,
+          markerPane: editHelpersPaneName
         }
       })
 
@@ -121,7 +124,7 @@ export const editLayers = {
 
       this.layerEditMode = mode
     },
-    async startEditLayer (layer, { allowedEditModes = null, editMode = null } = {}) {
+    async startEditLayer (layer, { allowedEditModes = null, editMode = null, zIndex = -1 } = {}) {
       if (this.editedLayer) return
 
       const leafletLayer = this.getLeafletLayerByName(layer.name)
@@ -172,6 +175,12 @@ export const editLayers = {
       this.$engineEvents.on('pm:rotateend', this.onFeaturesEdited)
       this.$engineEvents.on('layerremove', this.onFeaturesDeleted)
       this.$engineEvents.on('pm:markerdragend', this.onPointMoveEnd)
+
+      // Make sure the special pane where we put our edition helper layers exists
+      let pane = this.map.getPane(editHelpersPaneName)
+      if (!pane) pane = this.map.createPane(editHelpersPaneName)
+      // Default to leaflet's popup pane (see https://leafletjs.com/reference.html#map-popuppane)
+      _.set(pane, 'style.zIndex', zIndex !== -1 ? zIndex : 700)
 
       if (editMode) this.setEditMode(editMode)
     },
