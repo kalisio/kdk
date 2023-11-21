@@ -4,8 +4,7 @@
     <k-form
       ref="viewsForm"
       :schema="viewsFormSchema"
-      :values="selectedViews"
-      @field-changed="onViewsFormFieldChanged"
+      :values="project"
     />
     <!-- Buttons section -->
     <q-card-actions align="right">
@@ -34,13 +33,14 @@ export default {
     'done'
   ],
   inject: ['kActivity'],
-  data () {
-    return {
-      selectedViews: []
+  props: {
+    contextId: {
+      type: String,
+      default: ''
     }
   },
   computed: {
-    layersFormSchema () {
+    viewsFormSchema () {
       return {
         $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'http://kalisio.xyz/schemas/select-views#',
@@ -73,26 +73,24 @@ export default {
     }
   },
   methods: {
-    onViewsFormFieldChanged () {
-
-    },
     onClose () {
       this.$emit('done')
     },
     async onSelect () {
       const viewsResult = this.$refs.viewsForm.validate()
       if (!viewsResult.isValid) return
-      // TODO
+      const projectService = this.$api.getService('projects', this.contextId)
+      await projectService.patch(this.projectId, { views: viewsResult.values.views })
       this.$emit('done')
     }
   },
-  mounted () {
-    this.selectedViews = _.get(this.kActivity, 'project.views', [])
-  },
-  setup (props) {
+  // Should be used with <Suspense> to ensure the project is loaded upfront
+  async setup (props) {
+    const project = useProject()
+    await project.loadProject({ context: props.contextId })
     // Expose
     return {
-      ...useProject({ contextId: props.contextId })
+      ...project
     }
   }
 }

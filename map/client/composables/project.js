@@ -3,7 +3,7 @@ import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { api } from '../../../core.client.js'
 
-export function useProject (options) {
+export function useProject (options = {}) {
   // Data
   const route = useRoute()
   const projectId = ref(null)
@@ -18,7 +18,12 @@ export function useProject (options) {
   function hasProject () {
     return projectId.value
   }
+  function isProjectLoaded () {
+    return project.value
+  }
   async function loadProject (query = {}) {
+    // Ensure project ID is available first
+    refreshProjectId()
     if (!projectId.value) {
       project.value = null
     } else {
@@ -65,6 +70,7 @@ export function useProject (options) {
     project,
     projectId,
     hasProject,
+    isProjectLoaded,
     loadProject,
     projectQuery
   }

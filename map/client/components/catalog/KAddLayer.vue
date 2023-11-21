@@ -14,16 +14,16 @@
       <div>
         <q-tab-panels v-model="mode" animated>
           <q-tab-panel name="select" v-if="modes.includes('select')" :contextId="contextId">
-           <k-select-layers @done="closeModal" />
+            <Suspense><k-select-layers :contextId="contextId" @done="closeModal" /></Suspense>
           </q-tab-panel>
           <q-tab-panel name="import" v-if="modes.includes('import')">
-           <k-import-layer @done="closeModal" />
+            <k-import-layer @done="closeModal" />
           </q-tab-panel>
           <q-tab-panel name="connect" v-if="modes.includes('connect')">
             <k-connect-layer @done="closeModal" />
           </q-tab-panel>
           <q-tab-panel name="create" v-if="modes.includes('create')">
-           <k-create-layer @done="closeModal" />
+            <k-create-layer @done="closeModal" />
           </q-tab-panel>
         </q-tab-panels>
       </div>

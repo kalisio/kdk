@@ -51,8 +51,7 @@ export default {
     },
     viewTree () {
       const tree = []
-      if (this.views.length > 0) tree.push({ _id: 'views', label: this.$t('VIEWS_LABEL'), views: this.views })
-      if (this.contextViews.length > 0) tree.push({ _id: 'contextViews', label: this.$t('CATALOG'), views: this.contextViews })
+      if (this.views.length > 0) tree.push({ _id: 'views', label: this.$t('VIEWS_LABEL'), views: this.views.concat(this.contextViews) })
       return tree
     }
   },
@@ -66,6 +65,7 @@ export default {
     },
     onSelect () {
       // Keep only track of IDs
+      // For views we rely on id as a "stable" identifier because the underlying view might be renamed
       this.model = this.selectedViews.map(viewId => ({ _id: viewId }))
       this.onChanged()
     }
@@ -78,10 +78,10 @@ export default {
   },
   setup (props) {
     // Use global catalog
-    const { views, getViews } = useCatalog(api, { context: '' })
-    // Use local catalog if any
-    const { views: contextViews, getViews: getContextViews } = useCatalog(api, { context: Store.get('context') })
-
+    const { views, getViews } = useCatalog()
+    // Use local catalog
+    const { views: contextViews, getViews: getContextViews } = useCatalog({ context: Store.get('context') })
+    
     // Expose
     return {
       views,

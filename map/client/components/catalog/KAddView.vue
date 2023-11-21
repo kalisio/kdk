@@ -12,10 +12,10 @@
       <div>
         <q-tab-panels v-model="mode" animated>
           <q-tab-panel name="select" v-if="modes.includes('select')" :contextId="contextId">
-           <k-select-views @done="closeModal" />
+            <Suspense><k-select-views :contextId="contextId" @done="closeModal" /></Suspense>
           </q-tab-panel>
           <q-tab-panel name="create" v-if="modes.includes('create')">
-           <k-create-view @done="closeModal" />
+            <k-create-view @done="closeModal" />
           </q-tab-panel>
         </q-tab-panels>
       </div>

@@ -13,7 +13,7 @@
         :nbItemsPerPage="20"
         :append-items="true"
         :base-query="baseQuery"
-        :filter-query="filter.query"
+        :filter-query="filterQuery"
         @selection-changed="onViewSelected"
         :height="scrollAreaMaxHeight - 100"
         :width="scrollAreaMaxWidth"
@@ -28,6 +28,7 @@ import logger from 'loglevel'
 import { Filter, Sorter } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
+import { useProject } from '../../composables'
 
 export default {
   name: 'k-views-panel',
@@ -38,32 +39,6 @@ export default {
   },
   mixins: [catalogPanel],
   inject: ['kActivity'],
-  computed: {
-    baseQuery () {
-      return Object.assign({ type: 'Context' }, this.sorter.query)
-    },
-    toolbar () {
-      return [
-        {
-          id: 'views-filter',
-          component: 'collection/KFilter',
-          class: 'full-width'
-        },
-        { component: 'QSpace' },
-        {
-          component: 'collection/KSorter',
-          id: 'views-sorter',
-          tooltip: 'KViewsPanel.SORT_VIEWS',
-          options: [
-            { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
-            { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
-            { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
-            { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
-          ]
-        }
-      ]
-    }
-  },
   data () {
     const viewActions = []
     if (this.$can('create', 'catalog', this.kActivity.contextId)) {
@@ -92,6 +67,37 @@ export default {
       }
     }
   },
+  computed: {
+    baseQuery () {
+      return Object.assign({ type: 'Context' }, this.sorter.query)
+    },
+    filterQuery () {
+      const query = {}
+      if (this.hasProject()) Object.assign(query, { _id: { $in: _.map(this.project.views, '_id') } })
+      return Object.assign(query, this.filter.query)
+    },
+    toolbar () {
+      return [
+        {
+          id: 'views-filter',
+          component: 'collection/KFilter',
+          class: 'full-width'
+        },
+        { component: 'QSpace' },
+        {
+          component: 'collection/KSorter',
+          id: 'views-sorter',
+          tooltip: 'KViewsPanel.SORT_VIEWS',
+          options: [
+            { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
+            { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
+            { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
+            { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
+          ]
+        }
+      ]
+    }
+  },
   methods: {
     async onViewSelected (view, action) {
       switch (action) {
@@ -118,6 +124,15 @@ export default {
     },
     removeView (view) {
       this.$api.getService('catalog').remove(view._id)
+    }
+  },
+  // Should be used with <Suspense> to ensure the project is loaded upfront
+  async setup () {
+    const project = useProject()
+    await project.loadProject()
+    // Expose
+    return {
+      ...project
     }
   }
 }

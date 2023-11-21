@@ -23,6 +23,20 @@
     "INVALID_GPX_FILE": "{file} n'est pas un fichier GPX valide",
     "INVALID_KML_FILE": "{file} n'est pas un fichier KML valide"
   },
+  "utils": {
+    "layers": {
+      "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {features.length} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
+      "DOWNLOAD_INVALID_FEATURES_LABEL": "En sélectionnant cette option vos éléments invalides seront exportés dans un fichier avant l'enregistrement",
+      "INVALID_FEATURES_FILE": "ElementsInvalides.geojson",
+      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{processed} éléments traités sur {total}",
+      "SAVE_DIALOG_TITLE": "Tuilage de la couche {layer}",
+      "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",
+      "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
+      "REMOVE_DIALOG_TITLE": "Supprimer {layer} ?",
+      "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {layer} de votre espace de travail ?"
+    }
+  },
   "mixins": {
     "fileLayers": {
       "IMPORTED_DATA_NAME": "Mes données"
@@ -33,14 +47,7 @@
     "activity": {
       "ADD_LAYER": "Ajouter une couche",
       "CREATE_LAYER": "Créer une couche",
-      "SAVE_LABEL": "Sauvegarder la couche",
-      "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{processed} éléments traités sur {total}",
-      "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {features.length} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
-      "DOWNLOAD_INVALID_FEATURES_LABEL": "En sélectionnant cette option vos éléments invalides seront exportés dans un fichier avant l'enregistrement",
-      "INVALID_FEATURES_FILE": "ElementsInvalides.geojson",
-      "SAVE_DIALOG_TITLE": "Tuilage de la couche {layer}",
-      "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",
+      "MANAGE_LAYERS": "Gérer les couches",
       "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
       "FILTER_DATA_LABEL": "Filtrer les données",
@@ -49,10 +56,6 @@
       "START_EDIT_DATA_LABEL": "Editer les données",
       "STOP_EDIT_DATA_LABEL": "Clôturer l'édition des données",
       "EDITING_DATA_MESSAGE": "Edition en cours",
-      "REMOVE_LABEL": "Supprimer",
-      "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
-      "REMOVE_DIALOG_TITLE": "Supprimer {layer} ?",
-      "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {layer} de votre espace de travail ?",
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
@@ -73,12 +76,15 @@
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_VIEW": "Ajouter une vue",
       "CREATE_VIEW": "Créer une vue",
+      "MANAGE_VIEWS": "Gérer les vues",
       "CREATE_PROJECT": "Créer un projet",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
       "TOOLS": "Outils",
       "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",
       "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés",
-      "CAPTURE_VIEW": "Capturer la vue"
+      "CAPTURE_VIEW": "Capturer la vue",
+      "SAVE_LABEL": "Sauvegarder la couche",
+      "REMOVE_LABEL": "Supprimer"
     },
     "timeseries": {
       "FORECAST_PROBE": "Prévisions"

@@ -18,6 +18,7 @@
     <template v-slot:default>
       <KList
         service="projects"
+        :base-query="{ _id: { $ne: projectId } }"
         @selection-changed="onProjectSelected"
         :dense="true"
       />
@@ -76,7 +77,7 @@ export default {
     onProjectSelected (project) {
       this.$router.push({
         name: this.$route.name,
-        query: Object.assign({ project: project._id }, this.$route.query),
+        query: Object.assign({}, this.$route.query, { project: project._id }),
         params: Object.assign({}, this.$route.params)
       })
     }

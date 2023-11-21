@@ -18,7 +18,7 @@
       </template>
   </q-field>
   <!-- Layer tree -->
-  <q-tree :ref="tree" :nodes="layerTree" node-key="_id" label-key="label" children-key="layers"
+  <q-tree :ref="tree" :nodes="layerTree" node-key="id" label-key="label" children-key="layers"
     tick-strategy="leaf" v-model:ticked="selectedLayers" @update:ticked="onSelect">
   </q-tree>
 </template>
@@ -42,18 +42,23 @@ export default {
     },
     layerTree () {
       const tree = []
-      const userLayers = {
-        _id: 'userLayers', label: this.$t('LAYERS_LABEL'), layers: []
-      }
-      const catalogLayers = {
-        _id: 'catalogLayers', label: this.$t('CATALOG_LABEL'), layers: []
-      }
+      const userLayers = { id: 'userLayers', label: this.$t('LAYERS_LABEL'), layers: [] }
+      const catalogLayers = { id: 'catalogLayers', label: this.$t('CATALOG_LABEL'), layers: [] }
       this.categories.concat(this.contextCategories).forEach(category => {
-        const layers = this.contextLayersByCategory[category.name] || this.layersByCategory[category.name]
+        let layers = this.contextLayersByCategory[category.name] || this.layersByCategory[category.name]
         // Built-in categories can't contain user-defined layers
         const rootNode = (category._id ? userLayers : catalogLayers)
-        rootNode.layers.push({ _id: category._id || category.name, label: category.label, layers })
+        // Keep only what is required for rendering: id/label
+        layers = layers.map(layer => Object.assign(_.pick(layer, ['_id', 'name', 'label']), { id: category._id ? layer._id : layer.name }))
+        rootNode.layers.push({ id: category._id || category.name, label: category.label, layers })
       })
+      // Add orphan layers if any
+      this.orphanLayers.concat(this.orphanContextLayers).forEach(layer => {
+        const rootNode = (layer.scope === 'user' ? userLayers : catalogLayers)
+        // Push it front to be coherent with layers panel
+        rootNode.layers.unshift(Object.assign(_.pick(layer, ['_id', 'name', 'label']), { id: layer.scope === 'user' ? layer._id : layer.name }))
+      })
+      
       if (userLayers.layers.length > 0) tree.push(userLayers)
       if (catalogLayers.layers.length > 0) tree.push(catalogLayers)
       return tree
@@ -65,14 +70,19 @@ export default {
     },
     fill (value) {
       kCoreMixins.baseField.methods.fill.call(this, value)
-      this.selectedLayers = _.map(this.model, '_id')
+      // As we keep track of ID/name depending on if a layer comes from local/global catalog we need to process both
+      this.selectedLayers = _.map(_.filter(this.model, '_id'), '_id')
+      this.selectedLayers = this.selectedLayers.concat(_.map(_.filter(this.model, 'name'), 'name'))
     },
     onSelect () {
-      // Keep only track of IDs, take care that layers come from global/local catalog
-      this.model = this.selectedLayers.map(layerId => {
-        const layer = { _id: layerId }
-        if (_.find(this.contextLayers, layer)) layer.context = Store.get('context')
-        return layer
+      const layers = this.layers.concat(this.contextLayers)
+      // Keep only track of IDs/names, take care that layers come from global/local catalog
+      this.model = this.selectedLayers.map(id => {
+        // For user layers we rely on id as a "stable" identifier because the underlying layer might be renamed
+        const userLayer = _.find(layers, { _id: id })
+        // For global catalog we rely on name as a "stable" identifier because the underlying layer might be recreated
+        const catalogLayer = _.find(layers, { name: id })
+        return (userLayer ? { _id: id } : { name: id })
       })
       this.onChanged()
     }
@@ -87,20 +97,23 @@ export default {
   },
   setup (props) {
     // Use global catalog
-    const { layers, getLayers, categories, getCategories, layersByCategory } =
-      useCatalog(api, { context: '' })
+    const { layers, getLayers, categories, getCategories, layersByCategory, orphanLayers } =
+      useCatalog()
     // Use local catalog if any
-    const { layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories, layersByCategory: contextLayersByCategory } =
-      useCatalog(api, { context: Store.get('context') })
+    const { layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories,
+            layersByCategory: contextLayersByCategory, orphanLayers: orphanContextLayers } =
+      useCatalog({ context: Store.get('context') })
 
     // Expose
     return {
       layersByCategory,
+      orphanLayers,
       layers,
       getLayers,
       categories,
       getCategories,
       contextLayersByCategory,
+      orphanContextLayers,
       contextLayers,
       getContextLayers,
       contextCategories,

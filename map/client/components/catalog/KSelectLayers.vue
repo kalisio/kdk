@@ -4,8 +4,7 @@
     <k-form
       ref="layersForm"
       :schema="layersFormSchema"
-      :values="selectedLayers"
-      @field-changed="onLayersFormFieldChanged"
+      :values="project"
     />
     <!-- Buttons section -->
     <q-card-actions align="right">
@@ -34,9 +33,10 @@ export default {
     'done'
   ],
   inject: ['kActivity'],
-  data () {
-    return {
-      selectedLayers: []
+  props: {
+    contextId: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -73,26 +73,24 @@ export default {
     }
   },
   methods: {
-    onLayersFormFieldChanged () {
-
-    },
     onClose () {
       this.$emit('done')
     },
     async onSelect () {
       const layersResult = this.$refs.layersForm.validate()
       if (!layersResult.isValid) return
-      // TODO
+      const projectService = this.$api.getService('projects', this.contextId)
+      await projectService.patch(this.projectId, { layers: layersResult.values.layers })
       this.$emit('done')
     }
   },
-  mounted () {
-    this.selectedLayers = _.get(this.kActivity, 'project.layers', [])
-  },
-  setup (props) {
+  // Should be used with <Suspense> to ensure the project is loaded upfront
+  async setup (props) {
+    const project = useProject()
+    await project.loadProject({ context: props.contextId })
     // Expose
     return {
-      ...useProject({ contextId: props.contextId })
+      ...project
     }
   }
 }
