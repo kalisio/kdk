@@ -37,6 +37,7 @@ import KStamp from '../KStamp.vue'
 
 import _ from 'lodash'
 import { baseActivity } from '../../mixins'
+import { Exporter } from '../../exporter.js'
 
 export default {
   name: 'groups-activity',
@@ -60,6 +61,19 @@ export default {
       renderer: _.merge({
         component: 'team/KGroupCard'
       }, this.activityOptions.items)
+    }
+  },
+  methods: {
+    exportGroups () {
+      Exporter.export({
+        service: 'groups',
+        context: this.contextId,
+        formats: [
+          { label: 'CSV', value: 'csv' },
+          { label: 'JSON', value: 'json' }
+        ],
+        gzip: false
+      })
     }
   }
 }

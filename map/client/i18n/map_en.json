@@ -230,7 +230,20 @@
     "TIMELINE_STEP": "Timeline step (in minutes)",
     "TIMELINE_INTERVAL": "Real-time data refresh update interval",
     "TIMESERIES_SETTINGS": "Timeseries parameters",
-    "TIMESERIES_SPAN": "Timeseries span (in hours)"
+    "TIMESERIES_SPAN": "Timeseries span (in hours)",
+    "CAPTURE_RESOLUTION_FIELD_LABEL": "Resolution setting",
+    "CAPTURE_HEADER_FIELD_LABEL": "Title setting",
+    "CAPTURE_FOOTER_FIELD_LABEL": "Footer setting",
+    "CAPTURE_LEGEND_FIELD_LABEL": "Legend setting",
+    "CAPTURE_LEGEND_POSITION_FIELD_LABEL": "Select legend position",
+    "CAPTURE_COMPASS_FIELD_LABEL": "Orientation setting",
+    "CAPTURE_COMPASS_POSITION_FIELD_LABEL": "Select compass position",
+    "CAPTURE_LEFT_POSITION_FIELD_LABEL": " Left",
+    "CAPTURE_RIGHT_POSITION_FIELD_LABEL": " Right",
+    "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "Top left",
+    "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "Top right",
+    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Bottom left",
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Bottom right"
   },
   "tours": {
     "navigation-bar": {
@@ -630,23 +643,10 @@
     "ROTATE_FEATURES": "Rotate features",
     "REMOVE_FEATURES": "Remove features"
   },
-  "KCaptureToolbar": {
-    "SD_LABEL": "Standard Definition",
-    "SD_DESCRIPTION": "4:3, 640 x 480",
-    "HD_LABEL": "High Definition",
-    "HD_DESCRIPTION": "16:9, 1280 x 720",
-    "FHD_LABEL": "Full HD",
-    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
-    "QHD_LABEL": "Quad HD",
-    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
-    "2K_LABEL": "2K",
-    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
-    "4K_LABEL": "4K or Ultra HD",
-    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
-    "8K_LABEL": "8K or Full Ultra HD",
-    "8K_DESCRIPTION": "16∶9, 7680 x 4320",
+  "KCapture": {
     "CAPTURE_ACTION": "Capture view",
-    "CAPTURING_VIEW": "Waiting for capturing view"
+    "CAPTURING_VIEW": "Waiting for capturing view",
+    "ERROR_MESSAGE": "One capture is already in progress"
   },
   "KMeasureTool": {
     "TOOL_BUTTON_LABEL": "Display the measure tool",
@@ -686,5 +686,21 @@
   },
   "KDirectionField": {
     "COMPASS": "Compass"
+  },
+  "KResolutionField": {
+    "SD_LABEL": "Standard Definition",
+    "SD_DESCRIPTION": "4:3, 640 x 480",
+    "HD_LABEL": "High Definition",
+    "HD_DESCRIPTION": "16:9, 1280 x 720",
+    "FHD_LABEL": "Full HD",
+    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
+    "QHD_LABEL": "Quad HD",
+    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
+    "2K_LABEL": "2K",
+    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
+    "4K_LABEL": "4K or Ultra HD",
+    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
+    "8K_LABEL": "8K or Full Ultra HD",
+    "8K_DESCRIPTION": "16∶9, 7680 x 4320"
   }
 }

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.kalisio.xyz/schemas/capture.create.json#",
+  "description": "Capture schema",
+  "type": "object",
+  "properties": {
+    "resolution": {
+      "type": "object", 
+      "label": "resolution",
+      "field": {
+        "component": "form/KResolutionField",
+        "label": "schemas.CAPTURE_RESOLUTION_FIELD_LABEL"
+      }
+    },
+    "header": {
+      "type": "string", 
+      "field": {
+        "component": "form/KTextareaField",
+        "label": "schemas.CAPTURE_HEADER_FIELD_LABEL"
+      }
+    },
+    "footer": {
+      "type": "string", 
+      "field": {
+        "component": "form/KTextareaField",
+        "label": "schemas.CAPTURE_FOOTER_FIELD_LABEL"
+      }
+    },
+    "legend": {
+      "type": "boolean", 
+      "field": {
+        "component": "form/KToggleField",
+        "label": "schemas.CAPTURE_LEGEND_FIELD_LABEL"
+      }
+    },
+    "legendPosition": {
+      "type": "string", 
+      "field": {
+        "component": "form/KSelectField",
+        "label": "schemas.CAPTURE_LEGEND_POSITION_FIELD_LABEL",
+        "options": [
+          { "label": "schemas.CAPTURE_LEFT_POSITION_FIELD_LABEL", "value": "left", "selected": true },
+          { "label": "schemas.CAPTURE_RIGHT_POSITION_FIELD_LABEL", "value": "right" }
+        ]
+      }
+    },
+    "compass": {
+      "type": "boolean", 
+      "field": {
+        "component": "form/KToggleField",
+        "label": "schemas.CAPTURE_COMPASS_FIELD_LABEL"
+      }
+    },
+    "compassPosition": {
+      "type": "string", 
+      "field": {
+        "component": "form/KSelectField",
+        "label": "schemas.CAPTURE_COMPASS_POSITION_FIELD_LABEL",
+        "options": [
+          { "label": "schemas.CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL", "value": "top-left", "selected": true },
+          { "label": "schemas.CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL", "value": "top-right" }, 
+          { "label": "schemas.CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL", "value": "bottom-right" }, 
+          { "label": "schemas.CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL", "value": "bottom-left" }
+        ]
+      }
+    }
+  },
+  "required": []
+}
+

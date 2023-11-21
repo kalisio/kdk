@@ -1,57 +1,6 @@
 <template>
   <div>
-    <svg :width="width" :height="height" style="display:block">
-      <circle
-        v-if="type === 'circle'"
-        :cx="width/2"
-        :cy="height/2"
-        :r="(Math.min(height, width)/2)-borderWidth"
-        class="k-shape"
-      />
-      <ellipse
-        v-if="type === 'ellipse'"
-        :cx="width/2"
-        :cy="height/2"
-        :rx="(width/2)-borderWidth"
-        :ry="(height/2)-borderWidth"
-        class="k-shape"
-      />
-      <rect
-        v-if="type === 'rect'"
-        :x="borderWidth"
-        :y="borderWidth"
-        :width="width-(2*borderWidth)"
-        :height="height-(2*borderWidth)"
-        :rx="borderRadius"
-        :ry="borderRadius"
-        class="k-shape"
-      />
-      <polygon
-        v-if="type === 'triangle-up'"
-        :points="`${width/2},${borderWidth} ${borderWidth},${height-borderWidth} ${width-borderWidth},${height-borderWidth}`"
-        class="k-shape"
-      />
-      <polygon
-        v-if="type === 'triangle-down'"
-        :points="`${width/2},${height-borderWidth} ${borderWidth},${borderWidth} ${width-borderWidth},${borderWidth}`"
-        class="k-shape"
-      />
-      <polygon
-        v-if="type === 'triangle-right'"
-        :points="`0,0 0,${height} ${width},${height/2}`"
-        class="k-shape"
-      />
-      <polygon
-        v-if="type === 'triangle-left'"
-        :points="`0,${(height-borderWidth)/2} ${width-borderWidth},${height-borderWidth} ${width-borderWidth},${borderWidth}`"
-        class="k-shape"
-      />
-      <polygon
-        v-if="type === 'diamond'"
-        :points="`${width/2},${height-borderWidth} ${width-borderWidth},${height/2} ${width/2},${borderWidth} ${borderWidth},${height/2}`"
-        class="k-shape"
-      />
-    </svg>
+    <div v-html="content" />
     <q-tooltip v-if="tooltip">
       {{ tooltip }}
     </q-tooltip>
@@ -59,62 +8,64 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
+import { computed } from 'vue'
 import { getCssVar } from 'quasar'
+import { Shapes, createShape } from '../../utils/utils.shapes.js'
 
 // props
-defineProps({
-  type: {
+const props = defineProps({
+  shape: {
     type: String,
     default: 'circle',
     validator: (value) => {
-      return ['circle', 'ellipse', 'rect', 'triangle-up', 'triangle-down', 'triangle-right', 'triangle-left', 'diamond'].includes(value)
+      return Object.keys(Shapes).includes(value)
     }
   },
   width: {
     type: Number,
-    default: 18
+    default: 24
   },
   height: {
     type: Number,
-    default: 18
+    default: 24
   },
-  color: {
+  fill: {
     type: String,
     default: getCssVar('primary')
   },
-  opacity: {
+  fillOpacity: {
     type: Number,
     default: 1
   },
-  borderColor: {
+  stroke: {
     type: String,
     default: 'black'
   },
-  borderWidth: {
-    type: Number,
-    default: 1
-  },
-  borderRadius: {
+  strokeWidth: {
     type: Number,
     default: 0
   },
-  dashArray: {
+  strokeLineCap: {
     type: String,
-    default: ''
+    default: 'butt'
+  },
+  strokeLineJoin: {
+    type: String,
+    default: 'miter'
+  },
+  icon: {
+    type: Object,
+    default: undefined
   },
   tooltip: {
     type: String,
     default: undefined
   }
 })
-</script>
 
-<style lang="scss" scoped>
-.k-shape {
-  fill: v-bind(color);
-  fill-opacity: v-bind(opacity);
-  stroke: v-bind(borderColor);
-  stroke-width: v-bind(borderWidth);
-  stroke-dasharray: v-bind(dashArray);
-}
-</style>
+// Computed
+const content = computed(() => {
+  return createShape(_.omit(props, ['tooltip']))
+})
+</script>

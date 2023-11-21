@@ -2,7 +2,7 @@
 // https://quasar.dev/style/sass-scss-variables#variables-list
 
 // Theme
-$primary: #bf360c !default;
+$primary: #293341 !default;
 $secondary: lighten($primary, 75%) !default;
 $accent: lighten($primary, 25%) !default;
 $dark: darken($primary, 25%) !default;
@@ -36,3 +36,5 @@ $sticky-z-index: 1000 !default;
 
 // Table: quasar has eg $table-hover-background but nothing for background
 $table-background: #fff !default;
+
+

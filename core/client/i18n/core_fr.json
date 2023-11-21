@@ -133,6 +133,12 @@
       "RETRY": "Rééssayer",
       "ALERT": "Alerte",
       "INFORMATION": "Information"
+    },
+    "pwa": {
+      "UPDATE_TITLE": "Mise à jour disponible",
+      "UPDATE_MESSAGE": "Pour en savoir plus consultez la <a href=\"{changelog}\">note de version</a>",
+      "UPDATE": "Mettre à jour",
+      "IGNORE": "Ignorer"
     }
   },
   "utils": {
@@ -142,10 +148,7 @@
       "IOS_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites.<br>Depuis <b>Safari</b> cliquez sur <i class=\"material-icons\">ios_share</i> puis sur <b>Ajouter à l'écran d'accueil</b>",
       "FIREFOX_DESKTOP_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalites. Pour l'installer utiliser l'extension <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a>.",
       "INSTALL": "Installer",
-      "IGNORE": "Ignorer",
-      "UPDATE_TITLE": "Mise à jour disponible",
-      "UPDATE_MESSAGE": "Pour en savoir plus consultez la <a href=\"{changelog}\">note de version</a>",
-      "UPDATE": "Mettre à jour"
+      "IGNORE": "Ignorer"
     }
   },
   "schemas": {
@@ -450,13 +453,6 @@
     "TITLE": "Vous avez été déconnecté",
     "LOG_IN_AGAIN_LABEL": "Se reconnecter ?"
   },  
-  "KEndpointScreen": {
-    "TITLE": "Changer l'adresse du serveur ?",
-    "BASE_URL_FIELD_LABEL": "Saisissez l'adresse du serveur à utiliser",
-    "APPLY_LABEL": "Appliquer",
-    "RESET_LABEL": "Réinitialiser",
-    "LOG_IN_LABEL": "Se connecter ?"
-  },
   "KProfile": {
     "EDIT_PROFILE": "Editer mon profil",
     "MANAGE_ACCOUNT": "Gérer mon compte"
@@ -666,6 +662,7 @@
     "MEMBERS_LABEL": "@:MEMBERS",
     "SORT_MEMBERS": "Trier les membres",
     "SEARCH_MEMBERS": "Rechercher des membres",
+    "EXPORT_MEMBERS": "Exporter les membres",
     "ADD_USER_LABEL": "Ajouter un membre",
     "INVITE_GUEST_LABEL": "Inviter des personnes"
   },
@@ -742,6 +739,7 @@
     "TAGS_LABEL": "@:TAGS",
     "SORT_TAGS": "Trier les étiquettes",
     "SEARCH_TAGS": "Rechercher des étiquettes",
+    "EXPORT_TAGS": "Exporter les étiquettes",
     "CREATE_TAG_LABEL": "Créer une étiquette"
   },
   "KTagCard": {
@@ -755,6 +753,7 @@
     "GROUPS_LABEL": "@:GROUPS",
     "SORT_GROUPS": "Trier les groupes",
     "SEARCH_GROUPS": "Rechercher des groupes",
+    "EXPORT_GROUPS": "Exporter les groupes",
     "CREATE_GROUP_LABEL": "Créer un groupe"
   },
   "KGroupCard": {
