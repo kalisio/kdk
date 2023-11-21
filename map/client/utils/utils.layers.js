@@ -4,6 +4,8 @@ import explode from '@turf/explode'
 import { i18n, api, utils as kCoreUtils } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
 
+export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
+
 export function isInMemoryLayer (layer) {
   return layer._id === undefined
 }
@@ -104,7 +106,7 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   let createdLayer
   try {
     createdLayer = await api.getService('catalog')
-      .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
+      .create(_.omit(layer, InternalLayerProperties))
     let nbFeatures = 0
     // We use the generated DB ID as layer ID on features
     await createFeatures(geoJson, createdLayer._id, chunkSize, (i, chunk) => {
@@ -126,6 +128,10 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   }
   Loading.hide()
   return createdLayer
+}
+
+export async function saveLayer (layer) {
+  await api.getService('catalog').create(_.omit(layer, InternalLayerProperties))
 }
 
 export async function removeLayer (layer) {

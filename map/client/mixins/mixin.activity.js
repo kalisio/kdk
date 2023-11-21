@@ -190,8 +190,14 @@ export const activity = {
         createdLayer = await layers.saveGeoJsonLayer(layer, geoJson, _.get(this, 'activityOptions.featuresChunkSize', 5000))
       } else {
         // Otherwise simply save in catalog
-        createdLayer = await this.$api.getService('catalog')
-          .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
+        createdLayer = await layers.saveLayer(layer)
+      }
+      // Add layer to current project ?
+      if (this.hasProject()) {
+        this.project.layers.push({ _id: createdLayer._id })
+        await this.$api.getService('projects').patch(this.project._id, {
+          layers: this.project.layers
+        })
       }
       // Reset layer with new setup
       // It should be triggerred by real-time event
@@ -227,6 +233,7 @@ export const activity = {
         // but as we might not always use sockets perform it anyway
         this.removeLayer(layer.name)
       }
+      // Removing the layer should automatically update all projects
     },
     onEngineReady (engine) {
       this.engine = engine
