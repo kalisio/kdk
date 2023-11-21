@@ -11,7 +11,7 @@
 import _ from 'lodash'
 import { computed } from 'vue'
 import { getCssVar } from 'quasar'
-import { createShape } from '../../utils/utils.shapes.js'
+import { Shapes, createShape } from '../../utils/utils.shapes.js'
 
 // props
 const props = defineProps({
@@ -19,7 +19,7 @@ const props = defineProps({
     type: String,
     default: 'circle',
     validator: (value) => {
-      return ['circle', 'ellipse', 'rect', 'triangle-up', 'triangle-down', 'triangle-right', 'triangle-left', 'diamond'].includes(value)
+      return Object.keys(Shapes).includes(value)
     }
   },
   width: {

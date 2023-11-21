@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { uid } from 'quasar'
 
-const shapes = {
+export const Shapes = {
   circle: {
     viewBox: "0 0 100 100",
     content: '<circle cx="50" cy="50" r="50" />'
@@ -101,10 +101,8 @@ export function createShape (options) {
     svgShapeContent = shape.content
   } else if (typeof options.shape === 'string') {
     // use predefined shape
-    shape = shapes[options.shape]
-    console.log(shape, options.shape)
+    shape = Shapes[options.shape]
     if (shape) {
-      console.log(shape)
       beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', shape.viewBox)
       svgShapeContent = shape.content
     } else {
@@ -145,6 +143,5 @@ export function createShape (options) {
     iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}); color: ${color}; font-size: ${size}px;"`
     iconTag += '/>'
   }
-  console.log(svgShapeContent)
   return beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + endDivTag
 }
