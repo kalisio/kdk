@@ -48,14 +48,13 @@
 
 <script>
 import _ from 'lodash'
-import moment from 'moment'
 import { Dialog } from 'quasar'
 import mime from 'mime'
 import KPanel from '../KPanel.vue'
 import KImageViewer from '../media/KImageViewer.vue'
 import { Storage } from '../../storage.js'
 import { Events } from '../../events.js'
-import { createThumbnail, downloadAsBlob, dataUriToBlob } from '../../utils/index.js'
+import { downloadAsBlob } from '../../utils/index.js'
 
 export default {
   components: {
