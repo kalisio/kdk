@@ -98,5 +98,13 @@ export const Storage = {
     // Transform the query params
     url += `?${new URLSearchParams(query)}`
     return url
+  },
+  async getPresignedUrl (options) {
+    const { key, context } = options
+    // Ensure service is created
+    const service = this.getService(context)
+    // Get a presigned url
+    const { SignedUrl } = await service.create({ id: key, command: 'GetObject', ..._.omit(options, ['key', 'context']) })
+    return SignedUrl
   }
 }
