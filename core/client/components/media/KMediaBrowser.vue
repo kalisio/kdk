@@ -231,39 +231,12 @@ export default {
         if (mimeType === 'application/pdf') {
           Object.assign(media, { uri: 'icons/kdk/pdf.png' })
         } else {
-          const uri = await Storage.getObjectUrl({ key: media.key, context: this.context })
+          //const uri = await Storage.getObjectUrl({ key: media.key, context: this.context })
+          const uri = await Storage.getPresignedUrl({ key: media.key, context: this.context, expiresIn: 60 })
           Object.assign(media, { uri })
         }
         this.medias[index] = media
       }
-    },
-    capturePhoto () {
-      navigator.camera.getPicture(this.onPhotoCaptured, null, {
-        correctOrientation: true,
-        quality: 75,
-        destinationType: navigator.camera.DestinationType.DATA_URL,
-        sourceType: navigator.camera.PictureSourceType.CAMERA
-      })
-    },
-    async onPhotoCaptured (photoDataUri) {
-      const name = moment().format('YYYYMMDD_HHmmss.jpg')
-      const key = this.prefix ? this.prefix + '/' + name : name
-      photoDataUri = 'data:image/jpg;base64,' + photoDataUri
-      createThumbnail(photoDataUri, 200, 200, 50, async thumbnailDataUri => {
-        // Store once everything has been computed
-        await Storage.upload({
-          file: name,
-          key,
-          blob: dataUriToBlob(photoDataUri),
-          context: this.context
-        }, { query: this.uploadQuery })
-        await Storage.upload({
-          file: name,
-          key: key + '.thumbnail',
-          blob: dataUriToBlob(thumbnailDataUri),
-          context: this.context
-        }, { query: this.uploadQuery })
-      })
     },
     onRemoveMedia () {
       Dialog.create({
