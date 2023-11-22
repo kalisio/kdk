@@ -32,6 +32,7 @@ export function useCatalog (options = {}) {
       context: options.context,
       planetApi: options.planetApi
     })
+    return layers.value
   }
   async function getCategories () {
     categories.value = await catalog.getCategories({
@@ -39,6 +40,7 @@ export function useCatalog (options = {}) {
       context: options.context,
       planetApi: options.planetApi
     })
+    return categories.value
   }
   async function getViews () {
     views.value = await catalog.getViews({
@@ -46,6 +48,7 @@ export function useCatalog (options = {}) {
       context: options.context,
       planetApi: options.planetApi
     })
+    return views.value
   }
 
   // Expose

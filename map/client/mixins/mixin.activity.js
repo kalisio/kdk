@@ -88,10 +88,6 @@ export const activity = {
       return categories
     },
     async addCatalogCategory (category) {
-      // Process i18n
-      if (category.i18n) i18n.registerTranslation(category.i18n)
-      category.label = this.$tie(category.name)
-      category.description = this.$tie(category.description)
       this.layerCategories.push(category)
     },
     async refreshLayerCategories () {

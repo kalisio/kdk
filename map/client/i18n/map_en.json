@@ -221,6 +221,7 @@
     "PROJECT_DESCRIPTION_FIELD_LABEL": "Enter the description of this project",
     "PROJECT_LAYERS_FIELD_LABEL": "Select the layers in this project",
     "PROJECT_VIEWS_FIELD_LABEL": "Select the views in this project",
+    "PROJECT_INDENTIFIER_FIELD_LABEL": "Enter the identifier of this project for third-party applications",
     "MAP_SETTINGS": "Map parameters",
     "RESTORE_VIEW_FIELD_LABEL": "Save current extent",
     "RESTORE_LAYERS_FIELD_LABEL": "Save active layers",

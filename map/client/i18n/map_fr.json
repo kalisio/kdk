@@ -221,6 +221,7 @@
     "PROJECT_DESCRIPTION_FIELD_LABEL": "Saisissez la description du projet",
     "PROJECT_LAYERS_FIELD_LABEL": "Sélectionnez les couches dans ce projet",
     "PROJECT_VIEWS_FIELD_LABEL": "Sélectionnez les vues dans ce projet",
+    "PROJECT_INDENTIFIER_FIELD_LABEL": "Saisissez l'identifiant du projet pour les applications tierces",
     "MAP_SETTINGS": "Paramètres cartographiques",
     "RESTORE_VIEW_FIELD_LABEL": "Sauvegarder l'emprise courante",
     "RESTORE_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",

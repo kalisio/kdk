@@ -35,6 +35,15 @@
         "component": "form/KSelectViewsField",
         "label": "schemas.PROJECT_VIEWS_FIELD_LABEL"
       }
+    },
+    "identifier": {
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 3,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.PROJECT_INDENTIFIER_FIELD_LABEL"
+      }
     }
   },
   "required": [

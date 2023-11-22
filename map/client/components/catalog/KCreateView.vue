@@ -19,6 +19,7 @@
 
 <script>
 import { KPanel, KForm } from '../../../../core/client/components'
+import { useProject } from '../../composables'
 
 export default {
   components: {
@@ -29,6 +30,12 @@ export default {
     'done'
   ],
   inject: ['kActivity'],
+  props: {
+    contextId: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       creating: false
@@ -97,7 +104,14 @@ export default {
         const view = result.values
         try {
           this.creating = true
-          await this.kActivity.saveContext(view)
+          const createdView = await this.kActivity.saveContext(view)
+          // Add view to current project ?
+          if (this.hasProject()) {
+            this.project.views.push({ _id: createdView._id })
+            await this.$api.getService('projects').patch(this.project._id, {
+              views: this.project.views
+            })
+          }
           this.creating = false
           this.$emit('done')
         } catch (error) {
@@ -106,6 +120,15 @@ export default {
           throw error
         }
       }
+    }
+  },
+  // Should be used with <Suspense> to ensure the project is loaded upfront
+  async setup (props) {
+    const project = useProject()
+    await project.loadProject({ context: props.contextId })
+    // Expose
+    return {
+      ...project
     }
   }
 }
