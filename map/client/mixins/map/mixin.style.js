@@ -19,7 +19,6 @@ export const style = {
         _.get(this, 'activityOptions.engine.pointStyle'),
         leafletOptions.layerStyle,
         this.convertFromSimpleStyleSpec(feature.style || feature.properties))
-
       // We allow to template style properties according to feature,
       // because it can be slow you have to specify a subset of properties
       if (leafletOptions.template) {
