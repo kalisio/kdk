@@ -23,7 +23,7 @@ import { ref, onMounted } from 'vue'
 import 'pinch-zoom-element/dist/pinch-zoom.js'
 
 // Props
-const props = defineProps({
+defineProps({
   source: {
     type: String,
     default: ''
@@ -35,7 +35,7 @@ const props = defineProps({
 })
 
 // Emit
-const emit = defineEmits(['image-transformed'])
+defineEmits(['image-transformed'])
   
 // Data
 const loading = ref(true)
@@ -59,5 +59,10 @@ function onLoaded () {
 // Hooks
 onMounted(() => {
   restore()
+})
+
+// Expose
+defineExpose({
+  restore
 })
 </script>
