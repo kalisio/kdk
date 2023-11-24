@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import { ref, computed } from 'vue'
 import * as catalog from '../utils/utils.catalog.js'
+import { getCatalogProjectQuery } from '../utils/utils.project.js'
 import { api } from '../../../core/client/api.js'
 import { i18n } from '../../../core/client/i18n.js'
 
 export function useCatalog (options = {}) {
+  // Options might also contains a project object to filter the catalog
   _.defaults(options, {
     // Default filter queries
     layers: {},
@@ -28,7 +30,7 @@ export function useCatalog (options = {}) {
   // Functions
   async function getLayers() {
     layers.value = await catalog.getLayers({
-      query: options.layers,
+      query: options.project ? getCatalogProjectQuery(options.project) : options.layers,
       context: options.context,
       planetApi: options.planetApi
     })
@@ -44,7 +46,7 @@ export function useCatalog (options = {}) {
   }
   async function getViews () {
     views.value = await catalog.getViews({
-      query: options.views,
+      query: options.project ? getCatalogProjectQuery(options.project) : options.views,
       context: options.context,
       planetApi: options.planetApi
     })

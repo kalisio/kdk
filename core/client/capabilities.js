@@ -15,8 +15,8 @@ export const Capabilities = {
     Store.set('capabilities.api', content)
     Store.set('capabilities.client', _.pick(config, ['version', 'buildNumber']))
   },
-  get (key) {
+  get (key, defaultValue) {
     if (!this.content) logger.error(new Error('Capabilities must be initialized first'))
-    else return _.get(this.content, key)
+    else return _.get(this.content, key, defaultValue)
   }
 }

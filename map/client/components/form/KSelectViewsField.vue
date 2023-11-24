@@ -34,7 +34,7 @@
 
 <script>
 import _ from 'lodash'
-import { api, Store, mixins as kCoreMixins } from '../../../../core/client'
+import { Store, mixins as kCoreMixins } from '../../../../core/client'
 import { useCatalog } from '../../composables'
 
 export default {
@@ -81,7 +81,7 @@ export default {
     const { views, getViews } = useCatalog()
     // Use local catalog
     const { views: contextViews, getViews: getContextViews } = useCatalog({ context: Store.get('context') })
-    
+
     // Expose
     return {
       views,

@@ -25,7 +25,7 @@
 
 <script>
 import _ from 'lodash'
-import { api, Store, mixins as kCoreMixins } from '../../../../core/client'
+import { Store, mixins as kCoreMixins } from '../../../../core/client'
 import { useCatalog } from '../../composables'
 
 export default {
@@ -58,7 +58,7 @@ export default {
         // Push it front to be coherent with layers panel
         rootNode.layers.unshift(Object.assign(_.pick(layer, ['_id', 'name', 'label']), { id: layer.scope === 'user' ? layer._id : layer.name }))
       })
-      
+
       if (userLayers.layers.length > 0) tree.push(userLayers)
       if (catalogLayers.layers.length > 0) tree.push(catalogLayers)
       return tree
@@ -81,7 +81,6 @@ export default {
         // For user layers we rely on id as a "stable" identifier because the underlying layer might be renamed
         const userLayer = _.find(layers, { _id: id })
         // For global catalog we rely on name as a "stable" identifier because the underlying layer might be recreated
-        const catalogLayer = _.find(layers, { name: id })
         return (userLayer ? { _id: id } : { name: id })
       })
       this.onChanged()
@@ -100,8 +99,10 @@ export default {
     const { layers, getLayers, categories, getCategories, layersByCategory, orphanLayers } =
       useCatalog()
     // Use local catalog if any
-    const { layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories,
-            layersByCategory: contextLayersByCategory, orphanLayers: orphanContextLayers } =
+    const {
+      layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories,
+      layersByCategory: contextLayersByCategory, orphanLayers: orphanContextLayers
+    } =
       useCatalog({ context: Store.get('context') })
 
     // Expose

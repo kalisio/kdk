@@ -1,8 +1,6 @@
 import _ from 'lodash'
 import { getType, getGeom } from '@turf/invariant'
 import logger from 'loglevel'
-import moment from 'moment'
-import { Time } from '../../../core/client/time.js'
 import * as features from '../utils/utils.features.js'
 
 export const featureService = {

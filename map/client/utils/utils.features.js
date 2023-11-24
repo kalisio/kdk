@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { getType } from '@turf/invariant'
 import explode from '@turf/explode'
 import kinks from '@turf/kinks'
@@ -8,7 +9,7 @@ import rhumbDistance from '@turf/rhumb-distance'
 import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
-import { i18n, api } from '../../../core/client/index.js'
+import { i18n, api, Time } from '../../../core/client/index.js'
 
 export function transformFeatures (features, transform) {
   features.forEach(feature => {

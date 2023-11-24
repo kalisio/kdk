@@ -5,7 +5,7 @@ import { i18n, Store, utils as kCoreUtils } from '../../../core/client/index.js'
 import { Geolocation } from '../geolocation.js'
 import { setEngineJwt, getLayers, getCategories } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
-import { getProjectQuery } from '../utils/utils.project.js'
+import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
 export const activity = {
   data () {
@@ -48,7 +48,7 @@ export const activity = {
       // Do we get layers coming from project ?
       if (this.hasProject()) {
         this.project = await this.$api.getService('projects').get(_.get(this.$route, 'query.project'))
-        Object.assign(query, getProjectQuery(this.project))
+        Object.assign(query, getCatalogProjectQuery(this.project))
       } else {
         this.project = null
       }

@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { KForm, KPanel } from '../../../../core/client/components'
 import { useProject } from '../../composables'
 

@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import logger from 'loglevel'
 import { Filter, Sorter } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
