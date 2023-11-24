@@ -74,7 +74,7 @@ export default {
     },
     filterQuery () {
       const query = {}
-      if (this.hasProject()) Object.assign(query, { _id: { $in: _.map(this.project.views, '_id') } })
+      if (this.project) Object.assign(query, { _id: { $in: _.map(this.project.views, '_id') } })
       return Object.assign(query, this.filter.query)
     },
     toolbar () {

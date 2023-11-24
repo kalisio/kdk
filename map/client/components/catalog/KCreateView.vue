@@ -106,7 +106,7 @@ export default {
           this.creating = true
           const createdView = await this.kActivity.saveContext(view)
           // Add view to current project ?
-          if (this.hasProject()) {
+          if (this.project) {
             this.project.views.push({ _id: createdView._id })
             await this.$api.getService('projects').patch(this.project._id, {
               views: this.project.views

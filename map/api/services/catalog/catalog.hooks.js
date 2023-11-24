@@ -2,7 +2,7 @@ import _ from 'lodash'
 import common from 'feathers-hooks-common'
 import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
-import { filterLayers, updateLayerReferences, getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
+import { filterLayers, updateLayerReferences, updateProjects, getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
 
 const { setNow, discard } = common
 
@@ -61,7 +61,8 @@ export default {
     ],
     remove: [
       setNow('updatedAt'),
-      updateLayerReferences
+      updateLayerReferences,
+      updateProjects
     ]
   },
 

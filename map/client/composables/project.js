@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../../core.client.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
@@ -17,6 +17,7 @@ export function useProject (options = {}) {
 
   // Data
   const route = useRoute()
+  const router = useRouter()
   const projectId = ref(null)
   const project = ref(null)
 
@@ -59,6 +60,12 @@ export function useProject (options = {}) {
     if (project.value && (removedProject._id === project.value._id)) {
       project.value = null
       projectId.value = null
+      // Clear project from query as well
+      if (options.route) router.push({
+        name: route.name,
+        query: _.omit(route.query, ['project']),
+        params: route.params
+      })
     }
   }
   function refreshProjectId () {
@@ -93,6 +100,7 @@ export function useProject (options = {}) {
     hasProject,
     isProjectLoaded,
     loadProject,
-    projectQuery
+    projectQuery,
+    catalogProjectQuery
   }
 }

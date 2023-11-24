@@ -36,9 +36,6 @@ export const activity = {
     is3D () {
       return (this.engine === 'cesium')
     },
-    hasProject () {
-      return _.has(this.$route, 'query.project')
-    },
     // This method should be overriden in activities
     getFeatureActions (feature, layer) {
       return []
@@ -46,9 +43,8 @@ export const activity = {
     async getCatalogLayers () {
       const query = {}
       // Do we get layers coming from project ?
-      if (this.hasProject()) {
-        this.project = await this.$api.getService('projects').get(_.get(this.$route, 'query.project'))
-        Object.assign(query, getCatalogProjectQuery(this.project))
+      if (this.project) {
+        Object.assign(query, this.catalogProjectQuery ? this.catalogProjectQuery : getCatalogProjectQuery(this.project))
       } else {
         this.project = null
       }
@@ -189,7 +185,7 @@ export const activity = {
         createdLayer = await layers.saveLayer(layer)
       }
       // Add layer to current project ?
-      if (this.hasProject()) {
+      if (this.project) {
         this.project.layers.push({ _id: createdLayer._id })
         await this.$api.getService('projects').patch(this.project._id, {
           layers: this.project.layers
