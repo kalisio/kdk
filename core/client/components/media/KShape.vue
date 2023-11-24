@@ -8,11 +8,10 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { computed } from 'vue'
 import { createShape } from '../../utils/utils.shapes.js'
 
-// props
+// Props
 const props = defineProps({
   options: {
     type: Object,
