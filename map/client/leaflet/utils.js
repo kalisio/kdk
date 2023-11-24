@@ -1,6 +1,11 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import { utils as kdkCoreUtils } from '../../../core/client/index.js'
+import { ShapeMarker } from './ShapeMarker.js'
+
+L.shapeMarker = function (latlng, options) {
+  return new ShapeMarker(latlng, options)
+}
 
 export const LeafletStyleMappings = {
   'z-index': 'pane',
@@ -18,18 +23,20 @@ export const LeafletStyleMappings = {
   'line-join': 'lineJoin',
   'dash-array': 'dashArray',
   'dash-offset': 'dashOffset',
-  'marker-size': 'icon.options.iconSize',
-  'marker-symbol': 'icon.options.iconUrl',
-  'marker-color': 'icon.options.markerColor',
   'marker-type': 'type',
-  'icon-color': 'icon.options.iconColor',
-  'icon-size': 'icon.options.iconSize',
-  'icon-anchor': 'icon.options.iconAnchor',
-  'icon-classes': 'icon.options.iconClasses',
-  'icon-html': 'icon.options.html',
-  'icon-class': 'icon.options.className',
-  'icon-x-offset': 'icon.options.iconXOffset',
-  'icon-y-offset': 'icon.options.iconYOffset'
+  'marker-symbol': 'shape',
+  'marker-size': 'size',
+  'marker-color': 'fillColor',
+  'icon-url': 'icon.iconUrl',
+  'icon-html': 'icon.html',
+  'icon-size': 'icon.iconSize',
+  'icon-anchor': 'icon.iconAnchor',
+  'icon-class': 'icon.className',
+  'icon-color': 'icon.color',
+  'icon-opacity': 'icon.opacity',
+  'icon-classes': 'icon.classes',
+  'icon-x-offset': 'icon.xOffset',
+  'icon-y-offset': 'icon.yOffset'
 }
 export const LeafletStyleOptions = _.values(LeafletStyleMappings)
 
@@ -74,31 +81,40 @@ export const LeafletEvents = {
   Cluster: ['spiderfied', 'unspiderfied']
 }
 
-export function createLeafletMarkerFromStyle (latlng, markerStyle, feature) {
-  if (markerStyle) {
-    let icon = markerStyle.icon
-    // Parse icon options to get icon object if any
-    if (icon) {
-      const iconOptions = icon.options || icon
-      const options = markerStyle.options || markerStyle
-      icon = _.get(L, icon.type)(iconOptions)
-      return _.get(L, markerStyle.type || 'marker')(latlng, Object.assign(_.omit(options, ['icon']), { icon }))
-    } else {
-      const options = markerStyle.options || markerStyle
-      return _.get(L, markerStyle.type || 'marker')(latlng, options)
-    }
-  } else {
-    return L.marker(latlng)
+export function createLeafletIconFromStyle (iconStyle) {
+  const iconOptions = iconStyle.options || iconStyle
+  let type = 'icon'
+  if (iconStyle.html) {
+    type = 'divIcon'
+    // Remove default background style
+    if (!iconOptions.className) _.set(iconOptions, 'className', '')
   }
+  return _.get(L, type)(iconOptions)
+}
+
+export function createLeafletMarkerFromStyle (latlng, markerStyle, feature) {
+  let options
+  if (markerStyle) {
+    // Retrienve the options
+    options = markerStyle.options || markerStyle
+    // Retrieve the type
+    const type = markerStyle.type || 'shapeMarker'
+    if (type !== 'shapeMarker') {
+      // parse icon options to create Leaflet icon 
+      if (markerStyle.icon) {
+        const icon = createLeafletIconFromStyle(markerStyle.icon)
+        options = Object.assign(_.omit(options, ['icon']), { icon })
+      }
+      return _.get(L, type || 'marker')(latlng, options)
+    }
+  } 
+  return L.shapeMarker(latlng, options)
 }
 
 export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
   if (!style) return {}
   const convertedStyle = (inPlace ? style : {})
   // Compute flags first because if updating in place options in style spec will be replaced
-  const isHtml = _.has(style, 'icon-html')
-  const hasClass = _.has(style, 'icon-class')
-  const isFontAwesome = _.has(style, 'icon-classes')
   let isIconSpec = _.has(style, 'icon')
   // First copy any icon spec as not supported by simple style spec
   if (isIconSpec) _.set(convertedStyle, 'icon', _.get(style, 'icon'))
@@ -107,9 +123,8 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
       const mapping = _.get(LeafletStyleMappings, key)
       // Specific options
       switch (key) {
-        case 'icon-size':
-        case 'icon-anchor':
         case 'marker-size':
+        case 'icon-anchor':
           if (!Array.isArray(value)) value = [value, value]
           _.set(convertedStyle, mapping, value)
           break
@@ -122,11 +137,11 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
     }
   })
   if (isIconSpec) {
-    // Select the right icon type based on options if not already set
-    if (!_.has(style, 'icon.type')) _.set(convertedStyle, 'icon.type', (isFontAwesome ? 'icon.fontAwesome' : isHtml ? 'divIcon' : 'icon'))
-    // Leaflet adds a default background style but we prefer to remove it
-    if (isHtml && !hasClass) _.set(convertedStyle, 'icon.options.className', '')
-    _.set(convertedStyle, 'type', 'marker')
+    // Select the right marker type based on icon properties if not already set
+    if (!_.has(style, 'marker.type')) {
+      if (_.has(style, 'icon-url') || _.has(style, 'icon-html')) _.set(convertedStyle, 'type', 'marker')
+      else if (_.has(style, 'icon-classes')) _.set(convertedStyle, 'type', 'shapeMarker')
+    }
   }
   // Manage panes to make z-index work for all types of layers,
   // pane name can actually be a z-index value

@@ -47,12 +47,7 @@ async function createLocationLayer () {
       isVisible: true,
       realtime: true,
       interactive: false,
-      popup: { template: '<%= properties.name %>' },
-      'icon-classes': 'fas fa-circle',
-      'marker-color': getCssVar('primary'),
-      'icon-color': '#FFFFFF',
-      'icon-x-offset': -2,
-      'icon-y-offset': 0
+      popup: { template: '<%= properties.name %>' }
     },
     cesium: {
       type: 'geoJson',

@@ -45,7 +45,7 @@ export default {
     mapGhostIcon: {
       type: Object,
       default (rawProps) {
-        return { 'marker-type': 'marker', 'marker-color': 'primary', 'icon-classes': 'las la-mountain', 'icon-color': 'secondary' }
+        return { 'marker-type': 'shapeMarker', 'fill-color': 'primary', 'icon-classes': 'las la-mountain' }
       }
     },
     terrainLegend: { type: String, default: '' }
