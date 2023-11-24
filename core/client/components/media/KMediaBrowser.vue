@@ -15,7 +15,8 @@
       -->
     <template v-for="(media) in medias" :key="media.key">
       <q-carousel-slide :name="media.name" class="row justify-center items-center">
-        <k-image-viewer :ref="media.key" class="fit k-media-browser-slide" :source="media.uri" :interactive="media.isImage" @image-transformed="onImageTrasnformed" />
+        <!-- We use the uri as unique identifier to ensure the component is recreated -->
+        <k-image-viewer :ref="media.uri" class="fit k-media-browser-slide" :source="media.uri" :interactive="media.isImage" @image-transformed="onImageTransformed" />
       </q-carousel-slide>
     </template>
     <!--
@@ -104,15 +105,6 @@ export default {
           handler: this.onRemoveMedia
         })
       }
-      if (this.canCapturePhoto()) {
-        actions.push({
-          id: 'capture-photo',
-          icon: 'las la-camera',
-          tooltip: this.$t('KMediaBrowser.ADD_PHOTO_LABEL'),
-          color: (this.hasMedia ? 'grey-5 ' : 'secondary'),
-          handler: this.onCapturePhoto
-        })
-      }
       actions.push({
         id: 'add-media',
         icon: 'las la-paperclip',
@@ -179,15 +171,12 @@ export default {
     }
   },
   methods: {
-    canCapturePhoto () {
-      if (!this.$q.platform.is.cordova) return false
-      return true
-    },
-    onImageTrasnformed () {
+    onImageTransformed () {
       this.currentMediaTransformed = true
     },
     onImageRestored () {
-      if (this.$refs[this.currentMedia.key]) this.$refs[this.currentMedia.key][0].restore()
+      // We use the uri as unique identifier to ensure the component is recreated
+      if (this.$refs[this.currentMedia.uri]) this.$refs[this.currentMedia.uri][0].restore()
       this.currentMediaTransformed = false
     },
     async onDownloadMedia () {
@@ -224,16 +213,16 @@ export default {
       this.currentMedia = media
       this.currentMedia.isImage = mimeType.startsWith('image/')
       this.currentMediaTransformed = false
-      // Download image the first time
-      if (!media.uri) {
-        // We only download images
-        if (mimeType === 'application/pdf') {
-          Object.assign(media, { uri: 'icons/kdk/pdf.png' })
-        } else {
-          //const uri = await Storage.getObjectUrl({ key: media.key, context: this.context })
-          const uri = await Storage.getPresignedUrl({ key: media.key, context: this.context, expiresIn: 60 })
-          Object.assign(media, { uri })
-        }
+      // Get the uri of the target image
+      let uri
+      // We only display image preview not pdf preview
+      if (mimeType === 'application/pdf') {
+        uri = 'icons/kdk/pdf.png'
+      } else {
+        uri = await Storage.getPresignedUrl({ key: media.key, context: this.context, expiresIn: 60 })
+      }
+      if (media.uri !== uri) {
+        Object.assign(media, { uri })
         this.medias[index] = media
       }
     },
