@@ -80,18 +80,18 @@ Our mapping extends the simple style spec and can be used to create styles more 
 * `line-join`: mapped as `lineJoin`,
 * `dash-array`: mapped as `dashArray`,
 * `dash-offset`: mapped as `dashOffset`,
-* `marker-size`: mapped as `icon.options.iconSize`,
-* `marker-symbol`: mapped as `icon.options.iconUrl`,
 * `marker-type`: mapped as `type`,
-* `icon-size`: mapped as `icon.options.iconSize`,
-* `icon-anchor`: mapped as `icon.options.iconAnchor`,
-* `icon-class`: mapped as `icon.options.className`,
-* `icon-html`: mapped as `icon.options.html` and automatically switch to `divIcon` constructor function,
-* `icon-classes`: mapped as `icon.options.iconClasses` and automatically switch to `icon.fontAwesome` constructor function,
-* `marker-color`: mapped as `icon.options.markerColor` for `icon.fontAwesome`,
-* `icon-color`: mapped as `icon.options.iconColor` for `icon.fontAwesome`,
-* `icon-x-offset`: mapped as `icon.options.iconXOffset` for `icon.fontAwesome`,
-* `icon-y-offset`: mapped as `icon.options.iconYOffset` for `icon.fontAwesome`
+* `marker-symbol`: mapped as `shape`,
+* `marker-size`: mapped as `size`,
+* `marker-color`: mapped as `fillColor`
+* `icon-size`: mapped as `icon.iconSize`,
+* `icon-anchor`: mapped as `icon.iconAnchor`,
+* `icon-class`: mapped as `icon.className`,
+* `icon-html`: mapped as `icon.html` and automatically switch to `divIcon` constructor function,
+* `icon-classes`: mapped as `icon.iconClasses` for `ShapeMarker` only
+* `icon-color`: mapped as `icon.options.iconColor` for `ShapeMarker` only
+* `icon-x-offset`: mapped as `icon.options.iconXOffset` for `ShapeMarker` only
+* `icon-y-offset`: mapped as `icon.options.iconYOffset` for `ShapeMarker` only
 
 The mixin automatically registers defaults styling:
   * `markerStyle` => will create a marker based on the following options merged with the following order of precedence

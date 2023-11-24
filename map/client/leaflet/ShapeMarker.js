@@ -5,8 +5,7 @@ import { utils as coreUtils } from '../../../core/client/index.js'
 // Defaults marker properties
 const defaults = {
 	shape: 'marker-pin',
-	width: 28,
-	height: 36,
+	size: [28, 36],
 	icon: {
 		classes: 'fa fa-circle'
 	}
@@ -14,20 +13,19 @@ const defaults = {
 
 export const ShapeMarker = L.Marker.extend({
 	initialize (latlng, options) {
-		let _options = _.cloneDeep(options)
+		let mappedOptions = _.cloneDeep(options)
 		// map options from simplespec to SVG shape
-		if (_options.fillColor) _.set(_options, 'color', options.fillColor)
-		if (_options.fillOpacity) _.set(_options, 'opacity', options.fillOpacity)
-		if (_options.color) _.set(_options, 'stroke.color', options.color)
-		if (_options.weight) _.set(_options, 'stroke.Width', options.weight)
+		if (mappedOptions.fillColor) _.set(mappedOptions, 'color', options.fillColor)
+		if (mappedOptions.fillOpacity) _.set(mappedOptions, 'opacity', options.fillOpacity)
+		if (mappedOptions.color) _.set(mappedOptions, 'stroke.color', options.color)
+		if (mappedOptions.weight) _.set(mappedOptions, 'stroke.Width', options.weight)
     // create the marker with the corredt divIcon
-		const width = _options.width || defaults.width
-		const height = _options.height || defaults.height
+		const size = mappedOptions.size || defaults.size
     L.Marker.prototype.initialize.call(this, latlng, { 
 			icon: L.divIcon({
-				iconSize: [width, height],
-				iconAnchor: [width/2, height],
-				html: coreUtils.createShape(_.defaultsDeep(_options, defaults)),
+				iconSize: size,
+				iconAnchor: [size[0]/2, size[1]],
+				html: coreUtils.createShape(_.defaultsDeep(mappedOptions, defaults)),
 				className: ''
 			}) 
 		})

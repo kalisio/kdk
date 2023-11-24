@@ -88,8 +88,8 @@ function addSvgAttribute (svg, attibute, value) {
 */
 export function createShape (options) {
   let shape
-  const width = options.width || 24
-  const height = options.height || 24
+  const width = _.get(options, 'size[0]', 24)
+  const height = _.get(options, 'size[1]', 24)
   // Set div container vars
   const beginDivTag = `<div style="position: relative; width: ${width}px; height: ${height}px;">`
   const endDivTag = '</div>'
