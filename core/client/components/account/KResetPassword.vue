@@ -103,16 +103,22 @@ async function apply () {
     processing.value = false
   } catch (error) {
     processing.value = false
-    const type = _.get(error, 'errors.$className')
-    switch (type) {
-      case 'badParams':
-        message.value = i18n.t('KResetPassword.ERROR_MESSAGE_BAD_PARAMS')
-        break
-      case 'resetExpired':
-        message.value = i18n.t('KResetPassword.ERROR_MESSAGE_VERIFY_EXPIRED')
-        break
-      default:
-        message.value = i18n.t('KResetPassword.ERROR_MESSAGE_DEFAULT')
+    // Translate the error if we have a specific message, ie a translation key exists
+    const translation = _.get(error, 'data.translation')
+    if (translation) {
+      message.value = i18n.tie('errors.' + translation.key, translation.params)
+    } else { // Otherwise use a message linked to the generic error type
+      const type = _.get(error, 'errors.$className')
+      switch (type) {
+        case 'badParams':
+          message.value = i18n.t('KResetPassword.ERROR_MESSAGE_BAD_PARAMS')
+          break
+        case 'resetExpired':
+          message.value = i18n.t('KResetPassword.ERROR_MESSAGE_VERIFY_EXPIRED')
+          break
+        default:
+          message.value = i18n.t('KResetPassword.ERROR_MESSAGE_DEFAULT')
+      }
     }
   }
   send.value = true
