@@ -21,7 +21,10 @@ module.exports = function (categoryFiles, context) {
     categories = categories.concat(categoriesFromFile)
   })
   debug(`Found ${categories.length} category definitions to build catalog from`)
-
+  // Sort categories
+  categories.sort((category, other) => {
+    return (category.order || 50) - (other.order || 50)
+  })
   // All categories by default
   let filter = categories.map(category => category.name.replace('Categories.', ''))
   // Now build filter according any env filter
