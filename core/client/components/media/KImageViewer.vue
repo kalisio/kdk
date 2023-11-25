@@ -4,7 +4,7 @@
       <pinch-zoom class="pinch-zoom-controller fit row justify-center items-center" @change="$emit('image-transformed')">
         <img :src="source" style="max-width:100%; max-height:100%" :onload="onLoaded" />
       </pinch-zoom>
-      
+
     </div>
     <div v-else class="fit row justify-center items-center">
       <img :src="source" style="max-width:100%; max-height:100%" />
@@ -36,7 +36,7 @@ defineProps({
 
 // Emit
 defineEmits(['image-transformed'])
-  
+
 // Data
 const loading = ref(true)
 
