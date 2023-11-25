@@ -30,7 +30,7 @@
               </q-item-section>
             </q-item>
           </template>
-          <q-separator v-if="index < sections.length - 1" />
+          <q-separator v-if="index < sections.length - 1" style="margin: 8px;" />
         </q-list>
       </template>
     </div>
