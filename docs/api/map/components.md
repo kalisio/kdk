@@ -6,7 +6,7 @@ The **k-catalog** is used to list all available layers in [catalog](./services.m
 * **name**: internal name,
 * **label**: display label,
 * **icon**: display icon,
-* **weight**: is used to order the category within the catalog. You can specify a weight between 1 and 100. Categories with the lowest weight are displayed first. Basemaps are displayed last with a weight of 100.
+* **order**: weight to order the category within the catalog. You can specify a value between 1 and 100. Categories with the lowest weight are displayed first. Basemaps are displayed last with a weight of 100.
 * **options**:
   * **exclusive**: `true` if layer selection in the category should be exclusive (defaults to `false`),
   * **open**: `true` if layer category should initially be open in the catalog component (defaults to `false`),
