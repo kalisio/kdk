@@ -368,7 +368,8 @@
     "READING_FILE": "Reading file {file}"
   },
   "storage": {
-    "UPLOADING_FILE": "Uploading file {file}"
+    "UPLOADING_FILE": "Uploading file {file}",
+    "DOWNLOADING_FILE": "Downloading file {file}"
   },
   "KVersion": {
     "CLIENT_VERSION": "Client v{version}",
