@@ -16,13 +16,15 @@
       >
         <!-- legend components by layers -->
         <template v-for="layer in layersBySublegend[sublegend.name]" :key="layer.name" class="column full-width">
-          <div class="q-py-xs q-px-md">
-            <component
-              :is="layer.legend.renderer"
-              :label="layer.legend.label"
-              :content="filterContent(layer)"
-            />
-          </div>
+          <template v-for="legend in getLegends(layer)" :key="layer.name">
+            <div class="q-py-xs q-px-md">
+              <component
+                :is="legend.renderer"
+                :label="legend.label"
+                :content="legend.content"
+              />
+            </div>
+          </template>
         </template>
       </q-expansion-item>
     </template>
@@ -39,7 +41,7 @@ import { useCurrentActivity } from '../../composables'
 
 // Props
 const props = defineProps({
-  contextId: {
+  contextOrId: {
     type: String,
     default: undefined
   },
@@ -95,23 +97,14 @@ const layersBySublegend = computed(() => {
 
 // Functions
 function onShowLayer (layer, engine) {
-  const legend = layer.legend
-  if (!legend) return
-  if (!legend.content) {
-    logger.warn(`[KDK] Legend for ${layer.name} has no content`)
-    return
-  }
+  let layerLegend = layer.legend
+  // Check whether the layer has a legend
+  if (!layerLegend) return
+  // Check wehther the legend is already registered for that layer
   if (_.find(layers.value, { name: layer.name })) {
     logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
     return
   }
-  logger.debug(`[KDK] Register '${layer.name}' legend`)
-  const renderer = props.renderers[legend.type]
-  if (!renderer) {
-    logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
-    return
-  }
-  legend.renderer = coreUtils.loadComponent(renderer)
   layers.value.push(layer)
 }
 function onHideLayer (layer) {
@@ -122,27 +115,29 @@ function onHideLayer (layer) {
 function onZoomChanged () {
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
 }
-function filterContent (layer) {
-  const content = layer.legend.content
-  if (!zoom.value) return content
-  let result
-  if (Array.isArray(content)) {
-    _.forEach(content, item => {
-      const minZoom = _.get(layer, `${engine.value}.minZoom`, _.get(item, 'minZoom', 0))
-      const maxZoom = _.get(layer, `${engine.value}.maxZoom`, _.get(item, 'maxZoom', 99))
-      if (zoom.value >= minZoom && zoom.value <= maxZoom) {
-        result = item
-        return false
-      }
-    })
-  } else {
-    const minZoom = _.get(layer, `${engine.value}.minZoom`, _.get(content, 'minZoom', 0))
-    const maxZoom = _.get(layer, `${engine.value}.maxZoom`, _.get(content, 'maxZoom', 99))
-    if (zoom.value >= minZoom && zoom.value <= maxZoom) {
-      result = content
+function getLegends (layer) {
+  let legends = [] 
+  let layerLegends = layer.legend || []
+  if (!Array.isArray(layerLegends)) layerLegends = [layerLegends]
+  layerLegends.forEach(legend => {
+    if (!legend.content) {
+      logger.warn(`[KDK] Legend ${legend.label} for ${layer.name} has no content`)
+      return
     }
-  }
-  return result
+    const minZoom = _.get(legend, 'minZoom', _.get(layer, `${engine.value}.minZoom`, 0))
+    const maxZoom = _.get(legend, 'maxZoom', _.get(layer, `${engine.value}.maxZoom`, 99))
+    if (zoom.value >= minZoom && zoom.value <= maxZoom) {
+      logger.debug(`[KDK] Register '${layer.name}' legend ${legend.label}`)
+      const renderer = props.renderers[legend.type]
+      if (!renderer) {
+        logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
+        return
+      }
+      legend.renderer = coreUtils.loadComponent(renderer)
+      legends.push(legend)
+    }
+  })
+  return legends
 }
 
 // Watch

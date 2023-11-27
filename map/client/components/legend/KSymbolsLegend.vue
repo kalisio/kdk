@@ -58,7 +58,7 @@ const props = defineProps({
 
 // computed
 const sections = computed(() => {
-  return _.difference(_.keys(props.content), ['minZoom', 'maxZoom'])
+  return _.difference(_.keys(props.content))
 })
 
 // function
