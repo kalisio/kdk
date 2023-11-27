@@ -137,9 +137,12 @@ Tipically, **sublegends** declaration is done within the application's API confi
 }
 ```
 
-And **layer legends** information is part of the layer declaration in a dedicated `legend` object. It consists in :
+And **layer legends** information is part of the layer declaration in a dedicated `legend` object. It consists in a legend **objet** or an **array**. 
+A legend objet is defined by the folowwing properties:
 * a _type_ defining the type of the legend to be rendered. It is mandatory.
 * a _label_ defining the caption of this legend
+* a _minZomm_ definig the minimum zoom 
+* a _mawZomm_ definig the miximum zoom
 * a _content_ describing the content of the legend which must conform the _type_ formalism.
 
 It exists 3 different _types_ of legend:
@@ -150,8 +153,8 @@ It exists 3 different _types_ of legend:
 legend: {
   type: 'image',
   label: 'An image'
+  minZoom: 9 
   content: {
-    minZoom: 9 
       src: 'https://wxs.ign.fr/static/legends/INSEE.FILOSOFI.POPULATION-tot-legend-2017.png',
       width: '234px',
       height: '58px'
@@ -198,29 +201,36 @@ legend: {
 }
 ```
 
-The content of a legend can be adapted according to the zoom level. The `content` object can support the `minZoom` and `maxZoom` properties or can be declared in the form of an array in order to be able to specify different contents according to zoom intervals.
+The content of a legend can be adapted according to the zoom level using multiple legends:
 
 ```js
-legend: {
-  type: 'symbols',
-  label: 'Adaptative zoom legend',
-  content: [{
+legend: [
+  {
+    type: 'symbols',
+    label: 'Adaptative zoom legend',
     minZoom: 6,
-    maxZoom: 13,
-    symbols: [
-      { symbol: { 'media/KShape': { type: 'rect', color: 'blue' } }, label: 'Blue' },
-      { symbol: { 'media/KShape': { type: 'rect', color: 'red' } }, label: 'Red' },
-      { symbol: { 'media/KShape': { type: 'rect', color: '#green' } }, label: 'Green' }
-    ]
-  }, {
+    maxZoom: 13,  
+    content: {
+      symbols: [
+        { symbol: { 'media/KShape': { type: 'rect', color: 'blue' } }, label: 'Blue' },
+        { symbol: { 'media/KShape': { type: 'rect', color: 'red' } }, label: 'Red' },
+        { symbol: { 'media/KShape': { type: 'rect', color: '#green' } }, label: 'Green' }
+      ]
+    }
+  }, 
+  {
+    type: 'symbols',
+    label: 'Adaptative zoom legend',
     minZoom: 14,
-    symbols: [
-      { symbol: { 'media/KShape': { type: 'circle', color: 'purple' } }, label: 'Purple' },
-      { symbol: { 'media/KShape': { type: 'circle', color: 'yellow' } }, label: 'Yellow' },
-      { symbol: { 'media/KShape': { type: 'circle', color: 'orange' } }, label: 'Orange' }
-    ]
-  }]
-}
+    content: {
+      symbols: [
+        { symbol: { 'media/KShape': { type: 'circle', color: 'purple' } }, label: 'Purple' },
+        { symbol: { 'media/KShape': { type: 'circle', color: 'yellow' } }, label: 'Yellow' },
+        { symbol: { 'media/KShape': { type: 'circle', color: 'orange' } }, label: 'Orange' }
+      ]
+    }
+  }
+]
 ```
 
 ::: tip
