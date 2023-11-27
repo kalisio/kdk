@@ -4,7 +4,7 @@ import sift from 'sift'
 import centroid from '@turf/centroid'
 import HeatmapOverlay from 'leaflet-heatmap'
 import { Time } from '../../../../core/client/time.js'
-import { fetchGeoJson } from '../../utils.js'
+import { fetchGeoJson } from '../../utils/utils.features.js'
 
 export const heatmapLayers = {
   methods: {
