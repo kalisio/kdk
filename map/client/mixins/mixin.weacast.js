@@ -13,17 +13,11 @@ export const weacast = {
     }
   },
   methods: {
+    getWeacastApi () {
+      // As we usually proxy weacast service we use our API unless another client has been specified by override
+      return this.$api
+    },
     async setupWeacast () {
-      // As we usually proxy weacast service we use our API unless another client has been specified
-      if (!this.weacastApi) this.weacastApi = this.$api
-      // We need to implement time management
-      this.weacastApi.setForecastTime = (time) => {
-        this.$api.forecastTime = time
-        this.$api.emit('forecast-time-changed', time)
-      }
-      this.weacastApi.getForecastTime = () => {
-        return this.$api.forecastTime
-      }
       try {
         await this.setupForecastModels()
       } catch (error) {
@@ -31,12 +25,12 @@ export const weacast = {
       }
     },
     async setupForecastModels () {
-      if (!this.weacastApi) return
-      const response = await this.weacastApi.getService('forecasts').find()
+      if (!this.getWeacastApi()) return
+      const response = await this.getWeacastApi().getService('forecasts').find()
       // Required to use splice when modifying objects inside an array to make it reactive
       this.forecastModels.splice(0, this.forecastModels.length, ...response.data)
       // store forecast models on the weacast api object too (useful in the weacast grid source)
-      this.weacastApi.models = this.forecastModels
+      this.getWeacastApi().models = this.forecastModels
       // Add 'virtual' actions used to trigger the layer/filters
       this.forecastModels.forEach(forecastModel => {
         forecastModel.actions = [{ id: 'toggle', handler: () => this.setForecastModel(forecastModel) }]
@@ -98,7 +92,7 @@ export const weacast = {
             return (tokens.length === 0) || !_.isFinite(_.toNumber(tokens[tokens.length - 1]))
           })
         }
-        const response = await this.weacastApi.getService('probes')
+        const response = await this.getWeacastApi().getService('probes')
           .create({
             forecast: this.forecastModel.name,
             elements
@@ -119,7 +113,7 @@ export const weacast = {
       if (this.probe && (this.probe.name === name) && (this.probe.forecast === this.forecastModel.name)) {
         return this.probe
       }
-      const results = await this.weacastApi.getService('probes').find({
+      const results = await this.getWeacastApi().getService('probes').find({
         query: {
           name,
           forecast: this.forecastModel.name,
@@ -158,7 +152,7 @@ export const weacast = {
         const windSpeed = (this.forecastLevel ? `windSpeed-${this.forecastLevel}` : 'windSpeed')
         elements = elements.concat([windDirection, windSpeed])
 
-        const results = await this.weacastApi.getService('probe-results').find({
+        const results = await this.getWeacastApi().getService('probe-results').find({
           query: {
             probeId: this.probe._id,
             forecastTime: {
@@ -180,7 +174,7 @@ export const weacast = {
       return probedLocation
     },
     onCurrentForecastTimeChanged (time) {
-      if (this.weacastApi) this.weacastApi.setForecastTime(time)
+      if (this.getWeacastApi()) this.getWeacastApi().setForecastTime(time)
     },
     onWeacastSelectedLevelChanged (level) {
       // Used when selectable levels are cleared

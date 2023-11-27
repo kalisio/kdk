@@ -1,6 +1,6 @@
 <template>
   <KModal
-    id="editor-modal"
+    id="project-editor-modal"
     :title="editorTitle"
     :buttons="buttons"
     v-model="isModalOpened"
@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import KModal from '../KModal.vue'
-import KForm from '../form/KForm.vue'
-import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../mixins'
+import { KModal } from '../../../../core/client/components'
+import { KForm } from '../../../../core/client/components/form'
+import { baseModal, service, objectProxy, schemaProxy, baseEditor } from '../../../../core/client/mixins'
 
 export default {
   components: {
@@ -31,6 +31,12 @@ export default {
     objectProxy,
     schemaProxy
   ],
+  props: {
+    service: {
+      type: String,
+      default: 'projects'
+    }
+  },
   computed: {
     buttons () {
       const buttons = [
@@ -50,24 +56,6 @@ export default {
           handler: () => this.apply()
         }
       ]
-      if (this.clearButton !== '') {
-        buttons.push({
-          id: 'clear-button',
-          label: this.clearButton,
-          renderer: 'form-button',
-          outline: 'true',
-          handler: () => this.clearEditor()
-        })
-      }
-      if (this.resetButton !== '') {
-        buttons.push({
-          id: 'reset-button',
-          label: this.resetButton,
-          renderer: 'form-button',
-          outline: 'true',
-          handler: () => this.resetEditor()
-        })
-      }
       return buttons
     }
   },
@@ -78,6 +66,15 @@ export default {
   },
   methods: {
     async apply () {
+      // We at least needs a background layer
+      // FIXME: how to do this as we only have IDs here
+      /*
+      const layers = this.form.values().layers
+      if (!_.find(layers, { type: 'BaseLayer'})) {
+        this.$notify({ type: 'negative', message: this.$t('KProjectEditor.BACKGROUND_LAYER_REQUIRED') })
+        return
+      }
+      */
       this.processing = true
       if (await baseEditor.methods.apply.call(this)) {
         this.processing = false

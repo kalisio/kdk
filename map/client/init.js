@@ -5,6 +5,7 @@ import logger from 'loglevel'
 import { memory } from '@feathersjs/memory'
 import { Store, Reader, utils as kCoreUtils } from '../../core/client/index.js'
 import { Geolocation } from './geolocation.js'
+import { Planets } from './planets.js'
 import * as readers from './readers/index.js'
 
 function siftMatcher (originalQuery) {
@@ -12,6 +13,21 @@ function siftMatcher (originalQuery) {
   // which are already filtered by core matcher
   const keysToOmit = ['geoJson']
   return _.omit(originalQuery, ...keysToOmit)
+}
+
+// Decorate core API with some of the required features for map
+export function setupApi (configuration) {
+  const api = this
+  // We need to implement time management as our api is sometimes used
+  // by layers expecting a Weacast interface
+  api.setForecastTime = (time) => {
+    api.forecastTime = time
+    api.emit('forecast-time-changed', time)
+  }
+  api.getForecastTime = () => {
+    return api.forecastTime
+  }
+  return api
 }
 
 export default async function init () {
@@ -35,6 +51,7 @@ export default async function init () {
 
   // Initialize singletons that might be used globally first
   Geolocation.initialize()
+  Planets.initialize()
 
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models

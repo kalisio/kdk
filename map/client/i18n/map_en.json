@@ -1,6 +1,12 @@
 {
   "CLOSE": "Close",
   "SEARCH": "Search",
+  "LAYERS_LABEL": "My data",
+  "VIEWS_LABEL": "My views",
+  "PROJECTS_LABEL": "My projects",
+  "CATALOG_LABEL": "Catalog",
+  "PROJECT_LAYERS_LABEL": "Data",
+  "PROJECT_VIEWS_LABEL": "Views",
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
     "GEOLOCATION_ERROR": "We are not able to locate your position, this might affect some features of the application.",
@@ -17,6 +23,20 @@
     "INVALID_GPX_FILE": "{file} is not a valid GPX file",
     "INVALID_KML_FILE": "{file} is not a valid KML file"
   },
+  "utils": {
+    "layers": {
+      "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {features.length} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
+      "DOWNLOAD_INVALID_FEATURES_LABEL": "By checking this option the invalid features will be exported to a file before saving",
+      "INVALID_FEATURES_FILE": "InvalidFeatures.geojson",
+      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",
+      "SAVE_DIALOG_TITLE": "Tiling layer {layer}",
+      "SAVE_DIALOG_MESSAGE": "Your layer contains too much elements and has been optimized to be smoothly displayed.</br>As a consequence, it will only be visible at a local scale from a given zoom level.",
+      "REMOVING_LABEL": "Please wait while removing layer data",
+      "REMOVE_DIALOG_TITLE": "Remove {layer} ?",
+      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{layer}</b> from your workspace ?"
+    }
+  },
   "mixins": {
     "fileLayers": {
       "IMPORTED_DATA_NAME": "My data"
@@ -25,15 +45,9 @@
       "CONVERT_UNITS": "Click to change unit"
     },
     "activity": {
-      "ADD_LAYER": "Add a new layer",
-      "SAVE_LABEL": "Save layer",
-      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",
-      "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {features.length} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
-      "DOWNLOAD_INVALID_FEATURES_LABEL": "By checking this option the invalid features will be exported to a file before saving",
-      "INVALID_FEATURES_FILE": "InvalidFeatures.geojson",
-      "SAVE_DIALOG_TITLE": "Tiling layer {layer}",
-      "SAVE_DIALOG_MESSAGE": "Your layer contains too much elements and has been optimized to be smoothly displayed.</br>As a consequence, it will only be visible at a local scale from a given zoom level.",
+      "ADD_LAYER": "Add a layer",
+      "CREATE_LAYER": "Create a layer",
+      "MANAGE_LAYERS": "Manage layers",
       "EDIT_LABEL": "Edit properties",
       "EDIT_LAYER_STYLE_LABEL": "Edit style",
       "FILTER_DATA_LABEL": "Filter data",
@@ -42,10 +56,6 @@
       "START_EDIT_DATA_LABEL": "Start data edit",
       "STOP_EDIT_DATA_LABEL": "Stop data edit",
       "EDITING_DATA_MESSAGE": "Editing",
-      "REMOVE_LABEL": "Remove",
-      "REMOVING_LABEL": "Please wait while removing layer data",
-      "REMOVE_DIALOG_TITLE": "Remove {layer} ?",
-      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{layer}</b> from your workspace ?",
       "ZOOM_TO_LABEL": "Zoom to",
       "ZOOM_IN": "Zoom in",
       "ZOOM_OUT": "Zoom out",
@@ -64,12 +74,17 @@
       "DISPLAY_LEGEND": "Display legend",
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
+      "ADD_VIEW": "Add view",      
       "CREATE_VIEW": "Create view",      
+      "MANAGE_VIEWS": "Manage views",
+      "CREATE_PROJECT": "Create project",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
       "TOOLS": "Tools",
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
       "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
-      "CAPTURE_VIEW": "Capture the view"
+      "CAPTURE_VIEW": "Capture the view",
+      "SAVE_LABEL": "Save layer",
+      "REMOVE_LABEL": "Remove"
     },
     "timeseries": {
       "FORECAST_PROBE": "Forecast"
@@ -201,6 +216,12 @@
     "LAYER_CATEGORY_ICON_FIELD_LABEL": "Select an icon for this category",
     "LAYER_CATEGORY_LAYERS_FIELD_LABEL": "Select the layers in this category",
     "LAYER_CATEGORY_EXCLUSIVE_FIELD_LABEL": "Make selection exclusive within this category",
+    "PROJECT_CREATE_TITLE": "Create a new project?",
+    "PROJECT_NAME_FIELD_LABEL": "Enter the name of this project",
+    "PROJECT_DESCRIPTION_FIELD_LABEL": "Enter the description of this project",
+    "PROJECT_LAYERS_FIELD_LABEL": "Select the layers in this project",
+    "PROJECT_VIEWS_FIELD_LABEL": "Select the views in this project",
+    "PROJECT_INDENTIFIER_FIELD_LABEL": "Enter the identifier of this project for third-party applications",
     "MAP_SETTINGS": "Map parameters",
     "RESTORE_VIEW_FIELD_LABEL": "Save current extent",
     "RESTORE_LAYERS_FIELD_LABEL": "Save active layers",
@@ -356,6 +377,9 @@
     "UNSUPPORTED_LAYER_CRS": "The projection used by this layer is not supported.",
     "UNSUPPORTED_LAYER_FORMAT": "The data format used by this layer is not supported."
   },
+  "KSelectViewsField": {
+    "EMPTY": "None available"
+  },
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "No result found",
@@ -410,9 +434,17 @@
     "NO_DATA_AVAILABLE": "No data available"
   },
   "KViewsPanel": {
-    "SORT_VIEWS": "Sort view",
+    "SORT_VIEWS": "Sort views",
     "REMOVE_VIEW": "@:REMOVE",
     "SET_HOME_VIEW": "Set as default view"
+  },
+  "KProjectsPanel": {
+    "SORT_PROJECTS": "Sort projects",
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
+  },
+  "KProjectEditor": {
+    "BACKGROUND_LAYER_REQUIRED": "A project at least requires a background layer."
   },  
   "KFeaturesFilter": {
     "TITLE": "Data filter for layer",
@@ -546,10 +578,15 @@
   },
   "KAddLayer": {
     "TITLE": "Add a new layer",
+    "PROJECT_TITLE": "Manager layers",
     "NAME_FIELD_LABEL": "Enter the name of the new layer",
     "DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATEGORY_FIELD_LABEL": "Select or enter a category",
     "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID"
+  },
+  "KSelectLayers": {
+    "LAYERS_FIELD_LABEL": "Select projet layers",
+    "SELECT_BUTTON": "Select"
   },
   "KImportLayer": {
     "FILE_FIELD_LABEL": "Select the file to import",
@@ -577,11 +614,24 @@
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CREATE_BUTTON": "Create"
   },
+  "KAddView": {
+    "TITLE": "Add a new view",
+    "PROJECT_TITLE": "Manage views"
+  },
+  "KSelectViews": {
+    "VIEWS_FIELD_LABEL": "Select projet views",
+    "SELECT_BUTTON": "Select"
+  },
   "KCreateView": {
     "MODAL_TITLE": "Create a new view ?",
     "NAME_FIELD_LABEL": "Enter the name of this view",
     "DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
     "LAYERS_FIELD_LABEL": "Save the active layers"
+  },
+  "KCreateProject": {
+    "MODAL_TITLE": "Create a new project ?",
+    "NAME_FIELD_LABEL": "Enter the name of this project",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of this project"
   },
   "KLayerEditionToolbar": {
     "ADD_POLYGON_FEATURES": "Add polygon features",

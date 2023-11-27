@@ -14,6 +14,7 @@ export async function verifyGuest (hook) {
   }
   const app = hook.app
   const user = hook.result.user
+  if (!user) return hook
   debug('verifyGuest hook called on ', user._id)
 
   // Check whether the user has been inivted. If not, nothing to do
@@ -42,6 +43,7 @@ export async function consentGuest (hook) {
   }
   const app = hook.app
   const user = hook.result.user
+  if (!user) return hook
   debug('consentGuest hook called on ', user._id)
 
   // Check whether the user has been invited. If not, nothing to do

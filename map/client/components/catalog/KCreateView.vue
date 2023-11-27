@@ -1,54 +1,61 @@
 <template>
-  <k-modal
-    id="add-view-modal"
-    title="KCreateView.MODAL_TITLE"
-    :buttons="modalButtons"
-    v-model="isModalOpened"
-  >
-    <!--
-      Modal content
-    -->
+  <div>
+    <!-- Forms section -->
     <k-form
       ref="form"
       :schema="formSchema"
     />
-  </k-modal>
+    <!-- Buttons section -->
+    <q-card-actions align="right">
+      <KPanel
+        id="modal-buttons"
+        :content="buttons"
+        renderer="form-button"
+        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }"
+      />
+    </q-card-actions>
+  </div>
 </template>
 
 <script>
-import { KModal, KForm } from '../../../../core/client/components'
-import { baseModal } from '../../../../core/client/mixins'
+import { KPanel, KForm } from '../../../../core/client/components'
+import { useProject } from '../../composables'
 
 export default {
   components: {
-    KModal,
+    KPanel,
     KForm
   },
-  mixins: [baseModal],
+  emits: [
+    'done'
+  ],
   inject: ['kActivity'],
+  props: {
+    contextId: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       creating: false
     }
   },
   computed: {
-    modalButtons () {
-      return [
-        {
-          id: 'cancel-button',
-          label: 'CANCEL',
-          renderer: 'form-button',
-          outline: true,
-          handler: () => this.closeModal()
-        },
-        {
-          id: 'apply-button',
-          label: 'CREATE',
-          renderer: 'form-button',
-          loading: this.creating,
-          handler: () => this.apply()
-        }
-      ]
+    buttons () {
+      return [{
+        id: 'close-action',
+        outline: true,
+        label: 'CLOSE',
+        renderer: 'form-button',
+        handler: this.onClose
+      }, {
+        id: 'create-view-action',
+        label: 'CREATE',
+        loading: this.creating,
+        renderer: 'form-button',
+        handler: this.onCreate
+      }]
     },
     formSchema () {
       return {
@@ -88,20 +95,40 @@ export default {
     }
   },
   methods: {
-    async apply () {
+    onClose () {
+      this.$emit('done')
+    },
+    async onCreate () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
         const view = result.values
         try {
           this.creating = true
-          await this.kActivity.saveContext(view)
+          const createdView = await this.kActivity.saveContext(view)
+          // Add view to current project ?
+          if (this.project) {
+            this.project.views.push({ _id: createdView._id })
+            await this.$api.getService('projects').patch(this.project._id, {
+              views: this.project.views
+            })
+          }
           this.creating = false
-          this.closeModal()
+          this.$emit('done')
         } catch (error) {
           this.creating = false
+          this.$emit('done')
           throw error
         }
       }
+    }
+  },
+  // Should be used with <Suspense> to ensure the project is loaded upfront
+  async setup (props) {
+    const project = useProject()
+    await project.loadProject({ context: props.contextId })
+    // Expose
+    return {
+      ...project
     }
   }
 }

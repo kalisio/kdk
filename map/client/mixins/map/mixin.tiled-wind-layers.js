@@ -17,8 +17,10 @@ export const tiledWindLayers = {
 
       // Build u & v grid sources
       const [gridKey, gridConf] = extractGridSourceConfig(options)
-      const uSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
-      const vSource = makeGridSource(gridKey, { weacastApi: this.weacastApi })
+      // Check API to be used in case the layer is coming from a remote "planet"
+      const weacastApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
+      const uSource = makeGridSource(gridKey, { weacastApi })
+      const vSource = makeGridSource(gridKey, { weacastApi })
       uSource.setup(gridConf)
       vSource.setup(gridConf)
       if (uSource.updateCtx) {

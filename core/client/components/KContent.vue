@@ -1,7 +1,17 @@
 <template>
   <div>
     <template v-for="component in avaiableComponents" :key="component.uid">
-      <component
+      <Suspense v-if="component.suspense">
+        <component
+          v-if="component.isVisible && !component.isHidden"
+          :is="component.instance"
+          :context="context"
+          :renderer="component.renderer ? component.renderer: actionRenderer"
+          v-bind="component"
+          v-on="component.on ? { [component.on.event]: component.on.listener } : {}"
+          @triggered="onTriggered" />
+      </Suspense>
+      <component v-else
         v-if="component.isVisible && !component.isHidden"
         :is="component.instance"
         :context="context"

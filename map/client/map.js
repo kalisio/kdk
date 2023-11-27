@@ -7,9 +7,11 @@ import init from './init.js'
 const mixins = Object.assign({}, commonMixins, { map: mapMixins })
 
 export * from './geolocation.js'
+export * from './planets.js'
 export { utils }
 export { composables }
 export { mixins }
 export * from '../common/index.js'
+export * from './init.js'
 
 export default init

@@ -8,11 +8,13 @@ import init from './init.js'
 const mixins = Object.assign({}, commonMixins, { map: mapMixins, globe: globeMixins })
 
 export * from './geolocation.js'
+export * from './planets.js'
 export * from './canvas-draw-context.js'
 export { utils }
 export { elevationUtils }
 export { composables }
 export { mixins }
 export * from '../common/index.js'
+export * from './init.js'
 
 export default init

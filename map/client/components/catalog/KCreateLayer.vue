@@ -24,8 +24,7 @@
 
 <script>
 import _ from 'lodash'
-import { KPanel } from '../../../../core/client/components'
-import KForm from '../../../../core/client/components/form/KForm.vue'
+import { KPanel, KForm } from '../../../../core/client/components'
 
 export default {
   name: 'k-create-layer',

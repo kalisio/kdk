@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import explode from '@turf/explode'
-import { Loading, Dialog } from 'quasar'
+import { i18n, Store, utils as kCoreUtils } from '../../../core/client/index.js'
 import { Geolocation } from '../geolocation.js'
-import { setEngineJwt } from '../utils.js'
-import { i18n, utils as kCoreUtils } from '../../../core/client/index.js'
+import { setEngineJwt, getLayers, getCategories } from '../utils/utils.catalog.js'
+import * as layers from '../utils/utils.layers.js'
+import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
 export const activity = {
   data () {
@@ -41,33 +41,27 @@ export const activity = {
       return []
     },
     async getCatalogLayers () {
-      let layers = []
+      const query = {}
+      // Do we get layers coming from project ?
+      if (this.project) {
+        Object.assign(query, this.catalogProjectQuery ? this.catalogProjectQuery : getCatalogProjectQuery(this.project))
+      } else {
+        this.project = null
+      }
+
       // We get layers coming from global catalog first if any
-      const globalCatalogService = this.$api.getService('catalog', '')
-      if (globalCatalogService) {
-        const response = await globalCatalogService.find()
-        layers = layers.concat(response.data)
-      }
+      let layers = await getLayers({ query })
       // Then we get layers coming from contextual catalog if any
-      const catalogService = this.$api.getService('catalog')
-      if (catalogService && (catalogService !== globalCatalogService)) {
-        const response = await catalogService.find()
-        layers = layers.concat(response.data)
-      }
-      // Do we need to inject a token ?
-      await setEngineJwt(layers)
+      const context = Store.get('context')
+      if (context) layers = layers.concat(await getLayers({ query, context }))
       return layers
     },
     async addCatalogLayer (layer) {
       // Check if available for current engine
       if (layer[this.engine]) {
-        // Process i18n
-        if (layer.i18n) i18n.registerTranslation(layer.i18n)
-        layer.label = this.$tie(layer.name)
-        layer.description = this.$tie(layer.description)
         // Check for Weacast API availability
         const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
-        if (isWeacastLayer && (!this.weacastApi || !this.forecastModel)) return
+        if (isWeacastLayer && (!this.getWeacastApi() || !this.forecastModel)) return
         await this.addLayer(layer)
       }
       // Filter layers with variables, not just visible ones because we might want to
@@ -82,26 +76,14 @@ export const activity = {
       }
     },
     async getCatalogCategories () {
-      let categories = []
       // We get categories coming from global catalog first if any
-      const globalCatalogService = this.$api.getService('catalog', '')
-      if (globalCatalogService) {
-        const response = await globalCatalogService.find({ query: { type: 'Category' } })
-        categories = categories.concat(response.data)
-      }
+      let categories = await getCategories()
       // Then we get categories coming from contextual catalog if any
-      const catalogService = this.$api.getService('catalog')
-      if (catalogService && (catalogService !== globalCatalogService)) {
-        const response = await catalogService.find({ query: { type: 'Category' } })
-        categories = categories.concat(response.data)
-      }
+      const context = Store.get('context')
+      if (context) categories = categories.concat(await getCategories({ context }))
       return categories
     },
     async addCatalogCategory (category) {
-      // Process i18n
-      if (category.i18n) i18n.registerTranslation(category.i18n)
-      category.label = this.$tie(category.name)
-      category.description = this.$tie(category.description)
       this.layerCategories.push(category)
     },
     async refreshLayerCategories () {
@@ -128,45 +110,21 @@ export const activity = {
         if (baseLayer) await this.showLayer(baseLayer.name)
       }
     },
-    isInMemoryLayer (layer) {
-      return layer._id === undefined
-    },
-    isUserLayer (layer) {
-      return (_.get(layer, 'scope') === 'user')
-    },
-    isFeatureLayer (layer) {
-      return (_.get(layer, 'service') === 'features')
-    },
-    hasFeatureSchema (layer) {
-      return _.has(layer, 'schema')
-    },
+    isInMemoryLayer: layers.isInMemoryLayer,
+    isUserLayer: layers.isUserLayer,
+    isFeatureLayer: layers.isFeatureLayer,
+    hasFeatureSchema: layers.hasFeatureSchema,
     isLayerSelectable (layer) {
       // Only possible when not edited by default
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return false
-      return _.get(layer, 'isSelectable', true)
+      return layers.isLayerSelectable(layer)
     },
-    isLayerProbable (layer) {
-      return _.get(layer, 'isProbable', false)
-    },
-    isLayerStorable (layer) {
-      // Only possible when not saved by default
-      if (layer._id) return false
-      return _.get(layer, 'isStorable', this.isUserLayer(layer))
-    },
-    isLayerEditable (layer) {
-      // Only possible when saved by default
-      if (!layer._id) return false
-      return _.get(layer, 'isEditable', this.isUserLayer(layer))
-    },
-    isLayerRemovable (layer) {
-      return _.get(layer, 'isRemovable', this.isUserLayer(layer))
-    },
-    isLayerStyleEditable (layer) {
-      return _.get(layer, 'isStyleEditable', this.isUserLayer(layer))
-    },
-    isLayerDataEditable (layer) {
-      return _.get(layer, 'isDataEditable', this.isUserLayer(layer) && this.isFeatureLayer(layer))
-    },
+    isLayerProbable: layers.isLayerProbable,
+    isLayerStorable: layers.isLayerStorable,
+    isLayerEditable: layers.isLayerEditable,
+    isLayerRemovable: layers.isLayerRemovable,
+    isLayerStyleEditable: layers.isLayerStyleEditable,
+    isLayerDataEditable: layers.isLayerDataEditable,
     async resetLayer (layer) {
       // Reset layer with new setup but keep track of current visibility state
       // as adding the layer back will restore default visibility state
@@ -217,90 +175,26 @@ export const activity = {
     async onSaveLayer (layer) {
       // Stop any running edition
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('accept')
+      let createdLayer
       // Take care that WFS layers rely on the same type as our own feature layers
       if (!_.has(layer, 'wfs') && _.get(layer, `${this.engine}.type`) === 'geoJson') {
         const geoJson = this.toGeoJson(layer.name)
-        // Check for invalid features first
-        const check = this.checkFeatures(geoJson)
-        if (check.kinks.length > 0) {
-          const result = await kCoreUtils.dialog({
-            title: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_TITLE', { features: check.kinks }),
-            message: this.$t('mixins.activity.INVALID_FEATURES_DIALOG_MESSAGE', { features: check.kinks }),
-            options: {
-              type: 'toggle',
-              model: [],
-              items: [
-                { label: this.$t('mixins.activity.DOWNLOAD_INVALID_FEATURES_LABEL'), value: 'download' }
-              ]
-            },
-            html: true,
-            ok: {
-              label: this.$t('OK'),
-              flat: true
-            },
-            cancel: {
-              label: this.$t('CANCEL'),
-              flat: true
-            }
-          })
-          if (!result.ok) return
-          // Export invalid features if required
-          if (_.get(result, 'data', []).includes('download')) {
-            kCoreUtils.downloadAsBlob(JSON.stringify({ type: 'FeatureCollection', features: check.kinks }),
-              this.$t('mixins.activity.INVALID_FEATURES_FILE'), 'application/json;charset=utf-8;')
-          }
-        }
-        // Change data source from in-memory to features service
-        _.set(layer, 'service', 'features')
-        if (_.has(layer, 'leaflet')) _.set(layer, 'leaflet.source', '/api/features')
-        if (_.has(layer, 'cesium')) _.set(layer, 'cesium.source', '/api/features')
-        const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-        // If too much data use tiling
-        // The threshold is based on the number of points and not features.
-        // Indeed otherwise the complexity will be different depending on the geometry type
-        // (eg a bucket of 1000 polygons can actually contains a lot of points).
-        let nbPoints = 0
-        features.forEach(feature => {
-          nbPoints += explode(feature).features.length
-        })
-        if (this.is2D() && (nbPoints > 5000)) {
-          _.set(layer, 'leaflet.tiled', true)
-          _.set(layer, 'leaflet.minZoom', 15)
-        }
-        Loading.show({ message: this.$t('mixins.activity.SAVING_LABEL', { processed: 0, total: features.length }), html: true })
-        try {
-          let createdLayer = await this.$api.getService('catalog')
-            .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
-          const chunkSize = _.get(this, 'activityOptions.featuresChunkSize', 5000)
-          let nbFeatures = 0
-          // We use the generated DB ID as layer ID on features
-          await this.createFeatures(geoJson, createdLayer._id, chunkSize, (i, chunk) => {
-            // Update saving message according to new chunk data
-            nbFeatures += chunk.length
-            Loading.show({
-              message: this.$t('mixins.activity.SAVING_LABEL', { processed: nbFeatures, total: features.length }),
-              html: true
-            })
-          })
-          // Because we save all features in a single service use filtering to separate layers
-          createdLayer = await this.$api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
-          // Reset layer with new setup
-          await this.resetLayer(createdLayer)
-          if (_.get(layer, 'leaflet.tiled')) {
-            this.$notify({ type: 'positive', message: this.$t('mixins.activity.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
-          }
-        } catch (error) {
-          // User error message on operation should be raised by error hook, otherwise this is more a coding error
-          logger.error(`[KDK] ${error}`)
-        }
-        Loading.hide()
+        createdLayer = await layers.saveGeoJsonLayer(layer, geoJson, _.get(this, 'activityOptions.featuresChunkSize', 5000))
       } else {
         // Otherwise simply save in catalog
-        const createdLayer = await this.$api.getService('catalog')
-          .create(_.omit(layer, ['actions', 'label', 'isVisible', 'isDisabled']))
-        // Reset layer with new setup
-        await this.resetLayer(createdLayer)
+        createdLayer = await layers.saveLayer(layer)
       }
+      // Add layer to current project ?
+      if (this.project) {
+        this.project.layers.push({ _id: createdLayer._id })
+        await this.$api.getService('projects').patch(this.project._id, {
+          layers: this.project.layers
+        })
+      }
+      // Reset layer with new setup
+      // It should be triggerred by real-time event
+      // but as we might not always use sockets perform it anyway
+      if (createdLayer) await this.resetLayer(createdLayer)
     },
     editLayerByName (name, editOptions = {}) {
       // this one is used through postRobot to trigger edition
@@ -324,39 +218,14 @@ export const activity = {
       await this.stopEditLayer(status)
     },
     async onRemoveLayer (layer) {
-      Dialog.create({
-        title: this.$t('mixins.activity.REMOVE_DIALOG_TITLE', { layer: layer.label || layer.name }),
-        message: this.$t('mixins.activity.REMOVE_DIALOG_MESSAGE', { layer: layer.label || layer.name }),
-        html: true,
-        ok: {
-          label: this.$t('OK'),
-          flat: true
-        },
-        cancel: {
-          label: this.$t('CANCEL'),
-          flat: true
-        }
-      }).onOk(async () => {
-        Loading.show({ message: this.$t('mixins.activity.REMOVING_LABEL'), html: true })
-        try {
-          // Stop any running edition
-          if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
-          if (layer._id) {
-            // If persistent feature layer remove features as well
-            if (this.isFeatureLayer(layer)) {
-              await this.removeFeatures(layer._id)
-            }
-            await this.$api.getService('catalog').remove(layer._id)
-          }
-          // Actual layer removal should be triggerred by real-time event
-          // but as we might not always use sockets perform it anyway
-          this.removeLayer(layer.name)
-        } catch (error) {
-          // User error message on operation should be raised by error hook, otherwise this is more a coding error
-          logger.error(`[KDK] ${error}`)
-        }
-        Loading.hide()
-      })
+      // Stop any running edition
+      if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
+      if (await layers.removeLayer(layer)) {
+        // Actual layer removal should be triggerred by real-time event
+        // but as we might not always use sockets perform it anyway
+        this.removeLayer(layer.name)
+      }
+      // Removing the layer should automatically update all projects
     },
     onEngineReady (engine) {
       this.engine = engine

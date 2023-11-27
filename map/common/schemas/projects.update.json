@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.kalisio.xyz/schemas/projects.update.json#",
+  "title": "schemas.OBJECT_NAME",
+  "description": "Project edition schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 3,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.PROJECT_NAME_FIELD_LABEL"
+      }
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2048,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.PROJECT_DESCRIPTION_FIELD_LABEL"
+      }
+    },
+    "layers": {
+      "type": "array",
+      "field": {
+        "component": "form/KSelectLayersField",
+        "label": "schemas.PROJECT_LAYERS_FIELD_LABEL"
+      }
+    },
+    "views": {
+      "type": "array",
+      "field": {
+        "component": "form/KSelectViewsField",
+        "label": "schemas.PROJECT_VIEWS_FIELD_LABEL"
+      }
+    },
+    "identifier": {
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 3,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.PROJECT_INDENTIFIER_FIELD_LABEL"
+      }
+    }
+  },
+  "required": [
+    "name", "layers"
+  ]
+}

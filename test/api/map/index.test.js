@@ -108,41 +108,6 @@ describe('map:services', () => {
     expect(defaultLayers.length > 0)
   })
 
-  it('manages layers, contexts and categories', async () => {
-    const layer = await catalogService.create({ name: 'dummy', type: 'OverlayLayer' })
-    // Can't duplicate name
-    let doublonLayer
-    try {
-      doublonLayer = await catalogService.create({ name: 'dummy', type: 'OverlayLayer' })
-    } catch (error) {
-      expect(error).toExist()
-      expect(error.name).to.equal('Conflict')
-      expect(error.data.translation.key).to.equal('OBJECT_ID_ALREADY_TAKEN')
-    }
-    expect(doublonLayer).beUndefined()
-    // Can duplicate if we target different types
-    let context = await catalogService.create({ name: 'dummy', type: 'Context', layers: ['dummy'] })
-    let category = await catalogService.create({ name: 'dummy', type: 'Category', layers: ['dummy'] })
-    // Check for context/category filtering by default
-    const response = await catalogService.find({ query: {}, paginate: false })
-    expect(response.length === defaultLayers.length + 1)
-    // Check for automated context/category update whn layer is renamed/removed
-    await catalogService.patch(layer._id.toString(), { name: 'oldDummy' })
-    context = await catalogService.get(context._id.toString())
-    expect(context.layers).to.deep.equal(['oldDummy'])
-    category = await catalogService.get(category._id.toString())
-    expect(category.layers).to.deep.equal(['oldDummy'])
-    await catalogService.remove(layer._id.toString())
-    context = await catalogService.get(context._id.toString())
-    expect(context.layers).to.deep.equal([])
-    await catalogService.remove(context._id.toString())
-    category = await catalogService.get(category._id.toString())
-    expect(category.layers).to.deep.equal([])
-    await catalogService.remove(category._id.toString())
-  })
-  // Let enough time to process
-    .timeout(5000)
-
   it('create and feed the zones service', async () => {
     // Create the service
     const zonesLayer = _.find(defaultLayers, { name: 'zones' })

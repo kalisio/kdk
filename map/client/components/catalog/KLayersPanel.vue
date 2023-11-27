@@ -32,8 +32,10 @@
 import sift from 'sift'
 import _ from 'lodash'
 import { loadComponent } from '../../../../core/client/utils'
+import { getLayersByCategory, getOrphanLayers } from '../../utils'
 import { KScrollArea } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
+import { useProject } from '../../composables'
 import KLayersSelector from './KLayersSelector.vue'
 
 export default {
@@ -80,30 +82,10 @@ export default {
       return filteredCategories
     },
     layersByCategory () {
-      const layersByCategory = {}
-      _.forEach(this.filteredCategories, category => {
-        // Built-in categories use filtering while user-defined ones use layers list
-        let filter = null
-        if (_.has(category, 'options.filter')) {
-          filter = _.get(category, 'options.filter')
-        } else if (_.has(category, 'layers')) {
-          filter = { name: { $in: _.get(category, 'layers') } }
-        }
-        // If the list of layers in category is empty we can have a null filter
-        layersByCategory[category.name] = filter ? _.remove(this.filteredLayers, sift(filter)) : []
-        // Order by
-        layersByCategory[category.name] = _.orderBy(layersByCategory[category.name],
-          [(layer) => _.get(layer, _.get(category, 'options.orderBy', '_id'))],
-          [_.get(category, 'options.order', 'asc')])
-      })
-      return layersByCategory
+      return getLayersByCategory(this.filteredLayers, this.filteredCategories)
     },
     orphanLayers () {
-      // Filters system layers
-      const categories = _.flatten(_.values(this.layersByCategory))
-      const layers = _.difference(this.filteredLayers, categories)
-      // Order by
-      return _.orderBy(layers, [(layer) => _.get(layer, '_id')], ['asc'])
+      return getOrphanLayers(this.filteredLayers, this.layersByCategory)
     }
   },
   methods: {
@@ -111,11 +93,16 @@ export default {
       return _.kebabCase(category.name)
     },
     isVisible (category) {
-      // Built-in categories only if not empty as depending on the configuration
-      // built-in layers might be unavailable
-      // User-defined categories are always visible by default, even if empty
+      // Show a built-in category only if it has some layers.
+      // Indeed, depending on the app configuration, none might be available for this category.
+      // User-defined categories are visible by default, even if empty,
+      // except if used inside a project as in this case having no layers means we don't want to use this category
       const isEmpty = (this.layersByCategory[category.name].length === 0)
-      return (isEmpty ? !_.get(category, 'hideIfEmpty', !category._id) : true)
+      if (isEmpty) {
+        if (this.hasProject()) return false
+        else return !_.get(category, 'hideIfEmpty', !category._id)
+      }
+      return true
     },
     getHeaderClass (category) {
       if (category.headerClass) return category.headerClass
@@ -131,6 +118,12 @@ export default {
       // return this.filteredCategories.length === 1
       // robin: to not break existing apps, just return false when options.open is not defined
       return false
+    }
+  },
+  setup () {
+    // Expose
+    return {
+      ...useProject()
     }
   }
 }

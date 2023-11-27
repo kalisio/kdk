@@ -1,14 +1,7 @@
 import _ from 'lodash'
-import rhumbBearing from '@turf/rhumb-bearing'
-import rhumbDistance from '@turf/rhumb-distance'
-import rotate from '@turf/transform-rotate'
-import scale from '@turf/transform-scale'
-import translate from '@turf/transform-translate'
 import chroma from 'chroma-js'
 import config from 'config'
 import formatcoords from 'formatcoords'
-import { buildUrl } from '../../../core/common/index.js'
-import { api, Store } from '../../../core/client/index.js'
 
 // Build a color map from a JS object specification
 export function buildColorMap (options) {
@@ -25,34 +18,6 @@ export function buildColorMap (options) {
     }
   }
   return colorMap
-}
-
-export function transformFeatures (features, transform) {
-  features.forEach(feature => {
-    const scaling = _.get(transform, 'scale')
-    const rotation = _.get(transform, 'rotate')
-    const translation = _.get(transform, 'translate')
-    if (scaling) {
-      scale(feature, scaling.factor,
-        Object.assign(_.omit(scaling, ['factor']), { mutate: true }))
-    }
-    if (rotation) {
-      rotate(feature, rotation.angle,
-        Object.assign(_.omit(rotation, ['angle']), { mutate: true }))
-    }
-    if (translation) {
-      // Could be expressed as direction/distance or target point
-      // Take care that turfjs uses a rhumb line
-      if (translation.point) {
-        translation.distance = rhumbDistance(translation.pivot || [0, 0], translation.point)
-        translation.direction = rhumbBearing(translation.pivot || [0, 0], translation.point)
-        delete translation.pivot
-        delete translation.point
-      }
-      translate(feature, translation.distance, translation.direction,
-        Object.assign(_.omit(translation, ['direction', 'distance']), { mutate: true }))
-    }
-  })
 }
 
 export async function fetchGeoJson (dataSource, options = {}) {
@@ -104,60 +69,6 @@ export function getTimeInterval (times, mode = 'minimum') {
     }
   })
   return interval
-}
-
-// Helper to set a JWT as query param in a target URL
-export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
-  const url = _.get(item, path)
-  if (!url) return
-  // Check it conforms to required base URL
-  if (!url.startsWith(baseUrl)) return
-  // FIXME: specific case of Cesium OpenStreetMap provider
-  // Because Cesium generates the final url as base url + tile scheme + extension
-  // updating the base url property breaks it, for now we modify the extension
-  if ((path === 'cesium.url') && _.get(item, 'cesium.type') === 'OpenStreetMap') {
-    const ext = _.get(item, 'cesium.fileExtension', 'png')
-    _.set(item, 'cesium.fileExtension', ext + `?${jwtField}=${jwt}`)
-  } else {
-    _.set(item, path, buildUrl(url, { [jwtField]: jwt }))
-  }
-}
-
-// Helper to set required JWT as query param in a given set of layers for underlying engine
-export async function setEngineJwt (layers) {
-  // If we need to use API gateway forward token as query parameter
-  // (Leaflet does not support anything else by default as it mainly uses raw <img> tags)
-  let jwt = (config.gatewayJwt ? await api.get('storage').getItem(config.gatewayJwt) : null)
-  let jwtField = config.gatewayJwtField
-  // Check both the default built-in config or the server provided one if any (eg mobile apps)
-  const gatewayUrl = Store.get('capabilities.api.gateway', config.gateway)
-  if (jwt) {
-    layers.forEach(layer => {
-      setUrlJwt(layer, 'iconUrl', gatewayUrl, jwtField, jwt)
-      setUrlJwt(layer, 'leaflet.source', gatewayUrl, jwtField, jwt)
-      setUrlJwt(layer, 'opendap.url', gatewayUrl, jwtField, jwt)
-      setUrlJwt(layer, 'geotiff.url', gatewayUrl, jwtField, jwt)
-      setUrlJwt(layer, 'wfs.url', gatewayUrl, jwtField, jwt)
-      setUrlJwt(layer, 'wcs.url', gatewayUrl, jwtField, jwt)
-      setUrlJwt(layer, 'cesium.url', gatewayUrl, jwtField, jwt)
-      setUrlJwt(layer, 'cesium.source', gatewayUrl, jwtField, jwt)
-    })
-  }
-  // We might also proxy some data directly from the app when using object storage
-  // This is only for raw raster data not OGC protocols
-  jwt = (config.apiJwt ? await api.get('storage').getItem(config.apiJwt) : null)
-  jwtField = 'jwt'
-  const apiUrl = api.getBaseUrl()
-  if (jwt) {
-    layers.forEach(layer => {
-      setUrlJwt(layer, 'geotiff.url', apiUrl, jwtField, jwt)
-    })
-    // We also allow absolute URLs for app like /api/storage/xxx
-    layers.forEach(layer => {
-      setUrlJwt(layer, 'geotiff.url', '/', jwtField, jwt)
-    })
-  }
-  return layers
 }
 
 export function getFeatureId (feature, layer) {

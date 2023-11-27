@@ -172,6 +172,10 @@ export function createClient (config) {
     return origin
   }
 
+  api.getConfig = function () {
+    return config
+  }
+
   api.can = function () {
     let service, context, resource
     // We can call this with different signatures
@@ -286,7 +290,8 @@ export function createClient (config) {
 // eg it might be imported before another one updating the config.
 // It is up to the application to instanciate the client when required.
 export let api
-export function initializeApi () {
+export function initializeApi (fn) {
   api = createClient(configuration)
+  if (fn) fn.call(api, configuration)
   return api
 }

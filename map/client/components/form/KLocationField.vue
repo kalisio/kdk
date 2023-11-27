@@ -103,7 +103,7 @@
     <template v-slot:no-option>
       <q-item>
         <q-item-section class="text-grey">
-          {{ $t('KLocationField.NO_RESULTS') }}
+          {{ $t('KLocationField.NO_RESULT') }}
         </q-item-section>
       </q-item>
     </template>

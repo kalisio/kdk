@@ -186,9 +186,18 @@ export async function authorise (hook) {
   if (checkAuthorisation) {
     // Build ability for user
     const authorisationService = hook.app.getService('authorisations')
-    const abilities = await authorisationService.getAbilities(hook.params.user)
+    // If no user we allow for a stateless token with permissions inside
+    let subject = hook.params.user
+    if (!subject) {
+      const payload = _.get(hook.params, 'authentication.payload')
+      if (payload && payload.sub) {
+        subject = Object.assign({ _id: payload.sub }, payload)
+      }
+    }
+    const abilities = await authorisationService.getAbilities(subject)
     hook.params.abilities = abilities
-    debug('User abilities are', abilities.rules)
+    if (hook.params.user) debug('User abilities are', abilities.rules)
+    else debug('Stateless abilities are', abilities.rules)
 
     // Check for access to service fisrt
     if (!hasServiceAbilities(abilities, hook.service)) {
