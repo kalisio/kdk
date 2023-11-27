@@ -66,9 +66,8 @@ function addSvgAttribute (svg, attibute, value) {
 
 /*
  Utility to create a shape with the following options:
-  - shape: String | Object : name of the predefined shape object specifyinfg the viewBox and the content
-  - width : Number
-  - height : Number
+  - shape: String | Object - name of the predefined shape or object specifyinfg the viewBox and the content
+  - size : Array - [width, height] of the maker
   - color: String - the fill color
   - opacity: Number - the fill opacity
   - stroke: Object specifying the stroke properties
@@ -87,6 +86,7 @@ function addSvgAttribute (svg, attibute, value) {
     - yOffset: String - the y offset from the center of the shape - '-50%'
 */
 export function createShape (options) {
+  console.log(options)
   let shape
   const width = _.get(options, 'size[0]', 24)
   const height = _.get(options, 'size[1]', 24)
