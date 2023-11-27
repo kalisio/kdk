@@ -243,8 +243,8 @@
     "CAPTURE_RIGHT_POSITION_FIELD_LABEL": " Droite",
     "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "En haut à gauche",
     "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "En haut à droite",
-    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "En bas à gauche",
-    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "En bas à droite"
+    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "En bas à droite",
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "En bas à gauche"
   },
   "tours": {
     "navigation-bar": {

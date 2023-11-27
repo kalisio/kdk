@@ -76,10 +76,16 @@ const scrollAreaKey = ref(0)
 const isExpandable = ref(false)
 const isExpanded = ref(false)
 const isScrollable = ref(false)
+const sanitizeHtmlOptions = {
+  ...sanitizeHtml.defaults,
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'strike' ]),
+  allowedAttributes: _.merge(sanitizeHtml.defaults.allowedAttributes, { '*': ['style'] }),
+  allowedStyles: { '*': { 'text-align': [/^left$/, /^right$/, /^center$/] }}
+}
 
 // computed
 const sanitizedText = computed(() => {
-  return sanitizeHtml(props.text)
+  return sanitizeHtml(props.text, sanitizeHtmlOptions)
 })
 const cssCursor = computed(() => {
   return isExpandable.value ? 'pointer' : 'default'

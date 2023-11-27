@@ -117,3 +117,13 @@ export const Geolocation = {
     return this.positionPromise
   }
 }
+
+export const CaptureProcessing = {
+  processing: false,
+  isProcessing () {
+    return this.processing
+  },
+  update () {
+    this.processing = !this.processing
+  }
+}

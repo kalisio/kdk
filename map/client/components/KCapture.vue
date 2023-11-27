@@ -8,30 +8,29 @@
     class="q-pa-sm"
   />
 </template>
-
 <script setup>
 import { ref } from 'vue'
 import { capture } from '../utils/utils.capture'
 import { Notify } from 'quasar'
 import { i18n } from '../../../core/client/index.js'
+import { CaptureProcessing } from '..'
 import captureSchema from '../../common/schemas/capture.create.json'
 import KForm from '../../../core/client/components/form/KForm.vue'
 
 // Data
-let processing = false
 const formRef = ref(null)
 
 // Functions
 async function apply () {
   const { isValid, values } = formRef.value.validate()
   // Check if processing is already in progress
-  if (processing) {
+  if (CaptureProcessing.isProcessing()) {
     return Notify.create({ type: 'negative', message: i18n.t('KCapture.ERROR_MESSAGE') })
   }
   if (isValid) {
-    processing = true
+    CaptureProcessing.update()
     await capture(values)
-    processing = false
+    CaptureProcessing.update()
     return true
   }
 }

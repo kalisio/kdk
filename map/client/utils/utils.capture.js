@@ -53,7 +53,6 @@ export async function capture (values) {
   } catch (error) {
     // Network error
     dismiss()
-    console.log(error)
     Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
   }
 }
