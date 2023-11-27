@@ -17,7 +17,7 @@ export default function init () {
   api.declareService('storage', { context: true })
   // TODO we use createService because of the custom methods
   // https://github.com/kalisio/kdk/issues/781
-  api.createService('account', { methods: ['create', 'verifyEmail']})
+  api.createService('account', { methods: ['create', 'verifyEmail'] })
 
   // Setup service for settings edition
   api.createService('settings', _.merge(config.settings || {}, {

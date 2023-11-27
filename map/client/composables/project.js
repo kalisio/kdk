@@ -61,11 +61,13 @@ export function useProject (options = {}) {
       project.value = null
       projectId.value = null
       // Clear project from query as well
-      if (options.route) router.push({
-        name: route.name,
-        query: _.omit(route.query, ['project']),
-        params: route.params
-      })
+      if (options.route) {
+        router.push({
+          name: route.name,
+          query: _.omit(route.query, ['project']),
+          params: route.params
+        })
+      }
     }
   }
   function refreshProjectId () {

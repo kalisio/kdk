@@ -97,7 +97,7 @@ const layersBySublegend = computed(() => {
 
 // Functions
 function onShowLayer (layer, engine) {
-  let layerLegend = layer.legend
+  const layerLegend = layer.legend
   // Check whether the layer has a legend
   if (!layerLegend) return
   // Check wehther the legend is already registered for that layer
@@ -116,7 +116,7 @@ function onZoomChanged () {
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
 }
 function getLegends (layer) {
-  let legends = [] 
+  const legends = []
   let layerLegends = layer.legend || []
   if (!Array.isArray(layerLegends)) layerLegends = [layerLegends]
   layerLegends.forEach(legend => {

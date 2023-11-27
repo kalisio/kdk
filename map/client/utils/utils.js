@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import chroma from 'chroma-js'
-import config from 'config'
 import formatcoords from 'formatcoords'
 
 // Build a color map from a JS object specification
@@ -18,25 +17,6 @@ export function buildColorMap (options) {
     }
   }
   return colorMap
-}
-
-export async function fetchGeoJson (dataSource, options = {}) {
-  const response = await fetch(dataSource)
-  if (response.status !== 200) {
-    throw new Error(`Impossible to fetch ${dataSource}: ` + response.status)
-  }
-  const data = await response.json()
-  const features = (data.type === 'FeatureCollection' ? data.features : [data])
-  if (typeof options.processor === 'function') {
-    features.forEach(feature => options.processor(feature))
-  } else if (typeof options.processor === 'string') {
-    const compiler = _.template(options.processor)
-    features.forEach(feature => compiler({ feature, properties: feature.properties }))
-  }
-  if (options.transform) {
-    transformFeatures(features, options.transform)
-  }
-  return data
 }
 
 // Find the nearest time of a given one in a given moment time list
@@ -112,5 +92,3 @@ export function coordinatesToGeoJSON (lat, lon, format, options) {
     }
   }
 }
-
-

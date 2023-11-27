@@ -8,4 +8,3 @@ export function getPlatform () {
     agent: Platform.userAgent
   })
 }
-

@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import * as catalog from '../utils/utils.catalog.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 import { api } from '../../../core/client/api.js'
-import { i18n } from '../../../core/client/i18n.js'
 
 export function useCatalog (options = {}) {
   // Options might also contains a project object to filter the catalog
@@ -28,7 +27,7 @@ export function useCatalog (options = {}) {
   const orphanLayers = computed(() => catalog.getOrphanLayers(layers.value, layersByCategory.value))
 
   // Functions
-  async function getLayers() {
+  async function getLayers () {
     layers.value = await catalog.getLayers({
       query: options.project ? getCatalogProjectQuery(options.project) : options.layers,
       context: options.context,

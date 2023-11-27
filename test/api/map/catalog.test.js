@@ -1,14 +1,12 @@
-import utility from 'util'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import _ from 'lodash'
-import moment from 'moment'
 import path from 'path'
 import fs from 'fs-extra'
 import { fileURLToPath } from 'url'
 import core, { kdk, hooks, permissions } from '../../../core/api/index.js'
 import map, {
-  permissions as mapPermissions, createFeaturesService, createCatalogService, createProjectsService
+  permissions as mapPermissions, createCatalogService, createProjectsService
 } from '../../../map/api/index.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

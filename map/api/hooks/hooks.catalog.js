@@ -106,7 +106,7 @@ export async function updateProjects (hook) {
     })
     // Stop when non found
     if (projects.length === 0) {
-      debug(`No project to update after removing item ${ removedItem.name } `)
+      debug(`No project to update after removing item ${removedItem.name} `)
       return hook
     }
     // Update each project otherwise
@@ -117,7 +117,7 @@ export async function updateProjects (hook) {
       return projectsService.patch(project._id.toString(), isLayer ? { layers: items } : { views: items })
     }))
 
-    debug(`Updated ${projects.length} projects after removing item ${ removedItem.name } `)
+    debug(`Updated ${projects.length} projects after removing item ${removedItem.name} `)
   }
   return hook
 }

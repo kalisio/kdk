@@ -2,7 +2,7 @@ import { api } from '../api.js'
 
 export async function verifyEmail (email) {
   const response = await api.getService('account').verifyEmail({ email })
-  return response.status === 200 ? true : false
+  return response.status === 200
 }
 
 export function resendVerifySignup (email) {

@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import commonHooks from 'feathers-hooks-common'
-//import { hooks as schemaHooks, resolve } from '@feathersjs/schema'
+// import { hooks as schemaHooks, resolve } from '@feathersjs/schema'
 import { hooks as coreHooks } from '@kalisio/kdk/core.api.js'
 
-const { setNow, discard, getItems, replaceItems, populate } = commonHooks
+const { setNow, discard, getItems, replaceItems } = commonHooks
 
 /* Populate is too much spacialized and does not allow to merge input/output
  but we need the service information on the fronted
@@ -81,8 +81,8 @@ export default {
   after: {
     all: [],
     find: [populateProjects],
-    //find: [],
-    //get: [populateProjects],
+    // find: [],
+    // get: [populateProjects],
     get: [],
     create: [],
     update: [],

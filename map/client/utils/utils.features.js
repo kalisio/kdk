@@ -9,7 +9,7 @@ import rhumbDistance from '@turf/rhumb-distance'
 import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
-import { i18n, api, Time } from '../../../core/client/index.js'
+import { api, Time } from '../../../core/client/index.js'
 
 export function transformFeatures (features, transform) {
   features.forEach(feature => {
@@ -341,4 +341,23 @@ export async function removeFeatures (geoJsonOrLayerId) {
       if (feature._id) await api.getService('features').remove(feature._id)
     }
   }
+}
+
+export async function fetchGeoJson (dataSource, options = {}) {
+  const response = await fetch(dataSource)
+  if (response.status !== 200) {
+    throw new Error(`Impossible to fetch ${dataSource}: ` + response.status)
+  }
+  const data = await response.json()
+  const features = (data.type === 'FeatureCollection' ? data.features : [data])
+  if (typeof options.processor === 'function') {
+    features.forEach(feature => options.processor(feature))
+  } else if (typeof options.processor === 'string') {
+    const compiler = _.template(options.processor)
+    features.forEach(feature => compiler({ feature, properties: feature.properties }))
+  }
+  if (options.transform) {
+    transformFeatures(features, options.transform)
+  }
+  return data
 }

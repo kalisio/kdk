@@ -100,14 +100,14 @@ export function createLeafletMarkerFromStyle (latlng, markerStyle, feature) {
     // Retrieve the type
     const type = markerStyle.type || 'shapeMarker'
     if (type !== 'shapeMarker') {
-      // parse icon options to create Leaflet icon 
+      // parse icon options to create Leaflet icon
       if (markerStyle.icon) {
         const icon = createLeafletIconFromStyle(markerStyle.icon)
         options = Object.assign(_.omit(options, ['icon']), { icon })
       }
       return _.get(L, type || 'marker')(latlng, options)
     }
-  } 
+  }
   return L.shapeMarker(latlng, options)
 }
 

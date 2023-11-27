@@ -31,11 +31,11 @@ export const Shapes = {
   'triangle-left': {
     viewBox: [0, 0, 100, 100],
     content: '<polygon points="0 50, 100 0, 100 100" />'
-  }, 
+  },
   'triangle-right': {
     viewBox: [0, 0, 100, 100],
     content: '<polygon points="0 0, 100 50, 0 100" />'
-  },  
+  },
   star: {
     viewBox: [0, 0, 48, 48],
     content: '<path d="m24,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />'
@@ -86,7 +86,6 @@ function addSvgAttribute (svg, attibute, value) {
     - yOffset: String - the y offset from the center of the shape - '-50%'
 */
 export function createShape (options) {
-  console.log(options)
   let shape
   const width = _.get(options, 'size[0]', 24)
   const height = _.get(options, 'size[1]', 24)
@@ -122,7 +121,7 @@ export function createShape (options) {
     console.warn('[KDK] invalid \'shape\' property type')
     return beginDivTag + endDivTag
   }
-  // Apply fill style 
+  // Apply fill style
   const color = options.color || getCssVar('primary')
   svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
   if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
@@ -138,7 +137,7 @@ export function createShape (options) {
       svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-width', strokeWidth * 2)
       // prevent scaling stroke
       svgShapeContent = addSvgAttribute(svgShapeContent, 'vector-effect', 'non-scaling-stroke')
-      // additional properties  
+      // additional properties
       if (options.stroke.lineCap) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linecap', options.stroke.lineCap)
       if (options.stroke.linejoin) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linejoin', options.stroke.lineJoin)
       if (options.stroke.dashArray) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dasharray', options.stroke.dashArray)

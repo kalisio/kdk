@@ -94,9 +94,9 @@ export default async function () {
   if (authConfig) {
     await app.createService('users', { modelsPath, servicesPath })
     debug('\'users\' service created')
-    await app.createService('account', { 
-      servicesPath, 
-      methods: ['create', 'verifyEmail'] 
+    await app.createService('account', {
+      servicesPath,
+      methods: ['create', 'verifyEmail']
     })
     debug('\'account\' service created')
     await app.createService('authorisations', { servicesPath })
@@ -111,9 +111,9 @@ export default async function () {
 
   const importExportConfig = app.get('import-export')
   if (importExportConfig) {
-    await app.createService('import-export', { 
-      servicesPath, 
-      events: ['import-created', 'import-completed', 'export-created', 'export-completed'] 
+    await app.createService('import-export', {
+      servicesPath,
+      events: ['import-created', 'import-completed', 'export-created', 'export-completed']
     }, app)
     debug('\'import-export\' service created')
   }

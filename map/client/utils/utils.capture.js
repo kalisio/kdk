@@ -81,12 +81,12 @@ function headerFooterComponent (text) {
 }
 
 function compassComponent (position) {
-  return { content:  _.union(Layout.getPage().content, [{ component: 'layout/KPageSticky', position, offset: [0, 5], content: [{ component: 'KNorth' }]}]) }
+  return { content: _.union(Layout.getPage().content, [{ component: 'layout/KPageSticky', position, offset: [0, 5], content: [{ component: 'KNorth' }] }]) }
 }
 
 function legendComponent () {
   return {
-    content: [{  id: 'legend-widget', label: 'KLegend.LABEL', icon: 'las la-list', scrollable: true, content: { component: 'legend/KLegend' }}],
+    content: [{ id: 'legend-widget', label: 'KLegend.LABEL', icon: 'las la-list', scrollable: true, content: { component: 'legend/KLegend' } }],
     current: 'legend-widget',
     state: 'pinned',
     sizePolicy: {
@@ -98,6 +98,6 @@ function legendComponent () {
         xl: [15, 100]
       }
     },
-    visible: true 
+    visible: true
   }
 }

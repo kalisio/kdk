@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import { i18n, Store, utils as kCoreUtils } from '../../../core/client/index.js'
+import { Store, utils as kCoreUtils } from '../../../core/client/index.js'
 import { Geolocation } from '../geolocation.js'
 import { setEngineJwt, getLayers, getCategories } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'

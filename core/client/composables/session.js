@@ -9,7 +9,6 @@ import { Events } from '../events.js'
 import { Store } from '../store.js'
 import { beforeGuard } from '../guards.js'
 import { LocalStorage } from '../local-storage.js'
-import { useVersion } from '../composables/version.js'
 import { restoreSession } from '../utils/utils.session.js'
 
 export function useSession (options = {}) {
@@ -17,7 +16,6 @@ export function useSession (options = {}) {
   const router = useRouter()
   const route = useRoute()
   const $q = useQuasar()
-  const { Version } = useVersion()
 
   const isInitialized = ref(false)
   let pendingReconnection = null
@@ -112,8 +110,8 @@ export function useSession (options = {}) {
         },
         position: 'bottom'
       })
-      .onOk(() => { window.location.reload() })
-      .onCancel(() => { pendingReload = null })
+        .onOk(() => { window.location.reload() })
+        .onCancel(() => { pendingReload = null })
     }
   }
   function onRateLimit () {

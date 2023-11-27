@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import { Loading, Dialog } from 'quasar'
+import logger from 'loglevel'
+import { Loading } from 'quasar'
 import explode from '@turf/explode'
 import { i18n, api, utils as kCoreUtils } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'

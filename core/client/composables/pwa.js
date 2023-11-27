@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
 import config from 'config'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar } from 'quasar'

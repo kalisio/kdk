@@ -4,17 +4,16 @@ import config from 'config'
 import { Store, api, i18n, Events } from '../../../core.client.js'
 import { formatUserCoordinates } from './utils.js'
 
-
 // Format (reverse) geocoding output
 function formatGeocodingResult (result) {
   const properties = result.properties
   if (!properties) {
-    logger.warn(`[KDK] invalid geocoding result: missing 'properties' property`)
+    logger.warn('[KDK] invalid geocoding result: missing \'properties\' property')
     return
   }
   // check whether the result as a valid formatted address
   let label = properties.formattedAddress || ''
-  // try to build a formatted address 
+  // try to build a formatted address
   if (!label) {
     if (properties.streetNumber) label += (properties.streetNumber + ', ')
     if (properties.streetName) label += (properties.streetName + ' ')
@@ -24,7 +23,7 @@ function formatGeocodingResult (result) {
   // otherwise retireve the match prop
   if (!label) {
     if (!_.has(result, 'geokoder.matchProp')) {
-      logger.warn(`[KDK] invalid geocoding result: missing 'geokoder.matchProp' property`)
+      logger.warn('[KDK] invalid geocoding result: missing \'geokoder.matchProp\' property')
       return
     }
     label = _.get(result, result.geokoder.matchProp, '')

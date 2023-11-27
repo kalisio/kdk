@@ -143,7 +143,6 @@ export function useCollection (options) {
   if (options.baseQuery) watch(options.baseQuery, resetCollection)
   if (options.filterQuery) watch(options.filterQuery, resetCollection)
 
-
   onBeforeMount(() => {
     if (options.appendItems.value) {
       const service = getService()
