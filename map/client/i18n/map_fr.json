@@ -579,14 +579,14 @@
   },
   "KAddLayer": {
     "TITLE": "Ajouter une nouvelle couche",
-    "PROJECT_TITLE": "Gérer les couches",
+    "PROJECT_TITLE": "Sélectionner les couches",
     "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle couche",
     "CATEGORY_FIELD_LABEL": "Sélectionnez ou saisissez une catégorie",
     "FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique"
   },
   "KSelectLayers": {
-    "LAYERS_FIELD_LABEL": "Choisissez les couches du projets",
+    "LAYERS_FIELD_LABEL": "Choisissez les couches du projet",
     "SELECT_BUTTON": "Sélectionner"
   },
   "KImportLayer": {
@@ -617,7 +617,7 @@
   },
   "KAddView": {
     "TITLE": "Ajouter une vue",
-    "PROJECT_TITLE": "Gérer les vues"
+    "PROJECT_TITLE": "Sélectionner les vues"
   },
   "KSelectViews": {
     "VIEWS_FIELD_LABEL": "Choisissez les vues du projets",

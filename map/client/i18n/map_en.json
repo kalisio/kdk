@@ -584,7 +584,7 @@
     "CATEGORY_FIELD_LABEL": "Select or enter a category",
     "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID"
   },
-  "KSelectLayer": {
+  "KSelectLayers": {
     "LAYERS_FIELD_LABEL": "Select projet layers",
     "SELECT_BUTTON": "Select"
   },
