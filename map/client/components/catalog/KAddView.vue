@@ -15,7 +15,7 @@
             <Suspense><k-select-views :contextId="contextId" @done="closeModal" /></Suspense>
           </q-tab-panel>
           <q-tab-panel name="create" v-if="modes.includes('create')" :contextId="contextId">
-            <k-create-view @done="closeModal" />
+            <Suspense><k-create-view @done="closeModal" /></Suspense>
           </q-tab-panel>
         </q-tab-panels>
       </div>
