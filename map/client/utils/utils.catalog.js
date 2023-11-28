@@ -61,6 +61,7 @@ export async function setEngineJwt (layers, planetApi) {
 }
 
 export function getLayersByCategory (layers, categories) {
+  const categorizedLayers = _.clone(layers)
   const layersByCategory = {}
   _.forEach(categories, category => {
     // Built-in categories use filtering while user-defined ones use layers list
@@ -71,7 +72,7 @@ export function getLayersByCategory (layers, categories) {
       filter = { name: { $in: _.get(category, 'layers') } }
     }
     // If the list of layers in category is empty we can have a null filter
-    layersByCategory[category.name] = filter ? _.filter(layers, sift(filter)) : []
+    layersByCategory[category.name] = filter ? _.remove(categorizedLayers, sift(filter)) : []
     // Order by
     layersByCategory[category.name] = _.orderBy(layersByCategory[category.name],
       [(layer) => _.get(layer, _.get(category, 'options.orderBy', '_id'))],
