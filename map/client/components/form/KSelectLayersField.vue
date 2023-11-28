@@ -46,6 +46,8 @@ export default {
       const catalogLayers = { id: 'catalogLayers', label: this.$t('CATALOG_LABEL'), layers: [] }
       this.categories.concat(this.contextCategories).forEach(category => {
         let layers = this.contextLayersByCategory[category.name] || this.layersByCategory[category.name]
+        // Nothing to select ?
+        if (layers.length === 0) return
         // Built-in categories can't contain user-defined layers
         const rootNode = (category._id ? userLayers : catalogLayers)
         // Keep only what is required for rendering: id/label
