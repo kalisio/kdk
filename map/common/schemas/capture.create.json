@@ -13,7 +13,8 @@
       }
     },
     "header": {
-      "type": "string", 
+      "type": "string",
+      "maxLength": 200, 
       "field": {
         "component": "form/KTextareaField",
         "label": "schemas.CAPTURE_HEADER_FIELD_LABEL"
@@ -28,11 +29,12 @@
     },
     "legend": {
       "type": "string", 
+      "default": "none",
       "field": {
         "component": "form/KSelectField",
         "label": "schemas.CAPTURE_LEGEND_POSITION_FIELD_LABEL",
         "options": [
-          { "label": "schemas.CAPTURE_NOT_DISPLAYED_FIELD_LABEL", "value": "false", "selected": true },
+          { "label": "schemas.CAPTURE_NOT_DISPLAYED_FIELD_LABEL", "value": "none" },
           { "label": "schemas.CAPTURE_LEFT_POSITION_FIELD_LABEL", "value": "left" },
           { "label": "schemas.CAPTURE_RIGHT_POSITION_FIELD_LABEL", "value": "right" }
         ]
@@ -40,11 +42,12 @@
     },
     "compass": {
       "type": "string", 
+      "default": "none",
       "field": {
         "component": "form/KSelectField",
         "label": "schemas.CAPTURE_COMPASS_POSITION_FIELD_LABEL",
         "options": [
-          { "label": "schemas.CAPTURE_NOT_DISPLAYED_FIELD_LABEL", "value": "false", "selected": true },
+          { "label": "schemas.CAPTURE_NOT_DISPLAYED_FIELD_LABEL", "value": "none" },
           { "label": "schemas.CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL", "value": "top-left" },
           { "label": "schemas.CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL", "value": "top-right" }, 
           { "label": "schemas.CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL", "value": "bottom-right" }, 

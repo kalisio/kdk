@@ -4,8 +4,7 @@ import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/ind
 import * as composables from '../../../core/client/composables/index.js'
 import { exportFile, Notify } from 'quasar'
 
-const legendPlacements = ['right', 'left']
-const compassPlacements = ['top-left', 'top-right', 'bottom-right', 'bottom-left']
+const placements = ['right', 'left', 'top', 'bottom', 'top-left', 'top-right', 'bottom-right', 'bottom-left']
 
 export async function capture (values) {
   // Retrieve activity
@@ -72,8 +71,8 @@ function getLayout (values) {
   }
   if (_.has(values, 'header')) _.set(layout, 'header', headerFooterComponent(values.header))
   if (_.has(values, 'footer')) _.set(layout, 'footer', headerFooterComponent(values.footer))
-  if (_.includes(compassPlacements, values.compass)) _.set(layout, 'page', compassComponent(values.compass))
-  if (_.includes(legendPlacements, values.legend)) _.set(layout, `windows.${values.legend}`, legendComponent())
+  if (_.includes(placements, values.compass)) _.set(layout, 'page', compassComponent(values.compass))
+  if (_.includes(placements, values.legend)) _.set(layout, `windows.${values.legend}`, legendComponent())
 
   return layout
 }
