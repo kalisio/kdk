@@ -235,16 +235,15 @@
     "CAPTURE_RESOLUTION_FIELD_LABEL": "Paramétrez la résolution",
     "CAPTURE_HEADER_FIELD_LABEL": "Paramétrez le titre",
     "CAPTURE_FOOTER_FIELD_LABEL": "Paramétrez le pied de page",
-    "CAPTURE_LEGEND_FIELD_LABEL": "Paramétrez la légende",
-    "CAPTURE_LEGEND_POSITION_FIELD_LABEL": "Choisissez la position de la légende",
-    "CAPTURE_COMPASS_FIELD_LABEL": "Paramétrez l'orientation",
-    "CAPTURE_COMPASS_POSITION_FIELD_LABEL": "Choisissez la position de la boussole",
-    "CAPTURE_LEFT_POSITION_FIELD_LABEL": " Gauche",
-    "CAPTURE_RIGHT_POSITION_FIELD_LABEL": " Droite",
-    "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "En haut à gauche",
-    "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "En haut à droite",
-    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "En bas à droite",
-    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "En bas à gauche"
+    "CAPTURE_NOT_DISPLAYED_FIELD_LABEL": "Ne pas afficher",
+    "CAPTURE_LEGEND_POSITION_FIELD_LABEL": "Paramétrez la position de la légende",
+    "CAPTURE_LEFT_POSITION_FIELD_LABEL": " Afficher à gauche",
+    "CAPTURE_RIGHT_POSITION_FIELD_LABEL": " Afficher à droite",
+    "CAPTURE_COMPASS_POSITION_FIELD_LABEL": "Paramétrez la position de la boussole",
+    "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "Afficher en haut à gauche",
+    "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "Afficher en haut à droite",
+    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Afficher en bas à droite",
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Afficher en bas à gauche"
   },
   "tours": {
     "navigation-bar": {

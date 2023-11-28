@@ -235,16 +235,15 @@
     "CAPTURE_RESOLUTION_FIELD_LABEL": "Resolution setting",
     "CAPTURE_HEADER_FIELD_LABEL": "Title setting",
     "CAPTURE_FOOTER_FIELD_LABEL": "Footer setting",
-    "CAPTURE_LEGEND_FIELD_LABEL": "Legend setting",
-    "CAPTURE_LEGEND_POSITION_FIELD_LABEL": "Select legend position",
-    "CAPTURE_COMPASS_FIELD_LABEL": "Orientation setting",
-    "CAPTURE_COMPASS_POSITION_FIELD_LABEL": "Select compass position",
-    "CAPTURE_LEFT_POSITION_FIELD_LABEL": " Left",
-    "CAPTURE_RIGHT_POSITION_FIELD_LABEL": " Right",
-    "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "Top left",
-    "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "Top right",
-    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Bottom right",
-    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Bottom left"
+    "CAPTURE_LEGEND_POSITION_FIELD_LABEL": "Set legend position",
+    "CAPTURE_LEGEND_NOT_DISPLAYED_FIELD_LABEL": "Do not display",
+    "CAPTURE_LEGEND_LEFT_POSITION_FIELD_LABEL": " Display left",
+    "CAPTURE_LEGEND_RIGHT_POSITION_FIELD_LABEL": " Display right",
+    "CAPTURE_COMPASS_POSITION_FIELD_LABEL": "Set compass position",
+    "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "Display top left",
+    "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "Display top right",
+    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Display bottom right",
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Display bottom left"
   },
   "tours": {
     "navigation-bar": {
