@@ -14,7 +14,7 @@
     },
     "header": {
       "type": "string",
-      "maxLength": 200, 
+      "maxLength": 200,
       "field": {
         "component": "form/KTextareaField",
         "label": "schemas.CAPTURE_HEADER_FIELD_LABEL"
