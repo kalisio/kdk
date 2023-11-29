@@ -618,6 +618,23 @@
   "KTagField": {
     "CREATE_TAG": "Create <b>c</b>"
   },
+  "KResolutionField": {
+    "SD_LABEL": "Standard Definition",
+    "SD_DESCRIPTION": "4:3, 640 x 480",
+    "HD_LABEL": "High Definition",
+    "HD_DESCRIPTION": "16:9, 1280 x 720",
+    "FHD_LABEL": "Full HD",
+    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
+    "QHD_LABEL": "Quad HD",
+    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
+    "2K_LABEL": "2K",
+    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
+    "4K_LABEL": "4K or Ultra HD",
+    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
+    "8K_LABEL": "8K or Full Ultra HD",
+    "8K_DESCRIPTION": "16∶9, 7680 x 4320",
+    "PERSONALISED_LABEL": "Personalized"
+  },
   "KFileField": {
     "INVALID_FILE_TYPE": "Invalid file type, please select the right file type",
     "INVALID_FILE_SIZE": "Invalid file size, the file is too large",

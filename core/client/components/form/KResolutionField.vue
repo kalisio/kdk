@@ -1,16 +1,13 @@
 <template>
-  <div v-if="readOnly" :id="properties.name + '-field'">
-    <div v-html="text" />
-  </div>
-  <div v-else :class="labelClass">
+  <div :class="labelClass">
     <q-select
       v-model="resolution"
       :options="getResolutions()"
       style="min-width: 30%"
       dense
+      :label="label"
       :borderless="borderless"
       :disable="disabled"
-      @update:model-value='updateModel()'
     >
       <template v-slot:option="scope">
         <q-item v-bind="scope.itemProps">
@@ -32,8 +29,9 @@
       :borderless="borderless"
       input-class="text-center"
       style="max-width: 54px"
+      :readonly="readonly"
       :disable="disabled"
-      @update:model-value='updateModel(width)'
+      @update:model-value='updateModel()'
     />
     <span>x</span>
     <q-input
@@ -45,8 +43,9 @@
       :borderless="borderless"
       input-class="text-center"
       style="max-width: 54px"
+      :readonly="readonly"
       :disable="disabled"
-      @update:model-value='updateModel(height)'
+      @update:model-value='updateModel()'
     />
   </div>
 </template>
@@ -96,23 +95,27 @@ export default {
   computed: {
     labelClass () {
       const classObject = {}
-      classObject['row items-center no-wrap q-gutter-x-xs q-pb-md'] = true
+      classObject['row items-center no-wrap q-gutter-x-xs q-pb-md items-start'] = true
       if (this.properties.center) classObject['justify-center'] = true
       return classObject
     },
     borderless () {
       return this.properties.borderless ? this.properties.borderless : false
+    },
+    readonly () {
+      return this.resolution.readonly
     }
   },
   methods: {
     getResolutions () {
       return [
-        { label: i18n.t('KResolutionField.SD_LABEL'), description: i18n.t('KResolutionField.SD_DESCRIPTION'), value: '640x480' },
-        { label: i18n.t('KResolutionField.HD_LABEL'), description: i18n.t('KResolutionField.HD_DESCRIPTION'), value: '1280x720' },
-        { label: i18n.t('KResolutionField.FHD_LABEL'), description: i18n.t('KResolutionField.FHD_DESCRIPTION'), value: '1920x1080' },
-        { label: i18n.t('KResolutionField.QHD_LABEL'), description: i18n.t('KResolutionField.QHD_DESCRIPTION'), value: '2560x1440' },
-        { label: i18n.t('KResolutionField.2K_LABEL'), description: i18n.t('KResolutionField.2K_DESCRIPTION'), value: '2048x1080' },
-        { label: i18n.t('KResolutionField.4K_LABEL'), description: i18n.t('KResolutionField.4K_DESCRIPTION'), value: '3840x2160' }
+        { label: i18n.t('KResolutionField.SD_LABEL'), description: i18n.t('KResolutionField.SD_DESCRIPTION'), value: '640x480', readonly: true },
+        { label: i18n.t('KResolutionField.HD_LABEL'), description: i18n.t('KResolutionField.HD_DESCRIPTION'), value: '1280x720', readonly: true },
+        { label: i18n.t('KResolutionField.FHD_LABEL'), description: i18n.t('KResolutionField.FHD_DESCRIPTION'), value: '1920x1080', readonly: true },
+        { label: i18n.t('KResolutionField.QHD_LABEL'), description: i18n.t('KResolutionField.QHD_DESCRIPTION'), value: '2560x1440', readonly: true },
+        { label: i18n.t('KResolutionField.2K_LABEL'), description: i18n.t('KResolutionField.2K_DESCRIPTION'), value: '2048x1080', readonly: true },
+        { label: i18n.t('KResolutionField.4K_LABEL'), description: i18n.t('KResolutionField.4K_DESCRIPTION'), value: '3840x2160', readonly: true },
+        { label: i18n.t('KResolutionField.PERSONALISED_LABEL'), value: '1280x720', readonly: false }
       ]
     },
     updateModel () {
