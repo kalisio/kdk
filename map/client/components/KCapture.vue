@@ -10,7 +10,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { CaptureProcessing } from '../capture.js'
+import { Capture } from '../capture.js'
 import captureSchema from '../../common/schemas/capture.create.json'
 import KForm from '../../../core/client/components/form/KForm.vue'
 
@@ -20,7 +20,7 @@ const formRef = ref(null)
 // Functions
 async function apply () {
   const { isValid, values } = formRef.value.validate()
-  if (isValid) CaptureProcessing.capture(values)
+  if (isValid) Capture.process(values)
   return true
 }
 
