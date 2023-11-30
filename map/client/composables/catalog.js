@@ -29,7 +29,7 @@ export function useCatalog (options = {}) {
   // Functions
   async function getLayers () {
     layers.value = await catalog.getLayers({
-      query: options.project ? getCatalogProjectQuery(options.project) : options.layers,
+      query: options.project ? Object.assign(getCatalogProjectQuery(options.project), options.layers) : options.layers,
       context: options.context,
       planetApi: options.planetApi
     })
@@ -45,7 +45,7 @@ export function useCatalog (options = {}) {
   }
   async function getViews () {
     views.value = await catalog.getViews({
-      query: options.project ? getCatalogProjectQuery(options.project) : options.views,
+      query: options.project ? Object.assign(getCatalogProjectQuery(options.project), options.views) : options.views,
       context: options.context,
       planetApi: options.planetApi
     })

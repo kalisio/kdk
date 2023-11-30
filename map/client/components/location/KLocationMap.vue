@@ -24,10 +24,13 @@ import L from 'leaflet'
 import config from 'config'
 import centroid from '@turf/centroid'
 import { KPanel } from '../../../../core/client/components'
+import { api } from '../../../../core/client/api.js'
 import * as mapMixins from '../../mixins/map'
-import { Geolocation } from '../../geolocation'
+import { Geolocation } from '../../geolocation.js'
+import { Planets } from '../../planets.js'
+import { useCatalog } from '../../composables'
 import {
-  setEngineJwt, coordinatesToGeoJSON, formatUserCoordinates,
+  coordinatesToGeoJSON, formatUserCoordinates,
   bindLeafletEvents, unbindLeafletEvents, createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec
 } from '../../utils.map.js'
 
@@ -55,6 +58,14 @@ export default {
     draggable: {
       type: Boolean,
       default: false
+    },
+    planet: {
+      type: String,
+      default: ''
+    },
+    project: {
+      type: Object,
+      default: null
     }
   },
   computed: {
@@ -232,14 +243,10 @@ export default {
       this.map.pm.setGlobalOptions({ layerGroup: null })
     },
     async refreshBaseLayer () {
-      const catalogService = this.$api.getService('catalog', '')
+      const layers = await this.getLayers()
       // Get first visible base layer
-      const response = await catalogService.find({ query: { type: 'BaseLayer', 'leaflet.isVisible': true } })
-      if (response.data.length > 0) {
-        const baseLayer = response.data[0]
-        // Do we need to inject a token ?
-        await setEngineJwt([baseLayer])
-        this.addLayer(baseLayer)
+      if (layers.length > 0) {
+        this.addLayer(layers[0])
       }
     },
     mapRefCreated (container) {
@@ -261,6 +268,19 @@ export default {
   },
   beforeUnmount () {
     this.$engineEvents.off('pm:create', this.stopDraw)
+  },
+  async setup (props) {
+    const planetApi = props.planet ? Planets.get(props.planet) : api
+    // Use target catalog according to project and filtering options to get base layer
+    const { getLayers } = useCatalog({
+      project: props.project,
+      layers: { type: 'BaseLayer', 'leaflet.isVisible': true },
+      planetApi
+    })
+    // expose
+    return {
+      getLayers
+    }
   }
 }
 </script>
