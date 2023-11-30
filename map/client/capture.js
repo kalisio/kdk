@@ -8,9 +8,9 @@ export const CaptureProcessing = {
   update () {
     this.processing = !this.processing
   },
-  async capture (isValid, values) {
+  async capture (values) {
     if (this.processing) Notify.create({ type: 'negative', message: i18n.t('KCapture.ERROR_MESSAGE') })
-    if (isValid && !this.processing) {
+    else {
       this.update()
       await capture(values)
       this.update()
