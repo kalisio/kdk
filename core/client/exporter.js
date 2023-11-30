@@ -92,9 +92,6 @@ export const Exporter = {
   initialize (options) {
     ExporterQueue.initialize(_.get(options, 'maxConcurrentRequests', 3))
   },
-  getFileName (basename) {
-
-  },
   export (options) {
     if (!options.service) {
       logger.error('[KDK] invalid options: missing \'service\' property')
