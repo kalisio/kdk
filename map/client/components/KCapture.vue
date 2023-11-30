@@ -20,7 +20,8 @@ const formRef = ref(null)
 // Functions
 async function apply () {
   const { isValid, values } = formRef.value.validate()
-  await CaptureProcessing.capture(isValid, values)
+  CaptureProcessing.capture(isValid, values)
+  return true
 }
 
 // Expose
