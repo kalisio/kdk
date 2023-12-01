@@ -145,7 +145,7 @@ export async function getProbeFeatures (options) {
     features.forEach(feature => compiler({ feature, properties: feature.properties }))
   }
   if (options.transform) {
-    features.transformFeatures(features, options.transform)
+    transformFeatures(features, options.transform)
   }
   return response
 }
@@ -224,7 +224,7 @@ export async function getFeaturesFromQuery (options, query) {
     features.forEach(feature => compiler({ feature, properties: feature.properties }))
   }
   if (options.transform) {
-    features.transformFeatures(features, options.transform)
+    transformFeatures(features, options.transform)
   }
   return response
 }
