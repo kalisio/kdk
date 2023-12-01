@@ -25,8 +25,12 @@ export const ShapeMarker = L.Marker.extend({
       if (options.fillOpacity) this.options.opacity = options.fillOpacity
       if (options.color) _.set(this.options, 'stroke.color', options.color)
       if (options.weight) _.set(this.options, 'stroke.width', options.weight)
-      if (options.icon) this.options.icon = options.icon
-
+      if (options.icon) {
+        this.options.icon = { classes: options.icon.classes }
+        if (options.icon.iconSize) _.set(this.options, 'icon.size', options.icon.iconSize)
+        if (options.icon.color) _.set(this.options, 'icon.color', options.icon.color)
+      }
+    console.log(this.options.icon)
     }
     const shape = coreUtils.createShape(this.options)
     if (shape) {
