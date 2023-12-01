@@ -10,35 +10,43 @@ export const Shapes = {
   },
   rect: {
     viewBox: [0, 0, 100, 100],
-    content: '<rect cx="0" cy="0" width="100" height="100" />'
+    content: '<rect cx="0" cy="0" width="100" height="100" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 0.9), Math.round(r * 2 * 0.9)]}
   },
   'rounded-rect': {
     viewBox: [0, 0, 100, 100],
-    content: '<rect cx="0" cy="0" width="100" height="100" rx="20" ry="20" />'
+    content: '<rect cx="0" cy="0" width="100" height="100" rx="20" ry="20" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 0.9), Math.round(r * 2 * 0.9)]}
   },
   diamond: {
     viewBox: [0, 0, 100, 100],
-    content: '<polygon points="50 0, 100 50, 50 100, 0 50" />'
+    content: '<polygon points="50 0, 100 50, 50 100, 0 50" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 1.2), Math.round(r * 2 * 1.2)]}
   },
   triangle: {
     viewBox: [0, 0, 100, 100],
-    content: '<polygon points="50 0, 100 100, 0 100" />'
+    content: '<polygon points="50 0, 100 100, 0 100" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 1.125), Math.round(r * 2 * 1.025)]}
   },
   'triangle-down': {
     viewBox: [0, 0, 100, 100],
-    content: '<polygon points="0 0, 100 0, 50 100" />'
+    content: '<polygon points="0 0, 100 0, 50 100" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 1.125), Math.round(r * 2 * 1.025)]}
   },
   'triangle-left': {
     viewBox: [0, 0, 100, 100],
-    content: '<polygon points="0 50, 100 0, 100 100" />'
+    content: '<polygon points="0 50, 100 0, 100 100" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 1.025), Math.round(r * 2 * 1.125)]}
   },
   'triangle-right': {
     viewBox: [0, 0, 100, 100],
-    content: '<polygon points="0 0, 100 50, 0 100" />'
+    content: '<polygon points="0 0, 100 50, 0 100" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 1.025), Math.round(r * 2 * 1.125)]}
   },
   star: {
     viewBox: [0, 0, 48, 48],
-    content: '<path d="m24,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />'
+    content: '<path d="m24,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />',
+    radiusToSize: (r) => { return [ Math.round(r * 2 * 1.4), Math.round(r * 2 * 1.4)]}
   },
   'marker-pin': {
     viewBox: [0, 0, 384, 512],
@@ -56,6 +64,8 @@ export const Shapes = {
   }
 }
 
+const EmptyDiv = '<div />'
+
 function addTagAttribute (tag, attibute, value) {
   return tag.slice(0, -1) + ` ${attibute}="${value}">`
 }
@@ -68,6 +78,7 @@ function addSvgAttribute (svg, attibute, value) {
  Utility to create a shape with the following options:
   - shape: String | Object - name of the predefined shape or object specifyinfg the viewBox and the content
   - size : Array - [width, height] of the maker
+  - radius: Number - the radius to compute a "visual" size
   - color: String - the fill color
   - opacity: Number - the fill opacity
   - stroke: Object specifying the stroke properties
@@ -78,7 +89,7 @@ function addSvgAttribute (svg, attibute, value) {
     - dashArray: String - the stroke dasharray - 'none'
     - dashOffset: Number - the stroke dashoffset - 0
   - icon: Object specifying an icon overlay
-    - class: String - the icon class
+    - classes: String - the icon class
     - color: String - the icon color
     - opacity: Number - the icon opacity
     - size: Number - the icon size in pixel - 14
@@ -86,41 +97,52 @@ function addSvgAttribute (svg, attibute, value) {
     - yOffset: String - the y offset from the center of the shape - '-50%'
 */
 export function createShape (options) {
+  // Check arguments
+  if (!options) {
+    console.warn(`[KDK] 'options' argument is required`)
+    return EmptyDiv
+  }
+  if (!options.shape) {
+    console.warn(`[KDK] 'options.shape' property is required`)
+    return EmptyDiv
+  }
+  // Retrieve the shape
   let shape
-  const width = _.get(options, 'size[0]', 24)
-  const height = _.get(options, 'size[1]', 24)
+  if (typeof options.shape === 'object') shape = options.shape
+  else {
+    shape = Shapes[options.shape]
+    if (!shape) {
+      console.warn(`[KDK] unknow shape ${options.shape}`)
+      return EmptyDiv
+    }
+  }
+  // Define the size
+  let width = 24
+  let height = 24
+  if (options.size) {
+    width = options.size[0]
+    height = options.size[1]
+  } else {
+    if (options.radius) {
+      if (shape.radiusToSize) {
+        const size = shape.radiusToSize(options.radius)
+        width = size[0]
+        height = size[1]
+      } else {
+        width = options.radius * 2
+        height = options.radius * 2
+      }
+    }
+  }
   // Set div container vars
   const beginDivTag = `<div style="position: relative; width: ${width}px; height: ${height}px;">`
   const endDivTag = '</div>'
   // Set svg shape vars
   let beginSvgTag = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" preserveAspectRatio="none">`
-  let svgShapeContent = ''
+  beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', _.join(shape.viewBox, ' '))
+  let svgShapeContent = shape.content
   let svgClipPath = ''
   const endSvgTag = '</svg>'
-  // Check shape property
-  if (!options.shape) {
-    console.warn('[KDK] property \'shape\' must be defined')
-    return beginDivTag + endDivTag
-  }
-  if (typeof options.shape === 'object') {
-    // use custom shape
-    shape = options.shape
-    beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', _.join(shape.viewBox, ' '))
-    svgShapeContent = shape.content
-  } else if (typeof options.shape === 'string') {
-    // use predefined shape
-    shape = Shapes[options.shape]
-    if (shape) {
-      beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', _.join(shape.viewBox, ' '))
-      svgShapeContent = shape.content
-    } else {
-      console.warn(`[KDK] unknow shape ${options.shape}`)
-      return beginDivTag + endDivTag
-    }
-  } else {
-    console.warn('[KDK] invalid \'shape\' property type')
-    return beginDivTag + endDivTag
-  }
   // Apply fill style
   const color = options.color || getCssVar('primary')
   svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
@@ -163,3 +185,4 @@ export function createShape (options) {
   }
   return beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + endDivTag
 }
+
