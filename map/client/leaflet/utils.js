@@ -27,6 +27,7 @@ export const LeafletStyleMappings = {
   'marker-symbol': 'shape',
   'marker-size': 'size',
   'marker-color': 'fillColor',
+  'marker-anchor': 'anchor',
   'icon-url': 'icon.iconUrl',
   'icon-html': 'icon.html',
   'icon-size': 'icon.iconSize',
@@ -124,6 +125,7 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
       // Specific options
       switch (key) {
         case 'marker-size':
+        case 'marker-anchor':
         case 'icon-anchor':
           if (!Array.isArray(value)) value = [value, value]
           _.set(convertedStyle, mapping, value)
