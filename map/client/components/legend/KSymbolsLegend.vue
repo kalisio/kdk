@@ -17,11 +17,13 @@
           >
             <q-item dense>
               <q-item-section avatar v-if="element.component">
-                <component
-                  :is="element.component"
-                  v-bind="element.props"
-                  :key="element.label"
-                />
+                <div class="row justify-center" style="width: 24px;">
+                  <component
+                    :is="element.component"
+                    v-bind="element.props"
+                    :key="element.label"
+                  />
+                </div>
               </q-item-section>
               <q-item-section>
                 <q-item-label>
@@ -44,7 +46,7 @@ import { computed } from 'vue'
 import { loadComponent } from '../../../../core/client/utils'
 import KLegendRenderer from './KLegendRenderer.vue'
 
-// props
+// Props
 const props = defineProps({
   label: {
     type: String,
@@ -56,7 +58,7 @@ const props = defineProps({
   }
 })
 
-// computed
+// Computed
 const sections = computed(() => {
   return _.difference(_.keys(props.content))
 })
