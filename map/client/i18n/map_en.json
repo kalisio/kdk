@@ -46,8 +46,6 @@
     },
     "activity": {
       "ADD_LAYER": "Add a layer",
-      "CREATE_LAYER": "Create a layer",
-      "MANAGE_LAYERS": "Manage layers",
       "EDIT_LABEL": "Edit properties",
       "EDIT_LAYER_STYLE_LABEL": "Edit style",
       "FILTER_DATA_LABEL": "Filter data",
@@ -75,9 +73,9 @@
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
       "ADD_VIEW": "Add view",      
-      "CREATE_VIEW": "Create view",      
-      "MANAGE_VIEWS": "Manage views",
-      "CREATE_PROJECT": "Create project",      
+      "CREATE_VIEW": "Create view",
+      "CREATE_PROJECT": "Create project",
+      "MANAGE_PROJECT": "Manage project",      
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
       "TOOLS": "Tools",
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
@@ -577,7 +575,6 @@
   },
   "KAddLayer": {
     "TITLE": "Add a new layer",
-    "PROJECT_TITLE": "Manager layers",
     "NAME_FIELD_LABEL": "Enter the name of the new layer",
     "DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATEGORY_FIELD_LABEL": "Select or enter a category",
@@ -612,10 +609,6 @@
     "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CREATE_BUTTON": "Create"
-  },
-  "KAddView": {
-    "TITLE": "Add a new view",
-    "PROJECT_TITLE": "Manage views"
   },
   "KSelectViews": {
     "VIEWS_FIELD_LABEL": "Select projet views",

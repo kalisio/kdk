@@ -19,7 +19,7 @@
   </q-field>
   <!-- Layer tree -->
   <q-tree :ref="tree" :nodes="layerTree" node-key="id" label-key="label" children-key="layers"
-    tick-strategy="leaf" v-model:ticked="selectedLayers" @update:ticked="onSelect">
+    v-model:expanded="expandedLayers" tick-strategy="leaf" v-model:ticked="selectedLayers" @update:ticked="onSelect">
   </q-tree>
 </template>
 
@@ -33,7 +33,8 @@ export default {
   mixins: [kCoreMixins.baseField],
   data () {
     return {
-      selectedLayers: []
+      selectedLayers: [],
+      expandedLayers: []
     }
   },
   computed: {
@@ -42,6 +43,7 @@ export default {
     },
     layerTree () {
       const tree = []
+      this.expandedLayers = []
       const userLayers = { id: 'userLayers', label: this.$t('LAYERS_LABEL'), layers: [] }
       const catalogLayers = { id: 'catalogLayers', label: this.$t('CATALOG_LABEL'), layers: [] }
       this.categories.concat(this.contextCategories).forEach(category => {
@@ -61,8 +63,14 @@ export default {
         rootNode.layers.unshift(Object.assign(_.pick(layer, ['_id', 'name', 'label']), { id: layer.scope === 'user' ? layer._id : layer.name }))
       })
 
-      if (userLayers.layers.length > 0) tree.push(userLayers)
-      if (catalogLayers.layers.length > 0) tree.push(catalogLayers)
+      if (userLayers.layers.length > 0) {
+        tree.push(userLayers)
+        this.expandedLayers.push('userLayers')
+      }
+      if (catalogLayers.layers.length > 0) {
+        tree.push(catalogLayers)
+        this.expandedLayers.push('catalogLayers')
+      }
       return tree
     }
   },

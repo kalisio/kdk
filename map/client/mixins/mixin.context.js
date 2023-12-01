@@ -228,7 +228,8 @@ export const context = {
       if (hasLayers) {
         Object.assign(context, this.getContextParameters('layers'))
       }
-      await this.$api.getService('catalog').create(context)
+      context = await this.$api.getService('catalog').create(context)
+      return context
     },
     async loadContext (context) {
       // If not context object retrieve it from catalog first
@@ -243,6 +244,7 @@ export const context = {
       if (!context) throw new Error('Cannot find or invalid context')
       this.setContextParameters('view', context)
       this.setContextParameters('layers', context)
+      return context
     },
     updateViewSettings (enabled) {
       if (!enabled) this.clearContext('view')

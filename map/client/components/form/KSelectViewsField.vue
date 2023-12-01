@@ -19,7 +19,7 @@
   </q-field>
   <!-- View tree -->
   <q-tree v-if="viewTree.length" :nodes="viewTree" node-key="_id" label-key="label" children-key="views"
-    tick-strategy="leaf" v-model:ticked="selectedViews" @update:ticked="onSelect">
+    v-model:expanded="expandedViews" tick-strategy="leaf" v-model:ticked="selectedViews" @update:ticked="onSelect">
   </q-tree>
   <div v-else class="row">
     <KStamp
@@ -42,7 +42,8 @@ export default {
   mixins: [kCoreMixins.baseField],
   data () {
     return {
-      selectedViews: []
+      selectedViews: [],
+      expandedViews: []
     }
   },
   computed: {
@@ -51,7 +52,10 @@ export default {
     },
     viewTree () {
       const tree = []
-      if (this.views.length > 0) tree.push({ _id: 'views', label: this.$t('VIEWS_LABEL'), views: this.views.concat(this.contextViews) })
+      if (this.views.length > 0) {
+        tree.push({ _id: 'views', label: this.$t('VIEWS_LABEL'), views: this.views.concat(this.contextViews) })
+        this.expandedViews = ['views']
+      }
       return tree
     }
   },

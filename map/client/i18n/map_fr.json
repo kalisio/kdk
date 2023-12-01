@@ -46,8 +46,6 @@
     },
     "activity": {
       "ADD_LAYER": "Ajouter une couche",
-      "CREATE_LAYER": "Créer une couche",
-      "MANAGE_LAYERS": "Gérer les couches",
       "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
       "FILTER_DATA_LABEL": "Filtrer les données",
@@ -76,8 +74,8 @@
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_VIEW": "Ajouter une vue",
       "CREATE_VIEW": "Créer une vue",
-      "MANAGE_VIEWS": "Gérer les vues",
       "CREATE_PROJECT": "Créer un projet",
+      "MANAGE_PROJECT": "Gérer le projet",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchroniser temporellement",
       "TOOLS": "Outils",
       "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",

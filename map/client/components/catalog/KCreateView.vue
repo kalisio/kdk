@@ -1,34 +1,31 @@
 <template>
-  <div>
-    <!-- Forms section -->
+  <k-modal
+    id="create-view-modal"
+    title="KCreateView.MODAL_TITLE"
+    :buttons="modalButtons"
+    v-model="isModalOpened"
+  >
+    <!--
+      Modal content
+    -->
     <k-form
       ref="form"
       :schema="formSchema"
     />
-    <!-- Buttons section -->
-    <q-card-actions align="right">
-      <KPanel
-        id="modal-buttons"
-        :content="buttons"
-        renderer="form-button"
-        v-bind:class="{ 'q-gutter-x-md' : $q.screen.gt.xs, 'q-gutter-x-sm': $q.screen.lt.sm }"
-      />
-    </q-card-actions>
-  </div>
+  </k-modal>
 </template>
 
 <script>
-import { KPanel, KForm } from '../../../../core/client/components'
+import { KModal, KForm } from '../../../../core/client/components'
+import { baseModal } from '../../../../core/client/mixins'
 import { useProject } from '../../composables'
 
 export default {
   components: {
-    KPanel,
+    KModal,
     KForm
   },
-  emits: [
-    'done'
-  ],
+  mixins: [baseModal],
   inject: ['kActivity'],
   props: {
     contextId: {
@@ -42,20 +39,23 @@ export default {
     }
   },
   computed: {
-    buttons () {
-      return [{
-        id: 'close-action',
-        outline: true,
-        label: 'CLOSE',
-        renderer: 'form-button',
-        handler: this.onClose
-      }, {
-        id: 'create-view-action',
-        label: 'CREATE',
-        loading: this.creating,
-        renderer: 'form-button',
-        handler: this.onCreate
-      }]
+    modalButtons () {
+      return [
+        {
+          id: 'cancel-button',
+          label: 'CANCEL',
+          renderer: 'form-button',
+          outline: true,
+          handler: () => this.closeModal()
+        },
+        {
+          id: 'apply-button',
+          label: 'CREATE',
+          renderer: 'form-button',
+          loading: this.creating,
+          handler: () => this.apply()
+        }
+      ]
     },
     formSchema () {
       return {
@@ -95,10 +95,7 @@ export default {
     }
   },
   methods: {
-    onClose () {
-      this.$emit('done')
-    },
-    async onCreate () {
+    async apply () {
       const result = this.$refs.form.validate()
       if (result.isValid) {
         const view = result.values
@@ -113,10 +110,9 @@ export default {
             })
           }
           this.creating = false
-          this.$emit('done')
+          this.closeModal()
         } catch (error) {
           this.creating = false
-          this.$emit('done')
           throw error
         }
       }
