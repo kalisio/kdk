@@ -64,12 +64,12 @@ export const Shapes = {
   }
 }
 
-const EmptyDiv = '<div />'
-
+/*
+  Helper functions
+*/
 function addTagAttribute (tag, attibute, value) {
   return tag.slice(0, -1) + ` ${attibute}="${value}">`
 }
-
 function addSvgAttribute (svg, attibute, value) {
   return svg.slice(0, -2) + ` ${attibute}="${value}" />`
 }
@@ -78,7 +78,7 @@ function addSvgAttribute (svg, attibute, value) {
  Utility to create a shape with the following options:
   - shape: String | Object - name of the predefined shape or object specifyinfg the viewBox and the content
   - size : Array - [width, height] of the maker
-  - radius: Number - the radius to compute a "visual" size
+  - radius: Number - the radius to compute a "visual" size. If the size is defined, the radius is omitted.
   - color: String - the fill color
   - opacity: Number - the fill opacity
   - stroke: Object specifying the stroke properties
@@ -100,11 +100,11 @@ export function createShape (options) {
   // Check arguments
   if (!options) {
     console.warn(`[KDK] 'options' argument is required`)
-    return EmptyDiv
+    return
   }
   if (!options.shape) {
     console.warn(`[KDK] 'options.shape' property is required`)
-    return EmptyDiv
+    return
   }
   // Retrieve the shape
   let shape
@@ -113,7 +113,7 @@ export function createShape (options) {
     shape = Shapes[options.shape]
     if (!shape) {
       console.warn(`[KDK] unknow shape ${options.shape}`)
-      return EmptyDiv
+      return
     }
   }
   // Define the size
@@ -183,6 +183,10 @@ export function createShape (options) {
     iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}); color: ${color}; opacity: ${opacity}; font-size: ${size}px;"`
     iconTag += '/>'
   }
-  return beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + endDivTag
+  return {
+    width,
+    height,
+    html: beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + endDivTag
+  }
 }
 

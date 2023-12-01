@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-html="content" />
+    <div v-if="content" v-html="content" />
     <q-tooltip v-if="tooltip">
       {{ tooltip }}
     </q-tooltip>
@@ -25,6 +25,7 @@ const props = defineProps({
 
 // Computed
 const content = computed(() => {
-  return createShape(props.options)
+  const shape = createShape(props.options)
+  return shape ? shape.html : undefined
 })
 </script>

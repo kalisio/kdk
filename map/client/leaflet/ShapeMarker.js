@@ -1,33 +1,52 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import { getCssVar } from 'quasar'
 import { utils as coreUtils } from '../../../core/client/index.js'
 
-// Defaults marker properties
-const defaults = {
-  shape: 'marker-pin',
-  size: [28, 36],
-  icon: {
-    classes: 'fa fa-circle'
-  }
-}
-
 export const ShapeMarker = L.Marker.extend({
+
+  // Constructor
   initialize (latlng, options) {
-    const mappedOptions = _.cloneDeep(options)
-    // map options from simplespec to SVG shape
-    if (mappedOptions.fillColor) _.set(mappedOptions, 'color', options.fillColor)
-    if (mappedOptions.fillOpacity) _.set(mappedOptions, 'opacity', options.fillOpacity)
-    if (mappedOptions.color) _.set(mappedOptions, 'stroke.color', options.color)
-    if (mappedOptions.weight) _.set(mappedOptions, 'stroke.Width', options.weight)
-    // create the marker with the corredt divIcon
-    const size = mappedOptions.size || defaults.size
-    L.Marker.prototype.initialize.call(this, latlng, {
-      icon: L.divIcon({
-        iconSize: size,
-        iconAnchor: [size[0] / 2, size[1]],
-        html: coreUtils.createShape(_.defaultsDeep(mappedOptions, defaults)),
-        className: ''
-      })
+    L.setOptions(this, {
+      shape: 'circle',
+      color: getCssVar('primary'),
+      opacity: 1,
     })
+    if (options) {
+      if (options.shape) this.options.shape = options.shape
+      if (options.size) this.options.size = options.size
+      if (options.radius) this.options.radius = options.radius
+      if (options.anchor) this.options.anchor = options.anchor
+      if (options.fillColor) this.options.color = options.fillColor
+      if (options.fillOpacity) this.options.opacity = options.fillOpacity
+      if (options.color) _.set(this.options, 'stroke.color', options.color)
+      if (options.weight) _.set(this.options, 'stroke.width', options.weight)
+      if (options.icon) this.options.icon = options.icon
+    }
+    const shape = coreUtils.createShape(this.options)
+    if (shape) {
+      L.Marker.prototype.initialize.call(this, latlng, {
+        icon: L.divIcon({
+          iconSize: [shape.width, shape.height],
+          iconAnchor: getAnchor(options.anchor, shape.width, shape.height),
+          popupAnchor: [0, -shape.height / 2],
+          html: shape.html,
+          className: ''
+        })
+      })
+    }
+    
+    function getAnchor (position, width, height) {
+      if (position === 'top-left') return [0, 0]
+      if (position === 'top-center') return [width / 2, 0]
+      if (position === 'top-right') return [width, 0]
+      if (position === 'middle-left') return [0, height / 2]
+      if (position === 'middle-right') return [width, height / 2]
+      if (position === 'middle-left') return [0, height / 2]
+      if (position === 'bottom-left') return [0, height]
+      if (position === 'bottom-center') return [width / 2, height]
+      if (position === 'bottom-right') return [width, height]
+      return [width / 2, height / 2]
+    }
   }
 })
