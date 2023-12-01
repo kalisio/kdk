@@ -27,8 +27,7 @@ import { KPanel } from '../../../../core/client/components'
 import { api } from '../../../../core/client/api.js'
 import * as mapMixins from '../../mixins/map'
 import { Geolocation } from '../../geolocation.js'
-import { Planets } from '../../planets.js'
-import { useCatalog } from '../../composables'
+import { useCatalog, useCurrentActivity } from '../../composables'
 import {
   coordinatesToGeoJSON, formatUserCoordinates,
   bindLeafletEvents, unbindLeafletEvents, createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec
@@ -58,14 +57,6 @@ export default {
     draggable: {
       type: Boolean,
       default: false
-    },
-    planet: {
-      type: String,
-      default: ''
-    },
-    project: {
-      type: Object,
-      default: null
     }
   },
   computed: {
@@ -269,11 +260,15 @@ export default {
   beforeUnmount () {
     this.$engineEvents.off('pm:create', this.stopDraw)
   },
-  async setup (props) {
-    const planetApi = props.planet ? Planets.get(props.planet) : api
+  async setup () {
+    // Get current project for activity if any
+    const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
+    const project = getActivityProject()
+    // We expect the project object to expose the underlying API
+    const planetApi = project && typeof project.getPlanetApi === 'function' ? project.getPlanetApi() : api
     // Use target catalog according to project and filtering options to get base layer
     const { getLayers } = useCatalog({
-      project: props.project,
+      project,
       layers: { type: 'BaseLayer', 'leaflet.isVisible': true },
       planetApi
     })

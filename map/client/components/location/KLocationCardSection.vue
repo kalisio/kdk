@@ -17,8 +17,6 @@
       <!-- Map  -->
       <KLocationMap
         v-model="feature"
-        :planet="planet"
-        :project="project"
         style="min-height: 140px"
       />
     </div>
@@ -54,14 +52,6 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
-  },
-  planet: {
-    type: String,
-    default: ''
-  },
-  project: {
-    type: Object,
-    default: null
   }
 })
 

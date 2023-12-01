@@ -7,7 +7,7 @@ import { Time } from '../../../../core/client/time.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId } from '../../utils.map.js'
+import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer } from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default remove handler for leaflet-realtime due to
@@ -432,7 +432,7 @@ export const geojsonLayers = {
         // these layers will be destroyed when hidden. We need to be able to restore
         // them when they get shown again
         const baseLayer = this.getLayerByName(name)
-        if (this.isInMemoryLayer(baseLayer)) {
+        if (isInMemoryLayer(baseLayer)) {
           const geojson = layer.toGeoJSON(false)
           this.geojsonCache[name] = geojson
         }
@@ -518,7 +518,7 @@ export const geojsonLayers = {
       // Check if we have cached geojson data for this layer
       const cachedGeojson = this.geojsonCache[layer.name]
       if (cachedGeojson) {
-        if (this.isInMemoryLayer(layer)) {
+        if (isInMemoryLayer(layer)) {
           // Restore geojson data for in-memory layers that was hidden
           this.updateLayer(layer.name, cachedGeojson)
         } else {

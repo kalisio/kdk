@@ -55,6 +55,12 @@ export function isLayerDataEditable (layer) {
   return _.get(layer, 'isDataEditable', isUserLayer(layer) && isFeatureLayer(layer))
 }
 
+export function isTerrainLayer (layer) {
+  if (layer.type === 'TerrainLayer') return true
+  const cesiumOptions = layer.cesium || layer
+  return (cesiumOptions.type === 'Cesium') || (cesiumOptions.type === 'Ellipsoid')
+}
+
 export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   // Check for invalid features first
   const check = checkFeatures(geoJson)

@@ -7,21 +7,23 @@
     :toolbar="toolbar"
     :width-policy="widthPolicy"
   >
-    <!-- component with v-model -->
-    <component
-      v-if="_.has(attrs, 'v-model')"
-      ref="componentRef"
-      :is="computedComponent"
-      v-model="computedModel"
-      v-bind="computedProps"
-    />
-    <!-- component without v-model -->
-    <component
-      v-else
-      ref="componentRef"
-      :is="computedComponent"
-      v-bind="computedProps"
-    />
+    <Suspense>
+      <!-- component with v-model -->
+      <component
+        v-if="_.has(attrs, 'v-model')"
+        ref="componentRef"
+        :is="computedComponent"
+        v-model="computedModel"
+        v-bind="computedProps"
+      />
+      <!-- component without v-model -->
+      <component
+        v-else
+        ref="componentRef"
+        :is="computedComponent"
+        v-bind="computedProps"
+      />
+    </Suspense>
   </KModal>
 </template>
 

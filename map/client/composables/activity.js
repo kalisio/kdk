@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import { onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, unref, shallowRef } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
+import { api } from '../../../core/client/api.js'
 import { useSelection } from './selection.js'
 import { useProbe } from './probe.js'
 import { useHighlight } from './highlight.js'
@@ -51,17 +52,29 @@ export function useActivity (name, options = {}) {
   })
 }
 
+const activityProject = shallowRef(null)
+
 // When using current activity we are mainly interested by selection/probe
 export function useCurrentActivity (options = {}) {
   _.defaults(options, { selection: true, probe: true })
 
   const { kActivity, kActivityName, state: activityState, options: activityOptions } = composables.useCurrentActivity()
+  // functions
+  function setActivityProject (project) {
+    activityProject.value = unref(project)
+  }
+  function getActivityProject() {
+    return activityProject.value
+  }
+
   // expose
   const expose = {
     kActivity,
     CurrentActivity: kActivity,
     kActivityName,
-    CurrentActivityName: kActivityName
+    CurrentActivityName: kActivityName,
+    setActivityProject,
+    getActivityProject
   }
   if (kActivityName.value) {
     Object.assign(expose, {

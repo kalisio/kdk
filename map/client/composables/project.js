@@ -50,6 +50,10 @@ export function useProject (options = {}) {
     } else {
       project.value = await options.planetApi.getService('projects', options.context).get(projectId.value)
     }
+    // Keep track of source API
+    if (project.value) {
+      project.value.getPlanetApi = () => options.planetApi
+    }
   }
   function onProjectUpdated (updatedProject) {
     if (project.value && (updatedProject._id === project.value._id)) {

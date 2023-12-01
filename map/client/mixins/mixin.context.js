@@ -2,6 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import sift from 'sift'
 import { utils as kCoreUtils, Time, Store } from '../../../core/client/index.js'
+import { isTerrainLayer } from '../utils/utils.layers.js'
 
 export const context = {
   methods: {
@@ -130,8 +131,8 @@ export const context = {
           // Take care that 3D requires at least a terrain layer.
           // So if we try to remove a terrain layer without activating a new one, keep it active
           // (this can be the case when the view has been saved from the 2D activity and restored in the 3D activity).
-          const inactivatedTerrainLayer = _.find(inactivatedLayers, (name) => this.hasLayer(name) && (this.getLayerByName(name).type === 'TerrainLayer'))
-          const activatedTerrainLayer = _.find(activedLayers, (name) => this.hasLayer(name) && (this.getLayerByName(name).type === 'TerrainLayer'))
+          const inactivatedTerrainLayer = _.find(inactivatedLayers, (name) => this.hasLayer(name) && isTerrainLayer(this.getLayerByName(name)))
+          const activatedTerrainLayer = _.find(activedLayers, (name) => this.hasLayer(name) && isTerrainLayer(this.getLayerByName(name)))
           if (inactivatedTerrainLayer && !activatedTerrainLayer) _.pull(inactivatedLayers, inactivatedTerrainLayer)
           await Promise.all(activedLayers.map(layer => this.showLayer(layer)))
           await Promise.all(inactivatedLayers.map(layer => this.hideLayer(layer)))

@@ -8,7 +8,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
 import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
 import { Geolocation } from '../../geolocation.js'
-import { convertCesiumHandlerEvent } from '../../utils.globe.js'
+import { convertCesiumHandlerEvent, isTerrainLayer } from '../../utils.globe.js'
 // Cesium has its own dynamic module loader requiring to be configured
 // Cesium files need to be also added as static assets of the applciation
 BuildModuleUrl.setBaseUrl('/Cesium/')
@@ -81,13 +81,10 @@ export const baseGlobe = {
       processedOptions.cesium.attribution = processedOptions.attribution
       return processedOptions
     },
-    isTerrainLayer (options) {
-      return (options.type === 'Cesium') || (options.type === 'Ellipsoid')
-    },
     createCesiumLayer (options) {
       const cesiumOptions = options.cesium || options
       let provider
-      if (this.isTerrainLayer(cesiumOptions)) {
+      if (isTerrainLayer(cesiumOptions)) {
         if (cesiumOptions.url || (cesiumOptions.type === 'Ellipsoid')) provider = cesiumOptions.type + 'TerrainProvider'
         // If no url given will use default terrain creation function createWorldTerrain()
         else provider = 'WorldTerrain'
@@ -98,7 +95,7 @@ export const baseGlobe = {
       const createFunction = 'create' + provider
       provider = (Cesium[createFunction] ? Cesium[createFunction](cesiumOptions) : new Cesium[provider](cesiumOptions))
       // Terrain is directly managed using a provider
-      return (this.isTerrainLayer(cesiumOptions) ? provider : new Cesium.ImageryLayer(provider))
+      return (isTerrainLayer(cesiumOptions) ? provider : new Cesium.ImageryLayer(provider))
     },
     registerCesiumConstructor (constructor) {
       this.cesiumFactory.push(constructor)
@@ -134,7 +131,7 @@ export const baseGlobe = {
       const layer = this.getLayerByName(name)
       if (!layer) return false
       const cesiumLayer = this.getCesiumLayerByName(name)
-      if (this.isTerrainLayer(layer.cesium)) {
+      if (isTerrainLayer(layer)) {
         return this.viewer.terrainProvider === cesiumLayer
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
         return this.viewer.scene.imageryLayers.contains(cesiumLayer)
@@ -182,7 +179,7 @@ export const baseGlobe = {
       }
       // Add the cesium layer to the globe
       this.cesiumLayers[name] = cesiumLayer
-      if (this.isTerrainLayer(layer.cesium)) {
+      if (isTerrainLayer(layer)) {
         this.viewer.terrainProvider = cesiumLayer
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
         this.viewer.scene.imageryLayers.add(cesiumLayer)
@@ -209,7 +206,7 @@ export const baseGlobe = {
       // Remove the cesium layer from globe
       const cesiumLayer = this.cesiumLayers[name]
       delete this.cesiumLayers[name]
-      if (this.isTerrainLayer(layer.cesium)) {
+      if (isTerrainLayer(layer)) {
         this.viewer.terrainProvider = null
       } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
         this.viewer.scene.imageryLayers.remove(cesiumLayer, false)

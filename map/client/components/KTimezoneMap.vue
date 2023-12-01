@@ -8,10 +8,10 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import { getCssVar } from 'quasar'
-import { utils as kCoreUtils } from '../../../core/client'
+import { api, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as mixins from '../mixins'
-import { setEngineJwt } from '../utils'
+import { useCatalog, useCurrentActivity } from '../composables'
 import meta from 'moment-timezone/data/meta/latest.json'
 
 // Convert timezones to GeoJson
@@ -67,14 +67,10 @@ export default {
       }
     },
     async refreshBaseLayer () {
-      const catalogService = this.$api.getService('catalog', '')
+      const layers = await this.getLayers()
       // Get first visible base layer
-      const response = await catalogService.find({ query: { type: 'BaseLayer', 'leaflet.isVisible': true } })
-      if (response.data.length > 0) {
-        const baseLayer = response.data[0]
-        // Do we need to inject a token ?
-        await setEngineJwt([baseLayer])
-        this.addLayer(baseLayer)
+      if (layers.length > 0) {
+        this.addLayer(layers[0])
       }
     },
     getTimezoneMarker (feature, latlng) {
@@ -128,7 +124,7 @@ export default {
       }
     },
     configure (container) {
-      if (!container) return
+      if (!container || this.map) return
       this.setupMap(container, {
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 0.25,
@@ -147,12 +143,29 @@ export default {
     this.registerStyle('tooltip', this.getTimezoneTooltip)
     this.$engineEvents.on('click', this.onTimezoneSelected)
   },
-  async mounted () {
+  mounted () {
     // Initialize component
     this.setTimezone(this.value)
   },
   beforeUnmount () {
     this.$engineEvents.off('click', this.onTimezoneSelected)
+  },
+  async setup () {
+    // Get current project for activity if any
+    const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
+    const project = getActivityProject()
+    // We expect the project object to expose the underlying API
+    const planetApi = project && typeof project.getPlanetApi === 'function' ? project.getPlanetApi() : api
+    // Use target catalog according to project and filtering options to get base layer
+    const { getLayers } = useCatalog({
+      project,
+      layers: { type: 'BaseLayer', 'leaflet.isVisible': true },
+      planetApi
+    })
+    // expose
+    return {
+      getLayers
+    }
   }
 }
 </script>

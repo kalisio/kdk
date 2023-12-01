@@ -2,7 +2,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
 import sift from 'sift'
 import { Time } from '../../../../core/client/time.js'
-import { fetchGeoJson, getFeatureId } from '../../utils.js'
+import { fetchGeoJson, getFeatureId, isInMemoryLayer } from '../../utils.js'
 
 export const geojsonLayers = {
   methods: {
@@ -246,7 +246,7 @@ export const geojsonLayers = {
       // these layers will be destroyed when hidden. We need to be able to restore
       // them when they get shown again
       const baseLayer = this.getLayerByName(name)
-      if (this.isInMemoryLayer(baseLayer)) {
+      if (isInMemoryLayer(baseLayer)) {
         this.geojsonCache[name] = geoJson
       }
     },
@@ -274,7 +274,7 @@ export const geojsonLayers = {
       // Check if we have cached geojson data for this layer
       const cachedGeojson = this.geojsonCache[layer.name]
       if (cachedGeojson) {
-        if (this.isInMemoryLayer(layer)) {
+        if (isInMemoryLayer(layer)) {
           // Restore geojson data for in-memory layers that was hidden
           this.updateLayer(layer.name, cachedGeojson)
         } else {
