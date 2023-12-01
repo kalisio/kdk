@@ -30,7 +30,6 @@ export const ShapeMarker = L.Marker.extend({
         if (options.icon.iconSize) _.set(this.options, 'icon.size', options.icon.iconSize)
         if (options.icon.color) _.set(this.options, 'icon.color', options.icon.color)
       }
-    console.log(this.options.icon)
     }
     const shape = coreUtils.createShape(this.options)
     if (shape) {
