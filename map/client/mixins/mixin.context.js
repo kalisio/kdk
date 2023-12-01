@@ -61,7 +61,7 @@ export const context = {
           break
         case 'time': {
           targetParameters = {
-            time: Time.getCurrentTime().restoreContext()
+            time: Time.getCurrentTime()
           }
           break
         }
