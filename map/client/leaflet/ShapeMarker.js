@@ -4,7 +4,7 @@ import L from 'leaflet'
 import { getCssVar } from 'quasar'
 import { utils as coreUtils } from '../../../core/client/index.js'
 
-const DefaultRadius = 14
+const DefaultRadius = 16
 
 export const ShapeMarker = L.Marker.extend({
 
