@@ -2,9 +2,12 @@
   <KScrollArea :maxHeight="scrollAreaMaxHeight" :style="panelStyle">
     <q-list dense bordered>
       <slot name="header" />
+      <!-- Orphan layers -->
       <k-layers-selector
         :layers="orphanLayers"
-        :options="{ hideIfEmpty: true }" />
+        :options="{ hideIfEmpty: true }" 
+      />
+      <!-- Categorized layers -->
       <template v-for="category in filteredCategories">
         <q-expansion-item
           v-if="isVisible(category)"
@@ -67,6 +70,7 @@ export default {
       default: () => []
     }
   },
+  inheritAttrs: false,
   computed: {
     filteredLayers () {
       const filter = (typeof this.layersFilter === 'object' ? sift(this.layersFilter) : this.layersFilter)
