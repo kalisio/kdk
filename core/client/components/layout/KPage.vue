@@ -18,7 +18,7 @@
       Managed stickies
       Be careful of the order
      -->
-    <!-- bottom -->
+    <!-- bottom pane -->
     <q-page-sticky position="bottom" class="k-sticky">
       <div id="bottom-pane" v-show="hasBottomPaneComponents" class="column items-center">
         <KOpener id="bottom-opener" v-if="bottomPane.opener" v-model="isBottomPaneOpened" position="bottom" />
@@ -34,7 +34,7 @@
         </div>
       </div>
     </q-page-sticky>
-    <!-- right -->
+    <!-- right pane -->
     <q-page-sticky position="right" class="k-sticky">
       <div id="right-pane" v-show="hasRightPaneComponents" class="row items-center">
         <KOpener id="right-opener" v-if="rightPane.opener" v-model="isRightPaneOpened" position="right" />
@@ -51,7 +51,7 @@
         </div>
       </div>
     </q-page-sticky>
-    <!-- top -->
+    <!-- top pane -->
     <q-page-sticky position="top" class="k-sticky">
       <div id="top-pane" v-show="hasTopPaneComponents" class="column items-center">
         <div>
@@ -113,7 +113,7 @@
         :style="`max-width: ${bottomWindowSize[0]}px; max-height: ${bottomWindowSize[1]};px`"
       />
     </q-page-sticky>
-    <!-- left -->
+    <!-- left pane -->
     <q-page-sticky position="left" class="k-sticky">
       <div id="left-pane" v-show="hasLeftPaneComponents" class="row items-center">
         <div>

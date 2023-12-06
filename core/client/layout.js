@@ -8,14 +8,14 @@ import { bindContent } from './utils/utils.content.js'
 const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const windowContols = { pin: true, unpin: false, maximize: true, restore: false, close: true, resize: true }
-const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowContols }
-const hWindowSizePolicy = {
+const windowDefaultContols = { pin: true, unpin: false, maximize: true, restore: false, close: true, resize: true }
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowDefaultContols }
+const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
   floating: { position: [0, 0], size: [300, 200] },
   pinned: { xs: [100, 30], sm: [90, 30], md: [80, 30], lg: [70, 30], xl: [60, 30] }
 }
-const vWindowSizePolicy = {
+const vWindowDefaultSizePolicy = {
   minSize: [200, 300],
   floating: { position: [0, 0], size: [200, 300] },
   pinned: { xs: [50, 90], sm: [40, 80], md: [30, 75], lg: [25, 75], xl: [20, 75] }
@@ -33,10 +33,10 @@ const defaults = {
     bottom: { ...contentDefaults, opener: false }
   },
   windows: {
-    left: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowSizePolicy },
-    top: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowSizePolicy },
-    right: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowSizePolicy },
-    bottom: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowSizePolicy }
+    left: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowDefaultSizePolicy },
+    top: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowDefaultSizePolicy },
+    right: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowDefaultSizePolicy },
+    bottom: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowDefaultSizePolicy }
   }
 }
 
@@ -276,7 +276,7 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowControls (placement, controls) {
-    for (key in _.keys(windowContols)) {
+    for (let key in _.keys(windowDefaultContols)) {
       if (!_.has(controls, key)) {
         logger.warn(`[KDK] Invalid window controls ${controls}`)
         return
