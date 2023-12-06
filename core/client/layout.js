@@ -8,7 +8,8 @@ import { bindContent } from './utils/utils.content.js'
 const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined }
+const windowContols = { pin: true, unpin: false, maximize: true, restore: false, close: true, resize: true }
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowContols }
 const hWindowSizePolicy = {
   minSize: [300, 200],
   floating: { position: [0, 0], size: [300, 200] },
@@ -273,6 +274,17 @@ export const Layout = {
   },
   setWindowVisible (placement, visible) {
     this.setElementVisible(`windows.${placement}`, visible)
+  },
+  setWindowControls (placement, controls) {
+    for (key in _.keys(windowContols)) {
+      if (!_.has(controls, key)) {
+        logger.warn(`[KDK] Invalid window controls ${controls}`)
+        return
+      }
+    }
+    const props = this.getElement(`windows.${placement}`)
+    if (_.isEqual(props.controls, controls)) return
+    Store.patch(this.getElementPath(`windows.${placement}`), { controls })
   },
   setWindowState (placement, state) {
     if (!['pinned', 'floating', 'maximized'].includes(state)) {

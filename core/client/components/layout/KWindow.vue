@@ -37,13 +37,13 @@
         dense
         direction="horizontal"
         action-renderer="button"
-        :content="controls"
+        :content="headerControls"
         class="q-pr-xs"
       />
       <KPanel
         v-else
         id="window-controls"
-        :content="controls"
+        :content="headerControls"
       />
     </div>
     <!--
@@ -75,7 +75,7 @@
       <q-resize-observer @resize="onFooterResized" />
       <!-- window grip -->
       <q-icon
-        v-if="currentWindow.state !== 'maximized'"
+        v-if="currentWindow.controls.resize && currentWindow.state !== 'maximized'"
         class="k-window-grip"
         name="las la-slash"
         size="10px"
@@ -169,14 +169,14 @@ const menu = computed(() => {
   }
   return menu
 })
-const controls = computed(() => {
+const headerControls = computed(() => {
   return [{
     id: `pin-${props.placement}-window`,
     icon: pinIcons[props.placement],
     size: 'sm',
     tooltip: 'KWindow.PIN_ACTION',
     class: 'k-window-control',
-    visible: currentWindow.state === 'floating',
+    visible: currentWindow.controls.pin && currentWindow.state === 'floating',
     handler: () => Layout.setWindowState(props.placement, 'pinned')
   }, {
     id: `unpin-${props.placement}-window`,
@@ -184,27 +184,28 @@ const controls = computed(() => {
     size: 'sm',
     tooltip: 'KWindow.RESTORE_ACTION',
     class: 'k-window-control',
-    visible: currentWindow.state === 'pinned' && restoreGeometry,
+    visible: currentWindow.controls.unpin && currentWindow.state === 'pinned' && restoreGeometry,
     handler: () => Layout.setWindowState(props.placement, 'floating')
   }, {
     id: `unpin-${props.placement}-window`,
     icon: 'las la-expand',
     size: 'sm',
     tooltip: 'KWindow.MAXIMIZE_ACTION',
-    visible: currentWindow.state !== 'maximized',
+    visible: currentWindow.controls.maximize && currentWindow.state !== 'maximized',
     handler: () => Layout.setWindowState(props.placement, 'maximized')
   }, {
     id: `restore-${props.placement}-window`,
     icon: 'las la-compress',
     size: 'sm',
     tooltip: 'KWindow.RESTORE_ACTION',
-    visible: currentWindow.state === 'maximized',
+    visible: currentWindow.controls.restore && currentWindow.state === 'maximized',
     handler: () => Layout.setWindowState(props.placement, backupState)
   }, {
     id: `close-${props.placement}-window`,
     icon: 'las la-times',
     size: 'sm',
     tooltip: 'KWindow.CLOSE_ACTION',
+    visible: currentWindow.controls.close,
     handler: () => Layout.setWindowVisible(props.placement, false)
   }]
 })
