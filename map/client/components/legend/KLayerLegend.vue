@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import logger from 'loglevel'
 import { computed } from 'vue'
 import { utils as coreUtils } from '../../../../core/client'
@@ -42,7 +43,7 @@ const legends = computed(() => {
   if (!Array.isArray(layerLegends)) layerLegends = [layerLegends]
   layerLegends.forEach(legend => {
     if (!legend.content) {
-      logger.warn(`[KDK] Legend ${legend.label} for ${layer.name} has no content`)
+      logger.warn(`[KDK] Legend ${legend.label} for ${props.layer.name} has no content`)
       return
     }
     const minZoom = _.get(legend, 'minZoom', _.get(props.layer, `${props.engine}.minZoom`, 0))
