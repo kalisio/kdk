@@ -29,9 +29,9 @@ export const style = {
           _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma }))
         })
       }
-      // We manage panes for z-index, so we need to forward it to marker options
-      if (leafletOptions.pane) style.pane = leafletOptions.pane
-      if (leafletOptions.shadowPane) style.shadowPane = leafletOptions.shadowPane
+      // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
+      if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
+      if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
       return (latlng ? this.createMarkerFromStyle(latlng, style) : style)
     },
     getDefaultStyle (feature, options) {
@@ -50,9 +50,9 @@ export const style = {
           _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma }))
         })
       }
-      // We manage panes for z-index, so we need to forward it to marker options
-      if (leafletOptions.pane) style.pane = leafletOptions.pane
-      if (leafletOptions.shadowPane) style.shadowPane = leafletOptions.shadowPane
+      // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
+      if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
+      if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
       return style
     }
   },
