@@ -1,29 +1,30 @@
 <template>
-  <KAction
-    v-if="project"
-    id="close-project"
-    icon="las la-times"
-    :propagate="false"
-    @triggered="closeProject" />
-  <q-btn-dropdown v-if="project"
-    class="q-pl-sm ellipsis-2-lines"
-    :label="label"
-    :size="size"
-    flat
-    dense
-    no-caps
-    square
-    menu-anchor="bottom middle"
-    menu-self="top middle">
-    <template v-slot:default>
-      <KList
-        service="projects"
-        :base-query="{ _id: { $ne: projectId } }"
-        @selection-changed="onProjectSelected"
-        :dense="true"
-      />
-    </template>
-  </q-btn-dropdown>
+  <div class="row" v-if="project">
+    <KAction
+      id="close-project"
+      icon="las la-times"
+      :propagate="false"
+      @triggered="closeProject" />
+    <q-btn-dropdown
+      class="q-pl-sm ellipsis-2-lines"
+      :label="label"
+      :size="size"
+      flat
+      dense
+      no-caps
+      square
+      menu-anchor="bottom middle"
+      menu-self="top middle">
+      <template v-slot:default>
+        <KList
+          service="projects"
+          :base-query="{ _id: { $ne: projectId } }"
+          @selection-changed="onProjectSelected"
+          :dense="true"
+        />
+      </template>
+    </q-btn-dropdown>
+  </div>
 </template>
 
 <script>
