@@ -15,6 +15,28 @@
     "header": {
       "type": "string",
       "maxLength": 200,
+      "toolbar": {
+        "xs": [
+          ["bold", "italic", "underline", "strike", "align"],
+          [{
+            "label": "",
+            "icon": "format_align_left",
+            "list": "only-icons",
+            "options": ["left", "center", "right"]
+          }],
+          ["undo", "redo"]
+        ],
+        "gt.xs": [
+          ["bold", "italic", "underline", "strike", "align"],
+          [{
+            "label": "",
+            "icon": "format_align_left",
+            "list": "only-icons",
+            "options": ["left", "center", "right"]
+          }],
+          ["undo", "redo"]
+        ]
+      },
       "field": {
         "component": "form/KTextareaField",
         "label": "schemas.CAPTURE_HEADER_FIELD_LABEL"
@@ -22,6 +44,28 @@
     },
     "footer": {
       "type": "string", 
+      "toolbar": {
+        "xs": [
+          ["bold", "italic", "underline", "strike", "align"],
+          [{
+            "label": "",
+            "icon": "format_align_left",
+            "list": "only-icons",
+            "options": ["left", "center", "right"]
+          }],
+          ["undo", "redo"]
+        ],
+        "gt.xs": [
+          ["bold", "italic", "underline", "strike", "align"],
+          [{
+            "label": "",
+            "icon": "format_align_left",
+            "list": "only-icons",
+            "options": ["left", "center", "right"]
+          }],
+          ["undo", "redo"]
+        ]
+      },
       "field": {
         "component": "form/KTextareaField",
         "label": "schemas.CAPTURE_FOOTER_FIELD_LABEL"

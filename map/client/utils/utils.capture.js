@@ -3,6 +3,7 @@ import config from 'config'
 import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
 import * as composables from '../../../core/client/composables/index.js'
 import { exportFile, Notify } from 'quasar'
+import sanitizeHtml from 'sanitize-html'
 
 const placements = ['right', 'left', 'top', 'bottom', 'top-left', 'top-right', 'bottom-right', 'bottom-left']
 
@@ -78,7 +79,11 @@ function getLayout (values) {
 }
 
 function headerFooterComponent (text) {
-  return { content: [{ component: 'KTextArea', text, minHeight: 32 }], visible: true }
+  const sanitizeHtmlOptions = {
+    ...sanitizeHtml.defaults,
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'strike' ]),
+  }
+  return { content: [{ component: 'KTextArea', text, minHeight: 32, capture: true, sanitizeHtmlOptions }], visible: true }
 }
 
 function compassComponent (position) {
@@ -90,6 +95,14 @@ function legendComponent () {
     content: [{ id: 'legend-widget', label: 'KLegend.LABEL', icon: 'las la-list', scrollable: true, content: { component: 'legend/KLegend' } }],
     current: 'legend-widget',
     state: 'pinned',
+    controls: {
+      pin: false,
+      unpin: false,
+      maximize: false,
+      restore: false,
+      close: false,
+      resize: false
+    },
     sizePolicy: {
       pinned: {
         xs: [35, 100],

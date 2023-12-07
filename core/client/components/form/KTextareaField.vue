@@ -75,7 +75,7 @@ export default {
   computed: {
     editorToolbar () {
       let configuration
-      _.forEach(this.toolbar || this.defaultToolbar, (value, key) => {
+      _.forEach(this.properties.toolbar || this.toolbar || this.defaultToolbar, (value, key) => {
         if (_.get(this.$q.screen, key)) {
           configuration = value
           return false

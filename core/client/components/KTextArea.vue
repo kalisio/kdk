@@ -15,7 +15,11 @@
       @scrolled="onScrolled"
     >
       <!-- content -->
-      <div
+      <div v-if="capture"
+        class="k-textarea-capture"
+        v-html="sanitizedText"
+      />
+      <div v-else
         class="q-pr-lg"
         :class="{ 'k-textarea-collapsed': !isExpanded, 'k-textarea-expanded': isExpanded }"
         v-html="sanitizedText"
@@ -68,6 +72,14 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  capture: {
+    type: Boolean,
+    default: false
+  },
+  sanitizeHtmlOptions: {
+    type: Object,
+    default: sanitizeHtml.defaults
   }
 })
 
@@ -77,16 +89,10 @@ const scrollAreaKey = ref(0)
 const isExpandable = ref(false)
 const isExpanded = ref(false)
 const isScrollable = ref(false)
-const sanitizeHtmlOptions = {
-  ...sanitizeHtml.defaults,
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'strike' ]),
-  allowedAttributes: _.merge(sanitizeHtml.defaults.allowedAttributes, { '*': ['style'] }),
-  allowedStyles: { '*': { 'text-align': [/^left$/, /^right$/, /^center$/] }}
-}
 
 // computed
 const sanitizedText = computed(() => {
-  return sanitizeHtml(props.text, sanitizeHtmlOptions)
+  return sanitizeHtml(props.text, props.sanitizeHtmlOptions)
 })
 const cssCursor = computed(() => {
   return isExpandable.value ? 'pointer' : 'default'
@@ -96,6 +102,12 @@ const cssExpandedFontSize = computed(() => {
 })
 const cssWidth = computed(() => {
   return `${props.width}%`
+})
+const cssCaptureAlign = computed(() => {
+  const styleAttribute = _.get(props.text.match(/style\s*=\s*['"]([^'"]*)['"]/), [1], '')
+  const textAlignValue = _.get(styleAttribute.match(/text-align:\s*(left|center|right)/), [1], '')
+  if (textAlignValue) return textAlignValue
+  return 'rigth'
 })
 
 // functions
@@ -154,5 +166,15 @@ watch(() => props.text, (text) => {
   right: 4px;
   padding: 1px;
   background-color: white;
+}
+.k-textarea-capture {
+  background-color: white;
+  color: black;
+  height: 32px;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content:  v-bind('cssCaptureAlign');
 }
 </style>
