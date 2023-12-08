@@ -46,6 +46,7 @@ export default {
       expandedViews: []
     }
   },
+  inheritAttrs: false,
   computed: {
     clearable () {
       return _.get(this.properties.field, 'clearable', false)
@@ -54,9 +55,16 @@ export default {
       const tree = []
       if (this.views.length > 0) {
         tree.push({ _id: 'views', label: this.$t('VIEWS_LABEL'), views: this.views.concat(this.contextViews) })
-        this.expandedViews = ['views']
       }
       return tree
+    }
+  },
+  watch: {
+    viewTree (tree) {
+      this.expandedViews = []
+      if (_.find(tree, { id: 'views' })) {
+        this.expandedViews.push('views')
+      }
     }
   },
   methods: {

@@ -18,7 +18,7 @@
       </template>
   </q-field>
   <!-- Layer tree -->
-  <q-tree :ref="tree" :nodes="layerTree" node-key="id" label-key="label" children-key="layers"
+  <q-tree :nodes="layerTree" node-key="id" label-key="label" children-key="layers"
     v-model:expanded="expandedLayers" tick-strategy="leaf" v-model:ticked="selectedLayers" @update:ticked="onSelect">
   </q-tree>
 </template>
@@ -37,13 +37,13 @@ export default {
       expandedLayers: []
     }
   },
+  inheritAttrs: false,
   computed: {
     clearable () {
       return _.get(this.properties.field, 'clearable', false)
     },
     layerTree () {
       const tree = []
-      this.expandedLayers = []
       const userLayers = { id: 'userLayers', label: this.$t('LAYERS_LABEL'), layers: [] }
       const catalogLayers = { id: 'catalogLayers', label: this.$t('CATALOG_LABEL'), layers: [] }
       this.categories.concat(this.contextCategories).forEach(category => {
@@ -65,13 +65,22 @@ export default {
 
       if (userLayers.layers.length > 0) {
         tree.push(userLayers)
-        this.expandedLayers.push('userLayers')
       }
       if (catalogLayers.layers.length > 0) {
         tree.push(catalogLayers)
-        this.expandedLayers.push('catalogLayers')
       }
       return tree
+    }
+  },
+  watch: {
+    layerTree (tree) {
+      this.expandedLayers = []
+      if (_.find(tree, { id: 'userLayers' })) {
+        this.expandedLayers.push('userLayers')
+      }
+      if (_.find(tree, { id: 'catalogLayers' })) {
+        this.expandedLayers.push('catalogLayers')
+      }
     }
   },
   methods: {
