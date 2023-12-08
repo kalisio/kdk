@@ -1,6 +1,7 @@
 <template>
   <q-list dense bordered>
     <div class="no-padding" :style="panelStyle">
+      <q-resize-observer @resize="onResized" />
       <KPanel
         id="favorite-views-toolbar"
         :content="toolbar"
@@ -92,6 +93,7 @@ export default {
       })
     }
     return {
+      scrollAreaMaxWidth: 0,
       filter: Filter.get(),
       sorter: Sorter.get(),
       projectRenderer: {
@@ -128,6 +130,9 @@ export default {
     },
     removeProject (project) {
       this.$api.getService('projects').remove(project._id)
+    },
+    onResized (size) {
+      this.scrollAreaMaxWidth = size[0]
     }
   }
 }

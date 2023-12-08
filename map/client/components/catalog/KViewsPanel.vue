@@ -1,6 +1,7 @@
 <template>
   <q-list dense bordered>
     <div class="no-padding" :style="panelStyle">
+      <q-resize-observer @resize="onResized" />
       <KPanel
         id="favorite-views-toolbar"
         :content="toolbar"
@@ -59,6 +60,7 @@ export default {
       })
     }
     return {
+      scrollAreaMaxWidth: 0,
       filter: Filter.get(),
       sorter: Sorter.get(),
       viewRenderer: {
@@ -125,6 +127,9 @@ export default {
     },
     removeView (view) {
       this.$api.getService('catalog').remove(view._id)
+    },
+    onResized (size) {
+      this.scrollAreaMaxWidth = size[0]
     }
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront
