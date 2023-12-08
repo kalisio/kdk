@@ -129,7 +129,7 @@ export default {
       this.$api.getService('catalog').remove(view._id)
     },
     onResized (size) {
-      this.scrollAreaMaxWidth = size[0]
+      this.scrollAreaMaxWidth = size.width
     }
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront

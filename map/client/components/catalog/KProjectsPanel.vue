@@ -15,10 +15,10 @@
         :append-items="true"
         :base-query="baseQuery"
         :filter-query="filter.query"
-        @selection-changed="onProjectSelected"
         :height="scrollAreaMaxHeight - 100"
-        :width="scrollAreaMaxWidth"
+        :width="scrollAreaMaxWidth - 50"
         :dense="true"
+        @selection-changed="onProjectSelected"
       />
     </div>
   </q-list>
@@ -132,7 +132,7 @@ export default {
       this.$api.getService('projects').remove(project._id)
     },
     onResized (size) {
-      this.scrollAreaMaxWidth = size[0]
+      this.scrollAreaMaxWidth = size.width
     }
   }
 }
