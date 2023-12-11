@@ -182,7 +182,7 @@ async function createService (name, app, options = {}) {
   }, options)
   if (serviceOptions.disabled) return undefined
   // For DB services a model has to be provided
-  const fileName = serviceOptions.fileName || name
+  const fileName = serviceOptions.modelName || name
 
   let dbService = false
   try {

@@ -18,7 +18,7 @@ export function createFeaturesService (options = {}) {
 
   debug('Creating features service with options', options)
   return app.createService(options.collection, Object.assign({
-    fileName: 'features',
+    modelName: 'features',
     servicesPath,
     modelsPath,
     paginate: { default: 5000, max: 5000 },
