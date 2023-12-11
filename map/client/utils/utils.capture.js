@@ -4,6 +4,11 @@ import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/ind
 import * as composables from '../../../core/client/composables/index.js'
 import { base64Encode } from '../../../core/client/utils/index.js'
 import { exportFile, Notify } from 'quasar'
+<<<<<<< HEAD
+=======
+import sanitizeHtml from 'sanitize-html'
+import { BLANK_PDF } from '@pdfme/common'
+>>>>>>> 852a63db ( wip: improve KCaptureToolbar component - pdfme #792)
 import { image } from '@pdfme/schemas'
 import { generate } from '@pdfme/generator'
 
@@ -52,7 +57,11 @@ export async function capture (values) {
     if (response.ok) {
       const arrayBuffer = await response.arrayBuffer()
       exportFile('capture.png', new Uint8Array(arrayBuffer))
+<<<<<<< HEAD
       const pdf = await generatePdf(base64Encode(arrayBuffer), _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
+=======
+      const pdf = await generatePdf(new Uint8Array(arrayBuffer), _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
+>>>>>>> 852a63db ( wip: improve KCaptureToolbar component - pdfme #792)
       exportFile('pdf.pdf', pdf)
     } else {
       Events.emit('error', { message: i18n.t('errors.' + response.status) })
@@ -63,6 +72,58 @@ export async function capture (values) {
     dismiss()
     Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
   }
+}
+
+function convertUint8ArrayToBase64(uint8Array) {
+  let base64String = ''
+  const len = uint8Array.length
+  const CHUNK_SIZE = 8192
+  for (let start = 0; start < len; start += CHUNK_SIZE) {
+    const end = Math.min(start + CHUNK_SIZE, len)
+    const chunk = uint8Array.subarray(start, end)
+    base64String += String.fromCharCode(...chunk)
+  }
+  return btoa(base64String)
+}
+
+function imageResolution(width, height) {
+  const resolution = {}
+  if (width > height) {
+    resolution.width = 279.52
+    resolution.height = _.round(279.52 * height / width, 2)
+    resolution.rotate = 90
+  } else {
+    resolution.height = 279.52
+    resolution.width = 279.52 * width / height
+    resolution.rotate = 0
+  }
+  return resolution
+}
+
+async function generatePdf(uint8Array, width, height) {
+  const resolution = imageResolution(width, height)
+  const template = {
+    pageSize: 'letter',
+    schemas: [
+      {
+        capture: {
+          type: 'image',
+          position: {
+            x: 0,
+            y: 0
+          },
+          width: resolution.width,
+          height: resolution.height,
+          rotate: resolution.rotate
+        },
+      }
+    ],
+    basePdf: BLANK_PDF
+  }
+  const plugins = { image }
+  const inputs = [{ capture: `data:image/png;base64,${convertUint8ArrayToBase64(uint8Array)}` }]
+  console.log(generate({ template, plugins, inputs }))
+  return await generate({ template, plugins, inputs })
 }
 
 function getLayout (values) {
