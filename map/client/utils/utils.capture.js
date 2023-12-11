@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import config from 'config'
 import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
+import { base64Encode } from '../../../core/client/utils/index.js'
 import * as composables from '../../../core/client/composables/index.js'
 import { base64Encode } from '../../../core/client/utils/index.js'
 import { exportFile, Notify } from 'quasar'
@@ -58,10 +59,14 @@ export async function capture (values) {
       const arrayBuffer = await response.arrayBuffer()
       exportFile('capture.png', new Uint8Array(arrayBuffer))
 <<<<<<< HEAD
+<<<<<<< HEAD
       const pdf = await generatePdf(base64Encode(arrayBuffer), _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
 =======
       const pdf = await generatePdf(new Uint8Array(arrayBuffer), _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
 >>>>>>> 852a63db ( wip: improve KCaptureToolbar component - pdfme #792)
+=======
+      const pdf = await generatePdf(arrayBuffer, _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
+>>>>>>> 0ca039b8 ( wip: improve KCaptureToolbar component - pdfme #792)
       exportFile('pdf.pdf', pdf)
     } else {
       Events.emit('error', { message: i18n.t('errors.' + response.status) })
@@ -72,18 +77,6 @@ export async function capture (values) {
     dismiss()
     Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
   }
-}
-
-function convertUint8ArrayToBase64(uint8Array) {
-  let base64String = ''
-  const len = uint8Array.length
-  const CHUNK_SIZE = 8192
-  for (let start = 0; start < len; start += CHUNK_SIZE) {
-    const end = Math.min(start + CHUNK_SIZE, len)
-    const chunk = uint8Array.subarray(start, end)
-    base64String += String.fromCharCode(...chunk)
-  }
-  return btoa(base64String)
 }
 
 function imageResolution(width, height) {
@@ -121,8 +114,7 @@ async function generatePdf(uint8Array, width, height) {
     basePdf: BLANK_PDF
   }
   const plugins = { image }
-  const inputs = [{ capture: `data:image/png;base64,${convertUint8ArrayToBase64(uint8Array)}` }]
-  console.log(generate({ template, plugins, inputs }))
+  const inputs = [{ capture: `data:image/png;base64,${base64Encode(uint8Array)}` }]
   return await generate({ template, plugins, inputs })
 }
 
