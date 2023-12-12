@@ -89,6 +89,7 @@ export async function updateProjects (hook) {
   const app = hook.app
   const context = hook.service.getContextId()
   const projectsService = app.getService('projects', context)
+  if (!projectsService) return hook
   let removedItems = getItems(hook)
   if (!Array.isArray(removedItems)) removedItems = [removedItems]
   for (let i = 0; i < removedItems.length; i++) {
