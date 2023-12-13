@@ -16,6 +16,10 @@ const props = defineProps({
   text: {
     type: String,
     default: ''
+  },
+  position: {
+    type: String,
+    default: 'header'
   }
 })
 
@@ -32,10 +36,10 @@ const sanitizedText = computed(() => {
   return sanitizeHtml(props.text, sanitizeHtmlOptions)
 })
 const cssBackgroundColor = computed(() => {
-  return _.get(config, 'capture.backgroundColor')
+  return _.get(config, `capture.${props.position}.backgroundColor`)
 })
 const cssColor = computed(() => {
-  return _.get(config, 'capture.color')
+  return _.get(config, `capture.${props.position}.color`)
 })
 </script>
 

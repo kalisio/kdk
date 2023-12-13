@@ -69,16 +69,16 @@ function getLayout (values) {
     },
     fab: { visible: false }
   }
-  if (_.has(values, 'header')) _.set(layout, 'header', headerFooterComponent(values.header))
-  if (_.has(values, 'footer')) _.set(layout, 'footer', headerFooterComponent(values.footer))
+  if (_.has(values, 'header')) _.set(layout, 'header', headerFooterComponent(values.header, 'header'))
+  if (_.has(values, 'footer')) _.set(layout, 'footer', headerFooterComponent(values.footer, 'footer'))
   if (_.includes(placements, values.compass)) _.set(layout, 'page', compassComponent(values.compass))
   if (_.includes(placements, values.legend)) _.set(layout, `windows.${values.legend}`, legendComponent())
 
   return layout
 }
 
-function headerFooterComponent (text) {
-  return { content: [{ component: 'KCaptureTextArea', text }], visible: true }
+function headerFooterComponent (text, position) {
+  return { content: [{ component: _.get(config, `capture.${position}.component`, 'KCaptureTextArea'), text, position }], visible: true }
 }
 
 function compassComponent (position) {

@@ -14,7 +14,6 @@ import KScrollArea from './KScrollArea.vue'
 import KStamp from './KStamp.vue'
 import KTextArea from './KTextArea.vue'
 import KVersion from './KVersion.vue'
-import KCaptureTextArea from './KCaptureTextArea.vue'
 
 export {
   KAction,
@@ -32,8 +31,7 @@ export {
   KScrollArea,
   KStamp,
   KTextArea,
-  KVersion,
-  KCaptureTextArea
+  KVersion
 }
 
 export * from './layout/index.js'

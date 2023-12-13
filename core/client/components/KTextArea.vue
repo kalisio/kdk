@@ -56,10 +56,6 @@ const props = defineProps({
     type: Number,
     default: 304
   },
-  width: {
-    type: Number,
-    default: 100
-  },
   zoom: {
     type: Boolean,
     default: false
@@ -67,10 +63,6 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
-  },
-  sanitizeHtmlOptions: {
-    type: Object,
-    default: sanitizeHtml.defaults
   }
 })
 
@@ -83,16 +75,13 @@ const isScrollable = ref(false)
 
 // computed
 const sanitizedText = computed(() => {
-  return sanitizeHtml(props.text, props.sanitizeHtmlOptions)
+  return sanitizeHtml(props.text)
 })
 const cssCursor = computed(() => {
   return isExpandable.value ? 'pointer' : 'default'
 })
 const cssExpandedFontSize = computed(() => {
   return props.zoom ? '1rem' : '0.875rem'
-})
-const cssWidth = computed(() => {
-  return `${props.width}%`
 })
 
 // functions
@@ -140,7 +129,6 @@ watch(() => props.text, (text) => {
 }
 .k-expandable {
   position: relative;
-  width: v-bind('cssWidth');
 }
 .k-expandable:hover {
   cursor: v-bind('cssCursor');
