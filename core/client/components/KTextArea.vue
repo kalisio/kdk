@@ -38,7 +38,6 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import _ from 'lodash'
 import sanitizeHtml from 'sanitize-html'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
