@@ -17,7 +17,7 @@ const { util, expect } = chai
 describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, catalogService, defaultLayers,
-    zonesService, vigicruesStationsService, vigicruesObsService,
+    zonesService, vigicruesStationsService, nbStations, vigicruesObsService,
     adsbObsService, items, eventListeners, eventCount, eventData
 
   function eventsOn (service) {
@@ -180,6 +180,7 @@ describe('map:services', () => {
     expect(vigicruesStationsService).toExist()
     // Feed the collection
     const stations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.stations.json')).features
+    nbStations = stations.length
     await vigicruesStationsService.create(stations)
   })
   // Let enough time to process
@@ -278,7 +279,27 @@ describe('map:services', () => {
     .timeout(5000)
 
   it('performs spatial filtering on vigicrues stations service', async () => {
-    const result = await vigicruesStationsService.find({
+    let result = await vigicruesStationsService.find({
+      query: { south: -90, north: 90, east: 180, west: -180 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(nbStations)
+    result = await vigicruesStationsService.find({
+      query: { south: 80, north: 85, east: 180, west: -180 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(0)
+    result = await vigicruesStationsService.find({
+      query: { south: -85, north: -80, east: 180, west: -180 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(0)
+    result = await vigicruesStationsService.find({
+      query: { south: -20, north: 20, east: 100, west: -100 },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(0)
+    result = await vigicruesStationsService.find({
       query: {
         geometry: {
           $near: {

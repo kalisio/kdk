@@ -12,6 +12,24 @@ export function marshallGeometryQuery (hook) {
   marshallGeometry(geometry)
 }
 
+function getGeometryQueryForBBox (bbox) {
+  // Here we use the custom MongoDB CRS that enforces counter-clockwise winding order
+  // and allows to support queries with a single-ringed GeoJSON polygon
+  // whose area is greater than or equal to a single hemisphere.
+  // Otherwise $geoIntersects queries for the complementary geometry.
+  return {
+    $geoIntersects: {
+      $geometry: {
+        type: 'Polygon',
+        coordinates: [bbox],
+        crs: {
+          type: 'name',
+          properties: { name: 'urn:x-mongodb:crs:strictwinding:EPSG:4326' }
+        }
+      }
+    }
+  }
+}
 export function marshallSpatialQuery (hook) {
   const query = hook.params.query
   if (query) {
@@ -66,17 +84,20 @@ export function marshallSpatialQuery (hook) {
       delete query.north
       delete query.west
       delete query.east
-      const geometryQuery = {
-        $geoIntersects: {
-          $geometry: {
-            type: 'Polygon',
-            coordinates: [ // BBox as a polygon
-              [[west, south], [east, south], [east, north], [west, north], [west, south]] // Closing point
-            ]
-          }
-        }
+      
+      // FIXME: MongoDB should allow to support queries with a single-ringed GeoJSON polygon
+      // whose area is greater than or equal to a single hemisphere.
+      // However, we did not succeeed in making it work as expected, for now on we split large polygon into two halfs.
+      if ((east-west) <= 180) {
+        // BBox as a polygon also requires the closing point.
+        const bbox = [[west, south], [east, south], [east, north], [west, north], [west, south]]
+        query.geometry = getGeometryQueryForBBox(bbox)
+      } else {
+        // BBox as a polygon also requires the closing point.
+        const leftHalfBbox = [[west, south], [0.5*(west+east), south], [0.5*(west+east), north], [west, north], [west, south]]
+        const rightHalfBbox = [[0.5*(west+east), south], [east, south], [east, north], [0.5*(west+east), north], [0.5*(west+east), south]]
+        query.$or = [{ geometry: getGeometryQueryForBBox(leftHalfBbox) }, { geometry: getGeometryQueryForBBox(rightHalfBbox) }]
       }
-      query.geometry = geometryQuery
     }
     // Shortcut for location query
     if (!_.isNil(query.longitude) && !_.isNil(query.latitude)) {
