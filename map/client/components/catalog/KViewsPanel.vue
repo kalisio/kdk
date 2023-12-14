@@ -27,7 +27,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Filter, Sorter } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 import { useProject } from '../../composables'
@@ -125,8 +125,22 @@ export default {
           logger.debug('invalid action ', action)
       }
     },
-    removeView (view) {
-      this.$api.getService('catalog').remove(view._id)
+    async removeView (view) {
+      const result = await utils.dialog({
+        title: i18n.t('KViewsPanel.REMOVE_DIALOG_TITLE', { view: view.name }),
+        message: i18n.t('KViewsPanel.REMOVE_DIALOG_MESSAGE', { view: view.name }),
+        html: true,
+        ok: {
+          label: i18n.t('OK'),
+          flat: true
+        },
+        cancel: {
+          label: i18n.t('CANCEL'),
+          flat: true
+        }
+      })
+      if (!result.ok) return false
+      await this.$api.getService('catalog').remove(view._id)
     },
     onResized (size) {
       this.scrollAreaMaxWidth = size.width

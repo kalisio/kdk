@@ -434,12 +434,16 @@
   "KViewsPanel": {
     "SORT_VIEWS": "Trier les vues",
     "REMOVE_VIEW": "@:REMOVE",
-    "SET_HOME_VIEW": "Définir comme vue par défaut"
+    "SET_HOME_VIEW": "Définir comme vue par défaut",
+    "REMOVE_DIALOG_TITLE": "Supprimer {view} ?",
+    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {view} de votre espace de travail ?"
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Trier les projets",
     "EDIT_PROJECT": "@:EDIT",
-    "REMOVE_PROJECT": "@:REMOVE"
+    "REMOVE_PROJECT": "@:REMOVE",
+    "REMOVE_DIALOG_TITLE": "Supprimer {project} ?",
+    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {project} de votre espace de travail ?"
   },
   "KProjectEditor": {
     "BACKGROUND_LAYER_REQUIRED": "Un projet doit au moins contenir un fond cartographique."

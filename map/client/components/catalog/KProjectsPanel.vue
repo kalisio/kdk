@@ -26,7 +26,7 @@
 
 <script>
 import logger from 'loglevel'
-import { Filter, Sorter } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 
@@ -128,8 +128,22 @@ export default {
         })
       })
     },
-    removeProject (project) {
-      this.$api.getService('projects').remove(project._id)
+    async removeProject (project) {
+      const result = await utils.dialog({
+        title: i18n.t('KProjectsPanel.REMOVE_DIALOG_TITLE', { project: project.name }),
+        message: i18n.t('KProjectsPanel.REMOVE_DIALOG_MESSAGE', { project: project.name }),
+        html: true,
+        ok: {
+          label: i18n.t('OK'),
+          flat: true
+        },
+        cancel: {
+          label: i18n.t('CANCEL'),
+          flat: true
+        }
+      })
+      if (!result.ok) return false
+      await this.$api.getService('projects').remove(project._id)
     },
     onResized (size) {
       this.scrollAreaMaxWidth = size.width
