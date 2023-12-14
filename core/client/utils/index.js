@@ -108,6 +108,17 @@ export function dataUriToBlob (dataUri) {
   return new Blob([ab], { type: mimeType })
 }
 
+// Taken from https://github.com/juanelas/base64
+export const base64Encode = function (bytes) {
+  bytes = new Uint8Array(bytes)
+  const CHUNK_SIZE = 0x8000
+  const array = []
+  for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
+    array.push(String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK_SIZE)))
+  }
+  return btoa(array.join(''))
+}
+
 export function downloadAsBlob (data, filename, mimeType) {
   const blob = new Blob([data], { type: mimeType })
   exportFile(filename, blob)
