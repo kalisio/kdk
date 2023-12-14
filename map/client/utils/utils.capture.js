@@ -124,13 +124,9 @@ function getImageProperties (width, height) {
     imageProperties.width = 287
     imageProperties.height = 287 * height / width
     imageProperties.position = { x: 5, y: (210 - imageProperties.height) / 2 }
-  } else if (width < height) {
+  } else {
     imageProperties.height = 200
     imageProperties.width = 200 * width / height
-    imageProperties.position = { y: 5, x: (297 - imageProperties.width) / 2 }
-  } else {
-    imageProperties.width = 200
-    imageProperties.height = 200
     imageProperties.position = { y: 5, x: (297 - imageProperties.width) / 2 }
   }
 
