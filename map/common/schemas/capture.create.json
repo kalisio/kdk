@@ -102,6 +102,7 @@
     "dateTime": {
       "type": "object",
       "group": "schemas.CAPTURE_ADVANCED_SETTINGS",
+      "default": { "start": "2023-11-17T23:00:00.000Z", "end": "2023-12-17T23:00:00.000Z"},
       "field": {
         "component": "form/KDateTimeRangeField",
         "min": "2022-12-31T23:00:00.000Z",
