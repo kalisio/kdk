@@ -21,7 +21,7 @@ export const CSVReader = {
           reject(new Error(i18n.t('errors.INVALID_CSV_FILE', { file: file.name }), { errors: content.errors }))
           return
         }
-        resolve(content)
+        resolve(content.data)
       }
       reader.onerror = (error) => {
         logger.debug(error)
