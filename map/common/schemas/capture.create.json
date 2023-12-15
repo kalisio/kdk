@@ -98,6 +98,16 @@
           { "label": "schemas.CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL", "value": "bottom-left" }
         ]
       }
+    },
+    "dateTime": {
+      "type": "object",
+      "group": "schemas.CAPTURE_ADVANCED_SETTINGS",
+      "field": {
+        "component": "form/KDateTimeRangeField",
+        "min": "2022-12-31T23:00:00.000Z",
+        "max": "2023-12-17T23:00:00.000Z",
+        "label": "schemas.CAPTURE_DATETIME_RANGE_FIELD_LABEL"
+      }
     }
   },
   "required": ["resolution", "compass", "legend"]

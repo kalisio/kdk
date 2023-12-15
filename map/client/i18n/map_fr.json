@@ -241,7 +241,9 @@
     "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "Afficher en haut à gauche",
     "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "Afficher en haut à droite",
     "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Afficher en bas à droite",
-    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Afficher en bas à gauche"
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Afficher en bas à gauche",
+    "CAPTURE_ADVANCED_SETTINGS": "Paramètres avancés",
+    "CAPTURE_DATETIME_RANGE_FIELD_LABEL": "Paramétrez l'intervalle de temps"
   },
   "tours": {
     "navigation-bar": {

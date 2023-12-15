@@ -1,15 +1,9 @@
 import _ from 'lodash'
 import config from 'config'
 import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
-import { base64Encode } from '../../../core/client/utils/index.js'
 import * as composables from '../../../core/client/composables/index.js'
 import { base64Encode } from '../../../core/client/utils/index.js'
 import { exportFile, Notify } from 'quasar'
-<<<<<<< HEAD
-=======
-import sanitizeHtml from 'sanitize-html'
-import { BLANK_PDF } from '@pdfme/common'
->>>>>>> 852a63db ( wip: improve KCaptureToolbar component - pdfme #792)
 import { image } from '@pdfme/schemas'
 import { generate } from '@pdfme/generator'
 
@@ -44,80 +38,50 @@ export async function capture (values) {
   if (jwt) options.headers.Authorization = 'Bearer ' + jwt
   // Perform the request
   let dismiss = null
+  dismiss = Notify.create({
+    group: 'capture',
+    icon: 'las la-hourglass-half',
+    message: i18n.t('KCapture.CAPTURING_VIEW'),
+    color: 'primary',
+    timeout: 0,
+    spinner: true
+  })
+
+  const results = []
   try {
-    dismiss = Notify.create({
-      group: 'capture',
-      icon: 'las la-hourglass-half',
-      message: i18n.t('KCapture.CAPTURING_VIEW'),
-      color: 'primary',
-      timeout: 0,
-      spinner: true
-    })
-    const response = await fetch(endpoint, options)
-    dismiss()
-    if (response.ok) {
-      const arrayBuffer = await response.arrayBuffer()
-      exportFile('capture.png', new Uint8Array(arrayBuffer))
-<<<<<<< HEAD
-<<<<<<< HEAD
-      const pdf = await generatePdf(base64Encode(arrayBuffer), _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
-=======
-      const pdf = await generatePdf(new Uint8Array(arrayBuffer), _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
->>>>>>> 852a63db ( wip: improve KCaptureToolbar component - pdfme #792)
-=======
-      const pdf = await generatePdf(arrayBuffer, _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
->>>>>>> 0ca039b8 ( wip: improve KCaptureToolbar component - pdfme #792)
-      exportFile('pdf.pdf', pdf)
+    if (_.has(values, 'dateTime')) {
+      const dateTime = [values.dateTime.start, values.dateTime.end]
+
+      for (let index = 0; index < dateTime.length; index++) {
+        const response = await fetch(endpoint, options)
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer()
+          results.push(arrayBuffer)
+        } else {
+          Events.emit('error', { message: i18n.t('errors.' + response.status) })
+        }
+      }
     } else {
-      Events.emit('error', { message: i18n.t('errors.' + response.status) })
+      const response = await fetch(endpoint, options)
+      if (response.ok) {
+        const arrayBuffer = await response.arrayBuffer()
+        results.push(arrayBuffer)          
+      } else {
+        Events.emit('error', { message: i18n.t('errors.' + response.status) })
+      }
     }
+
+    const pdf = await generatePdf(results, _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
+    exportFile('pdf.pdf', pdf)
+    dismiss()
   } catch (error) {
     // Network error
-    console.log(error)
     dismiss()
-    Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
-  }
+    Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') });
+  }  
 }
 
-function imageResolution(width, height) {
-  const resolution = {}
-  if (width > height) {
-    resolution.width = 279.52
-    resolution.height = _.round(279.52 * height / width, 2)
-    resolution.rotate = 90
-  } else {
-    resolution.height = 279.52
-    resolution.width = 279.52 * width / height
-    resolution.rotate = 0
-  }
-  return resolution
-}
-
-async function generatePdf(uint8Array, width, height) {
-  const resolution = imageResolution(width, height)
-  const template = {
-    pageSize: 'letter',
-    schemas: [
-      {
-        capture: {
-          type: 'image',
-          position: {
-            x: 0,
-            y: 0
-          },
-          width: resolution.width,
-          height: resolution.height,
-          rotate: resolution.rotate
-        },
-      }
-    ],
-    basePdf: BLANK_PDF
-  }
-  const plugins = { image }
-  const inputs = [{ capture: `data:image/png;base64,${base64Encode(uint8Array)}` }]
-  return await generate({ template, plugins, inputs })
-}
-
+// Layout utility functions
 function getLayout (values) {
   const layout = {
     panes: {
@@ -135,15 +99,12 @@ function getLayout (values) {
 
   return layout
 }
-
 function headerFooterComponent (text, position) {
   return { content: [{ component: _.get(config, `capture.${position}.component`, 'KCaptureTextArea'), text, position }], visible: true }
 }
-
 function compassComponent (position) {
   return { content: _.union(Layout.getPage().content, [{ component: 'layout/KPageSticky', position, offset: [0, 5], content: [{ component: 'KNorth' }] }]) }
 }
-
 function legendComponent () {
   return {
     content: [{ id: 'legend-widget', label: 'KLegend.LABEL', icon: 'las la-list', scrollable: true, content: { component: 'legend/KLegend' } }],
@@ -169,10 +130,9 @@ function legendComponent () {
     visible: true
   }
 }
-
+// PDFME utility functions
 function getImageProperties (width, height) {
   const imageProperties = { type: 'image', rotate: 0}
-
   if (width > height) {
     imageProperties.width = 287
     imageProperties.height = 287 * height / width
@@ -185,13 +145,15 @@ function getImageProperties (width, height) {
 
   return imageProperties
 }
-
-async function generatePdf (imageBase64, width, height) {
+async function generatePdf (imageArray, width, height) {
   const template = {
     schemas: [ { capture: getImageProperties(width, height) }],
     basePdf: 'data:application/pdf;base64,JVBERi0xLjQKJeLjz9MKMSAwIG9iaiA8PC9UeXBlL1hPYmplY3QvUmVzb3VyY2VzPDwvUHJvY1NldFsvUERGL1RleHRdL0ZvbnQgMiAwIFI+Pi9TdWJ0eXBlL0Zvcm0vQkJveFswIDAgMjk4IDQyMF0vTWF0cml4WzEgMCAwIDEgMCAwXS9MZW5ndGggNDQvRm9ybVR5cGUgMS9GaWx0ZXIvRmxhdGVEZWNvZGU+PnN0cmVhbQp4nDPQM1Qo5ypUMFAw0DNRMLI01zNXMDG01DNTKEpVCNdSyOMKVAAAiEAHjgplbmRzdHJlYW0KZW5kb2JqCjMgMCBvYmogPDwvTGVuZ3RoIDgxL0ZpbHRlci9GbGF0ZURlY29kZT4+c3RyZWFtCnicK+RyCuEyNlMwNbXUMzZVCEnhcg3hCuQqVDDQMzMwNDNUMABBKNvY2FDP2ETB2MBMz8xcITlXQT8izVDBJV8hkAukzFAhyJ0rmAsAxQ8Q1AplbmRzdHJlYW0KZW5kb2JqCjQgMCBvYmo8PC9UeXBlL1BhZ2VzL0NvdW50IDEvS2lkc1s1IDAgUl0+PgplbmRvYmoKNSAwIG9iajw8L1BhcmVudCA0IDAgUi9UeXBlL1BhZ2UvQ29udGVudHMgMyAwIFIvUmVzb3VyY2VzPDwvUHJvY1NldFsvUERGL1RleHQvSW1hZ2VCL0ltYWdlQy9JbWFnZUldL1hPYmplY3Q8PC9YZjEgMSAwIFI+Pj4+L01lZGlhQm94WzAgMCA4NDEuOTUgNTk1LjM1XT4+CmVuZG9iagoyIDAgb2JqPDw+PgplbmRvYmoKNiAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyA0IDAgUj4+CmVuZG9iago3IDAgb2JqPDwvUHJvZHVjZXIoUERGaWxsOiBGcmVlIFBERiBXcml0ZXIgYW5kIFRvb2xzKS9Nb2REYXRlKEQ6MjAwOTEwMTgyMjMwMTArMDInMDAnKS9DcmVhdGlvbkRhdGUoRDoyMDA5MTAxODIyMzAxMCswMicwMCcpPj4KZW5kb2JqCnhyZWYKMCA4CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwNjAyIDAwMDAwIG4gCjAwMDAwMDAyNDQgMDAwMDAgbiAKMDAwMDAwMDM5MSAwMDAwMCBuIAowMDAwMDAwNDQxIDAwMDAwIG4gCjAwMDAwMDA2MjEgMDAwMDAgbiAKMDAwMDAwMDY2NSAwMDAwMCBuIAp0cmFpbGVyCjw8L1Jvb3QgNiAwIFIvSW5mbyA3IDAgUi9TaXplIDg+PgpzdGFydHhyZWYKNzk5CiUlRU9GCg=='
   }
   const plugins = { image }
-  const inputs = [{ capture: `data:image/png;base64,${imageBase64}` }]
+  const inputs = []
+  _.forEach(imageArray, (value) => {
+    inputs.push({ capture: `data:image/png;base64,${base64Encode(value)}` })
+  })
   return await generate({ template, plugins, inputs })
 }
