@@ -48,29 +48,18 @@ export async function capture (values) {
   })
 
   const results = []
+  let dateTime = [Date.now()]
+  if (_.has(values, 'dateTime')) dateTime = [values.dateTime.start, values.dateTime.end]
   try {
-    if (_.has(values, 'dateTime')) {
-      const dateTime = [values.dateTime.start, values.dateTime.end]
-
-      for (let index = 0; index < dateTime.length; index++) {
-        const response = await fetch(endpoint, options)
-        if (response.ok) {
-          const arrayBuffer = await response.arrayBuffer()
-          results.push(arrayBuffer)
-        } else {
-          Events.emit('error', { message: i18n.t('errors.' + response.status) })
-        }
-      }
-    } else {
+    for (let index = 0; index < dateTime.length; index++) {
       const response = await fetch(endpoint, options)
       if (response.ok) {
         const arrayBuffer = await response.arrayBuffer()
-        results.push(arrayBuffer)          
+        results.push(arrayBuffer)
       } else {
         Events.emit('error', { message: i18n.t('errors.' + response.status) })
       }
     }
-
     const pdf = await generatePdf(results, _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
     exportFile('pdf.pdf', pdf)
     dismiss()
