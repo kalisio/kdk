@@ -85,12 +85,10 @@
 
 <script>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { Dialog, exportFile } from 'quasar'
 import { baseModal } from '../../mixins'
 import { getLocale } from '../../utils'
-import { api } from '../../api.js'
-import { Store } from '../../store.js'
-import { i18n } from '../../i18n.js'
 import { RoleNames } from '../../../common/permissions'
 import KModal from '../KModal.vue'
 import KForm from '../form/KForm.vue'
@@ -317,11 +315,19 @@ export default {
               flat: true
             }
           }).onOk(async () => {
-            this.processRecords(records)
+            try {
+              await this.processRecords(records)
+            } catch (error) {
+              logger.error(error)
+            }
             this.closeModal()
           })
         } else {
-          this.processRecords(records)
+          try {
+            await this.processRecords(records)
+          } catch (error) {
+            logger.error(error)
+          }
           this.closeModal()
         }
       }
@@ -329,44 +335,44 @@ export default {
     },
     async processRecords (records) {
       const report = {}
-      for (let i = 0; i < records.length; i++) {
+      for (let i = 0; i < records.length; ++i) {
         const record = records[i]
-        report[record.name] = await this.processRecord(record, this.contextId)
+        report[record.name] = await this.processRecord(record)
       }
       exportFile('report.json', JSON.stringify(report, null, '\t'))
     },
-    async processRecord (record, contextId) {
+    async processRecord (record) {
       // Check whether the guest has already an acount
-      const usersService = api.getService('users')
+      const usersService = this.$api.getService('users')
       const response = await usersService.find({ query: { email: record.email } })
       if (response.total === 1) {
         // Check whether the user belong to the organisation
         const user = response.data[0]
-        if (_.find(user.organisations, { _id: contextId })) return i18n.t('KAddMember.ALREADY_MEMBER_ERROR')
+        if (_.find(user.organisations, { _id: this.contextId })) return this.$t('KAddMember.ALREADY_MEMBER_ERROR')
         // Add the person
-        const authorisationService = api.getService('authorisations')
+        const authorisationService = this.$api.getService('authorisations')
         await authorisationService.create({
           scope: 'organisations',
           permissions: record.role,
           subjects: user._id,
           subjectsService: 'users',
-          resource: contextId,
+          resource: this.contextId,
           resourcesService: 'organisations'
         })
-        return i18n.t('KAddMember.USER_ADDED_MESSAGE')
+        return this.$t('KAddMember.USER_ADDED_MESSAGE')
       } else {
         const guest = {
           locale: getLocale(),
           sponsor: {
-            id: Store.get('user._id'),
-            organisationId: contextId,
+            id: this.$store.get('user._id'),
+            organisationId: this.contextId,
             roleGranted: record.role
           },
           name: record.name,
           email: record.email
         }
         await usersService.create(guest)
-        return i18n.t('KAddMember.GUEST_ADDED_MESSAGE')
+        return this.$t('KAddMember.GUEST_ADDED_MESSAGE')
       }
     }
   },
