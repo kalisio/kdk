@@ -20,6 +20,11 @@
   <!-- Layer tree -->
   <q-tree :nodes="layerTree" node-key="id" label-key="label" children-key="layers"
     v-model:expanded="expandedLayers" tick-strategy="leaf" v-model:ticked="selectedLayers" @update:ticked="onSelect">
+    <template v-slot:default-header="prop">
+      <div class="row items-center">
+        <div :id="prop.node.id">{{ prop.node.label }}</div>
+      </div>
+    </template>
   </q-tree>
 </template>
 

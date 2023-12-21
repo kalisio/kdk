@@ -126,6 +126,12 @@ export async function addView (page) {
   await page.waitForTimeout(1000)
 }
 
+export async function addProject (page) {
+  await core.clickFab(page)
+  await core.clickAction(page, 'create-project')
+  await page.waitForTimeout(1000)
+}
+
 export async function importLayer (page, filePath, featureId = undefined, wait = 2000) {
   await addLayer(page)
   await core.uploadFile(page, '#file-field', filePath)
@@ -189,5 +195,46 @@ export async function removeView (page, tabId, name) {
   const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
   await core.clickItemAction(page, 'catalog/KViewSelector', name, 'view-overflowmenu', 1000)
   await core.clickAction(page, 'remove-view', 1000)
+  await core.click(page, '.q-dialog button:nth-child(2)', 1000)
+  if (!isCatalogOpened) await core.clickOpener(page, 'right')
+}
+
+export async function createProject (page, name, layers, views, wait = 2000) {
+  await addProject(page)
+  await core.type(page, '#name-field', name)
+  await core.type(page, '#description-field', `${name} description`)
+  for (let i = 0; i < layers.length; i++) {
+    const layer = layers[i]
+    await core.clickXPath(page, `//div[contains(., "${layer}")]/../../preceding-sibling::div[contains(@class, "q-checkbox")]`)
+  }
+  if (views) {
+    for (let i = 0; i < views.length; i++) {
+      const view = views[i]
+      await core.clickXPath(page, `//div[contains(., "${view}")]/../../preceding-sibling::div[contains(@class, "q-checkbox")]`)
+    }
+  }
+  await core.clickAction(page, 'apply-button', 1000)
+  await page.waitForTimeout(wait)
+}
+
+export async function projectExists (page, tabId, name) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
+  const exists = await core.itemExists(page, 'catalog/KProjectSelector', name)
+  if (!isCatalogOpened) await core.clickOpener(page, 'right')
+  return exists
+}
+
+export async function clickProject (page, tabId, name) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
+  await core.clickItem(page, 'catalog/KProjectSelector', name)
+  if (!isCatalogOpened) await core.clickOpener(page, 'right')
+  await page.waitForNetworkIdle()
+}
+
+export async function removeProject (page, tabId, name) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
+  await core.clickItemAction(page, 'catalog/KProjectSelector', name, 'project-overflowmenu', 1000)
+  await core.clickAction(page, 'remove-project', 1000)
+  await core.click(page, '.q-dialog button:nth-child(2)', 1000)
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
 }

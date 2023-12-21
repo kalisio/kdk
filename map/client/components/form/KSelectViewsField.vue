@@ -20,6 +20,11 @@
   <!-- View tree -->
   <q-tree v-if="viewTree.length" :nodes="viewTree" node-key="_id" label-key="label" children-key="views"
     v-model:expanded="expandedViews" tick-strategy="leaf" v-model:ticked="selectedViews" @update:ticked="onSelect">
+    <template v-slot:default-header="prop">
+      <div class="row items-center">
+        <div :id="prop.node._id">{{ prop.node.label }}</div>
+      </div>
+    </template>
   </q-tree>
   <div v-else class="row">
     <KStamp
