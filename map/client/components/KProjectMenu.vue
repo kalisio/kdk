@@ -6,6 +6,7 @@
       :propagate="false"
       @triggered="closeProject" />
     <q-btn-dropdown
+      id="project-menu"
       class="q-pl-sm ellipsis-2-lines"
       :label="label"
       :size="size"

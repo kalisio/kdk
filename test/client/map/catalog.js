@@ -199,18 +199,25 @@ export async function removeView (page, tabId, name) {
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
 }
 
-export async function createProject (page, name, layers, views, wait = 2000) {
+export async function createProject (page, name, options, wait = 2000) {
+  const { categories, layers, views } = options
   await addProject(page)
   await core.type(page, '#name-field', name)
   await core.type(page, '#description-field', `${name} description`)
+  // Open categories first
+  for (let i = 0; i < categories.length; i++) {
+    const category = categories[i]
+    await core.clickXPath(page, `//div[contains(text(), "${category}")]`)
+  }
+  // Then select layers
   for (let i = 0; i < layers.length; i++) {
     const layer = layers[i]
-    await core.clickXPath(page, `//div[contains(., "${layer}")]/../../preceding-sibling::div[contains(@class, "q-checkbox")]`)
+    await core.clickXPath(page, `//div[contains(text(), "${layer}")]/../../preceding-sibling::div[contains(@class, "q-checkbox")]`)
   }
   if (views) {
     for (let i = 0; i < views.length; i++) {
       const view = views[i]
-      await core.clickXPath(page, `//div[contains(., "${view}")]/../../preceding-sibling::div[contains(@class, "q-checkbox")]`)
+      await core.clickXPath(page, `//div[contains(text(), "${view}")]/../../preceding-sibling::div[contains(@class, "q-checkbox")]`)
     }
   }
   await core.clickAction(page, 'apply-button', 1000)
@@ -228,6 +235,17 @@ export async function clickProject (page, tabId, name) {
   const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
   await core.clickItem(page, 'catalog/KProjectSelector', name)
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
+  await page.waitForNetworkIdle()
+}
+
+export async function switchProject (page, name) {
+  await core.click(page, '#project-menu', 2000)
+  await core.clickXPath(page, `//div[contains(@component, "collection/KItem") and contains(., "${name}")]`, 1000)
+  await page.waitForNetworkIdle()
+}
+
+export async function closeProject (page) {
+  await core.click(page, '#close-project')
   await page.waitForNetworkIdle()
 }
 
