@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import commonHooks from 'feathers-hooks-common'
 // import { hooks as schemaHooks, resolve } from '@feathersjs/schema'
-import { hooks as coreHooks } from '@kalisio/kdk/core.api.js'
+import { hooks as coreHooks } from '../../../../core/api/index.js'
 
 const { setNow, discard, getItems, replaceItems } = commonHooks
 
-/* Populate is too much spacialized and does not allow to merge input/output
+/* Populate is too much specialized and does not allow to merge input/output
  but we need the service information on the fronted
 export const populateLayers = populate({
   schema: hook => {
@@ -38,7 +38,6 @@ const contextsResolver = resolve({
 })
 */
 
-/* Can't get this to workd with get, seems to be called twice */
 const populateProjects = async (hook) => {
   let items = getItems(hook)
   const isArray = Array.isArray(items)
@@ -49,18 +48,23 @@ const populateProjects = async (hook) => {
     for (let j = 0; j < layers.length; j++) {
       let layer = layers[j]
       // Get only name when listing
-      const query = (hook.method === 'find' ? { $select: ['name'] } : {})
+      const query = { $select: ['name', 'service', 'probeService'] }
       const service = hook.app.getService('catalog', _.has(layer, 'context') ? layer.context : hook.service.context)
-      layer = await service.get(layer._id.toString(), { query })
+      // As we keep track of ID/name depending on if a layer is a user-defined one or not we need to process both
+      Object.assign(query, (layer._id ? { _id: layer._id } : { name: layer.name }))
+      const response = await service.find({ query })
+      layer = _.get(response, 'data[0]')
       Object.assign(layers[j], layer)
     }
     const views = project.views || []
     for (let j = 0; j < views.length; j++) {
       let view = views[j]
       // Get only name when listing
-      const query = (hook.method === 'find' ? { $select: ['name'], type: 'Context' } : { type: 'Context' })
+      const query = { $select: ['name'], type: 'Context' }
+      Object.assign(query, { _id: view._id })
       const service = hook.app.getService('catalog', _.has(view, 'context') ? view.context : hook.service.context)
-      view = await service.get(view._id.toString(), { query })
+      const response = await service.find({ query })
+      view = _.get(response, 'data[0]')
       Object.assign(views[j], view)
     }
   }
@@ -81,9 +85,7 @@ export default {
   after: {
     all: [],
     find: [populateProjects],
-    // find: [],
-    // get: [populateProjects],
-    get: [],
+    get: [populateProjects],
     create: [],
     update: [],
     patch: [],

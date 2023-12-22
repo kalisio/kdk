@@ -31,7 +31,7 @@
 <script>
 import _ from 'lodash'
 import { KList } from '../../../core/client/components'
-import { useProject } from '../composables'
+import { useProject, useCurrentActivity } from '../composables'
 
 export default {
   components: {
@@ -54,11 +54,6 @@ export default {
     },
     size () {
       return this.$q.screen.lt.sm ? 'sm' : 'md'
-    }
-  },
-  data () {
-    return {
-      organisation: this.$store.get('context')
     }
   },
   watch: {

@@ -2,15 +2,20 @@ import _ from 'lodash'
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../../core.client.js'
+import { useCurrentActivity } from '../composables/activity.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
 export function useProject (options = {}) {
+  const { setActivityProject } = useCurrentActivity({ selection: false, probe: false })
+
   _.defaults(options, {
     // Set if project should be extracted from route
     // otherwise it should be loaded manually
     route: true,
     // Default to global service
     context: '',
+    // Default to target activity
+    updateActivity: true,
     // Default to app API
     planetApi: api
   })
@@ -50,6 +55,7 @@ export function useProject (options = {}) {
     } else {
       project.value = await options.planetApi.getService('projects', options.context).get(projectId.value)
     }
+    if (options.updateActivity) setActivityProject(project.value)
     // Keep track of source API
     if (project.value) {
       project.value.getPlanetApi = () => options.planetApi
@@ -58,6 +64,7 @@ export function useProject (options = {}) {
   function onProjectUpdated (updatedProject) {
     if (project.value && (updatedProject._id === project.value._id)) {
       project.value = updatedProject
+      if (options.updateActivity) setActivityProject(updatedProject)
     }
   }
   function onProjectRemoved (removedProject) {

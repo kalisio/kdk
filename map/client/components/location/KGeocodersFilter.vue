@@ -12,6 +12,10 @@
 import _ from 'lodash'
 import { computed } from 'vue'
 import { i18n } from '../../../../core.client'
+import { useCurrentActivity } from '../../composables'
+
+const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
+const project = getActivityProject()
 
 // Props
 const props = defineProps({
@@ -38,6 +42,16 @@ const selectedGeocoders = computed({
   }
 })
 const availableGeocoders = computed(() => {
-  return _.sortBy(props.geocoders, ['label'])
+  const geocoders = props.geocoders.filter(geocoder => {
+    if (project && geocoder.value.startsWith('kano:')) {
+      const service = geocoder.value.replace('kano:', '')
+      // Depending on the layer the geocoding source (i.e. collection/service) is not the same
+      let layer = _.find(project.layers, { service })
+      if (!layer) layer = _.find(project.layers, { probeService: service })
+      return layer
+    }
+    return true
+  })
+  return _.sortBy(geocoders, ['label'])
 })
 </script>
