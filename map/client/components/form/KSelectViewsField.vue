@@ -67,7 +67,7 @@ export default {
   watch: {
     viewTree (tree) {
       this.expandedViews = []
-      if (_.find(tree, { id: 'views' })) {
+      if (_.find(tree, { _id: 'views' })) {
         this.expandedViews.push('views')
       }
     }

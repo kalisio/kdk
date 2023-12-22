@@ -29,6 +29,14 @@ export async function clickLayerCategory (page, tabId, categoryId, wait = 500) {
   await core.clickPaneAction(page, 'right', categoryId, wait)
 }
 
+export async function layerExists (page, tabId, layer) {
+  const isCatalogOpened = await clickCatalogTab(page, tabId)
+  const layerId = getLayerId(layer)
+  const exists = await core.elementExists(page, `#${layerId}`)
+  if (!isCatalogOpened) await core.clickOpener(page, 'right')
+  return exists
+}
+
 export async function clickLayer (page, tabId, layer, wait = 1000) {
   const isCatalogOpened = await clickCatalogTab(page, tabId)
   const layerId = getLayerId(layer)
@@ -39,7 +47,7 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickPaneAction(page, 'right', categoryId, 1000)
   }
   let selector = `#${layerId} .q-toggle`
-  // some layers have a toggle (regulaer layers), some don't (base layers)
+  // some layers have a toggle (regular layers), some don't (base layers)
   if (!await core.elementExists(page, selector)) {
     selector = `#${layerId}`
   }
@@ -234,7 +242,8 @@ export async function projectExists (page, tabId, name) {
 export async function clickProject (page, tabId, name) {
   const isCatalogOpened = await clickCatalogTab(page, tabId, 2000)
   await core.clickItem(page, 'catalog/KProjectSelector', name)
-  if (!isCatalogOpened) await core.clickOpener(page, 'right')
+  // Switching to project automatically closes the catalog tab
+  if (isCatalogOpened) await core.clickOpener(page, 'right')
   await page.waitForNetworkIdle()
 }
 
