@@ -18,7 +18,7 @@ install_age() {
     wget -q https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz
     # no checksum ...
     tar xf age-v${AGE_VERSION}-linux-amd64.tar.gz
-    cp age/age /usr/local/bin
+    cp age/age "$HOME/.local/bin"
     popd || exit
 }
 
@@ -28,13 +28,19 @@ install_sops() {
     wget -q https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
     wget -q https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.checksums.txt
     sha256sum --ignore-missing --quiet -c sops-v${SOPS_VERSION}.checksums.txt
-    cp sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
-    chmod a+x /usr/local/bin/sops
+    cp sops-v${SOPS_VERSION}.linux.amd64 "$HOME/.local/bin/sops"
+    chmod a+x "$HOME/.local/bin/sops"
     popd || exit
 }
 
+echo "$HOME"
+echo "$PATH"
+echo "$(whoami)"
+
+mkdir -p $HOME/.local/bin
 install_age
 install_sops
+export PATH="$PATH:$HOME/.local/bin"
 
 echo -e "machine github.com\n  login $GITHUB_TOKEN" > ~/.netrc
 
