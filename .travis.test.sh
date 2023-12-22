@@ -33,14 +33,10 @@ install_sops() {
     popd || exit
 }
 
-echo "$HOME"
-echo "$PATH"
-echo "$(whoami)"
-
-mkdir -p $HOME/.local/bin
+# Make sure that folder exists, with Travis CI it's already in the PATH
+mkdir -p "$HOME/.local/bin"
 install_age
 install_sops
-export PATH="$PATH:$HOME/.local/bin"
 
 echo -e "machine github.com\n  login $GITHUB_TOKEN" > ~/.netrc
 
