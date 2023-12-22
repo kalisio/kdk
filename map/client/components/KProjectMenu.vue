@@ -31,7 +31,7 @@
 <script>
 import _ from 'lodash'
 import { KList } from '../../../core/client/components'
-import { useProject, useCurrentActivity } from '../composables'
+import { useProject } from '../composables'
 
 export default {
   components: {

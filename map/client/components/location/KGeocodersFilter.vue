@@ -11,7 +11,6 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
-import { i18n } from '../../../../core.client'
 import { useCurrentActivity } from '../../composables'
 
 const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
