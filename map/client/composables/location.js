@@ -11,6 +11,7 @@ export function useLocation () {
   const selectedGeocoders = ref([])
 
   // Functions
+  // Input geocoders if given should be like { source: xxx, selected: true }
   async function setGeocoders (geocoders) {
     if (_.isNull(geocoders)) {
       // clear the geocoders
@@ -21,22 +22,14 @@ export function useLocation () {
       const allGeocoders = await listGeocoders()
       if (_.isEmpty(geocoders)) {
         availableGeocoders.value = _.map(allGeocoders, geocoder => {
-          return { value: geocoder, label: i18n.tie(geocoder) }
+          return { value: geocoder, label: i18n.tie(`Geocoders.${geocoder}`) }
         })
         selectedGeocoders.value = allGeocoders
       } else {
-        availableGeocoders.value = _.map(geocoders, geocoder => {
-          if (_.indexOf(allGeocoders, geocoder.source)) {
-            return { value: geocoder.source, label: i18n.tie(geocoder.source) }
-          } else {
-            logger.warn(`[KDK] invalid geocoder ${geocoder.source}`)
-          }
-        })
-        selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => {
-          return geocoder.selected
-        }), geocoder => {
-          return geocoder.source
-        })
+        availableGeocoders.value = geocoders
+          .filter(geocoder => allGeocoders.includes(geocoder.source))
+          .map(geocoder => ({ value: geocoder.source, label: i18n.tie(`Geocoders.${geocoder.source}`) }))
+        selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => geocoder.selected), 'source')
       }
     }
   }

@@ -188,7 +188,7 @@ export default {
     }
   },
   mounted () {
-    this.setGeocoders(_.get(this.properties, 'field.geocoders'))
+    this.setGeocoders(_.get(this.properties, 'field.geocoders', []))
   }
 }
 </script>
