@@ -10,7 +10,7 @@ export default {
     get: [],
     create: [
       when(
-        (hook) =>["passwordChange","resetPwdShort","verifySignupSetPasswordLong","verifySignupSetPasswordShort"].includes(hook.data.action),
+        (hook) =>["passwordChange", "resetPwdShort", "verifySignupSetPasswordLong", "verifySignupSetPasswordShort"].includes(hook.data.action),
         enforcePasswordPolicy({userAsItem: false,passwordField: "value.password"})
       ),
     ],
