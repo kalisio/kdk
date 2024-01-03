@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import config from 'config'
+import moment from 'moment'
 import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
 import * as composables from '../../../core/client/composables/index.js'
 import { base64Encode } from '../../../core/client/utils/index.js'
@@ -48,10 +49,20 @@ export async function capture (values) {
   })
 
   const results = []
-  let dateTime = [Date.now()]
-  if (_.has(values, 'dateTime')) dateTime = [values.dateTime.start, values.dateTime.end]
+  const dateArray = generateDateArray(values.dateTime.start, values.dateTime.end)
+  console.log(dateArray)
   try {
-    for (let index = 0; index < dateTime.length; index++) {
+    for (let index = 0; index < dateArray.length; index++) {
+      options.body = JSON.stringify({
+          activity: kActivity.value.is3D() ? 'globe' : 'map',
+          layers,
+          bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
+          size: { width: +values.resolution.width, height: +values.resolution.height },
+          time: Time.getCurrentTime().toISOString(),
+          layout: getLayout(values),
+          time: dateArray[index]
+        })
+
       const response = await fetch(endpoint, options)
       if (response.ok) {
         const arrayBuffer = await response.arrayBuffer()
@@ -60,8 +71,14 @@ export async function capture (values) {
         Events.emit('error', { message: i18n.t('errors.' + response.status) })
       }
     }
-    const pdf = await generatePdf(results, _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
-    exportFile('pdf.pdf', pdf)
+    if (values.format === 'pdf') {
+      const pdf = await generatePdf(results, _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
+      exportFile('pdf.pdf', pdf)
+    } else {
+      _.forEach(results, (result) => {
+        exportFile('capture.png', new Uint8Array(result))
+      }) 
+    }
     dismiss()
   } catch (error) {
     // Network error
@@ -118,6 +135,23 @@ function legendComponent () {
     },
     visible: true
   }
+}
+// Moment utility functions
+function generateDateArray (startDateString, endDateString) {
+  if (startDateString === endDateString) return [startDateString]
+  // Convert input strings to Moment.js objects
+  const startDate = moment(startDateString)
+  const endDate = moment(endDateString)
+  const intervalMinutes =  Store.get('time.interval')
+  const dateArray = []
+  // Clone the start date for iteration
+  let currentDate = startDate.clone()
+  // Iterate until the current date is before the end date
+  while (currentDate.isBefore(endDate)) {
+    dateArray.push(currentDate.toISOString())
+    currentDate.add(intervalMinutes, 'minutes')
+  }
+  return dateArray
 }
 // PDFME utility functions
 function getImageProperties (width, height) {

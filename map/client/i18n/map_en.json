@@ -243,7 +243,10 @@
     "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Display bottom right",
     "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Display bottom left",
     "CAPTURE_ADVANCED_SETTINGS": "Advanced setting",
-    "CAPTURE_DATETIME_RANGE_FIELD_LABEL": "Set time interval"
+    "CAPTURE_DATETIME_RANGE_FIELD_LABEL": "Set time interval",
+    "CAPTURE_FORMAT_FIELD_LABEL": "Select file format",
+    "CAPTURE_PDF_FORMAT_FIELD_LABEL": "PDF",
+    "CAPTURE_PNG_FORMAT_FIELD_LABEL": "PNG"
   },
   "tours": {
     "navigation-bar": {
