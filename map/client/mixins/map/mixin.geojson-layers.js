@@ -145,6 +145,9 @@ export const geojsonLayers = {
       }
       // Check for feature service layers
       if (options.service) {
+        // FIXME: need to retrieve original layer options as here we get processed options by the underlying engine
+        // and eg filtering depends on changing the state of the layer definition object at run time
+        options = this.getLayerByName(options.name)
         // We perform manual update
         _.set(leafletOptions, 'start', false)
         // Tell realtime plugin how to update/load data
@@ -158,9 +161,6 @@ export const geojsonLayers = {
           leafletOptions.removeMissing = !options.probeService
           let initialized = !options.probeService // If no probe reference, nothing to be initialized
           _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
-            // FIXME: need to retrieve original layer options as here we get processed options by the underlying engine
-            // and eg filtering depends on changing the state of the layer definition object at run time
-            options = this.getLayerByName(options.name)
             // If the probe location is given by another service use it on initialization
             if (!initialized) {
               try {
@@ -424,7 +424,8 @@ export const geojsonLayers = {
         } else if (geoJson) {
           if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, geoJson)
         } else { // Fetch new data or update in place
-          if (typeof layer.update === 'function') layer.update()
+          if (layer.tiledLayer) layer.tiledLayer.redraw()
+          else if (typeof layer.update === 'function') layer.update()
           else if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, this.toGeoJson(name))
         }
 

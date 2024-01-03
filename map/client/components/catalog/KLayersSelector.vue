@@ -71,7 +71,7 @@ export default {
     },
     onLayerFilterToggled (layer, filter) {
       if (layer.isDisabled) return
-      this.toggleLayerFilter(layer)
+      this.toggleLayerFilter(layer, filter)
     }
   }
 }
