@@ -75,7 +75,7 @@
     "CANNOT_READ_FILE": "Impossible de lire le fichier {file}",
     "INVALID_JSON_FILE": "{file} n'est pas un fichier JSON valide",
     "INVALID_CSV_FILE": "{file} n'est pas un fichier CSV valide",
-    "NETWORK_ERROR": "Une erreur réseau s'est produite"
+    "NETWORK_ERROR": "Une erreur réseau s'est produite ou le service est indisponible"
   },
   "units": {
     "METER_SYMBOL": "m",

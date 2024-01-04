@@ -35,6 +35,10 @@
       "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
       "REMOVE_DIALOG_TITLE": "Supprimer {layer} ?",
       "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {layer} de votre espace de travail ?"
+    },
+    "capture": {
+      "CAPTURE_PDF_FILE": "impression_{time}.pdf",
+      "CAPTURE_IMAGE_FILE": "impression_{time}.png"
     }
   },
   "mixins": {
@@ -226,7 +230,7 @@
     "LOCATION_FORMAT_LABEL": "Format de coordonnées",
     "LOCATION_FORMAT_HELPER": "<a target='_blank' href='https://github.com/nerik/formatcoords#formatting'>&#x1F6C8;</a>",
     "TIMELINE_SETTINGS": "Paramètrage du sélecteur temporel",
-    "TIMELINE_STEP": "Pas du sélécteur temporel, en minutes",
+    "TIMELINE_STEP": "Pas du sélécteur temporel",
     "TIMELINE_INTERVAL": "Fréquence de rafraichissement des données en temps-réel",
     "TIMESERIES_SETTINGS": "Paramètrage des séries temporelles",
     "TIMESERIES_SPAN": "Intervalle des séries temporelles, en heures",

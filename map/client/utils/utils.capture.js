@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import config from 'config'
 import moment from 'moment'
 import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
@@ -50,7 +51,6 @@ export async function capture (values) {
         layers,
         bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
         size: { width: +values.resolution.width, height: +values.resolution.height },
-        time: Time.getCurrentTime().toISOString(),
         layout: getLayout(values),
         time: dateArray[index],
         lang: getAppLocale()
@@ -65,16 +65,18 @@ export async function capture (values) {
     }
     if (values.format === 'pdf') {
       const pdf = await generatePdf(results, _.toNumber(values.resolution.width), _.toNumber(values.resolution.height))
-      exportFile('pdf.pdf', pdf)
+      exportFile(i18n.t('utils.capture.CAPTURE_PDF_FILE', { time: _.get(dateArray, '[0]', '') }), pdf)
     } else {
-      _.forEach(results, (result) => {
-        exportFile('capture.png', new Uint8Array(result))
+      _.forEach(results, (result, index) => {
+        const time = dateArray[index]
+        exportFile(i18n.t('utils.capture.CAPTURE_IMAGE_FILE', { time: _.get(dateArray, `[${index}]`, '') }), new Uint8Array(result))
       }) 
     }
     dismiss()
   } catch (error) {
-    // Network error
+    // Network/Service error
     dismiss()
+    logger.error(error)
     Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') });
   }  
 }
@@ -132,14 +134,14 @@ function legendComponent () {
 function generateDateArray (startDateString, endDateString) {
   if (startDateString === endDateString) return [startDateString]
   // Convert input strings to Moment.js objects
-  const startDate = moment(startDateString)
-  const endDate = moment(endDateString)
+  const startDate = moment.utc(startDateString)
+  const endDate = moment.utc(endDateString)
   const intervalMinutes =  Store.get('time.interval')
   const dateArray = []
   // Clone the start date for iteration
   let currentDate = startDate.clone()
   // Iterate until the current date is before the end date
-  while (currentDate.isBefore(endDate)) {
+  while (currentDate.isSameOrBefore(endDate)) {
     dateArray.push(currentDate.toISOString())
     currentDate.add(intervalMinutes, 'minutes')
   }

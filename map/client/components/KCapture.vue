@@ -21,8 +21,18 @@ const formRef = ref(null)
 // computed
 const schema = computed(() => {
   const dateTimePropertie = captureSchema.properties.dateTime
-  dateTimePropertie.default = { start: moment.utc().toISOString(), end: moment.utc().toISOString() }
-  dateTimePropertie.field = { ...dateTimePropertie.field, min: moment.utc().subtract(3, 'months').toISOString(), max: moment.utc().toISOString() }
+  dateTimePropertie.default = {
+    start: moment.utc().toISOString(),
+    end: moment.utc().toISOString()
+  }
+  // TODO: could be dynamically computed from layers
+  // For archived data we have typically 10 years in layers
+  // For forecast data we have at most couple of weeks
+  dateTimePropertie.field = {
+    ...dateTimePropertie.field,
+    min: moment.utc().subtract(10, 'years').toISOString(),
+    max: moment.utc().add(1, 'months').toISOString()
+  }
   return captureSchema
 })
 
