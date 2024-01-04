@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import config from 'config'
 import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
+import { getAppLocale } from '../../../core/client/utils/index.js'
 import * as composables from '../../../core/client/composables/index.js'
 import { exportFile, Notify } from 'quasar'
 
@@ -25,7 +26,7 @@ export async function capture (values) {
       size: { width: +values.resolution.width, height: +values.resolution.height },
       time: Time.getCurrentTime().toISOString(),
       layout: getLayout(values),
-      lang: window.navigator.userLanguage || window.navigator.language
+      lang: getAppLocale()
     }),
     headers: {
       'Content-Type': 'application/json'
