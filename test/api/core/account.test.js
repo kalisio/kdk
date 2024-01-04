@@ -212,6 +212,26 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(15000)
 
+  it('check password policy on user verifySignupSetPasswordShort', () => {
+    try {
+      accountService.create({
+        action: 'verifySignupSetPasswordShort',
+        value: {
+          user: { email: gmailUser },
+          token: userObject.verifyShortToken,
+          password: '1234'
+        }
+      })
+      assert.fail()
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('BadRequest')
+      expect(error.data.translation.params.failedRules.length > 0).beTrue()
+    }
+  })
+  // Let enough time to process
+  .timeout(5000)
+
   it('verify user signup', async () => {
     const user = await accountService.create({
       action: 'verifySignupShort',

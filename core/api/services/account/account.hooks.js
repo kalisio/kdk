@@ -8,11 +8,15 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [when(hook => hook.data.action === 'resetPwdShort' || hook.data.action === 'passwordChange',
-      enforcePasswordPolicy({ userAsItem: false, passwordField: 'value.password' }))],
+    create: [
+      when(
+        (hook) => ['passwordChange', 'resetPwdShort', 'verifySignupSetPasswordLong', 'verifySignupSetPasswordShort'].includes(hook.data.action),
+        enforcePasswordPolicy({ userAsItem: false, passwordField: 'value.password' })
+      ),
+    ],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   after: {
@@ -22,7 +26,7 @@ export default {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -32,6 +36,6 @@ export default {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 }
