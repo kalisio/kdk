@@ -28,7 +28,8 @@ export async function capture (values) {
       bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
       size: { width: +values.resolution.width, height: +values.resolution.height },
       time: Time.getCurrentTime().toISOString(),
-      layout: getLayout(values)
+      layout: getLayout(values),
+      lang: window.navigator.userLanguage || window.navigator.language
     }),
     headers: {
       'Content-Type': 'application/json'
@@ -60,7 +61,8 @@ export async function capture (values) {
           size: { width: +values.resolution.width, height: +values.resolution.height },
           time: Time.getCurrentTime().toISOString(),
           layout: getLayout(values),
-          time: dateArray[index]
+          time: dateArray[index],
+          lang: window.navigator.userLanguage || window.navigator.language
         })
 
       const response = await fetch(endpoint, options)
