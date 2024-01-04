@@ -212,9 +212,9 @@ describe('core:account', () => {
   // Let enough time to process
     .timeout(15000)
 
-  it('check password policy on user verifySignupSetPasswordShort', () => {
+  it('check password policy on user verifySignupSetPasswordShort', async () => {
     try {
-      accountService.create({
+      await accountService.create({
         action: 'verifySignupSetPasswordShort',
         value: {
           user: { email: gmailUser },
