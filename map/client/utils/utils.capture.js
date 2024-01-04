@@ -3,7 +3,7 @@ import config from 'config'
 import moment from 'moment'
 import { Time, i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
 import * as composables from '../../../core/client/composables/index.js'
-import { base64Encode } from '../../../core/client/utils/index.js'
+import { base64Encode, getAppLocale } from '../../../core/client/utils/index.js'
 import { exportFile, Notify } from 'quasar'
 import { image } from '@pdfme/schemas'
 import { generate } from '@pdfme/generator'
@@ -22,15 +22,6 @@ export async function capture (values) {
   const options = {
     method: 'POST',
     mode: 'cors',
-    body: JSON.stringify({
-      activity: kActivity.value.is3D() ? 'globe' : 'map',
-      layers,
-      bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
-      size: { width: +values.resolution.width, height: +values.resolution.height },
-      time: Time.getCurrentTime().toISOString(),
-      layout: getLayout(values),
-      lang: window.navigator.userLanguage || window.navigator.language
-    }),
     headers: {
       'Content-Type': 'application/json'
     }
@@ -51,20 +42,19 @@ export async function capture (values) {
 
   const results = []
   const dateArray = generateDateArray(values.dateTime.start, values.dateTime.end)
-  console.log(dateArray)
   try {
     for (let index = 0; index < dateArray.length; index++) {
+      // Setup the request body
       options.body = JSON.stringify({
-          activity: kActivity.value.is3D() ? 'globe' : 'map',
-          layers,
-          bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
-          size: { width: +values.resolution.width, height: +values.resolution.height },
-          time: Time.getCurrentTime().toISOString(),
-          layout: getLayout(values),
-          time: dateArray[index],
-          lang: window.navigator.userLanguage || window.navigator.language
-        })
-
+        activity: kActivity.value.is3D() ? 'globe' : 'map',
+        layers,
+        bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
+        size: { width: +values.resolution.width, height: +values.resolution.height },
+        time: Time.getCurrentTime().toISOString(),
+        layout: getLayout(values),
+        time: dateArray[index],
+        lang: getAppLocale()
+      })
       const response = await fetch(endpoint, options)
       if (response.ok) {
         const arrayBuffer = await response.arrayBuffer()
