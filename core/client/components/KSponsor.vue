@@ -2,7 +2,7 @@
   <div class="column items-center">
     <!-- KDK attribution -->
     <div class="row justify-center items-center">
-      <div>
+      <div class="text-caption">
         {{ $t('KSponsor.KDK_POWERED') }}
       </div>
       <KAction
