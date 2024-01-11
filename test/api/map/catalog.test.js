@@ -127,7 +127,7 @@ describe('map:catalog', () => {
     expect(projectObject.views).to.deep.equal([])
     // Remove layer and check it has been updated in project
     await catalogService.remove(zonesLayer._id)
-    projectObject = await projectService.get(projectObject._id)
+    projectObject = await projectService.get(projectObject._id, { query: { populate: true } })
     expect(projectObject.layers).to.deep.equal([{
       _id: vigicruesLayer._id,
       name: vigicruesLayer.name,
