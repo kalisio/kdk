@@ -148,5 +148,7 @@ function onLocationChanged () {
 }
 
 // Hooks
-watch(() => props.geocoders, async (geocoders) => setGeocoders(geocoders), { immediate: true })
+watch(() => props.geocoders, (geocoders) => {
+  setGeocoders(geocoders)
+}, { immediate: true })
 </script>

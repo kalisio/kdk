@@ -3,9 +3,12 @@ import logger from 'loglevel'
 import { ref } from 'vue'
 import { Store, i18n } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
-import { searchLocation, listGeocoders } from '../utils/utils.location.js'
+import { useCurrentActivity } from './activity.js'
+import { searchLocation, listGeocoders, filterGeocoders } from '../utils/utils.location.js'
 
 export function useLocation () {
+  const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
+
   // Data
   const availableGeocoders = ref([])
   const selectedGeocoders = ref([])
@@ -13,13 +16,16 @@ export function useLocation () {
   // Functions
   // Input geocoders if given should be like { source: xxx, selected: true }
   async function setGeocoders (geocoders) {
+    const project = getActivityProject()
+
     if (_.isNull(geocoders)) {
       // clear the geocoders
       availableGeocoders.value = []
       selectedGeocoders.value = []
     } else {
       // check the capabilities to list the geocoders
-      const allGeocoders = await listGeocoders()
+      let allGeocoders = await listGeocoders()
+      allGeocoders = filterGeocoders(allGeocoders, project)
       if (_.isEmpty(geocoders)) {
         availableGeocoders.value = _.map(allGeocoders, geocoder => {
           return { value: geocoder, label: i18n.tie(`Geocoders.${geocoder}`) }
