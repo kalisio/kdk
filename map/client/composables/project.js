@@ -44,16 +44,19 @@ export function useProject (options = {}) {
   async function loadProject (query) {
     // Ensure project ID is available first
     refreshProjectId()
+    // Populate project (i.e. layers, views) by default
+    const projectQuery = (query ? _.cloneDeep(query) : {})
+    _.defaults(projectQuery, { populate: true })
     if (!projectId.value) {
       project.value = null
       if (query) {
-        const response = await options.planetApi.getService('projects', options.context).find({ query })
+        const response = await options.planetApi.getService('projects', options.context).find({ query: projectQuery })
         project.value = _.get(response, 'data[0]')
         // If we load project manually not by using route update ID as well
         if (project.value) projectId.value = project.value._id
       }
     } else {
-      project.value = await options.planetApi.getService('projects', options.context).get(projectId.value)
+      project.value = await options.planetApi.getService('projects', options.context).get(projectId.value, { query: projectQuery })
     }
     if (options.updateActivity) setActivityProject(project.value)
     // Keep track of source API

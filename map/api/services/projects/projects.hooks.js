@@ -3,7 +3,7 @@ import commonHooks from 'feathers-hooks-common'
 // import { hooks as schemaHooks, resolve } from '@feathersjs/schema'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 
-const { setNow, discard, getItems, replaceItems } = commonHooks
+const { setNow, discard, getItems, replaceItems, when } = commonHooks
 
 /* Populate is too much specialized and does not allow to merge input/output
  but we need the service information on the fronted
@@ -37,6 +37,16 @@ const contextsResolver = resolve({
   }
 })
 */
+
+function marshallPopulateQuery (hook) {
+  const query = hook.params.query
+  if (query) {
+    if (query.populate) {
+      delete query.populate
+      hook.params.populate = true
+    }
+  }
+}
 
 const populateProjects = async (hook) => {
   let items = getItems(hook)
@@ -74,8 +84,8 @@ const populateProjects = async (hook) => {
 export default {
   before: {
     all: [],
-    find: [],
-    get: [],
+    find: [marshallPopulateQuery],
+    get: [marshallPopulateQuery],
     create: [coreHooks.convertObjectIDs(['layers', 'views']), setNow('createdAt', 'updatedAt')],
     update: [],
     patch: [coreHooks.convertObjectIDs(['layers', 'views']), discard('createdAt', 'updatedAt'), setNow('updatedAt')],
@@ -84,8 +94,8 @@ export default {
 
   after: {
     all: [],
-    find: [populateProjects],
-    get: [populateProjects],
+    find: [when(hook => hook.params.populate, populateProjects)],
+    get: [when(hook => hook.params.populate, populateProjects)],
     create: [],
     update: [],
     patch: [],

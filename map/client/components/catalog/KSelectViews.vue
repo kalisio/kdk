@@ -85,8 +85,8 @@ export default {
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront
   async setup (props) {
-    const project = useProject()
-    await project.loadProject({ context: props.contextId })
+    const project = useProject({ contextId: props.contextId })
+    await project.loadProject({ populate: false })
     // Expose
     return {
       ...project
