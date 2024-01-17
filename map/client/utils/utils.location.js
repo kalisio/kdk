@@ -44,7 +44,7 @@ export function parseCoordinates (str) {
   }
 }
 
-export async function searchLocation (pattern, options) {
+export async function searchLocation (planet, pattern, options) {
   const locations = []
   // Try to parse lat/long coordinates
   const coordinates = parseCoordinates(pattern)
@@ -65,7 +65,7 @@ export async function searchLocation (pattern, options) {
       // only request geocoder results from specified sources
       filter = '&sources=*(' + options.geocoders.join('|') + ')'
     }
-    const endpoint = Store.get('capabilities.api.gateway') + '/geocoder'
+    const endpoint = planet.gateway + '/geocoder'
     const jwt = await api.get('storage').getItem(config.gatewayJwt)
     const query = `${endpoint}/forward?q=${pattern}${filter}`
     const results = await fetch(query, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())

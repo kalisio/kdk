@@ -46,7 +46,8 @@ export function useLocation () {
     return Store.get('geolocation.location')
   }
   async function search (pattern) {
-    return searchLocation(pattern, { geocoders: selectedGeocoders.value })
+    const planet = getActivityProject().getPlanetApi().getConfig()
+    return searchLocation(planet, pattern, { geocoders: selectedGeocoders.value })
   }
   // Expose
   return {
