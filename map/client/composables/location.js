@@ -24,7 +24,7 @@ export function useLocation () {
       selectedGeocoders.value = []
     } else {
       // check the capabilities to list the geocoders
-      let allGeocoders = await listGeocoders()
+      let allGeocoders = await listGeocoders(getActivityProject().getPlanetApi().getConfig())
       allGeocoders = filterGeocoders(allGeocoders, project)
       if (_.isEmpty(geocoders)) {
         availableGeocoders.value = _.map(allGeocoders, geocoder => {

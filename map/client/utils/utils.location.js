@@ -79,10 +79,10 @@ export async function searchLocation (planet, pattern, options) {
   return locations
 }
 
-export async function listGeocoders () {
+export async function listGeocoders (planet) {
   let response
   try {
-    const endpoint = Store.get('capabilities.api.gateway') + '/geocoder'
+    const endpoint = planet.gateway + '/geocoder'
     const jwt = await api.get('storage').getItem(config.gatewayJwt)
     response = await fetch(`${endpoint}/capabilities/forward`, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
     if (response.i18n) i18n.registerTranslation(response.i18n)
