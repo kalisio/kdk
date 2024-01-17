@@ -2,6 +2,18 @@ import _ from 'lodash'
 import L from 'leaflet'
 import { leafletLayer, json_style } from 'protomaps-leaflet'
 
+// Use this locally to make pmtiles accessible
+// http-server --cors
+
+// Some changes have been required in the style and in the protomaps-leaflet module to make rendering better:
+// background layer type not supported => converted to fill but does not seem to work
+// text field for labels should be rewritten and not yet support multiple ones => need to rewrite things like "text-field": "{name:latin} {name:nonlatin}" to "text-field": "name:latin"
+// stops not supported on numbers => need to add things like "opacity: numberOrFn(layer.paint["fill-opacity"])" whenever required
+// hsla colors not supported => converted to hex + opacity
+// circle/line opacity not supported => need to add things like "opacity: numberOrFn(layer.paint["line-opacity"])" whenever required
+// fonts partially supported but not loaded from pbf like tileservergl => need to be implemented, using default one for now
+// stops not supported on colors => need to be implemented
+// sprites partially supported but not loaded from atlas like tileservergl => need to be implemented
 export const pmtilesLayers = {
   methods: {
     async createLeafletPMTilesLayer (options) {
