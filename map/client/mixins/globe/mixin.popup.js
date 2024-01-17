@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { Time, Units } from '../../../../core/client/index.js'
 import { getTextTable } from '../../utils.globe.js'
 
@@ -23,7 +24,7 @@ export const popup = {
           if (popupStyle.template) {
             const compiler = popupStyle.compiler
             // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
-            text = compiler({ feature: { properties }, properties, $t: this.$t, Units, Time })
+            text = compiler({ feature: { properties }, properties, $t: this.$t, Units, Time, moment })
           } else if (popupStyle.pick) {
             properties = _.pick(properties, popupStyle.pick)
           } else if (popupStyle.omit) {

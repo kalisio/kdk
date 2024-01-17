@@ -1,5 +1,6 @@
 import L from 'leaflet'
 import _ from 'lodash'
+import moment from 'moment'
 import { Time, Units } from '../../../../core/client/index.js'
 import { getHtmlTable } from '../../utils.map.js'
 
@@ -22,7 +23,7 @@ export const popup = {
         if (!html) {
           if (popupStyle.template) {
             const compiler = popupStyle.compiler
-            html = compiler({ properties, feature, $t: this.$t, Units, Time })
+            html = compiler({ properties, feature, $t: this.$t, Units, Time, moment })
           } else if (popupStyle.pick) {
             properties = _.pick(properties, popupStyle.pick)
           } else if (popupStyle.omit) {

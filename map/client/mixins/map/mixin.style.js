@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import chroma from 'chroma-js'
+import moment from 'moment'
+import { Time, Units } from '../../../../core/client/index.js'
 import { createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec, LeafletStyleMappings } from '../../utils.map.js'
 
 export const style = {
@@ -24,7 +26,7 @@ export const style = {
       if (leafletOptions.template) {
         leafletOptions.template.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma }))
+          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma, moment, Units, Time }))
         })
       }
       // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
@@ -45,7 +47,7 @@ export const style = {
       if (leafletOptions.template) {
         leafletOptions.template.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma }))
+          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma, moment, Units, Time }))
         })
       }
       // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)

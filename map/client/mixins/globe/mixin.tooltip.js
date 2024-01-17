@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { Time, Units } from '../../../../core/client/index.js'
 
 export const tooltip = {
@@ -36,7 +37,7 @@ export const tooltip = {
           } else if (tooltipStyle.template) {
             const compiler = tooltipStyle.compiler
             // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
-            text = compiler({ feature: { properties }, properties, $t: this.$t, Units, Time })
+            text = compiler({ feature: { properties }, properties, $t: this.$t, Units, Time, moment })
           }
         }
         if (text) {
