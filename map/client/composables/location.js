@@ -17,14 +17,14 @@ export function useLocation () {
   // Input geocoders if given should be like { source: xxx, selected: true }
   async function setGeocoders (geocoders) {
     const project = getActivityProject()
-
+    const planet = getActivityProject().getPlanetApi().getConfig()
     if (_.isNull(geocoders)) {
       // clear the geocoders
       availableGeocoders.value = []
       selectedGeocoders.value = []
     } else {
       // check the capabilities to list the geocoders
-      let allGeocoders = await listGeocoders(getActivityProject().getPlanetApi().getConfig())
+      let allGeocoders = await listGeocoders(planet)
       allGeocoders = filterGeocoders(allGeocoders, project)
       if (_.isEmpty(geocoders)) {
         availableGeocoders.value = _.map(allGeocoders, geocoder => {
