@@ -88,9 +88,6 @@ function getUnit (timeSerie) {
   const unit = _.get(timeSerie, 'variable.unit')
   return unit
 }
-function getTargetUnit (timeSerie) {
-  return Units.getTargetUnit(getUnit(timeSerie))
-}
 function getZoom () {
   const start = moment.utc(_.get(chart, 'scales.x.min'))
   const end = moment.utc(_.get(chart, 'scales.x.max'))
