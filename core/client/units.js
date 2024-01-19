@@ -93,6 +93,85 @@ const angle = {
     label: 'units.RADIAN_LABEL'
   }
 }
+const fraction = {
+  'ppm': {
+    symbol: 'units.PPM_SYMBOL',
+    label: 'units.PPM_LABEL'
+  }
+}
+const density = {
+  'ug/m^3': {
+    symbol: 'units.MICROGRAM_PER_M3_SYMBOL',
+    label: 'units.MICROGRAM_PER_M3_LABEL'
+  }
+}
+const volumeVelocity = {
+  'm^3/s': {
+    symbol: 'units.CUBIC_METER_PER_SECOND_SYMBOL',
+    label: 'units.CUBIC_METER_PER_SECOND_LABEL'
+  }
+}
+const radioactivity = {
+  'bq': {
+    symbol: 'units.BEQUEREL_SYMBOL',
+    label: 'units.BEQUEREL_LABEL',
+    baseName: 'radioactivity'
+  }
+}
+const radioactivityDensity = {
+  'bq/m^2': {
+    symbol: 'units.BEQUEREL_PER_M2_SYMBOL',
+    label: 'units.BEQUEREL_PER_M2_LABEL'
+  },
+  'bq/m^3': {
+    symbol: 'units.BEQUEREL_PER_M3_SYMBOL',
+    label: 'units.BEQUEREL_PER_M3_LABEL'
+  }
+}
+const equivalentDose = {
+  'sv': {
+    symbol: 'units.SIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.SIEVERT_PER_HOUR_LABEL',
+    baseName: 'equivalentDose'
+  },
+  'msv': {
+    symbol: 'units.MILLISIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.MILLISIEVERT_PER_HOUR_LABEL',
+    definition: '0.001 sv'
+  },
+  'usv': {
+    symbol: 'units.MICROSIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.MICROSIEVERT_PER_HOUR_LABEL',
+    definition: '0.000001 sv'
+  },
+  'nsv': {
+    symbol: 'units.NANOSIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.NANOSIEVERT_PER_HOUR_LABEL',
+    definition: '0.000000001 sv'
+  }
+}
+const equivalentDoseRate = {
+  'svh': {
+    symbol: 'units.SIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.SIEVERT_PER_HOUR_LABEL',
+    baseName: 'equivalentDoseRate'
+  },
+  'msvh': {
+    symbol: 'units.MILLISIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.MILLISIEVERT_PER_HOUR_LABEL',
+    definition: '0.001 sv/h'
+  },
+  'usvh': {
+    symbol: 'units.MICROSIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.MICROSIEVERT_PER_HOUR_LABEL',
+    definition: '0.000001 sv/h'
+  },
+  'nsvh': {
+    symbol: 'units.NANOSIEVERT_PER_HOUR_SYMBOL',
+    label: 'units.NANOSIEVERT_PER_HOUR_LABEL',
+    definition: '0.000000001 sv/h'
+  }
+}
 
 const quantities = {
   length,
@@ -100,7 +179,14 @@ const quantities = {
   area,
   velocity,
   temperature,
-  angle
+  angle,
+  fraction,
+  density,
+  volumeVelocity,
+  radioactivity,
+  radioactivityDensity,
+  equivalentDose,
+  equivalentDoseRate
 }
 
 // Export singleton
@@ -116,6 +202,9 @@ export const Units = {
           velocity: 'm/s',
           temperature: 'degC',
           angle: 'deg',
+          radioactivity: 'bq',
+          equivalentDose: 'usv',
+          equivalentDoseRate: 'usvh',
           notation: 'auto',
           precision: 3
         }
@@ -171,13 +260,16 @@ export const Units = {
       return units
     }
   },
+  // Get unit definition by name
   getUnit (unit) {
     return _.find(this.getUnits(), { name: unit })
   },
+  // Get unit symbol by unit name
   getUnitSymbol (unit) {
     const definition = this.getUnit(unit)
     return (definition ? i18n.t(definition.symbol) : unit)
   },
+  // Get default unit definition (if any) for a given quantity/unit name
   getDefaultUnit (quantityOrUnit) {
     // Check for quantity first
     let defaultUnit = Store.get(`units.default.${quantityOrUnit}`)
@@ -189,7 +281,23 @@ export const Units = {
     }
     return defaultUnit
   },
+  // Get symbol of default unit (if any) for a given quantity/unit name
+  getDefaultUnitSymbol (quantityOrUnit) {
+    return this.getUnitSymbol(this.getDefaultUnit(quantityOrUnit))
+  },
+  // Get target unit for a source unit, will be default unit (if any) or source unit
+  getTargetUnit (sourceUnit) {
+    return this.getDefaultUnit(sourceUnit) || sourceUnit
+  },
+  // Get target unit symbol for a source unit, will be default unit symbol (if any) or source unit symbol
+  getTargetUnitSymbol (sourceUnit) {
+    return this.getUnitSymbol(this.getTargetUnit(sourceUnit))
+  },
+  // Convert between units by names
+  // If target unit is not specified will use default unit (if any) for source unit
   convert (value, sourceUnit, targetUnit) {
+    // If target unit is not given use default one
+    if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
     if (sourceUnit === targetUnit) return value
     let n = math.unit(value, sourceUnit)
     n = n.toNumber(targetUnit)
@@ -197,6 +305,9 @@ export const Units = {
     n = (targetUnit === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
     return n
   },
+  // Format display of source value in target unit, converting from source unit
+  // If target unit is not specified will use default unit (if any) for source unit
+  // options are mathjs format options
   format (value, sourceUnit, targetUnit, options) {
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)

@@ -111,7 +111,7 @@ export default {
       return this.zoomHistory.length > 0
     },
     getBaseUnit (variable, properties) {
-      const unit = variable.units[0]
+      const unit = variable.unit
       // Could be either directly the unit or the property of the measure storing the unit
       return _.get(properties, unit, unit)
     },
@@ -145,15 +145,12 @@ export default {
         // Check if we are targetting a specific level
         const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
         // Falback to base unit
-        const baseUnit = this.getBaseUnit(variable, properties)
-        // Get default unit for this quantity instead if available
-        const defaultUnit = Units.getDefaultUnit(baseUnit)
-        const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
+        const unit = this.getBaseUnit(variable, properties)
         const label = this.$t(variable.label) || variable.label
         // Aggregated variable available for feature ?
         if (this.hasVariable(name, properties, variable.baseQuery)) {
           // Build data structure as expected by visualisation
-          let values = properties[name].map((value, index) => ({ x: time[name][index], y: Units.convert(value, baseUnit, unit) }))
+          let values = properties[name].map((value, index) => ({ x: time[name][index], y: Units.convert(value, unit) }))
           // Keep only selected value if multiple are provided for the same time (eg different forecasts)
           if (variable.runTimes && !_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
             values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
@@ -162,8 +159,7 @@ export default {
           // To enable decimation the x, e.g. time, values should be defined in millisecond (parsing is disable)
           values = values.map((value) => Object.assign(value, { x: new Date(value.x).getTime() }))
           this.datasets.push(_.merge({
-            label: `${label} (${Units.getUnitSymbol(unit)})`,
-            baseUnit,
+            label: `${label} (${Units.getTargetUnitSymbol(unit)})`,
             unit,
             data: values,
             cubicInterpolationMode: 'monotone',
@@ -181,14 +177,10 @@ export default {
         // Check if we are targetting a specific level
         const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
         // Falback to base unit
-        const baseUnit = this.getBaseUnit(variable, properties)
-        // Get default unit for this quantity instead if available
-        const defaultUnit = Units.getDefaultUnit(baseUnit)
-        const unit = (variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
+        const unit = this.getBaseUnit(variable, properties)
         // Variable available for feature ?
         if (this.hasVariable(name, properties, variable.baseQuery)) {
           this.yAxes[`y${axisId}`] = _.merge({
-            baseUnit,
             unit,
             display: 'auto',
             position: (axisId + 1) % 2 ? 'left' : 'right',
@@ -196,7 +188,7 @@ export default {
               color: this.datasets[axisId].backgroundColor,
               callback: function (value, index, values) {
                 if (values[index] !== undefined) {
-                  return Units.format(values[index].value, unit, unit, { symbol: false })
+                  return Units.format(values[index].value, unit, null, { symbol: false })
                 }
               }
             }
@@ -241,23 +233,41 @@ export default {
         // Is current time visible in data time range ?
         const currentTime = Time.getCurrentTime()
         const timeRange = Time.getRange()
-        let annotation = {}
+        let annotations = []
         if (currentTime.isBetween(timeRange.start, timeRange.end)) {
-          annotation = {
-            annotations: [{
+          annotations.push({
+            type: 'line',
+            mode: 'vertical',
+            scaleID: 'x',
+            value: currentTime.toDate(),
+            borderColor: 'grey',
+            borderWidth: 1,
+            label: {
+              backgroundColor: 'rgba(0,0,0,0.65)',
+              content: _.get(Time.getCurrentFormattedTime(), 'time.long'),
+              position: 'start',
+              enabled: true
+            }
+          })
+        }
+        // Display also time of probed feature, only if single variable
+        if ((this.probedVariables.length === 1) && this.feature && this.feature.time) {
+          const time = moment.utc(this.feature.time[this.probedVariables[0].name])
+          if (time.isBetween(timeRange.start, timeRange.end)) {
+            annotations.push({
               type: 'line',
               mode: 'vertical',
               scaleID: 'x',
-              value: currentTime.toDate(),
-              borderColor: 'grey',
+              value: time.toDate(),
+              borderColor: 'green',
               borderWidth: 1,
               label: {
                 backgroundColor: 'rgba(0,0,0,0.65)',
-                content: _.get(Time.getCurrentFormattedTime(), 'time.long'),
+                content: Time.format(time, 'time.long'),
                 position: 'start',
                 enabled: true
               }
-            }]
+            })
           }
         }
         this.chart.update({
@@ -323,11 +333,13 @@ export default {
                     const { unit, label } = context.dataset
                     const y = _.get(context, 'parsed.y')
                     // We have unit in label name for legend but we want it after the value for tooltip
-                    return label.replace(`(${Units.getUnitSymbol(unit)})`, '') + ': ' + Units.format(y, unit, unit)
+                    return label.replace(`(${Units.getTargetUnitSymbol(unit)})`, '') + ': ' + Units.format(y, unit)
                   }
                 }
               },
-              annotation,
+              annotation: {
+                annotations
+              },
               zoom: {
                 zoom: {
                   drag: {

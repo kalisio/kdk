@@ -60,7 +60,7 @@ export default {
       this.kActivity.setSelectedLevel(level)
     },
     getFormatedLevel (level) {
-      const unit = _.get(this.kActivity.selectableLevels, 'units[0]')
+      const unit = _.get(this.kActivity.selectableLevels, 'unit')
       return `${level || this.kActivity.selectedLevel} ${unit}`
     }
   }

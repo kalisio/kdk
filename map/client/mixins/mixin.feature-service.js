@@ -41,11 +41,17 @@ export const featureService = {
       return this.getFeatures(layer, queryInterval)
     },
     getMeasureForFeatureBaseQuery (layer, feature) {
+      // We might have a different ID to identify measures related to a timeseries (what is called a chronicle)
+      // than measures displayed on a map. For instance mobile measures might appear at different locations,
+      // but when selecting one we would like to display the timeseries related to all locations.
+      let featureId = layer.chronicleId || layer.featureId
       // Support compound ID
-      const featureId = (Array.isArray(layer.featureId) ? layer.featureId : [layer.featureId])
-      return featureId.reduce((result, id) =>
+      featureId = (Array.isArray(featureId) ? featureId : [featureId])
+      const query = featureId.reduce((result, id) =>
         Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
       {})
+      query.$groupBy = featureId
+      return query
     },
     async getMeasureForFeatureQuery (layer, feature, startTime, endTime) {
       const query = await this.getFeaturesQuery(_.merge({

@@ -197,6 +197,15 @@
         "quantity": "angle"
       }
     },
+    "defaultEquivalentDoseRate": {
+      "type": "string",
+      "group": "schemas.UNITS_SETTINGS",
+      "field": {
+        "component": "form/KUnitField",
+        "label": "schemas.EQUIVALENT_DOSE_RATE_FIELD_LABEL",
+        "quantity": "equivalentDoseRate"
+      }
+    },
     "defaultNotation": {
       "type": "string",
       "group": "schemas.NOTATION_SETTINGS",

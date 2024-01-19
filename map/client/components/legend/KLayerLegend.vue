@@ -3,6 +3,7 @@
     <div class="q-py-xs q-px-md">
       <component
         :is="legend.renderer"
+        :layer="layer"
         :label="legend.label"
         :content="legend.content"
       />
@@ -44,7 +45,7 @@ const legends = computed(() => {
   layerLegends.forEach(legend => {
     if (!legend.content) {
       logger.warn(`[KDK] Legend ${legend.label} for ${props.layer.name} has no content`)
-      return
+      //return
     }
     const minZoom = _.get(legend, 'minZoom', _.get(props.layer, `${props.engine}.minZoom`, 0))
     const maxZoom = _.get(legend, 'maxZoom', _.get(props.layer, `${props.engine}.maxZoom`, 99))
