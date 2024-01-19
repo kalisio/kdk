@@ -298,7 +298,10 @@ export const Units = {
   convert (value, sourceUnit, targetUnit) {
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
-    if (sourceUnit === targetUnit) return value
+    // Check if the target unit does exist
+    if (!targetUnit) return value
+    // Check if the source unit does exist
+    if (math.Unit.isValuelessUnit(sourceUnit)) return value
     let n = math.unit(value, sourceUnit)
     n = n.toNumber(targetUnit)
     // Remap from [-180,+180[ to [0,360[ for angles
