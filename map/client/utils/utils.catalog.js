@@ -30,7 +30,7 @@ export async function setEngineJwt (layers, planetApi) {
   let jwt = (planetConfig.gatewayJwt ? await planetApi.get('storage').getItem(planetConfig.gatewayJwt) : null)
   let jwtField = planetConfig.gatewayJwtField
   // Check both the default built-in config or the server provided one if any (eg mobile apps)
-  const gatewayUrl = planetConfig.gateway || Store.get('capabilities.api.gateway')
+  const gatewayUrl = Store.get('capabilities.api.gateway') || planetConfig.gateway
   if (jwt) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'iconUrl', gatewayUrl, jwtField, jwt)
