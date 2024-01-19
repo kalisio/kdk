@@ -83,13 +83,13 @@ async function onCanvasRef (ref) {
   canvas = ref
 }
 
-function getUnits (timeSerie) {
+function getUnit (timeSerie) {
   // Falback to base unit
-  const baseUnit = _.get(timeSerie, 'variable.units[0]')
-  // Get default unit for this quantity instead if available
-  const defaultUnit = Units.getDefaultUnit(baseUnit)
-  const unit = (timeSerie.variable.units.includes(defaultUnit) ? defaultUnit : baseUnit)
-  return { unit, baseUnit }
+  const unit = _.get(timeSerie, 'variable.unit')
+  return unit
+}
+function getTargetUnit (timeSerie) {
+  return Units.getTargetUnit(getUnit(timeSerie))
 }
 function getZoom () {
   const start = moment.utc(_.get(chart, 'scales.x.min'))
@@ -145,9 +145,9 @@ async function makeChartConfig () {
               return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.long')}` : '')
             },
             label: (context) => {
-              const { baseUnit, unit, label } = context.dataset
+              const { unit, label } = context.dataset
               const y = _.get(context, 'parsed.y')
-              return label + ': ' + Units.format(y, baseUnit, unit)
+              return label + ': ' + Units.format(y, unit)
             }
           }
         },
@@ -255,12 +255,11 @@ function makeScales () {
   unit2axis.clear()
   let axisId = 0
   for (const timeSerie of props.timeSeries) {
-    const { unit, baseUnit } = getUnits(timeSerie)
+    const unit = getUnit(timeSerie)
     if (!unit2axis.has(unit)) {
       const axis = `y${axisId}`
       unit2axis.set(unit, axis)
       scales[axis] = _.merge({
-        baseUnit,
         unit,
         type: props.logarithmic ? 'logarithmic' : 'linear',
         position: (axisId + 1) % 2 ? 'left' : 'right',
@@ -271,7 +270,7 @@ function makeScales () {
         ticks: {
           callback: function (value, index, values) {
             if (values[index] !== undefined) {
-              return Units.format(values[index].value, baseUnit, unit, { symbol: false })
+              return Units.format(values[index].value, unit, null, { symbol: false })
             }
           }
         }
@@ -290,12 +289,11 @@ async function makeDatasets () {
   const datasets = []
   for (const timeSerie of props.timeSeries) {
     const label = _.get(timeSerie, 'variable.label')
-    const { unit, baseUnit } = getUnits(timeSerie)
+    const unit = getUnit(timeSerie)
     const data = await timeSerie.data
     const dataset = Object.assign({
       label,
       data,
-      baseUnit,
       unit,
       yAxisID: unit2axis.get(unit)
     }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))

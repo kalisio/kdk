@@ -275,9 +275,9 @@ export const Units = {
     let defaultUnit = Store.get(`units.default.${quantityOrUnit}`)
     // If not check by matching quantity based on given unit
     if (!defaultUnit) {
-      const baseUnit = Units.getUnit(quantityOrUnit)
+      const baseUnit = this.getUnit(quantityOrUnit)
       // Get default unit for this quantity instead
-      if (baseUnit) defaultUnit = Units.getDefaultUnit(baseUnit.quantity)
+      if (baseUnit) defaultUnit = this.getDefaultUnit(baseUnit.quantity)
     }
     return defaultUnit
   },
