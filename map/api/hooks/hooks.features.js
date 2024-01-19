@@ -36,8 +36,9 @@ export function simplifyResult (hook) {
   const method = hook.method
   const result = getItems(hook)
   const simplifyResult = _.get(service, 'options.simplifyResult', ['create', 'update', 'patch', 'remove'])
+  const simplifyResultLimit = _.get(service, 'options.simplifyResultLimit', 1)
   // Only keep track of object IDs so that caller can at least get them if required
-  if (simplifyResult.includes(method) && Array.isArray(result)) {
+  if (simplifyResult.includes(method) && Array.isArray(result) && (result.length > simplifyResultLimit)) {
     debug(`Simplifying multi result for ${method} method on service ${service.name}`)
     replaceItems(hook, result.map(item => ({ _id: item._id })))
   }
@@ -53,7 +54,8 @@ export function skipEvents (hook) {
   const simplifyEvents = _.get(service, 'options.simplifyEvents', [])
   // Even if we emit simplified events we skip standard feathers events to emit our own version
   let skip = skipEvents.includes(event) || simplifyEvents.includes(event)
-  skip = skip && Array.isArray(result)
+  const skipEventsLimit = _.get(service, 'options.skipEventsLimit', 1)
+  skip = skip && Array.isArray(result) && (result.length > skipEventsLimit)
   if (skip) debug(`Skipping standard event ${event} for multi operation on service ${service.name}`)
   return iff(hook => skip, coreHooks.skipEvents)(hook)
 }
