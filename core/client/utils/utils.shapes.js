@@ -175,7 +175,7 @@ export function createShape (options) {
   if (options.icon) {
     iconTag = '<i '
     iconTag += `class="${options.icon.classes}" `
-    const color = options.icon.color || 'white'
+    const color = options.icon.color || 'black'
     const opacity = options.icon.opacity || 1
     const size = options.icon.size || 16
     const xOffset = options.icon.xOffset || _.get(shape, 'icon.xOffset', '-50%')
@@ -183,10 +183,23 @@ export function createShape (options) {
     iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}); color: ${color}; opacity: ${opacity}; font-size: ${size}px;"`
     iconTag += '/>'
   }
+  // Apply text style
+  let textTag = ''
+  if (options.text) {
+    textTag = '<span '
+    const color = options.text.color || 'black'
+    const size = options.text.size || 12
+    const xOffset = options.text.xOffset || _.get(shape, 'text.xOffset', '-50%')
+    const yOffset = options.text.yOffset || _.get(shape, 'text.yOffset', '-50%')
+    textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}); color: ${color}; font-size: ${size}px;"`
+    textTag += '>'
+    textTag += options.text.label
+    textTag += '</span>'
+  }
   return {
     width,
     height,
-    html: beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + endDivTag
+    html: beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + textTag + endDivTag
   }
 }
 
