@@ -241,7 +241,12 @@
     "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "Afficher en haut à gauche",
     "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "Afficher en haut à droite",
     "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Afficher en bas à droite",
-    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Afficher en bas à gauche"
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Afficher en bas à gauche",
+    "CAPTURE_ADVANCED_SETTINGS": "Paramètres avancés",
+    "CAPTURE_DATETIME_RANGE_FIELD_LABEL": "Paramétrez l'intervalle de temps",
+    "CAPTURE_FORMAT_FIELD_LABEL": "Sélectionnez le format de fichier",
+    "CAPTURE_PDF_FORMAT_FIELD_LABEL": "PDF",
+    "CAPTURE_PNG_FORMAT_FIELD_LABEL": "PNG"
   },
   "tours": {
     "navigation-bar": {

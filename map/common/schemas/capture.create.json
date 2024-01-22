@@ -12,6 +12,18 @@
         "label": "schemas.CAPTURE_RESOLUTION_FIELD_LABEL"
       }
     },
+    "format": {
+      "type": "string", 
+      "default": "png",
+      "field": {
+        "component": "form/KSelectField",
+        "label": "schemas.CAPTURE_FORMAT_FIELD_LABEL",
+        "options": [
+          { "label": "schemas.CAPTURE_PNG_FORMAT_FIELD_LABEL", "value": "png" },
+          { "label": "schemas.CAPTURE_PDF_FORMAT_FIELD_LABEL", "value": "pdf" }
+        ]
+      }
+    },
     "header": {
       "type": "string",
       "maxLength": 200,
@@ -98,8 +110,18 @@
           { "label": "schemas.CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL", "value": "bottom-left" }
         ]
       }
+    },
+    "dateTime": {
+      "type": "object",
+      "group": "schemas.CAPTURE_ADVANCED_SETTINGS",
+      "default": { "start": "2023-11-17T23:00:00.000Z", "end": "2023-12-17T23:00:00.000Z"},
+      "field": {
+        "component": "form/KDateTimeRangeField",
+        "min": "2022-12-31T23:00:00.000Z",
+        "max": "2023-12-17T23:00:00.000Z",
+        "label": "schemas.CAPTURE_DATETIME_RANGE_FIELD_LABEL"
+      }
     }
   },
-  "required": ["resolution", "compass", "legend"]
+  "required": ["resolution", "compass", "legend", "format"]
 }
-
