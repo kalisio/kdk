@@ -295,7 +295,7 @@ export const geojsonLayers = {
           leafletOptions.tooltip.compiler = _.template(tooltipTemplate)
         }
         // Optimize styling by creating color scales up-front
-        const variables = _.get(options, 'variables')
+        const variables = _.get(options, 'variables', [])
         variables.forEach(variable => {
           if (_.has(variable, 'chromajs')) {
             variable.colorScale = buildColorMap(_.get(variable, 'chromajs'))
