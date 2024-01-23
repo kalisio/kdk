@@ -156,21 +156,23 @@ module.exports = [{
     clickOnNext: ['#tools', '#capture-map'],
     nextDelay: 500
   }
-}, {
-  target: '#capture-button',
-  title: 'tours.navigation-bar.CAPTURE_BUTTON_LABEL',
-  params: {
-    placement: 'bottom',
-  }
-}, {
-  target: '#back',
-  title: 'tours.navigation-bar.CAPTURE_BACK_LABEL',
-  params: {
-    placement: 'bottom',
-    clickOnNext: '#back',
-    nextDelay: 500
-  }
-}, {
+}, 
+// {
+//   target: '#capture-button',
+//   title: 'tours.navigation-bar.CAPTURE_BUTTON_LABEL',
+//   params: {
+//     placement: 'bottom',
+//   }
+// }, {
+//   target: '#back',
+//   title: 'tours.navigation-bar.CAPTURE_BACK_LABEL',
+//   params: {
+//     placement: 'bottom',
+//     clickOnNext: '#back',
+//     nextDelay: 500
+//   }
+// }, 
+{
   target: '#toggle-vr',
   title: 'tours.navigation-bar.TOGGLE_VR_LABEL',
   params: {
