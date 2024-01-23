@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import chroma from 'chroma-js'
+import { buildColorMap } from '../utils.js'
 
 import { tile2key, tileSetContainsParent } from './utils.js'
 
@@ -21,12 +21,10 @@ const TiledWindLayer = L.GridLayer.extend({
     // set of loaded leaflet tiles
     this.loadedTiles = new Set()
 
-    // build colormap
-    const domain = _.get(options, 'chromajs.domain', null)
-    const colors = _.get(options, 'chromajs.scale', null)
-    const invert = _.get(options, 'chromajs.invertScale', false)
-    const scale = chroma.scale(colors)
-    this.colorMap = scale.domain(invert ? domain.slice().reverse() : domain)
+    // Setup the colormap
+    const chromajs = _.get(options, 'chromajs')
+    this.colorMap = buildColorMap(chromajs)
+    const invert = chromajs.invertScale
 
     this.uSource = uSource
     this.vSource = vSource

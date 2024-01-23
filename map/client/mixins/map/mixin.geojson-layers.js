@@ -7,7 +7,7 @@ import { Time } from '../../../../core/client/time.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer } from '../../utils.map.js'
+import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, buildColorMap } from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default remove handler for leaflet-realtime due to
@@ -294,6 +294,13 @@ export const geojsonLayers = {
         if (tooltipTemplate) {
           leafletOptions.tooltip.compiler = _.template(tooltipTemplate)
         }
+        // Optimize styling by creating color scales up-front
+        const variables = _.get(options, 'variables')
+        variables.forEach(variable => {
+          if (_.has(variable, 'chromajs')) {
+            variable.colorScale = buildColorMap(_.get(variable, 'chromajs'))
+          }
+        })
         // Merge generic GeoJson options and layer options
         const geoJsonOptions = this.getGeoJsonOptions(options)
         Object.keys(geoJsonOptions).forEach(key => {

@@ -7,7 +7,7 @@ export function buildColorMap (options) {
   let colorMap
   const classes = _.get(options, 'classes')
   const domain = _.get(options, 'domain')
-  const scale = _.get(options, 'scale')
+  const scale = _.get(options, 'scale', _.get(options, 'colors', ''))
   const invert = _.get(options, 'invertScale')
   if (scale) {
     if (classes) {

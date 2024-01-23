@@ -23,10 +23,14 @@ export const style = {
         this.convertFromSimpleStyleSpec(feature.style || feature.properties))
       // We allow to template style properties according to feature,
       // because it can be slow you have to specify a subset of properties
+      const context = { properties, feature, chroma, moment, Units, Time }
       if (leafletOptions.template) {
+        // Create the map of variables
+        if (options.variables) context.variables = _.reduce(options.variables,
+          (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
         leafletOptions.template.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma, moment, Units, Time }))
+          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler(context))
         })
       }
       // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
@@ -44,10 +48,14 @@ export const style = {
 
       // We allow to template style properties according to feature,
       // because it can be slow you have to specify a subset of properties
+      const context = { properties, feature, chroma, moment, Units, Time }
       if (leafletOptions.template) {
+        // Create the map of variables
+        if (options.variables) context.variables = _.reduce(options.variables,
+          (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
         leafletOptions.template.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler({ properties, feature, chroma, moment, Units, Time }))
+          _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler(context))
         })
       }
       // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)

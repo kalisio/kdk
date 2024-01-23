@@ -33,12 +33,6 @@ const GeorasterLayer = L.Layer.extend({
     }
     // Setup the colormap
     this.colorMap = buildColorMap(this)
-    const scale = this.scale ? this.scale : ''
-    if (this.classes) {
-      this.colorMap = chroma.scale(scale).classes(this.classes)
-    } else if (this.domain) {
-      this.colorMap = chroma.scale(scale).domain(this.domain)
-    }
 
     // Setup the grid
     const grid = new Grid({
