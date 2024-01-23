@@ -1,28 +1,54 @@
 <template>
-  <div class="row items-center nowrap">
-    <KAction id="previous-step" icon="las la-step-backward" size="md" color="primary" tooltip="KTimeControl.PREVIOUS_STEP" handler="onPreviousStepClicked" />
-    <KAction id="previous-hour" icon="las la-angle-left" size="md" color="primary" tooltip="KTimeControl.PREVIOUS_HOUR" handler="onPreviousHourClicked"/>
-    <KAction id="previous-day" icon="las la-calendar-minus" size="md" color="primary" tooltip="KTimeControl.PREVIOUS_DAY" handler="onPreviousDayClicked"/>
-    <KAction id="timecontrol-now" icon="las la-user-clock" size="md" color="primary" tooltip="KTimeControl.SET_NOW" handler="onNowClicked"/>
-    <q-btn-group>
-      <KAction id="timecontrol-date" label=".." tooltip="KTimeControl.SET_DATE" handler=".."/>
-      <KAction id="timecontrol-time" label="formatTime(time, 'date.long') + ' ' + formatTime(time, 'time.long')" tooltip="KTimeControl.SET_TIME" handler=".."/>
+  <div id="timecontrols" class="row items-center nowrap">
+    <KAction id="previous-step" icon="las la-step-backward" :dense="dense" color="primary" tooltip="KTimeControl.PREVIOUS_STEP" handler="onPreviousStepClicked" />
+    <KAction id="previous-hour" icon="las la-angle-left" :dense="dense" color="primary" tooltip="KTimeControl.PREVIOUS_HOUR" handler="onPreviousHourClicked"/>
+    <KAction id="previous-day" icon="las la-calendar-minus" :dense="dense" color="primary" tooltip="KTimeControl.PREVIOUS_DAY" handler="onPreviousDayClicked"/>
+    <KAction id="timecontrol-now" icon="las la-user-clock" :dense="dense" color="primary" tooltip="KTimeControl.SET_NOW" handler="onNowClicked"/>
+    <q-btn-group rounded class="bg-primary q-mx-sm">
+      <KAction id="timecontrol-date" color="white" label="Date" tooltip="KTimeControl.SET_DATE" handler=".."/>
+      <q-separator inset color="white" />
+      <KAction id="timecontrol-time" color="white" label="Time" tooltip="KTimeControl.SET_TIME" handler=".."/>
     </q-btn-group>
-    <q-fab id="timecontrol-step" v-model="fabCenter" vertical-actions-align="center" color="primary" label=".." direction="up">
-      <q-fab-action id="step-05" color="primary" @click="onClick" label="05"/>
-      <q-fab-action id="step-10" color="primary" @click="onClick" label="10"/>
-      <q-fab-action id="step-12" color="primary" @click="onClick" label="12"/>
-      <q-fab-action id="step-15" color="primary" @click="onClick" label="15"/>
-      <q-fab-action id="step-20" color="primary" @click="onClick" label="20"/>
-      <q-fab-action id="step-30" color="primary" @click="onClick" label="30"/>
-      <q-fab-action id="step-60" color="primary" @click="onClick" label="60"/>
-      <q-fab-action id="step-3H" color="primary" @click="onClick" label="3H"/>
-      <q-fab-action id="step-6H" color="primary" @click="onClick" label="6H"/>
+    <q-fab id="timecontrol-step" vertical-actions-align="center" color="primary" :label="fabLabel" direction="up" padding="0">
+      <q-fab-action v-for="item in fabActions" :key="item.id" :id="item.id" :color="item.color" @click="onClick(item.label)" :label="item.label" padding="0" />
     </q-fab>
-    <KAction id="next-day" icon="las la-calendar-plus" size="md" color="primary" tooltip="KTimeControl.NEXT_DAY" handler="onNextDayClicked"/>
-    <KAction id="next-hour" icon="las la-angle-right" size="md" color="primary" tooltip="KTimeControl.NEXT_HOUR" handler="onNextHourClicked" />
-    <KAction id="next-step" icon="las la-step-forward" size="md" color="primary" tooltip="KTimeControl.NEXT_STEP" handler="onNextStepClicked" />
+    <KAction id="next-day" icon="las la-calendar-plus" :dense="dense" color="primary" tooltip="KTimeControl.NEXT_DAY" handler="onNextDayClicked"/>
+    <KAction id="next-hour" icon="las la-angle-right" :dense="dense" color="primary" tooltip="KTimeControl.NEXT_HOUR" handler="onNextHourClicked" />
+    <KAction id="next-step" icon="las la-step-forward" :dense="dense" color="primary" tooltip="KTimeControl.NEXT_STEP" handler="onNextStepClicked" />
   </div>
 </template>
+
 <script setup>
+import { ref, computed } from 'vue'
+import { useQuasar } from 'quasar'
+
+// Data
+const $q = useQuasar()
+
+//Fab Actions
+const fabLabel = ref('05');
+const fabActions = [
+  { id: "step-05", color: "primary", label: "05"},
+  { id: "step-10", color: "primary", label: "10"},
+  { id: "step-12", color: "primary", label: "12"},
+  { id: "step-15", color: "primary", label: "15"},
+  { id: "step-20", color: "primary", label: "20"},
+  { id: "step-30", color: "primary", label: "30"},
+  { id: "step-60", color: "primary", label: "60"},
+  { id: "step-3H", color: "primary", label: "3H"},
+  { id: "step-6H", color: "primary", label: "6H"}
+];
+
+// Computed
+const dense = computed(() => {
+  return $q.screen.lt.sm
+})
+
+// Functions
+const updateFabLabel = (label) => {
+  fabLabel.value = label;
+};
+const onClick = (label) => {
+  updateFabLabel(label);
+};
 </script>
