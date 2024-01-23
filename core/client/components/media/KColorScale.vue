@@ -12,7 +12,7 @@
 import _ from 'lodash'
 import { computed, watch, onMounted } from 'vue'
 import { uid } from 'quasar'
-import chroma from 'chroma-js'
+import { buildColorScale } from '../../utils/utils.colors'
 
 // props
 const props = defineProps({
@@ -91,7 +91,7 @@ const barWidth = computed(() => {
   return _.get(props.layout, 'bar.width', props.direction === 'vertical' ? 16 : undefined)
 })
 const ticksSize = computed(() => {
-  return _.get(props.layout, 'ticks.size', 8)
+  return _.get(props.layout, 'ticks.size', 10)
 })
 const ticksFont = computed(() => {
   return ticksSize.value + 'px ' + _.get(props.layout, 'ticks.font', 'Arial')
@@ -126,9 +126,9 @@ function drawDiscreteHorizontalScale () {
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
   const boxWidth = canvas.width / length
-  const classToColor = chroma.scale(props.colors).classes(props.classes)
+  const colorScale = buildColorScale(props)
   for (let i = 0; i < length; i++) {
-    canvasContext.fillStyle = classToColor(props.classes[i])
+    canvasContext.fillStyle = colorScale(props.classes[i])
     canvasContext.fillRect(i * boxWidth, yBar, boxWidth, barHeight.value)
   }
   // draw ticks
@@ -160,9 +160,9 @@ function drawDiscreteVerticalScale () {
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
   const boxHeight = (canvas.height - yBar) / length
-  const classToColor = chroma.scale(props.colors).classes(props.classes)
+  const colorScale = buildColorScale(props)
   for (let i = 0; i < length; i++) {
-    canvasContext.fillStyle = classToColor(props.classes[i])
+    canvasContext.fillStyle = colorScale(props.classes[i])
     canvasContext.fillRect(0, yBar + (length - i - 1) * boxHeight, barWidth.value, boxHeight)
   }
   // draw ticks
@@ -185,13 +185,14 @@ function drawContinuousHorizontalScale () {
   // draw colorbar
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = canvas.width
-  const colors = chroma.scale(props.colors).colors(length)
+  const colors = buildColorScale(props).colors(length)
   for (let i = 0; i < length; i++) {
     canvasContext.fillStyle = colors[i]
     canvasContext.fillRect(i, yBar, 1, barHeight.value)
   }
   // draw ticks
   const yTicks = yBar + barHeight.value + gutter.value + ticksSize.value
+  console.log(ticksFont.value)
   canvasContext.font = ticksFont.value
   canvasContext.fillStyle = ticksColor.value
   canvasContext.textAlign = 'left'
@@ -204,7 +205,7 @@ function drawContinuousVerticalScale () {
   // draw colorbar
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = canvas.height - yBar
-  const colors = chroma.scale(props.colors).colors(length)
+  const colors = buildColorScale(props).colors(length)
   for (let i = 0; i < length; i++) {
     canvasContext.fillStyle = colors[i]
     canvasContext.fillRect(0, yBar + length - i, barWidth.value, 1)

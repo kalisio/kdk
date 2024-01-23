@@ -1,4 +1,6 @@
 import _ from 'lodash'
+import logger from 'debug'
+import chroma from 'chroma-js'
 
 export const Colors = {
   dark: '#333',
@@ -33,4 +35,28 @@ export function getColorFromPalette (color) {
   // Check if already a RGB color
   if (color.startsWith('#')) return color
   else return Colors[color] || '#ffffff'
+}
+
+export function buildColorScale (options) {
+  let colors = options.colors
+  if (!colors)  {
+    logger.debug(`[KDK] buildColorScale: no colors defined, using default default colors 'Spectral'`)
+    colors = 'Spectral'
+  }
+  let scale = chroma.scale(colors)
+  if (options.classes) {
+    if (Array.isArray(options.classes)) {
+      // The provided classes implicitly define the domain, then we omit the domain
+      scale = scale.classes(options.classes)
+    }
+    else {
+      // In this case, we need to take into account an optional domain
+      if (options.domain) scale = scale.domain(options.domain).classes(options.classes)
+      else scale = scale.classes(options.classes)
+    }
+  } else {
+    // No classes defined, we need to take into account an optional domain
+    if (options.domain) scale = scale.domain(options.domain)
+  }
+  return scale
 }
