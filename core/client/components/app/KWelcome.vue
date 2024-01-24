@@ -78,6 +78,7 @@ import { ref, computed, onBeforeUnmount } from 'vue'
 import { openURL, useQuasar } from 'quasar'
 import { Store, api } from '../..'
 import { loadComponent } from '../../utils'
+import { LocalStorage } from '../../local-storage.js'
 import KAction from '../KAction.vue'
 
 // Data
@@ -94,11 +95,8 @@ const dense = computed(() => {
 })
 
 // functions
-function getWelcomeKey () {
-  return _.get(config, 'appName').toLowerCase() + '-welcome'
-}
 function show () {
-  const canShow = window.localStorage.getItem(getWelcomeKey())
+  const canShow = LocalStorage.get('welcome')
   // Introduction is only for logged users
   showWelcome.value = (_.isNil(canShow) ? _.get(config, 'layout.welcome', true) : JSON.parse(canShow))
 }
@@ -106,7 +104,7 @@ function hide () {
   showWelcome.value = false
 }
 function onToggleIntroduction (toggle) {
-  window.localStorage.setItem(getWelcomeKey(), JSON.stringify(!toggle))
+  LocalStorage.set('welcome', !toggle)
 }
 function onOnlineHelp () {
   const onlineHelp = _.get(config, 'appOnlineHelp')
