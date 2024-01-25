@@ -2,10 +2,9 @@ import _ from 'lodash'
 import L from 'leaflet'
 import parseGeoraster from 'georaster'
 import moment from 'moment'
-import chroma from 'chroma-js'
 import { GridRenderer } from '@weacast/leaflet'
 import { Grid } from '@weacast/core/client.js'
-import { buildColorMap } from '../../utils.js'
+import { utils as kdkCoreUtils } from '../../../../core.client.js'
 
 const GeorasterLayer = L.Layer.extend({
 
@@ -32,7 +31,7 @@ const GeorasterLayer = L.Layer.extend({
       return
     }
     // Setup the colormap
-    this.colorMap = buildColorMap(this)
+    this.colorMap = kdkCoreUtils.buildColorScale(this)
 
     // Setup the grid
     const grid = new Grid({
@@ -90,8 +89,8 @@ export const georasterLayers = {
       if (leafletOptions.type !== 'georaster') return
 
       // Copy options
-      const colorMap = _.get(options, 'variables[0].chromajs', null)
-      if (colorMap) Object.assign(leafletOptions, colorMap)
+      const colorScale = _.get(options, 'variables[0].chromajs', null)
+      if (colorScale) Object.assign(leafletOptions, colorScale)
       const band = _.get(options, 'variables[0].band', 0)
       Object.assign(leafletOptions, { band })
       const nodata = _.get(options, 'variables[0].nodata', null)

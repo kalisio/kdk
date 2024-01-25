@@ -2,23 +2,6 @@ import _ from 'lodash'
 import chroma from 'chroma-js'
 import formatcoords from 'formatcoords'
 
-// Build a color map from a JS object specification
-export function buildColorMap (options) {
-  let colorMap
-  const classes = _.get(options, 'classes')
-  const domain = _.get(options, 'domain')
-  const scale = _.get(options, 'scale', _.get(options, 'colors', ''))
-  const invert = _.get(options, 'invertScale')
-  if (scale) {
-    if (classes) {
-      colorMap = chroma.scale(scale).classes(invert ? classes.slice().reverse() : classes)
-    } else if (domain) {
-      colorMap = chroma.scale(scale).domain(invert ? domain.slice().reverse() : domain)
-    }
-  }
-  return colorMap
-}
-
 // Find the nearest time of a given one in a given moment time list
 export function getNearestTime (time, times) {
   // Look for the nearest time

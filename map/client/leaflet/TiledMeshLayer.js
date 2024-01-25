@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import L from 'leaflet'
 import chroma from 'chroma-js'
 import * as PIXI from 'pixi.js'
@@ -177,7 +178,7 @@ const TiledMeshLayer = L.GridLayer.extend({
         done(null, tile)
       })
       .catch(err => {
-        console.log(err)
+        logger.error(err)
         done(err, tile)
       })
 
@@ -304,8 +305,6 @@ const TiledMeshLayer = L.GridLayer.extend({
       this.colorMapShaderCode = buildColorMapShaderCodeFromDomain(domain, glcolors)
     } else if (classes) {
       this.colorMapShaderCode = buildColorMapShaderCodeFromClasses(classes, glcolors)
-    } else {
-      console.error("Couldn't find any domain or classes to build color map!")
     }
   },
 

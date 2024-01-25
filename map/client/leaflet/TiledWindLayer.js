@@ -24,7 +24,6 @@ const TiledWindLayer = L.GridLayer.extend({
     // Setup the colormap
     const chromajs = _.get(options, 'chromajs')
     this.colorMap = kdkCoreUtils.buildColorScale(chromajs)
-    console.log(this.colorMap.colors(5))
     this.uSource = uSource
     this.vSource = vSource
     this.onDataChangedCallback = this.onDataChanged.bind(this)
