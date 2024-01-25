@@ -49,7 +49,6 @@ export default function (name, api, options) {
     restoreSettings () {
       let settings = LocalStorage.get(settingsKey)
       if (!settings) return
-      settings = JSON.parse(settings)
       // Backward compatibility when changed utc mode to timezone setting
       if (_.get(settings, 'utc') && _.has(mapping, 'timezone') && !_.get(settings, 'timezone')) {
         _.set(settings, 'timezone', 'UTC')

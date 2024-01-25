@@ -169,8 +169,7 @@ export const context = {
       // Restore from local storage/catalog if no route parameters
       if (_.isEmpty(targetParameters)) {
         const savedParameters = LocalStorage.get(this.getContextKey(context))
-        if (this.shouldRestoreContext(context) && savedParameters) {
-          targetParameters = JSON.parse(savedParameters)
+        if (this.shouldRestoreContext(context) && !_.isEmpty(savedParameters)) {
           // Backward compatibility: we previously stored the bounds as an array
           if (Array.isArray(targetParameters)) {
             targetParameters = {
