@@ -32,6 +32,9 @@ function getLayers (features) {
 }
 
 export function simplifyResult (hook) {
+  // Force full result emission ?
+  const fullResult = _.get(hook, 'params.fullResult')
+  if (fullResult) return hook
   const service = hook.service
   const method = hook.method
   const result = getItems(hook)
@@ -46,6 +49,9 @@ export function simplifyResult (hook) {
 }
 
 export function skipEvents (hook) {
+  // Force standard event emission ?
+  const emitEvents = _.get(hook, 'params.emitEvents')
+  if (emitEvents) return hook
   const service = hook.service
   const method = hook.method
   const event = defaultEventMap[method]
@@ -61,6 +67,9 @@ export function skipEvents (hook) {
 }
 
 export function simplifyEvents (hook) {
+  // Force standard event emission ?
+  const emitEvents = _.get(hook, 'params.emitEvents')
+  if (emitEvents) return hook
   const service = hook.service
   const params = hook.params
   const data = hook.data
@@ -70,7 +79,8 @@ export function simplifyEvents (hook) {
   const event = defaultEventMap[method]
   const result = getItems(hook)
   const simplifyEvents = _.get(service, 'options.simplifyEvents', [])
-  if (simplifyEvents.includes(event) && Array.isArray(result)) {
+  const simplifyEventsLimit = _.get(service, 'options.simplifyEventsLimit', 1)
+  if (simplifyEvents.includes(event) && Array.isArray(result) && (result.length > simplifyEventsLimit)) {
     debug(`Simplifying event ${event} for multi operation on service ${service.name}`)
     // Keep track of query selector when updating/patching/removing in batch
     const payload = (event === 'created' ? {} : { data })

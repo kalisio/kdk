@@ -1,8 +1,20 @@
+import _ from 'lodash'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import {
   marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson,
   simplifyResult, simplifyEvents, skipEvents, fuzzySearch
 } from '../../hooks/index.js'
+
+// Allow to control real-time events emission if required
+const emitEvents = (hook) => {
+  _.set(hook, 'params.emitEvents', _.get(hook, 'params.query.emitEvents'))
+  _.unset(hook, 'params.query.emitEvents')
+}
+// Allow to control full result emission if required
+const fullResult = (hook) => {
+  _.set(hook, 'params.fullResult', _.get(hook, 'params.query.fullResult'))
+  _.unset(hook, 'params.query.fullResult')
+}
 
 export default {
   before: {
@@ -10,10 +22,10 @@ export default {
     find: [coreHooks.marshallComparisonQuery, coreHooks.marshallSortQuery, marshallSpatialQuery,
       coreHooks.distinct, aggregateFeaturesQuery, coreHooks.aggregationQuery, fuzzySearch, coreHooks.diacriticSearch],
     get: [],
-    create: [coreHooks.processTimes(['time'])],
-    update: [coreHooks.processTimes(['time'])],
-    patch: [coreHooks.processTimes(['time'])],
-    remove: [coreHooks.marshallComparisonQuery, marshallSpatialQuery]
+    create: [coreHooks.processTimes(['time']), fullResult, emitEvents],
+    update: [coreHooks.processTimes(['time']), fullResult, emitEvents],
+    patch: [coreHooks.processTimes(['time']), fullResult, emitEvents],
+    remove: [coreHooks.marshallComparisonQuery, marshallSpatialQuery, fullResult, emitEvents]
   },
 
   after: {
