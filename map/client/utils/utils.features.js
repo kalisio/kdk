@@ -136,7 +136,7 @@ export async function getProbeFeatures (options) {
   Object.assign(query, filterQuery, sortQuery)
   // Check API to be used in case the layer is coming from a remote "planet"
   const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
-  const response = await planetApi.getService(options.probeService).find({ query })
+  const response = await planetApi.getService(options.probeService).find(Object.assign({ query }, options.baseParams))
   const features = (response.type === 'FeatureCollection' ? response.features : [response])
   if (typeof options.processor === 'function') {
     features.forEach(feature => options.processor(feature))
@@ -215,7 +215,7 @@ export async function getFeaturesQuery (options, queryInterval, queryLevel) {
 export async function getFeaturesFromQuery (options, query) {
   // Check API to be used in case the layer is coming from a remote "planet"
   const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
-  const response = await planetApi.getService(options.service).find({ query })
+  const response = await planetApi.getService(options.service).find(Object.assign({ query }, options.baseParams))
   const features = (response.type === 'FeatureCollection' ? response.features : [response])
   if (typeof options.processor === 'function') {
     features.forEach(feature => options.processor(feature))
