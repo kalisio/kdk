@@ -38,9 +38,13 @@ export function getColorFromPalette (color) {
 }
 
 export function buildColorScale (options) {
+  if (!options) {
+    logger.warn(`[KDK] buildColorScale: 'options' argument must be defined`)
+    return
+  }
   let colors = options.colors
   if (!colors)  {
-    logger.debug(`[KDK] buildColorScale: no colors defined, using default default colors 'Spectral'`)
+    logger.warn(`[KDK] buildColorScale: no colors defined, using default default colors 'Spectral'`)
     colors = 'Spectral'
   }
   let scale = chroma.scale(colors)
