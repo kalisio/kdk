@@ -1,5 +1,6 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
+import logger from 'loglevel'
 import sift from 'sift'
 import { Time } from '../../../../core/client/time.js'
 import { fetchGeoJson, getFeatureId, isInMemoryLayer } from '../../utils.js'
@@ -95,45 +96,54 @@ export const geojsonLayers = {
       entitiesToAdd.forEach(entity => dataSource.entities.add(entity))
     },
     async updateGeoJsonData (dataSource, options, geoJson) {
+      // As we have async operations during the whole chart creation process avoid reentrance
+      // otherwise we might have interleaved calls leading to multiple charts being created
+      if (this.updatingGeoJsonData[dataSource]) return
+      this.updatingGeoJsonData[dataSource] = true
       const cesiumOptions = options.cesium
       const source = _.get(cesiumOptions, 'source')
       const sourceTemplate = _.get(cesiumOptions, 'sourceTemplate')
-      // Update function to fetch for new data and update Cesium data source
-      if (options.probeService) {
-        // If the probe location is given by another service use it on initialization
-        if (dataSource.entities.values.length === 0) {
-          await this.loadGeoJson(dataSource, this.getProbeFeatures(options), cesiumOptions)
-        }
-        // Then get last available measures
-        const measureSource = new Cesium.GeoJsonDataSource()
-        await this.loadGeoJson(measureSource, this.getFeatures(options), cesiumOptions)
-        // Then merge with probes
-        const probes = dataSource.entities.values
-        for (let i = 0; i < probes.length; i++) {
-          const probe = probes[i]
-          const measure = measureSource.entities.getById(probe.id)
-          if (measure) {
-            probe.properties = measure.properties
-            probe.description = measure.description
+      try {
+        // Update function to fetch for new data and update Cesium data source
+        if (options.probeService) {
+          // If the probe location is given by another service use it on initialization
+          if (dataSource.entities.values.length === 0) {
+            await this.loadGeoJson(dataSource, this.getProbeFeatures(options), cesiumOptions)
           }
+          // Then get last available measures
+          const measureSource = new Cesium.GeoJsonDataSource()
+          await this.loadGeoJson(measureSource, this.getFeatures(options), cesiumOptions)
+          // Then merge with probes
+          const probes = dataSource.entities.values
+          for (let i = 0; i < probes.length; i++) {
+            const probe = probes[i]
+            const measure = measureSource.entities.getById(probe.id)
+            if (measure) {
+              probe.properties = measure.properties
+              probe.description = measure.description
+            }
+          }
+        } else if (options.service) { // Check for feature service layers only, in this case update in place
+          // If no probe reference, nothing to be initialized
+          await this.loadGeoJson(dataSource, this.getFeatures(options), cesiumOptions)
+        } else if (geoJson) {
+          await this.loadGeoJson(dataSource, geoJson, cesiumOptions)
+        } else if (sourceTemplate) {
+          const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() })
+          if (!dataSource.lastFetchedSource || (dataSource.lastFetchedSource !== sourceToFetch)) {
+            dataSource.lastFetchedSource = sourceToFetch
+            await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch, options), cesiumOptions)
+          }
+        } else if (!_.isNil(source)) {
+          // Assume source is an URL returning GeoJson
+          await this.loadGeoJson(dataSource, fetchGeoJson(source, options), cesiumOptions)
         }
-      } else if (options.service) { // Check for feature service layers only, in this case update in place
-        // If no probe reference, nothing to be initialized
-        await this.loadGeoJson(dataSource, this.getFeatures(options), cesiumOptions)
-      } else if (geoJson) {
-        await this.loadGeoJson(dataSource, geoJson, cesiumOptions)
-      } else if (sourceTemplate) {
-        const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() })
-        if (!dataSource.lastFetchedSource || (dataSource.lastFetchedSource !== sourceToFetch)) {
-          dataSource.lastFetchedSource = sourceToFetch
-          await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch, options), cesiumOptions)
-        }
-      } else if (!_.isNil(source)) {
-        // Assume source is an URL returning GeoJson
-        await this.loadGeoJson(dataSource, fetchGeoJson(source, options), cesiumOptions)
+        this.applyStyle(dataSource.entities, options)
+        if (typeof this.applyTooltips === 'function') this.applyTooltips(dataSource.entities, options)
+      } catch (error) {
+        logger.error(error)
       }
-      this.applyStyle(dataSource.entities, options)
-      if (typeof this.applyTooltips === 'function') this.applyTooltips(dataSource.entities, options)
+      delete this.updatingGeoJsonData[dataSource]
     },
     async createCesiumRealtimeGeoJsonLayer (dataSource, options) {
       const cesiumOptions = options.cesium
@@ -300,7 +310,9 @@ export const geojsonLayers = {
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
-
+    // Map of currently updated layers to avoid reentrance with real-time events as
+    // we are not able to perform in place update and required to pull the data
+    this.updatingGeoJsonData = {}
     // Cache where we'll store geojson data for in memory layers we'll hide
     this.geojsonCache = {}
   },

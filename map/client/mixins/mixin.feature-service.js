@@ -92,7 +92,9 @@ export const featureService = {
       if (!getType(feature) || !getGeom(feature)) return
       // Find related layer
       const layer = this.getLayerById(feature.layer)
-      if (!layer || !this.isLayerVisible(layer.name) || this.isLayerEdited(layer)) return
+      if (!layer || !this.isLayerVisible(layer.name)) return
+      // Only possible when not edited by default
+      if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
       // As by default we update the whole layer in fetch and replace mode force add/update only mode
       // Can only apply to realtime layers as we need to force a data refresh
       if (typeof this.updateLayer === 'function') this.updateLayer(layer.name, feature, { removeMissing: false })
@@ -102,7 +104,9 @@ export const featureService = {
       if (!getType(feature) || !getGeom(feature)) return
       // Find related layer
       const layer = this.getLayerById(feature.layer)
-      if (!layer || !this.isLayerVisible(layer.name) || this.isLayerEdited(layer)) return
+      if (!layer || !this.isLayerVisible(layer.name)) return
+      // Only possible when not edited by default
+      if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
       // Can only apply to realtime layers as we need to force a data refresh
       if (typeof this.updateLayer === 'function') this.updateLayer(layer.name, feature, { remove: true })
     }
