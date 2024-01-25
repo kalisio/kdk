@@ -8,7 +8,9 @@ export const LocalStorage = {
     logger.debug(`[KDK] initializing local storage with prefix: ${this.prefix}`)
   },
   localKey (key) {
-    return `${this.prefix}-${_.kebabCase(key)}`
+    const keyPrefix = `${this.prefix}-`
+    if (_.startsWith(keyPrefix)) return key
+    return `${keyPrefix}${_.kebabCase(key)}`
   },
   set (key, value) {
     const jsonValue = JSON.stringify(value)
