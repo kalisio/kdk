@@ -27,23 +27,19 @@ const GSMaPLayer = L.TileLayer.extend({
 
   makeUrl (time) {
     const t = time || moment()
-
     // data interval is every half hour for GSMaP_NOW
     const halfHour = moment.duration(30, 'minutes')
     const stepTime = moment(Math.trunc(t / halfHour) * halfHour).utc()
-
-    const baseUrl = 'https://sharaku.eorc.jaxa.jp/cgi-bin/trmm/GSMaP_NOW/tilemap/tile_'
+    const baseUrl = 'https://sharaku.eorc.jaxa.jp/cgi-bin/trmm/GSMaP_NOW/tilemap/'
     const timeQuery = `year=${stepTime.year()}&month=${stepTime.month() + 1}&day=${stepTime.date()}&hour=${stepTime.hour()}&min=${stepTime.minute()}&z={z}&x={x}&y={y}`
-
     if (this.product === 'rain12' || this.product === 'rain24' || this.product === 'rain72') {
-      return baseUrl + `total.py?prod=${this.product}&` + timeQuery
+      return baseUrl + `tile_total.py?prod=${this.product}&` + timeQuery
     }
     if (this.product === 'ir') {
-      return baseUrl + `ir.py?prod=${this.product}&` + timeQuery
+      return baseUrl + `gsmapnow_tile_ir.py?prod=${this.product}&` + timeQuery
     }
-
     // default product is rain
-    return baseUrl + 'rain.py?prod=rain&' + timeQuery
+    return baseUrl + 'tile_rain.py?prod=rain&' + timeQuery
   },
 
   setCurrentTime (time) {
