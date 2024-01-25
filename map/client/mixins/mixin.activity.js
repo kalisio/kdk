@@ -270,10 +270,13 @@ export const activity = {
       this.catalogListeners = {}
       if (globalCatalogService.events !== undefined) {
         globalCatalogService.events.forEach(event => {
-          this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
-          globalCatalogService.on(event, this.catalogListeners[event])
-          if (catalogService && (catalogService !== globalCatalogService)) {
-            catalogService.on(event, this.catalogListeners[event])
+          // Avoid reentrance
+          if (!this.catalogListeners[event]) {
+            this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
+            globalCatalogService.on(event, this.catalogListeners[event])
+            if (catalogService && (catalogService !== globalCatalogService)) {
+              catalogService.on(event, this.catalogListeners[event])
+            }
           }
         })
       }
@@ -284,9 +287,12 @@ export const activity = {
       const catalogService = this.$api.getService('catalog')
       if (globalCatalogService.events !== undefined) {
         globalCatalogService.events.forEach(event => {
-          globalCatalogService.removeListener(event, this.catalogListeners[event])
-          if (catalogService && (catalogService !== globalCatalogService)) {
-            catalogService.removeListener(event, this.catalogListeners[event])
+          // Avoid reentrance
+          if (this.catalogListeners[event]) {
+            globalCatalogService.removeListener(event, this.catalogListeners[event])
+            if (catalogService && (catalogService !== globalCatalogService)) {
+              catalogService.removeListener(event, this.catalogListeners[event])
+            }
           }
         })
       }
