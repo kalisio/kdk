@@ -74,8 +74,7 @@ const defaultActions = [{
     okAction: 'CLOSE',
     widthPolicy: 'narrow'
   }
-}
-]
+}]
 if (!_.isNil(bugReport.address)) {
   defaultActions.unshift({
     id: 'report-bug',
