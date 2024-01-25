@@ -10,7 +10,7 @@ export const LocalStorage = {
   localKey (key) {
     const keyPrefix = `${this.prefix}-`
     if (_.startsWith(keyPrefix)) return key
-    return `${keyPrefix}${_.kebabCase(key)}`
+    return `${keyPrefix}${key}`
   },
   set (key, value) {
     const jsonValue = JSON.stringify(value)
