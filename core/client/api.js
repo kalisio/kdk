@@ -10,6 +10,7 @@ import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
 import { Events } from './events.js'
+import { LocalStorage } from './local-storage.js'
 
 // Setup log level
 if (_.get(configuration, 'logs.level')) {
@@ -21,10 +22,7 @@ if (_.get(configuration, 'logs.level')) {
 export function createClient (config) {
   // Initiate the client
   const api = feathers()
-
-  function getBaseUrlStorageKey () {
-    return config.appName.toLowerCase() + '-baseUrl'
-  }
+  const baseUrlStorageKey = 'baseUrl'
 
   // Matchers that can be added to customize route guards
   let matchers = []
@@ -141,7 +139,7 @@ export function createClient (config) {
   }
   // Change the base URL/domain to be used (useful for mobile apps)
   api.setBaseUrl = function (baseUrl) {
-    window.localStorage.setItem(getBaseUrlStorageKey(), baseUrl)
+    LocalStorage.set(baseUrlStorageKey, baseUrl)
     // Updating this setting live does not seem to work well in Feathers
     // For now the caller should simply "reload" the app
     /*
@@ -166,10 +164,7 @@ export function createClient (config) {
     // We can override the default app origin anyway
     let origin = config.origin || window.location.origin
     // Check for registered custom base Url if any
-    if (window.localStorage.getItem(getBaseUrlStorageKey())) {
-      origin = window.localStorage.getItem(getBaseUrlStorageKey())
-    }
-    return origin
+    return LocalStorage.get(baseUrlStorageKey, origin)
   }
 
   api.getConfig = function () {

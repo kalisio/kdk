@@ -2,13 +2,14 @@ import _ from 'lodash'
 import config from 'config'
 import { Store } from '../store.js'
 import { Events } from '../events.js'
+import { LocalStorage } from '../local-storage.js'
 
 export default function (name, api, options) {
   const mapping = options.propertyMapping
   // We will emit also an event for all top level properties in case of nested ones
   // This simplifies event management for some listeners instead of listening to all nested properties
   const rootPaths = _.uniq(_.values(mapping).map(path => path.split('.')[0]))
-  const settingsKey = config.appName.toLowerCase() + '-' + (options.settingsKey || 'settings')
+  const settingsKey = options.settingsKey || 'settings'
   return {
 
     async get (id) {
@@ -42,11 +43,11 @@ export default function (name, api, options) {
           _.set(data, key, Store.get(value))
         }
       })
-      window.localStorage.setItem(settingsKey, JSON.stringify(data))
+       LocalStorage.set(settingsKey, data)
     },
 
     restoreSettings () {
-      let settings = window.localStorage.getItem(settingsKey)
+      let settings = LocalStorage.get(settingsKey)
       if (!settings) return
       settings = JSON.parse(settings)
       // Backward compatibility when changed utc mode to timezone setting

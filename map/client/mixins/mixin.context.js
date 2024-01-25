@@ -1,14 +1,14 @@
 import _ from 'lodash'
 import moment from 'moment'
 import sift from 'sift'
-import { utils as kCoreUtils, Time, Store } from '../../../core/client/index.js'
+import { utils as kCoreUtils, Time, Store, LocalStorage } from '../../../core/client/index.js'
 import { isTerrainLayer } from '../utils/utils.layers.js'
 
 export const context = {
   methods: {
     getContextKey (context) {
       // Generate a unique key to store context based on app name, map activity name and context type
-      return this.getAppName().toLowerCase() + `-${this.activityName}-${context}`
+      return `${this.activityName}-${context}`
     },
     shouldRestoreContext (context) {
       // Use user settings except if the view has explicitly revoked restoration
@@ -161,14 +161,14 @@ export const context = {
         if (!_.isEqual(this.getRouteContext(context), targetParameters)) {
           this.updateRouteContext(context, targetParameters)
         }
-        window.localStorage.setItem(this.getContextKey(context), JSON.stringify(targetParameters))
+        LocalStorage.set(this.getContextKey(context), targetParameters)
       }
     },
     async restoreContext (context) {
       let targetParameters = this.getRouteContext(context)
       // Restore from local storage/catalog if no route parameters
       if (_.isEmpty(targetParameters)) {
-        const savedParameters = window.localStorage.getItem(this.getContextKey(context))
+        const savedParameters = LocalStorage.get(this.getContextKey(context))
         if (this.shouldRestoreContext(context) && savedParameters) {
           targetParameters = JSON.parse(savedParameters)
           // Backward compatibility: we previously stored the bounds as an array
