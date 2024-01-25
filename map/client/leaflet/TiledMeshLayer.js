@@ -4,8 +4,7 @@ import chroma from 'chroma-js'
 import * as PIXI from 'pixi.js'
 import 'leaflet-pixi-overlay'
 import 'abort-controller/polyfill.js'
-import { buildColorMap } from '../utils.js'
-
+import { utils as kdkCoreUtils } from '../../../core.client.js'
 import { buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils.js'
 
 const TiledMeshLayer = L.GridLayer.extend({
@@ -296,19 +295,15 @@ const TiledMeshLayer = L.GridLayer.extend({
         domain = this.gridSource.getDataBounds()
       }
     }
-
-    const invert = chromajs.invertScale
-    const colors = chromajs.scale
-    const scale = chroma.scale(colors)
+    const scale = chroma.scale(chromajs.colors)
     // translate to glsl style colors for shader code
     const glcolors = scale.colors().map(c => chroma(c).gl())
 
+    this.colorMap = kdkCoreUtils.buildColorScale(chromajs)
     if (domain) {
-      this.colorMap = buildColorMap(chromajs)
-      this.colorMapShaderCode = buildColorMapShaderCodeFromDomain(domain, glcolors, invert)
+      this.colorMapShaderCode = buildColorMapShaderCodeFromDomain(domain, glcolors)
     } else if (classes) {
-      this.colorMap = buildColorMap(chromajs)
-      this.colorMapShaderCode = buildColorMapShaderCodeFromClasses(classes, glcolors, invert)
+      this.colorMapShaderCode = buildColorMapShaderCodeFromClasses(classes, glcolors)
     } else {
       console.error("Couldn't find any domain or classes to build color map!")
     }

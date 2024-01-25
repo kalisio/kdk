@@ -3,11 +3,11 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import 'leaflet-realtime'
-import { Time } from '../../../../core/client/time.js'
+import { Time, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, buildColorMap } from '../../utils.map.js'
+import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer } from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default remove handler for leaflet-realtime due to
@@ -298,7 +298,7 @@ export const geojsonLayers = {
         const variables = _.get(options, 'variables', [])
         variables.forEach(variable => {
           if (_.has(variable, 'chromajs')) {
-            variable.colorScale = buildColorMap(_.get(variable, 'chromajs'))
+            variable.colorScale = kdkCoreUtils.buildColorScale(_.get(variable, 'chromajs'))
           }
         })
         // Merge generic GeoJson options and layer options

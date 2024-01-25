@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import { buildColorMap } from '../utils.js'
+import { utils as kdkCoreUtils } from '../../../core.client.js'
 
 import { tile2key, tileSetContainsParent } from './utils/utils.tiles.js'
 
@@ -23,9 +23,8 @@ const TiledWindLayer = L.GridLayer.extend({
 
     // Setup the colormap
     const chromajs = _.get(options, 'chromajs')
-    this.colorMap = buildColorMap(chromajs)
-    const invert = chromajs.invertScale
-
+    this.colorMap = kdkCoreUtils.buildColorScale(chromajs)
+    console.log(this.colorMap.colors(5))
     this.uSource = uSource
     this.vSource = vSource
     this.onDataChangedCallback = this.onDataChanged.bind(this)
@@ -39,7 +38,7 @@ const TiledWindLayer = L.GridLayer.extend({
       minVelocity: this.colorMap.domain()[0],
       maxVelocity: this.colorMap.domain()[1],
       velocityScale: 0.01,
-      colorScale: (invert ? this.colorMap.colors().reverse() : this.colorMap.colors()),
+      colorScale: this.colorMap.colors(),
       data: null
     }, options)
     this.velocityLayer = L.velocityLayer(velocityOptions)

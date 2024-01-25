@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import logger from 'debug'
+import logger from 'loglevel'
 import chroma from 'chroma-js'
 
 export const Colors = {
@@ -42,10 +42,16 @@ export function buildColorScale (options) {
     logger.warn(`[KDK] buildColorScale: 'options' argument must be defined`)
     return
   }
-  let colors = options.colors
+  let colors = options.colors 
   if (!colors)  {
-    logger.warn(`[KDK] buildColorScale: no colors defined, using default default colors 'Spectral'`)
-    colors = 'Spectral'
+    // For backward compatibility
+    if (options.scale) {
+      logger.warn(`[KDK] buildColorScale: please update 'scale' property to 'colors'`)
+      colors = options.scale
+    } else {
+      logger.warn(`[KDK] buildColorScale: no colors defined, using default default colors 'Spectral'`)
+      colors = 'Spectral'
+    }
   }
   let scale = chroma.scale(colors)
   if (options.classes) {

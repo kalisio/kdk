@@ -198,7 +198,7 @@ function buildColorMapShaderCode (thresholds, colors, interpolate) {
   return code
 }
 
-export function buildColorMapShaderCodeFromDomain (domain, colors, invertScale) {
+export function buildColorMapShaderCodeFromDomain (domain, colors, invertScale = false) {
   // expects N values in domain an N colors
   //  color0 .. color1 .. color2 ..... colorn-1 .. colorn
   //    |         |         |            |           |

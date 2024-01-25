@@ -192,7 +192,6 @@ function drawContinuousHorizontalScale () {
   }
   // draw ticks
   const yTicks = yBar + barHeight.value + gutter.value + ticksSize.value
-  console.log(ticksFont.value)
   canvasContext.font = ticksFont.value
   canvasContext.fillStyle = ticksColor.value
   canvasContext.textAlign = 'left'
