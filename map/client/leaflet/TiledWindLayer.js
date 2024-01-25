@@ -2,7 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import { buildColorMap } from '../utils.js'
 
-import { tile2key, tileSetContainsParent } from './utils.js'
+import { tile2key, tileSetContainsParent } from './utils/utils.tiles.js'
 
 const TiledWindLayer = L.GridLayer.extend({
   initialize (options, uSource, vSource) {

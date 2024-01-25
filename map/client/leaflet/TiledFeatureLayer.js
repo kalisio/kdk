@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import bbox from '@turf/bbox'
 import { featureEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
-import { tile2key, getParentTileInTileSet } from './utils.js'
+import { tile2key, getParentTileInTileSet } from './utils/utils.tiles.js'
 import { getFeatureId } from '../utils.js'
 
 const TiledFeatureLayer = L.GridLayer.extend({
