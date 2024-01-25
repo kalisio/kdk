@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
 import moment from 'moment'
-import { buildColorMap } from '../utils.js'
+import { utils as kdkCoreUtils } from '../../../core.client.js'
 
 const GSMaPLayer = L.TileLayer.extend({
   initialize (options) {
@@ -14,14 +14,17 @@ const GSMaPLayer = L.TileLayer.extend({
     L.TileLayer.prototype.initialize.call(this, url, updatedOptions)
 
     // colormap legend support
-    this.colorMap = buildColorMap(_.get(options, 'chromajs'))
-    if (this.colorMap) {
-      this.on('tileload', (event) => {
-        if (!this.hasData) {
-          this.fire('data')
-          this.hasData = true
-        }
-      })
+    const colorMapOptions = options.chromajs
+    if (colorMapOptions) {
+      this.colorMap = kdkCoreUtils.buildColorScale(colorMapOptions)
+      if (this.colorMap) {
+        this.on('tileload', (event) => {
+          if (!this.hasData) {
+            this.fire('data')
+            this.hasData = true
+          }
+        })
+      }
     }
   },
 
