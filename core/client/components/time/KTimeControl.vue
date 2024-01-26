@@ -65,6 +65,8 @@ const steps = [
   { id: "step-6H", color: "primary", label: "6h"},
   { id: "step-1D", color: "primary", label: "KTimeControl.1D"}
 ]
+const calendarDateMask = 'YYYY-MM-DD'
+//calendarTimeMask: 'YYYY-MM-DD',
 
 // Computed
 const formattedDate = computed(() => {
@@ -75,10 +77,24 @@ const formattedTime = computed(() => {
 })
 const date = computed({
   get: function () {
-    return formattedDate
+    const dateTime = Time.getCurrentTime()
+    // Assume locale if timezone not provided
+    return Time.getFormatTimezone()
+      ? moment(dateTime).tz(Time.getFormatTimezone()).format(calendarDateMask)
+      : moment(dateTime).local().format(calendarDateMask)
   },
   set: function (value) {
-    //TODO
+    let date
+    // Assume locale if timezone not provided
+    if (Time.getFormatTimezone()) {
+      date = moment.tz(value, calendarDateMask, Time.getFormatTimezone())
+    } else {
+      date = moment(value, calendarDateMask)
+    }
+    const dateTime = Time.getCurrentTime()
+    date.hour(dateTime.hour())
+    date.minute(dateTime.minute())
+    Time.setCurrentTime(moment.utc(date))
   }
 })
 const time = computed({
