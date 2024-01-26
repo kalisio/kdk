@@ -75,18 +75,18 @@ const formattedTime = computed(() => {
 })
 const date = computed({
   get: function () {
-    // TODO
+    return formattedDate
   },
   set: function (value) {
-    // TODO
+    //TODO
   }
 })
 const time = computed({
   get: function () {
-    // TODO
+    return formattedTime
   },
   set: function (value) {
-    // TODO
+    //TODO
   }
 })
 const dense = computed(() => {
