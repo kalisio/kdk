@@ -83,6 +83,13 @@ export const baseGlobe = {
     },
     createCesiumLayer (options) {
       const cesiumOptions = options.cesium || options
+      if (cesiumOptions.type === '3DTileset') {
+        const convertedOptions = this.convertToCesiumObjects(cesiumOptions)
+        const tileset = new Cesium.Cesium3DTileset(_.omit(convertedOptions, ['style']))
+        // Not possible to get style as constructor options
+        if (_.has(convertedOptions, 'style')) tileset.style = _.get(convertedOptions, 'style')
+        return tileset
+      }
       let provider
       if (isTerrainLayer(cesiumOptions)) {
         if (cesiumOptions.url || (cesiumOptions.type === 'Ellipsoid')) provider = cesiumOptions.type + 'TerrainProvider'
