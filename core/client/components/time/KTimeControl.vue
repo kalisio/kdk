@@ -52,7 +52,7 @@ import { Time } from '../../time.js'
 
 // Data
 const $q = useQuasar()
-const stepLabel = ref('05')
+const stepLabel = ref('1h')
 const steps = [
   { id: "step-05", color: "primary", label: "5m"},
   { id: "step-10", color: "primary", label: "10m"},
@@ -61,14 +61,14 @@ const steps = [
   { id: "step-20", color: "primary", label: "20m"},
   { id: "step-30", color: "primary", label: "30m"},
   { id: "step-60", color: "primary", label: "1h"},
-  { id: "step-3H", color: "primary", label: "3h"},
-  { id: "step-6H", color: "primary", label: "6h"},
-  { id: "step-1D", color: "primary", label: "KTimeControl.1D"}
+  { id: "step-180", color: "primary", label: "3h"},
+  { id: "step-360", color: "primary", label: "6h"},
+  { id: "step-1440", color: "primary", label: "1D"}
 ]
-const calendarDateMask = 'YYYY-MM-DD'
-//calendarTimeMask: 'YYYY-MM-DD',
 
-// Computed
+// Computed solution
+const calendarDateMask = 'YYYY-MM-DD'
+
 const formattedDate = computed(() => {
   return Time.getCurrentFormattedTime().date.long
 })
@@ -77,32 +77,44 @@ const formattedTime = computed(() => {
 })
 const date = computed({
   get: function () {
-    const dateTime = Time.getCurrentTime()
+    const dateTime = Time.getCurrentTime();
     // Assume locale if timezone not provided
     return Time.getFormatTimezone()
       ? moment(dateTime).tz(Time.getFormatTimezone()).format(calendarDateMask)
       : moment(dateTime).local().format(calendarDateMask)
   },
   set: function (value) {
-    let date
-    // Assume locale if timezone not provided
-    if (Time.getFormatTimezone()) {
-      date = moment.tz(value, calendarDateMask, Time.getFormatTimezone())
-    } else {
-      date = moment(value, calendarDateMask)
-    }
-    const dateTime = Time.getCurrentTime()
-    date.hour(dateTime.hour())
-    date.minute(dateTime.minute())
-    Time.setCurrentTime(moment.utc(date))
+    let newDate;
+    const currentTime = Time.getCurrentTime()
+
+    const [year, month, day] = value.split('-')
+
+    newDate = moment(currentTime)
+      .year(parseInt(year))
+      .month(parseInt(month) - 1)
+      .date(parseInt(day));
+
+    Time.setCurrentTime(newDate)
   }
 })
 const time = computed({
   get: function () {
-    return formattedTime
+    const dateTime = Time.getCurrentTime()
+    // Assume locale if timezone not provided
+    return Time.getFormatTimezone()
+      ? moment(dateTime).tz(Time.getFormatTimezone()).format(hourFormat)
+      : moment(dateTime).local().format(hourFormat)
   },
   set: function (value) {
-    //TODO
+    let newTime;
+    const currentDateTime = Time.getCurrentTime()
+
+    const [hours, minutes] = value.split(':')
+    newTime = moment(currentDateTime)
+      .hour(parseInt(hours))
+      .minute(parseInt(minutes))
+
+    Time.setCurrentTime(newTime)
   }
 })
 const dense = computed(() => {
@@ -110,19 +122,71 @@ const dense = computed(() => {
 })
 
 // Functions
-function onNowClicked () {
+
+function onNowClicked() {
   Time.startRealtime()
 }
-function onPreviousStepClicked () {
-  let newTime = moment(Time.getCurrentTime()).subtract(Time.getStep(), 'minute')
+function onPreviousStepClicked() {
+  let newTime = moment(Time.getCurrentTime()).subtract(parseInt(stepLabel.value), 'minute')
   Time.setCurrentTime(newTime)
 }
-function onNextStepClicked () {
-  let newTime = moment(Time.getCurrentTime()).add(Time.getStep(), 'minute')
+function onNextStepClicked() {
+  let newTime = moment(Time.getCurrentTime()).add(parseInt(stepLabel.value), 'minute')
   Time.setCurrentTime(newTime)
 }
-function onStepClicked (step) {
+function onStepClicked(step) {
   stepLabel.value = step
+
+  switch (step) {
+    case '5m':
+      Time.setStep(5)
+      break
+    case '10m':
+      Time.setStep(10)
+      break
+    case '12m':
+      Time.setStep(12)
+      break
+    case '15m':
+      Time.setStep(15)
+      break
+    case '20m':
+      Time.setStep(20)
+      break
+    case '30m':
+      Time.setStep(30)
+      break
+    case '1h':
+      Time.setStep(60)
+      break
+    case '3h':
+      Time.setStep(180)
+      break
+    case '6h':
+      Time.setStep(360)
+      break
+    case '1D':
+      Time.setStep(1440)
+      break
+    default:
+      break
+  }
+}
+function onPreviousHourClicked() {
+  const newTime = moment(Time.getCurrentTime()).subtract(1, 'hour')
+  Time.setCurrentTime(newTime)
+}
+function onPreviousDayClicked() {
+  const newTime = moment(Time.getCurrentTime()).subtract(1, 'day')
+  Time.setCurrentTime(newTime)
+}
+function onNextDayClicked() {
+  const newTime = moment(Time.getCurrentTime()).add(1, 'day')
+  Time.setCurrentTime(newTime)
+}
+function onNextHourClicked() {
+  const newTime = moment(Time.getCurrentTime()).add(1, 'hour');
+  Time.setCurrentTime(newTime)
 }
 </script>
 
