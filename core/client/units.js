@@ -151,10 +151,30 @@ const equivalentDose = {
   }
 }
 const equivalentDoseRate = {
+  'svs': {
+    symbol: 'units.SIEVERT_PER_SECOND_SYMBOL',
+    label: 'units.SIEVERT_PER_SECOND_LABEL',
+    baseName: 'equivalentDoseRate'
+  },
+  'msvs': {
+    symbol: 'units.MILLISIEVERT_PER_SECOND_SYMBOL',
+    label: 'units.MILLISIEVERT_PER_SECOND_LABEL',
+    definition: '0.001 sv/s'
+  },
+  'usvs': {
+    symbol: 'units.MICROSIEVERT_PER_SECOND_SYMBOL',
+    label: 'units.MICROSIEVERT_PER_SECOND_LABEL',
+    definition: '0.000001 sv/s'
+  },
+  'nsvs': {
+    symbol: 'units.NANOSIEVERT_PER_SECOND_SYMBOL',
+    label: 'units.NANOSIEVERT_PER_SECOND_LABEL',
+    definition: '0.000000001 sv/s'
+  },
   'svh': {
     symbol: 'units.SIEVERT_PER_HOUR_SYMBOL',
     label: 'units.SIEVERT_PER_HOUR_LABEL',
-    baseName: 'equivalentDoseRate'
+    definition: '3600 sv/s'
   },
   'msvh': {
     symbol: 'units.MILLISIEVERT_PER_HOUR_SYMBOL',
