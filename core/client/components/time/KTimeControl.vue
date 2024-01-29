@@ -52,7 +52,7 @@ import { Time } from '../../time.js'
 
 // Data
 const $q = useQuasar()
-const stepLabel = ref('1h')
+const stepLabel = ref('60m')
 const steps = [
   { id: "step-05", color: "primary", label: "5m"},
   { id: "step-10", color: "primary", label: "10m"},
@@ -60,10 +60,10 @@ const steps = [
   { id: "step-15", color: "primary", label: "15m"},
   { id: "step-20", color: "primary", label: "20m"},
   { id: "step-30", color: "primary", label: "30m"},
-  { id: "step-60", color: "primary", label: "1h"},
-  { id: "step-180", color: "primary", label: "3h"},
-  { id: "step-360", color: "primary", label: "6h"},
-  { id: "step-1440", color: "primary", label: "1D"}
+  { id: "step-60", color: "primary", label: "60m"},
+  { id: "step-180", color: "primary", label: "180m"},
+  { id: "step-360", color: "primary", label: "360m"},
+  { id: "step-1440", color: "primary", label: "1440m"}
 ]
 
 // Computed solution
@@ -136,7 +136,7 @@ function onNextStepClicked() {
 }
 function onStepClicked(step) {
   stepLabel.value = step
-
+  
   switch (step) {
     case '5m':
       Time.setStep(5)
@@ -156,16 +156,16 @@ function onStepClicked(step) {
     case '30m':
       Time.setStep(30)
       break
-    case '1h':
+    case '60m':
       Time.setStep(60)
       break
-    case '3h':
+    case '180m':
       Time.setStep(180)
       break
-    case '6h':
+    case '360m':
       Time.setStep(360)
       break
-    case '1D':
+    case '60m':
       Time.setStep(1440)
       break
     default:
