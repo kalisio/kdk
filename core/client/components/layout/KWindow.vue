@@ -161,7 +161,7 @@ const menu = computed(() => {
       id: `${props.placement}-window-menu`,
       component: 'menu/KMenu',
       icon: 'las la-cube',
-      size: 'sm',
+      dense: true,
       tooltip: 'Widgets',
       actionRenderer: 'item',
       content: widgetMenuItems
