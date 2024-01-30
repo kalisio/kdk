@@ -80,7 +80,7 @@ export const Geolocation = {
         ignore: (code === error.PERMISSION_DENIED),
         retryHandler: () => this.refresh()
       }))
-      logger.debug('geolocation failed: ', error)
+      logger.debug('[KDK] geolocation failed: ', error)
     }
     return location
   },
