@@ -18,7 +18,7 @@
         <div class="q-px-xs">
           {{  formattedTime }}
           <q-popup-proxy transition-show="scale" transition-hide="scale">
-            <q-time v-model="time" :mask="hourFormat" />
+            <q-time v-model="time" :mask="timeDateMask" />
           </q-popup-proxy>
         </div>
       </div>
@@ -51,6 +51,9 @@ import { useQuasar } from 'quasar'
 import { Time } from '../../time.js'
 
 // Data
+const calendarDateMask = 'YYYY-MM-DD'
+const timeDateMask = 'HH:mm'
+
 const $q = useQuasar()
 const stepLabel = ref('60m')
 const steps = [
@@ -66,9 +69,7 @@ const steps = [
   { id: "step-1440", color: "primary", label: "1440m"}
 ]
 
-// Computed solution
-const calendarDateMask = 'YYYY-MM-DD'
-
+// Computed
 const formattedDate = computed(() => {
   return Time.getCurrentFormattedTime().date.long
 })
@@ -77,14 +78,14 @@ const formattedTime = computed(() => {
 })
 const date = computed({
   get: function () {
-    const dateTime = Time.getCurrentTime();
+    const dateTime = Time.getCurrentTime()
     // Assume locale if timezone not provided
     return Time.getFormatTimezone()
       ? moment(dateTime).tz(Time.getFormatTimezone()).format(calendarDateMask)
       : moment(dateTime).local().format(calendarDateMask)
   },
   set: function (value) {
-    let newDate;
+    let newDate
     const currentTime = Time.getCurrentTime()
 
     const [year, month, day] = value.split('-')
@@ -92,7 +93,7 @@ const date = computed({
     newDate = moment(currentTime)
       .year(parseInt(year))
       .month(parseInt(month) - 1)
-      .date(parseInt(day));
+      .date(parseInt(day))
 
     Time.setCurrentTime(newDate)
   }
@@ -102,8 +103,8 @@ const time = computed({
     const dateTime = Time.getCurrentTime()
     // Assume locale if timezone not provided
     return Time.getFormatTimezone()
-      ? moment(dateTime).tz(Time.getFormatTimezone()).format(hourFormat)
-      : moment(dateTime).local().format(hourFormat)
+      ? moment(dateTime).tz(Time.getFormatTimezone()).format(timeDateMask)
+      : moment(dateTime).local().format(timeDateMask)
   },
   set: function (value) {
     let newTime;
@@ -165,7 +166,7 @@ function onStepClicked(step) {
     case '360m':
       Time.setStep(360)
       break
-    case '60m':
+    case '1440m':
       Time.setStep(1440)
       break
     default:
