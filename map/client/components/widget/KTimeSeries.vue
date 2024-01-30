@@ -150,7 +150,7 @@ export default {
         // Aggregated variable available for feature ?
         if (this.hasVariable(name, properties, variable.baseQuery)) {
           // Build data structure as expected by visualisation
-          let values = properties[name].map((value, index) => ({ x: time[name][index], y: Units.convert(value, unit) }))
+          let values = properties[name].map((value, index) => ({ x: time[name][index], y: value }))
           // Keep only selected value if multiple are provided for the same time (eg different forecasts)
           if (variable.runTimes && !_.isEmpty(_.get(runTime, name)) && this.getSelectedRunTime()) {
             values = values.filter((value, index) => (runTime[name][index] === this.getSelectedRunTime().toISOString()))
